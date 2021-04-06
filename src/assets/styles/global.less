@@ -1,0 +1,91 @@
+// 全局样式
+// @author Pluto <huarse@gmail.com>
+// @create 2020/06/03 01:31
+
+@import './variables';
+
+html,
+body {
+  height: 100%;
+  background-color: #f0f2f5;
+}
+
+body {
+  font-family: 'Alibaba Sans', -apple-system, 'PingFang SC', 'Helvetica Neue',
+    sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a:focus {
+  text-decoration: none;
+}
+
+#root {
+  height: 100%;
+}
+
+.flex-inline {
+  display: inline-flex;
+  align-items: center;
+}
+
+.flex-air {
+  flex: 1 1 0;
+}
+
+.flex-bt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  > h1,
+  > h2,
+  > h3,
+  > h4,
+  > h5,
+  > h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.action-cell {
+  button + button,
+  a + a {
+    margin-left: 12px;
+  }
+}
+
+.text-nowrap {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ellipsis-span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+hr {
+  margin: 20px 0;
+  border-top: 0;
+  border-bottom: 1px solid #eee;
+}
+
+/// ================= antd fix
+.ant-form.compact-form {
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

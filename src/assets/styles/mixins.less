@@ -1,0 +1,38 @@
+// mixins
+// @author Pluto <huarse@gmail.com>
+// @create 2020/06/03 01:31
+
+.clearfix() {
+  &::after,
+  &::before {
+    content: '';
+    line-height: 0;
+    display: table;
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+.scrollbar(@size:6px, @bg-color: #fff, @thumb-color: rgba(0, 0, 0, 0.3)) {
+  &::-webkit-scrollbar {
+    width: @size;
+    height: @size;
+    background-color: @bg-color;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: @thumb-color;
+    border-radius: 10px;
+    border: 0;
+
+    &:hover {
+      background-color: fadein(@thumb-color, 20%);
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    display: none;
+  }
+}

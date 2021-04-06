@@ -1,0 +1,54 @@
+{
+  "name": "fe-matris",
+  "description": "fe-matris",
+  "version": "1.0.2",
+  "scripts": {
+    "inject": "node script/config-inject.js",
+    "umi": "MOCK=none umi dev",
+    "start": "npm run inject -- dev && npm run umi",
+    "umi:mock": "umi dev",
+    "start:mock": "npm run inject -- dev && npm run umi:mock",
+    "umi:build": "umi build",
+    "build": "npm run inject && umi build",
+    "postinstall": "umi generate tmp",
+    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
+    "test": "umi-test",
+    "test:coverage": "umi-test --coverage",
+    "page": "node ./script/add-page.js"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.cfuture.shop/fe-data-app/fe-matris.git"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "dependencies": {
+    "@cffe/fe-backend-component": "^0.1.33",
+    "@umijs/preset-react": "1.x",
+    "dayjs": "^1.10.4",
+    "umi": "^3.3.7"
+  },
+  "devDependencies": {
+    "@irim/cli-base": "^1.1.9",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@umijs/test": "^3.3.7",
+    "lint-staged": "^10.0.7",
+    "prettier": "^2.2.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.2",
+    "typescript-require": "^0.3.0",
+    "yorkie": "^2.0.0"
+  }
+}
