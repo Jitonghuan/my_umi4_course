@@ -1,0 +1,27 @@
+.vc-page-content {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 0 12px;
+
+  &.is-flex {
+    height: 100%;
+    overflow: hidden;
+
+    .vc-page-content-body {
+      flex: 1;
+      height: 100%;
+      overflow: auto;
+    }
+  }
+
+  &-breadcrumb {
+    padding: 12px 0;
+    line-height: 20px;
+    font-size: 12px;
+  }
+
+  &-filter {
+    margin-bottom: 12px;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { FELayout } from '@cffe/fe-backend-component';
@@ -7,15 +7,29 @@ import ds from '@config/defaultSettings';
 import DocumentTitle from './DocumentTitle';
 import FeContext from './FeContext';
 import { doLogoutApi, queryUserInfoApi, queryAllSystem } from './service';
+import { DFSFunc } from '@/utils';
 
 export default (props: IUmiRrops) => {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
+
+  // 处理 breadcrumb, 平铺所有的路由
+  const breadcrumbMap = useMemo(() => {
+    const { routes } = props;
+
+    const map = {} as any[];
+    DFSFunc(routes, 'routes', (node) => {
+      map[node.path] = node;
+    });
+
+    return map;
+  }, [props]);
 
   return (
     <ConfigProvider locale={zhCN}>
       <FeContext.Provider
         value={{
           ...FeGlobalRef.current,
+          breadcrumbMap,
         }}
       >
         <DocumentTitle

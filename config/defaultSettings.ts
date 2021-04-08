@@ -34,9 +34,9 @@ export default {
   ...FEConfig,
 
   // 项目配置
-  primaryColor: '#1890FF',
+  primaryColor: '#1973CC',
   loginPrefix: '/user_module',
-  apiPrefix: `/${appKey}_backend`,
+  apiPrefix: `/v1`,
   pagePrefix: `/${appKey}`,
   publicPath: `/${appKey}/`,
 } as IDefaultSettings;

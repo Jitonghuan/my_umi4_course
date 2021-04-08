@@ -80,6 +80,31 @@ export default defineConfig({
   // 主题
   theme: {
     '@primary-color': ds.primaryColor,
+    // 'link-color': '#1973CC', // 链接颜色
+    // 'menu-item-height': '36px',
+    // 'success-color': '#439D75', // 成功色
+    // 'warning-color': '#D16F0D', // 警告色
+    // 'error-color': '#CC4631', // 错误色
+    // 'layout-body-background': '#D2D8E6', // 布局背景色
+    // 'layout-header-background': '#0B4485',
+    // 'layout-header-color': '#fff',
+    // 'layout-header-height': '40px', // 布局头部高度
+    // 'layout-header-padding': '0 20px', // 头部padding
+    // 'menu-item-boundary-margin': '0px', // menu-item 边界margin
+    // 'menu-item-vertical-margin': '0px', // menu-item 上下margin
+    // 'menu-bg': 'transparent', // menu背景色
+    // 'menu-item-color': '#000', // 文字颜色
+    // 'menu-item-active-bg': '#D6E9FF', //  选中背景色
+    // 'drawer-body-padding': '20px', // drawer padding
+    // 'drawer-header-padding': '8px 20px', // drawer 头部padding
+    // 'drawer-footer-padding-horizontal': '12px 20px', // drawer footer padding
+    // 'drawer-header-close-size': '39px',
+    // 'drawer-bg': '#F3F5FB',
+    // 'table-header-bg': '#F3F5FB',
+    // 'table-border-color': '#D2D8E6',
+    // 'table-header-color': '#5F677A',
+    // 'table-padding-vertical': '8px',
+    // 'table-padding-horizontal': '8px',
   },
 
   // 项目配置
