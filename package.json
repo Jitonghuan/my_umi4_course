@@ -35,9 +35,12 @@
     "@ant-design/icons": "^4.6.2",
     "@cffe/fe-backend-component": "^0.1.33",
     "@cffe/fe-tpl": "^0.2.7",
+    "@cffe/vc-custom-icon": "1.0.1",
     "@cffe/vc-form": "1.0.3",
     "@cffe/vc-hulk-form": "1.0.1",
     "@cffe/vc-hulk-table": "1.0.2",
+    "@cffe/vc-layout": "1.0.2",
+    "@cffe/vc-loading": "1.0.1",
     "@umijs/preset-react": "1.x",
     "dayjs": "^1.10.4",
     "umi": "^3.3.7"
