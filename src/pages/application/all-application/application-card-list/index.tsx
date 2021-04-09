@@ -19,6 +19,7 @@ const ApplicationCardList = (props: IProps) => {
     <>
       <CardLayout>
         {dataSource.map((item) => (
+          // TODO 点击跳转到应用详情
           <div key={item.id} className={cardCls}>
             <div className={`${cardCls}-header`}>{item.appName}</div>
 

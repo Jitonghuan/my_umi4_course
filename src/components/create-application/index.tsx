@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Drawer, Button } from 'antd';
-import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
+import { BasicForm } from '@cffe/fe-backend-component';
 import createSchema from './create-schema';
 import { IProps, FormValue } from './types';
 // import './index.less';
@@ -27,9 +27,14 @@ const CreateApplication = (props: IProps) => {
       visible={props.visible}
       onClose={props.onClose}
     >
+      {/* TODO 回显 */}
       <BasicForm
         {...(createSchema() as any)}
-        onFinish={(val: FormValue) => props?.onSubmit(val)}
+        dataSource={formValue}
+        onFinish={(val: FormValue) => {
+          // TODO 调用保存接口，成功后调用回调
+          props?.onSubmit();
+        }}
       />
     </Drawer>
   );

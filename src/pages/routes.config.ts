@@ -37,6 +37,12 @@ export default [
         icon: '',
         component: '@/pages/application/all-application',
       },
+      {
+        path: 'list',
+        name: '应用列表',
+        icon: '',
+        component: '@/pages/application/application-list',
+      },
     ],
   },
   {

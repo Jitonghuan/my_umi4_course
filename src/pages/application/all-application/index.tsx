@@ -71,9 +71,7 @@ const AllApplication = (props: IProps) => {
       <CreateApplication
         visible={createAppVisible}
         onClose={() => setCreateAppVisible(false)}
-        onSubmit={(formValue) => {
-          console.log(formValue);
-          // TODO 调用保存接口
+        onSubmit={() => {
           // 保存成功后，关闭抽屉，重新请求列表
           queryAllApps({
             type: 'all',
