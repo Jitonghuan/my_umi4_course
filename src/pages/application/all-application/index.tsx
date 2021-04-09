@@ -14,6 +14,7 @@ import VCPageContent, {
   ContentCard,
 } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/FeContext';
+import CreateApplication from '@/components/create-application';
 import ApplicationCardList from './application-card-list';
 import { queryApps } from './service';
 import { rootCls } from './constants';
@@ -23,6 +24,7 @@ import './index.less';
 const AllApplication = (props: IProps) => {
   const feContent = useContext(FEContext);
   const [appType, setAppType] = useState<'all' | 'my'>('all');
+  const [createAppVisible, setCreateAppVisible] = useState(false);
 
   /** 全部应用 */
   const [
@@ -66,6 +68,27 @@ const AllApplication = (props: IProps) => {
       pathname={location.pathname}
       isFlex
     >
+      <CreateApplication
+        visible={createAppVisible}
+        onClose={() => setCreateAppVisible(false)}
+        onSubmit={(formValue) => {
+          console.log(formValue);
+          // TODO 调用保存接口
+          // 保存成功后，关闭抽屉，重新请求列表
+          queryAllApps({
+            type: 'all',
+            pageIndex: allPagination.current,
+            pageSize: allPagination.pageSize,
+          });
+          queryMyApps({
+            type: 'my',
+            pageIndex: myPagination.current,
+            pageSize: myPagination.pageSize,
+          });
+          setCreateAppVisible(false);
+        }}
+      />
+
       <ContentCard>
         <div className={`${rootCls}__header`}>
           <Radio.Group
@@ -76,7 +99,7 @@ const AllApplication = (props: IProps) => {
             <Radio.Button value="my">我的应用</Radio.Button>
           </Radio.Group>
 
-          <Button type="primary">
+          <Button type="primary" onClick={() => setCreateAppVisible(true)}>
             <PlusOutlined />
             新增应用
           </Button>
