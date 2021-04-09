@@ -27,6 +27,19 @@ export default [
     component: '@/pages/Home',
   },
   {
+    path: 'application',
+    name: '应用管理',
+    icon: '',
+    routes: [
+      {
+        path: 'all',
+        name: '全部应用',
+        icon: '',
+        component: '@/pages/application/all-application',
+      },
+    ],
+  },
+  {
     path: 'publish',
     name: '发布管理',
     icon: 'iconmy-indicator',
