@@ -128,27 +128,21 @@ export const tableSchema = [
 ];
 
 // 新增工单
-export const ticketCreateSchema = {
-  isShowReset: false,
-  labelColSpan: 3,
-  theme: 'basic',
-  schema: [
+export const getTicketCreateSchema = ({
+  typeEuumData,
+  envEnumData,
+  businessEnumData,
+  applyEnumData,
+  isShowUpload = false,
+}: any) => {
+  const baseSchema: any[] = [
     {
       type: 'Radio',
       props: {
         label: '类型',
         name: 'type',
         required: true,
-        options: [
-          {
-            label: '运维权限申请',
-            value: '运维权限申请',
-          },
-          {
-            label: '资源申请',
-            value: '资源申请',
-          },
-        ],
+        options: typeEuumData,
       },
     },
     {
@@ -157,12 +151,7 @@ export const ticketCreateSchema = {
         label: '环境',
         name: 'env',
         required: true,
-        options: [
-          {
-            label: '测试',
-            value: 'test',
-          },
-        ],
+        options: envEnumData,
       },
     },
     {
@@ -171,12 +160,7 @@ export const ticketCreateSchema = {
         label: '业务线',
         name: 'bus',
         required: true,
-        options: [
-          {
-            label: '三甲',
-            value: 'g3a',
-          },
-        ],
+        options: businessEnumData,
       },
     },
     {
@@ -185,21 +169,39 @@ export const ticketCreateSchema = {
         label: '申请项',
         name: 'apply',
         required: true,
-        options: [
-          {
-            label: '测试',
-            value: 'test',
-          },
-        ],
+        options: applyEnumData,
       },
     },
     {
-      type: 'Input',
+      type: 'Custom',
       props: {
         label: '备注',
         name: 'remark',
+        custom: 'remark',
         required: false,
+        placeholder: '请输入备注',
       },
     },
-  ],
+  ];
+
+  if (isShowUpload) {
+    baseSchema.push({
+      type: 'Custom',
+      props: {
+        label: '申请表',
+        name: 'applyTable',
+        required: false,
+        custom: 'applyTable',
+      },
+    });
+  }
+
+  const baseColumns = {
+    isShowReset: false,
+    labelColSpan: 3,
+    theme: 'basic',
+    schema: baseSchema,
+  };
+
+  return baseColumns;
 };

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Breadcrumb, Card } from 'antd';
+import { CardProps } from 'antd/es/card';
 import { history } from 'umi';
 import { FELayout } from '@cffe/fe-backend-component';
 import './index.less';
@@ -130,7 +131,7 @@ Coms.defaultProps = {
 export default Coms;
 
 // filter card
-export const FilterCard: React.FC = (props) => {
+export const FilterCard: React.FC<CardProps> = (props) => {
   const { children, ...rest } = props;
 
   return (
@@ -141,7 +142,7 @@ export const FilterCard: React.FC = (props) => {
 };
 
 // content card
-export const ContentCard: React.FC = (props: any) => {
+export const ContentCard: React.FC<CardProps> = (props) => {
   const { children, ...rest } = props;
 
   return (

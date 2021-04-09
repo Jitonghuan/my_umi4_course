@@ -5,23 +5,27 @@ import React, {
   useCallback,
   useContext,
 } from 'react';
-import { Drawer, Button } from 'antd';
+import { Input, Drawer, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
-import { ColumnProps, TplTable } from '@cffe/fe-tpl';
+import { TplSimpleForm } from '@cffe/fe-tpl';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
+import HulkForm from '@cffe/vc-hulk-form';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
+import ApplyUpload from './apply-upload';
 import FEContext from '@/layouts/basic-layout/FeContext';
 
-import { queryTicketData } from '../service';
-import { filterFormSchema, tableSchema, ticketCreateSchema } from './schema';
+import { queryTicketData, queryTicketType } from '../service';
+import { filterFormSchema, tableSchema, getTicketCreateSchema } from './schema';
 
 import './index.less';
 import { postRequest, getRequest } from '@/utils/request';
+
+type IOption = { label: string; value: string; children?: IOption[] };
 
 /**
  * 工单列表
@@ -33,10 +37,37 @@ import { postRequest, getRequest } from '@/utils/request';
 const Coms = (props: any) => {
   const { location } = props;
   const feContent = useContext(FEContext);
+  const { envData = [], businessData = [] } = feContent;
+
+  // 类型枚举
+  const [typeEnum, setTypeEnum] = useState<IOption[]>([]);
+  // 申请项枚举
+  const [applyTypeEnum, setApplyTypeEnum] = useState<IOption[]>([]);
 
   const [tableData, setTableData] = useState<any[]>([]);
   const [visible, setVisible] = useState(false);
   const [filter, setFilter] = useState<any>({});
+
+  // 创建表单中的上传操作
+  const [isShowApplyUpload, setisShowApplyUpload] = useState(false);
+
+  // 查询枚举数据
+  const queryEnumData = async () => {
+    const resp = await getRequest(queryTicketType);
+    const { data = {} } = resp;
+
+    // 类型枚举
+    const typeLists = Object.keys(data).map((el) => ({
+      label: el,
+      value: el,
+      children: data[el].map((ele: string) => ({
+        label: ele,
+        value: ele,
+      })),
+    }));
+
+    setTypeEnum(typeLists);
+  };
 
   // 查询数据
   const { run: queryTicketLists, tableProps } = usePaginated({
@@ -59,10 +90,20 @@ const Coms = (props: any) => {
   };
 
   useEffect(() => {
+    queryEnumData();
     queryTicketLists();
   }, []);
 
-  console.log('tableColumns', tableSchema);
+  // 创建工单表格
+  const ticketCreateSchema = useMemo(() => {
+    return getTicketCreateSchema({
+      typeEuumData: typeEnum,
+      envEnumData: envData,
+      businessEnumData: businessData,
+      applyEnumData: applyTypeEnum,
+      isShowUpload: isShowApplyUpload,
+    });
+  }, [envData, businessData, typeEnum, applyTypeEnum, isShowApplyUpload]);
 
   return (
     <VCPageContent
@@ -98,7 +139,27 @@ const Coms = (props: any) => {
         width={800}
       >
         <BasicForm
+          dataSource={{
+            type: '资源申请',
+          }}
           {...(ticketCreateSchema as any)}
+          customMap={{
+            applyTable: ApplyUpload,
+            remark: Input.TextArea,
+          }}
+          isShowReset
+          onValuesChange={(target: any) => {
+            const field = Object.keys(target)[0];
+            const value = target[field];
+            if (field === 'type') {
+              // 类型切换,处理申请项数据
+              const filter = typeEnum.find((el) => el.value === value);
+              setApplyTypeEnum(
+                filter && filter.children ? filter.children : [],
+              );
+              setisShowApplyUpload(value === '运维权限申请');
+            }
+          }}
           onFinish={handleCreateTicket}
         />
       </Drawer>
