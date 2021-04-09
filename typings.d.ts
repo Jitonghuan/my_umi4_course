@@ -19,6 +19,8 @@ declare interface globalConfig {
   copyright: string;
 }
 
+declare type IOption = { label: string; value: string; children?: IOption[] };
+
 declare interface Window {
   FE_GLOBAL: globalConfig;
 }

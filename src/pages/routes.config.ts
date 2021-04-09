@@ -29,7 +29,7 @@ export default [
   {
     path: 'publish',
     name: '发布管理',
-    icon: '',
+    icon: 'iconmy-indicator',
     routes: [
       {
         path: 'function',
@@ -41,7 +41,7 @@ export default [
   {
     path: 'ticket',
     name: '工单管理',
-    icon: '',
+    icon: 'iconmy-indicator',
     routes: [
       {
         path: 'list',
@@ -58,12 +58,17 @@ export default [
   {
     path: 'test',
     name: '测试管理',
-    icon: '',
+    icon: 'iconmy-indicator',
     routes: [
       {
         path: 'auto',
         name: '自动化测试',
         component: '@/pages/test/auto-test',
+      },
+      {
+        path: 'result',
+        name: '自动化测试查询',
+        component: '@/pages/test/auto-test-result',
       },
     ],
   },
