@@ -47,7 +47,6 @@ export default [
       {
         path: 'function',
         name: '发布功能管理',
-        icon: '',
         component: '@/pages/publish/function-publish',
       },
     ],
@@ -60,14 +59,24 @@ export default [
       {
         path: 'list',
         name: '工单列表',
-        icon: '',
         component: '@/pages/ticket/ticket-list',
       },
       {
         path: 'apply',
         name: '工单审批',
-        icon: '',
         component: '@/pages/ticket/ticket-apply',
+      },
+    ],
+  },
+  {
+    path: 'test',
+    name: '测试管理',
+    icon: '',
+    routes: [
+      {
+        path: 'auto',
+        name: '自动化测试',
+        component: '@/pages/test/auto-test',
       },
     ],
   },

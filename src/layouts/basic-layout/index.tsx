@@ -1,7 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
-import { FELayout } from '@cffe/fe-backend-component';
+import FELayout from '@cffe/vc-layout';
 import { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/bus-layout';
 import ds from '@config/defaultSettings';
 import DocumentTitle from './DocumentTitle';
@@ -42,6 +42,7 @@ export default (props: IUmiRrops) => {
             isOpenLogin={false}
             // 全局插入配置覆盖默认配置
             {...FeGlobalRef.current}
+            headerProps={{ isShowGlobalMenu: false }}
             userApi={queryUserInfoApi}
             logoutApi={doLogoutApi}
             systemApi={queryAllSystem}
