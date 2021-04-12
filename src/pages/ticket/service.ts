@@ -35,3 +35,8 @@ export const queryTicketType = `${ds.apiPrefix}/ticketManage/getType`;
  *  status      工单状态
  */
 export const doUpdateStatus = `${ds.apiPrefix}/ticketManage/updateStatus`;
+
+/**
+ * 上传接口
+ */
+export const doUploadUrl = `${ds.apiPrefix}/ticketManage/uploadFile`;

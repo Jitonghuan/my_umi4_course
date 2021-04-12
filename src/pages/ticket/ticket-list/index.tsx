@@ -5,12 +5,10 @@ import React, {
   useCallback,
   useContext,
 } from 'react';
-import { Input, Drawer, Button } from 'antd';
+import { Select, Input, Drawer, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
-import { TplSimpleForm } from '@cffe/fe-tpl';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import HulkForm from '@cffe/vc-hulk-form';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import VCPageContent, {
   FilterCard,
@@ -75,7 +73,7 @@ const Coms = (props: any) => {
     requestMethod: 'GET',
     pagination: {
       showSizeChanger: true,
-      showTotal: (total) => `总共 ${total} 条数据`,
+      showTotal: (total: string) => `总共 ${total} 条数据`,
     },
   });
 
@@ -84,7 +82,7 @@ const Coms = (props: any) => {
     console.log(vals);
   }, []);
 
-  // 创建工单 TODO
+  // 创建工单
   const handleCreateTicket = (val: any) => {
     console.log(val);
   };
@@ -117,6 +115,11 @@ const Coms = (props: any) => {
           className="ticket-filter-form"
           {...(filterFormSchema as any)}
           isShowReset
+          customMap={{
+            ticketType: (curProps: ITicketTypeComs) => (
+              <TicketTypeComs {...curProps} typeEnumData={typeEnum} />
+            ),
+          }}
           onFinish={handleFilter}
         />
       </FilterCard>
@@ -175,3 +178,55 @@ Coms.defaultProps = {
 };
 
 export default Coms;
+
+export type ITicketTypeComs = {
+  value: { activeType?: string | number; activeApply?: string | number };
+  onChange: (params: {
+    activeType?: string | number;
+    activeApply?: string | number;
+  }) => void;
+  typeEnumData?: IOption[];
+};
+
+// filter 中的类型组件
+function TicketTypeComs(props: ITicketTypeComs) {
+  const { value = {}, onChange = () => {}, typeEnumData = [] } = props;
+
+  const [activeType, setActiveType] = useState<string | number>(
+    value.activeType as any,
+  );
+  const [activeApply, setActiveApply] = useState<string | number>(
+    value.activeApply as any,
+  );
+
+  // 申请项数据
+  const applyTypeOptions = useMemo(() => {
+    const filter = typeEnumData.find((el) => el.value === activeType);
+    return filter?.children || [];
+  }, [typeEnumData, activeType]);
+
+  useEffect(() => {
+    onChange({ activeType, activeApply });
+  }, [activeType, activeApply]);
+
+  return (
+    <div className="ticket-type-coms">
+      <Select
+        className="ticket-type-select"
+        options={typeEnumData}
+        placeholder="请选择类型"
+        onChange={(val: string) => setActiveType(val)}
+        allowClear
+        showSearch
+      />
+      <Select
+        className="ticket-type-select"
+        options={applyTypeOptions}
+        onChange={(val: string) => setActiveApply(val)}
+        placeholder="请选择申请项"
+        allowClear
+        showSearch
+      />
+    </div>
+  );
+}

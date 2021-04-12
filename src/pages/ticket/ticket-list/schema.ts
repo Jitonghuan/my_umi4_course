@@ -1,3 +1,5 @@
+import { doUploadUrl } from '../service';
+
 // 过滤表单 schema
 export const filterFormSchema = {
   theme: 'inline',
@@ -13,29 +15,12 @@ export const filterFormSchema = {
       },
     },
     {
-      type: 'Select',
+      type: 'Custom',
       props: {
         label: '分类',
         name: 'type',
         required: false,
-        options: [
-          {
-            label: '阿里云',
-            value: '1',
-          },
-          {
-            label: 'JumpServer',
-            value: '2',
-          },
-          {
-            label: 'VPN',
-            value: '3',
-          },
-          {
-            label: 'Rancher',
-            value: '4',
-          },
-        ],
+        custom: 'ticketType',
       },
     },
     {
@@ -192,6 +177,7 @@ export const getTicketCreateSchema = ({
         name: 'applyTable',
         required: false,
         custom: 'applyTable',
+        url: doUploadUrl,
       },
     });
   }

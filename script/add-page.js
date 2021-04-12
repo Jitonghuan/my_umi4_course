@@ -40,9 +40,21 @@ const updateRoutes = (routesInfo) => {
 const createPage = async () => {
   // 获取页面名称
   const pageName = await utils.input(
-    '请输入页面文件名<英文、中划线，首字母须英文>',
+    '请输入页面文件名<英文、中划线，首字母须英文, 支持二级页面，例如 a/b>',
   );
-  const comsName = pageName[0].toUpperCase() + pageName.slice(1); // 页面组件名，首字母大写处理
+
+  let currentPageName = pageName;
+  let pageFilePrefix = '';
+  // 处理，判断是否存在多级文件
+  const pageSplitArr = pageName.split('/');
+
+  if (pageSplitArr.length > 1) {
+    // 存在文件层级
+    currentPageName = pageSplitArr.pop();
+    pageFilePrefix = pageSplitArr.join('/');
+  }
+
+  const comsName = currentPageName[0].toUpperCase() + currentPageName.slice(1); // 页面组件名，首字母大写处理
   const pageDesc = await utils.prompt(
     '请输入页面名称<页面作用描述，例如 “测试页面”>',
     null,
@@ -63,8 +75,19 @@ const createPage = async () => {
     ['index.tsx', 'index.less', 'mock.ts'],
   );
 
+  // 判断文件夹是否存在
+  if (!fs.existsSync(path.resolve(pagePath, pageFilePrefix))) {
+    // 不存在，则创建文件夹
+    utils.print('error', `文件夹不存在，创建文件夹 ${pageFilePrefix}`);
+    fs.mkdirSync(path.resolve(pagePath, pageFilePrefix));
+  }
+
   // 确定输出文件位置
-  const outputFilePath = path.resolve(pagePath, pageName);
+  const outputFilePath = path.resolve(
+    pagePath,
+    pageFilePrefix,
+    currentPageName,
+  );
 
   utils.print('info', '>----------- 开始创建页面文件 ----------->');
 
@@ -80,7 +103,7 @@ const createPage = async () => {
 
     const fileStr = fs.readFileSync(tplFilePath, { encoding: 'utf-8' });
     const renderStr = utils.templateRender(fileStr, {
-      pageName,
+      currentPageName,
       comsName,
       pageDesc,
       timeStr: dayjs().format('YYYY-MM-DD HH:mm:ss'),
@@ -125,7 +148,7 @@ const createPage = async () => {
     path: pageRoute,
     name: pageDesc,
     icon: pageIcon,
-    component: `@/pages/${pageName}`,
+    component: `@/pages/${pageFilePrefix}/${currentPageName}`,
   });
 };
 

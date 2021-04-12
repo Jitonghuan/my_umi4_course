@@ -48,6 +48,7 @@ export default [
   {
     path: 'publish',
     name: '发布管理',
+    hideInMenu: true,
     icon: 'iconmy-indicator',
     routes: [
       {
@@ -88,6 +89,23 @@ export default [
         path: 'result',
         name: '自动化测试查询',
         component: '@/pages/test/auto-test-result',
+      },
+    ],
+  },
+  {
+    path: 'monitor',
+    name: '监控管理',
+    icon: 'iconmy-indicator',
+    routes: [
+      {
+        path: 'board',
+        name: '监控面板',
+        component: '@/pages/monitor/board',
+      },
+      {
+        path: 'application',
+        name: '应用监控',
+        component: '@/pages/monitor/application',
       },
     ],
   },
