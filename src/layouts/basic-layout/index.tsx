@@ -66,6 +66,7 @@ export default (props: IUmiRrops) => {
             {...(props as any)}
             {...ds}
             isOpenLogin={false}
+            showFooter={false}
             // 全局插入配置覆盖默认配置
             {...FeGlobalRef.current}
             headerProps={{ isShowGlobalMenu: false }}

@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useContext,
 } from 'react';
-import { Select, Input, Drawer, Button } from 'antd';
+import { Form, message, Select, Input, Drawer, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
@@ -17,8 +17,12 @@ import VCPageContent, {
 import ApplyUpload from './apply-upload';
 import FEContext from '@/layouts/basic-layout/FeContext';
 
-import { queryTicketData, queryTicketType } from '../service';
-import { filterFormSchema, tableSchema, getTicketCreateSchema } from './schema';
+import { queryTicketData, queryTicketType, doCreateTicket } from '../service';
+import {
+  getFilterFormSchema,
+  tableSchema,
+  getTicketCreateSchema,
+} from './schema';
 
 import './index.less';
 import { postRequest, getRequest } from '@/utils/request';
@@ -36,6 +40,9 @@ const Coms = (props: any) => {
   const { location } = props;
   const feContent = useContext(FEContext);
   const { envData = [], businessData = [] } = feContent;
+
+  // 工单创建表单对象
+  const [createFormRef] = Form.useForm();
 
   // 类型枚举
   const [typeEnum, setTypeEnum] = useState<IOption[]>([]);
@@ -68,7 +75,7 @@ const Coms = (props: any) => {
   };
 
   // 查询数据
-  const { run: queryTicketLists, tableProps } = usePaginated({
+  const { run: queryTicketLists, tableProps, reset } = usePaginated({
     requestUrl: queryTicketData,
     requestMethod: 'GET',
     pagination: {
@@ -78,19 +85,49 @@ const Coms = (props: any) => {
   });
 
   // 过滤操作
-  const handleFilter = useCallback((vals) => {
-    console.log(vals);
-  }, []);
+  const handleFilter = useCallback(
+    (vals) => {
+      setFilter({
+        ...filter,
+        ...vals,
+      });
+    },
+    [filter],
+  );
 
   // 创建工单
-  const handleCreateTicket = (val: any) => {
-    console.log(val);
+  const handleCreateTicket = async (vals: any) => {
+    const { envs, ticketSubTypes, ...rest } = vals;
+    const params = {
+      ...rest,
+      envs: JSON.stringify(envs),
+      ticketSubTypes: JSON.stringify(ticketSubTypes),
+    };
+
+    const resp = await postRequest(doCreateTicket, {
+      data: {
+        ...params,
+      },
+    });
+
+    if (!resp.success) {
+      message.error(resp.errorMsg);
+      return;
+    }
+
+    message.success('新增工单成功');
+    setVisible(false);
+    queryTicketLists(filter);
+    createFormRef.resetFields();
   };
 
   useEffect(() => {
     queryEnumData();
-    queryTicketLists();
   }, []);
+
+  useEffect(() => {
+    queryTicketLists(filter);
+  }, [filter]);
 
   // 创建工单表格
   const ticketCreateSchema = useMemo(() => {
@@ -113,14 +150,13 @@ const Coms = (props: any) => {
       <FilterCard>
         <InlineForm
           className="ticket-filter-form"
-          {...(filterFormSchema as any)}
+          {...(getFilterFormSchema(typeEnum) as any)}
           isShowReset
-          customMap={{
-            ticketType: (curProps: ITicketTypeComs) => (
-              <TicketTypeComs {...curProps} typeEnumData={typeEnum} />
-            ),
-          }}
           onFinish={handleFilter}
+          onReset={() => {
+            reset();
+            setFilter({});
+          }}
         />
       </FilterCard>
 
@@ -142,9 +178,8 @@ const Coms = (props: any) => {
         width={800}
       >
         <BasicForm
-          dataSource={{
-            type: '资源申请',
-          }}
+          form={createFormRef}
+          dataSource={{}}
           {...(ticketCreateSchema as any)}
           customMap={{
             applyTable: ApplyUpload,
@@ -154,7 +189,7 @@ const Coms = (props: any) => {
           onValuesChange={(target: any) => {
             const field = Object.keys(target)[0];
             const value = target[field];
-            if (field === 'type') {
+            if (field === 'ticketType') {
               // 类型切换,处理申请项数据
               const filter = typeEnum.find((el) => el.value === value);
               setApplyTypeEnum(
@@ -178,55 +213,3 @@ Coms.defaultProps = {
 };
 
 export default Coms;
-
-export type ITicketTypeComs = {
-  value: { activeType?: string | number; activeApply?: string | number };
-  onChange: (params: {
-    activeType?: string | number;
-    activeApply?: string | number;
-  }) => void;
-  typeEnumData?: IOption[];
-};
-
-// filter 中的类型组件
-function TicketTypeComs(props: ITicketTypeComs) {
-  const { value = {}, onChange = () => {}, typeEnumData = [] } = props;
-
-  const [activeType, setActiveType] = useState<string | number>(
-    value.activeType as any,
-  );
-  const [activeApply, setActiveApply] = useState<string | number>(
-    value.activeApply as any,
-  );
-
-  // 申请项数据
-  const applyTypeOptions = useMemo(() => {
-    const filter = typeEnumData.find((el) => el.value === activeType);
-    return filter?.children || [];
-  }, [typeEnumData, activeType]);
-
-  useEffect(() => {
-    onChange({ activeType, activeApply });
-  }, [activeType, activeApply]);
-
-  return (
-    <div className="ticket-type-coms">
-      <Select
-        className="ticket-type-select"
-        options={typeEnumData}
-        placeholder="请选择类型"
-        onChange={(val: string) => setActiveType(val)}
-        allowClear
-        showSearch
-      />
-      <Select
-        className="ticket-type-select"
-        options={applyTypeOptions}
-        onChange={(val: string) => setActiveApply(val)}
-        placeholder="请选择申请项"
-        allowClear
-        showSearch
-      />
-    </div>
-  );
-}

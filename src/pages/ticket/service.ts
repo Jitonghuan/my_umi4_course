@@ -10,7 +10,7 @@ import ds from '@config/defaultSettings';
  *  pageIndex
  *  pageSize
  */
-export const queryTicketData = `${ds.apiPrefix}/ticket/list`;
+export const queryTicketData = `${ds.apiPrefix}/ticketManage/list`;
 
 /** 工单状态 */
 export const statusMap: { label: string; value: number }[] = [

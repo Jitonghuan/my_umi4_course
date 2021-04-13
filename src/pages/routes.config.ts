@@ -21,12 +21,6 @@ export default [
     redirect: `${ds.pagePrefix}/order/list`,
   },
   {
-    path: 'index',
-    name: '主页',
-    icon: 'iconmy-indicator',
-    component: '@/pages/Home',
-  },
-  {
     path: 'application',
     name: '应用管理',
     icon: '',
