@@ -1,7 +1,8 @@
-export default () => ({
+export default (isEdit: boolean) => ({
   isShowReset: false,
   labelColSpan: 6,
   theme: 'basic',
+  // TODO 设计稿和prd的必填不一致
   schema: [
     {
       type: 'Input',
@@ -10,6 +11,7 @@ export default () => ({
         name: 'appCode',
         required: true,
         placeholder: '请输入应用代码',
+        disabled: isEdit,
       },
     },
     {

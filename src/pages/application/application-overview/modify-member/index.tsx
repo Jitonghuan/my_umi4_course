@@ -1,18 +1,19 @@
 /**
- * CreateApplication
- * @description 创建/编辑 应用
+ * ModifyMember
+ * @description 创建/修改 成员
  * @author moting.nq
- * @create 2021-04-09 15:38
+ * @create 2021-04-14 10:54
  */
 
 import React from 'react';
 import { Drawer, Button } from 'antd';
 import { BasicForm } from '@cffe/fe-backend-component';
+import SearchUserSelect from '@/components/search-user-select';
 import createSchema from './create-schema';
 import { IProps, FormValue } from './types';
 // import './index.less';
 
-const CreateApplication = (props: IProps) => {
+const ModifyMember = (props: IProps) => {
   const { formValue } = props;
   const isEdit = !!formValue?.id;
 
@@ -22,7 +23,7 @@ const CreateApplication = (props: IProps) => {
     <Drawer
       destroyOnClose
       width={600}
-      title={isEdit ? '编辑应用' : '新增应用'}
+      title={isEdit ? '编辑成员' : '新增成员'}
       placement="right"
       visible={props.visible}
       onClose={props.onClose}
@@ -31,6 +32,9 @@ const CreateApplication = (props: IProps) => {
       <BasicForm
         {...(createSchema(isEdit) as any)}
         dataSource={formValue}
+        customMap={{
+          SearchUserSelect,
+        }}
         isShowReset
         resetText="取消"
         onReset={props.onClose}
@@ -43,6 +47,6 @@ const CreateApplication = (props: IProps) => {
   );
 };
 
-CreateApplication.defaultProps = {};
+ModifyMember.defaultProps = {};
 
-export default CreateApplication;
+export default ModifyMember;

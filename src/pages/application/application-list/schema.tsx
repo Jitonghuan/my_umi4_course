@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'antd';
+import { history } from 'umi';
 
 // 过滤表单 schema
 export const filterFormSchema = {
@@ -137,7 +137,19 @@ export const createTableSchema = ({
       <>
         <a onClick={() => onEditClick(record, index)}>编辑</a>
         {/* TODO 跳转 */}
-        <a style={{ marginLeft: 20 }}>详情</a>
+        <a
+          style={{ marginLeft: 20 }}
+          onClick={() =>
+            history.push({
+              pathname: 'detail',
+              query: {
+                id: record.id,
+              },
+            })
+          }
+        >
+          详情
+        </a>
       </>
     ),
   },

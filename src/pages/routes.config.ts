@@ -34,14 +34,26 @@ export default [
       {
         path: 'all',
         name: '全部应用',
-        icon: '',
         component: '@/pages/application/all-application',
       },
       {
         path: 'list',
         name: '应用列表',
-        icon: '',
         component: '@/pages/application/application-list',
+      },
+      {
+        path: 'detail',
+        name: '应用详情',
+        hideInMenu: true,
+        component: '@/pages/application/application-detail',
+        routes: [
+          {
+            path: 'overview',
+            name: '概述',
+            hideInMenu: true,
+            component: '@/pages/application/application-overview',
+          },
+        ],
       },
     ],
   },
