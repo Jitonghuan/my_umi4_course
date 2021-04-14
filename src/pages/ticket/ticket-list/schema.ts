@@ -1,41 +1,18 @@
+import { doUploadUrl } from '../service';
+
 // 过滤表单 schema
-export const filterFormSchema = {
+export const getFilterFormSchema = (typeEuumData: any[]) => ({
   theme: 'inline',
   isShowReset: false,
   labelColSpan: 3,
   schema: [
     {
-      type: 'Input',
-      props: {
-        label: '标题',
-        name: 'title',
-        required: false,
-      },
-    },
-    {
       type: 'Select',
       props: {
         label: '分类',
-        name: 'type',
+        name: 'ticketType',
         required: false,
-        options: [
-          {
-            label: '阿里云',
-            value: '1',
-          },
-          {
-            label: 'JumpServer',
-            value: '2',
-          },
-          {
-            label: 'VPN',
-            value: '3',
-          },
-          {
-            label: 'Rancher',
-            value: '4',
-          },
-        ],
+        options: typeEuumData,
       },
     },
     {
@@ -69,30 +46,26 @@ export const filterFormSchema = {
       },
     },
   ],
-};
+});
 
 // 表格 schema
 export const tableSchema = [
   {
-    rowKey: '1617768894732-0',
     title: '编号',
     dataIndex: 'ticketCode',
     width: 100,
   },
   {
-    rowKey: '1617768436369-1',
     title: '标题',
     dataIndex: 'title',
     width: 200,
   },
   {
-    rowKey: '1617768897103-2',
     title: '分类',
     dataIndex: 'ticketType',
     width: 100,
   },
   {
-    rowKey: '1617768899255-3',
     title: '状态',
     dataIndex: 'status',
     valueType: 'status',
@@ -120,11 +93,11 @@ export const tableSchema = [
     },
     width: 100,
   },
-  {
-    title: '审批人',
-    dataIndex: 'modifyUser',
-    width: 100,
-  },
+  // {
+  //   title: '审批人',
+  //   dataIndex: 'modifyUser',
+  //   width: 100,
+  // },
 ];
 
 // 新增工单
@@ -140,7 +113,7 @@ export const getTicketCreateSchema = ({
       type: 'Radio',
       props: {
         label: '类型',
-        name: 'type',
+        name: 'ticketType',
         required: true,
         options: typeEuumData,
       },
@@ -149,7 +122,8 @@ export const getTicketCreateSchema = ({
       type: 'Select',
       props: {
         label: '环境',
-        name: 'env',
+        name: 'envs',
+        mode: 'multiple',
         required: true,
         options: envEnumData,
       },
@@ -158,7 +132,7 @@ export const getTicketCreateSchema = ({
       type: 'Select',
       props: {
         label: '业务线',
-        name: 'bus',
+        name: 'line',
         required: true,
         options: businessEnumData,
       },
@@ -166,8 +140,9 @@ export const getTicketCreateSchema = ({
     {
       type: 'Select',
       props: {
+        mode: 'multiple',
         label: '申请项',
-        name: 'apply',
+        name: 'ticketSubTypes',
         required: true,
         options: applyEnumData,
       },
@@ -192,6 +167,7 @@ export const getTicketCreateSchema = ({
         name: 'applyTable',
         required: false,
         custom: 'applyTable',
+        url: doUploadUrl,
       },
     });
   }

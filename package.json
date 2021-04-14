@@ -33,7 +33,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
-    "@cffe/fe-backend-component": "^0.1.49",
+    "@cffe/fe-backend-component": "0.1.49",
+    "@cffe/fe-datav-components": "^0.1.8",
     "@cffe/fe-tpl": "0.2.7",
     "@cffe/vc-b-card-layout": "1.0.8",
     "@cffe/vc-custom-icon": "1.0.1",
