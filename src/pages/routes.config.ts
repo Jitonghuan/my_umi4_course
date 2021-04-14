@@ -47,6 +47,13 @@ export default [
             hideInMenu: true,
             component: '@/pages/application/application-overview',
           },
+          {
+            path: 'launchParameters',
+            name: '启动参数',
+            hideInMenu: true,
+            component:
+              '@/pages/application/application-detail/components/launch-parameters',
+          },
         ],
       },
     ],

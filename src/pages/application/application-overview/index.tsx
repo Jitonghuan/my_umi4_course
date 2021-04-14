@@ -7,7 +7,6 @@
 
 import React, { useState } from 'react';
 import { Descriptions, Button, Tag, Modal } from 'antd';
-import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import VCPageContent, {
   FilterCard,
   ContentCard,
