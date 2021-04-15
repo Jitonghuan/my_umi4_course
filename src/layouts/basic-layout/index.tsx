@@ -6,17 +6,28 @@ import { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/b
 import ds from '@config/defaultSettings';
 import DocumentTitle from './DocumentTitle';
 import FeContext from './FeContext';
-import { doLogoutApi, queryUserInfoApi, queryAllSystem } from './service';
+import {
+  doLogoutApi,
+  queryBelongData,
+  queryUserInfoApi,
+  queryAllSystem,
+  queryBizData,
+  queryEnvData,
+} from './service';
 import { DFSFunc } from '@/utils';
 import { getRequest } from '@/utils/request';
+import { ChartsContext } from '@cffe/fe-datav-components';
+import { useSize, useDebounce } from '@umijs/hooks';
 
 export default (props: IUmiRrops) => {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
-  // 业务线
-  const [business, setBusiness] = useState<IOption[]>([
-    { label: '业务平台', value: '1' },
-    { label: '业务平台2', value: '2' },
+  // 所属数据
+  const [belongData, setBelongData] = useState<IOption[]>([
+    { label: 'gmc', value: 'gmc' },
   ]);
+
+  // 业务线
+  const [business, setBusiness] = useState<IOption[]>([]);
 
   // 环境
   const [envData, setEnvData] = useState<IOption[]>([
@@ -37,15 +48,49 @@ export default (props: IUmiRrops) => {
 
   // 查询业务线数据
   const queryBusinessData = async () => {
-    const resp = await getRequest('', {
-      data: {},
-    });
+    // 查询所属数据
+    const belongResp = await getRequest(queryBelongData);
 
-    setBusiness(resp.data || []);
+    // 查询业务线数据
+    const bizResp = await getRequest(queryBizData);
+
+    // 环境数据
+    const envResp = await getRequest(queryEnvData);
+
+    const belongData = belongResp.data?.dataSource || [];
+    const bizData = bizResp.data?.dataSource || [];
+    const envData = envResp.data?.dataSource || [];
+
+    setBelongData(
+      belongData.map((el: any) => ({
+        ...el,
+        label: el.belongName,
+        value: el.belongCode,
+      })),
+    );
+    setBusiness(
+      bizData.map((el: any) => ({
+        ...el,
+        label: el.lineName,
+        value: el.lineCode,
+      })),
+    );
+    setEnvData(
+      envData.map((el: any) => ({
+        ...el,
+        label: el.belongName,
+        value: el.belongCode,
+      })),
+    );
   };
 
+  const [{ width }] = useSize(
+    () => document.querySelector(`.vc-layout-inner`) as HTMLElement,
+  );
+  const effectResize = useDebounce(width, 100);
+
   useEffect(() => {
-    // queryBusinessData();
+    queryBusinessData();
   }, []);
 
   return (
@@ -55,26 +100,36 @@ export default (props: IUmiRrops) => {
           ...FeGlobalRef.current,
           breadcrumbMap,
           businessData: business,
+          belongData,
           envData,
         }}
       >
-        <DocumentTitle
-          title={FeGlobalRef.current.title}
-          favicon={FeGlobalRef.current.favicon}
+        <ChartsContext.Provider
+          value={{
+            effectResize,
+          }}
         >
-          <FELayout.BusLayout
-            {...(props as any)}
-            {...ds}
-            isOpenLogin={false}
-            showFooter={false}
-            // 全局插入配置覆盖默认配置
-            {...FeGlobalRef.current}
-            headerProps={{ isShowGlobalMenu: false }}
-            userApi={queryUserInfoApi}
-            logoutApi={doLogoutApi}
-            systemApi={queryAllSystem}
-          />
-        </DocumentTitle>
+          <DocumentTitle
+            title={FeGlobalRef.current.title}
+            favicon={FeGlobalRef.current.favicon}
+          >
+            <FELayout.BusLayout
+              {...(props as any)}
+              {...ds}
+              isOpenLogin={false}
+              showFooter={false}
+              // 全局插入配置覆盖默认配置
+              {...FeGlobalRef.current}
+              siderMenuProps={{
+                scriptUrl: 'http://at.alicdn.com/t/font_2486191_7mbr5t0adq8.js',
+              }}
+              headerProps={{ isShowGlobalMenu: false }}
+              userApi={queryUserInfoApi}
+              logoutApi={doLogoutApi}
+              systemApi={queryAllSystem}
+            />
+          </DocumentTitle>
+        </ChartsContext.Provider>
       </FeContext.Provider>
     </ConfigProvider>
   );

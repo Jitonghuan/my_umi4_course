@@ -29,7 +29,7 @@ type ITab = {
 type ICard = {
   mode?: '1' | '2'; // 1 为资源使用率，2 为方块节点数
   /** 标题 */
-  title: string;
+  title?: string;
   /** 值 */
   value?: string;
   /** 单位 */

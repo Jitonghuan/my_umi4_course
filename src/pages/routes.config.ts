@@ -2,9 +2,10 @@ import ds from '../../config/defaultSettings';
 
 type IRouteItem = {
   path: string;
-  name: string;
+  name?: string;
   icon?: string;
   component: string;
+  routes?: IRouteItem[];
 };
 
 export default [
@@ -23,7 +24,7 @@ export default [
   {
     path: 'application',
     name: '应用管理',
-    icon: '',
+    icon: 'icon-poc_maindata',
     routes: [
       {
         path: 'all',
@@ -43,7 +44,7 @@ export default [
     path: 'publish',
     name: '发布管理',
     hideInMenu: true,
-    icon: 'iconmy-indicator',
+    icon: 'icon-exit',
     routes: [
       {
         path: 'function',
@@ -55,24 +56,19 @@ export default [
   {
     path: 'ticket',
     name: '工单管理',
-    icon: 'iconmy-indicator',
+    icon: 'icon-report',
     routes: [
       {
         path: 'list',
         name: '工单列表',
         component: '@/pages/ticket/ticket-list',
       },
-      {
-        path: 'apply',
-        name: '工单审批',
-        component: '@/pages/ticket/ticket-apply',
-      },
     ],
   },
   {
     path: 'test',
     name: '测试管理',
-    icon: 'iconmy-indicator',
+    icon: 'icon-poc_mining',
     routes: [
       {
         path: 'auto',
@@ -89,7 +85,7 @@ export default [
   {
     path: 'monitor',
     name: '监控管理',
-    icon: 'iconmy-indicator',
+    icon: 'icon-poc_index',
     routes: [
       {
         path: 'board',

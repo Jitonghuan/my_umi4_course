@@ -39,7 +39,7 @@ type IOption = { label: string; value: string; children?: IOption[] };
 const Coms = (props: any) => {
   const { location } = props;
   const feContent = useContext(FEContext);
-  const { envData = [], businessData = [] } = feContent;
+  const { belongData = [], businessData = [] } = feContent;
 
   // 工单创建表单对象
   const [createFormRef] = Form.useForm();
@@ -80,7 +80,7 @@ const Coms = (props: any) => {
     requestMethod: 'GET',
     pagination: {
       showSizeChanger: true,
-      showTotal: (total: string) => `总共 ${total} 条数据`,
+      showTotal: ((total: string) => `总共 ${total} 条数据`) as any,
     },
   });
 
@@ -133,12 +133,12 @@ const Coms = (props: any) => {
   const ticketCreateSchema = useMemo(() => {
     return getTicketCreateSchema({
       typeEuumData: typeEnum,
-      envEnumData: envData,
+      belongEnumData: belongData, // 环境用的是归属数据
       businessEnumData: businessData,
       applyEnumData: applyTypeEnum,
       isShowUpload: isShowApplyUpload,
     });
-  }, [envData, businessData, typeEnum, applyTypeEnum, isShowApplyUpload]);
+  }, [belongData, businessData, typeEnum, applyTypeEnum, isShowApplyUpload]);
 
   return (
     <VCPageContent

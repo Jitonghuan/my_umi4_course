@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react';
 
+import { Modal } from 'antd';
 import VCForm, { IColumns } from '@cffe/vc-form';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import VCPageContent, {
@@ -21,12 +22,17 @@ import { queryTestResult } from '../service';
  */
 const Coms = () => {
   const feContent = useContext(FEContext);
-  const { businessData = [] } = feContent || {};
-  const initBusiness = businessData?.length > 0 ? businessData[0].value : '';
+  const { belongData = [], envData = [] } = feContent || {};
 
+  const [currentRecord, setCurrentRecord] = useState<any>({});
+  const [operateType, setOperateType] = useState<
+    'log' | 'report' | undefined
+  >();
+
+  const initBelong = belongData?.length > 0 ? belongData[0].value : '';
   // 过滤操作
   const [filter, setFilter] = useState<any>({
-    business: initBusiness,
+    belong: initBelong,
   });
 
   // 查询表格
@@ -60,11 +66,11 @@ const Coms = () => {
   const filterColumns = useMemo(() => {
     return [
       {
-        label: '业务线',
-        name: 'business',
+        label: '所属',
+        name: 'belong',
         type: 'Select',
-        options: businessData,
-        initialValue: initBusiness,
+        options: belongData,
+        initialValue: initBelong,
       },
       { label: '测试时间', name: 'testTime', type: 'RangePicker' },
       { label: '机构ID', name: 'id' },
@@ -90,24 +96,37 @@ const Coms = () => {
         ],
       },
     ] as IColumns[];
-  }, [businessData]);
+  }, [belongData]);
 
   useEffect(() => {
     queryTableData(filter);
   }, [filter]);
+
+  // 表格操作项
+  const handleOperate = (type: 'report' | 'log', oData: any) => {
+    setCurrentRecord(oData);
+    setOperateType(type);
+  };
 
   const curTableColumns = useMemo(() => {
     return tableSchema.concat([
       {
         title: '操作',
         dataIndex: 'operate',
-        valueType: 'action',
-        actions: [
-          { key: 'report', text: '测试报告' },
-          { key: 'log', text: '查看日志' },
-        ],
-        onAction: (actionKey) => {
-          console.log(actionKey);
+        render: (_, record) => {
+          return (
+            <React.Fragment>
+              <a onClick={() => handleOperate('report', record)}>测试报告</a>
+              {!!record.errorLog && (
+                <a
+                  style={{ marginLeft: '12px' }}
+                  onClick={() => handleOperate('log', record)}
+                >
+                  查看日志
+                </a>
+              )}
+            </React.Fragment>
+          );
         },
       },
     ]);
@@ -115,7 +134,7 @@ const Coms = () => {
 
   return (
     <VCPageContent
-      height="calc(100vh - 118px)"
+      height="calc(100vh - 58px)"
       breadcrumbMap={feContent.breadcrumbMap}
       pathname={location.pathname}
       isFlex
@@ -129,7 +148,7 @@ const Coms = () => {
           onSubmit={handleFilter}
           onReset={() => {
             reset();
-            setFilter({ business: initBusiness });
+            setFilter({ belong: initBelong });
           }}
         />
       </FilterCard>
@@ -137,6 +156,29 @@ const Coms = () => {
       <ContentCard>
         <VcHulkTable columns={curTableColumns} {...tableProps} />
       </ContentCard>
+
+      <Modal
+        className={operateType === 'report' ? 'test-full-modal' : ''}
+        width={operateType === 'report' ? '100%' : 800}
+        visible={!!operateType}
+        title={operateType === 'report' ? '查看报告' : '查看日志'}
+        bodyStyle={
+          operateType === 'report'
+            ? {}
+            : { height: '400px', overflow: 'hidden' }
+        }
+        onCancel={() => {
+          setCurrentRecord({});
+          setOperateType(undefined);
+        }}
+        footer={false}
+      >
+        {operateType === 'report' ? (
+          <iframe src={currentRecord.report} width="100%" height="100%" />
+        ) : (
+          <div className="test-modal-log">{currentRecord.errorLog}</div>
+        )}
+      </Modal>
     </VCPageContent>
   );
 };

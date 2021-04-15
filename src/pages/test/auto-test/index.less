@@ -30,9 +30,11 @@
   }
 
   &-body {
+    height: 100%;
     flex: 1;
     background-color: #fff;
     padding: 24px;
+    overflow: auto;
   }
 }
 
@@ -40,6 +42,11 @@
   display: flex;
   flex-direction: row;
   margin-bottom: 16px;
+
+  &-env {
+    margin-right: 12px;
+    width: 120px;
+  }
 
   .test-table-header-search {
     flex: 1;

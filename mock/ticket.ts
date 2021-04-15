@@ -39,7 +39,7 @@ const mockTableData = [
 
 export default {
   // 工单查询接口
-  [`GET /v1/ticket/list`]: {
+  [`GET /v1/ticketManage/list`]: {
     success: true,
     data: {
       dataSource: mockTableData,

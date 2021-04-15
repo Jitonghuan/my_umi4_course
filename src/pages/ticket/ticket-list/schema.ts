@@ -103,7 +103,7 @@ export const tableSchema = [
 // 新增工单
 export const getTicketCreateSchema = ({
   typeEuumData,
-  envEnumData,
+  belongEnumData,
   businessEnumData,
   applyEnumData,
   isShowUpload = false,
@@ -121,11 +121,12 @@ export const getTicketCreateSchema = ({
     {
       type: 'Select',
       props: {
-        label: '环境',
-        name: 'envs',
+        label: '归属',
+        name: 'belongs',
         mode: 'multiple',
         required: true,
-        options: envEnumData,
+        options: belongEnumData,
+        showArrow: true,
       },
     },
     {
@@ -145,6 +146,7 @@ export const getTicketCreateSchema = ({
         name: 'ticketSubTypes',
         required: true,
         options: applyEnumData,
+        showArrow: true,
       },
     },
     {

@@ -11,7 +11,7 @@ export const testCaseTableSchema: ColumnProps[] = [
   },
   {
     title: '用例名称',
-    dataIndex: 'caseName',
+    dataIndex: 'testCase',
     width: 200,
     ellipsis: true,
     copyable: true,

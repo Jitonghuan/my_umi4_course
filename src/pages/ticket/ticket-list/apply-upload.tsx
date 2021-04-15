@@ -5,6 +5,12 @@ import { UploadOutlined } from '@ant-design/icons';
 export interface IProps {
   /** 属性描述 */
   url: string;
+
+  /** value 值 */
+  value?: string;
+
+  /** onChange 事件 */
+  onChange?: (filename: string) => void;
 }
 
 /**
@@ -28,6 +34,8 @@ const funcName = (props: IProps) => {
       }
       if (info.file.status === 'done') {
         message.success('上传成功');
+        const { filename } = info.file.response.data || {};
+        onChange && onChange(filename);
       } else if (info.file.status === 'error') {
         message.error('上传失败');
       }
