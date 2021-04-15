@@ -14,7 +14,7 @@ import React, {
 } from 'react';
 import { Drawer, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useListData, useEffectOnce } from 'white-react-use';
+import { useEffectOnce } from 'white-react-use';
 import VCPageContent, {
   FilterCard,
   ContentCard,

@@ -54,6 +54,7 @@
   "devDependencies": {
     "@hbos/umi-plugin-theme-hbos": "^0.0.6",
     "@irim/cli-base": "^1.1.9",
+    "@types/lodash": "^4.14.168",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@umijs/test": "^3.3.7",
