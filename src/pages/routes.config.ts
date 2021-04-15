@@ -125,5 +125,26 @@ export default [
       },
     ],
   },
+
+  {
+    path: 'code',
+    name: '代码管理',
+    icon: 'icon-code',
+    routes: [
+      {
+        path: 'rank',
+        name: '代码排行',
+        key: '1',
+        component: '@/pages/code/rank',
+      },
+      {
+        path: 'details',
+        name: '代码排行详情',
+        key: '1',
+        hideInMenu: true,
+        component: '@/pages/code/details',
+      },
+    ],
+  },
   /** {{routes: 标志位不可删除，用于初始化页面}}  */
 ] as IRouteItem[];

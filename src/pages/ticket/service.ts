@@ -25,7 +25,7 @@ export const statusMap: { label: string; value: number }[] = [
 export const doCreateTicket = `${ds.apiPrefix}/ticketManage/create`;
 
 // 获取工单类型枚举
-export const queryTicketType = `${ds.apiPrefix}/ticketManage/getType`;
+export const queryTicketType = `${ds.apiPrefix}/ticketManage/getOptions`;
 
 /**
  * 更新工单状态

@@ -51,7 +51,7 @@ export default {
     },
   },
   // 工单状态类型
-  ['GET /v1/ticketManage/getType']: {
+  ['GET /v1/ticketManage/getOptions']: {
     success: true,
     data: {
       资源申请: ['ECS', 'RDS'],
