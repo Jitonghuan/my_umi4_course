@@ -56,6 +56,10 @@ const ApplicationDetail = (props: IProps) => {
       isFlex
     >
       <Tabs
+        tabBarStyle={{
+          padding: '0 24px',
+          background: '#fff',
+        }}
         className={`${rootCls}__tabs`}
         activeKey={tabActiveKey}
         onChange={(key) => {

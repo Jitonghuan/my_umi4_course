@@ -48,6 +48,13 @@ export default [
             component: '@/pages/application/application-overview',
           },
           {
+            path: 'appDeploy',
+            name: '应用部署',
+            hideInMenu: true,
+            component:
+              '@/pages/application/application-detail/components/application-deploy',
+          },
+          {
             path: 'launchParameters',
             name: '启动参数',
             hideInMenu: true,
