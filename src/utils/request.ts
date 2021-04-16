@@ -9,6 +9,4 @@ const request = BusRequest;
 export const getRequest = BusGetRequest;
 export const postRequest = BusPostRequest;
 
-// TODO success 为 false 时，统一提示？？？
-
 export default request;

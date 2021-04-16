@@ -6,7 +6,7 @@ export interface IProps {
     /** 应用名 */
     appName: string;
     /** 应用类型 */
-    appType: string;
+    appType: 'frontend' | 'backend';
     owner: string;
   }>;
   /** 分页 */

@@ -28,13 +28,13 @@ const ApplicationDeploy = (props: IProps) => {
           <DeployContent />
         </TabPane>
         <TabPane tab="TEST" key="TEST">
-          TEST
+          <DeployContent />
         </TabPane>
         <TabPane tab="POC" key="POC">
-          POC
+          <DeployContent />
         </TabPane>
         <TabPane tab="PRD" key="PRD">
-          PRD
+          <DeployContent />
         </TabPane>
       </Tabs>
     </div>

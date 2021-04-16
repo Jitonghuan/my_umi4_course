@@ -1,8 +1,14 @@
-export default (isEdit: boolean) => ({
+import { AppType } from './types';
+
+export default (params: {
+  isEdit: boolean;
+  appType?: AppType;
+  belongData?: any[];
+  businessData?: any[];
+}) => ({
   isShowReset: false,
   labelColSpan: 6,
   theme: 'basic',
-  // TODO 设计稿和prd的必填不一致
   schema: [
     {
       type: 'Input',
@@ -11,7 +17,7 @@ export default (isEdit: boolean) => ({
         name: 'appCode',
         required: true,
         placeholder: '请输入应用代码',
-        disabled: isEdit,
+        disabled: params.isEdit,
       },
     },
     {
@@ -24,10 +30,48 @@ export default (isEdit: boolean) => ({
       },
     },
     {
+      type: 'Select',
+      props: {
+        label: '应用类型',
+        name: 'appType',
+        required: true,
+        options: [
+          {
+            label: '前端',
+            value: 'frontend',
+          },
+          {
+            label: '后端',
+            value: 'backend',
+          },
+        ],
+      },
+    },
+    // 后端才有
+    {
+      isNotNeed: params.appType !== 'backend',
+      type: 'Radio',
+      props: {
+        label: '是否包含二方包',
+        name: 'isClient',
+        required: true,
+        options: [
+          {
+            label: '是',
+            value: 1,
+          },
+          {
+            label: '否',
+            value: 0,
+          },
+        ],
+      },
+    },
+    {
       type: 'Input',
       props: {
         label: 'git地址',
-        name: 'gitAddress',
+        name: 'gitlab',
         required: true,
         placeholder: '请输入git地址',
       },
@@ -41,91 +85,47 @@ export default (isEdit: boolean) => ({
       },
     },
     {
-      type: 'Radio',
-      props: {
-        label: '是否包含二方包',
-        name: 'isContainTwo',
-        required: true,
-        options: [
-          {
-            label: '是',
-            value: '1',
-          },
-          {
-            label: '否',
-            value: '0',
-          },
-        ],
-      },
-    },
-    {
-      type: 'Select',
-      props: {
-        label: '应用类型',
-        name: 'appType',
-        options: [
-          {
-            label: 'TODO',
-            value: 'test',
-          },
-        ],
-      },
-    },
-    {
       type: 'Select',
       props: {
         label: '所属',
         name: 'belong',
-        options: [
-          {
-            label: 'TODO',
-            value: 'g3a',
-          },
-        ],
+        options: params.belongData || [],
+      },
+    },
+    // 前端才有
+    {
+      isNotNeed: params.appType !== 'frontend',
+      type: 'Input',
+      props: {
+        label: '所属组',
+        name: 'group',
       },
     },
     {
       type: 'Select',
       props: {
         label: '业务线',
-        name: 'busLine',
-        options: [
-          {
-            label: 'TODO',
-            value: 'test',
-          },
-        ],
+        name: 'lineCode',
+        options: params.businessData || [],
       },
     },
     {
-      type: 'Select',
-      props: {
-        label: '业务模块',
-        name: 'busModule',
-        options: [
-          {
-            label: 'TODO',
-            value: 'test',
-          },
-        ],
-      },
-    },
-    {
+      // TODO 已经和后端确认，先暂时输入人名，后期改成接口搜索下拉
       type: 'Input',
       props: {
-        label: '责任人',
-        name: 'person',
-        placeholder: '请输入责任人',
+        label: '应用负责人',
+        name: 'owner',
+        placeholder: '请输入应用负责人',
       },
     },
     {
-      // TODO 换成 textarea，待参考创建工单
-      type: 'Input',
+      type: 'Custom',
       props: {
         label: '应用描述',
-        name: 'appDesc',
+        name: 'desc',
+        custom: 'Textarea',
         placeholder: '请输入应用描述',
       },
     },
-  ],
+  ].filter((item) => !(item.isNotNeed === true)),
 });

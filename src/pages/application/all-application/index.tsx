@@ -6,7 +6,7 @@
  */
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Radio, Button, Card, Col, Row } from 'antd';
+import { Radio, Button, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useListData, useEffectOnce } from 'white-react-use';
 import VCPageContent, {
@@ -16,15 +16,16 @@ import VCPageContent, {
 import FEContext from '@/layouts/basic-layout/FeContext';
 import CreateApplication from '@/components/create-application';
 import ApplicationCardList from './application-card-list';
-import { queryApps } from './service';
+import { queryApps } from '../service';
 import { rootCls } from './constants';
 import { IProps } from './types';
 import './index.less';
 
 const AllApplication = (props: IProps) => {
   const feContent = useContext(FEContext);
-  const [appType, setAppType] = useState<'all' | 'my'>('all');
+  const [type, setType] = useState<'all' | 'my'>('all');
   const [createAppVisible, setCreateAppVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   /** 全部应用 */
   const [
@@ -36,28 +37,32 @@ const AllApplication = (props: IProps) => {
   ] = useListData(queryApps as any, {
     currentAlias: 'pageIndex',
   });
+
+  const queryAllAppsWithLoading = (...args: any[]) => {
+    setLoading(true);
+    queryAllApps(...args).finally(() => setLoading(false));
+  };
+
   /** 我的应用 */
-  const [
-    queryMyApps,
-    myList,
-    setMyList,
-    myPagination,
-    setMyPagination,
-  ] = useListData(queryApps as any, {
-    currentAlias: 'pageIndex',
-  });
+  // const [
+  //   queryMyApps,
+  //   myList,
+  //   setMyList,
+  //   myPagination,
+  //   setMyPagination,
+  // ] = useListData(queryApps as any, {
+  //   currentAlias: 'pageIndex',
+  // });
 
   useEffectOnce(() => {
-    queryAllApps({
-      type: 'all',
+    queryAllAppsWithLoading({
       pageIndex: 1,
       pageSize: 10,
     });
-    queryMyApps({
-      type: 'my',
-      pageIndex: 1,
-      pageSize: 10,
-    });
+    // queryMyApps({
+    //   pageIndex: 1,
+    //   pageSize: 10,
+    // });
   });
 
   return (
@@ -73,53 +78,53 @@ const AllApplication = (props: IProps) => {
         onClose={() => setCreateAppVisible(false)}
         onSubmit={() => {
           // 保存成功后，关闭抽屉，重新请求列表
-          queryAllApps({
-            type: 'all',
+          queryAllAppsWithLoading({
             pageIndex: allPagination.current,
             pageSize: allPagination.pageSize,
           });
-          queryMyApps({
-            type: 'my',
-            pageIndex: myPagination.current,
-            pageSize: myPagination.pageSize,
-          });
+          // queryMyApps({
+          //   type: 'my',
+          //   pageIndex: myPagination.current,
+          //   pageSize: myPagination.pageSize,
+          // });
           setCreateAppVisible(false);
         }}
       />
 
-      <ContentCard>
-        <div className={`${rootCls}__header`}>
-          <Radio.Group
-            value={appType}
-            onChange={(e) => setAppType(e.target.value)}
-          >
-            <Radio.Button value="all">全部应用</Radio.Button>
-            <Radio.Button value="my">我的应用</Radio.Button>
-          </Radio.Group>
+      <Spin spinning={loading}>
+        <ContentCard>
+          <div className={`${rootCls}__header`}>
+            <Radio.Group value={type} onChange={(e) => setType(e.target.value)}>
+              <Radio.Button value="all">全部应用</Radio.Button>
+              {/* TODO 一期先不上我的应用功能 */}
+              {/* <Radio.Button value="my">我的应用</Radio.Button> */}
+            </Radio.Group>
 
-          <Button type="primary" onClick={() => setCreateAppVisible(true)}>
-            <PlusOutlined />
-            新增应用
-          </Button>
-        </div>
+            <Button type="primary" onClick={() => setCreateAppVisible(true)}>
+              <PlusOutlined />
+              新增应用
+            </Button>
+          </div>
 
-        <div className={`${rootCls}__card-wrapper`}>
-          <ApplicationCardList
-            pagination={{
-              ...(appType === 'all' ? allPagination : myPagination),
-              onChange: (page, pageSize) => {
-                const queryFn = appType === 'all' ? queryAllApps : queryMyApps;
-                queryFn({
-                  type: appType,
-                  pageIndex: page,
-                  pageSize,
-                });
-              },
-            }}
-            dataSource={appType === 'my' ? allList : myList}
-          />
-        </div>
-      </ContentCard>
+          <div className={`${rootCls}__card-wrapper`}>
+            <ApplicationCardList
+              pagination={{
+                // ...(type === 'all' ? allPagination : myPagination),
+                ...allPagination,
+                onChange: (page, pageSize) => {
+                  // const queryFn = type === 'all' ? queryAllApps : queryMyApps;
+                  queryAllAppsWithLoading({
+                    pageIndex: page,
+                    pageSize,
+                  });
+                },
+              }}
+              // dataSource={type === 'all' ? allList : myList}
+              dataSource={allList}
+            />
+          </div>
+        </ContentCard>
+      </Spin>
     </VCPageContent>
   );
 };

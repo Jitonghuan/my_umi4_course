@@ -5,18 +5,23 @@
  * @create 2021-04-09 15:38
  */
 
-import React from 'react';
-import { Drawer, Button } from 'antd';
+import React, { useState, useContext } from 'react';
+import { Drawer, Input, Spin, message } from 'antd';
+import FEContext from '@/layouts/basic-layout/FeContext';
 import { BasicForm } from '@cffe/fe-backend-component';
 import createSchema from './create-schema';
-import { IProps, FormValue } from './types';
+import { createApp, updateApp } from './service';
+import { IProps, FormValue, AppType } from './types';
 // import './index.less';
 
 const CreateApplication = (props: IProps) => {
   const { formValue } = props;
   const isEdit = !!formValue?.id;
 
-  // TODO 样式，待参考工单页面完善
+  const [loading, setLoading] = useState(false);
+  // 应用类型
+  const [appType, setAppType] = useState<AppType>();
+  const { belongData, businessData, envData } = useContext(FEContext);
 
   return (
     <Drawer
@@ -27,18 +32,50 @@ const CreateApplication = (props: IProps) => {
       visible={props.visible}
       onClose={props.onClose}
     >
-      {/* TODO 回显 */}
-      <BasicForm
-        {...(createSchema(isEdit) as any)}
-        dataSource={formValue}
-        isShowReset
-        resetText="取消"
-        onReset={props.onClose}
-        onFinish={(val: FormValue) => {
-          // TODO 调用保存接口，成功后调用回调
-          props?.onSubmit();
-        }}
-      />
+      <Spin spinning={loading}>
+        <BasicForm
+          {...(createSchema({
+            isEdit,
+            appType,
+            belongData,
+            businessData,
+          }) as any)}
+          dataSource={formValue}
+          customMap={{
+            Textarea: Input.TextArea,
+          }}
+          isShowReset
+          resetText="取消"
+          onReset={props.onClose}
+          onValuesChange={(changedValues, allValues) => {
+            setAppType(allValues?.appType);
+          }}
+          onFinish={(val: Omit<FormValue, 'id'>) => {
+            let promise = null;
+
+            setLoading(true);
+
+            if (isEdit) {
+              promise = updateApp({
+                id: formValue?.id!,
+                ...val,
+              });
+            } else {
+              promise = createApp(val);
+            }
+
+            promise
+              .then((res) => {
+                if (res.success) {
+                  props?.onSubmit();
+                  return;
+                }
+                message.error(res.errorMsg);
+              })
+              .finally(() => setLoading(false));
+          }}
+        />
+      </Spin>
     </Drawer>
   );
 };

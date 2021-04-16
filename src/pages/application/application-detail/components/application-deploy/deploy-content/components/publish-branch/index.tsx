@@ -5,7 +5,7 @@
  * @create 2021-04-15 10:22
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Steps, Button } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { useEffectOnce } from 'white-react-use';
@@ -18,6 +18,8 @@ const { Step } = Steps;
 const rootCls = 'publish-branch-compo';
 
 const PublishBranch = (props: IProps) => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>();
+
   // 查询数据
   const { run: queryContentList, tableProps } = usePaginated({
     requestUrl: queryPublishContentList,
@@ -41,8 +43,7 @@ const PublishBranch = (props: IProps) => {
           <span className={`${rootCls}__list-header-text`}>分支列表</span>
 
           <div className={`${rootCls}__list-header-btns`}>
-            {/* TODO 没选择置灰 */}
-            <Button>提交分支</Button>
+            <Button disabled={!selectedRowKeys?.length}>提交分支</Button>
           </div>
         </div>
 
@@ -53,12 +54,14 @@ const PublishBranch = (props: IProps) => {
           className={`${rootCls}__list-table`}
           rowSelection={{
             type: 'checkbox',
+            selectedRowKeys,
             onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
               console.log(
                 `selectedRowKeys: ${selectedRowKeys}`,
                 'selectedRows: ',
                 selectedRows,
               );
+              setSelectedRowKeys(selectedRowKeys);
             },
             // getCheckboxProps: (record: any) => ({
             //   disabled: record.name === 'Disabled User', // Column configuration not to be checked

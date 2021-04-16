@@ -6,11 +6,17 @@
  */
 
 import React from 'react';
+import { history } from 'umi';
 import { Pagination } from 'antd';
 import CardLayout from '@cffe/vc-b-card-layout';
 import { cardCls } from '../constants';
 import { IProps } from './types';
 import './index.less';
+
+const APP_TYPE_MAP = {
+  frontend: '前端',
+  backend: '后端',
+};
 
 const ApplicationCardList = (props: IProps) => {
   const { dataSource, pagination } = props;
@@ -19,21 +25,33 @@ const ApplicationCardList = (props: IProps) => {
     <>
       <CardLayout>
         {dataSource.map((item) => (
-          // TODO 点击跳转到应用详情
-          <div key={item.id} className={cardCls}>
+          <div
+            key={item.id}
+            className={cardCls}
+            onClick={() =>
+              history.push({
+                pathname: 'detail',
+                query: {
+                  id: `${item.id}`,
+                },
+              })
+            }
+          >
             <div className={`${cardCls}-header`}>{item.appName}</div>
 
             <div className={`${cardCls}-content`}>
-              <div>应用类型：{item.appType}</div>
+              <div>应用类型：{APP_TYPE_MAP[item.appType]}</div>
               <div>owner：{item.owner}</div>
             </div>
           </div>
         ))}
       </CardLayout>
 
-      <div className={`${cardCls}-pagination-wrap`}>
-        <Pagination showQuickJumper {...pagination} />
-      </div>
+      {!!dataSource?.length && pagination.total! > pagination.pageSize! && (
+        <div className={`${cardCls}-pagination-wrap`}>
+          <Pagination showQuickJumper {...pagination} />
+        </div>
+      )}
     </>
   );
 };
