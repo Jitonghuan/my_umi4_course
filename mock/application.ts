@@ -1,6 +1,7 @@
 const mockTableData = [
   {
     id: 1,
+    appCode: 'appCode',
     appName: '应用名称',
     appType: 'frontend',
     owner: '8号',
@@ -13,6 +14,7 @@ const mockTableData = [
   },
   {
     id: 2,
+    appCode: 'appCode',
     appName: '应用名称',
     appType: 'backend',
     owner: '8号',

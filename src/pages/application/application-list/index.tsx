@@ -23,21 +23,24 @@ import CreateApplication from '@/components/create-application';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
-import { filterFormSchema, createTableSchema } from './schema';
-import { queryApplicationList } from './service';
+import { createFilterFormSchema, createTableSchema } from './schema';
+import { queryAppsUrl } from '../service';
 import { rootCls } from './constants';
 import { IProps } from './types';
 import './index.less';
 
 const ApplicationList = (props: IProps) => {
-  const feContent = useContext(FEContext);
+  const { belongData, businessData, envData, breadcrumbMap } = useContext(
+    FEContext,
+  );
+
   const [createAppVisible, setCreateAppVisible] = useState(false);
   const [curRecord, setCurRecord] = useState<any>();
 
   // 查询数据
   const { run: queryAppList, tableProps } = usePaginated({
-    requestUrl: queryApplicationList,
-    requestMethod: 'POST',
+    requestUrl: queryAppsUrl,
+    requestMethod: 'GET',
     pagination: {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
@@ -51,7 +54,7 @@ const ApplicationList = (props: IProps) => {
   return (
     <VCPageContent
       height="calc(100vh - 118px)"
-      breadcrumbMap={feContent.breadcrumbMap}
+      breadcrumbMap={breadcrumbMap}
       pathname={location.pathname}
       isFlex
     >
@@ -69,9 +72,10 @@ const ApplicationList = (props: IProps) => {
       <FilterCard>
         <InlineForm
           className={`${rootCls}__filter-form`}
-          {...(filterFormSchema as any)}
+          {...(createFilterFormSchema({ belongData, businessData }) as any)}
+          submitText="查询"
           onFinish={(values) => {
-            console.log(values);
+            if (tableProps.loading) return;
             queryAppList({
               pageIndex: 1,
               ...values,

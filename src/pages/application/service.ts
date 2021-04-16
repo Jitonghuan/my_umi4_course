@@ -1,6 +1,11 @@
 import { postRequest, getRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 
+/**
+ * 查询应用列表
+ */
+export const queryAppsUrl = `${ds.apiPrefix}/appManage/list`;
+
 /** 查询应用列表 */
 export const queryApps = (params: {
   /** 应用CODE */
@@ -20,15 +25,13 @@ export const queryApps = (params: {
   /** 分页大小 */
   pageSize: number;
 }) =>
-  getRequest(`${ds.apiPrefix}/appManage/list`, { data: params }).then(
-    (res: any) => {
-      if (res.success) {
-        return {
-          list: res.data?.dataSource || [],
-          ...res.data?.pageInfo,
-        };
-      }
+  getRequest(queryAppsUrl, { data: params }).then((res: any) => {
+    if (res.success) {
+      return {
+        list: res.data?.dataSource || [],
+        ...res.data?.pageInfo,
+      };
+    }
 
-      return { list: [] };
-    },
-  );
+    return { list: [] };
+  });

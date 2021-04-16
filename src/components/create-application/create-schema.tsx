@@ -110,6 +110,13 @@ export default (params: {
       },
     },
     {
+      type: 'Input',
+      props: {
+        label: '业务模块',
+        name: 'sysCode',
+      },
+    },
+    {
       // TODO 已经和后端确认，先暂时输入人名，后期改成接口搜索下拉
       type: 'Input',
       props: {
