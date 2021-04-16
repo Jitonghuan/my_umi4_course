@@ -8,6 +8,8 @@ export const queryAppsUrl = `${ds.apiPrefix}/appManage/list`;
 
 /** 查询应用列表 */
 export const queryApps = (params: {
+  /** id */
+  id?: number;
   /** 应用CODE */
   appCode?: string;
   /** 应用名称    ---支持模糊搜索 */

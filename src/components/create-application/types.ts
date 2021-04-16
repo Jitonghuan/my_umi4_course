@@ -19,6 +19,8 @@ export interface FormValue {
   belong?: string;
   /** 业务线CODE */
   lineCode?: string;
+  /** 业务模块CODE */
+  sysCode?: string;
   /** 应用负责人   ---支持模糊搜索 */
   owner?: string;
   /** gitlab 中项目http地址 */

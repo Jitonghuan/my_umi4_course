@@ -5,7 +5,7 @@
  * @create 2021-04-09 15:38
  */
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Drawer, Input, Spin, message } from 'antd';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { BasicForm } from '@cffe/fe-backend-component';
@@ -13,6 +13,8 @@ import createSchema from './create-schema';
 import { createApp, updateApp } from './service';
 import { IProps, FormValue, AppType } from './types';
 // import './index.less';
+
+export type AppDataTypes = FormValue;
 
 const CreateApplication = (props: IProps) => {
   const { formValue } = props;
@@ -22,6 +24,10 @@ const CreateApplication = (props: IProps) => {
   // 应用类型
   const [appType, setAppType] = useState<AppType>();
   const { belongData, businessData, envData } = useContext(FEContext);
+
+  useEffect(() => {
+    setAppType(formValue?.appType);
+  }, [formValue?.appType]);
 
   return (
     <Drawer
