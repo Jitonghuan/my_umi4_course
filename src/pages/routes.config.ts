@@ -134,14 +134,11 @@ export default [
       {
         path: 'rank',
         name: '代码排行',
-        key: '1',
         component: '@/pages/code/rank',
       },
       {
         path: 'details',
-        name: '代码排行详情',
-        key: '1',
-        hideInMenu: true,
+        name: '统计详情',
         component: '@/pages/code/details',
       },
     ],

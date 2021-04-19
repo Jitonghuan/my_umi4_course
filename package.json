@@ -40,7 +40,7 @@
     "@cffe/vc-custom-icon": "1.0.1",
     "@cffe/vc-form": "1.0.7",
     "@cffe/vc-hulk-form": "1.0.11",
-    "@cffe/vc-hulk-table": "1.0.4",
+    "@cffe/vc-hulk-table": "1.0.5",
     "@cffe/vc-layout": "1.0.10",
     "@cffe/vc-loading": "1.0.2",
     "@umijs/hooks": "^1.9.3",
@@ -48,6 +48,7 @@
     "ahooks": "^2.10.0",
     "dayjs": "^1.10.4",
     "lodash": "^4.17.21",
+    "qs": "^6.10.1",
     "umi": "^3.3.7",
     "white-react-use": "^2.4.0"
   },
