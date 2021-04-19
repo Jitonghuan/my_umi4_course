@@ -1,4 +1,4 @@
-# fe-matris
+# fe-matrix
 
 ## Getting Started
 

@@ -6,9 +6,9 @@
    * @param {string} favicon
    */
   const DEFAULT_CONFIG = {
-    favicon: '/matris/favicon.png',
-    logo: '/matris/logo.png',
-    title: 'Matris',
+    favicon: '/matrix/favicon.png',
+    logo: '/matrix/logo.png',
+    title: 'Matrix',
     copyright: '2021 来未来',
   };
 

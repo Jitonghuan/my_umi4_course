@@ -20,11 +20,11 @@ interface IDefaultSettings extends IConfigFromPlugins {
 }
 
 // 应用关键字
-const appKey = 'matris';
+const appKey = 'matrix';
 
 // 抽离配置
 const FEConfig: globalConfig = {
-  title: 'Matris',
+  title: 'Matrix',
   favicon: `/${appKey}/favicon.png`,
   logo: `/${appKey}/logo.png`,
   copyright: '2021 来未来',

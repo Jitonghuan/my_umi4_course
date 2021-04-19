@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Tabs, Card } from 'antd';
 
-import MatrisPageContent from '@/components/matris-page-content';
+import MatrixPageContent from '@/components/matrix-page-content';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import {
@@ -196,7 +196,7 @@ const Coms = (props: IProps) => {
   };
 
   return (
-    <MatrisPageContent className="monitor-board">
+    <MatrixPageContent className="monitor-board">
       <Card className="monitor-board-content">
         <Tabs type="card" className="monitor-tabs">
           {tabData.map((el) => (
@@ -220,7 +220,7 @@ const Coms = (props: IProps) => {
           </div>
         </div>
       </Card>
-    </MatrisPageContent>
+    </MatrixPageContent>
   );
 };
 

@@ -1,6 +1,6 @@
 {
-  "name": "fe-matris",
-  "description": "fe-matris",
+  "name": "fe-matrix",
+  "description": "fe-matrix",
   "version": "1.0.2",
   "scripts": {
     "inject": "node script/config-inject.js",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.cfuture.shop/fe-data-app/fe-matris.git"
+    "url": "https://gitlab.cfuture.shop/fe-data-app/fe-matrix.git"
   },
   "lint-staged": {
     "*.{js,jsx,less,md,json}": [

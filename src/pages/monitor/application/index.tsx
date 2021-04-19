@@ -4,7 +4,7 @@ import { Card, Button } from 'antd';
 import VCForm, { IColumns } from '@cffe/vc-form';
 import HulkTable from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
-import MatrisPageContent from '@/components/matris-page-content';
+import MatrixPageContent from '@/components/matrix-page-content';
 import AppCard from './app-card';
 import {
   tableSchema,
@@ -53,7 +53,7 @@ const Coms = (props: IProps) => {
   ];
 
   return (
-    <MatrisPageContent className="monitor-app-list">
+    <MatrixPageContent className="monitor-app-list">
       <Card className="monitor-app-body">
         <h3 className="monitor-tabs-content-title">资源使用情况</h3>
         <div className="monitor-app-filter">
@@ -80,7 +80,7 @@ const Coms = (props: IProps) => {
           ))}
         </VCCardLayout>
       </Card>
-    </MatrisPageContent>
+    </MatrixPageContent>
   );
 };
 

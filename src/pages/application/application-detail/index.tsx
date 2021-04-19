@@ -18,7 +18,7 @@ import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'application-detail-page';
-const detailPath = '/matris/application/detail';
+const detailPath = '/matrix/application/detail';
 const { TabPane } = Tabs;
 /** 默认值为概述 */
 const defaultTab = 'overview';
