@@ -1,3 +1,5 @@
+import { parse } from 'qs';
+
 /** 深度优先搜索处理 func */
 export const DFSFunc = (
   tree: any[],
@@ -11,4 +13,22 @@ export const DFSFunc = (
 
     func(node);
   });
+};
+
+/**
+ * 获取 url params
+ */
+export const getUrlParams = (keys?: string[]) => {
+  const urlParams = parse(window.location.search.split('?')[1]);
+
+  if (keys) {
+    const target: { [key: string]: string } = {};
+    keys.forEach((el) => {
+      target[el] = urlParams[el] || '';
+    });
+
+    return target;
+  }
+
+  return urlParams;
 };

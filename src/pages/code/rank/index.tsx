@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
-import { Card, Button, Radio, Table } from 'antd';
+import { stringify } from 'qs';
+import { Select, DatePicker, Card, Button, Radio } from 'antd';
+import moment from 'moment';
 
 import MatrisPageContent from '@/components/matris-page-content';
-import VcHulkTable, { ColumnProps } from '@cffe/vc-hulk-table';
+import VcHulkTable from '@cffe/vc-hulk-table';
 import ds from '@config/defaultSettings';
+import { getRequest } from '@/utils/request';
+import { queryTimeDataApi, ITimeItem, queryTableDataApi } from '../service';
+import { getTableColumns } from '../dic';
 
 import './index.less';
 
@@ -13,16 +18,35 @@ export interface IProps {
   [key: string]: any;
 }
 
+type IModuleType = 'commitNo' | 'filePath' | 'app';
+
 type IModule = {
   /** 类型 */
-  type: string;
+  type: IModuleType;
   /** title */
   title: string;
   /** 数据源 */
-  dataSource: any[];
-  /** 表格 columns */
-  columns: ColumnProps[];
+  dataSource?: any[];
+  /** 展示更多 */
+  isShowMore?: boolean;
 };
+
+// 表格类型统计
+const tableTypeEnum: IModule[] = [
+  {
+    title: '人员提交次数统计',
+    type: 'commitNo',
+  },
+  {
+    title: '文件修改次数统计',
+    type: 'filePath',
+  },
+  {
+    title: '应用提交次数统计',
+    type: 'app',
+    isShowMore: false,
+  },
+];
 
 /**
  * Rank
@@ -30,70 +54,106 @@ type IModule = {
  * @create 2021-04-15 15:57:08
  */
 const Coms = (props: IProps) => {
-  const [activeType, setActiveType] = useState<'month' | 'dayj'>('month');
+  const [activeType, setActiveType] = useState<'month' | 'day'>('month');
+  const [currentDate, setCurrentDate] = useState<string>();
+  // 时间选择列表
+  const [timeLists, setTimeLists] = useState<IOption[]>([]);
+  // 当前选择的具体时间
+  const [currentTime, setCurrentTime] = useState<string>();
 
-  // 模块数据集合
-  const [moduleData, setModuleData] = useState<IModule[]>([]);
-
-  const commonColumns = [
-    {
-      dataIndex: 'rank',
-      title: '排名',
-      render: (_: any, __: any, idx: number) => <span>TOP{idx + 1}</span>,
-    },
-    { dataIndex: 'name', title: '姓名' },
-    { dataIndex: 'num', title: '数量' },
-  ];
+  // 表数据 map
+  const [commitNoData, setCommitNoData] = useState<any[]>([]);
+  const [filePathData, setFilePathData] = useState<any[]>([]);
+  const [appData, setAppData] = useState<any[]>([]);
 
   // 查询表格数据
-  const queryTableData = async () => {
-    setModuleData([
-      {
-        title: '测试1',
-        type: 'code1',
-        dataSource: [],
-        columns: commonColumns,
+  const queryTableData = async (rankingType: IModuleType) => {
+    const resp = await getRequest(queryTableDataApi, {
+      data: {
+        rankingType,
+        rankingCycle: currentTime,
       },
-      {
-        title: '测试2',
-        type: 'code2',
-        dataSource: [],
-        columns: commonColumns,
-      },
-      {
-        title: '测试3',
-        type: 'code3',
-        dataSource: [],
-        columns: commonColumns,
-      },
-    ]);
+    });
+
+    const { data = [] } = resp;
+
+    rankingType === 'commitNo' && setCommitNoData(data);
+    rankingType === 'filePath' && setFilePathData(data);
+    rankingType === 'app' && setAppData(data);
   };
 
   useEffect(() => {
-    queryTableData();
-  }, []);
+    queryTimeData();
+  }, [currentDate]);
+
+  useEffect(() => {
+    if (!currentTime) {
+      setCommitNoData([]);
+      setFilePathData([]);
+      setAppData([]);
+      return;
+    }
+
+    tableTypeEnum.forEach((el) => {
+      queryTableData(el.type);
+    });
+  }, [currentTime]);
+
+  // 查询统计时间数据
+  const queryTimeData = async () => {
+    const resp = await getRequest(queryTimeDataApi, {
+      data: {
+        cycleType: activeType,
+        cycleDate: currentDate,
+      },
+    });
+
+    const { dataSource = [] } = resp.data || {};
+
+    setTimeLists(
+      dataSource.map((el: ITimeItem) => ({
+        label: el.cycleDate,
+        value: el.cycleDate,
+      })),
+    );
+    // setCurrentTime(dataSource.length > 0 ? dataSource[0].cycleDate : undefined);
+  };
 
   // 模块
   const renderModule = ({
     title,
     type,
-    dataSource = [],
-    columns = [],
+    dataSource,
+    isShowMore = true,
   }: IModule) => {
     return (
       <div className="code-module-item">
         <div className="code-module-header">
           <h3>{title}</h3>
-          <Button
-            onClick={() => {
-              // 跳转 detail 页面
-              history.push(`${ds.pagePrefix}/code/details?type=${type}`);
-            }}
-          >
-            更多
-          </Button>
+          {isShowMore && (
+            <Button
+              ghost
+              type="primary"
+              onClick={() => {
+                const query = {
+                  type,
+                  timeType: activeType,
+                };
+                // 跳转 detail 页面
+                history.push(
+                  `${ds.pagePrefix}/code/details?${stringify(query)}`,
+                );
+              }}
+            >
+              更多
+            </Button>
+          )}
         </div>
-        <VcHulkTable dataSource={dataSource} columns={columns} />
+        <VcHulkTable
+          dataSource={dataSource}
+          columns={getTableColumns(type)}
+          pagination={false}
+        />
       </div>
     );
   };
@@ -101,17 +161,43 @@ const Coms = (props: IProps) => {
   return (
     <MatrisPageContent>
       <Card className="code-page">
-        <Radio.Group
-          className="code-radio"
-          onChange={(e) => setActiveType(e.target.value)}
-          defaultValue={activeType}
-        >
-          <Radio.Button value="month">月</Radio.Button>
-          <Radio.Button value="day">日</Radio.Button>
-        </Radio.Group>
+        <div className="code-filter">
+          <Radio.Group
+            className="code-radio"
+            onChange={(e) => {
+              setActiveType(e.target.value);
+            }}
+            defaultValue={activeType}
+          >
+            <Radio.Button value="month">月</Radio.Button>
+            <Radio.Button value="day">日</Radio.Button>
+          </Radio.Group>
+          <DatePicker
+            className="code-filter-picker"
+            value={currentDate ? moment(currentDate) : undefined}
+            format={activeType === 'day' ? 'YYYY-MM' : 'YYYY'}
+            picker={activeType === 'day' ? 'month' : 'year'}
+            onChange={(_, dateStr) => setCurrentDate(dateStr)}
+          />
+          <Select
+            className="code-filter-time"
+            value={currentTime}
+            options={timeLists}
+            onChange={setCurrentTime}
+            placeholder="时间周期"
+          />
+        </div>
 
         <div className="code-module-content">
-          {moduleData.map((el) => renderModule({ ...el }))}
+          {tableTypeEnum.map((el) =>
+            renderModule({
+              ...el,
+              dataSource:
+                (el.type === 'commitNo' && commitNoData) ||
+                (el.type === 'filePath' && filePathData) ||
+                appData,
+            }),
+          )}
         </div>
       </Card>
     </MatrisPageContent>
