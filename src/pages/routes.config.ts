@@ -56,6 +56,13 @@ export default [
               '@/pages/application/application-detail/components/application-deploy',
           },
           {
+            path: 'branch',
+            name: '分支',
+            hideInMenu: true,
+            component:
+              '@/pages/application/application-detail/components/application-branch',
+          },
+          {
             path: 'launchParameters',
             name: '启动参数',
             hideInMenu: true,
