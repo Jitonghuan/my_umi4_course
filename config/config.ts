@@ -44,10 +44,10 @@ export default defineConfig({
     'react-dom': 'window.ReactDOM',
   },
   // 对照 externals ，默认引入 public 中的 react，react-dom 资源【内网，专网部署考虑】
-  scripts: [
-    { src: `/${ds.appKey}/react.min.js` },
-    { src: `/${ds.appKey}/react-dom.min.js` },
-  ],
+  // scripts: [
+  //   { src: `/${ds.appKey}/react.min.js` },
+  //   { src: `/${ds.appKey}/react-dom.min.js` },
+  // ],
 
   // 按需加载，当前配置，默认所有页面按需加载
   // dynamicImport: {},
@@ -87,6 +87,6 @@ export default defineConfig({
   },
 
   // 项目配置
-  outputPath: `./dist${ds.publicPath}`,
+  outputPath: `./dist/${ds.appKey}/`,
   /*—————————— 项目属性配置 end ——————————*/
 });
