@@ -97,7 +97,7 @@ const Coms = (props: IProps) => {
     const resp = await getRequest(queryTimeDataApi, {
       data: {
         cycleType: activeType,
-        cycleDate: currentDate,
+        cyclePrefix: currentDate,
       },
     });
 
