@@ -25,8 +25,8 @@ const appKey = 'matrix';
 // 抽离配置
 const FEConfig: globalConfig = {
   title: 'Matrix',
-  favicon: `/${appKey}/favicon.png`,
-  logo: `/${appKey}/logo.png`,
+  favicon: `https://come2future-web.oss-cn-hangzhou.aliyuncs.com/dev/fe-matrix-front/matrix-front/matrix/favicon.png`,
+  logo: `https://come2future-web.oss-cn-hangzhou.aliyuncs.com/dev/fe-matrix-front/matrix-front/matrix/logo.png`,
   copyright: '2021 来未来',
 };
 
