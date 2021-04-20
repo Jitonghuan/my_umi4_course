@@ -54,7 +54,7 @@
     "white-react-use": "^2.4.0"
   },
   "devDependencies": {
-    "@hbos/umi-plugin-theme-hbos": "^0.0.6",
+    "@hbos/umi-plugin-theme-hbos": "^0.0.14",
     "@irim/cli-base": "^1.1.9",
     "@types/lodash": "^4.14.168",
     "@types/react": "^16.9.0",

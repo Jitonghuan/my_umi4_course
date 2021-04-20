@@ -9,6 +9,7 @@ type IRouteItem = {
   name: string;
   icon?: string;
   component: string;
+  routes?: IRouteItem[];
 };
 
 export const getRoutes = (
