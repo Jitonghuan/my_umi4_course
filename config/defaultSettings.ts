@@ -14,7 +14,7 @@ interface IDefaultSettings extends IConfigFromPlugins {
   /** 页面前缀 */
   pagePrefix: string;
   /** 静态资源前缀 */
-  publicPath: string;
+  publicPath?: string;
   /** 登录页面前缀配置 */
   loginPrefix: string;
 }
@@ -32,11 +32,11 @@ const FEConfig: globalConfig = {
 
 export default {
   ...FEConfig,
-
+  appKey,
   // 项目配置
   primaryColor: '#1973CC',
   loginPrefix: '/user_module',
   apiPrefix: `/v1`,
   pagePrefix: `/${appKey}`,
-  publicPath: `/${appKey}/`,
+  // publicPath: `/${appKey}/`,
 } as IDefaultSettings;
