@@ -101,7 +101,7 @@ const Coms = (props: IProps) => {
         value: el.cycleDate,
       })),
     );
-    // setCurrentTime(dataSource.length > 0 ? dataSource[0].cycleDate : undefined);
+    setCurrentTime(dataSource.length > 0 ? dataSource[0].cycleDate : undefined);
   };
 
   useEffect(() => {
@@ -120,6 +120,15 @@ const Coms = (props: IProps) => {
       queryTableData(el.type);
     });
   }, [currentTime]);
+
+  useEffect(() => {
+    setCurrentDate(
+      activeType === 'month'
+        ? moment().format('YYYY')
+        : moment().format('YYYY-MM'),
+    );
+    setCurrentTime(undefined);
+  }, [activeType]);
 
   // 模块
   const renderModule = ({
@@ -187,6 +196,8 @@ const Coms = (props: IProps) => {
             options={timeLists}
             onChange={setCurrentTime}
             placeholder="时间周期"
+            showSearch
+            allowClear
           />
         </div>
 
