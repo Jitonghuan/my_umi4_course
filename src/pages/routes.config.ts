@@ -30,6 +30,10 @@ export default [
     redirect: `${ds.pagePrefix}/order/list`,
   },
   {
+    path: `${ds.pagePrefix}/code`,
+    redirect: `${ds.pagePrefix}/code/rank`,
+  },
+  {
     path: 'application',
     name: '应用管理',
     icon: 'icon-poc_maindata',
