@@ -63,6 +63,13 @@ export default [
               '@/pages/application/application-detail/components/application-branch',
           },
           {
+            path: 'configMgr',
+            name: '配置管理',
+            hideInMenu: true,
+            component:
+              '@/pages/application/application-detail/components/config-manage',
+          },
+          {
             path: 'launchParameters',
             name: '启动参数',
             hideInMenu: true,
