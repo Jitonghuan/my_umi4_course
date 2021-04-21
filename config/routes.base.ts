@@ -9,6 +9,7 @@ type IRouteItem = {
   name: string;
   icon?: string;
   component: string;
+  routes?: IRouteItem[];
 };
 
 export const getRoutes = (
@@ -24,7 +25,7 @@ export const getRoutes = (
     path: pagePrefix,
     component: '../layouts/basic-layout/index',
     menuRoot: true,
-    routes,
+    routes: [...routes],
   },
   {
     path: '/',

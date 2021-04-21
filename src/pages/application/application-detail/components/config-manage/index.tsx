@@ -9,7 +9,7 @@ import React from 'react';
 import { Tabs, Button } from 'antd';
 import ConfigContent from './config-content';
 import { IProps } from './types';
-//  import './index.less';
+import './index.less';
 
 const { TabPane } = Tabs;
 const rootCls = 'config-manage-compo';

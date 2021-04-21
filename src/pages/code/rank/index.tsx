@@ -55,7 +55,9 @@ const tableTypeEnum: IModule[] = [
  */
 const Coms = (props: IProps) => {
   const [activeType, setActiveType] = useState<'month' | 'day'>('month');
-  const [currentDate, setCurrentDate] = useState<string>();
+  const [currentDate, setCurrentDate] = useState<string>(
+    moment().format('YYYY'),
+  );
   // 时间选择列表
   const [timeLists, setTimeLists] = useState<IOption[]>([]);
   // 当前选择的具体时间
@@ -82,6 +84,26 @@ const Coms = (props: IProps) => {
     rankingType === 'app' && setAppData(data);
   };
 
+  // 查询统计时间数据
+  const queryTimeData = async () => {
+    const resp = await getRequest(queryTimeDataApi, {
+      data: {
+        cycleType: activeType,
+        cyclePrefix: currentDate,
+      },
+    });
+
+    const { dataSource = [] } = resp.data || {};
+
+    setTimeLists(
+      dataSource.map((el: ITimeItem) => ({
+        label: el.cycleDate,
+        value: el.cycleDate,
+      })),
+    );
+    setCurrentTime(dataSource.length > 0 ? dataSource[0].cycleDate : undefined);
+  };
+
   useEffect(() => {
     queryTimeData();
   }, [currentDate]);
@@ -99,25 +121,14 @@ const Coms = (props: IProps) => {
     });
   }, [currentTime]);
 
-  // 查询统计时间数据
-  const queryTimeData = async () => {
-    const resp = await getRequest(queryTimeDataApi, {
-      data: {
-        cycleType: activeType,
-        cycleDate: currentDate,
-      },
-    });
-
-    const { dataSource = [] } = resp.data || {};
-
-    setTimeLists(
-      dataSource.map((el: ITimeItem) => ({
-        label: el.cycleDate,
-        value: el.cycleDate,
-      })),
+  useEffect(() => {
+    setCurrentDate(
+      activeType === 'month'
+        ? moment().format('YYYY')
+        : moment().format('YYYY-MM'),
     );
-    // setCurrentTime(dataSource.length > 0 ? dataSource[0].cycleDate : undefined);
-  };
+    setCurrentTime(undefined);
+  }, [activeType]);
 
   // 模块
   const renderModule = ({
@@ -145,7 +156,7 @@ const Coms = (props: IProps) => {
                 );
               }}
             >
-              更多
+              详情
             </Button>
           )}
         </div>
@@ -185,6 +196,8 @@ const Coms = (props: IProps) => {
             options={timeLists}
             onChange={setCurrentTime}
             placeholder="时间周期"
+            showSearch
+            allowClear
           />
         </div>
 

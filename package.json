@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
+    "@ant-design/pro-table": "^2.34.4",
     "@cffe/fe-backend-component": "0.1.49",
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "0.2.7",
@@ -43,6 +44,7 @@
     "@cffe/vc-hulk-table": "1.0.5",
     "@cffe/vc-layout": "1.0.10",
     "@cffe/vc-loading": "1.0.2",
+    "@cffe/vc-request": "1.0.9",
     "@umijs/hooks": "^1.9.3",
     "@umijs/preset-react": "1.x",
     "ahooks": "^2.10.0",
@@ -53,7 +55,7 @@
     "white-react-use": "^2.4.0"
   },
   "devDependencies": {
-    "@hbos/umi-plugin-theme-hbos": "^0.0.6",
+    "@hbos/umi-plugin-theme-hbos": "^0.0.14",
     "@irim/cli-base": "^1.1.9",
     "@types/lodash": "^4.14.168",
     "@types/react": "^16.9.0",
@@ -68,5 +70,6 @@
     "typescript": "^4.1.2",
     "typescript-require": "^0.3.0",
     "yorkie": "^2.0.0"
-  }
+  },
+  "__npminstall_done": false
 }

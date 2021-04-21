@@ -11,7 +11,15 @@ type IRouteItem = {
 export default [
   {
     path: ds.pagePrefix,
-    redirect: `${ds.pagePrefix}/index`,
+    redirect: `${ds.pagePrefix}/application`,
+  },
+  {
+    path: `${ds.pagePrefix}/index`,
+    redirect: `${ds.pagePrefix}/application`,
+  },
+  {
+    path: `${ds.pagePrefix}/application`,
+    redirect: `${ds.pagePrefix}/application/all`,
   },
   {
     path: `${ds.pagePrefix}/publish`,
@@ -20,6 +28,10 @@ export default [
   {
     path: `${ds.pagePrefix}/order`,
     redirect: `${ds.pagePrefix}/order/list`,
+  },
+  {
+    path: `${ds.pagePrefix}/code`,
+    redirect: `${ds.pagePrefix}/code/rank`,
   },
   {
     path: 'application',
@@ -46,7 +58,8 @@ export default [
             path: 'overview',
             name: '概述',
             hideInMenu: true,
-            component: '@/pages/application/application-overview',
+            component:
+              '@/pages/application/application-detail/components/application-overview',
           },
           {
             path: 'appDeploy',
@@ -60,7 +73,14 @@ export default [
             name: '分支',
             hideInMenu: true,
             component:
-              '@/pages/application/application-detail/components/application-branch',
+              '@/pages/application/application-detail/components/branch-manage',
+          },
+          {
+            path: 'configMgr',
+            name: '配置管理',
+            hideInMenu: true,
+            component:
+              '@/pages/application/application-detail/components/config-manage',
           },
           {
             path: 'launchParameters',
