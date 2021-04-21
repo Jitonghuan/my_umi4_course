@@ -145,9 +145,35 @@ export const configAdd = (params: {
   /** 环境参数---需要调用基础服务接口获取 */
   env: string;
   /** 配置的类型 boot启动参数，app应用配置 */
-  type: string;
+  type: 'boot' | 'app';
 }) =>
   postRequest(`${ds.apiPrefix}/appManage/config/add`, {
+    data: params,
+  });
+
+/** 新增多个配置 */
+export const configMultiAdd = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 环境参数---需要调用基础服务接口获取 */
+  env: string;
+  /** 配置的类型 boot启动参数，app应用配置 */
+  type: 'boot' | 'app';
+  /** 多个配置 */
+  configs: Array<{
+    /** 应用CODE */
+    appCode: string;
+    /** 环境参数---需要调用基础服务接口获取 */
+    env: string;
+    /** 配置的类型 boot启动参数，app应用配置 */
+    type: 'boot' | 'app';
+    /** 配置项的KEY */
+    key: string;
+    /** 配置项的Value */
+    value: string;
+  }>;
+}) =>
+  postRequest(`${ds.apiPrefix}/appManage/config/multiAdd`, {
     data: params,
   });
 
@@ -162,7 +188,7 @@ export const configUpdate = (params: {
   /** 配置项的Value */
   value: string;
   /** 配置的类型 boot启动参数，app应用配置 */
-  type: string;
+  type: 'boot' | 'app';
 }) =>
   request(`${ds.apiPrefix}/appManage/config/update`, {
     method: 'PUT',
@@ -177,7 +203,7 @@ export const configUpload = (params: {
   /** 环境参数---需要调用基础服务接口获取 */
   env: string;
   /** 配置的类型 boot启动参数，app应用配置 */
-  type: string;
+  type: 'boot' | 'app';
 }) =>
   postRequest(`${ds.apiPrefix}/appManage/config/upload`, {
     data: params,

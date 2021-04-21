@@ -23,7 +23,7 @@ const titleMap: { [P in IProps['type']]: string } = {
 };
 
 const EditConfig = (props: IProps) => {
-  const { formValue, type, env } = props;
+  const { formValue, type, env, appCode, configType } = props;
 
   const [loading, setLoading] = useState(false);
 
@@ -55,14 +55,19 @@ const EditConfig = (props: IProps) => {
             setLoading(true);
 
             if (type === 'edit') {
-              // TODO type、appCode
               promise = configUpdate({
                 id: formValue?.id!,
+                type: configType,
+                appCode,
                 ...val,
               });
             } else if (type === 'add') {
-              // TODO type、appCode
-              promise = configAdd({ ...val, env });
+              promise = configAdd({
+                env,
+                type: configType,
+                appCode,
+                ...val,
+              });
             }
 
             promise

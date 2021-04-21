@@ -46,7 +46,7 @@ const ApplicationOverview = (props: IProps) => {
       id: Number(id),
       pageIndex: 1,
       pageSize: 10,
-    }).then((res) => {
+    }).then((res: any) => {
       if (res.list.length) {
         setAppData(res.list[0]);
         return;

@@ -1,24 +1,24 @@
 /**
- * LaunchParameters
- * @description 启动参数
+ * AddConfigParameters
+ * @description
  * @author moting.nq
  * @create 2021-04-14 14:16
  */
 
 import React, { useState } from 'react';
-import { Button, Table } from 'antd';
+import { Button, Table, message } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
 import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
-import { createApp } from './service';
+import { configMultiAdd } from '../../../service';
 import { IProps, DataSourceType } from './types';
 import './index.less';
 
-const rootCls = 'launch-parameters-compo';
+const rootCls = 'add-config-parameters-compo';
 
-const LaunchParameters = (props: IProps) => {
+const AddConfigParameters = ({ env, appCode }: IProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
 
@@ -84,13 +84,24 @@ const LaunchParameters = (props: IProps) => {
         <Button
           type="primary"
           onClick={() => {
-            // TODO 去除 id
-            createApp({}).then((res) => {
+            configMultiAdd({
+              appCode,
+              env,
+              type: 'boot',
+              configs: dataSource
+                .filter((item) => item.key && item.value)
+                .map((item) => ({
+                  env,
+                  appCode,
+                  type: 'boot',
+                  ...(item as any),
+                })),
+            }).then((res: any) => {
               if (res.success) {
-                // TODO
+                message.success('操作成功');
                 return;
               }
-              // TODO
+              message.error(res.errorMsg);
             });
           }}
         >
@@ -108,6 +119,6 @@ const LaunchParameters = (props: IProps) => {
   );
 };
 
-LaunchParameters.defaultProps = {};
+AddConfigParameters.defaultProps = {};
 
-export default LaunchParameters;
+export default AddConfigParameters;

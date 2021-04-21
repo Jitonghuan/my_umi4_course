@@ -32,16 +32,16 @@ const ApplicationDetail = (props: IProps) => {
     () =>
       Object.keys(tabsConfig).find(
         (key) => location.pathname === `${detailPath}/${key}`,
-      ) || defaultTab,
+      ),
     [location.pathname],
   );
 
   // 默认重定向到【概述】路由下
   if (location.pathname === detailPath) {
     history.replace({
-      pathname: `${location.pathname}/${tabActiveKey}`,
+      pathname: `${location.pathname}/${defaultTab}`,
       query: {
-        id: location.query?.id,
+        ...location.query,
       },
     });
     return null;
@@ -55,28 +55,33 @@ const ApplicationDetail = (props: IProps) => {
       pathname={location.pathname}
       isFlex
     >
-      <Tabs
-        tabBarStyle={{
-          padding: '0 24px',
-          background: '#fff',
-        }}
-        className={`${rootCls}__tabs`}
-        activeKey={tabActiveKey}
-        onChange={(key) => {
-          history.replace({
-            pathname: `${detailPath}/${key}`,
-            query: {
-              id: location.query?.id,
-            },
-          });
-        }}
-      >
-        {Object.keys(tabsConfig).map((key) => (
-          <TabPane tab={tabsConfig[key]} key={key}>
-            {children}
-          </TabPane>
-        ))}
-      </Tabs>
+      {/* tab子路由 */}
+      {tabActiveKey && (
+        <Tabs
+          tabBarStyle={{
+            padding: '0 24px',
+            background: '#fff',
+          }}
+          className={`${rootCls}__tabs`}
+          activeKey={tabActiveKey}
+          onChange={(key) => {
+            history.replace({
+              pathname: `${detailPath}/${key}`,
+              query: {
+                ...location.query,
+              },
+            });
+          }}
+        >
+          {Object.keys(tabsConfig).map((key) => (
+            <TabPane tab={tabsConfig[key]} key={key}>
+              {null}
+            </TabPane>
+          ))}
+        </Tabs>
+      )}
+
+      {children}
     </VCPageContent>
   );
 };

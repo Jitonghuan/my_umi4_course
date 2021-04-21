@@ -21,8 +21,8 @@ const ImportConfig = (props: IProps) => {
     },
     data: {
       env: props.env,
-      appCode: '',
-      type: '',
+      appCode: props.appCode,
+      type: props.configType,
     },
     onChange: (info: any) => {
       if (info.file.status !== 'done') {

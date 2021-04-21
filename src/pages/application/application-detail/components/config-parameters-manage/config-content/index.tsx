@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useRef } from 'react';
+import { history } from 'umi';
 import { useEffectOnce, useListData } from 'white-react-use';
 import { Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
@@ -24,17 +25,7 @@ import './index.less';
 
 const rootCls = 'config-content-compo';
 
-const ConfigContent = ({ env }: IProps) => {
-  // TODO appCode 哪里来
-
-  // 查询参数缓存
-  const searchParams = useRef<{
-    env: IProps['env'];
-    [key: string]: string | number;
-  }>({
-    env,
-  });
-
+const ConfigContent = ({ env, configType, appCode }: IProps) => {
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const [importCfgVisible, setImportCfgVisible] = useState(false);
   const [editCfgData, setEditCfgData] = useState<{
@@ -61,13 +52,18 @@ const ConfigContent = ({ env }: IProps) => {
   });
 
   useEffectOnce(() => {
-    queryConfigList({ env });
+    queryConfigList({
+      env,
+      type: configType,
+    });
   });
 
   return (
     <div className={rootCls}>
       <ImportConfig
         env={env}
+        configType={configType}
+        appCode={appCode}
         visible={importCfgVisible}
         onClose={() => setImportCfgVisible(false)}
         onSubmit={() => {
@@ -81,6 +77,8 @@ const ConfigContent = ({ env }: IProps) => {
 
       <EditConfig
         env={env}
+        configType={configType}
+        appCode={appCode}
         type={editCfgData.type}
         formValue={editCfgData.curRecord}
         visible={editCfgData.visible}
@@ -109,7 +107,6 @@ const ConfigContent = ({ env }: IProps) => {
           submitText="查询"
           onFinish={(values) => {
             if (tableProps.loading) return;
-            searchParams.current = values;
             queryConfigList({
               pageIndex: 1,
               ...values,
@@ -127,9 +124,14 @@ const ConfigContent = ({ env }: IProps) => {
           </Button>
           <Button
             onClick={() => {
-              setEditCfgData({
-                type: 'add',
-                visible: true,
+              history.push({
+                pathname:
+                  configType === 'app' ? 'addConfig' : 'addLaunchParameters',
+                query: {
+                  env,
+                  type: configType,
+                  appCode,
+                },
               });
             }}
           >
