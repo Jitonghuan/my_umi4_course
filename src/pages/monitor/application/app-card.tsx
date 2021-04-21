@@ -1,5 +1,5 @@
-import React from 'react';
-import { Radio, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Radio, Button, message } from 'antd';
 import {
   EchartsReact,
   colorUtil,
@@ -7,6 +7,7 @@ import {
 } from '@cffe/fe-datav-components';
 import { RedoOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { IEchartsReactProps } from '@cffe/fe-datav-components/es/components/charts/echarts-react';
+import { postRequest } from '@/utils/request';
 
 const { ColorContainer } = colorUtil.context;
 
@@ -20,11 +21,20 @@ export interface IProps {
   getOption?: (xAxis: string[], dataSource: any[]) => { [key: string]: any };
 
   /** 接口调用 */
-  api?: string;
+  api: string;
+
+  /** 接口请求的外部参数 */
+  requestParams?: { [key: string]: any };
+
+  /** 是否有瞬时值、累计值按钮 */
+  hasRadio?: boolean;
+
+  /** 瞬时值、累计值的初始值 */
+  initialRadio?: string;
 }
 
 const typeEnum = [
-  { label: '限时值', value: '1' },
+  { label: '瞬时值', value: '1' },
   { label: '累计值', value: '2' },
 ];
 
@@ -34,19 +44,53 @@ const typeEnum = [
  * @create 2021-04-14 15:40
  */
 const Coms = (props: IProps) => {
-  const { title, getOption = () => {} } = props;
+  console.log(props.hasRadio);
+  const {
+    title,
+    getOption = () => {},
+    hasRadio = false,
+    initialRadio = '1',
+    api = '',
+    requestParams = {},
+  } = props;
+  const [curtRadio, setCurtRadio] = useState<string>(initialRadio || '1');
+  const [curOptions, setCurOptions] = useState<any>({});
 
-  const curOptions: any = getOption(
-    [
-      '2020-12-12 11:11',
-      '2020-12-12 11:11',
-      '2020-12-12 11:11',
-      '2020-12-12 11:11',
-      '2020-12-12 11:11',
-      '2020-12-12 11:11',
-    ],
-    [100, 200, 300, 120, 320],
-  );
+  const queryDatas = () => {
+    const param = {
+      ...requestParams,
+      ...(hasRadio ? { radio: curtRadio } : {}),
+    };
+    postRequest(api, {
+      data: param,
+    })
+      .then((resp) => {
+        const xAxis = [
+          '2020-12-12 11:11',
+          '2020-12-12 11:11',
+          '2020-12-12 11:11',
+          '2020-12-12 11:11',
+          '2020-12-12 11:11',
+          '2020-12-12 11:11',
+        ];
+        const _source = [
+          [1, 2, 2, 1, 3, 2, 1],
+          [200, 4, 2, 5, 3, 2, 1],
+        ];
+        setCurOptions(getOption(xAxis, _source));
+      })
+      .catch((err) => {
+        message.error(err.errMessage || `${api}请求失败`);
+      });
+  };
+
+  useEffect(() => {
+    if (requestParams?.envCode && requestParams?.appCode) {
+      queryDatas();
+    }
+  }, [JSON.stringify(requestParams)]);
+
+  console.log(hasRadio);
 
   return (
     <div className="monitor-app-card">
@@ -56,13 +100,19 @@ const Coms = (props: IProps) => {
         <span>
           <RedoOutlined className="app-operate-icon" />
           <FullscreenOutlined className="app-operate-icon" />
-          <Radio.Group size="small">
-            {typeEnum.map((el) => (
-              <Radio.Button className="app-operate-switch" value={el.value}>
-                {el.label}
-              </Radio.Button>
-            ))}
-          </Radio.Group>
+          {hasRadio && (
+            <Radio.Group
+              size="small"
+              value={curtRadio}
+              onChange={(ev) => setCurtRadio(ev.target.value)}
+            >
+              {typeEnum.map((el) => (
+                <Radio.Button className="app-operate-switch" value={el.value}>
+                  {el.label}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          )}
         </span>
       </div>
       <div className="app-content">

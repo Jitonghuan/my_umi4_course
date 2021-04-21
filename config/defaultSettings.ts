@@ -38,5 +38,4 @@ export default {
   loginPrefix: '/user_module',
   apiPrefix: `/v1`,
   pagePrefix: `/${appKey}`,
-  // publicPath: `/${appKey}/`,
 } as IDefaultSettings;
