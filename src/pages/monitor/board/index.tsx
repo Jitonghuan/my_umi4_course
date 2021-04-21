@@ -222,7 +222,7 @@ const Coms = (props: IProps) => {
               {
                 value: (100 - percentNum).toFixed(2),
                 name: '空闲',
-                itemStyle: { color: '#F0F2F5' },
+                itemStyle: { color: '#ddd' },
               },
             ],
           },
@@ -291,7 +291,7 @@ const Coms = (props: IProps) => {
         <div className="monitor-tabs-content">
           <Spin spinning={resLoading}>
             <h3 className="monitor-tabs-content-title">
-              资源使用情况
+              集群资源概览
               <RedoOutlined
                 className="monitor-tabs-content-title-btns"
                 onClick={handleRefresh}
@@ -304,7 +304,7 @@ const Coms = (props: IProps) => {
             </div>
           </Spin>
 
-          <h3 className="monitor-tabs-content-title">节点使用率</h3>
+          <h3 className="monitor-tabs-content-title">节点资源明细</h3>
           <div className="monitor-tabs-content-sec">
             <HulkTable
               rowKey="id"
