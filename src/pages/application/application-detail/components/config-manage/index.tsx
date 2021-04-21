@@ -25,16 +25,16 @@ const ConfigManage = (props: IProps) => {
         tabBarStyle={{ background: '#E6EBF5' }}
       >
         <TabPane tab="DEV" key="DEV">
-          <ConfigContent />
+          <ConfigContent env="DEV" />
         </TabPane>
         <TabPane tab="TEST" key="TEST">
-          <ConfigContent />
+          <ConfigContent env="TEST" />
         </TabPane>
         <TabPane tab="POC" key="POC">
-          <ConfigContent />
+          <ConfigContent env="POC" />
         </TabPane>
         <TabPane tab="PRD" key="PRD">
-          <ConfigContent />
+          <ConfigContent env="PRD" />
         </TabPane>
       </Tabs>
     </div>

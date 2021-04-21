@@ -1,4 +1,4 @@
-import { postRequest, getRequest } from '@/utils/request';
+import request, { postRequest, getRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 
 /** 查询应用列表 */
@@ -43,9 +43,11 @@ export const queryBranchListUrl = `${ds.apiPrefix}/releaseManage/branch/list`;
 export const deleteBranch = (params: {
   /** id */
   id: number;
-  // TODO DELETE 方法
 }) =>
-  postRequest(`${ds.apiPrefix}/releaseManage/branch/delete`, { data: params });
+  request(`${ds.apiPrefix}/releaseManage/branch/delete`, {
+    method: 'DELETE',
+    data: params,
+  });
 
 /** 新增feature分支 */
 export const createFeatureBranch = (params: {
@@ -84,5 +86,99 @@ export const updateAppMember = (params: {
   autoTestOwner?: string;
   /** 报警接收 */
   alterReceiver?: string;
-  // TODO PUT 请求
-}) => getRequest(`${ds.apiPrefix}/appManage/member/update`, { data: params });
+}) =>
+  request(`${ds.apiPrefix}/appManage/member/update`, {
+    method: 'PUT',
+    data: params,
+  });
+
+/** 查看最新版本的配置 */
+export const queryConfigListUrl = `${ds.apiPrefix}/appManage/config/listLatest`;
+export const queryConfigList = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 配置项的KEY */
+  key?: string;
+  /** TODO 需要这个查询参数 配置项的Value */
+  value?: string;
+  /** TODO 这个参数用来干嘛的？配置的类型 boot启动参数，app应用配置 */
+  type?: string;
+  /** 环境参数 */
+  env?: string;
+  /** 分页索引 */
+  pageIndex: number;
+  /** 分页大小 */
+  pageSize: number;
+}) =>
+  getRequest(queryConfigListUrl, { data: params }).then((res: any) => {
+    if (res.success) {
+      return {
+        list: res.data?.dataSource?.configs || [],
+        ...res.data?.pageInfo,
+      };
+    }
+
+    return { list: [] };
+  });
+
+/** 删除单个配置 */
+export const deleteConfig = (id: number) =>
+  request(`${ds.apiPrefix}/appManage/config/delete/${id}`, {
+    method: 'DELETE',
+  });
+
+/** 删除多个配置 */
+export const deleteMultipleConfig = (params: { ids: number[] }) =>
+  request(`${ds.apiPrefix}/appManage/config/multiDelete`, {
+    method: 'DELETE',
+    data: params,
+  });
+
+/** 新增单个配置 */
+export const configAdd = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 配置项的KEY */
+  key: string;
+  /** 配置项的Value */
+  value: string;
+  /** 环境参数---需要调用基础服务接口获取 */
+  env: string;
+  /** 配置的类型 boot启动参数，app应用配置 */
+  type: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/appManage/config/add`, {
+    data: params,
+  });
+
+/** 编辑单个配置 */
+export const configUpdate = (params: {
+  /** id */
+  id: number;
+  /** 应用CODE */
+  appCode: string;
+  /** 配置项的KEY */
+  key: string;
+  /** 配置项的Value */
+  value: string;
+  /** 配置的类型 boot启动参数，app应用配置 */
+  type: string;
+}) =>
+  request(`${ds.apiPrefix}/appManage/config/update`, {
+    method: 'PUT',
+    data: params,
+  });
+
+/** 导入配置 */
+export const configUploadUrl = `${ds.apiPrefix}/appManage/config/upload`;
+export const configUpload = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 环境参数---需要调用基础服务接口获取 */
+  env: string;
+  /** 配置的类型 boot启动参数，app应用配置 */
+  type: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/appManage/config/upload`, {
+    data: params,
+  });

@@ -6,15 +6,36 @@
  */
 
 import React, { useState } from 'react';
-import { Modal, Input, Spin, message } from 'antd';
-import { BasicForm } from '@cffe/fe-backend-component';
-import createSchema from './create-schema';
-import { createApp, updateApp } from '../../service';
+import { Modal, Button, Spin, message, Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { configUploadUrl } from '../../../../../service';
 import { IProps } from './types';
 // import './index.less';
 
 const ImportConfig = (props: IProps) => {
-  const [loading, setLoading] = useState(false);
+  const uploadProps = {
+    name: 'filename',
+    action: configUploadUrl,
+    headers: {
+      // authorization: 'authorization-text',
+    },
+    data: {
+      env: props.env,
+      appCode: '',
+      type: '',
+    },
+    onChange: (info: any) => {
+      if (info.file.status !== 'done') {
+        return;
+      }
+      if (info.file.status === 'done' && info.file.response?.success) {
+        message.success('上传成功');
+        props.onSubmit();
+      } else {
+        message.error('上传失败');
+      }
+    },
+  };
 
   return (
     <Modal
@@ -25,28 +46,12 @@ const ImportConfig = (props: IProps) => {
       onCancel={props.onClose}
       footer={null}
     >
-      <Spin spinning={loading}>
-        <BasicForm
-          {...(createSchema() as any)}
-          isShowReset
-          resetText="取消"
-          onReset={props.onClose}
-          onFinish={(val) => {
-            setLoading(true);
-
-            // TODO
-            createApp(val)
-              .then((res: any) => {
-                if (res.success) {
-                  props?.onSubmit();
-                  return;
-                }
-                message.error(res.errorMsg);
-              })
-              .finally(() => setLoading(false));
-          }}
-        />
-      </Spin>
+      <div style={{ display: 'flex' }}>
+        <span>配置文件：</span>
+        <Upload {...uploadProps}>
+          <Button icon={<UploadOutlined />}>点击上传配置文件</Button>
+        </Upload>
+      </div>
     </Modal>
   );
 };
