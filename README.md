@@ -21,12 +21,12 @@ $ npm run start:mock
 Start with SSO
 ```
 # 配置Host
-127.0.0.1 matrix-test.cfuture.shop
+127.0.0.1 matrix-local.cfuture.shop
 
 # monitor 启动【fe  monitor】，配置转发规则 http://127.0.0.1:30323/#/code 中源码编辑补充下面代码
 
 {
-    "server_name": "matrix-test.cfuture.shop",
+    "server_name": "matrix-local.cfuture.shop",
     "proxy": {
         "/matrix/**": {
             "type": "web",
@@ -52,7 +52,7 @@ Start with SSO
     }
 }
 
-# 启动 matrix 服务， 访问 http://matrix-test.cfuture.shop
+# 启动 matrix 服务， 访问 http://matrix-local.cfuture.shop
 
 ```
 
