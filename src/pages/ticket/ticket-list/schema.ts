@@ -45,6 +45,14 @@ export const getFilterFormSchema = (typeEuumData: any[]) => ({
         ],
       },
     },
+    {
+      type: 'Input',
+      props: {
+        label: '工单查询',
+        name: 'ticketCode',
+        required: false,
+      },
+    },
   ],
 });
 
@@ -166,7 +174,7 @@ export const getTicketCreateSchema = ({
       type: 'Custom',
       props: {
         label: '申请表',
-        name: 'applyTable',
+        name: 'filename',
         required: false,
         custom: 'applyTable',
         url: doUploadUrl,

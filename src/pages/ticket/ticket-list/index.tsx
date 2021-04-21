@@ -10,12 +10,9 @@ import { PlusOutlined } from '@ant-design/icons';
 
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
+import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import MatrixPageContent from '@/components/matrix-page-content';
 import ApplyUpload from './apply-upload';
-import FEContext from '@/layouts/basic-layout/FeContext';
 
 import { queryTicketData, queryTicketType, doCreateTicket } from '../service';
 import {
@@ -37,10 +34,8 @@ type IOption = { label: string; value: string; children?: IOption[] };
  * @create 2021-04-06 15:15
  */
 const Coms = (props: any) => {
-  const { location } = props;
-  const feContent = useContext(FEContext);
-  const { belongData = [], businessData = [] } = feContent;
-
+  const [belongData, setBelongData] = useState<IOption[]>([]);
+  const [lineData, setLineData] = useState<IOption[]>([]);
   // 工单创建表单对象
   const [createFormRef] = Form.useForm();
 
@@ -49,7 +44,6 @@ const Coms = (props: any) => {
   // 申请项枚举
   const [applyTypeEnum, setApplyTypeEnum] = useState<IOption[]>([]);
 
-  const [tableData, setTableData] = useState<any[]>([]);
   const [visible, setVisible] = useState(false);
   const [filter, setFilter] = useState<any>({});
 
@@ -60,12 +54,26 @@ const Coms = (props: any) => {
   const queryEnumData = async () => {
     const resp = await getRequest(queryTicketType);
     const { data = {} } = resp;
+    const { belong = [], line = [], ...rest } = data || {};
+
+    setBelongData(
+      belong.map((el: string) => ({
+        label: el,
+        value: el,
+      })),
+    );
+    setLineData(
+      line.map((el: string) => ({
+        label: el,
+        value: el,
+      })),
+    );
 
     // 类型枚举
-    const typeLists = Object.keys(data).map((el) => ({
+    const typeLists = Object.keys(rest).map((el) => ({
       label: el,
       value: el,
-      children: data[el].map((ele: string) => ({
+      children: rest[el].map((ele: string) => ({
         label: ele,
         value: ele,
       })),
@@ -78,6 +86,9 @@ const Coms = (props: any) => {
   const { run: queryTicketLists, tableProps, reset } = usePaginated({
     requestUrl: queryTicketData,
     requestMethod: 'GET',
+    initPageInfo: {
+      pageSize: 20,
+    },
     pagination: {
       showSizeChanger: true,
       showTotal: ((total: string) => `总共 ${total} 条数据`) as any,
@@ -87,6 +98,7 @@ const Coms = (props: any) => {
   // 过滤操作
   const handleFilter = useCallback(
     (vals) => {
+      reset();
       setFilter({
         ...filter,
         ...vals,
@@ -97,10 +109,10 @@ const Coms = (props: any) => {
 
   // 创建工单
   const handleCreateTicket = async (vals: any) => {
-    const { envs, ticketSubTypes, ...rest } = vals;
+    const { belongs, ticketSubTypes, ...rest } = vals;
     const params = {
       ...rest,
-      envs: JSON.stringify(envs),
+      belongs: JSON.stringify(belongs),
       ticketSubTypes: JSON.stringify(ticketSubTypes),
     };
 
@@ -134,19 +146,14 @@ const Coms = (props: any) => {
     return getTicketCreateSchema({
       typeEuumData: typeEnum,
       belongEnumData: belongData, // 环境用的是归属数据
-      businessEnumData: businessData,
+      businessEnumData: lineData,
       applyEnumData: applyTypeEnum,
       isShowUpload: isShowApplyUpload,
     });
-  }, [belongData, businessData, typeEnum, applyTypeEnum, isShowApplyUpload]);
+  }, [belongData, lineData, typeEnum, applyTypeEnum, isShowApplyUpload]);
 
   return (
-    <VCPageContent
-      height="calc(100vh - 118px)"
-      breadcrumbMap={feContent.breadcrumbMap}
-      pathname={location.pathname}
-      isFlex
-    >
+    <MatrixPageContent isFlex>
       <FilterCard>
         <InlineForm
           className="ticket-filter-form"
@@ -201,7 +208,7 @@ const Coms = (props: any) => {
           onFinish={handleCreateTicket}
         />
       </Drawer>
-    </VCPageContent>
+    </MatrixPageContent>
   );
 };
 

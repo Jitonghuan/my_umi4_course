@@ -1,12 +1,11 @@
-import {
-  BusGetRequest,
-  BusPostRequest,
-  BusRequest,
-} from '@cffe/fe-backend-component';
+import { sso } from '@cffe/vc-request';
 
 // 默认使用组件库对针对后台项目登录模式设计的接口调用方案
-const request = BusRequest;
-export const getRequest = BusGetRequest;
-export const postRequest = BusPostRequest;
+const request = sso.request;
+export const getRequest = sso.get;
+export const postRequest = sso.post;
+
+export const queryUserInfo = sso.queryUserInfo;
+export const doLogout = sso.doLogout;
 
 export default request;
