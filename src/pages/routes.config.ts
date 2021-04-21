@@ -58,7 +58,8 @@ export default [
             path: 'overview',
             name: '概述',
             hideInMenu: true,
-            component: '@/pages/application/application-overview',
+            component:
+              '@/pages/application/application-detail/components/application-overview',
           },
           {
             path: 'appDeploy',

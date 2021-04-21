@@ -59,3 +59,30 @@ export const createFeatureBranch = (params: {
   postRequest(`${ds.apiPrefix}/releaseManage/branch/createFeature`, {
     data: params,
   });
+
+/** 查询应用成员 */
+export const queryAppMember = (params: {
+  /** 应用CODE */
+  appCode?: string;
+}) => getRequest(`${ds.apiPrefix}/appManage/member/list`, { data: params });
+
+/** 编辑应用成员 */
+export const updateAppMember = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 应用Owner */
+  owner?: string;
+  /** 开发负责人 */
+  developerOwner?: string;
+  /** 发布负责人 */
+  deployOwner?: string;
+  /** code reviewer */
+  codeReviewer?: string;
+  /** 测试负责 */
+  testOwner?: string;
+  /** 自动化测试负责人 */
+  autoTestOwner?: string;
+  /** 报警接收 */
+  alterReceiver?: string;
+  // TODO PUT 请求
+}) => getRequest(`${ds.apiPrefix}/appManage/member/update`, { data: params });

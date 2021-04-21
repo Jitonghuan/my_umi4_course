@@ -14,8 +14,8 @@ import VCPageContent, {
 import UpdateApplication, {
   AppDataTypes,
 } from '@/components/create-application';
-import ModifyMember from './modify-member';
-import { queryApps } from '../service';
+import ModifyMember, { MemberTypes } from './modify-member';
+import { queryApps, queryAppMember } from '../../../service';
 import { IProps } from './types';
 import './index.less';
 
@@ -38,10 +38,10 @@ const ApplicationOverview = (props: IProps) => {
   const [isModifyApp, setIsModifyApp] = useState(false);
   const [appData, setAppData] = useState<AppDataTypes>();
   const [isModifyMember, setIsModifyMember] = useState(false);
-  const [memberData, setMemberData] = useState();
+  const [memberData, setMemberData] = useState<MemberTypes>();
 
-  useEffect(() => {
-    if (!id) return;
+  // 请求应用数据
+  const queryAppData = () => {
     queryApps({
       id: Number(id),
       pageIndex: 1,
@@ -53,7 +53,24 @@ const ApplicationOverview = (props: IProps) => {
       }
       setAppData(undefined);
     });
+  };
+
+  // 请求应用成员数据
+  const queryMemberData = () => {
+    queryAppMember({ appCode: appData?.appCode }).then((res) => {
+      setMemberData(res.data || {});
+    });
+  };
+
+  useEffect(() => {
+    if (!id) return;
+    queryAppData();
   }, [id]);
+
+  useEffect(() => {
+    if (!appData?.appCode) return;
+    queryMemberData();
+  }, [appData?.appCode]);
 
   return (
     <ContentCard className={rootCls}>
@@ -101,25 +118,27 @@ const ApplicationOverview = (props: IProps) => {
       >
         {/* 没有转交功能 */}
         <Descriptions.Item label="应用Owner">
-          <Tag>七号</Tag>
+          {memberData?.owner && <Tag>{memberData?.owner}</Tag>}
         </Descriptions.Item>
         <Descriptions.Item label="开发负责人">
-          <Tag>七号</Tag>
+          {memberData?.developerOwner && (
+            <Tag>{memberData?.developerOwner}</Tag>
+          )}
         </Descriptions.Item>
         <Descriptions.Item label="发布负责人">
-          <Tag>七号</Tag>
+          {memberData?.deployOwner && <Tag>{memberData?.deployOwner}</Tag>}
         </Descriptions.Item>
         <Descriptions.Item label="CodeReviewer">
-          <Tag>七号</Tag>
+          {memberData?.codeReviewer && <Tag>{memberData?.codeReviewer}</Tag>}
         </Descriptions.Item>
         <Descriptions.Item label="测试负责人">
-          <Tag>七号</Tag>
+          {memberData?.testOwner && <Tag>{memberData?.testOwner}</Tag>}
         </Descriptions.Item>
         <Descriptions.Item label="自动化测试人员">
-          <Tag>七号</Tag>
+          {memberData?.autoTestOwner && <Tag>{memberData?.autoTestOwner}</Tag>}
         </Descriptions.Item>
         <Descriptions.Item label="报警接收人">
-          <Tag>七号</Tag>
+          {memberData?.alterReceiver && <Tag>{memberData?.alterReceiver}</Tag>}
         </Descriptions.Item>
       </Descriptions>
 
@@ -129,8 +148,9 @@ const ApplicationOverview = (props: IProps) => {
         onClose={() => setIsModifyApp(false)}
         onSubmit={() => {
           // 保存成功后，关闭抽屉，重新请求应用数据
-          // queryAppData();
+          queryAppData();
           setIsModifyApp(false);
+          queryMemberData();
         }}
       />
 
@@ -140,7 +160,7 @@ const ApplicationOverview = (props: IProps) => {
         onClose={() => setIsModifyMember(false)}
         onSubmit={() => {
           // 保存成功后，关闭抽屉，重新请求成员数据
-          // queryAppData();
+          queryMemberData();
           setIsModifyMember(false);
         }}
       />
