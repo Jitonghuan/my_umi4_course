@@ -70,6 +70,9 @@ const Coms = (props: IProps) => {
   const { run: queryTableData, tableProps } = usePaginated({
     requestUrl: queryDetailTableDataApi,
     requestMethod: 'GET',
+    initPageInfo: {
+      pageSize: 20,
+    },
     pagination: {
       showTotal: (total) => `共 ${total} 条数据`,
     },
