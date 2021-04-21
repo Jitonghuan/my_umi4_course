@@ -11,7 +11,15 @@ type IRouteItem = {
 export default [
   {
     path: ds.pagePrefix,
-    redirect: `${ds.pagePrefix}/index`,
+    redirect: `${ds.pagePrefix}/application`,
+  },
+  {
+    path: `${ds.pagePrefix}/index`,
+    redirect: `${ds.pagePrefix}/application`,
+  },
+  {
+    path: `${ds.pagePrefix}/application`,
+    redirect: `${ds.pagePrefix}/application/all`,
   },
   {
     path: `${ds.pagePrefix}/publish`,
@@ -20,6 +28,10 @@ export default [
   {
     path: `${ds.pagePrefix}/order`,
     redirect: `${ds.pagePrefix}/order/list`,
+  },
+  {
+    path: `${ds.pagePrefix}/code`,
+    redirect: `${ds.pagePrefix}/code/rank`,
   },
   {
     path: 'application',

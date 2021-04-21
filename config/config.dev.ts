@@ -2,5 +2,9 @@ import { defineConfig } from 'umi';
 import ds from './defaultSettings';
 
 export default defineConfig({
-  publicPath: ds.publicPath,
+  scripts: [
+    { src: `/${ds.appKey}/react.min.js` },
+    { src: `/${ds.appKey}/react-dom.min.js` },
+  ],
+  publicPath: `/${ds.appKey}/`,
 });

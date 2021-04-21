@@ -97,7 +97,7 @@ const Coms = (props: IProps) => {
     const resp = await getRequest(queryTimeDataApi, {
       data: {
         cycleType: activeType,
-        cycleDate: currentDate,
+        cyclePrefix: currentDate,
       },
     });
 
@@ -125,8 +125,11 @@ const Coms = (props: IProps) => {
       { dataIndex: 'statisticsCycle', width: 50, title: '统计周期' },
       {
         dataIndex: 'statisticsKey',
-        width: type === 'commitNo' ? 50 : 150,
-        title: '提交人/文件',
+        width: countType === 'commitNo' ? 50 : 150,
+        title:
+          (countType === 'commitNo' && '提交人') ||
+          (countType === 'filePath' && '文件') ||
+          '提交人/文件',
         copyable: true,
         showTooltip: true,
         ellipsis: true,
@@ -143,6 +146,15 @@ const Coms = (props: IProps) => {
       </div>
     );
   };
+
+  useEffect(() => {
+    setCurrentDate(
+      activeType === 'month'
+        ? moment().format('YYYY')
+        : moment().format('YYYY-MM'),
+    );
+    setCurrentTime(undefined);
+  }, [activeType]);
 
   return (
     <MatrixPageContent>
@@ -180,6 +192,8 @@ const Coms = (props: IProps) => {
             options={timeLists}
             onChange={setCurrentTime}
             placeholder="时间周期"
+            showSearch
+            allowClear
           />
         </div>
 
