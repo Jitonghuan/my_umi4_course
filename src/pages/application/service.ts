@@ -1,9 +1,7 @@
 import { postRequest, getRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 
-/**
- * 查询应用列表
- */
+/** 查询应用列表 */
 export const queryAppsUrl = `${ds.apiPrefix}/appManage/list`;
 
 /** 查询应用列表 */
@@ -36,4 +34,28 @@ export const queryApps = (params: {
     }
 
     return { list: [] };
+  });
+
+/** 分支列表 */
+export const queryBranchListUrl = `${ds.apiPrefix}/releaseManage/branch/list`;
+
+/** 作废分支 */
+export const deleteBranch = (params: {
+  /** id */
+  id: number;
+  // TODO DELETE 方法
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/branch/delete`, { data: params });
+
+/** 新增feature分支 */
+export const createFeatureBranch = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 分支的自定义名称 固定前缀feature_ */
+  branchName: string;
+  /** 描述 */
+  desc: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/branch/createFeature`, {
+    data: params,
   });

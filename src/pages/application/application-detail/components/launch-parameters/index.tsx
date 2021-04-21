@@ -7,7 +7,6 @@
 
 import React, { useState } from 'react';
 import { Button, Table } from 'antd';
-import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import VCPageContent, {
   FilterCard,
@@ -39,20 +38,12 @@ const LaunchParameters = (props: IProps) => {
         }}
         columns={[
           {
-            title: 'ID',
-            dataIndex: 'id',
-            formItemProps: () => ({
-              rules: [{ required: true, message: '此项为必填项' }],
-            }),
-            width: '30%',
-          },
-          {
             title: 'Key',
             dataIndex: 'key',
           },
           {
-            title: '涉及业务范围',
-            dataIndex: 'area',
+            title: 'Value',
+            dataIndex: 'value',
           },
           {
             title: '操作',
@@ -93,7 +84,7 @@ const LaunchParameters = (props: IProps) => {
         <Button
           type="primary"
           onClick={() => {
-            // TODO
+            // TODO 去除 id
             createApp({}).then((res) => {
               if (res.success) {
                 // TODO
