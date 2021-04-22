@@ -39,7 +39,10 @@ const EditConfig = (props: IProps) => {
           onFinish={(val) => {
             setLoading(true);
 
-            createFeatureBranch(val)
+            createFeatureBranch({
+              appCode: props.appCode,
+              ...val,
+            })
               .then((res: any) => {
                 if (res.success) {
                   props?.onSubmit();
