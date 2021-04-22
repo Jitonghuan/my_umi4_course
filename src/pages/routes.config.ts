@@ -80,14 +80,26 @@ export default [
             name: '配置管理',
             hideInMenu: true,
             component:
-              '@/pages/application/application-detail/components/config-manage',
+              '@/pages/application/application-detail/components/config-parameters-manage',
           },
           {
             path: 'launchParameters',
             name: '启动参数',
             hideInMenu: true,
             component:
-              '@/pages/application/application-detail/components/launch-parameters',
+              '@/pages/application/application-detail/components/config-parameters-manage',
+          },
+          {
+            path: 'addConfig',
+            name: '新增配置',
+            component:
+              '@/pages/application/application-detail/components/add-config-parameters',
+          },
+          {
+            path: 'addLaunchParameters',
+            name: '新增启动参数',
+            component:
+              '@/pages/application/application-detail/components/add-config-parameters',
           },
         ],
       },

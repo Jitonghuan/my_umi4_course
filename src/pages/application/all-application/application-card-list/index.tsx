@@ -33,6 +33,7 @@ const ApplicationCardList = (props: IProps) => {
                 pathname: 'detail',
                 query: {
                   id: `${item.id}`,
+                  appCode: item.appCode,
                 },
               })
             }

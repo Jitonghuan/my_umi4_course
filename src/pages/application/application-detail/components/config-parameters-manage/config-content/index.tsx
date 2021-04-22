@@ -5,22 +5,27 @@
  * @create 2021-04-19 18:29
  */
 
-import React, { useState } from 'react';
-import { useEffectOnce } from 'white-react-use';
+import React, { useState, useRef } from 'react';
+import { history } from 'umi';
+import { useEffectOnce, useListData } from 'white-react-use';
 import { Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
 import { createFilterFormSchema, createTableSchema } from './schema';
-import { queryPublishContentList, createApp } from '../service';
+import {
+  queryConfigListUrl,
+  deleteConfig,
+  deleteMultipleConfig,
+} from '../../../../service';
 import { IProps } from './types';
 import { ConfigData } from '../types';
 import './index.less';
 
 const rootCls = 'config-content-compo';
 
-const ConfigContent = (props: IProps) => {
+const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const [importCfgVisible, setImportCfgVisible] = useState(false);
   const [editCfgData, setEditCfgData] = useState<{
@@ -33,9 +38,13 @@ const ConfigContent = (props: IProps) => {
   });
 
   // 查询数据
-  const { run: queryContentList, tableProps } = usePaginated({
-    requestUrl: queryPublishContentList,
+  const { run: queryConfigList, tableProps, reset } = usePaginated({
+    requestUrl: queryConfigListUrl,
     requestMethod: 'GET',
+    formatResult: (res) => ({
+      dataSource: res.data?.dataSource?.configs || [],
+      pageInfo: res.data?.pageInfo || {},
+    }),
     pagination: {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
@@ -43,24 +52,33 @@ const ConfigContent = (props: IProps) => {
   });
 
   useEffectOnce(() => {
-    queryContentList();
+    queryConfigList({
+      env,
+      type: configType,
+    });
   });
 
   return (
     <div className={rootCls}>
       <ImportConfig
+        env={env}
+        configType={configType}
+        appCode={appCode}
         visible={importCfgVisible}
         onClose={() => setImportCfgVisible(false)}
         onSubmit={() => {
           setImportCfgVisible(false);
           // 提交成功后，重新请求数据
-          queryContentList({
+          queryConfigList({
             pageIndex: 1,
           });
         }}
       />
 
       <EditConfig
+        env={env}
+        configType={configType}
+        appCode={appCode}
         type={editCfgData.type}
         formValue={editCfgData.curRecord}
         visible={editCfgData.visible}
@@ -78,18 +96,18 @@ const ConfigContent = (props: IProps) => {
             curRecord: undefined,
           });
           // 提交成功后，重新请求数据
-          queryContentList();
+          queryConfigList();
         }}
       />
 
       <div className={`${rootCls}__filter`}>
         <InlineForm
           className={`${rootCls}__filter-form`}
-          {...(createFilterFormSchema({}) as any)}
+          {...(createFilterFormSchema() as any)}
           submitText="查询"
           onFinish={(values) => {
             if (tableProps.loading) return;
-            queryContentList({
+            queryConfigList({
               pageIndex: 1,
               ...values,
             });
@@ -106,9 +124,15 @@ const ConfigContent = (props: IProps) => {
           </Button>
           <Button
             onClick={() => {
-              setEditCfgData({
-                type: 'add',
-                visible: true,
+              history.push({
+                pathname:
+                  configType === 'app' ? 'addConfig' : 'addLaunchParameters',
+                query: {
+                  env,
+                  type: configType,
+                  appCode,
+                  id: appId,
+                },
               });
             }}
           >
@@ -117,10 +141,9 @@ const ConfigContent = (props: IProps) => {
           <Popconfirm
             title="确定要删除选中项吗？"
             onConfirm={() => {
-              // TODO
-              createApp({ keys: selectedKeys } as any).then((res: any) => {
+              deleteMultipleConfig({ ids: selectedKeys }).then((res: any) => {
                 if (res.success) {
-                  queryContentList();
+                  queryConfigList();
                   return;
                 }
                 message.error(res.errorMsg);
@@ -164,10 +187,9 @@ const ConfigContent = (props: IProps) => {
                   curRecord: record,
                 });
               } else if (type === 'delete') {
-                // TODO
-                createApp({ keys: [record.id] } as any).then((res: any) => {
+                deleteConfig(record.id).then((res: any) => {
                   if (res.success) {
-                    queryContentList();
+                    queryConfigList();
                     return;
                   }
                   message.error(res.errorMsg);

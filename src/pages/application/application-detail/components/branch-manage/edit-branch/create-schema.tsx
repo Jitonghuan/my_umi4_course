@@ -6,15 +6,6 @@ export default () => ({
     {
       type: 'Input',
       props: {
-        label: '应用Code',
-        name: 'appCode',
-        required: true,
-        placeholder: '请输入应用Code',
-      },
-    },
-    {
-      type: 'Input',
-      props: {
         label: '分支名称',
         name: 'appName',
         required: true,

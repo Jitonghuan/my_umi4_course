@@ -72,4 +72,20 @@ export default {
       gmtModify: '2021-04-08T15:22:56.695418+08:00',
     },
   },
+  // 成员
+  [`GET /v1/appManage/member/list`]: {
+    code: 1000,
+    success: true,
+    errorMsg: '',
+    data: {
+      id: 1,
+      appCode: 'gmc',
+      owner: 'gmc',
+      belongName: '医共体',
+      createUser: '王安楠',
+      modifyUser: '王安楠',
+      gmtCreate: '2021-04-08T15:22:56.695415+08:00',
+      gmtModify: '2021-04-08T15:22:56.695418+08:00',
+    },
+  },
 };
