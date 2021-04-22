@@ -43,6 +43,10 @@ export const createTableSchema = ({
     dataIndex: 'gmtCreate',
   },
   {
+    title: '已部署环境',
+    dataIndex: 'deployedEnv',
+  },
+  {
     title: '创建人',
     dataIndex: 'createUser',
   },

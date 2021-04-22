@@ -19,7 +19,11 @@ import { rootCls } from './constants';
 import { IProps } from './types';
 import './index.less';
 
-const BranchManage = (props: IProps) => {
+const BranchManage = ({
+  location: {
+    query: { appCode, id },
+  },
+}: IProps) => {
   const [createBranchVisible, setCreateBranchVisible] = useState(false);
 
   // 查询数据
@@ -33,12 +37,13 @@ const BranchManage = (props: IProps) => {
   });
 
   useEffectOnce(() => {
-    queryBranchList();
+    queryBranchList({ appCode });
   });
 
   return (
     <>
       <EditBranch
+        appCode={appCode}
         visible={createBranchVisible}
         onSubmit={() => {
           setCreateBranchVisible(false);
@@ -81,7 +86,7 @@ const BranchManage = (props: IProps) => {
           columns={
             createTableSchema({
               onCancelClick: (record, index) => {
-                deleteBranch({ id: record.id }).then((res) => {
+                deleteBranch({ id: record.id }).then((res: any) => {
                   if (res.success) {
                     message.success('操作成功');
                     queryBranchList();
