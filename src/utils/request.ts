@@ -1,10 +1,10 @@
 import { message } from 'antd';
 import { sso } from '@cffe/vc-request';
-import { IRequestParams } from '@cffe/vc-request/es/service';
+import { IRequestParams, IResponse } from '@cffe/vc-request/es/service';
 
 // 默认使用组件库对针对后台项目登录模式设计的接口调用方案
 const request = async (url: string, params?: IRequestParams | undefined) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<IResponse>((resolve, reject) => {
     sso.request(url, params).then((resp) => {
       if (!resp.success) {
         message.error(resp.errorMsg);
@@ -22,7 +22,7 @@ export const postRequest = async (
   url: string,
   params?: IRequestParams | undefined,
 ) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<IResponse>((resolve, reject) => {
     sso.post(url, params).then((resp) => {
       if (!resp.success) {
         message.error(resp.errorMsg);
