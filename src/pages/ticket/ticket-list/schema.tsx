@@ -1,4 +1,9 @@
+import React from 'react';
 import { doUploadUrl } from '../service';
+import { ISchemaItem } from '@cffe/fe-backend-component/es/components/SchemaForm/type';
+
+// 默认选中类型
+export const defaultChooseType = '运维权限申请';
 
 // 过滤表单 schema
 export const getFilterFormSchema = (typeEuumData: any[]) => ({
@@ -48,7 +53,8 @@ export const getFilterFormSchema = (typeEuumData: any[]) => ({
     {
       type: 'Input',
       props: {
-        label: '工单查询',
+        label: '单号查询',
+        placeholder: '请输入工单号',
         name: 'ticketCode',
         required: false,
       },
@@ -59,7 +65,7 @@ export const getFilterFormSchema = (typeEuumData: any[]) => ({
 // 表格 schema
 export const tableSchema = [
   {
-    title: '编号',
+    title: '工单号',
     dataIndex: 'ticketCode',
     width: 100,
   },
@@ -110,19 +116,20 @@ export const tableSchema = [
 
 // 新增工单
 export const getTicketCreateSchema = ({
-  typeEuumData,
-  belongEnumData,
-  businessEnumData,
-  applyEnumData,
+  typeEuumData = [],
+  belongEnumData = [],
+  businessEnumData = [],
+  applyEnumData = [],
   isShowUpload = false,
 }: any) => {
-  const baseSchema: any[] = [
+  const baseSchema: (ISchemaItem | any)[] = [
     {
       type: 'Radio',
       props: {
         label: '类型',
         name: 'ticketType',
         required: true,
+        initialValue: defaultChooseType,
         options: typeEuumData,
       },
     },
@@ -191,3 +198,12 @@ export const getTicketCreateSchema = ({
 
   return baseColumns;
 };
+
+export const notifyData: string[] = [
+  'DMS账号 申请来未来阿里云账号',
+  '天台生产相关（RDS/EDAS/MQ）申请天台阿里云账号',
+  '巍山生产相关（RDS/EDAS/MQ）申请巍山阿里云账号',
+  'Jumpserver、Rancher 请先用ldap账号登录一次平台再申请权限',
+  'Rancher、VPN、JumpServer 的申请归属选来未来即可，并选择相应业务线',
+  '钉钉审批结束后的申请结果会以邮件的形式发送至你的企业邮箱',
+];

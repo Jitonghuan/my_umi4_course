@@ -6,7 +6,7 @@ import React, {
   useContext,
 } from 'react';
 import { Form, message, Select, Input, Drawer, Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
@@ -19,6 +19,8 @@ import {
   getFilterFormSchema,
   tableSchema,
   getTicketCreateSchema,
+  defaultChooseType,
+  notifyData,
 } from './schema';
 
 import './index.less';
@@ -80,6 +82,9 @@ const Coms = (props: any) => {
     }));
 
     setTypeEnum(typeLists);
+
+    const filter = typeLists.find((el) => el.value === defaultChooseType);
+    setApplyTypeEnum(filter && filter.children ? filter.children : []);
   };
 
   // 查询数据
@@ -160,6 +165,7 @@ const Coms = (props: any) => {
           {...(getFilterFormSchema(typeEnum) as any)}
           isShowReset
           onFinish={handleFilter}
+          submitText="查询"
           onReset={() => {
             reset();
             setFilter({});
@@ -181,7 +187,10 @@ const Coms = (props: any) => {
       <Drawer
         title="创建工单"
         visible={visible}
-        onClose={() => setVisible(false)}
+        onClose={() => {
+          setVisible(false);
+          createFormRef.resetFields();
+        }}
         width={800}
       >
         <BasicForm
@@ -202,11 +211,23 @@ const Coms = (props: any) => {
               setApplyTypeEnum(
                 filter && filter.children ? filter.children : [],
               );
-              setisShowApplyUpload(value === '运维权限申请');
+              setisShowApplyUpload(value === '资源申请');
             }
           }}
           onFinish={handleCreateTicket}
         />
+
+        <div className="ticket-notify">
+          <h3>
+            <InfoCircleOutlined className="ticket-notify-icon" />
+            运维权限申请友情提示
+          </h3>
+          <ul>
+            {notifyData.map((el) => (
+              <li>{el}</li>
+            ))}
+          </ul>
+        </div>
       </Drawer>
     </MatrixPageContent>
   );

@@ -6,16 +6,14 @@ import { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/b
 import ds from '@config/defaultSettings';
 import DocumentTitle from './DocumentTitle';
 import FeContext from './FeContext';
-import {
-  doLogoutApi,
-  queryBelongData,
-  queryUserInfoApi,
-  queryAllSystem,
-  queryBizData,
-  queryEnvData,
-} from './service';
+import { queryBelongData, queryBizData, queryEnvData } from './service';
 import { DFSFunc } from '@/utils';
-import { getRequest } from '@/utils/request';
+import {
+  getRequest,
+  queryUserInfo as ssoQueryUserInfo,
+  queryUserInfoApi,
+  doLogoutApi,
+} from '@/utils/request';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
 
@@ -84,13 +82,21 @@ export default (props: IUmiRrops) => {
     );
   };
 
+  // 获取用户信息
+  const queryUserInfo = async () => {
+    const resp = await ssoQueryUserInfo();
+
+    console.log(resp);
+  };
+
   const [{ width }] = useSize(
     () => document.querySelector(`.vc-layout-inner`) as HTMLElement,
   );
   const effectResize = useDebounce(width, 100);
 
   useEffect(() => {
-    queryBusinessData();
+    // queryUserInfo();
+    // queryBusinessData();
   }, []);
 
   return (
@@ -113,20 +119,22 @@ export default (props: IUmiRrops) => {
             title={FeGlobalRef.current.title}
             favicon={FeGlobalRef.current.favicon}
           >
-            <FELayout.BusLayout
+            <FELayout.SSOLayout
               {...(props as any)}
               {...ds}
-              isOpenLogin={false}
+              // isOpenLogin={false}
               showFooter={false}
               // 全局插入配置覆盖默认配置
               {...FeGlobalRef.current}
               siderMenuProps={{
                 scriptUrl: 'http://at.alicdn.com/t/font_2486191_7mbr5t0adq8.js',
               }}
-              headerProps={{ isShowGlobalMenu: false }}
+              headerProps={{
+                isShowGlobalMenu: false,
+              }}
               userApi={queryUserInfoApi}
               logoutApi={doLogoutApi}
-              systemApi={queryAllSystem}
+              // loginUrl={}
             />
           </DocumentTitle>
         </ChartsContext.Provider>
