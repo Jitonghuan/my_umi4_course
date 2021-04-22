@@ -6,7 +6,7 @@ import React, {
   useState,
   useContext,
 } from 'react';
-import { message, Select, Tree, Input, Button } from 'antd';
+import { Empty, message, Select, Tree, Input, Button } from 'antd';
 import { history } from 'umi';
 import _ from 'lodash';
 
@@ -35,11 +35,10 @@ const Coms = (props: any) => {
   const { location } = props;
   const feContent = useContext(FEContext);
   const { belongData = [], envData = [] } = feContent || {};
+  console.log('belongData', belongData);
 
   // 业务线数据
-  const [belong, setBelong] = useState<string>(
-    belongData?.length > 0 ? belongData[0].value : 'gmc',
-  );
+  const [belong, setBelong] = useState<string>('gmc');
   // 左侧用例集数据
   const [treeLoading, setTreeLoading] = useState<boolean>(false);
   const [treeData, setTreeData] = useState<IMenuItem[]>([]);
@@ -157,7 +156,9 @@ const Coms = (props: any) => {
 
   useEffect(() => {
     // 业务线切换
-    queryTreeData();
+    if (!!belong) {
+      queryTreeData();
+    }
   }, [belong]);
 
   useEffect(() => {
@@ -195,7 +196,7 @@ const Coms = (props: any) => {
         initialValue: belong,
       },
     ] as IColumns[];
-  }, []);
+  }, [belongData, belong]);
 
   // 表格相关重置, 翻页重置，搜索重置，表格选中重置
   const handleResetTable = () => {
@@ -232,7 +233,7 @@ const Coms = (props: any) => {
       <div className="test-page-content">
         <div className="test-page-content-sider">
           {treeLoading && <PageLoading mode="module" text={null} />}
-          {treeData.length > 0 && (
+          {treeData.length > 0 ? (
             <Tree
               selectedKeys={treeSelectKeys}
               className="hide-file-icon"
@@ -246,6 +247,8 @@ const Coms = (props: any) => {
                 }
               }}
             />
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
           )}
         </div>
 

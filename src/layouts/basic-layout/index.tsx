@@ -20,17 +20,13 @@ import { useSize, useDebounce } from '@umijs/hooks';
 export default (props: IUmiRrops) => {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
   // 所属数据
-  const [belongData, setBelongData] = useState<IOption[]>([
-    { label: 'gmc', value: 'gmc' },
-  ]);
+  const [belongData, setBelongData] = useState<IOption[]>([]);
 
   // 业务线
   const [business, setBusiness] = useState<IOption[]>([]);
 
   // 环境
-  const [envData, setEnvData] = useState<IOption[]>([
-    { label: 'test', value: 'test' },
-  ]);
+  const [envData, setEnvData] = useState<IOption[]>([]);
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -111,23 +107,26 @@ export default (props: IUmiRrops) => {
             title={FeGlobalRef.current.title}
             favicon={FeGlobalRef.current.favicon}
           >
-            <FELayout.SSOLayout
-              {...(props as any)}
-              {...ds}
-              // isOpenLogin={false}
-              showFooter={false}
-              // 全局插入配置覆盖默认配置
-              {...FeGlobalRef.current}
-              siderMenuProps={{
-                scriptUrl: 'http://at.alicdn.com/t/font_2486191_7mbr5t0adq8.js',
-              }}
-              headerProps={{
-                isShowGlobalMenu: false,
-              }}
-              userApi={queryUserInfoApi}
-              logoutApi={doLogoutApi}
-              // loginUrl={}
-            />
+            {belongData.length > 0 && (
+              <FELayout.SSOLayout
+                {...(props as any)}
+                {...ds}
+                // isOpenLogin={false}
+                showFooter={false}
+                // 全局插入配置覆盖默认配置
+                {...FeGlobalRef.current}
+                siderMenuProps={{
+                  scriptUrl:
+                    'http://at.alicdn.com/t/font_2486191_7mbr5t0adq8.js',
+                }}
+                headerProps={{
+                  isShowGlobalMenu: false,
+                }}
+                userApi={queryUserInfoApi}
+                logoutApi={doLogoutApi}
+                // loginUrl={}
+              />
+            )}
           </DocumentTitle>
         </ChartsContext.Provider>
       </FeContext.Provider>
