@@ -42,10 +42,9 @@ export default {
       dataSource: [
         {
           id: 1,
-          lineCode: 'cis',
-          sysCode: 'cis',
-          sysName: 'cis',
-          belong: 'g3a',
+          envCode: 'dev',
+          envName: '开发环境',
+          belongId: 'g3a',
           createUser: '王安楠',
           modifyUser: '王安楠',
           gmtCreate: '2021-04-08T15:22:56.695415+08:00',
@@ -53,10 +52,9 @@ export default {
         },
         {
           id: 2,
-          lineCode: 'cis',
-          sysCode: 'cis',
-          sysName: 'cis',
-          belong: 'g3a',
+          envCode: 'test',
+          envName: '测试环境',
+          belongId: 'g3a',
           createUser: '王安楠',
           modifyUser: '王安楠',
           gmtCreate: '2021-04-08T15:22:56.695415+08:00',

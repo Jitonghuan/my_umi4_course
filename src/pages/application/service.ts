@@ -101,7 +101,7 @@ export const queryConfigList = (params: {
   key?: string;
   /** TODO 需要这个查询参数 配置项的Value */
   value?: string;
-  /** TODO 这个参数用来干嘛的？配置的类型 boot启动参数，app应用配置 */
+  /** 配置的类型 boot启动参数，app应用配置 */
   type?: string;
   /** 环境参数 */
   env?: string;

@@ -5,8 +5,9 @@
  * @create 2021-04-15 09:33
  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Tabs, Button } from 'antd';
+import FeContext from '@/layouts/basic-layout/FeContext';
 import DeployContent from './deploy-content';
 import { IProps } from './types';
 import './index.less';
@@ -15,6 +16,8 @@ const { TabPane } = Tabs;
 const rootCls = 'app-deploy-compo';
 
 const ApplicationDeploy = (props: IProps) => {
+  const { envData } = useContext(FeContext);
+
   return (
     <div className={rootCls}>
       <Tabs
@@ -24,18 +27,11 @@ const ApplicationDeploy = (props: IProps) => {
         type="card"
         tabBarStyle={{ background: '#E6EBF5' }}
       >
-        <TabPane tab="DEV" key="DEV">
-          <DeployContent />
-        </TabPane>
-        <TabPane tab="TEST" key="TEST">
-          <DeployContent />
-        </TabPane>
-        <TabPane tab="POC" key="POC">
-          <DeployContent />
-        </TabPane>
-        <TabPane tab="PRD" key="PRD">
-          <DeployContent />
-        </TabPane>
+        {envData?.map((item) => (
+          <TabPane tab={item.envCode} key={item.envCode}>
+            <DeployContent />
+          </TabPane>
+        ))}
       </Tabs>
     </div>
   );

@@ -5,8 +5,9 @@
  * @create 2021-04-19 18:26
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { Tabs, Button } from 'antd';
+import FeContext from '@/layouts/basic-layout/FeContext';
 import ConfigContent from './config-content';
 import { IProps } from './types';
 import './index.less';
@@ -21,9 +22,11 @@ const typeMap = {
 const ConfigParametersManage = ({
   location: {
     pathname,
-    query: { id, appCode },
+    query: { id: appId, appCode },
   },
 }: IProps) => {
+  const { envData } = useContext(FeContext);
+
   const configType = useMemo(() => {
     const paths = pathname.split('/');
     const name = paths[paths.length - 1];
@@ -41,18 +44,16 @@ const ConfigParametersManage = ({
         type="card"
         tabBarStyle={{ background: '#E6EBF5' }}
       >
-        <TabPane tab="DEV" key="DEV">
-          <ConfigContent env="DEV" configType={configType} appCode={appCode} />
-        </TabPane>
-        <TabPane tab="TEST" key="TEST">
-          <ConfigContent env="TEST" configType={configType} appCode={appCode} />
-        </TabPane>
-        <TabPane tab="POC" key="POC">
-          <ConfigContent env="POC" configType={configType} appCode={appCode} />
-        </TabPane>
-        <TabPane tab="PRD" key="PRD">
-          <ConfigContent env="PRD" configType={configType} appCode={appCode} />
-        </TabPane>
+        {envData?.map((item) => (
+          <TabPane tab={item.envCode} key={item.envCode}>
+            <ConfigContent
+              env={item.envCode}
+              configType={configType}
+              appCode={appCode}
+              appId={appId}
+            />
+          </TabPane>
+        ))}
       </Tabs>
     </div>
   );

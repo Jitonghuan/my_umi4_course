@@ -53,4 +53,38 @@ export default {
       },
     },
   },
+  // 查看最新版本的配置
+  [`POST /v1/appManage/config/multiAdd`]: {
+    success: true,
+    code: 1000,
+    errorMsg: '',
+    data: [
+      {
+        id: 7,
+        key: 'test1',
+        value: 'this is for test1',
+        appCode: 'cops-appmanagement',
+        type: 'boot',
+        env: 'dev',
+        configVersions: null,
+        createUser: '王安楠',
+        modifyUser: '王安楠',
+        gmtCreate: '2021-04-08T15:31:30.412948+08:00',
+        gmtModify: '2021-04-08T15:31:30.41295+08:00',
+      },
+      {
+        id: 8,
+        key: 'test2',
+        value: 'this is for test2',
+        appCode: 'cops-appmanagement',
+        type: 'boot',
+        env: 'dev',
+        configVersions: null,
+        createUser: '王安楠',
+        modifyUser: '王安楠',
+        gmtCreate: '2021-04-08T15:31:30.430379+08:00',
+        gmtModify: '2021-04-08T15:31:30.430382+08:00',
+      },
+    ],
+  },
 };

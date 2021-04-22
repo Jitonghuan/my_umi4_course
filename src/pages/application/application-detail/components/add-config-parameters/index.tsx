@@ -5,22 +5,39 @@
  * @create 2021-04-14 14:16
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Table, message } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
 import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
-import { configMultiAdd } from '../../../service';
+import { configMultiAdd, queryConfigList } from '../../../service';
 import { IProps, DataSourceType } from './types';
 import './index.less';
 
 const rootCls = 'add-config-parameters-compo';
 
-const AddConfigParameters = ({ env, appCode }: IProps) => {
+const AddConfigParameters = ({
+  location: {
+    query: { appCode, env, type },
+  },
+}: IProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+
+  useEffect(() => {
+    // 获取最新的配置
+    queryConfigList({
+      appCode,
+      type,
+      env,
+      pageIndex: 1,
+      pageSize: 100,
+    }).then((res: any) => {
+      setDataSource(res?.list || []);
+    });
+  }, []);
 
   return (
     <ContentCard className={rootCls}>
@@ -87,18 +104,20 @@ const AddConfigParameters = ({ env, appCode }: IProps) => {
             configMultiAdd({
               appCode,
               env,
-              type: 'boot',
+              type,
               configs: dataSource
                 .filter((item) => item.key && item.value)
                 .map((item) => ({
                   env,
                   appCode,
-                  type: 'boot',
-                  ...(item as any),
+                  type,
+                  key: item.key!,
+                  value: item.value!,
                 })),
             }).then((res: any) => {
               if (res.success) {
                 message.success('操作成功');
+                history.back();
                 return;
               }
               message.error(res.errorMsg);
@@ -109,7 +128,7 @@ const AddConfigParameters = ({ env, appCode }: IProps) => {
         </Button>
         <Button
           onClick={() => {
-            // TODO 取消是什么操作
+            history.back();
           }}
         >
           取消

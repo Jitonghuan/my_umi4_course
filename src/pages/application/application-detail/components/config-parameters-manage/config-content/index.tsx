@@ -25,7 +25,7 @@ import './index.less';
 
 const rootCls = 'config-content-compo';
 
-const ConfigContent = ({ env, configType, appCode }: IProps) => {
+const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const [importCfgVisible, setImportCfgVisible] = useState(false);
   const [editCfgData, setEditCfgData] = useState<{
@@ -131,6 +131,7 @@ const ConfigContent = ({ env, configType, appCode }: IProps) => {
                   env,
                   type: configType,
                   appCode,
+                  id: appId,
                 },
               });
             }}
