@@ -7,7 +7,7 @@ export default () => ({
       type: 'Input',
       props: {
         label: '分支名称',
-        name: 'appName',
+        name: 'branchName',
         required: true,
         placeholder: '请输入',
         addonBefore: 'feature_',
