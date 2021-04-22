@@ -82,21 +82,13 @@ export default (props: IUmiRrops) => {
     );
   };
 
-  // 获取用户信息
-  const queryUserInfo = async () => {
-    const resp = await ssoQueryUserInfo();
-
-    console.log(resp);
-  };
-
   const [{ width }] = useSize(
     () => document.querySelector(`.vc-layout-inner`) as HTMLElement,
   );
   const effectResize = useDebounce(width, 100);
 
   useEffect(() => {
-    // queryUserInfo();
-    // queryBusinessData();
+    queryBusinessData();
   }, []);
 
   return (
