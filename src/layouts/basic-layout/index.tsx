@@ -20,17 +20,13 @@ import { useSize, useDebounce } from '@umijs/hooks';
 export default (props: IUmiRrops) => {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
   // 所属数据
-  const [belongData, setBelongData] = useState<IOption[]>([
-    { label: 'gmc', value: 'gmc' },
-  ]);
+  const [belongData, setBelongData] = useState<IOption[]>([]);
 
   // 业务线
   const [business, setBusiness] = useState<IOption[]>([]);
 
   // 环境
-  const [envData, setEnvData] = useState<IOption[]>([
-    { label: 'test', value: 'test' },
-  ]);
+  const [envData, setEnvData] = useState<IOption[]>([]);
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {

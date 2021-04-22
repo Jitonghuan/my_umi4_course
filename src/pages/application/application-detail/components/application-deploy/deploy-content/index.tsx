@@ -14,7 +14,7 @@ import './index.less';
 
 const rootCls = 'deploy-content-compo';
 
-const DeployContent = (props: IProps) => {
+const DeployContent = ({ env, appCode, appId }: IProps) => {
   return (
     <div className={rootCls}>
       <PublishDetail />
