@@ -15,7 +15,11 @@ import './index.less';
 const { TabPane } = Tabs;
 const rootCls = 'app-deploy-compo';
 
-const ApplicationDeploy = (props: IProps) => {
+const ApplicationDeploy = ({
+  location: {
+    query: { appCode, id: appId },
+  },
+}: IProps) => {
   const { envData } = useContext(FeContext);
 
   return (
@@ -29,7 +33,7 @@ const ApplicationDeploy = (props: IProps) => {
       >
         {envData?.map((item) => (
           <TabPane tab={item.envCode} key={item.envCode}>
-            <DeployContent />
+            <DeployContent env={item.envCode} appCode={appCode} appId={appId} />
           </TabPane>
         ))}
       </Tabs>
