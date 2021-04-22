@@ -8,8 +8,8 @@ import { getRequest } from '@/utils/request';
 
 const queryAppListApi = `${ds.apiPrefix}/monitorManage/app/list`;
 /** 查询应用列表 */
-export const queryAppList = (params: { envCode: string }) =>
-  getRequest(queryAppListApi, { data: params }).then((res: any) => {
+export const queryAppList = () =>
+  getRequest(queryAppListApi).then((res: any) => {
     if (res.success) {
       const { data = [] } = res;
       return data.map((app: any) => {
@@ -22,8 +22,24 @@ export const queryAppList = (params: { envCode: string }) =>
     return [];
   });
 
+const queryEnvListApi = `${ds.apiPrefix}/monitorManage/env/list`;
+/** 根据应用查询环境列表 */
+export const queryEnvList = (params: { appCode: string }) =>
+  getRequest(queryEnvListApi, { data: params }).then((res: any) => {
+    if (res.success) {
+      const { data = [] } = res;
+      return data.map((env: any) => {
+        return {
+          value: env.envCode,
+          label: env.envName,
+        };
+      });
+    }
+    return [];
+  });
+
 /** 查询主机详情 */
-export const queryPodInfoApi = `${ds.apiPrefix}monitorManage/app/podInfo`;
+export const queryPodInfoApi = `${ds.apiPrefix}/monitorManage/app/podInfo`;
 
 // 应⽤GC次数
 export const queryGcCountApi = `${ds.apiPrefix}/monitorManage/app/gcCount`;

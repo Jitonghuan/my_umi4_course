@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Radio, Button, message } from 'antd';
+import { Radio, Button, message, Spin } from 'antd';
 import {
   EchartsReact,
   colorUtil,
@@ -7,7 +7,7 @@ import {
 } from '@cffe/fe-datav-components';
 import { RedoOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { IEchartsReactProps } from '@cffe/fe-datav-components/es/components/charts/echarts-react';
-import { postRequest } from '@/utils/request';
+import { getRequest } from '@/utils/request';
 
 const { ColorContainer } = colorUtil.context;
 
@@ -44,7 +44,6 @@ const typeEnum = [
  * @create 2021-04-14 15:40
  */
 const Coms = (props: IProps) => {
-  console.log(props.hasRadio);
   const {
     title,
     getOption = () => {},
@@ -53,16 +52,14 @@ const Coms = (props: IProps) => {
     api = '',
     requestParams = {},
   } = props;
+  const [loading, setLoading] = useState<boolean>(false);
   const [curtRadio, setCurtRadio] = useState<string>(initialRadio || '1');
   const [curOptions, setCurOptions] = useState<any>({});
 
   const queryDatas = () => {
-    const param = {
-      ...requestParams,
-      ...(hasRadio ? { radio: curtRadio } : {}),
-    };
-    postRequest(api, {
-      data: param,
+    setLoading(true);
+    getRequest(api, {
+      data: requestParams,
     })
       .then((resp) => {
         const xAxis = [
@@ -81,45 +78,48 @@ const Coms = (props: IProps) => {
       })
       .catch((err) => {
         message.error(err.errMessage || `${api}请求失败`);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   useEffect(() => {
-    if (requestParams?.envCode && requestParams?.appCode) {
+    if (requestParams?.envCode && requestParams?.appCode && requestParams?.ip) {
       queryDatas();
     }
   }, [JSON.stringify(requestParams)]);
 
-  console.log(hasRadio);
-
   return (
     <div className="monitor-app-card">
-      <div className="app-header">
-        <h3 className="app-title">{title}</h3>
+      <Spin spinning={loading}>
+        <div className="app-header">
+          <h3 className="app-title">{title}</h3>
 
-        <span>
-          <RedoOutlined className="app-operate-icon" />
-          <FullscreenOutlined className="app-operate-icon" />
-          {hasRadio && (
-            <Radio.Group
-              size="small"
-              value={curtRadio}
-              onChange={(ev) => setCurtRadio(ev.target.value)}
-            >
-              {typeEnum.map((el) => (
-                <Radio.Button className="app-operate-switch" value={el.value}>
-                  {el.label}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
-          )}
-        </span>
-      </div>
-      <div className="app-content">
-        <ColorContainer roleKeys={['color']}>
-          <EchartsReact option={curOptions} />
-        </ColorContainer>
-      </div>
+          <span>
+            <RedoOutlined className="app-operate-icon" />
+            <FullscreenOutlined className="app-operate-icon" />
+            {hasRadio && (
+              <Radio.Group
+                size="small"
+                value={curtRadio}
+                onChange={(ev) => setCurtRadio(ev.target.value)}
+              >
+                {typeEnum.map((el) => (
+                  <Radio.Button className="app-operate-switch" value={el.value}>
+                    {el.label}
+                  </Radio.Button>
+                ))}
+              </Radio.Group>
+            )}
+          </span>
+        </div>
+        <div className="app-content">
+          <ColorContainer roleKeys={['color']}>
+            <EchartsReact option={curOptions} />
+          </ColorContainer>
+        </div>
+      </Spin>
     </div>
   );
 };
