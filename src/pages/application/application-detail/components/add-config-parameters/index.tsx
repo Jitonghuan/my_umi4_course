@@ -1,26 +1,43 @@
 /**
- * LaunchParameters
- * @description 启动参数
+ * AddConfigParameters
+ * @description
  * @author moting.nq
  * @create 2021-04-14 14:16
  */
 
-import React, { useState } from 'react';
-import { Button, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Table, message } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
 import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
-import { createApp } from './service';
+import { configMultiAdd, queryConfigList } from '../../../service';
 import { IProps, DataSourceType } from './types';
 import './index.less';
 
-const rootCls = 'launch-parameters-compo';
+const rootCls = 'add-config-parameters-compo';
 
-const LaunchParameters = (props: IProps) => {
+const AddConfigParameters = ({
+  location: {
+    query: { appCode, env, type },
+  },
+}: IProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+
+  useEffect(() => {
+    // 获取最新的配置
+    queryConfigList({
+      appCode,
+      type,
+      env,
+      pageIndex: 1,
+      pageSize: 100,
+    }).then((res: any) => {
+      setDataSource(res?.list || []);
+    });
+  }, []);
 
   return (
     <ContentCard className={rootCls}>
@@ -84,13 +101,26 @@ const LaunchParameters = (props: IProps) => {
         <Button
           type="primary"
           onClick={() => {
-            // TODO 去除 id
-            createApp({}).then((res) => {
+            configMultiAdd({
+              appCode,
+              env,
+              type,
+              configs: dataSource
+                .filter((item) => item.key && item.value)
+                .map((item) => ({
+                  env,
+                  appCode,
+                  type,
+                  key: item.key!,
+                  value: item.value!,
+                })),
+            }).then((res: any) => {
               if (res.success) {
-                // TODO
+                message.success('操作成功');
+                history.back();
                 return;
               }
-              // TODO
+              message.error(res.errorMsg);
             });
           }}
         >
@@ -98,7 +128,7 @@ const LaunchParameters = (props: IProps) => {
         </Button>
         <Button
           onClick={() => {
-            // TODO 取消是什么操作
+            history.back();
           }}
         >
           取消
@@ -108,6 +138,6 @@ const LaunchParameters = (props: IProps) => {
   );
 };
 
-LaunchParameters.defaultProps = {};
+AddConfigParameters.defaultProps = {};
 
-export default LaunchParameters;
+export default AddConfigParameters;

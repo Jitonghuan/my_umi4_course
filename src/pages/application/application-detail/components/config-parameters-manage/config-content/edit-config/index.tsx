@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { Modal, Input, Spin, message } from 'antd';
 import { BasicForm } from '@cffe/fe-backend-component';
 import createSchema from './create-schema';
-import { createApp, updateApp } from '../../service';
+import { configAdd, configUpdate } from '../../../../../service';
 import { IProps } from './types';
 import { ConfigData } from '../../types';
 // import './index.less';
@@ -23,7 +23,7 @@ const titleMap: { [P in IProps['type']]: string } = {
 };
 
 const EditConfig = (props: IProps) => {
-  const { formValue, type } = props;
+  const { formValue, type, env, appCode, configType } = props;
 
   const [loading, setLoading] = useState(false);
 
@@ -43,6 +43,7 @@ const EditConfig = (props: IProps) => {
           customMap={{
             Textarea: Input.TextArea,
           }}
+          // TODO 查看时需要去掉提交按钮
           isShowReset
           resetText="取消"
           onReset={props.onClose}
@@ -54,12 +55,19 @@ const EditConfig = (props: IProps) => {
             setLoading(true);
 
             if (type === 'edit') {
-              promise = updateApp({
+              promise = configUpdate({
                 id: formValue?.id!,
+                type: configType,
+                appCode,
                 ...val,
               });
             } else if (type === 'add') {
-              promise = createApp(val);
+              promise = configAdd({
+                env,
+                type: configType,
+                appCode,
+                ...val,
+              });
             }
 
             promise

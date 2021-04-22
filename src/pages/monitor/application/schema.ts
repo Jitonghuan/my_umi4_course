@@ -154,15 +154,7 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
       axisLabel: {
         color: '#999',
       },
-      data: [
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-      ],
+      data: xAxis,
     },
     yAxis: [
       {
@@ -187,13 +179,13 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     series: [
       {
         name: 'FullGC次数',
-        data: [1, 2, 2, 1, 3, 2, 1],
+        data: dataSource[0],
         type: 'line',
       },
       {
         yAxisIndex: 1,
         name: 'YoungGC次数',
-        data: [200, 4, 2, 5, 3, 2, 1],
+        data: dataSource[1],
         type: 'line',
       },
     ],
