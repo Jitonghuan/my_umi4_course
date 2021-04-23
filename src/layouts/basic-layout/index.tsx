@@ -72,8 +72,8 @@ export default (props: IUmiRrops) => {
     setEnvData(
       envData.map((el: any) => ({
         ...el,
-        label: el.belongName,
-        value: el.belongCode,
+        label: el.envName,
+        value: el.envCode,
       })),
     );
   };
