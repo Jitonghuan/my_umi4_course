@@ -17,7 +17,7 @@ export interface IProps {
 const Coms = (props: IProps) => {
   return (
     <MatrixPageContent>
-      <AppTable appCode="2" />
+      <AppTable />
     </MatrixPageContent>
   );
 };

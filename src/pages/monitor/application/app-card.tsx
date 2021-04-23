@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Radio, Button, message, Spin } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Radio, Select, message, Spin, RadioChangeEvent, Drawer } from 'antd';
 import {
   EchartsReact,
   colorUtil,
@@ -8,6 +8,7 @@ import {
 import { RedoOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { IEchartsReactProps } from '@cffe/fe-datav-components/es/components/charts/echarts-react';
 import { getRequest } from '@/utils/request';
+import { RATE_ENUMS, START_TIME_ENUMS } from './app-table';
 
 const { ColorContainer } = colorUtil.context;
 
@@ -21,7 +22,7 @@ export interface IProps {
   getOption?: (xAxis: string[], dataSource: any[]) => { [key: string]: any };
 
   /** 接口调用 */
-  api: string;
+  queryFn: (params: { [key: string]: any }) => Promise<any>;
 
   /** 接口请求的外部参数 */
   requestParams?: { [key: string]: any };
@@ -32,6 +33,17 @@ export interface IProps {
   /** 瞬时值、累计值的初始值 */
   initialRadio?: string;
 }
+
+type IEchartResp = {
+  count: {
+    xAxis: string[];
+    dataSource: string[][];
+  };
+  sum: {
+    xAxis: string[];
+    dataSource: string[][];
+  };
+};
 
 const typeEnum = [
   { label: '瞬时值', value: '1' },
@@ -49,61 +61,180 @@ const Coms = (props: IProps) => {
     getOption = () => {},
     hasRadio = false,
     initialRadio = '1',
-    api = '',
+    queryFn,
     requestParams = {},
   } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const [curtRadio, setCurtRadio] = useState<string>(initialRadio || '1');
   const [curOptions, setCurOptions] = useState<any>({});
+  const prevData = useRef<IEchartResp>({} as IEchartResp);
+
+  // 全屏时图标数据源
+  const [fullOptions, setFullOptions] = useState<any>({});
+  const prevFullData = useRef<IEchartResp>({} as IEchartResp);
+  const [fullDrawerShow, setFullDrawerShow] = useState<boolean>(false);
+
+  const [fullRadio, setFullRadio] = useState<string>(initialRadio || '1');
+  // 请求开始时间，由当前时间往前
+  const [startTime, setStartTime] = useState<number>(
+    requestParams.startTime || 30 * 60 * 1000,
+  );
+  // 刷新频率
+  const [timeRate, setTimeRate] = useState<number>(0);
+  const timeRateInterval = useRef<NodeJS.Timeout>();
+  const [fullLoading, setFullLoading] = useState<boolean>(false);
 
   const queryDatas = () => {
+    if (
+      !requestParams?.envCode ||
+      !requestParams?.appCode ||
+      !requestParams?.ip
+    ) {
+      return;
+    }
     setLoading(true);
-    getRequest(api, {
-      data: requestParams,
+    const now = new Date().getTime();
+    queryFn({
+      data: {
+        appCode: requestParams.appCode,
+        envCode: requestParams.envCode,
+        ip: requestParams.ip,
+        start: Number((now - requestParams.startTime) / 1000),
+        end: Number(now / 1000),
+      },
     })
       .then((resp) => {
-        const xAxis = [
-          '2020-12-12 11:11',
-          '2020-12-12 11:11',
-          '2020-12-12 11:11',
-          '2020-12-12 11:11',
-          '2020-12-12 11:11',
-          '2020-12-12 11:11',
-        ];
-        const _source = [
-          [1, 2, 2, 1, 3, 2, 1],
-          [200, 4, 2, 5, 3, 2, 1],
-        ];
-        setCurOptions(getOption(xAxis, _source));
+        const resource = curtRadio === '1' ? resp.count : resp.sum;
+        const options = getOption(resource.xAxis, resource.dataSource);
+        prevData.current = resp;
+        setCurOptions(options);
       })
       .catch((err) => {
-        message.error(err.errMessage || `${api}请求失败`);
+        message.error(err?.errMessage || '');
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
+  // 全屏弹窗查询
+  const queryFullDatas = () => {
+    setFullLoading(true);
+    const now = new Date().getTime();
+    queryFn({
+      data: {
+        appCode: requestParams.appCode,
+        envCode: requestParams.envCode,
+        ip: requestParams.ip,
+        start: Number((now - startTime) / 1000).toFixed(0),
+        end: Number(now / 1000).toFixed(0),
+      },
+    })
+      .then((resp) => {
+        const resource = fullRadio === '1' ? resp.count : resp.sum;
+        const options = getOption(resource.xAxis, resource.dataSource);
+        prevFullData.current = resp;
+        setFullOptions(options);
+      })
+      .catch((err) => {
+        message.error(err?.errMessage || '');
+      })
+      .finally(() => {
+        setFullLoading(false);
+      });
+  };
+
   useEffect(() => {
+    setStartTime(requestParams.startTime);
     if (requestParams?.envCode && requestParams?.appCode && requestParams?.ip) {
       queryDatas();
+    } else if (!requestParams?.ip) {
+      setCurOptions({});
     }
   }, [JSON.stringify(requestParams)]);
+
+  const handleRadioChange = (ev: RadioChangeEvent) => {
+    const { value } = ev.target;
+    if (fullDrawerShow) {
+      const resource =
+        value === '1' ? prevFullData.current.count : prevFullData.current.sum;
+      const options = getOption(resource.xAxis, resource.dataSource);
+      setFullOptions(options);
+      setFullRadio(value);
+    } else {
+      const resource =
+        value === '1' ? prevData.current.count : prevData.current.sum;
+      const options = getOption(resource.xAxis, resource.dataSource);
+      setCurOptions(options);
+      setCurtRadio(value);
+    }
+  };
+
+  // 全屏点击事件
+  const handleFullClick = () => {
+    if (
+      !requestParams?.envCode ||
+      !requestParams?.appCode ||
+      !requestParams?.ip
+    ) {
+      return;
+    }
+    setFullRadio(curtRadio);
+    setStartTime(props.requestParams?.startTime);
+    setFullDrawerShow(true);
+  };
+
+  // 全屏弹窗关闭事件
+  const handleFullClose = () => {
+    setFullDrawerShow(false);
+    setFullOptions({});
+    setTimeRate(0);
+    setStartTime(props.requestParams?.startTime);
+    if (timeRateInterval.current) {
+      clearInterval(timeRateInterval.current);
+    }
+  };
+
+  // 刷新频率改变事件
+  const handleTimeRateChange = (value: number) => {
+    setTimeRate(value);
+    if (timeRateInterval.current) {
+      clearInterval(timeRateInterval.current);
+    }
+    if (value) {
+      timeRateInterval.current = setInterval(() => {
+        queryFullDatas();
+      }, value * 1000);
+    }
+  };
+
+  useEffect(() => {
+    if (fullDrawerShow) {
+      queryFullDatas();
+    }
+  }, [startTime, fullDrawerShow]);
 
   return (
     <div className="monitor-app-card">
       <Spin spinning={loading}>
         <div className="app-header">
           <h3 className="app-title">{title}</h3>
-
           <span>
-            <RedoOutlined className="app-operate-icon" />
-            <FullscreenOutlined className="app-operate-icon" />
+            <RedoOutlined
+              className="app-operate-icon"
+              onClick={() => {
+                queryDatas();
+              }}
+            />
+            <FullscreenOutlined
+              className="app-operate-icon"
+              onClick={handleFullClick}
+            />
             {hasRadio && (
               <Radio.Group
                 size="small"
                 value={curtRadio}
-                onChange={(ev) => setCurtRadio(ev.target.value)}
+                onChange={handleRadioChange}
               >
                 {typeEnum.map((el) => (
                   <Radio.Button className="app-operate-switch" value={el.value}>
@@ -120,6 +251,62 @@ const Coms = (props: IProps) => {
           </ColorContainer>
         </div>
       </Spin>
+
+      <Drawer
+        title={title}
+        visible={fullDrawerShow}
+        width="90%"
+        onClose={handleFullClose}
+      >
+        <Spin spinning={fullLoading} className="monitor-app-card">
+          <div style={{ textAlign: 'right' }}>
+            <Select value={startTime} onChange={(value) => setStartTime(value)}>
+              {START_TIME_ENUMS.map((time) => (
+                <Select.Option key={time.value} value={time.value}>
+                  {time.label}
+                </Select.Option>
+              ))}
+            </Select>
+            <Select value={timeRate} onChange={handleTimeRateChange}>
+              {RATE_ENUMS.map((time) => (
+                <Select.Option key={time.value} value={time.value}>
+                  {time.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+          <div className="app-header">
+            <h3 className="app-title">{title}</h3>
+            <span>
+              <RedoOutlined
+                className="app-operate-icon"
+                onClick={() => {
+                  queryFullDatas();
+                }}
+              />
+              {hasRadio && (
+                <Radio.Group
+                  size="small"
+                  value={fullRadio}
+                  onChange={handleRadioChange}
+                >
+                  {typeEnum.map((el) => (
+                    <Radio.Button
+                      className="app-operate-switch"
+                      value={el.value}
+                    >
+                      {el.label}
+                    </Radio.Button>
+                  ))}
+                </Radio.Group>
+              )}
+            </span>
+          </div>
+          <ColorContainer roleKeys={['color']}>
+            <EchartsReact option={fullOptions} style={{ height: 400 }} />
+          </ColorContainer>
+        </Spin>
+      </Drawer>
     </div>
   );
 };

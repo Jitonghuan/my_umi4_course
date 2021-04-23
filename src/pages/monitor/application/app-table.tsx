@@ -22,10 +22,10 @@ import {
 import {
   queryAppList,
   queryPodInfoApi,
-  queryGcCountApi,
-  queryGcTimeApi,
-  queryJvmHeapApi,
-  queryJvmMetaspaceApi,
+  queryGcCount,
+  queryGcTime,
+  queryJvmHeap,
+  queryJvmMetaspace,
   queryEnvList,
 } from './service';
 
@@ -53,7 +53,7 @@ const layoutGrid = {
 };
 
 // 开始时间枚举
-const START_TIME_ENUMS = [
+export const START_TIME_ENUMS = [
   {
     label: '30min',
     value: 30 * 60 * 1000,
@@ -77,9 +77,9 @@ const START_TIME_ENUMS = [
 ];
 
 // 请求频次枚举
-const RATE_ENUMS = [
+export const RATE_ENUMS = [
   {
-    label: '无',
+    label: '刷新频率',
     value: 0,
   },
   {
@@ -103,6 +103,7 @@ const RATE_ENUMS = [
  */
 const Coms = (props: IProps) => {
   const [filter, setFilter] = useState<IFilter>({} as IFilter);
+  const prevFilter = useRef<IFilter>({} as IFilter);
   const [appData, setAppData] = useState([]);
   const [envData, setEnvData] = useState([]);
   // 请求开始时间，由当前时间往前
@@ -143,12 +144,7 @@ const Coms = (props: IProps) => {
             label: '环境',
             allowClear: false,
             showSearch: false,
-            options: envData?.map((env: any) => {
-              return {
-                label: env.sysName,
-                value: env.lineCode,
-              };
-            }),
+            options: envData,
           },
         },
       ],
@@ -160,23 +156,23 @@ const Coms = (props: IProps) => {
       title: 'GC瞬时次数/每分钟',
       getOption: getGCNumChartOption,
       hasRadio: true,
-      api: queryGcCountApi,
+      queryFn: queryGcCount,
     },
     {
       title: 'GC瞬时耗时/每分钟',
       getOption: getGCTimeChartOption,
       hasRadio: true,
-      api: queryGcTimeApi,
+      queryFn: queryGcTime,
     },
     {
       title: '堆内存详情/每分钟',
       getOption: getMemoryChartOption,
-      api: queryJvmHeapApi,
+      queryFn: queryJvmHeap,
     },
     {
       title: '元空间详情/每分钟',
       getOption: getGCDataChartOption,
-      api: queryJvmMetaspaceApi,
+      queryFn: queryJvmMetaspace,
     },
   ];
 
@@ -184,35 +180,26 @@ const Coms = (props: IProps) => {
   const queryApps = () => {
     queryAppList().then((resp) => {
       setAppData(resp);
-      if (resp.length) {
-        setFilter({
-          ...filter,
-          appCode: props.appCode || resp[0].value,
-        });
-        formInstance.setFieldsValue({
-          ...filter,
-          appCode: props.appCode || resp[0].value,
-        });
-      }
+      prevFilter.current = {
+        appCode: props.appCode || (resp.length ? resp[0].value : undefined),
+      };
+      setFilter(prevFilter.current);
+      formInstance.setFieldsValue(prevFilter.current);
     });
   };
 
   // 查询环境列表
   const queryEnvs = () => {
     queryEnvList({
-      appCode: filter.appCode as string,
+      appCode: prevFilter.current?.appCode as string,
     }).then((resp) => {
       setEnvData(resp);
-      if (resp.length) {
-        setFilter({
-          ...filter,
-          envCode: resp[0].value,
-        });
-        formInstance.setFieldsValue({
-          ...filter,
-          envCode: resp[0].value,
-        });
-      }
+      prevFilter.current = {
+        ...prevFilter.current,
+        envCode: resp.length ? resp[0].value : undefined,
+      };
+      setFilter(prevFilter.current);
+      formInstance.setFieldsValue(prevFilter.current);
     });
   };
 
@@ -230,7 +217,7 @@ const Coms = (props: IProps) => {
     },
     formatResult: (resp) => {
       if (resp.data && resp.data[0]) {
-        setCurtIp(resp.data[0].ip);
+        setCurtIp(resp.data[0].hostIP);
       }
       return {
         dataSource: resp.data || [],
@@ -249,6 +236,7 @@ const Coms = (props: IProps) => {
 
   useEffect(() => {
     if (filter.appCode) {
+      setEnvData([]);
       queryEnvs();
     }
   }, [filter.appCode]);
@@ -263,10 +251,18 @@ const Coms = (props: IProps) => {
   // 过滤操作
   const handleFilter = useCallback(
     (vals) => {
-      setFilter({
-        ...filter,
-        ...vals,
-      });
+      setCurtIp('');
+      if (vals.appCode) {
+        prevFilter.current = {
+          ...vals,
+        };
+      } else {
+        prevFilter.current = {
+          ...filter,
+          ...vals,
+        };
+      }
+      setFilter(prevFilter.current);
     },
     [filter],
   );
@@ -334,10 +330,10 @@ const Coms = (props: IProps) => {
           rowKey="ip"
           size="small"
           columns={tableSchema as ColumnProps[]}
-          scroll={{ y: 300 }}
+          // scroll={{ y: 300 }}
           {...tableProps}
           customColumnMap={{
-            ip: (value: string) => {
+            hostIP: (value: string) => {
               return (
                 <span
                   style={{ cursor: 'pointer' }}
@@ -350,7 +346,9 @@ const Coms = (props: IProps) => {
           }}
         />
 
-        <h3 className="monitor-tabs-content-title">监控图表</h3>
+        <h3 className="monitor-tabs-content-title">
+          监控图表&nbsp;&nbsp;{curtIP ? `当前POD：${curtIP}` : ''}
+        </h3>
         <VCCardLayout grid={layoutGrid} className="monitor-app-content">
           {appConfig.map((el) => (
             <AppCard

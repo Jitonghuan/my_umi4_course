@@ -1,13 +1,16 @@
 // less 文件
 .monitor-app-table {
   height: 100%;
+  display: flex;
+  flex-direction: column;
   .monitor-app-body {
+    flex: 1;
     background-color: #f7f8fa;
     box-shadow: 0px 2px 6px 0px rgba(11, 68, 133, 0.4);
     overflow-y: auto;
+    margin-bottom: 54px;
 
     .ant-card-body {
-      // height: 100%;
       padding: 0 24px 24px;
     }
   }
@@ -37,7 +40,7 @@
     }
 
     .ant-select {
-      width: 150px;
+      width: 220px;
     }
 
     .monitor-filter-form {
@@ -54,39 +57,6 @@
       }
     }
   }
-
-  // app-card
-  .monitor-app-card {
-    padding: 32px;
-    background-color: #fff;
-    border-radius: 2px;
-
-    .app-header {
-      height: 24px;
-      line-height: 24px;
-      display: flex;
-      flex-direction: row;
-
-      .app-title {
-        flex: 1;
-        font-size: 14px;
-      }
-
-      .app-operate-icon {
-        margin-right: 16px;
-      }
-
-      .app-operate-switch {
-        font-size: 12px;
-      }
-    }
-
-    .app-content {
-      height: 200px;
-      padding-top: 12px;
-    }
-  }
-
   .ant-table-thead > tr > th {
     background: #f3f5fb;
     border-top: 1px solid #d2d8e6;
@@ -96,5 +66,41 @@
   .ant-table-tbody > tr > td {
     border-bottom: 1px solid #d2d8e6;
     padding: 6px 4px;
+  }
+  .ant-badge-status-dot {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+// app-card
+.monitor-app-card {
+  padding: 32px;
+  background-color: #fff;
+  border-radius: 2px;
+
+  .app-header {
+    height: 24px;
+    line-height: 24px;
+    display: flex;
+    flex-direction: row;
+
+    .app-title {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .app-operate-icon {
+      margin-right: 16px;
+    }
+
+    .app-operate-switch {
+      font-size: 12px;
+    }
+  }
+
+  .app-content {
+    height: 200px;
+    padding-top: 12px;
   }
 }

@@ -23,6 +23,14 @@ Start with SSO
 # 配置Host
 127.0.0.1 matrix-local.cfuture.shop
 
+# 获取git库 https://gitlab.cfuture.shop/fe-base/fe-monitor-web 的权限
+
+# fe环境初始化（在git bash中执行）
+1、【fe -v】查看是否安装fe-cli，未安装执行2、3，如已安装则执行4
+2、【npm install -g @cffe/fe-cli --registry=http://registry.npm.cfuture.cc】
+3、【npm install -g @cffe/fnpm --registry=http://registry.npm.cfuture.cc】
+4、【fe env init】按照指示一步一步执行
+
 # monitor 启动【fe monitor start】，配置转发规则 http://127.0.0.1:30323/#/code 中源码编辑补充下面代码
 
 {

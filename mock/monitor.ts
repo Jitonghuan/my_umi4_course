@@ -86,7 +86,7 @@ export default {
     },
   },
 
-  'GET /v1/monitorManage/app/list': {
+  'GET /v1/appManage/list': {
     success: true,
     code: 1000,
     errorMsg: '',
@@ -104,7 +104,7 @@ export default {
     ],
   },
 
-  'GET /v1/monitorManage/env/list': {
+  'GET /v1/monitorManage/app/env': {
     success: true,
     code: 1000,
     errorMsg: '',
