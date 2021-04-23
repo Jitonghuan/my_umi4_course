@@ -212,7 +212,7 @@ const Coms = (props: IProps) => {
       return {
         ...params,
         pageSize: 1000,
-        ...filter,
+        ...prevFilter.current,
       };
     },
     formatResult: (resp) => {
@@ -342,6 +342,15 @@ const Coms = (props: IProps) => {
                   {value}
                 </span>
               );
+            },
+            cpu: (value) => {
+              return `${value}%`;
+            },
+            memory: (value) => {
+              return `${value}%`;
+            },
+            disk: (value) => {
+              return `${value}%`;
             },
           }}
         />

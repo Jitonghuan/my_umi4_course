@@ -149,7 +149,8 @@ const Coms = (props: IProps) => {
     if (requestParams?.envCode && requestParams?.appCode && requestParams?.ip) {
       queryDatas();
     } else if (!requestParams?.ip) {
-      setCurOptions({});
+      prevData.current = {} as IEchartResp;
+      setCurOptions(getOption([], []));
     }
   }, [JSON.stringify(requestParams)]);
 
@@ -162,10 +163,14 @@ const Coms = (props: IProps) => {
       setFullOptions(options);
       setFullRadio(value);
     } else {
-      const resource =
-        value === '1' ? prevData.current.count : prevData.current.sum;
-      const options = getOption(resource.xAxis, resource.dataSource);
-      setCurOptions(options);
+      if (prevData.current?.count) {
+        const resource =
+          value === '1' ? prevData.current.count : prevData.current.sum;
+        const options = getOption(resource.xAxis, resource.dataSource);
+        setCurOptions(options);
+      } else {
+        setCurOptions(getOption([], []));
+      }
       setCurtRadio(value);
     }
   };
@@ -258,16 +263,24 @@ const Coms = (props: IProps) => {
         width="90%"
         onClose={handleFullClose}
       >
-        <Spin spinning={fullLoading} className="monitor-app-card">
+        <Spin spinning={fullLoading}>
           <div style={{ textAlign: 'right' }}>
-            <Select value={startTime} onChange={(value) => setStartTime(value)}>
+            <Select
+              value={startTime}
+              onChange={(value) => setStartTime(value)}
+              style={{ width: 84 }}
+            >
               {START_TIME_ENUMS.map((time) => (
                 <Select.Option key={time.value} value={time.value}>
                   {time.label}
                 </Select.Option>
               ))}
             </Select>
-            <Select value={timeRate} onChange={handleTimeRateChange}>
+            <Select
+              value={timeRate}
+              onChange={handleTimeRateChange}
+              style={{ width: 84 }}
+            >
               {RATE_ENUMS.map((time) => (
                 <Select.Option key={time.value} value={time.value}>
                   {time.label}
@@ -275,36 +288,38 @@ const Coms = (props: IProps) => {
               ))}
             </Select>
           </div>
-          <div className="app-header">
-            <h3 className="app-title">{title}</h3>
-            <span>
-              <RedoOutlined
-                className="app-operate-icon"
-                onClick={() => {
-                  queryFullDatas();
-                }}
-              />
-              {hasRadio && (
-                <Radio.Group
-                  size="small"
-                  value={fullRadio}
-                  onChange={handleRadioChange}
-                >
-                  {typeEnum.map((el) => (
-                    <Radio.Button
-                      className="app-operate-switch"
-                      value={el.value}
-                    >
-                      {el.label}
-                    </Radio.Button>
-                  ))}
-                </Radio.Group>
-              )}
-            </span>
+          <div className="monitor-app-card" style={{ padding: '16px 0' }}>
+            <div className="app-header">
+              <h3 className="app-title">{title}</h3>
+              <span>
+                <RedoOutlined
+                  className="app-operate-icon"
+                  onClick={() => {
+                    queryFullDatas();
+                  }}
+                />
+                {hasRadio && (
+                  <Radio.Group
+                    size="small"
+                    value={fullRadio}
+                    onChange={handleRadioChange}
+                  >
+                    {typeEnum.map((el) => (
+                      <Radio.Button
+                        className="app-operate-switch"
+                        value={el.value}
+                      >
+                        {el.label}
+                      </Radio.Button>
+                    ))}
+                  </Radio.Group>
+                )}
+              </span>
+            </div>
+            <ColorContainer roleKeys={['color']}>
+              <EchartsReact option={fullOptions} style={{ height: 400 }} />
+            </ColorContainer>
           </div>
-          <ColorContainer roleKeys={['color']}>
-            <EchartsReact option={fullOptions} style={{ height: 400 }} />
-          </ColorContainer>
         </Spin>
       </Drawer>
     </div>
