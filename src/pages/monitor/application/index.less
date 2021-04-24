@@ -1,61 +1,75 @@
 // less 文件
-.monitor-app-list {
+.monitor-app-table {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .monitor-app-body {
-    // height: 100%;
+    flex: 1;
     background-color: #f7f8fa;
     box-shadow: 0px 2px 6px 0px rgba(11, 68, 133, 0.4);
     overflow-y: auto;
+    margin-bottom: 54px;
 
     .ant-card-body {
-      // height: 100%;
       padding: 0 24px 24px;
     }
   }
-}
+  .monitor-tabs-content-title {
+    position: relative;
+    line-height: 24px;
+    padding: 24px 12px 16px;
 
-.monitor-tabs-content-title {
-  position: relative;
-  line-height: 24px;
-  padding: 24px 12px 16px;
-
-  &:before {
-    content: '';
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 28px;
-    width: 4px;
-    height: 16px;
-    background-color: @primary-color;
-  }
-}
-
-.monitor-app-filter {
-  .ant-card-body {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 18px;
-    justify-content: space-between;
-  }
-
-  .ant-select {
-    width: 220px;
-  }
-
-  .monitor-filter-form {
-    flex: 1;
-  }
-
-  .monitor-time-select {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    .ant-select {
-      width: 84px;
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 28px;
+      width: 4px;
+      height: 16px;
+      background-color: @primary-color;
     }
+  }
+
+  .monitor-app-filter {
+    .ant-card-body {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ant-select {
+      width: 220px;
+    }
+
+    .monitor-filter-form {
+      flex: 1;
+    }
+
+    .monitor-time-select {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      .ant-select {
+        width: 84px;
+      }
+    }
+  }
+  .ant-table-thead > tr > th {
+    background: #f3f5fb;
+    border-top: 1px solid #d2d8e6;
+    border-bottom: 1px solid #d2d8e6;
+    padding: 6px 4px;
+  }
+  .ant-table-tbody > tr > td {
+    border-bottom: 1px solid #d2d8e6;
+    padding: 6px 4px;
+  }
+  .ant-badge-status-dot {
+    width: 12px;
+    height: 12px;
   }
 }
 

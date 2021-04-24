@@ -93,10 +93,7 @@ const Coms = () => {
         label: '测试环境',
         name: 'env',
         type: 'Select',
-        options: envData.map((el) => ({
-          label: el.envName,
-          value: el.envCode,
-        })),
+        options: envData,
       },
       {
         label: '构建方式',

@@ -12,7 +12,7 @@ import './index.less';
 
 const rootCls = 'publish-detail-compo';
 
-const PublishDetail = (props: IProps) => {
+const PublishDetail = ({ deployInfo }: IProps) => {
   return (
     <div className={rootCls}>
       <Descriptions
@@ -21,11 +21,19 @@ const PublishDetail = (props: IProps) => {
         labelStyle={{ color: '#5F677A', textAlign: 'right' }}
         contentStyle={{ color: '#000' }}
       >
-        <Descriptions.Item label="CRID">1107</Descriptions.Item>
-        <Descriptions.Item label="部署分支">1111</Descriptions.Item>
-        <Descriptions.Item label="冲突分支">暂无</Descriptions.Item>
-        <Descriptions.Item label="合并分支">暂无</Descriptions.Item>
-        <Descriptions.Item label="发布院区">暂无</Descriptions.Item>
+        <Descriptions.Item label="CRID">{deployInfo?.planId}</Descriptions.Item>
+        <Descriptions.Item label="部署分支">
+          {deployInfo?.releaseBranch}
+        </Descriptions.Item>
+        <Descriptions.Item label="冲突分支">
+          {deployInfo?.conflictFeature}
+        </Descriptions.Item>
+        <Descriptions.Item label="合并分支">
+          {deployInfo?.features}
+        </Descriptions.Item>
+        <Descriptions.Item label="发布院区">
+          {deployInfo?.hospitals}
+        </Descriptions.Item>
       </Descriptions>
     </div>
   );

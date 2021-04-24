@@ -9,18 +9,18 @@ export const createTableSchema = () => [
   },
   {
     title: '分支名',
-    dataIndex: 'appName',
+    dataIndex: 'branchName',
   },
   {
     title: '变更原因',
-    dataIndex: 'appCode',
+    dataIndex: 'desc',
   },
   {
     title: '创建时间',
-    dataIndex: 'gitRepo',
+    dataIndex: 'gmtCreate',
   },
   {
     title: '创建人',
-    dataIndex: 'belong',
+    dataIndex: 'createUser',
   },
 ];

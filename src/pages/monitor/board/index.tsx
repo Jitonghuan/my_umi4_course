@@ -316,9 +316,6 @@ const Coms = (props: IProps) => {
                 // ip: (value, record) => {
                 //   return <span className="monitor-tabs-content-ip" onClick={() => handleIpClick(record)}>{record.ip}</span>
                 // },
-                memoryTotal: (value, record) => {
-                  return `${value} GB`;
-                },
                 cpuUsageRate: (value, record) => {
                   return (
                     <span
