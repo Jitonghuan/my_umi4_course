@@ -208,3 +208,106 @@ export const configUpload = (params: {
   postRequest(`${ds.apiPrefix}/appManage/config/upload`, {
     data: params,
   });
+
+/** 查看部署 */
+export const queryDeployList = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 环境参数---需要调用基础服务接口获取 */
+  env: string;
+  /** 0否/1是    默认每个应用每个环境只有一个 */
+  isActive: 0 | 1;
+  /** 分页索引 */
+  pageIndex: number;
+  /** 分页大小 */
+  pageSize: number;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/list`, {
+    data: params,
+  }).then((res: any) => {
+    if (res.success) {
+      return {
+        list: res.data?.dataSource || [],
+        ...res.data?.pageInfo,
+      };
+    }
+
+    return { list: [] };
+  });
+
+/** 查看feature部署情况 */
+export const queryFeatureDeployed = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 环境参数---需要调用基础服务接口获取 */
+  env: string;
+  /** 1已部署，0未部署 */
+  isDeployed?: 0 | 1;
+}) =>
+  getRequest(`${ds.apiPrefix}/releaseManage/branch/featureDeployed`, {
+    data: params,
+  }).then((res: any) => (res.success ? res.data : {}));
+
+/** 创建部署 */
+export const createDeploy = (params: {
+  /** 应用CODE */
+  appCode: string;
+  /** 环境参数---需要调用基础服务接口获取 */
+  env: string;
+  /** 选择的feature分支 */
+  features: string[];
+  /** 选择发布的医院，1浙一，2天台，3巍山  只有生产环境有 */
+  hospitals?: string[];
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/create`, {
+    data: params,
+  });
+
+/** 重试合并 */
+export const retryMerge = (params: {
+  /** 部署的数据库自增ID */
+  id: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/merge/retry`, {
+    data: params,
+  });
+
+/** 重新部署 */
+export const retryDeploy = (params: {
+  /** 部署的数据库自增ID */
+  id: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/reDeploy`, {
+    data: params,
+  });
+
+/** 生产环境确认部署和继续部署 */
+export const confirmProdDeploy = (params: {
+  /** 部署的数据库自增ID */
+  id: string;
+  /** 发布机构: tian/weishan */
+  hospital: string;
+  /** 发布批次，0不分批，1发布第一批，2发布第二批 */
+  batch: 0 | 1 | 2;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/confirmProd`, {
+    data: params,
+  });
+
+/** 重试生产环境合并master */
+export const reMergeMaster = (params: {
+  /** 部署的数据库自增ID */
+  id: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/reMergeMaster`, {
+    data: params,
+  });
+
+/** 重试生产环境删除feature分支 */
+export const retryDelFeature = (params: {
+  /** 部署的数据库自增ID */
+  id: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/retryDelFeature`, {
+    data: params,
+  });

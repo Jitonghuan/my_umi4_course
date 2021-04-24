@@ -60,6 +60,16 @@ export default {
           gmtCreate: '2021-04-08T15:22:56.695415+08:00',
           gmtModify: '2021-04-08T15:22:56.695418+08:00',
         },
+        {
+          id: 2,
+          envCode: 'prod',
+          envName: '生产环境',
+          belongId: 'g3a',
+          createUser: '王安楠',
+          modifyUser: '王安楠',
+          gmtCreate: '2021-04-08T15:22:56.695415+08:00',
+          gmtModify: '2021-04-08T15:22:56.695418+08:00',
+        },
       ],
       pageInfo: {
         pageIndex: 1,

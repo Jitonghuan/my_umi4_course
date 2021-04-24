@@ -1,3 +1,5 @@
 import { ReactNode } from 'react';
 
-export interface IProps {}
+export interface IProps {
+  deployInfo: any;
+}

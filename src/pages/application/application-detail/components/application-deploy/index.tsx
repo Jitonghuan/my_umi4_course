@@ -32,7 +32,7 @@ const ApplicationDeploy = ({
         tabBarStyle={{ background: '#E6EBF5' }}
       >
         {envData?.map((item) => (
-          <TabPane tab={item.envCode} key={item.envCode}>
+          <TabPane tab={item.envName} key={item.envCode}>
             <DeployContent env={item.envCode} appCode={appCode} appId={appId} />
           </TabPane>
         ))}
