@@ -33,7 +33,7 @@ export default {
     },
   },
   // 节点使用率
-  'POST /v1/monitorManage/resource/node': {
+  'GET /v1/monitorManage/resource/node': {
     success: true,
     code: 1000,
     errorMsg: '',
@@ -86,33 +86,101 @@ export default {
     },
   },
 
-  'POST /v1/monitor/resource/list': {
+  'GET /v1/appManage/list': {
     success: true,
     code: 1000,
     errorMsg: '',
-    data: {
-      dataSource: [
-        {
-          id: '1',
-          name: '浙一医院1',
-          ip: '255.255.255.0',
-          href: 'https://www.baidu.com',
-        },
-        { id: '2', name: '天台医院2' },
-        { id: '3', name: '浙一医院3' },
-        { id: '4', name: '天台医院4' },
-        { id: '5', name: '浙一医院5' },
-        { id: '6', name: '天台医院6' },
-        { id: '7', name: '浙一医院7' },
-        { id: '8', name: '天台医院8' },
-        { id: '9', name: '浙一医院9' },
-        { id: '10', name: '天台医院10' },
-      ],
-      pageInfo: {
-        pageIndex: 1,
-        pageSize: 20,
-        total: 10,
+    data: [
+      { id: '1', appName: '浙一医院1', appCode: '1' },
+      { id: '2', appName: '天台医院2', appCode: '2' },
+      { id: '3', appName: '浙一医院3', appCode: '3' },
+      { id: '4', appName: '天台医院4', appCode: '4' },
+      { id: '5', appName: '浙一医院5', appCode: '5' },
+      { id: '6', appName: '天台医院6', appCode: '6' },
+      { id: '7', appName: '浙一医院7', appCode: '7' },
+      { id: '8', appName: '天台医院8', appCode: '8' },
+      { id: '9', appName: '浙一医院9', appCode: '9' },
+      { id: '10', appName: '天台医院10', appCode: '10' },
+    ],
+  },
+
+  'GET /v1/monitorManage/app/env': {
+    success: true,
+    code: 1000,
+    errorMsg: '',
+    data: [
+      { id: '1', envName: 'test', envCode: 'test' },
+      { id: '2', envName: 'dev', envCode: 'dev' },
+      { id: '3', envName: 'cis', envCode: 'cis' },
+    ],
+  },
+
+  'GET /v1/monitorManage/app/podInfo': {
+    success: true,
+    code: 1000,
+    errorMsg: '',
+    data: [
+      {
+        ip: '192.168.54.108:9100',
+        cpuCoreNum: '8',
+        cpuUsageRate: 14.09,
+        diskUsageRate: 79.08,
+        hostname: 'master0003',
+        load: 0.31,
+        memoryTotal: 15.41,
+        memoryUsageRate: 21.25,
+        upTime: 267,
       },
-    },
+      {
+        ip: '192.168.54.109:9100',
+        cpuCoreNum: '16',
+        cpuUsageRate: 11.13,
+        diskUsageRate: 71.34,
+        hostname: 'node0006',
+        load: 1.52,
+        memoryTotal: 30.91,
+        memoryUsageRate: 61.08,
+        upTime: 266,
+      },
+      {
+        ip: '192.168.54.110:9100',
+        cpuCoreNum: '16',
+        cpuUsageRate: 17.11,
+        diskUsageRate: 71.08,
+        hostname: 'node0003',
+        load: 1.96,
+        memoryTotal: 61.92,
+        memoryUsageRate: 73.58,
+        upTime: 266,
+      },
+    ],
+  },
+
+  'GET /v1/monitorManage/app/gcCount': {
+    success: true,
+    code: 1000,
+    errorMsg: '',
+    data: {},
+  },
+
+  'GET /v1/monitorManage/app/gcTime': {
+    success: true,
+    code: 1000,
+    errorMsg: '',
+    data: {},
+  },
+
+  'GET /v1/monitorManage/app/jvmHeap': {
+    success: true,
+    code: 1000,
+    errorMsg: '',
+    data: {},
+  },
+
+  'GET /v1/monitorManage/app/jvmMetaspace': {
+    success: true,
+    code: 1000,
+    errorMsg: '',
+    data: {},
   },
 };

@@ -29,16 +29,20 @@ const Coms = () => {
     'log' | 'report' | undefined
   >();
 
-  const initBelong = belongData?.length > 0 ? belongData[0].value : '';
-  // 过滤操作
-  const [filter, setFilter] = useState<any>({
-    belong: initBelong,
-  });
+  // 过滤操作， 默认定位医共体
+  const [filter, setFilter] = useState<any>({ belong: 'gmc' });
 
   // 查询表格
   const { run: queryTableData, tableProps, reset } = usePaginated({
     requestUrl: queryTestResult,
     requestMethod: 'GET',
+    fetcher: (async (params?: any) => {
+      return getRequest(queryTestResult, {
+        data: {
+          ...params,
+        },
+      });
+    }) as any,
   });
 
   // 过滤操作
@@ -70,7 +74,7 @@ const Coms = () => {
         name: 'belong',
         type: 'Select',
         options: belongData,
-        initialValue: initBelong,
+        initialValue: filter.belong,
       },
       { label: '测试时间', name: 'testTime', type: 'RangePicker' },
       { label: '机构ID', name: 'id' },
@@ -85,7 +89,12 @@ const Coms = () => {
           { value: 3, label: '失败' },
         ],
       },
-      { label: '测试环境', name: 'env', type: 'Select' },
+      {
+        label: '测试环境',
+        name: 'env',
+        type: 'Select',
+        options: envData,
+      },
       {
         label: '构建方式',
         name: 'buildType',
@@ -96,9 +105,12 @@ const Coms = () => {
         ],
       },
     ] as IColumns[];
-  }, [belongData]);
+  }, [belongData, envData]);
 
   useEffect(() => {
+    if (!filter.belong) {
+      return;
+    }
     queryTableData(filter);
   }, [filter]);
 
@@ -148,7 +160,7 @@ const Coms = () => {
           onSubmit={handleFilter}
           onReset={() => {
             reset();
-            setFilter({ belong: initBelong });
+            setFilter({ belong: filter.belong });
           }}
         />
       </FilterCard>

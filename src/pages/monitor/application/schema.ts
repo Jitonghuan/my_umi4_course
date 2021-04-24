@@ -12,7 +12,7 @@ export interface ITableSchema {
 // 表格schema
 export const tableSchema = [
   {
-    dataIndex: 'ip',
+    dataIndex: 'hostIP',
     title: 'POD IP',
   },
   {
@@ -32,8 +32,8 @@ export const tableSchema = [
     title: '重启次数',
   },
   {
-    dataIndex: 'upTime',
-    title: '运行时长',
+    dataIndex: 'uptime',
+    title: '运行时长(天)',
   },
   {
     dataIndex: 'health',
@@ -41,11 +41,11 @@ export const tableSchema = [
     valueType: 'status',
     statusEnum: {
       '0': {
-        text: '异常',
+        text: '',
         color: 'red',
       },
       '1': {
-        text: '健康',
+        text: '',
         color: 'green',
       },
     },
@@ -54,80 +54,6 @@ export const tableSchema = [
 
 // GC 次数
 export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
-  return {
-    tooltip: {
-      trigger: 'axis',
-    },
-    grid: {
-      bottom: 24,
-      top: 50,
-      left: 30,
-      right: 40,
-    },
-    legend: {
-      left: 0,
-      data: ['FullGC次数', 'YoungGC次数'],
-      icon: 'rect',
-    },
-    color: ['#4BA2FF', '#54DA81'],
-    xAxis: {
-      type: 'category',
-      axisLine: {
-        lineStyle: {
-          color: '#4BA2FF',
-        },
-      },
-      axisLabel: {
-        color: '#999',
-      },
-      data: [
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-      ],
-    },
-    yAxis: [
-      {
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
-        },
-        splitNumber: 3,
-      },
-    ],
-    series: [
-      {
-        name: 'FullGC次数',
-        data: [1, 2, 2, 1, 3, 2, 1],
-        type: 'line',
-      },
-      {
-        yAxisIndex: 1,
-        name: 'YoungGC次数',
-        data: [200, 4, 2, 5, 3, 2, 1],
-        type: 'line',
-      },
-    ],
-  };
-};
-
-// GC 耗时
-export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
   return {
     tooltip: {
       trigger: 'axis',
@@ -179,12 +105,78 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     series: [
       {
         name: 'FullGC次数',
+        data: dataSource?.[0] || [],
+        type: 'line',
+      },
+      {
+        // yAxisIndex: 1,
+        name: 'YoungGC次数',
+        data: dataSource?.[1] || [],
+        type: 'line',
+      },
+    ],
+  };
+};
+
+// GC 耗时
+export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
+  return {
+    tooltip: {
+      trigger: 'axis',
+    },
+    grid: {
+      bottom: 24,
+      top: 50,
+      left: 30,
+      right: 40,
+    },
+    legend: {
+      left: 0,
+      data: ['FullGC耗时', 'YoungGC耗时'],
+      icon: 'rect',
+    },
+    color: ['#4BA2FF', '#54DA81'],
+    xAxis: {
+      type: 'category',
+      axisLine: {
+        lineStyle: {
+          color: '#4BA2FF',
+        },
+      },
+      axisLabel: {
+        color: '#999',
+      },
+      data: xAxis,
+    },
+    yAxis: [
+      {
+        type: 'value',
+        axisLabel: {
+          color: '#999',
+        },
+        splitNumber: 3,
+      },
+      {
+        position: 'right',
+        type: 'value',
+        axisLabel: {
+          color: '#999',
+        },
+        splitLine: {
+          show: false,
+        },
+        splitNumber: 3,
+      },
+    ],
+    series: [
+      {
+        name: 'FullGC耗时',
         data: dataSource[0],
         type: 'line',
       },
       {
-        yAxisIndex: 1,
-        name: 'YoungGC次数',
+        // yAxisIndex: 1,
+        name: 'YoungGC耗时',
         data: dataSource[1],
         type: 'line',
       },
@@ -220,15 +212,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
       axisLabel: {
         color: '#999',
       },
-      data: [
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-      ],
+      data: xAxis,
     },
     yAxis: [
       {
@@ -252,14 +236,23 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     ],
     series: [
       {
-        name: 'FullGC次数',
-        data: [1, 2, 2, 1, 3, 2, 1],
+        name: '使用总和',
+        data: dataSource?.[0] || [],
         type: 'line',
       },
       {
-        yAxisIndex: 1,
-        name: 'YoungGC次数',
-        data: [200, 4, 2, 5, 3, 2, 1],
+        name: '年轻代Eden区',
+        data: dataSource?.[1] || [],
+        type: 'line',
+      },
+      {
+        name: '年轻代Survivor区',
+        data: dataSource?.[2] || [],
+        type: 'line',
+      },
+      {
+        name: '老年代',
+        data: dataSource?.[3] || [],
         type: 'line',
       },
     ],
@@ -294,15 +287,7 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
       axisLabel: {
         color: '#999',
       },
-      data: [
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-        '03-31 11:09',
-      ],
+      data: xAxis,
     },
     yAxis: [
       {
@@ -326,14 +311,8 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
     ],
     series: [
       {
-        name: 'FullGC次数',
-        data: [1, 2, 2, 1, 3, 2, 1],
-        type: 'line',
-      },
-      {
-        yAxisIndex: 1,
-        name: 'YoungGC次数',
-        data: [200, 4, 2, 5, 3, 2, 1],
+        name: '元空间',
+        data: dataSource?.[0] || [],
         type: 'line',
       },
     ],

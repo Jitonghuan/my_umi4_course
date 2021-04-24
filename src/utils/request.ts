@@ -5,15 +5,20 @@ import { IRequestParams, IResponse } from '@cffe/vc-request/es/service';
 // 默认使用组件库对针对后台项目登录模式设计的接口调用方案
 const request = async (url: string, params?: IRequestParams | undefined) => {
   return new Promise<IResponse>((resolve, reject) => {
-    sso.request(url, params).then((resp) => {
-      if (!resp.success) {
-        message.error(resp.errorMsg);
-        reject(resp);
-        return;
-      }
+    sso
+      .request(url, params)
+      .then((resp) => {
+        if (!resp.success) {
+          message.error(resp.errorMsg);
+          reject(resp);
+          return;
+        }
 
-      resolve(resp);
-    });
+        resolve(resp);
+      })
+      .catch((e) => {
+        reject(e);
+      });
   });
 };
 export const getRequest = request;

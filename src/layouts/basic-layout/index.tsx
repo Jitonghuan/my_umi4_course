@@ -72,8 +72,8 @@ export default (props: IUmiRrops) => {
     setEnvData(
       envData.map((el: any) => ({
         ...el,
-        label: el.belongName,
-        value: el.belongCode,
+        label: el.envName,
+        value: el.envCode,
       })),
     );
   };
@@ -107,23 +107,26 @@ export default (props: IUmiRrops) => {
             title={FeGlobalRef.current.title}
             favicon={FeGlobalRef.current.favicon}
           >
-            <FELayout.SSOLayout
-              {...(props as any)}
-              {...ds}
-              // isOpenLogin={false}
-              showFooter={false}
-              // 全局插入配置覆盖默认配置
-              {...FeGlobalRef.current}
-              siderMenuProps={{
-                scriptUrl: 'http://at.alicdn.com/t/font_2486191_7mbr5t0adq8.js',
-              }}
-              headerProps={{
-                isShowGlobalMenu: false,
-              }}
-              userApi={queryUserInfoApi}
-              logoutApi={doLogoutApi}
-              // loginUrl={}
-            />
+            {belongData.length > 0 && (
+              <FELayout.SSOLayout
+                {...(props as any)}
+                {...ds}
+                // isOpenLogin={false}
+                showFooter={false}
+                // 全局插入配置覆盖默认配置
+                {...FeGlobalRef.current}
+                siderMenuProps={{
+                  scriptUrl:
+                    'http://at.alicdn.com/t/font_2486191_7mbr5t0adq8.js',
+                }}
+                headerProps={{
+                  isShowGlobalMenu: false,
+                }}
+                userApi={queryUserInfoApi}
+                logoutApi={doLogoutApi}
+                // loginUrl={}
+              />
+            )}
           </DocumentTitle>
         </ChartsContext.Provider>
       </FeContext.Provider>
