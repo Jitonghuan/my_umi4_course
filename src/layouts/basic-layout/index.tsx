@@ -23,6 +23,7 @@ import {
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
 import { IPermission } from '@cffe/vc-layout/lib/sider-menu';
+import logo from './logo.svg';
 
 export default (props: IUmiRrops) => {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
@@ -152,6 +153,7 @@ export default (props: IUmiRrops) => {
                     'http://at.alicdn.com/t/font_2486191_tnfcu8v29v.js',
                 }}
                 headerProps={{
+                  logo,
                   isShowGlobalMenu: false,
                 }}
                 userApi={queryUserInfoApi}
