@@ -5,7 +5,7 @@
  * @create 2021-04-13 11:00
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Descriptions, Button, Tag, Modal } from 'antd';
 import VCPageContent, {
   FilterCard,
@@ -15,6 +15,7 @@ import UpdateApplication, {
   AppDataTypes,
 } from '@/components/create-application';
 import ModifyMember, { MemberTypes } from './modify-member';
+import DetailContext from '../../context';
 import { queryApps, queryAppMember } from '../../../service';
 import { IProps } from './types';
 import './index.less';
@@ -29,31 +30,11 @@ const APP_TYPE_MAP = {
 };
 
 const ApplicationOverview = (props: IProps) => {
-  const {
-    location: {
-      query: { id },
-    },
-  } = props;
+  const { appData, queryAppData } = useContext(DetailContext);
 
   const [isModifyApp, setIsModifyApp] = useState(false);
-  const [appData, setAppData] = useState<AppDataTypes>();
   const [isModifyMember, setIsModifyMember] = useState(false);
   const [memberData, setMemberData] = useState<MemberTypes>();
-
-  // 请求应用数据
-  const queryAppData = () => {
-    queryApps({
-      id: Number(id),
-      pageIndex: 1,
-      pageSize: 10,
-    }).then((res: any) => {
-      if (res.list.length) {
-        setAppData(res.list[0]);
-        return;
-      }
-      setAppData(undefined);
-    });
-  };
 
   // 请求应用成员数据
   const queryMemberData = () => {
@@ -61,11 +42,6 @@ const ApplicationOverview = (props: IProps) => {
       setMemberData(res.data || {});
     });
   };
-
-  useEffect(() => {
-    if (!id) return;
-    queryAppData();
-  }, [id]);
 
   useEffect(() => {
     if (!appData?.appCode) return;
@@ -148,7 +124,7 @@ const ApplicationOverview = (props: IProps) => {
         onClose={() => setIsModifyApp(false)}
         onSubmit={() => {
           // 保存成功后，关闭抽屉，重新请求应用数据
-          queryAppData();
+          queryAppData?.();
           setIsModifyApp(false);
           queryMemberData();
         }}

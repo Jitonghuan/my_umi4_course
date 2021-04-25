@@ -12,7 +12,7 @@ import './index.less';
 
 const rootCls = 'publish-detail-compo';
 
-const PublishDetail = ({ deployInfo }: IProps) => {
+const PublishDetail = ({ deployInfo, env }: IProps) => {
   return (
     <div className={rootCls}>
       <Descriptions
@@ -31,9 +31,11 @@ const PublishDetail = ({ deployInfo }: IProps) => {
         <Descriptions.Item label="合并分支">
           {deployInfo?.features}
         </Descriptions.Item>
-        <Descriptions.Item label="发布院区">
-          {deployInfo?.hospitals}
-        </Descriptions.Item>
+        {env === 'prod' && (
+          <Descriptions.Item label="发布院区">
+            {deployInfo?.hospitals}
+          </Descriptions.Item>
+        )}
       </Descriptions>
     </div>
   );

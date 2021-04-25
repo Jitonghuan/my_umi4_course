@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 
 export interface IProps {
-  appCode: string;
   deployInfo: Record<string, any>;
   onOperate: (type: OperateType) => void;
 }
@@ -30,13 +29,5 @@ export type Status =
   | 2.1
   /** 部署失败 */
   | 2.2
-  /** 合并master进行中 */
-  | 3.1
-  /** 合并master失败 */
-  | 3.2
-  /** 删除feature进行中 */
-  | 4.1
-  /** 删除feature失败 */
-  | 4.2
   /** 发布完成 */
-  | 6;
+  | 4;

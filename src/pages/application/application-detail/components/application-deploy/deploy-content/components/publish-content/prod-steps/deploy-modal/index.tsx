@@ -11,49 +11,81 @@ import { confirmProdDeploy } from '../../../../../../../../service';
 import { IProps } from './types';
 // import './index.less';
 
+const hospitalCodeToText: Record<string, string> = {
+  tiantai: '天台',
+  weishan: '巍山',
+  zheyi: '浙一',
+};
+
 const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
-  const { deployingHospital, jenkinsUrl, deployingHosBatch } = deployInfo;
+  const {
+    deployStatus,
+    deployingHospital,
+    deployingHosBatch,
+    jenkinsUrl,
+    hospitals,
+  } = deployInfo;
 
   const [deployConfig, setDeployConfig] = useState({
     deployEnv: '',
-    deployBatch: undefined,
+    deployBatch: 12,
   });
 
-  // TODO 发布详情
   const detail = useMemo(() => {
+    // TODO 如何判断哪个机构被部署了
+
+    if (deployStatus === 'deployWait') {
+      return null;
+    }
+
+    let text1 = null;
+    let text2 = null;
+
+    if (deployStatus === 'deploying') {
+      text1 = (
+        <span>{hospitalCodeToText[deployingHospital]}正在部署中。。。</span>
+      );
+
+      if (deployingHosBatch === 2) {
+        text2 = <span>第一批已部署完成，正在部署第二批。。。</span>;
+      }
+    } else if (deployStatus === 'deployWaitBatch2') {
+      text1 = (
+        <span>{hospitalCodeToText[deployingHospital]}正在部署中。。。</span>
+      );
+      text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
+    }
+
     return (
       <>
         <div>
           <Spin spinning />
-          <span>{deployingHospital}正在部署中。。。</span>
-          <span>第一批已部署完成，点击继续按钮发布第二批</span>
+          {text1}
+          {text2}
         </div>
-        <div>
-          <a target="_blank" href={jenkinsUrl}>
-            查看Jenkins详情
-          </a>
-        </div>
+        {jenkinsUrl && (
+          <div>
+            <a target="_blank" href={jenkinsUrl}>
+              查看Jenkins详情
+            </a>
+          </div>
+        )}
       </>
     );
-  }, [deployInfo]);
-
-  // TODO
-  const okBtnDisabled = false;
-  const confirmLoading = false;
+  }, [deployStatus, deployingHospital, deployingHosBatch]);
 
   return (
     <Modal
       title="批量部署"
       visible={visible}
-      confirmLoading={confirmLoading}
-      // TODO
-      okText={true ? '确定' : '继续'}
-      okButtonProps={{
-        disabled: okBtnDisabled,
-      }}
+      confirmLoading={deployStatus === 'deploying'}
+      okText={deployStatus === 'deployWait' ? '确定' : '继续'}
       onOk={() => {
-        // TODO
-        const batch = deployConfig.deployBatch === 12 ? 1 : 0;
+        let batch: 0 | 1 | 2 = deployConfig.deployBatch === 12 ? 1 : 0;
+
+        if (deployStatus === 'deployWaitBatch2') {
+          batch = 2;
+        }
 
         confirmProdDeploy({
           id: deployInfo.id,
@@ -61,34 +93,32 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
           batch,
         })
           .then((res) => {
-            if (res.success) {
-              // TODO
-              return;
+            if (!res.success) {
+              message.error(res.errorMsg);
             }
-            message.error(res.errorMsg);
           })
-          .finally(() => onOperate('retryDeployEnd'));
+          .finally(() => onOperate('deployEnd'));
       }}
       onCancel={onCancel}
     >
       <div>
         <span>发布环境：</span>
-        {/* TODO 数据哪里来 */}
+        {/* 根据 hospitals 拿到列表 */}
         <Radio.Group
           value={deployConfig.deployEnv}
           onChange={(v) =>
             setDeployConfig({ ...deployConfig, deployEnv: v.target.value })
           }
-          options={[
-            { label: '天台', value: 'tian' },
-            { label: '巍山', value: 'weishan' },
-          ]}
+          options={hospitals?.map((code: string) => ({
+            label: hospitalCodeToText[code],
+            value: code,
+          }))}
         />
       </div>
       <div style={{ marginTop: 8 }}>
         <span>发布批次：</span>
-        {/* TODO 数据哪里来 */}
         <Radio.Group
+          disabled={deployStatus !== 'deployWait'}
           value={deployConfig.deployBatch}
           onChange={(v) =>
             setDeployConfig({ ...deployConfig, deployBatch: v.target.value })

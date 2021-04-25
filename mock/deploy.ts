@@ -1,6 +1,6 @@
 export default {
   // 查看部署
-  [`POST /v1/releaseManage/deploy/list`]: {
+  [`GET /v1/releaseManage/deploy/list`]: {
     success: true,
     code: 1000,
     errorMsg: '',
@@ -17,11 +17,11 @@ export default {
           conflictFeature: 'feature_xiugai-git-03_1617776419',
           mergeWebUrl:
             'http://gitlab.cfuture.shop/devops/cops-appmanagement/-/merge_requests/1511',
-          deployStatus: 'mergeErr',
-          hospitals: 'tiantai,weishan',
+          deployStatus: 'deployWait',
+          hospitals: ['tiantai', 'weishan'],
           deployedHospitals: '',
           deployingHospital: 'tiantai',
-          deployingHosBatch: 1,
+          deployingHosBatch: 2,
           tagName: 'v20210422155029',
           jenkinsUrl: '',
           isClient: 0,

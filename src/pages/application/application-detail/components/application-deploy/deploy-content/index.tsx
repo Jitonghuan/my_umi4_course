@@ -5,18 +5,22 @@
  * @create 2021-04-15 10:04
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import useInterval from './useInterval';
+import DetailContext from '../../../context';
 import { queryDeployList, queryFeatureDeployed } from '../../../../service';
 import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';
 
-const DeployContent = ({ env, appCode, appId }: IProps) => {
+const DeployContent = ({ env }: IProps) => {
+  const { appData } = useContext(DetailContext);
+  const { appCode } = appData || {};
+
   const [updating, setUpdating] = useState(false);
   const [deployInfo, setDeployInfo] = useState({});
   const [branchInfo, setBranchInfo] = useState<{
@@ -30,13 +34,13 @@ const DeployContent = ({ env, appCode, appId }: IProps) => {
       setUpdating(true);
       Promise.all([
         queryDeployList({
-          appCode,
+          appCode: appCode!,
           env,
           isActive: 1,
           pageIndex: 1,
           pageSize: 10,
         }),
-        queryFeatureDeployed({ appCode, env }),
+        queryFeatureDeployed({ appCode: appCode!, env }),
       ])
         .then(([res1, res2]) => {
           setDeployInfo(res1?.list?.[0]);
@@ -55,9 +59,9 @@ const DeployContent = ({ env, appCode, appId }: IProps) => {
 
   return (
     <div className={rootCls}>
-      <PublishDetail deployInfo={deployInfo} />
+      <PublishDetail env={env} deployInfo={deployInfo} />
       <PublishContent
-        appCode={appCode}
+        appCode={appCode!}
         env={env}
         deployInfo={deployInfo}
         deployedList={branchInfo.deployed}
@@ -70,8 +74,11 @@ const DeployContent = ({ env, appCode, appId }: IProps) => {
         }}
       />
       <PublishBranch
+        deployInfo={deployInfo}
+        hasPublishContent={
+          !!(branchInfo.deployed && branchInfo.deployed.length)
+        }
         dataSource={branchInfo.unDeployed}
-        appCode={appCode}
         env={env}
         onSubmitBranch={(status) => {
           timerHandle(status === 'start' ? 'stop' : 'do', true);

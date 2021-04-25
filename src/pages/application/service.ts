@@ -222,7 +222,7 @@ export const queryDeployList = (params: {
   /** 分页大小 */
   pageSize: number;
 }) =>
-  postRequest(`${ds.apiPrefix}/releaseManage/deploy/list`, {
+  getRequest(`${ds.apiPrefix}/releaseManage/deploy/list`, {
     data: params,
   }).then((res: any) => {
     if (res.success) {
@@ -260,6 +260,17 @@ export const createDeploy = (params: {
   hospitals?: string[];
 }) =>
   postRequest(`${ds.apiPrefix}/releaseManage/deploy/create`, {
+    data: params,
+  });
+
+/** 追加发布的feature列表 */
+export const updateFeatures = (params: {
+  /** 部署的数据库自增ID */
+  id: number;
+  /** 选择的feature分支 */
+  features: string[];
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/updateFeatures`, {
     data: params,
   });
 

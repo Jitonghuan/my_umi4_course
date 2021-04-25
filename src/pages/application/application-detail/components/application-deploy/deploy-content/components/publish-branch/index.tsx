@@ -5,34 +5,59 @@
  * @create 2021-04-15 10:22
  */
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Steps, Button, message, Modal, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import { createTableSchema } from './schema';
-import { createDeploy } from '../../../../../../service';
+import DetailContext from '../../../../../context';
+import { createDeploy, updateFeatures } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
+const hospitalMap: Record<string, any[]> = {
+  g3a: [{ label: '浙一', value: 'zheyi' }],
+  gmc: [
+    { label: '天台', value: 'tiantai' },
+    { label: '巍山', value: 'weishan' },
+  ],
+};
 
 const PublishBranch = ({
+  hasPublishContent,
+  deployInfo,
   dataSource,
   onSubmitBranch,
-  appCode,
   env,
 }: IProps) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>();
+  const { appData } = useContext(DetailContext);
+  const { belong, appCode } = appData || {};
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
 
   const submit = () => {
+    // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
+    if (hasPublishContent) {
+      return updateFeatures({
+        id: deployInfo.id,
+        features: selectedRowKeys,
+      }).then((res: any) => {
+        if (!res.success) {
+          message.error(res.errorMsg);
+          throw Error;
+        }
+      });
+    }
+
     return createDeploy({
-      appCode,
+      appCode: appCode!,
       env,
-      features: selectedRowKeys!,
+      features: selectedRowKeys,
       hospitals: env === 'prod' ? deployEnv : undefined,
     }).then((res: any) => {
       if (!res.success) {
@@ -43,8 +68,6 @@ const PublishBranch = ({
   };
 
   const submitClick = () => {
-    onSubmitBranch?.('start');
-
     // 非生产环境
     if (env !== 'prod') {
       confirm({
@@ -119,14 +142,10 @@ const PublishBranch = ({
       >
         <div>
           <span>发布环境：</span>
-          {/* TODO 数据哪里来 */}
           <Checkbox.Group
             value={deployEnv}
             onChange={(v) => setDeployEnv(v)}
-            options={[
-              { label: '天台', value: '1' },
-              { label: '巍山', value: '2' },
-            ]}
+            options={hospitalMap[belong!] || []}
           />
         </div>
       </Modal>

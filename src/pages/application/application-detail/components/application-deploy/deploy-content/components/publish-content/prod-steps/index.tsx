@@ -26,9 +26,55 @@ const rootCls = 'publish-content-compo';
 const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
   const [deployVisible, setDeployVisible] = useState(false);
 
-  // TODO
   const status = useMemo<Status>(() => {
-    return 6;
+    const { deployStatus } = deployInfo;
+
+    if (!deployInfo.id) return 0;
+
+    // 合并release
+    // deployStatus: merging\mergeErr\conflict, 有 mergeWebUrl 则展示
+    if (deployStatus === 'merging') {
+      return 1.1;
+    }
+    if (deployStatus === 'mergeErr' && deployStatus === 'conflict') {
+      return 1.2;
+    }
+
+    // 部署
+    if (
+      deployStatus === 'deployWait' ||
+      deployStatus === 'deploying' ||
+      deployStatus === 'deployWaitBatch2'
+    ) {
+      return 2.1;
+    }
+    if (deployStatus === 'deployErr' || deployStatus === 'deployAborted') {
+      return 2.2;
+    }
+
+    // 合并master
+    //  deployStatus: mergingMaster\mergeMasterErr
+    if (deployStatus === 'mergingMaster') {
+      return 3.1;
+    }
+    if (deployStatus === 'mergeMasterErr') {
+      return 3.2;
+    }
+
+    // 删除feature
+    // deletingFeature，deleteFeatureErr
+    if (deployStatus === 'deletingFeature') {
+      return 4.1;
+    }
+    if (deployStatus === 'deleteFeatureErr') {
+      return 4.2;
+    }
+
+    if (deployStatus === 'deployFinish') {
+      return 6;
+    }
+
+    return 0;
   }, [deployInfo]);
 
   return (
@@ -42,12 +88,15 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
           description={
             status === 1.2 && (
               <>
-                <div style={{ margin: '2px 0 4px' }}>
-                  <a target="_blank" href={deployInfo.mergeWebUrl}>
-                    查看合并详情
-                  </a>
-                </div>
+                {deployInfo.mergeWebUrl && (
+                  <div style={{ marginTop: 2 }}>
+                    <a target="_blank" href={deployInfo.mergeWebUrl}>
+                      查看合并详情
+                    </a>
+                  </div>
+                )}
                 <Button
+                  style={{ marginTop: 4 }}
                   onClick={() => {
                     retryMerge({ id: deployInfo.id }).finally(() =>
                       onOperate('mergeReleaseRetryEnd'),
@@ -67,14 +116,17 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
           description={
             (status === 2.1 || status === 2.2) && (
               <>
-                <div style={{ margin: '2px 0 4px' }}>
-                  <a target="_blank" href={deployInfo.jenkinsUrl}>
-                    查看Jenkins详情
-                  </a>
-                </div>
+                {deployInfo.jenkinsUrl && (
+                  <div style={{ marginTop: 2 }}>
+                    <a target="_blank" href={deployInfo.jenkinsUrl}>
+                      查看Jenkins详情
+                    </a>
+                  </div>
+                )}
 
                 {status === 2.2 ? (
                   <Button
+                    style={{ marginTop: 4 }}
                     onClick={() => {
                       onOperate('retryDeployStart');
 
@@ -96,6 +148,7 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
                   </Button>
                 ) : (
                   <a
+                    style={{ marginTop: 4 }}
                     onClick={() => {
                       setDeployVisible(true);
                     }}
@@ -114,12 +167,15 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
           description={
             status === 3.2 && (
               <>
-                <div style={{ margin: '2px 0 4px' }}>
-                  <a target="_blank" href={deployInfo.mergeWebUrl}>
-                    查看合并详情
-                  </a>
-                </div>
+                {deployInfo.mergeWebUrl && (
+                  <div style={{ marginTop: 2 }}>
+                    <a target="_blank" href={deployInfo.mergeWebUrl}>
+                      查看合并详情
+                    </a>
+                  </div>
+                )}
                 <Button
+                  style={{ marginTop: 4 }}
                   onClick={() => {
                     reMergeMaster({ id: deployInfo.id }).finally(() =>
                       onOperate('mergeMasterRetryEnd'),
