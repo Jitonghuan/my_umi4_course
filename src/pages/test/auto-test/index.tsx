@@ -295,8 +295,9 @@ const Coms = (props: any) => {
             columns={tableColumns}
             rowSelection={{
               type: 'checkbox',
-              onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) =>
-                setTableSelect(selectedRowKeys),
+              onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                setTableSelect(selectedRows);
+              },
             }}
           />
         </Card>

@@ -121,6 +121,8 @@ export default (props: IUmiRrops) => {
         value={{
           ...FeGlobalRef.current,
           breadcrumbMap,
+          isOpenPermission: ds.isOpenPermission,
+          permissionData,
           businessData: business,
           belongData,
           envData,
