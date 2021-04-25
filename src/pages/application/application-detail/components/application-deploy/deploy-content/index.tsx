@@ -9,6 +9,7 @@ import React, { useState, useContext } from 'react';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
+import PublishRecord from './components/publish-record';
 import useInterval from './useInterval';
 import DetailContext from '../../../context';
 import { queryDeployList, queryFeatureDeployed } from '../../../../service';
@@ -57,21 +58,23 @@ const DeployContent = ({ env }: IProps) => {
     { immediate: true },
   );
 
+  const onOperate = (operateType: string) => {
+    if (operateType.endsWith('Start')) {
+      timerHandle('stop');
+    } else if (operateType.endsWith('End')) {
+      timerHandle('do', true);
+    }
+  };
+
   return (
     <div className={rootCls}>
-      <PublishDetail env={env} deployInfo={deployInfo} />
+      <PublishDetail env={env} deployInfo={deployInfo} onOperate={onOperate} />
       <PublishContent
         appCode={appCode!}
         env={env}
         deployInfo={deployInfo}
         deployedList={branchInfo.deployed}
-        onOperate={(operateType) => {
-          if (operateType.endsWith('Start')) {
-            timerHandle('stop');
-          } else if (operateType.endsWith('End')) {
-            timerHandle('do', true);
-          }
-        }}
+        onOperate={onOperate}
       />
       <PublishBranch
         deployInfo={deployInfo}
@@ -84,6 +87,7 @@ const DeployContent = ({ env }: IProps) => {
           timerHandle(status === 'start' ? 'stop' : 'do', true);
         }}
       />
+      <PublishRecord />
     </div>
   );
 };
