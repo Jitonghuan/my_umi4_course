@@ -62,6 +62,12 @@ export default [
               '@/pages/application/application-detail/components/application-overview',
           },
           {
+            path: 'monitor',
+            name: '应用监控',
+            hideInMenu: true,
+            component: '@/pages/monitor/application/app-table',
+          },
+          {
             path: 'appDeploy',
             name: '应用部署',
             hideInMenu: true,
