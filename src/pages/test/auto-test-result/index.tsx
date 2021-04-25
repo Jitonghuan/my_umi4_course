@@ -12,6 +12,7 @@ import VcHulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { tableSchema } from './schema';
 import { getRequest } from '@/utils/request';
 import { queryTestResult } from '../service';
+import dayjs from '_dayjs@1.10.4@dayjs';
 
 /**
  * 自动化测试结果
@@ -36,6 +37,10 @@ const Coms = () => {
   const { run: queryTableData, tableProps, reset } = usePaginated({
     requestUrl: queryTestResult,
     requestMethod: 'GET',
+    pagination: {
+      showTotal: ((total: number) => `总共 ${total} 条数据`) as any,
+      showSizeChanger: true,
+    },
     fetcher: (async (params?: any) => {
       return getRequest(queryTestResult, {
         data: {

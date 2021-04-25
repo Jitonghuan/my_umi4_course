@@ -72,3 +72,38 @@ Build
     线上发布分支 release/0.1.0
   3. Jenkins 构建部署【ops/fe-matrix-test】
 ```
+
+Permission
+```
+代码管理
+  /matrix/code
+    /matrix/code/rank    代码排行
+    /matrix/code/details   统计详情
+
+监控管理
+  /matrix/monitor
+    /matrix/monitor/board  监控面板
+    /matrix/monitor/application  应用监控
+
+测试管理
+  /matrix/test
+    /matrix/test/auto    自动化测试
+    /matrix/test/result    自动化测试查询
+
+工单列表
+  /matrix/ticket
+    /matrix/ticket/list    工单列表
+
+应用管理
+  /matrix/application
+    /matrix/application/all                 全部应用
+    /matrix/application/listenerCount       应用列表
+    /matrix/application/detail              应用详情
+      /matrix/application/detail/overview     概述
+      /matrix/application/detail/appDeploy    应用部署
+      /matrix/application/detail/branch       分支
+      /matrix/application/detail/configMgr      配置管理
+      /matrix/application/detail/launchParameters        启动参数
+      /matrix/application/detail/addConfig                新增配置
+      /matrix/application/detail/addLaunchParameters     新增启动参数
+```
