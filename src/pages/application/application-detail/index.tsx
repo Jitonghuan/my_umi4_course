@@ -5,7 +5,7 @@
  * @create 2021-04-09 18:39
  */
 
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Tabs } from 'antd';
 import VCPageContent, {
@@ -13,7 +13,9 @@ import VCPageContent, {
   ContentCard,
 } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/FeContext';
+import DetailContext, { ContextTypes } from './context';
 import { tabsConfig } from './config';
+import { queryApps } from '../service';
 import { IProps } from './types';
 import './index.less';
 
@@ -24,9 +26,11 @@ const { TabPane } = Tabs;
 const defaultTab = 'overview';
 
 const ApplicationDetail = (props: IProps) => {
-  const { location, route, children } = props;
+  const { location, children } = props;
+  const appId = location.query.id;
 
   const feContent = useContext(FEContext);
+  const [appData, setAppData] = useState<ContextTypes['appData']>();
 
   const tabActiveKey = useMemo(
     () =>
@@ -46,6 +50,26 @@ const ApplicationDetail = (props: IProps) => {
     });
     return null;
   }
+
+  // 请求应用数据
+  const queryAppData = () => {
+    queryApps({
+      id: Number(appId),
+      pageIndex: 1,
+      pageSize: 10,
+    }).then((res: any) => {
+      if (res.list.length) {
+        setAppData(res.list[0]);
+        return;
+      }
+      setAppData(undefined);
+    });
+  };
+
+  useEffect(() => {
+    if (!appId) return;
+    queryAppData();
+  }, [appId]);
 
   return (
     <VCPageContent
@@ -81,7 +105,14 @@ const ApplicationDetail = (props: IProps) => {
         </Tabs>
       )}
 
-      {children}
+      <DetailContext.Provider
+        value={{
+          appData,
+          queryAppData: queryAppData,
+        }}
+      >
+        {children}
+      </DetailContext.Provider>
     </VCPageContent>
   );
 };

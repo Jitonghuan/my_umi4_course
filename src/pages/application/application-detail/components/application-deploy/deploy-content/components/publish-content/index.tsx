@@ -7,12 +7,12 @@
 
 import React, { useState } from 'react';
 import { Modal, Button } from 'antd';
-import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import { useEffectOnce } from 'white-react-use';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
+import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { retryDeploy } from '../../../../../../service';
+import { createDeploy, updateFeatures } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 
@@ -28,7 +28,7 @@ const PublishContent = ({
 }: IProps) => {
   const isProd = env === 'prod';
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
   return (
     <div className={rootCls}>
@@ -40,7 +40,9 @@ const PublishContent = ({
           deployInfo={deployInfo}
           onOperate={onOperate}
         />
-      ) : null}
+      ) : (
+        <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} />
+      )}
 
       <div className={`${rootCls}__list-wrap`}>
         <div className={`${rootCls}__list-header`}>
@@ -49,6 +51,7 @@ const PublishContent = ({
           {!isProd && (
             <div className={`${rootCls}__list-header-btns`}>
               <Button
+                disabled={!selectedRowKeys.length}
                 onClick={() => {
                   onOperate('retryDeployStart');
 
@@ -56,8 +59,10 @@ const PublishContent = ({
                     title: '确定要重新部署吗?',
                     icon: <ExclamationCircleOutlined />,
                     onOk() {
-                      // TODO 接口不对
-                      return retryDeploy({ ids: selectedRowKeys }).then(() => {
+                      return updateFeatures({
+                        id: deployInfo.id,
+                        features: selectedRowKeys,
+                      }).then(() => {
                         onOperate('retryDeployEnd');
                       });
                     },
@@ -69,8 +74,41 @@ const PublishContent = ({
               >
                 重新部署
               </Button>
-              <Button>批量退出</Button>
-              <Button>重启</Button>
+              <Button
+                disabled={!selectedRowKeys.length}
+                onClick={() => {
+                  onOperate('batchExitStart');
+
+                  confirm({
+                    title: '确定要批量退出吗?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk() {
+                      return createDeploy({
+                        appCode,
+                        env,
+                        features: deployedList
+                          .filter((item) => !selectedRowKeys.includes(item.id))
+                          .map((item) => item.id),
+                      }).then(() => {
+                        onOperate('batchExitEnd');
+                      });
+                    },
+                    onCancel() {
+                      onOperate('batchExitEnd');
+                    },
+                  });
+                }}
+              >
+                批量退出
+              </Button>
+              <Button
+                onClick={() => {
+                  // TODO
+                  alert('缺接口');
+                }}
+              >
+                重启
+              </Button>
             </div>
           )}
         </div>
@@ -87,10 +125,7 @@ const PublishContent = ({
               : {
                   type: 'checkbox',
                   selectedRowKeys,
-                  onChange: (
-                    selectedRowKeys: React.Key[],
-                    selectedRows: any[],
-                  ) => {
+                  onChange: (selectedRowKeys: React.Key[]) => {
                     setSelectedRowKeys(selectedRowKeys as any);
                   },
                 }

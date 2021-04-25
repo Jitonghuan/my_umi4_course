@@ -1,7 +1,9 @@
 import { ReactNode } from 'react';
 
 export interface IProps {
-  appCode: string;
+  /** 是否有发布内容 */
+  hasPublishContent: boolean;
+  deployInfo: Record<string, any>;
   env: string;
   dataSource: Array<{
     id: string | number;

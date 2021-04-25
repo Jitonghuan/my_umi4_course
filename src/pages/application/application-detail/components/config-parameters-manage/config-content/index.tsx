@@ -54,6 +54,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   useEffectOnce(() => {
     queryConfigList({
       env,
+      appCode,
       type: configType,
     });
   });
