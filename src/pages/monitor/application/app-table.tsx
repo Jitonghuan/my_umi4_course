@@ -353,9 +353,6 @@ const Coms = (props: IProps) => {
               memory: (value) => {
                 return `${value}%`;
               },
-              disk: (value) => {
-                return `${value}%`;
-              },
             }}
           />
 

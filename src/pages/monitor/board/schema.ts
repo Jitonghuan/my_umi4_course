@@ -22,6 +22,9 @@ export const resUseTableSchema = [
   {
     title: '5m负载',
     dataIndex: 'load',
+    sorter: {
+      compare: (a: any, b: any) => a.load - b.load,
+    },
   },
   {
     title: 'CPU使用率',
