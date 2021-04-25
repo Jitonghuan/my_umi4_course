@@ -102,6 +102,9 @@ export const RATE_ENUMS = [
  * @create 2021-04-12 19:15:42
  */
 const Coms = (props: IProps) => {
+  // 该组件会被作为路由组件使用，接收地址栏传参数
+  const appCode = props.location?.query?.appCode;
+
   const [filter, setFilter] = useState<IFilter>({} as IFilter);
   const prevFilter = useRef<IFilter>({} as IFilter);
   const [appData, setAppData] = useState([]);
@@ -134,7 +137,7 @@ const Coms = (props: IProps) => {
             allowClear: false,
             showSearch: false,
             options: appData,
-            disabled: props.appCode ? true : false,
+            disabled: appCode ? true : false,
           },
         },
         {
@@ -181,7 +184,7 @@ const Coms = (props: IProps) => {
     queryAppList().then((resp) => {
       setAppData(resp);
       prevFilter.current = {
-        appCode: props.appCode || (resp.length ? resp[0].value : undefined),
+        appCode: appCode || (resp.length ? resp[0].value : undefined),
       };
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
