@@ -348,10 +348,10 @@ const Coms = (props: IProps) => {
                 );
               },
               cpu: (value) => {
-                return `${value}%`;
+                return value ? `${value}%` : '';
               },
               memory: (value) => {
-                return `${value}%`;
+                return value ? `${value}%` : '';
               },
             }}
           />
