@@ -1,19 +1,13 @@
-import React, {
-  useRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useContext,
-} from 'react';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { Card, Empty, message, Select, Tree, Input, Button } from 'antd';
 import { history } from 'umi';
 import _ from 'lodash';
 
 import HulkTable, { ColumnProps, usePaginated } from '@cffe/vc-hulk-table';
 import VCForm, { IColumns } from '@cffe/vc-form';
-import VCPageContent, { FilterCard } from '@/components/vc-page-content';
-import VCMenu, { IMenuItem } from '@/components/vc-menu';
+import { FilterCard } from '@/components/vc-page-content';
+import { IMenuItem } from '@/components/vc-menu';
+import MatrixPageContent from '@/components/matrix-page-content';
 import PageLoading from '@cffe/vc-loading';
 
 import FEContext from '@/layouts/basic-layout/FeContext';
@@ -214,12 +208,7 @@ const Coms = (props: any) => {
   };
 
   return (
-    <VCPageContent
-      height="calc(100vh - 48px)"
-      breadcrumbMap={feContent.breadcrumbMap}
-      pathname={location.pathname}
-      isFlex
-    >
+    <MatrixPageContent isFlex>
       <FilterCard bodyStyle={{ paddingBottom: '12px' }}>
         <VCForm
           layout="inline"
@@ -302,7 +291,7 @@ const Coms = (props: any) => {
           />
         </Card>
       </div>
-    </VCPageContent>
+    </MatrixPageContent>
   );
 };
 
