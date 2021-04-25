@@ -353,14 +353,14 @@ const Coms = (props: IProps) => {
               memory: (value) => {
                 return `${value}%`;
               },
-              disk: (value) => {
-                return `${value}%`;
-              },
             }}
           />
 
           <h3 className="monitor-tabs-content-title">
-            监控图表&nbsp;&nbsp;{curtIP ? `当前POD：${curtIP}` : ''}
+            监控图表&nbsp;&nbsp;
+            <span style={{ fontSize: 12, color: '#1973CC' }}>
+              {curtIP ? `当前IP：${curtIP}` : ''}
+            </span>
           </h3>
           <VCCardLayout grid={layoutGrid} className="monitor-app-content">
             {appConfig.map((el) => (

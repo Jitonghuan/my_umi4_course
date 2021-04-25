@@ -13,7 +13,7 @@ export interface ITableSchema {
 export const tableSchema = [
   {
     dataIndex: 'hostIP',
-    title: 'POD IP',
+    title: 'IP',
   },
   {
     dataIndex: 'cpu',
@@ -25,7 +25,7 @@ export const tableSchema = [
   },
   {
     dataIndex: 'disk',
-    title: '磁盘使用率',
+    title: '磁盘使用量(GB)',
   },
   {
     dataIndex: 'restartNum',
@@ -61,8 +61,9 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
     grid: {
       bottom: 24,
       top: 50,
-      left: 60,
-      right: 0,
+      left: 30,
+      right: 40,
+      containLabel: true,
     },
     legend: {
       left: 0,
@@ -127,8 +128,8 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     grid: {
       bottom: 24,
       top: 50,
-      left: 10,
-      right: 0,
+      left: 30,
+      right: 40,
       containLabel: true,
     },
     legend: {
@@ -194,8 +195,9 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     grid: {
       bottom: 24,
       top: 50,
-      left: 60,
-      right: 0,
+      left: 30,
+      right: 40,
+      containLabel: true,
     },
     legend: {
       left: 0,
@@ -218,6 +220,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     yAxis: [
       {
         type: 'value',
+        name: '单位：MB',
         axisLabel: {
           color: '#999',
         },
@@ -269,8 +272,9 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
     grid: {
       bottom: 24,
       top: 50,
-      left: 60,
-      right: 0,
+      left: 30,
+      right: 40,
+      containLabel: true,
     },
     legend: {
       left: 0,
@@ -293,6 +297,7 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
     yAxis: [
       {
         type: 'value',
+        name: '单位：MB',
         axisLabel: {
           color: '#999',
         },

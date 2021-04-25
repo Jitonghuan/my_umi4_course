@@ -6,13 +6,19 @@ import { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/b
 import ds from '@config/defaultSettings';
 import DocumentTitle from './DocumentTitle';
 import FeContext from './FeContext';
-import { queryBelongData, queryBizData, queryEnvData } from './service';
+import {
+  queryBelongData,
+  queryBizData,
+  queryEnvData,
+  queryPermission,
+} from './service';
 import { DFSFunc } from '@/utils';
 import {
   getRequest,
   queryUserInfo as ssoQueryUserInfo,
   queryUserInfoApi,
   doLogoutApi,
+  postRequest,
 } from '@/utils/request';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
@@ -78,6 +84,13 @@ export default (props: IUmiRrops) => {
     );
   };
 
+  // 获取用户权限
+  const queryPermissionData = async () => {
+    const resp = await getRequest(queryPermission);
+
+    console.log(resp);
+  };
+
   const [{ width }] = useSize(
     () => document.querySelector(`.vc-layout-inner`) as HTMLElement,
   );
@@ -85,6 +98,7 @@ export default (props: IUmiRrops) => {
 
   useEffect(() => {
     queryBusinessData();
+    queryPermissionData();
   }, []);
 
   return (
@@ -117,7 +131,7 @@ export default (props: IUmiRrops) => {
                 {...FeGlobalRef.current}
                 siderMenuProps={{
                   scriptUrl:
-                    'http://at.alicdn.com/t/font_2486191_7mbr5t0adq8.js',
+                    'http://at.alicdn.com/t/font_2486191_tnfcu8v29v.js',
                 }}
                 headerProps={{
                   isShowGlobalMenu: false,
