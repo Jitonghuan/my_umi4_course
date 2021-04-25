@@ -45,7 +45,7 @@ const ConfigParametersManage = ({
         tabBarStyle={{ background: '#E6EBF5' }}
       >
         {envData?.map((item) => (
-          <TabPane tab={item.envCode} key={item.envCode}>
+          <TabPane tab={item.envName} key={item.envCode}>
             <ConfigContent
               env={item.envCode}
               configType={configType}
