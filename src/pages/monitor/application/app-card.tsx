@@ -289,7 +289,7 @@ const Coms = (props: IProps) => {
             </Select>
           </div>
           <div className="monitor-app-card" style={{ padding: '16px 0' }}>
-            <div className="app-header">
+            <div className="app-header" style={{ marginBottom: 12 }}>
               <h3 className="app-title">{title}</h3>
               <span>
                 <RedoOutlined
