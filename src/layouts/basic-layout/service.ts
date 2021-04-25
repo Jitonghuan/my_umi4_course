@@ -20,3 +20,6 @@ export const queryBizModuleData = `${ds.apiPrefix}/orgManage/buSys/list`;
 
 /** 获取环境接口 */
 export const queryEnvData = `${ds.apiPrefix}/orgManage/env/list`;
+
+/** 获取权限数据 */
+export const queryPermission = `${ds.apiPrefix}/rightManage/getUserMenus`;
