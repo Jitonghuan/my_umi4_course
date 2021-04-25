@@ -29,7 +29,7 @@ export const resUseTableSchema = [
     dataIndex: 'cpuUsageRate',
     sorter: {
       compare: (a: any, b: any) => a.cpuUsageRate - b.cpuUsageRate,
-      multiple: 1,
+      multiple: 2,
     },
   },
   {
@@ -37,7 +37,7 @@ export const resUseTableSchema = [
     dataIndex: 'memoryUsageRate',
     sorter: {
       compare: (a: any, b: any) => a.memoryUsageRate - b.memoryUsageRate,
-      multiple: 1,
+      multiple: 3,
     },
   },
   {
@@ -45,7 +45,7 @@ export const resUseTableSchema = [
     dataIndex: 'diskUsageRate',
     sorter: {
       compare: (a: any, b: any) => a.diskUsageRate - b.diskUsageRate,
-      multiple: 1,
+      multiple: 4,
     },
   },
 ];
