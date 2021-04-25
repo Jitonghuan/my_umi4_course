@@ -17,6 +17,7 @@ const request = async (url: string, params?: IRequestParams | undefined) => {
         resolve(resp);
       })
       .catch((e) => {
+        message.error(e.errorMsg);
         reject(e);
       });
   });
@@ -28,15 +29,20 @@ export const postRequest = async (
   params?: IRequestParams | undefined,
 ) => {
   return new Promise<IResponse>((resolve, reject) => {
-    sso.post(url, params).then((resp) => {
-      if (!resp.success) {
-        message.error(resp.errorMsg);
-        reject(resp);
-        return;
-      }
+    sso
+      .post(url, params)
+      .then((resp) => {
+        if (!resp.success) {
+          message.error(resp.errorMsg);
+          reject(resp);
+          return;
+        }
 
-      resolve(resp);
-    });
+        resolve(resp);
+      })
+      .catch((e) => {
+        message.error(e.errorMsg);
+      });
   });
 };
 
