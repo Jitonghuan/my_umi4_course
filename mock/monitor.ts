@@ -86,33 +86,11 @@ export default {
     },
   },
 
-  'GET /v1/appManage/list': {
-    success: true,
-    code: 1000,
-    errorMsg: '',
-    data: [
-      { id: '1', appName: '浙一医院1', appCode: '1' },
-      { id: '2', appName: '天台医院2', appCode: '2' },
-      { id: '3', appName: '浙一医院3', appCode: '3' },
-      { id: '4', appName: '天台医院4', appCode: '4' },
-      { id: '5', appName: '浙一医院5', appCode: '5' },
-      { id: '6', appName: '天台医院6', appCode: '6' },
-      { id: '7', appName: '浙一医院7', appCode: '7' },
-      { id: '8', appName: '天台医院8', appCode: '8' },
-      { id: '9', appName: '浙一医院9', appCode: '9' },
-      { id: '10', appName: '天台医院10', appCode: '10' },
-    ],
-  },
-
   'GET /v1/monitorManage/app/env': {
     success: true,
     code: 1000,
     errorMsg: '',
-    data: [
-      { id: '1', envName: 'test', envCode: 'test' },
-      { id: '2', envName: 'dev', envCode: 'dev' },
-      { id: '3', envName: 'cis', envCode: 'cis' },
-    ],
+    data: ['hbos-dev', 'hbos-test'],
   },
 
   'GET /v1/monitorManage/app/podInfo': {

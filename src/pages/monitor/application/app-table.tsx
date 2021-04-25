@@ -102,6 +102,9 @@ export const RATE_ENUMS = [
  * @create 2021-04-12 19:15:42
  */
 const Coms = (props: IProps) => {
+  // 该组件会被作为路由组件使用，接收地址栏传参数
+  const appCode = props.location?.query?.appCode;
+
   const [filter, setFilter] = useState<IFilter>({} as IFilter);
   const prevFilter = useRef<IFilter>({} as IFilter);
   const [appData, setAppData] = useState([]);
@@ -134,7 +137,7 @@ const Coms = (props: IProps) => {
             allowClear: false,
             showSearch: false,
             options: appData,
-            disabled: props.appCode ? true : false,
+            disabled: appCode ? true : false,
           },
         },
         {
@@ -181,7 +184,7 @@ const Coms = (props: IProps) => {
     queryAppList().then((resp) => {
       setAppData(resp);
       prevFilter.current = {
-        appCode: props.appCode || (resp.length ? resp[0].value : undefined),
+        appCode: appCode || (resp.length ? resp[0].value : undefined),
       };
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
@@ -284,89 +287,94 @@ const Coms = (props: IProps) => {
   };
 
   return (
-    <div className="monitor-app-table">
-      <Card
-        className="monitor-app-filter"
-        style={{ marginBottom: 12, backgroundColor: '#fff' }}
-      >
-        <HulkForm
-          form={formInstance}
-          layout="inline"
-          {...filterColumns}
-          className="monitor-filter-form"
-          onValuesChange={handleFilter}
-        />
-        <div className="monitor-time-select">
-          <Select value={startTime} onChange={(value) => setStartTime(value)}>
-            {START_TIME_ENUMS.map((time) => (
-              <Select.Option key={time.value} value={time.value}>
-                {time.label}
-              </Select.Option>
-            ))}
-          </Select>
-          <Select value={timeRate} onChange={handleTimeRateChange}>
-            {RATE_ENUMS.map((time) => (
-              <Select.Option key={time.value} value={time.value}>
-                {time.label}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-      </Card>
+    <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div className="monitor-app-table">
+        <Card
+          className="monitor-app-filter"
+          style={{ marginBottom: 12, backgroundColor: '#fff' }}
+        >
+          <HulkForm
+            form={formInstance}
+            layout="inline"
+            {...filterColumns}
+            className="monitor-filter-form"
+            onValuesChange={handleFilter}
+          />
+          <div className="monitor-time-select">
+            <Select value={startTime} onChange={(value) => setStartTime(value)}>
+              {START_TIME_ENUMS.map((time) => (
+                <Select.Option key={time.value} value={time.value}>
+                  {time.label}
+                </Select.Option>
+              ))}
+            </Select>
+            <Select value={timeRate} onChange={handleTimeRateChange}>
+              {RATE_ENUMS.map((time) => (
+                <Select.Option key={time.value} value={time.value}>
+                  {time.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+        </Card>
 
-      <Card className="monitor-app-body">
-        <h3 className="monitor-tabs-content-title">
-          资源使用情况
-          <RedoOutlined
-            style={{ float: 'right' }}
-            onClick={() => {
-              reset();
-              queryNodeList();
+        <Card className="monitor-app-body">
+          <h3 className="monitor-tabs-content-title">
+            资源使用情况
+            <RedoOutlined
+              style={{ float: 'right' }}
+              onClick={() => {
+                reset();
+                queryNodeList();
+              }}
+            />
+          </h3>
+
+          <HulkTable
+            rowKey="ip"
+            size="small"
+            columns={tableSchema as ColumnProps[]}
+            // scroll={{ y: 300 }}
+            {...tableProps}
+            customColumnMap={{
+              hostIP: (value: string) => {
+                return (
+                  <span
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setCurtIp(value)}
+                  >
+                    {value}
+                  </span>
+                );
+              },
+              cpu: (value) => {
+                return `${value}%`;
+              },
+              memory: (value) => {
+                return `${value}%`;
+              },
+              disk: (value) => {
+                return `${value}%`;
+              },
             }}
           />
-        </h3>
 
-        <HulkTable
-          rowKey="ip"
-          size="small"
-          columns={tableSchema as ColumnProps[]}
-          // scroll={{ y: 300 }}
-          {...tableProps}
-          customColumnMap={{
-            hostIP: (value: string) => {
-              return (
-                <span
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setCurtIp(value)}
-                >
-                  {value}
-                </span>
-              );
-            },
-            cpu: (value) => {
-              return `${value}%`;
-            },
-            memory: (value) => {
-              return `${value}%`;
-            },
-            disk: (value) => {
-              return `${value}%`;
-            },
-          }}
-        />
-
-        <h3 className="monitor-tabs-content-title">
-          监控图表&nbsp;&nbsp;{curtIP ? `当前POD：${curtIP}` : ''}
-        </h3>
-        <VCCardLayout grid={layoutGrid} className="monitor-app-content">
-          {appConfig.map((el) => (
-            <AppCard
-              {...el}
-              requestParams={{ ...filter, ip: curtIP, startTime, rateNum }}
-            />
-          ))}
-        </VCCardLayout>
-      </Card>
+          <h3 className="monitor-tabs-content-title">
+            监控图表&nbsp;&nbsp;
+            <span style={{ fontSize: 12, color: '#1973CC' }}>
+              {curtIP ? `当前IP：${curtIP}` : ''}
+            </span>
+          </h3>
+          <VCCardLayout grid={layoutGrid} className="monitor-app-content">
+            {appConfig.map((el) => (
+              <AppCard
+                {...el}
+                requestParams={{ ...filter, ip: curtIP, startTime, rateNum }}
+              />
+            ))}
+          </VCCardLayout>
+        </Card>
+      </div>
     </div>
   );
 };
