@@ -25,7 +25,7 @@ export const tableSchema = [
   },
   {
     dataIndex: 'disk',
-    title: '磁盘使用率',
+    title: '磁盘使用量(GB)',
   },
   {
     dataIndex: 'restartNum',
