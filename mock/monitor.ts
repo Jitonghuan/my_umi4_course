@@ -108,11 +108,7 @@ export default {
     success: true,
     code: 1000,
     errorMsg: '',
-    data: [
-      { id: '1', envName: 'test', envCode: 'test' },
-      { id: '2', envName: 'dev', envCode: 'dev' },
-      { id: '3', envName: 'cis', envCode: 'cis' },
-    ],
+    data: ['hbos-dev', 'hbos-test'],
   },
 
   'GET /v1/monitorManage/app/podInfo': {

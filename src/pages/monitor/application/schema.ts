@@ -61,8 +61,8 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
     grid: {
       bottom: 24,
       top: 50,
-      left: 30,
-      right: 40,
+      left: 60,
+      right: 0,
     },
     legend: {
       left: 0,
@@ -127,8 +127,9 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     grid: {
       bottom: 24,
       top: 50,
-      left: 30,
-      right: 40,
+      left: 10,
+      right: 0,
+      containLabel: true,
     },
     legend: {
       left: 0,
@@ -193,12 +194,12 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     grid: {
       bottom: 24,
       top: 50,
-      left: 30,
-      right: 40,
+      left: 60,
+      right: 0,
     },
     legend: {
       left: 0,
-      data: ['FullGC次数', 'YoungGC次数'],
+      data: ['使用总和', '年轻代Eden区', '年轻代Survivor区', '老年代'],
       icon: 'rect',
     },
     color: ['#4BA2FF', '#54DA81'],
@@ -268,12 +269,12 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
     grid: {
       bottom: 24,
       top: 50,
-      left: 30,
-      right: 40,
+      left: 60,
+      right: 0,
     },
     legend: {
       left: 0,
-      data: ['FullGC次数', 'YoungGC次数'],
+      data: ['元空间'],
       icon: 'rect',
     },
     color: ['#4BA2FF', '#54DA81'],
