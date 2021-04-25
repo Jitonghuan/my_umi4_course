@@ -17,15 +17,20 @@ export const tableSchema: ColumnProps[] = [
   {
     title: '用例集',
     dataIndex: 'group',
+    render: (val) => val || '-',
   },
   {
     title: '测试时间',
     dataIndex: 'testTime',
     render: (val, record) => (
       <span>
-        {record.startTime}
+        {record.startTime
+          ? dayjs(record.startTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'}
         <br />
-        {record.endTime}
+        {record.endTime
+          ? dayjs(record.endTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'}
       </span>
     ),
   },
@@ -63,14 +68,17 @@ export const tableSchema: ColumnProps[] = [
   {
     title: '通过数',
     dataIndex: 'passNum',
+    render: (val) => val || '-',
   },
   {
     dataIndex: 'failNum',
     title: '失败数',
+    render: (val) => val || '-',
   },
   {
     title: '跳过数',
     dataIndex: 'skipNum',
+    render: (val) => val || '-',
   },
   {
     title: '构建方式',

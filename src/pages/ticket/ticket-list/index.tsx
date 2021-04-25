@@ -202,6 +202,9 @@ const Coms = (props: any) => {
             remark: Input.TextArea,
           }}
           isShowReset
+          onReset={() => {
+            createFormRef.resetFields();
+          }}
           onValuesChange={(target: any) => {
             const field = Object.keys(target)[0];
             const value = target[field];
