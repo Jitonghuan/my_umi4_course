@@ -40,17 +40,6 @@ const ApplicationDetail = (props: IProps) => {
     [location.pathname],
   );
 
-  // 默认重定向到【概述】路由下
-  if (location.pathname === detailPath) {
-    history.replace({
-      pathname: `${location.pathname}/${defaultTab}`,
-      query: {
-        ...location.query,
-      },
-    });
-    return null;
-  }
-
   // 请求应用数据
   const queryAppData = () => {
     queryApps({
@@ -70,6 +59,17 @@ const ApplicationDetail = (props: IProps) => {
     if (!appId) return;
     queryAppData();
   }, [appId]);
+
+  // 默认重定向到【概述】路由下
+  if (location.pathname === detailPath) {
+    history.replace({
+      pathname: `${location.pathname}/${defaultTab}`,
+      query: {
+        ...location.query,
+      },
+    });
+    return null;
+  }
 
   return (
     <VCPageContent

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { ConfigProvider } from 'antd';
+import { Dropdown, ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
 import FELayout from '@cffe/vc-layout';
 import { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/bus-layout';
@@ -22,15 +22,14 @@ import {
 } from '@/utils/request';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
+import { IPermission } from '@cffe/vc-layout/lib/sider-menu';
 
 export default (props: IUmiRrops) => {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
   // 所属数据
   const [belongData, setBelongData] = useState<IOption[]>([]);
-
   // 业务线
   const [business, setBusiness] = useState<IOption[]>([]);
-
   // 环境
   const [envData, setEnvData] = useState<IOption[]>([]);
 
@@ -45,6 +44,9 @@ export default (props: IUmiRrops) => {
 
     return map;
   }, [props]);
+
+  // 权限数据
+  const [permissionData, setPermissionData] = useState<IPermission[]>([]);
 
   // 查询业务线数据
   const queryBusinessData = async () => {
@@ -88,6 +90,18 @@ export default (props: IUmiRrops) => {
   const queryPermissionData = async () => {
     const resp = await getRequest(queryPermission);
 
+    const { data = [] } = resp;
+
+    if (data.length > 0) {
+      setPermissionData(
+        data.map((el: any) => ({
+          permissionId: el.menuCode,
+          permissionName: el.menuName,
+          permissionUrl: el.menuUrl,
+        })),
+      );
+    }
+
     console.log(resp);
   };
 
@@ -98,7 +112,7 @@ export default (props: IUmiRrops) => {
 
   useEffect(() => {
     queryBusinessData();
-    queryPermissionData();
+    ds.isOpenPermission && queryPermissionData();
   }, []);
 
   return (
@@ -130,6 +144,8 @@ export default (props: IUmiRrops) => {
                 // 全局插入配置覆盖默认配置
                 {...FeGlobalRef.current}
                 siderMenuProps={{
+                  isOpenPermission: ds.isOpenPermission,
+                  permissionData,
                   scriptUrl:
                     'http://at.alicdn.com/t/font_2486191_tnfcu8v29v.js',
                 }}

@@ -322,3 +322,12 @@ export const retryDelFeature = (params: {
   postRequest(`${ds.apiPrefix}/releaseManage/deploy/retryDelFeature`, {
     data: params,
   });
+
+/** 取消部署 */
+export const cancelDeploy = (params: {
+  /** 部署的数据库自增ID */
+  id: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/cancel`, {
+    data: params,
+  });
