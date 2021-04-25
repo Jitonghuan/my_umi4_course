@@ -18,6 +18,7 @@ import { tabsConfig } from './config';
 import { queryApps } from '../service';
 import { IProps } from './types';
 import './index.less';
+import VCPermission from '@/components/vc-permission';
 
 const rootCls = 'application-detail-page';
 const detailPath = '/matrix/application/detail';
@@ -111,7 +112,9 @@ const ApplicationDetail = (props: IProps) => {
           queryAppData: queryAppData,
         }}
       >
-        {children}
+        <VCPermission code={window.location.pathname} isShowErrorPage>
+          {children}
+        </VCPermission>
       </DetailContext.Provider>
     </VCPageContent>
   );

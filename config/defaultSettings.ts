@@ -39,5 +39,5 @@ export default {
   apiPrefix: `/v1`,
   pagePrefix: `/${appKey}`,
   // 是否开启权限
-  isOpenPermission: false,
+  isOpenPermission: true,
 } as IDefaultSettings;
