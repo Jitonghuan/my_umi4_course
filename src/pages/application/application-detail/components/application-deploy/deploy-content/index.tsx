@@ -29,11 +29,9 @@ const DeployContent = ({ env }: IProps) => {
     unDeployed: any[];
   }>({ deployed: [], unDeployed: [] });
 
-  console.log('appCode1', appCode);
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(
     () => {
-      console.log('appCode', appCode);
       setUpdating(true);
       Promise.all([
         queryDeployList({
