@@ -21,3 +21,15 @@ export const createTableSchema = () => [
     render: () => <a>详情</a>,
   },
 ];
+
+// 发布记录字段 map
+export const recordFieldMap: { [key: string]: string } = {
+  id: '发布Id',
+  createUser: '创建人',
+  gmtPublish: '发布时间',
+  env: '发布环境',
+  deployStatus: '发布状态',
+  features: '功能分支',
+  releaseBranch: '发布分支',
+  merge: 'git merge', // TODO
+};

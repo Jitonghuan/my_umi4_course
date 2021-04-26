@@ -19,7 +19,7 @@ const rootCls = 'publish-content-compo';
 
 const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
   const status = useMemo<Status>(() => {
-    const { deployStatus } = deployInfo;
+    const { deployStatus } = deployInfo || {};
 
     if (!deployInfo.id) return 0;
 
