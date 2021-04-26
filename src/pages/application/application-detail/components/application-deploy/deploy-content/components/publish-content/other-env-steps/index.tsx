@@ -19,9 +19,9 @@ const rootCls = 'publish-content-compo';
 
 const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
   const status = useMemo<Status>(() => {
-    const { deployStatus } = deployInfo;
+    const { deployStatus } = deployInfo || {};
 
-    if (!deployInfo.id) return 0;
+    if (!deployInfo || !deployInfo.id) return 0;
 
     // 合并release
     // deployStatus: merging\mergeErr\conflict, 有 mergeWebUrl 则展示

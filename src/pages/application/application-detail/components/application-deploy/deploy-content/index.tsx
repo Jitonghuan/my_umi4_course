@@ -32,6 +32,8 @@ const DeployContent = ({ env }: IProps) => {
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(
     () => {
+      if (!appCode) return;
+
       setUpdating(true);
       Promise.all([
         queryDeployList({
@@ -68,26 +70,34 @@ const DeployContent = ({ env }: IProps) => {
 
   return (
     <div className={rootCls}>
-      <PublishDetail env={env} deployInfo={deployInfo} onOperate={onOperate} />
-      <PublishContent
-        appCode={appCode!}
-        env={env}
-        deployInfo={deployInfo}
-        deployedList={branchInfo.deployed}
-        onOperate={onOperate}
-      />
-      <PublishBranch
-        deployInfo={deployInfo}
-        hasPublishContent={
-          !!(branchInfo.deployed && branchInfo.deployed.length)
-        }
-        dataSource={branchInfo.unDeployed}
-        env={env}
-        onSubmitBranch={(status) => {
-          timerHandle(status === 'start' ? 'stop' : 'do', true);
-        }}
-      />
-      <PublishRecord />
+      <div className={`${rootCls}-body`}>
+        <PublishDetail
+          env={env}
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+        />
+        <PublishContent
+          appCode={appCode!}
+          env={env}
+          deployInfo={deployInfo}
+          deployedList={branchInfo.deployed}
+          onOperate={onOperate}
+        />
+        <PublishBranch
+          deployInfo={deployInfo}
+          hasPublishContent={
+            !!(branchInfo.deployed && branchInfo.deployed.length)
+          }
+          dataSource={branchInfo.unDeployed}
+          env={env}
+          onSubmitBranch={(status) => {
+            timerHandle(status === 'start' ? 'stop' : 'do', true);
+          }}
+        />
+      </div>
+      <div className={`${rootCls}-sider`}>
+        <PublishRecord env={env} appCode={appCode} />
+      </div>
     </div>
   );
 };

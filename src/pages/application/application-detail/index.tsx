@@ -19,6 +19,7 @@ import { queryApps } from '../service';
 import { IProps } from './types';
 import './index.less';
 import VCPermission from '@/components/vc-permission';
+import MatrixPageContent from '@/components/matrix-page-content';
 
 const rootCls = 'application-detail-page';
 const detailPath = '/matrix/application/detail';
@@ -73,13 +74,7 @@ const ApplicationDetail = (props: IProps) => {
   }
 
   return (
-    <VCPageContent
-      className={rootCls}
-      height="calc(100vh - 118px)"
-      breadcrumbMap={feContent.breadcrumbMap}
-      pathname={location.pathname}
-      isFlex
-    >
+    <MatrixPageContent isFlex>
       {/* tab子路由 */}
       {tabActiveKey && (
         <Tabs
@@ -116,7 +111,7 @@ const ApplicationDetail = (props: IProps) => {
           {children}
         </VCPermission>
       </DetailContext.Provider>
-    </VCPageContent>
+    </MatrixPageContent>
   );
 };
 

@@ -54,7 +54,7 @@ export default (...params: Params): Response => {
 
     cacheRef.current.timeout = setInterval(
       () => {
-        fn();
+        cacheRef.current.params[0]?.();
       },
       typeof interval === 'number' ? interval : 1000,
     );
