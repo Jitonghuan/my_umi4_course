@@ -26,12 +26,14 @@ const funcName = (props: IProps) => {
 
   return (
     <Select
+      style={{ width: '170px' }}
       showSearch
       value={value}
       placeholder="请选择版本号"
       dropdownMatchSelectWidth={160}
       allowClear
       showArrow
+      optionFilterProp="label"
       onChange={handleChange}
       options={options}
     />
