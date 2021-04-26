@@ -182,5 +182,39 @@ export default [
       },
     ],
   },
+  {
+    path: 'release',
+    name: '发布申请管理',
+    icon: 'icon-code',
+    routes: [
+      {
+        path: 'function',
+        name: '发布功能管理',
+        component: '@/pages/release/function',
+        routes: [
+          {
+            path: 'add',
+            name: '新增发布功能',
+            component: '@/pages/release/function/addFunction',
+          },
+          {
+            path: 'edit',
+            name: '编辑发布功能',
+            component: '@/pages/release/function/editFunction',
+          },
+        ],
+      },
+      {
+        path: 'plan',
+        name: '发布计划管理',
+        component: '@/pages/release/plan',
+      },
+      {
+        path: 'apply',
+        name: '发布申请',
+        component: '@/pages/release/apply',
+      },
+    ],
+  },
   /** {{routes: 标志位不可删除，用于初始化页面}}  */
 ] as IRouteItem[];
