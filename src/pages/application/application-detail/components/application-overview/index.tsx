@@ -132,6 +132,7 @@ const ApplicationOverview = (props: IProps) => {
 
       <ModifyMember
         formValue={memberData}
+        appCode={appData?.appCode}
         visible={isModifyMember}
         onClose={() => setIsModifyMember(false)}
         onSubmit={() => {

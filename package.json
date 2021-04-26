@@ -42,7 +42,7 @@
     "@cffe/vc-error-page": "^1.0.1",
     "@cffe/vc-form": "1.0.7",
     "@cffe/vc-hulk-form": "1.0.11",
-    "@cffe/vc-hulk-table": "1.0.7",
+    "@cffe/vc-hulk-table": "1.0.8",
     "@cffe/vc-layout": "1.0.15",
     "@cffe/vc-loading": "1.0.2",
     "@cffe/vc-request": "1.0.10",

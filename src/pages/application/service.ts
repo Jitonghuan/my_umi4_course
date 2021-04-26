@@ -44,7 +44,7 @@ export const deleteBranch = (params: {
   /** id */
   id: number;
 }) =>
-  request(`${ds.apiPrefix}/releaseManage/branch/delete`, {
+  request(`${ds.apiPrefix}/releaseManage/branch/delete/${params.id}`, {
     method: 'DELETE',
     data: params,
   });

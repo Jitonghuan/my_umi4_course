@@ -43,7 +43,13 @@ const ModifyMember = (props: IProps) => {
           onReset={props.onClose}
           onFinish={(val: FormValue) => {
             setLoading(true);
-            updateAppMember(val as any)
+            if (!props.appCode) {
+              return;
+            }
+            updateAppMember({
+              appCode: props.appCode,
+              ...val,
+            })
               .then((res) => {
                 if (res.success) {
                   message.success('更新成功');
