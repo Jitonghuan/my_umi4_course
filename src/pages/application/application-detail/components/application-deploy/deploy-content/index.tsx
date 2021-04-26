@@ -68,26 +68,34 @@ const DeployContent = ({ env }: IProps) => {
 
   return (
     <div className={rootCls}>
-      <PublishDetail env={env} deployInfo={deployInfo} onOperate={onOperate} />
-      <PublishContent
-        appCode={appCode!}
-        env={env}
-        deployInfo={deployInfo}
-        deployedList={branchInfo.deployed}
-        onOperate={onOperate}
-      />
-      <PublishBranch
-        deployInfo={deployInfo}
-        hasPublishContent={
-          !!(branchInfo.deployed && branchInfo.deployed.length)
-        }
-        dataSource={branchInfo.unDeployed}
-        env={env}
-        onSubmitBranch={(status) => {
-          timerHandle(status === 'start' ? 'stop' : 'do', true);
-        }}
-      />
-      <PublishRecord />
+      <div className={`${rootCls}-body`}>
+        <PublishDetail
+          env={env}
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+        />
+        <PublishContent
+          appCode={appCode!}
+          env={env}
+          deployInfo={deployInfo}
+          deployedList={branchInfo.deployed}
+          onOperate={onOperate}
+        />
+        <PublishBranch
+          deployInfo={deployInfo}
+          hasPublishContent={
+            !!(branchInfo.deployed && branchInfo.deployed.length)
+          }
+          dataSource={branchInfo.unDeployed}
+          env={env}
+          onSubmitBranch={(status) => {
+            timerHandle(status === 'start' ? 'stop' : 'do', true);
+          }}
+        />
+      </div>
+      <div className={`${rootCls}-sider`}>
+        <PublishRecord />
+      </div>
     </div>
   );
 };
