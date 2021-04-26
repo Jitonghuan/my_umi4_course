@@ -40,9 +40,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     visible: false,
   });
 
-  // 回退版本弹窗
-  const [rollbackVisible, setRollbackVisible] = useState<boolean>(false);
-
   // 当前选中版本
   const [currentVersion, setCurrentVersion] = useState<string | number>();
 
@@ -65,6 +62,9 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     {
       requestUrl: queryVersionApi,
       requestMethod: 'GET',
+      initPageInfo: {
+        pageSize: 30,
+      },
     },
   );
 
