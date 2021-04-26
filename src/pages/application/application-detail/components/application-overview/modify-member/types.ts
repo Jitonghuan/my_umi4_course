@@ -1,6 +1,7 @@
 export interface IProps {
   formValue?: FormValue;
   visible: boolean;
+  appCode?: string;
   onClose: () => void;
   /** 提交成功后回调 */
   onSubmit: () => void;

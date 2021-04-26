@@ -22,9 +22,15 @@ const PublishRecord = (props: IProps) => {
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
 
-  const { run: queryDataSource, tableProps, setPageInfo } = usePaginated({
+  const {
+    run: queryDataSource,
+    tableProps,
+    loadMore,
+    setPageInfo,
+  } = usePaginated({
     requestUrl: queryRecordApi,
     requestMethod: 'GET',
+    loadMore: true,
   });
 
   useEffect(() => {
@@ -44,14 +50,7 @@ const PublishRecord = (props: IProps) => {
             ghost
             type="dashed"
             loading={tableProps.loading}
-            onClick={() => {
-              setPageInfo(
-                {
-                  pageIndex: current + 1,
-                },
-                true,
-              );
-            }}
+            onClick={loadMore}
           >
             加载更多
           </Button>
