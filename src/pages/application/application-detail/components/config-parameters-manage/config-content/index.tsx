@@ -5,15 +5,16 @@
  * @create 2021-04-19 18:29
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
 import { useEffectOnce, useListData } from 'white-react-use';
-import { Popconfirm, Button, message } from 'antd';
+import { Popover, Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
 import { createFilterFormSchema, createTableSchema } from './schema';
+import VersionSelect from './version-select';
 import {
   queryConfigListUrl,
   deleteConfig,
@@ -21,7 +22,9 @@ import {
 } from '../../../../service';
 import { IProps } from './types';
 import { ConfigData } from '../types';
+import { queryVersionApi, doRestoreVersionApi } from './service';
 import './index.less';
+import { postRequest } from '@/utils/request';
 
 const rootCls = 'config-content-compo';
 
@@ -37,6 +40,12 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     visible: false,
   });
 
+  // 回退版本弹窗
+  const [rollbackVisible, setRollbackVisible] = useState<boolean>(false);
+
+  // 当前选中版本
+  const [currentVersion, setCurrentVersion] = useState<string | number>();
+
   // 查询数据
   const { run: queryConfigList, tableProps, reset } = usePaginated({
     requestUrl: queryConfigListUrl,
@@ -51,6 +60,14 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     },
   });
 
+  // 查询版本数据
+  const { run: queryVersionData, tableProps: versionTableProps } = usePaginated(
+    {
+      requestUrl: queryVersionApi,
+      requestMethod: 'GET',
+    },
+  );
+
   useEffectOnce(() => {
     queryConfigList({
       env,
@@ -58,6 +75,33 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       type: configType,
     });
   });
+
+  useEffect(() => {
+    queryVersionData({
+      appCode,
+      env,
+      type: configType,
+    });
+  }, [appCode, env, configType]);
+
+  // 回退操作
+  const handleRollBack = async () => {
+    if (!currentVersion) {
+      return;
+    }
+
+    const resp = await postRequest(doRestoreVersionApi, {
+      data: {
+        id: currentVersion,
+      },
+    });
+
+    if (resp.success) {
+      return;
+    }
+
+    message.success('回退成功');
+  };
 
   return (
     <div className={rootCls}>
@@ -104,8 +148,25 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       <div className={`${rootCls}__filter`}>
         <InlineForm
           className={`${rootCls}__filter-form`}
-          {...(createFilterFormSchema() as any)}
+          {...(createFilterFormSchema({
+            versionOptions:
+              versionTableProps.dataSource?.map((el) => ({
+                label: el.versionNumber,
+                value: el.id,
+              })) || [],
+          }) as any)}
           submitText="查询"
+          customMap={{
+            versionSelect: VersionSelect,
+          }}
+          onFieldsChange={(_, allData) => {
+            const versionData = allData.find(
+              (el) => el.name && (el.name as string[])[0] === 'versionID',
+            );
+            setCurrentVersion(
+              versionData && versionData.value ? versionData.value : undefined,
+            );
+          }}
           onFinish={(values) => {
             if (tableProps.loading) return;
             queryConfigList({
@@ -116,6 +177,15 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
         />
 
         <div className={`${rootCls}__filter-btns`}>
+          <Popconfirm
+            title="确定回退到当前版本？"
+            disabled={!currentVersion}
+            onConfirm={handleRollBack}
+          >
+            <Button type="primary" danger disabled={!currentVersion}>
+              回退
+            </Button>
+          </Popconfirm>
           <Button
             onClick={() => {
               setImportCfgVisible(true);

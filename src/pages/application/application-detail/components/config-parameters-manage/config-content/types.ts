@@ -9,3 +9,10 @@ export interface IProps {
   configType: 'boot' | 'app';
   appCode: string;
 }
+
+// 版本明细
+export interface IVersionDetail {
+  id: string;
+  key: string;
+  value?: string;
+}
