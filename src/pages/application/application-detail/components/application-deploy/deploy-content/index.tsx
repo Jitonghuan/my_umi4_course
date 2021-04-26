@@ -32,6 +32,8 @@ const DeployContent = ({ env }: IProps) => {
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(
     () => {
+      if (!appCode) return;
+
       setUpdating(true);
       Promise.all([
         queryDeployList({
