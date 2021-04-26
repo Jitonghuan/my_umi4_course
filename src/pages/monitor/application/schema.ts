@@ -16,6 +16,10 @@ export const tableSchema = [
     title: 'IP',
   },
   {
+    title: '主机名',
+    dataIndex: 'hostName',
+  },
+  {
     dataIndex: 'cpu',
     title: 'CPU使用率',
   },

@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Radio, Select, message, Spin, RadioChangeEvent, Drawer } from 'antd';
+import { findDOMNode } from 'react-dom';
 import {
-  EchartsReact,
-  colorUtil,
-  ChartsContext,
-} from '@cffe/fe-datav-components';
+  Radio,
+  Select,
+  message,
+  Spin,
+  RadioChangeEvent,
+  Drawer,
+  Tooltip,
+} from 'antd';
+import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import { RedoOutlined, FullscreenOutlined } from '@ant-design/icons';
-import { IEchartsReactProps } from '@cffe/fe-datav-components/es/components/charts/echarts-react';
-import { getRequest } from '@/utils/request';
 import { RATE_ENUMS, START_TIME_ENUMS } from './app-table';
 
 const { ColorContainer } = colorUtil.context;
@@ -83,6 +86,8 @@ const Coms = (props: IProps) => {
   const [timeRate, setTimeRate] = useState<number>(0);
   const timeRateInterval = useRef<NodeJS.Timeout>();
   const [fullLoading, setFullLoading] = useState<boolean>(false);
+
+  const selectRef = useRef(null);
 
   const queryDatas = () => {
     if (
@@ -216,8 +221,26 @@ const Coms = (props: IProps) => {
   useEffect(() => {
     if (fullDrawerShow) {
       queryFullDatas();
+      const select = findDOMNode(selectRef.current) as HTMLDivElement;
+      if (select) {
+        const selector = select?.querySelectorAll('.ant-select-selection-item');
+        selector?.forEach((el) => {
+          el.setAttribute('title', '');
+        });
+      }
     }
   }, [startTime, fullDrawerShow]);
+
+  // 修改提示框
+  useEffect(() => {
+    const select = findDOMNode(selectRef.current) as HTMLDivElement;
+    if (select) {
+      const selector = select?.querySelectorAll('.ant-select-selection-item');
+      selector?.forEach((el) => {
+        el.setAttribute('title', '');
+      });
+    }
+  }, [timeRate]);
 
   return (
     <div className="monitor-app-card">
@@ -264,29 +287,39 @@ const Coms = (props: IProps) => {
         onClose={handleFullClose}
       >
         <Spin spinning={fullLoading}>
-          <div style={{ textAlign: 'right' }}>
-            <Select
-              value={startTime}
-              onChange={(value) => setStartTime(value)}
-              style={{ width: 84 }}
-            >
-              {START_TIME_ENUMS.map((time) => (
-                <Select.Option key={time.value} value={time.value}>
-                  {time.label}
-                </Select.Option>
-              ))}
-            </Select>
-            <Select
-              value={timeRate}
-              onChange={handleTimeRateChange}
-              style={{ width: 84 }}
-            >
-              {RATE_ENUMS.map((time) => (
-                <Select.Option key={time.value} value={time.value}>
-                  {time.label}
-                </Select.Option>
-              ))}
-            </Select>
+          <div
+            className="monitor-time-select"
+            ref={selectRef}
+            style={{ textAlign: 'right' }}
+          >
+            <Tooltip title="Relative time ranges" placement="top">
+              <Select
+                value={startTime}
+                onChange={(value) => setStartTime(value)}
+                style={{ width: 150 }}
+              >
+                <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
+                {START_TIME_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Tooltip>
+            <Tooltip title="Kbps" placement="top">
+              <Select
+                value={timeRate}
+                onChange={handleTimeRateChange}
+                style={{ width: 60 }}
+              >
+                <Select.OptGroup label="Kbps"></Select.OptGroup>
+                {RATE_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Tooltip>
           </div>
           <div className="monitor-app-card" style={{ padding: '16px 0' }}>
             <div className="app-header" style={{ marginBottom: 12 }}>
