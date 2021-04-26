@@ -9,11 +9,21 @@ const APP_TYPE_MAP = {
 };
 
 // 过滤表单 schema
-export const createFilterFormSchema = () => ({
+export const createFilterFormSchema = ({ versionOptions = [] }: any) => ({
   theme: 'inline',
   isShowReset: true,
   labelColSpan: 3,
   schema: [
+    {
+      type: 'Custom',
+      props: {
+        label: '版本',
+        name: 'versionID',
+        style: { width: 150 },
+        custom: 'versionSelect',
+        options: versionOptions,
+      },
+    },
     {
       type: 'Input',
       props: {
