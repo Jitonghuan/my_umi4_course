@@ -192,17 +192,24 @@ export default [
         name: '发布功能管理',
         component: '@/pages/release/function',
         routes: [
-          {
-            path: 'add',
-            name: '新增发布功能',
-            component: '@/pages/release/function/addFunction',
-          },
+          // {
+          //   path: 'addFunction',
+          //   name: '新增发布功能',
+          //   hideInMenu: true,
+          //   component: '@/pages/release/function/function-add',
+          // },
           {
             path: 'edit',
             name: '编辑发布功能',
-            component: '@/pages/release/function/editFunction',
+            component: '@/pages/release/function/function-edit',
           },
         ],
+      },
+      {
+        path: 'addFunction',
+        name: '新增发布功能',
+        hideInMenu: true,
+        component: '@/pages/release/function/function-add',
       },
       {
         path: 'plan',

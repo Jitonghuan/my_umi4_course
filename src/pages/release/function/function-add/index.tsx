@@ -10,6 +10,7 @@ import {
   Table,
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import MatrixPageContent from '@/components/matrix-page-content';
 
 interface Item {
   key: string;
@@ -197,26 +198,28 @@ const Test: React.FC = () => {
   });
 
   return (
-    <Form form={form} component={false}>
-      <Table
-        columns={mergedColumns}
-        dataSource={data}
-        pagination={false}
-        components={{
-          body: {
-            cell: EditableCell,
-          },
-        }}
-      />
-      <Button
-        type="dashed"
-        icon={<PlusOutlined />}
-        style={{ width: '100%' }}
-        onClick={addTableRow}
-      >
-        新增发布功能
-      </Button>
-    </Form>
+    <MatrixPageContent>
+      <Form form={form} component={false}>
+        <Table
+          columns={mergedColumns}
+          dataSource={data}
+          pagination={false}
+          components={{
+            body: {
+              cell: EditableCell,
+            },
+          }}
+        />
+        <Button
+          type="dashed"
+          icon={<PlusOutlined />}
+          style={{ width: '100%' }}
+          onClick={addTableRow}
+        >
+          新增发布功能
+        </Button>
+      </Form>
+    </MatrixPageContent>
   );
 };
 
