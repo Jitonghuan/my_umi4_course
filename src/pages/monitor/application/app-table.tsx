@@ -5,7 +5,8 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import { Card, Select, Form } from 'antd';
+import { findDOMNode } from 'react-dom';
+import { Card, Select, Form, Tooltip } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
 import HulkForm, { IProps as IFormProps } from '@cffe/vc-hulk-form';
@@ -55,23 +56,23 @@ const layoutGrid = {
 // 开始时间枚举
 export const START_TIME_ENUMS = [
   {
-    label: '30min',
+    label: 'Last 30 minutes',
     value: 30 * 60 * 1000,
   },
   {
-    label: '1h',
+    label: 'Last 1 hours',
     value: 60 * 60 * 1000,
   },
   {
-    label: '6h',
+    label: 'Last 6 hours',
     value: 6 * 60 * 60 * 1000,
   },
   {
-    label: '12h',
+    label: 'Last 12 hours',
     value: 12 * 60 * 60 * 1000,
   },
   {
-    label: '24h',
+    label: 'Last 24 hours',
     value: 24 * 60 * 60 * 1000,
   },
 ];
@@ -79,7 +80,7 @@ export const START_TIME_ENUMS = [
 // 请求频次枚举
 export const RATE_ENUMS = [
   {
-    label: '刷新频率',
+    label: 'Off',
     value: 0,
   },
   {
@@ -119,6 +120,8 @@ const Coms = (props: IProps) => {
   const [rateNum, setRateNum] = useState<number>(0);
   const prevRateNum = useRef<number>(0);
   const [formInstance] = Form.useForm();
+
+  const selectRef = useRef(null);
 
   const timeRateInterval = useRef<NodeJS.Timeout>();
 
@@ -251,6 +254,17 @@ const Coms = (props: IProps) => {
     }
   }, [filter]);
 
+  // 修改提示框
+  useEffect(() => {
+    const select = findDOMNode(selectRef.current) as HTMLDivElement;
+    if (select) {
+      const selector = select?.querySelectorAll('.ant-select-selection-item');
+      selector?.forEach((el) => {
+        el.setAttribute('title', '');
+      });
+    }
+  }, [startTime, timeRate]);
+
   // 过滤操作
   const handleFilter = useCallback(
     (vals) => {
@@ -300,21 +314,35 @@ const Coms = (props: IProps) => {
             className="monitor-filter-form"
             onValuesChange={handleFilter}
           />
-          <div className="monitor-time-select">
-            <Select value={startTime} onChange={(value) => setStartTime(value)}>
-              {START_TIME_ENUMS.map((time) => (
-                <Select.Option key={time.value} value={time.value}>
-                  {time.label}
-                </Select.Option>
-              ))}
-            </Select>
-            <Select value={timeRate} onChange={handleTimeRateChange}>
-              {RATE_ENUMS.map((time) => (
-                <Select.Option key={time.value} value={time.value}>
-                  {time.label}
-                </Select.Option>
-              ))}
-            </Select>
+          <div className="monitor-time-select" ref={selectRef}>
+            <Tooltip title="Relative time ranges" placement="top">
+              <Select
+                value={startTime}
+                onChange={(value) => setStartTime(value)}
+                style={{ width: 150 }}
+              >
+                <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
+                {START_TIME_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Tooltip>
+            <Tooltip title="Kbps" placement="top">
+              <Select
+                value={timeRate}
+                onChange={handleTimeRateChange}
+                style={{ width: 60 }}
+              >
+                <Select.OptGroup label="Kbps"></Select.OptGroup>
+                {RATE_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Tooltip>
           </div>
         </Card>
 
@@ -334,19 +362,14 @@ const Coms = (props: IProps) => {
             rowKey="ip"
             size="small"
             columns={tableSchema as ColumnProps[]}
+            onRow={(record) => {
+              return {
+                onClick: () => setCurtIp(record.hostIP),
+              };
+            }}
             // scroll={{ y: 300 }}
             {...tableProps}
             customColumnMap={{
-              hostIP: (value: string) => {
-                return (
-                  <span
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => setCurtIp(value)}
-                  >
-                    {value}
-                  </span>
-                );
-              },
               cpu: (value) => {
                 return value ? `${value}%` : '';
               },
