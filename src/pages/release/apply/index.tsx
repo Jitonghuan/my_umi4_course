@@ -11,35 +11,50 @@ import React, {
   useState,
   useCallback,
   useContext,
+  useRef,
 } from 'react';
-import { Drawer, Button } from 'antd';
+import { Form, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffectOnce } from 'white-react-use';
 import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
-import CreateApplication from '@/components/create-application';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm } from '@cffe/fe-backend-component';
 import { createFilterFormSchema, createTableSchema } from './schema';
-import { queryApplysUrl } from './service';
+import { queryApplysUrl, queryBizDatas } from './service';
+import AddDrawer from './components/add-drawer';
 import './index.less';
-import ColorContainer from '_@cffe_fe-datav-components@0.1.8@@cffe/fe-datav-components/es/components/utils/color-util/Context';
 
 export interface IProps {}
 
 const rootCls = 'release-apply-page';
 
-const Comp = (props: IProps) => {
-  const { belongData, businessData, breadcrumbMap } = useContext(FEContext);
+const ApplyList = (props: IProps) => {
+  const { belongData, breadcrumbMap } = useContext(FEContext);
 
   const [createAppVisible, setCreateAppVisible] = useState(false);
   const [curRecord, setCurRecord] = useState<any>();
+  const [businessData, setBusinessData] = useState<any[]>([]);
+  const [formInstance] = Form.useForm();
+
+  const prevBelong = useRef<string>();
+
+  const filterColumns = useMemo(() => {
+    return createFilterFormSchema({ belongData, businessData });
+  }, [belongData, businessData]);
+
+  // 根据所属查询业务线
+  const queryBusiness = (belong: string) => {
+    queryBizDatas({ belong }).then((datas) => {
+      setBusinessData(datas);
+    });
+  };
 
   // 查询数据
-  const { run: queryAppList, tableProps } = usePaginated({
+  const { run: queryAppList, tableProps, reset } = usePaginated({
     requestUrl: queryApplysUrl,
     requestMethod: 'GET',
     pagination: {
@@ -52,6 +67,18 @@ const Comp = (props: IProps) => {
     queryAppList();
   });
 
+  // 监听表单变化，根据所属查询业务线
+  const handleChange = useCallback((vals) => {
+    const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
+    if (name && name === 'belong') {
+      if (value !== prevBelong.current) {
+        formInstance.resetFields(['lineCode']);
+      }
+      prevBelong.current = value;
+      queryBusiness(value);
+    }
+  }, []);
+
   return (
     <VCPageContent
       height="calc(100vh - 118px)"
@@ -59,27 +86,37 @@ const Comp = (props: IProps) => {
       pathname={location.pathname}
       isFlex
     >
-      <CreateApplication
-        formValue={curRecord}
+      <AddDrawer
         visible={createAppVisible}
-        onClose={() => setCreateAppVisible(false)}
-        onSubmit={() => {
-          // 保存成功后，关闭抽屉，重新请求列表
-          queryAppList();
+        onClose={(reload) => {
+          if (reload) {
+            queryAppList();
+          }
           setCreateAppVisible(false);
         }}
       />
 
       <FilterCard>
         <InlineForm
+          form={formInstance}
           className={`${rootCls}__filter-form`}
-          {...(createFilterFormSchema({ belongData, businessData }) as any)}
+          {...(filterColumns as any)}
           submitText="查询"
+          onValuesChange={handleChange}
           onFinish={(values) => {
             if (tableProps.loading) return;
+            reset();
             queryAppList({
               pageIndex: 1,
               ...values,
+            });
+          }}
+          onReset={() => {
+            if (tableProps.loading) return;
+            formInstance.resetFields();
+            reset();
+            queryAppList({
+              pageIndex: 1,
             });
           }}
         />
@@ -99,24 +136,23 @@ const Comp = (props: IProps) => {
             提交发布申请
           </Button>
         </div>
-        <ColorContainer roleKeys={['color']}>
-          <HulkTable
-            columns={
-              createTableSchema({
-                onDetailClick: (record) => {
-                  setCurRecord(record);
-                  setCreateAppVisible(true);
-                },
-              }) as any
-            }
-            {...tableProps}
-          />
-        </ColorContainer>
+        <HulkTable
+          columns={
+            createTableSchema({
+              onDetailClick: (record) => {
+                setCurRecord(record);
+                setCreateAppVisible(true);
+              },
+              belongData,
+            }) as any
+          }
+          {...tableProps}
+        />
       </ContentCard>
     </VCPageContent>
   );
 };
 
-Comp.defaultProps = {};
+ApplyList.defaultProps = {};
 
-export default Comp;
+export default ApplyList;

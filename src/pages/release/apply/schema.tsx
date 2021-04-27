@@ -1,27 +1,13 @@
 import React from 'react';
 import { Tag, Badge } from 'antd';
-import { history } from 'umi';
 import { ColumnProps } from '@cffe/vc-hulk-table';
-
-const APPLY_STATUS_MAP: { [key: number]: string } = {
-  1: '审批成功',
-  3: '已撤销',
-};
-
-const APPLY_STATUS_COLOR_MAP: { [key: number]: string } = {
-  1: 'green',
-  3: '',
-};
-
-const DEPLOY_TYPE_MAP: { [key: string]: string } = {
-  daily: '日常发布',
-  emergency: '紧急发布',
-};
-
-const DEPLOY_TYPE_COLOR_MAP: { [key: string]: string } = {
-  daily: 'green',
-  emergency: 'red',
-};
+import {
+  APPLY_STATUS_COLOR_MAP,
+  APPLY_STATUS_MAP,
+  DEPLOY_TYPE_COLOR_MAP,
+  DEPLOY_TYPE_MAP,
+  DEPLOY_TYPE_OPTIONS,
+} from './const';
 
 // 过滤表单 schema
 export const createFilterFormSchema = (params: {
@@ -53,16 +39,7 @@ export const createFilterFormSchema = (params: {
       props: {
         label: '发布类型',
         name: 'deployType',
-        options: [
-          {
-            label: '日常发布',
-            value: 'daily',
-          },
-          {
-            label: '紧急发布',
-            value: 'emergency',
-          },
-        ],
+        options: DEPLOY_TYPE_OPTIONS,
       },
     },
     {
@@ -81,8 +58,10 @@ export const createFilterFormSchema = (params: {
 // 表格 schema
 export const createTableSchema = ({
   onDetailClick,
+  belongData,
 }: {
   onDetailClick: (record: any) => void;
+  belongData?: any[];
 }) =>
   [
     {
@@ -121,6 +100,10 @@ export const createTableSchema = ({
     {
       title: '所属',
       dataIndex: 'belong',
+      render: (value) => {
+        const result = belongData?.filter((el) => el.belongCode === value);
+        return result?.length ? result[0].belongName : value || '';
+      },
     },
     {
       title: '业务线',
@@ -141,14 +124,17 @@ export const createTableSchema = ({
     {
       title: '配置变更',
       dataIndex: 'ifDdl',
+      render: (value) => (value ? '是' : '否'),
     },
     {
       title: '功能回归',
       dataIndex: 'ifFuncRegression',
+      render: (value) => (value ? '是' : '否'),
     },
     {
       title: '是否CR',
       dataIndex: 'ifCr',
+      render: (value) => (value ? '是' : '否'),
     },
     {
       title: '申请时间',
