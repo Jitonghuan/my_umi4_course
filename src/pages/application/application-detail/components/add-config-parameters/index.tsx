@@ -12,7 +12,7 @@ import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
-import { configMultiAdd, queryConfigList } from '../../../service';
+import { configMultiAdd } from '../../../service';
 import { IProps, DataSourceType } from './types';
 import './index.less';
 
@@ -25,19 +25,6 @@ const AddConfigParameters = ({
 }: IProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
-
-  useEffect(() => {
-    // 获取最新的配置
-    queryConfigList({
-      appCode,
-      type,
-      env,
-      pageIndex: 1,
-      pageSize: 100,
-    }).then((res: any) => {
-      setDataSource(res?.list || []);
-    });
-  }, []);
 
   return (
     <ContentCard className={rootCls}>
