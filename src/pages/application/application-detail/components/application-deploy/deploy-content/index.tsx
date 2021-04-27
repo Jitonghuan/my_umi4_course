@@ -5,7 +5,7 @@
  * @create 2021-04-15 10:04
  */
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
@@ -77,6 +77,13 @@ const DeployContent = ({ env }: IProps) => {
       timerHandle('do', true);
     }
   };
+
+  // appCode变化时
+  useEffect(() => {
+    if (!appCode) return;
+
+    timerHandle('do', true);
+  }, [appCode]);
 
   return (
     <div className={rootCls}>
