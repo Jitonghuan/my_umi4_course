@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Popconfirm } from 'antd';
+import dayjs from '_dayjs@1.10.4@dayjs';
 
 // 过滤表单 schema
 export const createFilterFormSchema = () => ({
@@ -41,6 +42,8 @@ export const createTableSchema = ({
   {
     title: '创建时间',
     dataIndex: 'gmtCreate',
+    render: (val: string) =>
+      val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '',
   },
   {
     title: '已部署环境',
