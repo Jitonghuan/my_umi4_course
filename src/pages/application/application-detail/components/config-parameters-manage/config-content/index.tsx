@@ -222,6 +222,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           </Button>
           <Popconfirm
             title="确定要删除选中项吗？"
+            disabled={!selectedKeys.length}
             onConfirm={() => {
               deleteMultipleConfig({ ids: selectedKeys }).then((res: any) => {
                 if (res.success) {

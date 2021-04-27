@@ -72,7 +72,7 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
         )}
       </>
     );
-  }, [deployStatus, deployingHospital, deployingHosBatch]);
+  }, [deployInfo]);
 
   return (
     <Modal

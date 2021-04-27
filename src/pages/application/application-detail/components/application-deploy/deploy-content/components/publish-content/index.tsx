@@ -51,6 +51,7 @@ const PublishContent = ({
           {!isProd && (
             <div className={`${rootCls}__list-header-btns`}>
               <Button
+                type="primary"
                 disabled={!selectedRowKeys.length}
                 onClick={() => {
                   onOperate('retryDeployStart');
@@ -78,6 +79,7 @@ const PublishContent = ({
                 重新部署
               </Button>
               <Button
+                type="primary"
                 disabled={!selectedRowKeys.length}
                 onClick={() => {
                   onOperate('batchExitStart');

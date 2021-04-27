@@ -103,7 +103,11 @@ const PublishBranch = ({
           <span className={`${rootCls}__list-header-text`}>分支列表</span>
 
           <div className={`${rootCls}__list-header-btns`}>
-            <Button disabled={!selectedRowKeys?.length} onClick={submitClick}>
+            <Button
+              type="primary"
+              disabled={!selectedRowKeys?.length}
+              onClick={submitClick}
+            >
               提交分支
             </Button>
           </div>

@@ -44,6 +44,7 @@ const EditConfig = (props: IProps) => {
             Textarea: Input.TextArea,
           }}
           // TODO 查看时需要去掉提交按钮
+          isShowSubmit={false}
           isShowReset
           resetText="取消"
           onReset={props.onClose}
