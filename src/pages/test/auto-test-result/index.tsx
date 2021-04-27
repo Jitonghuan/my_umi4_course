@@ -82,7 +82,7 @@ const Coms = () => {
         initialValue: filter.belong,
       },
       { label: '测试时间', name: 'testTime', type: 'RangePicker' },
-      { label: '机构ID', name: 'id' },
+      { label: 'ID', name: 'id' },
       {
         label: '测试结果',
         name: 'result',
