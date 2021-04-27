@@ -45,8 +45,10 @@ export const createFilterFormSchema = ({ versionOptions = [] }: any) => ({
 
 // 表格 schema
 export const createTableSchema = ({
+  currentVersion,
   onOperateClick,
 }: {
+  currentVersion: number | string;
   onOperateClick: (
     type: 'detail' | 'delete' | 'edit',
     record: any,
@@ -65,6 +67,11 @@ export const createTableSchema = ({
     {
       title: 'Value',
       dataIndex: 'value',
+    },
+    {
+      title: '版本号',
+      dataIndex: 'version',
+      render: () => currentVersion,
     },
     {
       width: 170,
