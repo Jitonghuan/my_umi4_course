@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { findDOMNode } from 'react-dom';
 import { Card, Select, Form, Tooltip } from 'antd';
-import { RedoOutlined } from '@ant-design/icons';
+import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
 
 import HulkForm, { IProps as IFormProps } from '@cffe/vc-hulk-form';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
@@ -329,15 +329,19 @@ const Coms = (props: IProps) => {
                 ))}
               </Select>
             </Tooltip>
-            <Tooltip title="Kbps" placement="top">
+            <Tooltip title="Refresh dashboard" placement="top">
               <Select
                 value={timeRate}
                 onChange={handleTimeRateChange}
-                style={{ width: 60 }}
+                optionLabelProp="label"
+                style={{ width: 54 }}
               >
-                <Select.OptGroup label="Kbps"></Select.OptGroup>
                 {RATE_ENUMS.map((time) => (
-                  <Select.Option key={time.value} value={time.value}>
+                  <Select.Option
+                    key={time.value}
+                    value={time.value}
+                    label={<SyncOutlined />}
+                  >
                     {time.label}
                   </Select.Option>
                 ))}
