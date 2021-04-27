@@ -10,40 +10,57 @@ import { Descriptions, Button, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { cancelDeploy } from '../../../../../../service';
 import { IProps } from './types';
+import { doDeployReuseApi } from './service';
 import './index.less';
+import { postRequest } from '@/utils/request';
 
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
 
 const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
+  const handleDelopy = async () => {
+    // console.log('deployInfo', deployInfo);
+    // const resp = postRequest(doDeployReuseApi, {
+    //   data: {
+    //     id:
+    //     hospitals
+    //   }
+    // })
+  };
+
+  // console.log('env', env);
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        <Button
-          type="primary"
-          onClick={() => {
-            onOperate('deployNextEnvStart');
+        {env !== 'prod' && (
+          <Button
+            type="primary"
+            onClick={() => {
+              onOperate('deployNextEnvStart');
 
-            confirm({
-              title: '确定要把当前部署分支发布到下一个环境中？',
-              icon: <ExclamationCircleOutlined />,
-              onOk() {
-                // TODO
-                alert('缺接口');
-                // return updateFeatures({
-                //   id: deployInfo.id,
-                // }).then(() => {
-                //   onOperate('deployNextEnvEnd');
-                // });
-              },
-              onCancel() {
-                onOperate('deployNextEnvEnd');
-              },
-            });
-          }}
-        >
-          部署到下个环境
-        </Button>
+              confirm({
+                title: '确定要把当前部署分支发布到下一个环境中？',
+                icon: <ExclamationCircleOutlined />,
+                onOk: () => {
+                  // TODO
+                  handleDelopy();
+                  // return updateFeatures({
+                  //   id: deployInfo.id,
+                  // }).then(() => {
+                  //   onOperate('deployNextEnvEnd');
+                  // });
+                },
+                onCancel() {
+                  onOperate('deployNextEnvEnd');
+                },
+              });
+            }}
+          >
+            部署到下个环境
+          </Button>
+        )}
+
         <Button
           type="primary"
           danger

@@ -24,7 +24,7 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
     deployingHosBatch,
     jenkinsUrl,
     hospitals,
-  } = deployInfo;
+  } = deployInfo || {};
 
   const [deployConfig, setDeployConfig] = useState({
     deployEnv: '',
