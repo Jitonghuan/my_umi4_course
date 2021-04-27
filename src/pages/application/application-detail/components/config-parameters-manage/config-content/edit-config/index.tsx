@@ -46,7 +46,6 @@ const EditConfig = (props: IProps) => {
             customMap={{
               Textarea: Input.TextArea,
             }}
-            // TODO 查看时需要去掉提交按钮
             isShowReset
             resetText="取消"
             onReset={props.onClose}
