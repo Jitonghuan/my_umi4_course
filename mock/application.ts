@@ -45,8 +45,8 @@ export default {
   // 新建应用
   [`POST /v1/appManage/create`]: {
     code: 1000,
-    success: true,
-    errorMsg: '',
+    success: false,
+    errorMsg: 'application is exist',
     data: {
       id: 1,
       belongCode: 'gmc',
