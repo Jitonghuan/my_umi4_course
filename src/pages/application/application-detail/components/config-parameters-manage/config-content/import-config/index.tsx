@@ -15,14 +15,9 @@ import { IProps } from './types';
 const ImportConfig = (props: IProps) => {
   const uploadProps = {
     name: 'config',
-    action: configUploadUrl,
+    action: `${configUploadUrl}?env=${props.env}&appCode=${props.appCode}&type=${props.configType}`,
     headers: {
       // authorization: 'authorization-text',
-    },
-    data: {
-      env: props.env,
-      appCode: props.appCode,
-      type: props.configType,
     },
     onChange: (info: any) => {
       if (info.file.status !== 'done') {

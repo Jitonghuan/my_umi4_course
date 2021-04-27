@@ -48,7 +48,7 @@ export const createTableSchema = ({
   currentVersion,
   onOperateClick,
 }: {
-  currentVersion?: number | string;
+  currentVersion?: any;
   onOperateClick: (
     type: 'detail' | 'delete' | 'edit',
     record: any,
@@ -71,7 +71,7 @@ export const createTableSchema = ({
     {
       title: '版本号',
       dataIndex: 'version',
-      render: () => currentVersion,
+      render: () => currentVersion?.versionNumber || '',
     },
     {
       width: 170,
