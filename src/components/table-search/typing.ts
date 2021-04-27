@@ -11,8 +11,8 @@ export interface OptionProps {
 export interface FormProps<T = any> extends FormItemProps {
   key: string;
   type: TypeProps;
-  label: string;
   dataIndex: string;
+  label?: string;
   option?: OptionProps[];
   style?: CSSProperties;
   placeholder?: string;

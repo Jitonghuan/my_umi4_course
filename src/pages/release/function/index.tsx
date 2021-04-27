@@ -108,7 +108,9 @@ const FunctionCom: React.FC = () => {
       width: 100,
       render: (_: string, record: Item) => (
         <Space>
-          <Link to={`./add?id=${record.id}`}>编辑</Link>
+          <Link to={`${ds.pagePrefix}/release/editFunction?id=${record.id}`}>
+            编辑
+          </Link>
           <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
         </Space>
       ),

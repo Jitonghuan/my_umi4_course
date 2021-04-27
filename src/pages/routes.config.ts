@@ -212,6 +212,12 @@ export default [
         component: '@/pages/release/function/function-add',
       },
       {
+        path: 'editFunction',
+        name: '编辑发布功能',
+        hideInMenu: true,
+        component: '@/pages/release/function/function-edit',
+      },
+      {
         path: 'plan',
         name: '发布计划管理',
         component: '@/pages/release/plan',
