@@ -109,7 +109,7 @@ export const queryConfigList = (params: {
   appCode: string;
   /** 配置项的KEY */
   key?: string;
-  /** TODO 需要这个查询参数 配置项的Value */
+  /**  配置项的Value */
   value?: string;
   /** 配置的类型 boot启动参数，app应用配置 */
   type?: string;
@@ -344,5 +344,16 @@ export const cancelDeploy = (params: {
   id: string;
 }) =>
   postRequest(`${ds.apiPrefix}/releaseManage/deploy/cancel`, {
+    data: params,
+  });
+
+/** 复用release分支 */
+export const deployReuse = (params: {
+  /** 部署的数据库自增ID */
+  id: string;
+  /** poc环境复用到生产环境需要 */
+  hospitals?: string[];
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/reuse`, {
     data: params,
   });

@@ -87,4 +87,57 @@ export default {
       },
     ],
   },
+  // 查看最新版本的配置
+  [`GET /v1/appManage/config/version/listConfig`]: {
+    success: true,
+    code: 1000,
+    errorMsg: '',
+    data: {
+      dataSource: {
+        configs: [
+          {
+            id: 40,
+            key: 'test',
+            value: 'this is for test',
+            appCode: 'test-app',
+            type: 'app',
+            env: 'dev',
+            createUser: '',
+            modifyUser: '',
+            gmtCreate: '2021-04-27T14:54:39+08:00',
+            gmtModify: '2021-04-27T14:54:39+08:00',
+          },
+          {
+            id: 41,
+            key: 'test3',
+            value: 'this is for test3',
+            appCode: 'test-app',
+            type: 'app',
+            env: 'dev',
+            createUser: '',
+            modifyUser: '',
+            gmtCreate: '2021-04-27T14:54:39+08:00',
+            gmtModify: '2021-04-27T14:54:39+08:00',
+          },
+        ],
+        version: {
+          id: 68,
+          appCode: 'test-app',
+          type: 'app',
+          env: 'dev',
+          versionNumber: '2021042714543821',
+          isLatest: 0,
+          createUser: '王安楠',
+          modifyUser: '王安楠',
+          gmtCreate: '2021-04-27T14:54:39+08:00',
+          gmtModify: '2021-04-27T14:54:39+08:00',
+        },
+      },
+      pageInfo: {
+        pageIndex: 1,
+        pageSize: 10,
+        total: 2,
+      },
+    },
+  },
 };

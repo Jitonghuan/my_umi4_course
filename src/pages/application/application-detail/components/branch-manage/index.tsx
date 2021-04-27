@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Button, message } from 'antd';
+import { Button, message, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
@@ -24,6 +24,7 @@ const BranchManage = ({}: IProps) => {
   const { appCode } = appData || {};
 
   const [createBranchVisible, setCreateBranchVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -41,7 +42,7 @@ const BranchManage = ({}: IProps) => {
   }, [appCode]);
 
   return (
-    <>
+    <Spin spinning={loading}>
       <EditBranch
         appCode={appCode!}
         visible={createBranchVisible}
@@ -86,21 +87,24 @@ const BranchManage = ({}: IProps) => {
           columns={
             createTableSchema({
               onCancelClick: (record, index) => {
-                deleteBranch({ id: record.id }).then((res: any) => {
-                  if (res.success) {
-                    message.success('操作成功');
-                    queryBranchList();
-                    return;
-                  }
-                  message.error(res.errorMsg);
-                });
+                setLoading(true);
+                deleteBranch({ id: record.id })
+                  .then((res: any) => {
+                    if (res.success) {
+                      message.success('操作成功');
+                      queryBranchList();
+                      return;
+                    }
+                    message.error(res.errorMsg);
+                  })
+                  .finally(() => setLoading(false));
               },
             }) as any
           }
           {...tableProps}
         />
       </ContentCard>
-    </>
+    </Spin>
   );
 };
 

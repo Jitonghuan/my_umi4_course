@@ -5,30 +5,31 @@
  * @create 2021-04-15 10:11
  */
 
-import React from 'react';
-import { Descriptions, Button, Modal } from 'antd';
+import React, { useState, useContext } from 'react';
+import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { cancelDeploy } from '../../../../../../service';
+import DetailContext from '../../../../../context';
+import { cancelDeploy, deployReuse } from '../../../../../../service';
 import { IProps } from './types';
-import { doDeployReuseApi } from './service';
 import './index.less';
-import { postRequest } from '@/utils/request';
 
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
+const hospitalMap: Record<string, any[]> = {
+  g3a: [{ label: '浙一', value: 'zheyi' }],
+  gmc: [
+    { label: '天台', value: 'tiantai' },
+    { label: '巍山', value: 'weishan' },
+  ],
+};
 
 const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
-  const handleDelopy = async () => {
-    // console.log('deployInfo', deployInfo);
-    // const resp = postRequest(doDeployReuseApi, {
-    //   data: {
-    //     id:
-    //     hospitals
-    //   }
-    // })
-  };
+  const { appData } = useContext(DetailContext);
+  const { belong } = appData || {};
 
-  // console.log('env', env);
+  const [deployVisible, setDeployVisible] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [deployEnv, setDeployEnv] = useState<any[]>();
 
   return (
     <div className={rootCls}>
@@ -39,17 +40,22 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
             onClick={() => {
               onOperate('deployNextEnvStart');
 
+              // 部署到生产环境
+              if (env === 'poc') {
+                setDeployVisible(true);
+                return;
+              }
+
               confirm({
                 title: '确定要把当前部署分支发布到下一个环境中？',
                 icon: <ExclamationCircleOutlined />,
                 onOk: () => {
-                  // TODO
-                  handleDelopy();
-                  // return updateFeatures({
-                  //   id: deployInfo.id,
-                  // }).then(() => {
-                  //   onOperate('deployNextEnvEnd');
-                  // });
+                  return deployReuse({ id: deployInfo.id }).then((res) => {
+                    if (res.success) {
+                      message.success('操作成功，正在部署中...');
+                      return;
+                    }
+                  });
                 },
                 onCancel() {
                   onOperate('deployNextEnvEnd');
@@ -108,6 +114,39 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
           </Descriptions.Item>
         )}
       </Descriptions>
+
+      <Modal
+        title="选择发布环境"
+        visible={deployVisible}
+        confirmLoading={confirmLoading}
+        onOk={() => {
+          setConfirmLoading(true);
+
+          return deployReuse({ id: deployInfo.id })
+            .then((res) => {
+              if (res.success) {
+                message.success('操作成功，正在部署中...');
+                setDeployVisible(false);
+                onOperate('deployNextEnvEnd');
+              }
+            })
+            .finally(() => setConfirmLoading(false));
+        }}
+        onCancel={() => {
+          setDeployVisible(false);
+          setConfirmLoading(false);
+          onOperate('deployNextEnvEnd');
+        }}
+      >
+        <div>
+          <span>发布环境：</span>
+          <Checkbox.Group
+            value={deployEnv}
+            onChange={(v) => setDeployEnv(v)}
+            options={hospitalMap[belong!] || []}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };
