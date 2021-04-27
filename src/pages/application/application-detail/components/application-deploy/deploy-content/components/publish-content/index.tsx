@@ -109,7 +109,7 @@ const PublishContent = ({
               <Button
                 onClick={() => {
                   // TODO
-                  alert('缺接口');
+                  // alert('缺接口');
                 }}
               >
                 重启
