@@ -20,6 +20,7 @@ import { IProps } from './types';
 import './index.less';
 import VCPermission from '@/components/vc-permission';
 import MatrixPageContent from '@/components/matrix-page-content';
+import { divide } from '_@types_lodash@4.14.168@@types/lodash';
 
 const rootCls = 'application-detail-page';
 const detailPath = '/matrix/application/detail';
@@ -92,6 +93,22 @@ const ApplicationDetail = (props: IProps) => {
               },
             });
           }}
+          tabBarExtraContent={
+            <div>
+              <span
+                style={{
+                  color: 'rgba(0,0,0,.85)',
+                  fontWeight: 600,
+                  fontSize: 18,
+                }}
+              >
+                {appData?.appCode}
+              </span>
+              <span style={{ marginLeft: 12, color: 'rgba(0,0,0,.45)' }}>
+                {appData?.appName}
+              </span>
+            </div>
+          }
         >
           {Object.keys(tabsConfig).map((key) => (
             <TabPane tab={tabsConfig[key]} key={key}>
