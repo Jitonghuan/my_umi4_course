@@ -12,7 +12,7 @@ import React, {
   useCallback,
   useContext,
 } from 'react';
-import { Drawer, Button } from 'antd';
+import { Drawer, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffectOnce } from 'white-react-use';
 import VCPageContent, {
@@ -24,7 +24,7 @@ import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import { createFilterFormSchema, createTableSchema } from './schema';
-import { queryAppsUrl } from '../service';
+import { queryAppsUrl, deleteApp } from '../service';
 import { rootCls } from './constants';
 import { IProps } from './types';
 import './index.less';
@@ -104,6 +104,14 @@ const ApplicationList = (props: IProps) => {
               onEditClick: (record, index) => {
                 setCurRecord(record);
                 setCreateAppVisible(true);
+              },
+              onDelClick: (record, index) => {
+                deleteApp({ appCode: record.appCode }).then((res) => {
+                  if (res.success) {
+                    message.success('删除成功');
+                    queryAppList();
+                  }
+                });
               },
             }) as any
           }

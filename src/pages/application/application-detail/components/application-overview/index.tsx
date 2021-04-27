@@ -67,7 +67,7 @@ const ApplicationOverview = (props: IProps) => {
           {appData?.jarPath}
         </Descriptions.Item>
         <Descriptions.Item label="是否包含二方包">
-          {appData?.isClient}
+          {{ 1: '是', 0: '否' }[appData?.isClient!]}
         </Descriptions.Item>
         <Descriptions.Item label="应用类型">
           {APP_TYPE_MAP[appData?.appType!]}
