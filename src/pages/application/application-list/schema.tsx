@@ -1,5 +1,6 @@
 import React from 'react';
 import { history } from 'umi';
+import { Popconfirm } from 'antd';
 import { ColumnProps } from '@cffe/vc-hulk-table';
 import { AppType } from './types';
 
@@ -59,8 +60,10 @@ export const createFilterFormSchema = (params: {
 // 表格 schema
 export const createTableSchema = ({
   onEditClick,
+  onDelClick,
 }: {
   onEditClick: (record: any, index: number) => void;
+  onDelClick: (record: any, index: number) => void;
 }) =>
   [
     {
@@ -120,6 +123,7 @@ export const createTableSchema = ({
       dataIndex: 'desc',
     },
     {
+      width: 200,
       title: '操作',
       dataIndex: 'operate',
       render: (text: string, record: any, index: number) => (
@@ -139,6 +143,15 @@ export const createTableSchema = ({
           >
             详情
           </a>
+          <Popconfirm
+            title="确定要删除该应用吗？"
+            onConfirm={() => onDelClick(record, index)}
+            okText="确定"
+            cancelText="取消"
+            placement="topLeft"
+          >
+            <a style={{ marginLeft: 20 }}>删除</a>
+          </Popconfirm>
         </>
       ),
     },

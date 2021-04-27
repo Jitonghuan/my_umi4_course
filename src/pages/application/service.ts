@@ -36,6 +36,16 @@ export const queryApps = (params: {
     return { list: [] };
   });
 
+/** 删除应用 */
+export const deleteApp = (params: {
+  /** appCode */
+  appCode: string;
+}) =>
+  request(`${ds.apiPrefix}/appManage/delete`, {
+    method: 'DELETE',
+    data: params,
+  });
+
 /** 分支列表 */
 export const queryBranchListUrl = `${ds.apiPrefix}/releaseManage/branch/list`;
 
