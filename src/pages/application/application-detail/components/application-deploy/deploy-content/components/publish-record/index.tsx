@@ -22,12 +22,7 @@ const PublishRecord = (props: IProps) => {
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
 
-  const {
-    run: queryDataSource,
-    tableProps,
-    loadMore,
-    setPageInfo,
-  } = usePaginated({
+  const { run: queryDataSource, tableProps, loadMore } = usePaginated({
     requestUrl: queryRecordApi,
     requestMethod: 'GET',
     loadMore: true,
@@ -42,9 +37,12 @@ const PublishRecord = (props: IProps) => {
   }, []);
 
   const renderLoadMore = () => {
-    const { total = 0, current = 0 } = tableProps?.pagination || {};
+    const { pageSize = 0, total = 0, current = 0 } =
+      tableProps?.pagination || {};
+
     return (
-      total > 0 && (
+      total > 0 &&
+      total > pageSize && (
         <div className={`${rootCls}-btns`}>
           <Button
             ghost

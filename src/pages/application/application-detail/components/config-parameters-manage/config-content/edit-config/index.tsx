@@ -12,6 +12,7 @@ import createSchema from './create-schema';
 import { configAdd, configUpdate } from '../../../../../service';
 import { IProps } from './types';
 import { ConfigData } from '../../types';
+import VCDescription from '@/components/vc-description';
 // import './index.less';
 
 export type EditConfigIProps = IProps;
@@ -21,9 +22,10 @@ const titleMap: { [P in IProps['type']]: string } = {
   look: '配置详情',
   edit: '编辑配置',
 };
+const showFields = ['key', 'value'];
 
 const EditConfig = (props: IProps) => {
-  const { formValue, type, env, appCode, configType } = props;
+  const { formValue = {}, type, env, appCode, configType } = props;
 
   const [loading, setLoading] = useState(false);
 
@@ -37,51 +39,60 @@ const EditConfig = (props: IProps) => {
       footer={null}
     >
       <Spin spinning={loading}>
-        <BasicForm
-          {...(createSchema() as any)}
-          dataSource={formValue}
-          customMap={{
-            Textarea: Input.TextArea,
-          }}
-          // TODO 查看时需要去掉提交按钮
-          isShowSubmit={false}
-          isShowReset
-          resetText="取消"
-          onReset={props.onClose}
-          onFinish={(val: Omit<ConfigData, 'id'>) => {
-            if (type === 'look') return;
+        {['add', 'edit'].includes(type) ? (
+          <BasicForm
+            {...(createSchema() as any)}
+            dataSource={formValue}
+            customMap={{
+              Textarea: Input.TextArea,
+            }}
+            // TODO 查看时需要去掉提交按钮
+            isShowReset
+            resetText="取消"
+            onReset={props.onClose}
+            onFinish={(val: Omit<ConfigData, 'id'>) => {
+              if (type === 'look') return;
 
-            let promise = null;
+              let promise = null;
 
-            setLoading(true);
+              setLoading(true);
 
-            if (type === 'edit') {
-              promise = configUpdate({
-                id: formValue?.id!,
-                type: configType,
-                appCode,
-                ...val,
-              });
-            } else if (type === 'add') {
-              promise = configAdd({
-                env,
-                type: configType,
-                appCode,
-                ...val,
-              });
-            }
+              if (type === 'edit') {
+                promise = configUpdate({
+                  id: formValue?.id!,
+                  type: configType,
+                  appCode,
+                  ...val,
+                });
+              } else if (type === 'add') {
+                promise = configAdd({
+                  env,
+                  type: configType,
+                  appCode,
+                  ...val,
+                });
+              }
 
-            promise
-              ?.then((res: any) => {
-                if (res.success) {
-                  props?.onSubmit();
-                  return;
-                }
-                message.error(res.errorMsg);
-              })
-              .finally(() => setLoading(false));
-          }}
-        />
+              promise
+                ?.then((res: any) => {
+                  if (res.success) {
+                    props?.onSubmit();
+                    return;
+                  }
+                  message.error(res.errorMsg);
+                })
+                .finally(() => setLoading(false));
+            }}
+          />
+        ) : (
+          <VCDescription
+            column={1}
+            dataSource={showFields.map((el) => ({
+              label: el,
+              value: (formValue as any)[el],
+            }))}
+          />
+        )}
       </Spin>
     </Modal>
   );
