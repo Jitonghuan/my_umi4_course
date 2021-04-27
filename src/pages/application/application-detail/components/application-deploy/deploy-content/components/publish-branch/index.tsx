@@ -35,17 +35,22 @@ const PublishBranch = ({
   const { appData } = useContext(DetailContext);
   const { belong, appCode } = appData || {};
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
+    [],
+  );
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
 
   const submit = () => {
+    const filter = dataSource
+      .filter((el) => selectedRowKeys.includes(el.id))
+      .map((el) => el.branchName);
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
       return updateFeatures({
         id: deployInfo.id,
-        features: selectedRowKeys,
+        features: filter,
       }).then((res: any) => {
         if (!res.success) {
           message.error(res.errorMsg);
@@ -57,7 +62,7 @@ const PublishBranch = ({
     return createDeploy({
       appCode: appCode!,
       env,
-      features: selectedRowKeys,
+      features: filter,
       hospitals: env === 'prod' ? deployEnv : undefined,
     }).then((res: any) => {
       if (!res.success) {
