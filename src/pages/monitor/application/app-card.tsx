@@ -10,7 +10,11 @@ import {
   Tooltip,
 } from 'antd';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { RedoOutlined, FullscreenOutlined } from '@ant-design/icons';
+import {
+  RedoOutlined,
+  FullscreenOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { RATE_ENUMS, START_TIME_ENUMS } from './app-table';
 
 const { ColorContainer } = colorUtil.context;
@@ -296,7 +300,7 @@ const Coms = (props: IProps) => {
               <Select
                 value={startTime}
                 onChange={(value) => setStartTime(value)}
-                style={{ width: 150 }}
+                style={{ width: 150, textAlign: 'left' }}
               >
                 <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
                 {START_TIME_ENUMS.map((time) => (
@@ -306,15 +310,19 @@ const Coms = (props: IProps) => {
                 ))}
               </Select>
             </Tooltip>
-            <Tooltip title="Kbps" placement="top">
+            <Tooltip title="Refresh dashboard" placement="top">
               <Select
                 value={timeRate}
                 onChange={handleTimeRateChange}
-                style={{ width: 60 }}
+                optionLabelProp="label"
+                style={{ width: 54 }}
               >
-                <Select.OptGroup label="Kbps"></Select.OptGroup>
                 {RATE_ENUMS.map((time) => (
-                  <Select.Option key={time.value} value={time.value}>
+                  <Select.Option
+                    key={time.value}
+                    value={time.value}
+                    label={<SyncOutlined />}
+                  >
                     {time.label}
                   </Select.Option>
                 ))}

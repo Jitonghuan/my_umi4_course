@@ -93,7 +93,7 @@ export const updateAppMember = (params: {
   });
 
 /** 查看最新版本的配置 */
-export const queryConfigListUrl = `${ds.apiPrefix}/appManage/config/listLatest`;
+export const queryConfigListUrl = `${ds.apiPrefix}/appManage/config/version/listConfig`;
 export const queryConfigList = (params: {
   /** 应用CODE */
   appCode: string;
@@ -210,7 +210,7 @@ export const configUpload = (params: {
   });
 
 /** 查看部署 */
-export const queryDeployList = (params: {
+export const queryDeployList = async (params: {
   /** 应用CODE */
   appCode: string;
   /** 环境参数---需要调用基础服务接口获取 */
@@ -221,32 +221,37 @@ export const queryDeployList = (params: {
   pageIndex: number;
   /** 分页大小 */
   pageSize: number;
-}) =>
-  getRequest(`${ds.apiPrefix}/releaseManage/deploy/list`, {
+}) => {
+  console.log(222);
+  return getRequest(`${ds.apiPrefix}/releaseManage/deploy/list`, {
     data: params,
-  }).then((res: any) => {
-    if (res.success) {
-      return {
-        list: res.data?.dataSource || [],
-        ...res.data?.pageInfo,
-      };
-    }
-
-    return { list: [] };
   });
+};
+
+// .then((res: any) => {
+//   if (res.success) {
+//     return {
+//       list: res.data?.dataSource || [],
+//       ...res.data?.pageInfo,
+//     };
+//   }
+
+//   return { list: [] };
+// });
 
 /** 查看feature部署情况 */
-export const queryFeatureDeployed = (params: {
+export const queryFeatureDeployed = async (params: {
   /** 应用CODE */
   appCode: string;
   /** 环境参数---需要调用基础服务接口获取 */
   env: string;
   /** 1已部署，0未部署 */
   isDeployed?: 0 | 1;
-}) =>
-  getRequest(`${ds.apiPrefix}/releaseManage/branch/featureDeployed`, {
+}) => {
+  return getRequest(`${ds.apiPrefix}/releaseManage/branch/featureDeployed`, {
     data: params,
-  }).then((res: any) => (res.success ? res.data : {}));
+  });
+};
 
 /** 创建部署 */
 export const createDeploy = (params: {

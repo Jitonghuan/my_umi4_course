@@ -31,30 +31,40 @@ const DeployContent = ({ env }: IProps) => {
 
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(
-    () => {
+    async () => {
       if (!appCode) return;
 
       setUpdating(true);
-      Promise.all([
-        queryDeployList({
-          appCode: appCode!,
-          env,
-          isActive: 1,
-          pageIndex: 1,
-          pageSize: 10,
-        }),
-        queryFeatureDeployed({ appCode: appCode!, env }),
-      ])
-        .then(([res1, res2]) => {
-          setDeployInfo(res1?.list?.[0]);
-          setBranchInfo({
-            deployed: res2?.deployed || [],
-            unDeployed: res2?.unDeployed || [],
-          });
-        })
-        .finally(() => {
-          setUpdating(false);
-        });
+
+      const resp1 = await queryDeployList({
+        appCode: appCode!,
+        env,
+        isActive: 1,
+        pageIndex: 1,
+        pageSize: 10,
+      });
+
+      const resp2 = await queryFeatureDeployed({
+        appCode: appCode!,
+        env,
+        isDeployed: 1,
+      });
+      const resp3 = await queryFeatureDeployed({
+        appCode: appCode!,
+        env,
+        isDeployed: 0,
+      });
+
+      if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
+        setDeployInfo(resp1?.data?.dataSource[0]);
+      }
+
+      setBranchInfo({
+        deployed: resp2?.data || [],
+        unDeployed: resp3?.data || [],
+      });
+
+      setUpdating(false);
     },
     8000,
     { immediate: true },
