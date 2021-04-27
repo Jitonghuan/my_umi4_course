@@ -46,10 +46,17 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   const { run: queryConfigList, tableProps, reset } = usePaginated({
     requestUrl: queryConfigListUrl,
     requestMethod: 'GET',
-    formatResult: (res) => ({
-      dataSource: res.data?.dataSource?.configs || [],
-      pageInfo: res.data?.pageInfo || {},
-    }),
+    formatResult: (res) => {
+      let versionNumber = res.data?.dataSource?.version?.versionNumber;
+      if (versionNumber) {
+        setCurrentVersion(versionNumber);
+      }
+
+      return {
+        dataSource: res.data?.dataSource?.configs || [],
+        pageInfo: res.data?.pageInfo || {},
+      };
+    },
     pagination: {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
@@ -249,6 +256,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
         }}
         columns={
           createTableSchema({
+            currentVersion,
             onOperateClick: (type, record, i) => {
               if (type === 'detail' || type === 'edit') {
                 setEditCfgData({
