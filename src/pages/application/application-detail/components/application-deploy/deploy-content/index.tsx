@@ -60,8 +60,8 @@ const DeployContent = ({ env }: IProps) => {
       }
 
       setBranchInfo({
-        deployed: resp2?.data || [],
-        unDeployed: resp3?.data || [],
+        deployed: resp2?.data?.deployed || [],
+        unDeployed: resp3?.data?.unDeployed || [],
       });
 
       setUpdating(false);
