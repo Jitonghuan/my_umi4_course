@@ -9,6 +9,7 @@ import React, { useMemo, useContext } from 'react';
 import { Tabs, Button } from 'antd';
 import FeContext from '@/layouts/basic-layout/FeContext';
 import ConfigContent from './config-content';
+import DetailContext from '../../context';
 import { IProps } from './types';
 import './index.less';
 
@@ -22,10 +23,12 @@ const typeMap = {
 const ConfigParametersManage = ({
   location: {
     pathname,
-    query: { id: appId, appCode },
+    query: { id: appId },
   },
 }: IProps) => {
   const { envData } = useContext(FeContext);
+  const { appData } = useContext(DetailContext);
+  const { appCode } = appData || {};
 
   const configType = useMemo(() => {
     const paths = pathname.split('/');

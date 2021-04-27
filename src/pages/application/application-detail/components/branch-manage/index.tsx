@@ -5,25 +5,24 @@
  * @create 2021-04-20 19:10
  */
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useEffectOnce } from 'white-react-use';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm } from '@cffe/fe-backend-component';
 import EditBranch from './edit-branch';
 import { createFilterFormSchema, createTableSchema } from './schema';
+import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '../../../service';
 import { rootCls } from './constants';
 import { IProps } from './types';
 import './index.less';
 
-const BranchManage = ({
-  location: {
-    query: { appCode, id },
-  },
-}: IProps) => {
+const BranchManage = ({}: IProps) => {
+  const { appData } = useContext(DetailContext);
+  const { appCode } = appData || {};
+
   const [createBranchVisible, setCreateBranchVisible] = useState(false);
 
   // 查询数据
@@ -36,14 +35,15 @@ const BranchManage = ({
     },
   });
 
-  useEffectOnce(() => {
+  useEffect(() => {
+    if (!appCode) return;
     queryBranchList({ appCode, env: 'feature' });
-  });
+  }, [appCode]);
 
   return (
     <>
       <EditBranch
-        appCode={appCode}
+        appCode={appCode!}
         visible={createBranchVisible}
         onSubmit={() => {
           setCreateBranchVisible(false);

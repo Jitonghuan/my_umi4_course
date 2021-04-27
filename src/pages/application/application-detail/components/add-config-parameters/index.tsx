@@ -5,13 +5,14 @@
  * @create 2021-04-14 14:16
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Table, message } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
 import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
+import DetailContext from '../../context';
 import { configMultiAdd } from '../../../service';
 import { IProps, DataSourceType } from './types';
 import './index.less';
@@ -20,9 +21,12 @@ const rootCls = 'add-config-parameters-compo';
 
 const AddConfigParameters = ({
   location: {
-    query: { appCode, env, type },
+    query: { env, type },
   },
 }: IProps) => {
+  const { appData } = useContext(DetailContext);
+  const { appCode } = appData || {};
+
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
 
@@ -87,19 +91,26 @@ const AddConfigParameters = ({
         <Button
           type="primary"
           onClick={() => {
+            const configs = dataSource
+              .filter((item) => item.key && item.value)
+              .map((item) => ({
+                env,
+                appCode: appCode!,
+                type,
+                key: item.key!,
+                value: item.value!,
+              }));
+
+            if (!configs.length) {
+              message.warning('请填写完整');
+              return;
+            }
+
             configMultiAdd({
-              appCode,
+              appCode: appCode!,
               env,
               type,
-              configs: dataSource
-                .filter((item) => item.key && item.value)
-                .map((item) => ({
-                  env,
-                  appCode,
-                  type,
-                  key: item.key!,
-                  value: item.value!,
-                })),
+              configs,
             }).then((res: any) => {
               if (res.success) {
                 message.success('操作成功');
