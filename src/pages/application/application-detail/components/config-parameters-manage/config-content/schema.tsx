@@ -48,7 +48,7 @@ export const createTableSchema = ({
   currentVersion,
   onOperateClick,
 }: {
-  currentVersion: number | string;
+  currentVersion?: number | string;
   onOperateClick: (
     type: 'detail' | 'delete' | 'edit',
     record: any,
