@@ -37,7 +37,7 @@ const BranchManage = ({
   });
 
   useEffectOnce(() => {
-    queryBranchList({ appCode });
+    queryBranchList({ appCode, env: 'feature' });
   });
 
   return (

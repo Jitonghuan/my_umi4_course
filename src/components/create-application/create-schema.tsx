@@ -85,6 +85,15 @@ export default (params: {
       },
     },
     {
+      isNotNeed: params.appType === 'frontend',
+      type: 'Input',
+      props: {
+        label: 'deployment名称',
+        name: 'deploymentName',
+        placeholder: '请输入deployment名称',
+      },
+    },
+    {
       type: 'Select',
       props: {
         label: '所属',

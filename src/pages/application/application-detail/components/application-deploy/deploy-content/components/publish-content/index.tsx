@@ -59,9 +59,12 @@ const PublishContent = ({
                     title: '确定要重新部署吗?',
                     icon: <ExclamationCircleOutlined />,
                     onOk() {
+                      const filter = deployedList
+                        .filter((el) => selectedRowKeys.includes(el.id))
+                        .map((el) => el.branchName);
                       return updateFeatures({
                         id: deployInfo.id,
-                        features: selectedRowKeys,
+                        features: filter,
                       }).then(() => {
                         onOperate('retryDeployEnd');
                       });
@@ -88,7 +91,7 @@ const PublishContent = ({
                         env,
                         features: deployedList
                           .filter((item) => !selectedRowKeys.includes(item.id))
-                          .map((item) => item.id),
+                          .map((item) => item.branchName),
                       }).then(() => {
                         onOperate('batchExitEnd');
                       });
