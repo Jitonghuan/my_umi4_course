@@ -14,7 +14,7 @@ import { IProps } from './types';
 
 const ImportConfig = (props: IProps) => {
   const uploadProps = {
-    name: 'filename',
+    name: 'config',
     action: configUploadUrl,
     headers: {
       // authorization: 'authorization-text',
