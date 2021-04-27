@@ -109,7 +109,7 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
           onChange={(v) =>
             setDeployConfig({ ...deployConfig, deployEnv: v.target.value })
           }
-          options={hospitals?.map((code: string) => ({
+          options={hospitals?.split(',').map((code: string) => ({
             label: hospitalCodeToText[code],
             value: code,
           }))}

@@ -231,7 +231,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
 
       <HulkTable
         rowKey="id"
-        size="small"
         className={`${rootCls}__table`}
         rowSelection={{
           type: 'checkbox',
