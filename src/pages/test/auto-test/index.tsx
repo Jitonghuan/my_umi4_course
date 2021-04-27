@@ -65,10 +65,10 @@ const Coms = (props: any) => {
       return;
     }
 
-    // 设置初始化选中 key
-    if (data.length > 0) {
-      setTreeSelectKeys([data[0].preGroupName]);
-    }
+    // 设置初始化选中 key,(04.27备注，默认不选中，查全部)
+    // if (data.length > 0) {
+    //   setTreeSelectKeys([data[0].preGroupName]);
+    // }
 
     setTreeData(
       data.map((el: any) => ({
@@ -120,7 +120,7 @@ const Coms = (props: any) => {
       treeSelectKeys.length > 0 ? treeSelectKeys[0].split('-') : [];
     const params = {
       belong,
-      env: 'test', // TODO
+      env: envVal,
       preGroupName: groupNameArr.length > 0 ? groupNameArr[0] : undefined,
       groupName: groupNameArr.length > 1 ? groupNameArr[1] : undefined,
       caseList,
@@ -255,6 +255,10 @@ const Coms = (props: any) => {
                   setSearchKey(e.target.value);
                 }}
                 onPressEnter={(e) => {
+                  reset();
+                  handleQueryTable();
+                }}
+                onSearch={() => {
                   reset();
                   handleQueryTable();
                 }}

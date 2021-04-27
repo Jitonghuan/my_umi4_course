@@ -3,7 +3,7 @@ import { sso } from '@cffe/vc-request';
 import { IRequestParams, IResponse } from '@cffe/vc-request/es/service';
 
 // 默认使用组件库对针对后台项目登录模式设计的接口调用方案
-const request = async (url: string, params?: IRequestParams | undefined) => {
+const request = (url: string, params?: IRequestParams | undefined) => {
   return new Promise<IResponse>((resolve, reject) => {
     sso
       .request(url, params)
@@ -24,7 +24,7 @@ const request = async (url: string, params?: IRequestParams | undefined) => {
 };
 export const getRequest = request;
 
-export const postRequest = async (
+export const postRequest = (
   url: string,
   params?: IRequestParams | undefined,
 ) => {
@@ -42,6 +42,7 @@ export const postRequest = async (
       })
       .catch((e) => {
         message.error(e.errorMsg);
+        reject(e.errorMsg);
       });
   });
 };

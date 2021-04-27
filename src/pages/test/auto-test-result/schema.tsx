@@ -5,19 +5,19 @@ import { ColumnProps } from '@cffe/vc-hulk-table';
 
 // 表格 schema
 export const tableSchema: ColumnProps[] = [
+  // {
+  //   title: '序号',
+  //   dataIndex: 'idx',
+  //   valueType: 'index',
+  // },
   {
-    title: '序号',
-    dataIndex: 'idx',
-    valueType: 'index',
-  },
-  {
-    title: '用例ID',
+    title: 'ID',
     dataIndex: 'id',
   },
   {
     title: '用例集',
     dataIndex: 'group',
-    render: (val) => val || '-',
+    render: (val) => val || '',
   },
   {
     title: '测试时间',
@@ -68,17 +68,22 @@ export const tableSchema: ColumnProps[] = [
   {
     title: '通过数',
     dataIndex: 'passNum',
-    render: (val) => val || '-',
+    render: (val) => (val || Number(val) === 0 ? val : '-'),
   },
   {
     dataIndex: 'failNum',
     title: '失败数',
-    render: (val) => val || '-',
+    render: (val) => (val || Number(val) === 0 ? val : '-'),
+  },
+  {
+    title: '错误数',
+    dataIndex: 'errorNum',
+    render: (val) => (val || Number(val) === 0 ? val : '-'),
   },
   {
     title: '跳过数',
     dataIndex: 'skipNum',
-    render: (val) => val || '-',
+    render: (val) => (val || Number(val) === 0 ? val : '-'),
   },
   {
     title: '构建方式',
