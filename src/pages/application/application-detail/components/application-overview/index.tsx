@@ -52,7 +52,6 @@ const ApplicationOverview = (props: IProps) => {
     <ContentCard className={rootCls}>
       <Descriptions
         title="概要"
-        size="small"
         bordered
         column={2}
         labelStyle={labelStyle}
@@ -85,7 +84,6 @@ const ApplicationOverview = (props: IProps) => {
 
       <Descriptions
         title="成员"
-        size="small"
         bordered
         column={1}
         labelStyle={labelStyle}

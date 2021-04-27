@@ -89,7 +89,6 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
 
       <Descriptions
         title="发布详情"
-        size="small"
         labelStyle={{ color: '#5F677A', textAlign: 'right' }}
         contentStyle={{ color: '#000' }}
       >

@@ -44,7 +44,6 @@ const AddConfigParameters = ({
       <EditableProTable<DataSourceType>
         className={`${rootCls}__edit-table`}
         rowKey="id"
-        size="small"
         bordered
         columnEmptyText={false}
         recordCreatorProps={{

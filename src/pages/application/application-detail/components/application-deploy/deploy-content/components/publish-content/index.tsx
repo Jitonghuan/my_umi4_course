@@ -118,7 +118,6 @@ const PublishContent = ({
 
         <HulkTable
           rowKey="id"
-          size="small"
           className={`${rootCls}__list-table`}
           dataSource={deployedList}
           pagination={false}

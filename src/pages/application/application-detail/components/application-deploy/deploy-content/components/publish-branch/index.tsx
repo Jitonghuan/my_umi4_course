@@ -111,7 +111,6 @@ const PublishBranch = ({
 
         <HulkTable
           rowKey="id"
-          size="small"
           className={`${rootCls}__list-table`}
           dataSource={dataSource}
           pagination={false}
