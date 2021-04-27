@@ -36,7 +36,7 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
     if (deployStatus === 'merging') {
       return 1.1;
     }
-    if (deployStatus === 'mergeErr' && deployStatus === 'conflict') {
+    if (deployStatus === 'mergeErr' || deployStatus === 'conflict') {
       return 1.2;
     }
 
