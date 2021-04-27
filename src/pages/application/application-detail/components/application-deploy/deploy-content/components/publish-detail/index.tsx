@@ -93,7 +93,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
         labelStyle={{ color: '#5F677A', textAlign: 'right' }}
         contentStyle={{ color: '#000' }}
       >
-        <Descriptions.Item label="CRID">{deployInfo?.planId}</Descriptions.Item>
+        <Descriptions.Item label="CRID">{deployInfo?.id}</Descriptions.Item>
         <Descriptions.Item label="部署分支">
           {deployInfo?.releaseBranch}
         </Descriptions.Item>
