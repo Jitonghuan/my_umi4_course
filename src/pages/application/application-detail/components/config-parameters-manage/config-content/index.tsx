@@ -7,7 +7,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
-import { useEffectOnce, useListData } from 'white-react-use';
 import { Popover, Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
@@ -68,13 +67,14 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     },
   );
 
-  useEffectOnce(() => {
+  useEffect(() => {
+    if (!appCode) return;
     queryConfigList({
       env,
       appCode,
       type: configType,
     });
-  });
+  }, [appCode]);
 
   useEffect(() => {
     queryVersionData({
@@ -108,7 +108,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       <ImportConfig
         env={env}
         configType={configType}
-        appCode={appCode}
+        appCode={appCode!}
         visible={importCfgVisible}
         onClose={() => setImportCfgVisible(false)}
         onSubmit={() => {
@@ -123,7 +123,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       <EditConfig
         env={env}
         configType={configType}
-        appCode={appCode}
+        appCode={appCode!}
         type={editCfgData.type}
         formValue={editCfgData.curRecord}
         visible={editCfgData.visible}
@@ -201,7 +201,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
                 query: {
                   env,
                   type: configType,
-                  appCode,
+                  appCode: appCode!,
                   id: appId,
                 },
               });
