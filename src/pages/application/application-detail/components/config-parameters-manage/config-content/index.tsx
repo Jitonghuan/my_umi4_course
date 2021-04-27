@@ -40,16 +40,19 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   });
 
   // 当前选中版本
-  const [currentVersion, setCurrentVersion] = useState<string | number>();
+  const [currentVersion, setCurrentVersion] = useState<{
+    id: number;
+    versionNumber: string;
+  }>();
 
   // 查询数据
   const { run: queryConfigList, tableProps, reset } = usePaginated({
     requestUrl: queryConfigListUrl,
     requestMethod: 'GET',
     formatResult: (res) => {
-      let versionNumber = res.data?.dataSource?.version?.versionNumber;
-      if (versionNumber) {
-        setCurrentVersion(versionNumber);
+      let version = res.data?.dataSource?.version;
+      if (version) {
+        setCurrentVersion(version);
       }
 
       return {
@@ -99,7 +102,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
 
     const resp = await postRequest(doRestoreVersionApi, {
       data: {
-        id: currentVersion,
+        id: currentVersion.id,
       },
     });
 
@@ -170,9 +173,10 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
             const versionData = allData.find(
               (el) => el.name && (el.name as string[])[0] === 'versionID',
             );
-            setCurrentVersion(
-              versionData && versionData.value ? versionData.value : undefined,
+            const version = versionTableProps.dataSource?.find(
+              (item) => item.id === versionData?.value,
             );
+            setCurrentVersion(version || undefined);
           }}
           onFinish={(values) => {
             if (tableProps.loading) return;
