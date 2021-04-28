@@ -21,7 +21,7 @@ const Index = (props: IProps) => {
       className="index-page-bg"
       style={{ backgroundImage: `url(${IndexImg})` }}
     >
-      <img src={IndexGif} alt="" />
+      <img src={IndexGif} alt="系统首页" />
     </div>
   );
 };

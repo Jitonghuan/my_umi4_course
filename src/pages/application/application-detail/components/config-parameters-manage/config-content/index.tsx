@@ -50,7 +50,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     requestUrl: queryConfigListUrl,
     requestMethod: 'GET',
     showRequestError: true,
-    formatResult: (res) => {
+    formatResult: (res: any) => {
       let version = res.data?.dataSource?.version;
       if (version) {
         setCurrentVersion(version);
@@ -63,7 +63,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     },
     pagination: {
       showSizeChanger: true,
-      showTotal: (total) => `总共 ${total} 条数据`,
+      showTotal: (total: number) => `总共 ${total} 条数据`,
     },
   });
 
@@ -74,7 +74,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       requestMethod: 'GET',
       showRequestError: true,
       initPageInfo: {
-        pageSize: 30,
+        pageSize: 30, // 默认加载30条版本数据
       },
     },
   );
@@ -110,11 +110,16 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       },
     });
 
-    if (resp.success) {
+    if (!resp.success) {
       return;
     }
 
     message.success('回退成功');
+    queryVersionData({
+      appCode,
+      env,
+      type: configType,
+    });
   };
 
   const { dataSource = [] } = versionTableProps;
@@ -166,27 +171,15 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           className={`${rootCls}__filter-form`}
           {...(createFilterFormSchema({
             versionOptions:
-              dataSource?.map((el) => ({
+              dataSource?.map((el: any) => ({
                 label: el.versionNumber,
                 value: el.id,
               })) || [],
           }) as any)}
           submitText="查询"
-          // initialValues={{
-          //   versionID: '2021/0428/185711-39'
-          // }}
           customMap={{
             versionSelect: VersionSelect,
           }}
-          // onFieldsChange={(_, allData) => {
-          //   const versionData = allData.find(
-          //     (el) => el.name && (el.name as string[])[0] === 'versionID',
-          //   );
-          //   const version = versionTableProps.dataSource?.find(
-          //     (item) => item.id === versionData?.value,
-          //   );
-          //   setCurrentVersion(version || undefined);
-          // }}
           onValuesChange={(changeVals, values) => {
             const [name, value] = (Object.entries(changeVals)?.[0] || []) as [
               string,
@@ -194,7 +187,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
             ];
             if (name && name === 'versionID') {
               const version = versionTableProps.dataSource?.find(
-                (item) => item.id === value,
+                (item: any) => item.id === value,
               );
               if (version && tableProps.pagination) {
                 const { pageSize = 10 } = tableProps.pagination;

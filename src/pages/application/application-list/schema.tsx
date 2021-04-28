@@ -69,7 +69,7 @@ export const createTableSchema = ({
     {
       title: 'ID',
       dataIndex: 'id',
-      width: 100,
+      width: 50,
     },
     {
       title: '应用名',
@@ -109,7 +109,7 @@ export const createTableSchema = ({
     {
       title: '应用类型',
       dataIndex: 'appType',
-      width: 100,
+      width: 80,
       render: (appType: AppType) => APP_TYPE_MAP[appType] || '',
     },
     {
@@ -133,7 +133,7 @@ export const createTableSchema = ({
       width: 100,
     },
     {
-      width: 200,
+      width: 150,
       title: '操作',
       dataIndex: 'operate',
       render: (text: string, record: any, index: number) => (
