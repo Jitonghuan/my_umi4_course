@@ -1,6 +1,8 @@
 import React, { CSSProperties } from 'react';
 import { TableProps } from 'antd/lib/table';
 import { FormItemProps } from 'antd/lib/form';
+import { Moment } from 'moment';
+
 export type TypeProps = 'select' | 'input' | 'date';
 
 export interface OptionProps {
@@ -15,10 +17,12 @@ export interface FormProps<T = any> extends FormItemProps {
   label?: string;
   option?: OptionProps[];
   style?: CSSProperties;
+  itemStyle?: CSSProperties;
   placeholder?: string;
-  defaultValue?: string;
+  defaultValue?: string | Moment | number;
   showTime?: boolean;
   width?: string | number;
+  showSelectSearch?: boolean;
   onChange?: (e: T) => void;
 }
 

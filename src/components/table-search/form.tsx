@@ -14,13 +14,16 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       dataIndex,
       defaultValue,
       style: styles,
+      itemStyle,
       placeholder,
       label,
       required,
       showTime,
       width,
       key,
+      showSelectSearch,
       onChange,
+      ...rest
     } = v;
 
     switch (type) {
@@ -32,10 +35,17 @@ export const renderForm = (formOptions: FormProps[] = []) => {
             required={required}
             key={key}
             name={dataIndex}
+            style={itemStyle}
+            {...rest}
           >
             <Select
-              placeholder={placeholder}
+              placeholder={placeholder ?? '请选择'}
               allowClear
+              showSearch={showSelectSearch}
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
               style={{ width: width, ...styles }}
               onChange={onChange}
             >
@@ -55,9 +65,11 @@ export const renderForm = (formOptions: FormProps[] = []) => {
             label={label}
             key={key}
             name={dataIndex}
+            style={itemStyle}
+            {...rest}
           >
             <Input
-              placeholder={placeholder}
+              placeholder={placeholder ?? '请输入'}
               allowClear
               style={{ width: width, ...styles }}
               onChange={onChange}
@@ -72,6 +84,8 @@ export const renderForm = (formOptions: FormProps[] = []) => {
             label={label}
             key={key}
             name={dataIndex}
+            style={itemStyle}
+            {...rest}
           >
             <DatePicker
               showTime={showTime}

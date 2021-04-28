@@ -223,6 +223,42 @@ export default [
         component: '@/pages/release/plan',
       },
       {
+        path: 'addFunctionModify',
+        name: '新增功能变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/function-modify/add-modify',
+      },
+      {
+        path: 'editFunctionModify',
+        name: '编辑功能变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/function-modify/edit-modify',
+      },
+      {
+        path: 'addConfigModify',
+        name: '新增配置变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/config-modify/add-modify',
+      },
+      {
+        path: 'editConfigModify',
+        name: '编辑配置变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/config-modify/edit-modify',
+      },
+      {
+        path: 'addDatabaseModify',
+        name: '新增数据库变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/database-modify/add-modify',
+      },
+      {
+        path: 'editDatabasenModify',
+        name: '编辑数据库变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/database-modify/edit-modify',
+      },
+      {
         path: 'apply',
         name: '发布申请',
         component: '@/pages/release/apply',
