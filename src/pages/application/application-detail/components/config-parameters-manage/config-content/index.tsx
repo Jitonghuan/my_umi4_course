@@ -50,7 +50,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     requestUrl: queryConfigListUrl,
     requestMethod: 'GET',
     showRequestError: true,
-    formatResult: (res) => {
+    formatResult: (res: any) => {
       let version = res.data?.dataSource?.version;
       if (version) {
         setCurrentVersion(version);
@@ -63,7 +63,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     },
     pagination: {
       showSizeChanger: true,
-      showTotal: (total) => `总共 ${total} 条数据`,
+      showTotal: (total: number) => `总共 ${total} 条数据`,
     },
   });
 
@@ -89,11 +89,13 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   }, [appCode]);
 
   useEffect(() => {
-    queryVersionData({
-      appCode,
-      env,
-      type: configType,
-    });
+    if (appCode) {
+      queryVersionData({
+        appCode,
+        env,
+        type: configType,
+      });
+    }
   }, [appCode, env, configType]);
 
   // 回退操作
@@ -108,11 +110,12 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       },
     });
 
-    if (resp.success) {
-      return;
-    }
-
     message.success('回退成功');
+    queryVersionData({
+      appCode,
+      env,
+      type: configType,
+    });
   };
 
   return (
@@ -162,7 +165,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           className={`${rootCls}__filter-form`}
           {...(createFilterFormSchema({
             versionOptions:
-              versionTableProps.dataSource?.map((el) => ({
+              versionTableProps.dataSource?.map((el: any) => ({
                 label: el.versionNumber,
                 value: el.id,
               })) || [],
@@ -187,7 +190,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
             ];
             if (name && name === 'versionID') {
               const version = versionTableProps.dataSource?.find(
-                (item) => item.id === value,
+                (item: any) => item.id === value,
               );
               if (version && tableProps.pagination) {
                 const { pageSize = 10 } = tableProps.pagination;
