@@ -7,6 +7,7 @@ export interface IProps {
     type:
       | 'deployNextEnvStart'
       | 'deployNextEnvEnd'
+      | 'deployNextEnvSuccess'
       | 'cancelDeployStart'
       | 'cancelDeployEnd',
   ) => void;

@@ -70,7 +70,7 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
       return 4.2;
     }
 
-    if (deployStatus === 'deployFinish') {
+    if (deployStatus === 'deployFinish' || deployStatus === 'deployed') {
       return 6;
     }
 

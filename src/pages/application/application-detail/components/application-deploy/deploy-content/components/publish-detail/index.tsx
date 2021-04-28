@@ -53,6 +53,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
                   return deployReuse({ id: deployInfo.id }).then((res) => {
                     if (res.success) {
                       message.success('操作成功，正在部署中...');
+                      onOperate('deployNextEnvSuccess');
                       return;
                     }
                   });
