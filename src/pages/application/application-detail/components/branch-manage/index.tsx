@@ -30,6 +30,7 @@ const BranchManage = ({}: IProps) => {
   const { run: queryBranchList, tableProps } = usePaginated({
     requestUrl: queryBranchListUrl,
     requestMethod: 'GET',
+    showRequestError: true,
     pagination: {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,

@@ -87,6 +87,7 @@ const Coms = (props: any) => {
   const { run: queryTableData, tableProps, reset } = usePaginated({
     requestUrl: queryAutoTest,
     requestMethod: 'GET',
+    showRequestError: true,
     pagination: {
       showTotal: ((total: number) => `总共 ${total} 条数据`) as any,
       showSizeChanger: true,
