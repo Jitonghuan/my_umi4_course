@@ -293,9 +293,14 @@ const Coms = (props: any) => {
               options={envData}
               placeholder="请选择环境"
             />
-            <Button type="primary" onClick={() => handleOperate('runall')}>
-              批量执行
-            </Button>
+            <Popconfirm
+              title="确认执行当前用例？"
+              onConfirm={() => {
+                handleOperate('runall');
+              }}
+            >
+              <Button type="primary">批量执行</Button>
+            </Popconfirm>
             <Button
               type="primary"
               onClick={() => handleOperate('result')}
