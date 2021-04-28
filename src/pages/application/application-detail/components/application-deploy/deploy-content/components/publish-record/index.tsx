@@ -25,6 +25,7 @@ const PublishRecord = (props: IProps) => {
   const { run: queryDataSource, tableProps, loadMore } = usePaginated({
     requestUrl: queryRecordApi,
     requestMethod: 'GET',
+    showRequestError: true,
     loadMore: true,
   });
 

@@ -82,18 +82,22 @@ export const RATE_ENUMS = [
   {
     label: 'Off',
     value: 0,
+    showLabel: <SyncOutlined />,
   },
   {
     label: '10s',
     value: 10,
+    showLabel: '10s',
   },
   {
     label: '20s',
     value: 20,
+    showLabel: '20s',
   },
   {
     label: '30s',
     value: 30,
+    showLabel: '30s',
   },
 ];
 
@@ -213,6 +217,7 @@ const Coms = (props: IProps) => {
   const { run: queryNodeList, reset, tableProps } = usePaginated({
     requestUrl: queryPodInfoApi,
     requestMethod: 'GET',
+    showRequestError: true,
     didMounted: false,
     formatRequestParams: (params) => {
       return {
@@ -340,7 +345,7 @@ const Coms = (props: IProps) => {
                   <Select.Option
                     key={time.value}
                     value={time.value}
-                    label={<SyncOutlined />}
+                    label={time.showLabel}
                   >
                     {time.label}
                   </Select.Option>

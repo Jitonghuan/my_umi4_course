@@ -70,6 +70,7 @@ const Coms = (props: IProps) => {
   const { run: queryTableData, tableProps } = usePaginated({
     requestUrl: queryDetailTableDataApi,
     requestMethod: 'GET',
+    showRequestError: true,
     initPageInfo: {
       pageSize: 20,
     },

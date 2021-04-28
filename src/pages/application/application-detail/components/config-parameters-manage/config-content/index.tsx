@@ -49,6 +49,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   const { run: queryConfigList, tableProps, reset } = usePaginated({
     requestUrl: queryConfigListUrl,
     requestMethod: 'GET',
+    showRequestError: true,
     formatResult: (res) => {
       let version = res.data?.dataSource?.version;
       if (version) {
@@ -71,6 +72,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     {
       requestUrl: queryVersionApi,
       requestMethod: 'GET',
+      showRequestError: true,
       initPageInfo: {
         pageSize: 30,
       },
@@ -171,14 +173,34 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           customMap={{
             versionSelect: VersionSelect,
           }}
-          onFieldsChange={(_, allData) => {
-            const versionData = allData.find(
-              (el) => el.name && (el.name as string[])[0] === 'versionID',
-            );
-            const version = versionTableProps.dataSource?.find(
-              (item) => item.id === versionData?.value,
-            );
-            setCurrentVersion(version || undefined);
+          // onFieldsChange={(_, allData) => {
+          //   const versionData = allData.find(
+          //     (el) => el.name && (el.name as string[])[0] === 'versionID',
+          //   );
+          //   const version = versionTableProps.dataSource?.find(
+          //     (item) => item.id === versionData?.value,
+          //   );
+          //   setCurrentVersion(version || undefined);
+          // }}
+          onValuesChange={(changeVals, values) => {
+            const [name, value] = (Object.entries(changeVals)?.[0] || []) as [
+              string,
+              any,
+            ];
+            if (name && name === 'versionID') {
+              const version = versionTableProps.dataSource?.find(
+                (item) => item.id === value,
+              );
+              if (version && tableProps.pagination) {
+                const { pageSize = 10 } = tableProps.pagination;
+                queryConfigList({
+                  pageIndex: 1,
+                  pageSize,
+                  versionID: version.id,
+                });
+              }
+              setCurrentVersion(version || undefined);
+            }
           }}
           onFinish={(values) => {
             if (tableProps.loading) return;
@@ -192,10 +214,20 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
         <div className={`${rootCls}__filter-btns`}>
           <Popconfirm
             title="确定回退到当前版本？"
-            disabled={!currentVersion}
+            disabled={
+              !currentVersion ||
+              versionTableProps.dataSource?.[0]?.id === currentVersion?.id
+            }
             onConfirm={handleRollBack}
           >
-            <Button type="primary" danger disabled={!currentVersion}>
+            <Button
+              type="primary"
+              danger
+              disabled={
+                !currentVersion ||
+                versionTableProps.dataSource?.[0]?.id === currentVersion?.id
+              }
+            >
               回退
             </Button>
           </Popconfirm>

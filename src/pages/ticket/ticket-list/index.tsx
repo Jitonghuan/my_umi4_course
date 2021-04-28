@@ -91,6 +91,7 @@ const Coms = (props: any) => {
   const { run: queryTicketLists, tableProps, reset } = usePaginated({
     requestUrl: queryTicketData,
     requestMethod: 'GET',
+    showRequestError: true,
     initPageInfo: {
       pageSize: 20,
     },

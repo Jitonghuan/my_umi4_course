@@ -37,17 +37,11 @@ const Coms = () => {
   const { run: queryTableData, tableProps, reset } = usePaginated({
     requestUrl: queryTestResult,
     requestMethod: 'GET',
+    showRequestError: true,
     pagination: {
       showTotal: ((total: number) => `总共 ${total} 条数据`) as any,
       showSizeChanger: true,
     },
-    fetcher: (async (params?: any) => {
-      return getRequest(queryTestResult, {
-        data: {
-          ...params,
-        },
-      });
-    }) as any,
   });
 
   // 过滤操作
