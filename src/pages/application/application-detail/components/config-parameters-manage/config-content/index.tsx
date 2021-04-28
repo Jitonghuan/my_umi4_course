@@ -74,7 +74,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       requestMethod: 'GET',
       showRequestError: true,
       initPageInfo: {
-        pageSize: 30,
+        pageSize: 30, // 默认加载30条版本数据
       },
     },
   );
@@ -109,6 +109,10 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
         id: currentVersion.id,
       },
     });
+
+    if (!resp.success) {
+      return;
+    }
 
     message.success('回退成功');
     queryVersionData({
@@ -173,9 +177,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
               })) || [],
           }) as any)}
           submitText="查询"
-          // initialValues={{
-          //   versionID: '2021/0428/185711-39'
-          // }}
           customMap={{
             versionSelect: VersionSelect,
           }}
