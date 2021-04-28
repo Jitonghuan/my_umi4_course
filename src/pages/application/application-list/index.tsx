@@ -12,7 +12,7 @@ import React, {
   useCallback,
   useContext,
 } from 'react';
-import { Drawer, Button, message } from 'antd';
+import { Form, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffectOnce } from 'white-react-use';
 import VCPageContent, {
@@ -23,6 +23,9 @@ import CreateApplication from '@/components/create-application';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
+import { queryBizData } from '@/layouts/basic-layout/service';
+import { getRequest } from '@/utils/request';
+
 import { createFilterFormSchema, createTableSchema } from './schema';
 import { queryAppsUrl, deleteApp } from '../service';
 import { rootCls } from './constants';
@@ -30,22 +33,58 @@ import { IProps } from './types';
 import './index.less';
 
 const ApplicationList = (props: IProps) => {
-  const { belongData, businessData, envData, breadcrumbMap } = useContext(
-    FEContext,
-  );
+  const { belongData, envData, breadcrumbMap } = useContext(FEContext);
+  const [businessData, setBusinessData] = useState<any[]>([]);
+  const [formInstance] = Form.useForm();
 
   const [createAppVisible, setCreateAppVisible] = useState(false);
   const [curRecord, setCurRecord] = useState<any>();
 
+  const filterColumns = useMemo(() => {
+    return createFilterFormSchema({ belongData, businessData });
+  }, [belongData, businessData]);
+
+  // 根据所属查询业务线
+  const queryBusiness = (belong: string) => {
+    setBusinessData([]);
+    getRequest(queryBizData, {
+      data: {
+        belong,
+      },
+    }).then((resp: any) => {
+      if (resp.success) {
+        const datas =
+          resp?.data?.dataSource?.map((el: any) => {
+            return {
+              ...el,
+              value: el.lineCode,
+              label: el.lineName,
+            };
+          }) || [];
+        setBusinessData(datas);
+      }
+    });
+  };
+
   // 查询数据
-  const { run: queryAppList, tableProps } = usePaginated({
+  const { run: queryAppList, tableProps, reset } = usePaginated({
     requestUrl: queryAppsUrl,
     requestMethod: 'GET',
+    showRequestError: true,
     pagination: {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
     },
   });
+
+  // 监听表单变化，根据所属查询业务线
+  const handleChange = useCallback((vals) => {
+    const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
+    if (name && name === 'belong') {
+      formInstance.resetFields(['lineCode']);
+      queryBusiness(value);
+    }
+  }, []);
 
   useEffectOnce(() => {
     queryAppList();
@@ -71,14 +110,26 @@ const ApplicationList = (props: IProps) => {
 
       <FilterCard>
         <InlineForm
+          form={formInstance}
           className={`${rootCls}__filter-form`}
-          {...(createFilterFormSchema({ belongData, businessData }) as any)}
+          {...(filterColumns as any)}
           submitText="查询"
+          onValuesChange={handleChange}
           onFinish={(values) => {
             if (tableProps.loading) return;
             queryAppList({
               pageIndex: 1,
               ...values,
+            });
+          }}
+          onReset={() => {
+            if (tableProps.loading) return;
+            const { pageSize = 10 } = tableProps.pagination as any;
+            formInstance.resetFields();
+            reset();
+            queryAppList({
+              pageIndex: 1,
+              pageSize: pageSize,
             });
           }}
         />
@@ -99,6 +150,7 @@ const ApplicationList = (props: IProps) => {
           </Button>
         </div>
         <HulkTable
+          className={`${rootCls}__table-body`}
           columns={
             createTableSchema({
               onEditClick: (record, index) => {

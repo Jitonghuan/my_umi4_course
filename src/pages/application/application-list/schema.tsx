@@ -69,10 +69,12 @@ export const createTableSchema = ({
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 100,
     },
     {
       title: '应用名',
       dataIndex: 'appName',
+      width: 100,
       render: (text, record) => (
         <a
           onClick={() =>
@@ -92,35 +94,43 @@ export const createTableSchema = ({
     {
       title: '应用code',
       dataIndex: 'appCode',
+      width: 100,
     },
     {
       title: 'git仓库名',
       dataIndex: 'gitlab',
+      width: 200,
     },
     {
       title: '所属',
       dataIndex: 'belong',
+      width: 80,
     },
     {
       title: '应用类型',
       dataIndex: 'appType',
+      width: 100,
       render: (appType: AppType) => APP_TYPE_MAP[appType] || '',
     },
     {
       title: '业务线',
       dataIndex: 'lineCode',
+      width: 100,
     },
     {
       title: '业务模块',
       dataIndex: 'sysCode',
+      width: 100,
     },
     {
       title: '责任人',
       dataIndex: 'owner',
+      width: 100,
     },
     {
       title: '应用描述',
       dataIndex: 'desc',
+      width: 100,
     },
     {
       width: 200,

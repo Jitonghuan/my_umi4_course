@@ -321,7 +321,7 @@ const Coms = (props: IProps) => {
                   <Select.Option
                     key={time.value}
                     value={time.value}
-                    label={<SyncOutlined />}
+                    label={time.showLabel}
                   >
                     {time.label}
                   </Select.Option>

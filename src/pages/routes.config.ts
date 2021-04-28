@@ -14,8 +14,12 @@ export default [
     redirect: `${ds.pagePrefix}/application`,
   },
   {
-    path: `${ds.pagePrefix}/index`,
-    redirect: `${ds.pagePrefix}/application`,
+    // path: `${ds.pagePrefix}/index`,
+    // redirect: `${ds.pagePrefix}/application`,
+    path: 'index',
+    name: '首页',
+    icon: 'icon-poc_index',
+    component: '@/pages/index',
   },
   {
     path: `${ds.pagePrefix}/application`,
