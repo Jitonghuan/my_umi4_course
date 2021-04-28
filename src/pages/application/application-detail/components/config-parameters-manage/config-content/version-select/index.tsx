@@ -18,7 +18,7 @@ export interface IProps {
  * @create 2021-04-26 17:38
  */
 const funcName = (props: IProps) => {
-  const { value, onChange, options = [] } = props;
+  const { value, onChange, options = [], ...rest } = props;
 
   const handleChange = (val: string) => {
     onChange && onChange(val);
@@ -36,6 +36,7 @@ const funcName = (props: IProps) => {
       optionFilterProp="label"
       onChange={handleChange}
       options={options}
+      {...rest}
     />
   );
 };

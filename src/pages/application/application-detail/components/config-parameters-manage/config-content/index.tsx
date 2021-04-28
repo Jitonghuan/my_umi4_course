@@ -180,15 +180,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           customMap={{
             versionSelect: VersionSelect,
           }}
-          // onFieldsChange={(_, allData) => {
-          //   const versionData = allData.find(
-          //     (el) => el.name && (el.name as string[])[0] === 'versionID',
-          //   );
-          //   const version = versionTableProps.dataSource?.find(
-          //     (item) => item.id === versionData?.value,
-          //   );
-          //   setCurrentVersion(version || undefined);
-          // }}
           onValuesChange={(changeVals, values) => {
             const [name, value] = (Object.entries(changeVals)?.[0] || []) as [
               string,
