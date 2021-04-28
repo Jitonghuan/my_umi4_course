@@ -26,7 +26,6 @@ const funcName = (props: IProps) => {
 
   return (
     <Select
-      style={{ width: '170px' }}
       showSearch
       value={value}
       placeholder="请选择版本号"
@@ -37,6 +36,7 @@ const funcName = (props: IProps) => {
       onChange={handleChange}
       options={options}
       {...rest}
+      style={{ width: '190px' }}
     />
   );
 };
