@@ -1,5 +1,14 @@
 import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { Card, Empty, message, Select, Tree, Input, Button } from 'antd';
+import {
+  Popconfirm,
+  Card,
+  Empty,
+  message,
+  Select,
+  Tree,
+  Input,
+  Button,
+} from 'antd';
 import { history } from 'umi';
 import _ from 'lodash';
 
@@ -44,6 +53,8 @@ const Coms = (props: any) => {
 
   // 表格选中数据
   const [tableSelect, setTableSelect] = useState<React.Key[]>([]);
+  // 选中表格
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
 
   // 执行环境选择
   const [envVal, setEnvVal] = useState<string>();
@@ -143,6 +154,7 @@ const Coms = (props: any) => {
 
     if (type === 'runall') {
       setTableSelect([]);
+      setSelectedRowKeys([]);
     }
   };
 
@@ -153,7 +165,14 @@ const Coms = (props: any) => {
       dataIndex: 'operate',
       width: 60,
       render: (_, record) => (
-        <a onClick={() => handleOperate('run', record)}>执行</a>
+        <Popconfirm
+          title="确认执行当前用例？"
+          onConfirm={() => {
+            handleOperate('run', record);
+          }}
+        >
+          <a>执行</a>
+        </Popconfirm>
       ),
     },
   ]);
@@ -207,6 +226,7 @@ const Coms = (props: any) => {
     reset();
     setSearchKey('');
     setTableSelect([]);
+    setSelectedRowKeys([]);
   };
 
   return (
@@ -289,9 +309,11 @@ const Coms = (props: any) => {
             {...tableProps}
             columns={tableColumns}
             rowSelection={{
+              selectedRowKeys,
               type: 'checkbox',
               onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
                 setTableSelect(selectedRows);
+                setSelectedRowKeys(selectedRowKeys);
               },
             }}
           />

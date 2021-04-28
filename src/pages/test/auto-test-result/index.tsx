@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react';
 
-import { Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import VCForm, { IColumns } from '@cffe/vc-form';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import VCPageContent, {
@@ -182,7 +182,11 @@ const Coms = () => {
           setCurrentRecord({});
           setOperateType(undefined);
         }}
-        footer={false}
+        footer={
+          <Button type="primary" onClick={() => setOperateType(undefined)}>
+            关闭
+          </Button>
+        }
       >
         {operateType === 'report' ? (
           <iframe src={currentRecord.report} width="100%" height="100%" />

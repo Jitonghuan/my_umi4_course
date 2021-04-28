@@ -7,7 +7,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
-import { Popover, Popconfirm, Button, message } from 'antd';
+import { Form, Popover, Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import VCForm, { IColumns } from '@cffe/vc-form';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
@@ -43,6 +43,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     type: 'look',
     visible: false,
   });
+
+  const [filterFormRef] = Form.useForm();
 
   // 当前选中版本
   const [currentVersion, setCurrentVersion] = useState<{
@@ -80,6 +82,17 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       showRequestError: true,
       initPageInfo: {
         pageSize: 30, // 默认加载30条版本数据
+      },
+      successFunc: (resp: any) => {
+        const { dataSource = [] } = resp.data || {};
+
+        if (dataSource.length === 0) {
+          return;
+        }
+
+        filterFormRef.setFieldsValue({
+          versionID: dataSource[0].id,
+        });
       },
     },
   );
@@ -217,6 +230,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
         <VCForm
           className={`${rootCls}__filter-form`}
           layout="inline"
+          form={filterFormRef}
           columns={
             getFilterColumns(
               dataSource?.map((el: any) => ({
@@ -245,7 +259,16 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
               setCurrentVersion(version || undefined);
             }
           }}
-          onFinish={(values) => {
+          submitText="查询"
+          onReset={() => {
+            queryConfigList({
+              versionID: undefined,
+              key: undefined,
+              value: undefined,
+              pageIndex: 1,
+            });
+          }}
+          onSubmit={(values) => {
             if (tableProps.loading) return;
             queryConfigList({
               pageIndex: 1,
