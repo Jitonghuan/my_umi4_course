@@ -25,6 +25,7 @@ import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import { queryBizData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
+import MatrixPageContent from '@/components/matrix-page-content';
 
 import { createFilterFormSchema, createTableSchema } from './schema';
 import { queryAppsUrl, deleteApp } from '../service';
@@ -91,12 +92,7 @@ const ApplicationList = (props: IProps) => {
   });
 
   return (
-    <VCPageContent
-      height="calc(100vh - 118px)"
-      breadcrumbMap={breadcrumbMap}
-      pathname={location.pathname}
-      isFlex
-    >
+    <MatrixPageContent isFlex>
       <CreateApplication
         formValue={curRecord}
         visible={createAppVisible}
@@ -170,7 +166,7 @@ const ApplicationList = (props: IProps) => {
           {...tableProps}
         />
       </ContentCard>
-    </VCPageContent>
+    </MatrixPageContent>
   );
 };
 

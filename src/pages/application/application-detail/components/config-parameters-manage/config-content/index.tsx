@@ -89,13 +89,13 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   }, [appCode]);
 
   useEffect(() => {
-    if (appCode) {
-      queryVersionData({
-        appCode,
-        env,
-        type: configType,
-      });
-    }
+    if (!appCode) return;
+
+    queryVersionData({
+      appCode,
+      env,
+      type: configType,
+    });
   }, [appCode, env, configType]);
 
   // 回退操作
@@ -117,6 +117,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       type: configType,
     });
   };
+
+  const { dataSource = [] } = versionTableProps;
 
   return (
     <div className={rootCls}>
@@ -165,12 +167,15 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           className={`${rootCls}__filter-form`}
           {...(createFilterFormSchema({
             versionOptions:
-              versionTableProps.dataSource?.map((el: any) => ({
+              dataSource?.map((el: any) => ({
                 label: el.versionNumber,
                 value: el.id,
               })) || [],
           }) as any)}
           submitText="查询"
+          // initialValues={{
+          //   versionID: '2021/0428/185711-39'
+          // }}
           customMap={{
             versionSelect: VersionSelect,
           }}
