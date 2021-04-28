@@ -84,8 +84,7 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
           icon={status === 2.1 && <LoadingOutlined />}
           status={status === 2.2 ? 'error' : undefined}
           description={
-            status === 2.2 ||
-            (status === 2.1 && (
+            (status === 2.2 || status === 2.1) && (
               <>
                 {deployInfo.jenkinsUrl && (
                   <div style={{ marginTop: 2 }}>
@@ -94,29 +93,31 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
                     </a>
                   </div>
                 )}
-                <Button
-                  style={{ marginTop: 4 }}
-                  onClick={() => {
-                    onOperate('retryDeployStart');
+                {status === 2.2 && (
+                  <Button
+                    style={{ marginTop: 4 }}
+                    onClick={() => {
+                      onOperate('retryDeployStart');
 
-                    confirm({
-                      title: '确定要重新部署吗?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk() {
-                        return retryDeploy({ id: deployInfo.id }).then(() => {
+                      confirm({
+                        title: '确定要重新部署吗?',
+                        icon: <ExclamationCircleOutlined />,
+                        onOk() {
+                          return retryDeploy({ id: deployInfo.id }).then(() => {
+                            onOperate('retryDeployEnd');
+                          });
+                        },
+                        onCancel() {
                           onOperate('retryDeployEnd');
-                        });
-                      },
-                      onCancel() {
-                        onOperate('retryDeployEnd');
-                      },
-                    });
-                  }}
-                >
-                  重新部署
-                </Button>
+                        },
+                      });
+                    }}
+                  >
+                    重新部署
+                  </Button>
+                )}
               </>
-            ))
+            )
           }
         />
         <Step title="执行完成" />
