@@ -89,6 +89,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   }, [appCode]);
 
   useEffect(() => {
+    if (!appCode) return;
+
     queryVersionData({
       appCode,
       env,
@@ -170,6 +172,9 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
               })) || [],
           }) as any)}
           submitText="查询"
+          // initialValues={{
+          //   versionID: '2021/0428/185711-39'
+          // }}
           customMap={{
             versionSelect: VersionSelect,
           }}
