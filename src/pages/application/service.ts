@@ -41,9 +41,9 @@ export const deleteApp = (params: {
   /** appCode */
   appCode: string;
 }) =>
-  request(`${ds.apiPrefix}/appManage/delete`, {
+  request(`${ds.apiPrefix}/appManage/delete/${params.appCode}`, {
     method: 'DELETE',
-    data: params,
+    // data: params,
   });
 
 /** 分支列表 */

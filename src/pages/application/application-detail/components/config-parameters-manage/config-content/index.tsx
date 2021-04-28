@@ -115,6 +115,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     message.success('回退成功');
   };
 
+  const { dataSource = [] } = versionTableProps;
+
   return (
     <div className={rootCls}>
       <ImportConfig
@@ -162,7 +164,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           className={`${rootCls}__filter-form`}
           {...(createFilterFormSchema({
             versionOptions:
-              versionTableProps.dataSource?.map((el) => ({
+              dataSource?.map((el) => ({
                 label: el.versionNumber,
                 value: el.id,
               })) || [],
