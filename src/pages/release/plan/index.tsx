@@ -309,12 +309,16 @@ const FunctionCom: React.FC = () => {
         owner: '撒谎的艰苦撒旦',
         line: '撒谎的艰苦撒旦',
         model: '撒谎的艰苦撒旦',
-        org: '撒谎的艰苦撒旦',
-        range: '撒谎的艰苦撒旦',
-        needs: '撒谎的艰苦撒旦',
-        needsID: '撒谎的艰苦撒旦',
         person: '撒谎的艰苦撒旦',
         planTime: moment(new Date()).format('YYYY-MM-DD HH-mm'),
+        code: '111',
+        useType: '啊啊啊',
+        version: '1-1-1',
+        branch: 'sadad',
+        modules: 'sdsasd',
+        develop: '请问请问',
+        test: '拉开圣诞节',
+        publisher: '空间的',
       };
     });
 
