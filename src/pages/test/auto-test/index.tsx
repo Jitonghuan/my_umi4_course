@@ -61,7 +61,8 @@ const Coms = (props: any) => {
     const { data = [] } = resp;
 
     if (!data || data.length === 0) {
-      message.error(resp.errorMsg);
+      // message.error(resp.errorMsg);
+      setTreeData([]);
       return;
     }
 
