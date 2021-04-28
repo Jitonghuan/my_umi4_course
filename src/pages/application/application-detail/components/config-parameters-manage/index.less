@@ -1,5 +1,5 @@
 .config-parameters-manage-compo {
-  height: 100%;
+  height: calc(100% - 100px);
   background: #f7f8fa;
 
   &__tabs {
@@ -13,6 +13,10 @@
         background: #f7f8fa;
         border-bottom-color: #f7f8fa;
       }
+    }
+
+    .ant-tabs-content-holder {
+      overflow: auto;
     }
   }
 }

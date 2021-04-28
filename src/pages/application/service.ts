@@ -40,8 +40,10 @@ export const queryApps = (params: {
 export const deleteApp = (params: {
   /** appCode */
   appCode: string;
+  /** id */
+  id: string | number;
 }) =>
-  request(`${ds.apiPrefix}/appManage/delete/${params.appCode}`, {
+  request(`${ds.apiPrefix}/appManage/delete/${params.id}`, {
     method: 'DELETE',
     // data: params,
   });

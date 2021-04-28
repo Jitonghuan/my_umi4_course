@@ -154,12 +154,14 @@ const ApplicationList = (props: IProps) => {
                 setCreateAppVisible(true);
               },
               onDelClick: (record, index) => {
-                deleteApp({ appCode: record.appCode }).then((res) => {
-                  if (res.success) {
-                    message.success('删除成功');
-                    queryAppList();
-                  }
-                });
+                deleteApp({ appCode: record.appCode, id: record.id }).then(
+                  (res) => {
+                    if (res.success) {
+                      message.success('删除成功');
+                      queryAppList();
+                    }
+                  },
+                );
               },
             }) as any
           }
