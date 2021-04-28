@@ -5,7 +5,7 @@
  * @create 2021-04-15 09:33
  */
 
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Tabs, Button } from 'antd';
 import FeContext from '@/layouts/basic-layout/FeContext';
 import DeployContent from './deploy-content';
@@ -22,18 +22,28 @@ const ApplicationDeploy = ({
 }: IProps) => {
   const { envData } = useContext(FeContext);
 
+  const [tabActive, setTabActive] = useState('dev');
+
   return (
     <div className={rootCls}>
       <Tabs
         className={`${rootCls}__tabs`}
-        // onChange={this.onChange}
-        // activeKey={this.state.activeKey}
+        onChange={(v) => setTabActive(v)}
+        activeKey={tabActive}
         type="card"
         tabBarStyle={{ background: '#E6EBF5' }}
       >
         {envData?.map((item) => (
           <TabPane tab={item.envName} key={item.envCode}>
-            <DeployContent env={item.envCode} />
+            <DeployContent
+              env={item.envCode}
+              onDeployNextEnvSuccess={() => {
+                const i = envData.findIndex(
+                  (item) => item.envCode === tabActive,
+                );
+                setTabActive(envData[i + 1]?.envCode || 'dev');
+              }}
+            />
           </TabPane>
         ))}
       </Tabs>

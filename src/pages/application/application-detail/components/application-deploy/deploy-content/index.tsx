@@ -18,7 +18,7 @@ import './index.less';
 
 const rootCls = 'deploy-content-compo';
 
-const DeployContent = ({ env }: IProps) => {
+const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -91,7 +91,13 @@ const DeployContent = ({ env }: IProps) => {
         <PublishDetail
           env={env}
           deployInfo={deployInfo}
-          onOperate={onOperate}
+          onOperate={(type) => {
+            if (type === 'deployNextEnvSuccess') {
+              onDeployNextEnvSuccess();
+              return;
+            }
+            onOperate(type);
+          }}
         />
         <PublishContent
           appCode={appCode!}
