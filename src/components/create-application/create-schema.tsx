@@ -102,6 +102,7 @@ export default (params: {
       props: {
         label: '所属',
         name: 'belong',
+        required: true,
         options: params.belongData || [],
       },
     },
