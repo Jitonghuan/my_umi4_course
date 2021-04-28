@@ -27,7 +27,7 @@ const ImportConfig = (props: IProps) => {
         message.success('上传成功');
         props.onSubmit();
       } else {
-        message.error('上传失败');
+        message.error(info.file.response?.errorMsg || '上传失败');
       }
     },
   };
