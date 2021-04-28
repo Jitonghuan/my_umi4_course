@@ -1,9 +1,25 @@
-import React, { useContext, useState, useCallback } from 'react';
-import { Drawer, Form, Input, Radio, Select, DatePicker, Button } from 'antd';
+import React, { useContext, useState, useCallback, useRef } from 'react';
+import {
+  Drawer,
+  Form,
+  Input,
+  Radio,
+  Select,
+  DatePicker,
+  Button,
+  Modal,
+  Table,
+} from 'antd';
 
+import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
-import { queryBizDatas } from '../../service';
+import {
+  queryBizDataReq,
+  queryDeployEnvReq,
+  queryDeployPlanReq,
+} from '../../service';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
+import { planSchemaColumns } from '../../schema';
 
 export interface IProps {
   visible: boolean;
@@ -11,11 +27,11 @@ export interface IProps {
 }
 
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
+  labelCol: { span: 6 },
+  wrapperCol: { span: 12 },
 };
 const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
+  wrapperCol: { offset: 6, span: 18 },
 };
 
 const AddDrawer = (props: IProps) => {
@@ -24,41 +40,83 @@ const AddDrawer = (props: IProps) => {
   const [formInstance] = Form.useForm();
 
   const [businessData, setBusinessData] = useState<any[]>([]);
-  const [envData, setEnvData] = useState<any[]>([]);
+  const [deployEnvData, setDeployEnvData] = useState<any[]>([]);
+  const [deployPlanData, setDeployPlanData] = useState<any[]>([]);
+  const [selectPlan, setSelectPlan] = useState<React.Key[]>([]);
 
   // 根据所属查询业务线
   const queryBusiness = (belong: string) => {
-    queryBizDatas({ belong }).then((datas) => {
+    setBusinessData([]);
+    queryBizDataReq({ belong }).then((datas) => {
       setBusinessData(datas);
     });
   };
 
+  // 根据所属查询机构
+  const queryDeployEnv = (belong: string) => {
+    setDeployEnvData([]);
+    queryDeployEnvReq({ belong }).then((datas) => {
+      setDeployEnvData(datas);
+    });
+  };
+
+  // 根据业务线查询计划
+  const queryDeployPlan = (lineCode: string) => {
+    setDeployPlanData([]);
+    queryDeployPlanReq({ lineCode }).then((datas) => {
+      setDeployPlanData(datas);
+    });
+  };
+
+  const rowSelection = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        'selectedRows: ',
+        selectedRows,
+      );
+      setSelectPlan(selectedRowKeys);
+    },
+  };
+
   const handleFormChange = useCallback((vals) => {
-    console.log(vals);
     const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
     if (name && name === 'belongCode') {
       formInstance.resetFields(['lineCode']);
+      formInstance.resetFields(['deployEnv']);
       queryBusiness(value);
+      queryDeployEnv(value);
+      setDeployPlanData([]);
+      setSelectPlan([]);
+    }
+    if (name && name === 'lineCode') {
+      setSelectPlan([]);
+      queryDeployPlan(value);
     }
   }, []);
 
   const handleSubmit = () => {
     formInstance.validateFields().then((vals) => {
-      // TODO
-      onClose && onClose(true);
+      // TODO submit
+      handleClose(true);
     });
   };
 
-  const handleClose = () => {
-    onClose && onClose();
+  const handleClose = (reload?: boolean) => {
+    formInstance.resetFields();
+    setDeployPlanData([]);
+    setSelectPlan([]);
+    onClose && onClose(reload);
   };
 
   return (
     <Drawer
       title="新增发布申请"
       visible={visible}
-      width={720}
-      onClose={handleClose}
+      // centered
+      width="920"
+      onClose={() => handleClose()}
+      // onCancel={handleClose}
       footer={
         <>
           <Button
@@ -68,7 +126,7 @@ const AddDrawer = (props: IProps) => {
           >
             确定
           </Button>
-          <Button onClick={handleClose}>取消</Button>
+          <Button onClick={() => handleClose()}>取消</Button>
         </>
       }
       footerStyle={{
@@ -130,7 +188,7 @@ const AddDrawer = (props: IProps) => {
           rules={[{ required: true, message: '请选择机构!' }]}
         >
           <Select placeholder="请选择">
-            {envData?.map((el) => (
+            {deployEnvData?.map((el) => (
               <Select.Option key={el.value} value={el.value}>
                 {el.label}
               </Select.Option>
@@ -154,6 +212,21 @@ const AddDrawer = (props: IProps) => {
           rules={[{ required: true, message: '请输入发布负责人!' }]}
         >
           <Input placeholder="请输入" />
+        </Form.Item>
+        <Form.Item
+          {...tailLayout}
+          extra="请在此表单中选择关联的发布计划!"
+          label=""
+          name="deployUser"
+        >
+          <Table
+            rowKey="id"
+            scroll={{ x: 2000 }}
+            rowSelection={rowSelection}
+            columns={planSchemaColumns}
+            dataSource={deployPlanData}
+            pagination={false}
+          />
         </Form.Item>
       </Form>
     </Drawer>

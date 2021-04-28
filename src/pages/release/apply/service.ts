@@ -6,7 +6,7 @@ import { getRequest } from '@/utils/request';
 export const queryApplysUrl = `${ds.apiPrefix}/releaseManage/apply/list`;
 
 /** 根据所属，查询业务线列表 */
-export const queryBizDatas = (params: { belong: string }) =>
+export const queryBizDataReq = (params: { belong: string }) =>
   getRequest(queryBizData, {
     data: params,
   }).then((resp) => {
@@ -15,9 +15,45 @@ export const queryBizDatas = (params: { belong: string }) =>
         resp?.data?.dataSource?.map((el: any) => {
           return {
             ...el,
-            value: el.lineName,
-            label: el.lineCode,
+            value: el.lineCode,
+            label: el.lineName,
           };
+        }) || []
+      );
+    }
+    return [];
+  });
+
+const queryDeployEnvUrl = `${ds.apiPrefix}/releaseManage/deploy/env/list`;
+/** 根据业务线，查询机构列表 */
+export const queryDeployEnvReq = (params: { belong: string }) =>
+  getRequest(queryDeployEnvUrl, {
+    data: params,
+  }).then((resp) => {
+    if (resp.success) {
+      return (
+        resp?.data?.dataSource?.map((el: any) => {
+          return {
+            ...el,
+            value: el.envCode,
+            label: el.envName,
+          };
+        }) || []
+      );
+    }
+    return [];
+  });
+
+/** 根据业务线，查询发布计划 */
+const queryDeployPlanUrl = `${ds.apiPrefix}/releaseManage/deploy/plan/list`;
+export const queryDeployPlanReq = (params: { lineCode: string }) =>
+  getRequest(queryDeployPlanUrl, {
+    data: params,
+  }).then((resp) => {
+    if (resp.success) {
+      return (
+        resp?.data?.dataSource?.map((el: any) => {
+          return el.plan;
         }) || []
       );
     }

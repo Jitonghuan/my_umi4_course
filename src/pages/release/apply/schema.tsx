@@ -145,3 +145,66 @@ export const createTableSchema = ({
       dataIndex: 'applyUser',
     },
   ] as ColumnProps[];
+
+export const planSchemaColumns = [
+  {
+    title: '计划ID',
+    dataIndex: 'id',
+  },
+  {
+    title: '应用名',
+    dataIndex: 'appCode',
+  },
+  {
+    title: '应用类型',
+    dataIndex: 'deployType',
+  },
+  {
+    title: '变更类型',
+    dataIndex: 'changeType',
+  },
+  {
+    title: '所属',
+    dataIndex: 'belong',
+  },
+  {
+    title: '业务线',
+    dataIndex: 'lineCode',
+  },
+  {
+    title: '业务模块',
+    dataIndex: 'sysCode',
+  },
+  {
+    title: '版本号',
+    dataIndex: 'version',
+  },
+  {
+    title: '版本分支',
+    dataIndex: 'deployRelease',
+  },
+  {
+    title: '发布依赖',
+    dataIndex: 'dependency',
+  },
+  {
+    title: '开发',
+    dataIndex: 'develop',
+  },
+  {
+    title: '测试',
+    dataIndex: 'test',
+  },
+  {
+    title: '发布人',
+    dataIndex: 'deploy',
+  },
+  {
+    title: '期望发布时间',
+    dataIndex: 'preDeployTime',
+  },
+  {
+    title: '创建人',
+    dataIndex: 'createUser',
+  },
+];

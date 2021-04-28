@@ -24,7 +24,7 @@ import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm } from '@cffe/fe-backend-component';
 import { createFilterFormSchema, createTableSchema } from './schema';
-import { queryApplysUrl, queryBizDatas } from './service';
+import { queryApplysUrl, queryBizDataReq } from './service';
 import AddDrawer from './components/add-drawer';
 import './index.less';
 
@@ -48,7 +48,8 @@ const ApplyList = (props: IProps) => {
 
   // 根据所属查询业务线
   const queryBusiness = (belong: string) => {
-    queryBizDatas({ belong }).then((datas) => {
+    setBusinessData([]);
+    queryBizDataReq({ belong }).then((datas) => {
       setBusinessData(datas);
     });
   };
