@@ -84,7 +84,8 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
           icon={status === 2.1 && <LoadingOutlined />}
           status={status === 2.2 ? 'error' : undefined}
           description={
-            status === 2.2 && (
+            status === 2.2 ||
+            (status === 2.1 && (
               <>
                 {deployInfo.jenkinsUrl && (
                   <div style={{ marginTop: 2 }}>
@@ -115,7 +116,7 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
                   重新部署
                 </Button>
               </>
-            )
+            ))
           }
         />
         <Step title="执行完成" />

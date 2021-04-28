@@ -43,6 +43,29 @@ export const createFilterFormSchema = ({ versionOptions = [] }: any) => ({
   ],
 });
 
+// filter form columns
+export const getFilterColumns = (versionOptions: IOption[]) => [
+  {
+    label: '版本',
+    name: 'versionID',
+    style: { width: '240px' },
+    type: 'Select',
+    options: versionOptions,
+  },
+  {
+    type: 'Input',
+    label: 'Key',
+    name: 'key',
+    style: { width: '200px' },
+  },
+  {
+    type: 'Input',
+    label: 'Value',
+    name: 'value',
+    style: { width: '200px' },
+  },
+];
+
 // 表格 schema
 export const createTableSchema = ({
   currentVersion,

@@ -9,10 +9,15 @@ import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
 import { Popover, Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
+import VCForm, { IColumns } from '@cffe/vc-form';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
-import { createFilterFormSchema, createTableSchema } from './schema';
+import {
+  createFilterFormSchema,
+  createTableSchema,
+  getFilterColumns,
+} from './schema';
 import VersionSelect from './version-select';
 import {
   queryConfigListUrl,
@@ -167,7 +172,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       />
 
       <div className={`${rootCls}__filter`}>
-        <InlineForm
+        {/* <InlineForm
           className={`${rootCls}__filter-form`}
           {...(createFilterFormSchema({
             versionOptions:
@@ -180,6 +185,46 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           customMap={{
             versionSelect: VersionSelect,
           }}
+          onValuesChange={(changeVals, values) => {
+            const [name, value] = (Object.entries(changeVals)?.[0] || []) as [
+              string,
+              any,
+            ];
+            if (name && name === 'versionID') {
+              const version = versionTableProps.dataSource?.find(
+                (item: any) => item.id === value,
+              );
+              if (version && tableProps.pagination) {
+                const { pageSize = 10 } = tableProps.pagination;
+                queryConfigList({
+                  pageIndex: 1,
+                  pageSize,
+                  versionID: version.id,
+                });
+              }
+              setCurrentVersion(version || undefined);
+            }
+          }}
+          onFinish={(values) => {
+            if (tableProps.loading) return;
+            queryConfigList({
+              pageIndex: 1,
+              ...values,
+            });
+          }}
+        /> */}
+
+        <VCForm
+          className={`${rootCls}__filter-form`}
+          layout="inline"
+          columns={
+            getFilterColumns(
+              dataSource?.map((el: any) => ({
+                label: el.versionNumber,
+                value: el.id,
+              })) || [],
+            ) as IColumns[]
+          }
           onValuesChange={(changeVals, values) => {
             const [name, value] = (Object.entries(changeVals)?.[0] || []) as [
               string,
