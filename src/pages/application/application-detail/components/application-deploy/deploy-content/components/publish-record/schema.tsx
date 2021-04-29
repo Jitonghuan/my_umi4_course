@@ -13,7 +13,7 @@ export const createTableSchema = () => [
   },
   {
     title: '发布时间',
-    dataIndex: 'gmtPublish',
+    dataIndex: 'deployedTime',
   },
   {
     title: '操作',
@@ -26,7 +26,7 @@ export const createTableSchema = () => [
 export const recordFieldMap: { [key: string]: string } = {
   id: '发布Id',
   createUser: '创建人',
-  gmtPublish: '发布时间',
+  deployedTime: '发布时间',
   env: '发布环境',
   deployStatus: '发布状态',
   features: '功能分支',
