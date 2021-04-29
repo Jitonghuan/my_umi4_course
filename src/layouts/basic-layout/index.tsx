@@ -90,7 +90,6 @@ export default (props: IUmiRrops) => {
   // 获取用户权限
   const queryPermissionData = async () => {
     const resp = await getRequest(queryPermission);
-
     const { data = [] } = resp;
 
     if (data.length > 0) {
@@ -101,9 +100,10 @@ export default (props: IUmiRrops) => {
           permissionUrl: el.menuUrl,
         })),
       );
-    }
 
-    console.log(resp);
+      // 确认权限后获取数据
+      queryBusinessData();
+    }
   };
 
   const [{ width }] = useSize(
@@ -112,8 +112,11 @@ export default (props: IUmiRrops) => {
   const effectResize = useDebounce(width, 100);
 
   useEffect(() => {
-    queryBusinessData();
-    ds.isOpenPermission && queryPermissionData();
+    if (ds.isOpenPermission) {
+      queryPermissionData();
+    } else {
+      queryBusinessData();
+    }
   }, []);
 
   return (
