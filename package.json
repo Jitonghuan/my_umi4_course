@@ -45,7 +45,7 @@
     "@cffe/vc-hulk-table": "1.0.9",
     "@cffe/vc-layout": "1.0.15",
     "@cffe/vc-loading": "1.0.2",
-    "@cffe/vc-request": "1.0.10",
+    "@cffe/vc-request": "1.0.11",
     "@umijs/hooks": "^1.9.3",
     "@umijs/preset-react": "1.x",
     "ahooks": "^2.10.0",

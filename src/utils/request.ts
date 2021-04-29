@@ -16,9 +16,11 @@ const request = (url: string, params?: IRequestParams | undefined) => {
 
         resolve(resp);
       })
-      .catch((e) => {
-        message.error(e.errorMsg);
-        reject(e);
+      .catch((resp) => {
+        if (![3002, 3001].includes(resp.code)) {
+          message.error(resp.errorMsg);
+        }
+        reject(resp);
       });
   });
 };
@@ -32,6 +34,7 @@ export const postRequest = (
     sso
       .post(url, params)
       .then((resp) => {
+        // 非登录失效报错
         if (!resp.success) {
           message.error(resp.errorMsg);
           reject(resp);
@@ -40,9 +43,11 @@ export const postRequest = (
 
         resolve(resp);
       })
-      .catch((e) => {
-        message.error(e.errorMsg);
-        reject(e.errorMsg);
+      .catch((resp) => {
+        if (![3002, 3001].includes(resp.code)) {
+          message.error(resp.errorMsg);
+        }
+        reject(resp.errorMsg);
       });
   });
 };
