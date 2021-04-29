@@ -84,6 +84,9 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
       },
       axisLabel: {
         color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
       },
       data: xAxis,
     },
@@ -92,17 +95,6 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
         type: 'value',
         axisLabel: {
           color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
         },
         splitNumber: 3,
       },
@@ -151,6 +143,9 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
       },
       axisLabel: {
         color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
       },
       data: xAxis,
     },
@@ -159,17 +154,6 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
         type: 'value',
         axisLabel: {
           color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
         },
         splitNumber: 3,
       },
@@ -218,6 +202,9 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
       },
       axisLabel: {
         color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
       },
       data: xAxis,
     },
@@ -227,17 +214,6 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
         name: '单位：MB',
         axisLabel: {
           color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
         },
         splitNumber: 3,
       },
@@ -295,6 +271,9 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
       },
       axisLabel: {
         color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
       },
       data: xAxis,
     },
@@ -304,17 +283,6 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
         name: '单位：MB',
         axisLabel: {
           color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
         },
         splitNumber: 3,
       },

@@ -61,7 +61,7 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       const xAxis: string[] = [];
       const fullCount: string[] = [];
       fullGCCount?.map((el: string[]) => {
-        xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm'));
+        xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
         fullCount.push(Number(el[1]).toFixed(2));
       });
       const youngCount =
@@ -102,7 +102,7 @@ export const queryGcTime = (params: { [key: string]: string }) =>
       const xAxis: string[] = [];
       const fullTime: string[] = [];
       fullGCTime?.map((el: string[]) => {
-        xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm'));
+        xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
         fullTime.push(Number(el[1]).toFixed(2));
       });
       const youngTime =
@@ -143,7 +143,7 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
       const xAxis: string[] = [];
       const heapEden: string[] = [];
       heapEdenSpace?.map((el: string[]) => {
-        xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm'));
+        xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
         heapEden.push(Number(el[1]).toFixed(2));
       });
       const heapSum =
@@ -177,7 +177,7 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       const xAxis: string[] = [];
       const fullCount: string[] = [];
       metaspace?.map((el: string[]) => {
-        xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm'));
+        xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
         fullCount.push(Number(el[1]).toFixed(2));
       });
 
