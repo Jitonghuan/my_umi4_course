@@ -7,11 +7,9 @@ import {
   Select,
   DatePicker,
   Button,
-  Modal,
   Table,
 } from 'antd';
 
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import {
   queryBizDataReq,
@@ -27,11 +25,11 @@ export interface IProps {
 }
 
 const layout = {
-  labelCol: { span: 6 },
+  labelCol: { span: 4 },
   wrapperCol: { span: 12 },
 };
 const tailLayout = {
-  wrapperCol: { offset: 6, span: 18 },
+  wrapperCol: { offset: 4, span: 20 },
 };
 
 const AddDrawer = (props: IProps) => {
@@ -70,11 +68,6 @@ const AddDrawer = (props: IProps) => {
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        'selectedRows: ',
-        selectedRows,
-      );
       setSelectPlan(selectedRowKeys);
     },
   };
@@ -104,6 +97,8 @@ const AddDrawer = (props: IProps) => {
 
   const handleClose = (reload?: boolean) => {
     formInstance.resetFields();
+    setBusinessData([]);
+    setDeployEnvData([]);
     setDeployPlanData([]);
     setSelectPlan([]);
     onClose && onClose(reload);
@@ -113,10 +108,8 @@ const AddDrawer = (props: IProps) => {
     <Drawer
       title="新增发布申请"
       visible={visible}
-      // centered
       width="920"
       onClose={() => handleClose()}
-      // onCancel={handleClose}
       footer={
         <>
           <Button
