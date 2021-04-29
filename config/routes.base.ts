@@ -29,6 +29,6 @@ export const getRoutes = (
   },
   {
     path: '/',
-    redirect: pagePrefix,
+    redirect: `${ds.pagePrefix}/index`,
   },
 ];
