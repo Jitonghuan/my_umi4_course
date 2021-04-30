@@ -6,9 +6,8 @@
   .monitor-app-body {
     flex: 1;
     background-color: #f7f8fa;
-    box-shadow: 0px 2px 6px 0px rgba(11, 68, 133, 0.4);
+    // box-shadow: 0px 2px 6px 0px rgba(11, 68, 133, 0.4);
     overflow-y: auto;
-    margin-bottom: 54px;
 
     .ant-card-body {
       padding: 0 24px 24px;
@@ -52,8 +51,8 @@
       flex-direction: row;
       align-items: center;
       justify-content: flex-end;
-      .ant-select {
-        width: 84px;
+      .ant-select-selection-item {
+        text-overflow: inherit;
       }
     }
   }
@@ -62,10 +61,15 @@
     border-top: 1px solid #d2d8e6;
     border-bottom: 1px solid #d2d8e6;
     padding: 6px 4px;
+    text-align: center;
   }
   .ant-table-tbody > tr > td {
     border-bottom: 1px solid #d2d8e6;
     padding: 6px 4px;
+    text-align: center;
+  }
+  .ant-table-tbody > tr.ant-table-row {
+    cursor: pointer;
   }
   .ant-badge-status-dot {
     width: 12px;
@@ -102,5 +106,10 @@
   .app-content {
     height: 200px;
     padding-top: 12px;
+  }
+}
+.monitor-time-select {
+  .ant-select-selection-item {
+    text-overflow: inherit;
   }
 }

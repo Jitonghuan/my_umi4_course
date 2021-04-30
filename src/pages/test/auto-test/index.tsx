@@ -1,19 +1,22 @@
-import React, {
-  useRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useContext,
-} from 'react';
-import { Empty, message, Select, Tree, Input, Button } from 'antd';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
+import {
+  Popconfirm,
+  Card,
+  Empty,
+  message,
+  Select,
+  Tree,
+  Input,
+  Button,
+} from 'antd';
 import { history } from 'umi';
 import _ from 'lodash';
 
 import HulkTable, { ColumnProps, usePaginated } from '@cffe/vc-hulk-table';
 import VCForm, { IColumns } from '@cffe/vc-form';
-import VCPageContent, { FilterCard } from '@/components/vc-page-content';
-import VCMenu, { IMenuItem } from '@/components/vc-menu';
+import { FilterCard } from '@/components/vc-page-content';
+import { IMenuItem } from '@/components/vc-menu';
+import MatrixPageContent from '@/components/matrix-page-content';
 import PageLoading from '@cffe/vc-loading';
 
 import FEContext from '@/layouts/basic-layout/FeContext';
@@ -35,7 +38,6 @@ const Coms = (props: any) => {
   const { location } = props;
   const feContent = useContext(FEContext);
   const { belongData = [], envData = [] } = feContent || {};
-  console.log('belongData', belongData);
 
   // 业务线数据
   const [belong, setBelong] = useState<string>('gmc');
@@ -51,6 +53,8 @@ const Coms = (props: any) => {
 
   // 表格选中数据
   const [tableSelect, setTableSelect] = useState<React.Key[]>([]);
+  // 选中表格
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
 
   // 执行环境选择
   const [envVal, setEnvVal] = useState<string>();
@@ -67,10 +71,16 @@ const Coms = (props: any) => {
 
     const { data = [] } = resp;
 
-    // 设置初始化选中 key
-    if (data.length > 0) {
-      setTreeSelectKeys([data[0].preGroupName]);
+    if (!data || data.length === 0) {
+      // message.error(resp.errorMsg);
+      setTreeData([]);
+      return;
     }
+
+    // 设置初始化选中 key,(04.27备注，默认不选中，查全部)
+    // if (data.length > 0) {
+    //   setTreeSelectKeys([data[0].preGroupName]);
+    // }
 
     setTreeData(
       data.map((el: any) => ({
@@ -88,6 +98,11 @@ const Coms = (props: any) => {
   const { run: queryTableData, tableProps, reset } = usePaginated({
     requestUrl: queryAutoTest,
     requestMethod: 'GET',
+    showRequestError: true,
+    pagination: {
+      showTotal: ((total: number) => `总共 ${total} 条数据`) as any,
+      showSizeChanger: true,
+    },
   });
 
   // 执行脚本
@@ -118,7 +133,7 @@ const Coms = (props: any) => {
       treeSelectKeys.length > 0 ? treeSelectKeys[0].split('-') : [];
     const params = {
       belong,
-      env: 'test', // TODO
+      env: envVal,
       preGroupName: groupNameArr.length > 0 ? groupNameArr[0] : undefined,
       groupName: groupNameArr.length > 1 ? groupNameArr[1] : undefined,
       caseList,
@@ -139,6 +154,7 @@ const Coms = (props: any) => {
 
     if (type === 'runall') {
       setTableSelect([]);
+      setSelectedRowKeys([]);
     }
   };
 
@@ -147,9 +163,16 @@ const Coms = (props: any) => {
     {
       title: '操作',
       dataIndex: 'operate',
-      width: 100,
+      width: 60,
       render: (_, record) => (
-        <a onClick={() => handleOperate('run', record)}>执行</a>
+        <Popconfirm
+          title="确认执行当前用例？"
+          onConfirm={() => {
+            handleOperate('run', record);
+          }}
+        >
+          <a>执行</a>
+        </Popconfirm>
       ),
     },
   ]);
@@ -171,7 +194,7 @@ const Coms = (props: any) => {
       treeSelectKeys?.length > 0 ? treeSelectKeys[0].split('-') : ['', ''];
 
     // 只有存在业务线和测试集数据的时候才可以获取表格数据
-    if (belong && treeSelectKeys.length > 0) {
+    if (belong) {
       queryTableData({
         belong,
         searchText: searchKey,
@@ -203,17 +226,11 @@ const Coms = (props: any) => {
     reset();
     setSearchKey('');
     setTableSelect([]);
+    setSelectedRowKeys([]);
   };
 
-  console.log(treeSelectKeys);
-
   return (
-    <VCPageContent
-      height="calc(100vh - 48px)"
-      breadcrumbMap={feContent.breadcrumbMap}
-      pathname={location.pathname}
-      isFlex
-    >
+    <MatrixPageContent isFlex>
       <FilterCard bodyStyle={{ paddingBottom: '12px' }}>
         <VCForm
           layout="inline"
@@ -231,7 +248,7 @@ const Coms = (props: any) => {
       </FilterCard>
 
       <div className="test-page-content">
-        <div className="test-page-content-sider">
+        <Card className="test-page-content-sider">
           {treeLoading && <PageLoading mode="module" text={null} />}
           {treeData.length > 0 ? (
             <Tree
@@ -241,18 +258,16 @@ const Coms = (props: any) => {
               defaultExpandAll
               treeData={treeData}
               onSelect={(val) => {
-                if (val.length > 0) {
-                  handleResetTable();
-                  setTreeSelectKeys(val as string[]);
-                }
+                handleResetTable();
+                setTreeSelectKeys(val as string[]);
               }}
             />
           ) : (
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
           )}
-        </div>
+        </Card>
 
-        <div className="test-page-content-body">
+        <Card className="test-page-content-body">
           <div className="test-table-header">
             <div className="test-table-header-search">
               <Input.Search
@@ -262,6 +277,10 @@ const Coms = (props: any) => {
                   setSearchKey(e.target.value);
                 }}
                 onPressEnter={(e) => {
+                  reset();
+                  handleQueryTable();
+                }}
+                onSearch={() => {
                   reset();
                   handleQueryTable();
                 }}
@@ -290,14 +309,17 @@ const Coms = (props: any) => {
             {...tableProps}
             columns={tableColumns}
             rowSelection={{
+              selectedRowKeys,
               type: 'checkbox',
-              onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) =>
-                setTableSelect(selectedRowKeys),
+              onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                setTableSelect(selectedRows);
+                setSelectedRowKeys(selectedRowKeys);
+              },
             }}
           />
-        </div>
+        </Card>
       </div>
-    </VCPageContent>
+    </MatrixPageContent>
   );
 };
 

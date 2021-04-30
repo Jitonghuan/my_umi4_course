@@ -14,15 +14,10 @@ import { IProps } from './types';
 
 const ImportConfig = (props: IProps) => {
   const uploadProps = {
-    name: 'filename',
-    action: configUploadUrl,
+    name: 'config',
+    action: `${configUploadUrl}?env=${props.env}&appCode=${props.appCode}&type=${props.configType}`,
     headers: {
       // authorization: 'authorization-text',
-    },
-    data: {
-      env: props.env,
-      appCode: props.appCode,
-      type: props.configType,
     },
     onChange: (info: any) => {
       if (info.file.status !== 'done') {
@@ -32,7 +27,7 @@ const ImportConfig = (props: IProps) => {
         message.success('上传成功');
         props.onSubmit();
       } else {
-        message.error('上传失败');
+        message.error(info.file.response?.errorMsg || '上传失败');
       }
     },
   };

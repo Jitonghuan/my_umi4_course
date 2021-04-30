@@ -5,8 +5,9 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import { Card, Select, Form } from 'antd';
-import { RedoOutlined } from '@ant-design/icons';
+import { findDOMNode } from 'react-dom';
+import { Card, Select, Form, Tooltip } from 'antd';
+import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
 
 import HulkForm, { IProps as IFormProps } from '@cffe/vc-hulk-form';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
@@ -55,23 +56,23 @@ const layoutGrid = {
 // 开始时间枚举
 export const START_TIME_ENUMS = [
   {
-    label: '30min',
+    label: 'Last 30 minutes',
     value: 30 * 60 * 1000,
   },
   {
-    label: '1h',
+    label: 'Last 1 hours',
     value: 60 * 60 * 1000,
   },
   {
-    label: '6h',
+    label: 'Last 6 hours',
     value: 6 * 60 * 60 * 1000,
   },
   {
-    label: '12h',
+    label: 'Last 12 hours',
     value: 12 * 60 * 60 * 1000,
   },
   {
-    label: '24h',
+    label: 'Last 24 hours',
     value: 24 * 60 * 60 * 1000,
   },
 ];
@@ -79,20 +80,24 @@ export const START_TIME_ENUMS = [
 // 请求频次枚举
 export const RATE_ENUMS = [
   {
-    label: '刷新频率',
+    label: 'Off',
     value: 0,
+    showLabel: <SyncOutlined />,
   },
   {
     label: '10s',
     value: 10,
+    showLabel: '10s',
   },
   {
     label: '20s',
     value: 20,
+    showLabel: '20s',
   },
   {
     label: '30s',
     value: 30,
+    showLabel: '30s',
   },
 ];
 
@@ -102,6 +107,9 @@ export const RATE_ENUMS = [
  * @create 2021-04-12 19:15:42
  */
 const Coms = (props: IProps) => {
+  // 该组件会被作为路由组件使用，接收地址栏传参数
+  const appCode = props.location?.query?.appCode;
+
   const [filter, setFilter] = useState<IFilter>({} as IFilter);
   const prevFilter = useRef<IFilter>({} as IFilter);
   const [appData, setAppData] = useState([]);
@@ -116,6 +124,8 @@ const Coms = (props: IProps) => {
   const [rateNum, setRateNum] = useState<number>(0);
   const prevRateNum = useRef<number>(0);
   const [formInstance] = Form.useForm();
+
+  const selectRef = useRef(null);
 
   const timeRateInterval = useRef<NodeJS.Timeout>();
 
@@ -134,7 +144,7 @@ const Coms = (props: IProps) => {
             allowClear: false,
             showSearch: false,
             options: appData,
-            disabled: props.appCode ? true : false,
+            disabled: appCode ? true : false,
           },
         },
         {
@@ -181,7 +191,7 @@ const Coms = (props: IProps) => {
     queryAppList().then((resp) => {
       setAppData(resp);
       prevFilter.current = {
-        appCode: props.appCode || (resp.length ? resp[0].value : undefined),
+        appCode: appCode || (resp.length ? resp[0].value : undefined),
       };
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
@@ -207,12 +217,13 @@ const Coms = (props: IProps) => {
   const { run: queryNodeList, reset, tableProps } = usePaginated({
     requestUrl: queryPodInfoApi,
     requestMethod: 'GET',
+    showRequestError: true,
     didMounted: false,
     formatRequestParams: (params) => {
       return {
         ...params,
         pageSize: 1000,
-        ...filter,
+        ...prevFilter.current,
       };
     },
     formatResult: (resp) => {
@@ -247,6 +258,17 @@ const Coms = (props: IProps) => {
       queryNodeList();
     }
   }, [filter]);
+
+  // 修改提示框
+  useEffect(() => {
+    const select = findDOMNode(selectRef.current) as HTMLDivElement;
+    if (select) {
+      const selector = select?.querySelectorAll('.ant-select-selection-item');
+      selector?.forEach((el) => {
+        el.setAttribute('title', '');
+      });
+    }
+  }, [startTime, timeRate]);
 
   // 过滤操作
   const handleFilter = useCallback(
@@ -284,80 +306,104 @@ const Coms = (props: IProps) => {
   };
 
   return (
-    <div className="monitor-app-table">
-      <Card
-        className="monitor-app-filter"
-        style={{ marginBottom: 12, backgroundColor: '#fff' }}
-      >
-        <HulkForm
-          form={formInstance}
-          layout="inline"
-          {...filterColumns}
-          className="monitor-filter-form"
-          onValuesChange={handleFilter}
-        />
-        <div className="monitor-time-select">
-          <Select value={startTime} onChange={(value) => setStartTime(value)}>
-            {START_TIME_ENUMS.map((time) => (
-              <Select.Option key={time.value} value={time.value}>
-                {time.label}
-              </Select.Option>
-            ))}
-          </Select>
-          <Select value={timeRate} onChange={handleTimeRateChange}>
-            {RATE_ENUMS.map((time) => (
-              <Select.Option key={time.value} value={time.value}>
-                {time.label}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-      </Card>
+    <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div className="monitor-app-table">
+        <Card
+          className="monitor-app-filter"
+          style={{ marginBottom: 12, backgroundColor: '#fff' }}
+        >
+          <HulkForm
+            form={formInstance}
+            layout="inline"
+            {...filterColumns}
+            className="monitor-filter-form"
+            onValuesChange={handleFilter}
+          />
+          <div className="monitor-time-select" ref={selectRef}>
+            <Tooltip title="Relative time ranges" placement="top">
+              <Select
+                value={startTime}
+                onChange={(value) => setStartTime(value)}
+                style={{ width: 150 }}
+              >
+                <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
+                {START_TIME_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Tooltip>
+            <Tooltip title="Refresh dashboard" placement="top">
+              <Select
+                value={timeRate}
+                onChange={handleTimeRateChange}
+                optionLabelProp="label"
+                style={{ width: 54 }}
+              >
+                {RATE_ENUMS.map((time) => (
+                  <Select.Option
+                    key={time.value}
+                    value={time.value}
+                    label={time.showLabel}
+                  >
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Tooltip>
+          </div>
+        </Card>
 
-      <Card className="monitor-app-body">
-        <h3 className="monitor-tabs-content-title">
-          资源使用情况
-          <RedoOutlined
-            style={{ float: 'right' }}
-            onClick={() => {
-              reset();
-              queryNodeList();
+        <Card className="monitor-app-body">
+          <h3 className="monitor-tabs-content-title">
+            资源使用情况
+            <RedoOutlined
+              style={{ float: 'right' }}
+              onClick={() => {
+                reset();
+                queryNodeList();
+              }}
+            />
+          </h3>
+
+          <HulkTable
+            rowKey="ip"
+            size="small"
+            columns={tableSchema as ColumnProps[]}
+            onRow={(record) => {
+              return {
+                onClick: () => setCurtIp(record.hostIP),
+              };
+            }}
+            // scroll={{ y: 300 }}
+            {...tableProps}
+            customColumnMap={{
+              cpu: (value) => {
+                return value ? `${value}%` : '';
+              },
+              memory: (value) => {
+                return value ? `${value}%` : '';
+              },
             }}
           />
-        </h3>
 
-        <HulkTable
-          rowKey="ip"
-          size="small"
-          columns={tableSchema as ColumnProps[]}
-          // scroll={{ y: 300 }}
-          {...tableProps}
-          customColumnMap={{
-            hostIP: (value: string) => {
-              return (
-                <span
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setCurtIp(value)}
-                >
-                  {value}
-                </span>
-              );
-            },
-          }}
-        />
-
-        <h3 className="monitor-tabs-content-title">
-          监控图表&nbsp;&nbsp;{curtIP ? `当前POD：${curtIP}` : ''}
-        </h3>
-        <VCCardLayout grid={layoutGrid} className="monitor-app-content">
-          {appConfig.map((el) => (
-            <AppCard
-              {...el}
-              requestParams={{ ...filter, ip: curtIP, startTime, rateNum }}
-            />
-          ))}
-        </VCCardLayout>
-      </Card>
+          <h3 className="monitor-tabs-content-title">
+            监控图表&nbsp;&nbsp;
+            <span style={{ fontSize: 12, color: '#1973CC' }}>
+              {curtIP ? `当前IP：${curtIP}` : ''}
+            </span>
+          </h3>
+          <VCCardLayout grid={layoutGrid} className="monitor-app-content">
+            {appConfig.map((el) => (
+              <AppCard
+                {...el}
+                requestParams={{ ...filter, ip: curtIP, startTime, rateNum }}
+              />
+            ))}
+          </VCCardLayout>
+        </Card>
+      </div>
     </div>
   );
 };

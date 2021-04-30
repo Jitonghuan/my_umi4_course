@@ -1,38 +1,98 @@
 /**
  * PublishBranch
- * @description 发布分支
+ * @description 待发布分支
  * @author moting.nq
  * @create 2021-04-15 10:22
  */
 
-import React, { useState } from 'react';
-import { Steps, Button } from 'antd';
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import { useEffectOnce } from 'white-react-use';
+import React, { useState, useContext } from 'react';
+import { Steps, Button, message, Modal, Checkbox } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import HulkTable from '@cffe/vc-hulk-table';
 import { createTableSchema } from './schema';
-import { queryPublishContentList } from '../../../service';
+import DetailContext from '../../../../../context';
+import { createDeploy, updateFeatures } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 
-const { Step } = Steps;
 const rootCls = 'publish-branch-compo';
+const { confirm } = Modal;
+const hospitalMap: Record<string, any[]> = {
+  g3a: [{ label: '浙一', value: 'zheyi' }],
+  gmc: [
+    { label: '天台', value: 'tiantai' },
+    { label: '巍山', value: 'weishan' },
+  ],
+};
 
-const PublishBranch = (props: IProps) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>();
+const PublishBranch = ({
+  hasPublishContent,
+  deployInfo,
+  dataSource,
+  onSubmitBranch,
+  env,
+}: IProps) => {
+  const { appData } = useContext(DetailContext);
+  const { belong, appCode } = appData || {};
 
-  // 查询数据
-  const { run: queryContentList, tableProps } = usePaginated({
-    requestUrl: queryPublishContentList,
-    requestMethod: 'POST',
-    pagination: {
-      showSizeChanger: true,
-      showTotal: (total) => `总共 ${total} 条数据`,
-    },
-  });
+  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
+    [],
+  );
+  const [deployVisible, setDeployVisible] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [deployEnv, setDeployEnv] = useState<any[]>();
 
-  useEffectOnce(() => {
-    queryContentList();
-  });
+  const submit = () => {
+    const filter = dataSource
+      .filter((el) => selectedRowKeys.includes(el.id))
+      .map((el) => el.branchName);
+    // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
+    if (hasPublishContent) {
+      return updateFeatures({
+        id: deployInfo.id,
+        features: filter,
+      }).then((res: any) => {
+        if (!res.success) {
+          message.error(res.errorMsg);
+          throw Error;
+        }
+      });
+    }
+
+    return createDeploy({
+      appCode: appCode!,
+      env,
+      features: filter,
+      hospitals: env === 'prod' ? deployEnv : undefined,
+    }).then((res: any) => {
+      if (!res.success) {
+        message.error(res.errorMsg);
+        throw Error;
+      }
+    });
+  };
+
+  const submitClick = () => {
+    // 非生产环境
+    if (env !== 'prod') {
+      confirm({
+        title: '确定要提交发布吗?',
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          return submit().then(() => {
+            onSubmitBranch?.('end');
+          });
+        },
+        onCancel() {
+          onSubmitBranch?.('end');
+        },
+      });
+      return;
+    }
+
+    // 生产环境
+    setDeployVisible(true);
+  };
 
   return (
     <div className={rootCls}>
@@ -43,35 +103,60 @@ const PublishBranch = (props: IProps) => {
           <span className={`${rootCls}__list-header-text`}>分支列表</span>
 
           <div className={`${rootCls}__list-header-btns`}>
-            <Button disabled={!selectedRowKeys?.length}>提交分支</Button>
+            <Button
+              type="primary"
+              disabled={!selectedRowKeys?.length}
+              onClick={submitClick}
+            >
+              提交分支
+            </Button>
           </div>
         </div>
 
-        {/* TODO 需要页码吗？ */}
         <HulkTable
           rowKey="id"
-          size="small"
           className={`${rootCls}__list-table`}
+          dataSource={dataSource}
+          pagination={false}
           rowSelection={{
             type: 'checkbox',
             selectedRowKeys,
             onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-              console.log(
-                `selectedRowKeys: ${selectedRowKeys}`,
-                'selectedRows: ',
-                selectedRows,
-              );
-              setSelectedRowKeys(selectedRowKeys);
+              setSelectedRowKeys(selectedRowKeys as any);
             },
-            // getCheckboxProps: (record: any) => ({
-            //   disabled: record.name === 'Disabled User', // Column configuration not to be checked
-            //   name: record.name,
-            // }),
           }}
           columns={createTableSchema() as any}
-          {...tableProps}
         />
       </div>
+
+      <Modal
+        title="选择发布环境"
+        visible={deployVisible}
+        confirmLoading={confirmLoading}
+        onOk={() => {
+          setConfirmLoading(true);
+          return submit()
+            .then(() => {
+              setDeployVisible(false);
+              onSubmitBranch?.('end');
+            })
+            .finally(() => setConfirmLoading(false));
+        }}
+        onCancel={() => {
+          setDeployVisible(false);
+          setConfirmLoading(false);
+          onSubmitBranch?.('end');
+        }}
+      >
+        <div>
+          <span>发布环境：</span>
+          <Checkbox.Group
+            value={deployEnv}
+            onChange={(v) => setDeployEnv(v)}
+            options={hospitalMap[belong!] || []}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };

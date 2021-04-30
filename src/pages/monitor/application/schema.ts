@@ -13,7 +13,11 @@ export interface ITableSchema {
 export const tableSchema = [
   {
     dataIndex: 'hostIP',
-    title: 'POD IP',
+    title: 'IP',
+  },
+  {
+    title: '主机名',
+    dataIndex: 'hostName',
   },
   {
     dataIndex: 'cpu',
@@ -25,7 +29,7 @@ export const tableSchema = [
   },
   {
     dataIndex: 'disk',
-    title: '磁盘使用率',
+    title: '磁盘使用量(MB)',
   },
   {
     dataIndex: 'restartNum',
@@ -59,13 +63,14 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
       trigger: 'axis',
     },
     grid: {
-      bottom: 24,
-      top: 50,
+      bottom: 34,
+      top: 30,
       left: 30,
       right: 40,
+      containLabel: true,
     },
     legend: {
-      left: 0,
+      bottom: 0,
       data: ['FullGC次数', 'YoungGC次数'],
       icon: 'rect',
     },
@@ -79,6 +84,9 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
       },
       axisLabel: {
         color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
       },
       data: xAxis,
     },
@@ -87,17 +95,6 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
         type: 'value',
         axisLabel: {
           color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
         },
         splitNumber: 3,
       },
@@ -125,13 +122,14 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
       trigger: 'axis',
     },
     grid: {
-      bottom: 24,
-      top: 50,
+      bottom: 34,
+      top: 30,
       left: 30,
       right: 40,
+      containLabel: true,
     },
     legend: {
-      left: 0,
+      bottom: 0,
       data: ['FullGC耗时', 'YoungGC耗时'],
       icon: 'rect',
     },
@@ -145,6 +143,9 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
       },
       axisLabel: {
         color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
       },
       data: xAxis,
     },
@@ -153,17 +154,6 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
         type: 'value',
         axisLabel: {
           color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
         },
         splitNumber: 3,
       },
@@ -191,14 +181,15 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
       trigger: 'axis',
     },
     grid: {
-      bottom: 24,
-      top: 50,
+      bottom: 34,
+      top: 34,
       left: 30,
       right: 40,
+      containLabel: true,
     },
     legend: {
-      left: 0,
-      data: ['FullGC次数', 'YoungGC次数'],
+      bottom: 0,
+      data: ['使用总和', '年轻代Eden区', '年轻代Survivor区', '老年代'],
       icon: 'rect',
     },
     color: ['#4BA2FF', '#54DA81'],
@@ -211,25 +202,18 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
       },
       axisLabel: {
         color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
       },
       data: xAxis,
     },
     yAxis: [
       {
         type: 'value',
+        name: '单位：MB',
         axisLabel: {
           color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
         },
         splitNumber: 3,
       },
@@ -266,14 +250,15 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
       trigger: 'axis',
     },
     grid: {
-      bottom: 24,
-      top: 50,
+      bottom: 34,
+      top: 30,
       left: 30,
       right: 40,
+      containLabel: true,
     },
     legend: {
-      left: 0,
-      data: ['FullGC次数', 'YoungGC次数'],
+      bottom: 0,
+      data: ['元空间'],
       icon: 'rect',
     },
     color: ['#4BA2FF', '#54DA81'],
@@ -286,25 +271,18 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
       },
       axisLabel: {
         color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
       },
       data: xAxis,
     },
     yAxis: [
       {
         type: 'value',
+        name: '单位：MB',
         axisLabel: {
           color: '#999',
-        },
-        splitNumber: 3,
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLabel: {
-          color: '#999',
-        },
-        splitLine: {
-          show: false,
         },
         splitNumber: 3,
       },

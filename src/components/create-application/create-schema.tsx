@@ -30,6 +30,15 @@ export default (params: {
       },
     },
     {
+      type: 'Input',
+      props: {
+        label: 'git地址',
+        name: 'gitlab',
+        required: true,
+        placeholder: '请输入git地址',
+      },
+    },
+    {
       type: 'Select',
       props: {
         label: '应用类型',
@@ -67,21 +76,25 @@ export default (params: {
         ],
       },
     },
+    // 后端才有
     {
-      type: 'Input',
-      props: {
-        label: 'git地址',
-        name: 'gitlab',
-        required: true,
-        placeholder: '请输入git地址',
-      },
-    },
-    {
+      isNotNeed: params.appType !== 'backend',
       type: 'Input',
       props: {
         label: 'jar包路径',
         name: 'jarPath',
+        required: true,
         placeholder: '请输入jar包路径',
+      },
+    },
+    {
+      isNotNeed: params.appType === 'frontend',
+      type: 'Input',
+      props: {
+        label: 'deployment名称',
+        name: 'deploymentName',
+        required: true,
+        placeholder: '请输入deployment名称',
       },
     },
     {
@@ -89,6 +102,7 @@ export default (params: {
       props: {
         label: '所属',
         name: 'belong',
+        required: true,
         options: params.belongData || [],
       },
     },
@@ -122,6 +136,7 @@ export default (params: {
       props: {
         label: '应用负责人',
         name: 'owner',
+        required: true,
         placeholder: '请输入应用负责人',
       },
     },

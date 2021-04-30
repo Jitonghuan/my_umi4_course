@@ -1,5 +1,22 @@
 .deploy-content-compo {
-  padding: 0 24px;
+  display: flex;
+  flex-direction: row;
+  padding: 0 24px 24px;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
+
+  &-body {
+    flex: 1;
+    height: 100%;
+    overflow: auto;
+    padding-right: 12px;
+    border-right: solid 1px #d2d8e6;
+    margin-right: 12px;
+  }
+
+  &-sider {
+    width: 240px;
+    height: 100%;
+    overflow: auto;
+  }
 }

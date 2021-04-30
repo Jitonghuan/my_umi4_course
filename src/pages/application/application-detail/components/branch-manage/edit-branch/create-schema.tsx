@@ -11,6 +11,14 @@ export default () => ({
         required: true,
         placeholder: '请输入',
         addonBefore: 'feature_',
+        onKeyDown: (e: any) => {
+          if (e.keyCode === 13) {
+            // 回车键
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+          }
+        },
       },
     },
     {

@@ -9,11 +9,21 @@ const APP_TYPE_MAP = {
 };
 
 // 过滤表单 schema
-export const createFilterFormSchema = () => ({
+export const createFilterFormSchema = ({ versionOptions = [] }: any) => ({
   theme: 'inline',
   isShowReset: true,
   labelColSpan: 3,
   schema: [
+    {
+      type: 'Custom',
+      props: {
+        label: '版本',
+        name: 'versionID',
+        style: { width: 150 },
+        custom: 'versionSelect',
+        options: versionOptions,
+      },
+    },
     {
       type: 'Input',
       props: {
@@ -33,10 +43,35 @@ export const createFilterFormSchema = () => ({
   ],
 });
 
+// filter form columns
+export const getFilterColumns = (versionOptions: IOption[]) => [
+  {
+    label: '版本',
+    name: 'versionID',
+    style: { width: '240px' },
+    type: 'Select',
+    options: versionOptions,
+  },
+  {
+    type: 'Input',
+    label: 'Key',
+    name: 'key',
+    style: { width: '200px' },
+  },
+  {
+    type: 'Input',
+    label: 'Value',
+    name: 'value',
+    style: { width: '200px' },
+  },
+];
+
 // 表格 schema
 export const createTableSchema = ({
+  currentVersion,
   onOperateClick,
 }: {
+  currentVersion?: any;
   onOperateClick: (
     type: 'detail' | 'delete' | 'edit',
     record: any,
@@ -55,6 +90,11 @@ export const createTableSchema = ({
     {
       title: 'Value',
       dataIndex: 'value',
+    },
+    {
+      title: '版本号',
+      dataIndex: 'version',
+      render: () => currentVersion?.versionNumber || '',
     },
     {
       width: 170,

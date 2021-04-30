@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react';
 
-import { Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import VCForm, { IColumns } from '@cffe/vc-form';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import VCPageContent, {
@@ -12,6 +12,7 @@ import VcHulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { tableSchema } from './schema';
 import { getRequest } from '@/utils/request';
 import { queryTestResult } from '../service';
+import dayjs from '_dayjs@1.10.4@dayjs';
 
 /**
  * 自动化测试结果
@@ -36,13 +37,11 @@ const Coms = () => {
   const { run: queryTableData, tableProps, reset } = usePaginated({
     requestUrl: queryTestResult,
     requestMethod: 'GET',
-    fetcher: (async (params?: any) => {
-      return getRequest(queryTestResult, {
-        data: {
-          ...params,
-        },
-      });
-    }) as any,
+    showRequestError: true,
+    pagination: {
+      showTotal: ((total: number) => `总共 ${total} 条数据`) as any,
+      showSizeChanger: true,
+    },
   });
 
   // 过滤操作
@@ -77,7 +76,7 @@ const Coms = () => {
         initialValue: filter.belong,
       },
       { label: '测试时间', name: 'testTime', type: 'RangePicker' },
-      { label: '机构ID', name: 'id' },
+      { label: 'ID', name: 'id' },
       {
         label: '测试结果',
         name: 'result',
@@ -183,7 +182,11 @@ const Coms = () => {
           setCurrentRecord({});
           setOperateType(undefined);
         }}
-        footer={false}
+        footer={
+          <Button type="primary" onClick={() => setOperateType(undefined)}>
+            关闭
+          </Button>
+        }
       >
         {operateType === 'report' ? (
           <iframe src={currentRecord.report} width="100%" height="100%" />

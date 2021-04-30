@@ -1,5 +1,6 @@
 import React from 'react';
 import { history } from 'umi';
+import moment from 'moment';
 
 // 表格 schema
 export const createTableSchema = () => [
@@ -9,18 +10,20 @@ export const createTableSchema = () => [
   },
   {
     title: '分支名',
-    dataIndex: 'appName',
+    dataIndex: 'branchName',
   },
   {
     title: '变更原因',
-    dataIndex: 'appCode',
+    dataIndex: 'desc',
   },
   {
     title: '创建时间',
-    dataIndex: 'gitRepo',
+    dataIndex: 'gmtCreate',
+    render: (val: string) =>
+      val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '',
   },
   {
     title: '创建人',
-    dataIndex: 'belong',
+    dataIndex: 'createUser',
   },
 ];

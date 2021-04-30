@@ -86,33 +86,11 @@ export default {
     },
   },
 
-  'GET /v1/appManage/list': {
-    success: true,
-    code: 1000,
-    errorMsg: '',
-    data: [
-      { id: '1', appName: '浙一医院1', appCode: '1' },
-      { id: '2', appName: '天台医院2', appCode: '2' },
-      { id: '3', appName: '浙一医院3', appCode: '3' },
-      { id: '4', appName: '天台医院4', appCode: '4' },
-      { id: '5', appName: '浙一医院5', appCode: '5' },
-      { id: '6', appName: '天台医院6', appCode: '6' },
-      { id: '7', appName: '浙一医院7', appCode: '7' },
-      { id: '8', appName: '天台医院8', appCode: '8' },
-      { id: '9', appName: '浙一医院9', appCode: '9' },
-      { id: '10', appName: '天台医院10', appCode: '10' },
-    ],
-  },
-
   'GET /v1/monitorManage/app/env': {
     success: true,
     code: 1000,
     errorMsg: '',
-    data: [
-      { id: '1', envName: 'test', envCode: 'test' },
-      { id: '2', envName: 'dev', envCode: 'dev' },
-      { id: '3', envName: 'cis', envCode: 'cis' },
-    ],
+    data: ['hbos-dev', 'hbos-test'],
   },
 
   'GET /v1/monitorManage/app/podInfo': {
@@ -121,37 +99,14 @@ export default {
     errorMsg: '',
     data: [
       {
-        ip: '192.168.54.108:9100',
-        cpuCoreNum: '8',
-        cpuUsageRate: 14.09,
-        diskUsageRate: 79.08,
-        hostname: 'master0003',
-        load: 0.31,
-        memoryTotal: 15.41,
-        memoryUsageRate: 21.25,
-        upTime: 267,
-      },
-      {
-        ip: '192.168.54.109:9100',
-        cpuCoreNum: '16',
-        cpuUsageRate: 11.13,
-        diskUsageRate: 71.34,
-        hostname: 'node0006',
-        load: 1.52,
-        memoryTotal: 30.91,
-        memoryUsageRate: 61.08,
-        upTime: 266,
-      },
-      {
-        ip: '192.168.54.110:9100',
-        cpuCoreNum: '16',
-        cpuUsageRate: 17.11,
-        diskUsageRate: 71.08,
-        hostname: 'node0003',
-        load: 1.96,
-        memoryTotal: 61.92,
-        memoryUsageRate: 73.58,
-        upTime: 266,
+        cpu: 0.69,
+        disk: 0.01,
+        health: 1,
+        hostIP: '10.100.124.159',
+        hostName: 'hbos-dtc-7f7dffb998-wnlfw',
+        memory: 8.27,
+        restartNum: 0,
+        uptime: 0,
       },
     ],
   },
@@ -160,27 +115,110 @@ export default {
     success: true,
     code: 1000,
     errorMsg: '',
-    data: {},
+    data: {
+      fullGCCount: [
+        [1619343808.322, '0'],
+        [1619343868.322, '0'],
+        [1619343928.322, '0'],
+        [1619343988.322, '0'],
+      ],
+      fullGCSum: [
+        [1619343808.322, '4'],
+        [1619343868.322, '4'],
+        [1619343928.322, '4'],
+        [1619343988.322, '4'],
+      ],
+      youngGCCount: [
+        [1619343808.322, '2'],
+        [1619343868.322, '1.999000499750125'],
+        [1619343928.322, '0'],
+        [1619343988.322, '0'],
+      ],
+      youngGCSum: [
+        [1619343808.322, '45'],
+        [1619343868.322, '47'],
+        [1619343928.322, '47'],
+        [1619343988.322, '48'],
+      ],
+    },
   },
 
   'GET /v1/monitorManage/app/gcTime': {
     success: true,
     code: 1000,
     errorMsg: '',
-    data: {},
+    data: {
+      fullGCTime: [
+        [1619343808.323, '0'],
+        [1619343868.323, '0'],
+        [1619343928.323, '0'],
+        [1619343988.323, '0'],
+      ],
+      fullGCTimeSum: [
+        [1619343808.323, '0.653'],
+        [1619343868.323, '0.653'],
+        [1619343928.323, '0.653'],
+        [1619343988.323, '0.653'],
+      ],
+      youngGCTime: [
+        [1619343808.323, '0.03600000000000003'],
+        [1619343868.323, '0.04197901049475244'],
+        [1619343928.323, '0'],
+        [1619343988.323, '0'],
+      ],
+      youngGCTimeSum: [
+        [1619343808.323, '1.302'],
+        [1619343868.323, '1.341'],
+        [1619343928.323, '1.341'],
+        [1619343988.323, '1.363'],
+      ],
+    },
   },
 
   'GET /v1/monitorManage/app/jvmHeap': {
     success: true,
     code: 1000,
     errorMsg: '',
-    data: {},
+    data: {
+      heapEdenSpace: [
+        [1619343808.324, 295.34],
+        [1619343868.324, '75.41822052001953'],
+        [1619343928.324, '251.93450927734375'],
+        [1619343988.324, '148.418212890625'],
+      ],
+      heapMemSum: [
+        [1619343808.324, 170.2],
+        [1619343868.324, '204.14667510986328'],
+        [1619343928.324, '380.3551712036133'],
+        [1619343988.324, '275.9550476074219'],
+      ],
+      heapOldGen: [
+        [1619343808.324, 92.63],
+        [1619343868.324, '93.14769744873047'],
+        [1619343928.324, '93.14769744873047'],
+        [1619343988.324, '93.1867904663086'],
+      ],
+      heapSurvivorSpace: [
+        [1619343808.324, 7.39],
+        [1619343868.324, '10.707473754882812'],
+        [1619343928.324, '10.707473754882812'],
+        [1619343988.324, '10.187667846679688'],
+      ],
+    },
   },
 
   'GET /v1/monitorManage/app/jvmMetaspace': {
     success: true,
     code: 1000,
     errorMsg: '',
-    data: {},
+    data: {
+      metaspace: [
+        [1619343808.324, 108.95],
+        [1619343868.324, '112.65153503417969'],
+        [1619343928.324, '112.79752349853516'],
+        [1619343988.324, '112.80381774902344'],
+        [1619344048.324, '112.87494659423828'],
+      ],
+    },
   },
 };

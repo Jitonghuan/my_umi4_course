@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Radio, Select, message, Spin, RadioChangeEvent, Drawer } from 'antd';
+import { findDOMNode } from 'react-dom';
 import {
-  EchartsReact,
-  colorUtil,
-  ChartsContext,
-} from '@cffe/fe-datav-components';
-import { RedoOutlined, FullscreenOutlined } from '@ant-design/icons';
-import { IEchartsReactProps } from '@cffe/fe-datav-components/es/components/charts/echarts-react';
-import { getRequest } from '@/utils/request';
+  Radio,
+  Select,
+  message,
+  Spin,
+  RadioChangeEvent,
+  Drawer,
+  Tooltip,
+} from 'antd';
+import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
+import {
+  RedoOutlined,
+  FullscreenOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { RATE_ENUMS, START_TIME_ENUMS } from './app-table';
 
 const { ColorContainer } = colorUtil.context;
@@ -84,6 +91,8 @@ const Coms = (props: IProps) => {
   const timeRateInterval = useRef<NodeJS.Timeout>();
   const [fullLoading, setFullLoading] = useState<boolean>(false);
 
+  const selectRef = useRef(null);
+
   const queryDatas = () => {
     if (
       !requestParams?.envCode ||
@@ -149,7 +158,8 @@ const Coms = (props: IProps) => {
     if (requestParams?.envCode && requestParams?.appCode && requestParams?.ip) {
       queryDatas();
     } else if (!requestParams?.ip) {
-      setCurOptions({});
+      prevData.current = {} as IEchartResp;
+      setCurOptions(getOption([], []));
     }
   }, [JSON.stringify(requestParams)]);
 
@@ -162,10 +172,14 @@ const Coms = (props: IProps) => {
       setFullOptions(options);
       setFullRadio(value);
     } else {
-      const resource =
-        value === '1' ? prevData.current.count : prevData.current.sum;
-      const options = getOption(resource.xAxis, resource.dataSource);
-      setCurOptions(options);
+      if (prevData.current?.count) {
+        const resource =
+          value === '1' ? prevData.current.count : prevData.current.sum;
+        const options = getOption(resource.xAxis, resource.dataSource);
+        setCurOptions(options);
+      } else {
+        setCurOptions(getOption([], []));
+      }
       setCurtRadio(value);
     }
   };
@@ -211,8 +225,26 @@ const Coms = (props: IProps) => {
   useEffect(() => {
     if (fullDrawerShow) {
       queryFullDatas();
+      const select = findDOMNode(selectRef.current) as HTMLDivElement;
+      if (select) {
+        const selector = select?.querySelectorAll('.ant-select-selection-item');
+        selector?.forEach((el) => {
+          el.setAttribute('title', '');
+        });
+      }
     }
   }, [startTime, fullDrawerShow]);
+
+  // 修改提示框
+  useEffect(() => {
+    const select = findDOMNode(selectRef.current) as HTMLDivElement;
+    if (select) {
+      const selector = select?.querySelectorAll('.ant-select-selection-item');
+      selector?.forEach((el) => {
+        el.setAttribute('title', '');
+      });
+    }
+  }, [timeRate]);
 
   return (
     <div className="monitor-app-card">
@@ -258,53 +290,77 @@ const Coms = (props: IProps) => {
         width="90%"
         onClose={handleFullClose}
       >
-        <Spin spinning={fullLoading} className="monitor-app-card">
-          <div style={{ textAlign: 'right' }}>
-            <Select value={startTime} onChange={(value) => setStartTime(value)}>
-              {START_TIME_ENUMS.map((time) => (
-                <Select.Option key={time.value} value={time.value}>
-                  {time.label}
-                </Select.Option>
-              ))}
-            </Select>
-            <Select value={timeRate} onChange={handleTimeRateChange}>
-              {RATE_ENUMS.map((time) => (
-                <Select.Option key={time.value} value={time.value}>
-                  {time.label}
-                </Select.Option>
-              ))}
-            </Select>
+        <Spin spinning={fullLoading}>
+          <div
+            className="monitor-time-select"
+            ref={selectRef}
+            style={{ textAlign: 'right' }}
+          >
+            <Tooltip title="Relative time ranges" placement="top">
+              <Select
+                value={startTime}
+                onChange={(value) => setStartTime(value)}
+                style={{ width: 150, textAlign: 'left' }}
+              >
+                <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
+                {START_TIME_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Tooltip>
+            <Tooltip title="Refresh dashboard" placement="top">
+              <Select
+                value={timeRate}
+                onChange={handleTimeRateChange}
+                optionLabelProp="label"
+                style={{ width: 54 }}
+              >
+                {RATE_ENUMS.map((time) => (
+                  <Select.Option
+                    key={time.value}
+                    value={time.value}
+                    label={time.showLabel}
+                  >
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Tooltip>
           </div>
-          <div className="app-header">
-            <h3 className="app-title">{title}</h3>
-            <span>
-              <RedoOutlined
-                className="app-operate-icon"
-                onClick={() => {
-                  queryFullDatas();
-                }}
-              />
-              {hasRadio && (
-                <Radio.Group
-                  size="small"
-                  value={fullRadio}
-                  onChange={handleRadioChange}
-                >
-                  {typeEnum.map((el) => (
-                    <Radio.Button
-                      className="app-operate-switch"
-                      value={el.value}
-                    >
-                      {el.label}
-                    </Radio.Button>
-                  ))}
-                </Radio.Group>
-              )}
-            </span>
+          <div className="monitor-app-card" style={{ padding: '16px 0' }}>
+            <div className="app-header" style={{ marginBottom: 12 }}>
+              <h3 className="app-title">{title}</h3>
+              <span>
+                <RedoOutlined
+                  className="app-operate-icon"
+                  onClick={() => {
+                    queryFullDatas();
+                  }}
+                />
+                {hasRadio && (
+                  <Radio.Group
+                    size="small"
+                    value={fullRadio}
+                    onChange={handleRadioChange}
+                  >
+                    {typeEnum.map((el) => (
+                      <Radio.Button
+                        className="app-operate-switch"
+                        value={el.value}
+                      >
+                        {el.label}
+                      </Radio.Button>
+                    ))}
+                  </Radio.Group>
+                )}
+              </span>
+            </div>
+            <ColorContainer roleKeys={['color']}>
+              <EchartsReact option={fullOptions} style={{ height: 400 }} />
+            </ColorContainer>
           </div>
-          <ColorContainer roleKeys={['color']}>
-            <EchartsReact option={fullOptions} style={{ height: 400 }} />
-          </ColorContainer>
         </Spin>
       </Drawer>
     </div>

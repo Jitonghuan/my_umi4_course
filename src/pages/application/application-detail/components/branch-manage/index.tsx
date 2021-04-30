@@ -5,45 +5,47 @@
  * @create 2021-04-20 19:10
  */
 
-import React, { useState, useContext } from 'react';
-import { Button, message } from 'antd';
+import React, { useState, useContext, useEffect } from 'react';
+import { Button, message, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useEffectOnce } from 'white-react-use';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm } from '@cffe/fe-backend-component';
 import EditBranch from './edit-branch';
 import { createFilterFormSchema, createTableSchema } from './schema';
+import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '../../../service';
 import { rootCls } from './constants';
 import { IProps } from './types';
 import './index.less';
 
-const BranchManage = ({
-  location: {
-    query: { appCode, id },
-  },
-}: IProps) => {
+const BranchManage = ({}: IProps) => {
+  const { appData } = useContext(DetailContext);
+  const { appCode } = appData || {};
+
   const [createBranchVisible, setCreateBranchVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
     requestUrl: queryBranchListUrl,
     requestMethod: 'GET',
+    showRequestError: true,
     pagination: {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
     },
   });
 
-  useEffectOnce(() => {
-    queryBranchList({ appCode });
-  });
+  useEffect(() => {
+    if (!appCode) return;
+    queryBranchList({ appCode, env: 'feature' });
+  }, [appCode]);
 
   return (
-    <>
+    <Spin spinning={loading}>
       <EditBranch
-        appCode={appCode}
+        appCode={appCode!}
         visible={createBranchVisible}
         onSubmit={() => {
           setCreateBranchVisible(false);
@@ -86,21 +88,24 @@ const BranchManage = ({
           columns={
             createTableSchema({
               onCancelClick: (record, index) => {
-                deleteBranch({ id: record.id }).then((res: any) => {
-                  if (res.success) {
-                    message.success('操作成功');
-                    queryBranchList();
-                    return;
-                  }
-                  message.error(res.errorMsg);
-                });
+                setLoading(true);
+                deleteBranch({ id: record.id })
+                  .then((res: any) => {
+                    if (res.success) {
+                      message.success('操作成功');
+                      queryBranchList();
+                      return;
+                    }
+                    message.error(res.errorMsg);
+                  })
+                  .finally(() => setLoading(false));
               },
             }) as any
           }
           {...tableProps}
         />
       </ContentCard>
-    </>
+    </Spin>
   );
 };
 

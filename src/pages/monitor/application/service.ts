@@ -141,23 +141,23 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
         heapSurvivorSpace = [],
       } = res.data;
       const xAxis: string[] = [];
-      const fullCount: string[] = [];
+      const heapEden: string[] = [];
       heapEdenSpace?.map((el: string[]) => {
         xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
-        fullCount.push(Number(el[1]).toFixed(2));
+        heapEden.push(Number(el[1]).toFixed(2));
       });
-      const youngCount =
+      const heapSum =
         heapMemSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const fullSum =
+      const heapOld =
         heapOldGen?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const youngSum =
+      const heapSurvivor =
         heapSurvivorSpace?.map((el: string[]) => Number(el[1]).toFixed(2)) ||
         [];
 
       return {
         count: {
           xAxis,
-          dataSource: [fullCount, youngCount, fullSum, youngSum],
+          dataSource: [heapSum, heapEden, heapSurvivor, heapOld],
         },
         sum: {},
       };

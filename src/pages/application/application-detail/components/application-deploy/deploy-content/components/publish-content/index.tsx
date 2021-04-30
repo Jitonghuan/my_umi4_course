@@ -5,77 +5,136 @@
  * @create 2021-04-15 10:22
  */
 
-import React from 'react';
-import { Steps, Button } from 'antd';
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import { useEffectOnce } from 'white-react-use';
+import React, { useState } from 'react';
+import { Modal, Button } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import HulkTable from '@cffe/vc-hulk-table';
+import ProdSteps from './prod-steps';
+import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { queryPublishContentList } from '../../../service';
+import { createDeploy, updateFeatures } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 
-const { Step } = Steps;
 const rootCls = 'publish-content-compo';
+const { confirm } = Modal;
 
-const PublishContent = (props: IProps) => {
-  // 查询数据
-  const { run: queryContentList, tableProps } = usePaginated({
-    requestUrl: queryPublishContentList,
-    requestMethod: 'POST',
-    pagination: {
-      showSizeChanger: true,
-      showTotal: (total) => `总共 ${total} 条数据`,
-    },
-  });
+const PublishContent = ({
+  appCode,
+  env,
+  deployedList,
+  deployInfo,
+  onOperate,
+}: IProps) => {
+  const isProd = env === 'prod';
 
-  useEffectOnce(() => {
-    queryContentList();
-  });
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      <Steps className={`${rootCls}__steps`} current={1}>
-        <Step title="创建任务" />
-        <Step title="合并release" />
-        <Step title="部署" />
-        <Step title="发布" />
-        <Step title="执行完成" />
-      </Steps>
+      {isProd ? (
+        <ProdSteps
+          appCode={appCode}
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+        />
+      ) : (
+        <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} />
+      )}
 
       <div className={`${rootCls}__list-wrap`}>
         <div className={`${rootCls}__list-header`}>
           <span className={`${rootCls}__list-header-text`}>内容列表</span>
 
-          <div className={`${rootCls}__list-header-btns`}>
-            <Button>重新部署</Button>
-            <Button>批量退出</Button>
-            <Button>重启</Button>
-          </div>
+          {!isProd && (
+            <div className={`${rootCls}__list-header-btns`}>
+              <Button
+                type="primary"
+                disabled={!selectedRowKeys.length}
+                onClick={() => {
+                  onOperate('retryDeployStart');
+
+                  confirm({
+                    title: '确定要重新部署吗?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk() {
+                      const filter = deployedList
+                        .filter((el) => selectedRowKeys.includes(el.id))
+                        .map((el) => el.branchName);
+                      return updateFeatures({
+                        id: deployInfo.id,
+                        features: filter,
+                      }).then(() => {
+                        onOperate('retryDeployEnd');
+                      });
+                    },
+                    onCancel() {
+                      onOperate('retryDeployEnd');
+                    },
+                  });
+                }}
+              >
+                重新部署
+              </Button>
+              <Button
+                type="primary"
+                disabled={!selectedRowKeys.length}
+                onClick={() => {
+                  onOperate('batchExitStart');
+
+                  confirm({
+                    title: '确定要批量退出吗?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk() {
+                      return createDeploy({
+                        appCode,
+                        env,
+                        features: deployedList
+                          .filter((item) => !selectedRowKeys.includes(item.id))
+                          .map((item) => item.branchName),
+                      }).then(() => {
+                        onOperate('batchExitEnd');
+                      });
+                    },
+                    onCancel() {
+                      onOperate('batchExitEnd');
+                    },
+                  });
+                }}
+              >
+                批量退出
+              </Button>
+              <Button
+                onClick={() => {
+                  // TODO
+                  // alert('缺接口');
+                }}
+              >
+                重启
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* TODO 需要页码吗？ */}
         <HulkTable
           rowKey="id"
-          size="small"
           className={`${rootCls}__list-table`}
-          rowSelection={{
-            type: 'checkbox',
-            onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-              console.log(
-                `selectedRowKeys: ${selectedRowKeys}`,
-                'selectedRows: ',
-                selectedRows,
-              );
-            },
-            // getCheckboxProps: (record: any) => ({
-            //   disabled: record.name === 'Disabled User', // Column configuration not to be checked
-            //   name: record.name,
-            // }),
-          }}
+          dataSource={deployedList}
+          pagination={false}
+          rowSelection={
+            isProd
+              ? undefined
+              : {
+                  type: 'checkbox',
+                  selectedRowKeys,
+                  onChange: (selectedRowKeys: React.Key[]) => {
+                    setSelectedRowKeys(selectedRowKeys as any);
+                  },
+                }
+          }
           columns={createTableSchema() as any}
-          {...tableProps}
         />
       </div>
     </div>

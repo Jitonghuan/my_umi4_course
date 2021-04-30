@@ -113,6 +113,7 @@ const Coms = (props: IProps) => {
   const { run: queryNodeList, reset, tableProps } = usePaginated({
     requestUrl: queryNodeUseDataApi,
     requestMethod: 'GET',
+    showRequestError: true,
     formatRequestParams: (params) => {
       return {
         ...params,

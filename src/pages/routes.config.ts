@@ -14,8 +14,12 @@ export default [
     redirect: `${ds.pagePrefix}/application`,
   },
   {
-    path: `${ds.pagePrefix}/index`,
-    redirect: `${ds.pagePrefix}/application`,
+    // path: `${ds.pagePrefix}/index`,
+    // redirect: `${ds.pagePrefix}/application`,
+    path: 'index',
+    name: '首页',
+    icon: 'icon-poc_index',
+    component: '@/pages/index',
   },
   {
     path: `${ds.pagePrefix}/application`,
@@ -60,6 +64,12 @@ export default [
             hideInMenu: true,
             component:
               '@/pages/application/application-detail/components/application-overview',
+          },
+          {
+            path: 'monitor',
+            name: '应用监控',
+            hideInMenu: true,
+            component: '@/pages/monitor/application/app-table',
           },
           {
             path: 'appDeploy',

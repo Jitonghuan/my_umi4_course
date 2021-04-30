@@ -12,11 +12,54 @@
     }
   }
 
+  &__filter-form {
+  }
+
   &__table {
     margin-top: 16px;
 
     .ant-table-thead > tr > th {
       background: #f3f5fb;
+    }
+  }
+
+  &-version {
+    height: 300px;
+    overflow: auto;
+
+    &-item {
+      position: relative;
+      padding-right: 30px;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #e6ebf5;
+      }
+    }
+
+    &-loadbox {
+      padding: 12px 0;
+      text-align: center;
+    }
+
+    &-detail {
+      position: absolute;
+      right: 12px;
+
+      &-wrap {
+        .ant-popover-inner {
+          display: flex;
+          flex-direction: column;
+          width: 300px;
+          max-height: 400px;
+          padding-bottom: 12px;
+        }
+
+        .ant-popover-inner-content {
+          flex: 1;
+          overflow: auto;
+        }
+      }
     }
   }
 }

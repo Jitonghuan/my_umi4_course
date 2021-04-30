@@ -5,7 +5,7 @@ const mockTableData = [
     appName: '应用名称',
     appType: 'frontend',
     owner: '8号',
-    belongCode: 'gmc',
+    belong: 'gmc',
     belongName: '医共体',
     createUser: '王安楠',
     modifyUser: '王安楠',
@@ -18,7 +18,7 @@ const mockTableData = [
     appName: '应用名称',
     appType: 'backend',
     owner: '8号',
-    belongCode: 'g3a',
+    belong: 'g3a',
     belongName: '三甲',
     createUser: '王安楠',
     modifyUser: '王安楠',
@@ -45,8 +45,8 @@ export default {
   // 新建应用
   [`POST /v1/appManage/create`]: {
     code: 1000,
-    success: true,
-    errorMsg: '',
+    success: false,
+    errorMsg: 'application is exist',
     data: {
       id: 1,
       belongCode: 'gmc',

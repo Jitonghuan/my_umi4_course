@@ -1,3 +1,4 @@
+import { IPermission } from '@cffe/vc-layout/lib/sider-menu';
 import React from 'react';
 
 export interface IFEContent extends globalConfig {
@@ -9,6 +10,10 @@ export interface IFEContent extends globalConfig {
   businessData?: any[];
   // 环境枚举
   envData?: any[];
+  // 是否开启权限
+  isOpenPermission?: boolean;
+  // 权限数据
+  permissionData?: IPermission[];
 }
 
 export default React.createContext<IFEContent>({
@@ -20,4 +25,6 @@ export default React.createContext<IFEContent>({
   belongData: [],
   businessData: [],
   envData: [],
+  isOpenPermission: false,
+  permissionData: [],
 });

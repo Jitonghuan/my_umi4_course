@@ -1,5 +1,6 @@
 import React from 'react';
 import { history } from 'umi';
+import { Popconfirm } from 'antd';
 import { ColumnProps } from '@cffe/vc-hulk-table';
 import { AppType } from './types';
 
@@ -59,17 +60,21 @@ export const createFilterFormSchema = (params: {
 // 表格 schema
 export const createTableSchema = ({
   onEditClick,
+  onDelClick,
 }: {
   onEditClick: (record: any, index: number) => void;
+  onDelClick: (record: any, index: number) => void;
 }) =>
   [
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 50,
     },
     {
       title: '应用名',
       dataIndex: 'appName',
+      width: 100,
       render: (text, record) => (
         <a
           onClick={() =>
@@ -89,37 +94,46 @@ export const createTableSchema = ({
     {
       title: '应用code',
       dataIndex: 'appCode',
+      width: 100,
     },
     {
       title: 'git仓库名',
       dataIndex: 'gitlab',
+      width: 200,
     },
     {
       title: '所属',
       dataIndex: 'belong',
+      width: 80,
     },
     {
       title: '应用类型',
       dataIndex: 'appType',
+      width: 80,
       render: (appType: AppType) => APP_TYPE_MAP[appType] || '',
     },
     {
       title: '业务线',
       dataIndex: 'lineCode',
+      width: 100,
     },
     {
       title: '业务模块',
       dataIndex: 'sysCode',
+      width: 100,
     },
     {
       title: '责任人',
       dataIndex: 'owner',
+      width: 100,
     },
     {
       title: '应用描述',
       dataIndex: 'desc',
+      width: 100,
     },
     {
+      width: 150,
       title: '操作',
       dataIndex: 'operate',
       render: (text: string, record: any, index: number) => (
@@ -139,6 +153,15 @@ export const createTableSchema = ({
           >
             详情
           </a>
+          <Popconfirm
+            title="确定要删除该应用吗？"
+            onConfirm={() => onDelClick(record, index)}
+            okText="确定"
+            cancelText="取消"
+            placement="topLeft"
+          >
+            <a style={{ marginLeft: 20 }}>删除</a>
+          </Popconfirm>
         </>
       ),
     },

@@ -5,7 +5,7 @@
  * @create 2021-04-09 18:39
  */
 
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Tabs } from 'antd';
 import VCPageContent, {
@@ -13,9 +13,14 @@ import VCPageContent, {
   ContentCard,
 } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/FeContext';
+import DetailContext, { ContextTypes } from './context';
 import { tabsConfig } from './config';
+import { queryApps } from '../service';
 import { IProps } from './types';
 import './index.less';
+import VCPermission from '@/components/vc-permission';
+import MatrixPageContent from '@/components/matrix-page-content';
+import { divide } from '_@types_lodash@4.14.168@@types/lodash';
 
 const rootCls = 'application-detail-page';
 const detailPath = '/matrix/application/detail';
@@ -24,9 +29,11 @@ const { TabPane } = Tabs;
 const defaultTab = 'overview';
 
 const ApplicationDetail = (props: IProps) => {
-  const { location, route, children } = props;
+  const { location, children } = props;
+  const appId = location.query.id;
 
   const feContent = useContext(FEContext);
+  const [appData, setAppData] = useState<ContextTypes['appData']>();
 
   const tabActiveKey = useMemo(
     () =>
@@ -35,6 +42,26 @@ const ApplicationDetail = (props: IProps) => {
       ),
     [location.pathname],
   );
+
+  // 请求应用数据
+  const queryAppData = () => {
+    queryApps({
+      id: Number(appId),
+      pageIndex: 1,
+      pageSize: 10,
+    }).then((res: any) => {
+      if (res.list.length) {
+        setAppData(res.list[0]);
+        return;
+      }
+      setAppData(undefined);
+    });
+  };
+
+  useEffect(() => {
+    if (!appId) return;
+    queryAppData();
+  }, [appId]);
 
   // 默认重定向到【概述】路由下
   if (location.pathname === detailPath) {
@@ -48,13 +75,7 @@ const ApplicationDetail = (props: IProps) => {
   }
 
   return (
-    <VCPageContent
-      className={rootCls}
-      height="calc(100vh - 118px)"
-      breadcrumbMap={feContent.breadcrumbMap}
-      pathname={location.pathname}
-      isFlex
-    >
+    <MatrixPageContent isFlex>
       {/* tab子路由 */}
       {tabActiveKey && (
         <Tabs
@@ -72,6 +93,22 @@ const ApplicationDetail = (props: IProps) => {
               },
             });
           }}
+          tabBarExtraContent={
+            <div>
+              <span
+                style={{
+                  color: 'rgba(0,0,0,.85)',
+                  fontWeight: 600,
+                  fontSize: 18,
+                }}
+              >
+                {appData?.appCode}
+              </span>
+              <span style={{ marginLeft: 12, color: 'rgba(0,0,0,.45)' }}>
+                {appData?.appName}
+              </span>
+            </div>
+          }
         >
           {Object.keys(tabsConfig).map((key) => (
             <TabPane tab={tabsConfig[key]} key={key}>
@@ -81,8 +118,17 @@ const ApplicationDetail = (props: IProps) => {
         </Tabs>
       )}
 
-      {children}
-    </VCPageContent>
+      <DetailContext.Provider
+        value={{
+          appData,
+          queryAppData: queryAppData,
+        }}
+      >
+        <VCPermission code={window.location.pathname} isShowErrorPage>
+          {children}
+        </VCPermission>
+      </DetailContext.Provider>
+    </MatrixPageContent>
   );
 };
 

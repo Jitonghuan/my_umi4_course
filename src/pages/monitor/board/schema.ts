@@ -9,7 +9,6 @@ export const resUseTableSchema = [
     dataIndex: 'hostname',
     sorter: {
       compare: (a: any, b: any) => a.hostname.localeCompare(b.hostname),
-      multiple: 1,
     },
   },
   {
@@ -23,13 +22,15 @@ export const resUseTableSchema = [
   {
     title: '5m负载',
     dataIndex: 'load',
+    sorter: {
+      compare: (a: any, b: any) => a.load - b.load,
+    },
   },
   {
     title: 'CPU使用率',
     dataIndex: 'cpuUsageRate',
     sorter: {
       compare: (a: any, b: any) => a.cpuUsageRate - b.cpuUsageRate,
-      multiple: 1,
     },
   },
   {
@@ -37,7 +38,6 @@ export const resUseTableSchema = [
     dataIndex: 'memoryUsageRate',
     sorter: {
       compare: (a: any, b: any) => a.memoryUsageRate - b.memoryUsageRate,
-      multiple: 1,
     },
   },
   {
@@ -45,7 +45,6 @@ export const resUseTableSchema = [
     dataIndex: 'diskUsageRate',
     sorter: {
       compare: (a: any, b: any) => a.diskUsageRate - b.diskUsageRate,
-      multiple: 1,
     },
   },
 ];

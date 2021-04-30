@@ -19,6 +19,6 @@ export const testCaseTableSchema: ColumnProps[] = [
   {
     title: '用例标签',
     dataIndex: 'caseLabel',
-    width: 100,
+    width: 60,
   },
 ];
