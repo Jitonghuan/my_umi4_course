@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Space,
   Form,
@@ -13,7 +13,7 @@ import {
   Modal,
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 import { history } from 'umi';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { FormProps } from '@/components/table-search/typing';
@@ -27,6 +27,12 @@ import '../index.less';
 interface OptionProps {
   value: string;
   key: string;
+}
+
+export interface DefaultValueObjProps {
+  own: string;
+  line: string;
+  model: string;
 }
 
 interface JiraItem {
@@ -46,6 +52,11 @@ interface EditTableProps {
   ownOption: OptionProps[];
   lineOption: OptionProps[];
   modelOption: OptionProps[];
+  formSelectChange: (
+    e: React.FormEvent<HTMLInputElement>,
+    type: string,
+  ) => void;
+  defaultValueObj?: DefaultValueObjProps;
 }
 
 const EditTable: React.FC<EditTableProps> = ({
@@ -55,6 +66,8 @@ const EditTable: React.FC<EditTableProps> = ({
   lineOption,
   modelOption,
   title,
+  formSelectChange,
+  defaultValueObj = {},
 }) => {
   const [JiraData, setJiraData] = useState<JiraItem[]>([]);
   const [orgOption, setOrgOption] = useState<OptionProps[]>([]);
@@ -129,6 +142,9 @@ const EditTable: React.FC<EditTableProps> = ({
       editable: true,
       required: false,
       item: <DatePicker placeholder="请选择日期" showTime />,
+      render: (text: Moment) => (
+        <>{text ? moment(text).format('YYYY-MM-DD HH-mm-ss') : ''}</>
+      ),
     },
     {
       title: '需求ID',
@@ -149,12 +165,15 @@ const EditTable: React.FC<EditTableProps> = ({
           <span>
             <a
               href="javascript:;"
-              onClick={() => save(record.key)}
+              onClick={() => save(record.key as string)}
               style={{ marginRight: 8 }}
             >
               保存
             </a>
-            <Popconfirm title="确认取消?" onConfirm={() => cancel(record.key)}>
+            <Popconfirm
+              title="确认取消?"
+              onConfirm={() => cancel(record.key as string)}
+            >
               <a>取消</a>
             </Popconfirm>
           </span>
@@ -162,14 +181,14 @@ const EditTable: React.FC<EditTableProps> = ({
           <Space>
             <Typography.Link
               disabled={editingKey !== ''}
-              onClick={() => edit(record)}
+              onClick={() => edit(record as Partial<Item> & { key: React.Key })}
             >
               编辑
             </Typography.Link>
             {type === 'add' && (
               <Popconfirm
                 title="确认删除?"
-                onConfirm={() => onDelete(record.key)}
+                onConfirm={() => onDelete(record.key as string)}
               >
                 <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
               </Popconfirm>
@@ -224,6 +243,14 @@ const EditTable: React.FC<EditTableProps> = ({
     ]);
   }, []);
 
+  useEffect(() => {
+    form.setFieldsValue({
+      own: defaultValueObj?.own,
+      line: defaultValueObj?.line,
+      model: defaultValueObj?.model,
+    });
+  }, [defaultValueObj]);
+
   const formLists: FormProps[] = [
     {
       key: '1',
@@ -236,10 +263,11 @@ const EditTable: React.FC<EditTableProps> = ({
       option: ownOption,
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
+        formSelectChange(e, 'own');
       },
     },
     {
-      key: '1',
+      key: '2',
       type: 'select',
       label: '业务线',
       dataIndex: 'line',
@@ -249,10 +277,11 @@ const EditTable: React.FC<EditTableProps> = ({
       option: lineOption,
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
+        formSelectChange(e, 'line');
       },
     },
     {
-      key: '1',
+      key: '3',
       type: 'select',
       label: '业务模块',
       dataIndex: 'model',
@@ -262,13 +291,10 @@ const EditTable: React.FC<EditTableProps> = ({
       option: modelOption,
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
+        formSelectChange(e, 'model');
       },
     },
   ];
-
-  const formOptions: FormProps[] = useMemo(() => {
-    return formLists;
-  }, [ownOption, lineOption, modelOption]);
 
   return (
     <MatrixPageContent className="page-content">
@@ -276,7 +302,7 @@ const EditTable: React.FC<EditTableProps> = ({
         <Card bordered={false} title={title}>
           <Form form={form} component={false}>
             <div className="page-top-form">
-              <Space size={16}>{renderForm(formOptions)}</Space>
+              <Space size={16}>{renderForm(formLists)}</Space>
               <Button type="primary" onClick={() => setModalVisible(true)}>
                 关联Jira需求单
               </Button>

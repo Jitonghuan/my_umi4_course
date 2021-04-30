@@ -48,6 +48,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               }
               style={{ width: width, ...styles }}
               onChange={onChange}
+              getPopupContainer={(triggerNode) => triggerNode.parentElement}
             >
               {option?.map((item) => (
                 <Option key={item.key} value={item.key}>

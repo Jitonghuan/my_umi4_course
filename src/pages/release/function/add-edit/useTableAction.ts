@@ -10,7 +10,7 @@ interface IProps {
 const useTableAction = (props: IProps) => {
   const { initData = [] } = props;
   const [form] = Form.useForm();
-  const [data, setData] = useState<Item[]>(initData);
+  const [data, setData] = useState<Item[]>([]);
   const [editingKey, setEditingKey] = useState('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
@@ -23,6 +23,10 @@ const useTableAction = (props: IProps) => {
 
   const addTableRow = () => {
     const newData = [...data];
+    if (!(form.getFieldValue('line') && form.getFieldValue('model'))) {
+      message.warning('请先选择业务线和业务模块');
+      return;
+    }
     if (
       newData.length &&
       newData.filter((v) => !(v?.function && v?.org)).length
@@ -33,7 +37,15 @@ const useTableAction = (props: IProps) => {
     const obj = {
       key: `${newData.length + 1}`,
     };
-    form.resetFields();
+
+    form.resetFields([
+      'function',
+      'org',
+      'range',
+      'needs',
+      'planTime',
+      'needsID',
+    ]);
     newData.push(obj);
     setData(newData);
     setEditingKey(obj.key);
@@ -87,6 +99,10 @@ const useTableAction = (props: IProps) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
     setSelectedRowKeys(selectedRowKeys);
   };
+
+  useEffect(() => {
+    setData(initData);
+  }, [initData]);
 
   return {
     form,

@@ -8,25 +8,8 @@ import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import ds from '@config/defaultSettings';
 import { statusType } from '../constant';
+import { Item } from '../typing';
 import './index.less';
-
-interface Item {
-  id?: string;
-  type?: string;
-  function?: string;
-  status?: number;
-  owner?: string;
-  line?: string;
-  model?: string;
-  org?: string;
-  range?: string;
-  needs?: string;
-  planTime?: string;
-  needsID?: string;
-  actualTime?: string;
-  person?: string;
-  createTime?: string;
-}
 
 type changeTypeItem = {
   path: string;
@@ -34,9 +17,9 @@ type changeTypeItem = {
 };
 
 const changeType: Record<string, changeTypeItem> = {
-  func: { path: 'editFunction', text: '功能' },
+  func: { path: 'editFunctionModify', text: '功能' },
   config: { path: 'editConfigModify', text: '配置' },
-  datebase: { path: 'editDatabasenModify', text: '数据库' },
+  database: { path: 'editDatabasenModify', text: '数据库' },
 };
 
 const FunctionCom: React.FC = () => {
@@ -47,14 +30,19 @@ const FunctionCom: React.FC = () => {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: 60,
+      width: '3%',
       render: (text, record) => (
         <Link
+          // to={
+          //   record?.type
+          //     ? `${ds.pagePrefix}/release/plan/${
+          //         changeType[record?.type]?.path
+          //       }?id=${text}`
+          //     : ''
+          // }
           to={
             record?.type
-              ? `${ds.pagePrefix}/release/${
-                  changeType[record?.type]?.path
-                }?id=${text}`
+              ? `./plan/${changeType[record?.type]?.path}?id=${text}`
               : ''
           }
         >
@@ -66,14 +54,14 @@ const FunctionCom: React.FC = () => {
       title: '变更类型',
       dataIndex: 'type',
       key: 'type',
-      width: 80,
+      width: '5%',
       render: (text) => <Tag color="geekblue">{changeType[text]?.text}</Tag>,
     },
     {
       title: '发布状态',
       dataIndex: 'status',
       key: 'status',
-      width: 80,
+      width: '5%',
       render: (text) => (
         <Tag color={statusType[text]?.color}>{statusType[text]?.text}</Tag>
       ),
@@ -82,94 +70,100 @@ const FunctionCom: React.FC = () => {
       title: '所属',
       dataIndex: 'owner',
       key: 'owner',
-      width: 80,
+      width: '5%',
     },
     {
       title: '应用CODE',
       dataIndex: 'code',
       key: 'code',
-      width: 100,
+      width: '6%',
     },
     {
       title: '应用类型',
       dataIndex: 'useType',
       key: 'useType',
-      width: 80,
+      width: '5%',
     },
     {
       title: '业务线',
       dataIndex: 'line',
       key: 'line',
-      width: 80,
+      width: '5%',
     },
     {
       title: '业务模块',
       dataIndex: 'model',
       key: 'model',
+      width: '5%',
     },
     {
       title: '版本号',
       dataIndex: 'version',
       key: 'version',
-      width: 80,
+      width: '5%',
     },
     {
       title: '版本分支',
       dataIndex: 'branch',
       key: 'branch',
-      width: 80,
+      width: '5%',
     },
     {
       title: '发布依赖',
       dataIndex: 'modules',
       key: 'modules',
-      width: 80,
+      width: '5%',
     },
     {
       title: '开发',
       dataIndex: 'develop',
       key: 'develop',
-      width: 80,
+      width: '5%',
     },
     {
       title: '测试',
       dataIndex: 'test',
       key: 'test',
-      width: 80,
+      width: '5%',
     },
     {
       title: '发布人',
       dataIndex: 'publisher',
       key: 'publisher',
-      width: 80,
+      width: '5%',
     },
     {
       title: '计划发布时间',
       dataIndex: 'planTime',
       key: 'planTime',
-      width: 110,
+      width: '7%',
     },
     {
       title: '创建人',
       dataIndex: 'person',
       key: 'person',
-      width: 80,
+      width: '5%',
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
       fixed: 'right',
-      width: 100,
+      width: '6%',
       render: (_: string, record) => (
         //根据不同类型跳转
         <Space>
           <Link
+            // to={
+            //   record?.type
+            //     ? `${ds.pagePrefix}/release/plan/${
+            //         changeType[record?.type]?.path
+            //       }?id=${record.id}`
+            //     : ''
+            // }
             to={
               record?.type
-                ? `${ds.pagePrefix}/release/${
-                    changeType[record?.type]?.path
-                  }?id=${record.id}`
+                ? `./plan/${changeType[record?.type]?.path}?id=${record.id}`
                 : ''
             }
           >
@@ -303,12 +297,12 @@ const FunctionCom: React.FC = () => {
   useEffect(() => {
     const arr: Item[] = new Array(20).fill(1).map((_, i) => {
       return {
-        id: `${i + 1}`,
-        type: 'func',
+        id: `${i + 10000}`,
+        type: 'database',
         status: 0,
-        owner: '撒谎的艰苦撒旦',
-        line: '撒谎的艰苦撒旦',
-        model: '撒谎的艰苦撒旦',
+        owner: '撒谎的',
+        line: 'asdasd',
+        model: '撒谎的艰',
         person: '撒谎的艰苦撒旦',
         planTime: moment(new Date()).format('YYYY-MM-DD HH-mm'),
         code: '111',
@@ -316,8 +310,8 @@ const FunctionCom: React.FC = () => {
         version: '1-1-1',
         branch: 'sadad',
         modules: 'sdsasd',
-        develop: '请问请问',
-        test: '拉开圣诞节',
+        develop: '请问请',
+        test: '拉开圣',
         publisher: '空间的',
       };
     });
@@ -344,7 +338,8 @@ const FunctionCom: React.FC = () => {
               type="primary"
               ghost
               onClick={() => {
-                history.push(`${ds.pagePrefix}/release/addFunctionModify`);
+                // history.push(`${ds.pagePrefix}/release/plan/addFunctionModify`);
+                history.push('./plan/addFunctionModify');
               }}
             >
               新增功能变更
@@ -353,7 +348,8 @@ const FunctionCom: React.FC = () => {
               type="primary"
               ghost
               onClick={() => {
-                history.push(`${ds.pagePrefix}/release/addConfigModify`);
+                // history.push(`${ds.pagePrefix}/release/plan/addConfigModify`);
+                history.push('./plan/addConfigModify');
               }}
             >
               新增配置变更
@@ -362,7 +358,8 @@ const FunctionCom: React.FC = () => {
               type="primary"
               ghost
               onClick={() => {
-                history.push(`${ds.pagePrefix}/release/addDatabaseModify`);
+                // history.push(`${ds.pagePrefix}/release/plan/addDatabaseModify`);
+                history.push('./plan/addDatabaseModify');
               }}
             >
               新增数据库变更
@@ -371,7 +368,7 @@ const FunctionCom: React.FC = () => {
         }
         className="table-form"
         onSearch={onSearch}
-        scroll={{ x: 'max-content', y: 300 }}
+        scroll={{ x: 2000, y: 500 }}
         searchText="查询"
       />
     </MatrixPageContent>

@@ -4,25 +4,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { Moment } from 'moment';
 import { history } from 'umi';
 import BaseForm from '../../components/base-form';
-import { InitValue, BaseFormProps } from '../../../typing';
+import { InitValue, BaseFormProps, Item } from '../../../typing';
 import './index.less';
-
-interface Item {
-  id?: string;
-  function?: string;
-  status?: string;
-  owner?: string;
-  line?: string;
-  model?: string;
-  org?: string;
-  range?: string;
-  needs?: string;
-  planTime?: Moment;
-  needsID?: string;
-  actualTime?: Moment;
-  person?: string;
-  createTime?: Moment;
-}
 
 interface ModifyProps extends InitValue {}
 

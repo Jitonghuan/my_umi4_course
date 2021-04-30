@@ -1,13 +1,22 @@
 import { Moment } from 'moment';
 
 export interface Item {
-  key: string;
+  key?: string;
   function?: string;
-  org?: string[];
+  org?: string[] | string;
   range?: string;
   needs?: string;
-  planTime?: Moment;
+  planTime?: Moment | string;
   needsID?: string;
+  id?: string;
+  status?: number;
+  owner?: string;
+  line?: string;
+  model?: string;
+  actualTime?: string;
+  person?: string;
+  createTime?: string;
+  type?: string;
 }
 
 export interface InitValue {
