@@ -59,3 +59,15 @@ export const queryDeployPlanReq = (params: { lineCode: string }) =>
     }
     return [];
   });
+
+const querApplyDetailUrl = `${ds.apiPrefix}/releaseManage/apply/detail`;
+/** 根据发布申请id查询发布申请详情 */
+export const querApplyDetailReq = (params: { id: number | string }) =>
+  getRequest(querApplyDetailUrl, {
+    data: params,
+  }).then((resp) => {
+    if (resp.success) {
+      return resp?.data || {};
+    }
+    return {};
+  });

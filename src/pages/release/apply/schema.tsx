@@ -208,3 +208,46 @@ export const planSchemaColumns = [
     dataIndex: 'createUser',
   },
 ];
+
+export const applyDetailSchemaColumns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+  },
+  {
+    title: '发布功能',
+    dataIndex: 'funcName',
+  },
+  {
+    title: '业务线',
+    dataIndex: 'lineCode',
+  },
+  {
+    title: '业务模块',
+    dataIndex: 'sysCode',
+  },
+  {
+    title: '机构',
+    dataIndex: 'envs',
+  },
+  {
+    title: '涉及业务范围',
+    dataIndex: 'coverageRange',
+  },
+  {
+    title: '预计发布时间',
+    dataIndex: 'preDeployTime',
+  },
+  {
+    title: '需求id',
+    dataIndex: 'demandId',
+  },
+  {
+    title: '创建人',
+    dataIndex: 'createUser',
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'gmtCreate',
+  },
+];

@@ -26,6 +26,7 @@ import { InlineForm } from '@cffe/fe-backend-component';
 import { createFilterFormSchema, createTableSchema } from './schema';
 import { queryApplysUrl, queryBizDataReq } from './service';
 import AddDrawer from './components/add-drawer';
+import DetailDrawer from './components/detail-drawer';
 import './index.less';
 
 export interface IProps {}
@@ -35,7 +36,8 @@ const rootCls = 'release-apply-page';
 const ApplyList = (props: IProps) => {
   const { belongData, breadcrumbMap } = useContext(FEContext);
 
-  const [createAppVisible, setCreateAppVisible] = useState(false);
+  const [createApplyVisible, setCreateApplyVisible] = useState<boolean>(false);
+  const [applyDetailVisible, setApplyDetailVisible] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<any>();
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [formInstance] = Form.useForm();
@@ -88,12 +90,20 @@ const ApplyList = (props: IProps) => {
       isFlex
     >
       <AddDrawer
-        visible={createAppVisible}
+        visible={createApplyVisible}
         onClose={(reload) => {
           if (reload) {
             queryAppList();
           }
-          setCreateAppVisible(false);
+          setCreateApplyVisible(false);
+        }}
+      />
+
+      <DetailDrawer
+        id={curRecord?.id || ''}
+        visible={applyDetailVisible}
+        onClose={() => {
+          setApplyDetailVisible(false);
         }}
       />
 
@@ -129,8 +139,7 @@ const ApplyList = (props: IProps) => {
           <Button
             type="primary"
             onClick={() => {
-              setCurRecord(undefined);
-              setCreateAppVisible(true);
+              setCreateApplyVisible(true);
             }}
           >
             <PlusOutlined />
@@ -142,7 +151,7 @@ const ApplyList = (props: IProps) => {
             createTableSchema({
               onDetailClick: (record) => {
                 setCurRecord(record);
-                setCreateAppVisible(true);
+                setApplyDetailVisible(true);
               },
               belongData,
             }) as any
