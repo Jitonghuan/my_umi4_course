@@ -26,8 +26,8 @@ export default [
     redirect: `${ds.pagePrefix}/application/all`,
   },
   {
-    path: `${ds.pagePrefix}/publish`,
-    redirect: `${ds.pagePrefix}/publish/function`,
+    path: `${ds.pagePrefix}/release`,
+    redirect: `${ds.pagePrefix}/release/function`,
   },
   {
     path: `${ds.pagePrefix}/order`,
@@ -116,18 +116,90 @@ export default [
     ],
   },
   {
-    path: 'publish',
-    name: '发布管理',
-    hideInMenu: true,
+    path: 'release',
+    name: '发布申请管理',
     icon: 'icon-exit',
     routes: [
       {
         path: 'function',
         name: '发布功能管理',
-        component: '@/pages/publish/function-publish',
+        component: '@/pages/release/function',
+        exact: true,
+      },
+      {
+        path: 'function/addFunction',
+        name: '新增发布功能',
+        hideInMenu: true,
+        component: '@/pages/release/function/function-add',
+      },
+      {
+        path: 'function/editFunction',
+        name: '编辑发布功能',
+        hideInMenu: true,
+        component: '@/pages/release/function/function-edit',
+      },
+      {
+        path: 'plan',
+        name: '发布计划管理',
+        exact: true,
+        component: '@/pages/release/plan',
+      },
+      {
+        path: 'plan/addFunctionModify',
+        name: '新增功能变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/function-modify/add-modify',
+      },
+      {
+        path: 'plan/editFunctionModify',
+        name: '编辑功能变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/function-modify/edit-modify',
+      },
+      {
+        path: 'plan/addConfigModify',
+        name: '新增配置变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/config-modify/add-modify',
+      },
+      {
+        path: 'plan/editConfigModify',
+        name: '编辑配置变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/config-modify/edit-modify',
+      },
+      {
+        path: 'plan/addDatabaseModify',
+        name: '新增数据库变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/database-modify/add-modify',
+      },
+      {
+        path: 'plan/editDatabasenModify',
+        name: '编辑数据库变更',
+        hideInMenu: true,
+        component: '@/pages/release/plan/database-modify/edit-modify',
+      },
+      {
+        path: 'apply',
+        name: '发布申请',
+        component: '@/pages/release/apply',
       },
     ],
   },
+  // {
+  //   path: 'publish',
+  //   name: '发布管理',
+  //   hideInMenu: true,
+  //   icon: 'icon-exit',
+  //   routes: [
+  //     {
+  //       path: 'function',
+  //       name: '发布功能管理',
+  //       component: '@/pages/publish/function-publish',
+  //     },
+  //   ],
+  // },
   {
     path: 'ticket',
     name: '工单管理',
