@@ -1,7 +1,7 @@
 {
   "name": "fe-matrix",
   "description": "fe-matrix",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "scripts": {
     "inject": "node script/config-inject.js",
     "umi": "cross-env MOCK=none umi dev",
