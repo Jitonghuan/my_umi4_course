@@ -19,7 +19,7 @@ const FunctionCom: React.FC = () => {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      // width: '3%',
+      width: 70,
       render: (text) => (
         // <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${text}`}>
         <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
@@ -105,7 +105,7 @@ const FunctionCom: React.FC = () => {
       title: '计划发布时间',
       dataIndex: 'planTime',
       key: 'planTime',
-      // width: '8%',
+      width: '8%',
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
       //     {text}
@@ -122,19 +122,19 @@ const FunctionCom: React.FC = () => {
       title: '实际发布时间',
       dataIndex: 'actualTime',
       key: 'actualTime',
-      // width: '8%',
+      width: '8%',
     },
     {
       title: '创建人',
       dataIndex: 'person',
       key: 'person',
-      // width: '5%',
+      width: 100,
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
-      // width: '8%',
+      width: '8%',
       // width: 100,
       // render: (text) => (
       //   <span style={{ display: 'inline-block', width: 120 }}>{text}</span>
@@ -307,7 +307,7 @@ const FunctionCom: React.FC = () => {
         }
         className="table-form"
         onSearch={onSearch}
-        scroll={{ x: 1800, y: 300, scrollToFirstRowOnChange: true }}
+        scroll={{ x: 1800 }}
       />
     </MatrixPageContent>
   );

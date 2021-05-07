@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Card, Button, Input, Row, Col, Space } from 'antd';
 import { history } from 'umi';
+import { ContentCard } from '@/components/vc-page-content';
 import BaseForm from '../../components/base-form';
 import { InitValue, BaseFormProps } from '../../../typing';
 import './index.less';
@@ -29,13 +30,23 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   }, [initValueObj]);
 
   return (
-    <div className="add-content">
-      <Card bordered={false} title="基本信息" className="base-info">
+    <ContentCard>
+      <Card
+        bordered={false}
+        title="基本信息"
+        className="base-info"
+        headStyle={{ paddingLeft: 0 }}
+      >
         <Form form={form} className="form-list">
           {<BaseForm initValueObj={initValueObj} isCheck={isCheck} />}
         </Form>
       </Card>
-      <Card bordered={false} title="配置变更内容">
+      <Card
+        bordered={false}
+        title="配置变更内容"
+        headStyle={{ paddingLeft: 0 }}
+        className="content-info"
+      >
         <Row>
           <Col span={18}>
             <Form form={form} className="form-list">
@@ -67,7 +78,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
           </Col>
         </Row>
       </Card>
-    </div>
+    </ContentCard>
   );
 };
 
