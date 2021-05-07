@@ -78,7 +78,11 @@ const ApplyList = (props: IProps) => {
         formInstance.resetFields(['lineCode']);
       }
       prevBelong.current = value;
-      queryBusiness(value);
+      if (value !== undefined) {
+        queryBusiness(value);
+      } else {
+        setBusinessData([]);
+      }
     }
   }, []);
 
@@ -125,6 +129,7 @@ const ApplyList = (props: IProps) => {
           onReset={() => {
             if (tableProps.loading) return;
             formInstance.resetFields();
+            setBusinessData([]);
             reset();
             queryAppList({
               pageIndex: 1,
