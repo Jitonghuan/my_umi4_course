@@ -13,13 +13,26 @@ import './index.less';
 
 type changeTypeItem = {
   path: string;
+  checkPath: string;
   text: string;
 };
 
 const changeType: Record<string, changeTypeItem> = {
-  func: { path: 'editFunctionModify', text: '功能' },
-  config: { path: 'editConfigModify', text: '配置' },
-  database: { path: 'editDatabasenModify', text: '数据库' },
+  func: {
+    path: 'editFunctionModify',
+    checkPath: 'checkFunctionModify',
+    text: '功能',
+  },
+  config: {
+    path: 'editConfigModify',
+    checkPath: 'checkConfigModify',
+    text: '配置',
+  },
+  database: {
+    path: 'editDatabasenModify',
+    checkPath: 'checkDatabasenModify',
+    text: '数据库',
+  },
 };
 
 const FunctionCom: React.FC = () => {
@@ -42,7 +55,7 @@ const FunctionCom: React.FC = () => {
           // }
           to={
             record?.type
-              ? `./plan/${changeType[record?.type]?.path}?id=${text}`
+              ? `./plan/${changeType[record?.type]?.checkPath}?id=${text}`
               : ''
           }
         >
@@ -149,7 +162,7 @@ const FunctionCom: React.FC = () => {
       dataIndex: 'option',
       key: 'option',
       fixed: 'right',
-      width: '6%',
+      width: 80,
       render: (_: string, record) => (
         //根据不同类型跳转
         <Space>
@@ -298,7 +311,7 @@ const FunctionCom: React.FC = () => {
     const arr: Item[] = new Array(20).fill(1).map((_, i) => {
       return {
         id: `${i + 10000}`,
-        type: 'database',
+        type: 'func',
         status: 0,
         owner: '撒谎的',
         line: 'asdasd',

@@ -1,6 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { TableProps } from 'antd/lib/table';
-import { FormItemProps } from 'antd/lib/form';
+import { TableProps, FormItemProps } from 'antd/lib';
 import { Moment } from 'moment';
 
 export type TypeProps = 'select' | 'input' | 'date';
@@ -23,6 +22,7 @@ export interface FormProps<T = any> extends FormItemProps {
   showTime?: boolean;
   width?: string | number;
   showSelectSearch?: boolean;
+  disable?: boolean;
   onChange?: (e: T) => void;
 }
 

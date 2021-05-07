@@ -22,7 +22,7 @@ const FunctionCom: React.FC = () => {
       // width: '3%',
       render: (text) => (
         // <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${text}`}>
-        <Link to={`./function/editFunction?id=${text}`}>{text}</Link>
+        <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
       ),
     },
     {

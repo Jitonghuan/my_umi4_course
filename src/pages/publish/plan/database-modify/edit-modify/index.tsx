@@ -5,7 +5,7 @@ import Coms from '../add-edit';
 const EditModify: React.FC = () => {
   return (
     <MatrixPageContent>
-      <Coms initValueObj={{}} />
+      <Coms initValueObj={{}} type="edit" />
     </MatrixPageContent>
   );
 };

@@ -22,6 +22,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       width,
       key,
       showSelectSearch,
+      disable,
       onChange,
       ...rest
     } = v;
@@ -49,6 +50,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               style={{ width: width, ...styles }}
               onChange={onChange}
               getPopupContainer={(triggerNode) => triggerNode.parentElement}
+              disabled={disable}
             >
               {option?.map((item) => (
                 <Option key={item.key} value={item.key}>
@@ -74,6 +76,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               allowClear
               style={{ width: width, ...styles }}
               onChange={onChange}
+              disabled={disable}
             />
           </Item>
         );
@@ -92,6 +95,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               showTime={showTime}
               style={{ width: width, ...styles }}
               onChange={onChange}
+              disabled={disable}
             />
           </Item>
         );

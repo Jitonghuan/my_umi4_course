@@ -94,9 +94,9 @@ const EditFunction: React.FC = () => {
 
   return (
     <EditTable
-      type="edit"
+      type="check"
       initData={initData}
-      title="编辑发布功能"
+      title="查看发布功能"
       ownOption={ownOption}
       lineOption={lineOption}
       modelOption={modelOption}

@@ -32,4 +32,5 @@ export interface InitValue {
 
 export interface BaseFormProps {
   initValueObj?: InitValue;
+  isCheck?: boolean;
 }

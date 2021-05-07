@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import MatrixPageContent from '@/components/matrix-page-content';
 import Coms from '../add-edit';
 
-const AddModify: React.FC = () => {
+const EditModify: React.FC = () => {
   return (
     <MatrixPageContent>
-      <Coms type="add" />
+      <Coms initValueObj={{}} type="check" />
     </MatrixPageContent>
   );
 };
 
-export default AddModify;
+export default EditModify;

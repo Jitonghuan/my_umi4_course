@@ -4,7 +4,7 @@ import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import { BaseFormProps } from '../../typing';
 
-const BaseForm: React.FC<BaseFormProps> = ({ initValueObj }) => {
+const BaseForm: React.FC<BaseFormProps> = ({ initValueObj, isCheck }) => {
   const baseFormOption: FormProps[] = [
     {
       key: '1',
@@ -82,6 +82,7 @@ const BaseForm: React.FC<BaseFormProps> = ({ initValueObj }) => {
     v.itemStyle = { width: '100%' };
     v.labelCol = { span: 8 };
     v.wrapperCol = { span: 18 };
+    v.disable = isCheck;
   });
 
   return (

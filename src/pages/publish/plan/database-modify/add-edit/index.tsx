@@ -12,10 +12,12 @@ interface ModifyProps extends InitValue {
 
 interface IProps extends BaseFormProps {
   initValueObj?: ModifyProps;
+  type: 'add' | 'edit' | 'check';
 }
 
-const Coms: React.FC<IProps> = ({ initValueObj }) => {
+const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const [form] = Form.useForm();
+  const isCheck = type === 'check';
 
   const submit = () => {
     form.validateFields().then((value) => {
@@ -23,11 +25,15 @@ const Coms: React.FC<IProps> = ({ initValueObj }) => {
     });
   };
 
+  useEffect(() => {
+    form.setFieldsValue({});
+  }, [initValueObj]);
+
   return (
     <div className="add-content">
       <Card bordered={false} title="基本信息" className="base-info">
         <Form form={form} className="form-list">
-          {<BaseForm initValueObj={initValueObj} />}
+          {<BaseForm initValueObj={initValueObj} isCheck={isCheck} />}
         </Form>
       </Card>
       <Card bordered={false} title="配置变更内容">
@@ -44,6 +50,7 @@ const Coms: React.FC<IProps> = ({ initValueObj }) => {
                 <Input.TextArea
                   rows={18}
                   placeholder="请在此输入数据库变更内容"
+                  disabled={isCheck}
                 />
               </Form.Item>
               <Form.Item
@@ -56,16 +63,19 @@ const Coms: React.FC<IProps> = ({ initValueObj }) => {
                 <Input.TextArea
                   rows={18}
                   placeholder="请在此输入数据库变更内容"
+                  disabled={isCheck}
                 />
               </Form.Item>
-              <Form.Item wrapperCol={{ span: 18, offset: 2 }}>
-                <Space>
-                  <Button type="primary" onClick={submit}>
-                    确定
-                  </Button>
-                  <Button onClick={() => history.goBack()}>取消</Button>
-                </Space>
-              </Form.Item>
+              {!isCheck && (
+                <Form.Item wrapperCol={{ span: 18, offset: 2 }}>
+                  <Space>
+                    <Button type="primary" onClick={submit}>
+                      确定
+                    </Button>
+                    <Button onClick={() => history.goBack()}>取消</Button>
+                  </Space>
+                </Form.Item>
+              )}
             </Form>
           </Col>
         </Row>

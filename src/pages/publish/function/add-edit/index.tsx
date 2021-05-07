@@ -47,7 +47,7 @@ interface JiraItem {
 
 interface EditTableProps {
   initData: Item[];
-  type: 'add' | 'edit';
+  type: 'add' | 'edit' | 'check';
   title: string;
   ownOption: OptionProps[];
   lineOption: OptionProps[];
@@ -72,6 +72,8 @@ const EditTable: React.FC<EditTableProps> = ({
   const [JiraData, setJiraData] = useState<JiraItem[]>([]);
   const [orgOption, setOrgOption] = useState<OptionProps[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  const isCheck = type === 'check';
 
   const {
     form,
@@ -118,6 +120,7 @@ const EditTable: React.FC<EditTableProps> = ({
           ))}
         </Select>
       ),
+      render: (text: string[]) => <>{text.join(',')}</>,
     },
     {
       title: '涉及业务范围',
@@ -216,6 +219,10 @@ const EditTable: React.FC<EditTableProps> = ({
     };
   });
 
+  if (isCheck) {
+    mergedColumns.splice(columns.length - 1, 1);
+  }
+
   const onSubmit = () => {
     console.log(data, 'hhh');
   };
@@ -261,6 +268,7 @@ const EditTable: React.FC<EditTableProps> = ({
       placeholder: '请选择',
       required: true,
       option: ownOption,
+      disable: isCheck,
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
         formSelectChange(e, 'own');
@@ -275,6 +283,7 @@ const EditTable: React.FC<EditTableProps> = ({
       placeholder: '请选择',
       required: true,
       option: lineOption,
+      disable: isCheck,
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
         formSelectChange(e, 'line');
@@ -289,6 +298,7 @@ const EditTable: React.FC<EditTableProps> = ({
       placeholder: '请选择',
       required: true,
       option: modelOption,
+      disable: isCheck,
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
         formSelectChange(e, 'model');
@@ -331,27 +341,34 @@ const EditTable: React.FC<EditTableProps> = ({
           </Form>
         </Card>
       </div>
-      <div className="page-bottom">
-        <Space>
-          <Button type="primary" onClick={onSubmit}>
-            提交
-          </Button>
-          <Button onClick={() => history.goBack()}>取消</Button>
-        </Space>
-      </div>
+      {!isCheck && (
+        <div className="page-bottom">
+          <Space>
+            <Button type="primary" onClick={onSubmit}>
+              提交
+            </Button>
+            <Button onClick={() => history.goBack()}>取消</Button>
+          </Space>
+        </div>
+      )}
       <Modal
         title="关联Jira需求单"
         visible={modalVisible}
         width="100%"
         onCancel={() => setModalVisible(false)}
+        footer={!isCheck}
       >
         <Table
           columns={JiraColumns}
           dataSource={JiraData}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: onSelectChange,
-          }}
+          rowSelection={
+            !isCheck
+              ? {
+                  selectedRowKeys,
+                  onChange: onSelectChange,
+                }
+              : undefined
+          }
         />
       </Modal>
     </MatrixPageContent>

@@ -11,12 +11,19 @@ interface ModifyProps extends InitValue {}
 
 interface IProps extends BaseFormProps {
   initValueObj?: ModifyProps;
+  type: 'add' | 'edit' | 'check';
 }
 
-const Coms: React.FC<IProps> = ({ initValueObj }) => {
+const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const [form] = Form.useForm();
   const [options, setOptions] = useState<{ value: string }[]>([]);
   const [tableData, setTableDate] = useState([]);
+
+  const isCheck = type === 'check';
+
+  useEffect(() => {
+    form.setFieldsValue({});
+  }, [initValueObj]);
 
   const columns: ColumnsType<Item> = [
     {
@@ -75,13 +82,13 @@ const Coms: React.FC<IProps> = ({ initValueObj }) => {
       key: 'option',
       fixed: 'right',
       width: 100,
-      render: () => (
-        <Button type="ghost" danger>
-          删除
-        </Button>
-      ),
+      render: () => <Button danger>删除</Button>,
     },
   ];
+
+  if (isCheck) {
+    columns.splice(columns.length - 1, 1);
+  }
 
   const handleChange = () => {};
 
@@ -91,29 +98,33 @@ const Coms: React.FC<IProps> = ({ initValueObj }) => {
     <div className="add-content">
       <Card bordered={false} title="基本信息" className="base-info">
         <Form form={form} className="form-list">
-          {<BaseForm initValueObj={initValueObj} />}
+          {<BaseForm initValueObj={initValueObj} isCheck={isCheck} />}
         </Form>
       </Card>
       <Card bordered={false} title="关联相关功能">
         <Row>
           <Col span={18} offset={2}>
-            <AutoComplete
-              placeholder="请输入关键词搜索功能"
-              options={options}
-              onChange={handleChange}
-              onSelect={handleSelect}
-              style={{ width: '60%', marginBottom: 10 }}
-            />
+            {!isCheck && (
+              <AutoComplete
+                placeholder="请输入关键词搜索功能"
+                options={options}
+                onChange={handleChange}
+                onSelect={handleSelect}
+                style={{ width: '60%', marginBottom: 10 }}
+              />
+            )}
             <Table
               columns={columns}
               dataSource={tableData}
               pagination={false}
               bordered
             />
-            <Space style={{ marginTop: 10 }}>
-              <Button type="primary">确定</Button>
-              <Button onClick={() => history.goBack()}>取消</Button>
-            </Space>
+            {!isCheck && (
+              <Space style={{ marginTop: 10 }}>
+                <Button type="primary">确定</Button>
+                <Button onClick={() => history.goBack()}>取消</Button>
+              </Space>
+            )}
           </Col>
         </Row>
       </Card>

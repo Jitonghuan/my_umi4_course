@@ -5,7 +5,7 @@ import Coms from '../add-edit';
 const AddModify: React.FC = () => {
   return (
     <MatrixPageContent>
-      <Coms />
+      <Coms type="add" />
     </MatrixPageContent>
   );
 };

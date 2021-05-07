@@ -139,6 +139,12 @@ export default [
         component: '@/pages/publish/function/function-edit',
       },
       {
+        path: 'function/checkFunction',
+        name: '查看发布功能',
+        hideInMenu: true,
+        component: '@/pages/publish/function/function-check',
+      },
+      {
         path: 'plan',
         name: '发布计划管理',
         exact: true,
@@ -157,6 +163,12 @@ export default [
         component: '@/pages/publish/plan/function-modify/edit-modify',
       },
       {
+        path: 'plan/checkFunctionModify',
+        name: '查看功能变更',
+        hideInMenu: true,
+        component: '@/pages/publish/plan/function-modify/check-modify',
+      },
+      {
         path: 'plan/addConfigModify',
         name: '新增配置变更',
         hideInMenu: true,
@@ -169,6 +181,12 @@ export default [
         component: '@/pages/publish/plan/config-modify/edit-modify',
       },
       {
+        path: 'plan/checkConfigModify',
+        name: '查看配置变更',
+        hideInMenu: true,
+        component: '@/pages/publish/plan/config-modify/check-modify',
+      },
+      {
         path: 'plan/addDatabaseModify',
         name: '新增数据库变更',
         hideInMenu: true,
@@ -179,6 +197,12 @@ export default [
         name: '编辑数据库变更',
         hideInMenu: true,
         component: '@/pages/publish/plan/database-modify/edit-modify',
+      },
+      {
+        path: 'plan/checkDatabasenModify',
+        name: '查看数据库变更',
+        hideInMenu: true,
+        component: '@/pages/publish/plan/database-modify/check-modify',
       },
       {
         path: 'apply',
