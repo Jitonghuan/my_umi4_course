@@ -88,7 +88,7 @@ const ApplyList = (props: IProps) => {
 
   return (
     <VCPageContent
-      height="calc(100vh - 118px)"
+      height="calc(100vh - 60px)"
       breadcrumbMap={breadcrumbMap}
       pathname={location.pathname}
       isFlex

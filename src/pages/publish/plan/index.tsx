@@ -311,7 +311,7 @@ const FunctionCom: React.FC = () => {
     const arr: Item[] = new Array(20).fill(1).map((_, i) => {
       return {
         id: `${i + 10000}`,
-        type: 'func',
+        type: 'database',
         status: 0,
         owner: '撒谎的',
         line: 'asdasd',
@@ -381,7 +381,7 @@ const FunctionCom: React.FC = () => {
         }
         className="table-form"
         onSearch={onSearch}
-        scroll={{ x: 2000, y: 500 }}
+        scroll={{ x: 2000 }}
         searchText="查询"
       />
     </MatrixPageContent>

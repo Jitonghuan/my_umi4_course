@@ -3,6 +3,7 @@ import { Form, Card, AutoComplete, Table, Button, Row, Col, Space } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Moment } from 'moment';
 import { history } from 'umi';
+import { ContentCard } from '@/components/vc-page-content';
 import BaseForm from '../../components/base-form';
 import { InitValue, BaseFormProps, Item } from '../../../typing';
 import './index.less';
@@ -95,13 +96,22 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const handleSelect = () => {};
 
   return (
-    <div className="add-content">
-      <Card bordered={false} title="基本信息" className="base-info">
+    <ContentCard>
+      <Card
+        bordered={false}
+        title="基本信息"
+        className="base-info"
+        headStyle={{ paddingLeft: 0 }}
+      >
         <Form form={form} className="form-list">
           {<BaseForm initValueObj={initValueObj} isCheck={isCheck} />}
         </Form>
       </Card>
-      <Card bordered={false} title="关联相关功能">
+      <Card
+        bordered={false}
+        title="关联相关功能"
+        headStyle={{ paddingLeft: 0 }}
+      >
         <Row>
           <Col span={18} offset={2}>
             {!isCheck && (
@@ -128,7 +138,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
           </Col>
         </Row>
       </Card>
-    </div>
+    </ContentCard>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Space,
   Form,
@@ -7,7 +7,6 @@ import {
   Typography,
   Button,
   Table,
-  Card,
   Select,
   DatePicker,
   Modal,
@@ -16,6 +15,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import moment, { Moment } from 'moment';
 import { history } from 'umi';
 import MatrixPageContent from '@/components/matrix-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { FormProps } from '@/components/table-search/typing';
 import { renderForm } from '@/components/table-search/form';
 import { JiraColumns } from '../constant';
@@ -72,6 +72,7 @@ const EditTable: React.FC<EditTableProps> = ({
   const [JiraData, setJiraData] = useState<JiraItem[]>([]);
   const [orgOption, setOrgOption] = useState<OptionProps[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  let num = useRef(0);
 
   const isCheck = type === 'check';
 
@@ -251,12 +252,21 @@ const EditTable: React.FC<EditTableProps> = ({
   }, []);
 
   useEffect(() => {
+    if (!Object.keys(defaultValueObj).length || num.current !== 0) return;
+
     form.setFieldsValue({
       own: defaultValueObj?.own,
       line: defaultValueObj?.line,
       model: defaultValueObj?.model,
     });
+    num.current = num.current + 1;
   }, [defaultValueObj]);
+
+  // useEffect(()=>{
+  //   return () => {
+  //     num.current = 0
+  //   };
+  // })
 
   const formLists: FormProps[] = [
     {
@@ -309,8 +319,8 @@ const EditTable: React.FC<EditTableProps> = ({
   return (
     <MatrixPageContent className="page-content">
       <div className="page-top">
-        <Card bordered={false} title={title}>
-          <Form form={form} component={false}>
+        <ContentCard title={title}>
+          <Form form={form} component={false} initialValues={defaultValueObj}>
             <div className="page-top-form">
               <Space size={16}>{renderForm(formLists)}</Space>
               <Button type="primary" onClick={() => setModalVisible(true)}>
@@ -339,18 +349,19 @@ const EditTable: React.FC<EditTableProps> = ({
               </Button>
             )}
           </Form>
-        </Card>
+          {!isCheck && (
+            <div className="page-bottom">
+              <Space>
+                <Button type="primary" onClick={onSubmit}>
+                  提交
+                </Button>
+                <Button onClick={() => history.goBack()}>取消</Button>
+              </Space>
+            </div>
+          )}
+        </ContentCard>
       </div>
-      {!isCheck && (
-        <div className="page-bottom">
-          <Space>
-            <Button type="primary" onClick={onSubmit}>
-              提交
-            </Button>
-            <Button onClick={() => history.goBack()}>取消</Button>
-          </Space>
-        </div>
-      )}
+
       <Modal
         title="关联Jira需求单"
         visible={modalVisible}
