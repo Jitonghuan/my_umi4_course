@@ -111,6 +111,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
         bordered={false}
         title="关联相关功能"
         headStyle={{ paddingLeft: 0 }}
+        className="content-info"
       >
         <Row>
           <Col span={18} offset={2}>

@@ -46,6 +46,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
         bordered={false}
         title="配置变更内容"
         headStyle={{ paddingLeft: 0 }}
+        className="content-info"
       >
         <Row>
           <Col span={18} offset={2}>
