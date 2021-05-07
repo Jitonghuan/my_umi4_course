@@ -121,7 +121,9 @@ const EditTable: React.FC<EditTableProps> = ({
           ))}
         </Select>
       ),
-      render: (text: string[]) => <>{text.join(',')}</>,
+      render: (text: string[]) => (
+        <>{Array.isArray(text) ? text.join(',') : ''}</>
+      ),
     },
     {
       title: '涉及业务范围',
@@ -336,7 +338,7 @@ const EditTable: React.FC<EditTableProps> = ({
                   cell: EditableCell,
                 },
               }}
-              scroll={{ y: 400 }}
+              scroll={{ y: 200 }}
             />
             {type === 'add' && (
               <Button
