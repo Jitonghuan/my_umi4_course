@@ -127,7 +127,9 @@ const Coms = () => {
         render: (_, record) => {
           return (
             <React.Fragment>
-              <a onClick={() => handleOperate('report', record)}>测试报告</a>
+              {Number(record.status) === 2 && (
+                <a onClick={() => handleOperate('report', record)}>测试报告</a>
+              )}
               {!!record.errorLog && (
                 <a
                   style={{ marginLeft: '12px' }}
