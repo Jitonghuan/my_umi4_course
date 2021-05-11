@@ -1,12 +1,19 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import { TableProps, FormItemProps } from 'antd/lib';
 import { Moment } from 'moment';
 
-export type TypeProps = 'select' | 'input' | 'date';
+export type TypeProps =
+  | 'select'
+  | 'input'
+  | 'date'
+  | 'area'
+  | 'inputNumber'
+  | 'radio'
+  | 'other';
 
 export interface OptionProps {
   value: string;
-  key: string;
+  key: React.Key;
 }
 
 export interface FormProps<T = any> extends FormItemProps {
@@ -23,6 +30,9 @@ export interface FormProps<T = any> extends FormItemProps {
   width?: string | number;
   showSelectSearch?: boolean;
   disable?: boolean;
+  extraForm?: ReactNode;
+  className?: string;
+  validatorMessage?: string;
   onChange?: (e: T) => void;
 }
 

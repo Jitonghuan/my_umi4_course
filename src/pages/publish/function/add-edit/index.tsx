@@ -165,7 +165,7 @@ const EditTable: React.FC<EditTableProps> = ({
       dataIndex: 'option',
       key: 'option',
       width: 100,
-      render: (_: any, record: Item) => {
+      render: (_: string, record: Item) => {
         const editable = isEditing(record);
         return editable ? (
           <span>

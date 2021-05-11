@@ -117,7 +117,7 @@ export default [
   },
   {
     path: 'publish',
-    name: '发布申请管理',
+    name: '发布管理',
     icon: 'icon-exit',
     routes: [
       {
@@ -267,6 +267,28 @@ export default [
         path: 'application',
         name: '应用监控',
         component: '@/pages/monitor/application',
+      },
+      {
+        path: 'prometheus',
+        name: 'Prometheus监控',
+        component: '@/pages/monitor/prometheus',
+        exact: true,
+      },
+      {
+        path: 'prometheus/prometheus-add',
+        name: '接入Prometheus',
+        hideInMenu: true,
+        component: '@/pages/monitor/prometheus/prometheus-form',
+      },
+      {
+        path: 'template',
+        name: '模板管理',
+        component: '@/pages/monitor/template',
+      },
+      {
+        path: 'history',
+        name: '报警历史',
+        component: '@/pages/monitor/history',
       },
     ],
   },

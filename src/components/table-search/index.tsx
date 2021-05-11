@@ -10,6 +10,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
   extraNode,
   style,
   className,
+  tableTitle,
   ...rest
 }) => {
   return (
@@ -19,10 +20,12 @@ const TableSearch: React.FC<TableSearchProps> = ({
       </FilterCard>
       <ContentCard>
         <div className="extra-node-box">
-          {showTableTitle ? <b style={{ fontSize: '16px' }}>{}</b> : null}
+          {showTableTitle ? (
+            <b style={{ fontSize: '16px' }}>{tableTitle}</b>
+          ) : null}
           <>{extraNode}</>
         </div>
-        <Table {...rest} />
+        <Table className={className} {...rest} />
       </ContentCard>
     </>
   );
