@@ -131,19 +131,20 @@ const EditableTable: React.FC<EditableTableState> = ({
       title: '键',
       dataIndex: 'key',
       editable: true,
-      width: '30%',
+      width: '45%',
     },
     {
       title: '值',
       dataIndex: 'value',
       key: 'value',
       editable: true,
-      width: '30%',
+      width: '45%',
     },
     {
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
+      width: 50,
       render: (_: string, record: Item) => {
         const findData = dataSource.find((v) => v.id === record.id);
         return (
