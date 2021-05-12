@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form } from 'antd';
+import { FormInstance } from 'antd/lib';
 import EditTable from '../../../template/editTable';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import { Item } from '../../../typing';
 
-const StepOne: React.FC = () => {
+interface StepOneProps {
+  getTableData: (value: Record<string, Item[]>) => void;
+  form?: FormInstance;
+}
+
+const StepOne: React.FC<StepOneProps> = ({ getTableData }) => {
   const [matchlabels, setMatchlabels] = useState<Item[]>([]);
 
   const matchlabelsFun = (value: Item[]) => {
     console.log(value, 'label');
     setMatchlabels(value);
   };
+
+  useEffect(() => {
+    getTableData({ matchlabels: matchlabels });
+  }, [matchlabels]);
 
   const formOptions: FormProps[] = [
     {
@@ -32,7 +42,7 @@ const StepOne: React.FC = () => {
       dataIndex: 'applyName',
       placeholder: '请选择',
       required: true,
-      option: [],
+      option: [{ key: 'ccc', value: 'hhh' }],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -44,7 +54,7 @@ const StepOne: React.FC = () => {
       dataIndex: 'environmentName',
       placeholder: '请选择',
       required: true,
-      option: [],
+      option: [{ key: 'aa', value: 'hhh' }],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -73,6 +83,8 @@ const StepOne: React.FC = () => {
       dataIndex: 'url',
       placeholder: '请输入',
       required: true,
+      pattern: /^(https?|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]$/,
+      validatorMessage: '请输入正确的url',
       onChange: (e: string) => {
         console.log(e);
       },

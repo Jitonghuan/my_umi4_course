@@ -15,7 +15,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
 }) => {
   return (
     <>
-      <FilterCard className="antd-card-form">
+      <FilterCard className="antd-card-form" bodyStyle={{ paddingBottom: 12 }}>
         <From {...rest} />
       </FilterCard>
       <ContentCard>

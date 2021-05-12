@@ -281,6 +281,12 @@ export default [
         component: '@/pages/monitor/prometheus/prometheus-form',
       },
       {
+        path: 'prometheus/prometheus-edit',
+        name: '编辑Prometheus',
+        hideInMenu: true,
+        component: '@/pages/monitor/prometheus/prometheus-form',
+      },
+      {
         path: 'template',
         name: '模板管理',
         component: '@/pages/monitor/template',

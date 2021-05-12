@@ -85,7 +85,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
           ref={inputRef}
           onPressEnter={save}
           onBlur={save}
-          style={{ width: 160 }}
+          // style={{ width: 160 }}
         />
       </Form.Item>
     ) : (
@@ -232,6 +232,7 @@ const EditableTable: React.FC<EditableTableState> = ({
         columns={EditColumns}
         pagination={false}
         rowKey="id"
+        style={{ width: '100%' }}
       />
     </div>
   );

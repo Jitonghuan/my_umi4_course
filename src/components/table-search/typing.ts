@@ -33,6 +33,7 @@ export interface FormProps<T = any> extends FormItemProps {
   extraForm?: ReactNode;
   className?: string;
   validatorMessage?: string;
+  pattern?: RegExp;
   onChange?: (e: T) => void;
 }
 

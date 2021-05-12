@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Form } from 'antd';
+import { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
 import TemplateDrawer from '../../../template/templateDrawer';
 import { Item } from '../../../typing';
 import './index.less';
 
-const StepOne: React.FC = () => {
-  // const [dataSource, setDataSource] = useState<Item[]>([]);
-  const [dataSource, setDataSource] = useState<Item[]>([
-    { ruleName: '11' },
-    { ruleName: '22' },
-  ]);
+interface StepTwoProps {
+  getTableData: (value: Record<string, Item[]>) => void;
+  form?: FormInstance;
+}
+
+const StepOne: React.FC<StepTwoProps> = ({ form, getTableData }) => {
+  const [dataSource, setDataSource] = useState<Item[]>([]);
+
+  // const [dataSource, setDataSource] = useState<Item[]>([
+  //   { ruleName: '11' },
+  //   { ruleName: '22' },
+  // ]);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则模版');
 
@@ -96,6 +103,10 @@ const StepOne: React.FC = () => {
     console.log(value);
   };
 
+  useEffect(() => {
+    getTableData({ templates: dataSource });
+  }, [dataSource]);
+
   return (
     <Form.Item>
       <Table
@@ -107,7 +118,7 @@ const StepOne: React.FC = () => {
       <Button
         block
         icon={<PlusOutlined />}
-        style={{ borderLeft: 'none', borderRight: 'none', marginTop: 10 }}
+        id="button-add"
         onClick={() => {
           setDrawerVisible(true);
         }}

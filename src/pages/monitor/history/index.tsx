@@ -99,28 +99,28 @@ const HistoryCom: React.FC = () => {
         <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>
       ),
     },
-    {
-      title: '操作',
-      dataIndex: 'option',
-      key: 'option',
-      width: 100,
-      // width: '6%',
-      render: (_: string, record: Item) => (
-        <Space>
-          {/* <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${record.id}`}> */}
-          <Link to={`./function/editFunction?id=${record.id}`}>编辑</Link>
-          <Popconfirm
-            title="确认删除？"
-            // onConfirm={confirm}
-            // onCancel={cancel}
-            okText="是"
-            cancelText="否"
-          >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
-          </Popconfirm>
-        </Space>
-      ),
-    },
+    // {
+    //   title: '操作',
+    //   dataIndex: 'option',
+    //   key: 'option',
+    //   width: 100,
+    //   // width: '6%',
+    //   render: (_: string, record: Item) => (
+    //     <Space>
+    //       {/* <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${record.id}`}> */}
+    //       <Link to={`./function/editFunction?id=${record.id}`}>编辑</Link>
+    //       <Popconfirm
+    //         title="确认删除？"
+    //         // onConfirm={confirm}
+    //         // onCancel={cancel}
+    //         okText="是"
+    //         cancelText="否"
+    //       >
+    //         <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+    //       </Popconfirm>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   const formOptions: FormProps[] = [

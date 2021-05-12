@@ -5,6 +5,8 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import StepOne from './step-one';
 import StepTwo from './step-two';
+import StepThree from './step-three';
+import { Item } from '../../typing';
 import './index.less';
 
 const { Step } = Steps;
@@ -25,7 +27,10 @@ const stepOption = [
 ];
 
 const PrometheusForm: React.FC = () => {
-  const [current, setCurrent] = useState(1);
+  const [formList, setFormList] = useState({});
+  const [current, setCurrent] = useState(0);
+  const [stepOneTable, setStepOneTable] = useState<Record<string, Item[]>>({});
+  const [stepTwoTable, setStepTwoTable] = useState<Record<string, Item[]>>({});
   const [form] = Form.useForm();
 
   const pre = () => {
@@ -35,6 +40,11 @@ const PrometheusForm: React.FC = () => {
   const next = () => {
     form.validateFields().then((value) => {
       console.log(value, 'value');
+      console.log(
+        { ...formList, ...stepTwoTable, ...stepOneTable, ...value },
+        '123',
+      );
+      setFormList({ ...formList, ...stepTwoTable, ...stepOneTable, ...value });
       setCurrent(current + 1);
     });
     // setCurrent(current + 1);
@@ -43,16 +53,36 @@ const PrometheusForm: React.FC = () => {
   const cancel = () => {
     history.goBack();
   };
+
+  const reset = () => {
+    setCurrent(0);
+    form.resetFields();
+  };
+
+  const stepOneTableFun = (value: Record<string, Item[]>) => {
+    console.log(value, 'one');
+    setStepOneTable(value);
+  };
+
+  const stepTwoTableFun = (value: Record<string, Item[]>) => {
+    console.log(value, 'two');
+    setStepTwoTable(value);
+  };
+
   const isFirstCurrent = current === 0;
 
   const renderDom = [
     {
       current: 0,
-      dom: <StepOne />,
+      dom: <StepOne getTableData={stepOneTableFun} />,
     },
     {
       current: 1,
-      dom: <StepTwo />,
+      dom: <StepTwo getTableData={stepTwoTableFun} />,
+    },
+    {
+      current: 2,
+      dom: <StepThree reset={reset} />,
     },
   ];
 

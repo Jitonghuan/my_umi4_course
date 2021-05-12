@@ -36,6 +36,8 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       className,
       onChange,
       validatorMessage,
+      pattern,
+      rules,
       ...rest
     } = v;
 
@@ -54,12 +56,17 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 name={dataIndex}
                 initialValue={defaultValue}
                 noStyle
-                rules={[
-                  {
-                    required: required,
-                    message: validatorMessage ?? '请选择',
-                  },
-                ]}
+                rules={
+                  rules || extraForm
+                    ? rules
+                    : [
+                        {
+                          required: required,
+                          message: validatorMessage ?? '请选择',
+                          pattern,
+                        },
+                      ]
+                }
               >
                 <Select
                   placeholder={placeholder ?? '请选择'}
@@ -100,12 +107,17 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               initialValue={defaultValue}
               name={dataIndex}
               noStyle
-              rules={[
-                {
-                  required: required,
-                  message: validatorMessage ?? '请输入',
-                },
-              ]}
+              rules={
+                rules || extraForm
+                  ? rules
+                  : [
+                      {
+                        required: required,
+                        message: validatorMessage ?? '请输入',
+                        pattern,
+                      },
+                    ]
+              }
             >
               <Input
                 placeholder={placeholder ?? '请输入'}
@@ -131,12 +143,17 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               initialValue={defaultValue}
               name={dataIndex}
               noStyle
-              rules={[
-                {
-                  required: required,
-                  message: validatorMessage ?? '请选择日期',
-                },
-              ]}
+              rules={
+                rules || extraForm
+                  ? rules
+                  : [
+                      {
+                        required: required,
+                        message: validatorMessage ?? '请选择日期',
+                        pattern,
+                      },
+                    ]
+              }
             >
               <DatePicker
                 showTime={showTime}
@@ -161,12 +178,17 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               initialValue={defaultValue}
               name={dataIndex}
               noStyle
-              rules={[
-                {
-                  required: required,
-                  message: validatorMessage ?? '请输入',
-                },
-              ]}
+              rules={
+                rules || extraForm
+                  ? rules
+                  : [
+                      {
+                        required: required,
+                        message: validatorMessage ?? '请输入',
+                        pattern,
+                      },
+                    ]
+              }
             >
               <Input.TextArea
                 placeholder={placeholder ?? '请输入'}
@@ -192,12 +214,17 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               initialValue={defaultValue}
               name={dataIndex}
               noStyle
-              rules={[
-                {
-                  required: required,
-                  message: validatorMessage ?? '请输入',
-                },
-              ]}
+              rules={
+                rules || extraForm
+                  ? rules
+                  : [
+                      {
+                        required: required,
+                        message: validatorMessage ?? '请输入',
+                        pattern,
+                      },
+                    ]
+              }
             >
               <InputNumber
                 placeholder={placeholder ?? '请输入'}
@@ -222,12 +249,17 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               initialValue={defaultValue}
               name={dataIndex}
               noStyle
-              rules={[
-                {
-                  required: required,
-                  message: validatorMessage ?? '请选择',
-                },
-              ]}
+              rules={
+                rules || extraForm
+                  ? rules
+                  : [
+                      {
+                        required: required,
+                        message: validatorMessage ?? '请选择',
+                        pattern,
+                      },
+                    ]
+              }
             >
               <Radio.Group
                 onChange={onChange}

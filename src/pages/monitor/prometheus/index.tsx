@@ -12,6 +12,10 @@ import './index.less';
 const PrometheusCom: React.FC = () => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
 
+  const confirm = () => {
+    //....
+  };
+
   const columns: ColumnsType<Item> = [
     {
       title: 'ID',
@@ -59,10 +63,10 @@ const PrometheusCom: React.FC = () => {
       width: 100,
       render: (_: string, record: Item) => (
         <Space>
-          <Link to={`./function/editFunction?id=${record.id}`}>编辑</Link>
+          <Link to={`./prometheus/prometheus-edit?id=${record.id}`}>编辑</Link>
           <Popconfirm
             title="确认删除？"
-            // onConfirm={confirm}
+            onConfirm={confirm}
             // onCancel={cancel}
             okText="是"
             cancelText="否"
@@ -239,7 +243,6 @@ const PrometheusCom: React.FC = () => {
           <Button
             type="primary"
             onClick={() => {
-              // history.push(`${ds.pagePrefix}/release/function/addFunction`);
               history.push('./prometheus/prometheus-add');
             }}
             icon={<PlusOutlined />}

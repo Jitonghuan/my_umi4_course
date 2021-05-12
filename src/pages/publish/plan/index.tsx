@@ -4,7 +4,7 @@ import { ColumnsType } from 'antd/lib/table';
 import moment, { Moment } from 'moment';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
-import { FormProps } from '@/components/table-search/typing';
+import { FormProps, OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import ds from '@config/defaultSettings';
 import { statusType } from '../constant';
@@ -37,6 +37,8 @@ const changeType: Record<string, changeTypeItem> = {
 
 const FunctionCom: React.FC = () => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
+  const [ownerOption, setOwnerOption] = useState<OptionProps[]>([]);
+  const [lineOption, setLineOption] = useState<OptionProps[]>([]);
 
   const columns: ColumnsType<Item> = [
     {
@@ -251,9 +253,10 @@ const FunctionCom: React.FC = () => {
       dataIndex: 'owner',
       width: '144px',
       placeholder: '请选择',
-      option: [],
+      option: ownerOption,
       onChange: (e: string) => {
         console.log(e);
+        setLineOption([{ key: '1', value: '2' }]);
       },
     },
     {
@@ -263,7 +266,7 @@ const FunctionCom: React.FC = () => {
       dataIndex: 'line',
       width: '144px',
       placeholder: '请选择',
-      option: [],
+      option: lineOption,
       onChange: (e: string) => {
         console.log(e);
       },
@@ -328,6 +331,12 @@ const FunctionCom: React.FC = () => {
         publisher: '空间的',
       };
     });
+    setOwnerOption([
+      {
+        key: '123',
+        value: '456',
+      },
+    ]);
 
     setDataSource(arr);
   }, []);

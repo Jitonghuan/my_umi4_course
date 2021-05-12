@@ -4,7 +4,7 @@ import { ColumnsType } from 'antd/lib/table';
 import moment, { Moment } from 'moment';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
-import { FormProps } from '@/components/table-search/typing';
+import { FormProps, OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import ds from '@config/defaultSettings';
 import { statusType } from '../constant';
@@ -13,6 +13,9 @@ import './index.less';
 
 const FunctionCom: React.FC = () => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
+  const [ownerOption, setOwnerOption] = useState<OptionProps[]>([]);
+  const [lineOption, setLineOption] = useState<OptionProps[]>([]);
+  const [modelOption, setModelOption] = useState<OptionProps[]>([]);
 
   const columns: ColumnsType<Item> = [
     {
@@ -190,9 +193,11 @@ const FunctionCom: React.FC = () => {
       dataIndex: 'owner',
       width: '144px',
       placeholder: '请选择',
-      option: [],
+      option: ownerOption,
       onChange: (e: string) => {
         console.log(e);
+        //根据e请求赋值
+        setLineOption([]);
       },
     },
     {
@@ -202,9 +207,11 @@ const FunctionCom: React.FC = () => {
       dataIndex: 'line',
       width: '144px',
       placeholder: '请选择',
-      option: [],
+      option: lineOption,
       onChange: (e: string) => {
         console.log(e);
+        //根据e请求赋值
+        setModelOption([]);
       },
     },
     {
@@ -214,7 +221,7 @@ const FunctionCom: React.FC = () => {
       dataIndex: 'model',
       width: '144px',
       placeholder: '请先选择业务线',
-      option: [],
+      option: modelOption,
       onChange: (e: string) => {
         console.log(e);
       },

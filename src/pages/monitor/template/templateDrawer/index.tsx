@@ -157,6 +157,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       // width: '144px',
       placeholder: '请输入',
       required: true,
+      itemStyle: { marginBottom: 0 },
       extraForm: (
         <Form.Item noStyle>
           <Form.Item
@@ -263,7 +264,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   ];
 
   formOptions.forEach((v) => {
-    v.itemStyle = { width: '100%' };
     v.labelCol = { span: 6 };
     v.wrapperCol = { span: 17 };
   });
