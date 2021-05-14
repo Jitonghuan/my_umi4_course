@@ -41,9 +41,18 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       type: 'input',
       label: '规则名称',
       dataIndex: 'ruleName',
-      // width: '144px',
-      placeholder: '请输入',
+      placeholder: '请输入(最多253字符)',
       required: true,
+      rules: [
+        {
+          whitespace: true,
+          required: true,
+          message: '请输入正确的名称',
+          pattern: /^\d+$|^\d[(a-z\d\-\.)]*\d$|^\d+$/,
+          type: 'string',
+          max: 253,
+        },
+      ],
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
       },

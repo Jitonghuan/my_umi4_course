@@ -21,6 +21,10 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData }) => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则模版');
 
+  useEffect(() => {
+    //根据模板列表展示信息 setDataSource
+  }, []);
+
   const columns = [
     {
       title: '规则名称',

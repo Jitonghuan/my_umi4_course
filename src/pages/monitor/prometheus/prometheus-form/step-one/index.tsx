@@ -8,10 +8,11 @@ import { Item } from '../../../typing';
 
 interface StepOneProps {
   getTableData: (value: Record<string, Item[]>) => void;
+  tableData?: Item[];
   form?: FormInstance;
 }
 
-const StepOne: React.FC<StepOneProps> = ({ getTableData }) => {
+const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
   const [matchlabels, setMatchlabels] = useState<Item[]>([]);
 
   const matchlabelsFun = (value: Item[]) => {
@@ -23,14 +24,28 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData }) => {
     getTableData({ matchlabels: matchlabels });
   }, [matchlabels]);
 
+  useEffect(() => {
+    // 或根据id form.setFieldsValue
+  }, []);
+
   const formOptions: FormProps[] = [
     {
       key: '1',
       type: 'input',
       label: '名称',
       dataIndex: 'name',
-      placeholder: '请输入',
+      placeholder: '请输入(最多253字符)',
       required: true,
+      rules: [
+        {
+          whitespace: true,
+          required: true,
+          message: '请输入正确的名称',
+          pattern: /^\d+$|^\d[(a-z\d\-\.)]*\d$|^\d+$/,
+          type: 'string',
+          max: 253,
+        },
+      ],
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
       },
@@ -83,8 +98,13 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData }) => {
       dataIndex: 'url',
       placeholder: '请输入',
       required: true,
-      pattern: /^(https?|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]$/,
-      validatorMessage: '请输入正确的url',
+      rules: [
+        {
+          type: 'url',
+          required: true,
+          message: '请输入正确的url',
+        },
+      ],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -98,7 +118,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData }) => {
       required: true,
       extraForm: (
         <Form.Item noStyle>
-          <EditTable onTableChange={matchlabelsFun} />
+          <EditTable onTableChange={matchlabelsFun} initData={matchlabels} />
         </Form.Item>
       ),
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
