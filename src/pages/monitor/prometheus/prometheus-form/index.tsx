@@ -33,6 +33,8 @@ const PrometheusForm: React.FC = () => {
   const [stepTwoTable, setStepTwoTable] = useState<Record<string, Item[]>>({});
   const [form] = Form.useForm();
 
+  const pathName = history.location.pathname;
+
   const pre = () => {
     setCurrent(current - 1);
   };
@@ -86,11 +88,24 @@ const PrometheusForm: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    if (pathName.indexOf('edit') > -1) {
+      //...
+    }
+  }, []);
+
   return (
     <MatrixPageContent>
       <ContentCard style={{ background: '#F7F8FA' }}>
         <div className="step-style">
-          <Steps current={current}>
+          <Steps
+            current={current}
+            onChange={
+              pathName.indexOf('edit') > -1
+                ? (current) => setCurrent(current)
+                : undefined
+            }
+          >
             {stepOption.map((v) => (
               <Step key={v.key} title={v.title} />
             ))}

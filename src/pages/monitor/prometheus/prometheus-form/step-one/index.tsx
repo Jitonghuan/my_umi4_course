@@ -34,7 +34,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       type: 'input',
       label: '名称',
       dataIndex: 'name',
-      placeholder: '请输入(最多253字符)',
+      placeholder: '请输入(最多253字符，暂不支持中文)',
       required: true,
       rules: [
         {

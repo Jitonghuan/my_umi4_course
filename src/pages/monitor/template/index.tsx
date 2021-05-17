@@ -25,6 +25,7 @@ const TemplateCom: React.FC = () => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则模版');
+  const [editRecord, setEditRecord] = useState<Item>({});
 
   const columns: ColumnsType<Item> = [
     {
@@ -102,6 +103,7 @@ const TemplateCom: React.FC = () => {
             onClick={() => {
               setDrawerVisible(true);
               setDrawerTitle('编辑报警规则模版');
+              setEditRecord(record);
             }}
           >
             编辑
@@ -222,6 +224,7 @@ const TemplateCom: React.FC = () => {
         visible={drawerVisible}
         onClose={onClose}
         drawerTitle={drawerTitle}
+        record={editRecord}
       />
     </MatrixPageContent>
   );

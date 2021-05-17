@@ -10,7 +10,8 @@ interface TemplateDrawerProps {
   visible: boolean;
   drawerTitle: string;
   onClose: () => void;
-  record?: Record<string, string>;
+  type?: 'add' | 'edit';
+  record?: Item;
   onSubmit?: (value: any) => void;
 }
 
@@ -19,6 +20,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   onClose,
   drawerTitle,
   record,
+  type,
   onSubmit,
 }) => {
   const [form] = Form.useForm();
@@ -35,13 +37,19 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     setAnnotationsTableData(value);
   };
 
+  useEffect(() => {
+    if (type === 'edit') {
+      //...
+    }
+  }, []);
+
   const formOptions: FormProps[] = [
     {
       key: '1',
       type: 'input',
       label: '规则名称',
       dataIndex: 'ruleName',
-      placeholder: '请输入(最多253字符)',
+      placeholder: '请输入(最多253字符，暂不支持中文)',
       required: true,
       rules: [
         {
