@@ -9,6 +9,7 @@ export type TypeProps =
   | 'area'
   | 'inputNumber'
   | 'radio'
+  | 'checkbox'
   | 'other';
 
 export interface OptionProps {
@@ -16,16 +17,27 @@ export interface OptionProps {
   key: React.Key;
 }
 
-export interface FormProps<T = any> extends FormItemProps {
+export interface CheckboxOptionProps {
+  value: string;
+  label: string;
+  disable?: boolean;
+}
+
+export interface TextAreaProps {
+  autoSize?: { minRows?: number; maxRows?: number };
+}
+
+export interface FormProps<T = any> extends FormItemProps, TextAreaProps {
   key: string;
   type: TypeProps;
-  dataIndex: string;
+  dataIndex?: string;
   label?: string;
   option?: OptionProps[];
+  checkboxOption?: CheckboxOptionProps[];
   style?: CSSProperties;
   itemStyle?: CSSProperties;
   placeholder?: string;
-  defaultValue?: string | Moment | number;
+  defaultValue?: any;
   showTime?: boolean;
   width?: string | number;
   showSelectSearch?: boolean;

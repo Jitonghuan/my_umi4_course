@@ -8,6 +8,7 @@ import {
   Space,
   InputNumber,
   Radio,
+  Checkbox,
 } from 'antd';
 import { TableSearchProps, FormProps } from './typing';
 
@@ -26,7 +27,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       itemStyle,
       placeholder,
       label,
-      required,
+      required = false,
       showTime,
       width,
       key,
@@ -38,6 +39,8 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       validatorMessage,
       pattern,
       rules,
+      checkboxOption,
+      autoSize,
       ...rest
     } = v;
 
@@ -195,6 +198,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 style={{ width: width, ...styles }}
                 onChange={onChange}
                 disabled={disable}
+                autoSize={autoSize}
               />
             </Item>
             {extraForm}
@@ -271,6 +275,36 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                   </Radio>
                 ))}
               </Radio.Group>
+            </Item>
+            {extraForm}
+          </Item>
+        );
+      case 'checkbox':
+        return (
+          <Item
+            required={required}
+            label={label}
+            key={key}
+            style={itemStyle}
+            {...rest}
+          >
+            <Item
+              initialValue={defaultValue}
+              name={dataIndex}
+              noStyle
+              rules={
+                rules || extraForm
+                  ? rules
+                  : [
+                      {
+                        required: required,
+                        message: validatorMessage ?? '请选择',
+                        pattern,
+                      },
+                    ]
+              }
+            >
+              <Checkbox.Group options={checkboxOption} onChange={onChange} />
             </Item>
             {extraForm}
           </Item>

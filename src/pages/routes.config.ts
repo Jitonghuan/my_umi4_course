@@ -242,6 +242,18 @@ export default [
     icon: 'icon-poc_mining',
     routes: [
       {
+        path: 'dataFactory',
+        name: '数据工厂',
+        component: '@/pages/test/data-factory',
+        exact: true,
+      },
+      {
+        path: 'dataFactory/dataFactory-add',
+        name: '新增数据',
+        hideInMenu: true,
+        component: '@/pages/test/data-factory/data-factory-add',
+      },
+      {
         path: 'auto',
         name: '自动化测试',
         component: '@/pages/test/auto-test',
@@ -250,6 +262,16 @@ export default [
         path: 'result',
         name: '自动化测试查询',
         component: '@/pages/test/auto-test-result',
+      },
+      {
+        path: 'unitTest',
+        name: '单测覆盖检测',
+        component: '@/pages/test/unit-test',
+      },
+      {
+        path: 'codeQuality',
+        name: '代码质量检测',
+        component: '@/pages/test/code-quality',
       },
     ],
   },
