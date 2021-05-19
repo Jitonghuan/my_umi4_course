@@ -1,19 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Space, Popconfirm, Table, Tooltip } from 'antd';
+import { Button, Space, Popconfirm, Table, Tooltip, Modal, Form } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { Item } from '../typing';
+import useTable from '@/utils/useTable';
+import { Item, AlertNameProps } from '../typing';
+import { queryPrometheusList } from '../service';
 import './index.less';
 
 const PrometheusCom: React.FC = () => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
+  const [labelVisible, setLabelVisible] = useState(false);
+  const [rulesVisible, setRulesVisible] = useState(false);
+  const [labelRecord, setLabelRecord] = useState<Record<string, string>>({});
+  const [rulesRecord, setRulesRecord] = useState<AlertNameProps[]>([]);
+  const [modalType, setModalType] = useState<'label' | 'rules'>('label');
+
+  const [form] = Form.useForm();
+
+  const { tableProps, search } = useTable({
+    url: queryPrometheusList,
+    method: 'GET',
+    form,
+  });
 
   const confirm = () => {
     //....
+  };
+
+  const editLabelRecord = (record: Record<string, string>) => {
+    return Object.keys(record).map((v) => {
+      return {
+        key: v,
+        value: record[v],
+      };
+    });
   };
 
   const columns: ColumnsType<Item> = [
@@ -28,33 +52,76 @@ const PrometheusCom: React.FC = () => {
     },
     {
       title: '监控名称',
-      dataIndex: 'monitorName',
-      key: 'monitorName',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: '应用名称',
-      dataIndex: 'applyName',
-      key: 'applyName',
+      dataIndex: 'appCode',
+      key: 'appCode',
     },
     {
       title: '环境名称',
-      dataIndex: 'environmentName',
-      key: 'environmentName',
+      dataIndex: 'envCode',
+      key: 'envCode',
     },
     {
       title: 'URL',
-      dataIndex: 'url',
-      key: 'url',
+      dataIndex: 'metricsUrl',
+      key: 'metricsUrl',
     },
     {
       title: 'Matchlabels',
-      dataIndex: 'matchlabels',
-      key: 'matchlabels',
+      dataIndex: 'labels',
+      key: 'labels',
+      render: (text: Record<string, string>) => {
+        if (Object.keys(text).length === 0) return '-';
+        return (
+          <a
+            style={{
+              display: 'inline-block',
+              width: 100,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+            onClick={() => {
+              setLabelVisible(true);
+              setLabelRecord(text);
+              setModalType('label');
+            }}
+          >
+            {JSON.stringify(text)}
+          </a>
+        );
+      },
     },
     {
       title: '报警规则',
-      dataIndex: 'alarmRules',
-      key: 'alarmRules',
+      dataIndex: 'alertName',
+      key: 'alertName',
+      render: (text: AlertNameProps[]) => {
+        if (!text) return '-';
+        if (Array.isArray(text) && text.length === 0) return '-';
+        return (
+          <a
+            style={{
+              display: 'inline-block',
+              width: 100,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+            onClick={() => {
+              setRulesVisible(true);
+              setRulesRecord(text);
+              setModalType('rules');
+            }}
+          >
+            {JSON.stringify(text[0])}
+          </a>
+        );
+      },
     },
     {
       title: '操作',
@@ -78,18 +145,15 @@ const PrometheusCom: React.FC = () => {
     },
   ];
 
-  const expandedRowRender = (expandData: Item[]) => {
-    const expandColumns = [
+  const expandedRowRender = (
+    expandData: AlertNameProps[] | { key: string; value: string }[],
+    type?: string,
+  ) => {
+    const rulesColumns = [
       {
         title: '规则名称',
-        dataIndex: 'ruleName',
-        key: 'ruleName',
-        // width: '6%',
-        // render: (text) => (
-        //   <div style={{ width: 100, wordWrap: 'break-word', wordBreak: 'break-word' }}>
-        //     {text}
-        //   </div>
-        // ),
+        dataIndex: 'alertRuleName',
+        key: 'alertRuleName',
       },
       {
         title: '告警表达式',
@@ -115,21 +179,28 @@ const PrometheusCom: React.FC = () => {
       },
       {
         title: '告警消息',
-        dataIndex: 'news',
-        key: 'news',
-        // width: '5%',
-        // render: (text) => (
-        //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-        //     {text}
-        //   </div>
-        // ),
+        dataIndex: 'message',
+        key: 'message',
+      },
+    ];
+
+    const labelColumns = [
+      {
+        title: 'key',
+        dataIndex: 'key',
+        key: 'key',
+      },
+      {
+        title: 'value',
+        dataIndex: 'value',
+        key: 'value',
       },
     ];
 
     return (
       <Table
         dataSource={[...expandData]}
-        columns={expandColumns}
+        columns={type === 'label' ? labelColumns : rulesColumns}
         pagination={false}
         // rowKey={record => record.key}
       />
@@ -141,7 +212,7 @@ const PrometheusCom: React.FC = () => {
       key: '1',
       type: 'input',
       label: '监控名称',
-      dataIndex: 'monitorName',
+      dataIndex: 'name',
       width: '144px',
       placeholder: '请输入',
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
@@ -152,7 +223,7 @@ const PrometheusCom: React.FC = () => {
       key: '2',
       type: 'select',
       label: '应用名称',
-      dataIndex: 'applyName',
+      dataIndex: 'appCode',
       width: '144px',
       placeholder: '请选择',
       option: [],
@@ -164,7 +235,7 @@ const PrometheusCom: React.FC = () => {
       key: '3',
       type: 'select',
       label: '环境名称',
-      dataIndex: 'environmentName',
+      dataIndex: 'envCode',
       width: '144px',
       placeholder: '请选择',
       option: [],
@@ -176,66 +247,46 @@ const PrometheusCom: React.FC = () => {
       key: '4',
       type: 'input',
       label: 'URL',
-      dataIndex: 'url',
+      dataIndex: 'metricsUrl',
       width: '144px',
       placeholder: '请输入',
       onChange: (e: string) => {
         console.log(e);
       },
     },
-    {
-      key: '5',
-      type: 'input',
-      label: 'Matchlabels',
-      dataIndex: 'matchlabels',
-      width: '144px',
-      placeholder: '请输入',
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
-    },
   ];
+
+  const isLabel = modalType === 'label';
 
   const onSearch = (value: Record<string, any>) => {
     console.log(value, '8888');
   };
 
+  const onCancel = () => {
+    setLabelRecord({});
+    setLabelVisible(false);
+    setRulesRecord([]);
+    setRulesVisible(false);
+  };
+
   useEffect(() => {
-    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-      return {
-        id: `${i + 10000}`,
-        monitorName: '爱睡觉的',
-        applyName: '哈哈哈',
-        environmentName: '说的都是',
-        url: 'http://127.0.0.1:8080/index',
-        matchlabels: 'sssss',
-        alarmRules: 'yessad',
-        expandData: [
-          {
-            key: '12313',
-            ruleName: 'wwwww',
-            expression: 'sajdhjashdkasdhsakjdasdasd',
-            news: '静安寺大家ask',
-          },
-        ],
-      };
-    });
-    console.log(arr);
-    setDataSource(arr);
+    setDataSource([]);
   }, []);
 
   return (
     <MatrixPageContent>
       <TableSearch
+        form={form}
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        dataSource={dataSource}
+        {...tableProps}
+        // {...pagination}
         pagination={{
+          ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',
-          defaultPageSize: 20,
         }}
         showTableTitle
         tableTitle="Prometheus监控列表"
@@ -251,14 +302,24 @@ const PrometheusCom: React.FC = () => {
           </Button>
         }
         // className="table-form"
-        onSearch={onSearch}
+        onSearch={search.submit}
+        reset={search.reset}
         scroll={{ x: 'max-content' }}
-        expandable={{
-          expandedRowRender: (record) => expandedRowRender(record.expandData),
-        }}
         rowKey="id"
         className="expand-table"
       />
+      <Modal
+        visible={isLabel ? labelVisible : rulesVisible}
+        title={isLabel ? '查看Matchlabels' : '查看报警规则'}
+        onCancel={onCancel}
+        width={800}
+        bodyStyle={{ minHeight: 500 }}
+        footer={null}
+      >
+        {isLabel
+          ? expandedRowRender(editLabelRecord(labelRecord), 'label')
+          : expandedRowRender(rulesRecord)}
+      </Modal>
     </MatrixPageContent>
   );
 };

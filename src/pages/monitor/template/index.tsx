@@ -6,7 +6,7 @@ import { Link } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
-import TemplateDrawer from './templateDrawer';
+import TemplateDrawer from '../component/templateDrawer';
 import { Item } from '../typing';
 import './index.less';
 
@@ -225,6 +225,7 @@ const TemplateCom: React.FC = () => {
         onClose={onClose}
         drawerTitle={drawerTitle}
         record={editRecord}
+        drawerType="template"
       />
     </MatrixPageContent>
   );

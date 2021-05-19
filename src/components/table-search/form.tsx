@@ -14,6 +14,7 @@ import { TableSearchProps, FormProps } from './typing';
 
 const { Item } = Form;
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 export const renderForm = (formOptions: FormProps[] = []) => {
   if (!formOptions.length) return [];
@@ -159,6 +160,41 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               }
             >
               <DatePicker
+                showTime={showTime}
+                style={{ width: width, ...styles }}
+                onChange={onChange}
+                disabled={disable}
+              />
+            </Item>
+            {extraForm}
+          </Item>
+        );
+      case 'range':
+        return (
+          <Item
+            required={required}
+            label={label}
+            key={key}
+            style={itemStyle}
+            {...rest}
+          >
+            <Item
+              initialValue={defaultValue}
+              name={dataIndex}
+              noStyle
+              rules={
+                rules || extraForm
+                  ? rules
+                  : [
+                      {
+                        required: required,
+                        message: validatorMessage ?? '请选择日期',
+                        pattern,
+                      },
+                    ]
+              }
+            >
+              <RangePicker
                 showTime={showTime}
                 style={{ width: width, ...styles }}
                 onChange={onChange}
@@ -333,30 +369,30 @@ const FormList: React.FC<TableSearchProps> = ({
   showReset = true,
   searchText = '搜索',
   formLayout = 'horizontal',
+  form,
   onSearch,
+  reset,
 }) => {
-  const [form] = Form.useForm();
-
-  const submit = () => {
-    form.validateFields().then((value) => {
-      onSearch && onSearch(value);
-    });
-  };
+  // const submit = () => {
+  //   form.validateFields().then((value) => {
+  //     onSearch && onSearch(value);
+  //   });
+  // };
 
   return (
     <>
       <Form form={form} layout={formLayout}>
         {renderForm(formOptions)}
-        <Space size={12}>
-          {showSearch && (
-            <Button type="primary" onClick={submit}>
-              {searchText}
-            </Button>
-          )}
-          {showReset && (
-            <Button onClick={() => form.resetFields()}>重置</Button>
-          )}
-        </Space>
+        <Item>
+          <Space size={12}>
+            {showSearch && (
+              <Button type="primary" onClick={onSearch}>
+                {searchText}
+              </Button>
+            )}
+            {showReset && <Button onClick={reset}>重置</Button>}
+          </Space>
+        </Item>
       </Form>
     </>
   );

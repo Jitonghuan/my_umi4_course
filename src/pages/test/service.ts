@@ -42,3 +42,18 @@ export const createAutoTest = `${ds.apiPrefix}/qc/autotest/create`;
  *    result
  */
 export const queryTestResult = `${ds.apiPrefix}/qc/autotest/queryTestResult`;
+
+/** 添加质量控制任务 */
+export const createQCTask = `${ds.apiPrefix}/qc/unittest/createQCTask`;
+
+/** 查询质量控制任务列表*/
+export const queryQCTaskList = `${ds.apiPrefix}/qc/unittest/queryQCTaskList`;
+
+/** 执行检测任务 */
+export const executeQCTask = `${ds.apiPrefix}/qc/unittest/executeQCTask`;
+
+/** 查询单测覆盖检测记录列表*/
+export const queryUnittestCoverCheckLogList = `${ds.apiPrefix}/qc/unittest/queryUnittestCoverCheckLogList`;
+
+/** 查询代码质量检测记录列表*/
+export const queryCodeQualityCheckLogList = `${ds.apiPrefix}/qc/codeQuality/queryCodeQualityCheckLogList`;

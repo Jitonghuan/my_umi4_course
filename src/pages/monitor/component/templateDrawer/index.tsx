@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Space, Drawer, Form, Select, TimePicker } from 'antd';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
@@ -9,6 +9,7 @@ import './index.less';
 interface TemplateDrawerProps {
   visible: boolean;
   drawerTitle: string;
+  drawerType?: 'rules' | 'template';
   onClose: () => void;
   type?: 'add' | 'edit';
   record?: Item;
@@ -21,6 +22,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   drawerTitle,
   record,
   type,
+  drawerType,
   onSubmit,
 }) => {
   const [form] = Form.useForm();
@@ -46,6 +48,29 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const formOptions: FormProps[] = [
     {
       key: '1',
+      type: 'select',
+      label: '报警模版',
+      // dataIndex: 'classify',
+      placeholder: '选择告警模版，根据模版自动填充以下内容',
+      required: true,
+      // rules: [
+      //   {
+      //     required: true,
+      //     message: 'Please input your name',
+      //   },
+      // ],
+      option: [
+        {
+          key: '1',
+          value: 'kkkk节点',
+        },
+      ],
+      onChange: (e: string) => {
+        console.log(e);
+      },
+    },
+    {
+      key: '2',
       type: 'input',
       label: '规则名称',
       dataIndex: 'ruleName',
@@ -66,7 +91,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       },
     },
     {
-      key: '2',
+      key: '3',
       type: 'select',
       label: '分类',
       dataIndex: 'classify',
@@ -89,7 +114,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       },
     },
     {
-      key: '3',
+      key: '4',
       type: 'area',
       label: '告警表达式(PromQL)',
       dataIndex: 'expression',
@@ -106,7 +131,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       },
     },
     {
-      key: '3',
+      key: '5',
       type: 'inputNumber',
       label: '持续时间',
       dataIndex: 'time',
@@ -129,7 +154,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       },
     },
     {
-      key: '5',
+      key: '6',
       type: 'input',
       label: '告警消息',
       dataIndex: 'news',
@@ -141,7 +166,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       },
     },
     {
-      key: '6',
+      key: '7',
       type: 'select',
       label: '告警级别',
       dataIndex: 'alertRank',
@@ -167,7 +192,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       },
     },
     {
-      key: '7',
+      key: '8',
       type: 'other',
       label: '高级配置',
       dataIndex: '',
@@ -195,7 +220,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       ),
     },
     {
-      key: '8',
+      key: '9',
       type: 'select',
       label: '通知对象',
       dataIndex: 'notifyObject',
@@ -212,7 +237,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       },
     },
     {
-      key: '9',
+      key: '10',
       type: 'select',
       label: '通知方式',
       dataIndex: 'notifyType',
@@ -229,7 +254,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       },
     },
     {
-      key: '10',
+      key: '11',
       type: 'radio',
       label: '是否静默',
       dataIndex: 'isSilence',
@@ -285,6 +310,14 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     v.wrapperCol = { span: 17 };
   });
 
+  const formList = useMemo(() => {
+    if (drawerType === 'template') {
+      return formOptions.slice(1, 8);
+    }
+
+    return formOptions;
+  }, [drawerType]);
+
   const onFinish = () => {
     form.validateFields().then((value) => {
       const obj = { ...value, labelTableData, annotationsTableData };
@@ -321,7 +354,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       footerStyle={{ textAlign: 'right' }}
       destroyOnClose
     >
-      <Form form={form}>{renderForm(formOptions)}</Form>
+      <Form form={form}>{renderForm(formList)}</Form>
     </Drawer>
   );
 };

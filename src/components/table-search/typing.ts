@@ -1,11 +1,12 @@
 import React, { CSSProperties, ReactNode } from 'react';
-import { TableProps, FormItemProps } from 'antd/lib';
+import { TableProps, FormItemProps, FormInstance } from 'antd/lib';
 import { Moment } from 'moment';
 
 export type TypeProps =
   | 'select'
   | 'input'
   | 'date'
+  | 'range'
   | 'area'
   | 'inputNumber'
   | 'radio'
@@ -61,4 +62,6 @@ export interface TableSearchProps extends TableProps<any> {
   tableTitle?: string;
   style?: CSSProperties;
   onSearch?: (value: Record<string, any>) => void;
+  form?: FormInstance;
+  reset?: () => void;
 }

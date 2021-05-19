@@ -138,10 +138,10 @@ const DataFactory: React.FC = () => {
       key: '2',
       type: 'select',
       label: '数据工厂名称',
-      dataIndex: 'status',
+      dataIndex: 'factoryName',
       width: '144px',
       placeholder: '请选择',
-      defaultValue: 'ALL',
+      option: [],
       onChange: (e: string) => {
         console.log(e);
       },

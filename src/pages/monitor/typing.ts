@@ -1,4 +1,12 @@
 import { Moment } from 'moment';
+import React from '_@types_react@16.14.5@@types/react';
+
+export interface AlertNameProps {
+  key?: React.Key;
+  alertRuleName: string;
+  expression: string;
+  message: string;
+}
 
 export interface Item {
   key?: React.Key;
@@ -10,16 +18,16 @@ export interface Item {
   time?: Moment | string;
   id?: React.Key;
   status?: number;
-  applyName?: string;
-  environmentName?: string;
-  alertName?: string;
+  appCode?: string;
+  envCode?: string;
+  // alertName?: string;
   alertRank?: string;
   eventNum?: string;
   createTime?: string;
   notifyObject?: string;
-  monitorName?: string;
-  matchlabels?: string;
-  alarmRules?: string;
+  name?: string;
+  labels?: Record<string, string>;
+  alertName?: AlertNameProps[];
   children?: Item[];
 }
 

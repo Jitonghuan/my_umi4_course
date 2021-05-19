@@ -11,12 +11,20 @@ const TableSearch: React.FC<TableSearchProps> = ({
   style,
   className,
   tableTitle,
+  columns,
+  form,
   ...rest
 }) => {
+  columns?.forEach((v) => {
+    if (!v.render) {
+      v.render = (text) => text ?? '-';
+    }
+  });
+
   return (
     <>
       <FilterCard className="antd-card-form" bodyStyle={{ paddingBottom: 12 }}>
-        <From {...rest} />
+        <From form={form} {...rest} />
       </FilterCard>
       <ContentCard>
         <div className="extra-node-box">
@@ -25,7 +33,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
           ) : null}
           <>{extraNode}</>
         </div>
-        <Table className={className} {...rest} />
+        <Table className={className} columns={columns} {...rest} />
       </ContentCard>
     </>
   );

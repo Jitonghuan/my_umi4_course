@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Form } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
-import TemplateDrawer from '../../../template/templateDrawer';
+import TemplateDrawer from '../../../component/templateDrawer';
 import { Item } from '../../../typing';
 import './index.less';
 
@@ -19,7 +19,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData }) => {
   //   { ruleName: '22' },
   // ]);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [drawerTitle, setDrawerTitle] = useState('新增报警规则模版');
+  const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
 
   useEffect(() => {
     //根据模板列表展示信息 setDataSource

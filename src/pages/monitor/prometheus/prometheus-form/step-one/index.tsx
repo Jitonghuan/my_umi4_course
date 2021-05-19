@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form } from 'antd';
 import { FormInstance } from 'antd/lib';
-import EditTable from '../../../template/editTable';
+import EditTable from '../../../component/editTable';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import { Item } from '../../../typing';
@@ -54,7 +54,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       key: '2',
       type: 'select',
       label: '应用名称',
-      dataIndex: 'applyName',
+      dataIndex: 'appCode',
       placeholder: '请选择',
       required: true,
       option: [{ key: 'ccc', value: 'hhh' }],
@@ -66,7 +66,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       key: '3',
       type: 'select',
       label: '环境名称',
-      dataIndex: 'environmentName',
+      dataIndex: 'envCode',
       placeholder: '请选择',
       required: true,
       option: [{ key: 'aa', value: 'hhh' }],
@@ -78,13 +78,21 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       key: '4',
       type: 'select',
       label: '采集频率',
-      dataIndex: 'rate',
+      dataIndex: 'interval',
       placeholder: '请选择',
       required: true,
       option: [
         {
           key: '15s',
           value: '15s',
+        },
+        {
+          key: '30s',
+          value: '30s',
+        },
+        {
+          key: '60s',
+          value: '60s',
         },
       ],
       onChange: (e: string) => {
@@ -95,7 +103,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       key: '5',
       type: 'input',
       label: 'URL',
-      dataIndex: 'url',
+      dataIndex: 'metricsUrl',
       placeholder: '请输入',
       required: true,
       rules: [
@@ -113,7 +121,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       key: '6',
       type: 'other',
       label: 'Matchlabels',
-      dataIndex: 'matchlabels',
+      dataIndex: 'labels',
       placeholder: '请输入',
       required: true,
       extraForm: (
