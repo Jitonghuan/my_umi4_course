@@ -67,15 +67,15 @@ export default (props: IUmiRrops) => {
     setBelongData(
       belongData.map((el: any) => ({
         ...el,
-        label: el.belongName,
-        value: el.belongCode,
+        label: el.categoryName,
+        value: el.categoryCode,
       })),
     );
     setBusiness(
       bizData.map((el: any) => ({
         ...el,
-        label: el.lineName,
-        value: el.lineCode,
+        label: el.groupName,
+        value: el.groupCode,
       })),
     );
     setEnvData(

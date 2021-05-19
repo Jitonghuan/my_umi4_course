@@ -119,7 +119,7 @@ export default (params: {
       type: 'Select',
       props: {
         label: '业务线',
-        name: 'lineCode',
+        name: 'groupCode',
         options: params.businessData || [],
       },
     },

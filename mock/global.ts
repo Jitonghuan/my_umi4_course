@@ -1,6 +1,6 @@
 export default {
   // 所属数据
-  'GET /v1/orgManage/belong/list': {
+  'GET /v1/appManage/category/list': {
     success: true,
     code: 1000,
     errorMsg: '',
@@ -34,7 +34,7 @@ export default {
   },
 
   // 环境接口
-  'GET /v1/orgManage/env/list': {
+  'GET /v1/appManage/env/list': {
     success: true,
     code: 1000,
     errorMsg: '',
@@ -80,7 +80,7 @@ export default {
   },
 
   // 业务线接口
-  'GET /v1/orgManage/buLine/list': {
+  'GET /v1/appManage/group/list': {
     success: true,
     code: 1000,
     errorMsg: '',
