@@ -11,13 +11,10 @@ import {
 } from 'antd';
 
 import FEContext from '@/layouts/basic-layout/FeContext';
-import {
-  queryBizDataReq,
-  queryDeployEnvReq,
-  queryDeployPlanReq,
-} from '../../service';
+import { queryDeployEnvReq, queryDeployPlanReq } from '../../service';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
 import { planSchemaColumns } from '../../schema';
+import { queryAppGroupReq } from '@/pages/publish/service';
 
 export interface IProps {
   visible: boolean;
@@ -34,7 +31,7 @@ const tailLayout = {
 
 const AddDrawer = (props: IProps) => {
   const { visible, onClose } = props;
-  const { belongData } = useContext(FEContext);
+  const { categoryData } = useContext(FEContext);
   const [formInstance] = Form.useForm();
 
   const [businessData, setBusinessData] = useState<any[]>([]);
@@ -42,15 +39,15 @@ const AddDrawer = (props: IProps) => {
   const [deployPlanData, setDeployPlanData] = useState<any[]>([]);
   const [selectPlan, setSelectPlan] = useState<React.Key[]>([]);
 
-  // 根据所属查询业务线
-  const queryBusiness = (belong: string) => {
+  // 根据应用分类查询应用组
+  const queryBusiness = (categoryCode: string) => {
     setBusinessData([]);
-    queryBizDataReq({ belong }).then((datas) => {
-      setBusinessData(datas);
+    queryAppGroupReq({ categoryCode }).then((datas) => {
+      setBusinessData(datas.list);
     });
   };
 
-  // 根据所属查询机构
+  // 根据应用分类查询机构
   const queryDeployEnv = (belong: string) => {
     setDeployEnvData([]);
     queryDeployEnvReq({ belong }).then((datas) => {
@@ -58,7 +55,7 @@ const AddDrawer = (props: IProps) => {
     });
   };
 
-  // 根据业务线查询计划
+  // 根据应用组查询计划
   const queryDeployPlan = (lineCode: string) => {
     setDeployPlanData([]);
     queryDeployPlanReq({ lineCode }).then((datas) => {
@@ -74,7 +71,7 @@ const AddDrawer = (props: IProps) => {
 
   const handleFormChange = useCallback((vals) => {
     const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
-    if (name && name === 'belongCode') {
+    if (name && name === 'appCategoryCode') {
       formInstance.resetFields(['lineCode']);
       formInstance.resetFields(['deployEnv']);
       queryBusiness(value);
@@ -134,25 +131,27 @@ const AddDrawer = (props: IProps) => {
         onValuesChange={handleFormChange}
       >
         <Form.Item
-          label="所属"
-          name="belongCode"
-          rules={[{ required: true, message: '请选择所属!' }]}
+          label="应用分类"
+          name="appCategoryCode"
+          rules={[{ required: true, message: '请选择应用分类!' }]}
         >
           <Radio.Group>
-            {belongData?.map((el) => (
-              <Radio value={el.belongCode}>{el.belongName}</Radio>
+            {categoryData?.map((el) => (
+              <Radio key={el.value} value={el.value}>
+                {el.label}
+              </Radio>
             ))}
           </Radio.Group>
         </Form.Item>
         <Form.Item
-          label="业务线"
-          name="lineCode"
-          rules={[{ required: true, message: '请选择业务线!' }]}
+          label="应用组"
+          name="appGroupCode"
+          rules={[{ required: true, message: '请选择应用组!' }]}
         >
           <Select placeholder="请选择">
             {businessData?.map((el) => (
-              <Select.Option key={el.lineCode} value={el.lineCode}>
-                {el.lineName}
+              <Select.Option key={el.value} value={el.value}>
+                {el.label}
               </Select.Option>
             ))}
           </Select>

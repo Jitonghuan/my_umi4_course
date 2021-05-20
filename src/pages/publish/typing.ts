@@ -8,7 +8,7 @@ export interface Item {
   needs?: string;
   planTime?: Moment | string;
   needsID?: string;
-  id?: string;
+  id: string;
   status?: number;
   owner?: string;
   line?: string;
