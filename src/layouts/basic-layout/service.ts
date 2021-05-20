@@ -10,7 +10,7 @@ export const queryUserInfoApi = '/user_backend/v1/user/info';
 export const queryAllSystem = '/user_backend/v1/application/query';
 
 /** 查询应用分类数据 */
-export const queryBelongData = `${ds.apiPrefix}/appManage/category/list`;
+export const queryCategoryData = `${ds.apiPrefix}/appManage/category/list`;
 
 /** 获取应用组数据 */
 export const queryBizData = `${ds.apiPrefix}/appManage/group/list`;

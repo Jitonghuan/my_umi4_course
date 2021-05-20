@@ -68,6 +68,9 @@ const ApplicationOverview = (props: IProps) => {
         <Descriptions.Item label="pom文件路径">
           {appData?.deployPomPath}
         </Descriptions.Item>
+        <Descriptions.Item label="应用开发语言">
+          {appData?.appDevelopLanguage}
+        </Descriptions.Item>
         <Descriptions.Item label="应用部署名称">
           {appData?.deploymentName}
         </Descriptions.Item>

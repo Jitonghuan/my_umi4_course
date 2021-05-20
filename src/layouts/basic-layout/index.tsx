@@ -7,7 +7,7 @@ import ds from '@config/defaultSettings';
 import DocumentTitle from './DocumentTitle';
 import FeContext from './FeContext';
 import {
-  queryBelongData,
+  queryCategoryData,
   queryBizData,
   queryEnvData,
   queryPermission,
@@ -27,8 +27,8 @@ import logo from './logo.svg';
 
 export default (props: IUmiRrops) => {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
-  // 应用分类数据
-  const [belongData, setBelongData] = useState<IOption[]>([]);
+  // 所属数据
+  const [categoryData, setCategoryData] = useState<IOption[]>([]);
   // 业务线
   const [business, setBusiness] = useState<IOption[]>([]);
   // 环境
@@ -51,8 +51,8 @@ export default (props: IUmiRrops) => {
 
   // 查询业务线数据
   const queryBusinessData = async () => {
-    // 查询应用分类数据
-    const belongResp = await getRequest(queryBelongData);
+    // 查询所属数据
+    const categoryResp = await getRequest(queryCategoryData);
 
     // 查询业务线数据
     const bizResp = await getRequest(queryBizData);
@@ -60,12 +60,12 @@ export default (props: IUmiRrops) => {
     // 环境数据
     const envResp = await getRequest(queryEnvData);
 
-    const belongData = belongResp.data?.dataSource || [];
+    const categoryDate = categoryResp.data?.dataSource || [];
     const bizData = bizResp.data?.dataSource || [];
     const envData = envResp?.data || [];
 
-    setBelongData(
-      belongData.map((el: any) => ({
+    setCategoryData(
+      categoryDate.map((el: any) => ({
         ...el,
         label: el.categoryName,
         value: el.categoryCode,
@@ -128,7 +128,7 @@ export default (props: IUmiRrops) => {
           isOpenPermission: ds.isOpenPermission,
           permissionData,
           businessData: business,
-          belongData,
+          categoryData,
           envData,
         }}
       >
@@ -141,7 +141,7 @@ export default (props: IUmiRrops) => {
             title={FeGlobalRef.current.title}
             favicon={FeGlobalRef.current.favicon}
           >
-            {belongData.length > 0 && (
+            {categoryData.length > 0 && (
               <FELayout.SSOLayout
                 {...(props as any)}
                 {...ds}

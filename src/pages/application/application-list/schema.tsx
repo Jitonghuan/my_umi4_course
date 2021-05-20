@@ -11,7 +11,7 @@ const APP_TYPE_MAP = {
 
 // 过滤表单 schema
 export const createFilterFormSchema = (params: {
-  belongData?: any[];
+  categoryData?: any[];
   businessData?: any[];
 }) => ({
   theme: 'inline',
@@ -22,15 +22,15 @@ export const createFilterFormSchema = (params: {
       type: 'Select',
       props: {
         label: '应用分类',
-        name: 'categoryCode',
-        options: params.belongData || [],
+        name: 'appCategoryCode',
+        options: params.categoryData || [],
       },
     },
     {
       type: 'Select',
       props: {
         label: '应用组',
-        name: 'groupCode',
+        name: 'appGroupCode',
         options: params.businessData || [],
       },
     },
@@ -115,11 +115,6 @@ export const createTableSchema = ({
     {
       title: '应用组',
       dataIndex: 'appGroupCode',
-      width: 100,
-    },
-    {
-      title: '业务模块',
-      dataIndex: 'sysCode',
       width: 100,
     },
     {

@@ -34,7 +34,7 @@ import { IProps } from './types';
 import './index.less';
 
 const ApplicationList = (props: IProps) => {
-  const { belongData, envData, breadcrumbMap } = useContext(FEContext);
+  const { categoryData } = useContext(FEContext);
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [formInstance] = Form.useForm();
 
@@ -42,8 +42,8 @@ const ApplicationList = (props: IProps) => {
   const [curRecord, setCurRecord] = useState<any>();
 
   const filterColumns = useMemo(() => {
-    return createFilterFormSchema({ belongData, businessData });
-  }, [belongData, businessData]);
+    return createFilterFormSchema({ categoryData, businessData });
+  }, [categoryData, businessData]);
 
   // 根据应用分类查询应用组
   const queryBusiness = (categoryCode: string) => {
@@ -81,8 +81,8 @@ const ApplicationList = (props: IProps) => {
   // 监听表单变化，根据应用分类查询应用组
   const handleChange = useCallback((vals) => {
     const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
-    if (name && name === 'categoryCode') {
-      formInstance.resetFields(['groupCode']);
+    if (name && name === 'appCategoryCode') {
+      formInstance.resetFields(['appGroupCode']);
       queryBusiness(value);
     }
   }, []);

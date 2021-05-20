@@ -16,7 +16,7 @@ export interface ContextTypes {
     /** 应用组CODE */
     appGroupCode: string;
     /** 应用开发语言 **/
-    appDevelopLanguage: string;
+    appDevelopLanguage: 'golang' | 'java' | 'python';
     /** 应用部署名称 **/
     deploymentName: string;
     /** 应用负责人   ---支持模糊搜索 */

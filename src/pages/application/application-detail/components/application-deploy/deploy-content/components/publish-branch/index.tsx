@@ -33,7 +33,7 @@ const PublishBranch = ({
   env,
 }: IProps) => {
   const { appData } = useContext(DetailContext);
-  const { belong, appCode } = appData || {};
+  const { appCategoryCode, appCode } = appData || {};
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
     [],
@@ -61,7 +61,7 @@ const PublishBranch = ({
 
     return createDeploy({
       appCode: appCode!,
-      env,
+      envTypeCode: env,
       features: filter,
       hospitals: env === 'prod' ? deployEnv : undefined,
     }).then((res: any) => {
@@ -153,7 +153,7 @@ const PublishBranch = ({
           <Checkbox.Group
             value={deployEnv}
             onChange={(v) => setDeployEnv(v)}
-            options={hospitalMap[belong!] || []}
+            options={hospitalMap[appCategoryCode!] || []}
           />
         </div>
       </Modal>
