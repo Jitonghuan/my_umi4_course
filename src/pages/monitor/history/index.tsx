@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Space, Tag, Popconfirm } from 'antd';
+import { Tag, Form, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
+import useTable from '@/utils/useTable';
+import { queryAlertManageList } from '../service';
 import { Item } from '../typing';
 import './index.less';
 
@@ -14,20 +16,38 @@ type statusTypeItem = {
   text: string;
 };
 
-const STATUS_TYPE: Record<number, statusTypeItem> = {
-  0: { text: '待认领', color: 'blue' },
-  1: { text: '处理中', color: 'volcano' },
-  2: { text: '已解决', color: 'green' },
+const STATUS_TYPE: Record<string, statusTypeItem> = {
+  refuse: { text: '拒绝处理', color: 'red' },
+  firing: { text: '告警中', color: 'blue' },
+  resolved: { text: '已解决', color: 'green' },
+  terminate: { text: '中断处理', color: 'default' },
+};
+
+const ALERT_LEVEL: Record<string, string> = {
+  '2': '警告',
+  '3': '严重',
+  '4': '灾难',
 };
 
 const HistoryCom: React.FC = () => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
 
+  const [form] = Form.useForm();
+
+  const {
+    tableProps,
+    search: { submit, reset },
+  } = useTable({
+    url: queryAlertManageList,
+    method: 'GET',
+    form,
+  });
+
   const columns: ColumnsType<Item> = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: '序号',
+      dataIndex: 'key',
+      key: 'key',
       width: 70,
       // render: (text) => (
       //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
@@ -35,7 +55,7 @@ const HistoryCom: React.FC = () => {
     },
     {
       title: '应用名称',
-      dataIndex: 'applyName',
+      dataIndex: 'appCode',
       key: 'applyName',
       // width: '6%',
       // render: (text) => (
@@ -46,8 +66,8 @@ const HistoryCom: React.FC = () => {
     },
     {
       title: '环境名称',
-      dataIndex: 'environmentName',
-      key: 'environmentName',
+      dataIndex: 'envCode',
+      key: 'envCode',
       // width: '3%',
     },
     {
@@ -62,33 +82,45 @@ const HistoryCom: React.FC = () => {
       // ),
     },
     {
-      title: '报警等级',
-      dataIndex: 'alertRank',
-      key: 'alertRank',
+      title: '报警级别',
+      dataIndex: 'level',
+      key: 'level',
       // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      render: (text: string) => ALERT_LEVEL[text] ?? '-',
     },
     {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
+      title: '开始时间',
+      dataIndex: 'startTime',
+      key: 'startTime',
       // width: '6%',
     },
     {
-      title: '事件数量',
-      dataIndex: 'eventNum',
-      key: 'eventNum',
-      // width: '4%',
+      title: '结束时间',
+      dataIndex: 'endTime',
+      key: 'endTime',
+      // width: '6%',
     },
     {
       title: '通知对象',
-      dataIndex: 'notifyObject',
-      key: 'notifyObject',
-      // width: '4%',
+      dataIndex: 'receiver',
+      key: 'receiver',
+      render: (text: string) => {
+        return (
+          <Tooltip title={text}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 100,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {text}
+            </span>
+          </Tooltip>
+        );
+      },
     },
     {
       title: '状态',
@@ -99,36 +131,14 @@ const HistoryCom: React.FC = () => {
         <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>
       ),
     },
-    // {
-    //   title: '操作',
-    //   dataIndex: 'option',
-    //   key: 'option',
-    //   width: 100,
-    //   // width: '6%',
-    //   render: (_: string, record: Item) => (
-    //     <Space>
-    //       {/* <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${record.id}`}> */}
-    //       <Link to={`./function/editFunction?id=${record.id}`}>编辑</Link>
-    //       <Popconfirm
-    //         title="确认删除？"
-    //         // onConfirm={confirm}
-    //         // onCancel={cancel}
-    //         okText="是"
-    //         cancelText="否"
-    //       >
-    //         <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
-    //       </Popconfirm>
-    //     </Space>
-    //   ),
-    // },
   ];
 
   const formOptions: FormProps[] = [
     {
       key: '1',
       type: 'input',
-      label: '名称',
-      dataIndex: 'name',
+      label: '报警名称',
+      dataIndex: 'alertName',
       width: '144px',
       placeholder: '请输入',
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
@@ -142,19 +152,18 @@ const HistoryCom: React.FC = () => {
       dataIndex: 'status',
       width: '144px',
       placeholder: '请选择',
-      defaultValue: 'ALL',
       option: [
         {
-          key: 'ALL',
-          value: '全部',
+          key: 'refuse',
+          value: '拒绝处理',
         },
         {
-          key: 0,
-          value: '待认领',
+          key: 'firing',
+          value: '告警中',
         },
         {
-          key: 1,
-          value: '处理中',
+          key: 'terminate',
+          value: '中断处理',
         },
         {
           key: 2,
@@ -168,22 +177,22 @@ const HistoryCom: React.FC = () => {
     {
       key: '3',
       type: 'select',
-      label: '报警等级',
-      dataIndex: 'alertRank',
+      label: '报警级别',
+      dataIndex: 'level',
       width: '144px',
       placeholder: '请选择',
       option: [
         {
-          key: 1,
-          value: '1',
+          key: '2',
+          value: '警告',
         },
         {
-          key: 2,
-          value: '2',
+          key: '3',
+          value: '严重',
         },
         {
-          key: 3,
-          value: '3',
+          key: '4',
+          value: '灾难',
         },
       ],
       onChange: (e: string) => {
@@ -192,35 +201,22 @@ const HistoryCom: React.FC = () => {
     },
   ];
 
-  const onSearch = (value: Record<string, any>) => {
-    console.log(value, '8888');
-  };
-
   useEffect(() => {
-    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-      return {
-        id: `${i + 10000}`,
-        applyName: '顶顶顶顶',
-        environmentName: '啊卡仕达卡仕',
-        alertName: '撒谎的',
-        alertRank: '3',
-        createTime: '2012-01-01 00:00',
-        eventNum: '3',
-        notifyObject: '哈哈哈',
-        status: i % 3 === 0 ? 2 : i % 3 === 2 ? 1 : 0,
-      };
-    });
-
-    setDataSource(arr);
+    setDataSource([]);
   }, []);
 
   return (
     <MatrixPageContent>
       <TableSearch
+        form={form}
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        dataSource={dataSource}
+        {...tableProps}
+        dataSource={tableProps.dataSource?.map((v, i) => ({
+          ...v,
+          key: i + 1,
+        }))}
         pagination={{
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
@@ -230,8 +226,9 @@ const HistoryCom: React.FC = () => {
         showTableTitle
         tableTitle="报警历史列表"
         className="table-form"
-        onSearch={onSearch}
-        scroll={{ x: 'max-content' }}
+        onSearch={submit}
+        reset={reset}
+        // scroll={{ x: 'max-content' }}
       />
     </MatrixPageContent>
   );

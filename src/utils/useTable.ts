@@ -17,8 +17,6 @@ const useTable = (props: UseTableProps) => {
     { current, pageSize }: PaginatedParams[0],
     formData: Record<string, any>,
   ) => {
-    console.log(formData, 'formData==');
-
     if (method === 'GET') {
       return getRequest(url, {
         method: 'GET',
@@ -32,15 +30,16 @@ const useTable = (props: UseTableProps) => {
     return postRequest(url, {
       method: 'POST',
       data: { ...formData, pageIndex: current, pageSize },
-    });
+    }).then((data) => ({
+      total: data.data?.pageInfo?.total,
+      list: data.data.dataSource,
+    }));
   };
 
   const antdTable = useAntdTable(getTableData, {
     defaultPageSize: 20,
     form,
   });
-
-  console.log(antdTable, 'antdTable');
 
   return {
     ...antdTable,

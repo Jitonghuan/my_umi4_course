@@ -4,15 +4,17 @@ import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
-import { FormProps } from '@/components/table-search/typing';
+import { FormProps, OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import useTable from '@/utils/useTable';
+import useRequest from '@/utils/useRequest';
 import { Item, AlertNameProps } from '../typing';
-import { queryPrometheusList } from '../service';
+import usePublicData from './usePublicData';
+import { queryPrometheusList, deletePrometheus } from '../service';
 import './index.less';
 
 const PrometheusCom: React.FC = () => {
-  const [dataSource, setDataSource] = useState<Item[]>([]);
+  // const [dataSource, setDataSource] = useState<Item[]>([]);
   const [labelVisible, setLabelVisible] = useState(false);
   const [rulesVisible, setRulesVisible] = useState(false);
   const [labelRecord, setLabelRecord] = useState<Record<string, string>>({});
@@ -21,15 +23,31 @@ const PrometheusCom: React.FC = () => {
 
   const [form] = Form.useForm();
 
-  const { tableProps, search } = useTable({
+  const {
+    tableProps,
+    search: { submit, reset },
+  } = useTable({
     url: queryPrometheusList,
     method: 'GET',
     form,
   });
 
-  const confirm = () => {
-    //....
-  };
+  const { appManageEnvData, appManageListData } = usePublicData({
+    appCode: form.getFieldValue('appCode'),
+  });
+
+  const { run } = useRequest({
+    api: 'deletePrometheus',
+    method: 'GET',
+    successText: '删除成功',
+    onSuccess: () => {
+      submit();
+    },
+  });
+
+  // const confirm = (id: React.Key) => {
+  //   run({ id });
+  // };
 
   const editLabelRecord = (record: Record<string, string>) => {
     return Object.keys(record).map((v) => {
@@ -133,10 +151,11 @@ const PrometheusCom: React.FC = () => {
           <Link to={`./prometheus/prometheus-edit?id=${record.id}`}>编辑</Link>
           <Popconfirm
             title="确认删除？"
-            onConfirm={confirm}
+            onConfirm={() => run({ id: record.id })}
             // onCancel={cancel}
             okText="是"
             cancelText="否"
+            placement="topLeft"
           >
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
@@ -226,7 +245,8 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'appCode',
       width: '144px',
       placeholder: '请选择',
-      option: [],
+      showSelectSearch: true,
+      option: appManageListData as OptionProps[],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -238,7 +258,8 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'envCode',
       width: '144px',
       placeholder: '请选择',
-      option: [],
+      showSelectSearch: true,
+      option: appManageEnvData as OptionProps[],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -258,10 +279,6 @@ const PrometheusCom: React.FC = () => {
 
   const isLabel = modalType === 'label';
 
-  const onSearch = (value: Record<string, any>) => {
-    console.log(value, '8888');
-  };
-
   const onCancel = () => {
     setLabelRecord({});
     setLabelVisible(false);
@@ -269,9 +286,9 @@ const PrometheusCom: React.FC = () => {
     setRulesVisible(false);
   };
 
-  useEffect(() => {
-    setDataSource([]);
-  }, []);
+  // useEffect(() => {
+  //   setDataSource([]);
+  // }, []);
 
   return (
     <MatrixPageContent>
@@ -302,8 +319,8 @@ const PrometheusCom: React.FC = () => {
           </Button>
         }
         // className="table-form"
-        onSearch={search.submit}
-        reset={search.reset}
+        onSearch={submit}
+        reset={reset}
         scroll={{ x: 'max-content' }}
         rowKey="id"
         className="expand-table"

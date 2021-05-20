@@ -3,9 +3,11 @@ import { Form, Button, Steps, Space } from 'antd';
 import { history } from 'umi';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
+import useRequest from '@/utils/useRequest';
 import StepOne from './step-one';
 import StepTwo from './step-two';
 import StepThree from './step-three';
+import { createPrometheus } from '../../service';
 import { Item } from '../../typing';
 import './index.less';
 
@@ -29,24 +31,40 @@ const stepOption = [
 const PrometheusForm: React.FC = () => {
   const [formList, setFormList] = useState({});
   const [current, setCurrent] = useState(0);
-  const [stepOneTable, setStepOneTable] = useState<Record<string, Item[]>>({});
+  const [stepOneTable, setStepOneTable] = useState<Item[]>([]);
   const [stepTwoTable, setStepTwoTable] = useState<Record<string, Item[]>>({});
   const [form] = Form.useForm();
 
   const pathName = history.location.pathname;
+
+  const { run: createPrometheusFun } = useRequest({
+    api: 'createPrometheus',
+    method: 'POST',
+    successText: '提交成功',
+  });
+
+  const stepTableMap = (data: Item[]) => {
+    const obj: Record<string, string> = {};
+    console.log(Object.keys(data), '999');
+    data.forEach((item) => {
+      const str = item.key;
+      if (str) {
+        obj[str] = item.value as string;
+      }
+    });
+    return obj;
+  };
 
   const pre = () => {
     setCurrent(current - 1);
   };
 
   const next = () => {
+    stepTableMap(stepOneTable);
+
     form.validateFields().then((value) => {
-      console.log(value, 'value');
-      console.log(
-        { ...formList, ...stepTwoTable, ...stepOneTable, ...value },
-        '123',
-      );
-      setFormList({ ...formList, ...stepTwoTable, ...stepOneTable, ...value });
+      createPrometheusFun({ ...value, labels: stepTableMap(stepOneTable) });
+      setFormList({ ...formList, ...stepOneTable, ...value });
       setCurrent(current + 1);
     });
     // setCurrent(current + 1);
@@ -61,7 +79,7 @@ const PrometheusForm: React.FC = () => {
     form.resetFields();
   };
 
-  const stepOneTableFun = (value: Record<string, Item[]>) => {
+  const stepOneTableFun = (value: Item[]) => {
     console.log(value, 'one');
     setStepOneTable(value);
   };

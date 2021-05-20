@@ -1,5 +1,5 @@
 import { Moment } from 'moment';
-import React from '_@types_react@16.14.5@@types/react';
+import React from 'react';
 
 export interface AlertNameProps {
   key?: React.Key;

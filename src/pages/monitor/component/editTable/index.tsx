@@ -119,8 +119,8 @@ const EditableTable: React.FC<EditableTableState> = ({
       : [
           {
             id: 0,
-            key: '0',
-            value: '0',
+            key: 'key',
+            value: 'value',
           },
         ],
   );
@@ -181,8 +181,8 @@ const EditableTable: React.FC<EditableTableState> = ({
   const handleAdd = () => {
     const newData: Item = {
       id: count,
-      key: '0',
-      value: '0',
+      key: 'key',
+      value: 'value',
     };
     setDataSource([...dataSource, newData]);
     setCount(count + 1);

@@ -1,5 +1,13 @@
 import ds from '@config/defaultSettings';
 
+/** 应用名 */
+
+export const queryappManageList = `${ds.apiPrefix}/appManage/list`;
+
+/** 环境名 */
+
+export const queryappManageEnvList = `${ds.apiPrefix}/monitorManage/app/env`;
+
 /**
  * Prometheus监控
  */
@@ -55,7 +63,4 @@ export const deleteRuleTemplates = `${ds.apiPrefix}/monitorManage/ruleTemplates/
  */
 
 // 查询列表
-export const queryAlertManageList = `${ds.apiPrefix}/monitorManage/alertManage/alerts/list`;
-
-// 创建
-export const createAlertManage = `${ds.apiPrefix}/monitorManage/alertManage/alerts/create`;
+export const queryAlertManageList = `${ds.apiPrefix}/monitorManage/alertrecord/list`;

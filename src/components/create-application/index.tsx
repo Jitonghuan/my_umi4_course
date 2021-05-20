@@ -11,7 +11,7 @@ import FEContext from '@/layouts/basic-layout/FeContext';
 import { BasicForm } from '@cffe/fe-backend-component';
 import createSchema from './create-schema';
 import { createApp, updateApp } from './service';
-import { IProps, FormValue, AppType } from './types';
+import { IProps, FormValue, AppType, AppDevelopLanguage } from './types';
 // import './index.less';
 
 export type AppDataTypes = FormValue;
@@ -23,11 +23,20 @@ const CreateApplication = (props: IProps) => {
   const [loading, setLoading] = useState(false);
   // 应用类型
   const [appType, setAppType] = useState<AppType>();
-  const { belongData, businessData, envData } = useContext(FEContext);
+  // 应用开发语言
+  const [
+    appDevelopLanguage,
+    setAppDevelopLanguage,
+  ] = useState<AppDevelopLanguage>();
+  const { categoryData, businessData } = useContext(FEContext);
 
   useEffect(() => {
     setAppType(formValue?.appType);
   }, [formValue?.appType]);
+
+  useEffect(() => {
+    setAppDevelopLanguage(formValue?.appDevelopLanguage);
+  }, [formValue?.appDevelopLanguage]);
 
   return (
     <Drawer
@@ -43,7 +52,8 @@ const CreateApplication = (props: IProps) => {
           {...(createSchema({
             isEdit,
             appType,
-            belongData,
+            appDevelopLanguage,
+            categoryData,
             businessData,
           }) as any)}
           dataSource={formValue}
@@ -55,6 +65,7 @@ const CreateApplication = (props: IProps) => {
           onReset={props.onClose}
           onValuesChange={(changedValues, allValues) => {
             setAppType(allValues?.appType);
+            setAppDevelopLanguage(allValues?.appDevelopLanguage);
           }}
           onFinish={(val: Omit<FormValue, 'id'>) => {
             let promise = null;

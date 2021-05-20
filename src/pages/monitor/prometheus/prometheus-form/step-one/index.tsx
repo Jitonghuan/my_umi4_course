@@ -7,7 +7,7 @@ import { FormProps } from '@/components/table-search/typing';
 import { Item } from '../../../typing';
 
 interface StepOneProps {
-  getTableData: (value: Record<string, Item[]>) => void;
+  getTableData: (value: Item[]) => void;
   tableData?: Item[];
   form?: FormInstance;
 }
@@ -21,7 +21,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
   };
 
   useEffect(() => {
-    getTableData({ matchlabels: matchlabels });
+    getTableData(matchlabels);
   }, [matchlabels]);
 
   useEffect(() => {
@@ -57,6 +57,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       dataIndex: 'appCode',
       placeholder: '请选择',
       required: true,
+      showSelectSearch: true,
       option: [{ key: 'ccc', value: 'hhh' }],
       onChange: (e: string) => {
         console.log(e);
@@ -69,6 +70,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       dataIndex: 'envCode',
       placeholder: '请选择',
       required: true,
+      showSelectSearch: true,
       option: [{ key: 'aa', value: 'hhh' }],
       onChange: (e: string) => {
         console.log(e);
