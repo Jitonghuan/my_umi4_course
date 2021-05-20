@@ -33,9 +33,9 @@ const queryEnvListApi = `${ds.apiPrefix}/monitorManage/app/env`;
 export const queryEnvList = (params: { appCode: string }) =>
   getRequest(queryEnvListApi, { data: params }).then((res: any) => {
     if (res.success) {
-      const { data = [] } = res;
+      const { dataSource = [] } = res.data;
       return (
-        data?.map((env: any) => {
+        dataSource?.map((env: any) => {
           return {
             ...env,
             value: env.envCode,

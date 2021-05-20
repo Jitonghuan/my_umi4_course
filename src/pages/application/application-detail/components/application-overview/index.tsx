@@ -53,7 +53,7 @@ const ApplicationOverview = (props: IProps) => {
       <Descriptions
         title="概要"
         bordered
-        column={2}
+        column={3}
         labelStyle={labelStyle}
         extra={<Button onClick={() => setIsModifyApp(true)}>修改</Button>}
       >
@@ -61,22 +61,30 @@ const ApplicationOverview = (props: IProps) => {
           {appData?.appCode}
         </Descriptions.Item>
         <Descriptions.Item label="应用名">{appData?.appName}</Descriptions.Item>
-        <Descriptions.Item label="git地址">{appData?.gitlab}</Descriptions.Item>
-        <Descriptions.Item label="jar包路径">
-          {appData?.jarPath}
+        <Descriptions.Item label="git地址">
+          {appData?.gitAddress}
         </Descriptions.Item>
-        <Descriptions.Item label="是否包含二方包">
-          {{ 1: '是', 0: '否' }[appData?.isClient!]}
+        <Descriptions.Item label="git组">{appData?.gitGroup}</Descriptions.Item>
+        <Descriptions.Item label="pom文件路径">
+          {appData?.deployPomPath}
+        </Descriptions.Item>
+        <Descriptions.Item label="应用部署名称">
+          {appData?.deploymentName}
+        </Descriptions.Item>
+        <Descriptions.Item label="应用分类">
+          {appData?.appCategoryCode}
+        </Descriptions.Item>
+        <Descriptions.Item label="应用组">
+          {appData?.appGroupCode}
         </Descriptions.Item>
         <Descriptions.Item label="应用类型">
           {APP_TYPE_MAP[appData?.appType!]}
         </Descriptions.Item>
-        <Descriptions.Item label="所属">{appData?.belong}</Descriptions.Item>
-        <Descriptions.Item label="业务线">
-          {appData?.lineCode}
+        <Descriptions.Item label="是否为二方包">
+          {{ 1: '是', 0: '否' }[appData?.isClient!]}
         </Descriptions.Item>
-        <Descriptions.Item label="业务模块">
-          {appData?.sysCode}
+        <Descriptions.Item label="是否包含二方包">
+          {{ 1: '是', 0: '否' }[appData?.isContainClient!]}
         </Descriptions.Item>
         <Descriptions.Item label="责任人">{appData?.owner}</Descriptions.Item>
         <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>

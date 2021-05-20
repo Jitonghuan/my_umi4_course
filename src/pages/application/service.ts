@@ -14,10 +14,10 @@ export const queryApps = (params: {
   appName?: string;
   /** 应用类型 */
   appType?: 'frontend' | 'backend';
-  /** 所属 */
-  belong?: string;
-  /** 业务线CODE */
-  lineCode?: string;
+  /** 应用分类 */
+  categoryCode?: string;
+  /** 应用组CODE */
+  groupCode?: string;
   /** 应用负责人   ---支持模糊搜索 */
   owner?: string;
   /** 分页索引 */

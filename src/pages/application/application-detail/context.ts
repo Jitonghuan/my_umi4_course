@@ -11,22 +11,28 @@ export interface ContextTypes {
     appName: string;
     /** 应用类型 */
     appType: 'frontend' | 'backend';
-    /** 所属 */
-    belong: string;
-    /** 业务线CODE */
-    lineCode: string;
-    /** 业务模块CODE */
-    sysCode: string;
+    /** 应用分类 */
+    appCategoryCode: string;
+    /** 应用组CODE */
+    appGroupCode: string;
+    /** 应用开发语言 **/
+    appDevelopLanguage: string;
+    /** 应用部署名称 **/
+    deploymentName: string;
     /** 应用负责人   ---支持模糊搜索 */
     owner: string;
     /** gitlab 中项目http地址 */
-    gitlab: string;
-    /** jar包路径 ---只有后端应用才需要 */
-    jarPath: string;
-    /** 是否包含二方包 ---只有后端应用才需要 */
+    gitAddress: string;
+    /** gitlab 中项目的分组信息 */
+    gitGroup: string;
+    /** pom文件路径 ---只有后端应用Java应用才需要 */
+    deployPomPath: string;
+    /** 二方包应用pom文件位置 */
+    clientPomPath: string;
+    /** 是否是服务端工程包含二方包 */
+    isContainClient: string;
+    /** 是否是二方包应用*/
     isClient: number;
-    /** 应用所属的组  ---只有前端的应用才有 */
-    group: string;
     /** 描述 */
     desc: string;
   };

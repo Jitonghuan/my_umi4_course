@@ -27,7 +27,7 @@ import logo from './logo.svg';
 
 export default (props: IUmiRrops) => {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
-  // 所属数据
+  // 应用分类数据
   const [belongData, setBelongData] = useState<IOption[]>([]);
   // 业务线
   const [business, setBusiness] = useState<IOption[]>([]);
@@ -51,7 +51,7 @@ export default (props: IUmiRrops) => {
 
   // 查询业务线数据
   const queryBusinessData = async () => {
-    // 查询所属数据
+    // 查询应用分类数据
     const belongResp = await getRequest(queryBelongData);
 
     // 查询业务线数据
@@ -62,27 +62,27 @@ export default (props: IUmiRrops) => {
 
     const belongData = belongResp.data?.dataSource || [];
     const bizData = bizResp.data?.dataSource || [];
-    const envData = envResp.data?.dataSource || [];
+    const envData = envResp?.data || [];
 
     setBelongData(
       belongData.map((el: any) => ({
         ...el,
-        label: el.belongName,
-        value: el.belongCode,
+        label: el.categoryName,
+        value: el.categoryCode,
       })),
     );
     setBusiness(
       bizData.map((el: any) => ({
         ...el,
-        label: el.lineName,
-        value: el.lineCode,
+        label: el.groupName,
+        value: el.groupCode,
       })),
     );
     setEnvData(
       envData.map((el: any) => ({
         ...el,
-        label: el.envName,
-        value: el.envCode,
+        label: el.typeName,
+        value: el.typeCode,
       })),
     );
   };

@@ -21,16 +21,16 @@ export const createFilterFormSchema = (params: {
     {
       type: 'Select',
       props: {
-        label: '所属',
-        name: 'belong',
+        label: '应用分类',
+        name: 'categoryCode',
         options: params.belongData || [],
       },
     },
     {
       type: 'Select',
       props: {
-        label: '业务线',
-        name: 'lineCode',
+        label: '应用组',
+        name: 'groupCode',
         options: params.businessData || [],
       },
     },
@@ -98,12 +98,12 @@ export const createTableSchema = ({
     },
     {
       title: 'git仓库名',
-      dataIndex: 'gitlab',
+      dataIndex: 'gitAddress',
       width: 200,
     },
     {
-      title: '所属',
-      dataIndex: 'belong',
+      title: '应用分类',
+      dataIndex: 'appCategoryCode',
       width: 80,
     },
     {
@@ -113,8 +113,8 @@ export const createTableSchema = ({
       render: (appType: AppType) => APP_TYPE_MAP[appType] || '',
     },
     {
-      title: '业务线',
-      dataIndex: 'lineCode',
+      title: '应用组',
+      dataIndex: 'appGroupCode',
       width: 100,
     },
     {

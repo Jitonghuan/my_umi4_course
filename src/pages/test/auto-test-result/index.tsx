@@ -69,7 +69,7 @@ const Coms = () => {
   const filterColumns = useMemo(() => {
     return [
       {
-        label: '所属',
+        label: '应用分类',
         name: 'belong',
         type: 'Select',
         options: belongData,

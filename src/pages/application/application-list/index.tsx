@@ -45,12 +45,12 @@ const ApplicationList = (props: IProps) => {
     return createFilterFormSchema({ belongData, businessData });
   }, [belongData, businessData]);
 
-  // 根据所属查询业务线
-  const queryBusiness = (belong: string) => {
+  // 根据应用分类查询应用组
+  const queryBusiness = (categoryCode: string) => {
     setBusinessData([]);
     getRequest(queryBizData, {
       data: {
-        belong,
+        categoryCode,
       },
     }).then((resp: any) => {
       if (resp.success) {
@@ -58,8 +58,8 @@ const ApplicationList = (props: IProps) => {
           resp?.data?.dataSource?.map((el: any) => {
             return {
               ...el,
-              value: el.lineCode,
-              label: el.lineName,
+              value: el.groupCode,
+              label: el.groupName,
             };
           }) || [];
         setBusinessData(datas);
@@ -78,11 +78,11 @@ const ApplicationList = (props: IProps) => {
     },
   });
 
-  // 监听表单变化，根据所属查询业务线
+  // 监听表单变化，根据应用分类查询应用组
   const handleChange = useCallback((vals) => {
     const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
-    if (name && name === 'belong') {
-      formInstance.resetFields(['lineCode']);
+    if (name && name === 'categoryCode') {
+      formInstance.resetFields(['groupCode']);
       queryBusiness(value);
     }
   }, []);

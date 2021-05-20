@@ -213,7 +213,7 @@ const Coms = (props: any) => {
     return [
       {
         name: 'belong',
-        label: '所属',
+        label: '应用分类',
         type: 'Select',
         options: belongData,
         initialValue: belong,

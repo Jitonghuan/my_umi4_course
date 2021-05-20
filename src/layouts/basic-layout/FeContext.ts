@@ -4,7 +4,7 @@ import React from 'react';
 export interface IFEContent extends globalConfig {
   // 面包屑路由数据
   breadcrumbMap: any;
-  // 所属数据
+  // 应用分类数据
   belongData?: any[];
   // 业务线枚举
   businessData?: any[];
