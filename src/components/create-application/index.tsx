@@ -26,7 +26,7 @@ const CreateApplication = (props: IProps) => {
   // 应用开发语言
   const [appDevelopLanguage, setAppDevelopLanguage] =
     useState<AppDevelopLanguage>();
-  const { categoryData, businessData, envData } = useContext(FEContext);
+  const { categoryData, businessData } = useContext(FEContext);
 
   useEffect(() => {
     setAppType(formValue?.appType);

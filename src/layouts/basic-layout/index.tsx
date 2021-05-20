@@ -62,7 +62,7 @@ export default (props: IUmiRrops) => {
 
     const categoryDate = categoryResp.data?.dataSource || [];
     const bizData = bizResp.data?.dataSource || [];
-    const envData = envResp.data?.dataSource || [];
+    const envData = envResp?.data || [];
 
     setCategoryData(
       categoryDate.map((el: any) => ({
@@ -74,15 +74,15 @@ export default (props: IUmiRrops) => {
     setBusiness(
       bizData.map((el: any) => ({
         ...el,
-        label: el.lineName,
-        value: el.lineCode,
+        label: el.groupName,
+        value: el.groupCode,
       })),
     );
     setEnvData(
       envData.map((el: any) => ({
         ...el,
-        label: el.envName,
-        value: el.envCode,
+        label: el.typeName,
+        value: el.typeCode,
       })),
     );
   };

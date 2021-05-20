@@ -26,7 +26,7 @@ const Coms: React.FC<IProps> = (props) => {
   // const filterColumns: IColumns[] = useMemo(() => {
   //   return [
   //     { label: '发布状态' },
-  //     { label: '所属' },
+  //     { label: '应用分类' },
   //     { label: '业务线' },
   //     { label: '业务模块' },
   //     { label: '功能名称' },
@@ -37,9 +37,11 @@ const Coms: React.FC<IProps> = (props) => {
 
   return (
     <VCPageContent breadcrumb={breadcrumb}>
-      <Card>{/* <VCForm
+      <Card>
+        {/* <VCForm
           columns={filterColumns}
-        /> */}</Card>
+        /> */}
+      </Card>
     </VCPageContent>
   );
 };

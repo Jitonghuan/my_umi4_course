@@ -37,7 +37,7 @@ import { getRequest, postRequest } from '@/utils/request';
 const Coms = (props: any) => {
   const { location } = props;
   const feContent = useContext(FEContext);
-  const { belongData = [], envData = [] } = feContent || {};
+  const { categoryData = [], envData = [] } = feContent || {};
 
   // 业务线数据
   const [belong, setBelong] = useState<string>('gmc');
@@ -95,7 +95,11 @@ const Coms = (props: any) => {
   };
 
   // 查询表格数据
-  const { run: queryTableData, tableProps, reset } = usePaginated({
+  const {
+    run: queryTableData,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryAutoTest,
     requestMethod: 'GET',
     showRequestError: true,
@@ -213,13 +217,13 @@ const Coms = (props: any) => {
     return [
       {
         name: 'belong',
-        label: '所属',
+        label: '应用分类',
         type: 'Select',
-        options: belongData,
+        options: categoryData,
         initialValue: belong,
       },
     ] as IColumns[];
-  }, [belongData, belong]);
+  }, [categoryData, belong]);
 
   // 表格相关重置, 翻页重置，搜索重置，表格选中重置
   const handleResetTable = () => {

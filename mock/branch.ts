@@ -47,8 +47,8 @@ export default {
   //   errorMsg: '',
   //   data: {
   //     id: 1,
-  //     belongCode: 'gmc',
-  //     belongName: '医共体',
+  //     categoryCode: 'gmc',
+  //     categoryName: '医共体',
   //     createUser: '王安楠',
   //     modifyUser: '王安楠',
   //     gmtCreate: '2021-04-08T15:22:56.695415+08:00',
@@ -62,8 +62,8 @@ export default {
   //   errorMsg: '',
   //   data: {
   //     id: 1,
-  //     belongCode: 'gmc',
-  //     belongName: '医共体',
+  //     categoryCode: 'gmc',
+  //     categoryName: '医共体',
   //     createUser: '王安楠',
   //     modifyUser: '王安楠',
   //     gmtCreate: '2021-04-08T15:22:56.695415+08:00',

@@ -1,6 +1,6 @@
 export default {
-  // 所属数据
-  'GET /v1/orgManage/belong/list': {
+  // 应用分类数据
+  'GET /v1/appManage/category/list': {
     success: true,
     code: 1000,
     errorMsg: '',
@@ -8,8 +8,8 @@ export default {
       dataSource: [
         {
           id: 1,
-          belongCode: 'gmc',
-          belongName: '医共体',
+          categoryCode: 'gmc',
+          categoryName: '医共体',
           createUser: '王安楠',
           modifyUser: '王安楠',
           gmtCreate: '2021-04-08T15:22:56.695415+08:00',
@@ -17,8 +17,8 @@ export default {
         },
         {
           id: 2,
-          belongCode: 'g3a',
-          belongName: '三甲',
+          categoryCode: 'g3a',
+          categoryName: '三甲',
           createUser: '王安楠',
           modifyUser: '王安楠',
           gmtCreate: '2021-04-08T15:22:56.695415+08:00',
@@ -34,7 +34,7 @@ export default {
   },
 
   // 环境接口
-  'GET /v1/orgManage/env/list': {
+  'GET /v1/appManage/env/list': {
     success: true,
     code: 1000,
     errorMsg: '',
@@ -79,8 +79,8 @@ export default {
     },
   },
 
-  // 业务线接口
-  'GET /v1/orgManage/buLine/list': {
+  // 应用组
+  'GET /v1/appManage/group/list': {
     success: true,
     code: 1000,
     errorMsg: '',
@@ -88,8 +88,8 @@ export default {
       dataSource: [
         {
           id: 1,
-          lineCode: 'cis',
-          lineName: 'cis',
+          groupCode: 'cis',
+          groupName: 'cis',
           lineLeader: '秋年',
           leaderPhone: '12345678901',
           belong: 'g3a',
@@ -102,8 +102,8 @@ export default {
         },
         {
           id: 2,
-          lineCode: 'mis',
-          lineName: 'mis',
+          groupCode: 'mis',
+          groupName: 'mis',
           lineLeader: '秋年',
           leaderPhone: '12345678901',
           belong: 'g3a',

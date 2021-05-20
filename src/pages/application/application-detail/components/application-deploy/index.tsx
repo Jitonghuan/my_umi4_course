@@ -34,14 +34,12 @@ const ApplicationDeploy = ({
         tabBarStyle={{ background: '#E6EBF5' }}
       >
         {envData?.map((item) => (
-          <TabPane tab={item.envName} key={item.envCode}>
+          <TabPane tab={item.label} key={item.value}>
             <DeployContent
-              env={item.envCode}
+              env={item.value}
               onDeployNextEnvSuccess={() => {
-                const i = envData.findIndex(
-                  (item) => item.envCode === tabActive,
-                );
-                setTabActive(envData[i + 1]?.envCode || 'dev');
+                const i = envData.findIndex((item) => item.value === tabActive);
+                setTabActive(envData[i + 1]?.value || 'dev');
               }}
             />
           </TabPane>
