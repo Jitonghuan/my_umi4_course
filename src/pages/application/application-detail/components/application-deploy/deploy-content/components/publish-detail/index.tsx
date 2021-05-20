@@ -25,7 +25,7 @@ const hospitalMap: Record<string, any[]> = {
 
 const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   const { appData } = useContext(DetailContext);
-  const { belong } = appData || {};
+  const { appCategoryCode } = appData || {};
 
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -144,7 +144,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
           <Checkbox.Group
             value={deployEnv}
             onChange={(v) => setDeployEnv(v)}
-            options={hospitalMap[belong!] || []}
+            options={hospitalMap[appCategoryCode!] || []}
           />
         </div>
       </Modal>

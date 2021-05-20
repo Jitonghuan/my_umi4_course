@@ -38,7 +38,7 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
 
       const resp1 = await queryDeployList({
         appCode: appCode!,
-        env,
+        envTypeCode: env,
         isActive: 1,
         pageIndex: 1,
         pageSize: 10,
@@ -46,12 +46,12 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
 
       const resp2 = await queryFeatureDeployed({
         appCode: appCode!,
-        env,
+        envTypeCode: env,
         isDeployed: 1,
       });
       const resp3 = await queryFeatureDeployed({
         appCode: appCode!,
-        env,
+        envTypeCode: env,
         isDeployed: 0,
       });
 

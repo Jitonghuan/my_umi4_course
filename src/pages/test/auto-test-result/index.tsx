@@ -23,7 +23,7 @@ import dayjs from '_dayjs@1.10.4@dayjs';
  */
 const Coms = () => {
   const feContent = useContext(FEContext);
-  const { belongData = [], envData = [] } = feContent || {};
+  const { categoryData = [], envData = [] } = feContent || {};
 
   const [currentRecord, setCurrentRecord] = useState<any>({});
   const [operateType, setOperateType] = useState<
@@ -69,10 +69,10 @@ const Coms = () => {
   const filterColumns = useMemo(() => {
     return [
       {
-        label: '所属',
+        label: '应用分类',
         name: 'belong',
         type: 'Select',
-        options: belongData,
+        options: categoryData,
         initialValue: filter.belong,
       },
       { label: '测试时间', name: 'testTime', type: 'RangePicker' },
@@ -104,7 +104,7 @@ const Coms = () => {
         ],
       },
     ] as IColumns[];
-  }, [belongData, envData]);
+  }, [categoryData, envData]);
 
   useEffect(() => {
     if (!filter.belong) {

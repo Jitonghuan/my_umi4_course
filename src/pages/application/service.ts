@@ -14,10 +14,10 @@ export const queryApps = (params: {
   appName?: string;
   /** 应用类型 */
   appType?: 'frontend' | 'backend';
-  /** 所属 */
-  belong?: string;
-  /** 业务线CODE */
-  lineCode?: string;
+  /** 应用分类 */
+  categoryCode?: string;
+  /** 应用组CODE */
+  groupCode?: string;
   /** 应用负责人   ---支持模糊搜索 */
   owner?: string;
   /** 分页索引 */
@@ -226,7 +226,7 @@ export const queryDeployList = async (params: {
   /** 应用CODE */
   appCode: string;
   /** 环境参数---需要调用基础服务接口获取 */
-  env: string;
+  envTypeCode: string;
   /** 0否/1是    默认每个应用每个环境只有一个 */
   isActive: 0 | 1;
   /** 分页索引 */
@@ -256,7 +256,7 @@ export const queryFeatureDeployed = async (params: {
   /** 应用CODE */
   appCode: string;
   /** 环境参数---需要调用基础服务接口获取 */
-  env: string;
+  envTypeCode: string;
   /** 1已部署，0未部署 */
   isDeployed?: 0 | 1;
 }) => {
@@ -270,7 +270,7 @@ export const createDeploy = (params: {
   /** 应用CODE */
   appCode: string;
   /** 环境参数---需要调用基础服务接口获取 */
-  env: string;
+  envTypeCode: string;
   /** 选择的feature分支 */
   features: string[];
   /** 选择发布的医院，1浙一，2天台，3巍山  只有生产环境有 */
