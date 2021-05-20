@@ -10,16 +10,13 @@ export const queryUserInfoApi = '/user_backend/v1/user/info';
 export const queryAllSystem = '/user_backend/v1/application/query';
 
 /** 查询所属数据 */
-export const queryBelongData = `${ds.apiPrefix}/orgManage/belong/list`;
+export const queryCategoryData = `${ds.apiPrefix}/appManage/category/list`;
 
 /** 获取业务线数据 */
-export const queryBizData = `${ds.apiPrefix}/orgManage/buLine/list`;
-
-/** 业务模块 */
-export const queryBizModuleData = `${ds.apiPrefix}/orgManage/buSys/list`;
+export const queryBizData = `${ds.apiPrefix}/appManage/group/list`;
 
 /** 获取环境接口 */
-export const queryEnvData = `${ds.apiPrefix}/orgManage/env/list`;
+export const queryEnvData = `${ds.apiPrefix}/appManage/env/list`;
 
 /** 获取权限数据 */
 export const queryPermission = `${ds.apiPrefix}/rightManage/getUserMenus`;
