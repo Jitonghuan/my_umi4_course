@@ -62,7 +62,7 @@ const UnitTest: React.FC = () => {
 
   const columns: ColumnsType<Item> = [
     {
-      title: '序号',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
       width: '5%',
@@ -119,49 +119,54 @@ const UnitTest: React.FC = () => {
       // ellipsis: true,
       width: '15%',
       render: (_, record) => (
-        <>
-          <div>{record.startTime ?? '-'}</div>
-          <div>{record.endTime ?? '-'}</div>
-        </>
+        <span>
+          {record.startTime || '-'}
+          <br />
+          {record.endTime || '-'}
+        </span>
       ),
     },
     {
       title: '检测时长(秒)',
       dataIndex: 'times',
       key: 'times',
-      // ellipsis: true,
       width: '15%',
-      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+      render: (text) => text || '-',
     },
     {
       title: '构建人',
       dataIndex: 'createUser',
       key: 'createUser',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '可靠性',
       dataIndex: 'reliabilityLevel',
       key: 'reliabilityLevel',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '安全性',
       dataIndex: 'securityLevel',
       key: 'securityLevel',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '可维护性',
       dataIndex: 'maintainabilityLevel',
       key: 'maintainabilityLevel',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '重复率',
       dataIndex: 'newDuplicatedLinesCov',
       key: 'newDuplicatedLinesCov',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '状态',
@@ -178,9 +183,17 @@ const UnitTest: React.FC = () => {
       key: 'option',
       width: 80,
       fixed: 'right',
-      render: (_, record) => (
-        <a onClick={() => history.push(record.reportUrl as string)}>查看报告</a>
-      ),
+      render: (_, record) =>
+        record.reportUrl && (
+          <a
+            onClick={() => {
+              setFrameVisible(true);
+              setCurrentRecord(record);
+            }}
+          >
+            查看报告
+          </a>
+        ),
     },
   ];
 
@@ -188,10 +201,6 @@ const UnitTest: React.FC = () => {
     {
       key: '1',
       type: 'other',
-      // label: '应用分类',
-      // dataIndex: 'value',
-      // width: '144px',
-      // placeholder: '请输入',
       extraForm: (
         <Form.Item noStyle name="taskInfo">
           <Input
@@ -201,9 +210,6 @@ const UnitTest: React.FC = () => {
           />
         </Form.Item>
       ),
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '2',
@@ -211,10 +217,8 @@ const UnitTest: React.FC = () => {
       label: '应用分类',
       dataIndex: 'classification',
       width: '144px',
-      option: [],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
+      option: appTypeData,
+      onChange: setAppCategoryCode,
     },
     {
       key: '3',
@@ -222,20 +226,16 @@ const UnitTest: React.FC = () => {
       label: '应用名',
       dataIndex: 'name',
       width: '144px',
-      option: [],
-      onChange: (e: string) => {
-        console.log(e);
-      },
+      option: appManageListData,
+      onChange: setAppCode,
     },
     {
       key: '4',
-      type: 'input',
+      type: 'select',
       label: '分支名',
       dataIndex: 'branchName',
       width: '144px',
-      onChange: (e: string) => {
-        console.log(e);
-      },
+      option: appBranchData,
     },
     {
       key: '5',
@@ -271,7 +271,10 @@ const UnitTest: React.FC = () => {
         form={form}
         formOptions={formOptions}
         formLayout="inline"
-        columns={columns}
+        columns={columns.map((el) => ({
+          render: (text) => text || '-',
+          ...el,
+        }))}
         {...tableProps}
         pagination={{
           showTotal: (total) => `总共 ${total} 条数据`,

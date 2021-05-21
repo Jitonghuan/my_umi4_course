@@ -65,7 +65,7 @@ const QualityControl: React.FC = () => {
 
   const columns: ColumnsType<Item> = [
     {
-      title: '序号',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
       width: 50,
@@ -151,22 +151,6 @@ const QualityControl: React.FC = () => {
       key: 'lastCheckTime',
       // ellipsis: true,
       width: 200,
-      render: (text) => (
-        <Tooltip title={text}>
-          {text}
-          {/* <span
-            style={{
-              display: 'inline-block',
-              width: 100,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {text}
-          </span> */}
-        </Tooltip>
-      ),
     },
     {
       title: '检测次数',
@@ -301,7 +285,10 @@ const QualityControl: React.FC = () => {
         form={form}
         formOptions={formOptions}
         formLayout="inline"
-        columns={columns}
+        columns={columns.map((el) => ({
+          render: (text) => text || '-',
+          ...el,
+        }))}
         {...tableProps}
         pagination={{
           ...tableProps.pagination,
