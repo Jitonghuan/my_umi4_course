@@ -18,7 +18,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
   console.log(serviceId, 'idiiiii');
 
-  const { run: queryRulesListFun, data } = useRequest<{
+  const { run: queryRulesListFun, data: rulesList } = useRequest<{
     dataSource: Item[];
     pageInfo: Record<string, React.Key>;
   }>({
@@ -37,10 +37,6 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
     },
   });
 
-  // const [dataSource, setDataSource] = useState<Item[]>([
-  //   { ruleName: '11' },
-  //   { ruleName: '22' },
-  // ]);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
 
@@ -133,8 +129,8 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
     <Form.Item>
       <Table
         columns={columns}
-        dataSource={data?.dataSource}
-        pagination={data?.pageInfo}
+        dataSource={rulesList?.dataSource}
+        pagination={rulesList?.pageInfo}
         className="step-two"
       />
       <Button

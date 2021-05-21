@@ -7,9 +7,15 @@ import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import useTable from '@/utils/useTable';
+import useRequest from '@/utils/useRequest';
 import TemplateDrawer from '../component/templateDrawer';
 import { Item } from '../typing';
-import { queryRuleTemplatesList } from '../service';
+import {
+  queryRuleTemplatesList,
+  createRuleTemplates,
+  updateRuleTemplates,
+  deleteRuleTemplates,
+} from '../service';
 import './index.less';
 
 type statusTypeItem = {
@@ -24,20 +30,61 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 };
 
 const TemplateCom: React.FC = () => {
-  const [dataSource, setDataSource] = useState<Item[]>([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则模版');
   const [editRecord, setEditRecord] = useState<Item>({});
+  const [type, setType] = useState<'add' | 'edit'>('add');
 
   const [form] = Form.useForm();
 
   const {
     tableProps,
-    search: { submit, reset },
+    search: { submit: queryList, reset },
   } = useTable({
     url: queryRuleTemplatesList,
     method: 'GET',
     form,
+  });
+
+  //新增
+  const { run: createRuleTemplatesFun } = useRequest({
+    api: createRuleTemplates,
+    method: 'POST',
+    onSuccess: (data) => {
+      queryList();
+    },
+  });
+
+  //编辑
+  const { run: updateRuleTemplatesFun } = useRequest({
+    api: updateRuleTemplates,
+    method: 'POST',
+    onSuccess: (data) => {
+      queryList();
+    },
+  });
+
+  //启用/禁用
+  const { run: startRuleFun } = useRequest({
+    api: updateRuleTemplates,
+    method: 'GET',
+    onSuccess: (data) => {
+      queryList();
+    },
+  });
+
+  const { run: endRuleFun } = useRequest({
+    api: updateRuleTemplates,
+    method: 'GET',
+    onSuccess: (data) => {
+      queryList();
+    },
+  });
+
+  //删除
+  const { run: deleteRuleTemplatesFun } = useRequest({
+    api: deleteRuleTemplates,
+    method: 'DELETE',
   });
 
   const columns: ColumnsType<Item> = [
@@ -63,8 +110,8 @@ const TemplateCom: React.FC = () => {
     },
     {
       title: '分类',
-      dataIndex: 'classify',
-      key: 'classify',
+      dataIndex: 'group',
+      key: 'group',
       // width: '3%',
     },
     {
@@ -91,8 +138,8 @@ const TemplateCom: React.FC = () => {
     },
     {
       title: '持续时间',
-      dataIndex: 'time',
-      key: 'time',
+      dataIndex: 'duration',
+      key: 'duration',
       // width: '6%',
     },
     {
@@ -117,14 +164,16 @@ const TemplateCom: React.FC = () => {
               setDrawerVisible(true);
               setDrawerTitle('编辑报警规则模版');
               setEditRecord(record);
+              setType('edit');
             }}
           >
             编辑
           </a>
           <Popconfirm
             title="确认删除？"
-            // onConfirm={confirm}
-            // onCancel={cancel}
+            onConfirm={() => {
+              deleteRuleTemplatesFun({ id: record.id });
+            }}
             okText="是"
             cancelText="否"
           >
@@ -132,8 +181,10 @@ const TemplateCom: React.FC = () => {
           </Popconfirm>
           <Popconfirm
             title={`确认${STATUS_TYPE[record.status as number].buttonText}`}
-            // onConfirm={confirm}
-            // onCancel={cancel}
+            onConfirm={() => {
+              startRuleFun({ id: record.id });
+              endRuleFun({ id: record.id });
+            }}
             okText="是"
             cancelText="否"
           >
@@ -183,25 +234,13 @@ const TemplateCom: React.FC = () => {
     setDrawerVisible(false);
   };
 
-  const onSearch = (value: Record<string, any>) => {
-    console.log(value, '8888');
+  const onSubmit = (value: Record<string, string>) => {
+    if (type === 'add') {
+      createRuleTemplatesFun({ ...value });
+    } else {
+      updateRuleTemplatesFun({ ...value });
+    }
   };
-
-  // useEffect(() => {
-  //   const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-  //     return {
-  //       id: `${i + 10000}`,
-  //       status: i % 2 === 0 ? 1 : 0,
-  //       ruleName: '啊卡仕达卡',
-  //       classify: '撒谎的',
-  //       expression: 'sdsadasdd',
-  //       news: '撒谎的艰',
-  //       time: '10min',
-  //     };
-  //   });
-
-  //   setDataSource(arr);
-  // }, []);
 
   return (
     <MatrixPageContent>
@@ -224,6 +263,7 @@ const TemplateCom: React.FC = () => {
             type="primary"
             onClick={() => {
               setDrawerVisible(true);
+              setType('add');
             }}
             icon={<PlusOutlined />}
           >
@@ -231,7 +271,7 @@ const TemplateCom: React.FC = () => {
           </Button>
         }
         className="table-form"
-        onSearch={submit}
+        onSearch={queryList}
         reset={reset}
         scroll={{ x: 'max-content' }}
       />
@@ -241,6 +281,8 @@ const TemplateCom: React.FC = () => {
         drawerTitle={drawerTitle}
         record={editRecord}
         drawerType="template"
+        onSubmit={onSubmit}
+        type={type}
       />
     </MatrixPageContent>
   );

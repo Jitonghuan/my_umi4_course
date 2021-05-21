@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Steps, Space } from 'antd';
 import { history } from 'umi';
+import ds from '@config/defaultSettings';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import useRequest from '@/utils/useRequest';
@@ -13,6 +14,7 @@ import {
   queryPrometheusList,
 } from '../../service';
 import { Item } from '../../typing';
+import { stepTableMap } from '../../util';
 import './index.less';
 
 const { Step } = Steps;
@@ -42,7 +44,7 @@ const PrometheusForm: React.FC = () => {
   const [form] = Form.useForm();
 
   const {
-    location: { query, pathname },
+    location: { query },
   } = history;
 
   const isEdit = Object.keys(query as object).length > 0;
@@ -92,34 +94,25 @@ const PrometheusForm: React.FC = () => {
     },
   });
 
-  const stepTableMap = (data: Item[]) => {
-    const obj: Record<string, string> = {};
-    console.log(Object.keys(data), '999');
-    data.forEach((item) => {
-      const str = item.key;
-      if (str) {
-        obj[str] = item.value as string;
-      }
-    });
-    return obj;
-  };
-
   const pre = () => {
     setCurrent(current - 1);
   };
 
   const next = () => {
-    stepTableMap(stepOneTable);
+    if (current === 0) {
+      form.validateFields().then(async (value) => {
+        if (isEdit) {
+          updatePrometheusFun({ ...value, labels: stepTableMap(stepOneTable) });
+        } else {
+          createPrometheusFun({ ...value, labels: stepTableMap(stepOneTable) });
+        }
 
-    form.validateFields().then(async (value) => {
-      if (isEdit) {
-        updatePrometheusFun({ ...value, labels: stepTableMap(stepOneTable) });
-      } else {
-        createPrometheusFun({ ...value, labels: stepTableMap(stepOneTable) });
-      }
+        setFormList({ ...formList, ...stepOneTable, ...value });
+      });
+    } else {
+      setCurrent(current + 1);
+    }
 
-      setFormList({ ...formList, ...stepOneTable, ...value });
-    });
     // setCurrent(current + 1);
   };
 
@@ -129,16 +122,15 @@ const PrometheusForm: React.FC = () => {
 
   const reset = () => {
     setCurrent(0);
+    history.push(`${ds.pagePrefix}/monitor/prometheus/prometheus-add`);
     form.resetFields();
   };
 
   const stepOneTableFun = (value: Item[]) => {
-    console.log(value, 'one');
     setStepOneTable(value);
   };
 
   const stepTwoTableFun = (value: Record<string, Item[]>) => {
-    console.log(value, 'two');
     setStepTwoTable(value);
   };
 

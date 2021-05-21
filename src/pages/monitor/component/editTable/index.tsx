@@ -143,9 +143,6 @@ const EditableTable: React.FC<EditableTableState> = ({
       width: 50,
       render: (_: string, record: Item) => {
         const findData = dataSource.find((v) => v.id === record.id);
-        console.log(findData, 'findData');
-        console.log(record.id, 'record.id');
-        console.log(dataSource, 'dataSource');
         return (
           <Space>
             {dataSource.length > 1 ? (
