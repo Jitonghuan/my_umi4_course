@@ -11,22 +11,23 @@ export interface AlertNameProps {
 export interface Item {
   key?: React.Key;
   value?: string;
-  ruleName?: string;
-  classify?: string;
+  group?: string;
   expression?: string;
   message?: string;
   time?: Moment | string;
+  duration?: string;
   id?: React.Key;
   status?: number;
   appCode?: string;
   envCode?: string;
   // alertName?: string;
-  alertRank?: string;
+  level?: string;
   eventNum?: string;
   createTime?: string;
   notifyObject?: string;
   name?: string;
   labels?: Record<string, string>;
+  annotations?: Record<string, string>;
   alertName?: AlertNameProps[];
   children?: Item[];
 }
