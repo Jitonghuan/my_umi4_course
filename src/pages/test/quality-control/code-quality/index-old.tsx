@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tooltip, Form, Input, Tag } from 'antd';
+import { Tooltip, Form, Input, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import moment, { Moment } from 'moment';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
-import useTable from '@/utils/useTable';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { queryUnittestCoverCheckLogList } from '../../service';
-import usePublicData from '@/utils/usePublicData';
-import VCModal from '@/components/vc-modal';
 import { Item } from '../../typing';
 
 type statusTypeItem = {
@@ -24,41 +20,8 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   2: { text: '失败', color: 'volcano' },
 };
 
-const UnitTest: React.FC = () => {
-  const [form] = Form.useForm();
-
-  const [appCode, setAppCode] = useState<string | undefined>();
-  const [appCategoryCode, setAppCategoryCode] = useState<string | undefined>();
-
-  const [frameVisible, setFrameVisible] = useState<boolean>(false);
-  const [currentRecord, setCurrentRecord] = useState<any>({});
-
-  const { appManageListData, appTypeData, appBranchData } = usePublicData({
-    appCode,
-    appCategoryCode,
-  });
-
-  const {
-    tableProps,
-    search: { submit: queryUnittest, reset },
-  } = useTable({
-    url: queryUnittestCoverCheckLogList,
-    method: 'GET',
-    form,
-    formatter: (vals) => {
-      const { testTime = [undefined, undefined], ...rest } = vals;
-
-      return {
-        ...rest,
-        startTime: testTime[0]
-          ? testTime[0].format('YYYY-MM-DD HH:mm:ss')
-          : undefined,
-        endTime: testTime[1]
-          ? testTime[1].format('YYYY-MM-DD HH:mm:ss')
-          : undefined,
-      };
-    },
-  });
+const CodeQuality: React.FC = () => {
+  const [dataSource, setDataSource] = useState<Item[]>([]);
 
   const columns: ColumnsType<Item> = [
     {
@@ -135,11 +98,10 @@ const UnitTest: React.FC = () => {
       // ellipsis: true,
       width: '15%',
       render: (_, record) => (
-        <span>
-          {record.startTime}
-          <br />
-          {record.endTime}
-        </span>
+        <>
+          <div>{record.startTime ?? '-'}</div>
+          <div>{record.endTime ?? '-'}</div>
+        </>
       ),
     },
     {
@@ -172,33 +134,27 @@ const UnitTest: React.FC = () => {
       width: '10%',
     },
     {
-      title: '指令覆盖率',
-      dataIndex: 'instructionsCov',
-      key: 'instructionsCov',
+      title: '可靠性',
+      dataIndex: 'reliabilityLevel',
+      key: 'reliabilityLevel',
       width: '10%',
     },
     {
-      title: '分支覆盖率',
-      dataIndex: 'branchesCov',
-      key: 'branchesCov',
+      title: '安全性',
+      dataIndex: 'securityLevel',
+      key: 'securityLevel',
       width: '10%',
     },
     {
-      title: '行覆盖率',
-      dataIndex: 'linesCov',
-      key: 'linesCov',
+      title: '可维护性',
+      dataIndex: 'maintainabilityLevel',
+      key: 'maintainabilityLevel',
       width: '10%',
     },
     {
-      title: '方法覆盖率',
-      dataIndex: 'methodsCov',
-      key: 'methodsCov',
-      width: '10%',
-    },
-    {
-      title: '类覆盖率',
-      dataIndex: 'classesCov',
-      key: 'classesCov',
+      title: '重复率',
+      dataIndex: 'newDuplicatedLinesCov',
+      key: 'newDuplicatedLinesCov',
       width: '10%',
     },
     {
@@ -216,17 +172,9 @@ const UnitTest: React.FC = () => {
       key: 'option',
       width: 80,
       fixed: 'right',
-      render: (_, record) =>
-        record.reportUrl && (
-          <a
-            onClick={() => {
-              setFrameVisible(true);
-              setCurrentRecord(record);
-            }}
-          >
-            查看报告
-          </a>
-        ),
+      render: (_, record) => (
+        <a onClick={() => history.push(record.reportUrl as string)}>查看报告</a>
+      ),
     },
   ];
 
@@ -255,27 +203,33 @@ const UnitTest: React.FC = () => {
       key: '2',
       type: 'select',
       label: '应用分类',
-      dataIndex: 'categoryCode',
+      dataIndex: 'classification',
       width: '144px',
-      option: appTypeData,
-      onChange: setAppCategoryCode,
+      option: [],
+      onChange: (e: React.FormEvent<HTMLInputElement>) => {
+        console.log(e);
+      },
     },
     {
       key: '3',
       type: 'select',
       label: '应用名',
-      dataIndex: 'appCode',
+      dataIndex: 'name',
       width: '144px',
-      option: appManageListData,
-      onChange: setAppCode,
+      option: [],
+      onChange: (e: string) => {
+        console.log(e);
+      },
     },
     {
       key: '4',
-      type: 'select',
+      type: 'input',
       label: '分支名',
       dataIndex: 'branchName',
       width: '144px',
-      option: appBranchData,
+      onChange: (e: string) => {
+        console.log(e);
+      },
     },
     {
       key: '5',
@@ -284,12 +238,16 @@ const UnitTest: React.FC = () => {
       dataIndex: 'testTime',
       width: '280px',
       rules: [],
+      onChange: (e: Moment[]) => {
+        console.log(moment(e[0]).format('YYYY-MM-DD 00:00:00'), 'date');
+        console.log(moment(e[1]).format('YYYY-MM-DD 23:59:59'), 'date');
+      },
     },
     {
       key: '6',
       type: 'input',
       label: '构建人',
-      dataIndex: 'createUser',
+      dataIndex: 'creator',
       width: '144px',
       onChange: (e: string) => {
         console.log(e);
@@ -301,26 +259,63 @@ const UnitTest: React.FC = () => {
       label: '状态',
       dataIndex: 'status',
       width: '144px',
-      option: Object.keys(STATUS_TYPE).map((el) => ({
-        key: el,
-        value: STATUS_TYPE[el as any]?.text,
-      })),
+      option: [
+        {
+          key: 1,
+          value: '1',
+        },
+        {
+          key: 2,
+          value: '2',
+        },
+        {
+          key: 3,
+          value: '3',
+        },
+      ],
       onChange: (e: string) => {
         console.log(e);
       },
     },
   ];
 
+  const onSearch = (value: Record<string, any>) => {
+    console.log(value, '8888');
+  };
+
+  useEffect(() => {
+    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
+      return {
+        id: `${i + 10000}`,
+        classification: '顶顶顶顶',
+        taskName: '啊卡仕达卡仕',
+        name: '撒谎的',
+        branchName: '3-123',
+        startTime: '2012-01-01 00:00',
+        endTime: '2012-01-01 00:00',
+        durationTime: '500',
+        taskId: 100,
+        creator: '张三',
+        securityLevel: 'A',
+        reliabilityLevel: 'A',
+        maintainabilityLevel: 'A',
+        newDuplicatedLinesCov: '7.45%',
+        status: i % 3 === 0 ? 2 : i % 3 === 2 ? 1 : 0,
+      };
+    });
+
+    setDataSource(arr);
+  }, []);
+
   return (
     <MatrixPageContent>
       <TableSearch
-        form={form}
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        {...tableProps}
+        dataSource={dataSource}
         pagination={{
-          showTotal: (total) => `总共 ${total} 条数据`,
+          showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',
           defaultPageSize: 20,
@@ -329,25 +324,12 @@ const UnitTest: React.FC = () => {
         searchText="查询"
         tableTitle="执行记录"
         className="table-form"
-        onSearch={queryUnittest}
-        reset={reset}
-        scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
+        onSearch={onSearch}
+        scroll={{ x: '150%', y: 300, scrollToFirstRowOnChange: true }}
+        // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
       />
-
-      <VCModal
-        visible={frameVisible}
-        onCancel={() => setFrameVisible(false)}
-        isFull
-        footer={
-          <Button type="primary" onClick={() => setFrameVisible(false)}>
-            关闭
-          </Button>
-        }
-      >
-        <iframe src={currentRecord.reportUrl} width="100%" height="100%" />
-      </VCModal>
     </MatrixPageContent>
   );
 };
 
-export default UnitTest;
+export default CodeQuality;

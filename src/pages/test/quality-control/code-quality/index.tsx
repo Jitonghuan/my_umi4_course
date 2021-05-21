@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Tooltip, Form, Input, Tag } from 'antd';
+import { Button, Tooltip, Form, Input, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import moment, { Moment } from 'moment';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
+import useTable from '@/utils/useTable';
 import MatrixPageContent from '@/components/matrix-page-content';
+import { queryCodeQualityCheckLogList } from '../../service';
+import usePublicData from '@/utils/usePublicData';
+import VCModal from '@/components/vc-modal';
 import { Item } from '../../typing';
 
 type statusTypeItem = {
@@ -20,8 +24,41 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   2: { text: '失败', color: 'volcano' },
 };
 
-const CodeQuality: React.FC = () => {
-  const [dataSource, setDataSource] = useState<Item[]>([]);
+const UnitTest: React.FC = () => {
+  const [form] = Form.useForm();
+
+  const [appCode, setAppCode] = useState<string | undefined>();
+  const [appCategoryCode, setAppCategoryCode] = useState<string | undefined>();
+
+  const [frameVisible, setFrameVisible] = useState<boolean>(false);
+  const [currentRecord, setCurrentRecord] = useState<any>({});
+
+  const { appManageListData, appTypeData, appBranchData } = usePublicData({
+    appCode,
+    appCategoryCode,
+  });
+
+  const {
+    tableProps,
+    search: { submit: queryCodeQuality, reset },
+  } = useTable({
+    url: queryCodeQualityCheckLogList,
+    method: 'GET',
+    form,
+    formatter: (vals) => {
+      const { testTime = [undefined, undefined], ...rest } = vals;
+
+      return {
+        ...rest,
+        startTime: testTime[0]
+          ? testTime[0].format('YYYY-MM-DD HH:mm:ss')
+          : undefined,
+        endTime: testTime[1]
+          ? testTime[1].format('YYYY-MM-DD HH:mm:ss')
+          : undefined,
+      };
+    },
+  });
 
   const columns: ColumnsType<Item> = [
     {
@@ -29,18 +66,12 @@ const CodeQuality: React.FC = () => {
       dataIndex: 'id',
       key: 'id',
       width: '5%',
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
     },
     {
       title: '任务ID',
       dataIndex: 'taskId',
       key: 'taskId',
       width: '5%',
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
     },
     {
       title: '任务名',
@@ -74,22 +105,12 @@ const CodeQuality: React.FC = () => {
       dataIndex: 'appName',
       key: 'appName',
       width: '10%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
     },
     {
       title: '分支名',
       dataIndex: 'branchName',
       key: 'branchName',
       width: '10%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
     },
     {
       title: '检测时间',
@@ -110,22 +131,7 @@ const CodeQuality: React.FC = () => {
       key: 'times',
       // ellipsis: true,
       width: '15%',
-      render: (text) => (
-        <Tooltip title={text}>
-          {text}
-          {/* <span
-            style={{
-              display: 'inline-block',
-              width: 100,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {text}
-          </span> */}
-        </Tooltip>
-      ),
+      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
       title: '构建人',
@@ -238,10 +244,6 @@ const CodeQuality: React.FC = () => {
       dataIndex: 'testTime',
       width: '280px',
       rules: [],
-      onChange: (e: Moment[]) => {
-        console.log(moment(e[0]).format('YYYY-MM-DD 00:00:00'), 'date');
-        console.log(moment(e[1]).format('YYYY-MM-DD 23:59:59'), 'date');
-      },
     },
     {
       key: '6',
@@ -249,9 +251,6 @@ const CodeQuality: React.FC = () => {
       label: '构建人',
       dataIndex: 'creator',
       width: '144px',
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '7',
@@ -259,63 +258,23 @@ const CodeQuality: React.FC = () => {
       label: '状态',
       dataIndex: 'status',
       width: '144px',
-      option: [
-        {
-          key: 1,
-          value: '1',
-        },
-        {
-          key: 2,
-          value: '2',
-        },
-        {
-          key: 3,
-          value: '3',
-        },
-      ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
+      option: Object.keys(STATUS_TYPE).map((el) => ({
+        key: el,
+        value: STATUS_TYPE[el as any]?.text,
+      })),
     },
   ];
-
-  const onSearch = (value: Record<string, any>) => {
-    console.log(value, '8888');
-  };
-
-  useEffect(() => {
-    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-      return {
-        id: `${i + 10000}`,
-        classification: '顶顶顶顶',
-        taskName: '啊卡仕达卡仕',
-        name: '撒谎的',
-        branchName: '3-123',
-        startTime: '2012-01-01 00:00',
-        endTime: '2012-01-01 00:00',
-        durationTime: '500',
-        taskId: 100,
-        creator: '张三',
-        securityLevel: 'A',
-        reliabilityLevel: 'A',
-        maintainabilityLevel: 'A',
-        newDuplicatedLinesCov: '7.45%',
-        status: i % 3 === 0 ? 2 : i % 3 === 2 ? 1 : 0,
-      };
-    });
-
-    setDataSource(arr);
-  }, []);
 
   return (
     <MatrixPageContent>
       <TableSearch
+        form={form}
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        dataSource={dataSource}
+        {...tableProps}
         pagination={{
-          showTotal: (total) => `共 ${total} 条`,
+          showTotal: (total) => `总共 ${total} 条数据`,
           showSizeChanger: true,
           size: 'small',
           defaultPageSize: 20,
@@ -324,12 +283,25 @@ const CodeQuality: React.FC = () => {
         searchText="查询"
         tableTitle="执行记录"
         className="table-form"
-        onSearch={onSearch}
-        scroll={{ x: '150%', y: 300, scrollToFirstRowOnChange: true }}
-        // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
+        onSearch={queryCodeQuality}
+        reset={reset}
+        scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
       />
+
+      <VCModal
+        visible={frameVisible}
+        onCancel={() => setFrameVisible(false)}
+        isFull
+        footer={
+          <Button type="primary" onClick={() => setFrameVisible(false)}>
+            关闭
+          </Button>
+        }
+      >
+        <iframe src={currentRecord.reportUrl} width="100%" height="100%" />
+      </VCModal>
     </MatrixPageContent>
   );
 };
 
-export default CodeQuality;
+export default UnitTest;
