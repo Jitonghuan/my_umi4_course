@@ -1,82 +1,100 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Row, Col } from 'antd';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import { BaseFormProps } from '../../typing';
+import { queryAppList } from '@/pages/monitor/application/service';
 
 const BaseForm: React.FC<BaseFormProps> = ({ initValueObj, isCheck }) => {
-  const baseFormOption: FormProps[] = [
-    {
-      key: '1',
-      type: 'select',
-      option: [],
-      label: '应用名',
-      dataIndex: 'useName',
-      showSelectSearch: true,
-      required: true,
-      width: '100%',
-      defaultValue: initValueObj?.useName,
-    },
-    {
-      key: '2',
-      type: 'input',
-      label: '版本号',
-      dataIndex: 'version',
-      width: '100%',
-      defaultValue: initValueObj?.version,
-    },
-    {
-      key: '3',
-      type: 'input',
-      label: '版本分支',
-      dataIndex: 'branch',
-      width: '100%',
-      defaultValue: initValueObj?.branch,
-    },
-    {
-      key: '4',
-      type: 'input',
-      label: '版本依赖',
-      dataIndex: 'modules',
-      defaultValue: initValueObj?.modules,
-    },
-    {
-      key: '5',
-      type: 'input',
-      label: '开发',
-      dataIndex: 'develop',
-      required: true,
-      width: '100%',
-      defaultValue: initValueObj?.develop,
-    },
-    {
-      key: '6',
-      type: 'input',
-      label: '测试',
-      dataIndex: 'test',
-      required: true,
-      width: '100%',
-      defaultValue: initValueObj?.test,
-    },
-    {
-      key: '7',
-      type: 'input',
-      label: '发布人',
-      dataIndex: 'publisher',
-      required: true,
-      width: '100%',
-      defaultValue: initValueObj?.publisher,
-    },
-    {
-      key: '8',
-      type: 'date',
-      label: '期望发布日期',
-      dataIndex: 'planTime',
-      required: true,
-      width: '100%',
-      defaultValue: initValueObj?.planTime,
-    },
-  ];
+  const [appList, setAppList] = useState<any[]>([]);
+  useEffect(() => {
+    queryAppList().then((resp) => {
+      setAppList(
+        resp.map((el: any) => {
+          return {
+            ...el,
+            key: el.value,
+            value: el.label,
+          };
+        }),
+      );
+    });
+  }, []);
+  const baseFormOption: FormProps[] = useMemo(() => {
+    return [
+      {
+        key: '1',
+        type: 'select',
+        option: appList,
+        label: '应用',
+        dataIndex: 'appCode',
+        showSelectSearch: true,
+        required: true,
+        width: '100%',
+        defaultValue: initValueObj?.appCode,
+      },
+      {
+        key: '2',
+        type: 'input',
+        label: '版本号',
+        dataIndex: 'version',
+        width: '100%',
+        defaultValue: initValueObj?.version,
+      },
+      {
+        key: '3',
+        type: 'input',
+        label: '版本分支',
+        dataIndex: 'deployRelease',
+        width: '100%',
+        defaultValue: initValueObj?.deployRelease,
+      },
+      {
+        key: '4',
+        type: 'input',
+        label: '版本依赖',
+        dataIndex: 'dependcy',
+        defaultValue: initValueObj?.dependcy,
+      },
+      {
+        key: '5',
+        type: 'input',
+        label: '开发',
+        dataIndex: 'developer',
+        required: true,
+        width: '100%',
+        defaultValue: initValueObj?.developer,
+      },
+      {
+        key: '6',
+        type: 'input',
+        label: '测试',
+        dataIndex: 'tester',
+        required: true,
+        width: '100%',
+        defaultValue: initValueObj?.tester,
+      },
+      {
+        key: '7',
+        type: 'input',
+        label: '发布人',
+        dataIndex: 'deployer',
+        required: true,
+        width: '100%',
+        defaultValue: initValueObj?.deployer,
+      },
+      {
+        key: '8',
+        type: 'date',
+        label: '期望发布日期',
+        dataIndex: 'preDeployTime',
+        required: true,
+        width: '100%',
+        defaultValue: initValueObj?.preDeployTime,
+        rules: [],
+      },
+    ];
+  }, [initValueObj, appList]);
 
   baseFormOption.forEach((v) => {
     v.itemStyle = { width: '100%' };

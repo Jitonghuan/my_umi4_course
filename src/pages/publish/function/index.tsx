@@ -1,8 +1,8 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { Button, Form } from 'antd';
 import { history } from 'umi';
 import TableSearch from '@/components/table-search';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
+import { OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import './index.less';
 import FEContext from '@/layouts/basic-layout/FeContext';
@@ -26,6 +26,10 @@ const FunctionCom: React.FC = () => {
   });
 
   const onCategoryChange = (code: string) => {
+    form.setFieldsValue({
+      appGroupCode: undefined,
+    });
+    setGroupData([]);
     queryAppGroupReq({
       categoryCode: code,
     }).then((resp) => {
@@ -60,7 +64,6 @@ const FunctionCom: React.FC = () => {
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        // dataSource={dataSource}
         {...tableProps}
         pagination={{
           ...tableProps.pagination,

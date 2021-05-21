@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Card, Button, Input, Row, Col, Space } from 'antd';
+import { Form, Card, Button, Input, Row, Col, Space, message } from 'antd';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
 import BaseForm from '../../components/base-form';
 import { InitValue, BaseFormProps } from '../../../typing';
 import './index.less';
+import { addPublishPlanReq } from '@/pages/publish/service';
 
 interface ModifyProps extends InitValue {
   config?: string;
+  id?: string;
 }
 
 interface IProps extends BaseFormProps {
@@ -16,12 +18,24 @@ interface IProps extends BaseFormProps {
 }
 
 const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
+  console.log('initValueObj', initValueObj);
   const [form] = Form.useForm();
   const isCheck = type === 'check';
 
   const submit = () => {
     form.validateFields().then((value) => {
-      console.log(value, 'lll');
+      const { preDeployTime, ...rest } = value;
+      addPublishPlanReq({
+        ...(type === 'edit' ? { id: initValueObj?.id } : {}),
+        ...rest,
+        deployType: 'config',
+        preDeployTime: preDeployTime.format('YYYY-MM-DD'),
+      }).then((resp) => {
+        if (resp.success) {
+          message.info('保存配置变更成功!');
+          history.goBack();
+        }
+      });
     });
   };
 
@@ -53,7 +67,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
               <Form.Item
                 label="配置变更"
                 required
-                name="config"
+                name="configs"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 18 }}
                 initialValue={initValueObj?.config}

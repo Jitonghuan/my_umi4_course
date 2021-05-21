@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
 import {
   Space,
   Form,
@@ -14,28 +14,36 @@ import {
 import { PlusOutlined } from '@ant-design/icons';
 import moment, { Moment } from 'moment';
 import { history } from 'umi';
+
+import FEContext from '@/layouts/basic-layout/FeContext';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import { FormProps } from '@/components/table-search/typing';
 import { renderForm } from '@/components/table-search/form';
 import { JiraColumns } from '../constant';
 import EditableCell from './editTableCell';
-import { Item } from '../../typing';
+import { IFuncItem } from '../../typing';
 import useTableAction from './useTableAction';
 import '../index.less';
 
 import { OptionProps } from '@/components/table-search/typing';
+import {
+  queryEnvsReq,
+  addFuncMultiReq,
+  updateFuncReq,
+  queryAppGroupReq,
+} from '../../service';
 
 export interface DefaultValueObjProps {
   appCategoryCode: string;
   appGroupCode: string;
-  model: string;
+  id: string;
 }
 
 interface JiraItem {
   key: React.Key;
   id?: string;
-  function?: string;
+  funcName?: string;
   planTime?: Moment;
   status?: string;
   creator?: string;
@@ -43,30 +51,69 @@ interface JiraItem {
 }
 
 interface EditTableProps {
-  initData: Item[];
+  initData: IFuncItem[];
   type: 'add' | 'edit' | 'check';
   title: string;
-  categoryData: OptionProps[];
-  lineOption: OptionProps[];
-  formSelectChange: (value: any, type: string) => void;
+  formSelectChange?: (value: any, type: string) => void;
   defaultValueObj?: DefaultValueObjProps;
 }
 
 const EditTable: React.FC<EditTableProps> = ({
   initData,
   type,
-  categoryData,
-  lineOption,
   title,
-  formSelectChange,
   defaultValueObj = {},
 }) => {
-  const [JiraData, setJiraData] = useState<JiraItem[]>([]);
-  const [orgOption, setOrgOption] = useState<OptionProps[]>([]);
+  // 应用分类列表
+  const { categoryData } = useContext(FEContext);
+  const categorys = useMemo(() => {
+    return (
+      categoryData?.map((el) => {
+        return {
+          ...el,
+          key: el.value,
+          value: el.label,
+        };
+      }) || []
+    );
+  }, [categoryData]);
+  const [groupData, setGroupData] = useState<OptionProps[]>([]);
+
+  const [jiraData, setJiraData] = useState<JiraItem[]>([]);
+  const [envsOptions, setEnvsOptions] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   let num = useRef(0);
 
   const isCheck = type === 'check';
+  const isNotAdd = type !== 'add';
+
+  // 获取环境列表
+  const queryEnvs = (categoryCode: string) => {
+    setEnvsOptions([]);
+    queryEnvsReq({
+      categoryCode,
+    }).then((resp) => {
+      setEnvsOptions(resp.list);
+    });
+  };
+
+  // 获取应用组列表
+  const queryGroups = (code: string) => {
+    setGroupData([]);
+    queryAppGroupReq({
+      categoryCode: code,
+    }).then((resp) => {
+      setGroupData(
+        resp.list?.map((el: any) => {
+          return {
+            ...el,
+            key: el.value,
+            value: el.label,
+          };
+        }),
+      );
+    });
+  };
 
   const {
     form,
@@ -87,16 +134,16 @@ const EditTable: React.FC<EditTableProps> = ({
   const columns = [
     {
       title: '发布功能',
-      dataIndex: 'function',
-      key: 'function',
+      dataIndex: 'funcName',
+      key: 'funcName',
       editable: true,
       required: true,
-      item: <Input placeholder="必选" />,
+      item: <Input placeholder="必填" />,
     },
     {
-      title: '发布机构',
-      dataIndex: 'org',
-      key: 'org',
+      title: '发布环境',
+      dataIndex: 'envs',
+      key: 'envs',
       editable: true,
       required: true,
       item: (
@@ -106,9 +153,9 @@ const EditTable: React.FC<EditTableProps> = ({
           mode="multiple"
           style={{ width: 120 }}
         >
-          {orgOption?.map((item) => (
-            <Select.Option key={item.key} value={item.key}>
-              {item.value}
+          {envsOptions?.map((item) => (
+            <Select.Option key={item.value} value={item.value}>
+              {item.label}
             </Select.Option>
           ))}
         </Select>
@@ -119,35 +166,35 @@ const EditTable: React.FC<EditTableProps> = ({
     },
     {
       title: '涉及业务范围',
-      dataIndex: 'range',
-      key: 'range',
+      dataIndex: 'coverageRange',
+      key: 'coverageRange',
       editable: true,
       required: false,
       item: <Input placeholder="涉及业务范围" />,
     },
     {
       title: '解决的实际需求',
-      dataIndex: 'needs',
-      key: 'needs',
+      dataIndex: 'resolveNeeds',
+      key: 'resolveNeeds',
       editable: true,
       required: false,
       item: <Input placeholder="解决的实际需求" />,
     },
     {
       title: '预计发布时间',
-      dataIndex: 'planTime',
-      key: 'planTime',
+      dataIndex: 'preDeployTime',
+      key: 'preDeployTime',
       editable: true,
       required: false,
       item: <DatePicker placeholder="请选择日期" showTime />,
       render: (text: Moment) => (
-        <>{text ? moment(text).format('YYYY-MM-DD HH-mm-ss') : ''}</>
+        <>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</>
       ),
     },
     {
       title: '需求ID',
-      dataIndex: 'needsID',
-      key: 'needsID',
+      dataIndex: 'demandId',
+      key: 'demandId',
       editable: true,
       required: false,
       item: <Input placeholder="解决的实际需求" />,
@@ -157,7 +204,7 @@ const EditTable: React.FC<EditTableProps> = ({
       dataIndex: 'option',
       key: 'option',
       width: 100,
-      render: (_: string, record: Item) => {
+      render: (_: string, record: IFuncItem) => {
         const editable = isEditing(record);
         return editable ? (
           <span>
@@ -179,7 +226,9 @@ const EditTable: React.FC<EditTableProps> = ({
           <Space>
             <Typography.Link
               disabled={editingKey !== ''}
-              onClick={() => edit(record as Partial<Item> & { key: React.Key })}
+              onClick={() =>
+                edit(record as Partial<IFuncItem> & { key: React.Key })
+              }
             >
               编辑
             </Typography.Link>
@@ -203,7 +252,7 @@ const EditTable: React.FC<EditTableProps> = ({
     }
     return {
       ...col,
-      onCell: (record: Item) => ({
+      onCell: (record: IFuncItem) => ({
         record,
         dataIndex: col.dataIndex,
         title: col.title,
@@ -219,31 +268,34 @@ const EditTable: React.FC<EditTableProps> = ({
   }
 
   const onSubmit = () => {
-    console.log(data, 'hhh');
+    console.log(data, 'addFuncMulti onSubmit');
+    const params: IFuncItem[] = data.map((el) => {
+      const { envs = [], preDeployTime, key, ...rest } = el;
+      const deployTime = preDeployTime as Moment;
+      const _envs = envs as string[];
+      return {
+        ...rest,
+        preDeployTime: deployTime?.format('YYYY-MM-DD HH:mm:ss'),
+        envs: _envs.join(','),
+      };
+    });
+    if (type === 'add') {
+      addFuncMultiReq(params).then((resp) => {
+        if (resp.success) {
+          history.goBack();
+        }
+      });
+    } else if (type === 'edit') {
+      updateFuncReq({
+        ...params[0],
+        id: defaultValueObj.id,
+      }).then((resp) => {
+        if (resp.success) {
+          history.goBack();
+        }
+      });
+    }
   };
-
-  useEffect(() => {
-    setOrgOption([
-      {
-        key: '1',
-        value: '1',
-      },
-      {
-        key: '2',
-        value: '2',
-      },
-    ]);
-    setJiraData([
-      {
-        key: '0',
-        id: '1',
-      },
-      {
-        key: '1',
-        id: '2',
-      },
-    ]);
-  }, []);
 
   useEffect(() => {
     if (!Object.keys(defaultValueObj).length || num.current !== 0) return;
@@ -251,7 +303,6 @@ const EditTable: React.FC<EditTableProps> = ({
     form.setFieldsValue({
       appCategoryCode: defaultValueObj?.appCategoryCode,
       appGroupCode: defaultValueObj?.appGroupCode,
-      model: defaultValueObj?.model,
     });
     num.current = num.current + 1;
   }, [defaultValueObj]);
@@ -271,10 +322,14 @@ const EditTable: React.FC<EditTableProps> = ({
       width: '144px',
       placeholder: '请选择',
       required: true,
-      option: categoryData,
-      disable: isCheck,
+      option: categorys,
+      disable: isNotAdd,
       onChange: (value: string) => {
-        formSelectChange(value, 'appCategoryCode');
+        form.setFieldsValue({
+          appGroupCode: undefined,
+        });
+        queryGroups(value);
+        queryEnvs(value);
       },
     },
     {
@@ -285,8 +340,8 @@ const EditTable: React.FC<EditTableProps> = ({
       width: '144px',
       placeholder: '请选择',
       required: true,
-      option: lineOption,
-      disable: isCheck,
+      option: groupData,
+      disable: isNotAdd,
     },
   ];
 
@@ -297,9 +352,11 @@ const EditTable: React.FC<EditTableProps> = ({
           <Form form={form} component={false} initialValues={defaultValueObj}>
             <div className="page-top-form">
               <Space size={16}>{renderForm(formLists)}</Space>
-              <Button type="primary" onClick={() => setModalVisible(true)}>
-                关联Jira需求单
-              </Button>
+              {type === 'add' && (
+                <Button type="primary" onClick={() => setModalVisible(true)}>
+                  关联Jira需求单
+                </Button>
+              )}
             </div>
             <Table
               columns={mergedColumns}
@@ -345,7 +402,7 @@ const EditTable: React.FC<EditTableProps> = ({
       >
         <Table
           columns={JiraColumns}
-          dataSource={JiraData}
+          dataSource={jiraData}
           rowSelection={
             !isCheck
               ? {

@@ -8,10 +8,11 @@ interface UseTableProps {
   url: string;
   method: 'POST' | 'GET';
   form: FormInstance;
+  formatResult?: (result: any) => { total: number; list: any[] };
 }
 
 const useTable = (props: UseTableProps) => {
-  const { method, url, form } = props;
+  const { method, url, form, formatResult } = props;
 
   const getTableData = (
     { current, pageSize }: PaginatedParams[0],
@@ -21,19 +22,29 @@ const useTable = (props: UseTableProps) => {
       return getRequest(url, {
         method: 'GET',
         data: { ...formData, pageIndex: current, pageSize },
-      }).then((data) => ({
-        total: data.data?.pageInfo?.total,
-        list: data.data.dataSource,
-      }));
+      }).then((data) => {
+        if (formatResult) {
+          return formatResult(data);
+        }
+        return {
+          total: data.data?.pageInfo?.total,
+          list: data.data.dataSource,
+        };
+      });
     }
 
     return postRequest(url, {
       method: 'POST',
       data: { ...formData, pageIndex: current, pageSize },
-    }).then((data) => ({
-      total: data.data?.pageInfo?.total,
-      list: data.data.dataSource,
-    }));
+    }).then((data) => {
+      if (formatResult) {
+        return formatResult(data);
+      }
+      return {
+        total: data.data?.pageInfo?.total,
+        list: data.data.dataSource,
+      };
+    });
   };
 
   const antdTable = useAntdTable(getTableData, {
