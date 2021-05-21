@@ -44,16 +44,25 @@ export const createAutoTest = `${ds.apiPrefix}/qc/autotest/create`;
 export const queryTestResult = `${ds.apiPrefix}/qc/autotest/queryTestResult`;
 
 /** 添加质量控制任务 */
-export const createQCTask = `${ds.apiPrefix}/qc/unittest/createQCTask`;
+export const createQCTask = `${ds.apiPrefix}/qc/qualitycontrol/createQCTask`;
 
 /** 查询质量控制任务列表*/
-export const queryQCTaskList = `${ds.apiPrefix}/qc/unittest/queryQCTaskList`;
+export const queryQCTaskList = `${ds.apiPrefix}/qc/qualitycontrol/queryQCTaskList`;
 
 /** 执行检测任务 */
-export const executeQCTask = `${ds.apiPrefix}/qc/unittest/executeQCTask`;
+export const executeQCTask = `${ds.apiPrefix}/qc/qualitycontrol/executeQCTask`;
 
 /** 查询单测覆盖检测记录列表*/
-export const queryUnittestCoverCheckLogList = `${ds.apiPrefix}/qc/unittest/queryUnittestCoverCheckLogList`;
+export const queryUnittestCoverCheckLogList = `${ds.apiPrefix}/qc/qualitycontrol/queryUnittestCoverCheckLogList`;
 
 /** 查询代码质量检测记录列表*/
-export const queryCodeQualityCheckLogList = `${ds.apiPrefix}/qc/codeQuality/queryCodeQualityCheckLogList`;
+export const queryCodeQualityCheckLogList = `${ds.apiPrefix}/qc/qualitycontrol/queryCodeQualityCheckLogList`;
+
+/** 数据工厂名称查询 */
+export const queryDataFactoryName = `${ds.apiPrefix}/qc/dataFactory/queryDataFactory`;
+
+/** 数据生成接口*/
+export const createDataFactory = `${ds.apiPrefix}/qc/dataFactory/createData`;
+
+/** 数据工厂列表查询*/
+export const queryData = `${ds.apiPrefix}/qc/dataFactory/queryData`;

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Space, Tag, Popconfirm } from 'antd';
+import { Button, Space, Tag, Popconfirm, Form } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
+import useTable from '@/utils/useTable';
 import TemplateDrawer from '../component/templateDrawer';
 import { Item } from '../typing';
+import { queryRuleTemplatesList } from '../service';
 import './index.less';
 
 type statusTypeItem = {
@@ -17,7 +19,7 @@ type statusTypeItem = {
 };
 
 const STATUS_TYPE: Record<number, statusTypeItem> = {
-  1: { tagText: '已启用', buttonText: '关闭', color: 'green' },
+  1: { tagText: '已启用', buttonText: '禁用', color: 'green' },
   0: { tagText: '未启用', buttonText: '启用', color: 'default' },
 };
 
@@ -26,6 +28,17 @@ const TemplateCom: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则模版');
   const [editRecord, setEditRecord] = useState<Item>({});
+
+  const [form] = Form.useForm();
+
+  const {
+    tableProps,
+    search: { submit, reset },
+  } = useTable({
+    url: queryRuleTemplatesList,
+    method: 'GET',
+    form,
+  });
 
   const columns: ColumnsType<Item> = [
     {
@@ -39,8 +52,8 @@ const TemplateCom: React.FC = () => {
     },
     {
       title: '规则名称',
-      dataIndex: 'ruleName',
-      key: 'ruleName',
+      dataIndex: 'name',
+      key: 'name',
       // width: '6%',
       // render: (text) => (
       //   <div style={{ width: 100, wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -67,8 +80,8 @@ const TemplateCom: React.FC = () => {
     },
     {
       title: '告警消息',
-      dataIndex: 'news',
-      key: 'news',
+      dataIndex: 'message',
+      key: 'message',
       // width: '5%',
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -174,29 +187,30 @@ const TemplateCom: React.FC = () => {
     console.log(value, '8888');
   };
 
-  useEffect(() => {
-    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-      return {
-        id: `${i + 10000}`,
-        status: i % 2 === 0 ? 1 : 0,
-        ruleName: '啊卡仕达卡',
-        classify: '撒谎的',
-        expression: 'sdsadasdd',
-        news: '撒谎的艰',
-        time: '10min',
-      };
-    });
+  // useEffect(() => {
+  //   const arr: Item[] = new Array(20).fill(1).map((_, i) => {
+  //     return {
+  //       id: `${i + 10000}`,
+  //       status: i % 2 === 0 ? 1 : 0,
+  //       ruleName: '啊卡仕达卡',
+  //       classify: '撒谎的',
+  //       expression: 'sdsadasdd',
+  //       news: '撒谎的艰',
+  //       time: '10min',
+  //     };
+  //   });
 
-    setDataSource(arr);
-  }, []);
+  //   setDataSource(arr);
+  // }, []);
 
   return (
     <MatrixPageContent>
       <TableSearch
+        form={form}
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        dataSource={dataSource}
+        {...tableProps}
         pagination={{
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
@@ -217,7 +231,8 @@ const TemplateCom: React.FC = () => {
           </Button>
         }
         className="table-form"
-        onSearch={onSearch}
+        onSearch={submit}
+        reset={reset}
         scroll={{ x: 'max-content' }}
       />
       <TemplateDrawer

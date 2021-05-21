@@ -2,17 +2,40 @@ import React, { useEffect, useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Form } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
+import useRequest from '@/utils/useRequest';
+import { queryRulesList } from '../../../service';
 import TemplateDrawer from '../../../component/templateDrawer';
 import { Item } from '../../../typing';
 import './index.less';
 
 interface StepTwoProps {
   getTableData: (value: Record<string, Item[]>) => void;
+  serviceId: string;
   form?: FormInstance;
 }
 
-const StepOne: React.FC<StepTwoProps> = ({ form, getTableData }) => {
+const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
+  console.log(serviceId, 'idiiiii');
+
+  const { run: queryRulesListFun, data } = useRequest<{
+    dataSource: Item[];
+    pageInfo: Record<string, React.Key>;
+  }>({
+    api: queryRulesList,
+    method: 'POST',
+    successText: '提交成功',
+    isSuccessModal: true,
+    formatData: (data) => {
+      return {
+        ...data?.dataSource,
+        pageInfo: {
+          ...data.pageInfo,
+          current: data.pageInfo.pageIndex,
+        },
+      };
+    },
+  });
 
   // const [dataSource, setDataSource] = useState<Item[]>([
   //   { ruleName: '11' },
@@ -23,6 +46,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData }) => {
 
   useEffect(() => {
     //根据模板列表展示信息 setDataSource
+    queryRulesListFun({ serviceId });
   }, []);
 
   const columns = [
@@ -30,12 +54,6 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData }) => {
       title: '规则名称',
       dataIndex: 'ruleName',
       key: 'ruleName',
-      // width: '6%',
-      // render: (text) => (
-      //   <div style={{ width: 100, wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
     },
     {
       title: '告警表达式',
@@ -115,8 +133,8 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData }) => {
     <Form.Item>
       <Table
         columns={columns}
-        dataSource={dataSource}
-        pagination={false}
+        dataSource={data?.dataSource}
+        pagination={data?.pageInfo}
         className="step-two"
       />
       <Button

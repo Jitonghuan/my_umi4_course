@@ -1,19 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import { Form } from 'antd';
 import { FormInstance } from 'antd/lib';
+import { history } from 'umi';
 import EditTable from '../../../component/editTable';
 import { renderForm } from '@/components/table-search/form';
-import { FormProps } from '@/components/table-search/typing';
+import { FormProps, OptionProps } from '@/components/table-search/typing';
+import useRequest from '@/utils/useRequest';
 import { Item } from '../../../typing';
+import { queryPrometheusList } from '../../../service';
+import usePublicData from '../../usePublicData';
 
 interface StepOneProps {
   getTableData: (value: Item[]) => void;
   tableData?: Item[];
   form?: FormInstance;
+  matchlabelsList?: Item[];
 }
 
-const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
+const StepOne: React.FC<StepOneProps> = ({
+  getTableData,
+  tableData = [],
+  form,
+  matchlabelsList = [],
+}) => {
   const [matchlabels, setMatchlabels] = useState<Item[]>([]);
+  const [appCode, setAppCode] = useState('');
+
+  const {
+    location: { query },
+  } = history;
+
+  const isEdit = Object.keys(query as object).length > 0;
+
+  const { appManageEnvData, appManageListData } = usePublicData({
+    appCode,
+  });
+
+  // const { run: queryPrometheusListFun } = useRequest({
+  //   api: queryPrometheusList,
+  //   method: 'GET',
+  //   onSuccess: (data) => {
+  //     console.log(data,'uuu');
+  //     if(!data) return;
+  //     form?.setFieldsValue({
+  //       ...data.dataSource[0]
+  //     });
+
+  //     const item = data.dataSource[0]?.labels;
+  //     const labels = Object.keys(item).map((v,i)=>{
+  //       return {
+  //         id: i,
+  //         key: v,
+  //         value: item[v],
+  //       };
+  //     });
+  //     setMatchlabels(labels);
+  //   }
+  // });
 
   const matchlabelsFun = (value: Item[]) => {
     console.log(value, 'label');
@@ -25,8 +68,8 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
   }, [matchlabels]);
 
   useEffect(() => {
-    // 或根据id form.setFieldsValue
-  }, []);
+    setMatchlabels(matchlabelsList);
+  }, [matchlabelsList]);
 
   const formOptions: FormProps[] = [
     {
@@ -36,6 +79,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       dataIndex: 'name',
       placeholder: '请输入(最多253字符，暂不支持中文)',
       required: true,
+      disable: isEdit,
       rules: [
         {
           whitespace: true,
@@ -58,9 +102,10 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       placeholder: '请选择',
       required: true,
       showSelectSearch: true,
-      option: [{ key: 'ccc', value: 'hhh' }],
+      disable: isEdit,
+      option: appManageListData as OptionProps[],
       onChange: (e: string) => {
-        console.log(e);
+        setAppCode(e);
       },
     },
     {
@@ -71,7 +116,8 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, tableData = [] }) => {
       placeholder: '请选择',
       required: true,
       showSelectSearch: true,
-      option: [{ key: 'aa', value: 'hhh' }],
+      disable: isEdit,
+      option: appManageEnvData as OptionProps[],
       onChange: (e: string) => {
         console.log(e);
       },

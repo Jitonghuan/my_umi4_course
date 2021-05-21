@@ -14,7 +14,7 @@ export interface Item {
   ruleName?: string;
   classify?: string;
   expression?: string;
-  news?: string;
+  message?: string;
   time?: Moment | string;
   id?: React.Key;
   status?: number;

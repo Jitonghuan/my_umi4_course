@@ -7,7 +7,11 @@ import useRequest from '@/utils/useRequest';
 import StepOne from './step-one';
 import StepTwo from './step-two';
 import StepThree from './step-three';
-import { createPrometheus } from '../../service';
+import {
+  createPrometheus,
+  updatePrometheus,
+  queryPrometheusList,
+} from '../../service';
 import { Item } from '../../typing';
 import './index.less';
 
@@ -33,14 +37,59 @@ const PrometheusForm: React.FC = () => {
   const [current, setCurrent] = useState(0);
   const [stepOneTable, setStepOneTable] = useState<Item[]>([]);
   const [stepTwoTable, setStepTwoTable] = useState<Record<string, Item[]>>({});
+  const [serviceId, setServiceId] = useState('');
+  const [matchlabels, setMatchlabels] = useState<Item[]>([]);
   const [form] = Form.useForm();
 
-  const pathName = history.location.pathname;
+  const {
+    location: { query, pathname },
+  } = history;
+
+  const isEdit = Object.keys(query as object).length > 0;
+
+  const { run: queryPrometheusListFun } = useRequest({
+    api: queryPrometheusList,
+    method: 'GET',
+    onSuccess: (data) => {
+      console.log(data, 'uuu');
+      if (!data) return;
+      form?.setFieldsValue({
+        ...data.dataSource[0],
+      });
+
+      const item = data.dataSource[0]?.labels;
+      const labels = Object.keys(item).map((v, i) => {
+        return {
+          id: i,
+          key: v,
+          value: item[v],
+        };
+      });
+      setMatchlabels(labels);
+      setServiceId(data.dataSource[0]?.id);
+    },
+  });
 
   const { run: createPrometheusFun } = useRequest({
-    api: 'createPrometheus',
+    api: createPrometheus,
     method: 'POST',
     successText: '提交成功',
+    isSuccessModal: true,
+    onSuccess: (data) => {
+      setServiceId(data?.id);
+      setCurrent(current + 1);
+    },
+  });
+
+  const { run: updatePrometheusFun } = useRequest({
+    api: updatePrometheus,
+    method: 'POST',
+    successText: '更新成功',
+    isSuccessModal: true,
+    onSuccess: (data) => {
+      setServiceId(data?.id);
+      setCurrent(current + 1);
+    },
   });
 
   const stepTableMap = (data: Item[]) => {
@@ -62,10 +111,14 @@ const PrometheusForm: React.FC = () => {
   const next = () => {
     stepTableMap(stepOneTable);
 
-    form.validateFields().then((value) => {
-      createPrometheusFun({ ...value, labels: stepTableMap(stepOneTable) });
+    form.validateFields().then(async (value) => {
+      if (isEdit) {
+        updatePrometheusFun({ ...value, labels: stepTableMap(stepOneTable) });
+      } else {
+        createPrometheusFun({ ...value, labels: stepTableMap(stepOneTable) });
+      }
+
       setFormList({ ...formList, ...stepOneTable, ...value });
-      setCurrent(current + 1);
     });
     // setCurrent(current + 1);
   };
@@ -91,14 +144,26 @@ const PrometheusForm: React.FC = () => {
 
   const isFirstCurrent = current === 0;
 
+  useEffect(() => {
+    if (isEdit) {
+      queryPrometheusListFun({ ...query });
+    }
+  }, []);
+
   const renderDom = [
     {
       current: 0,
-      dom: <StepOne getTableData={stepOneTableFun} />,
+      dom: (
+        <StepOne
+          getTableData={stepOneTableFun}
+          form={form}
+          matchlabelsList={matchlabels}
+        />
+      ),
     },
     {
       current: 1,
-      dom: <StepTwo getTableData={stepTwoTableFun} />,
+      dom: <StepTwo getTableData={stepTwoTableFun} serviceId={serviceId} />,
     },
     {
       current: 2,
@@ -106,23 +171,13 @@ const PrometheusForm: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    if (pathName.indexOf('edit') > -1) {
-      //...
-    }
-  }, []);
-
   return (
     <MatrixPageContent>
       <ContentCard style={{ background: '#F7F8FA' }}>
         <div className="step-style">
           <Steps
             current={current}
-            onChange={
-              pathName.indexOf('edit') > -1
-                ? (current) => setCurrent(current)
-                : undefined
-            }
+            onChange={isEdit ? (current) => setCurrent(current) : undefined}
           >
             {stepOption.map((v) => (
               <Step key={v.key} title={v.title} />

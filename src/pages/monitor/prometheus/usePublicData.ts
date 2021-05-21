@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import useRequest from '@/utils/useRequest';
 import { queryappManageList, queryappManageEnvList } from '../service';
 
@@ -8,7 +8,6 @@ interface UsePublicDataProps {
 
 const usePublicData = (props: UsePublicDataProps) => {
   const { appCode } = props;
-  console.log(appCode, '0000');
 
   const { run: queryappManageListFun, data: appManageListData } = useRequest({
     api: queryappManageList,
@@ -41,6 +40,12 @@ const usePublicData = (props: UsePublicDataProps) => {
   useEffect(() => {
     queryappManageListFun({ pageSize: '-1' });
   }, []);
+
+  useEffect(() => {
+    console.log(appCode, 'appcode');
+    if (!appCode) return;
+    queryappManageEnvListFun({ appCode, pageSize: '-1' });
+  }, [appCode]);
 
   return {
     appManageListData,

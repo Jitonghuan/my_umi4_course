@@ -42,6 +42,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       rules,
       checkboxOption,
       autoSize,
+      isReadOnly,
       ...rest
     } = v;
 
@@ -235,6 +236,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 onChange={onChange}
                 disabled={disable}
                 autoSize={autoSize}
+                readOnly={isReadOnly}
               />
             </Item>
             {extraForm}

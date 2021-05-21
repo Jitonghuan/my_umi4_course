@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tag, Tooltip, Space, message } from 'antd';
+import { Button, Tag, Tooltip, Space, message, Form } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
+import useTable from '@/utils/useTable';
+import { queryQCTaskList } from '../service';
 import { Item } from '../typing';
 import TestDrawer from './testDrawer-add';
 
@@ -22,9 +24,20 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   0: { text: '正常', color: 'green', disable: false },
 };
 
-const DataFactory: React.FC = () => {
+const QualityControl: React.FC = () => {
   const [dataSource, setDataSource] = useState<Item[]>([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const [form] = Form.useForm();
+
+  const {
+    tableProps,
+    search: { submit, reset },
+  } = useTable({
+    url: queryQCTaskList,
+    method: 'GET',
+    form,
+  });
 
   const onConfirm = () => {
     message.warning('当前有进行中的检测任务，请稍后再试');
@@ -63,13 +76,13 @@ const DataFactory: React.FC = () => {
     },
     {
       title: '应用分类',
-      dataIndex: 'categoryName',
+      dataIndex: 'categoryCode',
       key: 'categoryName',
       width: '10%',
     },
     {
       title: '应用名',
-      dataIndex: 'appName',
+      dataIndex: 'appCode',
       key: 'appName',
       width: '10%',
       // render: (text) => (
@@ -200,7 +213,7 @@ const DataFactory: React.FC = () => {
       key: '1',
       type: 'select',
       label: '应用分类',
-      dataIndex: 'categoryName',
+      dataIndex: 'categoryCode',
       width: '144px',
       option: [],
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
@@ -211,7 +224,7 @@ const DataFactory: React.FC = () => {
       key: '2',
       type: 'select',
       label: '应用名',
-      dataIndex: 'appName',
+      dataIndex: 'appCode',
       width: '144px',
       option: [],
       onChange: (e: string) => {
@@ -280,41 +293,21 @@ const DataFactory: React.FC = () => {
     },
   ];
 
-  const onSearch = (value: Record<string, any>) => {
-    console.log(value, '8888');
-  };
-
   const onClose = () => {
     setDrawerVisible(false);
   };
 
-  useEffect(() => {
-    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-      return {
-        id: `${i + 10000}`,
-        categoryName: '顶顶顶顶',
-        name: '啊卡仕达卡仕',
-        appName: '撒谎的',
-        branchName: '3-123',
-        gmtCreate: '2012-01-01 00:00',
-        lastCheckTime: '2012-01-01 00:00',
-        checkNum: 2,
-        checkSuccessNum: 1,
-        status: i % 2 === 0 ? 1 : 0,
-      };
-    });
-
-    setDataSource(arr);
-  }, []);
-
   return (
     <MatrixPageContent>
       <TableSearch
+        form={form}
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        dataSource={dataSource}
+        // dataSource={dataSource}
+        {...tableProps}
         pagination={{
+          ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',
@@ -335,8 +328,13 @@ const DataFactory: React.FC = () => {
         searchText="查询"
         tableTitle="数据生成记录"
         className="table-form"
-        onSearch={onSearch}
-        scroll={{ x: '120%', y: 300, scrollToFirstRowOnChange: true }}
+        onSearch={submit}
+        reset={reset}
+        scroll={
+          tableProps.dataSource.length > 0
+            ? { x: '120%', y: 300, scrollToFirstRowOnChange: true }
+            : undefined
+        }
         // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
       />
       <TestDrawer visible={drawerVisible} onClose={onClose} />
@@ -344,4 +342,4 @@ const DataFactory: React.FC = () => {
   );
 };
 
-export default DataFactory;
+export default QualityControl;
