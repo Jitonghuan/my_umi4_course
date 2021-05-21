@@ -13,15 +13,15 @@ type IResponse<R = any> = {
 
 interface UseRequestProps<R = any> {
   api: string;
-  method?: 'POST' | 'GET';
-  onSuccess?: (res: IResponse) => void;
+  method?: 'POST' | 'GET' | 'DELETE';
+  onSuccess?: (res: R) => void;
   successText?: string;
   isSuccessModal?: boolean;
   formatData?: (res: R) => R;
 }
 
 interface RunProps<T = any> {
-  (body?: Record<string, T>): Promise<void>;
+  (body?: Record<string, T>): Promise<any>;
 }
 
 const useRequest = <K>(props: UseRequestProps) => {
@@ -40,8 +40,8 @@ const useRequest = <K>(props: UseRequestProps) => {
     setLoading(true);
     const resp =
       method === 'POST'
-        ? await postRequest(api, { method: 'POST', data: body })
-        : await getRequest(api, { method: 'GET', data: body });
+        ? await postRequest(api, { method, data: body })
+        : await getRequest(api, { method, data: body });
 
     if (!resp.success) return;
     onSuccess && onSuccess(resp.data);
@@ -52,9 +52,11 @@ const useRequest = <K>(props: UseRequestProps) => {
 
     if (formatData) {
       setData(formatData(resp.data));
-      return;
+      return formatData(resp.data);
     }
     setData(resp.data);
+
+    return resp.data;
   };
 
   const resetData = (value: any) => {

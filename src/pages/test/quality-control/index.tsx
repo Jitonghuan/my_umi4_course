@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Tag, Tooltip, Space, message } from 'antd';
+import React, { useContext, useState, useEffect } from 'react';
+import { Button, Tag, Tooltip, Space, message, Form, Popconfirm } from 'antd';
+import FELayout from '@cffe/vc-layout';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
+import useTable from '@/utils/useTable';
+import { queryQCTaskList, executeQCTask } from '../service';
 import { Item } from '../typing';
+import usePublicData from '@/utils/usePublicData';
 import TestDrawer from './testDrawer-add';
 
 import './index.less';
+import { postRequest } from '@/utils/request';
 
 type statusTypeItem = {
   color: string;
@@ -17,25 +22,53 @@ type statusTypeItem = {
   disable: boolean;
 };
 
-const STATUS_TYPE: Record<number, statusTypeItem> = {
-  1: { text: '作废', color: 'default', disable: true },
+export const STATUS_TYPE: Record<number, statusTypeItem> = {
   0: { text: '正常', color: 'green', disable: false },
+  1: { text: '作废', color: 'default', disable: true },
 };
 
-const DataFactory: React.FC = () => {
-  const [dataSource, setDataSource] = useState<Item[]>([]);
+const QualityControl: React.FC = () => {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [appCode, setAppCode] = useState<string | undefined>();
+  const [appCategoryCode, setAppCategoryCode] = useState<string | undefined>();
+  const [appBranch, setAppBranch] = useState<string | undefined>();
+  const [form] = Form.useForm();
 
-  const onConfirm = () => {
-    message.warning('当前有进行中的检测任务，请稍后再试');
+  const {
+    tableProps,
+    search: { submit: queryQCTable, reset },
+  } = useTable({
+    url: queryQCTaskList,
+    method: 'GET',
+    form,
+  });
+
+  const { appManageListData, appTypeData, appBranchData } = usePublicData({
+    appCode,
+    appCategoryCode,
+  });
+
+  // 二次确认执行
+  const onConfirm = async (taskId?: string) => {
+    if (!taskId) return;
+
+    await postRequest(executeQCTask, {
+      data: {
+        taskId,
+        createUser: userInfo?.userName,
+      },
+    });
+
+    message.success('执行成功');
   };
 
   const columns: ColumnsType<Item> = [
     {
-      title: '序号',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: '5%',
+      width: 50,
       // render: (text) => (
       //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
       // ),
@@ -44,7 +77,7 @@ const DataFactory: React.FC = () => {
       title: '任务名',
       dataIndex: 'name',
       key: 'name',
-      width: '10%',
+      width: 100,
       render: (text) => (
         <Tooltip title={text}>
           <span
@@ -63,15 +96,15 @@ const DataFactory: React.FC = () => {
     },
     {
       title: '应用分类',
-      dataIndex: 'categoryName',
+      dataIndex: 'categoryCode',
       key: 'categoryName',
-      width: '10%',
+      width: 100,
     },
     {
       title: '应用名',
-      dataIndex: 'appName',
+      dataIndex: 'appCode',
       key: 'appName',
-      width: '10%',
+      width: 100,
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
       //     {text}
@@ -82,7 +115,7 @@ const DataFactory: React.FC = () => {
       title: '分支名',
       dataIndex: 'branchName',
       key: 'branchName',
-      width: '10%',
+      width: 100,
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
       //     {text}
@@ -94,7 +127,7 @@ const DataFactory: React.FC = () => {
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
       // ellipsis: true,
-      width: '15%',
+      width: 200,
       render: (text) => (
         <Tooltip title={text}>
           {text}
@@ -117,61 +150,51 @@ const DataFactory: React.FC = () => {
       dataIndex: 'lastCheckTime',
       key: 'lastCheckTime',
       // ellipsis: true,
-      width: '15%',
-      render: (text) => (
-        <Tooltip title={text}>
-          {text}
-          {/* <span
-            style={{
-              display: 'inline-block',
-              width: 100,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {text}
-          </span> */}
-        </Tooltip>
-      ),
+      width: 200,
     },
     {
       title: '检测次数',
       dataIndex: 'checkNum',
       key: 'checkNum',
-      width: '10%',
+      width: 100,
     },
     {
       title: '成功次数',
       dataIndex: 'checkSuccessNum',
       key: 'checkSuccessNum',
-      width: '10%',
+      width: 100,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      width: '8%',
+      width: 100,
       render: (text: number) => (
-        <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>
+        <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>
       ),
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '12%',
+      width: 200,
       fixed: 'right',
       render: (_, record) => (
         <Space>
-          <Button
-            type="link"
-            disabled={STATUS_TYPE[record.status as number].disable}
-            style={{ padding: 0 }}
-            onClick={onConfirm}
+          <Popconfirm
+            title="确认执行当前任务？"
+            okText="确定"
+            disabled={STATUS_TYPE[record.status as number]?.disable}
+            onConfirm={() => onConfirm(record?.id as string)}
           >
-            执行
-          </Button>
+            <Button
+              type="link"
+              disabled={STATUS_TYPE[record.status as number]?.disable}
+              style={{ padding: 0 }}
+            >
+              执行
+            </Button>
+          </Popconfirm>
           <Button
             type="link"
             style={{ padding: 0 }}
@@ -200,47 +223,28 @@ const DataFactory: React.FC = () => {
       key: '1',
       type: 'select',
       label: '应用分类',
-      dataIndex: 'categoryName',
+      dataIndex: 'categoryCode',
       width: '144px',
-      option: [],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
+      option: appTypeData,
+      onChange: setAppCategoryCode,
     },
     {
       key: '2',
       type: 'select',
       label: '应用名',
-      dataIndex: 'appName',
+      dataIndex: 'appCode',
       width: '144px',
-      option: [],
-      onChange: (e: string) => {
-        console.log(e);
-      },
+      option: appManageListData,
+      onChange: setAppCode,
     },
     {
       key: '3',
-      type: 'input',
+      type: 'select',
       label: '分支名',
       dataIndex: 'branchName',
       width: '144px',
-      option: [
-        {
-          key: 1,
-          value: '1',
-        },
-        {
-          key: 2,
-          value: '2',
-        },
-        {
-          key: 3,
-          value: '3',
-        },
-      ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
+      option: appBranchData,
+      onChange: setAppBranch,
     },
     {
       key: '4',
@@ -249,20 +253,10 @@ const DataFactory: React.FC = () => {
       dataIndex: 'status',
       width: '144px',
       placeholder: '请选择',
-      option: [
-        {
-          key: 1,
-          value: '1',
-        },
-        {
-          key: 2,
-          value: '2',
-        },
-        {
-          key: 3,
-          value: '3',
-        },
-      ],
+      option: Object.keys(STATUS_TYPE).map((el) => ({
+        key: el,
+        value: STATUS_TYPE[el as any]?.text,
+      })),
       onChange: (e: string) => {
         console.log(e);
       },
@@ -280,44 +274,26 @@ const DataFactory: React.FC = () => {
     },
   ];
 
-  const onSearch = (value: Record<string, any>) => {
-    console.log(value, '8888');
-  };
-
   const onClose = () => {
     setDrawerVisible(false);
+    queryQCTable();
   };
-
-  useEffect(() => {
-    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-      return {
-        id: `${i + 10000}`,
-        categoryName: '顶顶顶顶',
-        name: '啊卡仕达卡仕',
-        appName: '撒谎的',
-        branchName: '3-123',
-        gmtCreate: '2012-01-01 00:00',
-        lastCheckTime: '2012-01-01 00:00',
-        checkNum: 2,
-        checkSuccessNum: 1,
-        status: i % 2 === 0 ? 1 : 0,
-      };
-    });
-
-    setDataSource(arr);
-  }, []);
 
   return (
     <MatrixPageContent>
       <TableSearch
+        form={form}
         formOptions={formOptions}
         formLayout="inline"
-        columns={columns}
-        dataSource={dataSource}
+        columns={columns.map((el) => ({
+          render: (text) => text || '-',
+          ...el,
+        }))}
+        {...tableProps}
         pagination={{
-          showTotal: (total) => `共 ${total} 条`,
+          ...tableProps.pagination,
+          showTotal: (total) => `总共 ${total} 条数据`,
           showSizeChanger: true,
-          size: 'small',
           defaultPageSize: 20,
         }}
         extraNode={
@@ -335,8 +311,13 @@ const DataFactory: React.FC = () => {
         searchText="查询"
         tableTitle="数据生成记录"
         className="table-form"
-        onSearch={onSearch}
-        scroll={{ x: '120%', y: 300, scrollToFirstRowOnChange: true }}
+        onSearch={queryQCTable}
+        reset={reset}
+        scroll={
+          tableProps.dataSource.length > 0
+            ? { x: '120%', y: 300, scrollToFirstRowOnChange: true }
+            : undefined
+        }
         // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
       />
       <TestDrawer visible={drawerVisible} onClose={onClose} />
@@ -344,4 +325,4 @@ const DataFactory: React.FC = () => {
   );
 };
 
-export default DataFactory;
+export default QualityControl;

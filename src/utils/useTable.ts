@@ -9,19 +9,21 @@ interface UseTableProps {
   method: 'POST' | 'GET';
   form: FormInstance;
   formatResult?: (result: any) => { total: number; list: any[] };
+  formatter?: (record: any) => any;
 }
 
 const useTable = (props: UseTableProps) => {
-  const { method, url, form, formatResult } = props;
+  const { method, url, form, formatter, formatResult } = props;
 
   const getTableData = (
     { current, pageSize }: PaginatedParams[0],
     formData: Record<string, any>,
   ) => {
+    const curFormData = formatter ? formatter(formData) : formData;
     if (method === 'GET') {
       return getRequest(url, {
         method: 'GET',
-        data: { ...formData, pageIndex: current, pageSize },
+        data: { ...curFormData, pageIndex: current, pageSize },
       }).then((data) => {
         if (formatResult) {
           return formatResult(data);
@@ -35,7 +37,7 @@ const useTable = (props: UseTableProps) => {
 
     return postRequest(url, {
       method: 'POST',
-      data: { ...formData, pageIndex: current, pageSize },
+      data: { ...curFormData, pageIndex: current, pageSize },
     }).then((data) => {
       if (formatResult) {
         return formatResult(data);

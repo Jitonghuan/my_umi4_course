@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Space, Tag, Popconfirm } from 'antd';
+import { Button, Space, Tag, Popconfirm, Form } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
+import useTable from '@/utils/useTable';
+import useRequest from '@/utils/useRequest';
 import TemplateDrawer from '../component/templateDrawer';
 import { Item } from '../typing';
+import {
+  queryRuleTemplatesList,
+  createRuleTemplates,
+  updateRuleTemplates,
+  deleteRuleTemplates,
+} from '../service';
 import './index.less';
 
 type statusTypeItem = {
@@ -17,15 +25,67 @@ type statusTypeItem = {
 };
 
 const STATUS_TYPE: Record<number, statusTypeItem> = {
-  1: { tagText: '已启用', buttonText: '关闭', color: 'green' },
+  1: { tagText: '已启用', buttonText: '禁用', color: 'green' },
   0: { tagText: '未启用', buttonText: '启用', color: 'default' },
 };
 
 const TemplateCom: React.FC = () => {
-  const [dataSource, setDataSource] = useState<Item[]>([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则模版');
   const [editRecord, setEditRecord] = useState<Item>({});
+  const [type, setType] = useState<'add' | 'edit'>('add');
+
+  const [form] = Form.useForm();
+
+  const {
+    tableProps,
+    search: { submit: queryList, reset },
+  } = useTable({
+    url: queryRuleTemplatesList,
+    method: 'GET',
+    form,
+  });
+
+  //新增
+  const { run: createRuleTemplatesFun } = useRequest({
+    api: createRuleTemplates,
+    method: 'POST',
+    onSuccess: (data) => {
+      queryList();
+    },
+  });
+
+  //编辑
+  const { run: updateRuleTemplatesFun } = useRequest({
+    api: updateRuleTemplates,
+    method: 'POST',
+    onSuccess: (data) => {
+      queryList();
+    },
+  });
+
+  //启用/禁用
+  const { run: startRuleFun } = useRequest({
+    api: updateRuleTemplates,
+    method: 'GET',
+    onSuccess: (data) => {
+      queryList();
+    },
+  });
+
+  const { run: endRuleFun } = useRequest({
+    api: updateRuleTemplates,
+    method: 'GET',
+    onSuccess: (data) => {
+      queryList();
+    },
+  });
+
+  //删除
+  const { run: deleteRuleTemplatesFun } = useRequest({
+    api: deleteRuleTemplates,
+    method: 'DELETE',
+  });
 
   const columns: ColumnsType<Item> = [
     {
@@ -39,8 +99,8 @@ const TemplateCom: React.FC = () => {
     },
     {
       title: '规则名称',
-      dataIndex: 'ruleName',
-      key: 'ruleName',
+      dataIndex: 'name',
+      key: 'name',
       // width: '6%',
       // render: (text) => (
       //   <div style={{ width: 100, wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -50,8 +110,8 @@ const TemplateCom: React.FC = () => {
     },
     {
       title: '分类',
-      dataIndex: 'classify',
-      key: 'classify',
+      dataIndex: 'group',
+      key: 'group',
       // width: '3%',
     },
     {
@@ -67,8 +127,8 @@ const TemplateCom: React.FC = () => {
     },
     {
       title: '告警消息',
-      dataIndex: 'news',
-      key: 'news',
+      dataIndex: 'message',
+      key: 'message',
       // width: '5%',
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -78,8 +138,8 @@ const TemplateCom: React.FC = () => {
     },
     {
       title: '持续时间',
-      dataIndex: 'time',
-      key: 'time',
+      dataIndex: 'duration',
+      key: 'duration',
       // width: '6%',
     },
     {
@@ -104,14 +164,16 @@ const TemplateCom: React.FC = () => {
               setDrawerVisible(true);
               setDrawerTitle('编辑报警规则模版');
               setEditRecord(record);
+              setType('edit');
             }}
           >
             编辑
           </a>
           <Popconfirm
             title="确认删除？"
-            // onConfirm={confirm}
-            // onCancel={cancel}
+            onConfirm={() => {
+              deleteRuleTemplatesFun({ id: record.id });
+            }}
             okText="是"
             cancelText="否"
           >
@@ -119,8 +181,10 @@ const TemplateCom: React.FC = () => {
           </Popconfirm>
           <Popconfirm
             title={`确认${STATUS_TYPE[record.status as number].buttonText}`}
-            // onConfirm={confirm}
-            // onCancel={cancel}
+            onConfirm={() => {
+              startRuleFun({ id: record.id });
+              endRuleFun({ id: record.id });
+            }}
             okText="是"
             cancelText="否"
           >
@@ -170,33 +234,22 @@ const TemplateCom: React.FC = () => {
     setDrawerVisible(false);
   };
 
-  const onSearch = (value: Record<string, any>) => {
-    console.log(value, '8888');
+  const onSubmit = (value: Record<string, string>) => {
+    if (type === 'add') {
+      createRuleTemplatesFun({ ...value });
+    } else {
+      updateRuleTemplatesFun({ ...value });
+    }
   };
-
-  useEffect(() => {
-    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-      return {
-        id: `${i + 10000}`,
-        status: i % 2 === 0 ? 1 : 0,
-        ruleName: '啊卡仕达卡',
-        classify: '撒谎的',
-        expression: 'sdsadasdd',
-        news: '撒谎的艰',
-        time: '10min',
-      };
-    });
-
-    setDataSource(arr);
-  }, []);
 
   return (
     <MatrixPageContent>
       <TableSearch
+        form={form}
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        dataSource={dataSource}
+        {...tableProps}
         pagination={{
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
@@ -210,6 +263,7 @@ const TemplateCom: React.FC = () => {
             type="primary"
             onClick={() => {
               setDrawerVisible(true);
+              setType('add');
             }}
             icon={<PlusOutlined />}
           >
@@ -217,7 +271,8 @@ const TemplateCom: React.FC = () => {
           </Button>
         }
         className="table-form"
-        onSearch={onSearch}
+        onSearch={queryList}
+        reset={reset}
         scroll={{ x: 'max-content' }}
       />
       <TemplateDrawer
@@ -226,6 +281,8 @@ const TemplateCom: React.FC = () => {
         drawerTitle={drawerTitle}
         record={editRecord}
         drawerType="template"
+        onSubmit={onSubmit}
+        type={type}
       />
     </MatrixPageContent>
   );

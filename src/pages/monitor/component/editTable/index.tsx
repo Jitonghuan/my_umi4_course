@@ -113,18 +113,14 @@ const EditableTable: React.FC<EditableTableState> = ({
   initData = [],
   onTableChange,
 }) => {
-  const [dataSource, setDataSource] = useState<Item[]>(
-    initData.length
-      ? initData
-      : [
-          {
-            id: 0,
-            key: 'key',
-            value: 'value',
-          },
-        ],
-  );
-  const [count, setCount] = useState<number>(dataSource.length);
+  const [dataSource, setDataSource] = useState<Item[]>([
+    {
+      id: 0,
+      key: 'key',
+      value: 'value',
+    },
+  ]);
+  // const [count, setCount] = useState<number>(dataSource.length);
 
   const columns = [
     {
@@ -151,7 +147,7 @@ const EditableTable: React.FC<EditableTableState> = ({
           <Space>
             {dataSource.length > 1 ? (
               <Popconfirm
-                title="Sure to delete?"
+                title="确认删除"
                 onConfirm={() => handleDelete(record.id as React.Key)}
               >
                 <MinusCircleOutlined style={{ color: 'red' }} />
@@ -173,6 +169,11 @@ const EditableTable: React.FC<EditableTableState> = ({
     onTableChange && onTableChange(dataSource);
   }, [dataSource]);
 
+  useEffect(() => {
+    if (initData.length === 0) return;
+    setDataSource(initData);
+  }, [initData]);
+
   const handleDelete = (id: React.Key) => {
     const data = [...dataSource];
     setDataSource(data.filter((item) => item.id !== id));
@@ -180,12 +181,12 @@ const EditableTable: React.FC<EditableTableState> = ({
 
   const handleAdd = () => {
     const newData: Item = {
-      id: count,
+      id: dataSource.length,
       key: 'key',
       value: 'value',
     };
     setDataSource([...dataSource, newData]);
-    setCount(count + 1);
+    // setCount(count + 1);
   };
 
   const handleSave = (row: Item) => {

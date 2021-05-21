@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Drawer, Button, Form, Space, message } from 'antd';
+import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
+import { getRequest, postRequest } from '@/utils/request';
+import usePublicData from '@/utils/usePublicData';
+import { createQCTask } from '../../service';
 
 interface TestAddProps {
   visible: boolean;
@@ -9,7 +13,17 @@ interface TestAddProps {
 }
 
 const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [form] = Form.useForm();
+  const [appCode, setAppCode] = useState<string | undefined>();
+  const [appCategoryCode, setAppCategoryCode] = useState<string | undefined>();
+
+  console.log(userInfo);
+
+  const { appManageListData, appTypeData, appBranchData } = usePublicData({
+    appCode,
+    appCategoryCode,
+  });
 
   const formOptions: FormProps[] = [
     {
@@ -27,26 +41,21 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
       key: '2',
       type: 'select',
       label: '应用分类',
-      dataIndex: 'categoryName',
-      // dataIndex: 'categoryCode',
+      dataIndex: 'categoryCode',
       placeholder: '请输入',
       required: true,
-      option: [],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
+      option: appTypeData,
+      onChange: setAppCategoryCode,
     },
     {
       key: '3',
       type: 'select',
       label: '应用名',
-      dataIndex: 'appName',
+      dataIndex: 'appCode',
       placeholder: '请选择',
       required: true,
-      option: [],
-      onChange: (e: string) => {
-        console.log(e);
-      },
+      option: appManageListData,
+      onChange: setAppCode,
     },
     {
       key: '4',
@@ -55,23 +64,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
       dataIndex: 'branchName',
       placeholder: '请选择',
       required: true,
-      option: [
-        {
-          key: 1,
-          value: '1',
-        },
-        {
-          key: 2,
-          value: '2',
-        },
-        {
-          key: 3,
-          value: '3',
-        },
-      ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
+      option: appBranchData,
     },
   ];
 
@@ -82,7 +75,15 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
 
   const onSubmit = async () => {
     const values = await form.validateFields();
-    message.warning('该任务已存在，请到任务列表中搜索');
+
+    await getRequest(createQCTask, {
+      data: {
+        ...values,
+        createUser: userInfo.userName,
+      },
+    });
+
+    message.success('创建成功');
   };
 
   return (

@@ -96,6 +96,7 @@ const DataFactoryAdd: React.FC = () => {
       autoSize: { minRows: 25 },
       labelCol: { span: 5 },
       wrapperCol: { span: 18 },
+      isReadOnly: true,
       // rules: [{
       //   required: true,
       //   message: '请输入正确的数据',

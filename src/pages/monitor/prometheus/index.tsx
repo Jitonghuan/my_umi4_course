@@ -20,6 +20,7 @@ const PrometheusCom: React.FC = () => {
   const [labelRecord, setLabelRecord] = useState<Record<string, string>>({});
   const [rulesRecord, setRulesRecord] = useState<AlertNameProps[]>([]);
   const [modalType, setModalType] = useState<'label' | 'rules'>('label');
+  const [appCode, setAppCode] = useState('');
 
   const [form] = Form.useForm();
 
@@ -33,13 +34,14 @@ const PrometheusCom: React.FC = () => {
   });
 
   const { appManageEnvData, appManageListData } = usePublicData({
-    appCode: form.getFieldValue('appCode'),
+    appCode,
   });
 
   const { run } = useRequest({
-    api: 'deletePrometheus',
+    api: deletePrometheus,
     method: 'GET',
     successText: '删除成功',
+    isSuccessModal: true,
     onSuccess: () => {
       submit();
     },
@@ -148,7 +150,9 @@ const PrometheusCom: React.FC = () => {
       width: 100,
       render: (_: string, record: Item) => (
         <Space>
-          <Link to={`./prometheus/prometheus-edit?id=${record.id}`}>编辑</Link>
+          <Link to={`./prometheus/prometheus-edit?name=${record.name}`}>
+            编辑
+          </Link>
           <Popconfirm
             title="确认删除？"
             onConfirm={() => run({ id: record.id })}
@@ -232,7 +236,7 @@ const PrometheusCom: React.FC = () => {
       type: 'input',
       label: '监控名称',
       dataIndex: 'name',
-      width: '144px',
+      width: '160px',
       placeholder: '请输入',
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
@@ -243,12 +247,12 @@ const PrometheusCom: React.FC = () => {
       type: 'select',
       label: '应用名称',
       dataIndex: 'appCode',
-      width: '144px',
+      width: '160px',
       placeholder: '请选择',
       showSelectSearch: true,
       option: appManageListData as OptionProps[],
       onChange: (e: string) => {
-        console.log(e);
+        setAppCode(e);
       },
     },
     {
@@ -256,7 +260,7 @@ const PrometheusCom: React.FC = () => {
       type: 'select',
       label: '环境名称',
       dataIndex: 'envCode',
-      width: '144px',
+      width: '160px',
       placeholder: '请选择',
       showSelectSearch: true,
       option: appManageEnvData as OptionProps[],
@@ -269,7 +273,7 @@ const PrometheusCom: React.FC = () => {
       type: 'input',
       label: 'URL',
       dataIndex: 'metricsUrl',
-      width: '144px',
+      width: '160px',
       placeholder: '请输入',
       onChange: (e: string) => {
         console.log(e);
@@ -286,6 +290,10 @@ const PrometheusCom: React.FC = () => {
     setRulesVisible(false);
   };
 
+  const onReset = () => {
+    setAppCode('');
+    reset();
+  };
   // useEffect(() => {
   //   setDataSource([]);
   // }, []);
@@ -320,8 +328,8 @@ const PrometheusCom: React.FC = () => {
         }
         // className="table-form"
         onSearch={submit}
-        reset={reset}
-        scroll={{ x: 'max-content' }}
+        reset={onReset}
+        // scroll={{ x: 'max-content' }}
         rowKey="id"
         className="expand-table"
       />
