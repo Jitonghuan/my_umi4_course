@@ -24,17 +24,17 @@ import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm } from '@cffe/fe-backend-component';
 import { createFilterFormSchema, createTableSchema } from './schema';
-import { queryApplysUrl, queryBizDataReq } from './service';
 import AddDrawer from './components/add-drawer';
 import DetailDrawer from './components/detail-drawer';
 import './index.less';
+import { queryApplysUrl, queryAppGroupReq } from '../service';
 
 export interface IProps {}
 
 const rootCls = 'release-apply-page';
 
 const ApplyList = (props: IProps) => {
-  const { belongData, breadcrumbMap } = useContext(FEContext);
+  const { categoryData, breadcrumbMap } = useContext(FEContext);
 
   const [createApplyVisible, setCreateApplyVisible] = useState<boolean>(false);
   const [applyDetailVisible, setApplyDetailVisible] = useState<boolean>(false);
@@ -45,14 +45,14 @@ const ApplyList = (props: IProps) => {
   const prevBelong = useRef<string>();
 
   const filterColumns = useMemo(() => {
-    return createFilterFormSchema({ belongData, businessData });
-  }, [belongData, businessData]);
+    return createFilterFormSchema({ categoryData, businessData });
+  }, [categoryData, businessData]);
 
   // 根据所属查询业务线
-  const queryBusiness = (belong: string) => {
+  const queryBusiness = (categoryCode: string) => {
     setBusinessData([]);
-    queryBizDataReq({ belong }).then((datas) => {
-      setBusinessData(datas);
+    queryAppGroupReq({ categoryCode }).then((datas) => {
+      setBusinessData(datas.list);
     });
   };
 
@@ -73,9 +73,9 @@ const ApplyList = (props: IProps) => {
   // 监听表单变化，根据所属查询业务线
   const handleChange = useCallback((vals) => {
     const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
-    if (name && name === 'belong') {
+    if (name && name === 'appCategoryCode') {
       if (value !== prevBelong.current) {
-        formInstance.resetFields(['lineCode']);
+        formInstance.resetFields(['appGroupCode']);
       }
       prevBelong.current = value;
       if (value !== undefined) {
@@ -158,7 +158,7 @@ const ApplyList = (props: IProps) => {
                 setCurRecord(record);
                 setApplyDetailVisible(true);
               },
-              belongData,
+              categoryData,
             }) as any
           }
           {...tableProps}

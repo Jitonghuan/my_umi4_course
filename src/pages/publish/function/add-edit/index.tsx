@@ -24,14 +24,11 @@ import { Item } from '../../typing';
 import useTableAction from './useTableAction';
 import '../index.less';
 
-interface OptionProps {
-  value: string;
-  key: string;
-}
+import { OptionProps } from '@/components/table-search/typing';
 
 export interface DefaultValueObjProps {
-  own: string;
-  line: string;
+  appCategoryCode: string;
+  appGroupCode: string;
   model: string;
 }
 
@@ -49,22 +46,17 @@ interface EditTableProps {
   initData: Item[];
   type: 'add' | 'edit' | 'check';
   title: string;
-  ownOption: OptionProps[];
+  categoryData: OptionProps[];
   lineOption: OptionProps[];
-  modelOption: OptionProps[];
-  formSelectChange: (
-    e: React.FormEvent<HTMLInputElement>,
-    type: string,
-  ) => void;
+  formSelectChange: (value: any, type: string) => void;
   defaultValueObj?: DefaultValueObjProps;
 }
 
 const EditTable: React.FC<EditTableProps> = ({
   initData,
   type,
-  ownOption,
+  categoryData,
   lineOption,
-  modelOption,
   title,
   formSelectChange,
   defaultValueObj = {},
@@ -257,8 +249,8 @@ const EditTable: React.FC<EditTableProps> = ({
     if (!Object.keys(defaultValueObj).length || num.current !== 0) return;
 
     form.setFieldsValue({
-      own: defaultValueObj?.own,
-      line: defaultValueObj?.line,
+      appCategoryCode: defaultValueObj?.appCategoryCode,
+      appGroupCode: defaultValueObj?.appGroupCode,
       model: defaultValueObj?.model,
     });
     num.current = num.current + 1;
@@ -274,47 +266,27 @@ const EditTable: React.FC<EditTableProps> = ({
     {
       key: '1',
       type: 'select',
-      label: '所属',
-      dataIndex: 'own',
+      label: '应用分类',
+      dataIndex: 'appCategoryCode',
       width: '144px',
       placeholder: '请选择',
       required: true,
-      option: ownOption,
+      option: categoryData,
       disable: isCheck,
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-        formSelectChange(e, 'own');
+      onChange: (value: string) => {
+        formSelectChange(value, 'appCategoryCode');
       },
     },
     {
       key: '2',
       type: 'select',
-      label: '业务线',
-      dataIndex: 'line',
+      label: '应用组',
+      dataIndex: 'appGroupCode',
       width: '144px',
       placeholder: '请选择',
       required: true,
       option: lineOption,
       disable: isCheck,
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-        formSelectChange(e, 'line');
-      },
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '业务模块',
-      dataIndex: 'model',
-      width: '144px',
-      placeholder: '请选择',
-      required: true,
-      option: modelOption,
-      disable: isCheck,
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-        formSelectChange(e, 'model');
-      },
     },
   ];
 

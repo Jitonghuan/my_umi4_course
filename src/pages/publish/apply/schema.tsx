@@ -11,7 +11,7 @@ import {
 
 // 过滤表单 schema
 export const createFilterFormSchema = (params: {
-  belongData?: any[];
+  categoryData?: any[];
   businessData?: any[];
 }) => ({
   theme: 'inline',
@@ -21,16 +21,16 @@ export const createFilterFormSchema = (params: {
     {
       type: 'Select',
       props: {
-        label: '所属',
-        name: 'belong',
-        options: params.belongData || [],
+        label: '应用分类',
+        name: 'appCategoryCode',
+        options: params.categoryData || [],
       },
     },
     {
       type: 'Select',
       props: {
-        label: '业务线',
-        name: 'lineCode',
+        label: '应用组',
+        name: 'appGroupCode',
         options: params.businessData || [],
       },
     },
@@ -58,10 +58,10 @@ export const createFilterFormSchema = (params: {
 // 表格 schema
 export const createTableSchema = ({
   onDetailClick,
-  belongData,
+  categoryData,
 }: {
   onDetailClick: (record: any) => void;
-  belongData?: any[];
+  categoryData?: any[];
 }) =>
   [
     {
@@ -98,16 +98,16 @@ export const createTableSchema = ({
       dataIndex: 'title',
     },
     {
-      title: '所属',
-      dataIndex: 'belong',
+      title: '应用分类',
+      dataIndex: 'appCategoryCode',
       render: (value) => {
-        const result = belongData?.filter((el) => el.belongCode === value);
-        return result?.length ? result[0].belongName : value || '';
+        const result = categoryData?.filter((el) => el.value === value);
+        return result?.length ? result[0].label : value || '';
       },
     },
     {
-      title: '业务线',
-      dataIndex: 'lineCode',
+      title: '应用组',
+      dataIndex: 'appGroupCode',
     },
     {
       title: '机构',
