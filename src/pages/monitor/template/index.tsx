@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Space, Tag, Popconfirm, Form } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
-import { Link } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
@@ -15,6 +14,7 @@ import {
   createRuleTemplates,
   updateRuleTemplates,
   deleteRuleTemplates,
+  ruleTemplatesSwitch,
 } from '../service';
 import './index.less';
 
@@ -22,11 +22,12 @@ type statusTypeItem = {
   color: string;
   tagText: string;
   buttonText: string;
+  status: number;
 };
 
 const STATUS_TYPE: Record<number, statusTypeItem> = {
-  1: { tagText: '已启用', buttonText: '禁用', color: 'green' },
-  0: { tagText: '未启用', buttonText: '启用', color: 'default' },
+  0: { tagText: '已启用', buttonText: '禁用', color: 'green', status: 1 },
+  1: { tagText: '未启用', buttonText: '启用', color: 'default', status: 0 },
 };
 
 const TemplateCom: React.FC = () => {
@@ -65,17 +66,11 @@ const TemplateCom: React.FC = () => {
   });
 
   //启用/禁用
-  const { run: startRuleFun } = useRequest({
-    api: updateRuleTemplates,
-    method: 'GET',
-    onSuccess: (data) => {
-      queryList();
-    },
-  });
-
-  const { run: endRuleFun } = useRequest({
-    api: updateRuleTemplates,
-    method: 'GET',
+  const { run: ruleTemplatesSwitchFun } = useRequest({
+    api: ruleTemplatesSwitch,
+    method: 'POST',
+    successText: '操作成功',
+    isSuccessModal: true,
     onSuccess: (data) => {
       queryList();
     },
@@ -83,8 +78,12 @@ const TemplateCom: React.FC = () => {
 
   //删除
   const { run: deleteRuleTemplatesFun } = useRequest({
-    api: deleteRuleTemplates,
     method: 'DELETE',
+    successText: '删除成功',
+    isSuccessModal: true,
+    onSuccess: () => {
+      queryList();
+    },
   });
 
   const columns: ColumnsType<Item> = [
@@ -172,7 +171,10 @@ const TemplateCom: React.FC = () => {
           <Popconfirm
             title="确认删除？"
             onConfirm={() => {
-              deleteRuleTemplatesFun({ id: record.id });
+              deleteRuleTemplatesFun(
+                { id: record.id },
+                `${deleteRuleTemplates}/${record.id}`,
+              );
             }}
             okText="是"
             cancelText="否"
@@ -182,8 +184,10 @@ const TemplateCom: React.FC = () => {
           <Popconfirm
             title={`确认${STATUS_TYPE[record.status as number].buttonText}`}
             onConfirm={() => {
-              startRuleFun({ id: record.id });
-              endRuleFun({ id: record.id });
+              ruleTemplatesSwitchFun({
+                id: record.id,
+                status: STATUS_TYPE[record.status as number].status,
+              });
             }}
             okText="是"
             cancelText="否"
@@ -216,11 +220,11 @@ const TemplateCom: React.FC = () => {
       placeholder: '请选择',
       option: [
         {
-          key: '1',
+          key: '0',
           value: '已启用',
         },
         {
-          key: '0',
+          key: '1',
           value: '未启用',
         },
       ],

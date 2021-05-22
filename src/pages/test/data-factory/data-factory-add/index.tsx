@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Form, Button, Space } from 'antd';
+import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import { FormProps } from '@/components/table-search/typing';
 
 const DataFactoryAdd: React.FC = () => {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [form] = Form.useForm();
 
   const formOptionsLeft: FormProps[] = [
@@ -97,11 +99,7 @@ const DataFactoryAdd: React.FC = () => {
       labelCol: { span: 5 },
       wrapperCol: { span: 18 },
       isReadOnly: true,
-      // rules: [{
-      //   required: true,
-      //   message: '请输入正确的数据',
-      //   // pattern: /^\{(\n|\s)+[\w:\w,]+\}$/,
-      // }],
+      rules: [],
       onChange: (e) => {
         console.log(e.target.value);
       },

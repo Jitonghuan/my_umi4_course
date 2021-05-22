@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { getRequest, postRequest } from './request';
+import { useState, useCallback } from 'react';
+import request, { getRequest, postRequest } from './request';
 import { message } from 'antd';
 
 type IResponse<R = any> = {
@@ -12,7 +12,7 @@ type IResponse<R = any> = {
 };
 
 interface UseRequestProps<R = any> {
-  api: string;
+  api?: string;
   method?: 'POST' | 'GET' | 'DELETE';
   onSuccess?: (res: R) => void;
   successText?: string;
@@ -21,7 +21,7 @@ interface UseRequestProps<R = any> {
 }
 
 interface RunProps<T = any> {
-  (body?: Record<string, T>): Promise<any>;
+  (body?: Record<string, T>, url?: string): Promise<any>;
 }
 
 const useRequest = <K>(props: UseRequestProps) => {
@@ -36,28 +36,41 @@ const useRequest = <K>(props: UseRequestProps) => {
   const [data, setData] = useState<K>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const run: RunProps = async (body = {}) => {
-    setLoading(true);
-    const resp =
-      method === 'POST'
-        ? await postRequest(api, { method, data: body })
-        : await getRequest(api, { method, data: body });
+  const run: RunProps = useCallback(
+    async (body = {}, url?: string) => {
+      setLoading(true);
+      let resp = {} as IResponse;
+      switch (method) {
+        case 'POST':
+          resp = await postRequest(api as string, { method, data: body });
+          break;
+        case 'GET':
+          resp = await getRequest(api as string, { method, data: body });
+          break;
+        case 'DELETE':
+          resp = await request(url as string, { method });
+        default:
+          break;
+      }
+      console.log(resp, 'resp');
 
-    if (!resp.success) return;
-    onSuccess && onSuccess(resp.data);
-    if (isSuccessModal) {
-      message.success(successText);
-    }
-    setLoading(false);
+      if (!resp.success) return;
+      onSuccess && onSuccess(resp.data);
+      if (isSuccessModal) {
+        message.success(successText);
+      }
+      setLoading(false);
 
-    if (formatData) {
-      setData(formatData(resp.data));
-      return formatData(resp.data);
-    }
-    setData(resp.data);
+      if (formatData) {
+        setData(formatData(resp.data));
+        return formatData(resp.data);
+      }
+      setData(resp.data);
 
-    return resp.data;
-  };
+      return resp.data;
+    },
+    [data],
+  );
 
   const resetData = (value: any) => {
     setData(value);

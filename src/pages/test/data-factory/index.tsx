@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Tag, Tooltip } from 'antd';
+import React, { useContext, useState, useEffect } from 'react';
+import { Button, Tag, Tooltip, Form } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
+import moment from 'moment';
+import FELayout from '@cffe/vc-layout';
+import useTable from '@/utils/useTable';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { Item } from '../typing';
+import { queryDataFactoryList } from '../service';
 
 import './index.less';
+import { create } from '_@types_lodash@4.14.168@@types/lodash';
 
 type statusTypeItem = {
   color: string;
@@ -22,7 +27,31 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 };
 
 const DataFactory: React.FC = () => {
-  const [dataSource, setDataSource] = useState<Item[]>([]);
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
+  const [form] = Form.useForm();
+
+  const {
+    tableProps,
+    search: { submit: queryList, reset },
+  } = useTable({
+    url: queryDataFactoryList,
+    method: 'GET',
+    form,
+    formatter: (record) => {
+      console.log(record, 'record');
+      console.log(userInfo, 'userInfo');
+      console.log(
+        moment(record?.createTime)?.format('YYYY-MM-DD HH:mm:ss'),
+        '222',
+      );
+      return {
+        ...record,
+        createTime: record.createTime
+          ? moment(record?.createTime)?.format('YYYY-MM-DD HH:mm:ss')
+          : undefined,
+      };
+    },
+  });
 
   const columns: ColumnsType<Item> = [
     {
@@ -57,14 +86,14 @@ const DataFactory: React.FC = () => {
     },
     {
       title: '数据工厂名称',
-      dataIndex: 'factoryName',
-      key: 'factoryName',
+      dataIndex: 'name',
+      key: 'name',
       // width: '3%',
     },
     {
       title: '环境',
-      dataIndex: 'environment',
-      key: 'environment',
+      dataIndex: 'env',
+      key: 'env',
       // width: '5%',
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -74,8 +103,8 @@ const DataFactory: React.FC = () => {
     },
     {
       title: '所属',
-      dataIndex: 'own',
-      key: 'own',
+      dataIndex: 'belong',
+      key: 'belong',
       // width: '5%',
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -91,14 +120,14 @@ const DataFactory: React.FC = () => {
     },
     {
       title: '创建人',
-      dataIndex: 'creator',
-      key: 'creator',
+      dataIndex: 'user',
+      key: 'user',
       // width: '4%',
     },
     {
       title: '创建参数',
-      dataIndex: 'params',
-      key: 'params',
+      dataIndex: 'createParams',
+      key: 'createParams',
       // width: '4%',
     },
     {
@@ -126,10 +155,11 @@ const DataFactory: React.FC = () => {
       key: '1',
       type: 'select',
       label: '所属',
-      dataIndex: 'own',
+      dataIndex: 'belong',
       width: '144px',
       placeholder: '请输入',
       option: [],
+      rules: [],
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
       },
@@ -142,6 +172,7 @@ const DataFactory: React.FC = () => {
       width: '144px',
       placeholder: '请选择',
       option: [],
+      rules: [],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -150,7 +181,7 @@ const DataFactory: React.FC = () => {
       key: '3',
       type: 'select',
       label: '创建环境',
-      dataIndex: 'environment',
+      dataIndex: 'env',
       width: '144px',
       placeholder: '请选择',
       option: [
@@ -167,6 +198,7 @@ const DataFactory: React.FC = () => {
           value: '3',
         },
       ],
+      rules: [],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -178,6 +210,7 @@ const DataFactory: React.FC = () => {
       dataIndex: 'createTime',
       width: '144px',
       placeholder: '请选择',
+      rules: [],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -186,14 +219,14 @@ const DataFactory: React.FC = () => {
       key: '5',
       type: 'checkbox',
       // label: '创建时间',
-      dataIndex: 'myData',
+      dataIndex: 'user',
       width: '144px',
       placeholder: '请选择',
       rules: [],
       checkboxOption: [
         {
           label: '我的数据',
-          value: 'myData',
+          value: userInfo?.userName as string,
         },
       ],
       onChange: (e: string) => {
@@ -202,36 +235,16 @@ const DataFactory: React.FC = () => {
     },
   ];
 
-  const onSearch = (value: Record<string, any>) => {
-    console.log(value, '8888');
-  };
-
-  useEffect(() => {
-    const arr: Item[] = new Array(20).fill(1).map((_, i) => {
-      return {
-        id: `${i + 10000}`,
-        applyName: '顶顶顶顶',
-        environmentName: '啊卡仕达卡仕',
-        alertName: '撒谎的',
-        alertRank: '3',
-        createTime: '2012-01-01 00:00',
-        eventNum: '3',
-        notifyObject: '哈哈哈',
-        status: i % 3 === 0 ? 2 : i % 3 === 2 ? 1 : 0,
-      };
-    });
-
-    setDataSource(arr);
-  }, []);
-
   return (
     <MatrixPageContent>
       <TableSearch
+        form={form}
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        dataSource={dataSource}
+        {...tableProps}
         pagination={{
+          ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',
@@ -252,7 +265,8 @@ const DataFactory: React.FC = () => {
         searchText="查询"
         tableTitle="数据生成记录"
         className="table-form"
-        onSearch={onSearch}
+        onSearch={queryList}
+        reset={reset}
         scroll={{ y: 300, scrollToFirstRowOnChange: true }}
       />
     </MatrixPageContent>

@@ -48,8 +48,8 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
   const columns = [
     {
       title: '规则名称',
-      dataIndex: 'ruleName',
-      key: 'ruleName',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: '告警表达式',
@@ -75,8 +75,8 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
     },
     {
       title: '告警消息',
-      dataIndex: 'news',
-      key: 'news',
+      dataIndex: 'message',
+      key: 'message',
       // width: '5%',
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>

@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Space, Drawer, Form, Select, TimePicker } from 'antd';
+import moment from 'moment';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import useRequest from '@/utils/useRequest';
 import EditTable from '../editTable';
 import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
-import {
-  queryRuleTemplatesList,
-  createRuleTemplates,
-  updateRuleTemplates,
-  deleteRuleTemplates,
-} from '../../service';
+import { queryRuleTemplatesList, queryGroupList } from '../../service';
 import './index.less';
 
 interface TemplateDrawerProps {
@@ -23,6 +19,12 @@ interface TemplateDrawerProps {
   record?: Item;
   onSubmit?: (value: Record<string, string>) => void;
 }
+
+const ALERT_LEVEL: Record<string, string> = {
+  '2': '警告',
+  '3': '严重',
+  '4': '灾难',
+};
 
 const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   visible,
@@ -41,10 +43,17 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
   //分类
   const { run: groupList } = useRequest({
-    api: updateRuleTemplates,
+    api: queryGroupList,
     method: 'GET',
     onSuccess: (data) => {
-      setGroupData(data);
+      setGroupData(
+        data?.map((v: any) => {
+          return {
+            key: v,
+            value: v,
+          };
+        }),
+      );
     },
   });
 
@@ -94,6 +103,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       ...record,
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
+      level: ALERT_LEVEL[record.level as string],
     });
     setLabelTableData(
       formatTableDataMap(record?.labels as Record<string, string>),
@@ -166,6 +176,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       dataIndex: 'name',
       placeholder: '请输入(最多253字符，暂不支持中文)',
       required: true,
+      disable: type === 'edit',
       rules: [
         {
           whitespace: true,
@@ -221,7 +232,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       className: 'extraStyleTime',
       extraForm: (
         <Form.Item name="timeType" noStyle initialValue="m">
-          <Select style={{ width: '90%' }}>
+          <Select style={{ width: '90%' }} placeholder="选择时间单位">
             <Select.Option value="h">小时</Select.Option>
             <Select.Option value="m">分钟</Select.Option>
             <Select.Option value="s">秒</Select.Option>
@@ -300,13 +311,18 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       key: '9',
       type: 'select',
       label: '通知对象',
-      dataIndex: 'notifyObject',
+      dataIndex: 'receiver',
       placeholder: '请选择',
       required: true,
+      mode: 'multiple',
       option: [
         {
-          key: 'dong',
+          key: '东来',
           value: '东来',
+        },
+        {
+          key: '羁绊',
+          value: '羁绊',
         },
       ],
       onChange: (e: string) => {
@@ -317,13 +333,18 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       key: '10',
       type: 'select',
       label: '通知方式',
-      dataIndex: 'notifyType',
+      dataIndex: 'receiverType',
       placeholder: '请选择',
       required: true,
+      mode: 'multiple',
       option: [
         {
-          key: 'ding',
+          key: '钉钉',
           value: '钉钉',
+        },
+        {
+          key: '电话',
+          value: '电话',
         },
       ],
       onChange: (e: string) => {
@@ -334,7 +355,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       key: '11',
       type: 'radio',
       label: '是否静默',
-      dataIndex: 'isSilence',
+      dataIndex: 'silence',
       placeholder: '请选择',
       required: true,
       defaultValue: 0,
@@ -394,18 +415,29 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     }
 
     return formOptions;
-  }, [drawerType]);
+  }, [drawerType, groupData]);
 
   //收集数据
   const onFinish = () => {
     form.validateFields().then((value) => {
+      console.log(value, '99999');
+      console.log(labelTableData, 'labelTableData');
       const obj = {
         ...value,
         labels: stepTableMap(labelTableData),
         annotations: stepTableMap(annotationsTableData),
         duration: `${value.duration}${value.timeType}`,
       };
+      if (value?.silence) {
+        obj.silenceStart = moment(value.silenceTime[0]).format(
+          'YYYY-MM-DD HH:mm:ss',
+        );
+        obj.silenceEnd = moment(value.silenceTime[1]).format(
+          'YYYY-MM-DD HH:mm:ss',
+        );
+      }
       delete obj.timeType;
+      console.log(obj, 'oooooo');
       onSubmit && onSubmit(obj);
     });
   };

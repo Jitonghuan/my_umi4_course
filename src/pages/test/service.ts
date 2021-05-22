@@ -67,4 +67,4 @@ export const queryDataFactoryName = `${origin}${ds.apiPrefix}/qc/dataFactory/que
 export const createDataFactory = `${origin}${ds.apiPrefix}/qc/dataFactory/createData`;
 
 /** 数据工厂列表查询*/
-export const queryData = `${origin}${ds.apiPrefix}/qc/dataFactory/queryData`;
+export const queryDataFactoryList = `${ds.apiPrefix}/qc/dataFactory/queryData`;

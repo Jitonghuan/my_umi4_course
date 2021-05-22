@@ -14,7 +14,6 @@ import { queryPrometheusList, deletePrometheus } from '../service';
 import './index.less';
 
 const PrometheusCom: React.FC = () => {
-  // const [dataSource, setDataSource] = useState<Item[]>([]);
   const [labelVisible, setLabelVisible] = useState(false);
   const [rulesVisible, setRulesVisible] = useState(false);
   const [labelRecord, setLabelRecord] = useState<Record<string, string>>({});

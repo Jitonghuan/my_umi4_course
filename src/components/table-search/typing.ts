@@ -48,6 +48,7 @@ export interface FormProps<T = any> extends FormItemProps, TextAreaProps {
   validatorMessage?: string;
   pattern?: RegExp;
   isReadOnly?: boolean;
+  mode?: 'multiple' | 'tags';
   onChange?: (e: T) => void;
 }
 

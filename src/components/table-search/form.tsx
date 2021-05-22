@@ -43,6 +43,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       checkboxOption,
       autoSize,
       isReadOnly,
+      mode,
       ...rest
     } = v;
 
@@ -87,6 +88,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                   onChange={onChange}
                   getPopupContainer={(triggerNode) => triggerNode.parentElement}
                   disabled={disable}
+                  mode={mode}
                 >
                   {option?.map((item) => (
                     <Option key={item.key} value={item.key}>

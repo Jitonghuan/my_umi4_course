@@ -114,13 +114,13 @@ const EditableTable: React.FC<EditableTableState> = ({
   onTableChange,
 }) => {
   const [dataSource, setDataSource] = useState<Item[]>([
-    {
-      id: 0,
-      key: 'key',
-      value: 'value',
-    },
+    // {
+    //   id: 0,
+    //   key: 'key',
+    //   value: 'value',
+    // },
   ]);
-  // const [count, setCount] = useState<number>(dataSource.length);
+  const [count, setCount] = useState<number>(dataSource.length);
 
   const columns = [
     {
@@ -145,7 +145,7 @@ const EditableTable: React.FC<EditableTableState> = ({
         const findData = dataSource.find((v) => v.id === record.id);
         return (
           <Space>
-            {dataSource.length > 1 ? (
+            {dataSource.length >= 1 ? (
               <Popconfirm
                 title="确认删除"
                 onConfirm={() => handleDelete(record.id as React.Key)}
@@ -153,12 +153,12 @@ const EditableTable: React.FC<EditableTableState> = ({
                 <MinusCircleOutlined style={{ color: 'red' }} />
               </Popconfirm>
             ) : null}
-            {dataSource.indexOf(findData as Item) === dataSource.length - 1 ? (
+            {/* {dataSource.indexOf(findData as Item) === dataSource.length - 1 ? (
               <PlusCircleOutlined
                 onClick={handleAdd}
                 style={{ color: 'green' }}
               />
-            ) : null}
+            ) : null} */}
           </Space>
         );
       },
@@ -166,10 +166,12 @@ const EditableTable: React.FC<EditableTableState> = ({
   ];
 
   useEffect(() => {
+    console.log(dataSource);
     onTableChange && onTableChange(dataSource);
   }, [dataSource]);
 
   useEffect(() => {
+    console.log(initData, 'inata');
     if (initData.length === 0) return;
     setDataSource(initData);
   }, [initData]);
@@ -225,6 +227,9 @@ const EditableTable: React.FC<EditableTableState> = ({
   });
   return (
     <div>
+      <Button style={{ marginBottom: 8 }} type="primary" onClick={handleAdd}>
+        添加
+      </Button>
       <Table
         components={components}
         // rowClassName={() => 'editable-row'}
