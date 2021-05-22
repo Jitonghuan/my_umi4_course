@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Tooltip, Form, Input, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { SearchOutlined } from '@ant-design/icons';
-import { Link, history } from 'umi';
-import moment, { Moment } from 'moment';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import useTable from '@/utils/useTable';
@@ -45,26 +43,33 @@ const UnitTest: React.FC = () => {
     url: queryUnittestCoverCheckLogList,
     method: 'GET',
     form,
+    formatter: (vals) => {
+      const { testTime = [undefined, undefined], ...rest } = vals;
+
+      return {
+        ...rest,
+        startTime: testTime[0]
+          ? testTime[0].format('YYYY-MM-DD HH:mm:ss')
+          : undefined,
+        endTime: testTime[1]
+          ? testTime[1].format('YYYY-MM-DD HH:mm:ss')
+          : undefined,
+      };
+    },
   });
 
   const columns: ColumnsType<Item> = [
     {
-      title: '序号',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
       width: '5%',
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
     },
     {
       title: '任务ID',
       dataIndex: 'taskId',
       key: 'taskId',
       width: '5%',
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
     },
     {
       title: '任务名',
@@ -98,104 +103,74 @@ const UnitTest: React.FC = () => {
       dataIndex: 'appName',
       key: 'appName',
       width: '10%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
     },
     {
       title: '分支名',
       dataIndex: 'branchName',
       key: 'branchName',
       width: '10%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
     },
     {
       title: '检测时间',
       dataIndex: 'testTime',
       key: 'testTime',
-      // ellipsis: true,
       width: '15%',
-      render: (text) => (
-        <Tooltip title={text}>
-          {text}
-          {/* <span
-            style={{
-              display: 'inline-block',
-              width: 100,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {text}
-          </span> */}
-        </Tooltip>
+      render: (_, record) => (
+        <span>
+          {record.startTime || '-'}
+          <br />
+          {record.endTime || '-'}
+        </span>
       ),
     },
     {
       title: '检测时长(秒)',
       dataIndex: 'times',
       key: 'times',
-      // ellipsis: true,
       width: '15%',
-      render: (text) => (
-        <Tooltip title={text}>
-          {text}
-          {/* <span
-            style={{
-              display: 'inline-block',
-              width: 100,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {text}
-          </span> */}
-        </Tooltip>
-      ),
+      render: (text) => text || '-',
     },
     {
       title: '构建人',
       dataIndex: 'createUser',
       key: 'createUser',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '指令覆盖率',
       dataIndex: 'instructionsCov',
       key: 'instructionsCov',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '分支覆盖率',
       dataIndex: 'branchesCov',
       key: 'branchesCov',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '行覆盖率',
       dataIndex: 'linesCov',
       key: 'linesCov',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '方法覆盖率',
       dataIndex: 'methodsCov',
       key: 'methodsCov',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '类覆盖率',
       dataIndex: 'classesCov',
       key: 'classesCov',
       width: '10%',
+      render: (text) => text || '-',
     },
     {
       title: '状态',
@@ -212,16 +187,17 @@ const UnitTest: React.FC = () => {
       key: 'option',
       width: 80,
       fixed: 'right',
-      render: (_, record) => (
-        <a
-          onClick={() => {
-            setFrameVisible(true);
-            setCurrentRecord(record);
-          }}
-        >
-          查看报告
-        </a>
-      ),
+      render: (_, record) =>
+        record.reportUrl && (
+          <a
+            onClick={() => {
+              setFrameVisible(true);
+              setCurrentRecord(record);
+            }}
+          >
+            查看报告
+          </a>
+        ),
     },
   ];
 
@@ -279,10 +255,6 @@ const UnitTest: React.FC = () => {
       dataIndex: 'testTime',
       width: '280px',
       rules: [],
-      onChange: (e: Moment[]) => {
-        console.log(moment(e[0]).format('YYYY-MM-DD 00:00:00'), 'date');
-        console.log(moment(e[1]).format('YYYY-MM-DD 23:59:59'), 'date');
-      },
     },
     {
       key: '6',
@@ -316,7 +288,10 @@ const UnitTest: React.FC = () => {
         form={form}
         formOptions={formOptions}
         formLayout="inline"
-        columns={columns}
+        columns={columns.map((el) => ({
+          render: (text) => text || '-',
+          ...el,
+        }))}
         {...tableProps}
         pagination={{
           showTotal: (total) => `总共 ${total} 条数据`,
@@ -329,8 +304,8 @@ const UnitTest: React.FC = () => {
         tableTitle="执行记录"
         className="table-form"
         onSearch={queryUnittest}
-        scroll={{ x: '150%', y: 300, scrollToFirstRowOnChange: true }}
-        // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
+        reset={reset}
+        scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
       />
 
       <VCModal

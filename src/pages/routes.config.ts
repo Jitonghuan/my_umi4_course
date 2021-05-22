@@ -266,21 +266,24 @@ export default [
       {
         path: 'qualityControl',
         name: '质量控制',
+        key: 'qualityControl',
         component: '@/pages/test/quality-control',
         exact: true,
       },
-      // {
-      //   path: 'qualityControl/unitTest',
-      //   name: '单测覆盖检测',
-      //   hideInMenu: true,
-      //   component: '@/pages/test/quality-control/unit-test',
-      // },
-      // {
-      //   path: 'qualityControl/codeQuality',
-      //   name: '代码质量检测',
-      //   hideInMenu: true,
-      //   component: '@/pages/test/quality-control/code-quality',
-      // },
+      {
+        path: 'qualityControl/unitTest',
+        name: '单测覆盖检测',
+        key: 'qualityControl',
+        hideInMenu: true,
+        component: '@/pages/test/quality-control/unit-test',
+      },
+      {
+        path: 'qualityControl/codeQuality',
+        name: '代码质量检测',
+        key: 'qualityControl',
+        hideInMenu: true,
+        component: '@/pages/test/quality-control/code-quality',
+      },
     ],
   },
   {

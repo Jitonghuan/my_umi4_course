@@ -1,11 +1,12 @@
 import React from 'react';
-import moment, { Moment } from 'moment';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
+import { Moment } from 'moment';
+import { FormProps } from '@/components/table-search/typing';
 import { Space, Tag, Popconfirm } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { Link, history } from 'umi';
+import { Link } from 'umi';
 import { statusType } from '../constant';
-import { Item } from '../typing';
+import { IFuncItem } from '../typing';
+import moment from 'moment';
 
 export const createFormItems = (params: {
   categoryData?: any[];
@@ -62,7 +63,14 @@ export const createFormItems = (params: {
       dataIndex: 'appGroupCode',
       width: '144px',
       placeholder: '请选择',
-      option: params?.groupData,
+      option: params?.groupData?.map((el) => {
+        // 数据重新格式化，适应TableSearch
+        return {
+          ...el,
+          key: el.value,
+          value: el.label,
+        };
+      }),
     },
     {
       key: '4',
@@ -157,9 +165,9 @@ export const createTableColumns = (params: {
       // ),
     },
     {
-      title: '机构',
-      dataIndex: 'org',
-      key: 'org',
+      title: '发布环境',
+      dataIndex: 'envs',
+      key: 'envs',
       // width: '4%',
     },
     {
@@ -189,11 +197,9 @@ export const createTableColumns = (params: {
       dataIndex: 'preDeployTime',
       key: 'preDeployTime',
       width: '8%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      render: (text) => {
+        return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
+      },
     },
     {
       title: '需求ID',
@@ -206,6 +212,9 @@ export const createTableColumns = (params: {
       dataIndex: 'deployTime',
       key: 'deployTime',
       width: '8%',
+      render: (text) => {
+        return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
+      },
     },
     {
       title: '创建人',
@@ -218,10 +227,9 @@ export const createTableColumns = (params: {
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
       width: '8%',
-      // width: 100,
-      // render: (text) => (
-      //   <span style={{ display: 'inline-block', width: 120 }}>{text}</span>
-      // ),
+      render: (text) => {
+        return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
+      },
     },
     {
       title: '操作',
@@ -230,18 +238,18 @@ export const createTableColumns = (params: {
       fixed: 'right',
       // width: 100,
       width: '6%',
-      render: (_: string, record: Item) => (
+      render: (_: string, record: IFuncItem) => (
         <Space>
           {/* <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${record.id}`}> */}
           <Link to={`./function/editFunction?id=${record.id}`}>编辑</Link>
           <Popconfirm
             title="确认删除?"
-            onConfirm={() => params?.onDelete(record?.id)}
+            onConfirm={() => params?.onDelete(record?.funcId!)}
           >
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
         </Space>
       ),
     },
-  ] as ColumnsType<Item>;
+  ] as ColumnsType<IFuncItem>;
 };

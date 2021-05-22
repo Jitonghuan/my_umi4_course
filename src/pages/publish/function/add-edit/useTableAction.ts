@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Form, message } from 'antd';
 
-import { Item } from '../../typing';
+import { IFuncItem } from '../../typing';
 
 interface IProps {
-  initData: Item[];
+  initData: IFuncItem[];
 }
 
 const useTableAction = (props: IProps) => {
   const { initData = [] } = props;
   const [form] = Form.useForm();
-  const [data, setData] = useState<Item[]>([]);
+  const [data, setData] = useState<IFuncItem[]>([]);
   const [editingKey, setEditingKey] = useState('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const edit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({ function: '', org: [], ...record });
+  const edit = (record: Partial<IFuncItem> & { key: React.Key }) => {
+    form.setFieldsValue({ funcName: '', envs: [], ...record });
     setEditingKey(record.key);
   };
 
-  const isEditing = (record: Item) => record.key === editingKey;
+  const isEditing = (record: IFuncItem) => record.key === editingKey;
 
   const addTableRow = () => {
     const newData = [...data];
-    if (!(form.getFieldValue('line') && form.getFieldValue('model'))) {
-      message.warning('请先选择业务线和业务模块');
+    if (!form.getFieldValue('appGroupCode')) {
+      message.warning('请先选择应用组');
       return;
     }
     if (
       newData.length &&
-      newData.filter((v) => !(v?.function && v?.org)).length
+      newData.filter((v) => !(v?.funcName && v?.envs?.length)).length
     ) {
       message.warning('先保存，再新增');
       return;
@@ -39,12 +39,12 @@ const useTableAction = (props: IProps) => {
     };
 
     form.resetFields([
-      'function',
-      'org',
-      'range',
-      'needs',
-      'planTime',
-      'needsID',
+      'funcName',
+      'envs',
+      'coverageRange',
+      'resolveNeeds',
+      'preDeployTime',
+      'demandId',
     ]);
     newData.push(obj);
     setData(newData);
@@ -52,7 +52,11 @@ const useTableAction = (props: IProps) => {
   };
 
   const cancel = (key: React.Key) => {
-    if (data.filter((v) => !(v?.function && v?.org) && v.key === key).length) {
+    if (
+      data.filter(
+        (v) => !(v?.funcName && v?.envs && v?.envs.length) && v.key === key,
+      ).length
+    ) {
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
       newData.splice(index, 1);
@@ -64,14 +68,12 @@ const useTableAction = (props: IProps) => {
 
   const save = async (key: React.Key) => {
     try {
-      const row = (await form.validateFields()) as Item;
+      const row = (await form.validateFields()) as IFuncItem;
 
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
         const item = newData[index];
-        console.log(newData, 'newData');
-        console.log(item, '123');
         newData.splice(index, 1, {
           ...item,
           ...row,

@@ -11,7 +11,7 @@ import {
 } from 'antd';
 
 import FEContext from '@/layouts/basic-layout/FeContext';
-import { queryDeployEnvReq, queryDeployPlanReq } from '../../service';
+import { queryDeployEnvReq, queryPublishPlanReq } from '../../service';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
 import { planSchemaColumns } from '../../schema';
 import { queryAppGroupReq } from '@/pages/publish/service';
@@ -58,7 +58,7 @@ const AddDrawer = (props: IProps) => {
   // 根据应用组查询计划
   const queryDeployPlan = (lineCode: string) => {
     setDeployPlanData([]);
-    queryDeployPlanReq({ lineCode }).then((datas) => {
+    queryPublishPlanReq({ lineCode }).then((datas) => {
       setDeployPlanData(datas);
     });
   };

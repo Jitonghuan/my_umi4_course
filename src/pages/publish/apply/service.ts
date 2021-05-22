@@ -42,9 +42,9 @@ export const queryDeployEnvReq = (params: { belong: string }) =>
   });
 
 /** 根据业务线，查询发布计划 */
-const queryDeployPlanUrl = `${ds.apiPrefix}/releaseManage/deploy/plan/list`;
-export const queryDeployPlanReq = (params: { lineCode: string }) =>
-  getRequest(queryDeployPlanUrl, {
+const queryPublishPlanUrl = `${ds.apiPrefix}/releaseManage/deploy/plan/list`;
+export const queryPublishPlanReq = (params: { lineCode: string }) =>
+  getRequest(queryPublishPlanUrl, {
     data: params,
   }).then((resp) => {
     if (resp.success) {

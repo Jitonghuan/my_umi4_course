@@ -1,13 +1,13 @@
 import React from 'react';
 import { Form } from 'antd';
-import { Item } from '../../typing';
+import { IFuncItem } from '../../typing';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   required: boolean;
   dataIndex: string;
   title: string;
-  record: Item;
+  record: IFuncItem;
   index: number;
   children: React.ReactNode;
   item: React.ReactNode;

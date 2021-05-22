@@ -1,33 +1,49 @@
 import { Moment } from 'moment';
 
-export interface Item {
+/** 发布功能 */
+export interface IFuncItem {
   key?: string;
-  function?: string;
-  org?: string[] | string;
-  range?: string;
-  needs?: string;
-  planTime?: Moment | string;
-  needsID?: string;
-  id: string;
-  status?: number;
-  owner?: string;
-  line?: string;
-  model?: string;
-  actualTime?: string;
-  person?: string;
-  createTime?: string;
-  type?: string;
+  funcName?: string;
+  envs?: string[] | string;
+  coverageRange?: string;
+  resolveNeeds?: string;
+  preDeployTime?: Moment | string;
+  demandId?: string;
+  id?: string;
+  deployStatus?: number;
+  appCategoryCode?: string;
+  appGroupCode?: string;
+  deployTime?: string;
+  createUser?: string;
+  gmtCreate?: string;
+  deployType?: string;
+  funcId?: string;
+}
+
+/** 发布计划 */
+export interface IPlanItem {
+  id?: string;
+  deployStatus?: number;
+  appCategoryCode?: string;
+  appGroupCode?: string;
+  deployTime?: string;
+  createUser?: string;
+  gmtCreate?: string;
+  deployType?: string;
+  preDeployTime?: Moment | string;
+  configs?: string;
+  planId: string;
 }
 
 export interface InitValue {
-  useName?: string;
+  appCode?: string;
   version?: string;
-  branch?: string;
-  modules?: string;
-  develop?: string;
-  test?: string;
-  publisher?: string;
-  planTime?: Moment;
+  deployRelease?: string;
+  dependcy?: string;
+  developer?: string;
+  tester?: string;
+  deployer?: string;
+  preDeployTime?: Moment;
 }
 
 export interface BaseFormProps {
