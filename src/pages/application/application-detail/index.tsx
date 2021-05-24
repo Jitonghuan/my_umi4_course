@@ -30,6 +30,7 @@ const defaultTab = 'overview';
 
 const ApplicationDetail = (props: IProps) => {
   const { location, children } = props;
+  const isContainClient = Number(location.query.isContainClient) === 1;
   const appId = location.query.id;
 
   const feContent = useContext(FEContext);
@@ -110,11 +111,21 @@ const ApplicationDetail = (props: IProps) => {
             </div>
           }
         >
-          {Object.keys(tabsConfig).map((key) => (
-            <TabPane tab={tabsConfig[key]} key={key}>
-              {null}
-            </TabPane>
-          ))}
+          {Object.keys(tabsConfig)
+            // 只有应用为包含二方包属性的时候，才会显示二方包的 tab
+            .filter((key) => {
+              if (isContainClient) {
+                return true;
+              }
+
+              // 不包含二方包
+              return key !== 'twoPackage';
+            })
+            .map((key) => (
+              <TabPane tab={tabsConfig[key]} key={key}>
+                {null}
+              </TabPane>
+            ))}
         </Tabs>
       )}
 

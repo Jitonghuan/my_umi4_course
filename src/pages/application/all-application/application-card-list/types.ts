@@ -9,6 +9,10 @@ export interface IProps {
     appName: string;
     /** 应用类型 */
     appType: 'frontend' | 'backend';
+    /** 是否为二方包 */
+    isClient?: number;
+    /** 是否包含二方包 */
+    isContainClient?: number;
     owner: string;
   }>;
   /** 分页 */
