@@ -4,9 +4,10 @@ import { ColumnProps } from '@cffe/vc-hulk-table';
 import {
   APPLY_STATUS_COLOR_MAP,
   APPLY_STATUS_MAP,
-  DEPLOY_TYPE_COLOR_MAP,
-  DEPLOY_TYPE_MAP,
   DEPLOY_TYPE_OPTIONS,
+  EMERGENCY_TYPE_COLOR_MAP,
+  EMERGENCY_TYPE_MAP,
+  EMERGENCY_TYPE_OPTIONS,
 } from './const';
 
 // 过滤表单 schema
@@ -37,9 +38,17 @@ export const createFilterFormSchema = (params: {
     {
       type: 'Select',
       props: {
-        label: '发布类型',
+        label: '部署类型',
         name: 'deployType',
         options: DEPLOY_TYPE_OPTIONS,
+      },
+    },
+    {
+      type: 'Select',
+      props: {
+        label: '紧急类型',
+        name: 'emergencyType',
+        options: EMERGENCY_TYPE_OPTIONS,
       },
     },
     {
@@ -84,12 +93,22 @@ export const createTableSchema = ({
         ),
     },
     {
-      title: '发布类型',
+      title: '部署类型',
       dataIndex: 'deployType',
       render: (deployType: string, record) => (
         <Badge
-          color={DEPLOY_TYPE_COLOR_MAP[deployType]}
-          text={DEPLOY_TYPE_MAP[deployType]}
+          color={EMERGENCY_TYPE_COLOR_MAP[deployType]}
+          text={EMERGENCY_TYPE_MAP[deployType]}
+        />
+      ),
+    },
+    {
+      title: '紧急类型',
+      dataIndex: 'emergencyType',
+      render: (text: string, record) => (
+        <Badge
+          color={EMERGENCY_TYPE_COLOR_MAP[text]}
+          text={EMERGENCY_TYPE_MAP[text]}
         />
       ),
     },
@@ -110,7 +129,7 @@ export const createTableSchema = ({
       dataIndex: 'appGroupCode',
     },
     {
-      title: '机构',
+      title: '发布环境',
       dataIndex: 'deployEnv',
     },
     {
@@ -152,28 +171,20 @@ export const planSchemaColumns = [
     dataIndex: 'id',
   },
   {
-    title: '应用名',
+    title: '应⽤分类',
+    dataIndex: 'appCategoryCode',
+  },
+  {
+    title: '应⽤组',
+    dataIndex: 'appGroupCode',
+  },
+  {
+    title: '应用CODE',
     dataIndex: 'appCode',
   },
   {
     title: '应用类型',
-    dataIndex: 'deployType',
-  },
-  {
-    title: '变更类型',
-    dataIndex: 'changeType',
-  },
-  {
-    title: '所属',
-    dataIndex: 'belong',
-  },
-  {
-    title: '业务线',
-    dataIndex: 'lineCode',
-  },
-  {
-    title: '业务模块',
-    dataIndex: 'sysCode',
+    dataIndex: 'appType',
   },
   {
     title: '版本号',
@@ -185,19 +196,19 @@ export const planSchemaColumns = [
   },
   {
     title: '发布依赖',
-    dataIndex: 'dependency',
+    dataIndex: 'dependcy',
   },
   {
     title: '开发',
-    dataIndex: 'develop',
+    dataIndex: 'developer',
   },
   {
     title: '测试',
-    dataIndex: 'test',
+    dataIndex: 'tester',
   },
   {
     title: '发布人',
-    dataIndex: 'deploy',
+    dataIndex: 'deployer',
   },
   {
     title: '期望发布时间',
@@ -215,19 +226,19 @@ export const applyDetailSchemaColumns = [
     dataIndex: 'id',
   },
   {
-    title: '发布功能',
+    title: '功能名称',
     dataIndex: 'funcName',
   },
   {
-    title: '业务线',
-    dataIndex: 'lineCode',
+    title: '应用分类',
+    dataIndex: 'appCategoryCode',
   },
   {
-    title: '业务模块',
-    dataIndex: 'sysCode',
+    title: '应用组',
+    dataIndex: 'appGroupCode',
   },
   {
-    title: '机构',
+    title: '发布环境',
     dataIndex: 'envs',
   },
   {
@@ -235,11 +246,15 @@ export const applyDetailSchemaColumns = [
     dataIndex: 'coverageRange',
   },
   {
+    title: '解决的实际需求',
+    dataIndex: 'resolveNeeds',
+  },
+  {
     title: '预计发布时间',
     dataIndex: 'preDeployTime',
   },
   {
-    title: '需求id',
+    title: '需求ID',
     dataIndex: 'demandId',
   },
   {

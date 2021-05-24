@@ -71,7 +71,9 @@ export const queryJiraUrl = `${ds.apiPrefix}/publishManage/issue/list`;
 /** 查询发布功能列表 */
 export const queryFunctionUrl = `${ds.apiPrefix}/publishManage/function/list`;
 export const queryFunctionReq = (params: {
-  id?: number; //发布功能的数据库⾃增ID
+  id?: number; // 发布功能的数据库⾃增ID
+  appCategoryCode?: string; // 应⽤分类CODE
+  appGroupCode?: string; // 应⽤组CODE
 }) =>
   getRequest(queryFunctionUrl, {
     data: params,
@@ -143,8 +145,19 @@ export const addPublishPlanReq = (params: IPlanItem) =>
     data: params,
   });
 export const addPublishPlanMultiUrl = `${ds.apiPrefix}/publishManage/plan/multiCreate`;
-export const addPublishPlanMultiReq = (params: IPlanItem[]) =>
+export const addPublishPlanMultiReq = (params: {
+  plan: IPlanItem;
+  funcIds: any[];
+}) =>
   postRequest(addPublishPlanMultiUrl, {
+    data: [params],
+  });
+
+/** 修改发布计划 */
+export const updatePublishPlanUrl = `${ds.apiPrefix}/publishManage/plan/update`;
+export const updatePublishPlanReq = (params: IFuncItem) =>
+  postRequest(updateFuncUrl, {
+    method: 'PUT',
     data: params,
   });
 
@@ -158,4 +171,27 @@ export const deletePublishPlanReq = (params: { planId: string }) =>
 /** 发布申请相关 */
 /** 查询发布申请列表api */
 export const queryApplysUrl = `${ds.apiPrefix}/publishManage/apply/list`;
+export const queryApplysReq = (params: {
+  id?: string;
+  title?: string; //申请标题
+  deployDate?: string; // 发布时间
+  appGroupCode?: string; //应⽤组CODE
+  appCategoryCode?: string; //应⽤分类CODE
+  deployStatus?: number; //申请状态 0/1/2/3 申请中/申请通过/申请拒绝/撤回
+  deployType?: number; //部署类型 frontend/backend
+  pageIndex?: number; //分⻚索引
+  pageSize?: number; //分⻚⼤⼩
+}) =>
+  getRequest(queryApplysUrl, {
+    data: params,
+  }).then((resp) => {
+    if (resp.success) {
+      return (
+        resp?.data?.dataSource?.map((el: any) => {
+          return el.plan;
+        }) || []
+      );
+    }
+    return [];
+  });
 /** 发布申请结束 */

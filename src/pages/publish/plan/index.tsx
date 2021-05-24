@@ -5,7 +5,6 @@ import TableSearch from '@/components/table-search';
 import { OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import FEContext from '@/layouts/basic-layout/FeContext';
-import { IPlanItem } from '../typing';
 import useTable from '@/utils/useTable';
 import {
   deletePublishPlanReq,
@@ -99,31 +98,10 @@ const FunctionCom: React.FC = () => {
               type="primary"
               ghost
               onClick={() => {
-                // history.push(`${ds.pagePrefix}/release/plan/addFunctionModify`);
-                history.push('./plan/addFunctionModify');
-              }}
-            >
-              新增功能变更
-            </Button>
-            <Button
-              type="primary"
-              ghost
-              onClick={() => {
-                // history.push(`${ds.pagePrefix}/release/plan/addConfigModify`);
                 history.push('./plan/addConfigModify');
               }}
             >
-              新增配置变更
-            </Button>
-            <Button
-              type="primary"
-              ghost
-              onClick={() => {
-                // history.push(`${ds.pagePrefix}/release/plan/addDatabaseModify`);
-                history.push('./plan/addDatabaseModify');
-              }}
-            >
-              新增数据库变更
+              新增发布计划
             </Button>
           </Space>
         }

@@ -11,10 +11,13 @@ import {
 } from 'antd';
 
 import FEContext from '@/layouts/basic-layout/FeContext';
-import { queryDeployEnvReq, queryPublishPlanReq } from '../../service';
-import { DEPLOY_TYPE_OPTIONS } from '../../const';
+import { DEPLOY_TYPE_OPTIONS, EMERGENCY_TYPE_OPTIONS } from '../../const';
 import { planSchemaColumns } from '../../schema';
-import { queryAppGroupReq } from '@/pages/publish/service';
+import {
+  queryAppGroupReq,
+  queryEnvsReq,
+  queryPublishPlanReq,
+} from '@/pages/publish/service';
 
 export interface IProps {
   visible: boolean;
@@ -47,18 +50,18 @@ const AddDrawer = (props: IProps) => {
     });
   };
 
-  // 根据应用分类查询机构
-  const queryDeployEnv = (belong: string) => {
+  // 根据应用分类查询环境
+  const queryDeployEnv = (categoryCode: string) => {
     setDeployEnvData([]);
-    queryDeployEnvReq({ belong }).then((datas) => {
-      setDeployEnvData(datas);
+    queryEnvsReq({ categoryCode }).then((datas) => {
+      setDeployEnvData(datas.list);
     });
   };
 
   // 根据应用组查询计划
-  const queryDeployPlan = (lineCode: string) => {
+  const queryDeployPlan = (appGroupCode: string) => {
     setDeployPlanData([]);
-    queryPublishPlanReq({ lineCode }).then((datas) => {
+    queryPublishPlanReq({ appGroupCode }).then((datas) => {
       setDeployPlanData(datas);
     });
   };
@@ -72,14 +75,14 @@ const AddDrawer = (props: IProps) => {
   const handleFormChange = useCallback((vals) => {
     const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
     if (name && name === 'appCategoryCode') {
-      formInstance.resetFields(['lineCode']);
+      formInstance.resetFields(['appGroupCode']);
       formInstance.resetFields(['deployEnv']);
       queryBusiness(value);
       queryDeployEnv(value);
       setDeployPlanData([]);
       setSelectPlan([]);
     }
-    if (name && name === 'lineCode') {
+    if (name && name === 'appGroupCode') {
       setSelectPlan([]);
       queryDeployPlan(value);
     }
@@ -164,9 +167,9 @@ const AddDrawer = (props: IProps) => {
           <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item
-          label="发布类型"
+          label="部署类型"
           name="deployType"
-          rules={[{ required: true, message: '请选择发布类型!' }]}
+          rules={[{ required: true, message: '请选择部署类型!' }]}
         >
           <Radio.Group>
             {DEPLOY_TYPE_OPTIONS?.map((el) => (
@@ -175,7 +178,18 @@ const AddDrawer = (props: IProps) => {
           </Radio.Group>
         </Form.Item>
         <Form.Item
-          label="机构"
+          label="紧急类型"
+          name="emergencyType"
+          rules={[{ required: true, message: '请选择紧急类型!' }]}
+        >
+          <Radio.Group>
+            {EMERGENCY_TYPE_OPTIONS?.map((el) => (
+              <Radio value={el.value}>{el.label}</Radio>
+            ))}
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          label="发布环境"
           name="deployEnv"
           rules={[{ required: true, message: '请选择机构!' }]}
         >
@@ -209,7 +223,7 @@ const AddDrawer = (props: IProps) => {
           {...tailLayout}
           extra="请在此表单中选择关联的发布计划!"
           label=""
-          name="deployUser"
+          name="planIds"
         >
           <Table
             rowKey="id"
