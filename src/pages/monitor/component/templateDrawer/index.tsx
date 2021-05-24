@@ -215,7 +215,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     {
       key: '2',
       type: 'input',
-      label: '规则名称',
+      label: drawerType === 'rules' ? '规则名称' : '模板名称',
       dataIndex: 'name',
       placeholder: '请输入(最多253字符，暂不支持中文)',
       required: true,
