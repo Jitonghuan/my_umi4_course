@@ -63,7 +63,7 @@ const DataFactoryAdd: React.FC = () => {
       key: '2',
       type: 'select',
       label: '数据工厂名称',
-      dataIndex: 'factoryName"',
+      dataIndex: 'factoryName',
       placeholder: '请选择',
       required: true,
       option: factoryNameData as OptionProps[],
