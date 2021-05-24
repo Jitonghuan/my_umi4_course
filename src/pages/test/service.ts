@@ -1,6 +1,7 @@
 import ds from '@config/defaultSettings';
 
-const origin = 'http://turing.cfuture.shop:8010';
+// const origin = 'http://turing.cfuture.shop:8010';
+const origin = '';
 
 /**
  * 查询左侧用例集数据
