@@ -126,7 +126,7 @@ const StepOne: React.FC<StepOneProps> = ({
       type: 'input',
       label: 'URL',
       dataIndex: 'metricsUrl',
-      placeholder: '请输入',
+      placeholder: '请输入(示例:http://127.0.0.1:8080/health)',
       required: true,
       rules: [
         {
