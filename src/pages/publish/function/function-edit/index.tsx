@@ -31,7 +31,7 @@ const EditFunction: React.FC = (props) => {
       type="edit"
       initData={initData}
       title="编辑发布功能"
-      defaultValueObj={{ ...detailInfo }}
+      defaultValueObj={detailInfo}
     />
   );
 };

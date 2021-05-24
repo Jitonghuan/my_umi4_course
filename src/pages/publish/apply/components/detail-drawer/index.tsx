@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Drawer, Card, Row, Col, Select, Divider, Table } from 'antd';
-import { querApplyDetailReq } from '../../service';
-import { DEPLOY_TYPE_MAP } from '../../const';
+import { EMERGENCY_TYPE_MAP } from '../../const';
 import { applyDetailSchemaColumns } from '../../schema';
+import { queryApplysReq } from '@/pages/publish/service';
 
 export interface IPorps {
-  id: number | string;
+  id: string;
   visible: boolean;
   onClose: () => void;
 }
@@ -25,7 +25,7 @@ const DetailDrawer = (props: IPorps) => {
 
   useEffect(() => {
     if (id && visible) {
-      querApplyDetailReq({ id }).then((data) => {
+      queryApplysReq({ id }).then((data) => {
         const { base = {}, plans = [] } = data;
         setBaseInfo(base);
         setPlans(plans);
@@ -45,11 +45,11 @@ const DetailDrawer = (props: IPorps) => {
         <div className={`${rootCls}-box-title`}>{baseInfo?.title}</div>
         <Row>
           <Col span={6}>
-            发布类型：{DEPLOY_TYPE_MAP[baseInfo?.deployType] || '--'}
+            紧急类型：{EMERGENCY_TYPE_MAP[baseInfo?.emergencyType] || '--'}
           </Col>
-          <Col span={6}>所属：{baseInfo?.belong || ''}</Col>
-          <Col span={6}>业务线：{baseInfo?.lineCode || ''}</Col>
-          <Col span={6}>机构：{baseInfo?.deployEnv || ''}</Col>
+          <Col span={6}>应用分类：{baseInfo?.belong || ''}</Col>
+          <Col span={6}>应用组：{baseInfo?.lineCode || ''}</Col>
+          <Col span={6}>发布环境：{baseInfo?.deployEnv || ''}</Col>
           <Col span={6}>发布负责人：{baseInfo?.deployUser || ''}</Col>
           <Col span={6}>计划发布时间：{baseInfo?.deployDate || ''}</Col>
           <Col span={6}>申请时间：{baseInfo?.gmtCreate || ''}</Col>
@@ -64,19 +64,16 @@ const DetailDrawer = (props: IPorps) => {
                 发布计划&nbsp;-&nbsp;{plan?.id}
               </div>
               <Row>
-                <Col span={6}>应用CODE：{plan?.lineCode || ''}</Col>
-                <Col span={6}>所属：{plan?.belong || ''}</Col>
-                <Col span={6}>
-                  应用类型：{DEPLOY_TYPE_MAP[plan?.deployType] || '--'}
-                </Col>
-                <Col span={6}>业务线：{plan?.lineCode || ''}</Col>
-                <Col span={6}>业务模块：{plan?.sysCode || ''}</Col>
+                <Col span={6}>应用CODE：{plan?.appCode || ''}</Col>
+                <Col span={6}>应用分类：{plan?.appCategoryCode || ''}</Col>
+                <Col span={6}>应用组：{plan?.appGroupCode || ''}</Col>
+                <Col span={6}>应用类型：{plan?.appType || '-'}</Col>
                 <Col span={6}>版本号：{plan?.version || ''}</Col>
                 <Col span={6}>版本分支：{plan?.deployRelease || ''}</Col>
-                <Col span={6}>发布依赖：{plan?.dependency || ''}</Col>
-                <Col span={6}>开发：{plan?.develop || ''}</Col>
-                <Col span={6}>测试：{plan?.test || ''}</Col>
-                <Col span={6}>发布人：{plan?.deploy || ''}</Col>
+                <Col span={6}>发布依赖：{plan?.dependcy || ''}</Col>
+                <Col span={6}>开发：{plan?.developer || ''}</Col>
+                <Col span={6}>测试：{plan?.tester || ''}</Col>
+                <Col span={6}>发布人：{plan?.deployer || ''}</Col>
                 <Col span={6}>计划发布时间：{plan?.preDeployTime || ''}</Col>
                 <Col span={6}>创建人：{plan?.createUser || ''}</Col>
               </Row>

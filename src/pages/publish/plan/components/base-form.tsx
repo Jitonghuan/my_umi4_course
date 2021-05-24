@@ -3,23 +3,13 @@ import { Row, Col } from 'antd';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import { BaseFormProps } from '../../typing';
-import { queryAppList } from '@/pages/monitor/application/service';
 
-const BaseForm: React.FC<BaseFormProps> = ({ initValueObj, isCheck }) => {
-  const [appList, setAppList] = useState<any[]>([]);
-  useEffect(() => {
-    queryAppList().then((resp) => {
-      setAppList(
-        resp.map((el: any) => {
-          return {
-            ...el,
-            key: el.value,
-            value: el.label,
-          };
-        }),
-      );
-    });
-  }, []);
+const BaseForm: React.FC<BaseFormProps> = ({
+  initValueObj,
+  isCheck,
+  appList,
+  appChange,
+}) => {
   const baseFormOption: FormProps[] = useMemo(() => {
     return [
       {
@@ -32,6 +22,7 @@ const BaseForm: React.FC<BaseFormProps> = ({ initValueObj, isCheck }) => {
         required: true,
         width: '100%',
         defaultValue: initValueObj?.appCode,
+        onChange: appChange,
       },
       {
         key: '2',

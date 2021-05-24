@@ -10,6 +10,7 @@ import {
   Select,
   DatePicker,
   Modal,
+  message,
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import moment, { Moment } from 'moment';
@@ -24,6 +25,7 @@ import { JiraColumns } from '../constant';
 import EditableCell from './editTableCell';
 import { IFuncItem } from '../../typing';
 import useTableAction from './useTableAction';
+import { usePaginated } from '@cffe/vc-hulk-table';
 import '../index.less';
 
 import { OptionProps } from '@/components/table-search/typing';
@@ -32,6 +34,7 @@ import {
   addFuncMultiReq,
   updateFuncReq,
   queryAppGroupReq,
+  queryJiraUrl,
 } from '../../service';
 
 export interface DefaultValueObjProps {
@@ -114,6 +117,14 @@ const EditTable: React.FC<EditTableProps> = ({
       );
     });
   };
+
+  const { run: queryNodeList, reset, tableProps } = usePaginated({
+    requestUrl: queryJiraUrl,
+    requestMethod: 'GET',
+    showRequestError: true,
+    didMounted: false,
+  });
+  const queryJiraData = (groupCode: string) => {};
 
   const {
     form,
@@ -269,6 +280,10 @@ const EditTable: React.FC<EditTableProps> = ({
 
   const onSubmit = () => {
     console.log(data, 'addFuncMulti onSubmit');
+    if (editingKey) {
+      message.warning('先保存，再提交');
+      return;
+    }
     const params: IFuncItem[] = data.map((el) => {
       const { envs = [], preDeployTime, key, ...rest } = el;
       const deployTime = preDeployTime as Moment;
@@ -342,6 +357,9 @@ const EditTable: React.FC<EditTableProps> = ({
       required: true,
       option: groupData,
       disable: isNotAdd,
+      onChange: (value: string) => {
+        queryJiraData(value);
+      },
     },
   ];
 
