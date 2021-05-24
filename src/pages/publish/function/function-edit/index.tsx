@@ -19,7 +19,9 @@ const EditFunction: React.FC = (props) => {
             key: '1',
             ...resp?.[0],
             envs: resp?.[0]?.envs.split(','),
-            preDeployTime: moment(resp?.[0]?.preDeployTime),
+            preDeployTime: resp?.[0]?.preDeployTime
+              ? moment(resp?.[0]?.preDeployTime)
+              : '',
           },
         ]);
       });

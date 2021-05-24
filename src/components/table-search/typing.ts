@@ -51,6 +51,7 @@ export interface FormProps<T = any> extends FormItemProps, TextAreaProps {
   mode?: 'multiple' | 'tags';
   id?: string;
   onChange?: (e: T) => void;
+  allowClear?: boolean;
 }
 
 export interface TableSearchProps extends TableProps<any> {
