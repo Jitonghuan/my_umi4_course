@@ -3,7 +3,14 @@ import { Table, Tooltip, Space, Popconfirm, Button, Form } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';
-import { queryRulesList } from '../../../service';
+import useTable from '@/utils/useTable';
+import {
+  queryRulesList,
+  createRules,
+  updateRules,
+  ruleSwitch,
+  deleteRules,
+} from '../../../service';
 import TemplateDrawer from '../../../component/templateDrawer';
 import { Item } from '../../../typing';
 import './index.less';
@@ -14,36 +21,87 @@ interface StepTwoProps {
   form?: FormInstance;
 }
 
-const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
-  const [dataSource, setDataSource] = useState<Item[]>([]);
-  console.log(serviceId, 'idiiiii');
+type statusTypeItem = {
+  color: string;
+  tagText: string;
+  buttonText: string;
+  status: number;
+};
 
-  const { run: queryRulesListFun, data: rulesList } = useRequest<{
+const STATUS_TYPE: Record<number, statusTypeItem> = {
+  0: { tagText: '已启用', buttonText: '禁用', color: 'green', status: 1 },
+  1: { tagText: '未启用', buttonText: '启用', color: 'default', status: 0 },
+};
+
+const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
+  const [dataSources, setDataSources] = useState<{
     dataSource: Item[];
     pageInfo: Record<string, React.Key>;
-  }>({
-    api: queryRulesList,
-    method: 'POST',
-    successText: '提交成功',
-    isSuccessModal: true,
-    formatData: (data) => {
+  }>();
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
+  const [type, setType] = useState<'add' | 'edit'>('add');
+  const [editRecord, setEditRecord] = useState<Item>({});
+
+  //列表
+  const {
+    tableProps,
+    search: { submit: queryList },
+  } = useTable({
+    url: queryRulesList,
+    method: 'GET',
+    formatter: () => {
       return {
-        ...data?.dataSource,
-        pageInfo: {
-          ...data.pageInfo,
-          current: data.pageInfo.pageIndex,
-        },
+        pageIndex: -1,
       };
     },
   });
 
-  const [drawerVisible, setDrawerVisible] = useState(false);
-  const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
+  //新增
+  const { run: createRulesFun } = useRequest({
+    api: createRules,
+    method: 'POST',
+    successText: '新增成功',
+    isSuccessModal: true,
+    onSuccess: () => {
+      setDrawerVisible(false);
+      queryList();
+    },
+  });
 
-  useEffect(() => {
-    //根据模板列表展示信息 setDataSource
-    queryRulesListFun({ serviceId });
-  }, []);
+  //编辑
+  const { run: updateRulesFun } = useRequest({
+    api: updateRules,
+    method: 'PUT',
+    successText: '编辑成功',
+    isSuccessModal: true,
+    onSuccess: () => {
+      setDrawerVisible(false);
+      queryList();
+    },
+  });
+
+  //启用/禁用
+  const { run: ruleTemplatesSwitchFun } = useRequest({
+    api: ruleSwitch,
+    method: 'POST',
+    successText: '操作成功',
+    isSuccessModal: true,
+    onSuccess: () => {
+      queryList();
+      // queryRulesListFun({ serviceId,pageIndex: -1 });
+    },
+  });
+
+  //删除
+  const { run: deleteRuleTemplatesFun } = useRequest({
+    method: 'DELETE',
+    successText: '删除成功',
+    isSuccessModal: true,
+    onSuccess: () => {
+      queryList();
+    },
+  });
 
   const columns = [
     {
@@ -88,25 +146,45 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
       title: '操作',
       dataIndex: 'option',
       key: 'news',
-      width: 100,
+      width: 150,
       render: (_: string, record: Item) => (
         <Space>
           <a
             onClick={() => {
               setDrawerVisible(true);
               setDrawerTitle('编辑报警规则模版');
+              setEditRecord(record);
+              setType('edit');
             }}
           >
             编辑
           </a>
           <Popconfirm
             title="确认删除？"
-            // onConfirm={confirm}
+            onConfirm={() => {
+              deleteRuleTemplatesFun(
+                { id: record.id },
+                `${deleteRules}/${record.id}`,
+              );
+            }}
             // onCancel={cancel}
             okText="是"
             cancelText="否"
           >
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+          </Popconfirm>
+          <Popconfirm
+            title={`确认${STATUS_TYPE[record.status as number].buttonText}`}
+            onConfirm={() => {
+              ruleTemplatesSwitchFun({
+                id: record.id,
+                status: STATUS_TYPE[record.status as number].status,
+              });
+            }}
+            okText="是"
+            cancelText="否"
+          >
+            <a>{STATUS_TYPE[record.status as number].buttonText}</a>
           </Popconfirm>
         </Space>
       ),
@@ -118,19 +196,25 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
   };
 
   const onSubmit = (value: any) => {
-    console.log(value);
+    if (type === 'add') {
+      createRulesFun({ ...value, serviceId });
+    } else {
+      updateRulesFun({ ...value, serviceId });
+    }
   };
 
-  useEffect(() => {
-    getTableData({ templates: dataSource });
-  }, [dataSource]);
+  // useEffect(() => {
+  //   getTableData({ templates: dataSource });
+  // }, [dataSource]);
 
   return (
-    <Form.Item>
+    <>
       <Table
         columns={columns}
-        dataSource={rulesList?.dataSource}
-        pagination={rulesList?.pageInfo}
+        // dataSource={dataSources?.dataSource}
+        // pagination={dataSources?.pageInfo}
+        {...tableProps}
+        pagination={false}
         className="step-two"
       />
       <Button
@@ -139,6 +223,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
         id="button-add"
         onClick={() => {
           setDrawerVisible(true);
+          setType('add');
         }}
       >
         新增
@@ -148,8 +233,11 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
         onClose={onClose}
         drawerTitle={drawerTitle}
         onSubmit={onSubmit}
+        drawerType="rules"
+        type={type}
+        record={editRecord}
       />
-    </Form.Item>
+    </>
   );
 };
 

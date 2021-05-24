@@ -146,11 +146,7 @@ const PrometheusForm: React.FC = () => {
     {
       current: 0,
       dom: (
-        <StepOne
-          getTableData={stepOneTableFun}
-          form={form}
-          matchlabelsList={matchlabels}
-        />
+        <StepOne getTableData={stepOneTableFun} matchlabelsList={matchlabels} />
       ),
     },
     {
@@ -177,8 +173,9 @@ const PrometheusForm: React.FC = () => {
           </Steps>
         </div>
         <Form className="form" requiredMark={false} form={form}>
-          {renderDom.find((v) => v.current === current)?.dom}
-
+          <Form.Item>
+            {renderDom.find((v) => v.current === current)?.dom}
+          </Form.Item>
           {current !== 2 && (
             <Form.Item wrapperCol={{ span: 20 }}>
               <div style={{ textAlign: 'right' }}>

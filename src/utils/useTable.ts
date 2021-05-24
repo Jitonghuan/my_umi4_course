@@ -7,7 +7,7 @@ import { IResponse } from '@cffe/vc-request/es/service';
 interface UseTableProps {
   url: string;
   method: 'POST' | 'GET';
-  form: FormInstance;
+  form?: FormInstance;
   formatResult?: (result: any) => { total: number; list: any[] };
   formatter?: (record: any) => any;
 }
@@ -23,7 +23,7 @@ const useTable = (props: UseTableProps) => {
     if (method === 'GET') {
       return getRequest(url, {
         method: 'GET',
-        data: { ...curFormData, pageIndex: current, pageSize },
+        data: { pageIndex: current, pageSize, ...curFormData },
       }).then((data) => {
         if (formatResult) {
           return formatResult(data);
@@ -37,7 +37,7 @@ const useTable = (props: UseTableProps) => {
 
     return postRequest(url, {
       method: 'POST',
-      data: { ...curFormData, pageIndex: current, pageSize },
+      data: { pageIndex: current, pageSize, ...curFormData },
     }).then((data) => {
       if (formatResult) {
         return formatResult(data);

@@ -6,6 +6,8 @@ export interface IProps {
     pathname: string;
     query: {
       id: string;
+      isClient: string;
+      isContainClient: string;
     };
   };
   route: {

@@ -111,6 +111,13 @@ export default [
             component:
               '@/pages/application/application-detail/components/add-config-parameters',
           },
+          // {
+          //   path: 'twoPackage',
+          //   name: '二方包',
+          //   hideInMenu: true,
+          //   component:
+          //     '@/pages/application/application-detail/components/two-package',
+          // },
         ],
       },
     ],

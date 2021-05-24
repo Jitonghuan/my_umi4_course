@@ -51,7 +51,10 @@ const TemplateCom: React.FC = () => {
   const { run: createRuleTemplatesFun } = useRequest({
     api: createRuleTemplates,
     method: 'POST',
-    onSuccess: (data) => {
+    successText: '添加成功',
+    isSuccessModal: true,
+    onSuccess: () => {
+      setDrawerVisible(false);
       queryList();
     },
   });
@@ -59,8 +62,11 @@ const TemplateCom: React.FC = () => {
   //编辑
   const { run: updateRuleTemplatesFun } = useRequest({
     api: updateRuleTemplates,
-    method: 'POST',
-    onSuccess: (data) => {
+    method: 'PUT',
+    successText: '编辑成功',
+    isSuccessModal: true,
+    onSuccess: () => {
+      setDrawerVisible(false);
       queryList();
     },
   });
@@ -71,7 +77,7 @@ const TemplateCom: React.FC = () => {
     method: 'POST',
     successText: '操作成功',
     isSuccessModal: true,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryList();
     },
   });
@@ -242,6 +248,7 @@ const TemplateCom: React.FC = () => {
     if (type === 'add') {
       createRuleTemplatesFun({ ...value });
     } else {
+      console.log(123);
       updateRuleTemplatesFun({ ...value });
     }
   };

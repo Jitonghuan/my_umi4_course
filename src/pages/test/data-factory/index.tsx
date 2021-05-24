@@ -34,7 +34,9 @@ const DataFactory: React.FC = () => {
     tableProps,
     search: { submit: queryList, reset },
   } = useTable({
-    url: queryDataFactoryList,
+    // url: queryDataFactoryList,
+    url: 'http://turing.cfuture.shop:8010/v1/qc/dataFactory/queryData',
+    //http://turing.cfuture.shop:8010/
     method: 'GET',
     form,
     formatter: (record) => {
