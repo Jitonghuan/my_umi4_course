@@ -224,8 +224,8 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           whitespace: true,
           required: true,
-          message: '请输入正确的名称',
-          pattern: /^\d+$|^\d[(a-z\d\-\.)]*\d$|^\d+$/,
+          message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
+          pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
           type: 'string',
           max: 253,
         },

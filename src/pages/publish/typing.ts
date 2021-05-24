@@ -49,4 +49,6 @@ export interface InitValue {
 export interface BaseFormProps {
   initValueObj?: InitValue;
   isCheck?: boolean;
+  appList?: any[];
+  appChange?: (value: string) => void;
 }

@@ -20,6 +20,7 @@ export const queryAppList = () =>
       const { dataSource = [] } = res.data || {};
       return dataSource.map((app: any) => {
         return {
+          ...app,
           value: app.appCode,
           label: app.appCode,
         };
