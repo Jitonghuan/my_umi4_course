@@ -52,6 +52,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
     method: 'GET',
     formatter: () => {
       return {
+        serviceId,
         pageIndex: -1,
       };
     },

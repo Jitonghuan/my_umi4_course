@@ -45,6 +45,8 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       isReadOnly,
       mode,
       id,
+      min,
+      max,
       ...rest
     } = v;
 
@@ -282,6 +284,8 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 onChange={onChange}
                 disabled={disable}
                 id={id}
+                max={max}
+                min={min}
               />
             </Item>
             {extraForm}

@@ -9,11 +9,11 @@ import useTable from '@/utils/useTable';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
+import usePublicData from '@/utils/usePublicData';
 import { Item } from '../typing';
 import { queryDataFactoryList } from '../service';
 
 import './index.less';
-import { create } from '_@types_lodash@4.14.168@@types/lodash';
 
 type statusTypeItem = {
   color: string;
@@ -22,34 +22,33 @@ type statusTypeItem = {
 
 const STATUS_TYPE: Record<number, statusTypeItem> = {
   0: { text: '创建中', color: 'blue' },
-  1: { text: '失败', color: 'volcano' },
-  2: { text: '成功', color: 'green' },
+  2: { text: '失败', color: 'volcano' },
+  1: { text: '成功', color: 'green' },
 };
 
 const DataFactory: React.FC = () => {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [form] = Form.useForm();
 
+  const { envListType, appTypeData } = usePublicData({
+    isUseAppEnv: false,
+    isUseAppBranch: false,
+    isUseAppLists: false,
+    isEnvType: true,
+  });
+
   const {
     tableProps,
     search: { submit: queryList, reset },
   } = useTable({
-    // url: queryDataFactoryList,
-    url: 'http://turing.cfuture.shop:8010/v1/qc/dataFactory/queryData',
-    //http://turing.cfuture.shop:8010/
+    url: queryDataFactoryList,
     method: 'GET',
     form,
     formatter: (record) => {
-      console.log(record, 'record');
-      console.log(userInfo, 'userInfo');
-      console.log(
-        moment(record?.createTime)?.format('YYYY-MM-DD HH:mm:ss'),
-        '222',
-      );
       return {
         ...record,
-        createTime: record.createTime
-          ? moment(record?.createTime)?.format('YYYY-MM-DD HH:mm:ss')
+        gmtCreate: record.gmtCreate
+          ? moment(record?.gmtCreate)?.format('YYYY-MM-DD HH:mm:ss')
           : undefined,
       };
     },
@@ -61,76 +60,90 @@ const DataFactory: React.FC = () => {
       dataIndex: 'id',
       key: 'id',
       width: 70,
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
     },
     {
       title: '数据明细',
-      dataIndex: 'detail',
-      key: 'detail',
+      dataIndex: 'response',
+      key: 'response',
       // width: '6%',
-      render: (text) => (
-        <Tooltip title={text}>
-          <span
-            style={{
-              display: 'inline-block',
-              width: 100,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {text}
-          </span>
-        </Tooltip>
-      ),
+      render: (text) => {
+        if (
+          !text ||
+          (typeof text === 'object' && Object.keys(text).length === 0)
+        )
+          return '-';
+        return (
+          <Tooltip title={JSON.stringify(text)}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 100,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {JSON.stringify(text)}
+            </span>
+          </Tooltip>
+        );
+      },
     },
     {
       title: '数据工厂名称',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'factoryName',
+      key: 'factoryName',
       // width: '3%',
     },
     {
       title: '环境',
       dataIndex: 'env',
       key: 'env',
-      // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
     },
     {
-      title: '所属',
-      dataIndex: 'belong',
-      key: 'belong',
-      // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      title: '项目',
+      dataIndex: 'project',
+      key: 'project',
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
-      // width: '6%',
+      dataIndex: 'gmtCreate',
+      key: 'gmtCreate',
+      width: '12%',
     },
     {
       title: '创建人',
-      dataIndex: 'user',
-      key: 'user',
+      dataIndex: 'createUser',
+      key: 'createUser',
       // width: '4%',
     },
     {
       title: '创建参数',
-      dataIndex: 'createParams',
-      key: 'createParams',
+      dataIndex: 'params',
+      key: 'params',
       // width: '4%',
+      render: (text) => {
+        if (
+          !text ||
+          (typeof text === 'object' && Object.keys(text).length === 0)
+        )
+          return '-';
+        return (
+          <Tooltip title={JSON.stringify(text)}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 100,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {JSON.stringify(text)}
+            </span>
+          </Tooltip>
+        );
+      },
     },
     {
       title: '状态',
@@ -143,12 +156,8 @@ const DataFactory: React.FC = () => {
     },
     {
       title: '日志',
-      dataIndex: 'log',
-      key: 'log',
-      // width: '4%',
-      // render: (text: number) => (
-      //   <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>
-      // ),
+      dataIndex: 'errorLog',
+      key: 'errorLog',
     },
   ];
 
@@ -156,24 +165,19 @@ const DataFactory: React.FC = () => {
     {
       key: '1',
       type: 'select',
-      label: '所属',
-      dataIndex: 'belong',
+      label: '项目',
+      dataIndex: 'project',
       width: '144px',
       placeholder: '请输入',
-      option: [],
+      option: appTypeData,
       rules: [],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '2',
-      type: 'select',
+      type: 'input',
       label: '数据工厂名称',
       dataIndex: 'factoryName',
       width: '144px',
-      placeholder: '请选择',
-      option: [],
       rules: [],
       onChange: (e: string) => {
         console.log(e);
@@ -186,20 +190,7 @@ const DataFactory: React.FC = () => {
       dataIndex: 'env',
       width: '144px',
       placeholder: '请选择',
-      option: [
-        {
-          key: 1,
-          value: '1',
-        },
-        {
-          key: 2,
-          value: '2',
-        },
-        {
-          key: 3,
-          value: '3',
-        },
-      ],
+      option: envListType,
       rules: [],
       onChange: (e: string) => {
         console.log(e);
@@ -209,7 +200,7 @@ const DataFactory: React.FC = () => {
       key: '4',
       type: 'date',
       label: '创建时间',
-      dataIndex: 'createTime',
+      dataIndex: 'gmtCreate',
       width: '144px',
       placeholder: '请选择',
       rules: [],
@@ -221,7 +212,7 @@ const DataFactory: React.FC = () => {
       key: '5',
       type: 'checkbox',
       // label: '创建时间',
-      dataIndex: 'user',
+      dataIndex: 'createUser',
       width: '144px',
       placeholder: '请选择',
       rules: [],
