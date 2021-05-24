@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Form, Button, Space } from 'antd';
-import * as CodeMirror from 'codemirror';
+import { omit } from 'lodash';
 import 'codemirror/lib/codemirror.css';
 import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
@@ -10,24 +10,24 @@ import { FormProps, OptionProps } from '@/components/table-search/typing';
 import usePublicData from '@/utils/usePublicData';
 import useRequest from '@/utils/useRequest';
 import JsonEditor from '@/components/JsonEditor';
-import { queryDataFactoryName } from '../../service';
+import { queryDataFactoryName, createDataFactory } from '../../service';
 import { Item } from '../../typing';
 
 const DataFactoryAdd: React.FC = () => {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [appCode, setAppCode] = useState('');
   const [factoryName, setFactoryName] = useState('');
   const [form] = Form.useForm();
 
-  const { appManageEnvData, appManageListData } = usePublicData({
-    appCode,
-    isUseAppEnv: true,
+  const { envListType, appTypeData } = usePublicData({
+    isUseAppEnv: false,
+    isUseAppBranch: false,
+    isUseAppLists: false,
+    isEnvType: true,
   });
 
+  // 获取数据工厂名称
   const { data: factoryNameData, run: queryDataFactoryNameFun } = useRequest({
-    // api: queryDataFactoryName,
-    api:
-      'http://turing.cfuture.shop:8010/v1/qc/dataFactory/queryDataFactory?project=hbos',
+    api: queryDataFactoryName,
     method: 'GET',
     formatData: (data = []) => {
       return data?.map((v: any) => {
@@ -40,6 +40,12 @@ const DataFactoryAdd: React.FC = () => {
     },
   });
 
+  //创建数据
+  const { data: dataFactory = [], run: createDataFactoryFun } = useRequest({
+    api: createDataFactory,
+    method: 'POST',
+  });
+
   const formOptionsLeft: FormProps[] = [
     {
       key: '1',
@@ -48,16 +54,16 @@ const DataFactoryAdd: React.FC = () => {
       dataIndex: 'project',
       placeholder: '请选择',
       required: true,
-      option: appManageListData,
+      option: appTypeData,
       onChange: (e) => {
-        setAppCode(e);
+        queryDataFactoryNameFun({ project: e });
       },
     },
     {
       key: '2',
       type: 'select',
       label: '数据工厂名称',
-      dataIndex: 'status',
+      dataIndex: 'factoryName',
       placeholder: '请选择',
       required: true,
       option: factoryNameData as OptionProps[],
@@ -69,20 +75,30 @@ const DataFactoryAdd: React.FC = () => {
       key: '3',
       type: 'select',
       label: '环境',
-      dataIndex: 'environment',
+      dataIndex: 'env',
       placeholder: '请选择',
       required: true,
-      option: appManageEnvData,
+      option: envListType,
       onChange: (e: string) => {
         console.log(e);
       },
     },
     {
       key: '4',
-      type: 'input',
+      type: 'inputNumber',
       label: '数量',
-      dataIndex: 'number',
-      placeholder: '请输入',
+      dataIndex: 'num',
+      placeholder: '请输入(1-10的数字)',
+      required: true,
+      min: 1,
+      max: 10,
+      width: '100%',
+      rules: [
+        {
+          required: true,
+          message: '请输入正确的数字',
+        },
+      ],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -139,11 +155,17 @@ const DataFactoryAdd: React.FC = () => {
 
   const onSubmit = async () => {
     const values = await form.validateFields();
+    const params = JSON.parse(values.params ?? '{}');
+    const id =
+      (factoryNameData as Item[])?.find((v) => v.name === factoryName)?.id ??
+      '';
+    createDataFactoryFun({
+      ...omit(values, ['returnData']),
+      factoryId: id,
+      params,
+      createUser: userInfo?.userName,
+    });
   };
-
-  useEffect(() => {
-    queryDataFactoryNameFun();
-  }, []);
 
   useEffect(() => {
     if (!factoryNameData) return;
@@ -154,6 +176,13 @@ const DataFactoryAdd: React.FC = () => {
       ),
     });
   }, [factoryNameData, factoryName]);
+
+  useEffect(() => {
+    if (dataFactory.length === 0) return;
+    form.setFieldsValue({
+      returnData: JSON.stringify(dataFactory),
+    });
+  }, [dataFactory]);
 
   return (
     <MatrixPageContent>

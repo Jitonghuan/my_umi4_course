@@ -58,8 +58,8 @@ const StepOne: React.FC<StepOneProps> = ({
         {
           whitespace: true,
           required: true,
-          message: '请输入正确的名称',
-          pattern: /^\d+$|^\d[(a-z\d\-\.)]*\d$|^\d+$/,
+          message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
+          pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
           type: 'string',
           max: 253,
         },
@@ -126,13 +126,13 @@ const StepOne: React.FC<StepOneProps> = ({
       type: 'input',
       label: 'URL',
       dataIndex: 'metricsUrl',
-      placeholder: '请输入',
+      placeholder: '请输入(示例:http://127.0.0.1:8080/health)',
       required: true,
       rules: [
         {
           type: 'url',
           required: true,
-          message: '请输入正确的url',
+          message: '请输入正确的url(示例:http://127.0.0.1:8080/health)',
         },
       ],
       onChange: (e: string) => {

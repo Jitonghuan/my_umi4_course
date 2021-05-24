@@ -76,7 +76,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
   const onSubmit = async () => {
     const values = await form.validateFields();
 
-    await getRequest(createQCTask, {
+    await postRequest(createQCTask, {
       data: {
         ...values,
         createUser: userInfo.userName,

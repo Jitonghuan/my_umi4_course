@@ -88,8 +88,7 @@ const PrometheusForm: React.FC = () => {
     method: 'POST',
     successText: '更新成功',
     isSuccessModal: true,
-    onSuccess: (data) => {
-      setServiceId(data?.id);
+    onSuccess: () => {
       setCurrent(current + 1);
     },
   });
