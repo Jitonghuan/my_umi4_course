@@ -15,7 +15,6 @@ import {
 import { DFSFunc } from '@/utils';
 import {
   getRequest,
-  queryUserInfo as ssoQueryUserInfo,
   queryUserInfoApi,
   doLogoutApi,
   postRequest,
@@ -145,7 +144,6 @@ export default (props: IUmiRrops) => {
               <FELayout.SSOLayout
                 {...(props as any)}
                 {...ds}
-                // isOpenLogin={false}
                 showFooter={false}
                 // 全局插入配置覆盖默认配置
                 {...FeGlobalRef.current}

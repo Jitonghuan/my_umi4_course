@@ -17,12 +17,20 @@ const rootCls = 'app-deploy-compo';
 
 const ApplicationDeploy = ({
   location: {
-    query: { appCode, id: appId },
+    query: { appCode, id: appId, isClient },
   },
 }: IProps) => {
   const { envData } = useContext(FeContext);
-
   const [tabActive, setTabActive] = useState('dev');
+
+  const curEnvData = envData?.filter((el) => {
+    if (Number(isClient) === 1) {
+      // 二方包
+      return ['dev', 'prod'].includes(el.typeCode);
+    }
+
+    return true;
+  });
 
   return (
     <div className={rootCls}>
@@ -33,13 +41,15 @@ const ApplicationDeploy = ({
         type="card"
         tabBarStyle={{ background: '#E6EBF5' }}
       >
-        {envData?.map((item) => (
+        {curEnvData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
               env={item.value}
               onDeployNextEnvSuccess={() => {
-                const i = envData.findIndex((item) => item.value === tabActive);
-                setTabActive(envData[i + 1]?.value || 'dev');
+                const i = curEnvData.findIndex(
+                  (item) => item.value === tabActive,
+                );
+                setTabActive(curEnvData[i + 1]?.value || 'dev');
               }}
             />
           </TabPane>

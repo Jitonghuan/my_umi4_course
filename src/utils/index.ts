@@ -1,4 +1,5 @@
 import { parse } from 'qs';
+import rjson from 'relaxed-json';
 
 /** 深度优先搜索处理 func */
 export const DFSFunc = (
@@ -31,4 +32,22 @@ export const getUrlParams = (keys?: string[]) => {
   }
 
   return urlParams;
+};
+
+/**
+ * jsonParse error-first
+ * @param jsonStr
+ * @param {boolean} relaxed 松散校验（非严格）
+ */
+export const JsonParse = (jsonStr: string, relaxed?: boolean) => {
+  try {
+    if (relaxed) {
+      jsonStr = rjson.transform(jsonStr);
+    }
+
+    let value = JSON.parse(jsonStr);
+    return [null, value];
+  } catch (e) {
+    return [true];
+  }
 };
