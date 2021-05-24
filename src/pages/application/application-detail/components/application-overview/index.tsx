@@ -65,12 +65,16 @@ const ApplicationOverview = (props: IProps) => {
           {appData?.gitAddress}
         </Descriptions.Item>
         <Descriptions.Item label="git组">{appData?.gitGroup}</Descriptions.Item>
-        <Descriptions.Item label="pom文件路径">
-          {appData?.deployPomPath}
-        </Descriptions.Item>
-        <Descriptions.Item label="应用开发语言">
-          {appData?.appDevelopLanguage}
-        </Descriptions.Item>
+        {appData?.appDevelopLanguage === 'java' && (
+          <Descriptions.Item label="pom文件路径">
+            {appData?.deployPomPath}
+          </Descriptions.Item>
+        )}
+        {appData?.appType === 'backend' && (
+          <Descriptions.Item label="应用开发语言">
+            {appData?.appDevelopLanguage}
+          </Descriptions.Item>
+        )}
         <Descriptions.Item label="应用部署名称">
           {appData?.deploymentName}
         </Descriptions.Item>
@@ -83,12 +87,16 @@ const ApplicationOverview = (props: IProps) => {
         <Descriptions.Item label="应用类型">
           {APP_TYPE_MAP[appData?.appType!]}
         </Descriptions.Item>
-        <Descriptions.Item label="是否为二方包">
-          {{ 1: '是', 0: '否' }[appData?.isClient!]}
-        </Descriptions.Item>
-        <Descriptions.Item label="是否包含二方包">
-          {{ 1: '是', 0: '否' }[appData?.isContainClient!]}
-        </Descriptions.Item>
+        {appData?.appDevelopLanguage === 'java' && (
+          <Descriptions.Item label="是否为二方包">
+            {{ 1: '是', 0: '否' }[appData?.isClient!]}
+          </Descriptions.Item>
+        )}
+        {appData?.appDevelopLanguage === 'java' && (
+          <Descriptions.Item label="是否包含二方包">
+            {{ 1: '是', 0: '否' }[appData?.isContainClient!]}
+          </Descriptions.Item>
+        )}
         <Descriptions.Item label="责任人">{appData?.owner}</Descriptions.Item>
         <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
       </Descriptions>
