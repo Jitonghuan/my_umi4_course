@@ -177,8 +177,9 @@ const PrometheusForm: React.FC = () => {
           </Steps>
         </div>
         <Form className="form" requiredMark={false} form={form}>
-          {renderDom.find((v) => v.current === current)?.dom}
-
+          <Form.Item>
+            {renderDom.find((v) => v.current === current)?.dom}
+          </Form.Item>
           {current !== 2 && (
             <Form.Item wrapperCol={{ span: 20 }}>
               <div style={{ textAlign: 'right' }}>

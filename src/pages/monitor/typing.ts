@@ -21,7 +21,7 @@ export interface Item {
   appCode?: string;
   envCode?: string;
   // alertName?: string;
-  level?: string;
+  level?: number;
   eventNum?: string;
   createTime?: string;
   notifyObject?: string;
@@ -30,6 +30,13 @@ export interface Item {
   annotations?: Record<string, string>;
   alertName?: AlertNameProps[];
   children?: Item[];
+  receiver?: string | string[];
+  receiverType?: string | string[];
+  timeType?: string;
+  silence?: number;
+  silenceTime?: Moment[];
+  silenceStart?: string;
+  silenceEnd?: string;
 }
 
 export interface InitValue {

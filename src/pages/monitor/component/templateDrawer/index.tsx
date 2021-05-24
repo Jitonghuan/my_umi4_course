@@ -1,6 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from 'react';
 import { Button, Space, Drawer, Form, Select, TimePicker } from 'antd';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import useRequest from '@/utils/useRequest';
@@ -9,6 +15,10 @@ import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
 import { queryRuleTemplatesList, queryGroupList } from '../../service';
 import './index.less';
+
+interface IRef {
+  setTreeData: (data: any) => void;
+}
 
 interface TemplateDrawerProps {
   visible: boolean;
@@ -20,10 +30,10 @@ interface TemplateDrawerProps {
   onSubmit?: (value: Record<string, string>) => void;
 }
 
-const ALERT_LEVEL: Record<string, string> = {
-  '2': '警告',
-  '3': '严重',
-  '4': '灾难',
+const ALERT_LEVEL: Record<string, { text: string; value: number }> = {
+  '2': { text: '警告', value: 2 },
+  '3': { text: '严重', value: 3 },
+  '4': { text: '灾难', value: 4 },
 };
 
 const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
@@ -40,6 +50,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [annotationsTableData, setAnnotationsTableData] = useState<Item[]>([]);
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
   const [ruleTemplate, setRuleTemplate] = useState('');
+  const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
 
   //分类
   const { run: groupList } = useRequest({
@@ -58,20 +69,19 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   });
 
   //获取模板列表
-  const {
-    data: ruleTemplatesList,
-    run: queryRuleTemplatesListFun,
-  } = useRequest({
+  const { run: queryRuleTemplatesListFun } = useRequest({
     api: queryRuleTemplatesList,
     method: 'GET',
-    formatData: (data) => {
-      return data?.dataSource.map((v: any) => {
-        return {
-          ...v,
-          key: v.name,
-          value: v.name,
-        };
-      });
+    onSuccess: (data) => {
+      setRuleTemplatesList(
+        data?.dataSource.map((v: any) => {
+          return {
+            ...v,
+            key: v.name,
+            value: v.name,
+          };
+        }),
+      );
     },
   });
 
@@ -84,8 +94,9 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   };
 
   //数组转map
-  const formatTableDataMap = (value: Item = {}) => {
-    const item = value?.labels ?? {};
+  const formatTableDataMap = (value: Record<string, string> = {}) => {
+    const item = value ?? {};
+
     const labels = Object.keys(item).map((v, i) => {
       return {
         id: i,
@@ -93,18 +104,63 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         value: item[v],
       };
     });
+
     return labels;
   };
 
   //编辑情况
   const editDataDetail = (record: Item = {}) => {
+    if (Object.keys(record).length === 0) return;
     const list = record?.duration?.split('') ?? [];
-    form.setFieldsValue({
+    // let receiver: string[] | undefined = [];
+    // let receiverType: string[] | undefined = [];
+    let silenceTime: Moment[] = [];
+
+    //回显数据
+    const setValues = {
       ...record,
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
-      level: ALERT_LEVEL[record.level as string],
+      level: ALERT_LEVEL[record.level as number]?.value,
+    };
+
+    //规则情况
+    if (drawerType === 'rules') {
+      // 回显通知对象
+      // if(!record?.receiver) {
+      //   receiver = undefined;
+      // }
+      // else if(record?.receiver && typeof(record?.receiver) === 'string' && record?.receiver?.indexOf(',') > -1) {
+      //   receiver = record?.receiver.split(',');
+      // } else {
+      //   receiver = [record?.receiver as string];
+      // }
+
+      //回显通知方式
+      // if(!record?.receiverType) {
+      //   receiverType = undefined;
+      // }
+      // else if(record?.receiverType && typeof(record?.receiverType) === 'string' && record?.receiverType?.indexOf(',') > -1) {
+      //   receiverType = record?.receiverType.split(',');
+      // } else {
+      //   receiverType = [record?.receiverType as string];
+      // }
+
+      //回显时间
+      if (record?.silence) {
+        silenceTime[0] = moment(record?.silenceStart, 'HH:mm');
+        silenceTime[1] = moment(record?.silenceEnd, 'HH:mm');
+      }
+
+      // setValues.receiver = receiver as string[];
+      // setValues.receiverType = receiverType as string[];
+      setValues.silenceTime = silenceTime;
+    }
+
+    form.setFieldsValue({
+      ...setValues,
     });
+
     setLabelTableData(
       formatTableDataMap(record?.labels as Record<string, string>),
     );
@@ -136,10 +192,11 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
   useEffect(() => {
     //编辑
-    if (type === 'edit') {
+    if (type === 'edit' && visible) {
       editDataDetail(record);
     }
-  }, [type, record]);
+    console.log(type, 'type');
+  }, [type, record, visible]);
 
   const formOptions: FormProps[] = [
     {
@@ -149,22 +206,8 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       dataIndex: 'ruleTemplate',
       placeholder: '选择告警模版，根据模版自动填充以下内容',
       required: true,
-      // option: ruleTemplatesList as OptionProps[],
+      option: ruleTemplatesList as OptionProps[],
       rules: [],
-      option: [
-        {
-          key: 1,
-          value: '1',
-        },
-        {
-          key: 2,
-          value: '2',
-        },
-        {
-          key: 3,
-          value: '3',
-        },
-      ],
       onChange: (e: string) => {
         setRuleTemplate(e);
       },
@@ -261,19 +304,26 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       label: '告警级别',
       dataIndex: 'level',
       // width: '144px',
-      placeholder: '请输入',
+      placeholder: '请选择',
       required: true,
+      rules: [
+        {
+          required: true,
+          message: '请选择',
+          type: 'number',
+        },
+      ],
       option: [
         {
-          key: '2',
+          key: 2,
           value: '警告',
         },
         {
-          key: '3',
+          key: 3,
           value: '严重',
         },
         {
-          key: '4',
+          key: 4,
           value: '灾难',
         },
       ],
@@ -291,19 +341,32 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       itemStyle: { marginBottom: 0 },
       extraForm: (
         <Form.Item noStyle>
-          <Form.Item name="labels" label="标签（Labels)" className="table-item">
-            <EditTable onTableChange={labelFun} initData={labelTableData} />
+          {/* <Form.Item name="labels" label="标签（Labels)" className="table-item">
+          <EditTable onTableChange={labelFun} initData={labelTableData} headerTitle='标签（Labels)'/>
           </Form.Item>
           <Form.Item
             name="annotations"
             label="注释（Annotations)"
             className="table-item"
           >
-            <EditTable
+          <EditTable
               onTableChange={annotationsFun}
               initData={annotationsTableData}
+              headerTitle='标签（Labels)'
             />
-          </Form.Item>
+          </Form.Item> */}
+          <EditTable
+            onTableChange={labelFun}
+            initData={labelTableData}
+            headerTitle="标签（Labels):"
+            style={{ marginBottom: 8 }}
+          />
+          <EditTable
+            onTableChange={annotationsFun}
+            initData={annotationsTableData}
+            headerTitle="注释（Annotations):"
+            style={{ marginBottom: 16 }}
+          />
         </Form.Item>
       ),
     },
@@ -325,6 +388,13 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           value: '羁绊',
         },
       ],
+      rules: [
+        {
+          required: true,
+          message: '请选择',
+          type: 'array',
+        },
+      ],
       onChange: (e: string) => {
         console.log(e);
       },
@@ -339,12 +409,19 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       mode: 'multiple',
       option: [
         {
-          key: '钉钉',
+          key: 'dingding',
           value: '钉钉',
         },
         {
-          key: '电话',
+          key: 'phone',
           value: '电话',
+        },
+      ],
+      rules: [
+        {
+          required: true,
+          message: '请选择',
+          type: 'array',
         },
       ],
       onChange: (e: string) => {
@@ -374,11 +451,11 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item
           noStyle
           shouldUpdate={(prevValues, curValues) =>
-            prevValues.isSilence !== curValues.isSilence
+            prevValues.silence !== curValues.silence
           }
         >
-          {({ getFieldValue }) =>
-            getFieldValue('isSilence') === 1 ? (
+          {({ getFieldValue }) => {
+            return getFieldValue('silence') === 1 ? (
               <Form.Item
                 name="silenceTime"
                 rules={[
@@ -393,13 +470,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
                   style={{ width: '100%', marginTop: 8 }}
                 />
               </Form.Item>
-            ) : null
-          }
+            ) : null;
+          }}
         </Form.Item>
       ),
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
   ];
 
@@ -415,13 +489,11 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     }
 
     return formOptions;
-  }, [drawerType, groupData]);
+  }, [drawerType, groupData, labelTableData, annotationsTableData]);
 
   //收集数据
   const onFinish = () => {
     form.validateFields().then((value) => {
-      console.log(value, '99999');
-      console.log(labelTableData, 'labelTableData');
       const obj = {
         ...value,
         labels: stepTableMap(labelTableData),
@@ -429,26 +501,30 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         duration: `${value.duration}${value.timeType}`,
       };
       if (value?.silence) {
-        obj.silenceStart = moment(value.silenceTime[0]).format(
-          'YYYY-MM-DD HH:mm:ss',
-        );
-        obj.silenceEnd = moment(value.silenceTime[1]).format(
-          'YYYY-MM-DD HH:mm:ss',
-        );
+        obj.silenceStart = moment(value.silenceTime[0]).format('HH:mm');
+        obj.silenceEnd = moment(value.silenceTime[1]).format('HH:mm');
+        delete obj.silenceTime;
+      }
+      if (type === 'edit') {
+        obj.id = record?.id;
       }
       delete obj.timeType;
-      console.log(obj, 'oooooo');
       onSubmit && onSubmit(obj);
     });
+  };
+
+  const onCancel = () => {
+    setLabelTableData([]);
+    setAnnotationsTableData([]);
+    setRuleTemplate('');
+    form.resetFields();
+    onClose();
   };
 
   return (
     <Drawer
       title={drawerTitle}
-      onClose={() => {
-        onClose();
-        form.resetFields();
-      }}
+      onClose={onCancel}
       visible={visible}
       width={700}
       bodyStyle={{ paddingRight: 0 }}
@@ -457,14 +533,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           <Button type="primary" onClick={onFinish}>
             确认
           </Button>
-          <Button
-            onClick={() => {
-              onClose();
-              form.resetFields();
-            }}
-          >
-            取消
-          </Button>
+          <Button onClick={onCancel}>取消</Button>
         </Space>
       }
       footerStyle={{ textAlign: 'right' }}

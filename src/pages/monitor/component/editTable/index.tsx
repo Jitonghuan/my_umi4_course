@@ -69,6 +69,24 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
   let childNode = children;
 
+  <Form.Item
+    style={{ margin: 0 }}
+    name={dataIndex}
+    rules={[
+      {
+        required: true,
+        message: '请输入',
+      },
+    ]}
+  >
+    <Input
+      ref={inputRef}
+      onPressEnter={save}
+      onBlur={save}
+      // style={{ width: 160 }}
+    />
+  </Form.Item>;
+
   if (editable) {
     childNode = editing ? (
       <Form.Item
@@ -106,20 +124,17 @@ type EditableTableProps = Parameters<typeof Table>[0];
 
 interface EditableTableState extends EditableTableProps {
   initData?: Item[];
+  headerTitle?: string;
   onTableChange?: (value: Item[]) => void;
 }
 
 const EditableTable: React.FC<EditableTableState> = ({
   initData = [],
   onTableChange,
+  headerTitle,
+  style,
 }) => {
-  const [dataSource, setDataSource] = useState<Item[]>([
-    // {
-    //   id: 0,
-    //   key: 'key',
-    //   value: 'value',
-    // },
-  ]);
+  const [dataSource, setDataSource] = useState<Item[]>(initData);
   const [count, setCount] = useState<number>(dataSource.length);
 
   const columns = [
@@ -171,7 +186,6 @@ const EditableTable: React.FC<EditableTableState> = ({
   }, [dataSource]);
 
   useEffect(() => {
-    console.log(initData, 'inata');
     if (initData.length === 0) return;
     setDataSource(initData);
   }, [initData]);
@@ -184,8 +198,8 @@ const EditableTable: React.FC<EditableTableState> = ({
   const handleAdd = () => {
     const newData: Item = {
       id: dataSource.length,
-      key: 'key',
-      value: 'value',
+      key: '点击可修改key',
+      value: '点击可修改value',
     };
     setDataSource([...dataSource, newData]);
     // setCount(count + 1);
@@ -226,10 +240,19 @@ const EditableTable: React.FC<EditableTableState> = ({
     };
   });
   return (
-    <div>
-      <Button style={{ marginBottom: 8 }} type="primary" onClick={handleAdd}>
-        添加
-      </Button>
+    <div style={style}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
+        }}
+      >
+        <span>{headerTitle}</span>
+        <Button style={{ marginBottom: 8 }} type="primary" onClick={handleAdd}>
+          添加
+        </Button>
+      </div>
       <Table
         components={components}
         // rowClassName={() => 'editable-row'}

@@ -36,28 +36,6 @@ const StepOne: React.FC<StepOneProps> = ({
     appCode,
   });
 
-  // const { run: queryPrometheusListFun } = useRequest({
-  //   api: queryPrometheusList,
-  //   method: 'GET',
-  //   onSuccess: (data) => {
-  //     console.log(data,'uuu');
-  //     if(!data) return;
-  //     form?.setFieldsValue({
-  //       ...data.dataSource[0]
-  //     });
-
-  //     const item = data.dataSource[0]?.labels;
-  //     const labels = Object.keys(item).map((v,i)=>{
-  //       return {
-  //         id: i,
-  //         key: v,
-  //         value: item[v],
-  //       };
-  //     });
-  //     setMatchlabels(labels);
-  //   }
-  // });
-
   const matchlabelsFun = (value: Item[]) => {
     console.log(value, 'label');
     setMatchlabels(value);

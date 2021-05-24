@@ -66,7 +66,9 @@ export const deleteRuleTemplates = `${ds.apiPrefix}/monitorManage/ruleTemplates/
 export const queryAlertManageList = `${ds.apiPrefix}/monitorManage/alertrecord/list`;
 
 /** 分类*/
-export const queryGroupList = `${ds.apiPrefix}/monitorManage/rule/group/list`;
+export const queryGroupList = `${ds.apiPrefix}/monitorManage/rules/group/list`;
 
 /** 启用禁用 */
 export const ruleTemplatesSwitch = `${ds.apiPrefix}/monitorManage/ruleTemplates/switch`;
+
+export const ruleSwitch = `${ds.apiPrefix}/monitorManage/rules/switch`;
