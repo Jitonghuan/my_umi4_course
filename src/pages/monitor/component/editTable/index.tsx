@@ -124,7 +124,7 @@ type EditableTableProps = Parameters<typeof Table>[0];
 
 interface EditableTableState extends EditableTableProps {
   initData?: Item[];
-  headerTitle?: string;
+  headerTitle?: string | React.ReactNode;
   onTableChange?: (value: Item[]) => void;
 }
 

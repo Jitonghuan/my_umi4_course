@@ -64,6 +64,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
     successText: '新增成功',
     isSuccessModal: true,
     onSuccess: () => {
+      setDrawerVisible(false);
       queryList();
     },
   });
@@ -75,6 +76,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
     successText: '编辑成功',
     isSuccessModal: true,
     onSuccess: () => {
+      setDrawerVisible(false);
       queryList();
     },
   });
@@ -195,10 +197,9 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
 
   const onSubmit = (value: any) => {
     if (type === 'add') {
-      createRulesFun({ ...value });
+      createRulesFun({ ...value, serviceId });
     } else {
-      console.log(123);
-      updateRulesFun({ ...value });
+      updateRulesFun({ ...value, serviceId });
     }
   };
 

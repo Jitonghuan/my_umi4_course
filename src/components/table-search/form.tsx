@@ -44,6 +44,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       autoSize,
       isReadOnly,
       mode,
+      id,
       ...rest
     } = v;
 
@@ -89,6 +90,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                   getPopupContainer={(triggerNode) => triggerNode.parentElement}
                   disabled={disable}
                   mode={mode}
+                  id={id}
                 >
                   {option?.map((item) => (
                     <Option key={item.key} value={item.key}>
@@ -132,6 +134,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 style={{ width: width, ...styles }}
                 onChange={onChange}
                 disabled={disable}
+                id={id}
               />
             </Item>
             {extraForm}
@@ -167,6 +170,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 style={{ width: width, ...styles }}
                 onChange={onChange}
                 disabled={disable}
+                id={id}
               />
             </Item>
             {extraForm}
@@ -202,6 +206,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 style={{ width: width, ...styles }}
                 onChange={onChange}
                 disabled={disable}
+                id={id}
               />
             </Item>
             {extraForm}
@@ -239,6 +244,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 disabled={disable}
                 autoSize={autoSize}
                 readOnly={isReadOnly}
+                id={id}
               />
             </Item>
             {extraForm}
@@ -275,6 +281,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 style={{ width: width, ...styles }}
                 onChange={onChange}
                 disabled={disable}
+                id={id}
               />
             </Item>
             {extraForm}
@@ -308,6 +315,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               <Radio.Group
                 onChange={onChange}
                 style={{ width: width, ...styles }}
+                id={id}
               >
                 {option?.map((item) => (
                   <Radio key={item.key} value={item.key}>

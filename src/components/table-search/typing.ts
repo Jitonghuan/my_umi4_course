@@ -49,6 +49,7 @@ export interface FormProps<T = any> extends FormItemProps, TextAreaProps {
   pattern?: RegExp;
   isReadOnly?: boolean;
   mode?: 'multiple' | 'tags';
+  id?: string;
   onChange?: (e: T) => void;
 }
 

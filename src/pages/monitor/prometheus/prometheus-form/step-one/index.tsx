@@ -12,15 +12,11 @@ import usePublicData from '../../usePublicData';
 
 interface StepOneProps {
   getTableData: (value: Item[]) => void;
-  tableData?: Item[];
-  form?: FormInstance;
   matchlabelsList?: Item[];
 }
 
 const StepOne: React.FC<StepOneProps> = ({
   getTableData,
-  tableData = [],
-  form,
   matchlabelsList = [],
 }) => {
   const [matchlabels, setMatchlabels] = useState<Item[]>([]);
@@ -152,7 +148,15 @@ const StepOne: React.FC<StepOneProps> = ({
       required: true,
       extraForm: (
         <Form.Item noStyle>
-          <EditTable onTableChange={matchlabelsFun} initData={matchlabels} />
+          <EditTable
+            onTableChange={matchlabelsFun}
+            initData={matchlabels}
+            headerTitle={
+              <span style={{ color: '#999' }}>
+                (MatchLabels已设置默认值，无特殊需求，请不要填写)
+              </span>
+            }
+          />
         </Form.Item>
       ),
       onChange: (e: React.FormEvent<HTMLInputElement>) => {

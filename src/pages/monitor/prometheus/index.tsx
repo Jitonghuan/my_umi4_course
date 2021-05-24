@@ -117,8 +117,8 @@ const PrometheusCom: React.FC = () => {
     },
     {
       title: '报警规则',
-      dataIndex: 'alertName',
-      key: 'alertName',
+      dataIndex: 'alertRules',
+      key: 'alertRules',
       render: (text: AlertNameProps[]) => {
         if (!text) return '-';
         if (Array.isArray(text) && text.length === 0) return '-';
