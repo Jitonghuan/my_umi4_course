@@ -8,7 +8,7 @@ import {
   Col,
   Space,
   message,
-  AutoComplete,
+  Select,
   Table,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -28,9 +28,11 @@ import './index.less';
 
 interface ModifyProps extends InitValue {
   config?: string;
-  id?: string;
+  planId?: string;
   DDL?: string;
   DML?: string;
+  appCategoryCode?: string;
+  appGroupCode?: string;
 }
 
 interface IProps {
@@ -40,6 +42,10 @@ interface IProps {
   };
   type: 'add' | 'edit' | 'check';
 }
+
+// 搜索节流
+let searchTimeout: NodeJS.Timeout;
+let currentSearchValue: string;
 
 const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const [form] = Form.useForm();
@@ -71,6 +77,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
       : []),
   ];
 
+  const [searchFunc, setSearchFunc] = useState<string | undefined>(undefined);
   // 发布功能搜索结果
   const [options, setOptions] = useState<any[]>([]);
   // 已关联的发布功能
@@ -96,20 +103,27 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
     if (!initValueObj) {
       form.setFieldsValue({});
     } else {
-      form.setFieldsValue(initValueObj.plan);
+      form.setFieldsValue(initValueObj?.plan);
+      if (initValueObj?.funcIds?.length) {
+        const { appCategoryCode = '', appGroupCode = '' } = initValueObj?.plan;
+        initValueObj.funcIds.map((funcId) => {
+          queryFuncs({ appCategoryCode, appGroupCode, funcId });
+        });
+      }
     }
   }, [initValueObj]);
 
-  const handleFormChange = (appCode: any) => {
-    if (appCode) {
-      const appInfo = appList.filter((app) => app.appCode === appCode);
-      if (appInfo && appInfo[0]) {
-        const { appCategoryCode, appGroupCode } = appInfo[0];
-        console.log('handleFormChange', appInfo);
-        queryFunctionReq({
-          appCategoryCode,
-          appGroupCode,
-        }).then((result) => {
+  const queryFuncs = (params: {
+    appCategoryCode: string;
+    appGroupCode: string;
+    funcName?: string;
+    funcId?: string;
+    // 是否是输入框搜索，否表示编辑时初始化查询
+    isSearch?: boolean;
+  }) => {
+    queryFunctionReq({ ...params }).then((result) => {
+      if (params.isSearch) {
+        if (currentSearchValue === params.funcName) {
           setOptions(
             result.map((el: any) => {
               return {
@@ -119,11 +133,11 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
               };
             }),
           );
-        });
+        }
+      } else {
+        setTableData(tableData.concat(result || []));
       }
-    } else {
-      setOptions([]);
-    }
+    });
   };
 
   const submit = () => {
@@ -139,7 +153,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
         type === 'add' ? addPublishPlanMultiReq : updatePublishPlanReq;
       reqFunc({
         plan: {
-          ...(type === 'edit' ? { id: initValueObj?.plan.id } : {}),
+          ...(type === 'edit' ? { planId: initValueObj?.plan.planId } : {}),
           ...rest,
           preDeployTime: preDeployTime.format('YYYY-MM-DD'),
         },
@@ -153,16 +167,40 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
     });
   };
 
-  const handleChange = (value: string) => {};
+  const handleSearch = (value: string) => {
+    const appCode = form.getFieldValue('appCode');
+    if (appCode) {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+      currentSearchValue = value;
+      searchTimeout = setTimeout(() => {
+        const appInfo = appList.filter((app) => app.appCode === appCode);
+        if (appInfo && appInfo[0]) {
+          const { appCategoryCode, appGroupCode } = appInfo[0];
+          queryFuncs({
+            appCategoryCode,
+            appGroupCode,
+            funcName: value,
+            isSearch: true,
+          });
+        }
+      }, 300);
+    } else {
+      message.info('请先选择应用');
+    }
+  };
 
-  const handleSelect = (value: string) => {
+  const handleChange = (value: string) => {
     if (value) {
       const func = options.filter((option) => option.id === value);
       if (func && func[0]) {
-        tableData.push(...func);
-        setTableData([...tableData]);
+        const rest = tableData.filter((row) => row.id !== value);
+        rest.push(...func);
+        setTableData(rest);
       }
     }
+    setSearchFunc(value);
   };
 
   return (
@@ -179,7 +217,10 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
               initValueObj={initValueObj?.plan}
               isCheck={isCheck}
               appList={appList}
-              appChange={handleFormChange}
+              appChange={() => {
+                setTableData([]);
+                setOptions([]);
+              }}
             />
           }
         </Form>
@@ -193,13 +234,23 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
         <Row>
           <Col span={22} offset={2}>
             {!isCheck && (
-              <AutoComplete
-                placeholder="请输入关键词搜索功能"
-                options={options}
+              <Select
+                showSearch
+                placeholder="请输入关键词搜索发布功能"
+                onSearch={handleSearch}
                 onChange={handleChange}
-                onSelect={handleSelect}
+                defaultActiveFirstOption={false}
+                value={searchFunc}
+                showArrow={false}
+                filterOption={false}
                 style={{ width: '60%', marginBottom: 10 }}
-              />
+              >
+                {options.map((d) => (
+                  <Select.Option key={d.value} value={d.value}>
+                    {d.label}
+                  </Select.Option>
+                ))}
+              </Select>
             )}
             <Table
               columns={mergeTableColumns as ColumnsType<any>}
@@ -224,7 +275,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
                 name="configs"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 18 }}
-                initialValue={initValueObj?.plan.config}
+                initialValue={initValueObj?.plan?.config}
               >
                 <Input.TextArea
                   rows={18}
@@ -250,7 +301,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
                 name="DDL"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 18 }}
-                initialValue={initValueObj?.plan.DDL}
+                initialValue={initValueObj?.plan?.DDL}
               >
                 <Input.TextArea
                   rows={18}
@@ -263,7 +314,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
                 name="DML"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 18 }}
-                initialValue={initValueObj?.plan.DML}
+                initialValue={initValueObj?.plan?.DML}
               >
                 <Input.TextArea
                   rows={18}
