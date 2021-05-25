@@ -42,6 +42,19 @@ const QualityControl: React.FC = () => {
     url: queryQCTaskList,
     method: 'GET',
     form,
+    formatter: (vals) => {
+      const { gmtCreate = [undefined, undefined], ...rest } = vals;
+
+      return {
+        ...rest,
+        startTime: gmtCreate[0]
+          ? gmtCreate[0].format('YYYY-MM-DD 00:00:00')
+          : undefined,
+        endTime: gmtCreate[1]
+          ? gmtCreate[1].format('YYYY-MM-DD 23:59:59')
+          : undefined,
+      };
+    },
   });
 
   const { appManageListData, appTypeData, appBranchData } = usePublicData({
@@ -263,10 +276,10 @@ const QualityControl: React.FC = () => {
     },
     {
       key: '5',
-      type: 'date',
+      type: 'range',
       label: '创建时间',
       dataIndex: 'gmtCreate',
-      width: '144px',
+      width: '250px',
       rules: [],
       onChange: (e: string) => {
         console.log(e);
