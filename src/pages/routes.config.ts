@@ -111,20 +111,20 @@ export default [
             component:
               '@/pages/application/application-detail/components/add-config-parameters',
           },
-          // {
-          //   path: 'twoPackage',
-          //   name: '二方包',
-          //   hideInMenu: true,
-          //   component:
-          //     '@/pages/application/application-detail/components/two-package',
-          // },
+          {
+            path: 'twoPackage',
+            name: '二方包',
+            hideInMenu: true,
+            component:
+              '@/pages/application/application-detail/components/two-package',
+          },
         ],
       },
     ],
   },
   {
     path: 'publish',
-    name: '发布管理',
+    name: '项目管理',
     icon: 'icon-exit',
     routes: [
       {

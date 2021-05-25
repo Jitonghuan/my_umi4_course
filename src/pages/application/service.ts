@@ -273,8 +273,10 @@ export const createDeploy = (params: {
   envTypeCode: string;
   /** 选择的feature分支 */
   features: string[];
-  /** 选择发布的医院，1浙一，2天台，3巍山  只有生产环境有 */
-  hospitals?: string[];
+  /** 发布环境code */
+  envCodes?: string[];
+  /** 是否是二方包*/
+  isClient: boolean;
 }) =>
   postRequest(`${ds.apiPrefix}/releaseManage/deploy/create`, {
     data: params,
@@ -358,4 +360,36 @@ export const deployReuse = (params: {
 }) =>
   postRequest(`${ds.apiPrefix}/releaseManage/deploy/reuse`, {
     data: params,
+  });
+
+/** 根据应用分类code查询发布环境列表 */
+const queryEnvsUrl = `${ds.apiPrefix}/appManage/env/list`;
+export const queryEnvsReq = (params: {
+  //所属的应⽤分类CODE
+  categoryCode: string;
+  // 当前所处环境
+  envTypeCode: string;
+}) =>
+  getRequest(queryEnvsUrl, {
+    data: {
+      ...params,
+      pageIndex: -1,
+      pageSize: 100,
+    },
+  }).then((res: any) => {
+    if (res.success) {
+      return {
+        list:
+          res.data?.dataSource?.map((el: any) => {
+            return {
+              ...el,
+              value: el.envCode,
+              label: el.envName,
+            };
+          }) || [],
+        // ...res.data?.pageInfo,
+      };
+    }
+
+    return { list: [] };
   });

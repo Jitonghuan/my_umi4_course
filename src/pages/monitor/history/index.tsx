@@ -19,7 +19,7 @@ type statusTypeItem = {
 const STATUS_TYPE: Record<string, statusTypeItem> = {
   refuse: { text: '拒绝处理', color: 'red' },
   firing: { text: '告警中', color: 'blue' },
-  resolved: { text: '已解决', color: 'green' },
+  resolved: { text: '已恢复', color: 'green' },
   terminate: { text: '中断处理', color: 'default' },
 };
 
@@ -74,6 +74,17 @@ const HistoryCom: React.FC = () => {
       title: '报警名称',
       dataIndex: 'alertName',
       key: 'alertName',
+      // width: '5%',
+      // render: (text) => (
+      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
+      //     {text}
+      //   </div>
+      // ),
+    },
+    {
+      title: '实例地址',
+      dataIndex: 'instance',
+      key: 'instance',
       // width: '5%',
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
