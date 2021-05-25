@@ -305,7 +305,9 @@ const EditTable: React.FC<EditTableProps> = ({
       const _envs = envs as string[];
       return {
         ...rest,
-        preDeployTime: deployTime?.format('YYYY-MM-DD HH:mm:ss'),
+        preDeployTime: deployTime
+          ? deployTime?.format('YYYY-MM-DD HH:mm:ss')
+          : '',
         envs: _envs.join(','),
       };
     });
