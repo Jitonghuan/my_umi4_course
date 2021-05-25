@@ -11,15 +11,24 @@ const useTableAction = (props: IProps) => {
   const { initData = [] } = props;
   const [form] = Form.useForm();
   const [data, setData] = useState<IFuncItem[]>([]);
-  const [editingKey, setEditingKey] = useState('');
+  const [editingKey, setEditingKey] = useState<string[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const edit = (record: Partial<IFuncItem> & { key: React.Key }) => {
-    form.setFieldsValue({ funcName: '', envs: [], ...record });
-    setEditingKey(record.key);
+    const key = record.key;
+    form.setFieldsValue({
+      ...record,
+      [`funcName-${key}`]: record.funcName,
+      [`envs-${key}`]: record.envs,
+      [`coverageRange-${key}`]: record.coverageRange,
+      [`resolveNeeds-${key}`]: record.resolveNeeds,
+      [`preDeployTime-${key}`]: record.preDeployTime,
+      [`demandId-${key}`]: record.demandId,
+    });
+    setEditingKey(editingKey.concat([record.key]));
   };
 
-  const isEditing = (record: IFuncItem) => record.key === editingKey;
+  const isEditing = (record: IFuncItem) => editingKey.includes(record?.key!);
 
   const addTableRow = () => {
     const newData = [...data];
@@ -27,28 +36,34 @@ const useTableAction = (props: IProps) => {
       message.warning('请先选择应用组');
       return;
     }
-    if (
-      newData.length &&
-      newData.filter((v) => !(v?.funcName && v?.envs?.length)).length
-    ) {
+    if (editingKey.length) {
       message.warning('先保存，再新增');
       return;
     }
+    const newStart = newData.length
+      ? Number(newData[newData.length - 1].key) + 1
+      : 1;
     const obj = {
-      key: `${newData.length + 1}`,
+      key: `${newStart}`,
+      [`funcName-${newStart}`]: '',
+      [`envs-${newStart}`]: [],
+      [`coverageRange-${newStart}`]: '',
+      [`resolveNeeds-${newStart}`]: '',
+      [`preDeployTime-${newStart}`]: '',
+      [`demandId-${newStart}`]: '',
     };
 
     form.resetFields([
-      'funcName',
-      'envs',
-      'coverageRange',
-      'resolveNeeds',
-      'preDeployTime',
-      'demandId',
+      `funcName-${obj.key}`,
+      `envs-${obj.key}`,
+      `coverageRange-${obj.key}`,
+      `resolveNeeds-${obj.key}`,
+      `preDeployTime-${obj.key}`,
+      `demandId-${obj.key}`,
     ]);
     newData.push(obj);
     setData(newData);
-    setEditingKey(obj.key);
+    setEditingKey([obj.key]);
   };
 
   const cancel = (key: React.Key) => {
@@ -62,29 +77,53 @@ const useTableAction = (props: IProps) => {
       newData.splice(index, 1);
       setData(newData);
     }
-
-    setEditingKey('');
+    // form.resetFields([
+    //   `funcName-${key}`,
+    //   `envs-${key}`,
+    //   `coverageRange-${key}`,
+    //   `resolveNeeds-${key}`,
+    //   `preDeployTime-${key}`,
+    //   `demandId-${key}`,
+    // ]);
+    const editIndex = editingKey.findIndex(
+      (item) => Number(item) === Number(key),
+    );
+    editingKey.splice(Number(editIndex), 1);
+    setEditingKey([...editingKey]);
   };
 
   const save = async (key: React.Key) => {
     try {
-      const row = (await form.validateFields()) as IFuncItem;
+      const row = await form.validateFields();
 
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
+      const editIndex = editingKey.findIndex(
+        (item) => Number(item) === Number(key),
+      );
+      let result = {
+        appCategoryCode: row.appCategoryCode,
+        appGroupCode: row.appCategoryCode,
+        coverageRange: row[`coverageRange-${key}`],
+        demandId: row[`demandId-${key}`],
+        envs: row[`envs-${key}`],
+        funcName: row[`funcName-${key}`],
+        preDeployTime: row[`preDeployTime-${key}`],
+        resolveNeeds: row[`resolveNeeds-${key}`],
+      };
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
           ...item,
-          ...row,
+          ...result,
         });
         setData(newData);
-        setEditingKey('');
       } else {
-        newData.push(row);
+        newData.push(result);
         setData(newData);
-        setEditingKey('');
       }
+      editingKey.splice(editIndex, 1);
+      setEditingKey([...editingKey]);
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
     }
@@ -98,18 +137,31 @@ const useTableAction = (props: IProps) => {
   };
 
   const onSelectChange = (selectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
     setSelectedRowKeys(selectedRowKeys);
   };
 
   useEffect(() => {
-    setData(initData);
+    setData(
+      initData.map((data, index) => {
+        return {
+          ...data,
+          [`funcName-${index + 1}`]: data.funcName,
+          [`envs-${index + 1}`]: data.envs,
+          [`coverageRange-${index + 1}`]: data.coverageRange,
+          [`resolveNeeds-${index + 1}`]: data.resolveNeeds,
+          [`preDeployTime-${index + 1}`]: data.preDeployTime,
+          [`demandId-${index + 1}`]: data.demandId,
+        };
+      }),
+    );
   }, [initData]);
 
   return {
     form,
     data,
+    setData,
     editingKey,
+    setEditingKey,
     selectedRowKeys,
     edit,
     isEditing,

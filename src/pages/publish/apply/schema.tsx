@@ -9,6 +9,7 @@ import {
   EMERGENCY_TYPE_MAP,
   EMERGENCY_TYPE_OPTIONS,
 } from './const';
+import moment from 'moment';
 
 // 过滤表单 schema
 export const createFilterFormSchema = (params: {
@@ -93,16 +94,6 @@ export const createTableSchema = ({
         ),
     },
     {
-      title: '部署类型',
-      dataIndex: 'deployType',
-      render: (deployType: string, record) => (
-        <Badge
-          color={EMERGENCY_TYPE_COLOR_MAP[deployType]}
-          text={EMERGENCY_TYPE_MAP[deployType]}
-        />
-      ),
-    },
-    {
       title: '紧急类型',
       dataIndex: 'emergencyType',
       render: (text: string, record) => (
@@ -158,6 +149,9 @@ export const createTableSchema = ({
     {
       title: '申请时间',
       dataIndex: 'gmtCreate',
+      render: (text: string) => {
+        return text ? moment(text).format('YYYY-MM-DD HH:mm') : '';
+      },
     },
     {
       title: '申请人',
@@ -196,7 +190,7 @@ export const planSchemaColumns = [
   },
   {
     title: '发布依赖',
-    dataIndex: 'dependcy',
+    dataIndex: 'dependency',
   },
   {
     title: '开发',
@@ -252,6 +246,9 @@ export const applyDetailSchemaColumns = [
   {
     title: '预计发布时间',
     dataIndex: 'preDeployTime',
+    render: (text: string) => {
+      return text ? moment(text).format('YYYY-MM-DD HH:mm') : '';
+    },
   },
   {
     title: '需求ID',
@@ -264,5 +261,8 @@ export const applyDetailSchemaColumns = [
   {
     title: '创建时间',
     dataIndex: 'gmtCreate',
+    render: (text: string) => {
+      return text ? moment(text).format('YYYY-MM-DD HH:mm') : '';
+    },
   },
 ];
