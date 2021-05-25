@@ -77,25 +77,18 @@ const PublishBranch = ({
   };
 
   const submitClick = () => {
-    // 二方包
-    if (query?.isClient === '1' || query?.isContainClient === '1') {
-      confirm({
-        title: '确定要提交发布吗?',
-        icon: <ExclamationCircleOutlined />,
-        onOk() {
-          return submit().then(() => {
-            onSubmitBranch?.('end');
-          });
-        },
-        onCancel() {
+    confirm({
+      title: '确定要提交发布吗?',
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        return submit().then(() => {
           onSubmitBranch?.('end');
-        },
-      });
-      return;
-    }
-
-    // 非二方包
-    setDeployVisible(true);
+        });
+      },
+      onCancel() {
+        onSubmitBranch?.('end');
+      },
+    });
   };
 
   useEffect(() => {
