@@ -20,6 +20,7 @@ const BaseForm: React.FC<BaseFormProps> = ({
         dataIndex: 'appCode',
         showSelectSearch: true,
         required: true,
+        allowClear: false,
         width: '100%',
         defaultValue: initValueObj?.appCode,
         onChange: appChange,
@@ -44,8 +45,8 @@ const BaseForm: React.FC<BaseFormProps> = ({
         key: '4',
         type: 'input',
         label: '版本依赖',
-        dataIndex: 'dependcy',
-        defaultValue: initValueObj?.dependcy,
+        dataIndex: 'dependency',
+        defaultValue: initValueObj?.dependency,
       },
       {
         key: '5',

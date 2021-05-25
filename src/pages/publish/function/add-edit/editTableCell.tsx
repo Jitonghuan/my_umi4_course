@@ -24,11 +24,13 @@ const EditableCell: React.FC<EditableCellProps> = ({
   item,
   ...restProps
 }) => {
+  // 行key；通过关联jira批量创建时，会存在多行同时在编辑状态，用这个来区分
+  const rowKey = record?.key || '0';
   return (
     <td {...restProps}>
       {editing ? (
         <Form.Item
-          name={dataIndex}
+          name={`${dataIndex}-${rowKey}`}
           style={{ margin: 0 }}
           rules={[
             {

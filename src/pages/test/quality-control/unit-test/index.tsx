@@ -22,7 +22,8 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   2: { text: '失败', color: 'volcano' },
 };
 
-const UnitTest: React.FC = () => {
+const UnitTest: React.FC<any> = (props) => {
+  const { id } = props.location.query;
   const [form] = Form.useForm();
 
   const [appCode, setAppCode] = useState<string | undefined>();
@@ -49,10 +50,10 @@ const UnitTest: React.FC = () => {
       return {
         ...rest,
         startTime: testTime[0]
-          ? testTime[0].format('YYYY-MM-DD HH:mm:ss')
+          ? testTime[0].format('YYYY-MM-DD 00:00:00')
           : undefined,
         endTime: testTime[1]
-          ? testTime[1].format('YYYY-MM-DD HH:mm:ss')
+          ? testTime[1].format('YYYY-MM-DD 23:59:59')
           : undefined,
       };
     },
@@ -128,49 +129,42 @@ const UnitTest: React.FC = () => {
       dataIndex: 'times',
       key: 'times',
       width: '15%',
-      render: (text) => text || '-',
     },
     {
       title: '构建人',
       dataIndex: 'createUser',
       key: 'createUser',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '指令覆盖率',
       dataIndex: 'instructionsCov',
       key: 'instructionsCov',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '分支覆盖率',
       dataIndex: 'branchesCov',
       key: 'branchesCov',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '行覆盖率',
       dataIndex: 'linesCov',
       key: 'linesCov',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '方法覆盖率',
       dataIndex: 'methodsCov',
       key: 'methodsCov',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '类覆盖率',
       dataIndex: 'classesCov',
       key: 'classesCov',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '状态',
@@ -210,11 +204,12 @@ const UnitTest: React.FC = () => {
       // width: '144px',
       // placeholder: '请输入',
       extraForm: (
-        <Form.Item noStyle name="taskInfo">
+        <Form.Item noStyle name="taskId">
           <Input
             prefix={<SearchOutlined />}
             placeholder="请输入任务ID/任务名"
             style={{ width: 280 }}
+            allowClear
           />
         </Form.Item>
       ),
@@ -229,7 +224,16 @@ const UnitTest: React.FC = () => {
       dataIndex: 'categoryCode',
       width: '144px',
       option: appTypeData,
-      onChange: setAppCategoryCode,
+      onChange: (e) => {
+        setAppCategoryCode(e);
+        if (
+          !form?.getFieldValue('appCode') ||
+          !form?.getFieldValue('branchName')
+        ) {
+          setAppCode('');
+        }
+        form?.resetFields(['appCode', 'branchName']);
+      },
     },
     {
       key: '3',
@@ -237,8 +241,12 @@ const UnitTest: React.FC = () => {
       label: '应用名',
       dataIndex: 'appCode',
       width: '144px',
-      option: appManageListData,
-      onChange: setAppCode,
+      option: form?.getFieldValue('categoryCode') ? appManageListData : [],
+      onChange: (e) => {
+        setAppCode(e);
+        if (!form?.getFieldValue('branchName')) return;
+        form?.resetFields(['branchName']);
+      },
     },
     {
       key: '4',
@@ -246,7 +254,7 @@ const UnitTest: React.FC = () => {
       label: '分支名',
       dataIndex: 'branchName',
       width: '144px',
-      option: appBranchData,
+      option: form?.getFieldValue('appCode') ? appBranchData : [],
     },
     {
       key: '5',
@@ -282,6 +290,12 @@ const UnitTest: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    form.setFieldsValue({
+      taskInfo: id,
+    });
+  }, []);
+
   return (
     <MatrixPageContent>
       <TableSearch
@@ -305,7 +319,7 @@ const UnitTest: React.FC = () => {
         className="table-form"
         onSearch={queryUnittest}
         reset={reset}
-        scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
+        scroll={{ x: '150%', y: 300, scrollToFirstRowOnChange: true }}
       />
 
       <VCModal

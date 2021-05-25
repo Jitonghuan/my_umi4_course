@@ -24,7 +24,8 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   2: { text: '失败', color: 'volcano' },
 };
 
-const UnitTest: React.FC = () => {
+const UnitTest: React.FC<any> = (props) => {
+  const { id } = props.location.query;
   const [form] = Form.useForm();
 
   const [appCode, setAppCode] = useState<string | undefined>();
@@ -51,10 +52,10 @@ const UnitTest: React.FC = () => {
       return {
         ...rest,
         startTime: testTime[0]
-          ? testTime[0].format('YYYY-MM-DD HH:mm:ss')
+          ? testTime[0].format('YYYY-MM-DD 00:00:00')
           : undefined,
         endTime: testTime[1]
-          ? testTime[1].format('YYYY-MM-DD HH:mm:ss')
+          ? testTime[1].format('YYYY-MM-DD 23:59:59')
           : undefined,
       };
     },
@@ -131,42 +132,36 @@ const UnitTest: React.FC = () => {
       dataIndex: 'times',
       key: 'times',
       width: '15%',
-      render: (text) => text || '-',
     },
     {
       title: '构建人',
       dataIndex: 'createUser',
       key: 'createUser',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '可靠性',
       dataIndex: 'reliabilityLevel',
       key: 'reliabilityLevel',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '安全性',
       dataIndex: 'securityLevel',
       key: 'securityLevel',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '可维护性',
       dataIndex: 'maintainabilityLevel',
       key: 'maintainabilityLevel',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '重复率',
       dataIndex: 'newDuplicatedLinesCov',
       key: 'newDuplicatedLinesCov',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '状态',
@@ -202,11 +197,12 @@ const UnitTest: React.FC = () => {
       key: '1',
       type: 'other',
       extraForm: (
-        <Form.Item noStyle name="taskInfo">
+        <Form.Item noStyle name="taskId">
           <Input
             prefix={<SearchOutlined />}
             placeholder="请输入任务ID/任务名"
             style={{ width: 280 }}
+            allowClear
           />
         </Form.Item>
       ),
@@ -215,19 +211,32 @@ const UnitTest: React.FC = () => {
       key: '2',
       type: 'select',
       label: '应用分类',
-      dataIndex: 'classification',
+      dataIndex: 'categoryCode',
       width: '144px',
       option: appTypeData,
-      onChange: setAppCategoryCode,
+      onChange: (e) => {
+        setAppCategoryCode(e);
+        if (
+          !form?.getFieldValue('appCode') ||
+          !form?.getFieldValue('branchName')
+        ) {
+          setAppCode('');
+        }
+        form?.resetFields(['appCode', 'branchName']);
+      },
     },
     {
       key: '3',
       type: 'select',
       label: '应用名',
-      dataIndex: 'name',
+      dataIndex: 'appCode',
       width: '144px',
-      option: appManageListData,
-      onChange: setAppCode,
+      option: form?.getFieldValue('categoryCode') ? appManageListData : [],
+      onChange: (e) => {
+        setAppCode(e);
+        if (!form?.getFieldValue('branchName')) return;
+        form?.resetFields(['branchName']);
+      },
     },
     {
       key: '4',
@@ -235,7 +244,7 @@ const UnitTest: React.FC = () => {
       label: '分支名',
       dataIndex: 'branchName',
       width: '144px',
-      option: appBranchData,
+      option: form?.getFieldValue('appCode') ? appBranchData : [],
     },
     {
       key: '5',
@@ -265,6 +274,12 @@ const UnitTest: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    form.setFieldsValue({
+      taskInfo: id,
+    });
+  }, []);
+
   return (
     <MatrixPageContent>
       <TableSearch
@@ -288,7 +303,7 @@ const UnitTest: React.FC = () => {
         className="table-form"
         onSearch={queryCodeQuality}
         reset={reset}
-        scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
+        scroll={{ x: '150%', y: 300, scrollToFirstRowOnChange: true }}
       />
 
       <VCModal

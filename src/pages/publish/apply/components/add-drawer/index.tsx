@@ -1,4 +1,10 @@
-import React, { useContext, useState, useCallback, useRef } from 'react';
+import React, {
+  useContext,
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import {
   Drawer,
   Form,
@@ -14,6 +20,7 @@ import FEContext from '@/layouts/basic-layout/FeContext';
 import { DEPLOY_TYPE_OPTIONS, EMERGENCY_TYPE_OPTIONS } from '../../const';
 import { planSchemaColumns } from '../../schema';
 import {
+  addPublishApplyReq,
   queryAppGroupReq,
   queryEnvsReq,
   queryPublishPlanReq,
@@ -62,15 +69,24 @@ const AddDrawer = (props: IProps) => {
   const queryDeployPlan = (appGroupCode: string) => {
     setDeployPlanData([]);
     queryPublishPlanReq({ appGroupCode }).then((datas) => {
-      setDeployPlanData(datas);
+      setDeployPlanData(
+        datas.map((data: any) => {
+          return {
+            ...data.plan,
+          };
+        }),
+      );
     });
   };
 
-  const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-      setSelectPlan(selectedRowKeys);
-    },
-  };
+  const rowSelection = useMemo(() => {
+    return {
+      selectedRowKeys: selectPlan,
+      onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+        setSelectPlan(selectedRowKeys);
+      },
+    };
+  }, [selectPlan]);
 
   const handleFormChange = useCallback((vals) => {
     const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
@@ -90,8 +106,17 @@ const AddDrawer = (props: IProps) => {
 
   const handleSubmit = () => {
     formInstance.validateFields().then((vals) => {
-      // TODO submit
-      handleClose(true);
+      addPublishApplyReq({
+        applyInfo: {
+          ...vals,
+          deployDate: vals.deployDate.format('YYYY-MM-DD HH:mm'),
+        },
+        planIds: selectPlan,
+      }).then((resp) => {
+        if (resp.success) {
+          handleClose(true);
+        }
+      });
     });
   };
 
@@ -167,17 +192,6 @@ const AddDrawer = (props: IProps) => {
           <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item
-          label="部署类型"
-          name="deployType"
-          rules={[{ required: true, message: '请选择部署类型!' }]}
-        >
-          <Radio.Group>
-            {DEPLOY_TYPE_OPTIONS?.map((el) => (
-              <Radio value={el.value}>{el.label}</Radio>
-            ))}
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item
           label="紧急类型"
           name="emergencyType"
           rules={[{ required: true, message: '请选择紧急类型!' }]}
@@ -226,7 +240,7 @@ const AddDrawer = (props: IProps) => {
           name="planIds"
         >
           <Table
-            rowKey="id"
+            rowKey="planId"
             scroll={{ x: 2000 }}
             rowSelection={rowSelection}
             columns={planSchemaColumns}

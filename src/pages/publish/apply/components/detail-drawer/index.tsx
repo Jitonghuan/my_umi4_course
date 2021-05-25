@@ -2,7 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Drawer, Card, Row, Col, Select, Divider, Table } from 'antd';
 import { EMERGENCY_TYPE_MAP } from '../../const';
 import { applyDetailSchemaColumns } from '../../schema';
-import { queryApplysReq } from '@/pages/publish/service';
+import { getApplyRelInfoReq } from '@/pages/publish/service';
+import moment from 'moment';
 
 export interface IPorps {
   id: string;
@@ -25,7 +26,7 @@ const DetailDrawer = (props: IPorps) => {
 
   useEffect(() => {
     if (id && visible) {
-      queryApplysReq({ id }).then((data) => {
+      getApplyRelInfoReq({ id }).then((data) => {
         const { base = {}, plans = [] } = data;
         setBaseInfo(base);
         setPlans(plans);
@@ -47,12 +48,17 @@ const DetailDrawer = (props: IPorps) => {
           <Col span={6}>
             紧急类型：{EMERGENCY_TYPE_MAP[baseInfo?.emergencyType] || '--'}
           </Col>
-          <Col span={6}>应用分类：{baseInfo?.belong || ''}</Col>
-          <Col span={6}>应用组：{baseInfo?.lineCode || ''}</Col>
+          <Col span={6}>应用分类：{baseInfo?.appCategoryCode || ''}</Col>
+          <Col span={6}>应用组：{baseInfo?.appGroupCode || ''}</Col>
           <Col span={6}>发布环境：{baseInfo?.deployEnv || ''}</Col>
           <Col span={6}>发布负责人：{baseInfo?.deployUser || ''}</Col>
           <Col span={6}>计划发布时间：{baseInfo?.deployDate || ''}</Col>
-          <Col span={6}>申请时间：{baseInfo?.gmtCreate || ''}</Col>
+          <Col span={6}>
+            申请时间：
+            {baseInfo?.gmtCreate
+              ? moment(baseInfo?.gmtCreate).format('YYYY-MM-DD HH:mm')
+              : ''}
+          </Col>
           <Col span={6}>申请人：{baseInfo?.applyUser || ''}</Col>
         </Row>
       </div>
@@ -70,7 +76,7 @@ const DetailDrawer = (props: IPorps) => {
                 <Col span={6}>应用类型：{plan?.appType || '-'}</Col>
                 <Col span={6}>版本号：{plan?.version || ''}</Col>
                 <Col span={6}>版本分支：{plan?.deployRelease || ''}</Col>
-                <Col span={6}>发布依赖：{plan?.dependcy || ''}</Col>
+                <Col span={6}>发布依赖：{plan?.dependency || ''}</Col>
                 <Col span={6}>开发：{plan?.developer || ''}</Col>
                 <Col span={6}>测试：{plan?.tester || ''}</Col>
                 <Col span={6}>发布人：{plan?.deployer || ''}</Col>

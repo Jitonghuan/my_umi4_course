@@ -153,7 +153,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
           <a
             onClick={() => {
               setDrawerVisible(true);
-              setDrawerTitle('编辑报警规则模版');
+              setDrawerTitle('编辑报警规则');
               setEditRecord(record);
               setType('edit');
             }}
@@ -217,6 +217,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
         {...tableProps}
         pagination={false}
         className="step-two"
+        rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
       />
       <Button
         block

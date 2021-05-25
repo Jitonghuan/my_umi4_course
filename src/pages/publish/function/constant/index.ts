@@ -2,18 +2,18 @@
 export const JiraColumns = [
   {
     title: 'Jira需求Id',
-    dataIndex: 'id',
-    key: 'id',
+    dataIndex: 'issueId',
+    key: 'issueId',
   },
   {
     title: '发布功能',
-    dataIndex: 'function',
-    key: 'function',
+    dataIndex: 'summary',
+    key: 'summary',
   },
   {
     title: '预计发布时间',
-    dataIndex: 'planTime',
-    key: 'planTime',
+    dataIndex: 'preDeployTime',
+    key: 'preDeployTime',
   },
   {
     title: '当前状态',

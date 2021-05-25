@@ -74,6 +74,8 @@ export const queryFunctionReq = (params: {
   id?: number; // 发布功能的数据库⾃增ID
   appCategoryCode?: string; // 应⽤分类CODE
   appGroupCode?: string; // 应⽤组CODE
+  funcName?: string;
+  funcId?: string;
 }) =>
   getRequest(queryFunctionUrl, {
     data: params,
@@ -130,11 +132,7 @@ export const queryPublishPlanReq = (params: {
     data: params,
   }).then((resp) => {
     if (resp.success) {
-      return (
-        resp?.data?.dataSource?.map((el: any) => {
-          return el.plan;
-        }) || []
-      );
+      return resp?.data?.dataSource || [];
     }
     return [];
   });
@@ -156,7 +154,7 @@ export const addPublishPlanMultiReq = (params: {
 /** 修改发布计划 */
 export const updatePublishPlanUrl = `${ds.apiPrefix}/publishManage/plan/update`;
 export const updatePublishPlanReq = (params: IFuncItem) =>
-  postRequest(updateFuncUrl, {
+  postRequest(updatePublishPlanUrl, {
     method: 'PUT',
     data: params,
   });
@@ -167,6 +165,7 @@ export const deletePublishPlanReq = (params: { planId: string }) =>
   request(`${deletePublishPlanUrl}/${params.planId}`, {
     method: 'DELETE',
   });
+/** 发布计划结束 */
 
 /** 发布申请相关 */
 /** 查询发布申请列表api */
@@ -193,5 +192,25 @@ export const queryApplysReq = (params: {
       );
     }
     return [];
+  });
+/** 新增发布申请 */
+export const addPublishApplyUrl = `${ds.apiPrefix}/publishManage/apply/create`;
+export const addPublishApplyReq = (params: {
+  applyInfo: any;
+  planIds: any[];
+}) =>
+  postRequest(addPublishApplyUrl, {
+    data: params,
+  });
+/** 获取发布申请的关联信息 */
+const getApplyRelInfo = `${ds.apiPrefix}/publishManage/apply/getApplyRelInfo`;
+export const getApplyRelInfoReq = (params: { id: string }) =>
+  getRequest(getApplyRelInfo, {
+    data: params,
+  }).then((resp) => {
+    if (resp.success) {
+      return resp?.data || {};
+    }
+    return {};
   });
 /** 发布申请结束 */

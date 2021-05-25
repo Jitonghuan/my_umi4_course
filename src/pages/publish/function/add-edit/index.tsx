@@ -51,6 +51,9 @@ interface JiraItem {
   status?: string;
   creator?: string;
   accepter?: string;
+  issueId?: string;
+  summary?: string;
+  preDeployTime?: string;
 }
 
 interface EditTableProps {
@@ -123,13 +126,26 @@ const EditTable: React.FC<EditTableProps> = ({
     requestMethod: 'GET',
     showRequestError: true,
     didMounted: false,
+    pagination: false,
+    formatResult: (resp) => {
+      setJiraData(resp.data || []);
+      return {
+        dataSource: resp.data || [],
+        pageInfo: {
+          pageIndex: 1,
+          pageSize: 1000,
+        },
+      };
+    },
   });
-  const queryJiraData = (groupCode: string) => {};
+  // const queryJiraData = (groupCode: string) => {};
 
   const {
     form,
     data,
+    setData,
     editingKey,
+    setEditingKey,
     selectedRowKeys,
     edit,
     isEditing,
@@ -236,7 +252,7 @@ const EditTable: React.FC<EditTableProps> = ({
         ) : (
           <Space>
             <Typography.Link
-              disabled={editingKey !== ''}
+              disabled={!!editingKey.length}
               onClick={() =>
                 edit(record as Partial<IFuncItem> & { key: React.Key })
               }
@@ -279,8 +295,7 @@ const EditTable: React.FC<EditTableProps> = ({
   }
 
   const onSubmit = () => {
-    console.log(data, 'addFuncMulti onSubmit');
-    if (editingKey) {
+    if (editingKey.length) {
       message.warning('先保存，再提交');
       return;
     }
@@ -290,7 +305,9 @@ const EditTable: React.FC<EditTableProps> = ({
       const _envs = envs as string[];
       return {
         ...rest,
-        preDeployTime: deployTime?.format('YYYY-MM-DD HH:mm:ss'),
+        preDeployTime: deployTime
+          ? deployTime?.format('YYYY-MM-DD HH:mm:ss')
+          : '',
         envs: _envs.join(','),
       };
     });
@@ -358,7 +375,10 @@ const EditTable: React.FC<EditTableProps> = ({
       option: groupData,
       disable: isNotAdd,
       onChange: (value: string) => {
-        queryJiraData(value);
+        queryNodeList({
+          appCategoryCode: form.getFieldValue('appCategoryCode'),
+          appGroupCode: value,
+        });
       },
     },
   ];
@@ -416,11 +436,67 @@ const EditTable: React.FC<EditTableProps> = ({
         visible={modalVisible}
         width="100%"
         onCancel={() => setModalVisible(false)}
-        footer={!isCheck}
+        footer={
+          <Space>
+            <Button onClick={() => setModalVisible(false)}>取消</Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                if (!selectedRowKeys.length) {
+                  message.warn('请至少选择一条需求单');
+                  return;
+                }
+                const newData = [...data];
+                const newEditingKey = [...editingKey];
+                const selectRows = jiraData.filter((jira) =>
+                  selectedRowKeys.includes(jira?.issueId!),
+                );
+                const start = newData.length
+                  ? Number(newData[newData.length - 1].key) + 1
+                  : 1;
+                selectRows.map((jira, index) => {
+                  let obj = {
+                    key: `${start + index}`,
+                    [`funcName-${start + index}`]: jira.summary,
+                    [`preDeployTime-${start + index}`]: jira.preDeployTime
+                      ? moment(jira.preDeployTime)
+                      : '',
+                    [`demandId-${start + index}`]: jira.issueId,
+                    [`envs-${start + index}`]: [],
+                  };
+                  // [`coverageRange-${index + 1}`]: data.coverageRange,
+                  // [`resolveNeeds-${index + 1}`]: data.resolveNeeds,
+                  newData.push(obj);
+                  newEditingKey.push(`${start + index}`);
+                });
+                setEditingKey(newEditingKey);
+                setData(newData);
+                setTimeout(() => {
+                  for (
+                    let i = start - 1;
+                    i < start - 1 + selectRows.length;
+                    i++
+                  ) {
+                    // edit(newData[i] as Partial<IFuncItem> & { key: React.Key; })
+                    form.setFieldsValue({ ...newData[i] });
+                  }
+                }, 100);
+                setModalVisible(false);
+              }}
+            >
+              确认
+            </Button>
+          </Space>
+        }
       >
         <Table
+          rowKey="issueId"
           columns={JiraColumns}
-          dataSource={jiraData}
+          // dataSource={jiraData}
+          {...tableProps}
+          pagination={{
+            ...tableProps.pagination,
+          }}
           rowSelection={
             !isCheck
               ? {

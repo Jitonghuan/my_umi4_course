@@ -18,8 +18,6 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
   const [appCode, setAppCode] = useState<string | undefined>();
   const [appCategoryCode, setAppCategoryCode] = useState<string | undefined>();
 
-  console.log(userInfo);
-
   const { appManageListData, appTypeData, appBranchData } = usePublicData({
     appCode,
     appCategoryCode,
@@ -76,7 +74,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
   const onSubmit = async () => {
     const values = await form.validateFields();
 
-    await getRequest(createQCTask, {
+    await postRequest(createQCTask, {
       data: {
         ...values,
         createUser: userInfo.userName,
@@ -84,6 +82,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
     });
 
     message.success('创建成功');
+    onClose();
   };
 
   return (

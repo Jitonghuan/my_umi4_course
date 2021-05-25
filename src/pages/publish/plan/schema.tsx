@@ -150,8 +150,8 @@ export const createTableColumns = (params: {
     },
     {
       title: '发布依赖',
-      dataIndex: 'dependcy',
-      key: 'dependcy',
+      dataIndex: 'dependency',
+      key: 'dependency',
       width: '5%',
     },
     {
