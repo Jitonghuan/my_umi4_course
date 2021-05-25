@@ -24,7 +24,8 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   2: { text: '失败', color: 'volcano' },
 };
 
-const UnitTest: React.FC = () => {
+const UnitTest: React.FC<any> = (props) => {
+  const { id } = props.location.query;
   const [form] = Form.useForm();
 
   const [appCode, setAppCode] = useState<string | undefined>();
@@ -51,10 +52,10 @@ const UnitTest: React.FC = () => {
       return {
         ...rest,
         startTime: testTime[0]
-          ? testTime[0].format('YYYY-MM-DD HH:mm:ss')
+          ? testTime[0].format('YYYY-MM-DD 00:00:00')
           : undefined,
         endTime: testTime[1]
-          ? testTime[1].format('YYYY-MM-DD HH:mm:ss')
+          ? testTime[1].format('YYYY-MM-DD 23:59:59')
           : undefined,
       };
     },
@@ -207,6 +208,7 @@ const UnitTest: React.FC = () => {
             prefix={<SearchOutlined />}
             placeholder="请输入任务ID/任务名"
             style={{ width: 280 }}
+            allowClear
           />
         </Form.Item>
       ),
@@ -264,6 +266,12 @@ const UnitTest: React.FC = () => {
       })),
     },
   ];
+
+  useEffect(() => {
+    form.setFieldsValue({
+      taskInfo: id,
+    });
+  }, []);
 
   return (
     <MatrixPageContent>
