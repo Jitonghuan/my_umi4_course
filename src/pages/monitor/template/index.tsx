@@ -213,9 +213,6 @@ const TemplateCom: React.FC = () => {
       dataIndex: 'name',
       width: '144px',
       placeholder: '请输入',
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '2',
@@ -234,9 +231,6 @@ const TemplateCom: React.FC = () => {
           value: '未启用',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
   ];
 

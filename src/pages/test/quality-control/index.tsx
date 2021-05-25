@@ -47,6 +47,7 @@ const QualityControl: React.FC = () => {
   const { appManageListData, appTypeData, appBranchData } = usePublicData({
     appCode,
     appCategoryCode,
+    isUseAppEnv: false,
   });
 
   // 二次确认执行
@@ -169,15 +170,18 @@ const QualityControl: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       width: 100,
-      render: (text: number) => (
-        <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>
-      ),
+      render: (text: number) =>
+        STATUS_TYPE[text]?.text ? (
+          <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>
+        ) : (
+          '-'
+        ),
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: 200,
+      width: 140,
       fixed: 'right',
       render: (_, record) => (
         <Space>
@@ -217,7 +221,7 @@ const QualityControl: React.FC = () => {
       ),
     },
   ];
-
+  console.log(appBranchData, 'appBranchData');
   const formOptions: FormProps[] = [
     {
       key: '1',
@@ -226,7 +230,16 @@ const QualityControl: React.FC = () => {
       dataIndex: 'categoryCode',
       width: '144px',
       option: appTypeData,
-      onChange: setAppCategoryCode,
+      onChange: (e) => {
+        setAppCategoryCode(e);
+        if (
+          !form?.getFieldValue('appCode') ||
+          !form?.getFieldValue('branchName')
+        ) {
+          setAppCode('');
+        }
+        form?.resetFields(['appCode', 'branchName']);
+      },
     },
     {
       key: '2',
@@ -234,8 +247,13 @@ const QualityControl: React.FC = () => {
       label: '应用名',
       dataIndex: 'appCode',
       width: '144px',
-      option: appManageListData,
-      onChange: setAppCode,
+      option: form?.getFieldValue('categoryCode') ? appManageListData : [],
+      placeholder: '请选择应用分类',
+      onChange: (e) => {
+        setAppCode(e);
+        if (!form?.getFieldValue('branchName')) return;
+        form?.resetFields(['branchName']);
+      },
     },
     {
       key: '3',
@@ -243,7 +261,8 @@ const QualityControl: React.FC = () => {
       label: '分支名',
       dataIndex: 'branchName',
       width: '144px',
-      option: appBranchData,
+      option: form?.getFieldValue('appCode') ? appBranchData : [],
+      placeholder: '请选择应用名',
       onChange: setAppBranch,
     },
     {

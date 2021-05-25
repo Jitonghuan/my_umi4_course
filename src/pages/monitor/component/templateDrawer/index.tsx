@@ -126,34 +126,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
     //规则情况
     if (drawerType === 'rules') {
-      // 回显通知对象
-      // if(!record?.receiver) {
-      //   receiver = undefined;
-      // }
-      // else if(record?.receiver && typeof(record?.receiver) === 'string' && record?.receiver?.indexOf(',') > -1) {
-      //   receiver = record?.receiver.split(',');
-      // } else {
-      //   receiver = [record?.receiver as string];
-      // }
-
-      //回显通知方式
-      // if(!record?.receiverType) {
-      //   receiverType = undefined;
-      // }
-      // else if(record?.receiverType && typeof(record?.receiverType) === 'string' && record?.receiverType?.indexOf(',') > -1) {
-      //   receiverType = record?.receiverType.split(',');
-      // } else {
-      //   receiverType = [record?.receiverType as string];
-      // }
-
       //回显时间
       if (record?.silence) {
         silenceTime[0] = moment(record?.silenceStart, 'HH:mm');
         silenceTime[1] = moment(record?.silenceEnd, 'HH:mm');
       }
 
-      // setValues.receiver = receiver as string[];
-      // setValues.receiverType = receiverType as string[];
       setValues.silenceTime = silenceTime;
     }
 
@@ -178,7 +156,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   useEffect(() => {
     //报警规则
     if (drawerType === 'rules') {
-      queryRuleTemplatesListFun({ pageIndex: -1 });
+      queryRuleTemplatesListFun({ pageIndex: -1, status: 0 });
     }
   }, [drawerType]);
 
@@ -230,9 +208,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           max: 253,
         },
       ],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '3',
@@ -242,9 +217,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       placeholder: '请选择',
       required: true,
       option: groupData,
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '4',
@@ -259,9 +231,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           value: 'kkkk节点',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '5',
@@ -282,9 +251,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           </Select>
         </Form.Item>
       ),
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '6',
@@ -294,9 +260,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       // width: '144px',
       placeholder: '请输入',
       required: true,
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '7',
@@ -327,9 +290,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           value: '灾难',
         },
       ],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '8',
@@ -341,20 +301,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       itemStyle: { marginBottom: 0 },
       extraForm: (
         <Form.Item noStyle>
-          {/* <Form.Item name="labels" label="标签（Labels)" className="table-item">
-          <EditTable onTableChange={labelFun} initData={labelTableData} headerTitle='标签（Labels)'/>
-          </Form.Item>
-          <Form.Item
-            name="annotations"
-            label="注释（Annotations)"
-            className="table-item"
-          >
-          <EditTable
-              onTableChange={annotationsFun}
-              initData={annotationsTableData}
-              headerTitle='标签（Labels)'
-            />
-          </Form.Item> */}
           <EditTable
             onTableChange={labelFun}
             initData={labelTableData}
@@ -395,9 +341,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           type: 'array',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '10',
@@ -424,9 +367,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           type: 'array',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '11',

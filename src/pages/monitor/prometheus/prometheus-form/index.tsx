@@ -145,7 +145,11 @@ const PrometheusForm: React.FC = () => {
     {
       current: 0,
       dom: (
-        <StepOne getTableData={stepOneTableFun} matchlabelsList={matchlabels} />
+        <StepOne
+          getTableData={stepOneTableFun}
+          matchlabelsList={matchlabels}
+          form={form}
+        />
       ),
     },
     {

@@ -237,9 +237,6 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'name',
       width: '160px',
       placeholder: '请输入',
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '2',
@@ -252,6 +249,8 @@ const PrometheusCom: React.FC = () => {
       option: appManageListData as OptionProps[],
       onChange: (e: string) => {
         setAppCode(e);
+        if (!form?.getFieldValue('envCode')) return;
+        form.resetFields(['envCode']);
       },
     },
     {
@@ -260,12 +259,9 @@ const PrometheusCom: React.FC = () => {
       label: '环境名称',
       dataIndex: 'envCode',
       width: '160px',
-      placeholder: '请选择',
+      placeholder: '请选择应用名称',
       showSelectSearch: true,
       option: appManageEnvData as OptionProps[],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '4',
@@ -274,9 +270,6 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'metricsUrl',
       width: '160px',
       placeholder: '请输入',
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
   ];
 
