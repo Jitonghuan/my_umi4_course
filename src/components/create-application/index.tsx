@@ -6,11 +6,16 @@
  */
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Drawer, Input, Spin, message } from 'antd';
+import { Drawer, Input, Spin, message, Form } from 'antd';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { BasicForm } from '@cffe/fe-backend-component';
 import createSchema from './create-schema';
-import { createApp, updateApp } from './service';
+import {
+  createApp,
+  updateApp,
+  queryBizData,
+  queryCategoryData,
+} from './service';
 import { IProps, FormValue, AppType, AppDevelopLanguage } from './types';
 // import './index.less';
 
@@ -28,7 +33,12 @@ const CreateApplication = (props: IProps) => {
     appDevelopLanguage,
     setAppDevelopLanguage,
   ] = useState<AppDevelopLanguage>();
-  const { categoryData, businessData } = useContext(FEContext);
+  // const { categoryData, businessData } = useContext(FEContext);
+  const [categoryData, setcategoryData] = useState([]);
+  const [businessData, setBusinessData] = useState([]);
+  const [categoryCode, setcategoryCode] = useState('');
+
+  const [form] = Form.useForm();
 
   useEffect(() => {
     setAppType(formValue?.appType);
@@ -37,6 +47,23 @@ const CreateApplication = (props: IProps) => {
   useEffect(() => {
     setAppDevelopLanguage(formValue?.appDevelopLanguage);
   }, [formValue?.appDevelopLanguage]);
+
+  useEffect(() => {
+    queryCategoryData().then((data) => {
+      setcategoryData(data.list);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!categoryCode) {
+      form.resetFields(['appGroupCode']);
+      setBusinessData([]);
+      return;
+    }
+    queryBizData({ categoryCode }).then((data) => {
+      setBusinessData(data.list);
+    });
+  }, [categoryCode]);
 
   return (
     <Drawer
@@ -50,6 +77,7 @@ const CreateApplication = (props: IProps) => {
     >
       <Spin spinning={loading}>
         <BasicForm
+          form={form}
           {...(createSchema({
             isEdit,
             appType,
@@ -65,6 +93,7 @@ const CreateApplication = (props: IProps) => {
           resetText="取消"
           onReset={props.onClose}
           onValuesChange={(changedValues, allValues) => {
+            setcategoryCode(allValues?.appCategoryCode);
             setAppType(allValues?.appType);
             setAppDevelopLanguage(allValues?.appDevelopLanguage);
           }}
