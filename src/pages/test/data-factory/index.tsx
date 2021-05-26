@@ -260,7 +260,7 @@ const DataFactory: React.FC = () => {
         className="table-form"
         onSearch={queryList}
         reset={reset}
-        scroll={{ y: 300, scrollToFirstRowOnChange: true }}
+        // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
       />
     </MatrixPageContent>
   );

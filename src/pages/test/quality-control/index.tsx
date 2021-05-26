@@ -347,7 +347,7 @@ const QualityControl: React.FC = () => {
         reset={reset}
         scroll={
           tableProps.dataSource.length > 0
-            ? { x: '120%', y: 300, scrollToFirstRowOnChange: true }
+            ? { x: '120%', scrollToFirstRowOnChange: true }
             : undefined
         }
         // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
