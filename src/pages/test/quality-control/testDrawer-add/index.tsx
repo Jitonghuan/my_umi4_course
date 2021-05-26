@@ -92,6 +92,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
       onClose={onClose}
       destroyOnClose
       width={600}
+      maskClosable={false}
       footer={
         <Space style={{ float: 'right' }}>
           <Button type="primary" onClick={onSubmit}>

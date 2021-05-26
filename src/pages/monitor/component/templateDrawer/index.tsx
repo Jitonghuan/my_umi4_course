@@ -242,6 +242,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       required: true,
       style: { marginRight: 10 },
       className: 'extraStyleTime',
+      min: 1,
       extraForm: (
         <Form.Item name="timeType" noStyle initialValue="m">
           <Select style={{ width: '90%' }} placeholder="选择时间单位">
@@ -468,6 +469,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       visible={visible}
       width={700}
       bodyStyle={{ paddingRight: 0 }}
+      maskClosable={false}
       footer={
         <Space>
           <Button type="primary" onClick={onFinish}>

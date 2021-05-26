@@ -390,12 +390,6 @@ const FormList: React.FC<TableSearchProps> = ({
   onSearch,
   reset,
 }) => {
-  // const submit = () => {
-  //   form.validateFields().then((value) => {
-  //     onSearch && onSearch(value);
-  //   });
-  // };
-
   return (
     <>
       <Form form={form} layout={formLayout}>

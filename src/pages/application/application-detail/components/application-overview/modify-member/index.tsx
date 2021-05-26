@@ -30,6 +30,7 @@ const ModifyMember = (props: IProps) => {
       placement="right"
       visible={props.visible}
       onClose={props.onClose}
+      maskClosable={false}
     >
       <Spin spinning={loading}>
         <BasicForm

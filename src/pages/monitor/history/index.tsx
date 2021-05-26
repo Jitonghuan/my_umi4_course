@@ -229,6 +229,7 @@ const HistoryCom: React.FC = () => {
           key: i + 1,
         }))}
         pagination={{
+          ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',

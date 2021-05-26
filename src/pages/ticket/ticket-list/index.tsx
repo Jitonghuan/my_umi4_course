@@ -193,6 +193,7 @@ const Coms = (props: any) => {
           createFormRef.resetFields();
         }}
         width={800}
+        maskClosable={false}
       >
         <BasicForm
           form={createFormRef}

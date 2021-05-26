@@ -88,6 +88,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   </Form.Item>;
 
   if (editable) {
+    form.resetFields([`${dataIndex}`]);
     childNode = editing ? (
       <Form.Item
         style={{ margin: 0 }}
@@ -139,13 +140,13 @@ const EditableTable: React.FC<EditableTableState> = ({
 
   const columns = [
     {
-      title: '键',
+      title: '键（点击可修改）',
       dataIndex: 'key',
       editable: true,
       width: '45%',
     },
     {
-      title: '值',
+      title: '值（点击可修改）',
       dataIndex: 'value',
       key: 'value',
       editable: true,
@@ -198,8 +199,8 @@ const EditableTable: React.FC<EditableTableState> = ({
   const handleAdd = () => {
     const newData: Item = {
       id: dataSource.length,
-      key: '点击可修改key',
-      value: '点击可修改value',
+      key: 'key',
+      value: 'value',
     };
     setDataSource([...dataSource, newData]);
     // setCount(count + 1);
