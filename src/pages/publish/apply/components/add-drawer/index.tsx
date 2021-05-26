@@ -135,6 +135,7 @@ const AddDrawer = (props: IProps) => {
       visible={visible}
       width="920"
       onClose={() => handleClose()}
+      maskClosable={false}
       footer={
         <>
           <Button

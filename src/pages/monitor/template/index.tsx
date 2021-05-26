@@ -256,6 +256,7 @@ const TemplateCom: React.FC = () => {
         columns={columns}
         {...tableProps}
         pagination={{
+          ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',

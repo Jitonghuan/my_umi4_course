@@ -234,7 +234,7 @@ const QualityControl: React.FC = () => {
       ),
     },
   ];
-  console.log(appBranchData, 'appBranchData');
+
   const formOptions: FormProps[] = [
     {
       key: '1',

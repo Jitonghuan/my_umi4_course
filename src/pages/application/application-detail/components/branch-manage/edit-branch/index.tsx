@@ -26,6 +26,7 @@ const EditConfig = (props: IProps) => {
       visible={props.visible}
       onCancel={props.onClose}
       footer={null}
+      maskClosable={false}
     >
       <Spin spinning={loading}>
         <BasicForm
