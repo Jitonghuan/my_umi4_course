@@ -10,15 +10,15 @@ import {
   updateRules,
   ruleSwitch,
   deleteRules,
-} from '../../../service';
-import TemplateDrawer from '../../../component/templateDrawer';
-import { Item } from '../../../typing';
+} from '../../service';
+import TemplateDrawer from '../template-drawer';
+import { Item } from '../../typing';
 import './index.less';
 
 interface StepTwoProps {
-  getTableData: (value: Record<string, Item[]>) => void;
   serviceId: string;
   form?: FormInstance;
+  isShowAddButton?: boolean;
 }
 
 type statusTypeItem = {
@@ -33,7 +33,10 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   1: { tagText: '未启用', buttonText: '启用', color: 'default', status: 0 },
 };
 
-const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
+const RulesTable: React.FC<StepTwoProps> = ({
+  serviceId,
+  isShowAddButton = true,
+}) => {
   const [dataSources, setDataSources] = useState<{
     dataSource: Item[];
     pageInfo: Record<string, React.Key>;
@@ -219,17 +222,19 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
         className="step-two"
         rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
       />
-      <Button
-        block
-        icon={<PlusOutlined />}
-        id="button-add"
-        onClick={() => {
-          setDrawerVisible(true);
-          setType('add');
-        }}
-      >
-        新增
-      </Button>
+      {isShowAddButton && (
+        <Button
+          block
+          icon={<PlusOutlined />}
+          id="button-add"
+          onClick={() => {
+            setDrawerVisible(true);
+            setType('add');
+          }}
+        >
+          新增
+        </Button>
+      )}
       <TemplateDrawer
         visible={drawerVisible}
         onClose={onClose}
@@ -243,4 +248,4 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
   );
 };
 
-export default StepOne;
+export default RulesTable;

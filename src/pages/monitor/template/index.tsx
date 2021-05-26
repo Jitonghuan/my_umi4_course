@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Space, Tag, Popconfirm, Form } from 'antd';
+import { Button, Space, Tag, Popconfirm, Form, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import TableSearch from '@/components/table-search';
@@ -7,7 +7,7 @@ import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
-import TemplateDrawer from '../component/templateDrawer';
+import TemplateDrawer from '../component/template-drawer';
 import { Item } from '../typing';
 import {
   queryRuleTemplatesList,
@@ -124,22 +124,42 @@ const TemplateCom: React.FC = () => {
       dataIndex: 'expression',
       key: 'expression',
       // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      render: (text) => (
+        <Tooltip title={text}>
+          <span
+            style={{
+              display: 'inline-block',
+              width: 100,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {text}
+          </span>
+        </Tooltip>
+      ),
     },
     {
       title: '告警消息',
       dataIndex: 'message',
       key: 'message',
       // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      render: (text) => (
+        <Tooltip title={text}>
+          <span
+            style={{
+              display: 'inline-block',
+              width: 100,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {text}
+          </span>
+        </Tooltip>
+      ),
     },
     {
       title: '持续时间',
