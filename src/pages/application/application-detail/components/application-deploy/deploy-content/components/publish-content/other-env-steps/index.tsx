@@ -8,7 +8,11 @@
 import React, { useMemo, useState } from 'react';
 import { Steps, Button, Modal, Radio } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { retryMerge, retryDeploy } from '../../../../../../../service';
+import {
+  retryMerge,
+  retryDeploy,
+  retryBuild,
+} from '../../../../../../../service';
 import { IProps, Status } from './types';
 // import './index.less';
 
@@ -32,18 +36,23 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
       return 1.2;
     }
 
-    // 部署
-    if (deployStatus === 'deploying' || deployStatus === 'building') {
+    //构建
+    if (deployStatus === 'building') {
       return 2.1;
     }
-    if (
-      deployStatus === 'deployErr' ||
-      deployStatus === 'deployAborted' ||
-      deployStatus === 'buildErr'
-    ) {
+    if (deployStatus === 'buildErr') {
       return 2.2;
     }
 
+    // 部署
+    if (deployStatus === 'deploying') {
+      return 3.1;
+    }
+    if (deployStatus === 'deployErr' || deployStatus === 'deployAborted') {
+      return 3.2;
+    }
+
+    //执行完成
     if (deployStatus === 'deployFinish' || deployStatus === 'deployed') {
       return 4;
     }
@@ -84,7 +93,7 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
           }
         />
         <Step
-          title="部署"
+          title="构建"
           icon={status === 2.1 && <LoadingOutlined />}
           status={status === 2.2 ? 'error' : undefined}
           description={
@@ -104,10 +113,10 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
                       onOperate('retryDeployStart');
 
                       confirm({
-                        title: '确定要重新部署吗?',
+                        title: '确定要重新构建吗?',
                         icon: <ExclamationCircleOutlined />,
                         onOk() {
-                          return retryDeploy({ id: deployInfo.id }).then(() => {
+                          return retryBuild({ id: deployInfo.id }).then(() => {
                             onOperate('retryDeployEnd');
                           });
                         },
@@ -117,8 +126,58 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
                       });
                     }}
                   >
-                    重新部署
+                    重新构建
                   </Button>
+                )}
+              </>
+            )
+          }
+        />
+        <Step
+          title="部署"
+          icon={status === 3.1 && <LoadingOutlined />}
+          status={status === 3.2 ? 'error' : undefined}
+          description={
+            (status === 3.2 || status === 3.1) && (
+              <>
+                {status === 3.2 && (
+                  <>
+                    {deployInfo.buildErrInfo && (
+                      <div
+                        style={{ marginTop: 2 }}
+                        onClick={() => {
+                          Modal.info({
+                            content: deployInfo.buildErrInfo,
+                            title: '部署错误详情',
+                          });
+                        }}
+                      >
+                        部署错误详情
+                      </div>
+                    )}
+                    <Button
+                      style={{ marginTop: 4 }}
+                      onClick={() => {
+                        onOperate('retryDeployStart');
+                        confirm({
+                          title: '确定要重新部署吗?',
+                          icon: <ExclamationCircleOutlined />,
+                          onOk() {
+                            return retryDeploy({ id: deployInfo.id }).then(
+                              () => {
+                                onOperate('retryDeployEnd');
+                              },
+                            );
+                          },
+                          onCancel() {
+                            onOperate('retryDeployEnd');
+                          },
+                        });
+                      }}
+                    >
+                      重新部署
+                    </Button>
+                  </>
                 )}
               </>
             )

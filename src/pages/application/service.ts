@@ -302,6 +302,14 @@ export const retryMerge = (params: {
     data: params,
   });
 
+/** 重新构建 */
+export const retryBuild = (params: {
+  /** 部署的数据库自增ID */
+  id: string;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/reBuild`, {
+    data: params,
+  });
 /** 重新部署 */
 export const retryDeploy = (params: {
   /** 部署的数据库自增ID */
