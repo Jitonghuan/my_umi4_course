@@ -5,9 +5,11 @@
  * @create 2021-04-15 09:33
  */
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Tabs, Button } from 'antd';
 import FeContext from '@/layouts/basic-layout/FeContext';
+import { queryEnvData } from '@/layouts/basic-layout/service';
+import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
 import { IProps } from './types';
 import './index.less';
@@ -20,17 +22,29 @@ const ApplicationDeploy = ({
     query: { appCode, id: appId, isContainClient },
   },
 }: IProps) => {
-  const { envData } = useContext(FeContext);
-  const [tabActive, setTabActive] = useState('dev');
+  // const { envData } = useContext(FeContext);
+  const [tabActive, setTabActive] = useState('cDev');
+  // 环境
+  const [envData, setEnvData] = useState<any[]>([]);
 
-  const curEnvData = envData?.filter((el) => {
-    if (Number(isContainClient) === 1) {
-      // 二方包
-      return ['dev', 'prod'].includes(el.typeCode);
-    }
+  // 环境数据
+  const queryEnvDataList = async () => {
+    const envResp = await getRequest(queryEnvData, {
+      data: { isClient: true },
+    });
+    const envData = envResp?.data || [];
+    setEnvData(
+      envData.map((el: any) => ({
+        ...el,
+        label: el.typeName,
+        value: el.typeCode,
+      })),
+    );
+  };
 
-    return true;
-  });
+  useEffect(() => {
+    queryEnvDataList();
+  }, []);
 
   return (
     <div className={rootCls}>
@@ -41,15 +55,13 @@ const ApplicationDeploy = ({
         type="card"
         tabBarStyle={{ background: '#E6EBF5' }}
       >
-        {curEnvData?.map((item) => (
+        {envData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
               env={item.value}
               onDeployNextEnvSuccess={() => {
-                const i = curEnvData.findIndex(
-                  (item) => item.value === tabActive,
-                );
-                setTabActive(curEnvData[i + 1]?.value || 'dev');
+                const i = envData.findIndex((item) => item.value === tabActive);
+                setTabActive(envData[i + 1]?.value || 'cDev');
               }}
             />
           </TabPane>

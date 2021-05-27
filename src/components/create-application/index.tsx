@@ -22,7 +22,7 @@ import { IProps, FormValue, AppType, AppDevelopLanguage } from './types';
 export type AppDataTypes = FormValue;
 
 const CreateApplication = (props: IProps) => {
-  const { formValue } = props;
+  const { formValue, visible } = props;
   const isEdit = !!formValue?.id;
 
   const [loading, setLoading] = useState(false);
@@ -48,15 +48,19 @@ const CreateApplication = (props: IProps) => {
     setAppDevelopLanguage(formValue?.appDevelopLanguage);
   }, [formValue?.appDevelopLanguage]);
 
+  //应用分类
   useEffect(() => {
     queryCategoryData().then((data) => {
       setcategoryData(data.list);
     });
   }, []);
 
+  //应用组
   useEffect(() => {
     if (!categoryCode) {
-      form.resetFields(['appGroupCode']);
+      form.setFieldsValue({
+        appGroupCode: undefined,
+      });
       setBusinessData([]);
       return;
     }
@@ -64,6 +68,21 @@ const CreateApplication = (props: IProps) => {
       setBusinessData(data.list);
     });
   }, [categoryCode]);
+
+  //编辑
+  useEffect(() => {
+    if (isEdit) {
+      queryBizData({
+        categoryCode: form.getFieldValue('appCategoryCode'),
+      }).then((data) => {
+        setBusinessData(data.list);
+      });
+      form.setFieldsValue({
+        ...formValue,
+        appGroupCode: formValue?.appGroupCode,
+      });
+    }
+  }, [isEdit, visible]);
 
   return (
     <Drawer
