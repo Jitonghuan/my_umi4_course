@@ -40,7 +40,7 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
     if (deployStatus === 'building') {
       return 2.1;
     }
-    if (deployStatus === 'buildErr') {
+    if (deployStatus === 'buildErr' || deployStatus === 'buildAborted') {
       return 2.2;
     }
 
@@ -142,12 +142,12 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
               <>
                 {status === 3.2 && (
                   <>
-                    {deployInfo.buildErrInfo && (
+                    {deployInfo.deployErrInfo && (
                       <div
                         style={{ marginTop: 2 }}
                         onClick={() => {
                           Modal.info({
-                            content: deployInfo.buildErrInfo,
+                            content: deployInfo.deployErrInfo,
                             title: '部署错误详情',
                           });
                         }}
