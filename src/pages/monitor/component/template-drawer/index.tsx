@@ -150,7 +150,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
   //打开抽屉在请求
   useEffect(() => {
-    if (!visible) return;
+    if (!visible) {
+      onCancel();
+      return;
+    }
     groupList();
   }, [visible]);
 
@@ -163,7 +166,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
   useEffect(() => {
     //报警模板回显数据
-    if (!visible) return;
+    if (!visible) {
+      onCancel();
+      return;
+    }
     const findRecord =
       (ruleTemplatesList as Item[])?.find((v) => v.name === ruleTemplate) ?? {};
     editDataDetail(findRecord);
@@ -174,7 +180,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     if (type === 'edit' && visible) {
       editDataDetail(record);
     }
-    console.log(type, 'type');
   }, [type, record, visible]);
 
   const formOptions: FormProps[] = [

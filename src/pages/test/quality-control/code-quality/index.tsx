@@ -236,6 +236,7 @@ const UnitTest: React.FC<any> = () => {
       dataIndex: 'appCode',
       width: '144px',
       option: form?.getFieldValue('categoryCode') ? appManageListData : [],
+      showSelectSearch: true,
       onChange: (e) => {
         setAppCode(e);
         if (!form?.getFieldValue('branchName')) return;
@@ -290,6 +291,7 @@ const UnitTest: React.FC<any> = () => {
         }))}
         {...tableProps}
         pagination={{
+          ...tableProps.pagination,
           showTotal: (total) => `总共 ${total} 条数据`,
           showSizeChanger: true,
           size: 'small',

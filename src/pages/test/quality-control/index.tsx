@@ -73,7 +73,7 @@ const QualityControl: React.FC = () => {
         createUser: userInfo?.userName,
       },
     });
-
+    queryQCTable();
     message.success('执行成功');
   };
 

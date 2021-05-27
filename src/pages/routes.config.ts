@@ -30,6 +30,14 @@ export default [
     redirect: `${ds.pagePrefix}/publish/function`,
   },
   {
+    path: `${ds.pagePrefix}/test`,
+    redirect: `${ds.pagePrefix}/test/dataFactory`,
+  },
+  {
+    path: `${ds.pagePrefix}/monitor`,
+    redirect: `${ds.pagePrefix}/monitor/board`,
+  },
+  {
     path: `${ds.pagePrefix}/order`,
     redirect: `${ds.pagePrefix}/order/list`,
   },

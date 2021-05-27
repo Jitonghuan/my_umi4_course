@@ -1,9 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Form, Button, Space, Modal } from 'antd';
+import { Form, Button, Space, Popconfirm } from 'antd';
 import { omit } from 'lodash';
 import { history } from 'umi';
 import 'codemirror/lib/codemirror.css';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
 import MatrixPageContent from '@/components/matrix-page-content';
@@ -14,8 +13,6 @@ import useRequest from '@/utils/useRequest';
 import JsonEditor from '@/components/JsonEditor';
 import { queryDataFactoryName, createDataFactory } from '../../service';
 import { Item } from '../../typing';
-
-const { confirm } = Modal;
 
 const DataFactoryAdd: React.FC = () => {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
@@ -48,6 +45,8 @@ const DataFactoryAdd: React.FC = () => {
   const { data: dataFactory = [], run: createDataFactoryFun } = useRequest({
     api: createDataFactory,
     method: 'POST',
+    successText: '创建成功',
+    isSuccessModal: true,
   });
 
   const formOptionsLeft: FormProps[] = [
@@ -163,32 +162,12 @@ const DataFactoryAdd: React.FC = () => {
     const id =
       (factoryNameData as Item[])?.find((v) => v.name === factoryName)?.id ??
       '';
-    secondConfirm(values, id, params);
-    // createDataFactoryFun({
-    //   ...omit(values, ['returnData']),
-    //   factoryId: id,
-    //   params,
-    //   createUser: userInfo?.userName,
-    // });
-  };
 
-  //二次确认
-  const secondConfirm = (
-    values: Record<string, any>,
-    id: React.Key,
-    params: Record<string, any>[] | Record<string, any>,
-  ) => {
-    confirm({
-      title: '确定要创建吗?',
-      icon: <ExclamationCircleOutlined />,
-      onOk() {
-        createDataFactoryFun({
-          ...omit(values, ['returnData']),
-          factoryId: id,
-          params,
-          createUser: userInfo?.userName,
-        });
-      },
+    createDataFactoryFun({
+      ...omit(values, ['returnData']),
+      factoryId: id,
+      params,
+      createUser: userInfo?.userName,
     });
   };
 
@@ -225,9 +204,14 @@ const DataFactoryAdd: React.FC = () => {
         </Form>
         <div style={{ textAlign: 'right' }}>
           <Space>
-            <Button type="primary" onClick={onSubmit}>
-              立即创建
-            </Button>
+            <Popconfirm
+              title="确认创建数据？"
+              okText="确定"
+              onConfirm={onSubmit}
+            >
+              <Button type="primary">立即创建</Button>
+            </Popconfirm>
+
             <Button
               onClick={() => {
                 form.resetFields();
