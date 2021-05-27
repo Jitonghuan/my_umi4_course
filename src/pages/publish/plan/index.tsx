@@ -108,7 +108,7 @@ const FunctionCom: React.FC = () => {
         className="table-form"
         onSearch={submit}
         reset={reset}
-        scroll={{ x: 2000 }}
+        scroll={tableProps.dataSource.length > 0 ? { x: 2000 } : undefined}
         searchText="查询"
       />
     </MatrixPageContent>

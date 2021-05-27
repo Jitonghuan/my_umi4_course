@@ -308,7 +308,9 @@ const TemplateCom: React.FC = () => {
         className="table-form"
         onSearch={queryList}
         reset={reset}
-        scroll={{ x: 'max-content' }}
+        scroll={
+          tableProps.dataSource.length > 0 ? { x: 'max-content' } : undefined
+        }
       />
       <TemplateDrawer
         visible={drawerVisible}

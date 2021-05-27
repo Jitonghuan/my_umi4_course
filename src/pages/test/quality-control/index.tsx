@@ -11,7 +11,7 @@ import useTable from '@/utils/useTable';
 import { queryQCTaskList, executeQCTask } from '../service';
 import { Item } from '../typing';
 import usePublicData from '@/utils/usePublicData';
-import TestDrawer from './testDrawer-add';
+import TestDrawer from './test-drawer-add';
 
 import './index.less';
 import { postRequest } from '@/utils/request';
@@ -216,7 +216,7 @@ const QualityControl: React.FC = () => {
             type="link"
             style={{ padding: 0 }}
             onClick={() => {
-              history.push(`./qualityControl/unitTest?id=${record.id}`);
+              history.push(`./qualityControl/unitTest?taskId=${record.id}`);
             }}
           >
             单测记录
@@ -225,7 +225,7 @@ const QualityControl: React.FC = () => {
             type="link"
             style={{ padding: 0 }}
             onClick={() => {
-              history.push(`./qualityControl/codeQuality?id=${record.id}`);
+              history.push(`./qualityControl/codeQuality?taskId=${record.id}`);
             }}
           >
             质检记录

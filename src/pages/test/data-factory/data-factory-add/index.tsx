@@ -1,7 +1,9 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Form, Button, Space } from 'antd';
+import { Form, Button, Space, Modal } from 'antd';
 import { omit } from 'lodash';
+import { history } from 'umi';
 import 'codemirror/lib/codemirror.css';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
 import MatrixPageContent from '@/components/matrix-page-content';
@@ -12,6 +14,8 @@ import useRequest from '@/utils/useRequest';
 import JsonEditor from '@/components/JsonEditor';
 import { queryDataFactoryName, createDataFactory } from '../../service';
 import { Item } from '../../typing';
+
+const { confirm } = Modal;
 
 const DataFactoryAdd: React.FC = () => {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
@@ -159,11 +163,32 @@ const DataFactoryAdd: React.FC = () => {
     const id =
       (factoryNameData as Item[])?.find((v) => v.name === factoryName)?.id ??
       '';
-    createDataFactoryFun({
-      ...omit(values, ['returnData']),
-      factoryId: id,
-      params,
-      createUser: userInfo?.userName,
+    secondConfirm(values, id, params);
+    // createDataFactoryFun({
+    //   ...omit(values, ['returnData']),
+    //   factoryId: id,
+    //   params,
+    //   createUser: userInfo?.userName,
+    // });
+  };
+
+  //二次确认
+  const secondConfirm = (
+    values: Record<string, any>,
+    id: React.Key,
+    params: Record<string, any>[] | Record<string, any>,
+  ) => {
+    confirm({
+      title: '确定要创建吗?',
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        createDataFactoryFun({
+          ...omit(values, ['returnData']),
+          factoryId: id,
+          params,
+          createUser: userInfo?.userName,
+        });
+      },
     });
   };
 
@@ -210,6 +235,7 @@ const DataFactoryAdd: React.FC = () => {
             >
               重置
             </Button>
+            <Button onClick={() => history.goBack()}>取消</Button>
           </Space>
         </div>
       </ContentCard>

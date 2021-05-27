@@ -222,8 +222,8 @@ const DataFactory: React.FC = () => {
           value: userInfo?.userName as string,
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
+      onChange: () => {
+        queryList();
       },
     },
   ];
