@@ -82,6 +82,9 @@ const CreateApplication = (props: IProps) => {
         appGroupCode: formValue?.appGroupCode,
       });
     }
+    if (!visible) {
+      form.resetFields();
+    }
   }, [isEdit, visible]);
 
   return (

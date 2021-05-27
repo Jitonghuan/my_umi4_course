@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Drawer, Button, Form, Space, message } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
@@ -23,6 +23,12 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
     appCategoryCode,
   });
 
+  useEffect(() => {
+    if (!visible) {
+      form.resetFields();
+    }
+  }, [visible]);
+
   const formOptions: FormProps[] = [
     {
       key: '1',
@@ -40,30 +46,40 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
       type: 'select',
       label: '应用分类',
       dataIndex: 'categoryCode',
-      placeholder: '请输入',
-      required: true,
       option: appTypeData,
-      onChange: setAppCategoryCode,
+      required: true,
+      onChange: (e) => {
+        setAppCategoryCode(e);
+        if (
+          !form?.getFieldValue('appCode') ||
+          !form?.getFieldValue('branchName')
+        ) {
+          setAppCode('');
+        }
+        form?.resetFields(['appCode', 'branchName']);
+      },
     },
     {
       key: '3',
       type: 'select',
       label: '应用名',
       dataIndex: 'appCode',
-      placeholder: '请选择',
+      option: form?.getFieldValue('categoryCode') ? appManageListData : [],
       required: true,
-      option: appManageListData,
       showSelectSearch: true,
-      onChange: setAppCode,
+      onChange: (e) => {
+        setAppCode(e);
+        if (!form?.getFieldValue('branchName')) return;
+        form?.resetFields(['branchName']);
+      },
     },
     {
       key: '4',
       type: 'select',
       label: '分支名',
       dataIndex: 'branchName',
-      placeholder: '请选择',
+      option: form?.getFieldValue('appCode') ? appBranchData : [],
       required: true,
-      option: appBranchData,
     },
   ];
 

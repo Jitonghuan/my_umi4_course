@@ -96,7 +96,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   </Form.Item>;
 
   if (editable) {
-    form.resetFields([`${dataIndex}`]);
+    // form.resetFields([`${dataIndex}`]);
     childNode = editing ? (
       <Form.Item
         style={{ margin: 0 }}

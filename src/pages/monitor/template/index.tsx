@@ -299,6 +299,7 @@ const TemplateCom: React.FC = () => {
             onClick={() => {
               setDrawerVisible(true);
               setType('add');
+              setDrawerTitle('新增报警规则模版');
             }}
             icon={<PlusOutlined />}
           >

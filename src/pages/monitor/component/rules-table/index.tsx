@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Tooltip, Space, Popconfirm, Button, Form } from 'antd';
+import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';
@@ -147,6 +147,15 @@ const RulesTable: React.FC<StepTwoProps> = ({
       // ),
     },
     {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      // width: '4%',
+      render: (text: number) => (
+        <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>
+      ),
+    },
+    {
       title: '操作',
       dataIndex: 'option',
       key: 'news',
@@ -230,6 +239,7 @@ const RulesTable: React.FC<StepTwoProps> = ({
           onClick={() => {
             setDrawerVisible(true);
             setType('add');
+            setDrawerTitle('新增报警规则');
           }}
         >
           新增
