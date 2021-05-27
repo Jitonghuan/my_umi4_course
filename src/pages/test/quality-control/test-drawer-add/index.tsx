@@ -53,6 +53,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
       placeholder: '请选择',
       required: true,
       option: appManageListData,
+      showSelectSearch: true,
       onChange: setAppCode,
     },
     {

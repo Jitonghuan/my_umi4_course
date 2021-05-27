@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Form } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { history } from 'umi';
-import EditTable from '../../../component/editTable';
+import EditTable from '@/components/edit-table';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
+import { editColumns } from '../../../component/template-drawer/colunms';
 import { Item } from '../../../typing';
 import usePublicData from '../../usePublicData';
 
@@ -145,6 +146,14 @@ const StepOne: React.FC<StepOneProps> = ({
                 (MatchLabels已设置默认值，无特殊需求，请不要填写)
               </span>
             }
+            columns={editColumns}
+            handleAddItem={() => {
+              return {
+                id: matchlabels.length,
+                key: 'key',
+                value: 'value',
+              };
+            }}
           />
         </Form.Item>
       ),

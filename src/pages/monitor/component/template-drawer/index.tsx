@@ -10,7 +10,8 @@ import moment, { Moment } from 'moment';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import useRequest from '@/utils/useRequest';
-import EditTable from '../editTable';
+import EditTable from '@/components/edit-table';
+import { editColumns } from './colunms';
 import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
 import { queryRuleTemplatesList, queryGroupList } from '../../service';
@@ -307,12 +308,28 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             initData={labelTableData}
             headerTitle="标签（Labels):"
             style={{ marginBottom: 8 }}
+            columns={editColumns}
+            handleAddItem={() => {
+              return {
+                id: labelTableData.length,
+                key: 'key',
+                value: 'value',
+              };
+            }}
           />
           <EditTable
             onTableChange={annotationsFun}
             initData={annotationsTableData}
             headerTitle="注释（Annotations):"
             style={{ marginBottom: 16 }}
+            columns={editColumns}
+            handleAddItem={() => {
+              return {
+                id: annotationsTableData.length,
+                key: 'key',
+                value: 'value',
+              };
+            }}
           />
         </Form.Item>
       ),

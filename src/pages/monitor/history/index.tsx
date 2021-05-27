@@ -116,6 +116,7 @@ const HistoryCom: React.FC = () => {
       dataIndex: 'receiver',
       key: 'receiver',
       render: (text: string) => {
+        if (!text) return '-';
         return (
           <Tooltip title={text}>
             <span

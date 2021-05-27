@@ -16,7 +16,10 @@ const { Item } = Form;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-export const renderForm = (formOptions: FormProps[] = []) => {
+export const renderForm = (
+  formOptions: FormProps[] = [],
+  onSearch?: () => void,
+) => {
   if (!formOptions.length) return [];
   return formOptions.map((v) => {
     const {
@@ -138,6 +141,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
                 onChange={onChange}
                 disabled={disable}
                 id={id}
+                onPressEnter={onSearch}
               />
             </Item>
             {extraForm}
@@ -393,7 +397,7 @@ const FormList: React.FC<TableSearchProps> = ({
   return (
     <>
       <Form form={form} layout={formLayout}>
-        {renderForm(formOptions)}
+        {renderForm(formOptions, onSearch)}
         <Item>
           <Space size={12}>
             {showSearch && (

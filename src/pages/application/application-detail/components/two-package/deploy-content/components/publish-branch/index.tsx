@@ -67,7 +67,7 @@ const PublishBranch = ({
       envTypeCode: env,
       features: filter,
       envCodes: deployEnv,
-      isClient: query?.isClient !== '0',
+      isClient: true,
     }).then((res: any) => {
       if (!res.success) {
         message.error(res.errorMsg);

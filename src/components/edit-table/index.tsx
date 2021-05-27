@@ -152,8 +152,8 @@ const EditableTable = <
   const [dataSource, setDataSource] = useState<T[]>([]);
   const [count, setCount] = useState<number>(dataSource.length);
 
-  const columns = useMemo(() => {
-    (columnsList || [])?.push({
+  const columns = [
+    {
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
@@ -179,12 +179,10 @@ const EditableTable = <
           </Space>
         );
       },
-    });
-    return columnsList as ColumnsType<T>[];
-  }, [columnsList]);
+    },
+  ];
 
   useEffect(() => {
-    console.log(dataSource);
     onTableChange && onTableChange(dataSource);
   }, [dataSource]);
 
@@ -200,11 +198,6 @@ const EditableTable = <
 
   const handleAdd = () => {
     const newData: T = handleAddItem();
-    // const newData: Item = {
-    //   id: dataSource.length,
-    //   key: 'key',
-    //   value: 'value',
-    // };
     setDataSource([...dataSource, newData]);
     // setCount(count + 1);
   };
@@ -228,7 +221,7 @@ const EditableTable = <
     },
   };
 
-  const EditColumns = columns?.map((col: any) => {
+  const EditColumns = columnsList?.map((col: any) => {
     if (!col.editable) {
       return col;
     }
@@ -243,6 +236,7 @@ const EditableTable = <
       }),
     };
   });
+
   return (
     <div style={style}>
       <div
@@ -262,7 +256,7 @@ const EditableTable = <
         // rowClassName={() => 'editable-row'}
         bordered
         dataSource={dataSource}
-        columns={EditColumns}
+        columns={[...(EditColumns as any[]), ...columns]}
         pagination={false}
         rowKey="id"
         style={{ width: '100%' }}

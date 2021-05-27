@@ -83,6 +83,8 @@ export const createTableSchema = ({
               query: {
                 id: record.id,
                 appCode: record.appCode,
+                isClient: record.isClient,
+                isContainClient: record.isContainClient,
               },
             })
           }
@@ -142,6 +144,8 @@ export const createTableSchema = ({
                 query: {
                   id: record.id,
                   appCode: record.appCode,
+                  isClient: record.isClient,
+                  isContainClient: record.isContainClient,
                 },
               })
             }

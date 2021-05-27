@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Tooltip, Form, Input, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { history } from 'umi';
 import { SearchOutlined } from '@ant-design/icons';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
@@ -22,8 +23,7 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   2: { text: '失败', color: 'volcano' },
 };
 
-const UnitTest: React.FC<any> = (props) => {
-  const { id } = props.location.query;
+const UnitTest: React.FC<any> = () => {
   const [form] = Form.useForm();
 
   const [appCode, setAppCode] = useState<string | undefined>();
@@ -31,6 +31,10 @@ const UnitTest: React.FC<any> = (props) => {
 
   const [frameVisible, setFrameVisible] = useState<boolean>(false);
   const [currentRecord, setCurrentRecord] = useState<any>({});
+
+  const {
+    location: { query },
+  } = history;
 
   const { appManageListData, appTypeData, appBranchData } = usePublicData({
     appCode,
@@ -55,6 +59,7 @@ const UnitTest: React.FC<any> = (props) => {
         endTime: testTime[1]
           ? testTime[1].format('YYYY-MM-DD 23:59:59')
           : undefined,
+        ...query,
       };
     },
   });
@@ -204,7 +209,7 @@ const UnitTest: React.FC<any> = (props) => {
       // width: '144px',
       // placeholder: '请输入',
       extraForm: (
-        <Form.Item noStyle name="taskId">
+        <Form.Item noStyle name="taskInfo">
           <Input
             prefix={<SearchOutlined />}
             placeholder="请输入任务ID/任务名"
@@ -290,12 +295,6 @@ const UnitTest: React.FC<any> = (props) => {
     },
   ];
 
-  useEffect(() => {
-    form.setFieldsValue({
-      taskInfo: id,
-    });
-  }, []);
-
   return (
     <MatrixPageContent>
       <TableSearch
@@ -319,7 +318,7 @@ const UnitTest: React.FC<any> = (props) => {
         className="table-form"
         onSearch={queryUnittest}
         reset={reset}
-        scroll={{ x: '150%', y: 300, scrollToFirstRowOnChange: true }}
+        scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
       />
 
       <VCModal
