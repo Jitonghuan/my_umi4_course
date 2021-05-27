@@ -33,10 +33,14 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
     }
 
     // 部署
-    if (deployStatus === 'deploying') {
+    if (deployStatus === 'deploying' || deployStatus === 'building') {
       return 2.1;
     }
-    if (deployStatus === 'deployErr' || deployStatus === 'deployAborted') {
+    if (
+      deployStatus === 'deployErr' ||
+      deployStatus === 'deployAborted' ||
+      deployStatus === 'buildErr'
+    ) {
       return 2.2;
     }
 
