@@ -101,7 +101,7 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
         />
         <PublishContent
           appCode={appCode!}
-          env={env}
+          envTypeCode={env}
           deployInfo={deployInfo}
           deployedList={branchInfo.deployed}
           onOperate={onOperate}

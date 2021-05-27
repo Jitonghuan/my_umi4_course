@@ -21,12 +21,12 @@ const { confirm } = Modal;
 
 const PublishContent = ({
   appCode,
-  env,
+  envTypeCode,
   deployedList,
   deployInfo,
   onOperate,
 }: IProps) => {
-  const isProd = env === 'prod';
+  const isProd = envTypeCode === 'cProd';
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
@@ -90,10 +90,11 @@ const PublishContent = ({
                     onOk() {
                       return createDeploy({
                         appCode,
-                        env,
+                        envTypeCode,
                         features: deployedList
                           .filter((item) => !selectedRowKeys.includes(item.id))
                           .map((item) => item.branchName),
+                        isClient: true,
                       }).then(() => {
                         onOperate('batchExitEnd');
                       });
