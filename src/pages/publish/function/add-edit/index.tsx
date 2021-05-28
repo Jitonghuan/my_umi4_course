@@ -187,9 +187,13 @@ const EditTable: React.FC<EditTableProps> = ({
           ))}
         </Select>
       ),
-      render: (text: string[]) => (
-        <>{Array.isArray(text) ? text.join(',') : ''}</>
-      ),
+      render: (text: string[]) => {
+        if (!text) return '-';
+        const labelList = text.map(
+          (item) => envsOptions.find((v) => v.value === item)?.label,
+        );
+        return <>{Array.isArray(labelList) ? labelList.join(',') : ''}</>;
+      },
     },
     {
       title: '涉及业务范围',
@@ -339,6 +343,14 @@ const EditTable: React.FC<EditTableProps> = ({
     num.current = num.current + 1;
   }, [defaultValueObj]);
 
+  //编辑
+  useEffect(() => {
+    if (type === 'edit' || type === 'check') {
+      queryEnvs(form.getFieldValue('appCategoryCode'));
+      queryGroups(form.getFieldValue('appCategoryCode'));
+    }
+  }, [type, form.getFieldValue('appCategoryCode')]);
+
   // useEffect(()=>{
   //   return () => {
   //     num.current = 0
@@ -449,7 +461,7 @@ const EditTable: React.FC<EditTableProps> = ({
                 const newData = [...data];
                 const newEditingKey = [...editingKey];
                 const selectRows = jiraData.filter((jira) =>
-                  selectedRowKeys.includes(jira?.issueId!),
+                  selectedRowKeys.includes(jira?.key!),
                 );
                 const start = newData.length
                   ? Number(newData[newData.length - 1].key) + 1
@@ -461,7 +473,7 @@ const EditTable: React.FC<EditTableProps> = ({
                     [`preDeployTime-${start + index}`]: jira.preDeployTime
                       ? moment(jira.preDeployTime)
                       : '',
-                    [`demandId-${start + index}`]: jira.issueId,
+                    [`demandId-${start + index}`]: jira.key,
                     [`envs-${start + index}`]: [],
                   };
                   // [`coverageRange-${index + 1}`]: data.coverageRange,
@@ -471,6 +483,7 @@ const EditTable: React.FC<EditTableProps> = ({
                 });
                 setEditingKey(newEditingKey);
                 setData(newData);
+                console.log(data, 'data');
                 setTimeout(() => {
                   for (
                     let i = start - 1;
@@ -490,7 +503,7 @@ const EditTable: React.FC<EditTableProps> = ({
         }
       >
         <Table
-          rowKey="issueId"
+          rowKey="key"
           columns={JiraColumns}
           // dataSource={jiraData}
           {...tableProps}

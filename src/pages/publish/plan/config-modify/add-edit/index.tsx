@@ -122,6 +122,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
     isSearch?: boolean;
   }) => {
     queryFunctionReq({ ...params }).then((result) => {
+      if (!result) return;
       if (params.isSearch) {
         if (currentSearchValue === params.funcName) {
           setOptions(
@@ -135,7 +136,8 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
           );
         }
       } else {
-        setTableData(tableData.concat(result || []));
+        tableData.push(...result);
+        setTableData([...tableData]);
       }
     });
   };

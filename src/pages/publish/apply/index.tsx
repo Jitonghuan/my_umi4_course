@@ -64,6 +64,14 @@ const ApplyList = (props: IProps) => {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
     },
+    formatRequestParams: (params) => {
+      return {
+        ...params,
+        deployDate: params.deployDate
+          ? params.deployDate.format('YYYY-MM-DD')
+          : undefined,
+      };
+    },
   });
 
   useEffectOnce(() => {

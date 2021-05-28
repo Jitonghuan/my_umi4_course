@@ -179,7 +179,7 @@ const QualityControl: React.FC = () => {
       width: 100,
     },
     {
-      title: '状态',
+      title: '任务状态',
       dataIndex: 'status',
       key: 'status',
       width: 100,
