@@ -263,7 +263,7 @@ const UnitTest: React.FC<any> = () => {
       key: '6',
       type: 'input',
       label: '构建人',
-      dataIndex: 'creator',
+      dataIndex: 'createUser',
       width: '144px',
     },
     {
