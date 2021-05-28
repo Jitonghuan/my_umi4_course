@@ -3,7 +3,7 @@ import { OperateType as StepOperateType } from './prod-steps/types';
 
 export interface IProps {
   appCode: string;
-  env: string;
+  envTypeCode: string;
   deployInfo: Record<string, any>;
   deployedList: any[];
   onOperate: (type: OperateType) => void;
