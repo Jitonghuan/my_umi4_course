@@ -124,7 +124,7 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
                   </div>
                 )}
 
-                {status === 2.2 ? (
+                {status === 2.2 && (
                   <Button
                     style={{ marginTop: 4 }}
                     onClick={() => {
@@ -146,15 +146,6 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
                   >
                     重新部署
                   </Button>
-                ) : (
-                  <a
-                    style={{ marginTop: 4 }}
-                    onClick={() => {
-                      setDeployVisible(true);
-                    }}
-                  >
-                    确认部署
-                  </a>
                 )}
               </>
             )
