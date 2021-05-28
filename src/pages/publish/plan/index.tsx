@@ -29,6 +29,14 @@ const FunctionCom: React.FC = () => {
     url: queryPublishPlanUrl,
     method: 'GET',
     form,
+    formatter: (params) => {
+      return {
+        ...params,
+        preDeployTime: params.preDeployTime
+          ? params.preDeployTime.format('YYYY-MM-DD')
+          : undefined,
+      };
+    },
     formatResult: (result) => {
       return {
         total: result.data?.pageInfo?.total,

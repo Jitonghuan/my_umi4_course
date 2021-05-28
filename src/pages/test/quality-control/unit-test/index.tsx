@@ -9,7 +9,6 @@ import useTable from '@/utils/useTable';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { queryUnittestCoverCheckLogList } from '../../service';
 import usePublicData from '@/utils/usePublicData';
-import VCModal from '@/components/vc-modal';
 import { Item } from '../../typing';
 
 type statusTypeItem = {
@@ -28,9 +27,6 @@ const UnitTest: React.FC<any> = () => {
 
   const [appCode, setAppCode] = useState<string | undefined>();
   const [appCategoryCode, setAppCategoryCode] = useState<string | undefined>();
-
-  const [frameVisible, setFrameVisible] = useState<boolean>(false);
-  const [currentRecord, setCurrentRecord] = useState<any>({});
 
   const {
     location: { query },
@@ -172,7 +168,7 @@ const UnitTest: React.FC<any> = () => {
       width: '10%',
     },
     {
-      title: '状态',
+      title: '执行状态',
       dataIndex: 'status',
       key: 'status',
       width: '8%',
@@ -188,12 +184,7 @@ const UnitTest: React.FC<any> = () => {
       fixed: 'right',
       render: (_, record) =>
         record.reportUrl && (
-          <a
-            onClick={() => {
-              setFrameVisible(true);
-              setCurrentRecord(record);
-            }}
-          >
+          <a href={record.reportUrl} target="_blank">
             查看报告
           </a>
         ),
@@ -322,19 +313,6 @@ const UnitTest: React.FC<any> = () => {
         reset={reset}
         scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
       />
-
-      <VCModal
-        visible={frameVisible}
-        onCancel={() => setFrameVisible(false)}
-        isFull
-        footer={
-          <Button type="primary" onClick={() => setFrameVisible(false)}>
-            关闭
-          </Button>
-        }
-      >
-        <iframe src={currentRecord.reportUrl} width="100%" height="100%" />
-      </VCModal>
     </MatrixPageContent>
   );
 };

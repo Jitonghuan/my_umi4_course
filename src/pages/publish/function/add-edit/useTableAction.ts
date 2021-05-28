@@ -103,7 +103,7 @@ const useTableAction = (props: IProps) => {
       );
       let result = {
         appCategoryCode: row.appCategoryCode,
-        appGroupCode: row.appCategoryCode,
+        appGroupCode: row.appGroupCode,
         coverageRange: row[`coverageRange-${key}`],
         demandId: row[`demandId-${key}`],
         envs: row[`envs-${key}`],
@@ -111,6 +111,7 @@ const useTableAction = (props: IProps) => {
         preDeployTime: row[`preDeployTime-${key}`],
         resolveNeeds: row[`resolveNeeds-${key}`],
       };
+
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
