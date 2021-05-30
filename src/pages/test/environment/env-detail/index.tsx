@@ -2,22 +2,14 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/28 10:47
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useContext,
-  useRef,
-  createRef,
-} from 'react';
-import { message, Input, Select, Tabs, Form, Button, Table, Empty } from 'antd';
-import {} from '@ant-design/icons';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { message, Input, Select, Tabs, Form, Button, Empty } from 'antd';
 import type Emitter from 'events';
 import FELayout from '@cffe/vc-layout';
 import { ContentCard } from '@/components/vc-page-content';
 import { EnvItemVO, EnvDbConfItemVO, EnvVarConfItemVO } from '../interfaces';
 import * as APIS from '../service';
-import { getRequest, postRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import { ENV_CODE_OPTIONS } from '../common';
 import DBPanel from './db-pane';
 import GlobalVarPanel from './global-var';

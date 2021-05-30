@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/29 20:52
 
-import React, { useState, useLayoutEffect } from 'react';
+import React from 'react';
 import { EditableProTable, ProColumns } from '@ant-design/pro-table';
 import { EnvDbConfItemVO } from '../interfaces';
 
