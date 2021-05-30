@@ -20,6 +20,9 @@ interface RightDetailProps extends Record<string, any> {
 
 export default function RightDetail(props: RightDetailProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
+  const [dataSource, setDataSource] = useState<CaseItemVO[]>([]);
+
+  useEffect(() => {}, []);
 
   return (
     <ContentCard className="page-case-right-detail">
@@ -30,11 +33,15 @@ export default function RightDetail(props: RightDetailProps) {
       <div className="case-detail-caption">
         <h3>用例列表</h3>
         <Button type="default">批量执行</Button>
-        <Button type="primary" icon={<PlusOutlined />}>
+        <Button
+          onClick={() => props.emitter.emit('CASE::ADD_CASE')}
+          type="primary"
+          icon={<PlusOutlined />}
+        >
           新增用例
         </Button>
       </div>
-      <Table>
+      <Table dataSource={dataSource}>
         <Table.Column dataIndex="id" title="ID" />
         <Table.Column dataIndex="module" title="模块" />
         <Table.Column dataIndex="api" title="接口" />

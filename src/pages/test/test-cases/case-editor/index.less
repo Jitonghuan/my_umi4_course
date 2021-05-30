@@ -1,0 +1,31 @@
+// case editor
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/05/30 20:14
+
+.test-case-editor {
+  .ant-drawer-body {
+    padding: 20px 32px;
+    background-color: #f7f8fa;
+  }
+
+  .ant-steps {
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
+
+  .case-editor-step {
+    display: none;
+
+    &[data-visible='true'] {
+      display: block;
+    }
+  }
+
+  .case-editor-footer {
+    text-align: right;
+
+    button + button {
+      margin-left: 12px;
+    }
+  }
+}
