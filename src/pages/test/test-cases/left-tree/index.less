@@ -1,0 +1,58 @@
+// case list
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/05/30 16:49
+
+.page-case-list {
+  padding: 16px 12px;
+
+  .case-list-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .ant-input-group-wrapper {
+    flex: 1 1 0;
+    margin-right: 16px;
+  }
+
+  // .ant-tree-treenode-selected {
+  //   background-color: #c2e9ff;
+  // }
+
+  .ant-tree.ant-tree-directory {
+    .ant-tree-treenode-selected:hover::before,
+    .ant-tree-treenode-selected::before {
+      background-color: #c2e9ff;
+    }
+
+    .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected {
+      color: inherit;
+    }
+
+    .ant-tree-list-holder-inner .ant-tree-node-content-wrapper {
+      overflow: hidden;
+    }
+  }
+
+  .custom-tree-node {
+    display: flex;
+
+    > span {
+      flex: 1 1 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    > a {
+      color: inherit;
+      flex: 0 0 auto;
+      margin-left: 8px;
+    }
+  }
+
+  // .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  //   background: transparent;
+  // }
+}

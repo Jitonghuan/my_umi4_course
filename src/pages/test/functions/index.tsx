@@ -14,7 +14,6 @@ import { PlusOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
-import {} from './interfaces';
 import * as APIS from './service';
 import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
