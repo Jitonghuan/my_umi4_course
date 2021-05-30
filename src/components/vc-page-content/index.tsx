@@ -3,6 +3,7 @@ import { Breadcrumb, Card } from 'antd';
 import { CardProps } from 'antd/es/card';
 import { history } from 'umi';
 import { FELayout } from '@cffe/fe-backend-component';
+import classnames from 'classnames';
 import './index.less';
 
 export interface IProps {
@@ -132,10 +133,10 @@ export default Coms;
 
 // filter card
 export const FilterCard: React.FC<CardProps> = (props) => {
-  const { children, ...rest } = props;
+  const { children, className, ...rest } = props;
 
   return (
-    <Card className="vc-page-content-filter" {...rest}>
+    <Card className={classnames('vc-page-content-filter', className)} {...rest}>
       {props.children}
     </Card>
   );
@@ -143,11 +144,41 @@ export const FilterCard: React.FC<CardProps> = (props) => {
 
 // content card
 export const ContentCard: React.FC<CardProps> = (props) => {
-  const { children, ...rest } = props;
+  const { children, className, ...rest } = props;
 
   return (
-    <Card className="vc-page-content-body" {...rest}>
+    <Card className={classnames('vc-page-content-body', className)} {...rest}>
       {props.children}
+    </Card>
+  );
+};
+
+type CardRowGroupType = React.FC<React.HTMLAttributes<HTMLDivElement>> & {
+  SlideCard: React.FC<CardProps & { width?: number }>;
+};
+
+// card row
+export const CardRowGroup: CardRowGroupType = (props) => {
+  const { children, className, ...rest } = props;
+
+  return (
+    <div className={classnames('vc-page-row', className)} {...rest}>
+      {children}
+    </div>
+  );
+};
+
+// slide card
+CardRowGroup.SlideCard = (props) => {
+  const { children, className, width = 180, ...rest } = props;
+
+  return (
+    <Card
+      className={classnames('vc-slide-card', className)}
+      style={{ width }}
+      {...rest}
+    >
+      {children}
     </Card>
   );
 };

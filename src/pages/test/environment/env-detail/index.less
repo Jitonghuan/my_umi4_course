@@ -1,0 +1,45 @@
+// 环境detail
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/05/28 10:47
+
+.page-env-detail {
+  position: relative;
+
+  .float-action-group {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+
+    > button + button {
+      margin-left: 12px;
+    }
+  }
+
+  .action-cell {
+    > a + a {
+      margin-left: 12px;
+    }
+  }
+
+  .ant-pro-table .ant-card-body {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .wrapper-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .ant-collapse:empty {
+    border: 0;
+  }
+
+  .ant-collapse-content-box {
+    background-color: #eff1f5;
+  }
+}

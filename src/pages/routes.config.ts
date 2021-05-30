@@ -255,6 +255,13 @@ export default [
         hideInMenu: true,
         component: '@/pages/test/quality-control/code-quality',
       },
+      {
+        path: 'environment',
+        name: '环境管理',
+        key: 'environment',
+        component: '@/pages/test/environment',
+        exact: true,
+      },
     ],
   },
   {

@@ -1,5 +1,6 @@
 import { parse } from 'qs';
 import rjson from 'relaxed-json';
+import ds from '@config/defaultSettings';
 
 /** 深度优先搜索处理 func */
 export const DFSFunc = (
@@ -50,4 +51,15 @@ export const JsonParse = (jsonStr: string, relaxed?: boolean) => {
   } catch (e) {
     return [true];
   }
+};
+
+/** 给接口增加统一前缀 */
+export const addAPIPrefix = (api: string) => {
+  const origin = '';
+  if (/^(https?:)?\/\//.test(api)) return api;
+  if (!/^\//.test(api)) {
+    api = `/${api}`;
+  }
+
+  return `${origin}${ds.apiPrefix}${api}`;
 };
