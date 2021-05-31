@@ -25,5 +25,5 @@ export interface FormValue {
   /** 自动化测试负责人 */
   autoTestOwner?: string;
   /** 报警接收 */
-  alterReceiver?: string;
+  alertReceiver?: string;
 }
