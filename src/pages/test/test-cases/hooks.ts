@@ -11,7 +11,12 @@ export function useProjectOptions(key = Date.now()) {
 
   useEffect(() => {
     getRequest(APIS.getProjects).then((result) => {
-      console.log('>>>> result', result.data);
+      const data = (result.data || []).map((n: any) => ({
+        label: `${n.name} (${n.id})`,
+        value: n.id,
+      }));
+
+      setData(data);
     });
   }, [key]);
 

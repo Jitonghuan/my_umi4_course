@@ -68,9 +68,6 @@ const treeData = [
 
 export default function LeftTree(props: LeftTreeProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  // const [projectOptions, setProjectOptions] = useState<SelectOptions<number>[]>(
-  //   [],
-  // );
   const [projectOptions] = useProjectOptions();
   const [searchProject, setSearchProject] = useState<number>();
   const [searchKey, setSearchKey] = useState<string>('');
@@ -93,20 +90,17 @@ export default function LeftTree(props: LeftTreeProps) {
   return (
     <CardRowGroup.SlideCard width={244} className="page-case-list">
       <div className="case-list-header">
-        <Input
-          addonBefore={
-            <Select
-              options={projectOptions}
-              value={searchProject}
-              onChange={(v) => setSearchProject(v)}
-              style={{ width: 72 }}
-              placeholder="项目"
-            />
-          }
+        {/* <Input
           value={searchKey}
           onChange={(e) => setSearchKey(e.target.value)}
           onPressEnter={handleSearch}
           placeholder="搜索"
+        /> */}
+        <Select
+          options={projectOptions}
+          value={searchProject}
+          onChange={(v) => setSearchProject(v)}
+          placeholder="项目"
         />
         <a onClick={handleAddProject}>
           <PlusSquareFilled style={{ fontSize: 24 }} />
