@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 export interface IProps {
+  envTypeCode: string;
   deployInfo: Record<string, any>;
   onOperate: (type: OperateType) => void;
 }

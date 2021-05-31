@@ -5,9 +5,13 @@
  * @create 2021-04-24 11:46
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { Steps, Button, Modal, Radio, Spin, message } from 'antd';
-import { confirmProdDeploy } from '../../../../../../../../service';
+import DetailContext from '../../../../../../../context';
+import {
+  confirmProdDeploy,
+  queryEnvsReq,
+} from '../../../../../../../../service';
 import { IProps } from './types';
 // import './index.less';
 
@@ -17,19 +21,57 @@ const hospitalCodeToText: Record<string, string> = {
   zheyi: '浙一',
 };
 
-const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
-  const {
-    deployStatus,
-    deployingHospital,
-    deployingHosBatch,
-    jenkinsUrl,
-    hospitals,
-  } = deployInfo || {};
+const DeployModal = ({
+  envTypeCode,
+  visible,
+  deployInfo,
+  onCancel,
+  onOperate,
+}: IProps) => {
+  const { deployStatus, deployingEnv, deployingHosBatch, jenkinsUrl } =
+    deployInfo || {};
+  console.log(deployInfo, 'deployInfo');
+  const { appData } = useContext(DetailContext);
+  const { appCategoryCode } = appData || {};
 
   const [deployConfig, setDeployConfig] = useState({
     deployEnv: '',
     deployBatch: 12,
   });
+  const [envDataList, setEnvDataList] = useState([]);
+
+  useEffect(() => {
+    if (!appCategoryCode) return;
+    queryEnvsReq({
+      categoryCode: appCategoryCode as string,
+      envTypeCode,
+    }).then((data) => {
+      console.log(data.list, 'data.list');
+      setEnvDataList(data.list);
+    });
+  }, [appCategoryCode, envTypeCode]);
+
+  const envList = useMemo(() => {
+    const { envs } = deployInfo;
+    const namesArr: any[] = [];
+    if (envs?.indexOf(',') > -1) {
+      const list = envs?.split(',') || [];
+      envDataList?.forEach((item: any) => {
+        list?.forEach((v: any) => {
+          if (item?.envCode === v) {
+            namesArr.push({
+              envName: item.envName,
+              envCode: v,
+            });
+          }
+        });
+      });
+      console.log(namesArr, 'namesArr');
+      return namesArr;
+    }
+
+    return (envDataList as any[]).filter((v: any) => v.envCode === envs);
+  }, [envDataList, deployInfo]);
 
   const detail = useMemo(() => {
     // TODO 如何判断哪个机构被部署了
@@ -43,7 +85,10 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
 
     if (deployStatus === 'deploying') {
       text1 = (
-        <span>{hospitalCodeToText[deployingHospital]}正在部署中。。。</span>
+        <span>
+          {envList.find((v) => v.envCode === deployingEnv)?.envName}
+          正在部署中。。。
+        </span>
       );
 
       if (deployingHosBatch === 2) {
@@ -51,7 +96,10 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
       }
     } else if (deployStatus === 'deployWaitBatch2') {
       text1 = (
-        <span>{hospitalCodeToText[deployingHospital]}正在部署中。。。</span>
+        <span>
+          {envList.find((v) => v.envCode === deployingEnv)?.envName}
+          正在部署中。。。
+        </span>
       );
       text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
     }
@@ -109,9 +157,9 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
           onChange={(v) =>
             setDeployConfig({ ...deployConfig, deployEnv: v.target.value })
           }
-          options={hospitals?.split(',').map((code: string) => ({
-            label: hospitalCodeToText[code],
-            value: code,
+          options={envList?.map((v: any) => ({
+            label: v.envName,
+            value: v.envCode,
           }))}
         />
       </div>

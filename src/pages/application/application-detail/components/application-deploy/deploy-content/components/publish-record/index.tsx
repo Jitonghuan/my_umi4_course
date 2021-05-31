@@ -100,7 +100,6 @@ const PublishRecord = (props: IProps) => {
 
   // 显示详情
   const handleShowDetail = (record: IRecord) => {
-    console.log(tableProps.dataSource, 'tableProps.dataSource');
     setVisible(true);
     setcurRecord(record);
   };
