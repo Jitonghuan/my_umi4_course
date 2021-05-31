@@ -107,14 +107,6 @@ const PublishContent = ({
               >
                 批量退出
               </Button>
-              <Button
-                onClick={() => {
-                  // TODO
-                  // alert('缺接口');
-                }}
-              >
-                重启
-              </Button>
             </div>
           )}
         </div>
