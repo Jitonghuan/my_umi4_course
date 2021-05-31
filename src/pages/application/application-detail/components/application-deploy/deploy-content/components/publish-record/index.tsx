@@ -40,7 +40,6 @@ const PublishRecord = (props: IProps) => {
       appCode,
       env,
       isActive: 0,
-      pageSize: 99999,
     });
   }, []);
 
