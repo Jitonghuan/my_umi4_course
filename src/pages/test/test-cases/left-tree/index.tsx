@@ -16,6 +16,7 @@ import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { SelectOptions, CaseItemVO } from '../interfaces';
+import { useProjectOptions } from '../hooks';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
@@ -67,9 +68,10 @@ const treeData = [
 
 export default function LeftTree(props: LeftTreeProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [projectOptions, setProjectOptions] = useState<SelectOptions<number>[]>(
-    [],
-  );
+  // const [projectOptions, setProjectOptions] = useState<SelectOptions<number>[]>(
+  //   [],
+  // );
+  const [projectOptions] = useProjectOptions();
   const [searchProject, setSearchProject] = useState<number>();
   const [searchKey, setSearchKey] = useState<string>('');
   const [selectedItem, setSelectedItem] = useState<CaseItemVO>();

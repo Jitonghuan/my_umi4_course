@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { parse } from 'qs';
 import rjson from 'relaxed-json';
 import ds from '@config/defaultSettings';
@@ -62,4 +63,24 @@ export const addAPIPrefix = (api: string) => {
   }
 
   return `${origin}${ds.apiPrefix}${api}`;
+};
+
+/** 使用浏览器原生的方法进行 base64 编码 */
+export const base64Encode = (str: string) => {
+  return window.btoa(window.unescape(window.encodeURIComponent(str)));
+};
+
+/** 使用浏览器原生方法进行 base64 解码 */
+export const base64Decode = (str: string) => {
+  return window.decodeURIComponent(window.escape(window.atob(str)));
+};
+
+/** 标准化 日期+时间 字符串输出 */
+export const datetimeCellRender = (str: string) => {
+  return (str && moment(str).format('YYYY-MM-DD HH:mm:ss')) || '';
+};
+
+/** 标准化 日期 字符串 输出 */
+export const dateCellRender = (str: string) => {
+  return (str && moment(str).format('YYYY-MM-DD')) || '';
 };

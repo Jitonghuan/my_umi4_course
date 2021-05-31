@@ -10,9 +10,9 @@ import { ContentCard } from '@/components/vc-page-content';
 import { EnvItemVO, EnvDbConfItemVO, EnvVarConfItemVO } from '../interfaces';
 import * as APIS from '../service';
 import { postRequest } from '@/utils/request';
-import { ENV_CODE_OPTIONS } from '../common';
 import DBPanel from './db-pane';
 import GlobalVarPanel from './global-var';
+import { useEnvCodeOptions } from '../hooks';
 import './index.less';
 
 type UpdateFormDataProps = Partial<EnvItemVO>;
@@ -32,6 +32,7 @@ export default function EnvDetail(props: EnvDetailProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [editField] = Form.useForm<UpdateFormDataProps>();
   const [currentTab, setCurrentTab] = useState<TabKeyEnum>('http');
+  const [envCodeOptions] = useEnvCodeOptions();
 
   const [dbSource, setDbSource] = useState<EnvDbConfItemVO[]>([]);
   const globalVarRef = useRef<() => EnvVarConfItemVO[]>(() => []);
@@ -48,7 +49,7 @@ export default function EnvDetail(props: EnvDetailProps) {
   const handleSubmit = async () => {
     const values = editField.getFieldsValue();
     const submitData = {
-      id: 1,
+      id: props.current.id,
       envName: values.name,
       envCode: values.code,
       httpConf: values.httpConf || '',
@@ -99,7 +100,7 @@ export default function EnvDetail(props: EnvDetailProps) {
           rules={[{ required: true, message: '请选择绑定环境' }]}
           {...formLayout}
         >
-          <Select options={ENV_CODE_OPTIONS} />
+          <Select options={envCodeOptions} />
         </Form.Item>
         <Tabs
           onChange={(key) => setCurrentTab(key as TabKeyEnum)}

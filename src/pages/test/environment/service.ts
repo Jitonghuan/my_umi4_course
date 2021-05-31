@@ -5,6 +5,9 @@
 
 import { addAPIPrefix } from '@/utils';
 
+/** GET 0、获取应用管理 */
+export const envCodeList = addAPIPrefix('/appManage/env/list');
+
 /** POST 1、环境管理-新增环境 */
 export const addEnv = addAPIPrefix('/qc/autotest/addEnv');
 

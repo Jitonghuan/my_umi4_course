@@ -16,6 +16,7 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from './service';
 import { getRequest, postRequest } from '@/utils/request';
+import { base64Encode, datetimeCellRender } from '@/utils';
 import './index.less';
 
 export default function FunctionManager() {
@@ -40,10 +41,10 @@ export default function FunctionManager() {
       data: { keyword, pageIndex, pageSize },
     })
       .then((result) => {
-        const { data } = result;
-        setDataSource(data || []);
+        const { dataSource, pageInfo } = result.data || {};
 
-        setTotal(100); // TODO 返回的数据里面没有分页信息!!
+        setDataSource(dataSource || []);
+        setTotal(pageInfo?.total);
       })
       .finally(() => {
         setLoading(false);
@@ -68,7 +69,7 @@ export default function FunctionManager() {
       // 新增
       postRequest(APIS.addFunc, {
         data: {
-          funcBody: content, // TODO 数据怎么加密？
+          funcBody: base64Encode(content),
           createUser: userInfo.userName,
           modifyUser: userInfo.userName,
         },
@@ -83,7 +84,7 @@ export default function FunctionManager() {
       postRequest(APIS.updateFunc, {
         data: {
           id,
-          funcBody: content,
+          funcBody: base64Encode(content),
           modifyUser: userInfo.userName,
         },
       }).then(() => {
@@ -149,7 +150,11 @@ export default function FunctionManager() {
           <Table.Column title="函数名" dataIndex="name" />
           <Table.Column title="描述" dataIndex="desc" />
           <Table.Column title="创建人" dataIndex="createUser" />
-          <Table.Column title="操作时间" dataIndex="gmtModify" />
+          <Table.Column
+            title="操作时间"
+            dataIndex="gmtModify"
+            render={datetimeCellRender}
+          />
           <Table.Column
             title="操作"
             width={120}

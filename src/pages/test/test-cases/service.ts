@@ -52,3 +52,6 @@ export const getPreCaseList = addAPIPrefix('/qc/autotest/getPreCaseList');
 
 /** POST 25、用例管理-更新用例 */
 export const updateCaseInfo = addAPIPrefix('/qc/autotest/updateCaseInfo');
+
+/** GET 26、用例管理-项目列表 */
+export const getProjects = addAPIPrefix('/qc/autotest/getProjects');
