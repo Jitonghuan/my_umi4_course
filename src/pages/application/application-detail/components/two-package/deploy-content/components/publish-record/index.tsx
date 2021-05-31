@@ -40,6 +40,7 @@ const PublishRecord = (props: IProps) => {
       appCode,
       env,
       isActive: 0,
+      pageSize: 99999,
     });
   }, []);
 
@@ -55,6 +56,21 @@ const PublishRecord = (props: IProps) => {
 
   const envNames: IRecord = useMemo(() => {
     const { envs } = curRecord;
+    const namesArr: any[] = [];
+    if (envs?.indexOf(',') > -1) {
+      const list = envs?.split(',') || [];
+      envDataList?.forEach((item: any) => {
+        list?.forEach((v: any) => {
+          if (item?.envCode === v) {
+            namesArr.push(item.envName);
+          }
+        });
+      });
+      return {
+        ...curRecord,
+        envs: namesArr.join(','),
+      };
+    }
 
     return {
       ...curRecord,
@@ -98,7 +114,11 @@ const PublishRecord = (props: IProps) => {
           loading={tableProps.loading}
           itemLayout="vertical"
           loadMore={renderLoadMore()}
-          dataSource={tableProps.dataSource as IRecord[]}
+          dataSource={
+            tableProps.dataSource?.filter(
+              (v) => v?.envTypeCode === env,
+            ) as IRecord[]
+          }
           renderItem={(item) => (
             <List.Item>
               {Object.keys(recordFieldMap)

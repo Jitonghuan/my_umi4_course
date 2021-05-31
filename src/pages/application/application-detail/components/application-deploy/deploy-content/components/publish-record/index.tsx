@@ -40,6 +40,7 @@ const PublishRecord = (props: IProps) => {
       appCode,
       env,
       isActive: 0,
+      pageSize: 99999,
     });
   }, []);
 
@@ -100,6 +101,7 @@ const PublishRecord = (props: IProps) => {
 
   // 显示详情
   const handleShowDetail = (record: IRecord) => {
+    console.log(tableProps.dataSource, 'tableProps.dataSource');
     setVisible(true);
     setcurRecord(record);
   };
