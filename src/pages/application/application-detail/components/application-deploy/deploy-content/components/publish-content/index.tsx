@@ -39,9 +39,14 @@ const PublishContent = ({
           appCode={appCode}
           deployInfo={deployInfo}
           onOperate={onOperate}
+          envTypeCode={envTypeCode}
         />
       ) : (
-        <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} />
+        <OtherEnvSteps
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          envTypeCode={envTypeCode}
+        />
       )}
 
       <div className={`${rootCls}__list-wrap`}>
