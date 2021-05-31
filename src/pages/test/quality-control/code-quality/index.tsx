@@ -159,8 +159,8 @@ const UnitTest: React.FC<any> = () => {
     },
     {
       title: '重复率',
-      dataIndex: 'newDuplicatedLinesCov',
-      key: 'newDuplicatedLinesCov',
+      dataIndex: 'duplicatedLinesCov',
+      key: 'duplicatedLinesCov',
       width: '10%',
     },
     {

@@ -38,6 +38,10 @@ export default [
     redirect: `${ds.pagePrefix}/monitor/board`,
   },
   {
+    path: `${ds.pagePrefix}/ticket`,
+    redirect: `${ds.pagePrefix}/ticket/list`,
+  },
+  {
     path: `${ds.pagePrefix}/order`,
     redirect: `${ds.pagePrefix}/order/list`,
   },
