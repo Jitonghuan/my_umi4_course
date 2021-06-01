@@ -45,6 +45,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
       isReadOnly,
       mode,
       id,
+      allowClear,
       min,
       max,
       ...rest
@@ -79,7 +80,7 @@ export const renderForm = (formOptions: FormProps[] = []) => {
               >
                 <Select
                   placeholder={placeholder ?? '请选择'}
-                  allowClear
+                  allowClear={allowClear || true}
                   showSearch={showSelectSearch}
                   optionFilterProp="children"
                   filterOption={(input, option) =>

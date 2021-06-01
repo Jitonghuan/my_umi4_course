@@ -13,8 +13,11 @@ const EditModify: React.FC = (props) => {
       queryPublishPlanReq({ id }).then((resp) => {
         if (resp?.[0]) {
           setDetailInfo({
-            ...resp?.[0],
-            preDeployTime: moment(resp?.[0]?.preDeployTime),
+            plan: {
+              ...resp?.[0].plan,
+              preDeployTime: moment(resp?.[0]?.plan.preDeployTime),
+            },
+            funcIds: resp?.[0].funcIds,
           });
         }
       });

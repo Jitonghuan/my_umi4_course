@@ -255,6 +255,27 @@ export default [
         hideInMenu: true,
         component: '@/pages/test/quality-control/code-quality',
       },
+      {
+        path: 'environment',
+        name: '环境管理',
+        key: 'environment',
+        component: '@/pages/test/environment',
+        exact: true,
+      },
+      {
+        path: 'functions',
+        name: '函数管理',
+        key: 'functions',
+        component: '@/pages/test/functions',
+        exact: true,
+      },
+      {
+        path: 'test-cases',
+        name: '用例管理',
+        key: 'test-cases',
+        component: '@/pages/test/test-cases',
+        exact: true,
+      },
     ],
   },
   {

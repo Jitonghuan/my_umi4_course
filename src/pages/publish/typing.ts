@@ -39,7 +39,7 @@ export interface InitValue {
   appCode?: string;
   version?: string;
   deployRelease?: string;
-  dependcy?: string;
+  dependency?: string;
   developer?: string;
   tester?: string;
   deployer?: string;

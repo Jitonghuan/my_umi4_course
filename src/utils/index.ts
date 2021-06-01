@@ -1,5 +1,7 @@
+import moment from 'moment';
 import { parse } from 'qs';
 import rjson from 'relaxed-json';
+import ds from '@config/defaultSettings';
 
 /** 深度优先搜索处理 func */
 export const DFSFunc = (
@@ -50,4 +52,35 @@ export const JsonParse = (jsonStr: string, relaxed?: boolean) => {
   } catch (e) {
     return [true];
   }
+};
+
+/** 给接口增加统一前缀 */
+export const addAPIPrefix = (api: string) => {
+  const origin = '';
+  if (/^(https?:)?\/\//.test(api)) return api;
+  if (!/^\//.test(api)) {
+    api = `/${api}`;
+  }
+
+  return `${origin}${ds.apiPrefix}${api}`;
+};
+
+/** 使用浏览器原生的方法进行 base64 编码 */
+export const base64Encode = (str: string) => {
+  return window.btoa(window.unescape(window.encodeURIComponent(str)));
+};
+
+/** 使用浏览器原生方法进行 base64 解码 */
+export const base64Decode = (str: string) => {
+  return window.decodeURIComponent(window.escape(window.atob(str)));
+};
+
+/** 标准化 日期+时间 字符串输出 */
+export const datetimeCellRender = (str: string) => {
+  return (str && moment(str).format('YYYY-MM-DD HH:mm:ss')) || '';
+};
+
+/** 标准化 日期 字符串 输出 */
+export const dateCellRender = (str: string) => {
+  return (str && moment(str).format('YYYY-MM-DD')) || '';
 };
