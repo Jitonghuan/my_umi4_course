@@ -67,7 +67,7 @@ export interface TableSearchProps extends TableProps<any> {
   showTableTitle?: boolean;
   tableTitle?: string;
   style?: CSSProperties;
-  onSearch?: (value: Record<string, any>) => void;
+  onSearch?: () => void;
   form?: FormInstance;
   reset?: () => void;
 }

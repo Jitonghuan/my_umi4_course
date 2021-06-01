@@ -23,6 +23,17 @@ const FunctionCom: React.FC = () => {
     url: queryFunctionUrl,
     method: 'GET',
     form,
+    formatter: (params) => {
+      return {
+        ...params,
+        preDeployTime: params.preDeployTime
+          ? params.preDeployTime.format('YYYY-MM-DD')
+          : undefined,
+        deployTime: params.deployTime
+          ? params.deployTime.format('YYYY-MM-DD')
+          : undefined,
+      };
+    },
   });
 
   const onCategoryChange = (code: string) => {
@@ -85,7 +96,7 @@ const FunctionCom: React.FC = () => {
         className="table-form"
         onSearch={submit}
         reset={reset}
-        scroll={{ x: 1800 }}
+        scroll={tableProps.dataSource.length > 0 ? { x: 1800 } : undefined}
       />
     </MatrixPageContent>
   );

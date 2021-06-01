@@ -10,7 +10,8 @@ import moment, { Moment } from 'moment';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import useRequest from '@/utils/useRequest';
-import EditTable from '../editTable';
+import EditTable from '@/components/edit-table';
+import { editColumns } from './colunms';
 import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
 import { queryRuleTemplatesList, queryGroupList } from '../../service';
@@ -126,34 +127,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
     //规则情况
     if (drawerType === 'rules') {
-      // 回显通知对象
-      // if(!record?.receiver) {
-      //   receiver = undefined;
-      // }
-      // else if(record?.receiver && typeof(record?.receiver) === 'string' && record?.receiver?.indexOf(',') > -1) {
-      //   receiver = record?.receiver.split(',');
-      // } else {
-      //   receiver = [record?.receiver as string];
-      // }
-
-      //回显通知方式
-      // if(!record?.receiverType) {
-      //   receiverType = undefined;
-      // }
-      // else if(record?.receiverType && typeof(record?.receiverType) === 'string' && record?.receiverType?.indexOf(',') > -1) {
-      //   receiverType = record?.receiverType.split(',');
-      // } else {
-      //   receiverType = [record?.receiverType as string];
-      // }
-
       //回显时间
       if (record?.silence) {
         silenceTime[0] = moment(record?.silenceStart, 'HH:mm');
         silenceTime[1] = moment(record?.silenceEnd, 'HH:mm');
       }
 
-      // setValues.receiver = receiver as string[];
-      // setValues.receiverType = receiverType as string[];
       setValues.silenceTime = silenceTime;
     }
 
@@ -171,20 +150,26 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
   //打开抽屉在请求
   useEffect(() => {
-    if (!visible) return;
+    if (!visible) {
+      onCancel();
+      return;
+    }
     groupList();
   }, [visible]);
 
   useEffect(() => {
     //报警规则
     if (drawerType === 'rules') {
-      queryRuleTemplatesListFun({ pageIndex: -1 });
+      queryRuleTemplatesListFun({ pageIndex: -1, status: 0 });
     }
   }, [drawerType]);
 
   useEffect(() => {
     //报警模板回显数据
-    if (!visible) return;
+    if (!visible) {
+      onCancel();
+      return;
+    }
     const findRecord =
       (ruleTemplatesList as Item[])?.find((v) => v.name === ruleTemplate) ?? {};
     editDataDetail(findRecord);
@@ -195,7 +180,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     if (type === 'edit' && visible) {
       editDataDetail(record);
     }
-    console.log(type, 'type');
   }, [type, record, visible]);
 
   const formOptions: FormProps[] = [
@@ -230,9 +214,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           max: 253,
         },
       ],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '3',
@@ -242,9 +223,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       placeholder: '请选择',
       required: true,
       option: groupData,
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '4',
@@ -259,9 +237,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           value: 'kkkk节点',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '5',
@@ -273,6 +248,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       required: true,
       style: { marginRight: 10 },
       className: 'extraStyleTime',
+      min: 1,
       extraForm: (
         <Form.Item name="timeType" noStyle initialValue="m">
           <Select style={{ width: '90%' }} placeholder="选择时间单位">
@@ -282,9 +258,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           </Select>
         </Form.Item>
       ),
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '6',
@@ -294,9 +267,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       // width: '144px',
       placeholder: '请输入',
       required: true,
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '7',
@@ -327,9 +297,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           value: '灾难',
         },
       ],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '8',
@@ -341,31 +308,33 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       itemStyle: { marginBottom: 0 },
       extraForm: (
         <Form.Item noStyle>
-          {/* <Form.Item name="labels" label="标签（Labels)" className="table-item">
-          <EditTable onTableChange={labelFun} initData={labelTableData} headerTitle='标签（Labels)'/>
-          </Form.Item>
-          <Form.Item
-            name="annotations"
-            label="注释（Annotations)"
-            className="table-item"
-          >
-          <EditTable
-              onTableChange={annotationsFun}
-              initData={annotationsTableData}
-              headerTitle='标签（Labels)'
-            />
-          </Form.Item> */}
           <EditTable
             onTableChange={labelFun}
             initData={labelTableData}
             headerTitle="标签（Labels):"
             style={{ marginBottom: 8 }}
+            columns={editColumns}
+            handleAddItem={() => {
+              return {
+                id: labelTableData.length,
+                key: 'key',
+                value: 'value',
+              };
+            }}
           />
           <EditTable
             onTableChange={annotationsFun}
             initData={annotationsTableData}
             headerTitle="注释（Annotations):"
             style={{ marginBottom: 16 }}
+            columns={editColumns}
+            handleAddItem={() => {
+              return {
+                id: annotationsTableData.length,
+                key: 'key',
+                value: 'value',
+              };
+            }}
           />
         </Form.Item>
       ),
@@ -395,9 +364,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           type: 'array',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '10',
@@ -424,9 +390,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           type: 'array',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '11',
@@ -528,6 +491,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       visible={visible}
       width={700}
       bodyStyle={{ paddingRight: 0 }}
+      maskClosable={false}
       footer={
         <Space>
           <Button type="primary" onClick={onFinish}>

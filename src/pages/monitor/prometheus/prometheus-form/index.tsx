@@ -5,9 +5,9 @@ import ds from '@config/defaultSettings';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import useRequest from '@/utils/useRequest';
-import StepOne from './step-one';
-import StepTwo from './step-two';
-import StepThree from './step-three';
+import StepMonitor from './step-monitor';
+import StepTwo from '../../component/rules-table';
+import StepComplate from './step-complate';
 import {
   createPrometheus,
   updatePrometheus,
@@ -38,7 +38,6 @@ const PrometheusForm: React.FC = () => {
   const [formList, setFormList] = useState({});
   const [current, setCurrent] = useState(0);
   const [stepOneTable, setStepOneTable] = useState<Item[]>([]);
-  const [stepTwoTable, setStepTwoTable] = useState<Record<string, Item[]>>({});
   const [serviceId, setServiceId] = useState('');
   const [matchlabels, setMatchlabels] = useState<Item[]>([]);
   const [form] = Form.useForm();
@@ -129,10 +128,6 @@ const PrometheusForm: React.FC = () => {
     setStepOneTable(value);
   };
 
-  const stepTwoTableFun = (value: Record<string, Item[]>) => {
-    setStepTwoTable(value);
-  };
-
   const isFirstCurrent = current === 0;
 
   useEffect(() => {
@@ -145,16 +140,20 @@ const PrometheusForm: React.FC = () => {
     {
       current: 0,
       dom: (
-        <StepOne getTableData={stepOneTableFun} matchlabelsList={matchlabels} />
+        <StepMonitor
+          getTableData={stepOneTableFun}
+          matchlabelsList={matchlabels}
+          form={form}
+        />
       ),
     },
     {
       current: 1,
-      dom: <StepTwo getTableData={stepTwoTableFun} serviceId={serviceId} />,
+      dom: <StepTwo serviceId={serviceId} />,
     },
     {
       current: 2,
-      dom: <StepThree reset={reset} />,
+      dom: <StepComplate reset={reset} />,
     },
   ];
 

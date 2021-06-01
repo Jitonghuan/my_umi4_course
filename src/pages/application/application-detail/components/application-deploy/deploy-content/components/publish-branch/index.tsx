@@ -5,25 +5,23 @@
  * @create 2021-04-15 10:22
  */
 
-import React, { useState, useContext } from 'react';
-import { Steps, Button, message, Modal, Checkbox } from 'antd';
+import React, { useState, useContext, useEffect } from 'react';
+import { Steps, Button, message, Modal, Checkbox, Form, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
+import { history } from 'umi';
 import { createTableSchema } from './schema';
 import DetailContext from '../../../../../context';
-import { createDeploy, updateFeatures } from '../../../../../../service';
+import {
+  createDeploy,
+  updateFeatures,
+  queryEnvsReq,
+} from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
-const hospitalMap: Record<string, any[]> = {
-  g3a: [{ label: '浙一', value: 'zheyi' }],
-  gmc: [
-    { label: '天台', value: 'tiantai' },
-    { label: '巍山', value: 'weishan' },
-  ],
-};
 
 const PublishBranch = ({
   hasPublishContent,
@@ -40,7 +38,12 @@ const PublishBranch = ({
   );
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
+
+  const {
+    location: { query },
+  } = history;
 
   const submit = () => {
     const filter = dataSource
@@ -63,7 +66,8 @@ const PublishBranch = ({
       appCode: appCode!,
       envTypeCode: env,
       features: filter,
-      hospitals: env === 'prod' ? deployEnv : undefined,
+      envCodes: deployEnv,
+      isClient: query?.isClient !== '0',
     }).then((res: any) => {
       if (!res.success) {
         message.error(res.errorMsg);
@@ -73,8 +77,8 @@ const PublishBranch = ({
   };
 
   const submitClick = () => {
-    // 非生产环境
-    if (env !== 'prod') {
+    // 二方包
+    if (query?.isClient === '1') {
       confirm({
         title: '确定要提交发布吗?',
         icon: <ExclamationCircleOutlined />,
@@ -90,9 +94,19 @@ const PublishBranch = ({
       return;
     }
 
-    // 生产环境
+    // 非二方包
     setDeployVisible(true);
   };
+
+  useEffect(() => {
+    if (!appCategoryCode) return;
+    queryEnvsReq({
+      categoryCode: appCategoryCode as string,
+      envTypeCode: env,
+    }).then((data) => {
+      setEnvDataList(data.list);
+    });
+  }, [appCategoryCode, env]);
 
   return (
     <div className={rootCls}>
@@ -147,13 +161,14 @@ const PublishBranch = ({
           setConfirmLoading(false);
           onSubmitBranch?.('end');
         }}
+        maskClosable={false}
       >
         <div>
           <span>发布环境：</span>
           <Checkbox.Group
             value={deployEnv}
             onChange={(v) => setDeployEnv(v)}
-            options={hospitalMap[appCategoryCode!] || []}
+            options={envDataList || []}
           />
         </div>
       </Modal>

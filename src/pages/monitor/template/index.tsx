@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Space, Tag, Popconfirm, Form } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Button, Space, Tag, Popconfirm, Form, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import TableSearch from '@/components/table-search';
@@ -7,7 +7,7 @@ import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
-import TemplateDrawer from '../component/templateDrawer';
+import TemplateDrawer from '../component/template-drawer';
 import { Item } from '../typing';
 import {
   queryRuleTemplatesList,
@@ -106,12 +106,22 @@ const TemplateCom: React.FC = () => {
       title: '规则名称',
       dataIndex: 'name',
       key: 'name',
-      // width: '6%',
-      // render: (text) => (
-      //   <div style={{ width: 100, wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      // width: '10%',
+      render: (text) => (
+        <Tooltip title={text}>
+          <span
+            style={{
+              display: 'inline-block',
+              width: 100,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {text}
+          </span>
+        </Tooltip>
+      ),
     },
     {
       title: '分类',
@@ -124,22 +134,42 @@ const TemplateCom: React.FC = () => {
       dataIndex: 'expression',
       key: 'expression',
       // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      render: (text) => (
+        <Tooltip title={text}>
+          <span
+            style={{
+              display: 'inline-block',
+              width: 100,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {text}
+          </span>
+        </Tooltip>
+      ),
     },
     {
       title: '告警消息',
       dataIndex: 'message',
       key: 'message',
       // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      render: (text) => (
+        <Tooltip title={text}>
+          <span
+            style={{
+              display: 'inline-block',
+              width: 100,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {text}
+          </span>
+        </Tooltip>
+      ),
     },
     {
       title: '持续时间',
@@ -213,9 +243,6 @@ const TemplateCom: React.FC = () => {
       dataIndex: 'name',
       width: '144px',
       placeholder: '请输入',
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '2',
@@ -234,9 +261,6 @@ const TemplateCom: React.FC = () => {
           value: '未启用',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
   ];
 
@@ -248,7 +272,6 @@ const TemplateCom: React.FC = () => {
     if (type === 'add') {
       createRuleTemplatesFun({ ...value });
     } else {
-      console.log(123);
       updateRuleTemplatesFun({ ...value });
     }
   };
@@ -262,6 +285,7 @@ const TemplateCom: React.FC = () => {
         columns={columns}
         {...tableProps}
         pagination={{
+          ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',
@@ -275,6 +299,7 @@ const TemplateCom: React.FC = () => {
             onClick={() => {
               setDrawerVisible(true);
               setType('add');
+              setDrawerTitle('新增报警规则模版');
             }}
             icon={<PlusOutlined />}
           >
@@ -284,7 +309,9 @@ const TemplateCom: React.FC = () => {
         className="table-form"
         onSearch={queryList}
         reset={reset}
-        scroll={{ x: 'max-content' }}
+        scroll={
+          tableProps.dataSource.length > 0 ? { x: 'max-content' } : undefined
+        }
       />
       <TemplateDrawer
         visible={drawerVisible}

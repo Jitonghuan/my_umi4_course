@@ -1,8 +1,16 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+/**
+ * editTable
+ * @description 简易可编辑表格
+ * @author
+ * @create
+ */
+
+import React, { useContext, useState, useEffect, useRef, useMemo } from 'react';
 import { Table, Input, Button, Popconfirm, Form, Space } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { FormInstance, TableColumnProps } from 'antd/lib';
+import { ColumnsType } from 'antd/lib/table';
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { Item } from '../../typing';
+// import { Item } from '../../typing';
 import './index.less';
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -22,13 +30,13 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   );
 };
 
-interface EditableCellProps {
+interface EditableCellProps<T = object> {
   title: React.ReactNode;
   editable: boolean;
   children: React.ReactNode;
-  dataIndex: keyof Item;
-  record: Item;
-  handleSave: (record: Item) => void;
+  dataIndex: keyof T;
+  record: T;
+  handleSave: (record: T) => void;
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({
@@ -88,6 +96,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   </Form.Item>;
 
   if (editable) {
+    // form.resetFields([`${dataIndex}`]);
     childNode = editing ? (
       <Form.Item
         style={{ margin: 0 }}
@@ -121,42 +130,35 @@ const EditableCell: React.FC<EditableCellProps> = ({
 };
 
 type EditableTableProps = Parameters<typeof Table>[0];
-
-interface EditableTableState extends EditableTableProps {
-  initData?: Item[];
+interface EditableTableState<T = any> extends EditableTableProps {
+  initData?: T[];
   headerTitle?: string | React.ReactNode;
-  onTableChange?: (value: Item[]) => void;
+  onTableChange?: (value: T[]) => void;
+  handleAddItem: () => T;
 }
 
-const EditableTable: React.FC<EditableTableState> = ({
+const EditableTable = <
+  T extends {
+    id: React.Key;
+  } = any
+>({
   initData = [],
   onTableChange,
   headerTitle,
   style,
-}) => {
-  const [dataSource, setDataSource] = useState<Item[]>(initData);
+  handleAddItem,
+  columns: columnsList,
+}: EditableTableState) => {
+  const [dataSource, setDataSource] = useState<T[]>([]);
   const [count, setCount] = useState<number>(dataSource.length);
 
   const columns = [
-    {
-      title: '键',
-      dataIndex: 'key',
-      editable: true,
-      width: '45%',
-    },
-    {
-      title: '值',
-      dataIndex: 'value',
-      key: 'value',
-      editable: true,
-      width: '45%',
-    },
     {
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
       width: 50,
-      render: (_: string, record: Item) => {
+      render: (_: string, record: any) => {
         const findData = dataSource.find((v) => v.id === record.id);
         return (
           <Space>
@@ -181,7 +183,6 @@ const EditableTable: React.FC<EditableTableState> = ({
   ];
 
   useEffect(() => {
-    console.log(dataSource);
     onTableChange && onTableChange(dataSource);
   }, [dataSource]);
 
@@ -196,16 +197,12 @@ const EditableTable: React.FC<EditableTableState> = ({
   };
 
   const handleAdd = () => {
-    const newData: Item = {
-      id: dataSource.length,
-      key: '点击可修改key',
-      value: '点击可修改value',
-    };
+    const newData: T = handleAddItem();
     setDataSource([...dataSource, newData]);
     // setCount(count + 1);
   };
 
-  const handleSave = (row: Item) => {
+  const handleSave = (row: T) => {
     const newData = [...dataSource];
 
     const index = newData.findIndex((item) => row.id === item.id);
@@ -224,13 +221,13 @@ const EditableTable: React.FC<EditableTableState> = ({
     },
   };
 
-  const EditColumns = columns.map((col) => {
+  const EditColumns = columnsList?.map((col: any) => {
     if (!col.editable) {
       return col;
     }
     return {
       ...col,
-      onCell: (record: Item) => ({
+      onCell: (record: T) => ({
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
@@ -239,6 +236,7 @@ const EditableTable: React.FC<EditableTableState> = ({
       }),
     };
   });
+
   return (
     <div style={style}>
       <div
@@ -253,12 +251,12 @@ const EditableTable: React.FC<EditableTableState> = ({
           添加
         </Button>
       </div>
-      <Table
+      <Table<T>
         components={components}
         // rowClassName={() => 'editable-row'}
         bordered
         dataSource={dataSource}
-        columns={EditColumns}
+        columns={[...(EditColumns as any[]), ...columns]}
         pagination={false}
         rowKey="id"
         style={{ width: '100%' }}

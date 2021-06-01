@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Form, Button, Space } from 'antd';
+import { Form, Button, Space, Popconfirm } from 'antd';
 import { omit } from 'lodash';
+import { history } from 'umi';
 import 'codemirror/lib/codemirror.css';
 import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
@@ -44,6 +45,8 @@ const DataFactoryAdd: React.FC = () => {
   const { data: dataFactory = [], run: createDataFactoryFun } = useRequest({
     api: createDataFactory,
     method: 'POST',
+    successText: '创建成功',
+    isSuccessModal: true,
   });
 
   const formOptionsLeft: FormProps[] = [
@@ -159,6 +162,7 @@ const DataFactoryAdd: React.FC = () => {
     const id =
       (factoryNameData as Item[])?.find((v) => v.name === factoryName)?.id ??
       '';
+
     createDataFactoryFun({
       ...omit(values, ['returnData']),
       factoryId: id,
@@ -200,9 +204,14 @@ const DataFactoryAdd: React.FC = () => {
         </Form>
         <div style={{ textAlign: 'right' }}>
           <Space>
-            <Button type="primary" onClick={onSubmit}>
-              立即创建
-            </Button>
+            <Popconfirm
+              title="确认创建数据？"
+              okText="确定"
+              onConfirm={onSubmit}
+            >
+              <Button type="primary">立即创建</Button>
+            </Popconfirm>
+
             <Button
               onClick={() => {
                 form.resetFields();
@@ -210,6 +219,7 @@ const DataFactoryAdd: React.FC = () => {
             >
               重置
             </Button>
+            <Button onClick={() => history.goBack()}>取消</Button>
           </Space>
         </div>
       </ContentCard>

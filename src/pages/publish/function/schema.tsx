@@ -90,6 +90,7 @@ export const createFormItems = (params: {
       dataIndex: 'preDeployTime',
       width: '144px',
       placeholder: '请选择日期',
+      rules: [],
       onChange: (e: Moment) => {
         console.log(e);
       },
@@ -101,6 +102,7 @@ export const createFormItems = (params: {
       dataIndex: 'deployTime',
       width: '144px',
       placeholder: '请选择日期',
+      rules: [],
       onChange: (e: Moment) => {
         console.log(e);
       },

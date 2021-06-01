@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Tooltip, Space, Popconfirm, Button, Form } from 'antd';
+import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';
@@ -10,15 +10,15 @@ import {
   updateRules,
   ruleSwitch,
   deleteRules,
-} from '../../../service';
-import TemplateDrawer from '../../../component/templateDrawer';
-import { Item } from '../../../typing';
+} from '../../service';
+import TemplateDrawer from '../template-drawer';
+import { Item } from '../../typing';
 import './index.less';
 
 interface StepTwoProps {
-  getTableData: (value: Record<string, Item[]>) => void;
   serviceId: string;
   form?: FormInstance;
+  isShowAddButton?: boolean;
 }
 
 type statusTypeItem = {
@@ -33,7 +33,10 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   1: { tagText: '未启用', buttonText: '启用', color: 'default', status: 0 },
 };
 
-const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
+const RulesTable: React.FC<StepTwoProps> = ({
+  serviceId,
+  isShowAddButton = true,
+}) => {
   const [dataSources, setDataSources] = useState<{
     dataSource: Item[];
     pageInfo: Record<string, React.Key>;
@@ -144,6 +147,15 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
       // ),
     },
     {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      // width: '4%',
+      render: (text: number) => (
+        <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>
+      ),
+    },
+    {
       title: '操作',
       dataIndex: 'option',
       key: 'news',
@@ -153,7 +165,7 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
           <a
             onClick={() => {
               setDrawerVisible(true);
-              setDrawerTitle('编辑报警规则模版');
+              setDrawerTitle('编辑报警规则');
               setEditRecord(record);
               setType('edit');
             }}
@@ -217,18 +229,22 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
         {...tableProps}
         pagination={false}
         className="step-two"
+        rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
       />
-      <Button
-        block
-        icon={<PlusOutlined />}
-        id="button-add"
-        onClick={() => {
-          setDrawerVisible(true);
-          setType('add');
-        }}
-      >
-        新增
-      </Button>
+      {isShowAddButton && (
+        <Button
+          block
+          icon={<PlusOutlined />}
+          id="button-add"
+          onClick={() => {
+            setDrawerVisible(true);
+            setType('add');
+            setDrawerTitle('新增报警规则');
+          }}
+        >
+          新增
+        </Button>
+      )}
       <TemplateDrawer
         visible={drawerVisible}
         onClose={onClose}
@@ -242,4 +258,4 @@ const StepOne: React.FC<StepTwoProps> = ({ form, getTableData, serviceId }) => {
   );
 };
 
-export default StepOne;
+export default RulesTable;

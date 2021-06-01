@@ -42,14 +42,13 @@ const usePublicData = (props: UsePublicDataProps) => {
   }, []);
 
   useEffect(() => {
-    console.log(appCode, 'appcode');
     if (!appCode) return;
     queryappManageEnvListFun({ appCode, pageSize: '-1' });
   }, [appCode]);
 
   return {
     appManageListData,
-    appManageEnvData,
+    appManageEnvData: appCode ? appManageEnvData : [],
   };
 };
 

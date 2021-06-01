@@ -92,14 +92,14 @@ const usePublicData = (props: UsePublicDataProps) => {
 
   // 查询应用分支
   const { run: queryappBranch, data: appBranchData } = useRequest({
-    api: queryappManageEnvList,
+    api: queryAppBranchLists,
     method: 'GET',
     formatData: (data) => {
       return data.dataSource?.map((v: any) => {
         return {
           ...v,
-          key: v?.envCode,
-          value: v?.envCode,
+          key: v?.branchName,
+          value: v?.branchName,
         };
       });
     },

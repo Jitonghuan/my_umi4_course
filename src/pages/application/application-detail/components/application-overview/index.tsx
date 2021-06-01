@@ -131,7 +131,7 @@ const ApplicationOverview = (props: IProps) => {
           {memberData?.autoTestOwner && <Tag>{memberData?.autoTestOwner}</Tag>}
         </Descriptions.Item>
         <Descriptions.Item label="报警接收人">
-          {memberData?.alterReceiver && <Tag>{memberData?.alterReceiver}</Tag>}
+          {memberData?.alertReceiver && <Tag>{memberData?.alertReceiver}</Tag>}
         </Descriptions.Item>
       </Descriptions>
 

@@ -2,8 +2,8 @@
 export const JiraColumns = [
   {
     title: 'Jira需求Id',
-    dataIndex: 'issueId',
-    key: 'issueId',
+    dataIndex: 'key',
+    key: 'key',
   },
   {
     title: '发布功能',

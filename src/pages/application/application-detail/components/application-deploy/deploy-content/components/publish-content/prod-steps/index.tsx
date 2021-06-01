@@ -23,7 +23,7 @@ const { confirm } = Modal;
 
 const rootCls = 'publish-content-compo';
 
-const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
+const ProdSteps = ({ envTypeCode, appCode, deployInfo, onOperate }: IProps) => {
   const [deployVisible, setDeployVisible] = useState(false);
 
   const status = useMemo<Status>(() => {
@@ -217,6 +217,7 @@ const ProdSteps = ({ appCode, deployInfo, onOperate }: IProps) => {
         deployInfo={deployInfo}
         onCancel={() => setDeployVisible(false)}
         onOperate={onOperate}
+        envTypeCode={envTypeCode}
       />
     </>
   );

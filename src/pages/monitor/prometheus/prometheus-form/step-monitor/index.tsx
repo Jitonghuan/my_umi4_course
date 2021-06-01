@@ -2,22 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Form } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { history } from 'umi';
-import EditTable from '../../../component/editTable';
+import EditTable from '@/components/edit-table';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
-import useRequest from '@/utils/useRequest';
+import { editColumns } from '../../../component/template-drawer/colunms';
 import { Item } from '../../../typing';
-import { queryPrometheusList } from '../../../service';
 import usePublicData from '../../usePublicData';
 
 interface StepOneProps {
   getTableData: (value: Item[]) => void;
   matchlabelsList?: Item[];
+  form?: FormInstance;
 }
 
 const StepOne: React.FC<StepOneProps> = ({
   getTableData,
   matchlabelsList = [],
+  form,
 }) => {
   const [matchlabels, setMatchlabels] = useState<Item[]>([]);
   const [appCode, setAppCode] = useState('');
@@ -33,7 +34,6 @@ const StepOne: React.FC<StepOneProps> = ({
   });
 
   const matchlabelsFun = (value: Item[]) => {
-    console.log(value, 'label');
     setMatchlabels(value);
   };
 
@@ -64,9 +64,6 @@ const StepOne: React.FC<StepOneProps> = ({
           max: 253,
         },
       ],
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '2',
@@ -80,6 +77,8 @@ const StepOne: React.FC<StepOneProps> = ({
       option: appManageListData as OptionProps[],
       onChange: (e: string) => {
         setAppCode(e);
+        if (!form?.getFieldValue('envCode')) return;
+        form?.resetFields(['envCode']);
       },
     },
     {
@@ -92,9 +91,6 @@ const StepOne: React.FC<StepOneProps> = ({
       showSelectSearch: true,
       disable: isEdit,
       option: appManageEnvData as OptionProps[],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '4',
@@ -117,9 +113,6 @@ const StepOne: React.FC<StepOneProps> = ({
           value: '60s',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '5',
@@ -135,9 +128,6 @@ const StepOne: React.FC<StepOneProps> = ({
           message: '请输入正确的url(示例:http://127.0.0.1:8080/health)',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '6',
@@ -156,12 +146,17 @@ const StepOne: React.FC<StepOneProps> = ({
                 (MatchLabels已设置默认值，无特殊需求，请不要填写)
               </span>
             }
+            columns={editColumns}
+            handleAddItem={() => {
+              return {
+                id: matchlabels.length,
+                key: 'key',
+                value: 'value',
+              };
+            }}
           />
         </Form.Item>
       ),
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
   ];
 

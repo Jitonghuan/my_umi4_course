@@ -9,6 +9,7 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
 import { Item, AlertNameProps } from '../typing';
+import RulesTable from '../component/rules-table';
 import usePublicData from './usePublicData';
 import { queryPrometheusList, deletePrometheus } from '../service';
 import './index.less';
@@ -17,7 +18,7 @@ const PrometheusCom: React.FC = () => {
   const [labelVisible, setLabelVisible] = useState(false);
   const [rulesVisible, setRulesVisible] = useState(false);
   const [labelRecord, setLabelRecord] = useState<Record<string, string>>({});
-  const [rulesRecord, setRulesRecord] = useState<AlertNameProps[]>([]);
+  const [rulesId, setRulesId] = useState('');
   const [modalType, setModalType] = useState<'label' | 'rules'>('label');
   const [appCode, setAppCode] = useState('');
 
@@ -119,7 +120,7 @@ const PrometheusCom: React.FC = () => {
       title: '报警规则',
       dataIndex: 'alertRules',
       key: 'alertRules',
-      render: (text: AlertNameProps[]) => {
+      render: (text: AlertNameProps[], record) => {
         if (!text) return '-';
         if (Array.isArray(text) && text.length === 0) return '-';
         return (
@@ -133,7 +134,7 @@ const PrometheusCom: React.FC = () => {
             }}
             onClick={() => {
               setRulesVisible(true);
-              setRulesRecord(text);
+              setRulesId(record.id as string);
               setModalType('rules');
             }}
           >
@@ -169,43 +170,7 @@ const PrometheusCom: React.FC = () => {
 
   const expandedRowRender = (
     expandData: AlertNameProps[] | { key: string; value: string }[],
-    type?: string,
   ) => {
-    const rulesColumns = [
-      {
-        title: '规则名称',
-        dataIndex: 'alertRuleName',
-        key: 'alertRuleName',
-      },
-      {
-        title: '告警表达式',
-        dataIndex: 'expression',
-        key: 'expression',
-        // width: '5%',
-        // ellipsis: true,
-        render: (text: string) => (
-          <Tooltip title={text}>
-            <span
-              style={{
-                display: 'inline-block',
-                width: 100,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {text}
-            </span>
-          </Tooltip>
-        ),
-      },
-      {
-        title: '告警消息',
-        dataIndex: 'message',
-        key: 'message',
-      },
-    ];
-
     const labelColumns = [
       {
         title: 'key',
@@ -222,7 +187,7 @@ const PrometheusCom: React.FC = () => {
     return (
       <Table
         dataSource={[...expandData]}
-        columns={type === 'label' ? labelColumns : rulesColumns}
+        columns={labelColumns}
         pagination={false}
         // rowKey={record => record.key}
       />
@@ -237,9 +202,6 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'name',
       width: '160px',
       placeholder: '请输入',
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
     },
     {
       key: '2',
@@ -252,6 +214,8 @@ const PrometheusCom: React.FC = () => {
       option: appManageListData as OptionProps[],
       onChange: (e: string) => {
         setAppCode(e);
+        if (!form?.getFieldValue('envCode')) return;
+        form.resetFields(['envCode']);
       },
     },
     {
@@ -260,12 +224,9 @@ const PrometheusCom: React.FC = () => {
       label: '环境名称',
       dataIndex: 'envCode',
       width: '160px',
-      placeholder: '请选择',
+      placeholder: '请选择应用名称',
       showSelectSearch: true,
       option: appManageEnvData as OptionProps[],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '4',
@@ -274,9 +235,6 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'metricsUrl',
       width: '160px',
       placeholder: '请输入',
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
   ];
 
@@ -285,7 +243,7 @@ const PrometheusCom: React.FC = () => {
   const onCancel = () => {
     setLabelRecord({});
     setLabelVisible(false);
-    setRulesRecord([]);
+    setRulesId('');
     setRulesVisible(false);
   };
 
@@ -339,10 +297,13 @@ const PrometheusCom: React.FC = () => {
         width={800}
         bodyStyle={{ minHeight: 500 }}
         footer={null}
+        destroyOnClose
       >
-        {isLabel
-          ? expandedRowRender(editLabelRecord(labelRecord), 'label')
-          : expandedRowRender(rulesRecord)}
+        {isLabel ? (
+          expandedRowRender(editLabelRecord(labelRecord))
+        ) : (
+          <RulesTable serviceId={rulesId} isShowAddButton={false} />
+        )}
       </Modal>
     </MatrixPageContent>
   );

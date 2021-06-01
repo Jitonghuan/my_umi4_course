@@ -56,7 +56,7 @@ export default (isEdit: boolean) => ({
       type: 'Input',
       props: {
         label: '报警接收人',
-        name: 'alterReceiver',
+        name: 'alertReceiver',
         placeholder: '请输入',
       },
     },

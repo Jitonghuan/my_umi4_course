@@ -43,7 +43,7 @@
     "@cffe/vc-form": "1.0.7",
     "@cffe/vc-hulk-form": "1.0.11",
     "@cffe/vc-hulk-table": "1.0.9",
-    "@cffe/vc-layout": "1.0.15",
+    "@cffe/vc-layout": "1.0.17",
     "@cffe/vc-loading": "1.0.2",
     "@cffe/vc-request": "1.0.11",
     "@umijs/hooks": "~1.9.3",

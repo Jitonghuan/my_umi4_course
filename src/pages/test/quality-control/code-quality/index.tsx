@@ -10,7 +10,6 @@ import useTable from '@/utils/useTable';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { queryCodeQualityCheckLogList } from '../../service';
 import usePublicData from '@/utils/usePublicData';
-import VCModal from '@/components/vc-modal';
 import { Item } from '../../typing';
 
 type statusTypeItem = {
@@ -24,14 +23,15 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   2: { text: '失败', color: 'volcano' },
 };
 
-const UnitTest: React.FC = () => {
+const UnitTest: React.FC<any> = () => {
   const [form] = Form.useForm();
 
   const [appCode, setAppCode] = useState<string | undefined>();
   const [appCategoryCode, setAppCategoryCode] = useState<string | undefined>();
 
-  const [frameVisible, setFrameVisible] = useState<boolean>(false);
-  const [currentRecord, setCurrentRecord] = useState<any>({});
+  const {
+    location: { query },
+  } = history;
 
   const { appManageListData, appTypeData, appBranchData } = usePublicData({
     appCode,
@@ -51,11 +51,12 @@ const UnitTest: React.FC = () => {
       return {
         ...rest,
         startTime: testTime[0]
-          ? testTime[0].format('YYYY-MM-DD HH:mm:ss')
+          ? testTime[0].format('YYYY-MM-DD 00:00:00')
           : undefined,
         endTime: testTime[1]
-          ? testTime[1].format('YYYY-MM-DD HH:mm:ss')
+          ? testTime[1].format('YYYY-MM-DD 23:59:59')
           : undefined,
+        ...query,
       };
     },
   });
@@ -131,45 +132,39 @@ const UnitTest: React.FC = () => {
       dataIndex: 'times',
       key: 'times',
       width: '15%',
-      render: (text) => text || '-',
     },
     {
       title: '构建人',
       dataIndex: 'createUser',
       key: 'createUser',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '可靠性',
       dataIndex: 'reliabilityLevel',
       key: 'reliabilityLevel',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '安全性',
       dataIndex: 'securityLevel',
       key: 'securityLevel',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '可维护性',
       dataIndex: 'maintainabilityLevel',
       key: 'maintainabilityLevel',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
       title: '重复率',
-      dataIndex: 'newDuplicatedLinesCov',
-      key: 'newDuplicatedLinesCov',
+      dataIndex: 'duplicatedLinesCov',
+      key: 'duplicatedLinesCov',
       width: '10%',
-      render: (text) => text || '-',
     },
     {
-      title: '状态',
+      title: '执行状态',
       dataIndex: 'status',
       key: 'status',
       width: '8%',
@@ -185,12 +180,7 @@ const UnitTest: React.FC = () => {
       fixed: 'right',
       render: (_, record) =>
         record.reportUrl && (
-          <a
-            onClick={() => {
-              setFrameVisible(true);
-              setCurrentRecord(record);
-            }}
-          >
+          <a href={record.reportUrl} target="_blank">
             查看报告
           </a>
         ),
@@ -207,6 +197,7 @@ const UnitTest: React.FC = () => {
             prefix={<SearchOutlined />}
             placeholder="请输入任务ID/任务名"
             style={{ width: 280 }}
+            allowClear
           />
         </Form.Item>
       ),
@@ -215,19 +206,33 @@ const UnitTest: React.FC = () => {
       key: '2',
       type: 'select',
       label: '应用分类',
-      dataIndex: 'classification',
+      dataIndex: 'categoryCode',
       width: '144px',
       option: appTypeData,
-      onChange: setAppCategoryCode,
+      onChange: (e) => {
+        setAppCategoryCode(e);
+        if (
+          !form?.getFieldValue('appCode') ||
+          !form?.getFieldValue('branchName')
+        ) {
+          setAppCode('');
+        }
+        form?.resetFields(['appCode', 'branchName']);
+      },
     },
     {
       key: '3',
       type: 'select',
       label: '应用名',
-      dataIndex: 'name',
+      dataIndex: 'appCode',
       width: '144px',
-      option: appManageListData,
-      onChange: setAppCode,
+      option: form?.getFieldValue('categoryCode') ? appManageListData : [],
+      showSelectSearch: true,
+      onChange: (e) => {
+        setAppCode(e);
+        if (!form?.getFieldValue('branchName')) return;
+        form?.resetFields(['branchName']);
+      },
     },
     {
       key: '4',
@@ -235,7 +240,7 @@ const UnitTest: React.FC = () => {
       label: '分支名',
       dataIndex: 'branchName',
       width: '144px',
-      option: appBranchData,
+      option: form?.getFieldValue('appCode') ? appBranchData : [],
     },
     {
       key: '5',
@@ -249,7 +254,7 @@ const UnitTest: React.FC = () => {
       key: '6',
       type: 'input',
       label: '构建人',
-      dataIndex: 'creator',
+      dataIndex: 'createUser',
       width: '144px',
     },
     {
@@ -277,6 +282,7 @@ const UnitTest: React.FC = () => {
         }))}
         {...tableProps}
         pagination={{
+          ...tableProps.pagination,
           showTotal: (total) => `总共 ${total} 条数据`,
           showSizeChanger: true,
           size: 'small',
@@ -290,19 +296,6 @@ const UnitTest: React.FC = () => {
         reset={reset}
         scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
       />
-
-      <VCModal
-        visible={frameVisible}
-        onCancel={() => setFrameVisible(false)}
-        isFull
-        footer={
-          <Button type="primary" onClick={() => setFrameVisible(false)}>
-            关闭
-          </Button>
-        }
-      >
-        <iframe src={currentRecord.reportUrl} width="100%" height="100%" />
-      </VCModal>
     </MatrixPageContent>
   );
 };
