@@ -151,10 +151,11 @@ export default function EnvDetail(props: EnvDetailProps) {
         </Tabs>
       </Form>
       <div className="float-action-group">
-        <Button type="primary" onClick={handleSubmit}>
+        <Button type="primary" size="large" onClick={handleSubmit}>
           保存
         </Button>
         <Button
+          size="large"
           type="default"
           onClick={() => props.emitter.emit('ENV::CANCEL')}
         >

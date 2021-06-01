@@ -193,7 +193,7 @@ export default function GlobalVar(props: GlobalVarProps) {
                 name="groupName"
                 rules={[{ required: true, message: '请输入分组名称' }]}
               >
-                <Input placeholder="请输入分组名称" />
+                <Input placeholder="请输入分组名称" autoFocus />
               </Form.Item>
               <Form.Item label=" " colon={false} wrapperCol={{ offset: 9 }}>
                 <Button

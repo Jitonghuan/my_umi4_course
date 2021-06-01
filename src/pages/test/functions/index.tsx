@@ -187,7 +187,7 @@ export default function FunctionManager() {
             name="content"
             rules={[{ required: true, message: '函数内容不能为空！' }]}
           >
-            <Input.TextArea placeholder="请输入函数" rows={10} />
+            <Input.TextArea placeholder="请输入函数" autoFocus rows={10} />
           </Form.Item>
         </Form>
       </Modal>

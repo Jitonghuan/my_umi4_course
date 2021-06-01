@@ -3,14 +3,23 @@
 // @create 2021/05/28 10:47
 
 .page-env-detail {
-  position: relative;
+  .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .ant-form {
+    flex: 1 1 0;
+    overflow: auto;
+  }
 
   .float-action-group {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
+    flex: 0 0 auto;
+    margin-top: 20px;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
 
     > button + button {
       margin-left: 12px;

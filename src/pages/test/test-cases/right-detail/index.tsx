@@ -3,19 +3,19 @@
 // @create 2021/05/30 16:25
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Button, Tag, Table, message } from 'antd';
+import { Button, Tag, Table, message, Empty } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
 import FELayout from '@cffe/vc-layout';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { APIItemVO, CaseItemVO } from '../interfaces';
+import { TreeNode, CaseItemVO } from '../interfaces';
 import './index.less';
 
 interface RightDetailProps extends Record<string, any> {
   emitter: Emitter;
-  current?: APIItemVO;
+  current?: TreeNode;
 }
 
 export default function RightDetail(props: RightDetailProps) {
@@ -24,10 +24,22 @@ export default function RightDetail(props: RightDetailProps) {
 
   useEffect(() => {}, []);
 
+  if (!props.current) {
+    return (
+      <ContentCard className="page-case-right-detail">
+        <Empty
+          description="请选择接口"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          style={{ marginTop: '40%' }}
+        />
+      </ContentCard>
+    );
+  }
+
   return (
     <ContentCard className="page-case-right-detail">
       <div className="case-detail-header">
-        <h2>接口名称: test</h2>
+        <h2>接口名称: {props.current.title || '--'}</h2>
         <Tag color="success">已生效</Tag>
       </div>
       <div className="case-detail-caption">

@@ -114,7 +114,7 @@ export default function EnvList(props: EnvListProps) {
             name="envName"
             rules={[{ required: true, message: '请输入环境名称' }]}
           >
-            <Input placeholder="请输入" maxLength={30} />
+            <Input placeholder="请输入" autoFocus maxLength={30} />
           </Form.Item>
         </Form>
       </Modal>

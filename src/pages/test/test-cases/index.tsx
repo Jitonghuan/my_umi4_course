@@ -9,13 +9,13 @@ import { CardRowGroup } from '@/components/vc-page-content';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
 import CaseEditor from './case-editor';
-import { APIItemVO, CaseItemVO } from './interfaces';
+import { TreeNode, CaseItemVO } from './interfaces';
 import './index.less';
 
 export default function TestCaseManager() {
   const emitterRef = useRef(new Emitter());
-  const [current, setCurrent] = useState<APIItemVO>(null as any);
-  const [addCaseVisible, setAddCaseVisible] = useState<boolean>(true);
+  const [current, setCurrent] = useState<TreeNode>();
+  const [addCaseVisible, setAddCaseVisible] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<CaseItemVO>();
 
   useLayoutEffect(() => {
@@ -44,7 +44,7 @@ export default function TestCaseManager() {
           emitter={emitterRef.current}
         />
         <RightDetail
-          key={current?.id || 1}
+          key={current?.key || 1}
           current={current}
           emitter={emitterRef.current}
         />
