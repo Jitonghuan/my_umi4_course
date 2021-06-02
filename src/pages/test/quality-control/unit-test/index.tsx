@@ -99,9 +99,12 @@ const UnitTest: React.FC<any> = () => {
       dataIndex: 'categoryCode',
       key: 'categoryCode',
       width: '10%',
+      render: (text) => {
+        return appTypeData?.find((v) => v.key === text)?.value || '';
+      },
     },
     {
-      title: '应用名',
+      title: '应用code',
       dataIndex: 'appCode',
       key: 'appCode',
       width: '10%',
@@ -235,7 +238,7 @@ const UnitTest: React.FC<any> = () => {
     {
       key: '3',
       type: 'select',
-      label: '应用名',
+      label: '应用code',
       dataIndex: 'appCode',
       width: '144px',
       option: form?.getFieldValue('categoryCode') ? appManageListData : [],

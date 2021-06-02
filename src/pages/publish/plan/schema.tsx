@@ -7,6 +7,13 @@ import { Link, history } from 'umi';
 import { statusType } from '../constant';
 import { IPlanItem } from '../typing';
 
+type AppType = 'frontend' | 'backend';
+
+const APP_TYPE_MAP = {
+  frontend: '前端',
+  backend: '后端',
+};
+
 // 列表页-查询表单
 export const createFormColumns = (params: {
   categoryData?: any[];
@@ -93,6 +100,8 @@ export const createFormColumns = (params: {
 // 列表页-表格
 export const createTableColumns = (params: {
   onDelete: (planId: string) => void;
+  categoryData: any[];
+  businessData: any[];
 }) => {
   return [
     {
@@ -118,12 +127,17 @@ export const createTableColumns = (params: {
       dataIndex: 'appCategoryCode',
       key: 'appCategoryCode',
       // width: '5%',
+      render: (text) =>
+        params.categoryData?.find((v) => v.categoryCode === text)
+          .categoryName || '-',
     },
     {
       title: '应⽤组',
       dataIndex: 'appGroupCode',
       key: 'appGroupCode',
       // width: '5%',
+      render: (text) =>
+        params.businessData?.find((v) => v.groupCode === text).groupName || '-',
     },
     {
       title: '应用CODE',
@@ -133,9 +147,10 @@ export const createTableColumns = (params: {
     },
     {
       title: '应用类型',
-      dataIndex: 'appType',
-      key: 'appType',
+      dataIndex: 'deployType',
+      key: 'deployType',
       // width: '5%',
+      render: (text: AppType) => APP_TYPE_MAP[text] || '',
     },
     {
       title: '版本号',

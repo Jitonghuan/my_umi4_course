@@ -62,7 +62,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
     {
       key: '3',
       type: 'select',
-      label: '应用名',
+      label: '应用code',
       dataIndex: 'appCode',
       option: form?.getFieldValue('categoryCode') ? appManageListData : [],
       required: true,

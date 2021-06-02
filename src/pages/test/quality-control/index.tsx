@@ -111,13 +111,16 @@ const QualityControl: React.FC = () => {
     {
       title: '应用分类',
       dataIndex: 'categoryCode',
-      key: 'categoryName',
+      key: 'categoryCode',
       width: 100,
+      render: (text) => {
+        return appTypeData?.find((v) => v.key === text)?.value || '';
+      },
     },
     {
-      title: '应用名',
+      title: '应用code',
       dataIndex: 'appCode',
-      key: 'appName',
+      key: 'appCode',
       width: 100,
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -257,7 +260,7 @@ const QualityControl: React.FC = () => {
     {
       key: '2',
       type: 'select',
-      label: '应用名',
+      label: '应用code',
       dataIndex: 'appCode',
       width: '144px',
       option: form?.getFieldValue('categoryCode') ? appManageListData : [],

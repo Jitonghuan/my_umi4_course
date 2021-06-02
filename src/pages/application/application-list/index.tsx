@@ -34,7 +34,9 @@ import { IProps } from './types';
 import './index.less';
 
 const ApplicationList = (props: IProps) => {
-  const { categoryData } = useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(
+    FEContext,
+  );
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [formInstance] = Form.useForm();
 
@@ -163,6 +165,8 @@ const ApplicationList = (props: IProps) => {
                   },
                 );
               },
+              categoryData,
+              businessDataList,
             }) as any
           }
           {...tableProps}

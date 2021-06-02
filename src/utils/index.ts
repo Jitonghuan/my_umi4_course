@@ -51,3 +51,23 @@ export const JsonParse = (jsonStr: string, relaxed?: boolean) => {
     return [true];
   }
 };
+
+/**
+ * 获取发布环境name
+ */
+export const getEnvName = (envList: any[] = [], text: string) => {
+  const namesArr: any[] = [];
+  if (text?.indexOf(',') > -1) {
+    const list = text?.split(',') || [];
+    envList?.forEach((item: any) => {
+      list?.forEach((v: any) => {
+        if (item?.envCode === v) {
+          namesArr.push(item.envName);
+        }
+      });
+    });
+    return namesArr.join(',');
+  }
+
+  return (envList as any).find((v: any) => v.envCode === text)?.envName;
+};

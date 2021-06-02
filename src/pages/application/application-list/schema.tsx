@@ -61,9 +61,13 @@ export const createFilterFormSchema = (params: {
 export const createTableSchema = ({
   onEditClick,
   onDelClick,
+  categoryData,
+  businessDataList,
 }: {
   onEditClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
+  categoryData: any[];
+  businessDataList: any[];
 }) =>
   [
     {
@@ -107,6 +111,9 @@ export const createTableSchema = ({
       title: '应用分类',
       dataIndex: 'appCategoryCode',
       width: 80,
+      render: (appCategoryCode) =>
+        categoryData?.find((v) => v.categoryCode === appCategoryCode)
+          .categoryName || '-',
     },
     {
       title: '应用类型',
@@ -118,6 +125,9 @@ export const createTableSchema = ({
       title: '应用组',
       dataIndex: 'appGroupCode',
       width: 100,
+      render: (appGroupCode) =>
+        businessDataList?.find((v) => v.groupCode === appGroupCode).groupName ||
+        '-',
     },
     {
       title: '责任人',

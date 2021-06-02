@@ -68,7 +68,7 @@ const StepOne: React.FC<StepOneProps> = ({
     {
       key: '2',
       type: 'select',
-      label: '应用名称',
+      label: '应用code',
       dataIndex: 'appCode',
       placeholder: '请选择',
       required: true,
@@ -84,7 +84,7 @@ const StepOne: React.FC<StepOneProps> = ({
     {
       key: '3',
       type: 'select',
-      label: '环境名称',
+      label: '环境code',
       dataIndex: 'envCode',
       placeholder: '请选择',
       required: true,

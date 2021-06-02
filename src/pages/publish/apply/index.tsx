@@ -23,6 +23,7 @@ import VCPageContent, {
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm } from '@cffe/fe-backend-component';
+import usePublicData from '@/utils/usePublicData';
 import { createFilterFormSchema, createTableSchema } from './schema';
 import AddDrawer from './components/add-drawer';
 import DetailDrawer from './components/detail-drawer';
@@ -34,7 +35,11 @@ export interface IProps {}
 const rootCls = 'release-apply-page';
 
 const ApplyList = (props: IProps) => {
-  const { categoryData, breadcrumbMap } = useContext(FEContext);
+  const {
+    categoryData,
+    breadcrumbMap,
+    businessData: businessDataList = [],
+  } = useContext(FEContext);
 
   const [createApplyVisible, setCreateApplyVisible] = useState<boolean>(false);
   const [applyDetailVisible, setApplyDetailVisible] = useState<boolean>(false);
@@ -43,6 +48,15 @@ const ApplyList = (props: IProps) => {
   const [formInstance] = Form.useForm();
 
   const prevBelong = useRef<string>();
+
+  const { envsUrlList } = usePublicData({
+    isEnvType: false,
+    isUseAppBranch: false,
+    isUseAppEnv: false,
+    isUseAppLists: false,
+    isUseAppType: false,
+    isEnvsUrl: true,
+  });
 
   const filterColumns = useMemo(() => {
     return createFilterFormSchema({ categoryData, businessData });
@@ -167,6 +181,8 @@ const ApplyList = (props: IProps) => {
                 setApplyDetailVisible(true);
               },
               categoryData,
+              businessDataList,
+              envsUrlList,
             }) as any
           }
           {...tableProps}
