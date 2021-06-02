@@ -9,6 +9,7 @@ import {
   EMERGENCY_TYPE_MAP,
   EMERGENCY_TYPE_OPTIONS,
 } from './const';
+import { getEnvName } from '@/utils';
 import moment from 'moment';
 
 // 过滤表单 schema
@@ -69,9 +70,13 @@ export const createFilterFormSchema = (params: {
 export const createTableSchema = ({
   onDetailClick,
   categoryData,
+  businessDataList,
+  envsUrlList,
 }: {
   onDetailClick: (record: any) => void;
   categoryData?: any[];
+  businessDataList: any[];
+  envsUrlList: any[];
 }) =>
   [
     {
@@ -118,10 +123,13 @@ export const createTableSchema = ({
     {
       title: '应用组',
       dataIndex: 'appGroupCode',
+      render: (text) =>
+        businessDataList?.find((v) => v.groupCode === text).groupName || '-',
     },
     {
       title: '发布环境',
       dataIndex: 'deployEnv',
+      render: (text) => getEnvName(envsUrlList, text) || '-',
     },
     {
       title: '发布负责人',

@@ -17,7 +17,7 @@ import { createFormColumns, createTableColumns } from './schema';
 import './index.less';
 
 const FunctionCom: React.FC = () => {
-  const { categoryData } = useContext(FEContext);
+  const { categoryData = [], businessData = [] } = useContext(FEContext);
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
 
   const [form] = Form.useForm();
@@ -82,7 +82,7 @@ const FunctionCom: React.FC = () => {
   }, [categoryData, groupData]);
 
   const columns = useMemo(() => {
-    return createTableColumns({ onDelete });
+    return createTableColumns({ onDelete, categoryData, businessData });
   }, []);
 
   return (

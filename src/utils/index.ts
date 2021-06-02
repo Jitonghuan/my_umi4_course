@@ -84,3 +84,22 @@ export const datetimeCellRender = (str: string) => {
 export const dateCellRender = (str: string) => {
   return (str && moment(str).format('YYYY-MM-DD')) || '';
 };
+/**
+ * 获取发布环境name
+ */
+export const getEnvName = (envList: any[] = [], text: string) => {
+  const namesArr: any[] = [];
+  if (text?.indexOf(',') > -1) {
+    const list = text?.split(',') || [];
+    envList?.forEach((item: any) => {
+      list?.forEach((v: any) => {
+        if (item?.envCode === v) {
+          namesArr.push(item.envName);
+        }
+      });
+    });
+    return namesArr.join(',');
+  }
+
+  return (envList as any).find((v: any) => v.envCode === text)?.envName;
+};

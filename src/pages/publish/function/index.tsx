@@ -8,13 +8,25 @@ import './index.less';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { deleteFunc, queryAppGroupReq, queryFunctionUrl } from '../service';
 import useTable from '@/utils/useTable';
+import usePublicData from '@/utils/usePublicData';
 import { createFormItems, createTableColumns } from './schema';
 
 const FunctionCom: React.FC = () => {
-  const { categoryData } = useContext(FEContext);
+  const { categoryData = [], envData = [], businessData = [] } = useContext(
+    FEContext,
+  );
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
 
   const [form] = Form.useForm();
+
+  const { envsUrlList } = usePublicData({
+    isEnvType: false,
+    isUseAppBranch: false,
+    isUseAppEnv: false,
+    isUseAppLists: false,
+    isUseAppType: false,
+    isEnvsUrl: true,
+  });
 
   const {
     tableProps,
@@ -66,7 +78,12 @@ const FunctionCom: React.FC = () => {
     });
   }, [categoryData, groupData]);
 
-  const columns = createTableColumns({ onDelete });
+  const columns = createTableColumns({
+    onDelete,
+    categoryData,
+    businessData,
+    envsUrlList,
+  });
 
   return (
     <MatrixPageContent>

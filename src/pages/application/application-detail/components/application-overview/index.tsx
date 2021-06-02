@@ -11,6 +11,7 @@ import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
+import FEContext from '@/layouts/basic-layout/FeContext';
 import UpdateApplication, {
   AppDataTypes,
 } from '@/components/create-application';
@@ -31,6 +32,7 @@ const APP_TYPE_MAP = {
 
 const ApplicationOverview = (props: IProps) => {
   const { appData, queryAppData } = useContext(DetailContext);
+  const { categoryData = [], businessData = [] } = useContext(FEContext);
 
   const [isModifyApp, setIsModifyApp] = useState(false);
   const [isModifyMember, setIsModifyMember] = useState(false);
@@ -79,10 +81,13 @@ const ApplicationOverview = (props: IProps) => {
           {appData?.deploymentName}
         </Descriptions.Item>
         <Descriptions.Item label="应用分类">
-          {appData?.appCategoryCode}
+          {categoryData?.find(
+            (v) => v.categoryCode === appData?.appCategoryCode,
+          )?.categoryName || '-'}
         </Descriptions.Item>
         <Descriptions.Item label="应用组">
-          {appData?.appGroupCode}
+          {businessData?.find((v) => v.groupCode === appData?.appGroupCode)
+            ?.groupName || '-'}
         </Descriptions.Item>
         <Descriptions.Item label="应用类型">
           {APP_TYPE_MAP[appData?.appType!]}
