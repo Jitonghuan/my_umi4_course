@@ -78,7 +78,7 @@ const PublishBranch = ({
 
   const submitClick = () => {
     // 二方包
-    if (query?.isClient === '1') {
+    if (query?.isClient === '1' || hasPublishContent) {
       confirm({
         title: '确定要提交发布吗?',
         icon: <ExclamationCircleOutlined />,
