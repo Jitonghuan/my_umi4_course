@@ -93,7 +93,7 @@ const DeployModal = ({
     // TODO 如何判断哪个机构被部署了
     let text1 = null;
     let text2 = null;
-    if (deployStatus === 'deployWait') {
+    if (deployStatus !== 'deploying' && deployStatus !== 'deployWaitBatch2') {
       return null;
     }
 
@@ -101,18 +101,18 @@ const DeployModal = ({
       text1 = (
         <span>
           {envList.find((v) => v.envCode === deployingEnv)?.envName}
-          正在部署中。。。
+          正在部署中...
         </span>
       );
 
       if (deployingHosBatch === 2) {
-        text2 = <span>第一批已部署完成，正在部署第二批。。。</span>;
+        text2 = <span>第一批已部署完成，正在部署第二批...</span>;
       }
     } else if (deployStatus === 'deployWaitBatch2') {
       text1 = (
         <span>
           {envList.find((v) => v.envCode === deployingEnv)?.envName}
-          正在部署中。。。
+          正在部署中...
         </span>
       );
       text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
