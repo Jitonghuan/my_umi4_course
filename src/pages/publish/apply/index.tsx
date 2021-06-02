@@ -36,7 +36,7 @@ const rootCls = 'release-apply-page';
 
 const ApplyList = (props: IProps) => {
   const {
-    categoryData,
+    categoryData = [],
     breadcrumbMap,
     businessData: businessDataList = [],
   } = useContext(FEContext);
@@ -123,6 +123,7 @@ const ApplyList = (props: IProps) => {
           }
           setCreateApplyVisible(false);
         }}
+        envsUrlList={envsUrlList}
       />
 
       <DetailDrawer
@@ -131,6 +132,9 @@ const ApplyList = (props: IProps) => {
         onClose={() => {
           setApplyDetailVisible(false);
         }}
+        categoryData={categoryData}
+        businessDataList={businessDataList}
+        envsUrlList={envsUrlList}
       />
 
       <FilterCard>

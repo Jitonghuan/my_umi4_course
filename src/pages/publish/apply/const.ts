@@ -49,3 +49,11 @@ export const EMERGENCY_TYPE_COLOR_MAP: { [key: string]: string } = {
   daily: 'green',
   emergency: 'red',
 };
+
+/** 应用类型*/
+export const APP_TYPE_MAP = {
+  frontend: '前端',
+  backend: '后端',
+};
+
+export type AppType = 'frontend' | 'backend';

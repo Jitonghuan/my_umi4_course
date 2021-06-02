@@ -1,9 +1,18 @@
 import React from 'react';
 import { Tag } from 'antd';
 import { statusType } from '@/pages/publish/constant';
+import { getEnvName } from '@/utils';
 import moment from 'moment';
 
-export const tableColumns = [
+export const createTableColumns = ({
+  categoryData,
+  businessDataList,
+  envsUrlList,
+}: {
+  categoryData?: any[];
+  businessDataList: any[];
+  envsUrlList: any[];
+}) => [
   {
     title: 'ID',
     dataIndex: 'id',
@@ -26,17 +35,21 @@ export const tableColumns = [
   {
     title: '应用分类',
     dataIndex: 'appCategoryCode',
-    key: 'appCategoryCode',
+    render: (value: string) => {
+      const result = categoryData?.filter((el) => el.value === value);
+      return result?.length ? result[0].label : value || '';
+    },
   },
   {
     title: '应用组',
     dataIndex: 'appGroupCode',
-    key: 'appGroupCode',
+    render: (text: string) =>
+      businessDataList?.find((v) => v.groupCode === text)?.groupName || '-',
   },
   {
     title: '发布环境',
     dataIndex: 'envs',
-    key: 'envs',
+    render: (text: string) => getEnvName(envsUrlList, text) || '-',
   },
   {
     title: '涉及业务范围',
