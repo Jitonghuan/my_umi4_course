@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Form,
   Card,
@@ -21,8 +21,10 @@ import {
   queryFunctionReq,
   updatePublishPlanReq,
 } from '@/pages/publish/service';
+import usePublicData from '@/utils/usePublicData';
+import FEContext from '@/layouts/basic-layout/FeContext';
 import { queryAppList } from '@/pages/monitor/application/service';
-import { tableColumns } from './schema';
+import { createTableColumns } from './schema';
 
 import './index.less';
 
@@ -51,8 +53,25 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const [form] = Form.useForm();
   const isCheck = type === 'check';
 
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(
+    FEContext,
+  );
+
+  const { envsUrlList } = usePublicData({
+    isEnvType: false,
+    isUseAppBranch: false,
+    isUseAppEnv: false,
+    isUseAppLists: false,
+    isUseAppType: false,
+    isEnvsUrl: true,
+  });
+
   const mergeTableColumns = [
-    ...tableColumns,
+    ...createTableColumns({
+      categoryData,
+      businessDataList,
+      envsUrlList,
+    }),
     ...(!isCheck
       ? [
           {
