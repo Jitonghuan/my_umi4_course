@@ -96,14 +96,14 @@ const UnitTest: React.FC<any> = () => {
     },
     {
       title: '应用分类',
-      dataIndex: 'categoryName',
-      key: 'categoryName',
+      dataIndex: 'categoryCode',
+      key: 'categoryCode',
       width: '10%',
     },
     {
       title: '应用名',
-      dataIndex: 'appName',
-      key: 'appName',
+      dataIndex: 'appCode',
+      key: 'appCode',
       width: '10%',
     },
     {
@@ -193,22 +193,23 @@ const UnitTest: React.FC<any> = () => {
 
   const formOptions: FormProps[] = [
     {
+      key: '0',
+      type: 'input',
+      label: '任务ID',
+      dataIndex: 'taskId',
+      width: '144px',
+      placeholder: '请输入',
+      onChange: (e: React.FormEvent<HTMLInputElement>) => {
+        console.log(e);
+      },
+    },
+    {
       key: '1',
-      type: 'other',
-      // label: '应用分类',
-      // dataIndex: 'value',
-      // width: '144px',
-      // placeholder: '请输入',
-      extraForm: (
-        <Form.Item noStyle name="taskInfo">
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder="请输入任务ID/任务名"
-            style={{ width: 280 }}
-            allowClear
-          />
-        </Form.Item>
-      ),
+      type: 'input',
+      label: '任务名',
+      dataIndex: 'taskInfo',
+      width: '144px',
+      placeholder: '请输入',
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
       },
@@ -286,6 +287,12 @@ const UnitTest: React.FC<any> = () => {
       },
     },
   ];
+
+  useEffect(() => {
+    form.setFieldsValue({
+      ...query,
+    });
+  }, []);
 
   return (
     <MatrixPageContent>

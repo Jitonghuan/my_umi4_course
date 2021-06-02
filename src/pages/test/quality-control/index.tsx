@@ -67,14 +67,14 @@ const QualityControl: React.FC = () => {
   const onConfirm = async (taskId?: string) => {
     if (!taskId) return;
 
-    await postRequest(executeQCTask, {
+    const resp = await postRequest(executeQCTask, {
       data: {
         taskId,
         createUser: userInfo?.userName,
       },
     });
     queryQCTable();
-    message.success('执行成功');
+    message.info(resp?.data);
   };
 
   const columns: ColumnsType<Item> = [
