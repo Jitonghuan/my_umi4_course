@@ -13,13 +13,6 @@ import {
   queryEnvsReq,
 } from '../../../../../../../../service';
 import { IProps } from './types';
-// import './index.less';
-
-const hospitalCodeToText: Record<string, string> = {
-  tiantai: '天台',
-  weishan: '巍山',
-  zheyi: '浙一',
-};
 
 const DeployModal = ({
   envTypeCode,
@@ -28,9 +21,13 @@ const DeployModal = ({
   onCancel,
   onOperate,
 }: IProps) => {
-  const { deployStatus, deployingEnv, deployingHosBatch, jenkinsUrl } =
-    deployInfo || {};
-  console.log(deployInfo, 'deployInfo');
+  const {
+    deployStatus,
+    deployedEnvs,
+    deployingEnv,
+    deployingHosBatch,
+    jenkinsUrl,
+  } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
 
@@ -46,7 +43,6 @@ const DeployModal = ({
       categoryCode: appCategoryCode as string,
       envTypeCode,
     }).then((data) => {
-      console.log(data.list, 'data.list');
       setEnvDataList(data.list);
     });
   }, [appCategoryCode, envTypeCode]);
@@ -66,22 +62,40 @@ const DeployModal = ({
           }
         });
       });
-      console.log(namesArr, 'namesArr');
       return namesArr;
     }
-
     return (envDataList as any[]).filter((v: any) => v.envCode === envs);
+  }, [envDataList, deployInfo]);
+
+  const deployedEnvList = useMemo(() => {
+    const { deployedEnvs } = deployInfo;
+    const resultList: any[] = [];
+    if (deployedEnvs?.indexOf(',') > -1) {
+      const list = deployedEnvs?.split(',') || [];
+      envDataList?.forEach((item: any) => {
+        list?.forEach((v: any) => {
+          if (item?.envCode === v) {
+            resultList.push({
+              envName: item.envName,
+              envCode: v,
+            });
+          }
+        });
+      });
+      return resultList;
+    }
+    return (envDataList as any[]).filter(
+      (v: any) => v.envCode === deployedEnvs,
+    );
   }, [envDataList, deployInfo]);
 
   const detail = useMemo(() => {
     // TODO 如何判断哪个机构被部署了
-
+    let text1 = null;
+    let text2 = null;
     if (deployStatus === 'deployWait') {
       return null;
     }
-
-    let text1 = null;
-    let text2 = null;
 
     if (deployStatus === 'deploying') {
       text1 = (
@@ -177,8 +191,11 @@ const DeployModal = ({
           ]}
         />
       </div>
-
       <h3 style={{ marginTop: 20 }}>发布详情</h3>
+      {deployedEnvs &&
+        deployedEnvList.map((item: any) => {
+          return <div>{item.envName}已经部署完成</div>;
+        })}
       {detail}
     </Modal>
   );
