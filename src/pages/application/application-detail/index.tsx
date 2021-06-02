@@ -20,7 +20,6 @@ import { IProps } from './types';
 import './index.less';
 import VCPermission from '@/components/vc-permission';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { divide } from '_@types_lodash@4.14.168@@types/lodash';
 
 const rootCls = 'application-detail-page';
 const detailPath = '/matrix/application/detail';
