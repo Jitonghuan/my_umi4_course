@@ -19,7 +19,7 @@ type statusTypeItem = {
 const STATUS_TYPE: Record<string, statusTypeItem> = {
   refuse: { text: '拒绝处理', color: 'red' },
   firing: { text: '告警中', color: 'blue' },
-  resolved: { text: '已恢复', color: 'green' },
+  resolved: { text: '已修复', color: 'green' },
   terminate: { text: '中断处理', color: 'default' },
 };
 
@@ -179,7 +179,7 @@ const HistoryCom: React.FC = () => {
         },
         {
           key: 2,
-          value: '已解决',
+          value: '已修复',
         },
       ],
       onChange: (e: string) => {
