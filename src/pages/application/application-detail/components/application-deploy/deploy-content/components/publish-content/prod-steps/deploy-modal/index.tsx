@@ -141,7 +141,7 @@ const DeployModal = ({
       title="批量部署"
       visible={visible}
       confirmLoading={deployStatus === 'deploying'}
-      okText={deployStatus === 'deployWait' ? '确定' : '继续'}
+      okText={deployStatus === 'deployWaitBatch2' ? '继续' : '确定'}
       onOk={() => {
         let batch: 0 | 1 | 2 = deployConfig.deployBatch === 12 ? 1 : 0;
 
