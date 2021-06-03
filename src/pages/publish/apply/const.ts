@@ -17,35 +17,29 @@ export const APPLY_STATUS_COLOR_MAP: { [key: number]: string } = {
 /** 部署类型 */
 export const DEPLOY_TYPE_OPTIONS: { label: string; value: string }[] = [
   {
-    label: '前端发布',
-    value: 'frontend',
-  },
-  {
-    label: '后端发布',
-    value: 'backend',
-  },
-];
-
-/** 紧急类型options */
-export const EMERGENCY_TYPE_OPTIONS: { label: string; value: string }[] = [
-  {
     label: '日常发布',
     value: 'daily',
   },
   {
-    label: '紧急发布',
-    value: 'emergency',
+    label: 'bug修复',
+    value: 'bugfix',
+  },
+  {
+    label: '紧急需求',
+    value: 'emergencyNeed',
   },
 ];
 
 /** 紧急类型map */
-export const EMERGENCY_TYPE_MAP: { [key: string]: string } = {
+export const DEPLOY_TYPE_MAP: { [key: string]: string } = {
   daily: '日常发布',
-  emergency: '紧急发布',
+  bugfix: 'bug修复',
+  emergencyNeed: '紧急需求',
 };
 
 /** 紧急类型颜色map */
-export const EMERGENCY_TYPE_COLOR_MAP: { [key: string]: string } = {
+export const DEPLOY_TYPE_COLOR_MAP: { [key: string]: string } = {
   daily: 'green',
-  emergency: 'red',
+  bugfix: 'red',
+  emergencyNeed: 'orange',
 };

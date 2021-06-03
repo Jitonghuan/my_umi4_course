@@ -5,9 +5,8 @@ import {
   APPLY_STATUS_COLOR_MAP,
   APPLY_STATUS_MAP,
   DEPLOY_TYPE_OPTIONS,
-  EMERGENCY_TYPE_COLOR_MAP,
-  EMERGENCY_TYPE_MAP,
-  EMERGENCY_TYPE_OPTIONS,
+  DEPLOY_TYPE_COLOR_MAP,
+  DEPLOY_TYPE_MAP,
 } from './const';
 import moment from 'moment';
 
@@ -42,14 +41,6 @@ export const createFilterFormSchema = (params: {
         label: '部署类型',
         name: 'deployType',
         options: DEPLOY_TYPE_OPTIONS,
-      },
-    },
-    {
-      type: 'Select',
-      props: {
-        label: '紧急类型',
-        name: 'emergencyType',
-        options: EMERGENCY_TYPE_OPTIONS,
       },
     },
     {
@@ -94,12 +85,12 @@ export const createTableSchema = ({
         ),
     },
     {
-      title: '紧急类型',
-      dataIndex: 'emergencyType',
+      title: '发布类型',
+      dataIndex: 'deployType',
       render: (text: string, record) => (
         <Badge
-          color={EMERGENCY_TYPE_COLOR_MAP[text]}
-          text={EMERGENCY_TYPE_MAP[text]}
+          color={DEPLOY_TYPE_COLOR_MAP[text]}
+          text={DEPLOY_TYPE_MAP[text]}
         />
       ),
     },
