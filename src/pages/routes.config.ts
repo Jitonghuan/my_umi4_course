@@ -236,16 +236,16 @@ export default [
         hideInMenu: true,
         component: '@/pages/test/data-factory/data-factory-add',
       },
-      {
-        path: 'auto',
-        name: '自动化测试',
-        component: '@/pages/test/auto-test',
-      },
-      {
-        path: 'result',
-        name: '自动化测试查询',
-        component: '@/pages/test/auto-test-result',
-      },
+      // {
+      //   path: 'auto',
+      //   name: '自动化测试',
+      //   component: '@/pages/test/auto-test',
+      // },
+      // {
+      //   path: 'result',
+      //   name: '自动化测试查询',
+      //   component: '@/pages/test/auto-test-result',
+      // },
       {
         path: 'qualityControl',
         name: '质量控制',

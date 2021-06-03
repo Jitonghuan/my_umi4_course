@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { useLocation } from 'umi';
-
 import FeContext from '@/layouts/basic-layout/FeContext';
 import VCPageContent, {
   IProps as IPageContentProps,
 } from '@/components/vc-page-content';
+import ErrorBoundary from '../error-boundary';
 
 export interface IProps extends IPageContentProps {}
 
@@ -26,7 +26,7 @@ const Coms: React.FC<IProps> = (props) => {
       height="calc(100vh - 60px)"
       {...rest}
     >
-      {children}
+      <ErrorBoundary>{children}</ErrorBoundary>
     </VCPageContent>
   );
 };
