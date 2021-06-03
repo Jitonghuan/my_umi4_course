@@ -18,7 +18,7 @@ import {
 
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
-import { planSchemaColumns } from '../../schema';
+import { createPlanSchemaColumns } from '../../schema';
 import {
   addPublishApplyReq,
   queryAppGroupReq,
@@ -42,9 +42,8 @@ const tailLayout = {
 
 const AddDrawer = (props: IProps) => {
   const { visible, onClose, envsUrlList } = props;
-  const { categoryData = [], businessData: businessDataList = [] } = useContext(
-    FEContext,
-  );
+  const { categoryData = [], businessData: businessDataList = [] } =
+    useContext(FEContext);
   const [formInstance] = Form.useForm();
 
   const [businessData, setBusinessData] = useState<any[]>([]);

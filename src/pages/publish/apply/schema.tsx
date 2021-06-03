@@ -188,11 +188,6 @@ export const createPlanSchemaColumns = ({
     dataIndex: 'appCode',
   },
   {
-    title: '应用类型',
-    dataIndex: 'deployType',
-    render: (text: AppType) => APP_TYPE_MAP[text] || '-',
-  },
-  {
     title: '版本号',
     dataIndex: 'version',
   },
