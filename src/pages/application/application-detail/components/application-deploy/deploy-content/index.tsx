@@ -18,7 +18,7 @@ import './index.less';
 
 const rootCls = 'deploy-content-compo';
 
-const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
+const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -38,7 +38,7 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
 
       const resp1 = await queryDeployList({
         appCode: appCode!,
-        envTypeCode: env,
+        envTypeCode: envTypeCode,
         isActive: 1,
         pageIndex: 1,
         pageSize: 10,
@@ -46,12 +46,12 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
 
       const resp2 = await queryFeatureDeployed({
         appCode: appCode!,
-        envTypeCode: env,
+        envTypeCode: envTypeCode,
         isDeployed: 1,
       });
       const resp3 = await queryFeatureDeployed({
         appCode: appCode!,
-        envTypeCode: env,
+        envTypeCode: envTypeCode,
         isDeployed: 0,
       });
 
@@ -89,7 +89,7 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
     <div className={rootCls}>
       <div className={`${rootCls}-body`}>
         <PublishDetail
-          env={env}
+          envTypeCode={envTypeCode}
           deployInfo={deployInfo}
           onOperate={(type) => {
             if (type === 'deployNextEnvSuccess') {
@@ -101,7 +101,7 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
         />
         <PublishContent
           appCode={appCode!}
-          envTypeCode={env}
+          envTypeCode={envTypeCode}
           deployInfo={deployInfo}
           deployedList={branchInfo.deployed}
           onOperate={onOperate}
@@ -112,14 +112,14 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
             !!(branchInfo.deployed && branchInfo.deployed.length)
           }
           dataSource={branchInfo.unDeployed}
-          env={env}
+          env={envTypeCode}
           onSubmitBranch={(status) => {
             timerHandle(status === 'start' ? 'stop' : 'do', true);
           }}
         />
       </div>
       <div className={`${rootCls}-sider`}>
-        <PublishRecord env={env} appCode={appCode} />
+        <PublishRecord env={envTypeCode} appCode={appCode} />
       </div>
     </div>
   );
