@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Drawer, Card, Row, Col, Select, Divider, Table } from 'antd';
-import { DEPLOY_TYPE_MAP } from '../../const';
-import { applyDetailSchemaColumns } from '../../schema';
+import { DEPLOY_TYPE_MAP, APP_TYPE_MAP, AppType } from '../../const';
+import { createApplyDetailSchemaColumns } from '../../schema';
 import { getApplyRelInfoReq } from '@/pages/publish/service';
 import { getEnvName } from '@/utils';
 import moment from 'moment';
@@ -18,14 +18,8 @@ export interface IPorps {
 const rootCls = 'apply-detail-drawer';
 
 const DetailDrawer = (props: IPorps) => {
-  const {
-    id,
-    visible,
-    onClose,
-    categoryData,
-    businessDataList,
-    envsUrlList,
-  } = props;
+  const { id, visible, onClose, categoryData, businessDataList, envsUrlList } =
+    props;
   const [baseInfo, setBaseInfo] = useState<any>({});
   const [plans, setPlans] = useState<any[]>([]);
 
