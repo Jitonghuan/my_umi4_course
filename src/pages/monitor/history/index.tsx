@@ -178,7 +178,7 @@ const HistoryCom: React.FC = () => {
           value: '中断处理',
         },
         {
-          key: 2,
+          key: 'resolved',
           value: '已修复',
         },
       ],
