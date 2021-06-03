@@ -111,6 +111,7 @@ const AddDrawer = (props: IProps) => {
       addPublishApplyReq({
         applyInfo: {
           ...vals,
+          deployEnv: vals.deployEnv.join(','),
           deployDate: vals.deployDate.format('YYYY-MM-DD HH:mm'),
         },
         planIds: selectPlan,
@@ -208,9 +209,9 @@ const AddDrawer = (props: IProps) => {
         <Form.Item
           label="发布环境"
           name="deployEnv"
-          rules={[{ required: true, message: '请选择机构!' }]}
+          rules={[{ required: true, message: '请选择发布环境!' }]}
         >
-          <Select placeholder="请选择">
+          <Select mode="multiple" placeholder="请选择">
             {deployEnvData?.map((el) => (
               <Select.Option key={el.value} value={el.value}>
                 {el.label}
