@@ -140,28 +140,25 @@ export default (props: IUmiRrops) => {
             title={FeGlobalRef.current.title}
             favicon={FeGlobalRef.current.favicon}
           >
-            {categoryData.length > 0 && (
-              <FELayout.SSOLayout
-                {...(props as any)}
-                {...ds}
-                showFooter={false}
-                // 全局插入配置覆盖默认配置
-                {...FeGlobalRef.current}
-                siderMenuProps={{
-                  isOpenPermission: ds.isOpenPermission,
-                  permissionData,
-                  scriptUrl:
-                    'http://at.alicdn.com/t/font_2486191_tnfcu8v29v.js',
-                }}
-                headerProps={{
-                  logo,
-                  isShowGlobalMenu: false,
-                }}
-                userApi={queryUserInfoApi}
-                logoutApi={doLogoutApi}
-                // loginUrl={}
-              />
-            )}
+            <FELayout.SSOLayout
+              {...(props as any)}
+              {...ds}
+              showFooter={false}
+              // 全局插入配置覆盖默认配置
+              {...FeGlobalRef.current}
+              siderMenuProps={{
+                isOpenPermission: ds.isOpenPermission,
+                permissionData,
+                scriptUrl: 'http://at.alicdn.com/t/font_2486191_tnfcu8v29v.js',
+              }}
+              headerProps={{
+                logo,
+                isShowGlobalMenu: false,
+              }}
+              userApi={queryUserInfoApi}
+              logoutApi={doLogoutApi}
+              // loginUrl={}
+            />
           </DocumentTitle>
         </ChartsContext.Provider>
       </FeContext.Provider>
