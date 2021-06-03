@@ -140,7 +140,6 @@ export default (props: IUmiRrops) => {
             title={FeGlobalRef.current.title}
             favicon={FeGlobalRef.current.favicon}
           >
-            {/* {categoryData.length > 0 && ( */}
             <FELayout.SSOLayout
               {...(props as any)}
               {...ds}
@@ -160,7 +159,6 @@ export default (props: IUmiRrops) => {
               logoutApi={doLogoutApi}
               // loginUrl={}
             />
-            {/* )} */}
           </DocumentTitle>
         </ChartsContext.Provider>
       </FeContext.Provider>
