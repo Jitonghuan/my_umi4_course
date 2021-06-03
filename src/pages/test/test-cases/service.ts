@@ -38,7 +38,7 @@ export const getCaseInfo = addAPIPrefix('/qc/autotest/getCaseInfo');
 /** GET 20、用例管理-查询用例列表 */
 export const getCaseList = addAPIPrefix('/qc/autotest/getCaseList');
 
-/** POST 21、用例管理-目录树节点删除 */
+/** POST 21、用例管理-目录树节点删除 (type 0 项目、1 模块、2 接口) */
 export const deleteApiTreeNode = addAPIPrefix('/qc/autotest/deleteApiTreeNode');
 
 /** POST 22、用例管理-用例删除 */
