@@ -64,7 +64,7 @@ const ApplicationDeploy = ({
         {curEnvData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
-              env={item.value}
+              envTypeCode={item.value}
               onDeployNextEnvSuccess={() => {
                 const i = curEnvData.findIndex(
                   (item) => item.value === tabActive,

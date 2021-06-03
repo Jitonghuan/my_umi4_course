@@ -21,7 +21,12 @@ import { name } from 'dayjs/locale/*';
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
 
-const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
+const PublishDetail = ({
+  deployInfo,
+  envTypeCode,
+  nextEnvTypeCode,
+  onOperate,
+}: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
 
@@ -29,16 +34,34 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [envDataList, setEnvDataList] = useState([]);
+  const [nextEnvDataList, setNextEnvDataList] = useState([]);
 
   useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
       categoryCode: appCategoryCode as string,
-      envTypeCode: env,
+      envTypeCode: envTypeCode,
     }).then((data) => {
       setEnvDataList(data.list);
     });
-  }, [appCategoryCode, env]);
+  }, [appCategoryCode, envTypeCode]);
+
+  useEffect(() => {
+    if (!appCategoryCode) return;
+    if (envTypeCode === 'dev') {
+      nextEnvTypeCode = 'test';
+    } else if (envTypeCode === 'test') {
+      nextEnvTypeCode = 'pre';
+    } else if (envTypeCode === 'pre') {
+      nextEnvTypeCode = 'prod';
+    }
+    queryEnvsReq({
+      categoryCode: appCategoryCode as string,
+      envTypeCode: nextEnvTypeCode,
+    }).then((data) => {
+      setNextEnvDataList(data.list);
+    });
+  }, [appCategoryCode, envTypeCode]);
 
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
@@ -60,34 +83,13 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        {env !== 'prod' && (
+        {envTypeCode !== 'prod' && (
           <Button
             type="primary"
             onClick={() => {
               onOperate('deployNextEnvStart');
-
-              // 部署到生产环境
-              if (env === 'poc') {
-                setDeployVisible(true);
-                return;
-              }
-
-              confirm({
-                title: '确定要把当前部署分支发布到下一个环境中？',
-                icon: <ExclamationCircleOutlined />,
-                onOk: () => {
-                  return deployReuse({ id: deployInfo.id }).then((res) => {
-                    if (res.success) {
-                      message.success('操作成功，正在部署中...');
-                      onOperate('deployNextEnvSuccess');
-                      return;
-                    }
-                  });
-                },
-                onCancel() {
-                  onOperate('deployNextEnvEnd');
-                },
-              });
+              setDeployVisible(true);
+              return;
             }}
           >
             部署到下个环境
@@ -145,7 +147,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
         onOk={() => {
           setConfirmLoading(true);
 
-          return deployReuse({ id: deployInfo.id })
+          return deployReuse({ id: deployInfo.id, envs: deployEnv })
             .then((res) => {
               if (res.success) {
                 message.success('操作成功，正在部署中...');
@@ -166,7 +168,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
           <Checkbox.Group
             value={deployEnv}
             onChange={(v) => setDeployEnv(v)}
-            options={envDataList || []}
+            options={nextEnvDataList || []}
           />
         </div>
       </Modal>
