@@ -11,7 +11,7 @@ const APP_TYPE_MAP = {
 
 // 过滤表单 schema
 export const createFilterFormSchema = (params: {
-  belongData?: any[];
+  categoryData?: any[];
   businessData?: any[];
 }) => ({
   theme: 'inline',
@@ -21,16 +21,16 @@ export const createFilterFormSchema = (params: {
     {
       type: 'Select',
       props: {
-        label: '所属',
-        name: 'belong',
-        options: params.belongData || [],
+        label: '应用分类',
+        name: 'appCategoryCode',
+        options: params.categoryData || [],
       },
     },
     {
       type: 'Select',
       props: {
-        label: '业务线',
-        name: 'lineCode',
+        label: '应用组',
+        name: 'appGroupCode',
         options: params.businessData || [],
       },
     },
@@ -61,9 +61,13 @@ export const createFilterFormSchema = (params: {
 export const createTableSchema = ({
   onEditClick,
   onDelClick,
+  categoryData,
+  businessDataList,
 }: {
   onEditClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
+  categoryData: any[];
+  businessDataList: any[];
 }) =>
   [
     {
@@ -83,6 +87,8 @@ export const createTableSchema = ({
               query: {
                 id: record.id,
                 appCode: record.appCode,
+                isClient: record.isClient,
+                isContainClient: record.isContainClient,
               },
             })
           }
@@ -98,13 +104,16 @@ export const createTableSchema = ({
     },
     {
       title: 'git仓库名',
-      dataIndex: 'gitlab',
+      dataIndex: 'gitAddress',
       width: 200,
     },
     {
-      title: '所属',
-      dataIndex: 'belong',
+      title: '应用分类',
+      dataIndex: 'appCategoryCode',
       width: 80,
+      render: (appCategoryCode) =>
+        categoryData?.find((v) => v.categoryCode === appCategoryCode)
+          .categoryName || '-',
     },
     {
       title: '应用类型',
@@ -113,14 +122,12 @@ export const createTableSchema = ({
       render: (appType: AppType) => APP_TYPE_MAP[appType] || '',
     },
     {
-      title: '业务线',
-      dataIndex: 'lineCode',
+      title: '应用组',
+      dataIndex: 'appGroupCode',
       width: 100,
-    },
-    {
-      title: '业务模块',
-      dataIndex: 'sysCode',
-      width: 100,
+      render: (appGroupCode) =>
+        businessDataList?.find((v) => v.groupCode === appGroupCode).groupName ||
+        '-',
     },
     {
       title: '责任人',
@@ -147,6 +154,8 @@ export const createTableSchema = ({
                 query: {
                   id: record.id,
                   appCode: record.appCode,
+                  isClient: record.isClient,
+                  isContainClient: record.isContainClient,
                 },
               })
             }

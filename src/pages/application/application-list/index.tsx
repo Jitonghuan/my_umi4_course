@@ -34,7 +34,9 @@ import { IProps } from './types';
 import './index.less';
 
 const ApplicationList = (props: IProps) => {
-  const { belongData, envData, breadcrumbMap } = useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(
+    FEContext,
+  );
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [formInstance] = Form.useForm();
 
@@ -42,15 +44,15 @@ const ApplicationList = (props: IProps) => {
   const [curRecord, setCurRecord] = useState<any>();
 
   const filterColumns = useMemo(() => {
-    return createFilterFormSchema({ belongData, businessData });
-  }, [belongData, businessData]);
+    return createFilterFormSchema({ categoryData, businessData });
+  }, [categoryData, businessData]);
 
-  // 根据所属查询业务线
-  const queryBusiness = (belong: string) => {
+  // 根据应用分类查询应用组
+  const queryBusiness = (categoryCode: string) => {
     setBusinessData([]);
     getRequest(queryBizData, {
       data: {
-        belong,
+        categoryCode,
       },
     }).then((resp: any) => {
       if (resp.success) {
@@ -58,8 +60,8 @@ const ApplicationList = (props: IProps) => {
           resp?.data?.dataSource?.map((el: any) => {
             return {
               ...el,
-              value: el.lineCode,
-              label: el.lineName,
+              value: el.groupCode,
+              label: el.groupName,
             };
           }) || [];
         setBusinessData(datas);
@@ -78,11 +80,11 @@ const ApplicationList = (props: IProps) => {
     },
   });
 
-  // 监听表单变化，根据所属查询业务线
+  // 监听表单变化，根据应用分类查询应用组
   const handleChange = useCallback((vals) => {
     const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
-    if (name && name === 'belong') {
-      formInstance.resetFields(['lineCode']);
+    if (name && name === 'appCategoryCode') {
+      formInstance.resetFields(['appGroupCode']);
       queryBusiness(value);
     }
   }, []);
@@ -163,6 +165,8 @@ const ApplicationList = (props: IProps) => {
                   },
                 );
               },
+              categoryData,
+              businessDataList,
             }) as any
           }
           {...tableProps}

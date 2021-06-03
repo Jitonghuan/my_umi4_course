@@ -8,8 +8,8 @@ export const createTableSchema = () => [
     dataIndex: 'id',
   },
   {
-    title: '创建人',
-    dataIndex: 'createUser',
+    title: '发布人',
+    dataIndex: 'modifyUser',
   },
   {
     title: '发布时间',
@@ -25,9 +25,9 @@ export const createTableSchema = () => [
 // 发布记录字段 map
 export const recordFieldMap: { [key: string]: string } = {
   id: '发布Id',
-  createUser: '创建人',
+  modifyUser: '发布人',
   deployedTime: '发布时间',
-  env: '发布环境',
+  envs: '发布环境',
   deployStatus: '发布状态',
   features: '功能分支',
   releaseBranch: '发布分支',

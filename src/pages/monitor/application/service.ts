@@ -20,6 +20,7 @@ export const queryAppList = () =>
       const { dataSource = [] } = res.data || {};
       return dataSource.map((app: any) => {
         return {
+          ...app,
           value: app.appCode,
           label: app.appCode,
         };
@@ -33,13 +34,16 @@ const queryEnvListApi = `${ds.apiPrefix}/monitorManage/app/env`;
 export const queryEnvList = (params: { appCode: string }) =>
   getRequest(queryEnvListApi, { data: params }).then((res: any) => {
     if (res.success) {
-      const { data = [] } = res;
-      return data.map((env: any) => {
-        return {
-          value: env,
-          label: env,
-        };
-      });
+      const { dataSource = [] } = res.data;
+      return (
+        dataSource?.map((env: any) => {
+          return {
+            ...env,
+            value: env.envCode,
+            label: env.envCode,
+          };
+        }) || []
+      );
     }
     return [];
   });

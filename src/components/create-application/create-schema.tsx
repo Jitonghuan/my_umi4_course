@@ -1,9 +1,10 @@
-import { AppType } from './types';
+import { AppType, AppDevelopLanguage } from './types';
 
 export default (params: {
   isEdit: boolean;
   appType?: AppType;
-  belongData?: any[];
+  appDevelopLanguage?: AppDevelopLanguage;
+  categoryData?: any[];
   businessData?: any[];
 }) => ({
   isShowReset: false,
@@ -33,9 +34,17 @@ export default (params: {
       type: 'Input',
       props: {
         label: 'git地址',
-        name: 'gitlab',
+        name: 'gitAddress',
         required: true,
-        placeholder: '请输入git地址',
+        placeholder: '请输入应用gitlab http地址',
+      },
+    },
+    {
+      type: 'Input',
+      props: {
+        label: 'git分组',
+        name: 'gitGroup',
+        placeholder: '请输入应用gitlab 分组信息',
       },
     },
     {
@@ -56,13 +65,56 @@ export default (params: {
         ],
       },
     },
-    // 后端才有
     {
       isNotNeed: params.appType !== 'backend',
+      type: 'Select',
+      props: {
+        label: '开发语言',
+        name: 'appDevelopLanguage',
+        required: true,
+        options: [
+          {
+            label: 'GOLANG',
+            value: 'golang',
+          },
+          {
+            label: 'JAVA',
+            value: 'java',
+          },
+          {
+            label: 'PYTHON',
+            value: 'python',
+          },
+        ],
+      },
+    },
+    // 后端才有
+    {
+      isNotNeed: params.appDevelopLanguage !== 'java',
+      type: 'Radio',
+      props: {
+        label: '是否为二方包',
+        name: 'isClient',
+        required: true,
+        options: [
+          {
+            label: '是',
+            value: 1,
+          },
+          {
+            label: '否',
+            value: 0,
+          },
+        ],
+      },
+    },
+    //java才有
+    {
+      isNotNeed: params.appDevelopLanguage !== 'java',
       type: 'Radio',
       props: {
         label: '是否包含二方包',
-        name: 'isClient',
+        name: 'isContainClient',
         required: true,
         options: [
           {
@@ -78,20 +130,19 @@ export default (params: {
     },
     // 后端才有
     {
-      isNotNeed: params.appType !== 'backend',
+      isNotNeed: params.appDevelopLanguage !== 'java',
       type: 'Input',
       props: {
-        label: 'jar包路径',
-        name: 'jarPath',
+        label: 'pom文件路径',
+        name: 'deployPomPath',
         required: true,
-        placeholder: '请输入jar包路径',
+        placeholder: '请输入应用的pom文件的相对路径',
       },
     },
     {
-      isNotNeed: params.appType === 'frontend',
       type: 'Input',
       props: {
-        label: 'deployment名称',
+        label: '应用部署名',
         name: 'deploymentName',
         required: true,
         placeholder: '请输入deployment名称',
@@ -100,34 +151,18 @@ export default (params: {
     {
       type: 'Select',
       props: {
-        label: '所属',
-        name: 'belong',
+        label: '应用分类',
+        name: 'appCategoryCode',
         required: true,
-        options: params.belongData || [],
-      },
-    },
-    // 前端才有
-    {
-      isNotNeed: params.appType !== 'frontend',
-      type: 'Input',
-      props: {
-        label: '所属组',
-        name: 'group',
+        options: params.categoryData || [],
       },
     },
     {
       type: 'Select',
       props: {
-        label: '业务线',
-        name: 'lineCode',
+        label: '应用组',
+        name: 'appGroupCode',
         options: params.businessData || [],
-      },
-    },
-    {
-      type: 'Input',
-      props: {
-        label: '业务模块',
-        name: 'sysCode',
       },
     },
     {

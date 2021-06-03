@@ -11,6 +11,7 @@ import VCPageContent, {
   FilterCard,
   ContentCard,
 } from '@/components/vc-page-content';
+import FEContext from '@/layouts/basic-layout/FeContext';
 import UpdateApplication, {
   AppDataTypes,
 } from '@/components/create-application';
@@ -31,6 +32,7 @@ const APP_TYPE_MAP = {
 
 const ApplicationOverview = (props: IProps) => {
   const { appData, queryAppData } = useContext(DetailContext);
+  const { categoryData = [], businessData = [] } = useContext(FEContext);
 
   const [isModifyApp, setIsModifyApp] = useState(false);
   const [isModifyMember, setIsModifyMember] = useState(false);
@@ -53,7 +55,7 @@ const ApplicationOverview = (props: IProps) => {
       <Descriptions
         title="概要"
         bordered
-        column={2}
+        column={3}
         labelStyle={labelStyle}
         extra={<Button onClick={() => setIsModifyApp(true)}>修改</Button>}
       >
@@ -61,23 +63,45 @@ const ApplicationOverview = (props: IProps) => {
           {appData?.appCode}
         </Descriptions.Item>
         <Descriptions.Item label="应用名">{appData?.appName}</Descriptions.Item>
-        <Descriptions.Item label="git地址">{appData?.gitlab}</Descriptions.Item>
-        <Descriptions.Item label="jar包路径">
-          {appData?.jarPath}
+        <Descriptions.Item label="git地址">
+          {appData?.gitAddress}
         </Descriptions.Item>
-        <Descriptions.Item label="是否包含二方包">
-          {{ 1: '是', 0: '否' }[appData?.isClient!]}
+        <Descriptions.Item label="git组">{appData?.gitGroup}</Descriptions.Item>
+        {appData?.appDevelopLanguage === 'java' && (
+          <Descriptions.Item label="pom文件路径">
+            {appData?.deployPomPath}
+          </Descriptions.Item>
+        )}
+        {appData?.appType === 'backend' && (
+          <Descriptions.Item label="应用开发语言">
+            {appData?.appDevelopLanguage}
+          </Descriptions.Item>
+        )}
+        <Descriptions.Item label="应用部署名称">
+          {appData?.deploymentName}
+        </Descriptions.Item>
+        <Descriptions.Item label="应用分类">
+          {categoryData?.find(
+            (v) => v.categoryCode === appData?.appCategoryCode,
+          )?.categoryName || '-'}
+        </Descriptions.Item>
+        <Descriptions.Item label="应用组">
+          {businessData?.find((v) => v.groupCode === appData?.appGroupCode)
+            ?.groupName || '-'}
         </Descriptions.Item>
         <Descriptions.Item label="应用类型">
           {APP_TYPE_MAP[appData?.appType!]}
         </Descriptions.Item>
-        <Descriptions.Item label="所属">{appData?.belong}</Descriptions.Item>
-        <Descriptions.Item label="业务线">
-          {appData?.lineCode}
-        </Descriptions.Item>
-        <Descriptions.Item label="业务模块">
-          {appData?.sysCode}
-        </Descriptions.Item>
+        {appData?.appDevelopLanguage === 'java' && (
+          <Descriptions.Item label="是否为二方包">
+            {{ 1: '是', 0: '否' }[appData?.isClient!]}
+          </Descriptions.Item>
+        )}
+        {appData?.appDevelopLanguage === 'java' && (
+          <Descriptions.Item label="是否包含二方包">
+            {{ 1: '是', 0: '否' }[appData?.isContainClient!]}
+          </Descriptions.Item>
+        )}
         <Descriptions.Item label="责任人">{appData?.owner}</Descriptions.Item>
         <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
       </Descriptions>
@@ -112,7 +136,7 @@ const ApplicationOverview = (props: IProps) => {
           {memberData?.autoTestOwner && <Tag>{memberData?.autoTestOwner}</Tag>}
         </Descriptions.Item>
         <Descriptions.Item label="报警接收人">
-          {memberData?.alterReceiver && <Tag>{memberData?.alterReceiver}</Tag>}
+          {memberData?.alertReceiver && <Tag>{memberData?.alertReceiver}</Tag>}
         </Descriptions.Item>
       </Descriptions>
 

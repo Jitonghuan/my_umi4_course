@@ -12,6 +12,10 @@
       flex: 1;
       height: 100%;
       overflow: auto;
+
+      &.x-relative {
+        position: relative;
+      }
     }
   }
 
@@ -23,5 +27,22 @@
 
   &-filter {
     margin-bottom: 12px;
+  }
+
+  .vc-page-row {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .vc-slide-card {
+    flex: 0 0 auto;
+    height: 100%;
+    margin-right: 12px;
+
+    .ant-card-body {
+      padding: 0;
+    }
   }
 }

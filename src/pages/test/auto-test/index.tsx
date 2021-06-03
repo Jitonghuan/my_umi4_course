@@ -37,7 +37,7 @@ import { getRequest, postRequest } from '@/utils/request';
 const Coms = (props: any) => {
   const { location } = props;
   const feContent = useContext(FEContext);
-  const { belongData = [], envData = [] } = feContent || {};
+  const { categoryData = [], envData = [] } = feContent || {};
 
   // 业务线数据
   const [belong, setBelong] = useState<string>('gmc');
@@ -213,13 +213,13 @@ const Coms = (props: any) => {
     return [
       {
         name: 'belong',
-        label: '所属',
+        label: '应用分类',
         type: 'Select',
-        options: belongData,
+        options: categoryData,
         initialValue: belong,
       },
     ] as IColumns[];
-  }, [belongData, belong]);
+  }, [categoryData, belong]);
 
   // 表格相关重置, 翻页重置，搜索重置，表格选中重置
   const handleResetTable = () => {
@@ -293,9 +293,14 @@ const Coms = (props: any) => {
               options={envData}
               placeholder="请选择环境"
             />
-            <Button type="primary" onClick={() => handleOperate('runall')}>
-              批量执行
-            </Button>
+            <Popconfirm
+              title="确认执行当前用例？"
+              onConfirm={() => {
+                handleOperate('runall');
+              }}
+            >
+              <Button type="primary">批量执行</Button>
+            </Popconfirm>
             <Button
               type="primary"
               onClick={() => handleOperate('result')}

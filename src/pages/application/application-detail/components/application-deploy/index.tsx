@@ -5,9 +5,11 @@
  * @create 2021-04-15 09:33
  */
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Tabs, Button } from 'antd';
 import FeContext from '@/layouts/basic-layout/FeContext';
+import { queryEnvData } from '@/layouts/basic-layout/service';
+import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
 import { IProps } from './types';
 import './index.less';
@@ -17,12 +19,38 @@ const rootCls = 'app-deploy-compo';
 
 const ApplicationDeploy = ({
   location: {
-    query: { appCode, id: appId },
+    query: { appCode, id: appId, isClient },
   },
 }: IProps) => {
-  const { envData } = useContext(FeContext);
+  const isTwoPackage = Number(isClient) === 1;
 
-  const [tabActive, setTabActive] = useState('dev');
+  const { envData } = useContext(FeContext);
+  const [tabActive, setTabActive] = useState(isTwoPackage ? 'cDev' : 'dev');
+  // 二方包环境
+  const [envTwoPackageData, setEnvTwoPackageData] = useState<any[]>([]);
+
+  // 环境数据
+  const queryEnvDataList = async () => {
+    const envResp = await getRequest(queryEnvData, {
+      data: { isClient: true },
+    });
+    const envData = envResp?.data || [];
+    setEnvTwoPackageData(
+      envData.map((el: any) => ({
+        ...el,
+        label: el.typeName,
+        value: el.typeCode,
+      })),
+    );
+  };
+
+  useEffect(() => {
+    if (isTwoPackage) {
+      queryEnvDataList();
+    }
+  }, [isClient]);
+
+  const curEnvData = isTwoPackage ? envTwoPackageData : envData;
 
   return (
     <div className={rootCls}>
@@ -33,15 +61,17 @@ const ApplicationDeploy = ({
         type="card"
         tabBarStyle={{ background: '#E6EBF5' }}
       >
-        {envData?.map((item) => (
-          <TabPane tab={item.envName} key={item.envCode}>
+        {curEnvData?.map((item) => (
+          <TabPane tab={item.label} key={item.value}>
             <DeployContent
-              env={item.envCode}
+              envTypeCode={item.value}
               onDeployNextEnvSuccess={() => {
-                const i = envData.findIndex(
-                  (item) => item.envCode === tabActive,
+                const i = curEnvData.findIndex(
+                  (item) => item.value === tabActive,
                 );
-                setTabActive(envData[i + 1]?.envCode || 'dev');
+                setTabActive(
+                  curEnvData[i + 1]?.value || isTwoPackage ? 'cDev' : 'dev',
+                );
               }}
             />
           </TabPane>
