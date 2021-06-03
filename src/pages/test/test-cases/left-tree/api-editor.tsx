@@ -19,6 +19,7 @@ import FELayout from '@cffe/vc-layout';
 import * as APIS from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import TableKVField from '@/components/table-kv-field';
+import DebounceSelect from '@/components/debounce-select';
 import { TreeNode, EditorMode } from '../interfaces';
 import {
   API_TYPE_OPTIONS,
@@ -59,6 +60,18 @@ export default function ApiEditor(props: ApiEditorProps) {
     console.log('>>> handleSubmit, values', values);
   }, [mode, targetNode]);
 
+  //
+  const fetchAppList = useCallback(async (keyword: string) => {
+    const result = await getRequest(APIS.getAppList, {
+      data: { pageSize: 50, appName: keyword },
+    });
+    const dataSource = (result.data.dataSource || []).map((n: any) => ({
+      label: n.appName,
+      value: n.id,
+    }));
+    return dataSource;
+  }, []);
+
   return (
     <Drawer
       title={mode === 'EDIT' ? '编辑接口' : '新增接口'}
@@ -79,8 +92,15 @@ export default function ApiEditor(props: ApiEditorProps) {
     >
       <Form form={editField} {...formLayout}>
         {/* ----- common ----- */}
-        <FormItem label="所属应用">
-          <span className="ant-form-text">{targetNode?.title}</span>
+        <FormItem
+          label="所属应用"
+          name="appId"
+          rules={[{ required: true, message: '请选择应用' }]}
+        >
+          <DebounceSelect
+            fetchOptions={fetchAppList}
+            placeholder="输入应用名搜索"
+          />
         </FormItem>
         <FormItem
           label="接口名称"
