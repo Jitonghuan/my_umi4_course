@@ -40,6 +40,10 @@ export const createTableSchema = ({
     dataIndex: 'branchName',
   },
   {
+    title: '描述',
+    dataIndex: 'desc',
+  },
+  {
     title: '创建时间',
     dataIndex: 'gmtCreate',
     render: (val: string) =>

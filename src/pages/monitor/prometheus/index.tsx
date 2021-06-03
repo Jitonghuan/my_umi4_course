@@ -76,12 +76,12 @@ const PrometheusCom: React.FC = () => {
       key: 'name',
     },
     {
-      title: '应用名称',
+      title: '应用code',
       dataIndex: 'appCode',
       key: 'appCode',
     },
     {
-      title: '环境名称',
+      title: '环境code',
       dataIndex: 'envCode',
       key: 'envCode',
     },
@@ -206,7 +206,7 @@ const PrometheusCom: React.FC = () => {
     {
       key: '2',
       type: 'select',
-      label: '应用名称',
+      label: '应用code',
       dataIndex: 'appCode',
       width: '160px',
       placeholder: '请选择',
@@ -221,10 +221,9 @@ const PrometheusCom: React.FC = () => {
     {
       key: '3',
       type: 'select',
-      label: '环境名称',
+      label: '环境code',
       dataIndex: 'envCode',
       width: '160px',
-      placeholder: '请选择应用名称',
       showSelectSearch: true,
       option: appManageEnvData as OptionProps[],
     },

@@ -4,6 +4,7 @@ import { FormProps } from '@/components/table-search/typing';
 import { Space, Tag, Popconfirm } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { Link } from 'umi';
+import { getEnvName } from '@/utils';
 import { statusType } from '../constant';
 import { IFuncItem } from '../typing';
 import moment from 'moment';
@@ -112,6 +113,9 @@ export const createFormItems = (params: {
 
 export const createTableColumns = (params: {
   onDelete: (id: string) => void;
+  categoryData: any[];
+  businessData: any[];
+  envsUrlList: any[];
 }) => {
   return [
     {
@@ -149,28 +153,24 @@ export const createTableColumns = (params: {
       dataIndex: 'appCategoryCode',
       key: 'appCategoryCode',
       // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      render: (text) =>
+        params.categoryData?.find((v) => v.categoryCode === text)
+          .categoryName || '-',
     },
     {
       title: '应用组',
       dataIndex: 'appGroupCode',
       key: 'appGroupCode',
       // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+      render: (text) =>
+        params.businessData?.find((v) => v.groupCode === text).groupName || '-',
     },
     {
       title: '发布环境',
       dataIndex: 'envs',
       key: 'envs',
       // width: '4%',
+      render: (text) => getEnvName(params.envsUrlList, text) || '-',
     },
     {
       title: '涉及业务范围',

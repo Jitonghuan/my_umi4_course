@@ -28,6 +28,7 @@ import {
 
 export interface IProps {
   visible: boolean;
+  envsUrlList: any[];
   onClose: (reload?: boolean) => void;
 }
 
@@ -40,8 +41,10 @@ const tailLayout = {
 };
 
 const AddDrawer = (props: IProps) => {
-  const { visible, onClose } = props;
-  const { categoryData } = useContext(FEContext);
+  const { visible, onClose, envsUrlList } = props;
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(
+    FEContext,
+  );
   const [formInstance] = Form.useForm();
 
   const [businessData, setBusinessData] = useState<any[]>([]);
@@ -245,7 +248,10 @@ const AddDrawer = (props: IProps) => {
             rowKey="planId"
             scroll={{ x: 2000 }}
             rowSelection={rowSelection}
-            columns={planSchemaColumns}
+            columns={createPlanSchemaColumns({
+              categoryData,
+              businessDataList,
+            })}
             dataSource={deployPlanData}
             pagination={false}
           />

@@ -8,6 +8,7 @@ import {
   DEPLOY_TYPE_COLOR_MAP,
   DEPLOY_TYPE_MAP,
 } from './const';
+import { getEnvName } from '@/utils';
 import moment from 'moment';
 
 // 过滤表单 schema
@@ -60,9 +61,13 @@ export const createFilterFormSchema = (params: {
 export const createTableSchema = ({
   onDetailClick,
   categoryData,
+  businessDataList,
+  envsUrlList,
 }: {
   onDetailClick: (record: any) => void;
   categoryData?: any[];
+  businessDataList: any[];
+  envsUrlList: any[];
 }) =>
   [
     {
@@ -109,10 +114,13 @@ export const createTableSchema = ({
     {
       title: '应用组',
       dataIndex: 'appGroupCode',
+      render: (text) =>
+        businessDataList?.find((v) => v.groupCode === text).groupName || '-',
     },
     {
       title: '发布环境',
       dataIndex: 'deployEnv',
+      render: (text) => getEnvName(envsUrlList, text) || '-',
     },
     {
       title: '发布负责人',
@@ -150,18 +158,30 @@ export const createTableSchema = ({
     },
   ] as ColumnProps[];
 
-export const planSchemaColumns = [
+export const createPlanSchemaColumns = ({
+  categoryData,
+  businessDataList,
+}: {
+  categoryData?: any[];
+  businessDataList: any[];
+}) => [
   {
     title: '计划ID',
     dataIndex: 'id',
   },
   {
-    title: '应⽤分类',
+    title: '应用分类',
     dataIndex: 'appCategoryCode',
+    render: (value: string) => {
+      const result = categoryData?.filter((el) => el.value === value);
+      return result?.length ? result[0].label : value || '';
+    },
   },
   {
-    title: '应⽤组',
+    title: '应用组',
     dataIndex: 'appGroupCode',
+    render: (text: string) =>
+      businessDataList?.find((v) => v.groupCode === text)?.groupName || '-',
   },
   {
     title: '应用CODE',
@@ -169,7 +189,8 @@ export const planSchemaColumns = [
   },
   {
     title: '应用类型',
-    dataIndex: 'appType',
+    dataIndex: 'deployType',
+    render: (text: AppType) => APP_TYPE_MAP[text] || '-',
   },
   {
     title: '版本号',
@@ -205,7 +226,15 @@ export const planSchemaColumns = [
   },
 ];
 
-export const applyDetailSchemaColumns = [
+export const createApplyDetailSchemaColumns = ({
+  categoryData,
+  businessDataList,
+  envsUrlList,
+}: {
+  categoryData?: any[];
+  businessDataList: any[];
+  envsUrlList: any[];
+}) => [
   {
     title: 'ID',
     dataIndex: 'id',
@@ -217,14 +246,21 @@ export const applyDetailSchemaColumns = [
   {
     title: '应用分类',
     dataIndex: 'appCategoryCode',
+    render: (value: string) => {
+      const result = categoryData?.filter((el) => el.value === value);
+      return result?.length ? result[0].label : value || '';
+    },
   },
   {
     title: '应用组',
     dataIndex: 'appGroupCode',
+    render: (text: string) =>
+      businessDataList?.find((v) => v.groupCode === text)?.groupName || '-',
   },
   {
     title: '发布环境',
     dataIndex: 'envs',
+    render: (text: string) => getEnvName(envsUrlList, text) || '-',
   },
   {
     title: '涉及业务范围',

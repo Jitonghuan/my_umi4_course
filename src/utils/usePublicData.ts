@@ -13,6 +13,8 @@ export const queryAppTypeLists = `${ds.apiPrefix}/appManage/category/list`;
 export const queryAppBranchLists = `${ds.apiPrefix}/releaseManage/branch/list`;
 /** 环境类型 */
 export const queryEnvListType = `${ds.apiPrefix}/appManage/env/listType`;
+/** 根据应用分类code查询发布环境列表 */
+const queryEnvsUrl = `${ds.apiPrefix}/appManage/env/list`;
 
 interface UsePublicDataProps {
   appCode?: string;
@@ -32,6 +34,9 @@ interface UsePublicDataProps {
 
   // 环境类型
   isEnvType?: boolean;
+
+  // 发布环境
+  isEnvsUrl?: boolean;
 }
 
 const usePublicData = (props: UsePublicDataProps) => {
@@ -43,6 +48,7 @@ const usePublicData = (props: UsePublicDataProps) => {
     isUseAppEnv = true,
     isUseAppBranch = true,
     isEnvType,
+    isEnvsUrl,
   } = props;
 
   // 查询应用分类
@@ -120,12 +126,30 @@ const usePublicData = (props: UsePublicDataProps) => {
     },
   });
 
+  // 查询环境类型
+  const { run: envsUrlFun, data: envsUrlList } = useRequest({
+    api: queryEnvsUrl,
+    method: 'GET',
+    formatData: (data) => {
+      return data?.dataSource?.map((v: any) => {
+        return {
+          ...v,
+          key: v?.envCode,
+          value: v?.envName,
+        };
+      });
+    },
+  });
+
   useEffect(() => {
     if (isUseAppType) {
-      queryAppTypeListsFun({ pageSzie: '-1' });
+      queryAppTypeListsFun({ pageSize: '-1' });
     }
     if (isEnvType) {
-      envTypeListFun({ pageSzie: '-1' });
+      envTypeListFun({ pageSize: '-1' });
+    }
+    if (isEnvsUrl) {
+      envsUrlFun({ pageSize: '-1' });
     }
   }, []);
 
@@ -148,12 +172,14 @@ const usePublicData = (props: UsePublicDataProps) => {
     appTypeData,
     appBranchData,
     envListType,
+    envsUrlList,
   } as {
     appManageListData: OptionProps[];
     appManageEnvData: OptionProps[];
     appTypeData: OptionProps[];
     appBranchData: OptionProps[];
     envListType: OptionProps[];
+    envsUrlList: OptionProps[];
   };
 };
 

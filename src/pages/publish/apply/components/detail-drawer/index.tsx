@@ -3,18 +3,29 @@ import { Drawer, Card, Row, Col, Select, Divider, Table } from 'antd';
 import { DEPLOY_TYPE_MAP } from '../../const';
 import { applyDetailSchemaColumns } from '../../schema';
 import { getApplyRelInfoReq } from '@/pages/publish/service';
+import { getEnvName } from '@/utils';
 import moment from 'moment';
 
 export interface IPorps {
   id: string;
   visible: boolean;
+  categoryData: any[];
+  businessDataList: any[];
+  envsUrlList: any[];
   onClose: () => void;
 }
 
 const rootCls = 'apply-detail-drawer';
 
 const DetailDrawer = (props: IPorps) => {
-  const { id, visible, onClose } = props;
+  const {
+    id,
+    visible,
+    onClose,
+    categoryData,
+    businessDataList,
+    envsUrlList,
+  } = props;
   const [baseInfo, setBaseInfo] = useState<any>({});
   const [plans, setPlans] = useState<any[]>([]);
 
@@ -48,9 +59,21 @@ const DetailDrawer = (props: IPorps) => {
           <Col span={6}>
             发布类型：{DEPLOY_TYPE_MAP[baseInfo?.deployType] || '--'}
           </Col>
-          <Col span={6}>应用分类：{baseInfo?.appCategoryCode || ''}</Col>
-          <Col span={6}>应用组：{baseInfo?.appGroupCode || ''}</Col>
-          <Col span={6}>发布环境：{baseInfo?.deployEnv || ''}</Col>
+          <Col span={6}>
+            应用分类：
+            {categoryData?.find(
+              (v) => v.categoryCode === baseInfo?.appCategoryCode,
+            )?.categoryName || '-'}
+          </Col>
+          <Col span={6}>
+            应用组：
+            {businessDataList?.find(
+              (v) => v.groupCode === baseInfo?.appGroupCode,
+            )?.groupName || '-'}
+          </Col>
+          <Col span={6}>
+            发布环境：{getEnvName(envsUrlList, baseInfo?.deployEnv) || ''}
+          </Col>
           <Col span={6}>发布负责人：{baseInfo?.deployUser || ''}</Col>
           <Col span={6}>计划发布时间：{baseInfo?.deployDate || ''}</Col>
           <Col span={6}>
@@ -71,9 +94,21 @@ const DetailDrawer = (props: IPorps) => {
               </div>
               <Row>
                 <Col span={6}>应用CODE：{plan?.appCode || ''}</Col>
-                <Col span={6}>应用分类：{plan?.appCategoryCode || ''}</Col>
-                <Col span={6}>应用组：{plan?.appGroupCode || ''}</Col>
-                <Col span={6}>应用类型：{plan?.appType || '-'}</Col>
+                <Col span={6}>
+                  应用分类：
+                  {categoryData?.find(
+                    (v) => v.categoryCode === plan?.appCategoryCode,
+                  )?.categoryName || '-'}
+                </Col>
+                <Col span={6}>
+                  应用组：
+                  {businessDataList?.find(
+                    (v) => v.groupCode === plan?.appGroupCode,
+                  )?.groupName || ''}
+                </Col>
+                <Col span={6}>
+                  应用类型：{APP_TYPE_MAP[plan?.deployType as AppType] || '-'}
+                </Col>
                 <Col span={6}>版本号：{plan?.version || ''}</Col>
                 <Col span={6}>版本分支：{plan?.deployRelease || ''}</Col>
                 <Col span={6}>发布依赖：{plan?.dependency || ''}</Col>
@@ -87,7 +122,11 @@ const DetailDrawer = (props: IPorps) => {
                 <Table
                   rowKey="id"
                   scroll={{ x: 1200 }}
-                  columns={applyDetailSchemaColumns}
+                  columns={createApplyDetailSchemaColumns({
+                    categoryData,
+                    businessDataList,
+                    envsUrlList,
+                  })}
                   dataSource={plan.funcs}
                   pagination={false}
                   style={{ marginBottom: 12 }}

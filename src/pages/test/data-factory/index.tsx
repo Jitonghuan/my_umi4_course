@@ -5,6 +5,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import moment from 'moment';
 import FELayout from '@cffe/vc-layout';
+import FEContext from '@/layouts/basic-layout/FeContext';
 import useTable from '@/utils/useTable';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
@@ -28,6 +29,7 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 
 const DataFactory: React.FC = () => {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
+  const { categoryData = [] } = useContext(FEContext);
   const [form] = Form.useForm();
 
   const { envListType, appTypeData } = usePublicData({
@@ -104,6 +106,10 @@ const DataFactory: React.FC = () => {
       title: '项目',
       dataIndex: 'project',
       key: 'project',
+      render: (value) => {
+        const result = categoryData?.filter((el) => el.value === value);
+        return result?.length ? result[0].label : value || '';
+      },
     },
     {
       title: '创建时间',
