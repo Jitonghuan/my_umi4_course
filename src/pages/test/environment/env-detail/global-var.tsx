@@ -32,7 +32,7 @@ function GlobalVarEditTable(props: {
   const columns: ProColumns<EnvVarEditProps>[] = [
     {
       title: '变量名',
-      dataIndex: 'name',
+      dataIndex: 'key',
       formItemProps: { rules: [{ required: true, message: '请输入变量名' }] },
     },
     {
@@ -66,7 +66,7 @@ function GlobalVarEditTable(props: {
       bordered
       recordCreatorProps={{
         creatorButtonText: '新增',
-        record: { name: '', value: '' },
+        record: { key: '', value: '' },
       }}
     />
   );
@@ -79,13 +79,8 @@ export interface GlobalVarProps {
   queryRef: React.MutableRefObject<() => EnvVarConfItemVO[]>;
 }
 
-interface GroupItemProps {
-  groupName: string;
-  dataSource: EnvVarEditProps[];
-}
-
 export default function GlobalVar(props: GlobalVarProps) {
-  const [groupList, setGroupList] = useState<GroupItemProps[]>([]);
+  const [groupList, setGroupList] = useState<EnvVarConfItemVO[]>([]);
   const [addGroupField] = Form.useForm<{ groupName: string }>();
   const [addPopVisible, setAddPopVisible] = useState(false);
 
@@ -95,48 +90,13 @@ export default function GlobalVar(props: GlobalVarProps) {
     }
 
     // 初始化数据
-    const nextGroupList: GroupItemProps[] = [];
-    props.initData.forEach((group) => {
-      const keys = Reflect.ownKeys(group);
-      if (!keys.length) return;
-
-      const groupName = keys[0] as string;
-      const dataSource: EnvVarEditProps[] = [];
-      // 这个数据格式很有问题，每个 Record 里面只有一组键值对
-      // NOTE 如果后面数据格式优化了，这里的逻辑要改
-      group[groupName].forEach((n) => {
-        const nameList = Object.keys(n);
-        if (!nameList.length) return;
-
-        dataSource.push({
-          name: nameList[0],
-          value: n[nameList[0]],
-        });
-      });
-
-      nextGroupList.push({
-        groupName,
-        dataSource,
-      });
-    });
+    const nextGroupList = (props.initData || []).slice(0);
     setGroupList(nextGroupList);
   }, [props.initData]);
 
   useLayoutEffect(() => {
     // 给外层一个方法，用于计算并获取全量的值
-    props.queryRef.current = () => {
-      return groupList.reduce((prev, curr) => {
-        // 这个数据格式很有问题，每个 Record 里面只有一组键值对
-        return [
-          ...prev,
-          {
-            [curr.groupName]: curr.dataSource.map((item) => ({
-              [item.name]: item.value,
-            })),
-          },
-        ];
-      }, [] as EnvVarConfItemVO[]);
-    };
+    props.queryRef.current = () => groupList;
   }, [groupList]);
 
   const handleAddGroupOk = useCallback(async () => {
@@ -148,7 +108,7 @@ export default function GlobalVar(props: GlobalVarProps) {
       return message.warn('已有同名分组!');
     }
 
-    nextGroupList.push({ groupName, dataSource: [] });
+    nextGroupList.push({ groupName, variables: [] });
     setGroupList(nextGroupList);
 
     setAddPopVisible(false);
@@ -156,7 +116,7 @@ export default function GlobalVar(props: GlobalVarProps) {
   }, [groupList]);
 
   const confirmDelGroup = useCallback(
-    (group: GroupItemProps, index: number, e?: React.MouseEvent) => {
+    (group: EnvVarConfItemVO, index: number, e?: React.MouseEvent) => {
       e && e.stopPropagation();
 
       const nextGroupList = groupList.slice(0);
@@ -167,9 +127,9 @@ export default function GlobalVar(props: GlobalVarProps) {
   );
 
   const handleGroupChange = useCallback(
-    (group: GroupItemProps, index: number, next: EnvVarEditProps[]) => {
+    (group: EnvVarConfItemVO, index: number, next: EnvVarEditProps[]) => {
       const nextGroupList = groupList.slice(0);
-      nextGroupList[index].dataSource = next;
+      nextGroupList[index].variables = next;
       setGroupList(nextGroupList);
     },
     [groupList],
@@ -240,7 +200,7 @@ export default function GlobalVar(props: GlobalVarProps) {
             }
           >
             <GlobalVarEditTable
-              value={group.dataSource}
+              value={group.variables}
               onChange={(next) => handleGroupChange(group, index, next)}
             />
           </Collapse.Panel>

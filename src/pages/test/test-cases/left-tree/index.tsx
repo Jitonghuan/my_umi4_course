@@ -2,8 +2,14 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 16:29
 
-import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { Modal, Form, Input, Select, Tree, Spin, Empty, message } from 'antd';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react';
+import { Modal, Select, Tree, Spin, Empty, message } from 'antd';
 import {
   PlusSquareFilled,
   PlusOutlined,
@@ -14,10 +20,13 @@ import type Emitter from 'events';
 import FELayout from '@cffe/vc-layout';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../service';
-import { getRequest, postRequest } from '@/utils/request';
-import { TreeNode } from '../interfaces';
+import { postRequest } from '@/utils/request';
+import { TreeNode, TreeNodeSaveData, EditorMode } from '../interfaces';
 import { useProjectOptions, useLeftTreeData } from '../hooks';
-import { findTreeNodeByKey } from '../common';
+import { findTreeNodeByKey, getMergedList } from '../common';
+import ProjectEditor from './project-editor';
+import ModuleEditor from './module-editor';
+import ApiEditor from './api-editor';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
@@ -41,12 +50,22 @@ type nodeAction =
 
 export default function LeftTree(props: LeftTreeProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [projectOptions, setProjectOptions] = useProjectOptions();
+  const [projectOptions, setProjectOptions, reloadProjectOptions] =
+    useProjectOptions();
   const [searchProject, setSearchProject] = useState<number>();
-  const [treeData, treeLoading] = useLeftTreeData(searchProject);
   // const [searchKey, setSearchKey] = useState<string>('');
+  const [treeData, treeLoading, setTreeData, reloadTreeData] =
+    useLeftTreeData(searchProject);
   const [selectedItem, setSelectedItem] = useState<TreeNode>();
+  // 当前操作的节点（或者触发节点）
+  const targetNodeRef = useRef<TreeNode>();
+  const [projectEditorMode, setProjectEditorMode] =
+    useState<EditorMode>('HIDE');
+  const [moduleEditorMode, setModuleEditoraMode] = useState<EditorMode>('HIDE');
+  const [apiEditorMode, setApiEditorMode] = useState<EditorMode>('ADD');
 
+  // ----- hooks
+  // projectOptions 变更后重新判断选中状态
   useEffect(() => {
     if (!projectOptions?.length) {
       setSearchProject(undefined);
@@ -79,6 +98,55 @@ export default function LeftTree(props: LeftTreeProps) {
     }
   }, [treeData]);
 
+  // ------ callbacks
+  // 项目 新增/编辑 完成后的操作
+  const handleProjectEditorSave = (data: TreeNodeSaveData) => {
+    const prevMode = projectEditorMode;
+    setProjectEditorMode('HIDE');
+
+    if (prevMode === 'ADD') {
+      // 重新刷新列表
+      reloadProjectOptions();
+    } else {
+      // 更新列表
+      const nextProjects = getMergedList(
+        projectOptions,
+        {
+          label: data.name,
+          value: data.id,
+        },
+        (item, addon) => item.value === addon.value,
+      );
+      setProjectOptions(nextProjects);
+
+      const nextTreeData = getMergedList(
+        treeData,
+        {
+          title: data.name,
+          key: data.id,
+          desc: data.desc,
+        },
+        (item, addon) => item.key === addon.key,
+      );
+      setTreeData(nextTreeData);
+    }
+  };
+
+  // 模块 新增/编辑 完成后的操作
+  // 目前来看，保存后只要再刷新一下列表就可以了
+  const handleModuleEditorSave = (data: TreeNodeSaveData) => {
+    // const prevMode = moduleEditorMode;
+    setModuleEditoraMode('HIDE');
+    reloadTreeData();
+  };
+
+  // 接口 新增/编辑 完成后的操作
+  const handleApiEditorSave = () => {
+    setModuleEditoraMode('HIDE');
+    reloadTreeData();
+  };
+
+  // 选择一个节点（这里只能选择叶子节点，即 接口）
   const handleItemSelect = (nextKeys: React.Key[], info: any) => {
     if (!nextKeys.length) return; // 禁止反选
 
@@ -90,19 +158,24 @@ export default function LeftTree(props: LeftTreeProps) {
     props.onItemClick(item);
   };
 
-  // 添加项目
-  const handleAddProject = useCallback(() => {}, []);
-
   // 节点上的各种操作
   const handleNodeAction = useCallback(
     (action: nodeAction, node: TreeNode) => {
+      // 重新指定触发节点
+      targetNodeRef.current = node;
+
       switch (action) {
-        case 'delProject': {
+        case 'delProject':
           Modal.confirm({
             title: '操作确认',
             content: `确定删除项目 ${node.title} ？删除后相关数据将自动清除`,
-            onOk: () => {
-              // TODO 调用接口
+            onOk: async () => {
+              await postRequest(APIS.deleteApiTreeNode, {
+                data: { id: node.key, type: 0 },
+              });
+              message.success('项目已删除!');
+
+              // 节点删除后，自动选中第 0 个
               const nextProjectList = projectOptions?.slice(0) || [];
               const index = nextProjectList.findIndex(
                 (n) => n.value === searchProject,
@@ -111,9 +184,50 @@ export default function LeftTree(props: LeftTreeProps) {
               setProjectOptions(nextProjectList);
             },
           });
-
           break;
-        }
+        case 'editProject':
+          setProjectEditorMode('EDIT');
+          break;
+        case 'addModule':
+          setModuleEditoraMode('ADD');
+          break;
+        case 'editModule':
+          setModuleEditoraMode('EDIT');
+          break;
+        case 'delModule':
+          Modal.confirm({
+            title: '操作确认',
+            content: `确定删除模块 ${node.title}？删除后相关数据将自动清除`,
+            onOk: async () => {
+              await postRequest(APIS.deleteApiTreeNode, {
+                data: { id: node.key, type: 1 },
+              });
+              message.success('模块已删除!');
+              // 删除节点后，更新 treeData （更新后，会自动触发重置判断）
+              reloadTreeData();
+            },
+          });
+          break;
+        case 'addApi':
+          setApiEditorMode('ADD');
+          break;
+        case 'editApi':
+          setApiEditorMode('EDIT');
+          break;
+        case 'delApi':
+          Modal.confirm({
+            title: '操作确认',
+            content: `确定删除接口 ${node.title}？删除后相关数据将自动清除`,
+            onOk: async () => {
+              await postRequest(APIS.deleteApiTreeNode, {
+                data: { id: node.key, type: 2 },
+              });
+              message.success('接口已删除！');
+              // 删除api节点后，更新 treeData ，会自动触发重置判断
+              reloadTreeData();
+            },
+          });
+          break;
         default:
           break;
       }
@@ -136,7 +250,7 @@ export default function LeftTree(props: LeftTreeProps) {
           onChange={(v) => setSearchProject(v)}
           placeholder="项目"
         />
-        <a onClick={handleAddProject} title="添加项目">
+        <a onClick={() => setProjectEditorMode('ADD')} title="添加项目">
           <PlusSquareFilled style={{ fontSize: 24 }} />
         </a>
       </div>
@@ -234,6 +348,27 @@ export default function LeftTree(props: LeftTreeProps) {
             )}
           </div>
         )}
+      />
+
+      <ProjectEditor
+        mode={projectEditorMode}
+        targetNode={targetNodeRef.current}
+        onClose={() => setProjectEditorMode('HIDE')}
+        onSave={handleProjectEditorSave}
+      />
+
+      <ModuleEditor
+        mode={moduleEditorMode}
+        targetNode={targetNodeRef.current}
+        onClose={() => setModuleEditoraMode('HIDE')}
+        onSave={handleModuleEditorSave}
+      />
+
+      <ApiEditor
+        mode={apiEditorMode}
+        targetNode={targetNodeRef.current}
+        onClose={() => setApiEditorMode('HIDE')}
+        onSave={handleApiEditorSave}
       />
     </CardRowGroup.SlideCard>
   );

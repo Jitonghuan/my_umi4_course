@@ -25,10 +25,12 @@ export interface EnvDbConfItemVO extends Record<string, any> {
   pwd?: string;
 }
 
-// 这个数据格式很有问题，每个 Record 里面只有一组键值对
-export type EnvVarConfItemVO = Record<string, Record<string, string>[]>;
+export interface EnvVarConfItemVO {
+  groupName: string;
+  variables: EnvVarEditProps[];
+}
 
 export interface EnvVarEditProps {
-  name: string;
+  key: string;
   value: string;
 }

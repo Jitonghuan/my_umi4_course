@@ -30,7 +30,7 @@ export default function RightDetail(props: RightDetailProps) {
         <Empty
           description="请选择接口"
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          style={{ marginTop: '40%' }}
+          style={{ marginTop: '100px' }}
         />
       </ContentCard>
     );
