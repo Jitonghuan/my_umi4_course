@@ -47,10 +47,10 @@ export const API_TYPE_OPTIONS: SelectOptions<number>[] = [
 ];
 
 export const PARAM_TYPE_OPTIONS: SelectOptions<number>[] = [
-  { label: 'application/json', value: 0 },
   { label: 'form-data', value: 1 },
   { label: 'x-www-form-urlencode', value: 2 },
   { label: 'params', value: 3 },
+  { label: 'application/json', value: 0 },
 ];
 
 export const API_METHOD_OPTIONS: SelectOptions<string>[] = [
