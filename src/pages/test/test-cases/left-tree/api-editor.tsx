@@ -21,7 +21,12 @@ import { getRequest, postRequest } from '@/utils/request';
 import TableKVField from '@/components/table-kv-field';
 import DebounceSelect from '@/components/debounce-select';
 import KVDTableForm from './kvd-table-form';
-import { TreeNode, EditorMode, KVDItemProps } from '../interfaces';
+import {
+  SelectOptions,
+  TreeNode,
+  EditorMode,
+  KVDItemProps,
+} from '../interfaces';
 import {
   API_TYPE_OPTIONS,
   PARAM_TYPE_OPTIONS,
@@ -76,15 +81,21 @@ export default function ApiEditor(props: ApiEditorProps) {
     const values = await editField.validateFields();
     console.log('>>> handleSubmit, values', values);
 
+    const payload = {
+      ...values,
+      parameters:
+        paramType === 0 ? values.parametersJSON || '' : values.parameters || [],
+    };
+    if (payload.paramType === 0) {
+      payload.parameters = payload.parametersJSON || '';
+    }
+    delete payload.parametersJSON;
+
     if (mode === 'ADD') {
       await postRequest(APIS.addApi, {
         data: {
+          ...payload,
           moduleId: targetNode?.key,
-          ...values,
-          parameters:
-            paramType === 0
-              ? values.parametersJSON || ''
-              : values.parameters || [],
           createUser: userInfo.userName,
         },
       });
@@ -133,6 +144,7 @@ export default function ApiEditor(props: ApiEditorProps) {
           rules={[{ required: true, message: '请选择应用' }]}
         >
           <DebounceSelect
+            labelInValue={false}
             fetchOptions={fetchAppList}
             placeholder="输入应用名搜索"
           />
