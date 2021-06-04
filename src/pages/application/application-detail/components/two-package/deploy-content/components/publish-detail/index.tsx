@@ -60,18 +60,11 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        {env !== 'prod' && (
+        {env === 'cDev' && (
           <Button
             type="primary"
             onClick={() => {
               onOperate('deployNextEnvStart');
-
-              // 部署到生产环境
-              if (env === 'poc') {
-                setDeployVisible(true);
-                return;
-              }
-
               confirm({
                 title: '确定要把当前部署分支发布到下一个环境中？',
                 icon: <ExclamationCircleOutlined />,
