@@ -95,7 +95,7 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'labels',
       key: 'labels',
       render: (text: Record<string, string>) => {
-        if (Object.keys(text).length === 0) return '-';
+        if (Object.keys(text).length === 0) return '';
         return (
           <a
             style={{
@@ -121,8 +121,8 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'alertRules',
       key: 'alertRules',
       render: (text: AlertNameProps[], record) => {
-        if (!text) return '-';
-        if (Array.isArray(text) && text.length === 0) return '-';
+        if (!text) return '';
+        if (Array.isArray(text) && text.length === 0) return '';
         return (
           <a
             style={{

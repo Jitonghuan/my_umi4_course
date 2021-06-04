@@ -188,7 +188,7 @@ const EditTable: React.FC<EditTableProps> = ({
         </Select>
       ),
       render: (text: string[]) => {
-        if (!text) return '-';
+        if (!text) return '';
         const labelList = text.map(
           (item) => envsOptions.find((v) => v.value === item)?.label,
         );

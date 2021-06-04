@@ -124,9 +124,9 @@ const UnitTest: React.FC<any> = () => {
       width: '15%',
       render: (_, record) => (
         <span>
-          {record.startTime || '-'}
+          {record.startTime || ''}
           <br />
-          {record.endTime || '-'}
+          {record.endTime || ''}
         </span>
       ),
     },
@@ -294,7 +294,7 @@ const UnitTest: React.FC<any> = () => {
         formOptions={formOptions}
         formLayout="inline"
         columns={columns.map((el) => ({
-          render: (text) => text || '-',
+          render: (text) => text || '',
           ...el,
         }))}
         {...tableProps}

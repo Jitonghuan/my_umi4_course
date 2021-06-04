@@ -28,10 +28,12 @@ export const createTableSchema = ({
   onCancelClick: (record: any, index: number) => void;
 }) => [
   {
+    width: 80,
     title: 'ID',
     dataIndex: 'id',
   },
   {
+    width: 120,
     title: '应用code',
     dataIndex: 'appCode',
   },
@@ -40,20 +42,24 @@ export const createTableSchema = ({
     dataIndex: 'branchName',
   },
   {
+    width: 150,
     title: '描述',
     dataIndex: 'desc',
   },
   {
+    width: 100,
     title: '创建时间',
     dataIndex: 'gmtCreate',
     render: (val: string) =>
       val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '',
   },
   {
+    width: 100,
     title: '已部署环境',
     dataIndex: 'deployedEnv',
   },
   {
+    width: 100,
     title: '创建人',
     dataIndex: 'createUser',
   },
