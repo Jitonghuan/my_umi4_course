@@ -364,7 +364,7 @@ export const deployReuse = (params: {
   /** 部署的数据库自增ID */
   id: string;
   /** poc环境复用到生产环境需要 */
-  hospitals?: string[];
+  envs?: string[];
 }) =>
   postRequest(`${ds.apiPrefix}/releaseManage/deploy/reuse`, {
     data: params,
@@ -376,7 +376,7 @@ export const queryEnvsReq = (params: {
   //所属的应⽤分类CODE
   categoryCode: string;
   // 当前所处环境
-  envTypeCode: string;
+  envTypeCode?: string;
 }) =>
   getRequest(queryEnvsUrl, {
     data: {
