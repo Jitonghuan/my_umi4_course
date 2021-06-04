@@ -26,11 +26,11 @@ export const tableSchema: ColumnProps[] = [
       <span>
         {record.startTime
           ? dayjs(record.startTime).format('YYYY-MM-DD HH:mm:ss')
-          : '-'}
+          : ''}
         <br />
         {record.endTime
           ? dayjs(record.endTime).format('YYYY-MM-DD HH:mm:ss')
-          : '-'}
+          : ''}
       </span>
     ),
   },
@@ -40,7 +40,7 @@ export const tableSchema: ColumnProps[] = [
     render: (_, record) =>
       record.endTime && record.startTime
         ? dayjs(record.endTime).diff(dayjs(record.startTime)) / 1000
-        : '-',
+        : '',
   },
   {
     title: '测试结果',
@@ -68,22 +68,22 @@ export const tableSchema: ColumnProps[] = [
   {
     title: '通过数',
     dataIndex: 'passNum',
-    render: (val) => (val || Number(val) === 0 ? val : '-'),
+    render: (val) => (val || Number(val) === 0 ? val : ''),
   },
   {
     dataIndex: 'failNum',
     title: '失败数',
-    render: (val) => (val || Number(val) === 0 ? val : '-'),
+    render: (val) => (val || Number(val) === 0 ? val : ''),
   },
   {
     title: '错误数',
     dataIndex: 'errorNum',
-    render: (val) => (val || Number(val) === 0 ? val : '-'),
+    render: (val) => (val || Number(val) === 0 ? val : ''),
   },
   {
     title: '跳过数',
     dataIndex: 'skipNum',
-    render: (val) => (val || Number(val) === 0 ? val : '-'),
+    render: (val) => (val || Number(val) === 0 ? val : ''),
   },
   {
     title: '构建方式',

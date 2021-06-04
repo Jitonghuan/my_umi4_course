@@ -26,7 +26,7 @@ export const DEPLOY_TYPE_OPTIONS: { label: string; value: string }[] = [
   },
 ];
 
-/** 紧急类型options */
+/** 发布类型options */
 export const EMERGENCY_TYPE_OPTIONS: { label: string; value: string }[] = [
   {
     label: '日常发布',
@@ -34,20 +34,20 @@ export const EMERGENCY_TYPE_OPTIONS: { label: string; value: string }[] = [
   },
   {
     label: '紧急发布',
-    value: 'emergency',
+    value: 'emergencyNeed',
   },
 ];
 
-/** 紧急类型map */
+/** 发布类型map */
 export const EMERGENCY_TYPE_MAP: { [key: string]: string } = {
   daily: '日常发布',
-  emergency: '紧急发布',
+  emergencyNeed: '紧急发布',
 };
 
-/** 紧急类型颜色map */
+/** 发布类型颜色map */
 export const EMERGENCY_TYPE_COLOR_MAP: { [key: string]: string } = {
   daily: 'green',
-  emergency: 'red',
+  emergencyNeed: 'red',
 };
 
 /** 应用类型*/

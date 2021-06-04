@@ -73,7 +73,7 @@ const DataFactory: React.FC = () => {
           !text ||
           (typeof text === 'object' && Object.keys(text).length === 0)
         )
-          return '-';
+          return '';
         return (
           <Tooltip title={JSON.stringify(text)}>
             <span
@@ -133,7 +133,7 @@ const DataFactory: React.FC = () => {
           !text ||
           (typeof text === 'object' && Object.keys(text).length === 0)
         )
-          return '-';
+          return '';
         return (
           <Tooltip title={JSON.stringify(text)}>
             <span

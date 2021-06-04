@@ -129,7 +129,7 @@ export const createTableColumns = (params: {
       // width: '5%',
       render: (text) =>
         params.categoryData?.find((v) => v.categoryCode === text)
-          .categoryName || '-',
+          .categoryName || '',
     },
     {
       title: '应⽤组',
@@ -137,7 +137,7 @@ export const createTableColumns = (params: {
       key: 'appGroupCode',
       // width: '5%',
       render: (text) =>
-        params.businessData?.find((v) => v.groupCode === text).groupName || '-',
+        params.businessData?.find((v) => v.groupCode === text).groupName || '',
     },
     {
       title: '应用CODE',

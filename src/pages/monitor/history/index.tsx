@@ -97,7 +97,7 @@ const HistoryCom: React.FC = () => {
       dataIndex: 'level',
       key: 'level',
       // width: '5%',
-      render: (text: string) => ALERT_LEVEL[text] ?? '-',
+      render: (text: string) => ALERT_LEVEL[text] ?? '',
     },
     {
       title: '开始时间',
@@ -116,7 +116,7 @@ const HistoryCom: React.FC = () => {
       dataIndex: 'receiver',
       key: 'receiver',
       render: (text: string) => {
-        if (!text) return '-';
+        if (!text) return '';
         return (
           <Tooltip title={text}>
             <span

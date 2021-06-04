@@ -17,7 +17,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
 }) => {
   columns?.forEach((v) => {
     if (!v.render) {
-      v.render = (text) => text || '-';
+      v.render = (text) => text || '';
     }
   });
 

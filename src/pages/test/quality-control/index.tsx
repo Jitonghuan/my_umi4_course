@@ -190,7 +190,7 @@ const QualityControl: React.FC = () => {
         STATUS_TYPE[text]?.text ? (
           <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>
         ) : (
-          '-'
+          ''
         ),
     },
     {
@@ -321,7 +321,7 @@ const QualityControl: React.FC = () => {
         formOptions={formOptions}
         formLayout="inline"
         columns={columns.map((el) => ({
-          render: (text) => text || '-',
+          render: (text) => text || '',
           ...el,
         }))}
         {...tableProps}
