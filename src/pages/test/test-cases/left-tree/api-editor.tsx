@@ -82,7 +82,9 @@ export default function ApiEditor(props: ApiEditorProps) {
           moduleId: targetNode?.key,
           ...values,
           parameters:
-            paramType === 0 ? values.parametersJSON : values.parameters || [],
+            paramType === 0
+              ? values.parametersJSON || ''
+              : values.parameters || [],
           createUser: userInfo.userName,
         },
       });
@@ -192,7 +194,7 @@ export default function ApiEditor(props: ApiEditorProps) {
                 />
               </FormItem>
               {paramType !== 0 ? (
-                <FormItem noStyle name="parameters">
+                <FormItem noStyle name="parameters" initialValue={[]}>
                   <KVDTableForm />
                 </FormItem>
               ) : (
@@ -202,7 +204,7 @@ export default function ApiEditor(props: ApiEditorProps) {
               )}
             </Tabs.TabPane>
             <Tabs.TabPane key="headers" tab="headers" forceRender>
-              <FormItem noStyle name="headers">
+              <FormItem noStyle name="headers" initialValue={[]}>
                 <KVDTableForm />
               </FormItem>
             </Tabs.TabPane>
