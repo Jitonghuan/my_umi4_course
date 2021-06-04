@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Drawer, Card, Row, Col, Select, Divider, Table } from 'antd';
-import { EMERGENCY_TYPE_MAP, APP_TYPE_MAP, AppType } from '../../const';
+import { DEPLOY_TYPE_MAP, APP_TYPE_MAP, AppType } from '../../const';
 import { createApplyDetailSchemaColumns } from '../../schema';
 import { getApplyRelInfoReq } from '@/pages/publish/service';
 import { getEnvName } from '@/utils';
@@ -18,14 +18,8 @@ export interface IPorps {
 const rootCls = 'apply-detail-drawer';
 
 const DetailDrawer = (props: IPorps) => {
-  const {
-    id,
-    visible,
-    onClose,
-    categoryData,
-    businessDataList,
-    envsUrlList,
-  } = props;
+  const { id, visible, onClose, categoryData, businessDataList, envsUrlList } =
+    props;
   const [baseInfo, setBaseInfo] = useState<any>({});
   const [plans, setPlans] = useState<any[]>([]);
 
@@ -57,7 +51,7 @@ const DetailDrawer = (props: IPorps) => {
         <div className={`${rootCls}-box-title`}>{baseInfo?.title}</div>
         <Row>
           <Col span={6}>
-            紧急类型：{EMERGENCY_TYPE_MAP[baseInfo?.emergencyType] || '--'}
+            发布类型：{DEPLOY_TYPE_MAP[baseInfo?.deployType] || '--'}
           </Col>
           <Col span={6}>
             应用分类：

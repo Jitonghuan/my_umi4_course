@@ -19,7 +19,14 @@ import FELayout from '@cffe/vc-layout';
 import * as APIS from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import TableKVField from '@/components/table-kv-field';
-import { TreeNode, EditorMode } from '../interfaces';
+import DebounceSelect from '@/components/debounce-select';
+import KVDTableForm from './kvd-table-form';
+import {
+  SelectOptions,
+  TreeNode,
+  EditorMode,
+  KVDItemProps,
+} from '../interfaces';
 import {
   API_TYPE_OPTIONS,
   PARAM_TYPE_OPTIONS,
@@ -32,9 +39,11 @@ const formLayout = {
 
 const { Item: FormItem } = Form;
 
+// ---------------------------------------------------------------------
+
 export interface ApiEditorProps {
   mode: EditorMode;
-  targetNode?: TreeNode;
+  targetNode?: TreeNode; // 如果是新增，则表示父节点(module)，如果是编辑，则表示当前编辑节点(api)
   onClose: () => any;
   onSave: () => any;
 }
@@ -43,6 +52,7 @@ export default function ApiEditor(props: ApiEditorProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { mode = 'HIDE', onClose, onSave, targetNode } = props;
   const [apiType, setApiType] = useState(API_TYPE_OPTIONS[0].value);
+  const [paramType, setParamType] = useState(PARAM_TYPE_OPTIONS[0].value);
   const [editField] = Form.useForm();
 
   useEffect(() => {
@@ -51,19 +61,68 @@ export default function ApiEditor(props: ApiEditorProps) {
     editField.resetFields();
     if (mode === 'ADD') return;
 
+    // 1. 获取 api detail
+    getRequest(APIS.getApiInfo, {
+      data: { id: targetNode?.key },
+    }).then((result) => {
+      console.log('>>>>result', result.data);
+      // editField.setFieldsValue({
+      //   ...result.data,
+      // });
+    });
+
     // TODO 回填接口数据
+    // 2. 回填数据
+
+    // TODO 回填 apiType 和 paramType
   }, [mode]);
 
   const handleSubmit = useCallback(async () => {
     const values = await editField.validateFields();
     console.log('>>> handleSubmit, values', values);
+
+    const payload = {
+      ...values,
+      parameters:
+        paramType === 0 ? values.parametersJSON || '' : values.parameters || [],
+    };
+    if (payload.paramType === 0) {
+      payload.parameters = payload.parametersJSON || '';
+    }
+    delete payload.parametersJSON;
+
+    if (mode === 'ADD') {
+      await postRequest(APIS.addApi, {
+        data: {
+          ...payload,
+          moduleId: targetNode?.key,
+          createUser: userInfo.userName,
+        },
+      });
+
+      message.success('接口新增成功！');
+      onSave();
+    }
+    // ....
   }, [mode, targetNode]);
+
+  const fetchAppList = useCallback(async (keyword: string) => {
+    const result = await getRequest(APIS.getAppList, {
+      data: { pageSize: 50, appName: keyword },
+    });
+    const dataSource = (result.data.dataSource || []).map((n: any) => ({
+      label: n.appName,
+      value: n.id,
+    }));
+    return dataSource;
+  }, []);
 
   return (
     <Drawer
       title={mode === 'EDIT' ? '编辑接口' : '新增接口'}
       visible={mode !== 'HIDE'}
       onClose={() => onClose()}
+      maskClosable={false}
       className="test-api-editor"
       width={600}
       footer={
@@ -79,12 +138,20 @@ export default function ApiEditor(props: ApiEditorProps) {
     >
       <Form form={editField} {...formLayout}>
         {/* ----- common ----- */}
-        <FormItem label="所属应用">
-          <span className="ant-form-text">{targetNode?.title}</span>
+        <FormItem
+          label="所属应用"
+          name="appId"
+          rules={[{ required: true, message: '请选择应用' }]}
+        >
+          <DebounceSelect
+            labelInValue={false}
+            fetchOptions={fetchAppList}
+            placeholder="输入应用名搜索"
+          />
         </FormItem>
         <FormItem
           label="接口名称"
-          name="apiName"
+          name="name"
           rules={[{ required: true, message: '请输入接口名称' }]}
         >
           <Input placeholder="请输入" />
@@ -126,7 +193,7 @@ export default function ApiEditor(props: ApiEditorProps) {
         {/* ---- http ----- */}
         {apiType === 0 ? (
           <Tabs defaultActiveKey="parameters">
-            <Tabs.TabPane key="parameters" tab="parameters">
+            <Tabs.TabPane key="parameters" tab="parameters" forceRender>
               <FormItem
                 label="参数类型"
                 name="paramType"
@@ -135,14 +202,23 @@ export default function ApiEditor(props: ApiEditorProps) {
                 <Radio.Group
                   options={PARAM_TYPE_OPTIONS}
                   className="flex-radio-group"
+                  onChange={(e) => setParamType(e.target.value)}
                 />
               </FormItem>
-              <FormItem noStyle name="parameters">
-                <TableKVField />
-              </FormItem>
+              {paramType !== 0 ? (
+                <FormItem noStyle name="parameters" initialValue={[]}>
+                  <KVDTableForm />
+                </FormItem>
+              ) : (
+                <FormItem label="参数值" name="parametersJSON">
+                  <Input.TextArea placeholder="请输入JSON" rows={6} />
+                </FormItem>
+              )}
             </Tabs.TabPane>
-            <Tabs.TabPane key="headers" tab="headers">
-              HEADERS~~~~
+            <Tabs.TabPane key="headers" tab="headers" forceRender>
+              <FormItem noStyle name="headers" initialValue={[]}>
+                <KVDTableForm />
+              </FormItem>
             </Tabs.TabPane>
           </Tabs>
         ) : null}
