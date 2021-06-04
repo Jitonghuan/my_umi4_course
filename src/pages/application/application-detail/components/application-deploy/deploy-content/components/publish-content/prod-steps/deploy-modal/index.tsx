@@ -167,6 +167,7 @@ const DeployModal = ({
         <span>发布环境：</span>
         {/* 根据 hospitals 拿到列表 */}
         <Radio.Group
+          disabled={deployStatus === 'deployWaitBatch2'}
           value={deployConfig.deployEnv}
           onChange={(v) =>
             setDeployConfig({ ...deployConfig, deployEnv: v.target.value })
