@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/03 08:48
 
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Select, Spin } from 'antd';
 import type { SelectProps } from 'antd/es/select';
 import debounce from 'lodash/debounce';
@@ -11,6 +11,7 @@ export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
   fetchOptions: (search: string) => Promise<ValueType[]>;
   debounceTimeout?: number;
+  fetchOnMount?: boolean;
 }
 
 export default function DebounceSelect<
@@ -44,6 +45,12 @@ export default function DebounceSelect<
 
     return debounce(loadOptions, debounceTimeout);
   }, [fetchOptions, debounceTimeout]);
+
+  useEffect(() => {
+    if (props.fetchOnMount) {
+      debounceFetcher('');
+    }
+  }, []);
 
   return (
     <Select<ValueType>

@@ -9,29 +9,29 @@ import { CardRowGroup } from '@/components/vc-page-content';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
 import CaseEditor from './case-editor';
-import { TreeNode, CaseItemVO } from './interfaces';
+import { EditorMode, TreeNode, CaseItemVO } from './interfaces';
 import './index.less';
 
 export default function TestCaseManager() {
   const emitterRef = useRef(new Emitter());
   const [current, setCurrent] = useState<TreeNode>();
-  const [addCaseVisible, setAddCaseVisible] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<CaseItemVO>();
+  const [caseEditorMode, setCaseEditorMode] = useState<EditorMode>('HIDE');
 
   useLayoutEffect(() => {
     emitterRef.current.on('CASE::ADD_CASE', () => {
       setEditorData(undefined);
-      setAddCaseVisible(true);
+      setCaseEditorMode('ADD');
     });
     emitterRef.current.on('CASE::EDIT_CASE', (item: CaseItemVO) => {
       console.log('>>>>CASE::EDIT_CASE', item);
       setEditorData(item);
-      setAddCaseVisible(true);
+      setCaseEditorMode('EDIT');
     });
   }, []);
 
   const handleSave = useCallback(() => {
-    setAddCaseVisible(false);
+    setCaseEditorMode('HIDE');
 
     emitterRef.current.emit('CASE::RELOAD_CASE', editorData);
   }, [current, editorData]);
@@ -50,9 +50,10 @@ export default function TestCaseManager() {
         />
       </CardRowGroup>
       <CaseEditor
-        visible={addCaseVisible}
+        mode={caseEditorMode}
         initData={editorData}
-        onCancel={() => setAddCaseVisible(false)}
+        current={current}
+        onCancel={() => setCaseEditorMode('HIDE')}
         onSave={handleSave}
       />
     </MatrixPageContent>

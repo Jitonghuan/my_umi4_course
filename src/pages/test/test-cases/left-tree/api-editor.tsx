@@ -2,7 +2,13 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/01 15:32
 
-import React, { useState, useCallback, useEffect, useContext } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useContext,
+  useRef,
+} from 'react';
 import {
   Drawer,
   Form,
@@ -11,23 +17,20 @@ import {
   Select,
   Radio,
   Tabs,
-  Table,
   Button,
   Switch,
 } from 'antd';
+import type { RadioChangeEvent } from 'antd/es/radio';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from '../service';
 import { getRequest, postRequest } from '@/utils/request';
-import TableKVField from '@/components/table-kv-field';
 import DebounceSelect from '@/components/debounce-select';
-import KVDTableForm from './kvd-table-form';
+import TableForm from '@/components/simple-table-form';
+import { TreeNode, EditorMode } from '../interfaces';
 import {
-  SelectOptions,
-  TreeNode,
-  EditorMode,
-  KVDItemProps,
-} from '../interfaces';
-import {
+  API_TYPE,
+  PARAM_TYPE,
+  API_METHOD,
   API_TYPE_OPTIONS,
   PARAM_TYPE_OPTIONS,
   API_METHOD_OPTIONS,
@@ -51,45 +54,56 @@ export interface ApiEditorProps {
 export default function ApiEditor(props: ApiEditorProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { mode = 'HIDE', onClose, onSave, targetNode } = props;
-  const [apiType, setApiType] = useState(API_TYPE_OPTIONS[0].value);
-  const [paramType, setParamType] = useState(PARAM_TYPE_OPTIONS[0].value);
+  const [apiType, setApiType] = useState(API_TYPE._default);
+  const [paramType, setParamType] = useState(PARAM_TYPE._default);
   const [editField] = Form.useForm();
+  const originDataRef = useRef<Record<string, any>>({});
 
   useEffect(() => {
     if (mode === 'HIDE') return;
 
-    editField.resetFields();
-    if (mode === 'ADD') return;
+    if (mode === 'ADD') {
+      editField.resetFields();
+      setApiType(API_TYPE._default);
+      setParamType(PARAM_TYPE._default);
+      return;
+    }
 
     // 1. 获取 api detail
     getRequest(APIS.getApiInfo, {
       data: { id: targetNode?.key },
     }).then((result) => {
-      console.log('>>>>result', result.data);
-      // editField.setFieldsValue({
-      //   ...result.data,
-      // });
+      originDataRef.current = result.data;
+      const initFields = { ...result.data };
+
+      initFields.headers = initFields.headers || [];
+      initFields.path = initFields.path || initFields.apiPath;
+      initFields.method = initFields.method || initFields.reqMethod;
+
+      delete initFields.gmtCreate;
+      delete initFields.gmtModify;
+      delete initFields.modifyUser;
+      delete initFields.reqMethod;
+      delete initFields.apiPath;
+
+      editField.setFieldsValue(initFields);
+      setApiType(initFields.apiType ?? API_TYPE._default);
+      setParamType(initFields.paramType ?? PARAM_TYPE._default);
     });
-
-    // TODO 回填接口数据
-    // 2. 回填数据
-
-    // TODO 回填 apiType 和 paramType
   }, [mode]);
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = async () => {
     const values = await editField.validateFields();
-    console.log('>>> handleSubmit, values', values);
-
     const payload = {
       ...values,
       parameters:
-        paramType === 0 ? values.parametersJSON || '' : values.parameters || [],
+        paramType === PARAM_TYPE.JSON
+          ? values.parametersJSON || ''
+          : values.parameters || [],
     };
-    if (payload.paramType === 0) {
-      payload.parameters = payload.parametersJSON || '';
-    }
     delete payload.parametersJSON;
+    // NOTE 接口类型为 dubbo 的时候仍然会校验此参数，所以要将数据重置 (这个应该让服务端同学修复掉)
+    payload.paramType = payload.paramType || PARAM_TYPE._default;
 
     if (mode === 'ADD') {
       await postRequest(APIS.addApi, {
@@ -102,9 +116,21 @@ export default function ApiEditor(props: ApiEditorProps) {
 
       message.success('接口新增成功！');
       onSave();
+    } else {
+      await postRequest(APIS.updateApi, {
+        data: {
+          ...payload,
+          id: originDataRef.current.id,
+          moduleId: originDataRef.current.moduleId,
+          modifyUser: userInfo.userName,
+        },
+      });
+
+      message.success('接口修改成功！');
+      onSave();
     }
     // ....
-  }, [mode, targetNode]);
+  };
 
   const fetchAppList = useCallback(async (keyword: string) => {
     const result = await getRequest(APIS.getAppList, {
@@ -116,6 +142,17 @@ export default function ApiEditor(props: ApiEditorProps) {
     }));
     return dataSource;
   }, []);
+
+  // 修改 apiType
+  const handleApiTypeChange = (e: RadioChangeEvent) => {
+    const next = e.target.value;
+    setApiType(next);
+
+    // 重置 method 值
+    editField.setFieldsValue({
+      method: next === API_TYPE.DUBBO ? '' : API_METHOD._default,
+    });
+  };
 
   return (
     <Drawer
@@ -147,6 +184,7 @@ export default function ApiEditor(props: ApiEditorProps) {
             labelInValue={false}
             fetchOptions={fetchAppList}
             placeholder="输入应用名搜索"
+            fetchOnMount
           />
         </FormItem>
         <FormItem
@@ -167,11 +205,11 @@ export default function ApiEditor(props: ApiEditorProps) {
         <FormItem
           label="接口类型"
           name="apiType"
-          initialValue={API_TYPE_OPTIONS[0].value}
+          initialValue={API_TYPE._default}
         >
           <Radio.Group
             options={API_TYPE_OPTIONS}
-            onChange={(e) => setApiType(e.target.value)}
+            onChange={handleApiTypeChange}
           />
         </FormItem>
         <FormItem
@@ -181,33 +219,45 @@ export default function ApiEditor(props: ApiEditorProps) {
         >
           <Input placeholder="/api/aaa/bbb" />
         </FormItem>
-        <FormItem
-          label="Method"
-          name="method"
-          initialValue={API_METHOD_OPTIONS[0].value}
-          rules={[{ required: true, message: '请选择接口方法' }]}
-        >
-          <Select placeholder="请选择" options={API_METHOD_OPTIONS} />
-        </FormItem>
+        {apiType === API_TYPE.HTTP ? (
+          <FormItem
+            label="Method"
+            name="method"
+            initialValue={API_METHOD._default}
+            rules={[{ required: true, message: '请选择接口方法' }]}
+          >
+            <Select placeholder="请选择" options={API_METHOD_OPTIONS} />
+          </FormItem>
+        ) : (
+          <FormItem
+            label="Method"
+            name="method"
+            rules={[{ required: true, message: '请输入 Method' }]}
+          >
+            <Input placeholder="请输入" />
+          </FormItem>
+        )}
 
         {/* ---- http ----- */}
-        {apiType === 0 ? (
+        {apiType === API_TYPE.HTTP ? (
           <Tabs defaultActiveKey="parameters">
             <Tabs.TabPane key="parameters" tab="parameters" forceRender>
-              <FormItem
-                label="参数类型"
-                name="paramType"
-                initialValue={PARAM_TYPE_OPTIONS[0].value}
-              >
+              <FormItem label="参数类型" name="paramType" initialValue={1}>
                 <Radio.Group
                   options={PARAM_TYPE_OPTIONS}
                   className="flex-radio-group"
                   onChange={(e) => setParamType(e.target.value)}
                 />
               </FormItem>
-              {paramType !== 0 ? (
+              {paramType !== PARAM_TYPE.JSON ? (
                 <FormItem noStyle name="parameters" initialValue={[]}>
-                  <KVDTableForm />
+                  <TableForm
+                    columns={[
+                      { title: 'key', dataIndex: 'key', required: true },
+                      { title: 'value', dataIndex: 'value' },
+                      { title: '说明', dataIndex: 'desc' },
+                    ]}
+                  />
                 </FormItem>
               ) : (
                 <FormItem label="参数值" name="parametersJSON">
@@ -217,14 +267,20 @@ export default function ApiEditor(props: ApiEditorProps) {
             </Tabs.TabPane>
             <Tabs.TabPane key="headers" tab="headers" forceRender>
               <FormItem noStyle name="headers" initialValue={[]}>
-                <KVDTableForm />
+                <TableForm
+                  columns={[
+                    { title: 'key', dataIndex: 'key', required: true },
+                    { title: 'value', dataIndex: 'value' },
+                    { title: '说明', dataIndex: 'desc' },
+                  ]}
+                />
               </FormItem>
             </Tabs.TabPane>
           </Tabs>
         ) : null}
 
         {/* ----- dubbo ----- */}
-        {apiType === 1 ? (
+        {apiType === API_TYPE.DUBBO ? (
           <FormItem
             label="Group"
             name="group"
@@ -233,7 +289,7 @@ export default function ApiEditor(props: ApiEditorProps) {
             <Input placeholder="请输入" />
           </FormItem>
         ) : null}
-        {apiType === 1 ? (
+        {apiType === API_TYPE.DUBBO ? (
           <FormItem
             label="Version"
             name="version"
@@ -242,7 +298,7 @@ export default function ApiEditor(props: ApiEditorProps) {
             <Input placeholder="请输入" />
           </FormItem>
         ) : null}
-        {apiType === 1 ? (
+        {apiType === API_TYPE.DUBBO ? (
           <FormItem label="Args" name="args">
             <Input.TextArea placeholder="请输入" rows={8} />
           </FormItem>
