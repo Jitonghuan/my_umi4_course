@@ -11,6 +11,7 @@ export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
   fetchOptions: (search: string) => Promise<ValueType[]>;
   debounceTimeout?: number;
+  fetchOnMount?: boolean;
 }
 
 export default function DebounceSelect<
@@ -46,7 +47,9 @@ export default function DebounceSelect<
   }, [fetchOptions, debounceTimeout]);
 
   useEffect(() => {
-    debounceFetcher('');
+    if (props.fetchOnMount) {
+      debounceFetcher('');
+    }
   }, []);
 
   return (

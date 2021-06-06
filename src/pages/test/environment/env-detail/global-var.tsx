@@ -8,7 +8,6 @@ import React, {
   useCallback,
   useLayoutEffect,
 } from 'react';
-import { EditableProTable, ProColumns } from '@ant-design/pro-table';
 import {
   Button,
   Collapse,
@@ -20,54 +19,24 @@ import {
   message,
 } from 'antd';
 import VCCustomIcon from '@cffe/vc-custom-icon';
+import TableForm from '@/components/simple-table-form';
 import { EnvVarConfItemVO, EnvVarEditProps } from '../interfaces';
 
-// 单个的可编辑表格
-function GlobalVarEditTable(props: {
+interface GlobalVarEditTableProps {
   value: EnvVarEditProps[];
   onChange: (next: EnvVarEditProps[]) => any;
-}) {
-  const { value, onChange } = props;
+}
 
-  const columns: ProColumns<EnvVarEditProps>[] = [
-    {
-      title: '变量名',
-      dataIndex: 'key',
-      formItemProps: { rules: [{ required: true, message: '请输入变量名' }] },
-    },
-    {
-      title: '变量值',
-      dataIndex: 'value',
-      formItemProps: { rules: [{ required: true, message: '请输入变量值' }] },
-    },
-    {
-      title: '操作',
-      valueType: 'option',
-      width: 160,
-      render: (text, record, index, action) => [
-        <a key="editable" onClick={() => action?.startEditable(index)}>
-          编辑
-        </a>,
-        <a
-          key="delete"
-          onClick={() => onChange(value.filter((_, i) => i !== index))}
-        >
-          移除
-        </a>,
-      ],
-    },
-  ];
-
+// 单个的可编辑表格
+function GlobalVarEditTable(props: GlobalVarEditTableProps) {
   return (
-    <EditableProTable
-      columns={columns}
-      value={value}
-      onChange={onChange}
-      bordered
-      recordCreatorProps={{
-        creatorButtonText: '新增',
-        record: { key: '', value: '' },
-      }}
+    <TableForm
+      value={props.value}
+      onChange={props.onChange}
+      columns={[
+        { title: '变量名', dataIndex: 'key', required: true },
+        { title: '变量值', dataIndex: 'value', required: true },
+      ]}
     />
   );
 }

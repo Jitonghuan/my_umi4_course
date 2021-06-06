@@ -3,7 +3,7 @@
 // @create 2021/05/30 16:25
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Button, Tag, Table, message, Empty } from 'antd';
+import { Button, Tag, Table, message, Empty, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
 import FELayout from '@cffe/vc-layout';
@@ -11,18 +11,30 @@ import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { TreeNode, CaseItemVO } from '../interfaces';
+import { useApiDetail, useCaseList } from '../hooks';
 import './index.less';
 
 interface RightDetailProps extends Record<string, any> {
   emitter: Emitter;
+  /** 当前选中的接口 */
   current?: TreeNode;
 }
 
 export default function RightDetail(props: RightDetailProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [dataSource, setDataSource] = useState<CaseItemVO[]>([]);
+  const [apiDetail, apiLoading] = useApiDetail(props.current?.key as number);
+  const [pageIndex, setPageIndex] = useState(1);
+  const [caseList, caseTotal, caseLoading, reloadCase] = useCaseList(
+    props.current?.key as number,
+    pageIndex,
+  );
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    props.emitter.on('CASE::RELOAD_CASE', () => {
+      setPageIndex(1);
+      reloadCase(1);
+    });
+  }, []);
 
   if (!props.current) {
     return (
@@ -36,15 +48,24 @@ export default function RightDetail(props: RightDetailProps) {
     );
   }
 
+  if (apiLoading) {
+    return (
+      <ContentCard className="page-case-right-detail">
+        <Spin />
+      </ContentCard>
+    );
+  }
+
   return (
     <ContentCard className="page-case-right-detail">
       <div className="case-detail-header">
         <h2>接口名称: {props.current.title || '--'}</h2>
-        <Tag color="success">已生效</Tag>
+        {apiDetail.status === 1 ? <Tag color="success">已生效</Tag> : null}
+        {apiDetail.status === 0 ? <Tag color="warning">未生效</Tag> : null}
       </div>
       <div className="case-detail-caption">
         <h3>用例列表</h3>
-        <Button type="default">批量执行</Button>
+        {/* <Button type="default">批量执行</Button> */}
         <Button
           onClick={() => props.emitter.emit('CASE::ADD_CASE')}
           type="primary"
@@ -53,7 +74,10 @@ export default function RightDetail(props: RightDetailProps) {
           新增用例
         </Button>
       </div>
-      <Table dataSource={dataSource}>
+      <Table
+        dataSource={caseList}
+        pagination={{ pageSize: 20, current: pageIndex, total: caseTotal }}
+      >
         <Table.Column dataIndex="id" title="ID" />
         <Table.Column dataIndex="module" title="模块" />
         <Table.Column dataIndex="api" title="接口" />

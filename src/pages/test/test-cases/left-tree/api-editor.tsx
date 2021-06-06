@@ -17,7 +17,6 @@ import {
   Select,
   Radio,
   Tabs,
-  Table,
   Button,
   Switch,
 } from 'antd';
@@ -26,13 +25,8 @@ import FELayout from '@cffe/vc-layout';
 import * as APIS from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import DebounceSelect from '@/components/debounce-select';
-import KVDTableForm from './kvd-table-form';
-import {
-  SelectOptions,
-  TreeNode,
-  EditorMode,
-  KVDItemProps,
-} from '../interfaces';
+import TableForm from '@/components/simple-table-form';
+import { TreeNode, EditorMode } from '../interfaces';
 import {
   API_TYPE,
   PARAM_TYPE,
@@ -82,14 +76,15 @@ export default function ApiEditor(props: ApiEditorProps) {
       originDataRef.current = result.data;
       const initFields = { ...result.data };
 
-      // delete initFields.gmtCreate
-      // delete initFields.gmtModify
-      // delete initFields.modifyUser
-      // delete initFields.reqMethod
-
       initFields.headers = initFields.headers || [];
       initFields.path = initFields.path || initFields.apiPath;
       initFields.method = initFields.method || initFields.reqMethod;
+
+      delete initFields.gmtCreate;
+      delete initFields.gmtModify;
+      delete initFields.modifyUser;
+      delete initFields.reqMethod;
+      delete initFields.apiPath;
 
       editField.setFieldsValue(initFields);
       setApiType(initFields.apiType ?? API_TYPE._default);
@@ -189,6 +184,7 @@ export default function ApiEditor(props: ApiEditorProps) {
             labelInValue={false}
             fetchOptions={fetchAppList}
             placeholder="输入应用名搜索"
+            fetchOnMount
           />
         </FormItem>
         <FormItem
@@ -255,7 +251,13 @@ export default function ApiEditor(props: ApiEditorProps) {
               </FormItem>
               {paramType !== PARAM_TYPE.JSON ? (
                 <FormItem noStyle name="parameters" initialValue={[]}>
-                  <KVDTableForm />
+                  <TableForm
+                    columns={[
+                      { title: 'key', dataIndex: 'key', required: true },
+                      { title: 'value', dataIndex: 'value' },
+                      { title: '说明', dataIndex: 'desc' },
+                    ]}
+                  />
                 </FormItem>
               ) : (
                 <FormItem label="参数值" name="parametersJSON">
@@ -265,7 +267,13 @@ export default function ApiEditor(props: ApiEditorProps) {
             </Tabs.TabPane>
             <Tabs.TabPane key="headers" tab="headers" forceRender>
               <FormItem noStyle name="headers" initialValue={[]}>
-                <KVDTableForm />
+                <TableForm
+                  columns={[
+                    { title: 'key', dataIndex: 'key', required: true },
+                    { title: 'value', dataIndex: 'value' },
+                    { title: '说明', dataIndex: 'desc' },
+                  ]}
+                />
               </FormItem>
             </Tabs.TabPane>
           </Tabs>

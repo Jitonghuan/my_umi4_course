@@ -45,12 +45,3 @@ export interface TreeNodeSaveData extends Record<string, any> {
 }
 
 export interface CaseItemVO extends Record<string, any> {}
-
-export interface KVItemProps extends Record<string, any> {
-  key: string;
-  value: string;
-}
-
-export interface KVDItemProps extends KVItemProps {
-  desc: string;
-}
