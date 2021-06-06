@@ -41,6 +41,30 @@ export function getMergedList<T, U>(
   return next;
 }
 
+export const API_TYPE = {
+  HTTP: 0,
+  DUBBO: 1,
+  _default: 0,
+};
+
+export const PARAM_TYPE = {
+  FORM_DATA: 1,
+  FORM_URLENCODE: 2,
+  PARAMS: 3,
+  JSON: 0,
+  _default: 1,
+};
+
+export const API_METHOD = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+  HEAD: 'HEAD',
+  OPTION: 'OPTION',
+  _default: 'GET',
+};
+
 export const API_TYPE_OPTIONS: SelectOptions<number>[] = [
   { label: 'http', value: 0 },
   { label: 'dubbo', value: 1 },

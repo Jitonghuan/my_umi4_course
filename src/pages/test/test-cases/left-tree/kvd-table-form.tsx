@@ -12,7 +12,12 @@ export interface KVDTableFormProps {
 }
 
 export default function KVDTableForm(props: KVDTableFormProps) {
-  const { value, onChange } = props;
+  let { value, onChange } = props;
+
+  if (!Array.isArray(value)) {
+    console.error('ERORR in KVDTableForm, value is not an array!', value);
+    value = [];
+  }
 
   const columns: ProColumns<KVDItemProps>[] = [
     {
