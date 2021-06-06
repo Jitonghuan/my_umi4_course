@@ -16,7 +16,7 @@ export default function TestCaseManager() {
   const emitterRef = useRef(new Emitter());
   const [current, setCurrent] = useState<TreeNode>();
   const [editorData, setEditorData] = useState<CaseItemVO>();
-  const [caseEditorMode, setCaseEditorMode] = useState<EditorMode>('ADD');
+  const [caseEditorMode, setCaseEditorMode] = useState<EditorMode>('HIDE');
 
   useLayoutEffect(() => {
     emitterRef.current.on('CASE::ADD_CASE', () => {
@@ -52,6 +52,7 @@ export default function TestCaseManager() {
       <CaseEditor
         mode={caseEditorMode}
         initData={editorData}
+        current={current}
         onCancel={() => setCaseEditorMode('HIDE')}
         onSave={handleSave}
       />

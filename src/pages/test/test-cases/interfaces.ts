@@ -44,4 +44,31 @@ export interface TreeNodeSaveData extends Record<string, any> {
   createUser?: string;
 }
 
-export interface CaseItemVO extends Record<string, any> {}
+/** 用例 item */
+export interface CaseItemVO extends Record<string, any> {
+  id: number;
+  name: string;
+  apiId: number;
+  desc: string;
+  headers?: { key: string; value: string }[];
+  resAssert?: {
+    assertName: string;
+    compare: string;
+    type: string;
+    value: string;
+  }[];
+  savedVars?: { name: string; jsonpath: string }[];
+  customVars?: { key: string; type: string; value: string; desc?: string }[];
+  // hooks?: string; // 返回的数据是一个字符串，需要 JSON 序列化
+}
+
+export interface PreCaseItemProps {
+  projectId: number;
+  projectName: string;
+  moduleId: number;
+  moduleName: string;
+  apiId: number;
+  apiName: string;
+  caseId: number;
+  caseName: string;
+}

@@ -3,60 +3,124 @@
 // @create 2021/05/30 20:15
 // NOTE 用例编辑要提取到公共组件中，后期可能提供给其它业务模块使用
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useContext,
-} from 'react';
-import {
-  Drawer,
-  Form,
-  Steps,
-  Button,
-  Input,
-  Select,
-  message,
-  Table,
-  Radio,
-  Tabs,
-} from 'antd';
+import React, { useState, useEffect, useContext } from 'react';
+import { Drawer, Form, Steps, Button, Input, message, Radio, Tabs } from 'antd';
+import FELayout from '@cffe/vc-layout';
+import { postRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { CaseItemVO, EditorMode } from '../interfaces';
+import { CaseItemVO, EditorMode, TreeNode } from '../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import TableForm from '@/components/simple-table-form';
+import { getFuncListByIds, getCaseListByIds } from './common';
 import './index.less';
 
 const { Item: FormItem } = Form;
 
 export interface CaseEditorProps extends Record<string, any> {
   mode: EditorMode;
+  current?: TreeNode;
   initData?: CaseItemVO;
   onCancel?: () => any;
   onSave?: () => any;
 }
 
 export default function CaseEditor(props: CaseEditorProps) {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [editField] = Form.useForm<Record<string, any>>();
   const [step, setSetp] = useState<number>(0);
   const [paramType, setParamType] = useState<'object' | 'array'>('object');
 
-  useEffect(() => {
-    if (!props.visible) return;
-    // TODO 初始化数据
-  }, [props.visible]);
+  const initEditField = async (initData: CaseItemVO) => {
+    const hooks = initData.hooks ? JSON.parse(initData.hooks) : {};
+    const beforeFunIds: number[] = hooks.setup || [];
+    const afterFuncIds: number[] = hooks.teardown || [];
+    const beforeCaseIds: number[] = (hooks.preStep || '')
+      .split(',')
+      .map((n: string) => +n);
 
-  const handleSubmit = useCallback(() => {
-    console.log('>>> handleSubmit');
-  }, []);
+    const nextParamType =
+      typeof initData.parameters === 'string' ? 'object' : 'array';
+    setParamType(nextParamType);
+
+    editField.setFieldsValue({
+      name: initData.name,
+      desc: initData.desc,
+      beforeFuncs: await getFuncListByIds(beforeFunIds),
+      afterFuncs: await getFuncListByIds(afterFuncIds),
+      beforeCases: await getCaseListByIds(beforeCaseIds),
+      customVars: initData.customVars || [],
+      headers: initData.headers || [],
+      parameters: nextParamType === 'array' ? initData.parameters || [] : [],
+      parameterJSON:
+        nextParamType === 'object' ? initData.parameters || '' : '',
+      savedVars: initData.savedVars || [],
+      resAssert: initData.resAssert || [],
+    });
+  };
+
+  useEffect(() => {
+    if (props.mode === 'HIDE') return;
+
+    setSetp(0);
+    editField.resetFields();
+    setParamType('object');
+
+    if (props.mode === 'EDIT') {
+      initEditField(props.initData || ({} as CaseItemVO));
+    }
+  }, [props.mode]);
+
+  const handleSubmit = async () => {
+    const values = await editField.validateFields();
+    console.log('>>> handleSubmit', values);
+
+    const payload = {
+      apiId: props.current?.key,
+      name: values.name,
+      desc: values.desc,
+      headers: values.headers || [],
+      parameters:
+        paramType === 'array'
+          ? values.parameters || []
+          : values.parameterJSON || '',
+      preStep: (values.beforeCases || []).map((n: any) => n.caseId).join(','),
+      customVars: values.customVars || [],
+      savedVars: values.savedVars || [],
+      hooks: {
+        setup: (values.beforeFuncs || []).map((n: any) => n.id),
+        teardown: (values.afterFuncs || []).map((n: any) => n.id),
+      },
+      resAssert: values.resAssert || [],
+      modifyUser: userInfo.userName,
+    };
+
+    if (props.mode == 'ADD') {
+      await postRequest(APIS.saveCaseInfo, {
+        data: {
+          ...payload,
+          createUser: userInfo.userName,
+        },
+      });
+    } else {
+      await postRequest(APIS.updateCaseInfo, {
+        data: {
+          ...payload,
+          id: props.initData?.id,
+          createUser: props.initData?.createUser,
+        },
+      });
+    }
+
+    message.success('用例保存成功！');
+    setSetp(0);
+    props.onSave?.();
+  };
 
   const gotoNextStep = async () => {
+    // 先校验
     const values = await editField.validateFields();
-    console.log('>>>>> gotoNextStep', values);
-
-    // TODO 先校验
+    console.log('> gotoNextStep', values);
     setSetp(step + 1);
   };
 
@@ -94,10 +158,18 @@ export default function CaseEditor(props: CaseEditorProps) {
     >
       <Form form={editField}>
         <FormItem
+          label="用例名称"
+          name="name"
+          labelCol={{ flex: '76px' }}
+          rules={[{ required: true, message: '请输入用例名称' }]}
+        >
+          <Input placeholder="请输入用例名称" />
+        </FormItem>
+        <FormItem
           label="用例描述"
           name="desc"
           labelCol={{ flex: '76px' }}
-          rules={[{ required: false, message: '请输入用例描述' }]}
+          rules={[{ required: true, message: '请输入用例描述' }]}
         >
           <Input placeholder="请输入用例描述" />
         </FormItem>

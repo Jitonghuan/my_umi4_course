@@ -3,17 +3,20 @@
 // @create 2021/06/06 15:09
 
 import React, { useState } from 'react';
-import { Button, Popover, Collapse, Empty, message } from 'antd';
+import { Button, Popover, Collapse, Empty, message, Table } from 'antd';
 import { getRequest } from '@/utils/request';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import * as APIS from '../service';
 import DebounceSelect from '@/components/debounce-select';
+import { CaseItemVO, PreCaseItemProps } from '../interfaces';
 import './index.less';
+
+export type CaseTableValueProps = CaseItemVO & PreCaseItemProps;
 
 export interface CaseTableFieldProps {
   title?: React.ReactNode;
-  value?: Record<string, any>[];
-  onChange?: (next: Record<string, any>[]) => any;
+  value?: CaseTableValueProps[];
+  onChange?: (next: CaseTableValueProps[]) => any;
 }
 
 export default function CaseTable(props: CaseTableFieldProps) {
@@ -44,7 +47,11 @@ export default function CaseTable(props: CaseTableFieldProps) {
       return message.warn('此用例已选择!');
     }
 
-    nextValue.push(item.data);
+    const { data }: { data: CaseItemVO } = await getRequest(APIS.getCaseInfo, {
+      id: item.data.caseId,
+    });
+
+    nextValue.push({ ...data, ...item.data });
     props.onChange?.(nextValue);
     setPopVisible(false);
   };
@@ -96,7 +103,24 @@ export default function CaseTable(props: CaseTableFieldProps) {
               />
             }
           >
-            我是用例详情~~~
+            <ul className="case-info-list">
+              <li>所属项目: {n.projectName || '--'}</li>
+              <li>所属模块: {n.moduleName || '--'}</li>
+              <li>接口地址: {n.caseName || '--'}</li>
+            </ul>
+            <h4>定义变量</h4>
+            <Table dataSource={n.customVars || []} pagination={false} bordered>
+              <Table.Column title="变量名" dataIndex="name" />
+              <Table.Column title="类型" dataIndex="type" />
+              <Table.Column title="值" dataIndex="value" />
+              <Table.Column title="描述" dataIndex="desc" />
+            </Table>
+            <h4> 保存返回值</h4>
+            <Table dataSource={n.savedVars || []} pagination={false} bordered>
+              <Table.Column title="变量名" dataIndex="name" />
+              <Table.Column title="表达式" dataIndex="jsonpath" />
+              <Table.Column title="描述" dataIndex="desc" />
+            </Table>
           </Collapse.Panel>
         ))}
       </Collapse>
