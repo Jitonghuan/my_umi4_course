@@ -106,7 +106,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
             <ul className="case-info-list">
               <li>所属项目: {n.projectName || '--'}</li>
               <li>所属模块: {n.moduleName || '--'}</li>
-              <li>接口地址: {n.caseName || '--'}</li>
+              <li>接口地址: {n.apiPath || '--'}</li>
             </ul>
             <h4>定义变量</h4>
             <Table dataSource={n.customVars || []} pagination={false} bordered>

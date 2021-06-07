@@ -95,6 +95,7 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
           onOperate={(type) => {
             if (type === 'deployNextEnvSuccess') {
               onDeployNextEnvSuccess();
+              console.log('deployNextEnvSuccess');
               return;
             }
             requestData();
