@@ -69,9 +69,8 @@ const ApplicationDeploy = ({
                 const i = curEnvData.findIndex(
                   (item) => item.value === tabActive,
                 );
-                setTabActive(
-                  curEnvData[i + 1]?.value || isTwoPackage ? 'cDev' : 'dev',
-                );
+                setTabActive(curEnvData[i + 1]?.value);
+                console.log(tabActive);
               }}
             />
           </TabPane>

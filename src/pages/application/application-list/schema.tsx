@@ -113,7 +113,7 @@ export const createTableSchema = ({
       width: 80,
       render: (appCategoryCode) =>
         categoryData?.find((v) => v.categoryCode === appCategoryCode)
-          .categoryName || '-',
+          ?.categoryName || '-',
     },
     {
       title: '应用类型',
@@ -126,8 +126,8 @@ export const createTableSchema = ({
       dataIndex: 'appGroupCode',
       width: 100,
       render: (appGroupCode) =>
-        businessDataList?.find((v) => v.groupCode === appGroupCode).groupName ||
-        '-',
+        businessDataList?.find((v) => v.groupCode === appGroupCode)
+          ?.groupName || '-',
     },
     {
       title: '责任人',
