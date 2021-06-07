@@ -116,8 +116,8 @@ export default function RightDetail(props: RightDetailProps) {
         loading={caseLoading}
       >
         <Table.Column dataIndex="id" title="ID" />
-        <Table.Column dataIndex="module" title="模块" />
-        <Table.Column dataIndex="apiId" title="接口" />
+        <Table.Column dataIndex="moduleName" title="模块" />
+        <Table.Column dataIndex="apiName" title="接口" />
         <Table.Column dataIndex="name" title="用例名称" />
         <Table.Column dataIndex="createUser" title="创建人" />
         <Table.Column dataIndex="gmtModify" title="修改时间" width={160} />
