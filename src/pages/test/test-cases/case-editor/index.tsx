@@ -35,9 +35,9 @@ export default function CaseEditor(props: CaseEditorProps) {
     const hooks = initData.hooks ? JSON.parse(initData.hooks) : {};
     const beforeFunIds: number[] = hooks.setup || [];
     const afterFuncIds: number[] = hooks.teardown || [];
-    const beforeCaseIds: number[] = (hooks.preStep || '')
-      .split(',')
-      .map((n: string) => +n);
+    const beforeCaseIds: number[] = initData.preStep
+      ? initData.preStep.split(',').map((n: string) => +n)
+      : [];
 
     const nextParamType =
       typeof initData.parameters === 'string' ? 'object' : 'array';
