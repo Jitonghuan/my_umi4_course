@@ -197,7 +197,7 @@ const QualityControl: React.FC = () => {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: 140,
+      width: 180,
       fixed: 'right',
       render: (_, record) => (
         <Space>
@@ -344,7 +344,7 @@ const QualityControl: React.FC = () => {
         }
         showTableTitle
         searchText="查询"
-        tableTitle="数据生成记录"
+        tableTitle="检测任务列表"
         className="table-form"
         onSearch={queryQCTable}
         reset={reset}

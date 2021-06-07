@@ -66,22 +66,22 @@ export default (props: IUmiRrops) => {
     setCategoryData(
       categoryDate.map((el: any) => ({
         ...el,
-        label: el.categoryName,
-        value: el.categoryCode,
+        label: el?.categoryName,
+        value: el?.categoryCode,
       })),
     );
     setBusiness(
       bizData.map((el: any) => ({
         ...el,
-        label: el.groupName,
-        value: el.groupCode,
+        label: el?.groupName,
+        value: el?.groupCode,
       })),
     );
     setEnvData(
       envData.map((el: any) => ({
         ...el,
-        label: el.typeName,
-        value: el.typeCode,
+        label: el?.typeName,
+        value: el?.typeCode,
       })),
     );
   };
