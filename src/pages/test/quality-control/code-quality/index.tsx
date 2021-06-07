@@ -56,7 +56,6 @@ const UnitTest: React.FC<any> = () => {
         endTime: testTime[1]
           ? testTime[1].format('YYYY-MM-DD 23:59:59')
           : undefined,
-        ...query,
       };
     },
   });
@@ -281,6 +280,13 @@ const UnitTest: React.FC<any> = () => {
     },
   ];
 
+  const onSearch = () => {
+    history.push({
+      query: { taskId: form.getFieldValue('taskId') },
+    });
+    queryCodeQuality();
+  };
+
   useEffect(() => {
     form.setFieldsValue({
       ...query,
@@ -309,7 +315,7 @@ const UnitTest: React.FC<any> = () => {
         searchText="查询"
         tableTitle="执行记录"
         className="table-form"
-        onSearch={queryCodeQuality}
+        onSearch={onSearch}
         reset={reset}
         scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
       />
