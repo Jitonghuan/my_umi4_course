@@ -152,7 +152,7 @@ const PublishDetail = ({
               if (res.success) {
                 message.success('操作成功，正在部署中...');
                 setDeployVisible(false);
-                onOperate('deployNextEnvEnd');
+                onOperate('deployNextEnvSuccess');
               }
             })
             .finally(() => setConfirmLoading(false));
