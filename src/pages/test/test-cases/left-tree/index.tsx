@@ -146,7 +146,7 @@ export default function LeftTree(props: LeftTreeProps) {
     reloadTreeData();
   };
 
-  // 选择一个节点（这里只能选择叶子节点，即 接口）
+  // 选择一个节点
   const handleItemSelect = (nextKeys: React.Key[], info: any) => {
     if (!nextKeys.length) return; // 禁止反选
 
