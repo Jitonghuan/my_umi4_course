@@ -2,13 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 16:29
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useContext,
-  useRef,
-} from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Modal, Select, Tree, Spin, Empty, message } from 'antd';
 import {
   PlusSquareFilled,
@@ -17,7 +11,6 @@ import {
 } from '@ant-design/icons';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import type Emitter from 'events';
-import FELayout from '@cffe/vc-layout';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import { postRequest } from '@/utils/request';
@@ -49,7 +42,6 @@ type nodeAction =
   | 'delApi';
 
 export default function LeftTree(props: LeftTreeProps) {
-  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [projectOptions, setProjectOptions, reloadProjectOptions] =
     useProjectOptions();
   const [searchProject, setSearchProject] = useState<number>();
@@ -165,6 +157,21 @@ export default function LeftTree(props: LeftTreeProps) {
       targetNodeRef.current = node;
 
       switch (action) {
+        case 'addModule':
+          setModuleEditoraMode('ADD');
+          break;
+        case 'addApi':
+          setApiEditorMode('ADD');
+          break;
+        case 'editProject':
+          setProjectEditorMode('EDIT');
+          break;
+        case 'editModule':
+          setModuleEditoraMode('EDIT');
+          break;
+        case 'editApi':
+          setApiEditorMode('EDIT');
+          break;
         case 'delProject':
           Modal.confirm({
             title: '操作确认',
@@ -185,15 +192,6 @@ export default function LeftTree(props: LeftTreeProps) {
             },
           });
           break;
-        case 'editProject':
-          setProjectEditorMode('EDIT');
-          break;
-        case 'addModule':
-          setModuleEditoraMode('ADD');
-          break;
-        case 'editModule':
-          setModuleEditoraMode('EDIT');
-          break;
         case 'delModule':
           Modal.confirm({
             title: '操作确认',
@@ -207,12 +205,6 @@ export default function LeftTree(props: LeftTreeProps) {
               reloadTreeData();
             },
           });
-          break;
-        case 'addApi':
-          setApiEditorMode('ADD');
-          break;
-        case 'editApi':
-          setApiEditorMode('EDIT');
           break;
         case 'delApi':
           Modal.confirm({

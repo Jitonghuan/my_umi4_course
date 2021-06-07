@@ -34,10 +34,15 @@ export default function RightDetail(props: RightDetailProps) {
   const [execCases, setExecCases] = useState<CaseItemVO[]>([]);
 
   useEffect(() => {
-    props.emitter.on('CASE::RELOAD_CASE', () => {
+    const listener = () => {
       setPageIndex(1);
       reloadCase(1);
-    });
+    };
+    props.emitter.on('CASE::RELOAD_CASE', listener);
+
+    return () => {
+      props.emitter.off('CASE::RELOAD_CASE', listener);
+    };
   }, []);
 
   const handleDelCaseItem = (record: CaseItemVO, index: number) => {
