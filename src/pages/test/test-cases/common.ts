@@ -91,7 +91,7 @@ export const ASSERT_COMPARE_ENUM: EditTableEnum = [
 ].reduce(
   (prev, curr) => ({
     ...prev,
-    [curr]: { text: curr, status: 'Default' },
+    [curr]: { text: curr },
   }),
   {} as EditTableEnum,
 );
@@ -107,7 +107,7 @@ export const VALUE_TYPE_ENUM: EditTableEnum = [
 ].reduce(
   (prev, curr) => ({
     ...prev,
-    [curr]: { text: curr, status: 'Default' },
+    [curr]: { text: curr },
   }),
   {} as EditTableEnum,
 );
