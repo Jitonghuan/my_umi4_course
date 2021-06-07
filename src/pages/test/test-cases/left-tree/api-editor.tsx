@@ -77,18 +77,22 @@ export default function ApiEditor(props: ApiEditorProps) {
       const initFields = { ...result.data };
 
       initFields.headers = initFields.headers || [];
-      initFields.path = initFields.path || initFields.apiPath;
-      initFields.method = initFields.method || initFields.reqMethod;
 
       delete initFields.gmtCreate;
       delete initFields.gmtModify;
       delete initFields.modifyUser;
-      delete initFields.reqMethod;
-      delete initFields.apiPath;
 
-      editField.setFieldsValue(initFields);
       setApiType(initFields.apiType ?? API_TYPE._default);
       setParamType(initFields.paramType ?? PARAM_TYPE._default);
+
+      if (initFields.paramType === PARAM_TYPE.JSON) {
+        initFields.parametersJSON = initFields.parameters;
+        initFields.parameters = [];
+      } else {
+        initFields.parametersJSON = '';
+      }
+
+      editField.setFieldsValue(initFields);
     });
   }, [mode]);
 
@@ -103,7 +107,7 @@ export default function ApiEditor(props: ApiEditorProps) {
     };
     delete payload.parametersJSON;
     // NOTE 接口类型为 dubbo 的时候仍然会校验此参数，所以要将数据重置 (这个应该让服务端同学修复掉)
-    payload.paramType = payload.paramType || PARAM_TYPE._default;
+    payload.paramType = payload.paramType ?? PARAM_TYPE._default;
 
     if (mode === 'ADD') {
       await postRequest(APIS.addApi, {
