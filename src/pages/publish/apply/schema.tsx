@@ -119,7 +119,7 @@ export const createTableSchema = ({
       title: '应用组',
       dataIndex: 'appGroupCode',
       render: (text) =>
-        businessDataList?.find((v) => v.groupCode === text).groupName || '',
+        businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
     },
     {
       title: '发布环境',
