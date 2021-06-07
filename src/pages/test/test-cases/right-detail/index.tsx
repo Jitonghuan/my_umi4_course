@@ -107,7 +107,12 @@ export default function RightDetail(props: RightDetailProps) {
       </div>
       <Table
         dataSource={caseList}
-        pagination={{ pageSize: 20, current: pageIndex, total: caseTotal }}
+        pagination={{
+          pageSize: 20,
+          current: pageIndex,
+          total: caseTotal,
+          onChange: (next) => setPageIndex(next),
+        }}
         loading={caseLoading}
       >
         <Table.Column dataIndex="id" title="ID" />
