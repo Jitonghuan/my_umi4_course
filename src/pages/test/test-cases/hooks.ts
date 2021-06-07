@@ -75,12 +75,15 @@ export function useLeftTreeData(
 }
 
 // 获取 API 详情
-export function useApiDetail(id: number): [Record<string, any>, boolean] {
+export function useApiDetail(
+  id: number,
+  level: number,
+): [Record<string, any>, boolean] {
   const [data, setData] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || level !== 3) return;
 
     setLoading(true);
     setData({});
@@ -102,6 +105,7 @@ export function useApiDetail(id: number): [Record<string, any>, boolean] {
 export function useCaseList(
   id: number,
   pageIndex: number,
+  nodeLevel: number,
 ): [Record<string, any>[], number, boolean, (page?: number) => Promise<void>] {
   const [data, setData] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState(0);
@@ -114,7 +118,7 @@ export function useCaseList(
     setLoading(true);
 
     getRequest(APIS.getCaseList, {
-      data: { id, type: 2, page, pageSize: 20 },
+      data: { id, type: nodeLevel - 1, page, pageSize: 20 },
     })
       .then((result) => {
         const { dataSource, pageInfo } = result.data || {};
@@ -128,8 +132,10 @@ export function useCaseList(
   };
 
   useEffect(() => {
+    if (!nodeLevel) return;
+
     loadData();
-  }, [id, pageIndex]);
+  }, [id, pageIndex, nodeLevel]);
 
   return [data, total, loading, loadData];
 }

@@ -2,13 +2,12 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 16:25
 
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Tag, Table, message, Empty, Spin, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
-import FELayout from '@cffe/vc-layout';
 import { ContentCard } from '@/components/vc-page-content';
-import { getRequest, postRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { TreeNode, CaseItemVO } from '../interfaces';
 import { useApiDetail, useCaseList } from '../hooks';
@@ -22,12 +21,15 @@ interface RightDetailProps extends Record<string, any> {
 }
 
 export default function RightDetail(props: RightDetailProps) {
-  const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [apiDetail, apiLoading] = useApiDetail(props.current?.key as number);
+  const [apiDetail, apiLoading] = useApiDetail(
+    props.current?.key as number,
+    props.current?.level as number,
+  );
   const [pageIndex, setPageIndex] = useState(1);
   const [caseList, caseTotal, caseLoading, reloadCase] = useCaseList(
     props.current?.key as number,
     pageIndex,
+    props.current?.level as number,
   );
   const [execCases, setExecCases] = useState<CaseItemVO[]>([]);
 
@@ -83,20 +85,25 @@ export default function RightDetail(props: RightDetailProps) {
   return (
     <ContentCard className="page-case-right-detail">
       <div className="case-detail-header">
-        <h2>接口名称: {props.current.title || '--'}</h2>
+        <h2>
+          {['', '项目', '模块', '接口'][props.current.level || 0]}名称:{' '}
+          {props.current.title || '--'}
+        </h2>
         {apiDetail.status === 1 ? <Tag color="success">已生效</Tag> : null}
         {apiDetail.status === 0 ? <Tag color="warning">未生效</Tag> : null}
       </div>
       <div className="case-detail-caption">
         <h3>用例列表</h3>
         {/* <Button type="default">批量执行</Button> */}
-        <Button
-          onClick={() => props.emitter.emit('CASE::ADD_CASE')}
-          type="primary"
-          icon={<PlusOutlined />}
-        >
-          新增用例
-        </Button>
+        {props.current.level === 3 ? (
+          <Button
+            onClick={() => props.emitter.emit('CASE::ADD_CASE')}
+            type="primary"
+            icon={<PlusOutlined />}
+          >
+            新增用例
+          </Button>
+        ) : null}
       </div>
       <Table
         dataSource={caseList}

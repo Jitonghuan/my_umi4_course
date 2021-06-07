@@ -52,7 +52,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       customVars: initData.customVars || [],
       headers: initData.headers || [],
       parameters: nextParamType === 'array' ? initData.parameters || [] : [],
-      parameterJSON:
+      parametersJSON:
         nextParamType === 'object' ? initData.parameters || '' : '',
       savedVars: initData.savedVars || [],
       resAssert: initData.resAssert || [],
@@ -76,14 +76,13 @@ export default function CaseEditor(props: CaseEditorProps) {
     console.log('>>> handleSubmit', values);
 
     const payload = {
-      apiId: props.current?.key,
       name: values.name,
       desc: values.desc,
       headers: values.headers || [],
       parameters:
         paramType === 'array'
           ? values.parameters || []
-          : values.parameterJSON || '',
+          : values.parametersJSON || '',
       preStep: (values.beforeCases || []).map((n: any) => n.caseId).join(','),
       customVars: values.customVars || [],
       savedVars: values.savedVars || [],
@@ -99,6 +98,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       await postRequest(APIS.saveCaseInfo, {
         data: {
           ...payload,
+          apiId: props.current?.key,
           createUser: userInfo.userName,
         },
       });
@@ -107,6 +107,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         data: {
           ...payload,
           id: props.initData?.id,
+          apiId: props.initData?.apiId,
           createUser: props.initData?.createUser,
         },
       });
@@ -250,7 +251,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                   />
                 </FormItem>
               ) : (
-                <FormItem name="parameterJSON" noStyle>
+                <FormItem name="parametersJSON" noStyle>
                   <Input.TextArea placeholder="请输入" rows={10} />
                 </FormItem>
               )}

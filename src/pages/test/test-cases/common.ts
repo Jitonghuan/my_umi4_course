@@ -94,14 +94,14 @@ export function formatTreeData(payload: any) {
     key: n1.id,
     title: n1.name, // 项目名
     desc: n1.desc,
-    selectable: false,
+    selectable: true,
     level: 1, // 加上 level 方便判断
     // 第二层是模块
     children: (n1.children || []).map((n2: any) => ({
       key: n2.id,
       title: n2.name, // 模块名
       desc: n2.desc,
-      selectable: false,
+      selectable: true,
       level: 2,
       projectId: n1.id,
       // 第三层是接口
