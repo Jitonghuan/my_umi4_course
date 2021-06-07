@@ -13,11 +13,7 @@ import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import TableForm from '@/components/simple-table-form';
 import { getFuncListByIds, getCaseListByIds } from './common';
-import {
-  ASSERT_COMPARE_ENUM,
-  VALUE_TYPE_ENUM,
-  fmtOptions2Enum,
-} from '../common';
+import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM } from '../common';
 import './index.less';
 
 const { Item: FormItem } = Form;
