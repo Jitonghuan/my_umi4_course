@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/26 15:07
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import Emitter from 'events';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { CardRowGroup } from '@/components/vc-page-content';
@@ -13,16 +13,16 @@ import './index.less';
 
 export default function EnvironmentManager() {
   const [current, setCurrent] = useState<EnvItemVO>(null as any);
-  const emitterRef = useRef(new Emitter());
+
+  const emitter = useMemo(() => {
+    return new Emitter();
+  }, []);
 
   return (
     <MatrixPageContent isFlex>
       <CardRowGroup>
-        <EnvList
-          onItemClick={(item) => setCurrent(item)}
-          emitter={emitterRef.current}
-        />
-        <EnvDetail current={current} emitter={emitterRef.current} />
+        <EnvList onItemClick={(item) => setCurrent(item)} emitter={emitter} />
+        <EnvDetail current={current} emitter={emitter} />
       </CardRowGroup>
     </MatrixPageContent>
   );
