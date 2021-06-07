@@ -13,6 +13,11 @@ import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import TableForm from '@/components/simple-table-form';
 import { getFuncListByIds, getCaseListByIds } from './common';
+import {
+  ASSERT_COMPARE_ENUM,
+  VALUE_TYPE_ENUM,
+  fmtOptions2Enum,
+} from '../common';
 import './index.less';
 
 const { Item: FormItem } = Form;
@@ -207,7 +212,13 @@ export default function CaseEditor(props: CaseEditorProps) {
             <TableForm
               columns={[
                 { title: '变量名', dataIndex: 'key', required: true },
-                { title: '类型', dataIndex: 'type', required: true },
+                {
+                  title: '类型',
+                  dataIndex: 'type',
+                  required: true,
+                  valueType: 'select',
+                  valueEnum: VALUE_TYPE_ENUM,
+                },
                 { title: '值', dataIndex: 'value' },
                 { title: '描述', dataIndex: 'desc' },
               ]}
@@ -284,8 +295,20 @@ export default function CaseEditor(props: CaseEditorProps) {
             <TableForm
               columns={[
                 { title: '断言项', dataIndex: 'assertName', required: true },
-                { title: '比较符', dataIndex: 'compare', required: true },
-                { title: '类型', dataIndex: 'type', required: true },
+                {
+                  title: '比较符',
+                  dataIndex: 'compare',
+                  required: true,
+                  valueType: 'select',
+                  valueEnum: ASSERT_COMPARE_ENUM,
+                },
+                {
+                  title: '类型',
+                  dataIndex: 'type',
+                  required: true,
+                  valueType: 'select',
+                  valueEnum: VALUE_TYPE_ENUM,
+                },
                 { title: '期望值', dataIndex: 'value', required: true },
               ]}
             />

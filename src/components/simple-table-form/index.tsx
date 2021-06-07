@@ -10,6 +10,11 @@ export interface TableColumnProps {
   dataIndex: string;
   title?: string;
   required?: boolean;
+  valueType?: 'text' | 'select' | 'date';
+  valueEnum?: Record<
+    string,
+    { text: string; status?: 'Success' | 'Error' | 'Default' }
+  >;
   rules?: Record<string, any>[];
 }
 
@@ -32,10 +37,19 @@ export default function TableForm<ItemProps = Record<string, any>>(
   const columnConfig: ProColumns<ItemProps>[] = columns.map((col) => ({
     title: col.title || col.dataIndex,
     dataIndex: col.dataIndex,
+    valueType: col.valueType || 'text',
+    valueEnum: col.valueEnum,
     formItemProps: {
       rules:
         col.rules || col.required
-          ? [{ required: true, message: `请输入${col.title || col.dataIndex}` }]
+          ? [
+              {
+                required: true,
+                message: `${col.valueType === 'select' ? '请选择' : '请输入'}${
+                  col.title || col.dataIndex
+                }`,
+              },
+            ]
           : [],
     },
   }));

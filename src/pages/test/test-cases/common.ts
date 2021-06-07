@@ -49,6 +49,69 @@ export const API_METHOD_OPTIONS: SelectOptions<string>[] = [
   { label: 'OPTION', value: 'OPTION' },
 ];
 
+export type EditTableEnum = Record<
+  string,
+  { text: string; status?: 'Success' | 'Error' | 'Default' }
+>;
+
+export function fmtOptions2Enum(
+  options: SelectOptions<string>[],
+): EditTableEnum {
+  return options.reduce((prev, curr) => {
+    return {
+      ...prev,
+      [curr.value]: {
+        text: curr.label,
+        status: 'Default',
+      },
+    };
+  }, {} as EditTableEnum);
+}
+
+/** 比较方式 */
+export const ASSERT_COMPARE_ENUM: EditTableEnum = [
+  'eq', // "实际结果"和"期望结果"相等
+  'lt', // "实际结果"小于"期望结果"
+  'le', // "实际结果"小于等于"期望结果"
+  'gt', // "实际结果"大于"期望结果"
+  'ge', // "实际结果"大于等于"期望结果"
+  'ne', // "实际结果"和"期望结果"不相等
+  'str_eq', // 转义字符串后对比，"实际结果"和"期望结果"相等
+  'len_eq', // 字符串或list长度，"实际结果"和"期望结果"相等
+  'len_gt', // "实际结果的长度"大于"期望结果"
+  'len_ge', // "实际结果的长度"大于等于"期望结果"
+  'len_lt', // "实际结果的长度"小于"期望结果"
+  'len_le', // "实际结果的长度"小于等于"期望结果"
+  'contains', // 预期结果是否被包含在实际结果中
+  'contained_by', // 实际结果是否被包含在预期结果中
+  'type_match', // 类型是否匹配
+  'regex_match', // 正则表达式是否匹配
+  'startswith', // 字符串是否以什么开头
+  'endswith', // 字符串是否以什么结尾
+].reduce(
+  (prev, curr) => ({
+    ...prev,
+    [curr]: { text: curr, status: 'Default' },
+  }),
+  {} as EditTableEnum,
+);
+
+/** 数据类型 */
+export const VALUE_TYPE_ENUM: EditTableEnum = [
+  'String',
+  'Integer',
+  'Float',
+  'Boolean',
+  'List',
+  'Dict',
+].reduce(
+  (prev, curr) => ({
+    ...prev,
+    [curr]: { text: curr, status: 'Default' },
+  }),
+  {} as EditTableEnum,
+);
+
 /** 广度遍历查找节点 */
 export function findTreeNodeByKey(
   treeData: TreeNode[],
