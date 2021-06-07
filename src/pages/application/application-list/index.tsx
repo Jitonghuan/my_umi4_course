@@ -60,8 +60,8 @@ const ApplicationList = (props: IProps) => {
           resp?.data?.dataSource?.map((el: any) => {
             return {
               ...el,
-              value: el.groupCode,
-              label: el.groupName,
+              value: el?.groupCode,
+              label: el?.groupName,
             };
           }) || [];
         setBusinessData(datas);
