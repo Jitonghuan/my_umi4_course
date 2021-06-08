@@ -32,7 +32,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
     });
 
     return (result.data || []).map((n: any) => ({
-      value: n.apiId,
+      value: n.caseId,
       label: `${n.projectName}/${n.moduleName}/${n.apiName}/${n.caseName}`,
       data: n,
     }));
@@ -43,12 +43,12 @@ export default function CaseTable(props: CaseTableFieldProps) {
     console.log('>>> handleSelect', item.data);
 
     const nextValue = props.value?.slice(0) || [];
-    if (nextValue.find((n) => n.apiId === item.data?.apiId)) {
+    if (nextValue.find((n) => n.id === item.data?.caseId)) {
       return message.warn('此用例已选择!');
     }
 
     const { data }: { data: CaseItemVO } = await getRequest(APIS.getCaseInfo, {
-      id: item.data.caseId,
+      data: { id: item.data.caseId },
     });
 
     nextValue.push({ ...data, ...item.data });
