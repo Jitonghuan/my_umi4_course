@@ -84,7 +84,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         paramType === 'array'
           ? values.parameters || []
           : values.parametersJSON || '',
-      preStep: (values.beforeCases || []).map((n: any) => n.caseId).join(','),
+      preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
       customVars: values.customVars || [],
       savedVars: values.savedVars || [],
       hooks: {
