@@ -1,7 +1,7 @@
 import React from 'react';
 import { history } from 'umi';
 import { Popconfirm, message } from 'antd';
-import { ColumnProps } from '_@cffe_vc-hulk-table@1.0.5@@cffe/vc-hulk-table';
+import { ColumnProps } from '@cffe/vc-hulk-table';
 
 const APP_TYPE_MAP = {
   frontend: '前端',
@@ -80,6 +80,7 @@ export const createTableSchema = ({
 }) =>
   [
     {
+      width: 80,
       title: 'ID',
       dataIndex: 'id',
     },

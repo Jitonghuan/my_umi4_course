@@ -5,6 +5,15 @@
 
 import { addAPIPrefix } from '@/utils';
 
+/** GET 4、环境管理-环境列表 */
+export const envList = addAPIPrefix('/qc/autotest/envList');
+
+/** GET 8、函数管理-获取函数内容 */
+export const getFunc = addAPIPrefix('/qc/autotest/getFunc');
+
+/** GET 9、函数管理-函数列表 */
+export const funcList = addAPIPrefix('/qc/autotest/funcList');
+
 /** POST 10、用例管理-新增项目 */
 export const addProject = addAPIPrefix('/qc/autotest/addProject');
 
@@ -55,3 +64,6 @@ export const updateCaseInfo = addAPIPrefix('/qc/autotest/updateCaseInfo');
 
 /** GET 26、用例管理-项目列表 */
 export const getProjects = addAPIPrefix('/qc/autotest/getProjects');
+
+/** GET 27、查看应用列表 {  } */
+export const getAppList = addAPIPrefix('/appManage/list');

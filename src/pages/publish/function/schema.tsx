@@ -155,7 +155,7 @@ export const createTableColumns = (params: {
       // width: '5%',
       render: (text) =>
         params.categoryData?.find((v) => v.categoryCode === text)
-          .categoryName || '-',
+          ?.categoryName || '',
     },
     {
       title: '应用组',
@@ -163,14 +163,14 @@ export const createTableColumns = (params: {
       key: 'appGroupCode',
       // width: '5%',
       render: (text) =>
-        params.businessData?.find((v) => v.groupCode === text).groupName || '-',
+        params.businessData?.find((v) => v.groupCode === text)?.groupName || '',
     },
     {
       title: '发布环境',
       dataIndex: 'envs',
       key: 'envs',
       // width: '4%',
-      render: (text) => getEnvName(params.envsUrlList, text) || '-',
+      render: (text) => getEnvName(params.envsUrlList, text) || '',
     },
     {
       title: '涉及业务范围',

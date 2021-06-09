@@ -25,6 +25,7 @@ const BranchManage = ({}: IProps) => {
 
   const [createBranchVisible, setCreateBranchVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [tableHeight, setTableHeight] = useState(window.innerHeight - 440);
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -41,6 +42,12 @@ const BranchManage = ({}: IProps) => {
     if (!appCode) return;
     queryBranchList({ appCode, env: 'feature' });
   }, [appCode]);
+
+  useEffect(() => {
+    window.onresize = () => {
+      setTableHeight(window.innerHeight - 440);
+    };
+  }, []);
 
   return (
     <Spin spinning={loading}>
@@ -103,6 +110,7 @@ const BranchManage = ({}: IProps) => {
             }) as any
           }
           {...tableProps}
+          scroll={{ y: tableHeight }}
         />
       </ContentCard>
     </Spin>

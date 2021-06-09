@@ -190,14 +190,14 @@ const QualityControl: React.FC = () => {
         STATUS_TYPE[text]?.text ? (
           <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>
         ) : (
-          '-'
+          ''
         ),
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: 140,
+      width: 180,
       fixed: 'right',
       render: (_, record) => (
         <Space>
@@ -321,7 +321,7 @@ const QualityControl: React.FC = () => {
         formOptions={formOptions}
         formLayout="inline"
         columns={columns.map((el) => ({
-          render: (text) => text || '-',
+          render: (text) => text || '',
           ...el,
         }))}
         {...tableProps}
@@ -344,7 +344,7 @@ const QualityControl: React.FC = () => {
         }
         showTableTitle
         searchText="查询"
-        tableTitle="数据生成记录"
+        tableTitle="检测任务列表"
         className="table-form"
         onSearch={queryQCTable}
         reset={reset}

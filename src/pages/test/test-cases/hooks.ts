@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as APIS from './service';
 import { getRequest } from '@/utils/request';
 import { SelectOptions, TreeNode, ProjectItemVO } from './interfaces';
+import { formatTreeData } from './common';
 
 // 当前可选的项目列表
 export function useProjectOptions(): [
@@ -34,6 +35,7 @@ export function useProjectOptions(): [
   return [data, setData, loadData];
 }
 
+// 获取左侧树结构数据
 export function useLeftTreeData(
   projectId?: number,
 ): [
@@ -72,34 +74,68 @@ export function useLeftTreeData(
   return [data, loading, setData, loadData];
 }
 
-function formatTreeData(payload: any) {
-  if (!payload?.length) return [];
+// 获取 API 详情
+export function useApiDetail(
+  id: number,
+  level: number,
+): [Record<string, any>, boolean] {
+  const [data, setData] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(false);
 
-  // 第一层是项目，目前有且仅有一个
-  return payload.map((n1: any) => ({
-    key: n1.id,
-    title: n1.name, // 项目名
-    desc: n1.desc,
-    selectable: false,
-    level: 1, // 加上 level 方便判断
-    // 第二层是模块
-    children: (n1.children || []).map((n2: any) => ({
-      key: n2.id,
-      title: n2.name, // 模块名
-      desc: n2.desc,
-      selectable: false,
-      level: 2,
-      projectId: n1.id,
-      // 第三层是接口
-      children: (n2.children || []).map((n3: any) => ({
-        key: n3.id,
-        title: n3.name, // 接口名
-        selectable: true,
-        isLeaf: true,
-        level: 3,
-        projectId: n1.id,
-        moduleId: n2.id,
-      })),
-    })),
-  }));
+  useEffect(() => {
+    if (!id || level !== 3) return;
+
+    setLoading(true);
+    setData({});
+    getRequest(APIS.getApiInfo, {
+      data: { id },
+    })
+      .then((result) => {
+        setData(result.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [id]);
+
+  return [data, loading];
+}
+
+// 获取用例列表
+export function useCaseList(
+  id: number,
+  pageIndex: number,
+  nodeLevel: number,
+): [Record<string, any>[], number, boolean, (page?: number) => Promise<void>] {
+  const [data, setData] = useState<Record<string, any>[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const loadData = async (page = pageIndex) => {
+    if (!id) return;
+
+    setData([]);
+    setLoading(true);
+
+    getRequest(APIS.getCaseList, {
+      data: { id, type: nodeLevel - 1, page, pageSize: 20 },
+    })
+      .then((result) => {
+        const { dataSource, pageInfo } = result.data || {};
+
+        setData(dataSource || []);
+        setTotal(pageInfo?.total);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (!nodeLevel) return;
+
+    loadData();
+  }, [id, pageIndex, nodeLevel]);
+
+  return [data, total, loading, loadData];
 }

@@ -99,8 +99,8 @@ const CodeQuality: React.FC = () => {
       width: '15%',
       render: (_, record) => (
         <>
-          <div>{record.startTime ?? '-'}</div>
-          <div>{record.endTime ?? '-'}</div>
+          <div>{record.startTime ?? ''}</div>
+          <div>{record.endTime ?? ''}</div>
         </>
       ),
     },

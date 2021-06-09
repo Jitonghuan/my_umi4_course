@@ -29,46 +29,47 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
     unDeployed: any[];
   }>({ deployed: [], unDeployed: [] });
 
+  const requestData = async () => {
+    if (!appCode) return;
+
+    setUpdating(true);
+
+    const resp1 = await queryDeployList({
+      appCode: appCode!,
+      envTypeCode,
+      isActive: 1,
+      pageIndex: 1,
+      pageSize: 10,
+    });
+
+    const resp2 = await queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      isDeployed: 1,
+    });
+    const resp3 = await queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      isDeployed: 0,
+    });
+
+    if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
+      setDeployInfo(resp1?.data?.dataSource[0]);
+    }
+
+    setBranchInfo({
+      deployed: resp2?.data || [],
+      unDeployed: resp3?.data || [],
+    });
+
+    setUpdating(false);
+  };
+
   // 定时请求发布内容
-  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(
-    async () => {
-      if (!appCode) return;
-
-      setUpdating(true);
-
-      const resp1 = await queryDeployList({
-        appCode: appCode!,
-        envTypeCode: envTypeCode,
-        isActive: 1,
-        pageIndex: 1,
-        pageSize: 10,
-      });
-
-      const resp2 = await queryFeatureDeployed({
-        appCode: appCode!,
-        envTypeCode: envTypeCode,
-        isDeployed: 1,
-      });
-      const resp3 = await queryFeatureDeployed({
-        appCode: appCode!,
-        envTypeCode: envTypeCode,
-        isDeployed: 0,
-      });
-
-      if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-        setDeployInfo(resp1?.data?.dataSource[0]);
-      }
-
-      setBranchInfo({
-        deployed: resp2?.data || [],
-        unDeployed: resp3?.data || [],
-      });
-
-      setUpdating(false);
-    },
-    8000,
-    { immediate: true },
-  );
+  const {
+    getStatus: getTimerStatus,
+    handle: timerHandle,
+  } = useInterval(requestData, 8000, { immediate: true });
 
   const onOperate = (operateType: string) => {
     if (operateType.endsWith('Start')) {
@@ -94,8 +95,10 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
           onOperate={(type) => {
             if (type === 'deployNextEnvSuccess') {
               onDeployNextEnvSuccess();
+              console.log('deployNextEnvSuccess');
               return;
             }
+            requestData();
             onOperate(type);
           }}
         />

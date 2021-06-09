@@ -17,7 +17,7 @@ import {
 } from 'antd';
 
 import FEContext from '@/layouts/basic-layout/FeContext';
-import { DEPLOY_TYPE_OPTIONS, EMERGENCY_TYPE_OPTIONS } from '../../const';
+import { DEPLOY_TYPE_OPTIONS } from '../../const';
 import { createPlanSchemaColumns } from '../../schema';
 import {
   addPublishApplyReq,
@@ -42,9 +42,8 @@ const tailLayout = {
 
 const AddDrawer = (props: IProps) => {
   const { visible, onClose, envsUrlList } = props;
-  const { categoryData = [], businessData: businessDataList = [] } = useContext(
-    FEContext,
-  );
+  const { categoryData = [], businessData: businessDataList = [] } =
+    useContext(FEContext);
   const [formInstance] = Form.useForm();
 
   const [businessData, setBusinessData] = useState<any[]>([]);
@@ -112,6 +111,7 @@ const AddDrawer = (props: IProps) => {
       addPublishApplyReq({
         applyInfo: {
           ...vals,
+          deployEnv: vals.deployEnv.join(','),
           deployDate: vals.deployDate.format('YYYY-MM-DD HH:mm'),
         },
         planIds: selectPlan,
@@ -196,12 +196,12 @@ const AddDrawer = (props: IProps) => {
           <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item
-          label="紧急类型"
-          name="emergencyType"
-          rules={[{ required: true, message: '请选择紧急类型!' }]}
+          label="发布类型"
+          name="deployType"
+          rules={[{ required: true, message: '请选择发布类型!' }]}
         >
           <Radio.Group>
-            {EMERGENCY_TYPE_OPTIONS?.map((el) => (
+            {DEPLOY_TYPE_OPTIONS?.map((el) => (
               <Radio value={el.value}>{el.label}</Radio>
             ))}
           </Radio.Group>
@@ -209,9 +209,9 @@ const AddDrawer = (props: IProps) => {
         <Form.Item
           label="发布环境"
           name="deployEnv"
-          rules={[{ required: true, message: '请选择机构!' }]}
+          rules={[{ required: true, message: '请选择发布环境!' }]}
         >
-          <Select placeholder="请选择">
+          <Select mode="multiple" placeholder="请选择">
             {deployEnvData?.map((el) => (
               <Select.Option key={el.value} value={el.value}>
                 {el.label}
@@ -225,8 +225,9 @@ const AddDrawer = (props: IProps) => {
           rules={[{ required: true, message: '请选择计划发布时间!' }]}
         >
           <DatePicker
-            placeholder="请选择"
-            format={'YYYY-MM-DD'}
+            placeholder="请选择发布时间"
+            format={'YYYY-MM-DD HH-mm'}
+            showTime={{ format: 'HH-mm' }}
             style={{ width: '100%' }}
           />
         </Form.Item>
