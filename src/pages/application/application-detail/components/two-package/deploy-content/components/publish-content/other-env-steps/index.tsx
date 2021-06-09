@@ -10,6 +10,7 @@ import { Steps, Button, Modal, Radio } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { retryMerge, retryDeploy } from '../../../../../../../service';
 import { IProps, Status } from './types';
+import deploy from 'mock/deploy';
 // import './index.less';
 
 const { Step } = Steps;
@@ -36,7 +37,12 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
     if (deployStatus === 'deploying') {
       return 2.1;
     }
-    if (deployStatus === 'deployErr' || deployStatus === 'deployAborted') {
+    if (
+      deployStatus === 'deployErr' ||
+      deployStatus === 'deployAborted' ||
+      deployStatus === 'buildErr' ||
+      deployStatus === 'buildAborted'
+    ) {
       return 2.2;
     }
 
