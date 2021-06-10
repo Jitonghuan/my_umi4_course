@@ -146,13 +146,14 @@ export default function FunctionManager() {
             onShowSizeChange: (_, next) => setPageSize(next),
           }}
         >
-          <Table.Column title="序号" dataIndex="id" />
-          <Table.Column title="函数名" dataIndex="name" />
-          <Table.Column title="描述" dataIndex="desc" />
-          <Table.Column title="创建人" dataIndex="createUser" />
+          <Table.Column title="序号" dataIndex="id" width={60} />
+          <Table.Column title="函数名" dataIndex="name" ellipsis />
+          <Table.Column title="描述" dataIndex="desc" ellipsis />
+          <Table.Column title="创建人" dataIndex="createUser" width={140} />
           <Table.Column
             title="操作时间"
             dataIndex="gmtModify"
+            width={180}
             render={datetimeCellRender}
           />
           <Table.Column

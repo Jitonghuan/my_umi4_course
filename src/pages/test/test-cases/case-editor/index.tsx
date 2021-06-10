@@ -120,9 +120,6 @@ export default function CaseEditor(props: CaseEditorProps) {
   };
 
   const gotoNextStep = async () => {
-    // 先校验
-    const values = await editField.validateFields();
-    console.log('> gotoNextStep', values);
     setSetp(step + 1);
   };
 
@@ -175,7 +172,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         >
           <Input placeholder="请输入用例描述" />
         </FormItem>
-        <Steps current={step}>
+        <Steps current={step} onChange={(n) => setSetp(n)}>
           <Steps.Step title="前端/后置" />
           <Steps.Step title="定义变量" />
           <Steps.Step title="请求内容" />
