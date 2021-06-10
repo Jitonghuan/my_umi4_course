@@ -5,10 +5,18 @@
 .page-case-list {
   padding: 16px 12px;
 
+  .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+  }
+
   .case-list-header {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
+    flex: 0 0 auto;
 
     .ant-input-group-wrapper {
       flex: 1 1 0;
@@ -31,6 +39,9 @@
   }
 
   .ant-tree.ant-tree-directory {
+    flex: 1 1 0;
+    overflow: auto;
+
     .ant-tree-treenode-selected:hover::before,
     .ant-tree-treenode-selected::before {
       background-color: #c2e9ff;

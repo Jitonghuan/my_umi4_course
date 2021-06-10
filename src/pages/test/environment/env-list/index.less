@@ -3,8 +3,14 @@
 // @create 2021/05/26 16:28
 
 .page-env-list {
+  .ant-card-body {
+    height: 100%;
+  }
+
   .env-list {
     padding: 12px 8px;
+    height: ~'calc(100% - 40px)';
+    overflow: auto;
 
     > li {
       cursor: pointer;
