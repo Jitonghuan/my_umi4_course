@@ -67,18 +67,24 @@ const AddDrawer = (props: IProps) => {
     });
   };
 
-  // 根据应用组查询计划
-  const queryDeployPlan = (appGroupCode: string) => {
+  // 根据应用分类和应用组查询未上线的计划
+  const queryDeployPlan = (
+    appCategoryCode: string,
+    appGroupCode: string,
+    deployStatus: number,
+  ) => {
     setDeployPlanData([]);
-    queryPublishPlanReq({ appGroupCode }).then((datas) => {
-      setDeployPlanData(
-        datas.map((data: any) => {
-          return {
-            ...data.plan,
-          };
-        }),
-      );
-    });
+    queryPublishPlanReq({ appGroupCode, appCategoryCode, deployStatus }).then(
+      (datas) => {
+        setDeployPlanData(
+          datas.map((data: any) => {
+            return {
+              ...data.plan,
+            };
+          }),
+        );
+      },
+    );
   };
 
   const rowSelection = useMemo(() => {
@@ -89,22 +95,27 @@ const AddDrawer = (props: IProps) => {
       },
     };
   }, [selectPlan]);
+  const [appCategoryCode, setAppCategoryCode] = useState<string>();
 
-  const handleFormChange = useCallback((vals) => {
-    const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
-    if (name && name === 'appCategoryCode') {
-      formInstance.resetFields(['appGroupCode']);
-      formInstance.resetFields(['deployEnv']);
-      queryBusiness(value);
-      queryDeployEnv(value);
-      setDeployPlanData([]);
-      setSelectPlan([]);
-    }
-    if (name && name === 'appGroupCode') {
-      setSelectPlan([]);
-      queryDeployPlan(value);
-    }
-  }, []);
+  const handleFormChange = useCallback(
+    (vals) => {
+      const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
+      if (name && name === 'appCategoryCode') {
+        formInstance.resetFields(['appGroupCode']);
+        formInstance.resetFields(['deployEnv']);
+        queryBusiness(value);
+        queryDeployEnv(value);
+        setDeployPlanData([]);
+        setSelectPlan([]);
+        setAppCategoryCode(value);
+      }
+      if (name && name === 'appGroupCode') {
+        setSelectPlan([]);
+        queryDeployPlan(appCategoryCode || '', value, 0);
+      }
+    },
+    [appCategoryCode],
+  );
 
   const handleSubmit = () => {
     formInstance.validateFields().then((vals) => {
