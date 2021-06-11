@@ -28,15 +28,10 @@ const AllApplication = (props: IProps) => {
   const [loading, setLoading] = useState(false);
 
   /** 全部应用 */
-  const [
-    queryAllApps,
-    allList,
-    setAllList,
-    allPagination,
-    setAllPagination,
-  ] = useListData(queryApps as any, {
-    currentAlias: 'pageIndex',
-  });
+  const [queryAllApps, allList, setAllList, allPagination, setAllPagination] =
+    useListData(queryApps as any, {
+      currentAlias: 'pageIndex',
+    });
 
   const queryAllAppsWithLoading = (...args: any[]) => {
     setLoading(true);
@@ -57,7 +52,7 @@ const AllApplication = (props: IProps) => {
   useEffectOnce(() => {
     queryAllAppsWithLoading({
       pageIndex: 1,
-      pageSize: 10,
+      pageSize: 20,
     });
     // queryMyApps({
     //   pageIndex: 1,
