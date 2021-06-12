@@ -146,7 +146,7 @@ export default function CaseEditor(props: CaseEditorProps) {
               <Input.TextArea
                 value={displayData.parametersJSON || ''}
                 rows={10}
-                disabled
+                readOnly
               />
             )}
           </div>
