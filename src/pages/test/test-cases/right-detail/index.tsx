@@ -67,6 +67,10 @@ export default function RightDetail(props: RightDetailProps) {
     props.emitter.emit('CASE::EDIT_CASE', record);
   };
 
+  const handleDetailCaseItem = (record: CaseItemVO) => {
+    props.emitter.emit('CASE::DETAIL', record);
+  };
+
   if (!props.current) {
     return (
       <ContentCard className="page-case-right-detail">
@@ -102,7 +106,7 @@ export default function RightDetail(props: RightDetailProps) {
         {/* <Button type="default">批量执行</Button> */}
         {props.current.level === 3 ? (
           <Button
-            onClick={() => props.emitter.emit('CASE::ADD_CASE')}
+            onClick={() => props.emitter.emit('CASE::ADD_CASE', apiDetail)}
             type="primary"
             icon={<PlusOutlined />}
           >
@@ -120,7 +124,13 @@ export default function RightDetail(props: RightDetailProps) {
         }}
         loading={caseLoading}
       >
-        <Table.Column dataIndex="id" title="ID" />
+        <Table.Column
+          dataIndex="id"
+          title="ID"
+          render={(value, record: CaseItemVO) => (
+            <a onClick={() => handleDetailCaseItem(record)}>{value}</a>
+          )}
+        />
         <Table.Column dataIndex="moduleName" title="模块" />
         <Table.Column dataIndex="apiName" title="接口" />
         <Table.Column dataIndex="name" title="用例名称" />
