@@ -13,7 +13,7 @@ import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import TableForm from '@/components/simple-table-form';
 import { getFuncListByIds, getCaseListByIds } from './common';
-import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM } from '../common';
+import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../common';
 import './index.less';
 
 const { Item: FormItem } = Form;
@@ -22,6 +22,7 @@ export interface CaseEditorProps extends Record<string, any> {
   mode: EditorMode;
   current?: TreeNode;
   initData?: CaseItemVO;
+  apiDetail?: Record<string, any>;
   onCancel?: () => any;
   onSave?: () => any;
 }
@@ -32,6 +33,7 @@ export default function CaseEditor(props: CaseEditorProps) {
   const [step, setSetp] = useState<number>(0);
   const [paramType, setParamType] = useState<'object' | 'array'>('object');
 
+  // 编辑时回填数据
   const initEditField = async (initData: CaseItemVO) => {
     const hooks = initData.hooks ? JSON.parse(initData.hooks) : {};
     const beforeFunIds: number[] = hooks.setup || [];
@@ -60,6 +62,26 @@ export default function CaseEditor(props: CaseEditorProps) {
     });
   };
 
+  const initAddField = (apiDetail?: Record<string, any>) => {
+    if (!apiDetail) return;
+
+    const nextParamType =
+      apiDetail.paramType === PARAM_TYPE.JSON ? 'object' : 'array';
+    setParamType(nextParamType);
+
+    editField.setFieldsValue({
+      headers: apiDetail.headers || [],
+      parameters:
+        apiDetail.paramType === PARAM_TYPE.JSON
+          ? []
+          : apiDetail.parameters || [],
+      parametersJSON:
+        apiDetail.paramType === PARAM_TYPE.JSON
+          ? apiDetail.parameters || ''
+          : '',
+    });
+  };
+
   useEffect(() => {
     if (props.mode === 'HIDE') return;
 
@@ -69,6 +91,8 @@ export default function CaseEditor(props: CaseEditorProps) {
 
     if (props.mode === 'EDIT') {
       initEditField(props.initData || ({} as CaseItemVO));
+    } else {
+      initAddField(props.apiDetail);
     }
   }, [props.mode]);
 
@@ -224,18 +248,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           className="case-editor-step case-editor-step-2"
           data-visible={step === 2}
         >
-          <Tabs defaultActiveKey="headers">
-            <Tabs.TabPane key="headers" tab="headers" forceRender>
-              <FormItem name="headers" noStyle initialValue={[]}>
-                <TableForm
-                  columns={[
-                    { title: 'key', dataIndex: 'key', required: true },
-                    { title: 'value', dataIndex: 'value' },
-                    { title: '描述', dataIndex: 'desc' },
-                  ]}
-                />
-              </FormItem>
-            </Tabs.TabPane>
+          <Tabs defaultActiveKey="parameters">
             <Tabs.TabPane key="parameters" tab="parameters" forceRender>
               <FormItem label="参数格式">
                 <Radio.Group
@@ -259,6 +272,17 @@ export default function CaseEditor(props: CaseEditorProps) {
                   <Input.TextArea placeholder="请输入" rows={10} />
                 </FormItem>
               )}
+            </Tabs.TabPane>
+            <Tabs.TabPane key="headers" tab="headers" forceRender>
+              <FormItem name="headers" noStyle initialValue={[]}>
+                <TableForm
+                  columns={[
+                    { title: 'key', dataIndex: 'key', required: true },
+                    { title: 'value', dataIndex: 'value' },
+                    { title: '描述', dataIndex: 'desc' },
+                  ]}
+                />
+              </FormItem>
             </Tabs.TabPane>
           </Tabs>
         </div>

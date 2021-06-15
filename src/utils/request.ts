@@ -45,6 +45,7 @@ export const getRequest = request;
 export const postRequest = (
   url: string,
   params?: IRequestParams | undefined,
+  reserveError?: boolean,
 ) => {
   return new Promise<IResponse>((resolve, reject) => {
     sso
@@ -63,7 +64,7 @@ export const postRequest = (
         if (![3002, 3001].includes(resp.code)) {
           message.error(parseErrorMsg(resp.errorMsg));
         }
-        reject(resp.errorMsg);
+        reject(reserveError ? resp : resp.errorMsg);
       });
   });
 };

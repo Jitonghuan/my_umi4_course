@@ -55,6 +55,7 @@ export default function LeftTree(props: LeftTreeProps) {
     useState<EditorMode>('HIDE');
   const [moduleEditorMode, setModuleEditoraMode] = useState<EditorMode>('HIDE');
   const [apiEditorMode, setApiEditorMode] = useState<EditorMode>('HIDE');
+  const [expandedKeys, setExpandedKeys] = useState<(number | string)[]>([]);
 
   // ----- hooks
   // projectOptions 变更后重新判断选中状态
@@ -74,19 +75,24 @@ export default function LeftTree(props: LeftTreeProps) {
 
   // treeData 变更时重置选中状态
   useEffect(() => {
-    if (!selectedItem) return;
+    // if (!selectedItem) return;
 
-    if (!treeData.length) {
+    if (!treeData.length && selectedItem) {
       setSelectedItem(undefined);
       props.onItemClick(undefined);
       return;
     }
 
-    // 新的 treeData 中未找到当前节点，则也重置
-    const target = findTreeNodeByKey(treeData, selectedItem.key);
-    if (!target) {
-      setSelectedItem(undefined);
-      props.onItemClick(undefined);
+    // 新的 treeData 中未找到当前节点，则也选中根节点
+    const target = selectedItem
+      ? findTreeNodeByKey(treeData, selectedItem.key)
+      : null;
+    if (!target && treeData.length) {
+      setSelectedItem(treeData[0]);
+      props.onItemClick(treeData[0]);
+      setExpandedKeys([treeData[0].key]);
+      // setSelectedItem(undefined);
+      // props.onItemClick(undefined);
     }
   }, [treeData]);
 
@@ -265,6 +271,8 @@ export default function LeftTree(props: LeftTreeProps) {
         treeData={treeData}
         selectedKeys={selectedItem ? [selectedItem.key] : []}
         onSelect={handleItemSelect}
+        expandedKeys={expandedKeys}
+        onExpand={(keys, info) => setExpandedKeys(keys)}
         showIcon={false}
         titleRender={
           ((nodeData: TreeNode) => (

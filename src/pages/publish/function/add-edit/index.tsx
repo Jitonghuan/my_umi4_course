@@ -121,7 +121,11 @@ const EditTable: React.FC<EditTableProps> = ({
     });
   };
 
-  const { run: queryNodeList, reset, tableProps } = usePaginated({
+  const {
+    run: queryNodeList,
+    reset,
+    tableProps,
+  } = usePaginated({
     requestUrl: queryJiraUrl,
     requestMethod: 'GET',
     showRequestError: true,
@@ -178,7 +182,7 @@ const EditTable: React.FC<EditTableProps> = ({
           placeholder="必选，可多选"
           allowClear
           mode="multiple"
-          style={{ width: 120 }}
+          style={{ width: 200 }}
         >
           {envsOptions?.map((item) => (
             <Select.Option key={item.value} value={item.value}>
@@ -240,18 +244,12 @@ const EditTable: React.FC<EditTableProps> = ({
         return editable ? (
           <span>
             <a
-              href="javascript:;"
               onClick={() => save(record.key as string)}
               style={{ marginRight: 8 }}
             >
               保存
             </a>
-            <Popconfirm
-              title="确认取消?"
-              onConfirm={() => cancel(record.key as string)}
-            >
-              <a>取消</a>
-            </Popconfirm>
+            <a onClick={() => cancel(record.key as string)}>取消</a>
           </span>
         ) : (
           <Space>

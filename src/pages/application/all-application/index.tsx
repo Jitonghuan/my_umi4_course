@@ -31,6 +31,7 @@ const AllApplication = (props: IProps) => {
   const [queryAllApps, allList, setAllList, allPagination, setAllPagination] =
     useListData(queryApps as any, {
       currentAlias: 'pageIndex',
+      pageSize: 24,
     });
 
   const queryAllAppsWithLoading = (...args: any[]) => {
@@ -52,7 +53,7 @@ const AllApplication = (props: IProps) => {
   useEffectOnce(() => {
     queryAllAppsWithLoading({
       pageIndex: 1,
-      pageSize: 20,
+      pageSize: 24,
     });
     // queryMyApps({
     //   pageIndex: 1,

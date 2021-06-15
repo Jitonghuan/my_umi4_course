@@ -67,7 +67,7 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
         <Step
           title="合并release"
           icon={status === 1.1 && <LoadingOutlined />}
-          status={status === 1.2 ? 'error' : undefined}
+          status={status === 1.2 ? 'error' : 'process'}
           description={
             status === 1.2 && (
               <>
@@ -95,17 +95,18 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
         <Step
           title="构建"
           icon={status === 2.1 && <LoadingOutlined />}
-          status={status === 2.2 ? 'error' : undefined}
+          status={status === 2.2 ? 'error' : 'undefined'}
           description={
             (status === 2.2 || status === 2.1) && (
               <>
-                {deployInfo.jenkinsUrl && (
-                  <div style={{ marginTop: 2 }}>
-                    <a target="_blank" href={deployInfo.jenkinsUrl}>
-                      查看Jenkins详情
-                    </a>
-                  </div>
-                )}
+                {deployInfo.jenkinsUrl &&
+                  (envTypeCode == 'dev' || envTypeCode == 'test') && (
+                    <div style={{ marginTop: 2 }}>
+                      <a target="_blank" href={deployInfo.jenkinsUrl}>
+                        查看Jenkins详情
+                      </a>
+                    </div>
+                  )}
                 {status === 2.2 && (
                   <Button
                     style={{ marginTop: 4 }}
@@ -136,25 +137,34 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
         <Step
           title="部署"
           icon={status === 3.1 && <LoadingOutlined />}
-          status={status === 3.2 ? 'error' : undefined}
+          status={status === 3.2 ? 'error' : 'undefined'}
           description={
             (status === 3.2 || status === 3.1) && (
               <>
                 {status === 3.2 && (
                   <>
-                    {deployInfo.deployErrInfo && (
-                      <div
-                        style={{ marginTop: 2 }}
-                        onClick={() => {
-                          Modal.info({
-                            content: deployInfo.deployErrInfo,
-                            title: '部署错误详情',
-                          });
-                        }}
-                      >
-                        部署错误详情
-                      </div>
-                    )}
+                    {deployInfo.deployErrInfo &&
+                      (envTypeCode == 'dev' || envTypeCode == 'test') && (
+                        <div
+                          style={{ marginTop: 2 }}
+                          onClick={() => {
+                            Modal.info({
+                              content: deployInfo.deployErrInfo,
+                              title: '部署错误详情',
+                            });
+                          }}
+                        >
+                          部署错误详情
+                        </div>
+                      )}
+                    {deployInfo.jenkinsUrl &&
+                      (envTypeCode == 'pre' || envTypeCode == 'prod') && (
+                        <div style={{ marginTop: 2 }}>
+                          <a target="_blank" href={deployInfo.jenkinsUrl}>
+                            查看Jenkins详情
+                          </a>
+                        </div>
+                      )}
                     <Button
                       style={{ marginTop: 4 }}
                       onClick={() => {
