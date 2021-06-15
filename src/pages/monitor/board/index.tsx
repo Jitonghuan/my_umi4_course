@@ -110,38 +110,41 @@ const Coms = (props: IProps) => {
   };
 
   // 查询节点使用率
-  const { run: queryNodeList, reset, tableProps } = usePaginated({
+  const {
+    run: queryNodeList,
+    reset,
+    tableProps,
+  } = usePaginated({
     requestUrl: queryNodeUseDataApi,
     requestMethod: 'GET',
     showRequestError: true,
+    initPageInfo: {
+      pageSize: 20,
+    },
     formatRequestParams: (params) => {
       return {
         ...params,
-        pageIndex: 1,
-        pageSize: 1000,
         clusterId: currentTab,
       };
     },
     formatResult: (resp) => {
-      const data = resp.data;
-      const result = [];
-      for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-          result.push({
-            ip: key,
-            ...data[key],
-          });
-        }
-      }
+      const { dataSource = [], pageInfo = {} } = resp.data;
+      const result = dataSource.map((item: Record<string, object>) => {
+        const key = Object.keys(item)[0];
+        return {
+          ip: key,
+          ...item[key],
+        };
+      });
+
       return {
         dataSource: result,
         pageInfo: {
-          pageIndex: 1,
-          pageSize: 1000,
+          total: pageInfo.total || 0,
+          pageSize: 20,
         },
       };
     },
-    pagination: false,
   });
 
   // 查询已安装大盘
