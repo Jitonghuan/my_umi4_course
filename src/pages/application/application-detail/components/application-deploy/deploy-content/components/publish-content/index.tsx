@@ -131,7 +131,7 @@ const PublishContent = ({
           pagination={false}
           rowSelection={
             isProd
-              ? undefined
+              ? {}
               : {
                   type: 'checkbox',
                   selectedRowKeys,
