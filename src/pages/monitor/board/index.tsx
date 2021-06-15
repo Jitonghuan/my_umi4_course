@@ -139,10 +139,7 @@ const Coms = (props: IProps) => {
 
       return {
         dataSource: result,
-        pageInfo: {
-          total: pageInfo.total || 0,
-          pageSize: 20,
-        },
+        pageInfo,
       };
     },
   });
