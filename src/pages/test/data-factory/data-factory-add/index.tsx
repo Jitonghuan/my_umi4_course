@@ -17,6 +17,7 @@ import { Item } from '../../typing';
 const DataFactoryAdd: React.FC = () => {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [factoryName, setFactoryName] = useState('');
+  const [dataNum, setDataNum] = useState<number>(1);
   const [form] = Form.useForm();
 
   const { envListType, appTypeData } = usePublicData({
@@ -47,6 +48,9 @@ const DataFactoryAdd: React.FC = () => {
     method: 'POST',
     successText: '创建成功',
     isSuccessModal: true,
+    onSuccess: () => {
+      form.resetFields();
+    },
   });
 
   const formOptionsLeft: FormProps[] = [
@@ -58,6 +62,7 @@ const DataFactoryAdd: React.FC = () => {
       placeholder: '请选择',
       required: true,
       option: appTypeData,
+      defaultValue: 'hbos',
       onChange: (e) => {
         queryDataFactoryNameFun({ project: e });
       },
@@ -82,8 +87,9 @@ const DataFactoryAdd: React.FC = () => {
       placeholder: '请选择',
       required: true,
       option: envListType,
+      defaultValue: 'dev',
       onChange: (e: string) => {
-        console.log(e);
+        // console.log('env: ', e);
       },
     },
     {
@@ -93,6 +99,7 @@ const DataFactoryAdd: React.FC = () => {
       dataIndex: 'num',
       placeholder: '请输入(1-10的数字)',
       required: true,
+      defaultValue: dataNum,
       min: 1,
       max: 10,
       width: '100%',
@@ -102,8 +109,9 @@ const DataFactoryAdd: React.FC = () => {
           message: '请输入正确的数字',
         },
       ],
-      onChange: (e: string) => {
-        console.log(e);
+      onChange: (v: number) => {
+        setDataNum(v);
+        // console.log('num: ', e);
       },
     },
     {
@@ -116,13 +124,15 @@ const DataFactoryAdd: React.FC = () => {
       extraForm: (
         <Form.Item noStyle name="params">
           <JsonEditor
+            disabled={dataNum > 1}
+            placeholder={dataNum > 1 ? '批量添加数据无需参数示例' : ''}
             style={{ minHeight: 300 }}
             options={{ placeholder: '参数实例' }}
           />
         </Form.Item>
       ),
       onChange: (e: string) => {
-        console.log(e);
+        // console.log(e);
       },
     },
   ];

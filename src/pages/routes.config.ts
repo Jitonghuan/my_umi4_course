@@ -124,11 +124,11 @@ export default [
               '@/pages/application/application-detail/components/add-config-parameters',
           },
           {
-            path: 'twoPackage',
+            path: 'secondPartyPkg',
             name: '二方包',
             hideInMenu: true,
             component:
-              '@/pages/application/application-detail/components/two-package',
+              '@/pages/application/application-detail/components/second-party-pkg',
           },
         ],
       },

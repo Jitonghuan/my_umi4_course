@@ -1,6 +1,6 @@
 /**
- * ApplicationDeploy
- * @description 应用部署
+ * TowPartyPkg
+ * @description 二方包
  * @author moting.nq
  * @create 2021-04-15 09:33
  */
@@ -15,9 +15,9 @@ import { IProps } from './types';
 import './index.less';
 
 const { TabPane } = Tabs;
-const rootCls = 'app-deploy-compo';
+const rootCls = 'second-party-pkg';
 
-const ApplicationDeploy = ({
+const TowPartyPkg = ({
   location: {
     query: { appCode, id: appId, isContainClient },
   },
@@ -71,6 +71,6 @@ const ApplicationDeploy = ({
   );
 };
 
-ApplicationDeploy.defaultProps = {};
+TowPartyPkg.defaultProps = {};
 
-export default ApplicationDeploy;
+export default TowPartyPkg;

@@ -31,7 +31,7 @@ const AllApplication = (props: IProps) => {
   const [queryAllApps, allList, setAllList, allPagination, setAllPagination] =
     useListData(queryApps as any, {
       currentAlias: 'pageIndex',
-      pageSize: 24,
+      pageSize: 20,
     });
 
   const queryAllAppsWithLoading = (...args: any[]) => {
@@ -53,7 +53,7 @@ const AllApplication = (props: IProps) => {
   useEffectOnce(() => {
     queryAllAppsWithLoading({
       pageIndex: 1,
-      pageSize: 24,
+      pageSize: 20,
     });
     // queryMyApps({
     //   pageIndex: 1,
@@ -64,7 +64,7 @@ const AllApplication = (props: IProps) => {
   return (
     <VCPageContent
       className={rootCls}
-      height="calc(100vh - 118px)"
+      // height="calc(100vh - 118px)"
       breadcrumbMap={feContent.breadcrumbMap}
       pathname={location.pathname}
       isFlex
@@ -88,7 +88,7 @@ const AllApplication = (props: IProps) => {
       />
 
       <Spin spinning={loading}>
-        <ContentCard>
+        <ContentCard style={{ height: 'calc(100vh - 100px)' }}>
           <div className={`${rootCls}__header`}>
             <Radio.Group value={type} onChange={(e) => setType(e.target.value)}>
               <Radio.Button value="all">全部应用</Radio.Button>

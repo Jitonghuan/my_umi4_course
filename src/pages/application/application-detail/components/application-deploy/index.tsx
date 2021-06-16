@@ -22,12 +22,12 @@ const ApplicationDeploy = ({
     query: { appCode, id: appId, isClient },
   },
 }: IProps) => {
-  const isTwoPackage = Number(isClient) === 1;
+  const isSecondPartyPkg = Number(isClient) === 1;
 
   const { envData } = useContext(FeContext);
-  const [tabActive, setTabActive] = useState(isTwoPackage ? 'cDev' : 'dev');
+  const [tabActive, setTabActive] = useState(isSecondPartyPkg ? 'cDev' : 'dev');
   // 二方包环境
-  const [envTwoPackageData, setEnvTwoPackageData] = useState<any[]>([]);
+  const [envSecondPartyPkgData, setEnvSecondPartyPkgData] = useState<any[]>([]);
 
   // 环境数据
   const queryEnvDataList = async () => {
@@ -35,7 +35,7 @@ const ApplicationDeploy = ({
       data: { isClient: true },
     });
     const envData = envResp?.data || [];
-    setEnvTwoPackageData(
+    setEnvSecondPartyPkgData(
       envData.map((el: any) => ({
         ...el,
         label: el.typeName,
@@ -45,12 +45,12 @@ const ApplicationDeploy = ({
   };
 
   useEffect(() => {
-    if (isTwoPackage) {
+    if (isSecondPartyPkg) {
       queryEnvDataList();
     }
   }, [isClient]);
 
-  const curEnvData = isTwoPackage ? envTwoPackageData : envData;
+  const curEnvData = isSecondPartyPkg ? envSecondPartyPkgData : envData;
 
   return (
     <div className={rootCls}>
