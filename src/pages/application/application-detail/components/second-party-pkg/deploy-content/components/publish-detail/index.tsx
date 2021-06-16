@@ -16,7 +16,6 @@ import {
 } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
-import { name } from 'dayjs/locale/*';
 
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
@@ -122,13 +121,13 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
         <Descriptions.Item label="部署分支">
           {deployInfo?.releaseBranch}
         </Descriptions.Item>
-        <Descriptions.Item label="冲突分支">
+        <Descriptions.Item label="发布环境">{envNames}</Descriptions.Item>
+        <Descriptions.Item label="冲突分支" span={3}>
           {deployInfo?.conflictFeature}
         </Descriptions.Item>
-        <Descriptions.Item label="合并分支">
+        <Descriptions.Item label="合并分支" span={3}>
           {deployInfo?.features}
         </Descriptions.Item>
-        <Descriptions.Item label="发布环境">{envNames}</Descriptions.Item>
       </Descriptions>
 
       <Modal

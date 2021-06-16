@@ -66,10 +66,11 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
   };
 
   // 定时请求发布内容
-  const {
-    getStatus: getTimerStatus,
-    handle: timerHandle,
-  } = useInterval(requestData, 8000, { immediate: true });
+  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(
+    requestData,
+    8000,
+    { immediate: true },
+  );
 
   const onOperate = (operateType: string) => {
     if (operateType.endsWith('Start')) {

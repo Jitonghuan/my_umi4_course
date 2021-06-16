@@ -97,14 +97,14 @@ export default function CaseEditor(props: CaseEditorProps) {
           <div className="and-form-text">{displayData.desc || '--'}</div>
         </FormItem>
         <Steps current={step} onChange={(n) => setSetp(n)}>
-          <Steps.Step title="前端/后置" />
+          <Steps.Step title="前置/后置" />
           <Steps.Step title="定义变量" />
           <Steps.Step title="请求内容" />
           <Steps.Step title="保存返回值" />
           <Steps.Step title="结果断言" />
         </Steps>
 
-        {/* step 0 前端/后置 */}
+        {/* step 0 前置/后置 */}
         <div
           className="case-editor-step case-editor-step-0"
           data-visible={step === 0}

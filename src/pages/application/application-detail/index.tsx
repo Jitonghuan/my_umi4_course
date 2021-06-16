@@ -113,12 +113,17 @@ const ApplicationDetail = (props: IProps) => {
           {Object.keys(tabsConfig)
             // 只有应用为包含二方包属性的时候，才会显示二方包的 tab
             .filter((key) => {
+              // 只有 HBOS 才显示 配置管理 和 启动参数
+              if (key === 'configMgr' || key === 'launchParameters') {
+                return appData?.appCategoryCode === 'hbos';
+              }
+
               if (isContainClient) {
                 return true;
               }
 
               // 不包含二方包
-              return key !== 'twoPackage';
+              return key !== 'secondPartyPkg';
             })
             .map((key) => (
               <TabPane tab={tabsConfig[key]} key={key}>
