@@ -5,14 +5,9 @@
  * @create 2021-04-09 18:39
  */
 
-import React, { useContext, useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Tabs } from 'antd';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
-import FEContext from '@/layouts/basic-layout/FeContext';
 import DetailContext, { ContextTypes } from './context';
 import { tabsConfig } from './config';
 import { queryApps } from '../service';
@@ -32,7 +27,6 @@ const ApplicationDetail = (props: IProps) => {
   const isContainClient = Number(location.query.isContainClient) === 1;
   const appId = location.query.id;
 
-  const feContent = useContext(FEContext);
   const [appData, setAppData] = useState<ContextTypes['appData']>();
 
   const tabActiveKey = useMemo(
@@ -60,7 +54,11 @@ const ApplicationDetail = (props: IProps) => {
 
   useEffect(() => {
     if (!appId) return;
+
     queryAppData();
+
+    // 每次切换进来需要重置数据
+    sessionStorage.removeItem('__init_env_tab__');
   }, [appId]);
 
   // 默认重定向到【概述】路由下

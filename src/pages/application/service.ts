@@ -234,7 +234,6 @@ export const queryDeployList = async (params: {
   /** 分页大小 */
   pageSize: number;
 }) => {
-  console.log(222);
   return getRequest(`${ds.apiPrefix}/releaseManage/deploy/list`, {
     data: params,
   });
