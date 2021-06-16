@@ -67,7 +67,7 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
         <Step
           title="合并release"
           icon={status === 1.1 && <LoadingOutlined />}
-          status={status === 1.2 ? 'error' : 'process'}
+          status={status === 1.2 ? 'error' : undefined}
           description={
             status === 1.2 && (
               <>
@@ -95,7 +95,7 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
         <Step
           title="构建"
           icon={status === 2.1 && <LoadingOutlined />}
-          status={status === 2.2 ? 'error' : 'undefined'}
+          status={status === 2.2 ? 'error' : undefined}
           description={
             (status === 2.2 || status === 2.1) && (
               <>
@@ -137,7 +137,7 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
         <Step
           title="部署"
           icon={status === 3.1 && <LoadingOutlined />}
-          status={status === 3.2 ? 'error' : 'undefined'}
+          status={status === 3.2 ? 'error' : undefined}
           description={
             (status === 3.2 || status === 3.1) && (
               <>
