@@ -71,9 +71,16 @@ const ApplyList = (props: IProps) => {
   };
 
   // 查询数据
-  const { run: queryAppList, tableProps, reset } = usePaginated({
+  const {
+    run: queryAppList,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryApplysUrl,
     requestMethod: 'GET',
+    initPageInfo: {
+      pageSize: 20,
+    },
     pagination: {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,

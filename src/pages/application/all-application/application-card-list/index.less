@@ -18,11 +18,22 @@
     &-content {
       display: flex;
       justify-content: space-between;
+      white-space: nowrap;
+      overflow: hidden;
       margin-top: 12px;
       font-size: 14px;
       font-weight: 400;
       color: #5f677a;
       line-height: 22px;
+
+      > div + div {
+        margin-left: 8px;
+      }
+
+      > div:last-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
     &-pagination-wrap {

@@ -45,6 +45,7 @@ export interface Iprops {
   showFormatBtn?: boolean;
   btnType?: 'format' | 'preview';
   previewModalName?: string;
+  disabled?: boolean;
 }
 
 export default class JsonEditor extends Component<Iprops> {
@@ -141,6 +142,7 @@ export default class JsonEditor extends Component<Iprops> {
       value: propValue,
       options,
       style,
+      disabled,
       showFormatBtn = true,
       btnType = 'format',
       previewModalName,
@@ -150,6 +152,20 @@ export default class JsonEditor extends Component<Iprops> {
 
     const { value, previewVisible } = this.state;
     const codeValue = ('value' in this.props ? propValue : value) as string;
+
+    if (disabled) {
+      return (
+        <div className={classnames(prefixCls, className)} style={style}>
+          <textarea
+            disabled
+            style={{ display: 'block', border: '0', ...style }}
+            placeholder={placeholder}
+          >
+            {codeValue}
+          </textarea>
+        </div>
+      );
+    }
 
     return (
       <div className={classnames(prefixCls, className)} style={style}>

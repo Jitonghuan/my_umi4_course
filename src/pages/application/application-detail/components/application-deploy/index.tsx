@@ -5,7 +5,7 @@
  * @create 2021-04-15 09:33
  */
 
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useLayoutEffect } from 'react';
 import { Tabs, Button } from 'antd';
 import FeContext from '@/layouts/basic-layout/FeContext';
 import { queryEnvData } from '@/layouts/basic-layout/service';
@@ -22,12 +22,15 @@ const ApplicationDeploy = ({
     query: { appCode, id: appId, isClient },
   },
 }: IProps) => {
-  const isTwoPackage = Number(isClient) === 1;
+  const isSecondPartyPkg = Number(isClient) === 1;
 
   const { envData } = useContext(FeContext);
-  const [tabActive, setTabActive] = useState(isTwoPackage ? 'cDev' : 'dev');
+  const [tabActive, setTabActive] = useState(
+    sessionStorage.getItem('__init_env_tab__') ||
+      (isSecondPartyPkg ? 'cDev' : 'dev'),
+  );
   // 二方包环境
-  const [envTwoPackageData, setEnvTwoPackageData] = useState<any[]>([]);
+  const [envSecondPartyPkgData, setEnvSecondPartyPkgData] = useState<any[]>([]);
 
   // 环境数据
   const queryEnvDataList = async () => {
@@ -35,7 +38,7 @@ const ApplicationDeploy = ({
       data: { isClient: true },
     });
     const envData = envResp?.data || [];
-    setEnvTwoPackageData(
+    setEnvSecondPartyPkgData(
       envData.map((el: any) => ({
         ...el,
         label: el.typeName,
@@ -45,12 +48,16 @@ const ApplicationDeploy = ({
   };
 
   useEffect(() => {
-    if (isTwoPackage) {
+    if (isSecondPartyPkg) {
       queryEnvDataList();
     }
   }, [isClient]);
 
-  const curEnvData = isTwoPackage ? envTwoPackageData : envData;
+  useLayoutEffect(() => {
+    sessionStorage.setItem('__init_env_tab__', tabActive);
+  }, [tabActive]);
+
+  const curEnvData = isSecondPartyPkg ? envSecondPartyPkgData : envData;
 
   return (
     <div className={rootCls}>

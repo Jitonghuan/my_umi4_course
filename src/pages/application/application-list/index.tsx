@@ -34,9 +34,8 @@ import { IProps } from './types';
 import './index.less';
 
 const ApplicationList = (props: IProps) => {
-  const { categoryData = [], businessData: businessDataList = [] } = useContext(
-    FEContext,
-  );
+  const { categoryData = [], businessData: businessDataList = [] } =
+    useContext(FEContext);
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [formInstance] = Form.useForm();
 
@@ -70,10 +69,17 @@ const ApplicationList = (props: IProps) => {
   };
 
   // 查询数据
-  const { run: queryAppList, tableProps, reset } = usePaginated({
+  const {
+    run: queryAppList,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryAppsUrl,
     requestMethod: 'GET',
     showRequestError: true,
+    initPageInfo: {
+      pageSize: 20,
+    },
     pagination: {
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
