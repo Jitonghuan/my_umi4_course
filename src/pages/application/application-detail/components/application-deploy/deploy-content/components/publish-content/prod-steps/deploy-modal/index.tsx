@@ -147,6 +147,11 @@ const DeployModal = ({
 
         if (deployStatus === 'deployWaitBatch2') {
           batch = 2;
+        } else if (deployStatus === 'deployWait') {
+          batch = 1;
+        } else {
+          onCancel?.();
+          return;
         }
 
         confirmProdDeploy({
