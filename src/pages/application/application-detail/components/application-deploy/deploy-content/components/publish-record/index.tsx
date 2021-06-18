@@ -28,7 +28,11 @@ const PublishRecord = (props: IProps) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [envDataList, setEnvDataList] = useState([]);
 
-  const { run: queryDataSource, tableProps, loadMore } = usePaginated({
+  const {
+    run: queryDataSource,
+    tableProps,
+    loadMore,
+  } = usePaginated({
     requestUrl: queryRecordApi,
     requestMethod: 'GET',
     showRequestError: true,
@@ -78,8 +82,11 @@ const PublishRecord = (props: IProps) => {
   }, [envDataList, curRecord]);
 
   const renderLoadMore = () => {
-    const { pageSize = 0, total = 0, current = 0 } =
-      tableProps?.pagination || {};
+    const {
+      pageSize = 0,
+      total = 0,
+      current = 0,
+    } = tableProps?.pagination || {};
 
     return (
       total > 0 &&
@@ -88,7 +95,7 @@ const PublishRecord = (props: IProps) => {
           <Button
             ghost
             type="dashed"
-            loading={tableProps.loading}
+            //loading={tableProps.loading}
             onClick={loadMore}
           >
             加载更多
