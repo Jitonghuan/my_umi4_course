@@ -141,6 +141,13 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
           description={
             (status === 3.2 || status === 3.1) && (
               <>
+                {deployInfo.jenkinsUrl && envTypeCode === 'pre' && (
+                  <div style={{ marginTop: 2 }}>
+                    <a target="_blank" href={deployInfo.jenkinsUrl}>
+                      查看Jenkins详情
+                    </a>
+                  </div>
+                )}
                 {status === 3.2 && (
                   <>
                     {deployInfo.deployErrInfo &&
@@ -155,14 +162,6 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
                           }}
                         >
                           部署错误详情
-                        </div>
-                      )}
-                    {deployInfo.jenkinsUrl &&
-                      (envTypeCode == 'pre' || envTypeCode == 'prod') && (
-                        <div style={{ marginTop: 2 }}>
-                          <a target="_blank" href={deployInfo.jenkinsUrl}>
-                            查看Jenkins详情
-                          </a>
                         </div>
                       )}
                     <Button
