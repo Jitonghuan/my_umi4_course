@@ -177,6 +177,7 @@ const EditTable: React.FC<EditTableProps> = ({
       key: 'envs',
       editable: true,
       required: true,
+      width: 220,
       item: (
         <Select
           placeholder="必选，可多选"
@@ -221,6 +222,7 @@ const EditTable: React.FC<EditTableProps> = ({
       key: 'preDeployTime',
       editable: true,
       required: false,
+      width: 220,
       item: <DatePicker placeholder="请选择日期" showTime />,
       render: (text: Moment) => (
         <>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</>
@@ -232,6 +234,7 @@ const EditTable: React.FC<EditTableProps> = ({
       key: 'demandId',
       editable: true,
       required: false,
+      width: 180,
       item: <Input placeholder="解决的实际需求" />,
     },
     {
