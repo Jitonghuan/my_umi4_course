@@ -88,7 +88,11 @@ const Coms = (props: any) => {
   };
 
   // 查询数据
-  const { run: queryTicketLists, tableProps, reset } = usePaginated({
+  const {
+    run: queryTicketLists,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryTicketData,
     requestMethod: 'GET',
     showRequestError: true,
@@ -147,6 +151,12 @@ const Coms = (props: any) => {
     queryTicketLists(filter);
   }, [filter]);
 
+  useEffect(() => {
+    const values = createFormRef.getFieldsValue() || {};
+    const valueList = Object.keys(values).map((v) => v);
+    createFormRef.resetFields([...valueList.filter((v) => v !== 'ticketType')]);
+  }, [createFormRef.getFieldValue('ticketType')]);
+
   // 创建工单表格
   const ticketCreateSchema = useMemo(() => {
     return getTicketCreateSchema({
@@ -193,6 +203,7 @@ const Coms = (props: any) => {
           createFormRef.resetFields();
         }}
         width={800}
+        maskClosable={false}
       >
         <BasicForm
           form={createFormRef}
@@ -205,6 +216,7 @@ const Coms = (props: any) => {
           isShowReset
           onReset={() => {
             createFormRef.resetFields();
+            setisShowApplyUpload(false);
           }}
           onValuesChange={(target: any) => {
             const field = Object.keys(target)[0];

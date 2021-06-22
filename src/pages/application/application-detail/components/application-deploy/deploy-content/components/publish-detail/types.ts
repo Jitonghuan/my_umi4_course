@@ -2,7 +2,8 @@ import { ReactNode } from 'react';
 
 export interface IProps {
   deployInfo: any;
-  env: string;
+  envTypeCode: string;
+  nextEnvTypeCode?: string;
   onOperate: (
     type:
       | 'deployNextEnvStart'

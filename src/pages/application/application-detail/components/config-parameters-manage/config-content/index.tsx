@@ -28,7 +28,7 @@ import { IProps } from './types';
 import { ConfigData } from '../types';
 import { queryVersionApi, doRestoreVersionApi } from './service';
 import './index.less';
-import { postRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 
 const rootCls = 'config-content-compo';
 
@@ -46,6 +46,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
 
   const [filterFormRef] = Form.useForm();
 
+  const [versionData, setVersionData] = useState<any[]>([]);
+
   // 当前选中版本
   const [currentVersion, setCurrentVersion] = useState<{
     id: number;
@@ -53,7 +55,11 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   }>();
 
   // 查询数据
-  const { run: queryConfigList, tableProps, reset } = usePaginated({
+  const {
+    run: queryConfigList,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryConfigListUrl,
     requestMethod: 'GET',
     showRequestError: true,
@@ -75,45 +81,46 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   });
 
   // 查询版本数据
-  const { run: queryVersionData, tableProps: versionTableProps } = usePaginated(
-    {
-      requestUrl: queryVersionApi,
-      requestMethod: 'GET',
-      showRequestError: true,
-      initPageInfo: {
-        pageSize: 30, // 默认加载30条版本数据
+  const queryVersionData = async (listParams?: any) => {
+    const resp = await getRequest(queryVersionApi, {
+      data: {
+        pageSize: 30,
+        pageIndex: 1,
+        appCode,
+        env,
+        type: configType,
       },
-      successFunc: (resp: any) => {
-        const { dataSource = [] } = resp.data || {};
+    });
 
-        if (dataSource.length === 0) {
-          return;
-        }
+    const { dataSource = [] } = resp?.data || {};
 
-        filterFormRef.setFieldsValue({
-          versionID: dataSource[0].id,
-        });
-      },
-    },
-  );
+    if (dataSource.length === 0) {
+      return;
+    }
 
-  useEffect(() => {
-    if (!appCode) return;
+    setVersionData(dataSource);
+    filterFormRef.setFieldsValue({
+      versionID: dataSource[0].id,
+    });
     queryConfigList({
-      env,
-      appCode,
-      type: configType,
+      versionID: dataSource[0].id,
+      ...(listParams || {}),
     });
-  }, [appCode]);
+  };
+
+  // useEffect(() => {
+  //   if (!appCode) return;
+  //   queryConfigList({
+  //     env,
+  //     appCode,
+  //     type: configType,
+  //   });
+  // }, [appCode]);
 
   useEffect(() => {
     if (!appCode) return;
 
-    queryVersionData({
-      appCode,
-      env,
-      type: configType,
-    });
+    queryVersionData();
   }, [appCode, env, configType]);
 
   // 回退操作
@@ -133,14 +140,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     }
 
     message.success('回退成功');
-    queryVersionData({
-      appCode,
-      env,
-      type: configType,
-    });
+    queryVersionData();
   };
-
-  const { dataSource = [] } = versionTableProps;
 
   return (
     <div className={rootCls}>
@@ -153,9 +154,12 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
         onSubmit={() => {
           setImportCfgVisible(false);
           // 提交成功后，重新请求数据
-          queryConfigList({
+          queryVersionData({
             pageIndex: 1,
           });
+          // queryConfigList({
+          //   pageIndex: 1,
+          // });
         }}
       />
 
@@ -180,60 +184,19 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
             curRecord: undefined,
           });
           // 提交成功后，重新请求数据
-          queryConfigList();
+          queryVersionData();
+          // queryConfigList();
         }}
       />
 
       <div className={`${rootCls}__filter`}>
-        {/* <InlineForm
-          className={`${rootCls}__filter-form`}
-          {...(createFilterFormSchema({
-            versionOptions:
-              dataSource?.map((el: any) => ({
-                label: el.versionNumber,
-                value: el.id,
-              })) || [],
-          }) as any)}
-          submitText="查询"
-          customMap={{
-            versionSelect: VersionSelect,
-          }}
-          onValuesChange={(changeVals, values) => {
-            const [name, value] = (Object.entries(changeVals)?.[0] || []) as [
-              string,
-              any,
-            ];
-            if (name && name === 'versionID') {
-              const version = versionTableProps.dataSource?.find(
-                (item: any) => item.id === value,
-              );
-              if (version && tableProps.pagination) {
-                const { pageSize = 10 } = tableProps.pagination;
-                queryConfigList({
-                  pageIndex: 1,
-                  pageSize,
-                  versionID: version.id,
-                });
-              }
-              setCurrentVersion(version || undefined);
-            }
-          }}
-          onFinish={(values) => {
-            if (tableProps.loading) return;
-            queryConfigList({
-              pageIndex: 1,
-              ...values,
-            });
-          }}
-        /> */}
-
         <VCForm
           className={`${rootCls}__filter-form`}
           layout="inline"
           form={filterFormRef}
           columns={
             getFilterColumns(
-              dataSource?.map((el: any) => ({
+              versionData?.map((el: any) => ({
                 label: el.versionNumber,
                 value: el.id,
               })) || [],
@@ -245,7 +208,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
               any,
             ];
             if (name && name === 'versionID') {
-              const version = versionTableProps.dataSource?.find(
+              const version = versionData?.find(
                 (item: any) => item.id === value,
               );
               if (version && tableProps.pagination) {
@@ -281,8 +244,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           <Popconfirm
             title="确定回退到当前版本？"
             disabled={
-              !currentVersion ||
-              versionTableProps.dataSource?.[0]?.id === currentVersion?.id
+              !currentVersion || versionData?.[0]?.id === currentVersion?.id
             }
             onConfirm={handleRollBack}
           >
@@ -290,8 +252,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
               type="primary"
               danger
               disabled={
-                !currentVersion ||
-                versionTableProps.dataSource?.[0]?.id === currentVersion?.id
+                !currentVersion || versionData?.[0]?.id === currentVersion?.id
               }
             >
               回退
@@ -326,7 +287,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
             onConfirm={() => {
               deleteMultipleConfig({ ids: selectedKeys }).then((res: any) => {
                 if (res.success) {
-                  queryConfigList();
+                  // queryConfigList();
+                  queryVersionData();
                   return;
                 }
                 message.error(res.errorMsg);
@@ -372,7 +334,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
               } else if (type === 'delete') {
                 deleteConfig(record.id).then((res: any) => {
                   if (res.success) {
-                    queryConfigList();
+                    queryVersionData();
+                    // queryConfigList();
                     return;
                   }
                   message.error(res.errorMsg);

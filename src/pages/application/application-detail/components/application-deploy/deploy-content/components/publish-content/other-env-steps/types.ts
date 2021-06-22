@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 export interface IProps {
+  envTypeCode: string;
   deployInfo: Record<string, any>;
   onOperate: (type: OperateType) => void;
 }
@@ -25,9 +26,13 @@ export type Status =
   | 1.1
   /** 合并release失败 */
   | 1.2
-  /** 部署中 */
+  /** 构建中 */
   | 2.1
-  /** 部署失败 */
+  /** 构建失败 */
   | 2.2
+  /** 部署中 */
+  | 3.1
+  /** 部署失败 */
+  | 3.2
   /** 发布完成 */
   | 4;

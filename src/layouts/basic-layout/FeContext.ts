@@ -4,11 +4,11 @@ import React from 'react';
 export interface IFEContent extends globalConfig {
   // 面包屑路由数据
   breadcrumbMap: any;
-  // 所属数据
-  belongData?: any[];
-  // 业务线枚举
+  // 应用分类数据
+  categoryData?: any[];
+  // 应用组
   businessData?: any[];
-  // 环境枚举
+  // 环境类型枚举
   envData?: any[];
   // 是否开启权限
   isOpenPermission?: boolean;
@@ -22,7 +22,7 @@ export default React.createContext<IFEContent>({
   logo: '',
   copyright: '',
   breadcrumbMap: {},
-  belongData: [],
+  categoryData: [],
   businessData: [],
   envData: [],
   isOpenPermission: false,

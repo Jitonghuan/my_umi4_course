@@ -5,13 +5,15 @@
  * @create 2021-04-25 16:05
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Modal, Button, List } from 'antd';
 import VCDescription from '@/components/vc-description';
+import DetailContext from '../../../../../context';
 import { recordFieldMap } from './schema';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';
 import { usePaginated } from '@cffe/vc-hulk-table';
+import { queryEnvsReq } from '../../../../../../service';
 import './index.less';
 
 const rootCls = 'publish-record-compo';
@@ -19,10 +21,18 @@ const rootCls = 'publish-record-compo';
 const PublishRecord = (props: IProps) => {
   const { env, appCode } = props;
 
+  const { appData } = useContext(DetailContext);
+  const { appCategoryCode } = appData || {};
+
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
+  const [envDataList, setEnvDataList] = useState([]);
 
-  const { run: queryDataSource, tableProps, loadMore } = usePaginated({
+  const {
+    run: queryDataSource,
+    tableProps,
+    loadMore,
+  } = usePaginated({
     requestUrl: queryRecordApi,
     requestMethod: 'GET',
     showRequestError: true,
@@ -37,9 +47,46 @@ const PublishRecord = (props: IProps) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (!appCategoryCode) return;
+    queryEnvsReq({
+      categoryCode: appCategoryCode as string,
+      envTypeCode: env,
+    }).then((data) => {
+      setEnvDataList(data.list);
+    });
+  }, [appCategoryCode, env]);
+
+  const envNames: IRecord = useMemo(() => {
+    const { envs } = curRecord;
+    const namesArr: any[] = [];
+    if (envs?.indexOf(',') > -1) {
+      const list = envs?.split(',') || [];
+      envDataList?.forEach((item: any) => {
+        list?.forEach((v: any) => {
+          if (item?.envCode === v) {
+            namesArr.push(item.envName);
+          }
+        });
+      });
+      return {
+        ...curRecord,
+        envs: namesArr.join(','),
+      };
+    }
+
+    return {
+      ...curRecord,
+      envs: (envDataList as any).find((v: any) => v.envCode === envs)?.envName,
+    };
+  }, [envDataList, curRecord]);
+
   const renderLoadMore = () => {
-    const { pageSize = 0, total = 0, current = 0 } =
-      tableProps?.pagination || {};
+    const {
+      pageSize = 0,
+      total = 0,
+      current = 0,
+    } = tableProps?.pagination || {};
 
     return (
       total > 0 &&
@@ -48,7 +95,7 @@ const PublishRecord = (props: IProps) => {
           <Button
             ghost
             type="dashed"
-            loading={tableProps.loading}
+            //loading={tableProps.loading}
             onClick={loadMore}
           >
             加载更多
@@ -67,26 +114,31 @@ const PublishRecord = (props: IProps) => {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布记录</div>
-
-      <List
-        className="demo-loadmore-list"
-        loading={tableProps.loading}
-        itemLayout="vertical"
-        loadMore={renderLoadMore()}
-        dataSource={tableProps.dataSource as IRecord[]}
-        renderItem={(item) => (
-          <List.Item>
-            {Object.keys(recordFieldMap)
-              .slice(0, 3)
-              .map((key) => (
-                <span className={`${rootCls}-row ${key}`}>
-                  <label>{recordFieldMap[key]}</label>：{item[key]}
-                </span>
-              ))}
-            <a onClick={() => handleShowDetail(item)}>详情</a>
-          </List.Item>
-        )}
-      />
+      {tableProps.dataSource?.filter((v) => v?.envTypeCode === env)?.length ? (
+        <List
+          className="demo-loadmore-list"
+          loading={tableProps.loading}
+          itemLayout="vertical"
+          loadMore={renderLoadMore()}
+          dataSource={
+            tableProps.dataSource?.filter(
+              (v) => v?.envTypeCode === env,
+            ) as IRecord[]
+          }
+          renderItem={(item) => (
+            <List.Item>
+              {Object.keys(recordFieldMap)
+                .slice(0, 3)
+                .map((key) => (
+                  <span className={`${rootCls}-row ${key}`}>
+                    <label>{recordFieldMap[key]}</label>：{item[key]}
+                  </span>
+                ))}
+              <a onClick={() => handleShowDetail(item)}>详情</a>
+            </List.Item>
+          )}
+        />
+      ) : null}
 
       <Modal
         title="发布详情"
@@ -97,7 +149,7 @@ const PublishRecord = (props: IProps) => {
           column={1}
           dataSource={Object.keys(recordFieldMap).map((field) => ({
             label: recordFieldMap[field],
-            value: curRecord[field],
+            value: envNames[field],
           }))}
         />
       </Modal>

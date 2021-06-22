@@ -1,0 +1,47 @@
+// env list
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/05/26 16:28
+
+.page-env-list {
+  .ant-card-body {
+    height: 100%;
+  }
+
+  .env-list {
+    padding: 12px 8px;
+    height: ~'calc(100% - 40px)';
+    overflow: auto;
+
+    > li {
+      cursor: pointer;
+      line-height: 20px;
+      padding: 6px 24px;
+      user-select: none;
+
+      &[data-active='true'] {
+        cursor: default;
+        background-color: #d6e9ff;
+        color: #1973cc;
+      }
+
+      &:hover {
+        background-color: rgba(#d6e9ff, 0.5);
+      }
+    }
+  }
+}
+
+.env-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 4px 12px;
+  border-bottom: 1px solid #d2d8e6;
+
+  > h3 {
+    font-size: 14px;
+    font-weight: normal;
+    margin-bottom: 0;
+  }
+}

@@ -21,12 +21,12 @@ const { confirm } = Modal;
 
 const PublishContent = ({
   appCode,
-  env,
+  envTypeCode,
   deployedList,
   deployInfo,
   onOperate,
 }: IProps) => {
-  const isProd = env === 'prod';
+  const isProd = envTypeCode === 'prod';
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
@@ -39,9 +39,14 @@ const PublishContent = ({
           appCode={appCode}
           deployInfo={deployInfo}
           onOperate={onOperate}
+          envTypeCode={envTypeCode}
         />
       ) : (
-        <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} />
+        <OtherEnvSteps
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          envTypeCode={envTypeCode}
+        />
       )}
 
       <div className={`${rootCls}__list-wrap`}>
@@ -90,10 +95,11 @@ const PublishContent = ({
                     onOk() {
                       return createDeploy({
                         appCode,
-                        env,
+                        envTypeCode,
                         features: deployedList
                           .filter((item) => !selectedRowKeys.includes(item.id))
                           .map((item) => item.branchName),
+                        isClient: false,
                       }).then(() => {
                         onOperate('batchExitEnd');
                       });
@@ -125,7 +131,7 @@ const PublishContent = ({
           pagination={false}
           rowSelection={
             isProd
-              ? undefined
+              ? {}
               : {
                   type: 'checkbox',
                   selectedRowKeys,

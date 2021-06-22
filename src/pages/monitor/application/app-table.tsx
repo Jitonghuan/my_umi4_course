@@ -140,9 +140,9 @@ const Coms = (props: IProps) => {
           type: 'Select',
           props: {
             name: 'appCode',
-            label: '应用名',
+            label: '应用code',
             allowClear: false,
-            showSearch: false,
+            showSearch: true,
             options: appData,
             disabled: appCode ? true : false,
           },
@@ -151,7 +151,7 @@ const Coms = (props: IProps) => {
           type: 'Select',
           props: {
             name: 'envCode',
-            label: '环境',
+            label: '环境code',
             allowClear: false,
             showSearch: false,
             options: envData,
@@ -214,7 +214,11 @@ const Coms = (props: IProps) => {
   };
 
   // 查询节点使用率
-  const { run: queryNodeList, reset, tableProps } = usePaginated({
+  const {
+    run: queryNodeList,
+    reset,
+    tableProps,
+  } = usePaginated({
     requestUrl: queryPodInfoApi,
     requestMethod: 'GET',
     showRequestError: true,

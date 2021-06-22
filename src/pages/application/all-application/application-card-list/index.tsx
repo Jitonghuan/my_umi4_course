@@ -34,6 +34,8 @@ const ApplicationCardList = (props: IProps) => {
                 query: {
                   id: `${item.id}`,
                   appCode: item.appCode,
+                  isClient: String(item.isClient),
+                  isContainClient: String(item.isContainClient),
                 },
               })
             }

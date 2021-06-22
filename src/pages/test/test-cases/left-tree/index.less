@@ -1,0 +1,110 @@
+// case list
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/05/30 16:49
+
+.page-case-list {
+  padding: 16px 12px;
+
+  .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+  }
+
+  .case-list-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    flex: 0 0 auto;
+
+    .ant-input-group-wrapper {
+      flex: 1 1 0;
+      margin-right: 16px;
+    }
+
+    > .ant-select {
+      flex: 1 1 0;
+      margin-right: 16px;
+    }
+  }
+
+  // .ant-tree-treenode-selected {
+  //   background-color: #c2e9ff;
+  // }
+
+  .spin-wrapper {
+    text-align: center;
+    padding-top: 60px;
+  }
+
+  .ant-tree.ant-tree-directory {
+    flex: 1 1 0;
+    overflow: auto;
+
+    .ant-tree-treenode-selected:hover::before,
+    .ant-tree-treenode-selected::before {
+      background-color: #c2e9ff;
+    }
+
+    .ant-tree-switcher-noop:empty {
+      display: none;
+    }
+
+    .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected {
+      color: inherit;
+    }
+
+    .ant-tree-list-holder-inner .ant-tree-node-content-wrapper {
+      overflow: hidden;
+    }
+  }
+
+  .custom-tree-node {
+    display: flex;
+
+    &:hover > a {
+      display: block;
+    }
+
+    > span {
+      flex: 1 1 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    > a {
+      display: none;
+      color: inherit;
+      flex: 0 0 auto;
+      margin-left: 8px;
+    }
+  }
+
+  // .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  //   background: transparent;
+  // }
+}
+
+.test-api-editor {
+  .ant-drawer-body {
+    padding: 20px 32px;
+    background-color: #f7f8fa;
+  }
+
+  .api-editor-footer {
+    text-align: right;
+
+    button + button {
+      margin-left: 12px;
+    }
+  }
+
+  .ant-radio-group.flex-radio-group {
+    > label {
+      width: 48%;
+      margin-bottom: 4px;
+    }
+  }
+}

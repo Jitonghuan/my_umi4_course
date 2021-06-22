@@ -6,7 +6,7 @@
  */
 
 import React, { useMemo, useContext } from 'react';
-import { Tabs, Button } from 'antd';
+import { Tabs } from 'antd';
 import FeContext from '@/layouts/basic-layout/FeContext';
 import ConfigContent from './config-content';
 import DetailContext from '../../context';
@@ -36,21 +36,28 @@ const ConfigParametersManage = ({
     return (typeMap as any)[name];
   }, [pathname]);
 
+  const handleTabActiveChange = (next: string) => {
+    sessionStorage.setItem('__init_env_tab__', next);
+  };
+
   if (!configType) return null;
 
   return (
     <div className={rootCls}>
       <Tabs
         className={`${rootCls}__tabs`}
-        // onChange={this.onChange}
+        defaultActiveKey={
+          sessionStorage.getItem('__init_env_tab__') || undefined
+        }
+        onChange={handleTabActiveChange}
         // activeKey={this.state.activeKey}
         type="card"
         tabBarStyle={{ background: '#E6EBF5' }}
       >
         {envData?.map((item) => (
-          <TabPane tab={item.envName} key={item.envCode}>
+          <TabPane tab={item.label} key={item.value}>
             <ConfigContent
-              env={item.envCode}
+              env={item.value}
               configType={configType}
               appCode={appCode}
               appId={appId}

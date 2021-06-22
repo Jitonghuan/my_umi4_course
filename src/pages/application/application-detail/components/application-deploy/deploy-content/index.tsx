@@ -18,7 +18,7 @@ import './index.less';
 
 const rootCls = 'deploy-content-compo';
 
-const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
+const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -29,43 +29,45 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
     unDeployed: any[];
   }>({ deployed: [], unDeployed: [] });
 
+  const requestData = async () => {
+    if (!appCode) return;
+
+    setUpdating(true);
+
+    const resp1 = await queryDeployList({
+      appCode: appCode!,
+      envTypeCode,
+      isActive: 1,
+      pageIndex: 1,
+      pageSize: 10,
+    });
+
+    const resp2 = await queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      isDeployed: 1,
+    });
+    const resp3 = await queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      isDeployed: 0,
+    });
+
+    if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
+      setDeployInfo(resp1?.data?.dataSource[0]);
+    }
+
+    setBranchInfo({
+      deployed: resp2?.data || [],
+      unDeployed: resp3?.data || [],
+    });
+
+    setUpdating(false);
+  };
+
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(
-    async () => {
-      if (!appCode) return;
-
-      setUpdating(true);
-
-      const resp1 = await queryDeployList({
-        appCode: appCode!,
-        env,
-        isActive: 1,
-        pageIndex: 1,
-        pageSize: 10,
-      });
-
-      const resp2 = await queryFeatureDeployed({
-        appCode: appCode!,
-        env,
-        isDeployed: 1,
-      });
-      const resp3 = await queryFeatureDeployed({
-        appCode: appCode!,
-        env,
-        isDeployed: 0,
-      });
-
-      if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-        setDeployInfo(resp1?.data?.dataSource[0]);
-      }
-
-      setBranchInfo({
-        deployed: resp2?.data || [],
-        unDeployed: resp3?.data || [],
-      });
-
-      setUpdating(false);
-    },
+    requestData,
     8000,
     { immediate: true },
   );
@@ -89,19 +91,21 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
     <div className={rootCls}>
       <div className={`${rootCls}-body`}>
         <PublishDetail
-          env={env}
+          envTypeCode={envTypeCode}
           deployInfo={deployInfo}
           onOperate={(type) => {
             if (type === 'deployNextEnvSuccess') {
               onDeployNextEnvSuccess();
+              console.log('deployNextEnvSuccess');
               return;
             }
+            requestData();
             onOperate(type);
           }}
         />
         <PublishContent
           appCode={appCode!}
-          env={env}
+          envTypeCode={envTypeCode}
           deployInfo={deployInfo}
           deployedList={branchInfo.deployed}
           onOperate={onOperate}
@@ -112,14 +116,14 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
             !!(branchInfo.deployed && branchInfo.deployed.length)
           }
           dataSource={branchInfo.unDeployed}
-          env={env}
+          env={envTypeCode}
           onSubmitBranch={(status) => {
             timerHandle(status === 'start' ? 'stop' : 'do', true);
           }}
         />
       </div>
       <div className={`${rootCls}-sider`}>
-        <PublishRecord env={env} appCode={appCode} />
+        <PublishRecord env={envTypeCode} appCode={appCode} />
       </div>
     </div>
   );

@@ -5,14 +5,9 @@
  * @create 2021-04-09 18:39
  */
 
-import React, { useContext, useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Tabs } from 'antd';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
-import FEContext from '@/layouts/basic-layout/FeContext';
 import DetailContext, { ContextTypes } from './context';
 import { tabsConfig } from './config';
 import { queryApps } from '../service';
@@ -20,7 +15,6 @@ import { IProps } from './types';
 import './index.less';
 import VCPermission from '@/components/vc-permission';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { divide } from '_@types_lodash@4.14.168@@types/lodash';
 
 const rootCls = 'application-detail-page';
 const detailPath = '/matrix/application/detail';
@@ -30,9 +24,9 @@ const defaultTab = 'overview';
 
 const ApplicationDetail = (props: IProps) => {
   const { location, children } = props;
+  const isContainClient = Number(location.query.isContainClient) === 1;
   const appId = location.query.id;
 
-  const feContent = useContext(FEContext);
   const [appData, setAppData] = useState<ContextTypes['appData']>();
 
   const tabActiveKey = useMemo(
@@ -60,7 +54,11 @@ const ApplicationDetail = (props: IProps) => {
 
   useEffect(() => {
     if (!appId) return;
+
     queryAppData();
+
+    // 每次切换进来需要重置数据
+    sessionStorage.removeItem('__init_env_tab__');
   }, [appId]);
 
   // 默认重定向到【概述】路由下
@@ -110,11 +108,26 @@ const ApplicationDetail = (props: IProps) => {
             </div>
           }
         >
-          {Object.keys(tabsConfig).map((key) => (
-            <TabPane tab={tabsConfig[key]} key={key}>
-              {null}
-            </TabPane>
-          ))}
+          {Object.keys(tabsConfig)
+            // 只有应用为包含二方包属性的时候，才会显示二方包的 tab
+            .filter((key) => {
+              // 只有 HBOS 才显示 配置管理 和 启动参数
+              if (key === 'configMgr' || key === 'launchParameters') {
+                return appData?.appCategoryCode === 'hbos';
+              }
+
+              if (isContainClient) {
+                return true;
+              }
+
+              // 不包含二方包
+              return key !== 'secondPartyPkg';
+            })
+            .map((key) => (
+              <TabPane tab={tabsConfig[key]} key={key}>
+                {null}
+              </TabPane>
+            ))}
         </Tabs>
       )}
 
