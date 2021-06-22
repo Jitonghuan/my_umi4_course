@@ -78,3 +78,4 @@
 - VC 组件文档: http://vdoc.cfuture.cc/vc-doc/#/vc-doc/component/list
 - 项目文档: https://come-future.yuque.com/sekh46/bbgc7f
 - 项目排期: https://come-future.yuque.com/sekh46/bbgc7f/px4te4/edit#y44m
+- 视觉稿: https://lanhuapp.com/web/#/item/project/stage?tid=3b3b08b2-8068-4d09-9535-148f1c47f6b8&pid=56924b6e-18ea-4be5-860a-d5eef3e89d06
