@@ -28,30 +28,30 @@
 
 ```json
 {
-    "server_name": "matrix-local.cfuture.shop",
-    "proxy": {
-        "/matrix/**": {
-            "type": "web",
-            "port": "9091",
-            "target": "http://127.0.0.1:9091",
-            "changeOrigin": false,
-            "pathRewriter": {}
-        },
-        "/v1/**": {
-            "type": "web",
-            "port": "9091",
-            "target": "http://127.0.0.1:9091",
-            "changeOrigin": false,
-            "pathRewriter": {}
-        },
-        "/**": {
-            "type": "web",
-            "port": "9091",
-            "target": "http://127.0.0.1:9091",
-            "changeOrigin": false,
-            "pathRewriter": {}
-        }
+  "server_name": "matrix-local.cfuture.shop",
+  "proxy": {
+    "/matrix/**": {
+      "type": "web",
+      "port": "9091",
+      "target": "http://127.0.0.1:9091",
+      "changeOrigin": false,
+      "pathRewriter": {}
+    },
+    "/v1/**": {
+      "type": "web",
+      "port": "9091",
+      "target": "http://127.0.0.1:9091",
+      "changeOrigin": false,
+      "pathRewriter": {}
+    },
+    "/**": {
+      "type": "web",
+      "port": "9091",
+      "target": "http://127.0.0.1:9091",
+      "changeOrigin": false,
+      "pathRewriter": {}
     }
+  }
 }
 ```
 
