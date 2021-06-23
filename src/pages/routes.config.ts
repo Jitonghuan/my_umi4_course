@@ -50,6 +50,34 @@ export default [
     redirect: `${ds.pagePrefix}/code/rank`,
   },
   {
+    path: 'demo',
+    name: '示例页面',
+    icon: 'icon-report',
+    hideInMenu: process.env.UMI_ENV !== 'dev',
+    routes: [
+      {
+        path: 'layout-normal',
+        name: '普通布局',
+        component: '@/pages/demo/layout-normal',
+      },
+      {
+        path: 'layout-lr',
+        name: '左右布局',
+        component: '@/pages/demo/layout-lr',
+      },
+      {
+        path: 'layout-tb',
+        name: '上下布局',
+        component: '@/pages/demo/layout-tb',
+      },
+      {
+        path: 'list',
+        name: '列表页面',
+        component: '@/pages/demo/list',
+      },
+    ],
+  },
+  {
     path: 'application',
     name: '应用管理',
     icon: 'icon-poc_maindata',
@@ -332,6 +360,29 @@ export default [
         path: 'history',
         name: '报警历史',
         component: '@/pages/monitor/history',
+      },
+    ],
+  },
+
+  {
+    path: 'logger',
+    name: '日志管理',
+    icon: 'icon-code',
+    routes: [
+      {
+        path: 'dashboard',
+        name: '仪表盘',
+        component: '@/pages/logger/dashboard',
+      },
+      {
+        path: 'search',
+        name: '日志检索',
+        component: '@/pages/logger/search',
+      },
+      {
+        path: 'alarm',
+        name: '日志告警',
+        component: '@/pages/logger/alarm',
       },
     ],
   },
