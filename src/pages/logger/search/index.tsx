@@ -45,7 +45,7 @@ export default function LoggerSearch() {
         {!frameLoading && (!envCode || !logStore) ? (
           <div className="empty-holder">请选择环境和日志库</div>
         ) : null}
-        {!frameLoading && envCode && logStore ? (
+        {!frameLoading && envCode && logStore && !frameUrl ? (
           <div className="empty-holder">未找到日志检索页面</div>
         ) : null}
         {!frameLoading && frameUrl ? (
