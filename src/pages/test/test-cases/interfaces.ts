@@ -72,3 +72,10 @@ export interface PreCaseItemProps {
   caseId: number;
   caseName: string;
 }
+
+export interface FuncProps {
+  id: number;
+  desc?: string;
+  name?: string;
+  argument?: string;
+}
