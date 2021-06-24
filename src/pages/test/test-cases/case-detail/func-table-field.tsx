@@ -19,6 +19,7 @@ export default function FuncTableField(props: FuncTableFieldProps) {
       </div>
       <Table dataSource={props.data || []} bordered pagination={false}>
         <Table.Column dataIndex="name" title="函数" />
+        <Table.Column dataIndex="argument" title="入参" width={260} />
         <Table.Column dataIndex="desc" title="描述" />
       </Table>
     </div>
