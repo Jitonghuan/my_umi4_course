@@ -3,36 +3,45 @@
 // @create 2021/06/23 09:25
 
 import React, { useCallback, useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table } from 'antd';
+import { Form, Input, Select, Button, Table, Tag } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest } from '@/utils/request';
 import * as APIS from './service';
-import { useEnvOptions } from './hooks';
+import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
 import './index.less';
 
 export default function LoggerAlarm() {
   const [searchField] = Form.useForm();
+  const [appOptions] = useAppOptions();
   const [envOptions] = useEnvOptions();
+  const [statusOptions] = useStatusOptions();
+
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
   const [tableSource, setTableSource] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const queryTableData = async (page = pageIndex) => {
+  const queryTableData = (page = pageIndex) => {
     const values = searchField.getFieldsValue();
 
-    const result = await getRequest(APIS.getMonitorList, {
+    setLoading(true);
+    getRequest(APIS.getMonitorList, {
       data: {
         ...values,
         pageIndex: page,
         pageSize,
       },
-    });
-
-    const { dataSource, pageInfo } = result.data || {};
-    setTableSource(dataSource || []);
-    setTotal(pageInfo?.total);
+    })
+      .then((result) => {
+        const { dataSource, pageInfo } = result.data || {};
+        setTableSource(dataSource || []);
+        setTotal(pageInfo?.total);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleSearch = () => {
@@ -52,7 +61,11 @@ export default function LoggerAlarm() {
             <Input placeholder="请输入" />
           </Form.Item>
           <Form.Item label="应用名称" name="appCode">
-            <Select placeholder="请选择" options={[]} style={{ width: 168 }} />
+            <Select
+              placeholder="请选择"
+              options={appOptions}
+              style={{ width: 168 }}
+            />
           </Form.Item>
           <Form.Item label="环境名称" name="envCode">
             <Select
@@ -62,7 +75,11 @@ export default function LoggerAlarm() {
             />
           </Form.Item>
           <Form.Item label="状态" name="status">
-            <Select placeholder="请选择" options={[]} style={{ width: 168 }} />
+            <Select
+              placeholder="请选择"
+              options={statusOptions}
+              style={{ width: 168 }}
+            />
           </Form.Item>
           <Form.Item>
             <Button type="primary" ghost onClick={handleSearch}>
@@ -80,6 +97,7 @@ export default function LoggerAlarm() {
           <Button type="primary">+ 新增日志告警</Button>
         </div>
         <Table
+          loading={loading}
           dataSource={tableSource}
           pagination={{
             current: pageIndex,
@@ -96,7 +114,17 @@ export default function LoggerAlarm() {
           <Table.Column dataIndex="envName" title="环境名称" />
           <Table.Column dataIndex="message" title="报警分类" />
           <Table.Column dataIndex="expression" title="报警表达式" />
-          <Table.Column dataIndex="status" title="状态" />
+          <Table.Column
+            dataIndex="status"
+            title="状态"
+            render={(v, record) => {
+              return v === 1 ? (
+                <Tag color="success">已启用</Tag>
+              ) : v === 0 ? (
+                <Tag color="default">已关闭</Tag>
+              ) : null;
+            }}
+          />
           <Table.Column
             title="操作"
             render={(_, record, index) => (

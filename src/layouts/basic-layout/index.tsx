@@ -149,7 +149,8 @@ export default (props: IUmiRrops) => {
               siderMenuProps={{
                 isOpenPermission: ds.isOpenPermission,
                 permissionData,
-                scriptUrl: 'http://at.alicdn.com/t/font_2486191_tnfcu8v29v.js',
+                // scriptUrl: 'http://at.alicdn.com/t/font_2486191_tnfcu8v29v.js',
+                scriptUrl: '//at.alicdn.com/t/font_2486191_0p96gx6ws9ka.js',
               }}
               headerProps={{
                 logo,

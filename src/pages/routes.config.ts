@@ -367,7 +367,7 @@ export default [
   {
     path: 'logger',
     name: '日志管理',
-    icon: 'icon-code',
+    icon: 'icon-diagnose',
     routes: [
       {
         path: 'dashboard',
