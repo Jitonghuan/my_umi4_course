@@ -110,7 +110,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
             </ul>
             <h4>定义变量</h4>
             <Table dataSource={n.customVars || []} pagination={false} bordered>
-              <Table.Column title="变量名" dataIndex="name" />
+              <Table.Column title="变量名" dataIndex="key" />
               <Table.Column title="类型" dataIndex="type" />
               <Table.Column title="值" dataIndex="value" />
               <Table.Column title="描述" dataIndex="desc" />
