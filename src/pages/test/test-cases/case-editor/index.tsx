@@ -8,7 +8,7 @@ import { Drawer, Form, Steps, Button, Input, message, Radio, Tabs } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import { postRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { CaseItemVO, EditorMode, TreeNode } from '../interfaces';
+import { CaseItemVO, EditorMode, TreeNode, FuncProps } from '../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import TableForm from '@/components/simple-table-form';
@@ -36,8 +36,8 @@ export default function CaseEditor(props: CaseEditorProps) {
   // 编辑时回填数据
   const initEditField = async (initData: CaseItemVO) => {
     const hooks = initData.hooks ? JSON.parse(initData.hooks) : {};
-    const beforeFunIds: number[] = hooks.setup || [];
-    const afterFuncIds: number[] = hooks.teardown || [];
+    const beforeFuns: FuncProps[] = hooks.setup || [];
+    const afterFuncs: FuncProps[] = hooks.teardown || [];
     const beforeCaseIds: number[] = initData.preStep
       ? initData.preStep.split(',').map((n: string) => +n)
       : [];
@@ -49,8 +49,8 @@ export default function CaseEditor(props: CaseEditorProps) {
     editField.setFieldsValue({
       name: initData.name,
       desc: initData.desc,
-      beforeFuncs: await getFuncListByIds(beforeFunIds),
-      afterFuncs: await getFuncListByIds(afterFuncIds),
+      beforeFuncs: await getFuncListByIds(beforeFuns),
+      afterFuncs: await getFuncListByIds(afterFuncs),
       beforeCases: await getCaseListByIds(beforeCaseIds),
       customVars: initData.customVars || [],
       headers: initData.headers || [],
@@ -112,8 +112,16 @@ export default function CaseEditor(props: CaseEditorProps) {
       customVars: values.customVars || [],
       savedVars: values.savedVars || [],
       hooks: {
-        setup: (values.beforeFuncs || []).map((n: any) => n.id),
-        teardown: (values.afterFuncs || []).map((n: any) => n.id),
+        setup: (values.beforeFuncs || []).map((n: any) => ({
+          id: n.id,
+          argument: n.argument || '',
+        })),
+        teardown: (values.afterFuncs || []).map((n: any) => ({
+          id: n.id,
+          argument: n.argument || '',
+        })),
+        // setup: (values.beforeFuncs || []).map((n: any) => n.id),
+        // teardown: (values.afterFuncs || []).map((n: any) => n.id),
       },
       resAssert: values.resAssert || [],
       modifyUser: userInfo.userName,

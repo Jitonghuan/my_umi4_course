@@ -4,18 +4,22 @@
 
 import { getRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { CaseItemVO } from '../interfaces';
+import { CaseItemVO, FuncProps } from '../interfaces';
 
-export async function getFuncListByIds(ids: number[]) {
-  if (!ids?.length) return [];
+export async function getFuncListByIds(funcs: FuncProps[]) {
+  if (!funcs?.length) return [];
 
   return await Promise.all(
-    ids.map(async (id) => {
+    funcs.map(async (n) => {
+      if (typeof n === 'number' || typeof n === 'string') {
+        n = { id: n };
+      }
+
       const { data } = await getRequest(APIS.getFunc, {
-        data: { id },
+        data: { id: n.id },
       });
 
-      return data;
+      return { ...data, argument: n.argument };
     }),
   );
 }
