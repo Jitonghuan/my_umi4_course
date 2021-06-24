@@ -340,6 +340,7 @@ export default [
     path: 'code',
     name: '代码管理',
     icon: 'icon-code',
+    hideInMenu: true,
     routes: [
       {
         path: 'rank',
