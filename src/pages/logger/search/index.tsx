@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Form, Select, Spin } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { useEnvOptions, useLogStoreOptions, useFrameUrl } from './hook';
+import { useEnvOptions, useLogStoreOptions, useFrameUrl } from './hooks';
 import './index.less';
 
 export default function LoggerSearch() {
