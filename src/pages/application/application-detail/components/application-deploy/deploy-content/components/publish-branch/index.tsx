@@ -67,7 +67,7 @@ const PublishBranch = ({
       envTypeCode: env,
       features: filter,
       envCodes: deployEnv,
-      isClient: query?.isClient !== '0',
+      isClient: String(query?.isClient) === '1',
     }).then((res: any) => {
       if (!res.success) {
         message.error(res.errorMsg);
@@ -78,7 +78,7 @@ const PublishBranch = ({
 
   const submitClick = () => {
     // 二方包
-    if (query?.isClient === '1' || hasPublishContent) {
+    if (String(query?.isClient) === '1' || hasPublishContent) {
       confirm({
         title: '确定要提交发布吗?',
         icon: <ExclamationCircleOutlined />,
