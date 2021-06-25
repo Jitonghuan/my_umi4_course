@@ -4,10 +4,11 @@
 
 import { useEffect, useState } from 'react';
 import { getRequest } from '@/utils/request';
+import { SelectOptions } from './interface';
 import * as APIS from './service';
 
 export function useAppOptions() {
-  const [source, setSource] = useState<{ label: string; value: string }[]>([]);
+  const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
     getRequest(APIS.getAppList, {
@@ -27,7 +28,7 @@ export function useAppOptions() {
 }
 
 export function useEnvOptions() {
-  const [source, setSource] = useState<{ label: string; value: string }[]>([]);
+  const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
     getRequest(APIS.getEnvList, {
@@ -57,4 +58,8 @@ export function useStatusOptions() {
   }, []);
 
   return [source];
+}
+
+export function useCategoryOptions() {
+  const [source, setSource] = useState();
 }
