@@ -58,6 +58,7 @@ const TowPartyPkg = ({
         {envData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
+              appCode={appCode}
               env={item.value}
               onDeployNextEnvSuccess={() => {
                 const i = envData.findIndex((item) => item.value === tabActive);
