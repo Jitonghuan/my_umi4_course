@@ -119,7 +119,7 @@ const PublishContent = ({
               <Popconfirm
                 title="确定要重启应用吗？"
                 onConfirm={async () => {
-                  await restartApp({ appCode, envCode: envTypeCode });
+                  await restartApp({ appCode, envCode: deployInfo.envs });
                   message.success('操作成功！');
                 }}
               >
