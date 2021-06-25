@@ -48,7 +48,7 @@ export function useEnvOptions() {
 }
 
 export function useStatusOptions() {
-  const [source, setSource] = useState<{ label: string; value: number }[]>([]);
+  const [source, setSource] = useState<SelectOptions<number>[]>([]);
 
   useEffect(() => {
     setSource([
@@ -61,5 +61,29 @@ export function useStatusOptions() {
 }
 
 export function useCategoryOptions() {
-  const [source, setSource] = useState();
+  const [source, setSource] = useState<SelectOptions<number>[]>([]);
+
+  useEffect(() => {
+    setSource([
+      { label: 'SQL异常', value: 1 },
+      { label: '服务异常', value: 2 },
+    ]);
+  }, []);
+
+  return [source];
+}
+
+export function useNotifyTypeOptions() {
+  const [source, setSource] = useState<SelectOptions<number>[]>([]);
+
+  useEffect(() => {
+    setSource([
+      { label: '钉钉', value: 1 },
+      { label: '邮件', value: 2 },
+      { label: '短信', value: 3 },
+      { label: '电话', value: 4 },
+    ]);
+  }, []);
+
+  return [source];
 }

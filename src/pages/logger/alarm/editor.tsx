@@ -7,7 +7,12 @@ import { Form, Modal, Input, Select, Button, Radio } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from './service';
 import { EditorMode } from './interface';
-import { useAppOptions, useEnvOptions } from './hooks';
+import {
+  useAppOptions,
+  useEnvOptions,
+  useCategoryOptions,
+  useNotifyTypeOptions,
+} from './hooks';
 
 const { Item: FormItem } = Form;
 

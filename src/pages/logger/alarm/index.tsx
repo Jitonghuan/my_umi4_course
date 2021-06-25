@@ -9,6 +9,8 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest } from '@/utils/request';
 import * as APIS from './service';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
+import { EditorMode } from './interface';
+import AlarmEditor from './editor';
 import './index.less';
 
 export default function LoggerAlarm() {
@@ -22,6 +24,8 @@ export default function LoggerAlarm() {
   const [total, setTotal] = useState(0);
   const [tableSource, setTableSource] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const [editorMode, setEditorMode] = useState<EditorMode>('HIDE');
 
   const queryTableData = (page = pageIndex) => {
     const values = searchField.getFieldsValue();
@@ -47,6 +51,11 @@ export default function LoggerAlarm() {
   const handleSearch = () => {
     setPageIndex(1);
     queryTableData(1);
+  };
+
+  const handleEditorSave = () => {
+    setEditorMode('HIDE');
+    handleSearch();
   };
 
   useEffect(() => {
@@ -94,7 +103,9 @@ export default function LoggerAlarm() {
       <ContentCard>
         <div className="table-caption">
           <h3>告警列表</h3>
-          <Button type="primary">+ 新增日志告警</Button>
+          <Button type="primary" onClick={() => setEditorMode('ADD')}>
+            + 新增日志告警
+          </Button>
         </div>
         <Table
           loading={loading}
@@ -135,6 +146,12 @@ export default function LoggerAlarm() {
             )}
           />
         </Table>
+
+        <AlarmEditor
+          mode={editorMode}
+          onClose={() => setEditorMode('HIDE')}
+          onSave={handleEditorSave}
+        />
       </ContentCard>
     </MatrixPageContent>
   );
