@@ -73,6 +73,35 @@ export function useCategoryOptions() {
   return [source];
 }
 
+export function useIntervalUnitOptions() {
+  const [source, setSource] = useState<SelectOptions[]>([]);
+
+  useEffect(() => {
+    setSource([
+      { label: '秒', value: 'seconds' },
+      { label: '分钟', value: 'minutes' },
+      { label: '小时', value: 'hours' },
+      { label: '天', value: 'days' },
+    ]);
+  }, []);
+
+  return [source];
+}
+
+export function useLevelOptions() {
+  const [source, setSource] = useState<SelectOptions<number>[]>([]);
+
+  useEffect(() => {
+    setSource([
+      { label: '低', value: 1 },
+      { label: '中', value: 2 },
+      { label: '高', value: 3 },
+    ]);
+  }, []);
+
+  return [source];
+}
+
 export function useNotifyTypeOptions() {
   const [source, setSource] = useState<SelectOptions<number>[]>([]);
 
