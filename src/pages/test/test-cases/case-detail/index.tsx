@@ -3,12 +3,12 @@
 // @create 2021/05/30 20:15
 
 import React, { useState, useEffect } from 'react';
-import { Drawer, Table, Form, Steps, Input, Tabs } from 'antd';
-import { CaseItemVO } from '../interfaces';
+import { Drawer, Table, Form, Steps, Input } from 'antd';
+import { CaseItemVO, FuncProps } from '../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
-import { getFuncListByIds, getCaseListByIds } from './common';
-import './index.less';
+import { getFuncListByIds, getCaseListByIds } from '../case-editor/common';
+import '../case-editor/index.less';
 
 const { Item: FormItem } = Form;
 
@@ -36,8 +36,8 @@ async function initDisplayData(
   initData: CaseItemVO,
 ): Promise<DisplayDataProps> {
   const hooks = initData.hooks ? JSON.parse(initData.hooks) : {};
-  const beforeFunIds: number[] = hooks.setup || [];
-  const afterFuncIds: number[] = hooks.teardown || [];
+  const beforeFuns: FuncProps[] = hooks.setup || [];
+  const afterFuncs: FuncProps[] = hooks.teardown || [];
   const beforeCaseIds: number[] = initData.preStep
     ? initData.preStep.split(',').map((n: string) => +n)
     : [];
@@ -47,8 +47,8 @@ async function initDisplayData(
   return {
     name: initData.name,
     desc: initData.desc,
-    beforeFuncs: await getFuncListByIds(beforeFunIds),
-    afterFuncs: await getFuncListByIds(afterFuncIds),
+    beforeFuncs: await getFuncListByIds(beforeFuns),
+    afterFuncs: await getFuncListByIds(afterFuncs),
     beforeCases: await getCaseListByIds(beforeCaseIds),
     customVars: initData.customVars || [],
     headers: initData.headers || [],

@@ -3,7 +3,7 @@
 // @create 2021/06/06 11:35
 
 import React, { useState } from 'react';
-import { Table, Button, Popover, message } from 'antd';
+import { Table, Button, Popover, message, Input } from 'antd';
 import { getRequest } from '@/utils/request';
 import * as APIS from '../service';
 import DebounceSelect from '@/components/debounce-select';
@@ -56,6 +56,15 @@ export default function FuncTableField(props: FuncTableFieldProps) {
     props.onChange?.(nextValue);
   };
 
+  const handleArgsChange = (value: string, index: number) => {
+    const nextValue = props.value?.slice(0) || [];
+    nextValue[index] = {
+      ...nextValue[index],
+      argument: value,
+    };
+    props.onChange?.(nextValue);
+  };
+
   return (
     <div className="func-table-field">
       <div className="field-caption">
@@ -84,6 +93,21 @@ export default function FuncTableField(props: FuncTableFieldProps) {
       </div>
       <Table dataSource={props.value || []} bordered pagination={false}>
         <Table.Column dataIndex="name" title="函数" />
+        <Table.Column
+          dataIndex="argument"
+          title="入参"
+          onCell={() => ({ className: 'input-wrapper-cell' })}
+          width={262}
+          render={(value, record, index) => (
+            <Input
+              className="cell-inner-input"
+              placeholder="请输入参数"
+              value={value}
+              onChange={(e) => handleArgsChange(e.target.value, index)}
+              style={{ width: 260 }}
+            />
+          )}
+        />
         <Table.Column dataIndex="desc" title="描述" />
         <Table.Column
           title="操作"
