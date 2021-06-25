@@ -8,11 +8,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Radio, Button, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useListData, useEffectOnce } from 'white-react-use';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
+import { useListData } from 'white-react-use';
+import VCPageContent, { ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import CreateApplication from '@/components/create-application';
 import ApplicationCardList from './application-card-list';
@@ -34,32 +31,26 @@ const AllApplication = (props: IProps) => {
       pageSize: 20,
     });
 
-  const queryAllAppsWithLoading = (...args: any[]) => {
+  /** 我的应用 */
+  const [queryMyApps, myList, setMyList, myPagination, setMyPagination] =
+    useListData(queryApps as any, {
+      currentAlias: 'pageIndex',
+      pageSize: 20,
+    });
+
+  const queryAppsWithLoading = (params: any) => {
     setLoading(true);
-    queryAllApps(...args).finally(() => setLoading(false));
+
+    const queryFn = type === 'all' ? queryAllApps : queryMyApps;
+    queryFn({ ...params, requestType: type }).finally(() => setLoading(false));
   };
 
-  /** 我的应用 */
-  // const [
-  //   queryMyApps,
-  //   myList,
-  //   setMyList,
-  //   myPagination,
-  //   setMyPagination,
-  // ] = useListData(queryApps as any, {
-  //   currentAlias: 'pageIndex',
-  // });
-
-  useEffectOnce(() => {
-    queryAllAppsWithLoading({
+  useEffect(() => {
+    queryAppsWithLoading({
       pageIndex: 1,
       pageSize: 20,
     });
-    // queryMyApps({
-    //   pageIndex: 1,
-    //   pageSize: 10,
-    // });
-  });
+  }, [type]);
 
   return (
     <VCPageContent
@@ -74,15 +65,10 @@ const AllApplication = (props: IProps) => {
         onClose={() => setCreateAppVisible(false)}
         onSubmit={() => {
           // 保存成功后，关闭抽屉，重新请求列表
-          queryAllAppsWithLoading({
+          queryAppsWithLoading({
             pageIndex: allPagination.current,
             pageSize: allPagination.pageSize,
           });
-          // queryMyApps({
-          //   type: 'my',
-          //   pageIndex: myPagination.current,
-          //   pageSize: myPagination.pageSize,
-          // });
           setCreateAppVisible(false);
         }}
       />
@@ -92,8 +78,7 @@ const AllApplication = (props: IProps) => {
           <div className={`${rootCls}__header`}>
             <Radio.Group value={type} onChange={(e) => setType(e.target.value)}>
               <Radio.Button value="all">全部应用</Radio.Button>
-              {/* TODO 一期先不上我的应用功能 */}
-              {/* <Radio.Button value="my">我的应用</Radio.Button> */}
+              <Radio.Button value="my">我的应用</Radio.Button>
             </Radio.Group>
 
             <Button type="primary" onClick={() => setCreateAppVisible(true)}>
@@ -104,19 +89,17 @@ const AllApplication = (props: IProps) => {
 
           <div className={`${rootCls}__card-wrapper`}>
             <ApplicationCardList
+              key={type}
               pagination={{
-                // ...(type === 'all' ? allPagination : myPagination),
-                ...allPagination,
+                ...(type === 'all' ? allPagination : myPagination),
                 onChange: (page, pageSize) => {
-                  // const queryFn = type === 'all' ? queryAllApps : queryMyApps;
-                  queryAllAppsWithLoading({
+                  queryAppsWithLoading({
                     pageIndex: page,
                     pageSize,
                   });
                 },
               }}
-              // dataSource={type === 'all' ? allList : myList}
-              dataSource={allList}
+              dataSource={type === 'all' ? allList : myList}
             />
           </div>
         </ContentCard>

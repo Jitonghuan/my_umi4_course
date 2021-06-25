@@ -4,6 +4,8 @@ import ds from '@config/defaultSettings';
 /** 查询应用列表 */
 export const queryAppsUrl = `${ds.apiPrefix}/appManage/list`;
 
+export const queryMyAppsUrl = `${ds.apiPrefix}/appManage/listMyApp`;
+
 /** 查询应用列表 */
 export const queryApps = (params: {
   /** id */
@@ -24,8 +26,14 @@ export const queryApps = (params: {
   pageIndex: number;
   /** 分页大小 */
   pageSize: number;
-}) =>
-  getRequest(queryAppsUrl, { data: params }).then((res: any) => {
+
+  requestType?: 'all' | 'my';
+}) => {
+  const { requestType, ...data } = params;
+
+  return getRequest(requestType === 'my' ? queryMyAppsUrl : queryAppsUrl, {
+    data,
+  }).then((res: any) => {
     if (res.success) {
       return {
         list: res.data?.dataSource || [],
@@ -35,6 +43,7 @@ export const queryApps = (params: {
 
     return { list: [] };
   });
+};
 
 /** 删除应用 */
 export const deleteApp = (params: {
@@ -400,3 +409,9 @@ export const queryEnvsReq = (params: {
 
     return { list: [] };
   });
+
+// 重启应用
+export const restartAppUrl = `${ds.apiPrefix}/appManage/restart`;
+export const restartApp = async (data: any) => {
+  return await postRequest(restartAppUrl, { data });
+};
