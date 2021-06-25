@@ -6,13 +6,17 @@
  */
 
 import React, { useState } from 'react';
-import { Modal, Button } from 'antd';
+import { Modal, Button, message, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { createDeploy, updateFeatures } from '../../../../../../service';
+import {
+  createDeploy,
+  updateFeatures,
+  restartApp,
+} from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 
@@ -112,14 +116,15 @@ const PublishContent = ({
               >
                 批量退出
               </Button>
-              <Button
-                onClick={() => {
-                  // TODO
-                  // alert('缺接口');
+              <Popconfirm
+                title="确定要重启应用吗？"
+                onConfirm={async () => {
+                  await restartApp({ appCode, envCode: envTypeCode });
+                  message.success('操作成功！');
                 }}
               >
-                重启
-              </Button>
+                <Button>重启</Button>
+              </Popconfirm>
             </div>
           )}
         </div>
