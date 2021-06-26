@@ -9,3 +9,11 @@ export const getEnvList = addAPIPrefix('/logManage/logSearch/env');
 export const getMonitorList = addAPIPrefix('/logManage/alertrule/list');
 
 export const getAppList = addAPIPrefix('/appManage/list');
+
+export const getAlertRule = addAPIPrefix('/logManage/alertrule/options/list');
+
+export const createRule = addAPIPrefix('/logManage/alertrule/create');
+
+export const updateRule = addAPIPrefix('/logManage/alertrule/update');
+
+export const deleteRule = addAPIPrefix('/logManage/alertrule/delete');

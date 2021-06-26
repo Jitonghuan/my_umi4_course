@@ -2,11 +2,20 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/23 09:25
 
-import React, { useCallback, useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Table,
+  Tag,
+  message,
+  Popconfirm,
+} from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { getRequest } from '@/utils/request';
+import { getRequest, delRequest } from '@/utils/request';
 import * as APIS from './service';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
 import { EditorMode } from './interface';
@@ -26,10 +35,10 @@ export default function LoggerAlarm() {
   const [loading, setLoading] = useState(false);
 
   const [editorMode, setEditorMode] = useState<EditorMode>('HIDE');
+  const [editData, setEditData] = useState<any>();
 
   const queryTableData = (page = pageIndex) => {
     const values = searchField.getFieldsValue();
-
     setLoading(true);
     getRequest(APIS.getMonitorList, {
       data: {
@@ -49,8 +58,7 @@ export default function LoggerAlarm() {
   };
 
   const handleSearch = () => {
-    setPageIndex(1);
-    queryTableData(1);
+    pageIndex === 1 ? queryTableData() : setPageIndex(1);
   };
 
   const handleEditorSave = () => {
@@ -60,7 +68,21 @@ export default function LoggerAlarm() {
 
   useEffect(() => {
     queryTableData();
-  }, [pageSize]);
+  }, [pageIndex, pageSize]);
+
+  const handleEditItem = (item: any, index: number) => {
+    setEditorMode('EDIT');
+    setEditData(item);
+  };
+
+  const handleDelItem = async (item: any, index: number) => {
+    await delRequest(APIS.deleteRule, {
+      data: { ruleId: item.id },
+    });
+
+    message.success('规则删除成功！');
+    handleSearch();
+  };
 
   return (
     <MatrixPageContent className="page-logger-alarm">
@@ -112,11 +134,12 @@ export default function LoggerAlarm() {
           dataSource={tableSource}
           pagination={{
             current: pageIndex,
-            total: total,
+            total,
+            pageSize,
+            showSizeChanger: true,
             defaultPageSize: 20,
-            onChange: (page, pageSize) => {
-              console.log('>>>> page, pageSize', page, pageSize);
-            },
+            onChange: (next) => setPageIndex(next),
+            onShowSizeChange: (_, next) => setPageSize(next),
           }}
         >
           <Table.Column dataIndex="id" title="ID" />
@@ -140,8 +163,18 @@ export default function LoggerAlarm() {
             title="操作"
             render={(_, record, index) => (
               <div className="action-cell">
-                <Button type="text">编辑</Button>
-                <Button type="text">删除</Button>
+                <Button
+                  type="text"
+                  onClick={() => handleEditItem(record, index)}
+                >
+                  编辑
+                </Button>
+                <Popconfirm
+                  title="确定要删除该规则吗？"
+                  onConfirm={() => handleDelItem(record, index)}
+                >
+                  <Button type="text">删除</Button>
+                </Popconfirm>
               </div>
             )}
           />
@@ -151,6 +184,7 @@ export default function LoggerAlarm() {
           mode={editorMode}
           onClose={() => setEditorMode('HIDE')}
           onSave={handleEditorSave}
+          initData={editData}
         />
       </ContentCard>
     </MatrixPageContent>

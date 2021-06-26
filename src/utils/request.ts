@@ -18,55 +18,68 @@ const parseErrorMsg = (errorMsg: any) => {
   return errorMsg?.msg || errorMsg?.message || 'unknown error';
 };
 
-// 默认使用组件库对针对后台项目登录模式设计的接口调用方案
-const request = (url: string, params?: IRequestParams | undefined) => {
-  return new Promise<IResponse>((resolve, reject) => {
-    sso
-      .request(url, params)
-      .then((resp) => {
-        if (!resp.success) {
-          message.error(parseErrorMsg(resp.errorMsg));
-          reject(resp);
-          return;
-        }
+async function requestHandler(
+  promise: Promise<IResponse<any>>,
+  reserveError = false,
+) {
+  return promise
+    .then((resp) => {
+      // 非登录失效报错
+      if (!resp.success) {
+        message.error(parseErrorMsg(resp.errorMsg));
+        throw resp;
+      }
 
-        resolve(resp);
-      })
-      .catch((resp) => {
-        if (![3002, 3001].includes(resp.code)) {
-          message.error(parseErrorMsg(resp.errorMsg));
-        }
-        reject(resp);
-      });
-  });
+      return resp;
+    })
+    .catch((resp) => {
+      if (![3002, 3001].includes(resp.code)) {
+        message.error(parseErrorMsg(resp.errorMsg));
+      }
+
+      throw reserveError ? resp : resp.errorMsg;
+    });
+}
+
+// 默认使用组件库对针对后台项目登录模式设计的接口调用方案
+const request = (
+  url: string,
+  params?: IRequestParams,
+  reserveError?: boolean,
+) => {
+  return requestHandler(sso.request(url, params), reserveError);
 };
+
 export const getRequest = request;
+
+export const delRequest = (
+  url: string,
+  params?: IRequestParams,
+  reserveError?: boolean,
+) => {
+  return requestHandler(
+    sso.request(url, { ...params, method: 'DELETE' }),
+    reserveError,
+  );
+};
 
 export const postRequest = (
   url: string,
-  params?: IRequestParams | undefined,
+  params?: IRequestParams,
   reserveError?: boolean,
 ) => {
-  return new Promise<IResponse>((resolve, reject) => {
-    sso
-      .post(url, params)
-      .then((resp) => {
-        // 非登录失效报错
-        if (!resp.success) {
-          message.error(parseErrorMsg(resp.errorMsg));
-          reject(resp);
-          return;
-        }
+  return requestHandler(sso.post(url, params), reserveError);
+};
 
-        resolve(resp);
-      })
-      .catch((resp) => {
-        if (![3002, 3001].includes(resp.code)) {
-          message.error(parseErrorMsg(resp.errorMsg));
-        }
-        reject(reserveError ? resp : resp.errorMsg);
-      });
-  });
+export const putRequest = (
+  url: string,
+  params?: IRequestParams,
+  reserveError?: boolean,
+) => {
+  return requestHandler(
+    sso.request(url, { ...params, method: 'PUT' }),
+    reserveError,
+  );
 };
 
 export const queryUserInfo = sso.queryUserInfo;

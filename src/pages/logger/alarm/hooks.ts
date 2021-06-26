@@ -47,6 +47,30 @@ export function useEnvOptions() {
   return [source];
 }
 
+export function useRuleOptions() {
+  const [groupSource, setGroupSource] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [indexSource, setIndexSource] = useState<
+    { label: string; value: string }[]
+  >([]);
+
+  useEffect(() => {
+    getRequest(APIS.getAlertRule).then((result) => {
+      const { Group, Index } = result.data || {};
+
+      setGroupSource(
+        (Group || []).map((n: string) => ({ label: n, value: n })),
+      );
+      setIndexSource(
+        (Index || []).map((n: string) => ({ label: n, value: n })),
+      );
+    });
+  }, []);
+
+  return [groupSource, indexSource];
+}
+
 export function useStatusOptions() {
   const [source, setSource] = useState<SelectOptions<number>[]>([]);
 
@@ -60,28 +84,17 @@ export function useStatusOptions() {
   return [source];
 }
 
-export function useCategoryOptions() {
-  const [source, setSource] = useState<SelectOptions<number>[]>([]);
-
-  useEffect(() => {
-    setSource([
-      { label: 'SQL异常', value: 1 },
-      { label: '服务异常', value: 2 },
-    ]);
-  }, []);
-
-  return [source];
-}
-
-export function useIntervalUnitOptions() {
+// 比较符
+export function useOperatorOptions() {
   const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
     setSource([
-      { label: '秒', value: 'seconds' },
-      { label: '分钟', value: 'minutes' },
-      { label: '小时', value: 'hours' },
-      { label: '天', value: 'days' },
+      { label: '=', value: '=' },
+      { label: '>', value: '>' },
+      { label: '>=', value: '>=' },
+      { label: '<', value: '<' },
+      { label: '<=', value: '<=' },
     ]);
   }, []);
 
@@ -93,9 +106,9 @@ export function useLevelOptions() {
 
   useEffect(() => {
     setSource([
-      { label: '低', value: 1 },
-      { label: '中', value: 2 },
-      { label: '高', value: 3 },
+      { label: '警告', value: 2 },
+      { label: '严重', value: 3 },
+      { label: '灾难', value: 4 },
     ]);
   }, []);
 
@@ -103,14 +116,12 @@ export function useLevelOptions() {
 }
 
 export function useNotifyTypeOptions() {
-  const [source, setSource] = useState<SelectOptions<number>[]>([]);
+  const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
     setSource([
-      { label: '钉钉', value: 1 },
-      { label: '邮件', value: 2 },
-      { label: '短信', value: 3 },
-      { label: '电话', value: 4 },
+      { label: '钉钉', value: '钉钉' },
+      { label: '电话', value: '电话' },
     ]);
   }, []);
 
