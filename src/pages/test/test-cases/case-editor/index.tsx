@@ -131,7 +131,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       await postRequest(APIS.saveCaseInfo, {
         data: {
           ...payload,
-          apiId: props.current?.key,
+          apiId: props.current?.bizId!,
           createUser: userInfo.userName,
         },
       });
