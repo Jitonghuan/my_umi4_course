@@ -92,9 +92,9 @@ export function useOperatorOptions() {
     setSource([
       { label: '=', value: '=' },
       { label: '>', value: '>' },
-      { label: '>=', value: '>=' },
       { label: '<', value: '<' },
-      { label: '<=', value: '<=' },
+      // { label: '>=', value: '>=' },
+      // { label: '<=', value: '<=' },
     ]);
   }, []);
 

@@ -71,6 +71,11 @@ export default [
         component: '@/pages/demo/layout-tb',
       },
       {
+        path: 'layout-box',
+        name: '盒子布局',
+        component: '@/pages/demo/layout-box',
+      },
+      {
         path: 'list',
         name: '列表页面',
         component: '@/pages/demo/list',
@@ -309,6 +314,31 @@ export default [
         component: '@/pages/test/functions',
         exact: true,
       },
+      // {
+      //   path: 'autotest',
+      //   name: '自动化测试',
+      //   key: 'autotest',
+      //   routes: [
+      //     {
+      //       path: 'test-cases',
+      //       name: '用例管理',
+      //       component: '@/pages/test/test-cases',
+      //       hideInMenu: true,
+      //     },
+      //     {
+      //       path: 'scenes',
+      //       name: '场景管理',
+      //       component: '@/pages/test/test-cases',
+      //       hideInMenu: true,
+      //     },
+      //     {
+      //       path: 'tasks',
+      //       name: '任务管理',
+      //       component: '@/pages/test/test-cases',
+      //       hideInMenu: true,
+      //     },
+      //   ]
+      // },
       {
         path: 'test-cases',
         name: '用例管理',
@@ -316,6 +346,24 @@ export default [
         component: '@/pages/test/test-cases',
         exact: true,
       },
+      // {
+      //   path: 'autotest/scenes',
+      //   name: '场景管理',
+      //   // key: 'scenes',
+      //   // component: '@/pages/test/scene-manager',
+      //   component: '@/pages/test/test-cases',
+      //   hideInMenu: true,
+      //   // exact: true,
+      // },
+      // {
+      //   path: 'autotest/tasks',
+      //   name: '任务管理',
+      //   // key: 'tasks',
+      //   // component: '@/pages/test/task-manager',
+      //   component: '@/pages/test/test-cases',
+      //   hideInMenu: true,
+      //   // exact: true,
+      // },
     ],
   },
   {
