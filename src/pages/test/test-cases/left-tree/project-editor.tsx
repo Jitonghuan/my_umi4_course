@@ -14,7 +14,7 @@ export interface ProjectEditorProps {
   /** 触发节点，如果是编辑，则也是编辑的目标节点 */
   targetNode?: TreeNode;
   onClose: () => any;
-  onSave: (data: TreeNodeSaveData) => any;
+  onSave: (data: TreeNodeSaveData, targetNode: TreeNode) => any;
 }
 
 export default function ProjectEditor(props: ProjectEditorProps) {
@@ -49,10 +49,10 @@ export default function ProjectEditor(props: ProjectEditorProps) {
       });
 
       message.success('新增成功！');
-      onSave(payload);
+      onSave(payload, targetNode!);
     } else {
       const payload = {
-        id: targetNode?.key as number,
+        id: targetNode?.bizId!,
         name: name,
         desc: desc,
         modifyUser: userInfo.userName,
@@ -62,7 +62,7 @@ export default function ProjectEditor(props: ProjectEditorProps) {
       });
 
       message.success('保存成功！');
-      onSave(payload);
+      onSave(payload, targetNode!);
     }
   }, [mode, targetNode]);
 

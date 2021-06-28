@@ -20,6 +20,8 @@ export interface ProjectItemVO extends Record<string, any> {
 }
 
 export interface TreeNode extends DataNode {
+  /** 业务ID，即服务端返回的 id 字段，方便将 key 和 id 区分开来 */
+  bizId?: number;
   title?: string;
   /** 节点级别， 1: 项目, 2: 模块, 3: 接口 */
   level?: number;
