@@ -65,6 +65,7 @@ const DataFactoryAdd: React.FC = () => {
       defaultValue: 'hbos',
       onChange: (e) => {
         queryDataFactoryNameFun({ project: e });
+        form.resetFields(['factoryName']);
       },
     },
     {
@@ -180,6 +181,10 @@ const DataFactoryAdd: React.FC = () => {
       createUser: userInfo?.userName,
     });
   };
+
+  useEffect(() => {
+    queryDataFactoryNameFun({ project: 'hbos' });
+  }, []);
 
   useEffect(() => {
     if (!factoryNameData) return;
