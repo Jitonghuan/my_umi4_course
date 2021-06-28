@@ -149,19 +149,25 @@ export function getMergedList<T, U>(
   return next;
 }
 
+let RANDOM_SEED = Date.now();
+export const randomKey = () =>
+  (Math.random() * RANDOM_SEED++).toString(36).toUpperCase();
+
 export function formatTreeData(payload: any) {
   if (!payload?.length) return [];
 
   // 第一层是项目，目前有且仅有一个
   return payload.map((n1: any) => ({
-    key: n1.id,
+    bizId: n1.id,
+    key: `l1-${n1.id}`,
     title: n1.name, // 项目名
     desc: n1.desc,
     selectable: true,
     level: 1, // 加上 level 方便判断
     // 第二层是模块
     children: (n1.children || []).map((n2: any) => ({
-      key: n2.id,
+      bizId: n2.id,
+      key: `l2-${n2.id}`,
       title: n2.name, // 模块名
       desc: n2.desc,
       selectable: true,
@@ -169,7 +175,8 @@ export function formatTreeData(payload: any) {
       projectId: n1.id,
       // 第三层是接口
       children: (n2.children || []).map((n3: any) => ({
-        key: n3.id,
+        bizId: n3.id,
+        key: `l3-${n3.id}`,
         title: n3.name, // 接口名
         selectable: true,
         isLeaf: true,

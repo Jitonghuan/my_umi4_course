@@ -40,7 +40,7 @@ export default function ModuleEditor(props: ModuleEditorProps) {
 
     if (mode === 'ADD') {
       const payload = {
-        projectId: targetNode?.key,
+        projectId: targetNode?.bizId!,
         name: name,
         desc: desc,
         createUser: userInfo.userName,
@@ -53,7 +53,7 @@ export default function ModuleEditor(props: ModuleEditorProps) {
       onSave(payload);
     } else {
       const payload = {
-        id: targetNode?.key as number,
+        id: targetNode?.bizId!,
         projectId: targetNode?.projectId,
         name: name,
         desc: desc,
