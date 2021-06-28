@@ -71,7 +71,7 @@ export default function ApiEditor(props: ApiEditorProps) {
 
     // 1. 获取 api detail
     getRequest(APIS.getApiInfo, {
-      data: { id: targetNode?.key },
+      data: { id: targetNode?.bizId },
     }).then((result) => {
       originDataRef.current = result.data;
       const initFields = { ...result.data };

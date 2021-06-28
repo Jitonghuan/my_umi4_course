@@ -22,14 +22,14 @@ interface RightDetailProps extends Record<string, any> {
 
 export default function RightDetail(props: RightDetailProps) {
   const [apiDetail, apiLoading] = useApiDetail(
-    props.current?.key as number,
-    props.current?.level as number,
+    props.current?.bizId!,
+    props.current?.level!,
   );
   const [pageIndex, setPageIndex] = useState(1);
   const [caseList, caseTotal, caseLoading, reloadCase] = useCaseList(
-    props.current?.key as number,
+    props.current?.bizId!,
     pageIndex,
-    props.current?.level as number,
+    props.current?.level!,
   );
   const [execCases, setExecCases] = useState<CaseItemVO[]>([]);
 
