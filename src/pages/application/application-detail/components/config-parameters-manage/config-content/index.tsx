@@ -55,7 +55,11 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   }>();
 
   // 查询数据
-  const { run: queryConfigList, tableProps, reset } = usePaginated({
+  const {
+    run: queryConfigList,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryConfigListUrl,
     requestMethod: 'GET',
     showRequestError: true,

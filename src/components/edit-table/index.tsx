@@ -140,7 +140,7 @@ interface EditableTableState<T = any> extends EditableTableProps {
 const EditableTable = <
   T extends {
     id: React.Key;
-  } = any
+  } = any,
 >({
   initData = [],
   onTableChange,

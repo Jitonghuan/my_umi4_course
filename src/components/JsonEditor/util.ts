@@ -39,7 +39,8 @@ export const getRegExpValue = (
   operateArr: string[],
   bracketsArr: string[],
 ) => {
-  const variableRegExp = /\$[\{][^\}]*[\}]|\w+|\$\{[^\$)\$,]*\w\}|\$\{[^\$]*\w\}|\$\{[^\$]*[\u4e00-\u9fa5]\}|\w|(.)|\n/g;
+  const variableRegExp =
+    /\$[\{][^\}]*[\}]|\w+|\$\{[^\$)\$,]*\w\}|\$\{[^\$]*\w\}|\$\{[^\$]*[\u4e00-\u9fa5]\}|\w|(.)|\n/g;
   const operateRegStr = operateArr
     .map((el) => {
       return /\W/.test(el) ? `\\${el}` : el;

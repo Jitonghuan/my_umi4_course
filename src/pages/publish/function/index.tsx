@@ -12,9 +12,11 @@ import usePublicData from '@/utils/usePublicData';
 import { createFormItems, createTableColumns } from './schema';
 
 const FunctionCom: React.FC = () => {
-  const { categoryData = [], envData = [], businessData = [] } = useContext(
-    FEContext,
-  );
+  const {
+    categoryData = [],
+    envData = [],
+    businessData = [],
+  } = useContext(FEContext);
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
 
   const [form] = Form.useForm();

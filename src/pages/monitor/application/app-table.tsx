@@ -214,7 +214,11 @@ const Coms = (props: IProps) => {
   };
 
   // 查询节点使用率
-  const { run: queryNodeList, reset, tableProps } = usePaginated({
+  const {
+    run: queryNodeList,
+    reset,
+    tableProps,
+  } = usePaginated({
     requestUrl: queryPodInfoApi,
     requestMethod: 'GET',
     showRequestError: true,

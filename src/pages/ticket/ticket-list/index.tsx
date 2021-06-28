@@ -88,7 +88,11 @@ const Coms = (props: any) => {
   };
 
   // 查询数据
-  const { run: queryTicketLists, tableProps, reset } = usePaginated({
+  const {
+    run: queryTicketLists,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryTicketData,
     requestMethod: 'GET',
     showRequestError: true,

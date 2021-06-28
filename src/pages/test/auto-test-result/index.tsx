@@ -34,7 +34,11 @@ const Coms = () => {
   const [filter, setFilter] = useState<any>({ belong: 'gmc' });
 
   // 查询表格
-  const { run: queryTableData, tableProps, reset } = usePaginated({
+  const {
+    run: queryTableData,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryTestResult,
     requestMethod: 'GET',
     showRequestError: true,

@@ -53,9 +53,8 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const [form] = Form.useForm();
   const isCheck = type === 'check';
 
-  const { categoryData = [], businessData: businessDataList = [] } = useContext(
-    FEContext,
-  );
+  const { categoryData = [], businessData: businessDataList = [] } =
+    useContext(FEContext);
 
   const { envsUrlList } = usePublicData({
     isEnvType: false,

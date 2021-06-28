@@ -95,7 +95,11 @@ const Coms = (props: any) => {
   };
 
   // 查询表格数据
-  const { run: queryTableData, tableProps, reset } = usePaginated({
+  const {
+    run: queryTableData,
+    tableProps,
+    reset,
+  } = usePaginated({
     requestUrl: queryAutoTest,
     requestMethod: 'GET',
     showRequestError: true,
