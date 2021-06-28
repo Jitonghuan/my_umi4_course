@@ -98,7 +98,10 @@ export default function LeftTree(props: LeftTreeProps) {
 
   // ------ callbacks
   // 项目 新增/编辑 完成后的操作
-  const handleProjectEditorSave = (data: TreeNodeSaveData) => {
+  const handleProjectEditorSave = (
+    data: TreeNodeSaveData,
+    targetNode: TreeNode,
+  ) => {
     const prevMode = projectEditorMode;
     setProjectEditorMode('HIDE');
 
@@ -117,11 +120,12 @@ export default function LeftTree(props: LeftTreeProps) {
       );
       setProjectOptions(nextProjects);
 
+      // 更新树节点
       const nextTreeData = getMergedList(
         treeData,
         {
           title: data.name,
-          key: data.id,
+          key: targetNode.key,
           desc: data.desc,
         },
         (item, addon) => item.key === addon.key,
@@ -184,7 +188,7 @@ export default function LeftTree(props: LeftTreeProps) {
             content: `确定删除项目 ${node.title} ？删除后相关数据将自动清除`,
             onOk: async () => {
               await postRequest(APIS.deleteApiTreeNode, {
-                data: { id: node.key, type: 0 },
+                data: { id: node.bizId!, type: 0 },
               });
               message.success('项目已删除!');
 
@@ -204,7 +208,7 @@ export default function LeftTree(props: LeftTreeProps) {
             content: `确定删除模块 ${node.title}？删除后相关数据将自动清除`,
             onOk: async () => {
               await postRequest(APIS.deleteApiTreeNode, {
-                data: { id: node.key, type: 1 },
+                data: { id: node.bizId!, type: 1 },
               });
               message.success('模块已删除!');
               // 删除节点后，更新 treeData （更新后，会自动触发重置判断）
@@ -218,7 +222,7 @@ export default function LeftTree(props: LeftTreeProps) {
             content: `确定删除接口 ${node.title}？删除后相关数据将自动清除`,
             onOk: async () => {
               await postRequest(APIS.deleteApiTreeNode, {
-                data: { id: node.key, type: 2 },
+                data: { id: node.bizId!, type: 2 },
               });
               message.success('接口已删除！');
               // 删除api节点后，更新 treeData ，会自动触发重置判断
