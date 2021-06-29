@@ -10,10 +10,7 @@ const APP_TYPE_MAP = {
 };
 
 // 过滤表单 schema
-export const createFilterFormSchema = (params: {
-  categoryData?: any[];
-  businessData?: any[];
-}) => ({
+export const createFilterFormSchema = (params: { categoryData?: any[]; businessData?: any[] }) => ({
   theme: 'inline',
   isShowReset: true,
   labelColSpan: 3,
@@ -111,9 +108,7 @@ export const createTableSchema = ({
       title: '应用分类',
       dataIndex: 'appCategoryCode',
       width: 80,
-      render: (appCategoryCode) =>
-        categoryData?.find((v) => v.categoryCode === appCategoryCode)
-          ?.categoryName || '-',
+      render: (appCategoryCode) => categoryData?.find((v) => v.categoryCode === appCategoryCode)?.categoryName || '-',
     },
     {
       title: '应用类型',
@@ -125,9 +120,7 @@ export const createTableSchema = ({
       title: '应用组',
       dataIndex: 'appGroupCode',
       width: 100,
-      render: (appGroupCode) =>
-        businessDataList?.find((v) => v.groupCode === appGroupCode)
-          ?.groupName || '-',
+      render: (appGroupCode) => businessDataList?.find((v) => v.groupCode === appGroupCode)?.groupName || '-',
     },
     {
       title: '责任人',

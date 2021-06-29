@@ -155,10 +155,7 @@ const DataFactoryAdd: React.FC = () => {
       rules: [],
       extraForm: (
         <Form.Item noStyle name="returnData">
-          <JsonEditor
-            style={{ minHeight: 300 }}
-            options={{ readOnly: true, placeholder: '返回数据' }}
-          />
+          <JsonEditor style={{ minHeight: 300 }} options={{ readOnly: true, placeholder: '返回数据' }} />
         </Form.Item>
       ),
       onChange: (e) => {
@@ -170,9 +167,7 @@ const DataFactoryAdd: React.FC = () => {
   const onSubmit = async () => {
     const values = await form.validateFields();
     const params = JSON.parse(values.params ?? '{}');
-    const id =
-      (factoryNameData as Item[])?.find((v) => v.name === factoryName)?.id ??
-      '';
+    const id = (factoryNameData as Item[])?.find((v) => v.name === factoryName)?.id ?? '';
 
     createDataFactoryFun({
       ...omit(values, ['returnData']),
@@ -189,10 +184,7 @@ const DataFactoryAdd: React.FC = () => {
   useEffect(() => {
     if (!factoryNameData) return;
     form.setFieldsValue({
-      params: JSON.stringify(
-        (factoryNameData as Item[])?.find((v) => v.name === factoryName)
-          ?.params,
-      ),
+      params: JSON.stringify((factoryNameData as Item[])?.find((v) => v.name === factoryName)?.params),
     });
   }, [factoryNameData, factoryName]);
 
@@ -219,11 +211,7 @@ const DataFactoryAdd: React.FC = () => {
         </Form>
         <div style={{ textAlign: 'right' }}>
           <Space>
-            <Popconfirm
-              title="确认创建数据？"
-              okText="确定"
-              onConfirm={onSubmit}
-            >
+            <Popconfirm title="确认创建数据？" okText="确定" onConfirm={onSubmit}>
               <Button type="primary">立即创建</Button>
             </Popconfirm>
 

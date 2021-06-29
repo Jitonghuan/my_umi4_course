@@ -1,26 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  Form,
-  Card,
-  Button,
-  Input,
-  Row,
-  Col,
-  Space,
-  message,
-  Select,
-  Table,
-} from 'antd';
+import { Form, Card, Button, Input, Row, Col, Space, message, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
 import BaseForm from '../../components/base-form';
 import { InitValue, BaseFormProps } from '../../../typing';
-import {
-  addPublishPlanMultiReq,
-  queryFunctionReq,
-  updatePublishPlanReq,
-} from '@/pages/publish/service';
+import { addPublishPlanMultiReq, queryFunctionReq, updatePublishPlanReq } from '@/pages/publish/service';
 import usePublicData from '@/utils/usePublicData';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { queryAppList } from '@/pages/monitor/application/service';
@@ -53,8 +38,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const [form] = Form.useForm();
   const isCheck = type === 'check';
 
-  const { categoryData = [], businessData: businessDataList = [] } =
-    useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
 
   const { envsUrlList } = usePublicData({
     isEnvType: false,
@@ -169,8 +153,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
         return;
       }
       const { preDeployTime, ...rest } = value;
-      const reqFunc =
-        type === 'add' ? addPublishPlanMultiReq : updatePublishPlanReq;
+      const reqFunc = type === 'add' ? addPublishPlanMultiReq : updatePublishPlanReq;
       reqFunc({
         plan: {
           ...(type === 'edit' ? { planId: initValueObj?.plan.planId } : {}),
@@ -225,12 +208,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
 
   return (
     <ContentCard>
-      <Card
-        bordered={false}
-        title="基本信息"
-        className="base-info"
-        headStyle={{ paddingLeft: 0 }}
-      >
+      <Card bordered={false} title="基本信息" className="base-info" headStyle={{ paddingLeft: 0 }}>
         <Form form={form} className="form-list">
           {
             <BaseForm
@@ -245,12 +223,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
           }
         </Form>
       </Card>
-      <Card
-        bordered={false}
-        title="关联相关功能"
-        headStyle={{ paddingLeft: 0 }}
-        className="content-info"
-      >
+      <Card bordered={false} title="关联相关功能" headStyle={{ paddingLeft: 0 }} className="content-info">
         <Row>
           <Col span={22} offset={2}>
             {!isCheck && (
@@ -272,21 +245,11 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
                 ))}
               </Select>
             )}
-            <Table
-              columns={mergeTableColumns as ColumnsType<any>}
-              dataSource={tableData}
-              pagination={false}
-              bordered
-            />
+            <Table columns={mergeTableColumns as ColumnsType<any>} dataSource={tableData} pagination={false} bordered />
           </Col>
         </Row>
       </Card>
-      <Card
-        bordered={false}
-        title="配置变更内容"
-        headStyle={{ paddingLeft: 0 }}
-        className="content-info"
-      >
+      <Card bordered={false} title="配置变更内容" headStyle={{ paddingLeft: 0 }} className="content-info">
         <Row>
           <Col span={24}>
             <Form form={form} className="form-list">
@@ -297,22 +260,13 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
                 wrapperCol={{ span: 18 }}
                 initialValue={initValueObj?.plan?.config}
               >
-                <Input.TextArea
-                  rows={18}
-                  placeholder="请在此输入配置变更内容"
-                  disabled={isCheck}
-                />
+                <Input.TextArea rows={18} placeholder="请在此输入配置变更内容" disabled={isCheck} />
               </Form.Item>
             </Form>
           </Col>
         </Row>
       </Card>
-      <Card
-        bordered={false}
-        title="配置数据库变更内容"
-        headStyle={{ paddingLeft: 0 }}
-        className="content-info"
-      >
+      <Card bordered={false} title="配置数据库变更内容" headStyle={{ paddingLeft: 0 }} className="content-info">
         <Row>
           <Col span={24}>
             <Form form={form} className="form-list">
@@ -323,11 +277,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
                 wrapperCol={{ span: 18 }}
                 initialValue={initValueObj?.plan?.DDL}
               >
-                <Input.TextArea
-                  rows={18}
-                  placeholder="请在此输入数据库变更内容"
-                  disabled={isCheck}
-                />
+                <Input.TextArea rows={18} placeholder="请在此输入数据库变更内容" disabled={isCheck} />
               </Form.Item>
               <Form.Item
                 label="DML"
@@ -336,11 +286,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
                 wrapperCol={{ span: 18 }}
                 initialValue={initValueObj?.plan?.DML}
               >
-                <Input.TextArea
-                  rows={18}
-                  placeholder="请在此输入数据库变更内容"
-                  disabled={isCheck}
-                />
+                <Input.TextArea rows={18} placeholder="请在此输入数据库变更内容" disabled={isCheck} />
               </Form.Item>
               {!isCheck && (
                 <Form.Item wrapperCol={{ span: 18, offset: 2 }}>

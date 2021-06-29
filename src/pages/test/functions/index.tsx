@@ -2,13 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  useRef,
-} from 'react';
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { Form, Input, Table, Button, Modal, message, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
@@ -150,22 +144,14 @@ export default function FunctionManager() {
           <Table.Column title="函数名" dataIndex="name" ellipsis />
           <Table.Column title="描述" dataIndex="desc" ellipsis />
           <Table.Column title="创建人" dataIndex="createUser" width={140} />
-          <Table.Column
-            title="操作时间"
-            dataIndex="gmtModify"
-            width={180}
-            render={datetimeCellRender}
-          />
+          <Table.Column title="操作时间" dataIndex="gmtModify" width={180} render={datetimeCellRender} />
           <Table.Column
             title="操作"
             width={120}
             render={(_, record: Record<string, any>, index) => (
               <div className="action-cell">
                 <a onClick={(e) => handleModify(record, index)}>修改</a>
-                <Popconfirm
-                  title="确定要删除该函数吗？"
-                  onConfirm={() => confirmDelItem(record, index)}
-                >
+                <Popconfirm title="确定要删除该函数吗？" onConfirm={() => confirmDelItem(record, index)}>
                   <a>删除</a>
                 </Popconfirm>
               </div>
@@ -184,10 +170,7 @@ export default function FunctionManager() {
           <Form.Item noStyle name="id">
             <Input type="hidden" />
           </Form.Item>
-          <Form.Item
-            name="content"
-            rules={[{ required: true, message: '函数内容不能为空！' }]}
-          >
+          <Form.Item name="content" rules={[{ required: true, message: '函数内容不能为空！' }]}>
             <Input.TextArea placeholder="请输入函数" autoFocus rows={10} />
           </Form.Item>
         </Form>

@@ -4,11 +4,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Modal, Select, Tree, Spin, Empty, message } from 'antd';
-import {
-  PlusSquareFilled,
-  PlusOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
+import { PlusSquareFilled, PlusOutlined, EditOutlined } from '@ant-design/icons';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import type Emitter from 'events';
 import { CardRowGroup } from '@/components/vc-page-content';
@@ -42,17 +38,14 @@ type nodeAction =
   | 'delApi';
 
 export default function LeftTree(props: LeftTreeProps) {
-  const [projectOptions, setProjectOptions, reloadProjectOptions] =
-    useProjectOptions();
+  const [projectOptions, setProjectOptions, reloadProjectOptions] = useProjectOptions();
   const [searchProject, setSearchProject] = useState<number>();
   // const [searchKey, setSearchKey] = useState<string>('');
-  const [treeData, treeLoading, setTreeData, reloadTreeData] =
-    useLeftTreeData(searchProject);
+  const [treeData, treeLoading, setTreeData, reloadTreeData] = useLeftTreeData(searchProject);
   const [selectedItem, setSelectedItem] = useState<TreeNode>();
   // 当前操作的节点（或者触发节点）
   const targetNodeRef = useRef<TreeNode>();
-  const [projectEditorMode, setProjectEditorMode] =
-    useState<EditorMode>('HIDE');
+  const [projectEditorMode, setProjectEditorMode] = useState<EditorMode>('HIDE');
   const [moduleEditorMode, setModuleEditoraMode] = useState<EditorMode>('HIDE');
   const [apiEditorMode, setApiEditorMode] = useState<EditorMode>('HIDE');
   const [expandedKeys, setExpandedKeys] = useState<(number | string)[]>([]);
@@ -65,10 +58,7 @@ export default function LeftTree(props: LeftTreeProps) {
       return;
     }
     // 默认选中第 0 个项目，触发 treeData 更新
-    if (
-      !searchProject ||
-      !projectOptions.find((n) => n.value === searchProject)
-    ) {
+    if (!searchProject || !projectOptions.find((n) => n.value === searchProject)) {
       setSearchProject(projectOptions[0].value);
     }
   }, [projectOptions, searchProject]);
@@ -84,9 +74,7 @@ export default function LeftTree(props: LeftTreeProps) {
     }
 
     // 新的 treeData 中未找到当前节点，则也选中根节点
-    const target = selectedItem
-      ? findTreeNodeByKey(treeData, selectedItem.key)
-      : null;
+    const target = selectedItem ? findTreeNodeByKey(treeData, selectedItem.key) : null;
     if (!target && treeData.length) {
       setSelectedItem(treeData[0]);
       props.onItemClick(treeData[0]);
@@ -98,10 +86,7 @@ export default function LeftTree(props: LeftTreeProps) {
 
   // ------ callbacks
   // 项目 新增/编辑 完成后的操作
-  const handleProjectEditorSave = (
-    data: TreeNodeSaveData,
-    targetNode: TreeNode,
-  ) => {
+  const handleProjectEditorSave = (data: TreeNodeSaveData, targetNode: TreeNode) => {
     const prevMode = projectEditorMode;
     setProjectEditorMode('HIDE');
 
@@ -194,9 +179,7 @@ export default function LeftTree(props: LeftTreeProps) {
 
               // 节点删除后，自动选中第 0 个
               const nextProjectList = projectOptions?.slice(0) || [];
-              const index = nextProjectList.findIndex(
-                (n) => n.value === searchProject,
-              );
+              const index = nextProjectList.findIndex((n) => n.value === searchProject);
               index > -1 && nextProjectList?.splice(index, 1);
               setProjectOptions(nextProjectList);
             },
@@ -263,11 +246,7 @@ export default function LeftTree(props: LeftTreeProps) {
         </div>
       ) : null}
       {!treeLoading && !treeData.length ? (
-        <Empty
-          description="未找到数据"
-          style={{ marginTop: 60 }}
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
+        <Empty description="未找到数据" style={{ marginTop: 60 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : null}
 
       <Tree.DirectoryTree
@@ -285,70 +264,51 @@ export default function LeftTree(props: LeftTreeProps) {
               {/* 编辑项目 */}
               {nodeData.level === 1 && (
                 <a title="编辑项目" {...stopProp}>
-                  <EditOutlined
-                    onClick={() => handleNodeAction('editProject', nodeData)}
-                  />
+                  <EditOutlined onClick={() => handleNodeAction('editProject', nodeData)} />
                 </a>
               )}
               {/* 添加子节点：模块 */}
               {nodeData.level === 1 && (
                 <a title="添加子节点：模块" {...stopProp}>
-                  <PlusOutlined
-                    onClick={() => handleNodeAction('addModule', nodeData)}
-                  />
+                  <PlusOutlined onClick={() => handleNodeAction('addModule', nodeData)} />
                 </a>
               )}
               {/* 删除项目 */}
               {nodeData.level === 1 && (
                 <a title="删除项目" {...stopProp}>
-                  <VCCustomIcon
-                    onClick={() => handleNodeAction('delProject', nodeData)}
-                    type="icondelete"
-                  />
+                  <VCCustomIcon onClick={() => handleNodeAction('delProject', nodeData)} type="icondelete" />
                 </a>
               )}
 
               {/* 编辑模块 */}
               {nodeData.level === 2 && (
                 <a title="编辑模块" {...stopProp}>
-                  <EditOutlined
-                    onClick={() => handleNodeAction('editModule', nodeData)}
-                  />
+                  <EditOutlined onClick={() => handleNodeAction('editModule', nodeData)} />
                 </a>
               )}
               {/* 添加子节点：接口 */}
               {nodeData.level === 2 && (
                 <a title="添加子节点：接口" {...stopProp}>
-                  <PlusOutlined
-                    onClick={() => handleNodeAction('addApi', nodeData)}
-                  />
+                  <PlusOutlined onClick={() => handleNodeAction('addApi', nodeData)} />
                 </a>
               )}
               {/* 删除模块 */}
               {nodeData.level === 2 && (
                 <a title="删除模块" {...stopProp}>
-                  <VCCustomIcon
-                    onClick={() => handleNodeAction('delModule', nodeData)}
-                    type="icondelete"
-                  />
+                  <VCCustomIcon onClick={() => handleNodeAction('delModule', nodeData)} type="icondelete" />
                 </a>
               )}
 
               {/* 编辑接口 */}
               {nodeData.level === 3 && (
                 <a title="编辑接口" {...stopProp}>
-                  <EditOutlined
-                    onClick={() => handleNodeAction('editApi', nodeData)}
-                  />
+                  <EditOutlined onClick={() => handleNodeAction('editApi', nodeData)} />
                 </a>
               )}
               {/* 删除接口 */}
               {nodeData.level === 3 && (
                 <a title="删除接口" {...stopProp}>
-                  <VCCustomIcon
-                    onClick={() => handleNodeAction('delApi', nodeData)}
-                    type="icondelete"
-                  />
+                  <VCCustomIcon onClick={() => handleNodeAction('delApi', nodeData)} type="icondelete" />
                 </a>
               )}
             </div>

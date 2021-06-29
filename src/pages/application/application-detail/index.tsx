@@ -30,10 +30,7 @@ const ApplicationDetail = (props: IProps) => {
   const [appData, setAppData] = useState<ContextTypes['appData']>();
 
   const tabActiveKey = useMemo(
-    () =>
-      Object.keys(tabsConfig).find(
-        (key) => location.pathname === `${detailPath}/${key}`,
-      ),
+    () => Object.keys(tabsConfig).find((key) => location.pathname === `${detailPath}/${key}`),
     [location.pathname],
   );
 
@@ -102,9 +99,7 @@ const ApplicationDetail = (props: IProps) => {
               >
                 {appData?.appCode}
               </span>
-              <span style={{ marginLeft: 12, color: 'rgba(0,0,0,.45)' }}>
-                {appData?.appName}
-              </span>
+              <span style={{ marginLeft: 12, color: 'rgba(0,0,0,.45)' }}>{appData?.appName}</span>
             </div>
           }
         >

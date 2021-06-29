@@ -88,20 +88,13 @@ export default function CaseTable(props: CaseTableFieldProps) {
           <Button>新增</Button>
         </Popover>
       </div>
-      {!props.value?.length ? (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      ) : null}
+      {!props.value?.length ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> : null}
       <Collapse>
         {props.value?.map((n, i) => (
           <Collapse.Panel
             key={i}
             header={n?.name || '用例'}
-            extra={
-              <VCCustomIcon
-                type="icondelete"
-                onClick={() => handleDelRecord(i)}
-              />
-            }
+            extra={<VCCustomIcon type="icondelete" onClick={() => handleDelRecord(i)} />}
           >
             <ul className="case-info-list">
               <li>所属项目: {n.projectName || '--'}</li>

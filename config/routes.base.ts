@@ -12,11 +12,7 @@ type IRouteItem = {
   routes?: IRouteItem[];
 };
 
-export const getRoutes = (
-  pagePrefix = '/',
-  routes: IRouteItem[] = [],
-  ds: any,
-) => [
+export const getRoutes = (pagePrefix = '/', routes: IRouteItem[] = [], ds: any) => [
   {
     path: `${ds.loginPrefix}/login`,
     component: '../layouts/login',

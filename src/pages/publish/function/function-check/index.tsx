@@ -27,14 +27,7 @@ const EditFunction: React.FC = () => {
     }
   }, [id]);
 
-  return (
-    <EditTable
-      type="check"
-      initData={initData}
-      title="查看发布功能"
-      defaultValueObj={{ ...detailInfo }}
-    />
-  );
+  return <EditTable type="check" initData={initData} title="查看发布功能" defaultValueObj={{ ...detailInfo }} />;
 };
 
 export default EditFunction;

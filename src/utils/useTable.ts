@@ -15,10 +15,7 @@ interface UseTableProps {
 const useTable = (props: UseTableProps) => {
   const { method, url, form, formatter, formatResult } = props;
 
-  const getTableData = (
-    { current, pageSize }: PaginatedParams[0],
-    formData: Record<string, any>,
-  ) => {
+  const getTableData = ({ current, pageSize }: PaginatedParams[0], formData: Record<string, any>) => {
     const curFormData = formatter ? formatter(formData) : formData;
     if (method === 'GET') {
       return getRequest(url, {

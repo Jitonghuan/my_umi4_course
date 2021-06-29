@@ -4,12 +4,7 @@ import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import { BaseFormProps } from '../../typing';
 
-const BaseForm: React.FC<BaseFormProps> = ({
-  initValueObj,
-  isCheck,
-  appList,
-  appChange,
-}) => {
+const BaseForm: React.FC<BaseFormProps> = ({ initValueObj, isCheck, appList, appChange }) => {
   const baseFormOption: FormProps[] = useMemo(() => {
     return [
       {

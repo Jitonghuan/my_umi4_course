@@ -15,11 +15,7 @@ interface StepOneProps {
   form?: FormInstance;
 }
 
-const StepOne: React.FC<StepOneProps> = ({
-  getTableData,
-  matchlabelsList = [],
-  form,
-}) => {
+const StepOne: React.FC<StepOneProps> = ({ getTableData, matchlabelsList = [], form }) => {
   const [matchlabels, setMatchlabels] = useState<Item[]>([]);
   const [appCode, setAppCode] = useState('');
 
@@ -141,11 +137,7 @@ const StepOne: React.FC<StepOneProps> = ({
           <EditTable
             onTableChange={matchlabelsFun}
             initData={matchlabels}
-            headerTitle={
-              <span style={{ color: '#999' }}>
-                (MatchLabels已设置默认值，无特殊需求，请不要填写)
-              </span>
-            }
+            headerTitle={<span style={{ color: '#999' }}>(MatchLabels已设置默认值，无特殊需求，请不要填写)</span>}
             columns={editColumns}
             handleAddItem={() => {
               return {

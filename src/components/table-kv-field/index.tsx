@@ -28,12 +28,10 @@ export default function TableField(props: TableFieldProps) {
     if (!props.value) return;
     valueRef.current = props.value;
 
-    const next: TableSourceItemProps[] = Object.keys(props.value).map(
-      (key) => ({
-        key: key,
-        value: props.value ? props.value[key] : '',
-      }),
-    );
+    const next: TableSourceItemProps[] = Object.keys(props.value).map((key) => ({
+      key: key,
+      value: props.value ? props.value[key] : '',
+    }));
 
     setDataSource(next);
   }, [props.value]);
@@ -52,16 +50,8 @@ export default function TableField(props: TableFieldProps) {
   return (
     <div className="table-kv-field">
       <Table bordered dataSource={dataSource}>
-        <Table.Column
-          dataIndex="key"
-          title="key"
-          render={() => <Input placeholder="key" />}
-        />
-        <Table.Column
-          dataIndex="value"
-          title="value"
-          render={() => <Input placeholder="value" />}
-        />
+        <Table.Column dataIndex="key" title="key" render={() => <Input placeholder="key" />} />
+        <Table.Column dataIndex="value" title="value" render={() => <Input placeholder="value" />} />
         <Table.Column
           title="操作"
           width={80}

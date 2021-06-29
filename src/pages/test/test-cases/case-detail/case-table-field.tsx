@@ -18,9 +18,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
       <div className="field-caption">
         <h3>{props.title || '前置用例'}</h3>
       </div>
-      {!props.data?.length ? (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      ) : null}
+      {!props.data?.length ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> : null}
       <Collapse>
         {props.data?.map((n, i) => (
           <Collapse.Panel key={i} header={n?.name || '用例'}>

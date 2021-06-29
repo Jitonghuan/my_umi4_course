@@ -49,12 +49,8 @@ const UnitTest: React.FC<any> = () => {
 
       return {
         ...rest,
-        startTime: testTime[0]
-          ? testTime[0].format('YYYY-MM-DD 00:00:00')
-          : undefined,
-        endTime: testTime[1]
-          ? testTime[1].format('YYYY-MM-DD 23:59:59')
-          : undefined,
+        startTime: testTime[0] ? testTime[0].format('YYYY-MM-DD 00:00:00') : undefined,
+        endTime: testTime[1] ? testTime[1].format('YYYY-MM-DD 23:59:59') : undefined,
       };
     },
   });
@@ -174,9 +170,7 @@ const UnitTest: React.FC<any> = () => {
       dataIndex: 'status',
       key: 'status',
       width: '8%',
-      render: (text: number) => (
-        <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>
-      ),
+      render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>,
     },
     {
       title: '操作',
@@ -225,10 +219,7 @@ const UnitTest: React.FC<any> = () => {
       option: appTypeData,
       onChange: (e) => {
         setAppCategoryCode(e);
-        if (
-          !form?.getFieldValue('appCode') ||
-          !form?.getFieldValue('branchName')
-        ) {
+        if (!form?.getFieldValue('appCode') || !form?.getFieldValue('branchName')) {
           setAppCode('');
         }
         form?.resetFields(['appCode', 'branchName']);

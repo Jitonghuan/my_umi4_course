@@ -1,25 +1,12 @@
 import React from 'react';
-import {
-  Select,
-  Input,
-  DatePicker,
-  Button,
-  Form,
-  Space,
-  InputNumber,
-  Radio,
-  Checkbox,
-} from 'antd';
+import { Select, Input, DatePicker, Button, Form, Space, InputNumber, Radio, Checkbox } from 'antd';
 import { TableSearchProps, FormProps } from './typing';
 
 const { Item } = Form;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-export const renderForm = (
-  formOptions: FormProps[] = [],
-  onSearch?: () => void,
-) => {
+export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void) => {
   if (!formOptions.length) return [];
   return formOptions.map((v) => {
     const {
@@ -58,13 +45,7 @@ export const renderForm = (
       case 'select':
         return (
           <>
-            <Item
-              label={label}
-              required={required}
-              key={key}
-              style={itemStyle}
-              {...rest}
-            >
+            <Item label={label} required={required} key={key} style={itemStyle} {...rest}>
               <Item
                 name={dataIndex}
                 initialValue={defaultValue}
@@ -86,11 +67,7 @@ export const renderForm = (
                   allowClear={allowClear || true}
                   showSearch={showSelectSearch}
                   optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option?.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
+                  filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   style={{ width: width, ...styles }}
                   onChange={onChange}
                   getPopupContainer={(triggerNode) => triggerNode.parentElement}
@@ -111,13 +88,7 @@ export const renderForm = (
         );
       case 'input':
         return (
-          <Item
-            required={required}
-            label={label}
-            key={key}
-            style={itemStyle}
-            {...rest}
-          >
+          <Item required={required} label={label} key={key} style={itemStyle} {...rest}>
             <Item
               initialValue={defaultValue}
               name={dataIndex}
@@ -149,13 +120,7 @@ export const renderForm = (
         );
       case 'date':
         return (
-          <Item
-            required={required}
-            label={label}
-            key={key}
-            style={itemStyle}
-            {...rest}
-          >
+          <Item required={required} label={label} key={key} style={itemStyle} {...rest}>
             <Item
               initialValue={defaultValue}
               name={dataIndex}
@@ -185,13 +150,7 @@ export const renderForm = (
         );
       case 'range':
         return (
-          <Item
-            required={required}
-            label={label}
-            key={key}
-            style={itemStyle}
-            {...rest}
-          >
+          <Item required={required} label={label} key={key} style={itemStyle} {...rest}>
             <Item
               initialValue={defaultValue}
               name={dataIndex}
@@ -221,13 +180,7 @@ export const renderForm = (
         );
       case 'area':
         return (
-          <Item
-            required={required}
-            label={label}
-            key={key}
-            style={itemStyle}
-            {...rest}
-          >
+          <Item required={required} label={label} key={key} style={itemStyle} {...rest}>
             <Item
               initialValue={defaultValue}
               name={dataIndex}
@@ -259,14 +212,7 @@ export const renderForm = (
         );
       case 'inputNumber':
         return (
-          <Item
-            required={required}
-            label={label}
-            key={key}
-            style={itemStyle}
-            className={className}
-            {...rest}
-          >
+          <Item required={required} label={label} key={key} style={itemStyle} className={className} {...rest}>
             <Item
               initialValue={defaultValue}
               name={dataIndex}
@@ -298,13 +244,7 @@ export const renderForm = (
         );
       case 'radio':
         return (
-          <Item
-            required={required}
-            label={label}
-            key={key}
-            style={itemStyle}
-            {...rest}
-          >
+          <Item required={required} label={label} key={key} style={itemStyle} {...rest}>
             <Item
               initialValue={defaultValue}
               name={dataIndex}
@@ -321,11 +261,7 @@ export const renderForm = (
                     ]
               }
             >
-              <Radio.Group
-                onChange={onChange}
-                style={{ width: width, ...styles }}
-                id={id}
-              >
+              <Radio.Group onChange={onChange} style={{ width: width, ...styles }} id={id}>
                 {option?.map((item) => (
                   <Radio key={item.key} value={item.key}>
                     {item.value}
@@ -338,13 +274,7 @@ export const renderForm = (
         );
       case 'checkbox':
         return (
-          <Item
-            required={required}
-            label={label}
-            key={key}
-            style={itemStyle}
-            {...rest}
-          >
+          <Item required={required} label={label} key={key} style={itemStyle} {...rest}>
             <Item
               initialValue={defaultValue}
               name={dataIndex}
@@ -368,13 +298,7 @@ export const renderForm = (
         );
       case 'other':
         return (
-          <Item
-            required={required}
-            label={label}
-            key={key}
-            style={itemStyle}
-            {...rest}
-          >
+          <Item required={required} label={label} key={key} style={itemStyle} {...rest}>
             {extraForm}
           </Item>
         );

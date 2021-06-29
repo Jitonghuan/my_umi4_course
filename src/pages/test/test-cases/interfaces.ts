@@ -4,8 +4,7 @@
 
 import type { DataNode } from 'antd/lib/tree/index';
 
-export interface SelectOptions<Value = string, T = Record<string, any>>
-  extends Record<string, any> {
+export interface SelectOptions<Value = string, T = Record<string, any>> extends Record<string, any> {
   label: string;
   value: Value;
   /** 用于挂载到 option 上的业务数据 */

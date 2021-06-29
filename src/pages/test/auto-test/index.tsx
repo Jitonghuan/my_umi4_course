@@ -1,14 +1,5 @@
 import React, { useEffect, useMemo, useState, useContext } from 'react';
-import {
-  Popconfirm,
-  Card,
-  Empty,
-  message,
-  Select,
-  Tree,
-  Input,
-  Button,
-} from 'antd';
+import { Popconfirm, Card, Empty, message, Select, Tree, Input, Button } from 'antd';
 import { history } from 'umi';
 import _ from 'lodash';
 
@@ -110,10 +101,7 @@ const Coms = (props: any) => {
   });
 
   // 执行脚本
-  const handleOperate = async (
-    type: 'run' | 'runall' | 'result',
-    record?: any,
-  ) => {
+  const handleOperate = async (type: 'run' | 'runall' | 'result', record?: any) => {
     if (type === 'result') {
       history.push(`${ds.pagePrefix}/test/result`);
       return;
@@ -133,8 +121,7 @@ const Coms = (props: any) => {
             testCase: el.testCase,
           }));
 
-    const groupNameArr =
-      treeSelectKeys.length > 0 ? treeSelectKeys[0].split('-') : [];
+    const groupNameArr = treeSelectKeys.length > 0 ? treeSelectKeys[0].split('-') : [];
     const params = {
       belong,
       env: envVal,
@@ -194,8 +181,7 @@ const Coms = (props: any) => {
 
   // 触发查询表格数据
   const handleQueryTable = () => {
-    const [preGroupName, groupName] =
-      treeSelectKeys?.length > 0 ? treeSelectKeys[0].split('-') : ['', ''];
+    const [preGroupName, groupName] = treeSelectKeys?.length > 0 ? treeSelectKeys[0].split('-') : ['', ''];
 
     // 只有存在业务线和测试集数据的时候才可以获取表格数据
     if (belong) {
@@ -305,11 +291,7 @@ const Coms = (props: any) => {
             >
               <Button type="primary">批量执行</Button>
             </Popconfirm>
-            <Button
-              type="primary"
-              onClick={() => handleOperate('result')}
-              style={{ marginLeft: '12px' }}
-            >
+            <Button type="primary" onClick={() => handleOperate('result')} style={{ marginLeft: '12px' }}>
               查看结果
             </Button>
           </div>

@@ -1,17 +1,5 @@
 import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
-import {
-  Space,
-  Form,
-  Input,
-  Popconfirm,
-  Typography,
-  Button,
-  Table,
-  Select,
-  DatePicker,
-  Modal,
-  message,
-} from 'antd';
+import { Space, Form, Input, Popconfirm, Typography, Button, Table, Select, DatePicker, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import moment, { Moment } from 'moment';
 import { history } from 'umi';
@@ -29,13 +17,7 @@ import { usePaginated } from '@cffe/vc-hulk-table';
 import '../index.less';
 
 import { OptionProps } from '@/components/table-search/typing';
-import {
-  queryEnvsReq,
-  addFuncMultiReq,
-  updateFuncReq,
-  queryAppGroupReq,
-  queryJiraUrl,
-} from '../../service';
+import { queryEnvsReq, addFuncMultiReq, updateFuncReq, queryAppGroupReq, queryJiraUrl } from '../../service';
 
 export interface DefaultValueObjProps {
   appCategoryCode: string;
@@ -64,12 +46,7 @@ interface EditTableProps {
   defaultValueObj?: DefaultValueObjProps;
 }
 
-const EditTable: React.FC<EditTableProps> = ({
-  initData,
-  type,
-  title,
-  defaultValueObj = {},
-}) => {
+const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultValueObj = {} }) => {
   // 应用分类列表
   const { categoryData } = useContext(FEContext);
   const categorys = useMemo(() => {
@@ -179,12 +156,7 @@ const EditTable: React.FC<EditTableProps> = ({
       required: true,
       width: 220,
       item: (
-        <Select
-          placeholder="必选，可多选"
-          allowClear
-          mode="multiple"
-          style={{ width: 200 }}
-        >
+        <Select placeholder="必选，可多选" allowClear mode="multiple" style={{ width: 200 }}>
           {envsOptions?.map((item) => (
             <Select.Option key={item.value} value={item.value}>
               {item.label}
@@ -194,9 +166,7 @@ const EditTable: React.FC<EditTableProps> = ({
       ),
       render: (text: string[]) => {
         if (!text) return '';
-        const labelList = text.map(
-          (item) => envsOptions.find((v) => v.value === item)?.label,
-        );
+        const labelList = text.map((item) => envsOptions.find((v) => v.value === item)?.label);
         return <>{Array.isArray(labelList) ? labelList.join(',') : ''}</>;
       },
     },
@@ -224,9 +194,7 @@ const EditTable: React.FC<EditTableProps> = ({
       required: false,
       width: 220,
       item: <DatePicker placeholder="请选择日期" showTime />,
-      render: (text: Moment) => (
-        <>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</>
-      ),
+      render: (text: Moment) => <>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</>,
     },
     {
       title: '需求ID',
@@ -246,10 +214,7 @@ const EditTable: React.FC<EditTableProps> = ({
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <a
-              onClick={() => save(record.key as string)}
-              style={{ marginRight: 8 }}
-            >
+            <a onClick={() => save(record.key as string)} style={{ marginRight: 8 }}>
               保存
             </a>
             <a onClick={() => cancel(record.key as string)}>取消</a>
@@ -258,17 +223,12 @@ const EditTable: React.FC<EditTableProps> = ({
           <Space>
             <Typography.Link
               disabled={!!editingKey.length}
-              onClick={() =>
-                edit(record as Partial<IFuncItem> & { key: React.Key })
-              }
+              onClick={() => edit(record as Partial<IFuncItem> & { key: React.Key })}
             >
               编辑
             </Typography.Link>
             {type === 'add' && (
-              <Popconfirm
-                title="确认删除?"
-                onConfirm={() => onDelete(record.key as string)}
-              >
+              <Popconfirm title="确认删除?" onConfirm={() => onDelete(record.key as string)}>
                 <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
               </Popconfirm>
             )}
@@ -310,9 +270,7 @@ const EditTable: React.FC<EditTableProps> = ({
       const _envs = envs as string[];
       return {
         ...rest,
-        preDeployTime: deployTime
-          ? deployTime?.format('YYYY-MM-DD HH:mm:ss')
-          : '',
+        preDeployTime: deployTime ? deployTime?.format('YYYY-MM-DD HH:mm:ss') : '',
         envs: _envs.join(','),
       };
     });
@@ -461,19 +419,13 @@ const EditTable: React.FC<EditTableProps> = ({
                 }
                 const newData = [...data];
                 const newEditingKey = [...editingKey];
-                const selectRows = jiraData.filter((jira) =>
-                  selectedRowKeys.includes(jira?.key!),
-                );
-                const start = newData.length
-                  ? Number(newData[newData.length - 1].key) + 1
-                  : 1;
+                const selectRows = jiraData.filter((jira) => selectedRowKeys.includes(jira?.key!));
+                const start = newData.length ? Number(newData[newData.length - 1].key) + 1 : 1;
                 selectRows.map((jira, index) => {
                   let obj = {
                     key: `${start + index}`,
                     [`funcName-${start + index}`]: jira.summary,
-                    [`preDeployTime-${start + index}`]: jira.preDeployTime
-                      ? moment(jira.preDeployTime)
-                      : '',
+                    [`preDeployTime-${start + index}`]: jira.preDeployTime ? moment(jira.preDeployTime) : '',
                     [`demandId-${start + index}`]: jira.key,
                     [`envs-${start + index}`]: [],
                   };
@@ -486,11 +438,7 @@ const EditTable: React.FC<EditTableProps> = ({
                 setData(newData);
                 console.log(data, 'data');
                 setTimeout(() => {
-                  for (
-                    let i = start - 1;
-                    i < start - 1 + selectRows.length;
-                    i++
-                  ) {
+                  for (let i = start - 1; i < start - 1 + selectRows.length; i++) {
                     // edit(newData[i] as Partial<IFuncItem> & { key: React.Key; })
                     form.setFieldsValue({ ...newData[i] });
                   }

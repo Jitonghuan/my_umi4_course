@@ -19,13 +19,7 @@ import './index.less';
 const rootCls = 'publish-content-compo';
 const { confirm } = Modal;
 
-const PublishContent = ({
-  appCode,
-  envTypeCode,
-  deployedList,
-  deployInfo,
-  onOperate,
-}: IProps) => {
+const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOperate }: IProps) => {
   const isProd = envTypeCode === 'cProd';
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -35,11 +29,7 @@ const PublishContent = ({
       <div className={`${rootCls}__title`}>发布内容</div>
 
       {isProd ? (
-        <ProdSteps
-          appCode={appCode}
-          deployInfo={deployInfo}
-          onOperate={onOperate}
-        />
+        <ProdSteps appCode={appCode} deployInfo={deployInfo} onOperate={onOperate} />
       ) : (
         <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} />
       )}

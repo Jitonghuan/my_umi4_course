@@ -79,11 +79,7 @@ export default function CaseExec(props: CaseExecProps) {
         confirmLoading={pending}
       >
         <Form form={editField} labelCol={{ flex: '80px' }}>
-          <Form.Item
-            label="执行环境"
-            name="envId"
-            rules={[{ required: true, message: '请选择环境' }]}
-          >
+          <Form.Item label="执行环境" name="envId" rules={[{ required: true, message: '请选择环境' }]}>
             <Select placeholder="请选择" options={envOptions} />
           </Form.Item>
         </Form>
@@ -109,11 +105,7 @@ export default function CaseExec(props: CaseExecProps) {
         bodyStyle={{ padding: 0 }}
         maskClosable={false}
       >
-        <iframe
-          src={resultURL}
-          frameBorder="0"
-          style={{ width: 1000, height: '72vh' }}
-        />
+        <iframe src={resultURL} frameBorder="0" style={{ width: 1000, height: '72vh' }} />
       </Modal>
     </>
   );

@@ -6,12 +6,7 @@ import { OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import useTable from '@/utils/useTable';
-import {
-  deletePublishPlanReq,
-  queryAppGroupReq,
-  queryPublishPlanUrl,
-  queryFunctionUrl,
-} from '../service';
+import { deletePublishPlanReq, queryAppGroupReq, queryPublishPlanUrl, queryFunctionUrl } from '../service';
 import { createFormColumns, createTableColumns } from './schema';
 
 import './index.less';
@@ -32,9 +27,7 @@ const FunctionCom: React.FC = () => {
     formatter: (params) => {
       return {
         ...params,
-        preDeployTime: params.preDeployTime
-          ? params.preDeployTime.format('YYYY-MM-DD')
-          : undefined,
+        preDeployTime: params.preDeployTime ? params.preDeployTime.format('YYYY-MM-DD') : undefined,
       };
     },
     formatResult: (result) => {

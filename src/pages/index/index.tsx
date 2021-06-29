@@ -17,10 +17,7 @@ const Index = (props: IProps) => {
   const location = useLocation();
 
   return (
-    <div
-      className="index-page-bg"
-      style={{ backgroundImage: `url(${IndexImg})` }}
-    >
+    <div className="index-page-bg" style={{ backgroundImage: `url(${IndexImg})` }}>
       <img src={IndexGif} alt="系统首页" />
     </div>
   );

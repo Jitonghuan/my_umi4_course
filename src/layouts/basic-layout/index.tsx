@@ -6,19 +6,9 @@ import { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/b
 import ds from '@config/defaultSettings';
 import DocumentTitle from './DocumentTitle';
 import FeContext from './FeContext';
-import {
-  queryCategoryData,
-  queryBizData,
-  queryEnvData,
-  queryPermission,
-} from './service';
+import { queryCategoryData, queryBizData, queryEnvData, queryPermission } from './service';
 import { DFSFunc } from '@/utils';
-import {
-  getRequest,
-  queryUserInfoApi,
-  doLogoutApi,
-  postRequest,
-} from '@/utils/request';
+import { getRequest, queryUserInfoApi, doLogoutApi, postRequest } from '@/utils/request';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
 import { IPermission } from '@cffe/vc-layout/lib/sider-menu';
@@ -105,9 +95,7 @@ export default (props: IUmiRrops) => {
     }
   };
 
-  const [{ width }] = useSize(
-    () => document.querySelector(`.vc-layout-inner`) as HTMLElement,
-  );
+  const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
   const effectResize = useDebounce(width, 100);
 
   useEffect(() => {
@@ -136,10 +124,7 @@ export default (props: IUmiRrops) => {
             effectResize,
           }}
         >
-          <DocumentTitle
-            title={FeGlobalRef.current.title}
-            favicon={FeGlobalRef.current.favicon}
-          >
+          <DocumentTitle title={FeGlobalRef.current.title} favicon={FeGlobalRef.current.favicon}>
             <FELayout.SSOLayout
               {...(props as any)}
               {...ds}

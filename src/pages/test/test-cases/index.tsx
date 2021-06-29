@@ -2,13 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  useLayoutEffect,
-  useRef,
-} from 'react';
+import React, { useState, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
 import Emitter from 'events';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { CardRowGroup } from '@/components/vc-page-content';
@@ -56,11 +50,7 @@ export default function TestCaseManager() {
     <MatrixPageContent isFlex>
       <CardRowGroup>
         <LeftTree onItemClick={(item) => setCurrent(item)} emitter={emitter} />
-        <RightDetail
-          key={current?.key || 1}
-          current={current}
-          emitter={emitter}
-        />
+        <RightDetail key={current?.key || 1} current={current} emitter={emitter} />
       </CardRowGroup>
       <CaseEditor
         mode={caseEditorMode}

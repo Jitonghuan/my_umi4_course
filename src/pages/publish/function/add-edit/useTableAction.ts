@@ -40,9 +40,7 @@ const useTableAction = (props: IProps) => {
       message.warning('先保存，再新增');
       return;
     }
-    const newStart = newData.length
-      ? Number(newData[newData.length - 1].key) + 1
-      : 1;
+    const newStart = newData.length ? Number(newData[newData.length - 1].key) + 1 : 1;
     const obj = {
       key: `${newStart}`,
       [`funcName-${newStart}`]: '',
@@ -67,11 +65,7 @@ const useTableAction = (props: IProps) => {
   };
 
   const cancel = (key: React.Key) => {
-    if (
-      data.filter(
-        (v) => !(v?.funcName && v?.envs && v?.envs.length) && v.key === key,
-      ).length
-    ) {
+    if (data.filter((v) => !(v?.funcName && v?.envs && v?.envs.length) && v.key === key).length) {
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
       newData.splice(index, 1);
@@ -85,9 +79,7 @@ const useTableAction = (props: IProps) => {
     //   `preDeployTime-${key}`,
     //   `demandId-${key}`,
     // ]);
-    const editIndex = editingKey.findIndex(
-      (item) => Number(item) === Number(key),
-    );
+    const editIndex = editingKey.findIndex((item) => Number(item) === Number(key));
     editingKey.splice(Number(editIndex), 1);
     setEditingKey([...editingKey]);
   };
@@ -98,9 +90,7 @@ const useTableAction = (props: IProps) => {
 
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
-      const editIndex = editingKey.findIndex(
-        (item) => Number(item) === Number(key),
-      );
+      const editIndex = editingKey.findIndex((item) => Number(item) === Number(key));
       let result = {
         appCategoryCode: row.appCategoryCode,
         appGroupCode: row.appGroupCode,

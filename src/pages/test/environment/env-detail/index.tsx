@@ -74,11 +74,7 @@ export default function EnvDetail(props: EnvDetailProps) {
   if (!props.current) {
     return (
       <ContentCard className="page-env-detail">
-        <Empty
-          description="请选择环境"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          style={{ marginTop: '30%' }}
-        />
+        <Empty description="请选择环境" image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ marginTop: '30%' }} />
       </ContentCard>
     );
   }
@@ -86,26 +82,13 @@ export default function EnvDetail(props: EnvDetailProps) {
   return (
     <ContentCard className="page-env-detail">
       <Form form={editField}>
-        <Form.Item
-          label="环境名称"
-          name="name"
-          rules={[{ required: true, message: '请输入环境名称' }]}
-          {...formLayout}
-        >
+        <Form.Item label="环境名称" name="name" rules={[{ required: true, message: '请输入环境名称' }]} {...formLayout}>
           <Input />
         </Form.Item>
-        <Form.Item
-          label="环境绑定"
-          name="code"
-          rules={[{ required: true, message: '请选择绑定环境' }]}
-          {...formLayout}
-        >
+        <Form.Item label="环境绑定" name="code" rules={[{ required: true, message: '请选择绑定环境' }]} {...formLayout}>
           <Select options={envCodeOptions} />
         </Form.Item>
-        <Tabs
-          onChange={(key) => setCurrentTab(key as TabKeyEnum)}
-          activeKey={currentTab}
-        >
+        <Tabs onChange={(key) => setCurrentTab(key as TabKeyEnum)} activeKey={currentTab}>
           {/* --------- http 域名 ----------- */}
           <Tabs.TabPane key="http" tab="http服务" forceRender>
             <Form.Item label="http域名" name="httpConf" {...formLayout}>
@@ -115,38 +98,22 @@ export default function EnvDetail(props: EnvDetailProps) {
 
           {/* ---------- RPC服务 ----------- */}
           <Tabs.TabPane key="rpc" tab="RPC服务" forceRender>
-            <Form.Item
-              label="注册中心"
-              name={['rpcConf', 'registCenter']}
-              {...formLayout}
-            >
+            <Form.Item label="注册中心" name={['rpcConf', 'registCenter']} {...formLayout}>
               <Input />
             </Form.Item>
-            <Form.Item
-              label="命名空间"
-              name={['rpcConf', 'nameSpace']}
-              {...formLayout}
-            >
+            <Form.Item label="命名空间" name={['rpcConf', 'nameSpace']} {...formLayout}>
               <Input />
             </Form.Item>
           </Tabs.TabPane>
 
           {/* ------- 数据库配置 --------- */}
           <Tabs.TabPane key="db" tab="数据库配置" forceRender>
-            <DBPanel
-              key={props.current.id}
-              value={dbSource}
-              onChange={setDbSource}
-            />
+            <DBPanel key={props.current.id} value={dbSource} onChange={setDbSource} />
           </Tabs.TabPane>
 
           {/* ------------ 全局变量 ------------- */}
           <Tabs.TabPane key="global" tab="全局变量" forceRender>
-            <GlobalVarPanel
-              key={props.current.id}
-              initData={props.current.varConf || []}
-              queryRef={globalVarRef}
-            />
+            <GlobalVarPanel key={props.current.id} initData={props.current.varConf || []} queryRef={globalVarRef} />
           </Tabs.TabPane>
         </Tabs>
       </Form>
@@ -154,11 +121,7 @@ export default function EnvDetail(props: EnvDetailProps) {
         <Button type="primary" size="large" onClick={handleSubmit}>
           保存
         </Button>
-        <Button
-          size="large"
-          type="default"
-          onClick={() => props.emitter.emit('ENV::CANCEL')}
-        >
+        <Button size="large" type="default" onClick={() => props.emitter.emit('ENV::CANCEL')}>
           取消
         </Button>
       </div>
