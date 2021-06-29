@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef,
-} from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Button, Space, Drawer, Form, Select, TimePicker } from 'antd';
 import moment, { Moment } from 'moment';
 import { renderForm } from '@/components/table-search/form';
@@ -140,12 +134,8 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       ...setValues,
     });
 
-    setLabelTableData(
-      formatTableDataMap(record?.labels as Record<string, string>),
-    );
-    setAnnotationsTableData(
-      formatTableDataMap(record?.annotations as Record<string, string>),
-    );
+    setLabelTableData(formatTableDataMap(record?.labels as Record<string, string>));
+    setAnnotationsTableData(formatTableDataMap(record?.annotations as Record<string, string>));
   };
 
   //打开抽屉在请求
@@ -170,8 +160,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       onCancel();
       return;
     }
-    const findRecord =
-      (ruleTemplatesList as Item[])?.find((v) => v.name === ruleTemplate) ?? {};
+    const findRecord = (ruleTemplatesList as Item[])?.find((v) => v.name === ruleTemplate) ?? {};
     editDataDetail(findRecord);
   }, [visible, ruleTemplate]);
 
@@ -411,12 +400,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         },
       ],
       extraForm: (
-        <Form.Item
-          noStyle
-          shouldUpdate={(prevValues, curValues) =>
-            prevValues.silence !== curValues.silence
-          }
-        >
+        <Form.Item noStyle shouldUpdate={(prevValues, curValues) => prevValues.silence !== curValues.silence}>
           {({ getFieldValue }) => {
             return getFieldValue('silence') === 1 ? (
               <Form.Item
@@ -428,10 +412,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
                   },
                 ]}
               >
-                <TimePicker.RangePicker
-                  format="HH:mm"
-                  style={{ width: '100%', marginTop: 8 }}
-                />
+                <TimePicker.RangePicker format="HH:mm" style={{ width: '100%', marginTop: 8 }} />
               </Form.Item>
             ) : null;
           }}

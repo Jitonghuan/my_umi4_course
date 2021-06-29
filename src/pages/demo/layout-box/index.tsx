@@ -5,11 +5,7 @@
 import React from 'react';
 import {} from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
-import {
-  ContentCard,
-  FilterCard,
-  CardRowGroup,
-} from '@/components/vc-page-content';
+import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from './service';
 
 export default function DemoPageTb() {

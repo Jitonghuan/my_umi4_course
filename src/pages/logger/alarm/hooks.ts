@@ -48,23 +48,15 @@ export function useEnvOptions() {
 }
 
 export function useRuleOptions() {
-  const [groupSource, setGroupSource] = useState<
-    { label: string; value: string }[]
-  >([]);
-  const [indexSource, setIndexSource] = useState<
-    { label: string; value: string }[]
-  >([]);
+  const [groupSource, setGroupSource] = useState<{ label: string; value: string }[]>([]);
+  const [indexSource, setIndexSource] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
     getRequest(APIS.getAlertRule).then((result) => {
       const { Group, Index } = result.data || {};
 
-      setGroupSource(
-        (Group || []).map((n: string) => ({ label: n, value: n })),
-      );
-      setIndexSource(
-        (Index || []).map((n: string) => ({ label: n, value: n })),
-      );
+      setGroupSource((Group || []).map((n: string) => ({ label: n, value: n })));
+      setIndexSource((Index || []).map((n: string) => ({ label: n, value: n })));
     });
   }, []);
 

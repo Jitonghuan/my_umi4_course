@@ -12,11 +12,7 @@ import usePublicData from '@/utils/usePublicData';
 import { createFormItems, createTableColumns } from './schema';
 
 const FunctionCom: React.FC = () => {
-  const {
-    categoryData = [],
-    envData = [],
-    businessData = [],
-  } = useContext(FEContext);
+  const { categoryData = [], envData = [], businessData = [] } = useContext(FEContext);
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
 
   const [form] = Form.useForm();
@@ -40,12 +36,8 @@ const FunctionCom: React.FC = () => {
     formatter: (params) => {
       return {
         ...params,
-        preDeployTime: params.preDeployTime
-          ? params.preDeployTime.format('YYYY-MM-DD')
-          : undefined,
-        deployTime: params.deployTime
-          ? params.deployTime.format('YYYY-MM-DD')
-          : undefined,
+        preDeployTime: params.preDeployTime ? params.preDeployTime.format('YYYY-MM-DD') : undefined,
+        deployTime: params.deployTime ? params.deployTime.format('YYYY-MM-DD') : undefined,
       };
     },
   });

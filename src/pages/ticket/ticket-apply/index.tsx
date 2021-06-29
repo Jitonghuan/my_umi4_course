@@ -2,10 +2,7 @@ import React, { useState, useCallback, useContext } from 'react';
 
 import { TplTable } from '@cffe/fe-tpl';
 import { InlineForm } from '@cffe/fe-backend-component';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
+import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/FeContext';
 
 import { filterFormSchema, tableSchema } from './schema';
@@ -36,12 +33,7 @@ const Coms = (props: any) => {
       isFlex
     >
       <FilterCard>
-        <InlineForm
-          className="ticket-filter-form"
-          {...(filterFormSchema as any)}
-          isShowReset
-          onFinish={handleFilter}
-        />
+        <InlineForm className="ticket-filter-form" {...(filterFormSchema as any)} isShowReset onFinish={handleFilter} />
       </FilterCard>
 
       <ContentCard>

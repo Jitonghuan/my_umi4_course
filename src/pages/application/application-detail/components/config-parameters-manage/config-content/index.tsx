@@ -13,17 +13,9 @@ import VCForm, { IColumns } from '@cffe/vc-form';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
-import {
-  createFilterFormSchema,
-  createTableSchema,
-  getFilterColumns,
-} from './schema';
+import { createFilterFormSchema, createTableSchema, getFilterColumns } from './schema';
 import VersionSelect from './version-select';
-import {
-  queryConfigListUrl,
-  deleteConfig,
-  deleteMultipleConfig,
-} from '../../../../service';
+import { queryConfigListUrl, deleteConfig, deleteMultipleConfig } from '../../../../service';
 import { IProps } from './types';
 import { ConfigData } from '../types';
 import { queryVersionApi, doRestoreVersionApi } from './service';
@@ -203,14 +195,9 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
             ) as IColumns[]
           }
           onValuesChange={(changeVals, values) => {
-            const [name, value] = (Object.entries(changeVals)?.[0] || []) as [
-              string,
-              any,
-            ];
+            const [name, value] = (Object.entries(changeVals)?.[0] || []) as [string, any];
             if (name && name === 'versionID') {
-              const version = versionData?.find(
-                (item: any) => item.id === value,
-              );
+              const version = versionData?.find((item: any) => item.id === value);
               if (version && tableProps.pagination) {
                 const { pageSize = 10 } = tableProps.pagination;
                 queryConfigList({
@@ -243,18 +230,10 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
         <div className={`${rootCls}__filter-btns`}>
           <Popconfirm
             title="确定回退到当前版本？"
-            disabled={
-              !currentVersion || versionData?.[0]?.id === currentVersion?.id
-            }
+            disabled={!currentVersion || versionData?.[0]?.id === currentVersion?.id}
             onConfirm={handleRollBack}
           >
-            <Button
-              type="primary"
-              danger
-              disabled={
-                !currentVersion || versionData?.[0]?.id === currentVersion?.id
-              }
-            >
+            <Button type="primary" danger disabled={!currentVersion || versionData?.[0]?.id === currentVersion?.id}>
               回退
             </Button>
           </Popconfirm>
@@ -268,8 +247,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
           <Button
             onClick={() => {
               history.push({
-                pathname:
-                  configType === 'app' ? 'addConfig' : 'addLaunchParameters',
+                pathname: configType === 'app' ? 'addConfig' : 'addLaunchParameters',
                 query: {
                   env,
                   type: configType,
@@ -309,11 +287,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
         rowSelection={{
           type: 'checkbox',
           onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-            console.log(
-              `selectedRowKeys: ${selectedRowKeys}`,
-              'selectedRows: ',
-              selectedRows,
-            );
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setSelectedKeys(selectedRowKeys);
           },
           // getCheckboxProps: (record: any) => ({

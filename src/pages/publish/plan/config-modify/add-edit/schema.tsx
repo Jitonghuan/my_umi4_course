@@ -28,9 +28,7 @@ export const createTableColumns = ({
     title: '发布状态',
     dataIndex: 'deployStatus',
     key: 'deployStatus',
-    render: (text: number) => (
-      <Tag color={statusType[text]?.color}>{statusType[text]?.text}</Tag>
-    ),
+    render: (text: number) => <Tag color={statusType[text]?.color}>{statusType[text]?.text}</Tag>,
   },
   {
     title: '应用分类',
@@ -43,8 +41,7 @@ export const createTableColumns = ({
   {
     title: '应用组',
     dataIndex: 'appGroupCode',
-    render: (text: string) =>
-      businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
+    render: (text: string) => businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
   },
   {
     title: '发布环境',

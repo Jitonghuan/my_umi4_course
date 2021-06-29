@@ -10,12 +10,7 @@ import { Drawer, Input, Spin, message, Form } from 'antd';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { BasicForm } from '@cffe/fe-backend-component';
 import createSchema from './create-schema';
-import {
-  createApp,
-  updateApp,
-  queryBizData,
-  queryCategoryData,
-} from './service';
+import { createApp, updateApp, queryBizData, queryCategoryData } from './service';
 import { IProps, FormValue, AppType, AppDevelopLanguage } from './types';
 // import './index.less';
 
@@ -29,8 +24,7 @@ const CreateApplication = (props: IProps) => {
   // 应用类型
   const [appType, setAppType] = useState<AppType>();
   // 应用开发语言
-  const [appDevelopLanguage, setAppDevelopLanguage] =
-    useState<AppDevelopLanguage>();
+  const [appDevelopLanguage, setAppDevelopLanguage] = useState<AppDevelopLanguage>();
   // const { categoryData, businessData } = useContext(FEContext);
   const [categoryData, setcategoryData] = useState([]);
   const [businessData, setBusinessData] = useState([]);

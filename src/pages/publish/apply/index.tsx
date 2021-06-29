@@ -5,21 +5,11 @@
  * @create 2021-04-09 16:53
  */
 
-import React, {
-  useMemo,
-  useEffect,
-  useState,
-  useCallback,
-  useContext,
-  useRef,
-} from 'react';
+import React, { useMemo, useEffect, useState, useCallback, useContext, useRef } from 'react';
 import { Form, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffectOnce } from 'white-react-use';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
+import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { InlineForm } from '@cffe/fe-backend-component';
@@ -35,11 +25,7 @@ export interface IProps {}
 const rootCls = 'release-apply-page';
 
 const ApplyList = (props: IProps) => {
-  const {
-    categoryData = [],
-    breadcrumbMap,
-    businessData: businessDataList = [],
-  } = useContext(FEContext);
+  const { categoryData = [], breadcrumbMap, businessData: businessDataList = [] } = useContext(FEContext);
 
   const [createApplyVisible, setCreateApplyVisible] = useState<boolean>(false);
   const [applyDetailVisible, setApplyDetailVisible] = useState<boolean>(false);
@@ -88,9 +74,7 @@ const ApplyList = (props: IProps) => {
     formatRequestParams: (params) => {
       return {
         ...params,
-        deployDate: params.deployDate
-          ? params.deployDate.format('YYYY-MM-DD')
-          : undefined,
+        deployDate: params.deployDate ? params.deployDate.format('YYYY-MM-DD') : undefined,
       };
     },
   });
@@ -116,12 +100,7 @@ const ApplyList = (props: IProps) => {
   }, []);
 
   return (
-    <VCPageContent
-      height="calc(100vh - 60px)"
-      breadcrumbMap={breadcrumbMap}
-      pathname={location.pathname}
-      isFlex
-    >
+    <VCPageContent height="calc(100vh - 60px)" breadcrumbMap={breadcrumbMap} pathname={location.pathname} isFlex>
       <AddDrawer
         visible={createApplyVisible}
         onClose={(reload) => {

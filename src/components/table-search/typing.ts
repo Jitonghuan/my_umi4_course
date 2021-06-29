@@ -2,16 +2,7 @@ import React, { CSSProperties, ReactNode } from 'react';
 import { TableProps, FormItemProps, FormInstance } from 'antd/lib';
 import { Moment } from 'moment';
 
-export type TypeProps =
-  | 'select'
-  | 'input'
-  | 'date'
-  | 'range'
-  | 'area'
-  | 'inputNumber'
-  | 'radio'
-  | 'checkbox'
-  | 'other';
+export type TypeProps = 'select' | 'input' | 'date' | 'range' | 'area' | 'inputNumber' | 'radio' | 'checkbox' | 'other';
 
 export interface OptionProps {
   value: string;

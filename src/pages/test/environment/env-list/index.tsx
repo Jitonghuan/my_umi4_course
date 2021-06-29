@@ -30,10 +30,7 @@ export default function EnvList(props: EnvListProps) {
     getRequest(APIS.envList).then((result) => {
       const data: EnvItemVO[] = result.data || [];
       setEnvList(data);
-      if (
-        data.length &&
-        (!hightlight || !data.find((n) => n.id === hightlight))
-      ) {
+      if (data.length && (!hightlight || !data.find((n) => n.id === hightlight))) {
         handleEnvItemClick(data[0], 0);
       }
       if (!data.length && hightlight) {
@@ -91,11 +88,7 @@ export default function EnvList(props: EnvListProps) {
       </div>
       <ul className="env-list">
         {envList.map((item, index) => (
-          <li
-            key={index}
-            data-active={hightlight === item.id}
-            onClick={() => handleEnvItemClick(item, index)}
-          >
+          <li key={index} data-active={hightlight === item.id} onClick={() => handleEnvItemClick(item, index)}>
             {item.name}
           </li>
         ))}
@@ -109,11 +102,7 @@ export default function EnvList(props: EnvListProps) {
         bodyStyle={{ minHeight: 140 }}
       >
         <Form form={addField} labelCol={{ span: '60px' }}>
-          <Form.Item
-            label="环境名称: "
-            name="envName"
-            rules={[{ required: true, message: '请输入环境名称' }]}
-          >
+          <Form.Item label="环境名称: " name="envName" rules={[{ required: true, message: '请输入环境名称' }]}>
             <Input placeholder="请输入" autoFocus maxLength={30} />
           </Form.Item>
         </Form>

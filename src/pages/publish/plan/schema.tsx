@@ -109,35 +109,28 @@ export const createTableColumns = (params: {
       dataIndex: 'id',
       key: 'id',
       width: '3%',
-      render: (text, record) => (
-        <Link to={`./plan/checkConfigModify?id=${text}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`./plan/checkConfigModify?id=${text}`}>{text}</Link>,
     },
     {
       title: '发布状态',
       dataIndex: 'deployStatus',
       key: 'status',
       // width: '5%',
-      render: (text) => (
-        <Tag color={statusType[text]?.color}>{statusType[text]?.text}</Tag>
-      ),
+      render: (text) => <Tag color={statusType[text]?.color}>{statusType[text]?.text}</Tag>,
     },
     {
       title: '应⽤分类',
       dataIndex: 'appCategoryCode',
       key: 'appCategoryCode',
       // width: '5%',
-      render: (text) =>
-        params.categoryData?.find((v) => v.categoryCode === text)
-          ?.categoryName || '',
+      render: (text) => params.categoryData?.find((v) => v.categoryCode === text)?.categoryName || '',
     },
     {
       title: '应⽤组',
       dataIndex: 'appGroupCode',
       key: 'appGroupCode',
       // width: '5%',
-      render: (text) =>
-        params.businessData?.find((v) => v.groupCode === text)?.groupName || '',
+      render: (text) => params.businessData?.find((v) => v.groupCode === text)?.groupName || '',
     },
     {
       title: '应用CODE',
@@ -213,10 +206,7 @@ export const createTableColumns = (params: {
         //根据不同类型跳转
         <Space>
           <Link to={`./plan/editConfigModify?id=${record.id}`}>编辑</Link>
-          <Popconfirm
-            title="确认删除?"
-            onConfirm={() => params?.onDelete(record?.planId!)}
-          >
+          <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete(record?.planId!)}>
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
         </Space>

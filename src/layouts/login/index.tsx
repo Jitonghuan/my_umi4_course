@@ -14,10 +14,7 @@ const LoginPage = () => {
   const FeGlobalRef = useRef<globalConfig>(window.FE_GLOBAL);
 
   return (
-    <DocumentTitle
-      title={FeGlobalRef.current.title}
-      favicon={FeGlobalRef.current.favicon}
-    >
+    <DocumentTitle title={FeGlobalRef.current.title} favicon={FeGlobalRef.current.favicon}>
       <BusinessLogin
         logo={FeGlobalRef.current.logo}
         title={FeGlobalRef.current.title}

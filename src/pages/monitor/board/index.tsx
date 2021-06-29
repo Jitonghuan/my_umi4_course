@@ -7,12 +7,7 @@ import VCCardLayout from '@cffe/vc-b-card-layout';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import { useEffectOnce } from 'white-react-use';
-import {
-  queryEnvLists,
-  queryResUseData,
-  queryNodeUseDataApi,
-  queryUseMarketData,
-} from './service';
+import { queryEnvLists, queryResUseData, queryNodeUseDataApi, queryUseMarketData } from './service';
 import { resUseTableSchema } from './schema';
 
 import './index.less';
@@ -184,66 +179,57 @@ const Coms = (props: IProps) => {
   };
 
   // 获取资源使用率图
-  const getChartOptions: any = useCallback(
-    (title: string, percent: number | string, color?: string) => {
-      const percentNum = Number(percent);
-      const options = {
-        grid: {
-          left: '0',
-          right: '0',
-          top: '0',
-          bottom: '0',
+  const getChartOptions: any = useCallback((title: string, percent: number | string, color?: string) => {
+    const percentNum = Number(percent);
+    const options = {
+      grid: {
+        left: '0',
+        right: '0',
+        top: '0',
+        bottom: '0',
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter(param: any) {
+          return `${param.name}<br/>${param.marker}${param.value}%`;
         },
-        tooltip: {
-          trigger: 'item',
-          formatter(param: any) {
-            return `${param.name}<br/>${param.marker}${param.value}%`;
+      },
+      series: [
+        {
+          type: 'pie',
+          radius: ['55%', '90%'],
+          label: {
+            show: false,
           },
+          itemStyle: {
+            borderColor: '#fff',
+            borderWidth: 2,
+          },
+          labelLine: {
+            show: false,
+          },
+          data: [
+            {
+              value: percentNum,
+              name: title,
+              itemStyle: { color: color || '#439D75' },
+            },
+            {
+              value: (100 - percentNum).toFixed(2),
+              name: '空闲',
+              itemStyle: { color: '#ddd' },
+            },
+          ],
         },
-        series: [
-          {
-            type: 'pie',
-            radius: ['55%', '90%'],
-            label: {
-              show: false,
-            },
-            itemStyle: {
-              borderColor: '#fff',
-              borderWidth: 2,
-            },
-            labelLine: {
-              show: false,
-            },
-            data: [
-              {
-                value: percentNum,
-                name: title,
-                itemStyle: { color: color || '#439D75' },
-              },
-              {
-                value: (100 - percentNum).toFixed(2),
-                name: '空闲',
-                itemStyle: { color: '#ddd' },
-              },
-            ],
-          },
-        ],
-      };
+      ],
+    };
 
-      return options;
-    },
-    [],
-  );
+    return options;
+  }, []);
 
   // 顶部的 card
   const renderCard = (record: ICard) => {
-    const {
-      mode = '1',
-      title,
-      value = '-',
-      unit = '',
-      dataSource = [],
-    } = record;
+    const { mode = '1', title, value = '-', unit = '', dataSource = [] } = record;
 
     return mode === '1' ? (
       <Card className="monitor-card-item">
@@ -278,12 +264,7 @@ const Coms = (props: IProps) => {
   return (
     <MatrixPageContent className="monitor-board">
       <Card className="monitor-board-content">
-        <Tabs
-          activeKey={currentTab}
-          type="card"
-          className="monitor-tabs"
-          onChange={handleTabChange}
-        >
+        <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
           {tabData?.map((el) => (
             <Tabs.TabPane key={el.key} tab={el.title} />
           ))}
@@ -293,15 +274,10 @@ const Coms = (props: IProps) => {
           <Spin spinning={resLoading}>
             <h3 className="monitor-tabs-content-title">
               集群资源概览
-              <RedoOutlined
-                className="monitor-tabs-content-title-btns"
-                onClick={handleRefresh}
-              />
+              <RedoOutlined className="monitor-tabs-content-title-btns" onClick={handleRefresh} />
             </h3>
             <div className="monitor-tabs-content-sec">
-              <VCCardLayout grid={gridData}>
-                {cardDataLists.map((el) => renderCard(el))}
-              </VCCardLayout>
+              <VCCardLayout grid={gridData}>{cardDataLists.map((el) => renderCard(el))}</VCCardLayout>
             </div>
           </Spin>
 
@@ -319,30 +295,21 @@ const Coms = (props: IProps) => {
                 // },
                 cpuUsageRate: (value, record) => {
                   return (
-                    <span
-                      className="monitor-tabs-content-tag"
-                      style={{ backgroundColor: getColorByValue(value) }}
-                    >
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
                       {value}%
                     </span>
                   );
                 },
                 memoryUsageRate: (value, record) => {
                   return (
-                    <span
-                      className="monitor-tabs-content-tag"
-                      style={{ backgroundColor: getColorByValue(value) }}
-                    >
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
                       {value}%
                     </span>
                   );
                 },
                 diskUsageRate: (value, record) => {
                   return (
-                    <span
-                      className="monitor-tabs-content-tag"
-                      style={{ backgroundColor: getColorByValue(value) }}
-                    >
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
                       {value}%
                     </span>
                   );

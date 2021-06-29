@@ -116,11 +116,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         />
       </Form.Item>
     ) : (
-      <div
-        className="editable-cell-value-wrap"
-        style={{ paddingRight: 24 }}
-        onClick={toggleEdit}
-      >
+      <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
         {children}
       </div>
     );
@@ -163,10 +159,7 @@ const EditableTable = <
         return (
           <Space>
             {dataSource.length >= 1 ? (
-              <Popconfirm
-                title="确认删除"
-                onConfirm={() => handleDelete(record.id as React.Key)}
-              >
+              <Popconfirm title="确认删除" onConfirm={() => handleDelete(record.id as React.Key)}>
                 <MinusCircleOutlined style={{ color: 'red' }} />
               </Popconfirm>
             ) : null}

@@ -21,8 +21,7 @@ export const createTableSchema = () => [
     width: 100,
     title: '创建时间',
     dataIndex: 'gmtCreate',
-    render: (val: string) =>
-      val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '',
+    render: (val: string) => (val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : ''),
   },
   {
     width: 80,

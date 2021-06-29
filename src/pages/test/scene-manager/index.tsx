@@ -6,23 +6,14 @@ import React from 'react';
 import { Tabs } from 'antd';
 import type { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/bus-layout';
 import MatrixPageContent from '@/components/matrix-page-content';
-import {
-  ContentCard,
-  FilterCard,
-  CardRowGroup,
-} from '@/components/vc-page-content';
+import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from './service';
 
 export default function SceneManager(props: IUmiRrops) {
   return (
     <MatrixPageContent>
       <FilterCard className="layout-compact">
-        <Tabs
-          activeKey="scenes"
-          onChange={(next) =>
-            props.history.push(`/matrix/test/autotest/${next}`)
-          }
-        >
+        <Tabs activeKey="scenes" onChange={(next) => props.history.push(`/matrix/test/autotest/${next}`)}>
           <Tabs.TabPane tab="用例管理" key="test-cases" />
           <Tabs.TabPane tab="场景管理" key="scenes" />
           <Tabs.TabPane tab="任务管理" key="tasks" />

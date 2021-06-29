@@ -4,13 +4,7 @@ import { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';
 import useTable from '@/utils/useTable';
-import {
-  queryRulesList,
-  createRules,
-  updateRules,
-  ruleSwitch,
-  deleteRules,
-} from '../../service';
+import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../service';
 import TemplateDrawer from '../template-drawer';
 import { Item } from '../../typing';
 import './index.less';
@@ -33,10 +27,7 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   1: { tagText: '未启用', buttonText: '启用', color: 'default', status: 0 },
 };
 
-const RulesTable: React.FC<StepTwoProps> = ({
-  serviceId,
-  isShowAddButton = true,
-}) => {
+const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true }) => {
   const [dataSources, setDataSources] = useState<{
     dataSource: Item[];
     pageInfo: Record<string, React.Key>;
@@ -151,9 +142,7 @@ const RulesTable: React.FC<StepTwoProps> = ({
       dataIndex: 'status',
       key: 'status',
       // width: '4%',
-      render: (text: number) => (
-        <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>
-      ),
+      render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>,
     },
     {
       title: '操作',
@@ -175,10 +164,7 @@ const RulesTable: React.FC<StepTwoProps> = ({
           <Popconfirm
             title="确认删除？"
             onConfirm={() => {
-              deleteRuleTemplatesFun(
-                { id: record.id },
-                `${deleteRules}/${record.id}`,
-              );
+              deleteRuleTemplatesFun({ id: record.id }, `${deleteRules}/${record.id}`);
             }}
             // onCancel={cancel}
             okText="是"

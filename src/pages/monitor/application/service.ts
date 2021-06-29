@@ -56,24 +56,16 @@ export const queryGcCountApi = `${ds.apiPrefix}/monitorManage/app/gcCount`;
 export const queryGcCount = (params: { [key: string]: string }) =>
   getRequest(queryGcCountApi, { ...params }).then((res: any) => {
     if (res.success) {
-      const {
-        fullGCCount = [],
-        youngGCCount = [],
-        fullGCSum = [],
-        youngGCSum = [],
-      } = res.data;
+      const { fullGCCount = [], youngGCCount = [], fullGCSum = [], youngGCSum = [] } = res.data;
       const xAxis: string[] = [];
       const fullCount: string[] = [];
       fullGCCount?.map((el: string[]) => {
         xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
         fullCount.push(Number(el[1]).toFixed(2));
       });
-      const youngCount =
-        youngGCCount?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const fullSum =
-        fullGCSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const youngSum =
-        youngGCSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      const youngCount = youngGCCount?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      const fullSum = fullGCSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      const youngSum = youngGCSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
 
       return {
         count: {
@@ -97,24 +89,16 @@ export const queryGcTimeApi = `${ds.apiPrefix}/monitorManage/app/gcTime`;
 export const queryGcTime = (params: { [key: string]: string }) =>
   getRequest(queryGcTimeApi, { ...params }).then((res: any) => {
     if (res.success) {
-      const {
-        fullGCTime = [],
-        youngGCTime = [],
-        fullGCTimeSum = [],
-        youngGCTimeSum = [],
-      } = res.data;
+      const { fullGCTime = [], youngGCTime = [], fullGCTimeSum = [], youngGCTimeSum = [] } = res.data;
       const xAxis: string[] = [];
       const fullTime: string[] = [];
       fullGCTime?.map((el: string[]) => {
         xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
         fullTime.push(Number(el[1]).toFixed(2));
       });
-      const youngTime =
-        youngGCTime?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const fullSum =
-        fullGCTimeSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const youngSum =
-        youngGCTimeSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      const youngTime = youngGCTime?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      const fullSum = fullGCTimeSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      const youngSum = youngGCTimeSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
 
       return {
         count: {
@@ -138,25 +122,16 @@ export const queryJvmHeapApi = `${ds.apiPrefix}/monitorManage/app/jvmHeap`;
 export const queryJvmHeap = (params: { [key: string]: string }) =>
   getRequest(queryJvmHeapApi, { ...params }).then((res: any) => {
     if (res.success) {
-      const {
-        heapEdenSpace = [],
-        heapMemSum = [],
-        heapOldGen = [],
-        heapSurvivorSpace = [],
-      } = res.data;
+      const { heapEdenSpace = [], heapMemSum = [], heapOldGen = [], heapSurvivorSpace = [] } = res.data;
       const xAxis: string[] = [];
       const heapEden: string[] = [];
       heapEdenSpace?.map((el: string[]) => {
         xAxis.push(dayjs(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
         heapEden.push(Number(el[1]).toFixed(2));
       });
-      const heapSum =
-        heapMemSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const heapOld =
-        heapOldGen?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const heapSurvivor =
-        heapSurvivorSpace?.map((el: string[]) => Number(el[1]).toFixed(2)) ||
-        [];
+      const heapSum = heapMemSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      const heapOld = heapOldGen?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      const heapSurvivor = heapSurvivorSpace?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
 
       return {
         count: {

@@ -106,15 +106,10 @@ const Coms: React.FC<IProps> = (props) => {
   };
 
   return (
-    <div
-      className={`vc-page-content ${isFlex ? 'is-flex' : ''} ${className}`}
-      style={{ ...curStyle }}
-    >
+    <div className={`vc-page-content ${isFlex ? 'is-flex' : ''} ${className}`} style={{ ...curStyle }}>
       {isShowBreadcrumb && breadcrumbDOM}
       {props.children}
-      {isShowFooter && (
-        <FELayout.Footer copyright={window.FE_GLOBAL.copyright} />
-      )}
+      {isShowFooter && <FELayout.Footer copyright={window.FE_GLOBAL.copyright} />}
     </div>
   );
 };
@@ -173,11 +168,7 @@ CardRowGroup.SlideCard = (props) => {
   const { children, className, width = 180, ...rest } = props;
 
   return (
-    <Card
-      className={classnames('vc-slide-card', className)}
-      style={{ width }}
-      {...rest}
-    >
+    <Card className={classnames('vc-slide-card', className)} style={{ width }} {...rest}>
       {children}
     </Card>
   );

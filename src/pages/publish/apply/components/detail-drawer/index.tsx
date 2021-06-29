@@ -18,8 +18,7 @@ export interface IPorps {
 const rootCls = 'apply-detail-drawer';
 
 const DetailDrawer = (props: IPorps) => {
-  const { id, visible, onClose, categoryData, businessDataList, envsUrlList } =
-    props;
+  const { id, visible, onClose, categoryData, businessDataList, envsUrlList } = props;
   const [baseInfo, setBaseInfo] = useState<any>({});
   const [plans, setPlans] = useState<any[]>([]);
 
@@ -40,41 +39,25 @@ const DetailDrawer = (props: IPorps) => {
   }, [id, visible]);
 
   return (
-    <Drawer
-      title="发布申请详情"
-      visible={visible}
-      width={'80%'}
-      onClose={() => handleClose()}
-      className={`${rootCls}`}
-    >
+    <Drawer title="发布申请详情" visible={visible} width={'80%'} onClose={() => handleClose()} className={`${rootCls}`}>
       <div className={`${rootCls}-box`} style={{ marginBottom: 16 }}>
         <div className={`${rootCls}-box-title`}>{baseInfo?.title}</div>
         <Row>
-          <Col span={6}>
-            发布类型：{DEPLOY_TYPE_MAP[baseInfo?.deployType] || '--'}
-          </Col>
+          <Col span={6}>发布类型：{DEPLOY_TYPE_MAP[baseInfo?.deployType] || '--'}</Col>
           <Col span={6}>
             应用分类：
-            {categoryData?.find(
-              (v) => v.categoryCode === baseInfo?.appCategoryCode,
-            )?.categoryName || '-'}
+            {categoryData?.find((v) => v.categoryCode === baseInfo?.appCategoryCode)?.categoryName || '-'}
           </Col>
           <Col span={6}>
             应用组：
-            {businessDataList?.find(
-              (v) => v.groupCode === baseInfo?.appGroupCode,
-            )?.groupName || '-'}
+            {businessDataList?.find((v) => v.groupCode === baseInfo?.appGroupCode)?.groupName || '-'}
           </Col>
-          <Col span={6}>
-            发布环境：{getEnvName(envsUrlList, baseInfo?.deployEnv) || ''}
-          </Col>
+          <Col span={6}>发布环境：{getEnvName(envsUrlList, baseInfo?.deployEnv) || ''}</Col>
           <Col span={6}>发布负责人：{baseInfo?.deployUser || ''}</Col>
           <Col span={6}>计划发布时间：{baseInfo?.deployDate || ''}</Col>
           <Col span={6}>
             申请时间：
-            {baseInfo?.gmtCreate
-              ? moment(baseInfo?.gmtCreate).format('YYYY-MM-DD HH:mm')
-              : ''}
+            {baseInfo?.gmtCreate ? moment(baseInfo?.gmtCreate).format('YYYY-MM-DD HH:mm') : ''}
           </Col>
           <Col span={6}>申请人：{baseInfo?.applyUser || ''}</Col>
         </Row>
@@ -83,26 +66,18 @@ const DetailDrawer = (props: IPorps) => {
         {plans?.map((plan, index) => {
           return (
             <div className={`${rootCls}-box`}>
-              <div className={`${rootCls}-box-title`}>
-                发布计划&nbsp;-&nbsp;{plan?.id}
-              </div>
+              <div className={`${rootCls}-box-title`}>发布计划&nbsp;-&nbsp;{plan?.id}</div>
               <Row>
                 <Col span={6}>应用CODE：{plan?.appCode || ''}</Col>
                 <Col span={6}>
                   应用分类：
-                  {categoryData?.find(
-                    (v) => v.categoryCode === plan?.appCategoryCode,
-                  )?.categoryName || '-'}
+                  {categoryData?.find((v) => v.categoryCode === plan?.appCategoryCode)?.categoryName || '-'}
                 </Col>
                 <Col span={6}>
                   应用组：
-                  {businessDataList?.find(
-                    (v) => v.groupCode === plan?.appGroupCode,
-                  )?.groupName || ''}
+                  {businessDataList?.find((v) => v.groupCode === plan?.appGroupCode)?.groupName || ''}
                 </Col>
-                <Col span={6}>
-                  应用类型：{APP_TYPE_MAP[plan?.deployType as AppType] || '-'}
-                </Col>
+                <Col span={6}>应用类型：{APP_TYPE_MAP[plan?.deployType as AppType] || '-'}</Col>
                 <Col span={6}>版本号：{plan?.version || ''}</Col>
                 <Col span={6}>版本分支：{plan?.deployRelease || ''}</Col>
                 <Col span={6}>发布依赖：{plan?.dependency || ''}</Col>
@@ -131,20 +106,12 @@ const DetailDrawer = (props: IPorps) => {
                   <Col span={12}>
                     DDL：
                     <br />
-                    <textarea
-                      rows={5}
-                      style={{ width: '95%' }}
-                      value={plan?.DDL}
-                    ></textarea>
+                    <textarea rows={5} style={{ width: '95%' }} value={plan?.DDL}></textarea>
                   </Col>
                   <Col span={12}>
                     DML：
                     <br />
-                    <textarea
-                      rows={5}
-                      style={{ width: '95%' }}
-                      value={plan?.DML}
-                    ></textarea>
+                    <textarea rows={5} style={{ width: '95%' }} value={plan?.DML}></textarea>
                   </Col>
                 </Row>
               )}
@@ -153,11 +120,7 @@ const DetailDrawer = (props: IPorps) => {
                   <Col span={24}>
                     配置：
                     <br />
-                    <textarea
-                      rows={5}
-                      style={{ width: '95%' }}
-                      value={plan?.configs}
-                    ></textarea>
+                    <textarea rows={5} style={{ width: '95%' }} value={plan?.configs}></textarea>
                   </Col>
                 </Row>
               )}

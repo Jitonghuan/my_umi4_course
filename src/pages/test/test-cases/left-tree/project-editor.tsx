@@ -74,11 +74,7 @@ export default function ProjectEditor(props: ProjectEditorProps) {
       onCancel={() => onClose()}
     >
       <Form form={editField} labelCol={{ flex: '80px' }}>
-        <Form.Item
-          label="项目名称"
-          name="name"
-          rules={[{ required: true, message: '请输入项目名称' }]}
-        >
+        <Form.Item label="项目名称" name="name" rules={[{ required: true, message: '请输入项目名称' }]}>
           <Input placeholder="请输入项目名称" autoFocus />
         </Form.Item>
         <Form.Item label="项目描述" name="desc">

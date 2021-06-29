@@ -2,13 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  useLayoutEffect,
-  useRef,
-} from 'react';
+import React, { useState, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
 import Emitter from 'events';
 import { Tabs } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
@@ -57,12 +51,7 @@ export default function TestCaseManager(props: IUmiRrops) {
   return (
     <MatrixPageContent isFlex>
       <FilterCard className="layout-compact">
-        <Tabs
-          activeKey="test-cases"
-          onChange={(next) =>
-            props.history.push(`/matrix/test/autotest/${next}`)
-          }
-        >
+        <Tabs activeKey="test-cases" onChange={(next) => props.history.push(`/matrix/test/autotest/${next}`)}>
           <Tabs.TabPane tab="用例管理" key="test-cases" />
           <Tabs.TabPane tab="场景管理" key="scenes" />
           <Tabs.TabPane tab="任务管理" key="tasks" />
@@ -70,11 +59,7 @@ export default function TestCaseManager(props: IUmiRrops) {
       </FilterCard>
       <CardRowGroup>
         <LeftTree onItemClick={(item) => setCurrent(item)} emitter={emitter} />
-        <RightDetail
-          key={current?.key || 1}
-          current={current}
-          emitter={emitter}
-        />
+        <RightDetail key={current?.key || 1} current={current} emitter={emitter} />
       </CardRowGroup>
       <CaseEditor
         mode={caseEditorMode}

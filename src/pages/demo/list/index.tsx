@@ -71,22 +71,14 @@ export default function DemoPageList() {
           <Table.Column title="函数名" dataIndex="name" ellipsis />
           <Table.Column title="描述" dataIndex="desc" ellipsis />
           <Table.Column title="创建人" dataIndex="createUser" width={140} />
-          <Table.Column
-            title="操作时间"
-            dataIndex="gmtModify"
-            width={180}
-            render={datetimeCellRender}
-          />
+          <Table.Column title="操作时间" dataIndex="gmtModify" width={180} render={datetimeCellRender} />
           <Table.Column
             title="操作"
             width={120}
             render={(_, record: Record<string, any>, index) => (
               <div className="action-cell">
                 <a>修改</a>
-                <Popconfirm
-                  title="确定要删除该函数吗？"
-                  onConfirm={() => console.log(record, index)}
-                >
+                <Popconfirm title="确定要删除该函数吗？" onConfirm={() => console.log(record, index)}>
                   <a>删除</a>
                 </Popconfirm>
               </div>

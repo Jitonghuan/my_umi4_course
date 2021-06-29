@@ -44,10 +44,7 @@ export function useLogStoreOptions() {
   return [source];
 }
 
-export function useFrameUrl(
-  envCode?: string,
-  logStore?: string,
-): [string, boolean] {
+export function useFrameUrl(envCode?: string, logStore?: string): [string, boolean] {
   const [url, setUrl] = useState<string>('');
   const [loading, setLoading] = useState(false);
 

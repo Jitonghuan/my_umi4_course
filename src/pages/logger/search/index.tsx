@@ -42,15 +42,11 @@ export default function LoggerSearch() {
       </FilterCard>
       <ContentCard className="page-logger-search-content">
         {frameLoading ? <Spin /> : null}
-        {!frameLoading && (!envCode || !logStore) ? (
-          <div className="empty-holder">请选择环境和日志库</div>
-        ) : null}
+        {!frameLoading && (!envCode || !logStore) ? <div className="empty-holder">请选择环境和日志库</div> : null}
         {!frameLoading && envCode && logStore && !frameUrl ? (
           <div className="empty-holder">未找到日志检索页面</div>
         ) : null}
-        {!frameLoading && frameUrl ? (
-          <iframe src={frameUrl} frameBorder="0" />
-        ) : null}
+        {!frameLoading && frameUrl ? <iframe src={frameUrl} frameBorder="0" /> : null}
       </ContentCard>
     </MatrixPageContent>
   );

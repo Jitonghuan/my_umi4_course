@@ -12,10 +12,7 @@ import { getEnvName } from '@/utils';
 import moment from 'moment';
 
 // 过滤表单 schema
-export const createFilterFormSchema = (params: {
-  categoryData?: any[];
-  businessData?: any[];
-}) => ({
+export const createFilterFormSchema = (params: { categoryData?: any[]; businessData?: any[] }) => ({
   theme: 'inline',
   isShowReset: true,
   labelColSpan: 3,
@@ -74,18 +71,14 @@ export const createTableSchema = ({
       width: 60,
       title: 'ID',
       dataIndex: 'id',
-      render: (text, record) => (
-        <a onClick={() => onDetailClick(record)}>{text}</a>
-      ),
+      render: (text, record) => <a onClick={() => onDetailClick(record)}>{text}</a>,
     },
     {
       title: '审批状态',
       dataIndex: 'applyStatus',
       render: (applyStatus: number, record) =>
         APPLY_STATUS_MAP[applyStatus] ? (
-          <Tag color={APPLY_STATUS_COLOR_MAP[applyStatus] || ''}>
-            {APPLY_STATUS_MAP[applyStatus]}
-          </Tag>
+          <Tag color={APPLY_STATUS_COLOR_MAP[applyStatus] || ''}>{APPLY_STATUS_MAP[applyStatus]}</Tag>
         ) : (
           applyStatus
         ),
@@ -93,12 +86,7 @@ export const createTableSchema = ({
     {
       title: '发布类型',
       dataIndex: 'deployType',
-      render: (text: string, record) => (
-        <Badge
-          color={DEPLOY_TYPE_COLOR_MAP[text]}
-          text={DEPLOY_TYPE_MAP[text]}
-        />
-      ),
+      render: (text: string, record) => <Badge color={DEPLOY_TYPE_COLOR_MAP[text]} text={DEPLOY_TYPE_MAP[text]} />,
     },
     {
       title: '申请名',
@@ -115,8 +103,7 @@ export const createTableSchema = ({
     {
       title: '应用组',
       dataIndex: 'appGroupCode',
-      render: (text) =>
-        businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
+      render: (text) => businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
     },
     {
       title: '发布环境',
@@ -181,8 +168,7 @@ export const createPlanSchemaColumns = ({
   {
     title: '应用组',
     dataIndex: 'appGroupCode',
-    render: (text: string) =>
-      businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
+    render: (text: string) => businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
   },
   {
     title: '应用CODE',
@@ -250,8 +236,7 @@ export const createApplyDetailSchemaColumns = ({
   {
     title: '应用组',
     dataIndex: 'appGroupCode',
-    render: (text: string) =>
-      businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
+    render: (text: string) => businessDataList?.find((v) => v.groupCode === text)?.groupName || '',
   },
   {
     title: '发布环境',

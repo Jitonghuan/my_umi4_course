@@ -3,16 +3,7 @@
 // @create 2021/06/23 09:25
 
 import React, { useState, useEffect } from 'react';
-import {
-  Form,
-  Input,
-  Select,
-  Button,
-  Table,
-  Tag,
-  message,
-  Popconfirm,
-} from 'antd';
+import { Form, Input, Select, Button, Table, Tag, message, Popconfirm } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest, delRequest } from '@/utils/request';
@@ -92,25 +83,13 @@ export default function LoggerAlarm() {
             <Input placeholder="请输入" />
           </Form.Item>
           <Form.Item label="应用名称" name="appCode">
-            <Select
-              placeholder="请选择"
-              options={appOptions}
-              style={{ width: 168 }}
-            />
+            <Select placeholder="请选择" options={appOptions} style={{ width: 168 }} />
           </Form.Item>
           <Form.Item label="环境名称" name="envCode">
-            <Select
-              placeholder="请选择"
-              options={envOptions}
-              style={{ width: 168 }}
-            />
+            <Select placeholder="请选择" options={envOptions} style={{ width: 168 }} />
           </Form.Item>
           <Form.Item label="状态" name="status">
-            <Select
-              placeholder="请选择"
-              options={statusOptions}
-              style={{ width: 168 }}
-            />
+            <Select placeholder="请选择" options={statusOptions} style={{ width: 168 }} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" ghost onClick={handleSearch}>
@@ -152,27 +131,17 @@ export default function LoggerAlarm() {
             dataIndex="status"
             title="状态"
             render={(v, record) => {
-              return v === 1 ? (
-                <Tag color="success">已启用</Tag>
-              ) : v === 0 ? (
-                <Tag color="default">已关闭</Tag>
-              ) : null;
+              return v === 1 ? <Tag color="success">已启用</Tag> : v === 0 ? <Tag color="default">已关闭</Tag> : null;
             }}
           />
           <Table.Column
             title="操作"
             render={(_, record, index) => (
               <div className="action-cell">
-                <Button
-                  type="text"
-                  onClick={() => handleEditItem(record, index)}
-                >
+                <Button type="text" onClick={() => handleEditItem(record, index)}>
                   编辑
                 </Button>
-                <Popconfirm
-                  title="确定要删除该规则吗？"
-                  onConfirm={() => handleDelItem(record, index)}
-                >
+                <Popconfirm title="确定要删除该规则吗？" onConfirm={() => handleDelItem(record, index)}>
                   <Button type="text">删除</Button>
                 </Popconfirm>
               </div>

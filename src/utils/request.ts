@@ -9,19 +9,14 @@ const parseErrorMsg = (errorMsg: any) => {
   if (Array.isArray(errorMsg)) {
     return errorMsg
       .map((n) => {
-        return typeof n === 'string'
-          ? n
-          : n?.msg || n.message || 'unknown error';
+        return typeof n === 'string' ? n : n?.msg || n.message || 'unknown error';
       })
       .join('; ');
   }
   return errorMsg?.msg || errorMsg?.message || 'unknown error';
 };
 
-async function requestHandler(
-  promise: Promise<IResponse<any>>,
-  reserveError = false,
-) {
+async function requestHandler(promise: Promise<IResponse<any>>, reserveError = false) {
   return promise
     .then((resp) => {
       // 非登录失效报错
@@ -42,44 +37,22 @@ async function requestHandler(
 }
 
 // 默认使用组件库对针对后台项目登录模式设计的接口调用方案
-const request = (
-  url: string,
-  params?: IRequestParams,
-  reserveError?: boolean,
-) => {
+const request = (url: string, params?: IRequestParams, reserveError?: boolean) => {
   return requestHandler(sso.request(url, params), reserveError);
 };
 
 export const getRequest = request;
 
-export const delRequest = (
-  url: string,
-  params?: IRequestParams,
-  reserveError?: boolean,
-) => {
-  return requestHandler(
-    sso.request(url, { ...params, method: 'DELETE' }),
-    reserveError,
-  );
+export const delRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
+  return requestHandler(sso.request(url, { ...params, method: 'DELETE' }), reserveError);
 };
 
-export const postRequest = (
-  url: string,
-  params?: IRequestParams,
-  reserveError?: boolean,
-) => {
+export const postRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
   return requestHandler(sso.post(url, params), reserveError);
 };
 
-export const putRequest = (
-  url: string,
-  params?: IRequestParams,
-  reserveError?: boolean,
-) => {
-  return requestHandler(
-    sso.request(url, { ...params, method: 'PUT' }),
-    reserveError,
-  );
+export const putRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
+  return requestHandler(sso.request(url, { ...params, method: 'PUT' }), reserveError);
 };
 
 export const queryUserInfo = sso.queryUserInfo;

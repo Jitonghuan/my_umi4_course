@@ -12,24 +12,14 @@ import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import {
-  createDeploy,
-  updateFeatures,
-  restartApp,
-} from '../../../../../../service';
+import { createDeploy, updateFeatures, restartApp } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
 const { confirm } = Modal;
 
-const PublishContent = ({
-  appCode,
-  envTypeCode,
-  deployedList,
-  deployInfo,
-  onOperate,
-}: IProps) => {
+const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOperate }: IProps) => {
   const isProd = envTypeCode === 'prod';
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -39,18 +29,9 @@ const PublishContent = ({
       <div className={`${rootCls}__title`}>发布内容</div>
 
       {isProd ? (
-        <ProdSteps
-          appCode={appCode}
-          deployInfo={deployInfo}
-          onOperate={onOperate}
-          envTypeCode={envTypeCode}
-        />
+        <ProdSteps appCode={appCode} deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
       ) : (
-        <OtherEnvSteps
-          deployInfo={deployInfo}
-          onOperate={onOperate}
-          envTypeCode={envTypeCode}
-        />
+        <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
       )}
 
       <div className={`${rootCls}__list-wrap`}>

@@ -1,10 +1,4 @@
-import React, {
-  useMemo,
-  useEffect,
-  useState,
-  useCallback,
-  useContext,
-} from 'react';
+import React, { useMemo, useEffect, useState, useCallback, useContext } from 'react';
 import { Form, message, Select, Input, Drawer, Button } from 'antd';
 import { PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
@@ -15,13 +9,7 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import ApplyUpload from './apply-upload';
 
 import { queryTicketData, queryTicketType, doCreateTicket } from '../service';
-import {
-  getFilterFormSchema,
-  tableSchema,
-  getTicketCreateSchema,
-  defaultChooseType,
-  notifyData,
-} from './schema';
+import { getFilterFormSchema, tableSchema, getTicketCreateSchema, defaultChooseType, notifyData } from './schema';
 
 import './index.less';
 import { postRequest, getRequest } from '@/utils/request';
@@ -224,9 +212,7 @@ const Coms = (props: any) => {
             if (field === 'ticketType') {
               // 类型切换,处理申请项数据
               const filter = typeEnum.find((el) => el.value === value);
-              setApplyTypeEnum(
-                filter && filter.children ? filter.children : [],
-              );
+              setApplyTypeEnum(filter && filter.children ? filter.children : []);
               setisShowApplyUpload(value === '资源申请');
             }
           }}

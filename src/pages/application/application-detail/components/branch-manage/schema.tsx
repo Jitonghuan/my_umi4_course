@@ -22,11 +22,7 @@ export const createFilterFormSchema = () => ({
 });
 
 // 表格 schema
-export const createTableSchema = ({
-  onCancelClick,
-}: {
-  onCancelClick: (record: any, index: number) => void;
-}) => [
+export const createTableSchema = ({ onCancelClick }: { onCancelClick: (record: any, index: number) => void }) => [
   {
     width: 80,
     title: 'ID',
@@ -50,8 +46,7 @@ export const createTableSchema = ({
     width: 100,
     title: '创建时间',
     dataIndex: 'gmtCreate',
-    render: (val: string) =>
-      val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '',
+    render: (val: string) => (val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : ''),
   },
   {
     width: 100,
