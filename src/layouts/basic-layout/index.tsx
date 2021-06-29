@@ -155,6 +155,9 @@ export default (props: IUmiRrops) => {
               headerProps={{
                 logo,
                 isShowGlobalMenu: false,
+                onBrandClick: () => {
+                  props.history.push('/matrix/index');
+                },
               }}
               userApi={queryUserInfoApi}
               logoutApi={doLogoutApi}

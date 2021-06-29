@@ -10,8 +10,10 @@ import React, {
   useRef,
 } from 'react';
 import Emitter from 'events';
+import { Tabs } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { CardRowGroup } from '@/components/vc-page-content';
+import type { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/bus-layout';
+import { CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
 import CaseEditor from './case-editor';
@@ -19,7 +21,7 @@ import CaseDetail from './case-detail';
 import { EditorMode, TreeNode, CaseItemVO } from './interfaces';
 import './index.less';
 
-export default function TestCaseManager() {
+export default function TestCaseManager(props: IUmiRrops) {
   const [current, setCurrent] = useState<TreeNode>();
   const [editorData, setEditorData] = useState<CaseItemVO>();
   const [caseEditorMode, setCaseEditorMode] = useState<EditorMode>('HIDE');
@@ -54,6 +56,18 @@ export default function TestCaseManager() {
 
   return (
     <MatrixPageContent isFlex>
+      <FilterCard className="layout-compact">
+        <Tabs
+          activeKey="test-cases"
+          onChange={(next) =>
+            props.history.push(`/matrix/test/autotest/${next}`)
+          }
+        >
+          <Tabs.TabPane tab="用例管理" key="test-cases" />
+          <Tabs.TabPane tab="场景管理" key="scenes" />
+          <Tabs.TabPane tab="任务管理" key="tasks" />
+        </Tabs>
+      </FilterCard>
       <CardRowGroup>
         <LeftTree onItemClick={(item) => setCurrent(item)} emitter={emitter} />
         <RightDetail

@@ -14,10 +14,8 @@ export default [
     redirect: `${ds.pagePrefix}/application`,
   },
   {
-    // path: `${ds.pagePrefix}/index`,
-    // redirect: `${ds.pagePrefix}/application`,
     path: 'index',
-    name: '首页',
+    // name: '首页',
     icon: 'icon-poc_index',
     component: '@/pages/index',
   },
@@ -48,6 +46,10 @@ export default [
   {
     path: `${ds.pagePrefix}/code`,
     redirect: `${ds.pagePrefix}/code/rank`,
+  },
+  {
+    path: `${ds.pagePrefix}/test/autotest`,
+    redirect: `${ds.pagePrefix}/test/autotest/test-cases`,
   },
   {
     path: 'demo',
@@ -95,17 +97,20 @@ export default [
       {
         path: 'list',
         name: '应用列表',
+        key: 'list',
         component: '@/pages/application/application-list',
       },
       {
         path: 'detail',
         name: '应用详情',
+        key: 'list',
         hideInMenu: true,
         component: '@/pages/application/application-detail',
         routes: [
           {
             path: 'overview',
             name: '概述',
+            key: 'list',
             hideInMenu: true,
             component:
               '@/pages/application/application-detail/components/application-overview',
@@ -113,12 +118,14 @@ export default [
           {
             path: 'monitor',
             name: '应用监控',
+            key: 'list',
             hideInMenu: true,
             component: '@/pages/monitor/application/app-table',
           },
           {
             path: 'appDeploy',
             name: '应用部署',
+            key: 'list',
             hideInMenu: true,
             component:
               '@/pages/application/application-detail/components/application-deploy',
@@ -126,6 +133,7 @@ export default [
           {
             path: 'branch',
             name: '分支',
+            key: 'list',
             hideInMenu: true,
             component:
               '@/pages/application/application-detail/components/branch-manage',
@@ -133,6 +141,7 @@ export default [
           {
             path: 'configMgr',
             name: '配置管理',
+            key: 'list',
             hideInMenu: true,
             component:
               '@/pages/application/application-detail/components/config-parameters-manage',
@@ -140,6 +149,7 @@ export default [
           {
             path: 'launchParameters',
             name: '启动参数',
+            key: 'list',
             hideInMenu: true,
             component:
               '@/pages/application/application-detail/components/config-parameters-manage',
@@ -147,18 +157,21 @@ export default [
           {
             path: 'addConfig',
             name: '新增配置',
+            key: 'list',
             component:
               '@/pages/application/application-detail/components/add-config-parameters',
           },
           {
             path: 'addLaunchParameters',
             name: '新增启动参数',
+            key: 'list',
             component:
               '@/pages/application/application-detail/components/add-config-parameters',
           },
           {
             path: 'secondPartyPkg',
             name: '二方包',
+            key: 'list',
             hideInMenu: true,
             component:
               '@/pages/application/application-detail/components/second-party-pkg',
@@ -174,6 +187,7 @@ export default [
     routes: [
       {
         path: 'function',
+        key: 'function',
         name: '发布功能管理',
         component: '@/pages/publish/function',
         exact: true,
@@ -181,42 +195,49 @@ export default [
       {
         path: 'function/addFunction',
         name: '新增发布功能',
+        key: 'function',
         hideInMenu: true,
         component: '@/pages/publish/function/function-add',
       },
       {
         path: 'function/editFunction',
         name: '编辑发布功能',
+        key: 'function',
         hideInMenu: true,
         component: '@/pages/publish/function/function-edit',
       },
       {
         path: 'function/checkFunction',
         name: '查看发布功能',
+        key: 'function',
         hideInMenu: true,
         component: '@/pages/publish/function/function-check',
       },
       {
         path: 'plan',
         name: '发布计划管理',
+        key: 'plan',
         exact: true,
         component: '@/pages/publish/plan',
       },
       {
         path: 'plan/addConfigModify',
         name: '新增发布计划',
+        key: 'plan',
         hideInMenu: true,
         component: '@/pages/publish/plan/config-modify/add-modify',
       },
       {
         path: 'plan/editConfigModify',
         name: '编辑发布计划',
+        key: 'plan',
         hideInMenu: true,
         component: '@/pages/publish/plan/config-modify/edit-modify',
       },
       {
         path: 'plan/checkConfigModify',
         name: '查看发布计划',
+        key: 'plan',
         hideInMenu: true,
         component: '@/pages/publish/plan/config-modify/check-modify',
       },
@@ -314,56 +335,34 @@ export default [
         component: '@/pages/test/functions',
         exact: true,
       },
-      // {
-      //   path: 'autotest',
-      //   name: '自动化测试',
-      //   key: 'autotest',
-      //   routes: [
-      //     {
-      //       path: 'test-cases',
-      //       name: '用例管理',
-      //       component: '@/pages/test/test-cases',
-      //       hideInMenu: true,
-      //     },
-      //     {
-      //       path: 'scenes',
-      //       name: '场景管理',
-      //       component: '@/pages/test/test-cases',
-      //       hideInMenu: true,
-      //     },
-      //     {
-      //       path: 'tasks',
-      //       name: '任务管理',
-      //       component: '@/pages/test/test-cases',
-      //       hideInMenu: true,
-      //     },
-      //   ]
-      // },
       {
-        path: 'test-cases',
-        name: '用例管理',
-        key: 'test-cases',
-        component: '@/pages/test/test-cases',
-        exact: true,
+        path: 'autotest',
+        name: '自动化测试',
+        key: 'autotest',
+        routes: [
+          {
+            path: 'test-cases',
+            name: '用例管理',
+            key: 'autotest',
+            component: '@/pages/test/test-cases',
+            hideInMenu: true,
+          },
+          {
+            path: 'scenes',
+            name: '场景管理',
+            key: 'autotest',
+            component: '@/pages/test/scene-manager',
+            hideInMenu: true,
+          },
+          {
+            path: 'tasks',
+            name: '任务管理',
+            key: 'autotest',
+            component: '@/pages/test/task-manager',
+            hideInMenu: true,
+          },
+        ],
       },
-      // {
-      //   path: 'autotest/scenes',
-      //   name: '场景管理',
-      //   // key: 'scenes',
-      //   // component: '@/pages/test/scene-manager',
-      //   component: '@/pages/test/test-cases',
-      //   hideInMenu: true,
-      //   // exact: true,
-      // },
-      // {
-      //   path: 'autotest/tasks',
-      //   name: '任务管理',
-      //   // key: 'tasks',
-      //   // component: '@/pages/test/task-manager',
-      //   component: '@/pages/test/test-cases',
-      //   hideInMenu: true,
-      //   // exact: true,
-      // },
     ],
   },
   {
