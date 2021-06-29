@@ -9,9 +9,7 @@ const parseErrorMsg = (errorMsg: any) => {
   if (Array.isArray(errorMsg)) {
     return errorMsg
       .map((n) => {
-        return typeof n === 'string'
-          ? n
-          : n?.msg || n.message || 'unknown error';
+        return typeof n === 'string' ? n : n?.msg || n.message || 'unknown error';
       })
       .join('; ');
   }
@@ -42,11 +40,7 @@ const request = (url: string, params?: IRequestParams | undefined) => {
 };
 export const getRequest = request;
 
-export const postRequest = (
-  url: string,
-  params?: IRequestParams | undefined,
-  reserveError?: boolean,
-) => {
+export const postRequest = (url: string, params?: IRequestParams | undefined, reserveError?: boolean) => {
   return new Promise<IResponse>((resolve, reject) => {
     sso
       .post(url, params)

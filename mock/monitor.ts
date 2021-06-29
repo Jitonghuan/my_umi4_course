@@ -77,12 +77,10 @@ export default {
     errorMsg: '',
     data: {
       Home: 'https://grafana.seenew.info/grafana/d/home/home',
-      Kubernetes概览:
-        'https://grafana.seenew.info/grafana/d/dev-k8s-overview/kubernetesgai-lan',
+      Kubernetes概览: 'https://grafana.seenew.info/grafana/d/dev-k8s-overview/kubernetesgai-lan',
       '【dev】- Kubernetes容器副本':
         'https://grafana.seenew.info/grafana/d/1855283466460174-7453-223/dev-kubernetesrong-qi-fu-ben',
-      '【tt-prd】- Alerts':
-        'https://grafana.seenew.info/grafana/d/pbHjqZzmk/tt-prd-alerts',
+      '【tt-prd】- Alerts': 'https://grafana.seenew.info/grafana/d/pbHjqZzmk/tt-prd-alerts',
     },
   },
 

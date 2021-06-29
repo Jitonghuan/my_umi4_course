@@ -16,7 +16,7 @@ const SearchSelect = <
     key?: string;
     label: ReactNode;
     value: string | number;
-  } = any
+  } = any,
 >({
   fetchOptions,
   debounceTimeout = 800,

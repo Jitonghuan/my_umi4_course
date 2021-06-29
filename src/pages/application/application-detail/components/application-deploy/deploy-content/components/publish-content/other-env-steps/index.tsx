@@ -8,11 +8,7 @@
 import React, { useMemo, useState } from 'react';
 import { Steps, Button, Modal, Radio } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  retryMerge,
-  retryDeploy,
-  retryBuild,
-} from '../../../../../../../service';
+import { retryMerge, retryDeploy, retryBuild } from '../../../../../../../service';
 import { IProps, Status } from './types';
 // import './index.less';
 
@@ -81,9 +77,7 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
                 <Button
                   style={{ marginTop: 4 }}
                   onClick={() => {
-                    retryMerge({ id: deployInfo.id }).finally(() =>
-                      onOperate('mergeReleaseRetryEnd'),
-                    );
+                    retryMerge({ id: deployInfo.id }).finally(() => onOperate('mergeReleaseRetryEnd'));
                   }}
                 >
                   重试
@@ -99,14 +93,13 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
           description={
             (status === 2.2 || status === 2.1) && (
               <>
-                {deployInfo.jenkinsUrl &&
-                  (envTypeCode == 'dev' || envTypeCode == 'test') && (
-                    <div style={{ marginTop: 2 }}>
-                      <a target="_blank" href={deployInfo.jenkinsUrl}>
-                        查看Jenkins详情
-                      </a>
-                    </div>
-                  )}
+                {deployInfo.jenkinsUrl && (envTypeCode == 'dev' || envTypeCode == 'test') && (
+                  <div style={{ marginTop: 2 }}>
+                    <a target="_blank" href={deployInfo.jenkinsUrl}>
+                      查看Jenkins详情
+                    </a>
+                  </div>
+                )}
                 {status === 2.2 && (
                   <Button
                     style={{ marginTop: 4 }}
@@ -150,20 +143,19 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
                 )}
                 {status === 3.2 && (
                   <>
-                    {deployInfo.deployErrInfo &&
-                      (envTypeCode == 'dev' || envTypeCode == 'test') && (
-                        <div
-                          style={{ marginTop: 2 }}
-                          onClick={() => {
-                            Modal.info({
-                              content: deployInfo.deployErrInfo,
-                              title: '部署错误详情',
-                            });
-                          }}
-                        >
-                          部署错误详情
-                        </div>
-                      )}
+                    {deployInfo.deployErrInfo && (envTypeCode == 'dev' || envTypeCode == 'test') && (
+                      <div
+                        style={{ marginTop: 2 }}
+                        onClick={() => {
+                          Modal.info({
+                            content: deployInfo.deployErrInfo,
+                            title: '部署错误详情',
+                          });
+                        }}
+                      >
+                        部署错误详情
+                      </div>
+                    )}
                     <Button
                       style={{ marginTop: 4 }}
                       onClick={() => {
@@ -172,11 +164,9 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
                           title: '确定要重新部署吗?',
                           icon: <ExclamationCircleOutlined />,
                           onOk() {
-                            return retryDeploy({ id: deployInfo.id }).then(
-                              () => {
-                                onOperate('retryDeployEnd');
-                              },
-                            );
+                            return retryDeploy({ id: deployInfo.id }).then(() => {
+                              onOperate('retryDeployEnd');
+                            });
                           },
                           onCancel() {
                             onOperate('retryDeployEnd');

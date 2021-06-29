@@ -18,13 +18,7 @@ const hospitalCodeToText: Record<string, string> = {
 };
 
 const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
-  const {
-    deployStatus,
-    deployingHospital,
-    deployingHosBatch,
-    jenkinsUrl,
-    hospitals,
-  } = deployInfo || {};
+  const { deployStatus, deployingHospital, deployingHosBatch, jenkinsUrl, hospitals } = deployInfo || {};
 
   const [deployConfig, setDeployConfig] = useState({
     deployEnv: '',
@@ -42,17 +36,13 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
     let text2 = null;
 
     if (deployStatus === 'deploying') {
-      text1 = (
-        <span>{hospitalCodeToText[deployingHospital]}正在部署中。。。</span>
-      );
+      text1 = <span>{hospitalCodeToText[deployingHospital]}正在部署中。。。</span>;
 
       if (deployingHosBatch === 2) {
         text2 = <span>第一批已部署完成，正在部署第二批。。。</span>;
       }
     } else if (deployStatus === 'deployWaitBatch2') {
-      text1 = (
-        <span>{hospitalCodeToText[deployingHospital]}正在部署中。。。</span>
-      );
+      text1 = <span>{hospitalCodeToText[deployingHospital]}正在部署中。。。</span>;
       text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
     }
 
@@ -106,9 +96,7 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
         {/* 根据 hospitals 拿到列表 */}
         <Radio.Group
           value={deployConfig.deployEnv}
-          onChange={(v) =>
-            setDeployConfig({ ...deployConfig, deployEnv: v.target.value })
-          }
+          onChange={(v) => setDeployConfig({ ...deployConfig, deployEnv: v.target.value })}
           options={hospitals?.split(',').map((code: string) => ({
             label: hospitalCodeToText[code],
             value: code,
@@ -120,9 +108,7 @@ const DeployModal = ({ visible, deployInfo, onCancel, onOperate }: IProps) => {
         <Radio.Group
           disabled={deployStatus !== 'deployWait'}
           value={deployConfig.deployBatch}
-          onChange={(v) =>
-            setDeployConfig({ ...deployConfig, deployBatch: v.target.value })
-          }
+          onChange={(v) => setDeployConfig({ ...deployConfig, deployBatch: v.target.value })}
           options={[
             { label: '分批', value: 12 },
             { label: '不分批', value: 0 },

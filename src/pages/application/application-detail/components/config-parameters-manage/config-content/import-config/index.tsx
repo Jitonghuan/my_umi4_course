@@ -33,14 +33,7 @@ const ImportConfig = (props: IProps) => {
   };
 
   return (
-    <Modal
-      destroyOnClose
-      width={600}
-      title="导入配置"
-      visible={props.visible}
-      onCancel={props.onClose}
-      footer={null}
-    >
+    <Modal destroyOnClose width={600} title="导入配置" visible={props.visible} onCancel={props.onClose} footer={null}>
       <div style={{ display: 'flex' }}>
         <span>配置文件：</span>
         <Upload {...uploadProps}>

@@ -82,22 +82,13 @@ const PublishRecord = (props: IProps) => {
   }, [envDataList, curRecord]);
 
   const renderLoadMore = () => {
-    const {
-      pageSize = 0,
-      total = 0,
-      current = 0,
-    } = tableProps?.pagination || {};
+    const { pageSize = 0, total = 0, current = 0 } = tableProps?.pagination || {};
 
     return (
       total > 0 &&
       total > pageSize && (
         <div className={`${rootCls}-btns`}>
-          <Button
-            ghost
-            type="dashed"
-            loading={tableProps.loading}
-            onClick={loadMore}
-          >
+          <Button ghost type="dashed" loading={tableProps.loading} onClick={loadMore}>
             加载更多
           </Button>
         </div>
@@ -120,11 +111,7 @@ const PublishRecord = (props: IProps) => {
           loading={tableProps.loading}
           itemLayout="vertical"
           loadMore={renderLoadMore()}
-          dataSource={
-            tableProps.dataSource?.filter(
-              (v) => v?.envTypeCode === env,
-            ) as IRecord[]
-          }
+          dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
           renderItem={(item) => (
             <List.Item>
               {Object.keys(recordFieldMap)
@@ -140,11 +127,7 @@ const PublishRecord = (props: IProps) => {
         />
       ) : null}
 
-      <Modal
-        title="发布详情"
-        visible={visible}
-        onCancel={() => setVisible(false)}
-      >
+      <Modal title="发布详情" visible={visible} onCancel={() => setVisible(false)}>
         <VCDescription
           column={1}
           dataSource={Object.keys(recordFieldMap).map((field) => ({

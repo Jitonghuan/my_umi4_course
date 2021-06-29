@@ -24,13 +24,9 @@ export const tableSchema: ColumnProps[] = [
     dataIndex: 'testTime',
     render: (val, record) => (
       <span>
-        {record.startTime
-          ? dayjs(record.startTime).format('YYYY-MM-DD HH:mm:ss')
-          : ''}
+        {record.startTime ? dayjs(record.startTime).format('YYYY-MM-DD HH:mm:ss') : ''}
         <br />
-        {record.endTime
-          ? dayjs(record.endTime).format('YYYY-MM-DD HH:mm:ss')
-          : ''}
+        {record.endTime ? dayjs(record.endTime).format('YYYY-MM-DD HH:mm:ss') : ''}
       </span>
     ),
   },
@@ -38,9 +34,7 @@ export const tableSchema: ColumnProps[] = [
     title: '测试时长(秒)',
     dataIndex: 'useTime',
     render: (_, record) =>
-      record.endTime && record.startTime
-        ? dayjs(record.endTime).diff(dayjs(record.startTime)) / 1000
-        : '',
+      record.endTime && record.startTime ? dayjs(record.endTime).diff(dayjs(record.startTime)) / 1000 : '',
   },
   {
     title: '测试结果',

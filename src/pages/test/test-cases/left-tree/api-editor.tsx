@@ -2,24 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/01 15:32
 
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useContext,
-  useRef,
-} from 'react';
-import {
-  Drawer,
-  Form,
-  Input,
-  message,
-  Select,
-  Radio,
-  Tabs,
-  Button,
-  Switch,
-} from 'antd';
+import React, { useState, useCallback, useEffect, useContext, useRef } from 'react';
+import { Drawer, Form, Input, message, Select, Radio, Tabs, Button, Switch } from 'antd';
 import type { RadioChangeEvent } from 'antd/es/radio';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from '../service';
@@ -27,14 +11,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import DebounceSelect from '@/components/debounce-select';
 import TableForm from '@/components/simple-table-form';
 import { TreeNode, EditorMode } from '../interfaces';
-import {
-  API_TYPE,
-  PARAM_TYPE,
-  API_METHOD,
-  API_TYPE_OPTIONS,
-  PARAM_TYPE_OPTIONS,
-  API_METHOD_OPTIONS,
-} from '../common';
+import { API_TYPE, PARAM_TYPE, API_METHOD, API_TYPE_OPTIONS, PARAM_TYPE_OPTIONS, API_METHOD_OPTIONS } from '../common';
 
 const formLayout = {
   labelCol: { flex: '88px' },
@@ -100,10 +77,7 @@ export default function ApiEditor(props: ApiEditorProps) {
     const values = await editField.validateFields();
     const payload = {
       ...values,
-      parameters:
-        paramType === PARAM_TYPE.JSON
-          ? values.parametersJSON || ''
-          : values.parameters || [],
+      parameters: paramType === PARAM_TYPE.JSON ? values.parametersJSON || '' : values.parameters || [],
     };
     delete payload.parametersJSON;
     // NOTE 接口类型为 dubbo 的时候仍然会校验此参数，所以要将数据重置 (这个应该让服务端同学修复掉)
@@ -179,48 +153,19 @@ export default function ApiEditor(props: ApiEditorProps) {
     >
       <Form form={editField} {...formLayout}>
         {/* ----- common ----- */}
-        <FormItem
-          label="所属应用"
-          name="appId"
-          rules={[{ required: true, message: '请选择应用' }]}
-        >
-          <DebounceSelect
-            labelInValue={false}
-            fetchOptions={fetchAppList}
-            placeholder="输入应用名搜索"
-            fetchOnMount
-          />
+        <FormItem label="所属应用" name="appId" rules={[{ required: true, message: '请选择应用' }]}>
+          <DebounceSelect labelInValue={false} fetchOptions={fetchAppList} placeholder="输入应用名搜索" fetchOnMount />
         </FormItem>
-        <FormItem
-          label="接口名称"
-          name="name"
-          rules={[{ required: true, message: '请输入接口名称' }]}
-        >
+        <FormItem label="接口名称" name="name" rules={[{ required: true, message: '请输入接口名称' }]}>
           <Input placeholder="请输入" />
         </FormItem>
-        <FormItem
-          label="是否生效"
-          name="status"
-          initialValue={true}
-          valuePropName="checked"
-        >
+        <FormItem label="是否生效" name="status" initialValue={true} valuePropName="checked">
           <Switch />
         </FormItem>
-        <FormItem
-          label="接口类型"
-          name="apiType"
-          initialValue={API_TYPE._default}
-        >
-          <Radio.Group
-            options={API_TYPE_OPTIONS}
-            onChange={handleApiTypeChange}
-          />
+        <FormItem label="接口类型" name="apiType" initialValue={API_TYPE._default}>
+          <Radio.Group options={API_TYPE_OPTIONS} onChange={handleApiTypeChange} />
         </FormItem>
-        <FormItem
-          label="接口地址"
-          name="path"
-          rules={[{ required: true, message: '请输入接口地址' }]}
-        >
+        <FormItem label="接口地址" name="path" rules={[{ required: true, message: '请输入接口地址' }]}>
           <Input placeholder="/api/aaa/bbb" />
         </FormItem>
         {apiType === API_TYPE.HTTP ? (
@@ -233,11 +178,7 @@ export default function ApiEditor(props: ApiEditorProps) {
             <Select placeholder="请选择" options={API_METHOD_OPTIONS} />
           </FormItem>
         ) : (
-          <FormItem
-            label="Method"
-            name="method"
-            rules={[{ required: true, message: '请输入 Method' }]}
-          >
+          <FormItem label="Method" name="method" rules={[{ required: true, message: '请输入 Method' }]}>
             <Input placeholder="请输入" />
           </FormItem>
         )}
@@ -285,20 +226,12 @@ export default function ApiEditor(props: ApiEditorProps) {
 
         {/* ----- dubbo ----- */}
         {apiType === API_TYPE.DUBBO ? (
-          <FormItem
-            label="Group"
-            name="group"
-            rules={[{ required: true, message: '请输入 group' }]}
-          >
+          <FormItem label="Group" name="group" rules={[{ required: true, message: '请输入 group' }]}>
             <Input placeholder="请输入" />
           </FormItem>
         ) : null}
         {apiType === API_TYPE.DUBBO ? (
-          <FormItem
-            label="Version"
-            name="version"
-            rules={[{ required: true, message: '请输入接口版本' }]}
-          >
+          <FormItem label="Version" name="version" rules={[{ required: true, message: '请输入接口版本' }]}>
             <Input placeholder="请输入" />
           </FormItem>
         ) : null}

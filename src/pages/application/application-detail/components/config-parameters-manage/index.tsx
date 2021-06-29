@@ -46,9 +46,7 @@ const ConfigParametersManage = ({
     <div className={rootCls}>
       <Tabs
         className={`${rootCls}__tabs`}
-        defaultActiveKey={
-          sessionStorage.getItem('__init_env_tab__') || undefined
-        }
+        defaultActiveKey={sessionStorage.getItem('__init_env_tab__') || undefined}
         onChange={handleTabActiveChange}
         // activeKey={this.state.activeKey}
         type="card"
@@ -56,12 +54,7 @@ const ConfigParametersManage = ({
       >
         {envData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
-            <ConfigContent
-              env={item.value}
-              configType={configType}
-              appCode={appCode}
-              appId={appId}
-            />
+            <ConfigContent env={item.value} configType={configType} appCode={appCode} appId={appId} />
           </TabPane>
         ))}
       </Tabs>

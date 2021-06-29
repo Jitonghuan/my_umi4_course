@@ -150,9 +150,7 @@ const PrometheusCom: React.FC = () => {
       width: 100,
       render: (_: string, record: Item) => (
         <Space>
-          <Link to={`./prometheus/prometheus-edit?name=${record.name}`}>
-            编辑
-          </Link>
+          <Link to={`./prometheus/prometheus-edit?name=${record.name}`}>编辑</Link>
           <Popconfirm
             title="确认删除？"
             onConfirm={() => run({ id: record.id })}
@@ -168,9 +166,7 @@ const PrometheusCom: React.FC = () => {
     },
   ];
 
-  const expandedRowRender = (
-    expandData: AlertNameProps[] | { key: string; value: string }[],
-  ) => {
+  const expandedRowRender = (expandData: AlertNameProps[] | { key: string; value: string }[]) => {
     const labelColumns = [
       {
         title: 'key',

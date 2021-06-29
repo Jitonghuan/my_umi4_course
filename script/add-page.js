@@ -26,9 +26,7 @@ const updateRoutes = (routesInfo) => {
 
     // 查找注入节点
     const idx = routesStr.indexOf('/** {{routes:');
-    const targetStr = `${routesStr.substr(0, idx)}${str},\n${routesStr.substr(
-      idx,
-    )}`;
+    const targetStr = `${routesStr.substr(0, idx)}${str},\n${routesStr.substr(idx)}`;
 
     fs.writeFileSync(routesPath, targetStr);
 
@@ -39,9 +37,7 @@ const updateRoutes = (routesInfo) => {
 // 初始化页面文件
 const createPage = async () => {
   // 获取页面名称
-  const pageName = await utils.input(
-    '请输入页面文件名<英文、中划线，首字母须英文, 支持二级页面，例如 a/b>',
-  );
+  const pageName = await utils.input('请输入页面文件名<英文、中划线，首字母须英文, 支持二级页面，例如 a/b>');
 
   let currentPageName = pageName;
   let pageFilePrefix = '';
@@ -55,14 +51,10 @@ const createPage = async () => {
   }
 
   const comsName = currentPageName[0].toUpperCase() + currentPageName.slice(1); // 页面组件名，首字母大写处理
-  const pageDesc = await utils.prompt(
-    '请输入页面名称<页面作用描述，例如 “测试页面”>',
-    null,
-    (v) => {
-      if (!v) return new Error('测试页面必填！');
-      return true;
-    },
-  );
+  const pageDesc = await utils.prompt('请输入页面名称<页面作用描述，例如 “测试页面”>', null, (v) => {
+    if (!v) return new Error('测试页面必填！');
+    return true;
+  });
   const pageSelect = await utils.multi(
     '请选择输出文件<空格选中>',
     [
@@ -83,11 +75,7 @@ const createPage = async () => {
   }
 
   // 确定输出文件位置
-  const outputFilePath = path.resolve(
-    pagePath,
-    pageFilePrefix,
-    currentPageName,
-  );
+  const outputFilePath = path.resolve(pagePath, pageFilePrefix, currentPageName);
 
   utils.print('info', '>----------- 开始创建页面文件 ----------->');
 
@@ -96,10 +84,7 @@ const createPage = async () => {
     // 模板文件位置
     const tplFilePath = path.resolve(tplPath, el);
     // 要输出的文件path
-    const outputPath = path.resolve(
-      outputFilePath,
-      el === 'mock.ts' ? '_mock.ts' : el,
-    );
+    const outputPath = path.resolve(outputFilePath, el === 'mock.ts' ? '_mock.ts' : el);
 
     const fileStr = fs.readFileSync(tplFilePath, { encoding: 'utf-8' });
     const renderStr = utils.templateRender(fileStr, {
@@ -117,10 +102,7 @@ const createPage = async () => {
 
     // 当前文件已存在，中断当前文件的写入行为
     if (fs.existsSync(outputPath)) {
-      utils.print(
-        'warn',
-        `${el}文件已存在，不执行覆盖，继续执行下一个文件写入`,
-      );
+      utils.print('warn', `${el}文件已存在，不执行覆盖，继续执行下一个文件写入`);
       return;
     }
 
@@ -131,9 +113,7 @@ const createPage = async () => {
 
   utils.print('success', '页面创建完成');
 
-  const isCreateRoutes = await utils.confirm(
-    '是否更新路由文件<仅支持一级路由，暂不支持子路由>',
-  );
+  const isCreateRoutes = await utils.confirm('是否更新路由文件<仅支持一级路由，暂不支持子路由>');
 
   if (!isCreateRoutes) {
     return;

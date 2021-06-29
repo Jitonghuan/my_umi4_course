@@ -12,30 +12,18 @@ import HulkTable from '@cffe/vc-hulk-table';
 import { history } from 'umi';
 import { createTableSchema } from './schema';
 import DetailContext from '../../../../../context';
-import {
-  createDeploy,
-  updateFeatures,
-  queryEnvsReq,
-} from '../../../../../../service';
+import { createDeploy, updateFeatures, queryEnvsReq } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
-const PublishBranch = ({
-  hasPublishContent,
-  deployInfo,
-  dataSource,
-  onSubmitBranch,
-  env,
-}: IProps) => {
+const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBranch, env }: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
-    [],
-  );
+  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState([]);
@@ -46,9 +34,7 @@ const PublishBranch = ({
   } = history;
 
   const submit = () => {
-    const filter = dataSource
-      .filter((el) => selectedRowKeys.includes(el.id))
-      .map((el) => el.branchName);
+    const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
       return updateFeatures({
@@ -110,11 +96,7 @@ const PublishBranch = ({
           <span className={`${rootCls}__list-header-text`}>分支列表</span>
 
           <div className={`${rootCls}__list-header-btns`}>
-            <Button
-              type="primary"
-              disabled={!selectedRowKeys?.length}
-              onClick={submitClick}
-            >
+            <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
               提交分支
             </Button>
           </div>
@@ -157,11 +139,7 @@ const PublishBranch = ({
       >
         <div>
           <span>发布环境：</span>
-          <Checkbox.Group
-            value={deployEnv}
-            onChange={(v) => setDeployEnv(v)}
-            options={envDataList || []}
-          />
+          <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
         </div>
       </Modal>
     </div>

@@ -26,8 +26,7 @@ const ApplicationDeploy = ({
 
   const { envData } = useContext(FeContext);
   const [tabActive, setTabActive] = useState(
-    sessionStorage.getItem('__init_env_tab__') ||
-      (isSecondPartyPkg ? 'cDev' : 'dev'),
+    sessionStorage.getItem('__init_env_tab__') || (isSecondPartyPkg ? 'cDev' : 'dev'),
   );
   // 二方包环境
   const [envSecondPartyPkgData, setEnvSecondPartyPkgData] = useState<any[]>([]);
@@ -74,9 +73,7 @@ const ApplicationDeploy = ({
               appCode={appCode}
               envTypeCode={item.value}
               onDeployNextEnvSuccess={() => {
-                const i = curEnvData.findIndex(
-                  (item) => item.value === tabActive,
-                );
+                const i = curEnvData.findIndex((item) => item.value === tabActive);
                 setTabActive(curEnvData[i + 1]?.value);
                 console.log(tabActive);
               }}

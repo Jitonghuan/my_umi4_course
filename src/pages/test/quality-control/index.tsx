@@ -47,12 +47,8 @@ const QualityControl: React.FC = () => {
 
       return {
         ...rest,
-        startTime: gmtCreate[0]
-          ? gmtCreate[0].format('YYYY-MM-DD 00:00:00')
-          : undefined,
-        endTime: gmtCreate[1]
-          ? gmtCreate[1].format('YYYY-MM-DD 23:59:59')
-          : undefined,
+        startTime: gmtCreate[0] ? gmtCreate[0].format('YYYY-MM-DD 00:00:00') : undefined,
+        endTime: gmtCreate[1] ? gmtCreate[1].format('YYYY-MM-DD 23:59:59') : undefined,
       };
     },
   });
@@ -187,11 +183,7 @@ const QualityControl: React.FC = () => {
       key: 'status',
       width: 100,
       render: (text: number) =>
-        STATUS_TYPE[text]?.text ? (
-          <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>
-        ) : (
-          ''
-        ),
+        STATUS_TYPE[text]?.text ? <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag> : '',
     },
     {
       title: '操作',
@@ -207,11 +199,7 @@ const QualityControl: React.FC = () => {
             disabled={STATUS_TYPE[record.status as number]?.disable}
             onConfirm={() => onConfirm(record?.id as string)}
           >
-            <Button
-              type="link"
-              disabled={STATUS_TYPE[record.status as number]?.disable}
-              style={{ padding: 0 }}
-            >
+            <Button type="link" disabled={STATUS_TYPE[record.status as number]?.disable} style={{ padding: 0 }}>
               执行
             </Button>
           </Popconfirm>
@@ -248,10 +236,7 @@ const QualityControl: React.FC = () => {
       option: appTypeData,
       onChange: (e) => {
         setAppCategoryCode(e);
-        if (
-          !form?.getFieldValue('appCode') ||
-          !form?.getFieldValue('branchName')
-        ) {
+        if (!form?.getFieldValue('appCode') || !form?.getFieldValue('branchName')) {
           setAppCode('');
         }
         form?.resetFields(['appCode', 'branchName']);
@@ -348,11 +333,7 @@ const QualityControl: React.FC = () => {
         className="table-form"
         onSearch={queryQCTable}
         reset={reset}
-        scroll={
-          tableProps.dataSource.length > 0
-            ? { x: '120%', scrollToFirstRowOnChange: true }
-            : undefined
-        }
+        scroll={tableProps.dataSource.length > 0 ? { x: '120%', scrollToFirstRowOnChange: true } : undefined}
         // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
       />
       <TestDrawer visible={drawerVisible} onClose={onClose} />

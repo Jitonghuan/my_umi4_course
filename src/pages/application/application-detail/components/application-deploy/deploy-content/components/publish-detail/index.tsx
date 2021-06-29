@@ -9,11 +9,7 @@ import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '../../../../../context';
-import {
-  cancelDeploy,
-  deployReuse,
-  queryEnvsReq,
-} from '../../../../../../service';
+import { cancelDeploy, deployReuse, queryEnvsReq } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 import { name } from 'dayjs/locale/*';
@@ -21,12 +17,7 @@ import { name } from 'dayjs/locale/*';
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
 
-const PublishDetail = ({
-  deployInfo,
-  envTypeCode,
-  nextEnvTypeCode,
-  onOperate,
-}: IProps) => {
+const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
 
@@ -128,9 +119,7 @@ const PublishDetail = ({
         contentStyle={{ color: '#000' }}
       >
         <Descriptions.Item label="CRID">{deployInfo?.id}</Descriptions.Item>
-        <Descriptions.Item label="部署分支">
-          {deployInfo?.releaseBranch}
-        </Descriptions.Item>
+        <Descriptions.Item label="部署分支">{deployInfo?.releaseBranch}</Descriptions.Item>
         <Descriptions.Item label="发布环境">{envNames}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={3}>
           {deployInfo?.conflictFeature}
@@ -165,11 +154,7 @@ const PublishDetail = ({
       >
         <div>
           <span>发布环境：</span>
-          <Checkbox.Group
-            value={deployEnv}
-            onChange={(v) => setDeployEnv(v)}
-            options={nextEnvDataList || []}
-          />
+          <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={nextEnvDataList || []} />
         </div>
       </Modal>
     </div>

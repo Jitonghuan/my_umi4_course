@@ -34,11 +34,7 @@ import CodeMirror from 'codemirror';
 //   // return value.match(new RegExp(regExpStr, 'g')) || [];
 // };
 
-export const getRegExpValue = (
-  value: string,
-  operateArr: string[],
-  bracketsArr: string[],
-) => {
+export const getRegExpValue = (value: string, operateArr: string[], bracketsArr: string[]) => {
   const variableRegExp =
     /\$[\{][^\}]*[\}]|\w+|\$\{[^\$)\$,]*\w\}|\$\{[^\$]*\w\}|\$\{[^\$]*[\u4e00-\u9fa5]\}|\w|(.)|\n/g;
   const operateRegStr = operateArr
@@ -48,8 +44,7 @@ export const getRegExpValue = (
     .join('|');
   const bracketRegStr = bracketsArr.map((el) => `\\${el}`).join('|');
 
-  const regExpStr =
-    operateRegStr + `${bracketRegStr.length ? '|' : ''}` + bracketRegStr;
+  const regExpStr = operateRegStr + `${bracketRegStr.length ? '|' : ''}` + bracketRegStr;
 
   const operateRegExpStr = `\\n|${regExpStr}|((?!${regExpStr}).)*((?!${regExpStr}).)|[^${regExpStr}]*[^${regExpStr}]`;
 
@@ -95,10 +90,7 @@ interface IvalidateConf {
  * @param valuesArr
  * @param config
  */
-export const validateValue = (
-  valuesArr: string[],
-  config: IvalidateConf,
-): [boolean, string[]?] => {
+export const validateValue = (valuesArr: string[], config: IvalidateConf): [boolean, string[]?] => {
   const { operateArr = [], bracketsArr = [], allowNumber = false } = config;
 
   const bracketsStack: string[] = [];
@@ -122,8 +114,7 @@ export const validateValue = (
         if ([prevValStr, nextValStr].includes(endBracket)) return [true];
         if (prevValStr) {
           // 开始括号前面不为开始括号&&不是操作符
-          if (prevValStr !== startBracket && !operateArr.includes(prevValStr))
-            return [true];
+          if (prevValStr !== startBracket && !operateArr.includes(prevValStr)) return [true];
         }
         bracketsStack.push(currValStr);
       } else {
@@ -131,8 +122,7 @@ export const validateValue = (
           // 结束括号后面不能为开始括号
           if (nextValStr === startBracket) return [true];
           // 结束括号后面不为结束括号 && 不是操作符
-          if (nextValStr !== endBracket && !operateArr.includes(nextValStr))
-            return [true];
+          if (nextValStr !== endBracket && !operateArr.includes(nextValStr)) return [true];
         }
         if (!bracketsStack.length) return [true];
         bracketsStack.pop();
@@ -143,8 +133,7 @@ export const validateValue = (
     /** 校验操作符 */
     if (operateArr.includes(currValStr)) {
       /** 首尾有操作符 || 操作符后面紧跟结束括号 [err] */
-      const operatePositionErr =
-        [0, valuesArr.length - 1].includes(i) || nextValStr === endBracket;
+      const operatePositionErr = [0, valuesArr.length - 1].includes(i) || nextValStr === endBracket;
 
       if (operateArr.includes(nextValStr) || operatePositionErr) {
         return [true];
@@ -159,20 +148,10 @@ export const validateValue = (
       }
 
       /** 变量前面必须跟操作符 */
-      if (
-        prevValStr &&
-        prevValStr !== startBracket &&
-        !operateArr.includes(prevValStr)
-      )
-        return [true];
+      if (prevValStr && prevValStr !== startBracket && !operateArr.includes(prevValStr)) return [true];
 
       /** 变量后面必须跟操作符 */
-      if (
-        nextValStr &&
-        nextValStr !== endBracket &&
-        !operateArr.includes(nextValStr)
-      )
-        return [true];
+      if (nextValStr && nextValStr !== endBracket && !operateArr.includes(nextValStr)) return [true];
       continue;
     }
 
@@ -214,13 +193,10 @@ export const createSpanElem = (
  */
 function generateUUID(): string {
   var d = new Date().getTime();
-  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-    /[xy]/g,
-    function (c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c == 'x' ? r : (r & 0x7) | 0x8).toString(16);
-    },
-  );
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    return (c == 'x' ? r : (r & 0x7) | 0x8).toString(16);
+  });
   return uuid;
 }

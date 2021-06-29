@@ -55,9 +55,7 @@ const tableTypeEnum: IModule[] = [
  */
 const Coms = (props: IProps) => {
   const [activeType, setActiveType] = useState<'month' | 'day'>('month');
-  const [currentDate, setCurrentDate] = useState<string>(
-    moment().format('YYYY'),
-  );
+  const [currentDate, setCurrentDate] = useState<string>(moment().format('YYYY'));
   // 时间选择列表
   const [timeLists, setTimeLists] = useState<IOption[]>([]);
   // 当前选择的具体时间
@@ -122,21 +120,12 @@ const Coms = (props: IProps) => {
   }, [currentTime]);
 
   useEffect(() => {
-    setCurrentDate(
-      activeType === 'month'
-        ? moment().format('YYYY')
-        : moment().format('YYYY-MM'),
-    );
+    setCurrentDate(activeType === 'month' ? moment().format('YYYY') : moment().format('YYYY-MM'));
     setCurrentTime(undefined);
   }, [activeType]);
 
   // 模块
-  const renderModule = ({
-    title,
-    type,
-    dataSource,
-    isShowMore = true,
-  }: IModule) => {
+  const renderModule = ({ title, type, dataSource, isShowMore = true }: IModule) => {
     return (
       <div className="code-module-item">
         <div className="code-module-header">
@@ -151,20 +140,14 @@ const Coms = (props: IProps) => {
                   timeType: activeType,
                 };
                 // 跳转 detail 页面
-                history.push(
-                  `${ds.pagePrefix}/code/details?${stringify(query)}`,
-                );
+                history.push(`${ds.pagePrefix}/code/details?${stringify(query)}`);
               }}
             >
               详情
             </Button>
           )}
         </div>
-        <VcHulkTable
-          dataSource={dataSource}
-          columns={getTableColumns(type)}
-          pagination={false}
-        />
+        <VcHulkTable dataSource={dataSource} columns={getTableColumns(type)} pagination={false} />
       </div>
     );
   };
@@ -206,9 +189,7 @@ const Coms = (props: IProps) => {
             renderModule({
               ...el,
               dataSource:
-                (el.type === 'commitNo' && commitNoData) ||
-                (el.type === 'filePath' && filePathData) ||
-                appData,
+                (el.type === 'commitNo' && commitNoData) || (el.type === 'filePath' && filePathData) || appData,
             }),
           )}
         </div>

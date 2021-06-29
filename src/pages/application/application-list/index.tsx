@@ -5,20 +5,11 @@
  * @create 2021-04-09 16:53
  */
 
-import React, {
-  useMemo,
-  useEffect,
-  useState,
-  useCallback,
-  useContext,
-} from 'react';
+import React, { useMemo, useEffect, useState, useCallback, useContext } from 'react';
 import { Form, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffectOnce } from 'white-react-use';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
+import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import CreateApplication from '@/components/create-application';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/FeContext';
@@ -34,8 +25,7 @@ import { IProps } from './types';
 import './index.less';
 
 const ApplicationList = (props: IProps) => {
-  const { categoryData = [], businessData: businessDataList = [] } =
-    useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [formInstance] = Form.useForm();
 
@@ -162,14 +152,12 @@ const ApplicationList = (props: IProps) => {
                 setCreateAppVisible(true);
               },
               onDelClick: (record, index) => {
-                deleteApp({ appCode: record.appCode, id: record.id }).then(
-                  (res) => {
-                    if (res.success) {
-                      message.success('删除成功');
-                      queryAppList();
-                    }
-                  },
-                );
+                deleteApp({ appCode: record.appCode, id: record.id }).then((res) => {
+                  if (res.success) {
+                    message.success('删除成功');
+                    queryAppList();
+                  }
+                });
               },
               categoryData,
               businessDataList,

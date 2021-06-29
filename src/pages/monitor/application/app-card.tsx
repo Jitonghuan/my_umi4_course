@@ -1,20 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
-import {
-  Radio,
-  Select,
-  message,
-  Spin,
-  RadioChangeEvent,
-  Drawer,
-  Tooltip,
-} from 'antd';
+import { Radio, Select, message, Spin, RadioChangeEvent, Drawer, Tooltip } from 'antd';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import {
-  RedoOutlined,
-  FullscreenOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
+import { RedoOutlined, FullscreenOutlined, SyncOutlined } from '@ant-design/icons';
 import { RATE_ENUMS, START_TIME_ENUMS } from './app-table';
 
 const { ColorContainer } = colorUtil.context;
@@ -63,14 +51,7 @@ const typeEnum = [
  * @create 2021-04-14 15:40
  */
 const Coms = (props: IProps) => {
-  const {
-    title,
-    getOption = () => {},
-    hasRadio = false,
-    initialRadio = '1',
-    queryFn,
-    requestParams = {},
-  } = props;
+  const { title, getOption = () => {}, hasRadio = false, initialRadio = '1', queryFn, requestParams = {} } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const [curtRadio, setCurtRadio] = useState<string>(initialRadio || '1');
   const [curOptions, setCurOptions] = useState<any>({});
@@ -83,9 +64,7 @@ const Coms = (props: IProps) => {
 
   const [fullRadio, setFullRadio] = useState<string>(initialRadio || '1');
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(
-    requestParams.startTime || 30 * 60 * 1000,
-  );
+  const [startTime, setStartTime] = useState<number>(requestParams.startTime || 30 * 60 * 1000);
   // 刷新频率
   const [timeRate, setTimeRate] = useState<number>(0);
   const timeRateInterval = useRef<NodeJS.Timeout>();
@@ -94,11 +73,7 @@ const Coms = (props: IProps) => {
   const selectRef = useRef(null);
 
   const queryDatas = () => {
-    if (
-      !requestParams?.envCode ||
-      !requestParams?.appCode ||
-      !requestParams?.ip
-    ) {
+    if (!requestParams?.envCode || !requestParams?.appCode || !requestParams?.ip) {
       return;
     }
     setLoading(true);
@@ -166,15 +141,13 @@ const Coms = (props: IProps) => {
   const handleRadioChange = (ev: RadioChangeEvent) => {
     const { value } = ev.target;
     if (fullDrawerShow) {
-      const resource =
-        value === '1' ? prevFullData.current.count : prevFullData.current.sum;
+      const resource = value === '1' ? prevFullData.current.count : prevFullData.current.sum;
       const options = getOption(resource.xAxis, resource.dataSource);
       setFullOptions(options);
       setFullRadio(value);
     } else {
       if (prevData.current?.count) {
-        const resource =
-          value === '1' ? prevData.current.count : prevData.current.sum;
+        const resource = value === '1' ? prevData.current.count : prevData.current.sum;
         const options = getOption(resource.xAxis, resource.dataSource);
         setCurOptions(options);
       } else {
@@ -186,11 +159,7 @@ const Coms = (props: IProps) => {
 
   // 全屏点击事件
   const handleFullClick = () => {
-    if (
-      !requestParams?.envCode ||
-      !requestParams?.appCode ||
-      !requestParams?.ip
-    ) {
+    if (!requestParams?.envCode || !requestParams?.appCode || !requestParams?.ip) {
       return;
     }
     setFullRadio(curtRadio);
@@ -258,16 +227,9 @@ const Coms = (props: IProps) => {
                 queryDatas();
               }}
             />
-            <FullscreenOutlined
-              className="app-operate-icon"
-              onClick={handleFullClick}
-            />
+            <FullscreenOutlined className="app-operate-icon" onClick={handleFullClick} />
             {hasRadio && (
-              <Radio.Group
-                size="small"
-                value={curtRadio}
-                onChange={handleRadioChange}
-              >
+              <Radio.Group size="small" value={curtRadio} onChange={handleRadioChange}>
                 {typeEnum.map((el) => (
                   <Radio.Button className="app-operate-switch" value={el.value}>
                     {el.label}
@@ -284,18 +246,9 @@ const Coms = (props: IProps) => {
         </div>
       </Spin>
 
-      <Drawer
-        title={title}
-        visible={fullDrawerShow}
-        width="90%"
-        onClose={handleFullClose}
-      >
+      <Drawer title={title} visible={fullDrawerShow} width="90%" onClose={handleFullClose}>
         <Spin spinning={fullLoading}>
-          <div
-            className="monitor-time-select"
-            ref={selectRef}
-            style={{ textAlign: 'right' }}
-          >
+          <div className="monitor-time-select" ref={selectRef} style={{ textAlign: 'right' }}>
             <Tooltip title="Relative time ranges" placement="top">
               <Select
                 value={startTime}
@@ -311,18 +264,9 @@ const Coms = (props: IProps) => {
               </Select>
             </Tooltip>
             <Tooltip title="Refresh dashboard" placement="top">
-              <Select
-                value={timeRate}
-                onChange={handleTimeRateChange}
-                optionLabelProp="label"
-                style={{ width: 54 }}
-              >
+              <Select value={timeRate} onChange={handleTimeRateChange} optionLabelProp="label" style={{ width: 54 }}>
                 {RATE_ENUMS.map((time) => (
-                  <Select.Option
-                    key={time.value}
-                    value={time.value}
-                    label={time.showLabel}
-                  >
+                  <Select.Option key={time.value} value={time.value} label={time.showLabel}>
                     {time.label}
                   </Select.Option>
                 ))}
@@ -340,16 +284,9 @@ const Coms = (props: IProps) => {
                   }}
                 />
                 {hasRadio && (
-                  <Radio.Group
-                    size="small"
-                    value={fullRadio}
-                    onChange={handleRadioChange}
-                  >
+                  <Radio.Group size="small" value={fullRadio} onChange={handleRadioChange}>
                     {typeEnum.map((el) => (
-                      <Radio.Button
-                        className="app-operate-switch"
-                        value={el.value}
-                      >
+                      <Radio.Button className="app-operate-switch" value={el.value}>
                         {el.label}
                       </Radio.Button>
                     ))}

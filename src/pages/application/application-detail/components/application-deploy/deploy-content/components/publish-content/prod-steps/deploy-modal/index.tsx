@@ -8,26 +8,11 @@
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { Steps, Button, Modal, Radio, Spin, message } from 'antd';
 import DetailContext from '../../../../../../../context';
-import {
-  confirmProdDeploy,
-  queryEnvsReq,
-} from '../../../../../../../../service';
+import { confirmProdDeploy, queryEnvsReq } from '../../../../../../../../service';
 import { IProps } from './types';
 
-const DeployModal = ({
-  envTypeCode,
-  visible,
-  deployInfo,
-  onCancel,
-  onOperate,
-}: IProps) => {
-  const {
-    deployStatus,
-    deployedEnvs,
-    deployingEnv,
-    deployingHosBatch,
-    jenkinsUrl,
-  } = deployInfo || {};
+const DeployModal = ({ envTypeCode, visible, deployInfo, onCancel, onOperate }: IProps) => {
+  const { deployStatus, deployedEnvs, deployingEnv, deployingHosBatch, jenkinsUrl } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
 
@@ -84,9 +69,7 @@ const DeployModal = ({
       });
       return resultList;
     }
-    return (envDataList as any[]).filter(
-      (v: any) => v.envCode === deployedEnvs,
-    );
+    return (envDataList as any[]).filter((v: any) => v.envCode === deployedEnvs);
   }, [envDataList, deployInfo]);
 
   const detail = useMemo(() => {
@@ -174,9 +157,7 @@ const DeployModal = ({
         <Radio.Group
           disabled={deployStatus === 'deployWaitBatch2'}
           value={deployConfig.deployEnv}
-          onChange={(v) =>
-            setDeployConfig({ ...deployConfig, deployEnv: v.target.value })
-          }
+          onChange={(v) => setDeployConfig({ ...deployConfig, deployEnv: v.target.value })}
           options={envList?.map((v: any) => ({
             label: v.envName,
             value: v.envCode,
@@ -188,9 +169,7 @@ const DeployModal = ({
         <Radio.Group
           disabled={deployStatus !== 'deployWait'}
           value={deployConfig.deployBatch}
-          onChange={(v) =>
-            setDeployConfig({ ...deployConfig, deployBatch: v.target.value })
-          }
+          onChange={(v) => setDeployConfig({ ...deployConfig, deployBatch: v.target.value })}
           options={[
             { label: '分批', value: 12 },
             { label: '不分批', value: 0 },

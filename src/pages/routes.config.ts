@@ -74,8 +74,7 @@ export default [
             path: 'overview',
             name: '概述',
             hideInMenu: true,
-            component:
-              '@/pages/application/application-detail/components/application-overview',
+            component: '@/pages/application/application-detail/components/application-overview',
           },
           {
             path: 'monitor',
@@ -87,48 +86,41 @@ export default [
             path: 'appDeploy',
             name: '应用部署',
             hideInMenu: true,
-            component:
-              '@/pages/application/application-detail/components/application-deploy',
+            component: '@/pages/application/application-detail/components/application-deploy',
           },
           {
             path: 'branch',
             name: '分支',
             hideInMenu: true,
-            component:
-              '@/pages/application/application-detail/components/branch-manage',
+            component: '@/pages/application/application-detail/components/branch-manage',
           },
           {
             path: 'configMgr',
             name: '配置管理',
             hideInMenu: true,
-            component:
-              '@/pages/application/application-detail/components/config-parameters-manage',
+            component: '@/pages/application/application-detail/components/config-parameters-manage',
           },
           {
             path: 'launchParameters',
             name: '启动参数',
             hideInMenu: true,
-            component:
-              '@/pages/application/application-detail/components/config-parameters-manage',
+            component: '@/pages/application/application-detail/components/config-parameters-manage',
           },
           {
             path: 'addConfig',
             name: '新增配置',
-            component:
-              '@/pages/application/application-detail/components/add-config-parameters',
+            component: '@/pages/application/application-detail/components/add-config-parameters',
           },
           {
             path: 'addLaunchParameters',
             name: '新增启动参数',
-            component:
-              '@/pages/application/application-detail/components/add-config-parameters',
+            component: '@/pages/application/application-detail/components/add-config-parameters',
           },
           {
             path: 'secondPartyPkg',
             name: '二方包',
             hideInMenu: true,
-            component:
-              '@/pages/application/application-detail/components/second-party-pkg',
+            component: '@/pages/application/application-detail/components/second-party-pkg',
           },
         ],
       },
