@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Collapse, Empty, Table } from 'antd';
-import { CaseItemVO, PreCaseItemProps } from '../interfaces';
+import { CaseItemVO } from '../../interfaces';
 import './index.less';
 
 export interface CaseTableFieldProps {

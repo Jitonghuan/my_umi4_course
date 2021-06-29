@@ -8,10 +8,10 @@ import { PlusOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
 import { ContentCard } from '@/components/vc-page-content';
 import { postRequest } from '@/utils/request';
-import * as APIS from '../service';
-import { TreeNode, CaseItemVO } from '../interfaces';
+import * as APIS from '../../service';
+import { TreeNode, CaseItemVO } from '../../interfaces';
 import { useApiDetail, useCaseList } from '../hooks';
-import CaseExec from '../case-exec';
+import CaseExec from '../../components/case-exec';
 import './index.less';
 
 interface RightDetailProps extends Record<string, any> {

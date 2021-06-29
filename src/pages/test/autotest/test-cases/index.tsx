@@ -10,9 +10,9 @@ import type { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-lay
 import { CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
-import CaseEditor from './case-editor';
-import CaseDetail from './case-detail';
-import { EditorMode, TreeNode, CaseItemVO } from './interfaces';
+import CaseEditor from '../components/case-editor';
+import CaseDetail from '../components/case-detail';
+import { EditorMode, TreeNode, CaseItemVO } from '../interfaces';
 import './index.less';
 
 export default function TestCaseManager(props: IUmiRrops) {

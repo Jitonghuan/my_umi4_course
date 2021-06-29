@@ -240,19 +240,6 @@ export default [
       },
     ],
   },
-  // {
-  //   path: 'publish',
-  //   name: '发布管理',
-  //   hideInMenu: true,
-  //   icon: 'icon-exit',
-  //   routes: [
-  //     {
-  //       path: 'function',
-  //       name: '发布功能管理',
-  //       component: '@/pages/publish/function-publish',
-  //     },
-  //   ],
-  // },
   {
     path: 'ticket',
     name: '工单管理',
@@ -273,25 +260,17 @@ export default [
       {
         path: 'dataFactory',
         name: '数据工厂',
+        key: 'dataFactory',
         component: '@/pages/test/data-factory',
         exact: true,
       },
       {
         path: 'dataFactory/dataFactory-add',
         name: '新增数据',
+        key: 'dataFactory',
         hideInMenu: true,
         component: '@/pages/test/data-factory/data-factory-add',
       },
-      // {
-      //   path: 'auto',
-      //   name: '自动化测试',
-      //   component: '@/pages/test/auto-test',
-      // },
-      // {
-      //   path: 'result',
-      //   name: '自动化测试查询',
-      //   component: '@/pages/test/auto-test-result',
-      // },
       {
         path: 'qualityControl',
         name: '质量控制',
@@ -336,21 +315,21 @@ export default [
             path: 'test-cases',
             name: '用例管理',
             key: 'autotest',
-            component: '@/pages/test/test-cases',
+            component: '@/pages/test/autotest/test-cases',
             hideInMenu: true,
           },
           {
             path: 'scenes',
             name: '场景管理',
             key: 'autotest',
-            component: '@/pages/test/scene-manager',
+            component: '@/pages/test/autotest/scene-manager',
             hideInMenu: true,
           },
           {
             path: 'tasks',
             name: '任务管理',
             key: 'autotest',
-            component: '@/pages/test/task-manager',
+            component: '@/pages/test/autotest/task-manager',
             hideInMenu: true,
           },
         ],

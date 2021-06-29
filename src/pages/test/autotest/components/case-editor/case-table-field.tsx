@@ -6,9 +6,9 @@ import React, { useState } from 'react';
 import { Button, Popover, Collapse, Empty, message, Table } from 'antd';
 import { getRequest } from '@/utils/request';
 import VCCustomIcon from '@cffe/vc-custom-icon';
-import * as APIS from '../service';
 import DebounceSelect from '@/components/debounce-select';
-import { CaseItemVO, PreCaseItemProps } from '../interfaces';
+import * as APIS from '../../service';
+import { CaseItemVO, PreCaseItemProps } from '../../interfaces';
 import './index.less';
 
 export type CaseTableValueProps = CaseItemVO & PreCaseItemProps;

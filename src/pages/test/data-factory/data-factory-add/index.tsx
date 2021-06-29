@@ -11,8 +11,8 @@ import { FormProps, OptionProps } from '@/components/table-search/typing';
 import usePublicData from '@/utils/usePublicData';
 import useRequest from '@/utils/useRequest';
 import JsonEditor from '@/components/JsonEditor';
-import { queryDataFactoryName, createDataFactory } from '../../service';
-import { Item } from '../../typing';
+import { queryDataFactoryName, createDataFactory } from '../service';
+import { Item } from '../typing';
 
 const DataFactoryAdd: React.FC = () => {
   const userInfo = useContext(FELayout.SSOUserInfoContext);

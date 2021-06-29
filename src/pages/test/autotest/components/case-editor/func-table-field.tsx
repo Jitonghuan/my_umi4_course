@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { Table, Button, Popover, message, Input } from 'antd';
 import { getRequest } from '@/utils/request';
-import * as APIS from '../service';
+import * as APIS from '../../service';
 import DebounceSelect from '@/components/debounce-select';
 import './index.less';
 

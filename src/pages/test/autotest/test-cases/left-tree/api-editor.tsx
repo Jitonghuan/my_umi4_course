@@ -6,12 +6,19 @@ import React, { useState, useCallback, useEffect, useContext, useRef } from 'rea
 import { Drawer, Form, Input, message, Select, Radio, Tabs, Button, Switch } from 'antd';
 import type { RadioChangeEvent } from 'antd/es/radio';
 import FELayout from '@cffe/vc-layout';
-import * as APIS from '../service';
+import * as APIS from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import DebounceSelect from '@/components/debounce-select';
 import TableForm from '@/components/simple-table-form';
-import { TreeNode, EditorMode } from '../interfaces';
-import { API_TYPE, PARAM_TYPE, API_METHOD, API_TYPE_OPTIONS, PARAM_TYPE_OPTIONS, API_METHOD_OPTIONS } from '../common';
+import { TreeNode, EditorMode } from '../../interfaces';
+import {
+  API_TYPE,
+  PARAM_TYPE,
+  API_METHOD,
+  API_TYPE_OPTIONS,
+  PARAM_TYPE_OPTIONS,
+  API_METHOD_OPTIONS,
+} from '../../common';
 
 const formLayout = {
   labelCol: { flex: '88px' },

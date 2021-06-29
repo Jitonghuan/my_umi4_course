@@ -11,8 +11,8 @@ import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import usePublicData from '@/utils/usePublicData';
-import { Item } from '../typing';
-import { queryDataFactoryList } from '../service';
+import { Item } from './typing';
+import { queryDataFactoryList } from './service';
 
 import './index.less';
 

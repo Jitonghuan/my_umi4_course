@@ -8,11 +8,11 @@ import { PlusSquareFilled, PlusOutlined, EditOutlined } from '@ant-design/icons'
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import type Emitter from 'events';
 import { CardRowGroup } from '@/components/vc-page-content';
-import * as APIS from '../service';
+import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
-import { TreeNode, TreeNodeSaveData, EditorMode } from '../interfaces';
+import { TreeNode, TreeNodeSaveData, EditorMode } from '../../interfaces';
 import { useProjectOptions, useLeftTreeData } from '../hooks';
-import { findTreeNodeByKey, getMergedList } from '../common';
+import { findTreeNodeByKey, getMergedList } from '../../common';
 import ProjectEditor from './project-editor';
 import ModuleEditor from './module-editor';
 import ApiEditor from './api-editor';

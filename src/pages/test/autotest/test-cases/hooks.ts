@@ -3,10 +3,10 @@
 // @create 2021/05/31 17:15
 
 import { useState, useEffect, useCallback } from 'react';
-import * as APIS from './service';
+import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
-import { SelectOptions, TreeNode, ProjectItemVO } from './interfaces';
-import { formatTreeData } from './common';
+import { SelectOptions, TreeNode, ProjectItemVO } from '../interfaces';
+import { formatTreeData } from '../common';
 
 // 当前可选的项目列表
 export function useProjectOptions(): [

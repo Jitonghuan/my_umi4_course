@@ -5,7 +5,7 @@ import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import { getRequest, postRequest } from '@/utils/request';
 import usePublicData from '@/utils/usePublicData';
-import { createQCTask } from '../../service';
+import { createQCTask } from '../service';
 
 interface TestAddProps {
   visible: boolean;

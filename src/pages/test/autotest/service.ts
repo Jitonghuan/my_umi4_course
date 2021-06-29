@@ -5,8 +5,29 @@
 
 import { addAPIPrefix } from '@/utils';
 
+/** GET 0、获取应用管理 */
+export const envCodeList = addAPIPrefix('/appManage/env/list');
+
+/** POST 1、环境管理-新增环境 */
+export const addEnv = addAPIPrefix('/qc/autotest/addEnv');
+
+/** POST 2、环境管理-更新环境 */
+export const updateEnvInfo = addAPIPrefix('/qc/autotest/updateEnvInfo');
+
+/** GET 3、环境管理-查询环境（未使用，环境列表返回数据已经是完整的） */
+export const getEnvInfo = addAPIPrefix('/qc/autotest/getEnvInfo');
+
 /** GET 4、环境管理-环境列表 */
 export const envList = addAPIPrefix('/qc/autotest/envList');
+
+/** POST 5、函数管理-新增函数 */
+export const addFunc = addAPIPrefix('/qc/autotest/addFunc');
+
+/** POST 6、函数管理-删除函数 */
+export const delFunc = addAPIPrefix('/qc/autotest/delFunc');
+
+/** POST 7、函数管理-修改函数 */
+export const updateFunc = addAPIPrefix('/qc/autotest/updateFunc');
 
 /** GET 8、函数管理-获取函数内容 */
 export const getFunc = addAPIPrefix('/qc/autotest/getFunc');

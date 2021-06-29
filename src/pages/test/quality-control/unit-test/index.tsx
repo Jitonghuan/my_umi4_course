@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Button, Tooltip, Form, Input, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { history } from 'umi';
-import { SearchOutlined } from '@ant-design/icons';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import useTable from '@/utils/useTable';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { queryUnittestCoverCheckLogList } from '../../service';
+import { queryUnittestCoverCheckLogList } from '../service';
 import usePublicData from '@/utils/usePublicData';
-import { Item } from '../../typing';
+import { Item } from '../typing';
 
 type statusTypeItem = {
   color: string;

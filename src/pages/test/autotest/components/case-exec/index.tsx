@@ -5,8 +5,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, message, Select, Form, Input } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
-import * as APIS from '../service';
-import { CaseItemVO, SelectOptions } from '../interfaces';
+import * as APIS from '../../service';
+import { CaseItemVO, SelectOptions } from '../../interfaces';
 
 export interface CaseExecProps {
   visible?: boolean;

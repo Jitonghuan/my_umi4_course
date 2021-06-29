@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Drawer, Table, Form, Steps, Input } from 'antd';
-import { CaseItemVO, FuncProps } from '../interfaces';
+import { CaseItemVO, FuncProps } from '../../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import { getFuncListByIds, getCaseListByIds } from '../case-editor/common';

@@ -7,13 +7,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Drawer, Form, Steps, Button, Input, message, Radio, Tabs } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import { postRequest } from '@/utils/request';
-import * as APIS from '../service';
-import { CaseItemVO, EditorMode, TreeNode, FuncProps } from '../interfaces';
+import * as APIS from '../../service';
+import { CaseItemVO, EditorMode, TreeNode, FuncProps } from '../../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import TableForm from '@/components/simple-table-form';
 import { getFuncListByIds, getCaseListByIds } from './common';
-import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../common';
+import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../../common';
 import './index.less';
 
 const { Item: FormItem } = Form;

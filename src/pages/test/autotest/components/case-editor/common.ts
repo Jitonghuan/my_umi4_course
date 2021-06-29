@@ -3,8 +3,8 @@
 // @create 2021/06/06 20:51
 
 import { getRequest } from '@/utils/request';
-import * as APIS from '../service';
-import { CaseItemVO, FuncProps } from '../interfaces';
+import * as APIS from '../../service';
+import { CaseItemVO, FuncProps } from '../../interfaces';
 
 export async function getFuncListByIds(funcs: FuncProps[]) {
   if (!funcs?.length) return [];

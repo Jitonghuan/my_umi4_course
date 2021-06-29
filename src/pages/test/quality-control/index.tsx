@@ -8,8 +8,8 @@ import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import useTable from '@/utils/useTable';
-import { queryQCTaskList, executeQCTask } from '../service';
-import { Item } from '../typing';
+import { queryQCTaskList, executeQCTask } from './service';
+import { Item } from './typing';
 import usePublicData from '@/utils/usePublicData';
 import TestDrawer from './test-drawer-add';
 
