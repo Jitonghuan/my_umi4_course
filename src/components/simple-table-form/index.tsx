@@ -70,7 +70,7 @@ export default function TableForm<ItemProps = Record<string, any>>(props: TableF
       bordered
       recordCreatorProps={{
         creatorButtonText: '新增',
-        record: {} as ItemProps,
+        record: {} as any,
       }}
     />
   );
