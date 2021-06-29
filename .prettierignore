@@ -8,3 +8,4 @@ package.json
 .umi-test
 /script/page-tpl/**
 dist/**
+public/

@@ -26,11 +26,13 @@ const Coms: React.FC<IProps> = (props) => {
   );
 
   // 权限未开启，或者权限数据中存在当前的节点数据
-  return (!isOpenPermission || hasPermission ? (
-    children
-  ) : isShowErrorPage ? (
-    <FELayout.NoPermissionPage />
-  ) : null) as React.ReactElement;
+  return (
+    !isOpenPermission || hasPermission ? (
+      children
+    ) : isShowErrorPage ? (
+      <FELayout.NoPermissionPage />
+    ) : null
+  ) as React.ReactElement;
 };
 
 /**
