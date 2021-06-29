@@ -72,11 +72,7 @@ export const createTableSchema = ({
   onOperateClick,
 }: {
   currentVersion?: any;
-  onOperateClick: (
-    type: 'detail' | 'delete' | 'edit',
-    record: any,
-    index: number,
-  ) => void;
+  onOperateClick: (type: 'detail' | 'delete' | 'edit', record: any, index: number) => void;
 }) =>
   [
     {
@@ -117,10 +113,7 @@ export const createTableSchema = ({
       render: (text: string, record: any, index: number) => (
         <>
           <a onClick={() => onOperateClick('detail', record, index)}>详情</a>
-          <a
-            style={{ marginLeft: 20 }}
-            onClick={() => onOperateClick('edit', record, index)}
-          >
+          <a style={{ marginLeft: 20 }} onClick={() => onOperateClick('edit', record, index)}>
             编辑
           </a>
           <Popconfirm

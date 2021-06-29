@@ -32,17 +32,12 @@ interface DisplayDataProps {
   }[];
 }
 
-async function initDisplayData(
-  initData: CaseItemVO,
-): Promise<DisplayDataProps> {
+async function initDisplayData(initData: CaseItemVO): Promise<DisplayDataProps> {
   const hooks = initData.hooks ? JSON.parse(initData.hooks) : {};
   const beforeFuns: FuncProps[] = hooks.setup || [];
   const afterFuncs: FuncProps[] = hooks.teardown || [];
-  const beforeCaseIds: number[] = initData.preStep
-    ? initData.preStep.split(',').map((n: string) => +n)
-    : [];
-  const nextParamType =
-    typeof initData.parameters === 'string' ? 'object' : 'array';
+  const beforeCaseIds: number[] = initData.preStep ? initData.preStep.split(',').map((n: string) => +n) : [];
+  const nextParamType = typeof initData.parameters === 'string' ? 'object' : 'array';
 
   return {
     name: initData.name,
@@ -105,20 +100,14 @@ export default function CaseEditor(props: CaseEditorProps) {
         </Steps>
 
         {/* step 0 前置/后置 */}
-        <div
-          className="case-editor-step case-editor-step-0"
-          data-visible={step === 0}
-        >
+        <div className="case-editor-step case-editor-step-0" data-visible={step === 0}>
           <FuncTableField title="前置函数" data={displayData.beforeFuncs} />
           <CaseTableField title="前置用例" data={displayData.beforeCases} />
           <FuncTableField title="后置函数" data={displayData.afterFuncs} />
         </div>
 
         {/* step 1 定义变量 */}
-        <div
-          className="case-editor-step case-editor-step-1"
-          data-visible={step === 1}
-        >
+        <div className="case-editor-step case-editor-step-1" data-visible={step === 1}>
           <Table dataSource={displayData.customVars} pagination={false}>
             <Table.Column dataIndex="key" title="变量名" />
             <Table.Column dataIndex="type" title="类型" />
@@ -128,10 +117,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         </div>
 
         {/* step 2 请求内容 */}
-        <div
-          className="case-editor-step case-editor-step-2"
-          data-visible={step === 2}
-        >
+        <div className="case-editor-step case-editor-step-2" data-visible={step === 2}>
           <div className="case-table-field">
             <div className="field-caption">
               <h3>parameters</h3>
@@ -143,11 +129,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                 <Table.Column title="描述" dataIndex="desc" />
               </Table>
             ) : (
-              <Input.TextArea
-                value={displayData.parametersJSON || ''}
-                rows={10}
-                readOnly
-              />
+              <Input.TextArea value={displayData.parametersJSON || ''} rows={10} readOnly />
             )}
           </div>
           <div className="case-table-field">
@@ -163,10 +145,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         </div>
 
         {/* step 3 保存返回值 */}
-        <div
-          className="case-editor-step case-editor-step-3"
-          data-visible={step === 3}
-        >
+        <div className="case-editor-step case-editor-step-3" data-visible={step === 3}>
           <Table dataSource={displayData.savedVars} pagination={false}>
             <Table.Column title="变量名" dataIndex="name" />
             <Table.Column title="表达式" dataIndex="jsonpath" />
@@ -175,10 +154,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         </div>
 
         {/* step 4 结果断言 */}
-        <div
-          className="case-editor-step case-editor-step-4"
-          data-visible={step === 4}
-        >
+        <div className="case-editor-step case-editor-step-4" data-visible={step === 4}>
           <Table dataSource={displayData.resAssert} pagination={false}>
             <Table.Column title="断言项" dataIndex="assertName" />
             <Table.Column title="比较符" dataIndex="compare" />

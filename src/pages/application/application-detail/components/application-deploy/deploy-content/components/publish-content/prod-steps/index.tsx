@@ -9,12 +9,7 @@ import React, { useMemo, useState } from 'react';
 import { Steps, Button, Modal, Radio } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import DeployModal from './deploy-modal';
-import {
-  retryMerge,
-  retryDeploy,
-  reMergeMaster,
-  retryDelFeature,
-} from '../../../../../../../service';
+import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature } from '../../../../../../../service';
 import { IProps, Status } from './types';
 // import './index.less';
 
@@ -41,11 +36,7 @@ const ProdSteps = ({ envTypeCode, appCode, deployInfo, onOperate }: IProps) => {
     }
 
     // 部署
-    if (
-      deployStatus === 'deployWait' ||
-      deployStatus === 'deploying' ||
-      deployStatus === 'deployWaitBatch2'
-    ) {
+    if (deployStatus === 'deployWait' || deployStatus === 'deploying' || deployStatus === 'deployWaitBatch2') {
       return 2.1;
     }
     if (deployStatus === 'deployErr' || deployStatus === 'deployAborted') {
@@ -98,9 +89,7 @@ const ProdSteps = ({ envTypeCode, appCode, deployInfo, onOperate }: IProps) => {
                 <Button
                   style={{ marginTop: 4 }}
                   onClick={() => {
-                    retryMerge({ id: deployInfo.id }).finally(() =>
-                      onOperate('mergeReleaseRetryEnd'),
-                    );
+                    retryMerge({ id: deployInfo.id }).finally(() => onOperate('mergeReleaseRetryEnd'));
                   }}
                 >
                   重试
@@ -177,9 +166,7 @@ const ProdSteps = ({ envTypeCode, appCode, deployInfo, onOperate }: IProps) => {
                 <Button
                   style={{ marginTop: 4 }}
                   onClick={() => {
-                    reMergeMaster({ id: deployInfo.id }).finally(() =>
-                      onOperate('mergeMasterRetryEnd'),
-                    );
+                    reMergeMaster({ id: deployInfo.id }).finally(() => onOperate('mergeMasterRetryEnd'));
                   }}
                 >
                   重试
@@ -198,9 +185,7 @@ const ProdSteps = ({ envTypeCode, appCode, deployInfo, onOperate }: IProps) => {
                 <Button
                   style={{ marginTop: 4 }}
                   onClick={() => {
-                    retryDelFeature({ id: deployInfo.id }).finally(() =>
-                      onOperate('deleteFeatureRetryEnd'),
-                    );
+                    retryDelFeature({ id: deployInfo.id }).finally(() => onOperate('deleteFeatureRetryEnd'));
                   }}
                 >
                   重试

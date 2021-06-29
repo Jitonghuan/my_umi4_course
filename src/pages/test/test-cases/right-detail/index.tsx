@@ -21,10 +21,7 @@ interface RightDetailProps extends Record<string, any> {
 }
 
 export default function RightDetail(props: RightDetailProps) {
-  const [apiDetail, apiLoading] = useApiDetail(
-    props.current?.bizId!,
-    props.current?.level!,
-  );
+  const [apiDetail, apiLoading] = useApiDetail(props.current?.bizId!, props.current?.level!);
   const [pageIndex, setPageIndex] = useState(1);
   const [caseList, caseTotal, caseLoading, reloadCase] = useCaseList(
     props.current?.bizId!,
@@ -74,11 +71,7 @@ export default function RightDetail(props: RightDetailProps) {
   if (!props.current) {
     return (
       <ContentCard className="page-case-right-detail">
-        <Empty
-          description="请选择接口"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          style={{ marginTop: '100px' }}
-        />
+        <Empty description="请选择接口" image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ marginTop: '100px' }} />
       </ContentCard>
     );
   }
@@ -95,8 +88,7 @@ export default function RightDetail(props: RightDetailProps) {
     <ContentCard className="page-case-right-detail">
       <div className="case-detail-header">
         <h2>
-          {['', '项目', '模块', '接口'][props.current.level || 0]}名称:{' '}
-          {props.current.title || '--'}
+          {['', '项目', '模块', '接口'][props.current.level || 0]}名称: {props.current.title || '--'}
         </h2>
         {apiDetail.status === 1 ? <Tag color="success">已生效</Tag> : null}
         {apiDetail.status === 0 ? <Tag color="warning">未生效</Tag> : null}
@@ -127,9 +119,7 @@ export default function RightDetail(props: RightDetailProps) {
         <Table.Column
           dataIndex="id"
           title="ID"
-          render={(value, record: CaseItemVO) => (
-            <a onClick={() => handleDetailCaseItem(record)}>{value}</a>
-          )}
+          render={(value, record: CaseItemVO) => <a onClick={() => handleDetailCaseItem(record)}>{value}</a>}
         />
         <Table.Column dataIndex="moduleName" title="模块" />
         <Table.Column dataIndex="apiName" title="接口" />
@@ -148,11 +138,7 @@ export default function RightDetail(props: RightDetailProps) {
           )}
         />
       </Table>
-      <CaseExec
-        visible={!!execCases.length}
-        caseList={execCases}
-        onClose={() => setExecCases([])}
-      />
+      <CaseExec visible={!!execCases.length} caseList={execCases} onClose={() => setExecCases([])} />
     </ContentCard>
   );
 }

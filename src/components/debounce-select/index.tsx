@@ -7,8 +7,7 @@ import { Select, Spin } from 'antd';
 import type { SelectProps } from 'antd/es/select';
 import debounce from 'lodash/debounce';
 
-export interface DebounceSelectProps<ValueType = any>
-  extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
+export interface DebounceSelectProps<ValueType = any> extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
   fetchOptions: (search: string) => Promise<ValueType[]>;
   debounceTimeout?: number;
   fetchOnMount?: boolean;

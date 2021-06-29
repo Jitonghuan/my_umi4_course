@@ -19,23 +19,14 @@ const EditFunction: React.FC = (props) => {
             key: '1',
             ...resp?.[0],
             envs: resp?.[0]?.envs.split(','),
-            preDeployTime: resp?.[0]?.preDeployTime
-              ? moment(resp?.[0]?.preDeployTime)
-              : '',
+            preDeployTime: resp?.[0]?.preDeployTime ? moment(resp?.[0]?.preDeployTime) : '',
           },
         ]);
       });
     }
   }, [id]);
 
-  return (
-    <EditTable
-      type="edit"
-      initData={initData}
-      title="编辑发布功能"
-      defaultValueObj={detailInfo}
-    />
-  );
+  return <EditTable type="edit" initData={initData} title="编辑发布功能" defaultValueObj={detailInfo} />;
 };
 
 export default EditFunction;

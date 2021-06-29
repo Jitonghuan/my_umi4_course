@@ -49,14 +49,9 @@ export const API_METHOD_OPTIONS: SelectOptions<string>[] = [
   { label: 'OPTION', value: 'OPTION' },
 ];
 
-export type EditTableEnum = Record<
-  string,
-  { text: string; status?: 'Success' | 'Error' | 'Default' }
->;
+export type EditTableEnum = Record<string, { text: string; status?: 'Success' | 'Error' | 'Default' }>;
 
-export function fmtOptions2Enum(
-  options: SelectOptions<string>[],
-): EditTableEnum {
+export function fmtOptions2Enum(options: SelectOptions<string>[]): EditTableEnum {
   return options.reduce((prev, curr) => {
     return {
       ...prev,
@@ -97,14 +92,7 @@ export const ASSERT_COMPARE_ENUM: EditTableEnum = [
 );
 
 /** 数据类型 */
-export const VALUE_TYPE_ENUM: EditTableEnum = [
-  'String',
-  'Integer',
-  'Float',
-  'Boolean',
-  'List',
-  'Dict',
-].reduce(
+export const VALUE_TYPE_ENUM: EditTableEnum = ['String', 'Integer', 'Float', 'Boolean', 'List', 'Dict'].reduce(
   (prev, curr) => ({
     ...prev,
     [curr]: { text: curr },
@@ -113,10 +101,7 @@ export const VALUE_TYPE_ENUM: EditTableEnum = [
 );
 
 /** 广度遍历查找节点 */
-export function findTreeNodeByKey(
-  treeData: TreeNode[],
-  key?: number | string,
-): TreeNode | null {
+export function findTreeNodeByKey(treeData: TreeNode[], key?: number | string): TreeNode | null {
   if (!key) return null;
   if (!treeData.length) return null;
 
@@ -129,11 +114,7 @@ export function findTreeNodeByKey(
   return findTreeNodeByKey(nextLevelList, key);
 }
 /** 返回合并后的数组 */
-export function getMergedList<T, U>(
-  list: T[],
-  addon: U,
-  callback: (item: T, addon: U) => boolean,
-) {
+export function getMergedList<T, U>(list: T[], addon: U, callback: (item: T, addon: U) => boolean) {
   if (!list.length) return [];
 
   const next = list.slice(0);
@@ -150,8 +131,7 @@ export function getMergedList<T, U>(
 }
 
 let RANDOM_SEED = Date.now();
-export const randomKey = () =>
-  (Math.random() * RANDOM_SEED++).toString(36).toUpperCase();
+export const randomKey = () => (Math.random() * RANDOM_SEED++).toString(36).toUpperCase();
 
 export function formatTreeData(payload: any) {
   if (!payload?.length) return [];

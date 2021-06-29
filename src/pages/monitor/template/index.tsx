@@ -182,9 +182,7 @@ const TemplateCom: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       // width: '4%',
-      render: (text: number) => (
-        <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>
-      ),
+      render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>,
     },
     {
       title: '操作',
@@ -207,10 +205,7 @@ const TemplateCom: React.FC = () => {
           <Popconfirm
             title="确认删除？"
             onConfirm={() => {
-              deleteRuleTemplatesFun(
-                { id: record.id },
-                `${deleteRuleTemplates}/${record.id}`,
-              );
+              deleteRuleTemplatesFun({ id: record.id }, `${deleteRuleTemplates}/${record.id}`);
             }}
             okText="是"
             cancelText="否"
@@ -309,9 +304,7 @@ const TemplateCom: React.FC = () => {
         className="table-form"
         onSearch={queryList}
         reset={reset}
-        scroll={
-          tableProps.dataSource.length > 0 ? { x: 'max-content' } : undefined
-        }
+        scroll={tableProps.dataSource.length > 0 ? { x: 'max-content' } : undefined}
       />
       <TemplateDrawer
         visible={drawerVisible}

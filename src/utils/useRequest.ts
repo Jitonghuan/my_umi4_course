@@ -25,14 +25,7 @@ interface RunProps<T = any> {
 }
 
 const useRequest = <K>(props: UseRequestProps) => {
-  const {
-    method,
-    api,
-    successText,
-    isSuccessModal = false,
-    onSuccess,
-    formatData,
-  } = props;
+  const { method, api, successText, isSuccessModal = false, onSuccess, formatData } = props;
   const [data, setData] = useState<K>();
   const [loading, setLoading] = useState<boolean>(false);
 

@@ -50,10 +50,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
       required: true,
       onChange: (e) => {
         setAppCategoryCode(e);
-        if (
-          !form?.getFieldValue('appCode') ||
-          !form?.getFieldValue('branchName')
-        ) {
+        if (!form?.getFieldValue('appCode') || !form?.getFieldValue('branchName')) {
           setAppCode('');
         }
         form?.resetFields(['appCode', 'branchName']);

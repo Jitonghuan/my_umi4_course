@@ -8,10 +8,7 @@
 import React, { useContext, useState } from 'react';
 import { Button, Table, message } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
+import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
 import { configMultiAdd } from '../../../service';
 import { IProps, DataSourceType } from './types';
@@ -68,9 +65,7 @@ const AddConfigParameters = ({
               <a
                 key="delete"
                 onClick={() => {
-                  setDataSource(
-                    dataSource.filter((item) => item.id !== record.id),
-                  );
+                  setDataSource(dataSource.filter((item) => item.id !== record.id));
                 }}
               >
                 删除

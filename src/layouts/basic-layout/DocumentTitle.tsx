@@ -8,9 +8,7 @@ export interface IProps {
 const DocumentTitle: React.FC<IProps> = (props) => {
   useEffect(() => {
     // 设置favicon
-    const link: any =
-      document.querySelector("link[rel*='icon']") ||
-      document.createElement('link');
+    const link: any = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
     link.rel = 'shortcut icon';
     link.href = props.favicon;

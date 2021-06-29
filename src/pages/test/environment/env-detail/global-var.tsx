@@ -2,22 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/29 21:01
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useLayoutEffect,
-} from 'react';
-import {
-  Button,
-  Collapse,
-  Popconfirm,
-  Empty,
-  Popover,
-  Form,
-  Input,
-  message,
-} from 'antd';
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
+import { Button, Collapse, Popconfirm, Empty, Popover, Form, Input, message } from 'antd';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import TableForm from '@/components/simple-table-form';
 import { EnvVarConfItemVO, EnvVarEditProps } from '../interfaces';
@@ -117,19 +103,11 @@ export default function GlobalVar(props: GlobalVarProps) {
           autoAdjustOverflow
           content={
             <Form form={addGroupField} labelCol={{ flex: '100px' }}>
-              <Form.Item
-                label="分组名称"
-                name="groupName"
-                rules={[{ required: true, message: '请输入分组名称' }]}
-              >
+              <Form.Item label="分组名称" name="groupName" rules={[{ required: true, message: '请输入分组名称' }]}>
                 <Input placeholder="请输入分组名称" autoFocus />
               </Form.Item>
               <Form.Item label=" " colon={false} wrapperCol={{ offset: 9 }}>
-                <Button
-                  type="primary"
-                  onClick={handleAddGroupOk}
-                  style={{ marginRight: 12 }}
-                >
+                <Button type="primary" onClick={handleAddGroupOk} style={{ marginRight: 12 }}>
                   确定
                 </Button>
                 <Button type="default" onClick={() => setAddPopVisible(false)}>
@@ -144,11 +122,7 @@ export default function GlobalVar(props: GlobalVarProps) {
         </Popover>
       </div>
       {!groupList.length ? (
-        <Empty
-          description="请新增分组"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          style={{ padding: '60px 0' }}
-        />
+        <Empty description="请新增分组" image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ padding: '60px 0' }} />
       ) : null}
       <Collapse defaultActiveKey={[0]}>
         {groupList.map((group, index) => (
@@ -156,22 +130,12 @@ export default function GlobalVar(props: GlobalVarProps) {
             header={group.groupName}
             key={index}
             extra={
-              <Popconfirm
-                title="确定删除此分组吗？"
-                onConfirm={(e) => confirmDelGroup(group, index, e)}
-              >
-                <VCCustomIcon
-                  type="icondelete"
-                  fontSize="16px"
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <Popconfirm title="确定删除此分组吗？" onConfirm={(e) => confirmDelGroup(group, index, e)}>
+                <VCCustomIcon type="icondelete" fontSize="16px" onClick={(e) => e.stopPropagation()} />
               </Popconfirm>
             }
           >
-            <GlobalVarEditTable
-              value={group.variables}
-              onChange={(next) => handleGroupChange(group, index, next)}
-            />
+            <GlobalVarEditTable value={group.variables} onChange={(next) => handleGroupChange(group, index, next)} />
           </Collapse.Panel>
         ))}
       </Collapse>

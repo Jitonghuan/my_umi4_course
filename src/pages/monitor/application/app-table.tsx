@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
 import { Card, Select, Form, Tooltip } from 'antd';
 import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
@@ -312,10 +306,7 @@ const Coms = (props: IProps) => {
   return (
     <div style={{ flex: 1, overflowY: 'auto' }}>
       <div className="monitor-app-table">
-        <Card
-          className="monitor-app-filter"
-          style={{ marginBottom: 12, backgroundColor: '#fff' }}
-        >
+        <Card className="monitor-app-filter" style={{ marginBottom: 12, backgroundColor: '#fff' }}>
           <HulkForm
             form={formInstance}
             layout="inline"
@@ -325,11 +316,7 @@ const Coms = (props: IProps) => {
           />
           <div className="monitor-time-select" ref={selectRef}>
             <Tooltip title="Relative time ranges" placement="top">
-              <Select
-                value={startTime}
-                onChange={(value) => setStartTime(value)}
-                style={{ width: 150 }}
-              >
+              <Select value={startTime} onChange={(value) => setStartTime(value)} style={{ width: 150 }}>
                 <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
                 {START_TIME_ENUMS.map((time) => (
                   <Select.Option key={time.value} value={time.value}>
@@ -339,18 +326,9 @@ const Coms = (props: IProps) => {
               </Select>
             </Tooltip>
             <Tooltip title="Refresh dashboard" placement="top">
-              <Select
-                value={timeRate}
-                onChange={handleTimeRateChange}
-                optionLabelProp="label"
-                style={{ width: 54 }}
-              >
+              <Select value={timeRate} onChange={handleTimeRateChange} optionLabelProp="label" style={{ width: 54 }}>
                 {RATE_ENUMS.map((time) => (
-                  <Select.Option
-                    key={time.value}
-                    value={time.value}
-                    label={time.showLabel}
-                  >
+                  <Select.Option key={time.value} value={time.value} label={time.showLabel}>
                     {time.label}
                   </Select.Option>
                 ))}
@@ -394,16 +372,11 @@ const Coms = (props: IProps) => {
 
           <h3 className="monitor-tabs-content-title">
             监控图表&nbsp;&nbsp;
-            <span style={{ fontSize: 12, color: '#1973CC' }}>
-              {curtIP ? `当前IP：${curtIP}` : ''}
-            </span>
+            <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
           </h3>
           <VCCardLayout grid={layoutGrid} className="monitor-app-content">
             {appConfig.map((el) => (
-              <AppCard
-                {...el}
-                requestParams={{ ...filter, ip: curtIP, startTime, rateNum }}
-              />
+              <AppCard {...el} requestParams={{ ...filter, ip: curtIP, startTime, rateNum }} />
             ))}
           </VCCardLayout>
         </Card>

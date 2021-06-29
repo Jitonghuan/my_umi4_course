@@ -11,12 +11,10 @@ export default {
           appCode: 'Matrix-lilan-behind',
           env: 'test',
           releaseBranch: 'release_test_2021042745455321',
-          features:
-            'feature_lilan_2021042745285621,feature_李澜_2021042745284521',
+          features: 'feature_lilan_2021042745285621,feature_李澜_2021042745284521',
           unMergedFeatures: '',
           conflictFeature: 'feature_李澜_2021042745284521',
-          mergeWebUrl:
-            'http://gitlab.cfuture.shop/devops/cops-appmanagement/-/merge_requests/1525',
+          mergeWebUrl: 'http://gitlab.cfuture.shop/devops/cops-appmanagement/-/merge_requests/1525',
           deployStatus: 'conflict',
           hospitals: '',
           deployedHospitals: '',

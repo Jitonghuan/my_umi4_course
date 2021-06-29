@@ -7,11 +7,7 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import VcHulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import ds from '@config/defaultSettings';
 import { getRequest } from '@/utils/request';
-import {
-  queryTimeDataApi,
-  ITimeItem,
-  queryDetailTableDataApi,
-} from '../service';
+import { queryTimeDataApi, ITimeItem, queryDetailTableDataApi } from '../service';
 import { getUrlParams } from '@/utils/index';
 
 import '../rank/index.less';
@@ -54,9 +50,7 @@ const Coms = (props: IProps) => {
   // 统计类型
   const [countType, setCountType] = useState<'commitNo' | 'filePath'>(type);
   // 时间类型
-  const [activeType, setActiveType] = useState<'month' | 'day'>(
-    timeType || 'month',
-  );
+  const [activeType, setActiveType] = useState<'month' | 'day'>(timeType || 'month');
   // 当前年月时间
   const [currentDate, setCurrentDate] = useState<string>();
   // 时间选择列表
@@ -130,10 +124,7 @@ const Coms = (props: IProps) => {
       {
         dataIndex: 'statisticsKey',
         width: countType === 'commitNo' ? 50 : 150,
-        title:
-          (countType === 'commitNo' && '提交人') ||
-          (countType === 'filePath' && '文件') ||
-          '提交人/文件',
+        title: (countType === 'commitNo' && '提交人') || (countType === 'filePath' && '文件') || '提交人/文件',
         copyable: true,
         showTooltip: true,
         ellipsis: true,
@@ -152,11 +143,7 @@ const Coms = (props: IProps) => {
   };
 
   useEffect(() => {
-    setCurrentDate(
-      activeType === 'month'
-        ? moment().format('YYYY')
-        : moment().format('YYYY-MM'),
-    );
+    setCurrentDate(activeType === 'month' ? moment().format('YYYY') : moment().format('YYYY-MM'));
     setCurrentTime(undefined);
   }, [activeType]);
 

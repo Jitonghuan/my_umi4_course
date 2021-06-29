@@ -49,9 +49,7 @@ const DataFactory: React.FC = () => {
     formatter: (record) => {
       return {
         ...record,
-        gmtCreate: record.gmtCreate
-          ? moment(record?.gmtCreate)?.format('YYYY-MM-DD HH:mm:ss')
-          : undefined,
+        gmtCreate: record.gmtCreate ? moment(record?.gmtCreate)?.format('YYYY-MM-DD HH:mm:ss') : undefined,
       };
     },
   });
@@ -69,11 +67,7 @@ const DataFactory: React.FC = () => {
       key: 'response',
       // width: '6%',
       render: (text) => {
-        if (
-          !text ||
-          (typeof text === 'object' && Object.keys(text).length === 0)
-        )
-          return '';
+        if (!text || (typeof text === 'object' && Object.keys(text).length === 0)) return '';
         return (
           <Tooltip title={JSON.stringify(text)}>
             <span
@@ -129,11 +123,7 @@ const DataFactory: React.FC = () => {
       key: 'params',
       // width: '4%',
       render: (text) => {
-        if (
-          !text ||
-          (typeof text === 'object' && Object.keys(text).length === 0)
-        )
-          return '';
+        if (!text || (typeof text === 'object' && Object.keys(text).length === 0)) return '';
         return (
           <Tooltip title={JSON.stringify(text)}>
             <span
@@ -156,9 +146,7 @@ const DataFactory: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       // width: '4%',
-      render: (text: number) => (
-        <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>
-      ),
+      render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>,
     },
     {
       title: '日志',

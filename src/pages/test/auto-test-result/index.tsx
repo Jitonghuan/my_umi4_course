@@ -3,10 +3,7 @@ import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { Button, Modal } from 'antd';
 import VCForm, { IColumns } from '@cffe/vc-form';
 import FEContext from '@/layouts/basic-layout/FeContext';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
+import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import './index.less';
 import VcHulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { tableSchema } from './schema';
@@ -26,9 +23,7 @@ const Coms = () => {
   const { categoryData = [], envData = [] } = feContent || {};
 
   const [currentRecord, setCurrentRecord] = useState<any>({});
-  const [operateType, setOperateType] = useState<
-    'log' | 'report' | undefined
-  >();
+  const [operateType, setOperateType] = useState<'log' | 'report' | undefined>();
 
   // 过滤操作， 默认定位医共体
   const [filter, setFilter] = useState<any>({ belong: 'gmc' });
@@ -57,12 +52,8 @@ const Coms = () => {
     // 时间处理
     const { testTime = [undefined, undefined] } = targetFilter;
     if (testTime) {
-      targetFilter.startTime = testTime[0]
-        ? testTime[0].format('YYYY-MM-DD')
-        : '';
-      targetFilter.endTime = testTime[1]
-        ? testTime[1].format('YYYY-MM-DD')
-        : '';
+      targetFilter.startTime = testTime[0] ? testTime[0].format('YYYY-MM-DD') : '';
+      targetFilter.endTime = testTime[1] ? testTime[1].format('YYYY-MM-DD') : '';
     }
     delete targetFilter.testTime;
 
@@ -131,14 +122,9 @@ const Coms = () => {
         render: (_, record) => {
           return (
             <React.Fragment>
-              {Number(record.status) === 2 && (
-                <a onClick={() => handleOperate('report', record)}>测试报告</a>
-              )}
+              {Number(record.status) === 2 && <a onClick={() => handleOperate('report', record)}>测试报告</a>}
               {!!record.errorLog && (
-                <a
-                  style={{ marginLeft: '12px' }}
-                  onClick={() => handleOperate('log', record)}
-                >
+                <a style={{ marginLeft: '12px' }} onClick={() => handleOperate('log', record)}>
                   查看日志
                 </a>
               )}
@@ -179,11 +165,7 @@ const Coms = () => {
         width={operateType === 'report' ? '100%' : 800}
         visible={!!operateType}
         title={operateType === 'report' ? '查看报告' : '查看日志'}
-        bodyStyle={
-          operateType === 'report'
-            ? {}
-            : { height: '400px', overflow: 'hidden' }
-        }
+        bodyStyle={operateType === 'report' ? {} : { height: '400px', overflow: 'hidden' }}
         onCancel={() => {
           setCurrentRecord({});
           setOperateType(undefined);

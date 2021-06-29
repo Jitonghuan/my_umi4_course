@@ -38,12 +38,9 @@ export default function CaseEditor(props: CaseEditorProps) {
     const hooks = initData.hooks ? JSON.parse(initData.hooks) : {};
     const beforeFuns: FuncProps[] = hooks.setup || [];
     const afterFuncs: FuncProps[] = hooks.teardown || [];
-    const beforeCaseIds: number[] = initData.preStep
-      ? initData.preStep.split(',').map((n: string) => +n)
-      : [];
+    const beforeCaseIds: number[] = initData.preStep ? initData.preStep.split(',').map((n: string) => +n) : [];
 
-    const nextParamType =
-      typeof initData.parameters === 'string' ? 'object' : 'array';
+    const nextParamType = typeof initData.parameters === 'string' ? 'object' : 'array';
     setParamType(nextParamType);
 
     editField.setFieldsValue({
@@ -55,8 +52,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       customVars: initData.customVars || [],
       headers: initData.headers || [],
       parameters: nextParamType === 'array' ? initData.parameters || [] : [],
-      parametersJSON:
-        nextParamType === 'object' ? initData.parameters || '' : '',
+      parametersJSON: nextParamType === 'object' ? initData.parameters || '' : '',
       savedVars: initData.savedVars || [],
       resAssert: initData.resAssert || [],
     });
@@ -65,20 +61,13 @@ export default function CaseEditor(props: CaseEditorProps) {
   const initAddField = (apiDetail?: Record<string, any>) => {
     if (!apiDetail) return;
 
-    const nextParamType =
-      apiDetail.paramType === PARAM_TYPE.JSON ? 'object' : 'array';
+    const nextParamType = apiDetail.paramType === PARAM_TYPE.JSON ? 'object' : 'array';
     setParamType(nextParamType);
 
     editField.setFieldsValue({
       headers: apiDetail.headers || [],
-      parameters:
-        apiDetail.paramType === PARAM_TYPE.JSON
-          ? []
-          : apiDetail.parameters || [],
-      parametersJSON:
-        apiDetail.paramType === PARAM_TYPE.JSON
-          ? apiDetail.parameters || ''
-          : '',
+      parameters: apiDetail.paramType === PARAM_TYPE.JSON ? [] : apiDetail.parameters || [],
+      parametersJSON: apiDetail.paramType === PARAM_TYPE.JSON ? apiDetail.parameters || '' : '',
     });
   };
 
@@ -104,10 +93,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       name: values.name,
       desc: values.desc,
       headers: values.headers || [],
-      parameters:
-        paramType === 'array'
-          ? values.parameters || []
-          : values.parametersJSON || '',
+      parameters: paramType === 'array' ? values.parameters || [] : values.parametersJSON || '',
       preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
       customVars: values.customVars || [],
       savedVars: values.savedVars || [],
@@ -213,10 +199,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         </Steps>
 
         {/* step 0 前置/后置 */}
-        <div
-          className="case-editor-step case-editor-step-0"
-          data-visible={step === 0}
-        >
+        <div className="case-editor-step case-editor-step-0" data-visible={step === 0}>
           <FormItem noStyle name="beforeFuncs">
             <FuncTableField title="前置函数" />
           </FormItem>
@@ -229,10 +212,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         </div>
 
         {/* step 1 定义变量 */}
-        <div
-          className="case-editor-step case-editor-step-1"
-          data-visible={step === 1}
-        >
+        <div className="case-editor-step case-editor-step-1" data-visible={step === 1}>
           <FormItem name="customVars" noStyle initialValue={[]}>
             <TableForm
               columns={[
@@ -252,10 +232,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         </div>
 
         {/* step 2 请求内容 */}
-        <div
-          className="case-editor-step case-editor-step-2"
-          data-visible={step === 2}
-        >
+        <div className="case-editor-step case-editor-step-2" data-visible={step === 2}>
           <Tabs defaultActiveKey="parameters">
             <Tabs.TabPane key="parameters" tab="parameters" forceRender>
               <FormItem label="参数格式">
@@ -296,10 +273,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         </div>
 
         {/* step 3 保存返回值 */}
-        <div
-          className="case-editor-step case-editor-step-3"
-          data-visible={step === 3}
-        >
+        <div className="case-editor-step case-editor-step-3" data-visible={step === 3}>
           <FormItem name="savedVars" noStyle initialValue={[]}>
             <TableForm
               columns={[
@@ -312,10 +286,7 @@ export default function CaseEditor(props: CaseEditorProps) {
         </div>
 
         {/* step 4 结果断言 */}
-        <div
-          className="case-editor-step case-editor-step-4"
-          data-visible={step === 4}
-        >
+        <div className="case-editor-step case-editor-step-4" data-visible={step === 4}>
           <FormItem name="resAssert" noStyle initialValue={[]}>
             <TableForm
               columns={[

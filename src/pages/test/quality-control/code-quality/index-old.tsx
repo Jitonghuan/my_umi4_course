@@ -162,9 +162,7 @@ const CodeQuality: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       width: '8%',
-      render: (text: number) => (
-        <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>
-      ),
+      render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>,
     },
     {
       title: '操作',
@@ -172,9 +170,7 @@ const CodeQuality: React.FC = () => {
       key: 'option',
       width: 80,
       fixed: 'right',
-      render: (_, record) => (
-        <a onClick={() => history.push(record.reportUrl as string)}>查看报告</a>
-      ),
+      render: (_, record) => <a onClick={() => history.push(record.reportUrl as string)}>查看报告</a>,
     },
   ];
 
@@ -188,11 +184,7 @@ const CodeQuality: React.FC = () => {
       // placeholder: '请输入',
       extraForm: (
         <Form.Item noStyle name="taskInfo">
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder="请输入任务ID/任务名"
-            style={{ width: 280 }}
-          />
+          <Input prefix={<SearchOutlined />} placeholder="请输入任务ID/任务名" style={{ width: 280 }} />
         </Form.Item>
       ),
       onChange: (e: React.FormEvent<HTMLInputElement>) => {

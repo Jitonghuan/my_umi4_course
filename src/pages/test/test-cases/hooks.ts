@@ -38,12 +38,7 @@ export function useProjectOptions(): [
 // 获取左侧树结构数据
 export function useLeftTreeData(
   projectId?: number,
-): [
-  TreeNode[],
-  boolean,
-  React.Dispatch<React.SetStateAction<TreeNode[]>>,
-  () => Promise<void>,
-] {
+): [TreeNode[], boolean, React.Dispatch<React.SetStateAction<TreeNode[]>>, () => Promise<void>] {
   const [data, setData] = useState<TreeNode[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -75,10 +70,7 @@ export function useLeftTreeData(
 }
 
 // 获取 API 详情
-export function useApiDetail(
-  id: number,
-  level: number,
-): [Record<string, any>, boolean] {
+export function useApiDetail(id: number, level: number): [Record<string, any>, boolean] {
   const [data, setData] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
 

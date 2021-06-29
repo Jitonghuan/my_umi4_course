@@ -74,9 +74,7 @@ const ProdSteps = ({ deployInfo, onOperate }: IProps) => {
                 <Button
                   style={{ marginTop: 4 }}
                   onClick={() => {
-                    retryMerge({ id: deployInfo.id }).finally(() =>
-                      onOperate('mergeReleaseRetryEnd'),
-                    );
+                    retryMerge({ id: deployInfo.id }).finally(() => onOperate('mergeReleaseRetryEnd'));
                   }}
                 >
                   重试

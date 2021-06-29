@@ -53,9 +53,7 @@ export const queryResUseData = (params: { clusterId: string }) =>
           value: data.clusterAvgDisk,
           color: getColorByValue(data.clusterAvgDisk),
           unit: '%',
-          ...(data.clusterAvgDisk && Number(data.clusterAvgDisk) > 90
-            ? { warn: '容量不足' }
-            : {}),
+          ...(data.clusterAvgDisk && Number(data.clusterAvgDisk) > 90 ? { warn: '容量不足' } : {}),
         },
         {
           mode: '2',

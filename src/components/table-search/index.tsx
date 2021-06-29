@@ -28,9 +28,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
       </FilterCard>
       <ContentCard>
         <div className="extra-node-box">
-          {showTableTitle ? (
-            <b style={{ fontSize: '16px' }}>{tableTitle}</b>
-          ) : null}
+          {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
           <>{extraNode}</>
         </div>
         <Table className={className} columns={columns} {...rest} />

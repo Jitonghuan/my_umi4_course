@@ -15,10 +15,7 @@ require('ts-node').register({
   },
 });
 
-const defaultSetting = require(path.join(
-  __dirname,
-  '../config/defaultSettings.ts',
-)).default;
+const defaultSetting = require(path.join(__dirname, '../config/defaultSettings.ts')).default;
 
 const tplConfigStr = fs.readFileSync(path.join(__dirname, './_config-tpl.js'), {
   encoding: 'utf-8',

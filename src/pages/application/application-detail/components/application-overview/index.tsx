@@ -7,14 +7,9 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 import { Descriptions, Button, Tag, Modal } from 'antd';
-import VCPageContent, {
-  FilterCard,
-  ContentCard,
-} from '@/components/vc-page-content';
+import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/FeContext';
-import UpdateApplication, {
-  AppDataTypes,
-} from '@/components/create-application';
+import UpdateApplication, { AppDataTypes } from '@/components/create-application';
 import ModifyMember, { MemberTypes } from './modify-member';
 import DetailContext from '../../context';
 import { queryApps, queryAppMember } from '../../../service';
@@ -59,43 +54,26 @@ const ApplicationOverview = (props: IProps) => {
         labelStyle={labelStyle}
         extra={<Button onClick={() => setIsModifyApp(true)}>修改</Button>}
       >
-        <Descriptions.Item label="APPCODE">
-          {appData?.appCode}
-        </Descriptions.Item>
+        <Descriptions.Item label="APPCODE">{appData?.appCode}</Descriptions.Item>
         <Descriptions.Item label="应用名">{appData?.appName}</Descriptions.Item>
-        <Descriptions.Item label="git地址">
-          {appData?.gitAddress}
-        </Descriptions.Item>
+        <Descriptions.Item label="git地址">{appData?.gitAddress}</Descriptions.Item>
         <Descriptions.Item label="git组">{appData?.gitGroup}</Descriptions.Item>
         {appData?.appDevelopLanguage === 'java' && (
-          <Descriptions.Item label="pom文件路径">
-            {appData?.deployPomPath}
-          </Descriptions.Item>
+          <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
         )}
         {appData?.appType === 'backend' && (
-          <Descriptions.Item label="应用开发语言">
-            {appData?.appDevelopLanguage}
-          </Descriptions.Item>
+          <Descriptions.Item label="应用开发语言">{appData?.appDevelopLanguage}</Descriptions.Item>
         )}
-        <Descriptions.Item label="应用部署名称">
-          {appData?.deploymentName}
-        </Descriptions.Item>
+        <Descriptions.Item label="应用部署名称">{appData?.deploymentName}</Descriptions.Item>
         <Descriptions.Item label="应用分类">
-          {categoryData?.find(
-            (v) => v.categoryCode === appData?.appCategoryCode,
-          )?.categoryName || '-'}
+          {categoryData?.find((v) => v.categoryCode === appData?.appCategoryCode)?.categoryName || '-'}
         </Descriptions.Item>
         <Descriptions.Item label="应用组">
-          {businessData?.find((v) => v.groupCode === appData?.appGroupCode)
-            ?.groupName || '-'}
+          {businessData?.find((v) => v.groupCode === appData?.appGroupCode)?.groupName || '-'}
         </Descriptions.Item>
-        <Descriptions.Item label="应用类型">
-          {APP_TYPE_MAP[appData?.appType!]}
-        </Descriptions.Item>
+        <Descriptions.Item label="应用类型">{APP_TYPE_MAP[appData?.appType!]}</Descriptions.Item>
         {appData?.appDevelopLanguage === 'java' && (
-          <Descriptions.Item label="是否为二方包">
-            {{ 1: '是', 0: '否' }[appData?.isClient!]}
-          </Descriptions.Item>
+          <Descriptions.Item label="是否为二方包">{{ 1: '是', 0: '否' }[appData?.isClient!]}</Descriptions.Item>
         )}
         {appData?.appDevelopLanguage === 'java' && (
           <Descriptions.Item label="是否包含二方包">
@@ -115,13 +93,9 @@ const ApplicationOverview = (props: IProps) => {
         extra={<Button onClick={() => setIsModifyMember(true)}>修改</Button>}
       >
         {/* 没有转交功能 */}
-        <Descriptions.Item label="应用Owner">
-          {memberData?.owner && <Tag>{memberData?.owner}</Tag>}
-        </Descriptions.Item>
+        <Descriptions.Item label="应用Owner">{memberData?.owner && <Tag>{memberData?.owner}</Tag>}</Descriptions.Item>
         <Descriptions.Item label="开发负责人">
-          {memberData?.developerOwner && (
-            <Tag>{memberData?.developerOwner}</Tag>
-          )}
+          {memberData?.developerOwner && <Tag>{memberData?.developerOwner}</Tag>}
         </Descriptions.Item>
         <Descriptions.Item label="发布负责人">
           {memberData?.deployOwner && <Tag>{memberData?.deployOwner}</Tag>}

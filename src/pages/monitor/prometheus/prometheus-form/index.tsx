@@ -8,11 +8,7 @@ import useRequest from '@/utils/useRequest';
 import StepMonitor from './step-monitor';
 import StepTwo from '../../component/rules-table';
 import StepComplate from './step-complate';
-import {
-  createPrometheus,
-  updatePrometheus,
-  queryPrometheusList,
-} from '../../service';
+import { createPrometheus, updatePrometheus, queryPrometheusList } from '../../service';
 import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
 import './index.less';
@@ -139,13 +135,7 @@ const PrometheusForm: React.FC = () => {
   const renderDom = [
     {
       current: 0,
-      dom: (
-        <StepMonitor
-          getTableData={stepOneTableFun}
-          matchlabelsList={matchlabels}
-          form={form}
-        />
-      ),
+      dom: <StepMonitor getTableData={stepOneTableFun} matchlabelsList={matchlabels} form={form} />,
     },
     {
       current: 1,
@@ -161,19 +151,14 @@ const PrometheusForm: React.FC = () => {
     <MatrixPageContent>
       <ContentCard style={{ background: '#F7F8FA' }}>
         <div className="step-style">
-          <Steps
-            current={current}
-            onChange={isEdit ? (current) => setCurrent(current) : undefined}
-          >
+          <Steps current={current} onChange={isEdit ? (current) => setCurrent(current) : undefined}>
             {stepOption.map((v) => (
               <Step key={v.key} title={v.title} />
             ))}
           </Steps>
         </div>
         <Form className="form" requiredMark={false} form={form}>
-          <Form.Item>
-            {renderDom.find((v) => v.current === current)?.dom}
-          </Form.Item>
+          <Form.Item>{renderDom.find((v) => v.current === current)?.dom}</Form.Item>
           {current !== 2 && (
             <Form.Item wrapperCol={{ span: 20 }}>
               <div style={{ textAlign: 'right' }}>
@@ -181,9 +166,7 @@ const PrometheusForm: React.FC = () => {
                   <Button type="primary" onClick={next}>
                     下一步
                   </Button>
-                  <Button onClick={isFirstCurrent ? cancel : pre}>
-                    {isFirstCurrent ? '取消' : '上一步'}
-                  </Button>
+                  <Button onClick={isFirstCurrent ? cancel : pre}>{isFirstCurrent ? '取消' : '上一步'}</Button>
                 </Space>
               </div>
             </Form.Item>

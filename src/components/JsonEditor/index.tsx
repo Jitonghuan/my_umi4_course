@@ -92,11 +92,7 @@ export default class JsonEditor extends Component<Iprops> {
     });
   };
 
-  private onBeforeChange = (
-    _editor: CodeMirror.Editor,
-    _data: CodeMirror.EditorChange,
-    value: string,
-  ) => {
+  private onBeforeChange = (_editor: CodeMirror.Editor, _data: CodeMirror.EditorChange, value: string) => {
     this.setState(
       {
         value,
@@ -156,11 +152,7 @@ export default class JsonEditor extends Component<Iprops> {
     if (disabled) {
       return (
         <div className={classnames(prefixCls, className)} style={style}>
-          <textarea
-            disabled
-            style={{ display: 'block', border: '0', ...style }}
-            placeholder={placeholder}
-          >
+          <textarea disabled style={{ display: 'block', border: '0', ...style }} placeholder={placeholder}>
             {codeValue}
           </textarea>
         </div>
@@ -209,9 +201,7 @@ export default class JsonEditor extends Component<Iprops> {
               className={`${prefixCls}-btn-formatter`}
               icon={isPreview ? <EyeOutlined /> : <FormatPainterOutlined />}
               shape="circle"
-              onClick={() =>
-                isPreview ? this.handlePreview() : this.handleFormatterValue()
-              }
+              onClick={() => (isPreview ? this.handlePreview() : this.handleFormatterValue())}
             />
           </Tooltip>
         )}

@@ -111,9 +111,7 @@ export default function FuncTableField(props: FuncTableFieldProps) {
         <Table.Column dataIndex="desc" title="描述" />
         <Table.Column
           title="操作"
-          render={(_, __, index) => (
-            <a onClick={() => handleDelRecord(index)}>删除</a>
-          )}
+          render={(_, __, index) => <a onClick={() => handleDelRecord(index)}>删除</a>}
           width={80}
         />
       </Table>

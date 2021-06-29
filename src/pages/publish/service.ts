@@ -143,10 +143,7 @@ export const addPublishPlanReq = (params: IPlanItem) =>
     data: params,
   });
 export const addPublishPlanMultiUrl = `${ds.apiPrefix}/publishManage/plan/multiCreate`;
-export const addPublishPlanMultiReq = (params: {
-  plan: IPlanItem;
-  funcIds: any[];
-}) =>
+export const addPublishPlanMultiReq = (params: { plan: IPlanItem; funcIds: any[] }) =>
   postRequest(addPublishPlanMultiUrl, {
     data: [params],
   });
@@ -195,10 +192,7 @@ export const queryApplysReq = (params: {
   });
 /** 新增发布申请 */
 export const addPublishApplyUrl = `${ds.apiPrefix}/publishManage/apply/create`;
-export const addPublishApplyReq = (params: {
-  applyInfo: any;
-  planIds: any[];
-}) =>
+export const addPublishApplyReq = (params: { applyInfo: any; planIds: any[] }) =>
   postRequest(addPublishApplyUrl, {
     data: params,
   });

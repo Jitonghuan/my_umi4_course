@@ -11,10 +11,7 @@ export interface TableColumnProps {
   title?: string;
   required?: boolean;
   valueType?: 'text' | 'select' | 'date';
-  valueEnum?: Record<
-    string,
-    { text: string; status?: 'Success' | 'Error' | 'Default' }
-  >;
+  valueEnum?: Record<string, { text: string; status?: 'Success' | 'Error' | 'Default' }>;
   rules?: Record<string, any>[];
 }
 
@@ -24,9 +21,7 @@ export interface TableFormProps<ItemProps> {
   columns: TableColumnProps[];
 }
 
-export default function TableForm<ItemProps = Record<string, any>>(
-  props: TableFormProps<ItemProps>,
-) {
+export default function TableForm<ItemProps = Record<string, any>>(props: TableFormProps<ItemProps>) {
   let { value, onChange, columns } = props;
 
   if (!Array.isArray(value)) {
@@ -45,9 +40,7 @@ export default function TableForm<ItemProps = Record<string, any>>(
           ? [
               {
                 required: true,
-                message: `${col.valueType === 'select' ? '请选择' : '请输入'}${
-                  col.title || col.dataIndex
-                }`,
+                message: `${col.valueType === 'select' ? '请选择' : '请输入'}${col.title || col.dataIndex}`,
               },
             ]
           : [],
@@ -62,10 +55,7 @@ export default function TableForm<ItemProps = Record<string, any>>(
       <a key="editable" onClick={() => action?.startEditable(index)}>
         编辑
       </a>,
-      <a
-        key="delete"
-        onClick={() => onChange?.(value?.filter((_, i) => i !== index) || [])}
-      >
+      <a key="delete" onClick={() => onChange?.(value?.filter((_, i) => i !== index) || [])}>
         移除
       </a>,
     ],

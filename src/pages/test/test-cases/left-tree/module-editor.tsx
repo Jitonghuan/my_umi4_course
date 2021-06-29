@@ -76,11 +76,7 @@ export default function ModuleEditor(props: ModuleEditorProps) {
       onCancel={() => onClose()}
     >
       <Form form={editField} labelCol={{ flex: '80px' }}>
-        <Form.Item
-          label="模块名称"
-          name="name"
-          rules={[{ required: true, message: '请输入模块名称' }]}
-        >
+        <Form.Item label="模块名称" name="name" rules={[{ required: true, message: '请输入模块名称' }]}>
           <Input placeholder="请输入模块名称" autoFocus />
         </Form.Item>
         <Form.Item label="模块描述" name="desc">

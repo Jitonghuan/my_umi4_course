@@ -144,26 +144,21 @@ export const createTableColumns = (params: {
       dataIndex: 'deployStatus',
       key: 'deployStatus',
       // width: '3%',
-      render: (text) => (
-        <Tag color={statusType[text]?.color}>{statusType[text]?.text}</Tag>
-      ),
+      render: (text) => <Tag color={statusType[text]?.color}>{statusType[text]?.text}</Tag>,
     },
     {
       title: '应用分类',
       dataIndex: 'appCategoryCode',
       key: 'appCategoryCode',
       // width: '5%',
-      render: (text) =>
-        params.categoryData?.find((v) => v.categoryCode === text)
-          ?.categoryName || '',
+      render: (text) => params.categoryData?.find((v) => v.categoryCode === text)?.categoryName || '',
     },
     {
       title: '应用组',
       dataIndex: 'appGroupCode',
       key: 'appGroupCode',
       // width: '5%',
-      render: (text) =>
-        params.businessData?.find((v) => v.groupCode === text)?.groupName || '',
+      render: (text) => params.businessData?.find((v) => v.groupCode === text)?.groupName || '',
     },
     {
       title: '发布环境',
@@ -244,10 +239,7 @@ export const createTableColumns = (params: {
         <Space>
           {/* <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${record.id}`}> */}
           <Link to={`./function/editFunction?id=${record.id}`}>编辑</Link>
-          <Popconfirm
-            title="确认删除?"
-            onConfirm={() => params?.onDelete(record?.funcId!)}
-          >
+          <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete(record?.funcId!)}>
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
         </Space>

@@ -1,30 +1,10 @@
-import React, {
-  useContext,
-  useState,
-  useCallback,
-  useRef,
-  useMemo,
-} from 'react';
-import {
-  Drawer,
-  Form,
-  Input,
-  Radio,
-  Select,
-  DatePicker,
-  Button,
-  Table,
-} from 'antd';
+import React, { useContext, useState, useCallback, useRef, useMemo } from 'react';
+import { Drawer, Form, Input, Radio, Select, DatePicker, Button, Table } from 'antd';
 
 import FEContext from '@/layouts/basic-layout/FeContext';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
 import { createPlanSchemaColumns } from '../../schema';
-import {
-  addPublishApplyReq,
-  queryAppGroupReq,
-  queryEnvsReq,
-  queryPublishPlanReq,
-} from '@/pages/publish/service';
+import { addPublishApplyReq, queryAppGroupReq, queryEnvsReq, queryPublishPlanReq } from '@/pages/publish/service';
 
 export interface IProps {
   visible: boolean;
@@ -42,8 +22,7 @@ const tailLayout = {
 
 const AddDrawer = (props: IProps) => {
   const { visible, onClose, envsUrlList } = props;
-  const { categoryData = [], businessData: businessDataList = [] } =
-    useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
   const [formInstance] = Form.useForm();
 
   const [businessData, setBusinessData] = useState<any[]>([]);
@@ -68,23 +47,17 @@ const AddDrawer = (props: IProps) => {
   };
 
   // 根据应用分类和应用组查询未上线的计划
-  const queryDeployPlan = (
-    appCategoryCode: string,
-    appGroupCode: string,
-    deployStatus: number,
-  ) => {
+  const queryDeployPlan = (appCategoryCode: string, appGroupCode: string, deployStatus: number) => {
     setDeployPlanData([]);
-    queryPublishPlanReq({ appGroupCode, appCategoryCode, deployStatus }).then(
-      (datas) => {
-        setDeployPlanData(
-          datas.map((data: any) => {
-            return {
-              ...data.plan,
-            };
-          }),
-        );
-      },
-    );
+    queryPublishPlanReq({ appGroupCode, appCategoryCode, deployStatus }).then((datas) => {
+      setDeployPlanData(
+        datas.map((data: any) => {
+          return {
+            ...data.plan,
+          };
+        }),
+      );
+    });
   };
 
   const rowSelection = useMemo(() => {
@@ -152,11 +125,7 @@ const AddDrawer = (props: IProps) => {
       maskClosable={false}
       footer={
         <>
-          <Button
-            type="primary"
-            style={{ marginRight: '12px' }}
-            onClick={handleSubmit}
-          >
+          <Button type="primary" style={{ marginRight: '12px' }} onClick={handleSubmit}>
             确定
           </Button>
           <Button onClick={() => handleClose()}>取消</Button>
@@ -167,17 +136,8 @@ const AddDrawer = (props: IProps) => {
         justifyContent: 'flex-end',
       }}
     >
-      <Form
-        {...layout}
-        name="basic"
-        form={formInstance}
-        onValuesChange={handleFormChange}
-      >
-        <Form.Item
-          label="应用分类"
-          name="appCategoryCode"
-          rules={[{ required: true, message: '请选择应用分类!' }]}
-        >
+      <Form {...layout} name="basic" form={formInstance} onValuesChange={handleFormChange}>
+        <Form.Item label="应用分类" name="appCategoryCode" rules={[{ required: true, message: '请选择应用分类!' }]}>
           <Radio.Group>
             {categoryData?.map((el) => (
               <Radio key={el.value} value={el.value}>
@@ -186,11 +146,7 @@ const AddDrawer = (props: IProps) => {
             ))}
           </Radio.Group>
         </Form.Item>
-        <Form.Item
-          label="应用组"
-          name="appGroupCode"
-          rules={[{ required: true, message: '请选择应用组!' }]}
-        >
+        <Form.Item label="应用组" name="appGroupCode" rules={[{ required: true, message: '请选择应用组!' }]}>
           <Select placeholder="请选择">
             {businessData?.map((el) => (
               <Select.Option key={el.value} value={el.value}>
@@ -199,29 +155,17 @@ const AddDrawer = (props: IProps) => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item
-          label="发布申请名"
-          name="title"
-          rules={[{ required: true, message: '请输入发布申请名!' }]}
-        >
+        <Form.Item label="发布申请名" name="title" rules={[{ required: true, message: '请输入发布申请名!' }]}>
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item
-          label="发布类型"
-          name="deployType"
-          rules={[{ required: true, message: '请选择发布类型!' }]}
-        >
+        <Form.Item label="发布类型" name="deployType" rules={[{ required: true, message: '请选择发布类型!' }]}>
           <Radio.Group>
             {DEPLOY_TYPE_OPTIONS?.map((el) => (
               <Radio value={el.value}>{el.label}</Radio>
             ))}
           </Radio.Group>
         </Form.Item>
-        <Form.Item
-          label="发布环境"
-          name="deployEnv"
-          rules={[{ required: true, message: '请选择发布环境!' }]}
-        >
+        <Form.Item label="发布环境" name="deployEnv" rules={[{ required: true, message: '请选择发布环境!' }]}>
           <Select mode="multiple" placeholder="请选择">
             {deployEnvData?.map((el) => (
               <Select.Option key={el.value} value={el.value}>
@@ -230,11 +174,7 @@ const AddDrawer = (props: IProps) => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item
-          label="计划发布时间"
-          name="deployDate"
-          rules={[{ required: true, message: '请选择计划发布时间!' }]}
-        >
+        <Form.Item label="计划发布时间" name="deployDate" rules={[{ required: true, message: '请选择计划发布时间!' }]}>
           <DatePicker
             placeholder="请选择发布时间"
             format={'YYYY-MM-DD HH-mm'}
@@ -242,19 +182,10 @@ const AddDrawer = (props: IProps) => {
             style={{ width: '100%' }}
           />
         </Form.Item>
-        <Form.Item
-          label="发布负责人"
-          name="deployUser"
-          rules={[{ required: true, message: '请输入发布负责人!' }]}
-        >
+        <Form.Item label="发布负责人" name="deployUser" rules={[{ required: true, message: '请输入发布负责人!' }]}>
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item
-          {...tailLayout}
-          extra="请在此表单中选择关联的发布计划!"
-          label=""
-          name="planIds"
-        >
+        <Form.Item {...tailLayout} extra="请在此表单中选择关联的发布计划!" label="" name="planIds">
           <Table
             rowKey="planId"
             scroll={{ x: 2000 }}
