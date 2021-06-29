@@ -7,7 +7,7 @@
 
 import React, { useMemo, useContext } from 'react';
 import { Tabs } from 'antd';
-import FeContext from '@/layouts/basic-layout/FeContext';
+import FeContext from '@/layouts/basic-layout/fe-context';
 import ConfigContent from './config-content';
 import DetailContext from '../../context';
 import { IProps } from './types';

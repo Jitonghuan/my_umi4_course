@@ -7,7 +7,7 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Drawer, Input, Spin, message, Form } from 'antd';
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import { BasicForm } from '@cffe/fe-backend-component';
 import createSchema from './create-schema';
 import { createApp, updateApp, queryBizData, queryCategoryData } from './service';

@@ -5,7 +5,7 @@ import TableSearch from '@/components/table-search';
 import { OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import './index.less';
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import { deleteFunc, queryAppGroupReq, queryFunctionUrl } from '../service';
 import useTable from '@/utils/useTable';
 import usePublicData from '@/utils/usePublicData';

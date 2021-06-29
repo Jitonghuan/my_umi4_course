@@ -7,7 +7,7 @@ import BaseForm from '../../components/base-form';
 import { InitValue, BaseFormProps } from '../../../typing';
 import { addPublishPlanMultiReq, queryFunctionReq, updatePublishPlanReq } from '@/pages/publish/service';
 import usePublicData from '@/utils/usePublicData';
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import { queryAppList } from '@/pages/monitor/application/service';
 import { createTableColumns } from './schema';
 

@@ -12,7 +12,7 @@ import { useEffectOnce } from 'white-react-use';
 import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import CreateApplication from '@/components/create-application';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
 import { queryBizData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';

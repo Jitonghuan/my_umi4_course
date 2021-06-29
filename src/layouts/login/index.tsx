@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import { BusinessLogin } from '@cffe/fe-backend-component';
-import DocumentTitle from '../basic-layout/DocumentTitle';
+import DocumentTitle from '../basic-layout/document-title';
 
 declare const window: any;
 

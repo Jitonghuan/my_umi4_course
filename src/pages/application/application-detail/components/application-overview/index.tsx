@@ -8,7 +8,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Descriptions, Button, Tag, Modal } from 'antd';
 import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import UpdateApplication, { AppDataTypes } from '@/components/create-application';
 import ModifyMember, { MemberTypes } from './modify-member';
 import DetailContext from '../../context';

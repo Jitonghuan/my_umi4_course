@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import FeContext from '@/layouts/basic-layout/FeContext';
+import FeContext from '@/layouts/basic-layout/fe-context';
 import FELayout from '@cffe/vc-layout';
 
 export interface IProps {

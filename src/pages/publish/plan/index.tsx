@@ -4,7 +4,7 @@ import { history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import useTable from '@/utils/useTable';
 import { deletePublishPlanReq, queryAppGroupReq, queryPublishPlanUrl, queryFunctionUrl } from '../service';
 import { createFormColumns, createTableColumns } from './schema';

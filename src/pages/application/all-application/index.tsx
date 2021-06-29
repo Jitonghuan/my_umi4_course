@@ -10,7 +10,7 @@ import { Radio, Button, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useListData } from 'white-react-use';
 import VCPageContent, { ContentCard } from '@/components/vc-page-content';
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import CreateApplication from '@/components/create-application';
 import ApplicationCardList from './application-card-list';
 import { queryApps } from '../service';

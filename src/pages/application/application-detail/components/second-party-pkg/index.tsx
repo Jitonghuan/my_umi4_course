@@ -7,7 +7,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Tabs, Button } from 'antd';
-import FeContext from '@/layouts/basic-layout/FeContext';
+import FeContext from '@/layouts/basic-layout/fe-context';
 import { queryEnvData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';

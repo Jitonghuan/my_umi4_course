@@ -3,7 +3,7 @@ import React, { useState, useCallback, useContext } from 'react';
 import { TplTable } from '@cffe/fe-tpl';
 import { InlineForm } from '@cffe/fe-backend-component';
 import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 
 import { filterFormSchema, tableSchema } from './schema';
 

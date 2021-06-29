@@ -1,7 +1,7 @@
 import React, { useContext, useState, useCallback, useRef, useMemo } from 'react';
 import { Drawer, Form, Input, Radio, Select, DatePicker, Button, Table } from 'antd';
 
-import FEContext from '@/layouts/basic-layout/FeContext';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
 import { createPlanSchemaColumns } from '../../schema';
 import { addPublishApplyReq, queryAppGroupReq, queryEnvsReq, queryPublishPlanReq } from '@/pages/publish/service';
