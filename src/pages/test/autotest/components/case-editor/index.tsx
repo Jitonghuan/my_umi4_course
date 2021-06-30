@@ -11,7 +11,7 @@ import * as APIS from '../../service';
 import { CaseItemVO, EditorMode, TreeNode, FuncProps } from '../../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
-import TableForm from '@/components/simple-table-form';
+import EditorTable from '@cffe/pc-editor-table';
 import { getFuncListByIds, getCaseListByIds } from './common';
 import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../../common';
 import './index.less';
@@ -86,7 +86,15 @@ export default function CaseEditor(props: CaseEditorProps) {
   }, [props.mode]);
 
   const handleSubmit = async () => {
-    const values = await editField.validateFields();
+    const values = await editField.validateFields().catch((error) => {
+      const info = error.errorFields
+        ?.map((n: any) => n.errors)
+        .flat()
+        .join('; ');
+      message.error(info);
+      throw error;
+    });
+
     console.log('>>> handleSubmit', values);
 
     const payload = {
@@ -213,8 +221,22 @@ export default function CaseEditor(props: CaseEditorProps) {
 
         {/* step 1 定义变量 */}
         <div className="case-editor-step case-editor-step-1" data-visible={step === 1}>
-          <FormItem name="customVars" noStyle initialValue={[]}>
-            <TableForm
+          <FormItem
+            name="customVars"
+            noStyle
+            initialValue={[]}
+            rules={[
+              {
+                validator: async (_, value: any[]) => {
+                  if (value.find((n) => !(n.key && n.type))) {
+                    throw new Error('自定义变量的 key 和 type 必填');
+                  }
+                },
+                validateTrigger: [],
+              },
+            ]}
+          >
+            <EditorTable
               columns={[
                 { title: '变量名', dataIndex: 'key', required: true },
                 {
@@ -222,7 +244,8 @@ export default function CaseEditor(props: CaseEditorProps) {
                   dataIndex: 'type',
                   required: true,
                   valueType: 'select',
-                  valueEnum: VALUE_TYPE_ENUM,
+                  valueOptions: VALUE_TYPE_ENUM,
+                  colProps: { width: 160 },
                 },
                 { title: '值', dataIndex: 'value' },
                 { title: '描述', dataIndex: 'desc' },
@@ -243,8 +266,22 @@ export default function CaseEditor(props: CaseEditorProps) {
                 />
               </FormItem>
               {paramType == 'array' ? (
-                <FormItem name="parameters" noStyle initialValue={[]}>
-                  <TableForm
+                <FormItem
+                  name="parameters"
+                  noStyle
+                  initialValue={[]}
+                  rules={[
+                    {
+                      validator: async (_, value: any[]) => {
+                        if (value.find((n) => !n.key)) {
+                          throw new Error('请求参数的 key 必填');
+                        }
+                      },
+                      validateTrigger: [],
+                    },
+                  ]}
+                >
+                  <EditorTable
                     columns={[
                       { title: 'key', dataIndex: 'key', required: true },
                       { title: 'value', dataIndex: 'value' },
@@ -259,8 +296,22 @@ export default function CaseEditor(props: CaseEditorProps) {
               )}
             </Tabs.TabPane>
             <Tabs.TabPane key="headers" tab="headers" forceRender>
-              <FormItem name="headers" noStyle initialValue={[]}>
-                <TableForm
+              <FormItem
+                name="headers"
+                noStyle
+                initialValue={[]}
+                rules={[
+                  {
+                    validator: async (_, value: any[]) => {
+                      if (value.find((n) => !n.key)) {
+                        throw new Error('请求头的 key 必填');
+                      }
+                    },
+                    validateTrigger: [],
+                  },
+                ]}
+              >
+                <EditorTable
                   columns={[
                     { title: 'key', dataIndex: 'key', required: true },
                     { title: 'value', dataIndex: 'value' },
@@ -274,8 +325,22 @@ export default function CaseEditor(props: CaseEditorProps) {
 
         {/* step 3 保存返回值 */}
         <div className="case-editor-step case-editor-step-3" data-visible={step === 3}>
-          <FormItem name="savedVars" noStyle initialValue={[]}>
-            <TableForm
+          <FormItem
+            name="savedVars"
+            noStyle
+            initialValue={[]}
+            rules={[
+              {
+                validator: async (_, value: any[]) => {
+                  if (value.find((n) => !(n.name && n.jsonpath))) {
+                    throw new Error('保存返回值的 变量名、表达式 必填');
+                  }
+                },
+                validateTrigger: [],
+              },
+            ]}
+          >
+            <EditorTable
               columns={[
                 { title: '变量名', dataIndex: 'name', required: true },
                 { title: '表达式', dataIndex: 'jsonpath', required: true },
@@ -287,8 +352,22 @@ export default function CaseEditor(props: CaseEditorProps) {
 
         {/* step 4 结果断言 */}
         <div className="case-editor-step case-editor-step-4" data-visible={step === 4}>
-          <FormItem name="resAssert" noStyle initialValue={[]}>
-            <TableForm
+          <FormItem
+            name="resAssert"
+            noStyle
+            initialValue={[]}
+            rules={[
+              {
+                validator: async (_, value: any[]) => {
+                  if (value.find((n) => !(n.assertName && n.compare && n.type && n.value))) {
+                    throw new Error('断言项的每一行必填');
+                  }
+                },
+                validateTrigger: [],
+              },
+            ]}
+          >
+            <EditorTable
               columns={[
                 { title: '断言项', dataIndex: 'assertName', required: true },
                 {
@@ -296,14 +375,14 @@ export default function CaseEditor(props: CaseEditorProps) {
                   dataIndex: 'compare',
                   required: true,
                   valueType: 'select',
-                  valueEnum: ASSERT_COMPARE_ENUM,
+                  valueOptions: ASSERT_COMPARE_ENUM,
                 },
                 {
                   title: '类型',
                   dataIndex: 'type',
                   required: true,
                   valueType: 'select',
-                  valueEnum: VALUE_TYPE_ENUM,
+                  valueOptions: VALUE_TYPE_ENUM,
                 },
                 { title: '期望值', dataIndex: 'value', required: true },
               ]}

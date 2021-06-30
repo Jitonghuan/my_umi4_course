@@ -5,29 +5,8 @@
 import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { Button, Collapse, Popconfirm, Empty, Popover, Form, Input, message } from 'antd';
 import VCCustomIcon from '@cffe/vc-custom-icon';
-import TableForm from '@/components/simple-table-form';
+import EditorTable from '@cffe/pc-editor-table';
 import { EnvVarConfItemVO, EnvVarEditProps } from '../interfaces';
-
-interface GlobalVarEditTableProps {
-  value: EnvVarEditProps[];
-  onChange: (next: EnvVarEditProps[]) => any;
-}
-
-// 单个的可编辑表格
-function GlobalVarEditTable(props: GlobalVarEditTableProps) {
-  return (
-    <TableForm
-      value={props.value}
-      onChange={props.onChange}
-      columns={[
-        { title: '变量名', dataIndex: 'key', required: true },
-        { title: '变量值', dataIndex: 'value', required: true },
-      ]}
-    />
-  );
-}
-
-// ---------------------------------------------------------------------
 
 export interface GlobalVarProps {
   initData: EnvVarConfItemVO[];
@@ -135,7 +114,14 @@ export default function GlobalVar(props: GlobalVarProps) {
               </Popconfirm>
             }
           >
-            <GlobalVarEditTable value={group.variables} onChange={(next) => handleGroupChange(group, index, next)} />
+            <EditorTable
+              value={group.variables}
+              onChange={(next) => handleGroupChange(group, index, next)}
+              columns={[
+                { title: '变量名', dataIndex: 'key', required: true },
+                { title: '变量值', dataIndex: 'value', required: true },
+              ]}
+            />
           </Collapse.Panel>
         ))}
       </Collapse>

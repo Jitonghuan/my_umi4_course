@@ -8,10 +8,11 @@ import type { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-lay
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from './service';
+import './index.less';
 
 export default function SceneManager(props: IUmiRrops) {
   return (
-    <MatrixPageContent>
+    <MatrixPageContent className="page-autotest-scene">
       <FilterCard className="layout-compact">
         <Tabs activeKey="scenes" onChange={(next) => props.history.push(`/matrix/test/autotest/${next}`)}>
           <Tabs.TabPane tab="用例管理" key="test-cases" />
