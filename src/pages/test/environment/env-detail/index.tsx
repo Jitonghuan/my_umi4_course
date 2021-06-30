@@ -48,6 +48,16 @@ export default function EnvDetail(props: EnvDetailProps) {
   // 全量保存数据
   const handleSubmit = async () => {
     const values = editField.getFieldsValue();
+
+    if (dbSource.find((n) => !n.host || !n.user)) {
+      return message.warning('数据库配置未填写完整， host 和 user 必填!');
+    }
+
+    const varConf = globalVarRef.current();
+    if (varConf.find((g) => g.variables.some((n) => !(n.key && n.value)))) {
+      return message.warning('全局变量配置未填写完整，key 和 value 必填!');
+    }
+
     const submitData = {
       id: props.current.id,
       envName: values.name,
@@ -55,7 +65,7 @@ export default function EnvDetail(props: EnvDetailProps) {
       httpConf: values.httpConf || '',
       rpcConf: values.rpcConf,
       dbConf: dbSource,
-      varConf: globalVarRef.current(),
+      varConf,
       modifyUser: userInfo.userName,
     };
 

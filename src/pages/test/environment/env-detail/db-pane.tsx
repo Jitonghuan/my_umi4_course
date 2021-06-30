@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { EnvDbConfItemVO } from '../interfaces';
-import TableForm from '@/components/simple-table-form';
+import EditorTable from '@cffe/pc-editor-table';
 
 export interface DBPanelProps {
   value: EnvDbConfItemVO[];
@@ -13,12 +13,12 @@ export interface DBPanelProps {
 
 export default function DBPanel(props: DBPanelProps) {
   return (
-    <TableForm
+    <EditorTable
       value={props.value}
       onChange={props.onChange}
       columns={[
-        { title: 'host', dataIndex: 'host', required: true },
-        { title: 'user', dataIndex: 'user', required: true },
+        { title: 'host', dataIndex: 'host' },
+        { title: 'user', dataIndex: 'user' },
         { title: 'pwd', dataIndex: 'pwd' },
       ]}
     />

@@ -9,7 +9,7 @@ import FELayout from '@cffe/vc-layout';
 import * as APIS from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import DebounceSelect from '@/components/debounce-select';
-import TableForm from '@/components/simple-table-form';
+import EditorTable from '@cffe/pc-editor-table';
 import { TreeNode, EditorMode } from '../../interfaces';
 import {
   API_TYPE,
@@ -81,7 +81,14 @@ export default function ApiEditor(props: ApiEditorProps) {
   }, [mode]);
 
   const handleSubmit = async () => {
-    const values = await editField.validateFields();
+    const values = await editField.validateFields().catch((error) => {
+      const info = error.errorFields
+        ?.map((n: any) => n.errors)
+        .flat()
+        .join('; ');
+      message.error(info);
+      throw error;
+    });
     const payload = {
       ...values,
       parameters: paramType === PARAM_TYPE.JSON ? values.parametersJSON || '' : values.parameters || [],
@@ -202,8 +209,22 @@ export default function ApiEditor(props: ApiEditorProps) {
                 />
               </FormItem>
               {paramType !== PARAM_TYPE.JSON ? (
-                <FormItem noStyle name="parameters" initialValue={[]}>
-                  <TableForm
+                <FormItem
+                  noStyle
+                  name="parameters"
+                  initialValue={[]}
+                  rules={[
+                    {
+                      validator: async (_, value: any[]) => {
+                        if (value.find((n) => !n.key)) {
+                          throw new Error('参数的 key 必填');
+                        }
+                      },
+                      validateTrigger: [],
+                    },
+                  ]}
+                >
+                  <EditorTable
                     columns={[
                       { title: 'key', dataIndex: 'key', required: true },
                       { title: 'value', dataIndex: 'value' },
@@ -218,8 +239,22 @@ export default function ApiEditor(props: ApiEditorProps) {
               )}
             </Tabs.TabPane>
             <Tabs.TabPane key="headers" tab="headers" forceRender>
-              <FormItem noStyle name="headers" initialValue={[]}>
-                <TableForm
+              <FormItem
+                noStyle
+                name="headers"
+                initialValue={[]}
+                rules={[
+                  {
+                    validator: async (_, value: any[]) => {
+                      if (value.find((n) => !n.key)) {
+                        throw new Error('headers 的 key 必填');
+                      }
+                    },
+                    validateTrigger: [],
+                  },
+                ]}
+              >
+                <EditorTable
                   columns={[
                     { title: 'key', dataIndex: 'key', required: true },
                     { title: 'value', dataIndex: 'value' },

@@ -49,22 +49,22 @@ export const API_METHOD_OPTIONS: SelectOptions<string>[] = [
   { label: 'OPTION', value: 'OPTION' },
 ];
 
-export type EditTableEnum = Record<string, { text: string; status?: 'Success' | 'Error' | 'Default' }>;
+// export type EditTableEnum = Record<string, { text: string; status?: 'Success' | 'Error' | 'Default' }>;
 
-export function fmtOptions2Enum(options: SelectOptions<string>[]): EditTableEnum {
-  return options.reduce((prev, curr) => {
-    return {
-      ...prev,
-      [curr.value]: {
-        text: curr.label,
-        status: 'Default',
-      },
-    };
-  }, {} as EditTableEnum);
-}
+// export function fmtOptions2Enum(options: SelectOptions<string>[]): EditTableEnum {
+//   return options.reduce((prev, curr) => {
+//     return {
+//       ...prev,
+//       [curr.value]: {
+//         text: curr.label,
+//         status: 'Default',
+//       },
+//     };
+//   }, {} as EditTableEnum);
+// }
 
 /** 比较方式 */
-export const ASSERT_COMPARE_ENUM: EditTableEnum = [
+export const ASSERT_COMPARE_ENUM = [
   'eq', // "实际结果"和"期望结果"相等
   'lt', // "实际结果"小于"期望结果"
   'le', // "实际结果"小于等于"期望结果"
@@ -83,22 +83,13 @@ export const ASSERT_COMPARE_ENUM: EditTableEnum = [
   'regex_match', // 正则表达式是否匹配
   'startswith', // 字符串是否以什么开头
   'endswith', // 字符串是否以什么结尾
-].reduce(
-  (prev, curr) => ({
-    ...prev,
-    [curr]: { text: curr },
-  }),
-  {} as EditTableEnum,
-);
+].map((n) => ({ label: n, value: n }));
 
 /** 数据类型 */
-export const VALUE_TYPE_ENUM: EditTableEnum = ['String', 'Integer', 'Float', 'Boolean', 'List', 'Dict'].reduce(
-  (prev, curr) => ({
-    ...prev,
-    [curr]: { text: curr },
-  }),
-  {} as EditTableEnum,
-);
+export const VALUE_TYPE_ENUM = ['String', 'Integer', 'Float', 'Boolean', 'List', 'Dict'].map((n) => ({
+  label: n,
+  value: n,
+}));
 
 /** 广度遍历查找节点 */
 export function findTreeNodeByKey(treeData: TreeNode[], key?: number | string): TreeNode | null {
