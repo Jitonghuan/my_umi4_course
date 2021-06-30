@@ -16,7 +16,7 @@ import './index.less';
 
 interface RightDetailProps extends Record<string, any> {
   emitter: Emitter;
-  /** 当前选中的接口 */
+  /** 当前选中的节点 */
   current?: TreeNode;
 }
 

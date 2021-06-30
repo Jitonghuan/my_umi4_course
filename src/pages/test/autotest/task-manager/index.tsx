@@ -7,7 +7,7 @@ import { Tabs } from 'antd';
 import type { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/bus-layout';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
-import * as APIS from './service';
+import * as APIS from '../service';
 
 export default function TaskManager(props: IUmiRrops) {
   return (
