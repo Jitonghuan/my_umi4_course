@@ -1,4 +1,4 @@
-// 带防拦的搜索下拉框
+// 带防抖的搜索下拉框
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/03 08:48
 

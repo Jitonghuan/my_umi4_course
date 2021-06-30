@@ -40,5 +40,4 @@ export default {
   pagePrefix: `/${appKey}`,
   // 是否开启权限
   isOpenPermission: false,
-  // isOpenPermission: false,
 } as IDefaultSettings;
