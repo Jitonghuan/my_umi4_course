@@ -1,7 +1,8 @@
-// 用例管理相关接口
+// 自动化测试相关接口
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/27 09:21
-// @see https://come-future.yuque.com/sekh46/bbgc7f/vunnok#HNWBj
+// 二期接口 https://come-future.yuque.com/sekh46/bbgc7f/vunnok#HNWBj
+// 三期接口 https://come-future.yuque.com/sekh46/bbgc7f/bg8qyo
 
 import { addAPIPrefix } from '@/utils';
 
@@ -88,3 +89,65 @@ export const getProjects = addAPIPrefix('/qc/autotest/getProjects');
 
 /** GET 27、查看应用列表 {  } */
 export const getAppList = addAPIPrefix('/appManage/list');
+
+// -------------- 三期接口 ----------------
+
+/** POST 1、场景管理-新增场景 */
+export const addScene = addAPIPrefix('/qc/autotest/addScene');
+
+/** POST 2、场景管理-更新场景 */
+export const updateScene = addAPIPrefix('/qc/autotest/updateScene');
+
+/** GET 3、场景管理-查询场景列表 */
+export const getSceneList = addAPIPrefix('/qc/autotest/getSceneList');
+
+/** GET 4、场景管理-查询场景目录树 */
+export const getSceneTree = addAPIPrefix('/qc/autotest/getSceneTree');
+
+/** POST 5、场景管理-场景执行 */
+export const executeScene = addAPIPrefix('/qc/autotest/executeScene');
+
+/** POST 6、任务管理-新建任务 */
+export const addTask = addAPIPrefix('/qc/autotest/addTask');
+
+/** POST 7、任务管理-修改任务 */
+export const updateTask = addAPIPrefix('/qc/autotest/updateTask');
+
+/** POST 8、任务管理-删除任务 */
+export const deleteTask = addAPIPrefix('/qc/autotest/deleteTask');
+
+/** GET 9、任务管理-任务列表 */
+export const getTaskList = addAPIPrefix('/qc/autotest/getTaskList');
+
+/** GET 10、任务管理-任务详情 */
+export const getTaskDetail = addAPIPrefix('/qc/autotest/getTaskDetail');
+
+/** POST 11、任务管理-执行任务 */
+export const executeTask = addAPIPrefix('/qc/autotest/executeTask');
+
+/** GET 12、执行记录-报告列表 */
+export const getRecordList = addAPIPrefix('/qc/autotest/getRecordList');
+
+/** GET 13、执行记录-查询报告目录树 */
+export const getReportTree = addAPIPrefix('/qc/autotest/getReportTree');
+
+/** GET 14、执行记录-查询报告详情 */
+export const getReportDetail = addAPIPrefix('/qc/autotest/getReportDetail');
+
+/** GET 15、看板统计-最近一次任务执行情况 */
+export const statisticOfLastRun = addAPIPrefix('/qc/autotest/statisticOfLastRun');
+
+/** GET 16、看板统计-用例数据统计 */
+export const statisticOfCaseData = addAPIPrefix('/qc/autotest/statisticOfCaseData');
+
+/** GET 17、看板统计-任务近7天执行情况 */
+export const statisticOfNearly7Days = addAPIPrefix('/qc/autotest/statisticOfNearly7Days');
+
+/** GET 18、看板统计-近一月用例新增情况 */
+export const statisticOfNewCase = addAPIPrefix('/qc/autotest/statisticOfNewCase');
+
+/** POST 19、场景管理-删除场景 */
+export const deleteScene = addAPIPrefix('/qc/autotest/deleteScene');
+
+/** POST 20、场景管理-判断该用例是否被其他场景引用 */
+export const caseHasUsedByScene = addAPIPrefix('/qc/autotest/caseHasUsedByScene');

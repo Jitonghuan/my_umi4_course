@@ -2,9 +2,7 @@ import { defineConfig } from 'umi';
 import path from 'path';
 
 import ds from './defaultSettings';
-import { getRoutes } from './routes.base';
 import routes from '../src/pages/routes.config';
-import proxy from '../src/pages/proxy';
 
 export default defineConfig({
   /*—————————— 编译性能等配置 start ——————————*/
@@ -17,26 +15,14 @@ export default defineConfig({
   ],
 
   themeHbos: {
-    bundleName: 'matrix', // 项目bundleName，插件会使用这个bundleName来进行样式隔离
+    bundleName: 'matrix', // 项目 bundleName，插件会使用这个 bundleName 来进行样式隔离
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome
   targets:
     process.env.NODE_ENV === 'development'
-      ? {
-          chrome: 49,
-          firefox: false,
-          safari: false,
-          edge: false,
-          ios: false,
-        }
-      : {
-          // umi 默认支持浏览器
-          chrome: 49,
-          firefox: 64,
-          safari: 10,
-          edge: 13,
-        },
+      ? { chrome: 49, firefox: false, safari: false, edge: false, ios: false }
+      : { chrome: 49, firefox: 64, safari: 10, edge: 13 },
 
   // 配置 external 资源外部依赖, react, react-dom
   externals: {
@@ -72,14 +58,44 @@ export default defineConfig({
   },
 
   // 代理
-  proxy,
+  proxy: {
+    '/user_backend': {
+      target: 'http://60.190.249.92/',
+      changeOrigin: true,
+    },
+    '/v1': {
+      target: 'http://matrix-api-test.cfuture.shop/',
+      // target: 'http://10.10.129.247:8080/',
+      // target: 'http://10.10.129.177:8080/',
+      // target: 'http://10.10.129.128:8080',
+      // target: 'http://10.10.128.182:8081/', // 羁绊本地
+      // target: 'http://10.10.130.108:8000', // 可乐本地
+      // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
+      changeOrigin: true,
+    },
+  },
 
   // devServer: {
   //   open: true,
   // },
 
   // 路由
-  routes: getRoutes(ds.pagePrefix, routes, ds),
+  routes: [
+    {
+      path: `${ds.loginPrefix}/login`,
+      component: '../layouts/login',
+    },
+    {
+      path: ds.pagePrefix,
+      component: '../layouts/basic-layout/index',
+      menuRoot: true,
+      routes: [...routes],
+    },
+    {
+      path: '/',
+      redirect: `${ds.pagePrefix}/index`,
+    },
+  ],
 
   // 主题
   theme: {

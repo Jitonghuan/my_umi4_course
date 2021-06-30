@@ -308,7 +308,8 @@ export default [
       },
       {
         path: 'autotest',
-        name: '自动化测试',
+        // name: '自动化测试',
+        name: '用例管理',
         key: 'autotest',
         routes: [
           {
