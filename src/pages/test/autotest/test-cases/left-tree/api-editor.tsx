@@ -101,7 +101,7 @@ export default function ApiEditor(props: ApiEditorProps) {
       await postRequest(APIS.addApi, {
         data: {
           ...payload,
-          moduleId: targetNode?.key,
+          moduleId: targetNode?.bizId,
           createUser: userInfo.userName,
         },
       });

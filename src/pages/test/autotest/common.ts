@@ -28,11 +28,13 @@ export const API_METHOD = {
   _default: 'GET',
 };
 
+// API 类型
 export const API_TYPE_OPTIONS: SelectOptions<number>[] = [
   { label: 'http', value: 0 },
   { label: 'dubbo', value: 1 },
 ];
 
+// 参数类型
 export const PARAM_TYPE_OPTIONS: SelectOptions<number>[] = [
   { label: 'form-data', value: 1 },
   { label: 'x-www-form-urlencode', value: 2 },
@@ -48,20 +50,6 @@ export const API_METHOD_OPTIONS: SelectOptions<string>[] = [
   { label: 'HEAD', value: 'HEAD' },
   { label: 'OPTION', value: 'OPTION' },
 ];
-
-// export type EditTableEnum = Record<string, { text: string; status?: 'Success' | 'Error' | 'Default' }>;
-
-// export function fmtOptions2Enum(options: SelectOptions<string>[]): EditTableEnum {
-//   return options.reduce((prev, curr) => {
-//     return {
-//       ...prev,
-//       [curr.value]: {
-//         text: curr.label,
-//         status: 'Default',
-//       },
-//     };
-//   }, {} as EditTableEnum);
-// }
 
 /** 比较方式 */
 export const ASSERT_COMPARE_ENUM = [

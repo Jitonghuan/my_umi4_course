@@ -5,16 +5,14 @@
   "scripts": {
     "inject": "node script/config-inject.js",
     "umi": "cross-env MOCK=none umi dev",
+    "dev": "fnpm i && npm run inject -- dev && npm run umi",
     "start": "fnpm i && npm run inject -- dev && npm run umi",
     "umi:mock": "umi dev",
     "start:mock": "fnpm i && npm run inject -- dev && npm run umi:mock",
     "umi:build": "umi build",
     "build": "fnpm i && npm run inject && umi build",
     "postinstall": "umi generate tmp",
-    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
-    "test": "umi-test",
-    "test:coverage": "umi-test --coverage",
-    "page": "node ./script/add-page.js"
+    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

@@ -308,7 +308,8 @@ export default [
       },
       {
         path: 'autotest',
-        name: '自动化测试',
+        // name: '自动化测试',
+        name: '用例管理',
         key: 'autotest',
         routes: [
           {
@@ -381,11 +382,11 @@ export default [
       },
     ],
   },
-
   {
     path: 'logger',
     name: '日志管理',
     icon: 'icon-diagnose',
+    hideInMenu: true,
     routes: [
       {
         path: 'dashboard',
@@ -404,7 +405,6 @@ export default [
       },
     ],
   },
-
   {
     path: 'code',
     name: '代码管理',

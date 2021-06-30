@@ -50,13 +50,13 @@ export default function TestCaseManager(props: IUmiRrops) {
 
   return (
     <MatrixPageContent isFlex>
-      <FilterCard className="layout-compact">
+      {/* <FilterCard className="layout-compact">
         <Tabs activeKey="test-cases" onChange={(next) => props.history.push(`/matrix/test/autotest/${next}`)}>
           <Tabs.TabPane tab="用例管理" key="test-cases" />
           <Tabs.TabPane tab="场景管理" key="scenes" />
           <Tabs.TabPane tab="任务管理" key="tasks" />
         </Tabs>
-      </FilterCard>
+      </FilterCard> */}
       <CardRowGroup>
         <LeftTree onItemClick={(item) => setCurrent(item)} emitter={emitter} />
         <RightDetail key={current?.key || 1} current={current} emitter={emitter} />
