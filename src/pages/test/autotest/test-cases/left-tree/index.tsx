@@ -6,20 +6,18 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Modal, Select, Tree, Spin, Empty, message } from 'antd';
 import { PlusSquareFilled, PlusOutlined, EditOutlined } from '@ant-design/icons';
 import VCCustomIcon from '@cffe/vc-custom-icon';
-import type Emitter from 'events';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
 import { TreeNode, TreeNodeSaveData, EditorMode } from '../../interfaces';
 import { useProjectOptions, useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey, getMergedList } from '../../common';
-import ProjectEditor from './project-editor';
-import ModuleEditor from './module-editor';
-import ApiEditor from './api-editor';
+import ProjectEditor from '../../components/project-editor';
+import ModuleEditor from '../../components/module-editor';
+import ApiEditor from '../../components/api-editor';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
-  emitter: Emitter;
   onItemClick: (item?: TreeNode) => any;
 }
 
@@ -40,7 +38,6 @@ type nodeAction =
 export default function LeftTree(props: LeftTreeProps) {
   const [projectOptions, setProjectOptions, reloadProjectOptions] = useProjectOptions();
   const [searchProject, setSearchProject] = useState<number>();
-  // const [searchKey, setSearchKey] = useState<string>('');
   const [treeData, treeLoading, setTreeData, reloadTreeData] = useLeftTreeData(searchProject);
   const [selectedItem, setSelectedItem] = useState<TreeNode>();
   // 当前操作的节点（或者触发节点）
@@ -223,12 +220,6 @@ export default function LeftTree(props: LeftTreeProps) {
   return (
     <CardRowGroup.SlideCard width={244} className="page-case-list">
       <div className="case-list-header">
-        {/* <Input
-          value={searchKey}
-          onChange={(e) => setSearchKey(e.target.value)}
-          onPressEnter={handleSearch}
-          placeholder="搜索"
-        /> */}
         <Select
           options={projectOptions}
           value={searchProject}

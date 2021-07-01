@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/31 23:42
 
-import { SelectOptions, TreeNode } from './interfaces';
+import { SelectOptions, TreeNode, SceneItemVO } from './interfaces';
 
 export const API_TYPE = {
   HTTP: 0,
@@ -109,8 +109,17 @@ export function getMergedList<T, U>(list: T[], addon: U, callback: (item: T, add
   return next;
 }
 
-let RANDOM_SEED = Date.now();
-export const randomKey = () => (Math.random() * RANDOM_SEED++).toString(36).toUpperCase();
+export function createNodeDataFromSceneItem(item: SceneItemVO): TreeNode {
+  return {
+    key: `l3-${item.id}`,
+    title: item.name,
+    desc: item.desc,
+    projectId: item.projectId,
+    moduleId: item.moduleId,
+    bizId: item.id,
+    level: 3,
+  };
+}
 
 export function formatTreeData(payload: any) {
   if (!payload?.length) return [];
@@ -136,7 +145,8 @@ export function formatTreeData(payload: any) {
       children: (n2.children || []).map((n3: any) => ({
         bizId: n3.id,
         key: `l3-${n3.id}`,
-        title: n3.name, // 接口名
+        title: n3.name, // 接口或场景名
+        desc: n3.desc, // 场景描述
         selectable: true,
         isLeaf: true,
         level: 3,
