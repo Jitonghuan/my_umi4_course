@@ -71,7 +71,7 @@ export default function RightDetail(props: RightDetailProps) {
   if (!props.current) {
     return (
       <ContentCard className="page-case-right-detail">
-        <Empty description="请选择接口" image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ marginTop: '100px' }} />
+        <Empty description="请选择节点" image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ marginTop: '100px' }} />
       </ContentCard>
     );
   }

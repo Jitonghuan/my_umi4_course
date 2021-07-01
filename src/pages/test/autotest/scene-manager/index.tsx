@@ -4,16 +4,16 @@
 
 import React, { useState, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
 import Emitter from 'events';
-import { Tabs } from 'antd';
-import type { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/bus-layout';
+import {} from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
+import { CardRowGroup } from '@/components/vc-page-content';
 import { EditorMode, TreeNode } from '../interfaces';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
+import HeaderTabs from '../components/header-tabs';
 import './index.less';
 
-export default function SceneManager(props: IUmiRrops) {
+export default function SceneManager(props: any) {
   const [current, setCurrent] = useState<TreeNode>();
 
   const emitter = useMemo(() => {
@@ -22,15 +22,9 @@ export default function SceneManager(props: IUmiRrops) {
 
   return (
     <MatrixPageContent className="page-autotest-scene">
-      <FilterCard className="layout-compact">
-        <Tabs activeKey="scenes" onChange={(next) => props.history.push(`/matrix/test/autotest/${next}`)}>
-          <Tabs.TabPane tab="用例管理" key="test-cases" />
-          <Tabs.TabPane tab="场景管理" key="scenes" />
-          <Tabs.TabPane tab="任务管理" key="tasks" />
-        </Tabs>
-      </FilterCard>
+      <HeaderTabs activeKey="scenes" history={props.history} />
       <CardRowGroup>
-        <LeftTree onItemClick={(item) => setCurrent(item)} emitter={emitter} />
+        <LeftTree emitter={emitter} onItemClick={(item) => setCurrent(item)} />
         <RightDetail key={current?.key || 1} current={current} emitter={emitter} />
       </CardRowGroup>
     </MatrixPageContent>

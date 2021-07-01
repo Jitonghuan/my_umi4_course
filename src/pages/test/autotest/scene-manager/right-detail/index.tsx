@@ -10,6 +10,8 @@ import { ContentCard } from '@/components/vc-page-content';
 import { postRequest } from '@/utils/request';
 import * as APIS from '../../service';
 import { TreeNode, CaseItemVO } from '../../interfaces';
+import SceneList from './scene-list';
+import SceneDetail from './scene-detail';
 import './index.less';
 
 interface RightDetailProps extends Record<string, any> {
@@ -19,5 +21,19 @@ interface RightDetailProps extends Record<string, any> {
 }
 
 export default function RightDetail(props: RightDetailProps) {
-  return <ContentCard className="page-case-right-detail">HELLO</ContentCard>;
+  useEffect(() => {}, []);
+
+  if (!props.current) {
+    return (
+      <ContentCard className="page-scene-right-detail">
+        <Empty description="请选择节点" image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ marginTop: '100px' }} />
+      </ContentCard>
+    );
+  }
+
+  if (props.current.level === 3) {
+    return <SceneDetail emitter={props.emitter} current={props.current} />;
+  }
+
+  return <SceneList emitter={props.emitter} current={props.current} />;
 }

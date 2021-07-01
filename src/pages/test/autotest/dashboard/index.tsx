@@ -9,11 +9,11 @@ import { ContentCard } from '@/components/vc-page-content';
 import HeaderTabs from '../components/header-tabs';
 import * as APIS from '../service';
 
-export default function TaskManager(props: any) {
+export default function Dashboard(props: any) {
   return (
     <MatrixPageContent>
-      <HeaderTabs activeKey="tasks" history={props.history} />
-      <ContentCard>任务管理</ContentCard>
+      <HeaderTabs activeKey="dashboard" history={props.history} />
+      <ContentCard>看板统计</ContentCard>
     </MatrixPageContent>
   );
 }
