@@ -308,10 +308,16 @@ export default [
       },
       {
         path: 'autotest',
-        // name: '自动化测试',
-        name: '用例管理',
+        name: '自动化测试',
         key: 'autotest',
         routes: [
+          {
+            path: 'dashboard',
+            name: '看板统计',
+            key: 'autotest',
+            component: '@/pages/test/autotest/dashboard',
+            hideInMenu: true,
+          },
           {
             path: 'test-cases',
             name: '用例管理',
@@ -386,7 +392,7 @@ export default [
     path: 'logger',
     name: '日志管理',
     icon: 'icon-diagnose',
-    hideInMenu: true,
+    hideInMenu: process.env.UMI_ENV === 'prod',
     routes: [
       {
         path: 'dashboard',

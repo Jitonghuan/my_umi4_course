@@ -7,7 +7,6 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Tabs, Button } from 'antd';
-import FeContext from '@/layouts/basic-layout/fe-context';
 import { queryEnvData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
@@ -17,11 +16,11 @@ import './index.less';
 const { TabPane } = Tabs;
 const rootCls = 'second-party-pkg';
 
-const TowPartyPkg = ({
+export default function TowPartyPkg({
   location: {
-    query: { appCode, id: appId, isContainClient },
+    query: { appCode, id: appId },
   },
-}: IProps) => {
+}: IProps) {
   // const { envData } = useContext(FeContext);
   const [tabActive, setTabActive] = useState('cDev');
   // 环境
@@ -70,8 +69,4 @@ const TowPartyPkg = ({
       </Tabs>
     </div>
   );
-};
-
-TowPartyPkg.defaultProps = {};
-
-export default TowPartyPkg;
+}

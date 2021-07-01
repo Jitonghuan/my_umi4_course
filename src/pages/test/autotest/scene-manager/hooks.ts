@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
-import { SelectOptions, TreeNode, ProjectItemVO } from '../interfaces';
+import { SelectOptions, TreeNode, ProjectItemVO, SceneItemVO } from '../interfaces';
 import { formatTreeData } from '../common';
 
 // 当前可选的项目列表
@@ -49,7 +49,7 @@ export function useLeftTreeData(
     // setData([]); // 这里不能清空数据，否则会触发联动判断!!
 
     try {
-      const result = await getRequest(APIS.getApiTree, {
+      const result = await getRequest(APIS.getSceneTree, {
         data: { id: projectId },
       });
       const list = formatTreeData(result.data || []);
@@ -67,4 +67,41 @@ export function useLeftTreeData(
   }, [projectId]);
 
   return [data, loading, setData, loadData];
+}
+
+// 根据项目/模块 获取场景列表
+export function useSceneList(
+  nodeId: number,
+  nodeType = 0,
+  pageIndex = 1,
+  pageSize = 20,
+): [SceneItemVO[], number, boolean, React.Dispatch<React.SetStateAction<SceneItemVO[]>>, () => Promise<void>] {
+  const [data, setData] = useState<SceneItemVO[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const loadData = useCallback(async () => {
+    if (!nodeId) return;
+
+    setLoading(true);
+    try {
+      const result = await getRequest(APIS.getSceneList, {
+        data: { id: nodeId, type: nodeType, pageIndex, pageSize },
+      });
+
+      const { dataSource, pageInfo } = result.data || {};
+      setData(dataSource || []);
+      setTotal(pageInfo?.total ?? dataSource?.length ?? 0);
+    } catch (ex) {
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [nodeId, nodeType, pageIndex, pageSize]);
+
+  useEffect(() => {
+    loadData();
+  }, [nodeId, nodeType, pageIndex, pageSize]);
+
+  return [data, total, loading, setData, loadData];
 }

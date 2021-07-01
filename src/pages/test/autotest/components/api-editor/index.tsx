@@ -19,6 +19,7 @@ import {
   PARAM_TYPE_OPTIONS,
   API_METHOD_OPTIONS,
 } from '../../common';
+import './index.less';
 
 const formLayout = {
   labelCol: { flex: '88px' },

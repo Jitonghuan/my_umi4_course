@@ -4,15 +4,16 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Modal, Select, Tree, Spin, Empty, message } from 'antd';
-import { PlusSquareFilled, PlusOutlined, EditOutlined } from '@ant-design/icons';
-import VCCustomIcon from '@cffe/vc-custom-icon';
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
+import VCCustomIcon from '@cffe/vc-custom-icon';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
 import { TreeNode, EditorMode } from '../../interfaces';
 import { useProjectOptions, useLeftTreeData } from '../hooks';
-import { findTreeNodeByKey, getMergedList } from '../../common';
+import { findTreeNodeByKey } from '../../common';
+import SceneEditor from '../../components/scene-editor';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
@@ -24,17 +25,16 @@ const stopProp = {
   onClick: (e: any) => e && e.stopPropagation(),
 };
 
-type nodeAction = 'addApi' | 'editApi' | 'delApi';
+type nodeAction = 'addScene' | 'editScene' | 'delScene';
 
 export default function LeftTree(props: LeftTreeProps) {
   const [projectOptions] = useProjectOptions();
   const [searchProject, setSearchProject] = useState<number>();
-  // const [searchKey, setSearchKey] = useState<string>('');
   const [treeData, treeLoading, setTreeData, reloadTreeData] = useLeftTreeData(searchProject);
   const [selectedItem, setSelectedItem] = useState<TreeNode>();
   // 当前操作的节点（或者触发节点）
   const targetNodeRef = useRef<TreeNode>();
-  const [apiEditorMode, setApiEditorMode] = useState<EditorMode>('HIDE');
+  const [sceneEditorMode, setSceneEditorMode] = useState<EditorMode>('HIDE');
   const [expandedKeys, setExpandedKeys] = useState<(number | string)[]>([]);
 
   // ----- hooks
@@ -67,6 +67,28 @@ export default function LeftTree(props: LeftTreeProps) {
     }
   }, [treeData]);
 
+  useEffect(() => {
+    const listener1 = () => reloadTreeData();
+    const listener2 = (node: TreeNode) => {
+      handleItemSelect([node.key], { selectedNodes: [node] });
+    };
+
+    // 右侧页面在新增场景后，左侧的 tree 也需要刷新
+    props.emitter.on('SCENE::RELOAD_TREE', listener1);
+    // 右侧页面选中了场景，左侧直接定位到相应的场景节点
+    props.emitter.on('SCENE::SELECT_SCENE', listener2);
+
+    return () => {
+      props.emitter.off('SCENE::RELOAD_TREE', listener1);
+      props.emitter.off('SCENE::SELECT_SCENE', listener2);
+    };
+  });
+
+  const handleScaneEditorSave = () => {
+    setSceneEditorMode('HIDE');
+    reloadTreeData();
+  };
+
   // 选择一个节点
   const handleItemSelect = (nextKeys: React.Key[], info: any) => {
     if (!nextKeys.length) return; // 禁止反选
@@ -86,22 +108,22 @@ export default function LeftTree(props: LeftTreeProps) {
       targetNodeRef.current = node;
 
       switch (action) {
-        case 'addApi':
-          setApiEditorMode('ADD');
+        case 'addScene':
+          setSceneEditorMode('ADD');
           break;
-        case 'editApi':
-          setApiEditorMode('EDIT');
+        case 'editScene':
+          setSceneEditorMode('EDIT');
           break;
-        case 'delApi':
+        case 'delScene':
           Modal.confirm({
             title: '操作确认',
             content: `确定删除接口 ${node.title}？删除后相关数据将自动清除`,
             onOk: async () => {
-              await postRequest(APIS.deleteApiTreeNode, {
+              await postRequest(APIS.deleteScene, {
                 data: { id: node.bizId!, type: 2 },
               });
-              message.success('接口已删除！');
-              // 删除api节点后，更新 treeData ，会自动触发重置判断
+              message.success('场景已删除！');
+              // 删除节点后，更新 treeData ，会自动触发重置判断
               reloadTreeData();
             },
           });
@@ -147,25 +169,32 @@ export default function LeftTree(props: LeftTreeProps) {
               <span>{nodeData.title}</span>
               {/* 添加子节点：接口 */}
               {nodeData.level === 2 && (
-                <a title="添加子节点：接口" {...stopProp}>
-                  <PlusOutlined onClick={() => handleNodeAction('addApi', nodeData)} />
+                <a title="添加子节点：场景" {...stopProp}>
+                  <PlusOutlined onClick={() => handleNodeAction('addScene', nodeData)} />
                 </a>
               )}
               {/* 编辑接口 */}
               {nodeData.level === 3 && (
-                <a title="编辑接口" {...stopProp}>
-                  <EditOutlined onClick={() => handleNodeAction('editApi', nodeData)} />
+                <a title="编辑场景" {...stopProp}>
+                  <EditOutlined onClick={() => handleNodeAction('editScene', nodeData)} />
                 </a>
               )}
               {/* 删除接口 */}
               {nodeData.level === 3 && (
-                <a title="删除接口" {...stopProp}>
-                  <VCCustomIcon onClick={() => handleNodeAction('delApi', nodeData)} type="icondelete" />
+                <a title="删除场景" {...stopProp}>
+                  <VCCustomIcon onClick={() => handleNodeAction('delScene', nodeData)} type="icondelete" />
                 </a>
               )}
             </div>
           )) as any
         }
+      />
+
+      <SceneEditor
+        mode={sceneEditorMode}
+        targetNode={targetNodeRef.current}
+        onClose={() => setSceneEditorMode('HIDE')}
+        onSave={handleScaneEditorSave}
       />
     </CardRowGroup.SlideCard>
   );

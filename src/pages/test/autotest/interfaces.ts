@@ -22,7 +22,7 @@ export interface TreeNode extends DataNode {
   /** 业务ID，即服务端返回的 id 字段，方便将 key 和 id 区分开来 */
   bizId?: number;
   title?: string;
-  /** 节点级别， 1: 项目, 2: 模块, 3: 接口 */
+  /** 节点级别， 1: 项目, 2: 模块, 3: 接口/场景 */
   level?: number;
   /** 节点描述，也是 项目/模块 描述 */
   desc?: string;
@@ -32,6 +32,8 @@ export interface TreeNode extends DataNode {
   moduleId: number;
 
   children?: TreeNode[];
+
+  [x: string]: any;
 }
 
 export type EditorMode = 'HIDE' | 'EDIT' | 'ADD';
@@ -79,4 +81,16 @@ export interface FuncProps {
   desc?: string;
   name?: string;
   argument?: string;
+}
+
+export interface SceneItemVO extends Record<string, any> {
+  id: number;
+  name: string;
+  desc: string;
+  cases: number[];
+  moduleId: number;
+  moduleName: string;
+  projectName: string;
+  createUser: string;
+  modifyUser: string;
 }

@@ -10,6 +10,7 @@ import { Tabs, Button } from 'antd';
 import FeContext from '@/layouts/basic-layout/fe-context';
 import { queryEnvData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
+import SecondPartyPkg from '../second-party-pkg';
 import DeployContent from './deploy-content';
 import { IProps } from './types';
 import './index.less';
@@ -17,11 +18,12 @@ import './index.less';
 const { TabPane } = Tabs;
 const rootCls = 'app-deploy-compo';
 
-const ApplicationDeploy = ({
-  location: {
-    query: { appCode, id: appId, isClient },
-  },
-}: IProps) => {
+export default function ApplicationDeploy(props: IProps) {
+  const {
+    location: {
+      query: { appCode, id: appId, isClient },
+    },
+  } = props;
   const isSecondPartyPkg = Number(isClient) === 1;
 
   const { envData } = useContext(FeContext);
@@ -58,6 +60,10 @@ const ApplicationDeploy = ({
 
   const curEnvData = isSecondPartyPkg ? envSecondPartyPkgData : envData;
 
+  if (+isClient === 1) {
+    return <SecondPartyPkg {...(props as any)} />;
+  }
+
   return (
     <div className={rootCls}>
       <Tabs
@@ -83,8 +89,4 @@ const ApplicationDeploy = ({
       </Tabs>
     </div>
   );
-};
-
-ApplicationDeploy.defaultProps = {};
-
-export default ApplicationDeploy;
+}

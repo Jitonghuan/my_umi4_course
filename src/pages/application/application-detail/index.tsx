@@ -119,9 +119,7 @@ const ApplicationDetail = (props: IProps) => {
               return key !== 'secondPartyPkg';
             })
             .map((key) => (
-              <TabPane tab={tabsConfig[key]} key={key}>
-                {null}
-              </TabPane>
+              <TabPane tab={tabsConfig[key]} key={key} />
             ))}
         </Tabs>
       )}
