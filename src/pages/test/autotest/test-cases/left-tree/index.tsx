@@ -240,7 +240,8 @@ export default function LeftTree(props: LeftTreeProps) {
         <Empty description="未找到数据" style={{ marginTop: 60 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : null}
 
-      <Tree.DirectoryTree
+      <Tree
+        blockNode
         key={searchProject || 1}
         treeData={treeData}
         selectedKeys={selectedItem ? [selectedItem.key] : []}
