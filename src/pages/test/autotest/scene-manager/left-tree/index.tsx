@@ -75,6 +75,7 @@ export default function LeftTree(props: LeftTreeProps) {
 
     // 右侧页面在新增场景后，左侧的 tree 也需要刷新
     props.emitter.on('SCENE::RELOAD_TREE', listener1);
+    // 右侧页面选中了场景，左侧直接定位到相应的场景节点
     props.emitter.on('SCENE::SELECT_SCENE', listener2);
 
     return () => {
