@@ -69,8 +69,10 @@ export default function LeftTree(props: LeftTreeProps) {
 
   useEffect(() => {
     const listener1 = () => reloadTreeData();
-    const listener2 = (node: TreeNode) => {
-      handleItemSelect([node.key], { selectedNodes: [node] });
+    const listener2 = (key: string) => {
+      const target = findTreeNodeByKey(treeData, key);
+      handleItemSelect([key], { selectedNodes: [target] });
+      setExpandedKeys([`l1-${target?.projectId}`, `l2-${target?.moduleId}`]);
     };
 
     // 右侧页面在新增场景后，左侧的 tree 也需要刷新
