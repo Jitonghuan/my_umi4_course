@@ -21,6 +21,7 @@ export default function DBPanel(props: DBPanelProps) {
         { title: 'user', dataIndex: 'user' },
         { title: 'pwd', dataIndex: 'pwd' },
       ]}
+      creator={{ record: { host: '', user: '', pwd: '' } }}
     />
   );
 }

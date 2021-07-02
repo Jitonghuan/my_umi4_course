@@ -94,13 +94,13 @@ export function useOperatorOptions() {
 }
 
 export function useLevelOptions() {
-  const [source, setSource] = useState<SelectOptions<number>[]>([]);
+  const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
     setSource([
-      { label: '警告', value: 2 },
-      { label: '严重', value: 3 },
-      { label: '灾难', value: 4 },
+      { label: '警告', value: '2' },
+      { label: '严重', value: '3' },
+      { label: '灾难', value: '4' },
     ]);
   }, []);
 

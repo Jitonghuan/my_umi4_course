@@ -14,6 +14,11 @@ export const getAlertRule = addAPIPrefix('/logManage/alertrule/options/list');
 
 export const createRule = addAPIPrefix('/logManage/alertrule/create');
 
+/** PUT 更新告警 */
 export const updateRule = addAPIPrefix('/logManage/alertrule/update');
 
+/** DELETE 删除告警 */
 export const deleteRule = addAPIPrefix('/logManage/alertrule/delete');
+
+/** PUT 告警开关 */
+export const switchRule = addAPIPrefix('/logManage/alertrule/switch');
