@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Tag, message, Popconfirm } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { getRequest, delRequest } from '@/utils/request';
+import { getRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from './service';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
 import { EditorMode } from './interface';
@@ -67,12 +67,27 @@ export default function LoggerAlarm() {
   };
 
   const handleDelItem = async (item: any, index: number) => {
-    await delRequest(APIS.deleteRule, {
-      data: { ruleId: item.id },
-    });
+    await delRequest(`${APIS.deleteRule}/${item.ruleId}`);
 
     message.success('规则删除成功！');
     handleSearch();
+  };
+
+  const handleSwitchStatus = async (item: any, index: number) => {
+    const nextStatus = item.status === '0' ? '1' : '0';
+    await putRequest(APIS.switchRule, {
+      data: { ruleId: item.ruleId, status: nextStatus },
+    });
+
+    message.success(nextStatus ? '启用成功！' : '停用成功！');
+
+    const nextSource = tableSource.slice(0);
+    nextSource[index] = {
+      ...nextSource[index],
+      status: nextStatus,
+    };
+
+    setTableSource(nextSource);
   };
 
   return (
@@ -131,21 +146,34 @@ export default function LoggerAlarm() {
             dataIndex="status"
             title="状态"
             render={(v, record) => {
-              return v === 1 ? <Tag color="success">已启用</Tag> : v === 0 ? <Tag color="default">已关闭</Tag> : null;
+              return v === '1' ? (
+                <Tag color="success">已启用</Tag>
+              ) : +v === 0 ? (
+                <Tag color="default">已关闭</Tag>
+              ) : null;
             }}
           />
           <Table.Column
             title="操作"
-            render={(_, record, index) => (
-              <div className="action-cell">
-                <Button type="text" onClick={() => handleEditItem(record, index)}>
-                  编辑
-                </Button>
-                <Popconfirm title="确定要删除该规则吗？" onConfirm={() => handleDelItem(record, index)}>
-                  <Button type="text">删除</Button>
-                </Popconfirm>
-              </div>
-            )}
+            width={160}
+            render={(_, record: any, index) => {
+              const isEnable = record.status === '1';
+
+              return (
+                <div className="action-cell">
+                  <a onClick={() => handleEditItem(record, index)}>编辑</a>
+                  <Popconfirm title="确定要删除该规则吗？" onConfirm={() => handleDelItem(record, index)}>
+                    <a style={{ color: 'red' }}>删除</a>
+                  </Popconfirm>
+                  <Popconfirm
+                    title={`确定要${isEnable ? '停用' : '启用'}该规则吗？`}
+                    onConfirm={() => handleSwitchStatus(record, index)}
+                  >
+                    <a style={{ color: isEnable ? 'orange' : 'green' }}>{isEnable ? '停用' : '启用'}</a>
+                  </Popconfirm>
+                </div>
+              );
+            }}
           />
         </Table>
 

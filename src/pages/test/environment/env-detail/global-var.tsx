@@ -121,6 +121,7 @@ export default function GlobalVar(props: GlobalVarProps) {
                 { title: '变量名', dataIndex: 'key', required: true },
                 { title: '变量值', dataIndex: 'value', required: true },
               ]}
+              creator={{ record: { key: '', value: '' } }}
             />
           </Collapse.Panel>
         ))}

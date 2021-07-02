@@ -231,6 +231,7 @@ export default function ApiEditor(props: ApiEditorProps) {
                       { title: 'value', dataIndex: 'value' },
                       { title: '说明', dataIndex: 'desc' },
                     ]}
+                    creator={{ record: { value: '', desc: '' } }}
                   />
                 </FormItem>
               ) : (
@@ -261,6 +262,7 @@ export default function ApiEditor(props: ApiEditorProps) {
                     { title: 'value', dataIndex: 'value' },
                     { title: '说明', dataIndex: 'desc' },
                   ]}
+                  creator={{ record: { value: '', desc: '' } }}
                 />
               </FormItem>
             </Tabs.TabPane>

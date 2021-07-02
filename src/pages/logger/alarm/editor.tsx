@@ -40,8 +40,8 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     const submitData = {
       ...values,
       interval: `${values.interval}m`,
-      silence_start: values.silence_start?.format('HH:mm'),
-      silence_end: values.silence_end?.format('HH:mm'),
+      silenceStart: values.silenceStart?.format('HH:mm'),
+      silenceEnd: values.silenceEnd?.format('HH:mm'),
     };
 
     console.log('> AlarmEditor.handleOk: ', submitData);
@@ -125,26 +125,26 @@ export default function AlarmEditor(props: AlarmEditorProps) {
         </FormItem>
         <FormItem
           label="通知方式"
-          name="receiver_type"
+          name="receiverType"
           rules={[{ required: true, message: '请选择通知方式' }]}
           initialValue={notifyTypeOptions[0]?.value}
         >
           <Select placeholder="请选择" options={notifyTypeOptions} />
         </FormItem>
-        <FormItem label="是否静默" name="silent" initialValue={0}>
+        <FormItem label="是否静默" name="silence" initialValue={'0'}>
           <Radio.Group>
-            <Radio value={0}>否</Radio>
-            <Radio value={1}>是</Radio>
+            <Radio value="0">否</Radio>
+            <Radio value="1">是</Radio>
           </Radio.Group>
         </FormItem>
-        <FormItem noStyle shouldUpdate={(prev, curr) => prev.silent !== curr.silent}>
+        <FormItem noStyle shouldUpdate={(prev, curr) => prev.silence !== curr.silence}>
           {({ getFieldValue }) =>
-            getFieldValue('silent') === 1 ? (
+            getFieldValue('silence') === '1' ? (
               <FormItem label="静默范围">
-                <FormItem noStyle name="silence_start" rules={[{ required: true, message: '请选择静默开始时间' }]}>
+                <FormItem noStyle name="silenceStart" rules={[{ required: true, message: '请选择静默开始时间' }]}>
                   <TimePicker format="HH:mm" placeholder="开始时间" style={{ marginRight: 8 }} />
                 </FormItem>
-                <FormItem noStyle name="silence_end" rules={[{ required: true, message: '请选择静默结束时间' }]}>
+                <FormItem noStyle name="silenceEnd" rules={[{ required: true, message: '请选择静默结束时间' }]}>
                   <TimePicker format="HH:mm" placeholder="结束时间" />
                 </FormItem>
               </FormItem>

@@ -53,7 +53,7 @@ export default function SceneList(props: SceneListProps) {
     console.log('>>>>> handleSelectSceneItem', item);
 
     const node = createNodeDataFromSceneItem(item);
-    props.emitter.emit('SCENE::SELECT_SCENE', node);
+    props.emitter.emit('SCENE::SELECT_SCENE', node.key);
   };
 
   const handleExecScene = (record: SceneItemVO) => {

@@ -12,6 +12,7 @@ import { getRequest, queryUserInfoApi, doLogoutApi } from '@/utils/request';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
 import { IPermission } from '@cffe/vc-layout/lib/sider-menu';
+import './index.less';
 import logo from './logo.svg';
 
 export default (props: IUmiRrops) => {
