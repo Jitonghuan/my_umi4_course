@@ -41,7 +41,7 @@ const AddDrawer = (props: IProps) => {
   // 根据应用分类查询环境
   const queryDeployEnv = (categoryCode: string) => {
     setDeployEnvData([]);
-    queryEnvsReq({ categoryCode }).then((datas) => {
+    queryEnvsReq({ categoryCode, envTypeCode: 'prod' }).then((datas) => {
       setDeployEnvData(datas.list);
     });
   };
