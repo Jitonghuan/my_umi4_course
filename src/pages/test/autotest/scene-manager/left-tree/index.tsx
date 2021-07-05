@@ -78,17 +78,19 @@ export default function LeftTree(props: LeftTreeProps) {
     // 右侧页面在新增场景后，左侧的 tree 也需要刷新
     props.emitter.on('SCENE::RELOAD_TREE', listener1);
     // 右侧页面选中了场景，左侧直接定位到相应的场景节点
-    props.emitter.on('SCENE::SELECT_SCENE', listener2);
+    props.emitter.on('SCENE::SELECT_TREE_NODE', listener2);
 
     return () => {
       props.emitter.off('SCENE::RELOAD_TREE', listener1);
-      props.emitter.off('SCENE::SELECT_SCENE', listener2);
+      props.emitter.off('SCENE::SELECT_TREE_NODE', listener2);
     };
   });
 
   const handleScaneEditorSave = () => {
     setSceneEditorMode('HIDE');
     reloadTreeData();
+    // 通知右侧列表页更新 (更精细一点应该判断是否定位在模块上)
+    props.emitter.emit('SCENE::RELOAD_SCENE_LIST');
   };
 
   // 选择一个节点
@@ -127,6 +129,8 @@ export default function LeftTree(props: LeftTreeProps) {
               message.success('场景已删除！');
               // 删除节点后，更新 treeData ，会自动触发重置判断
               reloadTreeData();
+              // 通知右侧也更新
+              props.emitter.emit('SCENE::RELOAD_SCENE_LIST');
             },
           });
           break;

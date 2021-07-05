@@ -11,7 +11,7 @@ import * as APIS from './service';
 export default function LoggerDashboard() {
   return (
     <MatrixPageContent>
-      <ContentCard>Hello</ContentCard>
+      <ContentCard>COMMING SOON... (招前端)</ContentCard>
     </MatrixPageContent>
   );
 }
