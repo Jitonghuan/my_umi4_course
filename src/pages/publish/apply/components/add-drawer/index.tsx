@@ -177,8 +177,8 @@ const AddDrawer = (props: IProps) => {
         <Form.Item label="计划发布时间" name="deployDate" rules={[{ required: true, message: '请选择计划发布时间!' }]}>
           <DatePicker
             placeholder="请选择发布时间"
-            format={'YYYY-MM-DD HH-mm'}
-            showTime={{ format: 'HH-mm' }}
+            format={'YYYY-MM-DD HH:mm'}
+            showTime={{ format: 'HH:mm' }}
             style={{ width: '100%' }}
           />
         </Form.Item>
