@@ -79,7 +79,7 @@ export default function LoggerAlarm() {
       data: { ruleId: item.ruleId, status: nextStatus },
     });
 
-    message.success(nextStatus ? '启用成功！' : '停用成功！');
+    message.success('修改成功！');
 
     const nextSource = tableSource.slice(0);
     nextSource[index] = {
@@ -156,9 +156,9 @@ export default function LoggerAlarm() {
             dataIndex="status"
             title="状态"
             render={(v, record) => {
-              return v === '1' ? (
+              return v === '0' ? (
                 <Tag color="success">已启用</Tag>
-              ) : +v === 0 ? (
+              ) : v === '1' ? (
                 <Tag color="default">已关闭</Tag>
               ) : null;
             }}
@@ -167,7 +167,7 @@ export default function LoggerAlarm() {
             title="操作"
             width={160}
             render={(_, record: any, index) => {
-              const isEnable = record.status === '1';
+              const isEnable = record.status === '0';
 
               return (
                 <div className="action-cell">
