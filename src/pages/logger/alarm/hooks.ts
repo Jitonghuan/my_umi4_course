@@ -36,8 +36,27 @@ export function useEnvOptions() {
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
-        label: item.envName,
+        // label: item.envName,
+        label: item.envCode,
         value: item.envCode,
+      }));
+
+      setSource(next);
+    });
+  }, []);
+
+  return [source];
+}
+
+export function useUserOptions() {
+  const [source, setSource] = useState<SelectOptions[]>([]);
+
+  useEffect(() => {
+    getRequest(APIS.getUserList).then((result) => {
+      const { usernames } = result.data || {};
+      const next = (usernames || []).map((item: string) => ({
+        label: item,
+        value: item,
       }));
 
       setSource(next);
