@@ -1,32 +1,31 @@
-// 用例执行
+// 执行场景
 // @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/06/06 20:20
+// @create 2021/07/05 14:51
 
 import React, { useState, useEffect } from 'react';
-import { Modal, message, Select, Form, Input } from 'antd';
-import { postRequest } from '@/utils/request';
+import { Select, Modal, message, Form, Input } from 'antd';
 import * as APIS from '../../service';
-import { CaseItemVO } from '../../interfaces';
+import { getRequest, postRequest } from '@/utils/request';
+import { TreeNode } from '../../interfaces';
 import { useEnvOptions } from '../../hooks';
 
-export interface CaseExecProps {
-  visible?: boolean;
-  caseList?: CaseItemVO[];
+export interface SceneExecProps {
+  target?: TreeNode;
   onClose?: () => any;
 }
 
-export default function CaseExec(props: CaseExecProps) {
-  const [editField] = Form.useForm<{ envId: string }>();
+export default function SceneExec(props: SceneExecProps) {
+  const [editField] = Form.useForm();
   const [envOptions] = useEnvOptions();
   const [pending, setPending] = useState(false);
   const [resultURL, setResultURL] = useState<string>();
   const [errorStack, setErrorStack] = useState('');
 
   useEffect(() => {
-    if (!props.visible || !props.caseList?.length) return;
+    if (!props.target) return;
 
     editField.resetFields();
-  }, [props.visible]);
+  }, [props.target]);
 
   const handleOk = async () => {
     const { envId } = await editField.validateFields();
@@ -34,12 +33,9 @@ export default function CaseExec(props: CaseExecProps) {
     setPending(true);
     try {
       const result = await postRequest(
-        APIS.runCaseByIds,
+        APIS.executeScene,
         {
-          data: {
-            envId,
-            ids: props.caseList?.map((n) => n.id),
-          },
+          data: { envId, id: props.target?.bizId },
         },
         true,
       );
@@ -63,17 +59,19 @@ export default function CaseExec(props: CaseExecProps) {
   return (
     <>
       <Modal
-        key="exec"
-        visible={props.visible}
-        title="用例执行"
-        onOk={handleOk}
+        visible={!!props.target}
+        title="执行场景"
         onCancel={props.onClose}
+        onOk={handleOk}
         maskClosable={false}
         confirmLoading={pending}
       >
-        <Form form={editField} labelCol={{ flex: '80px' }}>
+        <Form form={editField} labelCol={{ flex: '100px' }} wrapperCol={{ span: 17 }}>
+          <Form.Item label="场景名称">
+            <Input disabled value={props.target?.title} />
+          </Form.Item>
           <Form.Item label="执行环境" name="envId" rules={[{ required: true, message: '请选择环境' }]}>
-            <Select placeholder="请选择" options={envOptions} />
+            <Select placeholder="选择执行环境" options={envOptions} />
           </Form.Item>
         </Form>
       </Modal>

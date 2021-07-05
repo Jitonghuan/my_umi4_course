@@ -107,7 +107,7 @@ export const copyScene = addAPIPrefix('/qc/autotest/copyScene');
 /** GET 5、场景管理-查询当前项目下的模块列表 */
 export const getModulesByPro = addAPIPrefix('/qc/autotest/getModulesByPro');
 
-/** GET 6、场景管理-查询场景列表 */
+/** GET 6、场景管理-查询场景列表, type = 3 的时候是获取用例列表 */
 export const getSceneList = addAPIPrefix('/qc/autotest/getSceneList');
 
 /** GET 7、场景管理-查询场景目录树 */
