@@ -2,8 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/30 20:47
 
-import React, { useState } from 'react';
-import { Button, Table } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, Table, message } from 'antd';
 import type Emitter from 'events';
 import { ContentCard } from '@/components/vc-page-content';
 import { TreeNode, EditorMode, SceneItemVO } from '../../interfaces';
@@ -39,7 +39,7 @@ export default function SceneList(props: SceneListProps) {
 
   const handleEditScene = (record: SceneItemVO) => {
     // 构造一个节点
-    const node = createNodeDataFromSceneItem(record);
+    const node = createNodeDataFromSceneItem(record, 3);
     setTargetNode(node);
     setSceneEditorMode('EDIT');
   };
@@ -50,20 +50,36 @@ export default function SceneList(props: SceneListProps) {
   };
 
   const handleSelectSceneItem = (item: SceneItemVO) => {
+    const node = createNodeDataFromSceneItem(item);
     console.log('>>>>> handleSelectSceneItem', item);
 
-    const node = createNodeDataFromSceneItem(item);
-    props.emitter.emit('SCENE::SELECT_SCENE', node.key);
+    props.emitter.emit('SCENE::SELECT_TREE_NODE', node.key);
   };
 
   const handleExecScene = (record: SceneItemVO) => {
+    if (!record.cases?.length) {
+      return message.warning('该场景下没有用例，无法执行！');
+    }
+
     console.log('> handleExecScene', record);
   };
+
+  useEffect(() => {
+    const listener1 = () => {
+      loadData();
+    };
+
+    props.emitter.on('SCENE::RELOAD_SCENE_LIST', listener1);
+
+    return () => {
+      props.emitter.off('SCENE::RELOAD_SCENE_LIST', listener1);
+    };
+  });
 
   return (
     <ContentCard>
       <div className="page-scene-header">
-        <h3>{props.current?.title}</h3>
+        <h3>{props.current?.title} - 场景列表</h3>
         {props.current?.level === 2 ? (
           <Button type="primary" onClick={handleAddScene}>
             新增场景
@@ -92,18 +108,21 @@ export default function SceneList(props: SceneListProps) {
           render={(value, record: SceneItemVO) => <a onClick={() => handleSelectSceneItem(record)}>{value}</a>}
         />
         <Table.Column dataIndex="projectName" title="项目" />
+        <Table.Column dataIndex="moduleName" title="模块" />
         <Table.Column dataIndex="name" title="场景名称" />
         <Table.Column dataIndex="desc" title="场景描述" />
-        <Table.Column dataIndex="cases" title="用例" />
+        <Table.Column dataIndex="cases" title="用例数" render={(value: number[]) => value?.length || 0} />
         <Table.Column
           title="操作"
           render={(_, record: SceneItemVO, index) => (
             <div className="action-cell">
               <a onClick={() => handleEditScene(record)}>编辑</a>
-              <a onClick={() => handleExecScene(record)}>执行</a>
+              <a onClick={() => handleExecScene(record)} data-disabled={!record.cases?.length}>
+                执行
+              </a>
             </div>
           )}
-          width={110}
+          width={120}
         />
       </Table>
 
