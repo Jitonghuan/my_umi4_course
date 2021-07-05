@@ -100,7 +100,7 @@ export default function LoggerAlarm() {
           <Form.Item label="应用名称" name="appCode">
             <Select placeholder="请选择" options={appOptions} style={{ width: 168 }} />
           </Form.Item>
-          <Form.Item label="环境名称" name="envCode">
+          <Form.Item label="环境Code" name="envCode">
             <Select placeholder="请选择" options={envOptions} style={{ width: 168 }} />
           </Form.Item>
           <Form.Item label="状态" name="status">
@@ -138,10 +138,20 @@ export default function LoggerAlarm() {
         >
           <Table.Column dataIndex="id" title="ID" />
           <Table.Column dataIndex="name" title="报警名称" />
-          <Table.Column dataIndex="appName" title="应用名称" />
-          <Table.Column dataIndex="envName" title="环境名称" />
-          <Table.Column dataIndex="message" title="报警分类" />
-          <Table.Column dataIndex="expression" title="报警表达式" />
+          <Table.Column dataIndex="appCode" title="应用Code" />
+          <Table.Column dataIndex="envCode" title="环境Code" />
+          <Table.Column dataIndex="group" title="报警分类" />
+          <Table.Column dataIndex="completeExpression" title="报警表达式" />
+          <Table.Column
+            dataIndex="level"
+            title="告警级别"
+            render={(v: string) => {
+              const map: Record<string, string> = { '2': '警告', '3': '严重', '4': '灾难' };
+              const colors: Record<string, string> = { '2': 'orange', '3': 'red', '4': '#f50' };
+              const text = map[v];
+              return text ? <Tag color={colors[v]}>{text}</Tag> : null;
+            }}
+          />
           <Table.Column
             dataIndex="status"
             title="状态"
