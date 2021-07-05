@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
-import { TreeNode, SceneItemVO, CaseItemVO } from '../interfaces';
+import { TreeNode, SceneItemVO } from '../interfaces';
 import { formatTreeData } from '../common';
 
 // 获取左侧树结构数据
