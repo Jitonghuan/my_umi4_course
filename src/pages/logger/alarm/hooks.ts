@@ -87,8 +87,8 @@ export function useStatusOptions() {
 
   useEffect(() => {
     setSource([
-      { label: '已启用', value: 1 },
-      { label: '已关闭', value: 0 },
+      { label: '已启用', value: 0 },
+      { label: '已关闭', value: 1 },
     ]);
   }, []);
 
