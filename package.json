@@ -3,14 +3,11 @@
   "description": "fe-matrix",
   "version": "2.0.0",
   "scripts": {
-    "inject": "node script/config-inject.js",
     "umi": "cross-env MOCK=none umi dev",
-    "dev": "cross-env NODE_ENV=development npm run inject -- dev && npm run umi",
-    "start": "cross-env NODE_ENV=development npm run inject -- dev && npm run umi",
+    "dev": "cross-env NODE_ENV=development && npm run umi",
+    "start": "cross-env NODE_ENV=development && npm run umi",
     "umi:mock": "umi dev",
-    "start:mock": "fnpm i && npm run inject -- dev && npm run umi:mock",
-    "umi:build": "umi build",
-    "build": "fnpm i && npm run inject && umi build",
+    "build": "umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },

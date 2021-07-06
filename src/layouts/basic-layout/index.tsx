@@ -128,8 +128,7 @@ export default function BasicLayout(props: IUmiRrops) {
           <DocumentTitle title={FeGlobalRef.current.title} favicon={FeGlobalRef.current.favicon}>
             <FELayout.SSOLayout
               {...(props as any)}
-              // pagePrefix={ds.pagePrefix}
-              {...ds}
+              pagePrefix={ds.pagePrefix}
               showFooter={false}
               // 全局插入配置覆盖默认配置
               {...FeGlobalRef.current}
