@@ -2,8 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/30 20:48
 
-import React, { useState, useEffect, useContext } from 'react';
-import { Button, Table, message, Popover, Popconfirm, Tooltip } from 'antd';
+import React, { useState, useContext } from 'react';
+import { Button, Table, Popover, Popconfirm, Tooltip } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import DebounceSelect from '@/components/debounce-select';
 import type Emitter from 'events';

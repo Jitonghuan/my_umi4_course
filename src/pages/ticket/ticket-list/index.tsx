@@ -3,7 +3,7 @@ import { Form, message, Select, Input, Drawer, Button } from 'antd';
 import { PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
+import { InlineForm, BasicForm } from '@/components/schema-form';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import MatrixPageContent from '@/components/matrix-page-content';
 import ApplyUpload from './apply-upload';

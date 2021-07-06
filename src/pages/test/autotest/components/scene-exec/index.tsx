@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { Select, Modal, message, Form, Input } from 'antd';
 import * as APIS from '../../service';
-import { getRequest, postRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import { TreeNode } from '../../interfaces';
 import { useEnvOptions } from '../../hooks';
 

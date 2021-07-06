@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { Dropdown, ConfigProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
 import FELayout from '@cffe/vc-layout';
-import { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/bus-layout';
+import type { IUmiRrops } from '@cffe/vc-layout/es/bus-layout';
 import ds from '@config/defaultSettings';
 import DocumentTitle from './document-title';
 import FeContext from './fe-context';
@@ -15,7 +15,7 @@ import { IPermission } from '@cffe/vc-layout/lib/sider-menu';
 import './index.less';
 import logo from './logo.svg';
 
-export default (props: IUmiRrops) => {
+export default function BasicLayout(props: IUmiRrops) {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
   // 所属数据
   const [categoryData, setCategoryData] = useState<IOption[]>([]);
@@ -128,7 +128,7 @@ export default (props: IUmiRrops) => {
           <DocumentTitle title={FeGlobalRef.current.title} favicon={FeGlobalRef.current.favicon}>
             <FELayout.SSOLayout
               {...(props as any)}
-              {...ds}
+              pagePrefix={ds.pagePrefix}
               showFooter={false}
               // 全局插入配置覆盖默认配置
               {...FeGlobalRef.current}
@@ -154,4 +154,4 @@ export default (props: IUmiRrops) => {
       </FeContext.Provider>
     </ConfigProvider>
   );
-};
+}

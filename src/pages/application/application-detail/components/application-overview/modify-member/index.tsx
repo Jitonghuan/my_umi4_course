@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { Drawer, message, Spin } from 'antd';
-import { BasicForm } from '@cffe/fe-backend-component';
+import { BasicForm } from '@/components/schema-form';
 import SearchUserSelect from '@/components/search-user-select';
 import createSchema from './create-schema';
 import { updateAppMember } from '../../../../service';
