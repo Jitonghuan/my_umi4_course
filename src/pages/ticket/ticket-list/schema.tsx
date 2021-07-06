@@ -1,6 +1,6 @@
 import React from 'react';
 import { doUploadUrl } from '../service';
-import type { ISchemaItem } from '@cffe/fe-backend-component/es/components/SchemaForm/type';
+import type { ISchemaItem } from '@/components/schema-form/type';
 
 // 默认选中类型
 export const defaultChooseType = '运维权限申请';

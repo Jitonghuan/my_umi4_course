@@ -40,3 +40,6 @@ FEFormWrapper.defaultProps = {
 };
 
 export default FEFormWrapper;
+
+export { default as BasicForm } from './theme/BasicForm';
+export { default as InlineForm } from './theme/InlineForm';
