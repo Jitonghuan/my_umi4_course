@@ -11,7 +11,8 @@ export default {
   copyright: '2021 来未来',
 
   appKey,
-  primaryColor: '#ff0000',
+  // primaryColor: '#ff0000',
+  primaryColor: '#1973CC',
   apiPrefix: `/v1`,
   pagePrefix: `/${appKey}`,
   isOpenPermission: false,

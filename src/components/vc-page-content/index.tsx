@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { Breadcrumb, Card } from 'antd';
 import { CardProps } from 'antd/es/card';
 import { history } from 'umi';
-import { FELayout } from '@cffe/fe-backend-component';
 import classnames from 'classnames';
 import './index.less';
 
@@ -18,9 +17,6 @@ export interface IProps {
 
   /** 页面是否支持 flex 处理，一屏显示， true 为一屏显示 false 滚动 */
   isFlex?: boolean;
-
-  /** 是否显示 footer */
-  isShowFooter?: boolean;
 
   /** 是否显示面包屑 */
   isShowBreadcrumb?: boolean;
@@ -62,7 +58,6 @@ export const splitBreadcrumbUrl = (url?: string) => {
  */
 const Coms: React.FC<IProps> = (props) => {
   const {
-    isShowFooter,
     isShowBreadcrumb,
     breadcrumb = [],
     style = {},
@@ -109,7 +104,6 @@ const Coms: React.FC<IProps> = (props) => {
     <div className={`vc-page-content ${isFlex ? 'is-flex' : ''} ${className}`} style={{ ...curStyle }}>
       {isShowBreadcrumb && breadcrumbDOM}
       {props.children}
-      {isShowFooter && <FELayout.Footer copyright={window.FE_GLOBAL.copyright} />}
     </div>
   );
 };
@@ -121,7 +115,6 @@ Coms.defaultProps = {
   // 属性默认值配置
   isFlex: false,
   isShowBreadcrumb: true,
-  isShowFooter: false,
 };
 
 export default Coms;
