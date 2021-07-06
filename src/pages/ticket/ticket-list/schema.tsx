@@ -136,11 +136,11 @@ export const getTicketCreateSchema = ({
     {
       type: 'Select',
       props: {
-        label: '归属',
-        name: 'belongs',
         mode: 'multiple',
+        label: '申请项',
+        name: 'ticketSubTypes',
         required: true,
-        options: belongEnumData,
+        options: applyEnumData,
         showArrow: true,
       },
     },
@@ -151,17 +151,6 @@ export const getTicketCreateSchema = ({
         name: 'line',
         required: true,
         options: businessEnumData,
-      },
-    },
-    {
-      type: 'Select',
-      props: {
-        mode: 'multiple',
-        label: '申请项',
-        name: 'ticketSubTypes',
-        required: true,
-        options: applyEnumData,
-        showArrow: true,
       },
     },
     {
@@ -177,6 +166,18 @@ export const getTicketCreateSchema = ({
   ];
 
   if (isShowUpload) {
+    baseSchema.splice(1, 0, {
+      type: 'Select',
+      props: {
+        label: '归属',
+        name: 'belongs',
+        mode: 'multiple',
+        required: true,
+        options: belongEnumData,
+        showArrow: true,
+      },
+    });
+
     baseSchema.push({
       type: 'Custom',
       props: {
@@ -204,6 +205,6 @@ export const notifyData: (string | React.ReactNode)[] = [
   '天台生产相关（RDS/EDAS/MQ）申请天台阿里云账号',
   '巍山生产相关（RDS/EDAS/MQ）申请巍山阿里云账号',
   <b style={{ color: '#666' }}>Jumpserver、Rancher 请先用ldap账号登录一次平台再申请权限</b>,
-  'Rancher、VPN、JumpServer 的申请归属选来未来即可，并选择相应业务线',
+  // 'Rancher、VPN、JumpServer 的申请归属选来未来即可，并选择相应业务线',
   '钉钉审批结束后的申请结果会以邮件的形式发送至你的企业邮箱',
 ];
