@@ -1,4 +1,4 @@
-import ds from '../../config/defaultSettings';
+// import ds from '../../config/defaultSettings';
 
 type IRouteItem = {
   path: string;
@@ -8,10 +8,12 @@ type IRouteItem = {
   routes?: IRouteItem[];
 };
 
+const PAGE_PREFIX = '/matrix';
+
 export default [
   {
-    path: ds.pagePrefix,
-    redirect: `${ds.pagePrefix}/application`,
+    path: PAGE_PREFIX,
+    redirect: `${PAGE_PREFIX}/application`,
   },
   {
     path: 'index',
@@ -20,36 +22,36 @@ export default [
     component: '@/pages/index',
   },
   {
-    path: `${ds.pagePrefix}/application`,
-    redirect: `${ds.pagePrefix}/application/all`,
+    path: `${PAGE_PREFIX}/application`,
+    redirect: `${PAGE_PREFIX}/application/all`,
   },
   {
-    path: `${ds.pagePrefix}/publish`,
-    redirect: `${ds.pagePrefix}/publish/function`,
+    path: `${PAGE_PREFIX}/publish`,
+    redirect: `${PAGE_PREFIX}/publish/function`,
   },
   {
-    path: `${ds.pagePrefix}/test`,
-    redirect: `${ds.pagePrefix}/test/dataFactory`,
+    path: `${PAGE_PREFIX}/test`,
+    redirect: `${PAGE_PREFIX}/test/dataFactory`,
   },
   {
-    path: `${ds.pagePrefix}/monitor`,
-    redirect: `${ds.pagePrefix}/monitor/board`,
+    path: `${PAGE_PREFIX}/monitor`,
+    redirect: `${PAGE_PREFIX}/monitor/board`,
   },
   {
-    path: `${ds.pagePrefix}/ticket`,
-    redirect: `${ds.pagePrefix}/ticket/list`,
+    path: `${PAGE_PREFIX}/ticket`,
+    redirect: `${PAGE_PREFIX}/ticket/list`,
   },
   {
-    path: `${ds.pagePrefix}/order`,
-    redirect: `${ds.pagePrefix}/order/list`,
+    path: `${PAGE_PREFIX}/order`,
+    redirect: `${PAGE_PREFIX}/order/list`,
   },
   {
-    path: `${ds.pagePrefix}/code`,
-    redirect: `${ds.pagePrefix}/code/rank`,
+    path: `${PAGE_PREFIX}/code`,
+    redirect: `${PAGE_PREFIX}/code/rank`,
   },
   {
-    path: `${ds.pagePrefix}/test/autotest`,
-    redirect: `${ds.pagePrefix}/test/autotest/test-cases`,
+    path: `${PAGE_PREFIX}/test/autotest`,
+    redirect: `${PAGE_PREFIX}/test/autotest/test-cases`,
   },
   {
     path: 'demo',

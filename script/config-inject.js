@@ -4,9 +4,7 @@ if (env.trim() === 'dev') {
   process.env.NODE_ENV = 'development';
 }
 
-const fs = require('fs');
-const path = require('path');
-const { utils } = require('@irim/cli-base');
+// console.log('>>>>>>>>> process.env.NODE_ENV', process.env.NODE_ENV);
 
 require('ts-node').register({
   transpileOnly: true,
@@ -15,13 +13,3 @@ require('ts-node').register({
     module: 'commonjs', // you can also override compilerOptions.  Only ts-node will use these overrides
   },
 });
-
-const defaultSetting = require(path.join(__dirname, '../config/defaultSettings.ts')).default;
-
-const tplConfigStr = fs.readFileSync(path.join(__dirname, './_config-tpl.js'), {
-  encoding: 'utf-8',
-});
-
-const renderStr = utils.render(tplConfigStr, defaultSetting);
-
-fs.writeFileSync(path.join(__dirname, '../public/config.js'), renderStr);

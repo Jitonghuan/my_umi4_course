@@ -5,8 +5,8 @@
   "scripts": {
     "inject": "node script/config-inject.js",
     "umi": "cross-env MOCK=none umi dev",
-    "dev": "fnpm i && npm run inject -- dev && npm run umi",
-    "start": "fnpm i && npm run inject -- dev && npm run umi",
+    "dev": "cross-env NODE_ENV=development npm run inject -- dev && npm run umi",
+    "start": "cross-env NODE_ENV=development npm run inject -- dev && npm run umi",
     "umi:mock": "umi dev",
     "start:mock": "fnpm i && npm run inject -- dev && npm run umi:mock",
     "umi:build": "umi build",
@@ -61,7 +61,6 @@
   },
   "devDependencies": {
     "@hbos/umi-plugin-theme-hbos": "^0.0.14",
-    "@irim/cli-base": "^1.1.9",
     "@types/codemirror": "^5.60.0",
     "@types/events": "^3.0.0",
     "@types/lodash": "^4.14.168",
@@ -69,7 +68,6 @@
     "@types/react-dom": "^16.9.0",
     "@types/relaxed-json": "^1.0.0",
     "@umijs/preset-react": "1.x",
-    "@umijs/test": "^3.3.7",
     "cross-env": "^7.0.3",
     "lint-staged": "^10.0.7",
     "prettier": "^2.2.0",

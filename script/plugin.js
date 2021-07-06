@@ -1,3 +1,5 @@
+// umi plugin for config.ts
+
 export default function (api) {
   api.addRuntimePlugin(() => {
     api.logger.info('use plugin');
