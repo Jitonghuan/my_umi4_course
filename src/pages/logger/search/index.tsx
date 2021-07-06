@@ -1,6 +1,7 @@
 // 日志搜索
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/23 09:25
+// TODO iframe 加一个 onload，页面显示 loading 中的提示
 
 import React, { useState } from 'react';
 import { Form, Select, Spin } from 'antd';
@@ -20,7 +21,7 @@ export default function LoggerSearch() {
     <MatrixPageContent>
       <FilterCard>
         <Form layout="inline">
-          <Form.Item label="环境">
+          <Form.Item label="环境Code">
             <Select
               value={envCode}
               onChange={(n) => setEnvCode(n)}

@@ -84,10 +84,11 @@ const Coms = (props: any) => {
     requestUrl: queryTicketData,
     requestMethod: 'GET',
     showRequestError: true,
-    initPageInfo: {
-      pageSize: 20,
-    },
+    // initPageInfo: {
+    //   pageSize: 20,
+    // },
     pagination: {
+      defaultPageSize: 20,
       showSizeChanger: true,
       showTotal: ((total: string) => `总共 ${total} 条数据`) as any,
     },
@@ -146,15 +147,13 @@ const Coms = (props: any) => {
   }, [createFormRef.getFieldValue('ticketType')]);
 
   // 创建工单表格
-  const ticketCreateSchema = useMemo(() => {
-    return getTicketCreateSchema({
-      typeEuumData: typeEnum,
-      belongEnumData: belongData, // 环境用的是归属数据
-      businessEnumData: lineData,
-      applyEnumData: applyTypeEnum,
-      isShowUpload: isShowApplyUpload,
-    });
-  }, [belongData, lineData, typeEnum, applyTypeEnum, isShowApplyUpload]);
+  const ticketCreateSchema = getTicketCreateSchema({
+    typeEuumData: typeEnum,
+    belongEnumData: belongData, // 环境用的是归属数据
+    businessEnumData: lineData,
+    applyEnumData: applyTypeEnum,
+    isShowUpload: isShowApplyUpload,
+  });
 
   return (
     <MatrixPageContent isFlex>
@@ -192,6 +191,7 @@ const Coms = (props: any) => {
         }}
         width={800}
         maskClosable={false}
+        className="create-ticket-drawer"
       >
         <BasicForm
           form={createFormRef}
