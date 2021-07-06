@@ -36,8 +36,27 @@ export function useEnvOptions() {
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
-        label: item.envName,
+        // label: item.envName,
+        label: item.envCode,
         value: item.envCode,
+      }));
+
+      setSource(next);
+    });
+  }, []);
+
+  return [source];
+}
+
+export function useUserOptions() {
+  const [source, setSource] = useState<SelectOptions[]>([]);
+
+  useEffect(() => {
+    getRequest(APIS.getUserList).then((result) => {
+      const { usernames } = result.data || {};
+      const next = (usernames || []).map((item: string) => ({
+        label: item,
+        value: item,
       }));
 
       setSource(next);
@@ -68,8 +87,8 @@ export function useStatusOptions() {
 
   useEffect(() => {
     setSource([
-      { label: '已启用', value: 1 },
-      { label: '已关闭', value: 0 },
+      { label: '已启用', value: 0 },
+      { label: '已关闭', value: 1 },
     ]);
   }, []);
 
@@ -94,13 +113,13 @@ export function useOperatorOptions() {
 }
 
 export function useLevelOptions() {
-  const [source, setSource] = useState<SelectOptions<number>[]>([]);
+  const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
     setSource([
-      { label: '警告', value: 2 },
-      { label: '严重', value: 3 },
-      { label: '灾难', value: 4 },
+      { label: '警告', value: '2' },
+      { label: '严重', value: '3' },
+      { label: '灾难', value: '4' },
     ]);
   }, []);
 

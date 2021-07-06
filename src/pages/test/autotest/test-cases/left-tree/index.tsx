@@ -10,8 +10,9 @@ import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
 import { TreeNode, TreeNodeSaveData, EditorMode } from '../../interfaces';
-import { useProjectOptions, useLeftTreeData } from '../hooks';
+import { useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey, getMergedList } from '../../common';
+import { useProjectOptions } from '../../hooks';
 import ProjectEditor from '../../components/project-editor';
 import ModuleEditor from '../../components/module-editor';
 import ApiEditor from '../../components/api-editor';
@@ -240,7 +241,8 @@ export default function LeftTree(props: LeftTreeProps) {
         <Empty description="未找到数据" style={{ marginTop: 60 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : null}
 
-      <Tree.DirectoryTree
+      <Tree
+        blockNode
         key={searchProject || 1}
         treeData={treeData}
         selectedKeys={selectedItem ? [selectedItem.key] : []}

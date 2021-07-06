@@ -81,19 +81,19 @@ export default defineConfig({
 
   // 路由
   routes: [
+    // {
+    //   path: '/user_module/login',
+    //   component: '../layouts/login',
+    // },
     {
-      path: `${ds.loginPrefix}/login`,
-      component: '../layouts/login',
-    },
-    {
-      path: ds.pagePrefix,
+      path: `/${ds.appKey}`,
       component: '../layouts/basic-layout/index',
       menuRoot: true,
       routes: [...routes],
     },
     {
       path: '/',
-      redirect: `${ds.pagePrefix}/index`,
+      redirect: `/${ds.appKey}/index`,
     },
   ],
 

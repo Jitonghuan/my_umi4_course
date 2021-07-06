@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Steps, Button, message, Modal, Checkbox, Form, Select } from 'antd';
+import { Input, Button, message, Modal, Checkbox, Form, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import { history } from 'umi';
@@ -15,13 +15,16 @@ import DetailContext from '../../../../../context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
+import { getRequest } from '_@cffe_fe-backend-component@0.1.49@@cffe/fe-backend-component';
+import ds from '@config/defaultSettings';
 
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
-const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBranch, env }: IProps) => {
+const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch }: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
+  const [searchText, setSearchText] = useState<string>('');
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
@@ -101,14 +104,22 @@ const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBran
       <div className={`${rootCls}__list-wrap`}>
         <div className={`${rootCls}__list-header`}>
           <span className={`${rootCls}__list-header-text`}>分支列表</span>
-
+          <div className={`${rootCls}__list-header-search`}>
+            <Input.Search
+              placeholder="搜索分支"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onPressEnter={() => onSearch?.(searchText)}
+              onSearch={() => onSearch?.(searchText)}
+            />
+          </div>
+          <span style={{ flex: '1 1 0' }}></span>
           <div className={`${rootCls}__list-header-btns`}>
             <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
               提交分支
             </Button>
           </div>
         </div>
-
         <HulkTable
           rowKey="id"
           className={`${rootCls}__list-table`}

@@ -37,6 +37,7 @@ const queryEnvsUrl = `${ds.apiPrefix}/appManage/env/list`;
 export const queryEnvsReq = (params: {
   //所属的应⽤分类CODE
   categoryCode: string;
+  envTypeCode?: string;
 }) =>
   getRequest(queryEnvsUrl, {
     data: {

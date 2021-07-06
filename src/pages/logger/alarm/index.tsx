@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Tag, message, Popconfirm } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { getRequest, delRequest } from '@/utils/request';
+import { getRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from './service';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
 import { EditorMode } from './interface';
@@ -67,12 +67,27 @@ export default function LoggerAlarm() {
   };
 
   const handleDelItem = async (item: any, index: number) => {
-    await delRequest(APIS.deleteRule, {
-      data: { ruleId: item.id },
-    });
+    await delRequest(`${APIS.deleteRule}/${item.ruleId}`);
 
     message.success('规则删除成功！');
     handleSearch();
+  };
+
+  const handleSwitchStatus = async (item: any, index: number) => {
+    const nextStatus = item.status === '0' ? '1' : '0';
+    await putRequest(APIS.switchRule, {
+      data: { ruleId: item.ruleId, status: nextStatus },
+    });
+
+    message.success('修改成功！');
+
+    const nextSource = tableSource.slice(0);
+    nextSource[index] = {
+      ...nextSource[index],
+      status: nextStatus,
+    };
+
+    setTableSource(nextSource);
   };
 
   return (
@@ -85,7 +100,7 @@ export default function LoggerAlarm() {
           <Form.Item label="应用名称" name="appCode">
             <Select placeholder="请选择" options={appOptions} style={{ width: 168 }} />
           </Form.Item>
-          <Form.Item label="环境名称" name="envCode">
+          <Form.Item label="环境Code" name="envCode">
             <Select placeholder="请选择" options={envOptions} style={{ width: 168 }} />
           </Form.Item>
           <Form.Item label="状态" name="status">
@@ -123,29 +138,52 @@ export default function LoggerAlarm() {
         >
           <Table.Column dataIndex="id" title="ID" />
           <Table.Column dataIndex="name" title="报警名称" />
-          <Table.Column dataIndex="appName" title="应用名称" />
-          <Table.Column dataIndex="envName" title="环境名称" />
-          <Table.Column dataIndex="message" title="报警分类" />
-          <Table.Column dataIndex="expression" title="报警表达式" />
+          <Table.Column dataIndex="appCode" title="应用Code" />
+          <Table.Column dataIndex="envCode" title="环境Code" />
+          <Table.Column dataIndex="group" title="报警分类" />
+          <Table.Column dataIndex="completeExpression" title="报警表达式" />
+          <Table.Column
+            dataIndex="level"
+            title="告警级别"
+            render={(v: string) => {
+              const map: Record<string, string> = { '2': '警告', '3': '严重', '4': '灾难' };
+              const colors: Record<string, string> = { '2': 'orange', '3': 'red', '4': '#f50' };
+              const text = map[v];
+              return text ? <Tag color={colors[v]}>{text}</Tag> : null;
+            }}
+          />
           <Table.Column
             dataIndex="status"
             title="状态"
             render={(v, record) => {
-              return v === 1 ? <Tag color="success">已启用</Tag> : v === 0 ? <Tag color="default">已关闭</Tag> : null;
+              return v === '0' ? (
+                <Tag color="success">已启用</Tag>
+              ) : v === '1' ? (
+                <Tag color="default">已关闭</Tag>
+              ) : null;
             }}
           />
           <Table.Column
             title="操作"
-            render={(_, record, index) => (
-              <div className="action-cell">
-                <Button type="text" onClick={() => handleEditItem(record, index)}>
-                  编辑
-                </Button>
-                <Popconfirm title="确定要删除该规则吗？" onConfirm={() => handleDelItem(record, index)}>
-                  <Button type="text">删除</Button>
-                </Popconfirm>
-              </div>
-            )}
+            width={160}
+            render={(_, record: any, index) => {
+              const isEnable = record.status === '0';
+
+              return (
+                <div className="action-cell">
+                  <a onClick={() => handleEditItem(record, index)}>编辑</a>
+                  <Popconfirm title="确定要删除该规则吗？" onConfirm={() => handleDelItem(record, index)}>
+                    <a style={{ color: 'red' }}>删除</a>
+                  </Popconfirm>
+                  <Popconfirm
+                    title={`确定要${isEnable ? '停用' : '启用'}该规则吗？`}
+                    onConfirm={() => handleSwitchStatus(record, index)}
+                  >
+                    <a style={{ color: isEnable ? 'orange' : 'green' }}>{isEnable ? '停用' : '启用'}</a>
+                  </Popconfirm>
+                </div>
+              );
+            }}
           />
         </Table>
 

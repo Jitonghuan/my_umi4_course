@@ -250,6 +250,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                 { title: '值', dataIndex: 'value' },
                 { title: '描述', dataIndex: 'desc' },
               ]}
+              creator={{ record: { value: '', desc: '' } }}
             />
           </FormItem>
         </div>
@@ -287,6 +288,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                       { title: 'value', dataIndex: 'value' },
                       { title: '描述', dataIndex: 'desc' },
                     ]}
+                    creator={{ record: { value: '', desc: '' } }}
                   />
                 </FormItem>
               ) : (
@@ -317,6 +319,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                     { title: 'value', dataIndex: 'value' },
                     { title: '描述', dataIndex: 'desc' },
                   ]}
+                  creator={{ record: { value: '', desc: '' } }}
                 />
               </FormItem>
             </Tabs.TabPane>
@@ -346,6 +349,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                 { title: '表达式', dataIndex: 'jsonpath', required: true },
                 { title: '描述', dataIndex: 'desc' },
               ]}
+              creator={{ record: { desc: '' } }}
             />
           </FormItem>
         </div>

@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { Modal, Input, Spin, message } from 'antd';
-import { BasicForm } from '@cffe/fe-backend-component';
+import { BasicForm } from '@/components/schema-form';
 import createSchema from './create-schema';
 import { createFeatureBranch } from '../../../../service';
 import { IProps } from './types';

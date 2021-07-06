@@ -12,7 +12,7 @@ import { useEffectOnce } from 'white-react-use';
 import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import { InlineForm } from '@cffe/fe-backend-component';
+import { InlineForm } from '@/components/schema-form';
 import usePublicData from '@/utils/usePublicData';
 import { createFilterFormSchema, createTableSchema } from './schema';
 import AddDrawer from './components/add-drawer';

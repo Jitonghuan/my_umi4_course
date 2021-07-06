@@ -2,14 +2,11 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/30 15:59
 
-import React, { useState, useEffect } from 'react';
-import { Button, Tag, Table, message, Empty, Spin, Modal } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import React, { useEffect } from 'react';
+import { Empty } from 'antd';
 import type Emitter from 'events';
 import { ContentCard } from '@/components/vc-page-content';
-import { postRequest } from '@/utils/request';
-import * as APIS from '../../service';
-import { TreeNode, CaseItemVO } from '../../interfaces';
+import { TreeNode } from '../../interfaces';
 import SceneList from './scene-list';
 import SceneDetail from './scene-detail';
 import './index.less';

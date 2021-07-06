@@ -7,7 +7,7 @@ import { Form, Input, Modal, message } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
-import { TreeNode, TreeNodeSaveData, EditorMode } from '../../interfaces';
+import { TreeNode, EditorMode } from '../../interfaces';
 
 export interface SceneEditorProps {
   mode: EditorMode;
@@ -43,10 +43,9 @@ export default function ModuleEditor(props: SceneEditorProps) {
         moduleId: targetNode?.bizId!,
         sceneName,
         desc,
-        cases: [],
         createUser: userInfo.userName,
       };
-      await postRequest(APIS.addScene, {
+      await postRequest(APIS.addSceneNode, {
         data: payload,
       });
 
@@ -55,13 +54,12 @@ export default function ModuleEditor(props: SceneEditorProps) {
     } else {
       const payload = {
         id: targetNode?.bizId!,
-        moduleId: targetNode?.projectId,
+        moduleId: targetNode?.moduleId,
         sceneName,
         desc,
-        cases: [], // TODO !!!
         modifyUser: userInfo.userName,
       };
-      await postRequest(APIS.updateScene, {
+      await postRequest(APIS.updateSceneNode, {
         data: payload,
       });
 
