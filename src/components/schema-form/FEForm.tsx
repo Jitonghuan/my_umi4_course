@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, Form } from 'antd';
-import { FormProps } from 'antd/es/form';
+import type { FormProps } from 'antd/es/form';
 
 import useDefaultStyle from './hooks/useDefaultStyle';
-import { FormInstance } from 'antd/lib/form';
+import type { FormInstance } from 'antd/lib/form';
 
 // form props
 export interface IProps extends FormProps {

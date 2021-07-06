@@ -1,5 +1,5 @@
 import React from 'react';
-import { InputProps } from 'antd/es/input';
+import type { InputProps } from 'antd/es/input';
 
 import { INodeType } from '../type';
 
