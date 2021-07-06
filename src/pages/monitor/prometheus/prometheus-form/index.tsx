@@ -116,7 +116,7 @@ const PrometheusForm: React.FC = () => {
 
   const reset = () => {
     setCurrent(0);
-    history.push(`${ds.pagePrefix}/monitor/prometheus/prometheus-add`);
+    history.push('/matrix/monitor/prometheus/prometheus-add');
     form.resetFields();
   };
 

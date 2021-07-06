@@ -23,3 +23,6 @@ export const deleteRule = addAPIPrefix('/logManage/alertrule/delete');
 
 /** PUT 告警开关 */
 export const switchRule = addAPIPrefix('/logManage/alertrule/switch');
+
+/** GET 获取用户名 */
+export const getUserList = addAPIPrefix('/appManage/user/listAll');

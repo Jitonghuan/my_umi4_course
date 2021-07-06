@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Tabs } from 'antd';
-import type { IUmiRrops } from '@cffe/fe-backend-component/es/components/end-layout/bus-layout';
+import type { IUmiRrops } from '@cffe/vc-layout/es/bus-layout';
 import { FilterCard } from '@/components/vc-page-content';
 
 export interface HeaderTabsProps {

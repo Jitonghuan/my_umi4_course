@@ -2,12 +2,11 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React, { useState, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import Emitter from 'events';
-import {} from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { CardRowGroup } from '@/components/vc-page-content';
-import { EditorMode, TreeNode } from '../interfaces';
+import { TreeNode } from '../interfaces';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
 import HeaderTabs from '../components/header-tabs';

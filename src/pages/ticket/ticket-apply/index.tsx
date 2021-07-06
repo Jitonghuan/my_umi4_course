@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useContext } from 'react';
 
 import { TplTable } from '@cffe/fe-tpl';
-import { InlineForm } from '@cffe/fe-backend-component';
+import { InlineForm } from '@/components/schema-form';
 import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/fe-context';
 

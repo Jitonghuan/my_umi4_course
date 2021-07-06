@@ -79,7 +79,7 @@ export default function LoggerAlarm() {
       data: { ruleId: item.ruleId, status: nextStatus },
     });
 
-    message.success(nextStatus ? '启用成功！' : '停用成功！');
+    message.success('修改成功！');
 
     const nextSource = tableSource.slice(0);
     nextSource[index] = {
@@ -100,7 +100,7 @@ export default function LoggerAlarm() {
           <Form.Item label="应用名称" name="appCode">
             <Select placeholder="请选择" options={appOptions} style={{ width: 168 }} />
           </Form.Item>
-          <Form.Item label="环境名称" name="envCode">
+          <Form.Item label="环境Code" name="envCode">
             <Select placeholder="请选择" options={envOptions} style={{ width: 168 }} />
           </Form.Item>
           <Form.Item label="状态" name="status">
@@ -138,17 +138,27 @@ export default function LoggerAlarm() {
         >
           <Table.Column dataIndex="id" title="ID" />
           <Table.Column dataIndex="name" title="报警名称" />
-          <Table.Column dataIndex="appName" title="应用名称" />
-          <Table.Column dataIndex="envName" title="环境名称" />
-          <Table.Column dataIndex="message" title="报警分类" />
-          <Table.Column dataIndex="expression" title="报警表达式" />
+          <Table.Column dataIndex="appCode" title="应用Code" />
+          <Table.Column dataIndex="envCode" title="环境Code" />
+          <Table.Column dataIndex="group" title="报警分类" />
+          <Table.Column dataIndex="completeExpression" title="报警表达式" />
+          <Table.Column
+            dataIndex="level"
+            title="告警级别"
+            render={(v: string) => {
+              const map: Record<string, string> = { '2': '警告', '3': '严重', '4': '灾难' };
+              const colors: Record<string, string> = { '2': 'orange', '3': 'red', '4': '#f50' };
+              const text = map[v];
+              return text ? <Tag color={colors[v]}>{text}</Tag> : null;
+            }}
+          />
           <Table.Column
             dataIndex="status"
             title="状态"
             render={(v, record) => {
-              return v === '1' ? (
+              return v === '0' ? (
                 <Tag color="success">已启用</Tag>
-              ) : +v === 0 ? (
+              ) : v === '1' ? (
                 <Tag color="default">已关闭</Tag>
               ) : null;
             }}
@@ -157,7 +167,7 @@ export default function LoggerAlarm() {
             title="操作"
             width={160}
             render={(_, record: any, index) => {
-              const isEnable = record.status === '1';
+              const isEnable = record.status === '0';
 
               return (
                 <div className="action-cell">
