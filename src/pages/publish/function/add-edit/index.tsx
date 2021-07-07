@@ -75,6 +75,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     setEnvsOptions([]);
     queryEnvsReq({
       categoryCode,
+      envTypeCode: 'prod',
     }).then((resp) => {
       setEnvsOptions(resp.list);
     });
