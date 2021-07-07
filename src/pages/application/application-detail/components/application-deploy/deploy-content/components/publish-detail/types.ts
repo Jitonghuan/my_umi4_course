@@ -5,6 +5,13 @@ export interface IProps {
   envTypeCode: string;
   nextEnvTypeCode?: string;
   onOperate: (
-    type: 'deployNextEnvStart' | 'deployNextEnvEnd' | 'deployNextEnvSuccess' | 'cancelDeployStart' | 'cancelDeployEnd',
+    type:
+      | 'deployNextEnvStart'
+      | 'deployNextEnvEnd'
+      | 'deployNextEnvSuccess'
+      | 'deployMasterStart'
+      | 'deployMasterEnd'
+      | 'cancelDeployStart'
+      | 'cancelDeployEnd',
   ) => void;
 }
