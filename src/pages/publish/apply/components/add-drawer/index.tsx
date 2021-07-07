@@ -41,7 +41,7 @@ const AddDrawer = (props: IProps) => {
   // 根据应用分类查询环境
   const queryDeployEnv = (categoryCode: string) => {
     setDeployEnvData([]);
-    queryEnvsReq({ categoryCode }).then((datas) => {
+    queryEnvsReq({ categoryCode, envTypeCode: 'prod' }).then((datas) => {
       setDeployEnvData(datas.list);
     });
   };
@@ -177,8 +177,8 @@ const AddDrawer = (props: IProps) => {
         <Form.Item label="计划发布时间" name="deployDate" rules={[{ required: true, message: '请选择计划发布时间!' }]}>
           <DatePicker
             placeholder="请选择发布时间"
-            format={'YYYY-MM-DD HH-mm'}
-            showTime={{ format: 'HH-mm' }}
+            format={'YYYY-MM-DD HH:mm'}
+            showTime={{ format: 'HH:mm' }}
             style={{ width: '100%' }}
           />
         </Form.Item>

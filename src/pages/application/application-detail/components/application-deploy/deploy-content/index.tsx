@@ -5,7 +5,7 @@
  * @create 2021-04-15 10:04
  */
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
@@ -22,6 +22,7 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
+  const cachebranchName = useRef<string>();
   const [updating, setUpdating] = useState(false);
   const [deployInfo, setDeployInfo] = useState({});
   const [branchInfo, setBranchInfo] = useState<{
@@ -51,6 +52,7 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
       appCode: appCode!,
       envTypeCode,
       isDeployed: 0,
+      branchName: cachebranchName.current,
     });
 
     if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
@@ -67,6 +69,11 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
 
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(requestData, 8000, { immediate: true });
+
+  const searchUndeployedBranch = (branchName?: string) => {
+    cachebranchName.current = branchName;
+    timerHandle('do', true);
+  };
 
   const onOperate = (operateType: string) => {
     if (operateType.endsWith('Start')) {
@@ -111,6 +118,7 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
           hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
           dataSource={branchInfo.unDeployed}
           env={envTypeCode}
+          onSearch={searchUndeployedBranch}
           onSubmitBranch={(status) => {
             timerHandle(status === 'start' ? 'stop' : 'do', true);
           }}

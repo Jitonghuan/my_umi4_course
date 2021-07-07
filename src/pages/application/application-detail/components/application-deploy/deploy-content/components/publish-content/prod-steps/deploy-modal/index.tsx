@@ -155,7 +155,7 @@ const DeployModal = ({ envTypeCode, visible, deployInfo, onCancel, onOperate }: 
         <span>发布环境：</span>
         {/* 根据 envs 拿到列表 */}
         <Radio.Group
-          disabled={deployStatus === 'deployWaitBatch2'}
+          disabled={false}
           value={deployConfig.deployEnv}
           onChange={(v) => setDeployConfig({ ...deployConfig, deployEnv: v.target.value })}
           options={envList?.map((v: any) => ({
