@@ -378,6 +378,18 @@ export const deployReuse = (params: {
     data: params,
   });
 
+/** 部署master*/
+export const deployMaster = (params: {
+  /** 应用code */
+  appCode?: string;
+  envTypeCode?: string;
+  envCodes?: string[];
+  isClient?: boolean;
+}) =>
+  postRequest(`${ds.apiPrefix}/releaseManage/deploy/deployMaster`, {
+    data: params,
+  });
+
 /** 根据应用分类code查询发布环境列表 */
 const queryEnvsUrl = `${ds.apiPrefix}/appManage/env/list`;
 export const queryEnvsReq = (params: {
