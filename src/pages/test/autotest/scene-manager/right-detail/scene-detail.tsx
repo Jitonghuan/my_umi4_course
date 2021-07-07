@@ -85,7 +85,7 @@ export default function SceneDetail(props: SceneDetailProps) {
       <div className="page-scene-header">
         <h3>{props.current?.title} - 用例列表</h3>
         <s className="flex-air" />
-        <Button type="ghost" style={{ marginRight: 12 }} onClick={() => setTargetExecNode(props.current)}>
+        <Button type="primary" ghost style={{ marginRight: 12 }} onClick={() => setTargetExecNode(props.current)}>
           执行当前场景
         </Button>
         <Popover
