@@ -83,6 +83,7 @@ export interface FuncProps {
   argument?: string;
 }
 
+/** 场景模型 */
 export interface SceneItemVO extends Record<string, any> {
   id: number;
   name: string;
@@ -93,4 +94,17 @@ export interface SceneItemVO extends Record<string, any> {
   projectName: string;
   createUser: string;
   modifyUser: string;
+}
+
+/** 任务模型 */
+export interface TaskItemVO extends Record<string, any> {
+  id: number;
+  deleted: 0 | 1;
+  dbRemark?: string;
+  name: string;
+  cron: string;
+  runEnv: number;
+  testSuite: number[];
+  suiteType: number;
+  status: 0 | 1;
 }

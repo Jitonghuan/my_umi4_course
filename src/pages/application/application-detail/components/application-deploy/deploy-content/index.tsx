@@ -32,7 +32,6 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
 
   const requestData = async () => {
     if (!appCode) return;
-
     setUpdating(true);
 
     const resp1 = await queryDeployList({
@@ -56,7 +55,8 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
     });
 
     if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-      setDeployInfo(resp1?.data?.dataSource[0]);
+      const nextInfo = resp1?.data?.dataSource[0];
+      setDeployInfo(nextInfo);
     }
 
     setBranchInfo({
@@ -99,7 +99,6 @@ const DeployContent = ({ envTypeCode, onDeployNextEnvSuccess }: IProps) => {
           onOperate={(type) => {
             if (type === 'deployNextEnvSuccess') {
               onDeployNextEnvSuccess();
-              console.log('deployNextEnvSuccess');
               return;
             }
             requestData();
