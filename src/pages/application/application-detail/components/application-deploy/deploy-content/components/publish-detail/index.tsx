@@ -9,10 +9,12 @@ import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '../../../../../context';
-import { cancelDeploy, deployReuse, queryEnvsReq } from '../../../../../../service';
+import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
 import { name } from 'dayjs/locale/*';
+import { queryEnvLists } from '@/pages/monitor/board/service';
+import { envCodeList } from '@/pages/test/environment/service';
 
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
@@ -21,7 +23,8 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
 
-  const [deployVisible, setDeployVisible] = useState(false);
+  const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
+  const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [envDataList, setEnvDataList] = useState([]);
@@ -54,6 +57,16 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
     });
   }, [appCategoryCode, envTypeCode]);
 
+  function getDeployEnvData(): string[] {
+    if (deployNextEnvVisible) {
+      return nextEnvDataList;
+    } else if (deployMasterVisible) {
+      return envDataList;
+    }
+
+    return [];
+  }
+
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
     const namesArr: any[] = [];
@@ -78,8 +91,21 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
           <Button
             type="primary"
             onClick={() => {
+              onOperate('deployMasterStart');
+              setDeployMasterVisible(true);
+              return;
+            }}
+          >
+            部署Master
+          </Button>
+        )}
+
+        {envTypeCode !== 'prod' && (
+          <Button
+            type="primary"
+            onClick={() => {
               onOperate('deployNextEnvStart');
-              setDeployVisible(true);
+              setDeployNextEnvVisible(true);
               return;
             }}
           >
@@ -131,30 +157,47 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
 
       <Modal
         title="选择发布环境"
-        visible={deployVisible}
+        visible={deployNextEnvVisible || deployMasterVisible}
         confirmLoading={confirmLoading}
         onOk={() => {
           setConfirmLoading(true);
-
-          return deployReuse({ id: deployInfo.id, envs: deployEnv })
-            .then((res) => {
-              if (res.success) {
-                message.success('操作成功，正在部署中...');
-                setDeployVisible(false);
-                onOperate('deployNextEnvSuccess');
-              }
+          if (deployNextEnvVisible) {
+            return deployReuse({ id: deployInfo.id, envs: deployEnv })
+              .then((res) => {
+                if (res.success) {
+                  message.success('操作成功，正在部署中...');
+                  setDeployNextEnvVisible(false);
+                  onOperate('deployNextEnvSuccess');
+                }
+              })
+              .finally(() => setConfirmLoading(false));
+          } else if (deployMasterVisible) {
+            return deployMaster({
+              appCode: appData?.appCode,
+              envTypeCode: envTypeCode,
+              envCodes: deployEnv,
+              isClient: appData?.isClient === 1,
             })
-            .finally(() => setConfirmLoading(false));
+              .then((res) => {
+                if (res.success) {
+                  setDeployMasterVisible(false);
+                  onOperate('deployMasterEnd');
+                  setDeployEnv([]);
+                }
+              })
+              .finally(() => setConfirmLoading(false));
+          }
         }}
         onCancel={() => {
-          setDeployVisible(false);
+          setDeployMasterVisible(false);
+          setDeployNextEnvVisible(false);
           setConfirmLoading(false);
           onOperate('deployNextEnvEnd');
         }}
       >
         <div>
           <span>发布环境：</span>
-          <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={nextEnvDataList || []} />
+          <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={getDeployEnvData()} />
         </div>
       </Modal>
     </div>
