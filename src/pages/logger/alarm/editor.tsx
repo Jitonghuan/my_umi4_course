@@ -3,7 +3,7 @@
 // @create 2021/06/25 09:26
 
 import React, { useEffect } from 'react';
-import { Form, Modal, Input, Select, message, Radio, InputNumber, TimePicker } from 'antd';
+import { Form, Modal, Input, Select, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
 import { postRequest, putRequest } from '@/utils/request';
 import moment from 'moment';
 import * as APIS from './service';
@@ -100,6 +100,8 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     props.onSave?.();
   };
 
+  const disableEdit = props.mode === 'EDIT' && props.initData?.status === '1';
+
   return (
     <Modal
       width={800}
@@ -108,7 +110,10 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       maskClosable={false}
       onCancel={() => props.onClose?.()}
       onOk={handleOk}
+      okButtonProps={{ disabled: disableEdit }}
     >
+      {disableEdit ? <Alert type="warning" message="告警规则已停用，无法编辑" style={{ marginBottom: 16 }} /> : null}
+
       <Form form={field} labelCol={{ flex: '132px' }} wrapperCol={{ span: 16 }}>
         <FormItem label="告警名称" name="name" rules={[{ required: true, message: '请输入告警名称' }]}>
           <Input placeholder="请输入" />
