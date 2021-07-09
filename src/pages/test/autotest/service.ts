@@ -160,3 +160,6 @@ export const deleteScene = addAPIPrefix('/qc/autotest/deleteScene');
 
 /** POST 23、场景管理-判断该用例是否被其他场景引用 */
 export const caseHasUsedByScene = addAPIPrefix('/qc/autotest/caseHasUsedByScene');
+
+/** GET 24、任务管理-查询所有项目下场景/用例 集合 */
+export const getProjectsSuiteTree = addAPIPrefix('/qc/autotest/getProjectsSuiteTree');

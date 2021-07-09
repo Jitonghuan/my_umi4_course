@@ -66,6 +66,11 @@ export default function SceneDetail(props: SceneDetailProps) {
   const handleSortItem = (record: any, index: number, dir: -1 | 1) => {
     const idList = caseList.map((n) => n.id);
     const targetIndex = index + dir;
+
+    if (targetIndex < 0 || targetIndex >= idList.length) {
+      return false;
+    }
+
     const currId = idList[index];
     const targetId = idList[targetIndex];
     idList[index] = targetId;

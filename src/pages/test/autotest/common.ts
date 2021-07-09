@@ -121,10 +121,10 @@ export function createNodeDataFromSceneItem(item: SceneItemVO): TreeNode {
   };
 }
 
-export function formatTreeData(payload: any) {
+export function formatTreeData(payload: any[]): TreeNode[] {
   if (!payload?.length) return [];
 
-  // 第一层是项目，目前有且仅有一个
+  // 第一层是项目
   return payload.map((n1: any) => ({
     bizId: n1.id,
     key: `l1-${n1.id}`,
@@ -152,6 +152,33 @@ export function formatTreeData(payload: any) {
         level: 3,
         projectId: n1.id,
         moduleId: n2.id,
+      })),
+    })),
+  }));
+}
+
+export function formatTreeSelectData(payload: any[]) {
+  if (!payload?.length) return [];
+
+  return payload.map((n1: any) => ({
+    value: `l1-${n1.id}`,
+    title: n1.name,
+    // desc: n1.desc,
+    // level: 1,
+    selectable: false,
+    children: (n1.children || []).map((n2: any) => ({
+      value: `l2-${n2.id}`,
+      title: n2.name,
+      // desc: n2.desc,
+      // level: 2,
+      selectable: false,
+      children: (n2.children || []).map((n3: any) => ({
+        value: n3.id,
+        title: `${n1.name}/${n2.name}/${n3.name}`,
+        // desc: n3.desc,
+        // level: 3,
+        isLeaf: true,
+        selectable: true,
       })),
     })),
   }));

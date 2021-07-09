@@ -27,9 +27,9 @@ export interface TreeNode extends DataNode {
   /** 节点描述，也是 项目/模块 描述 */
   desc?: string;
   /** 一级节点ID，即项目ID */
-  projectId: number;
+  projectId?: number;
   /** 二级节点ID，即模块ID */
-  moduleId: number;
+  moduleId?: number;
 
   children?: TreeNode[];
 
