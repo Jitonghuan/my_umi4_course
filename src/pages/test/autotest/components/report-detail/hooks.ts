@@ -6,8 +6,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { getRequest } from '@/utils/request';
 import * as APIS from '../../service';
 
+// const sleep = (x: number) => new Promise(resolve => setTimeout(resolve, x));
+
 export function useReportTreeData(recordId: number): [any, boolean] {
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<any>({});
   const [loading, setLoading] = useState(false);
 
   const loadData = useCallback(async () => {
@@ -15,11 +17,12 @@ export function useReportTreeData(recordId: number): [any, boolean] {
 
     setLoading(true);
     try {
+      // await sleep(3000);
       const result = await getRequest(APIS.getReportTree, {
         data: { recordId },
       });
 
-      setData(result.data);
+      setData(result.data || {});
     } finally {
       setLoading(false);
     }
@@ -38,8 +41,8 @@ export function useReportDetailData(
   moduleId: number,
   belongId: number,
   caseId: number,
-): [any, boolean] {
-  const [data, setData] = useState<any>();
+): [any[], boolean] {
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const loadData = async () => {

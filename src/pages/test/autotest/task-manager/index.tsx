@@ -1,8 +1,8 @@
-// 上下布局页面
+// 任务管理
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { Input, Button, Table, Tag, message, Popconfirm } from 'antd';
 import { ThunderboltOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
@@ -145,7 +145,7 @@ export default function TaskManager(props: any) {
           <Table.Column
             title="执行机制"
             dataIndex="cron"
-            width={120}
+            width={100}
             render={(value: string) =>
               value ? (
                 <>
@@ -170,7 +170,7 @@ export default function TaskManager(props: any) {
                 ''
               )
             }
-            width={120}
+            width={90}
           />
           <Table.Column title="更新人" dataIndex="modifyUser" />
           <Table.Column title="更新时间" dataIndex="gmtCreate" width={180} />

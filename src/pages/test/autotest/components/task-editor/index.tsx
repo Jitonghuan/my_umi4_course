@@ -53,10 +53,31 @@ export default function TaskEditor(props: TaskEditorProps) {
   }, [mode]);
 
   const handleSubmit = async () => {
-    const values = editField.validateFields();
+    const values = await editField.validateFields();
     console.log('> handleSubmit', values);
 
-    // TODO !!!!
+    const { testSuiteCase, testSuiteScene, ...others } = values;
+
+    // 14, 15, 19
+    const payload = {
+      ...others,
+      cron: others.cron || '',
+      testSuite: (others.suiteType === 0 ? testSuiteCase : testSuiteScene) || [],
+    };
+
+    if (mode === 'ADD') {
+      payload.createUser = userInfo.userName;
+      // payload.testSuite = [14, 15, 19];
+
+      await postRequest(APIS.addTask, { data: payload });
+    } else {
+      payload.id = initData?.id;
+      payload.modifyUser = userInfo.userName;
+      await postRequest(APIS.updateTask, { data: payload });
+    }
+
+    message.success('保存成功！');
+    onSave?.();
   };
 
   return (
@@ -95,11 +116,18 @@ export default function TaskEditor(props: TaskEditorProps) {
             ]}
           />
         </FormItem>
-        <FormItem label="用例" name="testSuiteCase">
-          <TreeSelect treeData={caseTree} multiple />
-        </FormItem>
-        <FormItem label="场景" name="testSuiteScene">
-          <TreeSelect treeData={sceneTree} multiple />
+        <FormItem noStyle shouldUpdate={(prev, curr) => prev.suiteType !== curr.suiteType}>
+          {({ getFieldValue }) =>
+            getFieldValue('suiteType') === 0 ? (
+              <FormItem label="用例集合" name="testSuiteCase">
+                <TreeSelect treeData={caseTree} multiple />
+              </FormItem>
+            ) : (
+              <FormItem label="场景集合" name="testSuiteScene">
+                <TreeSelect treeData={sceneTree} multiple />
+              </FormItem>
+            )
+          }
         </FormItem>
       </Form>
     </Drawer>
