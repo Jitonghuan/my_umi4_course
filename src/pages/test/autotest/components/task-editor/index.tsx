@@ -3,12 +3,13 @@
 // @create 2021/07/08 16:17
 
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { Drawer, Button, Input, Form, Select, Radio, message } from 'antd';
+import { Drawer, Button, Input, Form, Select, Radio, TreeSelect, message } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import { postRequest, getRequest } from '@/utils/request';
 import * as APIS from '../../service';
 import { EditorMode, TaskItemVO } from '../../interfaces';
 import { useEnvOptions } from '../../hooks';
+import { useCaseListForTaskEditor, useSceneListForTaskEditor } from './hooks';
 import './index.less';
 
 const { Item: FormItem } = Form;
@@ -25,25 +26,38 @@ export default function TaskEditor(props: TaskEditorProps) {
   const { mode, initData, onClose, onSave } = props;
   const [envOptons] = useEnvOptions();
   const [editField] = Form.useForm();
-
-  const handleOk = useCallback(() => {}, [mode, initData]);
+  const [caseTree] = useCaseListForTaskEditor();
+  const [sceneTree] = useSceneListForTaskEditor();
 
   useEffect(() => {
     if (mode === 'HIDE') return;
     editField.resetFields();
     if (mode === 'ADD') return;
 
-    editField.setFieldsValue({
+    const initValues = {
       taskName: initData?.name,
       cron: initData?.cron,
       runEnv: initData?.runEnv,
       suiteType: initData?.suiteType,
-    });
+      testSuiteCase: [] as number[],
+      testSuiteScene: [] as number[],
+    };
 
-    // TODO 如果有 initData?.testSuite，需要初始化数据，通过 id 获取 caseList
+    if (initValues.suiteType === 1) {
+      initValues.testSuiteScene = initData?.testSuite || [];
+    } else {
+      initValues.testSuiteCase = initData?.testSuite || [];
+    }
+
+    editField.setFieldsValue(initValues);
   }, [mode]);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    const values = editField.validateFields();
+    console.log('> handleSubmit', values);
+
+    // TODO !!!!
+  };
 
   return (
     <Drawer
@@ -73,13 +87,19 @@ export default function TaskEditor(props: TaskEditorProps) {
         <FormItem label="执行环境" name="runEnv" rules={[{ required: true, message: '请选择执行环境' }]}>
           <Select placeholder="请选择" options={envOptons} />
         </FormItem>
-        <FormItem label="测试集合" name="suiteType" initialValue={0}>
+        <FormItem label="集合类型" name="suiteType" initialValue={0}>
           <Radio.Group
             options={[
-              { label: '接口', value: 0 },
+              { label: '用例', value: 0 },
               { label: '场景', value: 1 },
             ]}
           />
+        </FormItem>
+        <FormItem label="用例" name="testSuiteCase">
+          <TreeSelect treeData={caseTree} multiple />
+        </FormItem>
+        <FormItem label="场景" name="testSuiteScene">
+          <TreeSelect treeData={sceneTree} multiple />
         </FormItem>
       </Form>
     </Drawer>

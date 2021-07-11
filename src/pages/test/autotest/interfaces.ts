@@ -105,6 +105,7 @@ export interface TaskItemVO extends Record<string, any> {
   cron: string;
   runEnv: number;
   testSuite: number[];
+  /** 集合类型，0 - 用例集合, 1: 场景集合 */
   suiteType: number;
   status: 0 | 1;
 }
