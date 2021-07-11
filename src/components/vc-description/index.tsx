@@ -28,9 +28,19 @@ const funcName = (props: IProps) => {
   return (
     <Descriptions {...rest}>
       {dataSource.map((el) => (
-        <Descriptions.Item label={el.label}>{el.value}</Descriptions.Item>
+        <Descriptions.Item label={el.label}>
+          {el.label == 'jenkins' ? (
+            <a href={el.value} target="_blank">
+              {' '}
+              {el.value}
+            </a>
+          ) : (
+            el.value
+          )}
+        </Descriptions.Item>
       ))}
     </Descriptions>
+    // 添加Jenkins字段显示并以可点击链接形式展示
   );
 };
 
