@@ -43,6 +43,8 @@ export default function TaskEditor(props: TaskEditorProps) {
     // TODO 如果有 initData?.testSuite，需要初始化数据，通过 id 获取 caseList
   }, [mode]);
 
+  const handleSubmit = () => {};
+
   return (
     <Drawer
       visible={mode !== 'HIDE'}
@@ -51,8 +53,10 @@ export default function TaskEditor(props: TaskEditorProps) {
       onClose={onClose}
       width={600}
       footer={
-        <div className="task-editor-footer">
-          <Button type="primary">确定</Button>
+        <div className="drawer-custom-footer">
+          <Button type="primary" onClick={handleSubmit}>
+            确定
+          </Button>
           <Button type="default" onClick={() => onClose?.()}>
             取消
           </Button>

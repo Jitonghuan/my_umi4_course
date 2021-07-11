@@ -11,9 +11,10 @@ import { ContentCard } from '@/components/vc-page-content';
 import HeaderTabs from '../components/header-tabs';
 import TaskEditor from '../components/task-editor';
 import * as APIS from '../service';
-import { getRequest, postRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import { EditorMode, TaskItemVO } from '../interfaces';
 import { useTaskList } from './hooks';
+import ReportList from './report-list';
 import './index.less';
 
 export default function TaskManager(props: any) {
@@ -27,6 +28,8 @@ export default function TaskManager(props: any) {
 
   const [taskEditMode, setTaskEditMode] = useState<EditorMode>('HIDE');
   const [taskEditItem, setTaskEditData] = useState<TaskItemVO>();
+
+  const [showReportItem, setShowReportItem] = useState<TaskItemVO>();
 
   const handleSearch = () => {
     setKeyword(searchValue);
@@ -82,8 +85,6 @@ export default function TaskManager(props: any) {
     },
     [tableSource],
   );
-
-  const handleShowReports = useCallback((record: TaskItemVO, index: number) => {}, [tableSource]);
 
   const handleTaskEditorSave = () => {
     if (taskEditMode === 'ADD') {
@@ -176,6 +177,9 @@ export default function TaskManager(props: any) {
           <Table.Column
             title="操作"
             render={(_, record: TaskItemVO, index) => {
+              const reportCount = record.reportCount > 99 ? '99+' : record.reportCount ?? null;
+              const showRecordTitle = typeof reportCount === 'number' ? `查看报告(${record.reportCount})` : '查看报告';
+
               return (
                 <div className="action-cell">
                   {/* 状态为执行中时无法执行 */}
@@ -192,11 +196,11 @@ export default function TaskManager(props: any) {
                   <Popconfirm title="确定要删除此任务吗？" onConfirm={() => handleDelTask(record, index)}>
                     <a style={{ color: 'red' }}>删除</a>
                   </Popconfirm>
-                  <a onClick={() => handleShowReports(record, index)}>查看报告</a>
+                  <a onClick={() => setShowReportItem(record)}>{showRecordTitle}</a>
                 </div>
               );
             }}
-            width={220}
+            width={230}
           />
         </Table>
         <TaskEditor
@@ -205,6 +209,8 @@ export default function TaskManager(props: any) {
           onClose={() => setTaskEditMode('HIDE')}
           onSave={handleTaskEditorSave}
         />
+
+        <ReportList task={showReportItem} onClose={() => setShowReportItem(undefined)} />
       </ContentCard>
     </MatrixPageContent>
   );

@@ -108,3 +108,17 @@ export interface TaskItemVO extends Record<string, any> {
   suiteType: number;
   status: 0 | 1;
 }
+
+export interface TaskReportItemVO extends Record<string, any> {
+  id: number;
+  taskId: number;
+  passRate: number;
+  casesNum: number;
+  success: number;
+  failure: number;
+  error: number;
+  startTime: string;
+  endTime: string;
+  /** 触发方式 0: 手动, 1: 自动 */
+  triggered: 0 | 1;
+}

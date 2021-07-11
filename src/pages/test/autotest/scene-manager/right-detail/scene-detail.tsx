@@ -3,7 +3,7 @@
 // @create 2021/06/30 20:48
 
 import React, { useState, useContext } from 'react';
-import { Button, Table, Popover, Popconfirm, Tooltip } from 'antd';
+import { Button, Table, Popover, Popconfirm, Tooltip, Modal } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import DebounceSelect from '@/components/debounce-select';
 import type Emitter from 'events';
@@ -11,8 +11,8 @@ import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest, getRequest } from '@/utils/request';
 import { useCaseListByScene } from '../../hooks';
-import CaseDetail from '../../components/case-detail';
-import { TreeNode, CaseItemVO } from '../../interfaces';
+import CaseEditor from '../../components/case-editor';
+import { TreeNode, CaseItemVO, EditorMode } from '../../interfaces';
 import SceneExec from '../../components/scene-exec';
 
 export interface SceneDetailProps extends Record<string, any> {
@@ -85,6 +85,29 @@ export default function SceneDetail(props: SceneDetailProps) {
     updateSceneCase(idList);
   };
 
+  // 用例编辑前的二次确认
+  const confirmBeforeSaveCase = async (mode: EditorMode, payload: any) => {
+    const result = await postRequest(APIS.caseHasUsedByScene, {
+      data: {
+        caseId: detailData?.id,
+        sceneId: props.current?.bizId,
+      },
+    });
+
+    if (!result.data.hasUsed) {
+      return true;
+    }
+
+    return await new Promise<boolean>((resolve) => {
+      Modal.confirm({
+        title: '操作确认',
+        content: '该用例已经在其它场景中使用到，是否继续保存？',
+        onOk: () => resolve(true),
+        onCancel: () => resolve(false),
+      });
+    });
+  };
+
   return (
     <ContentCard>
       <div className="page-scene-header">
@@ -154,7 +177,16 @@ export default function SceneDetail(props: SceneDetailProps) {
         />
       </Table>
 
-      <CaseDetail data={detailData} onClose={() => setDetailData(undefined)} />
+      <CaseEditor
+        mode={detailData ? 'EDIT' : 'HIDE'}
+        initData={detailData}
+        onCancel={() => setDetailData(undefined)}
+        onSave={() => {
+          setDetailData(undefined);
+          reloadCaseList();
+        }}
+        hookBeforeSave={confirmBeforeSaveCase}
+      />
 
       <SceneExec target={targetExecNode} onClose={() => setTargetExecNode(undefined)} />
     </ContentCard>
