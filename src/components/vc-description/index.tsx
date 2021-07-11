@@ -31,7 +31,6 @@ const funcName = (props: IProps) => {
         <Descriptions.Item label={el.label}>
           {el.label == 'jenkins' ? (
             <a href={el.value} target="_blank">
-              {' '}
               {el.value}
             </a>
           ) : (
