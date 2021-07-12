@@ -87,7 +87,6 @@ export default defineConfig({
   },
 
   devServer: {
-    // open: true,
     port: 9091,
   },
 
