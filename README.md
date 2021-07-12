@@ -61,12 +61,6 @@
 
 7. 部署到 prod: [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-prod
 
-### 环境配置
-
-- 本地开发时，请确保 .env 文件中的 `UMI_ENV=dev`
-- 推到测试环境时，请确保 .env 文件中的 `UMI_ENV=test`
-- 推到线上环境时，请确保 .env 文件中的 `UMI_ENV=prod`
-
 ### 分支规范
 
 - 开发分支: `feat-xxx/0.x.x` 或 `dev-xxx/0.x.x`
