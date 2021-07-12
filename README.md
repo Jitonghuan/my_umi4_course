@@ -30,20 +30,6 @@
 {
   "server_name": "matrix-local.cfuture.shop",
   "proxy": {
-    "/matrix/**": {
-      "type": "web",
-      "port": "9091",
-      "target": "http://127.0.0.1:9091",
-      "changeOrigin": false,
-      "pathRewriter": {}
-    },
-    "/v1/**": {
-      "type": "web",
-      "port": "9091",
-      "target": "http://127.0.0.1:9091",
-      "changeOrigin": false,
-      "pathRewriter": {}
-    },
     "/**": {
       "type": "web",
       "port": "9091",
@@ -61,17 +47,11 @@
 
 7. 部署到 prod: [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-prod
 
-### 环境配置
-
-- 本地开发时，请确保 .env 文件中的 `UMI_ENV=dev`
-- 推到测试环境时，请确保 .env 文件中的 `UMI_ENV=test`
-- 推到线上环境时，请确保 .env 文件中的 `UMI_ENV=prod`
-
 ### 分支规范
 
-- 开发分支: `feat-xxx/0.x.x` 或 `dev-xxx/0.x.x`
-- 测试分支: `test/0.x.x`
-- 线上分支: `pub/1.x.x`
+- 开发分支: `feat-xxx/0.0.x` 或 `dev-xxx/0.0.x`
+- 测试分支: `test/0.2.x`
+- 线上分支: `pub/2.x.x`
 
 ### 相关文档
 
