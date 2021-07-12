@@ -43,7 +43,7 @@ const ConfigParametersManage = ({
   if (!configType) return null;
 
   return (
-    <div className={rootCls}>
+    <div className={rootCls} key={pathname}>
       <Tabs
         className={`${rootCls}__tabs`}
         defaultActiveKey={sessionStorage.getItem('__init_env_tab__') || undefined}

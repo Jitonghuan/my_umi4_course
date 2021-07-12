@@ -156,7 +156,7 @@ export default function ApiEditor(props: ApiEditorProps) {
       className="test-api-editor"
       width={600}
       footer={
-        <div className="api-editor-footer">
+        <div className="drawer-custom-footer">
           <Button type="primary" onClick={handleSubmit}>
             确定
           </Button>

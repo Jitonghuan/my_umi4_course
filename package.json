@@ -4,10 +4,12 @@
   "version": "2.0.0",
   "scripts": {
     "umi": "cross-env MOCK=none umi dev",
-    "dev": "cross-env NODE_ENV=development && npm run umi",
-    "start": "cross-env NODE_ENV=development && npm run umi",
+    "dev": "cross-env NODE_ENV=development MOCK=none umi dev",
+    "start": "npm run dev",
     "umi:mock": "umi dev",
-    "build": "umi build",
+    "build": "cross-env BUILD_ENV=test umi build",
+    "build:test": "cross-env BUILD_ENV=test umi build",
+    "build:prod": "cross-env BUILD_ENV=prod umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },

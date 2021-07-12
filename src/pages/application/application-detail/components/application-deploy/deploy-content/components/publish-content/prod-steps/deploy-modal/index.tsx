@@ -23,6 +23,19 @@ const DeployModal = ({ envTypeCode, visible, deployInfo, onCancel, onOperate }: 
   const [envDataList, setEnvDataList] = useState([]);
 
   useEffect(() => {
+    if (!['deploying', 'deployWaitBatch2'].includes(deployStatus)) return;
+
+    if (deployingEnv && deployingEnv !== deployConfig.deployEnv) {
+      console.log('>> reset deployEnv: ', deployingEnv);
+
+      setDeployConfig({
+        deployEnv: deployingEnv,
+        deployBatch: deployConfig.deployBatch,
+      });
+    }
+  }, [deployingEnv]);
+
+  useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
       categoryCode: appCategoryCode as string,
@@ -155,7 +168,7 @@ const DeployModal = ({ envTypeCode, visible, deployInfo, onCancel, onOperate }: 
         <span>发布环境：</span>
         {/* 根据 envs 拿到列表 */}
         <Radio.Group
-          disabled={false}
+          disabled={['deploying', 'deployWaitBatch2'].includes(deployStatus)}
           value={deployConfig.deployEnv}
           onChange={(v) => setDeployConfig({ ...deployConfig, deployEnv: v.target.value })}
           options={envList?.map((v: any) => ({

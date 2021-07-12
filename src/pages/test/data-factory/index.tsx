@@ -12,6 +12,7 @@ import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import usePublicData from '@/utils/usePublicData';
 import { Item } from './typing';
+import DetailModal from '@/components/detail-modal';
 import { queryDataFactoryList } from './service';
 
 import './index.less';
@@ -152,6 +153,7 @@ const DataFactory: React.FC = () => {
       title: '日志',
       dataIndex: 'errorLog',
       key: 'errorLog',
+      render: (value: string) => <DetailModal data={value} />,
     },
   ];
 

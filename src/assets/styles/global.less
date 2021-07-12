@@ -55,6 +55,10 @@ a:focus {
   a + a {
     margin-left: 12px;
   }
+
+  [data-disabled='true'] {
+    color: #999;
+  }
 }
 
 .text-nowrap {
@@ -87,4 +91,12 @@ ul {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.drawer-custom-footer {
+  text-align: right;
+
+  button + button {
+    margin-left: 12px;
+  }
 }
