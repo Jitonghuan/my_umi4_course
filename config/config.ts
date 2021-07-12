@@ -1,3 +1,6 @@
+// umi config
+// @see https://umijs.org/zh-CN/config
+
 import { defineConfig } from 'umi';
 import path from 'path';
 
@@ -44,7 +47,6 @@ export default defineConfig({
     { src: `${publicPathPrefix}/${ds.appKey}/react-dom.min.js` },
   ],
 
-  // 按需加载，当前配置，默认所有页面按需加载
   // dynamicImport: {},
 
   // split chunk TODO
