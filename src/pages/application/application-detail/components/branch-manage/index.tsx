@@ -10,7 +10,7 @@ import { Button, message, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import { InlineForm } from '@cffe/fe-backend-component';
+import { InlineForm } from '@/components/schema-form';
 import EditBranch from './edit-branch';
 import { createFilterFormSchema, createTableSchema } from './schema';
 import DetailContext from '../../context';

@@ -1,7 +1,6 @@
 // test case editor
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 20:15
-// NOTE 用例编辑要提取到公共组件中，后期可能提供给其它业务模块使用
 
 import React, { useState, useEffect, useContext } from 'react';
 import { Drawer, Form, Steps, Button, Input, message, Radio, Tabs } from 'antd';
@@ -20,9 +19,13 @@ const { Item: FormItem } = Form;
 
 export interface CaseEditorProps extends Record<string, any> {
   mode: EditorMode;
-  current?: TreeNode;
   initData?: CaseItemVO;
+  /** 当前节点，新增时用到 */
+  current?: TreeNode;
+  /** 当前的 API 节点，新增时用到 */
   apiDetail?: Record<string, any>;
+  /** 保存前调用，如果返回 false，则停止保存 */
+  hookBeforeSave?: (mode: EditorMode, payload: any) => Promise<boolean>;
   onCancel?: () => any;
   onSave?: () => any;
 }
@@ -121,6 +124,11 @@ export default function CaseEditor(props: CaseEditorProps) {
       modifyUser: userInfo.userName,
     };
 
+    if (typeof props.hookBeforeSave === 'function') {
+      const flag = await props.hookBeforeSave(props.mode, payload);
+      if (!flag) return;
+    }
+
     if (props.mode == 'ADD') {
       await postRequest(APIS.saveCaseInfo, {
         data: {
@@ -159,7 +167,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       width={900}
       className="test-case-editor"
       footer={
-        <div className="case-editor-footer">
+        <div className="drawer-custom-footer">
           {step > 0 ? (
             <Button type="primary" onClick={() => setSetp(step - 1)}>
               上一步
@@ -170,11 +178,9 @@ export default function CaseEditor(props: CaseEditorProps) {
               下一步
             </Button>
           ) : null}
-          {step === 4 ? (
-            <Button type="primary" onClick={handleSubmit}>
-              提交
-            </Button>
-          ) : null}
+          <Button type="primary" onClick={handleSubmit}>
+            提交
+          </Button>
           <Button type="default" onClick={props.onCancel}>
             取消
           </Button>

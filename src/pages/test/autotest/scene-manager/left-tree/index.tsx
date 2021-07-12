@@ -4,16 +4,18 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Modal, Select, Tree, Spin, Empty, message } from 'antd';
-import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, CopyOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
 import { TreeNode, EditorMode } from '../../interfaces';
-import { useProjectOptions, useLeftTreeData } from '../hooks';
+import { useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey } from '../../common';
+import { useProjectOptions } from '../../hooks';
 import SceneEditor from '../../components/scene-editor';
+import SceneClone from '../../components/scene-clone';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
@@ -25,7 +27,7 @@ const stopProp = {
   onClick: (e: any) => e && e.stopPropagation(),
 };
 
-type nodeAction = 'addScene' | 'editScene' | 'delScene';
+type nodeAction = 'addScene' | 'editScene' | 'delScene' | 'cloneScene';
 
 export default function LeftTree(props: LeftTreeProps) {
   const [projectOptions] = useProjectOptions();
@@ -36,6 +38,9 @@ export default function LeftTree(props: LeftTreeProps) {
   const targetNodeRef = useRef<TreeNode>();
   const [sceneEditorMode, setSceneEditorMode] = useState<EditorMode>('HIDE');
   const [expandedKeys, setExpandedKeys] = useState<(number | string)[]>([]);
+
+  // 复制场景
+  const [cloneTargetNode, setCloneTargetNode] = useState<TreeNode>();
 
   // ----- hooks
   // projectOptions 变更后重新判断选中状态
@@ -65,6 +70,12 @@ export default function LeftTree(props: LeftTreeProps) {
       props.onItemClick(treeData[0]);
       setExpandedKeys([treeData[0].key]);
     }
+
+    // 如果是同一个 key，但不是同一个对象，则重新触发一次更新
+    if (target && target !== selectedItem) {
+      setSelectedItem(target);
+      props.onItemClick(target);
+    }
   }, [treeData]);
 
   useEffect(() => {
@@ -86,11 +97,19 @@ export default function LeftTree(props: LeftTreeProps) {
     };
   });
 
-  const handleScaneEditorSave = () => {
+  const handleSceneEditorSave = () => {
     setSceneEditorMode('HIDE');
     reloadTreeData();
-    // 通知右侧列表页更新 (更精细一点应该判断是否定位在模块上)
-    props.emitter.emit('SCENE::RELOAD_SCENE_LIST');
+
+    // 如果右侧显示的是场景列表，则触发一次更新
+    if (selectedItem?.level !== 3) {
+      props.emitter.emit('SCENE::RELOAD_SCENE_LIST');
+    }
+  };
+
+  const handleSceneCloneSave = () => {
+    setCloneTargetNode(undefined);
+    reloadTreeData();
   };
 
   // 选择一个节点
@@ -117,6 +136,9 @@ export default function LeftTree(props: LeftTreeProps) {
           break;
         case 'editScene':
           setSceneEditorMode('EDIT');
+          break;
+        case 'cloneScene':
+          setCloneTargetNode(node);
           break;
         case 'delScene':
           Modal.confirm({
@@ -174,19 +196,25 @@ export default function LeftTree(props: LeftTreeProps) {
           ((nodeData: TreeNode) => (
             <div className="custom-tree-node">
               <span>{nodeData.title}</span>
-              {/* 添加子节点：接口 */}
+              {/* 添加子节点：场景 */}
               {nodeData.level === 2 && (
                 <a title="添加子节点：场景" {...stopProp}>
                   <PlusOutlined onClick={() => handleNodeAction('addScene', nodeData)} />
                 </a>
               )}
-              {/* 编辑接口 */}
+              {/* 编辑场景 */}
               {nodeData.level === 3 && (
                 <a title="编辑场景" {...stopProp}>
                   <EditOutlined onClick={() => handleNodeAction('editScene', nodeData)} />
                 </a>
               )}
-              {/* 删除接口 */}
+              {/* 复制场景 */}
+              {nodeData.level === 3 && (
+                <a title="复制场景" {...stopProp}>
+                  <CopyOutlined onClick={() => handleNodeAction('cloneScene', nodeData)} />
+                </a>
+              )}
+              {/* 删除场景 */}
               {nodeData.level === 3 && (
                 <a title="删除场景" {...stopProp}>
                   <VCCustomIcon onClick={() => handleNodeAction('delScene', nodeData)} type="icondelete" />
@@ -201,7 +229,13 @@ export default function LeftTree(props: LeftTreeProps) {
         mode={sceneEditorMode}
         targetNode={targetNodeRef.current}
         onClose={() => setSceneEditorMode('HIDE')}
-        onSave={handleScaneEditorSave}
+        onSave={handleSceneEditorSave}
+      />
+
+      <SceneClone
+        target={cloneTargetNode}
+        onClose={() => setCloneTargetNode(undefined)}
+        onSave={handleSceneCloneSave}
       />
     </CardRowGroup.SlideCard>
   );

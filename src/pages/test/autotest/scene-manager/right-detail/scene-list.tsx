@@ -10,6 +10,7 @@ import { TreeNode, EditorMode, SceneItemVO } from '../../interfaces';
 import { useSceneList } from '../hooks';
 import { createNodeDataFromSceneItem } from '../../common';
 import SceneEditor from '../../components/scene-editor';
+import SceneExec from '../../components/scene-exec';
 
 export interface SceneListProps extends Record<string, any> {
   emitter: Emitter;
@@ -27,7 +28,8 @@ export default function SceneList(props: SceneListProps) {
     pageSize,
   );
   const [sceneEditorMode, setSceneEditorMode] = useState<EditorMode>('HIDE');
-  const [targetNode, setTargetNode] = useState<TreeNode>();
+  const [targetEditNode, setTargetEditNode] = useState<TreeNode>();
+  const [targetExecNode, setTargetExecNode] = useState<TreeNode>();
 
   const handleSceneEditorSave = () => {
     // 通知左侧的列表也更新
@@ -39,14 +41,14 @@ export default function SceneList(props: SceneListProps) {
 
   const handleEditScene = (record: SceneItemVO) => {
     // 构造一个节点
-    const node = createNodeDataFromSceneItem(record, 3);
-    setTargetNode(node);
+    const node = createNodeDataFromSceneItem(record);
+    setTargetEditNode(node);
     setSceneEditorMode('EDIT');
   };
 
   const handleAddScene = () => {
     setSceneEditorMode('ADD');
-    setTargetNode(props.current);
+    setTargetEditNode(props.current);
   };
 
   const handleSelectSceneItem = (item: SceneItemVO) => {
@@ -62,6 +64,8 @@ export default function SceneList(props: SceneListProps) {
     }
 
     console.log('> handleExecScene', record);
+    const node = createNodeDataFromSceneItem(record);
+    setTargetExecNode(node);
   };
 
   useEffect(() => {
@@ -80,6 +84,7 @@ export default function SceneList(props: SceneListProps) {
     <ContentCard>
       <div className="page-scene-header">
         <h3>{props.current?.title} - 场景列表</h3>
+        <s className="flex-air" />
         {props.current?.level === 2 ? (
           <Button type="primary" onClick={handleAddScene}>
             新增场景
@@ -107,7 +112,7 @@ export default function SceneList(props: SceneListProps) {
           width={80}
           render={(value, record: SceneItemVO) => <a onClick={() => handleSelectSceneItem(record)}>{value}</a>}
         />
-        <Table.Column dataIndex="projectName" title="项目" />
+        <Table.Column dataIndex="projectName" title="项目" width={120} />
         <Table.Column dataIndex="moduleName" title="模块" />
         <Table.Column dataIndex="name" title="场景名称" />
         <Table.Column dataIndex="desc" title="场景描述" />
@@ -117,21 +122,24 @@ export default function SceneList(props: SceneListProps) {
           render={(_, record: SceneItemVO, index) => (
             <div className="action-cell">
               <a onClick={() => handleEditScene(record)}>编辑</a>
+              <a onClick={() => handleSelectSceneItem(record)}>编辑用例</a>
               <a onClick={() => handleExecScene(record)} data-disabled={!record.cases?.length}>
                 执行
               </a>
             </div>
           )}
-          width={120}
+          width={180}
         />
       </Table>
 
       <SceneEditor
         mode={sceneEditorMode}
-        targetNode={targetNode}
+        targetNode={targetEditNode}
         onClose={() => setSceneEditorMode('HIDE')}
         onSave={handleSceneEditorSave}
       />
+
+      <SceneExec target={targetExecNode} onClose={() => setTargetExecNode(undefined)} />
     </ContentCard>
   );
 }

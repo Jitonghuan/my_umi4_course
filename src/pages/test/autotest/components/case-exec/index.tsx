@@ -4,9 +4,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Modal, message, Select, Form, Input } from 'antd';
-import { getRequest, postRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import * as APIS from '../../service';
-import { CaseItemVO, SelectOptions } from '../../interfaces';
+import { CaseItemVO } from '../../interfaces';
+import { useEnvOptions } from '../../hooks';
 
 export interface CaseExecProps {
   visible?: boolean;
@@ -16,7 +17,7 @@ export interface CaseExecProps {
 
 export default function CaseExec(props: CaseExecProps) {
   const [editField] = Form.useForm<{ envId: string }>();
-  const [envOptions, setEnvOptions] = useState<SelectOptions[]>([]);
+  const [envOptions] = useEnvOptions();
   const [pending, setPending] = useState(false);
   const [resultURL, setResultURL] = useState<string>();
   const [errorStack, setErrorStack] = useState('');
@@ -25,14 +26,6 @@ export default function CaseExec(props: CaseExecProps) {
     if (!props.visible || !props.caseList?.length) return;
 
     editField.resetFields();
-    getRequest(APIS.envList).then((result) => {
-      const source = (result.data || []).map((n: any) => ({
-        label: n.name,
-        value: n.id,
-      }));
-
-      setEnvOptions(source);
-    });
   }, [props.visible]);
 
   const handleOk = async () => {

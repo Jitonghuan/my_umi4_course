@@ -15,7 +15,7 @@ export function useEnvOptions() {
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
-        label: item.envName,
+        label: item.envCode,
         value: item.envCode,
       }));
 

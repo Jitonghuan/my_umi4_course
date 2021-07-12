@@ -140,7 +140,7 @@ const Coms = (props: IProps) => {
                   timeType: activeType,
                 };
                 // 跳转 detail 页面
-                history.push(`${ds.pagePrefix}/code/details?${stringify(query)}`);
+                history.push(`/matrix/code/details?${stringify(query)}`);
               }}
             >
               详情

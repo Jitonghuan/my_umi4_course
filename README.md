@@ -57,9 +57,9 @@
 
 5. `$ npm start` 启动 matrix 服务， 访问 http://matrix-local.cfuture.shop
 
-6. 部署到 test:  jenkins -> ops/fe-matrix-test
+6. 部署到 test:  [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-test
 
-7. 部署到 prod: jenkins -> ops/fe-matrix-prod
+7. 部署到 prod: [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-prod
 
 ### 环境配置
 

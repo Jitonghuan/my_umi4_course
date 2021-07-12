@@ -123,10 +123,7 @@ export const createTableColumns = (params: {
       dataIndex: 'id',
       key: 'id',
       width: 70,
-      render: (text) => (
-        // <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${text}`}>
-        <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      ),
+      render: (text) => <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>,
     },
     {
       title: '发布功能',
@@ -237,7 +234,6 @@ export const createTableColumns = (params: {
       width: '6%',
       render: (_: string, record: IFuncItem) => (
         <Space>
-          {/* <Link to={`${ds.pagePrefix}/release/function/editFunction?id=${record.id}`}> */}
           <Link to={`./function/editFunction?id=${record.id}`}>编辑</Link>
           <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete(record?.funcId!)}>
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>

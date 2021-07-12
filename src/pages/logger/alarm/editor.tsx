@@ -2,14 +2,16 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/25 09:26
 
-import React, { useState, useEffect, useContext } from 'react';
-import { Form, Modal, Input, Select, message, Radio, InputNumber, TimePicker } from 'antd';
+import React, { useEffect } from 'react';
+import { Form, Modal, Input, Select, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
 import { postRequest, putRequest } from '@/utils/request';
+import moment from 'moment';
 import * as APIS from './service';
 import { EditorMode } from './interface';
 import {
   useAppOptions,
   useEnvOptions,
+  useUserOptions,
   useRuleOptions,
   useNotifyTypeOptions,
   useLevelOptions,
@@ -29,16 +31,51 @@ export default function AlarmEditor(props: AlarmEditorProps) {
   const [field] = Form.useForm();
   const [appOptions] = useAppOptions();
   const [envOptions] = useEnvOptions();
+  const [userOptions] = useUserOptions();
   const [groupSource, indexSource] = useRuleOptions();
   const [notifyTypeOptions] = useNotifyTypeOptions();
   const [levelOptions] = useLevelOptions();
   const [operationOptions] = useOperatorOptions();
+
+  // TODO 编辑数据回填
+  useEffect(() => {
+    if (props.mode === 'HIDE') return;
+
+    field.resetFields();
+
+    if (props.mode === 'ADD') return;
+
+    // 回填数据
+    const initData = props.initData!;
+    field.setFieldsValue({
+      ...initData,
+      // name: initData.name,
+      // appCode: initData.appCode,
+      // envCode: initData.envCode,
+      // group: initData.group,
+      // index: initData.index,
+      // expression: initData.expression,
+      // operator: initData.operator,
+      // numberEvents: initData.numberEvents,
+      // message: initData.message,
+      // level: initData.level,
+      // receiverType: initData.receiverType,
+      // silence: initData.silence,
+      interval: Number.parseFloat(initData.interval) || undefined,
+      receiver: initData.receiver?.split(',') || [],
+      silenceStart:
+        initData.silence === '1' && initData.silenceStart ? moment(`2021-07-07 ${initData.silenceStart}`) : undefined,
+      silenceEnd:
+        initData.silence === '1' && initData.silenceEnd ? moment(`2021-07-07 ${initData.silenceEnd}`) : undefined,
+    });
+  }, [props.mode]);
 
   const handleOk = async () => {
     const values = await field.validateFields();
 
     const submitData = {
       ...values,
+      receiver: (values.receiver || []).join(','),
       interval: `${values.interval}m`,
       silenceStart: values.silenceStart?.format('HH:mm'),
       silenceEnd: values.silenceEnd?.format('HH:mm'),
@@ -63,6 +100,8 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     props.onSave?.();
   };
 
+  const disableEdit = props.mode === 'EDIT' && props.initData?.status === '1';
+
   return (
     <Modal
       width={800}
@@ -71,7 +110,10 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       maskClosable={false}
       onCancel={() => props.onClose?.()}
       onOk={handleOk}
+      okButtonProps={{ disabled: disableEdit }}
     >
+      {disableEdit ? <Alert type="warning" message="告警规则已停用，无法编辑" style={{ marginBottom: 16 }} /> : null}
+
       <Form form={field} labelCol={{ flex: '132px' }} wrapperCol={{ span: 16 }}>
         <FormItem label="告警名称" name="name" rules={[{ required: true, message: '请输入告警名称' }]}>
           <Input placeholder="请输入" />
@@ -104,7 +146,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
         <FormItem label="采集频率">
           <Input.Group compact>
             <FormItem noStyle name="interval">
-              <InputNumber step={0.1} min={0.1} />
+              <InputNumber step={1} min={0.1} />
             </FormItem>
             <Input style={{ width: 60 }} value="分钟" disabled />
           </Input.Group>
@@ -121,7 +163,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           <Select placeholder="请选择" options={levelOptions} />
         </FormItem>
         <FormItem label="通知对象" name="receiver" rules={[{ required: true, message: '通知对象不能为空' }]}>
-          <Input placeholder="请输入" />
+          <Select placeholder="请选择" options={userOptions} showSearch mode="multiple" />
         </FormItem>
         <FormItem
           label="通知方式"

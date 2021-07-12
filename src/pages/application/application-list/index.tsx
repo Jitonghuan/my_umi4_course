@@ -9,11 +9,11 @@ import React, { useMemo, useEffect, useState, useCallback, useContext } from 're
 import { Form, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffectOnce } from 'white-react-use';
-import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import CreateApplication from '@/components/create-application';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import { InlineForm, BasicForm } from '@cffe/fe-backend-component';
+import { InlineForm } from '@/components/schema-form';
 import { queryBizData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
 import MatrixPageContent from '@/components/matrix-page-content';
