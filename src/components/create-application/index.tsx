@@ -10,7 +10,7 @@ import { Drawer, Input, Spin, message, Form } from 'antd';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import { BasicForm } from '@/components/schema-form';
 import createSchema from './create-schema';
-import { createApp, updateApp, queryBizData, queryCategoryData } from './service';
+import { createApp, updateApp, queryBizData, queryCategoryData, queryBaseImage } from './service';
 import { IProps, FormValue, AppType, AppDevelopLanguage } from './types';
 // import './index.less';
 
@@ -28,6 +28,7 @@ const CreateApplication = (props: IProps) => {
   // const { categoryData, businessData } = useContext(FEContext);
   const [categoryData, setcategoryData] = useState([]);
   const [businessData, setBusinessData] = useState([]);
+  const [baseImage, setBaseImage] = useState([]);
   const [categoryCode, setcategoryCode] = useState('');
 
   const [form] = Form.useForm();
@@ -60,6 +61,13 @@ const CreateApplication = (props: IProps) => {
       setBusinessData(data.list);
     });
   }, [categoryCode]);
+
+  //基础镜像
+  useEffect(() => {
+    queryBaseImage().then((data) => {
+      setBaseImage(data.list);
+    });
+  }, []);
 
   //编辑
   useEffect(() => {
@@ -97,6 +105,7 @@ const CreateApplication = (props: IProps) => {
             appDevelopLanguage,
             categoryData,
             businessData,
+            baseImage,
           }) as any)}
           dataSource={formValue}
           customMap={{
