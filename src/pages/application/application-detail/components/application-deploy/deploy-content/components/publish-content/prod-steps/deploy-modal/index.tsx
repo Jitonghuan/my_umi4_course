@@ -17,7 +17,7 @@ const DeployModal = ({ envTypeCode, visible, deployInfo, onCancel, onOperate }: 
   const { appCategoryCode } = appData || {};
 
   const [deployConfig, setDeployConfig] = useState({
-    deployEnv: '',
+    deployEnv: deployingEnv,
     deployBatch: 12,
   });
   const [envDataList, setEnvDataList] = useState([]);
