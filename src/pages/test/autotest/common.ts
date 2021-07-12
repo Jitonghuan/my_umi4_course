@@ -159,6 +159,9 @@ export function formatTreeData(payload: any[]): TreeNode[] {
 
 export function formatTreeSelectData(payload: any[]) {
   if (!payload?.length) return [];
+  if (Array.isArray(payload[0])) {
+    payload = payload.flat(1);
+  }
 
   return payload.map((n1: any) => ({
     value: `l1-${n1.id}`,
