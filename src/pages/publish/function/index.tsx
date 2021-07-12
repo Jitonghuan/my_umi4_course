@@ -6,7 +6,7 @@ import { OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import './index.less';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import { deleteFunc, queryAppGroupReq, queryFunctionUrl, exportPublishFunction } from '../service';
+import { deleteFunc, queryAppGroupReq, queryFunctionUrl, getExportPublishFunctionLink } from '../service';
 import useTable from '@/utils/useTable';
 import usePublicData from '@/utils/usePublicData';
 import { createFormItems, createTableColumns } from './schema';
@@ -45,15 +45,6 @@ const FunctionCom: React.FC = () => {
       return query;
     },
   });
-
-  const handleExportAll = async () => {
-    const downloadURL = await exportPublishFunction(lastSearchRef.current);
-    if (!downloadURL) {
-      return message.error('数据导出失败！');
-    }
-
-    window.open(downloadURL);
-  };
 
   const onCategoryChange = (code: string) => {
     form.setFieldsValue({
@@ -112,8 +103,8 @@ const FunctionCom: React.FC = () => {
             <Button type="primary" onClick={() => history.push('./function/addFunction')}>
               新增发布功能
             </Button>
-            <Button type="primary" ghost onClick={handleExportAll}>
-              导出全部
+            <Button type="primary" ghost target="_blank" href={getExportPublishFunctionLink(lastSearchRef.current)}>
+              导出数据
             </Button>
           </>
         }

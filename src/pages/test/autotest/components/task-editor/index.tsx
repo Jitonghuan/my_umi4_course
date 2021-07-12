@@ -120,11 +120,23 @@ export default function TaskEditor(props: TaskEditorProps) {
           {({ getFieldValue }) =>
             getFieldValue('suiteType') === 0 ? (
               <FormItem label="用例集合" name="testSuiteCase">
-                <TreeSelect treeData={caseTree} multiple />
+                <TreeSelect
+                  treeData={caseTree}
+                  multiple
+                  treeCheckable
+                  placeholder="请选择用例集合"
+                  treeNodeLabelProp="display"
+                />
               </FormItem>
             ) : (
               <FormItem label="场景集合" name="testSuiteScene">
-                <TreeSelect treeData={sceneTree} multiple />
+                <TreeSelect
+                  treeData={sceneTree}
+                  multiple
+                  treeCheckable
+                  placeholder="请选择场景集合"
+                  treeNodeLabelProp="display"
+                />
               </FormItem>
             )
           }
