@@ -9,3 +9,4 @@ package.json
 /script/page-tpl/**
 dist/**
 public/
+mock/

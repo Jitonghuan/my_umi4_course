@@ -209,3 +209,14 @@ export const getApplyRelInfoReq = (params: { id: string }) =>
     return {};
   });
 /** 发布申请结束 */
+
+/** 发布功能报表导出 */
+export const exportPublishFunctionUrl = `${ds.apiPrefix}/publishManage/function/exportPublishFunction`;
+
+export const exportPublishFunction = async (params: any) => {
+  const result = await getRequest(exportPublishFunctionUrl, {
+    data: params,
+  });
+
+  return result.data as string;
+};

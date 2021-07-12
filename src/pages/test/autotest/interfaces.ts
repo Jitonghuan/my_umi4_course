@@ -27,9 +27,9 @@ export interface TreeNode extends DataNode {
   /** 节点描述，也是 项目/模块 描述 */
   desc?: string;
   /** 一级节点ID，即项目ID */
-  projectId: number;
+  projectId?: number;
   /** 二级节点ID，即模块ID */
-  moduleId: number;
+  moduleId?: number;
 
   children?: TreeNode[];
 
@@ -105,6 +105,21 @@ export interface TaskItemVO extends Record<string, any> {
   cron: string;
   runEnv: number;
   testSuite: number[];
+  /** 集合类型，0 - 用例集合, 1: 场景集合 */
   suiteType: number;
   status: 0 | 1;
+}
+
+export interface TaskReportItemVO extends Record<string, any> {
+  id: number;
+  taskId: number;
+  passRate: number;
+  casesNum: number;
+  success: number;
+  failure: number;
+  error: number;
+  startTime: string;
+  endTime: string;
+  /** 触发方式 0: 手动, 1: 自动 */
+  triggered: 0 | 1;
 }

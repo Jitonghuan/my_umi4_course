@@ -4,6 +4,12 @@ import path from 'path';
 import ds from './defaultSettings';
 import routes from '../src/pages/routes.config';
 
+const publicPathPrefix = {
+  dev: '',
+  test: 'https://come2future-web.oss-cn-hangzhou.aliyuncs.com/dev/fe-matrix-front/matrix-front',
+  prod: 'https://come2future-web.oss-cn-hangzhou.aliyuncs.com/prod/fe-matrix-front/matrix-front',
+}[process.env.BUILD_ENV || 'dev'];
+
 export default defineConfig({
   /*—————————— 编译性能等配置 start ——————————*/
   nodeModulesTransform: {
@@ -15,7 +21,7 @@ export default defineConfig({
   ],
 
   themeHbos: {
-    bundleName: 'matrix', // 项目 bundleName，插件会使用这个 bundleName 来进行样式隔离
+    bundleName: ds.appKey, // 项目 bundleName，插件会使用这个 bundleName 来进行样式隔离
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome
@@ -24,16 +30,19 @@ export default defineConfig({
       ? { chrome: 49, firefox: false, safari: false, edge: false, ios: false }
       : { chrome: 49, firefox: 64, safari: 10, edge: 13 },
 
+  publicPath: `${publicPathPrefix}/${ds.appKey}/`,
+
   // 配置 external 资源外部依赖, react, react-dom
   externals: {
     react: 'window.React',
     'react-dom': 'window.ReactDOM',
   },
-  // 对照 externals ，默认引入 public 中的 react，react-dom 资源【内网，专网部署考虑】
-  // scripts: [
-  //   { src: `/${ds.appKey}/react.min.js` },
-  //   { src: `/${ds.appKey}/react-dom.min.js` },
-  // ],
+
+  // HTML 中以 <script> 方式引用的资源
+  scripts: [
+    { src: `${publicPathPrefix}/${ds.appKey}/react.min.js` },
+    { src: `${publicPathPrefix}/${ds.appKey}/react-dom.min.js` },
+  ],
 
   // 按需加载，当前配置，默认所有页面按需加载
   // dynamicImport: {},
@@ -75,16 +84,13 @@ export default defineConfig({
     },
   },
 
-  // devServer: {
-  //   open: true,
-  // },
+  devServer: {
+    // open: true,
+    port: 9091,
+  },
 
   // 路由
   routes: [
-    // {
-    //   path: '/user_module/login',
-    //   component: '../layouts/login',
-    // },
     {
       path: `/${ds.appKey}`,
       component: '../layouts/basic-layout/index',
