@@ -167,10 +167,12 @@ export function formatTreeSelectData(payload: any[]) {
     value: `l1-${n1.id}`,
     title: n1.name,
     selectable: false,
+    disabled: !n1.children?.length,
     children: (n1.children || []).map((n2: any) => ({
       value: `l2-${n2.id}`,
       title: n2.name,
       selectable: false,
+      disabled: !n2.children?.length,
       children: (n2.children || []).map((n3: any) => ({
         value: n3.id,
         title: n3.name,

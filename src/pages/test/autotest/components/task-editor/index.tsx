@@ -2,10 +2,11 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/08 16:17
 
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Drawer, Button, Input, Form, Select, Radio, TreeSelect, message } from 'antd';
+import { BulbOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
-import { postRequest, getRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import * as APIS from '../../service';
 import { EditorMode, TaskItemVO } from '../../interfaces';
 import { useEnvOptions } from '../../hooks';
@@ -102,7 +103,15 @@ export default function TaskEditor(props: TaskEditorProps) {
         <FormItem label="任务名称" name="taskName" rules={[{ required: true, message: '请输入任务名' }]}>
           <Input placeholder="请输入" />
         </FormItem>
-        <FormItem label="执行机制" name="cron">
+        <FormItem
+          label="执行机制"
+          name="cron"
+          extra={
+            <a target="_blank" href="https://www.pppet.net/">
+              <BulbOutlined /> 在线Cron表达式生成器
+            </a>
+          }
+        >
           <Input.TextArea placeholder="cron表达式，不填表示手动执行" />
         </FormItem>
         <FormItem label="执行环境" name="runEnv" rules={[{ required: true, message: '请选择执行环境' }]}>
@@ -120,11 +129,23 @@ export default function TaskEditor(props: TaskEditorProps) {
           {({ getFieldValue }) =>
             getFieldValue('suiteType') === 0 ? (
               <FormItem label="用例集合" name="testSuiteCase">
-                <TreeSelect treeData={caseTree} multiple placeholder="请选择用例集合" treeNodeLabelProp="display" />
+                <TreeSelect
+                  treeData={caseTree}
+                  multiple
+                  treeCheckable
+                  placeholder="请选择用例集合"
+                  treeNodeLabelProp="display"
+                />
               </FormItem>
             ) : (
               <FormItem label="场景集合" name="testSuiteScene">
-                <TreeSelect treeData={sceneTree} multiple placeholder="请选择场景集合" treeNodeLabelProp="display" />
+                <TreeSelect
+                  treeData={sceneTree}
+                  multiple
+                  treeCheckable
+                  placeholder="请选择场景集合"
+                  treeNodeLabelProp="display"
+                />
               </FormItem>
             )
           }
