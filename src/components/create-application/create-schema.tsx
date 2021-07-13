@@ -6,6 +6,7 @@ export default (params: {
   appDevelopLanguage?: AppDevelopLanguage;
   categoryData?: any[];
   businessData?: any[];
+  baseImage?: any[];
 }) => ({
   isShowReset: false,
   labelColSpan: 6,
@@ -163,6 +164,14 @@ export default (params: {
         label: '应用组',
         name: 'appGroupCode',
         options: params.businessData || [],
+      },
+    },
+    {
+      type: 'Select',
+      props: {
+        label: '基础镜像',
+        name: 'baseImage',
+        options: params.baseImage || [],
       },
     },
     {
