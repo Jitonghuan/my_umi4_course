@@ -3,6 +3,7 @@
 // @create 2021/07/09 17:19
 
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import { Drawer, Table } from 'antd';
 import { TaskItemVO, TaskReportItemVO } from '../interfaces';
 import { useReportList } from './hooks';
@@ -52,7 +53,13 @@ export default function ReportList(props: ReportListProps) {
               return `${value * 100}%`;
             }}
           />
-          <Table.Column title="执行完成时间" dataIndex="endTime" />
+          <Table.Column
+            title="执行完成时间"
+            dataIndex="endTime"
+            render={(v: string) => {
+              return v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '';
+            }}
+          />
           <Table.Column
             title="操作"
             render={(_, record: TaskReportItemVO) => <a onClick={() => setDetailItem(record)}>查看报告</a>}
