@@ -4,12 +4,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getRequest } from '@/utils/request';
+import { TreeNode } from '../../interfaces';
+import { treeDataFormatter } from './formatter';
 import * as APIS from '../../service';
 
-// const sleep = (x: number) => new Promise(resolve => setTimeout(resolve, x));
-
-export function useReportTreeData(recordId: number): [any, boolean] {
+export function useReportTreeData(recordId: number): [any, TreeNode[], boolean] {
   const [data, setData] = useState<any>({});
+  const [tree, setTree] = useState<TreeNode[]>([]);
   const [loading, setLoading] = useState(false);
 
   const loadData = useCallback(async () => {
@@ -17,12 +18,12 @@ export function useReportTreeData(recordId: number): [any, boolean] {
 
     setLoading(true);
     try {
-      // await sleep(3000);
       const result = await getRequest(APIS.getReportTree, {
         data: { recordId },
       });
 
       setData(result.data || {});
+      setTree(treeDataFormatter(result.data?.report_tree || []));
     } finally {
       setLoading(false);
     }
@@ -32,30 +33,25 @@ export function useReportTreeData(recordId: number): [any, boolean] {
     loadData();
   }, [recordId]);
 
-  return [data, loading];
+  return [data, tree, loading];
 }
 
-export function useReportDetailData(
-  recordId: number,
-  projectId: number,
-  moduleId: number,
-  belongId: number,
-  caseId: number,
-): [any[], boolean] {
+export function useReportDetailData(recordId?: number, selectedNode?: TreeNode): [any[], boolean] {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
-    if (!recordId || !projectId || !moduleId || !belongId || !caseId) return;
+    if (!recordId || !selectedNode) return;
 
+    setLoading(true);
     try {
       const result = await getRequest(APIS.getReportDetail, {
         data: {
           recordId,
-          projectId,
-          moduleId,
-          belongId,
-          id: caseId,
+          projectId: selectedNode.parent?.parent?.parent?.bizId,
+          moduleId: selectedNode.parent?.parent?.bizId,
+          belongId: selectedNode.parent?.bizId,
+          id: selectedNode.bizId,
         },
       });
 
@@ -67,7 +63,7 @@ export function useReportDetailData(
 
   useEffect(() => {
     loadData();
-  }, [recordId, projectId, moduleId, belongId, caseId]);
+  }, [recordId, selectedNode]);
 
   return [data, loading];
 }

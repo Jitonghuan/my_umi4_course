@@ -42,7 +42,7 @@ export default function ModuleEditor(props: SceneEditorProps) {
       const payload = {
         moduleId: targetNode?.bizId!,
         sceneName,
-        desc,
+        desc: desc || '',
         createUser: userInfo.userName,
       };
       await postRequest(APIS.addSceneNode, {
@@ -56,9 +56,10 @@ export default function ModuleEditor(props: SceneEditorProps) {
         id: targetNode?.bizId!,
         moduleId: targetNode?.moduleId,
         sceneName,
-        desc,
+        desc: desc || '',
         modifyUser: userInfo.userName,
       };
+
       await postRequest(APIS.updateSceneNode, {
         data: payload,
       });
