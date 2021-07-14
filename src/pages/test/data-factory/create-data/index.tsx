@@ -12,7 +12,7 @@ import usePublicData from '@/utils/usePublicData';
 import useRequest from '@/utils/useRequest';
 import HeaderTabs from '../components/header-tabs';
 import JsonEditor from '@/components/JsonEditor';
-import { queryDataFactoryName, createDataFactory } from '../service';
+import { queryDataFactory, createData } from '../service';
 import { Item } from '../typing';
 
 export default function CreateData(props: any) {
@@ -30,7 +30,7 @@ export default function CreateData(props: any) {
 
   // 获取数据工厂名称
   const { data: factoryNameData, run: queryDataFactoryNameFun } = useRequest({
-    api: queryDataFactoryName,
+    api: queryDataFactory,
     method: 'GET',
     formatData: (data = []) => {
       return data?.map((v: any) => {
@@ -45,7 +45,7 @@ export default function CreateData(props: any) {
 
   //创建数据
   const { data: dataFactory = [], run: createDataFactoryFun } = useRequest({
-    api: createDataFactory,
+    api: createData,
     method: 'POST',
     successText: '创建成功',
     isSuccessModal: true,

@@ -3,7 +3,7 @@
 // @create 2021/05/30 16:25
 
 import React, { useState, useEffect } from 'react';
-import { Button, Tag, Table, message, Empty, Spin, Modal } from 'antd';
+import { Button, Tag, Table, message, Empty, Spin, Modal, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
 import { ContentCard } from '@/components/vc-page-content';
@@ -42,18 +42,12 @@ export default function RightDetail(props: RightDetailProps) {
     };
   }, []);
 
-  const handleDelCaseItem = (record: CaseItemVO, index: number) => {
-    Modal.confirm({
-      title: '操作确认',
-      content: `确定要删除用例 ${record.id} 吗？此操作不可恢复`,
-      onOk: async () => {
-        await postRequest(APIS.deleteCaseById, {
-          data: { id: record.id },
-        });
-        message.success('用例已删除');
-        reloadCase();
-      },
+  const handleDelCaseItem = async (record: CaseItemVO, index: number) => {
+    await postRequest(APIS.deleteCaseById, {
+      data: { id: record.id },
     });
+    message.success('用例已删除');
+    reloadCase();
   };
 
   const handleExecCaseItem = (record: CaseItemVO) => {
@@ -132,7 +126,9 @@ export default function RightDetail(props: RightDetailProps) {
           render={(_, record: CaseItemVO, index: number) => (
             <div className="action-cell">
               <a onClick={() => handleEditCaseItem(record)}>编辑</a>
-              <a onClick={() => handleDelCaseItem(record, index)}>删除</a>
+              <Popconfirm title="确定要删除该用例吗？" onConfirm={() => handleDelCaseItem(record, index)}>
+                <a>删除</a>
+              </Popconfirm>
               <a onClick={() => handleExecCaseItem(record)}>执行</a>
             </div>
           )}

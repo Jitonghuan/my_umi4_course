@@ -15,7 +15,7 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import usePublicData from '@/utils/usePublicData';
 import { Item } from '../typing';
 import DetailModal from '@/components/detail-modal';
-import { queryDataFactoryList } from '../service';
+import { queryData } from '../service';
 import './index.less';
 
 type statusTypeItem = {
@@ -45,7 +45,7 @@ export default function DataFactoryList(props: any) {
     tableProps,
     search: { submit: queryList, reset },
   } = useTable({
-    url: queryDataFactoryList,
+    url: queryData,
     method: 'GET',
     form,
     formatter: (record) => {
@@ -164,6 +164,7 @@ export default function DataFactoryList(props: any) {
       width: '144px',
       placeholder: '请输入',
       option: appTypeData,
+      rules: [],
     },
     {
       key: '2',
@@ -171,6 +172,7 @@ export default function DataFactoryList(props: any) {
       label: '数据工厂名称',
       dataIndex: 'factoryName',
       width: '144px',
+      rules: [],
     },
     {
       key: '3',
@@ -180,6 +182,7 @@ export default function DataFactoryList(props: any) {
       width: '144px',
       placeholder: '请选择',
       option: envListType,
+      rules: [],
     },
     {
       key: '4',
@@ -188,6 +191,7 @@ export default function DataFactoryList(props: any) {
       dataIndex: 'gmtCreate',
       width: '144px',
       placeholder: '请选择',
+      rules: [],
     },
     {
       key: '5',
@@ -195,6 +199,7 @@ export default function DataFactoryList(props: any) {
       dataIndex: 'createUser',
       width: '144px',
       placeholder: '请选择',
+      rules: [],
       checkboxOption: [
         {
           label: '我的数据',

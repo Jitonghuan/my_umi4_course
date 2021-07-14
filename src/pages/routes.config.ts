@@ -274,15 +274,13 @@ export default [
             key: 'data-factory',
             component: '@/pages/test/data-factory/data-list',
             hideInMenu: true,
-            // exact: true,
           },
           {
             path: 'factory',
-            name: '数据模板列表',
+            name: '数据工厂列表',
             key: 'data-factory',
             component: '@/pages/test/data-factory/factory',
             hideInMenu: true,
-            // exact: true,
           },
           {
             path: 'add',

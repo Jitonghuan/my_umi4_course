@@ -23,9 +23,10 @@ const TableSearch: React.FC<TableSearchProps> = ({
 
   return (
     <>
-      <FilterCard className="antd-card-form" bodyStyle={{ paddingBottom: 12 }}></FilterCard>
-      <ContentCard>
+      <FilterCard className="antd-card-form" bodyStyle={{ paddingBottom: 12 }}>
         <Form form={form} {...rest} />
+      </FilterCard>
+      <ContentCard>
         <div className="extra-node-box">
           {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
           <>{extraNode}</>
