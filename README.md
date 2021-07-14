@@ -1,5 +1,6 @@
 # fe-matrix
 
+- 本地开发: http://matrix-local.cfuture.shop:9091/
 - 线上环境: http://matrix.cfuture.shop/
 - 测试环境: http://matrix-test.cfuture.shop/
 
@@ -22,30 +23,11 @@
    - 切换到对应分支
    - 安装依赖: `$ fnpm install`
 
-4. monitor 启动 `$ fe monitor start` 
-   - 配置转发规则 http://127.0.0.1:30323/#/code 中源码编辑补充下面代码 
-   - 如果已有规则为空，则需要将规则以 `[]` 包起来，确保源码是一个数组
+4. `$ npm start` 启动 matrix 服务， 访问 http://matrix-local.cfuture.shop:9091
 
-```json
-{
-  "server_name": "matrix-local.cfuture.shop",
-  "proxy": {
-    "/**": {
-      "type": "web",
-      "port": "9091",
-      "target": "http://127.0.0.1:9091",
-      "changeOrigin": false,
-      "pathRewriter": {}
-    }
-  }
-}
-```
+5. 部署到 test:  [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-test
 
-5. `$ npm start` 启动 matrix 服务， 访问 http://matrix-local.cfuture.shop
-
-6. 部署到 test:  [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-test
-
-7. 部署到 prod: [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-prod
+6. 部署到 prod: [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-prod
 
 ### 分支规范
 
