@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Popconfirm } from 'antd';
-import dayjs from '_dayjs@1.10.4@dayjs';
+import dayjs from 'dayjs';
 
 // 过滤表单 schema
 export const createFilterFormSchema = () => ({
