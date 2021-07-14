@@ -32,6 +32,7 @@ export interface TreeNode extends DataNode {
   moduleId?: number;
 
   children?: TreeNode[];
+  parent?: TreeNode;
 
   [x: string]: any;
 }
