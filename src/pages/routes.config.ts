@@ -31,7 +31,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/test`,
-    redirect: `${PAGE_PREFIX}/test/dataFactory`,
+    redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
   {
     path: `${PAGE_PREFIX}/monitor`,
@@ -52,6 +52,10 @@ export default [
   {
     path: `${PAGE_PREFIX}/test/autotest`,
     redirect: `${PAGE_PREFIX}/test/autotest/test-cases`,
+  },
+  {
+    path: `${PAGE_PREFIX}/test/data-factory`,
+    redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
   {
     path: 'demo',
@@ -260,18 +264,34 @@ export default [
     icon: 'icon-poc_mining',
     routes: [
       {
-        path: 'dataFactory',
+        path: 'data-factory',
         name: '数据工厂',
-        key: 'dataFactory',
-        component: '@/pages/test/data-factory',
-        exact: true,
-      },
-      {
-        path: 'dataFactory/dataFactory-add',
-        name: '新增数据',
-        key: 'dataFactory',
-        hideInMenu: true,
-        component: '@/pages/test/data-factory/data-factory-add',
+        key: 'data-factory',
+        routes: [
+          {
+            path: 'records',
+            name: '数据生成记录',
+            key: 'data-factory',
+            component: '@/pages/test/data-factory/data-list',
+            hideInMenu: true,
+            // exact: true,
+          },
+          {
+            path: 'factory',
+            name: '数据模板列表',
+            key: 'data-factory',
+            component: '@/pages/test/data-factory/factory',
+            hideInMenu: true,
+            // exact: true,
+          },
+          {
+            path: 'add',
+            name: '新增数据',
+            key: 'data-factory',
+            hideInMenu: true,
+            component: '@/pages/test/data-factory/create-data',
+          },
+        ],
       },
       {
         path: 'qualityControl',

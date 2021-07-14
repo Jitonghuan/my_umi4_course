@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Card } from 'antd';
-import From from './form';
+import Form from './form';
 import { TableSearchProps } from './typing';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import './index.less';
@@ -23,10 +23,9 @@ const TableSearch: React.FC<TableSearchProps> = ({
 
   return (
     <>
-      <FilterCard className="antd-card-form" bodyStyle={{ paddingBottom: 12 }}>
-        <From form={form} {...rest} />
-      </FilterCard>
+      <FilterCard className="antd-card-form" bodyStyle={{ paddingBottom: 12 }}></FilterCard>
       <ContentCard>
+        <Form form={form} {...rest} />
         <div className="extra-node-box">
           {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
           <>{extraNode}</>

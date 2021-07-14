@@ -10,11 +10,12 @@ import { ContentCard } from '@/components/vc-page-content';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import usePublicData from '@/utils/usePublicData';
 import useRequest from '@/utils/useRequest';
+import HeaderTabs from '../components/header-tabs';
 import JsonEditor from '@/components/JsonEditor';
 import { queryDataFactoryName, createDataFactory } from '../service';
 import { Item } from '../typing';
 
-const DataFactoryAdd: React.FC = () => {
+export default function CreateData(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [factoryName, setFactoryName] = useState('');
   const [dataNum, setDataNum] = useState<number>(1);
@@ -197,14 +198,8 @@ const DataFactoryAdd: React.FC = () => {
 
   return (
     <MatrixPageContent>
-      <ContentCard
-        bodyStyle={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}
-      >
+      <HeaderTabs activeKey="records" history={props.history} />
+      <ContentCard>
         <Form form={form} style={{ display: 'flex' }}>
           <div style={{ width: '50%' }}>{renderForm(formOptionsLeft)}</div>
           <div style={{ width: '50%' }}>{renderForm(formOptionsRight)}</div>
@@ -214,20 +209,11 @@ const DataFactoryAdd: React.FC = () => {
             <Popconfirm title="确认创建数据？" okText="确定" onConfirm={onSubmit}>
               <Button type="primary">立即创建</Button>
             </Popconfirm>
-
-            <Button
-              onClick={() => {
-                form.resetFields();
-              }}
-            >
-              重置
-            </Button>
+            <Button onClick={() => form.resetFields()}>重置</Button>
             <Button onClick={() => history.goBack()}>取消</Button>
           </Space>
         </div>
       </ContentCard>
     </MatrixPageContent>
   );
-};
-
-export default DataFactoryAdd;
+}
