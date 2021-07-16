@@ -7,7 +7,7 @@
 
 import React, { ReactNode, useState, useRef, useMemo } from 'react';
 import { Select, Spin } from 'antd';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { IProps } from './types';
 // import './index.less';
 

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Form, Button, Space, Popconfirm } from 'antd';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { history } from 'umi';
 import 'codemirror/lib/codemirror.css';
 import FELayout from '@cffe/vc-layout';
