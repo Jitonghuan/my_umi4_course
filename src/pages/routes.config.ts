@@ -270,16 +270,16 @@ export default [
         routes: [
           {
             path: 'records',
-            name: '数据生成记录',
+            name: '数据列表',
             key: 'data-factory',
             component: '@/pages/test/data-factory/data-list',
             hideInMenu: true,
           },
           {
-            path: 'factory',
-            name: '数据工厂列表',
+            path: 'template',
+            name: '数据模板',
             key: 'data-factory',
-            component: '@/pages/test/data-factory/factory',
+            component: '@/pages/test/data-factory/template',
             hideInMenu: true,
           },
           {

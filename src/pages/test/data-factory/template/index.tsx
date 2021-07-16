@@ -1,4 +1,4 @@
-// 上下布局页面
+// 数据模板
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
@@ -9,10 +9,10 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import HeaderTabs from '../components/header-tabs';
 import * as APIS from '../service';
 
-export default function DataFactoryTemplate(props: any) {
+export default function DataTemplate(props: any) {
   return (
     <MatrixPageContent>
-      <HeaderTabs activeKey="factory" history={props.history} />
+      <HeaderTabs activeKey="template" history={props.history} />
       <ContentCard></ContentCard>
     </MatrixPageContent>
   );

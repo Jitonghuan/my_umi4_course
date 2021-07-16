@@ -72,7 +72,7 @@ export default function CreateData(props: any) {
     {
       key: '2',
       type: 'select',
-      label: '数据工厂名称',
+      label: '数据模板',
       dataIndex: 'factoryName',
       placeholder: '请选择',
       required: true,
