@@ -1,20 +1,21 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Button, Tag, Tooltip, Form } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import React, { useContext } from 'react';
+import { Button, Tag, Tooltip, Form, Table } from 'antd';
+import type { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
-import { Link, history } from 'umi';
+import { history } from 'umi';
 import moment from 'moment';
 import FELayout from '@cffe/vc-layout';
 import FEContext from '@/layouts/basic-layout/fe-context';
+import { ContentCard } from '@/components/vc-page-content';
+import HeaderTabs from '../components/header-tabs';
 import useTable from '@/utils/useTable';
-import TableSearch from '@/components/table-search';
+import TableSearchForm from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import usePublicData from '@/utils/usePublicData';
-import { Item } from './typing';
+import { Item } from '../typing';
 import DetailModal from '@/components/detail-modal';
-import { queryDataFactoryList } from './service';
-
+import { queryData } from '../service';
 import './index.less';
 
 type statusTypeItem = {
@@ -28,7 +29,7 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
   1: { text: '成功', color: 'green' },
 };
 
-const DataFactory: React.FC = () => {
+export default function DataFactoryList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { categoryData = [] } = useContext(FEContext);
   const [form] = Form.useForm();
@@ -44,7 +45,7 @@ const DataFactory: React.FC = () => {
     tableProps,
     search: { submit: queryList, reset },
   } = useTable({
-    url: queryDataFactoryList,
+    url: queryData,
     method: 'GET',
     form,
     formatter: (record) => {
@@ -90,7 +91,6 @@ const DataFactory: React.FC = () => {
       title: '数据工厂名称',
       dataIndex: 'factoryName',
       key: 'factoryName',
-      // width: '3%',
     },
     {
       title: '环境',
@@ -111,18 +111,17 @@ const DataFactory: React.FC = () => {
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
       width: '12%',
+      render: (value) => (value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : ''),
     },
     {
       title: '创建人',
       dataIndex: 'createUser',
       key: 'createUser',
-      // width: '4%',
     },
     {
       title: '创建参数',
       dataIndex: 'params',
       key: 'params',
-      // width: '4%',
       render: (text) => {
         if (!text || (typeof text === 'object' && Object.keys(text).length === 0)) return '';
         return (
@@ -146,7 +145,6 @@ const DataFactory: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      // width: '4%',
       render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>,
     },
     {
@@ -175,9 +173,6 @@ const DataFactory: React.FC = () => {
       dataIndex: 'factoryName',
       width: '144px',
       rules: [],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '3',
@@ -188,9 +183,6 @@ const DataFactory: React.FC = () => {
       placeholder: '请选择',
       option: envListType,
       rules: [],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '4',
@@ -200,14 +192,10 @@ const DataFactory: React.FC = () => {
       width: '144px',
       placeholder: '请选择',
       rules: [],
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '5',
       type: 'checkbox',
-      // label: '创建时间',
       dataIndex: 'createUser',
       width: '144px',
       placeholder: '请选择',
@@ -215,51 +203,44 @@ const DataFactory: React.FC = () => {
       checkboxOption: [
         {
           label: '我的数据',
-          value: userInfo?.userName as string,
+          value: userInfo?.userName!,
         },
       ],
-      onChange: () => {
-        queryList();
-      },
+      onChange: () => queryList(),
     },
   ];
 
   return (
     <MatrixPageContent>
-      <TableSearch
-        form={form}
-        formOptions={formOptions}
-        formLayout="inline"
-        columns={columns}
-        {...tableProps}
-        pagination={{
-          ...tableProps.pagination,
-          showTotal: (total) => `共 ${total} 条`,
-          showSizeChanger: true,
-          size: 'small',
-          defaultPageSize: 20,
-        }}
-        extraNode={
-          <Button
-            type="primary"
-            onClick={() => {
-              history.push('./dataFactory/dataFactory-add');
-            }}
-            icon={<PlusOutlined />}
-          >
+      <HeaderTabs activeKey="records" history={props.history} />
+      <ContentCard>
+        <TableSearchForm
+          form={form}
+          formOptions={formOptions}
+          formLayout="inline"
+          onSearch={queryList}
+          reset={reset}
+          searchText="查询"
+          style={{ marginBottom: 24 }}
+        />
+        <div className="table-caption">
+          <h3></h3>
+          <Button type="primary" onClick={() => history.push('./add')} icon={<PlusOutlined />}>
             新增数据
           </Button>
-        }
-        showTableTitle
-        searchText="查询"
-        tableTitle="数据生成记录"
-        className="table-form"
-        onSearch={queryList}
-        reset={reset}
-        // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
-      />
+        </div>
+        <Table
+          className="table-form"
+          columns={columns}
+          {...tableProps}
+          pagination={{
+            ...tableProps.pagination,
+            showTotal: (total) => `共 ${total} 条`,
+            showSizeChanger: true,
+            defaultPageSize: 20,
+          }}
+        />
+      </ContentCard>
     </MatrixPageContent>
   );
-};
-
-export default DataFactory;
+}

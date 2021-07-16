@@ -184,6 +184,7 @@ export default function LeftTree(props: LeftTreeProps) {
       ) : null}
 
       <Tree
+        className="custom-tree"
         key={searchProject || 1}
         blockNode
         treeData={treeData}
