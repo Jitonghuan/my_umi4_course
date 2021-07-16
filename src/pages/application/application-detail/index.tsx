@@ -108,7 +108,7 @@ const ApplicationDetail = (props: IProps) => {
             .filter((key) => {
               // 只有 HBOS 才显示 配置管理 和 启动参数
               if (key === 'configMgr' || key === 'launchParameters') {
-                return appData?.appCategoryCode === 'hbos';
+                return appData?.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1';
               }
 
               if (isContainClient) {
