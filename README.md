@@ -1,4 +1,4 @@
-# fe-matrix
+# FE-MATRIX
 
 - 本地开发: http://matrix-local.cfuture.shop:9091/
 - 线上环境: http://matrix.cfuture.shop/
@@ -6,13 +6,13 @@
 
 ## Getting Started
 
-1. fe 环境初始化
-   - `$ fe` 查看是否安装 fe-cli，未安装执行以下步骤，如已安装则执行 2
-   - `$ npm install -g @cffe/fe-cli --registry=http://registry.npm.cfuture.cc`
-   - `$ npm install -g @cffe/fnpm --registry=http://registry.npm.cfuture.cc`
-   - `$ fe env init` 按照指示一步一步执行
+1. fe 环境初始化 （也可以只执行 1.2，安装 fnpm 即可）
+   - 1.1 `$ fe` 查看是否已安装 fe-cli，如未安装则执行 `$ npm install -g @cffe/fe-cli --registry=http://registry.npm.cfuture.cc` ，首次安装完后请执行 `$ fe env init` 初始化开发环境；
+   - 1.2 `$ fnpm -v` 查看是否已安装 fnpm，如未安装则执行 `$ npm install -g @cffe/fnpm --registry=http://registry.npm.cfuture.cc`
 
 2. 配置 Host
+
+绑定 host 是为了在本地开发时，能使用 cfuture.shop 的 cookie 进行接口联调：
 
 ```host
 127.0.0.1 matrix-local.cfuture.shop
@@ -20,10 +20,10 @@
 
 3. 初始化项目
    - clone 项目: `$ git clone git@gitlab.cfuture.shop:fe-data-app/fe-matrix.git`
-   - 切换到对应分支
+   - 切换到对应分支，分支规范见下文
    - 安装依赖: `$ fnpm install`
 
-4. `$ npm start` 启动 matrix 服务， 访问 http://matrix-local.cfuture.shop:9091
+4. `$ npm start` 启动本地开发， 访问 http://matrix-local.cfuture.shop:9091 （登录账号同 sso ）
 
 5. 部署到 test:  [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-test
 
