@@ -17,7 +17,7 @@ export default function HeaderTabs(props: HeaderTabsProps) {
     <FilterCard className="layout-compact">
       <Tabs activeKey={props.activeKey} onChange={(next) => props.history.push(`/matrix/test/data-factory/${next}`)}>
         <Tabs.TabPane tab="数据列表" key="records" />
-        <Tabs.TabPane tab="数据模板" key="template" />
+        {/* <Tabs.TabPane tab="数据模板" key="template" /> */}
       </Tabs>
     </FilterCard>
   );
