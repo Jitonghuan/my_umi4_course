@@ -88,7 +88,7 @@ export default function DataFactoryList(props: any) {
       },
     },
     {
-      title: '数据工厂名称',
+      title: '模板名称',
       dataIndex: 'factoryName',
       key: 'factoryName',
     },
@@ -161,7 +161,7 @@ export default function DataFactoryList(props: any) {
       type: 'select',
       label: '项目',
       dataIndex: 'project',
-      width: '144px',
+      width: '140px',
       placeholder: '请输入',
       option: appTypeData,
       rules: [],
@@ -169,7 +169,7 @@ export default function DataFactoryList(props: any) {
     {
       key: '2',
       type: 'input',
-      label: '数据工厂名称',
+      label: '模板名称',
       dataIndex: 'factoryName',
       width: '144px',
       rules: [],
@@ -179,7 +179,7 @@ export default function DataFactoryList(props: any) {
       type: 'select',
       label: '创建环境',
       dataIndex: 'env',
-      width: '144px',
+      width: '120px',
       placeholder: '请选择',
       option: envListType,
       rules: [],
@@ -221,7 +221,6 @@ export default function DataFactoryList(props: any) {
           onSearch={queryList}
           reset={reset}
           searchText="查询"
-          style={{ marginBottom: 24 }}
         />
         <div className="table-caption">
           <h3></h3>

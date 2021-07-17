@@ -3,17 +3,18 @@
 // @create 2021/05/30 10:10
 
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { Form, Table, Button, Input, Select, message, DatePicker, Checkbox, Popconfirm, Modal } from 'antd';
+import { Form, Table, Button, Input, Select, message, DatePicker, Checkbox, Modal } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import moment from 'moment';
 import FELayout from '@cffe/vc-layout';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import HeaderTabs from '../components/header-tabs';
 import usePublicData from '@/utils/usePublicData';
 import { useTableData } from './hooks';
 import { EditorMode } from '../interfaces';
 import * as APIS from '../service';
-import { getRequest, postRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
+import TemplateEditor from '../components/template-editor';
 
 const { Item: FormItem } = Form;
 
@@ -43,8 +44,14 @@ export default function DataTemplate(props: any) {
 
   const handleReset = useCallback(() => {
     searchField.resetFields();
-    setSearchParams({});
+    const nextValues = searchField.getFieldsValue();
+    setSearchParams(nextValues);
   }, [searchField]);
+
+  useEffect(() => {
+    const values = searchField.getFieldsValue();
+    setSearchParams(values);
+  }, []);
 
   // 删除模板
   const handleDelItem = useCallback(async () => {
@@ -64,19 +71,18 @@ export default function DataTemplate(props: any) {
     setEditorMode('EDIT');
   };
 
+  const handleEditorSave = () => {
+    setEditorMode('HIDE');
+    handleSearch();
+  };
+
   return (
     <MatrixPageContent>
       <HeaderTabs activeKey="template" history={props.history} />
       <ContentCard>
         <Form form={searchField} layout="inline">
-          <FormItem label="项目" name="project">
-            <Select
-              options={appTypeData}
-              placeholder="请选择"
-              style={{ width: 140 }}
-              onChange={handleSearch}
-              allowClear
-            />
+          <FormItem label="项目" name="project" initialValue="HBOS">
+            <Select options={appTypeData} placeholder="请选择" style={{ width: 140 }} onChange={handleSearch} />
           </FormItem>
           <FormItem label="环境" name="env">
             <Select
@@ -112,16 +118,21 @@ export default function DataTemplate(props: any) {
           </Button>
         </div>
         <Table pagination={false} dataSource={tableData} loading={loading}>
-          <Table.Column dataIndex="id" title="序号" />
+          <Table.Column dataIndex="id" title="序号" width={80} />
           <Table.Column dataIndex="name" title="模板名称" />
           <Table.Column dataIndex="project" title="项目" />
           <Table.Column dataIndex="env" title="环境" />
-          <Table.Column dataIndex="variable" title="可传变量" />
+          <Table.Column
+            dataIndex="variable"
+            title="可传变量"
+            render={(_, record: any) => Object.keys(record.params || {}).join(', ')}
+          />
           <Table.Column dataIndex="createUser" title="创建人" />
           <Table.Column
             dataIndex="gmtCreate"
             title="创建时间"
-            render={(value: string) => (value ? moment(value).format('YYYY-MM-DD HH:mm') : '')}
+            width={170}
+            render={(value: string) => (value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : '')}
           />
           <Table.Column
             title="操作"
@@ -158,6 +169,13 @@ export default function DataTemplate(props: any) {
           </FormItem>
         </Form>
       </Modal>
+
+      <TemplateEditor
+        mode={editorMode}
+        initData={editRecord}
+        onClose={() => setEditorMode('HIDE')}
+        onSave={handleEditorSave}
+      />
     </MatrixPageContent>
   );
 }

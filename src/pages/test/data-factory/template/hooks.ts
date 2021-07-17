@@ -11,10 +11,12 @@ export function useTableData(queryParams: Record<string, any>): [any[], boolean]
   const [loading, setLoading] = useState(false);
 
   const loadData = useCallback(async () => {
+    if (!queryParams) return;
+
     try {
       setLoading(true);
       const result = await getRequest(APIS.queryDataFactory, {
-        data: queryParams || {},
+        data: queryParams,
       });
       setData(result.data || []);
     } finally {
