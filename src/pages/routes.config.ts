@@ -61,7 +61,7 @@ export default [
     path: 'demo',
     name: '示例页面',
     icon: 'icon-report',
-    hideInMenu: process.env.UMI_ENV !== 'dev',
+    hideInMenu: process.env.NODE_ENV !== 'development',
     routes: [
       {
         path: 'layout-normal',

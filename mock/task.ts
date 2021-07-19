@@ -8,7 +8,7 @@ export default {
         python_version: 'CPython 3.8.3',
       },
       record_id: 164,
-      report_tree: [
+      reportTree: [
         {
           children: [
             {

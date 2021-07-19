@@ -6,10 +6,10 @@ import { TreeNode } from '../../interfaces';
 
 const keys = ['projectId', 'moduleId', 'belongId', 'caseId'];
 
-export function treeDataFormatter(report_tree: any[], level = 1, parent?: TreeNode): TreeNode[] {
+export function treeDataFormatter(reportTree: any[], level = 1, parent?: TreeNode): TreeNode[] {
   const key = keys[level - 1];
 
-  return report_tree.map((item: any) => {
+  return reportTree.map((item: any) => {
     const { children, ...info } = item;
     const node: TreeNode = {
       bizId: info[key],

@@ -23,7 +23,7 @@ export function useReportTreeData(recordId: number): [any, TreeNode[], boolean] 
       });
 
       setData(result.data || {});
-      setTree(treeDataFormatter(result.data?.report_tree || []));
+      setTree(treeDataFormatter(result.data?.reportTree || []));
     } finally {
       setLoading(false);
     }
