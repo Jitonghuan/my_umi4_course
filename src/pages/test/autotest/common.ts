@@ -165,7 +165,7 @@ export function formatTreeSelectData(payload: any[], deep = 3) {
   const formatter = (list: any[], level = 1, parentName = '') => {
     return list.map((n: any) => {
       const node: Record<string, any> = {
-        value: `l${level}-${n.id}`,
+        value: level === deep ? n.id : `l${level}-${n.id}`,
         title: n.name,
         selectable: level === deep,
         disabled: level < deep && !n.children?.length,
