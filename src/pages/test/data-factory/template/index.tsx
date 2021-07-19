@@ -25,6 +25,7 @@ export default function DataTemplate(props: any) {
     isUseAppBranch: false,
     isUseAppLists: false,
     isEnvType: true,
+    useCodeValue: true,
   });
   const [searchField] = Form.useForm();
   const [searchParams, setSearchParams] = useState<any>();
@@ -33,10 +34,11 @@ export default function DataTemplate(props: any) {
   const [editRecord, setEditRecord] = useState<any>();
 
   const handleSearch = useCallback(() => {
-    const values = searchField.getFieldsValue();
+    const { createTime, ...others } = searchField.getFieldsValue();
     setSearchParams({
-      ...values,
-      createTime: values.createTime ? values.createTime.format('YYYY-MM-DD HH:mm:ss') : undefined,
+      ...others,
+      startTime: createTime && createTime[0] ? createTime[0].format('YYYY-MM-DD HH:mm:ss') : undefined,
+      endTime: createTime && createTime[1] ? createTime[1].format('YYYY-MM-DD HH:mm:ss') : undefined,
     });
   }, [searchField]);
 
@@ -75,7 +77,7 @@ export default function DataTemplate(props: any) {
       <HeaderTabs activeKey="template" history={props.history} />
       <ContentCard>
         <Form form={searchField} layout="inline">
-          <FormItem label="项目" name="project" initialValue="HBOS">
+          <FormItem label="项目" name="project">
             <Select options={appTypeData} placeholder="请选择" style={{ width: 140 }} onChange={handleSearch} />
           </FormItem>
           <FormItem label="环境" name="env">
@@ -91,7 +93,7 @@ export default function DataTemplate(props: any) {
             <Input placeholder="请输入" style={{ width: 140 }} />
           </FormItem>
           <FormItem label="创建时间" name="createTime">
-            <DatePicker placeholder="请选择" style={{ width: 140 }} />
+            <DatePicker.RangePicker style={{ width: 240 }} />
           </FormItem>
           <FormItem label="" name="createUser">
             <Checkbox.Group options={[{ label: '我的模板', value: userInfo.userName! }]} onChange={handleSearch} />
