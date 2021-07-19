@@ -54,6 +54,10 @@ export default [
     redirect: `${PAGE_PREFIX}/test/autotest/test-cases`,
   },
   {
+    path: `${PAGE_PREFIX}/operation/cluster`,
+    redirect: `${PAGE_PREFIX}/operation/cluster/traffic-scheduling`,
+  },
+  {
     path: `${PAGE_PREFIX}/test/data-factory`,
     redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
@@ -363,6 +367,57 @@ export default [
       },
     ],
   },
+
+  {
+    path: 'operation',
+    name: '运维管理',
+    icon: 'icon-manage',
+    routes: [
+      {
+        path: 'cluster',
+        name: '双集群管理',
+        key: 'cluster',
+        routes: [
+          {
+            path: 'group-view',
+            name: '集群看板',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/group-view',
+            hideInMenu: true,
+          },
+          {
+            path: 'traffic-scheduling',
+            name: '流量调度',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/traffic-scheduling',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-synchro',
+            name: '集群同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/cluster-synchro',
+            hideInMenu: true,
+          },
+          {
+            path: 'application-synchro',
+            name: '应用同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/application-synchro',
+            hideInMenu: true,
+          },
+          {
+            path: 'operation-log',
+            name: '操作日志',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/operation-log',
+            hideInMenu: true,
+          },
+        ],
+      },
+    ],
+  },
+
   {
     path: 'monitor',
     name: '监控管理',
