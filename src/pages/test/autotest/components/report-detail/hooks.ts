@@ -41,7 +41,10 @@ export function useReportDetailData(recordId?: number, selectedNode?: TreeNode):
   const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
-    if (!recordId || !selectedNode) return;
+    if (!recordId || !selectedNode) {
+      setData([]);
+      return;
+    }
 
     setLoading(true);
     try {
