@@ -87,7 +87,7 @@ export default function TaskEditor(props: TaskEditorProps) {
       title={mode === 'ADD' ? '新增任务' : '编辑任务'}
       maskClosable={false}
       onClose={onClose}
-      width={600}
+      width={720}
       footer={
         <div className="drawer-custom-footer">
           <Button type="primary" onClick={handleSubmit}>
