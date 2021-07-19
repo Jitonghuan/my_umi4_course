@@ -7,7 +7,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
-import { Form, Popover, Popconfirm, Button, message } from 'antd';
+import { Form, Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import VCForm, { IColumns } from '@cffe/vc-form';
 import EditConfig, { EditConfigIProps } from './edit-config';

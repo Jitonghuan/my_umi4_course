@@ -63,18 +63,61 @@
     }
 
     span {
-      flex: 0 0 48px;
-      margin-left: 8px;
+      flex: 0 0 40px;
+      margin-left: 6px;
     }
   }
 
   .task-report-tree {
-    padding: 20px;
+    padding: 20px 16px;
     height: 360px;
-    overflow: hidden;
+    width: 476px;
+    overflow: auto;
+  }
+
+  .detail-loading {
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .task-report-right {
     flex: 1 1 0;
+    height: 590px;
+    overflow: auto;
+
+    h4 {
+      margin-bottom: 12px;
+    }
+
+    .ant-table {
+      margin-bottom: 20px;
+    }
+  }
+
+  .ant-collapse:empty {
+    display: none;
+  }
+
+  .custom-tree-node {
+    display: flex;
+
+    > b {
+      flex: 1 1 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: normal;
+
+      > .anticon {
+        margin-right: 4px;
+      }
+    }
+
+    > span {
+      flex: 0 0 40px;
+      margin-left: 6px;
+    }
   }
 }

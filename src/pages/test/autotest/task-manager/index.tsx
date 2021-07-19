@@ -178,7 +178,7 @@ export default function TaskManager(props: any) {
             title="操作"
             render={(_, record: TaskItemVO, index) => {
               const reportCount = record.reportCount > 99 ? '99+' : record.reportCount ?? null;
-              const showRecordTitle = typeof reportCount === 'number' ? `查看报告(${record.reportCount})` : '查看报告';
+              const showRecordTitle = reportCount !== null ? `查看报告(${reportCount})` : '查看报告';
 
               return (
                 <div className="action-cell">

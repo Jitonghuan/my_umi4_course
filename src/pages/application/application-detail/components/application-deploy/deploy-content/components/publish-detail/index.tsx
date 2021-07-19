@@ -12,9 +12,6 @@ import DetailContext from '../../../../../context';
 import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
-import { name } from 'dayjs/locale/*';
-import { queryEnvLists } from '@/pages/monitor/board/service';
-import { envCodeList } from '@/pages/test/environment/service';
 
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;

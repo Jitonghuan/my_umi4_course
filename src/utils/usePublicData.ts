@@ -37,6 +37,9 @@ interface UsePublicDataProps {
 
   // 发布环境
   isEnvsUrl?: boolean;
+
+  /** 是否使用 code 作为 value 值 */
+  useCodeValue?: boolean;
 }
 
 const usePublicData = (props: UsePublicDataProps) => {
@@ -49,6 +52,8 @@ const usePublicData = (props: UsePublicDataProps) => {
     isUseAppBranch = true,
     isEnvType,
     isEnvsUrl,
+
+    useCodeValue = false,
   } = props;
 
   // 查询应用分类
@@ -59,8 +64,9 @@ const usePublicData = (props: UsePublicDataProps) => {
       return data.dataSource?.map((v: any) => {
         return {
           ...v,
-          value: v?.categoryName,
           key: v?.categoryCode,
+          value: useCodeValue ? v?.categoryCode : v?.categoryName,
+          label: v?.categoryName,
         };
       });
     },
@@ -76,6 +82,7 @@ const usePublicData = (props: UsePublicDataProps) => {
           ...v,
           key: v?.appCode,
           value: v?.appCode,
+          label: v?.appCode,
         };
       });
     },
@@ -91,6 +98,7 @@ const usePublicData = (props: UsePublicDataProps) => {
           ...v,
           key: v?.envCode,
           value: v?.envCode,
+          label: v?.envCode,
         };
       });
     },
@@ -106,6 +114,7 @@ const usePublicData = (props: UsePublicDataProps) => {
           ...v,
           key: v?.branchName,
           value: v?.branchName,
+          label: v?.branchName,
         };
       });
     },
@@ -120,7 +129,8 @@ const usePublicData = (props: UsePublicDataProps) => {
         return {
           ...v,
           key: v?.typeCode,
-          value: v?.typeName,
+          value: useCodeValue ? v?.typeCode : v?.typeName,
+          label: v?.typeName,
         };
       });
     },
@@ -135,7 +145,8 @@ const usePublicData = (props: UsePublicDataProps) => {
         return {
           ...v,
           key: v?.envCode,
-          value: v?.envName,
+          value: useCodeValue ? v?.envCode : v?.envName,
+          label: v?.envName,
         };
       });
     },

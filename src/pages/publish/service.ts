@@ -1,3 +1,4 @@
+import { stringify } from 'qs';
 import request, { postRequest, getRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 import { IFuncItem, IPlanItem } from './typing';
@@ -213,10 +214,6 @@ export const getApplyRelInfoReq = (params: { id: string }) =>
 /** 发布功能报表导出 */
 export const exportPublishFunctionUrl = `${ds.apiPrefix}/publishManage/function/exportPublishFunction`;
 
-export const exportPublishFunction = async (params: any) => {
-  const result = await getRequest(exportPublishFunctionUrl, {
-    data: params,
-  });
-
-  return result.data as string;
+export const getExportPublishFunctionLink = (params: any) => {
+  return `${exportPublishFunctionUrl}?${stringify(params)}`;
 };

@@ -15,7 +15,8 @@ export function useCaseListForTaskEditor() {
       data: { suiteType: 0 },
     });
 
-    const tree = formatTreeSelectData(result.data || []);
+    // 项目-模块-接口-用例
+    const tree = formatTreeSelectData(result.data || [], 4);
     setData(tree);
   }, []);
 
@@ -34,7 +35,8 @@ export function useSceneListForTaskEditor() {
       data: { suiteType: 1 },
     });
 
-    const tree = formatTreeSelectData(result.data || []);
+    // 项目-模块-场景
+    const tree = formatTreeSelectData(result.data || [], 3);
     setData(tree);
   }, []);
 

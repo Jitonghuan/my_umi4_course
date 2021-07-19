@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Popconfirm } from 'antd';
-import dayjs from '_dayjs@1.10.4@dayjs';
+import moment from 'moment';
 
 // 过滤表单 schema
 export const createFilterFormSchema = () => ({
@@ -46,7 +46,7 @@ export const createTableSchema = ({ onCancelClick }: { onCancelClick: (record: a
     width: 100,
     title: '创建时间',
     dataIndex: 'gmtCreate',
-    render: (val: string) => (val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : ''),
+    render: (val: string) => (val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : ''),
   },
   {
     width: 100,

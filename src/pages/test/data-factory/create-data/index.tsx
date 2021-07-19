@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Form, Button, Space, Popconfirm } from 'antd';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { history } from 'umi';
 import 'codemirror/lib/codemirror.css';
 import FELayout from '@cffe/vc-layout';
@@ -10,11 +10,12 @@ import { ContentCard } from '@/components/vc-page-content';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import usePublicData from '@/utils/usePublicData';
 import useRequest from '@/utils/useRequest';
+import HeaderTabs from '../components/header-tabs';
 import JsonEditor from '@/components/JsonEditor';
-import { queryDataFactoryName, createDataFactory } from '../service';
+import { queryDataFactory, createData } from '../service';
 import { Item } from '../typing';
 
-const DataFactoryAdd: React.FC = () => {
+export default function CreateData(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [factoryName, setFactoryName] = useState('');
   const [dataNum, setDataNum] = useState<number>(1);
@@ -29,7 +30,7 @@ const DataFactoryAdd: React.FC = () => {
 
   // 获取数据工厂名称
   const { data: factoryNameData, run: queryDataFactoryNameFun } = useRequest({
-    api: queryDataFactoryName,
+    api: queryDataFactory,
     method: 'GET',
     formatData: (data = []) => {
       return data?.map((v: any) => {
@@ -44,7 +45,7 @@ const DataFactoryAdd: React.FC = () => {
 
   //创建数据
   const { data: dataFactory = [], run: createDataFactoryFun } = useRequest({
-    api: createDataFactory,
+    api: createData,
     method: 'POST',
     successText: '创建成功',
     isSuccessModal: true,
@@ -71,7 +72,7 @@ const DataFactoryAdd: React.FC = () => {
     {
       key: '2',
       type: 'select',
-      label: '数据工厂名称',
+      label: '数据模板',
       dataIndex: 'factoryName',
       placeholder: '请选择',
       required: true,
@@ -197,14 +198,8 @@ const DataFactoryAdd: React.FC = () => {
 
   return (
     <MatrixPageContent>
-      <ContentCard
-        bodyStyle={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}
-      >
+      <HeaderTabs activeKey="records" history={props.history} />
+      <ContentCard>
         <Form form={form} style={{ display: 'flex' }}>
           <div style={{ width: '50%' }}>{renderForm(formOptionsLeft)}</div>
           <div style={{ width: '50%' }}>{renderForm(formOptionsRight)}</div>
@@ -214,20 +209,11 @@ const DataFactoryAdd: React.FC = () => {
             <Popconfirm title="确认创建数据？" okText="确定" onConfirm={onSubmit}>
               <Button type="primary">立即创建</Button>
             </Popconfirm>
-
-            <Button
-              onClick={() => {
-                form.resetFields();
-              }}
-            >
-              重置
-            </Button>
+            <Button onClick={() => form.resetFields()}>重置</Button>
             <Button onClick={() => history.goBack()}>取消</Button>
           </Space>
         </div>
       </ContentCard>
     </MatrixPageContent>
   );
-};
-
-export default DataFactoryAdd;
+}

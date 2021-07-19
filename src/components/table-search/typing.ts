@@ -6,6 +6,7 @@ export type TypeProps = 'select' | 'input' | 'date' | 'range' | 'area' | 'inputN
 
 export interface OptionProps {
   value: string;
+  label: string;
   key: React.Key;
 }
 

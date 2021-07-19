@@ -124,65 +124,64 @@ export function createNodeDataFromSceneItem(item: SceneItemVO): TreeNode {
 export function formatTreeData(payload: any[]): TreeNode[] {
   if (!payload?.length) return [];
 
-  // 第一层是项目
-  return payload.map((n1: any) => ({
-    bizId: n1.id,
-    key: `l1-${n1.id}`,
-    title: n1.name, // 项目名
-    desc: n1.desc,
-    selectable: true,
-    level: 1, // 加上 level 方便判断
-    // 第二层是模块
-    children: (n1.children || []).map((n2: any) => ({
-      bizId: n2.id,
-      key: `l2-${n2.id}`,
-      title: n2.name, // 模块名
-      desc: n2.desc,
-      selectable: true,
-      level: 2,
-      projectId: n1.id,
-      // 第三层是接口
-      children: (n2.children || []).map((n3: any) => ({
-        bizId: n3.id,
-        key: `l3-${n3.id}`,
-        title: n3.name, // 接口或场景名
-        desc: n3.desc, // 场景描述
+  const formatter = (list: any[], level = 1, addon: Record<string, any>) => {
+    return list.map((n: any) => {
+      const node: TreeNode = {
+        bizId: n.id,
+        key: `l${level}-${n.id}`,
+        title: n.name,
+        desc: n.desc,
         selectable: true,
-        isLeaf: true,
-        level: 3,
-        projectId: n1.id,
-        moduleId: n2.id,
-      })),
-    })),
-  }));
+        level,
+        ...addon,
+      };
+
+      const nextAddon = { ...addon };
+      // 从第一层取项目ID，放到后代节点中
+      if (level === 1) nextAddon.projectId = n.id;
+      // 从第二层取模块ID，放到后代节点中
+      if (level === 2) nextAddon.moduleId = n.id;
+      // 第三层是接口 ID 或场景 ID
+
+      if (level < 3) {
+        node.children = formatter(n.children || [], level + 1, nextAddon);
+      } else {
+        node.isLeaf = true;
+      }
+
+      return node;
+    });
+  };
+
+  return formatter(payload, 1, {});
 }
 
-export function formatTreeSelectData(payload: any[]) {
+export function formatTreeSelectData(payload: any[], deep = 3) {
   if (!payload?.length) return [];
   if (Array.isArray(payload[0])) {
     payload = payload.flat(1);
   }
 
-  return payload.map((n1: any) => ({
-    value: `l1-${n1.id}`,
-    title: n1.name,
-    // desc: n1.desc,
-    // level: 1,
-    selectable: false,
-    children: (n1.children || []).map((n2: any) => ({
-      value: `l2-${n2.id}`,
-      title: n2.name,
-      // desc: n2.desc,
-      // level: 2,
-      selectable: false,
-      children: (n2.children || []).map((n3: any) => ({
-        value: n3.id,
-        title: `${n1.name}/${n2.name}/${n3.name}`,
-        // desc: n3.desc,
-        // level: 3,
-        isLeaf: true,
-        selectable: true,
-      })),
-    })),
-  }));
+  const formatter = (list: any[], level = 1, parentName = '') => {
+    return list.map((n: any) => {
+      const node: Record<string, any> = {
+        value: level === deep ? n.id : `l${level}-${n.id}`,
+        title: n.name,
+        selectable: level === deep,
+        disabled: level < deep && !n.children?.length,
+      };
+      const display = parentName ? `${parentName}/${n.name}` : n.name;
+
+      if (level < deep) {
+        node.children = formatter(n.children || [], level + 1, display);
+      } else {
+        node.display = display;
+        node.isLeaf = true;
+      }
+
+      return node;
+    });
+  };
+
+  return formatter(payload, 1);
 }

@@ -1,3 +1,6 @@
+// umi config
+// @see https://umijs.org/zh-CN/config
+
 import { defineConfig } from 'umi';
 import path from 'path';
 
@@ -44,7 +47,6 @@ export default defineConfig({
     { src: `${publicPathPrefix}/${ds.appKey}/react-dom.min.js` },
   ],
 
-  // 按需加载，当前配置，默认所有页面按需加载
   // dynamicImport: {},
 
   // split chunk TODO
@@ -73,7 +75,8 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      target: 'http://matrix-api-test.cfuture.shop/',
+      target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.129.247:8080/',
       // target: 'http://10.10.129.177:8080/',
       // target: 'http://10.10.129.128:8080',
@@ -85,7 +88,6 @@ export default defineConfig({
   },
 
   devServer: {
-    // open: true,
     port: 9091,
   },
 
