@@ -4,10 +4,12 @@
 
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import { Drawer, Table } from 'antd';
+import { Drawer, Table, DatePicker } from 'antd';
 import { TaskItemVO, TaskReportItemVO } from '../interfaces';
 import { useReportList } from './hooks';
 import ReportDetail from '../components/report-detail';
+
+const { RangePicker } = DatePicker;
 
 export interface ReportListProps {
   task?: TaskItemVO;
@@ -17,7 +19,8 @@ export interface ReportListProps {
 export default function ReportList(props: ReportListProps) {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [tableData, total, loading] = useReportList(props.task?.id!, pageIndex, pageSize);
+  const [filterRange, setFilterRange] = useState<moment.Moment[]>();
+  const [tableData, total, loading] = useReportList(props.task?.id!, pageIndex, pageSize, filterRange);
   const [detailItem, setDetailItem] = useState<TaskReportItemVO>();
 
   useEffect(() => {
@@ -27,7 +30,10 @@ export default function ReportList(props: ReportListProps) {
   return (
     <>
       <Drawer width={900} visible={!!props.task} title="报告管理" onClose={props.onClose} maskClosable={false}>
-        <h3 style={{ marginBottom: 16 }}>任务名称: {props.task?.name}</h3>
+        <div className="table-caption">
+          <h3>任务名称: {props.task?.name}</h3>
+          <RangePicker value={filterRange as any} onChange={(v: any) => setFilterRange(v)} />
+        </div>
         <Table
           dataSource={tableData}
           loading={loading}
