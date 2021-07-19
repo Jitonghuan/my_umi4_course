@@ -3,7 +3,7 @@
 // @create 2021/05/30 10:10
 
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { Form, Table, Button, Input, Select, message, DatePicker, Checkbox, Modal } from 'antd';
+import { Form, Table, Button, Input, Select, message, DatePicker, Checkbox, Popconfirm } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import moment from 'moment';
 import FELayout from '@cffe/vc-layout';
@@ -31,8 +31,6 @@ export default function DataTemplate(props: any) {
   const [tableData, loading] = useTableData(searchParams);
   const [editorMode, setEditorMode] = useState<EditorMode>('HIDE');
   const [editRecord, setEditRecord] = useState<any>();
-  const [delRecord, setDelRecord] = useState<any>();
-  const [delEnv, setDelEnv] = useState<string>();
 
   const handleSearch = useCallback(() => {
     const values = searchField.getFieldsValue();
@@ -54,17 +52,13 @@ export default function DataTemplate(props: any) {
   }, []);
 
   // 删除模板
-  const handleDelItem = useCallback(async () => {
-    if (!delEnv) return;
-
+  const handleDelItem = useCallback(async (record) => {
     await postRequest(APIS.delDataFactory, {
-      data: { factoryId: delRecord.id, env: delEnv },
+      data: { factoryId: record.id },
     });
     message.success('模板已删除！');
-
-    setDelRecord(undefined);
-    setDelEnv(undefined);
-  }, [delRecord, delEnv]);
+    handleSearch();
+  }, []);
 
   const handleEditItem = (record: any) => {
     setEditRecord(record);
@@ -139,36 +133,15 @@ export default function DataTemplate(props: any) {
             render={(_, record: any) => (
               <div className="action-cell">
                 <a onClick={() => handleEditItem(record)}>编辑</a>
-                <a
-                  style={{ color: 'red' }}
-                  onClick={() => {
-                    setDelRecord(record), setDelEnv(undefined);
-                  }}
-                >
-                  删除
-                </a>
+                <Popconfirm title="确定要删除此模板吗？" onConfirm={() => handleDelItem(record)}>
+                  <a style={{ color: 'red' }}>删除</a>
+                </Popconfirm>
               </div>
             )}
             width={100}
           />
         </Table>
       </ContentCard>
-      <Modal
-        title="删除模板"
-        visible={!!delRecord}
-        maskClosable={false}
-        onOk={handleDelItem}
-        onCancel={() => setDelRecord(undefined)}
-      >
-        <Form labelCol={{ flex: '140px' }}>
-          <FormItem label="请选择要删除的环境：">
-            <Select
-              placeholder="请选择"
-              options={delRecord?.env?.split(',').map((n: string) => ({ label: n, value: n })) || []}
-            />
-          </FormItem>
-        </Form>
-      </Modal>
 
       <TemplateEditor
         mode={editorMode}
