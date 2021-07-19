@@ -7,6 +7,7 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import HeaderTabs from '../../components/header-tabs';
 // import './index.less';
+
 export default function Traffic(props: any) {
   const { Step } = Steps;
   const { confirm } = Modal;
@@ -67,7 +68,7 @@ export default function Traffic(props: any) {
             )}
             {current > 0 && (
               <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-                取消
+                取 消
               </Button>
             )}
           </div>
