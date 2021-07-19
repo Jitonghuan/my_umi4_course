@@ -27,6 +27,7 @@ export default function DetailModal(props: DetailModal) {
   const titleRender = props.titleRender || defaultTitleRender(limit || 30);
   const [visible, setVisible] = useState(false);
 
+  if (typeof data === 'boolean' || typeof data === 'number') return (data as any).toString();
   if (!data || data.length < 20) return data as any;
 
   return (
