@@ -32,7 +32,7 @@ export default function ReportList(props: ReportListProps) {
       <Drawer width={900} visible={!!props.task} title="报告管理" onClose={props.onClose} maskClosable={false}>
         <div className="table-caption">
           <h3>任务名称: {props.task?.name}</h3>
-          <RangePicker value={filterRange as any} onChange={(v: any) => setFilterRange(v)} />
+          <RangePicker value={filterRange as any} showTime onChange={(v: any) => setFilterRange(v)} />
         </div>
         <Table
           dataSource={tableData}
