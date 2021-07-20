@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import request, { postRequest, getRequest } from '@/utils/request';
+import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 import { IFuncItem, IPlanItem } from './typing';
 /** 通用接口 */
@@ -102,17 +102,13 @@ export const addFuncMultiReq = (params: IFuncItem[]) =>
 /** 修改发布功能 */
 export const updateFuncUrl = `${ds.apiPrefix}/publishManage/function/update`;
 export const updateFuncReq = (params: IFuncItem) =>
-  postRequest(updateFuncUrl, {
-    method: 'PUT',
+  putRequest(updateFuncUrl, {
     data: params,
   });
 
 /** 删除发布功能 Method: DELETE */
 export const deleteFuncUrl = `${ds.apiPrefix}/publishManage/function`;
-export const deleteFunc = (params: { funcId: string }) =>
-  request(`${deleteFuncUrl}/${params.funcId}`, {
-    method: 'DELETE',
-  });
+export const deleteFunc = (params: { funcId: string }) => delRequest(`${deleteFuncUrl}/${params.funcId}`);
 
 /** 发布功能结束 */
 
@@ -153,17 +149,14 @@ export const addPublishPlanMultiReq = (params: { plan: IPlanItem; funcIds: any[]
 /** 修改发布计划 */
 export const updatePublishPlanUrl = `${ds.apiPrefix}/publishManage/plan/update`;
 export const updatePublishPlanReq = (params: IFuncItem) =>
-  postRequest(updatePublishPlanUrl, {
-    method: 'PUT',
+  putRequest(updatePublishPlanUrl, {
     data: params,
   });
 
 /** 删除发布计划 Method: DELETE */
 export const deletePublishPlanUrl = `${ds.apiPrefix}/publishManage/plan`;
 export const deletePublishPlanReq = (params: { planId: string }) =>
-  request(`${deletePublishPlanUrl}/${params.planId}`, {
-    method: 'DELETE',
-  });
+  delRequest(`${deletePublishPlanUrl}/${params.planId}`);
 /** 发布计划结束 */
 
 /** 发布申请相关 */

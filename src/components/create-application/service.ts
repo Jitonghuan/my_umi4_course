@@ -1,4 +1,4 @@
-import request, { postRequest, getRequest } from '@/utils/request';
+import request, { postRequest, getRequest, putRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 import { FormValue } from './types';
 
@@ -8,8 +8,7 @@ export const createApp = (params: Omit<FormValue, 'id'>) =>
 
 /** 编辑应用 */
 export const updateApp = (params: FormValue) =>
-  request(`${ds.apiPrefix}/appManage/update`, {
-    method: 'PUT',
+  putRequest(`${ds.apiPrefix}/appManage/update`, {
     data: params,
   });
 
