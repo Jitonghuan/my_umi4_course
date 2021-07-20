@@ -1,4 +1,4 @@
-import request, { postRequest, getRequest } from '@/utils/request';
+import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 
 /** 查询应用列表 */
@@ -51,11 +51,7 @@ export const deleteApp = (params: {
   appCode: string;
   /** id */
   id: string | number;
-}) =>
-  request(`${ds.apiPrefix}/appManage/delete/${params.id}`, {
-    method: 'DELETE',
-    // data: params,
-  });
+}) => delRequest(`${ds.apiPrefix}/appManage/delete/${params.id}`);
 
 /** 分支列表 */
 export const queryBranchListUrl = `${ds.apiPrefix}/releaseManage/branch/list`;
@@ -65,8 +61,7 @@ export const deleteBranch = (params: {
   /** id */
   id: number;
 }) =>
-  request(`${ds.apiPrefix}/releaseManage/branch/delete/${params.id}`, {
-    method: 'DELETE',
+  delRequest(`${ds.apiPrefix}/releaseManage/branch/delete/${params.id}`, {
     data: params,
   });
 
@@ -108,8 +103,7 @@ export const updateAppMember = (params: {
   /** 报警接收 */
   alterReceiver?: string;
 }) =>
-  request(`${ds.apiPrefix}/appManage/member/update`, {
-    method: 'PUT',
+  putRequest(`${ds.apiPrefix}/appManage/member/update`, {
     data: params,
   });
 
@@ -143,15 +137,11 @@ export const queryConfigList = (params: {
   });
 
 /** 删除单个配置 */
-export const deleteConfig = (id: number) =>
-  request(`${ds.apiPrefix}/appManage/config/delete/${id}`, {
-    method: 'DELETE',
-  });
+export const deleteConfig = (id: number) => delRequest(`${ds.apiPrefix}/appManage/config/delete/${id}`);
 
 /** 删除多个配置 */
 export const deleteMultipleConfig = (params: { ids: number[] }) =>
-  request(`${ds.apiPrefix}/appManage/config/multiDelete`, {
-    method: 'DELETE',
+  delRequest(`${ds.apiPrefix}/appManage/config/multiDelete`, {
     data: params,
   });
 
@@ -211,8 +201,7 @@ export const configUpdate = (params: {
   /** 配置的类型 boot启动参数，app应用配置 */
   type: 'boot' | 'app';
 }) =>
-  request(`${ds.apiPrefix}/appManage/config/update`, {
-    method: 'PUT',
+  putRequest(`${ds.apiPrefix}/appManage/config/update`, {
     data: params,
   });
 

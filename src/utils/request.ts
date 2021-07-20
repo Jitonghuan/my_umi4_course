@@ -44,7 +44,7 @@ const request = (url: string, params?: IRequestParams, reserveError?: boolean) =
 export const getRequest = request;
 
 export const delRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
-  return requestHandler(sso.request(url, { ...params, method: 'DELETE' }), reserveError);
+  return requestHandler(sso.request(url, { ...(params || {}), method: 'DELETE' }), reserveError);
 };
 
 export const postRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
@@ -52,7 +52,7 @@ export const postRequest = (url: string, params?: IRequestParams, reserveError?:
 };
 
 export const putRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
-  return requestHandler(sso.request(url, { ...params, method: 'PUT' }), reserveError);
+  return requestHandler(sso.request(url, { ...(params || {}), method: 'PUT' }), reserveError);
 };
 
 export const queryUserInfo = sso.queryUserInfo;
