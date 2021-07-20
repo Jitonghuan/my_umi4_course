@@ -371,7 +371,7 @@ export default [
   {
     path: 'operation',
     name: '运维管理',
-    icon: 'icon-manage',
+    icon: 'icon-atomic',
     routes: [
       {
         path: 'cluster',
