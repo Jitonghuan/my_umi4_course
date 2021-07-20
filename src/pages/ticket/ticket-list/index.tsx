@@ -1,6 +1,6 @@
-import React, { useMemo, useEffect, useState, useCallback, useContext } from 'react';
-import { Form, message, Select, Input, Drawer, Button } from 'antd';
-import { PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Form, message, Alert, Input, Drawer, Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm, BasicForm } from '@/components/schema-form';
@@ -9,7 +9,7 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import ApplyUpload from './apply-upload';
 
 import { queryTicketData, queryTicketType, doCreateTicket } from '../service';
-import { getFilterFormSchema, tableSchema, getTicketCreateSchema, defaultChooseType, notifyData } from './schema';
+import { getFilterFormSchema, tableSchema, getTicketCreateSchema, defaultChooseType } from './schema';
 
 import './index.less';
 import { postRequest, getRequest } from '@/utils/request';
@@ -220,15 +220,23 @@ const Coms = (props: any) => {
         />
 
         <div className="ticket-notify">
-          <h3>
-            <InfoCircleOutlined className="ticket-notify-icon" />
-            运维权限申请友情提示
-          </h3>
-          <ul>
-            {notifyData.map((el) => (
-              <li>{el}</li>
-            ))}
-          </ul>
+          <Alert
+            type="info"
+            message="运维权限申请友情提示"
+            showIcon
+            description={
+              <ul>
+                <li>DMS账号 申请来未来阿里云账号</li>
+                <li>天台生产相关（RDS/EDAS/MQ）申请天台阿里云账号</li>
+                <li>巍山生产相关（RDS/EDAS/MQ）申请巍山阿里云账号</li>
+                <li>
+                  <b>Jumpserver、Rancher 请先用ldap账号登录一次平台再申请权限</b>
+                </li>
+                {/* <li>Rancher、VPN、JumpServer 的申请归属选来未来即可，并选择相应业务线</li> */}
+                <li>钉钉审批结束后的申请结果会以邮件的形式发送至你的企业邮箱</li>
+              </ul>
+            }
+          />
         </div>
       </Drawer>
     </MatrixPageContent>

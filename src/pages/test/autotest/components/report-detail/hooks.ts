@@ -46,7 +46,9 @@ export function useReportDetailData(recordId?: number, selectedNode?: TreeNode):
       return;
     }
 
+    setData([]);
     setLoading(true);
+
     try {
       const result = await getRequest(APIS.getReportDetail, {
         data: {

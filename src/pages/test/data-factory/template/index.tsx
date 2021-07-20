@@ -78,19 +78,19 @@ export default function DataTemplate(props: any) {
       <ContentCard>
         <Form form={searchField} layout="inline">
           <FormItem label="项目" name="project">
-            <Select options={appTypeData} placeholder="请选择" style={{ width: 140 }} onChange={handleSearch} />
+            <Select options={appTypeData} placeholder="请选择" style={{ width: 120 }} onChange={handleSearch} />
           </FormItem>
           <FormItem label="环境" name="env">
             <Select
               options={envListType}
               placeholder="请选择"
-              style={{ width: 140 }}
+              style={{ width: 120 }}
               onChange={handleSearch}
               allowClear
             />
           </FormItem>
           <FormItem label="模板名称" name="name">
-            <Input placeholder="请输入" style={{ width: 140 }} />
+            <Input placeholder="请输入" style={{ width: 120 }} />
           </FormItem>
           <FormItem label="创建时间" name="createTime">
             <DatePicker.RangePicker style={{ width: 240 }} />
