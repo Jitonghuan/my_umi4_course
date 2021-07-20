@@ -35,10 +35,29 @@
 - 测试分支: `test/0.2.x`
 - 线上分支: `pub/2.x.x`
 
-### 相关文档
+## 相关文档
 
 - VC 组件文档: http://vdoc.cfuture.cc/vc-doc/#/vc-doc/component/list
 - 项目文档: https://come-future.yuque.com/sekh46/bbgc7f
 - 项目排期: https://come-future.yuque.com/sekh46/bbgc7f/px4te4/edit#y44m
 - 视觉稿: https://lanhuapp.com/web/#/item/project/stage?tid=3b3b08b2-8068-4d09-9535-148f1c47f6b8&pid=56924b6e-18ea-4be5-860a-d5eef3e89d06
 - 三期交互稿: http://vdoc.cfuture.cc/matrix/v3/
+
+## FAQ
+
+### 1. windows 中启动报错
+
+windows 中不要使用 `$ fnpm install`，直接使用 `$ npm install`，
+前提条件：将 ~/.npmrc 文件（如没有请新建）换成以下内容：
+
+```
+registry=https://registry.npm.taobao.org/
+@cffe:registry=http://registry.npm.cfuture.cc
+@ali:registry=http://registry.npm.cfuture.ccs
+@alife:registry=http://registry.npm.cfuture.cc
+@seenew:registry=http://registry.npm.cfuture.cc
+@hbos:registry=http://registry.npm.cfuture.cc
+```
+
+以上设置是为了让 `npm install` 的时候遇到内网包的 scope 也从内网源获取，外网源从淘宝镜像获取；
+下一步直接执行 `npm run dev`
