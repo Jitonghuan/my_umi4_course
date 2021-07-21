@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60px" height="60px" viewBox="0 0 60 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon_fail</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon_fail">
+            <circle id="椭圆形" stroke="#F7715A" stroke-width="2" cx="30" cy="30" r="29"></circle>
+            <circle id="椭圆形备份" stroke="#F7715A" cx="30" cy="30" r="25.5"></circle>
+            <text id="FAIL" transform="translate(30.000000, 30.000000) rotate(-22.000000) translate(-30.000000, -30.000000) " font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" fill="#F7715A">
+                <tspan x="15.314" y="35">FAIL</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

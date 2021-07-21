@@ -190,6 +190,12 @@ export default function ReportDetail(props: ReportDetailProps) {
                   <Table.Column title="check value" dataIndex="check_value" />
                   <Table.Column title="check result" dataIndex="check_result" />
                 </Table>
+                {group.attachment ? (
+                  <>
+                    <h4>附件信息：</h4>
+                    <pre>{group.attachment}</pre>
+                  </>
+                ) : null}
               </Collapse.Panel>
             ))}
           </Collapse>
