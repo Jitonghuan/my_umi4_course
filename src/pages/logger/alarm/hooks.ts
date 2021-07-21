@@ -16,7 +16,7 @@ export function useAppOptions() {
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
-        label: item.appName,
+        label: item.appCode,
         value: item.appCode,
       }));
 
@@ -27,12 +27,17 @@ export function useAppOptions() {
   return [source];
 }
 
-export function useEnvOptions() {
+export function useEnvOptions(appCode?: string) {
   const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
-    getRequest(APIS.getEnvList, {
-      data: { pageIndex: 1, pageSize: 100 },
+    if (!appCode) {
+      setSource([]);
+      return;
+    }
+
+    getRequest(APIS.getEnvListByAppCode, {
+      data: { pageIndex: 1, pageSize: 100, appCode },
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
@@ -43,7 +48,7 @@ export function useEnvOptions() {
 
       setSource(next);
     });
-  }, []);
+  }, [appCode]);
 
   return [source];
 }
