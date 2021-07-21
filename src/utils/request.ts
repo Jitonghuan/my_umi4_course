@@ -43,6 +43,12 @@ const request = (url: string, params?: IRequestParams, reserveError?: boolean) =
 
 export const getRequest = request;
 
+/**
+ * 删除请求，这里的传参实际是按照 POST 处理的 !!!
+ * @param url
+ * @param params
+ * @param reserveError
+ */
 export const delRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
   return requestHandler(sso.request(url, { ...(params || {}), method: 'DELETE' }), reserveError);
 };

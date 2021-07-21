@@ -1,22 +1,18 @@
-import React, { useContext } from 'react';
-import { Button, Tag, Tooltip, Form, Table } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
+import React, { useContext, useCallback, useState } from 'react';
+import { Form, Table, Button, Input, Select, DatePicker, Checkbox, Tag, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { history } from 'umi';
 import moment from 'moment';
 import FELayout from '@cffe/vc-layout';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import { ContentCard } from '@/components/vc-page-content';
 import HeaderTabs from '../components/header-tabs';
-import useTable from '@/utils/useTable';
-import TableSearchForm from '@/components/table-search/form';
-import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import usePublicData from '@/utils/usePublicData';
-import { Item } from '../typing';
 import DetailModal from '@/components/detail-modal';
-import { queryData } from '../service';
+import { useTableData } from './hooks';
 import './index.less';
+
+const { Item: FormItem } = Form;
 
 type statusTypeItem = {
   color: string;
@@ -32,213 +28,147 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 export default function DataFactoryList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { categoryData = [] } = useContext(FEContext);
-  const [form] = Form.useForm();
-
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [searchField] = Form.useForm();
   const { envListType, appTypeData } = usePublicData({
     isUseAppEnv: false,
     isUseAppBranch: false,
     isUseAppLists: false,
     isEnvType: true,
   });
+  const [searchParams, setSearchParams] = useState<any>();
+  const [tableData, total, loading] = useTableData(searchParams, pageIndex, pageSize);
 
-  const {
-    tableProps,
-    search: { submit: queryList, reset },
-  } = useTable({
-    url: queryData,
-    method: 'GET',
-    form,
-    formatter: (record) => {
-      return {
-        ...record,
-        gmtCreate: record.gmtCreate ? moment(record?.gmtCreate)?.format('YYYY-MM-DD HH:mm:ss') : undefined,
-      };
-    },
-  });
+  const handleSearch = useCallback(() => {
+    const { createTime, ...others } = searchField.getFieldsValue();
+    setSearchParams({
+      ...others,
+      startTime: createTime && createTime[0] ? `${createTime[0].format('YYYY-MM-DD')} 00:00:00` : undefined,
+      endTime: createTime && createTime[1] ? `${createTime[1].format('YYYY-MM-DD')} 23:59:59` : undefined,
+    });
+    setPageIndex(1);
+  }, [searchField]);
 
-  const columns: ColumnsType<Item> = [
-    {
-      title: '序号',
-      dataIndex: 'id',
-      key: 'id',
-      width: 70,
-    },
-    {
-      title: '数据明细',
-      dataIndex: 'response',
-      key: 'response',
-      // width: '6%',
-      render: (text) => {
-        if (!text || (typeof text === 'object' && Object.keys(text).length === 0)) return '';
-        return (
-          <Tooltip title={JSON.stringify(text)}>
-            <span
-              style={{
-                display: 'inline-block',
-                width: 100,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {JSON.stringify(text)}
-            </span>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: '模板名称',
-      dataIndex: 'factoryName',
-      key: 'factoryName',
-    },
-    {
-      title: '环境',
-      dataIndex: 'env',
-      key: 'env',
-    },
-    {
-      title: '项目',
-      dataIndex: 'project',
-      key: 'project',
-      render: (value) => {
-        const result = categoryData?.filter((el) => el.value === value);
-        return result?.length ? result[0].label : value || '';
-      },
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'gmtCreate',
-      key: 'gmtCreate',
-      width: '12%',
-      render: (value) => (value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : ''),
-    },
-    {
-      title: '创建人',
-      dataIndex: 'createUser',
-      key: 'createUser',
-    },
-    {
-      title: '创建参数',
-      dataIndex: 'params',
-      key: 'params',
-      render: (text) => {
-        if (!text || (typeof text === 'object' && Object.keys(text).length === 0)) return '';
-        return (
-          <Tooltip title={JSON.stringify(text)}>
-            <span
-              style={{
-                display: 'inline-block',
-                width: 100,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {JSON.stringify(text)}
-            </span>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>,
-    },
-    {
-      title: '日志',
-      dataIndex: 'errorLog',
-      key: 'errorLog',
-      render: (value: string) => <DetailModal data={value} />,
-    },
-  ];
-
-  const formOptions: FormProps[] = [
-    {
-      key: '1',
-      type: 'select',
-      label: '项目',
-      dataIndex: 'project',
-      width: '140px',
-      placeholder: '请输入',
-      option: appTypeData,
-      rules: [],
-    },
-    {
-      key: '2',
-      type: 'input',
-      label: '模板名称',
-      dataIndex: 'factoryName',
-      width: '144px',
-      rules: [],
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '创建环境',
-      dataIndex: 'env',
-      width: '120px',
-      placeholder: '请选择',
-      option: envListType,
-      rules: [],
-    },
-    {
-      key: '4',
-      type: 'date',
-      label: '创建时间',
-      dataIndex: 'gmtCreate',
-      width: '144px',
-      placeholder: '请选择',
-      rules: [],
-    },
-    {
-      key: '5',
-      type: 'checkbox',
-      dataIndex: 'createUser',
-      width: '144px',
-      placeholder: '请选择',
-      rules: [],
-      checkboxOption: [
-        {
-          label: '我的数据',
-          value: userInfo?.userName!,
-        },
-      ],
-      onChange: () => queryList(),
-    },
-  ];
+  const handleReset = useCallback(() => {
+    searchField.resetFields();
+    const nextValues = searchField.getFieldsValue();
+    setSearchParams(nextValues);
+    setPageIndex(1);
+  }, [searchField]);
 
   return (
     <MatrixPageContent>
       <HeaderTabs activeKey="records" history={props.history} />
       <ContentCard>
-        <TableSearchForm
-          form={form}
-          formOptions={formOptions}
-          formLayout="inline"
-          onSearch={queryList}
-          reset={reset}
-          searchText="查询"
-        />
+        <Form form={searchField} layout="inline">
+          <FormItem label="项目" name="project">
+            <Select options={appTypeData} placeholder="请选择" style={{ width: 120 }} onChange={handleSearch} />
+          </FormItem>
+          <FormItem label="环境" name="env">
+            <Select
+              options={envListType}
+              placeholder="请选择"
+              style={{ width: 120 }}
+              onChange={handleSearch}
+              allowClear
+            />
+          </FormItem>
+          <FormItem label="模板名称" name="factoryName">
+            <Input placeholder="请输入" style={{ width: 120 }} />
+          </FormItem>
+          <FormItem label="创建时间" name="createTime">
+            <DatePicker.RangePicker style={{ width: 240 }} />
+          </FormItem>
+          <FormItem label="" name="createUser">
+            <Checkbox.Group options={[{ label: '我的数据', value: userInfo.userName! }]} onChange={handleSearch} />
+          </FormItem>
+          <FormItem>
+            <Button type="primary" onClick={handleSearch} style={{ marginRight: 12 }}>
+              查询
+            </Button>
+            <Button type="default" onClick={handleReset}>
+              重置
+            </Button>
+          </FormItem>
+        </Form>
+
         <div className="table-caption">
           <h3></h3>
-          <Button type="primary" onClick={() => history.push('./add')} icon={<PlusOutlined />}>
+          <Button type="primary" onClick={() => props.history.push('./add')} icon={<PlusOutlined />}>
             新增数据
           </Button>
         </div>
+
         <Table
-          className="table-form"
-          columns={columns}
-          {...tableProps}
+          dataSource={tableData}
+          loading={loading}
           pagination={{
-            ...tableProps.pagination,
+            current: pageIndex,
+            total,
             showTotal: (total) => `共 ${total} 条`,
+            pageSize,
             showSizeChanger: true,
-            defaultPageSize: 20,
+            onShowSizeChange: (_, size) => {
+              setPageIndex(1);
+              setPageSize(size);
+            },
+            onChange: (next) => setPageIndex(next),
           }}
-        />
+        >
+          <Table.Column dataIndex="id" title="序号" width={90} />
+          <Table.Column
+            dataIndex="response"
+            title="数据明细"
+            width={200}
+            render={(text) => {
+              if (!text || (typeof text === 'object' && Object.keys(text).length === 0)) return '';
+              return (
+                <Tooltip title={JSON.stringify(text)}>
+                  <span style={{ width: 100 }} className="ellipsis-span">
+                    {JSON.stringify(text)}
+                  </span>
+                </Tooltip>
+              );
+            }}
+          />
+          <Table.Column dataIndex="factoryName" title="模板名称" />
+          <Table.Column dataIndex="env" title="环境" />
+          <Table.Column
+            dataIndex="project"
+            title="项目"
+            render={(value) => {
+              const result = categoryData?.filter((el) => el.value === value);
+              return result?.length ? result[0].label : value || '';
+            }}
+          />
+          <Table.Column
+            dataIndex="gmtCreate"
+            title="创建时间"
+            render={(value) => (value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : '')}
+          />
+          <Table.Column dataIndex="createUser" title="创建人" />
+          <Table.Column
+            dataIndex="params"
+            title="创建参数"
+            render={(text) => {
+              if (!text || (typeof text === 'object' && Object.keys(text).length === 0)) return '';
+              return (
+                <Tooltip title={JSON.stringify(text)}>
+                  <span style={{ width: 100 }} className="ellipsis-span">
+                    {JSON.stringify(text)}
+                  </span>
+                </Tooltip>
+              );
+            }}
+          />
+          <Table.Column
+            dataIndex="status"
+            title="状态"
+            render={(text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>}
+          />
+          <Table.Column dataIndex="errorLog" title="日志" render={(value: string) => <DetailModal data={value} />} />
+        </Table>
       </ContentCard>
     </MatrixPageContent>
   );

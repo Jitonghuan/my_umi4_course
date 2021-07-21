@@ -37,8 +37,8 @@ export default function DataTemplate(props: any) {
     const { createTime, ...others } = searchField.getFieldsValue();
     setSearchParams({
       ...others,
-      startTime: createTime && createTime[0] ? createTime[0].format('YYYY-MM-DD HH:mm:ss') : undefined,
-      endTime: createTime && createTime[1] ? createTime[1].format('YYYY-MM-DD HH:mm:ss') : undefined,
+      startTime: createTime && createTime[0] ? `${createTime[0].format('YYYY-MM-DD')} 00:00:00` : undefined,
+      endTime: createTime && createTime[1] ? `${createTime[1].format('YYYY-MM-DD')} 23:59:59` : undefined,
     });
   }, [searchField]);
 
