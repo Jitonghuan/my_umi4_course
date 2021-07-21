@@ -16,7 +16,8 @@ import './index.less';
 export default function LoggerAlarm() {
   const [searchField] = Form.useForm();
   const [appOptions] = useAppOptions();
-  const [envOptions] = useEnvOptions();
+  const [appCode, setAppCode] = useState<string>();
+  const [envOptions] = useEnvOptions(appCode);
   const [statusOptions] = useStatusOptions();
 
   const [pageIndex, setPageIndex] = useState(1);
@@ -52,6 +53,17 @@ export default function LoggerAlarm() {
     pageIndex === 1 ? queryTableData() : setPageIndex(1);
   };
 
+  const handleReset = () => {
+    setAppCode(undefined);
+    handleSearch();
+  };
+
+  // 应用Code 联动 envCode
+  const handleAppCodeChange = (next: string) => {
+    setAppCode(next);
+    searchField.resetFields(['envCode']);
+  };
+
   const handleEditorSave = () => {
     setEditorMode('HIDE');
     handleSearch();
@@ -61,18 +73,28 @@ export default function LoggerAlarm() {
     queryTableData();
   }, [pageIndex, pageSize]);
 
+  // 每次 envCode 选项重置后，默认选中第 0 个（并触发一次列表刷新）
+  useEffect(() => {
+    if (envOptions?.length && !searchField.getFieldValue('envCode')) {
+      searchField.setFieldsValue({ envCode: envOptions[0].value });
+      handleSearch();
+    }
+  }, [envOptions]);
+
+  // 编辑
   const handleEditItem = (item: any, index: number) => {
     setEditorMode('EDIT');
     setEditData(item);
   };
 
+  // 删除
   const handleDelItem = async (item: any, index: number) => {
     await delRequest(`${APIS.deleteRule}/${item.ruleId}`);
-
     message.success('规则删除成功！');
     handleSearch();
   };
 
+  // 启用/停用
   const handleSwitchStatus = async (item: any, index: number) => {
     const nextStatus = item.status === '0' ? '1' : '0';
     await putRequest(APIS.switchRule, {
@@ -93,18 +115,23 @@ export default function LoggerAlarm() {
   return (
     <MatrixPageContent className="page-logger-alarm">
       <FilterCard>
-        <Form form={searchField} layout="inline" onReset={() => handleSearch()}>
+        <Form form={searchField} layout="inline" onReset={handleReset}>
           <Form.Item label="告警名称" name="name">
             <Input placeholder="请输入" />
           </Form.Item>
-          <Form.Item label="应用名称" name="appCode">
-            <Select placeholder="请选择" options={appOptions} style={{ width: 168 }} />
+          <Form.Item label="应用Code" name="appCode">
+            <Select placeholder="请选择" options={appOptions} style={{ width: 168 }} onChange={handleAppCodeChange} />
           </Form.Item>
           <Form.Item label="环境Code" name="envCode">
-            <Select placeholder="请选择" options={envOptions} style={{ width: 168 }} />
+            <Select placeholder="请选择" options={envOptions} style={{ width: 168 }} onChange={() => handleSearch()} />
           </Form.Item>
           <Form.Item label="状态" name="status">
-            <Select placeholder="请选择" options={statusOptions} style={{ width: 168 }} />
+            <Select
+              placeholder="请选择"
+              options={statusOptions}
+              style={{ width: 168 }}
+              onChange={() => handleSearch()}
+            />
           </Form.Item>
           <Form.Item>
             <Button type="primary" ghost onClick={handleSearch}>

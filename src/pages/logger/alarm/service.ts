@@ -7,6 +7,8 @@ import { addAPIPrefix } from '@/utils';
 
 export const getEnvList = addAPIPrefix('/logManage/logSearch/env');
 
+export const getEnvListByAppCode = addAPIPrefix('/monitorManage/app/env');
+
 export const getMonitorList = addAPIPrefix('/logManage/alertrule/list');
 
 export const getAppList = addAPIPrefix('/appManage/list');
