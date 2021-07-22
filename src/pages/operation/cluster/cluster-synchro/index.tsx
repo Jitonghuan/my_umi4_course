@@ -10,41 +10,31 @@ import { ContentCard } from '@/components/vc-page-content';
 import { datetimeCellRender } from '@/utils';
 import HeaderTabs from '../components/header-tabs';
 import { getRequest, postRequest } from '@/utils/request';
+import * as APIS from '../service';
+import { result, values } from '_@types_lodash@4.14.171@@types/lodash';
 export default function ClusterPage(props: any) {
-  //const [keyword, setKeyword] = useState<string>('');
   //const [loading, setLoading] = useState(false);
-  const [pageIndex, setPageIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-  // const [loading,setLoading] = useState<any>();
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState(0);
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
 
-  const beginClust = async () => {};
+  const beginClust = async () => {
+    // await setDataSource();
+  };
+  useEffect(() => {
+    total;
+    getRequest(APIS.diffClusterApp).then((result) => {
+      var result = JSON.parse(result);
 
-  // useEffect(()=>{
-  //   // loadingData
+      let { tableSource, pageInfo } = result || {};
+      setDataSource(tableSource);
+      setTotal(pageInfo?.total);
+    });
+  }, []);
 
-  //   // return ()=>{
-  //   //   只在销毁之后调用
-  //   // }
-  // },[])
-
-  //   const handleCancel =
-
-  //     useCallback((value)=>{
-  // //慎用
-  //     },[props.name])
-  //     getRequest
-
-  // const beginClust= async () => {
-  //   const values = await (console.log(dataSource));}
-  // const res =  postRequest("https://release.zy91.com:4443/futuredog/v1/opsManage/diffApp?Appname=integrated-platform",{
-  //   data: values,
-  // });
-  // console.log(res);
-  // setLogVisiable(true);
-
-  const [total, setTotal] = useState<number>(0);
   return (
     <MatrixPageContent>
       <HeaderTabs activeKey="cluster-synchro" history={props.history} />
@@ -63,12 +53,10 @@ export default function ClusterPage(props: any) {
             total,
             pageSize,
             showSizeChanger: true,
+            defaultPageSize: 20,
             onChange: (next) => setPageIndex(next),
-            onShowSizeChange: (_, next) => {
-              setPageSize(next), setPageIndex(1);
-            },
+            onShowSizeChange: (_, next) => setPageSize(next),
           }}
-          // render有三个参数 value ， index ，
         >
           <Table.Column title="应用名" dataIndex="Appname" width="10%" />
           <Table.Column title="A集群版本" dataIndex="createUser" width="15%" />

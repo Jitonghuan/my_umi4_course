@@ -26,37 +26,15 @@ export default function Traffic(props: any) {
     { label: 'B集群', value: 'cluster_b' },
   ]);
 
-  // useEffect(() => {
-  // const fetchData = async()=>{
-  //   const result = await postRequest(APIS.clusterSwitch, {
-  //     data: payload,
-  // },[]);
-  // if (mode === 'HIDE') return;
-  // if (mode === 'ADD') {
-  //   editField.resetFields();
-  //   return;
-  // }
-
-  // editField.setFieldsValue({
-  //   name: targetNode?.title || '',
-  //   desc: targetNode?.desc || '',
-  // });
-
   const handleCancel = async () => {
     setLogVisiable(false);
   };
   const subFinish = (values: any) => {
     const res = postRequest(APIS.clusterSwitch, {
-      // data: values,
+      data: { values },
     });
     console.log(res);
     // setLogVisiable(true);
-  };
-
-  // const finish=()=>{};
-
-  const onCancel = (a: any) => {
-    form.resetFields();
   };
 
   return (
@@ -66,53 +44,58 @@ export default function Traffic(props: any) {
         <div>
           <span>请选择流量调度类型：</span>
         </div>
-
-        <Form layout="inline" onFinish={subFinish} validateMessages={validateMessages}>
-          <Row>
-            <Form.Item name="qingchun" rules={[{ required: true }]}>
-              <Card>
-                <div>
-                  <span>庆春院区</span>
-                </div>
-                <div>
-                  <Radio.Group options={options} optionType="default" />
-                </div>
-              </Card>
-            </Form.Item>
-            <Form.Item name="yuhang" rules={[{ required: true }]}>
-              <Card>
-                <div>
-                  <span>余杭院区</span>
-                </div>
-                <div>
-                  <Radio.Group options={options} optionType="default" />
-                </div>
-              </Card>
-            </Form.Item>
-            <Form.Item name="zhijiang" rules={[{ required: true }]}>
-              <Card>
-                <div>
-                  <span>之江院区</span>
-                </div>
-                <div>
-                  <Radio.Group options={options} optionType="default" />
-                </div>
-              </Card>
-            </Form.Item>
-          </Row>
-          <Row>
-            <Form.Item style={{ marginLeft: '350', marginTop: '20' }}>
+        <div className="selection">
+          <Form layout="inline" onFinish={subFinish} validateMessages={validateMessages}>
+            <div className="from-warp">
+              <Form.Item name="qingchun" rules={[{ required: true }]}>
+                <Card>
+                  <div>
+                    <span>庆春院区</span>
+                  </div>
+                  <div style={{ marginTop: 20 }}>
+                    <Radio.Group options={options} optionType="default" />
+                  </div>
+                </Card>
+              </Form.Item>
+              <Form.Item name="yuhang" rules={[{ required: true }]}>
+                <Card>
+                  <div>
+                    <span>余杭院区</span>
+                  </div>
+                  <div style={{ marginTop: 20 }}>
+                    <Radio.Group options={options} optionType="default" />
+                  </div>
+                </Card>
+              </Form.Item>
+              <Form.Item name="zhijiang" rules={[{ required: true }]}>
+                <Card>
+                  <div>
+                    <span>之江院区</span>
+                  </div>
+                  <div style={{ marginTop: 20 }}>
+                    <Radio.Group options={options} optionType="default" />
+                  </div>
+                </Card>
+              </Form.Item>
+            </div>
+            <div className="subButton">
               <Space size="large">
                 <Button type="primary" htmlType="submit">
                   提交
                 </Button>
-                <Button type="default" htmlType="reset" onClick={onCancel}>
+                <Button
+                  type="default"
+                  htmlType="reset"
+                  onClick={() => {
+                    form.resetFields();
+                  }}
+                >
                   取消
                 </Button>
               </Space>
-            </Form.Item>
-          </Row>
-        </Form>
+            </div>
+          </Form>
+        </div>
       </ContentCard>
       <Modal
         visible={logVisiable}
