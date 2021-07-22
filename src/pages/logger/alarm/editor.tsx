@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/25 09:26
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Modal, Input, Select, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
 import { postRequest, putRequest } from '@/utils/request';
 import moment from 'moment';
@@ -30,7 +30,8 @@ export interface AlarmEditorProps {
 export default function AlarmEditor(props: AlarmEditorProps) {
   const [field] = Form.useForm();
   const [appOptions] = useAppOptions();
-  const [envOptions] = useEnvOptions();
+  const [appCode, setAppCode] = useState<string>();
+  const [envOptions] = useEnvOptions(appCode);
   const [userOptions] = useUserOptions();
   const [groupSource, indexSource] = useRuleOptions();
   // const [notifyTypeOptions] = useNotifyTypeOptions();
@@ -40,6 +41,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
   useEffect(() => {
     if (props.mode === 'HIDE') return;
 
+    setAppCode(undefined);
     field.resetFields();
 
     if (props.mode === 'ADD') return;
@@ -55,7 +57,17 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       silenceEnd:
         initData.silence === '1' && initData.silenceEnd ? moment(`2021-07-07 ${initData.silenceEnd}`) : undefined,
     });
+
+    if (initData.appCode) {
+      setAppCode(initData.appCode);
+    }
   }, [props.mode]);
+
+  // 应用Code 联动 envCode
+  const handleAppCodeChange = (next: string) => {
+    setAppCode(next);
+    field.resetFields(['envCode']);
+  };
 
   const handleOk = async () => {
     const values = await field.validateFields();
@@ -106,7 +118,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem label="应用名" name="appCode" rules={[{ required: true, message: '请选择应用' }]}>
-          <Select placeholder="请选择" options={appOptions} />
+          <Select placeholder="请选择" options={appOptions} onChange={handleAppCodeChange} />
         </FormItem>
         <FormItem label="应用环境" name="envCode" rules={[{ required: true, message: '请选择应用环境' }]}>
           <Select placeholder="请选择" options={envOptions} />

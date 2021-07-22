@@ -47,17 +47,8 @@ export function getChartOptions(testcases: Record<string, any>) {
   const { success = 0, fail = 0, total = 1 } = testcases;
 
   return {
-    grid: {
-      left: '0',
-      right: '0',
-      top: '0',
-      bottom: '0',
-    },
     tooltip: {
       trigger: 'item',
-      formatter(param: any = {}) {
-        return `${param.name}<br/>${param.marker}${param.value}%`;
-      },
     },
     series: [
       {
@@ -69,9 +60,6 @@ export function getChartOptions(testcases: Record<string, any>) {
         itemStyle: {
           borderColor: '#fff',
           borderWidth: 2,
-        },
-        labelLine: {
-          show: false,
         },
         data: [
           {

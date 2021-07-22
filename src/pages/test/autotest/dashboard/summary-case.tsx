@@ -52,7 +52,7 @@ export default function SummaryCase(props: SummaryCaseProps) {
       <section data-loading={loading}>
         <h3>今日用例执行率</h3>
         <div className="info-row">
-          <b>{typeof data.execRate === 'number' ? `${data.execRate * 100}%` : '--'}</b>
+          <b>{typeof data.execRate === 'number' ? `${Math.round(data.execRate * 10000) / 100}%` : '--'}</b>
           <div className="icon-wrap" style={{ backgroundColor: '#5C61F3' }}>
             <IconFont type="icon-trend" />
           </div>

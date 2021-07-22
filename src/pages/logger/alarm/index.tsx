@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/23 09:25
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Input, Select, Button, Table, Tag, message, Popconfirm } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -62,6 +62,7 @@ export default function LoggerAlarm() {
   const handleAppCodeChange = (next: string) => {
     setAppCode(next);
     searchField.resetFields(['envCode']);
+    handleSearch();
   };
 
   const handleEditorSave = () => {
@@ -74,12 +75,12 @@ export default function LoggerAlarm() {
   }, [pageIndex, pageSize]);
 
   // 每次 envCode 选项重置后，默认选中第 0 个（并触发一次列表刷新）
-  useEffect(() => {
-    if (envOptions?.length && !searchField.getFieldValue('envCode')) {
-      searchField.setFieldsValue({ envCode: envOptions[0].value });
-      handleSearch();
-    }
-  }, [envOptions]);
+  // useEffect(() => {
+  //   if (envOptions?.length && !searchField.getFieldValue('envCode')) {
+  //     searchField.setFieldsValue({ envCode: envOptions[0].value });
+  //     handleSearch();
+  //   }
+  // }, [envOptions]);
 
   // 编辑
   const handleEditItem = (item: any, index: number) => {
@@ -112,25 +113,46 @@ export default function LoggerAlarm() {
     setTableSource(nextSource);
   };
 
+  const handleInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  }, []);
+
   return (
     <MatrixPageContent className="page-logger-alarm">
       <FilterCard>
         <Form form={searchField} layout="inline" onReset={handleReset}>
           <Form.Item label="告警名称" name="name">
-            <Input placeholder="请输入" />
+            <Input placeholder="请输入" onKeyDown={handleInputKeyDown} />
           </Form.Item>
           <Form.Item label="应用Code" name="appCode">
-            <Select placeholder="请选择" options={appOptions} style={{ width: 168 }} onChange={handleAppCodeChange} />
+            <Select
+              placeholder="请选择"
+              options={appOptions}
+              allowClear
+              showSearch
+              style={{ width: 168 }}
+              onChange={handleAppCodeChange}
+            />
           </Form.Item>
           <Form.Item label="环境Code" name="envCode">
-            <Select placeholder="请选择" options={envOptions} style={{ width: 168 }} onChange={() => handleSearch()} />
+            <Select
+              placeholder="请选择"
+              options={envOptions}
+              allowClear
+              showSearch
+              style={{ width: 168 }}
+              onChange={handleSearch}
+            />
           </Form.Item>
           <Form.Item label="状态" name="status">
             <Select
               placeholder="请选择"
               options={statusOptions}
               style={{ width: 168 }}
-              onChange={() => handleSearch()}
+              onChange={handleSearch}
+              allowClear
             />
           </Form.Item>
           <Form.Item>
@@ -163,7 +185,7 @@ export default function LoggerAlarm() {
             onShowSizeChange: (_, next) => setPageSize(next),
           }}
         >
-          <Table.Column dataIndex="id" title="ID" />
+          <Table.Column dataIndex="id" title="ID" width={70} />
           <Table.Column dataIndex="name" title="报警名称" />
           <Table.Column dataIndex="appCode" title="应用Code" />
           <Table.Column dataIndex="envCode" title="环境Code" />
