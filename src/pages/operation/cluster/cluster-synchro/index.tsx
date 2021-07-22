@@ -24,9 +24,9 @@ export default function ClusterPage(props: any) {
     // await setDataSource();
   };
   useEffect(() => {
-    total;
-    getRequest(APIS.diffClusterApp).then((result) => {
-      const tableSource = result || {};
+    // total;
+    getRequest(APIS.diffClusterApp).then((result: any) => {
+      const tableSource = result.body || {};
       setDataSource(tableSource);
       // setTotal(pageInfo?.total);
     });
@@ -55,7 +55,7 @@ export default function ClusterPage(props: any) {
             onShowSizeChange: (_, next) => setPageSize(next),
           }}
         >
-          <Table.Column title="应用名" dataIndex="Appname" width="10%" />
+          <Table.Column title="应用名" dataIndex="AppName" width="10%" />
           <Table.Column title="A集群版本" dataIndex="createUser" width="15%" />
           <Table.Column title="B集群版本" dataIndex="gmtModify" render={datetimeCellRender} width="15%" />
           <Table.Column title="A集群版本MD5" dataIndex="colonyA" width="30%" ellipsis />

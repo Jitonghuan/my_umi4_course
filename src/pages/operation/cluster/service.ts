@@ -27,7 +27,7 @@ export const serverDeploy = addAPIPrefix('/opsManage/multiple/configServerDeploy
 export const appDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
 
 /** POST 7、集群同步-前端资源同步 */
-export const frontSource = addAPIPrefix('/v1/opsManage/multiple/frontendSourceDeploy');
+export const frontSource = addAPIPrefix('/opsManage/multiple/frontendSourceDeploy');
 
 ///** POST 8、集群同步-前端资源同步 */
 export const frontendVersion = addAPIPrefix('/opsManage/multiple/frontendVersionDeploy');

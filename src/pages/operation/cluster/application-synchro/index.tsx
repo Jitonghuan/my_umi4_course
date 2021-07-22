@@ -10,6 +10,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
 import HeaderTabs from '../components/header-tabs';
 import { result } from '_@types_lodash@4.14.171@@types/lodash';
+import { copyScene } from '@/pages/test/autotest/service';
 export default function Application(props: any) {
   const { confirm } = Modal;
   const [searchField] = Form.useForm();
@@ -22,46 +23,40 @@ export default function Application(props: any) {
   //   queryTableData();
   // }, [pageIndex, pageSize]);
   const queryTableData = () => {
-    const values = searchField.getFieldsValue();
-  };
-  const onFinish = (values: any) => {
     // const values = searchField.getFieldsValue();
-    setLoading(true);
-    let res = getRequest(APIS.diffApp, {
+  };
+  const onFinish = (values: any) =>
+    getRequest('/v1/appManage/env/list', {
       data: { AppName: 'ac' },
     })
       .then((result) => {
-        debugger;
+        console.log('>>>>>>>, in res', result);
 
-        let dataSource = [
-          {
-            Name: 'A集群',
-            // appName: result.data.ClusterA.name,
-            // RegionId: result.data.ClusterA.RegionId,
-            // PackageVersion: result.body.ClusterA.PackageVersion,
-            // PackageMd5: result.body.ClusterA.PackageMd5,
-          },
-          {
-            Name: 'B集群',
-            // appName: result.data.ClusterB.name,
-            // RegionId:result.data.ClusterB.RegionId,
-            // PackageVersion: result.ClusterB.PackageVersion,
-            // PackageMd5: result.ClusterB.PackageMd5,
-          },
-        ];
-        setTableSource(dataSource || []);
+        // const dataSource = [
+        //   {
+        //     Name: 'A集群',
+        //     appName: result.data?.ClusterA?.name,
+        //     RegionId: result.data?.ClusterA?.RegionId,
+        //     PackageVersion: result.data?.ClusterA?.PackageVersion,
+        //     PackageMd5: result.data?.ClusterA?.PackageMd5,
+        //   },
+        //   {
+        //     Name: 'B集群',
+        //     // appName: result.data.ClusterB.name,
+        //     // RegionId:result.data.ClusterB.RegionId,
+        //     // PackageVersion: result.ClusterB.PackageVersion,
+        //     // PackageMd5: result.ClusterB.PackageMd5,
+        //   },
+        // ];
+        // setTableSource(dataSource || []);
       })
-      .catch(function (error) {
-        console.log('发生错误', error);
+      .catch((error) => {
+        console.log('发生错误');
+        console.error(error);
       })
       .finally(() => {
         setLoading(false);
       });
-    console.log('-----', res);
-    console.log('+++++', values.AppName);
-
-    console.log('Received values of form: ', values);
-  };
   const handleSearch = () => {
     queryTableData();
   };
