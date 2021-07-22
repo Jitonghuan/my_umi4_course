@@ -3,7 +3,6 @@
 // @create 2021/07/21 17:42
 
 import React from 'react';
-import { Spin } from 'antd';
 
 export interface ChartTaskWeeklyProps {
   data: any;
@@ -13,12 +12,8 @@ export interface ChartTaskWeeklyProps {
 export default function ChartTaskWeekly(props: ChartTaskWeeklyProps) {
   const { data, loading } = props;
 
-  // if (loading) {
-  //   return <div className="loading-wrapper"><Spin /></div>
-  // }
-
   return (
-    <section>
+    <section data-loading={loading}>
       <header>
         <h3>各任务近七天执行情况</h3>
       </header>

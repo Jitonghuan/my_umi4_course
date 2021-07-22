@@ -3,6 +3,7 @@
 // @create 2021/07/21 17:42
 
 import React from 'react';
+import moment from 'moment';
 import IconFailSvg from '@/assets/imgs/icon_fail.svg';
 import IconPassSvg from '@/assets/imgs/icon_pass.svg';
 
@@ -15,18 +16,17 @@ export default function SummaryExec(props: SummaryExecProps) {
   const { data, loading } = props;
 
   return (
-    <section style={{ width: 376 }} data-loading>
+    <section style={{ width: 376 }} data-loading={loading}>
       <div className="info-row">
-        {/* <img src={IconFailSvg} alt="" /> */}
-        <img src={IconPassSvg} alt="" />
+        <img src={loading ? '' : data.error > 0 ? IconFailSvg : IconPassSvg} width="60" height="60" alt="" />
         <div className="info-list">
           <p>
             <span>上次执行完成时间：</span>
-            <b>2021.07.21 16:03:06</b>
+            <b>{data.endTime ? moment(data.endTime).format('YYYY-MM-DD HH:mm:ss') : '--'}</b>
           </p>
           <p>
             <span>上次执行任务名称：</span>
-            <b>全量用例测试任务全集长长长长的文字</b>
+            <b>{data.taskName || '--'}</b>
           </p>
         </div>
       </div>

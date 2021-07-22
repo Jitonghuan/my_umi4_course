@@ -3,7 +3,6 @@
 // @create 2021/07/21 17:42
 
 import React from 'react';
-import { Spin } from 'antd';
 import { createFromIconfontCN } from '@ant-design/icons';
 
 const IconFont = createFromIconfontCN({
@@ -21,43 +20,39 @@ export interface SummaryCaseProps {
 export default function SummaryCase(props: SummaryCaseProps) {
   const { data, loading } = props;
 
-  // if (loading) {
-  //   return <div className="loading-wrapper"><Spin /></div>
-  // }
-
   return (
     <>
-      <section>
+      <section data-loading={loading}>
         <h3>覆盖应用</h3>
         <div className="info-row">
-          <b>658</b>
+          <b>{data.appNum ?? '--'}</b>
           <div className="icon-wrap" style={{ backgroundColor: '#4BA2FF' }}>
             <IconFont type="icon-dataset" />
           </div>
         </div>
       </section>
-      <section>
+      <section data-loading={loading}>
         <h3>接口总数</h3>
         <div className="info-row">
-          <b>658</b>
+          <b>{data.apiNum ?? '--'}</b>
           <div className="icon-wrap" style={{ backgroundColor: '#54DA81' }}>
             <IconFont type="icon-table_settings" />
           </div>
         </div>
       </section>
-      <section>
+      <section data-loading={loading}>
         <h3>用例总数</h3>
         <div className="info-row">
-          <b>658</b>
+          <b>{data.caseNum ?? '--'}</b>
           <div className="icon-wrap" style={{ backgroundColor: '#657CA6' }}>
             <IconFont type="icon-instructions" />
           </div>
         </div>
       </section>
-      <section>
+      <section data-loading={loading}>
         <h3>今日用例执行率</h3>
         <div className="info-row">
-          <b>62.1%</b>
+          <b>{typeof data.execRate === 'number' ? `${data.execRate * 100}%` : '--'}</b>
           <div className="icon-wrap" style={{ backgroundColor: '#5C61F3' }}>
             <IconFont type="icon-trend" />
           </div>
