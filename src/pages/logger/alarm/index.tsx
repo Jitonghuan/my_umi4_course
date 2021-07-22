@@ -185,7 +185,7 @@ export default function LoggerAlarm() {
             onShowSizeChange: (_, next) => setPageSize(next),
           }}
         >
-          <Table.Column dataIndex="id" title="ID" />
+          <Table.Column dataIndex="id" title="ID" width={70} />
           <Table.Column dataIndex="name" title="报警名称" />
           <Table.Column dataIndex="appCode" title="应用Code" />
           <Table.Column dataIndex="envCode" title="环境Code" />
