@@ -24,9 +24,9 @@ export function useOperationTypeOptions() {
 
   useEffect(() => {
     setData([
-      { value: 'sql', label: 'sql' },
-      { value: 'http', label: 'http' },
-      { value: 'dubbo', label: 'dubbo' },
+      { value: 'SQL', label: 'SQL' },
+      { value: 'HTTP', label: 'HTTP' },
+      { value: 'DUBBO', label: 'DUBBO' },
     ]);
   }, []);
 

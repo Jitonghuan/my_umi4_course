@@ -16,10 +16,10 @@ export default function HeaderTabs(props: HeaderTabsProps) {
   return (
     <FilterCard className="layout-compact">
       <Tabs activeKey={props.activeKey} onChange={(next) => props.history.push(`/matrix/test/autotest/${next}`)}>
-        {/* <Tabs.TabPane tab="看板统计" key="dashboard" /> */}
+        <Tabs.TabPane tab="看板统计" key="dashboard" />
         <Tabs.TabPane tab="用例管理" key="test-cases" />
-        {/* <Tabs.TabPane tab="场景管理" key="scenes" /> */}
-        {/* <Tabs.TabPane tab="任务管理" key="tasks" /> */}
+        <Tabs.TabPane tab="场景管理" key="scenes" />
+        <Tabs.TabPane tab="任务管理" key="tasks" />
       </Tabs>
     </FilterCard>
   );

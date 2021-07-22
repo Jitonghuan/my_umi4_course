@@ -141,6 +141,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
           ]}
         >
           <EditorTable
+            creator={{ clone: true }}
             columns={[
               { title: '序号', dataIndex: '__count', fieldType: 'readonly', colProps: { width: 60, align: 'center' } },
               { title: '变量名', dataIndex: 'name' },
@@ -169,6 +170,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
           ]}
         >
           <EditorTable
+            creator={{ clone: true }}
             columns={[
               { title: '序号', dataIndex: '__count', fieldType: 'readonly', colProps: { width: 60, align: 'center' } },
               {

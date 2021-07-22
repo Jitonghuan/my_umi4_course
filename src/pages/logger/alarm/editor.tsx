@@ -33,11 +33,10 @@ export default function AlarmEditor(props: AlarmEditorProps) {
   const [envOptions] = useEnvOptions();
   const [userOptions] = useUserOptions();
   const [groupSource, indexSource] = useRuleOptions();
-  const [notifyTypeOptions] = useNotifyTypeOptions();
+  // const [notifyTypeOptions] = useNotifyTypeOptions();
   const [levelOptions] = useLevelOptions();
   const [operationOptions] = useOperatorOptions();
 
-  // TODO 编辑数据回填
   useEffect(() => {
     if (props.mode === 'HIDE') return;
 
@@ -49,18 +48,6 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     const initData = props.initData!;
     field.setFieldsValue({
       ...initData,
-      // name: initData.name,
-      // appCode: initData.appCode,
-      // envCode: initData.envCode,
-      // group: initData.group,
-      // index: initData.index,
-      // expression: initData.expression,
-      // operator: initData.operator,
-      // numberEvents: initData.numberEvents,
-      // message: initData.message,
-      // level: initData.level,
-      // receiverType: initData.receiverType,
-      // silence: initData.silence,
       interval: Number.parseFloat(initData.interval) || undefined,
       receiver: initData.receiver?.split(',') || [],
       silenceStart:
@@ -165,14 +152,14 @@ export default function AlarmEditor(props: AlarmEditorProps) {
         <FormItem label="通知对象" name="receiver" rules={[{ required: true, message: '通知对象不能为空' }]}>
           <Select placeholder="请选择" options={userOptions} showSearch mode="multiple" />
         </FormItem>
-        <FormItem
+        {/* <FormItem
           label="通知方式"
           name="receiverType"
           rules={[{ required: true, message: '请选择通知方式' }]}
           initialValue={notifyTypeOptions[0]?.value}
         >
           <Select placeholder="请选择" options={notifyTypeOptions} />
-        </FormItem>
+        </FormItem> */}
         <FormItem label="是否静默" name="silence" initialValue={'0'}>
           <Radio.Group>
             <Radio value="0">否</Radio>

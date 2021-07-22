@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { sso } from '@cffe/vc-request';
-import { IRequestParams, IResponse } from '@cffe/vc-request/es/service';
+import { RequestOptionsInit, IResponse } from '@cffe/vc-request/es/base-request/type';
 
 const parseErrorMsg = (errorMsg: any) => {
   if (typeof errorMsg === 'string') {
@@ -37,27 +37,33 @@ async function requestHandler(promise: Promise<IResponse<any>>, reserveError = f
 }
 
 // 默认使用组件库对针对后台项目登录模式设计的接口调用方案
-const request = (url: string, params?: IRequestParams, reserveError?: boolean) => {
+const request = (url: string, params?: RequestOptionsInit, reserveError?: boolean) => {
   return requestHandler(sso.request(url, params), reserveError);
 };
 
 export const getRequest = request;
 
-export const delRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
-  return requestHandler(sso.request(url, { ...params, method: 'DELETE' }), reserveError);
+/**
+ * 删除请求，这里的传参实际是按照 POST 处理的 !!!
+ * @param url
+ * @param params
+ * @param reserveError
+ */
+export const delRequest = (url: string, params?: RequestOptionsInit, reserveError?: boolean) => {
+  return requestHandler(sso.request(url, { ...(params || {}), method: 'DELETE' }), reserveError);
 };
 
-export const postRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
+export const postRequest = (url: string, params?: RequestOptionsInit, reserveError?: boolean) => {
   return requestHandler(sso.post(url, params), reserveError);
 };
 
-export const putRequest = (url: string, params?: IRequestParams, reserveError?: boolean) => {
-  return requestHandler(sso.request(url, { ...params, method: 'PUT' }), reserveError);
+export const putRequest = (url: string, params?: RequestOptionsInit, reserveError?: boolean) => {
+  return requestHandler(sso.request(url, { ...(params || {}), method: 'PUT' }), reserveError);
 };
 
-export const queryUserInfo = sso.queryUserInfo;
-export const queryUserInfoApi = sso.queryUserInfoApi;
-export const doLogout = sso.doLogout;
-export const doLogoutApi = sso.doLogoutApi;
+export const queryUserInfo = sso.ssoQueryUserInfo;
+export const queryUserInfoApi = sso.ssoQueryUserInfoApi;
+export const doLogout = sso.ssoDoLogout;
+export const doLogoutApi = sso.ssoDoLogoutApi;
 
 export default request;

@@ -471,6 +471,7 @@ export default [
     routes: [
       {
         path: 'dashboard',
+        hideInMenu: true,
         name: '仪表盘',
         component: '@/pages/logger/dashboard',
       },
