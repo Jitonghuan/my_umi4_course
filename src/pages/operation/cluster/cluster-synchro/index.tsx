@@ -11,7 +11,6 @@ import { datetimeCellRender } from '@/utils';
 import HeaderTabs from '../components/header-tabs';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { result, values } from '_@types_lodash@4.14.171@@types/lodash';
 export default function ClusterPage(props: any) {
   //const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState(1);
@@ -27,11 +26,9 @@ export default function ClusterPage(props: any) {
   useEffect(() => {
     total;
     getRequest(APIS.diffClusterApp).then((result) => {
-      var result = JSON.parse(result);
-
-      let { tableSource, pageInfo } = result || {};
+      const tableSource = result || {};
       setDataSource(tableSource);
-      setTotal(pageInfo?.total);
+      // setTotal(pageInfo?.total);
     });
   }, []);
 

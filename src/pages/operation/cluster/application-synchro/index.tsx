@@ -15,15 +15,9 @@ export default function Application(props: any) {
   const [searchField] = Form.useForm();
   const [options, setOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [tableSource, setTableSource] = useState<Record<string, any>[]>([]);
-  //     const res =  getRequest('https://release.zy91.com:4443/futuredog/v1/opsManage/multiple/queryClusterApp‘
-  // /diffMq', {
-  //     Appname:'integrated-platform'
-  // https://release.zy91.com:4443/futuredog/v1/opsManage/multiple/diffClusterApp 集群同步页面列表接口
-  // /https://release.zy91.com:4443/futuredog/v1/opsManage/multiple/queryClusterApp
-  // /https://release.zy91.com:4443/futuredog/v1/opsManage/multiple/diffMq  应用集群页面
+  const [tableSource, setTableSource] = useState<any[]>([]);
+  // const [tableSource, setTableSource] = useState<Record<string, any>[]>([]);
 
-  //   });
   // useEffect(() => {
   //   queryTableData();
   // }, [pageIndex, pageSize]);
@@ -33,33 +27,39 @@ export default function Application(props: any) {
   const onFinish = (values: any) => {
     // const values = searchField.getFieldsValue();
     setLoading(true);
-    getRequest(APIS.applySync, {
+    let res = getRequest(APIS.diffApp, {
       data: { AppName: 'ac' },
     })
       .then((result) => {
+        debugger;
+
         let dataSource = [
           {
             Name: 'A集群',
             // appName: result.data.ClusterA.name,
             // RegionId: result.data.ClusterA.RegionId,
-            PackageVersion: result.ClusterA.PackageVersion,
-            PackageMd5: result.ClusterA.PackageMd5,
+            // PackageVersion: result.body.ClusterA.PackageVersion,
+            // PackageMd5: result.body.ClusterA.PackageMd5,
           },
           {
             Name: 'B集群',
             // appName: result.data.ClusterB.name,
             // RegionId:result.data.ClusterB.RegionId,
-            PackageVersion: result.ClusterB.PackageVersion,
-            PackageMd5: result.ClusterB.PackageMd5,
+            // PackageVersion: result.ClusterB.PackageVersion,
+            // PackageMd5: result.ClusterB.PackageMd5,
           },
         ];
         setTableSource(dataSource || []);
       })
+      .catch(function (error) {
+        console.log('发生错误', error);
+      })
       .finally(() => {
         setLoading(false);
       });
-
+    console.log('-----', res);
     console.log('+++++', values.AppName);
+
     console.log('Received values of form: ', values);
   };
   const handleSearch = () => {
@@ -138,10 +138,6 @@ export default function Application(props: any) {
                 <Table.Column title="版本MD5值" dataIndex="PackageMd5" ellipsis />
               </Table>
             </li>
-
-            {/* <li style={{height:'30px',marginTop:'10px'}}>
-                        <span style={{ float: 'left',color:'red'}}>提示：请确认同步应用配置已经是最新！</span>
-                    </li> */}
 
             <li style={{ height: '30px', marginTop: '30px' }}>
               <Space size="large" style={{ float: 'right' }}>
