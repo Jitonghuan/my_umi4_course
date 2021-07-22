@@ -4,6 +4,7 @@
 
 import React from 'react';
 import moment from 'moment';
+import { Tooltip } from 'antd';
 import IconFailSvg from '@/assets/imgs/icon_fail.svg';
 import IconPassSvg from '@/assets/imgs/icon_pass.svg';
 
@@ -26,7 +27,9 @@ export default function SummaryExec(props: SummaryExecProps) {
           </p>
           <p>
             <span>上次执行任务名称：</span>
-            <b>{data.taskName || '--'}</b>
+            <Tooltip title={data.taskName}>
+              <b>{data.taskName || '--'}</b>
+            </Tooltip>
           </p>
         </div>
       </div>
