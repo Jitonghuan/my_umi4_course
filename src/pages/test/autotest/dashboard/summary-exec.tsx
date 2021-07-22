@@ -19,7 +19,7 @@ export default function SummaryExec(props: SummaryExecProps) {
   return (
     <section style={{ width: 376 }} data-loading={loading}>
       <div className="info-row">
-        <img src={loading ? '' : data.error > 0 ? IconFailSvg : IconPassSvg} width="60" height="60" alt="" />
+        <img src={loading ? '' : data.passRate ? IconPassSvg : IconFailSvg} width="60" height="60" alt="" />
         <div className="info-list">
           <p>
             <span>上次执行完成时间：</span>
