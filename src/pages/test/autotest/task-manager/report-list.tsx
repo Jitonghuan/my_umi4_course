@@ -56,7 +56,7 @@ export default function ReportList(props: ReportListProps) {
             dataIndex="passRate"
             render={(value: number) => {
               if (typeof value !== 'number') return '--';
-              return `${value * 100}%`;
+              return `${Math.round(value * 10000) / 100}%`;
             }}
           />
           <Table.Column

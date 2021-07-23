@@ -32,10 +32,10 @@ export default function Dashboard(props: any) {
 
         <div className="section-group">
           <ChartLastExec data={lastTaskData} loading={lastTaskLoading} />
-          <ChartTaskWeekly data={taskExeData} loading={taskExeLoading} />
+          <ChartCaseList data={caseStatsData} loading={caseStatsLoading} />
         </div>
 
-        <ChartCaseList data={caseStatsData} loading={caseStatsLoading} />
+        <ChartTaskWeekly data={taskExeData} loading={taskExeLoading} />
 
         <ChartCaseMonthly data={caseIncData} loading={caseIncLoading} />
       </ContentCard>

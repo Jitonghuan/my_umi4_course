@@ -25,7 +25,7 @@ export default function ChartCaseMonthly(props: ChartCaseMonthlyProps) {
       <header>
         <h3>近一个月用例新增情况</h3>
       </header>
-      <div style={{ height: 280 }}>
+      <div style={{ height: 240 }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={chartOptions} />
         </ColorContainer>

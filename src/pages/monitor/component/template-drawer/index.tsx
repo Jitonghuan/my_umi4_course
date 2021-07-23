@@ -220,12 +220,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       dataIndex: 'expression',
       placeholder: '请输入',
       required: true,
-      option: [
-        {
-          key: '1',
-          value: 'kkkk节点',
-        },
-      ],
     },
     {
       key: '5',
@@ -276,14 +270,17 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           key: 2,
           value: '警告',
+          label: '警告',
         },
         {
           key: 3,
           value: '严重',
+          label: '严重',
         },
         {
           key: 4,
           value: '灾难',
+          label: '灾难',
         },
       ],
     },
@@ -340,10 +337,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           key: '东来',
           value: '东来',
+          label: '东来',
         },
         {
           key: '羁绊',
           value: '羁绊',
+          label: '羁绊',
         },
       ],
       rules: [
@@ -366,10 +365,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           key: 'dingding',
           value: '钉钉',
+          label: '钉钉',
         },
         {
           key: 'phone',
           value: '电话',
+          label: '电话',
         },
       ],
       rules: [
@@ -393,10 +394,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           key: 1,
           value: '是',
+          label: '是',
         },
         {
           key: 0,
           value: '否',
+          label: '否',
         },
       ],
       extraForm: (
