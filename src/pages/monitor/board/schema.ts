@@ -2,6 +2,7 @@ export const resUseTableSchema = [
   {
     title: 'IP',
     dataIndex: 'ip',
+    align: 'left',
     width: 200,
   },
   {

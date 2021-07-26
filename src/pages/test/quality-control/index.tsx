@@ -248,6 +248,7 @@ const QualityControl: React.FC = () => {
       label: '应用code',
       dataIndex: 'appCode',
       width: '144px',
+      showSelectSearch: true,
       option: form?.getFieldValue('categoryCode') ? appManageListData : [],
       placeholder: '请选择应用分类',
       onChange: (e) => {

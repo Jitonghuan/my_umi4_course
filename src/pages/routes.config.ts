@@ -444,7 +444,7 @@ export default [
         routes: [
           {
             path: 'prometheus',
-            name: 'Prometheus',
+            name: '接口方式接入',
             key: 'business-monitor',
             component: '@/pages/monitor/business/prometheus',
             hideInMenu: true,
@@ -464,15 +464,8 @@ export default [
             component: '@/pages/monitor/business/prometheus/prometheus-form',
           },
           {
-            path: 'logger-search',
-            key: 'business-monitor',
-            name: '日志检索',
-            hideInMenu: true,
-            component: '@/pages/monitor/business/logger-search',
-          },
-          {
             path: 'logger-alarm',
-            name: '日志告警',
+            name: '日志方式接入',
             key: 'business-monitor',
             hideInMenu: true,
             component: '@/pages/monitor/business/logger-alarm',
@@ -488,6 +481,19 @@ export default [
         path: 'history',
         name: '报警历史',
         component: '@/pages/monitor/history',
+      },
+    ],
+  },
+  {
+    path: 'logger',
+    name: '日志管理',
+    icon: 'icon-diagnose',
+    hideInMenu: process.env.BUILD_ENV === 'prod',
+    routes: [
+      {
+        path: 'search',
+        name: '日志检索',
+        component: '@/pages/logger/search',
       },
     ],
   },

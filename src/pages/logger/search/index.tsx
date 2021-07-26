@@ -7,7 +7,6 @@ import { Form, Select, Spin, Button } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { useEnvOptions, useLogStoreOptions, useFrameUrl } from './hooks';
-import HeaderTabs from '../components/header-tabs';
 import './index.less';
 
 export default function LoggerSearch(props: any) {
@@ -40,9 +39,8 @@ export default function LoggerSearch(props: any) {
 
   return (
     <MatrixPageContent>
-      <HeaderTabs activeKey="logger-search" history={props.history} />
-      <ContentCard className="page-logger-search-content">
-        <Form layout="inline" style={{ marginBottom: 16 }}>
+      <FilterCard>
+        <Form layout="inline">
           <Form.Item label="环境Code">
             <Select
               value={envCode}
@@ -68,6 +66,8 @@ export default function LoggerSearch(props: any) {
             </Button>
           ) : null}
         </Form>
+      </FilterCard>
+      <ContentCard className="page-logger-search-content">
         {urlLoading || framePending ? (
           <div className="loading-wrapper">
             <Spin tip="加载中" />
