@@ -435,7 +435,7 @@ export default [
       },
       {
         path: 'prometheus',
-        name: 'Prometheus监控',
+        name: 'Prometheus',
         component: '@/pages/monitor/prometheus',
         exact: true,
       },
@@ -461,29 +461,17 @@ export default [
         name: '报警历史',
         component: '@/pages/monitor/history',
       },
-    ],
-  },
-  {
-    path: 'logger',
-    name: '日志管理',
-    icon: 'icon-diagnose',
-    hideInMenu: process.env.BUILD_ENV === 'prod',
-    routes: [
-      {
-        path: 'dashboard',
-        hideInMenu: true,
-        name: '仪表盘',
-        component: '@/pages/logger/dashboard',
-      },
       {
         path: 'search',
         name: '日志检索',
-        component: '@/pages/logger/search',
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+        component: '@/pages/monitor/search',
       },
       {
         path: 'alarm',
         name: '日志告警',
-        component: '@/pages/logger/alarm',
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+        component: '@/pages/monitor/alarm',
       },
     ],
   },

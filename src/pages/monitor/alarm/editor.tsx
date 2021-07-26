@@ -114,54 +114,86 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       {disableEdit ? <Alert type="warning" message="告警规则已停用，无法编辑" style={{ marginBottom: 16 }} /> : null}
 
       <Form form={field} labelCol={{ flex: '132px' }} wrapperCol={{ span: 16 }}>
-        <FormItem label="告警名称" name="name" rules={[{ required: true, message: '请输入告警名称' }]}>
+        <FormItem label="告警名称" name="name" required={false} rules={[{ required: true, message: '请输入告警名称' }]}>
           <Input placeholder="请输入" />
         </FormItem>
-        <FormItem label="应用名" name="appCode" rules={[{ required: true, message: '请选择应用' }]}>
+        <FormItem label="应用名" name="appCode" required={false} rules={[{ required: true, message: '请选择应用' }]}>
           <Select placeholder="请选择" options={appOptions} onChange={handleAppCodeChange} />
         </FormItem>
-        <FormItem label="应用环境" name="envCode" rules={[{ required: true, message: '请选择应用环境' }]}>
+        <FormItem
+          label="应用环境"
+          name="envCode"
+          required={false}
+          rules={[{ required: true, message: '请选择应用环境' }]}
+        >
           <Select placeholder="请选择" options={envOptions} />
         </FormItem>
-        <FormItem label="分类" name="group" rules={[{ required: true, message: '请选择告警分类' }]}>
+        <FormItem label="分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
           <Select placeholder="请选择" options={groupSource} />
         </FormItem>
-        <FormItem label="索引" name="index" rules={[{ required: true, message: '请选择索引' }]}>
+        <FormItem label="索引" name="index" required={false} rules={[{ required: true, message: '请选择索引' }]}>
           <Select placeholder="请选择" options={indexSource} />
         </FormItem>
         <FormItem label="告警表达式">
-          <FormItem noStyle name="expression" rules={[{ required: true, message: '请输入告警表达式' }]}>
+          <FormItem
+            noStyle
+            name="expression"
+            required={false}
+            rules={[{ required: true, message: '请输入告警表达式' }]}
+          >
             <Input.TextArea placeholder={`例: d1: "abc" AND d2: "xyz"`} style={{ marginBottom: 8 }} />
           </FormItem>
           <Input.Group compact>
-            <FormItem noStyle name="operator" initialValue={operationOptions[0]?.value}>
+            <FormItem
+              noStyle
+              name="operator"
+              initialValue={operationOptions[0]?.value}
+              required={false}
+              rules={[{ required: true, message: '请输入告警表达式' }]}
+            >
               <Select options={operationOptions} style={{ width: 80 }} />
             </FormItem>
-            <FormItem noStyle name="numberEvents" rules={[{ required: true, message: '请输入告警阈值' }]}>
+            <FormItem
+              noStyle
+              name="numberEvents"
+              required={false}
+              rules={[{ required: true, message: '请输入告警阈值' }]}
+            >
               <Input placeholder="阈值" style={{ width: 200 }} />
             </FormItem>
           </Input.Group>
         </FormItem>
         <FormItem label="采集频率">
           <Input.Group compact>
-            <FormItem noStyle name="interval">
+            <FormItem noStyle name="interval" required={false} rules={[{ required: true, message: '请填写采集频率' }]}>
               <InputNumber step={1} min={0.1} />
             </FormItem>
             <Input style={{ width: 60 }} value="分钟" disabled />
           </Input.Group>
         </FormItem>
-        <FormItem label="告警消息" name="message" rules={[{ required: true, message: '请输入告警消息' }]}>
+        <FormItem
+          label="告警消息"
+          name="message"
+          required={false}
+          rules={[{ required: true, message: '请输入告警消息' }]}
+        >
           <Input.TextArea placeholder="请输入告警消息" />
         </FormItem>
         <FormItem
           label="告警级别"
+          required={false}
           name="level"
           rules={[{ required: true, message: '请选择告警级别' }]}
           initialValue={levelOptions[0]?.value}
         >
           <Select placeholder="请选择" options={levelOptions} />
         </FormItem>
-        <FormItem label="通知对象" name="receiver" rules={[{ required: true, message: '通知对象不能为空' }]}>
+        <FormItem
+          label="通知对象"
+          name="receiver"
+          required={false}
+          rules={[{ required: true, message: '通知对象不能为空' }]}
+        >
           <Select placeholder="请选择" options={userOptions} showSearch mode="multiple" />
         </FormItem>
         {/* <FormItem
@@ -182,10 +214,20 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           {({ getFieldValue }) =>
             getFieldValue('silence') === '1' ? (
               <FormItem label="静默范围">
-                <FormItem noStyle name="silenceStart" rules={[{ required: true, message: '请选择静默开始时间' }]}>
+                <FormItem
+                  noStyle
+                  name="silenceStart"
+                  required={false}
+                  rules={[{ required: true, message: '请选择静默开始时间' }]}
+                >
                   <TimePicker format="HH:mm" placeholder="开始时间" style={{ marginRight: 8 }} />
                 </FormItem>
-                <FormItem noStyle name="silenceEnd" rules={[{ required: true, message: '请选择静默结束时间' }]}>
+                <FormItem
+                  noStyle
+                  name="silenceEnd"
+                  required={false}
+                  rules={[{ required: true, message: '请选择静默结束时间' }]}
+                >
                   <TimePicker format="HH:mm" placeholder="结束时间" />
                 </FormItem>
               </FormItem>
