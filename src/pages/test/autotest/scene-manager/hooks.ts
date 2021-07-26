@@ -48,6 +48,7 @@ export function useSceneList(
   nodeType = 0,
   pageIndex = 1,
   pageSize = 20,
+  searchParams: any,
 ): [SceneItemVO[], number, boolean, React.Dispatch<React.SetStateAction<SceneItemVO[]>>, () => Promise<void>] {
   const [data, setData] = useState<SceneItemVO[]>([]);
   const [total, setTotal] = useState(0);
@@ -59,7 +60,7 @@ export function useSceneList(
     setLoading(true);
     try {
       const result = await getRequest(APIS.getSceneList, {
-        data: { id: nodeId, type: nodeType, pageIndex, pageSize },
+        data: { id: nodeId, type: nodeType, pageIndex, pageSize, ...searchParams },
       });
 
       const { dataSource, pageInfo } = result.data || {};
@@ -70,11 +71,11 @@ export function useSceneList(
     } finally {
       setLoading(false);
     }
-  }, [nodeId, nodeType, pageIndex, pageSize]);
+  }, [nodeId, nodeType, pageIndex, pageSize, searchParams]);
 
   useEffect(() => {
     loadData();
-  }, [nodeId, nodeType, pageIndex, pageSize]);
+  }, [nodeId, nodeType, pageIndex, pageSize, searchParams]);
 
   return [data, total, loading, setData, loadData];
 }

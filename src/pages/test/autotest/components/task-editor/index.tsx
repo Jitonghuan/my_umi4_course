@@ -117,6 +117,12 @@ export default function TaskEditor(props: TaskEditorProps) {
         <FormItem label="执行环境" name="runEnv" rules={[{ required: true, message: '请选择执行环境' }]}>
           <Select placeholder="请选择" options={envOptons} />
         </FormItem>
+        <FormItem label="通知方式" name="receiverType" rules={[{ required: true, message: '请选择通知方式' }]}>
+          <Select placeholder="请选择通知方式">
+            <Select.Option value="钉钉">钉钉通知</Select.Option>
+            <Select.Option value="邮件">邮件通知</Select.Option>
+          </Select>
+        </FormItem>
         <FormItem label="集合类型" name="suiteType" initialValue={0}>
           <Radio.Group
             options={[

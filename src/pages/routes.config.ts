@@ -51,7 +51,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/test/autotest`,
-    redirect: `${PAGE_PREFIX}/test/autotest/test-cases`,
+    redirect: `${PAGE_PREFIX}/test/autotest/dashboard`,
   },
   {
     path: `${PAGE_PREFIX}/operation/cluster`,
