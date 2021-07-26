@@ -118,7 +118,12 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem label="应用名" name="appCode" required={false} rules={[{ required: true, message: '请选择应用' }]}>
-          <Select placeholder="请选择" options={appOptions} onChange={handleAppCodeChange} />
+          <Select
+            placeholder="请选择"
+            options={appOptions}
+            onChange={handleAppCodeChange}
+            disabled={props.mode === 'EDIT'}
+          />
         </FormItem>
         <FormItem
           label="应用环境"
@@ -126,7 +131,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           required={false}
           rules={[{ required: true, message: '请选择应用环境' }]}
         >
-          <Select placeholder="请选择" options={envOptions} />
+          <Select placeholder="请选择" options={envOptions} disabled={props.mode === 'EDIT'} />
         </FormItem>
         <FormItem label="分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
           <Select placeholder="请选择" options={groupSource} />

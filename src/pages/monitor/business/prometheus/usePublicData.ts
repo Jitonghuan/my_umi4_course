@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import useRequest from '@/utils/useRequest';
-import { queryappManageList, queryappManageEnvList } from '../service';
+import { queryappManageList, queryappManageEnvList } from '../../service';
 
 interface UsePublicDataProps {
   appCode: string;

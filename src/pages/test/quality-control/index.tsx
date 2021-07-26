@@ -265,6 +265,7 @@ const QualityControl: React.FC = () => {
       option: form?.getFieldValue('appCode') ? appBranchData : [],
       placeholder: '请选择应用名',
       onChange: setAppBranch,
+      showSelectSearch: true,
     },
     {
       key: '4',
@@ -275,11 +276,9 @@ const QualityControl: React.FC = () => {
       placeholder: '请选择',
       option: Object.keys(STATUS_TYPE).map((el) => ({
         key: el,
+        label: el,
         value: STATUS_TYPE[el as any]?.text,
       })),
-      onChange: (e: string) => {
-        console.log(e);
-      },
     },
     {
       key: '5',

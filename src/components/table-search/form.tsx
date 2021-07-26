@@ -36,6 +36,7 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
       mode,
       id,
       allowClear,
+      showSearch,
       min,
       max,
       ...rest

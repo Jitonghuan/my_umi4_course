@@ -8,13 +8,14 @@ import { FormProps, OptionProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
-import { Item, AlertNameProps } from '../typing';
-import RulesTable from '../component/rules-table';
+import { Item, AlertNameProps } from '../../typing';
+import RulesTable from '../../component/rules-table';
 import usePublicData from './usePublicData';
-import { queryPrometheusList, deletePrometheus } from '../service';
+import { queryPrometheusList, deletePrometheus } from '../../service';
+import HeaderTabs from '../components/header-tabs';
 import './index.less';
 
-const PrometheusCom: React.FC = () => {
+const PrometheusCom: React.FC = (props: any) => {
   const [labelVisible, setLabelVisible] = useState(false);
   const [rulesVisible, setRulesVisible] = useState(false);
   const [labelRecord, setLabelRecord] = useState<Record<string, string>>({});
@@ -252,7 +253,9 @@ const PrometheusCom: React.FC = () => {
 
   return (
     <MatrixPageContent>
+      <HeaderTabs activeKey="prometheus" history={props.history} />
       <TableSearch
+        splitLayout={false}
         form={form}
         formOptions={formOptions}
         formLayout="inline"

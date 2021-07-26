@@ -238,6 +238,7 @@ const UnitTest: React.FC<any> = () => {
       type: 'select',
       label: '分支名',
       dataIndex: 'branchName',
+      showSelectSearch: true,
       width: '144px',
       option: form?.getFieldValue('appCode') ? appBranchData : [],
     },
