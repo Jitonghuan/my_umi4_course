@@ -103,7 +103,7 @@ export default function TaskEditor(props: TaskEditorProps) {
         </div>
       }
     >
-      <Form form={editField} labelCol={{ flex: '100px' }}>
+      <Form form={editField} labelCol={{ flex: '100px' }} wrapperCol={{ span: 20 }}>
         <FormItem label="任务名称" name="taskName" rules={[{ required: true, message: '请输入任务名' }]}>
           <Input placeholder="请输入" />
         </FormItem>
@@ -121,14 +121,14 @@ export default function TaskEditor(props: TaskEditorProps) {
         <FormItem label="执行环境" name="runEnv" rules={[{ required: true, message: '请选择执行环境' }]}>
           <Select placeholder="请选择" options={envOptons} />
         </FormItem>
-        <FormItem label="发送钉钉消息" name="dingTalkFlag" initialValue={false}>
+        <FormItem label="钉钉通知" name="dingTalkFlag" initialValue={false} valuePropName="checked">
+          <Switch />
+        </FormItem>
+        <FormItem label="邮件通知" name="emailFlag" initialValue={false} valuePropName="checked">
           <Switch />
         </FormItem>
         <FormItem label="钉钉Token" name="dingTalkUrls">
           <Select placeholder="请输入钉钉token" mode="tags" notFoundContent="请输入内容，回车添加" />
-        </FormItem>
-        <FormItem label="发送邮件" name="emailFlag" initialValue={false}>
-          <Switch />
         </FormItem>
         <FormItem
           label="通知邮箱"
