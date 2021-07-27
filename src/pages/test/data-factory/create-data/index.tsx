@@ -11,7 +11,7 @@ import { FormProps, OptionProps } from '@/components/table-search/typing';
 import usePublicData from '@/utils/usePublicData';
 import useRequest from '@/utils/useRequest';
 import HeaderTabs from '../components/header-tabs';
-import JsonEditor from '@/components/JsonEditor';
+import JsonEditor from '@/components/json-editor';
 import { queryDataFactory, createData } from '../service';
 import { Item } from '../typing';
 
