@@ -14,8 +14,8 @@ import { TreeNode, EditorMode } from '../../interfaces';
 import { useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey } from '../../common';
 import { useProjectOptions } from '../../hooks';
-import SceneEditor from '../../components/scene-editor';
-import SceneClone from '../../components/scene-clone';
+import SceneEditor from '../../_components/scene-editor';
+import SceneClone from '../../_components/scene-clone';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {

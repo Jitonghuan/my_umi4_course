@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Drawer, Table, DatePicker } from 'antd';
 import { TaskItemVO, TaskReportItemVO } from '../interfaces';
 import { useReportList } from './hooks';
-import ReportDetail from '../components/report-detail';
+import ReportDetail from '../_components/report-detail';
 
 const { RangePicker } = DatePicker;
 

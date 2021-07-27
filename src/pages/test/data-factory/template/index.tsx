@@ -8,13 +8,13 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import moment from 'moment';
 import FELayout from '@cffe/vc-layout';
 import { ContentCard } from '@/components/vc-page-content';
-import HeaderTabs from '../components/header-tabs';
+import HeaderTabs from '../_components/header-tabs';
 import usePublicData from '@/utils/usePublicData';
 import { useTableData } from './hooks';
 import { EditorMode } from '../interfaces';
 import * as APIS from '../service';
 import { postRequest } from '@/utils/request';
-import TemplateEditor from '../components/template-editor';
+import TemplateEditor from '../_components/template-editor';
 
 const { Item: FormItem } = Form;
 
