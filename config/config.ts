@@ -44,7 +44,9 @@ export default defineConfig({
     { src: `${publicPathPrefix}/${ds.appKey}/react-dom.min.js` },
   ],
 
-  // dynamicImport: {},
+  dynamicImport: {
+    loading: '@/components/source-loading',
+  },
 
   // split chunk TODO
   /*—————————— 编译性能和工程配置 end ——————————*/

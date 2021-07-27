@@ -1,5 +1,3 @@
-// import ds from '../../config/defaultSettings';
-
 type IRouteItem = {
   path: string;
   name?: string;

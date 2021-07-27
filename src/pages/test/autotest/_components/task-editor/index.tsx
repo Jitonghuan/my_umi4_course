@@ -137,7 +137,7 @@ export default function TaskEditor(props: TaskEditorProps) {
           rules={[
             {
               validator: async (_, value: string[]) => {
-                if (value.find((n) => !/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(n))) {
+                if (value?.find((n) => !/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(n))) {
                   throw new Error('请输入合法邮箱');
                 }
               },
