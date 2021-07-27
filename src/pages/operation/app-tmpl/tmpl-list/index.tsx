@@ -1,4 +1,4 @@
-// 上下布局页面 主页
+// 上下布局页面 应用模版页
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
@@ -16,14 +16,14 @@ export default function Launch() {
   const [DataSource, setDataSource] = useState<any[]>([
     {
       key: '1',
-      Id: 'John Brown',
-      launchName: 32,
+      Id: 32,
+      launchName: 'John Brown',
       launchType: 'New York No. 1 Lake Park',
     },
     {
       key: '2',
-      Id: 'Jim Green',
-      launchName: 42,
+      Id: 42,
+      launchName: 'Jim Green',
       launchType: 'London No. 1 Lake Park',
     },
   ]);
@@ -62,13 +62,12 @@ export default function Launch() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset">
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>
           <span style={{ float: 'right' }}>
-            {' '}
-            <Button type="primary" style={{ float: 'right' }}>
+            <Button type="primary" style={{ marginLeft: '183px' }}>
               新增模版
             </Button>
           </span>
@@ -90,7 +89,8 @@ export default function Launch() {
               width="24%"
               key="action"
               render={(text, record: any) => (
-                <Space size="middle">
+                <Space size="small">
+                  <a>复制</a>
                   <a
                     onClick={() =>
                       history.push({
@@ -139,6 +139,7 @@ export default function Launch() {
                   >
                     编辑
                   </a>
+
                   <Popconfirm
                     title="确定要删除该信息吗？"
                     //  onConfirm={() => handleDelItem(record, index)}

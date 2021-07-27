@@ -33,7 +33,7 @@ export default function DemoPageTb() {
               <Option value="tom">Tom</Option>
             </Select>
           </Form.Item>
-          <Form.Item label=" 参数类型" name="paramsType">
+          <Form.Item label=" 模版类型" name="paramsType">
             <Select showSearch style={{ width: 220 }}>
               <Option value="jack">Jack</Option>
               <Option value="lucy">Lucy</Option>
@@ -49,14 +49,14 @@ export default function DemoPageTb() {
         </div>
         <div className="right">
           <div className="table">
-            <div style={{ height: '50', marginBottom: '14px', float: 'left', fontSize: 18 }}>可配置项：</div>
+            <div style={{ height: '30', marginBottom: '14px', float: 'left', fontSize: 18 }}>可配置项：</div>
             <Table>
               <Table.Column title="Key" dataIndex="key" width="40%" />
               <Table.Column title="Value" dataIndex="value" width="60%" />
             </Table>
           </div>
 
-          <Space size="large" style={{ marginTop: '560px', float: 'right' }}>
+          <Space size="small" style={{ marginTop: '270px', float: 'right' }}>
             <Button type="ghost" htmlType="reset">
               取消
             </Button>

@@ -58,7 +58,7 @@ export default function Launch() {
           </Form.Item>
           <Form.Item label="应用CODE：" name="APPCODE">
             <div>
-              <Select showSearch style={{ width: 180 }}>
+              <Select showSearch style={{ width: 120 }}>
                 <Option value="jack">Jack</Option>
                 <Option value="lucy">Lucy</Option>
                 <Option value="tom">Tom</Option>

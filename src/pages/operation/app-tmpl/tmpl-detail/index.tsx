@@ -22,12 +22,12 @@ export default function DemoPageTb() {
   };
   const clickChange = () => {};
   return (
-    <MatrixPageContent>
+    <MatrixPageContent className="tmpl-detail">
       <ContentCard>
         <div>
           <Form layout="inline">
             <Form.Item label=" 模版类型：" name="templType">
-              <Select showSearch style={{ width: 220 }}>
+              <Select showSearch style={{ width: 150 }}>
                 <Option value="jack">Jack</Option>
                 <Option value="lucy">Lucy</Option>
                 <Option value="tom">Tom</Option>
@@ -43,41 +43,40 @@ export default function DemoPageTb() {
           </Form>
         </div>
         <div className="content">
-          <div className="left">
+          <div className="leftTmpl">
             <div>模版详情：</div>
             <div className="tmpl"></div>
           </div>
-          <div className="right">
+          <div className="rightTable">
             <div className="table">
-              <div style={{ height: '50', textAlign: 'center', fontSize: 18 }}>可配置项：</div>
-              <Button
-                type="primary"
-                onClick={handleAdd}
-                // style={{ width: '60%' }}
-                icon={<PlusOutlined />}
-              >
-                新增
-              </Button>
+              <div style={{ height: '50', fontSize: 18 }}>可配置项：</div>
               <Table>
                 <Table.Column title="Key" dataIndex="key" width="40%" />
                 <Table.Column title="Value" dataIndex="value" width="60%" />
               </Table>
+              <Button type="ghost" onClick={handleAdd} style={{ width: '100%' }} icon={<PlusOutlined />}>
+                新增
+              </Button>
             </div>
             <div className="form">
-              <Form layout="horizontal">
-                <Form.Item label=" 选择默认应用大类：" name="templType">
+              <Form layout="horizontal" labelAlign="right">
+                <Form.Item label="选择默认应用大类：" name="templType" rules={[{ required: true }]}>
+                  {/* <span  className='select'>选择默认应用大类：</span> */}
                   <Select showSearch style={{ width: 220 }}>
                     <Option value="jack">Jack</Option>
                     <Option value="lucy">Lucy</Option>
                     <Option value="tom">Tom</Option>
                   </Select>
                 </Form.Item>
-                <Form.Item label=" 选择默认环境：" name="templName">
+
+                <Form.Item label="选择默认环境：" name="templName">
+                  {/* <span className='select'>选择默认环境：</span> */}
+
                   <>
                     <Select
                       mode="multiple"
                       allowClear
-                      style={{ width: '100%' }}
+                      style={{ width: 220 }}
                       placeholder="Please select"
                       defaultValue={['a10', 'c12']}
                       onChange={clickChange}
@@ -85,11 +84,10 @@ export default function DemoPageTb() {
                       {children}
                     </Select>
                   </>
-                  ,
                 </Form.Item>
               </Form>
             </div>
-            <Space size="middle" style={{ marginTop: '310px', float: 'right' }}>
+            <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
               <Button type="ghost" htmlType="reset">
                 取消
               </Button>
