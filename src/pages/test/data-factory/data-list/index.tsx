@@ -5,7 +5,7 @@ import moment from 'moment';
 import FELayout from '@cffe/vc-layout';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import { ContentCard } from '@/components/vc-page-content';
-import HeaderTabs from '../components/header-tabs';
+import HeaderTabs from '../_components/header-tabs';
 import MatrixPageContent from '@/components/matrix-page-content';
 import usePublicData from '@/utils/usePublicData';
 import DetailModal from '@/components/detail-modal';

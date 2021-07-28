@@ -9,7 +9,7 @@ import { CardRowGroup } from '@/components/vc-page-content';
 import { TreeNode } from '../interfaces';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
-import HeaderTabs from '../components/header-tabs';
+import HeaderTabs from '../_components/header-tabs';
 import './index.less';
 
 export default function SceneManager(props: any) {

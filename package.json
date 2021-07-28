@@ -51,6 +51,7 @@
     "lodash": "~4.17.21",
     "moment": "~2.29.1",
     "qs": "~6.10.1",
+    "react-ace": "^9.4.1",
     "react-codemirror2": "~7.2.1",
     "relaxed-json": "~1.0.3",
     "umi": "~3.4.25",

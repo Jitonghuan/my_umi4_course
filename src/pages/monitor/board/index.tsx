@@ -13,11 +13,6 @@ import { resUseTableSchema } from './schema';
 import './index.less';
 import { getColorByValue } from './../util';
 
-export interface IProps {
-  /** 属性描述 */
-  [key: string]: any;
-}
-
 type ITab = {
   /** key */
   key: string;
@@ -65,7 +60,7 @@ type IMarket = {
  * @description 监控面板
  * @create 2021-04-12 19:13:58
  */
-const Coms = (props: IProps) => {
+const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
   const [currentTab, setCurrentTab] = useState<string>('');
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
@@ -299,7 +294,7 @@ const Coms = (props: IProps) => {
             <HulkTable
               rowKey="id"
               size="small"
-              columns={resUseTableSchema}
+              columns={resUseTableSchema as any}
               scroll={{ y: 313 }}
               {...tableProps}
               customColumnMap={{

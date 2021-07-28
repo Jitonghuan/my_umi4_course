@@ -28,10 +28,7 @@ export default defineConfig({
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome
-  targets:
-    process.env.NODE_ENV === 'development'
-      ? { chrome: 49, firefox: false, safari: false, edge: false, ios: false }
-      : { chrome: 49, firefox: 64, safari: 10, edge: 13 },
+  targets: { chrome: 60, firefox: 64, safari: 11 },
 
   publicPath: `${publicPathPrefix}/${ds.appKey}/`,
 
@@ -47,7 +44,9 @@ export default defineConfig({
     { src: `${publicPathPrefix}/${ds.appKey}/react-dom.min.js` },
   ],
 
-  // dynamicImport: {},
+  dynamicImport: {
+    loading: '@/components/source-loading',
+  },
 
   // split chunk TODO
   /*—————————— 编译性能和工程配置 end ——————————*/

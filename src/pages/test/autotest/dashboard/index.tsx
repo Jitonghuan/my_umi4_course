@@ -5,7 +5,7 @@
 import React from 'react';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
-import HeaderTabs from '../components/header-tabs';
+import HeaderTabs from '../_components/header-tabs';
 import { useLastTaskExecution, useCaseStats, useWeeklyTaskExecution, useMonthlyCaseIncrement } from './hooks';
 import SummaryCase from './summary-case';
 import SummaryExec from './summary-exec';

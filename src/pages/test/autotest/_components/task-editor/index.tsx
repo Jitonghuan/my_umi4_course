@@ -127,16 +127,17 @@ export default function TaskEditor(props: TaskEditorProps) {
         <FormItem label="邮件通知" name="emailFlag" initialValue={false} valuePropName="checked">
           <Switch />
         </FormItem>
-        <FormItem label="钉钉Token" name="dingTalkUrls">
+        <FormItem label="钉钉Token" name="dingTalkUrls" initialValue={[]}>
           <Select placeholder="请输入钉钉token" mode="tags" notFoundContent="请输入内容，回车添加" />
         </FormItem>
         <FormItem
           label="通知邮箱"
           name="emailReceivers"
+          initialValue={[]}
           rules={[
             {
               validator: async (_, value: string[]) => {
-                if (value.find((n) => !/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(n))) {
+                if (value?.find((n) => !/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(n))) {
                   throw new Error('请输入合法邮箱');
                 }
               },

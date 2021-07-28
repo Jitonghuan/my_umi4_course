@@ -9,8 +9,8 @@ import { ContentCard } from '@/components/vc-page-content';
 import { TreeNode, EditorMode, SceneItemVO } from '../../interfaces';
 import { useSceneList } from '../hooks';
 import { createNodeDataFromSceneItem } from '../../common';
-import SceneEditor from '../../components/scene-editor';
-import SceneExec from '../../components/scene-exec';
+import SceneEditor from '../../_components/scene-editor';
+import SceneExec from '../../_components/scene-exec';
 
 export interface SceneListProps extends Record<string, any> {
   emitter: Emitter;

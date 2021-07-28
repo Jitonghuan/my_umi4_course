@@ -1,5 +1,3 @@
-// import ds from '../../config/defaultSettings';
-
 type IRouteItem = {
   path: string;
   name?: string;
@@ -59,7 +57,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/operation/cluster`,
-    redirect: `${PAGE_PREFIX}/operation/cluster/traffic-scheduling`,
+    redirect: `${PAGE_PREFIX}/operation/cluster/scheduling`,
   },
   {
     path: `${PAGE_PREFIX}/operation/app-tmpl`,
@@ -394,31 +392,31 @@ export default [
         key: 'cluster',
         routes: [
           {
-            path: 'group-view',
+            path: 'dashboard',
             name: '集群看板',
             key: 'cluster',
-            component: '@/pages/operation/cluster/group-view',
+            component: '@/pages/operation/cluster/dashboard',
             hideInMenu: true,
           },
           {
-            path: 'traffic-scheduling',
+            path: 'scheduling',
             name: '流量调度',
             key: 'cluster',
-            component: '@/pages/operation/cluster/traffic-scheduling',
+            component: '@/pages/operation/cluster/scheduling',
             hideInMenu: true,
           },
           {
-            path: 'cluster-synchro',
+            path: 'cluster-sync',
             name: '集群同步',
             key: 'cluster',
-            component: '@/pages/operation/cluster/cluster-synchro',
+            component: '@/pages/operation/cluster/cluster-sync',
             hideInMenu: true,
           },
           {
-            path: 'application-synchro',
+            path: 'application-sync',
             name: '应用同步',
             key: 'cluster',
-            component: '@/pages/operation/cluster/application-synchro',
+            component: '@/pages/operation/cluster/application-sync',
             hideInMenu: true,
           },
           {

@@ -1,7 +1,6 @@
-// 双集群管理相关接口
-// 接口文档  https://come-future.yuque.com/sekh46/bbgc7f/dnkgfm#J4UiL
-// @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/07/16 16:30
+// api list
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/07/27 14:37
 
 import { addAPIPrefix } from '@/utils';
 
@@ -11,20 +10,17 @@ export const clusterSwitch = addAPIPrefix('/opsManage/multiple/switch');
 /** GET 1、集群同步-查询状态 */
 export const deployState = addAPIPrefix('/opsManage/multiple/deployState');
 
-/** POST 2、集群同步-MQ对比 */
-export const MqDiff = addAPIPrefix('/opsManage/multiple/MqDiff');
-
-/** POST 3、集群同步-MQ同步 */
+/** POST 2、集群同步-MQ同步 */
 export const MQDeploy = addAPIPrefix('/opsManage/multiple/MQDeploy');
 
-/** GET 4、集群同步-配置对比 */
-export const ServerDif = addAPIPrefix('/opsManage/multiple/configServerDiff');
-
-/** POST 5、集群同步-配置同步 */
+/** POST 3、集群同步-配置同步 */
 export const serverDeploy = addAPIPrefix('/opsManage/multiple/configServerDeploy');
 
-/** POST 6、集群同步-应用同步 */
+/** POST 4、集群同步-应用同步 */
 export const appDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
+
+/** POST 5、集群同步-前端同步 */
+export const frontDeploy = addAPIPrefix('/opsManage/multiple/frontendDeploy');
 
 /** POST 7、集群同步-前端资源同步 */
 export const frontSource = addAPIPrefix('/opsManage/multiple/frontendSourceDeploy');

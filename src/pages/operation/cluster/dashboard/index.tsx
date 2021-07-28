@@ -1,18 +1,17 @@
-// 上下布局页面 双集群管理
-// @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/07/14 16:30
+// 集群看板
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/07/27 14:34
 
 import React from 'react';
 import {} from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
-import HeaderTabs from '../components/header-tabs';
-// import * as APIS from '../service';
+import HeaderTabs from '../_components/header-tabs';
 
 export default function Dashboard(props: any) {
   return (
     <MatrixPageContent>
-      <HeaderTabs activeKey="group-view" history={props.history} />
+      <HeaderTabs activeKey="dashboard" history={props.history} />
       <ContentCard>集群看板</ContentCard>
     </MatrixPageContent>
   );
