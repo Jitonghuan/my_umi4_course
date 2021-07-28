@@ -88,6 +88,7 @@ export default function DemoPageTb() {
       <ContentCard>
         <div>
           <Form layout="inline">
+            <Form></Form>
             <Form.Item label=" 模版类型：" name="templateType">
               <Select showSearch style={{ width: 150 }} options={templateTypes} />
             </Form.Item>
