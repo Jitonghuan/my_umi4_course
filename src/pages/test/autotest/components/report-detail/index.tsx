@@ -81,16 +81,16 @@ export default function ReportDetail(props: ReportDetailProps) {
             <div className="summary-info">
               <h4>用例通过率</h4>
               <b style={{ color: success ? '#0a0' : '#f00' }}>
-                {stat ? `${Math.round((testcases?.success / testcases?.total) * 10000) / 100}%` : '--'}
+                {report ? `${Math.round(report.passRate! * 10000) / 100}%` : '--'}
               </b>
               <p>执行机制：{report?.triggered === 1 ? '自动' : report?.triggered === 0 ? '手动' : '--'}</p>
               <p>开始时间：{report?.startTime ? moment(report?.startTime).format('YYYY-MM-DD HH:mm:ss') : '--'}</p>
               <p>结束时间：{report?.endTime ? moment(report?.endTime).format('YYYY-MM-DD HH:mm:ss') : '--'}</p>
             </div>
             <div className="summary-chart">
-              {testcases?.total ? (
+              {report ? (
                 <ColorContainer roleKeys={['color']}>
-                  <EchartsReact option={getChartOptions(testcases)} />
+                  <EchartsReact option={getChartOptions(report)} />
                 </ColorContainer>
               ) : null}
             </div>

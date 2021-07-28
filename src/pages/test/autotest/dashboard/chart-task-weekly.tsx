@@ -25,7 +25,7 @@ export default function ChartTaskWeekly(props: ChartTaskWeeklyProps) {
       <header>
         <h3>各任务近七天执行情况</h3>
       </header>
-      <div style={{ height: 220 }}>
+      <div style={{ height: 240 }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={chartOptions} />
         </ColorContainer>

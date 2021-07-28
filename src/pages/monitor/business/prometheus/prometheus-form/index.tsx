@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Steps, Space } from 'antd';
 import { history } from 'umi';
-import ds from '@config/defaultSettings';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import useRequest from '@/utils/useRequest';
 import StepMonitor from './step-monitor';
-import StepTwo from '../../component/rules-table';
+import StepTwo from '../../../component/rules-table';
 import StepComplate from './step-complate';
-import { createPrometheus, updatePrometheus, queryPrometheusList } from '../../service';
-import { Item } from '../../typing';
-import { stepTableMap } from '../../util';
+import { createPrometheus, updatePrometheus, queryPrometheusList } from '../../../service';
+import { Item } from '../../../typing';
+import { stepTableMap } from '../../../util';
+import HeaderTabs from '../../components/header-tabs';
 import './index.less';
 
 const { Step } = Steps;
@@ -30,7 +30,7 @@ const stepOption = [
   },
 ];
 
-const PrometheusForm: React.FC = () => {
+const PrometheusForm: React.FC = (props: any) => {
   const [formList, setFormList] = useState({});
   const [current, setCurrent] = useState(0);
   const [stepOneTable, setStepOneTable] = useState<Item[]>([]);
@@ -149,6 +149,7 @@ const PrometheusForm: React.FC = () => {
 
   return (
     <MatrixPageContent>
+      <HeaderTabs activeKey="prometheus" history={props.history} />
       <ContentCard style={{ background: '#F7F8FA' }}>
         <div className="step-style">
           <Steps current={current} onChange={isEdit ? (current) => setCurrent(current) : undefined}>

@@ -115,6 +115,10 @@ const ApplicationDetail = (props: IProps) => {
                 return true;
               }
 
+              if (key === 'monitor') {
+                return appData?.isClient !== 1 && appData?.appType === 'backend';
+              }
+
               // 不包含二方包
               return key !== 'secondPartyPkg';
             })

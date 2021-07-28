@@ -5,8 +5,8 @@ import { history } from 'umi';
 import EditTable from '@/components/edit-table';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
-import { editColumns } from '../../../component/template-drawer/colunms';
-import { Item } from '../../../typing';
+import { editColumns } from '../../../../component/template-drawer/colunms';
+import { Item } from '../../../../typing';
 import usePublicData from '../../usePublicData';
 
 interface StepOneProps {
@@ -98,14 +98,17 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, matchlabelsList = [], f
       option: [
         {
           key: '15s',
+          label: '15s',
           value: '15s',
         },
         {
           key: '30s',
+          label: '30s',
           value: '30s',
         },
         {
           key: '60s',
+          label: '60s',
           value: '60s',
         },
       ],

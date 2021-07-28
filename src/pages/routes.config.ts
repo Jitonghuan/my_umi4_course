@@ -51,7 +51,11 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/test/autotest`,
-    redirect: `${PAGE_PREFIX}/test/autotest/test-cases`,
+    redirect: `${PAGE_PREFIX}/test/autotest/dashboard`,
+  },
+  {
+    path: `${PAGE_PREFIX}/monitor/business`,
+    redirect: `${PAGE_PREFIX}/monitor/business/prometheus`,
   },
   {
     path: `${PAGE_PREFIX}/operation/cluster`,
@@ -474,22 +478,39 @@ export default [
         component: '@/pages/monitor/application',
       },
       {
-        path: 'prometheus',
-        name: 'Prometheus监控',
-        component: '@/pages/monitor/prometheus',
-        exact: true,
-      },
-      {
-        path: 'prometheus/prometheus-add',
-        name: '接入Prometheus',
-        hideInMenu: true,
-        component: '@/pages/monitor/prometheus/prometheus-form',
-      },
-      {
-        path: 'prometheus/prometheus-edit',
-        name: '编辑Prometheus',
-        hideInMenu: true,
-        component: '@/pages/monitor/prometheus/prometheus-form',
+        path: 'business',
+        name: '业务监控',
+        key: 'business-monitor',
+        routes: [
+          {
+            path: 'prometheus',
+            name: '接口方式接入',
+            key: 'business-monitor',
+            component: '@/pages/monitor/business/prometheus',
+            hideInMenu: true,
+          },
+          {
+            path: 'prometheus/prometheus-add',
+            name: '接入Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/prometheus/prometheus-form',
+          },
+          {
+            path: 'prometheus/prometheus-edit',
+            name: '编辑Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/prometheus/prometheus-form',
+          },
+          {
+            path: 'logger-alarm',
+            name: '日志方式接入',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/logger-alarm',
+          },
+        ],
       },
       {
         path: 'template',
@@ -510,20 +531,9 @@ export default [
     hideInMenu: process.env.BUILD_ENV === 'prod',
     routes: [
       {
-        path: 'dashboard',
-        hideInMenu: true,
-        name: '仪表盘',
-        component: '@/pages/logger/dashboard',
-      },
-      {
         path: 'search',
         name: '日志检索',
         component: '@/pages/logger/search',
-      },
-      {
-        path: 'alarm',
-        name: '日志告警',
-        component: '@/pages/logger/alarm',
       },
     ],
   },

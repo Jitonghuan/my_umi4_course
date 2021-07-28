@@ -11,9 +11,10 @@ import * as APIS from './service';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
 import { EditorMode } from './interface';
 import AlarmEditor from './editor';
+import HeaderTabs from '../components/header-tabs';
 import './index.less';
 
-export default function LoggerAlarm() {
+export default function LoggerAlarm(props: any) {
   const [searchField] = Form.useForm();
   const [appOptions] = useAppOptions();
   const [appCode, setAppCode] = useState<string>();
@@ -121,7 +122,8 @@ export default function LoggerAlarm() {
 
   return (
     <MatrixPageContent className="page-logger-alarm">
-      <FilterCard>
+      <HeaderTabs activeKey="logger-alarm" history={props.history} />
+      <ContentCard>
         <Form form={searchField} layout="inline" onReset={handleReset}>
           <Form.Item label="告警名称" name="name">
             <Input placeholder="请输入" onKeyDown={handleInputKeyDown} />
@@ -164,8 +166,6 @@ export default function LoggerAlarm() {
             </Button>
           </Form.Item>
         </Form>
-      </FilterCard>
-      <ContentCard>
         <div className="table-caption">
           <h3>告警列表</h3>
           <Button type="primary" onClick={() => setEditorMode('ADD')}>

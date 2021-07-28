@@ -3,7 +3,7 @@
 // @create 2021/06/30 20:47
 
 import React, { useState, useEffect } from 'react';
-import { Button, Table, message } from 'antd';
+import { Button, Table, message, Form, Input } from 'antd';
 import type Emitter from 'events';
 import { ContentCard } from '@/components/vc-page-content';
 import { TreeNode, EditorMode, SceneItemVO } from '../../interfaces';
@@ -21,15 +21,18 @@ export interface SceneListProps extends Record<string, any> {
 export default function SceneList(props: SceneListProps) {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [searchParams, setSearchParams] = useState<any>();
   const [sceneSource, total, isLoading, setData, loadData] = useSceneList(
     props.current?.bizId!,
     props.current?.level! - 1,
     pageIndex,
     pageSize,
+    searchParams,
   );
   const [sceneEditorMode, setSceneEditorMode] = useState<EditorMode>('HIDE');
   const [targetEditNode, setTargetEditNode] = useState<TreeNode>();
   const [targetExecNode, setTargetExecNode] = useState<TreeNode>();
+  const [searchField] = Form.useForm();
 
   const handleSceneEditorSave = () => {
     // 通知左侧的列表也更新
@@ -80,16 +83,26 @@ export default function SceneList(props: SceneListProps) {
     };
   });
 
+  const handleSearch = () => {
+    setPageIndex(1);
+    setSearchParams(searchField.getFieldsValue());
+  };
+
   return (
     <ContentCard>
       <div className="page-scene-header">
         <h3>{props.current?.title} - 场景列表</h3>
         <s className="flex-air" />
-        {props.current?.level === 2 ? (
-          <Button type="primary" onClick={handleAddScene}>
-            新增场景
-          </Button>
-        ) : null}
+        <Form layout="inline" form={searchField}>
+          <Form.Item name="keyword">
+            <Input.Search placeholder="输入关键字，回车搜索" style={{ width: 320 }} onSearch={handleSearch} />
+          </Form.Item>
+          {props.current?.level === 2 ? (
+            <Button type="primary" onClick={handleAddScene}>
+              新增场景
+            </Button>
+          ) : null}
+        </Form>
       </div>
       <Table
         dataSource={sceneSource}

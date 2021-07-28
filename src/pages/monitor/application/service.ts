@@ -7,7 +7,7 @@ import ds from '@config/defaultSettings';
 import { getRequest } from '@/utils/request';
 import moment from 'moment';
 
-const queryAppListApi = `${ds.apiPrefix}/appManage/list`;
+const queryAppListApi = `${ds.apiPrefix}/monitorManage/backendApp/list`;
 /** 查询应用列表 */
 export const queryAppList = () =>
   getRequest(queryAppListApi, {

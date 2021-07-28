@@ -18,6 +18,7 @@ export default function DemoPageTb() {
   const [count, setCount] = useState<any>([0]);
   const { Option } = Select;
   const children: any = [];
+  const { TextArea } = Input;
   const handleAdd = () => {
     setCount(count + 1);
   };
@@ -45,7 +46,9 @@ export default function DemoPageTb() {
       <div className="content">
         <div className="left">
           <div>模版详情：</div>
-          <div className="tmpl"></div>
+          <div className="tmpl">
+            <TextArea rows={4} />,
+          </div>
         </div>
         <div className="right">
           <div className="table">

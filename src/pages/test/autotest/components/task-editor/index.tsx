@@ -3,7 +3,7 @@
 // @create 2021/07/08 16:17
 
 import React, { useEffect, useContext } from 'react';
-import { Drawer, Button, Input, Form, Select, Radio, TreeSelect, message } from 'antd';
+import { Drawer, Button, Input, Form, Select, Radio, TreeSelect, message, Switch } from 'antd';
 import { BulbOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
 import { postRequest } from '@/utils/request';
@@ -40,6 +40,10 @@ export default function TaskEditor(props: TaskEditorProps) {
       cron: initData?.cron,
       runEnv: initData?.runEnv,
       suiteType: initData?.suiteType,
+      dingTalkFlag: initData?.dingTalkFlag || false,
+      emailFlag: initData?.emailFlag || false,
+      dingTalkUrls: initData?.dingTalkUrls || [],
+      emailReceivers: initData?.emailReceivers || [],
       testSuiteCase: [] as number[],
       testSuiteScene: [] as number[],
     };
@@ -99,7 +103,7 @@ export default function TaskEditor(props: TaskEditorProps) {
         </div>
       }
     >
-      <Form form={editField} labelCol={{ flex: '100px' }}>
+      <Form form={editField} labelCol={{ flex: '100px' }} wrapperCol={{ span: 20 }}>
         <FormItem label="任务名称" name="taskName" rules={[{ required: true, message: '请输入任务名' }]}>
           <Input placeholder="请输入" />
         </FormItem>
@@ -116,6 +120,30 @@ export default function TaskEditor(props: TaskEditorProps) {
         </FormItem>
         <FormItem label="执行环境" name="runEnv" rules={[{ required: true, message: '请选择执行环境' }]}>
           <Select placeholder="请选择" options={envOptons} />
+        </FormItem>
+        <FormItem label="钉钉通知" name="dingTalkFlag" initialValue={false} valuePropName="checked">
+          <Switch />
+        </FormItem>
+        <FormItem label="邮件通知" name="emailFlag" initialValue={false} valuePropName="checked">
+          <Switch />
+        </FormItem>
+        <FormItem label="钉钉Token" name="dingTalkUrls">
+          <Select placeholder="请输入钉钉token" mode="tags" notFoundContent="请输入内容，回车添加" />
+        </FormItem>
+        <FormItem
+          label="通知邮箱"
+          name="emailReceivers"
+          rules={[
+            {
+              validator: async (_, value: string[]) => {
+                if (value.find((n) => !/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(n))) {
+                  throw new Error('请输入合法邮箱');
+                }
+              },
+            },
+          ]}
+        >
+          <Select placeholder="请输入邮箱" mode="tags" notFoundContent="请输入内容，回车添加" />
         </FormItem>
         <FormItem label="集合类型" name="suiteType" initialValue={0}>
           <Radio.Group

@@ -70,6 +70,8 @@ export function useApiDetail(id: number, level: number): [Record<string, any>, b
 export function useCaseList(
   id: number,
   pageIndex: number,
+  pageSize: number,
+  searchParams: any,
   nodeLevel: number,
 ): [Record<string, any>[], number, boolean, (page?: number) => Promise<void>] {
   const [data, setData] = useState<Record<string, any>[]>([]);
@@ -83,7 +85,7 @@ export function useCaseList(
     setLoading(true);
 
     getRequest(APIS.getCaseList, {
-      data: { id, type: nodeLevel - 1, page, pageSize: 20 },
+      data: { id, type: nodeLevel - 1, page, pageSize, ...searchParams },
     })
       .then((result) => {
         const { dataSource, pageInfo } = result.data || {};
@@ -100,7 +102,7 @@ export function useCaseList(
     if (!nodeLevel) return;
 
     loadData();
-  }, [id, pageIndex, nodeLevel]);
+  }, [id, pageIndex, pageSize, searchParams, nodeLevel]);
 
   return [data, total, loading, loadData];
 }

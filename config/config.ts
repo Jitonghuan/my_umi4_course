@@ -75,7 +75,7 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      target: 'http://matrix-test.cfuture.shop/',
+      //  target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.129.247:8080/',
       // target: 'http://10.10.129.177:8080/',
@@ -84,7 +84,7 @@ export default defineConfig({
       // target: 'http://10.10.130.108:8000', // 可乐本地
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
       // target: 'https://release.zy91.com:4443/futuredog',
-      // target:'http://10.10.128.211:8080'
+      target: 'http://10.10.128.226:8080',
       changeOrigin: true,
     },
   },

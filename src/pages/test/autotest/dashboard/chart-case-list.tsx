@@ -25,7 +25,7 @@ export default function ChartCaseList(props: ChartCaseListProps) {
       <header>
         <h3>各项用例数据</h3>
       </header>
-      <div style={{ height: 280 }}>
+      <div style={{ height: 220 }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={chartOptions} />
         </ColorContainer>

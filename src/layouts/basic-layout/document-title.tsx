@@ -16,7 +16,7 @@ const DocumentTitle: React.FC<IProps> = (props) => {
 
     // 延迟处理，不然不生效
     setTimeout(() => {
-      document.title = props.title || '';
+      document.title = props.title || document.title;
     });
   }, [props]);
 

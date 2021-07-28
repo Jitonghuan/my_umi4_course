@@ -9,7 +9,7 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { useEnvOptions, useLogStoreOptions, useFrameUrl } from './hooks';
 import './index.less';
 
-export default function LoggerSearch() {
+export default function LoggerSearch(props: any) {
   const [envCode, setEnvCode] = useState<string>();
   const [logStore, setLogStore] = useState<string>();
   const [envOptions] = useEnvOptions();

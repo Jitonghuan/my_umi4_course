@@ -3,7 +3,7 @@
 // @create 2021/05/30 16:25
 
 import React, { useState, useEffect } from 'react';
-import { Button, Tag, Table, message, Empty, Spin, Modal, Popconfirm } from 'antd';
+import { Button, Tag, Table, message, Empty, Spin, Form, Input, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
 import { ContentCard } from '@/components/vc-page-content';
@@ -22,13 +22,18 @@ interface RightDetailProps extends Record<string, any> {
 
 export default function RightDetail(props: RightDetailProps) {
   const [apiDetail, apiLoading] = useApiDetail(props.current?.bizId!, props.current?.level!);
+  const [searchParams, setSearchParams] = useState<any>();
   const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [caseList, caseTotal, caseLoading, reloadCase] = useCaseList(
     props.current?.bizId!,
     pageIndex,
+    pageSize,
+    searchParams,
     props.current?.level!,
   );
   const [execCases, setExecCases] = useState<CaseItemVO[]>([]);
+  const [searchField] = Form.useForm();
 
   useEffect(() => {
     const listener = () => {
@@ -62,6 +67,11 @@ export default function RightDetail(props: RightDetailProps) {
     props.emitter.emit('CASE::DETAIL', record);
   };
 
+  const handleSearch = () => {
+    setPageIndex(1);
+    setSearchParams(searchField.getFieldsValue());
+  };
+
   if (!props.current) {
     return (
       <ContentCard className="page-case-right-detail">
@@ -90,23 +100,33 @@ export default function RightDetail(props: RightDetailProps) {
       <div className="case-detail-caption">
         <h3>用例列表</h3>
         {/* <Button type="default">批量执行</Button> */}
-        {props.current.level === 3 ? (
-          <Button
-            onClick={() => props.emitter.emit('CASE::ADD_CASE', apiDetail)}
-            type="primary"
-            icon={<PlusOutlined />}
-          >
-            新增用例
-          </Button>
-        ) : null}
+        <Form layout="inline" form={searchField}>
+          <Form.Item name="keyword">
+            <Input.Search placeholder="输入关键字，回车搜索" onSearch={handleSearch} style={{ width: 320 }} />
+          </Form.Item>
+          {props.current.level === 3 ? (
+            <Button
+              onClick={() => props.emitter.emit('CASE::ADD_CASE', apiDetail)}
+              type="primary"
+              icon={<PlusOutlined />}
+            >
+              新增用例
+            </Button>
+          ) : null}
+        </Form>
       </div>
       <Table
         dataSource={caseList}
         pagination={{
-          pageSize: 20,
+          pageSize,
           current: pageIndex,
           total: caseTotal,
           onChange: (next) => setPageIndex(next),
+          showSizeChanger: true,
+          onShowSizeChange: (_, next) => {
+            setPageIndex(1);
+            setPageSize(next);
+          },
         }}
         loading={caseLoading}
       >

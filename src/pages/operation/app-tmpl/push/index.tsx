@@ -91,7 +91,7 @@ export default function Launch() {
               key="action"
               render={(text, record: any) => (
                 <Space size="large">
-                  <a>当前应用参数</a>
+                  <Button type="primary">当前应用参数</Button>
                 </Space>
               )}
             />
@@ -99,7 +99,7 @@ export default function Launch() {
         </div>
         <div>
           <Button onClick={allSelect}>全选</Button>
-          <Space size="middle" style={{ marginTop: '20px', float: 'right' }}>
+          <Space size="middle" style={{ float: 'right' }}>
             <Button type="ghost" htmlType="reset">
               清空
             </Button>

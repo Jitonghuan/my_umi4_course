@@ -54,7 +54,7 @@ windows 中不要使用 `$ fnpm install`，直接使用 `$ npm install`，
 ```
 registry=https://registry.npm.taobao.org/
 @cffe:registry=http://registry.npm.cfuture.cc
-@ali:registry=http://registry.npm.cfuture.ccs
+@ali:registry=http://r.npm.cfuture.ccs
 @alife:registry=http://registry.npm.cfuture.cc
 @seenew:registry=http://registry.npm.cfuture.cc
 @hbos:registry=http://registry.npm.cfuture.cc

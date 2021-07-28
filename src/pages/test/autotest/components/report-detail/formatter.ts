@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/13 11:13
 
-import { TreeNode } from '../../interfaces';
+import { TreeNode, TaskReportItemVO } from '../../interfaces';
 
 const keys = ['projectId', 'moduleId', 'belongId', 'caseId'];
 
@@ -43,12 +43,18 @@ export function createKVList(obj: Record<string, any>) {
   }));
 }
 
-export function getChartOptions(testcases: Record<string, any>) {
-  const { success = 0, fail = 0, total = 1 } = testcases;
+export function getChartOptions(report: TaskReportItemVO) {
+  const { success = 0, failure = 0, error = 0 } = report;
 
   return {
     tooltip: {
       trigger: 'item',
+    },
+    legend: {
+      orient: 'vertical',
+      top: 0,
+      right: 0,
+      icon: 'circle',
     },
     series: [
       {
@@ -57,6 +63,7 @@ export function getChartOptions(testcases: Record<string, any>) {
         label: {
           show: false,
         },
+        left: -48,
         itemStyle: {
           borderColor: '#fff',
           borderWidth: 2,
@@ -68,8 +75,13 @@ export function getChartOptions(testcases: Record<string, any>) {
             itemStyle: { color: '#439D75' },
           },
           {
-            value: fail,
+            value: failure,
             name: '失败',
+            itemStyle: { color: '#657CA6' },
+          },
+          {
+            value: error,
+            name: '错误',
             itemStyle: { color: '#FF0000' },
           },
         ],
