@@ -71,7 +71,7 @@ export default function TrafficScheduling(props: any) {
         onCancel={() => setLogger(undefined)}
         width={800}
       >
-        <pre className="cluster-scheduling-logger">{logger}</pre>
+        <pre className="pre-block">{logger}</pre>
       </Modal>
     </MatrixPageContent>
   );
