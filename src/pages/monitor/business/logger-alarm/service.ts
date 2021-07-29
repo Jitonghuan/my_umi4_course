@@ -13,8 +13,6 @@ export const getMonitorList = addAPIPrefix('/logManage/alertrule/list');
 
 export const getAppList = addAPIPrefix('/appManage/list');
 
-export const getAlertRule = addAPIPrefix('/logManage/alertrule/options/list');
-
 export const ruleGroupOptions = addAPIPrefix('/logManage/alertrule/group/list');
 
 export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');
