@@ -1,10 +1,16 @@
 import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
+import { addAPIPrefix } from '@/utils';
 
 /** 查询应用列表 */
 export const queryAppsUrl = `${ds.apiPrefix}/appManage/list`;
 
 export const queryMyAppsUrl = `${ds.apiPrefix}/appManage/listMyApp`;
+/** POST 3、应用模版-创建模版 */
+export const create = addAPIPrefix('/opsManage/appTemplate/create');
+
+/** GET 1、应用模版-获取模版类型 */
+export const tmplType = addAPIPrefix('/opsManage/appTemplate/listTmplType');
 
 /** 查询应用列表 */
 export const queryApps = (params: {

@@ -3,7 +3,7 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { history } from 'umi';
 import { useEffectOnce } from 'white-react-use';
@@ -91,6 +91,17 @@ export default function Launch() {
 
   // 查询数据
   const queryList = (value: any) => {
+    const dataSource = [
+      {
+        id: 6,
+        templateName: 'yuuoip',
+        templateCode: 'yguiuo',
+        templateType: '类型',
+        appCategoryCode: 'uionl',
+        envCode: 'yikli',
+      },
+    ];
+    setDataSource(dataSource);
     getRequest(APIS.tmplList, { data: { value } }).then((res: any) => {
       if (res.success) {
         const dataSource = res.data.dataSource;
@@ -103,20 +114,21 @@ export default function Launch() {
       }
     });
   };
+  //删除数据
+  const handleDelItem = (record: any) => {
+    debugger;
+    let id = record.id;
+    delRequest(APIS.deleteTmpl, { data: { id } }).then((res: any) => {
+      if (res.success) {
+        message.success('删除成功！');
+        queryList({
+          pageIndex: 1,
+          pageSize: 20,
+        });
+      }
+    });
+  };
 
-  // const {
-  //   run: queryList,
-  //   tableProps,
-  //   reset,
-  // } = usePaginated({
-  //   requestUrl: tmplList,
-  //   requestMethod: 'GET',
-  //   showRequestError: true,
-  //   initPageInfo: {
-  //     pageSize: 20,
-  //   },
-
-  // });
   return (
     <MatrixPageContent>
       <FilterCard>
@@ -192,6 +204,7 @@ export default function Launch() {
                 history.push({
                   pathname: 'tmpl-detail',
                   query: {
+                    type: 'info',
                     // id: record.id,
                     // isEdite:true;
                     // appCode: record.appCode,
@@ -216,10 +229,10 @@ export default function Launch() {
           >
             <Table.Column title="ID" dataIndex="id" width="10%" />
             <Table.Column title="模版名称" dataIndex="templateName" width="20%" ellipsis />
-            <Table.Column title="模版CODE" dataIndex="templateCode" width="20%" ellipsis />
-            <Table.Column title="模版类型" dataIndex="templateType" width="20%" />
-            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="20%" />
-            <Table.Column title="环境" dataIndex="envCode" width="10%" />
+            <Table.Column title="模版CODE" dataIndex="templateCode" width="15%" ellipsis />
+            <Table.Column title="模版类型" dataIndex="templateType" width="15%" />
+            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="15%" />
+            <Table.Column title="环境" dataIndex="envCode" width="25%" />
             <Table.Column
               title="操作"
               dataIndex="gmtModify"
@@ -233,11 +246,7 @@ export default function Launch() {
                       history.push({
                         pathname: 'tmpl-detail',
                         query: {
-                          // id: record.id,
-                          // isEdite:true;
-                          // appCode: record.appCode,
-                          // isClient: record.isClient,
-                          // isContainClient: record.isContainClient,
+                          type: 'info',
                         },
                       })
                     }
@@ -258,17 +267,16 @@ export default function Launch() {
                     onClick={() =>
                       history.push({
                         pathname: 'tmpl-detail',
-                        query: {},
+                        query: {
+                          type: 'edit',
+                        },
                       })
                     }
                   >
                     编辑
                   </a>
 
-                  <Popconfirm
-                    title="确定要删除该信息吗？"
-                    //  onConfirm={() => handleDelItem(record, index)}
-                  >
+                  <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem(record)}>
                     <a style={{ color: 'red' }}>删除</a>
                   </Popconfirm>
                 </Space>
