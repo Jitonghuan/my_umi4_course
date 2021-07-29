@@ -3,7 +3,7 @@
 // @create 2021/06/25 09:26
 
 import React, { useEffect, useState } from 'react';
-import { Form, Modal, Input, Select, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
+import { Form, Drawer, Input, Select, Button, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
 import { postRequest, putRequest } from '@/utils/request';
 import moment from 'moment';
 import * as APIS from './service';
@@ -116,14 +116,22 @@ export default function AlarmEditor(props: AlarmEditorProps) {
   const disableEdit = props.mode === 'EDIT' && props.initData?.status === '1';
 
   return (
-    <Modal
+    <Drawer
       width={800}
       title={props.mode === 'EDIT' ? '编辑告警' : '新增告警'}
       visible={props.mode !== 'HIDE'}
       maskClosable={false}
-      onCancel={() => props.onClose?.()}
-      onOk={handleOk}
-      okButtonProps={{ disabled: disableEdit }}
+      onClose={props.onClose}
+      footer={
+        <div className="drawer-custom-footer">
+          <Button type="primary" disabled={disableEdit} onClick={handleOk}>
+            确认
+          </Button>
+          <Button type="default" onClick={props.onClose}>
+            取消
+          </Button>
+        </div>
+      }
     >
       {disableEdit ? <Alert type="warning" message="告警规则已停用，无法编辑" style={{ marginBottom: 16 }} /> : null}
 
@@ -259,6 +267,6 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           }
         </FormItem>
       </Form>
-    </Modal>
+    </Drawer>
   );
 }
