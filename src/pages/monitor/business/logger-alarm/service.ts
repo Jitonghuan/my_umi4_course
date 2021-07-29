@@ -15,6 +15,10 @@ export const getAppList = addAPIPrefix('/appManage/list');
 
 export const getAlertRule = addAPIPrefix('/logManage/alertrule/options/list');
 
+export const ruleGroupOptions = addAPIPrefix('/logManage/alertrule/group/list');
+
+export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');
+
 export const createRule = addAPIPrefix('/logManage/alertrule/create');
 
 /** PUT 更新告警 */

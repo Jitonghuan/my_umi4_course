@@ -12,8 +12,9 @@ import {
   useAppOptions,
   useEnvOptions,
   useUserOptions,
-  useRuleOptions,
   useNotifyTypeOptions,
+  useRuleGroupOptions,
+  useRuleIndexOptions,
   useLevelOptions,
   useOperatorOptions,
 } from './hooks';
@@ -31,9 +32,11 @@ export default function AlarmEditor(props: AlarmEditorProps) {
   const [field] = Form.useForm();
   const [appOptions] = useAppOptions();
   const [appCode, setAppCode] = useState<string>();
+  const [envCode, setEnvCode] = useState<string>();
   const [envOptions] = useEnvOptions(appCode);
   const [userOptions] = useUserOptions();
-  const [groupSource, indexSource] = useRuleOptions();
+  const [ruleGroupOptions] = useRuleGroupOptions();
+  const [ruleIndexOptions] = useRuleIndexOptions(envCode);
   // const [notifyTypeOptions] = useNotifyTypeOptions();
   const [levelOptions] = useLevelOptions();
   const [operationOptions] = useOperatorOptions();
@@ -42,6 +45,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     if (props.mode === 'HIDE') return;
 
     setAppCode(undefined);
+    setEnvCode(undefined);
     field.resetFields();
 
     if (props.mode === 'ADD') return;
@@ -61,12 +65,22 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     if (initData.appCode) {
       setAppCode(initData.appCode);
     }
+    if (initData.envCode) {
+      setEnvCode(initData.envCode);
+    }
   }, [props.mode]);
 
   // 应用Code 联动 envCode
   const handleAppCodeChange = (next: string) => {
     setAppCode(next);
-    field.resetFields(['envCode']);
+    setEnvCode(undefined);
+    field.resetFields(['envCode', 'index']);
+  };
+
+  // envCode 联动 index
+  const handleEnvCodeChange = (next: string) => {
+    setEnvCode(next);
+    field.resetFields(['index']);
   };
 
   const handleOk = async () => {
@@ -131,13 +145,18 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           required={false}
           rules={[{ required: true, message: '请选择应用环境' }]}
         >
-          <Select placeholder="请选择" options={envOptions} disabled={props.mode === 'EDIT'} />
+          <Select
+            placeholder="请选择"
+            options={envOptions}
+            onChange={handleEnvCodeChange}
+            disabled={props.mode === 'EDIT'}
+          />
         </FormItem>
         <FormItem label="分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
-          <Select placeholder="请选择" options={groupSource} />
+          <Select placeholder="请选择" options={ruleGroupOptions} />
         </FormItem>
         <FormItem label="索引" name="index" required={false} rules={[{ required: true, message: '请选择索引' }]}>
-          <Select placeholder="请选择" options={indexSource} />
+          <Select placeholder="请选择" options={ruleIndexOptions} />
         </FormItem>
         <FormItem label="告警表达式">
           <FormItem
