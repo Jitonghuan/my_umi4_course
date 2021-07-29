@@ -402,6 +402,13 @@ export default [
             hideInMenu: true,
           },
           {
+            path: 'cluster-sync-detail',
+            name: '集群同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/cluster-sync/sync-detail',
+            hideInMenu: true,
+          },
+          {
             path: 'application-sync',
             name: '应用同步',
             key: 'cluster',

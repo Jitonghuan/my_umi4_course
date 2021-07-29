@@ -33,7 +33,7 @@ export const configServerDiff = addAPIPrefix('/opsManage/multiple/configServerDi
 export const configServerDeploy = addAPIPrefix('/opsManage/multiple/configServerDeploy');
 
 /** POST 集群同步-应用同步 */
-export const appDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
+export const appDeploy = addAPIPrefix('/opsManage/multiple/deployClusterApp');
 
 /** GET 集群同步-集群应用发布查询 */
 export const queryClusterApp = addAPIPrefix('/opsManage/multiple/queryClusterApp');
