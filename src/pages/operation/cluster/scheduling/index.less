@@ -1,0 +1,80 @@
+.page-scheduling {
+  .ant-card-body {
+    background-color: #f7f8fa;
+    height: 100%;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: normal;
+    margin-bottom: 20px;
+  }
+
+  .action-group {
+    text-align: right;
+  }
+}
+
+.zone-card-group {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+
+  .zone-card {
+    flex: 0 0 auto;
+    background-color: #fff;
+    margin-right: 24px;
+    margin-bottom: 16px;
+    padding: 32px 32px 16px 32px;
+    border-radius: 2px;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  h4 {
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0 0 12px;
+  }
+
+  .ant-radio-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .ant-radio-wrapper {
+    border: 1px solid #cacfdb;
+    padding: 4px 24px;
+    min-width: 136px;
+    cursor: pointer;
+    text-align: center;
+
+    + .ant-radio-wrapper {
+      margin-left: 28px;
+    }
+
+    .ant-radio {
+      vertical-align: -1px;
+      margin-right: 8px;
+    }
+
+    &.ant-radio-wrapper-checked {
+      border-color: #1973cc;
+      cursor: default;
+    }
+  }
+}
+
+.cluster-scheduling-logger {
+  height: 320px;
+  border: 1px solid #cacfdb;
+  background-color: #fafafa;
+  border-radius: 2px;
+  padding: 8px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow: auto;
+}

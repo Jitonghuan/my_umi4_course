@@ -1,6 +1,7 @@
 // api list
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/27 14:37
+// https://come-future.yuque.com/sekh46/bbgc7f/dnkgfm
 
 import { addAPIPrefix } from '@/utils';
 
