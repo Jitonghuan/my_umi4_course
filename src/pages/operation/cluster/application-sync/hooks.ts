@@ -32,6 +32,7 @@ export function useAppClusterData(appCode?: string): [any[], boolean] {
       return;
     }
 
+    setLoading(true);
     getRequest(APIS.singleAppDiff, {
       data: { appCode },
     })

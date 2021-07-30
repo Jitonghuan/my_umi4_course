@@ -4,6 +4,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { Form, Radio, Button, Modal } from 'antd';
+import { ArrowRightOutlined } from '@ant-design/icons';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import HeaderTabs from '../_components/header-tabs';
@@ -15,6 +16,7 @@ export default function TrafficScheduling(props: any) {
   const [sourceData] = useClusterSource();
   const [initData] = useInitClusterData();
   const [logger, setLogger] = useState<string>();
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     if (!initData) return;
@@ -26,12 +28,32 @@ export default function TrafficScheduling(props: any) {
     const values = await editField.validateFields();
     console.log('> handleSubmit', values);
 
-    setLogger(`> hello world
+    Modal.confirm({
+      title: '操作确认',
+      content: (
+        <div className="schedule-confirm-content">
+          <h4>请确认即将调度的内容：</h4>
+          {sourceData.map((item: any, index) => (
+            <p key={index}>
+              {item.title} <ArrowRightOutlined />
+              <b>{item.options?.find((n: any) => n.value === values[item.name])?.label}</b>
+            </p>
+          ))}
+        </div>
+      ),
+      okText: '我已确认无误',
+      cancelText: '取消',
+      onOk: async () => {
+        setPending(true);
+        setTimeout(() => setPending(false), 1000);
+        setLogger(`> hello world
 > 开始同步...
 > .............
 > 同步完成！
-    `);
-  }, [editField]);
+        `);
+      },
+    });
+  }, [editField, sourceData]);
 
   const handleReset = useCallback(() => {
     editField.setFieldsValue(initData || {});
@@ -54,7 +76,7 @@ export default function TrafficScheduling(props: any) {
             ))}
           </div>
           <div className="action-group">
-            <Button type="primary" size="large" onClick={handleSubmit}>
+            <Button type="primary" loading={pending} size="large" onClick={handleSubmit}>
               提交
             </Button>
             <Button hidden type="default" size="large" onClick={handleReset} style={{ marginLeft: 12 }}>
