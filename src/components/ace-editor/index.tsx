@@ -18,6 +18,7 @@ export interface AceEditorProps {
   onChange?: (nextValue: string) => any;
   mode?: 'yaml' | 'json';
   height?: number;
+  readOnly?: boolean;
 }
 
 export default function AceEditor(props: AceEditorProps) {
@@ -39,6 +40,7 @@ export default function AceEditor(props: AceEditorProps) {
         theme="tomorrow"
         value={displayValue}
         onChange={handleChange}
+        readOnly={props.readOnly}
         setOptions={{
           tabSize: 2,
           useWorker: false,

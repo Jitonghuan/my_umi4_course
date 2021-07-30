@@ -3,9 +3,8 @@
 // @create 2021/07/30 11:21
 
 import React, { useState, useCallback } from 'react';
-import { Button, Input, Form, Select, Spin, Table } from 'antd';
+import { Button, Input, Form, Select, Spin } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
-import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { CardRowGroup, ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest, putRequest, delRequest } from '@/utils/request';
@@ -24,8 +23,34 @@ export default function PageApiTest() {
   const [pending, setPending] = useState(false);
   const [resultData, setResultData] = useState('');
 
-  const handleSubmit = useCallback((values: any) => {
+  const handleSubmit = useCallback(async (values: any) => {
     console.log('> handleSubmit: ', values);
+
+    const { api, method, data, headers } = values;
+    let promise: Promise<any>;
+
+    const dataParams = JSON.parse(data);
+    const headerParams = JSON.parse(headers);
+
+    setPending(true);
+
+    if (method === 'DELETE') {
+      promise = delRequest(api, { data: dataParams, headers: headerParams });
+    } else if (method === 'POST') {
+      promise = postRequest(api, { data: dataParams, headers: headerParams });
+    } else if (method === 'PUT') {
+      promise = putRequest(api, { data: dataParams, headers: headerParams });
+    } else {
+      promise = getRequest(api, { data: dataParams, headers: headerParams });
+    }
+
+    promise
+      .then((result) => {
+        setResultData(JSON.stringify(result || {}, null, 2));
+      })
+      .finally(() => {
+        setPending(false);
+      });
   }, []);
 
   return (
@@ -36,27 +61,14 @@ export default function PageApiTest() {
             <FormItem label="API" name="api" rules={[{ required: true, message: '请输入接口路径' }]}>
               <Input placeholder="请输入接口路径" />
             </FormItem>
-            <FormItem label="Method" name="method">
+            <FormItem label="Method" name="method" initialValue="GET">
               <Select placeholder="请选择" options={methodOptions} style={{ width: 200 }} />
             </FormItem>
-            <FormItem label="Params" name="params">
-              <EditorTable
-                columns={[
-                  { dataIndex: 'name', title: 'Name' },
-                  { dataIndex: 'value', title: 'Value' },
-                ]}
-              />
-            </FormItem>
-            <FormItem label="Body" name="body">
+            <FormItem label="Data" name="data" initialValue="{}">
               <AceEditor mode="json" height={200} />
             </FormItem>
-            <FormItem label="Headers" name="headers">
-              <EditorTable
-                columns={[
-                  { dataIndex: 'name', title: 'Name' },
-                  { dataIndex: 'value', title: 'Value' },
-                ]}
-              />
+            <FormItem label="Headers" name="headers" initialValue="{}">
+              <AceEditor mode="json" height={160} />
             </FormItem>
             <FormItem label=" " colon={false}>
               <Button htmlType="submit" type="primary">
@@ -70,9 +82,7 @@ export default function PageApiTest() {
         </CardRowGroup.SlideCard>
         <ContentCard>
           <Spin spinning={pending}>
-            <pre className="pre-block" style={{ height: window.innerHeight - 170 }}>
-              {resultData}
-            </pre>
+            <AceEditor value={resultData} height={window.innerHeight - 170} readOnly />
           </Spin>
         </ContentCard>
       </CardRowGroup>
