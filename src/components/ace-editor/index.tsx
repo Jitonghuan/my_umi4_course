@@ -41,6 +41,7 @@ export default function AceEditor(props: AceEditorProps) {
         onChange={handleChange}
         setOptions={{
           tabSize: 2,
+          useWorker: false,
         }}
       />
     </div>

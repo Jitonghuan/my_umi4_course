@@ -3,7 +3,7 @@
 // @create 2021/07/30 11:21
 
 import React, { useState, useCallback } from 'react';
-import { Button, Input, Form, Select, Spin } from 'antd';
+import { Button, Input, Form, Select, Spin, Table } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
@@ -24,11 +24,15 @@ export default function PageApiTest() {
   const [pending, setPending] = useState(false);
   const [resultData, setResultData] = useState('');
 
+  const handleSubmit = useCallback((values: any) => {
+    console.log('> handleSubmit: ', values);
+  }, []);
+
   return (
     <MatrixPageContent>
       <CardRowGroup>
         <CardRowGroup.SlideCard className="content-slide" width={800}>
-          <Form form={field} labelCol={{ flex: '80px' }}>
+          <Form form={field} labelCol={{ flex: '80px' }} onFinish={handleSubmit}>
             <FormItem label="API" name="api" rules={[{ required: true, message: '请输入接口路径' }]}>
               <Input placeholder="请输入接口路径" />
             </FormItem>
@@ -66,7 +70,9 @@ export default function PageApiTest() {
         </CardRowGroup.SlideCard>
         <ContentCard>
           <Spin spinning={pending}>
-            <pre className="pre-block">{resultData}</pre>
+            <pre className="pre-block" style={{ height: window.innerHeight - 170 }}>
+              {resultData}
+            </pre>
           </Spin>
         </ContentCard>
       </CardRowGroup>
