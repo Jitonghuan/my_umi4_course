@@ -17,7 +17,7 @@ export const singleAppDiff = addAPIPrefix('/opsManage/multiple/appDiff');
 /** POST 集群同步-单应用发布 */
 export const singleAppDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
 
-/** POST 集群同步-MQ对比 */
+/** GET 集群同步-MQ对比 */
 export const mqDiff = addAPIPrefix('/opsManage/multiple/mqDiff');
 
 /** POST 集群同步-MQ Topic同步 */
