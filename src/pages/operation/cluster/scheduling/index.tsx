@@ -9,6 +9,8 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import HeaderTabs from '../_components/header-tabs';
 import { useInitClusterData, useClusterSource } from './hooks';
+import * as APIS from '../service';
+import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
 
 export default function TrafficScheduling(props: any) {
@@ -18,11 +20,18 @@ export default function TrafficScheduling(props: any) {
   const [logger, setLogger] = useState<string>();
   const [pending, setPending] = useState(false);
 
+  // 回填初始化数据到表单
   useEffect(() => {
     if (!initData) return;
 
     editField.setFieldsValue(initData);
   }, [initData]);
+
+  // useEffect(() => {
+  //   getRequest(APIS.trafficMap).then(result => {
+  //     console.log('>>> trafficMap', result.data);
+  //   });
+  // }, []);
 
   const handleSubmit = useCallback(async () => {
     const values = await editField.validateFields();
@@ -45,12 +54,19 @@ export default function TrafficScheduling(props: any) {
       cancelText: '取消',
       onOk: async () => {
         setPending(true);
-        setTimeout(() => setPending(false), 1000);
-        setLogger(`> hello world
-> 开始同步...
-> .............
-> 同步完成！
-        `);
+        try {
+          await postRequest(APIS.trafficScheduling, {
+            data: values,
+          });
+        } finally {
+          setPending(false);
+        }
+
+        //         setLogger(`> hello world
+        // > 开始同步...
+        // > .............
+        // > 同步完成！
+        //         `);
       },
     });
   }, [editField, sourceData]);

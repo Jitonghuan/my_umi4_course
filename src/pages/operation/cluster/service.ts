@@ -47,8 +47,14 @@ export const frontendVersionDeploy = addAPIPrefix('/opsManage/multiple/frontendV
 /** GET 集群应用比对 */
 export const diffClusterApp = addAPIPrefix('/opsManage/multiple/diffClusterApp');
 
+/** GET 任务状态查询 */
+export const queryWorkState = addAPIPrefix('/opsManage/multiple/queryWorkState');
+
 /** GET 获取浙一应用列表 */
 export const queryAppList = addAPIPrefix('/opsManage/multiple/queryAppList');
 
 /** GET 操作日志 */
 export const queryOperateLog = addAPIPrefix('/opsManage/multiple/queryOperateLog');
+
+/** GET 获取 dashboard 页面地址 */
+export const getDashboardUrl = addAPIPrefix('/opsManage/multiple/getDashboardUrl');

@@ -94,6 +94,11 @@ export default [
         name: '列表页面',
         component: '@/pages/demo/list',
       },
+      {
+        path: 'apitest',
+        name: '接口测试',
+        component: '@/pages/demo/api-test',
+      },
     ],
   },
   {
