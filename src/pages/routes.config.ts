@@ -98,6 +98,11 @@ export default [
         name: '列表页面',
         component: '@/pages/demo/list',
       },
+      {
+        path: 'apitest',
+        name: '接口测试',
+        component: '@/pages/demo/api-test',
+      },
     ],
   },
   {
@@ -385,6 +390,7 @@ export default [
     path: 'operation',
     name: '运维管理',
     icon: 'icon-atomic',
+    hideInMenu: process.env.BUILD_ENV === 'prod',
     routes: [
       {
         path: 'cluster',
@@ -410,6 +416,13 @@ export default [
             name: '集群同步',
             key: 'cluster',
             component: '@/pages/operation/cluster/cluster-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync-detail',
+            name: '集群同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/cluster-sync/sync-detail',
             hideInMenu: true,
           },
           {
@@ -573,6 +586,12 @@ export default [
         component: '@/pages/code/details',
       },
     ],
+  },
+  {
+    path: '*',
+    name: 'NOT FOUND',
+    hideInMenu: true,
+    component: '@/pages/index/page-404',
   },
   /** {{routes: 标志位不可删除，用于初始化页面}}  */
 ] as IRouteItem[];

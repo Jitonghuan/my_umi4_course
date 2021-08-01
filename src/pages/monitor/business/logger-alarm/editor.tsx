@@ -3,7 +3,7 @@
 // @create 2021/06/25 09:26
 
 import React, { useEffect, useState } from 'react';
-import { Form, Modal, Input, Select, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
+import { Form, Drawer, Input, Select, Button, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
 import { postRequest, putRequest } from '@/utils/request';
 import moment from 'moment';
 import * as APIS from './service';
@@ -12,8 +12,9 @@ import {
   useAppOptions,
   useEnvOptions,
   useUserOptions,
-  useRuleOptions,
   useNotifyTypeOptions,
+  useRuleGroupOptions,
+  useRuleIndexOptions,
   useLevelOptions,
   useOperatorOptions,
 } from './hooks';
@@ -31,9 +32,11 @@ export default function AlarmEditor(props: AlarmEditorProps) {
   const [field] = Form.useForm();
   const [appOptions] = useAppOptions();
   const [appCode, setAppCode] = useState<string>();
+  const [envCode, setEnvCode] = useState<string>();
   const [envOptions] = useEnvOptions(appCode);
   const [userOptions] = useUserOptions();
-  const [groupSource, indexSource] = useRuleOptions();
+  const [ruleGroupOptions] = useRuleGroupOptions();
+  const [ruleIndexOptions] = useRuleIndexOptions(envCode);
   // const [notifyTypeOptions] = useNotifyTypeOptions();
   const [levelOptions] = useLevelOptions();
   const [operationOptions] = useOperatorOptions();
@@ -42,6 +45,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     if (props.mode === 'HIDE') return;
 
     setAppCode(undefined);
+    setEnvCode(undefined);
     field.resetFields();
 
     if (props.mode === 'ADD') return;
@@ -61,12 +65,22 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     if (initData.appCode) {
       setAppCode(initData.appCode);
     }
+    if (initData.envCode) {
+      setEnvCode(initData.envCode);
+    }
   }, [props.mode]);
 
   // 应用Code 联动 envCode
   const handleAppCodeChange = (next: string) => {
     setAppCode(next);
-    field.resetFields(['envCode']);
+    setEnvCode(undefined);
+    field.resetFields(['envCode', 'index']);
+  };
+
+  // envCode 联动 index
+  const handleEnvCodeChange = (next: string) => {
+    setEnvCode(next);
+    field.resetFields(['index']);
   };
 
   const handleOk = async () => {
@@ -102,14 +116,22 @@ export default function AlarmEditor(props: AlarmEditorProps) {
   const disableEdit = props.mode === 'EDIT' && props.initData?.status === '1';
 
   return (
-    <Modal
+    <Drawer
       width={800}
       title={props.mode === 'EDIT' ? '编辑告警' : '新增告警'}
       visible={props.mode !== 'HIDE'}
       maskClosable={false}
-      onCancel={() => props.onClose?.()}
-      onOk={handleOk}
-      okButtonProps={{ disabled: disableEdit }}
+      onClose={props.onClose}
+      footer={
+        <div className="drawer-custom-footer">
+          <Button type="primary" disabled={disableEdit} onClick={handleOk}>
+            确认
+          </Button>
+          <Button type="default" onClick={props.onClose}>
+            取消
+          </Button>
+        </div>
+      }
     >
       {disableEdit ? <Alert type="warning" message="告警规则已停用，无法编辑" style={{ marginBottom: 16 }} /> : null}
 
@@ -131,13 +153,18 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           required={false}
           rules={[{ required: true, message: '请选择应用环境' }]}
         >
-          <Select placeholder="请选择" options={envOptions} disabled={props.mode === 'EDIT'} />
+          <Select
+            placeholder="请选择"
+            options={envOptions}
+            onChange={handleEnvCodeChange}
+            disabled={props.mode === 'EDIT'}
+          />
         </FormItem>
         <FormItem label="分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
-          <Select placeholder="请选择" options={groupSource} />
+          <Select placeholder="请选择" options={ruleGroupOptions} />
         </FormItem>
         <FormItem label="索引" name="index" required={false} rules={[{ required: true, message: '请选择索引' }]}>
-          <Select placeholder="请选择" options={indexSource} />
+          <Select placeholder="请选择" options={ruleIndexOptions} />
         </FormItem>
         <FormItem label="告警表达式">
           <FormItem
@@ -240,6 +267,6 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           }
         </FormItem>
       </Form>
-    </Modal>
+    </Drawer>
   );
 }

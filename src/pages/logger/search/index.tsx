@@ -13,17 +13,20 @@ export default function LoggerSearch(props: any) {
   const [envCode, setEnvCode] = useState<string>();
   const [logStore, setLogStore] = useState<string>();
   const [envOptions] = useEnvOptions();
-  const [logStoreOptions] = useLogStoreOptions();
+  const [logStoreOptions] = useLogStoreOptions(envCode);
   const [frameUrl, urlLoading] = useFrameUrl(envCode, logStore);
   const [framePending, setFramePending] = useState(false);
   const timmerRef = useRef<any>();
   const frameRef = useRef<any>();
 
   useEffect(() => {
-    if (frameUrl) {
-      setFramePending(true);
-    }
+    setFramePending(!!frameUrl);
   }, [frameUrl]);
+
+  const handleEnvCodeChange = (next: string) => {
+    setEnvCode(next);
+    setLogStore(undefined);
+  };
 
   const handleFrameComplete = () => {
     clearTimeout(timmerRef.current);
@@ -44,7 +47,7 @@ export default function LoggerSearch(props: any) {
           <Form.Item label="环境Code">
             <Select
               value={envCode}
-              onChange={(n) => setEnvCode(n)}
+              onChange={handleEnvCodeChange}
               options={envOptions}
               style={{ width: 200 }}
               placeholder="请选择环境"

@@ -26,11 +26,17 @@ export function useEnvOptions() {
   return [source];
 }
 
-export function useLogStoreOptions() {
+export function useLogStoreOptions(envCode?: string) {
   const [source, setSource] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
-    getRequest(APIS.getAlertRule).then((result) => {
+    setSource([]);
+
+    if (!envCode) return;
+
+    getRequest(APIS.ruleIndexOptions, {
+      data: { envCode },
+    }).then((result) => {
       const { Index } = result.data || {};
       const next = (Index || []).map((n: string) => ({
         label: n,
@@ -39,7 +45,7 @@ export function useLogStoreOptions() {
 
       setSource(next);
     });
-  }, []);
+  }, [envCode]);
 
   return [source];
 }
@@ -49,7 +55,11 @@ export function useFrameUrl(envCode?: string, logStore?: string): [string, boole
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!envCode || !logStore) return;
+    if (!envCode || !logStore) {
+      setLoading(false);
+      setUrl('');
+      return;
+    }
 
     setLoading(true);
     getRequest(APIS.getSearchUrl, {
