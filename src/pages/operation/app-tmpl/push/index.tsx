@@ -1,69 +1,171 @@
-// 上下布局页面 主页
+// 上下布局页面 推送页面
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState } from 'react';
-import { Form, Input, Select, Button, Table, Space } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Select, Button, Table, Space, message, Modal } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { history } from 'umi';
+import { stringify } from 'qs';
+import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { InlineForm } from '@/components/schema-form';
-// import * as APIS from './service';
+import * as APIS from '../service';
 
-export default function Launch() {
+export default function Push(porps: any) {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState();
-  // const hasSelected = selectedRowKeys.length > 0;
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
+  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
+  const [categoryCode, setCategoryCode] = useState<any[]>([]); //应用CODE
+  const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
+  const [appCodes, setAppCodes] = useState<string>(); //应用Code获取到的值
+  const [envCodes, setEnvCodes] = useState<string[]>([]); //环境CODE获取到的值
+  const [formTmpl] = Form.useForm();
+  const [formTmplQuery] = Form.useForm();
+  const [selectList, setSelectList] = useState<any[]>([]);
+  const [pageTotal, setPageTotal] = useState<number>();
+  const [currentData, setCurrentData] = useState<any[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
   const rowSelection = {
-    selectedRowKeys,
+    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
+      setSelectedRowKeys(selectedRowKeys);
+      setCurrentData(selectedRows);
+      // console.log(`selectedRowKeys: ${selectedRowKeys}`,'selectedRows: ', selectedRows);
+    },
   };
-  const [DataSource, setDataSource] = useState<any[]>([
-    {
-      key: '1',
-      Id: 'John Brown',
-      launchName: 32,
-      launchType: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '2',
-      Id: 'Jim Green',
-      launchName: 42,
-      launchType: 'London No. 1 Lake Park',
-    },
-  ]);
-  const { Column, ColumnGroup } = Table;
-  const allSelect = () => {};
+  // console.log('>>>>>>',currentData);
+  const showModal = () => {
+    if (appCategoryCode) {
+      debugger;
+      setIsModalVisible(true);
+    } else {
+      message.error('请选择要推送的应用分类');
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+  const [dataSource, setDataSource] = useState<any[]>([]);
+  useEffect(() => {
+    selectCategory();
+    getApplication({ pageIndex: 1, pageSize: 20 });
+  }, []);
+  // 根据选择的应用分类查询要推送的环境
+  const changeAppCategory = (value: any) => {
+    setEnvDatas([{ value: '', label: '' }]);
+    setEnvCodes(['']);
+    const appCategoryCode = value;
+    setAppCategoryCode(appCategoryCode);
+    getRequest(APIS.envList, { data: { categoryCode: appCategoryCode } }).then((resp: any) => {
+      if (resp.success) {
+        const datas =
+          resp?.data?.dataSource?.map((el: any) => {
+            return {
+              ...el,
+              value: el?.envCode,
+              label: el?.envName,
+            };
+          }) || [];
+        setEnvDatas(datas);
+      }
+    });
+  };
+  //获取环境的值
+  const changeEnvCode = (value: any) => {
+    setEnvCodes(value);
+  };
+  //推送模版 模版Code 应用分类 环境Code 应用Code
+  const handleOk = async () => {
+    setIsModalVisible(false);
+    const templateCode = porps.history.location.query.templateCode;
+    const appCodes = currentData.map((item, index) => {
+      return Object.assign(item.appCode);
+    });
+    let getEnvCodes = [...envCodes];
+    if (appCategoryCode && envCodes) {
+      await postRequest(APIS.pushTmpl, {
+        data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes },
+      }).then((resp: any) => {
+        if (resp.success) {
+          message.success('推送成功！');
+          window.location.reload();
+        }
+      });
+    } else {
+      message.error('请选择要推送的应用分类');
+    }
+  };
+
+  //点击查询
+  const getApplication = (value: any) => {
+    getRequest(APIS.appList, {
+      data: {
+        appCategoryCode: value.appCategoryCode,
+        appCode: value.appCode,
+        envCode: value.envCode,
+      },
+    }).then((res: any) => {
+      if (res.success) {
+        // console.log('.......',res.data)
+        const dataSource = res.data.dataSource;
+        let pageTotal = res.data.pageInfo.total;
+        setPageTotal(pageTotal);
+        setDataSource(dataSource);
+      }
+    });
+  };
+  //触发分页
+
+  const pageSizeClick = (pagination: any, currentDataSource: any) => {
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    getApplication(obj);
+
+    setSelectList(currentDataSource);
+  };
+
+  //加载应用分类
+  const selectCategory = () => {
+    getRequest(APIS.appTypeList).then((result) => {
+      const list = (result.data.dataSource || []).map((n: any) => ({
+        label: n.categoryName,
+        value: n.categoryCode,
+        data: n,
+      }));
+      setCategoryData(list);
+    });
+  };
+
+  const pushTmpls = () => {};
   return (
     <MatrixPageContent>
       <FilterCard>
-        <Form layout="inline">
-          <Form.Item label="应用分类：" name="APPName">
-            <div>
-              <Select showSearch style={{ width: 180 }}>
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-                <Option value="tom">Tom</Option>
-              </Select>
-            </div>
+        <Form
+          layout="inline"
+          form={formTmplQuery}
+          onFinish={(values) => {
+            getApplication({
+              ...values,
+              pageIndex: 1,
+              pageSize: 20,
+            });
+          }}
+          onReset={() => {
+            formTmpl.resetFields();
+            getApplication({
+              pageIndex: 1,
+            });
+          }}
+        >
+          <Form.Item label="应用分类：" name="appCategoryCode" rules={[{ required: true, message: '这是必选项' }]}>
+            <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
-          <Form.Item label="环境：" name="env">
-            <div>
-              <Select showSearch style={{ width: 180 }}>
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-                <Option value="tom">Tom</Option>
-              </Select>
-            </div>
-          </Form.Item>
-          <Form.Item label="应用CODE：" name="APPCODE">
-            <div>
-              <Select showSearch style={{ width: 120 }}>
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-                <Option value="tom">Tom</Option>
-              </Select>
-            </div>
+          <Form.Item label="应用CODE：" name="appCode">
+            <Input placeholder="请输入应用CODE" style={{ width: 180 }}></Input>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -71,7 +173,7 @@ export default function Launch() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset">
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>
@@ -79,32 +181,73 @@ export default function Launch() {
       </FilterCard>
       <ContentCard>
         <div>
-          <Table dataSource={DataSource} rowSelection={rowSelection}>
-            <Table.Column title="ID" dataIndex="Id" />
-            <Table.Column title="应用名" dataIndex="launchName" ellipsis />
-            <Table.Column title="应用CODE" dataIndex="launchCODE" ellipsis />
-            <Table.Column title="应用大类" dataIndex="AppClass" />
-            <Table.Column title="应用分组" dataIndex="env" />
-            <Table.Column
-              title="操作"
-              dataIndex="gmtModify"
-              key="action"
-              render={(text, record: any) => (
-                <Space size="large">
-                  <Button type="primary">当前应用参数</Button>
-                </Space>
-              )}
-            />
-          </Table>
-        </div>
-        <div>
-          <Button onClick={allSelect}>全选</Button>
-          <Space size="middle" style={{ float: 'right' }}>
-            <Button type="ghost" htmlType="reset">
-              清空
-            </Button>
-            <Button type="primary">推送</Button>
-          </Space>
+          <Form onFinish={pushTmpls} form={formTmpl}>
+            <Form.Item name="tableData">
+              <Table
+                dataSource={dataSource}
+                rowKey="id"
+                rowSelection={{ ...rowSelection }}
+                pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据` }}
+                onChange={pageSizeClick}
+              >
+                <Table.Column title="ID" dataIndex="id" />
+                <Table.Column title="应用名" dataIndex="appName" ellipsis />
+                <Table.Column title="应用CODE" dataIndex="appCode" ellipsis />
+                <Table.Column title="应用分类" dataIndex="appCategoryCode" />
+                <Table.Column title="应用分组" dataIndex="appGroupCode" />
+                <Table.Column
+                  title="操作"
+                  dataIndex="gmtModify"
+                  key="action"
+                  render={(text, record: any) => (
+                    <Space size="large">
+                      <a
+                        onClick={() => {
+                          const query = {
+                            appCode: record.appCode,
+                            templateType: record.templateType,
+                            envCode: record.envCode,
+                            categoryCode: record.categoryCode,
+                          };
+                          history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
+                        }}
+                      >
+                        当前应用参数
+                      </a>
+                    </Space>
+                  )}
+                />
+              </Table>
+            </Form.Item>
+            <Space size="middle" style={{ float: 'right' }}>
+              <Form.Item>
+                <Button type="ghost" htmlType="reset">
+                  清空
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit" onClick={showModal}>
+                  推送
+                </Button>
+              </Form.Item>
+            </Space>
+          </Form>
+          <Modal title="请选择推送环境" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+            <Form>
+              <Form.Item label="环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
+                <Select
+                  showSearch
+                  allowClear
+                  style={{ width: 160 }}
+                  mode="multiple"
+                  placeholder="请选择"
+                  onChange={changeEnvCode}
+                  // defaultValue={['a10', 'c12']}
+                  options={envDatas}
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
         </div>
       </ContentCard>
     </MatrixPageContent>

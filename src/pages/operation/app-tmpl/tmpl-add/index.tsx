@@ -1,4 +1,4 @@
-// 上下布局页面 详情页
+// 上下布局页面 新增应用模版页
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 17:20
 
@@ -7,11 +7,13 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import * as APIS from '../service';
 import EditorTable from '@cffe/pc-editor-table';
-import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, Row, Col, Select, Space } from 'antd';
+import { FormInstance } from 'antd/lib/form';
 import './index.less';
+import { JsonParse } from '@/utils';
 // import * as APIS from './service';
 
 export default function DemoPageTb(porps: any) {
@@ -27,8 +29,11 @@ export default function DemoPageTb(porps: any) {
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
-  const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]);
+  const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
+  const handleChange = (next: any[]) => {
+    setSource(next);
+  };
 
   const handleAdd = () => {
     setCount(count + 1);
@@ -38,7 +43,6 @@ export default function DemoPageTb(porps: any) {
   useEffect(() => {
     selectTmplType();
     selectCategory();
-    tmplDetialResult(templateCode);
 
     const flag = porps.history.location.query.type;
     if (flag == 'info') {
@@ -47,33 +51,6 @@ export default function DemoPageTb(porps: any) {
       setIsdisabled(false);
     }
   }, []);
-  //进入页面加载信息
-  const templateCode: string = porps.history.location.query.templateCode;
-  const tmplDetialResult = (templateCode: string) => {
-    getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
-      if (res.success) {
-        const tmplresult = res.data.dataSource[0];
-
-        createTmplForm.setFieldsValue({
-          templateType: tmplresult.templateType,
-          templateName: tmplresult.templateName,
-          templateValue: tmplresult.templateValue,
-          appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: tmplresult.envCode,
-          // tmplConfigurableItem:tmplresult.tmplConfigurableItem,
-        });
-        let arr = [];
-        for (const key in tmplresult.tmplConfigurableItem) {
-          arr.push({
-            key: key,
-            value: tmplresult.tmplConfigurableItem[key],
-          });
-        }
-
-        setTmplConfigurable(arr);
-      }
-    });
-  };
 
   //加载模版类型下拉选择
   const selectTmplType = () => {
@@ -125,6 +102,8 @@ export default function DemoPageTb(porps: any) {
       prev[el.key] = el.value;
       return prev;
     }, {} as any);
+    console.log('tmplConfigurableItem:', tmplConfigurableItem);
+
     postRequest(APIS.create, {
       data: {
         templateName: value.templateName,
@@ -172,10 +151,21 @@ export default function DemoPageTb(porps: any) {
 
             <Col span={10} offset={2}>
               <div style={{ fontSize: 18 }}>可配置项：</div>
-              <Table dataSource={tmplConfigurable} bordered>
-                <Table.Column title="Key" dataIndex="key" width="10%" />
-                <Table.Column title="缺省值" dataIndex="value" width="20%" ellipsis />
-              </Table>
+              <Form.Item name="tmplConfigurableItem" rules={[{ required: true, message: '这是必填项' }]}>
+                <EditorTable
+                  value={source}
+                  onChange={handleChange}
+                  columns={[
+                    { title: 'Key', dataIndex: 'key', colProps: { width: 240 } },
+                    {
+                      title: '缺省值',
+                      dataIndex: 'value',
+                      colProps: { width: 280 },
+                    },
+                  ]}
+                  disabled={isDisabled}
+                />
+              </Form.Item>
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}

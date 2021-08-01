@@ -91,24 +91,24 @@ export default function Launch() {
 
   // 查询数据
   const queryList = (value: any) => {
-    const dataSource = [
-      {
-        id: 6,
-        templateName: 'yuuoip',
-        templateCode: 'yguiuo',
-        templateType: '类型',
-        appCategoryCode: 'uionl',
-        envCode: 'yikli',
+    // setDataSource(dataSource);
+    getRequest(APIS.tmplList, {
+      data: {
+        appCategoryCode: value.appCategoryCode,
+        envCode: value.envCode,
+        templateType: value.templateType,
+        templateName: value.templateName,
+        pageIndex: value.pageIndex,
+        pageSize: value.pageSize,
       },
-    ];
-    setDataSource(dataSource);
-    getRequest(APIS.tmplList, { data: { value } }).then((res: any) => {
+    }).then((res: any) => {
       if (res.success) {
         const dataSource = res.data.dataSource;
         let pageTotal = res.data.pageInfo.total;
         value.appCategoryCode = appCategoryCode;
         value.envCode = envCode;
         value.templateType = templateType;
+
         setPageTotal(pageTotal);
         setDataSource(dataSource);
       }
@@ -118,7 +118,7 @@ export default function Launch() {
   const handleDelItem = (record: any) => {
     debugger;
     let id = record.id;
-    delRequest(APIS.deleteTmpl, { data: { id } }).then((res: any) => {
+    delRequest(`${APIS.deleteTmpl}/${id}`).then((res: any) => {
       if (res.success) {
         message.success('删除成功！');
         queryList({
@@ -135,16 +135,14 @@ export default function Launch() {
         <Form
           layout="inline"
           form={formTmpl}
-          onFinish={(values) => {
+          onFinish={(values: any) => {
             queryList({
-              pageIndex: 1,
               ...values,
+              pageIndex: 1,
               pageSize: 20,
             });
           }}
-          // onValuesChange={handleChange}
           onReset={() => {
-            // const { pageSize = 10 } = tableProps.pagination as any;
             formTmpl.resetFields();
             queryList({
               pageIndex: 1,
@@ -153,38 +151,30 @@ export default function Launch() {
           }}
         >
           <Form.Item label="应用分类：" name="appCategoryCode">
-            <div>
-              <Select showSearch style={{ width: 120 }} options={categoryData} onChange={changeAppCategory} />
-            </div>
+            <Select showSearch style={{ width: 120 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
           <Form.Item label="环境：" name="envCode">
-            <div>
-              <Select
-                options={envDatas}
-                onChange={(n) => {
-                  setenvCode(n);
-                }}
-                showSearch
-                style={{ width: 120 }}
-              />
-            </div>
+            <Select
+              options={envDatas}
+              onChange={(n) => {
+                setenvCode(n);
+              }}
+              showSearch
+              style={{ width: 120 }}
+            />
           </Form.Item>
-          <Form.Item label="模版类型：" name="templateTypes">
-            <div>
-              <Select
-                showSearch
-                style={{ width: 120 }}
-                options={templateTypes}
-                onChange={(n) => {
-                  setTemplateType(n);
-                }}
-              />
-            </div>
+          <Form.Item label="模版类型：" name="templateType">
+            <Select
+              showSearch
+              style={{ width: 120 }}
+              options={templateTypes}
+              onChange={(n) => {
+                setTemplateType(n);
+              }}
+            />
           </Form.Item>
           <Form.Item label=" 模版名称：" name="templateName">
-            <div>
-              <Input placeholder="请输入模版名称"></Input>
-            </div>
+            <Input placeholder="请输入模版名称"></Input>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -192,7 +182,7 @@ export default function Launch() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -202,15 +192,7 @@ export default function Launch() {
               style={{ marginLeft: '88px' }}
               onClick={() =>
                 history.push({
-                  pathname: 'tmpl-detail',
-                  query: {
-                    type: 'info',
-                    // id: record.id,
-                    // isEdite:true;
-                    // appCode: record.appCode,
-                    // isClient: record.isClient,
-                    // isContainClient: record.isContainClient,
-                  },
+                  pathname: 'tmpl-add',
                 })
               }
             >
@@ -229,10 +211,10 @@ export default function Launch() {
           >
             <Table.Column title="ID" dataIndex="id" width="10%" />
             <Table.Column title="模版名称" dataIndex="templateName" width="20%" ellipsis />
-            <Table.Column title="模版CODE" dataIndex="templateCode" width="15%" ellipsis />
-            <Table.Column title="模版类型" dataIndex="templateType" width="15%" />
-            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="15%" />
-            <Table.Column title="环境" dataIndex="envCode" width="25%" />
+            <Table.Column title="模版CODE" dataIndex="templateCode" width="35%" ellipsis />
+            <Table.Column title="模版类型" dataIndex="templateType" width="10%" />
+            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="10%" />
+            <Table.Column title="环境" dataIndex="envCode" width="15%" />
             <Table.Column
               title="操作"
               dataIndex="gmtModify"
@@ -240,13 +222,26 @@ export default function Launch() {
               key="action"
               render={(text, record: any) => (
                 <Space size="small">
-                  <a>复制</a>
+                  <a
+                    onClick={() =>
+                      history.push({
+                        pathname: 'tmpl-copy',
+                        query: {
+                          type: 'edit',
+                          templateCode: record.templateCode,
+                        },
+                      })
+                    }
+                  >
+                    复制
+                  </a>
                   <a
                     onClick={() =>
                       history.push({
                         pathname: 'tmpl-detail',
                         query: {
                           type: 'info',
+                          templateCode: record.templateCode,
                         },
                       })
                     }
@@ -254,21 +249,19 @@ export default function Launch() {
                     详情 {record.lastName}
                   </a>
                   <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'push',
-                        query: {},
-                      })
-                    }
+                    onClick={() => {
+                      history.push(`push?templateCode=${record.templateCode}`);
+                    }}
                   >
                     推送
                   </a>
                   <a
                     onClick={() =>
                       history.push({
-                        pathname: 'tmpl-detail',
+                        pathname: 'tmpl-edit',
                         query: {
                           type: 'edit',
+                          templateCode: record.templateCode,
                         },
                       })
                     }

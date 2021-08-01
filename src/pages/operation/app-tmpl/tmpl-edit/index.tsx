@@ -1,34 +1,34 @@
-// 上下布局页面 详情页
+// 上下布局页面 应用模版编辑页
 // @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/07/23 17:20
+// @create 2021/07/31 17:00
 
 import React from 'react';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
-import { useState, useEffect } from 'react';
+import { getRequest, putRequest } from '@/utils/request';
+import { useContext, useState, useEffect, useRef } from 'react';
 import * as APIS from '../service';
 import EditorTable from '@cffe/pc-editor-table';
 import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
-// import * as APIS from './service';
 
 export default function DemoPageTb(porps: any) {
-  const [dataSource, setDataSource] = useState<any[]>([]);
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
-  const [editingKey, setEditingKey] = useState<string[]>([]); //编辑
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]); //每一行数据
+  const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
   const children: any = [];
   const { TextArea } = Input;
-  const [tmplDetail, setTmplDetail] = useState<any>();
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
-  const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]);
+  const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
+  const handleChange = (next: any[]) => {
+    setSource(next);
+    // console.log('tyuioi:',next)
+  };
 
   const handleAdd = () => {
     setCount(count + 1);
@@ -53,15 +53,6 @@ export default function DemoPageTb(porps: any) {
     getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
       if (res.success) {
         const tmplresult = res.data.dataSource[0];
-
-        createTmplForm.setFieldsValue({
-          templateType: tmplresult.templateType,
-          templateName: tmplresult.templateName,
-          templateValue: tmplresult.templateValue,
-          appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: tmplresult.envCode,
-          // tmplConfigurableItem:tmplresult.tmplConfigurableItem,
-        });
         let arr = [];
         for (const key in tmplresult.tmplConfigurableItem) {
           arr.push({
@@ -69,8 +60,15 @@ export default function DemoPageTb(porps: any) {
             value: tmplresult.tmplConfigurableItem[key],
           });
         }
-
-        setTmplConfigurable(arr);
+        createTmplForm.setFieldsValue({
+          templateType: tmplresult.templateType,
+          templateName: tmplresult.templateName,
+          templateValue: tmplresult.templateValue,
+          appCategoryCode: tmplresult.appCategoryCode,
+          envCodes: tmplresult.envCode,
+          tmplConfigurableItem: arr,
+        });
+        // let arr = []
       }
     });
   };
@@ -118,21 +116,23 @@ export default function DemoPageTb(porps: any) {
       }
     });
   };
-  //提交模版
+  //保存编辑模版
   const createTmpl = (value: any) => {
+    const templateCode: string = porps.history.location.query.templateCode;
     //  const tmplConfigurableItem = new Map(value.tmplConfigurableItem.map((el:any)=> [el.key,el.value]))
     const tmplConfigurableItem = value.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
       return prev;
     }, {} as any);
-    postRequest(APIS.create, {
+    putRequest(APIS.update, {
       data: {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
         appCategoryCode: value.appCategoryCode,
-        envCodes: value.envCodes,
+        envCode: value.envCodes,
         tmplConfigurableItem,
+        templateCode: templateCode,
       },
     }).then((resp: any) => {
       if (resp.success) {
@@ -172,10 +172,21 @@ export default function DemoPageTb(porps: any) {
 
             <Col span={10} offset={2}>
               <div style={{ fontSize: 18 }}>可配置项：</div>
-              <Table dataSource={tmplConfigurable} bordered>
-                <Table.Column title="Key" dataIndex="key" width="10%" />
-                <Table.Column title="缺省值" dataIndex="value" width="20%" ellipsis />
-              </Table>
+              <Form.Item name="tmplConfigurableItem" rules={[{ required: true, message: '这是必填项' }]}>
+                <EditorTable
+                  value={source}
+                  onChange={handleChange}
+                  columns={[
+                    { title: 'Key', dataIndex: 'key', colProps: { width: 240 } },
+                    {
+                      title: '缺省值',
+                      dataIndex: 'value',
+                      colProps: { width: 280 },
+                    },
+                  ]}
+                  disabled={isDisabled}
+                />
+              </Form.Item>
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
@@ -226,7 +237,7 @@ export default function DemoPageTb(porps: any) {
                 取消
               </Button>
               <Button type="primary" htmlType="submit" disabled={isDisabled}>
-                提交
+                保存编辑
               </Button>
             </Space>
           </Form.Item>

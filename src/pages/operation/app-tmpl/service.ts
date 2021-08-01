@@ -24,7 +24,7 @@ export const create = addAPIPrefix('/opsManage/appTemplate/create');
 export const update = addAPIPrefix('opsManage/appTemplate/update');
 
 /** DELETE 5、应用模版-删除模版 */
-export const deleteTmpl = addAPIPrefix('opsManage/appTemplate/:id');
+export const deleteTmpl = addAPIPrefix('opsManage/appTemplate/delete');
 
 /** POST 6、应用模版-推送模版 */
 export const pushTmpl = addAPIPrefix('/opsManage/appTemplate/push');
@@ -34,3 +34,6 @@ export const paramsList = addAPIPrefix('/appManage/appTemplate/list');
 
 /** PUT 8、应用模版-编辑应用参数 */
 export const editParams = addAPIPrefix('/appManage/appTemplate/update');
+
+// 查看应用/appManage/list
+export const appList = addAPIPrefix('/appManage/list');
