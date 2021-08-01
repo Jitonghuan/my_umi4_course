@@ -100,21 +100,26 @@ export default function Push(porps: any) {
 
   //点击查询
   const getApplication = (value: any) => {
+    setLoading(true);
     getRequest(APIS.appList, {
       data: {
         appCategoryCode: value.appCategoryCode,
         appCode: value.appCode,
         envCode: value.envCode,
       },
-    }).then((res: any) => {
-      if (res.success) {
-        // console.log('.......',res.data)
-        const dataSource = res.data.dataSource;
-        let pageTotal = res.data.pageInfo.total;
-        setPageTotal(pageTotal);
-        setDataSource(dataSource);
-      }
-    });
+    })
+      .then((res: any) => {
+        if (res.success) {
+          // console.log('.......',res.data)
+          const dataSource = res.data.dataSource;
+          let pageTotal = res.data.pageInfo.total;
+          setPageTotal(pageTotal);
+          setDataSource(dataSource);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   //触发分页
 
@@ -186,6 +191,7 @@ export default function Push(porps: any) {
               <Table
                 dataSource={dataSource}
                 rowKey="id"
+                loading={loading}
                 rowSelection={{ ...rowSelection }}
                 pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据` }}
                 onChange={pageSizeClick}
