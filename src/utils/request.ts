@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { sso } from '@cffe/vc-request';
-import { RequestOptionsInit, IResponse } from '@cffe/vc-request/es/base-request/type';
+import type { RequestOptionsInit, IResponse } from '@cffe/vc-request/es/base-request/type';
 
 const parseErrorMsg = (errorMsg: any) => {
   if (typeof errorMsg === 'string') {

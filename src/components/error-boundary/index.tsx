@@ -3,7 +3,7 @@
 // @create 2019/02/11
 
 import React, { Component } from 'react';
-import { Empty, Alert } from 'antd';
+import { Alert } from 'antd';
 
 export default class ErrorBoundary extends Component {
   static getDerivedStateFromError() {

@@ -526,5 +526,11 @@ export default [
       },
     ],
   },
+  {
+    path: '*',
+    name: 'NOT FOUND',
+    hideInMenu: true,
+    component: '@/pages/index/page-404',
+  },
   /** {{routes: 标志位不可删除，用于初始化页面}}  */
 ] as IRouteItem[];

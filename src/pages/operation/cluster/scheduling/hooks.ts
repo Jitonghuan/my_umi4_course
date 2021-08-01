@@ -3,6 +3,8 @@
 // @create 2021/07/28 09:29
 
 import { useState, useEffect } from 'react';
+// import { getRequest } from '@/utils/request';
+// import * as APIS from '../service';
 
 export function useInitClusterData() {
   const [data, setData] = useState<Record<string, any>>();
