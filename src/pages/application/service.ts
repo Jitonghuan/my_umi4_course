@@ -1,10 +1,19 @@
 import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
+import { addAPIPrefix } from '@/utils';
 
 /** 查询应用列表 */
 export const queryAppsUrl = `${ds.apiPrefix}/appManage/list`;
 
 export const queryMyAppsUrl = `${ds.apiPrefix}/appManage/listMyApp`;
+/** POST 3、应用模版-创建模版 */
+export const create = addAPIPrefix('/opsManage/appTemplate/create');
+
+/** GET 2、应用模版-查看模版 */
+export const tmplList = addAPIPrefix('/opsManage/appTemplate/list');
+
+/** GET 1、应用模版-获取模版类型 */
+export const tmplType = addAPIPrefix('/opsManage/appTemplate/listTmplType');
 
 /** 查询应用列表 */
 export const queryApps = (params: {
@@ -416,3 +425,10 @@ export const restartAppUrl = `${ds.apiPrefix}/appManage/restart`;
 export const restartApp = async (data: any) => {
   return await postRequest(restartAppUrl, { data });
 };
+/** 环境名 */
+export const envList = addAPIPrefix('/appManage/env/list');
+/** GET 7、应用模版-查看应用参数 */
+export const paramsList = addAPIPrefix('/appManage/appTemplate/list');
+
+/** PUT 8、应用模版-编辑应用参数 */
+export const editParams = addAPIPrefix('/appManage/appTemplate/update');
