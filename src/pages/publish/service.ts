@@ -210,3 +210,26 @@ export const exportPublishFunctionUrl = `${ds.apiPrefix}/publishManage/function/
 export const getExportPublishFunctionLink = (params: any) => {
   return `${exportPublishFunctionUrl}?${stringify(params)}`;
 };
+
+const queryAppListApi = `${ds.apiPrefix}/appManage/list`;
+/** 查询应用列表 */
+export const queryAppList = () => {
+  return getRequest(queryAppListApi, {
+    data: {
+      pageIndex: 1,
+      pageSize: 1000,
+    },
+  }).then((res: any) => {
+    if (res.success) {
+      const { dataSource = [] } = res.data || {};
+      return dataSource.map((app: any) => {
+        return {
+          ...app,
+          value: app.appCode,
+          label: app.appCode,
+        };
+      });
+    }
+    return [];
+  });
+};
