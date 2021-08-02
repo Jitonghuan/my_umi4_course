@@ -124,7 +124,7 @@ export default function DemoPageTb(porps: any) {
       prev[el.key] = el.value;
       return prev;
     }, {} as any);
-    debugger;
+
     let valArr = [];
     if (Array.isArray(value.envCodes)) {
       valArr = value.envCodes;

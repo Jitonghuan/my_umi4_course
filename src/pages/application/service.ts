@@ -427,6 +427,7 @@ export const restartApp = async (data: any) => {
 };
 /** 环境名 */
 export const envList = addAPIPrefix('/appManage/env/list');
+
 /** GET 7、应用模版-查看应用参数 */
 export const paramsList = addAPIPrefix('/appManage/appTemplate/list');
 
