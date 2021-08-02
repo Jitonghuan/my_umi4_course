@@ -60,6 +60,10 @@ export default [
     redirect: `${PAGE_PREFIX}/operation/cluster/scheduling`,
   },
   {
+    path: `${PAGE_PREFIX}/operation/app-tmpl`,
+    redirect: `${PAGE_PREFIX}/operation/app-tmpl/tmpl-list`,
+  },
+  {
     path: `${PAGE_PREFIX}/test/data-factory`,
     redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
@@ -165,6 +169,13 @@ export default [
             key: 'list',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/config-parameters-manage',
+          },
+          {
+            path: 'AppParameters',
+            name: '应用参数',
+            key: 'list',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/application-params',
           },
           {
             path: 'addConfig',
@@ -426,6 +437,56 @@ export default [
             name: '操作日志',
             key: 'cluster',
             component: '@/pages/operation/cluster/operation-log',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'app-tmpl',
+        name: '应用模版',
+        key: 'app-tmpl',
+        routes: [
+          {
+            path: 'tmpl-list',
+            name: '应用模版列表',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-list',
+            hideInMenu: true,
+          },
+
+          {
+            path: 'tmpl-detail',
+            name: '应用模版详情',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'push',
+            name: '推送模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/push',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-edit',
+            name: '应用模版编辑',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-edit',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-add',
+            name: '新增应用模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-add',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-copy',
+            name: '复制应用模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-copy',
             hideInMenu: true,
           },
         ],
