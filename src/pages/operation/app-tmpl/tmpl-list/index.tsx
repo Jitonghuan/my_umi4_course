@@ -159,6 +159,7 @@ export default function Launch() {
           <Form.Item label="环境：" name="envCode">
             <Select
               options={envDatas}
+              allowClear
               onChange={(n) => {
                 setenvCode(n);
               }}
@@ -169,6 +170,7 @@ export default function Launch() {
           <Form.Item label="模版类型：" name="templateType">
             <Select
               showSearch
+              allowClear
               style={{ width: 120 }}
               options={templateTypes}
               onChange={(n) => {
