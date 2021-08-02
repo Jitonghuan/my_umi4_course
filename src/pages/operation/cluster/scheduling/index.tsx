@@ -93,7 +93,7 @@ export default function TrafficScheduling(props: any) {
           </div>
           <div className="action-group">
             <Button type="primary" loading={pending} size="large" onClick={handleSubmit}>
-              提交
+              开始调度
             </Button>
             <Button hidden type="default" size="large" onClick={handleReset} style={{ marginLeft: 12 }}>
               重置

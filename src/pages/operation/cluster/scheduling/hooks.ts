@@ -29,7 +29,7 @@ export function useClusterSource() {
   useEffect(() => {
     setData([
       {
-        title: '庆春院区',
+        title: '庆春城站院区',
         name: 'qingchun',
         options: [
           { label: 'A集群', value: 'cluster_a' },
@@ -52,14 +52,14 @@ export function useClusterSource() {
           { label: 'B集群', value: 'cluster_b' },
         ],
       },
-      {
-        title: '城站院区',
-        name: 'chengzhan',
-        options: [
-          { label: 'A集群', value: 'cluster_a' },
-          { label: 'B集群', value: 'cluster_b' },
-        ],
-      },
+      // {
+      //   title: '城站院区',
+      //   name: 'chengzhan',
+      //   options: [
+      //     { label: 'A集群', value: 'cluster_a' },
+      //     { label: 'B集群', value: 'cluster_b' },
+      //   ],
+      // },
     ]);
   }, []);
 

@@ -2,8 +2,9 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/29 16:06
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Button, Steps, Spin, Result } from 'antd';
+import moment from 'moment';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import HeaderTabs from '../_components/header-tabs';
@@ -61,6 +62,14 @@ export default function ClusterSyncDetail(props: any) {
   const [currStep, setCurrStep] = useState<number>(-1);
   const [resultLog, setResultLog] = useState<string>('');
   const [currState, setCurrState] = useState<ICategory>();
+  const resultRef = useRef<HTMLPreElement>(null);
+
+  const [nextDeployApp, setNextDeployApp] = useState<string>();
+
+  const updateResultLog = (addon: string) => {
+    const nextLog = resultLog + `[${moment().format('HH:mm:ss')}] ${addon || '<no result> success'}\n`;
+    setResultLog(nextLog);
+  };
 
   // 查询当前状态
   const queryCurrStatus = useCallback(async () => {
@@ -69,6 +78,11 @@ export default function ClusterSyncDetail(props: any) {
       const result = await getRequest(APIS.queryWorkState);
       console.log('> current work state: ', result.data);
       setCurrState(result.data.category);
+      updateResultLog(result.data.log || '<no initial log>');
+
+      if (result.data.category === 'GetDiffClusterApp') {
+        // TODO 设置下一个应用？
+      }
     } catch (ex) {
       setCurrState('Pass');
     } finally {
@@ -76,19 +90,21 @@ export default function ClusterSyncDetail(props: any) {
     }
   }, []);
 
-  const updateResultLog = (addon: string) => {
-    const nextLog = resultLog + `${addon || '<no result>'}\n`;
-    setResultLog(nextLog);
-  };
-
   const doAction = useCallback(
     async (promise: Promise<IResponse<any>>) => {
       try {
         setPending(true);
         const result = await promise;
-        updateResultLog(result.data);
+        let addon = result.data;
+        if (typeof addon === 'object' && addon.appCode) {
+          addon = `Next Deploy App: ${addon.appCode}`;
+        }
+
+        updateResultLog(addon);
+        return result.data;
       } catch (ex) {
-        // updateResultLog(`<ERROR> ${ex?.message || 'Server Error'}`);
+        updateResultLog(`<ERROR> ${ex?.message || 'Server Error'}`);
+        throw ex;
       } finally {
         setPending(false);
       }
@@ -101,49 +117,70 @@ export default function ClusterSyncDetail(props: any) {
     queryCurrStatus();
   }, []);
 
+  // 每次日志有新增的时候都滚动到最底部
+  useLayoutEffect(() => {
+    resultRef.current?.scrollTo({ top: 9999, behavior: 'smooth' });
+  }, [resultLog]);
+
   // 1. get mq diff
-  const getMqDiff = useCallback(() => {
-    doAction(getRequest(APIS.mqDiff));
+  const getMqDiff = useCallback(async () => {
+    await doAction(getRequest(APIS.mqDiff));
     setCurrState('GetDiffClusterMq');
   }, [resultLog]);
   // 2. deploy mq topic
-  const deployTopic = useCallback(() => {
-    doAction(postRequest(APIS.deployTopic));
+  const deployTopic = useCallback(async () => {
+    await doAction(postRequest(APIS.deployTopic));
     setCurrState('DeployClusterMqTopic');
   }, [resultLog]);
   // 3. deploy mq group
-  const deployGroup = useCallback(() => {
-    doAction(postRequest(APIS.deployGroup));
+  const deployGroup = useCallback(async () => {
+    await doAction(postRequest(APIS.deployGroup));
     setCurrState('DeployClusterMqGroup');
   }, [resultLog]);
   // 4. get config diff
-  const getConfigDiff = useCallback(() => {
-    doAction(getRequest(APIS.configServerDiff));
+  const getConfigDiff = useCallback(async () => {
+    await doAction(getRequest(APIS.configServerDiff));
     setCurrState('GetDiffClusterConfig');
   }, [resultLog]);
   // 5. deploy config
-  const deployConfig = useCallback(() => {
-    doAction(postRequest(APIS.configServerDeploy));
+  const deployConfig = useCallback(async () => {
+    await doAction(postRequest(APIS.configServerDeploy));
     setCurrState('DeployClusterConfig');
   }, [resultLog]);
   // 6. get cluster app
-  const getClusterApp = useCallback(() => {
-    doAction(getRequest(APIS.queryClusterApp));
-    setCurrState('GetDiffClusterApp');
+  const getClusterApp = useCallback(async () => {
+    const nextApp = await doAction(getRequest(APIS.queryClusterApp));
+    // setCurrState('GetDiffClusterApp');
+    if (nextApp.appCode) {
+      setCurrState('GetDiffClusterApp');
+      setNextDeployApp(nextApp.appCode);
+    } else {
+      setCurrState('DeployClusterApp');
+    }
   }, [resultLog]);
   // 7. deploy app
-  const deployApp = useCallback(() => {
-    doAction(postRequest(APIS.appDeploy));
-    setCurrState('DeployClusterApp');
-  }, [resultLog]);
+  const deployApp = useCallback(async () => {
+    const nextApp = await doAction(
+      postRequest(APIS.appDeploy, {
+        data: { appCode: nextDeployApp },
+      }),
+    );
+    if (nextApp.appCode) {
+      setCurrState('GetDiffClusterApp');
+      setNextDeployApp(nextApp.appCode);
+    } else {
+      setCurrState('DeployClusterApp');
+    }
+    // setCurrState('DeployClusterApp');
+  }, [resultLog, nextDeployApp]);
   // 8. deploy fe source
-  const deployFESource = useCallback(() => {
-    doAction(postRequest(APIS.frontendSourceDeploy));
+  const deployFESource = useCallback(async () => {
+    await doAction(postRequest(APIS.frontendSourceDeploy));
     setCurrState('DeployClusterWebSource');
   }, [resultLog]);
   // 9. deploy fe version
-  const deployFEVersion = useCallback(() => {
-    doAction(postRequest(APIS.frontendVersionDeploy));
+  const deployFEVersion = useCallback(async () => {
+    await doAction(postRequest(APIS.frontendVersionDeploy));
     setCurrState('DeployClusterWebVersion');
   }, [resultLog]);
   // 10. finish
@@ -180,7 +217,9 @@ export default function ClusterSyncDetail(props: any) {
         </Steps>
         {currStep !== 4 ? (
           <Spin spinning={pending}>
-            <pre className="result-log">{resultLog}</pre>
+            <pre className="result-log" ref={resultRef}>
+              {resultLog}
+            </pre>
             <div className="action-row">
               {currState === 'Pass' ? (
                 <Button type="primary" onClick={getMqDiff}>
@@ -214,7 +253,7 @@ export default function ClusterSyncDetail(props: any) {
               ) : null}
               {currState === 'GetDiffClusterApp' ? (
                 <Button type="primary" onClick={deployApp}>
-                  开始应用同步
+                  同步下一个应用
                 </Button>
               ) : null}
               {currState === 'DeployClusterApp' ? (
