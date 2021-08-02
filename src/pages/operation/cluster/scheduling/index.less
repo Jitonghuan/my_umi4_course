@@ -21,13 +21,19 @@
   margin-bottom: 20px;
 
   .zone-card {
-    flex: 0 0 auto;
+    // flex: 0 0 auto;
+    flex: 1 1 0;
+    max-width: 25%;
     background-color: #fff;
     margin-right: 24px;
     margin-bottom: 16px;
     padding: 32px 32px 16px 32px;
     border-radius: 2px;
     transition: box-shadow 0.3s ease;
+
+    &:nth-child(4n) {
+      margin-right: 0;
+    }
 
     &:hover {
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);

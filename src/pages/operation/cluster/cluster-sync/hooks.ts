@@ -7,7 +7,7 @@ import moment from 'moment';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
 
-function getCacheData(key: string, limit = 12e4): { timestamp: number; data: any } {
+function getCacheData(key: string, limit = 6e5): { timestamp: number; data: any } {
   const cacheStr = sessionStorage.getItem(key);
   if (!cacheStr) return null as any;
 

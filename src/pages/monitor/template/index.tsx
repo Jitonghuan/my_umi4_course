@@ -106,13 +106,14 @@ const TemplateCom: React.FC = () => {
       title: '规则名称',
       dataIndex: 'name',
       key: 'name',
+      width: 200,
       // width: '10%',
       render: (text) => (
         <Tooltip title={text}>
           <span
             style={{
               display: 'inline-block',
-              width: 100,
+              width: 200,
               overflow: 'hidden',
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
@@ -139,7 +140,7 @@ const TemplateCom: React.FC = () => {
           <span
             style={{
               display: 'inline-block',
-              width: 100,
+              width: 240,
               overflow: 'hidden',
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
@@ -160,7 +161,7 @@ const TemplateCom: React.FC = () => {
           <span
             style={{
               display: 'inline-block',
-              width: 100,
+              width: 240,
               overflow: 'hidden',
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
@@ -175,20 +176,20 @@ const TemplateCom: React.FC = () => {
       title: '持续时间',
       dataIndex: 'duration',
       key: 'duration',
-      // width: '6%',
+      width: 100,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      // width: '4%',
+      width: 100,
       render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>,
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: 120,
+      width: 140,
       // width: '6%',
       render: (_: string, record: Item) => (
         <Space>
