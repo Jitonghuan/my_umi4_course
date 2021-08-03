@@ -44,6 +44,9 @@ export const frontendSourceDeploy = addAPIPrefix('/opsManage/multiple/frontendSo
 /** POST 集群同步-前端版本同步 */
 export const frontendVersionDeploy = addAPIPrefix('/opsManage/multiple/frontendVersionDeploy');
 
+/** POST 集群同步-完成同步 */
+export const clusterDeployOver = addAPIPrefix('/opsManage/multiple/clusterDeployOver');
+
 /** GET 集群应用比对 */
 export const diffClusterApp = addAPIPrefix('/opsManage/multiple/diffClusterApp');
 

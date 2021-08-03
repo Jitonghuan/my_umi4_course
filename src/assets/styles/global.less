@@ -97,6 +97,11 @@ hr {
   > .caption-right {
     display: flex;
     align-items: center;
+
+    > a + a,
+    > button + button {
+      margin-left: 12px;
+    }
   }
 
   > h3 {
@@ -188,4 +193,9 @@ ul {
   font-size: 12px;
   white-space: pre-wrap;
   overflow: auto;
+}
+
+.custom-table-holder {
+  padding: 40px 20px;
+  color: #789;
 }

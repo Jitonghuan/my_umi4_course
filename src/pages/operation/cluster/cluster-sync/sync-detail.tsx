@@ -184,8 +184,9 @@ export default function ClusterSyncDetail(props: any) {
     setCurrState('DeployClusterWebVersion');
   }, [resultLog]);
   // 10. finish
-  const finishDeploy = useCallback(() => {
-    setCurrStep(4);
+  const finishDeploy = useCallback(async () => {
+    await doAction(postRequest(APIS.clusterDeployOver));
+    setCurrState('ClusterDeployOver');
   }, [resultLog]);
 
   // 不同的状态对应不同的 step
@@ -216,7 +217,7 @@ export default function ClusterSyncDetail(props: any) {
           <Steps.Step title="完成" />
         </Steps>
         {currStep !== 4 ? (
-          <Spin spinning={pending}>
+          <Spin spinning={pending} tip="执行中，请勿关闭或切换页面">
             <pre className="result-log" ref={resultRef}>
               {resultLog}
             </pre>
@@ -282,11 +283,11 @@ export default function ClusterSyncDetail(props: any) {
             status="success"
             title="同步成功"
             extra={[
-              <Button key="again" type="primary" onClick={reDeploy}>
-                再次同步集群
-              </Button>,
-              <Button key="showlist" type="default" onClick={() => props.history.push('./cluster-sync')}>
-                查看集群列表
+              // <Button key="again" type="primary" onClick={reDeploy}>
+              //   再次同步集群
+              // </Button>,
+              <Button key="showlist" type="default" onClick={() => props.history.push('./dashboard')}>
+                查看集群看板
               </Button>,
             ]}
           />
