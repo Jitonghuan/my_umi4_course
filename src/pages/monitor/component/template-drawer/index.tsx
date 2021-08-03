@@ -327,62 +327,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       ),
     },
     {
-      key: '9',
-      type: 'select',
-      label: '通知对象',
-      dataIndex: 'receiver',
-      placeholder: '请选择',
-      required: true,
-      mode: 'multiple',
-      option: [
-        {
-          key: '东来',
-          value: '东来',
-          label: '东来',
-        },
-        {
-          key: '羁绊',
-          value: '羁绊',
-          label: '羁绊',
-        },
-      ],
-      rules: [
-        {
-          required: true,
-          message: '请选择',
-          type: 'array',
-        },
-      ],
-    },
-    {
-      key: '10',
-      type: 'select',
-      label: '通知方式',
-      dataIndex: 'receiverType',
-      placeholder: '请选择',
-      required: true,
-      mode: 'multiple',
-      option: [
-        {
-          key: 'dingding',
-          value: '钉钉',
-          label: '钉钉',
-        },
-        {
-          key: 'phone',
-          value: '电话',
-          label: '电话',
-        },
-      ],
-      rules: [
-        {
-          required: true,
-          message: '请选择',
-          type: 'array',
-        },
-      ],
-    },
-    {
       key: '11',
       type: 'radio',
       label: '是否静默',
