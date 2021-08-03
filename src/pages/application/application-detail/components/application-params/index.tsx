@@ -45,8 +45,8 @@ export default function DemoPageTb(porps: any) {
   const envCode = porps.history.location.query.envCode;
   const getApp = () => {
     return getRequest(APIS.paramsList, { data: { appCode } }).then((result) => {
-      const app = result.data[0];
-      if (app.appCategoryCode !== '') {
+      if (result.data.length > 0) {
+        const app = result.data[0];
         const appCategoryCode = app.appCategoryCode;
         setId(app.id);
         setInintDatas(app);
@@ -78,22 +78,27 @@ export default function DemoPageTb(porps: any) {
 
   const showAppList = () => {
     getRequest(APIS.paramsList, { data: { appCode, templateType, envCode } }).then((result) => {
-      const applicationlist = result.data[0];
-      setApplicationlist(applicationlist);
-      let arr1 = [];
-      for (const key in applicationlist.tmplConfigurableItem) {
-        arr1.push({
-          key: key,
-          value: applicationlist.tmplConfigurableItem[key],
+      if (result.data.length > 0) {
+        const applicationlist = result.data[0];
+        setApplicationlist(applicationlist);
+        let arr1 = [];
+        for (const key in applicationlist.tmplConfigurableItem) {
+          arr1.push({
+            key: key,
+            value: applicationlist.tmplConfigurableItem[key],
+          });
+        }
+        setTableData(arr1);
+        applicationForm.setFieldsValue({
+          appEnvCode: applicationlist.envCode,
+          tmplType: applicationlist.templateType,
+          value: applicationlist.value,
+          tmplConfigurableItem: arr1,
         });
+      } else {
+        message.error('应用分类不能为空');
       }
-      setTableData(arr1);
-      applicationForm.setFieldsValue({
-        appEnvCode: applicationlist.envCode,
-        tmplType: applicationlist.templateType,
-        value: applicationlist.value,
-        tmplConfigurableItem: arr1,
-      });
+
       //底下是处理添加进表格的数据
       let arr = [];
       for (const key in applicationlist.tmplConfigurableItem) {
