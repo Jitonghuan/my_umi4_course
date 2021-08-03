@@ -7,10 +7,8 @@ import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from '
 import MatrixPageContent from '@/components/matrix-page-content';
 import { history } from 'umi';
 import { useEffectOnce } from 'white-react-use';
-import { usePaginated } from '@cffe/vc-hulk-table';
 import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { InlineForm } from '@/components/schema-form';
 import * as APIS from '../service';
 import { tmplList } from '../service';
 
@@ -92,6 +90,7 @@ export default function Launch() {
   // 查询数据
   const queryList = (value: any) => {
     // setDataSource(dataSource);
+    setLoading(true);
     getRequest(APIS.tmplList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -101,18 +100,22 @@ export default function Launch() {
         pageIndex: value.pageIndex,
         pageSize: value.pageSize,
       },
-    }).then((res: any) => {
-      if (res.success) {
-        const dataSource = res.data.dataSource;
-        let pageTotal = res.data.pageInfo.total;
-        value.appCategoryCode = appCategoryCode;
-        value.envCode = envCode;
-        value.templateType = templateType;
+    })
+      .then((res: any) => {
+        if (res.success) {
+          const dataSource = res.data.dataSource;
+          let pageTotal = res.data.pageInfo.total;
+          value.appCategoryCode = appCategoryCode;
+          value.envCode = envCode;
+          value.templateType = templateType;
 
-        setPageTotal(pageTotal);
-        setDataSource(dataSource);
-      }
-    });
+          setPageTotal(pageTotal);
+          setDataSource(dataSource);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   //删除数据
   const handleDelItem = (record: any) => {
@@ -156,6 +159,7 @@ export default function Launch() {
           <Form.Item label="环境：" name="envCode">
             <Select
               options={envDatas}
+              allowClear
               onChange={(n) => {
                 setenvCode(n);
               }}
@@ -166,6 +170,7 @@ export default function Launch() {
           <Form.Item label="模版类型：" name="templateType">
             <Select
               showSearch
+              allowClear
               style={{ width: 120 }}
               options={templateTypes}
               onChange={(n) => {
@@ -206,6 +211,7 @@ export default function Launch() {
           <Table
             dataSource={dataSource}
             bordered
+            loading={loading}
             pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据` }}
             onChange={pageSizeClick}
           >

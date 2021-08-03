@@ -174,8 +174,8 @@ export default function DemoPageTb(porps: any) {
               <div style={{ fontSize: 18 }}>可配置项：</div>
               <Form.Item name="tmplConfigurableItem" rules={[{ required: true, message: '这是必填项' }]}>
                 <EditorTable
-                  value={source}
-                  onChange={handleChange}
+                  // value={source}
+                  // onChange={handleChange}
                   columns={[
                     { title: 'Key', dataIndex: 'key', colProps: { width: 240 } },
                     {

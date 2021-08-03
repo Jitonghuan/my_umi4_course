@@ -8,9 +8,10 @@ import { history } from 'umi';
 import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import EditorTable from '@cffe/pc-editor-table';
-import { Table, Input, Button, Row, Col, Form, Select, Space, message } from 'antd';
+import { Table, Input, Button, Row, Col, Form, Select, Space, message, InputNumber } from 'antd';
 import './index.less';
 import * as APIS from '../../../service';
+import { copyScene } from '@/pages/test/autotest/service';
 
 export default function DemoPageTb(porps: any) {
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -20,54 +21,71 @@ export default function DemoPageTb(porps: any) {
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [selectEnvData, setSelectEnvData] = useState<string>(); //下拉选择应用环境
   const [selectTmpl, setSelectTmpl] = useState<string>(); //下拉选择应用模版
+  const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
+  const [categoryCode, setCategoryCode] = useState<string>();
+  const [id, setId] = useState<string>();
+  const [tableData, setTableData] = useState<any>([]);
+  const [isDisabled, setIsdisabled] = useState<any>();
   // const { Option } = Select;
   const { TextArea } = Input;
   const [source, setSource] = useState<any[]>([]);
-  const handleAdd = () => {
-    setCount(count + 1);
-  };
-  const handleChange = (next: any[]) => {
-    setSource(next);
-  };
 
-  const clickChange = () => {};
   useEffect(() => {
-    selectAppEnv();
+    getApp().then((appCategoryCode) => {
+      selectAppEnv(appCategoryCode);
+      showAppList();
+    });
   }, []);
 
   // 进入页面显示结果
   const appCode = porps.history.location.query.appCode;
+  console.log('appCode', appCode);
   const templateType = porps.history.location.query.templateType;
   const envCode = porps.history.location.query.envCode;
+  const getApp = () => {
+    return getRequest(APIS.paramsList, { data: { appCode } }).then((result) => {
+      //返回的的数据的结构与详情不一致有问题
+      const app = result.data[0];
+      const appCategoryCode = app.appCategoryCode;
+      setId(app.id);
+      return appCategoryCode;
+    });
+  };
 
   const showAppList = () => {
     getRequest(APIS.paramsList, { data: { appCode, templateType, envCode } }).then((result) => {
       //返回的的数据的结构与详情不一致有问题
-      //  const applicationlist = result.data.dataSource[0]
-      //  applicationForm.setFieldsValue({
-      //   appEnvCode:applicationlist.envCode,
-      //   tmplType: applicationlist.templateType,
-      //   templateValue:applicationlist.templateValue,
-      // });
+      const applicationlist = result.data[0];
+      setApplicationlist(applicationlist);
+      let arr1 = [];
+      for (const key in applicationlist.tmplConfigurableItem) {
+        arr1.push({
+          key: key,
+          value: applicationlist.tmplConfigurableItem[key],
+        });
+      }
+      setTableData(arr1);
+      applicationForm.setFieldsValue({
+        appEnvCode: applicationlist.envCode,
+        tmplType: applicationlist.templateType,
+        value: applicationlist.value,
+        tmplConfigurableItem: arr1,
+      });
       //底下是处理添加进表格的数据
-      // let arr = []
-      // for (const key in applicationlist.tmplConfigurableItem) {
-      //       arr.push(
-      //         {
-      //           key:key,
-      //           value:applicationlist.tmplConfigurableItem[key],
-      //         }
-      //       )
-      // }
-      // setSource(arr);
+      let arr = [];
+      for (const key in applicationlist.tmplConfigurableItem) {
+        arr.push({
+          key: key,
+          value: applicationlist.tmplConfigurableItem[key],
+        });
+      }
+      setSource(arr);
     });
   };
 
-  //根据路由传参的应用分类加载应用环境下拉选择
-  const selectAppEnv = () => {
-    const categoryCode: string = porps.history.location.query.categoryCode;
+  //根据应用分类加载应用环境下拉选择
+  const selectAppEnv = (categoryCode: any) => {
     getRequest(APIS.envList, { data: { categoryCode } }).then((result) => {
-      console.log('返回结果', result);
       const list = result.data.dataSource.map((n: any) => ({
         value: n?.envCode,
         label: n?.envName,
@@ -100,37 +118,44 @@ export default function DemoPageTb(porps: any) {
   //点击查询回调
   const queryTmpl = () => {
     // data里的参数是根据下拉选项来查询配置项和模版详情的
-    getRequest(APIS.paramsList, { data: { envCode: selectEnvData, templateType: selectTmpl } }).then((result) => {
+    getRequest(APIS.paramsList, {
+      data: { envCode: selectEnvData || envCode, appCode, templateType: selectTmpl || {} },
+    }).then((result) => {
       //返回的的数据的结构与详情不一致有问题
-      // const list = result.data.dataSource[0];
-      // applicationForm.setFieldsValue({
-      //   templateValue:list.templateValue,
-      // });
-      // let arr = []
-      // for (const key in applicationlist.tmplConfigurableItem) {
-      //       arr.push(
-      //         {
-      //           key:key,
-      //           value:applicationlist.tmplConfigurableItem[key],
-      //         }
-      //       )
-      // }
-      // setSource(arr);
+      // const list = result.data[0];
+      const applicationlist = result.data[0];
+      if (result.data.length !== 0) {
+        let arr = [];
+        for (const key in applicationlist.tmplConfigurableItem) {
+          arr.push({
+            key: key,
+            value: applicationlist.tmplConfigurableItem[key],
+          });
+        }
+        applicationForm.setFieldsValue({
+          // templateValue:list.templateValue,
+          tmplConfigurableItem: arr,
+          appEnvCode: applicationlist.envCode,
+          tmplType: applicationlist.templateType,
+          value: applicationlist.value,
+        });
+        setSource(arr);
+      } else {
+        message.error('您查看的应用模版不存在');
+      }
     });
   };
   //编辑应用参数
-  const setApplication = (value: any) => {
-    const tmplConfigurableItem = value.tmplConfigurableItem.reduce((prev: any, el: any) => {
+  const setApplication = (values: any) => {
+    const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
       return prev;
     }, {} as any);
-    const templateValue = value.templateValue;
-    putRequest(APIS.editParams, { data: { templateValue, tmplConfigurableItem } }).then((result) => {
+    const value = values.value;
+    putRequest(APIS.editParams, { data: { id, value, tmplConfigurableItem } }).then((result) => {
       if (result.success) {
         message.success('提交成功！');
-        history.push({
-          pathname: 'tmpl-list',
-        });
+        window.location.reload();
       }
     });
   };
@@ -157,22 +182,22 @@ export default function DemoPageTb(porps: any) {
         <Row style={{ marginTop: '20px' }}>
           <Col span={10}>
             <div>模版详情：</div>
-            <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
-              <TextArea rows={18} />
+            <Form.Item name="value">
+              <TextArea rows={18} disabled />
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>
             <div style={{ fontSize: 18 }}>可配置项：</div>
             <Form.Item name="tmplConfigurableItem" rules={[{ required: true, message: '这是必填项' }]}>
               <EditorTable
-                value={source}
-                onChange={handleChange}
+                readOnly
                 columns={[
-                  { title: 'Key', dataIndex: 'key', colProps: { width: 240 } },
+                  { title: 'Key', dataIndex: 'key', fieldType: 'readonly', colProps: { width: 240 } },
                   {
                     title: 'Value',
                     dataIndex: 'value',
                     colProps: { width: 280 },
+                    fieldProps: { readOnly: false },
                   },
                 ]}
               />

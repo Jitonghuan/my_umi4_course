@@ -11,10 +11,7 @@ import { useContext, useState, useEffect, useRef } from 'react';
 import * as APIS from '../service';
 import EditorTable from '@cffe/pc-editor-table';
 import { Table, Input, Button, Popconfirm, Form, Row, Col, Select, Space } from 'antd';
-import { FormInstance } from 'antd/lib/form';
 import './index.less';
-import { JsonParse } from '@/utils';
-// import * as APIS from './service';
 
 export default function DemoPageTb(porps: any) {
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -163,7 +160,6 @@ export default function DemoPageTb(porps: any) {
                       colProps: { width: 280 },
                     },
                   ]}
-                  disabled={isDisabled}
                 />
               </Form.Item>
               <Form.Item
