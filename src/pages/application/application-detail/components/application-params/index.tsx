@@ -46,10 +46,14 @@ export default function DemoPageTb(porps: any) {
   const getApp = () => {
     return getRequest(APIS.paramsList, { data: { appCode } }).then((result) => {
       const app = result.data[0];
-      const appCategoryCode = app.appCategoryCode;
-      setId(app.id);
-      setInintDatas(app);
-      return appCategoryCode;
+      if (app.appCategoryCode !== '') {
+        const appCategoryCode = app.appCategoryCode;
+        setId(app.id);
+        setInintDatas(app);
+        return appCategoryCode;
+      } else {
+        message.error('应用分类不能为空');
+      }
     });
   };
 
