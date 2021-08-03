@@ -19,7 +19,6 @@ export default function Launch() {
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const { Column, ColumnGroup } = Table;
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [envCode, setenvCode] = useState<any>(); //环境的值
   const [templateType, setTemplateType] = useState<any>(); //模版类型
@@ -254,13 +253,7 @@ export default function Launch() {
                   >
                     详情 {record.lastName}
                   </a>
-                  <a
-                    onClick={() => {
-                      history.push(`push?templateCode=${record.templateCode}`);
-                    }}
-                  >
-                    推送
-                  </a>
+
                   <a
                     onClick={() =>
                       history.push({
@@ -274,7 +267,13 @@ export default function Launch() {
                   >
                     编辑
                   </a>
-
+                  <a
+                    onClick={() => {
+                      history.push(`push?templateCode=${record.templateCode}`);
+                    }}
+                  >
+                    推送
+                  </a>
                   <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem(record)}>
                     <a style={{ color: 'red' }}>删除</a>
                   </Popconfirm>

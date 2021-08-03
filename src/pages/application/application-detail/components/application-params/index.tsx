@@ -7,6 +7,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
+import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
 import { Table, Input, Button, Row, Col, Form, Select, Space, message, InputNumber } from 'antd';
 import './index.less';
@@ -22,6 +23,7 @@ export default function DemoPageTb(porps: any) {
   const [selectEnvData, setSelectEnvData] = useState<string>(); //下拉选择应用环境
   const [selectTmpl, setSelectTmpl] = useState<string>(); //下拉选择应用模版
   const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
+  const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [categoryCode, setCategoryCode] = useState<string>();
   const [id, setId] = useState<string>();
   const [tableData, setTableData] = useState<any>([]);
@@ -39,22 +41,39 @@ export default function DemoPageTb(porps: any) {
 
   // 进入页面显示结果
   const appCode = porps.history.location.query.appCode;
-  console.log('appCode', appCode);
   const templateType = porps.history.location.query.templateType;
   const envCode = porps.history.location.query.envCode;
   const getApp = () => {
     return getRequest(APIS.paramsList, { data: { appCode } }).then((result) => {
-      //返回的的数据的结构与详情不一致有问题
       const app = result.data[0];
       const appCategoryCode = app.appCategoryCode;
       setId(app.id);
+      setInintDatas(app);
       return appCategoryCode;
     });
   };
 
+  //恢复初始化数据
+  const inintData = () => {
+    const templateType = porps.history.location.query.templateType;
+    const envCode = porps.history.location.query.envCode;
+    let arr1 = [];
+    for (const key in inintDatas.tmplConfigurableItem) {
+      arr1.push({
+        key: key,
+        value: inintDatas.tmplConfigurableItem[key],
+      });
+      applicationForm.setFieldsValue({
+        appEnvCode: inintDatas.envCode,
+        tmplType: inintDatas.templateType,
+        value: inintDatas.value,
+        tmplConfigurableItem: arr1,
+      });
+    }
+  };
+
   const showAppList = () => {
     getRequest(APIS.paramsList, { data: { appCode, templateType, envCode } }).then((result) => {
-      //返回的的数据的结构与详情不一致有问题
       const applicationlist = result.data[0];
       setApplicationlist(applicationlist);
       let arr1 = [];
@@ -181,9 +200,10 @@ export default function DemoPageTb(porps: any) {
         </Row>
         <Row style={{ marginTop: '20px' }}>
           <Col span={10}>
-            <div>模版详情：</div>
+            <div style={{ fontSize: 18 }}>模版详情：</div>
             <Form.Item name="value">
-              <TextArea rows={18} disabled />
+              {/* <TextArea rows={18} disabled /> */}
+              <AceEditor mode="yaml" height={300} readOnly />
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>
@@ -206,8 +226,8 @@ export default function DemoPageTb(porps: any) {
         </Row>
         <Form.Item>
           <Space size="small" style={{ float: 'right' }}>
-            <Button type="ghost" htmlType="reset">
-              取消
+            <Button type="ghost" onClick={inintData}>
+              重置
             </Button>
             <Button type="primary" htmlType="submit">
               提交
@@ -217,4 +237,11 @@ export default function DemoPageTb(porps: any) {
       </Form>
     </ContentCard>
   );
+}
+function selectAppEnv(appCategoryCode: any) {
+  throw new Error('Function not implemented.');
+}
+
+function showAppList() {
+  throw new Error('Function not implemented.');
 }

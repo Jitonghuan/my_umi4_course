@@ -9,6 +9,7 @@ import { history } from 'umi';
 import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import { useContext, useState, useEffect, useRef } from 'react';
 import * as APIS from '../service';
+import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
 import { Table, Input, Button, Popconfirm, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
@@ -94,12 +95,11 @@ export default function DemoPageTb(porps: any) {
   };
   //提交模版
   const createTmpl = (value: any) => {
-    //  const tmplConfigurableItem = new Map(value.tmplConfigurableItem.map((el:any)=> [el.key,el.value]))
     const tmplConfigurableItem = value.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
       return prev;
     }, {} as any);
-    console.log('tmplConfigurableItem:', tmplConfigurableItem);
+    // console.log('tmplConfigurableItem:', tmplConfigurableItem);
 
     postRequest(APIS.create, {
       data: {
@@ -142,7 +142,8 @@ export default function DemoPageTb(porps: any) {
               <div style={{ fontSize: 18 }}>模版详情：</div>
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
-                <TextArea rows={18} disabled={isDisabled} />
+                {/* <TextArea rows={18} disabled={isDisabled} /> */}
+                <AceEditor mode="yaml" height={300} />
               </Form.Item>
             </Col>
 
