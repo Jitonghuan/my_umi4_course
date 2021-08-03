@@ -560,7 +560,6 @@ export default [
     path: 'logger',
     name: '日志管理',
     icon: 'icon-diagnose',
-    hideInMenu: process.env.BUILD_ENV === 'prod',
     routes: [
       {
         path: 'search',
