@@ -64,6 +64,10 @@ export default [
     redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
   {
+    path: `${PAGE_PREFIX}/test/workspace`,
+    redirect: `${PAGE_PREFIX}/test/workspace/case-workspace`,
+  },
+  {
     path: 'demo',
     name: '示例页面',
     icon: 'icon-report',
@@ -364,6 +368,43 @@ export default [
             key: 'autotest',
             component: '@/pages/test/autotest/task-manager',
             hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'workspace',
+        name: '测试工作台',
+        key: 'workspace',
+        routes: [
+          {
+            path: 'case-workspace',
+            name: '用例工作台',
+            key: 'case-workspace',
+            component: '@/pages/test/workspace/case-workspace',
+          },
+          {
+            path: 'bug-manage',
+            name: 'Bug管理',
+            key: 'bug-manage',
+            component: '@/pages/test/workspace/bug-manage',
+          },
+          {
+            path: 'test-plan',
+            name: '测试计划',
+            key: 'test-plan',
+            component: '@/pages/test/workspace/test-plan',
+          },
+          {
+            path: 'plan-info',
+            name: '计划详情',
+            key: 'plan-info',
+            component: '@/pages/test/workspace/plan-info',
+          },
+          {
+            path: 'test-case',
+            name: '测试用例',
+            key: 'test-case',
+            component: '@/pages/test/workspace/test-case',
           },
         ],
       },
