@@ -5,8 +5,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Input, Select, Button, Table, Tag, message, Popconfirm } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
+import DetailModal from '@/components/detail-modal';
 import * as APIS from './service';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
 import { EditorMode } from './interface';
@@ -187,10 +188,14 @@ export default function LoggerAlarm(props: any) {
         >
           <Table.Column dataIndex="id" title="ID" width={70} />
           <Table.Column dataIndex="name" title="报警名称" />
-          <Table.Column dataIndex="appCode" title="应用Code" />
-          <Table.Column dataIndex="envCode" title="环境Code" />
-          <Table.Column dataIndex="group" title="报警分类" />
-          <Table.Column dataIndex="completeExpression" title="报警表达式" />
+          <Table.Column dataIndex="appCode" title="应用Code" width={140} />
+          <Table.Column dataIndex="envCode" title="环境Code" width={120} />
+          <Table.Column dataIndex="group" title="报警分类" width={140} />
+          <Table.Column
+            dataIndex="completeExpression"
+            title="报警表达式"
+            render={(value: string) => <DetailModal limit={50} data={value} />}
+          />
           <Table.Column
             dataIndex="level"
             title="告警级别"

@@ -17,7 +17,7 @@ export default function HeaderTabs(props: HeaderTabsProps) {
     <FilterCard className="layout-compact">
       <Tabs activeKey={props.activeKey} onChange={(next) => props.history.push(`/matrix/monitor/business/${next}`)}>
         <Tabs.TabPane tab="接口方式接入" key="prometheus" />
-        {/* <Tabs.TabPane tab="日志方式接入" key="logger-alarm" /> */}
+        <Tabs.TabPane tab="日志方式接入" key="logger-alarm" />
       </Tabs>
     </FilterCard>
   );
