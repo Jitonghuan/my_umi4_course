@@ -190,17 +190,18 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       type: 'input',
       label: drawerType === 'rules' ? '规则名称' : '模板名称',
       dataIndex: 'name',
-      placeholder: '请输入(最多253字符，暂不支持中文)',
+      placeholder: '请输入',
       required: true,
       disable: type === 'edit',
       rules: [
         {
           whitespace: true,
           required: true,
-          message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
-          pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
+          message: '请输入正确的名称',
+          // message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
+          // pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
           type: 'string',
-          max: 253,
+          max: 200,
         },
       ],
     },
@@ -324,62 +325,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           />
         </Form.Item>
       ),
-    },
-    {
-      key: '9',
-      type: 'select',
-      label: '通知对象',
-      dataIndex: 'receiver',
-      placeholder: '请选择',
-      required: true,
-      mode: 'multiple',
-      option: [
-        {
-          key: '东来',
-          value: '东来',
-          label: '东来',
-        },
-        {
-          key: '羁绊',
-          value: '羁绊',
-          label: '羁绊',
-        },
-      ],
-      rules: [
-        {
-          required: true,
-          message: '请选择',
-          type: 'array',
-        },
-      ],
-    },
-    {
-      key: '10',
-      type: 'select',
-      label: '通知方式',
-      dataIndex: 'receiverType',
-      placeholder: '请选择',
-      required: true,
-      mode: 'multiple',
-      option: [
-        {
-          key: 'dingding',
-          value: '钉钉',
-          label: '钉钉',
-        },
-        {
-          key: 'phone',
-          value: '电话',
-          label: '电话',
-        },
-      ],
-      rules: [
-        {
-          required: true,
-          message: '请选择',
-          type: 'array',
-        },
-      ],
     },
     {
       key: '11',
