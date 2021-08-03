@@ -98,6 +98,11 @@ export default [
         name: '列表页面',
         component: '@/pages/demo/list',
       },
+      {
+        path: 'rich-text',
+        name: '富文本组件',
+        component: '@/pages/demo/rich-text-demo',
+      },
     ],
   },
   {
