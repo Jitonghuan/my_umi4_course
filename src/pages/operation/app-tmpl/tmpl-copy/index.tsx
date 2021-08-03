@@ -9,6 +9,7 @@ import { history } from 'umi';
 import { getRequest, putRequest, postRequest } from '@/utils/request';
 import { useContext, useState, useEffect, useRef } from 'react';
 import * as APIS from '../service';
+import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
 import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
@@ -27,7 +28,6 @@ export default function DemoPageTb(porps: any) {
   const [isDisabled, setIsdisabled] = useState<any>();
   const handleChange = (next: any[]) => {
     setSource(next);
-    // console.log('tyuioi:',next)
   };
 
   const handleAdd = () => {
@@ -173,7 +173,8 @@ export default function DemoPageTb(porps: any) {
               <div style={{ fontSize: 18 }}>模版详情：</div>
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
-                <TextArea rows={18} disabled={isDisabled} />
+                {/* <TextArea rows={18} disabled={isDisabled} /> */}
+                <AceEditor mode="yaml" height={300} />
               </Form.Item>
             </Col>
 
