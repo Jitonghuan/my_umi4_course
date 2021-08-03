@@ -14,9 +14,8 @@ module.exports = {
       return [
         '$ fnpm install',
         `$ npm run build:${buildEnv}`,
-        `#oss -r ./build come2future-web:${ossDir}/{{group}}/{{project}}`,
-        '$ sshpass -p "&WUb&1u8508P0ohD" ssh root@192.168.0.111 "cd /usr/share/nginx/html/matrix-test/matrix && rm -rf index.html && wget https://come2future-web.oss-cn-hangzhou.aliyuncs.com/dev/fe-matrix-front/matrix-front/matrix/index.html"',
-        '$ echo PUBLISH SUCCESS!!',
+        `#oss -r ./dist come2future-web:${ossDir}/{{group}}/{{project}}`,
+        `$ sshpass -p "&WUb&1u8508P0ohD" ssh root@192.168.0.111 "cd /usr/share/nginx/html/matrix-${buildEnv}/matrix && rm -rf index.html && wget https://come2future-web.oss-cn-hangzhou.aliyuncs.com/${ossDir}/fe-matrix-front/matrix-front/matrix/index.html"`,
       ];
     },
   },
