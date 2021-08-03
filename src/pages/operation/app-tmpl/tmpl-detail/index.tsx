@@ -10,6 +10,7 @@ import request, { postRequest, getRequest, putRequest, delRequest } from '@/util
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import EditorTable from '@cffe/pc-editor-table';
+import AceEditor from '@/components/ace-editor';
 import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 // import * as APIS from './service';
@@ -166,7 +167,8 @@ export default function DemoPageTb(porps: any) {
               <div style={{ fontSize: 18 }}>模版详情：</div>
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
-                <TextArea rows={18} disabled={isDisabled} />
+                {/* <TextArea rows={18} disabled={isDisabled} /> */}
+                <AceEditor mode="yaml" height={300} readOnly />
               </Form.Item>
             </Col>
 
