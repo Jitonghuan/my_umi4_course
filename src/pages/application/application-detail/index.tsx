@@ -107,7 +107,8 @@ const ApplicationDetail = (props: IProps) => {
             // 只有应用为包含二方包属性的时候，才会显示二方包的 tab
             .filter((key) => {
               // 只有 HBOS 才显示 配置管理 和 启动参数
-              if (key === 'configMgr' || key === 'launchParameters') {
+              // if (key === 'configMgr' || key === 'launchParameters')
+              if (key === 'configMgr') {
                 return appData?.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1';
               }
 
