@@ -212,7 +212,7 @@ export default function DemoPageTb(porps: any) {
             <div style={{ fontSize: 18 }}>模版详情：</div>
             <Form.Item name="value">
               {/* <TextArea rows={18} disabled /> */}
-              <AceEditor mode="yaml" height={300} readOnly />
+              <AceEditor mode="yaml" height={600} readOnly />
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>
@@ -246,11 +246,4 @@ export default function DemoPageTb(porps: any) {
       </Form>
     </ContentCard>
   );
-}
-function selectAppEnv(appCategoryCode: any) {
-  throw new Error('Function not implemented.');
-}
-
-function showAppList() {
-  throw new Error('Function not implemented.');
 }
