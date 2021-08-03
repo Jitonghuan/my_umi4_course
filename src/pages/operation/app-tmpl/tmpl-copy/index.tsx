@@ -174,7 +174,7 @@ export default function DemoPageTb(porps: any) {
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
                 {/* <TextArea rows={18} disabled={isDisabled} /> */}
-                <AceEditor mode="yaml" height={300} />
+                <AceEditor mode="yaml" height={600} />
               </Form.Item>
             </Col>
 
@@ -200,7 +200,7 @@ export default function DemoPageTb(porps: any) {
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
                 rules={[{ required: true }]}
-                style={{ marginTop: '50px' }}
+                style={{ marginTop: '140px' }}
               >
                 <Select
                   showSearch
