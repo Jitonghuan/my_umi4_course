@@ -52,7 +52,7 @@ export default function DemoPageTb(porps: any) {
         setInintDatas(app);
         return appCategoryCode;
       } else {
-        message.error('应用分类不能为空');
+        message.error('应用模版为空');
       }
     });
   };
@@ -96,7 +96,7 @@ export default function DemoPageTb(porps: any) {
           tmplConfigurableItem: arr1,
         });
       } else {
-        message.error('应用分类不能为空');
+        message.error('应用模版为空');
       }
 
       //底下是处理添加进表格的数据
