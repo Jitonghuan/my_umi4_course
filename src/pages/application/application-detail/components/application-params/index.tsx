@@ -45,11 +45,15 @@ export default function DemoPageTb(porps: any) {
   const envCode = porps.history.location.query.envCode;
   const getApp = () => {
     return getRequest(APIS.paramsList, { data: { appCode } }).then((result) => {
-      const app = result.data[0];
-      const appCategoryCode = app.appCategoryCode;
-      setId(app.id);
-      setInintDatas(app);
-      return appCategoryCode;
+      if (result.data.length > 0) {
+        const app = result.data[0];
+        const appCategoryCode = app.appCategoryCode;
+        setId(app.id);
+        setInintDatas(app);
+        return appCategoryCode;
+      } else {
+        message.error('应用模版为空');
+      }
     });
   };
 
@@ -74,22 +78,27 @@ export default function DemoPageTb(porps: any) {
 
   const showAppList = () => {
     getRequest(APIS.paramsList, { data: { appCode, templateType, envCode } }).then((result) => {
-      const applicationlist = result.data[0];
-      setApplicationlist(applicationlist);
-      let arr1 = [];
-      for (const key in applicationlist.tmplConfigurableItem) {
-        arr1.push({
-          key: key,
-          value: applicationlist.tmplConfigurableItem[key],
+      if (result.data.length > 0) {
+        const applicationlist = result.data[0];
+        setApplicationlist(applicationlist);
+        let arr1 = [];
+        for (const key in applicationlist.tmplConfigurableItem) {
+          arr1.push({
+            key: key,
+            value: applicationlist.tmplConfigurableItem[key],
+          });
+        }
+        setTableData(arr1);
+        applicationForm.setFieldsValue({
+          appEnvCode: applicationlist.envCode,
+          tmplType: applicationlist.templateType,
+          value: applicationlist.value,
+          tmplConfigurableItem: arr1,
         });
+      } else {
+        message.error('应用模版为空');
       }
-      setTableData(arr1);
-      applicationForm.setFieldsValue({
-        appEnvCode: applicationlist.envCode,
-        tmplType: applicationlist.templateType,
-        value: applicationlist.value,
-        tmplConfigurableItem: arr1,
-      });
+
       //底下是处理添加进表格的数据
       let arr = [];
       for (const key in applicationlist.tmplConfigurableItem) {
@@ -203,7 +212,7 @@ export default function DemoPageTb(porps: any) {
             <div style={{ fontSize: 18 }}>模版详情：</div>
             <Form.Item name="value">
               {/* <TextArea rows={18} disabled /> */}
-              <AceEditor mode="yaml" height={300} readOnly />
+              <AceEditor mode="yaml" height={600} readOnly />
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>
@@ -237,11 +246,4 @@ export default function DemoPageTb(porps: any) {
       </Form>
     </ContentCard>
   );
-}
-function selectAppEnv(appCategoryCode: any) {
-  throw new Error('Function not implemented.');
-}
-
-function showAppList() {
-  throw new Error('Function not implemented.');
 }
