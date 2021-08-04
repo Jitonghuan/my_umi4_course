@@ -6,10 +6,16 @@ module.exports = {
   type: 'builder',
   builder: '@cffe/fe-builder-default',
   commands: {
-    dev: ['$ fnpm install', '$ npm run dev'],
+    dev: [
+      '$ fnpm install',
+      '$ npm run dev'
+    ],
     build: (options) => {
       const buildEnv = options.online ? 'prod' : 'test';
-      return ['$ fnpm install', `$ npm run build:${buildEnv}`];
+      return [
+        '$ fnpm install',
+        `$ npm run build:${buildEnv}`
+      ];
     },
     // 可以直接是数组，也可以是一个方法，返回一个数组
     publish: async (options) => {
