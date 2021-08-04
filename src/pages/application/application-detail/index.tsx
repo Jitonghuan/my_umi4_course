@@ -74,10 +74,7 @@ const ApplicationDetail = (props: IProps) => {
       {/* tab子路由 */}
       {tabActiveKey && (
         <Tabs
-          tabBarStyle={{
-            padding: '0 24px',
-            background: '#fff',
-          }}
+          tabBarStyle={{ padding: '0 24px', background: '#fff' }}
           className={`${rootCls}__tabs`}
           activeKey={tabActiveKey}
           onChange={(key) => {
@@ -89,7 +86,7 @@ const ApplicationDetail = (props: IProps) => {
             });
           }}
           tabBarExtraContent={
-            <div>
+            <div className="tab-right-extra">
               <span
                 style={{
                   color: 'rgba(0,0,0,.85)',

@@ -289,6 +289,7 @@ export default [
         path: 'data-factory',
         name: '数据工厂',
         key: 'data-factory',
+        component: '@/pages/test/data-factory/index',
         routes: [
           {
             path: 'records',
@@ -352,6 +353,7 @@ export default [
         path: 'autotest',
         name: '自动化测试',
         key: 'autotest',
+        component: '@/pages/test/autotest/index',
         routes: [
           {
             path: 'dashboard',
@@ -396,6 +398,7 @@ export default [
         path: 'cluster',
         name: '双集群管理',
         key: 'cluster',
+        component: '@/pages/operation/cluster',
         routes: [
           {
             path: 'dashboard',
@@ -513,6 +516,7 @@ export default [
         path: 'business',
         name: '业务监控',
         key: 'business-monitor',
+        component: '@/pages/monitor/business/index',
         routes: [
           {
             path: 'prometheus',
@@ -522,14 +526,14 @@ export default [
             hideInMenu: true,
           },
           {
-            path: 'prometheus/prometheus-add',
+            path: 'prometheus-add',
             name: '接入Prometheus',
             key: 'business-monitor',
             hideInMenu: true,
             component: '@/pages/monitor/business/prometheus/prometheus-form',
           },
           {
-            path: 'prometheus/prometheus-edit',
+            path: 'prometheus-edit',
             name: '编辑Prometheus',
             key: 'business-monitor',
             hideInMenu: true,

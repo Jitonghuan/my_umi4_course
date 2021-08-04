@@ -5,15 +5,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Form, Radio, Button, Modal } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
-import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
-import HeaderTabs from '../_components/header-tabs';
 import { useInitClusterData, useClusterSource } from './hooks';
 import * as APIS from '../service';
-import { getRequest, postRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import './index.less';
 
-export default function TrafficScheduling(props: any) {
+export default function TrafficScheduling() {
   const [editField] = Form.useForm();
   const [sourceData] = useClusterSource();
   const [initData] = useInitClusterData();
@@ -61,12 +59,6 @@ export default function TrafficScheduling(props: any) {
         } finally {
           setPending(false);
         }
-
-        //         setLogger(`> hello world
-        // > 开始同步...
-        // > .............
-        // > 同步完成！
-        //         `);
       },
     });
   }, [editField, sourceData]);
@@ -76,31 +68,28 @@ export default function TrafficScheduling(props: any) {
   }, [editField, initData]);
 
   return (
-    <MatrixPageContent>
-      <HeaderTabs activeKey="scheduling" history={props.history} />
-      <ContentCard className="page-scheduling">
-        <h3>请选择调度类型：</h3>
-        <Form form={editField}>
-          <div className="zone-card-group">
-            {sourceData.map((group, index) => (
-              <div className="zone-card" key={index}>
-                <h4>{group.title}</h4>
-                <Form.Item name={group.name} rules={[{ required: true, message: '请选择集群' }]}>
-                  <Radio.Group options={group.options} size="large" />
-                </Form.Item>
-              </div>
-            ))}
-          </div>
-          <div className="action-group">
-            <Button type="primary" loading={pending} size="large" onClick={handleSubmit}>
-              开始调度
-            </Button>
-            <Button hidden type="default" size="large" onClick={handleReset} style={{ marginLeft: 12 }}>
-              重置
-            </Button>
-          </div>
-        </Form>
-      </ContentCard>
+    <ContentCard className="page-scheduling">
+      <h3>请选择调度类型：</h3>
+      <Form form={editField}>
+        <div className="zone-card-group">
+          {sourceData.map((group, index) => (
+            <div className="zone-card" key={index}>
+              <h4>{group.title}</h4>
+              <Form.Item name={group.name} rules={[{ required: true, message: '请选择集群' }]}>
+                <Radio.Group options={group.options} size="large" />
+              </Form.Item>
+            </div>
+          ))}
+        </div>
+        <div className="action-group">
+          <Button type="primary" loading={pending} size="large" onClick={handleSubmit}>
+            开始调度
+          </Button>
+          <Button hidden type="default" size="large" onClick={handleReset} style={{ marginLeft: 12 }}>
+            重置
+          </Button>
+        </div>
+      </Form>
       <Modal
         visible={!!logger}
         title="同步日志"
@@ -111,6 +100,6 @@ export default function TrafficScheduling(props: any) {
       >
         <pre className="pre-block">{logger}</pre>
       </Modal>
-    </MatrixPageContent>
+    </ContentCard>
   );
 }
