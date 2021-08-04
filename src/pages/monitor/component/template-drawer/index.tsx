@@ -9,6 +9,7 @@ import { editColumns } from './colunms';
 import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
 import { queryRuleTemplatesList, queryGroupList } from '../../service';
+import { useUserOptions } from './hooks';
 import './index.less';
 
 interface IRef {
@@ -46,6 +47,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
   const [ruleTemplate, setRuleTemplate] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
+  const [userOptions] = useUserOptions();
 
   //分类
   const { run: groupList } = useRequest({
@@ -325,6 +327,24 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           />
         </Form.Item>
       ),
+    },
+    {
+      key: '9',
+      type: 'select',
+      label: '通知对象',
+      dataIndex: 'receiver',
+      placeholder: '请选择',
+      required: true,
+      mode: 'tags',
+      showSelectSearch: true,
+      option: userOptions,
+      rules: [
+        {
+          required: true,
+          message: '请选择',
+          type: 'array',
+        },
+      ],
     },
     {
       key: '11',
