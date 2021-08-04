@@ -33,7 +33,7 @@
     "@ant-design/pro-table": "~2.43.4",
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "1.0.0",
-    "@cffe/pc-editor-table": "~1.0.5",
+    "@cffe/pc-editor-table": "1.0.5",
     "@cffe/vc-b-card-layout": "1.0.8",
     "@cffe/vc-custom-icon": "1.0.6",
     "@cffe/vc-error-page": "1.0.2",
