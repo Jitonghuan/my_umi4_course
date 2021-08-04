@@ -72,3 +72,6 @@ export const queryGroupList = `${ds.apiPrefix}/monitorManage/rules/group/list`;
 export const ruleTemplatesSwitch = `${ds.apiPrefix}/monitorManage/ruleTemplates/switch`;
 
 export const ruleSwitch = `${ds.apiPrefix}/monitorManage/rules/switch`;
+
+/** GET 获取用户名 */
+export const getUserList = `${ds.apiPrefix}/appManage/user/listAll`;
