@@ -12,11 +12,10 @@ module.exports = {
       const ossDir = options.online ? 'prod' : 'dev';
 
       return [
-        // '$ fnpm install',
-        `$ echo hello_${ossDir}, {{group}}{{project}}`,
-        // `$ npm run build:${buildEnv}`,
-        // `#oss -r ./dist come2future-web:${ossDir}/{{group}}/{{project}}`,
-        // `$ sshpass -f ./config/sshpass ssh root@192.168.0.111 "cd /usr/share/nginx/html/matrix-${buildEnv}/matrix && rm -rf index.html && wget https://come2future-web.oss-cn-hangzhou.aliyuncs.com/${ossDir}/fe-matrix-front/matrix-front/matrix/index.html"`,
+        '$ fnpm install',
+        `$ npm run build:${buildEnv}`,
+        `#oss -r ./dist come2future-web:${ossDir}/fe-matrix-front/matrix-front`,
+        `#scp ./dist/matrix/index.html root@192.168.0.111:/usr/share/nginx/html/matrix-${buildEnv}/matrix/index.html --pass=&WUb&1u8508P0ohD`,
       ];
     },
   },

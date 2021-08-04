@@ -68,6 +68,7 @@
     "@umijs/preset-react": "1.8.19",
     "cross-env": "^7.0.3",
     "lint-staged": "^11.0.1",
+    "node-scp": "^0.0.15",
     "prettier": "^2.3.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
