@@ -90,6 +90,7 @@ export default function Launch() {
   const queryList = (value: any) => {
     // setDataSource(dataSource);
     setLoading(true);
+    console.log('11111111111', value);
     getRequest(APIS.tmplList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -107,7 +108,6 @@ export default function Launch() {
           value.appCategoryCode = appCategoryCode;
           value.envCode = envCode;
           value.templateType = templateType;
-
           setPageTotal(pageTotal);
           setDataSource(dataSource);
         }
@@ -211,7 +211,7 @@ export default function Launch() {
             dataSource={dataSource}
             bordered
             loading={loading}
-            pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据` }}
+            pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`, defaultPageSize: 20 }}
             onChange={pageSizeClick}
           >
             <Table.Column title="ID" dataIndex="id" width="10%" />

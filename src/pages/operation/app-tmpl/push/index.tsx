@@ -106,6 +106,9 @@ export default function Push(porps: any) {
         appCategoryCode: value.appCategoryCode,
         appCode: value.appCode,
         envCode: value.envCode,
+        appType: 'backend',
+        isClient: 0,
+        pageSize: value.pageSize,
       },
     })
       .then((res: any) => {
@@ -113,6 +116,7 @@ export default function Push(porps: any) {
           // console.log('.......',res.data)
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
+          let pageSize = res.data.pageInfo.pageSize;
           setPageTotal(pageTotal);
           setDataSource(dataSource);
         }
@@ -193,7 +197,7 @@ export default function Push(porps: any) {
                 rowKey="id"
                 loading={loading}
                 rowSelection={{ ...rowSelection }}
-                pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据` }}
+                pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`, defaultPageSize: 20 }}
                 onChange={pageSizeClick}
               >
                 <Table.Column title="ID" dataIndex="id" />
@@ -214,6 +218,8 @@ export default function Push(porps: any) {
                             templateType: record.templateType,
                             envCode: record.envCode,
                             categoryCode: record.categoryCode,
+                            isClient: 0,
+                            isContainClient: 0,
                           };
                           history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
                         }}
