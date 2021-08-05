@@ -35,7 +35,6 @@ export default function DemoPageTb(porps: any) {
   useEffect(() => {
     getApp().then((appCategoryCode) => {
       selectAppEnv(appCategoryCode);
-      showAppList();
     });
   }, []);
 
@@ -50,8 +49,10 @@ export default function DemoPageTb(porps: any) {
         const appCategoryCode = app.appCategoryCode;
         setId(app.id);
         setInintDatas(app);
+        showAppList();
         return appCategoryCode;
       } else {
+        debugger;
         message.error('应用模版为空');
       }
     });
@@ -95,7 +96,10 @@ export default function DemoPageTb(porps: any) {
           value: applicationlist.value,
           tmplConfigurableItem: arr1,
         });
+        changeEnvCode(applicationlist.envCode);
+        changeTmplType(applicationlist.templateType);
       } else {
+        debugger;
         message.error('应用模版为空');
       }
 
@@ -113,6 +117,7 @@ export default function DemoPageTb(porps: any) {
 
   //根据应用分类加载应用环境下拉选择
   const selectAppEnv = (categoryCode: any) => {
+    debugger;
     getRequest(APIS.envList, { data: { categoryCode } }).then((result) => {
       const list = result.data.dataSource.map((n: any) => ({
         value: n?.envCode,
@@ -132,7 +137,6 @@ export default function DemoPageTb(porps: any) {
         data: n,
       }));
       setTemplateTypes(list);
-      showAppList();
     });
   };
   //改变下拉选择后查询结果
@@ -169,6 +173,11 @@ export default function DemoPageTb(porps: any) {
         });
         setSource(arr);
       } else {
+        applicationForm.setFieldsValue({
+          // templateValue:list.templateValue,
+          tmplConfigurableItem: [],
+          value: '',
+        });
         message.error('您查看的应用模版不存在');
       }
     });

@@ -20,7 +20,7 @@ export default function DemoPageTb(porps: any) {
   const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
   const children: any = [];
   const { TextArea } = Input;
-  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
+  const [categoryData, setCategoryData] = useState<string>(); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
@@ -68,6 +68,7 @@ export default function DemoPageTb(porps: any) {
           envCodes: tmplresult.envCode,
           tmplConfigurableItem: arr,
         });
+        changeAppCategory(tmplresult.appCategoryCode);
         // let arr = []
       }
     });
@@ -100,6 +101,8 @@ export default function DemoPageTb(porps: any) {
   const changeAppCategory = (categoryCode: string) => {
     //调用接口 查询env 参数就是appCategoryCode
     //setEnvDatas
+    //  let categoryCode = categoryData
+
     setEnvDatas([]);
     setAppCategoryCode(categoryCode);
     getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
