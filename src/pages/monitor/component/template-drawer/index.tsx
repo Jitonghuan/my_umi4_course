@@ -9,6 +9,7 @@ import { editColumns } from './colunms';
 import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
 import { queryRuleTemplatesList, queryGroupList } from '../../service';
+import { useUserOptions } from './hooks';
 import './index.less';
 
 interface IRef {
@@ -46,6 +47,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
   const [ruleTemplate, setRuleTemplate] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
+  const [userOptions] = useUserOptions();
 
   //分类
   const { run: groupList } = useRequest({
@@ -333,47 +335,9 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       dataIndex: 'receiver',
       placeholder: '请选择',
       required: true,
-      mode: 'multiple',
-      option: [
-        {
-          key: '东来',
-          value: '东来',
-          label: '东来',
-        },
-        {
-          key: '羁绊',
-          value: '羁绊',
-          label: '羁绊',
-        },
-      ],
-      rules: [
-        {
-          required: true,
-          message: '请选择',
-          type: 'array',
-        },
-      ],
-    },
-    {
-      key: '10',
-      type: 'select',
-      label: '通知方式',
-      dataIndex: 'receiverType',
-      placeholder: '请选择',
-      required: true,
-      mode: 'multiple',
-      option: [
-        {
-          key: 'dingding',
-          value: '钉钉',
-          label: '钉钉',
-        },
-        {
-          key: 'phone',
-          value: '电话',
-          label: '电话',
-        },
-      ],
+      mode: 'tags',
+      showSelectSearch: true,
+      option: userOptions,
       rules: [
         {
           required: true,

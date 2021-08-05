@@ -145,6 +145,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
             options={appOptions}
             onChange={handleAppCodeChange}
             disabled={props.mode === 'EDIT'}
+            showSearch
           />
         </FormItem>
         <FormItem
@@ -158,6 +159,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
             options={envOptions}
             onChange={handleEnvCodeChange}
             disabled={props.mode === 'EDIT'}
+            showSearch
           />
         </FormItem>
         <FormItem label="分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
@@ -226,7 +228,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           required={false}
           rules={[{ required: true, message: '通知对象不能为空' }]}
         >
-          <Select placeholder="请选择" options={userOptions} showSearch mode="multiple" />
+          <Select placeholder="请选择" options={userOptions} showSearch mode="tags" />
         </FormItem>
         {/* <FormItem
           label="通知方式"

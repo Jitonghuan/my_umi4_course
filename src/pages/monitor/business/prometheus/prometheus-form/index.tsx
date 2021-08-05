@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Steps, Space } from 'antd';
 import { history } from 'umi';
-import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import useRequest from '@/utils/useRequest';
 import StepMonitor from './step-monitor';
@@ -10,7 +9,6 @@ import StepComplate from './step-complate';
 import { createPrometheus, updatePrometheus, queryPrometheusList } from '../../../service';
 import { Item } from '../../../typing';
 import { stepTableMap } from '../../../util';
-import HeaderTabs from '../../components/header-tabs';
 import './index.less';
 
 const { Step } = Steps;
@@ -30,7 +28,7 @@ const stepOption = [
   },
 ];
 
-const PrometheusForm: React.FC = (props: any) => {
+const PrometheusForm: React.FC = () => {
   const [formList, setFormList] = useState({});
   const [current, setCurrent] = useState(0);
   const [stepOneTable, setStepOneTable] = useState<Item[]>([]);
@@ -116,7 +114,7 @@ const PrometheusForm: React.FC = (props: any) => {
 
   const reset = () => {
     setCurrent(0);
-    history.push('/matrix/monitor/prometheus/prometheus-add');
+    history.push('./prometheus-add');
     form.resetFields();
   };
 
@@ -148,33 +146,30 @@ const PrometheusForm: React.FC = (props: any) => {
   ];
 
   return (
-    <MatrixPageContent>
-      <HeaderTabs activeKey="prometheus" history={props.history} />
-      <ContentCard style={{ background: '#F7F8FA' }}>
-        <div className="step-style">
-          <Steps current={current} onChange={isEdit ? (current) => setCurrent(current) : undefined}>
-            {stepOption.map((v) => (
-              <Step key={v.key} title={v.title} />
-            ))}
-          </Steps>
-        </div>
-        <Form className="form" requiredMark={false} form={form}>
-          <Form.Item>{renderDom.find((v) => v.current === current)?.dom}</Form.Item>
-          {current !== 2 && (
-            <Form.Item wrapperCol={{ span: 20 }}>
-              <div style={{ textAlign: 'right' }}>
-                <Space>
-                  <Button type="primary" onClick={next}>
-                    下一步
-                  </Button>
-                  <Button onClick={isFirstCurrent ? cancel : pre}>{isFirstCurrent ? '取消' : '上一步'}</Button>
-                </Space>
-              </div>
-            </Form.Item>
-          )}
-        </Form>
-      </ContentCard>
-    </MatrixPageContent>
+    <ContentCard style={{ background: '#F7F8FA' }}>
+      <div className="step-style">
+        <Steps current={current} onChange={isEdit ? (current) => setCurrent(current) : undefined}>
+          {stepOption.map((v) => (
+            <Step key={v.key} title={v.title} />
+          ))}
+        </Steps>
+      </div>
+      <Form className="form" requiredMark={false} form={form}>
+        <Form.Item>{renderDom.find((v) => v.current === current)?.dom}</Form.Item>
+        {current !== 2 && (
+          <Form.Item wrapperCol={{ span: 20 }}>
+            <div style={{ textAlign: 'right' }}>
+              <Space>
+                <Button type="primary" onClick={next}>
+                  下一步
+                </Button>
+                <Button onClick={isFirstCurrent ? cancel : pre}>{isFirstCurrent ? '取消' : '上一步'}</Button>
+              </Space>
+            </div>
+          </Form.Item>
+        )}
+      </Form>
+    </ContentCard>
   );
 };
 

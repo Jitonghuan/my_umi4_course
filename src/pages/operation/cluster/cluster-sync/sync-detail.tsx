@@ -5,9 +5,7 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Button, Steps, Spin, Result } from 'antd';
 import moment from 'moment';
-import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
-import HeaderTabs from '../_components/header-tabs';
 import type { IResponse } from '@cffe/vc-request/es/base-request/type';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
@@ -184,8 +182,9 @@ export default function ClusterSyncDetail(props: any) {
     setCurrState('DeployClusterWebVersion');
   }, [resultLog]);
   // 10. finish
-  const finishDeploy = useCallback(() => {
-    setCurrStep(4);
+  const finishDeploy = useCallback(async () => {
+    await doAction(postRequest(APIS.clusterDeployOver));
+    setCurrState('ClusterDeployOver');
   }, [resultLog]);
 
   // 不同的状态对应不同的 step
@@ -205,93 +204,90 @@ export default function ClusterSyncDetail(props: any) {
   }, []);
 
   return (
-    <MatrixPageContent>
-      <HeaderTabs activeKey="cluster-sync" history={props.history} />
-      <ContentCard className="page-cluster-sync-detail">
-        <Steps current={currStep}>
-          <Steps.Step title="MQ同步" />
-          <Steps.Step title="配置同步" />
-          <Steps.Step title="应用同步" />
-          <Steps.Step title="前端资源同步" />
-          <Steps.Step title="完成" />
-        </Steps>
-        {currStep !== 4 ? (
-          <Spin spinning={pending}>
-            <pre className="result-log" ref={resultRef}>
-              {resultLog}
-            </pre>
-            <div className="action-row">
-              {currState === 'Pass' ? (
-                <Button type="primary" onClick={getMqDiff}>
-                  开始 MQ 对比
-                </Button>
-              ) : null}
-              {currState === 'GetDiffClusterMq' ? (
-                <Button type="primary" onClick={deployTopic}>
-                  开始同步 MQ Topic
-                </Button>
-              ) : null}
-              {currState === 'DeployClusterMqTopic' ? (
-                <Button type="primary" onClick={deployGroup}>
-                  开始同步 MQ Group
-                </Button>
-              ) : null}
-              {currState === 'DeployClusterMqGroup' ? (
-                <Button type="primary" onClick={getConfigDiff}>
-                  开始进行配置对比
-                </Button>
-              ) : null}
-              {currState === 'GetDiffClusterConfig' ? (
-                <Button type="primary" onClick={deployConfig}>
-                  开始配置同步
-                </Button>
-              ) : null}
-              {currState === 'DeployClusterConfig' ? (
-                <Button type="primary" onClick={getClusterApp}>
-                  开始查询发布应用
-                </Button>
-              ) : null}
-              {currState === 'GetDiffClusterApp' ? (
-                <Button type="primary" onClick={deployApp}>
-                  同步下一个应用
-                </Button>
-              ) : null}
-              {currState === 'DeployClusterApp' ? (
-                <Button type="primary" onClick={deployFESource}>
-                  开始前端资源同步
-                </Button>
-              ) : null}
-              {currState === 'DeployClusterWebSource' ? (
-                <Button type="primary" onClick={deployFEVersion}>
-                  开始前端版本同步
-                </Button>
-              ) : null}
-              {currState === 'DeployClusterWebVersion' ? (
-                <Button type="primary" onClick={finishDeploy}>
-                  完成集群同步
-                </Button>
-              ) : null}
-              <Button type="default" onClick={() => props.history.push('./cluster-sync')}>
-                取消
+    <ContentCard className="page-cluster-sync-detail">
+      <Steps current={currStep}>
+        <Steps.Step title="MQ同步" />
+        <Steps.Step title="配置同步" />
+        <Steps.Step title="应用同步" />
+        <Steps.Step title="前端资源同步" />
+        <Steps.Step title="完成" />
+      </Steps>
+      {currStep !== 4 ? (
+        <Spin spinning={pending} tip="执行中，请勿关闭或切换页面">
+          <pre className="result-log" ref={resultRef}>
+            {resultLog}
+          </pre>
+          <div className="action-row">
+            {currState === 'Pass' ? (
+              <Button type="primary" onClick={getMqDiff}>
+                开始 MQ 对比
               </Button>
-            </div>
-          </Spin>
-        ) : null}
-        {currStep === 4 ? (
-          <Result
-            status="success"
-            title="同步成功"
-            extra={[
-              <Button key="again" type="primary" onClick={reDeploy}>
-                再次同步集群
-              </Button>,
-              <Button key="showlist" type="default" onClick={() => props.history.push('./cluster-sync')}>
-                查看集群列表
-              </Button>,
-            ]}
-          />
-        ) : null}
-      </ContentCard>
-    </MatrixPageContent>
+            ) : null}
+            {currState === 'GetDiffClusterMq' ? (
+              <Button type="primary" onClick={deployTopic}>
+                开始同步 MQ Topic
+              </Button>
+            ) : null}
+            {currState === 'DeployClusterMqTopic' ? (
+              <Button type="primary" onClick={deployGroup}>
+                开始同步 MQ Group
+              </Button>
+            ) : null}
+            {currState === 'DeployClusterMqGroup' ? (
+              <Button type="primary" onClick={getConfigDiff}>
+                开始进行配置对比
+              </Button>
+            ) : null}
+            {currState === 'GetDiffClusterConfig' ? (
+              <Button type="primary" onClick={deployConfig}>
+                开始配置同步
+              </Button>
+            ) : null}
+            {currState === 'DeployClusterConfig' ? (
+              <Button type="primary" onClick={getClusterApp}>
+                开始查询发布应用
+              </Button>
+            ) : null}
+            {currState === 'GetDiffClusterApp' ? (
+              <Button type="primary" onClick={deployApp}>
+                同步下一个应用
+              </Button>
+            ) : null}
+            {currState === 'DeployClusterApp' ? (
+              <Button type="primary" onClick={deployFESource}>
+                开始前端资源同步
+              </Button>
+            ) : null}
+            {currState === 'DeployClusterWebSource' ? (
+              <Button type="primary" onClick={deployFEVersion}>
+                开始前端版本同步
+              </Button>
+            ) : null}
+            {currState === 'DeployClusterWebVersion' ? (
+              <Button type="primary" onClick={finishDeploy}>
+                完成集群同步
+              </Button>
+            ) : null}
+            <Button type="default" onClick={() => props.history.push('./cluster-sync')}>
+              取消
+            </Button>
+          </div>
+        </Spin>
+      ) : null}
+      {currStep === 4 ? (
+        <Result
+          status="success"
+          title="同步成功"
+          extra={[
+            // <Button key="again" type="primary" onClick={reDeploy}>
+            //   再次同步集群
+            // </Button>,
+            <Button key="showlist" type="default" onClick={() => props.history.push('./dashboard')}>
+              查看集群看板
+            </Button>,
+          ]}
+        />
+      ) : null}
+    </ContentCard>
   );
 }

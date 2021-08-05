@@ -251,10 +251,12 @@ const TemplateCom: React.FC = () => {
         {
           key: '0',
           value: '已启用',
+          label: '已启用',
         },
         {
           key: '1',
           value: '未启用',
+          label: '未启用',
         },
       ],
     },
