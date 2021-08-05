@@ -69,6 +69,7 @@ export default function DemoPageTb(porps: any) {
           envCodes: tmplresult.envCode,
           tmplConfigurableItem: arr,
         });
+        changeAppCategory(tmplresult.appCategoryCode);
         // let arr = []
       }
     });
