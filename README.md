@@ -24,11 +24,12 @@
    - 安装依赖: `$ fnpm install`
 
 4. `$ npm start` 启动本地开发， 访问 http://matrix-local.cfuture.shop:9091 （登录账号同 sso ）
+  - 如果安装了 fe，可以直接执行 `$ fe d`
 
-5. 部署到 test:  [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-test
+6. 部署到 test:  [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-test
    - 如果安装了 fe，可以在 test 分支直接执行 `$ fe p -d`
 
-6. 部署到 prod: [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-prod
+7. 部署到 prod: [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-prod
    - 如果安装了 fe，可以在 pub 分支直接执行 `$ fe p -o`
 
 ### 分支规范
