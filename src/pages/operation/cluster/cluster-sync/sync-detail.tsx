@@ -3,7 +3,7 @@
 // @create 2021/07/29 16:06
 
 import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
-import { Button, Steps, Spin, Result } from 'antd';
+import { Button, Steps, Spin, Result, message } from 'antd';
 import moment from 'moment';
 import { ContentCard } from '@/components/vc-page-content';
 import type { IResponse } from '@cffe/vc-request/es/base-request/type';
@@ -77,10 +77,6 @@ export default function ClusterSyncDetail(props: any) {
       console.log('> current work state: ', result.data);
       setCurrState(result.data.category);
       updateResultLog(result.data.log || '<no initial log>');
-
-      if (result.data.category === 'GetDiffClusterApp') {
-        // TODO 设置下一个应用？
-      }
     } catch (ex) {
       setCurrState('Pass');
     } finally {
@@ -94,8 +90,9 @@ export default function ClusterSyncDetail(props: any) {
         setPending(true);
         const result = await promise;
         let addon = result.data;
+
         if (typeof addon === 'object' && addon.appCode) {
-          addon = `Next Deploy App: ${addon.appCode}`;
+          addon = `下一个要同步的应用: ${addon.appCode}`;
         }
 
         updateResultLog(addon);
@@ -148,8 +145,10 @@ export default function ClusterSyncDetail(props: any) {
   // 6. get cluster app
   const getClusterApp = useCallback(async () => {
     const nextApp = await doAction(getRequest(APIS.queryClusterApp));
-    // setCurrState('GetDiffClusterApp');
-    if (nextApp.appCode) {
+    if (!nextApp?.appCode) {
+      return message.warning('返回数据异常，appCode 为空值!');
+    }
+    if (nextApp.appCode !== 'Pass') {
       setCurrState('GetDiffClusterApp');
       setNextDeployApp(nextApp.appCode);
     } else {
@@ -158,17 +157,21 @@ export default function ClusterSyncDetail(props: any) {
   }, [resultLog]);
   // 7. deploy app
   const deployApp = useCallback(async () => {
-    const nextApp = await doAction(
+    await doAction(
       postRequest(APIS.appDeploy, {
         data: { appCode: nextDeployApp },
       }),
     );
-    if (nextApp.appCode) {
-      setCurrState('GetDiffClusterApp');
-      setNextDeployApp(nextApp.appCode);
-    } else {
-      setCurrState('DeployClusterApp');
-    }
+
+    // 成功后再调一次 queryClusterApp 接口
+    await getClusterApp();
+
+    // if (nextApp.appCode) {
+    //   setCurrState('GetDiffClusterApp');
+    //   setNextDeployApp(nextApp.appCode);
+    // } else {
+    //   setCurrState('DeployClusterApp');
+    // }
     // setCurrState('DeployClusterApp');
   }, [resultLog, nextDeployApp]);
   // 8. deploy fe source
@@ -197,11 +200,11 @@ export default function ClusterSyncDetail(props: any) {
     if (currState === 'Pass') getMqDiff();
   }, [currState]);
 
-  const reDeploy = useCallback(() => {
-    setCurrState('Pass');
-    setCurrStep(1);
-    setResultLog('');
-  }, []);
+  // const reDeploy = useCallback(() => {
+  //   setCurrState('Pass');
+  //   setCurrStep(1);
+  //   setResultLog('');
+  // }, []);
 
   return (
     <ContentCard className="page-cluster-sync-detail">

@@ -20,33 +20,3 @@ export function useAppOptions() {
 
   return [data];
 }
-
-export function useAppClusterData(appCode?: string): [any[], boolean] {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!appCode) {
-      setData([]);
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    getRequest(APIS.singleAppDiff, {
-      data: { appCode },
-    })
-      .then((result) => {
-        const source = result.data || {};
-        const next = Object.keys(source).map((cluster) => {
-          return { cluster, ...source[cluster] };
-        });
-        setData(next);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [appCode]);
-
-  return [data, loading];
-}
