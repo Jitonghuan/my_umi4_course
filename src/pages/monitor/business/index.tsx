@@ -6,6 +6,7 @@ import React from 'react';
 import { Tabs } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { FilterCard } from '@/components/vc-page-content';
+import VCPermission from '@/components/vc-permission';
 
 const activeKeyMap: Record<string, any> = {
   'prometheus-add': 'prometheus',
@@ -24,7 +25,9 @@ export default function Dashboard(props: any) {
           <Tabs.TabPane tab="日志方式接入" key="logger-alarm" />
         </Tabs>
       </FilterCard>
-      {props.children}
+      <VCPermission code={window.location.pathname} isShowErrorPage>
+        {props.children}
+      </VCPermission>
     </MatrixPageContent>
   );
 }
