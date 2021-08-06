@@ -23,6 +23,8 @@ export default function Launch() {
   const [envCode, setenvCode] = useState<any>(); //环境的值
   const [templateType, setTemplateType] = useState<any>(); //模版类型
   const [templateName, setTemplateName] = useState<any>(); //模版名称的值
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
   useEffectOnce(() => {
@@ -90,7 +92,7 @@ export default function Launch() {
   const queryList = (value: any) => {
     // setDataSource(dataSource);
     setLoading(true);
-    console.log('11111111111', value);
+
     getRequest(APIS.tmplList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -211,7 +213,18 @@ export default function Launch() {
             dataSource={dataSource}
             bordered
             loading={loading}
-            pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`, defaultPageSize: 20 }}
+            pagination={{
+              total: pageTotal,
+              pageSize,
+              current: pageIndex,
+              showSizeChanger: true,
+              onShowSizeChange: (_, size) => {
+                setPageSize(size);
+                setPageIndex(1);
+              },
+              showTotal: () => `总共 ${pageTotal} 条数据`,
+            }}
+            // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
             onChange={pageSizeClick}
           >
             <Table.Column title="ID" dataIndex="id" width="10%" />
