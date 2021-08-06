@@ -83,8 +83,6 @@ export default function ClusterSyncDetail(props: any) {
       console.log('> current work state: ', result.data);
       const initState = result.data.category;
 
-      updateResultLog(result.data.log || '<no initial log>');
-
       if (initState === 'DeployClusterApp') {
         updateResultLog(result.data.log || '<no initial log>');
         return await getClusterApp();
