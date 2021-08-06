@@ -8,6 +8,7 @@ export interface IProps {
       id: string;
       isClient: string;
       isContainClient: string;
+      appType: string;
     };
   };
   route: {
