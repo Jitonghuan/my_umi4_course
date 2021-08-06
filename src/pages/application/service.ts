@@ -265,6 +265,8 @@ export const queryFeatureDeployed = async (params: {
   envTypeCode: string;
   /** 1已部署，0未部署 */
   isDeployed?: 0 | 1;
+  /** 分支名 */
+  branchName?: string;
 }) => {
   return getRequest(`${ds.apiPrefix}/releaseManage/branch/featureDeployed`, {
     data: params,

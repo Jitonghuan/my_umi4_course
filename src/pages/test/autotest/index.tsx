@@ -6,6 +6,7 @@ import React from 'react';
 import { Tabs } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { FilterCard } from '@/components/vc-page-content';
+import VCPermission from '@/components/vc-permission';
 
 const activeKeyMap: Record<string, any> = {};
 
@@ -23,7 +24,9 @@ export default function Dashboard(props: any) {
           <Tabs.TabPane tab="任务管理" key="tasks" />
         </Tabs>
       </FilterCard>
-      {props.children}
+      <VCPermission code={window.location.pathname} isShowErrorPage>
+        {props.children}
+      </VCPermission>
     </MatrixPageContent>
   );
 }
