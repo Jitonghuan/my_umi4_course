@@ -183,7 +183,7 @@ export default function ClusterSyncDetail(props: any) {
     let logCache = resultLogCache;
     let addonLog = '';
     while (true) {
-      await sleep(3000); // 延迟 3秒获取一次状态
+      await sleep(6000); // 延迟 6 秒获取一次状态
       try {
         const result = await getRequest(APIS.queryFrontendSource);
         // 没有数据表示已经结束
