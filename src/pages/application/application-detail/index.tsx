@@ -25,6 +25,8 @@ const defaultTab = 'overview';
 const ApplicationDetail = (props: IProps) => {
   const { location, children } = props;
   const isContainClient = Number(location.query.isContainClient) === 1;
+  const isNotClient = Number(location.query.isClient) === 0;
+  const isBackend = location.query.appType === 'backend';
   const appId = location.query.id;
 
   const [appData, setAppData] = useState<ContextTypes['appData']>();
@@ -116,13 +118,28 @@ const ApplicationDetail = (props: IProps) => {
               if (key === 'monitor') {
                 return appData?.isClient !== 1 && appData?.appType === 'backend';
               }
+              // if(isNotClient&&isBackend){
+              //   return false;
+              // }
+              if (key === 'AppParameters') {
+                console.log('第二个结果：', appData?.appType === 'backend');
+                console.log('第一个结果：', isBackend);
+                return appData?.isClient !== 1 && appData?.appType === 'backend';
+                // console.log('1234445',isNotClient&&isBackend)
 
+                // return isNotClient&&isBackend ;
+              }
               // 不包含二方包
               return key !== 'secondPartyPkg';
             })
             .map((key) => (
               <TabPane tab={tabsConfig[key]} key={key} />
             ))}
+          {/* {Object.keys(tabsConfig).filter((key)=>{
+             if(isNotClient&&isBackend){
+              return true;
+            }
+            })} */}
         </Tabs>
       )}
 

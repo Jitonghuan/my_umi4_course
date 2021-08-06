@@ -17,6 +17,8 @@ export default function Push(porps: any) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [categoryCode, setCategoryCode] = useState<any[]>([]); //应用CODE
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [appCodes, setAppCodes] = useState<string>(); //应用Code获取到的值
@@ -25,6 +27,7 @@ export default function Push(porps: any) {
   const [formTmplQuery] = Form.useForm();
   const [selectList, setSelectList] = useState<any[]>([]);
   const [pageTotal, setPageTotal] = useState<number>();
+
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
   const rowSelection = {
@@ -101,6 +104,8 @@ export default function Push(porps: any) {
   //点击查询
   const getApplication = (value: any) => {
     setLoading(true);
+
+    debugger;
     getRequest(APIS.appList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -109,6 +114,9 @@ export default function Push(porps: any) {
         appType: 'backend',
         isClient: 0,
         pageSize: value.pageSize,
+        pageIndex: value.pageIndex,
+
+        // pageSize: value.pageSize,
       },
     })
       .then((res: any) => {
@@ -117,6 +125,7 @@ export default function Push(porps: any) {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageSize = res.data.pageInfo.pageSize;
+
           setPageTotal(pageTotal);
           setDataSource(dataSource);
         }
@@ -132,8 +141,10 @@ export default function Push(porps: any) {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    getApplication(obj);
 
+    setPageIndex(pagination.current);
+    getApplication(obj);
+    console.log('pagination.current:', pagination.current, pagination.pageSize);
     setSelectList(currentDataSource);
   };
 
@@ -197,7 +208,17 @@ export default function Push(porps: any) {
                 rowKey="id"
                 loading={loading}
                 rowSelection={{ ...rowSelection }}
-                pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`, defaultPageSize: 20 }}
+                pagination={{
+                  total: pageTotal,
+                  pageSize,
+                  current: pageIndex,
+                  showSizeChanger: true,
+                  onShowSizeChange: (_, size) => {
+                    setPageSize(size);
+                    setPageIndex(1);
+                  },
+                  showTotal: () => `总共 ${pageTotal} 条数据`,
+                }}
                 onChange={pageSizeClick}
               >
                 <Table.Column title="ID" dataIndex="id" />
@@ -213,6 +234,7 @@ export default function Push(porps: any) {
                     <Space size="large">
                       <a
                         onClick={() => {
+                          debugger;
                           const query = {
                             appCode: record.appCode,
                             templateType: record.templateType,
@@ -220,6 +242,7 @@ export default function Push(porps: any) {
                             categoryCode: record.categoryCode,
                             isClient: 0,
                             isContainClient: 0,
+                            id: record.id,
                           };
                           history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
                         }}
