@@ -17,13 +17,11 @@ const parseErrorMsg = (errorMsg: any) => {
 };
 
 async function requestHandler(promise: Promise<IResponse<any>>, reserveError = false) {
-  console.log('promise:', promise);
   return promise
     .then((resp) => {
-      console.log('resp:', resp);
       // 非登录失效报错
       if (!resp.success) {
-        message.error(parseErrorMsg(resp.errorMsg));
+        // message.error(parseErrorMsg(resp.errorMsg));
         throw resp;
       }
 
