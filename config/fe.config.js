@@ -8,7 +8,7 @@ module.exports = {
   commands: {
     dev: [
       '$ fnpm install',
-      '$ npm run dev'
+      '$ npm run dev',
     ],
     build: (options) => {
       const buildEnv = options.online ? 'prod' : 'test';
