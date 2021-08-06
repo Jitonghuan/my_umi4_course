@@ -42,8 +42,10 @@ export default function DemoPageTb(porps: any) {
   const appCode = porps.history.location.query.appCode;
   const templateType = porps.history.location.query.templateType;
   const envCode = porps.history.location.query.envCode;
+  const isClient = porps.history.location.query.isClient;
+  const isContainClient = porps.history.location.query.isContainClient;
   const getApp = () => {
-    return getRequest(APIS.paramsList, { data: { appCode } }).then((result) => {
+    return getRequest(APIS.paramsList, { data: { appCode, isClient, isContainClient } }).then((result) => {
       if (result.data.length > 0) {
         const app = result.data[0];
         const appCategoryCode = app.appCategoryCode;
