@@ -85,7 +85,7 @@ export default function Application() {
         </div>
         <div className="caption-right">
           <Button type="primary" ghost disabled={!appCode || loading || pending} onClick={loadAppList}>
-            开始比对应用集群
+            开始应用比对
           </Button>
           <Button
             type="primary"
@@ -103,7 +103,7 @@ export default function Application() {
         locale={{
           emptyText: (
             <div className="custom-table-holder">
-              {loading ? '加载中...' : completed ? '暂无数据' : <a onClick={loadAppList}>点击开始进行比对</a>}
+              {loading ? '加载中...' : completed ? '暂无数据' : <a onClick={loadAppList}>点击开始进行应用比对</a>}
             </div>
           ),
         }}

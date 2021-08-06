@@ -81,8 +81,20 @@ export default function ClusterSyncDetail(props: any) {
     try {
       const result = await getRequest(APIS.queryWorkState);
       console.log('> current work state: ', result.data);
-      setCurrState(result.data.category);
+      const initState = result.data.category;
+
       updateResultLog(result.data.log || '<no initial log>');
+
+      if (initState === 'DeployClusterApp') {
+        updateResultLog(result.data.log || '<no initial log>');
+        return await getClusterApp();
+      } else if (initState === 'DeployClusterWebSource') {
+        setCurrState('DeployClusterApp');
+        await getFESourceDeployProcess();
+      } else {
+        updateResultLog(result.data.log || '<no initial log>');
+        setCurrState(initState);
+      }
     } catch (ex) {
       setCurrState('Pass');
     } finally {
@@ -180,6 +192,10 @@ export default function ClusterSyncDetail(props: any) {
     await postRequest(APIS.frontendSourceDeploy);
     updateResultLog('前端资源同步开始...');
     // 2. 轮循调接口获取当前的部署状态，直到没有数据为止
+    await getFESourceDeployProcess();
+  }, []);
+  // 8.5 获取前端资源同步进度
+  const getFESourceDeployProcess = useCallback(async () => {
     let logCache = resultLogCache;
     let addonLog = '';
     while (true) {
@@ -242,10 +258,12 @@ export default function ClusterSyncDetail(props: any) {
         <Steps.Step title="完成" />
       </Steps>
       {currStep !== 4 ? (
+        <pre className="result-log" ref={resultRef}>
+          {resultLog}
+        </pre>
+      ) : null}
+      {currStep !== 4 ? (
         <Spin spinning={pending} tip="执行中，请勿关闭或切换页面">
-          <pre className="result-log" ref={resultRef}>
-            {resultLog}
-          </pre>
           <div className="action-row">
             {currState === 'Pass' ? (
               <Button type="primary" onClick={getMqDiff}>
