@@ -106,7 +106,7 @@ export default function ClusterSyncDetail(props: any) {
       const result = await promise;
       let addon = result.data;
 
-      if (typeof addon === 'object' && 'appCode' in addon) {
+      if (typeof addon === 'object' && 'appCode' in addon && addon.appCode !== 'Pass') {
         addon = `下一个要同步的应用: ${addon.appCode || '--'}`;
       }
 

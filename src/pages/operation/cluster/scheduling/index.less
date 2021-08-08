@@ -16,18 +16,13 @@
 }
 
 .zone-card-group {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(~'calc(25% - 24px * 0.75)', 372px));
+  gap: 16px 24px;
   margin-bottom: 20px;
 
   .zone-card {
-    // flex: 0 0 auto;
-    flex: 1 1 0;
-    max-width: 25%;
-    min-width: 372px;
     background-color: #fff;
-    margin-right: 24px;
-    margin-bottom: 16px;
     padding: 32px 32px 16px 32px;
     border-radius: 2px;
     transition: box-shadow 0.3s ease;
