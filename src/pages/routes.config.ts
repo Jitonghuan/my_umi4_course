@@ -103,6 +103,11 @@ export default [
         name: '接口测试',
         component: '@/pages/demo/api-test',
       },
+      {
+        path: 'mytest',
+        name: '我的练习',
+        component: '@/pages/demo/my-test',
+      },
     ],
   },
   {
@@ -405,6 +410,13 @@ export default [
             name: '集群看板',
             key: 'cluster',
             component: '@/pages/operation/cluster/dashboard',
+            hideInMenu: true,
+          },
+          {
+            path: 'dashboards',
+            name: '集群看板2',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/dashboards',
             hideInMenu: true,
           },
           {
