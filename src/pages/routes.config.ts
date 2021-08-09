@@ -485,7 +485,6 @@ export default [
     path: 'operation',
     name: '运维管理',
     icon: 'icon-atomic',
-    hideInMenu: process.env.BUILD_ENV === 'prod',
     routes: [
       {
         path: 'cluster',
