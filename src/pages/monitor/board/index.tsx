@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import { Tabs, Card, Tag, Spin } from 'antd';
+import { Tabs, Card, Form, Input, Spin } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
 import MatrixPageContent from '@/components/matrix-page-content';
@@ -12,11 +12,6 @@ import { resUseTableSchema } from './schema';
 
 import './index.less';
 import { getColorByValue } from './../util';
-
-export interface IProps {
-  /** 属性描述 */
-  [key: string]: any;
-}
 
 type ITab = {
   /** key */
@@ -42,12 +37,6 @@ type ICard = {
   dataSource?: ICard[];
 };
 
-// 节点使用率
-type INode = {
-  id: number;
-  href: string;
-};
-
 const gridData = {
   xs: 1,
   sm: 1,
@@ -66,21 +55,21 @@ type IMarket = {
   href: string;
 };
 
-const rootCls = 'monitor-board-compo';
-
 /**
  * Board
  * @description 监控面板
  * @create 2021-04-12 19:13:58
  */
-const Coms = (props: IProps) => {
+const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
   const [currentTab, setCurrentTab] = useState<string>('');
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
   const [useMarket, setUseMarket] = useState<IMarket[]>([]);
+  const [searchParams, setSearchParams] = useState<any>();
   // const [nodeDetailShow, setNodeDetailShow] = useState<boolean>(false);
   // const prevNode = useRef<INode>()
   const [resLoading, setResLoading] = useState<boolean>(false);
+  const [searchField] = Form.useForm();
 
   // 查询机构列表
   const queryEnvList = () => {
@@ -112,9 +101,15 @@ const Coms = (props: IProps) => {
   } = usePaginated({
     requestUrl: queryNodeUseDataApi,
     requestMethod: 'GET',
+    effectParams: searchParams,
     showRequestError: true,
     initPageInfo: {
+      total: 0,
       pageSize: 20,
+    },
+    pagination: {
+      showSizeChanger: true,
+      pageSizeOptions: ['20', '50', '100', '1000'],
     },
     formatRequestParams: (params) => {
       return {
@@ -227,6 +222,10 @@ const Coms = (props: IProps) => {
     return options;
   }, []);
 
+  const handleSearchRes = () => {
+    setSearchParams(searchField.getFieldsValue());
+  };
+
   // 顶部的 card
   const renderCard = (record: ICard) => {
     const { mode = '1', title, value = '-', unit = '', dataSource = [] } = record;
@@ -281,12 +280,21 @@ const Coms = (props: IProps) => {
             </div>
           </Spin>
 
-          <h3 className="monitor-tabs-content-title">节点资源明细</h3>
+          <div className="table-caption" style={{ marginTop: 28 }}>
+            <h3 className="monitor-tabs-content-title" style={{ margin: 0 }}>
+              节点资源明细
+            </h3>
+            <Form form={searchField} layout="inline">
+              <Form.Item name="keyword">
+                <Input.Search placeholder="搜索主机名、IP" style={{ width: 320 }} onSearch={handleSearchRes} />
+              </Form.Item>
+            </Form>
+          </div>
           <div className="monitor-tabs-content-sec">
             <HulkTable
               rowKey="id"
               size="small"
-              columns={resUseTableSchema}
+              columns={resUseTableSchema as any}
               scroll={{ y: 313 }}
               {...tableProps}
               customColumnMap={{

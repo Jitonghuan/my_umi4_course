@@ -15,8 +15,6 @@ import DetailContext from '../../../../../context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
-import { getRequest } from '_@cffe_fe-backend-component@0.1.49@@cffe/fe-backend-component';
-import ds from '@config/defaultSettings';
 
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;

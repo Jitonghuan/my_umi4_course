@@ -9,4 +9,6 @@ export const getEnvList = addAPIPrefix('/logManage/logSearch/env');
 
 export const getSearchUrl = addAPIPrefix('/logManage/logSearch/url');
 
-export const getAlertRule = addAPIPrefix('/logManage/alertrule/options/list');
+export const ruleGroupOptions = addAPIPrefix('/logManage/alertrule/group/list');
+
+export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');

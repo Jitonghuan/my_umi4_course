@@ -12,9 +12,6 @@ import DetailContext from '../../../../../context';
 import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq } from '../../../../../../service';
 import { IProps } from './types';
 import './index.less';
-import { name } from 'dayjs/locale/*';
-import { queryEnvLists } from '@/pages/monitor/board/service';
-import { envCodeList } from '@/pages/test/environment/service';
 
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
@@ -22,7 +19,6 @@ const { confirm } = Modal;
 const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: IProps) => {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
-
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -67,6 +63,7 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
     return [];
   }
 
+  // 发布环境
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
     const namesArr: any[] = [];
@@ -153,6 +150,11 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
         <Descriptions.Item label="合并分支" span={3}>
           {deployInfo?.features}
         </Descriptions.Item>
+        {deployInfo?.deployErrInfo !== '' && (
+          <Descriptions.Item label="部署错误信息" span={3} contentStyle={{ color: 'red' }}>
+            {deployInfo?.deployErrInfo}
+          </Descriptions.Item>
+        )}
       </Descriptions>
 
       <Modal

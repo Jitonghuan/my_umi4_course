@@ -13,9 +13,9 @@ import { TreeNode, TreeNodeSaveData, EditorMode } from '../../interfaces';
 import { useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey, getMergedList } from '../../common';
 import { useProjectOptions } from '../../hooks';
-import ProjectEditor from '../../components/project-editor';
-import ModuleEditor from '../../components/module-editor';
-import ApiEditor from '../../components/api-editor';
+import ProjectEditor from '../../_components/project-editor';
+import ModuleEditor from '../../_components/module-editor';
+import ApiEditor from '../../_components/api-editor';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
@@ -242,6 +242,7 @@ export default function LeftTree(props: LeftTreeProps) {
       ) : null}
 
       <Tree
+        className="custom-tree"
         blockNode
         key={searchProject || 1}
         treeData={treeData}

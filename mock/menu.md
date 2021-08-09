@@ -1,0 +1,71 @@
+/matrix/application 应用管理
+    /matrix/application/all 全部应用
+    /matrix/application/list 应用列表
+    /matrix/application/detail 应用详情
+        /matrix/application/detail/overview 概述
+        /matrix/application/detail/monitor 应用监控
+        /matrix/application/detail/appDeploy 应用部署
+        /matrix/application/detail/branch 分支
+        /matrix/application/detail/configMgr 配置管理
+        /matrix/application/detail/launchParameters 启动参数
+        /matrix/application/detail/AppParameters 应用参数
+        /matrix/application/detail/addConfig 新增配置
+        /matrix/application/detail/addLaunchParameters 新增启动参数
+        /matrix/application/detail/secondPartyPkg 二方包
+/matrix/publish 项目管理
+    /matrix/publish/function 发布功能管理
+    /matrix/publish/function/addFunction 新增发布功能
+    /matrix/publish/function/editFunction 编辑发布功能
+    /matrix/publish/function/checkFunction 查看发布功能
+    /matrix/publish/plan 发布计划管理
+    /matrix/publish/plan/addConfigModify 新增发布计划
+    /matrix/publish/plan/editConfigModify 编辑发布计划
+    /matrix/publish/plan/checkConfigModify 查看发布计划
+    /matrix/publish/apply 发布申请
+/matrix/ticket 工单管理
+    /matrix/ticket/list 工单列表
+/matrix/test 测试管理
+    /matrix/test/data-factory 数据工厂
+        /matrix/test/data-factory/records 数据列表
+        /matrix/test/data-factory/add 新增数据
+        /matrix/test/data-factory/template 数据模板
+    /matrix/test/qualityControl 质量控制
+        /matrix/test/qualityControl/unitTest 单测覆盖检测
+        /matrix/test/qualityControl/codeQuality 代码质量检测
+    /matrix/test/environment 环境管理
+    /matrix/test/functions 函数管理
+    /matrix/test/autotest 自动化测试
+        /matrix/test/autotest/dashboard 看板统计
+        /matrix/test/autotest/test-cases 用例管理
+        /matrix/test/autotest/scenes 场景管理
+        /matrix/test/autotest/tasks 任务管理
+/matrix/operation 运维管理
+    /matrix/operation/cluster 双集群管理
+        /matrix/operation/cluster/dashboard 集群看板
+        /matrix/operation/cluster/scheduling 流量调度
+        /matrix/operation/cluster/cluster-sync 集群同步
+        /matrix/operation/cluster/cluster-sync-detail 集群同步
+        /matrix/operation/cluster/application-sync 应用同步
+        /matrix/operation/cluster/operation-log 操作日志
+    /matrix/operation/app-tmpl 应用模版
+        /matrix/operation/app-tmpl/tmpl-list 应用模版列表
+        /matrix/operation/app-tmpl/tmpl-detail 应用模版详情
+        /matrix/operation/app-tmpl/push 推送模版
+        /matrix/operation/app-tmpl/tmpl-edit 应用模版编辑
+        /matrix/operation/app-tmpl/tmpl-add 新增应用模版
+        /matrix/operation/app-tmpl/tmpl-copy 复制应用模版
+/matrix/monitor 监控管理
+    /matrix/monitor/board 监控面板
+    /matrix/monitor/application 应用监控
+    /matrix/monitor/business 业务监控
+        /matrix/monitor/business/prometheus 接口方式接入
+        /matrix/monitor/business/prometheus-add 接入Prometheus
+        /matrix/monitor/business/prometheus-edit 编辑Prometheus
+        /matrix/monitor/business/logger-alarm 日志方式接入
+    /matrix/monitor/template 模板管理
+    /matrix/monitor/history 报警历史
+/matrix/logger 日志管理
+    /matrix/logger/search 日志检索
+/matrix/code 代码管理
+    /matrix/code/rank 代码排行
+    /matrix/code/details 统计详情

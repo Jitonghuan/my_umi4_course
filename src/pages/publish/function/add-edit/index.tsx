@@ -377,7 +377,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                   cell: EditableCell,
                 },
               }}
-              scroll={{ y: 200 }}
+              scroll={{ y: window.innerHeight - 360 }}
             />
             {type === 'add' && (
               <Button

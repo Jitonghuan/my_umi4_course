@@ -9,5 +9,6 @@ export default {
   primaryColor: '#1973CC',
   apiPrefix: `/v1`,
   pagePrefix: `/${appKey}`,
-  isOpenPermission: false,
+  // isOpenPermission: true,
+  isOpenPermission: process.env.NODE_ENV !== 'development',
 };

@@ -9,6 +9,7 @@ import { editColumns } from './colunms';
 import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
 import { queryRuleTemplatesList, queryGroupList } from '../../service';
+import { useUserOptions } from './hooks';
 import './index.less';
 
 interface IRef {
@@ -46,6 +47,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
   const [ruleTemplate, setRuleTemplate] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
+  const [userOptions] = useUserOptions();
 
   //分类
   const { run: groupList } = useRequest({
@@ -190,17 +192,18 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       type: 'input',
       label: drawerType === 'rules' ? '规则名称' : '模板名称',
       dataIndex: 'name',
-      placeholder: '请输入(最多253字符，暂不支持中文)',
+      placeholder: '请输入',
       required: true,
       disable: type === 'edit',
       rules: [
         {
           whitespace: true,
           required: true,
-          message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
-          pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
+          message: '请输入正确的名称',
+          // message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
+          // pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
           type: 'string',
-          max: 253,
+          max: 200,
         },
       ],
     },
@@ -220,12 +223,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       dataIndex: 'expression',
       placeholder: '请输入',
       required: true,
-      option: [
-        {
-          key: '1',
-          value: 'kkkk节点',
-        },
-      ],
     },
     {
       key: '5',
@@ -276,14 +273,17 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           key: 2,
           value: '警告',
+          label: '警告',
         },
         {
           key: 3,
           value: '严重',
+          label: '严重',
         },
         {
           key: 4,
           value: '灾难',
+          label: '灾难',
         },
       ],
     },
@@ -335,43 +335,9 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       dataIndex: 'receiver',
       placeholder: '请选择',
       required: true,
-      mode: 'multiple',
-      option: [
-        {
-          key: '东来',
-          value: '东来',
-        },
-        {
-          key: '羁绊',
-          value: '羁绊',
-        },
-      ],
-      rules: [
-        {
-          required: true,
-          message: '请选择',
-          type: 'array',
-        },
-      ],
-    },
-    {
-      key: '10',
-      type: 'select',
-      label: '通知方式',
-      dataIndex: 'receiverType',
-      placeholder: '请选择',
-      required: true,
-      mode: 'multiple',
-      option: [
-        {
-          key: 'dingding',
-          value: '钉钉',
-        },
-        {
-          key: 'phone',
-          value: '电话',
-        },
-      ],
+      mode: 'tags',
+      showSelectSearch: true,
+      option: userOptions,
       rules: [
         {
           required: true,
@@ -393,10 +359,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           key: 1,
           value: '是',
+          label: '是',
         },
         {
           key: 0,
           value: '否',
+          label: '否',
         },
       ],
       extraForm: (

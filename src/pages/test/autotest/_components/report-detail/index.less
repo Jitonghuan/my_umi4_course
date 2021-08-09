@@ -1,0 +1,132 @@
+.task-report-row {
+  display: flex;
+  min-height: 590px;
+
+  &.report-loading {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .task-report-left {
+    flex: 0 0 476px;
+    margin-right: 12px;
+    background-color: #fff;
+  }
+
+  .task-report-summary {
+    padding: 20px;
+    display: flex;
+    border-bottom: 1px solid #d2d8e6;
+
+    .summary-info {
+      flex: 0 0 180px;
+
+      h4 {
+        font-size: 14px;
+        margin-bottom: 14px;
+      }
+
+      b {
+        display: block;
+        font-size: 24px;
+        line-height: 32px;
+        margin-bottom: 12px;
+      }
+
+      p {
+        color: #999;
+        margin-bottom: 8px;
+        font-size: 12px;
+      }
+    }
+
+    .summary-chart {
+      flex: 1 1 0;
+      margin-left: 16px;
+    }
+  }
+
+  .task-report-tree-wrapper {
+  }
+
+  .task-report-tree-caption {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 20px;
+    border-bottom: 1px solid #d2d8e6;
+
+    h4 {
+      flex: 1 1 0;
+      font-weight: normal;
+      margin: 0;
+    }
+
+    span {
+      flex: 0 0 40px;
+      margin-left: 6px;
+    }
+  }
+
+  .task-report-tree {
+    padding: 20px 16px;
+    height: 360px;
+    width: 476px;
+    overflow: auto;
+  }
+
+  .detail-loading {
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .task-report-right {
+    flex: 1 1 0;
+    height: 590px;
+    overflow: auto;
+
+    h4 {
+      margin-bottom: 12px;
+    }
+
+    .ant-table {
+      margin-bottom: 20px;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      border: 1px solid #ddd;
+      padding: 12px;
+      border-radius: 3px;
+      background-color: #fff0f0;
+      font-size: 12px;
+    }
+  }
+
+  .ant-collapse:empty {
+    display: none;
+  }
+
+  .custom-tree-node {
+    display: flex;
+
+    > b {
+      flex: 1 1 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: normal;
+
+      > .anticon {
+        margin-right: 4px;
+      }
+    }
+
+    > span {
+      flex: 0 0 40px;
+      margin-left: 6px;
+    }
+  }
+}

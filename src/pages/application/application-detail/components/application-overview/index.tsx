@@ -44,7 +44,6 @@ const ApplicationOverview = (props: IProps) => {
     if (!appData?.appCode) return;
     queryMemberData();
   }, [appData?.appCode]);
-
   return (
     <ContentCard className={rootCls}>
       <Descriptions
@@ -65,6 +64,7 @@ const ApplicationOverview = (props: IProps) => {
           <Descriptions.Item label="应用开发语言">{appData?.appDevelopLanguage}</Descriptions.Item>
         )}
         <Descriptions.Item label="应用部署名称">{appData?.deploymentName}</Descriptions.Item>
+        {/* <Descriptions.Item label="基础镜像">{appData?.baseImage}</Descriptions.Item> */}
         <Descriptions.Item label="应用分类">
           {categoryData?.find((v) => v.categoryCode === appData?.appCategoryCode)?.categoryName || '-'}
         </Descriptions.Item>

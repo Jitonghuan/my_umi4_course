@@ -19,6 +19,8 @@ export interface ContextTypes {
     appDevelopLanguage: 'golang' | 'java' | 'python';
     /** 应用部署名称 **/
     deploymentName: string;
+    /** 基础镜像 */
+    // baseImage: string;
     /** 应用负责人   ---支持模糊搜索 */
     owner: string;
     /** gitlab 中项目http地址 */

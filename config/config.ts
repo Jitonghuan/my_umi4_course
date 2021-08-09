@@ -28,10 +28,7 @@ export default defineConfig({
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome
-  targets:
-    process.env.NODE_ENV === 'development'
-      ? { chrome: 49, firefox: false, safari: false, edge: false, ios: false }
-      : { chrome: 49, firefox: 64, safari: 10, edge: 13 },
+  targets: { chrome: 60, firefox: 64, safari: 11 },
 
   publicPath: `${publicPathPrefix}/${ds.appKey}/`,
 
@@ -47,7 +44,9 @@ export default defineConfig({
     { src: `${publicPathPrefix}/${ds.appKey}/react-dom.min.js` },
   ],
 
-  // dynamicImport: {},
+  dynamicImport: {
+    loading: '@/components/source-loading',
+  },
 
   // split chunk TODO
   /*—————————— 编译性能和工程配置 end ——————————*/
@@ -75,13 +74,16 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      target: 'http://matrix-api-test.cfuture.shop/',
-      // target: 'http://10.10.129.247:8080/',
+      target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix-api-test.cfuture.shop/',
+      // target: 'http://10.10.128.243:8080/',
       // target: 'http://10.10.129.177:8080/',
       // target: 'http://10.10.129.128:8080',
       // target: 'http://10.10.128.182:8081/', // 羁绊本地
       // target: 'http://10.10.130.108:8000', // 可乐本地
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
+      // target: 'https://release.zy91.com:4443/futuredog',
+      // target: 'http://10.10.128.227:8080',
       changeOrigin: true,
     },
   },

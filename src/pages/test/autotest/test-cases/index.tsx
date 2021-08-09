@@ -4,17 +4,15 @@
 
 import React, { useState, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
 import Emitter from 'events';
-import MatrixPageContent from '@/components/matrix-page-content';
 import { CardRowGroup } from '@/components/vc-page-content';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
-import CaseEditor from '../components/case-editor';
-import CaseDetail from '../components/case-detail';
+import CaseEditor from '../_components/case-editor';
+import CaseDetail from '../_components/case-detail';
 import { EditorMode, TreeNode, CaseItemVO } from '../interfaces';
 import './index.less';
-import HeaderTabs from '../components/header-tabs';
 
-export default function TestCaseManager(props: any) {
+export default function TestCaseManager() {
   const [current, setCurrent] = useState<TreeNode>();
   const [editorData, setEditorData] = useState<CaseItemVO>();
   const [caseEditorMode, setCaseEditorMode] = useState<EditorMode>('HIDE');
@@ -48,12 +46,9 @@ export default function TestCaseManager(props: any) {
   }, [current, editorData]);
 
   return (
-    <MatrixPageContent isFlex>
-      <HeaderTabs activeKey="test-cases" history={props.history} />
-      <CardRowGroup>
-        <LeftTree onItemClick={(item) => setCurrent(item)} />
-        <RightDetail key={current?.key || 1} current={current} emitter={emitter} />
-      </CardRowGroup>
+    <CardRowGroup>
+      <LeftTree onItemClick={(item) => setCurrent(item)} />
+      <RightDetail key={current?.key || 1} current={current} emitter={emitter} />
       <CaseEditor
         mode={caseEditorMode}
         initData={editorData}
@@ -63,6 +58,6 @@ export default function TestCaseManager(props: any) {
         onSave={handleSave}
       />
       <CaseDetail data={detailData} onClose={() => setDetailData(undefined)} />
-    </MatrixPageContent>
+    </CardRowGroup>
   );
 }

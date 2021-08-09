@@ -1,5 +1,3 @@
-// import ds from '../../config/defaultSettings';
-
 type IRouteItem = {
   path: string;
   name?: string;
@@ -31,7 +29,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/test`,
-    redirect: `${PAGE_PREFIX}/test/dataFactory`,
+    redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
   {
     path: `${PAGE_PREFIX}/monitor`,
@@ -51,13 +49,29 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/test/autotest`,
-    redirect: `${PAGE_PREFIX}/test/autotest/test-cases`,
+    redirect: `${PAGE_PREFIX}/test/autotest/dashboard`,
+  },
+  {
+    path: `${PAGE_PREFIX}/monitor/business`,
+    redirect: `${PAGE_PREFIX}/monitor/business/prometheus`,
+  },
+  {
+    path: `${PAGE_PREFIX}/operation/cluster`,
+    redirect: `${PAGE_PREFIX}/operation/cluster/scheduling`,
+  },
+  {
+    path: `${PAGE_PREFIX}/operation/app-tmpl`,
+    redirect: `${PAGE_PREFIX}/operation/app-tmpl/tmpl-list`,
+  },
+  {
+    path: `${PAGE_PREFIX}/test/data-factory`,
+    redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
   {
     path: 'demo',
     name: '示例页面',
     icon: 'icon-report',
-    hideInMenu: process.env.UMI_ENV !== 'dev',
+    hideInMenu: process.env.NODE_ENV !== 'development',
     routes: [
       {
         path: 'layout-normal',
@@ -83,6 +97,11 @@ export default [
         path: 'list',
         name: '列表页面',
         component: '@/pages/demo/list',
+      },
+      {
+        path: 'apitest',
+        name: '接口测试',
+        component: '@/pages/demo/api-test',
       },
     ],
   },
@@ -150,6 +169,13 @@ export default [
             key: 'list',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/config-parameters-manage',
+          },
+          {
+            path: 'AppParameters',
+            name: '应用参数',
+            key: 'list',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/application-params',
           },
           {
             path: 'addConfig',
@@ -260,18 +286,33 @@ export default [
     icon: 'icon-poc_mining',
     routes: [
       {
-        path: 'dataFactory',
+        path: 'data-factory',
         name: '数据工厂',
-        key: 'dataFactory',
-        component: '@/pages/test/data-factory',
-        exact: true,
-      },
-      {
-        path: 'dataFactory/dataFactory-add',
-        name: '新增数据',
-        key: 'dataFactory',
-        hideInMenu: true,
-        component: '@/pages/test/data-factory/data-factory-add',
+        key: 'data-factory',
+        component: '@/pages/test/data-factory/index',
+        routes: [
+          {
+            path: 'records',
+            name: '数据列表',
+            key: 'data-factory',
+            component: '@/pages/test/data-factory/data-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'add',
+            name: '新增数据',
+            key: 'data-factory',
+            hideInMenu: true,
+            component: '@/pages/test/data-factory/create-data',
+          },
+          {
+            path: 'template',
+            name: '数据模板',
+            key: 'data-factory',
+            component: '@/pages/test/data-factory/template',
+            hideInMenu: true,
+          },
+        ],
       },
       {
         path: 'qualityControl',
@@ -312,6 +353,7 @@ export default [
         path: 'autotest',
         name: '自动化测试',
         key: 'autotest',
+        component: '@/pages/test/autotest/index',
         routes: [
           {
             path: 'dashboard',
@@ -345,6 +387,7 @@ export default [
       },
     ],
   },
+
   {
     path: 'monitor',
     name: '监控管理',
@@ -361,22 +404,40 @@ export default [
         component: '@/pages/monitor/application',
       },
       {
-        path: 'prometheus',
-        name: 'Prometheus监控',
-        component: '@/pages/monitor/prometheus',
-        exact: true,
-      },
-      {
-        path: 'prometheus/prometheus-add',
-        name: '接入Prometheus',
-        hideInMenu: true,
-        component: '@/pages/monitor/prometheus/prometheus-form',
-      },
-      {
-        path: 'prometheus/prometheus-edit',
-        name: '编辑Prometheus',
-        hideInMenu: true,
-        component: '@/pages/monitor/prometheus/prometheus-form',
+        path: 'business',
+        name: '业务监控',
+        key: 'business-monitor',
+        component: '@/pages/monitor/business/index',
+        routes: [
+          {
+            path: 'prometheus',
+            name: '接口方式接入',
+            key: 'business-monitor',
+            component: '@/pages/monitor/business/prometheus',
+            hideInMenu: true,
+          },
+          {
+            path: 'prometheus-add',
+            name: '接入Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/prometheus/prometheus-form',
+          },
+          {
+            path: 'prometheus-edit',
+            name: '编辑Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/prometheus/prometheus-form',
+          },
+          {
+            path: 'logger-alarm',
+            name: '日志方式接入',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/logger-alarm',
+          },
+        ],
       },
       {
         path: 'template',
@@ -394,22 +455,11 @@ export default [
     path: 'logger',
     name: '日志管理',
     icon: 'icon-diagnose',
-    hideInMenu: process.env.BUILD_ENV === 'prod',
     routes: [
-      {
-        path: 'dashboard',
-        name: '仪表盘',
-        component: '@/pages/logger/dashboard',
-      },
       {
         path: 'search',
         name: '日志检索',
         component: '@/pages/logger/search',
-      },
-      {
-        path: 'alarm',
-        name: '日志告警',
-        component: '@/pages/logger/alarm',
       },
     ],
   },
@@ -417,7 +467,6 @@ export default [
     path: 'code',
     name: '代码管理',
     icon: 'icon-code',
-    hideInMenu: true,
     routes: [
       {
         path: 'rank',
@@ -430,6 +479,121 @@ export default [
         component: '@/pages/code/details',
       },
     ],
+  },
+
+  {
+    path: 'operation',
+    name: '运维管理',
+    icon: 'icon-atomic',
+    routes: [
+      {
+        path: 'cluster',
+        name: '双集群管理',
+        key: 'cluster',
+        component: '@/pages/operation/cluster',
+        routes: [
+          {
+            path: 'dashboard',
+            name: '集群看板',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/dashboard',
+            hideInMenu: true,
+          },
+          {
+            path: 'scheduling',
+            name: '流量调度',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/scheduling',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync',
+            name: '集群同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/cluster-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync-detail',
+            name: '集群同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/cluster-sync/sync-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'application-sync',
+            name: '应用同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/application-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'operation-log',
+            name: '操作日志',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/operation-log',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'app-tmpl',
+        name: '应用模版',
+        key: 'app-tmpl',
+        routes: [
+          {
+            path: 'tmpl-list',
+            name: '应用模版列表',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-list',
+            hideInMenu: true,
+          },
+
+          {
+            path: 'tmpl-detail',
+            name: '应用模版详情',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'push',
+            name: '推送模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/push',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-edit',
+            name: '应用模版编辑',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-edit',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-add',
+            name: '新增应用模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-add',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-copy',
+            name: '复制应用模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-copy',
+            hideInMenu: true,
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    path: '*',
+    name: 'NOT FOUND',
+    hideInMenu: true,
+    component: '@/pages/index/page-404',
   },
   /** {{routes: 标志位不可删除，用于初始化页面}}  */
 ] as IRouteItem[];

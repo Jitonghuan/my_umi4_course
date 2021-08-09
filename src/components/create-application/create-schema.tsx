@@ -6,6 +6,7 @@ export default (params: {
   appDevelopLanguage?: AppDevelopLanguage;
   categoryData?: any[];
   businessData?: any[];
+  baseImage?: any[];
 }) => ({
   isShowReset: false,
   labelColSpan: 6,
@@ -165,6 +166,14 @@ export default (params: {
         options: params.businessData || [],
       },
     },
+    // {
+    //   type: 'Select',
+    //   props: {
+    //     label: '基础镜像',
+    //     name: 'baseImage',
+    //     options: params.baseImage || [],
+    //   },
+    // },
     {
       // TODO 已经和后端确认，先暂时输入人名，后期改成接口搜索下拉
       type: 'Input',

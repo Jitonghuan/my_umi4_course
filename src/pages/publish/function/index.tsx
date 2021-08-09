@@ -103,7 +103,13 @@ const FunctionCom: React.FC = () => {
             <Button type="primary" onClick={() => history.push('./function/addFunction')}>
               新增发布功能
             </Button>
-            <Button type="primary" ghost target="_blank" href={getExportPublishFunctionLink(lastSearchRef.current)}>
+            <Button
+              type="primary"
+              ghost
+              target="_blank"
+              download
+              href={getExportPublishFunctionLink(lastSearchRef.current)}
+            >
               导出数据
             </Button>
           </>

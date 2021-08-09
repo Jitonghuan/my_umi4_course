@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
+import moment from 'moment';
 import { getRequest } from '@/utils/request';
 import { TaskItemVO, TaskReportItemVO } from '../interfaces';
 
@@ -44,6 +45,7 @@ export function useReportList(
   taskId: number,
   pageIndex = 1,
   pageSize = 20,
+  filterRange?: moment.Moment[], // 筛选范围，暂时未用到
 ): [TaskReportItemVO[], number, boolean, () => Promise<void>] {
   const [data, setData] = useState<TaskReportItemVO[]>([]);
   const [total, setTotal] = useState(0);
@@ -55,8 +57,14 @@ export function useReportList(
     setLoading(true);
 
     try {
+      const params: any = { taskId, pageIndex, pageSize };
+      if (filterRange?.length) {
+        params.start = filterRange[0].format('YYYY-MM-DD HH:mm:ss');
+        params.end = filterRange[1].format('YYYY-MM-DD HH:mm:ss');
+      }
+
       const result = await getRequest(APIS.getRecordList, {
-        data: { taskId, pageIndex, pageSize },
+        data: params,
       });
 
       const { dataSource, pageInfo } = result.data || {};
@@ -67,11 +75,11 @@ export function useReportList(
     } finally {
       setLoading(false);
     }
-  }, [taskId, pageIndex, pageSize]);
+  }, [taskId, pageIndex, pageSize, filterRange]);
 
   useEffect(() => {
     loadData();
-  }, [taskId, pageIndex, pageSize]);
+  }, [taskId, pageIndex, pageSize, filterRange]);
 
   return [data, total, loading, loadData];
 }

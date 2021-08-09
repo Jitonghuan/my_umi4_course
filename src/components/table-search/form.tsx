@@ -36,6 +36,7 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
       mode,
       id,
       allowClear,
+      showSearch,
       min,
       max,
       ...rest
@@ -317,23 +318,22 @@ const FormList: React.FC<TableSearchProps> = ({
   form,
   onSearch,
   reset,
+  style,
 }) => {
   return (
-    <>
-      <Form form={form} layout={formLayout}>
-        {renderForm(formOptions, onSearch)}
-        <Item>
-          <Space size={12}>
-            {showSearch && (
-              <Button type="primary" onClick={onSearch}>
-                {searchText}
-              </Button>
-            )}
-            {showReset && <Button onClick={reset}>重置</Button>}
-          </Space>
-        </Item>
-      </Form>
-    </>
+    <Form form={form} layout={formLayout} style={style}>
+      {renderForm(formOptions, onSearch)}
+      <Item>
+        <Space size={12}>
+          {showSearch && (
+            <Button type="primary" onClick={onSearch}>
+              {searchText}
+            </Button>
+          )}
+          {showReset && <Button onClick={reset}>重置</Button>}
+        </Space>
+      </Item>
+    </Form>
   );
 };
 

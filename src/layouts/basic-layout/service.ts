@@ -15,6 +15,9 @@ export const queryCategoryData = `${ds.apiPrefix}/appManage/category/list`;
 /** 获取应用组数据 */
 export const queryBizData = `${ds.apiPrefix}/appManage/group/list`;
 
+// /** 获取基础镜像列表 */
+// export const queryBaseImages = `${ds.apiPrefix}/appManage/baseImage/list`;
+
 /** 业务模块 */
 export const queryBizModuleData = `${ds.apiPrefix}/orgManage/buSys/list`;
 

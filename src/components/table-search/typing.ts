@@ -6,6 +6,7 @@ export type TypeProps = 'select' | 'input' | 'date' | 'range' | 'area' | 'inputN
 
 export interface OptionProps {
   value: string;
+  label: string;
   key: React.Key;
 }
 
@@ -60,5 +61,7 @@ export interface TableSearchProps extends TableProps<any> {
   style?: CSSProperties;
   onSearch?: () => void;
   form?: FormInstance;
+  /** 是否是分离式布局，默认是 */
+  splitLayout?: boolean;
   reset?: () => void;
 }

@@ -75,6 +75,7 @@ const TestAdd: React.FC<TestAddProps> = ({ visible, onClose }) => {
       type: 'select',
       label: '分支名',
       dataIndex: 'branchName',
+      showSelectSearch: true,
       option: form?.getFieldValue('appCode') ? appBranchData : [],
       required: true,
     },

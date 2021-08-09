@@ -28,7 +28,7 @@ export default function BasicLayout(props: IUmiRrops) {
   const breadcrumbMap = useMemo(() => {
     const { routes } = props;
 
-    const map = {} as any[];
+    const map = {} as any;
     DFSFunc(routes, 'routes', (node) => {
       map[node.path] = node;
     });
@@ -136,7 +136,7 @@ export default function BasicLayout(props: IUmiRrops) {
                 isOpenPermission: ds.isOpenPermission,
                 permissionData,
                 // https://www.iconfont.cn/manage/index?manage_type=myprojects&projectId=2486191
-                scriptUrl: '//at.alicdn.com/t/font_2486191_0p96gx6ws9ka.js',
+                scriptUrl: '//at.alicdn.com/t/font_2486191_bmiy8l0nqn.js',
               }}
               headerProps={{
                 logo,

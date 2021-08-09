@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Card } from 'antd';
-import From from './form';
+import Form from './form';
 import { TableSearchProps } from './typing';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import './index.less';
@@ -13,6 +13,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
   tableTitle,
   columns,
   form,
+  splitLayout = true,
   ...rest
 }) => {
   columns?.forEach((v) => {
@@ -21,10 +22,23 @@ const TableSearch: React.FC<TableSearchProps> = ({
     }
   });
 
+  if (splitLayout === false) {
+    return (
+      <ContentCard>
+        <Form form={form} {...rest} />
+        <div className="extra-node-box" style={{ marginTop: 20 }}>
+          {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
+          <>{extraNode}</>
+        </div>
+        <Table className={className} columns={columns} {...rest} />
+      </ContentCard>
+    );
+  }
+
   return (
     <>
       <FilterCard className="antd-card-form" bodyStyle={{ paddingBottom: 12 }}>
-        <From form={form} {...rest} />
+        <Form form={form} {...rest} />
       </FilterCard>
       <ContentCard>
         <div className="extra-node-box">

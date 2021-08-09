@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Input, Table, Popconfirm } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
@@ -18,6 +18,7 @@ export default function DemoPageList() {
   const [pageSize, setPageSize] = useState<number>(10);
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const handleSearch = () => {
     pageIndex === 1 ? queryData() : setPageIndex(1);
@@ -58,6 +59,11 @@ export default function DemoPageList() {
         <Table
           dataSource={dataSource}
           loading={loading}
+          rowKey="id"
+          rowSelection={{
+            selectedRowKeys,
+            onChange: (next) => setSelectedRowKeys(next),
+          }}
           pagination={{
             current: pageIndex,
             total,

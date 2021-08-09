@@ -25,6 +25,8 @@ const defaultTab = 'overview';
 const ApplicationDetail = (props: IProps) => {
   const { location, children } = props;
   const isContainClient = Number(location.query.isContainClient) === 1;
+  // const isNotClient = Number(location.query.isClient) === 0;
+  // const isBackend = location.query.appType === 'backend';
   const appId = location.query.id;
 
   const [appData, setAppData] = useState<ContextTypes['appData']>();
@@ -74,10 +76,7 @@ const ApplicationDetail = (props: IProps) => {
       {/* tab子路由 */}
       {tabActiveKey && (
         <Tabs
-          tabBarStyle={{
-            padding: '0 24px',
-            background: '#fff',
-          }}
+          tabBarStyle={{ padding: '0 24px', background: '#fff' }}
           className={`${rootCls}__tabs`}
           activeKey={tabActiveKey}
           onChange={(key) => {
@@ -89,7 +88,7 @@ const ApplicationDetail = (props: IProps) => {
             });
           }}
           tabBarExtraContent={
-            <div>
+            <div className="tab-right-extra">
               <span
                 style={{
                   color: 'rgba(0,0,0,.85)',
@@ -107,14 +106,23 @@ const ApplicationDetail = (props: IProps) => {
             // 只有应用为包含二方包属性的时候，才会显示二方包的 tab
             .filter((key) => {
               // 只有 HBOS 才显示 配置管理 和 启动参数
-              if (key === 'configMgr' || key === 'launchParameters') {
-                return appData?.appCategoryCode === 'hbos';
+              // if (key === 'configMgr' || key === 'launchParameters')
+              if (key === 'configMgr') {
+                return appData?.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1';
               }
 
               if (isContainClient) {
                 return true;
               }
 
+              if (key === 'monitor') {
+                return appData?.isClient !== 1 && appData?.appType === 'backend';
+              }
+              if (key === 'AppParameters') {
+                // console.log('第二个结果：', appData?.appType === 'backend');
+                // console.log('第一个结果：', isBackend);
+                return appData?.isClient !== 1 && appData?.appType === 'backend';
+              }
               // 不包含二方包
               return key !== 'secondPartyPkg';
             })

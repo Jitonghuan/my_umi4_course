@@ -1,10 +1,19 @@
-import request, { postRequest, getRequest } from '@/utils/request';
+import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
+import { addAPIPrefix } from '@/utils';
 
 /** 查询应用列表 */
 export const queryAppsUrl = `${ds.apiPrefix}/appManage/list`;
 
 export const queryMyAppsUrl = `${ds.apiPrefix}/appManage/listMyApp`;
+/** POST 3、应用模版-创建模版 */
+export const create = addAPIPrefix('/opsManage/appTemplate/create');
+
+/** GET 2、应用模版-查看模版 */
+export const tmplList = addAPIPrefix('/opsManage/appTemplate/list');
+
+/** GET 1、应用模版-获取模版类型 */
+export const tmplType = addAPIPrefix('/opsManage/appTemplate/listTmplType');
 
 /** 查询应用列表 */
 export const queryApps = (params: {
@@ -51,11 +60,7 @@ export const deleteApp = (params: {
   appCode: string;
   /** id */
   id: string | number;
-}) =>
-  request(`${ds.apiPrefix}/appManage/delete/${params.id}`, {
-    method: 'DELETE',
-    // data: params,
-  });
+}) => delRequest(`${ds.apiPrefix}/appManage/delete/${params.id}`);
 
 /** 分支列表 */
 export const queryBranchListUrl = `${ds.apiPrefix}/releaseManage/branch/list`;
@@ -65,8 +70,7 @@ export const deleteBranch = (params: {
   /** id */
   id: number;
 }) =>
-  request(`${ds.apiPrefix}/releaseManage/branch/delete/${params.id}`, {
-    method: 'DELETE',
+  delRequest(`${ds.apiPrefix}/releaseManage/branch/delete/${params.id}`, {
     data: params,
   });
 
@@ -108,8 +112,7 @@ export const updateAppMember = (params: {
   /** 报警接收 */
   alterReceiver?: string;
 }) =>
-  request(`${ds.apiPrefix}/appManage/member/update`, {
-    method: 'PUT',
+  putRequest(`${ds.apiPrefix}/appManage/member/update`, {
     data: params,
   });
 
@@ -143,15 +146,11 @@ export const queryConfigList = (params: {
   });
 
 /** 删除单个配置 */
-export const deleteConfig = (id: number) =>
-  request(`${ds.apiPrefix}/appManage/config/delete/${id}`, {
-    method: 'DELETE',
-  });
+export const deleteConfig = (id: number) => delRequest(`${ds.apiPrefix}/appManage/config/delete/${id}`);
 
 /** 删除多个配置 */
 export const deleteMultipleConfig = (params: { ids: number[] }) =>
-  request(`${ds.apiPrefix}/appManage/config/multiDelete`, {
-    method: 'DELETE',
+  delRequest(`${ds.apiPrefix}/appManage/config/multiDelete`, {
     data: params,
   });
 
@@ -211,8 +210,7 @@ export const configUpdate = (params: {
   /** 配置的类型 boot启动参数，app应用配置 */
   type: 'boot' | 'app';
 }) =>
-  request(`${ds.apiPrefix}/appManage/config/update`, {
-    method: 'PUT',
+  putRequest(`${ds.apiPrefix}/appManage/config/update`, {
     data: params,
   });
 
@@ -267,6 +265,8 @@ export const queryFeatureDeployed = async (params: {
   envTypeCode: string;
   /** 1已部署，0未部署 */
   isDeployed?: 0 | 1;
+  /** 分支名 */
+  branchName?: string;
 }) => {
   return getRequest(`${ds.apiPrefix}/releaseManage/branch/featureDeployed`, {
     data: params,
@@ -427,3 +427,11 @@ export const restartAppUrl = `${ds.apiPrefix}/appManage/restart`;
 export const restartApp = async (data: any) => {
   return await postRequest(restartAppUrl, { data });
 };
+/** 环境名 */
+export const envList = addAPIPrefix('/appManage/env/list');
+
+/** GET 7、应用模版-查看应用参数 */
+export const paramsList = addAPIPrefix('/appManage/appTemplate/list');
+
+/** PUT 8、应用模版-编辑应用参数 */
+export const editParams = addAPIPrefix('/appManage/appTemplate/update');

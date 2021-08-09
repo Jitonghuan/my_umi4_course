@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import request, { getRequest, postRequest } from './request';
+import { getRequest, postRequest, putRequest, delRequest } from './request';
 import { message } from 'antd';
 
 type IResponse<R = any> = {
@@ -34,14 +34,16 @@ const useRequest = <K>(props: UseRequestProps) => {
     let resp = {} as IResponse;
     switch (method) {
       case 'POST':
-      case 'PUT':
         resp = await postRequest(api as string, { method, data: body });
+        break;
+      case 'PUT':
+        resp = await putRequest(api as string, { method, data: body });
         break;
       case 'GET':
         resp = await getRequest(api as string, { method, data: body });
         break;
       case 'DELETE':
-        resp = await request(url as string, { method });
+        resp = await delRequest(url as string, { method });
       default:
         break;
     }

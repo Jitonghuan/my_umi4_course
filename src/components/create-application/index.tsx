@@ -28,6 +28,7 @@ const CreateApplication = (props: IProps) => {
   // const { categoryData, businessData } = useContext(FEContext);
   const [categoryData, setcategoryData] = useState([]);
   const [businessData, setBusinessData] = useState([]);
+  // const [baseImage, setBaseImage] = useState([]);
   const [categoryCode, setcategoryCode] = useState('');
 
   const [form] = Form.useForm();
@@ -60,6 +61,13 @@ const CreateApplication = (props: IProps) => {
       setBusinessData(data.list);
     });
   }, [categoryCode]);
+
+  // //基础镜像
+  // useEffect(() => {
+  //   queryBaseImage().then((data) => {
+  //     setBaseImage(data.list);
+  //   });
+  // }, []);
 
   //编辑
   useEffect(() => {
