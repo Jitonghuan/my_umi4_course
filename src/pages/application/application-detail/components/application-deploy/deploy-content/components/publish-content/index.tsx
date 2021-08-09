@@ -5,7 +5,7 @@
  * @create 2021-04-15 10:22
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { Modal, Button, message, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
@@ -14,6 +14,7 @@ import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
 import { createDeploy, updateFeatures, restartApp } from '../../../../../../service';
 import { IProps } from './types';
+import DetailContext from '../../../../../context';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -21,8 +22,8 @@ const { confirm } = Modal;
 
 const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOperate }: IProps) => {
   const isProd = envTypeCode === 'prod';
-
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  const { appData } = useContext(DetailContext);
 
   return (
     <div className={rootCls}>
@@ -108,6 +109,7 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
               </Popconfirm>
             </div>
           )}
+          {isProd ? <Button type="primary">重启服务</Button> : null}
         </div>
 
         <HulkTable

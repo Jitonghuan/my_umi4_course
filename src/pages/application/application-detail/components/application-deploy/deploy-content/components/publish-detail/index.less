@@ -25,3 +25,47 @@
     }
   }
 }
+
+.app-status-detail .ant-descriptions-item-content {
+  flex-wrap: wrap;
+
+  > p {
+    flex: 0 0 420px;
+    border: 1px solid #ddd;
+    padding: 2px 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    background-color: #e6ebf5;
+
+    > span + span {
+      margin-left: 8px;
+    }
+
+    &.status-add {
+      border-style: dashed;
+      text-align: center;
+      background-color: transparent;
+      color: #666;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #eee;
+      }
+    }
+  }
+}
+
+.flex-radio-wrap {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+
+  > span:last-child {
+    display: inline-flex;
+    white-space: nowrap;
+
+    > span:first-child {
+      flex: 0 0 220px;
+    }
+  }
+}

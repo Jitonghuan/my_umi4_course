@@ -12,6 +12,7 @@ export interface IProps {
       | 'deployMasterStart'
       | 'deployMasterEnd'
       | 'cancelDeployStart'
-      | 'cancelDeployEnd',
+      | 'cancelDeployEnd'
+      | 'rollbackVersion',
   ) => void;
 }
