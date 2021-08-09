@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, Popconfirm } from 'antd';
 import moment from 'moment';
-import dayjs from 'dayjs';
 
 // 过滤表单 schema
 export const createFilterFormSchema = () => ({
