@@ -40,7 +40,6 @@ export default function Push(porps: any) {
   // console.log('>>>>>>',currentData);
   const showModal = () => {
     if (appCategoryCode) {
-      debugger;
       setIsModalVisible(true);
     } else {
       message.error('请选择要推送的应用分类');
@@ -104,8 +103,6 @@ export default function Push(porps: any) {
   //点击查询
   const getApplication = (value: any) => {
     setLoading(true);
-
-    debugger;
     getRequest(APIS.appList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -141,7 +138,6 @@ export default function Push(porps: any) {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-
     setPageIndex(pagination.current);
     getApplication(obj);
     console.log('pagination.current:', pagination.current, pagination.pageSize);
@@ -170,7 +166,7 @@ export default function Push(porps: any) {
           onFinish={(values) => {
             getApplication({
               ...values,
-              pageIndex: 1,
+              pageIndex: pageIndex,
               pageSize: pageSize,
             });
           }}
@@ -234,7 +230,6 @@ export default function Push(porps: any) {
                     <Space size="large">
                       <a
                         onClick={() => {
-                          debugger;
                           const query = {
                             appCode: record.appCode,
                             templateType: record.templateType,

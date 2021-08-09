@@ -86,13 +86,13 @@ export default function Launch() {
       pageSize: pagination.pageSize,
     };
     queryList(obj);
+    setPageIndex(pagination.current);
   };
 
   // 查询数据
   const queryList = (value: any) => {
     // setDataSource(dataSource);
     setLoading(true);
-
     getRequest(APIS.tmplList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -120,7 +120,6 @@ export default function Launch() {
   };
   //删除数据
   const handleDelItem = (record: any) => {
-    debugger;
     let id = record.id;
     delRequest(`${APIS.deleteTmpl}/${id}`).then((res: any) => {
       if (res.success) {
@@ -142,8 +141,8 @@ export default function Launch() {
           onFinish={(values: any) => {
             queryList({
               ...values,
-              pageIndex: 1,
-              pageSize: 20,
+              pageIndex: pageIndex,
+              pageSize: pageSize,
             });
           }}
           onReset={() => {
