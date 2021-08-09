@@ -6,17 +6,20 @@
  */
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Radio } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '../../../../../context';
 import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq } from '../../../../../../service';
 import { IProps } from './types';
+import RollbackModal from '../rollback-modal';
+import ServerStatus from '../server-status';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
-const { confirm } = Modal;
 
-const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: IProps) => {
+export default function PublishDetail(props: IProps) {
+  let { deployInfo, envTypeCode, nextEnvTypeCode, onOperate, appStatusInfo } = props;
+
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
@@ -25,6 +28,7 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [envDataList, setEnvDataList] = useState([]);
   const [nextEnvDataList, setNextEnvDataList] = useState([]);
+  const [rollbackVisible, setRollbackVisible] = useState(false);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -63,6 +67,77 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
     return [];
   }
 
+  // 取消发布
+  const handleCancelPublish = () => {
+    onOperate('cancelDeployStart');
+
+    Modal.confirm({
+      title: '确定要取消当前发布吗？',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        return cancelDeploy({
+          id: deployInfo.id,
+        }).then(() => {
+          onOperate('cancelDeployEnd');
+        });
+      },
+      onCancel() {
+        onOperate('cancelDeployEnd');
+      },
+    });
+  };
+
+  // 部署 master
+  const deployToMaster = () => {
+    onOperate('deployMasterStart');
+    setDeployMasterVisible(true);
+  };
+
+  // 部署到下一个环境
+  const deployNext = () => {
+    onOperate('deployNextEnvStart');
+    setDeployNextEnvVisible(true);
+  };
+
+  // 确认发布操作
+  const handleConfirmPublish = () => {
+    setConfirmLoading(true);
+    if (deployNextEnvVisible) {
+      return deployReuse({ id: deployInfo.id, envs: deployEnv })
+        .then((res) => {
+          if (res.success) {
+            message.success('操作成功，正在部署中...');
+            setDeployNextEnvVisible(false);
+            onOperate('deployNextEnvSuccess');
+          }
+        })
+        .finally(() => setConfirmLoading(false));
+    } else if (deployMasterVisible) {
+      return deployMaster({
+        appCode: appData?.appCode,
+        envTypeCode: envTypeCode,
+        envCodes: deployEnv,
+        isClient: appData?.isClient === 1,
+      })
+        .then((res) => {
+          if (res.success) {
+            setDeployMasterVisible(false);
+            onOperate('deployMasterEnd');
+            setDeployEnv([]);
+          }
+        })
+        .finally(() => setConfirmLoading(false));
+    }
+  };
+
+  // 取消(放弃)发布操作
+  const handleGiveupPublish = () => {
+    setDeployMasterVisible(false);
+    setDeployNextEnvVisible(false);
+    setConfirmLoading(false);
+    onOperate('deployNextEnvEnd');
+  };
+
   // 发布环境
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
@@ -84,61 +159,31 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
+        {envTypeCode === 'prod' ? (
+          <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
+            发布回滚
+          </Button>
+        ) : null}
         {envTypeCode !== 'prod' && (
-          <Button
-            type="primary"
-            onClick={() => {
-              onOperate('deployMasterStart');
-              setDeployMasterVisible(true);
-              return;
-            }}
-          >
+          <Button type="primary" onClick={deployToMaster}>
             部署Master
           </Button>
         )}
 
         {envTypeCode !== 'prod' && (
-          <Button
-            type="primary"
-            onClick={() => {
-              onOperate('deployNextEnvStart');
-              setDeployNextEnvVisible(true);
-              return;
-            }}
-          >
+          <Button type="primary" onClick={deployNext}>
             部署到下个环境
           </Button>
         )}
 
-        <Button
-          type="primary"
-          danger
-          onClick={() => {
-            onOperate('cancelDeployStart');
-
-            confirm({
-              title: '确定要取消当前发布吗？',
-              icon: <ExclamationCircleOutlined />,
-              onOk() {
-                return cancelDeploy({
-                  id: deployInfo.id,
-                }).then(() => {
-                  onOperate('cancelDeployEnd');
-                });
-              },
-              onCancel() {
-                onOperate('cancelDeployEnd');
-              },
-            });
-          }}
-        >
+        <Button type="primary" danger onClick={handleCancelPublish}>
           取消发布
         </Button>
       </div>
 
       <Descriptions
         title="发布详情"
-        labelStyle={{ color: '#5F677A', textAlign: 'right' }}
+        labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
         contentStyle={{ color: '#000' }}
       >
         <Descriptions.Item label="CRID">{deployInfo?.id}</Descriptions.Item>
@@ -156,56 +201,34 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
           </Descriptions.Item>
         )}
       </Descriptions>
+      {envTypeCode === 'prod' && appStatusInfo?.length ? (
+        <ServerStatus onOperate={onOperate} appStatusInfo={appStatusInfo} />
+      ) : null}
+
+      {/* --------------------- modals --------------------- */}
 
       <Modal
         title="选择发布环境"
         visible={deployNextEnvVisible || deployMasterVisible}
         confirmLoading={confirmLoading}
-        onOk={() => {
-          setConfirmLoading(true);
-          if (deployNextEnvVisible) {
-            return deployReuse({ id: deployInfo.id, envs: deployEnv })
-              .then((res) => {
-                if (res.success) {
-                  message.success('操作成功，正在部署中...');
-                  setDeployNextEnvVisible(false);
-                  onOperate('deployNextEnvSuccess');
-                }
-              })
-              .finally(() => setConfirmLoading(false));
-          } else if (deployMasterVisible) {
-            return deployMaster({
-              appCode: appData?.appCode,
-              envTypeCode: envTypeCode,
-              envCodes: deployEnv,
-              isClient: appData?.isClient === 1,
-            })
-              .then((res) => {
-                if (res.success) {
-                  setDeployMasterVisible(false);
-                  onOperate('deployMasterEnd');
-                  setDeployEnv([]);
-                }
-              })
-              .finally(() => setConfirmLoading(false));
-          }
-        }}
-        onCancel={() => {
-          setDeployMasterVisible(false);
-          setDeployNextEnvVisible(false);
-          setConfirmLoading(false);
-          onOperate('deployNextEnvEnd');
-        }}
+        onOk={handleConfirmPublish}
+        onCancel={handleGiveupPublish}
       >
         <div>
           <span>发布环境：</span>
           <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={getDeployEnvData()} />
         </div>
       </Modal>
+
+      <RollbackModal
+        visible={rollbackVisible}
+        deployInfo={deployInfo}
+        onClose={() => setRollbackVisible(false)}
+        onSave={() => {
+          onOperate('rollbackVersion');
+          setRollbackVisible(false);
+        }}
+      />
     </div>
   );
-};
-
-PublishDetail.defaultProps = {};
-
-export default PublishDetail;
+}

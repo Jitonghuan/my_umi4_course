@@ -28,7 +28,7 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
 
   const loadData = useCallback(async (fromCache = false) => {
     if (fromCache) {
-      const cache = getCacheData('DIFF_CLUSTER_APP');
+      const cache = getCacheData('DIFF_CLUSTER_APP', 20 * 60 * 1000);
       if (cache) {
         setData(cache.data);
         setFromCache(moment(cache.timestamp).format('HH:mm:ss'));
