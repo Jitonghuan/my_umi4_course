@@ -53,9 +53,10 @@ export default function TrafficScheduling() {
       onOk: async () => {
         setPending(true);
         try {
-          await postRequest(APIS.trafficScheduling, {
+          const result = await postRequest(APIS.trafficScheduling, {
             data: values,
           });
+          setLogger(result.data || '');
         } finally {
           setPending(false);
         }

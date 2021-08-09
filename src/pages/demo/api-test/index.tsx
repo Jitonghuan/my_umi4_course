@@ -48,6 +48,9 @@ export default function PageApiTest() {
       .then((result) => {
         setResultData(JSON.stringify(result || {}, null, 2));
       })
+      .catch((error) => {
+        setResultData(JSON.stringify(error || {}, null, 2));
+      })
       .finally(() => {
         setPending(false);
       });

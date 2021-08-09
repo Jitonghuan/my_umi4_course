@@ -63,6 +63,7 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
     return [];
   }
 
+  // 发布环境
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
     const namesArr: any[] = [];

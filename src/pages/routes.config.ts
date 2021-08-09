@@ -394,10 +394,102 @@ export default [
   },
 
   {
+    path: 'monitor',
+    name: '监控管理',
+    icon: 'icon-poc_index',
+    routes: [
+      {
+        path: 'board',
+        name: '监控面板',
+        component: '@/pages/monitor/board',
+      },
+      {
+        path: 'application',
+        name: '应用监控',
+        component: '@/pages/monitor/application',
+      },
+      {
+        path: 'business',
+        name: '业务监控',
+        key: 'business-monitor',
+        component: '@/pages/monitor/business/index',
+        routes: [
+          {
+            path: 'prometheus',
+            name: '接口方式接入',
+            key: 'business-monitor',
+            component: '@/pages/monitor/business/prometheus',
+            hideInMenu: true,
+          },
+          {
+            path: 'prometheus-add',
+            name: '接入Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/prometheus/prometheus-form',
+          },
+          {
+            path: 'prometheus-edit',
+            name: '编辑Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/prometheus/prometheus-form',
+          },
+          {
+            path: 'logger-alarm',
+            name: '日志方式接入',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/logger-alarm',
+          },
+        ],
+      },
+      {
+        path: 'template',
+        name: '模板管理',
+        component: '@/pages/monitor/template',
+      },
+      {
+        path: 'history',
+        name: '报警历史',
+        component: '@/pages/monitor/history',
+      },
+    ],
+  },
+  {
+    path: 'logger',
+    name: '日志管理',
+    icon: 'icon-diagnose',
+    routes: [
+      {
+        path: 'search',
+        name: '日志检索',
+        component: '@/pages/logger/search',
+      },
+    ],
+  },
+  {
+    path: 'code',
+    name: '代码管理',
+    icon: 'icon-code',
+    routes: [
+      {
+        path: 'rank',
+        name: '代码排行',
+        component: '@/pages/code/rank',
+      },
+      {
+        path: 'details',
+        name: '统计详情',
+        component: '@/pages/code/details',
+      },
+    ],
+  },
+
+  {
     path: 'operation',
     name: '运维管理',
     icon: 'icon-atomic',
-    hideInMenu: process.env.BUILD_ENV === 'prod',
     routes: [
       {
         path: 'cluster',
@@ -509,99 +601,6 @@ export default [
     ],
   },
 
-  {
-    path: 'monitor',
-    name: '监控管理',
-    icon: 'icon-poc_index',
-    routes: [
-      {
-        path: 'board',
-        name: '监控面板',
-        component: '@/pages/monitor/board',
-      },
-      {
-        path: 'application',
-        name: '应用监控',
-        component: '@/pages/monitor/application',
-      },
-      {
-        path: 'business',
-        name: '业务监控',
-        key: 'business-monitor',
-        component: '@/pages/monitor/business/index',
-        routes: [
-          {
-            path: 'prometheus',
-            name: '接口方式接入',
-            key: 'business-monitor',
-            component: '@/pages/monitor/business/prometheus',
-            hideInMenu: true,
-          },
-          {
-            path: 'prometheus-add',
-            name: '接入Prometheus',
-            key: 'business-monitor',
-            hideInMenu: true,
-            component: '@/pages/monitor/business/prometheus/prometheus-form',
-          },
-          {
-            path: 'prometheus-edit',
-            name: '编辑Prometheus',
-            key: 'business-monitor',
-            hideInMenu: true,
-            component: '@/pages/monitor/business/prometheus/prometheus-form',
-          },
-          {
-            path: 'logger-alarm',
-            name: '日志方式接入',
-            key: 'business-monitor',
-            hideInMenu: true,
-            component: '@/pages/monitor/business/logger-alarm',
-          },
-        ],
-      },
-      {
-        path: 'template',
-        name: '模板管理',
-        component: '@/pages/monitor/template',
-      },
-      {
-        path: 'history',
-        name: '报警历史',
-        component: '@/pages/monitor/history',
-      },
-    ],
-  },
-  {
-    path: 'logger',
-    name: '日志管理',
-    icon: 'icon-diagnose',
-    routes: [
-      {
-        path: 'search',
-        name: '日志检索',
-        component: '@/pages/logger/search',
-      },
-    ],
-  },
-  {
-    path: 'code',
-    name: '代码管理',
-    icon: 'icon-code',
-    hideInMenu: true,
-    routes: [
-      {
-        path: 'rank',
-        name: '代码排行',
-        component: '@/pages/code/rank',
-      },
-      {
-        path: 'details',
-        name: '统计详情',
-        component: '@/pages/code/details',
-      },
-    ],
-  },
   {
     path: '*',
     name: 'NOT FOUND',

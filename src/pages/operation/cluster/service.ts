@@ -41,6 +41,9 @@ export const queryClusterApp = addAPIPrefix('/opsManage/multiple/queryClusterApp
 /** POST 集群同步-前端资源同步 */
 export const frontendSourceDeploy = addAPIPrefix('/opsManage/multiple/frontendSourceDeploy');
 
+/** GET 集群同步-获取前端资源同步状态 */
+export const queryFrontendSource = addAPIPrefix('/opsManage/multiple/queryFrontendSource');
+
 /** POST 集群同步-前端版本同步 */
 export const frontendVersionDeploy = addAPIPrefix('/opsManage/multiple/frontendVersionDeploy');
 
