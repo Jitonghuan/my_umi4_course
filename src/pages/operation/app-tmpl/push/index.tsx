@@ -171,7 +171,7 @@ export default function Push(porps: any) {
             getApplication({
               ...values,
               pageIndex: 1,
-              pageSize: 20,
+              pageSize: pageSize,
             });
           }}
           onReset={() => {
