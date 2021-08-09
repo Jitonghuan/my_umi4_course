@@ -5,12 +5,10 @@
 import React, { useState } from 'react';
 import { Table, Modal } from 'antd';
 import moment from 'moment';
-import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
-import HeaderTabs from '../_components/header-tabs';
 import { useLogSource } from './hooks';
 
-export default function Operation(props: any) {
+export default function Operation() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [searchParams, setSearchParams] = useState<any>();
@@ -18,48 +16,45 @@ export default function Operation(props: any) {
   const [detailItem, setDetailItem] = useState<any>();
 
   return (
-    <MatrixPageContent>
-      <HeaderTabs activeKey="operation-log" history={props.history} />
-      <ContentCard>
-        <Table
-          dataSource={tableSouce}
-          loading={loading}
-          pagination={{
-            current: pageIndex,
-            pageSize,
-            total,
-            onChange: (next) => setPageIndex(next),
-            showSizeChanger: true,
-            onShowSizeChange: (_, next) => {
-              setPageIndex(1);
-              setPageSize(next);
-            },
-          }}
-        >
-          <Table.Column title="操作人" dataIndex="createUser" />
-          <Table.Column title="操作类别" dataIndex="category" />
-          <Table.Column
-            title="创建时间"
-            dataIndex="gmtCreate"
-            render={(v: string) => (v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '--')}
-          />
-          <Table.Column
-            title="结束时间"
-            dataIndex="gmtModify"
-            render={(v: string) => (v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '--')}
-          />
-          {/* <Table.Column title="描述" dataIndex="" /> */}
-          <Table.Column
-            title="操作"
-            render={(_, record: any) => (
-              <div className="action-cell">
-                <a onClick={() => setDetailItem(record)}>查看日志</a>
-              </div>
-            )}
-            width={90}
-          />
-        </Table>
-      </ContentCard>
+    <ContentCard>
+      <Table
+        dataSource={tableSouce}
+        loading={loading}
+        pagination={{
+          current: pageIndex,
+          pageSize,
+          total,
+          onChange: (next) => setPageIndex(next),
+          showSizeChanger: true,
+          onShowSizeChange: (_, next) => {
+            setPageIndex(1);
+            setPageSize(next);
+          },
+        }}
+      >
+        <Table.Column title="操作人" dataIndex="createUser" />
+        <Table.Column title="操作类别" dataIndex="category" />
+        <Table.Column
+          title="创建时间"
+          dataIndex="gmtCreate"
+          render={(v: string) => (v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '--')}
+        />
+        <Table.Column
+          title="结束时间"
+          dataIndex="gmtModify"
+          render={(v: string) => (v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '--')}
+        />
+        {/* <Table.Column title="描述" dataIndex="" /> */}
+        <Table.Column
+          title="操作"
+          render={(_, record: any) => (
+            <div className="action-cell">
+              <a onClick={() => setDetailItem(record)}>查看日志</a>
+            </div>
+          )}
+          width={90}
+        />
+      </Table>
       <Modal
         visible={!!detailItem}
         title="查看日志"
@@ -72,6 +67,6 @@ export default function Operation(props: any) {
           {detailItem?.log}
         </pre>
       </Modal>
-    </MatrixPageContent>
+    </ContentCard>
   );
 }

@@ -5,17 +5,15 @@ import { history } from 'umi';
 import 'codemirror/lib/codemirror.css';
 import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
-import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import usePublicData from '@/utils/usePublicData';
 import useRequest from '@/utils/useRequest';
-import HeaderTabs from '../_components/header-tabs';
 import JsonEditor from '@/components/json-editor';
 import { queryDataFactory, createData } from '../service';
 import { Item } from '../typing';
 
-export default function CreateData(props: any) {
+export default function CreateData() {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [factoryName, setFactoryName] = useState('');
   const [dataNum, setDataNum] = useState<number>(1);
@@ -197,23 +195,20 @@ export default function CreateData(props: any) {
   }, [dataFactory]);
 
   return (
-    <MatrixPageContent>
-      <HeaderTabs activeKey="records" history={props.history} />
-      <ContentCard>
-        <Form form={form} style={{ display: 'flex' }}>
-          <div style={{ width: '50%' }}>{renderForm(formOptionsLeft)}</div>
-          <div style={{ width: '50%' }}>{renderForm(formOptionsRight)}</div>
-        </Form>
-        <div style={{ textAlign: 'right' }}>
-          <Space>
-            <Popconfirm title="确认创建数据？" okText="确定" onConfirm={onSubmit}>
-              <Button type="primary">立即创建</Button>
-            </Popconfirm>
-            <Button onClick={() => form.resetFields()}>重置</Button>
-            <Button onClick={() => history.goBack()}>取消</Button>
-          </Space>
-        </div>
-      </ContentCard>
-    </MatrixPageContent>
+    <ContentCard>
+      <Form form={form} style={{ display: 'flex' }}>
+        <div style={{ width: '50%' }}>{renderForm(formOptionsLeft)}</div>
+        <div style={{ width: '50%' }}>{renderForm(formOptionsRight)}</div>
+      </Form>
+      <div style={{ textAlign: 'right' }}>
+        <Space>
+          <Popconfirm title="确认创建数据？" okText="确定" onConfirm={onSubmit}>
+            <Button type="primary">立即创建</Button>
+          </Popconfirm>
+          <Button onClick={() => form.resetFields()}>重置</Button>
+          <Button onClick={() => history.goBack()}>取消</Button>
+        </Space>
+      </div>
+    </ContentCard>
   );
 }

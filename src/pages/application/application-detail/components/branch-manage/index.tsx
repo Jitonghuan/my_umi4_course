@@ -34,7 +34,7 @@ const BranchManage = ({}: IProps) => {
     showRequestError: true,
     pagination: {
       showSizeChanger: true,
-      showTotal: (total) => `总共 ${total} 条数据`,
+      showTotal: (total: any) => `总共 ${total} 条数据`,
     },
   });
 

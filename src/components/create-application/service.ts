@@ -67,20 +67,20 @@ export const queryBizData = (params: {
   });
 
 // 查询基础镜像
-export const queryBaseImage = () =>
-  getRequest(`${ds.apiPrefix}/appManage/baseImage/list`).then((resp: any) => {
-    if (resp.success) {
-      return {
-        list:
-          resp?.data?.map((el: any) => {
-            return {
-              ...el,
-              value: el?.imageUrl,
-              label: el?.imageName,
-            };
-          }) || [],
-      };
-    }
+// export const queryBaseImage = () =>
+//   getRequest(`${ds.apiPrefix}/appManage/baseImage/list`).then((resp: any) => {
+//     if (resp.success) {
+//       return {
+//         list:
+//           resp?.data?.map((el: any) => {
+//             return {
+//               ...el,
+//               value: el?.imageUrl,
+//               label: el?.imageName,
+//             };
+//           }) || [],
+//       };
+//     }
 
-    return { list: [] };
-  });
+//     return { list: [] };
+//   });

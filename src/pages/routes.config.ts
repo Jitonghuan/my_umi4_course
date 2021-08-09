@@ -60,6 +60,10 @@ export default [
     redirect: `${PAGE_PREFIX}/operation/cluster/scheduling`,
   },
   {
+    path: `${PAGE_PREFIX}/operation/app-tmpl`,
+    redirect: `${PAGE_PREFIX}/operation/app-tmpl/tmpl-list`,
+  },
+  {
     path: `${PAGE_PREFIX}/test/data-factory`,
     redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
@@ -165,6 +169,13 @@ export default [
             key: 'list',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/config-parameters-manage',
+          },
+          {
+            path: 'AppParameters',
+            name: '应用参数',
+            key: 'list',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/application-params',
           },
           {
             path: 'addConfig',
@@ -278,6 +289,7 @@ export default [
         path: 'data-factory',
         name: '数据工厂',
         key: 'data-factory',
+        component: '@/pages/test/data-factory/index',
         routes: [
           {
             path: 'records',
@@ -341,6 +353,7 @@ export default [
         path: 'autotest',
         name: '自动化测试',
         key: 'autotest',
+        component: '@/pages/test/autotest/index',
         routes: [
           {
             path: 'dashboard',
@@ -376,6 +389,99 @@ export default [
   },
 
   {
+    path: 'monitor',
+    name: '监控管理',
+    icon: 'icon-poc_index',
+    routes: [
+      {
+        path: 'board',
+        name: '监控面板',
+        component: '@/pages/monitor/board',
+      },
+      {
+        path: 'application',
+        name: '应用监控',
+        component: '@/pages/monitor/application',
+      },
+      {
+        path: 'business',
+        name: '业务监控',
+        key: 'business-monitor',
+        component: '@/pages/monitor/business/index',
+        routes: [
+          {
+            path: 'prometheus',
+            name: '接口方式接入',
+            key: 'business-monitor',
+            component: '@/pages/monitor/business/prometheus',
+            hideInMenu: true,
+          },
+          {
+            path: 'prometheus-add',
+            name: '接入Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/prometheus/prometheus-form',
+          },
+          {
+            path: 'prometheus-edit',
+            name: '编辑Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/prometheus/prometheus-form',
+          },
+          {
+            path: 'logger-alarm',
+            name: '日志方式接入',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business/logger-alarm',
+          },
+        ],
+      },
+      {
+        path: 'template',
+        name: '模板管理',
+        component: '@/pages/monitor/template',
+      },
+      {
+        path: 'history',
+        name: '报警历史',
+        component: '@/pages/monitor/history',
+      },
+    ],
+  },
+  {
+    path: 'logger',
+    name: '日志管理',
+    icon: 'icon-diagnose',
+    routes: [
+      {
+        path: 'search',
+        name: '日志检索',
+        component: '@/pages/logger/search',
+      },
+    ],
+  },
+  {
+    path: 'code',
+    name: '代码管理',
+    icon: 'icon-code',
+    routes: [
+      {
+        path: 'rank',
+        name: '代码排行',
+        component: '@/pages/code/rank',
+      },
+      {
+        path: 'details',
+        name: '统计详情',
+        component: '@/pages/code/details',
+      },
+    ],
+  },
+
+  {
     path: 'operation',
     name: '运维管理',
     icon: 'icon-atomic',
@@ -385,6 +491,7 @@ export default [
         path: 'cluster',
         name: '双集群管理',
         key: 'cluster',
+        component: '@/pages/operation/cluster',
         routes: [
           {
             path: 'dashboard',
@@ -430,100 +537,64 @@ export default [
           },
         ],
       },
+      {
+        path: 'app-tmpl',
+        name: '应用模版',
+        key: 'app-tmpl',
+        routes: [
+          {
+            path: 'tmpl-list',
+            name: '应用模版列表',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-list',
+            hideInMenu: true,
+          },
+
+          {
+            path: 'tmpl-detail',
+            name: '应用模版详情',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'push',
+            name: '推送模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/push',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-edit',
+            name: '应用模版编辑',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-edit',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-add',
+            name: '新增应用模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-add',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-copy',
+            name: '复制应用模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-copy',
+            hideInMenu: true,
+          },
+        ],
+      },
     ],
   },
 
   {
-    path: 'monitor',
-    name: '监控管理',
-    icon: 'icon-poc_index',
-    routes: [
-      {
-        path: 'board',
-        name: '监控面板',
-        component: '@/pages/monitor/board',
-      },
-      {
-        path: 'application',
-        name: '应用监控',
-        component: '@/pages/monitor/application',
-      },
-      {
-        path: 'business',
-        name: '业务监控',
-        key: 'business-monitor',
-        routes: [
-          {
-            path: 'prometheus',
-            name: '接口方式接入',
-            key: 'business-monitor',
-            component: '@/pages/monitor/business/prometheus',
-            hideInMenu: true,
-          },
-          {
-            path: 'prometheus/prometheus-add',
-            name: '接入Prometheus',
-            key: 'business-monitor',
-            hideInMenu: true,
-            component: '@/pages/monitor/business/prometheus/prometheus-form',
-          },
-          {
-            path: 'prometheus/prometheus-edit',
-            name: '编辑Prometheus',
-            key: 'business-monitor',
-            hideInMenu: true,
-            component: '@/pages/monitor/business/prometheus/prometheus-form',
-          },
-          {
-            path: 'logger-alarm',
-            name: '日志方式接入',
-            key: 'business-monitor',
-            hideInMenu: true,
-            component: '@/pages/monitor/business/logger-alarm',
-          },
-        ],
-      },
-      {
-        path: 'template',
-        name: '模板管理',
-        component: '@/pages/monitor/template',
-      },
-      {
-        path: 'history',
-        name: '报警历史',
-        component: '@/pages/monitor/history',
-      },
-    ],
-  },
-  {
-    path: 'logger',
-    name: '日志管理',
-    icon: 'icon-diagnose',
-    routes: [
-      {
-        path: 'search',
-        name: '日志检索',
-        component: '@/pages/logger/search',
-      },
-    ],
-  },
-  {
-    path: 'code',
-    name: '代码管理',
-    icon: 'icon-code',
+    path: '*',
+    name: 'NOT FOUND',
     hideInMenu: true,
-    routes: [
-      {
-        path: 'rank',
-        name: '代码排行',
-        component: '@/pages/code/rank',
-      },
-      {
-        path: 'details',
-        name: '统计详情',
-        component: '@/pages/code/details',
-      },
-    ],
+    component: '@/pages/index/page-404',
   },
   /** {{routes: 标志位不可删除，用于初始化页面}}  */
 ] as IRouteItem[];

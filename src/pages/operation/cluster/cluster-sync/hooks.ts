@@ -7,7 +7,7 @@ import moment from 'moment';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
 
-function getCacheData(key: string, limit = 12e4): { timestamp: number; data: any } {
+function getCacheData(key: string, limit = 6e5): { timestamp: number; data: any } {
   const cacheStr = sessionStorage.getItem(key);
   if (!cacheStr) return null as any;
 
@@ -20,19 +20,23 @@ function getCacheData(key: string, limit = 12e4): { timestamp: number; data: any
   return cacheData;
 }
 
-export function useTableData(): [any[], string, boolean, (forceReload?: boolean) => Promise<void>] {
+export function useTableData(): [any[], string, boolean, boolean, (fromCache?: boolean) => Promise<void>] {
   const [data, setData] = useState<any[]>([]);
   const [fromCache, setFromCache] = useState<string>('');
+  const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const loadData = useCallback(async (forceReload = false) => {
-    if (!forceReload) {
+  const loadData = useCallback(async (fromCache = false) => {
+    if (fromCache) {
       const cache = getCacheData('DIFF_CLUSTER_APP');
       if (cache) {
         setData(cache.data);
         setFromCache(moment(cache.timestamp).format('HH:mm:ss'));
-        return;
+        setCompleted(true);
+      } else {
+        setData([]);
       }
+      return;
     }
 
     setLoading(true);
@@ -51,12 +55,13 @@ export function useTableData(): [any[], string, boolean, (forceReload?: boolean)
       setData(next);
     } finally {
       setLoading(false);
+      setCompleted(true);
     }
   }, []);
 
   useEffect(() => {
-    loadData();
+    loadData(true);
   }, []);
 
-  return [data, fromCache, loading, loadData];
+  return [data, fromCache, loading, completed, loadData];
 }

@@ -3,6 +3,8 @@
 // @create 2021/07/28 09:29
 
 import { useState, useEffect } from 'react';
+// import { getRequest } from '@/utils/request';
+// import * as APIS from '../service';
 
 export function useInitClusterData() {
   const [data, setData] = useState<Record<string, any>>();
@@ -27,7 +29,7 @@ export function useClusterSource() {
   useEffect(() => {
     setData([
       {
-        title: '庆春院区',
+        title: '庆春城站院区',
         name: 'qingchun',
         options: [
           { label: 'A集群', value: 'cluster_a' },
@@ -50,14 +52,14 @@ export function useClusterSource() {
           { label: 'B集群', value: 'cluster_b' },
         ],
       },
-      {
-        title: '城站院区',
-        name: 'chengzhan',
-        options: [
-          { label: 'A集群', value: 'cluster_a' },
-          { label: 'B集群', value: 'cluster_b' },
-        ],
-      },
+      // {
+      //   title: '城站院区',
+      //   name: 'chengzhan',
+      //   options: [
+      //     { label: 'A集群', value: 'cluster_a' },
+      //     { label: 'B集群', value: 'cluster_b' },
+      //   ],
+      // },
     ]);
   }, []);
 

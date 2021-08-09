@@ -17,7 +17,7 @@ export const singleAppDiff = addAPIPrefix('/opsManage/multiple/appDiff');
 /** POST 集群同步-单应用发布 */
 export const singleAppDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
 
-/** POST 集群同步-MQ对比 */
+/** GET 集群同步-MQ对比 */
 export const mqDiff = addAPIPrefix('/opsManage/multiple/mqDiff');
 
 /** POST 集群同步-MQ Topic同步 */
@@ -41,8 +41,14 @@ export const queryClusterApp = addAPIPrefix('/opsManage/multiple/queryClusterApp
 /** POST 集群同步-前端资源同步 */
 export const frontendSourceDeploy = addAPIPrefix('/opsManage/multiple/frontendSourceDeploy');
 
+/** GET 集群同步-获取前端资源同步状态 */
+export const queryFrontendSource = addAPIPrefix('/opsManage/multiple/queryFrontendSource');
+
 /** POST 集群同步-前端版本同步 */
 export const frontendVersionDeploy = addAPIPrefix('/opsManage/multiple/frontendVersionDeploy');
+
+/** POST 集群同步-完成同步 */
+export const clusterDeployOver = addAPIPrefix('/opsManage/multiple/clusterDeployOver');
 
 /** GET 集群应用比对 */
 export const diffClusterApp = addAPIPrefix('/opsManage/multiple/diffClusterApp');
