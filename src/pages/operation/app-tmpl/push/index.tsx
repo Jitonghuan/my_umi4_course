@@ -40,7 +40,6 @@ export default function Push(porps: any) {
   // console.log('>>>>>>',currentData);
   const showModal = () => {
     if (appCategoryCode) {
-      debugger;
       setIsModalVisible(true);
     } else {
       message.error('请选择要推送的应用分类');
@@ -105,7 +104,6 @@ export default function Push(porps: any) {
   const getApplication = (value: any) => {
     setLoading(true);
 
-    debugger;
     getRequest(APIS.appList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -234,7 +232,6 @@ export default function Push(porps: any) {
                     <Space size="large">
                       <a
                         onClick={() => {
-                          debugger;
                           const query = {
                             appCode: record.appCode,
                             templateType: record.templateType,
