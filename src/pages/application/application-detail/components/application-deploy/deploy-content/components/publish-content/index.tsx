@@ -20,7 +20,8 @@ import './index.less';
 const rootCls = 'publish-content-compo';
 const { confirm } = Modal;
 
-const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOperate }: IProps) => {
+export default function PublishContent(props: IProps) {
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
   const isProd = envTypeCode === 'prod';
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const { appData } = useContext(DetailContext);
@@ -78,7 +79,7 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                   confirm({
                     title: '确定要批量退出吗?',
                     icon: <ExclamationCircleOutlined />,
-                    onOk() {
+                    onOk: async () => {
                       return createDeploy({
                         appCode,
                         envTypeCode,
@@ -109,7 +110,6 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
               </Popconfirm>
             </div>
           )}
-          {isProd ? <Button type="primary">重启服务</Button> : null}
         </div>
 
         <HulkTable
@@ -133,8 +133,4 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
       </div>
     </div>
   );
-};
-
-PublishContent.defaultProps = {};
-
-export default PublishContent;
+}
