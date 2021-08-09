@@ -86,7 +86,7 @@ export default function Launch() {
       pageSize: pagination.pageSize,
     };
     queryList(obj);
-    setPageIndex(pageIndex);
+    setPageIndex(pagination.current);
   };
 
   // 查询数据
