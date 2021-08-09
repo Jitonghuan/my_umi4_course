@@ -91,7 +91,7 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
     // const result = await getRequest(APIS.queryHistoryVersions, {
     //   data: {
     //     deploymentName: appData?.deploymentName,
-    //     envCode: deployInfo.envs,
+    //     envCode: deployInfo.deployingEnv,
     //   },
     // });
 
@@ -142,11 +142,11 @@ const PublishDetail = ({ deployInfo, envTypeCode, nextEnvTypeCode, onOperate }: 
     await postRequest(APIS.rollbackApplication, {
       data: {
         deploymentName: appData?.deploymentName,
-        envCode: deployInfo.envs,
+        envCode: deployInfo.deployingEnv,
         // envCode: 'tt-prd',
         appId: appData?.id,
         packageVersion: versionItem.packageVersion,
-        PackageVersionId: versionItem.PackageVersionId,
+        packageVersionId: versionItem.packageVersionId,
       },
     });
 

@@ -12,7 +12,7 @@ export function useAppOptions() {
   useEffect(() => {
     getRequest(APIS.queryAppList).then((result) => {
       const next = (result.data || []).map((item: any) => {
-        return { label: item.appName, value: item.appCode };
+        return { label: item.appCode, value: item.appCode };
       });
       setData(next);
     });
