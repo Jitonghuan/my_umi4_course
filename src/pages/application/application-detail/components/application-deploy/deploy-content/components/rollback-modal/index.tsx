@@ -75,7 +75,7 @@ export default function RollbackModal(props: RollbackModalProps) {
       data: {
         deploymentName: appData?.deploymentName,
         envCode: envCode,
-        appId: appData?.id,
+        appId: versionItem.appId,
         packageVersion: versionItem.packageVersion,
         packageVersionId: versionItem.packageVersionId,
         owner: appData?.owner,
