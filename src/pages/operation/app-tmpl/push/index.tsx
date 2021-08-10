@@ -121,10 +121,11 @@ export default function Push(porps: any) {
           // console.log('.......',res.data)
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
-          let pageSize = res.data.pageInfo.pageSize;
+          let pageIndex = res.data.pageInfo.pageIndex;
 
           setPageTotal(pageTotal);
           setDataSource(dataSource);
+          setPageIndex(pageIndex);
         }
       })
       .finally(() => {
