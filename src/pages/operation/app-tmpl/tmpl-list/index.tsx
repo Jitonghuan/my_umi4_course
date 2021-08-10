@@ -108,11 +108,13 @@ export default function Launch() {
         if (res.success) {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
+          let pageIndex = res.data.pageInfo.pageIndex;
           value.appCategoryCode = appCategoryCode;
           value.envCode = envCode;
           value.templateType = templateType;
           setPageTotal(pageTotal);
           setDataSource(dataSource);
+          setPageIndex(pageIndex);
         }
       })
       .finally(() => {
