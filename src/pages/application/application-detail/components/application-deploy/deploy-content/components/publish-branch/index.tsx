@@ -13,13 +13,30 @@ import { history } from 'umi';
 import { createTableSchema } from './schema';
 import DetailContext from '../../../../../context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '../../../../../../service';
-import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
-const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch }: IProps) => {
+export interface PublishBranchProps {
+  /** 是否有发布内容 */
+  hasPublishContent: boolean;
+  deployInfo: Record<string, any>;
+  env: string;
+  onSearch: (name?: string) => any;
+  dataSource: Array<{
+    id: string | number;
+    branchName: string;
+    desc: string;
+    createUser: string;
+    gmtCreate: string;
+  }>;
+  /** 提交分支事件 */
+  onSubmitBranch: (status: 'start' | 'end') => void;
+}
+
+export default function PublishBranch(props: PublishBranchProps) {
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch } = props;
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
@@ -161,8 +178,4 @@ const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBran
       </Modal>
     </div>
   );
-};
-
-PublishBranch.defaultProps = {};
-
-export default PublishBranch;
+}

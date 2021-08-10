@@ -1,6 +1,17 @@
-export interface IProps extends Record<string, any> {
-  /** 环境参数 */
-  envTypeCode: string;
-  /** 部署下个环境成功回调 */
-  onDeployNextEnvSuccess: () => void;
+export interface IStatusInfoProps {
+  envCode?: string;
+  envName?: string;
+  appState: number;
+  appStateName: string;
+  eccid: string;
+  ip: string;
+  packageMd5: string;
+  taskState: number;
+  taskStateName: string;
+}
+
+export interface GroupedStatusInfoProps {
+  envCode: string;
+  envName: string;
+  list: IStatusInfoProps[];
 }
