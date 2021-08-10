@@ -159,11 +159,12 @@ export default function PublishDetail(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        {envTypeCode === 'prod' ? (
+        {/* XXX */}
+        {/* {envTypeCode === 'prod' ? (
           <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
             发布回滚
           </Button>
-        ) : null}
+        ) : null} */}
         {envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
             部署Master
