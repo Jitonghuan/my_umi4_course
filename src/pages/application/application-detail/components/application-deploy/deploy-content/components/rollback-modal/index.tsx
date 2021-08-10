@@ -69,15 +69,16 @@ export default function RollbackModal(props: RollbackModalProps) {
   const handleRollbackSubmit = useCallback(async () => {
     const { envCode, version } = await field.validateFields();
     console.log('>> handleRollbackSubmit', envCode, version);
-    const versionItem = rollbackVersions.find((n) => n.PackageVersionId === version);
+    const versionItem = rollbackVersions.find((n) => n.packageVersionId === version);
 
     await postRequest(APIS.rollbackApplication, {
       data: {
         deploymentName: appData?.deploymentName,
         envCode: envCode,
         appId: appData?.id,
-        packageVersion: versionItem.PackageVersion,
-        packageVersionId: versionItem.PackageVersionId,
+        packageVersion: versionItem.packageVersion,
+        packageVersionId: versionItem.packageVersionId,
+        owner: appData?.owner,
       },
     });
 
@@ -119,9 +120,9 @@ export default function RollbackModal(props: RollbackModalProps) {
         <Form.Item label="回滚版本" name="version" rules={[{ required: true, message: '请选择版本' }]}>
           <Radio.Group style={{ width: '100%' }}>
             {rollbackVersions.map((item: any, index) => (
-              <Radio key={index} value={item.PackageVersionId} className="flex-radio-wrap">
-                <span>版本号：{item.PackageVersion}</span>
-                <span>部署时间：{item.DeployTime || '--'}</span>
+              <Radio key={index} value={item.packageVersionId} className="flex-radio-wrap">
+                <span>版本号：{item.packageVersion}</span>
+                <span>部署时间：{item.deployTime || '--'}</span>
               </Radio>
             ))}
           </Radio.Group>

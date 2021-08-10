@@ -33,6 +33,7 @@ export default function ServerStatus(props: ServerStatusProps) {
         deploymentName: appData?.deploymentName,
         envCode: item?.envCode,
         eccid: item?.eccid,
+        owner: appData?.owner,
       },
     });
     setRestartVisible(false);
