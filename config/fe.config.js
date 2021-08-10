@@ -6,6 +6,10 @@ module.exports = {
   type: 'builder',
   builder: '@cffe/fe-builder-default',
   commands: {
+    mock: [
+      '$ fnpm install',
+      '$ npm run mock',
+    ],
     dev: [
       '$ fnpm install',
       '$ npm run dev',
