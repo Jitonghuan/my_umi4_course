@@ -42,7 +42,7 @@
     "@cffe/vc-hulk-table": "1.0.14",
     "@cffe/vc-layout": "1.0.53",
     "@cffe/vc-loading": "1.0.4",
-    "@cffe/vc-request": "2.0.15",
+    "@cffe/vc-request": "2.0.16",
     "@umijs/hooks": "~1.9.3",
     "ahooks": "~2.10.8",
     "classnames": "~2.3.1",

@@ -86,7 +86,7 @@ export default function Launch() {
       pageSize: pagination.pageSize,
     };
     queryList(obj);
-    setPageIndex(pageIndex);
+    setPageIndex(pagination.current);
   };
 
   // 查询数据
@@ -123,7 +123,6 @@ export default function Launch() {
   };
   //删除数据
   const handleDelItem = (record: any) => {
-    debugger;
     let id = record.id;
     delRequest(`${APIS.deleteTmpl}/${id}`).then((res: any) => {
       if (res.success) {
