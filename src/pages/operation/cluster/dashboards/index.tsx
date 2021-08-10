@@ -7,17 +7,18 @@ import ClusterBChart from './chart-case-Bcluster';
 import ABHistorgram from './ABHistogram';
 import ClusterTable from './clusterTable';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
+import { useABHistogram, useClusterA } from './hook';
 const { ColorContainer } = colorUtil.context;
 
 var chartDom = document.getElementById('main');
-// var myChart = echarts.init(chartDom);
-// import { useFrameURL } from './hooks';
 
 export default function Dashboards() {
   const [key, setKey] = useState(1);
   const frameRef = useRef<any>();
   const [chartOptions, setChartOptions] = useState<any>();
-  // const [frameURL, isLoading] = useFrameURL(key);
+  // clusterAData, loading,timeStamp
+  const [clusterAData, setClusterAData] = useClusterA();
+  const [histogramData, loading] = useABHistogram();
   useEffect(() => {}, []);
   return (
     <ContentCard className="cluster-dashboards">
@@ -30,16 +31,16 @@ export default function Dashboards() {
         </Button>
       </div>
       <Row>
-        <Col span={12}>
-          <ABHistorgram data={''} />
+        <Col span={16}>
+          <ABHistorgram data={histogramData} />
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <ClusterTable />
         </Col>
       </Row>
       <Row>
         <Col span={12}>
-          <ClusterAChart data={''} />
+          <ClusterAChart data={clusterAData} />
         </Col>
 
         <Col span={12}>

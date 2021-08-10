@@ -23,7 +23,7 @@ export default function ClusterAChart(props: ChartCaseListProps) {
       <header>
         <h3>A集群各院区流量</h3>
       </header>
-      <div style={{ height: '420px' }}>
+      <div style={{ height: '420px', width: 500 }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={clusterAchartOptions} />
         </ColorContainer>

@@ -103,11 +103,6 @@ export default [
         name: '接口测试',
         component: '@/pages/demo/api-test',
       },
-      {
-        path: 'mytest',
-        name: '我的练习',
-        component: '@/pages/demo/my-test',
-      },
     ],
   },
   {

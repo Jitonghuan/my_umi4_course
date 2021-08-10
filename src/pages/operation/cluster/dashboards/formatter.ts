@@ -18,18 +18,19 @@ export function clusterALineChart(data: Record<string, any>) {
     });
   });
   return {
-    // title: {
-    //     text: 'A集群各院区流量'
-    // },
     tooltip: {
       trigger: 'axis',
     },
     legend: {
       data: ['庆春城站', '之江', '余杭', '余杭无线', '庆春城站无线', '之江无线'],
+      orient: 'vertical',
+      top: 0,
+      right: 0,
+      icon: 'circle',
     },
     grid: {
       left: '0%',
-      right: '10%',
+      right: '20%',
       bottom: '0%',
       // top:'10%',
       containLabel: true,
@@ -109,15 +110,21 @@ export function clusterBLineChart(data: Record<string, any>) {
     // title: {
     //     text: 'A集群各院区流量'
     // },
+
     tooltip: {
       trigger: 'axis',
     },
+    //图例组件
     legend: {
       data: ['庆春城站', '之江', '余杭', '余杭无线', '庆春城站无线', '之江无线'],
+      orient: 'vertical',
+      top: 0,
+      right: 0,
+      icon: 'circle',
     },
     grid: {
       left: '3%',
-      right: '4%',
+      right: '25%',
       bottom: '0%',
       containLabel: true,
     },
@@ -177,54 +184,56 @@ export function clusterBLineChart(data: Record<string, any>) {
 
 // A/B集群柱状图
 
-export function ABClusterHistogram(data: Record<string, any>) {
-  const names = Object.keys(data);
-  let dateList: string[] = [];
-  const series: any[] = [];
-  names.forEach((name) => {
-    const item = data[name];
-    dateList = Object.keys(item).map((n) => n?.replace(/^\d{4}-/, ''));
-
-    series.push({
-      name,
-      type: 'line',
-      data: Object.values(item),
-    });
-  });
-
+export function ABClusterHistogram(histogramData: Record<string, any>) {
+  const countList: number[] = [];
+  const categoryList: string[] = [];
+  for (var i in histogramData) {
+    console.log(i, '======', histogramData[i]);
+    countList.push(histogramData[i] || 0);
+    categoryList.push(i || '');
+  }
+  // console.log('获取到的结果11：',categoryList)
   return {
-    legend: {},
+    //图例组件
+    legend: {
+      orient: 'vertical',
+      top: 0,
+      right: 40,
+      icon: 'circle',
+    },
+    //提示信息
     tooltip: {},
     dataset: {
       source: [
         [
-          'visitNumber',
-          '城站庆春-A',
-          '之江-A',
-          '余杭-A',
-          '余杭无线-A',
-          '城站庆春无线-A',
-          '之江无线-A',
-          '城站庆春-B',
-          '之江-B',
-          '余杭-B',
-          '余杭无线-B',
-          '城站庆春无线-B',
-          '之江无线-B',
+          ...categoryList,
+          // '城站庆春-A',
+          // '之江-A',
+          // '余杭-A',
+          // '余杭无线-A',
+          // '城站庆春无线-A',
+          // '之江无线-A',
+          // '城站庆春-B',
+          // '之江-B',
+          // '余杭-B',
+          // '余杭无线-B',
+          // '城站庆春无线-B',
+          // '之江无线-B',
         ],
-        ['Alldocs', 43.3, 85.8, 93.7, 88, 89, 67, 89, 44, 56, 23, 78, 23],
+        ['访问量', ...countList],
       ],
     },
+    //布局
     grid: {
       left: '0%',
       right: '20%',
       bottom: '10%',
       containLabel: true,
     },
+    //配置要在X轴显示的项
     xAxis: { type: 'category' },
-    yAxis: {},
-    // Declare several bar series, each will be mapped
-    // to a column of dataset.source by default.
+    //配置要在Y轴显示的项
+    yAxis: { type: 'value' },
     series: [
       { type: 'bar' },
       { type: 'bar' },
