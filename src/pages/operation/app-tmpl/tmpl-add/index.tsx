@@ -119,7 +119,7 @@ export default function DemoPageTb(porps: any) {
         });
       }
     });
-    console.log('获取到的00000:', value.envCodes);
+    // console.log('获取到的00000:', value.envCodes);
   };
 
   return (

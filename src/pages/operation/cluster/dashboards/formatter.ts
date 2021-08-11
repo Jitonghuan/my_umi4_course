@@ -2,6 +2,8 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 9:30
 
+import { values } from '_@types_lodash@4.14.171@@types/lodash';
+
 // A集群各院区流量
 export function clusterALineChart(clusterAData: Record<string, any>) {
   const countList: number[] = [];
@@ -15,12 +17,12 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       data: ['之江', '之江无线', '余杭', '余杭无线', '庆春城站', '庆春城站无线'],
       // orient: 'line',
       top: 0,
-      right: '0%',
+      right: '10%',
       icon: 'circle',
     },
     grid: {
       left: '0%',
-      right: '0%',
+      right: '5%',
       bottom: '0%',
       // top:'10%',
       containLabel: true,
@@ -92,7 +94,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       icon: 'circle',
     },
     grid: {
-      left: '0%',
+      left: '5%',
       right: '0%',
       bottom: '0%',
       containLabel: true,
@@ -149,12 +151,14 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
 // A/B集群柱状图
 
 export function ABClusterHistogram(histogramData: Record<string, any>) {
-  const countList: number[] = [];
+  const countList: any[] = [];
   const categoryList: string[] = [];
   for (var i in histogramData) {
     countList.push(histogramData[i] || 0);
     categoryList.push(i || '');
   }
+  // const countListA = countList.filter(item => item.indexOf(i)<6 );
+  // const countListB = countList.filter(item => item.indexOf(i)>=6)
   // console.log('获取到的结果11：',categoryList)
   return {
     //图例组件
@@ -184,6 +188,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       source: [
         [
           ...categoryList,
+
           // '城站庆春-A',
           // '之江-A',
           // '余杭-A',
@@ -204,7 +209,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     grid: {
       left: '0%',
       right: '20%',
-      bottom: '10%',
+      bottom: '5%',
       containLabel: true,
     },
     //配置要在X轴显示的项

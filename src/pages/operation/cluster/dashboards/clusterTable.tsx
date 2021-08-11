@@ -39,7 +39,7 @@ export default function ClusterTable() {
   const onChange = (filters: any, sorter: any, extra: any) => {};
 
   return (
-    <section>
+    <section data-loading={loading}>
       <header>
         <h3>A/B集群流量表</h3>
       </header>
