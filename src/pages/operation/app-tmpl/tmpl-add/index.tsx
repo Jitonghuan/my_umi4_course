@@ -106,8 +106,8 @@ export default function DemoPageTb(porps: any) {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
-        appCategoryCode: value?.appCategoryCode || '',
-        envCodes: value?.envCodes || [],
+        appCategoryCode: value.appCategoryCode || '',
+        envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
       },
     }).then((resp: any) => {
