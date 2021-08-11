@@ -1,9 +1,10 @@
-import { ReactNode } from 'react';
+import { IStatusInfoProps } from '../../types';
 
 export interface IProps {
   deployInfo: any;
   envTypeCode: string;
   nextEnvTypeCode?: string;
+  appStatusInfo: IStatusInfoProps[];
   onOperate: (
     type:
       | 'deployNextEnvStart'
@@ -12,6 +13,8 @@ export interface IProps {
       | 'deployMasterStart'
       | 'deployMasterEnd'
       | 'cancelDeployStart'
-      | 'cancelDeployEnd',
+      | 'cancelDeployEnd'
+      | 'rollbackVersion'
+      | 'reloadServer',
   ) => void;
 }

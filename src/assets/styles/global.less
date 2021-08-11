@@ -91,7 +91,18 @@ hr {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+
+  > .caption-left,
+  > .caption-right {
+    display: flex;
+    align-items: center;
+
+    > a + a,
+    > button + button {
+      margin-left: 12px;
+    }
+  }
 
   > h3 {
     font-size: 16px;
@@ -109,7 +120,8 @@ ul {
   margin: 0;
 }
 
-.drawer-custom-footer {
+.drawer-custom-footer,
+.drawer-footer {
   text-align: right;
 
   button + button {
@@ -168,4 +180,22 @@ ul {
   .ant-tree-list-holder-inner .ant-tree-node-content-wrapper {
     overflow: hidden;
   }
+}
+
+// ------ common
+
+.pre-block {
+  height: 320px;
+  border: 1px solid #cacfdb;
+  background-color: #fafafa;
+  border-radius: 2px;
+  padding: 8px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+.custom-table-holder {
+  padding: 40px 20px;
+  color: #789;
 }

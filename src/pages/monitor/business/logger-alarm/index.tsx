@@ -4,17 +4,16 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Input, Select, Button, Table, Tag, message, Popconfirm } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
+import DetailModal from '@/components/detail-modal';
 import * as APIS from './service';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
 import { EditorMode } from './interface';
 import AlarmEditor from './editor';
-import HeaderTabs from '../components/header-tabs';
 import './index.less';
 
-export default function LoggerAlarm(props: any) {
+export default function LoggerAlarm() {
   const [searchField] = Form.useForm();
   const [appOptions] = useAppOptions();
   const [appCode, setAppCode] = useState<string>();
@@ -121,128 +120,125 @@ export default function LoggerAlarm(props: any) {
   }, []);
 
   return (
-    <MatrixPageContent className="page-logger-alarm">
-      <HeaderTabs activeKey="logger-alarm" history={props.history} />
-      <ContentCard>
-        <Form form={searchField} layout="inline" onReset={handleReset}>
-          <Form.Item label="告警名称" name="name">
-            <Input placeholder="请输入" onKeyDown={handleInputKeyDown} />
-          </Form.Item>
-          <Form.Item label="应用Code" name="appCode">
-            <Select
-              placeholder="请选择"
-              options={appOptions}
-              allowClear
-              showSearch
-              style={{ width: 168 }}
-              onChange={handleAppCodeChange}
-            />
-          </Form.Item>
-          <Form.Item label="环境Code" name="envCode">
-            <Select
-              placeholder="请选择"
-              options={envOptions}
-              allowClear
-              showSearch
-              style={{ width: 168 }}
-              onChange={handleSearch}
-            />
-          </Form.Item>
-          <Form.Item label="状态" name="status">
-            <Select
-              placeholder="请选择"
-              options={statusOptions}
-              style={{ width: 168 }}
-              onChange={handleSearch}
-              allowClear
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" ghost onClick={handleSearch}>
-              查询
-            </Button>
-            <Button type="default" htmlType="reset" style={{ marginLeft: 12 }}>
-              重置
-            </Button>
-          </Form.Item>
-        </Form>
-        <div className="table-caption">
-          <h3>告警列表</h3>
-          <Button type="primary" onClick={() => setEditorMode('ADD')}>
-            + 新增日志告警
+    <ContentCard>
+      <Form form={searchField} layout="inline" onReset={handleReset}>
+        <Form.Item label="告警名称" name="name">
+          <Input placeholder="请输入" onKeyDown={handleInputKeyDown} />
+        </Form.Item>
+        <Form.Item label="应用Code" name="appCode">
+          <Select
+            placeholder="请选择"
+            options={appOptions}
+            allowClear
+            showSearch
+            style={{ width: 168 }}
+            onChange={handleAppCodeChange}
+          />
+        </Form.Item>
+        <Form.Item label="环境Code" name="envCode">
+          <Select
+            placeholder="请选择"
+            options={envOptions}
+            allowClear
+            showSearch
+            style={{ width: 168 }}
+            onChange={handleSearch}
+          />
+        </Form.Item>
+        <Form.Item label="状态" name="status">
+          <Select
+            placeholder="请选择"
+            options={statusOptions}
+            style={{ width: 168 }}
+            onChange={handleSearch}
+            allowClear
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" ghost onClick={handleSearch}>
+            查询
           </Button>
-        </div>
-        <Table
-          loading={loading}
-          dataSource={tableSource}
-          pagination={{
-            current: pageIndex,
-            total,
-            pageSize,
-            showSizeChanger: true,
-            defaultPageSize: 20,
-            onChange: (next) => setPageIndex(next),
-            onShowSizeChange: (_, next) => setPageSize(next),
-          }}
-        >
-          <Table.Column dataIndex="id" title="ID" width={70} />
-          <Table.Column dataIndex="name" title="报警名称" />
-          <Table.Column dataIndex="appCode" title="应用Code" />
-          <Table.Column dataIndex="envCode" title="环境Code" />
-          <Table.Column dataIndex="group" title="报警分类" />
-          <Table.Column dataIndex="completeExpression" title="报警表达式" />
-          <Table.Column
-            dataIndex="level"
-            title="告警级别"
-            render={(v: string) => {
-              const map: Record<string, string> = { '2': '警告', '3': '严重', '4': '灾难' };
-              const colors: Record<string, string> = { '2': 'orange', '3': 'red', '4': '#f50' };
-              const text = map[v];
-              return text ? <Tag color={colors[v]}>{text}</Tag> : null;
-            }}
-          />
-          <Table.Column
-            dataIndex="status"
-            title="状态"
-            render={(v, record) => {
-              return v === '0' ? (
-                <Tag color="success">已启用</Tag>
-              ) : v === '1' ? (
-                <Tag color="default">已关闭</Tag>
-              ) : null;
-            }}
-          />
-          <Table.Column
-            title="操作"
-            width={160}
-            render={(_, record: any, index) => {
-              const isEnable = record.status === '0';
-
-              return (
-                <div className="action-cell">
-                  <a onClick={() => handleEditItem(record, index)}>编辑</a>
-                  <Popconfirm title="确定要删除该规则吗？" onConfirm={() => handleDelItem(record, index)}>
-                    <a style={{ color: 'red' }}>删除</a>
-                  </Popconfirm>
-                  <Popconfirm
-                    title={`确定要${isEnable ? '停用' : '启用'}该规则吗？`}
-                    onConfirm={() => handleSwitchStatus(record, index)}
-                  >
-                    <a style={{ color: isEnable ? 'orange' : 'green' }}>{isEnable ? '停用' : '启用'}</a>
-                  </Popconfirm>
-                </div>
-              );
-            }}
-          />
-        </Table>
-
-        <AlarmEditor
-          mode={editorMode}
-          onClose={() => setEditorMode('HIDE')}
-          onSave={handleEditorSave}
-          initData={editData}
+          <Button type="default" htmlType="reset" style={{ marginLeft: 12 }}>
+            重置
+          </Button>
+        </Form.Item>
+      </Form>
+      <div className="table-caption">
+        <h3>告警列表</h3>
+        <Button type="primary" onClick={() => setEditorMode('ADD')}>
+          + 新增日志告警
+        </Button>
+      </div>
+      <Table
+        loading={loading}
+        dataSource={tableSource}
+        pagination={{
+          current: pageIndex,
+          total,
+          pageSize,
+          showSizeChanger: true,
+          defaultPageSize: 20,
+          onChange: (next) => setPageIndex(next),
+          onShowSizeChange: (_, next) => setPageSize(next),
+        }}
+      >
+        <Table.Column dataIndex="id" title="ID" width={70} />
+        <Table.Column dataIndex="name" title="报警名称" />
+        <Table.Column dataIndex="appCode" title="应用Code" width={140} />
+        <Table.Column dataIndex="envCode" title="环境Code" width={120} />
+        <Table.Column dataIndex="group" title="报警分类" width={140} />
+        <Table.Column
+          dataIndex="completeExpression"
+          title="报警表达式"
+          render={(value: string) => <DetailModal limit={50} data={value} />}
         />
-      </ContentCard>
-    </MatrixPageContent>
+        <Table.Column
+          dataIndex="level"
+          title="告警级别"
+          render={(v: string) => {
+            const map: Record<string, string> = { '2': '警告', '3': '严重', '4': '灾难' };
+            const colors: Record<string, string> = { '2': 'orange', '3': 'red', '4': '#f50' };
+            const text = map[v];
+            return text ? <Tag color={colors[v]}>{text}</Tag> : null;
+          }}
+        />
+        <Table.Column
+          dataIndex="status"
+          title="状态"
+          render={(v, record) => {
+            return v === '0' ? <Tag color="success">已启用</Tag> : v === '1' ? <Tag color="default">已关闭</Tag> : null;
+          }}
+        />
+        <Table.Column
+          title="操作"
+          width={160}
+          render={(_, record: any, index) => {
+            const isEnable = record.status === '0';
+
+            return (
+              <div className="action-cell">
+                <a onClick={() => handleEditItem(record, index)}>编辑</a>
+                <Popconfirm title="确定要删除该规则吗？" onConfirm={() => handleDelItem(record, index)}>
+                  <a style={{ color: 'red' }}>删除</a>
+                </Popconfirm>
+                <Popconfirm
+                  title={`确定要${isEnable ? '停用' : '启用'}该规则吗？`}
+                  onConfirm={() => handleSwitchStatus(record, index)}
+                >
+                  <a style={{ color: isEnable ? 'orange' : 'green' }}>{isEnable ? '停用' : '启用'}</a>
+                </Popconfirm>
+              </div>
+            );
+          }}
+        />
+      </Table>
+
+      <AlarmEditor
+        mode={editorMode}
+        onClose={() => setEditorMode('HIDE')}
+        onSave={handleEditorSave}
+        initData={editData}
+      />
+    </ContentCard>
   );
 }

@@ -60,6 +60,10 @@ export default [
     redirect: `${PAGE_PREFIX}/operation/cluster/scheduling`,
   },
   {
+    path: `${PAGE_PREFIX}/operation/app-tmpl`,
+    redirect: `${PAGE_PREFIX}/operation/app-tmpl/tmpl-list`,
+  },
+  {
     path: `${PAGE_PREFIX}/test/data-factory`,
     redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
@@ -102,6 +106,11 @@ export default [
         path: 'rich-text',
         name: '富文本组件',
         component: '@/pages/demo/rich-text-demo',
+      },
+      {
+        path: 'apitest',
+        name: '接口测试',
+        component: '@/pages/demo/api-test',
       },
     ],
   },
@@ -169,6 +178,13 @@ export default [
             key: 'list',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/config-parameters-manage',
+          },
+          {
+            path: 'AppParameters',
+            name: '应用参数',
+            key: 'list',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/application-params',
           },
           {
             path: 'addConfig',
@@ -282,6 +298,7 @@ export default [
         path: 'data-factory',
         name: '数据工厂',
         key: 'data-factory',
+        component: '@/pages/test/data-factory/index',
         routes: [
           {
             path: 'records',
@@ -345,6 +362,7 @@ export default [
         path: 'autotest',
         name: '自动化测试',
         key: 'autotest',
+        component: '@/pages/test/autotest/index',
         routes: [
           {
             path: 'dashboard',
@@ -417,56 +435,6 @@ export default [
   },
 
   {
-    path: 'operation',
-    name: '运维管理',
-    icon: 'icon-atomic',
-    routes: [
-      {
-        path: 'cluster',
-        name: '双集群管理',
-        key: 'cluster',
-        routes: [
-          {
-            path: 'dashboard',
-            name: '集群看板',
-            key: 'cluster',
-            component: '@/pages/operation/cluster/dashboard',
-            hideInMenu: true,
-          },
-          {
-            path: 'scheduling',
-            name: '流量调度',
-            key: 'cluster',
-            component: '@/pages/operation/cluster/scheduling',
-            hideInMenu: true,
-          },
-          {
-            path: 'cluster-sync',
-            name: '集群同步',
-            key: 'cluster',
-            component: '@/pages/operation/cluster/cluster-sync',
-            hideInMenu: true,
-          },
-          {
-            path: 'application-sync',
-            name: '应用同步',
-            key: 'cluster',
-            component: '@/pages/operation/cluster/application-sync',
-            hideInMenu: true,
-          },
-          {
-            path: 'operation-log',
-            name: '操作日志',
-            key: 'cluster',
-            component: '@/pages/operation/cluster/operation-log',
-            hideInMenu: true,
-          },
-        ],
-      },
-    ],
-  },
-
-  {
     path: 'monitor',
     name: '监控管理',
     icon: 'icon-poc_index',
@@ -485,6 +453,7 @@ export default [
         path: 'business',
         name: '业务监控',
         key: 'business-monitor',
+        component: '@/pages/monitor/business/index',
         routes: [
           {
             path: 'prometheus',
@@ -494,14 +463,14 @@ export default [
             hideInMenu: true,
           },
           {
-            path: 'prometheus/prometheus-add',
+            path: 'prometheus-add',
             name: '接入Prometheus',
             key: 'business-monitor',
             hideInMenu: true,
             component: '@/pages/monitor/business/prometheus/prometheus-form',
           },
           {
-            path: 'prometheus/prometheus-edit',
+            path: 'prometheus-edit',
             name: '编辑Prometheus',
             key: 'business-monitor',
             hideInMenu: true,
@@ -532,7 +501,6 @@ export default [
     path: 'logger',
     name: '日志管理',
     icon: 'icon-diagnose',
-    hideInMenu: process.env.BUILD_ENV === 'prod',
     routes: [
       {
         path: 'search',
@@ -545,7 +513,6 @@ export default [
     path: 'code',
     name: '代码管理',
     icon: 'icon-code',
-    hideInMenu: true,
     routes: [
       {
         path: 'rank',
@@ -558,6 +525,121 @@ export default [
         component: '@/pages/code/details',
       },
     ],
+  },
+
+  {
+    path: 'operation',
+    name: '运维管理',
+    icon: 'icon-atomic',
+    routes: [
+      {
+        path: 'cluster',
+        name: '双集群管理',
+        key: 'cluster',
+        component: '@/pages/operation/cluster',
+        routes: [
+          {
+            path: 'dashboards',
+            name: '集群看板',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/dashboards',
+            hideInMenu: true,
+          },
+          {
+            path: 'scheduling',
+            name: '流量调度',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/scheduling',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync',
+            name: '集群同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/cluster-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync-detail',
+            name: '集群同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/cluster-sync/sync-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'application-sync',
+            name: '应用同步',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/application-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'operation-log',
+            name: '操作日志',
+            key: 'cluster',
+            component: '@/pages/operation/cluster/operation-log',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'app-tmpl',
+        name: '应用模版',
+        key: 'app-tmpl',
+        routes: [
+          {
+            path: 'tmpl-list',
+            name: '应用模版列表',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-list',
+            hideInMenu: true,
+          },
+
+          {
+            path: 'tmpl-detail',
+            name: '应用模版详情',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'push',
+            name: '推送模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/push',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-edit',
+            name: '应用模版编辑',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-edit',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-add',
+            name: '新增应用模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-add',
+            hideInMenu: true,
+          },
+          {
+            path: 'tmpl-copy',
+            name: '复制应用模版',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-copy',
+            hideInMenu: true,
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    path: '*',
+    name: 'NOT FOUND',
+    hideInMenu: true,
+    component: '@/pages/index/page-404',
   },
   /** {{routes: 标志位不可删除，用于初始化页面}}  */
 ] as IRouteItem[];

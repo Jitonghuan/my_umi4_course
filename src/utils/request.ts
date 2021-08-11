@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { sso } from '@cffe/vc-request';
-import { RequestOptionsInit, IResponse } from '@cffe/vc-request/es/base-request/type';
+import type { RequestOptionsInit, IResponse } from '@cffe/vc-request/es/base-request/type';
 
 const parseErrorMsg = (errorMsg: any) => {
   if (typeof errorMsg === 'string') {
@@ -21,7 +21,7 @@ async function requestHandler(promise: Promise<IResponse<any>>, reserveError = f
     .then((resp) => {
       // 非登录失效报错
       if (!resp.success) {
-        message.error(parseErrorMsg(resp.errorMsg));
+        // message.error(parseErrorMsg(resp.errorMsg));
         throw resp;
       }
 

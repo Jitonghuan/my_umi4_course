@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import request, { getRequest, postRequest, putRequest, delRequest } from './request';
+import { getRequest, postRequest, putRequest, delRequest } from './request';
 import { message } from 'antd';
 
 type IResponse<R = any> = {

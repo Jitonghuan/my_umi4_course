@@ -5,17 +5,15 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
-import MatrixPageContent from '@/components/matrix-page-content';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
 import { Item, AlertNameProps } from '../../typing';
 import RulesTable from '../../component/rules-table';
 import usePublicData from './usePublicData';
 import { queryPrometheusList, deletePrometheus } from '../../service';
-import HeaderTabs from '../components/header-tabs';
 import './index.less';
 
-const PrometheusCom: React.FC = (props: any) => {
+const PrometheusCom: React.FC = () => {
   const [labelVisible, setLabelVisible] = useState(false);
   const [rulesVisible, setRulesVisible] = useState(false);
   const [labelRecord, setLabelRecord] = useState<Record<string, string>>({});
@@ -151,7 +149,7 @@ const PrometheusCom: React.FC = (props: any) => {
       width: 100,
       render: (_: string, record: Item) => (
         <Space>
-          <Link to={`./prometheus/prometheus-edit?name=${record.name}`}>编辑</Link>
+          <Link to={`./prometheus-edit?name=${record.name}`}>编辑</Link>
           <Popconfirm
             title="确认删除？"
             onConfirm={() => run({ id: record.id })}
@@ -252,8 +250,7 @@ const PrometheusCom: React.FC = (props: any) => {
   // }, []);
 
   return (
-    <MatrixPageContent>
-      <HeaderTabs activeKey="prometheus" history={props.history} />
+    <>
       <TableSearch
         splitLayout={false}
         form={form}
@@ -274,7 +271,7 @@ const PrometheusCom: React.FC = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              history.push('./prometheus/prometheus-add');
+              history.push('./prometheus-add');
             }}
             icon={<PlusOutlined />}
           >
@@ -303,7 +300,7 @@ const PrometheusCom: React.FC = (props: any) => {
           <RulesTable serviceId={rulesId} isShowAddButton={false} />
         )}
       </Modal>
-    </MatrixPageContent>
+    </>
   );
 };
 

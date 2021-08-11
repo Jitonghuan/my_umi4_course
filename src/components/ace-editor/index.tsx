@@ -9,6 +9,7 @@ import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 // import ace from 'ace-builds/src-noconflict/ace';
 // import jsonWorkerUrl from 'file-loader!ace-builds/src-noconflict/worker-json';
+import './index.less';
 
 // ace.config.setModuleUrl('ace/mode/json_worker', jsonWorkerUrl);
 
@@ -18,6 +19,7 @@ export interface AceEditorProps {
   onChange?: (nextValue: string) => any;
   mode?: 'yaml' | 'json';
   height?: number;
+  readOnly?: boolean;
 }
 
 export default function AceEditor(props: AceEditorProps) {
@@ -39,8 +41,10 @@ export default function AceEditor(props: AceEditorProps) {
         theme="tomorrow"
         value={displayValue}
         onChange={handleChange}
+        readOnly={props.readOnly}
         setOptions={{
           tabSize: 2,
+          useWorker: false,
         }}
       />
     </div>

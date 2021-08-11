@@ -14,7 +14,7 @@ import CreateApplication from '@/components/create-application';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import { InlineForm } from '@/components/schema-form';
-import { queryBizData, queryBaseImages } from '@/layouts/basic-layout/service';
+import { queryBizData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
 import MatrixPageContent from '@/components/matrix-page-content';
 

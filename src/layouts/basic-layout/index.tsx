@@ -28,7 +28,7 @@ export default function BasicLayout(props: IUmiRrops) {
   const breadcrumbMap = useMemo(() => {
     const { routes } = props;
 
-    const map = {} as any[];
+    const map = {} as any;
     DFSFunc(routes, 'routes', (node) => {
       map[node.path] = node;
     });

@@ -31,8 +31,9 @@ export function useEnvOptions(appCode?: string) {
   const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
+    setSource([]);
+
     if (!appCode) {
-      setSource([]);
       return;
     }
 
@@ -71,20 +72,40 @@ export function useUserOptions() {
   return [source];
 }
 
-export function useRuleOptions() {
-  const [groupSource, setGroupSource] = useState<{ label: string; value: string }[]>([]);
-  const [indexSource, setIndexSource] = useState<{ label: string; value: string }[]>([]);
+export function useRuleGroupOptions() {
+  const [source, setSource] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
-    getRequest(APIS.getAlertRule).then((result) => {
-      const { Group, Index } = result.data || {};
+    getRequest(APIS.ruleGroupOptions).then((result) => {
+      const { Group } = result.data || {};
 
-      setGroupSource((Group || []).map((n: string) => ({ label: n, value: n })));
-      setIndexSource((Index || []).map((n: string) => ({ label: n, value: n })));
+      setSource((Group || []).map((n: string) => ({ label: n, value: n })));
     });
   }, []);
 
-  return [groupSource, indexSource];
+  return [source];
+}
+
+export function useRuleIndexOptions(envCode?: string) {
+  const [source, setSource] = useState<SelectOptions[]>([]);
+
+  useEffect(() => {
+    setSource([]);
+
+    if (!envCode) {
+      return;
+    }
+
+    getRequest(APIS.ruleIndexOptions, {
+      data: { envCode },
+    }).then((result) => {
+      const { Index } = result.data || {};
+
+      setSource((Index || []).map((n: string) => ({ label: n, value: n })));
+    });
+  }, [envCode]);
+
+  return [source];
 }
 
 export function useStatusOptions() {
