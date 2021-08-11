@@ -13,7 +13,6 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function ABHistorgram(props: ChartCaseListProps) {
   const { data, loading } = props;
-
   const ABHistorgramOptions = useMemo(() => {
     return ABClusterHistogram(data);
   }, [data]);

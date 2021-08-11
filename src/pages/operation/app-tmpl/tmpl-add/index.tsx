@@ -95,12 +95,12 @@ export default function DemoPageTb(porps: any) {
   };
   //提交模版
   const createTmpl = (value: any) => {
-    const tmplConfigurableItem = value.tmplConfigurableItem.reduce((prev: any, el: any) => {
-      prev[el.key] = el.value;
+    const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
+      prev[el.key] = el?.value;
       return prev;
     }, {} as any);
     // console.log('tmplConfigurableItem:', tmplConfigurableItem);
-
+    debugger;
     postRequest(APIS.create, {
       data: {
         templateName: value.templateName,
@@ -113,13 +113,15 @@ export default function DemoPageTb(porps: any) {
     }).then((resp: any) => {
       if (resp.success) {
         const datas = resp.data || [];
-        setEnvDatas(datas);
+        setEnvDatas(datas.envCodes);
+        setAppCategoryCode(datas.appCategoryCode);
+
         history.push({
           pathname: 'tmpl-list',
         });
       }
     });
-    console.log('获取到的00000:', value.envCodes);
+    // console.log('获取到的00000:', value.envCodes);
   };
 
   return (
