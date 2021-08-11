@@ -64,6 +64,10 @@ export default [
     redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
   {
+    path: `${PAGE_PREFIX}/test/workspace`,
+    redirect: `${PAGE_PREFIX}/test/workspace/test-case-library`,
+  },
+  {
     path: 'demo',
     name: '示例页面',
     icon: 'icon-report',
@@ -376,13 +380,18 @@ export default [
         path: 'workspace',
         name: '测试工作台',
         key: 'workspace',
-        component: '@/pages/test/workspace',
         routes: [
           {
-            path: 'case-workspace',
-            name: '用例工作台',
-            key: 'case-workspace',
-            component: '@/pages/test/workspace/case-workspace',
+            path: 'test-case-library',
+            name: '测试用例库',
+            key: 'test-case-library',
+            component: '@/pages/test/workspace/test-case-library',
+          },
+          {
+            path: 'test-case',
+            name: '测试用例库详情',
+            key: 'test-case-library',
+            component: '@/pages/test/workspace/test-case',
           },
           {
             path: 'bug-manage',
@@ -401,12 +410,6 @@ export default [
             name: '计划详情',
             key: 'plan-info',
             component: '@/pages/test/workspace/plan-info',
-          },
-          {
-            path: 'test-case',
-            name: '测试用例',
-            key: 'test-case',
-            component: '@/pages/test/workspace/test-case',
           },
         ],
       },
