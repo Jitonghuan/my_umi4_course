@@ -132,14 +132,14 @@ export default function DemoPageTb(porps: any) {
         templateType: value.templateType,
         templateValue: value.templateValue,
         appCategoryCode: value.appCategoryCode || '',
-        envCode: value.envCodes || [],
+        envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         templateCode: templateCode,
       },
     }).then((resp: any) => {
       if (resp.success) {
         const datas = resp.data || [];
-        setEnvDatas(datas.envCode);
+        setEnvDatas(datas.envCodes);
         history.push({
           pathname: 'tmpl-list',
         });
