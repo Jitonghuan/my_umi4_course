@@ -12,7 +12,7 @@ export default function HeaderTabs(props: HeaderTabsProps) {
   // TODO: 路由随便搞的，等设计稿出来记得改
   return (
     <FilterCard className="layout-compact">
-      <Tabs activeKey={props.activeKey} onChange={(next) => props.history.push(`/matrix/test/data-factory/${next}`)}>
+      <Tabs activeKey={props.activeKey} onChange={(next) => props.history.push(`/matrix/test/workspace/${next}`)}>
         <Tabs.TabPane tab="测试用例库" key="test-case" />
         <Tabs.TabPane tab="测试计划" key="test-plan" />
         <Tabs.TabPane tab="Bug跟踪" key="bug-manage" />

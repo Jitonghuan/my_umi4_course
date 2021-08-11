@@ -34,6 +34,8 @@
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "1.0.0",
     "@cffe/pc-editor-table": "~1.0.1",
+    "@cffe/sona": "^0.6.10",
+    "@cffe/sona-editor": "^1.13.3",
     "@cffe/vc-b-card-layout": "1.0.8",
     "@cffe/vc-custom-icon": "1.0.6",
     "@cffe/vc-error-page": "1.0.2",
@@ -53,12 +55,12 @@
     "qs": "~6.10.1",
     "react-ace": "^9.4.1",
     "react-codemirror2": "~7.2.1",
-    "react-quill": "^1.3.5",
     "relaxed-json": "~1.0.3",
     "umi": "~3.4.25",
     "white-react-use": "~2.4.0"
   },
   "devDependencies": {
+    "@hbos/umi-plugin-alias": "^1.0.4",
     "@hbos/umi-plugin-theme-hbos": "^0.0.22",
     "@types/codemirror": "5.x",
     "@types/events": "3.x",

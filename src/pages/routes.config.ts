@@ -64,10 +64,6 @@ export default [
     redirect: `${PAGE_PREFIX}/test/data-factory/records`,
   },
   {
-    path: `${PAGE_PREFIX}/test/workspace`,
-    redirect: `${PAGE_PREFIX}/test/workspace/case-workspace`,
-  },
-  {
     path: 'demo',
     name: '示例页面',
     icon: 'icon-report',
@@ -380,6 +376,7 @@ export default [
         path: 'workspace',
         name: '测试工作台',
         key: 'workspace',
+        component: '@/pages/test/workspace',
         routes: [
           {
             path: 'case-workspace',

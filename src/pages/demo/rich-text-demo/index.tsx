@@ -1,5 +1,4 @@
 import React from 'react';
-import {} from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import RichText from '@/components/rich-text';
