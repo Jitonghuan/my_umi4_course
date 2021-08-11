@@ -493,10 +493,10 @@ export default [
         component: '@/pages/operation/cluster',
         routes: [
           {
-            path: 'dashboard',
+            path: 'dashboards',
             name: '集群看板',
             key: 'cluster',
-            component: '@/pages/operation/cluster/dashboard',
+            component: '@/pages/operation/cluster/dashboards',
             hideInMenu: true,
           },
           {
