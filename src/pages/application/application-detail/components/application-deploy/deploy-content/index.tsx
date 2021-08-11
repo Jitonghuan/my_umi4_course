@@ -83,39 +83,6 @@ export default function DeployContent(props: DeployContentProps) {
         });
 
         const { Status: nextAppStatus } = resp4.data || {};
-        // const nextAppStatus = [
-        //   {
-        //     "appState": 7,
-        //     "appStateName": "运行正常",
-        //     "envCode": "tt-prd",
-        //     "eccid": "44e39f91-b7b7-4db3-a605-487b49fbf6bf",
-        //     "ip": "172.16.185.198",
-        //     "packageMd5": "d0db5bcb442e492104d0f00e10a03dd9",
-        //     "taskState": 2,
-        //     "taskStateName": "变更成功"
-        //   },
-        //   {
-        //     "appState": 8,
-        //     "appStateName": "运行正常",
-        //     "envCode": "tt-prd",
-        //     "eccid": "44e39f91-b7b7-4db3-a605-987b49fbf6bf",
-        //     "ip": "172.16.185.198",
-        //     "packageMd5": "d0db5bcb442e492106d0f00e10a03dd9",
-        //     "taskState": 2,
-        //     "taskStateName": "变更成功"
-        //   },
-        //   {
-        //     "appState": 9,
-        //     "appStateName": "运行正常",
-        //     "envCode": "tt-prd2",
-        //     "eccid": "4b03bb2c-3ee4-4d15-a97e-10xebd4f0aea",
-        //     "ip": "172.16.185.197",
-        //     "packageMd5": "d0db5bcb442e492104d0f00e10a09dd9",
-        //     "taskState": 2,
-        //     "taskStateName": "变更成功"
-        //   }
-        // ];
-
         setAppStatusInfo(nextAppStatus);
       }
     }

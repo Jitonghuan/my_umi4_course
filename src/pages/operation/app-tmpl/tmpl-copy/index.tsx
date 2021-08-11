@@ -123,8 +123,8 @@ export default function DemoPageTb(porps: any) {
   const createTmpl = (value: any) => {
     // const templateCode:string = porps.history.location.query.templateCode;
     //  const tmplConfigurableItem = new Map(value.tmplConfigurableItem.map((el:any)=> [el.key,el.value]))
-    const tmplConfigurableItem = value.tmplConfigurableItem.reduce((prev: any, el: any) => {
-      prev[el.key] = el.value;
+    const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
+      prev[el.key] = el?.value;
       return prev;
     }, {} as any);
 
@@ -139,15 +139,15 @@ export default function DemoPageTb(porps: any) {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
-        appCategoryCode: value.appCategoryCode,
-        envCodes: valArr,
-        tmplConfigurableItem,
+        appCategoryCode: value.appCategoryCode || '',
+        envCodes: valArr || [],
+        tmplConfigurableItem: tmplConfigurableItem || {},
         // templateCode:templateCode
       },
     }).then((resp: any) => {
       if (resp.success) {
         const datas = resp.data || [];
-        setEnvDatas(datas);
+        setEnvDatas(datas.envCodes);
         history.push({
           pathname: 'tmpl-list',
         });
@@ -183,7 +183,7 @@ export default function DemoPageTb(porps: any) {
 
             <Col span={10} offset={2}>
               <div style={{ fontSize: 18 }}>可配置项：</div>
-              <Form.Item name="tmplConfigurableItem" rules={[{ required: true, message: '这是必填项' }]}>
+              <Form.Item name="tmplConfigurableItem">
                 <EditorTable
                   value={source}
                   onChange={handleChange}
@@ -202,7 +202,6 @@ export default function DemoPageTb(porps: any) {
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                rules={[{ required: true }]}
                 style={{ marginTop: '140px' }}
               >
                 <Select
@@ -213,12 +212,7 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
-              <Form.Item
-                label="选择默认环境："
-                labelCol={{ span: 8 }}
-                name="envCodes"
-                rules={[{ required: true, message: '这是必选项' }]}
-              >
+              <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
                   mode="multiple"
                   allowClear
