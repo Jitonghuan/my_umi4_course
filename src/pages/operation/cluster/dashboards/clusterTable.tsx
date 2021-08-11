@@ -23,11 +23,13 @@ export default function ClusterTable() {
       title: '分类',
       dataIndex: 'name',
       key: 'name',
+      width: '100px',
     },
     {
       title: '访问量',
       dataIndex: 'count',
       key: 'count',
+      width: '80px',
       sorter: {
         compare: (a: any, b: any) => a.count - b.count,
       },
@@ -39,10 +41,17 @@ export default function ClusterTable() {
   return (
     <section>
       <header>
-        <h3>浙一双集群流量表</h3>
+        <h3>A/B集群流量表</h3>
       </header>
       <div style={{ height: '420px' }}>
-        <Table bordered columns={columns} dataSource={countList} pagination={false} onChange={onChange}></Table>
+        <Table
+          bordered
+          columns={columns}
+          dataSource={countList}
+          pagination={false}
+          onChange={onChange}
+          size="middle"
+        ></Table>
       </div>
     </section>
   );

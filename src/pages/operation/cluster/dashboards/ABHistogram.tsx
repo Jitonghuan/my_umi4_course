@@ -21,7 +21,7 @@ export default function ABHistorgram(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>A/B集群</h3>
+        <h3>A/B集群各院区流量</h3>
       </header>
       <div style={{ height: '420px' }}>
         <ColorContainer roleKeys={['color']}>
