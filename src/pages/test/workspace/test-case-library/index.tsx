@@ -75,7 +75,22 @@ export default function Workspace(props: any) {
     void setEditCaseCategoryName(record.name);
   };
 
-  const numberRender = (_: any, index: number) => index;
+  const numberRender = (_: any, __: any, index: number) => {
+    return <span>{(pageIndex - 1) * pageSize + index + 1}</span>;
+  };
+
+  const nameRender = (name: string, record: any) => {
+    return (
+      <Button
+        type="link"
+        onClick={() => {
+          props.history.push(`/matrix/test/workspace/test-case?testCaseId=${record.id}`);
+        }}
+      >
+        {name}
+      </Button>
+    );
+  };
 
   const addCaseCategory = async () => {
     const load = message.loading('正在添加测试用例库');
@@ -136,8 +151,8 @@ export default function Workspace(props: any) {
           }}
         >
           <Table.Column title="序号" width={60} render={numberRender} />
-          <Table.Column title="用例库名称" dataIndex="name" ellipsis />
-          <Table.Column title="用例数" dataIndex="desc" ellipsis />
+          <Table.Column title="用例库名称" dataIndex="name" render={nameRender} ellipsis />
+          <Table.Column title="用例数" width={80} dataIndex="caseCount" ellipsis />
           <Table.Column
             title="操作"
             width={120}
