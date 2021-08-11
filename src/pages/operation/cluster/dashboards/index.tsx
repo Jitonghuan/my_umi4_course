@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Spin, Space, Row, Col } from 'antd';
+import './index.less';
 import { ContentCard } from '@/components/vc-page-content';
 import ClusterAChart from './chart-case-Acluster';
 import ClusterBChart from './chart-case-Bcluster';

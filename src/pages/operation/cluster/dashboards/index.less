@@ -1,0 +1,155 @@
+// dashboard style
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/07/21 15:09
+
+.cluster-dashboards {
+  .ant-card-body {
+    min-height: 100%;
+    background-color: #f7f8fa;
+  }
+
+  .ant-card-body > section {
+    min-height: 320px;
+  }
+
+  .section-group {
+    display: flex;
+    margin-bottom: 12px;
+
+    &.summary-group {
+      > section {
+        padding: 16px;
+      }
+    }
+
+    > section {
+      flex: 1 1 0;
+      margin-bottom: 0;
+
+      + section {
+        margin-left: 12px;
+      }
+
+      &[style] {
+        flex: 0 0 auto;
+      }
+    }
+  }
+
+  section {
+    background-color: #fff;
+    margin-bottom: 12px;
+    padding: 32px;
+
+    &[data-loading='true'] {
+      position: relative;
+
+      &::after {
+        content: 'loading...';
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        color: transparent;
+        animation: loadingFrame 600ms ease 0s 1 both;
+        // background-color: rgba(0,0,0,.2);
+        // color: #fff;
+      }
+    }
+
+    > header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+
+      > h3 {
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: bold;
+        color: #000;
+        margin: 0;
+      }
+    }
+  }
+
+  .summary-group {
+    h3 {
+      font-size: 14px;
+      line-height: 22px;
+      margin-bottom: 10px;
+      color: #8991a3;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      > img {
+        margin-right: 16px;
+
+        &[src=''] {
+          visibility: hidden;
+        }
+      }
+
+      > b {
+        font-size: 24px;
+        line-height: 32px;
+        color: #000;
+        font-weight: normal;
+      }
+
+      .icon-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        color: #fff;
+        border-radius: 50%;
+      }
+
+      .info-list {
+        flex: 1 1 0;
+        overflow: hidden;
+        padding-top: 4px;
+      }
+
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 10px;
+
+        > span {
+          color: #8991a3;
+        }
+
+        > b {
+          font-weight: normal;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+}
+
+@keyframes loadingFrame {
+  0% {
+    background-color: transparent;
+    color: transparent;
+  }
+
+  100% {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #fff;
+  }
+}
