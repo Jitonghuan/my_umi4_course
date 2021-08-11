@@ -95,8 +95,8 @@ export default function DemoPageTb(porps: any) {
   };
   //提交模版
   const createTmpl = (value: any) => {
-    const tmplConfigurableItem = value.tmplConfigurableItem.reduce((prev: any, el: any) => {
-      prev[el.key] = el.value;
+    const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
+      prev[el.key] = el?.value;
       return prev;
     }, {} as any);
     // console.log('tmplConfigurableItem:', tmplConfigurableItem);
@@ -106,14 +106,14 @@ export default function DemoPageTb(porps: any) {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
-        appCategoryCode: value.appCategoryCode,
-        envCodes: value.envCodes,
-        tmplConfigurableItem,
+        appCategoryCode: value?.appCategoryCode || '',
+        envCodes: value?.envCodes || [],
+        tmplConfigurableItem: tmplConfigurableItem || {},
       },
     }).then((resp: any) => {
       if (resp.success) {
         const datas = resp.data || [];
-        setEnvDatas(datas);
+        setEnvDatas(datas.envCodes);
         history.push({
           pathname: 'tmpl-list',
         });
