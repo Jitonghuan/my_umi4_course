@@ -60,12 +60,16 @@ export default function DemoPageTb(porps: any) {
             value: tmplresult.tmplConfigurableItem[key],
           });
         }
+        let envCode = tmplresult.envCode;
+        if (envCode == '') {
+          envCode = [];
+        }
         createTmplForm.setFieldsValue({
           templateType: tmplresult.templateType,
           templateName: tmplresult.templateName,
           templateValue: tmplresult.templateValue,
           appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: tmplresult.envCode,
+          envCodes: envCode,
           tmplConfigurableItem: arr,
         });
         changeAppCategory(tmplresult.appCategoryCode);

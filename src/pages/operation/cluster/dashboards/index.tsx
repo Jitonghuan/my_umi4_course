@@ -48,7 +48,7 @@ export default function Dashboards() {
         <Row>
           <Col span={16}>
             <ABHistorgram data={histogramData} loading={loading} />
-            <div className="histogram" style={{ display: 'flex', width: '1000px', fontSize: 16 }}>
+            <div className="histogram" style={{ display: 'flex', width: '600px', fontSize: 16 }}>
               <div style={{ flex: 1, textAlign: 'center' }}>A集群</div>
               <div style={{ flex: 1, textAlign: 'center' }}>B集群</div>
             </div>
@@ -57,7 +57,7 @@ export default function Dashboards() {
             <ClusterTable data={histogramData} loading={loading} />
           </Col>
         </Row>
-        <Row style={{ marginTop: 50 }}>
+        <Row>
           <Col span={12}>
             <ClusterAChart data={clusterAData} loading={clusterALoading} />
           </Col>

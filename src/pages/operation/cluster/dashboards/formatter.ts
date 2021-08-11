@@ -211,7 +211,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     grid: {
       left: '0%',
       right: '20%',
-      bottom: '5%',
+      bottom: '0%',
       containLabel: true,
     },
     //配置要在X轴显示的项

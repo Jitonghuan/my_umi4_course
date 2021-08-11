@@ -55,12 +55,16 @@ export default function DemoPageTb(porps: any) {
       if (res.success) {
         const tmplresult = res.data.dataSource[0];
 
+        let envCode = tmplresult.envCode;
+        if (envCode == '') {
+          envCode = [];
+        }
         createTmplForm.setFieldsValue({
           templateType: tmplresult.templateType,
           templateName: tmplresult.templateName,
           templateValue: tmplresult.templateValue,
           appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: tmplresult.envCode,
+          envCodes: envCode,
           // tmplConfigurableItem:tmplresult.tmplConfigurableItem,
         });
         let arr = [];
@@ -182,7 +186,6 @@ export default function DemoPageTb(porps: any) {
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                rules={[{ required: true }]}
                 style={{ marginTop: '140px' }}
               >
                 <Select
@@ -193,12 +196,7 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
-              <Form.Item
-                label="选择默认环境："
-                labelCol={{ span: 8 }}
-                name="envCodes"
-                rules={[{ required: true, message: '这是必选项' }]}
-              >
+              <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
                   mode="multiple"
                   allowClear
