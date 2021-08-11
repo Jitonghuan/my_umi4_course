@@ -72,19 +72,19 @@ export default function DeployContent(props: DeployContentProps) {
       setDeployInfo(nextInfo);
 
       // 如果有部署信息，且为线上，则更新应用状态
-      // if (envTypeCode === 'prod' && appData) {
-      //   const resp4 = await getRequest(APIS.queryApplicationStatus, {
-      //     data: {
-      //       deploymentName: appData?.deploymentName,
-      //       envCode: nextInfo.deployedEnvs,
-      //     },
-      //   }).catch(() => {
-      //     return { data: null };
-      //   });
+      if (envTypeCode === 'prod' && appData) {
+        const resp4 = await getRequest(APIS.queryApplicationStatus, {
+          data: {
+            deploymentName: appData?.deploymentName,
+            envCode: nextInfo.deployedEnvs,
+          },
+        }).catch(() => {
+          return { data: null };
+        });
 
-      //   const { Status: nextAppStatus } = resp4.data || {};
-      //   setAppStatusInfo(nextAppStatus);
-      // }
+        const { Status: nextAppStatus } = resp4.data || {};
+        setAppStatusInfo(nextAppStatus);
+      }
     }
 
     setBranchInfo({
