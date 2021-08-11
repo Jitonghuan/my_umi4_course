@@ -28,7 +28,6 @@ export default function DemoPageTb(porps: any) {
   const [isDisabled, setIsdisabled] = useState<any>();
   const handleChange = (next: any[]) => {
     setSource(next);
-    // console.log('tyuioi:',next)
   };
 
   const handleAdd = () => {

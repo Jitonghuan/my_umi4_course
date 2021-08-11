@@ -41,7 +41,7 @@ export default function Dashboards() {
             loadHistogram(), loadClusterA(), loadClusterB();
           }}
         >
-          刷新页面
+          刷新数据
         </Button>
       </div>
       <div ref={echartBig} style={{ background: '#FFFF' }}>
@@ -54,7 +54,7 @@ export default function Dashboards() {
             </div>
           </Col>
           <Col span={8}>
-            <ClusterTable />
+            <ClusterTable data={histogramData} loading={loading} />
           </Col>
         </Row>
         <Row style={{ marginTop: 50 }}>
