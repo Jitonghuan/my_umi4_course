@@ -109,15 +109,15 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
       if (initValueObj?.funcIds?.length) {
         const { appCategoryCode = '', appGroupCode = '' } = initValueObj?.plan;
         initValueObj.funcIds.map((funcId) => {
-          queryFuncs({ appGroupCode, funcId }); //appCategoryCode,
+          queryFuncs({ appCategoryCode, funcId }); //appGroupCode
         });
       }
     }
   }, [initValueObj]);
 
   const queryFuncs = (params: {
-    // appCategoryCode: string;
-    appGroupCode: string;
+    appCategoryCode: string;
+    // appGroupCode: string;
     funcName?: string;
     funcId?: string;
     // 是否是输入框搜索，否表示编辑时初始化查询
@@ -182,8 +182,8 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
         if (appInfo && appInfo[0]) {
           const { appCategoryCode, appGroupCode } = appInfo[0];
           queryFuncs({
-            // appCategoryCode,
-            appGroupCode,
+            appCategoryCode,
+            // appGroupCode,
             funcName: value,
             isSearch: true,
           });
