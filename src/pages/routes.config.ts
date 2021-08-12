@@ -398,6 +398,7 @@ export default [
         path: 'workspace',
         name: '测试工作台',
         key: 'workspace',
+        hideInMenu: process.env.BUILD_ENV === 'prod',
         routes: [
           {
             path: 'test-case-library',
