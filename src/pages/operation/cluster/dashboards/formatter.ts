@@ -41,37 +41,37 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       {
         name: '之江',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[0],
       },
       {
         name: '之江无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[1],
       },
       {
         name: '余杭',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[2],
       },
       {
         name: '余杭无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[3],
       },
       {
         name: '庆春城站',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[4],
       },
       {
         name: '庆春城站无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[5],
       },
     ],
@@ -110,37 +110,37 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '庆春城站',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[0],
       },
       {
         name: '之江',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[1],
       },
       {
         name: '余杭',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[2],
       },
       {
         name: '余杭无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[3],
       },
       {
         name: '庆春城站无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[4],
       },
       {
         name: '之江无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[5],
       },
     ],
@@ -157,9 +157,6 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     countList.push(histogramData[i]);
     categoryList.push(i);
   }
-
-  // console.log('获取到的结果11：',["aaaa",categoryList])
-  // console.log('获取到的结果11：',["aaaa",countList])
 
   return {
     //图例组件
