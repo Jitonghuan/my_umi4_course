@@ -84,7 +84,7 @@ export default function Workspace(props: any) {
       <Button
         type="link"
         onClick={() => {
-          props.history.push(`/matrix/test/workspace/test-case?testCaseId=${record.id}`);
+          props.history.push(`/matrix/test/workspace/test-case?testCaseCateId=${record.id}`);
         }}
       >
         {name}
