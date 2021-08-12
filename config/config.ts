@@ -114,4 +114,12 @@ export default defineConfig({
   // 项目配置
   outputPath: `./dist/${ds.appKey}/`,
   /*—————————— 项目属性配置 end ——————————*/
+
+  /*————————— 插件调试配置 start —————————*/
+
+  hbosAlias: {
+    useAlias: true,
+  },
+
+  /*—————————— 插件调试配置 end ——————————*/
 });

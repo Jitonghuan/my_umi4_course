@@ -28,7 +28,6 @@ export default function DemoPageTb(porps: any) {
   const [isDisabled, setIsdisabled] = useState<any>();
   const handleChange = (next: any[]) => {
     setSource(next);
-    // console.log('tyuioi:',next)
   };
 
   const handleAdd = () => {
@@ -61,12 +60,16 @@ export default function DemoPageTb(porps: any) {
             value: tmplresult.tmplConfigurableItem[key],
           });
         }
+        let envCode = tmplresult.envCode;
+        if (envCode == '') {
+          envCode = [];
+        }
         createTmplForm.setFieldsValue({
           templateType: tmplresult.templateType,
           templateName: tmplresult.templateName,
           templateValue: tmplresult.templateValue,
           appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: tmplresult.envCode,
+          envCodes: envCode,
           tmplConfigurableItem: arr,
         });
         changeAppCategory(tmplresult.appCategoryCode);
@@ -192,6 +195,7 @@ export default function DemoPageTb(porps: any) {
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
                 style={{ marginTop: '140px' }}
+                rules={[{ required: true, message: '这是必选项' }]}
               >
                 <Select
                   showSearch
@@ -201,13 +205,17 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
-              <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
+              <Form.Item
+                label="选择默认环境："
+                labelCol={{ span: 8 }}
+                name="envCodes"
+                rules={[{ required: true, message: '这是必选项' }]}
+              >
                 <Select
                   mode="multiple"
                   allowClear
                   style={{ width: 220 }}
                   placeholder="Please select"
-                  // defaultValue={['a10', 'c12']}
                   onChange={clickChange}
                   options={envDatas}
                   disabled={isDisabled}

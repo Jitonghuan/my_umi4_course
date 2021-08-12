@@ -15,6 +15,7 @@ import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
 export default function DemoPageTb(porps: any) {
+  const { Option } = Select;
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
   const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
@@ -60,12 +61,18 @@ export default function DemoPageTb(porps: any) {
             value: tmplresult.tmplConfigurableItem[key],
           });
         }
+
+        let envCode = tmplresult.envCode;
+        if (envCode == '') {
+          envCode = [];
+        }
         createTmplForm.setFieldsValue({
           templateType: tmplresult.templateType,
           templateName: tmplresult.templateName,
           templateValue: tmplresult.templateValue,
           appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: tmplresult.envCode,
+          envCodes: envCode,
+
           tmplConfigurableItem: arr,
         });
         changeAppCategory(tmplresult.appCategoryCode);
