@@ -31,11 +31,13 @@ export default function ClusterTable(props: ChartCaseListProps) {
       dataIndex: 'name',
       key: 'name',
       width: '100px',
+      align: 'center',
     },
     {
       title: '访问量',
       dataIndex: 'count',
       key: 'count',
+      align: 'center',
       width: '80px',
       sorter: {
         compare: (a: any, b: any) => a.count - b.count,
@@ -54,15 +56,17 @@ export default function ClusterTable(props: ChartCaseListProps) {
       <header>
         <h3>A/B集群流量表</h3>
       </header>
-      <div className="clusterTable">
+      <div className="clusterTable" style={{ overflow: 'hidden' }}>
         <Table
           bordered
           columns={columns}
           dataSource={countList}
           pagination={false}
           onChange={onChange}
-          size="middle"
-          scroll={{ y: window.innerHeight - 734 }}
+          size="small"
+          // max-height={{ y: window.innerHeight - 480 }}
+          // scroll={{ y: window.innerHeight - 480 }}
+          scroll={{ y: '240px' }}
         ></Table>
       </div>
     </section>

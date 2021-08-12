@@ -41,37 +41,37 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       {
         name: '之江',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[0],
       },
       {
         name: '之江无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[1],
       },
       {
         name: '余杭',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[2],
       },
       {
         name: '余杭无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[3],
       },
       {
         name: '庆春城站',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[4],
       },
       {
         name: '庆春城站无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[5],
       },
     ],
@@ -110,37 +110,37 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '庆春城站',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[0],
       },
       {
         name: '之江',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[1],
       },
       {
         name: '余杭',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[2],
       },
       {
         name: '余杭无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[3],
       },
       {
         name: '庆春城站无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[4],
       },
       {
         name: '之江无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[5],
       },
     ],
@@ -164,10 +164,19 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
   return {
     //图例组件
     legend: {
-      orient: 'vertical',
+      // orient: 'vertical',
       top: 0,
       right: 0,
+      left: 4,
+
       icon: 'circle',
+      // width:"60px",                               //图例宽度
+      height: '60px', //图例高度
+      textStyle: {
+        // 图例文字样式
+
+        fontSize: 10,
+      },
     },
     //提示信息
     tooltip: {},
@@ -210,7 +219,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     //布局
     grid: {
       left: '0%',
-      right: '22%',
+      right: '0%',
       bottom: '0%',
       containLabel: true,
     },

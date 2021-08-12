@@ -22,7 +22,7 @@ export default function ABHistorgram(props: ChartCaseListProps) {
       <header>
         <h3>A/B集群各院区流量</h3>
       </header>
-      <div style={{ height: '330px' }}>
+      <div style={{ height: '260px' }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={ABHistorgramOptions} />
         </ColorContainer>
