@@ -195,7 +195,6 @@ export default function DemoPageTb(porps: any) {
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
                 style={{ marginTop: '140px' }}
-                rules={[{ required: true, message: '这是必选项' }]}
               >
                 <Select
                   showSearch
@@ -205,12 +204,7 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
-              <Form.Item
-                label="选择默认环境："
-                labelCol={{ span: 8 }}
-                name="envCodes"
-                rules={[{ required: true, message: '这是必选项' }]}
-              >
+              <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
                   mode="multiple"
                   allowClear

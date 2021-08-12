@@ -119,7 +119,6 @@ export default function DemoPageTb(porps: any) {
 
   //根据应用分类加载应用环境下拉选择
   const selectAppEnv = (categoryCode: any) => {
-    debugger;
     getRequest(APIS.envList, { data: { categoryCode } }).then((result) => {
       const list = result.data.dataSource.map((n: any) => ({
         value: n?.envCode,
