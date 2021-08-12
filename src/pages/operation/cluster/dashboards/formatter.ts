@@ -166,7 +166,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     legend: {
       orient: 'vertical',
       top: 0,
-      right: 40,
+      right: 0,
       icon: 'circle',
     },
     //提示信息
@@ -177,7 +177,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       '#FFEBCD',
       '#FFE4C4',
       '#B0E2FF',
-      '#006400',
+      '#EEB4B4',
       '#CD6600',
       '#8B4789',
       '#6959CD',
@@ -210,7 +210,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     //布局
     grid: {
       left: '0%',
-      right: '20%',
+      right: '22%',
       bottom: '0%',
       containLabel: true,
     },
