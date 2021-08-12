@@ -158,25 +158,13 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     categoryList.push(i);
   }
 
-  // console.log('获取到的结果11：',["aaaa",categoryList])
-  // console.log('获取到的结果11：',["aaaa",countList])
-
   return {
     //图例组件
     legend: {
-      // orient: 'vertical',
+      orient: 'vertical',
       top: 0,
       right: 0,
-      left: 4,
-
       icon: 'circle',
-      // width:"60px",                               //图例宽度
-      height: '60px', //图例高度
-      textStyle: {
-        // 图例文字样式
-
-        fontSize: 10,
-      },
     },
     //提示信息
     tooltip: {},
@@ -219,7 +207,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     //布局
     grid: {
       left: '0%',
-      right: '0%',
+      right: '22%',
       bottom: '0%',
       containLabel: true,
     },

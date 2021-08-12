@@ -46,23 +46,23 @@ export default function Dashboards() {
       </div>
       <div ref={echartBig} style={{ background: '#FFFF' }}>
         <Row>
-          <Col span={12}>
+          <Col span={12} style={{ border: '1px solid #D3D3D3' }}>
             <ABHistorgram data={histogramData} loading={loading} />
-            <div className="histogram" style={{ display: 'flex', width: '100%', fontSize: 12 }}>
+            <div className="histogram" style={{ display: 'flex', width: '80%', fontSize: 12 }}>
               <div style={{ flex: 1, textAlign: 'center' }}>A集群</div>
               <div style={{ flex: 1, textAlign: 'center' }}>B集群</div>
             </div>
           </Col>
-          <Col span={12}>
+          <Col span={12} style={{ border: '1px solid #D3D3D3' }}>
             <ClusterTable data={histogramData} loading={loading} />
           </Col>
         </Row>
         <Row>
-          <Col span={12}>
+          <Col span={12} style={{ border: '1px solid #D3D3D3' }}>
             <ClusterAChart data={clusterAData} loading={clusterALoading} />
           </Col>
 
-          <Col span={12}>
+          <Col span={12} style={{ border: '1px solid #D3D3D3' }}>
             <ClusterBChart data={clusterBData} loading={clusterBLoading} />
           </Col>
         </Row>
