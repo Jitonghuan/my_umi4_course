@@ -6,7 +6,7 @@ import { clusterBLineChart } from './formatter';
 import React, { useEffect, useMemo } from 'react';
 import { Table } from 'antd';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { useABHistogram } from './hook';
+import './index.less';
 const { ColorContainer } = colorUtil.context;
 
 export interface ChartCaseListProps {
@@ -54,7 +54,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
       <header>
         <h3>A/B集群流量表</h3>
       </header>
-      <div style={{ height: '420px' }}>
+      <div className="clusterTable">
         <Table
           bordered
           columns={columns}
@@ -62,6 +62,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
           pagination={false}
           onChange={onChange}
           size="middle"
+          scroll={{ y: window.innerHeight - 734 }}
         ></Table>
       </div>
     </section>
