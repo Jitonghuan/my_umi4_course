@@ -141,7 +141,7 @@ export default function Push(porps: any) {
     };
     setPageIndex(pagination.current);
     getApplication(obj);
-    console.log('pagination.current:', pagination.current, pagination.pageSize);
+    // console.log('pagination.current:', pagination.current, pagination.pageSize);
     setSelectList(currentDataSource);
   };
 

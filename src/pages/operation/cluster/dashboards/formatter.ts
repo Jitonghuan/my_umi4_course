@@ -2,6 +2,8 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 9:30
 
+import { values } from '_@types_lodash@4.14.171@@types/lodash';
+
 // A集群各院区流量
 export function clusterALineChart(clusterAData: Record<string, any>) {
   const countList: number[] = [];
@@ -15,12 +17,12 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       data: ['之江', '之江无线', '余杭', '余杭无线', '庆春城站', '庆春城站无线'],
       // orient: 'line',
       top: 0,
-      right: '0%',
+      right: '5%',
       icon: 'circle',
     },
     grid: {
       left: '0%',
-      right: '0%',
+      right: '5%',
       bottom: '0%',
       // top:'10%',
       containLabel: true,
@@ -29,7 +31,6 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
       data: clusterAData[6],
     },
     yAxis: {
@@ -92,7 +93,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       icon: 'circle',
     },
     grid: {
-      left: '0%',
+      left: '5%',
       right: '0%',
       bottom: '0%',
       containLabel: true,
@@ -149,13 +150,17 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
 // A/B集群柱状图
 
 export function ABClusterHistogram(histogramData: Record<string, any>) {
-  const countList: number[] = [];
+  const countList: any[] = [];
   const categoryList: string[] = [];
+
   for (var i in histogramData) {
-    countList.push(histogramData[i] || 0);
-    categoryList.push(i || '');
+    countList.push(histogramData[i]);
+    categoryList.push(i);
   }
-  // console.log('获取到的结果11：',categoryList)
+
+  // console.log('获取到的结果11：',["aaaa",categoryList])
+  // console.log('获取到的结果11：',["aaaa",countList])
+
   return {
     //图例组件
     legend: {
@@ -180,22 +185,24 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       '#CD4F39',
       '#8B8682',
     ],
+
     dataset: {
       source: [
         [
-          ...categoryList,
-          // '城站庆春-A',
-          // '之江-A',
-          // '余杭-A',
-          // '余杭无线-A',
-          // '城站庆春无线-A',
-          // '之江无线-A',
-          // '城站庆春-B',
-          // '之江-B',
-          // '余杭-B',
-          // '余杭无线-B',
-          // '城站庆春无线-B',
-          // '之江无线-B',
+          'product',
+          // 'product',...categoryList,
+          'A-之江',
+          'A-之江无线',
+          'A-余杭',
+          'A-余杭无线',
+          'A-城站庆春',
+          'A-城站庆春无线',
+          'B-之江',
+          'B-之江无线',
+          'B-余杭',
+          'B-余杭无线',
+          'B-城站庆春',
+          'B-城站庆春无线',
         ],
         ['访问量', ...countList],
       ],
@@ -204,7 +211,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     grid: {
       left: '0%',
       right: '20%',
-      bottom: '10%',
+      bottom: '0%',
       containLabel: true,
     },
     //配置要在X轴显示的项
