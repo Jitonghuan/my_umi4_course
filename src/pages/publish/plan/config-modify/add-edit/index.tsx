@@ -109,14 +109,14 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
       if (initValueObj?.funcIds?.length) {
         const { appCategoryCode = '', appGroupCode = '' } = initValueObj?.plan;
         initValueObj.funcIds.map((funcId) => {
-          queryFuncs({ appCategoryCode, appGroupCode, funcId });
+          queryFuncs({ appGroupCode, funcId }); //appCategoryCode
         });
       }
     }
   }, [initValueObj]);
 
   const queryFuncs = (params: {
-    appCategoryCode: string;
+    // appCategoryCode: string;
     appGroupCode: string;
     funcName?: string;
     funcId?: string;
@@ -182,7 +182,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
         if (appInfo && appInfo[0]) {
           const { appCategoryCode, appGroupCode } = appInfo[0];
           queryFuncs({
-            appCategoryCode,
+            // appCategoryCode,
             appGroupCode,
             funcName: value,
             isSearch: true,
