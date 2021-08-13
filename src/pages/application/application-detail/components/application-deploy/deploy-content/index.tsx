@@ -21,6 +21,7 @@ import './index.less';
 const rootCls = 'deploy-content-compo';
 
 export interface DeployContentProps {
+  isActive?: boolean;
   appCode?: string;
   /** 环境参数 */
   envTypeCode: string;
@@ -44,7 +45,8 @@ export default function DeployContent(props: DeployContentProps) {
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
 
   const requestData = async () => {
-    if (!appCode) return;
+    if (!appCode || !props.isActive) return;
+
     setUpdating(true);
 
     const resp1 = await queryDeployList({
@@ -96,7 +98,7 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   // 定时请求发布内容
-  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(requestData, 8000, { immediate: true });
+  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(requestData, 8000, { immediate: false });
 
   const searchUndeployedBranch = (branchName?: string) => {
     cachebranchName.current = branchName;
@@ -113,10 +115,10 @@ export default function DeployContent(props: DeployContentProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode) return;
+    if (!appCode || !props.isActive) return;
 
     timerHandle('do', true);
-  }, [appCode]);
+  }, [appCode, props.isActive]);
 
   return (
     <div className={rootCls}>
