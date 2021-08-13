@@ -31,8 +31,8 @@ export default function RecordList(props: ReordListProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [isMy, setIsMy] = useState(0);
-  const [createUser, setCreateUser] = useState(null);
+  const [isMine, setIsMine] = useState(false);
+  const [createUser, setCreateUser] = useState<string>();
   const [filterRange, setFilterRange] = useState<moment.Moment[]>();
   const [tableData, total, loading] = useRecordList(props.templ?.id!, createUser, pageIndex, pageSize, filterRange);
 
@@ -44,14 +44,15 @@ export default function RecordList(props: ReordListProps) {
     setLogData(record.errorLog);
   };
 
+  const handleChangeisMine = (next: boolean) => {
+    setIsMine(next);
+    setCreateUser(next ? userInfo.userName : undefined);
+  };
+
   useEffect(() => {
     if (!props.templ) setPageIndex(1);
-    console.log(isMy);
-    if (isMy) {
-      setCreateUser(userInfo.userName);
-    } else {
-      setCreateUser(null);
-    }
+
+    setCreateUser(isMine ? userInfo.userName : undefined);
   }, [props.templ]);
 
   return (
@@ -59,8 +60,16 @@ export default function RecordList(props: ReordListProps) {
       <Drawer width={900} visible={!!props.templ} title="执行记录" onClose={props.onClose} maskClosable={false}>
         <div className="table-caption">
           <h3>模板名称: {props.templ?.name}</h3>
-          <Switch checkedChildren="只看我的" unCheckedChildren="只看我的" onChange={(v: any) => setIsMy(v)} />
-          <RangePicker value={filterRange as any} showTime onChange={(v: any) => setFilterRange(v)} />
+          <div className="caption-right">
+            <span>只看我的：</span>
+            <Switch checked={isMine} onChange={handleChangeisMine} />
+            <RangePicker
+              value={filterRange as any}
+              style={{ marginLeft: 20 }}
+              showTime
+              onChange={(v: any) => setFilterRange(v)}
+            />
+          </div>
         </div>
         <Table
           dataSource={tableData}

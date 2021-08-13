@@ -43,7 +43,7 @@ export function useTableData(queryParams: Record<string, any>, pageIndex = 1, pa
 
 export function useRecordList(
   id: number,
-  createUser?: null,
+  createUser?: string,
   pageIndex = 1,
   pageSize = 20,
   filterRange?: moment.Moment[],

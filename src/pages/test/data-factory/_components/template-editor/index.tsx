@@ -109,7 +109,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
       className="template-editor-wrapper"
       footer={
         <div className="template-editor-footer">
-          <Button type="default" icon={<BugOutlined />} style={{ backgroundColor: 'palegreen', color: 'orangered' }}>
+          <Button type="default" icon={<BugOutlined />} danger>
             调试
           </Button>
           <Button type="primary" onClick={handleSave}>
