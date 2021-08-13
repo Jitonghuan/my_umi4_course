@@ -21,7 +21,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
       {!props.data?.length ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> : null}
       <Collapse>
         {props.data?.map((n, i) => (
-          <Collapse.Panel key={i} header={n?.name || '用例'}>
+          <Collapse.Panel key={i} header={n?.name ? `#${n.id} - ${n.name}` : '用例'}>
             <ul className="case-info-list">
               <li>所属项目: {n.projectName || '--'}</li>
               <li>所属模块: {n.moduleName || '--'}</li>
