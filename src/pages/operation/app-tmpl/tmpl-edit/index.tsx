@@ -60,10 +60,11 @@ export default function DemoPageTb(porps: any) {
             value: tmplresult.tmplConfigurableItem[key],
           });
         }
-        let envCode = tmplresult.envCode;
-        if (envCode == '') {
-          envCode = [];
-        }
+        const envCode: string[] = [];
+        envCode.push(tmplresult.envCode);
+        // if (envCode == '') {
+        //   envCode = [];
+        // }
         createTmplForm.setFieldsValue({
           templateType: tmplresult.templateType,
           templateName: tmplresult.templateName,
