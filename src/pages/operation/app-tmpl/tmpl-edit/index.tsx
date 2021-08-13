@@ -60,8 +60,8 @@ export default function DemoPageTb(porps: any) {
             value: tmplresult.tmplConfigurableItem[key],
           });
         }
-        const envCode: string[] = [];
-        envCode.push(tmplresult.envCode);
+        // const envCode: string[] = [];
+        // envCode.push(tmplresult.envCode);
         // if (envCode == '') {
         //   envCode = [];
         // }
@@ -70,7 +70,7 @@ export default function DemoPageTb(porps: any) {
           templateName: tmplresult.templateName,
           templateValue: tmplresult.templateValue,
           appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: envCode,
+          envCodes: tmplresult.envCode,
           tmplConfigurableItem: arr,
         });
         changeAppCategory(tmplresult.appCategoryCode);
@@ -130,13 +130,16 @@ export default function DemoPageTb(porps: any) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
+    const envCodes: string[] = [];
+    envCodes.push(value.envCodes);
+
     putRequest(APIS.update, {
       data: {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
         appCategoryCode: value.appCategoryCode || '',
-        envCodes: value.envCodes || [],
+        envCodes: envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         templateCode: templateCode,
       },
@@ -207,10 +210,10 @@ export default function DemoPageTb(porps: any) {
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
-                  mode="multiple"
+                  // mode="multiple"
                   allowClear
                   style={{ width: 220 }}
-                  placeholder="Please select"
+                  placeholder="请选择"
                   onChange={clickChange}
                   options={envDatas}
                   disabled={isDisabled}
