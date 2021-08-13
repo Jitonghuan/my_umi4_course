@@ -60,11 +60,6 @@ export default function DemoPageTb(porps: any) {
             value: tmplresult.tmplConfigurableItem[key],
           });
         }
-        // const envCode: string[] = [];
-        // envCode.push(tmplresult.envCode);
-        // if (envCode == '') {
-        //   envCode = [];
-        // }
         createTmplForm.setFieldsValue({
           templateType: tmplresult.templateType,
           templateName: tmplresult.templateName,
@@ -132,7 +127,6 @@ export default function DemoPageTb(porps: any) {
     }, {} as any);
     const envCodes: string[] = [];
     envCodes.push(value.envCodes);
-
     putRequest(APIS.update, {
       data: {
         templateName: value.templateName,
