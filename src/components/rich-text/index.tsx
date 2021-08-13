@@ -6,7 +6,7 @@ import './index.less';
 const plugins: any[] = [Plugin.AlignPlugin];
 
 export default function CaseWorkspace(props: any) {
-  const { width = '100%', height = '240px', onChange } = props;
+  const { className, width = '100%', height = '240px', onChange } = props;
 
   const sona = useMemo(() => createSona(), []);
 
@@ -21,7 +21,7 @@ export default function CaseWorkspace(props: any) {
     <Editor
       sona={sona}
       style={{ width: width, height: height }}
-      className="matrix-rich-editor-wrapper"
+      className={'matrix-rich-editor-wrapper ' + className}
       toolbarClassName="matrix-rich-editor-toolbar"
       editorClassName="matrix-rich-editor"
     />

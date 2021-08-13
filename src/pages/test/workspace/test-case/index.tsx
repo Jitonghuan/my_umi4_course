@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
+import AddCaseDrawer from './add-case-drawer';
 import HeaderTabs from '../_components/header-tabs';
 import MatrixPageContent from '@/components/matrix-page-content';
 import {
@@ -31,6 +32,9 @@ export default function TestCase(props: any) {
   const [tree, setTree] = useState<Tree>();
   const [cateTreeData, setCateTreeData] = useState<any[]>([]);
   const [caseCategories, setCaseCategories] = useState<any[]>([]);
+  const [rootCateId, setRootCateId] = useState<string>(testCaseCateId as string);
+  const [cateId, setCateId] = useState<string>(testCaseCateId as string);
+  const [drawerVisible, setDrawerVisible] = useState(true);
 
   const updateLeftTree = async (cateId: string, keyword?: string) => {
     let curTree: Tree = tree as Tree;
@@ -50,12 +54,24 @@ export default function TestCase(props: any) {
     void updateLeftTree(testCaseCateId as string);
   }, []);
 
+  const onAddCaseBtnClick = () => {
+    void setDrawerVisible(true);
+  };
+
+  const onEditCaseBtnClick = () => {
+    void setDrawerVisible(true);
+  };
+
   return (
     <MatrixPageContent>
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
         <CardRowGroup.SlideCard width={200}>
           <LeftTree
+            cateId={cateId}
+            setCateId={setCateId}
+            rootCateId={rootCateId}
+            setRootCateId={setRootCateId}
             cateTreeData={cateTreeData}
             caseCategories={caseCategories}
             defaultCateId={testCaseCateId}
@@ -63,9 +79,16 @@ export default function TestCase(props: any) {
           />
         </CardRowGroup.SlideCard>
         <ContentCard>
-          <RightDetail />
+          <RightDetail
+            cateId={cateId}
+            setDrawerVisible={setDrawerVisible}
+            onAddCaseBtnClick={onAddCaseBtnClick}
+            onEditCaseBtnClick={onEditCaseBtnClick}
+          />
         </ContentCard>
       </CardRowGroup>
+
+      <AddCaseDrawer visible={drawerVisible} setVisible={setDrawerVisible} />
     </MatrixPageContent>
   );
 }

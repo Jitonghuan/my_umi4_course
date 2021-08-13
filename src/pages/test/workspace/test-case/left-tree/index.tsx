@@ -15,24 +15,33 @@ const formatTreeData = (cateTreeData: TreeNode[]): any => {
 };
 
 export default function LeftTree(props: any) {
-  const { caseCategories = [], cateTreeData = [], defaultCateId, searchCateTreeData } = props;
-  const [cateId, setCateId] = useState<string>(defaultCateId);
+  const {
+    caseCategories = [],
+    cateTreeData = [],
+    defaultCateId,
+    searchCateTreeData,
+    rootCateId,
+    setRootCateId,
+    cateId,
+    setCateId,
+  } = props;
   const [keyword, setKeyword] = useState<string>('');
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
 
   useEffect(() => {
-    void searchCateTreeData(cateId, keyword);
-  }, [cateId, keyword]);
+    void searchCateTreeData(rootCateId, keyword);
+  }, [rootCateId, keyword]);
 
   useEffect(() => {
     setExpandedKeys([cateTreeData[0]?.key]);
     setSelectedKeys([cateTreeData[0]?.key]);
+    setCateId(cateTreeData[0]?.key);
   }, [cateTreeData]);
 
   const onCateChange = (val: any) => {
     if (!val) return;
-    void setCateId(val);
+    void setRootCateId(val);
   };
 
   const onKeywordChange = (e: any) => {
@@ -47,12 +56,13 @@ export default function LeftTree(props: any) {
 
   const onSelect = (selectedKeysValue: React.Key[]) => {
     void setSelectedKeys(selectedKeysValue);
+    setCateId(selectedKeysValue);
   };
 
   return (
     <div className="test-workspace-test-case-left-tree">
       <div className="search-header">
-        <Select className="case-cate-select" onChange={onCateChange} value={cateId}>
+        <Select className="case-cate-select" onChange={onCateChange} value={rootCateId}>
           {caseCategories.map((item: any) => (
             <Option key={item.id.toString()} value={item.id.toString()}>
               {item.name}

@@ -1,15 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Table, Button, Popconfirm, Input, Select, message } from 'antd';
+import { getRequest, postRequest } from '@/utils/request';
+import { getCasePageList } from '../../service';
+import dayjs from 'dayjs';
 import './index.less';
 
 export default function RightDetail(props: any) {
-  const { cateId } = props;
+  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick } = props;
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
+
+  const updateDatasource = async (keyword?: string, _pageIndex: number = pageIndex, _pageSize = pageSize) => {
+    if (!cateId && cateId !== 0) return;
+    void setLoading(true);
+    const res = await getRequest(getCasePageList, {
+      data: { categoryId: cateId, pageIndex: _pageIndex, pageSize: _pageSize, keyword },
+    });
+    void setLoading(false);
+    const { dataSource, pageInfo } = res.data;
+    const { total, pageIndex, pageSize } = pageInfo;
+    void setDataSource(dataSource);
+    void setPageIndex(pageIndex);
+    void setPageSize(pageSize);
+    void setTotal(total);
+  };
+
+  useEffect(() => {
+    void updateDatasource();
+  }, [pageIndex, pageSize, cateId]);
 
   const onConfirm = () => {
     console.log('delete');
@@ -43,7 +65,7 @@ export default function RightDetail(props: any) {
       </div>
       <div className="detail-container">
         <div className="add-btn-wrapper">
-          <Button className="add-case-btn" type="primary">
+          <Button className="add-case-btn" type="primary" onClick={onAddCaseBtnClick}>
             新增用例
           </Button>
         </div>
@@ -65,7 +87,11 @@ export default function RightDetail(props: any) {
           <Table.Column dataIndex="title" title="用例名称"></Table.Column>
           <Table.Column dataIndex="priority" title="优先级"></Table.Column>
           <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
-          <Table.Column dataIndex="gmtModify" title="更新时间"></Table.Column>
+          <Table.Column
+            dataIndex="gmtModify"
+            title="更新时间"
+            render={(date) => dayjs(date).format('YYYY-MM-DD HH:mm:ss')}
+          ></Table.Column>
           <Table.Column title="操作" render={operateRender}></Table.Column>
         </Table>
       </div>
