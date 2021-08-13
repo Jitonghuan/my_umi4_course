@@ -9,10 +9,12 @@ import FELayout from '@cffe/vc-layout';
 import { ContentCard } from '@/components/vc-page-content';
 import usePublicData from '@/utils/usePublicData';
 import { useTableData } from './hooks';
-import { EditorMode } from '../interfaces';
+import { EditorMode, TemplateItemProps } from '../interfaces';
 import * as APIS from '../service';
 import { postRequest } from '@/utils/request';
 import TemplateEditor from '../_components/template-editor';
+import TemplExec from '../_components/template-exec';
+import RecordList from './record-list';
 
 const { Item: FormItem } = Form;
 
@@ -25,11 +27,15 @@ export default function DataTemplate() {
     isEnvType: true,
     useCodeValue: true,
   });
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [searchField] = Form.useForm();
   const [searchParams, setSearchParams] = useState<any>();
-  const [tableData, loading] = useTableData(searchParams);
+  const [tableData, total, loading] = useTableData(searchParams, pageIndex, pageSize);
   const [editorMode, setEditorMode] = useState<EditorMode>('HIDE');
   const [editRecord, setEditRecord] = useState<any>();
+  const [execTempl, setExecTempl] = useState<TemplateItemProps>();
+  const [showRecordItem, setShowRecordItem] = useState<TemplateItemProps>();
 
   const handleSearch = useCallback(() => {
     const { createTime, ...others } = searchField.getFieldsValue();
@@ -38,12 +44,14 @@ export default function DataTemplate() {
       startTime: createTime && createTime[0] ? `${createTime[0].format('YYYY-MM-DD')} 00:00:00` : undefined,
       endTime: createTime && createTime[1] ? `${createTime[1].format('YYYY-MM-DD')} 23:59:59` : undefined,
     });
+    setPageIndex(1);
   }, [searchField]);
 
   const handleReset = useCallback(() => {
     searchField.resetFields();
     const nextValues = searchField.getFieldsValue();
     setSearchParams(nextValues);
+    setPageIndex(1);
   }, [searchField]);
 
   useEffect(() => {
@@ -70,13 +78,18 @@ export default function DataTemplate() {
     handleSearch();
   };
 
+  const handleExecItem = (record: any) => {
+    setExecTempl(record);
+    console.log(record, execTempl);
+  };
+
   return (
     <ContentCard>
       <Form form={searchField} layout="inline">
-        <FormItem label="项目" name="project">
+        <FormItem label="业务线" name="project">
           <Select options={appTypeData} placeholder="请选择" style={{ width: 120 }} onChange={handleSearch} />
         </FormItem>
-        <FormItem label="环境" name="env">
+        <FormItem label="支持环境" name="env">
           <Select
             options={envListType}
             placeholder="请选择"
@@ -109,16 +122,32 @@ export default function DataTemplate() {
           新增数据模板
         </Button>
       </div>
-      <Table pagination={false} dataSource={tableData} loading={loading}>
+      <Table
+        dataSource={tableData}
+        loading={loading}
+        pagination={{
+          current: pageIndex,
+          total,
+          showTotal: (total) => `共 ${total} 条`,
+          pageSize,
+          showSizeChanger: true,
+          onShowSizeChange: (_, size) => {
+            setPageIndex(1);
+            setPageSize(size);
+          },
+          onChange: (next) => setPageIndex(next),
+        }}
+      >
         <Table.Column dataIndex="id" title="序号" width={80} />
         <Table.Column dataIndex="name" title="模板名称" />
-        <Table.Column dataIndex="project" title="项目" />
-        <Table.Column dataIndex="env" title="环境" />
-        <Table.Column
+        <Table.Column dataIndex="desc" title="描述" />
+        <Table.Column dataIndex="project" title="业务线" />
+        <Table.Column dataIndex="env" title="支持环境" />
+        {/* <Table.Column
           dataIndex="variable"
           title="可传变量"
           render={(_, record: any) => Object.keys(record.params || {}).join(', ')}
-        />
+        /> */}
         <Table.Column dataIndex="createUser" title="创建人" />
         <Table.Column
           dataIndex="gmtCreate"
@@ -130,13 +159,15 @@ export default function DataTemplate() {
           title="操作"
           render={(_, record: any) => (
             <div className="action-cell">
+              <a onClick={() => handleExecItem(record)}>执行</a>
               <a onClick={() => handleEditItem(record)}>编辑</a>
               <Popconfirm title="确定要删除此模板吗？" onConfirm={() => handleDelItem(record)}>
                 <a style={{ color: 'red' }}>删除</a>
               </Popconfirm>
+              <a onClick={() => setShowRecordItem(record)}>造数记录</a>
             </div>
           )}
-          width={100}
+          width={220}
         />
       </Table>
       <TemplateEditor
@@ -145,6 +176,8 @@ export default function DataTemplate() {
         onClose={() => setEditorMode('HIDE')}
         onSave={handleEditorSave}
       />
+      <TemplExec visible={execTempl?.id ? true : false} TemplVo={execTempl} onClose={() => setExecTempl({})} />
+      <RecordList templ={showRecordItem} onClose={() => setShowRecordItem(undefined)} />
     </ContentCard>
   );
 }
