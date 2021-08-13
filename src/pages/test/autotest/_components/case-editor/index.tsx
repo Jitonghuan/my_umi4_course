@@ -12,6 +12,7 @@ import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import EditorTable from '@cffe/pc-editor-table';
 import { getFuncListByIds, getCaseListByIds } from './common';
+import AceEditor from '@/components/ace-editor';
 import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../../common';
 import './index.less';
 
@@ -34,7 +35,7 @@ export default function CaseEditor(props: CaseEditorProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [editField] = Form.useForm<Record<string, any>>();
   const [step, setSetp] = useState<number>(0);
-  const [paramType, setParamType] = useState<'object' | 'array'>('object');
+  const [paramType, setParamType] = useState<'json' | 'form'>('json');
 
   // 编辑时回填数据
   const initEditField = async (initData: CaseItemVO) => {
@@ -43,7 +44,7 @@ export default function CaseEditor(props: CaseEditorProps) {
     const afterFuncs: FuncProps[] = hooks.teardown || [];
     const beforeCaseIds: number[] = initData.preStep ? initData.preStep.split(',').map((n: string) => +n) : [];
 
-    const nextParamType = typeof initData.parameters === 'string' ? 'object' : 'array';
+    const nextParamType = typeof initData.parameters === 'string' ? 'json' : 'form';
     setParamType(nextParamType);
 
     editField.setFieldsValue({
@@ -54,8 +55,8 @@ export default function CaseEditor(props: CaseEditorProps) {
       beforeCases: await getCaseListByIds(beforeCaseIds),
       customVars: initData.customVars || [],
       headers: initData.headers || [],
-      parameters: nextParamType === 'array' ? initData.parameters || [] : [],
-      parametersJSON: nextParamType === 'object' ? initData.parameters || '' : '',
+      parameters: nextParamType === 'form' ? initData.parameters || [] : [],
+      parametersJSON: nextParamType === 'json' ? initData.parameters || '' : '',
       savedVars: initData.savedVars || [],
       resAssert: initData.resAssert || [],
     });
@@ -64,7 +65,7 @@ export default function CaseEditor(props: CaseEditorProps) {
   const initAddField = (apiDetail?: Record<string, any>) => {
     if (!apiDetail) return;
 
-    const nextParamType = apiDetail.paramType === PARAM_TYPE.JSON ? 'object' : 'array';
+    const nextParamType = apiDetail.paramType === PARAM_TYPE.JSON ? 'json' : 'form';
     setParamType(nextParamType);
 
     editField.setFieldsValue({
@@ -79,7 +80,7 @@ export default function CaseEditor(props: CaseEditorProps) {
 
     setSetp(0);
     editField.resetFields();
-    setParamType('object');
+    setParamType('json');
 
     if (props.mode === 'EDIT') {
       initEditField(props.initData || ({} as CaseItemVO));
@@ -104,7 +105,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       name: values.name,
       desc: values.desc,
       headers: values.headers || [],
-      parameters: paramType === 'array' ? values.parameters || [] : values.parametersJSON || '',
+      parameters: paramType === 'form' ? values.parameters || [] : values.parametersJSON || '',
       preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
       customVars: values.customVars || [],
       savedVars: values.savedVars || [],
@@ -267,12 +268,12 @@ export default function CaseEditor(props: CaseEditorProps) {
             <Tabs.TabPane key="parameters" tab="parameters" forceRender>
               <FormItem label="参数格式">
                 <Radio.Group
-                  options={['array', 'object']}
+                  options={['form', 'json']}
                   value={paramType}
                   onChange={(e) => setParamType(e.target.value)}
                 />
               </FormItem>
-              {paramType == 'array' ? (
+              {paramType == 'form' ? (
                 <FormItem
                   name="parameters"
                   noStyle
@@ -299,7 +300,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                 </FormItem>
               ) : (
                 <FormItem name="parametersJSON" noStyle>
-                  <Input.TextArea placeholder="请输入" rows={10} />
+                  <AceEditor mode="json" height={220} />
                 </FormItem>
               )}
             </Tabs.TabPane>

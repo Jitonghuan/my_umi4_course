@@ -8,6 +8,7 @@ import { CaseItemVO, FuncProps } from '../../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import { getFuncListByIds, getCaseListByIds } from '../case-editor/common';
+import AceEditor from '@/components/ace-editor';
 import '../case-editor/index.less';
 
 const { Item: FormItem } = Form;
@@ -20,7 +21,7 @@ interface DisplayDataProps {
   beforeCases: CaseItemVO[];
   customVars: { key: string; type: string; value?: string; desc?: string }[];
   headers: { key: string; value?: string }[];
-  paramType: 'object' | 'array';
+  paramType: 'json' | 'form';
   parameters?: { key: string; value: string; desc?: string }[];
   parametersJSON?: string;
   savedVars: { name: string; jsonpath?: string }[];
@@ -37,7 +38,7 @@ async function initDisplayData(initData: CaseItemVO): Promise<DisplayDataProps> 
   const beforeFuns: FuncProps[] = hooks.setup || [];
   const afterFuncs: FuncProps[] = hooks.teardown || [];
   const beforeCaseIds: number[] = initData.preStep ? initData.preStep.split(',').map((n: string) => +n) : [];
-  const nextParamType = typeof initData.parameters === 'string' ? 'object' : 'array';
+  const nextParamType = typeof initData.parameters === 'string' ? 'json' : 'form';
 
   return {
     name: initData.name,
@@ -48,8 +49,8 @@ async function initDisplayData(initData: CaseItemVO): Promise<DisplayDataProps> 
     customVars: initData.customVars || [],
     headers: initData.headers || [],
     paramType: nextParamType,
-    parameters: nextParamType === 'array' ? initData.parameters || [] : [],
-    parametersJSON: nextParamType === 'object' ? initData.parameters || '' : '',
+    parameters: nextParamType === 'form' ? initData.parameters || [] : [],
+    parametersJSON: nextParamType === 'json' ? initData.parameters || '' : '',
     savedVars: initData.savedVars || [],
     resAssert: initData.resAssert || [],
   };
@@ -122,14 +123,14 @@ export default function CaseEditor(props: CaseEditorProps) {
             <div className="field-caption">
               <h3>parameters</h3>
             </div>
-            {displayData.paramType == 'array' ? (
+            {displayData.paramType == 'form' ? (
               <Table dataSource={displayData.parameters} pagination={false}>
                 <Table.Column title="key" dataIndex="key" />
                 <Table.Column title="value" dataIndex="value" />
                 <Table.Column title="描述" dataIndex="desc" />
               </Table>
             ) : (
-              <Input.TextArea value={displayData.parametersJSON || ''} rows={10} readOnly />
+              <AceEditor value={displayData.parametersJSON || ''} height={220} readOnly />
             )}
           </div>
           <div className="case-table-field">
