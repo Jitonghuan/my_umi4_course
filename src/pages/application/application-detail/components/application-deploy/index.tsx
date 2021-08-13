@@ -76,12 +76,12 @@ export default function ApplicationDeploy(props: IProps) {
         {curEnvData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
+              isActive={item.value === tabActive}
               appCode={appCode}
               envTypeCode={item.value}
               onDeployNextEnvSuccess={() => {
                 const i = curEnvData.findIndex((item) => item.value === tabActive);
                 setTabActive(curEnvData[i + 1]?.value);
-                console.log(tabActive);
               }}
             />
           </TabPane>
