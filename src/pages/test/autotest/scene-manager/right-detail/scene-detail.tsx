@@ -40,7 +40,7 @@ export default function SceneDetail(props: SceneDetailProps) {
 
     return (result.data || []).map((n: any) => ({
       value: n.caseId,
-      label: `${n.projectName}/${n.moduleName}/${n.apiName}/${n.caseName}`,
+      label: `#${n.caseId} - ${n.projectName}/${n.moduleName}/${n.apiName}/${n.caseName}`,
       data: n,
     }));
   };
@@ -132,8 +132,8 @@ export default function SceneDetail(props: SceneDetailProps) {
             />
           }
           placement="bottomLeft"
-          overlayInnerStyle={{ width: 300 }}
-          overlayStyle={{ width: 300 }}
+          overlayInnerStyle={{ width: 600 }}
+          overlayStyle={{ width: 600 }}
         >
           <Button type="primary">新增用例</Button>
         </Popover>

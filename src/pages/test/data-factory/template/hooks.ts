@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
 
-export function useTableData(queryParams: Record<string, any>): [any[], boolean] {
+export function useTableData(queryParams: Record<string, any>, pageIndex = 1, pageSize = 20): [any[], boolean] {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +18,10 @@ export function useTableData(queryParams: Record<string, any>): [any[], boolean]
       const result = await getRequest(APIS.queryDataFactory, {
         data: queryParams,
       });
-      setData(result.data || []);
+
+      const { dataSource, pageInfo } = result.data || {};
+
+      setData(dataSource || []);
     } finally {
       setLoading(false);
     }

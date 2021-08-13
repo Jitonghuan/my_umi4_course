@@ -3,7 +3,7 @@
 // @create 2021/05/30 20:15
 
 import React, { useState, useEffect, useContext } from 'react';
-import { Drawer, Form, Steps, Button, Input, message, Radio, Tabs } from 'antd';
+import { Drawer, Form, Steps, Button, Input, message, Radio, Tabs, Switch, Row, Col } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import { postRequest } from '@/utils/request';
 import * as APIS from '../../service';
@@ -12,7 +12,7 @@ import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import EditorTable from '@cffe/pc-editor-table';
 import { getFuncListByIds, getCaseListByIds } from './common';
-import AceEditor from '@/components/ace-editor';
+import AceEditor, { JSONValidator } from '@/components/ace-editor';
 import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../../common';
 import './index.less';
 
@@ -50,6 +50,8 @@ export default function CaseEditor(props: CaseEditorProps) {
     editField.setFieldsValue({
       name: initData.name,
       desc: initData.desc,
+      allowSkip: initData.allowSkip || false,
+      skipReason: initData.skipReason,
       beforeFuncs: await getFuncListByIds(beforeFuns),
       afterFuncs: await getFuncListByIds(afterFuncs),
       beforeCases: await getCaseListByIds(beforeCaseIds),
@@ -104,6 +106,8 @@ export default function CaseEditor(props: CaseEditorProps) {
     const payload = {
       name: values.name,
       desc: values.desc,
+      allowSkip: values.allowSkip || false,
+      skipReason: values.skipReason || '',
       headers: values.headers || [],
       parameters: paramType === 'form' ? values.parameters || [] : values.parametersJSON || '',
       preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
@@ -118,8 +122,6 @@ export default function CaseEditor(props: CaseEditorProps) {
           id: n.id,
           argument: n.argument || '',
         })),
-        // setup: (values.beforeFuncs || []).map((n: any) => n.id),
-        // teardown: (values.afterFuncs || []).map((n: any) => n.id),
       },
       resAssert: values.resAssert || [],
       modifyUser: userInfo.userName,
@@ -205,6 +207,26 @@ export default function CaseEditor(props: CaseEditorProps) {
         >
           <Input placeholder="请输入用例描述" />
         </FormItem>
+        <FormItem label="允许跳过" labelCol={{ flex: '76px' }}>
+          <Row gutter={20}>
+            <Col>
+              <FormItem name="allowSkip" valuePropName="checked">
+                <Switch />
+              </FormItem>
+            </Col>
+            <Col flex={1}>
+              <FormItem noStyle shouldUpdate={(prev, curr) => prev.allowSkip !== curr.allowSkip}>
+                {({ getFieldValue }) =>
+                  getFieldValue('allowSkip') ? (
+                    <FormItem name="skipReason" rules={[{ required: true, message: '请输入跳过原因' }]}>
+                      <Input placeholder="请输入跳过原因" />
+                    </FormItem>
+                  ) : null
+                }
+              </FormItem>
+            </Col>
+          </Row>
+        </FormItem>
         <Steps current={step} onChange={(n) => setSetp(n)}>
           <Steps.Step title="前置/后置" />
           <Steps.Step title="定义变量" />
@@ -230,7 +252,6 @@ export default function CaseEditor(props: CaseEditorProps) {
         <div className="case-editor-step case-editor-step-1" data-visible={step === 1}>
           <FormItem
             name="customVars"
-            noStyle
             initialValue={[]}
             rules={[
               {
@@ -271,12 +292,12 @@ export default function CaseEditor(props: CaseEditorProps) {
                   options={['form', 'json']}
                   value={paramType}
                   onChange={(e) => setParamType(e.target.value)}
+                  disabled={props.mode === 'EDIT'}
                 />
               </FormItem>
               {paramType == 'form' ? (
                 <FormItem
                   name="parameters"
-                  noStyle
                   initialValue={[]}
                   rules={[
                     {
@@ -299,7 +320,15 @@ export default function CaseEditor(props: CaseEditorProps) {
                   />
                 </FormItem>
               ) : (
-                <FormItem name="parametersJSON" noStyle>
+                <FormItem
+                  name="parametersJSON"
+                  rules={[
+                    {
+                      validator: JSONValidator,
+                      validateTrigger: [],
+                    },
+                  ]}
+                >
                   <AceEditor mode="json" height={220} />
                 </FormItem>
               )}
@@ -307,7 +336,6 @@ export default function CaseEditor(props: CaseEditorProps) {
             <Tabs.TabPane key="headers" tab="headers" forceRender>
               <FormItem
                 name="headers"
-                noStyle
                 initialValue={[]}
                 rules={[
                   {
@@ -337,7 +365,6 @@ export default function CaseEditor(props: CaseEditorProps) {
         <div className="case-editor-step case-editor-step-3" data-visible={step === 3}>
           <FormItem
             name="savedVars"
-            noStyle
             initialValue={[]}
             rules={[
               {
@@ -365,7 +392,6 @@ export default function CaseEditor(props: CaseEditorProps) {
         <div className="case-editor-step case-editor-step-4" data-visible={step === 4}>
           <FormItem
             name="resAssert"
-            noStyle
             initialValue={[]}
             rules={[
               {

@@ -20,6 +20,7 @@ import {
   API_METHOD_OPTIONS,
 } from '../../common';
 import './index.less';
+import AceEditor, { JSONValidator } from '@/components/ace-editor';
 
 const formLayout = {
   labelCol: { flex: '88px' },
@@ -211,7 +212,6 @@ export default function ApiEditor(props: ApiEditorProps) {
               </FormItem>
               {paramType !== PARAM_TYPE.JSON ? (
                 <FormItem
-                  noStyle
                   name="parameters"
                   initialValue={[]}
                   rules={[
@@ -235,14 +235,17 @@ export default function ApiEditor(props: ApiEditorProps) {
                   />
                 </FormItem>
               ) : (
-                <FormItem label="参数值" name="parametersJSON">
-                  <Input.TextArea placeholder="请输入JSON" rows={6} />
+                <FormItem
+                  label="参数值"
+                  name="parametersJSON"
+                  rules={[{ validator: JSONValidator, validateTrigger: [] }]}
+                >
+                  <AceEditor mode="json" height={200} />
                 </FormItem>
               )}
             </Tabs.TabPane>
             <Tabs.TabPane key="headers" tab="headers" forceRender>
               <FormItem
-                noStyle
                 name="headers"
                 initialValue={[]}
                 rules={[

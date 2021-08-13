@@ -50,3 +50,12 @@ export default function AceEditor(props: AceEditorProps) {
     </div>
   );
 }
+
+export async function JSONValidator(_: any, value: string) {
+  if (!value) return;
+  try {
+    JSON.parse(value);
+  } catch (ex) {
+    throw new Error('JSON 格式校验失败！');
+  }
+}
