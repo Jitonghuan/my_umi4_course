@@ -211,10 +211,10 @@ export default function DemoPageTb(porps: any) {
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
-                  mode="multiple"
+                  // mode="multiple"
                   allowClear
                   style={{ width: 220 }}
-                  placeholder="Please select"
+                  placeholder="请选择"
                   onChange={clickChange}
                   options={envDatas}
                   disabled={isDisabled}
