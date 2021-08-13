@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { history } from 'umi';
@@ -11,7 +11,7 @@ import request, { postRequest, getRequest, putRequest, delRequest } from '@/util
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import { tmplList } from '../service';
-
+import tmplEditPage from '../tmpl-edits';
 export default function Launch() {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
@@ -27,12 +27,13 @@ export default function Launch() {
   const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
+  const [showDrawVisible, setShowDrawVisible] = useState<boolean>(false); //是否展示抽屉
   useEffectOnce(() => {
     queryList({ pageIndex: 1, pageSize: 20 });
     selectCategory();
     selectTmplType();
   });
-
+  // const [clusterAData, clusterALoading, loadClusterA] = useTmplEditPage();
   // 加载应用分类下拉选择
   const selectCategory = () => {
     getRequest(APIS.appTypeList).then((result) => {
@@ -134,10 +135,17 @@ export default function Launch() {
       }
     });
   };
+  //展示抽屉
 
+  const showDrawer = () => {
+    setShowDrawVisible(true);
+  };
   return (
     <MatrixPageContent>
+      {/* <tmplEditPage/> */}
+      <tmplEditPage data="" />
       <FilterCard>
+        {/* <tmplEditPage/> */}
         <Form
           layout="inline"
           form={formTmpl}
@@ -194,6 +202,7 @@ export default function Launch() {
               重置
             </Button>
           </Form.Item>
+
           <span style={{ float: 'right' }}>
             <Button
               type="primary"
@@ -269,19 +278,7 @@ export default function Launch() {
                     详情 {record.lastName}
                   </a>
 
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-edit',
-                        query: {
-                          type: 'edit',
-                          templateCode: record.templateCode,
-                        },
-                      })
-                    }
-                  >
-                    编辑
-                  </a>
+                  <a onClick={showDrawer}>编辑</a>
                   <a
                     onClick={() => {
                       history.push(`push?templateCode=${record.templateCode}`);
