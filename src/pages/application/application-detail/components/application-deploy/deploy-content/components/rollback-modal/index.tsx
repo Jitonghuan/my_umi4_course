@@ -25,7 +25,7 @@ export default function RollbackModal(props: RollbackModalProps) {
     const result = await getRequest(APIS.queryHistoryVersions, {
       data: {
         deploymentName: appData?.deploymentName,
-        envCode,
+        envCode, // TODO 使用 appManage/env/list 接口获取 ? { categoryCode, envTypeCode }
       },
     });
 
