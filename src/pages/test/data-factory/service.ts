@@ -25,3 +25,6 @@ export const testDataFactory = addAPIPrefix('/qc/dataFactory/createData');
 
 /** POST 删除数据模板 */
 export const delDataFactory = addAPIPrefix('/qc/dataFactory/delete');
+
+/** GET 查询模板造数记录 */
+export const getRecords = addAPIPrefix('/qc/dataFactory/getRecords');
