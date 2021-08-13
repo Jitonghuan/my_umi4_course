@@ -100,7 +100,7 @@ export default function DemoPageTb(porps: any) {
       return prev;
     }, {} as any);
     // console.log('tmplConfigurableItem:', tmplConfigurableItem);
-
+    debugger;
     postRequest(APIS.create, {
       data: {
         templateName: value.templateName,
@@ -114,11 +114,14 @@ export default function DemoPageTb(porps: any) {
       if (resp.success) {
         const datas = resp.data || [];
         setEnvDatas(datas.envCodes);
+        setAppCategoryCode(datas.appCategoryCode);
+
         history.push({
           pathname: 'tmpl-list',
         });
       }
     });
+    // console.log('获取到的00000:', value.envCodes);
   };
 
   return (

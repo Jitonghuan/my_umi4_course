@@ -103,7 +103,6 @@ export default function Push(porps: any) {
   //点击查询
   const getApplication = (value: any) => {
     setLoading(true);
-
     getRequest(APIS.appList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -140,10 +139,9 @@ export default function Push(porps: any) {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-
     setPageIndex(pagination.current);
     getApplication(obj);
-    console.log('pagination.current:', pagination.current, pagination.pageSize);
+    // console.log('pagination.current:', pagination.current, pagination.pageSize);
     setSelectList(currentDataSource);
   };
 
@@ -169,7 +167,7 @@ export default function Push(porps: any) {
           onFinish={(values) => {
             getApplication({
               ...values,
-              pageIndex: 1,
+              pageIndex: pageIndex,
               pageSize: pageSize,
             });
           }}
