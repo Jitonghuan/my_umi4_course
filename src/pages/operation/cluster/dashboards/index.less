@@ -4,6 +4,12 @@
 
 .cluster-dashboards {
   // transform: scale(1.2,1.2);
+
+  .action-groups {
+    text-align: right;
+    margin-bottom: 16px;
+  }
+
   .ant-card-body {
     min-height: 100%;
     background-color: #f7f8fa;
@@ -16,6 +22,7 @@
   .section-group {
     display: flex;
     margin-bottom: 12px;
+    overflow: hidden;
 
     > section {
       flex: 1 1 0;
@@ -33,8 +40,8 @@
 
   section {
     background-color: #fff;
-    // margin-bottom: 12px;
     padding: 14px;
+    overflow: hidden;
 
     &[data-loading='true'] {
       position: relative;
@@ -69,6 +76,12 @@
         font-weight: bold;
         color: #000;
         margin: 0;
+      }
+
+      + div {
+        height: ~'calc((100vh - 240px) / 2 - 84px)';
+        max-height: 400px;
+        min-height: 290px;
       }
     }
   }
