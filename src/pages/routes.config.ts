@@ -57,7 +57,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/operation/cluster`,
-    redirect: `${PAGE_PREFIX}/operation/cluster/scheduling`,
+    redirect: `${PAGE_PREFIX}/operation/cluster/dashboards`,
   },
   {
     path: `${PAGE_PREFIX}/operation/app-tmpl`,
