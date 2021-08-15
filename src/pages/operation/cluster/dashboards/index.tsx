@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { Button, Row, Col } from 'antd';
+import React, { useEffect } from 'react';
+import { Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import ClusterAChart from './chart-case-Acluster';
 import ClusterBChart from './chart-case-Bcluster';
@@ -9,7 +9,6 @@ import { useABHistogram, useClusterA, useClusterB } from './hook';
 import './index.less';
 
 export default function Dashboards() {
-  const echartBig = useRef<any>();
   const [clusterAData, clusterALoading, loadClusterA] = useClusterA();
   const [clusterBData, clusterBLoading, loadClusterB] = useClusterB();
   const [histogramData, loading, loadHistogram] = useABHistogram();
@@ -28,9 +27,6 @@ export default function Dashboards() {
   return (
     <ContentCard className="cluster-dashboards">
       <div className="action-groups">
-        <Button type="primary" ghost onClick={() => echartBig.current?.requestFullscreen()} style={{ marginRight: 12 }}>
-          全屏显示
-        </Button>
         <Button
           type="primary"
           onClick={() => {
