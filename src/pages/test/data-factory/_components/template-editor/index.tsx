@@ -154,7 +154,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
             },
           ]}
         >
-          <EditorTable
+          <EditorTable<any>
             creator={{ clone: true }}
             columns={[
               { title: '序号', dataIndex: '__count', fieldType: 'readonly', colProps: { width: 60, align: 'center' } },
@@ -167,7 +167,13 @@ export default function TemplateEditor(props: TemplateEditorProps) {
                 valueOptions: varTypeOptions,
                 colProps: { width: 160 },
               },
-              { title: '值', dataIndex: 'value' },
+              {
+                title: '值',
+                dataIndex: 'value',
+                // fieldType: (record) => {
+                //   return ['Integer', 'Float'].includes(record.type) ? 'number' : 'text';
+                // }
+              },
               { title: '描述', dataIndex: 'desc' },
             ]}
           />
@@ -181,8 +187,6 @@ export default function TemplateEditor(props: TemplateEditorProps) {
                 if (value?.find((n) => !(n.type && n.name && n.script))) {
                   throw new Error('还有未填写的数据项!');
                 }
-
-                // TODO 校验 JSON 数据格式
               },
               validateTrigger: [],
             },
