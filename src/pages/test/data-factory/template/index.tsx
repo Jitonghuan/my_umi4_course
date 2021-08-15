@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { Form, Table, Button, Input, Select, message, DatePicker, Checkbox, Popconfirm } from 'antd';
 import moment from 'moment';
 import FELayout from '@cffe/vc-layout';
@@ -83,6 +83,10 @@ export default function DataTemplate() {
     console.log(record, execTempl);
   };
 
+  const filteredEnvTypeOptions = useMemo(() => {
+    return envListType?.filter((n) => n.value !== 'prod');
+  }, [envListType]);
+
   return (
     <ContentCard>
       <Form form={searchField} layout="inline">
@@ -91,9 +95,9 @@ export default function DataTemplate() {
         </FormItem>
         <FormItem label="支持环境" name="env">
           <Select
-            options={envListType}
+            options={filteredEnvTypeOptions}
             placeholder="请选择"
-            style={{ width: 120 }}
+            style={{ width: 90 }}
             onChange={handleSearch}
             allowClear
           />
@@ -176,7 +180,7 @@ export default function DataTemplate() {
         onClose={() => setEditorMode('HIDE')}
         onSave={handleEditorSave}
       />
-      <TemplExec visible={execTempl?.id ? true : false} TemplVo={execTempl} onClose={() => setExecTempl({})} />
+      <TemplExec visible={!!execTempl?.id} temp={execTempl} onClose={() => setExecTempl(undefined)} />
       <RecordList templ={showRecordItem} onClose={() => setShowRecordItem(undefined)} />
     </ContentCard>
   );

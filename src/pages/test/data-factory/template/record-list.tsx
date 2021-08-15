@@ -6,7 +6,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import moment from 'moment';
 import { Drawer, Table, DatePicker, Switch, Tag, Modal, Input } from 'antd';
 import FELayout from '@cffe/vc-layout';
-import { TemplateItemProps } from '../interfaces';
+import { TemplateItemProps, RecordVo } from '../interfaces';
 import { useRecordList } from './hooks';
 
 type statusTypeItem = {
@@ -37,9 +37,9 @@ export default function RecordList(props: ReordListProps) {
   const [tableData, total, loading] = useRecordList(props.templ?.id!, createUser, pageIndex, pageSize, filterRange);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [logData, setLogData] = useState();
+  const [logData, setLogData] = useState<string>();
 
-  const checkLog = (record: any) => {
+  const checkLog = (record: RecordVo) => {
     setIsModalVisible(true);
     setLogData(record.errorLog);
   };
@@ -89,7 +89,7 @@ export default function RecordList(props: ReordListProps) {
           <Table.Column
             dataIndex="status"
             title="状态"
-            render={(text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>}
+            render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
           />
           <Table.Column
             dataIndex="gmtCreate"
@@ -100,12 +100,18 @@ export default function RecordList(props: ReordListProps) {
 
           <Table.Column
             title="操作"
-            render={(_, record) => <a onClick={() => checkLog(record)}>查看日志</a>}
+            render={(_, record: RecordVo) => <a onClick={() => checkLog(record)}>查看日志</a>}
             width={100}
           />
         </Table>
       </Drawer>
-      <Modal title="执行日志" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={false}>
+      <Modal
+        title="执行日志"
+        width={800}
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={false}
+      >
         <Input.TextArea value={logData} readOnly rows={20} />
       </Modal>
     </>

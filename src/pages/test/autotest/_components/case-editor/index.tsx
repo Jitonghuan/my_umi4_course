@@ -413,6 +413,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                   required: true,
                   fieldType: 'select',
                   valueOptions: ASSERT_COMPARE_ENUM,
+                  colProps: { width: 120 },
                 },
                 {
                   title: '类型',
