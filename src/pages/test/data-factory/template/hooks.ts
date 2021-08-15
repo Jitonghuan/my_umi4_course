@@ -5,9 +5,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
+import { RecordVo, TemplateItemProps } from '../interfaces';
 
-export function useTableData(queryParams: Record<string, any>, pageIndex = 1, pageSize = 20): [any[], number, boolean] {
-  const [data, setData] = useState<any[]>([]);
+export function useTableData(
+  queryParams: Record<string, any>,
+  pageIndex = 1,
+  pageSize = 20,
+): [TemplateItemProps[], number, boolean] {
+  const [data, setData] = useState<TemplateItemProps[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -43,12 +48,12 @@ export function useTableData(queryParams: Record<string, any>, pageIndex = 1, pa
 
 export function useRecordList(
   id: number,
-  createUser?: null,
+  createUser?: string,
   pageIndex = 1,
   pageSize = 20,
   filterRange?: moment.Moment[],
-): [any[], number, boolean] {
-  const [data, setData] = useState<any[]>([]);
+): [RecordVo[], number, boolean] {
+  const [data, setData] = useState<RecordVo[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 

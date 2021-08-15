@@ -30,8 +30,10 @@ export default function CreateData() {
   const { data: factoryNameData, run: queryDataFactoryNameFun } = useRequest({
     api: queryDataFactory,
     method: 'GET',
-    formatData: (data = []) => {
-      return data?.map((v: any) => {
+    formatData: (data) => {
+      const { dataSource } = data || {};
+
+      return dataSource?.map((v: any) => {
         return {
           ...v,
           key: v.name,
