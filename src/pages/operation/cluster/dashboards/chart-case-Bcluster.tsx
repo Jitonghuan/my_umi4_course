@@ -23,7 +23,7 @@ export default function ClusterBChart(props: ChartCaseListProps) {
       <header>
         <h3>B集群各院区流量</h3>
       </header>
-      <div style={{ height: '420px' }}>
+      <div>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={clusterBchartOptions} />
         </ColorContainer>

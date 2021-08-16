@@ -3,6 +3,13 @@
 // @create 2021/07/21 15:09
 
 .cluster-dashboards {
+  // transform: scale(1.2,1.2);
+
+  .action-groups {
+    text-align: right;
+    margin-bottom: 16px;
+  }
+
   .ant-card-body {
     min-height: 100%;
     background-color: #f7f8fa;
@@ -15,6 +22,7 @@
   .section-group {
     display: flex;
     margin-bottom: 12px;
+    overflow: hidden;
 
     > section {
       flex: 1 1 0;
@@ -32,8 +40,8 @@
 
   section {
     background-color: #fff;
-    margin-bottom: 12px;
-    padding: 32px;
+    padding: 14px;
+    overflow: hidden;
 
     &[data-loading='true'] {
       position: relative;
@@ -69,6 +77,12 @@
         color: #000;
         margin: 0;
       }
+
+      + div {
+        height: ~'calc((100vh - 240px) / 2 - 84px)';
+        max-height: 400px;
+        min-height: 300px;
+      }
     }
   }
 }
@@ -84,3 +98,9 @@
     color: #fff;
   }
 }
+
+// .clusterTable {
+//   .ant-table-wrapper {
+//     min-height: 320px !important;
+//   }
+// }

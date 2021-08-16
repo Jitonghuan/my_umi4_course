@@ -2,8 +2,6 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 9:30
 
-import { values } from '_@types_lodash@4.14.171@@types/lodash';
-
 // A集群各院区流量
 export function clusterALineChart(clusterAData: Record<string, any>) {
   const countList: number[] = [];
@@ -41,37 +39,37 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       {
         name: '之江',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[0],
       },
       {
         name: '之江无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[1],
       },
       {
         name: '余杭',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[2],
       },
       {
         name: '余杭无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[3],
       },
       {
         name: '庆春城站',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[4],
       },
       {
         name: '庆春城站无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterAData[5],
       },
     ],
@@ -110,37 +108,37 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '庆春城站',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[0],
       },
       {
         name: '之江',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[1],
       },
       {
         name: '余杭',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[2],
       },
       {
         name: '余杭无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[3],
       },
       {
         name: '庆春城站无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[4],
       },
       {
         name: '之江无线',
         type: 'line',
-        stack: '访问量',
+        // stack: '访问量',
         data: clusterBData[5],
       },
     ],
@@ -158,31 +156,28 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     categoryList.push(i);
   }
 
-  // console.log('获取到的结果11：',["aaaa",categoryList])
-  // console.log('获取到的结果11：',["aaaa",countList])
-
   return {
     //图例组件
     legend: {
       orient: 'vertical',
       top: 0,
-      right: 40,
+      right: 0,
       icon: 'circle',
     },
     //提示信息
     tooltip: {},
     color: [
-      '#FFF0F5',
-      '#E6E6FA',
-      '#FFEBCD',
-      '#FFE4C4',
-      '#B0E2FF',
-      '#006400',
-      '#CD6600',
-      '#8B4789',
-      '#6959CD',
-      '#104E8B',
-      '#CD4F39',
+      '#BC8F8F',
+      '#EE6363',
+      '#DDA0DD',
+      '#FF8247',
+      '#FF69B4',
+      '#9370DB',
+      '#2E8B57',
+      '#4682B4',
+      '#8B864E',
+      '#3A5FCD',
+      '#191970',
       '#8B8682',
     ],
 
@@ -210,7 +205,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     //布局
     grid: {
       left: '0%',
-      right: '20%',
+      right: '22%',
       bottom: '0%',
       containLabel: true,
     },

@@ -1,3 +1,24 @@
 .ace-editor-wrapper {
+  position: relative;
   border: 1px solid #cacfdb;
+
+  .ace-editor-type {
+    position: absolute;
+    z-index: 100;
+    bottom: 0;
+    right: 0;
+    padding: 0 8px;
+    border: 1px solid #cacfdb;
+    border-width: 1px 0 0 1px;
+    background-color: #f8f9fa;
+    color: #999;
+
+    &[data-type='json'] {
+      cursor: pointer;
+    }
+  }
+}
+
+.ant-form-item-has-error .ace-editor-wrapper {
+  border-color: #cc4631;
 }
