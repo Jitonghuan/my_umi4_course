@@ -36,7 +36,7 @@
     "@cffe/fe-tpl": "1.0.0",
     "@cffe/pc-editor-table": "~1.0.5",
     "@cffe/sona": "^0.6.10",
-    "@cffe/sona-editor": "^1.13.3",
+    "@cffe/sona-editor": "^1.14.0",
     "@cffe/vc-b-card-layout": "1.0.8",
     "@cffe/vc-custom-icon": "1.0.6",
     "@cffe/vc-error-page": "1.0.2",

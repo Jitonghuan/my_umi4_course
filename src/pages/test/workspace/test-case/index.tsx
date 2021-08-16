@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
-import AddCaseDrawer from './add-case-drawer';
 import HeaderTabs from '../_components/header-tabs';
 import MatrixPageContent from '@/components/matrix-page-content';
-import {
-  createCase,
-  caseDelete,
-  updateCase,
-  copyCases,
-  moveCases,
-  getCaseInfo,
-  getCasePageList,
-  getCaseMultiDeepList,
-  getCaseCategoryDeepList,
-} from '../service';
+import { getCaseCategoryDeepList } from '../service';
 import { ContentCard, CardRowGroup } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import { Tree, TreeNode } from '@cffe/algorithm';
@@ -34,7 +23,7 @@ export default function TestCase(props: any) {
   const [caseCategories, setCaseCategories] = useState<any[]>([]);
   const [rootCateId, setRootCateId] = useState<string>(testCaseCateId as string);
   const [cateId, setCateId] = useState<string>(testCaseCateId as string);
-  const [drawerVisible, setDrawerVisible] = useState(true);
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
   const updateLeftTree = async (cateId: string, keyword?: string) => {
     let curTree: Tree = tree as Tree;
@@ -81,14 +70,13 @@ export default function TestCase(props: any) {
         <ContentCard>
           <RightDetail
             cateId={cateId}
+            drawerVisible={drawerVisible}
             setDrawerVisible={setDrawerVisible}
             onAddCaseBtnClick={onAddCaseBtnClick}
             onEditCaseBtnClick={onEditCaseBtnClick}
           />
         </ContentCard>
       </CardRowGroup>
-
-      <AddCaseDrawer visible={drawerVisible} setVisible={setDrawerVisible} />
     </MatrixPageContent>
   );
 }

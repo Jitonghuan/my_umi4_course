@@ -40,3 +40,6 @@ export const getCasePageList = addAPIPrefix('/qc/teststation/casePageList');
 
 /** GET 深度列举指定用例类目及其子类目下的用例 */
 export const getCaseMultiDeepList = addAPIPrefix('/qc/teststation/caseMultiDeepList');
+
+/** GET 获取所属枚举 */
+export const getCategoryList = addAPIPrefix('/appManage/category/list?pageSize=-1');

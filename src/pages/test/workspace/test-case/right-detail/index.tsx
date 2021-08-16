@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Form, Table, Button, Popconfirm, Input, Select, message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList } from '../../service';
+import AddCaseDrawer from '../add-case-drawer';
 import dayjs from 'dayjs';
 import './index.less';
 
 export default function RightDetail(props: any) {
-  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick } = props;
+  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible } = props;
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -95,6 +96,7 @@ export default function RightDetail(props: any) {
           <Table.Column title="操作" render={operateRender}></Table.Column>
         </Table>
       </div>
+      <AddCaseDrawer visible={drawerVisible} setVisible={setDrawerVisible} updateCaseTable={updateDatasource} />
     </div>
   );
 }
