@@ -42,7 +42,7 @@ export default function AceEditor(props: AceEditorProps) {
   const handleFormat = useCallback(() => {
     if (!displayValue) return;
 
-    if (props.mode !== 'json') {
+    if (!props.mode || props.mode === 'text') {
       return setWrap(!wrap);
     }
 
@@ -72,7 +72,7 @@ export default function AceEditor(props: AceEditorProps) {
         }}
       />
       <span className="ace-editor-type" data-type={props.mode} onClick={handleFormat}>
-        {props.mode === 'json' ? 'json' : wrap ? 'inline' : 'wrap'}
+        {props.mode === 'text' ? (wrap ? 'wrap text' : 'inline text') : props.mode}
       </span>
     </div>
   );
