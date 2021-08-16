@@ -4,17 +4,22 @@
 
 import React from 'react';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import { getRequest, putRequest } from '@/utils/request';
-import { useContext, useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
-import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Drawer, Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
-export default function DemoPageTb(porps: any) {
+// export interface TmplEditProps {
+//   data: any;
+//   showDrawVisible?: boolean;
+// }
+
+export default function tmplEditPage(porps: any) {
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
   const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
@@ -147,9 +152,11 @@ export default function DemoPageTb(porps: any) {
       }
     });
   };
-
+  const onDrawClose = () => {};
+  const showDrawVisible = porps.showDrawVisible;
   return (
-    <MatrixPageContent className="tmpl-detail">
+    <Drawer className="tmpl-detail" onClose={onDrawClose} visible={showDrawVisible}>
+      {/* <MatrixPageContent className="tmpl-detail"> */}
       <ContentCard>
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
@@ -237,6 +244,7 @@ export default function DemoPageTb(porps: any) {
           </Form.Item>
         </Form>
       </ContentCard>
-    </MatrixPageContent>
+      {/* </MatrixPageContent> */}
+    </Drawer>
   );
 }

@@ -2,16 +2,27 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { history } from 'umi';
 import { useEffectOnce } from 'white-react-use';
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
+import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
-import { tmplList } from '../service';
+import TmplEditDraw from '../tmpl-edits';
 
+export type EditorMode = 'HIDE' | 'EDIT';
+/** 编辑页回显数据 */
+export interface TmplEdit extends Record<string, any> {
+  templateCode: string;
+  templateType: string;
+  templateName: string;
+  tmplConfigurableItem: object;
+  appCategoryCode: any;
+  envCodes: string;
+  templateValue: string;
+}
 export default function Launch() {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
@@ -27,6 +38,25 @@ export default function Launch() {
   const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
+  const [showDrawVisible, setShowDrawVisible] = useState<boolean>(true); //是否展示抽屉
+  const [showDrawInfo, setShowDrawInfo] = useState<any>({
+    type: '',
+    templateCode: '',
+    showDraw: false,
+  });
+
+  const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
+  const [tmplateData, setTmplateData] = useState<TmplEdit>();
+
+  const handleEditTask = useCallback(
+    (record: TmplEdit, index: number) => {
+      setTmplateData(record);
+      setTmplEditMode('EDIT');
+    },
+    [dataSource],
+  );
+
+  //查询编辑参数
   useEffectOnce(() => {
     queryList({ pageIndex: 1, pageSize: 20 });
     selectCategory();
@@ -115,12 +145,14 @@ export default function Launch() {
           setPageTotal(pageTotal);
           setDataSource(dataSource);
           setPageIndex(pageIndex);
+          console.log('可配置项：', dataSource);
         }
       })
       .finally(() => {
         setLoading(false);
       });
   };
+
   //删除数据
   const handleDelItem = (record: any) => {
     let id = record.id;
@@ -134,9 +166,11 @@ export default function Launch() {
       }
     });
   };
+  //展示抽屉
 
   return (
     <MatrixPageContent>
+      <TmplEditDraw mode={tmplEditMode} initData={tmplateData} onClose={() => setTmplEditMode('HIDE')} />
       <FilterCard>
         <Form
           layout="inline"
@@ -194,6 +228,7 @@ export default function Launch() {
               重置
             </Button>
           </Form.Item>
+
           <span style={{ float: 'right' }}>
             <Button
               type="primary"
@@ -240,7 +275,7 @@ export default function Launch() {
               dataIndex="gmtModify"
               width="24%"
               key="action"
-              render={(text, record: any) => (
+              render={(_, record: TmplEdit, index) => (
                 <Space size="small">
                   <a
                     onClick={() =>
@@ -269,19 +304,7 @@ export default function Launch() {
                     详情 {record.lastName}
                   </a>
 
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-edit',
-                        query: {
-                          type: 'edit',
-                          templateCode: record.templateCode,
-                        },
-                      })
-                    }
-                  >
-                    编辑
-                  </a>
+                  <a onClick={() => handleEditTask(record, index)}>编辑</a>
                   <a
                     onClick={() => {
                       history.push(`push?templateCode=${record.templateCode}`);
