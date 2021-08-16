@@ -8,6 +8,8 @@ import Editor, { IAnnotation } from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/mode-sql';
+import 'ace-builds/src-noconflict/mode-text';
+import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 // import ace from 'ace-builds/src-noconflict/ace';
 // import jsonWorkerUrl from 'file-loader!ace-builds/src-noconflict/worker-json';
@@ -19,9 +21,11 @@ export interface AceEditorProps {
   defaultValue?: string;
   value?: string;
   onChange?: (nextValue: string) => any;
-  mode?: 'yaml' | 'json' | 'sql';
+  mode?: 'yaml' | 'json' | 'sql' | 'text' | 'xml';
   height?: number;
   readOnly?: boolean;
+  status?: 'success' | 'error' | 'warning' | 'default';
+  placeholder?: string;
 }
 
 export default function AceEditor(props: AceEditorProps) {
@@ -47,22 +51,23 @@ export default function AceEditor(props: AceEditorProps) {
   }, [displayValue, props.mode]);
 
   return (
-    <div className="ace-editor-wrapper">
+    <div className="ace-editor-wrapper" data-status={props.status || 'default'}>
       <Editor
-        mode={props.mode || 'yaml'}
+        mode={props.mode || 'text'}
         width="100%"
         height={props.height ? `${props.height}px` : undefined}
         theme="tomorrow"
         value={displayValue}
         onChange={handleChange}
         readOnly={props.readOnly}
+        placeholder={props.placeholder}
         setOptions={{
           tabSize: 2,
           useWorker: false,
         }}
       />
       <span className="ace-editor-type" data-type={props.mode} onClick={handleFormat}>
-        {props.mode || 'yaml'}
+        {props.mode || 'text'}
       </span>
     </div>
   );

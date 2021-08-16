@@ -2,14 +2,13 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Form, Button, Space, Popconfirm } from 'antd';
 import omit from 'lodash/omit';
 import { history } from 'umi';
-import 'codemirror/lib/codemirror.css';
 import FELayout from '@cffe/vc-layout';
 import { renderForm } from '@/components/table-search/form';
 import { ContentCard } from '@/components/vc-page-content';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import usePublicData from '@/utils/usePublicData';
 import useRequest from '@/utils/useRequest';
-import JsonEditor from '@/components/json-editor';
+import AceEditor from '@/components/ace-editor';
 import { queryDataFactory, createData } from '../service';
 import { Item } from '../typing';
 
@@ -125,17 +124,14 @@ export default function CreateData() {
       autoSize: { minRows: 17 },
       extraForm: (
         <Form.Item noStyle name="params">
-          <JsonEditor
-            disabled={dataNum > 1}
-            placeholder={dataNum > 1 ? '批量添加数据无需参数示例' : ''}
-            style={{ minHeight: 300 }}
-            options={{ placeholder: '参数实例' }}
+          <AceEditor
+            mode="json"
+            readOnly={dataNum > 1}
+            placeholder={dataNum > 1 ? '批量添加数据无需参数示例' : '参数实例'}
+            height={300}
           />
         </Form.Item>
       ),
-      onChange: (e: string) => {
-        // console.log(e);
-      },
     },
   ];
 
@@ -156,7 +152,7 @@ export default function CreateData() {
       rules: [],
       extraForm: (
         <Form.Item noStyle name="returnData">
-          <JsonEditor style={{ minHeight: 300 }} options={{ readOnly: true, placeholder: '返回数据' }} />
+          <AceEditor height={window.innerHeight - 200} readOnly placeholder="返回数据" mode="json" />
         </Form.Item>
       ),
       onChange: (e) => {

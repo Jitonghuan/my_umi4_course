@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import { Modal, Input } from 'antd';
+import AceEditor from '../ace-editor';
 
 export interface DetailModal {
   data: string;
@@ -19,7 +20,7 @@ const defaultTitleRender =
   };
 
 const defaultDetailRender = (data: string) => {
-  return <Input.TextArea value={data} readOnly rows={20} />;
+  return <AceEditor value={data} readOnly height={400} />;
 };
 
 export default function DetailModal(props: DetailModal) {
