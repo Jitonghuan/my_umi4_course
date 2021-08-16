@@ -22,10 +22,16 @@ export default function ABHistorgram(props: ChartCaseListProps) {
       <header>
         <h3>A/B集群各院区流量</h3>
       </header>
-      <div style={{ height: '290px' }}>
-        <ColorContainer roleKeys={['color']}>
-          <EchartsReact option={ABHistorgramOptions} />
-        </ColorContainer>
+      <div>
+        <div style={{ height: 'calc(100% - 20px)' }}>
+          <ColorContainer roleKeys={['color']}>
+            <EchartsReact option={ABHistorgramOptions} />
+          </ColorContainer>
+        </div>
+        <div style={{ display: 'flex', width: '80%', fontSize: 12 }}>
+          <div style={{ flex: 1, textAlign: 'center' }}>A集群</div>
+          <div style={{ flex: 1, textAlign: 'center' }}>B集群</div>
+        </div>
       </div>
     </section>
   );

@@ -5,22 +5,32 @@
 export type EditorMode = 'HIDE' | 'EDIT' | 'ADD';
 
 export interface TemplateItemProps {
-  id?: number;
-  name?: string;
-  project?: number;
-  env?: number[];
-  createUser?: string;
-  params?: any;
+  createUser: string;
+  dbRemark?: string;
+  desc?: string;
+  env: string;
+  gmtCreate: string;
+  gmtModify: string;
+  id: number;
+  modifyUser?: string;
+  name: string;
+  params: Record<string, string>[];
+  project: string;
 }
 
 export interface RecordVo {
-  id?: number;
-  factoryId?: number;
-  factoryName?: String;
-  project?: number;
-  env?: number[];
-  createUser?: string;
+  createUser: string;
+  dbRemark?: string;
+  env: string;
+  errorLog?: string;
+  factoryId: number;
+  factoryName: string;
+  gmtCreate: string;
+  gmtModify: string;
+  id: number;
+  modifyUser?: string;
+  project: string;
   params?: any;
-  errorLog?: String;
   response?: any;
+  status: number;
 }

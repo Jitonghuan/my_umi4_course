@@ -74,7 +74,7 @@ export const ASSERT_COMPARE_ENUM = [
 ].map((n) => ({ label: n, value: n }));
 
 /** 数据类型 */
-export const VALUE_TYPE_ENUM = ['String', 'Integer', 'Float', 'Boolean', 'List', 'Dict'].map((n) => ({
+export const VALUE_TYPE_ENUM = ['String', 'Integer', 'Float', 'Boolean', 'List', 'Dict', 'None'].map((n) => ({
   label: n,
   value: n,
 }));

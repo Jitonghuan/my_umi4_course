@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/16 16:35
 
-import React, { useCallback, useEffect, useContext } from 'react';
+import React, { useCallback, useEffect, useContext, useMemo } from 'react';
 import { Drawer, Form, Button, Checkbox, Input, Select, message } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
@@ -99,6 +99,10 @@ export default function TemplateEditor(props: TemplateEditorProps) {
     onSave?.();
   }, [mode, initData]);
 
+  const filteredEnvTypeOptions = useMemo(() => {
+    return envListType?.filter((n) => n.value !== 'prod');
+  }, [envListType]);
+
   return (
     <Drawer
       visible={mode !== 'HIDE'}
@@ -109,7 +113,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
       className="template-editor-wrapper"
       footer={
         <div className="template-editor-footer">
-          <Button type="default" icon={<BugOutlined />} style={{ backgroundColor: 'palegreen', color: 'orangered' }}>
+          <Button type="default" icon={<BugOutlined />} danger>
             调试
           </Button>
           <Button type="primary" onClick={handleSave}>
@@ -133,7 +137,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
             <Select options={appTypeData} placeholder="请选择 " style={{ width: 300 }} />
           </FormItem>
           <FormItem label="支持环境" name="env" rules={[{ required: true, message: '请选择支持环境' }]}>
-            <Checkbox.Group options={envListType} />
+            <Checkbox.Group options={filteredEnvTypeOptions} />
           </FormItem>
         </div>
         <h3>定义变量</h3>
@@ -142,8 +146,8 @@ export default function TemplateEditor(props: TemplateEditorProps) {
           rules={[
             {
               validator: async (_, value: any[]) => {
-                if (value?.find((n) => !(n.name && n.value))) {
-                  throw new Error('变量名 和 值不能为空 !');
+                if (value?.find((n) => !(n.name && n.value && n.type))) {
+                  throw new Error('变量名、类型、值不能为空 !');
                 }
               },
               validateTrigger: [],
@@ -177,12 +181,14 @@ export default function TemplateEditor(props: TemplateEditorProps) {
                 if (value?.find((n) => !(n.type && n.name && n.script))) {
                   throw new Error('还有未填写的数据项!');
                 }
+
+                // TODO 校验 JSON 数据格式
               },
               validateTrigger: [],
             },
           ]}
         >
-          <EditorTable
+          <EditorTable<any>
             creator={{ clone: true }}
             columns={[
               { title: '序号', dataIndex: '__count', fieldType: 'readonly', colProps: { width: 60, align: 'center' } },
@@ -194,7 +200,15 @@ export default function TemplateEditor(props: TemplateEditorProps) {
                 colProps: { width: 120 },
               },
               { title: '步骤名称', dataIndex: 'name', colProps: { width: 160 } },
-              { title: '脚本', dataIndex: 'script', fieldType: 'custom', component: ScriptEditor },
+              {
+                title: '脚本',
+                dataIndex: 'script',
+                fieldType: 'custom',
+                component: ScriptEditor,
+                fieldProps: (value, index, record) => {
+                  return { mode: record.type === 'SQL' ? 'sql' : 'json' };
+                },
+              },
             ]}
           />
         </FormItem>

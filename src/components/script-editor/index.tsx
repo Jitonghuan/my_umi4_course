@@ -3,16 +3,18 @@
 // @create 2021/07/17 21:06
 
 import React, { useState, useCallback } from 'react';
-import { Modal, Input } from 'antd';
+import { Modal, Input, message } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
+import AceEditor, { isJSON } from '../ace-editor';
 
 export interface ScriptEditorProps extends Record<string, any> {
   value?: string;
   onChange?: (next: string) => any;
+  mode?: 'text' | 'json' | 'sql' | 'yaml';
 }
 
 export default function ScriptEditor(props: ScriptEditorProps) {
-  const { onChange, ...others } = props;
+  const { onChange, mode = 'text', ...others } = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [tempValue, setTempValue] = useState('');
 
@@ -29,12 +31,17 @@ export default function ScriptEditor(props: ScriptEditorProps) {
   }, [props.value]);
 
   const handleOk = useCallback(() => {
+    if (mode === 'json' && !isJSON(tempValue)) {
+      return message.warning('JSON数据格式不合法!');
+    }
+
     onChange?.(tempValue);
     setModalVisible(false);
   }, [tempValue]);
 
   const handleCancel = useCallback(() => setModalVisible(false), []);
   const handleTempChange = useCallback((e: any) => setTempValue(e.target.value), []);
+  const handleAceTempChange = useCallback((v: string) => setTempValue(v), []);
 
   return (
     <>
@@ -53,7 +60,11 @@ export default function ScriptEditor(props: ScriptEditorProps) {
         onCancel={handleCancel}
         onOk={handleOk}
       >
-        <Input.TextArea autoFocus value={tempValue} onChange={handleTempChange} rows={14} />
+        {mode === 'text' ? (
+          <Input.TextArea autoFocus value={tempValue} onChange={handleTempChange} rows={14} />
+        ) : (
+          <AceEditor mode={mode} value={tempValue} onChange={handleAceTempChange} height={320} />
+        )}
       </Modal>
     </>
   );
