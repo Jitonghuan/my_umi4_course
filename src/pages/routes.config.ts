@@ -65,7 +65,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/test/data-factory`,
-    redirect: `${PAGE_PREFIX}/test/data-factory/records`,
+    redirect: `${PAGE_PREFIX}/test/data-factory/template`,
   },
   {
     path: `${PAGE_PREFIX}/test/workspace`,
