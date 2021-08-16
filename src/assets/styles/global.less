@@ -193,6 +193,15 @@ ul {
   font-size: 12px;
   white-space: pre-wrap;
   overflow: auto;
+
+  &.pre-line {
+    white-space: pre;
+  }
+
+  &[data-status='error'] {
+    border-color: red;
+    color: red;
+  }
 }
 
 .custom-table-holder {

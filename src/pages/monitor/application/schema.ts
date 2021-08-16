@@ -23,6 +23,16 @@ export const tableSchema = [
     align: 'left',
   },
   {
+    dataIndex: 'memLimit',
+    title: '总内存(MB)',
+    width: 100,
+  },
+  {
+    dataIndex: 'cpuLimit',
+    title: 'CPU核数',
+    width: 100,
+  },
+  {
     dataIndex: 'cpu',
     title: 'CPU使用率',
     width: 120,
