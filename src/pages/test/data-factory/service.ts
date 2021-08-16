@@ -20,11 +20,14 @@ export const createDataFactory = addAPIPrefix('/qc/dataFactory/create');
 /** POST 更新数据模板 */
 export const updateDataFactory = addAPIPrefix('/qc/dataFactory/update');
 
-/** POST 调试数据模板(复用 create) */
-export const testDataFactory = addAPIPrefix('/qc/dataFactory/createData');
+/** POST 调试数据模板 */
+export const debugTemplate = addAPIPrefix('/qc/dataFactory/debugTemplate');
 
 /** POST 删除数据模板 */
 export const delDataFactory = addAPIPrefix('/qc/dataFactory/delete');
 
 /** GET 查询模板造数记录 */
 export const getRecords = addAPIPrefix('/qc/dataFactory/getRecords');
+
+/** GET 查询造数日志 */
+export const getInstanceList = addAPIPrefix('/qc/dataFactory/getInstanceList');

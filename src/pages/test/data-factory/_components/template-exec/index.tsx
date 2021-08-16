@@ -8,8 +8,8 @@ import FELayout from '@cffe/vc-layout';
 import { postRequest } from '@/utils/request';
 import * as APIS from '../../service';
 import EditorTable from '@cffe/pc-editor-table';
-import AceEditor from '@/components/ace-editor';
 import { TemplateItemProps } from '../../interfaces';
+import ExecResult from '@/components/exec-result';
 
 export interface TemplExecProps {
   visible?: boolean;
@@ -76,14 +76,9 @@ export default function TemplExec(props: TemplExecProps) {
     return temp?.env ? temp.env.split(/,\s?/).map((n) => ({ label: n, value: n })) : [];
   }, [temp]);
 
-  const resultDataStr = useMemo(() => {
-    return JSON.stringify(resultData, null, 2);
-  }, [resultData]);
-
   return (
     <>
       <Modal
-        key="exec"
         visible={visible}
         title="执行造数"
         width={840}
@@ -151,17 +146,7 @@ export default function TemplExec(props: TemplExecProps) {
           </FormItem>
         </Form>
       </Modal>
-      <Modal
-        key="result"
-        title="执行结果"
-        visible={resultVisible}
-        maskClosable={false}
-        footer={false}
-        width={800}
-        onCancel={() => setResultVisible(false)}
-      >
-        <AceEditor mode="json" value={resultDataStr} readOnly height={400} />
-      </Modal>
+      <ExecResult visible={resultVisible} onClose={() => setResultVisible(false)} data={resultData} />
     </>
   );
 }

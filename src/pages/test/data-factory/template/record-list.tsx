@@ -2,12 +2,15 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/09 17:19
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import moment from 'moment';
-import { Drawer, Table, DatePicker, Switch, Tag, Modal, Input } from 'antd';
+import { Drawer, Table, DatePicker, Switch, Tag } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import { TemplateItemProps, RecordVo } from '../interfaces';
 import { useRecordList } from './hooks';
+import { getRequest } from '@/utils/request';
+import ExecResult from '@/components/exec-result';
+import * as APIS from '../service';
 
 type statusTypeItem = {
   color: string;
@@ -15,9 +18,8 @@ type statusTypeItem = {
 };
 
 const STATUS_TYPE: Record<number, statusTypeItem> = {
-  0: { text: '创建中', color: 'blue' },
-  2: { text: '失败', color: 'volcano' },
-  1: { text: '成功', color: 'green' },
+  0: { text: '失败', color: 'error' },
+  1: { text: '成功', color: 'success' },
 };
 
 const { RangePicker } = DatePicker;
@@ -39,10 +41,14 @@ export default function RecordList(props: ReordListProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [logData, setLogData] = useState<string>();
 
-  const checkLog = (record: RecordVo) => {
+  const checkLog = useCallback(async (record: RecordVo) => {
+    const result = await getRequest(APIS.getInstanceList, {
+      data: { id: record.id },
+    });
+
     setIsModalVisible(true);
-    setLogData(record.errorLog);
-  };
+    setLogData(result.data?.[0]?.errorLog);
+  }, []);
 
   const handleChangeisMine = (next: boolean) => {
     setIsMine(next);
@@ -105,15 +111,7 @@ export default function RecordList(props: ReordListProps) {
           />
         </Table>
       </Drawer>
-      <Modal
-        title="执行日志"
-        width={800}
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        footer={false}
-      >
-        <Input.TextArea value={logData} readOnly rows={20} />
-      </Modal>
+      <ExecResult visible={isModalVisible} onClose={() => setIsModalVisible(false)} data={logData} />
     </>
   );
 }

@@ -20,7 +20,7 @@ export default function Dashboard(props: any) {
     <MatrixPageContent>
       <FilterCard className="layout-compact">
         <Tabs activeKey={activeKey} onChange={(next) => props.history.push(`/matrix/test/data-factory/${next}`)}>
-          <Tabs.TabPane tab="数据列表" key="records" />
+          {/* <Tabs.TabPane tab="数据列表" key="records" /> */}
           <Tabs.TabPane tab="数据模板" key="template" />
         </Tabs>
       </FilterCard>

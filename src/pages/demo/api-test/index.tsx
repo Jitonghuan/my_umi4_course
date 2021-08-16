@@ -85,7 +85,7 @@ export default function PageApiTest() {
         </CardRowGroup.SlideCard>
         <ContentCard>
           <Spin spinning={pending}>
-            <AceEditor value={resultData} height={window.innerHeight - 170} readOnly />
+            <AceEditor value={resultData} height={window.innerHeight - 170} mode="json" readOnly />
           </Spin>
         </ContentCard>
       </CardRowGroup>
