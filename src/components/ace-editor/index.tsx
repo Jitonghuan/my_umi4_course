@@ -30,6 +30,7 @@ export interface AceEditorProps {
 
 export default function AceEditor(props: AceEditorProps) {
   const [stateValue, setStateValue] = useState<string>('value' in props ? props.value! : props.defaultValue ?? '');
+  const [wrap, setWrap] = useState(false);
 
   const handleChange = (next: string) => {
     setStateValue(next);
@@ -39,8 +40,11 @@ export default function AceEditor(props: AceEditorProps) {
   const displayValue = 'value' in props ? props.value : stateValue;
 
   const handleFormat = useCallback(() => {
-    if (props.mode !== 'json') return;
     if (!displayValue) return;
+
+    if (props.mode !== 'json') {
+      return setWrap(!wrap);
+    }
 
     try {
       const obj = JSON.parse(displayValue);
@@ -48,7 +52,7 @@ export default function AceEditor(props: AceEditorProps) {
     } catch (ex) {
       message.warning('JSON格式不合法!');
     }
-  }, [displayValue, props.mode]);
+  }, [displayValue, wrap, props.mode]);
 
   return (
     <div className="ace-editor-wrapper" data-status={props.status || 'default'}>
@@ -61,13 +65,14 @@ export default function AceEditor(props: AceEditorProps) {
         onChange={handleChange}
         readOnly={props.readOnly}
         placeholder={props.placeholder}
+        wrapEnabled={wrap}
         setOptions={{
           tabSize: 2,
           useWorker: false,
         }}
       />
       <span className="ace-editor-type" data-type={props.mode} onClick={handleFormat}>
-        {props.mode || 'text'}
+        {props.mode === 'json' ? 'json' : wrap ? 'inline' : 'wrap'}
       </span>
     </div>
   );

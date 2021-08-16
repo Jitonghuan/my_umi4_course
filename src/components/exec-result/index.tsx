@@ -13,30 +13,40 @@ export interface ExecResultProps {
   onClose?: () => any;
 }
 
+const dataFormatter = (data: any): string => {
+  if (Array.isArray(data)) {
+    return data.map((item) => dataFormatter(item)).join('\n\n');
+  }
+
+  if (!data) return '<no result>';
+  if (typeof data === 'string') data;
+  // 有错误信息
+  if (data.status === false && data.error) {
+    throw data.error as string;
+  }
+  if (data.errorLog) {
+    return data.errorLog as string;
+  }
+  if (data.error_log) {
+    return data.error_log as string;
+  }
+
+  return JSON.stringify(data, null, 2);
+};
+
 export default function ExecResult(props: ExecResultProps) {
   const { visible, data, onClose } = props;
 
   const [resultDataStr, hasError] = useMemo(() => {
-    const item = Array.isArray(data) ? data[0] : data;
-
-    if (!item) return ['<no result>', false];
-    if (typeof item === 'string') return [item, false];
-    // 有错误信息
-    if (item.status === false && item.error) {
-      return [item.error as string, true];
+    try {
+      return [dataFormatter(data), false];
+    } catch (ex) {
+      return [ex as string, true];
     }
-    if (item.errorLog) {
-      return [item.errorLog as string, false];
-    }
-    if (item.error_log) {
-      return [item.error_log as string, false];
-    }
-
-    return [JSON.stringify(item, null, 2), false];
   }, [data]);
 
   return (
-    <Modal title="执行结果" visible={visible} maskClosable={false} footer={false} width={888} onCancel={onClose}>
+    <Modal title="执行结果" visible={visible} maskClosable={false} footer={false} width={960} onCancel={onClose}>
       <div className="exec-result-container">
         <AceEditor
           mode="text"

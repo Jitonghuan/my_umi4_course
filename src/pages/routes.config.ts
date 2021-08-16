@@ -56,6 +56,10 @@ export default [
     redirect: `${PAGE_PREFIX}/monitor/business/prometheus`,
   },
   {
+    path: `${PAGE_PREFIX}/monitor/basic`,
+    redirect: `${PAGE_PREFIX}/monitor/basic/prometheus`,
+  },
+  {
     path: `${PAGE_PREFIX}/operation/cluster`,
     redirect: `${PAGE_PREFIX}/operation/cluster/dashboards`,
   },
@@ -483,6 +487,26 @@ export default [
             key: 'business-monitor',
             hideInMenu: true,
             component: '@/pages/monitor/business/logger-alarm',
+          },
+        ],
+      },
+      {
+        path: 'basic',
+        name: '基础监控',
+        key: 'basic-monitor',
+        component: '@/pages/monitor/basic/index',
+        routes: [
+          {
+            path: 'prometheus',
+            name: '服务接入',
+            key: 'basic-monitor',
+            component: '@/pages/monitor/basic/prometheus',
+          },
+          {
+            path: 'alarm-rules',
+            name: '报警配置',
+            key: 'basic-monitor',
+            component: '@/pages/monitor/basic/alarm-rules',
           },
         ],
       },
