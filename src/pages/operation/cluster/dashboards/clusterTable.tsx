@@ -41,7 +41,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
 
   let tableHeight = (window.innerHeight - 240) / 2 - 84 - 30;
   if (tableHeight > 370) tableHeight = 370;
-  if (tableHeight < 260) tableHeight = 260;
+  if (tableHeight < 270) tableHeight = 270;
 
   return (
     <section data-loading={loading}>
