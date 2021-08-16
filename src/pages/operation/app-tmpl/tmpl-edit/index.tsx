@@ -4,10 +4,10 @@
 
 import React from 'react';
 import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import { getRequest, putRequest } from '@/utils/request';
-import { useContext, useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
