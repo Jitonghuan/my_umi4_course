@@ -2,8 +2,6 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 9:30
 
-import { values } from '_@types_lodash@4.14.171@@types/lodash';
-
 // A集群各院区流量
 export function clusterALineChart(clusterAData: Record<string, any>) {
   const countList: number[] = [];

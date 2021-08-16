@@ -22,7 +22,7 @@ export default function TaskManager() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [tableSource, total, loading, reloadData] = useTaskList(keyword, pageIndex, pageSize);
-  const [executingIds, setExecutingIds] = useState<number[]>([]);
+  const [pendingIds, setPendingIds] = useState<number[]>([]);
 
   const [taskEditMode, setTaskEditMode] = useState<EditorMode>('HIDE');
   const [taskEditItem, setTaskEditData] = useState<TaskItemVO>();
@@ -37,7 +37,7 @@ export default function TaskManager() {
 
   const handleExecTask = useCallback(
     async (record: TaskItemVO, index: number) => {
-      setExecutingIds([...executingIds, record.id]);
+      setPendingIds([...pendingIds, record.id]);
 
       try {
         await postRequest(APIS.executeTask, {
@@ -49,18 +49,18 @@ export default function TaskManager() {
           },
         });
 
-        message.success('任务执行完成！');
-        // reloadData();
+        message.success('任务已开始执行');
+        reloadData();
       } finally {
-        const next = executingIds.reduce((prev, curr) => {
+        const next = pendingIds.reduce((prev, curr) => {
           if (curr !== record.id) prev.push(curr);
           return prev;
         }, [] as number[]);
 
-        setExecutingIds(next);
+        setPendingIds(next);
       }
     },
-    [tableSource, executingIds],
+    [tableSource, pendingIds],
   );
 
   const handleEditTask = useCallback(
@@ -158,13 +158,7 @@ export default function TaskManager() {
           title="状态"
           dataIndex="status"
           render={(value: number, record: TaskItemVO) =>
-            value === 1 || executingIds.includes(record.id) ? (
-              <Tag color="processing">执行中</Tag>
-            ) : value === 0 ? (
-              <Tag color="default">待执行</Tag>
-            ) : (
-              ''
-            )
+            value === 1 ? <Tag color="processing">执行中</Tag> : value === 0 ? <Tag color="default">待执行</Tag> : ''
           }
           width={90}
         />
@@ -179,7 +173,7 @@ export default function TaskManager() {
             return (
               <div className="action-cell">
                 {/* 状态为执行中时无法执行 */}
-                {record.status === 1 || executingIds.includes(record.id) ? (
+                {record.status === 1 || pendingIds.includes(record.id) ? (
                   <a data-disabled onClick={() => message.warning('当前任务已经在执行中')}>
                     执行
                   </a>
