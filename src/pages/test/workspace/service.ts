@@ -56,7 +56,7 @@ export const deleteTestPlan = addAPIPrefix('/qc/teststation/deleteTestPlan');
 export const modifyTestPlan = addAPIPrefix('/qc/teststation/modifyTestPlan');
 
 /** GET  测试计划-查询计划列表 */
-export const getTestPlan = addAPIPrefix('/qc/teststation/getTestPlanList');
+export const getTestPlanList = addAPIPrefix('/qc/teststation/getTestPlanList');
 
 /** POST 测试阶段-新增/删除测试阶段用例 */
 export const modifyPhaseCase = addAPIPrefix('/qc/teststation/modifyCasesToPhase');
