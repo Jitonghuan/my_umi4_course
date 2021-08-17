@@ -3,11 +3,28 @@
 // @create 2021/08/17 14:20
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Form, message, Alert, Input, Drawer, Button, Select, Space, Table, Modal } from 'antd';
+import { Form, message, Alert, Input, Drawer, Button, Select, Space, Table, Modal, Tag } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { postRequest, getRequest } from '@/utils/request';
 import * as APIS from '../service';
+type statusTypeItem = {
+  color: string;
+  text: string;
+};
+
+const STATUS_TYPE: Record<string, statusTypeItem> = {
+  refuse: { text: '拒绝处理', color: 'red' },
+  firing: { text: '告警中', color: 'blue' },
+  resolved: { text: '已修复', color: 'green' },
+  terminate: { text: '中断处理', color: 'default' },
+};
+
+const ALERT_LEVEL: Record<string, string> = {
+  '2': '警告',
+  '3': '严重',
+  '4': '灾难',
+};
 export default function ticketAlarm() {
   const [alertTicketSearch] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
@@ -20,10 +37,6 @@ export default function ticketAlarm() {
   useEffect(() => {
     getAlertTickets({ pageIndex: 1, pageSize: 20 });
   }, []);
-
-  //   const showModal = () => {
-  //     setIsModalVisible(true);
-  //   };
 
   const handleOk = () => {
     setIsModalVisible(false);
@@ -48,7 +61,7 @@ export default function ticketAlarm() {
     })
       .then((res: any) => {
         if (res.success) {
-          console.log('.......', res.data);
+          // console.log('.......', res.data);
           const alertData = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
@@ -64,21 +77,24 @@ export default function ticketAlarm() {
   };
 
   // 报警历史
-  const showModal = async () => {
+  const showModal = async (record: any) => {
     setIsModalVisible(true);
+
     await getRequest(APIS.alertRecord, {
       data: {
-        id: alertData.id,
-        alertName: alertData.alertName,
-        appCode: alertData.appCode,
-        envCode: alertData.appCode,
-        level: alertData.ticketLevel,
-        status: alertData.status,
+        id: record.id,
+        alertName: record.alertName,
+        appCode: record.appCode,
+        envCode: record.envCode,
+        level: record.ticketLevel,
+        status: record.status,
       },
     }).then((resp: any) => {
       if (resp.success) {
-        const alertHistoryData = resp.data;
-        setAlertHistoryData(alertHistoryData);
+        const alertHistoryData = resp.data.dataSource;
+        if (alertHistoryData !== []) {
+          setAlertHistoryData(alertHistoryData);
+        }
       }
     });
   };
@@ -117,7 +133,6 @@ export default function ticketAlarm() {
             <Input placeholder="请输入"></Input>
           </Form.Item>
           <Form.Item label="应用名称" name="appCode">
-            {' '}
             <Input placeholder="请输入"></Input>
           </Form.Item>
           <Form.Item label="环境" name="envCode">
@@ -164,38 +179,42 @@ export default function ticketAlarm() {
           onChange={pageSizeClick}
         >
           <Table.Column title="ID" dataIndex="id" width="5%" />
-          <Table.Column title="报警名称" dataIndex="alertName" ellipsis width="15%" />
+          <Table.Column title="报警名称" dataIndex="alertName" ellipsis width="14%" />
           <Table.Column title="应用名" dataIndex="appCode" ellipsis />
           <Table.Column title="环境" dataIndex="envCode" ellipsis />
           <Table.Column title="通知信息" dataIndex="message" width="15%" />
           <Table.Column title="通知对象" dataIndex="receiver" />
-          <Table.Column title="工单等级" dataIndex="ticketLevel" />
+          <Table.Column title="工单等级" dataIndex="ticketLevel" width="5%" />
           <Table.Column title="开始时间" dataIndex="startTime" />
           <Table.Column title="结束时间" dataIndex="endTime" />
-          <Table.Column title="报警状态" dataIndex="status" />
+          <Table.Column
+            title="报警状态"
+            dataIndex="status"
+            render={(text) => (
+              <Tag
+                color={
+                  text == '待审批'
+                    ? 'blue'
+                    : text == '处理完成'
+                    ? 'green'
+                    : text == '拒绝处理'
+                    ? 'red'
+                    : text == '中断处理'
+                    ? 'default'
+                    : ''
+                }
+              >
+                {text}
+              </Tag>
+            )}
+          />
           <Table.Column
             title="操作"
             dataIndex="gmtModify"
             key="action"
             render={(text, record: any) => (
               <Space size="large">
-                <a
-                  onClick={showModal}
-                  //   onClick={() => {
-                  //     const query = {
-                  //       appCode: record.appCode,
-                  //       templateType: record.templateType,
-                  //       envCode: record.envCode,
-                  //       categoryCode: record.categoryCode,
-                  //       isClient: 0,
-                  //       isContainClient: 0,
-                  //       id: record.id,
-                  //     };
-                  //     //   history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
-                  //   }}
-                >
-                  查看报警历史
-                </a>
+                <a onClick={() => showModal(record)}>查看报警历史</a>
               </Space>
             )}
           />
@@ -208,11 +227,15 @@ export default function ticketAlarm() {
           <Table.Column title="应用名" dataIndex="app_code" ellipsis />
           <Table.Column title="环境" dataIndex="env_code" ellipsis />
           <Table.Column title="实例地址" dataIndex="instance" width="15%" />
-          <Table.Column title="报警级别" dataIndex="level" />
+          <Table.Column title="报警级别" dataIndex="level" render={(text: string) => ALERT_LEVEL[text] ?? ''} />
           <Table.Column title="开始时间" dataIndex="start_time" />
           <Table.Column title="结束时间" dataIndex="end_time" />
           <Table.Column title="工单等级" dataIndex="receiver" />
-          <Table.Column title="报警状态" dataIndex="status" />
+          <Table.Column
+            title="报警状态"
+            dataIndex="status"
+            render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
+          />
         </Table>
       </Modal>
     </MatrixPageContent>
