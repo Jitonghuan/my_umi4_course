@@ -37,7 +37,7 @@ export default function ScriptEditor(props: ScriptEditorProps) {
 
     onChange?.(tempValue);
     setModalVisible(false);
-  }, [tempValue]);
+  }, [tempValue, mode]);
 
   const handleCancel = useCallback(() => setModalVisible(false), []);
   const handleAceTempChange = useCallback((v: string) => setTempValue(v), []);

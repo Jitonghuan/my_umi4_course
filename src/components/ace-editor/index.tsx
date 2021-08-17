@@ -49,6 +49,8 @@ export default function AceEditor(props: AceEditorProps) {
       return setWrap(!wrap);
     }
 
+    if (mode !== 'json') return;
+
     try {
       const obj = JSON.parse(displayValue);
       handleChange(JSON.stringify(obj, null, 2));
