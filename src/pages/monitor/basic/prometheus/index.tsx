@@ -26,9 +26,7 @@ const PrometheusCom: React.FC = () => {
     form,
   });
 
-  const { appManageEnvData, appManageListData } = usePublicData({
-    appCode,
-  });
+  const { appManageEnvData, appManageListData } = usePublicData({ appCode });
 
   const { run } = useRequest({
     api: deletePrometheus,
@@ -73,7 +71,7 @@ const PrometheusCom: React.FC = () => {
       key: 'labels',
       render: (v: any) => {
         const data = JSON.stringify(v, null, 2);
-        return <DetailModal limit={60} data={data} />;
+        return <DetailModal limit={60} data={data} dataType="json" />;
       },
     },
     {

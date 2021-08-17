@@ -4,13 +4,14 @@
 
 import React, { useState } from 'react';
 import { Modal, Input } from 'antd';
-import AceEditor from '../ace-editor';
+import AceEditor, { AceDataType } from '../ace-editor';
 
 export interface DetailModal {
   data: string;
-  detailRender?: (data: string) => React.ReactNode;
+  detailRender?: (data: string, dataType?: AceDataType) => React.ReactNode;
   titleRender?: (data: string) => React.ReactNode;
   limit?: number;
+  dataType?: AceDataType;
 }
 
 const defaultTitleRender =
@@ -19,12 +20,12 @@ const defaultTitleRender =
     return data?.length > limit ? `${data.substring(0, limit)}...` : data;
   };
 
-const defaultDetailRender = (data: string) => {
-  return <AceEditor value={data} readOnly height={400} />;
+const defaultDetailRender = (data: string, dataType?: AceDataType) => {
+  return <AceEditor value={data} readOnly height={400} mode={dataType} />;
 };
 
 export default function DetailModal(props: DetailModal) {
-  const { data, detailRender = defaultDetailRender, limit } = props;
+  const { data, detailRender = defaultDetailRender, limit, dataType } = props;
   const titleRender = props.titleRender || defaultTitleRender(limit || 30);
   const [visible, setVisible] = useState(false);
 
@@ -35,7 +36,7 @@ export default function DetailModal(props: DetailModal) {
     <>
       <a onClick={() => setVisible(true)}>{titleRender(data)}</a>
       <Modal width={800} title="显示详情" visible={visible} onCancel={() => setVisible(false)} footer={false}>
-        {detailRender(data)}
+        {detailRender(data, dataType)}
       </Modal>
     </>
   );

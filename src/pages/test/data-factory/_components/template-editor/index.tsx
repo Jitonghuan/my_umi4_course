@@ -93,6 +93,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
       ...payloadFormatter(values),
       name,
       desc,
+      env: values.env?.join(','),
     };
 
     if (mode === 'ADD') {

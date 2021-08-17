@@ -17,11 +17,13 @@ import './index.less';
 
 // ace.config.setModuleUrl('ace/mode/json_worker', jsonWorkerUrl);
 
+export type AceDataType = 'yaml' | 'json' | 'sql' | 'text' | 'xml';
+
 export interface AceEditorProps {
   defaultValue?: string;
   value?: string;
   onChange?: (nextValue: string) => any;
-  mode?: 'yaml' | 'json' | 'sql' | 'text' | 'xml';
+  mode?: AceDataType;
   height?: number;
   readOnly?: boolean;
   status?: 'success' | 'error' | 'warning' | 'default';
@@ -29,6 +31,7 @@ export interface AceEditorProps {
 }
 
 export default function AceEditor(props: AceEditorProps) {
+  const { mode = 'text' } = props;
   const [stateValue, setStateValue] = useState<string>('value' in props ? props.value! : props.defaultValue ?? '');
   const [wrap, setWrap] = useState(false);
 
@@ -42,7 +45,7 @@ export default function AceEditor(props: AceEditorProps) {
   const handleFormat = useCallback(() => {
     if (!displayValue) return;
 
-    if (!props.mode || props.mode === 'text') {
+    if (mode === 'text') {
       return setWrap(!wrap);
     }
 
@@ -52,12 +55,12 @@ export default function AceEditor(props: AceEditorProps) {
     } catch (ex) {
       message.warning('JSON格式不合法!');
     }
-  }, [displayValue, wrap, props.mode]);
+  }, [displayValue, wrap, mode]);
 
   return (
     <div className="ace-editor-wrapper" data-status={props.status || 'default'}>
       <Editor
-        mode={props.mode || 'text'}
+        mode={mode}
         width="100%"
         height={props.height ? `${props.height}px` : undefined}
         theme="tomorrow"
@@ -71,8 +74,8 @@ export default function AceEditor(props: AceEditorProps) {
           useWorker: false,
         }}
       />
-      <span className="ace-editor-type" data-type={props.mode} onClick={handleFormat}>
-        {props.mode === 'text' ? (wrap ? 'wrap text' : 'inline text') : props.mode}
+      <span className="ace-editor-type" data-type={mode} onClick={handleFormat}>
+        {mode === 'text' ? (wrap ? 'wrap text' : 'inline text') : mode}
       </span>
     </div>
   );
