@@ -1,6 +1,5 @@
 import moment from 'moment';
 import { parse } from 'qs';
-import rjson from 'relaxed-json';
 import ds from '@config/defaultSettings';
 
 /** 深度优先搜索处理 func */
@@ -30,24 +29,6 @@ export const getUrlParams = (keys?: string[]) => {
   }
 
   return urlParams;
-};
-
-/**
- * jsonParse error-first
- * @param jsonStr
- * @param {boolean} relaxed 松散校验（非严格）
- */
-export const JsonParse = (jsonStr: string, relaxed?: boolean) => {
-  try {
-    if (relaxed) {
-      jsonStr = rjson.transform(jsonStr);
-    }
-
-    let value = JSON.parse(jsonStr);
-    return [null, value];
-  } catch (e) {
-    return [true];
-  }
 };
 
 /** 给接口增加统一前缀 */
