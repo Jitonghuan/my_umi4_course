@@ -284,8 +284,15 @@ export default [
     routes: [
       {
         path: 'list',
-        name: '工单列表',
+        name: '运维工单',
+        key: 'ticketList',
         component: '@/pages/ticket/ticket-list',
+      },
+      {
+        path: 'alarm',
+        name: '告警工单',
+        key: 'ticketAlarm',
+        component: '@/pages/ticket/ticket-alarm',
       },
     ],
   },

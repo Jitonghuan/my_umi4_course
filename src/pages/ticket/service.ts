@@ -10,6 +10,8 @@ import ds from '@config/defaultSettings';
  *  pageIndex
  *  pageSize
  */
+import { addAPIPrefix } from '@/utils';
+
 export const queryTicketData = `${ds.apiPrefix}/ticketManage/list`;
 
 /** 工单状态 */
@@ -40,3 +42,7 @@ export const doUpdateStatus = `${ds.apiPrefix}/ticketManage/updateStatus`;
  * 上传接口
  */
 export const doUploadUrl = `${ds.apiPrefix}/ticketManage/uploadFile`;
+//告警工单列表
+export const alertTickets = addAPIPrefix('/ticketManage/alerttickets/list');
+//告警历史
+export const alertRecord = addAPIPrefix('/monitorManage/alertrecord/list');
