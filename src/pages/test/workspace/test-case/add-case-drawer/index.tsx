@@ -1,5 +1,5 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
-import { Form, Drawer, Input, Switch, Select, Tabs, Button } from 'antd';
+import { Form, Drawer, Input, Switch, Select, Tabs, Button, message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { createCase, updateCase, getCategoryList, getCaseInfo } from '../../service';
 import { createSona } from '@cffe/sona';
@@ -58,7 +58,7 @@ export default function RightDetail(props: any) {
       ..._data,
       stepContent: finalStepContent.map((item, idx) => ({ input: item, output: finalExpectedResult[idx] })),
       comment: JSON.stringify(sona.schema),
-      currentUser: userInfo.userId?.toString(),
+      currentUser: userInfo.userName,
       descType: +descType,
       isAuto: _data.isAuto ? 1 : 0,
     };
@@ -69,6 +69,7 @@ export default function RightDetail(props: any) {
       void (await postRequest(createCase, { data: formData }));
     }
     void updateCaseTable();
+    void message.success('新增用例成功');
   };
 
   const handleCancel = () => {

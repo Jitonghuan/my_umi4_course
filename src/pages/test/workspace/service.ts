@@ -75,3 +75,6 @@ export const getPhaseCaseDetail = addAPIPrefix('/qc/teststation/queryPhaseCaseDe
 
 /** POST 测试执行-关联Bug */
 export const relatedBug = addAPIPrefix('/qc/teststation/relatedBugByCase');
+
+/** GET  获取所属业务列表 */
+export const getProjects = addAPIPrefix('/appManage/category/list?pageIndex=-1&pageSize=100');
