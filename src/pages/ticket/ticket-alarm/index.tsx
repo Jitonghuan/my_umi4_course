@@ -15,14 +15,15 @@ export default function ticketAlarm() {
   const [pageSize, setPageSize] = useState(20);
   const [loading, setLoading] = useState(false);
   const [alertData, setAlertData] = useState<any>([]);
+  const [alertHistoryData, setAlertHistoryData] = useState<any>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   useEffect(() => {
     getAlertTickets({ pageIndex: 1, pageSize: 20 });
   }, []);
 
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
+  //   const showModal = () => {
+  //     setIsModalVisible(true);
+  //   };
 
   const handleOk = () => {
     setIsModalVisible(false);
@@ -34,6 +35,7 @@ export default function ticketAlarm() {
   // 查询数据
   const getAlertTickets = (value: any) => {
     setLoading(true);
+    // alertRecord
     getRequest(APIS.alertTickets, {
       data: {
         alertName: value.alertName || '',
@@ -46,7 +48,7 @@ export default function ticketAlarm() {
     })
       .then((res: any) => {
         if (res.success) {
-          // console.log('.......',res.data)
+          console.log('.......', res.data);
           const alertData = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
@@ -61,9 +63,27 @@ export default function ticketAlarm() {
       });
   };
 
-  // 过滤操作
-  //触发分页
+  // 报警历史
+  const showModal = async () => {
+    setIsModalVisible(true);
+    await getRequest(APIS.alertRecord, {
+      data: {
+        id: alertData.id,
+        alertName: alertData.alertName,
+        appCode: alertData.appCode,
+        envCode: alertData.appCode,
+        level: alertData.ticketLevel,
+        status: alertData.status,
+      },
+    }).then((resp: any) => {
+      if (resp.success) {
+        const alertHistoryData = resp.data;
+        setAlertHistoryData(alertHistoryData);
+      }
+    });
+  };
 
+  //触发分页
   const pageSizeClick = (pagination: any, currentDataSource: any) => {
     let obj = {
       pageIndex: pagination.current,
@@ -71,7 +91,6 @@ export default function ticketAlarm() {
     };
     setPageIndex(pagination.current);
     getAlertTickets(obj);
-    // console.log('pagination.current:', pagination.current, pagination.pageSize);
   };
 
   return (
@@ -182,8 +201,19 @@ export default function ticketAlarm() {
           />
         </Table>
       </ContentCard>
-      <Modal title="报警历史" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <Table bordered></Table>
+      <Modal title="报警历史" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width="80%">
+        <Table bordered dataSource={alertHistoryData}>
+          <Table.Column title="ID" dataIndex="id" width="5%" />
+          <Table.Column title="报警名称" dataIndex="alert_name" ellipsis width="15%" />
+          <Table.Column title="应用名" dataIndex="app_code" ellipsis />
+          <Table.Column title="环境" dataIndex="env_code" ellipsis />
+          <Table.Column title="实例地址" dataIndex="instance" width="15%" />
+          <Table.Column title="报警级别" dataIndex="level" />
+          <Table.Column title="开始时间" dataIndex="start_time" />
+          <Table.Column title="结束时间" dataIndex="end_time" />
+          <Table.Column title="工单等级" dataIndex="receiver" />
+          <Table.Column title="报警状态" dataIndex="status" />
+        </Table>
       </Modal>
     </MatrixPageContent>
   );
