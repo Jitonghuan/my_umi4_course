@@ -32,7 +32,7 @@ export interface ContextTypes {
     /** 二方包应用pom文件位置 */
     clientPomPath: string;
     /** 是否是服务端工程包含二方包 */
-    isContainClient: string;
+    isContainClient: number;
     /** 是否是二方包应用*/
     isClient: number;
     /** 描述 */
