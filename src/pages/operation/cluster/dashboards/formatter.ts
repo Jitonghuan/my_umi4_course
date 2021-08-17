@@ -163,6 +163,11 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       top: 0,
       right: 0,
       icon: 'circle',
+      textStyle: {
+        //图例字体大小
+        fontSize: 10,
+      },
+      itemHeight: 10,
     },
     //提示信息
     tooltip: {},
