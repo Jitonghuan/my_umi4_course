@@ -4,15 +4,16 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Form, Input, Select, Button, Drawer, message } from 'antd';
-import { renderForm } from '@/components/table-search/form';
 import EditorTable from '@cffe/pc-editor-table';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { EditorMode, KVProps, PromitheusItemProps } from '../../interfaces';
-import { postRequest, getRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import * as APIS from '../../services';
-import { usePublicData, useIntervalOptions } from './hooks';
+import { useAppCodeOptions, useEnvCodeOptions, useIntervalOptions } from './hooks';
 
 const { Item: FormItem } = Form;
+const fieldCommon = {
+  style: { width: 320 },
+};
 
 export interface PromitheusEditorProps {
   mode?: EditorMode;
@@ -25,6 +26,10 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
   const { mode, initData, onClose, onSave } = props;
   const [editField] = Form.useForm<PromitheusItemProps>();
   const [intervalOptions] = useIntervalOptions();
+  const [appCode, setAppCode] = useState<string>();
+  const [appCodeOptions] = useAppCodeOptions();
+  const [envCodeOptions, envCodeLoading] = useEnvCodeOptions(appCode);
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -48,10 +53,18 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
     editField.setFieldsValue(payload);
   }, [mode]);
 
+  const handleAppCodeChange = useCallback(
+    (next: string) => {
+      setAppCode(next);
+      editField.resetFields(['envCode']);
+    },
+    [editField],
+  );
+
   // 提交表单
   const handleSubmit = useCallback(async () => {
     const { labelList, ...others } = await editField.validateFields();
-    const labels = labelList!.reduce((prev, curr) => {
+    const labels = (labelList || []).reduce((prev, curr) => {
       prev[curr.key] = curr.value;
       return prev;
     }, {} as Record<string, any>);
@@ -60,14 +73,19 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
       labels,
     };
 
-    if (mode === 'ADD') {
-      postRequest(APIS.createPrometheus, { data: payload });
+    setPending(true);
+    try {
+      if (mode === 'ADD') {
+        await postRequest(APIS.createPrometheus, { data: payload });
+      } else {
+        await postRequest(APIS.updatePrometheus, { data: payload });
+      }
+
+      message.success('保存成功！');
+      onSave?.();
+    } finally {
+      setPending(false);
     }
-    {
-      postRequest(APIS.updatePrometheus, { data: payload });
-    }
-    message.success('保存成功！');
-    onSave?.();
   }, [mode, initData, onSave]);
 
   return (
@@ -79,7 +97,7 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
       width={800}
       footer={
         <div className="drawer-custom-footer">
-          <Button type="primary" onClick={handleSubmit}>
+          <Button type="primary" onClick={handleSubmit} loading={pending}>
             保存
           </Button>
           <Button type="default" onClick={onClose}>
@@ -90,20 +108,55 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
     >
       <Form form={editField} labelCol={{ flex: '100px' }}>
         <FormItem label="名称" name="name" rules={[{ required: true, message: '请输入名称' }]}>
-          <Input placeholder="请输入" disabled={mode === 'EDIT'} />
+          <Input placeholder="请输入" disabled={mode === 'EDIT'} {...fieldCommon} />
         </FormItem>
         <FormItem label="应用code" name="appCode" rules={[{ required: true, message: '请选择应用' }]}>
-          {mode === 'ADD' ? <Select placeholder="请选择" /> : <Input disabled />}
+          {mode === 'ADD' ? (
+            <Select
+              placeholder="请选择"
+              options={appCodeOptions}
+              onChange={handleAppCodeChange}
+              {...fieldCommon}
+              showSearch
+            />
+          ) : (
+            <Input disabled {...fieldCommon} />
+          )}
         </FormItem>
         <FormItem label="环境code" name="envCode" rules={[{ required: true, message: '请选择环境' }]}>
-          {mode === 'ADD' ? <Select placeholder="请选择" /> : <Input disabled />}
+          {mode === 'ADD' ? (
+            <Select
+              placeholder="请选择"
+              options={envCodeOptions}
+              loading={envCodeLoading}
+              {...fieldCommon}
+              showSearch
+            />
+          ) : (
+            <Input disabled {...fieldCommon} />
+          )}
         </FormItem>
         <FormItem label="采集频率" name="interval" initialValue={intervalOptions[0]?.value}>
-          <Select options={intervalOptions} placeholder="请选择" />
+          <Select options={intervalOptions} placeholder="请选择" {...fieldCommon} />
         </FormItem>
-        <FormItem label="MatchLabels">
+        <FormItem label="URL" name="metricsUrl" rules={[{ required: true, type: 'url', message: '请输入正确的URL' }]}>
+          <Input placeholder="示例: http://127.0.0.1:8080/health" />
+        </FormItem>
+        <FormItem label="MatchLabels" initialValue={[]}>
           <h4 style={{ color: '#999' }}>MatchLabels已设置默认值，无特殊需求，请不要填写</h4>
-          <FormItem noStyle name="labelList">
+          <FormItem
+            name="labelList"
+            rules={[
+              {
+                validator: async (_, value: KVProps[]) => {
+                  if (value?.find((n) => !n.key)) {
+                    throw new Error('MatchLabels 的 key 必填');
+                  }
+                },
+                validateTrigger: [],
+              },
+            ]}
+          >
             <EditorTable
               columns={[
                 { dataIndex: 'key', title: '键' },

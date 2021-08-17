@@ -4,10 +4,10 @@
 
 import { addAPIPrefix } from '@/utils';
 
-/** 应用名 */
+/** GET 应用名 */
 export const queryappManageList = addAPIPrefix('/appManage/list');
 
-/** 环境名 */
+/** GET 环境名 */
 export const queryappManageEnvList = addAPIPrefix('/monitorManage/app/env');
 
 /**
@@ -16,16 +16,16 @@ export const queryappManageEnvList = addAPIPrefix('/monitorManage/app/env');
 
 /* 监控对象 */
 
-// 查询列表
+/** 查询监控对象列表 */
 export const queryPrometheusList = addAPIPrefix('/monitorManage/serviceMonitor/list');
 
-// 创建
+/** POST 创建监控对象 */
 export const createPrometheus = addAPIPrefix('/monitorManage/serviceMonitor/create');
 
-// 编辑
+/** POST 编辑监控对象 */
 export const updatePrometheus = addAPIPrefix('/monitorManage/serviceMonitor/update');
 
-// 删除
+/** GET 删除监控对象 */
 export const deletePrometheus = addAPIPrefix('/monitorManage/serviceMonitor/delete');
 
 /* 报警规则 */

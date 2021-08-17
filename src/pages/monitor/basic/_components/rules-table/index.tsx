@@ -1,33 +1,32 @@
+// fork from business/component/rules-table
+
 import React, { useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
-import { FormInstance } from 'antd/lib';
-import { PlusOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';
 import useTable from '@/utils/useTable';
-import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../service';
+import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../services';
 import TemplateDrawer from '../template-drawer';
 import { Item } from '../../typing';
 import './index.less';
 
-interface StepTwoProps {
-  serviceId: string;
-  form?: FormInstance;
-  isShowAddButton?: boolean;
+interface RulesTableProps {
+  serviceId?: string;
 }
 
-type statusTypeItem = {
+type StatusTypeItem = {
   color: string;
   tagText: string;
   buttonText: string;
   status: number;
 };
 
-const STATUS_TYPE: Record<number, statusTypeItem> = {
+const STATUS_TYPE: Record<number, StatusTypeItem> = {
   0: { tagText: '已启用', buttonText: '禁用', color: 'green', status: 1 },
   1: { tagText: '未启用', buttonText: '启用', color: 'default', status: 0 },
 };
 
-const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true }) => {
+export default function RulesTable(props: RulesTableProps) {
+  const { serviceId } = props;
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
   const [type, setType] = useState<'add' | 'edit'>('add');
@@ -190,27 +189,22 @@ const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true 
 
   return (
     <>
-      <Table
-        columns={columns}
-        {...tableProps}
-        pagination={false}
-        className="step-two"
-        rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
-      />
-      {isShowAddButton && (
-        <Button
-          block
-          icon={<PlusOutlined />}
-          id="button-add"
-          onClick={() => {
-            setDrawerVisible(true);
-            setType('add');
-            setDrawerTitle('新增报警规则');
-          }}
-        >
-          新增
-        </Button>
-      )}
+      <div className="table-caption">
+        <div className="caption-left"></div>
+        <div className="caption-right">
+          <Button
+            type="primary"
+            onClick={() => {
+              setDrawerVisible(true);
+              setType('add');
+              setDrawerTitle('新增报警规则');
+            }}
+          >
+            +新增报警规则
+          </Button>
+        </div>
+      </div>
+      <Table columns={columns} {...tableProps} pagination={false} />
       <TemplateDrawer
         visible={drawerVisible}
         onClose={onClose}
@@ -222,6 +216,4 @@ const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true 
       />
     </>
   );
-};
-
-export default RulesTable;
+}
