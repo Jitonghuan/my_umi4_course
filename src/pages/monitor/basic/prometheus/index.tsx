@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button, Space, Popconfirm, Form } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import { PlusOutlined } from '@ant-design/icons';
-import { Link, history } from 'umi';
+import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
-import { Item } from '../../typing';
 import usePublicData from './usePublicData';
 import DetailModal from '@/components/detail-modal';
 import { queryPrometheusList, deletePrometheus } from '../../service';
+import { EditorMode, PromitheusItemProps } from '../interfaces';
+import PromitheusEditor from '../_components/prometheus-editor';
 import './index.less';
 
-const PrometheusCom: React.FC = () => {
+export default function PrometheusCom() {
   const [appCode, setAppCode] = useState('');
   const [form] = Form.useForm();
+
+  const [editMode, setEditMode] = useState<EditorMode>('HIDE');
+  const [editData, setEditData] = useState<PromitheusItemProps>();
 
   const {
     tableProps,
@@ -38,7 +40,17 @@ const PrometheusCom: React.FC = () => {
     },
   });
 
-  const columns: ColumnsType<Item> = [
+  const handleEditItem = useCallback((record: PromitheusItemProps) => {
+    setEditMode('EDIT');
+    setEditData(record);
+  }, []);
+
+  const handleEditSave = useCallback(() => {
+    setEditMode('HIDE');
+    submit();
+  }, []);
+
+  const columns: ColumnsType<PromitheusItemProps> = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -79,9 +91,9 @@ const PrometheusCom: React.FC = () => {
       dataIndex: 'option',
       key: 'option',
       width: 100,
-      render: (_: string, record: Item) => (
+      render: (_: string, record: PromitheusItemProps) => (
         <Space>
-          <Link to={`./prometheus-edit?name=${record.name}`}>编辑</Link>
+          <a onClick={() => handleEditItem(record)}>编辑</a>
           <Popconfirm title="确认删除？" onConfirm={() => run({ id: record.id })} placement="topLeft">
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
@@ -139,37 +151,36 @@ const PrometheusCom: React.FC = () => {
   };
 
   return (
-    <TableSearch
-      splitLayout={false}
-      form={form}
-      formOptions={formOptions}
-      formLayout="inline"
-      columns={columns}
-      {...tableProps}
-      pagination={{
-        ...tableProps.pagination,
-        showTotal: (total) => `共 ${total} 条`,
-        showSizeChanger: true,
-        size: 'small',
-      }}
-      showTableTitle
-      tableTitle="Prometheus监控列表"
-      extraNode={
-        <Button
-          type="primary"
-          onClick={() => {
-            history.push('./prometheus-add');
-          }}
-          icon={<PlusOutlined />}
-        >
-          接入Prometheus
-        </Button>
-      }
-      onSearch={submit}
-      reset={onReset}
-      rowKey="id"
-    />
+    <>
+      <TableSearch
+        splitLayout={false}
+        form={form}
+        formOptions={formOptions}
+        formLayout="inline"
+        columns={columns}
+        {...tableProps}
+        pagination={{
+          ...tableProps.pagination,
+          showTotal: (total) => `共 ${total} 条`,
+          showSizeChanger: true,
+        }}
+        showTableTitle
+        tableTitle="Prometheus监控列表"
+        extraNode={
+          <Button type="primary" onClick={() => setEditMode('ADD')}>
+            + 接入Prometheus
+          </Button>
+        }
+        onSearch={submit}
+        reset={onReset}
+        rowKey="id"
+      />
+      <PromitheusEditor
+        mode={editMode}
+        initData={editData}
+        onClose={() => setEditMode('HIDE')}
+        onSave={handleEditSave}
+      />
+    </>
   );
-};
-
-export default PrometheusCom;
+}

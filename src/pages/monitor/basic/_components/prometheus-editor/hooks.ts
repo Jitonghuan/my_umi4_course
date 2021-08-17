@@ -2,60 +2,61 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/17 09:17
 
-import { useState, useEffect } from 'react';
-import useRequest from '@/utils/useRequest';
+import { useState, useEffect, useCallback } from 'react';
+import { getRequest } from '@/utils/request';
 import { queryappManageList, queryappManageEnvList } from '../../services';
 import { SelectOptions } from '../../interfaces';
 
-interface UsePublicDataProps {
-  appCode: string;
-}
-
-export const usePublicData = (props: UsePublicDataProps) => {
-  const { appCode } = props;
-
-  const { run: queryappManageListFun, data: appManageListData } = useRequest({
-    api: queryappManageList,
-    method: 'GET',
-    formatData: (data) => {
-      return data.dataSource?.map((v: any) => {
-        return {
-          ...v,
-          key: v?.appCode,
-          value: v?.appCode,
-        };
-      });
-    },
-  });
-
-  const { run: queryappManageEnvListFun, data: appManageEnvData } = useRequest({
-    api: queryappManageEnvList,
-    method: 'GET',
-    formatData: (data) => {
-      return data.dataSource?.map((v: any) => {
-        return {
-          ...v,
-          key: v?.envCode,
-          value: v?.envCode,
-        };
-      });
-    },
-  });
+export function useAppCodeOptions() {
+  const [data, setData] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
-    queryappManageListFun({ pageSize: '-1' });
+    getRequest(queryappManageList, {
+      data: { pageSize: -1 },
+    }).then((result) => {
+      const { dataSource } = result.data || {};
+      const next = (dataSource || []).map((item: any) => ({
+        label: item.appCode,
+        value: item.appCode,
+        key: item.appCode,
+      }));
+      setData(next);
+    });
+  }, []);
+
+  return [data];
+}
+
+export function useEnvCodeOptions(appCode?: string): [SelectOptions[], boolean] {
+  const [data, setData] = useState<SelectOptions[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadData = useCallback(async (appCode?: string) => {
+    setData([]);
+    if (!appCode) return;
+    setLoading(true);
+    try {
+      const result = await getRequest(queryappManageEnvList, {
+        data: { appCode, pageSize: -1 },
+      });
+      const { dataSource } = result.data || {};
+      const next = (dataSource || []).map((item: any) => ({
+        label: item.envCode,
+        value: item.envCode,
+        key: item.envCode,
+      }));
+      setData(next);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    if (!appCode) return;
-    queryappManageEnvListFun({ appCode, pageSize: '-1' });
+    loadData(appCode);
   }, [appCode]);
 
-  return {
-    appManageListData,
-    appManageEnvData: appCode ? appManageEnvData : [],
-  };
-};
+  return [data, loading];
+}
 
 export function useIntervalOptions() {
   const [data, setData] = useState<SelectOptions[]>([]);

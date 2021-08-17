@@ -28,3 +28,23 @@ export interface PromitheusItemProps extends Record<string, any> {
   /** 仅编辑时使用 */
   labelList?: KVProps[];
 }
+
+export interface AlarmRuleProps extends Record<string, any> {
+  id?: number;
+  RuleId: string;
+  name: string;
+  serviceId?: number;
+  group?: string;
+  expression: string;
+  duration: string;
+  message?: string;
+  level: number;
+  labels: Record<string, string>;
+  annotations: Record<string, string>;
+  receiver: string[];
+  receiverType: string[];
+  silence: number;
+  silenceStart?: string;
+  silenceEnd?: string;
+  status: number;
+}
