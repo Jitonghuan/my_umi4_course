@@ -1,6 +1,5 @@
 import isNaN from 'lodash/isNaN';
 import flattenDepth from 'lodash/flattenDepth';
-import CodeMirror from 'codemirror';
 // \$\{[^\$\(\)\+\-\*\/
 /** 切片正则 */
 // /\$[\{][^\}]*[\}]|\w+|\$\{[^\$\(\)\+\-\*\/)\$,]*\w\}|\$\{[^\$\(\)\+\-\*\/]*\w\}|\$\{[^\$\(\)\+\-\*\/]*[\u4e00-\u9fa5]\}|\w|(.)|\n/g
@@ -173,25 +172,11 @@ export const validateValue = (valuesArr: string[], config: IvalidateConf): [bool
   return [false, valuesArr];
 };
 
-export const createSpanElem = (
-  className: string,
-  text: string,
-  _endCursor?: CodeMirror.Position,
-  _editorRef?: CodeMirror.Editor,
-) => {
-  const spanNode = document.createElement('span');
-  spanNode.className = `${className} ${generateUUID()}`;
-  const innerText = document.createTextNode(text);
-  spanNode.append(innerText);
-
-  return spanNode;
-};
-
 /**
  * generateUUID 生成UUID
  * @returns {string} 返回字符串
  */
-function generateUUID(): string {
+export function generateUUID(): string {
   var d = new Date().getTime();
   var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = (d + Math.random() * 16) % 16 | 0;

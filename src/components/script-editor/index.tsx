@@ -40,7 +40,6 @@ export default function ScriptEditor(props: ScriptEditorProps) {
   }, [tempValue]);
 
   const handleCancel = useCallback(() => setModalVisible(false), []);
-  const handleTempChange = useCallback((e: any) => setTempValue(e.target.value), []);
   const handleAceTempChange = useCallback((v: string) => setTempValue(v), []);
 
   return (
@@ -60,11 +59,7 @@ export default function ScriptEditor(props: ScriptEditorProps) {
         onCancel={handleCancel}
         onOk={handleOk}
       >
-        {mode === 'text' ? (
-          <Input.TextArea autoFocus value={tempValue} onChange={handleTempChange} rows={14} />
-        ) : (
-          <AceEditor mode={mode} value={tempValue} onChange={handleAceTempChange} height={320} />
-        )}
+        <AceEditor mode={mode} value={tempValue} onChange={handleAceTempChange} height={320} />
       </Modal>
     </>
   );

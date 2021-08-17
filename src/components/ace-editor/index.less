@@ -12,13 +12,16 @@
     border-width: 1px 0 0 1px;
     background-color: #f8f9fa;
     color: #999;
-
-    &[data-type='json'] {
-      cursor: pointer;
-    }
+    cursor: pointer;
   }
 }
 
-.ant-form-item-has-error .ace-editor-wrapper {
+.ant-form-item-has-error .ace-editor-wrapper,
+.ace-editor-wrapper[data-status='error'] {
   border-color: #cc4631;
+
+  .ace-editor-type {
+    border-color: #cc4631;
+    background-color: #faebe9;
+  }
 }
