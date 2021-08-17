@@ -19,7 +19,7 @@ const dataFormatter = (data: any): string => {
   }
 
   if (!data) return '<no result>';
-  if (typeof data === 'string') data;
+  if (typeof data === 'string') return data;
   // 有错误信息
   if (data.status === false && data.error) {
     throw data.error as string;
