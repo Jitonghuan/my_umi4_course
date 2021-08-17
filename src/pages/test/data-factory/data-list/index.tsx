@@ -19,8 +19,8 @@ type statusTypeItem = {
 
 const STATUS_TYPE: Record<number, statusTypeItem> = {
   0: { text: '创建中', color: 'blue' },
-  2: { text: '失败', color: 'volcano' },
   1: { text: '成功', color: 'green' },
+  2: { text: '失败', color: 'volcano' },
 };
 
 export default function DataFactoryList(props: any) {
@@ -161,7 +161,7 @@ export default function DataFactoryList(props: any) {
         <Table.Column
           dataIndex="status"
           title="状态"
-          render={(text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>}
+          render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
         />
         <Table.Column dataIndex="errorLog" title="日志" render={(value: string) => <DetailModal data={value} />} />
       </Table>
