@@ -57,7 +57,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/operation/cluster`,
-    redirect: `${PAGE_PREFIX}/operation/cluster/scheduling`,
+    redirect: `${PAGE_PREFIX}/operation/cluster/dashboards`,
   },
   {
     path: `${PAGE_PREFIX}/operation/app-tmpl`,
@@ -610,13 +610,13 @@ export default [
             component: '@/pages/operation/app-tmpl/push',
             hideInMenu: true,
           },
-          {
-            path: 'tmpl-edit',
-            name: '应用模版编辑',
-            key: 'app-tmpl',
-            component: '@/pages/operation/app-tmpl/tmpl-edit',
-            hideInMenu: true,
-          },
+          // {
+          //   path: 'tmpl-edit',
+          //   name: '应用模版编辑',
+          //   key: 'app-tmpl',
+          //   component: '@/pages/operation/app-tmpl/tmpl-edit',
+          //   hideInMenu: true,
+          // },
           {
             path: 'tmpl-add',
             name: '新增应用模版',

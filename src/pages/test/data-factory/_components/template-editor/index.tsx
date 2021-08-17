@@ -2,19 +2,21 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/16 16:35
 
-import React, { useCallback, useEffect, useContext } from 'react';
+import React, { useCallback, useEffect, useContext, useMemo } from 'react';
 import { Drawer, Form, Button, Checkbox, Input, Select, message } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
 import usePublicData from '@/utils/usePublicData';
 import { postRequest } from '@/utils/request';
 import { EditorMode } from '../../interfaces';
-import { useOperationTypeOptions } from './hooks';
+import { useOperationTypeOptions, useVarTypeOptions } from './hooks';
 import ScriptEditor from '@/components/script-editor';
+import { BugOutlined } from '@ant-design/icons';
 import * as APIS from '../../service';
 import './index.less';
 
 const { Item: FormItem } = Form;
+const { TextArea } = Input;
 
 export interface TemplateEditorProps {
   mode?: EditorMode;
@@ -27,7 +29,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { mode, initData, onClose, onSave } = props;
   const [editField] = Form.useForm();
-  // const [varTypeOptions] = useVarTypeOptions();
+  const [varTypeOptions] = useVarTypeOptions();
   const [operationTypeOptions] = useOperationTypeOptions();
 
   const { envListType, appTypeData } = usePublicData({
@@ -47,6 +49,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
 
     const initValues = {
       name: initData?.name,
+      desc: initData?.desc,
       env: (initData?.env || '').split(/,\s?/),
       project: initData?.project,
       steps: initData?.steps || [],
@@ -64,12 +67,13 @@ export default function TemplateEditor(props: TemplateEditorProps) {
     const values = await editField.validateFields();
     console.log('>> handleSave', values);
 
-    const { name, project, env, params = [], steps = [] } = values;
+    const { name, desc, project, env, params = [], steps = [] } = values;
     const payload: any = {
       name,
+      desc,
       project,
       env: (env || []).join(','),
-      params: (params || []).map((n: any) => ({ name: n.name, value: n.value })),
+      params: (params || []).map((n: any) => ({ name: n.name, value: n.value, type: n.type, desc: n.desc })),
       steps: (steps || []).map((n: any, index: number) => ({
         ...n,
         step: index + 1,
@@ -95,6 +99,10 @@ export default function TemplateEditor(props: TemplateEditorProps) {
     onSave?.();
   }, [mode, initData]);
 
+  const filteredEnvTypeOptions = useMemo(() => {
+    return envListType?.filter((n) => n.value !== 'prod');
+  }, [envListType]);
+
   return (
     <Drawer
       visible={mode !== 'HIDE'}
@@ -105,6 +113,9 @@ export default function TemplateEditor(props: TemplateEditorProps) {
       className="template-editor-wrapper"
       footer={
         <div className="template-editor-footer">
+          <Button type="default" icon={<BugOutlined />} danger>
+            调试
+          </Button>
           <Button type="primary" onClick={handleSave}>
             保存
           </Button>
@@ -115,15 +126,18 @@ export default function TemplateEditor(props: TemplateEditorProps) {
       }
     >
       <Form form={editField} labelCol={{ flex: '100px' }}>
-        <FormItem label="模板名称" name="name" rules={[{ required: true, message: '请输入模板名称' }]}>
+        <FormItem label="名称" name="name" rules={[{ required: true, message: '请输入模板名称' }]}>
           <Input placeholder="请输入" style={{ width: 720 }} />
         </FormItem>
+        <FormItem label="描述" name="desc" rules={[{ required: true, message: '请输入模板描述' }]}>
+          <TextArea rows={4} style={{ width: 720 }} />
+        </FormItem>
         <div className="form-item-group">
-          <FormItem label="项目" name="project" rules={[{ required: true, message: '请选择模板项目' }]}>
+          <FormItem label="业务线" name="project" rules={[{ required: true, message: '请选择业务线' }]}>
             <Select options={appTypeData} placeholder="请选择 " style={{ width: 300 }} />
           </FormItem>
           <FormItem label="支持环境" name="env" rules={[{ required: true, message: '请选择支持环境' }]}>
-            <Checkbox.Group options={envListType} />
+            <Checkbox.Group options={filteredEnvTypeOptions} />
           </FormItem>
         </div>
         <h3>定义变量</h3>
@@ -132,8 +146,8 @@ export default function TemplateEditor(props: TemplateEditorProps) {
           rules={[
             {
               validator: async (_, value: any[]) => {
-                if (value?.find((n) => !(n.name && n.value))) {
-                  throw new Error('变量名 和 值不能为空 !');
+                if (value?.find((n) => !(n.name && n.value && n.type))) {
+                  throw new Error('变量名、类型、值不能为空 !');
                 }
               },
               validateTrigger: [],
@@ -148,10 +162,13 @@ export default function TemplateEditor(props: TemplateEditorProps) {
               {
                 title: '类型',
                 dataIndex: 'type',
-                fieldType: 'readonly',
-                colProps: { render: () => '自定义值', width: 100 },
+                required: true,
+                fieldType: 'select',
+                valueOptions: varTypeOptions,
+                colProps: { width: 160 },
               },
               { title: '值', dataIndex: 'value' },
+              { title: '描述', dataIndex: 'desc' },
             ]}
           />
         </FormItem>
@@ -164,24 +181,34 @@ export default function TemplateEditor(props: TemplateEditorProps) {
                 if (value?.find((n) => !(n.type && n.name && n.script))) {
                   throw new Error('还有未填写的数据项!');
                 }
+
+                // TODO 校验 JSON 数据格式
               },
               validateTrigger: [],
             },
           ]}
         >
-          <EditorTable
+          <EditorTable<any>
             creator={{ clone: true }}
             columns={[
               { title: '序号', dataIndex: '__count', fieldType: 'readonly', colProps: { width: 60, align: 'center' } },
               {
-                title: '操作类型',
+                title: '步骤类型',
                 dataIndex: 'type',
                 fieldType: 'select',
                 valueOptions: operationTypeOptions,
                 colProps: { width: 120 },
               },
-              { title: '名称', dataIndex: 'name', colProps: { width: 160 } },
-              { title: '脚本', dataIndex: 'script', fieldType: 'custom', component: ScriptEditor },
+              { title: '步骤名称', dataIndex: 'name', colProps: { width: 160 } },
+              {
+                title: '脚本',
+                dataIndex: 'script',
+                fieldType: 'custom',
+                component: ScriptEditor,
+                fieldProps: (value, index, record) => {
+                  return { mode: record.type === 'SQL' ? 'sql' : 'json' };
+                },
+              },
             ]}
           />
         </FormItem>

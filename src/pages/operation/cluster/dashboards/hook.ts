@@ -5,38 +5,40 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from './service';
 import { getRequest } from '@/utils/request';
-import { result } from '_@types_lodash@4.14.171@@types/lodash';
 import moment from 'moment';
 type AnyObject = Record<string, any>;
 
 // 获取AB集群各院区流量数据
-export function useABHistogram(): [AnyObject, boolean, () => Promise<void>] {
+export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) => Promise<any>] {
   const [loading, setLoading] = useState(false);
   const [histogramData, setHistogramData] = useState(<any>[{}]);
 
-  const loadHistogram = () =>
-    getRequest(APIS.getClustersEsData)
+  const loadHistogram = useCallback((showLoading = true) => {
+    showLoading && setLoading(true);
+    return getRequest(APIS.getClustersEsData)
       .then((result) => {
         setHistogramData(result.data || {});
       })
       .finally(() => {
         setLoading(false);
       });
+  }, []);
 
   useEffect(() => {
-    setLoading(true);
     loadHistogram();
   }, []);
   return [histogramData, loading, loadHistogram];
 }
 
 /** A集群各院区流量 */
-export function useClusterA(): [any, boolean, () => Promise<void>, any] {
+export function useClusterA(): [any, boolean, (showLoading?: boolean) => Promise<void>, any] {
   const [clusterAData, setClusterAData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [timeStamp, setTimeStamp] = useState<any>([]);
-  const loadClusterA = () =>
-    getRequest(APIS.getAClusterEsData)
+  const loadClusterA = (showLoading = true) => {
+    showLoading && setLoading(true);
+
+    return getRequest(APIS.getAClusterEsData)
       .then((result) => {
         let dataList = result.data;
         let timeStampList = [];
@@ -93,22 +95,24 @@ export function useClusterA(): [any, boolean, () => Promise<void>, any] {
       .finally(() => {
         setLoading(false);
       });
+  };
+
   useEffect(() => {
-    setLoading(true);
     loadClusterA();
   }, []);
 
-  // const clusterAData =[]
   return [clusterAData, loading, loadClusterA, timeStamp];
 }
 
 /** B集群各院区流量 */
-export function useClusterB(): [any, boolean, () => Promise<void>, any] {
+export function useClusterB(): [any, boolean, (showLoading?: boolean) => Promise<void>, any] {
   const [clusterBData, setClusterBData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [timeStamp, setTimeStamp] = useState<any>([]);
-  const loadClusterB = () =>
-    getRequest(APIS.getBClusterEsData)
+  const loadClusterB = (showLoading = true) => {
+    showLoading && setLoading(true);
+
+    return getRequest(APIS.getBClusterEsData)
       .then((result) => {
         let dataList = result.data;
         let timeStampList = [];
@@ -165,8 +169,9 @@ export function useClusterB(): [any, boolean, () => Promise<void>, any] {
       .finally(() => {
         setLoading(false);
       });
+  };
+
   useEffect(() => {
-    setLoading(true);
     loadClusterB();
   }, []);
 

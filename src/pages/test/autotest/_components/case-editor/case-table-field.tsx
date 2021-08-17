@@ -93,7 +93,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
         {props.value?.map((n, i) => (
           <Collapse.Panel
             key={i}
-            header={n?.name || '用例'}
+            header={n?.name ? `#${n.id} - ${n.name}` : '用例'}
             extra={<VCCustomIcon type="icondelete" onClick={() => handleDelRecord(i)} />}
           >
             <ul className="case-info-list">

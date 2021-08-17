@@ -8,7 +8,7 @@ module.exports = {
   commands: {
     mock: [
       '$ fnpm install',
-      '$ npm run mock',
+      '$ npm run umi:mock',
     ],
     dev: [
       '$ fnpm install',
