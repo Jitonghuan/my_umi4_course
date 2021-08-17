@@ -139,7 +139,7 @@ const HistoryCom: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       // width: '4%',
-      render: (text: number) => <Tag color={STATUS_TYPE?.[text].color}>{STATUS_TYPE[text].text}</Tag>,
+      render: (text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>,
     },
   ];
 

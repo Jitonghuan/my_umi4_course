@@ -3,7 +3,7 @@
 // @create 2021/08/17 14:20
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Form, message, Alert, Input, Drawer, Button, Select, Space, Table } from 'antd';
+import { Form, message, Alert, Input, Drawer, Button, Select, Space, Table, Modal } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { postRequest, getRequest } from '@/utils/request';
@@ -15,9 +15,22 @@ export default function ticketAlarm() {
   const [pageSize, setPageSize] = useState(20);
   const [loading, setLoading] = useState(false);
   const [alertData, setAlertData] = useState<any>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   useEffect(() => {
     getAlertTickets({ pageIndex: 1, pageSize: 20 });
   }, []);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
   // 查询数据
   const getAlertTickets = (value: any) => {
     setLoading(true);
@@ -148,18 +161,19 @@ export default function ticketAlarm() {
             render={(text, record: any) => (
               <Space size="large">
                 <a
-                  onClick={() => {
-                    const query = {
-                      appCode: record.appCode,
-                      templateType: record.templateType,
-                      envCode: record.envCode,
-                      categoryCode: record.categoryCode,
-                      isClient: 0,
-                      isContainClient: 0,
-                      id: record.id,
-                    };
-                    //   history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
-                  }}
+                  onClick={showModal}
+                  //   onClick={() => {
+                  //     const query = {
+                  //       appCode: record.appCode,
+                  //       templateType: record.templateType,
+                  //       envCode: record.envCode,
+                  //       categoryCode: record.categoryCode,
+                  //       isClient: 0,
+                  //       isContainClient: 0,
+                  //       id: record.id,
+                  //     };
+                  //     //   history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
+                  //   }}
                 >
                   查看报警历史
                 </a>
@@ -168,6 +182,9 @@ export default function ticketAlarm() {
           />
         </Table>
       </ContentCard>
+      <Modal title="报警历史" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <Table bordered></Table>
+      </Modal>
     </MatrixPageContent>
   );
 }
