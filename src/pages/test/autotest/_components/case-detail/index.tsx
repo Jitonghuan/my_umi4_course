@@ -130,7 +130,7 @@ export default function CaseEditor(props: CaseEditorProps) {
                 <Table.Column title="描述" dataIndex="desc" />
               </Table>
             ) : (
-              <AceEditor value={displayData.parametersJSON || ''} height={220} readOnly />
+              <AceEditor mode="json" value={displayData.parametersJSON || ''} height={220} readOnly />
             )}
           </div>
           <div className="case-table-field">

@@ -47,7 +47,7 @@ export default function RecordList(props: ReordListProps) {
     });
 
     setIsModalVisible(true);
-    setLogData(result.data?.[0]?.errorLog);
+    setLogData(result.data);
   }, []);
 
   const handleChangeisMine = (next: boolean) => {
