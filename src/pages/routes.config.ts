@@ -494,7 +494,6 @@ export default [
         path: 'basic',
         name: '基础监控',
         key: 'basic-monitor',
-        hideInMenu: true,
         component: '@/pages/monitor/basic/index',
         routes: [
           {
