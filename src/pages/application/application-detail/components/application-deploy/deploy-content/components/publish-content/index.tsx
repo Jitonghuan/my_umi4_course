@@ -5,16 +5,16 @@
  * @create 2021-04-15 10:22
  */
 
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, message, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
+import TestEnvSteps from './test-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
 import { createDeploy, updateFeatures, restartApp } from '../../../../../../service';
 import { IProps } from './types';
-import DetailContext from '../../../../../context';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -22,16 +22,17 @@ const { confirm } = Modal;
 
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
-  const isProd = envTypeCode === 'prod';
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const { appData } = useContext(DetailContext);
+  const isProd = envTypeCode === 'prod';
 
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
       {isProd ? (
-        <ProdSteps appCode={appCode} deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
+        <ProdSteps deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
+      ) : envTypeCode === 'test' ? (
+        <TestEnvSteps deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
       ) : (
         <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
       )}
