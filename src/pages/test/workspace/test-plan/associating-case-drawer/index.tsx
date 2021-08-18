@@ -98,7 +98,7 @@ export default function AssociatingCaseDrawer(props: any) {
         <Button type="primary" onClick={submit}>
           确定
         </Button>
-        <Button type="primary" onClick={() => setVisible(false)}>
+        <Button type="primary" onClick={() => setVisible(false)} className="ml-12">
           取消
         </Button>
       </div>
