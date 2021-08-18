@@ -140,10 +140,10 @@ export default function ticketAlarm() {
           </Form.Item>
           <Form.Item label="报警状态" name="status">
             <Select showSearch style={{ width: 200 }} placeholder="请选择">
-              <Option value="refuse">拒绝处理</Option>
-              <Option value="firing">告警中</Option>
-              <Option value="terminate">中断处理</Option>
-              <Option value="resolved">已修复</Option>
+              <Option value="待审批">待审批</Option>
+              <Option value="处理完成">处理完成</Option>
+              <Option value="拒绝处理">拒绝处理</Option>
+              <Option value="中断处理">中断处理</Option>
             </Select>
           </Form.Item>
           <Form.Item>
