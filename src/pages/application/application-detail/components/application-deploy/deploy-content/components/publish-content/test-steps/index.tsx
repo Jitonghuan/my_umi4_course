@@ -22,8 +22,8 @@ const deployStatusMapping: Record<string, Status> = {
   mergeErr: 1.2,
   conflict: 1.2,
   // 单测卡点
-  testing: 2.1,
-  testErr: 2.2,
+  qualityChecking: 2.1,
+  qualityCheckFailed: 2.2,
   // 构建
   building: 3.1,
   buildErr: 3.2,
@@ -80,7 +80,7 @@ export default function TestEnvSteps({ deployInfo, onOperate }: IProps) {
           title="质量卡点"
           icon={status === 2.1 && <LoadingOutlined />}
           status={status === 2.2 ? 'error' : undefined}
-          description={status === 2.2 ? <a>查看详情</a> : null}
+          description={status > 2.2 ? <a>查看详情</a> : null}
         />
         <Step
           title="构建"
