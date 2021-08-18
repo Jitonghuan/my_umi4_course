@@ -15,15 +15,22 @@ export default function AssociatingCaseDrawer(props: any) {
 
   useEffect(() => {
     void getRequest(getAllTestCaseTree).then((res) => {
-      const Q = [...res.data.subItems];
+      const curCaseTree = res.data.subItems.filter((item: any) => item.subItems?.length || item.cases?.length);
+      const Q = [...curCaseTree];
       while (Q.length) {
         const cur = Q.shift();
         cur.key = cur.id;
         cur.title = cur.name;
-        cur.children = cur.subItems;
-        cur.subItems?.length && Q.push(...cur.subItems);
+        if (cur.subItems?.length) {
+          cur.subItems = cur.subItems.filter((item: any) => item.subItems?.length || item.cases?.length);
+          cur.children = cur.subItems;
+          Q.push(...cur.subItems);
+        } else if (cur.cases?.length) {
+          cur.cases.forEach((item: any) => (item.key = item.id));
+          cur.children = cur.cases;
+        }
       }
-      void setTestCaseTree(res.data.subItems || []);
+      void setTestCaseTree(curCaseTree || []);
     });
   }, []);
 
