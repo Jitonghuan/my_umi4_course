@@ -79,15 +79,10 @@ export default function ticketAlarm() {
   // 报警历史
   const showModal = async (record: any) => {
     setIsModalVisible(true);
-
+    console.log('99999', record);
     await getRequest(APIS.alertRecord, {
       data: {
-        id: record.id,
-        alertName: record.alertName,
-        appCode: record.appCode,
-        envCode: record.envCode,
-        level: record.ticketLevel,
-        status: record.status,
+        id: record.alertRecordId,
       },
     }).then((resp: any) => {
       if (resp.success) {
@@ -182,9 +177,7 @@ export default function ticketAlarm() {
           <Table.Column title="报警名称" dataIndex="alertName" ellipsis width="14%" />
           <Table.Column title="应用名" dataIndex="appCode" ellipsis />
           <Table.Column title="环境" dataIndex="envCode" ellipsis />
-          <Table.Column title="通知信息" dataIndex="message" width="15%" />
-          <Table.Column title="通知对象" dataIndex="receiver" />
-          <Table.Column title="工单等级" dataIndex="ticketLevel" width="5%" />
+          <Table.Column title="通知对象" dataIndex="receiver" width="5%" />
           <Table.Column title="开始时间" dataIndex="startTime" />
           <Table.Column title="结束时间" dataIndex="endTime" />
           <Table.Column
@@ -210,11 +203,11 @@ export default function ticketAlarm() {
           />
           <Table.Column
             title="操作"
-            dataIndex="gmtModify"
+            // dataIndex="gmtModify"
             key="action"
             render={(text, record: any) => (
               <Space size="large">
-                <a onClick={() => showModal(record)}>查看报警历史</a>
+                <a onClick={() => showModal(record)}>查看告警历史</a>
               </Space>
             )}
           />
@@ -223,14 +216,20 @@ export default function ticketAlarm() {
       <Modal title="报警历史" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width="80%">
         <Table bordered dataSource={alertHistoryData}>
           <Table.Column title="ID" dataIndex="id" width="5%" />
-          <Table.Column title="报警名称" dataIndex="alert_name" ellipsis width="15%" />
-          <Table.Column title="应用名" dataIndex="app_code" ellipsis />
-          <Table.Column title="环境" dataIndex="env_code" ellipsis />
-          <Table.Column title="实例地址" dataIndex="instance" width="15%" />
-          <Table.Column title="报警级别" dataIndex="level" render={(text: string) => ALERT_LEVEL[text] ?? ''} />
-          <Table.Column title="开始时间" dataIndex="start_time" />
-          <Table.Column title="结束时间" dataIndex="end_time" />
-          <Table.Column title="工单等级" dataIndex="receiver" />
+          <Table.Column title="告警名称" dataIndex="alertName" ellipsis width="12%" />
+          <Table.Column title="告警信息" dataIndex="message" ellipsis width="20%" />
+          <Table.Column title="应用名" dataIndex="appCode" ellipsis />
+          <Table.Column title="环境" dataIndex="envCode" ellipsis width="5%" />
+          <Table.Column title="实例地址" dataIndex="instance" width="10%" />
+          <Table.Column
+            title="告警级别"
+            dataIndex="level"
+            render={(text: string) => ALERT_LEVEL[text] ?? ''}
+            width="7%"
+          />
+          <Table.Column title="开始时间" dataIndex="startTime" />
+          <Table.Column title="结束时间" dataIndex="endTime" />
+          <Table.Column title="接收人" dataIndex="receiver" />
           <Table.Column
             title="报警状态"
             dataIndex="status"

@@ -228,11 +228,11 @@ export default function Launch() {
               重置
             </Button>
           </Form.Item>
-
-          <span style={{ float: 'right' }}>
+        </Form>
+        <div style={{ marginTop: '1%', float: 'left' }}>
+          <Space size="large">
             <Button
               type="primary"
-              style={{ marginLeft: '88px' }}
               onClick={() =>
                 history.push({
                   pathname: 'tmpl-add',
@@ -241,8 +241,18 @@ export default function Launch() {
             >
               新增模版
             </Button>
-          </span>
-        </Form>
+            <Button
+              type="primary"
+              onClick={() =>
+                history.push({
+                  pathname: 'tmpl-log',
+                })
+              }
+            >
+              查看日志
+            </Button>
+          </Space>
+        </div>
       </FilterCard>
       <ContentCard>
         <div>
