@@ -71,6 +71,7 @@ export default function AceEditor(props: AceEditorProps) {
         readOnly={props.readOnly}
         placeholder={props.placeholder}
         wrapEnabled={wrap}
+        scrollMargin={[0, 32]}
         setOptions={{
           tabSize: 2,
           useWorker: false,
