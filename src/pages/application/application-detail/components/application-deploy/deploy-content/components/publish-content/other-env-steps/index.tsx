@@ -86,7 +86,6 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
             )
           }
         />
-        {/* XXX 卡点 */}
         {/* <Step title="质量卡点" description="任务已跳过" status="finish" /> */}
         <Step
           title="构建"
