@@ -20,13 +20,20 @@ import './index.less';
 const detailPath = '/matrix/application/detail';
 const { TabPane } = Tabs;
 
+// 额外的菜单匹配映射规则
+const activeKeyMap: Record<string, any> = {
+  addConfig: 'configMgr',
+  addLaunchParameters: 'launchParameters',
+};
+
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
   const appId = location.query?.id;
   const [appData, setAppData] = useState<ContextTypes['appData']>();
 
   const tabActiveKey = useMemo(() => {
-    return Object.keys(tabsConfig).find((key) => location.pathname === `${detailPath}/${key}`);
+    const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
+    return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
 
   // 请求应用数据

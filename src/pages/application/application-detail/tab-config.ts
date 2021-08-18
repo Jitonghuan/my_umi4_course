@@ -6,5 +6,6 @@ export const tabsConfig: any = {
   deployInfo: '部署信息',
   configMgr: '配置管理',
   AppParameters: '应用模版',
+  // launchParameters: '启动参数',
   // secondPartyPkg: '二方包',
 };
