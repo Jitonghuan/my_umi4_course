@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import HeaderTabs from '../_components/header-tabs';
 import MatrixPageContent from '@/components/matrix-page-content';
+import UserCaseInfoExec from './use-case-info-exec';
 import { history } from 'umi';
-import { Col, Row, Tabs, Progress } from 'antd';
+import { Col, Row, Tabs, Progress, Table } from 'antd';
 import { getTestPhaseDetail } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
@@ -111,7 +112,9 @@ export default function PlanInfo(props: any) {
             <Col className="mt-1x" span={3}>
               用例情况:
             </Col>
-            <Col className="mt-1x">一个图</Col>
+            <Col className="mt-1x">
+              <UserCaseInfoExec data={testPhaseDetail.executedInfo || {}} />
+            </Col>
           </Row>
 
           <Row className="mt-3x">
@@ -121,7 +124,14 @@ export default function PlanInfo(props: any) {
           </Row>
           <Row>
             <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x">表格</Col>
+            <Col className="mt-1x">
+              <Table>
+                <Table.Column title="ID" render={(_: any, idx: number) => idx + 1} />
+                <Table.Column title="标题" />
+                <Table.Column title="优先级" />
+                <Table.Column title="创建人" />
+              </Table>
+            </Col>
           </Row>
         </CardRowGroup.SlideCard>
         <ContentCard>测试用例树状选择？ 用例详情</ContentCard>
