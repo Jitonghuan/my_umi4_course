@@ -10,17 +10,11 @@ export default function AssociatingCaseDrawer(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [testCaseTree, setTestCaseTree] = useState([]);
+  const [curActivePhase, setCurActivePhase] = useState<string>();
   const [selectedTestPlanIds, setselectedTestPlanIds] = useState<React.Key[]>([]);
 
   useEffect(() => {
-    if (visible) {
-      console.log(plan);
-    }
-  }, [visible]);
-
-  //TODO: 问清楚是什么接口先，可选择数据 和 已经选择的数据 怎么获取
-  const updateSelectTree = (phaseId: number | string) => {
-    getRequest(getAllTestCaseTree).then((res) => {
+    void getRequest(getAllTestCaseTree).then((res) => {
       const Q = [...res.data.subItems];
       while (Q.length) {
         const cur = Q.shift();
@@ -31,21 +25,41 @@ export default function AssociatingCaseDrawer(props: any) {
       }
       void setTestCaseTree(res.data.subItems || []);
     });
+  }, []);
 
-    getRequest(getPhaseCaseTree, { data: { phaseId } }).then((res) => {
+  useEffect(() => {
+    if (visible) {
+      void updateSelectTree(plan?.phaseCollection?.[0].id.toString());
+      void setCurActivePhase(plan?.phaseCollection?.[0].id.toString());
+    }
+  }, [visible]);
+
+  const updateSelectTree = (phaseId: number | string) => {
+    void setCurActivePhase(phaseId.toString());
+    void getRequest(getPhaseCaseTree, { data: { phaseId } }).then((res) => {
       const selected = [];
-      const Q = [...res.data];
+      const Q = [...(res.data.length ? res.data : [])];
       while (Q.length) {
         const cur = Q.shift();
         !cur.subItems?.length && selected.push(cur.id);
         cur.subItems?.length && Q.push(...cur.subItems);
       }
-      setselectedTestPlanIds(selected);
+      void setselectedTestPlanIds(selected);
     });
   };
 
   const onSelectChange = (vals: React.Key[]) => {
     void setselectedTestPlanIds(vals);
+  };
+
+  const submit = () => {
+    void postRequest(modifyPhaseCase, {
+      data: {
+        phaseId: curActivePhase,
+        cases: selectedTestPlanIds,
+        modifyUser: userInfo.userName,
+      },
+    });
   };
 
   return (
@@ -56,7 +70,7 @@ export default function AssociatingCaseDrawer(props: any) {
       title="关联用例"
       onClose={() => setVisible(false)}
     >
-      <Tabs onChange={(key) => updateSelectTree(key)}>
+      <Tabs onChange={(key) => updateSelectTree(key)} activeKey={curActivePhase}>
         {plan?.phaseCollection?.map((item: any) => (
           <Tabs.TabPane tab={item.name} key={item.id}>
             <TreeSelect
@@ -74,8 +88,12 @@ export default function AssociatingCaseDrawer(props: any) {
       </Tabs>
 
       <div className="btn-container">
-        <Button type="primary">确定</Button>
-        <Button type="primary">取消</Button>
+        <Button type="primary" onClick={submit}>
+          确定
+        </Button>
+        <Button type="primary" onClick={() => setVisible(false)}>
+          取消
+        </Button>
       </div>
     </Drawer>
   );
