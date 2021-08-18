@@ -510,7 +510,6 @@ export default [
         path: 'basic',
         name: '基础监控',
         key: 'basic-monitor',
-        hideInMenu: process.env.BUILD_ENV === 'prod',
         component: '@/pages/monitor/basic/index',
         routes: [
           {
