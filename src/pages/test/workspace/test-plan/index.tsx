@@ -3,6 +3,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import MatrixPageContent from '@/components/matrix-page-content';
 import HeaderTabs from '../_components/header-tabs';
 import AddTestPlanDrawer from './add-test-plan-drawer';
+import AssociatingCaseDrawer from './associating-case-drawer';
 import { getRequest, postRequest } from '@/utils/request';
 import { getTestPlanList, deleteTestPlan } from '../service';
 import { Form, Button, Table, Input, Select, Space, message, Popconfirm } from 'antd';
@@ -19,6 +20,7 @@ export default function TestPlan(props: any) {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [planOpVisible, setPlanOpVisible] = useState(false);
+  const [associatingVisible, setAssociatingVisible] = useState(false);
   const [curSelectPlan, setCurSelectPlan] = useState<null | string>(null);
 
   useEffect(() => {
@@ -54,8 +56,9 @@ export default function TestPlan(props: any) {
     void updateTable();
   };
 
-  const handleAssociatingCaseBtnClick = (planId: string) => {
-    console.log(planId);
+  const handleAssociatingCaseBtnClick = (plan: any) => {
+    void setCurSelectPlan(plan);
+    void setAssociatingVisible(true);
   };
 
   return (
@@ -131,7 +134,21 @@ export default function TestPlan(props: any) {
             <Table.Column
               title="计划名称"
               dataIndex="name"
-              render={(planName) => <Button type="link">{planName}</Button>}
+              render={(planName, record: any) => (
+                <Button
+                  type="link"
+                  onClick={() =>
+                    props.history.push({
+                      pathname: '/matrix/test/workspace/plan-info',
+                      state: {
+                        plan: record,
+                      },
+                    })
+                  }
+                >
+                  {planName}
+                </Button>
+              )}
             />
             <Table.Column title="状态" dataIndex="status" render={(status) => statusEnum[status]} />
             {/* <Table.Column title="当前责任人" dataIndex="?" /> */}
@@ -154,7 +171,7 @@ export default function TestPlan(props: any) {
                       <Button type="link">删除</Button>
                     </Popconfirm>
 
-                    <Button type="link" onClick={() => handleAssociatingCaseBtnClick(record.id)}>
+                    <Button type="link" onClick={() => handleAssociatingCaseBtnClick(record)}>
                       关联用例
                     </Button>
                   </Space>
@@ -168,6 +185,7 @@ export default function TestPlan(props: any) {
             plan={curSelectPlan}
             updateTable={updateTable}
           />
+          <AssociatingCaseDrawer visible={associatingVisible} setVisible={setAssociatingVisible} plan={curSelectPlan} />
         </div>
       </ContentCard>
     </MatrixPageContent>

@@ -397,37 +397,37 @@ export default [
       {
         path: 'workspace',
         name: '测试工作台',
-        key: 'workspace',
+        key: 'test-workspace',
         hideInMenu: process.env.BUILD_ENV === 'prod',
         routes: [
           {
             path: 'test-case-library',
             name: '测试用例库',
-            key: 'test-case-library',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/test-case-library',
           },
           {
             path: 'test-case',
             name: '测试用例库详情',
-            key: 'test-case-library',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/test-case',
           },
           {
             path: 'bug-manage',
             name: 'Bug管理',
-            key: 'bug-manage',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/bug-manage',
           },
           {
             path: 'test-plan',
             name: '测试计划',
-            key: 'test-plan',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/test-plan',
           },
           {
             path: 'plan-info',
             name: '计划详情',
-            key: 'plan-info',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/plan-info',
           },
         ],

@@ -78,3 +78,6 @@ export const relatedBug = addAPIPrefix('/qc/teststation/relatedBugByCase');
 
 /** GET  获取所属业务列表 */
 export const getProjects = addAPIPrefix('/appManage/category/list?pageIndex=-1&pageSize=100');
+
+/** GET  获取所有测试用例(树状) */
+export const getAllTestCaseTree = addAPIPrefix('/qc/teststation/caseMultiDeepList?categoryId=0');
