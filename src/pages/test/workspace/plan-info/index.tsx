@@ -10,6 +10,11 @@ import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-cont
 import './index.less';
 
 export default function PlanInfo(props: any) {
+  if (!history.location.state) {
+    props.history.push('/matrix/test/workspace/test-plan');
+    return null;
+  }
+
   const { plan }: any = history.location.state;
 
   const [activeKey, setActiveKey] = useState<string>();
@@ -82,7 +87,7 @@ export default function PlanInfo(props: any) {
             <Col className="mt-1x" span={3}>
               已测用例:
             </Col>
-            <Col className="mt-1x">
+            <Col className="mt-1x" span={18}>
               <Progress
                 percent={
                   testPhaseDetail.executedInfo?.caseTotal
@@ -97,7 +102,7 @@ export default function PlanInfo(props: any) {
             <Col className="mt-1x" span={3}>
               Bug情况:
             </Col>
-            <Col className="mt-1x">
+            <Col className="mt-1x" span={18}>
               <Progress
                 percent={
                   testPhaseDetail.bugInfo?.bugTotal
@@ -117,14 +122,14 @@ export default function PlanInfo(props: any) {
             </Col>
           </Row>
 
-          <Row className="mt-3x">
+          {/* <Row className="mt-3x">
             <Col className="mt-1x" push={1}>
               bug列表
             </Col>
           </Row>
           <Row>
             <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x">
+            <Col className="mt-1x" span={21}>
               <Table>
                 <Table.Column title="ID" render={(_: any, idx: number) => idx + 1} />
                 <Table.Column title="标题" />
@@ -132,7 +137,7 @@ export default function PlanInfo(props: any) {
                 <Table.Column title="创建人" />
               </Table>
             </Col>
-          </Row>
+          </Row> */}
         </CardRowGroup.SlideCard>
         <ContentCard>测试用例树状选择？ 用例详情</ContentCard>
       </CardRowGroup>
