@@ -13,6 +13,7 @@ import { history } from 'umi';
 import { createTableSchema } from './schema';
 import DetailContext from '../../../../../context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '../../../../../../service';
+import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
@@ -21,7 +22,7 @@ const { confirm } = Modal;
 export interface PublishBranchProps {
   /** 是否有发布内容 */
   hasPublishContent: boolean;
-  deployInfo: Record<string, any>;
+  deployInfo: DeployInfoVO;
   env: string;
   onSearch: (name?: string) => any;
   dataSource: Array<{
