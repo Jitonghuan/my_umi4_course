@@ -297,6 +297,8 @@ export default [
         name: '告警工单',
         key: 'ticketAlarm',
         component: '@/pages/ticket/ticket-alarm',
+        // TODO 线上不显示
+        hideInMenu: process.env.BUILD_ENV === 'prod',
       },
     ],
   },
@@ -501,6 +503,7 @@ export default [
         path: 'basic',
         name: '基础监控',
         key: 'basic-monitor',
+        hideInMenu: process.env.BUILD_ENV === 'prod',
         component: '@/pages/monitor/basic/index',
         routes: [
           {
