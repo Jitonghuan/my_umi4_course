@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import HeaderTabs from '../_components/header-tabs';
 import MatrixPageContent from '@/components/matrix-page-content';
 import UserCaseInfoExec from './use-case-info-exec';
+import RichText from '@/components/rich-text';
+import { createSona } from '@cffe/sona';
 import { history } from 'umi';
-import { Col, Row, Tabs, Progress, Table } from 'antd';
-import { getTestPhaseDetail } from '../service';
+import { Col, Row, Tabs, Progress, Table, Input, Select, Tree } from 'antd';
+import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import './index.less';
+
+const { DirectoryTree } = Tree;
 
 export default function PlanInfo(props: any) {
   if (!history.location.state) {
@@ -19,13 +23,56 @@ export default function PlanInfo(props: any) {
 
   const [activeKey, setActiveKey] = useState<string>();
   const [testPhaseDetail, setTestPhaseDetail] = useState<any>({});
+  const [testCaseTree, setTestCaseTree] = useState<any[]>();
+  const [curCaseId, setCurCaseId] = useState<any>();
+  const [curCase, setCurCase] = useState<any>();
+  const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
+  const sona = useMemo(() => createSona(), []);
 
   useEffect(() => {
     if (!activeKey) return;
+    void setCurCaseId(undefined);
+    void setCurCase(undefined);
+    void setExpendedKeys([]);
     getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } }).then((res) => {
       void setTestPhaseDetail(res.data);
     });
+
+    void getRequest(getPhaseCaseTree, { data: { phaseId: +activeKey } }).then((res) => {
+      const curCaseTree = res.data;
+      const Q = [...curCaseTree];
+      while (Q.length) {
+        const cur = Q.shift();
+        cur.key = cur.id;
+        cur.title = cur.name;
+        cur.selectable = false;
+        if (cur.subItems?.length) {
+          cur.subItems = cur.subItems.filter((item: any) => item.subItems?.length || item.cases?.length);
+          cur.children = cur.subItems;
+          Q.push(...cur.subItems);
+        } else if (cur.cases?.length) {
+          cur.cases.forEach((item: any) => {
+            item.key = item.id;
+            item.isLeaf = true;
+          });
+          cur.children = cur.cases;
+        }
+      }
+      void setTestCaseTree(curCaseTree || []);
+    });
   }, [activeKey]);
+
+  useEffect(() => {
+    if (!curCaseId) return;
+    getRequest(getPhaseCaseDetail, {
+      data: {
+        phaseId: activeKey,
+        caseId: curCaseId,
+      },
+    }).then((res) => {
+      void setCurCase(res.data);
+    });
+  }, [curCaseId]);
 
   useEffect(() => {
     void setActiveKey(plan?.phaseCollection?.[0].id.toString());
@@ -139,7 +186,50 @@ export default function PlanInfo(props: any) {
             </Col>
           </Row> */}
         </CardRowGroup.SlideCard>
-        <ContentCard>测试用例树状选择？ 用例详情</ContentCard>
+        <ContentCard>
+          <div className="right-card">
+            <div className="case-select-container">
+              <div className="filter-bar">
+                <Select>
+                  <Select.Option value="1">全部状态</Select.Option>
+                </Select>
+                <Input.Search />
+              </div>
+              <DirectoryTree
+                treeData={testCaseTree}
+                onSelect={(keys) => setCurCaseId(keys[0])}
+                selectedKeys={[curCaseId]}
+                className="test-case-select-tree"
+                onExpand={(expendedKeys) => setExpendedKeys(expendedKeys)}
+                expandedKeys={expendedKeys}
+                showIcon={false}
+              />
+            </div>
+
+            <div className="case-info">
+              <Row>
+                <Col span={12}>优先级： {curCase?.caseInfo?.priority}</Col>
+                <Col span={12}>所属模块： {curCase?.caseInfo?.categoryId}</Col>
+              </Row>
+
+              <div className="case-prop-title">前置条件</div>
+              <Input.TextArea disabled value={curCase?.caseInfo?.precondition} />
+
+              <div className="case-prop-title">步骤描述</div>
+              <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
+                <Table.Column title="编号" render={(_: any, __: any, idx: number) => idx + 1} />
+                <Table.Column title="步骤描述" dataIndex="input" />
+                <Table.Column title="预期结果" dataIndex="output" />
+              </Table>
+
+              <div className="case-prop-title">用例备注</div>
+              <Input.TextArea disabled value={curCase?.caseInfo?.comment} />
+
+              <div className="case-prop-title">执行备注</div>
+              <RichText sona={sona} />
+            </div>
+          </div>
+        </ContentCard>
       </CardRowGroup>
     </MatrixPageContent>
   );
