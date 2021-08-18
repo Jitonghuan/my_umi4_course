@@ -149,7 +149,7 @@ const HistoryCom: React.FC = () => {
       type: 'input',
       label: '报警名称',
       dataIndex: 'alertName',
-      width: '144px',
+      width: '154px',
       placeholder: '请输入',
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
@@ -160,7 +160,7 @@ const HistoryCom: React.FC = () => {
       type: 'select',
       label: '报警状态',
       dataIndex: 'status',
-      width: '144px',
+      width: '154px',
       placeholder: '请选择',
       option: [
         {
@@ -189,7 +189,7 @@ const HistoryCom: React.FC = () => {
       type: 'select',
       label: '报警级别',
       dataIndex: 'level',
-      width: '144px',
+      width: '154px',
       placeholder: '请选择',
       option: [
         {
