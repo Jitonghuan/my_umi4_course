@@ -13,7 +13,7 @@ export interface ExecResultProps {
   onClose?: () => any;
 }
 
-const knownKeys = ['errorLog', 'error_log'];
+const knownKeys = ['logInfo', 'log_info'];
 
 const dataFormatter = (data: any): string => {
   if (Array.isArray(data)) {
