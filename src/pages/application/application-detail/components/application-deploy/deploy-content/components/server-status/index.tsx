@@ -4,9 +4,10 @@
 
 import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { Descriptions, Modal, Button, Table, Radio, message } from 'antd';
-import { IStatusInfoProps, GroupedStatusInfoProps } from '../../types';
+import { GroupedStatusInfoProps } from '../../types';
 import DetailContext from '../../../../../context';
 import { postRequest } from '@/utils/request';
+import { IStatusInfoProps } from '@/pages/application/application-detail/types';
 import * as APIS from '../../services';
 import './index.less';
 

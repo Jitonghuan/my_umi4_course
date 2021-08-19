@@ -1,7 +1,7 @@
-import { IStatusInfoProps } from '../../types';
+import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 
 export interface IProps {
-  deployInfo: any;
+  deployInfo: DeployInfoVO;
   envTypeCode: string;
   nextEnvTypeCode?: string;
   appStatusInfo: IStatusInfoProps[];
