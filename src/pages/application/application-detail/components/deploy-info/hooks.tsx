@@ -3,9 +3,9 @@
 // @create 2021/08/18 09:48
 
 import { useState, useEffect, useCallback } from 'react';
-import * as APIS from './services';
+import { EnvDataVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
-import { EnvDataVO, IStatusInfoProps } from '../../types';
+import * as APIS from '@/pages/application/application-detail/services';
 
 // 获取应用下的环境列表
 export function useAppEnvList(appCode?: string): [EnvDataVO[], boolean] {

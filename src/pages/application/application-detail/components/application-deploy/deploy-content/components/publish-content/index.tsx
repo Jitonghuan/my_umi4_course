@@ -13,7 +13,7 @@ import ProdSteps from './prod-steps';
 import TestEnvSteps from './test-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { createDeploy, updateFeatures, restartApp } from '../../../../../../service';
+import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
 import { IProps } from './types';
 import './index.less';
 

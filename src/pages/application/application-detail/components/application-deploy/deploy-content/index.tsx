@@ -6,16 +6,16 @@
  */
 
 import React, { useState, useContext, useEffect, useRef } from 'react';
+import useInterval from './useInterval';
+import DetailContext from '@/pages/application/application-detail/context';
+import { queryDeployList, queryFeatureDeployed } from '@/pages/application/service';
+import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
+import { getRequest } from '@/utils/request';
+import * as APIS from '@/pages/application/application-detail/services';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
-import useInterval from './useInterval';
-import DetailContext from '../../../context';
-import { queryDeployList, queryFeatureDeployed } from '../../../../service';
-import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
-import { getRequest } from '@/utils/request';
-import * as APIS from './services';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';

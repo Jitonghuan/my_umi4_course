@@ -5,10 +5,10 @@
 import React, { useState, useEffect, useCallback, useContext, useRef } from 'react';
 import { Tabs, Button, Table, message, Popconfirm, Spin, Empty } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import DetailContext from '../../context';
+import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
-import { IStatusInfoProps } from '../../types';
-import * as APIS from './services';
+import { IStatusInfoProps } from '@/pages/application/application-detail/types';
+import * as APIS from '@/pages/application/application-detail/services';
 import { useAppEnvList, useAppDeployInfo, useAppChangeOrder } from './hooks';
 import RollbackModal from './components/rollback-modal';
 import './index.less';

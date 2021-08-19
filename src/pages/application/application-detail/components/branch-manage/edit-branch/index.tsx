@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { Modal, Input, Spin, message } from 'antd';
 import { BasicForm } from '@/components/schema-form';
 import createSchema from './create-schema';
-import { createFeatureBranch } from '../../../../service';
+import { createFeatureBranch } from '@/pages/application/service';
 import { IProps } from './types';
 // import './index.less';
 

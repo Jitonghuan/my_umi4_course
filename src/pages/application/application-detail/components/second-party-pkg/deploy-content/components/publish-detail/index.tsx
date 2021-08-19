@@ -8,8 +8,8 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import DetailContext from '../../../../../context';
-import { cancelDeploy, deployReuse, queryEnvsReq } from '../../../../../../service';
+import DetailContext from '@/pages/application/application-detail/context';
+import { cancelDeploy, deployReuse, queryEnvsReq } from '@/pages/application/service';
 import { IProps } from './types';
 import './index.less';
 

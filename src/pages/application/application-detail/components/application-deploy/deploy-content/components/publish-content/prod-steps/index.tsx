@@ -9,7 +9,7 @@ import React, { useMemo, useState } from 'react';
 import { Steps, Button, Modal } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import DeployModal from './deploy-modal';
-import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature } from '../../../../../../../service';
+import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature } from '@/pages/application/service';
 import { IProps, Status } from './types';
 
 const { Step } = Steps;

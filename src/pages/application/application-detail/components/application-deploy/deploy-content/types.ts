@@ -1,4 +1,4 @@
-import { IStatusInfoProps } from '../../../types';
+import { IStatusInfoProps } from '@/pages/application/application-detail/types';
 
 export interface GroupedStatusInfoProps {
   envCode: string;

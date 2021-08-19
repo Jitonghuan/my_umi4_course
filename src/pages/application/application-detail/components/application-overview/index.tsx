@@ -11,8 +11,8 @@ import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-con
 import FEContext from '@/layouts/basic-layout/fe-context';
 import UpdateApplication, { AppDataTypes } from '@/components/create-application';
 import ModifyMember, { MemberTypes } from './modify-member';
-import DetailContext from '../../context';
-import { queryApps, queryAppMember } from '../../../service';
+import DetailContext from '@/pages/application/application-detail/context';
+import { queryApps, queryAppMember } from '@/pages/application/service';
 import { IProps } from './types';
 import './index.less';
 

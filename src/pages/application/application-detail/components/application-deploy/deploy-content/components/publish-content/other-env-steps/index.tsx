@@ -8,7 +8,7 @@
 import React, { useMemo } from 'react';
 import { Steps, Button, Modal } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { retryMerge, retryDeploy, retryBuild } from '../../../../../../../service';
+import { retryMerge, retryDeploy, retryBuild } from '@/pages/application/service';
 import { IProps, Status } from './types';
 
 const { Step } = Steps;

@@ -8,12 +8,12 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Modal, Button, List } from 'antd';
 import VCDescription from '@/components/vc-description';
-import DetailContext from '../../../../../context';
+import DetailContext from '@/pages/application/application-detail/context';
 import { recordFieldMap } from './schema';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';
 import { usePaginated } from '@cffe/vc-hulk-table';
-import { queryEnvsReq } from '../../../../../../service';
+import { queryEnvsReq } from '@/pages/application/service';
 import './index.less';
 
 const rootCls = 'publish-record-compo';

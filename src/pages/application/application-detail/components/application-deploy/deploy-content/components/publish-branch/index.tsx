@@ -6,13 +6,13 @@
  */
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Input, Button, message, Modal, Checkbox, Form, Select } from 'antd';
+import { Input, Button, message, Modal, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import { history } from 'umi';
 import { createTableSchema } from './schema';
-import DetailContext from '../../../../../context';
-import { createDeploy, updateFeatures, queryEnvsReq } from '../../../../../../service';
+import DetailContext from '@/pages/application/application-detail/context';
+import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import './index.less';
 
