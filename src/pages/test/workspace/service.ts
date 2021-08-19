@@ -81,3 +81,17 @@ export const getProjects = addAPIPrefix('/appManage/category/list?pageIndex=-1&p
 
 /** GET  获取所有测试用例(树状) */
 export const getAllTestCaseTree = addAPIPrefix('/qc/teststation/caseMultiDeepList?categoryId=0');
+
+/** -------------------------------------------------------------------------------------------------------------- */
+
+/** POST 缺陷跟踪-提交bug */
+export const addBug = addAPIPrefix('/qc/teststation/addBug');
+
+/** POST 缺陷跟踪-修改bug */
+export const modifyBug = addAPIPrefix('/qc/teststation/modifyBug');
+
+/** POST 缺陷跟踪-删除bug */
+export const deleteBug = addAPIPrefix('/qc/teststation/deleteBug');
+
+/** GET  缺陷跟踪-查询bug列表 */
+export const getBugList = addAPIPrefix('/qc/teststation/bugList');
