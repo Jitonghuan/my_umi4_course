@@ -6,11 +6,10 @@ import FELayout from '@cffe/vc-layout';
 import { Select, Input, Switch, Button, Table, Form, Space } from 'antd';
 import { getRequest } from '@/utils/request';
 import { getProjects, getBugList } from '../service';
+import { bugTypeEnum, statusEnum, priorityEnum } from '../constant';
+import AddBugDrawer from './add-bug-drawer';
 import moment from 'moment';
 import './index.less';
-
-const statusEnum = ['新建', '修复中', '已拒绝', '待验证', '重复打开', '已关闭', '延期解决'];
-const bugTypeEnum = ['功能问题', '性能问题', '接口问题', 'UI界面问题', '易用性问题', '需求问题'];
 
 export default function BugManage(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
@@ -39,6 +38,7 @@ export default function BugManage(props: any) {
     getRequest(getProjects).then((res) => {
       void setProjectList(res.data.dataSource);
     });
+    void updateBugList();
   }, []);
 
   return (
@@ -70,10 +70,11 @@ export default function BugManage(props: any) {
             </Form.Item>
             <Form.Item label="优先级" name="priority">
               <Select className="w-60">
-                <Select.Option value="0">P0</Select.Option>
-                <Select.Option value="1">P1</Select.Option>
-                <Select.Option value="2">P2</Select.Option>
-                <Select.Option value="3">P3</Select.Option>
+                {priorityEnum.map((title, index) => (
+                  <Select.Option value={index} key={index}>
+                    {title}
+                  </Select.Option>
+                ))}
               </Select>
             </Form.Item>
             <Form.Item label="类型" name="bugType">
@@ -141,6 +142,7 @@ export default function BugManage(props: any) {
             />
           </Table>
         </div>
+        <AddBugDrawer visible={addBugDrawerVisible} setVisible={setAddBugDrawerVisible} projectList={projectList} />
       </ContentCard>
     </MatrixPageContent>
   );
