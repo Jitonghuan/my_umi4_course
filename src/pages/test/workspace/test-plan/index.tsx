@@ -5,7 +5,7 @@ import HeaderTabs from '../_components/header-tabs';
 import AddTestPlanDrawer from './add-test-plan-drawer';
 import AssociatingCaseDrawer from './associating-case-drawer';
 import { getRequest, postRequest } from '@/utils/request';
-import { getTestPlanList, deleteTestPlan } from '../service';
+import { getTestPlanList, deleteTestPlan, getProjects } from '../service';
 import { Form, Button, Table, Input, Select, Space, message, Popconfirm } from 'antd';
 import './index.less';
 import _ from 'lodash';
@@ -22,9 +22,14 @@ export default function TestPlan(props: any) {
   const [planOpVisible, setPlanOpVisible] = useState(false);
   const [associatingVisible, setAssociatingVisible] = useState(false);
   const [curSelectPlan, setCurSelectPlan] = useState<null | string>(null);
+  const [projectList, setProjectList] = useState<any[]>([]);
 
   useEffect(() => {
     void updateTable(pageIndex, pageSize);
+
+    getRequest(getProjects).then((res) => {
+      void setProjectList(res.data.dataSource);
+    });
   }, []);
 
   const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize) => {
@@ -73,7 +78,11 @@ export default function TestPlan(props: any) {
             }}
           >
             <Form.Item label="所属" name="projectId">
-              <Input placeholder="请输入所属业务" />
+              <Select placeholder="请选择" allowClear>
+                {projectList.map((item) => (
+                  <Select.Option value={item.id}>{item.categoryName}</Select.Option>
+                ))}
+              </Select>
             </Form.Item>
 
             <Form.Item label="任务名称" name="taskName">
@@ -184,6 +193,7 @@ export default function TestPlan(props: any) {
             setVisible={setPlanOpVisible}
             plan={curSelectPlan}
             updateTable={updateTable}
+            projectList={projectList}
           />
           <AssociatingCaseDrawer visible={associatingVisible} setVisible={setAssociatingVisible} plan={curSelectPlan} />
         </div>

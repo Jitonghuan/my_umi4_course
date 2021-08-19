@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
-import { createTestPlan, getProjects, modifyTestPlan } from '../../service';
+import { createTestPlan, modifyTestPlan } from '../../service';
 import { Form, Button, Table, Input, Select, Space, Drawer, message } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
@@ -9,18 +9,11 @@ import './index.less';
 import _ from 'lodash';
 
 export default function AddTestPlanDrawer(props: any) {
-  const { plan, visible, setVisible, updateTable } = props;
+  const { plan, visible, setVisible, updateTable, projectList } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [phaseCollection, setPhaseCollection] = useState<any[]>([]);
-  const [projectList, setProjectList] = useState<any[]>([]);
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    getRequest(getProjects).then((res) => {
-      void setProjectList(res.data.dataSource);
-    });
-  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -93,7 +86,7 @@ export default function AddTestPlanDrawer(props: any) {
         </Form.Item>
         <Form.Item label="业务所属" name="projectId">
           <Select placeholder="请选择" allowClear>
-            {projectList.map((item) => (
+            {projectList.map((item: any) => (
               <Select.Option value={item.id}>{item.categoryName}</Select.Option>
             ))}
           </Select>

@@ -39,7 +39,7 @@ export default function PlanInfo(props: any) {
     });
 
     void getRequest(getPhaseCaseTree, { data: { phaseId: +activeKey } }).then((res) => {
-      const curCaseTree = res.data;
+      const curCaseTree = res.data || [];
       const Q = [...curCaseTree];
       while (Q.length) {
         const cur = Q.shift();
