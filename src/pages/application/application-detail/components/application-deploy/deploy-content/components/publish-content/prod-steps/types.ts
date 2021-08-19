@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import { DeployInfoVO } from '@/pages/application/application-detail/types';
 
 export interface IProps {
   envTypeCode: string;
-  deployInfo: Record<string, any>;
+  deployInfo: DeployInfoVO;
   onOperate: (type: OperateType) => void;
 }
 
