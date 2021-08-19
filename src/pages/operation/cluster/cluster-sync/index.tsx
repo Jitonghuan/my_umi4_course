@@ -61,7 +61,7 @@ export default function ClusterPage(props: any) {
         <Table.Column title="A集群版本MD5" dataIndex={['ClusterA', 'PackageMd5']} />
         <Table.Column title="B集群版本MD5" dataIndex={['ClusterB', 'PackageMd5']} />
         <Table.Column title="A集群版本" dataIndex={['ClusterA', 'PackageVersion']} />
-        <Table.Column title="A集群版本" dataIndex={['ClusterB', 'PackageVersion']} />
+        <Table.Column title="B集群版本" dataIndex={['ClusterB', 'PackageVersion']} />
       </Table>
     </ContentCard>
   );
