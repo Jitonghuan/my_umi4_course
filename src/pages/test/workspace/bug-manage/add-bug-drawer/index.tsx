@@ -9,28 +9,47 @@ import './index.less';
 import { postRequest } from '@/utils/request';
 
 export default function BugManage(props: any) {
-  const { visible, setVisible, projectList, bugId } = props;
+  const { visible, setVisible, projectList, bugInfo } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [continueAdd, setContinueAdd] = useState(false);
+  const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
   const submit = async () => {
-    const finishLoading = message.loading(bugId ? '正在修改' : '正在新增');
+    const finishLoading = message.loading(bugInfo ? '正在修改' : '正在新增');
     const formData = form.getFieldsValue();
-    const requestParams = { ...formData, description: JSON.stringify(sona.schema), createUser: userInfo.userName };
-    await postRequest(addBug, { data: requestParams });
-    void finishLoading();
-    void message.success(bugId ? '修改成功' : '新增成功');
+    const requestParams = {
+      ...formData,
+      desc: JSON.stringify(sona.schema),
+      createUser: userInfo.userName,
+      onlineBug: formData.onlineBug ? 1 : 0,
+      relatedCases,
+      id: bugInfo.id,
+    };
+    await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
+      void finishLoading();
+    });
+    void message.success(bugInfo ? '修改成功' : '新增成功');
+    if (continueAdd && !bugInfo) return;
     void setVisible(false);
   };
+
+  useEffect(() => {
+    if (visible) {
+      form.resetFields();
+      void setRelatedCases([]);
+      sona.schema = [];
+      bugInfo && form.setFieldsValue(bugInfo);
+    }
+  }, [visible]);
 
   return (
     <Drawer
       visible={visible}
       onClose={() => setVisible(false)}
       width={700}
-      title={bugId ? '编辑Bug' : '新增Bug'}
+      title={bugInfo ? '编辑Bug' : '新增Bug'}
       className="test-workspace-bug-manage-add-bug-drawer"
       maskClosable={false}
     >
@@ -80,12 +99,14 @@ export default function BugManage(props: any) {
             </Form.Item>
           </Col>
           <Col span="24">
-            <Form.Item label="描述" name="description">
+            <Form.Item label="描述" name="desc">
               <RichText width="560px" sona={sona} />
             </Form.Item>
           </Col>
           <Col span="24">
-            <Form.Item label="关联用例">icon1,icon2,list</Form.Item>
+            <Form.Item label="关联用例" name="relatedCases">
+              icon1,icon2,list
+            </Form.Item>
           </Col>
           <Col span="12">
             <Form.Item label="经办人" name="agent">

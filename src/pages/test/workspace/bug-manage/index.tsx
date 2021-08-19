@@ -20,6 +20,7 @@ export default function BugManage(props: any) {
   const [loading, setLoading] = useState(false);
   const [projectList, setProjectList] = useState<any[]>([]);
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(true);
+  const [curBugInfo, setCurBugInfo] = useState<any>();
   const [form] = Form.useForm();
 
   const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize) => {
@@ -40,6 +41,16 @@ export default function BugManage(props: any) {
     });
     void updateBugList();
   }, []);
+
+  const handleAddBugBtnClick = () => {
+    void setCurBugInfo(undefined);
+    void setAddBugDrawerVisible(true);
+  };
+
+  const handleModifyBugBtnClick = (record: any) => {
+    void setCurBugInfo(record);
+    void setAddBugDrawerVisible(true);
+  };
 
   return (
     <MatrixPageContent className="test-workspace-bug-manage">
@@ -101,7 +112,7 @@ export default function BugManage(props: any) {
         </div>
         <div className="bug-table-container">
           <div className="add-bug-btn-container">
-            <Button type="primary" onClick={() => setAddBugDrawerVisible(true)}>
+            <Button type="primary" onClick={handleAddBugBtnClick}>
               新建
             </Button>
           </div>
@@ -134,15 +145,23 @@ export default function BugManage(props: any) {
             />
             <Table.Column
               title="操作"
-              render={() => (
+              render={(record) => (
                 <Space>
+                  <Button type="link" onClick={() => handleModifyBugBtnClick(record)}>
+                    编辑
+                  </Button>
                   <Button type="link">删除</Button>
                 </Space>
               )}
             />
           </Table>
         </div>
-        <AddBugDrawer visible={addBugDrawerVisible} setVisible={setAddBugDrawerVisible} projectList={projectList} />
+        <AddBugDrawer
+          visible={addBugDrawerVisible}
+          setVisible={setAddBugDrawerVisible}
+          projectList={projectList}
+          bugInfo={curBugInfo}
+        />
       </ContentCard>
     </MatrixPageContent>
   );
