@@ -89,17 +89,17 @@ export default function AddTestPlanDrawer(props: any) {
     >
       <Form {...layout} form={form}>
         <Form.Item label="计划名称" name="name">
-          <Input />
+          <Input placeholder="请输入计划名称" />
         </Form.Item>
         <Form.Item label="业务所属" name="projectId">
-          <Select>
+          <Select placeholder="请选择" allowClear>
             {projectList.map((item) => (
               <Select.Option value={item.id}>{item.categoryName}</Select.Option>
             ))}
           </Select>
         </Form.Item>
         <Form.Item label="关联任务" name="jiraTask">
-          <Input />
+          <Input placeholder="请输入关联任务" />
         </Form.Item>
         <Form.Item label="计划说明" name="description">
           <Input.TextArea placeholder="请输入用例前置条件" />

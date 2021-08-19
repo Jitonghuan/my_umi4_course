@@ -73,19 +73,19 @@ export default function TestPlan(props: any) {
             }}
           >
             <Form.Item label="所属" name="projectId">
-              <Input />
+              <Input placeholder="请输入所属业务" />
             </Form.Item>
 
             <Form.Item label="任务名称" name="taskName">
-              <Input />
+              <Input placeholder="请输入任务名称" />
             </Form.Item>
 
             <Form.Item label="计划名称" name="planName">
-              <Input />
+              <Input placeholder="请输入计划名称" />
             </Form.Item>
 
             <Form.Item label="状态" name="status">
-              <Select className="w-80">
+              <Select className="w-80" placeholder="请选择" allowClear>
                 {statusEnum.map((item, index) => (
                   <Select.Option value={index}>{item}</Select.Option>
                 ))}

@@ -48,7 +48,7 @@ export default function BugManage(props: any) {
         <div className="search-header">
           <Form layout="inline" form={form}>
             <Form.Item label="所属" name="business">
-              <Select className="w-100">
+              <Select className="w-100" placeholder="请选择" allowClear>
                 {projectList.map((item) => (
                   <Select.Option value={item.id} key={item.id}>
                     {item.categoryName}
@@ -57,10 +57,10 @@ export default function BugManage(props: any) {
               </Select>
             </Form.Item>
             <Form.Item label="标题" name="bugName">
-              <Input />
+              <Input placeholder="请输入标题" />
             </Form.Item>
             <Form.Item label="状态" name="status">
-              <Select className="w-100">
+              <Select className="w-100" placeholder="请选择" allowClear>
                 {statusEnum.map((title, index) => (
                   <Select.Option value={index} key={index}>
                     {title}
@@ -69,7 +69,7 @@ export default function BugManage(props: any) {
               </Select>
             </Form.Item>
             <Form.Item label="优先级" name="priority">
-              <Select className="w-60">
+              <Select className="w-60" placeholder="请选择" allowClear>
                 {priorityEnum.map((title, index) => (
                   <Select.Option value={index} key={index}>
                     {title}
@@ -78,7 +78,7 @@ export default function BugManage(props: any) {
               </Select>
             </Form.Item>
             <Form.Item label="类型" name="bugType">
-              <Select className="w-120">
+              <Select className="w-120" placeholder="请选择" allowClear>
                 {bugTypeEnum.map((title, index) => (
                   <Select.Option value={index} key={index}>
                     {title}
