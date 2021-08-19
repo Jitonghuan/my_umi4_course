@@ -88,10 +88,10 @@ export const getAllTestCaseTree = addAPIPrefix('/qc/teststation/caseMultiDeepLis
 export const addBug = addAPIPrefix('/qc/teststation/addBug');
 
 /** POST 缺陷跟踪-修改bug */
-export const modifyBug = addAPIPrefix('/qc/teststation/modifyBug');
+export const modifyBug = addAPIPrefix('/qc/teststation/updateBug');
 
 /** POST 缺陷跟踪-删除bug */
-export const deleteBug = addAPIPrefix('/qc/teststation/deleteBug');
+export const deleteBug = addAPIPrefix('/qc/teststation/delBug');
 
 /** GET  缺陷跟踪-查询bug列表 */
 export const getBugList = addAPIPrefix('/qc/teststation/bugList');

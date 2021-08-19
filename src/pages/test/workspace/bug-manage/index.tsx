@@ -19,7 +19,7 @@ export default function BugManage(props: any) {
   const [bugTotal, setBugTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [projectList, setProjectList] = useState<any[]>([]);
-  const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(true);
+  const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
   const [form] = Form.useForm();
 
@@ -161,6 +161,7 @@ export default function BugManage(props: any) {
           setVisible={setAddBugDrawerVisible}
           projectList={projectList}
           bugInfo={curBugInfo}
+          updateBugList={updateBugList}
         />
       </ContentCard>
     </MatrixPageContent>

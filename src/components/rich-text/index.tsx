@@ -71,7 +71,7 @@ const plugins: EditorPlugin[] = [
 const toolbarConfig: any[] = plugins.filter((plugin) => plugin?.toolbarConfig).map((plugin) => plugin.toolbarConfig);
 
 export default function CaseWorkspace(props: any) {
-  const { className, width = '100%', height = '240px', onChange, sona } = props;
+  const { className, width = '100%', height = '240px', onChange, sona, schema } = props;
 
   // TODO:获取editor里面的值
   // TODO:回填数据
@@ -82,10 +82,11 @@ export default function CaseWorkspace(props: any) {
   // TODO:保持光标在视野内 （监听键盘按下事件即可，好像事件有返回光标信息）
   return (
     <Editor
+      sona={sona}
+      schema={schema}
       toolbarLayout="vertical-start"
       plugins={plugins}
       toolbarConfig={toolbarConfig}
-      sona={sona}
       style={{ width: width, height: height }}
       className={'matrix-rich-editor-wrapper ' + className}
       toolbarClassName="matrix-rich-editor-toolbar"

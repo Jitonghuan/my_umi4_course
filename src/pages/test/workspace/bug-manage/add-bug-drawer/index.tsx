@@ -9,10 +9,11 @@ import './index.less';
 import { postRequest } from '@/utils/request';
 
 export default function BugManage(props: any) {
-  const { visible, setVisible, projectList, bugInfo } = props;
+  const { visible, setVisible, projectList, bugInfo, updateBugList } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [continueAdd, setContinueAdd] = useState(false);
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
+  const [schema, setSchema] = useState<any[]>();
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
@@ -22,25 +23,35 @@ export default function BugManage(props: any) {
     const requestParams = {
       ...formData,
       desc: JSON.stringify(sona.schema),
-      createUser: userInfo.userName,
       onlineBug: formData.onlineBug ? 1 : 0,
       relatedCases,
-      id: bugInfo.id,
+      id: bugInfo?.id,
+      ...(bugInfo ? { modifyUser: userInfo.userName } : { createUser: userInfo.userName }),
     };
     await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
       void finishLoading();
     });
     void message.success(bugInfo ? '修改成功' : '新增成功');
+    void updateBugList();
     if (continueAdd && !bugInfo) return;
     void setVisible(false);
   };
 
   useEffect(() => {
     if (visible) {
-      form.resetFields();
-      void setRelatedCases([]);
-      sona.schema = [];
-      bugInfo && form.setFieldsValue(bugInfo);
+      if (bugInfo) {
+        form.setFieldsValue(bugInfo);
+        void setRelatedCases(bugInfo.relatedCases);
+        try {
+          void setSchema(JSON.parse(bugInfo.description));
+        } catch {
+          void setSchema(undefined);
+        }
+      } else {
+        form.resetFields();
+        void setRelatedCases([]);
+        void setSchema(undefined);
+      }
     }
   }, [visible]);
 
@@ -100,7 +111,7 @@ export default function BugManage(props: any) {
           </Col>
           <Col span="24">
             <Form.Item label="描述" name="desc">
-              <RichText width="560px" sona={sona} />
+              <RichText width="560px" sona={sona} schema={schema} />
             </Form.Item>
           </Col>
           <Col span="24">
@@ -128,9 +139,13 @@ export default function BugManage(props: any) {
         </Row>
       </Form>
       <div className="footer">
-        <Checkbox checked={continueAdd} onChange={(e) => setContinueAdd(e.target.checked)}>
-          继续新增下一个
-        </Checkbox>
+        {!bugInfo ? (
+          <Checkbox checked={continueAdd} onChange={(e) => setContinueAdd(e.target.checked)}>
+            继续新增下一个
+          </Checkbox>
+        ) : (
+          ''
+        )}
         <Button type="primary" className="ml-auto" onClick={() => setVisible(false)}>
           取消
         </Button>
