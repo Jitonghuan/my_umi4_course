@@ -87,6 +87,7 @@ export default function RollbackModal(props: RollbackModalProps) {
       onCancel={props.onClose}
       okText="回滚"
       confirmLoading={pending}
+      okButtonProps={{ disabled: !rollbackVersions.length }}
       onOk={handleRollbackSubmit}
       width={640}
     >
