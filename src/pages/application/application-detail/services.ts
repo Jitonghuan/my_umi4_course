@@ -25,3 +25,6 @@ export const rollbackApplication = addAPIPrefix('/releaseManage/rollbackApplicat
 
 /** POST 应用重启 */
 export const restartApplication = addAPIPrefix('/releaseManage/restartApplication');
+
+/** GET 查询卡点任务结果 */
+export const qualityGuardInfo = addAPIPrefix('/qc/qualitycontrol/qualityGuardInfo');

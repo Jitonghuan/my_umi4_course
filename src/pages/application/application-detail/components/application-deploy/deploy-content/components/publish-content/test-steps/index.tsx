@@ -10,6 +10,7 @@ import { Steps, Button, Modal } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { retryMerge, retryDeploy, retryBuild } from '@/pages/application/service';
 import { IProps, Status } from './types';
+import QualityCheckResult from './quality-check-result';
 
 const { Step } = Steps;
 const { confirm } = Modal;
@@ -23,7 +24,7 @@ const deployStatusMapping: Record<string, Status> = {
   conflict: 1.2,
   // 单测卡点
   qualityChecking: 2.1,
-  qualityCheckFailed: 2.2,
+  qualityFailed: 2.2,
   // 构建
   building: 3.1,
   buildErr: 3.2,
@@ -80,7 +81,7 @@ export default function TestEnvSteps({ deployInfo, onOperate }: IProps) {
           title="质量卡点"
           icon={status === 2.1 && <LoadingOutlined />}
           status={status === 2.2 ? 'error' : undefined}
-          description={status > 2.2 ? <a>查看详情</a> : null}
+          description={<QualityCheckResult visible={status >= 2.2} deployInfo={deployInfo} />}
         />
         <Step
           title="构建"
