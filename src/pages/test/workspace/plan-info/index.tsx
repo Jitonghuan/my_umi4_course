@@ -2,14 +2,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import HeaderTabs from '../_components/header-tabs';
 import MatrixPageContent from '@/components/matrix-page-content';
 import UserCaseInfoExec from './use-case-info-exec';
+import UseCaseTestInfoExec from './use-case-test-info-exec';
+import BugInfoExec from './bug-info-exec';
 import RichText from '@/components/rich-text';
 import { createSona } from '@cffe/sona';
 import { history } from 'umi';
-import { Col, Row, Tabs, Progress, Table, Input, Select, Tree } from 'antd';
+import { Col, Row, Tabs, Progress, Table, Input, Select, Tree, Tag } from 'antd';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import './index.less';
+import { useCaseTestInfoChartOptions } from './formatter';
 
 const { DirectoryTree } = Tree;
 
@@ -39,7 +42,7 @@ export default function PlanInfo(props: any) {
     });
 
     void getRequest(getPhaseCaseTree, { data: { phaseId: +activeKey } }).then((res) => {
-      const curCaseTree = res.data || [];
+      const curCaseTree = Array.isArray(res.data) ? res.data : [];
       const Q = [...curCaseTree];
       while (Q.length) {
         const cur = Q.shift();
@@ -88,7 +91,7 @@ export default function PlanInfo(props: any) {
         </Tabs>
       </FilterCard>
       <CardRowGroup>
-        <CardRowGroup.SlideCard width={550} className="left-card">
+        <CardRowGroup.SlideCard width={436} className="left-card">
           <Row>
             <Col className="mt-1x" push={1}>
               基本信息
@@ -120,50 +123,32 @@ export default function PlanInfo(props: any) {
             <Col className="mt-1x" push={1} span={4}>
               执行情况
             </Col>
-            <Col className="mt-1x">icon-执行中</Col>
-          </Row>
-          <Row>
-            <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x" span={3}>
-              用例总数:
+            <Col className="mt-1x">
+              <Tag color="processing">执行中</Tag>
             </Col>
-            <Col className="mt-1x">{testPhaseDetail.executedInfo?.caseTotal}</Col>
           </Row>
-          <Row>
-            <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x" span={3}>
-              已测用例:
-            </Col>
-            <Col className="mt-1x" span={18}>
-              <Progress
-                percent={
-                  testPhaseDetail.executedInfo?.caseTotal
-                    ? (testPhaseDetail.executedInfo?.executed / testPhaseDetail.executedInfo?.caseTotal) * 100
-                    : 100
-                }
+          <Row className="ml-18">
+            <Col className="mt-1x">
+              <UseCaseTestInfoExec
+                data={{
+                  notTested: testPhaseDetail.executedInfo?.caseTotal - testPhaseDetail.executedInfo?.executed,
+                  tested: testPhaseDetail.executedInfo?.executed,
+                  total: testPhaseDetail.executedInfo?.caseTotal,
+                }}
               />
             </Col>
           </Row>
-          <Row>
-            <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x" span={3}>
-              Bug情况:
-            </Col>
-            <Col className="mt-1x" span={18}>
-              <Progress
-                percent={
-                  testPhaseDetail.bugInfo?.bugTotal
-                    ? (testPhaseDetail.bugInfo?.closedNum / testPhaseDetail.bugInfo?.bugTotal) * 100
-                    : 100
-                }
+          <Row className="ml-18">
+            <Col className="mt-1x">
+              <BugInfoExec
+                data={{
+                  notFixed: testPhaseDetail.bugInfo?.bugTotal - testPhaseDetail.bugInfo?.closedNum,
+                  fixed: testPhaseDetail.bugInfo?.closedNum,
+                }}
               />
             </Col>
           </Row>
-          <Row>
-            <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x" span={3}>
-              用例情况:
-            </Col>
+          <Row className="ml-18">
             <Col className="mt-1x">
               <UserCaseInfoExec data={testPhaseDetail.executedInfo || {}} />
             </Col>
