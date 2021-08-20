@@ -14,7 +14,7 @@ import { InlineForm } from '@/components/schema-form';
 import EditBranch from './edit-branch';
 import { createFilterFormSchema, createTableSchema } from './schema';
 import DetailContext from '../../context';
-import { queryBranchListUrl, deleteBranch } from '../../../service';
+import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
 import { rootCls } from './constants';
 import { IProps } from './types';
 import './index.less';

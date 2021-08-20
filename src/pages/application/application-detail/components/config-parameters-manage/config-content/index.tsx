@@ -13,7 +13,7 @@ import VCForm, { IColumns } from '@cffe/vc-form';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
 import { createFilterFormSchema, createTableSchema, getFilterColumns } from './schema';
-import { queryConfigListUrl, deleteConfig, deleteMultipleConfig } from '../../../../service';
+import { queryConfigListUrl, deleteConfig, deleteMultipleConfig } from '@/pages/application/service';
 import { IProps } from './types';
 import { ConfigData } from '../types';
 import { queryVersionApi, doRestoreVersionApi } from './service';

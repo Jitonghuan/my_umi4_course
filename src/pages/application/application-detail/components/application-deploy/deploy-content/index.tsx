@@ -6,16 +6,16 @@
  */
 
 import React, { useState, useContext, useEffect, useRef } from 'react';
+import useInterval from './useInterval';
+import DetailContext from '@/pages/application/application-detail/context';
+import { queryDeployList, queryFeatureDeployed } from '@/pages/application/service';
+import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
+import { getRequest } from '@/utils/request';
+import * as APIS from '@/pages/application/application-detail/services';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
-import useInterval from './useInterval';
-import DetailContext from '../../../context';
-import { queryDeployList, queryFeatureDeployed } from '../../../../service';
-import { IStatusInfoProps } from './types';
-import { getRequest } from '@/utils/request';
-import * as APIS from './services';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';
@@ -36,7 +36,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   const cachebranchName = useRef<string>();
   const [updating, setUpdating] = useState(false);
-  const [deployInfo, setDeployInfo] = useState({});
+  const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
   const [branchInfo, setBranchInfo] = useState<{
     deployed: any[];
     unDeployed: any[];
@@ -75,8 +75,6 @@ export default function DeployContent(props: DeployContentProps) {
 
       // 如果有部署信息，且为线上，则更新应用状态
       if (envTypeCode === 'prod' && appData) {
-        console.log('>>>>>>>>>> ');
-
         const resp4 = await getRequest(APIS.queryApplicationStatus, {
           data: {
             deploymentName: appData?.deploymentName,

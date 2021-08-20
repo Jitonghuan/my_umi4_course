@@ -2,12 +2,13 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/09 20:13
 
-import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
-import { Descriptions, Modal, Button, Table, Radio, message } from 'antd';
-import { IStatusInfoProps, GroupedStatusInfoProps } from '../../types';
-import DetailContext from '../../../../../context';
+import React, { useState, useCallback, useContext, useMemo } from 'react';
+import { Descriptions, Modal, Button, Table, message } from 'antd';
+import { GroupedStatusInfoProps } from '../../types';
+import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
-import * as APIS from '../../services';
+import { IStatusInfoProps } from '@/pages/application/application-detail/types';
+import * as APIS from '@/pages/application/application-detail/services';
 import './index.less';
 
 export interface ServerStatusProps {

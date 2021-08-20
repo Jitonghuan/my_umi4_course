@@ -9,11 +9,10 @@ import React, { useState } from 'react';
 import { Modal, Input, Spin, message } from 'antd';
 import { BasicForm } from '@/components/schema-form';
 import createSchema from './create-schema';
-import { configAdd, configUpdate } from '../../../../../service';
+import { configAdd, configUpdate } from '@/pages/application/service';
 import { IProps } from './types';
 import { ConfigData } from '../../types';
 import VCDescription from '@/components/vc-description';
-// import './index.less';
 
 export type EditConfigIProps = IProps;
 

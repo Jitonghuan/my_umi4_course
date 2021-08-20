@@ -4,10 +4,10 @@
 
 import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { Form, Modal, Radio, message, Empty } from 'antd';
-import DetailContext from '../../../../../context';
 import { getRequest, postRequest } from '@/utils/request';
+import DetailContext from '@/pages/application/application-detail/context';
+import * as APIS from '@/pages/application/application-detail/services';
 import './index.less';
-import * as APIS from '../../services';
 
 export interface RollbackModalProps {
   visible?: boolean;

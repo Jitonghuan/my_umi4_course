@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form } from 'antd';
-import { FormInstance } from 'antd/lib';
+import type { FormInstance } from 'antd/lib';
 import { history } from 'umi';
 import EditTable from '@/components/edit-table';
 import { renderForm } from '@/components/table-search/form';

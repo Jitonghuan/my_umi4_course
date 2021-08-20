@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Form, Card, Button, Input, Row, Col, Space, message, Select, Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import type { ColumnsType } from 'antd/lib/table';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
 import BaseForm from '../../components/base-form';

@@ -7,8 +7,8 @@
 
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { Steps, Button, Modal, Radio, Spin, message } from 'antd';
-import DetailContext from '../../../../../../../context';
-import { confirmProdDeploy, queryEnvsReq } from '../../../../../../../../service';
+import DetailContext from '@/pages/application/application-detail/context';
+import { confirmProdDeploy, queryEnvsReq } from '@/pages/application/service';
 import { IProps } from './types';
 
 const DeployModal = ({ envTypeCode, visible, deployInfo, onCancel, onOperate }: IProps) => {

@@ -6,19 +6,40 @@
  */
 
 import React, { useMemo, useState } from 'react';
-import { Steps, Button, Modal, Radio } from 'antd';
+import { Steps, Button, Modal } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import DeployModal from './deploy-modal';
-import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature } from '../../../../../../../service';
+import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature } from '@/pages/application/service';
 import { IProps, Status } from './types';
-// import './index.less';
 
 const { Step } = Steps;
 const { confirm } = Modal;
 
 const rootCls = 'publish-content-compo';
 
-const ProdSteps = ({ envTypeCode, appCode, deployInfo, onOperate }: IProps) => {
+const deployStatusMapping: Record<string, Status> = {
+  // 合并release
+  // 有 mergeWebUrl 则展示
+  merging: 1.1,
+  mergeErr: 1.2,
+  conflict: 1.2,
+  // 部署
+  deployWait: 2.1,
+  deploying: 2.1,
+  deployWaitBatch2: 2.1,
+  deployErr: 2.2,
+  deployAborted: 2.2,
+  // 合并master
+  mergingMaster: 3.1,
+  mergeMasterErr: 3.2,
+  // 删除feature
+  deletingFeature: 4.1,
+  deleteFeatureErr: 4.2,
+  deployFinish: 5,
+  deployed: 5,
+};
+
+export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps) {
   const [deployVisible, setDeployVisible] = useState(false);
 
   const status = useMemo<Status>(() => {
@@ -26,46 +47,7 @@ const ProdSteps = ({ envTypeCode, appCode, deployInfo, onOperate }: IProps) => {
 
     if (!deployInfo || !deployInfo.id) return 0;
 
-    // 合并release
-    // deployStatus: merging\mergeErr\conflict, 有 mergeWebUrl 则展示
-    if (deployStatus === 'merging') {
-      return 1.1;
-    }
-    if (deployStatus === 'mergeErr' || deployStatus === 'conflict') {
-      return 1.2;
-    }
-
-    // 部署
-    if (deployStatus === 'deployWait' || deployStatus === 'deploying' || deployStatus === 'deployWaitBatch2') {
-      return 2.1;
-    }
-    if (deployStatus === 'deployErr' || deployStatus === 'deployAborted') {
-      return 2.2;
-    }
-
-    // 合并master
-    //  deployStatus: mergingMaster\mergeMasterErr
-    if (deployStatus === 'mergingMaster') {
-      return 3.1;
-    }
-    if (deployStatus === 'mergeMasterErr') {
-      return 3.2;
-    }
-
-    // 删除feature
-    // deletingFeature，deleteFeatureErr
-    if (deployStatus === 'deletingFeature') {
-      return 4.1;
-    }
-    if (deployStatus === 'deleteFeatureErr') {
-      return 4.2;
-    }
-
-    if (deployStatus === 'deployFinish' || deployStatus === 'deployed') {
-      return 6;
-    }
-
-    return 0;
+    return deployStatusMapping[deployStatus] || 0;
   }, [deployInfo]);
 
   return (
@@ -206,8 +188,4 @@ const ProdSteps = ({ envTypeCode, appCode, deployInfo, onOperate }: IProps) => {
       />
     </>
   );
-};
-
-ProdSteps.defaultProps = {};
-
-export default ProdSteps;
+}

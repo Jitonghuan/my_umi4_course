@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/27 15:28
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { message } from 'antd';
 import Editor, { IAnnotation } from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
@@ -34,6 +34,8 @@ export default function AceEditor(props: AceEditorProps) {
   const { mode = 'text' } = props;
   const [stateValue, setStateValue] = useState<string>('value' in props ? props.value! : props.defaultValue ?? '');
   const [wrap, setWrap] = useState(false);
+  const errorRef = useRef<any>();
+  const [errorTips, setErrorTips] = useState('');
 
   const handleChange = (next: string) => {
     setStateValue(next);
@@ -41,6 +43,14 @@ export default function AceEditor(props: AceEditorProps) {
   };
 
   const displayValue = 'value' in props ? props.value : stateValue;
+
+  const showError = useCallback((err: any) => {
+    clearTimeout(errorRef.current);
+    setErrorTips(err?.message || `${err}`);
+    errorRef.current = setTimeout(() => {
+      setErrorTips('');
+    }, 4000);
+  }, []);
 
   const handleFormat = useCallback(() => {
     if (!displayValue) return;
@@ -56,6 +66,7 @@ export default function AceEditor(props: AceEditorProps) {
       handleChange(JSON.stringify(obj, null, 2));
     } catch (ex) {
       message.warning('JSON格式不合法!');
+      showError(ex);
     }
   }, [displayValue, wrap, mode]);
 
@@ -71,6 +82,7 @@ export default function AceEditor(props: AceEditorProps) {
         readOnly={props.readOnly}
         placeholder={props.placeholder}
         wrapEnabled={wrap}
+        scrollMargin={[0, 32]}
         setOptions={{
           tabSize: 2,
           useWorker: false,
@@ -79,6 +91,11 @@ export default function AceEditor(props: AceEditorProps) {
       <span className="ace-editor-type" data-type={mode} onClick={handleFormat}>
         {mode === 'text' ? (wrap ? 'wrap text' : 'inline text') : mode}
       </span>
+      {errorTips ? (
+        <pre className="error-tips" onClick={() => setErrorTips('')}>
+          {errorTips}
+        </pre>
+      ) : null}
     </div>
   );
 }

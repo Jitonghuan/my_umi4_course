@@ -1,14 +1,4 @@
-export interface IStatusInfoProps {
-  envCode?: string;
-  envName?: string;
-  appState: number;
-  appStateName: string;
-  eccid: string;
-  ip: string;
-  packageMd5: string;
-  taskState: number;
-  taskStateName: string;
-}
+import { IStatusInfoProps } from '@/pages/application/application-detail/types';
 
 export interface GroupedStatusInfoProps {
   envCode: string;

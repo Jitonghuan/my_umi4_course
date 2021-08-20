@@ -5,6 +5,15 @@
 
 import { addAPIPrefix } from '@/utils';
 
+/** GET 获取部署信息 */
+export const queryDeployList = addAPIPrefix('/releaseManage/deploy/list');
+
+/** 获取应用大类的环境列表 */
+export const queryAppEnvs = addAPIPrefix('/monitorManage/app/env');
+
+/** GET 获取应用变更记录列表 */
+export const queryRecentChangeOrder = addAPIPrefix('/releaseManage/queryRecentChangeOrder');
+
 /** GET 获取应用运行和变更状态 */
 export const queryApplicationStatus = addAPIPrefix('/releaseManage/queryApplicationStatus');
 
@@ -16,3 +25,6 @@ export const rollbackApplication = addAPIPrefix('/releaseManage/rollbackApplicat
 
 /** POST 应用重启 */
 export const restartApplication = addAPIPrefix('/releaseManage/restartApplication');
+
+/** GET 查询卡点任务结果 */
+export const qualityGuardInfo = addAPIPrefix('/qc/qualitycontrol/qualityGuardInfo');

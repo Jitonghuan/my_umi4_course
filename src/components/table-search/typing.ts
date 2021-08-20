@@ -1,6 +1,5 @@
 import React, { CSSProperties, ReactNode } from 'react';
-import { TableProps, FormItemProps, FormInstance } from 'antd/lib';
-import { Moment } from 'moment';
+import type { TableProps, FormItemProps, FormInstance } from 'antd/lib';
 
 export type TypeProps = 'select' | 'input' | 'date' | 'range' | 'area' | 'inputNumber' | 'radio' | 'checkbox' | 'other';
 
