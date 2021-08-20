@@ -177,7 +177,7 @@ export default function ticketAlarm() {
           <Table.Column title="报警名称" dataIndex="alertName" ellipsis width="14%" />
           <Table.Column title="应用名" dataIndex="appCode" ellipsis />
           <Table.Column title="环境" dataIndex="envCode" ellipsis />
-          <Table.Column title="通知对象" dataIndex="receiver" width="5%" />
+          <Table.Column title="通知对象" dataIndex="receiver" width="8%" />
           <Table.Column title="开始时间" dataIndex="startTime" />
           <Table.Column title="结束时间" dataIndex="endTime" />
           <Table.Column

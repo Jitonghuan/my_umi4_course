@@ -228,8 +228,8 @@ export default function Launch() {
               重置
             </Button>
           </Form.Item>
-          <div style={{ float: 'right', display: 'flex', marginLeft: '5%' }}>
-            <Space size="large">
+          <div style={{ float: 'right', display: 'flex' }}>
+            <Space size="small">
               <Button
                 type="primary"
                 onClick={() =>
