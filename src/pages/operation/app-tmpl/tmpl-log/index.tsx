@@ -46,7 +46,7 @@ export default function Operation() {
     getRequest(APIS.logList, { data: { id: record.id } }).then((res: any) => {
       if (res.success) {
         const logDetail = res.data.dataSource[0].content || '';
-        console.log('日志详细内容：', logDetail);
+        // console.log('日志详细内容：', logDetail);
         setDetailItem(logDetail);
       }
     });
@@ -84,7 +84,6 @@ export default function Operation() {
             render={(_, record: any) => (
               <div className="action-cell">
                 <a onClick={() => showLogModal(record)}>查看日志</a>
-                {/* <a onClick={() => setDetailItem(record)}>查看日志</a> */}
               </div>
             )}
             width={180}
