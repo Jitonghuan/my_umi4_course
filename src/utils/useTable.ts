@@ -1,8 +1,7 @@
 import { useAntdTable } from 'ahooks';
 import { getRequest, postRequest } from './request';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
-import { FormInstance } from 'antd/lib';
-import { IResponse } from '@cffe/vc-request/es/service';
+import type { FormInstance } from 'antd/lib';
 
 interface UseTableProps {
   url: string;

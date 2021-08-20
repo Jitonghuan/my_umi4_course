@@ -7,10 +7,8 @@
 
 import React, { useContext, useState, useEffect, useRef, useMemo } from 'react';
 import { Table, Input, Button, Popconfirm, Form, Space } from 'antd';
-import { FormInstance, TableColumnProps } from 'antd/lib';
-import { ColumnsType } from 'antd/lib/table';
+import type { FormInstance, TableColumnProps } from 'antd/lib';
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
-// import { Item } from '../../typing';
 import './index.less';
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);

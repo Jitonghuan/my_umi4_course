@@ -2,7 +2,7 @@ import React from 'react';
 import moment, { Moment } from 'moment';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { Space, Tag, Popconfirm } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import type { ColumnsType } from 'antd/lib/table';
 import { Link, history } from 'umi';
 import { statusType } from '../constant';
 import { IPlanItem } from '../typing';

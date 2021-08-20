@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Tooltip, Form, Input, Tag } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import type { ColumnsType } from 'antd/lib/table';
 import { history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';

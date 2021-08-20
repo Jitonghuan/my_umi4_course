@@ -117,7 +117,7 @@ export default function AppDeployInfo() {
               render={(_, record: IStatusInfoProps) => (
                 <div className="action-cell">
                   <Popconfirm title={`确定重启 ${record.ip} 吗？`} onConfirm={() => handleRestartItem(record)}>
-                    <Button size="small" type="primary" ghost>
+                    <Button size="small" type="primary" ghost loading={record.taskState === 1}>
                       重启
                     </Button>
                   </Popconfirm>
