@@ -1,23 +1,51 @@
 .test-workspace-plan-info {
   .left-card {
     padding: 12px;
+
+    .left-cart-sub-title {
+      text-indent: 10px;
+      font-size: 16px;
+      color: #000000;
+
+      &::before {
+        content: '';
+        height: 16px;
+        width: 4px;
+        background: #1973cc;
+        position: absolute;
+        left: 0px;
+        top: 4px;
+      }
+    }
+
+    .left-cart-sub-sub-title {
+      text-align: right;
+      margin-right: 10px;
+    }
   }
 
   .right-card {
     display: grid;
-    grid-template-columns: 4fr 7fr;
+    grid-template-columns: 300px 1fr;
     grid-template-rows: 1fr;
     gap: 20px;
 
     .case-select-container {
+      width: 300px;
+
+      .filter-bar {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+      }
+
       .test-case-select-tree {
         height: 100%;
         margin-top: 12px;
-        background-color: #ddd;
       }
     }
 
     .case-prop-title {
+      color: #5f677a;
       line-height: 24px;
       margin-top: 10px;
     }

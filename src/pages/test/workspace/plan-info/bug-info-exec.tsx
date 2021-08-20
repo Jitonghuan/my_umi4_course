@@ -17,11 +17,11 @@ export default function UserCaseInfoExec(props: UserCaseInfoExecProps) {
   }, [data]);
 
   return (
-    <section style={{ width: 376 }} data-loading={loading}>
-      <header>
+    <section style={{ width: 272 }} data-loading={loading}>
+      {/* <header>
         <h3>Bug情况</h3>
-      </header>
-      <div style={{ height: 220 }}>
+      </header> */}
+      <div style={{ height: 174 }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={chartOptions} />
         </ColorContainer>

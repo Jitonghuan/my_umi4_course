@@ -11,8 +11,9 @@ import { Col, Row, Tabs, Progress, Table, Input, Select, Tree, Tag } from 'antd'
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
-import './index.less';
 import { useCaseTestInfoChartOptions } from './formatter';
+import moment from 'moment';
+import './index.less';
 
 const { DirectoryTree } = Tree;
 
@@ -91,36 +92,42 @@ export default function PlanInfo(props: any) {
         </Tabs>
       </FilterCard>
       <CardRowGroup>
-        <CardRowGroup.SlideCard width={436} className="left-card">
+        <CardRowGroup.SlideCard width={312} className="left-card">
           <Row>
-            <Col className="mt-1x" push={1}>
+            <Col className="mt-1x left-cart-sub-title" push={1}>
               基本信息
             </Col>
           </Row>
           <Row>
-            <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x" span={3}>
+            <Col className="mt-1x" span={1}></Col>
+            <Col className="mt-1x left-cart-sub-sub-title" span={6}>
               负责人:
             </Col>
             <Col className="mt-1x">{testPhaseDetail.phaseInfo?.head}</Col>
           </Row>
           <Row>
-            <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x" span={3}>
+            <Col className="mt-1x" span={1}></Col>
+            <Col className="mt-1x left-cart-sub-sub-title" span={6}>
               开始时间:
             </Col>
-            <Col className="mt-1x">{testPhaseDetail.phaseInfo?.startTime}</Col>
+            <Col className="mt-1x">
+              {testPhaseDetail.phaseInfo?.startTime &&
+                moment(testPhaseDetail.phaseInfo?.startTime).format('YYYY-MM-DD HH:mm:ss')}
+            </Col>
           </Row>
           <Row>
-            <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x" span={3}>
+            <Col className="mt-1x" span={1}></Col>
+            <Col className="mt-1x left-cart-sub-sub-title" span={6}>
               结束时间:
             </Col>
-            <Col className="mt-1x">{testPhaseDetail.phaseInfo?.endTime}</Col>
+            <Col className="mt-1x">
+              {testPhaseDetail.phaseInfo?.endTime &&
+                moment(testPhaseDetail.phaseInfo?.endTime).format('YYYY-MM-DD HH:mm:ss')}
+            </Col>
           </Row>
 
-          <Row className="mt-3x">
-            <Col className="mt-1x" push={1} span={4}>
+          <Row className="mt-1x">
+            <Col className="mt-1x left-cart-sub-title" span={8} push={1}>
               执行情况
             </Col>
             <Col className="mt-1x">
@@ -140,6 +147,11 @@ export default function PlanInfo(props: any) {
           </Row>
           <Row className="ml-18">
             <Col className="mt-1x">
+              <UserCaseInfoExec data={testPhaseDetail.executedInfo || {}} />
+            </Col>
+          </Row>
+          <Row className="ml-18">
+            <Col className="mt-1x">
               <BugInfoExec
                 data={{
                   notFixed: testPhaseDetail.bugInfo?.bugTotal - testPhaseDetail.bugInfo?.closedNum,
@@ -148,28 +160,6 @@ export default function PlanInfo(props: any) {
               />
             </Col>
           </Row>
-          <Row className="ml-18">
-            <Col className="mt-1x">
-              <UserCaseInfoExec data={testPhaseDetail.executedInfo || {}} />
-            </Col>
-          </Row>
-
-          {/* <Row className="mt-3x">
-            <Col className="mt-1x" push={1}>
-              bug列表
-            </Col>
-          </Row>
-          <Row>
-            <Col className="mt-1x" span={3}></Col>
-            <Col className="mt-1x" span={21}>
-              <Table>
-                <Table.Column title="ID" render={(_: any, idx: number) => idx + 1} />
-                <Table.Column title="标题" />
-                <Table.Column title="优先级" />
-                <Table.Column title="创建人" />
-              </Table>
-            </Col>
-          </Row> */}
         </CardRowGroup.SlideCard>
         <ContentCard>
           <div className="right-card">
@@ -197,20 +187,20 @@ export default function PlanInfo(props: any) {
                 <Col span={12}>所属模块： {curCase?.caseInfo?.categoryId}</Col>
               </Row>
 
-              <div className="case-prop-title">前置条件</div>
-              <Input.TextArea disabled value={curCase?.caseInfo?.precondition} />
+              <div className="case-prop-title">前置条件:</div>
+              <div>{curCase?.caseInfo?.precondition}</div>
 
-              <div className="case-prop-title">步骤描述</div>
+              <div className="case-prop-title">步骤描述:</div>
               <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
-                <Table.Column title="编号" render={(_: any, __: any, idx: number) => idx + 1} />
+                <Table.Column title="序号" render={(_: any, __: any, idx: number) => idx + 1} />
                 <Table.Column title="步骤描述" dataIndex="input" />
                 <Table.Column title="预期结果" dataIndex="output" />
               </Table>
 
-              <div className="case-prop-title">用例备注</div>
-              <Input.TextArea disabled value={curCase?.caseInfo?.comment} />
+              <div className="case-prop-title">用例备注:</div>
+              <div>{curCase?.caseInfo?.comment}</div>
 
-              <div className="case-prop-title">执行备注</div>
+              <div className="case-prop-title">执行备注:</div>
               <RichText sona={sona} />
             </div>
           </div>
