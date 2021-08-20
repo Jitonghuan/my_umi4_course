@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tag, Form, Tooltip } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import { PlusOutlined } from '@ant-design/icons';
-import { Link, history } from 'umi';
+import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';

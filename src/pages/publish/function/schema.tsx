@@ -2,7 +2,7 @@ import React from 'react';
 import { Moment } from 'moment';
 import { FormProps } from '@/components/table-search/typing';
 import { Space, Tag, Popconfirm } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import type { ColumnsType } from 'antd/lib/table';
 import { Link } from 'umi';
 import { getEnvName } from '@/utils';
 import { statusType } from '../constant';

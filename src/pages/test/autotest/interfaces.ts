@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:09
 
-import type { DataNode } from 'antd/lib/tree/index';
+import type { TreeNode } from '@/components/custom-tree/interfaces';
 
 export interface SelectOptions<Value = string, T = Record<string, any>> extends Record<string, any> {
   label: string;
@@ -18,24 +18,7 @@ export interface ProjectItemVO extends Record<string, any> {
   createUser: string;
 }
 
-export interface TreeNode extends DataNode {
-  /** 业务ID，即服务端返回的 id 字段，方便将 key 和 id 区分开来 */
-  bizId?: number;
-  title?: string;
-  /** 节点级别， 1: 项目, 2: 模块, 3: 接口/场景 */
-  level?: number;
-  /** 节点描述，也是 项目/模块 描述 */
-  desc?: string;
-  /** 一级节点ID，即项目ID */
-  projectId?: number;
-  /** 二级节点ID，即模块ID */
-  moduleId?: number;
-
-  children?: TreeNode[];
-  parent?: TreeNode;
-
-  [x: string]: any;
-}
+export { TreeNode };
 
 export type EditorMode = 'HIDE' | 'EDIT' | 'ADD';
 

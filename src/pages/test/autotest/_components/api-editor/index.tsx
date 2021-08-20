@@ -4,7 +4,7 @@
 
 import React, { useState, useCallback, useEffect, useContext, useRef } from 'react';
 import { Drawer, Form, Input, message, Select, Radio, Tabs, Button, Switch } from 'antd';
-import type { RadioChangeEvent } from 'antd/es/radio';
+import type { RadioChangeEvent } from 'antd/lib/radio';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from '../../service';
 import { getRequest, postRequest } from '@/utils/request';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Space, Popconfirm, Table, Tooltip, Modal, Form } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import type { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
