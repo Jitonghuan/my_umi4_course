@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import HeaderTabs from '../_components/header-tabs';
 import MatrixPageContent from '@/components/matrix-page-content';
 import UserCaseInfoExec from './use-case-info-exec';
 import UseCaseTestInfoExec from './use-case-test-info-exec';
 import BugInfoExec from './bug-info-exec';
 import RichText from '@/components/rich-text';
+import AddCaseDrawer from '../test-case/add-case-drawer';
 import { createSona } from '@cffe/sona';
 import { history } from 'umi';
-import { Col, Row, Tabs, Progress, Table, Input, Select, Tree, Tag } from 'antd';
+import { Col, Row, Tabs, Progress, Table, Input, Select, Tree, Tag, Button, Space, Modal } from 'antd';
+import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
-import { useCaseTestInfoChartOptions } from './formatter';
 import moment from 'moment';
 import './index.less';
 
@@ -31,6 +31,9 @@ export default function PlanInfo(props: any) {
   const [curCaseId, setCurCaseId] = useState<any>();
   const [curCase, setCurCase] = useState<any>();
   const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
+  const [associationBug, setAssociationBug] = useState<any[]>([]);
+  const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
+  const [addCaseDrawerVisible, setAddCaseDrawerVisible] = useState<boolean>(false);
   const sona = useMemo(() => createSona(), []);
 
   useEffect(() => {
@@ -82,8 +85,12 @@ export default function PlanInfo(props: any) {
     void setActiveKey(plan?.phaseCollection?.[0].id.toString());
   }, []);
 
+  const updateBugList = () => {
+    console.log('updateBugList');
+  };
+
   return (
-    <MatrixPageContent className="test-workspace-plan-info">
+    <MatrixPageContent>
       <FilterCard className="layout-compact">
         <Tabs activeKey={activeKey} onChange={(key) => setActiveKey(key)}>
           {plan?.phaseCollection?.map((item: any) => (
@@ -91,7 +98,7 @@ export default function PlanInfo(props: any) {
           ))}
         </Tabs>
       </FilterCard>
-      <CardRowGroup>
+      <CardRowGroup className="test-workspace-plan-info">
         <CardRowGroup.SlideCard width={312} className="left-card">
           <Row>
             <Col className="mt-1x left-cart-sub-title" push={1}>
@@ -182,10 +189,20 @@ export default function PlanInfo(props: any) {
             </div>
 
             <div className="case-info">
-              <Row>
-                <Col span={12}>优先级： {curCase?.caseInfo?.priority}</Col>
-                <Col span={12}>所属模块： {curCase?.caseInfo?.categoryId}</Col>
-              </Row>
+              <div className="case-header">
+                <div className="title-col">
+                  <span className="case-title">#366319 用例名称</span>
+                  <Select className="w-100 ml-auto"></Select>
+                  <Button className="ml-20" icon={<UpOutlined />} />
+                  <Button icon={<DownOutlined />} />
+                </div>
+
+                <div>
+                  <span className="case-prop-title">优先级： </span>
+                  {curCase?.caseInfo?.priority}
+                  <span className="case-prop-title ml-18">所属模块：</span> {curCase?.caseInfo?.categoryId}
+                </div>
+              </div>
 
               <div className="case-prop-title">前置条件:</div>
               <div>{curCase?.caseInfo?.precondition}</div>
@@ -202,10 +219,59 @@ export default function PlanInfo(props: any) {
 
               <div className="case-prop-title">执行备注:</div>
               <RichText sona={sona} />
+
+              <div className="bug-info">
+                <Tabs
+                  defaultActiveKey="1"
+                  tabBarExtraContent={
+                    <Space>
+                      <Button type="primary" ghost onClick={() => setAssociationBugModalVisible(true)}>
+                        关联Bug
+                      </Button>
+                      <Button type="primary" ghost onClick={() => setAddCaseDrawerVisible(true)}>
+                        新增Bug
+                      </Button>
+                      <Button type="primary" ghost disabled>
+                        一键提交
+                      </Button>
+                    </Space>
+                  }
+                >
+                  <Tabs.TabPane tab="关联Bug()" key="1">
+                    关联Bug()
+                  </Tabs.TabPane>
+                  <Tabs.TabPane tab="活动日志" key="2">
+                    活动日志
+                  </Tabs.TabPane>
+                </Tabs>
+              </div>
             </div>
           </div>
         </ContentCard>
       </CardRowGroup>
+
+      <Modal
+        title="Bug列表"
+        visible={associationBugModalVisible}
+        onCancel={() => setAssociationBugModalVisible(false)}
+        maskClosable={false}
+        width={800}
+      >
+        <Input.Search className="test-workspace-plan-info-bug-list-search" />
+
+        <Table>
+          <Table.Column title="ID" width={72} />
+          <Table.Column title="标题" width={442} />
+          <Table.Column title="优先级" width={88} />
+          <Table.Column title="创建人" width={96} />
+        </Table>
+      </Modal>
+
+      <AddCaseDrawer
+        visible={addCaseDrawerVisible}
+        setVisible={setAddCaseDrawerVisible}
+        updateCaseTable={updateBugList}
+      />
     </MatrixPageContent>
   );
 }
