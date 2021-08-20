@@ -36,11 +36,7 @@ function getParentKeys(treeData: TreeNode[], callback: (node: TreeNode) => void)
   }
 }
 
-export function searchTreeData(
-  treeData: TreeNode[],
-  keyword?: string,
-  keepRoot = true,
-): [TreeNode[], (number | string)[]] {
+export function searchTreeData(treeData: TreeNode[], keyword?: string): [TreeNode[], (number | string)[]] {
   if (!keyword) {
     return [treeData, [treeData[0]?.key]];
   }
