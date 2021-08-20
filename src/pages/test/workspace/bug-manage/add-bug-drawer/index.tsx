@@ -61,7 +61,7 @@ export default function BugManage(props: any) {
 
   return (
     <Drawer
-      visible={true}
+      visible={visible}
       onClose={() => setVisible(false)}
       width={700}
       title={bugInfo ? '编辑Bug' : '新增Bug'}

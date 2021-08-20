@@ -4,6 +4,7 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
 import { Select, Input, Switch, Button, Table, Form, Space } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { getProjects, getBugList } from '../service';
 import { bugTypeEnum, statusEnum, priorityEnum } from '../constant';
@@ -112,8 +113,10 @@ export default function BugManage(props: any) {
         </div>
         <div className="bug-table-container">
           <div className="add-bug-btn-container">
+            <span className="bug-table-title">Bug列表</span>
             <Button type="primary" onClick={handleAddBugBtnClick}>
-              新建
+              <PlusOutlined />
+              新增Bug
             </Button>
           </div>
           <Table
