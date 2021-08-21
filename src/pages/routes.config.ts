@@ -616,7 +616,7 @@ export default [
           },
           {
             path: 'operation-log',
-            name: '操作日志',
+            name: '操作记录',
             key: 'operation-cluster',
             component: '@/pages/operation/cluster/operation-log',
             hideInMenu: true,
@@ -673,6 +673,7 @@ export default [
           },
         ],
       },
+      { path: 'tmpl-log', name: '操作日志', key: 'tmpl-log', component: '@/pages/operation/tmpl-log' },
     ],
   },
 

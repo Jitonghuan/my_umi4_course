@@ -1,4 +1,4 @@
-// 操作日志
+// 操作记录
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/27 14:35
 
@@ -50,7 +50,7 @@ export default function Operation() {
           title="操作"
           render={(_, record: any) => (
             <div className="action-cell">
-              <a onClick={() => setDetailItem(record)}>查看日志</a>
+              <a onClick={() => setDetailItem(record)}>查看记录</a>
             </div>
           )}
           width={90}
