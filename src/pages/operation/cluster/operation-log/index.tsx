@@ -7,6 +7,7 @@ import { Table, Modal } from 'antd';
 import moment from 'moment';
 import { ContentCard } from '@/components/vc-page-content';
 import { useLogSource } from './hooks';
+import ExecResult from '@/components/exec-result';
 
 export default function Operation() {
   const [pageIndex, setPageIndex] = useState(1);
@@ -55,18 +56,7 @@ export default function Operation() {
           width={90}
         />
       </Table>
-      <Modal
-        visible={!!detailItem}
-        title="查看日志"
-        width={1000}
-        maskClosable={false}
-        footer={false}
-        onCancel={() => setDetailItem(undefined)}
-      >
-        <pre className="pre-block" style={{ height: window.innerHeight - 300 }}>
-          {detailItem?.log}
-        </pre>
-      </Modal>
+      <ExecResult visible={!!detailItem} data={detailItem?.log} onClose={() => setDetailItem(undefined)} />
     </ContentCard>
   );
 }

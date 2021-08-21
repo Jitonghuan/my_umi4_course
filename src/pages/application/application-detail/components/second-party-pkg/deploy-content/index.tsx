@@ -11,8 +11,8 @@ import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
 import useInterval from './useInterval';
-import DetailContext from '../../../context';
-import { queryDeployList, queryFeatureDeployed } from '../../../../service';
+import DetailContext from '@/pages/application/application-detail/context';
+import { queryDeployList, queryFeatureDeployed } from '@/pages/application/service';
 import { IProps } from './types';
 import './index.less';
 

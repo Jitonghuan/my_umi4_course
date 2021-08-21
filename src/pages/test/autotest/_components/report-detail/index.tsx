@@ -3,7 +3,7 @@
 // @create 2021/07/11 14:20
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Collapse, Table, Tree, Spin, Empty } from 'antd';
+import { Modal, Collapse, Table, Spin, Empty } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled } from '@ant-design/icons';
 import moment from 'moment';
 import DetailModal from '@/components/detail-modal';
@@ -11,6 +11,8 @@ import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import { TaskItemVO, TaskReportItemVO, TreeNode } from '../../interfaces';
 import { useReportTreeData, useReportDetailData } from './hooks';
 import { formatNum, createKVList, getChartOptions } from './formatter';
+import CustomTree from '@/components/custom-tree';
+
 import './index.less';
 
 export interface ReportDetailProps {
@@ -104,14 +106,13 @@ export default function ReportDetail(props: ReportDetailProps) {
             </div>
             <div className="task-report-tree">
               {!treeNodes.length ? <Empty style={{ marginTop: 80 }} image={Empty.PRESENTED_IMAGE_SIMPLE} /> : null}
-              <Tree
-                className="custom-tree"
-                blockNode
+              <CustomTree
                 treeData={treeNodes}
                 defaultExpandedKeys={treeNodes[0] ? [treeNodes[0].key] : []}
                 selectedKeys={selectedNode ? [selectedNode.key] : []}
                 onSelect={handleNodeSelect}
-                showIcon={false}
+                showSearch
+                searchPlaceholder="搜索模块、场景、接口、用例"
                 titleRender={
                   ((nodeData: TreeNode) => (
                     <div className="custom-tree-node">

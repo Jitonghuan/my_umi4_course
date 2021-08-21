@@ -11,8 +11,8 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import { history } from 'umi';
 import { createTableSchema } from './schema';
-import DetailContext from '../../../../../context';
-import { createDeploy, updateFeatures, queryEnvsReq } from '../../../../../../service';
+import DetailContext from '@/pages/application/application-detail/context';
+import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { IProps } from './types';
 import './index.less';
 

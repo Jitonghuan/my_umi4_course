@@ -29,12 +29,12 @@ export interface RecordVo {
   createUser: string;
   dbRemark?: string;
   env: string;
-  errorLog?: string;
   factoryId: number;
   factoryName: string;
   gmtCreate: string;
   gmtModify: string;
   id: number;
+  logInfo: string;
   modifyUser?: string;
   project: string;
   params?: any;

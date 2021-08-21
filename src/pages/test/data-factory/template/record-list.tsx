@@ -8,9 +8,7 @@ import { Drawer, Table, DatePicker, Switch, Tag } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import { TemplateItemProps, RecordVo } from '../interfaces';
 import { useRecordList } from './hooks';
-import { getRequest } from '@/utils/request';
 import ExecResult from '@/components/exec-result';
-import * as APIS from '../service';
 
 type statusTypeItem = {
   color: string;
@@ -41,13 +39,9 @@ export default function RecordList(props: ReordListProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [logData, setLogData] = useState<string>();
 
-  const checkLog = useCallback(async (record: RecordVo) => {
-    const result = await getRequest(APIS.getInstanceList, {
-      data: { id: record.id },
-    });
-
+  const checkLog = useCallback((record: RecordVo) => {
     setIsModalVisible(true);
-    setLogData(result.data);
+    setLogData(record.logInfo);
   }, []);
 
   const handleChangeisMine = (next: boolean) => {

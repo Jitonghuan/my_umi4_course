@@ -8,7 +8,7 @@
 import React, { useMemo, useState } from 'react';
 import { Steps, Button, Modal, Radio } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { retryMerge, retryDeploy } from '../../../../../../../service';
+import { retryMerge, retryDeploy } from '@/pages/application/service';
 import { IProps, Status } from './types';
 import deploy from 'mock/deploy';
 // import './index.less';

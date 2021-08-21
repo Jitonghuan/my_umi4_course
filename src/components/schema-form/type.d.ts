@@ -1,4 +1,4 @@
-import { FormItemProps } from 'antd/es/form';
+import type { FormItemProps } from 'antd/lib/form';
 
 // node type
 export type INodeType =

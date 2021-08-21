@@ -11,7 +11,7 @@ import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
 import { Table, Input, Button, Row, Col, Form, Select, Space, message, InputNumber } from 'antd';
 import './index.less';
-import * as APIS from '../../../service';
+import * as APIS from '@/pages/application/service';
 import { copyScene } from '@/pages/test/autotest/service';
 
 export default function DemoPageTb(porps: any) {

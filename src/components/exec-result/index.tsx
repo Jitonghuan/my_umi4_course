@@ -13,6 +13,8 @@ export interface ExecResultProps {
   onClose?: () => any;
 }
 
+const knownKeys = ['logInfo', 'log_info'];
+
 const dataFormatter = (data: any): string => {
   if (Array.isArray(data)) {
     return data.map((item) => dataFormatter(item)).join('\n\n');
@@ -24,11 +26,11 @@ const dataFormatter = (data: any): string => {
   if (data.status === false && data.error) {
     throw data.error as string;
   }
-  if (data.errorLog) {
-    return data.errorLog as string;
-  }
-  if (data.error_log) {
-    return data.error_log as string;
+  for (let i = 0, j = knownKeys.length; i < j; i++) {
+    const knownKey = knownKeys[i];
+    if (knownKey in data) {
+      return String(data[knownKey]);
+    }
   }
 
   return JSON.stringify(data, null, 2);

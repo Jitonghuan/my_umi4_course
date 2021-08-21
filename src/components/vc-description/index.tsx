@@ -1,7 +1,7 @@
 import React from 'react';
 import { Descriptions } from 'antd';
 
-import { DescriptionsProps } from 'antd/lib/descriptions';
+import type { DescriptionsProps } from 'antd/lib/descriptions';
 
 export type IOption = {
   /** label */

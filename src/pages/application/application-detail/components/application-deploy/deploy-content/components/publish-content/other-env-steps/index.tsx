@@ -5,55 +5,42 @@
  * @create 2021-04-25 15:06
  */
 
-import React, { useMemo, useState } from 'react';
-import { Steps, Button, Modal, Radio } from 'antd';
+import React, { useMemo } from 'react';
+import { Steps, Button, Modal } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { retryMerge, retryDeploy, retryBuild } from '../../../../../../../service';
+import { retryMerge, retryDeploy, retryBuild } from '@/pages/application/service';
 import { IProps, Status } from './types';
-// import './index.less';
 
 const { Step } = Steps;
 const { confirm } = Modal;
 
 const rootCls = 'publish-content-compo';
 
-const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
+const deployStatusMapping: Record<string, Status> = {
+  // 合并release
+  merging: 1.1,
+  mergeErr: 1.2,
+  conflict: 1.2,
+  // 构建
+  building: 2.1,
+  buildErr: 2.2,
+  buildAborted: 2.2,
+  // 部署
+  deploying: 3.1,
+  deployErr: 3.2,
+  deployAborted: 3.2,
+  // 完成
+  deployFinish: 4,
+  deployed: 4,
+};
+
+export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps) {
   const status = useMemo<Status>(() => {
     const { deployStatus } = deployInfo || {};
 
     if (!deployInfo || !deployInfo.id) return 0;
 
-    // 合并release
-    // deployStatus: merging\mergeErr\conflict, 有 mergeWebUrl 则展示
-    if (deployStatus === 'merging') {
-      return 1.1;
-    }
-    if (deployStatus === 'mergeErr' || deployStatus === 'conflict') {
-      return 1.2;
-    }
-
-    //构建
-    if (deployStatus === 'building') {
-      return 2.1;
-    }
-    if (deployStatus === 'buildErr' || deployStatus === 'buildAborted') {
-      return 2.2;
-    }
-
-    // 部署
-    if (deployStatus === 'deploying') {
-      return 3.1;
-    }
-    if (deployStatus === 'deployErr' || deployStatus === 'deployAborted') {
-      return 3.2;
-    }
-
-    //执行完成
-    if (deployStatus === 'deployFinish' || deployStatus === 'deployed') {
-      return 4;
-    }
-
-    return 0;
+    return deployStatusMapping[deployStatus] || 0;
   }, [deployInfo]);
 
   return (
@@ -86,7 +73,6 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
             )
           }
         />
-        {/* <Step title="质量卡点" description="任务已跳过" status="finish" /> */}
         <Step
           title="构建"
           icon={status === 2.1 && <LoadingOutlined />}
@@ -94,7 +80,7 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
           description={
             (status === 2.2 || status === 2.1) && (
               <>
-                {deployInfo.jenkinsUrl && (envTypeCode == 'dev' || envTypeCode == 'test') && (
+                {deployInfo.jenkinsUrl && envTypeCode === 'dev' && (
                   <div style={{ marginTop: 2 }}>
                     <a target="_blank" href={deployInfo.jenkinsUrl}>
                       查看Jenkins详情
@@ -144,7 +130,7 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
                 )}
                 {status === 3.2 && (
                   <>
-                    {deployInfo.deployErrInfo && (envTypeCode == 'dev' || envTypeCode == 'test') && (
+                    {deployInfo.deployErrInfo && envTypeCode === 'dev' && (
                       <div
                         style={{ marginTop: 2 }}
                         onClick={() => {
@@ -187,8 +173,4 @@ const ProdSteps = ({ envTypeCode, deployInfo, onOperate }: IProps) => {
       </Steps>
     </>
   );
-};
-
-ProdSteps.defaultProps = {};
-
-export default ProdSteps;
+}

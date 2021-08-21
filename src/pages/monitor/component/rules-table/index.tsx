@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
-import { FormInstance } from 'antd/lib';
+import type { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';
 import useTable from '@/utils/useTable';
