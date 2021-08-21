@@ -18,6 +18,7 @@ export interface TmplListProps {
   mode?: EditorMode;
   initData?: TmplEdit;
   onClose?: () => any;
+  onSave?: () => any;
 }
 
 export default function TaskEditor(props: TmplListProps) {
@@ -25,7 +26,7 @@ export default function TaskEditor(props: TmplListProps) {
   const [createTmplForm] = Form.useForm();
   const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
   const children: any = [];
-  const { mode, initData, onClose } = props;
+  const { mode, initData, onClose, onSave, reload } = props;
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -46,16 +47,18 @@ export default function TaskEditor(props: TmplListProps) {
     if (mode === 'HIDE') return;
     createTmplForm.resetFields();
     //进入页面加载信息
+    const envCodes: string[] = [];
+    envCodes.push(initData?.envCode);
     const initValues = {
       templateCode: initData?.templateCode,
       templateType: initData?.templateType,
       templateName: initData?.templateName,
       tmplConfigurableItem: initData?.tmplConfigurableItem, //tmplConfigurableItem
-      appCategoryCode: initData?.appCategoryCode || [],
-      envCodes: initData?.envCode || '',
+      appCategoryCode: initData?.appCategoryCode || '',
+      envCodes: envCodes || [],
       templateValue: initData?.templateValue,
     };
-    // console.log('获取到的初始化数据：',initValues.tmplConfigurableItem)
+    console.log('获取到的初始化数据：', initValues.envCodes);
     let arr = [];
     for (const key in initValues.tmplConfigurableItem) {
       arr.push({
@@ -127,27 +130,29 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    const envCodes: string[] = [];
-    envCodes.push(value.envCodes);
     putRequest(APIS.update, {
       data: {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
         appCategoryCode: value.appCategoryCode || '',
-        envCodes: envCodes || [],
+        envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         templateCode: templateCode,
       },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas = resp.data || [];
-        setEnvDatas(datas.envCodes);
-        history.push({
-          pathname: 'tmpl-list',
-        });
-      }
-    });
+    })
+      .then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          setEnvDatas(datas.envCodes);
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      })
+      .finally(() => {
+        reload;
+      });
   };
   return (
     <Drawer
@@ -228,7 +233,7 @@ export default function TaskEditor(props: TmplListProps) {
               <Button type="ghost" htmlType="reset" onClick={onClose}>
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" onClick={() => onClose?.()} disabled={isDisabled}>
+              <Button type="primary" htmlType="submit" onClick={() => onSave?.()} disabled={isDisabled}>
                 保存编辑
               </Button>
             </Space>

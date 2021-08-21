@@ -2,15 +2,16 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { history } from 'umi';
-import { useEffectOnce } from 'white-react-use';
+// import { useEffectOnce } from 'white-react-use';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from '../tmpl-edits';
+import { values } from '_@types_lodash@4.14.171@@types/lodash';
 
 export type EditorMode = 'HIDE' | 'EDIT';
 /** 编辑页回显数据 */
@@ -50,18 +51,20 @@ export default function Launch() {
 
   const handleEditTask = useCallback(
     (record: TmplEdit, index: number) => {
+      const flushFlag = tmplateData?.templateName;
       setTmplateData(record);
       setTmplEditMode('EDIT');
+      setDataSource(dataSource);
     },
     [dataSource],
   );
 
   //查询编辑参数
-  useEffectOnce(() => {
+  useEffect(() => {
     queryList({ pageIndex: 1, pageSize: 20 });
     selectCategory();
     selectTmplType();
-  });
+  }, []);
 
   // 加载应用分类下拉选择
   const selectCategory = () => {
@@ -145,7 +148,6 @@ export default function Launch() {
           setPageTotal(pageTotal);
           setDataSource(dataSource);
           setPageIndex(pageIndex);
-          console.log('可配置项：', dataSource);
         }
       })
       .finally(() => {
@@ -166,11 +168,24 @@ export default function Launch() {
       }
     });
   };
-  //展示抽屉
+  //抽屉保存
+  const saveEditData = () => {
+    setTmplEditMode('HIDE');
+    message.success('保存成功！');
 
+    setTimeout(() => {
+      queryList({ pageIndex: 1, pageSize: 20 });
+    }, 100);
+    // window.location.reload();
+  };
   return (
     <MatrixPageContent>
-      <TmplEditDraw mode={tmplEditMode} initData={tmplateData} onClose={() => setTmplEditMode('HIDE')} />
+      <TmplEditDraw
+        mode={tmplEditMode}
+        initData={tmplateData}
+        onClose={() => setTmplEditMode('HIDE')}
+        onSave={saveEditData}
+      />
       <FilterCard>
         <Form
           layout="inline"
@@ -229,28 +244,16 @@ export default function Launch() {
             </Button>
           </Form.Item>
           <div style={{ float: 'right', display: 'flex' }}>
-            <Space size="small">
-              <Button
-                type="primary"
-                onClick={() =>
-                  history.push({
-                    pathname: 'tmpl-add',
-                  })
-                }
-              >
-                新增模版
-              </Button>
-              <Button
-                type="primary"
-                onClick={() =>
-                  history.push({
-                    pathname: 'tmpl-log',
-                  })
-                }
-              >
-                查看日志
-              </Button>
-            </Space>
+            <Button
+              type="primary"
+              onClick={() =>
+                history.push({
+                  pathname: 'tmpl-add',
+                })
+              }
+            >
+              新增模版
+            </Button>
           </div>
         </Form>
       </FilterCard>

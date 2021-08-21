@@ -174,14 +174,12 @@ export default function ticketAlarm() {
           onChange={pageSizeClick}
         >
           <Table.Column title="ID" dataIndex="id" width="5%" />
-          <Table.Column title="报警名称" dataIndex="alertName" ellipsis width="14%" />
-          <Table.Column title="应用名" dataIndex="appCode" ellipsis />
-          <Table.Column title="环境" dataIndex="envCode" ellipsis />
-          <Table.Column title="通知对象" dataIndex="receiver" width="8%" />
+          <Table.Column title="告警信息" dataIndex="message" ellipsis width="14%" />
+          <Table.Column title="审批人" dataIndex="receiver" width="8%" />
           <Table.Column title="开始时间" dataIndex="startTime" />
           <Table.Column title="结束时间" dataIndex="endTime" />
           <Table.Column
-            title="报警状态"
+            title="工单状态"
             dataIndex="status"
             render={(text) => (
               <Tag
@@ -207,13 +205,13 @@ export default function ticketAlarm() {
             key="action"
             render={(text, record: any) => (
               <Space size="large">
-                <a onClick={() => showModal(record)}>查看告警历史</a>
+                <a onClick={() => showModal(record)}>查看告警记录</a>
               </Space>
             )}
           />
         </Table>
       </ContentCard>
-      <Modal title="报警历史" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width="80%">
+      <Modal title="报警历史" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width="90%">
         <Table bordered dataSource={alertHistoryData}>
           <Table.Column title="ID" dataIndex="id" width="5%" />
           <Table.Column title="告警名称" dataIndex="alertName" ellipsis width="12%" />
