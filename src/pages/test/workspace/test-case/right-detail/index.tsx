@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Table, Button, Popconfirm, Input, Select, message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
-import { getCasePageList } from '../../service';
+import { getCasePageList, caseDelete } from '../../service';
 import { priorityEnum } from '../../constant';
 import AddCaseDrawer from '../add-case-drawer';
 import dayjs from 'dayjs';
@@ -15,13 +15,11 @@ export default function RightDetail(props: any) {
   const [pageSize, setPageSize] = useState<number>(10);
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
+  const [form] = Form.useForm();
 
-  const updateDatasource = async (
-    keyword?: string,
-    priority?: string,
-    _pageIndex: number = pageIndex,
-    _pageSize = pageSize,
-  ) => {
+  const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize) => {
+    const { keyword, priority } = form.getFieldsValue();
+
     if (!cateId && cateId !== 0) return;
     void setLoading(true);
     const res = await getRequest(getCasePageList, {
@@ -40,24 +38,28 @@ export default function RightDetail(props: any) {
     void updateDatasource();
   }, [pageIndex, pageSize, cateId]);
 
-  const onConfirm = () => {
-    console.log('delete');
+  const onDeleteConfirm = (id: number) => {
+    const loadEnd = message.loading('正在删除');
+    postRequest(caseDelete, { data: { ids: [id] } }).then((res) => {
+      void loadEnd();
+      void message.success('删除成功');
+      void updateDatasource();
+    });
   };
 
-  const operateRender = () => (
-    <Popconfirm title="确定要删除此用例吗？" onConfirm={onConfirm}>
+  const operateRender = (record: any) => (
+    <Popconfirm title="确定要删除此用例吗？" onConfirm={() => onDeleteConfirm(record.id)}>
       <Button type="link">删除</Button>
     </Popconfirm>
   );
-
-  const handleSearch = (vals: any) => {
-    void updateDatasource(vals.keyword, vals.priority);
+  const handleSearch = () => {
+    void updateDatasource(1);
   };
 
   return (
     <div className="test-workspace-test-case-right-detail">
       <div className="searchHeader">
-        <Form layout="inline" onFinish={handleSearch}>
+        <Form layout="inline" onFinish={handleSearch} form={form}>
           <Form.Item label="用例标题:" name="keyword">
             <Input placeholder="输入标题" />
           </Form.Item>
@@ -97,8 +99,8 @@ export default function RightDetail(props: any) {
             total,
             pageSize,
             showSizeChanger: true,
-            onChange: (next) => setPageIndex(next),
-            onShowSizeChange: (_, next) => setPageSize(next),
+            onChange: (next) => updateDatasource(next),
+            onShowSizeChange: (_, next) => updateDatasource(1, next),
           }}
         >
           <Table.Column width={60} title="ID" render={(_: any, __: any, index: number) => index + 1}></Table.Column>

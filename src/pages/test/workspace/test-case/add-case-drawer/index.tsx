@@ -65,11 +65,15 @@ export default function RightDetail(props: any) {
       categoryId: cateId,
     };
 
+    const loadEnd = message.loading(`正在${caseId ? '更新' : '新增'}用例`);
+
     if (caseId) {
       void (await postRequest(updateCase + '/' + caseId, { data: formData }));
     } else if (cateId) {
       void (await postRequest(createCase, { data: formData }));
     }
+
+    void loadEnd();
     void updateCaseTable();
     void message.success('新增用例成功');
 
@@ -96,7 +100,13 @@ export default function RightDetail(props: any) {
   };
 
   return (
-    <Drawer visible={visible} width="650" title={caseId ? '编辑用例' : '添加用例'} onClose={() => setVisible(false)}>
+    <Drawer
+      visible={visible}
+      width="650"
+      title={caseId ? '编辑用例' : '添加用例'}
+      onClose={() => setVisible(false)}
+      maskClosable={false}
+    >
       <Form {...layout} form={form}>
         <Form.Item label="标题:" name="title">
           <Input placeholder="请输入标题" />
