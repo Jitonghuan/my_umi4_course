@@ -304,8 +304,8 @@ export default [
         name: '告警工单',
         key: 'ticketAlarm',
         component: '@/pages/ticket/ticket-alarm',
-        // TODO 线上不显示
-        hideInMenu: process.env.BUILD_ENV === 'prod',
+        // // TODO 线上不显示
+        // hideInMenu: process.env.BUILD_ENV === 'prod',
       },
     ],
   },
@@ -651,13 +651,6 @@ export default [
             hideInMenu: true,
           },
           {
-            path: 'tmpl-log',
-            name: '查看日志',
-            key: 'app-tmpl',
-            // component: '@/pages/operation/app-tmpl/tmpl-log',
-            hideInMenu: true,
-          },
-          {
             path: 'tmpl-add',
             name: '新增应用模版',
             key: 'app-tmpl',
@@ -673,7 +666,12 @@ export default [
           },
         ],
       },
-      { path: 'tmpl-log', name: '操作日志', key: 'tmpl-log', component: '@/pages/operation/tmpl-log' },
+      {
+        path: 'tmpl-log',
+        name: '操作日志',
+        key: 'tmpl-log',
+        component: '@/pages/operation/tmpl-log',
+      },
     ],
   },
 
