@@ -137,7 +137,7 @@ export default function BugManage(props: any) {
             <Table.Column title="ID" dataIndex="id" />
             <Table.Column title="标题" dataIndex="name" />
             <Table.Column title="类型" dataIndex="bugType" render={(type) => bugTypeEnum[type]} />
-            <Table.Column title="优先级" dataIndex="priority" />
+            <Table.Column title="优先级" dataIndex="priority" render={(priority) => bugPriorityEnum[priority]} />
             <Table.Column title="状态" dataIndex="status" render={(status) => statusEnum[status]} />
             <Table.Column title="创建人" dataIndex="createUser" />
             <Table.Column title="经办人" dataIndex="modifyUser" />
