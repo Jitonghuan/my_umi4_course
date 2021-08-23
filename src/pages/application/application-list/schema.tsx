@@ -2,7 +2,8 @@ import React from 'react';
 import { history } from 'umi';
 import { Popconfirm } from 'antd';
 import { ColumnProps } from '@cffe/vc-hulk-table';
-import { AppType } from './types';
+
+export type AppType = 'frontend' | 'backend';
 
 const APP_TYPE_MAP = {
   frontend: '前端',

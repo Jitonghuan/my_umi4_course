@@ -8,7 +8,6 @@
 import React, { useMemo, useEffect, useState, useCallback, useContext, useRef } from 'react';
 import { Form, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useEffectOnce } from 'white-react-use';
 import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/fe-context';
@@ -64,10 +63,8 @@ const ApplyList = (props: IProps) => {
   } = usePaginated({
     requestUrl: queryApplysUrl,
     requestMethod: 'GET',
-    initPageInfo: {
-      pageSize: 20,
-    },
     pagination: {
+      defaultPageSize: 20,
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
     },
@@ -79,9 +76,9 @@ const ApplyList = (props: IProps) => {
     },
   });
 
-  useEffectOnce(() => {
+  useEffect(() => {
     queryAppList();
-  });
+  }, []);
 
   // 监听表单变化，根据所属查询业务线
   const handleChange = useCallback((vals) => {

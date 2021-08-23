@@ -8,9 +8,8 @@
 import React, { useMemo, useEffect, useState, useCallback, useContext } from 'react';
 import { Form, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useEffectOnce } from 'white-react-use';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import CreateApplication from '@/components/create-application';
+import CreateApplication from '../_components/create-application';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import { InlineForm } from '@/components/schema-form';
@@ -20,11 +19,11 @@ import MatrixPageContent from '@/components/matrix-page-content';
 
 import { createFilterFormSchema, createTableSchema } from './schema';
 import { queryAppsUrl, deleteApp } from '../service';
-import { rootCls } from './constants';
-import { IProps } from './types';
 import './index.less';
 
-const ApplicationList = (props: IProps) => {
+const rootCls = 'application-list-page';
+
+const ApplicationList = () => {
   const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [formInstance] = Form.useForm();
@@ -67,10 +66,8 @@ const ApplicationList = (props: IProps) => {
     requestUrl: queryAppsUrl,
     requestMethod: 'GET',
     showRequestError: true,
-    initPageInfo: {
-      pageSize: 20,
-    },
     pagination: {
+      defaultPageSize: 20,
       showSizeChanger: true,
       showTotal: (total) => `总共 ${total} 条数据`,
     },
@@ -85,9 +82,9 @@ const ApplicationList = (props: IProps) => {
     }
   }, []);
 
-  useEffectOnce(() => {
+  useEffect(() => {
     queryAppList();
-  });
+  }, []);
 
   return (
     <MatrixPageContent isFlex>
