@@ -1,9 +1,8 @@
-import { ReactNode } from 'react';
+import { DeployInfoVO } from '@/pages/application/application-detail/types';
 
 export interface IProps {
   envTypeCode: string;
-  appCode: string;
-  deployInfo: Record<string, any>;
+  deployInfo: DeployInfoVO;
   onOperate: (type: OperateType) => void;
 }
 
@@ -40,4 +39,4 @@ export type Status =
   /** 删除feature失败 */
   | 4.2
   /** 发布完成 */
-  | 6;
+  | 5;

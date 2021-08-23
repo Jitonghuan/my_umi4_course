@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
-import { FormInstance } from 'antd/lib';
+import type { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';
 import useTable from '@/utils/useTable';
@@ -28,10 +28,6 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 };
 
 const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true }) => {
-  const [dataSources, setDataSources] = useState<{
-    dataSource: Item[];
-    pageInfo: Record<string, React.Key>;
-  }>();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
   const [type, setType] = useState<'add' | 'edit'>('add');
@@ -84,7 +80,6 @@ const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true 
     isSuccessModal: true,
     onSuccess: () => {
       queryList();
-      // queryRulesListFun({ serviceId,pageIndex: -1 });
     },
   });
 
@@ -108,8 +103,6 @@ const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true 
       title: '告警表达式',
       dataIndex: 'expression',
       key: 'expression',
-      // width: '5%',
-      // ellipsis: true,
       render: (text: string) => (
         <Tooltip title={text}>
           <span
@@ -130,18 +123,11 @@ const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true 
       title: '告警消息',
       dataIndex: 'message',
       key: 'message',
-      // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      // width: '4%',
       render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>,
     },
     {
@@ -202,16 +188,10 @@ const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true 
     }
   };
 
-  // useEffect(() => {
-  //   getTableData({ templates: dataSource });
-  // }, [dataSource]);
-
   return (
     <>
       <Table
         columns={columns}
-        // dataSource={dataSources?.dataSource}
-        // pagination={dataSources?.pageInfo}
         {...tableProps}
         pagination={false}
         className="step-two"

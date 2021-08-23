@@ -10,7 +10,7 @@ import { Drawer, message, Spin } from 'antd';
 import { BasicForm } from '@/components/schema-form';
 import SearchUserSelect from '@/components/search-user-select';
 import createSchema from './create-schema';
-import { updateAppMember } from '../../../../service';
+import { updateAppMember } from '@/pages/application/service';
 import { IProps, FormValue } from './types';
 // import './index.less';
 

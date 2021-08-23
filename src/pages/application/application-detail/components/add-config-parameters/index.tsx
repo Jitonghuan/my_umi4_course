@@ -10,7 +10,7 @@ import { Button, Table, message } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
 import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
-import { configMultiAdd } from '../../../service';
+import { configMultiAdd } from '@/pages/application/service';
 import { IProps, DataSourceType } from './types';
 import './index.less';
 

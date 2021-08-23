@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Form } from 'antd';
-import type { FormProps } from 'antd/es/form';
+import type { FormProps } from 'antd/lib/form';
 
 import useDefaultStyle from './hooks/useDefaultStyle';
 import type { FormInstance } from 'antd/lib/form';

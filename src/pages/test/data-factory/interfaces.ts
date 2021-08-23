@@ -4,6 +4,13 @@
 
 export type EditorMode = 'HIDE' | 'EDIT' | 'ADD';
 
+export interface TempParamsProps {
+  name: string;
+  desc: string;
+  value: string;
+  type: string;
+}
+
 export interface TemplateItemProps {
   createUser: string;
   dbRemark?: string;
@@ -14,7 +21,7 @@ export interface TemplateItemProps {
   id: number;
   modifyUser?: string;
   name: string;
-  params: Record<string, string>[];
+  params?: TempParamsProps[];
   project: string;
 }
 
@@ -22,12 +29,12 @@ export interface RecordVo {
   createUser: string;
   dbRemark?: string;
   env: string;
-  errorLog?: string;
   factoryId: number;
   factoryName: string;
   gmtCreate: string;
   gmtModify: string;
   id: number;
+  logInfo: string;
   modifyUser?: string;
   project: string;
   params?: any;

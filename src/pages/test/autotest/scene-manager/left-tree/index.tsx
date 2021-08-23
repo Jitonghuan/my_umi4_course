@@ -3,7 +3,7 @@
 // @create 2021/05/30 16:29
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Modal, Select, Tree, Spin, Empty, message } from 'antd';
+import { Modal, Select, Spin, Empty, message } from 'antd';
 import { PlusOutlined, EditOutlined, CopyOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
 import VCCustomIcon from '@cffe/vc-custom-icon';
@@ -16,6 +16,7 @@ import { findTreeNodeByKey } from '../../common';
 import { useProjectOptions } from '../../hooks';
 import SceneEditor from '../../_components/scene-editor';
 import SceneClone from '../../_components/scene-clone';
+import CustomTree from '@/components/custom-tree';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
@@ -183,16 +184,15 @@ export default function LeftTree(props: LeftTreeProps) {
         <Empty description="未找到数据" style={{ marginTop: 60 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : null}
 
-      <Tree
-        className="custom-tree"
+      <CustomTree
         key={searchProject || 1}
-        blockNode
         treeData={treeData}
         selectedKeys={selectedItem ? [selectedItem.key] : []}
         onSelect={handleItemSelect}
         expandedKeys={expandedKeys}
         onExpand={(keys, info) => setExpandedKeys(keys)}
-        showIcon={false}
+        showSearch
+        searchPlaceholder="搜索模块、场景"
         titleRender={
           ((nodeData: TreeNode) => (
             <div className="custom-tree-node">

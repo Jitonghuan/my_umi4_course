@@ -145,7 +145,7 @@ export default function DataTemplate() {
         <Table.Column dataIndex="id" title="序号" width={80} />
         <Table.Column dataIndex="name" title="模板名称" />
         <Table.Column dataIndex="desc" title="描述" />
-        <Table.Column dataIndex="project" title="业务线" />
+        <Table.Column dataIndex="projectName" title="业务线" />
         <Table.Column dataIndex="env" title="支持环境" />
         {/* <Table.Column
           dataIndex="variable"

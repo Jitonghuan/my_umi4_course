@@ -2,16 +2,28 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { history } from 'umi';
-import { useEffectOnce } from 'white-react-use';
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
+// import { useEffectOnce } from 'white-react-use';
+import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
-import { tmplList } from '../service';
+import TmplEditDraw from '../tmpl-edits';
+import { values } from '_@types_lodash@4.14.171@@types/lodash';
 
+export type EditorMode = 'HIDE' | 'EDIT';
+/** 编辑页回显数据 */
+export interface TmplEdit extends Record<string, any> {
+  templateCode: string;
+  templateType: string;
+  templateName: string;
+  tmplConfigurableItem: object;
+  appCategoryCode: any;
+  envCodes: string;
+  templateValue: string;
+}
 export default function Launch() {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
@@ -27,11 +39,32 @@ export default function Launch() {
   const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
-  useEffectOnce(() => {
+  const [showDrawVisible, setShowDrawVisible] = useState<boolean>(true); //是否展示抽屉
+  const [showDrawInfo, setShowDrawInfo] = useState<any>({
+    type: '',
+    templateCode: '',
+    showDraw: false,
+  });
+
+  const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
+  const [tmplateData, setTmplateData] = useState<TmplEdit>();
+
+  const handleEditTask = useCallback(
+    (record: TmplEdit, index: number) => {
+      const flushFlag = tmplateData?.templateName;
+      setTmplateData(record);
+      setTmplEditMode('EDIT');
+      setDataSource(dataSource);
+    },
+    [dataSource],
+  );
+
+  //查询编辑参数
+  useEffect(() => {
     queryList({ pageIndex: 1, pageSize: 20 });
     selectCategory();
     selectTmplType();
-  });
+  }, []);
 
   // 加载应用分类下拉选择
   const selectCategory = () => {
@@ -121,6 +154,7 @@ export default function Launch() {
         setLoading(false);
       });
   };
+
   //删除数据
   const handleDelItem = (record: any) => {
     let id = record.id;
@@ -134,9 +168,24 @@ export default function Launch() {
       }
     });
   };
+  //抽屉保存
+  const saveEditData = () => {
+    setTmplEditMode('HIDE');
+    message.success('保存成功！');
 
+    setTimeout(() => {
+      queryList({ pageIndex: 1, pageSize: 20 });
+    }, 100);
+    // window.location.reload();
+  };
   return (
     <MatrixPageContent>
+      <TmplEditDraw
+        mode={tmplEditMode}
+        initData={tmplateData}
+        onClose={() => setTmplEditMode('HIDE')}
+        onSave={saveEditData}
+      />
       <FilterCard>
         <Form
           layout="inline"
@@ -194,10 +243,9 @@ export default function Launch() {
               重置
             </Button>
           </Form.Item>
-          <span style={{ float: 'right' }}>
+          <div style={{ float: 'right', display: 'flex' }}>
             <Button
               type="primary"
-              style={{ marginLeft: '88px' }}
               onClick={() =>
                 history.push({
                   pathname: 'tmpl-add',
@@ -206,7 +254,7 @@ export default function Launch() {
             >
               新增模版
             </Button>
-          </span>
+          </div>
         </Form>
       </FilterCard>
       <ContentCard>
@@ -240,7 +288,7 @@ export default function Launch() {
               dataIndex="gmtModify"
               width="24%"
               key="action"
-              render={(text, record: any) => (
+              render={(_, record: TmplEdit, index) => (
                 <Space size="small">
                   <a
                     onClick={() =>
@@ -269,19 +317,7 @@ export default function Launch() {
                     详情 {record.lastName}
                   </a>
 
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-edit',
-                        query: {
-                          type: 'edit',
-                          templateCode: record.templateCode,
-                        },
-                      })
-                    }
-                  >
-                    编辑
-                  </a>
+                  <a onClick={() => handleEditTask(record, index)}>编辑</a>
                   <a
                     onClick={() => {
                       history.push(`push?templateCode=${record.templateCode}`);

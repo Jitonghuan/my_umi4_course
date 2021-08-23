@@ -100,7 +100,6 @@ export default function DemoPageTb(porps: any) {
       return prev;
     }, {} as any);
     // console.log('tmplConfigurableItem:', tmplConfigurableItem);
-    debugger;
     postRequest(APIS.create, {
       data: {
         templateName: value.templateName,

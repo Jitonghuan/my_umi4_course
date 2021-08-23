@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tag, Form, Tooltip } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import { PlusOutlined } from '@ant-design/icons';
-import { Link, history } from 'umi';
+import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import MatrixPageContent from '@/components/matrix-page-content';
@@ -42,7 +40,7 @@ const HistoryCom: React.FC = () => {
     method: 'GET',
     form,
   });
-
+  console.log('获取到的结果：', tableProps);
   const columns: ColumnsType<Item> = [
     {
       title: '序号',
@@ -139,7 +137,7 @@ const HistoryCom: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       // width: '4%',
-      render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].text}</Tag>,
+      render: (text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>,
     },
   ];
 
@@ -149,7 +147,7 @@ const HistoryCom: React.FC = () => {
       type: 'input',
       label: '报警名称',
       dataIndex: 'alertName',
-      width: '144px',
+      width: '154px',
       placeholder: '请输入',
       onChange: (e: React.FormEvent<HTMLInputElement>) => {
         console.log(e);
@@ -160,7 +158,7 @@ const HistoryCom: React.FC = () => {
       type: 'select',
       label: '报警状态',
       dataIndex: 'status',
-      width: '144px',
+      width: '154px',
       placeholder: '请选择',
       option: [
         {
@@ -189,7 +187,7 @@ const HistoryCom: React.FC = () => {
       type: 'select',
       label: '报警级别',
       dataIndex: 'level',
-      width: '144px',
+      width: '154px',
       placeholder: '请选择',
       option: [
         {
@@ -205,6 +203,29 @@ const HistoryCom: React.FC = () => {
           value: '灾难',
         },
       ],
+      onChange: (e: string) => {
+        console.log(e);
+      },
+    },
+    {
+      key: '4',
+      type: 'input',
+      label: '应用名称',
+      dataIndex: 'appCode',
+      width: '154px',
+      placeholder: '请输入',
+
+      onChange: (e: string) => {
+        console.log(e);
+      },
+    },
+    {
+      key: '5',
+      type: 'input',
+      label: '环境名称',
+      dataIndex: 'envCode',
+      width: '154px',
+      placeholder: '请输入',
       onChange: (e: string) => {
         console.log(e);
       },

@@ -12,7 +12,7 @@ import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { createDeploy, updateFeatures } from '../../../../../../service';
+import { createDeploy, updateFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import './index.less';
 

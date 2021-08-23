@@ -5,147 +5,134 @@
  * @create 2021-04-09 18:39
  */
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Tabs } from 'antd';
+import { Tabs, Spin } from 'antd';
+import VCPermission from '@/components/vc-permission';
+import MatrixPageContent from '@/components/matrix-page-content';
+import { FilterCard } from '@/components/vc-page-content';
 import DetailContext, { ContextTypes } from './context';
-import { tabsConfig } from './config';
+import { tabsConfig } from './tab-config';
 import { queryApps } from '../service';
 import { IProps } from './types';
 import './index.less';
-import VCPermission from '@/components/vc-permission';
-import MatrixPageContent from '@/components/matrix-page-content';
 
-const rootCls = 'application-detail-page';
 const detailPath = '/matrix/application/detail';
 const { TabPane } = Tabs;
-/** 默认值为概述 */
-const defaultTab = 'overview';
 
-const ApplicationDetail = (props: IProps) => {
+// 额外的菜单匹配映射规则
+const activeKeyMap: Record<string, any> = {
+  addConfig: 'configMgr',
+  addLaunchParameters: 'launchParameters',
+};
+
+export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
-  const isContainClient = Number(location.query.isContainClient) === 1;
-  // const isNotClient = Number(location.query.isClient) === 0;
-  // const isBackend = location.query.appType === 'backend';
-  const appId = location.query.id;
-
+  const appId = location.query?.id;
   const [appData, setAppData] = useState<ContextTypes['appData']>();
 
-  const tabActiveKey = useMemo(
-    () => Object.keys(tabsConfig).find((key) => location.pathname === `${detailPath}/${key}`),
-    [location.pathname],
-  );
+  const tabActiveKey = useMemo(() => {
+    const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
+    return activeKeyMap[currRoute!] || currRoute;
+  }, [location.pathname]);
 
   // 请求应用数据
-  const queryAppData = () => {
+  const queryAppData = useCallback(() => {
     queryApps({
-      id: Number(appId),
+      id: +appId,
       pageIndex: 1,
       pageSize: 10,
     }).then((res: any) => {
-      if (res.list.length) {
-        setAppData(res.list[0]);
-        return;
-      }
-      setAppData(undefined);
+      setAppData(res?.list?.[0]);
     });
-  };
+  }, [appId]);
 
   useEffect(() => {
-    if (!appId) return;
-
+    if (!appId) {
+      setAppData(undefined);
+      return;
+    }
     queryAppData();
 
-    // 每次切换进来需要重置数据
+    // 每次切换进来需要重置 tab 缓存
     sessionStorage.removeItem('__init_env_tab__');
   }, [appId]);
 
+  // 过滤掉不显示的 tab
+  const filteredTabList = useMemo(() => {
+    if (!appData) return [];
+
+    return Object.keys(tabsConfig).filter((key) => {
+      // 只有 HBOS 才显示 配置管理 和 启动参数
+      // if (key === 'configMgr' || key === 'launchParameters')
+      if (key === 'configMgr') {
+        return appData.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1';
+      }
+
+      if (appData.isContainClient === 1) return true;
+
+      if (key === 'monitor') {
+        return appData.isClient !== 1 && appData.appType === 'backend';
+      }
+      if (key === 'AppParameters') {
+        return appData.isClient !== 1 && appData.appType === 'backend';
+      }
+
+      return true;
+    });
+  }, [appData]);
+
   // 默认重定向到【概述】路由下
   if (location.pathname === detailPath) {
-    history.replace({
-      pathname: `${location.pathname}/${defaultTab}`,
-      query: {
-        ...location.query,
-      },
-    });
-    return null;
+    return (
+      history.replace({
+        pathname: `${location.pathname}/overview`,
+        query: { ...location.query },
+      }),
+      null
+    );
+  }
+
+  // 没有数据的时整体不显示，防止出现空数据异常
+  if (!appData) {
+    return (
+      <MatrixPageContent>
+        <div className="block-loading">
+          <Spin tip="数据初始化中" />
+        </div>
+      </MatrixPageContent>
+    );
   }
 
   return (
-    <MatrixPageContent isFlex>
-      {/* tab子路由 */}
-      {tabActiveKey && (
+    <MatrixPageContent className="application-detail-page">
+      <FilterCard className="layout-compact">
         <Tabs
-          tabBarStyle={{ padding: '0 24px', background: '#fff' }}
-          className={`${rootCls}__tabs`}
           activeKey={tabActiveKey}
           onChange={(key) => {
             history.replace({
               pathname: `${detailPath}/${key}`,
-              query: {
-                ...location.query,
-              },
+              query: { ...location.query },
             });
           }}
           tabBarExtraContent={
             <div className="tab-right-extra">
-              <span
-                style={{
-                  color: 'rgba(0,0,0,.85)',
-                  fontWeight: 600,
-                  fontSize: 18,
-                }}
-              >
-                {appData?.appCode}
-              </span>
-              <span style={{ marginLeft: 12, color: 'rgba(0,0,0,.45)' }}>{appData?.appName}</span>
+              <h4>{appData?.appCode}</h4>
+              <span>{appData?.appName}</span>
             </div>
           }
         >
-          {Object.keys(tabsConfig)
-            // 只有应用为包含二方包属性的时候，才会显示二方包的 tab
-            .filter((key) => {
-              // 只有 HBOS 才显示 配置管理 和 启动参数
-              // if (key === 'configMgr' || key === 'launchParameters')
-              if (key === 'configMgr') {
-                return appData?.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1';
-              }
-
-              if (isContainClient) {
-                return true;
-              }
-
-              if (key === 'monitor') {
-                return appData?.isClient !== 1 && appData?.appType === 'backend';
-              }
-              if (key === 'AppParameters') {
-                // console.log('第二个结果：', appData?.appType === 'backend');
-                // console.log('第一个结果：', isBackend);
-                return appData?.isClient !== 1 && appData?.appType === 'backend';
-              }
-              // 不包含二方包
-              return key !== 'secondPartyPkg';
-            })
-            .map((key) => (
-              <TabPane tab={tabsConfig[key]} key={key} />
-            ))}
+          {filteredTabList.map((key) => (
+            <TabPane tab={tabsConfig[key]} key={key} />
+          ))}
         </Tabs>
-      )}
+      </FilterCard>
 
-      <DetailContext.Provider
-        value={{
-          appData,
-          queryAppData: queryAppData,
-        }}
-      >
+      <DetailContext.Provider value={{ appData, queryAppData }}>
         <VCPermission code={window.location.pathname} isShowErrorPage>
           {children}
         </VCPermission>
       </DetailContext.Provider>
     </MatrixPageContent>
   );
-};
-
-ApplicationDetail.defaultProps = {};
-
-export default ApplicationDetail;
+}

@@ -7,7 +7,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { Steps, Button, Modal, Radio, Spin, message } from 'antd';
-import { confirmProdDeploy } from '../../../../../../../../service';
+import { confirmProdDeploy } from '@/pages/application/service';
 import { IProps } from './types';
 // import './index.less';
 

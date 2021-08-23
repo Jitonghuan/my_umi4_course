@@ -8,7 +8,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Spin, message, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { configUploadUrl } from '../../../../../service';
+import { configUploadUrl } from '@/pages/application/service';
 import { IProps } from './types';
 // import './index.less';
 

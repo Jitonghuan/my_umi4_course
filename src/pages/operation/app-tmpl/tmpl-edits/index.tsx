@@ -1,31 +1,39 @@
-// 上下布局页面 应用模版编辑页
+// data formatter
 // @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/07/31 17:00
+// @create 2021/08/09 10:30
 
+// import { clusterBLineChart } from './formatter';
 import React from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import { getRequest, putRequest } from '@/utils/request';
-import { useContext, useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
+import { EditorMode, TmplEdit } from '../tmpl-list';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
-import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
-import './index.less';
+import { Drawer, Input, Button, Form, Row, Col, Select, Space } from 'antd';
 
-export default function DemoPageTb(porps: any) {
+export interface TmplListProps {
+  mode?: EditorMode;
+  initData?: TmplEdit;
+  onClose?: () => any;
+  onSave?: () => any;
+}
+
+export default function TaskEditor(props: TmplListProps) {
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
   const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
   const children: any = [];
-  const { TextArea } = Input;
+  const { mode, initData, onClose, onSave, reload } = props;
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
+  const templateCode = initData?.templateCode;
   const handleChange = (next: any[]) => {
     setSource(next);
   };
@@ -36,43 +44,41 @@ export default function DemoPageTb(porps: any) {
   const clickChange = () => {};
 
   useEffect(() => {
+    if (mode === 'HIDE') return;
+    createTmplForm.resetFields();
+    //进入页面加载信息
+    const envCodes: string[] = [];
+    envCodes.push(initData?.envCode);
+    const initValues = {
+      templateCode: initData?.templateCode,
+      templateType: initData?.templateType,
+      templateName: initData?.templateName,
+      tmplConfigurableItem: initData?.tmplConfigurableItem, //tmplConfigurableItem
+      appCategoryCode: initData?.appCategoryCode || '',
+      envCodes: envCodes || [],
+      templateValue: initData?.templateValue,
+    };
+    console.log('获取到的初始化数据：', initValues.envCodes);
+    let arr = [];
+    for (const key in initValues.tmplConfigurableItem) {
+      arr.push({
+        key: key,
+        value: initValues.tmplConfigurableItem[key],
+      });
+    }
+    createTmplForm.setFieldsValue({
+      templateType: initValues.templateType,
+      templateName: initValues.templateName,
+      templateValue: initValues.templateValue,
+      appCategoryCode: initValues.appCategoryCode,
+      envCodes: initValues.envCodes,
+      tmplConfigurableItem: arr,
+    });
+    changeAppCategory(initValues.appCategoryCode);
+    // createTmplForm.setFieldsValue({initValues});
     selectTmplType();
     selectCategory();
-    tmplDetialResult(templateCode);
-
-    const flag = porps.history.location.query.type;
-    if (flag == 'info') {
-      setIsdisabled(true);
-    } else {
-      setIsdisabled(false);
-    }
-  }, []);
-  //进入页面加载信息
-  const templateCode: string = porps.history.location.query.templateCode;
-  const tmplDetialResult = (templateCode: string) => {
-    getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
-      if (res.success) {
-        const tmplresult = res.data.dataSource[0];
-        let arr = [];
-        for (const key in tmplresult.tmplConfigurableItem) {
-          arr.push({
-            key: key,
-            value: tmplresult.tmplConfigurableItem[key],
-          });
-        }
-        createTmplForm.setFieldsValue({
-          templateType: tmplresult.templateType,
-          templateName: tmplresult.templateName,
-          templateValue: tmplresult.templateValue,
-          appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: tmplresult.envCode,
-          tmplConfigurableItem: arr,
-        });
-        changeAppCategory(tmplresult.appCategoryCode);
-        // let arr = []
-      }
-    });
-  };
+  }, [mode]);
 
   //加载模版类型下拉选择
   const selectTmplType = () => {
@@ -119,37 +125,43 @@ export default function DemoPageTb(porps: any) {
   };
   //保存编辑模版
   const createTmpl = (value: any) => {
-    const templateCode: string = porps.history.location.query.templateCode;
-    //  const tmplConfigurableItem = new Map(value.tmplConfigurableItem.map((el:any)=> [el.key,el.value]))
+    // const templateCode: string = templateCode;
     const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    const envCodes: string[] = [];
-    envCodes.push(value.envCodes);
     putRequest(APIS.update, {
       data: {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
         appCategoryCode: value.appCategoryCode || '',
-        envCodes: envCodes || [],
+        envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         templateCode: templateCode,
       },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas = resp.data || [];
-        setEnvDatas(datas.envCodes);
-        history.push({
-          pathname: 'tmpl-list',
-        });
-      }
-    });
+    })
+      .then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          setEnvDatas(datas.envCodes);
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      })
+      .finally(() => {
+        reload;
+      });
   };
-
   return (
-    <MatrixPageContent className="tmpl-detail">
+    <Drawer
+      visible={mode !== 'HIDE'}
+      title={mode === 'EDIT' ? '编辑模版' : ''}
+      maskClosable={false}
+      onClose={onClose}
+      width={'70%'}
+    >
       <ContentCard>
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
@@ -165,11 +177,11 @@ export default function DemoPageTb(porps: any) {
             </Col>
           </Row>
           <Row style={{ marginTop: '20px' }}>
-            <Col span={10}>
+            <Col span={12}>
               <div style={{ fontSize: 18 }}>模版详情：</div>
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
-                <AceEditor mode="yaml" height={600} />
+                <AceEditor mode="yaml" height={700} />
               </Form.Item>
             </Col>
 
@@ -204,7 +216,6 @@ export default function DemoPageTb(porps: any) {
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
-                  // mode="multiple"
                   allowClear
                   style={{ width: 220 }}
                   placeholder="请选择"
@@ -219,24 +230,16 @@ export default function DemoPageTb(porps: any) {
           </Row>
           <Form.Item>
             <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
-              <Button
-                type="ghost"
-                htmlType="reset"
-                onClick={() =>
-                  history.push({
-                    pathname: 'tmpl-list',
-                  })
-                }
-              >
+              <Button type="ghost" htmlType="reset" onClick={onClose}>
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" disabled={isDisabled}>
+              <Button type="primary" htmlType="submit" onClick={() => onSave?.()} disabled={isDisabled}>
                 保存编辑
               </Button>
             </Space>
           </Form.Item>
         </Form>
       </ContentCard>
-    </MatrixPageContent>
+    </Drawer>
   );
 }

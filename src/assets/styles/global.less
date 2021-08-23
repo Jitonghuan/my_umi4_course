@@ -137,49 +137,11 @@ ul {
   padding-top: 6px;
 }
 
-.ant-tree.custom-tree {
-  flex: 1 1 0;
-  overflow: auto;
-
-  .ant-tree-indent-unit {
-    width: 20px;
-  }
-
-  .ant-tree-switcher {
-    width: 20px;
-  }
-
-  .ant-tree-node-content-wrapper.ant-tree-node-selected {
-    background-color: transparent !important;
-    transition: none !important;
-  }
-
-  .ant-tree-treenode-selected:hover::before,
-  .ant-tree-treenode-selected::before {
-    background-color: #c2e9ff;
-  }
-
-  .ant-tree-treenode {
-    &:hover {
-      background-color: #f3f5fb;
-    }
-
-    &.ant-tree-treenode-selected {
-      background-color: #c2e9ff;
-    }
-  }
-
-  .ant-tree-switcher-noop:empty {
-    display: none;
-  }
-
-  .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected {
-    color: inherit;
-  }
-
-  .ant-tree-list-holder-inner .ant-tree-node-content-wrapper {
-    overflow: hidden;
-  }
+.block-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 // ------ common
@@ -193,6 +155,15 @@ ul {
   font-size: 12px;
   white-space: pre-wrap;
   overflow: auto;
+
+  &.pre-line {
+    white-space: pre;
+  }
+
+  &[data-status='error'] {
+    border-color: red;
+    color: red;
+  }
 }
 
 .custom-table-holder {

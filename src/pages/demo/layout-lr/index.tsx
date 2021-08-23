@@ -6,7 +6,6 @@ import React from 'react';
 import {} from 'antd';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { CardRowGroup, ContentCard } from '@/components/vc-page-content';
-import * as APIS from './service';
 
 export default function DemoPageLr() {
   return (
