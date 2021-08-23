@@ -1,6 +1,6 @@
 /**
  * Comp
- * @description 应用列表
+ * @description 发布申请
  * @author moting.nq
  * @create 2021-04-09 16:53
  */
@@ -8,7 +8,8 @@
 import React, { useMemo, useEffect, useState, useCallback, useContext, useRef } from 'react';
 import { Form, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import MatrixPageContent from '@/components/matrix-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import { InlineForm } from '@/components/schema-form';
@@ -19,12 +20,10 @@ import DetailDrawer from './components/detail-drawer';
 import './index.less';
 import { queryApplysUrl, queryAppGroupReq } from '../service';
 
-export interface IProps {}
-
 const rootCls = 'release-apply-page';
 
-const ApplyList = (props: IProps) => {
-  const { categoryData = [], breadcrumbMap, businessData: businessDataList = [] } = useContext(FEContext);
+export default function ApplyList() {
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
 
   const [createApplyVisible, setCreateApplyVisible] = useState<boolean>(false);
   const [applyDetailVisible, setApplyDetailVisible] = useState<boolean>(false);
@@ -97,7 +96,7 @@ const ApplyList = (props: IProps) => {
   }, []);
 
   return (
-    <VCPageContent height="calc(100vh - 60px)" breadcrumbMap={breadcrumbMap} pathname={location.pathname} isFlex>
+    <MatrixPageContent>
       <AddDrawer
         visible={createApplyVisible}
         onClose={(reload) => {
@@ -175,10 +174,6 @@ const ApplyList = (props: IProps) => {
           {...tableProps}
         />
       </ContentCard>
-    </VCPageContent>
+    </MatrixPageContent>
   );
-};
-
-ApplyList.defaultProps = {};
-
-export default ApplyList;
+}

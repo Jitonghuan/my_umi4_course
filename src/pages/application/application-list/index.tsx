@@ -103,7 +103,7 @@ export default function ApplicationList() {
   }, [categoryData, businessDataList]);
 
   return (
-    <MatrixPageContent isFlex>
+    <MatrixPageContent>
       <FilterCard>
         <InlineForm
           form={formInstance}

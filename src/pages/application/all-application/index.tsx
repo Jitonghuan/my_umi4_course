@@ -14,12 +14,13 @@ import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import CreateApplication from '../_components/create-application';
 import ApplicationCardList from './card-list';
 import { queryApps } from '../service';
+import FilterHeader from '../_components/filter-header';
 import './index.less';
 
 const rootCls = 'all-application-page';
 
 export default function AllApplication() {
-  const [type, setType] = useState<'all' | 'mine'>('all');
+  const [type, setType] = useState<'all' | 'mine'>('mine');
   const [createAppVisible, setCreateAppVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -60,20 +61,21 @@ export default function AllApplication() {
 
   return (
     <MatrixPageContent className={rootCls}>
-      <Spin spinning={loading}>
-        <ContentCard style={{ height: 'calc(100vh - 100px)' }}>
-          <div className={`${rootCls}__header`}>
-            <Radio.Group value={type} onChange={(e) => setType(e.target.value)}>
-              <Radio.Button value="all">全部应用</Radio.Button>
-              <Radio.Button value="mine">我的应用</Radio.Button>
-            </Radio.Group>
+      <FilterHeader />
+      <ContentCard>
+        <div className={`${rootCls}__header`}>
+          <Radio.Group value={type} onChange={(e) => setType(e.target.value)}>
+            <Radio.Button value="mine">我的应用</Radio.Button>
+            <Radio.Button value="all">全部应用</Radio.Button>
+          </Radio.Group>
 
-            <Button type="primary" onClick={() => setCreateAppVisible(true)}>
-              <PlusOutlined />
-              新增应用
-            </Button>
-          </div>
+          <Button type="primary" onClick={() => setCreateAppVisible(true)}>
+            <PlusOutlined />
+            新增应用
+          </Button>
+        </div>
 
+        <Spin spinning={loading}>
           <div className={`${rootCls}__card-wrapper`}>
             <ApplicationCardList key={type} dataSource={dataSource} />
             {!!dataSource?.length && pageInfo.total! > pageInfo.pageSize! && (
@@ -86,8 +88,8 @@ export default function AllApplication() {
               </div>
             )}
           </div>
-        </ContentCard>
-      </Spin>
+        </Spin>
+      </ContentCard>
 
       <CreateApplication
         visible={createAppVisible}

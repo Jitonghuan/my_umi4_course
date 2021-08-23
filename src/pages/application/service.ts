@@ -36,11 +36,11 @@ export const queryApps = (params: {
   /** 分页大小 */
   pageSize: number;
 
-  requestType?: 'all' | 'my';
+  requestType?: 'all' | 'mine';
 }) => {
   const { requestType, ...data } = params;
 
-  return getRequest(requestType === 'my' ? queryMyAppsUrl : queryAppsUrl, {
+  return getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, {
     data,
   }).then((res: any) => {
     if (res.success) {

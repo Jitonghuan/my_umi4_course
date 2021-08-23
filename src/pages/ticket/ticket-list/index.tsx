@@ -156,7 +156,7 @@ const Coms = (props: any) => {
   });
 
   return (
-    <MatrixPageContent isFlex>
+    <MatrixPageContent>
       <FilterCard>
         <InlineForm
           className="ticket-filter-form"
