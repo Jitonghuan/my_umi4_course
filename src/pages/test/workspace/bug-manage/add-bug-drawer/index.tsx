@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, statusEnum, bugPriorityEnum } from '../../constant';
 import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, Tree } from 'antd';
-import { addBug, modifyBug, getCaseMultiDeepList, getCaseCategoryPageList } from '../../service';
+import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryPageList } from '../../service';
 import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
@@ -14,8 +14,12 @@ export default function BugManage(props: any) {
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
   const [associationUseCaseModalVisible, setAssociationUseCaseModalVisible] = useState(false);
-  const [caseTreeData, setCaseTreeData] = useState<any[]>([]);
+  const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
   const [caseCateList, setCaseCateList] = useState<any[]>([]);
+  const [checkedTestCaseIds, setCheckedTestCaseIds] = useState<any[]>([]);
+  const [curTestCaseCateId, setCurTestCaseCateId] = useState<any>();
+  const [curTestCaseKeyword, setCurTestCaseKeyword] = useState<string>('');
+  const [testCaseTreeExpandedKeys, setTestCaseTreeExpandedKeys] = useState<React.Key[]>([]);
   const [caseCateId, setCaseCateId] = useState<React.Key>();
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
@@ -63,23 +67,91 @@ export default function BugManage(props: any) {
 
   /** -------------------------- 关联用例 start -------------------------- */
 
+  const dataClean = (node: any): boolean => {
+    node.key = node.id;
+    node.title = node.name;
+
+    const isLeaf = !node.subItems?.length;
+    // 终点条件，叶子节点是否有cases
+    if (isLeaf) {
+      node.children = node.cases.map((node: any) => ({ ...node, key: node.id }));
+      return !!node.children?.length;
+    }
+
+    node.children = [];
+    node.subItems.forEach((subNode: any) => dataClean(subNode) && node.children.push(subNode));
+    return !!node.children.length;
+  };
+
+  // 获得可关联的测试用例树
   useEffect(() => {
-    getRequest(getCaseCategoryPageList, {
-      data: {
-        pageSize: 1000,
-        id: 0,
-      },
-    }).then((res) => {
-      if (!res?.data?.dataSource?.length) return;
-      void setCaseCateList(res.data.dataSource);
+    void getRequest(getAllTestCaseTree).then((res) => {
+      const root = res.data;
+      void dataClean(root);
+      void setTestCaseTree(root.children);
+      void setCaseCateList(root.children);
     });
   }, []);
 
   useEffect(() => {
-    getRequest(getCaseMultiDeepList, { data: { categoryId: 1 } }).then((res) => {
-      // TODO: 清洗下数据，放到 caseTreeData 里
-    });
-  }, []);
+    if (associationUseCaseModalVisible) {
+      void setCheckedTestCaseIds([]);
+      void setCurTestCaseCateId(undefined);
+      void setCurTestCaseKeyword('');
+    }
+  }, [associationUseCaseModalVisible]);
+
+  const filterTestCaseTree = useMemo(() => {
+    let curTree = testCaseTree;
+    if (curTestCaseCateId) {
+      curTree = curTree.filter((node) => node.id === curTestCaseCateId || checkedTestCaseIds.includes(node.id));
+    }
+
+    if (curTestCaseKeyword?.length) {
+      const expandedKeys: React.Key[] = [];
+
+      const dfs = (nodeArr: any[], parentKey: React.Key): any => {
+        if (!nodeArr?.length) return [];
+
+        let nedExpandedParent = false;
+        const len = expandedKeys.push(parentKey);
+
+        const res = nodeArr.map((node) => {
+          const idx = node.title.indexOf(curTestCaseKeyword);
+          if (idx === -1) {
+            return { ...node, children: dfs(node.children, node.id) };
+          }
+          nedExpandedParent = true;
+          const lr = [node.title.slice(0, idx), node.title.slice(idx + curTestCaseKeyword.length, node.title.length)];
+          const titleEl = (
+            <>
+              {lr[0]}
+              <span className="keywordHL">{curTestCaseKeyword}</span>
+              {lr[1]}
+            </>
+          );
+          return {
+            ...node,
+            title: titleEl,
+          };
+        });
+
+        // 如果自己不匹配 且 子孙节点页没有匹配的，则当前节点不用展开
+        if (!nedExpandedParent && len === expandedKeys.length) expandedKeys.pop();
+
+        return res;
+      };
+
+      curTree = dfs(curTree, -1);
+      void setTestCaseTreeExpandedKeys(expandedKeys);
+    }
+
+    return curTree;
+  }, [curTestCaseCateId, curTestCaseKeyword]);
+
+  const handleTestCaseCheck = (ids: React.Key[]) => {
+    void setCheckedTestCaseIds(ids);
+  };
 
   /** -------------------------- 关联用例 end -------------------------- */
 
@@ -181,10 +253,31 @@ export default function BugManage(props: any) {
         width={400}
       >
         <div className="searchHeader">
-          <Select></Select>
-          <Input placeholder="请输入关键词" />
+          <Select placeholder="请选择" allowClear value={curTestCaseCateId} onChange={setCurTestCaseCateId}>
+            {caseCateList.map((cate) => (
+              <Select.Option value={cate.id} key={cate.id}>
+                {cate.name}
+              </Select.Option>
+            ))}
+          </Select>
+          <Input
+            placeholder="请输入关键词"
+            value={curTestCaseKeyword}
+            onChange={(e) => setCurTestCaseKeyword(e.target.value)}
+          />
         </div>
-        <Tree />
+        <Tree.DirectoryTree
+          className="test-case-tree-select"
+          treeData={filterTestCaseTree}
+          multiple
+          checkable
+          // @ts-ignore
+          onCheck={handleTestCaseCheck}
+          checkedKeys={checkedTestCaseIds}
+          showIcon={false}
+          expandedKeys={testCaseTreeExpandedKeys}
+          onExpand={setTestCaseTreeExpandedKeys}
+        />
       </Modal>
     </>
   );
