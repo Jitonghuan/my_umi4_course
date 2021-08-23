@@ -16,11 +16,16 @@ export default function RightDetail(props: any) {
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
 
-  const updateDatasource = async (keyword?: string, _pageIndex: number = pageIndex, _pageSize = pageSize) => {
+  const updateDatasource = async (
+    keyword?: string,
+    priority?: string,
+    _pageIndex: number = pageIndex,
+    _pageSize = pageSize,
+  ) => {
     if (!cateId && cateId !== 0) return;
     void setLoading(true);
     const res = await getRequest(getCasePageList, {
-      data: { categoryId: cateId, pageIndex: _pageIndex, pageSize: _pageSize, keyword },
+      data: { categoryId: cateId, pageIndex: _pageIndex, pageSize: _pageSize, keyword, priority },
     });
     void setLoading(false);
     const { dataSource, pageInfo } = res.data;
@@ -45,19 +50,19 @@ export default function RightDetail(props: any) {
     </Popconfirm>
   );
 
-  const handleSearch = (vals: any) => {};
-
-  const handleReset = () => {};
+  const handleSearch = (vals: any) => {
+    void updateDatasource(vals.keyword, vals.priority);
+  };
 
   return (
     <div className="test-workspace-test-case-right-detail">
       <div className="searchHeader">
-        <Form layout="inline" onFinish={handleSearch} onReset={handleReset}>
-          <Form.Item label="用例标题:">
+        <Form layout="inline" onFinish={handleSearch}>
+          <Form.Item label="用例标题:" name="keyword">
             <Input placeholder="输入标题" />
           </Form.Item>
-          <Form.Item label="优先级:">
-            <Select placeholder="选择优先级">
+          <Form.Item label="优先级:" name="priority">
+            <Select placeholder="选择优先级" allowClear>
               {priorityEnum.map((item) => (
                 <Select.Option value={item.value} key={item.value}>
                   {item.lable}
