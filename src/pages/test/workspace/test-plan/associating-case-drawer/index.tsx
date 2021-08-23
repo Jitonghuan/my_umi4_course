@@ -63,12 +63,16 @@ export default function AssociatingCaseDrawer(props: any) {
   };
 
   const submit = () => {
+    const loadFinish = message.loading('正在关联中');
     void postRequest(modifyPhaseCase, {
       data: {
         phaseId: curActivePhase,
         cases: selectedTestPlanIds,
         modifyUser: userInfo.userName,
       },
+    }).then(() => {
+      void loadFinish();
+      void message.success('关联成功');
     });
   };
 
