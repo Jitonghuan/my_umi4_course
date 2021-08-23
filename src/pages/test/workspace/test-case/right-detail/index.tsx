@@ -58,9 +58,9 @@ export default function RightDetail(props: any) {
           </Form.Item>
           <Form.Item label="优先级:">
             <Select placeholder="选择优先级">
-              {priorityEnum.map((item, index) => (
-                <Select.Option value={index} key={index}>
-                  {item}
+              {priorityEnum.map((item) => (
+                <Select.Option value={item.value} key={item.value}>
+                  {item.lable}
                 </Select.Option>
               ))}
             </Select>

@@ -7,7 +7,7 @@ import { Select, Input, Switch, Button, Table, Form, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { getProjects, getBugList } from '../service';
-import { bugTypeEnum, statusEnum, priorityEnum } from '../constant';
+import { bugTypeEnum, statusEnum, bugPriorityEnum } from '../constant';
 import AddBugDrawer from './add-bug-drawer';
 import moment from 'moment';
 import './index.less';
@@ -82,7 +82,7 @@ export default function BugManage(props: any) {
             </Form.Item>
             <Form.Item label="优先级" name="priority">
               <Select className="w-60" placeholder="请选择" allowClear>
-                {priorityEnum.map((title, index) => (
+                {bugPriorityEnum.map((title, index) => (
                   <Select.Option value={index} key={index}>
                     {title}
                   </Select.Option>

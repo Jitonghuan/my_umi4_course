@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { bugTypeEnum, statusEnum, priorityEnum } from '../../constant';
+import { bugTypeEnum, statusEnum, bugPriorityEnum } from '../../constant';
 import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, Tree } from 'antd';
 import { addBug, modifyBug, getCaseMultiDeepList, getCaseCategoryPageList } from '../../service';
 import { createSona } from '@cffe/sona';
@@ -110,7 +110,7 @@ export default function BugManage(props: any) {
           </Form.Item>
           <Form.Item label="优先级" name="priority">
             <Radio.Group>
-              {priorityEnum.map((title, index) => (
+              {bugPriorityEnum.map((title, index) => (
                 <Radio value={index} key={index}>
                   {title}
                 </Radio>

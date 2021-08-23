@@ -72,6 +72,17 @@ export default function RightDetail(props: any) {
     }
     void updateCaseTable();
     void message.success('新增用例成功');
+
+    // 保存后清空表单
+    void form.resetFields();
+    if (descType === '1') {
+      void setStepContent('');
+      void setExpectedResult('');
+    } else {
+      void setCaseDescArr([]);
+      void setStepContent([]);
+      void setExpectedResult([]);
+    }
   };
 
   const handleCancel = () => {
@@ -99,9 +110,9 @@ export default function RightDetail(props: any) {
         </Form.Item>
         <Form.Item label="优先级:" name="priority">
           <Select>
-            {priorityEnum.map((item, index) => (
-              <Select.Option value={index} key={index}>
-                {item}
+            {priorityEnum.map((item) => (
+              <Select.Option value={item.value} key={item.value}>
+                {item.lable}
               </Select.Option>
             ))}
           </Select>
