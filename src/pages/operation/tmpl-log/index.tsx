@@ -75,7 +75,7 @@ export default function Operation() {
       value?.operateTime && value.operateTime[1] ? `${value.operateTime[1].format('YYYY-MM-DD')} 23:59:59` : '';
     let operateTime = startTime + '-' + endTime || '';
     // console.log('1111111', operateTime);
-    getRequest(APIS.logList, { data: { operator, operateType, operateTime: operateTime, pageIndex, pageSize } })
+    getRequest(APIS.logList, { data: { operator, operateType, startTime, endTime, pageIndex, pageSize } })
       .then((res: any) => {
         if (res.success) {
           const logList = (res.data.dataSource || []).map((n: any) => ({
