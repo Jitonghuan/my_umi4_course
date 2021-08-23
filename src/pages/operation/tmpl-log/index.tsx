@@ -74,7 +74,7 @@ export default function Operation() {
     let endTime =
       value?.operateTime && value.operateTime[1] ? `${value.operateTime[1].format('YYYY-MM-DD')} 23:59:59` : '';
     let operateTime = startTime + '-' + endTime || '';
-    console.log('1111111', operateTime);
+    // console.log('1111111', operateTime);
     getRequest(APIS.logList, { data: { operator, operateType, operateTime: operateTime, pageIndex, pageSize } })
       .then((res: any) => {
         if (res.success) {
@@ -154,18 +154,6 @@ export default function Operation() {
             },
             showTotal: () => `总共 ${pageTotal} 条数据`,
           }}
-          // pagination={{
-          //   current: pageIndex,
-          //   pageSize,
-          //   total: pageTotal,
-          //   showTotal: () => `总共 ${pageTotal} 条数据`,
-          //   onChange: (next) => setPageIndex(next),
-          //   showSizeChanger: true,
-          //   onShowSizeChange: (_, next) => {
-          //     setPageIndex(1);
-          //     setPageSize(next);
-          //   },
-          // }}
           onChange={pageSizeClick}
         >
           <Table.Column title="id" dataIndex="id" />
