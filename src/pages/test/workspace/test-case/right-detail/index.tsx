@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Table, Button, Popconfirm, Input, Select, message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList } from '../../service';
+import { priorityEnum } from '../../constant';
 import AddCaseDrawer from '../add-case-drawer';
 import dayjs from 'dayjs';
 import './index.less';
@@ -44,23 +45,35 @@ export default function RightDetail(props: any) {
     </Popconfirm>
   );
 
+  const handleSearch = (vals: any) => {};
+
+  const handleReset = () => {};
+
   return (
     <div className="test-workspace-test-case-right-detail">
       <div className="searchHeader">
-        <Form layout="inline">
+        <Form layout="inline" onFinish={handleSearch} onReset={handleReset}>
           <Form.Item label="用例标题:">
             <Input placeholder="输入标题" />
           </Form.Item>
           <Form.Item label="优先级:">
             <Select placeholder="选择优先级">
-              <Select.Option value="123">123</Select.Option>
+              {priorityEnum.map((item, index) => (
+                <Select.Option value={index} key={index}>
+                  {item}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button type="primary">查询</Button>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="primary">重制</Button>
+            <Button type="primary" htmlType="reset">
+              重制
+            </Button>
           </Form.Item>
         </Form>
       </div>

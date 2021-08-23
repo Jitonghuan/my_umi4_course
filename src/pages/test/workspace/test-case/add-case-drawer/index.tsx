@@ -2,6 +2,7 @@ import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { Form, Drawer, Input, Switch, Select, Tabs, Button, message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { createCase, updateCase, getCategoryList, getCaseInfo } from '../../service';
+import { priorityEnum } from '../../constant';
 import { createSona } from '@cffe/sona';
 import EditorTable from '@cffe/pc-editor-table';
 import RichText from '@/components/rich-text';
@@ -98,10 +99,11 @@ export default function RightDetail(props: any) {
         </Form.Item>
         <Form.Item label="优先级:" name="priority">
           <Select>
-            <Select.Option value="P0">P0</Select.Option>
-            <Select.Option value="P1">P1</Select.Option>
-            <Select.Option value="P2">P2</Select.Option>
-            <Select.Option value="P3">P3</Select.Option>
+            {priorityEnum.map((item, index) => (
+              <Select.Option value={index} key={index}>
+                {item}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
         <Form.Item label="是否自动化:" name="isAuto" valuePropName="checked">
