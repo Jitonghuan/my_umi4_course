@@ -15,12 +15,6 @@ export default function BugManage(props: any) {
   const [schema, setSchema] = useState<any[]>();
   const [associationUseCaseModalVisible, setAssociationUseCaseModalVisible] = useState(false);
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
-  const [caseCateList, setCaseCateList] = useState<any[]>([]);
-  const [checkedTestCaseIds, setCheckedTestCaseIds] = useState<any[]>([]);
-  const [curTestCaseCateId, setCurTestCaseCateId] = useState<any>();
-  const [curTestCaseKeyword, setCurTestCaseKeyword] = useState<string>('');
-  const [testCaseTreeExpandedKeys, setTestCaseTreeExpandedKeys] = useState<React.Key[]>([]);
-  const [caseCateId, setCaseCateId] = useState<React.Key>();
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
@@ -42,19 +36,9 @@ export default function BugManage(props: any) {
     void updateBugList();
 
     // 保存后清空form
-    if (bugInfo) {
-      form.setFieldsValue(bugInfo);
-      void setRelatedCases(bugInfo.relatedCases);
-      try {
-        void setSchema(JSON.parse(bugInfo.description));
-      } catch {
-        void setSchema(undefined);
-      }
-    } else {
-      form.resetFields();
-      void setRelatedCases([]);
-      void setSchema(undefined);
-    }
+    form.resetFields();
+    void setRelatedCases([]);
+    void setSchema(undefined);
 
     if (continueAdd && !bugInfo) return;
     void setVisible(false);
@@ -64,6 +48,19 @@ export default function BugManage(props: any) {
     labelCol: { span: 4 },
     wrapperCol: { span: 19 },
   };
+
+  // 如果是编辑，则回填信息
+  useEffect(() => {
+    if (visible && bugInfo) {
+      form.setFieldsValue(bugInfo);
+      void setRelatedCases(bugInfo.relatedCases);
+      try {
+        void setSchema(JSON.parse(bugInfo.description));
+      } catch {
+        void setSchema(undefined);
+      }
+    }
+  }, [visible]);
 
   /** -------------------------- 关联用例 start -------------------------- */
 
@@ -89,69 +86,8 @@ export default function BugManage(props: any) {
       const root = res.data;
       void dataClean(root);
       void setTestCaseTree(root.children);
-      void setCaseCateList(root.children);
     });
   }, []);
-
-  useEffect(() => {
-    if (associationUseCaseModalVisible) {
-      void setCheckedTestCaseIds([]);
-      void setCurTestCaseCateId(undefined);
-      void setCurTestCaseKeyword('');
-    }
-  }, [associationUseCaseModalVisible]);
-
-  // const filterTestCaseTree = useMemo(() => {
-  //   let curTree = testCaseTree;
-  //   if (curTestCaseCateId) {
-  //     curTree = curTree.filter((node) => node.id === curTestCaseCateId || checkedTestCaseIds.includes(node.id));
-  //   }
-
-  //   if (curTestCaseKeyword?.length) {
-  //     const expandedKeys: React.Key[] = [];
-
-  //     const dfs = (nodeArr: any[], parentKey: React.Key): any => {
-  //       if (!nodeArr?.length) return [];
-
-  //       let nedExpandedParent = false;
-  //       const len = expandedKeys.push(parentKey);
-
-  //       const res = nodeArr.map((node) => {
-  //         const idx = node.title.indexOf(curTestCaseKeyword);
-  //         if (idx === -1) {
-  //           return { ...node, children: dfs(node.children, node.id) };
-  //         }
-  //         nedExpandedParent = true;
-  //         const lr = [node.title.slice(0, idx), node.title.slice(idx + curTestCaseKeyword.length, node.title.length)];
-  //         const titleEl = (
-  //           <>
-  //             {lr[0]}
-  //             <span className="keywordHL">{curTestCaseKeyword}</span>
-  //             {lr[1]}
-  //           </>
-  //         );
-  //         return {
-  //           ...node,
-  //           title: titleEl,
-  //         };
-  //       });
-
-  //       // 如果自己不匹配 且 子孙节点页没有匹配的，则当前节点不用展开
-  //       if (!nedExpandedParent && len === expandedKeys.length) expandedKeys.pop();
-
-  //       return res;
-  //     };
-
-  //     curTree = dfs(curTree, -1);
-  //     void setTestCaseTreeExpandedKeys(expandedKeys);
-  //   }
-
-  //   return curTree;
-  // }, [curTestCaseCateId, curTestCaseKeyword]);
-
-  const handleTestCaseCheck = (ids: React.Key[]) => {
-    void setCheckedTestCaseIds(ids);
-  };
 
   /** -------------------------- 关联用例 end -------------------------- */
 
@@ -201,9 +137,20 @@ export default function BugManage(props: any) {
           </Form.Item>
           <Form.Item label="关联用例" name="relatedCases">
             <Space>
-              <Button type="primary" ghost onClick={() => setAssociationUseCaseModalVisible(true)}>
+              {/* <Button type="primary" ghost onClick={() => setAssociationUseCaseModalVisible(true)}>
                 关联用例
-              </Button>
+              </Button> */}
+              <TreeSelect
+                className="test-case-tree-select"
+                multiple
+                treeCheckable
+                placeholder="请选择用例集合"
+                treeNodeLabelProp="title"
+                treeNodeFilterProp="title"
+                treeData={testCaseTree}
+                value={relatedCases}
+                onChange={setRelatedCases}
+              />
               <Button type="primary" ghost>
                 新增用例
               </Button>
@@ -245,40 +192,15 @@ export default function BugManage(props: any) {
         </div>
       </Drawer>
 
-      <Modal
+      {/* <Modal
         title="关联用例"
         visible={associationUseCaseModalVisible}
         onCancel={() => setAssociationUseCaseModalVisible(false)}
         className="association-use-case-modal"
         width={400}
       >
-        {/* <div className="searchHeader">
-          <Select placeholder="请选择" allowClear value={curTestCaseCateId} onChange={setCurTestCaseCateId}>
-            {caseCateList.map((cate) => (
-              <Select.Option value={cate.id} key={cate.id}>
-                {cate.name}
-              </Select.Option>
-            ))}
-          </Select>
-          <Input
-            placeholder="请输入关键词"
-            value={curTestCaseKeyword}
-            onChange={(e) => setCurTestCaseKeyword(e.target.value)}
-          />
-        </div> */}
 
-        <TreeSelect
-          className="test-case-tree-select"
-          multiple
-          treeCheckable
-          placeholder="请选择用例集合"
-          treeNodeLabelProp="title"
-          treeNodeFilterProp="title"
-          treeData={testCaseTree}
-          value={checkedTestCaseIds}
-          onChange={handleTestCaseCheck}
-        />
-      </Modal>
+      </Modal> */}
     </>
   );
 }
