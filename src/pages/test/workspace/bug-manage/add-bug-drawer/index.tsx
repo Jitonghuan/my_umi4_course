@@ -56,12 +56,6 @@ export default function BugManage(props: any) {
     void setVisible(false);
   };
 
-  // useEffect(() => {
-  //   if (visible) {
-
-  //   }
-  // }, [visible]);
-
   const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 19 },

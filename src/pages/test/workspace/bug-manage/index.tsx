@@ -3,10 +3,10 @@ import { ContentCard } from '@/components/vc-page-content';
 import MatrixPageContent from '@/components/matrix-page-content';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
-import { Select, Input, Switch, Button, Table, Form, Space } from 'antd';
+import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { getRequest } from '@/utils/request';
-import { getProjects, getBugList } from '../service';
+import { getRequest, postRequest } from '@/utils/request';
+import { getProjects, getBugList, deleteBug } from '../service';
 import { bugTypeEnum, statusEnum, bugPriorityEnum } from '../constant';
 import AddBugDrawer from './add-bug-drawer';
 import moment from 'moment';
@@ -51,6 +51,15 @@ export default function BugManage(props: any) {
   const handleModifyBugBtnClick = (record: any) => {
     void setCurBugInfo(record);
     void setAddBugDrawerVisible(true);
+  };
+
+  const handleConfirmDelete = (id: number) => {
+    const loadFinish = message.loading('正在删除中');
+    void postRequest(deleteBug, { data: { id } }).then(() => {
+      void loadFinish();
+      void message.success('删除成功');
+      void updateBugList();
+    });
   };
 
   return (
@@ -153,7 +162,9 @@ export default function BugManage(props: any) {
                   <Button type="link" onClick={() => handleModifyBugBtnClick(record)}>
                     编辑
                   </Button>
-                  <Button type="link">删除</Button>
+                  <Popconfirm title="确定要删除吗" onConfirm={() => handleConfirmDelete(record.id)}>
+                    <Button type="link">删除</Button>
+                  </Popconfirm>
                 </Space>
               )}
             />
