@@ -170,7 +170,7 @@ export default function TaskEditor(props: TmplListProps) {
                 <Select showSearch style={{ width: 150 }} options={templateTypes} disabled={isDisabled} />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
                 <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
               </Form.Item>
