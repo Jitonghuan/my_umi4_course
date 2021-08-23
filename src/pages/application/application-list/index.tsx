@@ -16,14 +16,13 @@ import { InlineForm } from '@/components/schema-form';
 import { queryBizData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
 import MatrixPageContent from '@/components/matrix-page-content';
-
 import { createFilterFormSchema, createTableSchema } from './schema';
 import { queryAppsUrl, deleteApp } from '../service';
 import './index.less';
 
 const rootCls = 'application-list-page';
 
-const ApplicationList = () => {
+export default function ApplicationList() {
   const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [formInstance] = Form.useForm();
@@ -36,26 +35,23 @@ const ApplicationList = () => {
   }, [categoryData, businessData]);
 
   // 根据应用分类查询应用组
-  const queryBusiness = (categoryCode: string) => {
+  const queryBusiness = useCallback((categoryCode: string) => {
     setBusinessData([]);
     getRequest(queryBizData, {
-      data: {
-        categoryCode,
-      },
+      data: { categoryCode },
     }).then((resp: any) => {
       if (resp.success) {
         const datas =
-          resp?.data?.dataSource?.map((el: any) => {
-            return {
-              ...el,
-              value: el?.groupCode,
-              label: el?.groupName,
-            };
-          }) || [];
+          resp.data?.dataSource?.map((el: any) => ({
+            ...el,
+            value: el?.groupCode,
+            label: el?.groupName,
+          })) || [];
+
         setBusinessData(datas);
       }
     });
-  };
+  }, []);
 
   // 查询数据
   const {
@@ -86,19 +82,28 @@ const ApplicationList = () => {
     queryAppList();
   }, []);
 
+  // 表格列配置
+  const tableColumns = useMemo(() => {
+    return createTableSchema({
+      onEditClick: (record, index) => {
+        setCurRecord(record);
+        setCreateAppVisible(true);
+      },
+      onDelClick: (record, index) => {
+        deleteApp({ appCode: record.appCode, id: record.id }).then((res) => {
+          if (res.success) {
+            message.success('删除成功');
+            queryAppList();
+          }
+        });
+      },
+      categoryData,
+      businessDataList,
+    }) as any;
+  }, [categoryData, businessDataList]);
+
   return (
     <MatrixPageContent isFlex>
-      <CreateApplication
-        formValue={curRecord}
-        visible={createAppVisible}
-        onClose={() => setCreateAppVisible(false)}
-        onSubmit={() => {
-          // 保存成功后，关闭抽屉，重新请求列表
-          queryAppList();
-          setCreateAppVisible(false);
-        }}
-      />
-
       <FilterCard>
         <InlineForm
           form={formInstance}
@@ -140,33 +145,18 @@ const ApplicationList = () => {
             新增应用
           </Button>
         </div>
-        <HulkTable
-          className={`${rootCls}__table-body`}
-          columns={
-            createTableSchema({
-              onEditClick: (record, index) => {
-                setCurRecord(record);
-                setCreateAppVisible(true);
-              },
-              onDelClick: (record, index) => {
-                deleteApp({ appCode: record.appCode, id: record.id }).then((res) => {
-                  if (res.success) {
-                    message.success('删除成功');
-                    queryAppList();
-                  }
-                });
-              },
-              categoryData,
-              businessDataList,
-            }) as any
-          }
-          {...tableProps}
-        />
+        <HulkTable className={`${rootCls}__table-body`} columns={tableColumns} {...tableProps} />
       </ContentCard>
+
+      <CreateApplication
+        formValue={curRecord}
+        visible={createAppVisible}
+        onClose={() => setCreateAppVisible(false)}
+        onSubmit={() => {
+          queryAppList();
+          setCreateAppVisible(false);
+        }}
+      />
     </MatrixPageContent>
   );
-};
-
-ApplicationList.defaultProps = {};
-
-export default ApplicationList;
+}
