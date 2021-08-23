@@ -654,7 +654,7 @@ export default [
             path: 'tmpl-log',
             name: '查看日志',
             key: 'app-tmpl',
-            component: '@/pages/operation/app-tmpl/tmpl-log',
+            // component: '@/pages/operation/app-tmpl/tmpl-log',
             hideInMenu: true,
           },
           {
