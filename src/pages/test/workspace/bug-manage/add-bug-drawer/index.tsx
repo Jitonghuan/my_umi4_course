@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, statusEnum, bugPriorityEnum } from '../../constant';
-import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, Tree } from 'antd';
+import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect } from 'antd';
 import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryPageList } from '../../service';
 import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
@@ -101,53 +101,53 @@ export default function BugManage(props: any) {
     }
   }, [associationUseCaseModalVisible]);
 
-  const filterTestCaseTree = useMemo(() => {
-    let curTree = testCaseTree;
-    if (curTestCaseCateId) {
-      curTree = curTree.filter((node) => node.id === curTestCaseCateId || checkedTestCaseIds.includes(node.id));
-    }
+  // const filterTestCaseTree = useMemo(() => {
+  //   let curTree = testCaseTree;
+  //   if (curTestCaseCateId) {
+  //     curTree = curTree.filter((node) => node.id === curTestCaseCateId || checkedTestCaseIds.includes(node.id));
+  //   }
 
-    if (curTestCaseKeyword?.length) {
-      const expandedKeys: React.Key[] = [];
+  //   if (curTestCaseKeyword?.length) {
+  //     const expandedKeys: React.Key[] = [];
 
-      const dfs = (nodeArr: any[], parentKey: React.Key): any => {
-        if (!nodeArr?.length) return [];
+  //     const dfs = (nodeArr: any[], parentKey: React.Key): any => {
+  //       if (!nodeArr?.length) return [];
 
-        let nedExpandedParent = false;
-        const len = expandedKeys.push(parentKey);
+  //       let nedExpandedParent = false;
+  //       const len = expandedKeys.push(parentKey);
 
-        const res = nodeArr.map((node) => {
-          const idx = node.title.indexOf(curTestCaseKeyword);
-          if (idx === -1) {
-            return { ...node, children: dfs(node.children, node.id) };
-          }
-          nedExpandedParent = true;
-          const lr = [node.title.slice(0, idx), node.title.slice(idx + curTestCaseKeyword.length, node.title.length)];
-          const titleEl = (
-            <>
-              {lr[0]}
-              <span className="keywordHL">{curTestCaseKeyword}</span>
-              {lr[1]}
-            </>
-          );
-          return {
-            ...node,
-            title: titleEl,
-          };
-        });
+  //       const res = nodeArr.map((node) => {
+  //         const idx = node.title.indexOf(curTestCaseKeyword);
+  //         if (idx === -1) {
+  //           return { ...node, children: dfs(node.children, node.id) };
+  //         }
+  //         nedExpandedParent = true;
+  //         const lr = [node.title.slice(0, idx), node.title.slice(idx + curTestCaseKeyword.length, node.title.length)];
+  //         const titleEl = (
+  //           <>
+  //             {lr[0]}
+  //             <span className="keywordHL">{curTestCaseKeyword}</span>
+  //             {lr[1]}
+  //           </>
+  //         );
+  //         return {
+  //           ...node,
+  //           title: titleEl,
+  //         };
+  //       });
 
-        // 如果自己不匹配 且 子孙节点页没有匹配的，则当前节点不用展开
-        if (!nedExpandedParent && len === expandedKeys.length) expandedKeys.pop();
+  //       // 如果自己不匹配 且 子孙节点页没有匹配的，则当前节点不用展开
+  //       if (!nedExpandedParent && len === expandedKeys.length) expandedKeys.pop();
 
-        return res;
-      };
+  //       return res;
+  //     };
 
-      curTree = dfs(curTree, -1);
-      void setTestCaseTreeExpandedKeys(expandedKeys);
-    }
+  //     curTree = dfs(curTree, -1);
+  //     void setTestCaseTreeExpandedKeys(expandedKeys);
+  //   }
 
-    return curTree;
-  }, [curTestCaseCateId, curTestCaseKeyword]);
+  //   return curTree;
+  // }, [curTestCaseCateId, curTestCaseKeyword]);
 
   const handleTestCaseCheck = (ids: React.Key[]) => {
     void setCheckedTestCaseIds(ids);
@@ -252,7 +252,7 @@ export default function BugManage(props: any) {
         className="association-use-case-modal"
         width={400}
       >
-        <div className="searchHeader">
+        {/* <div className="searchHeader">
           <Select placeholder="请选择" allowClear value={curTestCaseCateId} onChange={setCurTestCaseCateId}>
             {caseCateList.map((cate) => (
               <Select.Option value={cate.id} key={cate.id}>
@@ -265,18 +265,18 @@ export default function BugManage(props: any) {
             value={curTestCaseKeyword}
             onChange={(e) => setCurTestCaseKeyword(e.target.value)}
           />
-        </div>
-        <Tree.DirectoryTree
+        </div> */}
+
+        <TreeSelect
           className="test-case-tree-select"
-          treeData={filterTestCaseTree}
           multiple
-          checkable
-          // @ts-ignore
-          onCheck={handleTestCaseCheck}
-          checkedKeys={checkedTestCaseIds}
-          showIcon={false}
-          expandedKeys={testCaseTreeExpandedKeys}
-          onExpand={setTestCaseTreeExpandedKeys}
+          treeCheckable
+          placeholder="请选择用例集合"
+          treeNodeLabelProp="title"
+          treeNodeFilterProp="title"
+          treeData={testCaseTree}
+          value={checkedTestCaseIds}
+          onChange={handleTestCaseCheck}
         />
       </Modal>
     </>

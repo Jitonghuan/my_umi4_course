@@ -94,6 +94,7 @@ export default function AssociatingCaseDrawer(props: any) {
               treeCheckable
               placeholder="请选择用例集合"
               treeNodeLabelProp="title"
+              treeNodeFilterProp="title"
               value={selectedTestPlanIds}
               onChange={onSelectChange}
             />
