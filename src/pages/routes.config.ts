@@ -650,13 +650,6 @@ export default [
             component: '@/pages/operation/app-tmpl/push',
             hideInMenu: true,
           },
-          // {
-          //   path: 'tmpl-log',
-          //   name: '查看日志',
-          //   key: 'app-tmpl',
-          //   component: '@/pages/operation/app-tmpl/tmpl-log',
-          //   hideInMenu: true,
-          // },
           {
             path: 'tmpl-add',
             name: '新增应用模版',
