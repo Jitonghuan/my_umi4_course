@@ -33,7 +33,11 @@ export default function BugManage(props: any) {
       justMe: fromData.justMe ? userInfo.userName : undefined,
     };
     const res = await getRequest(getBugList, { data: requestParams });
+    const { pageIndex, pageSize, total } = res.data.pageInfo;
     void setBugList(res.data.dataSource);
+    void setPageIndex(pageIndex);
+    void setPageSize(pageSize);
+    void setBugTotal(total);
   };
 
   useEffect(() => {
@@ -67,7 +71,7 @@ export default function BugManage(props: any) {
       <HeaderTabs activeKey="bug-manage" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form layout="inline" form={form}>
+          <Form layout="inline" form={form} onFinish={() => updateBugList(1)}>
             <Form.Item label="所属" name="business">
               <Select className="w-100" placeholder="请选择" allowClear>
                 {projectList.map((item) => (
@@ -77,7 +81,7 @@ export default function BugManage(props: any) {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item label="标题" name="bugName">
+            <Form.Item label="标题" name="name">
               <Input placeholder="请输入标题" />
             </Form.Item>
             <Form.Item label="状态" name="status">
@@ -111,12 +115,14 @@ export default function BugManage(props: any) {
               <Switch />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" onClick={() => updateBugList(1)}>
+              <Button type="primary" htmlType="submit">
                 查询
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button type="primary">重置</Button>
+              <Button type="primary" htmlType="reset">
+                重置
+              </Button>
             </Form.Item>
           </Form>
         </div>
@@ -134,12 +140,9 @@ export default function BugManage(props: any) {
               pageSize,
               current: pageIndex,
               total: bugTotal,
-              onChange: (next) => setPageIndex(next),
               showSizeChanger: true,
-              onShowSizeChange: (_, next) => {
-                setPageIndex(1);
-                setPageSize(next);
-              },
+              onChange: (next) => updateBugList(next),
+              onShowSizeChange: (_, next) => updateBugList(1, next),
             }}
             loading={loading}
           >
