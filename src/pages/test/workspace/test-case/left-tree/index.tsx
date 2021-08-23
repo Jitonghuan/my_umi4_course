@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Select, Input, Tree } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { TreeNode } from '@cffe/algorithm';
+import './index.less';
+
 const { DirectoryTree } = Tree;
 const { Option } = Select;
 
@@ -62,7 +65,12 @@ export default function LeftTree(props: any) {
   return (
     <div className="test-workspace-test-case-left-tree">
       <div className="search-header">
-        <Select className="case-cate-select" onChange={onCateChange} value={rootCateId}>
+        <Select
+          className="case-cate-select"
+          dropdownClassName="case-cate-select-dropdown"
+          onChange={onCateChange}
+          value={rootCateId}
+        >
           {caseCategories.map((item: any) => (
             <Option key={item.id.toString()} value={item.id.toString()}>
               {item.name}
@@ -74,6 +82,7 @@ export default function LeftTree(props: any) {
           onChange={onKeywordChange}
           onPressEnter={onSearch}
           onSearch={onSearch}
+          suffix={<SearchOutlined />}
         />
       </div>
       <div className="tree-container">
