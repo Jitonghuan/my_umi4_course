@@ -11,7 +11,7 @@ import './index.less';
 const { TabPane } = Tabs;
 
 export default function RightDetail(props: any) {
-  const { visible, setVisible, updateCaseTable, caseId } = props;
+  const { visible, setVisible, updateCaseTable, caseId, cateId } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
@@ -61,11 +61,12 @@ export default function RightDetail(props: any) {
       currentUser: userInfo.userName,
       descType: +descType,
       isAuto: _data.isAuto ? 1 : 0,
+      categoryId: cateId,
     };
 
     if (caseId) {
       void (await postRequest(updateCase + '/' + caseId, { data: formData }));
-    } else {
+    } else if (cateId) {
       void (await postRequest(createCase, { data: formData }));
     }
     void updateCaseTable();

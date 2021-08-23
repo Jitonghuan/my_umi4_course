@@ -96,7 +96,12 @@ export default function RightDetail(props: any) {
           <Table.Column title="操作" render={operateRender}></Table.Column>
         </Table>
       </div>
-      <AddCaseDrawer visible={drawerVisible} setVisible={setDrawerVisible} updateCaseTable={updateDatasource} />
+      <AddCaseDrawer
+        cateId={cateId}
+        visible={drawerVisible}
+        setVisible={setDrawerVisible}
+        updateCaseTable={updateDatasource}
+      />
     </div>
   );
 }
