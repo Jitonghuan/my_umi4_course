@@ -13,24 +13,27 @@ export default function AssociatingCaseDrawer(props: any) {
   const [curActivePhase, setCurActivePhase] = useState<string>();
   const [selectedTestPlanIds, setselectedTestPlanIds] = useState<React.Key[]>([]);
 
+  const dataClean = (node: any): boolean => {
+    node.key = node.id;
+    node.title = node.name;
+
+    const isLeaf = !node.subItems?.length;
+    // 终点条件，叶子节点是否有cases
+    if (isLeaf) {
+      node.children = node.cases.map((node: any) => ({ ...node, key: node.id }));
+      return !!node.children?.length;
+    }
+
+    node.children = [];
+    node.subItems.forEach((subNode: any) => dataClean(subNode) && node.children.push(subNode));
+    return !!node.children.length;
+  };
+
   useEffect(() => {
     void getRequest(getAllTestCaseTree).then((res) => {
-      const curCaseTree = res.data.subItems.filter((item: any) => item.subItems?.length || item.cases?.length);
-      const Q = [...curCaseTree];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.key = cur.id;
-        cur.title = cur.name;
-        if (cur.subItems?.length) {
-          cur.subItems = cur.subItems.filter((item: any) => item.subItems?.length || item.cases?.length);
-          cur.children = cur.subItems;
-          Q.push(...cur.subItems);
-        } else if (cur.cases?.length) {
-          cur.cases.forEach((item: any) => (item.key = item.id));
-          cur.children = cur.cases;
-        }
-      }
-      void setTestCaseTree(curCaseTree || []);
+      const root = res.data;
+      void dataClean(root);
+      void setTestCaseTree(root.children);
     });
   }, []);
 
