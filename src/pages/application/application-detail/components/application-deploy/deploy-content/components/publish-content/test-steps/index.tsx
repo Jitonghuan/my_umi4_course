@@ -81,7 +81,7 @@ export default function TestEnvSteps({ deployInfo, onOperate }: IProps) {
           title="质量卡点"
           icon={status === 2.1 && <LoadingOutlined />}
           status={status === 2.2 ? 'error' : undefined}
-          description={<QualityCheckResult visible={status >= 2.2} deployInfo={deployInfo} />}
+          // description={<QualityCheckResult visible={status >= 2.2} deployInfo={deployInfo} />}
         />
         <Step
           title="构建"

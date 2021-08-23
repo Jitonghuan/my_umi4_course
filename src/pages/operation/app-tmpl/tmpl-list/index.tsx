@@ -244,28 +244,16 @@ export default function Launch() {
             </Button>
           </Form.Item>
           <div style={{ float: 'right', display: 'flex' }}>
-            <Space size="small">
-              <Button
-                type="primary"
-                onClick={() =>
-                  history.push({
-                    pathname: 'tmpl-add',
-                  })
-                }
-              >
-                新增模版
-              </Button>
-              <Button
-                type="primary"
-                onClick={() =>
-                  history.push({
-                    pathname: 'tmpl-log',
-                  })
-                }
-              >
-                查看日志
-              </Button>
-            </Space>
+            <Button
+              type="primary"
+              onClick={() =>
+                history.push({
+                  pathname: 'tmpl-add',
+                })
+              }
+            >
+              新增模版
+            </Button>
           </div>
         </Form>
       </FilterCard>
