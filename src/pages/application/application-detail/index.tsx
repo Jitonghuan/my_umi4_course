@@ -69,7 +69,9 @@ export default function ApplicationDetail(props: IProps) {
         return appData.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1';
       }
 
-      if (appData.isContainClient === 1) return true;
+      if (key === 'secondPartyPkg') {
+        return appData.isContainClient === 1;
+      }
 
       if (key === 'monitor') {
         return appData.isClient !== 1 && appData.appType === 'backend';
