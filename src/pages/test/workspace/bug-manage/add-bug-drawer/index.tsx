@@ -36,27 +36,31 @@ export default function BugManage(props: any) {
     });
     void message.success(bugInfo ? '修改成功' : '新增成功');
     void updateBugList();
+
+    // 保存后清空form
+    if (bugInfo) {
+      form.setFieldsValue(bugInfo);
+      void setRelatedCases(bugInfo.relatedCases);
+      try {
+        void setSchema(JSON.parse(bugInfo.description));
+      } catch {
+        void setSchema(undefined);
+      }
+    } else {
+      form.resetFields();
+      void setRelatedCases([]);
+      void setSchema(undefined);
+    }
+
     if (continueAdd && !bugInfo) return;
     void setVisible(false);
   };
 
-  useEffect(() => {
-    if (visible) {
-      if (bugInfo) {
-        form.setFieldsValue(bugInfo);
-        void setRelatedCases(bugInfo.relatedCases);
-        try {
-          void setSchema(JSON.parse(bugInfo.description));
-        } catch {
-          void setSchema(undefined);
-        }
-      } else {
-        form.resetFields();
-        void setRelatedCases([]);
-        void setSchema(undefined);
-      }
-    }
-  }, [visible]);
+  // useEffect(() => {
+  //   if (visible) {
+
+  //   }
+  // }, [visible]);
 
   const formItemLayout = {
     labelCol: { span: 4 },
