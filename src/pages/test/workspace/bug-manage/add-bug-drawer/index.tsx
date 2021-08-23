@@ -137,9 +137,6 @@ export default function BugManage(props: any) {
           </Form.Item>
           <Form.Item label="关联用例" name="relatedCases">
             <Space>
-              {/* <Button type="primary" ghost onClick={() => setAssociationUseCaseModalVisible(true)}>
-                关联用例
-              </Button> */}
               <TreeSelect
                 className="test-case-tree-select"
                 multiple
@@ -191,16 +188,6 @@ export default function BugManage(props: any) {
           </Space>
         </div>
       </Drawer>
-
-      {/* <Modal
-        title="关联用例"
-        visible={associationUseCaseModalVisible}
-        onCancel={() => setAssociationUseCaseModalVisible(false)}
-        className="association-use-case-modal"
-        width={400}
-      >
-
-      </Modal> */}
     </>
   );
 }

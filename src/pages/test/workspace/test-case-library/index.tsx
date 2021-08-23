@@ -140,6 +140,7 @@ export default function Workspace(props: any) {
           </Button>
         </div>
         <Table
+          className="test-case-library-table"
           dataSource={dataSource}
           loading={loading}
           pagination={{
