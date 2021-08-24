@@ -4,12 +4,12 @@ import UserCaseInfoExec from './use-case-info-exec';
 import UseCaseTestInfoExec from './use-case-test-info-exec';
 import BugInfoExec from './bug-info-exec';
 import RichText from '@/components/rich-text';
-import AddCaseDrawer from '../test-case/add-case-drawer';
+import AddBugDrawer from '../bug-manage/add-bug-drawer';
 import { createSona } from '@cffe/sona';
 import { history } from 'umi';
-import { Col, Row, Tabs, Progress, Table, Input, Select, Tag, Button, Space, Modal, Typography } from 'antd';
+import { Col, Row, Tabs, Progress, Table, Input, Select, Tag, Button, Space, Modal, Typography, Empty } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
-import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail } from '../service';
+import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import CustomTree from '@/components/custom-tree';
@@ -36,7 +36,8 @@ export default function PlanInfo(props: any) {
   const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
   const [associationBug, setAssociationBug] = useState<any[]>([]);
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
-  const [addCaseDrawerVisible, setAddCaseDrawerVisible] = useState<boolean>(false);
+  const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
+  const [projectList, setProjectList] = useState<any[]>([]);
   const sona = useMemo(() => createSona(), []);
 
   useEffect(() => {
@@ -86,6 +87,9 @@ export default function PlanInfo(props: any) {
 
   useEffect(() => {
     void setActiveKey(plan?.phaseCollection?.[0].id.toString());
+    getRequest(getProjects).then((res) => {
+      void setProjectList(res.data.dataSource);
+    });
   }, []);
 
   const updateBugList = () => {
@@ -172,97 +176,100 @@ export default function PlanInfo(props: any) {
           </Row>
         </CardRowGroup.SlideCard>
         <ContentCard>
-          <div className="right-card">
-            <div className="case-select-container">
-              {/* <div className="filter-bar">
-                <Select>
-                  <Select.Option value="1">全部状态</Select.Option>
-                </Select>
-                <Input.Search />
-              </div> */}
-              <CustomTree
-                treeData={testCaseTree || []}
-                onSelect={(keys) => setCurCaseId(keys[0])}
-                selectedKeys={[curCaseId]}
-                className="test-case-select-tree"
-                onExpand={(expendedKeys) => setExpendedKeys(expendedKeys)}
-                expandedKeys={expendedKeys}
-                showIcon={false}
-                showSearch
-                searchPlaceholder="搜索用例、用例库"
-              />
-            </div>
-
-            <div className="case-info">
-              <div className="case-header">
-                <div className="title-col">
-                  <span className="case-title">#366319 用例名称</span>
-                  <Select className="w-100 ml-auto"></Select>
-                  <Button className="ml-20" icon={<UpOutlined />} />
-                  <Button icon={<DownOutlined />} />
-                </div>
-
-                <div>
-                  <span className="case-prop-title">优先级： </span>
-                  {curCase?.caseInfo?.priority}
-                  <span className="case-prop-title ml-18">所属模块：</span> {curCase?.caseInfo?.categoryId}
-                </div>
+          {testCaseTree?.length ? (
+            <div className="right-card">
+              <div className="case-select-container">
+                <CustomTree
+                  treeData={testCaseTree || []}
+                  onSelect={(keys) => setCurCaseId(keys[0])}
+                  selectedKeys={[curCaseId]}
+                  className="test-case-select-tree"
+                  onExpand={(expendedKeys) => setExpendedKeys(expendedKeys)}
+                  expandedKeys={expendedKeys}
+                  showIcon={false}
+                  showSearch
+                  searchPlaceholder="搜索用例、用例库"
+                />
               </div>
 
-              <div className="case-prop-title">前置条件:</div>
-              <div>{curCase?.caseInfo?.precondition}</div>
+              <div className="case-info">
+                <div className="case-header">
+                  <div className="title-col">
+                    <span className="case-title">#366319 用例名称</span>
+                    <Select className="w-100 ml-auto"></Select>
+                    <Button className="ml-20" icon={<UpOutlined />} />
+                    <Button icon={<DownOutlined />} />
+                  </div>
 
-              <div className="case-prop-title">步骤描述:</div>
-              <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
-                <Table.Column title="序号" render={(_: any, __: any, idx: number) => idx + 1} />
-                <Table.Column title="步骤描述" dataIndex="input" />
-                <Table.Column title="预期结果" dataIndex="output" />
-              </Table>
+                  <div>
+                    <span className="case-prop-title">优先级： </span>
+                    {curCase?.caseInfo?.priority}
+                    <span className="case-prop-title ml-18">所属模块：</span> {curCase?.caseInfo?.categoryId}
+                  </div>
+                </div>
 
-              <div className="case-prop-title">用例备注:</div>
-              <div>{curCase?.caseInfo?.comment}</div>
+                <div className="case-prop-title">前置条件:</div>
+                <div>{curCase?.caseInfo?.precondition}</div>
 
-              <div className="case-prop-title">执行备注:</div>
-              <RichText sona={sona} />
+                <div className="case-prop-title">步骤描述:</div>
+                <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
+                  <Table.Column title="序号" render={(_: any, __: any, idx: number) => idx + 1} />
+                  <Table.Column title="步骤描述" dataIndex="input" />
+                  <Table.Column title="预期结果" dataIndex="output" />
+                </Table>
 
-              <div className="bug-info">
-                <Tabs
-                  defaultActiveKey="1"
-                  tabBarExtraContent={
-                    <Space>
-                      <Button type="primary" ghost onClick={() => setAssociationBugModalVisible(true)}>
-                        关联Bug
-                      </Button>
-                      <Button type="primary" ghost onClick={() => setAddCaseDrawerVisible(true)}>
-                        新增Bug
-                      </Button>
-                      <Button type="primary" ghost disabled>
-                        一键提交
-                      </Button>
-                    </Space>
-                  }
-                >
-                  <Tabs.TabPane tab="关联Bug()" key="1">
-                    关联Bug()
-                  </Tabs.TabPane>
-                  <Tabs.TabPane tab="活动日志" key="2">
-                    {curCase?.records.map((item: any) => {
-                      return (
-                        <Row>
-                          <Col span={17}>
-                            <Text>{item.executeNote}</Text>
-                          </Col>
-                          <Col span={7} className="activity-log">
-                            <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
-                          </Col>
-                        </Row>
-                      );
-                    })}
-                  </Tabs.TabPane>
-                </Tabs>
+                <div className="case-prop-title">用例备注:</div>
+                <div>{curCase?.caseInfo?.comment}</div>
+
+                <div className="case-prop-title">执行备注:</div>
+                <RichText sona={sona} />
+
+                <div className="bug-info">
+                  <Tabs
+                    defaultActiveKey="1"
+                    tabBarExtraContent={
+                      <Space>
+                        <Button type="primary" ghost onClick={() => setAssociationBugModalVisible(true)}>
+                          关联Bug
+                        </Button>
+                        <Button type="primary" ghost onClick={() => setAddBugDrawerVisible(true)}>
+                          新增Bug
+                        </Button>
+                        <Button type="primary" ghost disabled>
+                          一键提交
+                        </Button>
+                      </Space>
+                    }
+                  >
+                    <Tabs.TabPane tab="关联Bug()" key="1">
+                      <Table dataSource={associationBug}>
+                        <Table.Column title="ID" dataIndex="" />
+                        <Table.Column title="标题" dataIndex="" />
+                        <Table.Column title="状态" dataIndex="" render={() => <Select></Select>} />
+                        <Table.Column title="操作" render={() => <Button type="link">删除</Button>} />
+                      </Table>
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="活动日志" key="2">
+                      {curCase?.records.map((item: any) => {
+                        return (
+                          <Row>
+                            <Col span={17}>
+                              <Text>{item.executeNote}</Text>
+                            </Col>
+                            <Col span={7} className="activity-log">
+                              <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
+                            </Col>
+                          </Row>
+                        );
+                      })}
+                    </Tabs.TabPane>
+                  </Tabs>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="此测试阶段没有关联用例" />
+          )}
         </ContentCard>
       </CardRowGroup>
 
@@ -283,10 +290,11 @@ export default function PlanInfo(props: any) {
         </Table>
       </Modal>
 
-      <AddCaseDrawer
-        visible={addCaseDrawerVisible}
-        setVisible={setAddCaseDrawerVisible}
+      <AddBugDrawer
+        visible={addBugDrawerVisible}
+        setVisible={setAddBugDrawerVisible}
         updateCaseTable={updateBugList}
+        projectList={projectList}
       />
     </MatrixPageContent>
   );

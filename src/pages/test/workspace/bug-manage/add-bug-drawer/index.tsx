@@ -32,14 +32,14 @@ export default function BugManage(props: any) {
       id: bugInfo?.id,
       ...(bugInfo ? { modifyUser: userInfo.userName } : { createUser: userInfo.userName }),
     };
-    await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
+    void (await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
       void finishLoading();
-    });
+    }));
     void message.success(bugInfo ? '修改成功' : '新增成功');
-    void updateBugList();
+    void updateBugList && updateBugList();
 
     // 保存后清空form
-    form.resetFields();
+    void form.resetFields();
     void setRelatedCases([]);
     void setSchema(undefined);
 
@@ -55,7 +55,7 @@ export default function BugManage(props: any) {
   // 如果是编辑，则回填信息
   useEffect(() => {
     if (visible && bugInfo) {
-      form.setFieldsValue(bugInfo);
+      void form.setFieldsValue(bugInfo);
       void setRelatedCases(bugInfo.relatedCases);
       try {
         void setSchema(JSON.parse(bugInfo.description));
