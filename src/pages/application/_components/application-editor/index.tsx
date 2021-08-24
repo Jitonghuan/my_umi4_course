@@ -1,5 +1,5 @@
 /**
- * CreateApplication
+ * ApplicationEditor
  * @description 创建/编辑 应用
  * @author moting.nq
  * @create 2021-04-09 15:38
@@ -7,16 +7,17 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Drawer, Input, Spin, message, Form } from 'antd';
-// import FEContext from '@/layouts/basic-layout/fe-context';
+import FEContext from '@/layouts/basic-layout/fe-context';
 import { BasicForm } from '@/components/schema-form';
 import createSchema from './create-schema';
-import { createApp, updateApp, queryBizData, queryCategoryData } from './service';
+import { createApp, updateApp } from './service';
 import { IProps, FormValue, AppType, AppDevelopLanguage } from './types';
-// import './index.less';
+import { useAppGroupOptions } from '../../hooks';
 
 export type AppDataTypes = FormValue;
 
-const CreateApplication = (props: IProps) => {
+const ApplicationEditor = (props: IProps) => {
+  const { categoryData } = useContext(FEContext);
   const { formValue, visible } = props;
   const isEdit = !!formValue?.id;
 
@@ -25,11 +26,8 @@ const CreateApplication = (props: IProps) => {
   const [appType, setAppType] = useState<AppType>();
   // 应用开发语言
   const [appDevelopLanguage, setAppDevelopLanguage] = useState<AppDevelopLanguage>();
-  // const { categoryData, businessData } = useContext(FEContext);
-  const [categoryData, setcategoryData] = useState([]);
-  const [businessData, setBusinessData] = useState([]);
-  // const [baseImage, setBaseImage] = useState([]);
-  const [categoryCode, setcategoryCode] = useState('');
+  const [categoryCode, setCategoryCode] = useState<string>();
+  const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
 
   const [form] = Form.useForm();
 
@@ -41,42 +39,10 @@ const CreateApplication = (props: IProps) => {
     setAppDevelopLanguage(formValue?.appDevelopLanguage);
   }, [formValue?.appDevelopLanguage]);
 
-  //应用分类
-  useEffect(() => {
-    queryCategoryData().then((data) => {
-      setcategoryData(data.list);
-    });
-  }, []);
-
-  //应用组
-  useEffect(() => {
-    if (!categoryCode) {
-      form.setFieldsValue({
-        appGroupCode: undefined,
-      });
-      setBusinessData([]);
-      return;
-    }
-    queryBizData({ categoryCode }).then((data) => {
-      setBusinessData(data.list);
-    });
-  }, [categoryCode]);
-
-  // //基础镜像
-  // useEffect(() => {
-  //   queryBaseImage().then((data) => {
-  //     setBaseImage(data.list);
-  //   });
-  // }, []);
-
-  //编辑
+  // 数据回填
   useEffect(() => {
     if (isEdit) {
-      queryBizData({
-        categoryCode: form.getFieldValue('appCategoryCode'),
-      }).then((data) => {
-        setBusinessData(data.list);
-      });
+      setCategoryCode(formValue?.appCategoryCode);
       form.setFieldsValue({
         ...formValue,
         appGroupCode: formValue?.appGroupCode,
@@ -104,7 +70,7 @@ const CreateApplication = (props: IProps) => {
             appType,
             appDevelopLanguage,
             categoryData,
-            businessData,
+            businessData: appGroupOptions,
           }) as any)}
           dataSource={formValue}
           customMap={{
@@ -114,9 +80,15 @@ const CreateApplication = (props: IProps) => {
           resetText="取消"
           onReset={props.onClose}
           onValuesChange={(changedValues, allValues) => {
-            setcategoryCode(allValues?.appCategoryCode);
+            setCategoryCode(allValues?.appCategoryCode);
             setAppType(allValues?.appType);
             setAppDevelopLanguage(allValues?.appDevelopLanguage);
+
+            // 重置应用组
+            if ('appCategoryCode' in changedValues) {
+              setCategoryCode(changedValues.appCategoryCode);
+              form.resetFields(['appGroupCode']);
+            }
           }}
           onFinish={(val: Omit<FormValue, 'id'>) => {
             let promise = null;
@@ -148,6 +120,6 @@ const CreateApplication = (props: IProps) => {
   );
 };
 
-CreateApplication.defaultProps = {};
+ApplicationEditor.defaultProps = {};
 
-export default CreateApplication;
+export default ApplicationEditor;

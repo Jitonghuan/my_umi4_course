@@ -9,7 +9,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Descriptions, Button, Tag, Modal } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import UpdateApplication from '@/pages/application/_components/create-application';
+import UpdateApplication from '@/pages/application/_components/application-editor';
 import ModifyMember, { MemberTypes } from './modify-member';
 import DetailContext from '@/pages/application/application-detail/context';
 import { queryApps, queryAppMember } from '@/pages/application/service';

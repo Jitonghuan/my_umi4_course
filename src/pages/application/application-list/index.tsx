@@ -9,7 +9,7 @@ import React, { useMemo, useState, useCallback, useContext } from 'react';
 import { Button, message, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
-import CreateApplication from '../_components/create-application';
+import ApplicationEditor from '../_components/application-editor';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { createTableSchema } from './schema';
@@ -85,7 +85,7 @@ export default function ApplicationList() {
         ></Table>
       </ContentCard>
 
-      <CreateApplication
+      <ApplicationEditor
         formValue={curRecord}
         visible={createAppVisible}
         onClose={() => setCreateAppVisible(false)}

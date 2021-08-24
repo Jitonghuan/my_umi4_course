@@ -10,7 +10,7 @@ import { Radio, Button, Spin, Pagination } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { ContentCard } from '@/components/vc-page-content';
-import CreateApplication from '../_components/create-application';
+import ApplicationEditor from '../_components/application-editor';
 import ApplicationCardList from './card-list';
 import FilterHeader from '../_components/filter-header';
 import { useAppListData } from '../hooks';
@@ -73,7 +73,7 @@ export default function AllApplication() {
         </Spin>
       </ContentCard>
 
-      <CreateApplication
+      <ApplicationEditor
         visible={createAppVisible}
         onClose={() => setCreateAppVisible(false)}
         onSubmit={() => {
