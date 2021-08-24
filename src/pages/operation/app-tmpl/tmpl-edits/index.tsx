@@ -53,7 +53,7 @@ export default function TaskEditor(props: TmplListProps) {
       templateName: initData?.templateName,
       tmplConfigurableItem: initData?.tmplConfigurableItem,
       appCategoryCode: initData?.appCategoryCode || '',
-      envCodes: initData?.envCode || [],
+      envCodes: initData?.envCodes || [],
       templateValue: initData?.templateValue,
     };
     // console.log('获取到的初始化数据：', initValues.tmplConfigurableItem);
