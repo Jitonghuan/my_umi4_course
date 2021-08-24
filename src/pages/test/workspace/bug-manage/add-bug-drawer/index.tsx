@@ -2,19 +2,22 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, statusEnum, bugPriorityEnum } from '../../constant';
 import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect } from 'antd';
 import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryPageList } from '../../service';
+import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
+import AddCaseModal from '../add-case-modal';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
+import _ from 'lodash';
 import './index.less';
-import { getRequest, postRequest } from '@/utils/request';
 
 export default function BugManage(props: any) {
   const { visible, setVisible, projectList, bugInfo, updateBugList } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
-  const [associationUseCaseModalVisible, setAssociationUseCaseModalVisible] = useState(false);
+  const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
+  const [cates, setCates] = useState<any[]>([]);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
@@ -64,6 +67,7 @@ export default function BugManage(props: any) {
 
   /** -------------------------- 关联用例 start -------------------------- */
 
+  /** 关联用例-数据清洗 */
   const dataClean = (node: any): boolean => {
     node.key = node.id;
     node.title = node.name;
@@ -80,13 +84,29 @@ export default function BugManage(props: any) {
     return !!node.children.length;
   };
 
-  // 获得可关联的测试用例树
-  useEffect(() => {
+  const caseCateTreeDataClean = (node: any) => {
+    node.key = node.id;
+    node.title = node.name;
+    node.children = node.subItems;
+    node.children?.forEach((item: any) => caseCateTreeDataClean(item));
+  };
+
+  const updateAssociatingCaseTreeSelect = () => {
     void getRequest(getAllTestCaseTree).then((res) => {
+      // 新增用例-用例库数据
+      const caseCateTreeDataRoot = _.cloneDeep(res.data);
+      void caseCateTreeDataClean(caseCateTreeDataRoot);
+      void setCates(caseCateTreeDataRoot.children);
+
       const root = res.data;
       void dataClean(root);
       void setTestCaseTree(root.children);
     });
+  };
+
+  /** 获得可关联的测试用例树 */
+  useEffect(() => {
+    void updateAssociatingCaseTreeSelect();
   }, []);
 
   /** -------------------------- 关联用例 end -------------------------- */
@@ -148,7 +168,7 @@ export default function BugManage(props: any) {
                 value={relatedCases}
                 onChange={setRelatedCases}
               />
-              <Button type="primary" ghost>
+              <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
                 新增用例
               </Button>
             </Space>
@@ -188,6 +208,13 @@ export default function BugManage(props: any) {
           </Space>
         </div>
       </Drawer>
+
+      <AddCaseModal
+        visible={addCaseModalVisible}
+        setVisible={setAddCaseModalVisible}
+        cates={cates}
+        updateAssociatingCaseTreeSelect={updateAssociatingCaseTreeSelect}
+      />
     </>
   );
 }
