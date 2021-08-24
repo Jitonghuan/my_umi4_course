@@ -7,13 +7,12 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 import { Descriptions, Button, Tag, Modal } from 'antd';
-import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import UpdateApplication, { AppDataTypes } from '@/components/create-application';
+import UpdateApplication from '@/pages/application/_components/create-application';
 import ModifyMember, { MemberTypes } from './modify-member';
 import DetailContext from '@/pages/application/application-detail/context';
 import { queryApps, queryAppMember } from '@/pages/application/service';
-import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'overview-page';
@@ -25,7 +24,7 @@ const APP_TYPE_MAP = {
   backend: '后端',
 };
 
-const ApplicationOverview = (props: IProps) => {
+export default function ApplicationOverview() {
   const { appData, queryAppData } = useContext(DetailContext);
   const { categoryData = [], businessData = [] } = useContext(FEContext);
 
@@ -115,7 +114,7 @@ const ApplicationOverview = (props: IProps) => {
       </Descriptions>
 
       <UpdateApplication
-        formValue={appData}
+        formValue={appData as any}
         visible={isModifyApp}
         onClose={() => setIsModifyApp(false)}
         onSubmit={() => {
@@ -139,8 +138,4 @@ const ApplicationOverview = (props: IProps) => {
       />
     </ContentCard>
   );
-};
-
-ApplicationOverview.defaultProps = {};
-
-export default ApplicationOverview;
+}

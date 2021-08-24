@@ -105,7 +105,7 @@ export default function ticketAlarm() {
   };
 
   return (
-    <MatrixPageContent isFlex>
+    <MatrixPageContent>
       <FilterCard>
         <Form
           layout="inline"

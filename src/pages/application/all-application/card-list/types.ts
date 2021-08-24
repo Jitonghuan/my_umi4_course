@@ -15,6 +15,4 @@ export interface IProps {
     isContainClient?: number;
     owner: string;
   }>;
-  /** 分页 */
-  pagination: PaginationProps;
 }

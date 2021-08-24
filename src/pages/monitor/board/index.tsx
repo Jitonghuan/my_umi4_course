@@ -6,7 +6,6 @@ import MatrixPageContent from '@/components/matrix-page-content';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { useEffectOnce } from 'white-react-use';
 import { queryEnvLists, queryResUseData, queryNodeUseDataApi, queryUseMarketData } from './service';
 import { resUseTableSchema } from './schema';
 
@@ -141,9 +140,9 @@ const Coms = (props: any) => {
     });
   };
 
-  useEffectOnce(() => {
+  useEffect(() => {
     queryEnvList();
-  });
+  }, []);
 
   useEffect(() => {
     if (currentTab) {

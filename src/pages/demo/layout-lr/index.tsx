@@ -9,7 +9,7 @@ import { CardRowGroup, ContentCard } from '@/components/vc-page-content';
 
 export default function DemoPageLr() {
   return (
-    <MatrixPageContent isFlex>
+    <MatrixPageContent>
       <CardRowGroup>
         <CardRowGroup.SlideCard width={200}>LEFT</CardRowGroup.SlideCard>
         <ContentCard>RIGHT</ContentCard>

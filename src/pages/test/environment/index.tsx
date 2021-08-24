@@ -19,7 +19,7 @@ export default function EnvironmentManager() {
   }, []);
 
   return (
-    <MatrixPageContent isFlex>
+    <MatrixPageContent>
       <CardRowGroup>
         <EnvList onItemClick={(item) => setCurrent(item)} emitter={emitter} />
         <EnvDetail current={current} emitter={emitter} />
