@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { getRequest } from '@/utils/request';
 import { queryBizData } from '@/layouts/basic-layout/service';
 
-export function useAppGroupOptions(categoryCode: string): [any[], boolean] {
+export function useAppGroupOptions(categoryCode?: string): [any[], boolean] {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 

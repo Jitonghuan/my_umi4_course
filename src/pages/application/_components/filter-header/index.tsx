@@ -2,10 +2,11 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/23 15:36
 
-import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
+import React, { useState, useCallback, useContext, useMemo } from 'react';
 import { Form, Input, Select, Button } from 'antd';
 import { FilterCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/fe-context';
+import { useAppGroupOptions } from './hooks';
 
 const { Item: FormItem } = Form;
 
@@ -16,17 +17,27 @@ export interface FilterHeaderProps {
 export default function FilterHeader(props: FilterHeaderProps) {
   const [searchField] = Form.useForm();
   const { categoryData } = useContext(FEContext);
-  const [appGroupOptions, setAppGroupOptions] = useState<any[]>([]);
+  const [categoryCode, setCategoryCode] = useState<string>();
+  const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
 
   const handleSearch = useCallback(() => {
     const values = searchField.getFieldsValue();
+    console.log('> handleSearch', values);
     props.onSearch?.(values);
-  }, []);
+  }, [searchField]);
 
-  const handleAppCategoryChange = useCallback((next: string) => {
-    searchField.resetFields(['appGroupCode']);
-    setAppGroupOptions([]);
-  }, []);
+  const handleReset = useCallback(() => {
+    setCategoryCode(undefined);
+    handleSearch();
+  }, [searchField]);
+
+  const handleAppCategoryChange = useCallback(
+    (next: string) => {
+      searchField.resetFields(['appGroupCode']);
+      setCategoryCode(next);
+    },
+    [searchField],
+  );
 
   const appTypeOptions = useMemo(
     () => [
@@ -38,7 +49,7 @@ export default function FilterHeader(props: FilterHeaderProps) {
 
   return (
     <FilterCard>
-      <Form layout="inline" form={searchField} onFinish={handleSearch} onReset={handleSearch}>
+      <Form layout="inline" form={searchField} onFinish={handleSearch} onReset={handleReset}>
         <FormItem label="应用类型" name="appType">
           <Select options={appTypeOptions} placeholder="请选择" style={{ width: 100 }} allowClear />
         </FormItem>
@@ -52,7 +63,13 @@ export default function FilterHeader(props: FilterHeaderProps) {
           />
         </FormItem>
         <FormItem label="应用组" name="appGroupCode">
-          <Select options={appGroupOptions} placeholder="请选择" style={{ width: 140 }} allowClear />
+          <Select
+            options={appGroupOptions}
+            loading={appGroupLoading}
+            placeholder="请选择"
+            style={{ width: 140 }}
+            allowClear
+          />
         </FormItem>
         <FormItem label="应用名" name="appName">
           <Input placeholder="请输入" style={{ width: 140 }} />
