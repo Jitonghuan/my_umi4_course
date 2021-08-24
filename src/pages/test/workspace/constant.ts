@@ -7,3 +7,17 @@ export const priorityEnum = [
   { lable: 'P2', value: 'P2' },
   { lable: 'P3', value: 'P3' },
 ];
+export const testPhaseEnum = [
+  {
+    title: '待执行',
+    type: 'default',
+  },
+  {
+    title: '执行中',
+    type: 'processing',
+  },
+  {
+    title: '已完成',
+    type: 'success',
+  },
+];

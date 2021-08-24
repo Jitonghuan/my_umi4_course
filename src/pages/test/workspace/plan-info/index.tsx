@@ -12,6 +12,7 @@ import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
+import { testPhaseEnum } from '../constant';
 import CustomTree from '@/components/custom-tree';
 import moment from 'moment';
 import './index.less';
@@ -145,7 +146,11 @@ export default function PlanInfo(props: any) {
               执行情况
             </Col>
             <Col className="mt-1x">
-              <Tag color="processing">执行中</Tag>
+              {testPhaseDetail.phaseInfo?.status.toString() && (
+                <Tag color={testPhaseEnum[testPhaseDetail.phaseInfo.status].type}>
+                  {testPhaseEnum[testPhaseDetail.phaseInfo.status].title}
+                </Tag>
+              )}
             </Col>
           </Row>
           <Row className="ml-18">
