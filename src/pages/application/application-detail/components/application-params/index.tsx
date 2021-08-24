@@ -4,19 +4,15 @@
 
 import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
+import request, { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
-import { Table, Input, Button, Row, Col, Form, Select, Space, message, InputNumber } from 'antd';
+import { Button, Row, Col, Form, Select, Space, message } from 'antd';
 import './index.less';
 import * as APIS from '@/pages/application/service';
-import { copyScene } from '@/pages/test/autotest/service';
 
 export default function DemoPageTb(porps: any) {
-  const [dataSource, setDataSource] = useState<any[]>([]);
-  const [count, setCount] = useState<any>([0]);
   const [applicationForm] = Form.useForm();
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -24,13 +20,9 @@ export default function DemoPageTb(porps: any) {
   const [selectTmpl, setSelectTmpl] = useState<string>(); //下拉选择应用模版
   const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
-  const [categoryCode, setCategoryCode] = useState<string>();
   const [id, setId] = useState<string>();
   const [tableData, setTableData] = useState<any>([]);
-  const [isDisabled, setIsdisabled] = useState<any>();
   const [isDeployment, setIsDeployment] = useState<string>();
-  // const { Option } = Select;
-  const { TextArea } = Input;
   const [source, setSource] = useState<any[]>([]);
 
   useEffect(() => {
@@ -57,28 +49,33 @@ export default function DemoPageTb(porps: any) {
 
         return appCategoryCode;
       } else {
-        debugger;
         message.error('应用模版为空');
       }
     });
   };
 
-  //恢复初始化数据
+  //重置时恢复初始化数据
   const inintData = () => {
-    const templateType = porps.history.location.query.templateType;
-    const envCode = porps.history.location.query.envCode;
     let arr1 = [];
+    let jvm = '';
     for (const key in inintDatas.tmplConfigurableItem) {
-      arr1.push({
-        key: key,
-        value: inintDatas.tmplConfigurableItem[key],
-      });
+      if (key === 'jvm') {
+        jvm = inintDatas.tmplConfigurableItem[key];
+      } else {
+        arr1.push({
+          key: key,
+          value: inintDatas.tmplConfigurableItem[key],
+        });
+      }
+      console.log('11111111', jvm);
       applicationForm.setFieldsValue({
         appEnvCode: inintDatas.envCode,
         tmplType: inintDatas.templateType,
         value: inintDatas.value,
         tmplConfigurableItem: arr1,
+        jvm: jvm,
       });
+      setIsDeployment(inintDatas.templateType);
     }
   };
 
@@ -108,15 +105,14 @@ export default function DemoPageTb(porps: any) {
           jvm: jvm,
         });
 
-        setIsDeployment(applicationlist.templateType);
         changeEnvCode(applicationlist.envCode);
         changeTmplType(applicationlist.templateType);
+        setIsDeployment(applicationlist.templateType);
       } else {
-        debugger;
         message.error('应用模版为空');
       }
 
-      //底下是处理添加进表格的数据
+      //处理添加进表格的数据
       let arr = [];
       for (const key in applicationlist.tmplConfigurableItem) {
         arr.push({
@@ -169,11 +165,16 @@ export default function DemoPageTb(porps: any) {
       const applicationlist = result.data[0];
       if (result.data.length !== 0) {
         let arr = [];
+        let jvm = '';
         for (const key in applicationlist.tmplConfigurableItem) {
-          arr.push({
-            key: key,
-            value: applicationlist.tmplConfigurableItem[key],
-          });
+          if (key === 'jvm') {
+            jvm = applicationlist.tmplConfigurableItem[key];
+          } else {
+            arr.push({
+              key: key,
+              value: applicationlist.tmplConfigurableItem[key],
+            });
+          }
         }
         applicationForm.setFieldsValue({
           // templateValue:list.templateValue,
@@ -181,13 +182,14 @@ export default function DemoPageTb(porps: any) {
           appEnvCode: applicationlist.envCode,
           tmplType: applicationlist.templateType,
           value: applicationlist.value,
+          jvm: jvm,
         });
 
         setSource(arr);
       } else {
         applicationForm.setFieldsValue({
-          // templateValue:list.templateValue,
           tmplConfigurableItem: [],
+          jvm: '',
           value: '',
         });
         message.error('您查看的应用模版不存在');
@@ -196,13 +198,12 @@ export default function DemoPageTb(porps: any) {
   };
   //编辑应用参数
   const setApplication = (values: any) => {
-    debugger;
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
       return prev;
     }, {} as any);
     const value = values.value;
-    putRequest(APIS.editParams, { data: { id, value, tmplConfigurableItem } }).then((result) => {
+    putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
       if (result.success) {
         message.success('提交成功！');
         window.location.reload();

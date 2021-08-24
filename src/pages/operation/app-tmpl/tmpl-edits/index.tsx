@@ -2,7 +2,6 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-// import { clusterBLineChart } from './formatter';
 import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
@@ -24,7 +23,6 @@ export interface TmplListProps {
 export default function TaskEditor(props: TmplListProps) {
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
-  const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
   const children: any = [];
   const { mode, initData, onClose, onSave } = props;
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -33,6 +31,7 @@ export default function TaskEditor(props: TmplListProps) {
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
+  const [isDeployment, setIsDeployment] = useState<string>();
   const templateCode = initData?.templateCode;
   const handleChange = (next: any[]) => {
     setSource(next);
@@ -49,24 +48,28 @@ export default function TaskEditor(props: TmplListProps) {
     //进入页面加载信息
     const envCodes: string[] = [];
     envCodes.push(initData?.envCode);
-    debugger;
     const initValues = {
       templateCode: initData?.templateCode,
       templateType: initData?.templateType,
       templateName: initData?.templateName,
-      tmplConfigurableItem: initData?.tmplConfigurableItem, //tmplConfigurableItem
+      tmplConfigurableItem: initData?.tmplConfigurableItem,
       appCategoryCode: initData?.appCategoryCode || '',
       envCodes: envCodes || [],
-      jvm: initData?.tmplConfigurableItem.jvm,
       templateValue: initData?.templateValue,
     };
-    // console.log('获取到的初始化数据：', initValues.jvm);
+    // console.log('获取到的初始化数据：', initValues.tmplConfigurableItem);
     let arr = [];
+    let jvm = '';
+
     for (const key in initValues.tmplConfigurableItem) {
-      arr.push({
-        key: key,
-        value: initValues.tmplConfigurableItem[key],
-      });
+      if (key === 'jvm') {
+        jvm = initValues.tmplConfigurableItem[key];
+      } else {
+        arr.push({
+          key: key,
+          value: initValues.tmplConfigurableItem[key],
+        });
+      }
     }
     createTmplForm.setFieldsValue({
       templateType: initValues.templateType,
@@ -74,12 +77,12 @@ export default function TaskEditor(props: TmplListProps) {
       templateValue: initValues.templateValue,
       appCategoryCode: initValues.appCategoryCode,
       envCodes: initValues.envCodes,
-      jvm: initValues.jvm,
+      jvm: jvm,
       tmplConfigurableItem: arr,
     });
     // console.log('000000',initValues.jvm)
     changeAppCategory(initValues.appCategoryCode);
-    // createTmplForm.setFieldsValue({initValues});
+    setIsDeployment(initValues.templateType);
     selectTmplType();
     selectCategory();
   }, [mode]);
@@ -129,7 +132,6 @@ export default function TaskEditor(props: TmplListProps) {
   };
   //保存编辑模版
   const createTmpl = (value: any) => {
-    // const templateCode: string = templateCode;
     const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
       prev[el.key] = el?.value;
       return prev;
@@ -158,6 +160,9 @@ export default function TaskEditor(props: TmplListProps) {
     });
   };
 
+  const changeTmplType = (value: any) => {
+    setIsDeployment(value);
+  };
   return (
     <Drawer
       visible={mode !== 'HIDE'}
@@ -171,7 +176,13 @@ export default function TaskEditor(props: TmplListProps) {
           <Row>
             <Col span={6}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
-                <Select showSearch style={{ width: 150 }} options={templateTypes} disabled={isDisabled} />
+                <Select
+                  showSearch
+                  style={{ width: 150 }}
+                  options={templateTypes}
+                  disabled={isDisabled}
+                  onChange={changeTmplType}
+                />
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -204,12 +215,13 @@ export default function TaskEditor(props: TmplListProps) {
                   disabled={isDisabled}
                 />
               </Form.Item>
-              {initData?.templateType == 'deployment' && <span>JVM参数:</span>}
-
-              {initData?.templateType == 'deployment' && (
+              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
+              {isDeployment == 'deployment' ? (
                 <Form.Item name="jvm">
                   <AceEditor mode="yaml" height={300} />
                 </Form.Item>
+              ) : (
+                ''
               )}
               <Form.Item
                 label="选择默认应用分类："
