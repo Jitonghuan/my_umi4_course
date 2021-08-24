@@ -28,6 +28,7 @@ export default function DemoPageTb(porps: any) {
   const [id, setId] = useState<string>();
   const [tableData, setTableData] = useState<any>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
+  const [isDeployment, setIsDeployment] = useState<string>();
   // const { Option } = Select;
   const { TextArea } = Input;
   const [source, setSource] = useState<any[]>([]);
@@ -44,6 +45,7 @@ export default function DemoPageTb(porps: any) {
   const envCode = porps.history.location.query.envCode;
   const isClient = porps.history.location.query.isClient;
   const isContainClient = porps.history.location.query.isContainClient;
+
   const getApp = () => {
     return getRequest(APIS.paramsList, { data: { appCode, isClient, isContainClient } }).then((result) => {
       if (result.data.length > 0) {
@@ -52,6 +54,7 @@ export default function DemoPageTb(porps: any) {
         setId(app.id);
         setInintDatas(app);
         showAppList();
+
         return appCategoryCode;
       } else {
         debugger;
@@ -85,11 +88,16 @@ export default function DemoPageTb(porps: any) {
         const applicationlist = result.data[0];
         setApplicationlist(applicationlist);
         let arr1 = [];
+        let jvm = '';
         for (const key in applicationlist.tmplConfigurableItem) {
-          arr1.push({
-            key: key,
-            value: applicationlist.tmplConfigurableItem[key],
-          });
+          if (key === 'jvm') {
+            jvm = applicationlist.tmplConfigurableItem[key];
+          } else {
+            arr1.push({
+              key: key,
+              value: applicationlist.tmplConfigurableItem[key],
+            });
+          }
         }
         setTableData(arr1);
         applicationForm.setFieldsValue({
@@ -97,7 +105,10 @@ export default function DemoPageTb(porps: any) {
           tmplType: applicationlist.templateType,
           value: applicationlist.value,
           tmplConfigurableItem: arr1,
+          jvm: jvm,
         });
+
+        setIsDeployment(applicationlist.templateType);
         changeEnvCode(applicationlist.envCode);
         changeTmplType(applicationlist.templateType);
       } else {
@@ -147,6 +158,7 @@ export default function DemoPageTb(porps: any) {
 
   const changeTmplType = (getTmplType: string) => {
     setSelectTmpl(getTmplType);
+    setIsDeployment(getTmplType);
   };
   //点击查询回调
   const queryTmpl = () => {
@@ -154,8 +166,6 @@ export default function DemoPageTb(porps: any) {
     getRequest(APIS.paramsList, {
       data: { envCode: selectEnvData || envCode, appCode, templateType: selectTmpl || {} },
     }).then((result) => {
-      //返回的的数据的结构与详情不一致有问题
-      // const list = result.data[0];
       const applicationlist = result.data[0];
       if (result.data.length !== 0) {
         let arr = [];
@@ -172,6 +182,7 @@ export default function DemoPageTb(porps: any) {
           tmplType: applicationlist.templateType,
           value: applicationlist.value,
         });
+
         setSource(arr);
       } else {
         applicationForm.setFieldsValue({
@@ -185,6 +196,7 @@ export default function DemoPageTb(porps: any) {
   };
   //编辑应用参数
   const setApplication = (values: any) => {
+    debugger;
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
       return prev;
@@ -241,6 +253,14 @@ export default function DemoPageTb(porps: any) {
                 ]}
               />
             </Form.Item>
+            {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
+            {isDeployment == 'deployment' ? (
+              <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
+                <AceEditor mode="yaml" height={300} />
+              </Form.Item>
+            ) : (
+              ''
+            )}
           </Col>
         </Row>
         <Form.Item>

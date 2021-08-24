@@ -171,8 +171,6 @@ export default function Launch() {
   //抽屉保存
   const saveEditData = () => {
     setTmplEditMode('HIDE');
-    message.success('保存成功！');
-
     setTimeout(() => {
       queryList({ pageIndex: 1, pageSize: 20 });
     }, 100);

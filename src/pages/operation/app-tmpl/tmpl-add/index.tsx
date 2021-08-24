@@ -29,6 +29,7 @@ export default function DemoPageTb(porps: any) {
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
+  const [isDeployment, setIsDeployment] = useState<string>();
   const handleChange = (next: any[]) => {
     setSource(next);
   };
@@ -60,6 +61,9 @@ export default function DemoPageTb(porps: any) {
       }));
       setTemplateTypes(list);
     });
+  };
+  const selectTemplType = (value: any) => {
+    setIsDeployment(value);
   };
   //加载应用分类下拉选择
   const selectCategory = () => {
@@ -108,6 +112,7 @@ export default function DemoPageTb(porps: any) {
         appCategoryCode: value.appCategoryCode || '',
         envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
+        jvm: value?.jvm,
       },
     }).then((resp: any) => {
       if (resp.success) {
@@ -130,7 +135,13 @@ export default function DemoPageTb(porps: any) {
           <Row>
             <Col span={6}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
-                <Select showSearch style={{ width: 150 }} options={templateTypes} disabled={isDisabled} />
+                <Select
+                  showSearch
+                  style={{ width: 150 }}
+                  options={templateTypes}
+                  disabled={isDisabled}
+                  onChange={selectTemplType}
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -165,11 +176,20 @@ export default function DemoPageTb(porps: any) {
                   ]}
                 />
               </Form.Item>
+              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
+              {isDeployment == 'deployment' ? (
+                <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              ) : (
+                ''
+              )}
+
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '140px' }}
+                style={{ marginTop: '80px' }}
               >
                 <Select
                   showSearch
