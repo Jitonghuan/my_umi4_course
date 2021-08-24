@@ -26,6 +26,7 @@ export default function PlanInfo(props: any) {
   const [activeKey, setActiveKey] = useState<string>();
   const [testPhaseDetail, setTestPhaseDetail] = useState<any>({});
   const [testCaseTree, setTestCaseTree] = useState<any[]>();
+  const [testCaseTreeLeafs, setTestCaseTreeLeafs] = useState<any[]>([]);
   const [curCaseId, setCurCaseId] = useState<any>();
   const [curCase, setCurCase] = useState<any>();
   const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
@@ -43,6 +44,7 @@ export default function PlanInfo(props: any) {
     });
 
     void getRequest(getPhaseCaseTree, { data: { phaseId: +activeKey } }).then((res) => {
+      const allLeafs = [];
       const curCaseTree = Array.isArray(res.data) ? res.data : [];
       const Q = [...curCaseTree];
       while (Q.length) {
@@ -53,16 +55,19 @@ export default function PlanInfo(props: any) {
         if (cur.subItems?.length) {
           cur.subItems = cur.subItems.filter((item: any) => item.subItems?.length || item.cases?.length);
           cur.children = cur.subItems;
-          Q.push(...cur.subItems);
+          void Q.push(...cur.subItems);
         } else if (cur.cases?.length) {
-          cur.cases.forEach((item: any) => {
+          void allLeafs.push(...cur.cases);
+          void cur.cases.forEach((item: any) => {
             item.key = item.id;
             item.isLeaf = true;
           });
           cur.children = cur.cases;
         }
       }
+
       void setTestCaseTree(curCaseTree || []);
+      void setTestCaseTreeLeafs(allLeafs);
     });
   }, [activeKey]);
 
@@ -192,6 +197,8 @@ export default function PlanInfo(props: any) {
                 <CaseInfo
                   setAssociationBugModalVisible={associationBugModalVisible}
                   setAddBugDrawerVisible={setAssociationBugModalVisible}
+                  testCaseTreeLeafs={testCaseTreeLeafs}
+                  setCurCaseId={setCurCaseId}
                   curCase={curCase}
                   phaseId={activeKey}
                 />

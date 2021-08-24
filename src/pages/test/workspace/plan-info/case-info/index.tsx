@@ -14,7 +14,8 @@ moment.locale('zh-cn');
 const { Text } = Typography;
 
 export default function UserCaseInfoExec(props: any) {
-  const { setAssociationBugModalVisible, setAddBugDrawerVisible, curCase, phaseId } = props;
+  const { setAssociationBugModalVisible, setAddBugDrawerVisible, curCase, phaseId, testCaseTreeLeafs, setCurCaseId } =
+    props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [associationBug, setAssociationBug] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function UserCaseInfoExec(props: any) {
   const sona = useMemo(() => createSona(), []);
 
   useEffect(() => {
-    if (curCase) {
+    if (curCase && curCase.status !== undefined) {
       void setCaseStatus(curCase.status.toString());
     }
   }, [curCase]);
@@ -77,19 +78,26 @@ export default function UserCaseInfoExec(props: any) {
     void setExecNoteReadOnly(true);
   };
 
+  const handleChangeCurCaseIdx = (isToNext: boolean) => {
+    const idx = testCaseTreeLeafs.findIndex((leaf: any) => leaf.id === curCase.caseInfo.id);
+    const len = testCaseTreeLeafs.length;
+    if (isToNext) void setCurCaseId(testCaseTreeLeafs[(idx + 1) % len].id);
+    else void setCurCaseId(testCaseTreeLeafs[(idx - 1 + len) % len].id);
+  };
+
   return (
     <div className="case-info">
       <div className="case-header">
         <div className="title-col">
-          <span className="case-title">#366319 用例名称</span>
+          <span className="case-title">{curCase?.caseInfo?.title}</span>
           <Select
             className="w-100 ml-auto"
             value={caseStatus}
             onChange={handleCaseStatusChange}
             options={caseStatusEnum}
           ></Select>
-          <Button className="ml-20" icon={<UpOutlined />} />
-          <Button icon={<DownOutlined />} />
+          <Button className="ml-20" icon={<UpOutlined />} onClick={() => handleChangeCurCaseIdx(false)} />
+          <Button icon={<DownOutlined />} onClick={() => handleChangeCurCaseIdx(true)} />
         </div>
 
         <div>
@@ -117,10 +125,12 @@ export default function UserCaseInfoExec(props: any) {
         <RichText sona={sona} readOnly={execNoteReadOnly} schema={schema} />
         {!execNoteReadOnly ? (
           <div className="executeNote-btn-container">
-            <Button type="primary" onClick={handleSaveExecNote}>
-              保存
-            </Button>
-            <Button onClick={handleCancelSaveExecNote}>取消</Button>
+            <Space>
+              <Button type="primary" onClick={handleSaveExecNote}>
+                保存
+              </Button>
+              <Button onClick={handleCancelSaveExecNote}>取消</Button>
+            </Space>
           </div>
         ) : (
           <div className="executeNote-btn-container">
@@ -157,7 +167,7 @@ export default function UserCaseInfoExec(props: any) {
             </Table>
           </Tabs.TabPane>
           <Tabs.TabPane tab="活动日志" key="2">
-            {curCase?.records.map((item: any) => {
+            {curCase?.records?.map((item: any) => {
               return (
                 <Row>
                   <Col span={17}>
