@@ -30,6 +30,7 @@ export default function TaskEditor(props: TmplListProps) {
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
+  const [envCodesArry, setEnvCodesArry] = useState<string[]>([]);
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
@@ -47,15 +48,13 @@ export default function TaskEditor(props: TmplListProps) {
     if (mode === 'HIDE') return;
     createTmplForm.resetFields();
     //进入页面加载信息
-    const envCodes: string[] = [];
-    envCodes.push(initData?.envCode);
     const initValues = {
       templateCode: initData?.templateCode,
       templateType: initData?.templateType,
       templateName: initData?.templateName,
       tmplConfigurableItem: initData?.tmplConfigurableItem, //tmplConfigurableItem
       appCategoryCode: initData?.appCategoryCode || '',
-      envCodes: envCodes || [],
+      envCodes: initData?.envCodes || [],
       templateValue: initData?.templateValue,
     };
     console.log('获取到的初始化数据：', initValues.envCodes);
@@ -126,6 +125,14 @@ export default function TaskEditor(props: TmplListProps) {
   //保存编辑模版
   const createTmpl = (value: any) => {
     // const templateCode: string = templateCode;
+    if (Array.isArray(value?.envCodes)) {
+      let envCodesArry = value?.envCodes;
+      setEnvCodesArry(envCodesArry);
+    } else {
+      let envCodesArry = [];
+      envCodesArry.push(value?.envCodes);
+      setEnvCodesArry(envCodesArry);
+    }
     const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
       prev[el.key] = el?.value;
       return prev;
@@ -136,7 +143,7 @@ export default function TaskEditor(props: TmplListProps) {
         templateType: value.templateType,
         templateValue: value.templateValue,
         appCategoryCode: value.appCategoryCode || '',
-        envCodes: value.envCodes || [],
+        envCodes: envCodesArry || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         templateCode: templateCode,
       },

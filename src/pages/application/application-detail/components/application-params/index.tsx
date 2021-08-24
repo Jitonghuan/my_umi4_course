@@ -54,7 +54,6 @@ export default function DemoPageTb(porps: any) {
         showAppList();
         return appCategoryCode;
       } else {
-        debugger;
         message.error('应用模版为空');
       }
     });
@@ -101,7 +100,6 @@ export default function DemoPageTb(porps: any) {
         changeEnvCode(applicationlist.envCode);
         changeTmplType(applicationlist.templateType);
       } else {
-        debugger;
         message.error('应用模版为空');
       }
 
