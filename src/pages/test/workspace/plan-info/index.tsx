@@ -7,7 +7,7 @@ import RichText from '@/components/rich-text';
 import AddCaseDrawer from '../test-case/add-case-drawer';
 import { createSona } from '@cffe/sona';
 import { history } from 'umi';
-import { Col, Row, Tabs, Progress, Table, Input, Select, Tag, Button, Space, Modal } from 'antd';
+import { Col, Row, Tabs, Progress, Table, Input, Select, Tag, Button, Space, Modal, Typography } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
@@ -15,6 +15,10 @@ import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-cont
 import CustomTree from '@/components/custom-tree';
 import moment from 'moment';
 import './index.less';
+
+moment.locale('zh-cn');
+
+const { Text } = Typography;
 
 export default function PlanInfo(props: any) {
   if (!history.location.state) {
@@ -242,7 +246,18 @@ export default function PlanInfo(props: any) {
                     关联Bug()
                   </Tabs.TabPane>
                   <Tabs.TabPane tab="活动日志" key="2">
-                    活动日志
+                    {curCase?.records.map((item: any) => {
+                      return (
+                        <Row>
+                          <Col span={17}>
+                            <Text>{item.executeNote}</Text>
+                          </Col>
+                          <Col span={7} className="activity-log">
+                            <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
+                          </Col>
+                        </Row>
+                      );
+                    })}
                   </Tabs.TabPane>
                 </Tabs>
               </div>
