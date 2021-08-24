@@ -7,15 +7,14 @@ import RichText from '@/components/rich-text';
 import AddCaseDrawer from '../test-case/add-case-drawer';
 import { createSona } from '@cffe/sona';
 import { history } from 'umi';
-import { Col, Row, Tabs, Progress, Table, Input, Select, Tree, Tag, Button, Space, Modal } from 'antd';
+import { Col, Row, Tabs, Progress, Table, Input, Select, Tag, Button, Space, Modal } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail } from '../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
+import CustomTree from '@/components/custom-tree';
 import moment from 'moment';
 import './index.less';
-
-const { DirectoryTree } = Tree;
 
 export default function PlanInfo(props: any) {
   if (!history.location.state) {
@@ -171,20 +170,22 @@ export default function PlanInfo(props: any) {
         <ContentCard>
           <div className="right-card">
             <div className="case-select-container">
-              <div className="filter-bar">
+              {/* <div className="filter-bar">
                 <Select>
                   <Select.Option value="1">全部状态</Select.Option>
                 </Select>
                 <Input.Search />
-              </div>
-              <DirectoryTree
-                treeData={testCaseTree}
+              </div> */}
+              <CustomTree
+                treeData={testCaseTree || []}
                 onSelect={(keys) => setCurCaseId(keys[0])}
                 selectedKeys={[curCaseId]}
                 className="test-case-select-tree"
                 onExpand={(expendedKeys) => setExpendedKeys(expendedKeys)}
                 expandedKeys={expendedKeys}
                 showIcon={false}
+                showSearch
+                searchPlaceholder="搜索用例、用例库"
               />
             </div>
 
