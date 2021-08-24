@@ -35,7 +35,7 @@ const resultMapping = {
 };
 
 const resultColor: any = {
-  '0': 'warning',
+  '0': 'default',
   '1': 'success',
   '-1': 'error',
 };
