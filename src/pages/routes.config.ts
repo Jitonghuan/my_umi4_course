@@ -666,7 +666,12 @@ export default [
           },
         ],
       },
-      { path: 'tmpl-log', name: '操作日志', key: 'tmpl-log', component: '@/pages/operation/tmpl-log' },
+      {
+        path: 'tmpl-log',
+        name: '操作日志',
+        key: 'tmpl-log',
+        component: '@/pages/operation/tmpl-log',
+      },
     ],
   },
 
