@@ -71,7 +71,7 @@ const plugins: EditorPlugin[] = [
 const toolbarConfig: any[] = plugins.filter((plugin) => plugin?.toolbarConfig).map((plugin) => plugin.toolbarConfig);
 
 export default function CaseWorkspace(props: any) {
-  const { className, width = '100%', height = '240px', onChange, sona, schema } = props;
+  const { className, width = '100%', height = '240px', onChange, sona, schema, ...otherProps } = props;
 
   // TODO:获取editor里面的值
   // TODO:回填数据
@@ -91,6 +91,7 @@ export default function CaseWorkspace(props: any) {
       className={'matrix-rich-editor-wrapper ' + className}
       toolbarClassName="matrix-rich-editor-toolbar"
       editorClassName="matrix-rich-editor"
+      {...otherProps}
     />
   );
 }

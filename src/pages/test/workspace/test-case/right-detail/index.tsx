@@ -67,7 +67,7 @@ export default function RightDetail(props: any) {
             <Select placeholder="选择优先级" allowClear>
               {priorityEnum.map((item) => (
                 <Select.Option value={item.value} key={item.value}>
-                  {item.lable}
+                  {item.label}
                 </Select.Option>
               ))}
             </Select>
