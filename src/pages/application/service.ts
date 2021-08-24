@@ -1,4 +1,4 @@
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
+import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 import { addAPIPrefix } from '@/utils';
 
