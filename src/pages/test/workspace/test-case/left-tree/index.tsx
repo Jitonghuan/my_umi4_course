@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Select, Input, Tree } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { TreeNode } from '@cffe/algorithm';
 import './index.less';
 
 const { DirectoryTree } = Tree;
 const { Option } = Select;
-
-const formatTreeData = (cateTreeData: TreeNode[]): any => {
-  if (!cateTreeData) return [];
-  return cateTreeData.map((node) => {
-    node.bfs((node) => {
-      node.title = node.name;
-    });
-    return node;
-  });
-};
 
 export default function LeftTree(props: any) {
   const {
@@ -27,9 +16,10 @@ export default function LeftTree(props: any) {
     setRootCateId,
     cateId,
     setCateId,
+    expandedKeys,
+    setExpandedKeys,
   } = props;
   const [keyword, setKeyword] = useState<string>('');
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
 
   useEffect(() => {
@@ -37,9 +27,8 @@ export default function LeftTree(props: any) {
   }, [rootCateId, keyword]);
 
   useEffect(() => {
-    setExpandedKeys([cateTreeData[0]?.key]);
-    setSelectedKeys([cateTreeData[0]?.key]);
-    setCateId(cateTreeData[0]?.key);
+    void setSelectedKeys([cateTreeData[0]?.key]);
+    void setCateId(cateTreeData[0]?.key);
   }, [cateTreeData]);
 
   const onCateChange = (val: any) => {
@@ -88,7 +77,7 @@ export default function LeftTree(props: any) {
       <div className="tree-container">
         <DirectoryTree
           className="custom-tree"
-          treeData={formatTreeData(cateTreeData)}
+          treeData={cateTreeData}
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
           onSelect={onSelect}
