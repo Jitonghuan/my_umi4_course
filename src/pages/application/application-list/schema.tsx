@@ -1,6 +1,7 @@
 import React from 'react';
 import { history } from 'umi';
 import { Popconfirm } from 'antd';
+import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import { ColumnProps } from '@cffe/vc-hulk-table';
 
 export type AppType = 'frontend' | 'backend';
@@ -10,63 +11,10 @@ const APP_TYPE_MAP = {
   backend: '后端',
 };
 
-// 过滤表单 schema
-export const createFilterFormSchema = (params: { categoryData?: any[]; businessData?: any[] }) => ({
-  theme: 'inline',
-  isShowReset: true,
-  labelColSpan: 3,
-  schema: [
-    {
-      type: 'Select',
-      props: {
-        label: '应用类型',
-        name: 'appType',
-        options: [
-          { value: 'backend', label: '后端' },
-          { value: 'frontend', label: '前端' },
-        ],
-        style: { width: 100 },
-      },
-    },
-    {
-      type: 'Select',
-      props: {
-        label: '应用分类',
-        name: 'appCategoryCode',
-        options: params.categoryData || [],
-        style: { width: 120 },
-      },
-    },
-    {
-      type: 'Select',
-      props: {
-        label: '应用组',
-        name: 'appGroupCode',
-        options: params.businessData || [],
-      },
-    },
-    {
-      type: 'Input',
-      props: {
-        label: '应用名',
-        name: 'appName',
-        props: {
-          placeholder: '请输入',
-        },
-      },
-    },
-    {
-      type: 'Input',
-      props: {
-        label: '应用code',
-        name: 'appCode',
-        props: {
-          placeholder: '请输入',
-        },
-      },
-    },
-  ],
-});
+const APP_TYPE_ICON = {
+  frontend: <Html5Outlined />,
+  backend: <CodeOutlined />,
+};
 
 // 表格 schema
 export const createTableSchema = ({
@@ -132,7 +80,12 @@ export const createTableSchema = ({
       title: '应用类型',
       dataIndex: 'appType',
       width: 80,
-      render: (appType: AppType) => APP_TYPE_MAP[appType] || '',
+      render: (appType: AppType) => (
+        <>
+          {APP_TYPE_ICON[appType]}&nbsp;
+          {APP_TYPE_MAP[appType] || '--'}
+        </>
+      ),
     },
     {
       title: '应用组',

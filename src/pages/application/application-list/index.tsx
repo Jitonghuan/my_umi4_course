@@ -18,8 +18,6 @@ import { useAppListData } from '../hooks';
 import FilterHeader from '../_components/filter-header';
 import './index.less';
 
-const rootCls = 'application-list-page';
-
 export default function ApplicationList() {
   const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
   const [pageIndex, setPageIndex] = useState(1);
@@ -56,7 +54,7 @@ export default function ApplicationList() {
       <FilterHeader onSearch={handleFilterSearch} />
 
       <ContentCard>
-        <div className={`${rootCls}__table-header`}>
+        <div className="table-caption">
           <h3>应用列表</h3>
           <Button
             type="primary"

@@ -39,7 +39,7 @@ export default function AllApplication() {
       <FilterHeader onSearch={handleFilterSearch} />
 
       <ContentCard>
-        <div className={`${rootCls}__header`}>
+        <div className="table-caption">
           <Radio.Group value={type} onChange={(e) => setType(e.target.value)}>
             <Radio.Button value="mine">我的应用</Radio.Button>
             <Radio.Button value="all">全部应用</Radio.Button>

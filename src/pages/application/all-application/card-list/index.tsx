@@ -7,6 +7,8 @@
 
 import React from 'react';
 import { history } from 'umi';
+import { Tag, Tooltip } from 'antd';
+import { Html5Outlined, CodeOutlined, UserOutlined } from '@ant-design/icons';
 import CardLayout from '@cffe/vc-b-card-layout';
 import { IProps } from './types';
 import './index.less';
@@ -16,6 +18,11 @@ const cardCls = 'all-application-page__card';
 const APP_TYPE_MAP = {
   frontend: '前端',
   backend: '后端',
+};
+
+const APP_TYPE_TAG: Record<string, [string, React.ReactNode]> = {
+  frontend: ['geekblue', <Html5Outlined />],
+  backend: ['default', <CodeOutlined />],
 };
 
 const ApplicationCardList = (props: IProps) => {
@@ -42,8 +49,17 @@ const ApplicationCardList = (props: IProps) => {
           <div className={`${cardCls}-header`}>{item.appName}</div>
 
           <div className={`${cardCls}-content`}>
-            <div>应用类型：{APP_TYPE_MAP[item.appType]}</div>
-            <div>owner：{item.owner}</div>
+            {/* <div>应用类型：{APP_TYPE_MAP[item.appType]}</div> */}
+            <div>
+              <Tag color={APP_TYPE_TAG[item.appType]?.[0]} icon={APP_TYPE_TAG[item.appType]?.[1]}>
+                {APP_TYPE_MAP[item.appType]}
+              </Tag>
+            </div>
+            <Tooltip title={item.owner}>
+              <div>
+                <UserOutlined /> {item.owner}
+              </div>
+            </Tooltip>
           </div>
         </div>
       ))}
