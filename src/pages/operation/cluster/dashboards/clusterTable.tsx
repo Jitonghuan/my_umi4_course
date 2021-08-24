@@ -17,6 +17,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
     let dataSource = {
       name: i,
       count: data[i],
+      // cluster: /^([ABCD])-/g.exec(i)?.[1],
     };
     countList.push(dataSource);
   }
@@ -24,15 +25,11 @@ export default function ClusterTable(props: ChartCaseListProps) {
     {
       title: '分类',
       dataIndex: 'name',
-      key: 'name',
-      // width: '100px',
     },
     {
       title: '访问量',
       dataIndex: 'count',
-      key: 'count',
-
-      width: 90,
+      width: 100,
       sorter: {
         compare: (a: any, b: any) => a.count - b.count,
       },
