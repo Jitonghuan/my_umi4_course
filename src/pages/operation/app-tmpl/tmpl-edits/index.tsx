@@ -12,7 +12,7 @@ import * as APIS from '../service';
 import { EditorMode, TmplEdit } from '../tmpl-list';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from 'antd';
 
 export interface TmplListProps {
   mode?: EditorMode;
@@ -49,6 +49,7 @@ export default function TaskEditor(props: TmplListProps) {
     //进入页面加载信息
     const envCodes: string[] = [];
     envCodes.push(initData?.envCode);
+    debugger;
     const initValues = {
       templateCode: initData?.templateCode,
       templateType: initData?.templateType,
@@ -56,9 +57,10 @@ export default function TaskEditor(props: TmplListProps) {
       tmplConfigurableItem: initData?.tmplConfigurableItem, //tmplConfigurableItem
       appCategoryCode: initData?.appCategoryCode || '',
       envCodes: envCodes || [],
+      jvm: initData?.tmplConfigurableItem.jvm,
       templateValue: initData?.templateValue,
     };
-    console.log('获取到的初始化数据：', initValues.envCodes);
+    // console.log('获取到的初始化数据：', initValues.jvm);
     let arr = [];
     for (const key in initValues.tmplConfigurableItem) {
       arr.push({
@@ -72,8 +74,10 @@ export default function TaskEditor(props: TmplListProps) {
       templateValue: initValues.templateValue,
       appCategoryCode: initValues.appCategoryCode,
       envCodes: initValues.envCodes,
+      jvm: initValues.jvm,
       tmplConfigurableItem: arr,
     });
+    // console.log('000000',initValues.jvm)
     changeAppCategory(initValues.appCategoryCode);
     // createTmplForm.setFieldsValue({initValues});
     selectTmplType();
@@ -135,6 +139,7 @@ export default function TaskEditor(props: TmplListProps) {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
+        jvm: value?.jvm,
         appCategoryCode: value.appCategoryCode || '',
         envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
@@ -147,9 +152,12 @@ export default function TaskEditor(props: TmplListProps) {
         history.push({
           pathname: 'tmpl-list',
         });
+        message.success('保存成功！');
+        onSave?.();
       }
     });
   };
+
   return (
     <Drawer
       visible={mode !== 'HIDE'}
@@ -158,7 +166,7 @@ export default function TaskEditor(props: TmplListProps) {
       onClose={onClose}
       width={'70%'}
     >
-      <ContentCard>
+      <ContentCard className="tmpl-edits">
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
             <Col span={6}>
@@ -196,11 +204,18 @@ export default function TaskEditor(props: TmplListProps) {
                   disabled={isDisabled}
                 />
               </Form.Item>
+              {initData?.templateType == 'deployment' && <span>JVM参数:</span>}
+
+              {initData?.templateType == 'deployment' && (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              )}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '140px' }}
+                style={{ marginTop: '80px' }}
               >
                 <Select
                   showSearch
@@ -229,7 +244,7 @@ export default function TaskEditor(props: TmplListProps) {
               <Button type="ghost" htmlType="reset" onClick={onClose}>
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" onClick={() => onSave?.()} disabled={isDisabled}>
+              <Button type="primary" htmlType="submit" disabled={isDisabled}>
                 保存编辑
               </Button>
             </Space>
