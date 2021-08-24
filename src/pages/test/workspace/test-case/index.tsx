@@ -108,6 +108,7 @@ export default function TestCase(props: any) {
             setDrawerVisible={setDrawerVisible}
             onAddCaseBtnClick={onAddCaseBtnClick}
             onEditCaseBtnClick={onEditCaseBtnClick}
+            caseCateTreeData={caseCateTreeData}
           />
         </ContentCard>
       </CardRowGroup>

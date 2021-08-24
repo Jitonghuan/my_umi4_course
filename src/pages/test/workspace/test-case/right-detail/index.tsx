@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import './index.less';
 
 export default function RightDetail(props: any) {
-  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible } = props;
+  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible, caseCateTreeData } = props;
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -121,6 +121,7 @@ export default function RightDetail(props: any) {
         visible={drawerVisible}
         setVisible={setDrawerVisible}
         updateCaseTable={updateDatasource}
+        caseCateTreeData={caseCateTreeData}
       />
     </div>
   );

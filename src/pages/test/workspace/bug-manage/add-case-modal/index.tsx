@@ -89,7 +89,7 @@ export default function RightDetail(props: any) {
           <Input placeholder="请输入标题" />
         </Form.Item>
         <Form.Item label="所属:" name="categoryId">
-          <TreeSelect treeData={cates} optionFilterProp="title" />
+          <TreeSelect treeData={cates} showSearch treeNodeFilterProp="title" />
         </Form.Item>
         <Form.Item label="优先级:" name="priority">
           <Select>
