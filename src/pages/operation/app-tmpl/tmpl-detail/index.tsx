@@ -25,7 +25,7 @@ export default function DemoPageTb(porps: any) {
   const { TextArea } = Input;
   const [tmplDetail, setTmplDetail] = useState<any>();
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
-  const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
+  const [templateTypes, setTemplateTypes] = useState<string>(); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]);
@@ -37,8 +37,6 @@ export default function DemoPageTb(porps: any) {
   const clickChange = () => {};
 
   useEffect(() => {
-    selectTmplType();
-    selectCategory();
     tmplDetialResult(templateCode);
 
     const flag = porps.history.location.query.type;
@@ -59,47 +57,30 @@ export default function DemoPageTb(porps: any) {
         if (envCode == '') {
           envCode = [];
         }
+        setTemplateTypes(tmplresult.templateType);
+        let arr = [];
+        let jvm = '';
+
+        for (const key in tmplresult.tmplConfigurableItem) {
+          if (key === 'jvm') {
+            jvm = tmplresult.tmplConfigurableItem[key];
+          } else {
+            arr.push({
+              key: key,
+              value: tmplresult.tmplConfigurableItem[key],
+            });
+          }
+        }
+        setTmplConfigurable(arr);
         createTmplForm.setFieldsValue({
           templateType: tmplresult.templateType,
           templateName: tmplresult.templateName,
           templateValue: tmplresult.templateValue,
           appCategoryCode: tmplresult.appCategoryCode,
           envCodes: envCode,
-          // tmplConfigurableItem:tmplresult.tmplConfigurableItem,
+          jvm: jvm,
         });
-        let arr = [];
-        for (const key in tmplresult.tmplConfigurableItem) {
-          arr.push({
-            key: key,
-            value: tmplresult.tmplConfigurableItem[key],
-          });
-        }
-
-        setTmplConfigurable(arr);
       }
-    });
-  };
-
-  //加载模版类型下拉选择
-  const selectTmplType = () => {
-    getRequest(APIS.tmplType).then((result) => {
-      const list = (result.data || []).map((n: any) => ({
-        label: n,
-        value: n,
-        data: n,
-      }));
-      setTemplateTypes(list);
-    });
-  };
-  //加载应用分类下拉选择
-  const selectCategory = () => {
-    getRequest(APIS.appTypeList).then((result) => {
-      const list = (result.data.dataSource || []).map((n: any) => ({
-        label: n.categoryName,
-        value: n.categoryCode,
-        data: n,
-      }));
-      setCategoryData(list);
     });
   };
 
@@ -123,41 +104,15 @@ export default function DemoPageTb(porps: any) {
       }
     });
   };
-  //提交模版
-  const createTmpl = (value: any) => {
-    //  const tmplConfigurableItem = new Map(value.tmplConfigurableItem.map((el:any)=> [el.key,el.value]))
-    const tmplConfigurableItem = value.tmplConfigurableItem.reduce((prev: any, el: any) => {
-      prev[el.key] = el.value;
-      return prev;
-    }, {} as any);
-    postRequest(APIS.create, {
-      data: {
-        templateName: value.templateName,
-        templateType: value.templateType,
-        templateValue: value.templateValue,
-        appCategoryCode: value.appCategoryCode,
-        envCodes: value.envCodes,
-        tmplConfigurableItem,
-      },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas = resp.data || [];
-        setEnvDatas(datas);
-        history.push({
-          pathname: 'tmpl-list',
-        });
-      }
-    });
-  };
 
   return (
     <MatrixPageContent className="tmpl-detail">
       <ContentCard>
-        <Form form={createTmplForm} onFinish={createTmpl}>
+        <Form form={createTmplForm}>
           <Row>
             <Col span={6}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
-                <Select showSearch style={{ width: 150 }} options={templateTypes} disabled={isDisabled} />
+                <Select showSearch style={{ width: 150 }} disabled={isDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -175,18 +130,24 @@ export default function DemoPageTb(porps: any) {
                 <AceEditor mode="yaml" height={600} readOnly />
               </Form.Item>
             </Col>
-
             <Col span={10} offset={2}>
               <div style={{ fontSize: 18 }}>可配置项：</div>
               <Table dataSource={tmplConfigurable} bordered>
                 <Table.Column title="Key" dataIndex="key" width="10%" />
                 <Table.Column title="缺省值" dataIndex="value" width="20%" ellipsis />
               </Table>
+              {templateTypes == 'deployment' && <span>JVM参数:</span>}
+
+              {templateTypes == 'deployment' && (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              )}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '140px' }}
+                style={{ marginTop: '80px' }}
               >
                 <Select
                   showSearch
@@ -196,6 +157,7 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
+
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
                   mode="multiple"
