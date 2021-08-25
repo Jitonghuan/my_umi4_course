@@ -25,13 +25,31 @@ export default function UserCaseInfoExec(props: any) {
   const sona = useMemo(() => createSona(), []);
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [checkedBugs, setCheckedBugs] = useState<Record<string, React.Key[]>>({});
+  const [caseNote, setCaseNote] = useState<any>();
 
   useEffect(() => {
     if (curCase) {
       curCase.status !== undefined && void setCaseStatus(curCase.status.toString());
 
+      const emptySchema = [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              text: '',
+            },
+          ],
+        },
+      ];
+      // @ts-ignore
+      void setSchema(emptySchema);
+      // @ts-ignore
+      void setCaseNote(emptySchema);
       try {
         curCase.executeNote?.length > 0 && void setSchema(JSON.parse(curCase.executeNote));
+      } catch (e) {}
+      try {
+        curCase.caseInfo?.comment > 0 && void setCaseNote(JSON.parse(curCase.caseInfo.comment));
       } catch (e) {}
 
       console.log(curCase);
@@ -132,7 +150,7 @@ export default function UserCaseInfoExec(props: any) {
 
       <div className="case-body">
         <div className="case-prop-title">前置条件:</div>
-        <div>{curCase?.caseInfo?.precondition}</div>
+        <div className="mh-40">{curCase?.caseInfo?.precondition}</div>
 
         <div className="case-prop-title mt-12">步骤描述:</div>
         <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
@@ -142,7 +160,7 @@ export default function UserCaseInfoExec(props: any) {
         </Table>
 
         <div className="case-prop-title mt-12">用例备注:</div>
-        <RichText readOnly={execNoteReadOnly} schema={JSON.parse(curCase?.caseInfo?.comment)} />
+        <RichText readOnly={execNoteReadOnly} schema={caseNote} />
 
         <div className="case-prop-title mt-12">执行备注:</div>
         <div className="executeNote">
