@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Button, Popconfirm, Input, Select, message } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Form, Table, Button, Popconfirm, Input, Select, Space, message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList, caseDelete } from '../../service';
 import { priorityEnum } from '../../constant';
@@ -15,6 +15,7 @@ export default function RightDetail(props: any) {
   const [pageSize, setPageSize] = useState<number>(10);
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
+  const [checkedCaseIds, setCheckedCaseIds] = useState<React.Key[]>([]);
   const [form] = Form.useForm();
 
   const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize) => {
@@ -32,6 +33,7 @@ export default function RightDetail(props: any) {
     void setPageIndex(pageIndex);
     void setPageSize(pageSize);
     void setTotal(total);
+    void setCheckedCaseIds([]);
   };
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export default function RightDetail(props: any) {
       <Button type="link">删除</Button>
     </Popconfirm>
   );
+
   const handleSearch = () => {
     void updateDatasource(1);
   };
@@ -86,13 +89,21 @@ export default function RightDetail(props: any) {
       </div>
       <div className="detail-container">
         <div className="add-btn-wrapper">
+          <Space>
+            <Button type="primary" ghost>
+              复制
+            </Button>
+            <Button type="primary" ghost>
+              移动
+            </Button>
+          </Space>
           <Button className="add-case-btn" type="primary" onClick={onAddCaseBtnClick}>
             新增用例
           </Button>
         </div>
         <Table
           className="detail-table"
-          dataSource={dataSource}
+          dataSource={useMemo(() => dataSource.map((item) => ({ ...item, key: item.id })), [dataSource])}
           loading={loading}
           pagination={{
             current: pageIndex,
@@ -101,6 +112,11 @@ export default function RightDetail(props: any) {
             showSizeChanger: true,
             onChange: (next) => updateDatasource(next),
             onShowSizeChange: (_, next) => updateDatasource(1, next),
+          }}
+          rowSelection={{
+            type: 'checkbox',
+            selectedRowKeys: checkedCaseIds,
+            onChange: setCheckedCaseIds,
           }}
         >
           <Table.Column width={60} title="ID" render={(_: any, __: any, index: number) => index + 1}></Table.Column>
