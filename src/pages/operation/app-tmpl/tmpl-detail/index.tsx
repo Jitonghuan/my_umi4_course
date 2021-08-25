@@ -152,8 +152,6 @@ export default function DemoPageTb(porps: any) {
                   mode="multiple"
                   allowClear
                   style={{ width: 220 }}
-                  placeholder="Please select"
-                  // defaultValue={['a10', 'c12']}
                   onChange={clickChange}
                   options={envDatas}
                   disabled={isDisabled}
