@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Input, Table, Popconfirm } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from './service';
 import { getRequest } from '@/utils/request';
@@ -45,7 +45,7 @@ export default function DemoPageList() {
   }, [pageIndex, pageSize]);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <ContentCard>
         <div className="test-page-header">
           <Input.Search
@@ -92,6 +92,6 @@ export default function DemoPageList() {
           />
         </Table>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

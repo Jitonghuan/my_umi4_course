@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import FeContext from '@/layouts/basic-layout/fe-context';
 import FELayout from '@cffe/vc-layout';
 
@@ -16,25 +16,14 @@ export interface IProps {
  * @version 1.0.0
  * @create 2021-04-25 16:36
  */
-const Coms: React.FC<IProps> = (props) => {
-  const { children, isShowErrorPage, code } = props;
-  const feContent = useContext(FeContext);
-  const { permissionData = [], isOpenPermission = false } = feContent;
+export default function VCPermission(props: React.PropsWithChildren<IProps>) {
+  const { children, isShowErrorPage = false, code } = props;
+  const { permissionData, isOpenPermission = false } = useContext(FeContext);
 
-  const hasPermission = !!permissionData.find((el) => el.permissionUrl === code);
+  const hasPermission = !!permissionData?.find((el) => el.permissionUrl === code);
 
   // 权限未开启，或者权限数据中存在当前的节点数据
   return (
     !isOpenPermission || hasPermission ? children : isShowErrorPage ? <FELayout.NoPermissionPage /> : null
   ) as React.ReactElement;
-};
-
-/**
- * 默认值
- */
-Coms.defaultProps = {
-  // 属性默认值配置
-  isShowErrorPage: false,
-};
-
-export default Coms;
+}

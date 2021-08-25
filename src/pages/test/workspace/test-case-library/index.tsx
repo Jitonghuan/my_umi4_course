@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import { Input, Button, Table, Popconfirm, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
@@ -123,7 +123,7 @@ export default function Workspace(props: any) {
   };
 
   return (
-    <MatrixPageContent className="test-workspace">
+    <PageContainer className="test-workspace">
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <ContentCard>
         <div className="test-page-header">
@@ -198,6 +198,6 @@ export default function Workspace(props: any) {
           </label>
         </Modal>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

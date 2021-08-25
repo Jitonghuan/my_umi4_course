@@ -3,6 +3,7 @@
 // @create 2021/08/20 09:51
 
 import React, { useState, useEffect, useCallback } from 'react';
+import classNames from 'classnames';
 import { Tree, Input } from 'antd';
 import { CustomTreeProps, TreeNode } from './interfaces';
 import { searchTreeData } from './utils';
@@ -11,7 +12,7 @@ import './index.less';
 export { CustomTreeProps, TreeNode };
 
 export default function CustomTree(props: CustomTreeProps) {
-  const { showSearch, treeData, searchPlaceholder = '搜索节点', keepRootInSearch = true, ...others } = props;
+  const { showSearch, className, treeData, searchPlaceholder = '搜索节点', keepRootInSearch = true, ...others } = props;
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredTreeData, setFilteredTreeData] = useState<TreeNode[]>([]);
 
@@ -33,6 +34,8 @@ export default function CustomTree(props: CustomTreeProps) {
     return null;
   }
 
+  const clazz = classNames('custom-tree', className);
+
   return (
     <div className="custom-tree-container">
       {showSearch ? (
@@ -45,7 +48,7 @@ export default function CustomTree(props: CustomTreeProps) {
           />
         </div>
       ) : null}
-      <Tree className="custom-tree" treeData={filteredTreeData} blockNode showIcon={false} {...others} />
+      <Tree className={clazz} treeData={filteredTreeData} blockNode showIcon={false} {...others} />
     </div>
   );
 }

@@ -55,8 +55,7 @@
     "moment": "^2.29.1",
     "qs": "~6.10.1",
     "react-ace": "^9.4.1",
-    "umi": "~3.4.25",
-    "white-react-use": "~2.4.0"
+    "umi": "~3.4.25"
   },
   "devDependencies": {
     "@hbos/umi-plugin-alias": "^1.0.4",

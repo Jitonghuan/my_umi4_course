@@ -2,11 +2,10 @@ import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Tabs, Card, Form, Input, Spin } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { useEffectOnce } from 'white-react-use';
 import { queryEnvLists, queryResUseData, queryNodeUseDataApi, queryUseMarketData } from './service';
 import { resUseTableSchema } from './schema';
 
@@ -141,9 +140,9 @@ const Coms = (props: any) => {
     });
   };
 
-  useEffectOnce(() => {
+  useEffect(() => {
     queryEnvList();
-  });
+  }, []);
 
   useEffect(() => {
     if (currentTab) {
@@ -261,7 +260,7 @@ const Coms = (props: any) => {
   };
 
   return (
-    <MatrixPageContent className="monitor-board">
+    <PageContainer className="monitor-board">
       <Card className="monitor-board-content">
         <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
           {tabData?.map((el) => (
@@ -349,7 +348,7 @@ const Coms = (props: any) => {
       >
         {nodeDetailShow && <iframe style={{ width: '100%', height: '99%', border: 'none' }} src={prevNode.current?.href}></iframe>}
       </Drawer> */}
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

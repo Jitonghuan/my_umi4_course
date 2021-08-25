@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import UseCaseTestInfoExec from './use-case-test-info-exec';
 import AddBugDrawer from '../bug-manage/add-bug-drawer';
 import UserCaseInfoExec from './use-case-info-exec';
@@ -94,7 +94,7 @@ export default function PlanInfo(props: any) {
   };
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <FilterCard className="layout-compact">
         <Tabs activeKey={activeKey} onChange={(key) => setActiveKey(key)}>
           {plan?.phaseCollection?.map((item: any) => (
@@ -216,6 +216,6 @@ export default function PlanInfo(props: any) {
         updateCaseTable={updateBugList}
         projectList={projectList}
       />
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

@@ -3,24 +3,22 @@
 // @create 2021/07/31 17:00
 
 import React from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import PageContainer from '@/components/page-container';
+import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import { getRequest, putRequest, postRequest } from '@/utils/request';
-import { useContext, useState, useEffect, useRef } from 'react';
+import { getRequest, postRequest } from '@/utils/request';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
-import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
 export default function DemoPageTb(porps: any) {
   const { Option } = Select;
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
-  const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
   const children: any = [];
-  const { TextArea } = Input;
   const [categoryData, setCategoryData] = useState<string>(); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -84,7 +82,6 @@ export default function DemoPageTb(porps: any) {
         });
         setIsDeployment(tmplresult.templateType);
         changeAppCategory(tmplresult.appCategoryCode);
-        // let arr = []
       }
     });
   };
@@ -119,8 +116,6 @@ export default function DemoPageTb(porps: any) {
   // 根据应用分类查询环境
   const changeAppCategory = (categoryCode: string) => {
     //调用接口 查询env 参数就是appCategoryCode
-    //setEnvDatas
-    //  let categoryCode = categoryData
 
     setEnvDatas([]);
     setAppCategoryCode(categoryCode);
@@ -176,7 +171,7 @@ export default function DemoPageTb(porps: any) {
   };
 
   return (
-    <MatrixPageContent className="tmpl-detail">
+    <PageContainer className="tmpl-detail">
       <ContentCard>
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
@@ -283,6 +278,6 @@ export default function DemoPageTb(porps: any) {
           </Form.Item>
         </Form>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Form, Select, Spin, Button } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { useEnvOptions, useLogStoreOptions, useFrameUrl } from './hooks';
 import './index.less';
@@ -41,7 +41,7 @@ export default function LoggerSearch(props: any) {
   }, []);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <FilterCard>
         <Form layout="inline">
           <Form.Item label="环境Code">
@@ -84,6 +84,6 @@ export default function LoggerSearch(props: any) {
           <iframe onLoad={handleFrameComplete} src={frameUrl} frameBorder="0" ref={frameRef} />
         ) : null}
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

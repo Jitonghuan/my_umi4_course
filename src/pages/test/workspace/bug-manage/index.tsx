@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
 import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message } from 'antd';
@@ -67,7 +67,7 @@ export default function BugManage(props: any) {
   };
 
   return (
-    <MatrixPageContent className="test-workspace-bug-manage">
+    <PageContainer className="test-workspace-bug-manage">
       <HeaderTabs activeKey="bug-manage" history={props.history} />
       <ContentCard>
         <div className="search-header">
@@ -176,6 +176,6 @@ export default function BugManage(props: any) {
           updateBugList={updateBugList}
         />
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

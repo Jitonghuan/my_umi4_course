@@ -6,42 +6,31 @@ import classnames from 'classnames';
 import './index.less';
 
 export interface IProps {
-  /** className */
   className?: string;
-
-  /** style */
   style?: React.CSSProperties;
-
   /** 容器高度 */
   height?: string;
-
   /** 页面是否支持 flex 处理，一屏显示， true 为一屏显示 false 滚动 */
   isFlex?: boolean;
-
   /** 是否显示面包屑 */
   isShowBreadcrumb?: boolean;
-
   /** 面包屑路由数据 */
   breadcrumb?: { name: string; path: string }[];
-
   /** 路由平铺数据 */
   breadcrumbMap?: { [key: string]: { name: string; path: string } };
-
   /** 当前面包屑路由 */
   pathname?: string;
 }
 
 /** 处理面包屑的路由  /a/b => [/a, /a/b] */
-export const splitBreadcrumbUrl = (url?: string) => {
-  if (!url) {
-    return [];
-  }
+const splitBreadcrumbUrl = (url?: string) => {
+  if (!url) return [];
 
   const urlArr = url.split('/');
   const targetArr: string[] = [];
 
-  const target = urlArr.reduce((a: string, b: string) => {
-    const nextUrl = [a, b].join('/');
+  urlArr.reduce((prev: string, curr: string) => {
+    const nextUrl = `${prev}/${curr}`;
     targetArr.push(nextUrl);
     return nextUrl;
   });
@@ -56,9 +45,9 @@ export const splitBreadcrumbUrl = (url?: string) => {
  * @version 1.0.0
  * @create 2021-04-06 11:24
  */
-const Coms: React.FC<IProps> = (props) => {
+export default function VCPageContent(props: React.PropsWithChildren<IProps>) {
   const {
-    isShowBreadcrumb,
+    isShowBreadcrumb = true,
     breadcrumb = [],
     style = {},
     pathname,
@@ -69,58 +58,42 @@ const Coms: React.FC<IProps> = (props) => {
   } = props;
 
   // 面包屑
-  const breadcrumbDOM = useMemo(() => {
+  const breadcrumbLists = useMemo(() => {
     const urlArr = splitBreadcrumbUrl(pathname);
 
-    const breadcrumbLists =
-      breadcrumb.length > 0
-        ? breadcrumb
-        : urlArr
-            .map((urlKey) => ({
-              name: breadcrumbMap[urlKey] ? breadcrumbMap[urlKey].name : '',
-              path: breadcrumbMap[urlKey] ? breadcrumbMap[urlKey].path : '',
-            }))
-            .filter((el) => !!el.name && !!el.path);
-
-    return (
-      <div className="vc-page-content-breadcrumb">
-        <Breadcrumb>
-          {breadcrumbLists.map((el) => (
-            <Breadcrumb.Item>
-              <a onClick={() => history.push(el.path)}>{el.name}</a>
-            </Breadcrumb.Item>
-          ))}
-        </Breadcrumb>
-      </div>
-    );
+    return breadcrumb.length > 0
+      ? breadcrumb
+      : urlArr
+          .map((urlKey) => ({
+            name: breadcrumbMap[urlKey] ? breadcrumbMap[urlKey].name : '',
+            path: breadcrumbMap[urlKey] ? breadcrumbMap[urlKey].path : '',
+          }))
+          .filter((el) => !!el.name && !!el.path);
   }, [pathname, breadcrumbMap, breadcrumb]);
 
-  const curStyle = {
-    ...style,
-    height: isFlex ? height : undefined,
-  };
+  const curStyle = { ...style, height: isFlex ? height : undefined };
+  const clazz = classnames('vc-page-content', { 'is-flex': isFlex }, className);
 
   return (
-    <div className={`vc-page-content ${isFlex ? 'is-flex' : ''} ${className}`} style={{ ...curStyle }}>
-      {isShowBreadcrumb && breadcrumbDOM}
+    <div className={clazz} style={{ ...curStyle }}>
+      {isShowBreadcrumb && (
+        <div className="vc-page-content-breadcrumb">
+          <Breadcrumb>
+            {breadcrumbLists.map((el) => (
+              <Breadcrumb.Item>
+                <a onClick={() => history.push(el.path)}>{el.name}</a>
+              </Breadcrumb.Item>
+            ))}
+          </Breadcrumb>
+        </div>
+      )}
       {props.children}
     </div>
   );
-};
-
-/**
- * 默认值
- */
-Coms.defaultProps = {
-  // 属性默认值配置
-  isFlex: false,
-  isShowBreadcrumb: true,
-};
-
-export default Coms;
+}
 
 // filter card
-export const FilterCard: React.FC<CardProps> = (props) => {
+export function FilterCard(props: React.PropsWithChildren<CardProps>) {
   const { children, className, ...rest } = props;
 
   return (
@@ -128,10 +101,10 @@ export const FilterCard: React.FC<CardProps> = (props) => {
       {props.children}
     </Card>
   );
-};
+}
 
 // content card
-export const ContentCard: React.FC<CardProps> = (props) => {
+export function ContentCard(props: React.PropsWithChildren<CardProps>) {
   const { children, className, ...rest } = props;
 
   return (
@@ -139,14 +112,12 @@ export const ContentCard: React.FC<CardProps> = (props) => {
       {props.children}
     </Card>
   );
-};
+}
 
-type CardRowGroupType = React.FC<React.HTMLAttributes<HTMLDivElement>> & {
-  SlideCard: React.FC<CardProps & { width?: number }>;
-};
+type CardRowGroupType = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>;
 
 // card row
-export const CardRowGroup: CardRowGroupType = (props) => {
+export function CardRowGroup(props: CardRowGroupType) {
   const { children, className, ...rest } = props;
 
   return (
@@ -154,10 +125,10 @@ export const CardRowGroup: CardRowGroupType = (props) => {
       {children}
     </div>
   );
-};
+}
 
 // slide card
-CardRowGroup.SlideCard = (props) => {
+export function SlideCard(props: React.PropsWithChildren<CardProps & { width?: number }>) {
   const { children, className, width = 180, ...rest } = props;
 
   return (
@@ -165,4 +136,7 @@ CardRowGroup.SlideCard = (props) => {
       {children}
     </Card>
   );
-};
+}
+
+// slide card
+CardRowGroup.SlideCard = SlideCard;

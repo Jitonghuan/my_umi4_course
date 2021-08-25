@@ -1,58 +1,20 @@
 import React from 'react';
 import { history } from 'umi';
 import { Popconfirm } from 'antd';
-import { ColumnProps } from '@cffe/vc-hulk-table';
-import { AppType } from './types';
+import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
+import type { ColumnProps } from '@cffe/vc-hulk-table';
+
+export type AppType = 'frontend' | 'backend';
 
 const APP_TYPE_MAP = {
   frontend: '前端',
   backend: '后端',
 };
 
-// 过滤表单 schema
-export const createFilterFormSchema = (params: { categoryData?: any[]; businessData?: any[] }) => ({
-  theme: 'inline',
-  isShowReset: true,
-  labelColSpan: 3,
-  schema: [
-    {
-      type: 'Select',
-      props: {
-        label: '应用分类',
-        name: 'appCategoryCode',
-        options: params.categoryData || [],
-      },
-    },
-    {
-      type: 'Select',
-      props: {
-        label: '应用组',
-        name: 'appGroupCode',
-        options: params.businessData || [],
-      },
-    },
-    {
-      type: 'Input',
-      props: {
-        label: '应用名',
-        name: 'appName',
-        props: {
-          placeholder: '请输入',
-        },
-      },
-    },
-    {
-      type: 'Input',
-      props: {
-        label: '应用code',
-        name: 'appCode',
-        props: {
-          placeholder: '请输入',
-        },
-      },
-    },
-  ],
-});
+const APP_TYPE_ICON = {
+  frontend: <Html5Outlined />,
+  backend: <CodeOutlined />,
+};
 
 // 表格 schema
 export const createTableSchema = ({
@@ -75,7 +37,7 @@ export const createTableSchema = ({
     {
       title: '应用名',
       dataIndex: 'appName',
-      width: 100,
+      width: 200,
       render: (text, record) => (
         <a
           onClick={() =>
@@ -97,30 +59,39 @@ export const createTableSchema = ({
     {
       title: '应用code',
       dataIndex: 'appCode',
-      width: 100,
     },
     {
       title: 'git仓库名',
       dataIndex: 'gitAddress',
-      width: 200,
+      render: (value: string) =>
+        value && (
+          <a href={value} target="_blank">
+            {value}
+          </a>
+        ),
     },
     {
       title: '应用分类',
       dataIndex: 'appCategoryCode',
-      width: 80,
-      render: (appCategoryCode) => categoryData?.find((v) => v.categoryCode === appCategoryCode)?.categoryName || '-',
+      width: 90,
+      render: (value) => categoryData?.find((v) => v.categoryCode === value)?.categoryName || '-',
     },
     {
       title: '应用类型',
       dataIndex: 'appType',
       width: 80,
-      render: (appType: AppType) => APP_TYPE_MAP[appType] || '',
+      render: (appType: AppType) => (
+        <>
+          {APP_TYPE_ICON[appType]}&nbsp;
+          {APP_TYPE_MAP[appType] || '--'}
+        </>
+      ),
     },
     {
       title: '应用组',
       dataIndex: 'appGroupCode',
-      width: 100,
-      render: (appGroupCode) => businessDataList?.find((v) => v.groupCode === appGroupCode)?.groupName || '-',
+      width: 90,
+      render: (value) => businessDataList?.find((v) => v.groupCode === value)?.groupName || '-',
     },
     {
       title: '责任人',
@@ -130,18 +101,16 @@ export const createTableSchema = ({
     {
       title: '应用描述',
       dataIndex: 'desc',
-      width: 100,
     },
     {
-      width: 150,
+      width: 140,
       title: '操作',
       dataIndex: 'operate',
-      render: (text: string, record: any, index: number) => (
-        <>
+      render: (_: any, record: any, index: number) => (
+        <div className="action-cell">
           <a onClick={() => onEditClick(record, index)}>编辑</a>
           <a
-            style={{ marginLeft: 20 }}
-            onClick={() =>
+            onClick={() => {
               history.push({
                 pathname: 'detail',
                 query: {
@@ -150,8 +119,8 @@ export const createTableSchema = ({
                   isClient: record.isClient,
                   isContainClient: record.isContainClient,
                 },
-              })
-            }
+              });
+            }}
           >
             详情
           </a>
@@ -162,9 +131,9 @@ export const createTableSchema = ({
             cancelText="取消"
             placement="topLeft"
           >
-            <a style={{ marginLeft: 20 }}>删除</a>
+            <a>删除</a>
           </Popconfirm>
-        </>
+        </div>
       ),
     },
   ] as ColumnProps[];

@@ -3,37 +3,26 @@
 // @create 2021/07/23 17:20
 
 import React from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import PageContainer from '@/components/page-container';
+import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
+import request, { getRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
-import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
-// import * as APIS from './service';
 
 export default function DemoPageTb(porps: any) {
-  const [dataSource, setDataSource] = useState<any[]>([]);
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
-  const [editingKey, setEditingKey] = useState<string[]>([]); //编辑
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]); //每一行数据
   const children: any = [];
-  const { TextArea } = Input;
-  const [tmplDetail, setTmplDetail] = useState<any>();
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<string>(); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
-
-  const handleAdd = () => {
-    setCount(count + 1);
-  };
   const clickChange = () => {};
 
   useEffect(() => {
@@ -106,7 +95,7 @@ export default function DemoPageTb(porps: any) {
   };
 
   return (
-    <MatrixPageContent className="tmpl-detail">
+    <PageContainer className="tmpl-detail">
       <ContentCard>
         <Form form={createTmplForm}>
           <Row>
@@ -132,7 +121,7 @@ export default function DemoPageTb(porps: any) {
             </Col>
             <Col span={10} offset={2}>
               <div style={{ fontSize: 18 }}>可配置项：</div>
-              <Table dataSource={tmplConfigurable} bordered>
+              <Table dataSource={tmplConfigurable} bordered pagination={false}>
                 <Table.Column title="Key" dataIndex="key" width="10%" />
                 <Table.Column title="缺省值" dataIndex="value" width="20%" ellipsis />
               </Table>
@@ -194,6 +183,6 @@ export default function DemoPageTb(porps: any) {
           </Form.Item>
         </Form>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

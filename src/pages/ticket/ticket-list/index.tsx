@@ -5,7 +5,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm, BasicForm } from '@/components/schema-form';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import ApplyUpload from './apply-upload';
 
 import { queryTicketData, queryTicketType, doCreateTicket } from '../service';
@@ -156,7 +156,7 @@ const Coms = (props: any) => {
   });
 
   return (
-    <MatrixPageContent isFlex>
+    <PageContainer>
       <FilterCard>
         <InlineForm
           className="ticket-filter-form"
@@ -239,7 +239,7 @@ const Coms = (props: any) => {
           />
         </div>
       </Drawer>
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

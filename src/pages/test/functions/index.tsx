@@ -6,7 +6,7 @@ import React, { useState, useEffect, useContext, useCallback, useRef } from 'rea
 import { Form, Input, Table, Button, Modal, message, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from './service';
 import { getRequest, postRequest } from '@/utils/request';
@@ -114,7 +114,7 @@ export default function FunctionManager() {
   );
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <ContentCard className="page-test-functions">
         <div className="test-page-header">
           <Input.Search
@@ -175,6 +175,6 @@ export default function FunctionManager() {
           </Form.Item>
         </Form>
       </Modal>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

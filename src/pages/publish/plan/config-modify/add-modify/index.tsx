@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import Coms from '../add-edit';
 
 const AddModify: React.FC = () => {
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <Coms type="add" />
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

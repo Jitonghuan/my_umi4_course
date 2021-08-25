@@ -5,7 +5,7 @@ import { history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
 import useTable from '@/utils/useTable';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { queryUnittestCoverCheckLogList } from '../service';
 import usePublicData from '@/utils/usePublicData';
 import { Item } from '../typing';
@@ -295,7 +295,7 @@ const UnitTest: React.FC<any> = () => {
   }, []);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <TableSearch
         form={form}
         formOptions={formOptions}
@@ -320,7 +320,7 @@ const UnitTest: React.FC<any> = () => {
         reset={reset}
         scroll={{ x: '150%', scrollToFirstRowOnChange: true }}
       />
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

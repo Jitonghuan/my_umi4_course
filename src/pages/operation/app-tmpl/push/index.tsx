@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, message, Modal } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';
 import { postRequest, getRequest } from '@/utils/request';
@@ -159,7 +159,7 @@ export default function Push(porps: any) {
 
   const pushTmpls = () => {};
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <FilterCard>
         <Form
           layout="inline"
@@ -281,6 +281,6 @@ export default function Push(porps: any) {
           </Modal>
         </div>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

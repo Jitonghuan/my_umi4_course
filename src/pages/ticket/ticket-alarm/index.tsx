@@ -5,7 +5,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Form, message, Alert, Input, Drawer, Button, Select, Space, Table, Modal, Tag } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { postRequest, getRequest } from '@/utils/request';
 import * as APIS from '../service';
 type statusTypeItem = {
@@ -105,7 +105,7 @@ export default function ticketAlarm() {
   };
 
   return (
-    <MatrixPageContent isFlex>
+    <PageContainer>
       <FilterCard>
         <Form
           layout="inline"
@@ -174,12 +174,13 @@ export default function ticketAlarm() {
           onChange={pageSizeClick}
         >
           <Table.Column title="ID" dataIndex="id" width="5%" />
-          <Table.Column title="告警信息" dataIndex="message" ellipsis width="14%" />
+          <Table.Column title="告警信息" dataIndex="message" ellipsis width="38%" />
           <Table.Column title="审批人" dataIndex="receiver" width="8%" />
-          <Table.Column title="开始时间" dataIndex="startTime" />
-          <Table.Column title="结束时间" dataIndex="endTime" />
+          <Table.Column title="开始时间" dataIndex="startTime" width="15%" />
+          <Table.Column title="结束时间" dataIndex="endTime" width="15%" />
           <Table.Column
             title="工单状态"
+            width="8%"
             dataIndex="status"
             render={(text) => (
               <Tag
@@ -201,7 +202,7 @@ export default function ticketAlarm() {
           />
           <Table.Column
             title="操作"
-            // dataIndex="gmtModify"
+            width="11%"
             key="action"
             render={(text, record: any) => (
               <Space size="large">
@@ -235,6 +236,6 @@ export default function ticketAlarm() {
           />
         </Table>
       </Modal>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

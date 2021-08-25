@@ -6,12 +6,7 @@ import ErrorBoundary from '../error-boundary';
 
 export interface IProps extends IPageContentProps {}
 
-/**
- * Board
- * @description 监控面板
- * @create 2021-04-12 19:13:58
- */
-const Coms: React.FC<IProps> = (props) => {
+export default function PageContainer(props: React.PropsWithChildren<IProps>) {
   const { children, ...rest } = props;
   const feContent = useContext(FeContext);
   const location = useLocation();
@@ -27,6 +22,4 @@ const Coms: React.FC<IProps> = (props) => {
       <ErrorBoundary>{children}</ErrorBoundary>
     </VCPageContent>
   );
-};
-
-export default Coms;
+}

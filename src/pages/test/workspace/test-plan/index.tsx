@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import AddTestPlanDrawer from './add-test-plan-drawer';
 import AssociatingCaseDrawer from './associating-case-drawer';
@@ -67,7 +67,7 @@ export default function TestPlan(props: any) {
   };
 
   return (
-    <MatrixPageContent className="test-workspace-test-plan">
+    <PageContainer className="test-workspace-test-plan">
       <HeaderTabs activeKey="test-plan" history={props.history} />
       <ContentCard>
         <div className="search-header">
@@ -198,6 +198,6 @@ export default function TestPlan(props: any) {
           <AssociatingCaseDrawer visible={associatingVisible} setVisible={setAssociatingVisible} plan={curSelectPlan} />
         </div>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

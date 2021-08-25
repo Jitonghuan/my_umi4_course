@@ -2,8 +2,18 @@ import React, { useEffect, useState } from 'react';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
 import HeaderTabs from '../_components/header-tabs';
-import MatrixPageContent from '@/components/matrix-page-content';
 import { getCaseCategoryDeepList } from '../service';
+import PageContainer from '@/components/page-container';
+import {
+  createCase,
+  caseDelete,
+  updateCase,
+  copyCases,
+  moveCases,
+  getCaseInfo,
+  getCasePageList,
+  getCaseMultiDeepList,
+} from '../service';
 import { ContentCard, CardRowGroup } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
@@ -84,7 +94,7 @@ export default function TestCase(props: any) {
   };
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
         <CardRowGroup.SlideCard width={240}>
@@ -112,6 +122,6 @@ export default function TestCase(props: any) {
           />
         </ContentCard>
       </CardRowGroup>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }
