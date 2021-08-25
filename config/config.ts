@@ -117,9 +117,5 @@ export default defineConfig({
 
   /*————————— 插件调试配置 start —————————*/
 
-  hbosAlias: {
-    useAlias: true,
-  },
-
   /*—————————— 插件调试配置 end ——————————*/
 });
