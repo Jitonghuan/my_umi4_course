@@ -124,7 +124,7 @@ export default function UserCaseInfoExec(props: any) {
       </Table>
 
       <div className="case-prop-title">用例备注:</div>
-      <div>{curCase?.caseInfo?.comment}</div>
+      <RichText readOnly={execNoteReadOnly} schema={JSON.parse(curCase?.caseInfo?.comment)} />
 
       <div className="case-prop-title">执行备注:</div>
       <div className="executeNote">
