@@ -28,8 +28,8 @@ export default function ApplicationDeploy(props: IProps) {
   }, [tabActive]);
 
   // 二方包直接渲染另一个页面
-  if (+isClient === 1) {
-    return <SecondPartyPkg {...(props as any)} />;
+  if (+isClient! === 1) {
+    return <SecondPartyPkg {...props} />;
   }
 
   return (

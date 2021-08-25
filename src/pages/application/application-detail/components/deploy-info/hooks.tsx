@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { EnvDataVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
-import * as APIS from '@/pages/application/application-detail/services';
+import * as APIS from '@/pages/application/service';
 
 // 获取应用下的环境列表
 export function useAppEnvList(appCode?: string): [EnvDataVO[], boolean] {

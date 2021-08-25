@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getRequest } from '@/utils/request';
 import { queryBizData } from '@/layouts/basic-layout/service';
-import { queryAppsUrl, queryMyAppsUrl } from './service';
+import { queryApps, queryAppsUrl, queryMyAppsUrl } from './service';
 import { AppItemVO } from './interfaces';
 
 // 获取应用分组选项
@@ -80,4 +80,29 @@ export function useAppListData(
   }, [params, pageIndex, pageSize]);
 
   return [data, total, loading, loadData];
+}
+
+// 获取应用详情
+export function useAppDetail(appId: number): [AppItemVO | undefined, () => Promise<void>] {
+  const [data, setData] = useState<AppItemVO>();
+
+  const loadData = useCallback(async () => {
+    const res = await queryApps({
+      id: appId,
+      pageIndex: 1,
+      pageSize: 10,
+    });
+
+    setData(res?.list?.[0]);
+  }, [appId]);
+
+  useEffect(() => {
+    if (!appId) {
+      return setData(undefined);
+    }
+
+    loadData();
+  }, [appId]);
+
+  return [data, loadData];
 }

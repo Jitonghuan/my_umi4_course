@@ -8,10 +8,9 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
-import { queryDeployList, queryFeatureDeployed } from '@/pages/application/service';
+import { queryDeployList, queryFeatureDeployed, queryApplicationStatus } from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
-import * as APIS from '@/pages/application/application-detail/services';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
@@ -75,7 +74,7 @@ export default function DeployContent(props: DeployContentProps) {
 
       // 如果有部署信息，且为线上，则更新应用状态
       if (envTypeCode === 'prod' && appData) {
-        const resp4 = await getRequest(APIS.queryApplicationStatus, {
+        const resp4 = await getRequest(queryApplicationStatus, {
           data: {
             deploymentName: appData?.deploymentName,
             envCode: nextInfo.deployedEnvs,

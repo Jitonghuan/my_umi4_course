@@ -7,7 +7,8 @@ export interface IProps {
     query: {
       id: string;
       appCode: string;
-      isContainClient: string;
+      isContainClient?: string;
+      isClient?: string;
     };
   };
   route: {

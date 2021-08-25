@@ -6,7 +6,7 @@ import React, { useState, useCallback, useContext } from 'react';
 import { Popover, Spin, Tag } from 'antd';
 import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
-import * as APIS from '@/pages/application/application-detail/services';
+import * as APIS from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import './index.less';
 
