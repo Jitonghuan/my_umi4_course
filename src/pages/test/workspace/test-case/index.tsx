@@ -68,9 +68,9 @@ export default function TestCase(props: any) {
       });
   };
 
-  const updateLeftTree = async (cateId: number, keyword?: string) => {
+  const updateLeftTree = async (cateId: number, keyword?: string, force: boolean = false) => {
     let _curTreeData = caseCateTreeData;
-    if (!_curTreeData) {
+    if (!_curTreeData || force) {
       const res = await getRequest(getCaseCategoryDeepList);
       _curTreeData = dataClean({ key: -1, items: res.data }).children;
       void setCaseCateTreeData(_curTreeData || []);
@@ -97,7 +97,7 @@ export default function TestCase(props: any) {
     <PageContainer>
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
-        <CardRowGroup.SlideCard width={240}>
+        <CardRowGroup.SlideCard width={340}>
           <LeftTree
             cateId={cateId}
             setCateId={setCateId}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Select, Input, Tree } from 'antd';
+import { Select, Input, Tree, Space, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import OperateCaseLibModal from '../../test-case-library/oprate-case-lib-modal';
 import './index.less';
 
 const { DirectoryTree } = Tree;
@@ -18,9 +19,12 @@ export default function LeftTree(props: any) {
     setCateId,
     expandedKeys,
     setExpandedKeys,
+    updateLeftTree,
   } = props;
   const [keyword, setKeyword] = useState<string>('');
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
+  const [oprateCaseLibModalVisible, setOprateCaseLibModalVisible] = useState<boolean>(false);
+  const [curChooseCate, setCurChooseCate] = useState<any>();
 
   useEffect(() => {
     void searchCateTreeData(rootCateId, keyword);
@@ -50,6 +54,24 @@ export default function LeftTree(props: any) {
     void setSelectedKeys(selectedKeysValue);
     setCateId(selectedKeysValue);
   };
+
+  const handleAddCaseCate = (node: any) => {
+    void setCurChooseCate({
+      parentId: node.id,
+    });
+    void setOprateCaseLibModalVisible(true);
+  };
+
+  const handleEditCaseCate = (node: any) => {
+    void setCurChooseCate({
+      id: node.id,
+      name: node.name,
+      parentId: node.parentId,
+    });
+    void setOprateCaseLibModalVisible(true);
+  };
+
+  const handleDeleteCaseCate = (node: any) => {};
 
   return (
     <div className="test-workspace-test-case-left-tree">
@@ -83,8 +105,56 @@ export default function LeftTree(props: any) {
           onSelect={onSelect}
           onExpand={onExpand}
           showIcon={false}
+          titleRender={(node) => {
+            return (
+              <div className="node-render">
+                <span>{node.title}</span>
+                <div className="oprate-btn-container">
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={(e) => {
+                      void handleAddCaseCate(node);
+                      void e.stopPropagation();
+                    }}
+                  >
+                    新增
+                  </Button>
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={(e) => {
+                      void handleEditCaseCate(node);
+                      void e.stopPropagation();
+                    }}
+                  >
+                    编辑
+                  </Button>
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={(e) => {
+                      void handleDeleteCaseCate(node);
+                      void e.stopPropagation();
+                    }}
+                  >
+                    删除
+                  </Button>
+                </div>
+              </div>
+            );
+          }}
         />
       </div>
+
+      <OperateCaseLibModal
+        visible={oprateCaseLibModalVisible}
+        setVisible={setOprateCaseLibModalVisible}
+        caseCateId={curChooseCate?.id}
+        caseCateName={curChooseCate?.name}
+        parentId={curChooseCate?.parentId}
+        updateDatasource={() => searchCateTreeData(rootCateId, keyword, true)}
+      />
     </div>
   );
 }

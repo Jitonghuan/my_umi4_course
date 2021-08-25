@@ -14,6 +14,51 @@
   .tree-container {
     padding: 0 12px;
 
+    .custom-tree {
+      flex: 1 1 0;
+      overflow: auto;
+
+      .ant-tree-indent-unit {
+        width: 20px;
+      }
+
+      .ant-tree-switcher {
+        width: 20px;
+      }
+
+      .ant-tree-node-content-wrapper.ant-tree-node-selected {
+        background-color: transparent !important;
+        transition: none !important;
+      }
+
+      .ant-tree-treenode-selected:hover::before,
+      .ant-tree-treenode-selected::before {
+        background-color: #c2e9ff;
+      }
+
+      .ant-tree-treenode {
+        &:hover {
+          background-color: #f3f5fb;
+        }
+
+        &.ant-tree-treenode-selected {
+          background-color: #c2e9ff;
+        }
+      }
+
+      .ant-tree-switcher-noop:empty {
+        display: none;
+      }
+
+      .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected {
+        color: inherit;
+      }
+
+      .ant-tree-list-holder-inner .ant-tree-node-content-wrapper {
+        overflow: hidden;
+      }
+    }
+
     .custom-tree-node {
       display: flex;
 
@@ -33,6 +78,18 @@
         color: inherit;
         flex: 0 0 auto;
         margin-left: 8px;
+      }
+    }
+
+    .node-render {
+      display: flex;
+
+      .oprate-btn-container {
+        margin-left: auto;
+
+        .ant-btn-link {
+          padding: 4px;
+        }
       }
     }
   }

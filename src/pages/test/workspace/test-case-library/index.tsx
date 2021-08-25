@@ -6,6 +6,7 @@ import { Input, Button, Table, Popconfirm, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { createCaseCategory, deleteCaseCategory, updateCaseCategory, getCaseCategoryPageList } from '../service';
+import OprateCaseLibModal from './oprate-case-lib-modal';
 import FELayout from '@cffe/vc-layout';
 import './index.less';
 
@@ -16,12 +17,8 @@ export default function Workspace(props: any) {
   const [pageSize, setPageSize] = useState<number>(10);
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
-  const [addCaseCategoryName, setAddCaseCategoryName] = useState('');
-  const [addCaseCategoryModalVisible, setAddCaseCategoryModalVisible] = useState(false);
-  const [editCaseCategoryName, setEditCaseCategoryName] = useState('');
-  const [editCaseCategoryModalVisible, setEditCaseCategoryModalVisible] = useState(false);
   const [curEditCaseCategory, setCurEditCaseCategory] = useState<any>();
-  const userInfo = useContext(FELayout.SSOUserInfoContext);
+  const [oprateCaseLibModalVisible, setOprateCaseLibModalVisible] = useState<boolean>(false);
 
   const updateDatasource = async (keyword?: string, _pageIndex: number = pageIndex, _pageSize = pageSize) => {
     void setLoading(true);
@@ -55,8 +52,8 @@ export default function Workspace(props: any) {
   };
 
   const handleAddClick = () => {
-    void setAddCaseCategoryName('');
-    void setAddCaseCategoryModalVisible(true);
+    void setCurEditCaseCategory(undefined);
+    void setOprateCaseLibModalVisible(true);
   };
 
   const confirmDelItem = async (record: any, index: number) => {
@@ -71,8 +68,7 @@ export default function Workspace(props: any) {
 
   const handleEdit = (record: any, index: number) => {
     void setCurEditCaseCategory(record);
-    void setEditCaseCategoryModalVisible(true);
-    void setEditCaseCategoryName(record.name);
+    void setOprateCaseLibModalVisible(true);
   };
 
   const numberRender = (_: any, __: any, index: number) => {
@@ -90,36 +86,6 @@ export default function Workspace(props: any) {
         {name}
       </Button>
     );
-  };
-
-  const addCaseCategory = async () => {
-    const load = message.loading('正在添加测试用例库');
-    await postRequest(createCaseCategory, {
-      data: {
-        name: addCaseCategoryName,
-        parentId: 0,
-        currentUser: userInfo.userName,
-      },
-    });
-    void load();
-    void message.success('成功添加测试用例库！');
-    void setAddCaseCategoryModalVisible(false);
-    void updateDatasource();
-  };
-
-  const editCaseCategory = async () => {
-    const load = message.loading('正在更新测试用例库');
-    await postRequest(updateCaseCategory + '/' + curEditCaseCategory.id, {
-      data: {
-        name: editCaseCategoryName,
-        parentId: 0,
-        currentUser: userInfo.userName,
-      },
-    });
-    void load();
-    void message.success('成功更新测试用例库！');
-    void setEditCaseCategoryModalVisible(false);
-    void updateDatasource();
   };
 
   return (
@@ -169,34 +135,13 @@ export default function Workspace(props: any) {
           />
         </Table>
 
-        <Modal
-          title="新增用例库"
-          visible={addCaseCategoryModalVisible}
-          onCancel={() => setAddCaseCategoryModalVisible(false)}
-          onOk={addCaseCategory}
-        >
-          <label className="inline-item">
-            <span> 用例库名称：</span>
-            <Input
-              value={addCaseCategoryName}
-              onChange={(e) => setAddCaseCategoryName(e.target.value)}
-              placeholder="输入用例库名称"
-            />
-          </label>
-        </Modal>
-
-        {/* 别骂我 */}
-        <Modal
-          title="编辑用例库"
-          visible={editCaseCategoryModalVisible}
-          onCancel={() => setEditCaseCategoryModalVisible(false)}
-          onOk={editCaseCategory}
-        >
-          <label className="inline-item">
-            <span> 用例库名称：</span>
-            <Input value={editCaseCategoryName} onChange={(e) => setEditCaseCategoryName(e.target.value)} />
-          </label>
-        </Modal>
+        <OprateCaseLibModal
+          visible={oprateCaseLibModalVisible}
+          setVisible={setOprateCaseLibModalVisible}
+          caseCateId={curEditCaseCategory?.id}
+          caseCateName={curEditCaseCategory?.name}
+          updateDatasource={updateDatasource}
+        />
       </ContentCard>
     </PageContainer>
   );
