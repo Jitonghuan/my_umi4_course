@@ -149,7 +149,7 @@ export default function PlanInfo(props: any) {
               )}
             </Col>
           </Row>
-          <Row className="ml-18">
+          <Row className="ml-8">
             <Col className="mt-1x">
               <UseCaseTestInfoExec
                 data={{
@@ -160,12 +160,12 @@ export default function PlanInfo(props: any) {
               />
             </Col>
           </Row>
-          <Row className="ml-18">
+          <Row className="ml-8">
             <Col className="mt-1x">
               <UserCaseInfoExec data={testPhaseDetail.executedInfo || {}} />
             </Col>
           </Row>
-          <Row className="ml-18">
+          <Row className="ml-8">
             <Col className="mt-1x">
               <BugInfoExec
                 data={{
@@ -192,17 +192,20 @@ export default function PlanInfo(props: any) {
                 />
               </div>
 
-              {curCase ? (
-                <CaseInfo
-                  setAddBugDrawerVisible={setAddBugDrawerVisible}
-                  testCaseTreeLeafs={testCaseTreeLeafs}
-                  setCurCaseId={setCurCaseId}
-                  phaseId={activeKey}
-                  curCase={curCase}
-                />
-              ) : (
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有选择测试用例" />
-              )}
+              <div className="case-info-container">
+                {curCase ? (
+                  <CaseInfo
+                    className="case-info"
+                    setAddBugDrawerVisible={setAddBugDrawerVisible}
+                    testCaseTreeLeafs={testCaseTreeLeafs}
+                    setCurCaseId={setCurCaseId}
+                    phaseId={activeKey}
+                    curCase={curCase}
+                  />
+                ) : (
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有选择测试用例" />
+                )}
+              </div>
             </div>
           ) : (
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="此测试阶段没有关联用例" />

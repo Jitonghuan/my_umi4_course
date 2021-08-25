@@ -1,7 +1,13 @@
 .test-workspace-plan-info {
+  .ant-card-body {
+    padding: 0;
+    height: 100%;
+  }
+
   .left-card {
     padding: 12px;
     overflow: auto;
+    background: #f7f8fa;
 
     .left-cart-sub-title {
       text-indent: 10px;
@@ -29,38 +35,58 @@
     display: grid;
     grid-template-columns: 300px 1fr;
     grid-template-rows: 1fr;
-    gap: 20px;
+    height: 100%;
+    background: #fff;
 
-    .case-info {
-      overflow: hidden;
+    .case-info-container {
+      border-left: 1px solid #d2d8e6;
+      background: #f7f8fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-      .case-header {
-        .title-col {
-          width: 100%;
-          display: flex;
+      .case-info {
+        overflow: auto;
+        height: 100%;
+        width: 100%;
 
-          .case-title {
-            font-size: 16px;
-            font-weight: bold;
-          }
+        .case-header {
+          border-bottom: 1px solid #d2d8e6;
+          padding: 12px;
 
-          .ant-btn {
-            width: 38px;
-            height: 28px;
+          .title-col {
+            width: 100%;
+            display: flex;
+
+            .case-title {
+              font-size: 16px;
+              font-weight: bold;
+            }
+
+            .ant-btn {
+              width: 38px;
+              height: 28px;
+            }
           }
         }
-      }
 
-      .bug-info {
-        .activity-log {
-          display: flex;
-          justify-content: flex-end;
+        .case-body {
+          padding: 12px;
+
+          .bug-info {
+            .activity-log {
+              display: flex;
+              justify-content: flex-end;
+            }
+          }
         }
       }
     }
 
     .case-select-container {
       width: 300px;
+      background: #fff;
+      padding: 12px;
 
       .filter-bar {
         display: grid;
@@ -76,7 +102,6 @@
     .case-prop-title {
       color: #5f677a;
       line-height: 24px;
-      margin-top: 10px;
     }
 
     .executeNote {
@@ -92,12 +117,16 @@
     width: 100%;
   }
 
-  .ml-18 {
-    margin-left: 18px;
+  .ml-8 {
+    margin-left: 8px;
   }
 
   .ml-20 {
     margin-left: 20px;
+  }
+
+  .mt-12 {
+    margin-top: 12px;
   }
 
   .ml-auto {

@@ -21,7 +21,7 @@ export default function UserCaseInfoExec(props: UserCaseInfoExecProps) {
       {/* <header>
         <h3>已测用例情况</h3>
       </header> */}
-      <div style={{ height: 174 }}>
+      <div style={{ height: 174, background: '#fff' }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={chartOptions} />
         </ColorContainer>
