@@ -4,7 +4,8 @@ import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
 import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
-import { caseStatusEnum } from '../../constant';
+import AssociationBugModal from '../association-bug-modal';
+import { caseStatusEnum, bugStatusEnum } from '../../constant';
 import { executePhaseCase } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
@@ -14,8 +15,7 @@ moment.locale('zh-cn');
 const { Text } = Typography;
 
 export default function UserCaseInfoExec(props: any) {
-  const { setAssociationBugModalVisible, setAddBugDrawerVisible, curCase, phaseId, testCaseTreeLeafs, setCurCaseId } =
-    props;
+  const { setAddBugDrawerVisible, curCase, phaseId, testCaseTreeLeafs, setCurCaseId } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [associationBug, setAssociationBug] = useState<any[]>([]);
@@ -23,6 +23,8 @@ export default function UserCaseInfoExec(props: any) {
   const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(true);
   const [schema, setSchema] = useState();
   const sona = useMemo(() => createSona(), []);
+  const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
+  const [checkedBugs, setCheckedBugs] = useState<Record<string, React.Key[]>>({});
 
   useEffect(() => {
     if (curCase && curCase.status !== undefined) {
@@ -83,6 +85,10 @@ export default function UserCaseInfoExec(props: any) {
     const len = testCaseTreeLeafs.length;
     if (isToNext) void setCurCaseId(testCaseTreeLeafs[(idx + 1) % len].id);
     else void setCurCaseId(testCaseTreeLeafs[(idx - 1 + len) % len].id);
+  };
+
+  const mergeCheckedBugs2AssociationBugs = () => {
+    void setAssociationBug([...new Set([...associationBug, ...Object.values(checkedBugs).flat(2)])]);
   };
 
   return (
@@ -160,9 +166,13 @@ export default function UserCaseInfoExec(props: any) {
         >
           <Tabs.TabPane tab="关联Bug()" key="1">
             <Table dataSource={associationBug}>
-              <Table.Column title="ID" dataIndex="" />
-              <Table.Column title="标题" dataIndex="" />
-              <Table.Column title="状态" dataIndex="" render={() => <Select></Select>} />
+              <Table.Column title="ID" dataIndex="id" />
+              <Table.Column title="标题" dataIndex="name" />
+              <Table.Column
+                title="状态"
+                dataIndex="status"
+                render={(status) => <Select value={status.toString()} options={bugStatusEnum}></Select>}
+              />
               <Table.Column title="操作" render={() => <Button type="link">删除</Button>} />
             </Table>
           </Tabs.TabPane>
@@ -182,6 +192,14 @@ export default function UserCaseInfoExec(props: any) {
           </Tabs.TabPane>
         </Tabs>
       </div>
+
+      <AssociationBugModal
+        associationBugModalVisible={associationBugModalVisible}
+        setAssociationBugModalVisible={setAssociationBugModalVisible}
+        checkedBugs={checkedBugs}
+        setCheckedBugs={setCheckedBugs}
+        mergeCheckedBugs2AssociationBugs={mergeCheckedBugs2AssociationBugs}
+      />
     </div>
   );
 }

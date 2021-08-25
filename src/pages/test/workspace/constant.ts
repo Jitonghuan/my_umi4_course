@@ -1,4 +1,9 @@
-export const statusEnum = ['新建', '修复中', '已拒绝', '待验证', '重复打开', '已关闭', '延期解决'];
+export const bugStatusEnum = ['新建', '修复中', '已拒绝', '待验证', '重复打开', '已关闭', '延期解决'].map(
+  (item, index) => ({
+    value: index.toString(),
+    label: item,
+  }),
+);
 export const bugTypeEnum = ['功能问题', '性能问题', '接口问题', 'UI界面问题', '易用性问题', '需求问题'];
 export const bugPriorityEnum = ['高', '中', '低'];
 export const priorityEnum = [

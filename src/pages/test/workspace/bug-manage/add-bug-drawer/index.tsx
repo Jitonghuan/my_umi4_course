@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { bugTypeEnum, statusEnum, bugPriorityEnum } from '../../constant';
+import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../../constant';
 import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect } from 'antd';
 import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryPageList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
@@ -180,13 +180,7 @@ export default function BugManage(props: any) {
             <Input />
           </Form.Item>
           <Form.Item label="状态" name="status">
-            <Select>
-              {statusEnum.map((title, index) => (
-                <Select.Option value={index} key={index}>
-                  {title}
-                </Select.Option>
-              ))}
-            </Select>
+            <Select options={bugStatusEnum}></Select>
           </Form.Item>
         </Form>
 

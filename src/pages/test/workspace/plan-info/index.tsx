@@ -30,7 +30,6 @@ export default function PlanInfo(props: any) {
   const [curCaseId, setCurCaseId] = useState<any>();
   const [curCase, setCurCase] = useState<any>();
   const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
-  const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [projectList, setProjectList] = useState<any[]>([]);
 
@@ -195,12 +194,11 @@ export default function PlanInfo(props: any) {
 
               {curCase ? (
                 <CaseInfo
-                  setAssociationBugModalVisible={associationBugModalVisible}
-                  setAddBugDrawerVisible={setAssociationBugModalVisible}
+                  setAddBugDrawerVisible={setAddBugDrawerVisible}
                   testCaseTreeLeafs={testCaseTreeLeafs}
                   setCurCaseId={setCurCaseId}
-                  curCase={curCase}
                   phaseId={activeKey}
+                  curCase={curCase}
                 />
               ) : (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有选择测试用例" />
@@ -211,23 +209,6 @@ export default function PlanInfo(props: any) {
           )}
         </ContentCard>
       </CardRowGroup>
-
-      <Modal
-        title="Bug列表"
-        visible={associationBugModalVisible}
-        onCancel={() => setAssociationBugModalVisible(false)}
-        maskClosable={false}
-        width={800}
-      >
-        <Input.Search className="test-workspace-plan-info-bug-list-search" />
-
-        <Table>
-          <Table.Column title="ID" width={72} />
-          <Table.Column title="标题" width={442} />
-          <Table.Column title="优先级" width={88} />
-          <Table.Column title="创建人" width={96} />
-        </Table>
-      </Modal>
 
       <AddBugDrawer
         visible={addBugDrawerVisible}

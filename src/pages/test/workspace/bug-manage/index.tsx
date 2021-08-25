@@ -7,7 +7,7 @@ import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message 
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { getProjects, getBugList, deleteBug } from '../service';
-import { bugTypeEnum, statusEnum, bugPriorityEnum } from '../constant';
+import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../constant';
 import AddBugDrawer from './add-bug-drawer';
 import moment from 'moment';
 import './index.less';
@@ -85,13 +85,7 @@ export default function BugManage(props: any) {
               <Input placeholder="请输入标题" />
             </Form.Item>
             <Form.Item label="状态" name="status">
-              <Select className="w-100" placeholder="请选择" allowClear>
-                {statusEnum.map((title, index) => (
-                  <Select.Option value={index} key={index}>
-                    {title}
-                  </Select.Option>
-                ))}
-              </Select>
+              <Select className="w-100" placeholder="请选择" allowClear options={bugStatusEnum}></Select>
             </Form.Item>
             <Form.Item label="优先级" name="priority">
               <Select className="w-60" placeholder="请选择" allowClear>
