@@ -2,7 +2,6 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-// import { clusterBLineChart } from './formatter';
 import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
@@ -12,7 +11,7 @@ import * as APIS from '../service';
 import { EditorMode, TmplEdit } from '../tmpl-list';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from 'antd';
 
 export interface TmplListProps {
   mode?: EditorMode;
@@ -24,7 +23,6 @@ export interface TmplListProps {
 export default function TaskEditor(props: TmplListProps) {
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
-  const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
   const children: any = [];
   const { mode, initData, onClose, onSave } = props;
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -34,6 +32,7 @@ export default function TaskEditor(props: TmplListProps) {
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
+  const [isDeployment, setIsDeployment] = useState<string>();
   const templateCode = initData?.templateCode;
   const handleChange = (next: any[]) => {
     setSource(next);
@@ -52,18 +51,25 @@ export default function TaskEditor(props: TmplListProps) {
       templateCode: initData?.templateCode,
       templateType: initData?.templateType,
       templateName: initData?.templateName,
-      tmplConfigurableItem: initData?.tmplConfigurableItem, //tmplConfigurableItem
+      tmplConfigurableItem: initData?.tmplConfigurableItem,
       appCategoryCode: initData?.appCategoryCode || '',
-      envCodes: initData?.envCodes || [],
+      envCodes: initData?.envCode || [],
       templateValue: initData?.templateValue,
     };
-    console.log('获取到的初始化数据：', initValues.envCodes);
+    console.log('获取到的初始化数据：', initData?.envCode);
+    console.log('=-=-=-=-', initData);
     let arr = [];
+    let jvm = '';
+
     for (const key in initValues.tmplConfigurableItem) {
-      arr.push({
-        key: key,
-        value: initValues.tmplConfigurableItem[key],
-      });
+      if (key === 'jvm') {
+        jvm = initValues.tmplConfigurableItem[key];
+      } else {
+        arr.push({
+          key: key,
+          value: initValues.tmplConfigurableItem[key],
+        });
+      }
     }
     createTmplForm.setFieldsValue({
       templateType: initValues.templateType,
@@ -71,10 +77,12 @@ export default function TaskEditor(props: TmplListProps) {
       templateValue: initValues.templateValue,
       appCategoryCode: initValues.appCategoryCode,
       envCodes: initValues.envCodes,
+      jvm: jvm,
       tmplConfigurableItem: arr,
     });
+    // console.log('000000',initValues.jvm)
     changeAppCategory(initValues.appCategoryCode);
-    // createTmplForm.setFieldsValue({initValues});
+    setIsDeployment(initValues.templateType);
     selectTmplType();
     selectCategory();
   }, [mode]);
@@ -124,7 +132,7 @@ export default function TaskEditor(props: TmplListProps) {
   };
   //保存编辑模版
   const createTmpl = (value: any) => {
-    // const templateCode: string = templateCode;
+    console.log('------', value.envCodes);
     if (Array.isArray(value?.envCodes)) {
       let envCodesArry = value?.envCodes;
       setEnvCodesArry(envCodesArry);
@@ -142,6 +150,7 @@ export default function TaskEditor(props: TmplListProps) {
         templateName: value.templateName,
         templateType: value.templateType,
         templateValue: value.templateValue,
+        jvm: value?.jvm,
         appCategoryCode: value.appCategoryCode || '',
         envCodes: envCodesArry || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
@@ -150,12 +159,21 @@ export default function TaskEditor(props: TmplListProps) {
     }).then((resp: any) => {
       if (resp.success) {
         const datas = resp.data || [];
-        setEnvDatas(datas.envCodes);
+        // setEnvDatas(datas.envCode);
+        // console.log('6666667',datas)
         history.push({
           pathname: 'tmpl-list',
         });
+        message.success('保存成功！');
+        onSave?.();
+      } else {
+        message.error('保存失败');
       }
     });
+  };
+
+  const changeTmplType = (value: any) => {
+    setIsDeployment(value);
   };
   return (
     <Drawer
@@ -165,12 +183,18 @@ export default function TaskEditor(props: TmplListProps) {
       onClose={onClose}
       width={'70%'}
     >
-      <ContentCard>
+      <ContentCard className="tmpl-edits">
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
             <Col span={6}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
-                <Select showSearch style={{ width: 150 }} options={templateTypes} disabled={isDisabled} />
+                <Select
+                  showSearch
+                  style={{ width: 150 }}
+                  options={templateTypes}
+                  disabled={isDisabled}
+                  onChange={changeTmplType}
+                />
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -203,11 +227,19 @@ export default function TaskEditor(props: TmplListProps) {
                   disabled={isDisabled}
                 />
               </Form.Item>
+              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
+              {isDeployment == 'deployment' ? (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              ) : (
+                ''
+              )}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '140px' }}
+                style={{ marginTop: '80px' }}
               >
                 <Select
                   showSearch
@@ -236,7 +268,7 @@ export default function TaskEditor(props: TmplListProps) {
               <Button type="ghost" htmlType="reset" onClick={onClose}>
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" onClick={() => onSave?.()} disabled={isDisabled}>
+              <Button type="primary" htmlType="submit" disabled={isDisabled}>
                 保存编辑
               </Button>
             </Space>

@@ -3,7 +3,7 @@ import { history } from 'umi';
 import { Select, DatePicker, Card, Button, Radio } from 'antd';
 import moment from 'moment';
 
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import VcHulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import ds from '@config/defaultSettings';
 import { getRequest } from '@/utils/request';
@@ -148,7 +148,7 @@ const Coms = (props: IProps) => {
   }, [activeType]);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <Card className="code-page">
         <div className="code-filter">
           <Select
@@ -190,7 +190,7 @@ const Coms = (props: IProps) => {
 
         <div className="code-module-content">{renderModule()}</div>
       </Card>
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

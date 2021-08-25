@@ -3,7 +3,7 @@ import { Button, Space, Form } from 'antd';
 import { history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { OptionProps } from '@/components/table-search/typing';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import useTable from '@/utils/useTable';
 import { deletePublishPlanReq, queryAppGroupReq, queryPublishPlanUrl, queryFunctionUrl } from '../service';
@@ -79,7 +79,7 @@ const FunctionCom: React.FC = () => {
   }, []);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <TableSearch
         form={form}
         formOptions={formOptions}
@@ -112,7 +112,7 @@ const FunctionCom: React.FC = () => {
         scroll={tableProps.dataSource.length > 0 ? { x: 2000 } : {}}
         searchText="查询"
       />
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

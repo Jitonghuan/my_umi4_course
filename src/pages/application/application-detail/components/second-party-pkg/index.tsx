@@ -5,8 +5,8 @@
  * @create 2021-04-15 09:33
  */
 
-import React, { useContext, useEffect, useState } from 'react';
-import { Tabs, Button } from 'antd';
+import React, { useLayoutEffect, useEffect, useState } from 'react';
+import { Tabs } from 'antd';
 import { queryEnvData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
@@ -16,13 +16,14 @@ import './index.less';
 const { TabPane } = Tabs;
 const rootCls = 'second-party-pkg';
 
-export default function TowPartyPkg({
-  location: {
-    query: { appCode, id: appId },
-  },
-}: IProps) {
-  // const { envData } = useContext(FeContext);
-  const [tabActive, setTabActive] = useState('cDev');
+export default function TowPartyPkg(props: IProps) {
+  const {
+    location: {
+      query: { appCode },
+    },
+  } = props;
+
+  const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_secondpartypkg_env_tab__') || 'cDev');
   // 环境
   const [envData, setEnvData] = useState<any[]>([]);
 
@@ -44,6 +45,10 @@ export default function TowPartyPkg({
   useEffect(() => {
     queryEnvDataList();
   }, []);
+
+  useLayoutEffect(() => {
+    sessionStorage.setItem('__init_secondpartypkg_env_tab__', tabActive);
+  }, [tabActive]);
 
   return (
     <div className={rootCls}>

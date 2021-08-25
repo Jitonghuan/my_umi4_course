@@ -5,11 +5,11 @@ export interface IFEContent extends globalConfig {
   // 面包屑路由数据
   breadcrumbMap: any;
   // 应用分类数据
-  categoryData?: any[];
+  categoryData?: IOption[];
   // 应用组
-  businessData?: any[];
+  businessData?: IOption[];
   // 环境类型枚举
-  envData?: any[];
+  envData?: IOption[];
   // 是否开启权限
   isOpenPermission?: boolean;
   // 权限数据

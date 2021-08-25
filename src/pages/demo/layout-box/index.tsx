@@ -4,17 +4,17 @@
 
 import React from 'react';
 import {} from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 
 export default function DemoPageTb() {
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <FilterCard>TOP</FilterCard>
       <CardRowGroup>
         <CardRowGroup.SlideCard width={200}>LEFT</CardRowGroup.SlideCard>
         <ContentCard>RIGHT</ContentCard>
       </CardRowGroup>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

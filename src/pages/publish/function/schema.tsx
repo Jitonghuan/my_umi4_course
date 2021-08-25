@@ -129,6 +129,7 @@ export const createTableColumns = (params: {
       title: '发布功能',
       dataIndex: 'funcName',
       key: 'funcName',
+      width: 200,
       // width: '6%',
       // render: (text) => (
       //   <div style={{ width: 100, wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -161,7 +162,7 @@ export const createTableColumns = (params: {
       title: '发布环境',
       dataIndex: 'envs',
       key: 'envs',
-      // width: '4%',
+      width: 160,
       render: (text) => getEnvName(params.envsUrlList, text) || '',
     },
     {
@@ -179,6 +180,7 @@ export const createTableColumns = (params: {
       title: '解决的实际需求',
       dataIndex: 'resolveNeeds',
       key: 'resolveNeeds',
+      width: 150,
       // width: '9%',
       // render: (text) => (
       //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
@@ -190,7 +192,7 @@ export const createTableColumns = (params: {
       title: '计划发布时间',
       dataIndex: 'preDeployTime',
       key: 'preDeployTime',
-      width: '8%',
+      width: 160,
       render: (text) => {
         return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
       },
@@ -205,7 +207,7 @@ export const createTableColumns = (params: {
       title: '实际发布时间',
       dataIndex: 'deployTime',
       key: 'deployTime',
-      width: '8%',
+      width: 160,
       render: (text) => {
         return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
       },
@@ -220,7 +222,7 @@ export const createTableColumns = (params: {
       title: '创建时间',
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
-      width: '8%',
+      width: 160,
       render: (text) => {
         return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
       },

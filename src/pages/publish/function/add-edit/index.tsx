@@ -5,7 +5,7 @@ import moment, { Moment } from 'moment';
 import { history } from 'umi';
 
 import FEContext from '@/layouts/basic-layout/fe-context';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { FormProps } from '@/components/table-search/typing';
 import { renderForm } from '@/components/table-search/form';
@@ -356,7 +356,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
   ];
 
   return (
-    <MatrixPageContent className="page-content">
+    <PageContainer className="page-content">
       <div className="page-top">
         <ContentCard title={title}>
           <Form form={form} component={false} initialValues={defaultValueObj}>
@@ -470,7 +470,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
           }
         />
       </Modal>
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

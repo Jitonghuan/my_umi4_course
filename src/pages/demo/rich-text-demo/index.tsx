@@ -1,5 +1,5 @@
 import React from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import RichText from '@/components/rich-text';
 
@@ -8,10 +8,10 @@ export default function DemoPageTb() {
     console.log(val);
   };
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <ContentCard>
         <RichText onChange={onChange} />
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

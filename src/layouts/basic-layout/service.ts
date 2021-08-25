@@ -21,7 +21,7 @@ export const queryBizData = `${ds.apiPrefix}/appManage/group/list`;
 /** 业务模块 */
 export const queryBizModuleData = `${ds.apiPrefix}/orgManage/buSys/list`;
 
-/** 获取环境接口 */
+/** 获取环境类型接口 */
 export const queryEnvData = `${ds.apiPrefix}/appManage/env/listType`;
 
 /** 获取权限数据 */

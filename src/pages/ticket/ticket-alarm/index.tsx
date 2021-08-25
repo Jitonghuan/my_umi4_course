@@ -5,7 +5,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Form, message, Alert, Input, Drawer, Button, Select, Space, Table, Modal, Tag } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { postRequest, getRequest } from '@/utils/request';
 import * as APIS from '../service';
 type statusTypeItem = {
@@ -105,7 +105,7 @@ export default function ticketAlarm() {
   };
 
   return (
-    <MatrixPageContent isFlex>
+    <PageContainer>
       <FilterCard>
         <Form
           layout="inline"
@@ -236,6 +236,6 @@ export default function ticketAlarm() {
           />
         </Table>
       </Modal>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

@@ -1,136 +1,58 @@
-/**
- * ApplicationList
- * @description 应用列表
- * @author moting.nq
- * @create 2021-04-09 16:53
- */
+// 应用列表
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/08/25 09:23
 
-import React, { useMemo, useEffect, useState, useCallback, useContext } from 'react';
-import { Form, Button, message } from 'antd';
+import React, { useMemo, useState, useCallback, useContext } from 'react';
+import { Button, message, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useEffectOnce } from 'white-react-use';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import CreateApplication from '@/components/create-application';
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
+import { ContentCard } from '@/components/vc-page-content';
+import ApplicationEditor from '../_components/application-editor';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import { InlineForm } from '@/components/schema-form';
-import { queryBizData } from '@/layouts/basic-layout/service';
-import { getRequest } from '@/utils/request';
-import MatrixPageContent from '@/components/matrix-page-content';
-
-import { createFilterFormSchema, createTableSchema } from './schema';
-import { queryAppsUrl, deleteApp } from '../service';
-import { rootCls } from './constants';
-import { IProps } from './types';
+import PageContainer from '@/components/page-container';
+import { createTableSchema } from './schema';
+import { deleteApp } from '../service';
+import { useAppListData } from '../hooks';
+import FilterHeader from '../_components/filter-header';
+import { AppItemVO } from '../interfaces';
 import './index.less';
 
-const ApplicationList = (props: IProps) => {
+export default function ApplicationList() {
   const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
-  const [businessData, setBusinessData] = useState<any[]>([]);
-  const [formInstance] = Form.useForm();
-
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [searchParams, setSearchParams] = useState<any>();
+  const [appListData, total, isLoading, loadAppListData] = useAppListData(searchParams, pageIndex, pageSize);
   const [createAppVisible, setCreateAppVisible] = useState(false);
-  const [curRecord, setCurRecord] = useState<any>();
+  const [curRecord, setCurRecord] = useState<AppItemVO>();
 
-  const filterColumns = useMemo(() => {
-    return createFilterFormSchema({ categoryData, businessData });
-  }, [categoryData, businessData]);
-
-  // 根据应用分类查询应用组
-  const queryBusiness = (categoryCode: string) => {
-    setBusinessData([]);
-    getRequest(queryBizData, {
-      data: {
-        categoryCode,
-      },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas =
-          resp?.data?.dataSource?.map((el: any) => {
-            return {
-              ...el,
-              value: el?.groupCode,
-              label: el?.groupName,
-            };
-          }) || [];
-        setBusinessData(datas);
-      }
-    });
-  };
-
-  // 查询数据
-  const {
-    run: queryAppList,
-    tableProps,
-    reset,
-  } = usePaginated({
-    requestUrl: queryAppsUrl,
-    requestMethod: 'GET',
-    showRequestError: true,
-    initPageInfo: {
-      pageSize: 20,
-    },
-    pagination: {
-      showSizeChanger: true,
-      showTotal: (total) => `总共 ${total} 条数据`,
-    },
-  });
-
-  // 监听表单变化，根据应用分类查询应用组
-  const handleChange = useCallback((vals) => {
-    const [name, value] = (Object.entries(vals)?.[0] || []) as [string, any];
-    if (name && name === 'appCategoryCode') {
-      formInstance.resetFields(['appGroupCode']);
-      queryBusiness(value);
-    }
+  const handleFilterSearch = useCallback((next: any) => {
+    setPageIndex(1);
+    setSearchParams(next);
   }, []);
 
-  useEffectOnce(() => {
-    queryAppList();
-  });
+  // 表格列配置
+  const tableColumns = useMemo(() => {
+    return createTableSchema({
+      onEditClick: (record, index) => {
+        setCurRecord(record);
+        setCreateAppVisible(true);
+      },
+      onDelClick: async (record, index) => {
+        await deleteApp({ appCode: record.appCode, id: record.id });
+        message.success('删除成功');
+        loadAppListData();
+      },
+      categoryData,
+      businessDataList,
+    }) as any;
+  }, [categoryData, businessDataList, appListData]);
 
   return (
-    <MatrixPageContent isFlex>
-      <CreateApplication
-        formValue={curRecord}
-        visible={createAppVisible}
-        onClose={() => setCreateAppVisible(false)}
-        onSubmit={() => {
-          // 保存成功后，关闭抽屉，重新请求列表
-          queryAppList();
-          setCreateAppVisible(false);
-        }}
-      />
-
-      <FilterCard>
-        <InlineForm
-          form={formInstance}
-          className={`${rootCls}__filter-form`}
-          {...(filterColumns as any)}
-          submitText="查询"
-          onValuesChange={handleChange}
-          onFinish={(values) => {
-            if (tableProps.loading) return;
-            queryAppList({
-              pageIndex: 1,
-              ...values,
-            });
-          }}
-          onReset={() => {
-            if (tableProps.loading) return;
-            const { pageSize = 10 } = tableProps.pagination as any;
-            formInstance.resetFields();
-            reset();
-            queryAppList({
-              pageIndex: 1,
-              pageSize: pageSize,
-            });
-          }}
-        />
-      </FilterCard>
+    <PageContainer>
+      <FilterHeader onSearch={handleFilterSearch} />
 
       <ContentCard>
-        <div className={`${rootCls}__table-header`}>
+        <div className="table-caption">
           <h3>应用列表</h3>
           <Button
             type="primary"
@@ -143,33 +65,33 @@ const ApplicationList = (props: IProps) => {
             新增应用
           </Button>
         </div>
-        <HulkTable
-          className={`${rootCls}__table-body`}
-          columns={
-            createTableSchema({
-              onEditClick: (record, index) => {
-                setCurRecord(record);
-                setCreateAppVisible(true);
-              },
-              onDelClick: (record, index) => {
-                deleteApp({ appCode: record.appCode, id: record.id }).then((res) => {
-                  if (res.success) {
-                    message.success('删除成功');
-                    queryAppList();
-                  }
-                });
-              },
-              categoryData,
-              businessDataList,
-            }) as any
-          }
-          {...tableProps}
-        />
+        <Table
+          dataSource={appListData}
+          loading={isLoading}
+          pagination={{
+            pageSize,
+            total,
+            current: pageIndex,
+            showSizeChanger: true,
+            onShowSizeChange: (_, next) => {
+              setPageIndex(1);
+              setPageSize(next);
+            },
+            onChange: (next) => setPageIndex(next),
+          }}
+          columns={tableColumns}
+        ></Table>
       </ContentCard>
-    </MatrixPageContent>
+
+      <ApplicationEditor
+        initData={curRecord}
+        visible={createAppVisible}
+        onClose={() => setCreateAppVisible(false)}
+        onSubmit={() => {
+          loadAppListData();
+          setCreateAppVisible(false);
+        }}
+      />
+    </PageContainer>
   );
-};
-
-ApplicationList.defaultProps = {};
-
-export default ApplicationList;
+}

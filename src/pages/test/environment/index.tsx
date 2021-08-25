@@ -4,7 +4,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Emitter from 'events';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { CardRowGroup } from '@/components/vc-page-content';
 import EnvList from './env-list';
 import EnvDetail from './env-detail';
@@ -19,11 +19,11 @@ export default function EnvironmentManager() {
   }, []);
 
   return (
-    <MatrixPageContent isFlex>
+    <PageContainer>
       <CardRowGroup>
         <EnvList onItemClick={(item) => setCurrent(item)} emitter={emitter} />
         <EnvDetail current={current} emitter={emitter} />
       </CardRowGroup>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

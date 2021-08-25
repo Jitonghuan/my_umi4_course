@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import LeftTree from './left-tree';
 import RightDetail from './right-detail';
 import HeaderTabs from '../_components/header-tabs';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import {
   createCase,
   caseDelete,
@@ -27,7 +27,7 @@ export default function TestCase(props: any) {
   }, []);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
         <CardRowGroup.SlideCard width={200}>
@@ -37,6 +37,6 @@ export default function TestCase(props: any) {
           <RightDetail />
         </ContentCard>
       </CardRowGroup>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

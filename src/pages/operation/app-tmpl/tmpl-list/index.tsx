@@ -4,14 +4,12 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-// import { useEffectOnce } from 'white-react-use';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from '../tmpl-edits';
-import { values } from '_@types_lodash@4.14.171@@types/lodash';
 
 export type EditorMode = 'HIDE' | 'EDIT';
 /** 编辑页回显数据 */
@@ -171,15 +169,13 @@ export default function Launch() {
   //抽屉保存
   const saveEditData = () => {
     setTmplEditMode('HIDE');
-    message.success('保存成功！');
-
     setTimeout(() => {
       queryList({ pageIndex: 1, pageSize: 20 });
     }, 100);
     // window.location.reload();
   };
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <TmplEditDraw
         mode={tmplEditMode}
         initData={tmplateData}
@@ -334,6 +330,6 @@ export default function Launch() {
           </Table>
         </div>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

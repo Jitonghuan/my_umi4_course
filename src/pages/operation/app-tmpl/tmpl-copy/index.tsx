@@ -3,30 +3,29 @@
 // @create 2021/07/31 17:00
 
 import React from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import PageContainer from '@/components/page-container';
+import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import { getRequest, putRequest, postRequest } from '@/utils/request';
-import { useContext, useState, useEffect, useRef } from 'react';
+import { getRequest, postRequest } from '@/utils/request';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
-import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
 export default function DemoPageTb(porps: any) {
   const { Option } = Select;
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
-  const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]); //可配置项
   const children: any = [];
-  const { TextArea } = Input;
   const [categoryData, setCategoryData] = useState<string>(); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
+  const [isDeployment, setIsDeployment] = useState<string>();
   const handleChange = (next: any[]) => {
     setSource(next);
   };
@@ -55,28 +54,34 @@ export default function DemoPageTb(porps: any) {
       if (res.success) {
         const tmplresult = res.data.dataSource[0];
         let arr = [];
+        let jvm = '';
         for (const key in tmplresult.tmplConfigurableItem) {
-          arr.push({
-            key: key,
-            value: tmplresult.tmplConfigurableItem[key],
-          });
+          if (key === 'jvm') {
+            jvm = tmplresult.tmplConfigurableItem[key];
+          } else {
+            arr.push({
+              key: key,
+              value: tmplresult.tmplConfigurableItem[key],
+            });
+          }
         }
 
         let envCode = tmplresult.envCode;
         if (envCode == '') {
           envCode = [];
         }
+
         createTmplForm.setFieldsValue({
           templateType: tmplresult.templateType,
           templateName: tmplresult.templateName,
           templateValue: tmplresult.templateValue,
           appCategoryCode: tmplresult.appCategoryCode,
           envCodes: envCode,
-
           tmplConfigurableItem: arr,
+          jvm: jvm,
         });
+        setIsDeployment(tmplresult.templateType);
         changeAppCategory(tmplresult.appCategoryCode);
-        // let arr = []
       }
     });
   };
@@ -91,6 +96,10 @@ export default function DemoPageTb(porps: any) {
       }));
       setTemplateTypes(list);
     });
+  };
+
+  const selectTemplType = (value: any) => {
+    setIsDeployment(value);
   };
   //加载应用分类下拉选择
   const selectCategory = () => {
@@ -107,8 +116,6 @@ export default function DemoPageTb(porps: any) {
   // 根据应用分类查询环境
   const changeAppCategory = (categoryCode: string) => {
     //调用接口 查询env 参数就是appCategoryCode
-    //setEnvDatas
-    //  let categoryCode = categoryData
 
     setEnvDatas([]);
     setAppCategoryCode(categoryCode);
@@ -149,6 +156,7 @@ export default function DemoPageTb(porps: any) {
         appCategoryCode: value.appCategoryCode || '',
         envCodes: valArr || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
+        jvm: value?.jvm,
         // templateCode:templateCode
       },
     }).then((resp: any) => {
@@ -163,13 +171,19 @@ export default function DemoPageTb(porps: any) {
   };
 
   return (
-    <MatrixPageContent className="tmpl-detail">
+    <PageContainer className="tmpl-detail">
       <ContentCard>
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
             <Col span={6}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
-                <Select showSearch style={{ width: 150 }} options={templateTypes} disabled={isDisabled} />
+                <Select
+                  showSearch
+                  style={{ width: 150 }}
+                  options={templateTypes}
+                  disabled={isDisabled}
+                  onChange={selectTemplType}
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -205,11 +219,20 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
+              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
+              {isDeployment == 'deployment' ? (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              ) : (
+                ''
+              )}
+
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '140px' }}
+                style={{ marginTop: '80px' }}
               >
                 <Select
                   showSearch
@@ -255,6 +278,6 @@ export default function DemoPageTb(porps: any) {
           </Form.Item>
         </Form>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

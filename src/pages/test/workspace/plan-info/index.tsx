@@ -1,11 +1,11 @@
 import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 
 export default function PlanInfo(props: any) {
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <ContentCard>PlanInfo</ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

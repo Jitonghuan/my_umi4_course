@@ -1,5 +1,5 @@
 import React from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import AppTable from './app-table';
 
 import './index.less';
@@ -16,9 +16,9 @@ export interface IProps {
  */
 const Coms = (props: IProps) => {
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <AppTable />
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

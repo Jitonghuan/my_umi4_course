@@ -1,28 +1,32 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
 import FELayout from '@cffe/vc-layout';
-import type { IUmiRrops } from '@cffe/vc-layout/es/bus-layout';
-import ds from '@config/defaultSettings';
-import DocumentTitle from './document-title';
-import FeContext from './fe-context';
-import { queryCategoryData, queryBizData, queryEnvData, queryPermission } from './service';
-import { DFSFunc } from '@/utils';
-import { getRequest, queryUserInfoApi, doLogoutApi } from '@/utils/request';
+import type { IUmiRrops } from '@cffe/vc-layout/lib/bus-layout';
+import type { IPermission } from '@cffe/vc-layout/lib/sider-menu';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
-import { IPermission } from '@cffe/vc-layout/lib/sider-menu';
+import ds from '@config/defaultSettings';
+import { DFSFunc } from '@/utils';
+import { getRequest, queryUserInfoApi, doLogoutApi } from '@/utils/request';
+import DocumentTitle from './document-title';
+import FeContext from './fe-context';
+import { queryPermission } from './service';
+import { useCategoryData, useBusinessData, useEnvTypeData } from './hooks';
 import './index.less';
 import logo from './logo.svg';
 
 export default function BasicLayout(props: IUmiRrops) {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
+  const [ready, setReady] = useState(false);
   // 所属数据
-  const [categoryData, setCategoryData] = useState<IOption[]>([]);
+  const [categoryData] = useCategoryData(ready);
   // 业务线
-  const [business, setBusiness] = useState<IOption[]>([]);
+  const [business] = useBusinessData(ready);
   // 环境
-  const [envData, setEnvData] = useState<IOption[]>([]);
+  const [envData] = useEnvTypeData(ready);
+  // 权限数据
+  const [permissionData, setPermissionData] = useState<IPermission[]>([]);
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -36,65 +40,21 @@ export default function BasicLayout(props: IUmiRrops) {
     return map;
   }, [props]);
 
-  // 权限数据
-  const [permissionData, setPermissionData] = useState<IPermission[]>([]);
-
-  // 查询业务线数据
-  const queryBusinessData = async () => {
-    // 查询所属数据
-    const categoryResp = await getRequest(queryCategoryData);
-
-    // 查询业务线数据
-    const bizResp = await getRequest(queryBizData);
-
-    // 环境数据
-    const envResp = await getRequest(queryEnvData);
-
-    const categoryDate = categoryResp.data?.dataSource || [];
-    const bizData = bizResp.data?.dataSource || [];
-    const envData = envResp?.data || [];
-
-    setCategoryData(
-      categoryDate.map((el: any) => ({
-        ...el,
-        label: el?.categoryName,
-        value: el?.categoryCode,
-      })),
-    );
-    setBusiness(
-      bizData.map((el: any) => ({
-        ...el,
-        label: el?.groupName,
-        value: el?.groupCode,
-      })),
-    );
-    setEnvData(
-      envData.map((el: any) => ({
-        ...el,
-        label: el?.typeName,
-        value: el?.typeCode,
-      })),
-    );
-  };
-
   // 获取用户权限
-  const queryPermissionData = async () => {
-    const resp = await getRequest(queryPermission);
-    const { data = [] } = resp;
+  const queryPermissionData = useCallback(async () => {
+    const result = await getRequest(queryPermission);
+    const next =
+      result.data?.map((el: any) => ({
+        permissionId: el.menuCode,
+        permissionName: el.menuName,
+        permissionUrl: el.menuUrl,
+      })) || [];
 
-    if (data.length > 0) {
-      setPermissionData(
-        data.map((el: any) => ({
-          permissionId: el.menuCode,
-          permissionName: el.menuName,
-          permissionUrl: el.menuUrl,
-        })),
-      );
+    setPermissionData(next);
 
-      // 确认权限后获取数据
-      queryBusinessData();
-    }
-  };
+    // 确认权限后获取数据
+    setReady(true);
+  }, []);
 
   const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
   const effectResize = useDebounce(width, 100);
@@ -103,7 +63,7 @@ export default function BasicLayout(props: IUmiRrops) {
     if (ds.isOpenPermission) {
       queryPermissionData();
     } else {
-      queryBusinessData();
+      setReady(true);
     }
   }, []);
 
