@@ -63,22 +63,22 @@ export default function ApplicationDetail(props: IProps) {
   const filteredTabList = useMemo(() => {
     if (!appData) return [];
 
+    // 是否为非二方包后端应用
+    const isBackendAndNotClient = appData.isClient !== 1 && appData.appType === 'backend';
+
     return Object.keys(tabsConfig).filter((key) => {
       // 只有 HBOS 才显示 配置管理 和 启动参数
       // if (key === 'configMgr' || key === 'launchParameters')
       if (key === 'configMgr') {
-        return appData.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1';
+        return (
+          isBackendAndNotClient && (appData.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1')
+        );
       }
-
       if (key === 'secondPartyPkg') {
         return appData.isContainClient === 1;
       }
-
-      if (key === 'monitor') {
-        return appData.isClient !== 1 && appData.appType === 'backend';
-      }
-      if (key === 'AppParameters') {
-        return appData.isClient !== 1 && appData.appType === 'backend';
+      if (key === 'monitor' || key === 'AppParameters') {
+        return isBackendAndNotClient;
       }
 
       return true;
