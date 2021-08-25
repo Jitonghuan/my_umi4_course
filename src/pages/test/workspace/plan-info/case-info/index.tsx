@@ -189,18 +189,22 @@ export default function UserCaseInfoExec(props: any) {
               </Table>
             </Tabs.TabPane>
             <Tabs.TabPane tab="活动日志" key="2">
-              {curCase?.records?.map((item: any) => {
-                return (
-                  <Row>
-                    <Col span={17}>
-                      <Text>{item.executeNote}</Text>
-                    </Col>
-                    <Col span={7} className="activity-log">
-                      <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
-                    </Col>
-                  </Row>
-                );
-              })}
+              {curCase?.records?.length ? (
+                curCase.records.map((item: any) => {
+                  return (
+                    <Row>
+                      <Col span={17}>
+                        <Text>{item.executeNote}</Text>
+                      </Col>
+                      <Col span={7} className="activity-log">
+                        <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
+                      </Col>
+                    </Row>
+                  );
+                })
+              ) : (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有活动日志" />
+              )}
             </Tabs.TabPane>
           </Tabs>
         </div>
