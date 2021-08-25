@@ -8,7 +8,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import ApplicationEditor from '../_components/application-editor';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { createTableSchema } from './schema';
 import { deleteApp } from '../service';
 import { useAppListData } from '../hooks';
@@ -48,7 +48,7 @@ export default function ApplicationList() {
   }, [categoryData, businessDataList, appListData]);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <FilterHeader onSearch={handleFilterSearch} />
 
       <ContentCard>
@@ -92,6 +92,6 @@ export default function ApplicationList() {
           setCreateAppVisible(false);
         }}
       />
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

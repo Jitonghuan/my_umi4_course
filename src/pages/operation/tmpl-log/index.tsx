@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Modal, Form, Input, Button, DatePicker } from 'antd';
 import moment from 'moment';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import * as APIS from '../app-tmpl/service';
 import { getRequest } from '@/utils/request';
 
@@ -97,7 +97,7 @@ export default function Operation() {
       });
   };
   return (
-    <MatrixPageContent className="tmpl-detail">
+    <PageContainer className="tmpl-detail">
       <FilterCard>
         <Form
           layout="inline"
@@ -188,6 +188,6 @@ export default function Operation() {
           </pre>
         </Modal>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

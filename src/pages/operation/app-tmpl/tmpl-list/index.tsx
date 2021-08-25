@@ -4,7 +4,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -175,7 +175,7 @@ export default function Launch() {
     // window.location.reload();
   };
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <TmplEditDraw
         mode={tmplEditMode}
         initData={tmplateData}
@@ -330,6 +330,6 @@ export default function Launch() {
           </Table>
         </div>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

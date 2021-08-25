@@ -4,7 +4,7 @@ import type { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
 import TemplateDrawer from '../component/template-drawer';
@@ -275,7 +275,7 @@ const TemplateCom: React.FC = () => {
   };
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <TableSearch
         form={form}
         formOptions={formOptions}
@@ -318,7 +318,7 @@ const TemplateCom: React.FC = () => {
         onSubmit={onSubmit}
         type={type}
       />
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

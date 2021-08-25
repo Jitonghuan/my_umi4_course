@@ -6,7 +6,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Link, history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import useTable from '@/utils/useTable';
 import { queryQCTaskList, executeQCTask } from './service';
 import { Item } from './typing';
@@ -300,7 +300,7 @@ const QualityControl: React.FC = () => {
   };
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <TableSearch
         form={form}
         formOptions={formOptions}
@@ -337,7 +337,7 @@ const QualityControl: React.FC = () => {
         // scroll={{ y: 300, scrollToFirstRowOnChange: true }}
       />
       <TestDrawer visible={drawerVisible} onClose={onClose} />
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

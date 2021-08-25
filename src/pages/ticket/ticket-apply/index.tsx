@@ -9,14 +9,14 @@
 import React from 'react';
 import { TplTable } from '@cffe/fe-tpl';
 import { InlineForm } from '@/components/schema-form';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { filterFormSchema, tableSchema } from './schema';
 import './index.less';
 
 export default function TicketApply(props: any) {
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <FilterCard>
         <InlineForm className="ticket-filter-form" {...(filterFormSchema as any)} isShowReset />
       </FilterCard>
@@ -27,6 +27,6 @@ export default function TicketApply(props: any) {
         </div>
         <TplTable schema={tableSchema as any} />
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

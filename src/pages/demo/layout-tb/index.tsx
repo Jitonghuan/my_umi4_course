@@ -4,14 +4,14 @@
 
 import React from 'react';
 import {} from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 
 export default function DemoPageTb() {
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <FilterCard>TOP</FilterCard>
       <ContentCard>BOTTOM</ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

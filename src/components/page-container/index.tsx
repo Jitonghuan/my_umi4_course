@@ -6,7 +6,7 @@ import ErrorBoundary from '../error-boundary';
 
 export interface IProps extends IPageContentProps {}
 
-export default function MatrixPageContent(props: React.PropsWithChildren<IProps>) {
+export default function PageContainer(props: React.PropsWithChildren<IProps>) {
   const { children, ...rest } = props;
   const feContent = useContext(FeContext);
   const location = useLocation();

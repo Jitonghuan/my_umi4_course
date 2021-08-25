@@ -5,7 +5,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Radio, Button, Spin, Pagination } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import ApplicationEditor from '../_components/application-editor';
 import ApplicationCardList from './card-list';
@@ -32,7 +32,7 @@ export default function AllApplication() {
   }, []);
 
   return (
-    <MatrixPageContent className={rootCls}>
+    <PageContainer className={rootCls}>
       <FilterHeader onSearch={handleFilterSearch} />
 
       <ContentCard>
@@ -78,6 +78,6 @@ export default function AllApplication() {
           setCreateAppVisible(false);
         }}
       />
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

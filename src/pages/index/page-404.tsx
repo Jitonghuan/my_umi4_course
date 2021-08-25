@@ -4,15 +4,15 @@
 
 import React from 'react';
 import { Result } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 
 export default function Page404() {
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <ContentCard>
         <Result status="404" title="404" subTitle="啊！页面去火星了~" />
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }
