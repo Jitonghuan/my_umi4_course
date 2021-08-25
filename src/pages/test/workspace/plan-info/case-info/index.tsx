@@ -6,7 +6,7 @@ import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase } from '../../service';
+import { executePhaseCase, relatedBug } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
 
@@ -87,8 +87,16 @@ export default function UserCaseInfoExec(props: any) {
     else void setCurCaseId(testCaseTreeLeafs[(idx - 1 + len) % len].id);
   };
 
-  const mergeCheckedBugs2AssociationBugs = () => {
+  const mergeCheckedBugs2AssociationBugs = async () => {
     void setAssociationBug([...new Set([...associationBug, ...Object.values(checkedBugs).flat(2)])]);
+    void (await postRequest(relatedBug, {
+      data: {
+        phaseId: phaseId,
+        caseId: curCase.caseInfo.id,
+        bugs: [...new Set([...associationBug, ...Object.values(checkedBugs).flat(2)])],
+      },
+    }));
+    void message.success('关联bug成功');
   };
 
   return (
