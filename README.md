@@ -40,13 +40,32 @@
 
 ## 相关文档
 
+### 开发技术文档
+
 - VC 组件文档: http://vdoc.cfuture.cc/vc-doc/#/vc-doc/component/list
 - Echarts文档: https://echarts.apache.org/zh/option.html
+
+### 需求文档
+
 - 项目文档: https://come-future.yuque.com/sekh46/bbgc7f
-- 项目排期: https://come-future.yuque.com/sekh46/bbgc7f/px4te4/edit#y44m
+- 项目排期: https://come-future.yuque.com/sekh46/bbgc7f/px4te4/edit
 - 视觉稿: https://lanhuapp.com/web/#/item/project/stage?tid=3b3b08b2-8068-4d09-9535-148f1c47f6b8&pid=56924b6e-18ea-4be5-860a-d5eef3e89d06
 - 三期交互稿: http://vdoc.cfuture.cc/matrix/v3/
 - 四期交互稿: http://vdoc.cfuture.cc/matrix/v4/
+- 前端发布接入流程: https://come-future.yuque.com/fu-xt/xssxgb/dgmp57
+- 屏蔽EDAS设计稿: https://modao.cc/app/5b7aabe3b24533a5d4e809c6ac218d37d2ae7f52
+
+### 业务&接口文档
+
+- 应用部署模块设计: https://come-future.yuque.com/sekh46/bbgc7f/gy8woc
+- 自动化三期: https://come-future.yuque.com/sekh46/bbgc7f/bg8qyo
+- 发布申请管理: https://come-future.yuque.com/sekh46/bbgc7f/eus31y
+- 监控管理: https://come-future.yuque.com/sekh46/bbgc7f/es5pwg
+- 双集群管理: https://come-future.yuque.com/sekh46/bbgc7f/dnkgfm
+- 应用重启、回滚、屏蔽EDAS: https://come-future.yuque.com/sekh46/bbgc7f/ih8peg
+- 数据工厂二期: https://come-future.yuque.com/sekh46/bbgc7f/gvbhuh
+- 发布单测卡点: https://come-future.yuque.com/sekh46/bbgc7f/optg5a
+
 
 ## FAQ
 

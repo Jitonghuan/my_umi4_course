@@ -4,7 +4,6 @@
 // @see https://come-future.yuque.com/sekh46/bbgc7f/us83sd
 
 import { addAPIPrefix } from '@/utils';
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 
 /** 环境名 */
 export const envList = addAPIPrefix('/appManage/env/list');
