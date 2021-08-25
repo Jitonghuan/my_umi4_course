@@ -307,6 +307,18 @@ export default [
         // // TODO 线上不显示
         // hideInMenu: process.env.BUILD_ENV === 'prod',
       },
+      {
+        path: 'addTicket',
+        name: '新建工单',
+        key: 'addTicket',
+        component: '@/pages/ticket/addTicket',
+      },
+      {
+        path: 'resourceApply',
+        name: '资源申请',
+        key: 'resourceApply',
+        component: '@/pages/ticket/resource-apply',
+      },
     ],
   },
   {
