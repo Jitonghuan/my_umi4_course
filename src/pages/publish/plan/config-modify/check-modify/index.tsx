@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import Coms from '../add-edit';
 import { queryPublishPlanReq } from '@/pages/publish/service';
 import moment from 'moment';
@@ -24,9 +24,9 @@ const EditModify: React.FC = (props) => {
     }
   }, [id]);
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <Coms initValueObj={detailInfo} type="check" />
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

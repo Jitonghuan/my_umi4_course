@@ -25,7 +25,6 @@ import {
 } from './service';
 
 import './index.less';
-import { useEffectOnce } from 'white-react-use';
 
 export interface IProps {
   /** 属性描述 */
@@ -239,9 +238,9 @@ const Coms = (props: IProps) => {
     pagination: false,
   });
 
-  useEffectOnce(() => {
+  useEffect(() => {
     queryApps();
-  });
+  }, []);
 
   useEffect(() => {
     if (filter.appCode) {

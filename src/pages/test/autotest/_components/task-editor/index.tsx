@@ -164,6 +164,7 @@ export default function TaskEditor(props: TaskEditorProps) {
                   treeCheckable
                   placeholder="请选择用例集合"
                   treeNodeLabelProp="display"
+                  treeNodeFilterProp="title"
                 />
               </FormItem>
             ) : (
@@ -174,6 +175,7 @@ export default function TaskEditor(props: TaskEditorProps) {
                   treeCheckable
                   placeholder="请选择场景集合"
                   treeNodeLabelProp="display"
+                  treeNodeFilterProp="title"
                 />
               </FormItem>
             )

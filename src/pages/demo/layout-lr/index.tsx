@@ -4,16 +4,16 @@
 
 import React from 'react';
 import {} from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { CardRowGroup, ContentCard } from '@/components/vc-page-content';
 
 export default function DemoPageLr() {
   return (
-    <MatrixPageContent isFlex>
+    <PageContainer>
       <CardRowGroup>
         <CardRowGroup.SlideCard width={200}>LEFT</CardRowGroup.SlideCard>
         <ContentCard>RIGHT</ContentCard>
       </CardRowGroup>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

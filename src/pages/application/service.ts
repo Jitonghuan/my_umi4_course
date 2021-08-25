@@ -1,4 +1,4 @@
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
+import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 import { addAPIPrefix } from '@/utils';
 
@@ -36,11 +36,11 @@ export const queryApps = (params: {
   /** 分页大小 */
   pageSize: number;
 
-  requestType?: 'all' | 'my';
+  requestType?: 'all' | 'mine';
 }) => {
   const { requestType, ...data } = params;
 
-  return getRequest(requestType === 'my' ? queryMyAppsUrl : queryAppsUrl, {
+  return getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, {
     data,
   }).then((res: any) => {
     if (res.success) {

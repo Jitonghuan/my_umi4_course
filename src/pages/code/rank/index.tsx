@@ -4,7 +4,7 @@ import { stringify } from 'qs';
 import { Select, DatePicker, Card, Button, Radio } from 'antd';
 import moment from 'moment';
 
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import VcHulkTable from '@cffe/vc-hulk-table';
 import ds from '@config/defaultSettings';
 import { getRequest } from '@/utils/request';
@@ -153,7 +153,7 @@ const Coms = (props: IProps) => {
   };
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <Card className="code-page">
         <div className="code-filter">
           <Radio.Group
@@ -194,7 +194,7 @@ const Coms = (props: IProps) => {
           )}
         </div>
       </Card>
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

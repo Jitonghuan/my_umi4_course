@@ -3,7 +3,7 @@ import { Tag, Form, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
 import { FormProps } from '@/components/table-search/typing';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import useTable from '@/utils/useTable';
 import { queryAlertManageList } from '../service';
 import { Item } from '../typing';
@@ -237,7 +237,7 @@ const HistoryCom: React.FC = () => {
   }, []);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <TableSearch
         form={form}
         formOptions={formOptions}
@@ -262,7 +262,7 @@ const HistoryCom: React.FC = () => {
         reset={reset}
         // scroll={{ x: 'max-content' }}
       />
-    </MatrixPageContent>
+    </PageContainer>
   );
 };
 

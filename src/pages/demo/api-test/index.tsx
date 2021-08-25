@@ -4,7 +4,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { Button, Input, Form, Select, Spin } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import AceEditor from '@/components/ace-editor';
 import { CardRowGroup, ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest, putRequest, delRequest } from '@/utils/request';
@@ -57,7 +57,7 @@ export default function PageApiTest() {
   }, []);
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <CardRowGroup>
         <CardRowGroup.SlideCard className="content-slide" width={800}>
           <Form form={field} labelCol={{ flex: '80px' }} onFinish={handleSubmit}>
@@ -89,6 +89,6 @@ export default function PageApiTest() {
           </Spin>
         </ContentCard>
       </CardRowGroup>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

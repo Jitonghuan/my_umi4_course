@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Tabs } from 'antd';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
 import VCPermission from '@/components/vc-permission';
 
@@ -15,7 +15,7 @@ export default function Dashboard(props: any) {
   const activeKey = activeKeyMap[currRoute!] || currRoute;
 
   return (
-    <MatrixPageContent>
+    <PageContainer>
       <FilterCard className="layout-compact">
         <Tabs activeKey={activeKey} onChange={(next) => props.history.push(`/matrix/test/autotest/${next}`)}>
           <Tabs.TabPane tab="看板统计" key="dashboard" />
@@ -27,6 +27,6 @@ export default function Dashboard(props: any) {
       <VCPermission code={window.location.pathname} isShowErrorPage>
         {props.children}
       </VCPermission>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }

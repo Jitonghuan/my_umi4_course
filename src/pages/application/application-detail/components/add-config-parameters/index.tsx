@@ -8,7 +8,7 @@
 import React, { useContext, useState } from 'react';
 import { Button, Table, message } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
-import VCPageContent, { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
 import { configMultiAdd } from '@/pages/application/service';
 import { IProps, DataSourceType } from './types';
@@ -16,11 +16,12 @@ import './index.less';
 
 const rootCls = 'add-config-parameters-compo';
 
-const AddConfigParameters = ({
-  location: {
-    query: { env, type },
-  },
-}: IProps) => {
+export default function AddConfigParameters(props: IProps) {
+  const {
+    location: {
+      query: { env, type },
+    },
+  } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -128,8 +129,4 @@ const AddConfigParameters = ({
       </div>
     </ContentCard>
   );
-};
-
-AddConfigParameters.defaultProps = {};
-
-export default AddConfigParameters;
+}

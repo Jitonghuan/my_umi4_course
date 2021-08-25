@@ -3,7 +3,7 @@
 // @create 2021/07/31 17:00
 
 import React from 'react';
-import MatrixPageContent from '@/components/matrix-page-content';
+import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import { getRequest, postRequest } from '@/utils/request';
@@ -171,7 +171,7 @@ export default function DemoPageTb(porps: any) {
   };
 
   return (
-    <MatrixPageContent className="tmpl-detail">
+    <PageContainer className="tmpl-detail">
       <ContentCard>
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
@@ -278,6 +278,6 @@ export default function DemoPageTb(porps: any) {
           </Form.Item>
         </Form>
       </ContentCard>
-    </MatrixPageContent>
+    </PageContainer>
   );
 }
