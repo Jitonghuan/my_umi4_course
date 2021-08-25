@@ -11,7 +11,7 @@ import { history } from 'umi';
 import { testPhaseEnum } from '../constant';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
-import { Col, Row, Tabs, Table, Input, Tag, Modal, Empty } from 'antd';
+import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
 
@@ -189,6 +189,20 @@ export default function PlanInfo(props: any) {
                   showIcon={false}
                   showSearch
                   searchPlaceholder="搜索用例、用例库"
+                  titleRender={(node) => {
+                    let renderTitle;
+
+                    if (!node.isLeaf) renderTitle = node.title;
+                    else renderTitle = node.title;
+
+                    return (
+                      <Tooltip placement="right" title={renderTitle}>
+                        <Typography.Text style={{ maxWidth: '100%' }} ellipsis={{ suffix: '' }}>
+                          {renderTitle}
+                        </Typography.Text>
+                      </Tooltip>
+                    );
+                  }}
                 />
               </div>
 
