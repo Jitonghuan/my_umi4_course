@@ -11,10 +11,11 @@ import { Tabs, Spin } from 'antd';
 import VCPermission from '@/components/vc-permission';
 import MatrixPageContent from '@/components/matrix-page-content';
 import { FilterCard } from '@/components/vc-page-content';
-import DetailContext, { ContextTypes } from './context';
+import DetailContext from './context';
 import { tabsConfig } from './tab-config';
 import { queryApps } from '../service';
 import { IProps } from './types';
+import { AppItemVO } from '../interfaces';
 import './index.less';
 
 const detailPath = '/matrix/application/detail';
@@ -29,7 +30,7 @@ const activeKeyMap: Record<string, any> = {
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
   const appId = location.query?.id;
-  const [appData, setAppData] = useState<ContextTypes['appData']>();
+  const [appData, setAppData] = useState<AppItemVO>();
 
   const tabActiveKey = useMemo(() => {
     const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];

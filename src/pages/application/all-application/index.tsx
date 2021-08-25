@@ -1,9 +1,6 @@
-/**
- * AllApplication
- * @description 全部应用页面
- * @author moting.nq
- * @create 2021-04-08 14:56
- */
+// 应用卡片列表
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/08/25 09:26
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { Radio, Button, Spin, Pagination } from 'antd';

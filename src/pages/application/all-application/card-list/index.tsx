@@ -10,7 +10,7 @@ import { history } from 'umi';
 import { Tag, Tooltip } from 'antd';
 import { Html5Outlined, CodeOutlined, UserOutlined } from '@ant-design/icons';
 import CardLayout from '@cffe/vc-b-card-layout';
-import { IProps } from './types';
+import { AppItemVO } from '../../interfaces';
 import './index.less';
 
 const cardCls = 'all-application-page__card';
@@ -25,7 +25,11 @@ const APP_TYPE_TAG: Record<string, [string, React.ReactNode]> = {
   backend: ['default', <CodeOutlined />],
 };
 
-const ApplicationCardList = (props: IProps) => {
+export interface IProps {
+  dataSource: AppItemVO[];
+}
+
+export default function ApplicationCardList(props: IProps) {
   const { dataSource } = props;
 
   return (
@@ -65,8 +69,4 @@ const ApplicationCardList = (props: IProps) => {
       ))}
     </CardLayout>
   );
-};
-
-ApplicationCardList.defaultProps = {};
-
-export default ApplicationCardList;
+}

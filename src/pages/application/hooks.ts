@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { getRequest } from '@/utils/request';
 import { queryBizData } from '@/layouts/basic-layout/service';
 import { queryAppsUrl, queryMyAppsUrl } from './service';
+import { AppItemVO } from './interfaces';
 
 // 获取应用分组选项
 export function useAppGroupOptions(categoryCode?: string): [any[], boolean] {
@@ -43,8 +44,8 @@ export function useAppListData(
   params: Record<string, any>,
   pageIndex = 1,
   pageSize = 20,
-): [any[], number, boolean, (extra?: any) => Promise<any>] {
-  const [data, setData] = useState<any[]>([]);
+): [AppItemVO[], number, boolean, (extra?: any) => Promise<any>] {
+  const [data, setData] = useState<AppItemVO[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 

@@ -1,9 +1,6 @@
-/**
- * ApplicationList
- * @description 应用列表
- * @author moting.nq
- * @create 2021-04-09 16:53
- */
+// 应用列表
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/08/25 09:23
 
 import React, { useMemo, useState, useCallback, useContext } from 'react';
 import { Button, message, Table } from 'antd';
@@ -16,6 +13,7 @@ import { createTableSchema } from './schema';
 import { deleteApp } from '../service';
 import { useAppListData } from '../hooks';
 import FilterHeader from '../_components/filter-header';
+import { AppItemVO } from '../interfaces';
 import './index.less';
 
 export default function ApplicationList() {
@@ -25,7 +23,7 @@ export default function ApplicationList() {
   const [searchParams, setSearchParams] = useState<any>();
   const [appListData, total, isLoading, loadAppListData] = useAppListData(searchParams, pageIndex, pageSize);
   const [createAppVisible, setCreateAppVisible] = useState(false);
-  const [curRecord, setCurRecord] = useState<any>();
+  const [curRecord, setCurRecord] = useState<AppItemVO>();
 
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
@@ -47,7 +45,7 @@ export default function ApplicationList() {
       categoryData,
       businessDataList,
     }) as any;
-  }, [categoryData, businessDataList]);
+  }, [categoryData, businessDataList, appListData]);
 
   return (
     <MatrixPageContent>
@@ -86,7 +84,7 @@ export default function ApplicationList() {
       </ContentCard>
 
       <ApplicationEditor
-        formValue={curRecord}
+        initData={curRecord}
         visible={createAppVisible}
         onClose={() => setCreateAppVisible(false)}
         onSubmit={() => {
