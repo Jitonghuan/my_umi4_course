@@ -27,10 +27,10 @@ export const caseDelete = addAPIPrefix('/qc/teststation/caseDelete');
 export const updateCase = addAPIPrefix('/qc/teststation/caseUpdate');
 
 /** POST 复制用例 */
-export const copyCases = addAPIPrefix('/qc/teststation/copyCases');
+export const copyCases = addAPIPrefix('/qc/teststation/caseCopy');
 
 /** POST 移动用例 */
-export const moveCases = addAPIPrefix('/qc/teststation/moveCases');
+export const moveCases = addAPIPrefix('/qc/teststation/caseMove');
 
 /** GET  查看指定用例信息 */
 export const getCaseInfo = addAPIPrefix('/qc/teststation/caseInfo');

@@ -4,6 +4,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList, caseDelete } from '../../service';
 import { priorityEnum } from '../../constant';
 import AddCaseDrawer from '../add-case-drawer';
+import OprateCaseDrawer from '../oprate-case-modal';
 import dayjs from 'dayjs';
 import './index.less';
 
@@ -16,6 +17,8 @@ export default function RightDetail(props: any) {
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [checkedCaseIds, setCheckedCaseIds] = useState<React.Key[]>([]);
+  const [oprateCaseModalVisible, setOprateCaseModalVisible] = useState<boolean>(false);
+  const [oprationType, setOprationType] = useState<string>();
   const [form] = Form.useForm();
 
   const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize) => {
@@ -59,6 +62,16 @@ export default function RightDetail(props: any) {
     void updateDatasource(1);
   };
 
+  const handleCopyCases = () => {
+    void setOprationType('copy');
+    void setOprateCaseModalVisible(true);
+  };
+
+  const handleMoveCases = () => {
+    void setOprationType('move');
+    void setOprateCaseModalVisible(true);
+  };
+
   return (
     <div className="test-workspace-test-case-right-detail">
       <div className="searchHeader">
@@ -90,10 +103,10 @@ export default function RightDetail(props: any) {
       <div className="detail-container">
         <div className="add-btn-wrapper">
           <Space>
-            <Button type="primary" ghost>
+            <Button type="primary" ghost onClick={handleCopyCases}>
               复制
             </Button>
-            <Button type="primary" ghost>
+            <Button type="primary" ghost onClick={handleMoveCases}>
               移动
             </Button>
           </Space>
@@ -138,6 +151,14 @@ export default function RightDetail(props: any) {
         setVisible={setDrawerVisible}
         updateCaseTable={updateDatasource}
         caseCateTreeData={caseCateTreeData}
+      />
+
+      <OprateCaseDrawer
+        visible={oprateCaseModalVisible}
+        setVisible={setOprateCaseModalVisible}
+        oprationType={oprationType as 'copy' | 'move'}
+        checkedCaseIds={checkedCaseIds}
+        setCheckedCaseIds={setCheckedCaseIds}
       />
     </div>
   );
