@@ -19,7 +19,11 @@ declare interface globalConfig {
   copyright: string;
 }
 
-declare type IOption = { label: string; value: string; children?: IOption[] };
+declare interface IOption<ValueType = string> extends Record<string, any> {
+  label: string;
+  value: ValueType;
+  children?: IOption<ValueType>[];
+}
 
 declare interface Window {
   FE_GLOBAL: globalConfig;

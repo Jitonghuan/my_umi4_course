@@ -2,7 +2,7 @@ import React from 'react';
 import { history } from 'umi';
 import { Popconfirm } from 'antd';
 import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
-import { ColumnProps } from '@cffe/vc-hulk-table';
+import type { ColumnProps } from '@cffe/vc-hulk-table';
 
 export type AppType = 'frontend' | 'backend';
 

@@ -6,13 +6,13 @@
  */
 
 import React, { useState, useEffect, useContext } from 'react';
-import { Descriptions, Button, Tag, Modal } from 'antd';
+import { Descriptions, Button, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import UpdateApplication from '@/pages/application/_components/create-application';
+import ApplicationEditor from '@/pages/application/_components/application-editor';
 import ModifyMember, { MemberTypes } from './modify-member';
 import DetailContext from '@/pages/application/application-detail/context';
-import { queryApps, queryAppMember } from '@/pages/application/service';
+import { queryAppMember } from '@/pages/application/service';
 import './index.less';
 
 const rootCls = 'overview-page';
@@ -113,12 +113,11 @@ export default function ApplicationOverview() {
         </Descriptions.Item>
       </Descriptions>
 
-      <UpdateApplication
-        formValue={appData as any}
+      <ApplicationEditor
+        initData={appData as any}
         visible={isModifyApp}
         onClose={() => setIsModifyApp(false)}
         onSubmit={() => {
-          // 保存成功后，关闭抽屉，重新请求应用数据
           queryAppData?.();
           setIsModifyApp(false);
           queryMemberData();
