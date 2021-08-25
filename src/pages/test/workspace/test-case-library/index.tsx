@@ -84,7 +84,7 @@ export default function Workspace(props: any) {
       <Button
         type="link"
         onClick={() => {
-          props.history.push(`/matrix/test/workspace/test-case?testCaseId=${record.id}`);
+          props.history.push(`/matrix/test/workspace/test-case?testCaseCateId=${record.id}`);
         }}
       >
         {name}
@@ -133,12 +133,14 @@ export default function Workspace(props: any) {
             onPressEnter={() => handleSearch()}
             onSearch={() => handleSearch()}
             style={{ width: 320 }}
+            placeholder="输入关键词搜索"
           />
           <Button type="primary" onClick={handleAddClick}>
             <PlusOutlined /> 新增用例库
           </Button>
         </div>
         <Table
+          className="test-case-library-table"
           dataSource={dataSource}
           loading={loading}
           pagination={{
@@ -175,7 +177,11 @@ export default function Workspace(props: any) {
         >
           <label className="inline-item">
             <span> 用例库名称：</span>
-            <Input value={addCaseCategoryName} onChange={(e) => setAddCaseCategoryName(e.target.value)} />
+            <Input
+              value={addCaseCategoryName}
+              onChange={(e) => setAddCaseCategoryName(e.target.value)}
+              placeholder="输入用例库名称"
+            />
           </label>
         </Modal>
 

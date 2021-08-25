@@ -305,6 +305,22 @@ export default [
         key: 'ticketAlarm',
         component: '@/pages/ticket/ticket-alarm',
       },
+      {
+        path: 'addTicket',
+        name: '新建工单',
+        key: 'addTicket',
+        component: '@/pages/ticket/addTicket',
+        //测试环境和正式环境暂不展示
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+      },
+      {
+        path: 'resourceApply',
+        name: '资源申请',
+        key: 'resourceApply',
+        component: '@/pages/ticket/resource-apply',
+        //测试环境和正式环境暂不展示
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+      },
     ],
   },
   {
@@ -415,37 +431,37 @@ export default [
       {
         path: 'workspace',
         name: '测试工作台',
-        key: 'workspace',
+        key: 'test-workspace',
         hideInMenu: process.env.BUILD_ENV === 'prod',
         routes: [
           {
             path: 'test-case-library',
             name: '测试用例库',
-            key: 'test-case-library',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/test-case-library',
           },
           {
             path: 'test-case',
             name: '测试用例库详情',
-            key: 'test-case-library',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/test-case',
           },
           {
             path: 'bug-manage',
             name: 'Bug管理',
-            key: 'bug-manage',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/bug-manage',
           },
           {
             path: 'test-plan',
             name: '测试计划',
-            key: 'test-plan',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/test-plan',
           },
           {
             path: 'plan-info',
             name: '计划详情',
-            key: 'plan-info',
+            key: 'test-workspace',
             component: '@/pages/test/workspace/plan-info',
           },
         ],

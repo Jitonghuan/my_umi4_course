@@ -53,10 +53,11 @@ export default function TaskEditor(props: TmplListProps) {
       templateName: initData?.templateName,
       tmplConfigurableItem: initData?.tmplConfigurableItem,
       appCategoryCode: initData?.appCategoryCode || '',
-      envCodes: initData?.envCodes || [],
+      envCodes: initData?.envCode || [],
       templateValue: initData?.templateValue,
     };
-    // console.log('获取到的初始化数据：', initValues.tmplConfigurableItem);
+    console.log('获取到的初始化数据：', initData?.envCode);
+    console.log('=-=-=-=-', initData);
     let arr = [];
     let jvm = '';
 
@@ -131,7 +132,7 @@ export default function TaskEditor(props: TmplListProps) {
   };
   //保存编辑模版
   const createTmpl = (value: any) => {
-    console.log('---00---', value.envCodes);
+    console.log('------', value.envCodes);
     if (Array.isArray(value?.envCodes)) {
       let envCodesArry = value?.envCodes;
       setEnvCodesArry(envCodesArry);
@@ -144,8 +145,6 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    let envCodesArry = [];
-    envCodesArry.push(value.envCodes);
     putRequest(APIS.update, {
       data: {
         templateName: value.templateName,
@@ -160,7 +159,8 @@ export default function TaskEditor(props: TmplListProps) {
     }).then((resp: any) => {
       if (resp.success) {
         const datas = resp.data || [];
-        setEnvDatas(datas.envCodes);
+        // setEnvDatas(datas.envCode);
+        // console.log('6666667',datas)
         history.push({
           pathname: 'tmpl-list',
         });

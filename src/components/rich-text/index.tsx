@@ -1,14 +1,77 @@
 import React, { useEffect, useMemo } from 'react';
-import Editor, { Plugin } from '@cffe/sona-editor';
+import Editor, { Plugin, EditorPlugin } from '@cffe/sona-editor';
 import { createSona } from '@cffe/sona';
 import './index.less';
+import { isArray } from 'lodash';
 
-const plugins: any[] = [Plugin.AlignPlugin];
+const {
+  ExternalPlugin,
+  OpHistoryPlugin,
+  TextPlugin,
+  LeafPlugin,
+  FontPlugin,
+  AlignPlugin,
+  ImgPlugin,
+  TablePlugin,
+  RightOpPlugin,
+  ColorPlugin,
+  ListPlugin,
+  LinkPlugin,
+  CustomTabkeyPlugin,
+  DragPlugin,
+  ResetStylePlugin,
+} = Plugin;
+
+[
+  ExternalPlugin,
+  OpHistoryPlugin,
+  TextPlugin,
+  LeafPlugin,
+  FontPlugin,
+  AlignPlugin,
+  ImgPlugin,
+  TablePlugin,
+  RightOpPlugin,
+  ColorPlugin,
+  ListPlugin,
+  LinkPlugin,
+  CustomTabkeyPlugin,
+  DragPlugin,
+  ResetStylePlugin,
+].forEach((plugin) => {
+  if (!plugin.toolbarConfig) return;
+  // @ts-ignore
+  if (Array.isArray(plugin.toolbarConfig)) {
+    plugin.toolbarConfig.forEach((config) => {
+      if (['undo', 'redo', 'preview', 'save', 'unorder-list', 'order-list'].includes(config.key)) config.align = 'left';
+    });
+  } else {
+    plugin.toolbarConfig.align = 'left';
+  }
+});
+
+const plugins: EditorPlugin[] = [
+  ExternalPlugin,
+  OpHistoryPlugin,
+  TextPlugin,
+  LeafPlugin,
+  FontPlugin,
+  AlignPlugin,
+  ImgPlugin,
+  TablePlugin,
+  RightOpPlugin,
+  ColorPlugin,
+  ListPlugin,
+  LinkPlugin,
+  CustomTabkeyPlugin,
+  DragPlugin,
+  ResetStylePlugin,
+];
+
+const toolbarConfig: any[] = plugins.filter((plugin) => plugin?.toolbarConfig).map((plugin) => plugin.toolbarConfig);
 
 export default function CaseWorkspace(props: any) {
-  const { width = '100%', height = '240px', onChange } = props;
-
-  const sona = useMemo(() => createSona(), []);
+  const { className, width = '100%', height = '240px', onChange, sona, schema, ...otherProps } = props;
 
   // TODO:获取editor里面的值
   // TODO:回填数据
@@ -20,10 +83,15 @@ export default function CaseWorkspace(props: any) {
   return (
     <Editor
       sona={sona}
+      schema={schema}
+      toolbarLayout="vertical-start"
+      plugins={plugins}
+      toolbarConfig={toolbarConfig}
       style={{ width: width, height: height }}
-      className="matrix-rich-editor-wrapper"
+      className={'matrix-rich-editor-wrapper ' + className}
       toolbarClassName="matrix-rich-editor-toolbar"
       editorClassName="matrix-rich-editor"
+      {...otherProps}
     />
   );
 }
