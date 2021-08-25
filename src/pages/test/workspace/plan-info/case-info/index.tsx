@@ -27,8 +27,14 @@ export default function UserCaseInfoExec(props: any) {
   const [checkedBugs, setCheckedBugs] = useState<Record<string, React.Key[]>>({});
 
   useEffect(() => {
-    if (curCase && curCase.status !== undefined) {
-      void setCaseStatus(curCase.status.toString());
+    if (curCase) {
+      curCase.status !== undefined && void setCaseStatus(curCase.status.toString());
+
+      try {
+        curCase.executeNote?.length > 0 && void setSchema(JSON.parse(curCase.executeNote));
+      } catch (e) {}
+
+      console.log(curCase);
     }
   }, [curCase]);
 
