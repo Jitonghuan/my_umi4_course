@@ -125,6 +125,20 @@ export default function UserCaseInfoExec(props: any) {
     void message.success('关联bug成功');
   };
 
+  const handleDeleteAssociationBug = async (id: React.Key) => {
+    const nextAssociationBugs = associationBug.filter((bug) => bug.id !== id);
+    void setAssociationBug(nextAssociationBugs);
+    void (await postRequest(relatedBug, {
+      data: {
+        phaseId: phaseId,
+        caseId: curCase.caseInfo.id,
+        bugs: nextAssociationBugs.map((bug) => bug.id),
+      },
+    }));
+    void setCheckedBugs([]);
+    void message.success('删除bug成功');
+  };
+
   return (
     <div className={className}>
       <div className="case-header">
@@ -211,7 +225,14 @@ export default function UserCaseInfoExec(props: any) {
                   dataIndex="status"
                   render={(status) => <Select value={status.toString()} options={bugStatusEnum}></Select>}
                 />
-                <Table.Column title="操作" render={() => <Button type="link">删除</Button>} />
+                <Table.Column
+                  title="操作"
+                  render={(record: any) => (
+                    <Button type="link" onClick={() => handleDeleteAssociationBug(record.id)}>
+                      删除
+                    </Button>
+                  )}
+                />
               </Table>
             </Tabs.TabPane>
             <Tabs.TabPane tab="活动日志" key="2">
