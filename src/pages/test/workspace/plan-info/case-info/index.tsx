@@ -6,7 +6,7 @@ import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
 
@@ -30,6 +30,8 @@ export default function UserCaseInfoExec(props: any) {
   useEffect(() => {
     if (curCase) {
       curCase.status !== undefined && void setCaseStatus(curCase.status.toString());
+
+      void setAssociationBug(curCase.bugs);
 
       const emptySchema = [
         {
@@ -139,6 +141,20 @@ export default function UserCaseInfoExec(props: any) {
     void message.success('删除bug成功');
   };
 
+  const handleBugStatusChange = (bugInfo: any, status: string) => {
+    const loadEnd = message.loading('正在修改Bug状态');
+    postRequest(modifyBug, {
+      data: {
+        ...bugInfo,
+        status,
+      },
+    }).then((res) => {
+      void loadEnd();
+      void message.success('修改Bug状态成功');
+      void updateCurCase();
+    });
+  };
+
   return (
     <div className={className}>
       <div className="case-header">
@@ -223,7 +239,13 @@ export default function UserCaseInfoExec(props: any) {
                 <Table.Column
                   title="状态"
                   dataIndex="status"
-                  render={(status) => <Select value={status.toString()} options={bugStatusEnum}></Select>}
+                  render={(status, record: any) => (
+                    <Select
+                      value={status.toString()}
+                      options={bugStatusEnum}
+                      onChange={() => handleBugStatusChange(record, status)}
+                    ></Select>
+                  )}
                 />
                 <Table.Column
                   title="操作"
