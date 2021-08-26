@@ -3,6 +3,11 @@ import Editor, { Plugin, EditorPlugin } from '@cffe/sona-editor';
 import { createSona } from '@cffe/sona';
 import './index.less';
 import { isArray } from 'lodash';
+import { addAPIPrefix } from '@/utils';
+import { postRequest } from '@/utils/request';
+
+/** POST 图片/文件上传 */
+export const uploadFile = addAPIPrefix('/qc/teststation/uploadFile');
 
 const {
   ExternalPlugin,
@@ -49,6 +54,46 @@ const {
     plugin.toolbarConfig.align = 'left';
   }
 });
+
+// @ts-ignore
+ImgPlugin.exportApi.insertImg = function insertImg(editor: any) {
+  var input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', '.jpg,.jpeg,.gif,.png,.webp');
+  document.body.appendChild(input);
+  var reader = new FileReader();
+
+  input.onchange = function () {
+    if (input.files) {
+      const fd = new FormData();
+      fd.append('file', input.files[0]);
+
+      postRequest(uploadFile, { data: fd }).then((res) => {
+        var url = res.data.url;
+        var nodes = [
+          {
+            type: 'img',
+            props: {
+              url: url,
+            },
+            children: [
+              {
+                text: '',
+              },
+            ],
+          },
+          {
+            text: '',
+          },
+        ];
+        editor.insertFragment(nodes);
+      });
+    }
+  };
+
+  input.click();
+  document.body.removeChild(input);
+};
 
 const plugins: EditorPlugin[] = [
   ExternalPlugin,
