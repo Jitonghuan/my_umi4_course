@@ -77,7 +77,7 @@ export default function UserCaseInfoExec(props: any) {
   };
 
   const handleCaseStatusChange = async (caseStatus: string) => {
-    void (await handleCaseStatusSubmit(caseStatus));
+    void (await handleCaseStatusSubmit(caseStatus, JSON.stringify(sona.schema)));
     void setCaseStatus(caseStatus);
     void message.success('用例状态修改成功');
   };
