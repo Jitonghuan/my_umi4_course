@@ -15,7 +15,7 @@ moment.locale('zh-cn');
 const { Text } = Typography;
 
 export default function UserCaseInfoExec(props: any) {
-  const { setAddBugDrawerVisible, curCase, phaseId, testCaseTreeLeafs, setCurCaseId, className } = props;
+  const { setAddBugDrawerVisible, curCase, phaseId, testCaseTreeLeafs, setCurCaseId, className, updateCurCase } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [associationBug, setAssociationBug] = useState<any[]>([]);
@@ -51,8 +51,6 @@ export default function UserCaseInfoExec(props: any) {
       try {
         curCase.caseInfo?.comment > 0 && void setCaseNote(JSON.parse(curCase.caseInfo.comment));
       } catch (e) {}
-
-      console.log(curCase);
     }
   }, [curCase]);
 
@@ -74,6 +72,7 @@ export default function UserCaseInfoExec(props: any) {
     if (!caseStatus) return;
     const loadEnd = message.loading('状态切换中');
     void (await changeCaseStatus(phaseId, curCase.caseInfo.id, caseStatus, executeNote));
+    void updateCurCase();
     void loadEnd();
   };
 
@@ -216,9 +215,11 @@ export default function UserCaseInfoExec(props: any) {
               {curCase?.records?.length ? (
                 curCase.records.map((item: any) => {
                   return (
-                    <Row>
+                    <Row style={{ width: '100%', overflow: 'hidden' }}>
                       <Col span={17}>
-                        <Text>{item.executeNote}</Text>
+                        <Text>
+                          {item.createUser} 修改了用例，状态为：{caseStatusEnum[item.status].label}
+                        </Text>
                       </Col>
                       <Col span={7} className="activity-log">
                         <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>

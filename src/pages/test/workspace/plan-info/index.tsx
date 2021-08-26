@@ -70,8 +70,7 @@ export default function PlanInfo(props: any) {
     });
   }, [activeKey]);
 
-  useEffect(() => {
-    if (!curCaseId) return;
+  const updateCurCase = () => {
     getRequest(getPhaseCaseDetail, {
       data: {
         phaseId: activeKey,
@@ -80,6 +79,11 @@ export default function PlanInfo(props: any) {
     }).then((res) => {
       void setCurCase(res.data);
     });
+  };
+
+  useEffect(() => {
+    if (!curCaseId) return;
+    void updateCurCase();
   }, [curCaseId]);
 
   useEffect(() => {
@@ -215,6 +219,7 @@ export default function PlanInfo(props: any) {
                     setCurCaseId={setCurCaseId}
                     phaseId={activeKey}
                     curCase={curCase}
+                    updateCurCase={updateCurCase}
                   />
                 ) : (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有选择测试用例" />
