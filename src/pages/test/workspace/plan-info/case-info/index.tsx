@@ -143,10 +143,16 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleBugStatusChange = (bugInfo: any, status: string) => {
     const loadEnd = message.loading('正在修改Bug状态');
+    let relatedCases = [];
+    try {
+      relatedCases = JSON.parse(bugInfo.relatedCases);
+    } catch (e) {}
     postRequest(modifyBug, {
       data: {
         ...bugInfo,
         status,
+        desc: bugInfo.description,
+        relatedCases: relatedCases,
       },
     }).then((res) => {
       void loadEnd();
@@ -243,7 +249,7 @@ export default function UserCaseInfoExec(props: any) {
                     <Select
                       value={status.toString()}
                       options={bugStatusEnum}
-                      onChange={() => handleBugStatusChange(record, status)}
+                      onChange={(value) => handleBugStatusChange(record, value)}
                     ></Select>
                   )}
                 />
