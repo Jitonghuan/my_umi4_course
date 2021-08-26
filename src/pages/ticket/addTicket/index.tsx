@@ -29,45 +29,45 @@ export default function addTicket() {
       </FilterCard>
       <ContentCard className="addTicket">
         <div className="ticketApply">
-          <Form>
-            <Form.Item name="applyType" label="类型：">
+          <Form style={{ marginTop: '6%', marginBottom: '8%', marginRight: '2%' }} size="large">
+            <Form.Item name="applyType" label="类型：" labelCol={{ span: 8 }}>
               <Radio.Group value={value}>
                 <Radio value={1}>资源申请</Radio>
                 <Radio value={2}>运维权限申请</Radio>
               </Radio.Group>
             </Form.Item>
-            <Form.Item name="applyItem" label="申请项：">
-              <Select showSearch allowClear options={applyOptions}></Select>
+            <Form.Item name="applyItem" label="申请项：" labelCol={{ span: 8 }}>
+              <Select showSearch allowClear options={applyOptions} style={{ width: '240px' }}></Select>
             </Form.Item>
-            <Form.Item name="ascription" label="归属：">
-              <Select showSearch allowClear options={ascription}></Select>
+            <Form.Item name="ascription" label="归属：" labelCol={{ span: 8 }}>
+              <Select showSearch allowClear options={ascription} style={{ width: '240px' }}></Select>
             </Form.Item>
-            <Form.Item name="businessLine" label="业务线：">
-              <Select showSearch allowClear options={businessLine}></Select>
+            <Form.Item name="businessLine" label="业务线：" labelCol={{ span: 8 }}>
+              <Select showSearch allowClear options={businessLine} style={{ width: '240px' }}></Select>
             </Form.Item>
-            <Form.Item name="instanceName" label="实例名：">
-              <Input placeholder="格式：应用名+序列号，如：sso-001"></Input>
+            <Form.Item name="instanceName" label="实例名：" labelCol={{ span: 8 }}>
+              <Input placeholder="格式：应用名+序列号，如：sso-001" style={{ width: '240px' }}></Input>
             </Form.Item>
-            <Form.Item name="number" label="数量：">
-              <Input placeholder="请输入数量"></Input>
+            <Form.Item name="number" label="数量：" labelCol={{ span: 8 }}>
+              <Input placeholder="请输入数量" style={{ width: '240px' }}></Input>
             </Form.Item>
-            <Form.Item name="specifications" label="规格：">
-              <Select showSearch allowClear options={businessLine} />
+            <Form.Item name="specifications" label="规格：" labelCol={{ span: 8 }}>
+              <Select showSearch allowClear options={businessLine} style={{ width: '240px' }} />
             </Form.Item>
-            <Form.Item name="diskSize" label="磁盘：">
-              <Select showSearch allowClear options={diskSize}></Select>
+            <Form.Item name="diskSize" label="磁盘：" labelCol={{ span: 8 }}>
+              <Select showSearch allowClear options={diskSize} style={{ width: '240px' }}></Select>
             </Form.Item>
-            <Form.Item name="remarks" label="备注：">
-              <Input></Input>
+            <Form.Item name="remarks" label="备注：" labelCol={{ span: 8 }}>
+              <Input.TextArea style={{ width: '240px' }}></Input.TextArea>
             </Form.Item>
-            <Form.Item name="application" label="申请表">
+            <Form.Item name="application" label="申请表" labelCol={{ span: 8 }}>
               <Upload>
                 <Button icon={<UploadOutlined />}>上传文件</Button>
               </Upload>
               <span>支持扩展名：.doc .pdf</span>
             </Form.Item>
             <Form.Item>
-              <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
+              <Space size="small" style={{ marginTop: '50px', float: 'right', marginRight: '3%' }}>
                 <Button type="ghost" htmlType="reset">
                   重置
                 </Button>
