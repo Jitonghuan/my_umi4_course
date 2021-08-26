@@ -30,10 +30,18 @@ export default function ClusterTable(props: ChartCaseListProps) {
     {
       title: 'A集群',
       dataIndex: 'clusterA',
+      sorter: {
+        compare: (a: any, b: any) => a.clusterA - b.clusterA,
+        // multiple: 1,
+      },
     },
     {
       title: 'B集群',
       dataIndex: 'clusterB',
+      sorter: {
+        compare: (a: any, b: any) => a.clusterB - b.clusterB,
+        // multiple: 2,
+      },
     },
   ];
   const countList = [
@@ -84,7 +92,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
       <header>
         <h3>A/B集群流量表</h3>
       </header>
-      <div>
+      <div className="clusterTable">
         <Table bordered columns={columns} dataSource={countList} pagination={false} scroll={{ y: tableHeight }} />
       </div>
     </section>
