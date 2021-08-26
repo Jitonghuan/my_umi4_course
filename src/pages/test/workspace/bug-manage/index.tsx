@@ -38,6 +38,7 @@ export default function BugManage(props: any) {
     void setPageIndex(pageIndex);
     void setPageSize(pageSize);
     void setBugTotal(total);
+    console.log('更新了', res);
   };
 
   useEffect(() => {

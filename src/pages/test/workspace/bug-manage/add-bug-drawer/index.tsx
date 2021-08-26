@@ -36,7 +36,8 @@ export default function BugManage(props: any) {
       void finishLoading();
     }));
     void message.success(bugInfo ? '修改成功' : '新增成功');
-    void updateBugList && updateBugList();
+
+    void (updateBugList && updateBugList());
 
     // 保存后清空form
     void form.resetFields();
@@ -55,6 +56,7 @@ export default function BugManage(props: any) {
   // 如果是编辑，则回填信息
   useEffect(() => {
     if (visible && bugInfo) {
+      bugInfo.status = bugInfo?.status.toString();
       void form.setFieldsValue(bugInfo);
       void setRelatedCases(bugInfo.relatedCases);
       try {
