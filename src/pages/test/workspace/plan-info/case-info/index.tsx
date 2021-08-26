@@ -70,10 +70,10 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleCaseStatusSubmit = async (caseStatus: string, executeNote?: string) => {
     if (!caseStatus) return;
-    const loadEnd = message.loading('状态切换中');
+    // const loadEnd = message.loading('状态切换中');
     void (await changeCaseStatus(phaseId, curCase.caseInfo.id, caseStatus, executeNote));
     void updateCurCase();
-    void loadEnd();
+    // void loadEnd();
   };
 
   const handleCaseStatusChange = async (caseStatus: string) => {
@@ -218,7 +218,7 @@ export default function UserCaseInfoExec(props: any) {
                     <Row style={{ width: '100%', overflow: 'hidden' }}>
                       <Col span={17}>
                         <Text>
-                          {item.createUser} 修改了用例，状态为：{caseStatusEnum[item.status].label}
+                          {item.createUser} 执行了用例，状态为：{caseStatusEnum[item.status].label}
                         </Text>
                       </Col>
                       <Col span={7} className="activity-log">

@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import Editor, { Plugin, EditorPlugin } from '@cffe/sona-editor';
-import { createSona } from '@cffe/sona';
+// import { createSona } from '@cffe/sona';
 import './index.less';
-import { isArray } from 'lodash';
 import { addAPIPrefix } from '@/utils';
 import { postRequest } from '@/utils/request';
 
@@ -57,11 +56,10 @@ const {
 
 // @ts-ignore
 ImgPlugin.exportApi.insertImg = function insertImg(editor: any) {
-  var input = document.createElement('input');
+  const input = document.createElement('input');
   input.setAttribute('type', 'file');
   input.setAttribute('accept', '.jpg,.jpeg,.gif,.png,.webp');
   document.body.appendChild(input);
-  var reader = new FileReader();
 
   input.onchange = function () {
     if (input.files) {
@@ -69,8 +67,8 @@ ImgPlugin.exportApi.insertImg = function insertImg(editor: any) {
       fd.append('file', input.files[0]);
 
       postRequest(uploadFile, { data: fd }).then((res) => {
-        var url = res.data.url;
-        var nodes = [
+        const url = res.data.url;
+        const nodes = [
           {
             type: 'img',
             props: {
@@ -95,22 +93,24 @@ ImgPlugin.exportApi.insertImg = function insertImg(editor: any) {
   document.body.removeChild(input);
 };
 
+RightOpPlugin.toolbarConfig = [];
+
 const plugins: EditorPlugin[] = [
-  ExternalPlugin,
-  OpHistoryPlugin,
-  TextPlugin,
-  LeafPlugin,
-  FontPlugin,
-  AlignPlugin,
   ImgPlugin,
   TablePlugin,
-  RightOpPlugin,
+  TextPlugin,
+  ExternalPlugin,
+  OpHistoryPlugin,
+  LeafPlugin,
+  AlignPlugin,
   ColorPlugin,
   ListPlugin,
   LinkPlugin,
-  CustomTabkeyPlugin,
   DragPlugin,
+  CustomTabkeyPlugin,
+  FontPlugin,
   ResetStylePlugin,
+  RightOpPlugin,
 ];
 
 const toolbarConfig: any[] = plugins.filter((plugin) => plugin?.toolbarConfig).map((plugin) => plugin.toolbarConfig);
@@ -118,12 +118,7 @@ const toolbarConfig: any[] = plugins.filter((plugin) => plugin?.toolbarConfig).m
 export default function CaseWorkspace(props: any) {
   const { className, width = '100%', height = '240px', onChange, sona, schema, ...otherProps } = props;
 
-  // TODO:获取editor里面的值
-  // TODO:回填数据
-  // TODO:图片上传逻辑 (加个Plugin就行)
-  // TODO:去掉预览、保存按钮 （Plugin不传就行）
   // TODO:图片、表格拉平出来 （Plugin）
-  // TODO:添加样式清除按钮 v
   // TODO:保持光标在视野内 （监听键盘按下事件即可，好像事件有返回光标信息）
   return (
     <Editor
