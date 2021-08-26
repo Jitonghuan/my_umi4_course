@@ -22,7 +22,6 @@ export default function LeftTree(props: any) {
     setCateId,
     expandedKeys,
     setExpandedKeys,
-    updateLeftTree,
   } = props;
   const [keyword, setKeyword] = useState<string>('');
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
@@ -117,7 +116,7 @@ export default function LeftTree(props: any) {
           showIcon={false}
           titleRender={(node) => {
             return (
-              <div className="node-render">
+              <div className="node-render custom-tree-node">
                 <span>{node.title}</span>
                 <div className="oprate-btn-container">
                   <Button
