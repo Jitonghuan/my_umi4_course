@@ -24,7 +24,7 @@ export default function UserCaseInfoExec(props: any) {
   const [schema, setSchema] = useState();
   const sona = useMemo(() => createSona(), []);
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
-  const [checkedBugs, setCheckedBugs] = useState<Record<string, React.Key[]>>({});
+  const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
 
   useEffect(() => {
@@ -111,14 +111,17 @@ export default function UserCaseInfoExec(props: any) {
   };
 
   const mergeCheckedBugs2AssociationBugs = async () => {
-    void setAssociationBug([...new Set([...associationBug, ...Object.values(checkedBugs).flat(2)])]);
+    const preBugIds = associationBug.map((bug) => bug.id);
+    const curAssociationBugs = [...associationBug, ...checkedBugs.filter((bug) => !preBugIds.includes(bug.id))];
+    void setAssociationBug(curAssociationBugs);
     void (await postRequest(relatedBug, {
       data: {
         phaseId: phaseId,
         caseId: curCase.caseInfo.id,
-        bugs: [...new Set([...associationBug, ...Object.values(checkedBugs).flat(2)])],
+        bugs: curAssociationBugs.map((bug) => bug.id),
       },
     }));
+    void setCheckedBugs([]);
     void message.success('关联bug成功');
   };
 

@@ -28,13 +28,13 @@ const {
 
 [
   ExternalPlugin,
+  ImgPlugin,
+  TablePlugin,
+  AlignPlugin,
   OpHistoryPlugin,
   TextPlugin,
   LeafPlugin,
   FontPlugin,
-  AlignPlugin,
-  ImgPlugin,
-  TablePlugin,
   RightOpPlugin,
   ColorPlugin,
   ListPlugin,
