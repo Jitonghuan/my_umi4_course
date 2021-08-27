@@ -93,6 +93,32 @@ ImgPlugin.exportApi.insertImg = function insertImg(editor: any) {
   document.body.removeChild(input);
 };
 
+// @ts-ignore
+ImgPlugin.exportApi.insertPasteImg = function insertImg(editor: any, file: any) {
+  const fd = new FormData();
+  fd.append('file', file);
+  postRequest(uploadFile, { data: fd }).then((res) => {
+    const url = res.data.url;
+    const nodes = [
+      {
+        type: 'img',
+        props: {
+          url: url,
+        },
+        children: [
+          {
+            text: '',
+          },
+        ],
+      },
+      {
+        text: '',
+      },
+    ];
+    editor.insertFragment(nodes);
+  });
+};
+
 RightOpPlugin.toolbarConfig = [];
 
 const plugins: EditorPlugin[] = [
@@ -126,7 +152,8 @@ export default function CaseWorkspace(props: any) {
       schema={schema}
       toolbarLayout="vertical-start"
       plugins={plugins}
-      toolbarConfig={!readOnly ? toolbarConfig : []}
+      toolbarConfig={toolbarConfig}
+      hiddenToolbar={readOnly}
       style={{ width: width, height: height }}
       className={'matrix-rich-editor-wrapper ' + className}
       toolbarClassName="matrix-rich-editor-toolbar"

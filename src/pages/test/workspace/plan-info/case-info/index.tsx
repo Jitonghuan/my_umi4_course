@@ -6,7 +6,7 @@ import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug, modifyBug } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug, addBug } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
 
@@ -171,6 +171,28 @@ export default function UserCaseInfoExec(props: any) {
     });
   };
 
+  const handleSmartSubmit = async () => {
+    const finishLoading = message.loading('正在提交Bug');
+    const requestParams = {
+      name: '前端埋点ww--不符合预期结果',
+      business: 4,
+      priority: 1,
+      bugType: 0,
+      onlineBug: 0,
+      relatedCases: [855],
+      desc: '[{"type":"paragraph","children":[{"text":"wwww"}]}]',
+      agent: 'jidan.wdd',
+      status: '0',
+      createUser: userInfo.userName,
+    };
+    void (await postRequest(addBug, { data: requestParams }).catch(() => {
+      void finishLoading();
+    }));
+    void finishLoading();
+    void updateCurCase();
+    void message.success('一键提交成功');
+  };
+
   return (
     <div className={className}>
       <div className="case-header">
@@ -208,7 +230,7 @@ export default function UserCaseInfoExec(props: any) {
         </Table>
 
         <div className="case-prop-title mt-12">用例备注:</div>
-        <RichText readOnly={execNoteReadOnly} schema={caseNote} />
+        <RichText readOnly={true} schema={caseNote} />
 
         <div className="case-prop-title mt-12">执行备注:</div>
         <div className="executeNote">
@@ -242,7 +264,7 @@ export default function UserCaseInfoExec(props: any) {
                 <Button type="primary" ghost onClick={() => setAddBugDrawerVisible(true)}>
                   新增Bug
                 </Button>
-                <Button type="primary" ghost disabled>
+                <Button type="primary" ghost disabled onClick={handleSmartSubmit}>
                   一键提交
                 </Button>
               </Space>
