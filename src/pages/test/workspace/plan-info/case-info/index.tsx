@@ -277,7 +277,7 @@ export default function UserCaseInfoExec(props: any) {
               </Space>
             }
           >
-            <Tabs.TabPane tab="关联Bug()" key="1">
+            <Tabs.TabPane tab="关联Bug" key="1">
               <Table dataSource={associationBug}>
                 <Table.Column title="ID" dataIndex="id" />
                 <Table.Column title="标题" dataIndex="name" />
