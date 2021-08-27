@@ -11,7 +11,7 @@ import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import DeployModal from './deploy-modal';
 import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature, downloadImage } from '@/pages/application/service';
 import { IProps, Status } from './types';
-import { getRequest } from '@/utils/request';
+import { stringify } from 'qs';
 
 const { Step } = Steps;
 const { confirm } = Modal;
@@ -52,17 +52,11 @@ export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps
   }, [deployInfo]);
   const envsArry = [];
   envsArry.push(deployInfo.envs);
-  const downloadImages = () => {
-    setImageLoading(true);
-    getRequest(downloadImage, { data: { id: deployInfo.id } })
-      .then((res: any) => {
-        if (res.sucess) {
-          message.success('下载镜像成功');
-        }
-      })
-      .finally(() => {
-        setImageLoading(false);
-      });
+  // export const getExportPublishFunctionLink = (params: any) => {
+  //   return `${exportPublishFunctionUrl}?${stringify(params)}`;
+  // };
+  const downloadImages = (id: number) => {
+    return `${downloadImage}?id=${id}`;
   };
   return (
     <>
@@ -199,7 +193,7 @@ export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps
                   item == 'zs-prd';
                 }) && (
                   <Spin spinning={imageLoading}>
-                    <Button style={{ marginTop: 4 }} onClick={downloadImages}>
+                    <Button download style={{ marginTop: 4 }} target="_blank" href={downloadImages(deployInfo.id)}>
                       下载镜像
                     </Button>
                   </Spin>

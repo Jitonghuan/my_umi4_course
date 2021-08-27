@@ -155,10 +155,17 @@ export default function PublishDetail(props: IProps) {
     }
     return (envDataList as any).find((v: any) => v.envCode === envs)?.envName;
   }, [envDataList, deployInfo]);
-
+  //离线部署
+  const uploadImage = () => {};
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
+        {envTypeCode === 'prod' && (
+          <Button type="primary" onClick={uploadImage}>
+            离线部署
+          </Button>
+        )}
+
         {envTypeCode === 'prod' ? (
           <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
             发布回滚
