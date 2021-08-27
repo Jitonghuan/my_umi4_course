@@ -1,10 +1,10 @@
 import React from 'react';
 import {
-  CheckCircleFilled,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ClockCircleOutlined,
+  RightCircleOutlined,
   SyncOutlined,
-  CloseCircleFilled,
-  ClockCircleFilled,
-  DoubleRightOutlined,
 } from '@ant-design/icons';
 
 export const bugStatusEnum = ['新建', '修复中', '已拒绝', '待验证', '重复打开', '已关闭', '延期解决'].map(
@@ -40,9 +40,9 @@ export const caseStatusEnum = ['待执行', '执行通过', '执行失败', '阻
   label: item,
 }));
 export const caseStatusTagEnum = [
-  { label: '待执行', color: '#5F677A', icon: <ClockCircleFilled /> },
-  { label: '执行通过', color: '#439D75', icon: <CheckCircleFilled /> },
-  { label: '执行失败', color: '#CC4631', icon: <CloseCircleFilled /> },
-  { label: '阻塞', color: '#FECD3A', icon: <SyncOutlined spin /> },
-  { label: '跳过', color: '#6C82AA', icon: <DoubleRightOutlined /> },
+  { label: '待执行', color: '#5F677A', icon: <ClockCircleOutlined /> },
+  { label: '执行通过', color: '#439D75', icon: <CheckCircleOutlined /> },
+  { label: '执行失败', color: '#CC4631', icon: <CloseCircleOutlined /> },
+  { label: '阻塞', color: '#FECD3A', icon: <SyncOutlined /> },
+  { label: '跳过', color: '#6C82AA', icon: <RightCircleOutlined /> },
 ];
