@@ -12,22 +12,22 @@ import './index.less';
 const { TabPane } = Tabs;
 
 export default function RightDetail(props: any) {
-  const { visible, setVisible, updateCaseTable, caseId, cateId, caseCateTreeData } = props;
+  const { visible, setVisible, updateCaseTable, caseId, cateId } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
   const [stepContent, setStepContent] = useState<string | string[]>('');
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
-  // const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [descType, setDescType] = useState('1');
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
-  // useEffect(() => {
-  //   getRequest(getCategoryList).then((res) => {
-  //     setCategories(res.data.dataSource);
-  //   });
-  // }, []);
+  useEffect(() => {
+    getRequest(getCategoryList).then((res) => {
+      setCategories(res.data.dataSource);
+    });
+  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -112,12 +112,11 @@ export default function RightDetail(props: any) {
           <Input placeholder="请输入标题" />
         </Form.Item>
         <Form.Item label="所属:" name="categoryId">
-          <TreeSelect treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
-          {/* <Select>
+          <Select>
             {categories.map((cate) => (
               <Select.Option value={cate.id}>{cate.categoryName}</Select.Option>
             ))}
-          </Select> */}
+          </Select>
         </Form.Item>
         <Form.Item label="优先级:" name="priority">
           <Select>
