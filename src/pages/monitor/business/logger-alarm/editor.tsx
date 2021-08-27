@@ -7,7 +7,6 @@ import { Form, Drawer, Input, Select, Button, message, Radio, InputNumber, TimeP
 import { postRequest, putRequest } from '@/utils/request';
 import moment from 'moment';
 import * as APIS from './service';
-import { EditorMode } from './interface';
 import {
   useAppOptions,
   useEnvOptions,

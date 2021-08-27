@@ -8,7 +8,7 @@ import useRequest from '@/utils/useRequest';
 import usePublicData from './usePublicData';
 import DetailModal from '@/components/detail-modal';
 import { queryPrometheusList, deletePrometheus } from '../../service';
-import { EditorMode, PromitheusItemProps } from '../interfaces';
+import { PromitheusItemProps } from '../interfaces';
 import PromitheusEditor from '../_components/prometheus-editor';
 import './index.less';
 

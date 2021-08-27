@@ -57,7 +57,7 @@ export default function ApplicationDetail(props: IProps) {
       if (key === 'secondPartyPkg') {
         return appData.isContainClient === 1;
       }
-      if (key === 'monitor' || key === 'AppParameters') {
+      if (['monitor', 'AppParameters', 'deployInfo'].includes(key)) {
         return isBackendAndNotClient;
       }
 

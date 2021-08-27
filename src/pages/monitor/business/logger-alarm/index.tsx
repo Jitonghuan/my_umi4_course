@@ -9,7 +9,6 @@ import { getRequest, delRequest, putRequest } from '@/utils/request';
 import DetailModal from '@/components/detail-modal';
 import * as APIS from './service';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
-import { EditorMode } from './interface';
 import AlarmEditor from './editor';
 import './index.less';
 
