@@ -197,7 +197,9 @@ export default function UserCaseInfoExec(props: any) {
     <div className={className}>
       <div className="case-header">
         <div className="title-col">
-          <span className="case-title">{curCase?.caseInfo?.title}</span>
+          <span className="case-title">
+            #{curCase?.caseInfo?.id} {curCase?.caseInfo?.title}
+          </span>
           <Select
             className={
               'w-100 ml-auto ' + ['beExecuted', 'executeSuccess', 'executeFailure', 'block', 'pass'][+(caseStatus || 0)]
