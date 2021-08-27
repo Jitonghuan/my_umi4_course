@@ -68,8 +68,6 @@ export default function BasicLayout(props: IUmiRrops) {
     }
   }, []);
 
-  console.log('>>>>> ', userInfo);
-
   return (
     <ConfigProvider locale={zhCN}>
       <FeContext.Provider

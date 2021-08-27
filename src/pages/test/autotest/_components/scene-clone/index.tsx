@@ -8,7 +8,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from '../../service';
 import { useCaseListByScene } from '../../hooks';
-import { TreeNode, SelectOptions } from '../../interfaces';
+import { TreeNode } from '../../interfaces';
 
 export interface SceneCloneProps {
   target?: TreeNode;
@@ -18,7 +18,7 @@ export interface SceneCloneProps {
 
 export default function SceneClone(props: SceneCloneProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [moduleOptions, setModuleOptions] = useState<SelectOptions[]>([]);
+  const [moduleOptions, setModuleOptions] = useState<IOption[]>([]);
   const [caseList] = useCaseListByScene(props.target?.bizId!);
   const [editField] = Form.useForm();
 

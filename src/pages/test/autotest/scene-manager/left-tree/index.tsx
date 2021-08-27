@@ -10,7 +10,7 @@ import VCCustomIcon from '@cffe/vc-custom-icon';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
-import { TreeNode, EditorMode } from '../../interfaces';
+import { TreeNode } from '../../interfaces';
 import { useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey } from '../../common';
 import { useProjectOptions } from '../../hooks';

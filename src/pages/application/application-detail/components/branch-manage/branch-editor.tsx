@@ -1,98 +1,65 @@
-/**
- * EditBranch
- * @description (新建)分支
- * @author moting.na
- * @create 2021-04-21 10:12
- */
+// 分支编辑
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/08/27 10:58
 
-import React, { useState } from 'react';
-import { Modal, Input, Spin, message } from 'antd';
-import { BasicForm } from '@/components/schema-form';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Modal, Input, Form, message } from 'antd';
 import { createFeatureBranch } from '@/pages/application/service';
 
 export interface IProps {
+  mode?: EditorMode;
   appCode: string;
-  visible: boolean;
   onClose: () => void;
-  /** 提交成功后回调 */
   onSubmit: () => void;
 }
 
-const formSchema = {
-  isShowReset: false,
-  labelColSpan: 6,
-  theme: 'basic',
-  schema: [
-    {
-      type: 'Input',
-      props: {
-        label: '分支名称',
-        name: 'branchName',
-        required: true,
-        placeholder: '请输入',
-        addonBefore: 'feature_',
-        onKeyDown: (e: any) => {
-          if (e.keyCode === 13) {
-            // 回车键
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
-          }
-        },
-      },
-    },
-    {
-      type: 'Custom',
-      props: {
-        custom: 'Textarea',
-        label: '描述',
-        name: 'desc',
-        placeholder: '请输入描述',
-      },
-    },
-  ],
-};
-
 export default function BranchEditor(props: IProps) {
+  const { mode, appCode, onClose, onSubmit } = props;
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+
+  const handleSubmit = useCallback(async () => {
+    const values = await form.validateFields();
+
+    setLoading(true);
+
+    try {
+      await createFeatureBranch({
+        appCode,
+        ...values,
+      });
+      message.success('操作成功！');
+      onSubmit?.();
+    } finally {
+      setLoading(false);
+    }
+  }, [form, appCode]);
+
+  useEffect(() => {
+    if (mode === 'HIDE') return;
+
+    form.resetFields();
+  }, [mode]);
 
   return (
     <Modal
       destroyOnClose
       width={600}
-      title="新建分支"
-      visible={props.visible}
-      onCancel={props.onClose}
-      footer={null}
+      title={mode === 'ADD' ? '新建分支' : '编辑分支'}
+      visible={props.mode !== 'HIDE'}
+      onOk={handleSubmit}
+      onCancel={onClose}
+      confirmLoading={loading}
       maskClosable={false}
     >
-      <Spin spinning={loading}>
-        <BasicForm
-          {...(formSchema as any)}
-          customMap={{
-            Textarea: Input.TextArea,
-          }}
-          isShowReset
-          resetText="取消"
-          onReset={props.onClose}
-          onFinish={(val) => {
-            setLoading(true);
-
-            createFeatureBranch({
-              appCode: props.appCode,
-              ...val,
-            })
-              .then((res: any) => {
-                if (res.success) {
-                  props?.onSubmit();
-                  return;
-                }
-                message.error(res.errorMsg);
-              })
-              .finally(() => setLoading(false));
-          }}
-        />
-      </Spin>
+      <Form form={form} labelCol={{ span: 6 }}>
+        <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
+          <Input addonBefore="feature_" autoFocus />
+        </Form.Item>
+        <Form.Item label="描述" name="desc">
+          <Input.TextArea placeholder="请输入描述" rows={3} />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 }

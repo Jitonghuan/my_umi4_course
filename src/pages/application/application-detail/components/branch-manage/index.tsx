@@ -1,31 +1,23 @@
-/**
- * BranchManage
- * @description 分支管理
- * @author moting.nq
- * @create 2021-04-20 19:10
- */
+// 分支管理
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/08/27 12:41
 
-import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
-import { Button, message, Form, Input } from 'antd';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
+import moment from 'moment';
+import { Button, message, Form, Input, Table, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import { InlineForm } from '@/components/schema-form';
+import { ContentCard } from '@/components/vc-page-content';
+import { usePaginated } from '@cffe/vc-hulk-table';
 import BranchEditor from './branch-editor';
-import { createFilterFormSchema, createTableSchema } from './schema';
 import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
-import './index.less';
-
-const rootCls = 'branch-list-page';
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
   const [searchForm] = Form.useForm();
-
-  const [createBranchVisible, setCreateBranchVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
+  const [pending, setPending] = useState(false);
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -43,6 +35,7 @@ export default function BranchManage() {
     queryBranchList({ appCode, env: 'feature' });
   }, [appCode]);
 
+  // 搜索
   const handleSearch = useCallback(() => {
     const values = searchForm.getFieldsValue();
     queryBranchList({
@@ -51,68 +44,75 @@ export default function BranchManage() {
     });
   }, [searchForm]);
 
-  const tableSchema = useMemo(() => {
-    return createTableSchema({
-      onCancelClick: (record, index) => {
-        setLoading(true);
-        deleteBranch({ id: record.id })
-          .then((res: any) => {
-            if (res.success) {
-              message.success('操作成功');
-              queryBranchList();
-              return;
-            }
-            message.error(res.errorMsg);
-          })
-          .finally(() => setLoading(false));
-      },
-    }) as any;
-  }, [tableProps]);
+  // 删除分支
+  const handleDelBranch = useCallback(async (record: any) => {
+    try {
+      setPending(true);
+      await deleteBranch({ id: record.id });
+      message.success('操作成功！');
+      queryBranchList();
+    } finally {
+      setPending(false);
+    }
+  }, []);
 
   return (
-    <>
-      <FilterCard>
-        <InlineForm
-          className={`${rootCls}__filter-form`}
-          {...(createFilterFormSchema() as any)}
-          submitText="查询"
-          onFinish={(values) => {
-            if (tableProps.loading) return;
-            queryBranchList({
-              pageIndex: 1,
-              ...values,
-            });
-          }}
-        />
-      </FilterCard>
-
-      <ContentCard>
+    <ContentCard>
+      <div className="table-caption">
         <Form layout="inline" form={searchForm}>
           <Form.Item label="分支名" name="branchName">
-            <Input.Search placeholder="搜索分支名" onSearch={handleSearch} />
+            <Input.Search placeholder="搜索分支名" enterButton onSearch={handleSearch} style={{ width: 320 }} />
           </Form.Item>
         </Form>
-        <div className="table-caption">
-          <h3>分支列表</h3>
-          <Button type="primary" onClick={() => setCreateBranchVisible(true)}>
-            <PlusOutlined />
-            新建分支
-          </Button>
-        </div>
-        <HulkTable loading={loading} columns={tableSchema} {...tableProps} scroll={{ y: window.innerHeight - 440 }} />
-
-        <BranchEditor
-          appCode={appCode!}
-          visible={createBranchVisible}
-          onSubmit={() => {
-            setCreateBranchVisible(false);
-            queryBranchList({
-              pageIndex: 1,
-            });
-          }}
-          onClose={() => setCreateBranchVisible(false)}
+        <Button type="primary" onClick={() => setBranchEditMode('ADD')}>
+          <PlusOutlined />
+          新建分支
+        </Button>
+      </div>
+      <Table
+        dataSource={tableProps.dataSource}
+        pagination={tableProps.pagination}
+        loading={tableProps.loading || pending}
+        scroll={{ y: window.innerHeight - 330 }}
+      >
+        <Table.Column title="ID" dataIndex="id" width={80} />
+        <Table.Column title="应用code" dataIndex="appCode" width={200} />
+        <Table.Column title="分支名" dataIndex="branchName" />
+        <Table.Column title="描述" dataIndex="desc" width={200} />
+        <Table.Column
+          title="创建时间"
+          dataIndex="gmtCreate"
+          width={160}
+          render={(val: string) => (val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '')}
         />
-      </ContentCard>
-    </>
+        <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
+        <Table.Column title="创建人" dataIndex="createUser" width={100} />
+        <Table.Column
+          title="操作"
+          width={100}
+          render={(_, record: any, index) => (
+            <div className="action-cell">
+              <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
+                <Button type="primary" danger size="small">
+                  作废
+                </Button>
+              </Popconfirm>
+            </div>
+          )}
+        />
+      </Table>
+
+      <BranchEditor
+        appCode={appCode!}
+        mode={branchEditMode}
+        onSubmit={() => {
+          setBranchEditMode('HIDE');
+          queryBranchList({
+            pageIndex: 1,
+          });
+        }}
+        onClose={() => setBranchEditMode('HIDE')}
+      />
+    </ContentCard>
   );
 }

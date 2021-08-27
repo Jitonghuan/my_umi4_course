@@ -4,13 +4,6 @@
 
 import type { TreeNode } from '@/components/custom-tree/interfaces';
 
-export interface SelectOptions<Value = string, T = Record<string, any>> extends Record<string, any> {
-  label: string;
-  value: Value;
-  /** 用于挂载到 option 上的业务数据 */
-  data?: T;
-}
-
 export interface ProjectItemVO extends Record<string, any> {
   id: number;
   name: string;
@@ -19,8 +12,6 @@ export interface ProjectItemVO extends Record<string, any> {
 }
 
 export { TreeNode };
-
-export type EditorMode = 'HIDE' | 'EDIT' | 'ADD';
 
 /** 用于 新增/编辑 节点的返回值 */
 export interface TreeNodeSaveData extends Record<string, any> {
