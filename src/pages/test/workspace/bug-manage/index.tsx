@@ -38,7 +38,6 @@ export default function BugManage(props: any) {
     void setPageIndex(pageIndex);
     void setPageSize(pageSize);
     void setBugTotal(total);
-    console.log('更新了', res);
   };
 
   useEffect(() => {
@@ -65,6 +64,10 @@ export default function BugManage(props: any) {
       void message.success('删除成功');
       void updateBugList();
     });
+  };
+
+  const handleFilterPropJustMeChange = () => {
+    void updateBugList();
   };
 
   return (
@@ -107,7 +110,7 @@ export default function BugManage(props: any) {
               </Select>
             </Form.Item>
             <Form.Item label="只看我的" name="justMe" valuePropName="checked">
-              <Switch />
+              <Switch onChange={handleFilterPropJustMeChange} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
