@@ -52,7 +52,7 @@ export default function BranchEditor(props: IProps) {
       confirmLoading={loading}
       maskClosable={false}
     >
-      <Form form={form} labelCol={{ span: 6 }}>
+      <Form form={form} labelCol={{ flex: '100px' }}>
         <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
           <Input addonBefore="feature_" autoFocus />
         </Form.Item>

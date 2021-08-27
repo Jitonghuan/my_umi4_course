@@ -52,7 +52,7 @@ export function useClusterA(): [any, boolean, (showLoading?: boolean) => Promise
 
         for (let index = 0; index < dataList.length; index++) {
           let dataObj = dataList[index].buckets;
-          let time = moment(parseInt(dataList[index].timeStamp)).format('hh:mm:ss');
+          let time = moment(parseInt(dataList[index].timeStamp)).format('HH:mm:ss');
           timeStampList.push(time);
           for (const key in dataObj) {
             switch (key) {
@@ -126,7 +126,7 @@ export function useClusterB(): [any, boolean, (showLoading?: boolean) => Promise
 
         for (let index = 0; index < dataList.length; index++) {
           let dataObj = dataList[index].buckets;
-          let time = moment(parseInt(dataList[index].timeStamp)).format('hh:mm:ss');
+          let time = moment(parseInt(dataList[index].timeStamp)).format('HH:mm:ss');
           timeStampList.push(time);
           for (const key in dataObj) {
             switch (key) {
