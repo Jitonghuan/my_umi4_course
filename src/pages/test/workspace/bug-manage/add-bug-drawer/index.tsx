@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../../constant';
 import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect } from 'antd';
-import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryPageList } from '../../service';
+import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryPageList, getManagerList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
 import AddCaseModal from '../add-case-modal';
@@ -18,6 +18,7 @@ export default function BugManage(props: any) {
   const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
   const [cates, setCates] = useState<any[]>([]);
+  const [manageList, setManageList] = useState<string[]>([]);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
@@ -113,6 +114,9 @@ export default function BugManage(props: any) {
   /** 获得可关联的测试用例树 */
   useEffect(() => {
     void updateAssociatingCaseTreeSelect();
+    void getRequest(getManagerList).then((res) => {
+      void setManageList(res.data.usernames);
+    });
   }, []);
 
   /** -------------------------- 关联用例 end -------------------------- */
@@ -183,7 +187,11 @@ export default function BugManage(props: any) {
             <RichText width="524px" sona={sona} schema={schema} />
           </Form.Item>
           <Form.Item label="经办人" name="agent">
-            <Input />
+            <Select
+              options={manageList.map((item) => ({ label: item, value: item }))}
+              optionFilterProp="label"
+              showSearch
+            />
           </Form.Item>
           <Form.Item label="状态" name="status">
             <Select options={bugStatusEnum}></Select>

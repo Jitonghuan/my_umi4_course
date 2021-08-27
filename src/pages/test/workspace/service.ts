@@ -95,3 +95,6 @@ export const deleteBug = addAPIPrefix('/qc/teststation/delBug');
 
 /** GET  缺陷跟踪-查询bug列表 */
 export const getBugList = addAPIPrefix('/qc/teststation/bugList');
+
+/** GET 获取经办人列表 */
+export const getManagerList = addAPIPrefix('/appManage/user/listAll');
