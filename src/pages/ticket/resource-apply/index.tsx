@@ -39,45 +39,46 @@ export default function addTicket() {
           >
             <Row>
               <Col span={8}>
-                <Form.Item name="appType" label="应用分类：" labelAlign="right">
+                <Form.Item name="appType" label="应用分类：">
                   <Select showSearch allowClear options={appTypeOptions} style={{ width: '180px' }} />
                 </Form.Item>
               </Col>
 
-              <Col span={7}>
-                <Form.Item name="envCode" label="环境" labelAlign="right">
+              <Col span={8}>
+                <Form.Item name="envCode" label="环境" labelCol={{ span: 4 }}>
                   <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
                 </Form.Item>
               </Col>
-              <Col span={7}>
-                <Form.Item name="businessLine" label="业务线：" labelAlign="right">
+              <Col span={8}>
+                <Form.Item name="businessLine" label="业务线：">
                   <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={8}>
-                <Form.Item name="appType" label="资源类型" labelAlign="right">
+                <Form.Item name="recourceType" label="资源类型">
                   <Select showSearch allowClear options={appTypeOptions} style={{ width: '180px' }} />
                 </Form.Item>
               </Col>
 
-              <Col span={7}>
-                <Form.Item name="envCode" label="环境" labelAlign="right">
+              <Col span={8}>
+                <Form.Item name="nodeNumber" label="节点数">
                   <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
                 </Form.Item>
               </Col>
-              <Col span={7}>
-                <Form.Item name="businessLine" label="业务线：" labelAlign="right">
+              <Col span={8}>
+                <Form.Item name="appcatecoryName" label="应用名">
                   <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
-              <Form.List name="sights">
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map((field) => (
+
+            <Form.List name="sights">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map((field) => (
+                    <Row>
                       <Space key={field.key} align="baseline">
                         <Form.Item
                           noStyle
@@ -93,16 +94,17 @@ export default function addTicket() {
                               fieldKey={[field.fieldKey, 'sight']}
                               rules={[{ required: true, message: 'Missing sight' }]}
                             >
-                              {/* <Select disabled={!applyResourceForm.getFieldValue('area')} style={{ width: 130 }}>
+                              <Select disabled={!applyResourceForm.getFieldValue('area')} style={{ width: 130 }}>
                                 {(sights[applyResourceForm.getFieldValue('area')] || []).map((item) => (
                                   <Option key={item} value={item}>
                                     {item}
                                   </Option>
                                 ))}
-                              </Select> */}
+                              </Select>
                             </Form.Item>
                           )}
                         </Form.Item>
+
                         <Form.Item
                           {...field}
                           label="Price"
@@ -115,25 +117,27 @@ export default function addTicket() {
 
                         <MinusCircleOutlined onClick={() => remove(field.name)} />
                       </Space>
-                    ))}
-
+                    </Row>
+                  ))}
+                  <Row>
                     <Form.Item>
-                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                      <Button
+                        type="primary"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                        style={{ marginLeft: '42%', width: '160px', height: '36px' }}
+                      >
                         添加资源类型
                       </Button>
                     </Form.Item>
-                  </>
-                )}
-              </Form.List>
-              {/* <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  添加一项
-                </Button>
-              </Form.Item> */}
-            </Row>
+                  </Row>
+                </>
+              )}
+            </Form.List>
             <Row>
               <Form.Item name="remarks" label="备注：" style={{ marginLeft: '3%' }}>
-                <Input.TextArea style={{ width: '440px' }}></Input.TextArea>
+                <Input.TextArea style={{ width: '750px' }}></Input.TextArea>
               </Form.Item>
             </Row>
             <Row>
