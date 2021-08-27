@@ -25,6 +25,9 @@ export const queryConfigListUrl = `${ds.apiPrefix}/appManage/config/version/list
 /** POST 导入配置 */
 export const configUploadUrl = `${ds.apiPrefix}/appManage/config/upload`;
 
+/** GET 下载镜像 */
+export const downloadImage = `${ds.apiPrefix}/releaseManage/deploy/downloadImage`;
+
 /** 查询应用列表 */
 export const queryApps = (params: {
   /** id */

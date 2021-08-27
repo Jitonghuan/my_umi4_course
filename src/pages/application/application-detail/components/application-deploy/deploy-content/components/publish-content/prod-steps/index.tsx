@@ -6,11 +6,12 @@
  */
 
 import React, { useMemo, useState } from 'react';
-import { Steps, Button, Modal } from 'antd';
+import { Steps, Button, Modal, message } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import DeployModal from './deploy-modal';
-import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature } from '@/pages/application/service';
+import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature, downloadImage } from '@/pages/application/service';
 import { IProps, Status } from './types';
+import { getRequest } from '@/utils/request';
 
 const { Step } = Steps;
 const { confirm } = Modal;
@@ -41,7 +42,6 @@ const deployStatusMapping: Record<string, Status> = {
 
 export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps) {
   const [deployVisible, setDeployVisible] = useState(false);
-
   const status = useMemo<Status>(() => {
     const { deployStatus } = deployInfo || {};
 
@@ -49,7 +49,8 @@ export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps
 
     return deployStatusMapping[deployStatus] || 0;
   }, [deployInfo]);
-
+  const envsArry = [];
+  envsArry.push(deployInfo.envs);
   return (
     <>
       <Steps className={`${rootCls}__steps`} current={parseInt(status + '')}>
@@ -176,7 +177,31 @@ export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps
             )
           }
         />
-        <Step title="执行完成" />
+        <Step
+          title="执行完成"
+          description={
+            status === 5 && (
+              <>
+                {envsArry.filter((item) => {
+                  item == 'zs-prd';
+                }) && (
+                  <Button
+                    style={{ marginTop: 4 }}
+                    onClick={() => {
+                      getRequest(downloadImage, { data: { id: deployInfo.id } }).then((res: any) => {
+                        if (res.sucess) {
+                          message.success('下载镜像成功');
+                        }
+                      });
+                    }}
+                  >
+                    下载镜像
+                  </Button>
+                )}
+              </>
+            )
+          }
+        />
       </Steps>
 
       <DeployModal
