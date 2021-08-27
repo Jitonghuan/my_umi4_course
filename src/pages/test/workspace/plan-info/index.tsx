@@ -33,15 +33,19 @@ export default function PlanInfo(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [projectList, setProjectList] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (!activeKey) return;
-    void setCurCaseId(undefined);
-    void setCurCase(undefined);
-    void setExpendedKeys([]);
-    getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } }).then((res) => {
-      void setTestPhaseDetail(res.data);
+  const updateCurCase = () => {
+    getRequest(getPhaseCaseDetail, {
+      data: {
+        phaseId: activeKey,
+        caseId: curCaseId,
+      },
+    }).then((res) => {
+      void setCurCase(res.data);
     });
+  };
 
+  const updateTestCaseTree = () => {
+    if (!activeKey) return;
     void getRequest(getPhaseCaseTree, { data: { phaseId: +activeKey } }).then((res) => {
       const allLeafs = [];
       const curCaseTree = Array.isArray(res.data) ? res.data : [];
@@ -68,18 +72,18 @@ export default function PlanInfo(props: any) {
       void setTestCaseTree(curCaseTree || []);
       void setTestCaseTreeLeafs(allLeafs);
     });
-  }, [activeKey]);
-
-  const updateCurCase = () => {
-    getRequest(getPhaseCaseDetail, {
-      data: {
-        phaseId: activeKey,
-        caseId: curCaseId,
-      },
-    }).then((res) => {
-      void setCurCase(res.data);
-    });
   };
+
+  useEffect(() => {
+    if (!activeKey) return;
+    void setCurCaseId(undefined);
+    void setCurCase(undefined);
+    void setExpendedKeys([]);
+    getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } }).then((res) => {
+      void setTestPhaseDetail(res.data);
+    });
+    void updateTestCaseTree();
+  }, [activeKey]);
 
   useEffect(() => {
     if (!curCaseId) return;
@@ -228,6 +232,7 @@ export default function PlanInfo(props: any) {
                     phaseId={activeKey}
                     curCase={curCase}
                     updateCurCase={updateCurCase}
+                    updateTestCaseTree={updateTestCaseTree}
                   />
                 ) : (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有选择测试用例" />

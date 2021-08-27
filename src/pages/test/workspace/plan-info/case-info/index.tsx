@@ -15,7 +15,16 @@ moment.locale('zh-cn');
 const { Text } = Typography;
 
 export default function UserCaseInfoExec(props: any) {
-  const { setAddBugDrawerVisible, curCase, phaseId, testCaseTreeLeafs, setCurCaseId, className, updateCurCase } = props;
+  const {
+    setAddBugDrawerVisible,
+    curCase,
+    phaseId,
+    testCaseTreeLeafs,
+    setCurCaseId,
+    className,
+    updateCurCase,
+    updateTestCaseTree,
+  } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [associationBug, setAssociationBug] = useState<any[]>([]);
@@ -75,6 +84,7 @@ export default function UserCaseInfoExec(props: any) {
     // const loadEnd = message.loading('状态切换中');
     void (await changeCaseStatus(phaseId, curCase.caseInfo.id, caseStatus, executeNote));
     void updateCurCase();
+    void updateTestCaseTree();
     // void loadEnd();
   };
 

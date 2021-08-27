@@ -116,7 +116,7 @@ const plugins: EditorPlugin[] = [
 const toolbarConfig: any[] = plugins.filter((plugin) => plugin?.toolbarConfig).map((plugin) => plugin.toolbarConfig);
 
 export default function CaseWorkspace(props: any) {
-  const { className, width = '100%', height = '240px', onChange, sona, schema, ...otherProps } = props;
+  const { className, width = '100%', height = '240px', onChange, sona, schema, readOnly, ...otherProps } = props;
 
   // TODO:图片、表格拉平出来 （Plugin）
   // TODO:保持光标在视野内 （监听键盘按下事件即可，好像事件有返回光标信息）
@@ -126,11 +126,12 @@ export default function CaseWorkspace(props: any) {
       schema={schema}
       toolbarLayout="vertical-start"
       plugins={plugins}
-      toolbarConfig={toolbarConfig}
+      toolbarConfig={!readOnly ? toolbarConfig : []}
       style={{ width: width, height: height }}
       className={'matrix-rich-editor-wrapper ' + className}
       toolbarClassName="matrix-rich-editor-toolbar"
       editorClassName="matrix-rich-editor"
+      readOnly={readOnly}
       {...otherProps}
     />
   );
