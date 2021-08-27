@@ -11,7 +11,7 @@ import _ from 'lodash';
 import './index.less';
 
 export default function BugManage(props: any) {
-  const { visible, setVisible, projectList, bugInfo, updateBugList } = props;
+  const { visible, setVisible, projectList, bugInfo, updateBugList, defaultRelatedCases } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
@@ -55,14 +55,18 @@ export default function BugManage(props: any) {
 
   // 如果是编辑，则回填信息
   useEffect(() => {
-    if (visible && bugInfo) {
-      bugInfo.status = bugInfo?.status.toString();
-      void form.setFieldsValue(bugInfo);
-      void setRelatedCases(bugInfo.relatedCases);
-      try {
-        void setSchema(JSON.parse(bugInfo.description));
-      } catch {
-        void setSchema(undefined);
+    if (visible) {
+      if (bugInfo) {
+        bugInfo.status = bugInfo?.status.toString();
+        void form.setFieldsValue(bugInfo);
+        void setRelatedCases(bugInfo.relatedCases);
+        try {
+          void setSchema(JSON.parse(bugInfo.description));
+        } catch {
+          void setSchema(undefined);
+        }
+      } else if (defaultRelatedCases) {
+        void setRelatedCases(defaultRelatedCases);
       }
     }
   }, [visible]);

@@ -250,6 +250,7 @@ export default function PlanInfo(props: any) {
         setVisible={setAddBugDrawerVisible}
         updateCaseTable={updateBugList}
         projectList={projectList}
+        defaultRelatedCases={[curCase?.caseInfo.id]}
       />
     </PageContainer>
   );
