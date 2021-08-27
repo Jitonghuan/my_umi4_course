@@ -100,6 +100,9 @@ export default function ApplicationEditor(props: IProps) {
         <FormItem label="应用名" name="appName" rules={[{ required: true, message: '请输入应用名称' }]}>
           <Input placeholder="请输入" style={{ width: 220 }} />
         </FormItem>
+        <FormItem label="应用部署名" name="deploymentName" rules={[{ required: true, message: '请输入应用部署名' }]}>
+          <Input placeholder="请输入" style={{ width: 220 }} />
+        </FormItem>
         <FormItem label="应用分类" name="appCategoryCode" rules={[{ required: true, message: '请选择应用分类' }]}>
           <Select
             options={categoryData}
