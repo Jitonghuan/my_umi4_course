@@ -5,12 +5,10 @@
 import React from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { UploadOutlined } from '@ant-design/icons';
-import { history } from 'umi';
+import { UploadOutlined, PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
-import AceEditor from '@/components/ace-editor';
 import { Input, Upload, Button, Form, Radio, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
@@ -22,6 +20,11 @@ export default function addTicket() {
   const [businessLine, setBusinessLine] = useState<any[]>([]); //业务线选择
   const [specifications, setSpecifications] = useState<any[]>([]); //规格选项
   const [diskSize, setDiskSize] = useState<any[]>([]); //磁盘选项
+  const [applyResourceForm] = Form.useForm();
+
+  const handleChange = () => {
+    applyResourceForm.setFieldsValue({ sights: [] });
+  };
   return (
     <PageContainer>
       <FilterCard>
@@ -29,7 +32,11 @@ export default function addTicket() {
       </FilterCard>
       <ContentCard className="addTicket">
         <div className="resourceApply">
-          <Form style={{ marginTop: '6%', marginBottom: '8%', marginLeft: '5%' }} size="middle">
+          <Form
+            form={applyResourceForm}
+            style={{ marginTop: '6%', marginBottom: '8%', marginLeft: '5%' }}
+            size="middle"
+          >
             <Row>
               <Col span={8}>
                 <Form.Item name="appType" label="应用分类：" labelAlign="right">
@@ -47,6 +54,64 @@ export default function addTicket() {
                   <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
                 </Form.Item>
               </Col>
+            </Row>
+            <Row>
+              <Form.List name="sights">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map((field) => (
+                      <Space key={field.key} align="baseline">
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prevValues, curValues) =>
+                            prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
+                          }
+                        >
+                          {() => (
+                            <Form.Item
+                              {...field}
+                              label="Sight"
+                              name={[field.name, 'sight']}
+                              fieldKey={[field.fieldKey, 'sight']}
+                              rules={[{ required: true, message: 'Missing sight' }]}
+                            >
+                              <Select disabled={!applyResourceForm.getFieldValue('area')} style={{ width: 130 }}>
+                                {(sights[applyResourceForm.getFieldValue('area')] || []).map((item) => (
+                                  <Option key={item} value={item}>
+                                    {item}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          )}
+                        </Form.Item>
+                        <Form.Item
+                          {...field}
+                          label="Price"
+                          name={[field.name, 'price']}
+                          fieldKey={[field.fieldKey, 'price']}
+                          rules={[{ required: true, message: 'Missing price' }]}
+                        >
+                          <Input />
+                        </Form.Item>
+
+                        <MinusCircleOutlined onClick={() => remove(field.name)} />
+                      </Space>
+                    ))}
+
+                    <Form.Item>
+                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                        Add sights
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
+              <Form.Item>
+                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                  添加一项
+                </Button>
+              </Form.Item>
             </Row>
             <Row>
               <Form.Item name="remarks" label="备注：" style={{ marginLeft: '3%' }}>
