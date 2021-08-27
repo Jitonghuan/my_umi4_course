@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback, useContext } from 'react';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
 import FELayout from '@cffe/vc-layout';
@@ -18,6 +18,7 @@ import logo from './logo.svg';
 
 export default function BasicLayout(props: IUmiRrops) {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [ready, setReady] = useState(false);
   // 所属数据
   const [categoryData] = useCategoryData(ready);
@@ -66,6 +67,8 @@ export default function BasicLayout(props: IUmiRrops) {
       setReady(true);
     }
   }, []);
+
+  console.log('>>>>> ', userInfo);
 
   return (
     <ConfigProvider locale={zhCN}>

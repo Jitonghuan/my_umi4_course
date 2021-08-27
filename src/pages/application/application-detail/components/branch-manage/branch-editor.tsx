@@ -8,14 +8,52 @@
 import React, { useState } from 'react';
 import { Modal, Input, Spin, message } from 'antd';
 import { BasicForm } from '@/components/schema-form';
-import createSchema from './create-schema';
 import { createFeatureBranch } from '@/pages/application/service';
-import { IProps } from './types';
-// import './index.less';
 
-export type EditConfigIProps = IProps;
+export interface IProps {
+  appCode: string;
+  visible: boolean;
+  onClose: () => void;
+  /** 提交成功后回调 */
+  onSubmit: () => void;
+}
 
-const EditConfig = (props: IProps) => {
+const formSchema = {
+  isShowReset: false,
+  labelColSpan: 6,
+  theme: 'basic',
+  schema: [
+    {
+      type: 'Input',
+      props: {
+        label: '分支名称',
+        name: 'branchName',
+        required: true,
+        placeholder: '请输入',
+        addonBefore: 'feature_',
+        onKeyDown: (e: any) => {
+          if (e.keyCode === 13) {
+            // 回车键
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+          }
+        },
+      },
+    },
+    {
+      type: 'Custom',
+      props: {
+        custom: 'Textarea',
+        label: '描述',
+        name: 'desc',
+        placeholder: '请输入描述',
+      },
+    },
+  ],
+};
+
+export default function BranchEditor(props: IProps) {
   const [loading, setLoading] = useState(false);
 
   return (
@@ -30,7 +68,7 @@ const EditConfig = (props: IProps) => {
     >
       <Spin spinning={loading}>
         <BasicForm
-          {...(createSchema() as any)}
+          {...(formSchema as any)}
           customMap={{
             Textarea: Input.TextArea,
           }}
@@ -57,8 +95,4 @@ const EditConfig = (props: IProps) => {
       </Spin>
     </Modal>
   );
-};
-
-EditConfig.defaultProps = {};
-
-export default EditConfig;
+}

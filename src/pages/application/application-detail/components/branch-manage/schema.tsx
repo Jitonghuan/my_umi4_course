@@ -15,6 +15,7 @@ export const createFilterFormSchema = () => ({
         name: 'branchName',
         props: {
           placeholder: '请输入分支名',
+          style: { width: 240 },
         },
       },
     },
@@ -29,7 +30,7 @@ export const createTableSchema = ({ onCancelClick }: { onCancelClick: (record: a
     dataIndex: 'id',
   },
   {
-    width: 120,
+    width: 200,
     title: '应用code',
     dataIndex: 'appCode',
   },
@@ -38,18 +39,18 @@ export const createTableSchema = ({ onCancelClick }: { onCancelClick: (record: a
     dataIndex: 'branchName',
   },
   {
-    width: 150,
+    width: 200,
     title: '描述',
     dataIndex: 'desc',
   },
   {
-    width: 100,
+    width: 160,
     title: '创建时间',
     dataIndex: 'gmtCreate',
     render: (val: string) => (val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : ''),
   },
   {
-    width: 100,
+    width: 120,
     title: '已部署环境',
     dataIndex: 'deployedEnv',
   },
@@ -59,18 +60,12 @@ export const createTableSchema = ({ onCancelClick }: { onCancelClick: (record: a
     dataIndex: 'createUser',
   },
   {
-    width: 120,
+    width: 110,
     title: '操作',
     dataIndex: 'operate',
     render: (text: string, record: any, index: number) => (
       <>
-        <Popconfirm
-          title="确定要作废该项吗？"
-          onConfirm={() => onCancelClick(record, index)}
-          okText="确定"
-          cancelText="取消"
-          placement="topLeft"
-        >
+        <Popconfirm title="确定要作废该项吗？" onConfirm={() => onCancelClick(record, index)}>
           <Button type="primary" danger>
             作废
           </Button>

@@ -109,7 +109,13 @@ export default function ApplicationEditor(props: IProps) {
           />
         </FormItem>
         <FormItem label="应用组" name="appGroupCode">
-          <Select options={appGroupOptions} loading={appGroupLoading} placeholder="请选择" style={{ width: 220 }} />
+          <Select
+            options={appGroupOptions}
+            loading={appGroupLoading}
+            placeholder="请选择"
+            style={{ width: 220 }}
+            allowClear
+          />
         </FormItem>
         <FormItem label="应用负责人" name="owner" rules={[{ required: true, message: '请输入应用负责人' }]}>
           <Input placeholder="请输入" style={{ width: 220 }} />
@@ -120,9 +126,9 @@ export default function ApplicationEditor(props: IProps) {
         <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
           <Input placeholder="http://gitlab.cfuture.shop/group/project.git" />
         </FormItem>
-        <FormItem label="Git 分组" name="gitGroup">
+        {/* <FormItem label="Git 分组" name="gitGroup">
           <Input placeholder="请输入应用 gitlab 分组信息" style={{ width: 220 }} />
-        </FormItem>
+        </FormItem> */}
 
         <Divider />
 

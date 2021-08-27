@@ -5,27 +5,27 @@
  * @create 2021-04-20 19:10
  */
 
-import React, { useState, useContext, useEffect } from 'react';
-import { Button, message, Spin } from 'antd';
+import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
+import { Button, message, Form, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm } from '@/components/schema-form';
-import EditBranch from './edit-branch';
+import BranchEditor from './branch-editor';
 import { createFilterFormSchema, createTableSchema } from './schema';
 import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
-import { rootCls } from './constants';
-import { IProps } from './types';
 import './index.less';
 
-const BranchManage = ({}: IProps) => {
+const rootCls = 'branch-list-page';
+
+export default function BranchManage() {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
+  const [searchForm] = Form.useForm();
 
   const [createBranchVisible, setCreateBranchVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [tableHeight, setTableHeight] = useState(window.innerHeight - 440);
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -43,26 +43,34 @@ const BranchManage = ({}: IProps) => {
     queryBranchList({ appCode, env: 'feature' });
   }, [appCode]);
 
-  useEffect(() => {
-    window.onresize = () => {
-      setTableHeight(window.innerHeight - 440);
-    };
-  }, []);
+  const handleSearch = useCallback(() => {
+    const values = searchForm.getFieldsValue();
+    queryBranchList({
+      pageIndex: 1,
+      ...values,
+    });
+  }, [searchForm]);
+
+  const tableSchema = useMemo(() => {
+    return createTableSchema({
+      onCancelClick: (record, index) => {
+        setLoading(true);
+        deleteBranch({ id: record.id })
+          .then((res: any) => {
+            if (res.success) {
+              message.success('操作成功');
+              queryBranchList();
+              return;
+            }
+            message.error(res.errorMsg);
+          })
+          .finally(() => setLoading(false));
+      },
+    }) as any;
+  }, [tableProps]);
 
   return (
-    <Spin spinning={loading}>
-      <EditBranch
-        appCode={appCode!}
-        visible={createBranchVisible}
-        onSubmit={() => {
-          setCreateBranchVisible(false);
-          queryBranchList({
-            pageIndex: 1,
-          });
-        }}
-        onClose={() => setCreateBranchVisible(false)}
-      />
-
+    <>
       <FilterCard>
         <InlineForm
           className={`${rootCls}__filter-form`}
@@ -79,44 +87,32 @@ const BranchManage = ({}: IProps) => {
       </FilterCard>
 
       <ContentCard>
-        <div className={`${rootCls}__table-header`}>
+        <Form layout="inline" form={searchForm}>
+          <Form.Item label="分支名" name="branchName">
+            <Input.Search placeholder="搜索分支名" onSearch={handleSearch} />
+          </Form.Item>
+        </Form>
+        <div className="table-caption">
           <h3>分支列表</h3>
-          <Button
-            type="primary"
-            onClick={() => {
-              setCreateBranchVisible(true);
-            }}
-          >
+          <Button type="primary" onClick={() => setCreateBranchVisible(true)}>
             <PlusOutlined />
             新建分支
           </Button>
         </div>
-        <HulkTable
-          columns={
-            createTableSchema({
-              onCancelClick: (record, index) => {
-                setLoading(true);
-                deleteBranch({ id: record.id })
-                  .then((res: any) => {
-                    if (res.success) {
-                      message.success('操作成功');
-                      queryBranchList();
-                      return;
-                    }
-                    message.error(res.errorMsg);
-                  })
-                  .finally(() => setLoading(false));
-              },
-            }) as any
-          }
-          {...tableProps}
-          scroll={{ y: tableHeight }}
+        <HulkTable loading={loading} columns={tableSchema} {...tableProps} scroll={{ y: window.innerHeight - 440 }} />
+
+        <BranchEditor
+          appCode={appCode!}
+          visible={createBranchVisible}
+          onSubmit={() => {
+            setCreateBranchVisible(false);
+            queryBranchList({
+              pageIndex: 1,
+            });
+          }}
+          onClose={() => setCreateBranchVisible(false)}
         />
       </ContentCard>
-    </Spin>
+    </>
   );
-};
-
-BranchManage.defaultProps = {};
-
-export default BranchManage;
+}
