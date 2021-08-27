@@ -8,7 +8,7 @@ import BugInfoExec from './bug-info-exec';
 import CaseInfo from './case-info';
 import moment from 'moment';
 import { history } from 'umi';
-import { testPhaseEnum } from '../constant';
+import { testPhaseEnum, caseStatusTagEnum } from '../constant';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography } from 'antd';
@@ -193,11 +193,19 @@ export default function PlanInfo(props: any) {
                   showIcon={false}
                   showSearch
                   searchPlaceholder="搜索用例、用例库"
-                  titleRender={(node) => {
+                  titleRender={(node: any) => {
                     let renderTitle;
 
                     if (!node.isLeaf) renderTitle = node.title;
-                    else renderTitle = node.title;
+                    else
+                      renderTitle = (
+                        <div>
+                          <span style={{ color: caseStatusTagEnum[node.status].color }}>
+                            {caseStatusTagEnum[node.status].icon}
+                          </span>{' '}
+                          {node.title}
+                        </div>
+                      );
 
                     return (
                       <Tooltip placement="right" title={renderTitle}>
