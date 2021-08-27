@@ -56,6 +56,24 @@ export default function addTicket() {
               </Col>
             </Row>
             <Row>
+              <Col span={8}>
+                <Form.Item name="appType" label="资源类型" labelAlign="right">
+                  <Select showSearch allowClear options={appTypeOptions} style={{ width: '180px' }} />
+                </Form.Item>
+              </Col>
+
+              <Col span={7}>
+                <Form.Item name="envCode" label="环境" labelAlign="right">
+                  <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
+                </Form.Item>
+              </Col>
+              <Col span={7}>
+                <Form.Item name="businessLine" label="业务线：" labelAlign="right">
+                  <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
               <Form.List name="sights">
                 {(fields, { add, remove }) => (
                   <>
@@ -75,13 +93,13 @@ export default function addTicket() {
                               fieldKey={[field.fieldKey, 'sight']}
                               rules={[{ required: true, message: 'Missing sight' }]}
                             >
-                              <Select disabled={!applyResourceForm.getFieldValue('area')} style={{ width: 130 }}>
+                              {/* <Select disabled={!applyResourceForm.getFieldValue('area')} style={{ width: 130 }}>
                                 {(sights[applyResourceForm.getFieldValue('area')] || []).map((item) => (
                                   <Option key={item} value={item}>
                                     {item}
                                   </Option>
                                 ))}
-                              </Select>
+                              </Select> */}
                             </Form.Item>
                           )}
                         </Form.Item>
@@ -101,17 +119,17 @@ export default function addTicket() {
 
                     <Form.Item>
                       <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                        Add sights
+                        添加资源类型
                       </Button>
                     </Form.Item>
                   </>
                 )}
               </Form.List>
-              <Form.Item>
+              {/* <Form.Item>
                 <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                   添加一项
                 </Button>
-              </Form.Item>
+              </Form.Item> */}
             </Row>
             <Row>
               <Form.Item name="remarks" label="备注：" style={{ marginLeft: '3%' }}>
