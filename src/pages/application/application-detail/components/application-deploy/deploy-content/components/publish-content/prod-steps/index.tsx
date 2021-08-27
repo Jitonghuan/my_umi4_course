@@ -6,7 +6,7 @@
  */
 
 import React, { useMemo, useState } from 'react';
-import { Steps, Button, Modal, message } from 'antd';
+import { Steps, Button, Modal, message, Spin } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import DeployModal from './deploy-modal';
 import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature, downloadImage } from '@/pages/application/service';
@@ -42,6 +42,7 @@ const deployStatusMapping: Record<string, Status> = {
 
 export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps) {
   const [deployVisible, setDeployVisible] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
   const status = useMemo<Status>(() => {
     const { deployStatus } = deployInfo || {};
 
@@ -51,6 +52,18 @@ export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps
   }, [deployInfo]);
   const envsArry = [];
   envsArry.push(deployInfo.envs);
+  const downloadImages = () => {
+    setImageLoading(true);
+    getRequest(downloadImage, { data: { id: deployInfo.id } })
+      .then((res: any) => {
+        if (res.sucess) {
+          message.success('下载镜像成功');
+        }
+      })
+      .finally(() => {
+        setImageLoading(false);
+      });
+  };
   return (
     <>
       <Steps className={`${rootCls}__steps`} current={parseInt(status + '')}>
@@ -185,18 +198,11 @@ export default function ProdSteps({ envTypeCode, deployInfo, onOperate }: IProps
                 {envsArry.filter((item) => {
                   item == 'zs-prd';
                 }) && (
-                  <Button
-                    style={{ marginTop: 4 }}
-                    onClick={() => {
-                      getRequest(downloadImage, { data: { id: deployInfo.id } }).then((res: any) => {
-                        if (res.sucess) {
-                          message.success('下载镜像成功');
-                        }
-                      });
-                    }}
-                  >
-                    下载镜像
-                  </Button>
+                  <Spin spinning={imageLoading}>
+                    <Button style={{ marginTop: 4 }} onClick={downloadImages}>
+                      下载镜像
+                    </Button>
+                  </Spin>
                 )}
               </>
             )
