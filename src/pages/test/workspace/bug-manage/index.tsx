@@ -126,7 +126,7 @@ export default function BugManage(props: any) {
         </div>
         <div className="bug-table-container">
           <div className="add-bug-btn-container">
-            <span className="bug-table-title">Bug列表</span>
+            {/* <span className="bug-table-title">Bug列表</span> */}
             <Button type="primary" onClick={handleAddBugBtnClick}>
               <PlusOutlined />
               新增Bug
