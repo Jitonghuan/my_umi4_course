@@ -3,7 +3,7 @@ import { Select, Input, Tree, Space, Button, Popconfirm, message } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { deleteCaseCategory } from '../../service';
 import { postRequest } from '@/utils/request';
-import OperateCaseLibModal from '../../test-case-library/oprate-case-lib-modal';
+import OperateCaseLibModal from '../oprate-case-module-modal';
 
 import './index.less';
 
