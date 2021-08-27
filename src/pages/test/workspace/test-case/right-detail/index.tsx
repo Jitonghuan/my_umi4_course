@@ -95,7 +95,7 @@ export default function RightDetail(props: any) {
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="reset">
-              重制
+              重置
             </Button>
           </Form.Item>
         </Form>
