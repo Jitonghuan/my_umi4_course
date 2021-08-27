@@ -8,7 +8,7 @@ import BugInfoExec from './bug-info-exec';
 import CaseInfo from './case-info';
 import moment from 'moment';
 import { history } from 'umi';
-import { testPhaseEnum, caseStatusTagEnum } from '../constant';
+import { testPhaseEnum, caseStatusEnum } from '../constant';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography } from 'antd';
@@ -204,8 +204,8 @@ export default function PlanInfo(props: any) {
                     else
                       renderTitle = (
                         <div>
-                          <span style={{ color: caseStatusTagEnum[node.status].color }}>
-                            {caseStatusTagEnum[node.status].icon}
+                          <span style={{ color: caseStatusEnum[node.status].color }}>
+                            {caseStatusEnum[node.status].icon}
                           </span>{' '}
                           {node.title}
                         </div>

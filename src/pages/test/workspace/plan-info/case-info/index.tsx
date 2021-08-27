@@ -199,11 +199,18 @@ export default function UserCaseInfoExec(props: any) {
         <div className="title-col">
           <span className="case-title">{curCase?.caseInfo?.title}</span>
           <Select
-            className="w-100 ml-auto"
+            className={
+              'w-100 ml-auto ' + ['beExecuted', 'executeSuccess', 'executeFailure', 'block', 'pass'][+(caseStatus || 0)]
+            }
             value={caseStatus}
             onChange={handleCaseStatusChange}
-            options={caseStatusEnum}
-          ></Select>
+          >
+            {caseStatusEnum.map((item) => (
+              <Select.Option value={item.value} style={{ background: item.color }}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select>
           <Button
             className="ml-20"
             icon={<UpOutlined style={{ color: '#5F677A' }} />}

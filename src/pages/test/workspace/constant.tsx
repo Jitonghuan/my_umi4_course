@@ -35,14 +35,10 @@ export const testPhaseEnum = [
     type: 'success',
   },
 ];
-export const caseStatusEnum = ['待执行', '执行通过', '执行失败', '阻塞', '跳过'].map((item, index) => ({
-  value: index.toString(),
-  label: item,
-}));
-export const caseStatusTagEnum = [
-  { label: '待执行', color: '#5F677A', icon: <ClockCircleOutlined /> },
-  { label: '执行通过', color: '#439D75', icon: <CheckCircleOutlined /> },
-  { label: '执行失败', color: '#CC4631', icon: <CloseCircleOutlined /> },
-  { label: '阻塞', color: '#FECD3A', icon: <SyncOutlined /> },
-  { label: '跳过', color: '#6C82AA', icon: <RightCircleOutlined /> },
+export const caseStatusEnum = [
+  { label: '待执行', color: '#5F677A', icon: <ClockCircleOutlined />, value: '0' },
+  { label: '执行通过', color: '#439D75', icon: <CheckCircleOutlined />, value: '1' },
+  { label: '执行失败', color: '#CC4631', icon: <CloseCircleOutlined />, value: '2' },
+  { label: '阻塞', color: '#FECD3A', icon: <SyncOutlined />, value: '3' },
+  { label: '跳过', color: '#6C82AA', icon: <RightCircleOutlined />, value: '4' },
 ];
