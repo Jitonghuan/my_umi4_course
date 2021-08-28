@@ -24,7 +24,7 @@ export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
-
+  console.log('0000000', deployInfo.envs);
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>

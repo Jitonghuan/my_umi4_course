@@ -8,3 +8,5 @@ export const getAClusterEsData = addAPIPrefix('/opsManage/multiple/getAClusterEs
 
 /** GET 2、获取B集群各院区流量数据 */
 export const getBClusterEsData = addAPIPrefix('/opsManage/multiple/getBClusterEsData');
+/** GET 3、获取AB集群各院区流量数据表格 */
+export const getClustersEsDataTable = addAPIPrefix('/opsManage/multiple/getClustersEsDataTable');
