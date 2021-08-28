@@ -6,10 +6,11 @@
  */
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Upload } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq } from '@/pages/application/service';
+import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
 import RollbackModal from '../rollback-modal';
 import ServerStatus from '../server-status';
@@ -156,14 +157,30 @@ export default function PublishDetail(props: IProps) {
     return (envDataList as any).find((v: any) => v.envCode === envs)?.envName;
   }, [envDataList, deployInfo]);
   //离线部署
-  const uploadImage = () => {};
+  const uploadImage = {
+    name: 'file',
+    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    onChange(info: any) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
         {envTypeCode === 'prod' && (
-          <Button type="primary" onClick={uploadImage}>
-            离线部署
-          </Button>
+          <Upload {...uploadImage}>
+            <Button icon={<UploadOutlined />}>离线部署</Button>
+          </Upload>
         )}
 
         {envTypeCode === 'prod' ? (
