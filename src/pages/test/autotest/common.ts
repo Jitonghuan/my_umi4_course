@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/31 23:42
 
-import { SelectOptions, TreeNode, SceneItemVO } from './interfaces';
+import { TreeNode, SceneItemVO } from './interfaces';
 
 export const API_TYPE = {
   HTTP: 0,
@@ -29,20 +29,20 @@ export const API_METHOD = {
 };
 
 // API 类型
-export const API_TYPE_OPTIONS: SelectOptions<number>[] = [
+export const API_TYPE_OPTIONS: IOption<number>[] = [
   { label: 'http', value: 0 },
   { label: 'dubbo', value: 1 },
 ];
 
 // 参数类型
-export const PARAM_TYPE_OPTIONS: SelectOptions<number>[] = [
+export const PARAM_TYPE_OPTIONS: IOption<number>[] = [
   { label: 'form-data', value: 1 },
   { label: 'x-www-form-urlencode', value: 2 },
   { label: 'params', value: 3 },
   { label: 'application/json', value: 0 },
 ];
 
-export const API_METHOD_OPTIONS: SelectOptions<string>[] = [
+export const API_METHOD_OPTIONS: IOption<string>[] = [
   { label: 'GET', value: 'GET' },
   { label: 'POST', value: 'POST' },
   { label: 'PUT', value: 'PUT' },

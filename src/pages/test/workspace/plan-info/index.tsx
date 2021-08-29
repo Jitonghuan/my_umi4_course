@@ -8,7 +8,7 @@ import BugInfoExec from './bug-info-exec';
 import CaseInfo from './case-info';
 import moment from 'moment';
 import { history } from 'umi';
-import { testPhaseEnum } from '../constant';
+import { testPhaseEnum, caseStatusEnum } from '../constant';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography } from 'antd';
@@ -33,15 +33,19 @@ export default function PlanInfo(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [projectList, setProjectList] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (!activeKey) return;
-    void setCurCaseId(undefined);
-    void setCurCase(undefined);
-    void setExpendedKeys([]);
-    getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } }).then((res) => {
-      void setTestPhaseDetail(res.data);
+  const updateCurCase = () => {
+    getRequest(getPhaseCaseDetail, {
+      data: {
+        phaseId: activeKey,
+        caseId: curCaseId,
+      },
+    }).then((res) => {
+      void setCurCase(res.data);
     });
+  };
 
+  const updateTestCaseTree = () => {
+    if (!activeKey) return;
     void getRequest(getPhaseCaseTree, { data: { phaseId: +activeKey } }).then((res) => {
       const allLeafs = [];
       const curCaseTree = Array.isArray(res.data) ? res.data : [];
@@ -68,18 +72,22 @@ export default function PlanInfo(props: any) {
       void setTestCaseTree(curCaseTree || []);
       void setTestCaseTreeLeafs(allLeafs);
     });
+  };
+
+  useEffect(() => {
+    if (!activeKey) return;
+    void setCurCaseId(undefined);
+    void setCurCase(undefined);
+    void setExpendedKeys([]);
+    getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } }).then((res) => {
+      void setTestPhaseDetail(res.data);
+    });
+    void updateTestCaseTree();
   }, [activeKey]);
 
   useEffect(() => {
     if (!curCaseId) return;
-    getRequest(getPhaseCaseDetail, {
-      data: {
-        phaseId: activeKey,
-        caseId: curCaseId,
-      },
-    }).then((res) => {
-      void setCurCase(res.data);
-    });
+    void updateCurCase();
   }, [curCaseId]);
 
   useEffect(() => {
@@ -189,11 +197,19 @@ export default function PlanInfo(props: any) {
                   showIcon={false}
                   showSearch
                   searchPlaceholder="搜索用例、用例库"
-                  titleRender={(node) => {
+                  titleRender={(node: any) => {
                     let renderTitle;
 
                     if (!node.isLeaf) renderTitle = node.title;
-                    else renderTitle = node.title;
+                    else
+                      renderTitle = (
+                        <div>
+                          <span style={{ color: caseStatusEnum[node.status].color }}>
+                            {caseStatusEnum[node.status].icon}
+                          </span>{' '}
+                          {node.title}
+                        </div>
+                      );
 
                     return (
                       <Tooltip placement="right" title={renderTitle}>
@@ -215,6 +231,8 @@ export default function PlanInfo(props: any) {
                     setCurCaseId={setCurCaseId}
                     phaseId={activeKey}
                     curCase={curCase}
+                    updateCurCase={updateCurCase}
+                    updateTestCaseTree={updateTestCaseTree}
                   />
                 ) : (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有选择测试用例" />
@@ -232,6 +250,7 @@ export default function PlanInfo(props: any) {
         setVisible={setAddBugDrawerVisible}
         updateCaseTable={updateBugList}
         projectList={projectList}
+        defaultRelatedCases={[curCase?.caseInfo.id]}
       />
     </PageContainer>
   );

@@ -22,8 +22,8 @@ export default function AddTestPlanDrawer(props: any) {
         void setPhaseCollection(
           plan?.phaseCollection?.map((item: any) => ({
             ...item,
-            startTime: moment(item.startTime).format('YYYY-MM-DD HH:mm:ss'),
-            endTime: moment(item.endTime).format('YYYY-MM-DD HH:mm:ss'),
+            startTime: moment(item.startTime),
+            endTime: moment(item.endTime),
           })),
         );
       } else {
@@ -38,7 +38,11 @@ export default function AddTestPlanDrawer(props: any) {
     const requestParams = {
       ...formData,
       projectId: +formData.projectId,
-      phaseCollection,
+      phaseCollection: phaseCollection.map((item) => ({
+        ...item,
+        startTime: item.startTime.format('YYYY-MM-DD HH:mm:ss'),
+        endTime: item.endTime.format('YYYY-MM-DD HH:mm:ss'),
+      })),
       createUser: userInfo.userName,
     };
     void (await postRequest(createTestPlan, { data: requestParams }));
@@ -51,7 +55,12 @@ export default function AddTestPlanDrawer(props: any) {
     const formData = form.getFieldsValue();
     const requestParams = {
       ...formData,
-      phaseCollection: phaseCollection.map((item) => ({ ...item, id: item.id === undefined ? -1 : item.id })),
+      phaseCollection: phaseCollection.map((item) => ({
+        ...item,
+        id: item.id === undefined ? -1 : item.id,
+        startTime: item.startTime.format('YYYY-MM-DD HH:mm:ss'),
+        endTime: item.endTime.format('YYYY-MM-DD HH:mm:ss'),
+      })),
       projectId: +formData.projectId,
       modifyUser: userInfo.userName,
       id: plan.id,
@@ -105,8 +114,20 @@ export default function AddTestPlanDrawer(props: any) {
             columns={[
               { title: '测试阶段', dataIndex: 'name', required: true },
               { title: '负责人', dataIndex: 'head', required: true },
-              { title: '开始时间', dataIndex: 'startTime', required: true },
-              { title: '结束时间', dataIndex: 'endTime', required: true },
+              {
+                title: '开始时间',
+                dataIndex: 'startTime',
+                required: true,
+                fieldType: 'date',
+                fieldProps: { showTime: true },
+              },
+              {
+                title: '结束时间',
+                dataIndex: 'endTime',
+                required: true,
+                fieldType: 'date',
+                fieldProps: { showTime: true },
+              },
             ]}
           />
         </Form.Item>

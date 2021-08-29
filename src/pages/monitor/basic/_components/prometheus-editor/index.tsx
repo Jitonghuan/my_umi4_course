@@ -5,7 +5,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Form, Input, Select, Button, Drawer, message } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
-import { EditorMode, KVProps, PromitheusItemProps } from '../../interfaces';
+import { KVProps, PromitheusItemProps } from '../../interfaces';
 import { postRequest } from '@/utils/request';
 import * as APIS from '../../services';
 import { useAppCodeOptions, useEnvCodeOptions, useIntervalOptions } from './hooks';

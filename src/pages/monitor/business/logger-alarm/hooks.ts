@@ -4,11 +4,10 @@
 
 import { useEffect, useState } from 'react';
 import { getRequest } from '@/utils/request';
-import { SelectOptions } from './interface';
 import * as APIS from './service';
 
 export function useAppOptions() {
-  const [source, setSource] = useState<SelectOptions[]>([]);
+  const [source, setSource] = useState<IOption[]>([]);
 
   useEffect(() => {
     getRequest(APIS.getAppList, {
@@ -28,7 +27,7 @@ export function useAppOptions() {
 }
 
 export function useEnvOptions(appCode?: string) {
-  const [source, setSource] = useState<SelectOptions[]>([]);
+  const [source, setSource] = useState<IOption[]>([]);
 
   useEffect(() => {
     setSource([]);
@@ -55,7 +54,7 @@ export function useEnvOptions(appCode?: string) {
 }
 
 export function useUserOptions() {
-  const [source, setSource] = useState<SelectOptions[]>([]);
+  const [source, setSource] = useState<IOption[]>([]);
 
   useEffect(() => {
     getRequest(APIS.getUserList).then((result) => {
@@ -73,7 +72,7 @@ export function useUserOptions() {
 }
 
 export function useRuleGroupOptions() {
-  const [source, setSource] = useState<SelectOptions[]>([]);
+  const [source, setSource] = useState<IOption[]>([]);
 
   useEffect(() => {
     getRequest(APIS.ruleGroupOptions).then((result) => {
@@ -87,7 +86,7 @@ export function useRuleGroupOptions() {
 }
 
 export function useRuleIndexOptions(envCode?: string) {
-  const [source, setSource] = useState<SelectOptions[]>([]);
+  const [source, setSource] = useState<IOption[]>([]);
 
   useEffect(() => {
     setSource([]);
@@ -109,7 +108,7 @@ export function useRuleIndexOptions(envCode?: string) {
 }
 
 export function useStatusOptions() {
-  const [source, setSource] = useState<SelectOptions<number>[]>([]);
+  const [source, setSource] = useState<IOption<number>[]>([]);
 
   useEffect(() => {
     setSource([
@@ -123,7 +122,7 @@ export function useStatusOptions() {
 
 // 比较符
 export function useOperatorOptions() {
-  const [source, setSource] = useState<SelectOptions[]>([]);
+  const [source, setSource] = useState<IOption[]>([]);
 
   useEffect(() => {
     setSource([
@@ -139,7 +138,7 @@ export function useOperatorOptions() {
 }
 
 export function useLevelOptions() {
-  const [source, setSource] = useState<SelectOptions[]>([]);
+  const [source, setSource] = useState<IOption[]>([]);
 
   useEffect(() => {
     setSource([
@@ -153,7 +152,7 @@ export function useLevelOptions() {
 }
 
 export function useNotifyTypeOptions() {
-  const [source, setSource] = useState<SelectOptions[]>([]);
+  const [source, setSource] = useState<IOption[]>([]);
 
   useEffect(() => {
     setSource([

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Select, Input, Tree, Space, Button } from 'antd';
+import { Select, Input, Tree, Space, Button, Popconfirm, message } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import OperateCaseLibModal from '../../test-case-library/oprate-case-lib-modal';
+import { deleteCaseCategory } from '../../service';
+import { postRequest } from '@/utils/request';
+import OperateCaseLibModal from '../oprate-case-module-modal';
+
 import './index.less';
 
 const { DirectoryTree } = Tree;
@@ -19,7 +22,6 @@ export default function LeftTree(props: any) {
     setCateId,
     expandedKeys,
     setExpandedKeys,
-    updateLeftTree,
   } = props;
   const [keyword, setKeyword] = useState<string>('');
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
@@ -71,7 +73,14 @@ export default function LeftTree(props: any) {
     void setOprateCaseLibModalVisible(true);
   };
 
-  const handleDeleteCaseCate = (node: any) => {};
+  const handleDeleteCaseCate = (node: any) => {
+    const loadEnd = message.loading('正在删除');
+    postRequest(deleteCaseCategory + '/' + node.id).then(() => {
+      void loadEnd();
+      void message.success('删除成功');
+      void searchCateTreeData(rootCateId, keyword, true);
+    });
+  };
 
   return (
     <div className="test-workspace-test-case-left-tree">
@@ -107,7 +116,7 @@ export default function LeftTree(props: any) {
           showIcon={false}
           titleRender={(node) => {
             return (
-              <div className="node-render">
+              <div className="node-render custom-tree-node">
                 <span>{node.title}</span>
                 <div className="oprate-btn-container">
                   <Button
@@ -130,16 +139,16 @@ export default function LeftTree(props: any) {
                   >
                     编辑
                   </Button>
-                  <Button
-                    type="link"
-                    size="small"
-                    onClick={(e) => {
+                  <Popconfirm
+                    title="确定要删除此测试用例库吗？"
+                    onConfirm={() => {
                       void handleDeleteCaseCate(node);
-                      void e.stopPropagation();
                     }}
                   >
-                    删除
-                  </Button>
+                    <Button type="link" size="small" onClick={(e) => e.stopPropagation()}>
+                      删除
+                    </Button>
+                  </Popconfirm>
                 </div>
               </div>
             );

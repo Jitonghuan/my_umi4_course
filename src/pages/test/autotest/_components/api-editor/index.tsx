@@ -10,7 +10,7 @@ import * as APIS from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import DebounceSelect from '@/components/debounce-select';
 import EditorTable from '@cffe/pc-editor-table';
-import { TreeNode, EditorMode } from '../../interfaces';
+import { TreeNode } from '../../interfaces';
 import {
   API_TYPE,
   PARAM_TYPE,

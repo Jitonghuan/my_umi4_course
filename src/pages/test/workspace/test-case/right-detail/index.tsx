@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import moment from 'moment';
 import { Form, Table, Button, Popconfirm, Input, Select, Space, message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList, caseDelete } from '../../service';
 import { priorityEnum } from '../../constant';
 import AddCaseDrawer from '../add-case-drawer';
 import OprateCaseDrawer from '../oprate-case-modal';
-import dayjs from 'dayjs';
 import './index.less';
 
 export default function RightDetail(props: any) {
@@ -95,7 +95,7 @@ export default function RightDetail(props: any) {
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="reset">
-              重制
+              重置
             </Button>
           </Form.Item>
         </Form>
@@ -140,7 +140,7 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="gmtModify"
             title="更新时间"
-            render={(date) => dayjs(date).format('YYYY-MM-DD HH:mm:ss')}
+            render={(date) => moment(date).format('YYYY-MM-DD HH:mm:ss')}
           ></Table.Column>
           <Table.Column title="操作" render={operateRender}></Table.Column>
         </Table>

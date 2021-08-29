@@ -6,7 +6,7 @@ import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug, addBug } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
 
@@ -15,7 +15,16 @@ moment.locale('zh-cn');
 const { Text } = Typography;
 
 export default function UserCaseInfoExec(props: any) {
-  const { setAddBugDrawerVisible, curCase, phaseId, testCaseTreeLeafs, setCurCaseId, className } = props;
+  const {
+    setAddBugDrawerVisible,
+    curCase,
+    phaseId,
+    testCaseTreeLeafs,
+    setCurCaseId,
+    className,
+    updateCurCase,
+    updateTestCaseTree,
+  } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [associationBug, setAssociationBug] = useState<any[]>([]);
@@ -24,12 +33,14 @@ export default function UserCaseInfoExec(props: any) {
   const [schema, setSchema] = useState();
   const sona = useMemo(() => createSona(), []);
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
-  const [checkedBugs, setCheckedBugs] = useState<Record<string, React.Key[]>>({});
+  const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
 
   useEffect(() => {
     if (curCase) {
       curCase.status !== undefined && void setCaseStatus(curCase.status.toString());
+
+      void setAssociationBug(curCase.bugs);
 
       const emptySchema = [
         {
@@ -51,8 +62,6 @@ export default function UserCaseInfoExec(props: any) {
       try {
         curCase.caseInfo?.comment > 0 && void setCaseNote(JSON.parse(curCase.caseInfo.comment));
       } catch (e) {}
-
-      console.log(curCase);
     }
   }, [curCase]);
 
@@ -72,13 +81,15 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleCaseStatusSubmit = async (caseStatus: string, executeNote?: string) => {
     if (!caseStatus) return;
-    const loadEnd = message.loading('状态切换中');
+    // const loadEnd = message.loading('状态切换中');
     void (await changeCaseStatus(phaseId, curCase.caseInfo.id, caseStatus, executeNote));
-    void loadEnd();
+    void updateCurCase();
+    void updateTestCaseTree();
+    // void loadEnd();
   };
 
   const handleCaseStatusChange = async (caseStatus: string) => {
-    void (await handleCaseStatusSubmit(caseStatus));
+    void (await handleCaseStatusSubmit(caseStatus, JSON.stringify(sona.schema)));
     void setCaseStatus(caseStatus);
     void message.success('用例状态修改成功');
   };
@@ -112,28 +123,96 @@ export default function UserCaseInfoExec(props: any) {
   };
 
   const mergeCheckedBugs2AssociationBugs = async () => {
-    void setAssociationBug([...new Set([...associationBug, ...Object.values(checkedBugs).flat(2)])]);
+    const preBugIds = associationBug.map((bug) => bug.id);
+    const curAssociationBugs = [...associationBug, ...checkedBugs.filter((bug) => !preBugIds.includes(bug.id))];
+    void setAssociationBug(curAssociationBugs);
     void (await postRequest(relatedBug, {
       data: {
         phaseId: phaseId,
         caseId: curCase.caseInfo.id,
-        bugs: [...new Set([...associationBug, ...Object.values(checkedBugs).flat(2)])],
+        bugs: curAssociationBugs.map((bug) => bug.id),
       },
     }));
+    void setCheckedBugs([]);
     void message.success('关联bug成功');
+  };
+
+  const handleDeleteAssociationBug = async (id: React.Key) => {
+    const nextAssociationBugs = associationBug.filter((bug) => bug.id !== id);
+    void setAssociationBug(nextAssociationBugs);
+    void (await postRequest(relatedBug, {
+      data: {
+        phaseId: phaseId,
+        caseId: curCase.caseInfo.id,
+        bugs: nextAssociationBugs.map((bug) => bug.id),
+      },
+    }));
+    void setCheckedBugs([]);
+    void message.success('删除bug成功');
+  };
+
+  const handleBugStatusChange = (bugInfo: any, status: string) => {
+    const loadEnd = message.loading('正在修改Bug状态');
+    let relatedCases = [];
+    try {
+      relatedCases = JSON.parse(bugInfo.relatedCases);
+    } catch (e) {}
+    postRequest(modifyBug, {
+      data: {
+        ...bugInfo,
+        status,
+        desc: bugInfo.description,
+        relatedCases: relatedCases,
+      },
+    }).then((res) => {
+      void loadEnd();
+      void message.success('修改Bug状态成功');
+      void updateCurCase();
+    });
+  };
+
+  const handleSmartSubmit = async () => {
+    const finishLoading = message.loading('正在提交Bug');
+    const requestParams = {
+      name: '前端埋点ww--不符合预期结果',
+      business: 4,
+      priority: 1,
+      bugType: 0,
+      onlineBug: 0,
+      relatedCases: [855],
+      desc: '[{"type":"paragraph","children":[{"text":"wwww"}]}]',
+      agent: 'jidan.wdd',
+      status: '0',
+      createUser: userInfo.userName,
+    };
+    void (await postRequest(addBug, { data: requestParams }).catch(() => {
+      void finishLoading();
+    }));
+    void finishLoading();
+    void updateCurCase();
+    void message.success('一键提交成功');
   };
 
   return (
     <div className={className}>
       <div className="case-header">
         <div className="title-col">
-          <span className="case-title">{curCase?.caseInfo?.title}</span>
+          <span className="case-title">
+            #{curCase?.caseInfo?.id} {curCase?.caseInfo?.title}
+          </span>
           <Select
-            className="w-100 ml-auto"
+            className={
+              'w-100 ml-auto ' + ['beExecuted', 'executeSuccess', 'executeFailure', 'block', 'pass'][+(caseStatus || 0)]
+            }
             value={caseStatus}
             onChange={handleCaseStatusChange}
-            options={caseStatusEnum}
-          ></Select>
+          >
+            {caseStatusEnum.map((item) => (
+              <Select.Option value={item.value} style={{ background: item.color }}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select>
           <Button
             className="ml-20"
             icon={<UpOutlined style={{ color: '#5F677A' }} />}
@@ -160,7 +239,7 @@ export default function UserCaseInfoExec(props: any) {
         </Table>
 
         <div className="case-prop-title mt-12">用例备注:</div>
-        <RichText readOnly={execNoteReadOnly} schema={caseNote} />
+        <RichText readOnly={true} schema={caseNote} />
 
         <div className="case-prop-title mt-12">执行备注:</div>
         <div className="executeNote">
@@ -194,31 +273,46 @@ export default function UserCaseInfoExec(props: any) {
                 <Button type="primary" ghost onClick={() => setAddBugDrawerVisible(true)}>
                   新增Bug
                 </Button>
-                <Button type="primary" ghost disabled>
+                <Button type="primary" ghost disabled onClick={handleSmartSubmit}>
                   一键提交
                 </Button>
               </Space>
             }
           >
-            <Tabs.TabPane tab="关联Bug()" key="1">
+            <Tabs.TabPane tab="关联Bug" key="1">
               <Table dataSource={associationBug}>
                 <Table.Column title="ID" dataIndex="id" />
                 <Table.Column title="标题" dataIndex="name" />
                 <Table.Column
                   title="状态"
                   dataIndex="status"
-                  render={(status) => <Select value={status.toString()} options={bugStatusEnum}></Select>}
+                  render={(status, record: any) => (
+                    <Select
+                      value={status.toString()}
+                      options={bugStatusEnum}
+                      onChange={(value) => handleBugStatusChange(record, value)}
+                    ></Select>
+                  )}
                 />
-                <Table.Column title="操作" render={() => <Button type="link">删除</Button>} />
+                <Table.Column
+                  title="操作"
+                  render={(record: any) => (
+                    <Button type="link" onClick={() => handleDeleteAssociationBug(record.id)}>
+                      删除
+                    </Button>
+                  )}
+                />
               </Table>
             </Tabs.TabPane>
             <Tabs.TabPane tab="活动日志" key="2">
               {curCase?.records?.length ? (
                 curCase.records.map((item: any) => {
                   return (
-                    <Row>
+                    <Row style={{ width: '100%', overflow: 'hidden' }}>
                       <Col span={17}>
-                        <Text>{item.executeNote}</Text>
+                        <Text>
+                          {item.createUser} 执行了用例，状态为：{caseStatusEnum[item.status].label}
+                        </Text>
                       </Col>
                       <Col span={7} className="activity-log">
                         <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>

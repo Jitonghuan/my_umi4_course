@@ -37,6 +37,7 @@ export default function UserCaseInfoExec(props: any) {
       void setPageSize(pageSize);
       void setTotal(total);
       void setKeyword(_keyword);
+      void setCheckedBugs([]);
     });
   };
 
@@ -45,7 +46,6 @@ export default function UserCaseInfoExec(props: any) {
   }, [pageIndex, pageSize]);
 
   const handleSearch = (keyword: string) => {
-    void setCheckedBugs({});
     void updateBugList(pageIndex, pageSize, keyword);
   };
 
@@ -54,7 +54,7 @@ export default function UserCaseInfoExec(props: any) {
       title="Bug列表"
       visible={associationBugModalVisible}
       onCancel={() => {
-        void setCheckedBugs({});
+        void setCheckedBugs([]);
         void setAssociationBugModalVisible(false);
       }}
       onOk={() => {
@@ -74,10 +74,9 @@ export default function UserCaseInfoExec(props: any) {
         rowSelection={{
           type: 'checkbox',
           onChange: (bugIds) => {
-            const bugs = bugList?.filter((item) => bugIds.includes(item.id)) || [];
-            void setCheckedBugs({ ...checkedBugs, [pageIndex]: bugs });
+            setCheckedBugs(bugList?.filter((bug) => bugIds.includes(bug.id)));
           },
-          selectedRowKeys: checkedBugs[pageIndex]?.map((item: any) => item.id) || [],
+          selectedRowKeys: checkedBugs?.map((bug: any) => bug.id) || [],
         }}
         pagination={{
           current: pageIndex,

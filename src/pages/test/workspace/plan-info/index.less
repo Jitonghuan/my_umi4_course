@@ -44,6 +44,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
 
       .case-info {
         overflow: auto;
@@ -57,6 +58,36 @@
           .title-col {
             width: 100%;
             display: flex;
+
+            .beExecuted {
+              .ant-select-selector {
+                background: #5f677a;
+              }
+            }
+
+            .executeSuccess {
+              .ant-select-selector {
+                background: #439d75;
+              }
+            }
+
+            .executeFailure {
+              .ant-select-selector {
+                background: #cc4631;
+              }
+            }
+
+            .block {
+              .ant-select-selector {
+                background: #fecd3a;
+              }
+            }
+
+            .pass {
+              .ant-select-selector {
+                background: #6c82aa;
+              }
+            }
 
             .case-title {
               font-size: 16px;
@@ -87,6 +118,7 @@
       width: 300px;
       background: #fff;
       padding: 12px;
+      overflow: auto;
 
       .filter-bar {
         display: grid;

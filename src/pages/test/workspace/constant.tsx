@@ -1,3 +1,12 @@
+import React from 'react';
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ClockCircleOutlined,
+  RightCircleOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
+
 export const bugStatusEnum = ['新建', '修复中', '已拒绝', '待验证', '重复打开', '已关闭', '延期解决'].map(
   (item, index) => ({
     value: index.toString(),
@@ -26,7 +35,10 @@ export const testPhaseEnum = [
     type: 'success',
   },
 ];
-export const caseStatusEnum = ['待执行', '执行通过', '执行失败', '阻塞', '跳过'].map((item, index) => ({
-  value: index.toString(),
-  label: item,
-}));
+export const caseStatusEnum = [
+  { label: '待执行', color: '#5F677A', icon: <ClockCircleOutlined />, value: '0' },
+  { label: '执行通过', color: '#439D75', icon: <CheckCircleOutlined />, value: '1' },
+  { label: '执行失败', color: '#CC4631', icon: <CloseCircleOutlined />, value: '2' },
+  { label: '阻塞', color: '#FECD3A', icon: <SyncOutlined />, value: '3' },
+  { label: '跳过', color: '#6C82AA', icon: <RightCircleOutlined />, value: '4' },
+];

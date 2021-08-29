@@ -12,22 +12,22 @@ import './index.less';
 const { TabPane } = Tabs;
 
 export default function RightDetail(props: any) {
-  const { visible, setVisible, updateCaseTable, caseId, cateId, caseCateTreeData } = props;
+  const { visible, setVisible, updateCaseTable, caseId, cateId } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
   const [stepContent, setStepContent] = useState<string | string[]>('');
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
-  // const [categories, setCategories] = useState<any[]>([]);
-  const [descType, setDescType] = useState('1');
+  const [categories, setCategories] = useState<any[]>([]);
+  const [descType, setDescType] = useState('0');
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
-  // useEffect(() => {
-  //   getRequest(getCategoryList).then((res) => {
-  //     setCategories(res.data.dataSource);
-  //   });
-  // }, []);
+  useEffect(() => {
+    getRequest(getCategoryList).then((res) => {
+      setCategories(res.data.dataSource);
+    });
+  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -79,7 +79,7 @@ export default function RightDetail(props: any) {
 
     // 保存后清空表单
     void form.resetFields();
-    if (descType === '1') {
+    if (descType === '0') {
       void setStepContent('');
       void setExpectedResult('');
     } else {
@@ -111,13 +111,12 @@ export default function RightDetail(props: any) {
         <Form.Item label="标题:" name="title">
           <Input placeholder="请输入标题" />
         </Form.Item>
-        <Form.Item label="所属:" name="categoryId">
-          <TreeSelect treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
-          {/* <Select>
+        <Form.Item label="所属业务:" name="categoryId">
+          <Select>
             {categories.map((cate) => (
               <Select.Option value={cate.id}>{cate.categoryName}</Select.Option>
             ))}
-          </Select> */}
+          </Select>
         </Form.Item>
         <Form.Item label="优先级:" name="priority">
           <Select>
@@ -139,7 +138,7 @@ export default function RightDetail(props: any) {
             activeKey={descType}
             onChange={(key) => {
               void setDescType(key);
-              if (key === '1') {
+              if (key === '0') {
                 void setStepContent('');
                 void setExpectedResult('');
               } else {
@@ -149,7 +148,7 @@ export default function RightDetail(props: any) {
               }
             }}
           >
-            <TabPane tab="卡片式" key="1">
+            <TabPane tab="卡片式" key="0">
               <div className="cardtype-case-desc-wrapper">
                 <Input.TextArea
                   placeholder="输入步骤描述"
@@ -165,7 +164,7 @@ export default function RightDetail(props: any) {
                 ></Input.TextArea>
               </div>
             </TabPane>
-            <TabPane tab="步骤式" key="2">
+            <TabPane tab="步骤式" key="1">
               <EditorTable
                 value={caseDescArr}
                 onChange={(val) => {
