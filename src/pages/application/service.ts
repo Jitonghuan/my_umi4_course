@@ -122,6 +122,8 @@ export const restartApplication = `${ds.apiPrefix}/releaseManage/restartApplicat
 
 /** GET 查询卡点任务结果 */
 export const qualityGuardInfo = `${ds.apiPrefix}/qc/qualitycontrol/qualityGuardInfo`;
+/** GET 下载镜像 */
+export const downloadImage = `${ds.apiPrefix}/releaseManage/deploy/downloadImage`;
 
 /** 查询应用列表 */
 export const queryApps = (params: {
