@@ -23,6 +23,11 @@ export default function BugManage(props: any) {
   const sona = useMemo(() => createSona(), []);
 
   const submit = async (continueAdd = false) => {
+    try {
+      void (await form.validateFields());
+    } catch (e) {
+      return;
+    }
     const finishLoading = message.loading(bugInfo ? '正在修改' : '正在新增');
     const formData = form.getFieldsValue();
     const requestParams = {
@@ -66,8 +71,10 @@ export default function BugManage(props: any) {
         } catch {
           void setSchema(undefined);
         }
-      } else if (defaultRelatedCases) {
-        void setRelatedCases(defaultRelatedCases);
+      } else {
+        void form.resetFields();
+        void setSchema(undefined);
+        void setRelatedCases(defaultRelatedCases || []);
       }
     }
   }, [visible]);
@@ -132,10 +139,10 @@ export default function BugManage(props: any) {
         maskClosable={false}
       >
         <Form {...formItemLayout} form={form}>
-          <Form.Item label="标题" name="name">
+          <Form.Item label="标题" name="name" rules={[{ required: true, message: '请输入标题' }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="所属业务" name="business">
+          <Form.Item label="所属业务" name="business" rules={[{ required: true, message: '请选择所属业务' }]}>
             <Select>
               {projectList.map((item: any) => (
                 <Select.Option value={item.id} key={item.id}>
@@ -144,7 +151,7 @@ export default function BugManage(props: any) {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="优先级" name="priority">
+          <Form.Item label="优先级" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
             <Radio.Group>
               {bugPriorityEnum.map((title, index) => (
                 <Radio value={index} key={index}>
@@ -153,7 +160,7 @@ export default function BugManage(props: any) {
               ))}
             </Radio.Group>
           </Form.Item>
-          <Form.Item label="类型" name="bugType">
+          <Form.Item label="类型" name="bugType" rules={[{ required: true, message: '请选择类型' }]}>
             <Select>
               {bugTypeEnum.map((title, index) => (
                 <Select.Option value={index} key={index}>
@@ -186,14 +193,14 @@ export default function BugManage(props: any) {
           <Form.Item label="描述" name="desc">
             <RichText width="524px" sona={sona} schema={schema} />
           </Form.Item>
-          <Form.Item label="经办人" name="agent">
+          <Form.Item label="经办人" name="agent" rules={[{ required: true, message: '请选择经办人' }]}>
             <Select
               options={manageList.map((item) => ({ label: item, value: item }))}
               optionFilterProp="label"
               showSearch
             />
           </Form.Item>
-          <Form.Item label="状态" name="status">
+          <Form.Item label="状态" name="status" rules={[{ required: true, message: '请选择状态' }]}>
             <Select options={bugStatusEnum}></Select>
           </Form.Item>
         </Form>
