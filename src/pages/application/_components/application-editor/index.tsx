@@ -104,20 +104,20 @@ export default function ApplicationEditor(props: IProps) {
           <Radio.Group options={appTypeOptions} disabled={isEdit} />
         </FormItem>
         <FormItem label="APPCODE" name="appCode" rules={[{ required: true, message: '请输入应用 Code' }]}>
-          <Input placeholder="请输入应用Code" disabled={isEdit} style={{ width: 220 }} />
+          <Input placeholder="请输入应用Code" disabled={isEdit} style={{ width: 320 }} />
         </FormItem>
         <FormItem label="应用名" name="appName" rules={[{ required: true, message: '请输入应用名称' }]}>
-          <Input placeholder="请输入" style={{ width: 220 }} />
+          <Input placeholder="请输入" style={{ width: 320 }} />
         </FormItem>
         <FormItem label="应用部署名" name="deploymentName" rules={[{ required: true, message: '请输入应用部署名' }]}>
-          <Input placeholder="请输入" style={{ width: 220 }} />
+          <Input placeholder="请输入" style={{ width: 320 }} />
         </FormItem>
         <FormItem label="应用分类" name="appCategoryCode" rules={[{ required: true, message: '请选择应用分类' }]}>
           <Select
             options={categoryData}
             placeholder="请选择"
             onChange={handleCategoryCodeChange}
-            style={{ width: 220 }}
+            style={{ width: 320 }}
           />
         </FormItem>
         <FormItem label="应用组" name="appGroupCode">
@@ -125,7 +125,7 @@ export default function ApplicationEditor(props: IProps) {
             options={appGroupOptions}
             loading={appGroupLoading}
             placeholder="请选择"
-            style={{ width: 220 }}
+            style={{ width: 320 }}
             allowClear
           />
         </FormItem>
@@ -139,7 +139,7 @@ export default function ApplicationEditor(props: IProps) {
           <DebounceSelect fetchOptions={searchGitAddress} labelInValue={false} placeholder="输入仓库名搜索" />
         </FormItem>
         {/* <FormItem label="Git 分组" name="gitGroup">
-          <Input placeholder="请输入应用 gitlab 分组信息" style={{ width: 220 }} />
+          <Input placeholder="请输入应用 gitlab 分组信息" style={{ width: 320 }} />
         </FormItem> */}
 
         <Divider />
