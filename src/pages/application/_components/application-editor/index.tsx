@@ -5,7 +5,9 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Drawer, Button, Select, Radio, Input, Divider, message, Form } from 'antd';
 import FEContext from '@/layouts/basic-layout/fe-context';
-import { createApp, updateApp } from './service';
+import DebounceSelect from '@/components/debounce-select';
+import UserSelector from '@/components/user-selector';
+import { createApp, updateApp, searchGitAddress } from './service';
 import { useAppGroupOptions } from '../../hooks';
 import { appTypeOptions, appDevelopLanguageOptions, isClientOptions } from './common';
 import { AppItemVO } from '../../interfaces';
@@ -35,6 +37,7 @@ export default function ApplicationEditor(props: IProps) {
       setCategoryCode(initData?.appCategoryCode);
       form.setFieldsValue({
         ...initData,
+        ownerList: initData?.owner?.split(/[,;\/，、]\s?|\s/)?.filter((n) => !!n) || [],
       });
     } else {
       form.resetFields();
@@ -51,13 +54,19 @@ export default function ApplicationEditor(props: IProps) {
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
     console.log('>> handleSubmit', values);
+    const { ownerList, ...others } = values;
+
+    const submitData = {
+      ...others,
+      owner: ownerList?.join(',') || '',
+    };
 
     setLoading(true);
     try {
       if (isEdit) {
-        await updateApp({ id: initData?.id!, ...values });
+        await updateApp({ id: initData?.id!, ...submitData });
       } else {
-        await createApp(values);
+        await createApp(submitData);
       }
 
       message.success('保存成功!');
@@ -69,7 +78,7 @@ export default function ApplicationEditor(props: IProps) {
 
   return (
     <Drawer
-      width={600}
+      width={660}
       title={isEdit ? '编辑应用' : '新增应用'}
       visible={props.visible}
       onClose={props.onClose}
@@ -92,7 +101,7 @@ export default function ApplicationEditor(props: IProps) {
           initialValue={appTypeOptions[0].value}
           rules={[{ required: true, message: '请选择应用类型' }]}
         >
-          <Select options={appTypeOptions} placeholder="请选择" disabled={isEdit} style={{ width: 220 }} />
+          <Radio.Group options={appTypeOptions} disabled={isEdit} />
         </FormItem>
         <FormItem label="APPCODE" name="appCode" rules={[{ required: true, message: '请输入应用 Code' }]}>
           <Input placeholder="请输入应用Code" disabled={isEdit} style={{ width: 220 }} />
@@ -120,14 +129,14 @@ export default function ApplicationEditor(props: IProps) {
             allowClear
           />
         </FormItem>
-        <FormItem label="应用负责人" name="owner" rules={[{ required: true, message: '请输入应用负责人' }]}>
-          <Input placeholder="请输入" style={{ width: 220 }} />
+        <FormItem label="应用负责人" name="ownerList" rules={[{ required: true, message: '请输入应用负责人' }]}>
+          <UserSelector />
         </FormItem>
         <FormItem label="应用描述" name="desc">
           <Input.TextArea placeholder="请输入应用描述" />
         </FormItem>
         <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
-          <Input placeholder="http://gitlab.cfuture.shop/group/project.git" />
+          <DebounceSelect fetchOptions={searchGitAddress} labelInValue={false} placeholder="输入仓库名搜索" />
         </FormItem>
         {/* <FormItem label="Git 分组" name="gitGroup">
           <Input placeholder="请输入应用 gitlab 分组信息" style={{ width: 220 }} />
@@ -144,7 +153,7 @@ export default function ApplicationEditor(props: IProps) {
                   name="appDevelopLanguage"
                   rules={[{ required: true, message: '请选择开发语言' }]}
                 >
-                  <Select options={appDevelopLanguageOptions} placeholder="请选择" style={{ width: 220 }} />
+                  <Radio.Group options={appDevelopLanguageOptions} />
                 </FormItem>
                 <FormItem noStyle shouldUpdate={(prev, curr) => prev.appDevelopLanguage !== curr.appDevelopLanguage}>
                   {({ getFieldValue }) =>
