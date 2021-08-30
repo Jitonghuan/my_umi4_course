@@ -99,7 +99,7 @@ export default function TestCase(props: any) {
     <PageContainer>
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
-        <CardRowGroup.SlideCard width={340}>
+        <CardRowGroup.SlideCard className="slide-card" width={340}>
           <LeftTree
             cateId={cateId}
             setCateId={setCateId}
