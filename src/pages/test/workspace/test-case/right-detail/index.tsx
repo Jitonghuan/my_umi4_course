@@ -86,7 +86,7 @@ export default function RightDetail(props: any) {
             <Input placeholder="输入标题" />
           </Form.Item>
           <Form.Item label="优先级:" name="priority">
-            <Select placeholder="选择优先级" allowClear>
+            <Select placeholder="选择优先级" allowClear style={{ width: '106px' }}>
               {priorityEnum.map((item) => (
                 <Select.Option value={item.value} key={item.value}>
                   {item.label}
@@ -138,7 +138,7 @@ export default function RightDetail(props: any) {
             onChange: setCheckedCaseIds,
           }}
         >
-          <Table.Column width={60} title="ID" render={(_: any, __: any, index: number) => index + 1}></Table.Column>
+          <Table.Column width={60} title="ID" dataIndex="id"></Table.Column>
           <Table.Column
             dataIndex="categoryName"
             title="所属"
