@@ -1,9 +1,7 @@
-import React from 'react';
-import { history } from 'umi';
 import moment from 'moment';
 
 // 表格 schema
-export const createTableSchema = () => [
+export const tableSchema = [
   {
     width: 80,
     title: 'ID',

@@ -18,16 +18,16 @@ export default function RightDetail(props: any) {
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
   const [stepContent, setStepContent] = useState<string | string[]>('');
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
-  const [categories, setCategories] = useState<any[]>([]);
+  // const [categories, setCategories] = useState<any[]>([]);
   const [descType, setDescType] = useState('0');
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
-  useEffect(() => {
-    getRequest(getCategoryList).then((res) => {
-      setCategories(res.data.dataSource);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getRequest(getCategoryList).then((res) => {
+  //     setCategories(res.data.dataSource);
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (visible) {
@@ -62,7 +62,7 @@ export default function RightDetail(props: any) {
       currentUser: userInfo.userName,
       descType: +descType,
       isAuto: _data.isAuto ? 1 : 0,
-      categoryId: cateId,
+      categoryId: +cateId,
     };
 
     const loadEnd = message.loading(`正在${caseId ? '更新' : '新增'}用例`);
@@ -111,13 +111,13 @@ export default function RightDetail(props: any) {
         <Form.Item label="标题:" name="title">
           <Input placeholder="请输入标题" />
         </Form.Item>
-        <Form.Item label="所属业务:" name="categoryId">
+        {/* <Form.Item label="所属业务:" name="categoryId">
           <Select>
             {categories.map((cate) => (
               <Select.Option value={cate.id}>{cate.categoryName}</Select.Option>
             ))}
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="优先级:" name="priority">
           <Select>
             {priorityEnum.map((item) => (

@@ -6,7 +6,7 @@ import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug, modifyBug, addBug } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
 
@@ -24,6 +24,7 @@ export default function UserCaseInfoExec(props: any) {
     className,
     updateCurCase,
     updateTestCaseTree,
+    plan,
   } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
@@ -35,6 +36,14 @@ export default function UserCaseInfoExec(props: any) {
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
+  // const [projectList, setProjectList] = useState<any[]>([]);
+  // console.log(plan);
+
+  // useEffect(() => {
+  //   getRequest(getProjects).then((res) => {
+  //     void setProjectList(res.data.dataSource);
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (curCase) {
@@ -172,16 +181,28 @@ export default function UserCaseInfoExec(props: any) {
   };
 
   const handleSmartSubmit = async () => {
+    if (!curCase?.caseInfo) return;
     const finishLoading = message.loading('正在提交Bug');
+    let desc = [];
+    try {
+      let caseDesc = JSON.parse(curCase.executeNote || '');
+      if (!(caseDesc instanceof Array)) caseDesc = [];
+      desc = [...caseDesc, ...sona.schema];
+    } catch (e) {
+      void finishLoading();
+      void message.error('未知错误');
+      return;
+    }
+
     const requestParams = {
-      name: '前端埋点ww--不符合预期结果',
-      business: 4,
+      name: `${curCase.caseInfo.title}--不符合预期结果`,
+      business: plan.projectId,
       priority: 1,
       bugType: 0,
       onlineBug: 0,
-      relatedCases: [855],
-      desc: '[{"type":"paragraph","children":[{"text":"wwww"}]}]',
-      agent: 'jidan.wdd',
+      relatedCases: [curCase.caseInfo.id],
+      desc: desc.length === 0 ? '' : JSON.stringify(desc),
+      agent: userInfo.userName,
       status: '0',
       createUser: userInfo.userName,
     };
@@ -223,7 +244,7 @@ export default function UserCaseInfoExec(props: any) {
 
         <div>
           <span className="case-prop-title">优先级:</span> {curCase?.caseInfo?.priority}
-          <span className="case-prop-title ml-20">所属模块:</span> {curCase?.caseInfo?.categoryId}
+          <span className="case-prop-title ml-20">所属模块:</span> {plan.projectName}
         </div>
       </div>
 
@@ -273,7 +294,7 @@ export default function UserCaseInfoExec(props: any) {
                 <Button type="primary" ghost onClick={() => setAddBugDrawerVisible(true)}>
                   新增Bug
                 </Button>
-                <Button type="primary" ghost disabled onClick={handleSmartSubmit}>
+                <Button type="primary" ghost onClick={handleSmartSubmit}>
                   一键提交
                 </Button>
               </Space>

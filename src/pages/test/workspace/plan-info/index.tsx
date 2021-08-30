@@ -233,6 +233,7 @@ export default function PlanInfo(props: any) {
                     curCase={curCase}
                     updateCurCase={updateCurCase}
                     updateTestCaseTree={updateTestCaseTree}
+                    plan={plan}
                   />
                 ) : (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有选择测试用例" />
