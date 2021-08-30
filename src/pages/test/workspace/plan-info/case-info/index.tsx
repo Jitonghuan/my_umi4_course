@@ -6,7 +6,7 @@ import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug, modifyBug, addBug } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
 
@@ -36,6 +36,13 @@ export default function UserCaseInfoExec(props: any) {
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
+  const [projectList, setProjectList] = useState<any[]>([]);
+
+  useEffect(() => {
+    getRequest(getProjects).then((res) => {
+      void setProjectList(res.data.dataSource);
+    });
+  }, []);
 
   useEffect(() => {
     if (curCase) {
@@ -236,7 +243,10 @@ export default function UserCaseInfoExec(props: any) {
 
         <div>
           <span className="case-prop-title">优先级:</span> {curCase?.caseInfo?.priority}
-          <span className="case-prop-title ml-20">所属模块:</span> {curCase?.caseInfo?.categoryId}
+          <span className="case-prop-title ml-20">所属模块:</span>{' '}
+          {projectList.find((item) => item.id === curCase?.caseInfo?.categoryId)?.categoryName ||
+            curCase?.caseInfo?.categoryId ||
+            '模块不存在'}
         </div>
       </div>
 
