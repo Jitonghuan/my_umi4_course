@@ -73,6 +73,7 @@ export default function AssociatingCaseDrawer(props: any) {
     }).then(() => {
       void loadFinish();
       void message.success('关联成功');
+      void setVisible(false);
     });
   };
 
