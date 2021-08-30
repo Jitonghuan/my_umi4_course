@@ -35,7 +35,7 @@ export default function TestPlan(props: any) {
   const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize) => {
     void setLoading(true);
     const res = await getRequest(getTestPlanList, {
-      data: { ...searchData, _pageIndex, _pageSize },
+      data: { ...searchData, pageIndex: _pageIndex, pageSize: _pageSize },
     });
     void setLoading(false);
     const { dataSource, pageInfo } = res.data;
@@ -133,8 +133,8 @@ export default function TestPlan(props: any) {
               total,
               pageSize,
               showSizeChanger: true,
-              onChange: (next) => setPageIndex(next),
-              onShowSizeChange: (_, next) => setPageSize(next),
+              onChange: (next) => updateTable(next),
+              onShowSizeChange: (_, next) => updateTable(1, next),
             }}
           >
             <Table.Column title="ID" width={80} dataIndex="id" />

@@ -39,7 +39,14 @@ export default function AddTestPlanDrawer(props: any) {
   useEffect(() => {
     if (visible) {
       if (plan) {
-        void form.setFieldsValue(plan);
+        const demandId = [];
+        plan.projectId && demandId.push(plan.projectId);
+        plan.demandId && demandId.push(plan.demandId);
+        plan.subDemandId && demandId.push(plan.subDemandId);
+        void form.setFieldsValue({
+          ...plan,
+          demandId,
+        });
         void setPhaseCollection(
           plan?.phaseCollection?.map((item: any) => ({
             ...item,
@@ -58,8 +65,9 @@ export default function AddTestPlanDrawer(props: any) {
     const formData = form.getFieldsValue();
     const requestParams = {
       ...formData,
-      projectId: +formData.projectId,
-      demandId: formData.demandId.join('/'),
+      projectId: formData.demandId[0] && +formData.demandId[0],
+      demandId: formData.demandId[1] && +formData.demandId[1],
+      subDemandId: formData.demandId[2] && +formData.demandId[2],
       phaseCollection: phaseCollection.map((item) => ({
         ...item,
         startTime: item.startTime.format('YYYY-MM-DD HH:mm:ss'),
@@ -77,14 +85,15 @@ export default function AddTestPlanDrawer(props: any) {
     const formData = form.getFieldsValue();
     const requestParams = {
       ...formData,
+      projectId: formData.demandId[0] && +formData.demandId[0],
+      demandId: formData.demandId[1] && +formData.demandId[1],
+      subDemandId: formData.demandId[2] && +formData.demandId[2],
       phaseCollection: phaseCollection.map((item) => ({
         ...item,
         id: item.id === undefined ? -1 : item.id,
         startTime: item.startTime.format('YYYY-MM-DD HH:mm:ss'),
         endTime: item.endTime.format('YYYY-MM-DD HH:mm:ss'),
       })),
-      projectId: +formData.projectId,
-      demandId: formData.demandId.join('/'),
       modifyUser: userInfo.userName,
       id: plan.id,
     };
