@@ -156,6 +156,7 @@ export default function TestPlan(props: any) {
                       },
                     })
                   }
+                  disabled={!record.phaseCollection?.length}
                 >
                   {planName}
                 </Button>

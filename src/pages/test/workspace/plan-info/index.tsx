@@ -91,7 +91,7 @@ export default function PlanInfo(props: any) {
   }, [curCaseId]);
 
   useEffect(() => {
-    void setActiveKey(plan?.phaseCollection?.[0].id.toString());
+    void setActiveKey(plan?.phaseCollection?.[0]?.id.toString());
     getRequest(getProjects).then((res) => {
       void setProjectList(res.data.dataSource);
     });
