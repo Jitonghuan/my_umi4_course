@@ -143,9 +143,11 @@ export default function LeftTree(props: any) {
                   </Button>
                   <Popconfirm
                     title="确定要删除此测试用例库吗？"
-                    onConfirm={() => {
+                    onConfirm={(e) => {
                       void handleDeleteCaseCate(node);
+                      void (e && e.stopPropagation());
                     }}
+                    onCancel={(e) => e && e.stopPropagation()}
                   >
                     <Button type="link" size="small" onClick={(e) => e.stopPropagation()}>
                       删除
