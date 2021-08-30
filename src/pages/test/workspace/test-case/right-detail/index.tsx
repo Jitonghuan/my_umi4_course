@@ -109,10 +109,10 @@ export default function RightDetail(props: any) {
       <div className="detail-container">
         <div className="add-btn-wrapper">
           <Space>
-            <Button type="primary" ghost onClick={handleCopyCases}>
+            <Button type="primary" ghost disabled={!checkedCaseIds.length} onClick={handleCopyCases}>
               复制
             </Button>
-            <Button type="primary" ghost onClick={handleMoveCases}>
+            <Button type="primary" ghost disabled={!checkedCaseIds.length} onClick={handleMoveCases}>
               移动
             </Button>
           </Space>
@@ -189,6 +189,7 @@ export default function RightDetail(props: any) {
         checkedCaseIds={checkedCaseIds}
         setCheckedCaseIds={setCheckedCaseIds}
         caseCateTreeData={caseCateTreeData}
+        updateDatasource={updateDatasource}
       />
     </div>
   );
