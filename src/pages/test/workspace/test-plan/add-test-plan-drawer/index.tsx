@@ -125,13 +125,13 @@ export default function AddTestPlanDrawer(props: any) {
         <Form.Item label="计划名称" name="name">
           <Input placeholder="请输入计划名称" />
         </Form.Item>
-        <Form.Item label="业务所属" name="projectId">
+        {/* <Form.Item label="业务所属" name="projectId">
           <Select placeholder="请选择" allowClear>
             {projectList.map((item: any) => (
               <Select.Option value={item.id}>{item.categoryName}</Select.Option>
             ))}
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="项目/需求" name="demandId">
           <Cascader placeholder="请选择" options={projectTreeData} onChange={(val) => console.log(val)} />
         </Form.Item>

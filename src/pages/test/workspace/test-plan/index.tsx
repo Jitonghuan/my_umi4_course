@@ -13,7 +13,6 @@ import _ from 'lodash';
 const statusEnum = ['待执行', '执行中', '已完成'];
 
 export default function TestPlan(props: any) {
-  const [searchData, setSearchData] = useState<any>({});
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -23,6 +22,7 @@ export default function TestPlan(props: any) {
   const [associatingVisible, setAssociatingVisible] = useState(false);
   const [curSelectPlan, setCurSelectPlan] = useState<null | string>(null);
   const [projectList, setProjectList] = useState<any[]>([]);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     void updateTable(pageIndex, pageSize);
@@ -35,7 +35,7 @@ export default function TestPlan(props: any) {
   const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize) => {
     void setLoading(true);
     const res = await getRequest(getTestPlanList, {
-      data: { ...searchData, pageIndex: _pageIndex, pageSize: _pageSize },
+      data: { ...form.getFieldsValue(), pageIndex: _pageIndex, pageSize: _pageSize },
     });
     void setLoading(false);
     const { dataSource, pageInfo } = res.data;
@@ -66,16 +66,21 @@ export default function TestPlan(props: any) {
     void setAssociatingVisible(true);
   };
 
+  // const handleResetFilterFormData = () => {
+  //   void form.resetFields();
+  //   void updateTable();
+  // };
+
   return (
     <PageContainer className="test-workspace-test-plan">
       <HeaderTabs activeKey="test-plan" history={props.history} />
       <ContentCard>
         <div className="search-header">
           <Form
+            form={form}
             layout="inline"
-            onValuesChange={(_: any, val: any) => {
-              setSearchData(val);
-            }}
+            onFinish={() => updateTable(1, pageSize)}
+            onReset={() => updateTable(1, pageSize)}
           >
             <Form.Item label="所属" name="projectId">
               <Select placeholder="请选择" allowClear>
@@ -102,18 +107,15 @@ export default function TestPlan(props: any) {
             </Form.Item>
 
             <Form.Item>
-              <Button
-                type="primary"
-                onClick={() => {
-                  updateTable(1, pageSize);
-                }}
-              >
+              <Button type="primary" htmlType="submit">
                 查询
               </Button>
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary">重置</Button>
+              <Button type="primary" htmlType="reset">
+                重置
+              </Button>
             </Form.Item>
           </Form>
         </div>
