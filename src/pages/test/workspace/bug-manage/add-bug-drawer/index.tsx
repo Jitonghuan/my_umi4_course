@@ -66,8 +66,10 @@ export default function BugManage(props: any) {
         } catch {
           void setSchema(undefined);
         }
-      } else if (defaultRelatedCases) {
-        void setRelatedCases(defaultRelatedCases);
+      } else {
+        void form.resetFields();
+        void setSchema(undefined);
+        void setRelatedCases(defaultRelatedCases || []);
       }
     }
   }, [visible]);
