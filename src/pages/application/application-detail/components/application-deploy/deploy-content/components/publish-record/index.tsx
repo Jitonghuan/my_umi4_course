@@ -18,7 +18,7 @@ import './index.less';
 
 const rootCls = 'publish-record-compo';
 
-const PublishRecord = (props: IProps) => {
+export default function PublishRecord(props: IProps) {
   const { env, appCode } = props;
 
   const { appData } = useContext(DetailContext);
@@ -88,12 +88,7 @@ const PublishRecord = (props: IProps) => {
       total > 0 &&
       total > pageSize && (
         <div className={`${rootCls}-btns`}>
-          <Button
-            ghost
-            type="dashed"
-            //loading={tableProps.loading}
-            onClick={loadMore}
-          >
+          <Button ghost type="dashed" onClick={loadMore}>
             加载更多
           </Button>
         </div>
@@ -132,8 +127,9 @@ const PublishRecord = (props: IProps) => {
         />
       ) : null}
 
-      <Modal title="发布详情" visible={visible} onCancel={() => setVisible(false)}>
+      <Modal title="发布详情" width={600} visible={visible} footer={false} onCancel={() => setVisible(false)}>
         <VCDescription
+          labelStyle={{ width: 90, justifyContent: 'flex-end' }}
           column={1}
           dataSource={Object.keys(recordFieldMap).map((field) => ({
             label: recordFieldMap[field],
@@ -143,8 +139,4 @@ const PublishRecord = (props: IProps) => {
       </Modal>
     </div>
   );
-};
-
-PublishRecord.defaultProps = {};
-
-export default PublishRecord;
+}

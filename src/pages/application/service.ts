@@ -393,7 +393,7 @@ export const updateFeatures = (params: {
 /** 重试合并 */
 export const retryMerge = (params: {
   /** 部署的数据库自增ID */
-  id: string;
+  id: number;
 }) =>
   postRequest(retryMergeUrl, {
     data: params,
@@ -402,7 +402,7 @@ export const retryMerge = (params: {
 /** 重新构建 */
 export const retryBuild = (params: {
   /** 部署的数据库自增ID */
-  id: string;
+  id: number;
 }) =>
   postRequest(retryBuildUrl, {
     data: params,
@@ -411,7 +411,7 @@ export const retryBuild = (params: {
 /** 重新部署 */
 export const retryDeploy = (params: {
   /** 部署的数据库自增ID */
-  id: string;
+  id: number;
 }) =>
   postRequest(retryDeployUrl, {
     data: params,
@@ -420,7 +420,7 @@ export const retryDeploy = (params: {
 /** 生产环境确认部署和继续部署 */
 export const confirmProdDeploy = (params: {
   /** 部署的数据库自增ID */
-  id: string;
+  id: number;
   /** 发布机构: tian/weishan */
   hospital: string;
   /** 发布批次，0不分批，1发布第一批，2发布第二批 */
@@ -433,7 +433,7 @@ export const confirmProdDeploy = (params: {
 /** 重试生产环境合并master */
 export const reMergeMaster = (params: {
   /** 部署的数据库自增ID */
-  id: string;
+  id: number;
 }) =>
   postRequest(reMergeMasterUrl, {
     data: params,
@@ -442,7 +442,7 @@ export const reMergeMaster = (params: {
 /** 重试生产环境删除feature分支 */
 export const retryDelFeature = (params: {
   /** 部署的数据库自增ID */
-  id: string;
+  id: number;
 }) =>
   postRequest(retryDelFeatureUrl, {
     data: params,
@@ -451,7 +451,7 @@ export const retryDelFeature = (params: {
 /** 取消部署 */
 export const cancelDeploy = (params: {
   /** 部署的数据库自增ID */
-  id: string;
+  id: number;
 }) =>
   postRequest(cancelDeployUrl, {
     data: params,
@@ -460,7 +460,7 @@ export const cancelDeploy = (params: {
 /** 复用release分支 */
 export const deployReuse = (params: {
   /** 部署的数据库自增ID */
-  id: string;
+  id: number;
   /** poc环境复用到生产环境需要 */
   envs?: string[];
 }) =>
