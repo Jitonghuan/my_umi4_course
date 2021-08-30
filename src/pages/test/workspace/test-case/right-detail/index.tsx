@@ -41,7 +41,7 @@ export default function RightDetail(props: any) {
 
   useEffect(() => {
     void updateDatasource();
-  }, [pageIndex, pageSize, cateId]);
+  }, [cateId, pageIndex, pageSize]);
 
   const onDeleteConfirm = (id: number) => {
     const loadEnd = message.loading('正在删除');
@@ -75,7 +75,7 @@ export default function RightDetail(props: any) {
   return (
     <div className="test-workspace-test-case-right-detail">
       <div className="searchHeader">
-        <Form layout="inline" onFinish={handleSearch} form={form}>
+        <Form layout="inline" onFinish={handleSearch} onReset={handleSearch} form={form}>
           <Form.Item label="用例标题:" name="keyword">
             <Input placeholder="输入标题" />
           </Form.Item>
@@ -123,8 +123,8 @@ export default function RightDetail(props: any) {
             total,
             pageSize,
             showSizeChanger: true,
-            onChange: (next) => updateDatasource(next),
-            onShowSizeChange: (_, next) => updateDatasource(1, next),
+            onChange: (next) => setPageIndex(next),
+            onShowSizeChange: (_, next) => setPageSize(next),
           }}
           rowSelection={{
             type: 'checkbox',
@@ -159,6 +159,7 @@ export default function RightDetail(props: any) {
         oprationType={oprationType as 'copy' | 'move'}
         checkedCaseIds={checkedCaseIds}
         setCheckedCaseIds={setCheckedCaseIds}
+        caseCateTreeData={caseCateTreeData}
       />
     </div>
   );

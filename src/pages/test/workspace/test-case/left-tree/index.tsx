@@ -89,7 +89,7 @@ export default function LeftTree(props: any) {
           className="case-cate-select"
           dropdownClassName="case-cate-select-dropdown"
           onChange={onCateChange}
-          value={rootCateId}
+          value={rootCateId.toString()}
         >
           {caseCategories.map((item: any) => (
             <Option key={item.id.toString()} value={item.id.toString()}>

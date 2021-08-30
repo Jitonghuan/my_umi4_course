@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getCaseCategoryDeepList, copyCases, moveCases } from '../../service';
+import { copyCases, moveCases } from '../../service';
 import { postRequest, getRequest } from '@/utils/request';
 import { Modal, TreeSelect } from 'antd';
 import FELayout from '@cffe/vc-layout';
@@ -11,13 +11,13 @@ interface PropsInterface {
   oprationType: 'copy' | 'move';
   checkedCaseIds: React.Key[];
   setCheckedCaseIds: any;
+  caseCateTreeData: any;
 }
 
 export default function OperateCaseModal(props: PropsInterface) {
-  const { visible, setVisible, oprationType, checkedCaseIds, setCheckedCaseIds } = props;
+  const { visible, setVisible, oprationType, checkedCaseIds, setCheckedCaseIds, caseCateTreeData } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [categoryId, setCategoryId] = useState<React.Key>();
-  const [dataSource, setDataSource] = useState<any[]>([]);
 
   const dataClean = (node: any) => {
     node.key = node.id;
@@ -28,12 +28,12 @@ export default function OperateCaseModal(props: PropsInterface) {
     return node;
   };
 
-  useEffect(() => {
-    getRequest(getCaseCategoryDeepList).then((res) => {
-      const _curTreeData = dataClean({ key: -1, items: res.data }).children;
-      void setDataSource(_curTreeData || []);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getRequest(getCaseCategoryDeepList).then((res) => {
+  //     const _curTreeData = dataClean({ key: -1, items: res.data }).children;
+  //     void setDataSource(_curTreeData || []);
+  //   });
+  // }, []);
 
   const submit = async () => {
     void (await postRequest(oprationType === 'copy' ? copyCases : moveCases, {
@@ -61,7 +61,7 @@ export default function OperateCaseModal(props: PropsInterface) {
           className="oprate-case-select-tree"
           value={categoryId}
           onChange={setCategoryId}
-          treeData={dataSource}
+          treeData={caseCateTreeData}
         />
       </div>
     </Modal>
