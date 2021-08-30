@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import moment from 'moment';
-import { Form, Table, Button, Popconfirm, Input, Select, Space, message } from 'antd';
+import { Form, Table, Button, Popconfirm, Input, Select, Space, message, Typography } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList, caseDelete } from '../../service';
 import { priorityEnum } from '../../constant';
@@ -133,8 +133,17 @@ export default function RightDetail(props: any) {
           }}
         >
           <Table.Column width={60} title="ID" render={(_: any, __: any, index: number) => index + 1}></Table.Column>
-          <Table.Column dataIndex="categoryName" title="所属"></Table.Column>
-          <Table.Column dataIndex="title" title="用例名称"></Table.Column>
+          <Table.Column
+            dataIndex="categoryName"
+            title="所属"
+            width="220"
+            render={(title) => (
+              <Typography.Text style={{ maxWidth: '100%' }} ellipsis={{ suffix: '' }}>
+                {title}
+              </Typography.Text>
+            )}
+          ></Table.Column>
+          <Table.Column dataIndex="title" title="用例名称" width="220"></Table.Column>
           <Table.Column dataIndex="priority" title="优先级"></Table.Column>
           <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
           <Table.Column
