@@ -30,7 +30,7 @@ export default function addTicket() {
       <FilterCard>
         <span>资源申请</span>
       </FilterCard>
-      <ContentCard className="addTicket">
+      <ContentCard>
         <div className="resourceApply">
           <Form
             form={applyResourceForm}
@@ -73,68 +73,30 @@ export default function addTicket() {
                 </Form.Item>
               </Col>
             </Row>
+            <Row>
+              <Col span={6}>
+                <Form.Item name="appType" label="资源类型">
+                  <Select showSearch allowClear options={appTypeOptions} style={{ width: '180px' }} />
+                </Form.Item>
+              </Col>
 
-            <Form.List name="sights">
-              {(fields, { add, remove }) => (
-                <>
-                  {fields.map((field) => (
-                    <Row>
-                      <Space key={field.key} align="baseline">
-                        <Form.Item
-                          noStyle
-                          shouldUpdate={(prevValues, curValues) =>
-                            prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
-                          }
-                        >
-                          {() => (
-                            <Form.Item
-                              {...field}
-                              label="Sight"
-                              name={[field.name, 'sight']}
-                              fieldKey={[field.fieldKey, 'sight']}
-                              rules={[{ required: true, message: 'Missing sight' }]}
-                            >
-                              <Select disabled={!applyResourceForm.getFieldValue('area')} style={{ width: 130 }}>
-                                {(sights[applyResourceForm.getFieldValue('area')] || []).map((item) => (
-                                  <Option key={item} value={item}>
-                                    {item}
-                                  </Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          )}
-                        </Form.Item>
+              <Col span={6}>
+                <Form.Item name="envCode" label="存量总量">
+                  <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item name="businessLine" label="数据库名">
+                  <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item name="envCode" label="数据库类型">
+                  <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
+                </Form.Item>
+              </Col>
+            </Row>
 
-                        <Form.Item
-                          {...field}
-                          label="Price"
-                          name={[field.name, 'price']}
-                          fieldKey={[field.fieldKey, 'price']}
-                          rules={[{ required: true, message: 'Missing price' }]}
-                        >
-                          <Input />
-                        </Form.Item>
-
-                        <MinusCircleOutlined onClick={() => remove(field.name)} />
-                      </Space>
-                    </Row>
-                  ))}
-                  <Row>
-                    <Form.Item>
-                      <Button
-                        type="primary"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                        style={{ marginLeft: '42%', width: '160px', height: '36px' }}
-                      >
-                        添加资源类型
-                      </Button>
-                    </Form.Item>
-                  </Row>
-                </>
-              )}
-            </Form.List>
             <Row>
               <Form.Item name="remarks" label="备注：" style={{ marginLeft: '3%' }}>
                 <Input.TextArea style={{ width: '750px' }}></Input.TextArea>

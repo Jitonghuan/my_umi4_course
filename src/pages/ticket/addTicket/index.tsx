@@ -29,7 +29,7 @@ export default function addTicket() {
       </FilterCard>
       <ContentCard className="addTicket">
         <div className="ticketApply">
-          <Form style={{ marginTop: '6%', marginBottom: '8%', marginRight: '2%' }} size="large">
+          <Form style={{ marginTop: '6%', marginBottom: '8%', marginRight: '2%' }}>
             <Form.Item name="applyType" label="类型：" labelCol={{ span: 8 }}>
               <Radio.Group value={value}>
                 <Radio value={1}>资源申请</Radio>
