@@ -62,8 +62,16 @@
     .node-render {
       display: flex;
 
+      .node-title {
+        max-width: 100%;
+      }
+
       &:hover > .oprate-btn-container {
         display: unset;
+      }
+
+      &:hover > .node-title {
+        max-width: 60%;
       }
 
       .oprate-btn-container {

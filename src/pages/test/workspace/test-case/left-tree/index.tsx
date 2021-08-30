@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Select, Input, Tree, Space, Button, Popconfirm, message } from 'antd';
+import { Select, Input, Tree, Space, Button, Popconfirm, message, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { deleteCaseCategory } from '../../service';
 import { postRequest } from '@/utils/request';
@@ -117,7 +117,9 @@ export default function LeftTree(props: any) {
           titleRender={(node) => {
             return (
               <div className="node-render custom-tree-node">
-                <span>{node.title}</span>
+                <Typography.Text className="node-title" ellipsis={{ suffix: '' }}>
+                  {node.title}
+                </Typography.Text>
                 <div className="oprate-btn-container">
                   <Button
                     type="link"
