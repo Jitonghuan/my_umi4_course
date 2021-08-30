@@ -9,7 +9,8 @@ import OprateCaseDrawer from '../oprate-case-modal';
 import './index.less';
 
 export default function RightDetail(props: any) {
-  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible, caseCateTreeData } = props;
+  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible, caseCateTreeData, curCase } =
+    props;
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -53,9 +54,14 @@ export default function RightDetail(props: any) {
   };
 
   const operateRender = (record: any) => (
-    <Popconfirm title="确定要删除此用例吗？" onConfirm={() => onDeleteConfirm(record.id)}>
-      <Button type="link">删除</Button>
-    </Popconfirm>
+    <Space>
+      <Button type="link" onClick={() => onEditCaseBtnClick(record)}>
+        编辑
+      </Button>
+      <Popconfirm title="确定要删除此用例吗？" onConfirm={() => onDeleteConfirm(record.id)}>
+        <Button type="link">删除</Button>
+      </Popconfirm>
+    </Space>
   );
 
   const handleSearch = () => {
@@ -168,6 +174,7 @@ export default function RightDetail(props: any) {
         </Table>
       </div>
       <AddCaseDrawer
+        caseId={curCase?.id}
         cateId={cateId}
         visible={drawerVisible}
         setVisible={setDrawerVisible}

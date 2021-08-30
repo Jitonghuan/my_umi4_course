@@ -18,22 +18,30 @@ export default function RightDetail(props: any) {
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
   const [stepContent, setStepContent] = useState<string | string[]>('');
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
-  // const [categories, setCategories] = useState<any[]>([]);
   const [descType, setDescType] = useState('0');
+  const [schema, setSchema] = useState<any>();
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
-  // useEffect(() => {
-  //   getRequest(getCategoryList).then((res) => {
-  //     setCategories(res.data.dataSource);
-  //   });
-  // }, []);
-
   useEffect(() => {
     if (visible) {
+      void setSchema(undefined);
       if (caseId) {
         getRequest(getCaseInfo + '/' + caseId).then((res) => {
-          console.log(res);
+          form.setFieldsValue(res.data);
+          if (res.data.descType === '0') {
+            void setStepContent(res.data.stepContent[0].input);
+            void setExpectedResult(res.data.stepContent[0].output);
+          } else {
+            void setCaseDescArr(
+              res.data.stepContent.map((item: any) => ({ ...item, value: item.input, desc: item.output })),
+            );
+            void setStepContent(res.data.stepContent.map((item: any) => item.input));
+            void setExpectedResult(res.data.stepContent.map((item: any) => item.output));
+          }
+          try {
+            void setSchema(JSON.parse(res.data.comment));
+          } catch (e) {}
         });
       }
     }
@@ -111,13 +119,6 @@ export default function RightDetail(props: any) {
         <Form.Item label="标题:" name="title">
           <Input placeholder="请输入标题" />
         </Form.Item>
-        {/* <Form.Item label="所属业务:" name="categoryId">
-          <Select>
-            {categories.map((cate) => (
-              <Select.Option value={cate.id}>{cate.categoryName}</Select.Option>
-            ))}
-          </Select>
-        </Form.Item> */}
         <Form.Item label="优先级:" name="priority">
           <Select>
             {priorityEnum.map((item) => (
@@ -188,7 +189,7 @@ export default function RightDetail(props: any) {
           </Tabs>
         </Form.Item>
         <Form.Item label="备注" name="comment">
-          <RichText sona={sona} width="100%" height="200px" />
+          <RichText sona={sona} schema={schema} width="100%" height="200px" />
         </Form.Item>
       </Form>
 
@@ -196,9 +197,13 @@ export default function RightDetail(props: any) {
         <Button type="primary" onClick={handleSave}>
           保存
         </Button>
-        <Button type="primary" className="mgl-short" onClick={handleSaveAndContinue}>
-          保存并继续
-        </Button>
+        {!caseId ? (
+          <Button type="primary" className="mgl-short" onClick={handleSaveAndContinue}>
+            保存并继续
+          </Button>
+        ) : (
+          ''
+        )}
         <Button type="primary" className="mgl-short" onClick={handleCancel}>
           取消
         </Button>
