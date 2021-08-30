@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
-import { createTestPlan, modifyTestPlan } from '../../service';
+import { createTestPlan, modifyTestPlan, getManagerList } from '../../service';
 import { Form, Button, Table, Input, Select, Space, Drawer, message } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
@@ -13,7 +13,14 @@ export default function AddTestPlanDrawer(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [phaseCollection, setPhaseCollection] = useState<any[]>([]);
+  const [manageList, setManageList] = useState<string[]>([]);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    void getRequest(getManagerList).then((res) => {
+      void setManageList(res.data.usernames);
+    });
+  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -113,7 +120,15 @@ export default function AddTestPlanDrawer(props: any) {
             creator={{ record: { name: '', head: '', startTime: '', endTime: '' } }}
             columns={[
               { title: '测试阶段', dataIndex: 'name', required: true },
-              { title: '负责人', dataIndex: 'head', required: true },
+              {
+                title: '负责人',
+                dataIndex: 'head',
+                fieldType: 'select',
+                valueOptions: manageList.map((item) => ({ label: item, value: item })),
+                fieldProps: { placeholder: '请选择', showSearch: true, optionFilterProp: 'label' },
+                colProps: { width: 140 },
+                required: true,
+              },
               {
                 title: '开始时间',
                 dataIndex: 'startTime',
