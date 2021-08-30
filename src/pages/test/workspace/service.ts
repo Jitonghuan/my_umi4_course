@@ -98,3 +98,6 @@ export const getBugList = addAPIPrefix('/qc/teststation/bugList');
 
 /** GET 获取经办人列表 */
 export const getManagerList = addAPIPrefix('/appManage/user/listAll');
+
+/** GET 获取项目/需求级联选项 */
+export const getProjectTreeData = addAPIPrefix('/qc/teststation/getDemandsTree');

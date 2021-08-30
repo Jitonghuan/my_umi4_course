@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
-import { createTestPlan, modifyTestPlan, getManagerList } from '../../service';
-import { Form, Button, Table, Input, Select, Space, Drawer, message } from 'antd';
+import { createTestPlan, modifyTestPlan, getManagerList, getProjectTreeData } from '../../service';
+import { Form, Button, Table, Input, Select, Space, Drawer, message, Cascader } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
 import moment from 'moment';
@@ -14,11 +14,25 @@ export default function AddTestPlanDrawer(props: any) {
 
   const [phaseCollection, setPhaseCollection] = useState<any[]>([]);
   const [manageList, setManageList] = useState<string[]>([]);
+  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
 
   useEffect(() => {
     void getRequest(getManagerList).then((res) => {
       void setManageList(res.data.usernames);
+    });
+
+    void getRequest(getProjectTreeData).then((res) => {
+      const Q = [...res.data];
+      while (Q.length) {
+        const cur = Q.shift();
+        cur.label = cur.name;
+        cur.value = cur.id;
+        cur.children && Q.push(...cur.children);
+      }
+      void setProjectTreeData(res.data);
+
+      console.log(res.data);
     });
   }, []);
 
@@ -45,6 +59,7 @@ export default function AddTestPlanDrawer(props: any) {
     const requestParams = {
       ...formData,
       projectId: +formData.projectId,
+      demandId: formData.demandId.join('/'),
       phaseCollection: phaseCollection.map((item) => ({
         ...item,
         startTime: item.startTime.format('YYYY-MM-DD HH:mm:ss'),
@@ -69,6 +84,7 @@ export default function AddTestPlanDrawer(props: any) {
         endTime: item.endTime.format('YYYY-MM-DD HH:mm:ss'),
       })),
       projectId: +formData.projectId,
+      demandId: formData.demandId.join('/'),
       modifyUser: userInfo.userName,
       id: plan.id,
     };
@@ -106,6 +122,9 @@ export default function AddTestPlanDrawer(props: any) {
               <Select.Option value={item.id}>{item.categoryName}</Select.Option>
             ))}
           </Select>
+        </Form.Item>
+        <Form.Item label="项目/需求" name="demandId">
+          <Cascader placeholder="请选择" options={projectTreeData} onChange={(val) => console.log(val)} />
         </Form.Item>
         <Form.Item label="关联任务" name="jiraTask">
           <Input placeholder="请输入关联任务" />
