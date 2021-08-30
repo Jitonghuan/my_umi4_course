@@ -21,6 +21,9 @@ module.exports = {
         `$ npm run build:${buildEnv}`
       ];
     },
+    analyze: [
+      '$ npm run build:analyze'
+    ],
     // 可以直接是数组，也可以是一个方法，返回一个数组
     publish: async (options) => {
       const buildEnv = options.online ? 'prod' : 'test';

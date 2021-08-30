@@ -1,5 +1,4 @@
 import React from 'react';
-import { history } from 'umi';
 
 // 表格 schema
 export const createTableSchema = () => [
@@ -32,5 +31,5 @@ export const recordFieldMap: { [key: string]: string } = {
   jenkinsUrl: 'jenkins',
   features: '功能分支',
   releaseBranch: '发布分支',
-  merge: 'git merge', // TODO
+  merge: 'git merge',
 };
