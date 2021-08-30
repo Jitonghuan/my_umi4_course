@@ -70,6 +70,15 @@ export default function BugManage(props: any) {
     void updateBugList();
   };
 
+  const StatusTag = (props: any) => {
+    const { color, bgColor, children } = props;
+    return (
+      <div className="status-tag" style={{ color, background: bgColor }}>
+        {children}
+      </div>
+    );
+  };
+
   return (
     <PageContainer className="test-workspace-bug-manage">
       <HeaderTabs activeKey="bug-manage" history={props.history} />
@@ -149,7 +158,15 @@ export default function BugManage(props: any) {
             <Table.Column title="标题" dataIndex="name" />
             <Table.Column title="类型" dataIndex="bugType" render={(type) => bugTypeEnum[type]} />
             <Table.Column title="优先级" dataIndex="priority" render={(priority) => bugPriorityEnum[priority]} />
-            <Table.Column title="状态" dataIndex="status" render={(status) => bugStatusEnum[status].label} />
+            <Table.Column
+              title="状态"
+              dataIndex="status"
+              render={(status) => (
+                <StatusTag color={bugStatusEnum[status].color} bgColor={bugStatusEnum[status].backgroundColor}>
+                  {bugStatusEnum[status].label}
+                </StatusTag>
+              )}
+            />
             <Table.Column title="创建人" dataIndex="createUser" />
             <Table.Column title="经办人" dataIndex="modifyUser" />
             <Table.Column
