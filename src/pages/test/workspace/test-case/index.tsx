@@ -32,7 +32,7 @@ export default function TestCase(props: any) {
   const [filterCaseCateTreeData, setFilterCaseCateTreeData] = useState<any[]>();
   const [caseCategories, setCaseCategories] = useState<any[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-
+  const [curCase, setCurCase] = useState<any>();
   const [rootCateId, setRootCateId] = useState<string>(testCaseCateId as string);
   const [cateId, setCateId] = useState<string>(testCaseCateId as string);
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -86,10 +86,12 @@ export default function TestCase(props: any) {
   /** ------------------------ 更新左侧树列表 end ------------------------ */
 
   const onAddCaseBtnClick = () => {
+    void setCurCase(undefined);
     void setDrawerVisible(true);
   };
 
-  const onEditCaseBtnClick = () => {
+  const onEditCaseBtnClick = (caseInfo: any) => {
+    void setCurCase(caseInfo);
     void setDrawerVisible(true);
   };
 
@@ -97,7 +99,7 @@ export default function TestCase(props: any) {
     <PageContainer>
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
-        <CardRowGroup.SlideCard width={340}>
+        <CardRowGroup.SlideCard className="slide-card" width={340}>
           <LeftTree
             cateId={cateId}
             setCateId={setCateId}
@@ -114,6 +116,7 @@ export default function TestCase(props: any) {
         <ContentCard>
           <RightDetail
             cateId={cateId}
+            curCase={curCase}
             drawerVisible={drawerVisible}
             setDrawerVisible={setDrawerVisible}
             onAddCaseBtnClick={onAddCaseBtnClick}

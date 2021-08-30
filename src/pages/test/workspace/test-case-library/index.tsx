@@ -34,15 +34,6 @@ export default function Workspace(props: any) {
     void setTotal(total);
   };
 
-  const init = async () => {
-    void updateDatasource();
-  };
-
-  // 初始化
-  useEffect(() => {
-    void init();
-  }, []);
-
   useEffect(() => {
     void updateDatasource();
   }, [pageIndex, pageSize]);
