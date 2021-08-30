@@ -9,7 +9,7 @@ import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox, Upload } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq } from '@/pages/application/service';
+import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq, offlineDeploy } from '@/pages/application/service';
 import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
 import RollbackModal from '../rollback-modal';
@@ -30,6 +30,7 @@ export default function PublishDetail(props: IProps) {
   const [envDataList, setEnvDataList] = useState([]);
   const [nextEnvDataList, setNextEnvDataList] = useState([]);
   const [rollbackVisible, setRollbackVisible] = useState(false);
+  const [deployVisible, setDeployVisible] = useState(false);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -157,30 +158,39 @@ export default function PublishDetail(props: IProps) {
     return (envDataList as any).find((v: any) => v.envCode === envs)?.envName;
   }, [envDataList, deployInfo]);
   //离线部署
-  const uploadImage = {
-    name: 'file',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    headers: {
-      authorization: 'authorization-text',
-    },
+  const uploadImages = () => {
+    return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
+  };
+  const uploadProps = {
+    name: 'image',
+    action: uploadImages,
+    headers: {},
     onChange(info: any) {
+      console.log('xinxi', info);
       if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
+        setConfirmLoading(true);
       }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+      if (info.file.status === 'done' && info.file.response?.success == 'true') {
+        message.success(`${info.file.name} 文件上传成功`);
+        setDeployVisible(false);
+        setConfirmLoading(false);
+      } else {
+        message.error(info.file.response?.errorMsg || '上传失败');
+        setDeployVisible(false);
+        setConfirmLoading(false);
       }
     },
+  };
+  const submitClick = () => {
+    setDeployVisible(true);
   };
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
         {envTypeCode === 'prod' && (
-          <Upload {...uploadImage}>
-            <Button icon={<UploadOutlined />}>离线部署</Button>
-          </Upload>
+          <Button type="primary" onClick={submitClick} icon={<UploadOutlined />}>
+            离线部署
+          </Button>
         )}
 
         {envTypeCode === 'prod' ? (
@@ -243,7 +253,19 @@ export default function PublishDetail(props: IProps) {
           <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={getDeployEnvData()} />
         </div>
       </Modal>
+      <Modal title="选择发布环境" visible={deployVisible} footer={null} onCancel={deployVisible} maskClosable={false}>
+        <div>
+          <span>发布环境：</span>
+          <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
+        </div>
 
+        <div style={{ display: 'flex', marginTop: '12px' }}>
+          <span>配置文件：</span>
+          <Upload {...uploadProps}>
+            <Button icon={<UploadOutlined />}>离线部署</Button>
+          </Upload>
+        </div>
+      </Modal>
       <RollbackModal
         visible={rollbackVisible}
         deployInfo={deployInfo}

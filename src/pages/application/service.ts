@@ -27,7 +27,8 @@ export const configUploadUrl = `${ds.apiPrefix}/appManage/config/upload`;
 
 /** GET 下载镜像 */
 export const downloadImage = `${ds.apiPrefix}/releaseManage/deploy/downloadImage`;
-
+/** Post 上传镜像*/
+export const offlineDeploy = `${ds.apiPrefix}/releaseManage/deploy/offlineDeploy`;
 /** 查询应用列表 */
 export const queryApps = (params: {
   /** id */
