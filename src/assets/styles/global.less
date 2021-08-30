@@ -98,15 +98,31 @@ hr {
     display: flex;
     align-items: center;
 
+    > a,
+    > span {
+      white-space: nowrap;
+    }
+
     > a + a,
     > button + button {
       margin-left: 12px;
     }
   }
 
-  > h3 {
+  > h3,
+  .caption-left > h3 {
     font-size: 16px;
     margin-bottom: 0;
+    white-space: nowrap;
+  }
+
+  > h4,
+  .caption-left > h4 {
+    font-size: 14px;
+    margin-bottom: 0;
+    color: #222;
+    white-space: nowrap;
+    font-weight: normal;
   }
 }
 

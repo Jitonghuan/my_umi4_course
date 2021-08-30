@@ -10,6 +10,7 @@
     "build": "cross-env BUILD_ENV=test umi build",
     "build:test": "cross-env BUILD_ENV=test umi build",
     "build:prod": "cross-env BUILD_ENV=prod umi build",
+    "build:analyze": "cross-env ANALYZE=1 umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },
@@ -71,7 +72,6 @@
     "react-dom": "^16.14.0",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5",
-    "typescript-require": "^0.3.0",
     "yorkie": "^2.0.0"
   },
   "__npminstall_done": false
