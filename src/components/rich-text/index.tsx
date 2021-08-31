@@ -5,6 +5,7 @@ import './index.less';
 import { addAPIPrefix } from '@/utils';
 import { postRequest } from '@/utils/request';
 import { imgConfig, tableConfig } from './toolbar-config';
+import ImageRender from './image-render';
 
 /** POST 图片/文件上传 */
 export const uploadFile = addAPIPrefix('/qc/teststation/uploadFile');
@@ -119,6 +120,9 @@ ImgPlugin.exportApi.insertPasteImg = function insertImg(editor: any, file: any) 
     editor.insertFragment(nodes);
   });
 };
+
+ImgPlugin.renderElement = ImageRender;
+
 RightOpPlugin.toolbarConfig = [];
 
 const plugins: EditorPlugin[] = [
@@ -142,9 +146,6 @@ const toolbarConfig: any[] = plugins.filter((plugin) => plugin?.toolbarConfig).m
 
 toolbarConfig.unshift(tableConfig);
 toolbarConfig.unshift(imgConfig);
-
-console.log('plugins :>> ', plugins);
-console.log('toolbarConfig :>> ', toolbarConfig);
 
 export default function CaseWorkspace(props: any) {
   const { className, width = '100%', height = '240px', onChange, sona, schema, readOnly, ...otherProps } = props;
