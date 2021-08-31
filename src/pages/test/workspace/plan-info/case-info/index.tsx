@@ -205,8 +205,11 @@ export default function UserCaseInfoExec(props: any) {
     };
     const res = await postRequest(addBug, { data: requestParams }).catch(() => {
       void finishLoading();
+      return;
     });
     void finishLoading();
+
+    // @ts-ignore
     const newBugInfo = { ...requestParams, id: res.data.id };
     void setCheckedBugs([newBugInfo]);
     void (await mergeCheckedBugs2AssociationBugs([newBugInfo]));

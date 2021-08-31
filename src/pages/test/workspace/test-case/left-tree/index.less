@@ -69,20 +69,17 @@
       display: flex;
 
       .node-title {
-        max-width: 100%;
+        flex: 1;
       }
 
       &:hover > .oprate-btn-container {
         display: unset;
       }
 
-      &:hover > .node-title {
-        max-width: 60%;
-      }
-
       .oprate-btn-container {
         margin-left: auto;
         display: none;
+        flex-basis: 108px;
 
         .ant-btn-link {
           padding: 4px;
