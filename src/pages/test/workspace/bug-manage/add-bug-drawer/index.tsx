@@ -169,15 +169,6 @@ export default function BugManage(props: any) {
           <Form.Item label="标题" name="name" rules={[{ required: true, message: '请输入标题' }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="所属业务" name="business" rules={[{ required: true, message: '请选择所属业务' }]}>
-            <Select>
-              {projectList.map((item: any) => (
-                <Select.Option value={item.id} key={item.id}>
-                  {item.categoryName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
           <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
             <Cascader placeholder="请选择" options={projectTreeData} />
           </Form.Item>

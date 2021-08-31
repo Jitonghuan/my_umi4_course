@@ -12,6 +12,7 @@ import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects }
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
+import { LeftOutlined } from '@ant-design/icons';
 import './index.less';
 
 export default function PlanInfo(props: any) {
@@ -95,18 +96,27 @@ export default function PlanInfo(props: any) {
     });
   }, []);
 
-  const updateBugList = () => {
-    console.log('updateBugList');
+  const updateBugList = () => {};
+
+  const goBack = () => {
+    history.push('/matrix/test/workspace/test-plan');
   };
 
   return (
     <PageContainer>
+      <div className="back-btn-container">
+        <div onClick={goBack} className="back-btn">
+          <LeftOutlined /> <span className="back-btn-title">{plan.name}</span>
+        </div>
+      </div>
       <FilterCard className="layout-compact">
-        <Tabs activeKey={activeKey} onChange={(key) => setActiveKey(key)}>
-          {plan?.phaseCollection?.map((item: any) => (
-            <Tabs.TabPane tab={item.name} key={item.id}></Tabs.TabPane>
-          ))}
-        </Tabs>
+        <div className="tabs-container">
+          <Tabs className="tabs" activeKey={activeKey} onChange={(key) => setActiveKey(key)}>
+            {plan?.phaseCollection?.map((item: any) => (
+              <Tabs.TabPane tab={item.name} key={item.id}></Tabs.TabPane>
+            ))}
+          </Tabs>
+        </div>
       </FilterCard>
       <CardRowGroup className="test-workspace-plan-info">
         <CardRowGroup.SlideCard width={312} className="left-card">
