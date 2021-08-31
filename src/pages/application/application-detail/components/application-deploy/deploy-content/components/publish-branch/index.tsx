@@ -24,13 +24,13 @@ export interface PublishBranchProps {
   deployInfo: DeployInfoVO;
   env: string;
   onSearch: (name?: string) => any;
-  dataSource: Array<{
+  dataSource: {
     id: string | number;
     branchName: string;
     desc: string;
     createUser: string;
     gmtCreate: string;
-  }>;
+  }[];
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
 }

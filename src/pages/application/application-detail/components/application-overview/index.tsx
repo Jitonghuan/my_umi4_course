@@ -1,24 +1,19 @@
-/**
- * ApplicationOverview
- * @description 应用-概述
- * @author moting.nq
- * @create 2021-04-13 11:00
- */
+// 应用-概述
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/08/30 20:45
 
-import React, { useState, useEffect, useContext } from 'react';
-import { Descriptions, Button, Tag } from 'antd';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { Descriptions, Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import ApplicationEditor from '@/pages/application/_components/application-editor';
-import ModifyMember, { MemberTypes } from './modify-member';
+import MemberEditor from './member-editor';
 import DetailContext from '@/pages/application/application-detail/context';
+import UserTagList from '@/components/user-selector/list';
 import { queryAppMember } from '@/pages/application/service';
+import { AppMemberInfo } from '@/pages/application/interfaces';
 import './index.less';
 
-const rootCls = 'overview-page';
-const labelStyle = {
-  width: 200,
-};
 const APP_TYPE_MAP = {
   frontend: '前端',
   backend: '后端',
@@ -29,27 +24,28 @@ export default function ApplicationOverview() {
   const { categoryData = [], businessData = [] } = useContext(FEContext);
 
   const [isModifyApp, setIsModifyApp] = useState(false);
-  const [isModifyMember, setIsModifyMember] = useState(false);
-  const [memberData, setMemberData] = useState<MemberTypes>();
+  const [memberEditorMode, setMemberEditorMode] = useState<EditorMode>('HIDE');
+  const [memberData, setMemberData] = useState<AppMemberInfo>();
 
   // 请求应用成员数据
-  const queryMemberData = () => {
+  const queryMemberData = useCallback(() => {
     queryAppMember({ appCode: appData?.appCode }).then((res) => {
       setMemberData(res.data || {});
     });
-  };
+  }, [appData]);
 
   useEffect(() => {
     if (!appData?.appCode) return;
     queryMemberData();
   }, [appData?.appCode]);
+
   return (
-    <ContentCard className={rootCls}>
+    <ContentCard className="overview-page">
       <Descriptions
         title="概要"
         bordered
         column={3}
-        labelStyle={labelStyle}
+        labelStyle={{ width: 200 }}
         extra={<Button onClick={() => setIsModifyApp(true)}>修改</Button>}
       >
         <Descriptions.Item label="APPCODE">{appData?.appCode}</Descriptions.Item>
@@ -79,7 +75,9 @@ export default function ApplicationOverview() {
             {{ 1: '是', 0: '否' }[appData?.isContainClient!]}
           </Descriptions.Item>
         )}
-        <Descriptions.Item label="责任人">{appData?.owner}</Descriptions.Item>
+        <Descriptions.Item label="责任人">
+          <UserTagList color="blue" data={appData?.owner} />
+        </Descriptions.Item>
         <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
       </Descriptions>
 
@@ -87,29 +85,30 @@ export default function ApplicationOverview() {
         title="成员"
         bordered
         column={1}
-        labelStyle={labelStyle}
+        labelStyle={{ width: 200 }}
         style={{ marginTop: 36 }}
-        extra={<Button onClick={() => setIsModifyMember(true)}>修改</Button>}
+        extra={<Button onClick={() => setMemberEditorMode('EDIT')}>修改</Button>}
       >
-        {/* 没有转交功能 */}
-        <Descriptions.Item label="应用Owner">{memberData?.owner && <Tag>{memberData?.owner}</Tag>}</Descriptions.Item>
+        <Descriptions.Item label="应用Owner">
+          <UserTagList color="blue" data={memberData?.owner} />
+        </Descriptions.Item>
         <Descriptions.Item label="开发负责人">
-          {memberData?.developerOwner && <Tag>{memberData?.developerOwner}</Tag>}
+          <UserTagList data={memberData?.developerOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="发布负责人">
-          {memberData?.deployOwner && <Tag>{memberData?.deployOwner}</Tag>}
+          <UserTagList data={memberData?.deployOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="CodeReviewer">
-          {memberData?.codeReviewer && <Tag>{memberData?.codeReviewer}</Tag>}
+          <UserTagList data={memberData?.codeReviewer} />
         </Descriptions.Item>
         <Descriptions.Item label="测试负责人">
-          {memberData?.testOwner && <Tag>{memberData?.testOwner}</Tag>}
+          <UserTagList data={memberData?.testOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="自动化测试人员">
-          {memberData?.autoTestOwner && <Tag>{memberData?.autoTestOwner}</Tag>}
+          <UserTagList data={memberData?.autoTestOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="报警接收人">
-          {memberData?.alertReceiver && <Tag>{memberData?.alertReceiver}</Tag>}
+          <UserTagList data={memberData?.alertReceiver} />
         </Descriptions.Item>
       </Descriptions>
 
@@ -124,15 +123,13 @@ export default function ApplicationOverview() {
         }}
       />
 
-      <ModifyMember
-        formValue={memberData}
-        appCode={appData?.appCode}
-        visible={isModifyMember}
-        onClose={() => setIsModifyMember(false)}
-        onSubmit={() => {
-          // 保存成功后，关闭抽屉，重新请求成员数据
+      <MemberEditor
+        initData={memberData}
+        mode={memberEditorMode}
+        onClose={() => setMemberEditorMode('HIDE')}
+        onSave={() => {
           queryMemberData();
-          setIsModifyMember(false);
+          setMemberEditorMode('HIDE');
         }}
       />
     </ContentCard>
