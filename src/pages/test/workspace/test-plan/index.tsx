@@ -200,7 +200,11 @@ export default function TestPlan(props: any) {
                       <Button type="link">删除</Button>
                     </Popconfirm>
 
-                    <Button type="link" onClick={() => handleAssociatingCaseBtnClick(record)}>
+                    <Button
+                      type="link"
+                      disabled={!record.phaseCollection?.length}
+                      onClick={() => handleAssociatingCaseBtnClick(record)}
+                    >
                       关联用例
                     </Button>
                   </Space>
