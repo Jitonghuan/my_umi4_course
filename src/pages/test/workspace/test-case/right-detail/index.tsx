@@ -20,6 +20,7 @@ export default function RightDetail(props: any) {
   const [checkedCaseIds, setCheckedCaseIds] = useState<React.Key[]>([]);
   const [oprateCaseModalVisible, setOprateCaseModalVisible] = useState<boolean>(false);
   const [oprationType, setOprationType] = useState<string>();
+  const [cateIdCache, setCateIdCache] = useState<any>(cateId);
   const [form] = Form.useForm();
 
   const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize) => {
@@ -41,8 +42,16 @@ export default function RightDetail(props: any) {
   };
 
   useEffect(() => {
+    console.log('pageIndex, pageSize :>> ', pageIndex, pageSize);
     void updateDatasource();
-  }, [cateId, pageIndex, pageSize]);
+  }, [pageIndex, pageSize]);
+
+  useEffect(() => {
+    if (cateIdCache == cateId) return;
+    console.log('cateId :>> ', cateId);
+    setCateIdCache(cateId);
+    void updateDatasource();
+  }, [cateId]);
 
   const onDeleteConfirm = (id: number) => {
     const loadEnd = message.loading('正在删除');

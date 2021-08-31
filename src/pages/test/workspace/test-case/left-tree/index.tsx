@@ -33,8 +33,10 @@ export default function LeftTree(props: any) {
   }, [rootCateId, keyword]);
 
   useEffect(() => {
-    void setSelectedKeys([cateTreeData[0]?.key]);
-    void setCateId(cateTreeData[0]?.key);
+    if (cateTreeData[0]?.key) {
+      void setSelectedKeys([cateTreeData[0].key]);
+      void setCateId(cateTreeData[0].key);
+    }
   }, [cateTreeData]);
 
   const onCateChange = (val: any) => {
