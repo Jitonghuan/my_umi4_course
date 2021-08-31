@@ -23,6 +23,7 @@ export default function TestPlan(props: any) {
   const [curSelectPlan, setCurSelectPlan] = useState<null | string>(null);
   const [projectList, setProjectList] = useState<any[]>([]);
   const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>({});
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -44,9 +45,9 @@ export default function TestPlan(props: any) {
     });
   }, []);
 
-  const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize) => {
+  const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize, _formData = formData) => {
     void setLoading(true);
-    const formData = form.getFieldsValue();
+    const formData = _formData;
     const res = await getRequest(getTestPlanList, {
       data: {
         ...formData,
@@ -91,17 +92,17 @@ export default function TestPlan(props: any) {
   //   void updateTable();
   // };
 
+  const handleFilterDataList = (data: any) => {
+    void setFormData(data);
+    void updateTable(1, pageSize, data);
+  };
+
   return (
     <PageContainer className="test-workspace-test-plan">
       <HeaderTabs activeKey="test-plan" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form
-            form={form}
-            layout="inline"
-            onFinish={() => updateTable(1, pageSize)}
-            onReset={() => updateTable(1, pageSize)}
-          >
+          <Form form={form} layout="inline" onFinish={handleFilterDataList} onReset={() => handleFilterDataList({})}>
             <Form.Item label="项目/需求" name="demandId">
               <Cascader placeholder="请选择" options={projectTreeData} />
             </Form.Item>

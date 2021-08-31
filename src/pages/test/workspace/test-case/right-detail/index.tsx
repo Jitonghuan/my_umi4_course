@@ -21,10 +21,11 @@ export default function RightDetail(props: any) {
   const [oprateCaseModalVisible, setOprateCaseModalVisible] = useState<boolean>(false);
   const [oprationType, setOprationType] = useState<string>();
   const [cateIdCache, setCateIdCache] = useState<any>(cateId);
+  const [formData, setFormData] = useState<any>({});
   const [form] = Form.useForm();
 
-  const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize) => {
-    const { keyword, priority } = form.getFieldsValue();
+  const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize, _formData = formData) => {
+    const { keyword, priority } = _formData;
 
     if (!cateId && cateId !== 0) return;
     void setLoading(true);
@@ -48,9 +49,8 @@ export default function RightDetail(props: any) {
 
   useEffect(() => {
     if (cateIdCache == cateId) return;
-    console.log('cateId :>> ', cateId);
-    setCateIdCache(cateId);
-    void updateDatasource();
+    if (pageIndex !== 1) void setPageIndex(1);
+    else void updateDatasource();
   }, [cateId]);
 
   const onDeleteConfirm = (id: number) => {
@@ -73,8 +73,9 @@ export default function RightDetail(props: any) {
     </Space>
   );
 
-  const handleSearch = () => {
-    void updateDatasource(1);
+  const handleSearch = (formData: any) => {
+    void setFormData(formData);
+    void updateDatasource(1, pageSize, formData);
   };
 
   const handleCopyCases = () => {

@@ -23,10 +23,11 @@ export default function BugManage(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
   const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>({});
   const [form] = Form.useForm();
 
-  const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize) => {
-    const formData = form.getFieldsValue();
+  const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize, _formData = formData) => {
+    const formData = _formData;
     const requestParams = {
       ...formData,
       pageIndex: _pageIndex,
@@ -95,12 +96,17 @@ export default function BugManage(props: any) {
     );
   };
 
+  const handleFilterDataList = (data: any) => {
+    void setFormData(data);
+    void updateBugList(1, pageSize, data);
+  };
+
   return (
     <PageContainer className="test-workspace-bug-manage">
       <HeaderTabs activeKey="bug-manage" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form layout="inline" form={form} onFinish={() => updateBugList(1)} onReset={() => updateBugList(1)}>
+          <Form layout="inline" form={form} onFinish={handleFilterDataList} onReset={() => handleFilterDataList({})}>
             {/* <Form.Item label="所属" name="business">
               <Select className="w-100" placeholder="请选择" allowClear>
                 {projectList.map((item) => (
