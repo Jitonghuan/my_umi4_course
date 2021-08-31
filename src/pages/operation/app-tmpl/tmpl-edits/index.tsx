@@ -55,6 +55,7 @@ export default function TaskEditor(props: TmplListProps) {
       appCategoryCode: initData?.appCategoryCode || '',
       envCodes: initData?.envCode || [],
       templateValue: initData?.templateValue,
+      remark: initData?.remark,
     };
     console.log('获取到的初始化数据：', initData?.envCode);
     console.log('=-=-=-=-', initData);
@@ -79,6 +80,7 @@ export default function TaskEditor(props: TmplListProps) {
       envCodes: initValues.envCodes,
       jvm: jvm,
       tmplConfigurableItem: arr,
+      remark: initValues?.remark,
     });
     // console.log('000000',initValues.jvm)
     changeAppCategory(initValues.appCategoryCode);
@@ -155,6 +157,7 @@ export default function TaskEditor(props: TmplListProps) {
         envCodes: envCodesArry || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         templateCode: templateCode,
+        remark: value?.remark,
       },
     }).then((resp: any) => {
       if (resp.success) {
@@ -239,7 +242,7 @@ export default function TaskEditor(props: TmplListProps) {
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '80px' }}
+                style={{ marginTop: '50px' }}
               >
                 <Select
                   showSearch
@@ -260,6 +263,9 @@ export default function TaskEditor(props: TmplListProps) {
                 >
                   {children}
                 </Select>
+              </Form.Item>
+              <Form.Item label="备注：" labelCol={{ span: 8 }} name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 220 }}></Input.TextArea>
               </Form.Item>
             </Col>
           </Row>
