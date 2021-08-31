@@ -3,10 +3,10 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
-import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message } from 'antd';
+import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message, Cascader } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
-import { getProjects, getBugList, deleteBug } from '../service';
+import { getProjects, getBugList, deleteBug, getProjectTreeData } from '../service';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../constant';
 import AddBugDrawer from './add-bug-drawer';
 import moment from 'moment';
@@ -22,15 +22,19 @@ export default function BugManage(props: any) {
   const [projectList, setProjectList] = useState<any[]>([]);
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
+  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
 
   const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize) => {
-    const fromData = form.getFieldsValue();
+    const formData = form.getFieldsValue();
     const requestParams = {
-      ...fromData,
+      ...formData,
       pageIndex: _pageIndex,
       pageSize: _pageSuze,
-      justMe: fromData.justMe ? userInfo.userName : undefined,
+      justMe: formData.justMe ? userInfo.userName : undefined,
+      projectId: formData.demandId?.[0] && +formData.demandId[0],
+      demandId: formData.demandId?.[1] && +formData.demandId[1],
+      subDemandId: formData.demandId?.[2] && +formData.demandId[2],
     };
     const res = await getRequest(getBugList, { data: requestParams });
     const { pageIndex, pageSize, total } = res.data.pageInfo;
@@ -44,7 +48,19 @@ export default function BugManage(props: any) {
     getRequest(getProjects).then((res) => {
       void setProjectList(res.data.dataSource);
     });
+
     void updateBugList();
+
+    void getRequest(getProjectTreeData).then((res) => {
+      const Q = [...res.data];
+      while (Q.length) {
+        const cur = Q.shift();
+        cur.label = cur.name;
+        cur.value = cur.id;
+        cur.children && Q.push(...cur.children);
+      }
+      void setProjectTreeData(res.data);
+    });
   }, []);
 
   const handleAddBugBtnClick = () => {
@@ -84,8 +100,8 @@ export default function BugManage(props: any) {
       <HeaderTabs activeKey="bug-manage" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form layout="inline" form={form} onFinish={() => updateBugList(1)}>
-            <Form.Item label="所属" name="business">
+          <Form layout="inline" form={form} onFinish={() => updateBugList(1)} onReset={() => updateBugList(1)}>
+            {/* <Form.Item label="所属" name="business">
               <Select className="w-100" placeholder="请选择" allowClear>
                 {projectList.map((item) => (
                   <Select.Option value={item.id} key={item.id}>
@@ -93,6 +109,9 @@ export default function BugManage(props: any) {
                   </Select.Option>
                 ))}
               </Select>
+            </Form.Item> */}
+            <Form.Item label="项目/需求" name="demandId">
+              <Cascader placeholder="请选择" options={projectTreeData} />
             </Form.Item>
             <Form.Item label="标题" name="name">
               <Input placeholder="请输入标题" />

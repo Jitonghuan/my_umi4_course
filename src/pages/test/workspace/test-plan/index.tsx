@@ -5,8 +5,8 @@ import HeaderTabs from '../_components/header-tabs';
 import AddTestPlanDrawer from './add-test-plan-drawer';
 import AssociatingCaseDrawer from './associating-case-drawer';
 import { getRequest, postRequest } from '@/utils/request';
-import { getTestPlanList, deleteTestPlan, getProjects } from '../service';
-import { Form, Button, Table, Input, Select, Space, message, Popconfirm } from 'antd';
+import { getTestPlanList, deleteTestPlan, getProjects, getProjectTreeData } from '../service';
+import { Form, Button, Table, Input, Select, Space, message, Popconfirm, Cascader } from 'antd';
 import './index.less';
 import _ from 'lodash';
 
@@ -22,6 +22,7 @@ export default function TestPlan(props: any) {
   const [associatingVisible, setAssociatingVisible] = useState(false);
   const [curSelectPlan, setCurSelectPlan] = useState<null | string>(null);
   const [projectList, setProjectList] = useState<any[]>([]);
+  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -30,12 +31,31 @@ export default function TestPlan(props: any) {
     getRequest(getProjects).then((res) => {
       void setProjectList(res.data.dataSource);
     });
+
+    void getRequest(getProjectTreeData).then((res) => {
+      const Q = [...res.data];
+      while (Q.length) {
+        const cur = Q.shift();
+        cur.label = cur.name;
+        cur.value = cur.id;
+        cur.children && Q.push(...cur.children);
+      }
+      void setProjectTreeData(res.data);
+    });
   }, []);
 
   const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize) => {
     void setLoading(true);
+    const formData = form.getFieldsValue();
     const res = await getRequest(getTestPlanList, {
-      data: { ...form.getFieldsValue(), pageIndex: _pageIndex, pageSize: _pageSize },
+      data: {
+        ...formData,
+        pageIndex: _pageIndex,
+        pageSize: _pageSize,
+        projectId: formData.demandId?.[0] && +formData.demandId[0],
+        demandId: formData.demandId?.[1] && +formData.demandId[1],
+        subDemandId: formData.demandId?.[2] && +formData.demandId[2],
+      },
     });
     void setLoading(false);
     const { dataSource, pageInfo } = res.data;
@@ -82,12 +102,8 @@ export default function TestPlan(props: any) {
             onFinish={() => updateTable(1, pageSize)}
             onReset={() => updateTable(1, pageSize)}
           >
-            <Form.Item label="所属" name="projectId">
-              <Select placeholder="请选择" allowClear>
-                {projectList.map((item) => (
-                  <Select.Option value={item.id}>{item.categoryName}</Select.Option>
-                ))}
-              </Select>
+            <Form.Item label="项目/需求" name="demandId">
+              <Cascader placeholder="请选择" options={projectTreeData} />
             </Form.Item>
 
             <Form.Item label="任务名称" name="taskName">

@@ -192,7 +192,7 @@ export default function UserCaseInfoExec(props: any) {
 
     const requestParams = {
       name: `${curCase.caseInfo.title}--不符合预期结果`,
-      business: plan.projectId,
+      // business: plan.projectId,
       projectId: +plan.projectId,
       demandId: +plan.demandId,
       subDemandId: +plan.subDemandId,
