@@ -18,7 +18,7 @@ export default function RightDetail(props: any) {
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
   const [stepContent, setStepContent] = useState<string | string[]>('');
   const [stepContentFormItemHelp, setStepContentFormItemHelp] = useState<any>();
-  const [stepContentFormItemvalidateStatus, setStepContentFormItemvalidateStatus] = useState<any>();
+  const [stepContentFormItemvalidateStatus, setStepContentFormItemvalidateStatus] = useState<any>('validating');
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
   const [descType, setDescType] = useState('0');
   const [schema, setSchema] = useState<any>();
@@ -30,7 +30,7 @@ export default function RightDetail(props: any) {
       void setSchema(undefined);
       if (caseId) {
         getRequest(getCaseInfo + '/' + caseId).then((res) => {
-          form.setFieldsValue(res.data);
+          void form.setFieldsValue(res.data);
           if (res.data.descType === '0') {
             void setStepContent(res.data.stepContent[0].input);
             void setExpectedResult(res.data.stepContent[0].output);
@@ -45,6 +45,11 @@ export default function RightDetail(props: any) {
             void setSchema(JSON.parse(res.data.comment));
           } catch (e) {}
         });
+      } else {
+        void form.resetFields();
+        void setStepContent('');
+        void setExpectedResult('');
+        void setSchema(undefined);
       }
     }
   }, [visible]);
@@ -153,6 +158,7 @@ export default function RightDetail(props: any) {
           name="stepContent"
           help={stepContentFormItemHelp}
           validateStatus={stepContentFormItemvalidateStatus}
+          className="step-content-form-item"
         >
           <Tabs
             activeKey={descType}
