@@ -109,13 +109,13 @@ export default function appStore(porps: any) {
             });
           }}
         >
-          <Form.Item label="名称：" name="appCategoryCode" rules={[{ required: true, message: '这是必选项' }]}>
+          <Form.Item label="应用名称：" name="appCategoryCode" rules={[{ required: true, message: '这是必选项' }]}>
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
           <Form.Item label="分类：" name="appCode">
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
-          <Form.Item label="交付版本：" name="manage">
+          <Form.Item label="应用版本：" name="manage">
             <Select style={{ width: 140 }}></Select>
           </Form.Item>
           <Form.Item label="状态：" name="state">
