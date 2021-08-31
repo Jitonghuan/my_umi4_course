@@ -19,7 +19,7 @@ export default function BugManage(props: any) {
   const [pageSize, setPageSize] = useState(10);
   const [bugTotal, setBugTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [projectList, setProjectList] = useState<any[]>([]);
+  // const [projectList, setProjectList] = useState<any[]>([]);
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
   const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
@@ -46,9 +46,9 @@ export default function BugManage(props: any) {
   };
 
   useEffect(() => {
-    getRequest(getProjects).then((res) => {
-      void setProjectList(res.data.dataSource);
-    });
+    // getRequest(getProjects).then((res) => {
+    //   void setProjectList(res.data.dataSource);
+    // });
 
     void updateBugList();
 
@@ -217,9 +217,9 @@ export default function BugManage(props: any) {
         <AddBugDrawer
           visible={addBugDrawerVisible}
           setVisible={setAddBugDrawerVisible}
-          projectList={projectList}
           bugInfo={curBugInfo}
           updateBugList={updateBugList}
+          projectTreeData={projectTreeData}
         />
       </ContentCard>
     </PageContainer>

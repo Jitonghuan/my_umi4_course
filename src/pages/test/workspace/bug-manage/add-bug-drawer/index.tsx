@@ -18,7 +18,8 @@ import _ from 'lodash';
 import './index.less';
 
 export default function BugManage(props: any) {
-  const { visible, setVisible, projectList, bugInfo, updateBugList, defaultRelatedCases, phaseId, onAddBug } = props;
+  const { visible, setVisible, bugInfo, updateBugList, defaultRelatedCases, phaseId, onAddBug, projectTreeData } =
+    props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
@@ -26,7 +27,6 @@ export default function BugManage(props: any) {
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
   const [cates, setCates] = useState<any[]>([]);
   const [manageList, setManageList] = useState<string[]>([]);
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
@@ -141,16 +141,17 @@ export default function BugManage(props: any) {
     void getRequest(getManagerList).then((res) => {
       void setManageList(res.data.usernames);
     });
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
-    });
+
+    // void getRequest(getProjectTreeData).then((res) => {
+    //   const Q = [...res.data];
+    //   while (Q.length) {
+    //     const cur = Q.shift();
+    //     cur.label = cur.name;
+    //     cur.value = cur.id;
+    //     cur.children && Q.push(...cur.children);
+    //   }
+    //   void setProjectTreeData(res.data);
+    // });
   }, []);
 
   /** -------------------------- 关联用例 end -------------------------- */
