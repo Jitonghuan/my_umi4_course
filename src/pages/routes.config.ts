@@ -688,7 +688,28 @@ export default [
       },
     ],
   },
-
+  {
+    path: 'delivery',
+    name: '交付管理',
+    icon: 'icon-code',
+    routes: [
+      {
+        path: 'deliveryList',
+        name: '交付列表',
+        component: '@/pages/delivery/delivery-list',
+      },
+      {
+        path: 'appStore',
+        name: '应用商店',
+        component: '@/pages/delivery/appStore',
+      },
+      {
+        path: 'releaseManage',
+        name: '版本管理',
+        component: '@/pages/delivery/release-manage',
+      },
+    ],
+  },
   {
     path: '*',
     name: 'NOT FOUND',

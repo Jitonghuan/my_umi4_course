@@ -21,16 +21,20 @@ export default function addTicket() {
   const [specifications, setSpecifications] = useState<any[]>([]); //规格选项
   const [diskSize, setDiskSize] = useState<any[]>([]); //磁盘选项
   const [applyResourceForm] = Form.useForm();
+  const [selectAppTypes, setSelectAppTypes] = useState<any>('application'); //资源类型所选择到的值
 
   const handleChange = () => {
     applyResourceForm.setFieldsValue({ sights: [] });
+  };
+  const selectAppType = (value: any) => {
+    setSelectAppTypes(value);
   };
   return (
     <PageContainer>
       <FilterCard>
         <span>资源申请</span>
       </FilterCard>
-      <ContentCard>
+      <ContentCard className="addTicket">
         <div className="resourceApply">
           <Form
             form={applyResourceForm}
@@ -58,43 +62,51 @@ export default function addTicket() {
             <Row>
               <Col span={8}>
                 <Form.Item name="recourceType" label="资源类型">
-                  <Select showSearch allowClear options={appTypeOptions} style={{ width: '180px' }} />
+                  <Select showSearch allowClear onChange={selectAppType} style={{ width: '180px' }}>
+                    <Option value="application">应用</Option>
+                    <Option value="mysql">数据库</Option>
+                    <Option value="middleWare">中间件</Option>
+                  </Select>
                 </Form.Item>
               </Col>
 
               <Col span={8}>
-                <Form.Item name="nodeNumber" label="节点数">
-                  <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
-                </Form.Item>
+                {selectAppTypes === 'application' && (
+                  <Form.Item name="nodeNumber" label="节点数">
+                    <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
+                  </Form.Item>
+                )}
+                {selectAppTypes === 'mysql' && (
+                  <Form.Item name="envCode" label="存量总量">
+                    <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
+                  </Form.Item>
+                )}
+                {selectAppTypes === 'middleWare' && (
+                  <Form.Item name="envCode" label="中间件名">
+                    <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
+                  </Form.Item>
+                )}
               </Col>
               <Col span={8}>
-                <Form.Item name="appcatecoryName" label="应用名">
-                  <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
-                </Form.Item>
+                {selectAppTypes === 'application' && (
+                  <Form.Item name="appcatecoryName" label="应用名">
+                    <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
+                  </Form.Item>
+                )}
+
+                {selectAppTypes === 'mysql' && (
+                  <Form.Item name="appcatecoryName" label="数据库名">
+                    <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
+                  </Form.Item>
+                )}
               </Col>
             </Row>
             <Row>
-              <Col span={6}>
-                <Form.Item name="appType" label="资源类型">
-                  <Select showSearch allowClear options={appTypeOptions} style={{ width: '180px' }} />
-                </Form.Item>
-              </Col>
-
-              <Col span={6}>
-                <Form.Item name="envCode" label="存量总量">
-                  <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item name="businessLine" label="数据库名">
+              {selectAppTypes === 'mysql' && (
+                <Form.Item name="appcatecoryName" label="数据库类型">
                   <Select showSearch allowClear options={businessLine} style={{ width: '180px' }}></Select>
                 </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item name="envCode" label="数据库类型">
-                  <Select showSearch allowClear options={envCode} style={{ width: '180px' }} />
-                </Form.Item>
-              </Col>
+              )}
             </Row>
 
             <Row>
