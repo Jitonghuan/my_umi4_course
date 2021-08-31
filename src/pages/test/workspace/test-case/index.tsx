@@ -7,6 +7,7 @@ import PageContainer from '@/components/page-container';
 import { ContentCard, CardRowGroup } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
+import { LeftOutlined } from '@ant-design/icons';
 import './index.less';
 
 export default function TestCase(props: any) {
@@ -79,8 +80,17 @@ export default function TestCase(props: any) {
     void setDrawerVisible(true);
   };
 
+  const goBack = () => {
+    history.push('/matrix/test/workspace/test-case-library');
+  };
+
   return (
     <PageContainer>
+      <div className="back-btn-container">
+        <div onClick={goBack} className="back-btn">
+          <LeftOutlined /> <span className="back-btn-title">返回</span>
+        </div>
+      </div>
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
         <CardRowGroup.SlideCard className="slide-card" width={240}>
