@@ -6,13 +6,26 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Drawer, Button, Select, Radio, Input, Divider, message, Form } from 'antd';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import DebounceSelect from '@/components/debounce-select';
-import UserSelector from '@/components/user-selector';
+import UserSelector, { stringToList } from '@/components/user-selector';
 import { createApp, updateApp, searchGitAddress } from './service';
 import { useAppGroupOptions } from '../../hooks';
-import { appTypeOptions, appDevelopLanguageOptions, isClientOptions } from './common';
+import {
+  appTypeOptions,
+  appDevelopLanguageOptions,
+  isClientOptions,
+  appFeProjectTypeOptions,
+  appMicroFeTypeOptions,
+} from './common';
 import { AppItemVO } from '../../interfaces';
 
 const { Item: FormItem } = Form;
+
+// 生成一个方法: shouldUpdate={(prev, curr) => prev.xxx !== curr.xxx}
+const shouldUpdate = (keys: string[]) => {
+  return (prev: any, curr: any) => {
+    return keys.some((key) => prev[key] !== curr[key]);
+  };
+};
 
 export interface IProps {
   initData?: AppItemVO;
@@ -37,7 +50,7 @@ export default function ApplicationEditor(props: IProps) {
       setCategoryCode(initData?.appCategoryCode);
       form.setFieldsValue({
         ...initData,
-        ownerList: initData?.owner?.split(/[,;\/，、]\s?|\s/)?.filter((n) => !!n) || [],
+        ownerList: stringToList(initData?.owner),
       });
     } else {
       form.resetFields();
@@ -144,9 +157,10 @@ export default function ApplicationEditor(props: IProps) {
 
         <Divider />
 
-        <FormItem noStyle shouldUpdate={(prev, curr) => prev.appType !== curr.appType}>
+        <FormItem noStyle shouldUpdate={shouldUpdate(['appType'])}>
           {({ getFieldValue }) =>
-            getFieldValue('appType') === 'backend' && (
+            getFieldValue('appType') === 'backend' ? (
+              // 后端相关字段
               <>
                 <FormItem
                   label="开发语言"
@@ -155,7 +169,7 @@ export default function ApplicationEditor(props: IProps) {
                 >
                   <Radio.Group options={appDevelopLanguageOptions} />
                 </FormItem>
-                <FormItem noStyle shouldUpdate={(prev, curr) => prev.appDevelopLanguage !== curr.appDevelopLanguage}>
+                <FormItem noStyle shouldUpdate={shouldUpdate(['appDevelopLanguage'])}>
                   {({ getFieldValue }) =>
                     getFieldValue('appDevelopLanguage') === 'java' && (
                       <>
@@ -172,6 +186,35 @@ export default function ApplicationEditor(props: IProps) {
                         >
                           <Input placeholder="请输入应用的 pom 文件的相对路径" />
                         </FormItem>
+                      </>
+                    )
+                  }
+                </FormItem>
+              </>
+            ) : (
+              // 前端相关字段
+              <>
+                <FormItem
+                  label="工程类型"
+                  name="projectType"
+                  rules={[{ required: true, message: '请选择工程类型' }]}
+                  initialValue={appFeProjectTypeOptions[1].value}
+                >
+                  <Radio.Group options={appFeProjectTypeOptions} />
+                </FormItem>
+                <FormItem noStyle shouldUpdate={shouldUpdate(['projectType', 'microFeType'])}>
+                  {({ getFieldValue }) =>
+                    getFieldValue('projectType') === 'micro' && (
+                      <>
+                        <FormItem
+                          label="微前端类型"
+                          name="microFeType"
+                          rules={[{ required: true, message: '请选择微前端类型' }]}
+                          initialValue={appMicroFeTypeOptions[1].value}
+                        >
+                          <Radio.Group options={appMicroFeTypeOptions} />
+                        </FormItem>
+                        <FormItem noStyle shouldUpdate={shouldUpdate(['microFeType'])}></FormItem>
                       </>
                     )
                   }
