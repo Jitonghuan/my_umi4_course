@@ -17,6 +17,8 @@ export default function RightDetail(props: any) {
 
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
   const [stepContent, setStepContent] = useState<string | string[]>('');
+  const [stepContentFormItemHelp, setStepContentFormItemHelp] = useState<any>();
+  const [stepContentFormItemvalidateStatus, setStepContentFormItemvalidateStatus] = useState<any>();
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
   const [descType, setDescType] = useState('0');
   const [schema, setSchema] = useState<any>();
@@ -47,19 +49,29 @@ export default function RightDetail(props: any) {
     }
   }, [visible]);
 
-  const handleSave = async () => {
-    void (await handleSaveAndContinue());
-    void setVisible(false);
-  };
-
-  const handleSaveAndContinue = async () => {
+  const handleSave = async (needContinue: boolean = false) => {
     let finalStepContent = stepContent;
     let finalExpectedResult = expectedResult;
     if (typeof finalStepContent === 'string') {
-      finalStepContent = [finalStepContent];
+      if (finalStepContent.length > 0) finalStepContent = [finalStepContent];
+      else finalStepContent = [];
     }
     if (typeof finalExpectedResult === 'string') {
-      finalExpectedResult = [finalExpectedResult];
+      if (finalExpectedResult.length > 0) finalExpectedResult = [finalExpectedResult];
+      else finalExpectedResult = [];
+    }
+
+    try {
+      form.validateFields();
+      await form.validateFields().finally(() => {
+        if (finalStepContent.length === 0 || finalExpectedResult.length === 0) {
+          void setStepContentFormItemHelp('请输入步骤描述');
+          void setStepContentFormItemvalidateStatus('error');
+          throw '请输入步骤描述';
+        }
+      });
+    } catch (e) {
+      return;
     }
 
     const _data = form.getFieldsValue();
@@ -83,7 +95,7 @@ export default function RightDetail(props: any) {
 
     // void loadEnd();
     void updateCaseTable();
-    void message.success('新增用例成功');
+    void message.success(caseId ? '编辑用例成功' : '新增用例成功');
 
     // 保存后清空表单
     void form.resetFields();
@@ -95,6 +107,8 @@ export default function RightDetail(props: any) {
       void setStepContent([]);
       void setExpectedResult([]);
     }
+
+    !needContinue && setVisible(false);
   };
 
   const handleCancel = () => {
@@ -116,10 +130,10 @@ export default function RightDetail(props: any) {
       maskClosable={false}
     >
       <Form {...layout} form={form}>
-        <Form.Item label="标题:" name="title">
+        <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
           <Input placeholder="请输入标题" />
         </Form.Item>
-        <Form.Item label="优先级:" name="priority">
+        <Form.Item label="优先级:" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
           <Select>
             {priorityEnum.map((item) => (
               <Select.Option value={item.value} key={item.value}>
@@ -134,7 +148,12 @@ export default function RightDetail(props: any) {
         <Form.Item label="前置条件:" name="precondition">
           <Input.TextArea placeholder="请输入前置条件"></Input.TextArea>
         </Form.Item>
-        <Form.Item label="用例描述:" name="stepContent">
+        <Form.Item
+          label="用例描述:"
+          name="stepContent"
+          help={stepContentFormItemHelp}
+          validateStatus={stepContentFormItemvalidateStatus}
+        >
           <Tabs
             activeKey={descType}
             onChange={(key) => {
@@ -155,13 +174,21 @@ export default function RightDetail(props: any) {
                   placeholder="输入步骤描述"
                   className="step-desc"
                   value={stepContent}
-                  onChange={(e) => setStepContent(e.target.value)}
+                  onChange={(e) => {
+                    void setStepContentFormItemHelp('');
+                    void setStepContentFormItemvalidateStatus(undefined);
+                    void setStepContent(e.target.value);
+                  }}
                 ></Input.TextArea>
                 <Input.TextArea
                   placeholder="预期结果"
                   className="step-expected-results"
                   value={expectedResult}
-                  onChange={(e) => setExpectedResult(e.target.value)}
+                  onChange={(e) => {
+                    void setStepContentFormItemHelp('');
+                    void setStepContentFormItemvalidateStatus(undefined);
+                    void setExpectedResult(e.target.value);
+                  }}
                 ></Input.TextArea>
               </div>
             </TabPane>
@@ -169,6 +196,8 @@ export default function RightDetail(props: any) {
               <EditorTable
                 value={caseDescArr}
                 onChange={(val) => {
+                  void setStepContentFormItemHelp('');
+                  void setStepContentFormItemvalidateStatus(undefined);
                   void setCaseDescArr(val);
                   void setStepContent(val.map((item) => item.value));
                   void setExpectedResult(val.map((item) => item.desc));
@@ -194,11 +223,11 @@ export default function RightDetail(props: any) {
       </Form>
 
       <div className="drawer-btn-group">
-        <Button type="primary" onClick={handleSave}>
+        <Button type="primary" onClick={() => handleSave()}>
           保存
         </Button>
         {!caseId ? (
-          <Button type="primary" className="mgl-short" onClick={handleSaveAndContinue}>
+          <Button type="primary" className="mgl-short" onClick={() => handleSave(true)}>
             保存并继续
           </Button>
         ) : (
