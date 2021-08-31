@@ -155,7 +155,7 @@ export default function UserCaseInfoExec(props: any) {
     void message.success('删除bug成功');
   };
 
-  const handleBugStatusChange = (bugInfo: any, status: string) => {
+  const handleBugStatusChange = (bugInfo: any, status: number) => {
     const loadEnd = message.loading('正在修改Bug状态');
     let relatedCases = [];
     try {
@@ -193,6 +193,9 @@ export default function UserCaseInfoExec(props: any) {
     const requestParams = {
       name: `${curCase.caseInfo.title}--不符合预期结果`,
       business: plan.projectId,
+      projectId: +plan.projectId,
+      demandId: +plan.demandId,
+      subDemandId: +plan.subDemandId,
       priority: 1,
       bugType: 0,
       onlineBug: 0,
@@ -203,12 +206,11 @@ export default function UserCaseInfoExec(props: any) {
       status: '0',
       createUser: userInfo.userName,
     };
-    const res = await postRequest(addBug, { data: requestParams }).catch(() => {
+    const res = await postRequest(addBug, { data: requestParams }).finally(() => {
       void finishLoading();
-      return;
     });
-    void finishLoading();
 
+    if (!res) return;
     // @ts-ignore
     const newBugInfo = { ...requestParams, id: res.data.id };
     void setCheckedBugs([newBugInfo]);
@@ -312,7 +314,7 @@ export default function UserCaseInfoExec(props: any) {
                   dataIndex="status"
                   render={(status, record: any) => (
                     <Select
-                      value={status.toString()}
+                      value={+status}
                       options={bugStatusEnum}
                       onChange={(value) => handleBugStatusChange(record, value)}
                     ></Select>
