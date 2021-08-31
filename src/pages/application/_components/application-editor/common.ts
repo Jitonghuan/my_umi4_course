@@ -29,3 +29,10 @@ export const appMicroFeTypeOptions: IOption<AppMicroFeType>[] = [
   { label: '主应用', value: 'main' },
   { label: '子应用', value: 'sub' },
 ];
+
+// TODO 需要改成接口获取
+export const relationMainAppCodeOptions: IOption[] = [
+  'g3a_future-his-portal-web',
+  'gmc_future-his-portal-web',
+  'hbos_portal',
+].map((n) => ({ label: n, value: n }));

@@ -4,9 +4,11 @@
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Drawer, Button, Select, Radio, Input, Divider, message, Form } from 'antd';
+import FELayout from '@cffe/vc-layout';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import DebounceSelect from '@/components/debounce-select';
 import UserSelector, { stringToList } from '@/components/user-selector';
+import EditorTable from '@cffe/pc-editor-table';
 import { createApp, updateApp, searchGitAddress } from './service';
 import { useAppGroupOptions } from '../../hooks';
 import {
@@ -15,6 +17,7 @@ import {
   isClientOptions,
   appFeProjectTypeOptions,
   appMicroFeTypeOptions,
+  relationMainAppCodeOptions,
 } from './common';
 import { AppItemVO } from '../../interfaces';
 
@@ -35,6 +38,7 @@ export interface IProps {
 }
 
 export default function ApplicationEditor(props: IProps) {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { categoryData } = useContext(FEContext);
   const { initData, visible } = props;
   const isEdit = !!initData?.id;
@@ -54,6 +58,9 @@ export default function ApplicationEditor(props: IProps) {
       });
     } else {
       form.resetFields();
+      form.setFieldsValue({
+        ownerList: [userInfo.fullName!],
+      });
     }
   }, [isEdit, visible]);
 
@@ -214,7 +221,32 @@ export default function ApplicationEditor(props: IProps) {
                         >
                           <Radio.Group options={appMicroFeTypeOptions} />
                         </FormItem>
-                        <FormItem noStyle shouldUpdate={shouldUpdate(['microFeType'])}></FormItem>
+                        {getFieldValue('microFeType') === appMicroFeTypeOptions[0].value ? (
+                          // 主应用
+                          <FormItem
+                            label="路由文件"
+                            name="routeFile"
+                            rules={[{ required: true, message: '请输入路由文件名' }]}
+                          >
+                            <Input placeholder="app.json" style={{ width: 320 }} />
+                          </FormItem>
+                        ) : (
+                          // 子应用
+                          <FormItem label="关联信息" name="relationMainApp">
+                            <EditorTable
+                              columns={[
+                                {
+                                  dataIndex: 'appCode',
+                                  title: '主应用Code',
+                                  fieldType: 'select',
+                                  valueOptions: relationMainAppCodeOptions,
+                                  colProps: { width: 200 },
+                                },
+                                { dataIndex: 'routePath', title: '路由' },
+                              ]}
+                            />
+                          </FormItem>
+                        )}
                       </>
                     )
                   }

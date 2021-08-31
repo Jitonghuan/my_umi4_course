@@ -81,6 +81,17 @@ export default function ApplicationOverview() {
         <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
       </Descriptions>
 
+      {appData?.relationMainApp?.length && (
+        <Descriptions title="关联主应用" bordered column={2} labelStyle={{ width: 200 }} style={{ marginTop: 36 }}>
+          {appData?.relationMainApp.map((group, groupIndex) => (
+            <>
+              <Descriptions.Item label={`主应用${groupIndex + 1}`}>{group.appCode}</Descriptions.Item>
+              <Descriptions.Item label={`路由${groupIndex + 1}`}>{group.routePath}</Descriptions.Item>
+            </>
+          ))}
+        </Descriptions>
+      )}
+
       <Descriptions
         title="成员"
         bordered
