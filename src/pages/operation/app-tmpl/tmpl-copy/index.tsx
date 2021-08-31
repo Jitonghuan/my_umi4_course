@@ -79,6 +79,7 @@ export default function DemoPageTb(porps: any) {
           envCodes: envCode,
           tmplConfigurableItem: arr,
           jvm: jvm,
+          remark: tmplresult.remark,
         });
         setIsDeployment(tmplresult.templateType);
         changeAppCategory(tmplresult.appCategoryCode);
@@ -232,7 +233,7 @@ export default function DemoPageTb(porps: any) {
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '80px' }}
+                style={{ marginTop: '50px' }}
               >
                 <Select
                   showSearch
@@ -255,6 +256,9 @@ export default function DemoPageTb(porps: any) {
                 >
                   {children}
                 </Select>
+              </Form.Item>
+              <Form.Item label="备注：" labelCol={{ span: 8 }} name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 220 }}></Input.TextArea>
               </Form.Item>
             </Col>
           </Row>

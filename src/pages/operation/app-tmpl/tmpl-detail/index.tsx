@@ -68,6 +68,7 @@ export default function DemoPageTb(porps: any) {
           appCategoryCode: tmplresult.appCategoryCode,
           envCodes: envCode,
           jvm: jvm,
+          remark: tmplresult.remark,
         });
       }
     });
@@ -158,6 +159,9 @@ export default function DemoPageTb(porps: any) {
                 >
                   {children}
                 </Select>
+              </Form.Item>
+              <Form.Item label="备注：" labelCol={{ span: 8 }} name="remark">
+                <Input.TextArea style={{ width: 220 }} disabled={isDisabled}></Input.TextArea>
               </Form.Item>
             </Col>
           </Row>

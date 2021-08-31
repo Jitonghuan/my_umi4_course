@@ -213,6 +213,9 @@ export default function DemoPageTb(porps: any) {
                   {children}
                 </Select>
               </Form.Item>
+              <Form.Item label="备注：" labelCol={{ span: 8 }} name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 220 }}></Input.TextArea>
+              </Form.Item>
             </Col>
           </Row>
           <Form.Item>
