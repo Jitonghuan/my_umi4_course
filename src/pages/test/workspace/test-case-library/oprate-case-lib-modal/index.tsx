@@ -16,7 +16,7 @@ export default function OprateCaseLibModal(props: any) {
 
   const submit = async () => {
     const isAdd = caseCateId === undefined;
-    const load = message.loading(isAdd ? '正在添加测试用例库' : '正在更新测试用例库');
+    // const load = message.loading(isAdd ? '正在添加测试用例库' : '正在更新测试用例库');
     const targetUrl = isAdd ? createCaseCategory : updateCaseCategory + '/' + caseCateId;
     await postRequest(targetUrl, {
       data: {
@@ -25,7 +25,7 @@ export default function OprateCaseLibModal(props: any) {
         currentUser: userInfo.userName,
       },
     });
-    void load();
+    // void load();
     void message.success(isAdd ? '成功添加测试用例库！' : '成功更新测试用例库！');
     void setVisible(false);
     void updateDatasource();

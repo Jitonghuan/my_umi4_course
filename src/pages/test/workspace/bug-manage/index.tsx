@@ -74,9 +74,9 @@ export default function BugManage(props: any) {
   };
 
   const handleConfirmDelete = (id: number) => {
-    const loadFinish = message.loading('正在删除中');
+    // const loadFinish = message.loading('正在删除中');
     void postRequest(deleteBug, { data: { id } }).then(() => {
-      void loadFinish();
+      // void loadFinish();
       void message.success('删除成功');
       void updateBugList();
     });

@@ -76,9 +76,9 @@ export default function LeftTree(props: any) {
   };
 
   const handleDeleteCaseCate = (node: any) => {
-    const loadEnd = message.loading('正在删除');
+    // const loadEnd = message.loading('正在删除');
     postRequest(deleteCaseCategory + '/' + node.id).then(() => {
-      void loadEnd();
+      // void loadEnd();
       void message.success('删除成功');
       void searchCateTreeData(rootCateId, keyword, true);
     });

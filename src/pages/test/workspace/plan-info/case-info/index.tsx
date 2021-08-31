@@ -70,7 +70,7 @@ export default function UserCaseInfoExec(props: any) {
   }, [curCase]);
 
   const changeCaseStatus = async (phaseId: number, caseId: number, status: string, executeNote?: string) => {
-    const loadEnd = message.loading('正在修改用例状态');
+    // const loadEnd = message.loading('正在修改用例状态');
     void (await postRequest(executePhaseCase, {
       data: {
         phaseId,
@@ -80,7 +80,7 @@ export default function UserCaseInfoExec(props: any) {
         modifyUser: userInfo.userName,
       },
     }));
-    void loadEnd();
+    // void loadEnd();
   };
 
   const handleCaseStatusSubmit = async (caseStatus: string, executeNote?: string) => {
@@ -156,7 +156,7 @@ export default function UserCaseInfoExec(props: any) {
   };
 
   const handleBugStatusChange = (bugInfo: any, status: number) => {
-    const loadEnd = message.loading('正在修改Bug状态');
+    // const loadEnd = message.loading('正在修改Bug状态');
     let relatedCases = [];
     try {
       relatedCases = JSON.parse(bugInfo.relatedCases);
@@ -170,7 +170,7 @@ export default function UserCaseInfoExec(props: any) {
         modifyUser: userInfo.userName,
       },
     }).then((res) => {
-      void loadEnd();
+      // void loadEnd();
       void message.success('修改Bug状态成功');
       void updateCurCase();
     });
@@ -178,14 +178,14 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleSmartSubmit = async () => {
     if (!curCase?.caseInfo) return;
-    const finishLoading = message.loading('正在提交Bug');
+    // const finishLoading = message.loading('正在提交Bug');
     let desc = [];
     try {
       let caseDesc = JSON.parse(curCase.executeNote || '');
       if (!(caseDesc instanceof Array)) caseDesc = [];
       desc = [...caseDesc, ...sona.schema];
     } catch (e) {
-      void finishLoading();
+      // void finishLoading();
       void message.error('未知错误');
       return;
     }

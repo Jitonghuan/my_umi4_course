@@ -73,7 +73,7 @@ export default function RightDetail(props: any) {
       categoryId: +cateId,
     };
 
-    const loadEnd = message.loading(`正在${caseId ? '更新' : '新增'}用例`);
+    // const loadEnd = message.loading(`正在${caseId ? '更新' : '新增'}用例`);
 
     if (caseId) {
       void (await postRequest(updateCase + '/' + caseId, { data: formData }));
@@ -81,7 +81,7 @@ export default function RightDetail(props: any) {
       void (await postRequest(createCase, { data: formData }));
     }
 
-    void loadEnd();
+    // void loadEnd();
     void updateCaseTable();
     void message.success('新增用例成功');
 

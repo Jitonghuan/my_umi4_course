@@ -63,7 +63,7 @@ export default function AssociatingCaseDrawer(props: any) {
   };
 
   const submit = () => {
-    const loadFinish = message.loading('正在关联中');
+    // const loadFinish = message.loading('正在关联中');
     void postRequest(modifyPhaseCase, {
       data: {
         phaseId: curActivePhase,
@@ -71,14 +71,14 @@ export default function AssociatingCaseDrawer(props: any) {
         modifyUser: userInfo.userName,
       },
     }).then(() => {
-      void loadFinish();
+      // void loadFinish();
       void message.success('关联成功');
       void setVisible(false);
     });
   };
 
   const submitAndContinue = () => {
-    const loadFinish = message.loading('正在关联中');
+    // const loadFinish = message.loading('正在关联中');
     void postRequest(modifyPhaseCase, {
       data: {
         phaseId: curActivePhase,
@@ -86,7 +86,7 @@ export default function AssociatingCaseDrawer(props: any) {
         modifyUser: userInfo.userName,
       },
     }).then(() => {
-      void loadFinish();
+      // void loadFinish();
       void message.success('关联成功');
     });
   };

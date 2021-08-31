@@ -36,7 +36,7 @@ export default function BugManage(props: any) {
     } catch (e) {
       return;
     }
-    const finishLoading = message.loading(bugInfo ? '正在修改' : '正在新增');
+    // const finishLoading = message.loading(bugInfo ? '正在修改' : '正在新增');
     const formData = form.getFieldsValue();
     const requestParams = {
       ...formData,
@@ -51,7 +51,7 @@ export default function BugManage(props: any) {
       phaseId,
     };
     const res = await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
-      void finishLoading();
+      // void finishLoading();
     });
     void message.success(bugInfo ? '修改成功' : '新增成功');
     // 钩子

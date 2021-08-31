@@ -54,9 +54,9 @@ export default function RightDetail(props: any) {
   }, [cateId]);
 
   const onDeleteConfirm = (id: number) => {
-    const loadEnd = message.loading('正在删除');
+    // const loadEnd = message.loading('正在删除');
     postRequest(caseDelete, { data: { ids: [id] } }).then((res) => {
-      void loadEnd();
+      // void loadEnd();
       void message.success('删除成功');
       void updateDatasource();
     });
