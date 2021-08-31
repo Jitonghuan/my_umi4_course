@@ -158,6 +158,7 @@ export default function DemoPageTb(porps: any) {
         envCodes: valArr || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         jvm: value?.jvm,
+        remark: value?.remark,
         // templateCode:templateCode
       },
     }).then((resp: any) => {

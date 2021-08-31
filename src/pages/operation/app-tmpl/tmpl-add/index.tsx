@@ -113,6 +113,7 @@ export default function DemoPageTb(porps: any) {
         envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         jvm: value?.jvm,
+        remark: value?.remark,
       },
     }).then((resp: any) => {
       if (resp.success) {
