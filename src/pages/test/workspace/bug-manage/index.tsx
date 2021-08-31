@@ -117,7 +117,7 @@ export default function BugManage(props: any) {
               </Select>
             </Form.Item> */}
             <Form.Item label="项目/需求" name="demandId">
-              <Cascader placeholder="请选择" options={projectTreeData} />
+              <Cascader className="demandId-cascader" placeholder="请选择" options={projectTreeData} />
             </Form.Item>
             <Form.Item label="标题" name="name">
               <Input placeholder="请输入标题" />

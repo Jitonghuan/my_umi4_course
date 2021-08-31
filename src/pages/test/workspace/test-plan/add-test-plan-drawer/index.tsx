@@ -14,6 +14,8 @@ export default function AddTestPlanDrawer(props: any) {
 
   const [manageList, setManageList] = useState<string[]>([]);
   const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [phaseCollectionFormItemHelp, setPhaseCollectionFormItemHelp] = useState<string>();
+  const [phaseCollectionFormItemValidateStatus, setPhaseCollectionFormItemValidateStatus] = useState<any>();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -56,20 +58,22 @@ export default function AddTestPlanDrawer(props: any) {
   }, [visible]);
 
   const handleSave = async () => {
+    const formData = form.getFieldsValue();
+
     try {
-      await form.validateFields();
+      await form.validateFields().finally(() => {
+        for (const item of formData.phaseCollection) {
+          for (const propName of ['name', 'head', 'startTime', 'endTime']) {
+            if (!item[propName]) {
+              void setPhaseCollectionFormItemHelp('请将测试阶段数据填写完整');
+              void setPhaseCollectionFormItemValidateStatus('error');
+              throw '请将测试阶段数据填写完整';
+            }
+          }
+        }
+      });
     } catch (e) {
       return;
-    }
-    const formData = form.getFieldsValue();
-    for (const item of formData.phaseCollection) {
-      for (const val of Object.values(item)) {
-        if (!val) {
-          // TODO: 要改成表单报错
-          void message.error('请将测试阶段数据填写完整');
-          return;
-        }
-      }
     }
 
     const requestParams = {
@@ -91,20 +95,22 @@ export default function AddTestPlanDrawer(props: any) {
   };
 
   const handleEdit = async () => {
+    const formData = form.getFieldsValue();
+
     try {
-      await form.validateFields();
+      await form.validateFields().finally(() => {
+        for (const item of formData.phaseCollection) {
+          for (const propName of ['name', 'head', 'startTime', 'endTime']) {
+            if (!item[propName]) {
+              void setPhaseCollectionFormItemHelp('请将测试阶段数据填写完整');
+              void setPhaseCollectionFormItemValidateStatus('error');
+              throw '请将测试阶段数据填写完整';
+            }
+          }
+        }
+      });
     } catch (e) {
       return;
-    }
-    const formData = form.getFieldsValue();
-    for (const item of formData.phaseCollection) {
-      for (const val of Object.values(item)) {
-        if (!val) {
-          // TODO: 要改成表单报错
-          void message.error('请将测试阶段数据填写完整');
-          return;
-        }
-      }
     }
 
     const requestParams = {
@@ -158,7 +164,13 @@ export default function AddTestPlanDrawer(props: any) {
         <Form.Item label="计划说明" name="description" rules={[{ required: true, message: '请输入计划说明' }]}>
           <Input.TextArea placeholder="请输入用例前置条件" />
         </Form.Item>
-        <Form.Item label="测试阶段" name="phaseCollection" rules={[{ required: true, message: '请输入测试阶段' }]}>
+        <Form.Item
+          label="测试阶段"
+          name="phaseCollection"
+          rules={[{ required: true, message: '请输入测试阶段' }]}
+          help={phaseCollectionFormItemHelp}
+          validateStatus={phaseCollectionFormItemValidateStatus}
+        >
           <EditorTable
             creator={{ record: { name: '', head: '', startTime: '', endTime: '' } }}
             columns={[
@@ -187,6 +199,10 @@ export default function AddTestPlanDrawer(props: any) {
                 fieldProps: { showTime: true },
               },
             ]}
+            onChange={() => {
+              void setPhaseCollectionFormItemHelp(undefined);
+              void setPhaseCollectionFormItemValidateStatus(undefined);
+            }}
           />
         </Form.Item>
       </Form>
