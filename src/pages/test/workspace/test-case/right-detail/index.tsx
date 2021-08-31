@@ -142,10 +142,9 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="categoryName"
             title="所属"
-            width="220"
             render={(title) => (
               <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '220px' }} ellipsis={{ suffix: '' }}>
+                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
                   {title}
                 </Typography.Text>
               </Tooltip>
@@ -154,16 +153,15 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="title"
             title="用例名称"
-            width="220"
             render={(title) => (
               <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '220px' }} ellipsis={{ suffix: '' }}>
+                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
                   {title}
                 </Typography.Text>
               </Tooltip>
             )}
           ></Table.Column>
-          <Table.Column dataIndex="priority" title="优先级"></Table.Column>
+          <Table.Column dataIndex="priority" title="优先级" width={60}></Table.Column>
           <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
           <Table.Column
             dataIndex="gmtModify"
