@@ -229,6 +229,10 @@ export default function TaskEditor(props: TmplListProps) {
                   ]}
                   disabled={isDisabled}
                 />
+                <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+                <Form.Item name="remark">
+                  <Input.TextArea placeholder="请输入" style={{ width: 520 }}></Input.TextArea>
+                </Form.Item>
               </Form.Item>
               {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
               {isDeployment == 'deployment' ? (
@@ -263,9 +267,6 @@ export default function TaskEditor(props: TmplListProps) {
                 >
                   {children}
                 </Select>
-              </Form.Item>
-              <Form.Item label="备注：" labelCol={{ span: 8 }} name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 220 }}></Input.TextArea>
               </Form.Item>
             </Col>
           </Row>

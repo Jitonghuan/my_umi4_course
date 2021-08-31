@@ -177,6 +177,10 @@ export default function DemoPageTb(porps: any) {
                   ]}
                 />
               </Form.Item>
+              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
+              </Form.Item>
               {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
               {isDeployment == 'deployment' ? (
                 <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
@@ -213,9 +217,6 @@ export default function DemoPageTb(porps: any) {
                 >
                   {children}
                 </Select>
-              </Form.Item>
-              <Form.Item label="备注：" labelCol={{ span: 8 }} name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 220 }}></Input.TextArea>
               </Form.Item>
             </Col>
           </Row>
