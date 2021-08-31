@@ -11,7 +11,7 @@ import {
 } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
-import AddCaseModal from '../add-case-modal';
+import AddCaseModal from '../../test-case/add-case-drawer';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
 import _ from 'lodash';
@@ -247,10 +247,11 @@ export default function BugManage(props: any) {
       </Drawer>
 
       <AddCaseModal
+        isModal
         visible={addCaseModalVisible}
         setVisible={setAddCaseModalVisible}
         cates={cates}
-        updateAssociatingCaseTreeSelect={updateAssociatingCaseTreeSelect}
+        onSuccess={updateAssociatingCaseTreeSelect}
       />
     </>
   );

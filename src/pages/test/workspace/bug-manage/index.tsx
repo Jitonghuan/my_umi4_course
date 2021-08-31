@@ -3,7 +3,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
-import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message, Cascader } from 'antd';
+import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message, Cascader, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { getProjects, getBugList, deleteBug, getProjectTreeData } from '../service';
@@ -180,7 +180,15 @@ export default function BugManage(props: any) {
             loading={loading}
           >
             <Table.Column title="ID" dataIndex="id" />
-            <Table.Column title="标题" dataIndex="name" />
+            <Table.Column
+              title="标题"
+              dataIndex="name"
+              render={(title) => (
+                <Typography.Text style={{ maxWidth: '220px' }} ellipsis={{ suffix: '' }}>
+                  {title}
+                </Typography.Text>
+              )}
+            />
             <Table.Column title="类型" dataIndex="bugType" render={(type) => bugTypeEnum[type]} />
             <Table.Column title="优先级" dataIndex="priority" render={(priority) => bugPriorityEnum[priority]} />
             <Table.Column

@@ -186,7 +186,7 @@ export default function RightDetail(props: any) {
         cateId={cateId}
         visible={drawerVisible}
         setVisible={setDrawerVisible}
-        updateCaseTable={updateDatasource}
+        onSuccess={updateDatasource}
         caseCateTreeData={caseCateTreeData}
       />
 

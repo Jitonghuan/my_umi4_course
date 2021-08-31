@@ -1,5 +1,5 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
-import { Form, Drawer, Input, Switch, Select, Tabs, Button, message, TreeSelect } from 'antd';
+import { Form, Drawer, Modal, Input, Switch, Select, Tabs, Button, message, TreeSelect, Space } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { createCase, updateCase, getCategoryList, getCaseInfo } from '../../service';
 import { priorityEnum } from '../../constant';
@@ -12,7 +12,7 @@ import './index.less';
 const { TabPane } = Tabs;
 
 export default function RightDetail(props: any) {
-  const { visible, setVisible, updateCaseTable, caseId, cateId } = props;
+  const { visible, setVisible, onSuccess, caseId, cateId, isModal = false } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
@@ -99,7 +99,7 @@ export default function RightDetail(props: any) {
     }
 
     // void loadEnd();
-    void updateCaseTable();
+    void onSuccess();
     void message.success(caseId ? '编辑用例成功' : '新增用例成功');
 
     // 保存后清空表单
@@ -126,14 +126,8 @@ export default function RightDetail(props: any) {
     labelAlign: 'left' as 'left',
   };
 
-  return (
-    <Drawer
-      visible={visible}
-      width="650"
-      title={caseId ? '编辑用例' : '添加用例'}
-      onClose={() => setVisible(false)}
-      maskClosable={false}
-    >
+  const infoEl = (
+    <>
       <Form {...layout} form={form}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
           <Input placeholder="请输入标题" />
@@ -229,20 +223,46 @@ export default function RightDetail(props: any) {
       </Form>
 
       <div className="drawer-btn-group">
-        <Button type="primary" onClick={() => handleSave()}>
-          保存
-        </Button>
-        {!caseId ? (
-          <Button type="primary" className="mgl-short" onClick={() => handleSave(true)}>
-            保存并继续
+        <Space>
+          <Button type="primary" onClick={() => handleSave()}>
+            保存
           </Button>
-        ) : (
-          ''
-        )}
-        <Button type="primary" className="mgl-short" onClick={handleCancel}>
-          取消
-        </Button>
+          {!caseId ? (
+            <Button type="primary" onClick={() => handleSave(true)}>
+              保存并继续
+            </Button>
+          ) : (
+            ''
+          )}
+          <Button type="primary" onClick={handleCancel}>
+            取消
+          </Button>
+        </Space>
       </div>
+    </>
+  );
+
+  return isModal ? (
+    <Modal
+      className="add-case-modal"
+      visible={visible}
+      width="400"
+      title={caseId ? '编辑用例' : '添加用例'}
+      onCancel={() => setVisible(false)}
+      maskClosable={false}
+      footer={false}
+    >
+      {infoEl}
+    </Modal>
+  ) : (
+    <Drawer
+      visible={visible}
+      width="650"
+      title={caseId ? '编辑用例' : '添加用例'}
+      onClose={() => setVisible(false)}
+      maskClosable={false}
+    >
+      {infoEl}
     </Drawer>
   );
 }
