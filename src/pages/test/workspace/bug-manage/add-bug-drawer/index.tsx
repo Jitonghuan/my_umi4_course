@@ -11,7 +11,7 @@ import _ from 'lodash';
 import './index.less';
 
 export default function BugManage(props: any) {
-  const { visible, setVisible, projectList, bugInfo, updateBugList, defaultRelatedCases } = props;
+  const { visible, setVisible, projectList, bugInfo, updateBugList, defaultRelatedCases, phaseId, onAddBug } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
@@ -37,11 +37,14 @@ export default function BugManage(props: any) {
       relatedCases,
       id: bugInfo?.id,
       ...(bugInfo ? { modifyUser: userInfo.userName } : { createUser: userInfo.userName }),
+      phaseId,
     };
-    void (await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
+    const res = await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
       void finishLoading();
-    }));
+    });
     void message.success(bugInfo ? '修改成功' : '新增成功');
+    // 钩子
+    void (onAddBug && onAddBug({ ...requestParams, id: res.data.id }));
 
     void (updateBugList && updateBugList());
 

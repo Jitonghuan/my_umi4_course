@@ -4,26 +4,10 @@ import RightDetail from './right-detail';
 import HeaderTabs from '../_components/header-tabs';
 import { getCaseCategoryDeepList } from '../service';
 import PageContainer from '@/components/page-container';
-import {
-  createCase,
-  caseDelete,
-  updateCase,
-  copyCases,
-  moveCases,
-  getCaseInfo,
-  getCasePageList,
-  getCaseMultiDeepList,
-} from '../service';
 import { ContentCard, CardRowGroup } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
 import './index.less';
-
-const createTreeOptions = {
-  type: 'tree' as 'tree',
-  keyProp: 'id',
-  childrenProp: 'items',
-};
 
 export default function TestCase(props: any) {
   const testCaseCateId = history.location.query?.testCaseCateId;

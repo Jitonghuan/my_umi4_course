@@ -5,6 +5,7 @@ import FELayout from '@cffe/vc-layout';
 import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
+import AddBugDrawer from '../../bug-manage/add-bug-drawer';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
 import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
@@ -16,7 +17,6 @@ const { Text } = Typography;
 
 export default function UserCaseInfoExec(props: any) {
   const {
-    setAddBugDrawerVisible,
     curCase,
     phaseId,
     testCaseTreeLeafs,
@@ -25,9 +25,12 @@ export default function UserCaseInfoExec(props: any) {
     updateCurCase,
     updateTestCaseTree,
     plan,
+    projectList,
+    updateBugList,
   } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
+  const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [associationBug, setAssociationBug] = useState<any[]>([]);
   const [caseStatus, setCaseStatus] = useState<string>();
   const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(true);
@@ -36,14 +39,6 @@ export default function UserCaseInfoExec(props: any) {
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
-  // const [projectList, setProjectList] = useState<any[]>([]);
-  // console.log(plan);
-
-  // useEffect(() => {
-  //   getRequest(getProjects).then((res) => {
-  //     void setProjectList(res.data.dataSource);
-  //   });
-  // }, []);
 
   useEffect(() => {
     if (curCase) {
@@ -131,9 +126,9 @@ export default function UserCaseInfoExec(props: any) {
     else void setCurCaseId(testCaseTreeLeafs[(idx - 1 + len) % len].id);
   };
 
-  const mergeCheckedBugs2AssociationBugs = async () => {
+  const mergeCheckedBugs2AssociationBugs = async (_checkedBugs = checkedBugs) => {
     const preBugIds = associationBug.map((bug) => bug.id);
-    const curAssociationBugs = [...associationBug, ...checkedBugs.filter((bug) => !preBugIds.includes(bug.id))];
+    const curAssociationBugs = [...associationBug, ..._checkedBugs.filter((bug) => !preBugIds.includes(bug.id))];
     void setAssociationBug(curAssociationBugs);
     void (await postRequest(relatedBug, {
       data: {
@@ -172,6 +167,7 @@ export default function UserCaseInfoExec(props: any) {
         status,
         desc: bugInfo.description,
         relatedCases: relatedCases,
+        modifyUser: userInfo.userName,
       },
     }).then((res) => {
       void loadEnd();
@@ -200,16 +196,20 @@ export default function UserCaseInfoExec(props: any) {
       priority: 1,
       bugType: 0,
       onlineBug: 0,
+      phaseId,
       relatedCases: [curCase.caseInfo.id],
       desc: desc.length === 0 ? '' : JSON.stringify(desc),
       agent: userInfo.userName,
       status: '0',
       createUser: userInfo.userName,
     };
-    void (await postRequest(addBug, { data: requestParams }).catch(() => {
+    const res = await postRequest(addBug, { data: requestParams }).catch(() => {
       void finishLoading();
-    }));
+    });
     void finishLoading();
+    const newBugInfo = { ...requestParams, id: res.data.id };
+    void setCheckedBugs([newBugInfo]);
+    void (await mergeCheckedBugs2AssociationBugs([newBugInfo]));
     void updateCurCase();
     void message.success('一键提交成功');
   };
@@ -355,6 +355,19 @@ export default function UserCaseInfoExec(props: any) {
         checkedBugs={checkedBugs}
         setCheckedBugs={setCheckedBugs}
         mergeCheckedBugs2AssociationBugs={mergeCheckedBugs2AssociationBugs}
+      />
+
+      <AddBugDrawer
+        visible={addBugDrawerVisible}
+        setVisible={setAddBugDrawerVisible}
+        updateCaseTable={updateBugList}
+        projectList={projectList}
+        defaultRelatedCases={[curCase?.caseInfo.id]}
+        phaseId={phaseId}
+        onAddBug={(newBugInfo: any) => {
+          void setCheckedBugs([newBugInfo]);
+          void mergeCheckedBugs2AssociationBugs([newBugInfo]);
+        }}
       />
     </div>
   );

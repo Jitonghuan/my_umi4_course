@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import UseCaseTestInfoExec from './use-case-test-info-exec';
-import AddBugDrawer from '../bug-manage/add-bug-drawer';
 import UserCaseInfoExec from './use-case-info-exec';
 import CustomTree from '@/components/custom-tree';
 import BugInfoExec from './bug-info-exec';
@@ -30,7 +29,6 @@ export default function PlanInfo(props: any) {
   const [curCaseId, setCurCaseId] = useState<any>();
   const [curCase, setCurCase] = useState<any>();
   const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
-  const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [projectList, setProjectList] = useState<any[]>([]);
 
   const updateCurCase = () => {
@@ -226,7 +224,6 @@ export default function PlanInfo(props: any) {
                 {curCase ? (
                   <CaseInfo
                     className="case-info"
-                    setAddBugDrawerVisible={setAddBugDrawerVisible}
                     testCaseTreeLeafs={testCaseTreeLeafs}
                     setCurCaseId={setCurCaseId}
                     phaseId={activeKey}
@@ -234,6 +231,8 @@ export default function PlanInfo(props: any) {
                     updateCurCase={updateCurCase}
                     updateTestCaseTree={updateTestCaseTree}
                     plan={plan}
+                    projectList={projectList}
+                    updateBugList={updateBugList}
                   />
                 ) : (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有选择测试用例" />
@@ -245,14 +244,6 @@ export default function PlanInfo(props: any) {
           )}
         </ContentCard>
       </CardRowGroup>
-
-      <AddBugDrawer
-        visible={addBugDrawerVisible}
-        setVisible={setAddBugDrawerVisible}
-        updateCaseTable={updateBugList}
-        projectList={projectList}
-        defaultRelatedCases={[curCase?.caseInfo.id]}
-      />
     </PageContainer>
   );
 }
