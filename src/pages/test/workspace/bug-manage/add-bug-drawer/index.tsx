@@ -8,6 +8,7 @@ import {
   getCaseCategoryPageList,
   getManagerList,
   getProjectTreeData,
+  getCaseCategoryDeepList,
 } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
@@ -27,6 +28,7 @@ export default function BugManage(props: any) {
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
   const [cates, setCates] = useState<any[]>([]);
   const [manageList, setManageList] = useState<string[]>([]);
+  const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
@@ -135,6 +137,12 @@ export default function BugManage(props: any) {
     });
   };
 
+  const handleAddCaseSuccess = (newCase: any) => {
+    console.log('newCase :>> ', newCase);
+    void updateAssociatingCaseTreeSelect();
+    void setRelatedCases([...relatedCases, newCase?.id]);
+  };
+
   /** 获得可关联的测试用例树 */
   useEffect(() => {
     void updateAssociatingCaseTreeSelect();
@@ -155,6 +163,22 @@ export default function BugManage(props: any) {
   }, []);
 
   /** -------------------------- 关联用例 end -------------------------- */
+
+  const dataCleanCateTree = (node: any) => {
+    node.key = node.id;
+    node.title = node.name;
+    node.children = node.items;
+    node.children?.forEach((item: any) => dataCleanCateTree(item));
+
+    return node;
+  };
+
+  useEffect(() => {
+    getRequest(getCaseCategoryDeepList).then((res) => {
+      const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
+      void setCaseCateTreeData(curTreeData || []);
+    });
+  }, []);
 
   return (
     <>
@@ -251,7 +275,8 @@ export default function BugManage(props: any) {
         visible={addCaseModalVisible}
         setVisible={setAddCaseModalVisible}
         cates={cates}
-        onSuccess={updateAssociatingCaseTreeSelect}
+        onSuccess={handleAddCaseSuccess}
+        caseCateTreeData={caseCateTreeData}
       />
     </>
   );

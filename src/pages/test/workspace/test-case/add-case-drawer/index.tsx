@@ -12,7 +12,7 @@ import './index.less';
 const { TabPane } = Tabs;
 
 export default function RightDetail(props: any) {
-  const { visible, setVisible, onSuccess, caseId, cateId, isModal = false } = props;
+  const { visible, setVisible, onSuccess, caseId, cateId, isModal = false, caseCateTreeData = [] } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
@@ -47,6 +47,7 @@ export default function RightDetail(props: any) {
         });
       } else {
         void form.resetFields();
+        void form.setFieldsValue({ categoryId: cateId });
         void setStepContent('');
         void setExpectedResult('');
         void setSchema(undefined);
@@ -87,19 +88,20 @@ export default function RightDetail(props: any) {
       currentUser: userInfo.userName,
       descType: +descType,
       isAuto: _data.isAuto ? 1 : 0,
-      categoryId: +cateId,
+      categoryId: +_data.categoryId,
     };
 
     // const loadEnd = message.loading(`正在${caseId ? '更新' : '新增'}用例`);
 
+    let res;
     if (caseId) {
-      void (await postRequest(updateCase + '/' + caseId, { data: formData }));
-    } else if (cateId) {
-      void (await postRequest(createCase, { data: formData }));
+      res = await postRequest(updateCase + '/' + caseId, { data: formData });
+    } else {
+      res = await postRequest(createCase, { data: formData });
     }
 
     // void loadEnd();
-    void onSuccess();
+    void onSuccess({ ...formData, id: res?.data.id });
     void message.success(caseId ? '编辑用例成功' : '新增用例成功');
 
     // 保存后清空表单
@@ -131,6 +133,9 @@ export default function RightDetail(props: any) {
       <Form {...layout} form={form}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
           <Input placeholder="请输入标题" />
+        </Form.Item>
+        <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
+          <TreeSelect treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
         </Form.Item>
         <Form.Item label="优先级:" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
           <Select>
