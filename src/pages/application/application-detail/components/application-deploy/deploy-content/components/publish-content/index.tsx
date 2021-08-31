@@ -5,7 +5,7 @@
  * @create 2021-04-15 10:22
  */
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal, Button, message, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
@@ -15,6 +15,7 @@ import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
 import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
 import { IProps } from './types';
+import DetailContext from '@/pages/application/application-detail/context';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -23,6 +24,7 @@ const { confirm } = Modal;
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  const { appData } = useContext(DetailContext);
   const isProd = envTypeCode === 'prod';
   console.log('0000000', deployInfo.envs);
   return (
@@ -103,7 +105,7 @@ export default function PublishContent(props: IProps) {
               <Popconfirm
                 title="确定要重启应用吗？"
                 onConfirm={async () => {
-                  await restartApp({ appCode, envCode: deployInfo.envs });
+                  await restartApp({ appCode, envCode: deployInfo.envs, appCategoryCode: appData?.appCategoryCode });
                   message.success('操作成功！');
                 }}
               >
