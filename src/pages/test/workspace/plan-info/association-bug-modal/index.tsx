@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext, useEffect } from 'react';
-import { Col, Row, Tabs, Table, Input, Select, Tag, Button, Space, Modal, Typography, Empty, message } from 'antd';
+import { Col, Row, Tabs, Table, Input, Select, Tag, Button, Space, Modal, Checkbox, message } from 'antd';
 import { getBugList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
@@ -13,6 +13,7 @@ export default function UserCaseInfoExec(props: any) {
     checkedBugs,
     setCheckedBugs,
     mergeCheckedBugs2AssociationBugs,
+    associationBugs,
   } = props;
   const [bugList, setBugList] = useState<any[]>();
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -20,6 +21,7 @@ export default function UserCaseInfoExec(props: any) {
   const [total, setTotal] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
   const [load, setLoad] = useState<boolean>(false);
+  const [associationBugIds, setAssociationBugIds] = useState<React.Key[]>([]);
 
   const updateBugList = (_pageIndex: number, _pageSize: number, _keyword: string | undefined = keyword) => {
     void setLoad(true);
@@ -27,11 +29,11 @@ export default function UserCaseInfoExec(props: any) {
       data: {
         pageIndex: _pageIndex,
         pageSize: _pageSize,
-        keyword: _keyword,
+        name: _keyword,
       },
     }).then((res) => {
       void setLoad(false);
-      void setBugList((res.data.dataSource || []).map((item: any) => ({ ...item, key: item.id })));
+      void setBugList((res.data.dataSource || []).map((item: any) => ({ ...item, key: item.id, disable: true })));
       const { pageIndex, pageSize, total } = res.data.pageInfo;
       void setPageIndex(pageIndex);
       void setPageSize(pageSize);
@@ -43,7 +45,12 @@ export default function UserCaseInfoExec(props: any) {
 
   useEffect(() => {
     void updateBugList(pageIndex, pageSize);
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, associationBugModalVisible]);
+
+  useEffect(() => {
+    const ids = associationBugs.map((item: any) => item.id);
+    void setAssociationBugIds(ids);
+  }, [associationBugs]);
 
   const handleSearch = (keyword: string) => {
     void updateBugList(pageIndex, pageSize, keyword);
@@ -77,6 +84,12 @@ export default function UserCaseInfoExec(props: any) {
             setCheckedBugs(bugList?.filter((bug) => bugIds.includes(bug.id)));
           },
           selectedRowKeys: checkedBugs?.map((bug: any) => bug.id) || [],
+          renderCell: (checked, record, index, originNode) => {
+            if (associationBugIds.includes(record.id)) {
+              return <Checkbox disabled checked />;
+            }
+            return originNode;
+          },
         }}
         pagination={{
           current: pageIndex,

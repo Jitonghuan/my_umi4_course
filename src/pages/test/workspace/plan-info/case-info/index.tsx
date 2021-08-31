@@ -358,6 +358,7 @@ export default function UserCaseInfoExec(props: any) {
         checkedBugs={checkedBugs}
         setCheckedBugs={setCheckedBugs}
         mergeCheckedBugs2AssociationBugs={mergeCheckedBugs2AssociationBugs}
+        associationBugs={associationBug}
       />
 
       <AddBugDrawer
