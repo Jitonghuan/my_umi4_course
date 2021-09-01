@@ -274,12 +274,12 @@ export default function Launch() {
             onChange={pageSizeClick}
           >
             <Table.Column title="ID" dataIndex="id" width="4%" />
-            <Table.Column title="模版名称" dataIndex="templateName" width="10%" ellipsis />
-            <Table.Column title="模版CODE" dataIndex="templateCode" width="22%" ellipsis />
+            <Table.Column title="模版名称" dataIndex="templateName" width="20%" ellipsis />
+            {/* <Table.Column title="模版CODE" dataIndex="templateCode" width="22%" ellipsis /> */}
             <Table.Column title="模版类型" dataIndex="templateType" width="8%" ellipsis />
             <Table.Column title="应用分类" dataIndex="appCategoryCode" width="12%" ellipsis />
             <Table.Column title="环境" dataIndex="envCode" width="12%" />
-            <Table.Column title="备注" dataIndex="remark" width="14%" ellipsis />
+            <Table.Column title="备注" dataIndex="remark" width="26%" ellipsis />
             <Table.Column
               title="操作"
               dataIndex="gmtModify"
