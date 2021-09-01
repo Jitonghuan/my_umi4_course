@@ -7,9 +7,9 @@
  */
 
 import React, { useState, useContext, useEffect } from 'react';
+import moment from 'moment';
 import { Table, Input, Button, Modal, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { tableSchema } from './schema';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
@@ -127,8 +127,18 @@ export default function PublishBranch(props: PublishBranchProps) {
             setSelectedRowKeys(selectedRowKeys as any);
           },
         }}
-        columns={tableSchema}
-      />
+      >
+        <Table.Column dataIndex="id" title="ID" width={80} />
+        <Table.Column dataIndex="branchName" title="分支名" />
+        <Table.Column dataIndex="desc" title="变更原因" />
+        <Table.Column
+          dataIndex="gmtCreate"
+          title="创建时间"
+          width={160}
+          render={(val: string) => (val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '')}
+        />
+        <Table.Column dataIndex="createUser" title="创建人" width={80} />
+      </Table>
 
       <Modal
         title="选择发布环境"
