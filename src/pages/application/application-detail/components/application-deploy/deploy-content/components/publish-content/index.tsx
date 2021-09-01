@@ -6,9 +6,10 @@
  * @modified 2021/08/30 moyan
  */
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Table, Modal, Button, message, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import DetailContext from '@/pages/application/application-detail/context';
 import ProdSteps from './prod-steps';
 import TestEnvSteps from './test-steps';
 import OtherEnvSteps from './other-env-steps';
@@ -21,6 +22,7 @@ const rootCls = 'publish-content-compo';
 
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
+  const { appData } = useContext(DetailContext);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
 
@@ -99,7 +101,11 @@ export default function PublishContent(props: IProps) {
             <Popconfirm
               title="确定要重启应用吗？"
               onConfirm={async () => {
-                await restartApp({ appCode, envCode: deployInfo.envs });
+                await restartApp({
+                  appCode,
+                  envCode: deployInfo.envs,
+                  appCategoryCode: appData?.appCategoryCode,
+                });
                 message.success('操作成功！');
               }}
             >

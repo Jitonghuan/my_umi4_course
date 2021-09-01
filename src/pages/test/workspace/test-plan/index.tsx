@@ -5,15 +5,14 @@ import HeaderTabs from '../_components/header-tabs';
 import AddTestPlanDrawer from './add-test-plan-drawer';
 import AssociatingCaseDrawer from './associating-case-drawer';
 import { getRequest, postRequest } from '@/utils/request';
-import { getTestPlanList, deleteTestPlan, getProjects } from '../service';
-import { Form, Button, Table, Input, Select, Space, message, Popconfirm } from 'antd';
+import { getTestPlanList, deleteTestPlan, getProjects, getProjectTreeData } from '../service';
+import { Form, Button, Table, Input, Select, Space, message, Popconfirm, Cascader } from 'antd';
 import './index.less';
 import _ from 'lodash';
 
 const statusEnum = ['待执行', '执行中', '已完成'];
 
 export default function TestPlan(props: any) {
-  const [searchData, setSearchData] = useState<any>({});
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -23,6 +22,9 @@ export default function TestPlan(props: any) {
   const [associatingVisible, setAssociatingVisible] = useState(false);
   const [curSelectPlan, setCurSelectPlan] = useState<null | string>(null);
   const [projectList, setProjectList] = useState<any[]>([]);
+  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>({});
+  const [form] = Form.useForm();
 
   useEffect(() => {
     void updateTable(pageIndex, pageSize);
@@ -30,12 +32,31 @@ export default function TestPlan(props: any) {
     getRequest(getProjects).then((res) => {
       void setProjectList(res.data.dataSource);
     });
+
+    void getRequest(getProjectTreeData).then((res) => {
+      const Q = [...res.data];
+      while (Q.length) {
+        const cur = Q.shift();
+        cur.label = cur.name;
+        cur.value = cur.id;
+        cur.children && Q.push(...cur.children);
+      }
+      void setProjectTreeData(res.data);
+    });
   }, []);
 
-  const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize) => {
+  const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize, _formData = formData) => {
     void setLoading(true);
+    const formData = _formData;
     const res = await getRequest(getTestPlanList, {
-      data: { ...searchData, _pageIndex, _pageSize },
+      data: {
+        ...formData,
+        pageIndex: _pageIndex,
+        pageSize: _pageSize,
+        projectId: formData.demandId?.[0] && +formData.demandId[0],
+        demandId: formData.demandId?.[1] && +formData.demandId[1],
+        subDemandId: formData.demandId?.[2] && +formData.demandId[2],
+      },
     });
     void setLoading(false);
     const { dataSource, pageInfo } = res.data;
@@ -66,23 +87,24 @@ export default function TestPlan(props: any) {
     void setAssociatingVisible(true);
   };
 
+  // const handleResetFilterFormData = () => {
+  //   void form.resetFields();
+  //   void updateTable();
+  // };
+
+  const handleFilterDataList = (data: any) => {
+    void setFormData(data);
+    void updateTable(1, pageSize, data);
+  };
+
   return (
     <PageContainer className="test-workspace-test-plan">
       <HeaderTabs activeKey="test-plan" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form
-            layout="inline"
-            onValuesChange={(_: any, val: any) => {
-              setSearchData(val);
-            }}
-          >
-            <Form.Item label="所属" name="projectId">
-              <Select placeholder="请选择" allowClear>
-                {projectList.map((item) => (
-                  <Select.Option value={item.id}>{item.categoryName}</Select.Option>
-                ))}
-              </Select>
+          <Form form={form} layout="inline" onFinish={handleFilterDataList} onReset={() => handleFilterDataList({})}>
+            <Form.Item label="项目/需求" name="demandId">
+              <Cascader placeholder="请选择" options={projectTreeData} />
             </Form.Item>
 
             <Form.Item label="任务名称" name="taskName">
@@ -102,18 +124,15 @@ export default function TestPlan(props: any) {
             </Form.Item>
 
             <Form.Item>
-              <Button
-                type="primary"
-                onClick={() => {
-                  updateTable(1, pageSize);
-                }}
-              >
+              <Button type="primary" htmlType="submit">
                 查询
               </Button>
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary">重置</Button>
+              <Button type="primary" htmlType="reset">
+                重置
+              </Button>
             </Form.Item>
           </Form>
         </div>
@@ -133,8 +152,8 @@ export default function TestPlan(props: any) {
               total,
               pageSize,
               showSizeChanger: true,
-              onChange: (next) => setPageIndex(next),
-              onShowSizeChange: (_, next) => setPageSize(next),
+              onChange: (next) => updateTable(next),
+              onShowSizeChange: (_, next) => updateTable(1, next),
             }}
           >
             <Table.Column title="ID" width={80} dataIndex="id" />
@@ -154,6 +173,7 @@ export default function TestPlan(props: any) {
                       },
                     })
                   }
+                  disabled={!record.phaseCollection?.length}
                 >
                   {planName}
                 </Button>
@@ -180,7 +200,11 @@ export default function TestPlan(props: any) {
                       <Button type="link">删除</Button>
                     </Popconfirm>
 
-                    <Button type="link" onClick={() => handleAssociatingCaseBtnClick(record)}>
+                    <Button
+                      type="link"
+                      disabled={!record.phaseCollection?.length}
+                      onClick={() => handleAssociatingCaseBtnClick(record)}
+                    >
                       关联用例
                     </Button>
                   </Space>

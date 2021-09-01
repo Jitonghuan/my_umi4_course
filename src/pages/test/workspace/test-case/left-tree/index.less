@@ -1,7 +1,11 @@
 .test-workspace-test-case-left-tree {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   .search-header {
     display: grid;
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 80px 1fr;
     padding: 12px;
 
     .case-cate-search {
@@ -13,6 +17,8 @@
 
   .tree-container {
     padding: 0 12px;
+    overflow: auto;
+    flex: 1;
 
     .custom-tree {
       flex: 1 1 0;
@@ -62,6 +68,10 @@
     .node-render {
       display: flex;
 
+      .node-title {
+        flex: 1;
+      }
+
       &:hover > .oprate-btn-container {
         display: unset;
       }
@@ -69,6 +79,7 @@
       .oprate-btn-container {
         margin-left: auto;
         display: none;
+        flex-basis: 108px;
 
         .ant-btn-link {
           padding: 4px;

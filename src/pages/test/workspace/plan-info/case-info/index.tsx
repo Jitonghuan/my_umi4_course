@@ -5,8 +5,9 @@ import FELayout from '@cffe/vc-layout';
 import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
+import AddBugDrawer from '../../bug-manage/add-bug-drawer';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects, getProjectTreeData } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
 
@@ -16,7 +17,6 @@ const { Text } = Typography;
 
 export default function UserCaseInfoExec(props: any) {
   const {
-    setAddBugDrawerVisible,
     curCase,
     phaseId,
     testCaseTreeLeafs,
@@ -25,9 +25,12 @@ export default function UserCaseInfoExec(props: any) {
     updateCurCase,
     updateTestCaseTree,
     plan,
+    projectList,
+    updateBugList,
   } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
+  const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [associationBug, setAssociationBug] = useState<any[]>([]);
   const [caseStatus, setCaseStatus] = useState<string>();
   const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(true);
@@ -36,14 +39,7 @@ export default function UserCaseInfoExec(props: any) {
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
-  // const [projectList, setProjectList] = useState<any[]>([]);
-  // console.log(plan);
-
-  // useEffect(() => {
-  //   getRequest(getProjects).then((res) => {
-  //     void setProjectList(res.data.dataSource);
-  //   });
-  // }, []);
+  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
 
   useEffect(() => {
     if (curCase) {
@@ -74,8 +70,21 @@ export default function UserCaseInfoExec(props: any) {
     }
   }, [curCase]);
 
+  useEffect(() => {
+    void getRequest(getProjectTreeData).then((res) => {
+      const Q = [...res.data];
+      while (Q.length) {
+        const cur = Q.shift();
+        cur.label = cur.name;
+        cur.value = cur.id;
+        cur.children && Q.push(...cur.children);
+      }
+      void setProjectTreeData(res.data);
+    });
+  }, []);
+
   const changeCaseStatus = async (phaseId: number, caseId: number, status: string, executeNote?: string) => {
-    const loadEnd = message.loading('正在修改用例状态');
+    // const loadEnd = message.loading('正在修改用例状态');
     void (await postRequest(executePhaseCase, {
       data: {
         phaseId,
@@ -85,7 +94,7 @@ export default function UserCaseInfoExec(props: any) {
         modifyUser: userInfo.userName,
       },
     }));
-    void loadEnd();
+    // void loadEnd();
   };
 
   const handleCaseStatusSubmit = async (caseStatus: string, executeNote?: string) => {
@@ -131,9 +140,9 @@ export default function UserCaseInfoExec(props: any) {
     else void setCurCaseId(testCaseTreeLeafs[(idx - 1 + len) % len].id);
   };
 
-  const mergeCheckedBugs2AssociationBugs = async () => {
+  const mergeCheckedBugs2AssociationBugs = async (_checkedBugs = checkedBugs) => {
     const preBugIds = associationBug.map((bug) => bug.id);
-    const curAssociationBugs = [...associationBug, ...checkedBugs.filter((bug) => !preBugIds.includes(bug.id))];
+    const curAssociationBugs = [...associationBug, ..._checkedBugs.filter((bug) => !preBugIds.includes(bug.id))];
     void setAssociationBug(curAssociationBugs);
     void (await postRequest(relatedBug, {
       data: {
@@ -143,6 +152,7 @@ export default function UserCaseInfoExec(props: any) {
       },
     }));
     void setCheckedBugs([]);
+    void (await updateCurCase());
     void message.success('关联bug成功');
   };
 
@@ -160,8 +170,8 @@ export default function UserCaseInfoExec(props: any) {
     void message.success('删除bug成功');
   };
 
-  const handleBugStatusChange = (bugInfo: any, status: string) => {
-    const loadEnd = message.loading('正在修改Bug状态');
+  const handleBugStatusChange = (bugInfo: any, status: number) => {
+    // const loadEnd = message.loading('正在修改Bug状态');
     let relatedCases = [];
     try {
       relatedCases = JSON.parse(bugInfo.relatedCases);
@@ -172,9 +182,10 @@ export default function UserCaseInfoExec(props: any) {
         status,
         desc: bugInfo.description,
         relatedCases: relatedCases,
+        modifyUser: userInfo.userName,
       },
     }).then((res) => {
-      void loadEnd();
+      // void loadEnd();
       void message.success('修改Bug状态成功');
       void updateCurCase();
     });
@@ -182,34 +193,44 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleSmartSubmit = async () => {
     if (!curCase?.caseInfo) return;
-    const finishLoading = message.loading('正在提交Bug');
+    // const finishLoading = message.loading('正在提交Bug');
     let desc = [];
     try {
-      let caseDesc = JSON.parse(curCase.executeNote || '');
-      if (!(caseDesc instanceof Array)) caseDesc = [];
+      let caseDesc;
+      if (curCase.executeNote.length === 0) caseDesc = [];
+      else caseDesc = JSON.parse(curCase.executeNote);
       desc = [...caseDesc, ...sona.schema];
     } catch (e) {
-      void finishLoading();
+      // void finishLoading();
       void message.error('未知错误');
       return;
     }
 
     const requestParams = {
       name: `${curCase.caseInfo.title}--不符合预期结果`,
-      business: plan.projectId,
+      // business: plan.projectId,
+      projectId: plan.projectId,
+      demandId: plan.demandId,
+      subDemandId: plan.subDemandId,
       priority: 1,
       bugType: 0,
       onlineBug: 0,
+      phaseId,
       relatedCases: [curCase.caseInfo.id],
       desc: desc.length === 0 ? '' : JSON.stringify(desc),
       agent: userInfo.userName,
       status: '0',
       createUser: userInfo.userName,
     };
-    void (await postRequest(addBug, { data: requestParams }).catch(() => {
-      void finishLoading();
-    }));
-    void finishLoading();
+    const res = await postRequest(addBug, { data: requestParams }).finally(() => {
+      // void finishLoading();
+    });
+
+    if (!res) return;
+    // @ts-ignore
+    const newBugInfo = { ...requestParams, id: res.data.id };
+    void setCheckedBugs([newBugInfo]);
+    void (await mergeCheckedBugs2AssociationBugs([newBugInfo]));
     void updateCurCase();
     void message.success('一键提交成功');
   };
@@ -309,7 +330,7 @@ export default function UserCaseInfoExec(props: any) {
                   dataIndex="status"
                   render={(status, record: any) => (
                     <Select
-                      value={status.toString()}
+                      value={+status}
                       options={bugStatusEnum}
                       onChange={(value) => handleBugStatusChange(record, value)}
                     ></Select>
@@ -355,6 +376,21 @@ export default function UserCaseInfoExec(props: any) {
         checkedBugs={checkedBugs}
         setCheckedBugs={setCheckedBugs}
         mergeCheckedBugs2AssociationBugs={mergeCheckedBugs2AssociationBugs}
+        associationBugs={associationBug}
+      />
+
+      <AddBugDrawer
+        visible={addBugDrawerVisible}
+        setVisible={setAddBugDrawerVisible}
+        updateCaseTable={updateBugList}
+        projectList={projectList}
+        defaultRelatedCases={[curCase?.caseInfo.id]}
+        phaseId={phaseId}
+        onAddBug={(newBugInfo: any) => {
+          void setCheckedBugs([newBugInfo]);
+          void mergeCheckedBugs2AssociationBugs([newBugInfo]);
+        }}
+        projectTreeData={projectTreeData}
       />
     </div>
   );

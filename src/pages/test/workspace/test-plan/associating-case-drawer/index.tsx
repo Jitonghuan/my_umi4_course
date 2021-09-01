@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import { modifyPhaseCase, getTestPhaseDetail, getAllTestCaseTree, getPhaseCaseTree } from '../../service';
-import { Button, Tabs, Drawer, message, TreeSelect } from 'antd';
+import { Button, Tabs, Drawer, message, TreeSelect, Space } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import './index.less';
 
@@ -63,7 +63,7 @@ export default function AssociatingCaseDrawer(props: any) {
   };
 
   const submit = () => {
-    const loadFinish = message.loading('正在关联中');
+    // const loadFinish = message.loading('正在关联中');
     void postRequest(modifyPhaseCase, {
       data: {
         phaseId: curActivePhase,
@@ -71,9 +71,23 @@ export default function AssociatingCaseDrawer(props: any) {
         modifyUser: userInfo.userName,
       },
     }).then(() => {
-      void loadFinish();
+      // void loadFinish();
       void message.success('关联成功');
       void setVisible(false);
+    });
+  };
+
+  const submitAndContinue = () => {
+    // const loadFinish = message.loading('正在关联中');
+    void postRequest(modifyPhaseCase, {
+      data: {
+        phaseId: curActivePhase,
+        cases: selectedTestPlanIds,
+        modifyUser: userInfo.userName,
+      },
+    }).then(() => {
+      // void loadFinish();
+      void message.success('关联成功');
     });
   };
 
@@ -104,12 +118,17 @@ export default function AssociatingCaseDrawer(props: any) {
       </Tabs>
 
       <div className="btn-container">
-        <Button type="primary" onClick={submit}>
-          确定
-        </Button>
-        <Button type="primary" onClick={() => setVisible(false)} className="ml-12">
-          取消
-        </Button>
+        <Space>
+          <Button type="primary" onClick={submit}>
+            确定
+          </Button>
+          <Button type="primary" onClick={submitAndContinue}>
+            确定并继续
+          </Button>
+          <Button type="primary" onClick={() => setVisible(false)}>
+            取消
+          </Button>
+        </Space>
       </div>
     </Drawer>
   );

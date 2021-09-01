@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import moment from 'moment';
-import { Form, Table, Button, Popconfirm, Input, Select, Space, message } from 'antd';
+import { Form, Table, Button, Popconfirm, Input, Select, Space, message, Typography, Tooltip } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList, caseDelete } from '../../service';
 import { priorityEnum } from '../../constant';
@@ -9,7 +9,8 @@ import OprateCaseDrawer from '../oprate-case-modal';
 import './index.less';
 
 export default function RightDetail(props: any) {
-  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible, caseCateTreeData } = props;
+  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible, caseCateTreeData, curCase } =
+    props;
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -19,10 +20,12 @@ export default function RightDetail(props: any) {
   const [checkedCaseIds, setCheckedCaseIds] = useState<React.Key[]>([]);
   const [oprateCaseModalVisible, setOprateCaseModalVisible] = useState<boolean>(false);
   const [oprationType, setOprationType] = useState<string>();
+  const [cateIdCache, setCateIdCache] = useState<any>(cateId);
+  const [formData, setFormData] = useState<any>({});
   const [form] = Form.useForm();
 
-  const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize) => {
-    const { keyword, priority } = form.getFieldsValue();
+  const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize, _formData = formData) => {
+    const { keyword, priority } = _formData;
 
     if (!cateId && cateId !== 0) return;
     void setLoading(true);
@@ -40,26 +43,39 @@ export default function RightDetail(props: any) {
   };
 
   useEffect(() => {
+    console.log('pageIndex, pageSize :>> ', pageIndex, pageSize);
     void updateDatasource();
-  }, [pageIndex, pageSize, cateId]);
+  }, [pageIndex, pageSize]);
+
+  useEffect(() => {
+    if (cateIdCache == cateId) return;
+    if (pageIndex !== 1) void setPageIndex(1);
+    else void updateDatasource();
+  }, [cateId]);
 
   const onDeleteConfirm = (id: number) => {
-    const loadEnd = message.loading('正在删除');
+    // const loadEnd = message.loading('正在删除');
     postRequest(caseDelete, { data: { ids: [id] } }).then((res) => {
-      void loadEnd();
+      // void loadEnd();
       void message.success('删除成功');
       void updateDatasource();
     });
   };
 
   const operateRender = (record: any) => (
-    <Popconfirm title="确定要删除此用例吗？" onConfirm={() => onDeleteConfirm(record.id)}>
-      <Button type="link">删除</Button>
-    </Popconfirm>
+    <>
+      <Button type="link" onClick={() => onEditCaseBtnClick(record)}>
+        编辑
+      </Button>
+      <Popconfirm title="确定要删除此用例吗？" onConfirm={() => onDeleteConfirm(record.id)}>
+        <Button type="link">删除</Button>
+      </Popconfirm>
+    </>
   );
 
-  const handleSearch = () => {
-    void updateDatasource(1);
+  const handleSearch = (formData: any) => {
+    void setFormData(formData);
+    void updateDatasource(1, pageSize, formData);
   };
 
   const handleCopyCases = () => {
@@ -75,12 +91,12 @@ export default function RightDetail(props: any) {
   return (
     <div className="test-workspace-test-case-right-detail">
       <div className="searchHeader">
-        <Form layout="inline" onFinish={handleSearch} form={form}>
+        <Form layout="inline" onFinish={handleSearch} onReset={handleSearch} form={form}>
           <Form.Item label="用例标题:" name="keyword">
             <Input placeholder="输入标题" />
           </Form.Item>
           <Form.Item label="优先级:" name="priority">
-            <Select placeholder="选择优先级" allowClear>
+            <Select placeholder="选择优先级" allowClear style={{ width: '106px' }}>
               {priorityEnum.map((item) => (
                 <Select.Option value={item.value} key={item.value}>
                   {item.label}
@@ -103,10 +119,10 @@ export default function RightDetail(props: any) {
       <div className="detail-container">
         <div className="add-btn-wrapper">
           <Space>
-            <Button type="primary" ghost onClick={handleCopyCases}>
+            <Button type="primary" ghost disabled={!checkedCaseIds.length} onClick={handleCopyCases}>
               复制
             </Button>
-            <Button type="primary" ghost onClick={handleMoveCases}>
+            <Button type="primary" ghost disabled={!checkedCaseIds.length} onClick={handleMoveCases}>
               移动
             </Button>
           </Space>
@@ -123,8 +139,8 @@ export default function RightDetail(props: any) {
             total,
             pageSize,
             showSizeChanger: true,
-            onChange: (next) => updateDatasource(next),
-            onShowSizeChange: (_, next) => updateDatasource(1, next),
+            onChange: (next) => setPageIndex(next),
+            onShowSizeChange: (_, next) => setPageSize(next),
           }}
           rowSelection={{
             type: 'checkbox',
@@ -132,24 +148,46 @@ export default function RightDetail(props: any) {
             onChange: setCheckedCaseIds,
           }}
         >
-          <Table.Column width={60} title="ID" render={(_: any, __: any, index: number) => index + 1}></Table.Column>
-          <Table.Column dataIndex="categoryName" title="所属"></Table.Column>
-          <Table.Column dataIndex="title" title="用例名称"></Table.Column>
-          <Table.Column dataIndex="priority" title="优先级"></Table.Column>
+          <Table.Column width={60} title="ID" dataIndex="id"></Table.Column>
+          <Table.Column
+            dataIndex="categoryName"
+            title="所属"
+            render={(title) => (
+              <Tooltip title={title}>
+                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
+                  {title}
+                </Typography.Text>
+              </Tooltip>
+            )}
+          ></Table.Column>
+          <Table.Column
+            dataIndex="title"
+            title="用例名称"
+            render={(title) => (
+              <Tooltip title={title}>
+                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
+                  {title}
+                </Typography.Text>
+              </Tooltip>
+            )}
+          ></Table.Column>
+          <Table.Column dataIndex="priority" title="优先级" width={60}></Table.Column>
           <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
           <Table.Column
             dataIndex="gmtModify"
             title="更新时间"
             render={(date) => moment(date).format('YYYY-MM-DD HH:mm:ss')}
+            width={166}
           ></Table.Column>
-          <Table.Column title="操作" render={operateRender}></Table.Column>
+          <Table.Column title="操作" render={operateRender} width={120}></Table.Column>
         </Table>
       </div>
       <AddCaseDrawer
+        caseId={curCase?.id}
         cateId={cateId}
         visible={drawerVisible}
         setVisible={setDrawerVisible}
-        updateCaseTable={updateDatasource}
+        onSuccess={() => updateDatasource()}
         caseCateTreeData={caseCateTreeData}
       />
 
@@ -159,6 +197,8 @@ export default function RightDetail(props: any) {
         oprationType={oprationType as 'copy' | 'move'}
         checkedCaseIds={checkedCaseIds}
         setCheckedCaseIds={setCheckedCaseIds}
+        caseCateTreeData={caseCateTreeData}
+        updateDatasource={updateDatasource}
       />
     </div>
   );

@@ -26,22 +26,22 @@ export function useCaseInfoChartOptions(data: Record<string, any>) {
         data: [
           {
             value: skip,
-            name: '跳过',
+            name: `跳过 ${skip}`,
             itemStyle: { color: '#657CA6' },
           },
           {
             value: pass,
-            name: '通过',
+            name: `通过 ${pass}`,
             itemStyle: { color: '#54DA81' },
           },
           {
             value: fail,
-            name: '失败',
+            name: `失败 ${fail}`,
             itemStyle: { color: '#F66951' },
           },
           {
             value: block,
-            name: '阻塞',
+            name: `阻塞 ${block}`,
             itemStyle: { color: '#FFCB30' },
           },
         ],

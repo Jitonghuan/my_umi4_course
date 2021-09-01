@@ -4,26 +4,11 @@ import RightDetail from './right-detail';
 import HeaderTabs from '../_components/header-tabs';
 import { getCaseCategoryDeepList } from '../service';
 import PageContainer from '@/components/page-container';
-import {
-  createCase,
-  caseDelete,
-  updateCase,
-  copyCases,
-  moveCases,
-  getCaseInfo,
-  getCasePageList,
-  getCaseMultiDeepList,
-} from '../service';
 import { ContentCard, CardRowGroup } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
+import { LeftOutlined } from '@ant-design/icons';
 import './index.less';
-
-const createTreeOptions = {
-  type: 'tree' as 'tree',
-  keyProp: 'id',
-  childrenProp: 'items',
-};
 
 export default function TestCase(props: any) {
   const testCaseCateId = history.location.query?.testCaseCateId;
@@ -32,7 +17,7 @@ export default function TestCase(props: any) {
   const [filterCaseCateTreeData, setFilterCaseCateTreeData] = useState<any[]>();
   const [caseCategories, setCaseCategories] = useState<any[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-
+  const [curCase, setCurCase] = useState<any>();
   const [rootCateId, setRootCateId] = useState<string>(testCaseCateId as string);
   const [cateId, setCateId] = useState<string>(testCaseCateId as string);
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -86,18 +71,29 @@ export default function TestCase(props: any) {
   /** ------------------------ 更新左侧树列表 end ------------------------ */
 
   const onAddCaseBtnClick = () => {
+    void setCurCase(undefined);
     void setDrawerVisible(true);
   };
 
-  const onEditCaseBtnClick = () => {
+  const onEditCaseBtnClick = (caseInfo: any) => {
+    void setCurCase(caseInfo);
     void setDrawerVisible(true);
+  };
+
+  const goBack = () => {
+    history.push('/matrix/test/workspace/test-case-library');
   };
 
   return (
     <PageContainer>
+      {/* <div className="back-btn-container">
+        <div onClick={goBack} className="back-btn">
+          <LeftOutlined /> <span className="back-btn-title">返回</span>
+        </div>
+      </div> */}
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
-        <CardRowGroup.SlideCard width={340}>
+        <CardRowGroup.SlideCard className="slide-card" width={240}>
           <LeftTree
             cateId={cateId}
             setCateId={setCateId}
@@ -114,6 +110,7 @@ export default function TestCase(props: any) {
         <ContentCard>
           <RightDetail
             cateId={cateId}
+            curCase={curCase}
             drawerVisible={drawerVisible}
             setDrawerVisible={setDrawerVisible}
             onAddCaseBtnClick={onAddCaseBtnClick}

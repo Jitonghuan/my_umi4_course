@@ -1,17 +1,26 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../../constant';
-import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect } from 'antd';
-import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryPageList, getManagerList } from '../../service';
+import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect, Cascader } from 'antd';
+import {
+  addBug,
+  modifyBug,
+  getAllTestCaseTree,
+  getCaseCategoryPageList,
+  getManagerList,
+  getProjectTreeData,
+  getCaseCategoryDeepList,
+} from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
-import AddCaseModal from '../add-case-modal';
+import AddCaseModal from '../../test-case/add-case-drawer';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
 import _ from 'lodash';
 import './index.less';
 
 export default function BugManage(props: any) {
-  const { visible, setVisible, projectList, bugInfo, updateBugList, defaultRelatedCases } = props;
+  const { visible, setVisible, bugInfo, updateBugList, defaultRelatedCases, phaseId, onAddBug, projectTreeData } =
+    props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
@@ -19,6 +28,7 @@ export default function BugManage(props: any) {
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
   const [cates, setCates] = useState<any[]>([]);
   const [manageList, setManageList] = useState<string[]>([]);
+  const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
@@ -28,20 +38,26 @@ export default function BugManage(props: any) {
     } catch (e) {
       return;
     }
-    const finishLoading = message.loading(bugInfo ? '正在修改' : '正在新增');
+    // const finishLoading = message.loading(bugInfo ? '正在修改' : '正在新增');
     const formData = form.getFieldsValue();
     const requestParams = {
       ...formData,
+      projectId: formData.demandId[0] && +formData.demandId[0],
+      demandId: formData.demandId[1] && +formData.demandId[1],
+      subDemandId: formData.demandId[2] && +formData.demandId[2],
       desc: JSON.stringify(sona.schema),
       onlineBug: formData.onlineBug ? 1 : 0,
       relatedCases,
       id: bugInfo?.id,
       ...(bugInfo ? { modifyUser: userInfo.userName } : { createUser: userInfo.userName }),
+      phaseId,
     };
-    void (await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
-      void finishLoading();
-    }));
+    const res = await postRequest(bugInfo ? modifyBug : addBug, { data: requestParams }).finally(() => {
+      // void finishLoading();
+    });
     void message.success(bugInfo ? '修改成功' : '新增成功');
+    // 钩子
+    void (onAddBug && onAddBug({ ...requestParams, id: res.data.id }));
 
     void (updateBugList && updateBugList());
 
@@ -63,8 +79,11 @@ export default function BugManage(props: any) {
   useEffect(() => {
     if (visible) {
       if (bugInfo) {
-        bugInfo.status = bugInfo?.status.toString();
-        void form.setFieldsValue(bugInfo);
+        const demandId = [];
+        bugInfo.projectId && demandId.push(bugInfo.projectId);
+        bugInfo.demandId && demandId.push(bugInfo.demandId);
+        bugInfo.subDemandId && demandId.push(bugInfo.subDemandId);
+        void form.setFieldsValue({ ...bugInfo, demandId });
         void setRelatedCases(bugInfo.relatedCases);
         try {
           void setSchema(JSON.parse(bugInfo.description));
@@ -118,15 +137,48 @@ export default function BugManage(props: any) {
     });
   };
 
+  const handleAddCaseSuccess = (newCase: any) => {
+    console.log('newCase :>> ', newCase);
+    void updateAssociatingCaseTreeSelect();
+    void setRelatedCases([...relatedCases, newCase?.id]);
+  };
+
   /** 获得可关联的测试用例树 */
   useEffect(() => {
     void updateAssociatingCaseTreeSelect();
     void getRequest(getManagerList).then((res) => {
       void setManageList(res.data.usernames);
     });
+
+    // void getRequest(getProjectTreeData).then((res) => {
+    //   const Q = [...res.data];
+    //   while (Q.length) {
+    //     const cur = Q.shift();
+    //     cur.label = cur.name;
+    //     cur.value = cur.id;
+    //     cur.children && Q.push(...cur.children);
+    //   }
+    //   void setProjectTreeData(res.data);
+    // });
   }, []);
 
   /** -------------------------- 关联用例 end -------------------------- */
+
+  const dataCleanCateTree = (node: any) => {
+    node.key = node.id;
+    node.title = node.name;
+    node.children = node.items;
+    node.children?.forEach((item: any) => dataCleanCateTree(item));
+
+    return node;
+  };
+
+  useEffect(() => {
+    getRequest(getCaseCategoryDeepList).then((res) => {
+      const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
+      void setCaseCateTreeData(curTreeData || []);
+    });
+  }, []);
 
   return (
     <>
@@ -142,14 +194,8 @@ export default function BugManage(props: any) {
           <Form.Item label="标题" name="name" rules={[{ required: true, message: '请输入标题' }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="所属业务" name="business" rules={[{ required: true, message: '请选择所属业务' }]}>
-            <Select>
-              {projectList.map((item: any) => (
-                <Select.Option value={item.id} key={item.id}>
-                  {item.categoryName}
-                </Select.Option>
-              ))}
-            </Select>
+          <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
+            <Cascader placeholder="请选择" options={projectTreeData} />
           </Form.Item>
           <Form.Item label="优先级" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
             <Radio.Group>
@@ -225,10 +271,12 @@ export default function BugManage(props: any) {
       </Drawer>
 
       <AddCaseModal
+        isModal
         visible={addCaseModalVisible}
         setVisible={setAddCaseModalVisible}
         cates={cates}
-        updateAssociatingCaseTreeSelect={updateAssociatingCaseTreeSelect}
+        onSuccess={handleAddCaseSuccess}
+        caseCateTreeData={caseCateTreeData}
       />
     </>
   );

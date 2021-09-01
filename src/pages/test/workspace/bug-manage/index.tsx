@@ -3,10 +3,10 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
-import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message } from 'antd';
+import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message, Cascader, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
-import { getProjects, getBugList, deleteBug } from '../service';
+import { getProjects, getBugList, deleteBug, getProjectTreeData } from '../service';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../constant';
 import AddBugDrawer from './add-bug-drawer';
 import moment from 'moment';
@@ -19,18 +19,23 @@ export default function BugManage(props: any) {
   const [pageSize, setPageSize] = useState(10);
   const [bugTotal, setBugTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [projectList, setProjectList] = useState<any[]>([]);
+  // const [projectList, setProjectList] = useState<any[]>([]);
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
+  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>({});
   const [form] = Form.useForm();
 
-  const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize) => {
-    const fromData = form.getFieldsValue();
+  const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize, _formData = formData) => {
+    const formData = _formData;
     const requestParams = {
-      ...fromData,
+      ...formData,
       pageIndex: _pageIndex,
       pageSize: _pageSuze,
-      justMe: fromData.justMe ? userInfo.userName : undefined,
+      justMe: formData.justMe ? userInfo.userName : undefined,
+      projectId: formData.demandId?.[0] && +formData.demandId[0],
+      demandId: formData.demandId?.[1] && +formData.demandId[1],
+      subDemandId: formData.demandId?.[2] && +formData.demandId[2],
     };
     const res = await getRequest(getBugList, { data: requestParams });
     const { pageIndex, pageSize, total } = res.data.pageInfo;
@@ -41,10 +46,22 @@ export default function BugManage(props: any) {
   };
 
   useEffect(() => {
-    getRequest(getProjects).then((res) => {
-      void setProjectList(res.data.dataSource);
-    });
+    // getRequest(getProjects).then((res) => {
+    //   void setProjectList(res.data.dataSource);
+    // });
+
     void updateBugList();
+
+    void getRequest(getProjectTreeData).then((res) => {
+      const Q = [...res.data];
+      while (Q.length) {
+        const cur = Q.shift();
+        cur.label = cur.name;
+        cur.value = cur.id;
+        cur.children && Q.push(...cur.children);
+      }
+      void setProjectTreeData(res.data);
+    });
   }, []);
 
   const handleAddBugBtnClick = () => {
@@ -58,9 +75,9 @@ export default function BugManage(props: any) {
   };
 
   const handleConfirmDelete = (id: number) => {
-    const loadFinish = message.loading('正在删除中');
+    // const loadFinish = message.loading('正在删除中');
     void postRequest(deleteBug, { data: { id } }).then(() => {
-      void loadFinish();
+      // void loadFinish();
       void message.success('删除成功');
       void updateBugList();
     });
@@ -70,13 +87,27 @@ export default function BugManage(props: any) {
     void updateBugList();
   };
 
+  const StatusTag = (props: any) => {
+    const { color, bgColor, children } = props;
+    return (
+      <div className="status-tag" style={{ color, background: bgColor }}>
+        {children}
+      </div>
+    );
+  };
+
+  const handleFilterDataList = (data: any) => {
+    void setFormData(data);
+    void updateBugList(1, pageSize, data);
+  };
+
   return (
     <PageContainer className="test-workspace-bug-manage">
       <HeaderTabs activeKey="bug-manage" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form layout="inline" form={form} onFinish={() => updateBugList(1)}>
-            <Form.Item label="所属" name="business">
+          <Form layout="inline" form={form} onFinish={handleFilterDataList} onReset={() => handleFilterDataList({})}>
+            {/* <Form.Item label="所属" name="business">
               <Select className="w-100" placeholder="请选择" allowClear>
                 {projectList.map((item) => (
                   <Select.Option value={item.id} key={item.id}>
@@ -84,6 +115,9 @@ export default function BugManage(props: any) {
                   </Select.Option>
                 ))}
               </Select>
+            </Form.Item> */}
+            <Form.Item label="项目/需求" name="demandId">
+              <Cascader className="demandId-cascader" placeholder="请选择" options={projectTreeData} />
             </Form.Item>
             <Form.Item label="标题" name="name">
               <Input placeholder="请输入标题" />
@@ -146,10 +180,26 @@ export default function BugManage(props: any) {
             loading={loading}
           >
             <Table.Column title="ID" dataIndex="id" />
-            <Table.Column title="标题" dataIndex="name" />
+            <Table.Column
+              title="标题"
+              dataIndex="name"
+              render={(title) => (
+                <Typography.Text style={{ maxWidth: '220px' }} ellipsis={{ suffix: '' }}>
+                  {title}
+                </Typography.Text>
+              )}
+            />
             <Table.Column title="类型" dataIndex="bugType" render={(type) => bugTypeEnum[type]} />
             <Table.Column title="优先级" dataIndex="priority" render={(priority) => bugPriorityEnum[priority]} />
-            <Table.Column title="状态" dataIndex="status" render={(status) => bugStatusEnum[status].label} />
+            <Table.Column
+              title="状态"
+              dataIndex="status"
+              render={(status) => (
+                <StatusTag color={bugStatusEnum[status].color} bgColor={bugStatusEnum[status].backgroundColor}>
+                  {bugStatusEnum[status].label}
+                </StatusTag>
+              )}
+            />
             <Table.Column title="创建人" dataIndex="createUser" />
             <Table.Column title="经办人" dataIndex="modifyUser" />
             <Table.Column
@@ -175,9 +225,9 @@ export default function BugManage(props: any) {
         <AddBugDrawer
           visible={addBugDrawerVisible}
           setVisible={setAddBugDrawerVisible}
-          projectList={projectList}
           bugInfo={curBugInfo}
           updateBugList={updateBugList}
+          projectTreeData={projectTreeData}
         />
       </ContentCard>
     </PageContainer>

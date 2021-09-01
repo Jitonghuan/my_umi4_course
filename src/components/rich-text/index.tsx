@@ -4,6 +4,8 @@ import Editor, { Plugin, EditorPlugin } from '@cffe/sona-editor';
 import './index.less';
 import { addAPIPrefix } from '@/utils';
 import { postRequest } from '@/utils/request';
+import { imgConfig, tableConfig } from './toolbar-config';
+import ImageRender from './image-render';
 
 /** POST 图片/文件上传 */
 export const uploadFile = addAPIPrefix('/qc/teststation/uploadFile');
@@ -119,13 +121,14 @@ ImgPlugin.exportApi.insertPasteImg = function insertImg(editor: any, file: any) 
   });
 };
 
+ImgPlugin.renderElement = ImageRender;
+
 RightOpPlugin.toolbarConfig = [];
 
 const plugins: EditorPlugin[] = [
   ImgPlugin,
   TablePlugin,
   TextPlugin,
-  ExternalPlugin,
   OpHistoryPlugin,
   LeafPlugin,
   AlignPlugin,
@@ -141,10 +144,12 @@ const plugins: EditorPlugin[] = [
 
 const toolbarConfig: any[] = plugins.filter((plugin) => plugin?.toolbarConfig).map((plugin) => plugin.toolbarConfig);
 
+toolbarConfig.unshift(tableConfig);
+toolbarConfig.unshift(imgConfig);
+
 export default function CaseWorkspace(props: any) {
   const { className, width = '100%', height = '240px', onChange, sona, schema, readOnly, ...otherProps } = props;
 
-  // TODO:图片、表格拉平出来 （Plugin）
   // TODO:保持光标在视野内 （监听键盘按下事件即可，好像事件有返回光标信息）
   return (
     <Editor

@@ -7,12 +7,15 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 
-export const bugStatusEnum = ['新建', '修复中', '已拒绝', '待验证', '重复打开', '已关闭', '延期解决'].map(
-  (item, index) => ({
-    value: index.toString(),
-    label: item,
-  }),
-);
+export const bugStatusEnum = [
+  { label: '新建', value: 0, backgroundColor: '#F3F8FC', color: '#1973CC' },
+  { label: '修复中', value: 1, backgroundColor: '#F4F9F7', color: '#439D75' },
+  { label: '已拒绝', value: 2, backgroundColor: '#FDF8F7', color: '#CC4631' },
+  { label: '待验证', value: 3, backgroundColor: '#FCF7F3', color: '#D16F0D' },
+  { label: '重复打开', value: 4, backgroundColor: '#F3F8FC', color: '#1973CC' },
+  { label: '已关闭', value: 5, backgroundColor: '#EFF1F5', color: '#5F677A' },
+  { label: '延期解决', value: 6, backgroundColor: '#FCF7F3', color: '#D16F0D' },
+];
 export const bugTypeEnum = ['功能问题', '性能问题', '接口问题', 'UI界面问题', '易用性问题', '需求问题'];
 export const bugPriorityEnum = ['高', '中', '低'];
 export const priorityEnum = [

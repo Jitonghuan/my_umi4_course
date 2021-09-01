@@ -34,15 +34,6 @@ export default function Workspace(props: any) {
     void setTotal(total);
   };
 
-  const init = async () => {
-    void updateDatasource();
-  };
-
-  // 初始化
-  useEffect(() => {
-    void init();
-  }, []);
-
   useEffect(() => {
     void updateDatasource();
   }, [pageIndex, pageSize]);
@@ -57,11 +48,11 @@ export default function Workspace(props: any) {
   };
 
   const confirmDelItem = async (record: any, index: number) => {
-    const load = message.loading('正在删除测试用例库');
+    // const load = message.loading('正在删除测试用例库');
     await postRequest(deleteCaseCategory + '/' + record.id, {
       data: {},
     });
-    void load();
+    // void load();
     void message.success('成功删除测试用例库！');
     void updateDatasource();
   };
