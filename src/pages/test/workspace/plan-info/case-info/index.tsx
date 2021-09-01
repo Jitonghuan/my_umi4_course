@@ -195,8 +195,9 @@ export default function UserCaseInfoExec(props: any) {
     // const finishLoading = message.loading('正在提交Bug');
     let desc = [];
     try {
-      let caseDesc = JSON.parse(curCase.executeNote || '');
-      if (!(caseDesc instanceof Array)) caseDesc = [];
+      let caseDesc;
+      if (curCase.executeNote.length === 0) caseDesc = [];
+      else caseDesc = JSON.parse(curCase.executeNote);
       desc = [...caseDesc, ...sona.schema];
     } catch (e) {
       // void finishLoading();
@@ -207,9 +208,9 @@ export default function UserCaseInfoExec(props: any) {
     const requestParams = {
       name: `${curCase.caseInfo.title}--不符合预期结果`,
       // business: plan.projectId,
-      projectId: +plan.projectId,
-      demandId: +plan.demandId,
-      subDemandId: +plan.subDemandId,
+      projectId: plan.projectId,
+      demandId: plan.demandId,
+      subDemandId: plan.subDemandId,
       priority: 1,
       bugType: 0,
       onlineBug: 0,

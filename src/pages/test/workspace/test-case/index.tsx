@@ -86,11 +86,11 @@ export default function TestCase(props: any) {
 
   return (
     <PageContainer>
-      <div className="back-btn-container">
+      {/* <div className="back-btn-container">
         <div onClick={goBack} className="back-btn">
           <LeftOutlined /> <span className="back-btn-title">返回</span>
         </div>
-      </div>
+      </div> */}
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
         <CardRowGroup.SlideCard className="slide-card" width={240}>

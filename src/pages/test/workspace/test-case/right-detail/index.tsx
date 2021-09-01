@@ -63,14 +63,14 @@ export default function RightDetail(props: any) {
   };
 
   const operateRender = (record: any) => (
-    <Space>
+    <>
       <Button type="link" onClick={() => onEditCaseBtnClick(record)}>
         编辑
       </Button>
       <Popconfirm title="确定要删除此用例吗？" onConfirm={() => onDeleteConfirm(record.id)}>
         <Button type="link">删除</Button>
       </Popconfirm>
-    </Space>
+    </>
   );
 
   const handleSearch = (formData: any) => {
@@ -177,8 +177,9 @@ export default function RightDetail(props: any) {
             dataIndex="gmtModify"
             title="更新时间"
             render={(date) => moment(date).format('YYYY-MM-DD HH:mm:ss')}
+            width={166}
           ></Table.Column>
-          <Table.Column title="操作" render={operateRender}></Table.Column>
+          <Table.Column title="操作" render={operateRender} width={120}></Table.Column>
         </Table>
       </div>
       <AddCaseDrawer
