@@ -50,23 +50,24 @@ export default function ApplicationOverview() {
       >
         <Descriptions.Item label="APPCODE">{appData?.appCode}</Descriptions.Item>
         <Descriptions.Item label="应用名">{appData?.appName}</Descriptions.Item>
-        <Descriptions.Item label="git地址">{appData?.gitAddress}</Descriptions.Item>
-        <Descriptions.Item label="git组">{appData?.gitGroup}</Descriptions.Item>
-        {appData?.appDevelopLanguage === 'java' && (
-          <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
-        )}
-        {appData?.appType === 'backend' && (
-          <Descriptions.Item label="应用开发语言">{appData?.appDevelopLanguage}</Descriptions.Item>
-        )}
-        <Descriptions.Item label="应用部署名称">{appData?.deploymentName}</Descriptions.Item>
-        {/* <Descriptions.Item label="基础镜像">{appData?.baseImage}</Descriptions.Item> */}
+        <Descriptions.Item label="应用部署名">{appData?.deploymentName}</Descriptions.Item>
+        <Descriptions.Item label="应用类型">{APP_TYPE_MAP[appData?.appType!]}</Descriptions.Item>
         <Descriptions.Item label="应用分类">
           {categoryData?.find((v) => v.categoryCode === appData?.appCategoryCode)?.categoryName || '-'}
         </Descriptions.Item>
         <Descriptions.Item label="应用组">
           {businessData?.find((v) => v.groupCode === appData?.appGroupCode)?.groupName || '-'}
         </Descriptions.Item>
-        <Descriptions.Item label="应用类型">{APP_TYPE_MAP[appData?.appType!]}</Descriptions.Item>
+        <Descriptions.Item label="责任人">
+          <UserTagList color="blue" data={appData?.owner} />
+        </Descriptions.Item>
+        <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
+        <Descriptions.Item label="git地址">{appData?.gitAddress}</Descriptions.Item>
+        {/* <Descriptions.Item label="git组">{appData?.gitGroup}</Descriptions.Item> */}
+        {appData?.appType === 'backend' && (
+          <Descriptions.Item label="应用开发语言">{appData?.appDevelopLanguage}</Descriptions.Item>
+        )}
+        {/* <Descriptions.Item label="基础镜像">{appData?.baseImage}</Descriptions.Item> */}
         {appData?.appDevelopLanguage === 'java' && (
           <Descriptions.Item label="是否为二方包">{{ 1: '是', 0: '否' }[appData?.isClient!]}</Descriptions.Item>
         )}
@@ -75,11 +76,21 @@ export default function ApplicationOverview() {
             {{ 1: '是', 0: '否' }[appData?.isContainClient!]}
           </Descriptions.Item>
         )}
-        <Descriptions.Item label="责任人">
-          <UserTagList color="blue" data={appData?.owner} />
-        </Descriptions.Item>
-        <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
+        {appData?.appDevelopLanguage === 'java' && (
+          <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
+        )}
       </Descriptions>
+
+      {appData?.relationMainApp?.length && (
+        <Descriptions title="关联主应用" bordered column={2} labelStyle={{ width: 200 }} style={{ marginTop: 36 }}>
+          {appData?.relationMainApp.map((group, groupIndex) => (
+            <>
+              <Descriptions.Item label={`主应用${groupIndex + 1}`}>{group.appCode}</Descriptions.Item>
+              <Descriptions.Item label={`路由${groupIndex + 1}`}>{group.routePath}</Descriptions.Item>
+            </>
+          ))}
+        </Descriptions>
+      )}
 
       <Descriptions
         title="成员"

@@ -81,9 +81,9 @@ export default function CaseTable(props: CaseTableFieldProps) {
               placeholder="输入关键字搜索"
             />
           }
-          placement="bottomLeft"
-          overlayInnerStyle={{ width: 400 }}
-          overlayStyle={{ width: 400 }}
+          placement="left"
+          overlayInnerStyle={{ width: 520 }}
+          overlayStyle={{ width: 520 }}
         >
           <Button>新增</Button>
         </Popover>
