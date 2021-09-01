@@ -30,6 +30,7 @@ export default function RightDetail(props: any) {
       void setSchema(undefined);
       if (caseId) {
         getRequest(getCaseInfo + '/' + caseId).then((res) => {
+          void setDescType(res.data.descType.toString());
           void form.setFieldsValue(res.data);
           if (res.data.descType === '0') {
             void setStepContent(res.data.stepContent[0].input);
@@ -46,6 +47,8 @@ export default function RightDetail(props: any) {
           } catch (e) {}
         });
       } else {
+        void setDescType('0');
+        void setCaseDescArr([]);
         void form.resetFields();
         void form.setFieldsValue({ categoryId: cateId });
         void setStepContent('');
