@@ -7,13 +7,12 @@
  */
 
 import React, { useState, useContext } from 'react';
-import { Table, Modal, Button, message, Popconfirm } from 'antd';
+import { Modal, Button, message, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import ProdSteps from './prod-steps';
 import TestEnvSteps from './test-steps';
 import OtherEnvSteps from './other-env-steps';
-import { tableSchema } from './schema';
 import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
 import { IProps } from './types';
 import './index.less';
@@ -88,31 +87,100 @@ export default function PublishContent(props: IProps) {
         <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
       )}
 
-      <div className="table-caption" style={{ marginTop: 16 }}>
-        <h4>内容列表</h4>
-        {!isProd && (
-          <div className="caption-right">
-            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-              重新部署
-            </Button>
-            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-              批量退出
-            </Button>
-            <Popconfirm
-              title="确定要重启应用吗？"
-              onConfirm={async () => {
-                await restartApp({
-                  appCode,
-                  envCode: deployInfo.envs,
-                  appCategoryCode: appData?.appCategoryCode,
-                });
-                message.success('操作成功！');
-              }}
-            >
-              <Button>重启</Button>
-            </Popconfirm>
-          </div>
-        )}
+      <div className={`${rootCls}__list-wrap`}>
+        <div className={`${rootCls}__list-header`}>
+          <span className={`${rootCls}__list-header-text`}>内容列表</span>
+
+          {!isProd && (
+            <div className={`${rootCls}__list-header-btns`}>
+              <Button
+                type="primary"
+                disabled={!selectedRowKeys.length}
+                onClick={() => {
+                  onOperate('retryDeployStart');
+
+                  confirm({
+                    title: '确定要重新部署吗?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk() {
+                      const filter = deployedList
+                        .filter((el) => selectedRowKeys.includes(el.id))
+                        .map((el) => el.branchName);
+                      return updateFeatures({
+                        id: deployInfo.id,
+                        features: filter,
+                      }).then(() => {
+                        onOperate('retryDeployEnd');
+                      });
+                    },
+                    onCancel() {
+                      onOperate('retryDeployEnd');
+                    },
+                  });
+                }}
+              >
+                重新部署
+              </Button>
+              <Button
+                type="primary"
+                disabled={!selectedRowKeys.length}
+                onClick={() => {
+                  onOperate('batchExitStart');
+
+                  confirm({
+                    title: '确定要批量退出吗?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: async () => {
+                      return createDeploy({
+                        appCode,
+                        envTypeCode,
+                        features: deployedList
+                          .filter((item) => !selectedRowKeys.includes(item.id))
+                          .map((item) => item.branchName),
+                        isClient: false,
+                      }).then(() => {
+                        onOperate('batchExitEnd');
+                      });
+                    },
+                    onCancel() {
+                      onOperate('batchExitEnd');
+                    },
+                  });
+                }}
+              >
+                批量退出
+              </Button>
+              <Popconfirm
+                title="确定要重启应用吗？"
+                onConfirm={async () => {
+                  await restartApp({ appCode, envCode: deployInfo.envs, appCategoryCode: appData?.appCategoryCode });
+                  message.success('操作成功！');
+                }}
+              >
+                <Button>重启</Button>
+              </Popconfirm>
+            </div>
+          )}
+        </div>
+
+        <HulkTable
+          rowKey="id"
+          className={`${rootCls}__list-table`}
+          dataSource={deployedList}
+          pagination={false}
+          rowSelection={
+            isProd
+              ? {}
+              : {
+                  type: 'checkbox',
+                  selectedRowKeys,
+                  onChange: (selectedRowKeys: React.Key[]) => {
+                    setSelectedRowKeys(selectedRowKeys as any);
+                  },
+                }
+          }
+          columns={createTableSchema() as any}
+        />
       </div>
 
       <Table

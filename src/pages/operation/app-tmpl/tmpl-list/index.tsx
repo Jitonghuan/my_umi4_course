@@ -20,6 +20,7 @@ export interface TmplEdit extends Record<string, any> {
   appCategoryCode: any;
   envCodes: string;
   templateValue: string;
+  remark: string;
 }
 export default function Launch() {
   const { Option } = Select;
@@ -272,16 +273,17 @@ export default function Launch() {
             // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
             onChange={pageSizeClick}
           >
-            <Table.Column title="ID" dataIndex="id" width="10%" />
-            <Table.Column title="模版名称" dataIndex="templateName" width="20%" ellipsis />
-            <Table.Column title="模版CODE" dataIndex="templateCode" width="35%" ellipsis />
-            <Table.Column title="模版类型" dataIndex="templateType" width="10%" />
-            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="10%" />
-            <Table.Column title="环境" dataIndex="envCode" width="15%" />
+            <Table.Column title="ID" dataIndex="id" width="4%" />
+            <Table.Column title="模版名称" dataIndex="templateName" width="10%" ellipsis />
+            <Table.Column title="模版CODE" dataIndex="templateCode" width="22%" ellipsis />
+            <Table.Column title="模版类型" dataIndex="templateType" width="8%" ellipsis />
+            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="12%" ellipsis />
+            <Table.Column title="环境" dataIndex="envCode" width="12%" />
+            <Table.Column title="备注" dataIndex="remark" width="14%" ellipsis />
             <Table.Column
               title="操作"
               dataIndex="gmtModify"
-              width="24%"
+              width="18%"
               key="action"
               render={(_, record: TmplEdit, index) => (
                 <Space size="small">

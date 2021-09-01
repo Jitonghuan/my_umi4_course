@@ -113,6 +113,7 @@ export default function DemoPageTb(porps: any) {
         envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         jvm: value?.jvm,
+        remark: value?.remark,
       },
     }).then((resp: any) => {
       if (resp.success) {
@@ -175,6 +176,10 @@ export default function DemoPageTb(porps: any) {
                     },
                   ]}
                 />
+              </Form.Item>
+              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
               </Form.Item>
               {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
               {isDeployment == 'deployment' ? (

@@ -68,6 +68,7 @@ export default function DemoPageTb(porps: any) {
           appCategoryCode: tmplresult.appCategoryCode,
           envCodes: envCode,
           jvm: jvm,
+          remark: tmplresult.remark,
         });
       }
     });
@@ -125,6 +126,11 @@ export default function DemoPageTb(porps: any) {
                 <Table.Column title="Key" dataIndex="key" width="10%" />
                 <Table.Column title="缺省值" dataIndex="value" width="20%" ellipsis />
               </Table>
+
+              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
+              </Form.Item>
               {templateTypes == 'deployment' && <span>JVM参数:</span>}
 
               {templateTypes == 'deployment' && (
