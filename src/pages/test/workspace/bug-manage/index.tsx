@@ -83,10 +83,6 @@ export default function BugManage(props: any) {
     });
   };
 
-  const handleFilterPropJustMeChange = () => {
-    void updateBugList();
-  };
-
   const StatusTag = (props: any) => {
     const { color, bgColor, children } = props;
     return (
@@ -94,6 +90,12 @@ export default function BugManage(props: any) {
         {children}
       </div>
     );
+  };
+
+  const handleFilterPropJustMeChange = () => {
+    const nexFormData = { ...formData, justMe: !formData.justMe };
+    void setFormData(nexFormData);
+    void updateBugList(1, pageSize, nexFormData);
   };
 
   const handleFilterDataList = (data: any) => {
