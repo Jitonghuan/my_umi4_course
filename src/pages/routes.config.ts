@@ -75,6 +75,7 @@ export default [
     path: `${PAGE_PREFIX}/test/workspace`,
     redirect: `${PAGE_PREFIX}/test/workspace/test-case-library`,
   },
+
   {
     path: 'demo',
     name: '示例页面',
@@ -696,17 +697,41 @@ export default [
       {
         path: 'deliveryList',
         name: '交付列表',
+        key: 'deliveryList',
         component: '@/pages/delivery/delivery-list',
       },
       {
         path: 'appStore',
         name: '应用商店',
+        key: 'appStore',
         component: '@/pages/delivery/appStore',
+      },
+      {
+        path: 'appDetails',
+        name: '应用详情',
+        key: 'appDetails',
+        component: '@/pages/delivery/appDetails',
+        hideInMenu: true,
       },
       {
         path: 'releaseManage',
         name: '版本管理',
+        key: 'releaseManage',
         component: '@/pages/delivery/release-manage',
+      },
+      {
+        path: 'createAppEdition',
+        name: '创建应用版本',
+        key: 'createAppEdition',
+        component: '@/pages/delivery/create-appEdition',
+        hideInMenu: true,
+      },
+      {
+        path: 'updateAppEdition',
+        name: '更新应用版本',
+        key: 'updateAppEdition',
+        component: '@/pages/delivery/update-appEdition',
+        hideInMenu: true,
       },
     ],
   },

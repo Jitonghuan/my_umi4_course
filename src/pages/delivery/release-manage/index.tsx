@@ -3,7 +3,7 @@
 // @create 2021/08/31 11:32
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, message, Popconfirm } from 'antd';
+import { Form, Input, Select, Button, Table, Space, message, Popconfirm, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';
@@ -38,11 +38,7 @@ export default function appStore(porps: any) {
   };
   // console.log('>>>>>>',currentData);
   const showModal = () => {
-    if (appCategoryCode) {
-      setIsModalVisible(true);
-    } else {
-      message.error('请选择要推送的应用分类');
-    }
+    setIsModalVisible(true);
   };
   //删除数据
   const handleDelItem = (record: any) => {
@@ -172,22 +168,7 @@ export default function appStore(porps: any) {
                   key="action"
                   render={(text, record: any) => (
                     <Space size="large">
-                      <a
-                        onClick={() => {
-                          const query = {
-                            appCode: record.appCode,
-                            templateType: record.templateType,
-                            envCode: record.envCode,
-                            categoryCode: record.categoryCode,
-                            isClient: 0,
-                            isContainClient: 0,
-                            id: record.id,
-                          };
-                          history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
-                        }}
-                      >
-                        上架
-                      </a>
+                      <a onClick={showModal}>上架</a>
                       <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem(record)}>
                         <a style={{ color: 'red' }}>删除</a>
                       </Popconfirm>
@@ -210,6 +191,28 @@ export default function appStore(porps: any) {
             </Space>
           </Form>
         </div>
+        <Modal
+          title="你确定要上架以下应用吗？ "
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width="60%"
+        >
+          <div>
+            <Table>
+              <Table.Column title="应用名称" dataIndex="appCode" />
+              <Table.Column title="应用版本" dataIndex="appVersion" />
+              <Table.Column title="更新日志" dataIndex="relase" />
+            </Table>
+          </div>
+          <div style={{ marginTop: '4%', marginBottom: '10%' }}>
+            <span>请输入生产的交付版本号:</span>
+            <div>
+              {' '}
+              <Input style={{ width: 220 }} placeholder="请输入"></Input>
+            </div>
+          </div>
+        </Modal>
       </ContentCard>
     </PageContainer>
   );

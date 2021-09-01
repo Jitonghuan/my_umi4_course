@@ -11,7 +11,17 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 export default function deliveryList() {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState<any[]>([]);
+  const [dataSource, setDataSource] = useState<any[]>([
+    {
+      key: '1',
+      templateName: '8888',
+      appName: '应用模版',
+      templateCode: 'xuxu',
+      appCategoryCode: 'xiniuyiliao',
+      envCode: '天台',
+      id: '1',
+    },
+  ]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -29,7 +39,6 @@ export default function deliveryList() {
   const handleDelItem = (record: any) => {
     let id = record.id;
   };
-
   return (
     <PageContainer>
       <FilterCard>
@@ -80,11 +89,9 @@ export default function deliveryList() {
           <Button
             type="primary"
             style={{ float: 'right', fontSize: 16, marginRight: '10px' }}
-            onClick={() =>
-              history.push({
-                pathname: 'appStore',
-              })
-            }
+            onClick={() => {
+              history.push('/matrix/delivery/appStore');
+            }}
           >
             应用商店
           </Button>

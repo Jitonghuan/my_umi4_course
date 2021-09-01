@@ -3,14 +3,13 @@
 // @create 2021/08/28 14:50
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, message, Popconfirm } from 'antd';
+import { Form, Input, Select, Button, Table, Space, message, Popconfirm, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { stringify } from 'qs';
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 
-export default function appStore(porps: any) {
+export default function appStore(props: any) {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -26,7 +25,14 @@ export default function appStore(porps: any) {
   const [formTmplQuery] = Form.useForm();
   const [selectList, setSelectList] = useState<any[]>([]);
   const [pageTotal, setPageTotal] = useState<number>();
-
+  const [dataSource, setDataSource] = useState<any[]>([
+    {
+      key: '1',
+      appCode: '8888',
+      appName: '安全生产',
+      id: '1',
+    },
+  ]);
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
   const rowSelection = {
@@ -38,11 +44,7 @@ export default function appStore(porps: any) {
   };
   // console.log('>>>>>>',currentData);
   const showModal = () => {
-    if (appCategoryCode) {
-      setIsModalVisible(true);
-    } else {
-      message.error('请选择要推送的应用分类');
-    }
+    setIsModalVisible(true);
   };
   //删除数据
   const handleDelItem = (record: any) => {
@@ -52,7 +54,7 @@ export default function appStore(porps: any) {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  const [dataSource, setDataSource] = useState<any[]>([]);
+
   useEffect(() => {
     getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
@@ -70,7 +72,7 @@ export default function appStore(porps: any) {
   //推送模版 模版Code 应用分类 环境Code 应用Code
   const handleOk = async () => {
     setIsModalVisible(false);
-    const templateCode = porps.history.location.query.templateCode;
+    const templateCode = props.history.location.query.templateCode;
     const appCodes = currentData.map((item, index) => {
       return Object.assign(item.appCode);
     });
@@ -109,7 +111,7 @@ export default function appStore(porps: any) {
             });
           }}
         >
-          <Form.Item label="名称：" name="appCategoryCode" rules={[{ required: true, message: '这是必选项' }]}>
+          <Form.Item label="名称：" name="appCategoryCode">
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
           <Form.Item label="分类：" name="appCode">
@@ -135,7 +137,7 @@ export default function appStore(porps: any) {
       </FilterCard>
       <ContentCard>
         <div style={{ marginBottom: '30px' }}>
-          <Button type="primary" style={{ float: 'right', fontSize: 16, marginRight: '10px' }}>
+          <Button type="primary" onClick={showModal} style={{ float: 'right', fontSize: 16, marginRight: '10px' }}>
             应用部署
           </Button>
         </div>
@@ -160,7 +162,7 @@ export default function appStore(porps: any) {
                 }}
                 onChange={pageSizeClick}
               >
-                <Table.Column title="名称" dataIndex="id" />
+                <Table.Column title="名称" dataIndex="id" width="14%" />
                 <Table.Column title="分类" dataIndex="appName" ellipsis />
                 <Table.Column title="交付版本" dataIndex="appCode" ellipsis />
                 <Table.Column title="应用版本" dataIndex="appCategoryCode" />
@@ -169,25 +171,23 @@ export default function appStore(porps: any) {
                   title="操作"
                   dataIndex="gmtModify"
                   key="action"
+                  width="18%"
                   render={(text, record: any) => (
-                    <Space size="large">
+                    <Space>
                       <a
                         onClick={() => {
-                          const query = {
-                            appCode: record.appCode,
-                            templateType: record.templateType,
-                            envCode: record.envCode,
-                            categoryCode: record.categoryCode,
-                            isClient: 0,
-                            isContainClient: 0,
-                            id: record.id,
-                          };
-                          history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
+                          history.push('/matrix/delivery/appDetails');
                         }}
                       >
                         详情
                       </a>
-                      <a>版本更新</a>
+                      <a
+                        onClick={() => {
+                          history.push('/matrix/delivery/updateAppEdition');
+                        }}
+                      >
+                        版本更新
+                      </a>
                       <a>下架</a>
                       <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem(record)}>
                         <a style={{ color: 'red' }}>删除</a>
@@ -218,6 +218,35 @@ export default function appStore(porps: any) {
             )}
           </Form>
         </div>
+        <Modal
+          title="你确定要安装以下应用吗？ "
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width="60%"
+        >
+          <div>
+            <Table>
+              <Table.Column title="应用名称" dataIndex="appCode" />
+              <Table.Column title="应用版本" dataIndex="appVersion" />
+              <Table.Column title="交付版本" dataIndex="relase" />
+            </Table>
+          </div>
+          <div style={{ marginTop: '4%' }}>
+            <span>集群（环境）:</span>
+            <div>
+              {' '}
+              <Select style={{ width: 140 }}></Select>
+            </div>
+          </div>
+          <div style={{ marginTop: '2%', marginBottom: '10%' }}>
+            <span>命名空间:</span>
+            <div>
+              {' '}
+              <Select style={{ width: 140 }}></Select>
+            </div>
+          </div>
+        </Modal>
       </ContentCard>
     </PageContainer>
   );
