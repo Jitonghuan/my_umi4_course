@@ -18,6 +18,7 @@ import {
   appFeProjectTypeOptions,
   appMicroFeTypeOptions,
   relationMainAppCodeOptions,
+  deployJobUrlOptions,
 } from './common';
 import { AppItemVO } from '../../interfaces';
 
@@ -50,6 +51,10 @@ export default function ApplicationEditor(props: IProps) {
 
   // 数据回填
   useEffect(() => {
+    if (!visible) return;
+
+    form.resetFields();
+
     if (isEdit) {
       setCategoryCode(initData?.appCategoryCode);
       form.setFieldsValue({
@@ -57,7 +62,6 @@ export default function ApplicationEditor(props: IProps) {
         ownerList: stringToList(initData?.owner),
       });
     } else {
-      form.resetFields();
       form.setFieldsValue({
         ownerList: [userInfo.fullName!],
       });
@@ -266,6 +270,13 @@ export default function ApplicationEditor(props: IProps) {
                       </>
                     )
                   }
+                </FormItem>
+                <FormItem
+                  label="构建任务类型"
+                  name="deployJobUrl"
+                  rules={[{ required: true, message: '请选择构建任务类型' }]}
+                >
+                  <Select options={deployJobUrlOptions} placeholder="请选择" style={{ width: 320 }} />
                 </FormItem>
               </>
             )
