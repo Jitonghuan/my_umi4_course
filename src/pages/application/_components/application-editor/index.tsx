@@ -232,7 +232,23 @@ export default function ApplicationEditor(props: IProps) {
                           </FormItem>
                         ) : (
                           // 子应用
-                          <FormItem label="关联信息" name="relationMainApp">
+                          <FormItem
+                            label="关联信息"
+                            name="relationMainApp"
+                            rules={[
+                              {
+                                validator: async (_, value: any) => {
+                                  if (!value?.length) {
+                                    throw new Error('关联信息至少填写一组');
+                                  }
+                                  if (value.find((n: any) => !(n.appCode && n.routePath))) {
+                                    throw new Error('主应用Code 和 路由不能为空!');
+                                  }
+                                },
+                                validateTrigger: [],
+                              },
+                            ]}
+                          >
                             <EditorTable
                               columns={[
                                 {
