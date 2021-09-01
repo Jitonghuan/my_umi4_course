@@ -152,6 +152,7 @@ export default function UserCaseInfoExec(props: any) {
       },
     }));
     void setCheckedBugs([]);
+    void (await updateCurCase());
     void message.success('关联bug成功');
   };
 
