@@ -26,4 +26,10 @@ export interface CustomTreeProps extends TreeProps {
   treeData: TreeNode[];
   /** 搜索时保留根节点 */
   keepRootInSearch?: boolean;
+
+  /** 左侧搜索栏配置项 */
+  showSideSelect?: boolean;
+  onSideSelectChange?: (val: string) => void;
+  sideSelectPlaceholder?: string;
+  sideSelectOptions: any[];
 }
