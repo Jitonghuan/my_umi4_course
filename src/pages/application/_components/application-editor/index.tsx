@@ -4,15 +4,32 @@
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Drawer, Button, Select, Radio, Input, Divider, message, Form } from 'antd';
+import FELayout from '@cffe/vc-layout';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import DebounceSelect from '@/components/debounce-select';
-import UserSelector from '@/components/user-selector';
+import UserSelector, { stringToList } from '@/components/user-selector';
+import EditorTable from '@cffe/pc-editor-table';
 import { createApp, updateApp, searchGitAddress } from './service';
 import { useAppGroupOptions } from '../../hooks';
-import { appTypeOptions, appDevelopLanguageOptions, isClientOptions } from './common';
+import {
+  appTypeOptions,
+  appDevelopLanguageOptions,
+  isClientOptions,
+  appFeProjectTypeOptions,
+  appMicroFeTypeOptions,
+  relationMainAppCodeOptions,
+  deployJobUrlOptions,
+} from './common';
 import { AppItemVO } from '../../interfaces';
 
 const { Item: FormItem } = Form;
+
+// 生成一个方法: shouldUpdate={(prev, curr) => prev.xxx !== curr.xxx}
+const shouldUpdate = (keys: string[]) => {
+  return (prev: any, curr: any) => {
+    return keys.some((key) => prev[key] !== curr[key]);
+  };
+};
 
 export interface IProps {
   initData?: AppItemVO;
@@ -22,6 +39,7 @@ export interface IProps {
 }
 
 export default function ApplicationEditor(props: IProps) {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { categoryData } = useContext(FEContext);
   const { initData, visible } = props;
   const isEdit = !!initData?.id;
@@ -33,14 +51,20 @@ export default function ApplicationEditor(props: IProps) {
 
   // 数据回填
   useEffect(() => {
+    if (!visible) return;
+
+    form.resetFields();
+
     if (isEdit) {
       setCategoryCode(initData?.appCategoryCode);
       form.setFieldsValue({
         ...initData,
-        ownerList: initData?.owner?.split(/[,;\/，、]\s?|\s/)?.filter((n) => !!n) || [],
+        ownerList: stringToList(initData?.owner),
       });
     } else {
-      form.resetFields();
+      form.setFieldsValue({
+        ownerList: [userInfo.fullName!],
+      });
     }
   }, [isEdit, visible]);
 
@@ -144,9 +168,10 @@ export default function ApplicationEditor(props: IProps) {
 
         <Divider />
 
-        <FormItem noStyle shouldUpdate={(prev, curr) => prev.appType !== curr.appType}>
+        <FormItem noStyle shouldUpdate={shouldUpdate(['appType'])}>
           {({ getFieldValue }) =>
-            getFieldValue('appType') === 'backend' && (
+            getFieldValue('appType') === 'backend' ? (
+              // 后端相关字段
               <>
                 <FormItem
                   label="开发语言"
@@ -155,7 +180,7 @@ export default function ApplicationEditor(props: IProps) {
                 >
                   <Radio.Group options={appDevelopLanguageOptions} />
                 </FormItem>
-                <FormItem noStyle shouldUpdate={(prev, curr) => prev.appDevelopLanguage !== curr.appDevelopLanguage}>
+                <FormItem noStyle shouldUpdate={shouldUpdate(['appDevelopLanguage'])}>
                   {({ getFieldValue }) =>
                     getFieldValue('appDevelopLanguage') === 'java' && (
                       <>
@@ -175,6 +200,83 @@ export default function ApplicationEditor(props: IProps) {
                       </>
                     )
                   }
+                </FormItem>
+              </>
+            ) : (
+              // 前端相关字段
+              <>
+                <FormItem
+                  label="工程类型"
+                  name="projectType"
+                  rules={[{ required: true, message: '请选择工程类型' }]}
+                  initialValue={appFeProjectTypeOptions[1].value}
+                >
+                  <Radio.Group options={appFeProjectTypeOptions} />
+                </FormItem>
+                <FormItem noStyle shouldUpdate={shouldUpdate(['projectType', 'microFeType'])}>
+                  {({ getFieldValue }) =>
+                    getFieldValue('projectType') === 'micro' && (
+                      <>
+                        <FormItem
+                          label="微前端类型"
+                          name="microFeType"
+                          rules={[{ required: true, message: '请选择微前端类型' }]}
+                          initialValue={appMicroFeTypeOptions[1].value}
+                        >
+                          <Radio.Group options={appMicroFeTypeOptions} />
+                        </FormItem>
+                        {getFieldValue('microFeType') === appMicroFeTypeOptions[0].value ? (
+                          // 主应用
+                          <FormItem
+                            label="路由文件"
+                            name="routeFile"
+                            rules={[{ required: true, message: '请输入路由文件名' }]}
+                          >
+                            <Input placeholder="app.json" style={{ width: 320 }} />
+                          </FormItem>
+                        ) : (
+                          // 子应用
+                          <FormItem
+                            label="关联信息"
+                            name="relationMainApp"
+                            rules={[
+                              {
+                                validator: async (_, value: any) => {
+                                  if (!value?.length) {
+                                    throw new Error('关联信息至少填写一组');
+                                  }
+                                  if (value.find((n: any) => !(n.appCode && n.routePath))) {
+                                    throw new Error('主应用Code 和 路由不能为空!');
+                                  }
+                                },
+                                validateTrigger: [],
+                              },
+                            ]}
+                          >
+                            <EditorTable
+                              columns={[
+                                {
+                                  dataIndex: 'appCode',
+                                  title: '主应用Code',
+                                  fieldType: 'select',
+                                  valueOptions: relationMainAppCodeOptions,
+                                  colProps: { width: 200 },
+                                },
+                                { dataIndex: 'routePath', title: '路由' },
+                              ]}
+                            />
+                          </FormItem>
+                        )}
+                      </>
+                    )
+                  }
+                </FormItem>
+                <FormItem
+                  label="构建任务类型"
+                  name="deployJobUrl"
+                  rules={[{ required: true, message: '请选择构建任务类型' }]}
+                >
+                  <Select options={deployJobUrlOptions} placeholder="请选择" style={{ width: 320 }} />
                 </FormItem>
               </>
             )

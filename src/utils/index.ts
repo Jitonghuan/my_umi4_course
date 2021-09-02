@@ -42,6 +42,14 @@ export const addAPIPrefix = (api: string) => {
   return `${origin}${ds.apiPrefix}${api}`;
 };
 
+/** 将 options 转换为 map 映射，用于渲染 */
+export const optionsToLabelMap = (options: IOption<any>[]) => {
+  return options.reduce((prev, curr) => {
+    prev[curr.value] = curr.label;
+    return prev;
+  }, {} as Record<string, string>);
+};
+
 /** 使用浏览器原生的方法进行 base64 编码 */
 export const base64Encode = (str: string) => {
   return window.btoa(window.unescape(window.encodeURIComponent(str)));

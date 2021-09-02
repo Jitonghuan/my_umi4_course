@@ -3,7 +3,7 @@
 // @create 2021/08/25 09:26
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { Radio, Button, Spin, Pagination } from 'antd';
+import { Radio, Button, Spin, Pagination, Empty } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
@@ -50,6 +50,9 @@ export default function AllApplication() {
 
         <Spin spinning={isLoading}>
           <div className={`${rootCls}__card-wrapper`}>
+            {!isLoading && !appListData.length && (
+              <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            )}
             <ApplicationCardList key={type} dataSource={appListData} />
             {total > 10 && (
               <div className={`${rootCls}-pagination-wrap`}>
