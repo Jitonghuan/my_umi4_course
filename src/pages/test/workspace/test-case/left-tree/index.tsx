@@ -40,6 +40,7 @@ export default function LeftTree(props: any) {
   }, [cateTreeData]);
 
   const onCateChange = (val: any) => {
+    console.log('val :>> ', val);
     if (!val) return;
     void setRootCateId(val);
   };
