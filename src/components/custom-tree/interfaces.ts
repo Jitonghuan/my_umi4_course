@@ -29,6 +29,7 @@ export interface CustomTreeProps extends TreeProps {
 
   /** 左侧搜索栏配置项 */
   showSideSelect?: boolean;
+  sideSelectValue?: string;
   onSideSelectChange?: (val: string) => void;
   sideSelectPlaceholder?: string;
   sideSelectOptions: any[];

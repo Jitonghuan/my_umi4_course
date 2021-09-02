@@ -20,6 +20,7 @@ export default function CustomTree(props: CustomTreeProps) {
     keepRootInSearch = true,
     showSideSelect = false,
     onSideSelectChange,
+    sideSelectValue,
     sideSelectPlaceholder = '请选择',
     sideSelectOptions,
     ...others
@@ -55,9 +56,11 @@ export default function CustomTree(props: CustomTreeProps) {
             className="custom-tree-header-side-select"
             options={sideSelectOptions || []}
             placeholder={sideSelectPlaceholder}
+            value={sideSelectValue}
             onChange={(val) => {
               onSideSelectChange && val && onSideSelectChange(val.toString());
             }}
+            allowClear
           />
         ) : null}
         {showSearch ? (
