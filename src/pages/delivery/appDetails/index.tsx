@@ -39,9 +39,12 @@ export default function appDetails() {
         <Tabs defaultActiveKey="1" onChange={tabOnclick}>
           <TabPane tab="应用信息" key="1">
             <div>
-              <div>介绍</div>
-              <div>nacos是注册中心和配置中心</div>
-              <div>
+              <div style={{ marginLeft: '14px' }}>
+                <div>介绍</div>
+                <div style={{ marginTop: '2%' }}>nacos是注册中心和配置中心</div>
+              </div>
+
+              <div style={{ marginTop: '2%' }}>
                 <span>更新历史</span>
                 <Table columns={appInfoColumns} dataSource={appInfo} />
               </div>
@@ -49,9 +52,12 @@ export default function appDetails() {
           </TabPane>
           <TabPane tab="YAML" key="2">
             <div>
-              <div>介绍</div>
-              <div>nacos是注册中心和配置中心</div>
-              <div>
+              <div style={{ marginLeft: '14px' }}>
+                <div>介绍</div>
+                <div style={{ marginTop: '2%' }}>nacos是注册中心和配置中心</div>
+              </div>
+
+              <div style={{ marginTop: '2%' }}>
                 <span>更新历史</span>
                 <Table columns={appInfoColumns} dataSource={appInfo} />
               </div>

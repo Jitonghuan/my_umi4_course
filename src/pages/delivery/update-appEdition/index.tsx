@@ -25,23 +25,23 @@ export default function updateAppEditon() {
         <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
           <TabPane tab="按环境" key="1">
             <Form>
-              <Form.Item label="环境名称：">
+              <Form.Item label="环境名称：" labelCol={{ span: 2 }}>
                 <Select style={{ width: '220px' }}></Select>
               </Form.Item>
-              <Form.Item label="应用名称：">
+              <Form.Item label="应用名称：" labelCol={{ span: 2 }}>
                 <Select style={{ width: '220px' }}></Select>
               </Form.Item>
-              <Form.Item label="应用分类：">
+              <Form.Item label="应用分类：" labelCol={{ span: 2 }}>
                 <Select style={{ width: '220px' }}></Select>
               </Form.Item>
-              <Form.Item label="应用版本号：">
-                <Input style={{ width: '220px' }}></Input>
+              <Form.Item label="应用版本号：" labelCol={{ span: 2 }}>
+                <Input style={{ width: '210px' }}></Input>
               </Form.Item>
-              <Form.Item label="更新日志：">
-                <Input.TextArea></Input.TextArea>
+              <Form.Item label="更新日志：" labelCol={{ span: 2 }}>
+                <Input.TextArea style={{ width: '220px', height: '240px' }}></Input.TextArea>
               </Form.Item>
               <Form.Item>
-                <Space>
+                <Space style={{ marginLeft: '220px' }}>
                   <Button type="primary" htmlType="submit">
                     确认
                   </Button>
@@ -54,32 +54,31 @@ export default function updateAppEditon() {
           </TabPane>
           <TabPane tab="按仓库" key="2">
             <Form>
-              <Form.Item label="应用名称：">
+              <Form.Item label="应用名称：" labelCol={{ span: 2 }}>
                 <Select style={{ width: '220px' }}></Select>
               </Form.Item>
-              <Form.Item label="镜像：">
+              <Form.Item label="镜像：" labelCol={{ span: 2 }}>
                 <Select style={{ width: '220px' }}></Select>
               </Form.Item>
-              <Form.Item label="应用分类：">
+              <Form.Item label="应用分类：" labelCol={{ span: 2 }}>
                 <Select style={{ width: '220px' }}></Select>
               </Form.Item>
-              <Form.Item label="应用版本号：">
-                <Input style={{ width: '220px' }}></Input>
+              <Form.Item label="应用版本号：" labelCol={{ span: 2 }}>
+                <Input style={{ width: '210px' }}></Input>
               </Form.Item>
-              <Form.Item label="更新日志：">
-                <Input.TextArea></Input.TextArea>
+              <Form.Item label="更新日志：" labelCol={{ span: 2 }}>
+                <Input.TextArea style={{ width: '220px', height: '240px' }}></Input.TextArea>
               </Form.Item>
-
-              <Space>
-                <Form.Item>
-                  <Button type="primary" htmlType="submit" onClick={showModal}>
+              <Form.Item>
+                <Space style={{ marginLeft: '220px' }}>
+                  <Button type="primary" htmlType="submit">
                     确认
                   </Button>
                   <Button type="ghost" htmlType="reset">
                     取消
                   </Button>
-                </Form.Item>
-              </Space>
+                </Space>
+              </Form.Item>
             </Form>
           </TabPane>
         </Tabs>

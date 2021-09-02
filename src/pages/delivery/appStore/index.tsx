@@ -226,6 +226,9 @@ export default function appStore(props: any) {
           width="60%"
         >
           <div>
+            <span>版本</span>
+          </div>
+          <div style={{ marginTop: '6px' }}>
             <Table>
               <Table.Column title="应用名称" dataIndex="appCode" />
               <Table.Column title="应用版本" dataIndex="appVersion" />

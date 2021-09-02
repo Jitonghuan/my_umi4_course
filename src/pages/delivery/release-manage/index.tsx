@@ -48,7 +48,17 @@ export default function appStore(porps: any) {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  const [dataSource, setDataSource] = useState<any[]>([]);
+  const [dataSource, setDataSource] = useState<any[]>([
+    {
+      key: '1',
+      templateName: '8888',
+      appName: '应用模版',
+      templateCode: 'xuxu',
+      appCategoryCode: 'xiniuyiliao',
+      envCode: '天台',
+      id: '1',
+    },
+  ]);
   useEffect(() => {
     getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
@@ -106,7 +116,7 @@ export default function appStore(porps: any) {
           }}
         >
           <Form.Item label="应用名称：" name="appCategoryCode" rules={[{ required: true, message: '这是必选项' }]}>
-            <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
+            <Input style={{ width: 140 }} onChange={changeAppCategory} />
           </Form.Item>
           <Form.Item label="分类：" name="appCode">
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
@@ -131,7 +141,13 @@ export default function appStore(porps: any) {
       </FilterCard>
       <ContentCard>
         <div style={{ marginBottom: '30px' }}>
-          <Button type="primary" style={{ float: 'right', fontSize: 16, marginRight: '10px' }}>
+          <Button
+            type="primary"
+            style={{ float: 'right', fontSize: 16, marginRight: '10px' }}
+            onClick={() => {
+              history.push('/matrix/delivery/createAppEdition');
+            }}
+          >
             创建新版本
           </Button>
         </div>
@@ -180,7 +196,7 @@ export default function appStore(porps: any) {
             <Space size="middle" style={{ float: 'right' }}>
               <Form.Item>
                 <Button type="ghost" htmlType="reset">
-                  清空
+                  重置
                 </Button>
               </Form.Item>
               <Form.Item>
