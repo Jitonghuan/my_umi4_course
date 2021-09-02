@@ -26,8 +26,8 @@ export const appFeProjectTypeOptions: IOption<AppFeProjectType>[] = [
 ];
 
 export const appMicroFeTypeOptions: IOption<AppMicroFeType>[] = [
-  { label: '主应用', value: 'main' },
-  { label: '子应用', value: 'sub' },
+  { label: '主应用', value: 'mainProject' },
+  { label: '子应用', value: 'subProject' },
 ];
 
 // TODO 需要改成接口获取
@@ -36,3 +36,11 @@ export const relationMainAppCodeOptions: IOption[] = [
   'gmc_future-his-portal-web',
   'hbos_portal',
 ].map((n) => ({ label: n, value: n }));
+
+// 布署的 jenkins 任务选项
+// 此配置直接写在前端工程中，后续如果有新增，直接修改此枚举即可
+export const deployJobUrlOptions: IOption[] = [
+  { label: '三甲 HIS 工程', value: 'http://jenkins-fe.cfuture.shop/job/seenew-g3a-his' },
+  { label: '医共体 HIS 工程', value: 'http://jenkins-fe.cfuture.shop/job/seenew-gmc-his' },
+  { label: 'HBOS 工程', value: 'http://jenkins-fe.cfuture.shop/job/hbos-fe' },
+];

@@ -8,7 +8,7 @@ export type AppDevelopLanguage = 'java' | 'golang' | 'python';
 export type AppFeProjectType = 'single' | 'micro';
 
 /** 微前端类型 */
-export type AppMicroFeType = 'main' | 'sub';
+export type AppMicroFeType = 'mainProject' | 'subProject';
 
 export interface AppItemVO {
   /** 数据库自增ID */
@@ -60,6 +60,8 @@ export interface AppItemVO {
     /** 路由 */
     routePath: string;
   }[];
+  /** 构建任务 */
+  deployJobUrl?: string;
 }
 
 export interface AppMemberInfo {
