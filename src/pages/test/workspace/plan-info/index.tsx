@@ -68,8 +68,8 @@ export default function PlanInfo(props: any) {
     void setExpendedKeys([]);
     getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } }).then((res) => {
       void setTestPhaseDetail(res.data);
+      void updateTestCaseTree();
     });
-    void updateTestCaseTree();
   }, [activeKey]);
 
   useEffect(() => {
