@@ -204,6 +204,11 @@ export default function PlanInfo(props: any) {
                   expandedKeys={expendedKeys}
                   showIcon={false}
                   showSearch
+                  // showSideSelect
+                  // sideSelectPlaceholder='请选择'
+                  // sideSelectOptions={caseStatusEnum}
+                  // sedeSelectValue='1'
+                  // onSideSelect={(val:any)=>{console.log('onSelectVal :>> ', val)}}
                   searchPlaceholder="搜索用例、用例库"
                   titleRender={(node: any) => {
                     let renderTitle;

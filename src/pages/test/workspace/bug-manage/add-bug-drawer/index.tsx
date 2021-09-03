@@ -189,6 +189,7 @@ export default function BugManage(props: any) {
         title={bugInfo ? '编辑Bug' : '新增Bug'}
         className="test-workspace-bug-manage-add-bug-drawer"
         maskClosable={false}
+        destroyOnClose
       >
         <Form {...formItemLayout} form={form}>
           <Form.Item label="标题" name="name" rules={[{ required: true, message: '请输入标题' }]}>

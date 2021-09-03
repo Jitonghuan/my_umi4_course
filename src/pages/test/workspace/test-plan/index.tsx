@@ -45,6 +45,10 @@ export default function TestPlan(props: any) {
     });
   }, []);
 
+  useEffect(() => {
+    void updateTable(pageIndex, pageSize);
+  }, [pageIndex, pageSize]);
+
   const updateTable = async (_pageIndex: number = pageIndex, _pageSize: number = pageSize, _formData = formData) => {
     void setLoading(true);
     const formData = _formData;
@@ -152,8 +156,8 @@ export default function TestPlan(props: any) {
               total,
               pageSize,
               showSizeChanger: true,
-              onChange: (next) => updateTable(next),
-              onShowSizeChange: (_, next) => updateTable(1, next),
+              onChange: (next) => setPageIndex(next),
+              onShowSizeChange: (_, next) => setPageSize(next),
             }}
           >
             <Table.Column title="ID" width={80} dataIndex="id" />
