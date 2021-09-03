@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PageContainer from '@/components/page-container';
 import UseCaseTestInfoExec from './use-case-test-info-exec';
 import UserCaseInfoExec from './use-case-info-exec';
@@ -6,6 +6,7 @@ import CustomTree from '@/components/custom-tree';
 import BugInfoExec from './bug-info-exec';
 import CaseInfo from './case-info';
 import moment from 'moment';
+import _ from 'lodash';
 import { history } from 'umi';
 import { testPhaseEnum, caseStatusEnum } from '../constant';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
@@ -31,6 +32,7 @@ export default function PlanInfo(props: any) {
   const [curCase, setCurCase] = useState<any>();
   const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
   const [projectList, setProjectList] = useState<any[]>([]);
+  const [caseStatusSelect, setCaseStatusSelect] = useState<string>();
 
   const updateCurCase = () => {
     getRequest(getPhaseCaseDetail, {
@@ -46,7 +48,7 @@ export default function PlanInfo(props: any) {
   const updateTestCaseTree = () => {
     if (!activeKey) return;
     void getRequest(getPhaseCaseTree, { data: { phaseId: +activeKey } }).then((res) => {
-      const phaseCaseTree = res.data || [];
+      const phaseCaseTree = Object.keys(res.data).length ? res.data : [];
       const allLeafs = [];
       const Q = [...phaseCaseTree];
       while (Q.length) {
@@ -87,6 +89,23 @@ export default function PlanInfo(props: any) {
   const goBack = () => {
     history.push('/matrix/test/workspace/test-plan');
   };
+
+  const dataClean = (nodeList: any[]) => {
+    return nodeList.filter((node) => {
+      if (node.isLeaf) {
+        return node.status == caseStatusSelect;
+      } else {
+        node.children = dataClean(node.children);
+        return node.children.length;
+      }
+    });
+  };
+
+  const filteredCaseTreeData = useMemo(() => {
+    if (!testCaseTree) return [];
+    if (!caseStatusSelect) return testCaseTree;
+    return dataClean(_.cloneDeep(testCaseTree));
+  }, [caseStatusSelect, testCaseTree]);
 
   return (
     <PageContainer>
@@ -183,7 +202,8 @@ export default function PlanInfo(props: any) {
             <div className="right-card">
               <div className="case-select-container">
                 <CustomTree
-                  treeData={testCaseTree || []}
+                  treeData={filteredCaseTreeData}
+                  treeDataEmptyHide={false}
                   onSelect={(keys) => testCaseTreeLeafs.includes(keys[0]) && setCurCaseId(keys[0])}
                   selectedKeys={[curCaseId]}
                   onExpand={(expendedKeys) => setExpendedKeys(expendedKeys)}
@@ -194,9 +214,7 @@ export default function PlanInfo(props: any) {
                   sideSelectPlaceholder="请选择"
                   sideSelectOptions={caseStatusEnum}
                   searchPlaceholder="搜索用例、用例库"
-                  onSideSelectChange={(val) => {
-                    console.log('val :>> ', val);
-                  }}
+                  onSideSelectChange={setCaseStatusSelect}
                   titleRender={(node: any) => {
                     let renderTitle;
 

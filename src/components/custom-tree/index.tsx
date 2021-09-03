@@ -23,6 +23,7 @@ export default function CustomTree(props: CustomTreeProps) {
     sideSelectValue,
     sideSelectPlaceholder = '请选择',
     sideSelectOptions,
+    treeDataEmptyHide = true,
     ...others
   } = props;
   const [searchValue, setSearchValue] = useState<string>();
@@ -42,7 +43,7 @@ export default function CustomTree(props: CustomTreeProps) {
     setFilteredTreeData(treeData);
   }, [treeData]);
 
-  if (treeData?.length === 0) {
+  if (treeData?.length === 0 && treeDataEmptyHide) {
     return null;
   }
 
@@ -57,9 +58,7 @@ export default function CustomTree(props: CustomTreeProps) {
             options={sideSelectOptions || []}
             placeholder={sideSelectPlaceholder}
             value={sideSelectValue}
-            onChange={(val) => {
-              onSideSelectChange && val && onSideSelectChange(val.toString());
-            }}
+            onChange={onSideSelectChange}
             allowClear
           />
         ) : null}
