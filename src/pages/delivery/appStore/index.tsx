@@ -238,14 +238,12 @@ export default function appStore(props: any) {
           <div style={{ marginTop: '4%' }}>
             <span>集群（环境）:</span>
             <div>
-              {' '}
               <Select style={{ width: 140 }}></Select>
             </div>
           </div>
           <div style={{ marginTop: '2%', marginBottom: '10%' }}>
             <span>命名空间:</span>
             <div>
-              {' '}
               <Select style={{ width: 140 }}></Select>
             </div>
           </div>
