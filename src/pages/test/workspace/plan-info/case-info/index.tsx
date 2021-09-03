@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext, useEffect } from 'react';
-import { Col, Row, Tabs, Table, Input, Select, Tag, Button, Space, Modal, Typography, Empty, message } from 'antd';
+import { Col, Row, Tabs, Table, Input, Select, Tag, Button, Space, List, Typography, Empty, message } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
 import { createSona } from '@cffe/sona';
@@ -263,17 +263,17 @@ export default function UserCaseInfoExec(props: any) {
         <div className="case-prop-title">前置条件:</div>
         <div className="mh-40">{curCase?.caseInfo?.precondition}</div>
 
-        <div className="case-prop-title mt-12">步骤描述:</div>
+        <div className="case-prop-title mt-24">步骤描述:</div>
         <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
           <Table.Column title="序号" render={(_: any, __: any, idx: number) => idx + 1} />
           <Table.Column title="步骤描述" dataIndex="input" />
           <Table.Column title="预期结果" dataIndex="output" />
         </Table>
 
-        <div className="case-prop-title mt-12">用例备注:</div>
+        <div className="case-prop-title mt-24">用例备注:</div>
         <RichText readOnly={true} schema={caseNote} />
 
-        <div className="case-prop-title mt-12">执行备注:</div>
+        <div className="case-prop-title mt-24">执行备注:</div>
         <div className="executeNote">
           <RichText sona={sona} readOnly={execNoteReadOnly} schema={schema} />
           {!execNoteReadOnly ? (
@@ -294,7 +294,7 @@ export default function UserCaseInfoExec(props: any) {
           )}
         </div>
 
-        <div className="bug-info">
+        <div className="bug-info mt-24">
           <Tabs
             defaultActiveKey="1"
             tabBarExtraContent={
@@ -337,24 +337,18 @@ export default function UserCaseInfoExec(props: any) {
               </Table>
             </Tabs.TabPane>
             <Tabs.TabPane tab="活动日志" key="2">
-              {curCase?.records?.length ? (
-                curCase.records.map((item: any) => {
-                  return (
-                    <Row style={{ width: '100%', overflow: 'hidden' }}>
-                      <Col span={17}>
-                        <Text>
-                          {item.createUser} 执行了用例，状态为：{caseStatusEnum[item.status].label}
-                        </Text>
-                      </Col>
-                      <Col span={7} className="activity-log">
-                        <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
-                      </Col>
-                    </Row>
-                  );
-                })
-              ) : (
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有活动日志" />
-              )}
+              <List
+                bordered
+                dataSource={curCase.records || []}
+                renderItem={(item: any) => (
+                  <List.Item>
+                    <Text>
+                      {item.createUser} 执行了用例，状态为：{caseStatusEnum[item.status].label}
+                    </Text>
+                    <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
+                  </List.Item>
+                )}
+              />
             </Tabs.TabPane>
           </Tabs>
         </div>

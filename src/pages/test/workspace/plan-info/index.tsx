@@ -187,7 +187,7 @@ export default function PlanInfo(props: any) {
             </Col>
           </Row>
           <Row className="ml-8">
-            <Col className="mt-1x">
+            <Col className="mt-1x pb-24">
               <BugInfoExec
                 data={{
                   notFixed: testPhaseDetail.bugInfo?.bugTotal - testPhaseDetail.bugInfo?.closedNum,
