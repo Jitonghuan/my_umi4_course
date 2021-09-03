@@ -1,15 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../../constant';
 import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect, Cascader } from 'antd';
-import {
-  addBug,
-  modifyBug,
-  getAllTestCaseTree,
-  getCaseCategoryPageList,
-  getManagerList,
-  getProjectTreeData,
-  getCaseCategoryDeepList,
-} from '../../service';
+import { addBug, modifyBug, getManagerList, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
 import AddCaseModal from '../../test-case/add-case-drawer';
@@ -26,7 +18,6 @@ export default function BugManage(props: any) {
   const [schema, setSchema] = useState<any[]>();
   const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
-  const [cates, setCates] = useState<any[]>([]);
   const [manageList, setManageList] = useState<string[]>([]);
   const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
@@ -100,40 +91,10 @@ export default function BugManage(props: any) {
 
   /** -------------------------- 关联用例 start -------------------------- */
 
-  /** 关联用例-数据清洗 */
-  const dataClean = (node: any): boolean => {
-    node.key = node.id;
-    node.title = node.name;
-
-    const isLeaf = !node.subItems?.length;
-    // 终点条件，叶子节点是否有cases
-    if (isLeaf) {
-      node.children = node.cases.map((node: any) => ({ ...node, key: node.id }));
-      return !!node.children?.length;
-    }
-
-    node.children = [];
-    node.subItems.forEach((subNode: any) => dataClean(subNode) && node.children.push(subNode));
-    return !!node.children.length;
-  };
-
-  const caseCateTreeDataClean = (node: any) => {
-    node.key = node.id;
-    node.title = node.name;
-    node.children = node.subItems;
-    node.children?.forEach((item: any) => caseCateTreeDataClean(item));
-  };
-
   const updateAssociatingCaseTreeSelect = () => {
     void getRequest(getAllTestCaseTree).then((res) => {
       // 新增用例-用例库数据
-      const caseCateTreeDataRoot = _.cloneDeep(res.data);
-      void caseCateTreeDataClean(caseCateTreeDataRoot);
-      void setCates(caseCateTreeDataRoot.children);
-
-      const root = res.data;
-      void dataClean(root);
-      void setTestCaseTree(root.children);
+      void setTestCaseTree(res.data);
     });
   };
 
@@ -149,17 +110,6 @@ export default function BugManage(props: any) {
     void getRequest(getManagerList).then((res) => {
       void setManageList(res.data.usernames);
     });
-
-    // void getRequest(getProjectTreeData).then((res) => {
-    //   const Q = [...res.data];
-    //   while (Q.length) {
-    //     const cur = Q.shift();
-    //     cur.label = cur.name;
-    //     cur.value = cur.id;
-    //     cur.children && Q.push(...cur.children);
-    //   }
-    //   void setProjectTreeData(res.data);
-    // });
   }, []);
 
   /** -------------------------- 关联用例 end -------------------------- */
@@ -189,6 +139,7 @@ export default function BugManage(props: any) {
         title={bugInfo ? '编辑Bug' : '新增Bug'}
         className="test-workspace-bug-manage-add-bug-drawer"
         maskClosable={false}
+        destroyOnClose
       >
         <Form {...formItemLayout} form={form}>
           <Form.Item label="标题" name="name" rules={[{ required: true, message: '请输入标题' }]}>
@@ -274,7 +225,6 @@ export default function BugManage(props: any) {
         isModal
         visible={addCaseModalVisible}
         setVisible={setAddCaseModalVisible}
-        cates={cates}
         onSuccess={handleAddCaseSuccess}
         caseCateTreeData={caseCateTreeData}
       />

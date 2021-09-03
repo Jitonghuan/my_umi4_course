@@ -64,6 +64,10 @@ export default function BugManage(props: any) {
     });
   }, []);
 
+  useEffect(() => {
+    void updateBugList(pageIndex, pageSize);
+  }, [pageIndex, pageSize]);
+
   const handleAddBugBtnClick = () => {
     void setCurBugInfo(undefined);
     void setAddBugDrawerVisible(true);
@@ -176,8 +180,8 @@ export default function BugManage(props: any) {
               current: pageIndex,
               total: bugTotal,
               showSizeChanger: true,
-              onChange: (next) => updateBugList(next),
-              onShowSizeChange: (_, next) => updateBugList(1, next),
+              onChange: (next) => setPageIndex(next),
+              onShowSizeChange: (_, next) => setPageSize(next),
             }}
             loading={loading}
           >
