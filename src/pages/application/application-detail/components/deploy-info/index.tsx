@@ -83,7 +83,7 @@ export default function AppDeployInfo() {
           <Tabs.TabPane tab={item.envName} key={item.envCode} />
         ))}
       </Tabs>
-      <div className="section-group">
+      <div className="tab-content section-group">
         <section className="section-left">
           <div className="table-caption">
             <div className="caption-left"></div>

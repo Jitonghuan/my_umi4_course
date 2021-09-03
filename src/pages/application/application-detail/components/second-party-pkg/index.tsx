@@ -12,10 +12,8 @@ import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
 import { ContentCard } from '@/components/vc-page-content';
 import { IProps } from './types';
-import './index.less';
 
 const { TabPane } = Tabs;
-const rootCls = 'second-party-pkg';
 
 export default function TowPartyPkg(props: IProps) {
   const {
@@ -52,8 +50,8 @@ export default function TowPartyPkg(props: IProps) {
   }, [tabActive]);
 
   return (
-    <ContentCard noPadding className={rootCls}>
-      <Tabs className={`${rootCls}__tabs`} onChange={(v) => setTabActive(v)} activeKey={tabActive} type="card">
+    <ContentCard noPadding>
+      <Tabs onChange={(v) => setTabActive(v)} activeKey={tabActive} type="card">
         {envData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent

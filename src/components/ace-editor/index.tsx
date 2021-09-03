@@ -26,7 +26,7 @@ export interface AceEditorProps {
   value?: string;
   onChange?: (nextValue: string) => any;
   mode?: AceDataType;
-  height?: number;
+  height?: number | string;
   readOnly?: boolean;
   status?: 'success' | 'error' | 'warning' | 'default';
   placeholder?: string;
@@ -77,7 +77,7 @@ export default function AceEditor(props: AceEditorProps) {
       <Editor
         mode={mode}
         width="100%"
-        height={props.height ? `${props.height}px` : undefined}
+        height={props.height ? `${props.height}${typeof props.height === 'string' ? '' : 'px'}` : undefined}
         theme="tomorrow"
         value={displayValue}
         onChange={handleChange}
