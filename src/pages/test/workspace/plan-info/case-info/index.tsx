@@ -193,7 +193,6 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleSmartSubmit = async () => {
     if (!curCase?.caseInfo) return;
-    // const finishLoading = message.loading('正在提交Bug');
     let desc = [];
     try {
       let caseDesc;
@@ -201,14 +200,12 @@ export default function UserCaseInfoExec(props: any) {
       else caseDesc = JSON.parse(curCase.executeNote);
       desc = [...caseDesc, ...sona.schema];
     } catch (e) {
-      // void finishLoading();
       void message.error('未知错误');
       return;
     }
 
     const requestParams = {
       name: `${curCase.caseInfo.title}--不符合预期结果`,
-      // business: plan.projectId,
       projectId: plan.projectId,
       demandId: plan.demandId,
       subDemandId: plan.subDemandId,
@@ -222,15 +219,8 @@ export default function UserCaseInfoExec(props: any) {
       status: '0',
       createUser: userInfo.userName,
     };
-    const res = await postRequest(addBug, { data: requestParams }).finally(() => {
-      // void finishLoading();
-    });
-
+    const res = await postRequest(addBug, { data: requestParams });
     if (!res) return;
-    // @ts-ignore
-    const newBugInfo = { ...requestParams, id: res.data.id };
-    void setCheckedBugs([newBugInfo]);
-    void (await mergeCheckedBugs2AssociationBugs([newBugInfo]));
     void updateCurCase();
     void message.success('一键提交成功');
   };
