@@ -97,6 +97,27 @@ export const paramsList = `${ds.apiPrefix}/appManage/appTemplate/list`;
 /** PUT 应用模版-编辑应用参数 */
 export const editParams = `${ds.apiPrefix}/appManage/appTemplate/update`;
 
+/** POST 新建应用 */
+export const createAppUrl = `${ds.apiPrefix}/appManage/create`;
+
+/** PUT 编辑应用 */
+export const updateAppUrl = `${ds.apiPrefix}/appManage/update`;
+
+/** GET 搜索 git 仓库 */
+export const searchGitAddressUrl = `${ds.apiPrefix}/appManage/searchGitAddress`;
+
+/** POST 创建前端路由模板 */
+export const createFeRouteTemplate = `${ds.apiPrefix}/appManage/feRouteTemplate/create`;
+
+/** GET 查询前端路由模板 */
+export const queryFeRouteTemplate = `${ds.apiPrefix}/appManage/feRouteTemplate/list`;
+
+/** PUT 更新前端路由模板 */
+export const updateFeRouteTemplate = `${ds.apiPrefix}/appManage/feRouteTemplate/update`;
+
+/** GET 查看前端版本 */
+export const queryFeVersions = `${ds.apiPrefix}/appManage/feVersion/list`;
+
 // ---------- 部署相关接口
 
 /** GET 获取部署信息 */

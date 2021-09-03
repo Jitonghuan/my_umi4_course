@@ -3,7 +3,7 @@
 // @create 2021/08/25 09:23
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Drawer, Button, Select, Radio, Input, Divider, message, Form } from 'antd';
+import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import DebounceSelect from '@/components/debounce-select';
@@ -48,6 +48,28 @@ export default function ApplicationEditor(props: IProps) {
   const [categoryCode, setCategoryCode] = useState<string>();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
   const [form] = Form.useForm<AppItemVO>();
+
+  // 前端应用在修改 git address 时同步到 deployment name
+  const handleGitAddressChange = useCallback(
+    (next: string) => {
+      const appType = form.getFieldValue('appType');
+      if (appType !== 'frontend' || !next) return;
+      const gitProject = /\/([\w-]+)(\.git)?$/.exec(next)?.[1];
+      const deploymentName = form.getFieldValue('deploymentName');
+      if (!deploymentName) {
+        form.setFieldsValue({ deploymentName: gitProject });
+      } else {
+        Modal.confirm({
+          title: '操作提示',
+          content: 'Git 地址已修改，是否要同步到应用部署名？',
+          onOk: () => {
+            form.setFieldsValue({ deploymentName: gitProject });
+          },
+        });
+      }
+    },
+    [form],
+  );
 
   // 数据回填
   useEffect(() => {
@@ -160,7 +182,12 @@ export default function ApplicationEditor(props: IProps) {
           <Input.TextArea placeholder="请输入应用描述" />
         </FormItem>
         <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
-          <DebounceSelect fetchOptions={searchGitAddress} labelInValue={false} placeholder="输入仓库名搜索" />
+          <DebounceSelect
+            fetchOptions={searchGitAddress}
+            labelInValue={false}
+            placeholder="输入仓库名搜索"
+            onChange={handleGitAddressChange as any}
+          />
         </FormItem>
         {/* <FormItem label="Git 分组" name="gitGroup">
           <Input placeholder="请输入应用 gitlab 分组信息" style={{ width: 320 }} />

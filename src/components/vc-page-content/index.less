@@ -16,6 +16,14 @@
       &.x-relative {
         position: relative;
       }
+
+      .ant-card-body > .ant-tabs:first-child {
+        flex: 0 0 auto;
+
+        .ant-tabs-nav-list .ant-tabs-tab:first-child {
+          border-left: 0;
+        }
+      }
     }
   }
 
@@ -52,15 +60,13 @@
     flex: 0 0 auto;
     height: 100%;
     margin-right: 12px;
+    overflow: auto;
+  }
 
+  .ant-card.no-padding {
     .ant-card-body {
       padding: 0;
-    }
-
-    &.content-slide .ant-card-body {
       height: 100%;
-      padding: 24px;
-      overflow: auto;
     }
   }
 }

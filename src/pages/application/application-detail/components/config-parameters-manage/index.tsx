@@ -8,6 +8,7 @@
 import React, { useMemo, useContext } from 'react';
 import { Tabs } from 'antd';
 import FeContext from '@/layouts/basic-layout/fe-context';
+import { ContentCard } from '@/components/vc-page-content';
 import ConfigContent from './config-content';
 import DetailContext from '../../context';
 import { IProps } from './types';
@@ -20,12 +21,13 @@ const typeMap = {
   launchParameters: 'boot',
 };
 
-const ConfigParametersManage = ({
-  location: {
-    pathname,
-    query: { id: appId },
-  },
-}: IProps) => {
+export default function ConfigParametersManage(props: IProps) {
+  const {
+    location: {
+      pathname,
+      query: { id: appId },
+    },
+  } = props;
   const { envData } = useContext(FeContext);
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
@@ -43,14 +45,13 @@ const ConfigParametersManage = ({
   if (!configType) return null;
 
   return (
-    <div className={rootCls} key={pathname}>
+    <ContentCard noPadding className={rootCls} key={pathname}>
       <Tabs
         className={`${rootCls}__tabs`}
         defaultActiveKey={sessionStorage.getItem('__init_env_tab__') || undefined}
         onChange={handleTabActiveChange}
         // activeKey={this.state.activeKey}
         type="card"
-        tabBarStyle={{ background: '#E6EBF5' }}
       >
         {envData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
@@ -58,10 +59,6 @@ const ConfigParametersManage = ({
           </TabPane>
         ))}
       </Tabs>
-    </div>
+    </ContentCard>
   );
-};
-
-ConfigParametersManage.defaultProps = {};
-
-export default ConfigParametersManage;
+}

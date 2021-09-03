@@ -1,10 +1,6 @@
 import { postRequest, getRequest, putRequest } from '@/utils/request';
-import ds from '@config/defaultSettings';
 import { AppItemVO } from '../../interfaces';
-
-export const createAppUrl = `${ds.apiPrefix}/appManage/create`;
-export const updateAppUrl = `${ds.apiPrefix}/appManage/update`;
-export const searchGitAddressUrl = `${ds.apiPrefix}/appManage/searchGitAddress`;
+import { createAppUrl, updateAppUrl, searchGitAddressUrl } from '../../service';
 
 /** 新建应用 */
 export const createApp = (params: AppItemVO) => postRequest(createAppUrl, { data: params });

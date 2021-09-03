@@ -163,7 +163,7 @@ export default function ApplicationOverview() {
         <Descriptions.Item label="报警接收人">
           <UserTagList data={memberData?.alertReceiver} />
         </Descriptions.Item>
-        <Descriptions.Item label=""></Descriptions.Item>
+        <Descriptions.Item label="">&nbsp;</Descriptions.Item>
       </Descriptions>
 
       <ApplicationEditor
@@ -183,6 +183,7 @@ export default function ApplicationOverview() {
         onClose={() => setMemberEditorMode('HIDE')}
         onSave={() => {
           queryMemberData();
+          queryAppData?.();
           setMemberEditorMode('HIDE');
         }}
       />

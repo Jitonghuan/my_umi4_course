@@ -10,6 +10,7 @@ import { Tabs } from 'antd';
 import { queryEnvData } from '@/layouts/basic-layout/service';
 import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { IProps } from './types';
 import './index.less';
 
@@ -51,14 +52,8 @@ export default function TowPartyPkg(props: IProps) {
   }, [tabActive]);
 
   return (
-    <div className={rootCls}>
-      <Tabs
-        className={`${rootCls}__tabs`}
-        onChange={(v) => setTabActive(v)}
-        activeKey={tabActive}
-        type="card"
-        tabBarStyle={{ background: '#E6EBF5' }}
-      >
+    <ContentCard noPadding className={rootCls}>
+      <Tabs className={`${rootCls}__tabs`} onChange={(v) => setTabActive(v)} activeKey={tabActive} type="card">
         {envData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
@@ -72,6 +67,6 @@ export default function TowPartyPkg(props: IProps) {
           </TabPane>
         ))}
       </Tabs>
-    </div>
+    </ContentCard>
   );
 }

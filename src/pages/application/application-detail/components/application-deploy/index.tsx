@@ -7,6 +7,7 @@ import { Tabs } from 'antd';
 import FeContext from '@/layouts/basic-layout/fe-context';
 import SecondPartyPkg from '../second-party-pkg';
 import DeployContent from './deploy-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { IProps } from './types';
 import './index.less';
 
@@ -33,14 +34,8 @@ export default function ApplicationDeploy(props: IProps) {
   }
 
   return (
-    <div className={rootCls}>
-      <Tabs
-        className={`${rootCls}__tabs`}
-        onChange={(v) => setTabActive(v)}
-        activeKey={tabActive}
-        type="card"
-        tabBarStyle={{ background: '#E6EBF5' }}
-      >
+    <ContentCard noPadding className={rootCls}>
+      <Tabs className={`${rootCls}__tabs`} onChange={(v) => setTabActive(v)} activeKey={tabActive} type="card">
         {envData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
@@ -55,6 +50,6 @@ export default function ApplicationDeploy(props: IProps) {
           </TabPane>
         ))}
       </Tabs>
-    </div>
+    </ContentCard>
   );
 }

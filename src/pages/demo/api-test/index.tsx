@@ -59,7 +59,7 @@ export default function PageApiTest() {
   return (
     <PageContainer>
       <CardRowGroup>
-        <CardRowGroup.SlideCard className="content-slide" width={800}>
+        <CardRowGroup.SlideCard width={800}>
           <Form form={field} labelCol={{ flex: '80px' }} onFinish={handleSubmit}>
             <FormItem label="API" name="api" rules={[{ required: true, message: '请输入接口路径' }]}>
               <Input placeholder="请输入接口路径" />

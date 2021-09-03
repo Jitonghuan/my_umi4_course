@@ -119,7 +119,7 @@ export default function PlanInfo(props: any) {
         </div>
       </FilterCard>
       <CardRowGroup className="test-workspace-plan-info">
-        <CardRowGroup.SlideCard width={312} className="left-card">
+        <CardRowGroup.SlideCard noPadding width={312} className="left-card">
           <Row>
             <Col className="mt-1x left-cart-sub-title" push={1}>
               基本信息

@@ -77,8 +77,8 @@ export default function AppDeployInfo() {
   }
 
   return (
-    <ContentCard className="page-app-deploy-info">
-      <Tabs activeKey={currEnvCode} onChange={(next) => setCurrEnv(next)}>
+    <ContentCard noPadding className="page-app-deploy-info">
+      <Tabs activeKey={currEnvCode} type="card" onChange={(next) => setCurrEnv(next)}>
         {envList.map((item) => (
           <Tabs.TabPane tab={item.envName} key={item.envCode} />
         ))}
