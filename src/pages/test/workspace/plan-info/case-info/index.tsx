@@ -134,10 +134,10 @@ export default function UserCaseInfoExec(props: any) {
   };
 
   const handleChangeCurCaseIdx = (isToNext: boolean) => {
-    const idx = testCaseTreeLeafs.findIndex((leaf: any) => leaf.id === curCase.caseInfo.id);
+    const idx = testCaseTreeLeafs.findIndex((leafKey: any) => leafKey === curCase.caseInfo.id);
     const len = testCaseTreeLeafs.length;
-    if (isToNext) void setCurCaseId(testCaseTreeLeafs[(idx + 1) % len].id);
-    else void setCurCaseId(testCaseTreeLeafs[(idx - 1 + len) % len].id);
+    if (isToNext) void setCurCaseId(testCaseTreeLeafs[(idx + 1) % len]);
+    else void setCurCaseId(testCaseTreeLeafs[(idx - 1 + len) % len]);
   };
 
   const mergeCheckedBugs2AssociationBugs = async (_checkedBugs = checkedBugs) => {

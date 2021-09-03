@@ -13,27 +13,9 @@ export default function AssociatingCaseDrawer(props: any) {
   const [curActivePhase, setCurActivePhase] = useState<string>();
   const [selectedTestPlanIds, setselectedTestPlanIds] = useState<React.Key[]>([]);
 
-  const dataClean = (node: any): boolean => {
-    node.key = node.id;
-    node.title = node.name;
-
-    const isLeaf = !node.subItems?.length;
-    // 终点条件，叶子节点是否有cases
-    if (isLeaf) {
-      node.children = node.cases.map((node: any) => ({ ...node, key: node.id }));
-      return !!node.children?.length;
-    }
-
-    node.children = [];
-    node.subItems.forEach((subNode: any) => dataClean(subNode) && node.children.push(subNode));
-    return !!node.children.length;
-  };
-
   useEffect(() => {
     void getRequest(getAllTestCaseTree).then((res) => {
-      const root = res.data;
-      void dataClean(root);
-      void setTestCaseTree(root.children);
+      void setTestCaseTree(res.data);
     });
   }, []);
 
@@ -51,8 +33,8 @@ export default function AssociatingCaseDrawer(props: any) {
       const Q = [...(res.data.length ? res.data : [])];
       while (Q.length) {
         const cur = Q.shift();
-        !cur.subItems?.length && selected.push(cur.id);
-        cur.subItems?.length && Q.push(...cur.subItems);
+        !cur.children?.length && selected.push(cur.key);
+        cur.children?.length && Q.push(...cur.children);
       }
       void setselectedTestPlanIds(selected);
     });
@@ -97,6 +79,7 @@ export default function AssociatingCaseDrawer(props: any) {
       visible={visible}
       width="650"
       title="关联用例"
+      maskClosable={false}
       onClose={() => setVisible(false)}
     >
       <Tabs onChange={(key) => updateSelectTree(key)} activeKey={curActivePhase}>

@@ -46,29 +46,15 @@ export default function PlanInfo(props: any) {
   const updateTestCaseTree = () => {
     if (!activeKey) return;
     void getRequest(getPhaseCaseTree, { data: { phaseId: +activeKey } }).then((res) => {
+      const phaseCaseTree = res.data || [];
       const allLeafs = [];
-      const curCaseTree = Array.isArray(res.data) ? res.data : [];
-      const Q = [...curCaseTree];
+      const Q = [...phaseCaseTree];
       while (Q.length) {
         const cur = Q.shift();
-        cur.key = cur.id;
-        cur.title = cur.name;
-        cur.selectable = false;
-        if (cur.subItems?.length) {
-          cur.subItems = cur.subItems.filter((item: any) => item.subItems?.length || item.cases?.length);
-          cur.children = cur.subItems;
-          void Q.push(...cur.subItems);
-        } else if (cur.cases?.length) {
-          void allLeafs.push(...cur.cases);
-          void cur.cases.forEach((item: any) => {
-            item.key = item.id;
-            item.isLeaf = true;
-          });
-          cur.children = cur.cases;
-        }
+        if (cur.children?.length) Q.push(...cur.children);
+        else allLeafs.push(cur.key);
       }
-
-      void setTestCaseTree(curCaseTree || []);
+      void setTestCaseTree(phaseCaseTree);
       void setTestCaseTreeLeafs(allLeafs);
     });
   };
