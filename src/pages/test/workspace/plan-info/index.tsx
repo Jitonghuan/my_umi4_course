@@ -184,7 +184,7 @@ export default function PlanInfo(props: any) {
               <div className="case-select-container">
                 <CustomTree
                   treeData={testCaseTree || []}
-                  onSelect={(keys) => setCurCaseId(keys[0])}
+                  onSelect={(keys) => testCaseTreeLeafs.includes(keys[0]) && setCurCaseId(keys[0])}
                   selectedKeys={[curCaseId]}
                   onExpand={(expendedKeys) => setExpendedKeys(expendedKeys)}
                   expandedKeys={expendedKeys}
