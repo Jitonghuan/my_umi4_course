@@ -5,10 +5,11 @@
  * @create 2021-04-19 18:29
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { history } from 'umi';
 import { Form, Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
+import DetailContext from '@/pages/application/application-detail/context';
 import VCForm, { IColumns } from '@cffe/vc-form';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
@@ -22,7 +23,8 @@ import { getRequest, postRequest } from '@/utils/request';
 
 const rootCls = 'config-content-compo';
 
-const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
+const ConfigContent = ({ env, configType }: IProps) => {
+  const { appData } = useContext(DetailContext);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const [importCfgVisible, setImportCfgVisible] = useState(false);
   const [editCfgData, setEditCfgData] = useState<{
@@ -35,7 +37,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   });
 
   const [filterFormRef] = Form.useForm();
-
   const [versionData, setVersionData] = useState<any[]>([]);
 
   // 当前选中版本
@@ -43,6 +44,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     id: number;
     versionNumber: string;
   }>();
+
+  const { appCode, id: appId } = appData || {};
 
   // 查询数据
   const {
@@ -67,6 +70,9 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     pagination: {
       showSizeChanger: true,
       showTotal: (total: number) => `总共 ${total} 条数据`,
+    },
+    initParams: {
+      appCode,
     },
   });
 

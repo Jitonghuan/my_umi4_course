@@ -10,7 +10,6 @@ import { Tabs } from 'antd';
 import FeContext from '@/layouts/basic-layout/fe-context';
 import { ContentCard } from '@/components/vc-page-content';
 import ConfigContent from './config-content';
-import DetailContext from '../../context';
 import { IProps } from './types';
 import './index.less';
 
@@ -26,9 +25,6 @@ export default function ConfigParametersManage(props: IProps) {
     location: { pathname },
   } = props;
   const { envTypeData } = useContext(FeContext);
-  const { appData } = useContext(DetailContext);
-  const { appCode } = appData || {};
-
   const configType = useMemo(() => {
     const paths = pathname.split('/');
     const name = paths[paths.length - 1];
@@ -52,7 +48,7 @@ export default function ConfigParametersManage(props: IProps) {
       >
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
-            <ConfigContent env={item.value} configType={configType} appCode={appCode} appId={appData?.id!} />
+            <ConfigContent env={item.value} configType={configType} />
           </TabPane>
         ))}
       </Tabs>

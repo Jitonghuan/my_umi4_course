@@ -16,5 +16,5 @@ export default function FEVersions() {
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
 
-  return <ContentCard className="page-fe-version"></ContentCard>;
+  return <ContentCard className="page-fe-version">hello~</ContentCard>;
 }
