@@ -1,3 +1,4 @@
+import { AppItemVO } from './interfaces';
 import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 
@@ -97,6 +98,27 @@ export const paramsList = `${ds.apiPrefix}/appManage/appTemplate/list`;
 /** PUT 应用模版-编辑应用参数 */
 export const editParams = `${ds.apiPrefix}/appManage/appTemplate/update`;
 
+/** POST 新建应用 */
+export const createAppUrl = `${ds.apiPrefix}/appManage/create`;
+
+/** PUT 编辑应用 */
+export const updateAppUrl = `${ds.apiPrefix}/appManage/update`;
+
+/** GET 搜索 git 仓库 */
+export const searchGitAddressUrl = `${ds.apiPrefix}/appManage/searchGitAddress`;
+
+/** POST 创建前端路由模板 */
+export const createFeRouteTemplate = `${ds.apiPrefix}/appManage/feRouteTemplate/create`;
+
+/** GET 查询前端路由模板 */
+export const queryFeRouteTemplate = `${ds.apiPrefix}/appManage/feRouteTemplate/list`;
+
+/** PUT 更新前端路由模板 */
+export const updateFeRouteTemplate = `${ds.apiPrefix}/appManage/feRouteTemplate/update`;
+
+/** GET 查看前端版本 */
+export const queryFeVersions = `${ds.apiPrefix}/appManage/feVersion/list`;
+
 // ---------- 部署相关接口
 
 /** GET 获取部署信息 */
@@ -123,43 +145,20 @@ export const restartApplication = `${ds.apiPrefix}/releaseManage/restartApplicat
 /** GET 查询卡点任务结果 */
 export const qualityGuardInfo = `${ds.apiPrefix}/qc/qualitycontrol/qualityGuardInfo`;
 
-/** 查询应用列表 */
-export const queryApps = (params: {
-  /** id */
-  id?: number;
-  /** 应用CODE */
-  appCode?: string;
-  /** 应用名称    ---支持模糊搜索 */
-  appName?: string;
-  /** 应用类型 */
-  appType?: 'frontend' | 'backend';
-  /** 应用分类 */
-  categoryCode?: string;
-  /** 应用组CODE */
-  groupCode?: string;
-  /** 应用负责人   ---支持模糊搜索 */
-  owner?: string;
-  /** 分页索引 */
-  pageIndex: number;
-  /** 分页大小 */
-  pageSize: number;
-
-  requestType?: 'all' | 'mine';
-}) => {
+/** 查询应用列表 (返回的数据没有分页) */
+export const queryApps = async (
+  params: Partial<AppItemVO> & {
+    /** 分页索引 */
+    pageIndex: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 请求类型 */
+    requestType?: 'all' | 'mine';
+  },
+) => {
   const { requestType, ...data } = params;
-
-  return getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, {
-    data,
-  }).then((res: any) => {
-    if (res.success) {
-      return {
-        list: res.data?.dataSource || [],
-        ...res.data?.pageInfo,
-      };
-    }
-
-    return { list: [] };
-  });
+  const result = await getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, { data });
+  return (result.data?.dataSource || []) as AppItemVO[];
 };
 
 /** 删除应用 */

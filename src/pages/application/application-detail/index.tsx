@@ -25,9 +25,8 @@ const activeKeyMap: Record<string, any> = {
 
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
-  const appId = location.query?.id;
-
-  const [appData, queryAppData] = useAppDetail(+appId);
+  const { id: appId, appCode } = location.query || {};
+  const [appData, queryAppData] = useAppDetail(+appId, appCode);
 
   const tabActiveKey = useMemo(() => {
     const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
@@ -37,7 +36,7 @@ export default function ApplicationDetail(props: IProps) {
   useEffect(() => {
     // 每次切换进来需要重置 环境 tab 缓存
     sessionStorage.removeItem('__init_env_tab__');
-  }, [appId]);
+  }, [appId, appCode]);
 
   // 过滤掉不显示的子页面 tab
   const filteredTabList = useMemo(() => {
@@ -45,6 +44,8 @@ export default function ApplicationDetail(props: IProps) {
 
     // 是否为非二方包后端应用
     const isBackendAndNotClient = appData.isClient !== 1 && appData.appType === 'backend';
+    // 是否为前端应用
+    const isFrontend = appData.appType === 'frontend';
 
     return Object.keys(tabsConfig).filter((key) => {
       // 只有 HBOS 才显示 配置管理 和 启动参数
@@ -59,6 +60,13 @@ export default function ApplicationDetail(props: IProps) {
       }
       if (['monitor', 'AppParameters', 'deployInfo'].includes(key)) {
         return isBackendAndNotClient;
+      }
+      if (key === 'feVersion') {
+        return isFrontend;
+      }
+      // 只有微前端主工程才有路由模板
+      if (key === 'routeTemplate') {
+        return isFrontend && appData.projectType === 'micro' && appData.microFeType === 'mainProject';
       }
 
       return true;

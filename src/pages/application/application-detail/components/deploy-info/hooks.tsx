@@ -3,40 +3,9 @@
 // @create 2021/08/18 09:48
 
 import { useState, useEffect, useCallback } from 'react';
-import { EnvDataVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
+import { IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
 import * as APIS from '@/pages/application/service';
-
-// 获取应用下的环境列表
-export function useAppEnvList(appCode?: string): [EnvDataVO[], boolean] {
-  const [data, setData] = useState<EnvDataVO[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const loadData = useCallback(async () => {
-    if (!appCode) return;
-
-    setLoading(true);
-    try {
-      const result = await getRequest(APIS.queryAppEnvs, {
-        data: {
-          appCode,
-          pageSize: -1,
-        },
-      });
-      const next: EnvDataVO[] = result.data?.dataSource || [];
-      // 通过 envTypeCode 过滤出线上环境
-      setData(next.filter((n) => n.envTypeCode === 'prod'));
-    } finally {
-      setLoading(false);
-    }
-  }, [appCode]);
-
-  useEffect(() => {
-    loadData();
-  }, [appCode]);
-
-  return [data, loading];
-}
 
 // 获取部署信息
 export function useAppDeployInfo(

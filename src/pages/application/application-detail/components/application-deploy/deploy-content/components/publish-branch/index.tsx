@@ -69,7 +69,7 @@ export default function PublishBranch(props: PublishBranchProps) {
   // 如果已有发布内容，则二次确认后直接添加进去，否则需要用户选择发布环境
   const submitClick = () => {
     // 二方包 或 有已发布
-    // if (String(query?.isClient) === '1' || hasPublishContent) {
+    // if (String(appData?.isClient) === '1' || hasPublishContent) {
     if (hasPublishContent) {
       return confirm({
         title: '确定要提交发布吗?',
