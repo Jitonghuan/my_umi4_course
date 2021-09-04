@@ -17,10 +17,10 @@ import {
   isClientOptions,
   appFeProjectTypeOptions,
   appMicroFeTypeOptions,
-  relationMainAppCodeOptions,
   deployJobUrlOptions,
 } from './common';
 import { AppItemVO } from '../../interfaces';
+import { useFeMicroMainProjectOptions } from './hooks';
 
 const { Item: FormItem } = Form;
 
@@ -47,6 +47,8 @@ export default function ApplicationEditor(props: IProps) {
 
   const [categoryCode, setCategoryCode] = useState<string>();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
+  const [feMicroMainProjectOptions] = useFeMicroMainProjectOptions();
+
   const [form] = Form.useForm<AppItemVO>();
 
   // 前端应用在修改 git address 时同步到 deployment name
@@ -275,6 +277,11 @@ export default function ApplicationEditor(props: IProps) {
                                   if (value.find((n: any) => !(n.appCode && n.routePath))) {
                                     throw new Error('主应用Code 和 路由不能为空!');
                                   }
+                                  // 去重校验
+                                  const appCodes = value.map((n: any) => n.appCode);
+                                  if (appCodes.length > [...new Set(appCodes)].length) {
+                                    throw new Error('请勿重复关联相同主应用');
+                                  }
                                 },
                                 validateTrigger: [],
                               },
@@ -284,9 +291,9 @@ export default function ApplicationEditor(props: IProps) {
                               columns={[
                                 {
                                   dataIndex: 'appCode',
-                                  title: '主应用Code',
+                                  title: '关联主应用',
                                   fieldType: 'select',
-                                  valueOptions: relationMainAppCodeOptions,
+                                  valueOptions: feMicroMainProjectOptions,
                                   colProps: { width: 200 },
                                 },
                                 { dataIndex: 'routePath', title: '路由' },

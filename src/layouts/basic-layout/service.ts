@@ -22,7 +22,7 @@ export const queryBizData = `${ds.apiPrefix}/appManage/group/list`;
 export const queryBizModuleData = `${ds.apiPrefix}/orgManage/buSys/list`;
 
 /** 获取环境类型接口 */
-export const queryEnvData = `${ds.apiPrefix}/appManage/env/listType`;
+export const queryEnvTypeData = `${ds.apiPrefix}/appManage/env/listType`;
 
 /** 获取权限数据 */
 export const queryPermission = `${ds.apiPrefix}/rightManage/getUserMenus`;

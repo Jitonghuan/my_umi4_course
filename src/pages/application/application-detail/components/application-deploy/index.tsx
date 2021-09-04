@@ -5,21 +5,16 @@
 import React, { useContext, useState, useLayoutEffect } from 'react';
 import { Tabs } from 'antd';
 import FeContext from '@/layouts/basic-layout/fe-context';
+import { ContentCard } from '@/components/vc-page-content';
+import DetailContext from '../../context';
 import SecondPartyPkg from '../second-party-pkg';
 import DeployContent from './deploy-content';
-import { ContentCard } from '@/components/vc-page-content';
-import { IProps } from './types';
 
 const { TabPane } = Tabs;
 
-export default function ApplicationDeploy(props: IProps) {
-  const {
-    location: {
-      query: { appCode, isClient },
-    },
-  } = props;
-  const { envData } = useContext(FeContext);
-
+export default function ApplicationDeploy(props: any) {
+  const { appData } = useContext(DetailContext);
+  const { envTypeData } = useContext(FeContext);
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
 
   useLayoutEffect(() => {
@@ -27,22 +22,21 @@ export default function ApplicationDeploy(props: IProps) {
   }, [tabActive]);
 
   // 二方包直接渲染另一个页面
-  if (+isClient! === 1) {
+  if (+appData?.isClient! === 1) {
     return <SecondPartyPkg {...props} />;
   }
 
   return (
     <ContentCard noPadding>
       <Tabs onChange={(v) => setTabActive(v)} activeKey={tabActive} type="card">
-        {envData?.map((item) => (
+        {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
               isActive={item.value === tabActive}
-              appCode={appCode}
               envTypeCode={item.value}
               onDeployNextEnvSuccess={() => {
-                const i = envData.findIndex((item) => item.value === tabActive);
-                setTabActive(envData[i + 1]?.value);
+                const i = envTypeData.findIndex((item) => item.value === tabActive);
+                setTabActive(envTypeData[i + 1]?.value);
               }}
             />
           </TabPane>

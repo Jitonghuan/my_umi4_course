@@ -6,9 +6,7 @@ export interface IProps {
     pathname: string;
     query: {
       id: string;
-      isClient: string;
-      isContainClient: string;
-      appType: string;
+      appCode: string;
     };
   };
   route: {
@@ -59,13 +57,4 @@ export interface IStatusInfoProps {
   packageMd5: string;
   taskState: number;
   taskStateName: string;
-}
-
-/** 环境信息 */
-export interface EnvDataVO extends Record<string, any> {
-  id: number;
-  envCode: string;
-  envName: string;
-  envTypeCode: string;
-  categoryCode: string;
 }

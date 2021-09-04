@@ -25,9 +25,8 @@ const activeKeyMap: Record<string, any> = {
 
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
-  const appId = location.query?.id;
-
-  const [appData, queryAppData] = useAppDetail(+appId);
+  const { id: appId, appCode } = location.query || {};
+  const [appData, queryAppData] = useAppDetail(+appId, appCode);
 
   const tabActiveKey = useMemo(() => {
     const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
@@ -37,7 +36,7 @@ export default function ApplicationDetail(props: IProps) {
   useEffect(() => {
     // 每次切换进来需要重置 环境 tab 缓存
     sessionStorage.removeItem('__init_env_tab__');
-  }, [appId]);
+  }, [appId, appCode]);
 
   // 过滤掉不显示的子页面 tab
   const filteredTabList = useMemo(() => {

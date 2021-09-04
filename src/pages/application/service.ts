@@ -1,3 +1,4 @@
+import { AppItemVO } from './interfaces';
 import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import ds from '@config/defaultSettings';
 
@@ -144,43 +145,20 @@ export const restartApplication = `${ds.apiPrefix}/releaseManage/restartApplicat
 /** GET 查询卡点任务结果 */
 export const qualityGuardInfo = `${ds.apiPrefix}/qc/qualitycontrol/qualityGuardInfo`;
 
-/** 查询应用列表 */
-export const queryApps = (params: {
-  /** id */
-  id?: number;
-  /** 应用CODE */
-  appCode?: string;
-  /** 应用名称    ---支持模糊搜索 */
-  appName?: string;
-  /** 应用类型 */
-  appType?: 'frontend' | 'backend';
-  /** 应用分类 */
-  categoryCode?: string;
-  /** 应用组CODE */
-  groupCode?: string;
-  /** 应用负责人   ---支持模糊搜索 */
-  owner?: string;
-  /** 分页索引 */
-  pageIndex: number;
-  /** 分页大小 */
-  pageSize: number;
-
-  requestType?: 'all' | 'mine';
-}) => {
+/** 查询应用列表 (返回的数据没有分页) */
+export const queryApps = async (
+  params: Partial<AppItemVO> & {
+    /** 分页索引 */
+    pageIndex: number;
+    /** 分页大小 */
+    pageSize: number;
+    /** 请求类型 */
+    requestType?: 'all' | 'mine';
+  },
+) => {
   const { requestType, ...data } = params;
-
-  return getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, {
-    data,
-  }).then((res: any) => {
-    if (res.success) {
-      return {
-        list: res.data?.dataSource || [],
-        ...res.data?.pageInfo,
-      };
-    }
-
-    return { list: [] };
-  });
+  const result = await getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, { data });
+  return (result.data?.dataSource || []) as AppItemVO[];
 };
 
 /** 删除应用 */

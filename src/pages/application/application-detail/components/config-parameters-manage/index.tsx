@@ -23,12 +23,9 @@ const typeMap = {
 
 export default function ConfigParametersManage(props: IProps) {
   const {
-    location: {
-      pathname,
-      query: { id: appId },
-    },
+    location: { pathname },
   } = props;
-  const { envData } = useContext(FeContext);
+  const { envTypeData } = useContext(FeContext);
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -53,9 +50,9 @@ export default function ConfigParametersManage(props: IProps) {
         // activeKey={this.state.activeKey}
         type="card"
       >
-        {envData?.map((item) => (
+        {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
-            <ConfigContent env={item.value} configType={configType} appCode={appCode} appId={appId} />
+            <ConfigContent env={item.value} configType={configType} appCode={appCode} appId={appData?.id!} />
           </TabPane>
         ))}
       </Tabs>
