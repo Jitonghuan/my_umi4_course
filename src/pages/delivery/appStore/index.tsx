@@ -197,7 +197,7 @@ export default function appStore(props: any) {
                 />
               </Table>
             </Form.Item>
-            {selectedRowKeys.length > 1 && (
+            {selectedRowKeys.length >= 1 && (
               <Space size="middle" style={{ float: 'right' }}>
                 <Form.Item>
                   <Button type="ghost" htmlType="reset">

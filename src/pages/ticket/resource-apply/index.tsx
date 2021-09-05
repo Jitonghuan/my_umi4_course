@@ -9,10 +9,16 @@ import { UploadOutlined, PlusOutlined, MinusCircleOutlined } from '@ant-design/i
 import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
+import showResourceModal from './resource-show';
 import { Input, Upload, Button, Form, Radio, Row, Col, Select, Space } from 'antd';
 import './index.less';
-
-export default function addTicket() {
+/** Modal页回显数据 */
+export interface showResource extends Record<string, any> {
+  remark: string;
+  visible: boolean;
+  setVisible: any;
+}
+export default function applyResource() {
   const [value, setValue] = React.useState(1);
   const { Option } = Select;
   const [appTypeOptions, setAppTypeOptions] = useState<any[]>([]); //申请项选择
@@ -22,15 +28,25 @@ export default function addTicket() {
   const [diskSize, setDiskSize] = useState<any[]>([]); //磁盘选项
   const [applyResourceForm] = Form.useForm();
   const [selectAppTypes, setSelectAppTypes] = useState<any>('application'); //资源类型所选择到的值
-
+  const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
+  const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
+  const [applyResourceData, setApplyResourceData] = useState<showResource>();
   const handleChange = () => {
     applyResourceForm.setFieldsValue({ sights: [] });
   };
   const selectAppType = (value: any) => {
     setSelectAppTypes(value);
   };
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <PageContainer>
+      <showResourceModal></showResourceModal>
       <FilterCard>
         <span>资源申请</span>
       </FilterCard>
@@ -110,7 +126,7 @@ export default function addTicket() {
             </Row>
 
             <Row>
-              <Form.Item name="remarks" label="备注：" style={{ marginLeft: '3%' }}>
+              <Form.Item name="remarks" label="备注：" labelCol={{ span: 2 }}>
                 <Input.TextArea style={{ width: '750px' }}></Input.TextArea>
               </Form.Item>
             </Row>
@@ -128,7 +144,7 @@ export default function addTicket() {
                 <Button type="ghost" htmlType="reset">
                   重置
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" onClick={showModal}>
                   提交申请
                 </Button>
               </Space>
