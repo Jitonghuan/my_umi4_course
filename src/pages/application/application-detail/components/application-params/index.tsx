@@ -2,17 +2,19 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 17:20
 
-import React from 'react';
+import React, { useContext } from 'react';
+import { Button, Row, Col, Form, Select, Space, message } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import request, { getRequest, putRequest } from '@/utils/request';
+import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import AceEditor from '@/components/ace-editor';
+import DetailContext from '@/pages/application/application-detail/context';
 import EditorTable from '@cffe/pc-editor-table';
-import { Button, Row, Col, Form, Select, Space, message } from 'antd';
-import './index.less';
 import * as APIS from '@/pages/application/service';
+import './index.less';
 
-export default function DemoPageTb(porps: any) {
+export default function ApplicationParams(props: any) {
+  const { appData } = useContext(DetailContext);
   const [applicationForm] = Form.useForm();
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -32,11 +34,8 @@ export default function DemoPageTb(porps: any) {
   }, []);
 
   // 进入页面显示结果
-  const appCode = porps.history.location.query.appCode;
-  const templateType = porps.history.location.query.templateType;
-  const envCode = porps.history.location.query.envCode;
-  const isClient = porps.history.location.query.isClient;
-  const isContainClient = porps.history.location.query.isContainClient;
+  const { appCode, isClient, isContainClient } = appData || {};
+  const { templateType, envCode } = props?.history.location?.query || {};
 
   const getApp = () => {
     return getRequest(APIS.paramsList, { data: { appCode, isClient, isContainClient } }).then((result) => {
@@ -67,7 +66,6 @@ export default function DemoPageTb(porps: any) {
           value: inintDatas.tmplConfigurableItem[key],
         });
       }
-      console.log('11111111', jvm);
       applicationForm.setFieldsValue({
         appEnvCode: inintDatas.envCode,
         tmplType: inintDatas.templateType,
@@ -192,7 +190,7 @@ export default function DemoPageTb(porps: any) {
           jvm: '',
           value: '',
         });
-        message.error('您查看的应用模版不存在');
+        message.error('应用模版不存在');
       }
     });
   };

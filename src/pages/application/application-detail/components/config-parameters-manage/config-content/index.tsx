@@ -5,14 +5,14 @@
  * @create 2021-04-19 18:29
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { history } from 'umi';
-import { Form, Popconfirm, Button, message } from 'antd';
+import { Form, Select, Input, Popconfirm, Button, message } from 'antd';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import VCForm, { IColumns } from '@cffe/vc-form';
+import DetailContext from '@/pages/application/application-detail/context';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
-import { createFilterFormSchema, createTableSchema, getFilterColumns } from './schema';
+import { createTableSchema } from './schema';
 import { queryConfigListUrl, deleteConfig, deleteMultipleConfig } from '@/pages/application/service';
 import { IProps } from './types';
 import { ConfigData } from '../types';
@@ -22,7 +22,8 @@ import { getRequest, postRequest } from '@/utils/request';
 
 const rootCls = 'config-content-compo';
 
-const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
+export default function ConfigContent({ env, configType }: IProps) {
+  const { appData } = useContext(DetailContext);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const [importCfgVisible, setImportCfgVisible] = useState(false);
   const [editCfgData, setEditCfgData] = useState<{
@@ -35,7 +36,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
   });
 
   const [filterFormRef] = Form.useForm();
-
   const [versionData, setVersionData] = useState<any[]>([]);
 
   // 当前选中版本
@@ -43,6 +43,8 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     id: number;
     versionNumber: string;
   }>();
+
+  const { appCode, id: appId } = appData || {};
 
   // 查询数据
   const {
@@ -67,6 +69,9 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
     pagination: {
       showSizeChanger: true,
       showTotal: (total: number) => `总共 ${total} 条数据`,
+    },
+    initParams: {
+      appCode,
     },
   });
 
@@ -97,15 +102,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       ...(listParams || {}),
     });
   };
-
-  // useEffect(() => {
-  //   if (!appCode) return;
-  //   queryConfigList({
-  //     env,
-  //     appCode,
-  //     type: configType,
-  //   });
-  // }, [appCode]);
 
   useEffect(() => {
     if (!appCode) return;
@@ -180,18 +176,10 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       />
 
       <div className={`${rootCls}__filter`}>
-        <VCForm
+        <Form
           className={`${rootCls}__filter-form`}
           layout="inline"
           form={filterFormRef}
-          columns={
-            getFilterColumns(
-              versionData?.map((el: any) => ({
-                label: el.versionNumber,
-                value: el.id,
-              })) || [],
-            ) as IColumns[]
-          }
           onValuesChange={(changeVals, values) => {
             const [name, value] = (Object.entries(changeVals)?.[0] || []) as [string, any];
             if (name && name === 'versionID') {
@@ -207,7 +195,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
               setCurrentVersion(version || undefined);
             }
           }}
-          submitText="查询"
           onReset={() => {
             queryConfigList({
               versionID: undefined,
@@ -216,14 +203,39 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
               pageIndex: 1,
             });
           }}
-          onSubmit={(values) => {
+          onFinish={(values) => {
             if (tableProps.loading) return;
             queryConfigList({
               pageIndex: 1,
               ...values,
             });
           }}
-        />
+        >
+          <Form.Item label="版本" name="versionID">
+            <Select
+              options={versionData?.map((el: any) => ({
+                label: el.versionNumber,
+                value: el.id,
+              }))}
+              placeholder="请选择版本"
+              style={{ width: 140 }}
+            />
+          </Form.Item>
+          <Form.Item label="Key" name="key">
+            <Input placeholder="请输入key" style={{ width: 140 }} />
+          </Form.Item>
+          <Form.Item label="Value" name="value">
+            <Input placeholder="请输入value" style={{ width: 140 }} />
+          </Form.Item>
+          <Form.Item>
+            <Button htmlType="submit" type="primary" style={{ marginRight: 12 }}>
+              查询
+            </Button>
+            <Button htmlType="reset" type="default">
+              重置
+            </Button>
+          </Form.Item>
+        </Form>
 
         <div className={`${rootCls}__filter-btns`}>
           <Popconfirm
@@ -250,7 +262,7 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
                   env,
                   type: configType,
                   appCode: appCode!,
-                  id: appId,
+                  id: `${appId}`,
                 },
               });
             }}
@@ -288,10 +300,6 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setSelectedKeys(selectedRowKeys);
           },
-          // getCheckboxProps: (record: any) => ({
-          //   disabled: record.name === 'Disabled User', // Column configuration not to be checked
-          //   name: record.name,
-          // }),
         }}
         columns={
           createTableSchema({
@@ -320,8 +328,4 @@ const ConfigContent = ({ env, configType, appCode, appId }: IProps) => {
       />
     </div>
   );
-};
-
-ConfigContent.defaultProps = {};
-
-export default ConfigContent;
+}

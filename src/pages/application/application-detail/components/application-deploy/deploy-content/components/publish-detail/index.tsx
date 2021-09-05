@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq } from '@/pages/application/service';

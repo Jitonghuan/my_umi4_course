@@ -220,7 +220,7 @@ export default function LeftTree(props: LeftTreeProps) {
   );
 
   return (
-    <CardRowGroup.SlideCard width={244} className="page-case-list">
+    <CardRowGroup.SlideCard noPadding width={244} className="page-case-list">
       <div className="case-list-header">
         <Select
           options={projectOptions}

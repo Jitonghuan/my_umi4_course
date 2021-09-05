@@ -1,20 +1,25 @@
 .page-app-deploy-info {
-  .section-group {
+  .ant-card-body {
     display: flex;
-    height: ~'calc(100vh - 264px)';
+    flex-direction: column;
+  }
+
+  .section-group {
+    padding-bottom: 20px;
+    display: flex;
   }
 
   .section-left {
     flex: 1 1 0;
     height: 100%;
     overflow: auto;
+    padding: 0 20px;
   }
 
   .section-right {
     flex: 0 0 360px;
     border-left: 1px solid #cacfdb;
-    margin-left: 20px;
-    padding-left: 20px;
+    padding: 0 20px;
     height: 100%;
     overflow: hidden;
 

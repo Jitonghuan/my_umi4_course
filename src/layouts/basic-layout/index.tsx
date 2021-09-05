@@ -25,7 +25,7 @@ export default function BasicLayout(props: IUmiRrops) {
   // 业务线
   const [business] = useBusinessData(ready);
   // 环境
-  const [envData] = useEnvTypeData(ready);
+  const [envTypeData] = useEnvTypeData(ready);
   // 权限数据
   const [permissionData, setPermissionData] = useState<IPermission[]>([]);
 
@@ -78,7 +78,7 @@ export default function BasicLayout(props: IUmiRrops) {
           permissionData,
           businessData: business,
           categoryData,
-          envData,
+          envTypeData,
         }}
       >
         <ChartsContext.Provider

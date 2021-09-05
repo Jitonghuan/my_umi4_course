@@ -20,8 +20,8 @@ import './index.less';
 const rootCls = 'deploy-content-compo';
 
 export interface DeployContentProps {
+  /** 当前页面是否激活 */
   isActive?: boolean;
-  appCode?: string;
   /** 环境参数 */
   envTypeCode: string;
   /** 部署下个环境成功回调 */
@@ -29,7 +29,7 @@ export interface DeployContentProps {
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, onDeployNextEnvSuccess } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -44,7 +44,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
 
   const requestData = async () => {
-    if (!appCode || !props.isActive) return;
+    if (!appCode || !isActive) return;
 
     setUpdating(true);
 
@@ -114,10 +114,10 @@ export default function DeployContent(props: DeployContentProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode || !props.isActive) return;
+    if (!appCode || !isActive) return;
 
     timerHandle('do', true);
-  }, [appCode, props.isActive]);
+  }, [appCode, isActive]);
 
   return (
     <div className={rootCls}>

@@ -10,6 +10,7 @@ export type AppFeProjectType = 'single' | 'micro';
 /** 微前端类型 */
 export type AppMicroFeType = 'mainProject' | 'subProject';
 
+/** 应用数据模型 */
 export interface AppItemVO {
   /** 数据库自增ID */
   id?: number;
@@ -87,4 +88,13 @@ export interface AppMemberInfo {
   gmtCreate?: string;
   gmtModify?: string;
   modifyUser?: string;
+}
+
+/** 环境信息 */
+export interface EnvDataVO extends Record<string, any> {
+  id: number;
+  envCode: string;
+  envName: string;
+  envTypeCode: string;
+  categoryCode: string;
 }
