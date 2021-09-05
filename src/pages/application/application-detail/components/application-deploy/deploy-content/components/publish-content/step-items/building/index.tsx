@@ -40,9 +40,8 @@ export default function BuildingStep(props: StepItemProps) {
                     title: '确定要重新构建吗?',
                     icon: <ExclamationCircleOutlined />,
                     onOk: async () => {
-                      return retryBuild({ id: deployInfo.id }).then(() => {
-                        onOperate('retryDeployEnd');
-                      });
+                      await retryBuild({ id: deployInfo.id });
+                      onOperate('retryDeployEnd');
                     },
                     onCancel() {
                       onOperate('retryDeployEnd');

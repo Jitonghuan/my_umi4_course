@@ -59,9 +59,8 @@ export default function DeployingStep(props: StepItemProps) {
                       title: '确定要重新部署吗?',
                       icon: <ExclamationCircleOutlined />,
                       onOk: async () => {
-                        return retryDeploy({ id: deployInfo.id }).then(() => {
-                          onOperate('retryDeployEnd');
-                        });
+                        await retryDeploy({ id: deployInfo.id });
+                        onOperate('retryDeployEnd');
                       },
                       onCancel() {
                         onOperate('retryDeployEnd');
@@ -73,7 +72,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )}
               {/* prod 需要确认部署 */}
-              {isLoading && (
+              {envTypeCode === 'prod' && isLoading && (
                 <a
                   style={{ marginTop: 4 }}
                   onClick={() => {
