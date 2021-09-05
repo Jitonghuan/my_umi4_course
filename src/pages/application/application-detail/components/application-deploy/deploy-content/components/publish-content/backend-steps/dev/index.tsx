@@ -10,6 +10,11 @@ import { Steps, Button, Modal } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { retryMerge, retryDeploy, retryBuild } from '@/pages/application/service';
 import { StepsProps } from '../../types';
+import CreateTaskStep from '../../backend-step-items/create-task';
+import MergeReleaseStep from '../../backend-step-items/merge-release';
+import BuildingStep from '../../backend-step-items/building';
+import DeployingStep from '../../backend-step-items/deploying';
+import FinishedStep from '../../backend-step-items/finished';
 
 const { Step } = Steps;
 const { confirm } = Modal;
@@ -43,11 +48,17 @@ export default function DevEnvSteps({ deployInfo, onOperate }: StepsProps) {
     return deployStatusMapping[deployStatus] || 0;
   }, [deployInfo]);
 
+  const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'dev' };
+
   return (
     <>
       <Steps className={`${rootCls}__steps`} current={parseInt(status + '')}>
-        <Step title="创建任务" />
-        <Step
+        <CreateTaskStep {...payload} />
+        <MergeReleaseStep {...payload} />
+        <BuildingStep {...payload} />
+        <DeployingStep {...payload} />
+        <FinishedStep {...payload} />
+        {/* <Step
           title="合并release"
           icon={status === 1.1 && <LoadingOutlined />}
           status={status === 1.2 ? 'error' : undefined}
@@ -162,7 +173,7 @@ export default function DevEnvSteps({ deployInfo, onOperate }: StepsProps) {
             )
           }
         />
-        <Step title="执行完成" />
+        <Step title="执行完成" /> */}
       </Steps>
     </>
   );

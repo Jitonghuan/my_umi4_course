@@ -16,10 +16,11 @@ export interface StepsProps {
 }
 
 // 执行步骤组件
-export interface StepItemProps {
+export interface StepItemProps extends Record<string, any> {
   deployInfo: DeployInfoVO;
   onOperate: (type: OperateType) => void;
   deployStatus: DeployStatusType;
+  envTypeCode: string;
 }
 
 export type OperateType =
