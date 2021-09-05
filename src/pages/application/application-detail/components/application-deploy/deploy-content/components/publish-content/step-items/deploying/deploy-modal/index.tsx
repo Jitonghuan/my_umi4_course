@@ -6,12 +6,12 @@
  */
 
 import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { Steps, Button, Modal, Radio, Spin, message } from 'antd';
+import { Modal, Radio, Spin, message } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { confirmProdDeploy, queryEnvsReq } from '@/pages/application/service';
 import { IProps } from './types';
 
-const DeployModal = ({ envTypeCode, visible, deployInfo, onCancel, onOperate }: IProps) => {
+export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel, onOperate }: IProps) {
   const { deployStatus, deployedEnvs, deployingEnv, deployingHosBatch, jenkinsUrl } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
@@ -197,8 +197,4 @@ const DeployModal = ({ envTypeCode, visible, deployInfo, onCancel, onOperate }: 
       {detail}
     </Modal>
   );
-};
-
-DeployModal.defaultProps = {};
-
-export default DeployModal;
+}

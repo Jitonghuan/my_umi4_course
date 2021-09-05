@@ -1,10 +1,6 @@
-/**
- * PublishContent
- * @description 发布内容
- * @author moting.nq
- * @create 2021-04-15 10:22
- * @modified 2021/08/30 moyan
- */
+// 发布内容
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/09/05 22:57
 
 import React, { useState, useContext } from 'react';
 import { Table, Modal, Button, message, Popconfirm } from 'antd';
@@ -13,19 +9,29 @@ import DetailContext from '@/pages/application/application-detail/context';
 import { tableSchema } from './schema';
 import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
 import { IProps, StepsProps } from './types';
-import DevEnvSteps from './backend-steps/dev';
-import TestEnvSteps from './backend-steps/test';
-import PreEnvSteps from './backend-steps/pre';
-import ProdEnvSteps from './backend-steps/prod';
+import BackendDevEnvSteps from './backend-steps/dev';
+import BackendTestEnvSteps from './backend-steps/test';
+import BackendPreEnvSteps from './backend-steps/pre';
+import BackendProdEnvSteps from './backend-steps/prod';
+import FrontendDevEnvSteps from './frontend-steps/dev';
+import FrontendTestEnvSteps from './frontend-steps/test';
+import FrontendPreEnvSteps from './frontend-steps/pre';
+import FrontendProdEnvSteps from './frontend-steps/prod';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
 
-const StepsMapping: Record<string, (props: StepsProps) => JSX.Element> = {
-  dev: DevEnvSteps,
-  test: TestEnvSteps,
-  pre: PreEnvSteps,
-  prod: ProdEnvSteps,
+const backendStepsMapping: Record<string, (props: StepsProps) => JSX.Element> = {
+  dev: BackendDevEnvSteps,
+  test: BackendTestEnvSteps,
+  pre: BackendPreEnvSteps,
+  prod: BackendProdEnvSteps,
+};
+const frontendStepsMapping: Record<string, (props: StepsProps) => JSX.Element> = {
+  dev: FrontendDevEnvSteps,
+  test: FrontendTestEnvSteps,
+  pre: FrontendPreEnvSteps,
+  prod: FrontendProdEnvSteps,
 };
 
 export default function PublishContent(props: IProps) {
@@ -84,7 +90,8 @@ export default function PublishContent(props: IProps) {
     });
   };
 
-  const CurrSteps = StepsMapping[envTypeCode];
+  const isFrontend = appData?.appType === 'frontend';
+  const CurrSteps = isFrontend ? frontendStepsMapping[envTypeCode] : backendStepsMapping[envTypeCode];
 
   return (
     <div className={rootCls}>
@@ -102,19 +109,21 @@ export default function PublishContent(props: IProps) {
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
               批量退出
             </Button>
-            <Popconfirm
-              title="确定要重启应用吗？"
-              onConfirm={async () => {
-                await restartApp({
-                  appCode,
-                  envCode: deployInfo.envs,
-                  appCategoryCode: appData?.appCategoryCode,
-                });
-                message.success('操作成功！');
-              }}
-            >
-              <Button>重启</Button>
-            </Popconfirm>
+            {!isFrontend && (
+              <Popconfirm
+                title="确定要重启应用吗？"
+                onConfirm={async () => {
+                  await restartApp({
+                    appCode,
+                    envCode: deployInfo.envs,
+                    appCategoryCode: appData?.appCategoryCode,
+                  });
+                  message.success('操作成功！');
+                }}
+              >
+                <Button>重启</Button>
+              </Popconfirm>
+            )}
           </div>
         )}
       </div>

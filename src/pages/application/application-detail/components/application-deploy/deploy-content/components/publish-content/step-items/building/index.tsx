@@ -19,7 +19,7 @@ export default function BuildingStep(props: StepItemProps) {
       {...others}
       title="构建"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : undefined}
+      status={isError ? 'error' : others.status}
       description={
         (isError || isLoading) && (
           <>
