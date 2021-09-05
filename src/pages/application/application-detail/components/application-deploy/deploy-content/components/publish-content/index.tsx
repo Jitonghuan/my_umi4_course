@@ -8,7 +8,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { tableSchema } from './schema';
 import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
-import { IProps, StepsProps } from './types';
+import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import BackendTestEnvSteps from './backend-steps/test';
 import BackendPreEnvSteps from './backend-steps/pre';
@@ -21,13 +21,13 @@ import './index.less';
 
 const rootCls = 'publish-content-compo';
 
-const backendStepsMapping: Record<string, (props: StepsProps) => JSX.Element> = {
+const backendStepsMapping: Record<string, typeof BackendDevEnvSteps> = {
   dev: BackendDevEnvSteps,
   test: BackendTestEnvSteps,
   pre: BackendPreEnvSteps,
   prod: BackendProdEnvSteps,
 };
-const frontendStepsMapping: Record<string, (props: StepsProps) => JSX.Element> = {
+const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
   dev: FrontendDevEnvSteps,
   test: FrontendTestEnvSteps,
   pre: FrontendPreEnvSteps,
