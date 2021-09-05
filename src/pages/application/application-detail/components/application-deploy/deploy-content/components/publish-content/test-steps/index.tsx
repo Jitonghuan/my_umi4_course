@@ -17,6 +17,13 @@ const { confirm } = Modal;
 
 const rootCls = 'publish-content-compo';
 
+// pushFeResource
+// pushFeResourceErr
+// pushVersion
+// pushVersionErr
+// verifyWait
+// verifyFailed
+
 const deployStatusMapping: Record<string, Status> = {
   // 合并release
   merging: 1.1,
