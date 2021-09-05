@@ -10,15 +10,23 @@ import React, { useState, useContext } from 'react';
 import { Table, Modal, Button, message, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import ProdSteps from './prod-steps';
-import TestEnvSteps from './test-steps';
-import OtherEnvSteps from './other-env-steps';
 import { tableSchema } from './schema';
 import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
-import { IProps } from './types';
+import { IProps, StepsProps } from './types';
+import DevEnvSteps from './backend-steps/dev';
+import TestEnvSteps from './backend-steps/test';
+import PreEnvSteps from './backend-steps/pre';
+import ProdEnvSteps from './backend-steps/prod';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
+
+const StepsMapping: Record<string, (props: StepsProps) => JSX.Element> = {
+  dev: DevEnvSteps,
+  test: TestEnvSteps,
+  pre: PreEnvSteps,
+  prod: ProdEnvSteps,
+};
 
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
@@ -76,17 +84,13 @@ export default function PublishContent(props: IProps) {
     });
   };
 
+  const CurrSteps = StepsMapping[envTypeCode];
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      {envTypeCode === 'prod' ? (
-        <ProdSteps deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
-      ) : envTypeCode === 'test' ? (
-        <TestEnvSteps deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
-      ) : (
-        <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} envTypeCode={envTypeCode} />
-      )}
+      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} />
 
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>

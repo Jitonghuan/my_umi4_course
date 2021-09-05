@@ -1,6 +1,6 @@
 /**
- * TestEnvSteps
- * @description 测试环境-发布步骤
+ * OtherEnvSteps
+ * @description 非生产环境-发布步骤
  * @author moting.nq
  * @create 2021-04-25 15:06
  */
@@ -9,44 +9,33 @@ import React, { useMemo } from 'react';
 import { Steps, Button, Modal } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { retryMerge, retryDeploy, retryBuild } from '@/pages/application/service';
-import { IProps, Status } from './types';
-import QualityCheckResult from './quality-check-result';
+import { StepsProps } from '../../types';
 
 const { Step } = Steps;
 const { confirm } = Modal;
 
 const rootCls = 'publish-content-compo';
 
-// pushFeResource
-// pushFeResourceErr
-// pushVersion
-// pushVersionErr
-// verifyWait
-// verifyFailed
-
-const deployStatusMapping: Record<string, Status> = {
+const deployStatusMapping: Record<string, number> = {
   // 合并release
   merging: 1.1,
   mergeErr: 1.2,
   conflict: 1.2,
-  // 单测卡点
-  qualityChecking: 2.1,
-  qualityFailed: 2.2,
   // 构建
-  building: 3.1,
-  buildErr: 3.2,
-  buildAborted: 3.2,
+  building: 2.1,
+  buildErr: 2.2,
+  buildAborted: 2.2,
   // 部署
-  deploying: 4.1,
-  deployErr: 4.2,
-  deployAborted: 4.2,
+  deploying: 3.1,
+  deployErr: 3.2,
+  deployAborted: 3.2,
   // 完成
-  deployFinish: 5,
-  deployed: 5,
+  deployFinish: 4,
+  deployed: 4,
 };
 
-export default function TestEnvSteps({ deployInfo, onOperate }: IProps) {
-  const status = useMemo<Status>(() => {
+export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
+  const status = useMemo(() => {
     const { deployStatus } = deployInfo || {};
 
     if (!deployInfo || !deployInfo.id) return 0;
@@ -85,26 +74,13 @@ export default function TestEnvSteps({ deployInfo, onOperate }: IProps) {
           }
         />
         <Step
-          title="质量卡点"
+          title="构建"
           icon={status === 2.1 && <LoadingOutlined />}
           status={status === 2.2 ? 'error' : undefined}
-          description={<QualityCheckResult visible={status >= 2.2} deployInfo={deployInfo} />}
-        />
-        <Step
-          title="构建"
-          icon={status === 3.1 && <LoadingOutlined />}
-          status={status === 3.2 ? 'error' : undefined}
           description={
-            (status === 3.2 || status === 3.1) && (
+            (status === 2.2 || status === 2.1) && (
               <>
-                {deployInfo.jenkinsUrl && (
-                  <div style={{ marginTop: 2 }}>
-                    <a target="_blank" href={deployInfo.jenkinsUrl}>
-                      查看Jenkins详情
-                    </a>
-                  </div>
-                )}
-                {status === 3.2 && (
+                {status === 2.2 && (
                   <Button
                     style={{ marginTop: 4 }}
                     onClick={() => {
@@ -133,26 +109,20 @@ export default function TestEnvSteps({ deployInfo, onOperate }: IProps) {
         />
         <Step
           title="部署"
-          icon={status === 4.1 && <LoadingOutlined />}
-          status={status === 4.2 ? 'error' : undefined}
+          icon={status === 3.1 && <LoadingOutlined />}
+          status={status === 3.2 ? 'error' : undefined}
           description={
-            (status === 4.2 || status === 4.1) && (
+            (status === 3.2 || status === 3.1) && (
               <>
-                {status === 4.2 && (
+                {deployInfo.jenkinsUrl && (
+                  <div style={{ marginTop: 2 }}>
+                    <a target="_blank" href={deployInfo.jenkinsUrl}>
+                      查看Jenkins详情
+                    </a>
+                  </div>
+                )}
+                {status === 3.2 && (
                   <>
-                    {deployInfo.deployErrInfo && (
-                      <div
-                        style={{ marginTop: 2 }}
-                        onClick={() => {
-                          Modal.info({
-                            content: deployInfo.deployErrInfo,
-                            title: '部署错误详情',
-                          });
-                        }}
-                      >
-                        部署错误详情
-                      </div>
-                    )}
                     <Button
                       style={{ marginTop: 4 }}
                       onClick={() => {
