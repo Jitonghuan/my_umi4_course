@@ -86,6 +86,11 @@ export const queryConfigListUrl = `${ds.apiPrefix}/appManage/config/version/list
 /** POST 导入配置 */
 export const configUploadUrl = `${ds.apiPrefix}/appManage/config/upload`;
 
+/** GET 下载镜像 */
+export const downloadImage = `${ds.apiPrefix}/releaseManage/deploy/downloadImage`;
+/** Post 上传镜像*/
+export const offlineDeploy = `${ds.apiPrefix}/releaseManage/deploy/offlineDeploy`;
+
 /** POST 重启应用 */
 export const restartAppUrl = `${ds.apiPrefix}/appManage/restart`;
 

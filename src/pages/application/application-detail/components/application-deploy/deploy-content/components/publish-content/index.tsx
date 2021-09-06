@@ -43,7 +43,6 @@ export default function PublishContent(props: IProps) {
   // 重新部署
   const handleReDeploy = () => {
     onOperate('retryDeployStart');
-
     Modal.confirm({
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,
