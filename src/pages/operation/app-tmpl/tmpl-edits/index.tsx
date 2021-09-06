@@ -219,6 +219,8 @@ export default function TaskEditor(props: TmplListProps) {
               <div style={{ fontSize: 18 }}>可配置项：</div>
               <Form.Item name="tmplConfigurableItem">
                 <EditorTable
+                  value={source}
+                  onChange={handleChange}
                   columns={[
                     { title: 'Key', dataIndex: 'key', colProps: { width: 240 } },
                     {
@@ -227,7 +229,6 @@ export default function TaskEditor(props: TmplListProps) {
                       colProps: { width: 280 },
                     },
                   ]}
-                  disabled={isDisabled}
                 />
                 <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
                 <Form.Item name="remark">
