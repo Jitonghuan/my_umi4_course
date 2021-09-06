@@ -9,7 +9,6 @@ export interface HeaderTabsProps {
 }
 
 export default function HeaderTabs(props: HeaderTabsProps) {
-  // TODO: 路由随便搞的，等设计稿出来记得改
   return (
     <FilterCard className="layout-compact">
       <Tabs activeKey={props.activeKey} onChange={(next) => props.history.push(`/matrix/test/workspace/${next}`)}>
