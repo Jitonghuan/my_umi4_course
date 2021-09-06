@@ -10,18 +10,26 @@ import { history } from 'umi';
 import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { Input, Upload, Button, Form, Radio, Row, Col, Select, Space, Modal } from 'antd';
-import './index.less';
+// import './index.less';
 
-export default function showResourceModal(props: any) {
-  const [value, setValue] = React.useState(1);
+/** 定义接口获取值 */
+export interface TmplEdit extends Record<string, any> {
+  isModalVisible: boolean;
+  handleCancel: () => any;
+  handleOk: () => any;
+}
+// 获取定义的接口的值
+export default function showResourceModal(props: TmplEdit) {
+  const { isModalVisible, handleCancel, handleOk } = props;
   const { Option } = Select;
   const [applyOptions, setApplyOptions] = useState<any[]>([]); //申请项选择
   const [ascription, setAscription] = useState<any[]>([]); //归属选择项
   const [businessLine, setBusinessLine] = useState<any[]>([]); //业务线选择
   const [specifications, setSpecifications] = useState<any[]>([]); //规格选项
   const [diskSize, setDiskSize] = useState<any[]>([]); //磁盘选项
+
   return (
-    <Modal>
+    <Modal visible={isModalVisible} onCancel={handleCancel} onOk={handleOk}>
       <div className="ticketApply">
         <Form style={{ marginTop: '6%', marginBottom: '8%', marginRight: '2%' }} size="large">
           <Form.Item name="applyItem" label="应用部署" labelCol={{ span: 8 }}>

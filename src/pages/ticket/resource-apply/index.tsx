@@ -1,6 +1,6 @@
 //资源申请页
 // @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/07/31 17:00
+// @create 2021/08/31 17:00
 
 import React from 'react';
 import PageContainer from '@/components/page-container';
@@ -9,8 +9,8 @@ import { UploadOutlined, PlusOutlined, MinusCircleOutlined } from '@ant-design/i
 import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
-import showResourceModal from './resource-show';
-import { Input, Upload, Button, Form, Radio, Row, Col, Select, Space } from 'antd';
+import ShowResourceModal from './resource-show';
+import { Input, Upload, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 /** Modal页回显数据 */
 export interface showResource extends Record<string, any> {
@@ -43,10 +43,17 @@ export default function applyResource() {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
 
   return (
     <PageContainer>
-      <showResourceModal></showResourceModal>
+      <ShowResourceModal
+        isModalVisible={isModalVisible}
+        handleCancel={handleCancel}
+        handleOk={handleOk}
+      ></ShowResourceModal>
       <FilterCard>
         <span>资源申请</span>
       </FilterCard>
