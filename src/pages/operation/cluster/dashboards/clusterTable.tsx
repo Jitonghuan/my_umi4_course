@@ -2,37 +2,84 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import './index.less';
+import { getRequest } from '@/utils/request';
+import { getClustersEsDataTable } from './service';
 
 export interface ChartCaseListProps {
-  data: any;
   loading?: boolean;
 }
 export default function ClusterTable(props: ChartCaseListProps) {
-  const { data, loading } = props;
-  const countList: object[] = [];
-  for (var i in data) {
-    let dataSource = {
-      name: i,
-      count: data[i],
-      // cluster: /^([ABCD])-/g.exec(i)?.[1],
-    };
-    countList.push(dataSource);
-  }
+  const { loading } = props;
+  const [clusterTableData, setClusterTableData] = useState<any[]>([]); //表格数据
+  useEffect(() => {
+    getRequest(getClustersEsDataTable).then((reslut) => {
+      if (reslut.success) {
+        let data = reslut.data;
+        setClusterTableData(data);
+      }
+    });
+  }, []);
   const columns = [
     {
-      title: '分类',
+      title: '院区',
       dataIndex: 'name',
     },
     {
-      title: '访问量',
-      dataIndex: 'count',
-      width: 100,
+      title: 'A集群',
+      dataIndex: 'clusterA',
       sorter: {
-        compare: (a: any, b: any) => a.count - b.count,
+        compare: (a: any, b: any) => a.clusterA - b.clusterA,
+        // multiple: 1,
       },
+    },
+    {
+      title: 'B集群',
+      dataIndex: 'clusterB',
+      sorter: {
+        compare: (a: any, b: any) => a.clusterB - b.clusterB,
+        // multiple: 2,
+      },
+    },
+  ];
+  const countList = [
+    {
+      key: 1,
+      name: '之江',
+      clusterA: clusterTableData.zj_a,
+      clusterB: clusterTableData.zj_b,
+    },
+    {
+      key: 2,
+      name: '之江无线',
+      clusterA: clusterTableData.zjwx_a,
+      clusterB: clusterTableData.zjwx_b,
+    },
+    {
+      key: 3,
+      name: '余杭',
+      clusterA: clusterTableData.yh_a,
+      clusterB: clusterTableData.yh_b,
+    },
+    {
+      key: 4,
+      name: '余杭无线',
+      clusterA: clusterTableData.yhwx_a,
+      clusterB: clusterTableData.yhwx_b,
+    },
+    {
+      key: 5,
+      name: '城站庆春',
+      clusterA: clusterTableData.czqc_a,
+      clusterB: clusterTableData.czqc_b,
+    },
+    {
+      key: 6,
+      name: '城站庆春无线',
+      clusterA: clusterTableData.czqcwx_a,
+      clusterB: clusterTableData.czqcwx_b,
     },
   ];
 
@@ -45,15 +92,8 @@ export default function ClusterTable(props: ChartCaseListProps) {
       <header>
         <h3>A/B集群流量表</h3>
       </header>
-      <div>
-        <Table
-          bordered
-          columns={columns}
-          dataSource={countList}
-          pagination={false}
-          size="small"
-          scroll={{ y: tableHeight }}
-        />
+      <div className="clusterTable">
+        <Table bordered columns={columns} dataSource={countList} pagination={false} scroll={{ y: tableHeight }} />
       </div>
     </section>
   );

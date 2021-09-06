@@ -3,7 +3,7 @@
 // @create 2021/09/05 22:57
 
 import React, { useState, useContext } from 'react';
-import { Table, Modal, Button, message, Popconfirm } from 'antd';
+import { Modal, Button, message, Popconfirm, Table } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { tableSchema } from './schema';
@@ -43,6 +43,7 @@ export default function PublishContent(props: IProps) {
   // 重新部署
   const handleReDeploy = () => {
     onOperate('retryDeployStart');
+
     Modal.confirm({
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,

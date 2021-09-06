@@ -79,6 +79,7 @@ export default function DemoPageTb(porps: any) {
           envCodes: envCode,
           tmplConfigurableItem: arr,
           jvm: jvm,
+          remark: tmplresult.remark,
         });
         setIsDeployment(tmplresult.templateType);
         changeAppCategory(tmplresult.appCategoryCode);
@@ -157,6 +158,7 @@ export default function DemoPageTb(porps: any) {
         envCodes: valArr || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         jvm: value?.jvm,
+        remark: value?.remark,
         // templateCode:templateCode
       },
     }).then((resp: any) => {
@@ -219,6 +221,10 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
+              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
+              </Form.Item>
               {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
               {isDeployment == 'deployment' ? (
                 <Form.Item name="jvm">
@@ -232,7 +238,7 @@ export default function DemoPageTb(porps: any) {
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '80px' }}
+                style={{ marginTop: '50px' }}
               >
                 <Select
                   showSearch
