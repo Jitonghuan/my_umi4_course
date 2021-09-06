@@ -1,4 +1,4 @@
-// data formatter
+// 应用模版编辑页
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
@@ -57,8 +57,7 @@ export default function TaskEditor(props: TmplListProps) {
       templateValue: initData?.templateValue,
       remark: initData?.remark,
     };
-    console.log('获取到的初始化数据：', initData?.envCode);
-    console.log('=-=-=-=-', initData);
+
     let arr = [];
     let jvm = '';
 
@@ -219,6 +218,8 @@ export default function TaskEditor(props: TmplListProps) {
               <div style={{ fontSize: 18 }}>可配置项：</div>
               <Form.Item name="tmplConfigurableItem">
                 <EditorTable
+                  value={source}
+                  onChange={handleChange}
                   columns={[
                     { title: 'Key', dataIndex: 'key', colProps: { width: 240 } },
                     {
@@ -227,7 +228,6 @@ export default function TaskEditor(props: TmplListProps) {
                       colProps: { width: 280 },
                     },
                   ]}
-                  disabled={isDisabled}
                 />
                 <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
                 <Form.Item name="remark">
