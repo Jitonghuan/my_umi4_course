@@ -104,6 +104,7 @@ export default function DeployContent(props: DeployContentProps) {
     timerHandle('do', true);
   };
 
+  // 操作开始时终止定时请求，操作结束后继续
   const onOperate = (operateType: string) => {
     if (operateType.endsWith('Start')) {
       timerHandle('stop');

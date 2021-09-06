@@ -33,10 +33,8 @@ export default function ApplicationDetail(props: IProps) {
     return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
 
-  useEffect(() => {
-    // 每次切换进来需要重置 环境 tab 缓存
-    sessionStorage.removeItem('__init_env_tab__');
-  }, [appId, appCode]);
+  // 页面销毁时清空缓存
+  useEffect(() => () => sessionStorage.removeItem('__init_env_tab__'), []);
 
   // 过滤掉不显示的子页面 tab
   const filteredTabList = useMemo(() => {

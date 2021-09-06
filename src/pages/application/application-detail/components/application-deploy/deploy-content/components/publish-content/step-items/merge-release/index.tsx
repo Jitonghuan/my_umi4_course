@@ -14,6 +14,14 @@ export default function MergeReleaseStep(props: StepItemProps) {
   const isLoading = deployStatus === 'merging';
   const isError = deployStatus === 'mergeErr' || deployStatus === 'conflict';
 
+  const retryMergeClick = async () => {
+    try {
+      await retryMerge({ id: deployInfo.id });
+    } finally {
+      onOperate('mergeReleaseRetryEnd');
+    }
+  };
+
   return (
     <Steps.Step
       {...others}
@@ -30,12 +38,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
                 </a>
               </div>
             )}
-            <Button
-              style={{ marginTop: 4 }}
-              onClick={() => {
-                retryMerge({ id: deployInfo.id }).finally(() => onOperate('mergeReleaseRetryEnd'));
-              }}
-            >
+            <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
               重试
             </Button>
           </>

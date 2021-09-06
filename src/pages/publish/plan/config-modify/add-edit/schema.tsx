@@ -1,8 +1,7 @@
 import React from 'react';
 import { Tag } from 'antd';
 import { statusType } from '@/pages/publish/constant';
-import { getEnvName } from '@/utils';
-import moment from 'moment';
+import { getEnvName, datetimeCellRender } from '@/utils';
 
 export const createTableColumns = ({
   categoryData,
@@ -63,9 +62,7 @@ export const createTableColumns = ({
     dataIndex: 'preDeployTime',
     key: 'preDeployTime',
     width: '8%',
-    render: (text: string) => {
-      return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
-    },
+    render: datetimeCellRender
   },
   {
     title: '需求ID',
@@ -83,8 +80,6 @@ export const createTableColumns = ({
     dataIndex: 'gmtCreate',
     key: 'gmtCreate',
     width: '8%',
-    render: (text: string) => {
-      return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
-    },
+    render: datetimeCellRender
   },
 ];

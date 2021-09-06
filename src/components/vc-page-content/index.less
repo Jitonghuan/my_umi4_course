@@ -4,6 +4,10 @@
   overflow: auto;
   padding: 0 12px;
 
+  .vc-error-page-container {
+    margin: 0;
+  }
+
   &.is-flex {
     height: 100%;
     overflow: hidden;
@@ -15,33 +19,6 @@
 
       &.x-relative {
         position: relative;
-      }
-
-      // 页面顶部的 card tab 样式
-      .ant-card-body > .ant-tabs:first-child {
-        flex: 0 0 auto;
-
-        .ant-tabs-nav-list .ant-tabs-tab:first-child {
-          border-left: 0;
-        }
-
-        + .tab-content {
-          flex: 1 1 0;
-          overflow: auto;
-        }
-      }
-
-      // 唯一的 tab 样式
-      .ant-card-body > .ant-tabs:only-child {
-        height: 100%;
-
-        .ant-tabs-content-holder {
-          flex: 1 1 0;
-        }
-
-        .ant-tabs-content {
-          height: 100%;
-        }
       }
     }
   }
@@ -88,6 +65,34 @@
       flex-direction: column;
       padding: 0;
       height: 100%;
+    }
+  }
+
+  // 页面顶部的 card tab 样式
+  .ant-card-body {
+    > .ant-tabs:first-child {
+      flex: 0 0 auto;
+
+      .ant-tabs-nav-list .ant-tabs-tab:first-child {
+        border-left: 0;
+      }
+
+      + .tab-content {
+        flex: 1 1 0;
+        overflow: auto;
+      }
+    }
+
+    > .ant-tabs:only-child {
+      height: 100%;
+
+      .ant-tabs-content-holder {
+        flex: 1 1 0;
+      }
+
+      .ant-tabs-content {
+        height: 100%;
+      }
     }
   }
 }

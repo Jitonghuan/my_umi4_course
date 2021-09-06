@@ -1,9 +1,9 @@
 import React from 'react';
-import moment, { Moment } from 'moment';
+import { datetimeCellRender } from '@/utils';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { Space, Tag, Popconfirm } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { Link, history } from 'umi';
+import { Link } from 'umi';
 import { statusType } from '../constant';
 import { IPlanItem } from '../typing';
 
@@ -182,9 +182,7 @@ export const createTableColumns = (params: {
       key: 'preDeployTime',
       width: 160,
       // width: '7%',
-      render: (text) => {
-        return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
-      },
+      render: datetimeCellRender,
     },
     {
       title: '创建人',

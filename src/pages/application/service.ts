@@ -150,6 +150,19 @@ export const restartApplication = `${ds.apiPrefix}/releaseManage/restartApplicat
 /** GET 查询卡点任务结果 */
 export const qualityGuardInfo = `${ds.apiPrefix}/qc/qualitycontrol/qualityGuardInfo`;
 
+// -------- 前端发布相关接口
+/** POST 重试推送资源 */
+export const rePushFeResourceUrl = `${ds.apiPrefix}/releaseManage/deploy/rePushFeResource`;
+
+/** POST 重试推送前端版本 */
+export const rePushFeVersionUrl = `${ds.apiPrefix}/releaseManage/deploy/rePushFeVersion`;
+
+/** POST 前端发布验证确认 */
+export const fePublishVerifyUrl = `${ds.apiPrefix}/releaseManage/deploy/fePublishVerify`;
+
+/** POST 前端版本回滚 */
+export const rollbackFeAppUrl = `${ds.apiPrefix}/appManage/rollbackFeApp`;
+
 /** 查询应用列表 (返回的数据没有分页) */
 export const queryApps = async (
   params: Partial<AppItemVO> & {
@@ -517,3 +530,15 @@ export const queryEnvsReq = (params: {
 
 /** 重启应用 */
 export const restartApp = async (data: any) => postRequest(restartAppUrl, { data });
+
+/** POST 重试推送资源 */
+export const rePushFeResource = async (data: any) => postRequest(rePushFeResourceUrl, { data });
+
+/** POST 重试推送前端版本 */
+export const rePushFeVersion = async (data: any) => postRequest(rePushFeVersionUrl, { data });
+
+/** POST 前端发布验证确认 */
+export const fePublishVerify = async (data: any) => postRequest(fePublishVerifyUrl, { data });
+
+/** POST 前端版本回滚 */
+export const rollbackFeApp = async (data: any) => postRequest(rollbackFeAppUrl, { data });
