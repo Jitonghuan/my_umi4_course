@@ -39,8 +39,10 @@ export default function FEVersions() {
           <section key={envTypeItem.value}>
             <header>{envTypeItem.label}</header>
             <div className="version-card-list clearfix">
-              {!envCodeList.length && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />}
               {isLoading && <Spin className="block-loading" />}
+              {!isLoading && !envCodeList.length && (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />
+              )}
               {envCodeList.map((envCodeItem) => {
                 const versionList = feVersionData[envCodeItem.envCode] || [];
                 const latestVersion = versionList.find((n) => n.isActive === 0);
@@ -67,7 +69,7 @@ export default function FEVersions() {
                         danger
                         size="small"
                         loading={isVersionLoading}
-                        // disabled={!latestVersion}
+                        disabled={!latestVersion}
                         onClick={() => handleRollbackClick(envCodeItem)}
                       >
                         回滚

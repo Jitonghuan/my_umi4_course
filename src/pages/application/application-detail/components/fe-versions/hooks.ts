@@ -23,7 +23,7 @@ export function useFeVersions(appData: AppItemVO): [Record<string, FeVersionItem
       const result = await getRequest(APIS.queryFeVersions, {
         data: {
           appCode: appData.appCode,
-          // appCategoryCode: appData.appCategoryCode,
+          appCategoryCode: appData.appCategoryCode,
           pageSize: 50,
           pageIndex: 1,
         },
