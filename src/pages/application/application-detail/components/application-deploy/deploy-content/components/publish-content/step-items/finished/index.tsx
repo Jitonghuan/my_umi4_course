@@ -9,13 +9,13 @@ import { downloadImage } from '@/pages/application/service';
 
 export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
-
+  console.log('status:', deployStatus);
   return (
     <Steps.Step
       {...others}
       title="执行完成"
       description={
-        deployStatus === 'deployed' &&
+        deployStatus === 'deployFinish' &&
         deployInfo.envs?.includes('zs-prd') && (
           <Button download style={{ marginTop: 4 }} target="_blank" href={`${downloadImage}?id=${deployInfo.id}`}>
             下载镜像
