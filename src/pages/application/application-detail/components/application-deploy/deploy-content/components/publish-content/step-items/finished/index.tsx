@@ -2,14 +2,15 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 21:09
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Steps, Button } from 'antd';
 import { StepItemProps } from '../../types';
 import { downloadImage } from '@/pages/application/service';
 
 export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
-  console.log('status:', deployStatus);
+  const [downLoadStatus, setDownLoadStatus] = useState(false);
+
   return (
     <Steps.Step
       {...others}
@@ -17,7 +18,14 @@ export default function FinishedStep(props: StepItemProps) {
       description={
         deployStatus === 'deployFinish' &&
         deployInfo.envs?.includes('zs-prd') && (
-          <Button download style={{ marginTop: 4 }} target="_blank" href={`${downloadImage}?id=${deployInfo.id}`}>
+          <Button
+            download
+            style={{ marginTop: 4 }}
+            target="_blank"
+            href={`${downloadImage}?id=${deployInfo.id}`}
+            disabled={downLoadStatus}
+            onClick={() => setDownLoadStatus(true)}
+          >
             下载镜像
           </Button>
         )
