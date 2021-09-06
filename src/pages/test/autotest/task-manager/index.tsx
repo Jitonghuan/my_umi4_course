@@ -10,7 +10,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import TaskEditor from '../_components/task-editor';
 import * as APIS from '../service';
 import { postRequest } from '@/utils/request';
-import { EditorMode, TaskItemVO } from '../interfaces';
+import { TaskItemVO } from '../interfaces';
 import { useTaskList } from './hooks';
 import ReportList from './report-list';
 import './index.less';

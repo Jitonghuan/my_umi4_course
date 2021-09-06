@@ -5,10 +5,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRequest } from '@/utils/request';
 import * as APIS from './service';
-import { SelectOptions, ProjectItemVO, CaseItemVO } from './interfaces';
+import { ProjectItemVO, CaseItemVO } from './interfaces';
 
 export function useEnvOptions() {
-  const [data, setData] = useState<SelectOptions[]>([]);
+  const [data, setData] = useState<IOption[]>([]);
 
   useEffect(() => {
     getRequest(APIS.envList).then((result) => {
@@ -26,11 +26,11 @@ export function useEnvOptions() {
 
 // 当前可选的项目列表
 export function useProjectOptions(): [
-  SelectOptions<number, ProjectItemVO>[],
-  React.Dispatch<React.SetStateAction<SelectOptions<number, ProjectItemVO>[]>>,
+  IOption<number, ProjectItemVO>[],
+  React.Dispatch<React.SetStateAction<IOption<number, ProjectItemVO>[]>>,
   () => void,
 ] {
-  const [data, setData] = useState<SelectOptions<number, ProjectItemVO>[]>([]);
+  const [data, setData] = useState<IOption<number, ProjectItemVO>[]>([]);
 
   const loadData = useCallback(() => {
     getRequest(APIS.getProjects).then((result) => {
