@@ -14,6 +14,14 @@ export default function MergeMasterStep(props: StepItemProps) {
   const isLoading = deployStatus === 'mergingMaster';
   const isError = deployStatus === 'mergeMasterErr';
 
+  const retryMergeMasterClick = async () => {
+    try {
+      await reMergeMaster({ id: deployInfo.id });
+    } finally {
+      onOperate('mergeMasterRetryEnd');
+    }
+  };
+
   return (
     <Steps.Step
       {...others}
@@ -30,12 +38,7 @@ export default function MergeMasterStep(props: StepItemProps) {
                 </a>
               </div>
             )}
-            <Button
-              style={{ marginTop: 4 }}
-              onClick={() => {
-                reMergeMaster({ id: deployInfo.id }).finally(() => onOperate('mergeMasterRetryEnd'));
-              }}
-            >
+            <Button style={{ marginTop: 4 }} onClick={retryMergeMasterClick}>
               重试
             </Button>
           </>

@@ -37,4 +37,15 @@ export type OperateType =
   | 'deleteFeatureRetryEnd'
   /** 批量退出 */
   | 'batchExitStart'
-  | 'batchExitEnd';
+  | 'batchExitEnd'
+  // 前端发布相关
+  | 'restartAppStart'
+  | 'restartAppEnd'
+  | 'rePushFeResourceStart'
+  | 'rePushFeResourceEnd'
+  | 'rePushFeVersionStart'
+  | 'rePushFeVersionEnd'
+  | 'fePublishVerifyStart'
+  | 'fePublishVerifyEnd'
+  | 'rollbackFeAppStart'
+  | 'rollbackFeAppEnd';

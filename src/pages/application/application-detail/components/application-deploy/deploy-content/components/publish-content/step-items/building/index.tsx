@@ -14,6 +14,22 @@ export default function BuildingStep(props: StepItemProps) {
   const isLoading = deployStatus === 'building';
   const isError = deployStatus === 'buildErr' || deployStatus === 'buildAborted';
 
+  const handleRebuildClick = () => {
+    onOperate('retryDeployStart');
+
+    Modal.confirm({
+      title: '确定要重新构建吗?',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        await retryBuild({ id: deployInfo.id });
+        onOperate('retryDeployEnd');
+      },
+      onCancel: () => {
+        onOperate('retryDeployEnd');
+      },
+    });
+  };
+
   return (
     <Steps.Step
       {...others}
@@ -31,24 +47,7 @@ export default function BuildingStep(props: StepItemProps) {
               </div>
             )}
             {isError && (
-              <Button
-                style={{ marginTop: 4 }}
-                onClick={() => {
-                  onOperate('retryDeployStart');
-
-                  Modal.confirm({
-                    title: '确定要重新构建吗?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk: async () => {
-                      await retryBuild({ id: deployInfo.id });
-                      onOperate('retryDeployEnd');
-                    },
-                    onCancel() {
-                      onOperate('retryDeployEnd');
-                    },
-                  });
-                }}
-              >
+              <Button style={{ marginTop: 4 }} onClick={handleRebuildClick}>
                 重新构建
               </Button>
             )}

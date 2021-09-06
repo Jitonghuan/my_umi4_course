@@ -25,9 +25,22 @@ a:focus {
   height: 100%;
 }
 
+.flex {
+  display: flex;
+  align-items: center;
+}
+
 .flex-inline {
   display: inline-flex;
   align-items: center;
+}
+
+.flex,
+.flex-inline {
+  > button + button,
+  > a + a {
+    margin-left: 8px;
+  }
 }
 
 .flex-air {

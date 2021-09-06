@@ -18,6 +18,29 @@ export default function DeployingStep(props: StepItemProps) {
 
   const [deployVisible, setDeployVisible] = useState(false);
 
+  const handleShowErrorDetail = () => {
+    Modal.info({
+      content: deployInfo.deployErrInfo,
+      title: '部署错误详情',
+    });
+  };
+
+  const handleReDeployClick = () => {
+    onOperate('retryDeployStart');
+
+    Modal.confirm({
+      title: '确定要重新部署吗?',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        await retryDeploy({ id: deployInfo.id });
+        onOperate('retryDeployEnd');
+      },
+      onCancel() {
+        onOperate('retryDeployEnd');
+      },
+    });
+  };
+
   return (
     <>
       <Steps.Step
@@ -30,15 +53,7 @@ export default function DeployingStep(props: StepItemProps) {
             <>
               {/* dev  显示错误详情 */}
               {isError && envTypeCode === 'dev' && deployInfo.deployErrInfo && (
-                <div
-                  style={{ marginTop: 2 }}
-                  onClick={() => {
-                    Modal.info({
-                      content: deployInfo.deployErrInfo,
-                      title: '部署错误详情',
-                    });
-                  }}
-                >
+                <div style={{ marginTop: 2 }} onClick={handleShowErrorDetail}>
                   部署错误详情
                 </div>
               )}
@@ -51,23 +66,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </div>
               )}
               {isError && (
-                <Button
-                  style={{ marginTop: 4 }}
-                  onClick={() => {
-                    onOperate('retryDeployStart');
-                    Modal.confirm({
-                      title: '确定要重新部署吗?',
-                      icon: <ExclamationCircleOutlined />,
-                      onOk: async () => {
-                        await retryDeploy({ id: deployInfo.id });
-                        onOperate('retryDeployEnd');
-                      },
-                      onCancel() {
-                        onOperate('retryDeployEnd');
-                      },
-                    });
-                  }}
-                >
+                <Button style={{ marginTop: 4 }} onClick={handleReDeployClick}>
                   重新部署
                 </Button>
               )}
@@ -86,6 +85,7 @@ export default function DeployingStep(props: StepItemProps) {
           )
         }
       />
+
       <DeployModal
         visible={deployVisible}
         deployInfo={deployInfo}
