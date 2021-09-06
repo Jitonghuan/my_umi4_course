@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Table, Modal, Form, Input, Button, DatePicker } from 'antd';
-import moment from 'moment';
+import { datetimeCellRender } from '@/utils';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import * as APIS from '../app-tmpl/service';
@@ -163,7 +163,7 @@ export default function Operation() {
           <Table.Column
             title="操作时间"
             dataIndex="operateTime"
-            render={(v: string) => (v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '--')}
+            render={datetimeCellRender}
           />
           <Table.Column
             title="操作"

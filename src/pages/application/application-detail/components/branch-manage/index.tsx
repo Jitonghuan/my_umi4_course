@@ -8,6 +8,7 @@ import { Button, message, Form, Input, Table, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
+import { datetimeCellRender } from '@/utils';
 import BranchEditor from './branch-editor';
 import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
@@ -83,7 +84,7 @@ export default function BranchManage() {
           title="创建时间"
           dataIndex="gmtCreate"
           width={160}
-          render={(val: string) => (val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '')}
+          render={datetimeCellRender}
         />
         <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
         <Table.Column title="创建人" dataIndex="createUser" width={100} />
