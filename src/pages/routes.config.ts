@@ -29,7 +29,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/test`,
-    redirect: `${PAGE_PREFIX}/test/data-factory/records`,
+    redirect: `${PAGE_PREFIX}/test/data-factory/template`,
   },
   {
     path: `${PAGE_PREFIX}/monitor`,
@@ -414,15 +414,15 @@ export default [
             path: 'functions',
             name: '函数管理',
             key: 'scripts',
-            component: '@/pages/test/scripts/functions'
+            component: '@/pages/test/scripts/functions',
           },
           {
             path: 'sqls',
             name: 'SQL管理',
             key: 'scripts',
-            component: '@/pages/test/scripts/sqls'
+            component: '@/pages/test/scripts/sqls',
           },
-        ]
+        ],
       },
       {
         path: 'autotest',
