@@ -3,7 +3,7 @@
 // @create 2021/09/06 10:43
 
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Form, Modal, message, } from 'antd';
+import { Form, Modal, message } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from './service';
 import { postRequest } from '@/utils/request';
@@ -30,9 +30,8 @@ export default function FuncEditor(props: FuncEditorProps) {
     if (mode === 'ADD') return;
 
     editForm.setFieldsValue({
-      funcBody: initData?.func || ''
+      funcBody: initData?.func || '',
     });
-
   }, [mode]);
 
   const handleSubmit = useCallback(async () => {
@@ -65,7 +64,6 @@ export default function FuncEditor(props: FuncEditorProps) {
     } finally {
       setPending(false);
     }
-
   }, [mode, editForm]);
 
   return (
@@ -80,7 +78,7 @@ export default function FuncEditor(props: FuncEditorProps) {
     >
       <Form form={editForm}>
         <Form.Item name="funcBody" rules={[{ required: true, message: '函数内容不能为空！' }]}>
-          <AceEditor placeholder="请输入函数" mode="text" height={400} />
+          <AceEditor placeholder="请输入函数" mode="python" height={400} />
         </Form.Item>
       </Form>
     </Modal>
