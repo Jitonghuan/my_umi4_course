@@ -86,6 +86,11 @@ export const queryConfigListUrl = `${ds.apiPrefix}/appManage/config/version/list
 /** POST 导入配置 */
 export const configUploadUrl = `${ds.apiPrefix}/appManage/config/upload`;
 
+/** GET 下载镜像 */
+export const downloadImage = `${ds.apiPrefix}/releaseManage/deploy/downloadImage`;
+/** Post 上传镜像*/
+export const offlineDeploy = `${ds.apiPrefix}/releaseManage/deploy/offlineDeploy`;
+
 /** POST 重启应用 */
 export const restartAppUrl = `${ds.apiPrefix}/appManage/restart`;
 
@@ -144,8 +149,6 @@ export const restartApplication = `${ds.apiPrefix}/releaseManage/restartApplicat
 
 /** GET 查询卡点任务结果 */
 export const qualityGuardInfo = `${ds.apiPrefix}/qc/qualitycontrol/qualityGuardInfo`;
-/** GET 下载镜像 */
-export const downloadImage = `${ds.apiPrefix}/releaseManage/deploy/downloadImage`;
 
 /** 查询应用列表 (返回的数据没有分页) */
 export const queryApps = async (
