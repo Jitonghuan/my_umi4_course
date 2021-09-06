@@ -6,9 +6,7 @@ export interface IProps {
     pathname: string;
     query: {
       id: string;
-      isClient: string;
-      isContainClient: string;
-      appType: string;
+      appCode: string;
     };
   };
   route: {
@@ -16,17 +14,19 @@ export interface IProps {
   };
 }
 
+export type EnvTypeCode = 'dev' | 'test' | 'pre' | 'prod';
+
 /** 部署信息 */
 export interface DeployInfoVO extends Record<string, any> {
   id: number;
   appCode: string;
-  envTypeCode: string;
+  envTypeCode: EnvTypeCode;
   releaseBranch: string;
   features: string;
   unMergedFeatures: string;
   conflictFeature: string;
   mergeWebUrl: string;
-  deployStatus: string;
+  deployStatus: DeployStatusType;
   envs: string;
   deployedEnvs: string;
   deployingEnv: string;
@@ -61,11 +61,40 @@ export interface IStatusInfoProps {
   taskStateName: string;
 }
 
-/** 环境信息 */
-export interface EnvDataVO extends Record<string, any> {
-  id: number;
-  envCode: string;
-  envName: string;
-  envTypeCode: string;
-  categoryCode: string;
-}
+/** 应用部署状态 */
+export type DeployStatusType =
+  // 合并 release
+  | 'merging'
+  | 'mergeErr'
+  | 'conflict'
+  // 单测卡点
+  | 'qualityChecking'
+  | 'qualityFailed'
+  // 构建
+  | 'building'
+  | 'buildErr'
+  | 'buildAborted'
+  // 部署
+  | 'deployWait'
+  | 'deploying'
+  | 'deployWaitBatch2'
+  | 'deployErr'
+  | 'deployAborted'
+  // 推送前端资源
+  | 'pushFeResource'
+  | 'pushFeResourceErr'
+  // 推送前端版本
+  | 'pushVersion'
+  | 'pushVersionErr'
+  // 前端线上验证
+  | 'verifyWait'
+  | 'verifyFailed'
+  // 合并主干
+  | 'mergingMaster'
+  | 'mergeMasterErr'
+  // 删除分支
+  | 'deletingFeature'
+  | 'deleteFeatureErr'
+  // 部署完成
+  | 'deployFinish'
+  | 'deployed';

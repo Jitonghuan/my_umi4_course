@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames';
-import { Tree, Input } from 'antd';
+import { Tree, Input, Select } from 'antd';
 import { CustomTreeProps, TreeNode } from './interfaces';
 import { searchTreeData } from './utils';
 import './index.less';
@@ -12,7 +12,20 @@ import './index.less';
 export { CustomTreeProps, TreeNode };
 
 export default function CustomTree(props: CustomTreeProps) {
-  const { showSearch, className, treeData, searchPlaceholder = '搜索节点', keepRootInSearch = true, ...others } = props;
+  const {
+    showSearch,
+    className,
+    treeData,
+    searchPlaceholder = '搜索节点',
+    keepRootInSearch = true,
+    showSideSelect = false,
+    onSideSelectChange,
+    sideSelectValue,
+    sideSelectPlaceholder = '请选择',
+    sideSelectOptions,
+    treeDataEmptyHide = true,
+    ...others
+  } = props;
   const [searchValue, setSearchValue] = useState<string>();
   const [filteredTreeData, setFilteredTreeData] = useState<TreeNode[]>([]);
 
@@ -30,7 +43,7 @@ export default function CustomTree(props: CustomTreeProps) {
     setFilteredTreeData(treeData);
   }, [treeData]);
 
-  if (treeData?.length === 0) {
+  if (treeData?.length === 0 && treeDataEmptyHide) {
     return null;
   }
 
@@ -38,16 +51,28 @@ export default function CustomTree(props: CustomTreeProps) {
 
   return (
     <div className="custom-tree-container">
-      {showSearch ? (
-        <div className="custom-tree-search">
-          <Input.Search
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder={searchPlaceholder}
-            onSearch={handleSearch}
+      <div className="custom-tree-header">
+        {showSideSelect ? (
+          <Select
+            className="custom-tree-header-side-select"
+            options={sideSelectOptions || []}
+            placeholder={sideSelectPlaceholder}
+            value={sideSelectValue}
+            onChange={onSideSelectChange}
+            allowClear
           />
-        </div>
-      ) : null}
+        ) : null}
+        {showSearch ? (
+          <div className="custom-tree-header-search">
+            <Input.Search
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder={searchPlaceholder}
+              onSearch={handleSearch}
+            />
+          </div>
+        ) : null}
+      </div>
       <Tree className={clazz} treeData={filteredTreeData} blockNode showIcon={false} {...others} />
     </div>
   );

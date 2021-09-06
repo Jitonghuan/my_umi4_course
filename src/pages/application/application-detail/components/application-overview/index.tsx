@@ -1,76 +1,96 @@
-/**
- * ApplicationOverview
- * @description 应用-概述
- * @author moting.nq
- * @create 2021-04-13 11:00
- */
+// 应用-概述
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/08/30 20:45
 
-import React, { useState, useEffect, useContext } from 'react';
-import { Descriptions, Button, Tag } from 'antd';
+import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
+import { Descriptions, Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import ApplicationEditor from '@/pages/application/_components/application-editor';
-import ModifyMember, { MemberTypes } from './modify-member';
+import MemberEditor from './member-editor';
 import DetailContext from '@/pages/application/application-detail/context';
+import UserTagList from '@/components/user-selector/list';
 import { queryAppMember } from '@/pages/application/service';
+import { AppMemberInfo } from '@/pages/application/interfaces';
+import { optionsToLabelMap } from '@/utils/index';
+import {
+  appFeProjectTypeOptions,
+  appMicroFeTypeOptions,
+  deployJobUrlOptions,
+} from '@/pages/application/_components/application-editor/common';
 import './index.less';
 
-const rootCls = 'overview-page';
-const labelStyle = {
-  width: 200,
-};
 const APP_TYPE_MAP = {
   frontend: '前端',
   backend: '后端',
 };
+
+const appFeProjectTypeOptionsMap = optionsToLabelMap(appFeProjectTypeOptions);
+const appMicroFeTypeOptionsMap = optionsToLabelMap(appMicroFeTypeOptions);
+const deployJobUrlOptionsMap = optionsToLabelMap(deployJobUrlOptions);
 
 export default function ApplicationOverview() {
   const { appData, queryAppData } = useContext(DetailContext);
   const { categoryData = [], businessData = [] } = useContext(FEContext);
 
   const [isModifyApp, setIsModifyApp] = useState(false);
-  const [isModifyMember, setIsModifyMember] = useState(false);
-  const [memberData, setMemberData] = useState<MemberTypes>();
+  const [memberEditorMode, setMemberEditorMode] = useState<EditorMode>('HIDE');
+  const [memberData, setMemberData] = useState<AppMemberInfo>();
 
   // 请求应用成员数据
-  const queryMemberData = () => {
+  const queryMemberData = useCallback(() => {
     queryAppMember({ appCode: appData?.appCode }).then((res) => {
       setMemberData(res.data || {});
     });
-  };
+  }, [appData]);
 
   useEffect(() => {
     if (!appData?.appCode) return;
     queryMemberData();
   }, [appData?.appCode]);
+
+  const categoryDataMap = useMemo(() => optionsToLabelMap(categoryData), [categoryData]);
+  const businessDataMap = useMemo(() => optionsToLabelMap(businessData), [businessData]);
+
   return (
-    <ContentCard className={rootCls}>
+    <ContentCard className="overview-page">
       <Descriptions
         title="概要"
+        className="fixed"
         bordered
         column={3}
-        labelStyle={labelStyle}
+        labelStyle={{ width: 200 }}
         extra={<Button onClick={() => setIsModifyApp(true)}>修改</Button>}
       >
         <Descriptions.Item label="APPCODE">{appData?.appCode}</Descriptions.Item>
         <Descriptions.Item label="应用名">{appData?.appName}</Descriptions.Item>
-        <Descriptions.Item label="git地址">{appData?.gitAddress}</Descriptions.Item>
-        <Descriptions.Item label="git组">{appData?.gitGroup}</Descriptions.Item>
-        {appData?.appDevelopLanguage === 'java' && (
-          <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
-        )}
+        <Descriptions.Item label="应用部署名">{appData?.deploymentName}</Descriptions.Item>
+        <Descriptions.Item label="应用类型">{APP_TYPE_MAP[appData?.appType!]}</Descriptions.Item>
+        <Descriptions.Item label="应用分类">{categoryDataMap[appData?.appCategoryCode!] || '--'}</Descriptions.Item>
+        <Descriptions.Item label="应用组">{businessDataMap[appData?.appGroupCode!] || '--'}</Descriptions.Item>
+        <Descriptions.Item label="责任人">
+          <UserTagList color="blue" data={appData?.owner} />
+        </Descriptions.Item>
+        <Descriptions.Item label="git地址" span={2}>
+          {appData?.gitAddress}
+        </Descriptions.Item>
+        <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
+      </Descriptions>
+
+      {/* 开发信息 */}
+      <Descriptions
+        title="开发信息"
+        className="fixed"
+        bordered
+        column={3}
+        labelStyle={{ width: 200 }}
+        style={{ marginTop: 36 }}
+      >
+        {/* 后端 */}
         {appData?.appType === 'backend' && (
           <Descriptions.Item label="应用开发语言">{appData?.appDevelopLanguage}</Descriptions.Item>
         )}
-        <Descriptions.Item label="应用部署名称">{appData?.deploymentName}</Descriptions.Item>
         {/* <Descriptions.Item label="基础镜像">{appData?.baseImage}</Descriptions.Item> */}
-        <Descriptions.Item label="应用分类">
-          {categoryData?.find((v) => v.categoryCode === appData?.appCategoryCode)?.categoryName || '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label="应用组">
-          {businessData?.find((v) => v.groupCode === appData?.appGroupCode)?.groupName || '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label="应用类型">{APP_TYPE_MAP[appData?.appType!]}</Descriptions.Item>
         {appData?.appDevelopLanguage === 'java' && (
           <Descriptions.Item label="是否为二方包">{{ 1: '是', 0: '否' }[appData?.isClient!]}</Descriptions.Item>
         )}
@@ -79,38 +99,71 @@ export default function ApplicationOverview() {
             {{ 1: '是', 0: '否' }[appData?.isContainClient!]}
           </Descriptions.Item>
         )}
-        <Descriptions.Item label="责任人">{appData?.owner}</Descriptions.Item>
-        <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
+        {appData?.appDevelopLanguage === 'java' && (
+          <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
+        )}
+
+        {/* 前端 */}
+        {appData?.appType === 'frontend' && (
+          <Descriptions.Item label="工程类型">
+            {appFeProjectTypeOptionsMap[appData.projectType!] || '--'}
+          </Descriptions.Item>
+        )}
+        {appData?.projectType === 'micro' && (
+          <Descriptions.Item label="微前端类型">
+            {appMicroFeTypeOptionsMap[appData.microFeType!] || '--'}
+          </Descriptions.Item>
+        )}
+        {appData?.appType === 'frontend' && (
+          <Descriptions.Item label="构建任务类型">
+            {deployJobUrlOptionsMap[appData.deployJobUrl!] || '--'}
+          </Descriptions.Item>
+        )}
+        {appData?.microFeType === 'mainProject' && (
+          <Descriptions.Item label="路由文件">{appData.routeFile || '--'}</Descriptions.Item>
+        )}
+        {appData?.microFeType === 'subProject' &&
+          appData?.relationMainApp?.map((group, groupIndex) => (
+            <>
+              <Descriptions.Item label={`关联主应用${groupIndex + 1}`}>{group.appCode}</Descriptions.Item>
+              <Descriptions.Item span={2} label={`路由${groupIndex + 1}`}>
+                {group.routePath}
+              </Descriptions.Item>
+            </>
+          ))}
       </Descriptions>
 
       <Descriptions
-        title="成员"
+        title="成员信息"
+        className="fixed"
         bordered
-        column={1}
-        labelStyle={labelStyle}
+        column={2}
+        labelStyle={{ width: 200 }}
         style={{ marginTop: 36 }}
-        extra={<Button onClick={() => setIsModifyMember(true)}>修改</Button>}
+        extra={<Button onClick={() => setMemberEditorMode('EDIT')}>修改</Button>}
       >
-        {/* 没有转交功能 */}
-        <Descriptions.Item label="应用Owner">{memberData?.owner && <Tag>{memberData?.owner}</Tag>}</Descriptions.Item>
+        <Descriptions.Item label="应用Owner">
+          <UserTagList color="blue" data={memberData?.owner} />
+        </Descriptions.Item>
         <Descriptions.Item label="开发负责人">
-          {memberData?.developerOwner && <Tag>{memberData?.developerOwner}</Tag>}
+          <UserTagList data={memberData?.developerOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="发布负责人">
-          {memberData?.deployOwner && <Tag>{memberData?.deployOwner}</Tag>}
+          <UserTagList data={memberData?.deployOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="CodeReviewer">
-          {memberData?.codeReviewer && <Tag>{memberData?.codeReviewer}</Tag>}
+          <UserTagList data={memberData?.codeReviewer} />
         </Descriptions.Item>
         <Descriptions.Item label="测试负责人">
-          {memberData?.testOwner && <Tag>{memberData?.testOwner}</Tag>}
+          <UserTagList data={memberData?.testOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="自动化测试人员">
-          {memberData?.autoTestOwner && <Tag>{memberData?.autoTestOwner}</Tag>}
+          <UserTagList data={memberData?.autoTestOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="报警接收人">
-          {memberData?.alertReceiver && <Tag>{memberData?.alertReceiver}</Tag>}
+          <UserTagList data={memberData?.alertReceiver} />
         </Descriptions.Item>
+        <Descriptions.Item label="">&nbsp;</Descriptions.Item>
       </Descriptions>
 
       <ApplicationEditor
@@ -124,15 +177,14 @@ export default function ApplicationOverview() {
         }}
       />
 
-      <ModifyMember
-        formValue={memberData}
-        appCode={appData?.appCode}
-        visible={isModifyMember}
-        onClose={() => setIsModifyMember(false)}
-        onSubmit={() => {
-          // 保存成功后，关闭抽屉，重新请求成员数据
+      <MemberEditor
+        initData={memberData}
+        mode={memberEditorMode}
+        onClose={() => setMemberEditorMode('HIDE')}
+        onSave={() => {
           queryMemberData();
-          setIsModifyMember(false);
+          queryAppData?.();
+          setMemberEditorMode('HIDE');
         }}
       />
     </ContentCard>

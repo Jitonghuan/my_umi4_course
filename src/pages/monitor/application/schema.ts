@@ -15,7 +15,7 @@ export const tableSchema = [
     dataIndex: 'hostIP',
     title: 'IP',
     align: 'left',
-    width: 200,
+    width: 180,
   },
   {
     title: '主机名',
@@ -30,38 +30,38 @@ export const tableSchema = [
   {
     dataIndex: 'cpuLimit',
     title: 'CPU核数',
-    width: 100,
+    width: 90,
   },
   {
     dataIndex: 'cpu',
     title: 'CPU使用率',
-    width: 120,
+    width: 100,
   },
   {
     dataIndex: 'memory',
     title: '内存使用率',
-    width: 120,
+    width: 100,
   },
   {
     dataIndex: 'disk',
     title: '磁盘使用量(MB)',
-    width: 160,
+    width: 140,
   },
   {
     dataIndex: 'restartNum',
     title: '重启次数',
-    width: 100,
+    width: 90,
   },
   {
     dataIndex: 'uptime',
     title: '运行时长(天)',
-    width: 120,
+    width: 110,
   },
   {
     dataIndex: 'health',
     title: '健康状态',
     valueType: 'status',
-    width: 120,
+    width: 90,
     statusEnum: {
       '0': {
         text: '',

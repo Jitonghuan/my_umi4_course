@@ -92,23 +92,35 @@ export default function VCPageContent(props: React.PropsWithChildren<IProps>) {
   );
 }
 
+interface ICardProps extends CardProps {
+  noPadding?: boolean;
+}
+
 // filter card
-export function FilterCard(props: React.PropsWithChildren<CardProps>) {
-  const { children, className, ...rest } = props;
+export function FilterCard(props: React.PropsWithChildren<ICardProps>) {
+  const { children, noPadding, className, ...rest } = props;
+
+  const clazz = classnames('vc-page-content-filter', className, {
+    'no-padding': noPadding,
+  });
 
   return (
-    <Card className={classnames('vc-page-content-filter', className)} {...rest}>
+    <Card className={clazz} {...rest}>
       {props.children}
     </Card>
   );
 }
 
 // content card
-export function ContentCard(props: React.PropsWithChildren<CardProps>) {
-  const { children, className, ...rest } = props;
+export function ContentCard(props: React.PropsWithChildren<ICardProps>) {
+  const { children, noPadding, className, ...rest } = props;
+
+  const clazz = classnames('vc-page-content-body', className, {
+    'no-padding': noPadding,
+  });
 
   return (
-    <Card className={classnames('vc-page-content-body', className)} {...rest}>
+    <Card className={clazz} {...rest}>
       {props.children}
     </Card>
   );
@@ -128,11 +140,15 @@ export function CardRowGroup(props: CardRowGroupType) {
 }
 
 // slide card
-export function SlideCard(props: React.PropsWithChildren<CardProps & { width?: number }>) {
-  const { children, className, width = 180, ...rest } = props;
+export function SlideCard(props: React.PropsWithChildren<ICardProps & { width?: number }>) {
+  const { children, className, noPadding, width = 180, ...rest } = props;
+
+  const clazz = classnames('vc-slide-card', className, {
+    'no-padding': noPadding,
+  });
 
   return (
-    <Card className={classnames('vc-slide-card', className)} style={{ width }} {...rest}>
+    <Card className={clazz} style={{ width }} {...rest}>
       {children}
     </Card>
   );

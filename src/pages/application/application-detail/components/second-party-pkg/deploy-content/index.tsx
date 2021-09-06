@@ -13,12 +13,18 @@ import PublishRecord from './components/publish-record';
 import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
 import { queryDeployList, queryFeatureDeployed } from '@/pages/application/service';
-import { IProps } from './types';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';
 
-const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
+export interface IProps {
+  /** 环境参数 */
+  env: string;
+  /** 部署下个环境成功回调 */
+  onDeployNextEnvSuccess: () => void;
+}
+
+export default function DeployContent({ env, onDeployNextEnvSuccess }: IProps) {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -120,8 +126,4 @@ const DeployContent = ({ env, onDeployNextEnvSuccess }: IProps) => {
       </div>
     </div>
   );
-};
-
-DeployContent.defaultProps = {};
-
-export default DeployContent;
+}

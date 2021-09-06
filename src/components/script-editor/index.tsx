@@ -5,12 +5,12 @@
 import React, { useState, useCallback } from 'react';
 import { Modal, Input, message } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
-import AceEditor, { isJSON } from '../ace-editor';
+import AceEditor, { isJSON, AceDataType } from '../ace-editor';
 
 export interface ScriptEditorProps extends Record<string, any> {
   value?: string;
   onChange?: (next: string) => any;
-  mode?: 'text' | 'json' | 'sql' | 'yaml';
+  mode?: AceDataType;
 }
 
 export default function ScriptEditor(props: ScriptEditorProps) {

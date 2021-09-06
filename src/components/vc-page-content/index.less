@@ -16,6 +16,33 @@
       &.x-relative {
         position: relative;
       }
+
+      // 页面顶部的 card tab 样式
+      .ant-card-body > .ant-tabs:first-child {
+        flex: 0 0 auto;
+
+        .ant-tabs-nav-list .ant-tabs-tab:first-child {
+          border-left: 0;
+        }
+
+        + .tab-content {
+          flex: 1 1 0;
+          overflow: auto;
+        }
+      }
+
+      // 唯一的 tab 样式
+      .ant-card-body > .ant-tabs:only-child {
+        height: 100%;
+
+        .ant-tabs-content-holder {
+          flex: 1 1 0;
+        }
+
+        .ant-tabs-content {
+          height: 100%;
+        }
+      }
     }
   }
 
@@ -52,15 +79,15 @@
     flex: 0 0 auto;
     height: 100%;
     margin-right: 12px;
+    overflow: auto;
+  }
 
+  .ant-card.no-padding {
     .ant-card-body {
+      display: flex;
+      flex-direction: column;
       padding: 0;
-    }
-
-    &.content-slide .ant-card-body {
       height: 100%;
-      padding: 24px;
-      overflow: auto;
     }
   }
 }

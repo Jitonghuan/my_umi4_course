@@ -1,9 +1,7 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
 import { Card, Select, Form, Tooltip } from 'antd';
 import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
-
-import HulkForm, { IProps as IFormProps } from '@cffe/vc-hulk-form';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import AppCard from './app-card';
@@ -121,38 +119,6 @@ const Coms = (props: IProps) => {
   const selectRef = useRef(null);
 
   const timeRateInterval = useRef<NodeJS.Timeout>();
-
-  const filterColumns: IFormProps = useMemo(() => {
-    return {
-      theme: 'basic',
-      layout: 'inline',
-      isShowReset: false,
-      isShowSubmit: false,
-      schema: [
-        {
-          type: 'Select',
-          props: {
-            name: 'appCode',
-            label: '应用code',
-            allowClear: false,
-            showSearch: true,
-            options: appData,
-            disabled: appCode ? true : false,
-          },
-        },
-        {
-          type: 'Select',
-          props: {
-            name: 'envCode',
-            label: '环境code',
-            allowClear: false,
-            showSearch: false,
-            options: envData,
-          },
-        },
-      ],
-    };
-  }, [envData, appData]);
 
   const appConfig = [
     {
@@ -306,13 +272,14 @@ const Coms = (props: IProps) => {
     <div style={{ flex: 1, overflowY: 'auto' }}>
       <div className="monitor-app-table">
         <Card className="monitor-app-filter" style={{ marginBottom: 12, backgroundColor: '#fff' }}>
-          <HulkForm
-            form={formInstance}
-            layout="inline"
-            {...filterColumns}
-            className="monitor-filter-form"
-            onValuesChange={handleFilter}
-          />
+          <Form form={formInstance} layout="inline" className="monitor-filter-form" onValuesChange={handleFilter}>
+            <Form.Item label="应用Code" name="appCode">
+              <Select showSearch options={appData} disabled={!!appCode} />
+            </Form.Item>
+            <Form.Item label="环境Code" name="envCode">
+              <Select options={envData} />
+            </Form.Item>
+          </Form>
           <div className="monitor-time-select" ref={selectRef}>
             <Tooltip title="Relative time ranges" placement="top">
               <Select value={startTime} onChange={(value) => setStartTime(value)} style={{ width: 150 }}>

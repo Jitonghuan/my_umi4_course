@@ -1,11 +1,8 @@
-/**
- * ApplicationDetail
- * @description 应用详情
- * @author moting.nq
- * @create 2021-04-09 18:39
- */
+// 应用详情
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/08/25 17:31
 
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { history } from 'umi';
 import { Tabs, Spin } from 'antd';
 import VCPermission from '@/components/vc-permission';
@@ -13,9 +10,8 @@ import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
 import DetailContext from './context';
 import { tabsConfig } from './tab-config';
-import { queryApps } from '../service';
 import { IProps } from './types';
-import { AppItemVO } from '../interfaces';
+import { useAppDetail } from '../hooks';
 import './index.less';
 
 const detailPath = '/matrix/application/detail';
@@ -29,42 +25,27 @@ const activeKeyMap: Record<string, any> = {
 
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
-  const appId = location.query?.id;
-  const [appData, setAppData] = useState<AppItemVO>();
+  const { id: appId, appCode } = location.query || {};
+  const [appData, queryAppData] = useAppDetail(+appId, appCode);
 
   const tabActiveKey = useMemo(() => {
     const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
     return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
 
-  // 请求应用数据
-  const queryAppData = useCallback(() => {
-    queryApps({
-      id: +appId,
-      pageIndex: 1,
-      pageSize: 10,
-    }).then((res: any) => {
-      setAppData(res?.list?.[0]);
-    });
-  }, [appId]);
-
   useEffect(() => {
-    if (!appId) {
-      setAppData(undefined);
-      return;
-    }
-    queryAppData();
-
-    // 每次切换进来需要重置 tab 缓存
+    // 每次切换进来需要重置 环境 tab 缓存
     sessionStorage.removeItem('__init_env_tab__');
-  }, [appId]);
+  }, [appId, appCode]);
 
-  // 过滤掉不显示的 tab
+  // 过滤掉不显示的子页面 tab
   const filteredTabList = useMemo(() => {
     if (!appData) return [];
 
     // 是否为非二方包后端应用
     const isBackendAndNotClient = appData.isClient !== 1 && appData.appType === 'backend';
+    // 是否为前端应用
+    const isFrontend = appData.appType === 'frontend';
 
     return Object.keys(tabsConfig).filter((key) => {
       // 只有 HBOS 才显示 配置管理 和 启动参数
@@ -77,8 +58,15 @@ export default function ApplicationDetail(props: IProps) {
       if (key === 'secondPartyPkg') {
         return appData.isContainClient === 1;
       }
-      if (key === 'monitor' || key === 'AppParameters') {
+      if (['monitor', 'AppParameters', 'deployInfo'].includes(key)) {
         return isBackendAndNotClient;
+      }
+      if (key === 'feVersion') {
+        return isFrontend;
+      }
+      // 只有微前端主工程才有路由模板
+      if (key === 'routeTemplate') {
+        return isFrontend && appData.projectType === 'micro' && appData.microFeType === 'mainProject';
       }
 
       return true;

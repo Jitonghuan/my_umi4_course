@@ -8,7 +8,7 @@ import { GroupedStatusInfoProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
 import { IStatusInfoProps } from '@/pages/application/application-detail/types';
-import * as APIS from '@/pages/application/application-detail/services';
+import * as APIS from '@/pages/application/service';
 import './index.less';
 
 export interface ServerStatusProps {

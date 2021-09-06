@@ -3,14 +3,13 @@
  * @description 待发布分支
  * @author moting.nq
  * @create 2021-04-15 10:22
+ * @modified 2021/08/30 moyan
  */
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Input, Button, message, Modal, Checkbox } from 'antd';
+import moment from 'moment';
+import { Table, Input, Button, Modal, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import HulkTable from '@cffe/vc-hulk-table';
-import { history } from 'umi';
-import { createTableSchema } from './schema';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
@@ -25,13 +24,13 @@ export interface PublishBranchProps {
   deployInfo: DeployInfoVO;
   env: string;
   onSearch: (name?: string) => any;
-  dataSource: Array<{
+  dataSource: {
     id: string | number;
     branchName: string;
     desc: string;
     createUser: string;
     gmtCreate: string;
-  }>;
+  }[];
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
 }
@@ -48,58 +47,40 @@ export default function PublishBranch(props: PublishBranchProps) {
   const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
 
-  const {
-    location: { query },
-  } = history;
-
-  const submit = () => {
+  const submit = async () => {
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
-      return updateFeatures({
+      return await updateFeatures({
         id: deployInfo.id,
         features: filter,
-      }).then((res: any) => {
-        if (!res.success) {
-          message.error(res.errorMsg);
-          throw Error;
-        }
       });
     }
 
-    return createDeploy({
+    return await createDeploy({
       appCode: appCode!,
       envTypeCode: env,
       features: filter,
       envCodes: deployEnv,
-      isClient: String(query?.isClient) === '1',
-    }).then((res: any) => {
-      if (!res.success) {
-        message.error(res.errorMsg);
-        throw Error;
-      }
+      isClient: +appData?.isClient! === 1,
     });
   };
 
+  // 如果已有发布内容，则二次确认后直接添加进去，否则需要用户选择发布环境
   const submitClick = () => {
-    // 二方包
-    if (String(query?.isClient) === '1' || hasPublishContent) {
-      confirm({
+    // 二方包 或 有已发布
+    // if (String(appData?.isClient) === '1' || hasPublishContent) {
+    if (hasPublishContent) {
+      return confirm({
         title: '确定要提交发布吗?',
         icon: <ExclamationCircleOutlined />,
-        onOk() {
-          return submit().then(() => {
-            onSubmitBranch?.('end');
-          });
-        },
-        onCancel() {
+        onOk: async () => {
+          await submit();
           onSubmitBranch?.('end');
         },
       });
-      return;
     }
 
-    // 非二方包
     setDeployVisible(true);
   };
 
@@ -117,40 +98,47 @@ export default function PublishBranch(props: PublishBranchProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>待发布的分支</div>
 
-      <div className={`${rootCls}__list-wrap`}>
-        <div className={`${rootCls}__list-header`}>
-          <span className={`${rootCls}__list-header-text`}>分支列表</span>
-          <div className={`${rootCls}__list-header-search`}>
-            <Input.Search
-              placeholder="搜索分支"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onPressEnter={() => onSearch?.(searchText)}
-              onSearch={() => onSearch?.(searchText)}
-            />
-          </div>
-          <span style={{ flex: '1 1 0' }}></span>
-          <div className={`${rootCls}__list-header-btns`}>
-            <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
-              提交分支
-            </Button>
-          </div>
+      <div className="table-caption">
+        <div className="caption-left">
+          <h4>分支列表&nbsp;&nbsp;</h4>
+          <Input.Search
+            placeholder="搜索分支"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onPressEnter={() => onSearch?.(searchText)}
+            onSearch={() => onSearch?.(searchText)}
+          />
         </div>
-        <HulkTable
-          rowKey="id"
-          className={`${rootCls}__list-table`}
-          dataSource={dataSource}
-          pagination={false}
-          rowSelection={{
-            type: 'checkbox',
-            selectedRowKeys,
-            onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-              setSelectedRowKeys(selectedRowKeys as any);
-            },
-          }}
-          columns={createTableSchema() as any}
-        />
+        <div className="caption-right">
+          <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
+            提交分支
+          </Button>
+        </div>
       </div>
+      <Table
+        rowKey="id"
+        bordered
+        dataSource={dataSource}
+        pagination={false}
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys,
+          onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+            setSelectedRowKeys(selectedRowKeys as any);
+          },
+        }}
+      >
+        <Table.Column dataIndex="id" title="ID" width={80} />
+        <Table.Column dataIndex="branchName" title="分支名" />
+        <Table.Column dataIndex="desc" title="变更原因" />
+        <Table.Column
+          dataIndex="gmtCreate"
+          title="创建时间"
+          width={160}
+          render={(val: string) => (val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '')}
+        />
+        <Table.Column dataIndex="createUser" title="创建人" width={80} />
+      </Table>
 
       <Modal
         title="选择发布环境"

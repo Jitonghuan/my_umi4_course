@@ -3,7 +3,7 @@
 // @create 2021/08/25 09:26
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { Radio, Button, Spin, Pagination } from 'antd';
+import { Radio, Button, Spin, Pagination, Empty } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
@@ -16,7 +16,9 @@ import './index.less';
 const rootCls = 'all-application-page';
 
 export default function AllApplication() {
-  const [type, setType] = useState<'all' | 'mine'>('mine');
+  const [type, setType] = useState<'all' | 'mine'>(
+    localStorage.getItem('__last_application_type') === 'all' ? 'all' : 'mine',
+  );
   const [createAppVisible, setCreateAppVisible] = useState(false);
 
   const [pageIndex, setPageIndex] = useState(1);
@@ -25,6 +27,12 @@ export default function AllApplication() {
 
   const hookParams = useMemo(() => ({ ...searchParams, requestType: type }), [type, searchParams]);
   const [appListData, total, isLoading, loadAppListData] = useAppListData(hookParams, pageIndex, pageSize);
+
+  const handleTypeChange = useCallback((e: any) => {
+    const next = e.target.value;
+    setType(next);
+    localStorage.setItem('__last_application_type', next);
+  }, []);
 
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
@@ -37,7 +45,7 @@ export default function AllApplication() {
 
       <ContentCard>
         <div className="table-caption">
-          <Radio.Group value={type} onChange={(e) => setType(e.target.value)}>
+          <Radio.Group value={type} onChange={handleTypeChange}>
             <Radio.Button value="mine">我的应用</Radio.Button>
             <Radio.Button value="all">全部应用</Radio.Button>
           </Radio.Group>
@@ -50,6 +58,9 @@ export default function AllApplication() {
 
         <Spin spinning={isLoading}>
           <div className={`${rootCls}__card-wrapper`}>
+            {!isLoading && !appListData.length && (
+              <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            )}
             <ApplicationCardList key={type} dataSource={appListData} />
             {total > 10 && (
               <div className={`${rootCls}-pagination-wrap`}>

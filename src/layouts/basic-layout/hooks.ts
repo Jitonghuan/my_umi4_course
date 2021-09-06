@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getRequest, queryUserInfoApi, doLogoutApi } from '@/utils/request';
-import { queryCategoryData, queryBizData, queryEnvData, queryPermission } from './service';
+import { queryCategoryData, queryBizData, queryEnvTypeData, queryPermission } from './service';
 
 // 业务所属
 export function useCategoryData(ready = false) {
@@ -57,7 +57,7 @@ export function useEnvTypeData(ready = false) {
   const [data, setData] = useState<IOption[]>([]);
 
   const loadData = useCallback(async () => {
-    const result = await getRequest(queryEnvData);
+    const result = await getRequest(queryEnvTypeData);
     const next = (result.data || []).map((el: any) => ({
       ...el,
       label: el?.typeName,

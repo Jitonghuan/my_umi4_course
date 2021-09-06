@@ -253,7 +253,13 @@ export default function PublishDetail(props: IProps) {
           <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={getDeployEnvData()} />
         </div>
       </Modal>
-      <Modal title="选择发布环境" visible={deployVisible} footer={null} onCancel={deployVisible} maskClosable={false}>
+      <Modal
+        title="选择发布环境"
+        visible={deployVisible}
+        footer={null}
+        onCancel={() => setDeployVisible(false)}
+        maskClosable={false}
+      >
         <div>
           <span>发布环境：</span>
           <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
