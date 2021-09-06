@@ -7,7 +7,7 @@ import { Drawer, Form, Steps, Button, Input, message, Radio, Tabs, Switch, Row, 
 import FELayout from '@cffe/vc-layout';
 import { postRequest } from '@/utils/request';
 import * as APIS from '../../service';
-import { CaseItemVO, TreeNode, FuncProps } from '../../interfaces';
+import { CaseItemVO, EditorMode, TreeNode, FuncProps } from '../../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import EditorTable from '@cffe/pc-editor-table';

@@ -7,7 +7,7 @@ import { Form, Input, Modal, message } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
-import { TreeNode, TreeNodeSaveData } from '../../interfaces';
+import { TreeNode, TreeNodeSaveData, EditorMode } from '../../interfaces';
 
 export interface ProjectEditorProps {
   mode: EditorMode;

@@ -7,7 +7,7 @@ import { Form, Input, Modal, message } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
-import { TreeNode } from '../../interfaces';
+import { TreeNode, EditorMode } from '../../interfaces';
 
 export interface SceneEditorProps {
   mode: EditorMode;

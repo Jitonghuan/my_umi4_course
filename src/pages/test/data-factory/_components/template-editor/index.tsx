@@ -9,6 +9,7 @@ import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
 import usePublicData from '@/utils/usePublicData';
 import { postRequest } from '@/utils/request';
+import { EditorMode } from '../../interfaces';
 import { useOperationTypeOptions, useVarTypeOptions } from './hooks';
 import ScriptEditor from '@/components/script-editor';
 import ExecResult from '@/components/exec-result';

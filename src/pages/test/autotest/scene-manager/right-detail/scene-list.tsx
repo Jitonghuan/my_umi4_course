@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Table, message, Form, Input } from 'antd';
 import type Emitter from 'events';
 import { ContentCard } from '@/components/vc-page-content';
-import { TreeNode, SceneItemVO } from '../../interfaces';
+import { TreeNode, EditorMode, SceneItemVO } from '../../interfaces';
 import { useSceneList } from '../hooks';
 import { createNodeDataFromSceneItem } from '../../common';
 import SceneEditor from '../../_components/scene-editor';

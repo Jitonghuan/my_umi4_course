@@ -69,7 +69,6 @@ export default function FuncTableField(props: FuncTableFieldProps) {
     <div className="func-table-field">
       <div className="field-caption">
         <h3>{props.title}</h3>
-        <s className="flex-air"></s>
         <Popover
           visible={popVisible}
           onVisibleChange={(n) => setPopVisible(n)}
@@ -85,19 +84,14 @@ export default function FuncTableField(props: FuncTableFieldProps) {
               placeholder="输入函数名搜索"
             />
           }
-          placement="left"
-          overlayInnerStyle={{ width: 400 }}
-          overlayStyle={{ width: 400 }}
+          placement="bottomLeft"
+          overlayInnerStyle={{ width: 300 }}
+          overlayStyle={{ width: 300 }}
         >
           <Button>新增</Button>
         </Popover>
-        {/* <Button>新增SQL</Button> */}
       </div>
       <Table dataSource={props.value || []} bordered pagination={false}>
-        {/* <Table.Column dataIndex="type" title="类型"
-          render={(value) => value === 1 ? 'SQL': '函数'}
-          width={60}
-        /> */}
         <Table.Column dataIndex="name" title="函数" />
         <Table.Column
           dataIndex="argument"

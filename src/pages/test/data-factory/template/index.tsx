@@ -9,7 +9,7 @@ import FELayout from '@cffe/vc-layout';
 import { ContentCard } from '@/components/vc-page-content';
 import usePublicData from '@/utils/usePublicData';
 import { useTableData } from './hooks';
-import { TemplateItemProps } from '../interfaces';
+import { EditorMode, TemplateItemProps } from '../interfaces';
 import * as APIS from '../service';
 import { postRequest } from '@/utils/request';
 import TemplateEditor from '../_components/template-editor';

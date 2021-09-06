@@ -12,7 +12,7 @@ import * as APIS from '../../service';
 import { postRequest, getRequest } from '@/utils/request';
 import { useCaseListByScene } from '../../hooks';
 import CaseEditor from '../../_components/case-editor';
-import { TreeNode, CaseItemVO } from '../../interfaces';
+import { TreeNode, CaseItemVO, EditorMode } from '../../interfaces';
 import SceneExec from '../../_components/scene-exec';
 
 export interface SceneDetailProps extends Record<string, any> {
