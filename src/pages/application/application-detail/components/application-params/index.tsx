@@ -21,6 +21,7 @@ export default function DemoPageTb(porps: any) {
   const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [id, setId] = useState<string>();
+  const [templateId, setTemplateId] = useState<number>();
   const [tableData, setTableData] = useState<any>([]);
   const [isDeployment, setIsDeployment] = useState<string>();
   const [source, setSource] = useState<any[]>([]);
@@ -67,7 +68,6 @@ export default function DemoPageTb(porps: any) {
           value: inintDatas.tmplConfigurableItem[key],
         });
       }
-      console.log('11111111', jvm);
       applicationForm.setFieldsValue({
         appEnvCode: inintDatas.envCode,
         tmplType: inintDatas.templateType,
