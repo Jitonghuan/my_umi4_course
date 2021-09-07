@@ -6,11 +6,10 @@ import AddTestPlanDrawer from './add-test-plan-drawer';
 import AssociatingCaseDrawer from './associating-case-drawer';
 import { getRequest, postRequest } from '@/utils/request';
 import { getTestPlanList, deleteTestPlan, getProjects, getProjectTreeData } from '../service';
-import { Form, Button, Table, Input, Select, Space, message, Popconfirm, Cascader } from 'antd';
+import { Form, Button, Table, Input, Select, Space, message, Popconfirm, Cascader, Tag } from 'antd';
+import { testPlanStatusEnum } from '../constant';
 import './index.less';
 import _ from 'lodash';
-
-const statusEnum = ['待执行', '执行中', '已完成'];
 
 export default function TestPlan(props: any) {
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -120,11 +119,7 @@ export default function TestPlan(props: any) {
             </Form.Item>
 
             <Form.Item label="状态" name="status">
-              <Select className="w-80" placeholder="请选择" allowClear>
-                {statusEnum.map((item, index) => (
-                  <Select.Option value={index}>{item}</Select.Option>
-                ))}
-              </Select>
+              <Select className="w-80" placeholder="请选择" allowClear options={testPlanStatusEnum} />
             </Form.Item>
 
             <Form.Item>
@@ -183,7 +178,11 @@ export default function TestPlan(props: any) {
                 </Button>
               )}
             />
-            <Table.Column title="状态" dataIndex="status" render={(status) => statusEnum[status]} />
+            <Table.Column
+              title="状态"
+              dataIndex="status"
+              render={(status) => <Tag color={testPlanStatusEnum[status].type}>{testPlanStatusEnum[status].title}</Tag>}
+            />
             {/* <Table.Column title="当前责任人" dataIndex="?" /> */}
             <Table.Column
               width={240}
