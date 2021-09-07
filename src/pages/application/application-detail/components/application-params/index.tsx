@@ -21,7 +21,6 @@ export default function DemoPageTb(porps: any) {
   const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [id, setId] = useState<string>();
-  const [templateId, setTemplateId] = useState<number>();
   const [tableData, setTableData] = useState<any>([]);
   const [isDeployment, setIsDeployment] = useState<string>();
   const [source, setSource] = useState<any[]>([]);
@@ -176,6 +175,7 @@ export default function DemoPageTb(porps: any) {
             });
           }
         }
+        setId(applicationlist?.id);
         applicationForm.setFieldsValue({
           // templateValue:list.templateValue,
           tmplConfigurableItem: arr,
@@ -196,7 +196,7 @@ export default function DemoPageTb(porps: any) {
       }
     });
   };
-  //编辑应用模版
+  //编辑应用膜拜
   const setApplication = (values: any) => {
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
@@ -204,6 +204,7 @@ export default function DemoPageTb(porps: any) {
     }, {} as any);
     const value = values.value;
     putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
+      console.log('id', id);
       if (result.success) {
         message.success('提交成功！');
         window.location.reload();
