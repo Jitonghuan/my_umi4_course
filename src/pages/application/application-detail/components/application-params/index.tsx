@@ -174,6 +174,7 @@ export default function ApplicationParams(props: any) {
             });
           }
         }
+        setId(applicationlist?.id);
         applicationForm.setFieldsValue({
           // templateValue:list.templateValue,
           tmplConfigurableItem: arr,
@@ -194,7 +195,7 @@ export default function ApplicationParams(props: any) {
       }
     });
   };
-  //编辑应用参数
+  //编辑应用膜拜
   const setApplication = (values: any) => {
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
@@ -202,6 +203,7 @@ export default function ApplicationParams(props: any) {
     }, {} as any);
     const value = values.value;
     putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
+      console.log('id', id);
       if (result.success) {
         message.success('提交成功！');
         window.location.reload();
@@ -238,7 +240,7 @@ export default function ApplicationParams(props: any) {
           </Col>
           <Col span={10} offset={2}>
             <div style={{ fontSize: 18 }}>可配置项：</div>
-            <Form.Item name="tmplConfigurableItem" rules={[{ required: true, message: '这是必填项' }]}>
+            <Form.Item name="tmplConfigurableItem">
               <EditorTable
                 readOnly
                 columns={[
@@ -254,7 +256,7 @@ export default function ApplicationParams(props: any) {
             </Form.Item>
             {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
             {isDeployment == 'deployment' ? (
-              <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
+              <Form.Item name="jvm">
                 <AceEditor mode="yaml" height={300} />
               </Form.Item>
             ) : (
