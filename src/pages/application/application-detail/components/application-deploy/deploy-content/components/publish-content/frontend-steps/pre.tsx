@@ -8,7 +8,8 @@ import { StepsProps } from '../types';
 import CreateTaskStep from '../step-items/create-task';
 import MergeReleaseStep from '../step-items/merge-release';
 import BuildingStep from '../step-items/building';
-import DeployingStep from '../step-items/deploying';
+import PushResourceStep from '../step-items/push-resource';
+import PushHTMLStep from '../step-items/push-html';
 import FinishedStep from '../step-items/finished';
 
 const deployStatusMapping: Record<string, number> = {
@@ -20,13 +21,15 @@ const deployStatusMapping: Record<string, number> = {
   building: 2.1,
   buildErr: 2.2,
   buildAborted: 2.2,
-  // 部署
-  deploying: 3.1,
-  deployErr: 3.2,
-  deployAborted: 3.2,
+  // 推送前端资源
+  pushFeResource: 3.1,
+  pushFeResourceErr: 3.2,
+  // 推送前端版本
+  pushVersion: 4.1,
+  pushVersionErr: 4.2,
   // 完成
-  deployFinish: 4,
-  deployed: 4,
+  deployFinish: 5,
+  deployed: 5,
 };
 
 export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
@@ -41,7 +44,8 @@ export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
         <CreateTaskStep {...payload} />
         <MergeReleaseStep {...payload} />
         <BuildingStep {...payload} />
-        <DeployingStep {...payload} />
+        <PushResourceStep {...payload} />
+        <PushHTMLStep {...payload} />
         <FinishedStep {...payload} />
       </Steps>
     </>
