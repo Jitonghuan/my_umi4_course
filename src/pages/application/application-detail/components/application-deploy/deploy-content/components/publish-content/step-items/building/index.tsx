@@ -8,6 +8,7 @@ import { Steps, Button, Modal } from 'antd';
 import { retryBuild } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
+/** 构建 */
 export default function BuildingStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

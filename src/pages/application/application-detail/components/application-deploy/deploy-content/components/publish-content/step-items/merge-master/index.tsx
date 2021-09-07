@@ -8,6 +8,7 @@ import { Steps, Button } from 'antd';
 import { reMergeMaster } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
+/** 合并master */
 export default function MergeMasterStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

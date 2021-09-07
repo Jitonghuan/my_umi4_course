@@ -9,6 +9,7 @@ import { retryDeploy } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import DeployModal from './deploy-modal';
 
+/** 部署 */
 export default function DeployingStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

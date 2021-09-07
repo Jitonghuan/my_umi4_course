@@ -8,6 +8,7 @@ import { Steps, Button } from 'antd';
 import { rePushFeVersion } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
+/** 发布HTML */
 export default function PushHTMLStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 
