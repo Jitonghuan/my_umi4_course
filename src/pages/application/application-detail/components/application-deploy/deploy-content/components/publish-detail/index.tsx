@@ -209,9 +209,9 @@ export default function PublishDetail(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        {envTypeCode === 'prod' && (
+        {appData?.appType === 'backend' && envTypeCode === 'prod' && (
           <Button type="primary" onClick={() => setRestartVisible(true)}>
-            重启
+            重启应用
           </Button>
         )}
         {envTypeCode === 'prod' && (
@@ -225,7 +225,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null}
-        {envTypeCode !== 'prod' && (
+        {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
             部署Master
           </Button>
