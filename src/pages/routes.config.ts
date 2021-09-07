@@ -405,13 +405,6 @@ export default [
         exact: true,
       },
       {
-        path: 'functions',
-        name: '函数管理',
-        key: 'functions',
-        component: '@/pages/test/functions',
-        exact: true,
-      },
-      {
         path: 'scripts',
         name: '脚本管理',
         key: 'scripts',
