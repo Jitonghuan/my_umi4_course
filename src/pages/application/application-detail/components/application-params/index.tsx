@@ -257,7 +257,7 @@ export default function DemoPageTb(porps: any) {
             </Form.Item>
             {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
             {isDeployment == 'deployment' ? (
-              <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
+              <Form.Item name="jvm">
                 <AceEditor mode="yaml" height={300} />
               </Form.Item>
             ) : (
