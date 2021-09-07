@@ -12,6 +12,7 @@ import QualityCheckResult from './quality-check-result';
 // 质量卡点结果前的状态
 const prevDeployStatus = ['merging', 'mergeErr', 'conflict', 'qualityChecking'];
 
+/** 质量卡点 */
 export default function QualityCheckStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

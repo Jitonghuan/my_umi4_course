@@ -8,6 +8,7 @@ import { Steps, Button } from 'antd';
 import { rePushFeResource } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
+/** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

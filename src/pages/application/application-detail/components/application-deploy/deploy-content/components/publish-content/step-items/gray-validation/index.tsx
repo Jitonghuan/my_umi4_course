@@ -8,6 +8,7 @@ import { Steps, Button, Modal } from 'antd';
 import { fePublishVerify } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
+/** 灰度验证 */
 export default function GrayValidationStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

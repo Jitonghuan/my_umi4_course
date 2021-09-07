@@ -64,6 +64,7 @@ export default function FunctionManager() {
     <ContentCard className="page-test-functions">
       <div className="table-caption">
         <Input.Search
+          placeholder="输入关键字搜索"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onPressEnter={() => handleSearch()}
@@ -89,9 +90,7 @@ export default function FunctionManager() {
         <Table.Column title="序号" dataIndex="id" width={60} />
         <Table.Column title="名称" dataIndex="name" ellipsis />
         <Table.Column title="描述" dataIndex="desc" ellipsis />
-        <Table.Column title="内容" dataIndex="script" ellipsis
-
-        />
+        <Table.Column title="内容" dataIndex="script" ellipsis />
         <Table.Column title="创建人" dataIndex="createUser" width={140} />
         <Table.Column title="操作时间" dataIndex="gmtModify" width={180} render={datetimeCellRender} />
         <Table.Column

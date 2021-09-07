@@ -5,7 +5,7 @@
 import React from 'react';
 import { Steps } from 'antd';
 import { StepItemProps } from '../../types';
-
+/** 创建任务 */
 export default function CreateTaskStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

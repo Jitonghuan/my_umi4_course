@@ -67,6 +67,7 @@ export default function FunctionManager() {
     <ContentCard className="page-test-functions">
       <div className="table-caption">
         <Input.Search
+          placeholder="输入关键字搜索"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onPressEnter={() => handleSearch()}
