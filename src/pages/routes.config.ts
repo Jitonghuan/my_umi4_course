@@ -414,15 +414,15 @@ export default [
             path: 'functions',
             name: '函数管理',
             key: 'scripts',
-            component: '@/pages/test/scripts/functions'
+            component: '@/pages/test/scripts/functions',
           },
           {
             path: 'sqls',
             name: 'SQL管理',
             key: 'scripts',
-            component: '@/pages/test/scripts/sqls'
+            component: '@/pages/test/scripts/sqls',
           },
-        ]
+        ],
       },
       {
         path: 'autotest',
@@ -464,7 +464,6 @@ export default [
         path: 'workspace',
         name: '测试工作台',
         key: 'test-workspace',
-        hideInMenu: process.env.BUILD_ENV === 'prod',
         routes: [
           {
             path: 'test-case-library',
