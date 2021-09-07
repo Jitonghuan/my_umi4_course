@@ -77,15 +77,10 @@ export default function BranchManage() {
         scroll={{ y: window.innerHeight - 330 }}
       >
         <Table.Column title="ID" dataIndex="id" width={80} />
-        <Table.Column title="应用code" dataIndex="appCode" width={200} />
+        <Table.Column title="应用code" dataIndex="appCode" />
         <Table.Column title="分支名" dataIndex="branchName" />
         <Table.Column title="描述" dataIndex="desc" width={200} />
-        <Table.Column
-          title="创建时间"
-          dataIndex="gmtCreate"
-          width={160}
-          render={datetimeCellRender}
-        />
+        <Table.Column title="创建时间" dataIndex="gmtCreate" width={160} render={datetimeCellRender} />
         <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
         <Table.Column title="创建人" dataIndex="createUser" width={100} />
         <Table.Column

@@ -72,7 +72,9 @@ export default function ApplicationOverview() {
           <UserTagList color="blue" data={appData?.owner} />
         </Descriptions.Item>
         <Descriptions.Item label="git地址" span={2}>
-          {appData?.gitAddress}
+          <a href={appData?.gitAddress} target="_blank">
+            {appData?.gitAddress}
+          </a>
         </Descriptions.Item>
         <Descriptions.Item label="应用描述">{appData?.desc}</Descriptions.Item>
       </Descriptions>
