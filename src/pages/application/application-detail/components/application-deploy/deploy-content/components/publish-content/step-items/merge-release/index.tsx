@@ -8,6 +8,7 @@ import { Steps, Button } from 'antd';
 import { retryMerge } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
+/** 合并release */
 export default function MergeReleaseStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

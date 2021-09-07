@@ -7,6 +7,7 @@ import { Steps, Button } from 'antd';
 import { StepItemProps } from '../../types';
 import { downloadImage } from '@/pages/application/service';
 
+/** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
   const [downLoadStatus, setDownLoadStatus] = useState(false);

@@ -8,6 +8,7 @@ import { Steps, Button } from 'antd';
 import { retryDelFeature } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
+/** 删除feature */
 export default function DeleteFeatureStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 

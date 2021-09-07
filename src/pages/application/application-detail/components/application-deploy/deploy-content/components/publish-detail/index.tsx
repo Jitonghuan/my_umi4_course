@@ -256,7 +256,7 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="合并分支" span={3}>
           {deployInfo?.features}
         </Descriptions.Item>
-        {deployInfo?.deployErrInfo !== '' && (
+        {deployInfo?.deployErrInfo !== '' && deployInfo.hasOwnProperty('deployErrInfo') && (
           <Descriptions.Item label="部署错误信息" span={3} contentStyle={{ color: 'red' }}>
             {deployInfo?.deployErrInfo}
           </Descriptions.Item>

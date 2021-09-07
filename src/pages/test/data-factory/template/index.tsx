@@ -121,7 +121,7 @@ export default function DataTemplate() {
         </FormItem>
       </Form>
       <div className="table-caption">
-        <h3></h3>
+        <h3>数据模板列表</h3>
         <Button type="primary" onClick={() => setEditorMode('ADD')}>
           新增数据模板
         </Button>
