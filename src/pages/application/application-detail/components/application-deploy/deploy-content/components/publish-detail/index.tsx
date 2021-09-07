@@ -35,9 +35,10 @@ export default function PublishDetail(props: IProps) {
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<string[]>();
+  const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
   const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
   const [deployNextEnv, setDeployNextEnv] = useState<string[]>();
-  const [envDataList, setEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<any[]>([]);
   const [nextEnvDataList, setNextEnvDataList] = useState([]);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [deployVisible, setDeployVisible] = useState(false);
@@ -53,7 +54,6 @@ export default function PublishDetail(props: IProps) {
     }).then((data) => {
       setEnvDataList(data.list);
     });
-
     // 下一个部署环境
     const nextEnvTypeCode = nextEnvTypeCodeMapping[envTypeCode];
     queryEnvsReq({
@@ -155,7 +155,6 @@ export default function PublishDetail(props: IProps) {
     }
     return (envDataList as any).find((v: any) => v.envCode === envs)?.envName;
   }, [envDataList, deployInfo]);
-
   // 离线部署
   const uploadImages = () => {
     return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
@@ -190,7 +189,7 @@ export default function PublishDetail(props: IProps) {
       onOk: () => {
         restartApp({
           appCode: appData?.appCode,
-          envCode: deployEnv?.[0],
+          envCode: restartEnv?.[0],
           appCategoryCode: appData?.appCategoryCode,
         })
           .then((resp) => {
@@ -200,6 +199,7 @@ export default function PublishDetail(props: IProps) {
           })
           .finally(() => {
             setRestartVisible(false);
+            setRestartEnv([]);
           });
       },
       onCancel() {},
@@ -209,7 +209,7 @@ export default function PublishDetail(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        {appData?.appType === 'backend' && envTypeCode === 'prod' && (
+        {appData?.appType === 'backend' && envTypeCode === 'prod' && deployEnv?.indexOf('tt-his') !== -1 && (
           <Button type="primary" onClick={() => setRestartVisible(true)}>
             重启应用
           </Button>
@@ -329,13 +329,20 @@ export default function PublishDetail(props: IProps) {
         key="deployRestart"
         title="选择重启环境"
         visible={restartVisible}
-        onCancel={() => setRestartVisible(false)}
+        onCancel={() => {
+          setRestartVisible(false);
+          setRestartEnv([]);
+        }}
         onOk={ensureRestart}
         maskClosable={false}
       >
         <div>
           <span>发布环境：</span>
-          <Checkbox.Group value={deployEnv} onChange={(v: any) => setDeployEnv(v)} options={envDataList || []} />
+          <Checkbox.Group
+            value={restartEnv}
+            onChange={(v: any) => setRestartEnv(v)}
+            options={[{ label: '天台生产', value: 'tt-his' }] || []}
+          />
         </div>
       </Modal>
 

@@ -67,11 +67,11 @@ export default function ServerStatus(props: ServerStatusProps) {
         style={{ marginTop: 16 }}
         labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
         contentStyle={{ color: '#000' }}
-        extra={
-          <Button type="primary" onClick={() => setRestartVisible(true)}>
-            重启服务
-          </Button>
-        }
+        // extra={
+        //   <Button type="primary" onClick={() => setRestartVisible(true)}>
+        //     重启服务
+        //   </Button>
+        // }
       >
         {groupedStatusInfo.map((group) => (
           <Descriptions.Item label={group.envName || group.envCode} span={3} className="app-status-detail">
