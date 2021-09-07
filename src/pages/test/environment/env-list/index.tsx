@@ -79,7 +79,7 @@ export default function EnvList(props: EnvListProps) {
   );
 
   return (
-    <CardRowGroup.SlideCard width={184} className="page-env-list">
+    <CardRowGroup.SlideCard noPadding width={184} className="page-env-list">
       <div className="env-list-header">
         <h3>环境列表</h3>
         <a onClick={handleAddBtnClick}>

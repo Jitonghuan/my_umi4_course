@@ -10,6 +10,9 @@ import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/mode-text';
 import 'ace-builds/src-noconflict/mode-xml';
+import 'ace-builds/src-noconflict/mode-html';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 // import ace from 'ace-builds/src-noconflict/ace';
 // import jsonWorkerUrl from 'file-loader!ace-builds/src-noconflict/worker-json';
@@ -17,14 +20,14 @@ import './index.less';
 
 // ace.config.setModuleUrl('ace/mode/json_worker', jsonWorkerUrl);
 
-export type AceDataType = 'yaml' | 'json' | 'sql' | 'text' | 'xml';
+export type AceDataType = 'yaml' | 'json' | 'sql' | 'text' | 'xml' | 'html' | 'javascript' | 'python';
 
 export interface AceEditorProps {
   defaultValue?: string;
   value?: string;
   onChange?: (nextValue: string) => any;
   mode?: AceDataType;
-  height?: number;
+  height?: number | string;
   readOnly?: boolean;
   status?: 'success' | 'error' | 'warning' | 'default';
   placeholder?: string;
@@ -75,7 +78,7 @@ export default function AceEditor(props: AceEditorProps) {
       <Editor
         mode={mode}
         width="100%"
-        height={props.height ? `${props.height}px` : undefined}
+        height={props.height ? `${props.height}${typeof props.height === 'string' ? '' : 'px'}` : undefined}
         theme="tomorrow"
         value={displayValue}
         onChange={handleChange}

@@ -65,6 +65,7 @@
 - 应用重启、回滚、屏蔽EDAS: https://come-future.yuque.com/sekh46/bbgc7f/ih8peg
 - 数据工厂二期: https://come-future.yuque.com/sekh46/bbgc7f/gvbhuh
 - 发布单测卡点: https://come-future.yuque.com/sekh46/bbgc7f/optg5a
+- 前端发布: https://come-future.yuque.com/sekh46/bbgc7f/dsyb0t
 
 
 ## FAQ

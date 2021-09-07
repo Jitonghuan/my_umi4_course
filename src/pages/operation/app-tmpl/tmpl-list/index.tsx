@@ -11,7 +11,6 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from '../tmpl-edits';
 
-export type EditorMode = 'HIDE' | 'EDIT';
 /** 编辑页回显数据 */
 export interface TmplEdit extends Record<string, any> {
   templateCode: string;

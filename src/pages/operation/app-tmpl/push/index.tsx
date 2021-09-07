@@ -232,13 +232,11 @@ export default function Push(porps: any) {
                       <a
                         onClick={() => {
                           const query = {
+                            id: record.id,
                             appCode: record.appCode,
                             templateType: record.templateType,
                             envCode: record.envCode,
-                            categoryCode: record.categoryCode,
-                            isClient: 0,
-                            isContainClient: 0,
-                            id: record.id,
+                            // categoryCode: record.categoryCode,
                           };
                           history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
                         }}

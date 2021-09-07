@@ -1,9 +1,7 @@
-import React from 'react';
-import { history } from 'umi';
-import moment from 'moment';
+import { datetimeCellRender } from '@/utils';
 
 // 表格 schema
-export const createTableSchema = () => [
+export const tableSchema = [
   {
     width: 80,
     title: 'ID',
@@ -21,7 +19,7 @@ export const createTableSchema = () => [
     width: 160,
     title: '创建时间',
     dataIndex: 'gmtCreate',
-    render: (val: string) => (val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : ''),
+    render: datetimeCellRender,
   },
   {
     width: 80,

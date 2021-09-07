@@ -9,7 +9,7 @@ import FELayout from '@cffe/vc-layout';
 import { ContentCard } from '@/components/vc-page-content';
 import usePublicData from '@/utils/usePublicData';
 import { useTableData } from './hooks';
-import { EditorMode, TemplateItemProps } from '../interfaces';
+import { TemplateItemProps } from '../interfaces';
 import * as APIS from '../service';
 import { postRequest } from '@/utils/request';
 import TemplateEditor from '../_components/template-editor';
@@ -121,7 +121,7 @@ export default function DataTemplate() {
         </FormItem>
       </Form>
       <div className="table-caption">
-        <h3></h3>
+        <h3>数据模板列表</h3>
         <Button type="primary" onClick={() => setEditorMode('ADD')}>
           新增数据模板
         </Button>

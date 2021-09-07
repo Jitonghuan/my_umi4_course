@@ -2,14 +2,15 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/18 09:45
 
-import React, { useState, useEffect, useCallback, useContext, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useContext, useRef, useMemo } from 'react';
 import { Tabs, Button, Table, message, Popconfirm, Spin, Empty } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
 import { IStatusInfoProps } from '@/pages/application/application-detail/types';
-import * as APIS from '@/pages/application/application-detail/services';
-import { useAppEnvList, useAppDeployInfo, useAppChangeOrder } from './hooks';
+import * as APIS from '@/pages/application/service';
+import { useAppDeployInfo, useAppChangeOrder } from './hooks';
+import { useAppEnvCodeData } from '@/pages/application/hooks';
 import RollbackModal from './components/rollback-modal';
 import './index.less';
 
@@ -19,7 +20,7 @@ const getStatusClazz = (text: string) => {
 
 export default function AppDeployInfo() {
   const { appData } = useContext(DetailContext);
-  const [envList, isLoading] = useAppEnvList(appData?.appCode);
+  const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
@@ -28,6 +29,8 @@ export default function AppDeployInfo() {
   );
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const intervalRef = useRef<any>();
+
+  const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
 
   useEffect(() => {
     if (envList.length && !currEnvCode) {
@@ -77,13 +80,13 @@ export default function AppDeployInfo() {
   }
 
   return (
-    <ContentCard className="page-app-deploy-info">
-      <Tabs activeKey={currEnvCode} onChange={(next) => setCurrEnv(next)}>
+    <ContentCard noPadding className="page-app-deploy-info">
+      <Tabs activeKey={currEnvCode} type="card" onChange={(next) => setCurrEnv(next)}>
         {envList.map((item) => (
           <Tabs.TabPane tab={item.envName} key={item.envCode} />
         ))}
       </Tabs>
-      <div className="section-group">
+      <div className="tab-content section-group">
         <section className="section-left">
           <div className="table-caption">
             <div className="caption-left"></div>

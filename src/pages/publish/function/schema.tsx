@@ -7,7 +7,7 @@ import { Link } from 'umi';
 import { getEnvName } from '@/utils';
 import { statusType } from '../constant';
 import { IFuncItem } from '../typing';
-import moment from 'moment';
+import { datetimeCellRender } from '@/utils';
 
 export const createFormItems = (params: {
   categoryData?: any[];
@@ -193,9 +193,7 @@ export const createTableColumns = (params: {
       dataIndex: 'preDeployTime',
       key: 'preDeployTime',
       width: 160,
-      render: (text) => {
-        return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
-      },
+      render: datetimeCellRender,
     },
     {
       title: '需求ID',
@@ -208,9 +206,7 @@ export const createTableColumns = (params: {
       dataIndex: 'deployTime',
       key: 'deployTime',
       width: 160,
-      render: (text) => {
-        return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
-      },
+      render: datetimeCellRender,
     },
     {
       title: '创建人',
@@ -223,9 +219,7 @@ export const createTableColumns = (params: {
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
       width: 160,
-      render: (text) => {
-        return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
-      },
+      render: datetimeCellRender,
     },
     {
       title: '操作',

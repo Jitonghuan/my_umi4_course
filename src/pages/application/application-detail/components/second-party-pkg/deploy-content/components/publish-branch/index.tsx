@@ -9,7 +9,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Steps, Button, message, Modal, Checkbox, Form, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
-import { history } from 'umi';
 import { createTableSchema } from './schema';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
@@ -19,7 +18,8 @@ import './index.less';
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
-const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBranch, env }: IProps) => {
+export default function PublishBranch(props: IProps) {
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env } = props;
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
 
@@ -28,10 +28,6 @@ const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBran
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
-
-  const {
-    location: { query },
-  } = history;
 
   const submit = () => {
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
@@ -144,8 +140,4 @@ const PublishBranch = ({ hasPublishContent, deployInfo, dataSource, onSubmitBran
       </Modal>
     </div>
   );
-};
-
-PublishBranch.defaultProps = {};
-
-export default PublishBranch;
+}

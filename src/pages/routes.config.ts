@@ -29,7 +29,7 @@ export default [
   },
   {
     path: `${PAGE_PREFIX}/test`,
-    redirect: `${PAGE_PREFIX}/test/data-factory/records`,
+    redirect: `${PAGE_PREFIX}/test/data-factory/template`,
   },
   {
     path: `${PAGE_PREFIX}/monitor`,
@@ -46,6 +46,10 @@ export default [
   {
     path: `${PAGE_PREFIX}/code`,
     redirect: `${PAGE_PREFIX}/code/rank`,
+  },
+  {
+    path: `${PAGE_PREFIX}/test/scripts`,
+    redirect: `${PAGE_PREFIX}/test/scripts/functions`,
   },
   {
     path: `${PAGE_PREFIX}/test/autotest`,
@@ -75,6 +79,7 @@ export default [
     path: `${PAGE_PREFIX}/test/workspace`,
     redirect: `${PAGE_PREFIX}/test/workspace/test-case-library`,
   },
+
   {
     path: 'demo',
     name: '示例页面',
@@ -215,6 +220,20 @@ export default [
             key: 'appList',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/second-party-pkg',
+          },
+          {
+            path: 'feVersion',
+            name: '版本管理',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/fe-versions',
+          },
+          {
+            path: 'routeTemplate',
+            name: '路由模板',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/route-template',
           },
         ],
       },
@@ -393,6 +412,26 @@ export default [
         exact: true,
       },
       {
+        path: 'scripts',
+        name: '脚本管理',
+        key: 'scripts',
+        component: '@/pages/test/scripts/index',
+        routes: [
+          {
+            path: 'functions',
+            name: '函数管理',
+            key: 'scripts',
+            component: '@/pages/test/scripts/functions',
+          },
+          {
+            path: 'sqls',
+            name: 'SQL管理',
+            key: 'scripts',
+            component: '@/pages/test/scripts/sqls',
+          },
+        ],
+      },
+      {
         path: 'autotest',
         name: '自动化测试',
         key: 'autotest',
@@ -432,7 +471,6 @@ export default [
         path: 'workspace',
         name: '测试工作台',
         key: 'test-workspace',
-        // hideInMenu: process.env.BUILD_ENV === 'prod',
         routes: [
           {
             path: 'test-case-library',
@@ -688,7 +726,54 @@ export default [
       },
     ],
   },
-
+  {
+    path: 'delivery',
+    name: '交付管理',
+    icon: 'icon-code',
+    routes: [
+      {
+        path: 'deliveryList',
+        name: '交付列表',
+        key: 'deliveryList',
+        component: '@/pages/delivery/delivery-list',
+      },
+      {
+        path: 'appStore',
+        name: '应用商店',
+        key: 'appStore',
+        component: '@/pages/delivery/appStore',
+      },
+      {
+        path: 'appDetails',
+        name: '应用详情',
+        key: 'appDetails',
+        component: '@/pages/delivery/appDetails',
+        hideInMenu: true,
+      },
+      {
+        path: 'releaseManage',
+        name: '版本管理',
+        key: 'releaseManage',
+        component: '@/pages/delivery/release-manage',
+      },
+      {
+        path: 'createAppEdition',
+        name: '创建应用版本',
+        key: 'createAppEdition',
+        component: '@/pages/delivery/create-appEdition',
+        hideInMenu: true,
+      },
+      {
+        path: 'updateAppEdition',
+        name: '更新应用版本',
+        key: 'updateAppEdition',
+        component: '@/pages/delivery/update-appEdition',
+        hideInMenu: true,
+      },
+    ],
+    //测试环境和正式环境暂不展示
+    hideInMenu: process.env.BUILD_ENV === 'prod',
+  },
   {
     path: '*',
     name: 'NOT FOUND',

@@ -5,10 +5,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getRequest } from '@/utils/request';
 import { queryappManageList, queryappManageEnvList } from '../../services';
-import { SelectOptions } from '../../interfaces';
 
 export function useAppCodeOptions() {
-  const [data, setData] = useState<SelectOptions[]>([]);
+  const [data, setData] = useState<IOption[]>([]);
 
   useEffect(() => {
     getRequest(queryappManageList, {
@@ -27,8 +26,8 @@ export function useAppCodeOptions() {
   return [data];
 }
 
-export function useEnvCodeOptions(appCode?: string): [SelectOptions[], boolean] {
-  const [data, setData] = useState<SelectOptions[]>([]);
+export function useEnvCodeOptions(appCode?: string): [IOption[], boolean] {
+  const [data, setData] = useState<IOption[]>([]);
   const [loading, setLoading] = useState(false);
 
   const loadData = useCallback(async (appCode?: string) => {
@@ -59,7 +58,7 @@ export function useEnvCodeOptions(appCode?: string): [SelectOptions[], boolean] 
 }
 
 export function useIntervalOptions() {
-  const [data, setData] = useState<SelectOptions[]>([]);
+  const [data, setData] = useState<IOption[]>([]);
 
   useEffect(() => {
     setData([

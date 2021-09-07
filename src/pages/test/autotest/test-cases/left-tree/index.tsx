@@ -9,7 +9,7 @@ import VCCustomIcon from '@cffe/vc-custom-icon';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
-import { TreeNode, TreeNodeSaveData, EditorMode } from '../../interfaces';
+import { TreeNode, TreeNodeSaveData } from '../../interfaces';
 import { useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey, getMergedList } from '../../common';
 import { useProjectOptions } from '../../hooks';
@@ -220,7 +220,7 @@ export default function LeftTree(props: LeftTreeProps) {
   );
 
   return (
-    <CardRowGroup.SlideCard width={244} className="page-case-list">
+    <CardRowGroup.SlideCard noPadding width={244} className="page-case-list">
       <div className="case-list-header">
         <Select
           options={projectOptions}

@@ -8,8 +8,7 @@ import {
   DEPLOY_TYPE_COLOR_MAP,
   DEPLOY_TYPE_MAP,
 } from './const';
-import { getEnvName } from '@/utils';
-import moment from 'moment';
+import { getEnvName, datetimeCellRender } from '@/utils';
 
 // 过滤表单 schema
 export const createFilterFormSchema = (params: { categoryData?: any[]; businessData?: any[] }) => ({
@@ -136,9 +135,7 @@ export const createTableSchema = ({
     {
       title: '申请时间',
       dataIndex: 'gmtCreate',
-      render: (text: string) => {
-        return text ? moment(text).format('YYYY-MM-DD HH:mm') : '';
-      },
+      render: datetimeCellRender,
     },
     {
       title: '申请人',
@@ -254,9 +251,7 @@ export const createApplyDetailSchemaColumns = ({
   {
     title: '预计发布时间',
     dataIndex: 'preDeployTime',
-    render: (text: string) => {
-      return text ? moment(text).format('YYYY-MM-DD HH:mm') : '';
-    },
+    render: datetimeCellRender,
   },
   {
     title: '需求ID',
@@ -269,8 +264,6 @@ export const createApplyDetailSchemaColumns = ({
   {
     title: '创建时间',
     dataIndex: 'gmtCreate',
-    render: (text: string) => {
-      return text ? moment(text).format('YYYY-MM-DD HH:mm') : '';
-    },
+    render: datetimeCellRender,
   },
 ];

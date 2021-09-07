@@ -9,7 +9,7 @@ import LeftTree from './left-tree';
 import RightDetail from './right-detail';
 import CaseEditor from '../_components/case-editor';
 import CaseDetail from '../_components/case-detail';
-import { EditorMode, TreeNode, CaseItemVO } from '../interfaces';
+import { TreeNode, CaseItemVO } from '../interfaces';
 import './index.less';
 
 export default function TestCaseManager() {

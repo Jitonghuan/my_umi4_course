@@ -8,10 +8,9 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
-import { queryDeployList, queryFeatureDeployed } from '@/pages/application/service';
+import { queryDeployList, queryFeatureDeployed, queryApplicationStatus } from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
-import * as APIS from '@/pages/application/application-detail/services';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
@@ -21,8 +20,8 @@ import './index.less';
 const rootCls = 'deploy-content-compo';
 
 export interface DeployContentProps {
+  /** 当前页面是否激活 */
   isActive?: boolean;
-  appCode?: string;
   /** 环境参数 */
   envTypeCode: string;
   /** 部署下个环境成功回调 */
@@ -30,7 +29,7 @@ export interface DeployContentProps {
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, onDeployNextEnvSuccess } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -45,7 +44,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
 
   const requestData = async () => {
-    if (!appCode || !props.isActive) return;
+    if (!appCode || !isActive) return;
 
     setUpdating(true);
 
@@ -75,7 +74,7 @@ export default function DeployContent(props: DeployContentProps) {
 
       // 如果有部署信息，且为线上，则更新应用状态
       if (envTypeCode === 'prod' && appData) {
-        const resp4 = await getRequest(APIS.queryApplicationStatus, {
+        const resp4 = await getRequest(queryApplicationStatus, {
           data: {
             deploymentName: appData?.deploymentName,
             envCode: nextInfo.deployedEnvs,
@@ -105,6 +104,7 @@ export default function DeployContent(props: DeployContentProps) {
     timerHandle('do', true);
   };
 
+  // 操作开始时终止定时请求，操作结束后继续
   const onOperate = (operateType: string) => {
     if (operateType.endsWith('Start')) {
       timerHandle('stop');
@@ -115,10 +115,10 @@ export default function DeployContent(props: DeployContentProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode || !props.isActive) return;
+    if (!appCode || !isActive) return;
 
     timerHandle('do', true);
-  }, [appCode, props.isActive]);
+  }, [appCode, isActive]);
 
   return (
     <div className={rootCls}>

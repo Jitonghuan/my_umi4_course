@@ -8,7 +8,7 @@ import { history } from 'umi';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
-import { EditorMode, TmplEdit } from '../tmpl-list';
+import { TmplEdit } from '../tmpl-list';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from 'antd';

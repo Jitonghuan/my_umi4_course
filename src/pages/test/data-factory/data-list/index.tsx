@@ -2,6 +2,7 @@ import React, { useContext, useCallback, useState } from 'react';
 import { Form, Table, Button, Input, Select, DatePicker, Checkbox, Tag, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { datetimeCellRender } from '@/utils';
 import FELayout from '@cffe/vc-layout';
 import FEContext from '@/layouts/basic-layout/fe-context';
 import { ContentCard } from '@/components/vc-page-content';
@@ -138,11 +139,7 @@ export default function DataFactoryList(props: any) {
             return result?.length ? result[0].label : value || '';
           }}
         />
-        <Table.Column
-          dataIndex="gmtCreate"
-          title="创建时间"
-          render={(value) => (value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : '')}
-        />
+        <Table.Column dataIndex="gmtCreate" title="创建时间" render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" />
         <Table.Column
           dataIndex="params"

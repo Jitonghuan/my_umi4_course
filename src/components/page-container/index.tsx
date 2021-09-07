@@ -8,12 +8,12 @@ export interface IProps extends IPageContentProps {}
 
 export default function PageContainer(props: React.PropsWithChildren<IProps>) {
   const { children, ...rest } = props;
-  const feContent = useContext(FeContext);
+  const { breadcrumbMap } = useContext(FeContext);
   const location = useLocation();
 
   return (
     <VCPageContent
-      breadcrumbMap={feContent.breadcrumbMap}
+      breadcrumbMap={breadcrumbMap}
       pathname={location.pathname}
       isFlex
       height="calc(100vh - 60px)"

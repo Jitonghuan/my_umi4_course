@@ -25,9 +25,22 @@ a:focus {
   height: 100%;
 }
 
+.flex {
+  display: flex;
+  align-items: center;
+}
+
 .flex-inline {
   display: inline-flex;
   align-items: center;
+}
+
+.flex,
+.flex-inline {
+  > button + button,
+  > a + a {
+    margin-left: 8px;
+  }
 }
 
 .flex-air {
@@ -87,6 +100,14 @@ hr {
   }
 }
 
+.ant-form .ant-row.ant-form-item {
+  flex-wrap: nowrap;
+
+  .ant-form-item-control {
+    overflow: hidden;
+  }
+}
+
 .table-caption {
   display: flex;
   align-items: center;
@@ -98,15 +119,31 @@ hr {
     display: flex;
     align-items: center;
 
+    > a,
+    > span {
+      white-space: nowrap;
+    }
+
     > a + a,
     > button + button {
       margin-left: 12px;
     }
   }
 
-  > h3 {
+  > h3,
+  .caption-left > h3 {
     font-size: 16px;
     margin-bottom: 0;
+    white-space: nowrap;
+  }
+
+  > h4,
+  .caption-left > h4 {
+    font-size: 14px;
+    margin-bottom: 0;
+    color: #222;
+    white-space: nowrap;
+    font-weight: normal;
   }
 }
 
@@ -142,6 +179,15 @@ ul {
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+
+.ant-input-search .ant-input-affix-wrapper {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.ant-descriptions-bordered.fixed .ant-descriptions-view > table {
+  table-layout: fixed !important;
 }
 
 // ------ common

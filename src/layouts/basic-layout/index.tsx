@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback, useContext } from 'react';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
 import FELayout from '@cffe/vc-layout';
@@ -18,13 +18,14 @@ import logo from './logo.svg';
 
 export default function BasicLayout(props: IUmiRrops) {
   const FeGlobalRef = useRef(window.FE_GLOBAL);
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [ready, setReady] = useState(false);
   // 所属数据
   const [categoryData] = useCategoryData(ready);
   // 业务线
   const [business] = useBusinessData(ready);
   // 环境
-  const [envData] = useEnvTypeData(ready);
+  const [envTypeData] = useEnvTypeData(ready);
   // 权限数据
   const [permissionData, setPermissionData] = useState<IPermission[]>([]);
 
@@ -77,7 +78,7 @@ export default function BasicLayout(props: IUmiRrops) {
           permissionData,
           businessData: business,
           categoryData,
-          envData,
+          envTypeData,
         }}
       >
         <ChartsContext.Provider

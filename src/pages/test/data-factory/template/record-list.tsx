@@ -3,7 +3,7 @@
 // @create 2021/07/09 17:19
 
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import moment from 'moment';
+import { datetimeCellRender } from '@/utils';
 import { Drawer, Table, DatePicker, Switch, Tag } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import { TemplateItemProps, RecordVo } from '../interfaces';
@@ -91,11 +91,7 @@ export default function RecordList(props: ReordListProps) {
             title="状态"
             render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
           />
-          <Table.Column
-            dataIndex="gmtCreate"
-            title="创建时间"
-            render={(value) => (value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : '')}
-          />
+          <Table.Column dataIndex="gmtCreate" title="创建时间" render={datetimeCellRender} />
           <Table.Column title="创建人" dataIndex="createUser" />
 
           <Table.Column

@@ -8,7 +8,7 @@ import { BulbOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
 import { postRequest } from '@/utils/request';
 import * as APIS from '../../service';
-import { EditorMode, TaskItemVO } from '../../interfaces';
+import { TaskItemVO } from '../../interfaces';
 import { useEnvOptions } from '../../hooks';
 import { useCaseListForTaskEditor, useSceneListForTaskEditor } from './hooks';
 import './index.less';
