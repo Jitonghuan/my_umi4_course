@@ -6,7 +6,14 @@ import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox, Upload } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { cancelDeploy, deployReuse, deployMaster, queryEnvsReq, offlineDeploy } from '@/pages/application/service';
+import {
+  cancelDeploy,
+  deployReuse,
+  deployMaster,
+  queryEnvsReq,
+  offlineDeploy,
+  restartApp,
+} from '@/pages/application/service';
 import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
 import RollbackModal from '../rollback-modal';
@@ -22,7 +29,6 @@ const nextEnvTypeCodeMapping: Record<string, string> = {
 
 export default function PublishDetail(props: IProps) {
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
-
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
@@ -35,6 +41,7 @@ export default function PublishDetail(props: IProps) {
   const [nextEnvDataList, setNextEnvDataList] = useState([]);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [deployVisible, setDeployVisible] = useState(false);
+  const [restartVisible, setRestartVisible] = useState(false);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -174,9 +181,39 @@ export default function PublishDetail(props: IProps) {
     },
   };
 
+  //重启确认
+  const { confirm } = Modal;
+  const ensureRestart = () => {
+    confirm({
+      title: '确定要重启应用吗？',
+      icon: <ExclamationCircleOutlined />,
+      onOk: () => {
+        restartApp({
+          appCode: appData?.appCode,
+          envCode: deployInfo.envs,
+          appCategoryCode: appData?.appCategoryCode,
+        })
+          .then((resp) => {
+            if (resp.success) {
+              message.success('操作成功！');
+            }
+          })
+          .finally(() => {
+            setRestartVisible(false);
+          });
+      },
+      onCancel() {},
+    });
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
+        {envTypeCode === 'prod' && (
+          <Button type="primary" onClick={() => setRestartVisible(true)}>
+            重启
+          </Button>
+        )}
         {envTypeCode === 'prod' && (
           <Button type="primary" onClick={() => setDeployVisible(true)} icon={<UploadOutlined />}>
             离线部署
@@ -284,6 +321,21 @@ export default function PublishDetail(props: IProps) {
               离线部署
             </Button>
           </Upload>
+        </div>
+      </Modal>
+
+      {/* 重启按钮 */}
+      <Modal
+        key="deployRestart"
+        title="选择重启环境"
+        visible={restartVisible}
+        onCancel={() => setRestartVisible(false)}
+        onOk={ensureRestart}
+        maskClosable={false}
+      >
+        <div>
+          <span>发布环境：</span>
+          <Checkbox.Group value={deployEnv} onChange={(v: any) => setDeployEnv(v)} options={envDataList || []} />
         </div>
       </Modal>
 
