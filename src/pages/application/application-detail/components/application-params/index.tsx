@@ -196,7 +196,7 @@ export default function DemoPageTb(porps: any) {
       }
     });
   };
-  //编辑应用参数
+  //编辑应用模版
   const setApplication = (values: any) => {
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
@@ -240,7 +240,7 @@ export default function DemoPageTb(porps: any) {
           </Col>
           <Col span={10} offset={2}>
             <div style={{ fontSize: 18 }}>可配置项：</div>
-            <Form.Item name="tmplConfigurableItem" rules={[{ required: true, message: '这是必填项' }]}>
+            <Form.Item name="tmplConfigurableItem">
               <EditorTable
                 readOnly
                 columns={[
