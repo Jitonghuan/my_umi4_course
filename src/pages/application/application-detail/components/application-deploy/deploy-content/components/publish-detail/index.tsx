@@ -190,7 +190,7 @@ export default function PublishDetail(props: IProps) {
       onOk: () => {
         restartApp({
           appCode: appData?.appCode,
-          envCode: deployInfo.envs,
+          envCode: deployEnv,
           appCategoryCode: appData?.appCategoryCode,
         })
           .then((resp) => {
