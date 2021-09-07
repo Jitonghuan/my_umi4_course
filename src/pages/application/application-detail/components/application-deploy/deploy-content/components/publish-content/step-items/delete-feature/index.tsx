@@ -1,4 +1,4 @@
-//
+// delete feature step
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 21:09
 
@@ -14,6 +14,14 @@ export default function DeleteFeatureStep(props: StepItemProps) {
   const isLoading = deployStatus === 'deletingFeature';
   const isError = deployStatus === 'deleteFeatureErr';
 
+  const handleRetryDelClick = async () => {
+    try {
+      await retryDelFeature({ id: deployInfo.id });
+    } finally {
+      onOperate('deleteFeatureRetryEnd');
+    }
+  };
+
   return (
     <Steps.Step
       {...others}
@@ -23,12 +31,7 @@ export default function DeleteFeatureStep(props: StepItemProps) {
       description={
         isError && (
           <>
-            <Button
-              style={{ marginTop: 4 }}
-              onClick={() => {
-                retryDelFeature({ id: deployInfo.id }).finally(() => onOperate('deleteFeatureRetryEnd'));
-              }}
-            >
+            <Button style={{ marginTop: 4 }} onClick={handleRetryDelClick}>
               重试
             </Button>
           </>

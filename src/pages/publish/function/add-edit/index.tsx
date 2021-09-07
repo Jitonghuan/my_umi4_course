@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
 import { Space, Form, Input, Popconfirm, Typography, Button, Table, Select, DatePicker, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import moment, { Moment } from 'moment';
+import { datetimeCellRender } from '@/utils';
 import { history } from 'umi';
-
 import FEContext from '@/layouts/basic-layout/fe-context';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
@@ -195,7 +195,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       required: false,
       width: 220,
       item: <DatePicker placeholder="请选择日期" showTime />,
-      render: (text: Moment) => <>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</>,
+      render: datetimeCellRender,
     },
     {
       title: '需求ID',

@@ -3,7 +3,7 @@ import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-
 export interface IProps {
   deployInfo: DeployInfoVO;
   envTypeCode: string;
-  nextEnvTypeCode?: string;
+  // nextEnvTypeCode?: string;
   appStatusInfo: IStatusInfoProps[];
   onOperate: (
     type:

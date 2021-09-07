@@ -13,6 +13,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
+import { datetimeCellRender } from '@/utils';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
@@ -135,7 +136,7 @@ export default function PublishBranch(props: PublishBranchProps) {
           dataIndex="gmtCreate"
           title="创建时间"
           width={160}
-          render={(val: string) => (val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '')}
+          render={datetimeCellRender}
         />
         <Table.Column dataIndex="createUser" title="创建人" width={80} />
       </Table>

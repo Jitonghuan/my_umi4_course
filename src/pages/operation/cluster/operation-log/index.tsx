@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { Table, Modal } from 'antd';
-import moment from 'moment';
+import { datetimeCellRender } from '@/utils';
 import { ContentCard } from '@/components/vc-page-content';
 import { useLogSource } from './hooks';
 import ExecResult from '@/components/exec-result';
@@ -38,12 +38,12 @@ export default function Operation() {
         <Table.Column
           title="创建时间"
           dataIndex="gmtCreate"
-          render={(v: string) => (v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '--')}
+          render={datetimeCellRender}
         />
         <Table.Column
           title="结束时间"
           dataIndex="gmtModify"
-          render={(v: string) => (v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '--')}
+          render={datetimeCellRender}
         />
         {/* <Table.Column title="描述" dataIndex="" /> */}
         <Table.Column

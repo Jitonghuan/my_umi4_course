@@ -48,6 +48,10 @@ export default [
     redirect: `${PAGE_PREFIX}/code/rank`,
   },
   {
+    path: `${PAGE_PREFIX}/test/scripts`,
+    redirect: `${PAGE_PREFIX}/test/scripts/functions`,
+  },
+  {
     path: `${PAGE_PREFIX}/test/autotest`,
     redirect: `${PAGE_PREFIX}/test/autotest/dashboard`,
   },
@@ -401,11 +405,24 @@ export default [
         exact: true,
       },
       {
-        path: 'functions',
-        name: '函数管理',
-        key: 'functions',
-        component: '@/pages/test/functions',
-        exact: true,
+        path: 'scripts',
+        name: '脚本管理',
+        key: 'scripts',
+        component: '@/pages/test/scripts/index',
+        routes: [
+          {
+            path: 'functions',
+            name: '函数管理',
+            key: 'scripts',
+            component: '@/pages/test/scripts/functions',
+          },
+          {
+            path: 'sqls',
+            name: 'SQL管理',
+            key: 'scripts',
+            component: '@/pages/test/scripts/sqls',
+          },
+        ],
       },
       {
         path: 'autotest',
@@ -447,7 +464,6 @@ export default [
         path: 'workspace',
         name: '测试工作台',
         key: 'test-workspace',
-        hideInMenu: process.env.BUILD_ENV === 'prod',
         routes: [
           {
             path: 'test-case-library',

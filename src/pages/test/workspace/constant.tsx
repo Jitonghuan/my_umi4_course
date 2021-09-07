@@ -38,6 +38,26 @@ export const testPhaseEnum = [
     type: 'success',
   },
 ];
+export const testPlanStatusEnum = [
+  {
+    value: 0,
+    title: '待执行',
+    label: '待执行',
+    type: 'default',
+  },
+  {
+    value: 1,
+    title: '执行中',
+    label: '执行中',
+    type: 'processing',
+  },
+  {
+    value: 2,
+    title: '已完成',
+    label: '已完成',
+    type: 'success',
+  },
+];
 export const caseStatusEnum = [
   { label: '待执行', color: '#5F677A', icon: <ClockCircleOutlined />, value: '0' },
   { label: '执行通过', color: '#439D75', icon: <CheckCircleOutlined />, value: '1' },

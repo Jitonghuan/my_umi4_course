@@ -1,4 +1,4 @@
-// data formatter
+// 应用模版编辑页
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
@@ -57,8 +57,7 @@ export default function TaskEditor(props: TmplListProps) {
       templateValue: initData?.templateValue,
       remark: initData?.remark,
     };
-    console.log('获取到的初始化数据：', initData?.envCode);
-    console.log('=-=-=-=-', initData);
+
     let arr = [];
     let jvm = '';
 
@@ -134,7 +133,8 @@ export default function TaskEditor(props: TmplListProps) {
   };
   //保存编辑模版
   const createTmpl = (value: any) => {
-    console.log('------', value.envCodes);
+    // console.log('------', value.envCodes);
+    console.log('985544466', value.tmplConfigurableItem);
     if (Array.isArray(value?.envCodes)) {
       let envCodesArry = value?.envCodes;
       setEnvCodesArry(envCodesArry);
@@ -230,10 +230,10 @@ export default function TaskEditor(props: TmplListProps) {
                     },
                   ]}
                 />
-                <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
-                <Form.Item name="remark">
-                  <Input.TextArea placeholder="请输入" style={{ width: 520 }}></Input.TextArea>
-                </Form.Item>
+              </Form.Item>
+              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 520 }}></Input.TextArea>
               </Form.Item>
               {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
               {isDeployment == 'deployment' ? (

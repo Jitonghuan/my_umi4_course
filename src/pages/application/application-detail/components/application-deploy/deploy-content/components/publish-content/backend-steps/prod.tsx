@@ -14,7 +14,6 @@ import FinishedStep from '../step-items/finished';
 
 const deployStatusMapping: Record<string, number> = {
   // 合并release
-  // 有 mergeWebUrl 则展示
   merging: 1.1,
   mergeErr: 1.2,
   conflict: 1.2,
@@ -30,6 +29,7 @@ const deployStatusMapping: Record<string, number> = {
   // 删除feature
   deletingFeature: 4.1,
   deleteFeatureErr: 4.2,
+  // 完成
   deployFinish: 5,
   deployed: 5,
 };

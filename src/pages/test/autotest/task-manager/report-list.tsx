@@ -3,7 +3,7 @@
 // @create 2021/07/09 17:19
 
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
+import { datetimeCellRender } from '@/utils';
 import { Drawer, Table, DatePicker } from 'antd';
 import { TaskItemVO, TaskReportItemVO } from '../interfaces';
 import { useReportList } from './hooks';
@@ -62,9 +62,7 @@ export default function ReportList(props: ReportListProps) {
           <Table.Column
             title="执行完成时间"
             dataIndex="endTime"
-            render={(v: string) => {
-              return v ? moment(v).format('YYYY-MM-DD HH:mm:ss') : '';
-            }}
+            render={datetimeCellRender}
           />
           <Table.Column
             title="操作"

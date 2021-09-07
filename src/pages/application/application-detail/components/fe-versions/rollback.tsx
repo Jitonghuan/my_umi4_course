@@ -7,6 +7,7 @@ import { Modal, message, Table, Empty } from 'antd';
 import moment from 'moment';
 import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
 import { postRequest } from '@/utils/request';
+import { datetimeCellRender } from '@/utils';
 import {} from '@/pages/application/service';
 import { FeVersionItemVO } from './types';
 
@@ -70,7 +71,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         <Table.Column
           dataIndex="gmtModify"
           title="发布时间"
-          render={(v) => v && moment(v).format('YYYY-MM-DD HH:mm:ss')}
+          render={datetimeCellRender}
           width={160}
         />
         <Table.Column dataIndex="modifyUser" title="发布人" />
