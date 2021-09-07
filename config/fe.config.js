@@ -33,7 +33,7 @@ module.exports = {
         `$ npm run build:${buildEnv}`,
         `#oss -r ./dist come2future-web:${ossDir}/fe-matrix-front/matrix-front`,
         `#scp ./dist/matrix/index.html root@192.168.0.111:/usr/share/nginx/html/matrix-${buildEnv}/matrix/index.html --pass=&WUb&1u8508P0ohD`,
-        '$ echo publish success!!!',
+        '#logger:success publish success!!!',
       ];
     },
   },

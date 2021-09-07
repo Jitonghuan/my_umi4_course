@@ -4,6 +4,7 @@
 
 import React, { useState, useContext, useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
 import { Select, Button, Tabs, Spin, Empty, Modal, message } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import FeContext from '@/layouts/basic-layout/fe-context';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
@@ -111,9 +112,13 @@ export default function RouteTemplate() {
               value={envCode}
               onChange={(next) => setEnvCode(next)}
               placeholder="请选择环境"
-              style={{ width: 300 }}
+              style={{ width: 300, marginRight: 20 }}
               options={envCodeOptions}
             />
+            <a href="https://www.smarty.net/docs/zh_CN/" target="_blank">
+              <QuestionCircleOutlined />
+              &nbsp; 查看模板语法
+            </a>
           </div>
           <div className="caption-right">
             <Button type="default" size="large" disabled={!envCode} onClick={handleReset}>
