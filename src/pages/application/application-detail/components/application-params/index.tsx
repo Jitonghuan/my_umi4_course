@@ -67,7 +67,6 @@ export default function DemoPageTb(porps: any) {
           value: inintDatas.tmplConfigurableItem[key],
         });
       }
-      console.log('11111111', jvm);
       applicationForm.setFieldsValue({
         appEnvCode: inintDatas.envCode,
         tmplType: inintDatas.templateType,
@@ -176,6 +175,7 @@ export default function DemoPageTb(porps: any) {
             });
           }
         }
+        setId(applicationlist?.id);
         applicationForm.setFieldsValue({
           // templateValue:list.templateValue,
           tmplConfigurableItem: arr,
@@ -196,7 +196,7 @@ export default function DemoPageTb(porps: any) {
       }
     });
   };
-  //编辑应用模版
+  //编辑应用膜拜
   const setApplication = (values: any) => {
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
@@ -204,6 +204,7 @@ export default function DemoPageTb(porps: any) {
     }, {} as any);
     const value = values.value;
     putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
+      console.log('id', id);
       if (result.success) {
         message.success('提交成功！');
         window.location.reload();
