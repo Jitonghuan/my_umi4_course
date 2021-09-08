@@ -134,11 +134,12 @@ export default function RightDetail(props: RightDetailProps) {
           dataIndex="id"
           title="ID"
           render={(value, record: CaseItemVO) => <a onClick={() => handleDetailCaseItem(record)}>{value}</a>}
+          width={80}
         />
-        <Table.Column dataIndex="moduleName" title="模块" />
-        <Table.Column dataIndex="apiName" title="接口" />
-        <Table.Column dataIndex="name" title="用例名称" />
-        <Table.Column dataIndex="createUser" title="创建人" />
+        <Table.Column dataIndex="moduleName" title="模块" width={160} />
+        <Table.Column dataIndex="apiName" title="接口" ellipsis />
+        <Table.Column dataIndex="name" title="用例名称" ellipsis />
+        <Table.Column dataIndex="createUser" title="创建人" width={120} />
         <Table.Column dataIndex="gmtModify" title="修改时间" width={160} />
         <Table.Column
           width={160}
