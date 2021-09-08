@@ -28,7 +28,8 @@ export default function TaskEditor(props: TmplListProps) {
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [envCodesArry, setEnvCodesArry] = useState<string[]>([]);
+  const [envCodeArry, setEnvCodeArry] = useState<string[]>([]);
+  const [enCodeTrue, setEnCodeTrue] = useState<string[]>([]);
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
@@ -131,22 +132,29 @@ export default function TaskEditor(props: TmplListProps) {
       }
     });
   };
+  useEffect(() => {
+    // 这个useEffect很关键，第一次赋值但是获取不到，所以要再赋值一次
+    if (envCodeArry) {
+      setEnvCodeArry(envCodeArry);
+    }
+  }, [envCodeArry]);
+
   //保存编辑模版
+
   const createTmpl = (value: any) => {
-    // console.log('------', value.envCodes);
-    console.log('985544466', value.tmplConfigurableItem);
-    if (Array.isArray(value?.envCodes)) {
-      let envCodesArry = value?.envCodes;
-      setEnvCodesArry(envCodesArry);
+    if (Array.isArray(value?.envCodes) || []) {
+      const envCodesArry = value?.envCodes;
+      setEnvCodeArry((envCodesArry) => envCodesArry);
     } else {
       let envCodesArry = [];
       envCodesArry.push(value?.envCodes);
-      setEnvCodesArry(envCodesArry);
+      setEnvCodeArry((envCodesArry) => envCodesArry);
     }
     const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
+
     putRequest(APIS.update, {
       data: {
         templateName: value.templateName,
@@ -154,7 +162,7 @@ export default function TaskEditor(props: TmplListProps) {
         templateValue: value.templateValue,
         jvm: value?.jvm,
         appCategoryCode: value.appCategoryCode || '',
-        envCodes: envCodesArry || [],
+        envCodes: envCodeArry || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         templateCode: templateCode,
         remark: value?.remark,
@@ -162,8 +170,6 @@ export default function TaskEditor(props: TmplListProps) {
     }).then((resp: any) => {
       if (resp.success) {
         const datas = resp.data || [];
-        // setEnvDatas(datas.envCode);
-        // console.log('6666667',datas)
         history.push({
           pathname: 'tmpl-list',
         });
@@ -173,6 +179,7 @@ export default function TaskEditor(props: TmplListProps) {
         message.error('保存失败');
       }
     });
+    console.log('ooooooo', envCodeArry);
   };
 
   const changeTmplType = (value: any) => {
