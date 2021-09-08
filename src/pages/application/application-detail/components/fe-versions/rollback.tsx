@@ -2,9 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 11:34
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, message, Table, Empty } from 'antd';
-import moment from 'moment';
 import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
 import { postRequest } from '@/utils/request';
 import { datetimeCellRender } from '@/utils';
@@ -22,6 +21,12 @@ export interface RollbackVersionProps {
 export default function RollbackVersion(props: RollbackVersionProps) {
   const { appData, envItem, versionList, onClose, onSubmit } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  useEffect(() => {
+    if (!envItem) return;
+
+    setSelectedRowKeys([]);
+  }, [envItem]);
 
   const handleOk = useCallback(async () => {
     message.success('操作成功！');
@@ -54,6 +59,9 @@ export default function RollbackVersion(props: RollbackVersionProps) {
             disabled: record.isActive === 0,
           }),
         }}
+        onRow={(record) => ({
+          onClick: () => setSelectedRowKeys([record.id]),
+        })}
         rowKey="id"
         pagination={false}
         bordered

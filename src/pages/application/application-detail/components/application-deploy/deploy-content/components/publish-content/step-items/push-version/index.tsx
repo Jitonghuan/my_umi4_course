@@ -9,7 +9,7 @@ import { rePushFeVersion } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 发布HTML */
-export default function PushHTMLStep(props: StepItemProps) {
+export default function PushVersionStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 
   const isLoading = deployStatus === 'pushVersion';
@@ -26,7 +26,7 @@ export default function PushHTMLStep(props: StepItemProps) {
   return (
     <Steps.Step
       {...others}
-      title="发布HTML"
+      title="发布版本"
       icon={isLoading && <LoadingOutlined />}
       status={isError ? 'error' : others.status}
       description={

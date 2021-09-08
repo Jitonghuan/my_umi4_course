@@ -42,8 +42,10 @@
 
 - 资源文件同步到 {BASE_DIR}/{group}/{project}/{version}
 - 路由文件(可能是html、app.json等) 同步到 {BASE_DIR}/{appData.routeFile}
+- html文件(如资源文件根目录下有) 同步到 {BASE_DIR}/{group}/{project}/xxx.html
 
 ### 微前端-子应用
 
 - 资源文件同步到 {BASE_DIR}/{group}/{project}/{version}
+- 路由文件(可能是html、app.json等) 同步到 {BASE_DIR}/{appData.routeFile}
 - html文件(如资源文件根目录下有) 同步到 {BASE_DIR}/{group}/{project}/xxx.html

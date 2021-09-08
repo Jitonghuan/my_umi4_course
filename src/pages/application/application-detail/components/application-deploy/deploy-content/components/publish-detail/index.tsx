@@ -38,8 +38,8 @@ export default function PublishDetail(props: IProps) {
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
   const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
   const [deployNextEnv, setDeployNextEnv] = useState<string[]>();
-  const [envDataList, setEnvDataList] = useState<any[]>([]);
-  const [nextEnvDataList, setNextEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<IOption[]>([]);
+  const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
@@ -141,20 +141,15 @@ export default function PublishDetail(props: IProps) {
   // 发布环境
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
-    const namesArr: any[] = [];
-    if (envs?.indexOf(',') > -1) {
-      const list = envs?.split(',') || [];
-      envDataList?.forEach((item: any) => {
-        list?.forEach((v: any) => {
-          if (item?.envCode === v) {
-            namesArr.push(item.envName);
-          }
-        });
-      });
-      return namesArr.join(',');
-    }
-    return (envDataList as any).find((v: any) => v.envCode === envs)?.envName;
+    const envList = envs?.split(',') || [];
+    return envDataList
+      .filter((envItem) => {
+        return envList.includes(envItem.envCode);
+      })
+      .map((envItem) => `${envItem.envName}(${envItem.envCode})`)
+      .join(',');
   }, [envDataList, deployInfo]);
+
   // 离线部署
   const uploadImages = () => {
     return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
