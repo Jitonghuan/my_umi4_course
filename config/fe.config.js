@@ -18,7 +18,8 @@ module.exports = {
       const buildEnv = options.online ? 'prod' : 'test';
       return [
         '$ fnpm install',
-        `$ npm run build:${buildEnv}`
+        `$ npm run build:${buildEnv}`,
+        (options.jenkins || options.j) && `#tar ./dist/matrix ./dist/seed.jsbundle --path=build`,
       ];
     },
     analyze: [
