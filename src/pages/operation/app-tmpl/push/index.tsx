@@ -52,7 +52,8 @@ export default function Push(porps: any) {
   const [dataSource, setDataSource] = useState<any[]>([]);
   useEffect(() => {
     selectCategory();
-    getApplication({ pageIndex: 1, pageSize: 20 });
+    loadListData({ pageIndex: 1, pageSize: 20 });
+    // getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
   // 根据选择的应用分类查询要推送的环境
   const changeAppCategory = (value: any) => {
@@ -140,9 +141,15 @@ export default function Push(porps: any) {
       pageSize: pagination.pageSize,
     };
     setPageIndex(pagination.current);
-    getApplication(obj);
-    // console.log('pagination.current:', pagination.current, pagination.pageSize);
+    loadListData(obj);
     setSelectList(currentDataSource);
+  };
+  const loadListData = (params: any) => {
+    const values = formTmplQuery.getFieldsValue();
+    getApplication({
+      ...values,
+      ...params,
+    });
   };
 
   //加载应用分类
@@ -172,7 +179,7 @@ export default function Push(porps: any) {
             });
           }}
           onReset={() => {
-            formTmpl.resetFields();
+            formTmplQuery.resetFields();
             getApplication({
               pageIndex: 1,
             });
