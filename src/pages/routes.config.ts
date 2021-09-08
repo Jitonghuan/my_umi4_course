@@ -79,6 +79,10 @@ export default [
     path: `${PAGE_PREFIX}/test/workspace`,
     redirect: `${PAGE_PREFIX}/test/workspace/test-case-library`,
   },
+  {
+    path: `${PAGE_PREFIX}/test/quality-control-new`,
+    redirect: `${PAGE_PREFIX}/test/quality-control-new/overview`,
+  },
 
   {
     path: 'demo',
@@ -494,6 +498,43 @@ export default [
             name: '计划详情',
             key: 'test-workspace',
             component: '@/pages/test/workspace/plan-info',
+          },
+        ],
+      },
+      {
+        path: 'quality-control-new',
+        name: '质量控制（新）',
+        key: 'quality-control-new',
+        routes: [
+          {
+            path: 'overview',
+            name: '质量看板',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/overview',
+          },
+          {
+            path: 'tesk-list',
+            name: '任务列表',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/tesk-list',
+          },
+          {
+            path: 'quality-scoring-rules',
+            name: '质量分规则',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/quality-scoring-rules',
+          },
+          {
+            path: 'global-control-point-rules',
+            name: '全局卡点规则',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/global-control-point-rules',
+          },
+          {
+            path: 'app-control-point-rules',
+            name: '应用卡点规则',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/app-control-point-rules',
           },
         ],
       },
