@@ -17,8 +17,10 @@ export interface FuncTableFieldProps {
 
 export default function FuncTableField(props: FuncTableFieldProps) {
   const [popVisible, setPopVisible] = useState(false);
+  const [sqlPopVisible, setSqlPopVisible] = useState(false);
   // const [searchKey, setSearchKey] = useState<string>();
 
+  // ---- func
   // 加载数据
   const loadOptions = async (keyword: string) => {
     const result = await getRequest(APIS.funcList, {
@@ -44,9 +46,41 @@ export default function FuncTableField(props: FuncTableFieldProps) {
       return message.warn('此函数已选择!');
     }
 
-    nextValue.push(item.data);
+    nextValue.push({ type: 0, ...item.data });
     props.onChange?.(nextValue);
     setPopVisible(false);
+    // setSearchKey(undefined);
+  };
+
+  // ---- sql
+  // 加载数据
+  const loadSqlOptions = async (keyword: string) => {
+    const result = await getRequest(APIS.getSqlList, {
+      data: {
+        keyword: keyword?.trim() || '',
+        pageIndex: 1,
+        pageSize: 50,
+      },
+    });
+
+    return (result.data?.dataSource || []).map((n: any) => ({
+      value: n.id,
+      label: `${n.name}-${n.desc}`,
+      data: n,
+    }));
+  };
+
+  const handleSqlSelect = (_: any, item: any) => {
+    const nextValue = props.value?.slice(0) || [];
+
+    //  去重校验
+    if (nextValue.find((n) => n.id === item.data?.id)) {
+      return message.warn('此SQL已选择!');
+    }
+
+    nextValue.push({ type: 1, ...item.data });
+    props.onChange?.(nextValue);
+    setSqlPopVisible(false);
     // setSearchKey(undefined);
   };
 
@@ -89,15 +123,32 @@ export default function FuncTableField(props: FuncTableFieldProps) {
           overlayInnerStyle={{ width: 400 }}
           overlayStyle={{ width: 400 }}
         >
-          <Button>新增</Button>
+          <Button>新增函数</Button>
         </Popover>
-        {/* <Button>新增SQL</Button> */}
+        <Popover
+          visible={sqlPopVisible}
+          onVisibleChange={(n) => setSqlPopVisible(n)}
+          trigger={['click']}
+          content={
+            <DebounceSelect
+              fetchOnMount
+              fetchOptions={loadSqlOptions}
+              onSelect={handleSqlSelect}
+              style={{ width: '100%' }}
+              autoFocus
+              suffixIcon={null}
+              placeholder="输入SQL名搜索"
+            />
+          }
+          placement="left"
+          overlayInnerStyle={{ width: 400 }}
+          overlayStyle={{ width: 400 }}
+        >
+          <Button>新增SQL</Button>
+        </Popover>
       </div>
       <Table dataSource={props.value || []} bordered pagination={false}>
-        {/* <Table.Column dataIndex="type" title="类型"
-          render={(value) => value === 1 ? 'SQL': '函数'}
-          width={60}
-        /> */}
+        <Table.Column dataIndex="type" title="类型" render={(value) => (value === 1 ? 'SQL' : '函数')} width={60} />
         <Table.Column dataIndex="name" title="函数" />
         <Table.Column
           dataIndex="argument"

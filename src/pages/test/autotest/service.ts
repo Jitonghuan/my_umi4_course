@@ -163,3 +163,20 @@ export const caseHasUsedByScene = addAPIPrefix('/qc/autotest/caseHasUsedByScene'
 
 /** GET 24、任务管理-查询所有项目下场景/用例 集合 */
 export const getProjectsSuiteTree = addAPIPrefix('/qc/autotest/getProjectsSuiteTree');
+
+// -------------- 迭代 1 接口 ----------------
+
+/** POST 5、SQL管理-新增SQL */
+export const addSql = addAPIPrefix('/qc/autotest/addSql');
+
+/** POST 6、SQL管理-删除SQL */
+export const deleteSql = addAPIPrefix('/qc/autotest/deleteSql');
+
+/** POST 7、SQL管理-修改SQL */
+export const modifySql = addAPIPrefix('/qc/autotest/modifySql');
+
+/** GET 8、SQL管理-获取SQL内容 */
+export const getSqlInfo = addAPIPrefix('/qc/autotest/getSqlInfo');
+
+/** GET 9、SQL管理-SQL列表 */
+export const getSqlList = addAPIPrefix('/qc/autotest/getSqlList');

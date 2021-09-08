@@ -53,6 +53,8 @@ export interface PreCaseItemProps {
 
 export interface FuncProps {
   id: number;
+  /** 1: sql, 0: func */
+  type?: 1 | 0;
   desc?: string;
   name?: string;
   argument?: string;
