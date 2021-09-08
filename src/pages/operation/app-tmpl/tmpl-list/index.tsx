@@ -59,7 +59,7 @@ export default function Launch() {
 
   //查询编辑参数
   useEffect(() => {
-    queryList({ pageIndex: 1, pageSize: 20 });
+    loadListData({ pageIndex: 1, pageSize: 20 });
     selectCategory();
     selectTmplType();
   }, []);
@@ -116,8 +116,17 @@ export default function Launch() {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    queryList(obj);
+    loadListData(obj);
     setPageIndex(pagination.current);
+  };
+
+  const loadListData = (params: any) => {
+    const values = formTmpl.getFieldsValue();
+
+    queryList({
+      ...values,
+      ...params,
+    });
   };
 
   // 查询数据
@@ -159,7 +168,7 @@ export default function Launch() {
     delRequest(`${APIS.deleteTmpl}/${id}`).then((res: any) => {
       if (res.success) {
         message.success('删除成功！');
-        queryList({
+        loadListData({
           pageIndex: 1,
           pageSize: 20,
         });
@@ -170,7 +179,7 @@ export default function Launch() {
   const saveEditData = () => {
     setTmplEditMode('HIDE');
     setTimeout(() => {
-      queryList({ pageIndex: 1, pageSize: 20 });
+      loadListData({ pageIndex: 1, pageSize: 20 });
     }, 100);
     // window.location.reload();
   };
