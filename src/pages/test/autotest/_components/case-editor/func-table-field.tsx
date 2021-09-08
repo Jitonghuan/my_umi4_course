@@ -3,7 +3,8 @@
 // @create 2021/06/06 11:35
 
 import React, { useState } from 'react';
-import { Table, Button, Popover, message, Input } from 'antd';
+import { Table, Button, Popover, message, Input, Tooltip } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import * as APIS from '../../service';
 import DebounceSelect from '@/components/debounce-select';
@@ -102,7 +103,12 @@ export default function FuncTableField(props: FuncTableFieldProps) {
   return (
     <div className="func-table-field">
       <div className="field-caption">
-        <h3>{props.title}</h3>
+        <h3>
+          {props.title}&nbsp;
+          <Tooltip title="请在 测试管理-脚本管理 中添加 函数 或 SQL">
+            <QuestionCircleOutlined style={{ color: '#1973CC' }} />
+          </Tooltip>
+        </h3>
         <s className="flex-air"></s>
         <Popover
           visible={popVisible}
