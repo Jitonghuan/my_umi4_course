@@ -22,7 +22,7 @@ export default function Operation() {
   //进入页面架加载信息
   useEffect(() => {
     setLoading(true);
-    getLogQuery({ pageIndex: 1, pageSize: 20 });
+    loadListData({ pageIndex: 1, pageSize: 20 });
   }, []);
 
   const getLogQuery = (value: any) => {
@@ -53,14 +53,21 @@ export default function Operation() {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    getLogQuery(obj);
+    loadListData(obj);
     setPageIndex(pagination.current);
+  };
+
+  const loadListData = (params: any) => {
+    const values = formLog.getFieldsValue();
+    logQuery({
+      ...values,
+      ...params,
+    });
   };
   const showLogModal = (record: any) => {
     getRequest(APIS.logList, { data: { id: record.id } }).then((res: any) => {
       if (res.success) {
         const logDetail = res.data.dataSource[0].content || '';
-        // console.log('日志详细内容：', logDetail);
         setDetailItem(logDetail);
       }
     });
@@ -74,7 +81,6 @@ export default function Operation() {
     let endTime =
       value?.operateTime && value.operateTime[1] ? `${value.operateTime[1].format('YYYY-MM-DD')} 23:59:59` : '';
     let operateTime = startTime + '-' + endTime || '';
-    // console.log('1111111', operateTime);
     getRequest(APIS.logList, { data: { operator, operateType, startTime, endTime, pageIndex, pageSize } })
       .then((res: any) => {
         if (res.success) {
