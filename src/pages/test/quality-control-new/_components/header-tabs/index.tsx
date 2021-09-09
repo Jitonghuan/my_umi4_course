@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs } from 'antd';
+import { Menu } from 'antd';
 import type { IUmiRrops } from '@cffe/vc-layout/es/bus-layout';
 import { FilterCard } from '@/components/vc-page-content';
 
@@ -16,16 +16,19 @@ export interface HeaderTabsProps {
 export default function HeaderTabs(props: HeaderTabsProps) {
   return (
     <FilterCard className="layout-compact">
-      <Tabs
+      <Menu
+        mode="horizontal"
         activeKey={props.activeKey}
-        onChange={(next) => props.history.push(`/matrix/test/quality-control-new/${next}`)}
+        onClick={({ key: next }) => props.history.push(`/matrix/test/quality-control-new/${next}`)}
       >
-        <Tabs.TabPane tab="质量看板" key="overview" />
-        <Tabs.TabPane tab="任务列表" key="tesk-list" />
-        <Tabs.TabPane tab="质量分规则" key="quality-scoring-rules" />
-        <Tabs.TabPane tab="全局卡点规则" key="global-control-point-rules" />
-        <Tabs.TabPane tab="应用卡点规则" key="app-control-point-rules" />
-      </Tabs>
+        <Menu.Item key="overview">质量看板</Menu.Item>
+        <Menu.Item key="tesk-list">任务列表</Menu.Item>
+        <Menu.SubMenu key="SubMenu" title="规则配置">
+          <Menu.Item key="quality-scoring-rules">质量分规则</Menu.Item>
+          <Menu.Item key="global-control-point-rules">全局卡点规则</Menu.Item>
+          <Menu.Item key="app-control-point-rules">应用卡点规则</Menu.Item>
+        </Menu.SubMenu>
+      </Menu>
     </FilterCard>
   );
 }
