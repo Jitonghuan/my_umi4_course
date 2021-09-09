@@ -23,30 +23,30 @@ export default function ApplicationParams(props: any) {
   const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [id, setId] = useState<string>();
-  const [tableData, setTableData] = useState<any>([]);
   const [isDeployment, setIsDeployment] = useState<string>();
-  const [source, setSource] = useState<any[]>([]);
 
   useEffect(() => {
-    getApp().then((appCategoryCode) => {
-      selectAppEnv(appCategoryCode);
-    });
+    // getApp().then((appCategoryCode) => {
+    //   selectAppEnv(appCategoryCode);
+    // });
+    getApp();
+    selectAppEnv();
   }, []);
 
   // 进入页面显示结果
   const { appCode, isClient, isContainClient } = appData || {};
-  const { templateType, envCode } = props?.history.location?.query || {};
+  const { templateType, envCode, appCategoryCode } = props?.history.location?.query || {};
 
   const getApp = () => {
     return getRequest(APIS.paramsList, { data: { appCode, isClient, isContainClient } }).then((result) => {
       if (result.data.length > 0) {
         const app = result.data[0];
-        const appCategoryCode = app.appCategoryCode;
+        // const appCategoryCode = app.appCategoryCode;
         setId(app.id);
         setInintDatas(app);
         showAppList();
 
-        return appCategoryCode;
+        // return appCategoryCode;
       } else {
         message.error('应用模版为空');
       }
@@ -94,7 +94,6 @@ export default function ApplicationParams(props: any) {
             });
           }
         }
-        setTableData(arr1);
         applicationForm.setFieldsValue({
           appEnvCode: applicationlist.envCode,
           tmplType: applicationlist.templateType,
@@ -118,13 +117,12 @@ export default function ApplicationParams(props: any) {
           value: applicationlist.tmplConfigurableItem[key],
         });
       }
-      setSource(arr);
     });
   };
 
   //根据应用分类加载应用环境下拉选择
-  const selectAppEnv = (categoryCode: any) => {
-    getRequest(APIS.envList, { data: { categoryCode } }).then((result) => {
+  const selectAppEnv = () => {
+    getRequest(APIS.envList, { data: { categoryCode: appCategoryCode } }).then((result) => {
       const list = result.data.dataSource.map((n: any) => ({
         value: n?.envCode,
         label: n?.envName,
@@ -149,10 +147,9 @@ export default function ApplicationParams(props: any) {
   const changeEnvCode = (getEnvCode: string) => {
     setSelectEnvData(getEnvCode);
   };
-
   const changeTmplType = (getTmplType: string) => {
     setSelectTmpl(getTmplType);
-    setIsDeployment(getTmplType);
+    setIsDeployment(selectTmpl);
   };
   //点击查询回调
   const queryTmpl = () => {
@@ -183,8 +180,6 @@ export default function ApplicationParams(props: any) {
           value: applicationlist.value,
           jvm: jvm,
         });
-
-        setSource(arr);
       } else {
         applicationForm.setFieldsValue({
           tmplConfigurableItem: [],
@@ -195,7 +190,7 @@ export default function ApplicationParams(props: any) {
       }
     });
   };
-  //编辑应用膜拜
+  //编辑应用模版
   const setApplication = (values: any) => {
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
@@ -203,7 +198,6 @@ export default function ApplicationParams(props: any) {
     }, {} as any);
     const value = values.value;
     putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
-      console.log('id', id);
       if (result.success) {
         message.success('提交成功！');
         window.location.reload();
