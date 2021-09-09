@@ -26,7 +26,6 @@ export default function ApplicationParams(props: any) {
   const [isDeployment, setIsDeployment] = useState<string>();
 
   useEffect(() => {
-    let appCategoryCode = '';
     getAppCategoryCode().then((result) => {
       let categoryCode = '';
       if (result.data.dataSource.length > 0) {
