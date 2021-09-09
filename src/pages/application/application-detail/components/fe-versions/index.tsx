@@ -72,10 +72,8 @@ export default function FEVersions() {
                         disabled={!latestVersion}
                         onClick={() => handleRollbackClick(envCodeItem)}
                       >
-                        回滚
+                        {envTypeItem.value === 'prod' ? '回滚' : '切换版本'}
                       </Button>
-                      {/* {envTypeItem.value === 'prod' && <Button type="default" danger size="small">回滚</Button>} */}
-                      {/* {envTypeItem.value !== 'prod' && <Button type="primary" ghost size="small">切换版本</Button>} */}
                     </div>
                   </div>
                 );
@@ -86,6 +84,7 @@ export default function FEVersions() {
       })}
 
       <RollbackVersion
+        appData={appData}
         envItem={rollbackEnv}
         versionList={feVersionData[rollbackEnv?.envCode!]}
         onClose={() => setRollbackEnv(undefined)}
