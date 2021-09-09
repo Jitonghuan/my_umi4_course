@@ -244,12 +244,16 @@ export default function PublishDetail(props: IProps) {
         column={4}
         bordered
       >
-        <Descriptions.Item label="CRID">{deployInfo?.id || '--'}</Descriptions.Item>
+        <Descriptions.Item label="CRID" contentStyle={{ whiteSpace: 'nowrap' }}>
+          {deployInfo?.id || '--'}
+        </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
           {deployInfo?.releaseBranch || '--'}
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
-          <Descriptions.Item label="部署版本">{deployInfo?.version || '--'}</Descriptions.Item>
+          <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
+            {deployInfo?.version || '--'}
+          </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
