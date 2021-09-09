@@ -26,27 +26,57 @@ export default function ApplicationParams(props: any) {
   const [isDeployment, setIsDeployment] = useState<string>();
 
   useEffect(() => {
-    // getApp().then((appCategoryCode) => {
-    //   selectAppEnv(appCategoryCode);
-    // });
-    getApp();
-    selectAppEnv();
+    let appCategoryCode = '';
+    getAppCategoryCode().then((result) => {
+      let categoryCode = '';
+      if (result.data.dataSource.length > 0) {
+        categoryCode = result.data.dataSource[0].appCategoryCode;
+      } else {
+        throw '获取应用详情异常，请联系管理员';
+      }
+
+      selectAppEnv(categoryCode).then((result) => {
+        const listEnv = result.data.dataSource.map((n: any) => ({
+          value: n?.envCode,
+          label: n?.envName,
+          data: n,
+        }));
+        setEnvDatas(listEnv);
+
+        getRequest(APIS.tmplType).then((result) => {
+          const listTmplType = (result.data || []).map((n: any) => ({
+            label: n,
+            value: n,
+            data: n,
+          }));
+          setTemplateTypes(listTmplType);
+          getAppTempl(listEnv[0].value, categoryCode, appData?.appCode, listTmplType[0].value);
+        });
+      });
+    });
   }, []);
 
   // 进入页面显示结果
   const { appCode, isClient, isContainClient } = appData || {};
-  const { templateType, envCode, appCategoryCode } = props?.history.location?.query || {};
+  const { templateType, envCode } = props?.history.location?.query || {};
+  //通过传入页面的appCode查应用信息 获取到appCategoryCode
+  const getAppCategoryCode = () => {
+    return getRequest(APIS.queryAppsUrl, { data: { appCode } });
+  };
 
-  const getApp = () => {
-    return getRequest(APIS.paramsList, { data: { appCode, isClient, isContainClient } }).then((result) => {
+  //通过appCategoryCode查询环境信息
+  const selectAppEnv = (categoryCode: string) => {
+    return getRequest(APIS.envList, { data: { categoryCode: categoryCode } });
+  };
+
+  //查询当前模版信息  一进入页面加载
+  const getAppTempl = (envCode?: string, appCategoryCode?: string, appCode?: string, templateType?: string) => {
+    return getRequest(APIS.paramsList, { data: { envCode, appCategoryCode, appCode, templateType } }).then((result) => {
       if (result.data.length > 0) {
-        const app = result.data[0];
-        // const appCategoryCode = app.appCategoryCode;
-        setId(app.id);
-        setInintDatas(app);
+        const appTmpl = result.data[0];
+        setId(appTmpl.id);
+        setInintDatas(appTmpl);
         showAppList();
-
-        // return appCategoryCode;
       } else {
         message.error('应用模版为空');
       }
@@ -120,29 +150,6 @@ export default function ApplicationParams(props: any) {
     });
   };
 
-  //根据应用分类加载应用环境下拉选择
-  const selectAppEnv = () => {
-    getRequest(APIS.envList, { data: { categoryCode: appCategoryCode } }).then((result) => {
-      const list = result.data.dataSource.map((n: any) => ({
-        value: n?.envCode,
-        label: n?.envName,
-        data: n,
-      }));
-      setEnvDatas(list);
-      selectTmplType();
-    });
-  };
-  //加载模版类型下拉选择
-  const selectTmplType = () => {
-    getRequest(APIS.tmplType).then((result) => {
-      const list = (result.data || []).map((n: any) => ({
-        label: n,
-        value: n,
-        data: n,
-      }));
-      setTemplateTypes(list);
-    });
-  };
   //改变下拉选择后查询结果
   const changeEnvCode = (getEnvCode: string) => {
     setSelectEnvData(getEnvCode);

@@ -243,9 +243,6 @@ export default function Push(porps: any) {
                             appCode: record.appCode,
                             templateType: record.templateType,
                             envCode: record.envCode,
-                            appCategoryCode: record.appCategoryCode,
-                            // flag:'isPush',
-                            // categoryCode: record.categoryCode,
                           };
                           history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
                         }}
