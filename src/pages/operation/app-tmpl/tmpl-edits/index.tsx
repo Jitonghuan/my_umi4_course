@@ -131,7 +131,7 @@ export default function TaskEditor(props: TmplListProps) {
 
   const createTmpl = (value: any) => {
     let envCodesArry = [];
-    if (Array.isArray(value?.envCodes) || []) {
+    if (Array.isArray(value?.envCodes)) {
       envCodesArry = value?.envCodes;
     } else {
       envCodesArry = [value?.envCodes];
