@@ -267,7 +267,7 @@ export default function ApplicationEditor(props: IProps) {
                           // 子应用
                           <FormItem
                             label="关联信息"
-                            name="relationMainApp"
+                            name="relationMainApps"
                             rules={[
                               {
                                 validator: async (_, value: any) => {
