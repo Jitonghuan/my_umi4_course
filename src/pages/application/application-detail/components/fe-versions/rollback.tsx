@@ -5,9 +5,8 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, message, Table, Empty } from 'antd';
 import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
-import { postRequest } from '@/utils/request';
 import { datetimeCellRender } from '@/utils';
-import {} from '@/pages/application/service';
+import { rollbackFeApp } from '@/pages/application/service';
 import { FeVersionItemVO } from './types';
 
 export interface RollbackVersionProps {
@@ -29,10 +28,15 @@ export default function RollbackVersion(props: RollbackVersionProps) {
   }, [envItem]);
 
   const handleOk = useCallback(async () => {
-    message.success('操作成功！');
+    await rollbackFeApp({
+      appCode: appData?.appCode,
+      envCode: envItem?.envCode,
+      version: selectedRowKeys[0],
+    });
 
+    message.success('操作成功！');
     onSubmit();
-  }, [appData, envItem, versionList]);
+  }, [appData, envItem, versionList, selectedRowKeys]);
 
   const currVersion = useMemo(() => {
     return versionList?.find((n) => n.isActive === 0);
@@ -60,9 +64,9 @@ export default function RollbackVersion(props: RollbackVersionProps) {
           }),
         }}
         onRow={(record) => ({
-          onClick: () => setSelectedRowKeys([record.id]),
+          onClick: () => setSelectedRowKeys([record.version]),
         })}
-        rowKey="id"
+        rowKey="version"
         pagination={false}
         bordered
         locale={{ emptyText: <Empty description="没有可回滚的版本" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}

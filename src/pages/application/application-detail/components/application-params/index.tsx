@@ -23,9 +23,7 @@ export default function ApplicationParams(props: any) {
   const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [id, setId] = useState<string>();
-  const [tableData, setTableData] = useState<any>([]);
   const [isDeployment, setIsDeployment] = useState<string>();
-  const [source, setSource] = useState<any[]>([]);
 
   useEffect(() => {
     getApp().then((appCategoryCode) => {
@@ -94,7 +92,6 @@ export default function ApplicationParams(props: any) {
             });
           }
         }
-        setTableData(arr1);
         applicationForm.setFieldsValue({
           appEnvCode: applicationlist.envCode,
           tmplType: applicationlist.templateType,
@@ -118,7 +115,6 @@ export default function ApplicationParams(props: any) {
           value: applicationlist.tmplConfigurableItem[key],
         });
       }
-      setSource(arr);
     });
   };
 
@@ -183,8 +179,6 @@ export default function ApplicationParams(props: any) {
           value: applicationlist.value,
           jvm: jvm,
         });
-
-        setSource(arr);
       } else {
         applicationForm.setFieldsValue({
           tmplConfigurableItem: [],
@@ -203,7 +197,6 @@ export default function ApplicationParams(props: any) {
     }, {} as any);
     const value = values.value;
     putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
-      console.log('id', id);
       if (result.success) {
         message.success('提交成功！');
         window.location.reload();
@@ -254,13 +247,11 @@ export default function ApplicationParams(props: any) {
                 ]}
               />
             </Form.Item>
-            {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-            {isDeployment == 'deployment' ? (
+            {isDeployment == 'deployment' && <span>JVM参数:</span>}
+            {isDeployment == 'deployment' && (
               <Form.Item name="jvm">
                 <AceEditor mode="yaml" height={300} />
               </Form.Item>
-            ) : (
-              ''
             )}
           </Col>
         </Row>

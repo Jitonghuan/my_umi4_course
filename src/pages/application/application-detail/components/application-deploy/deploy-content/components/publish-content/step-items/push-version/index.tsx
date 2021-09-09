@@ -26,7 +26,7 @@ export default function PushVersionStep(props: StepItemProps) {
   return (
     <Steps.Step
       {...others}
-      title="发布版本"
+      title="推送版本"
       icon={isLoading && <LoadingOutlined />}
       status={isError ? 'error' : others.status}
       description={

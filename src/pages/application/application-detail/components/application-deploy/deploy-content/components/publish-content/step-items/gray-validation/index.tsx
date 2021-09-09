@@ -1,6 +1,7 @@
 // grey validate step
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/06 21:40
+// TODO 灰度验证的时候，如果发布的是多个环境，需要确认验证是的哪一个环境，只有所有环境都验证通过，才能进入到下一步
 
 import React from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';

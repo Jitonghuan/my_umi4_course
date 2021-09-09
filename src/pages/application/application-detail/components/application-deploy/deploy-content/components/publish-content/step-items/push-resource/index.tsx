@@ -26,7 +26,7 @@ export default function PushResourceStep(props: StepItemProps) {
   return (
     <Steps.Step
       {...others}
-      title="发布资源"
+      title="推送资源"
       icon={isLoading && <LoadingOutlined />}
       status={isError ? 'error' : others.status}
       description={
