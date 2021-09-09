@@ -55,7 +55,7 @@ export interface AppItemVO {
   /** 路由文件（前端 - 微前端应用 - 主工程） */
   routeFile?: string;
   /** 微前端子应用关联主应用信息 */
-  relationMainApp?: {
+  relationMainApps?: {
     /** 主应用Code */
     appCode: string;
     /** 路由 */

@@ -254,13 +254,11 @@ export default function ApplicationParams(props: any) {
                 ]}
               />
             </Form.Item>
-            {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-            {isDeployment == 'deployment' ? (
+            {isDeployment == 'deployment' && <span>JVM参数:</span>}
+            {isDeployment == 'deployment' && (
               <Form.Item name="jvm">
                 <AceEditor mode="yaml" height={300} />
               </Form.Item>
-            ) : (
-              ''
             )}
           </Col>
         </Row>

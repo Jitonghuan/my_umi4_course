@@ -9,7 +9,7 @@ import CreateTaskStep from '../step-items/create-task';
 import MergeReleaseStep from '../step-items/merge-release';
 import BuildingStep from '../step-items/building';
 import PushResourceStep from '../step-items/push-resource';
-import PushHTMLStep from '../step-items/push-html';
+import PushVersionStep from '../step-items/push-version';
 import FinishedStep from '../step-items/finished';
 
 const deployStatusMapping: Record<string, number> = {
@@ -45,7 +45,7 @@ export default function DevEnvSteps({ deployInfo, onOperate }: StepsProps) {
         <MergeReleaseStep {...payload} />
         <BuildingStep {...payload} />
         <PushResourceStep {...payload} />
-        <PushHTMLStep {...payload} />
+        <PushVersionStep {...payload} />
         <FinishedStep {...payload} />
       </Steps>
     </>

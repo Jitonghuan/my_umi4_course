@@ -125,7 +125,7 @@ export default function ApplicationOverview() {
           <Descriptions.Item label="路由文件">{appData.routeFile || '--'}</Descriptions.Item>
         )}
         {appData?.microFeType === 'subProject' &&
-          appData?.relationMainApp?.map((group, groupIndex) => (
+          appData?.relationMainApps?.map((group, groupIndex) => (
             <>
               <Descriptions.Item label={`关联主应用${groupIndex + 1}`}>{group.appCode}</Descriptions.Item>
               <Descriptions.Item span={2} label={`路由${groupIndex + 1}`}>

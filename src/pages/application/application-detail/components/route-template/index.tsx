@@ -29,7 +29,7 @@ export default function RouteTemplate() {
   }, [tabActive]);
 
   useEffect(() => {
-    setEditValue(routeTemplate?.value);
+    setEditValue(routeTemplate?.value || '');
   }, [routeTemplate]);
 
   const handleTabChange = useCallback((next: string) => {
@@ -115,7 +115,7 @@ export default function RouteTemplate() {
               style={{ width: 300, marginRight: 20 }}
               options={envCodeOptions}
             />
-            <a href="https://www.smarty.net/docs/zh_CN/" target="_blank">
+            <a href="https://cloud.tencent.com/developer/article/1683688" target="_blank">
               <QuestionCircleOutlined />
               &nbsp; 查看模板语法
             </a>
