@@ -29,7 +29,7 @@ export default function RouteTemplate() {
   }, [tabActive]);
 
   useEffect(() => {
-    setEditValue(routeTemplate?.value);
+    setEditValue(routeTemplate?.value || '');
   }, [routeTemplate]);
 
   const handleTabChange = useCallback((next: string) => {
