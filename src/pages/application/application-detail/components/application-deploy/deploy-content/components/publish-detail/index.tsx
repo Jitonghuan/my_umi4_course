@@ -241,18 +241,25 @@ export default function PublishDetail(props: IProps) {
         title="发布详情"
         labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
         contentStyle={{ color: '#000' }}
+        column={4}
+        bordered
       >
-        <Descriptions.Item label="CRID">{deployInfo?.id}</Descriptions.Item>
-        <Descriptions.Item label="部署分支">{deployInfo?.releaseBranch}</Descriptions.Item>
-        <Descriptions.Item label="发布环境">{envNames}</Descriptions.Item>
-        <Descriptions.Item label="冲突分支" span={3}>
-          {deployInfo?.conflictFeature}
+        <Descriptions.Item label="CRID">{deployInfo?.id || '--'}</Descriptions.Item>
+        <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
+          {deployInfo?.releaseBranch || '--'}
         </Descriptions.Item>
-        <Descriptions.Item label="合并分支" span={3}>
-          {deployInfo?.features}
+        {appData?.appType === 'frontend' && (
+          <Descriptions.Item label="部署版本">{deployInfo?.version || '--'}</Descriptions.Item>
+        )}
+        <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
+        <Descriptions.Item label="冲突分支" span={4}>
+          {deployInfo?.conflictFeature || '--'}
         </Descriptions.Item>
-        {deployInfo?.deployErrInfo !== '' && deployInfo.hasOwnProperty('deployErrInfo') && (
-          <Descriptions.Item label="部署错误信息" span={3} contentStyle={{ color: 'red' }}>
+        <Descriptions.Item label="合并分支" span={4}>
+          {deployInfo?.features || '--'}
+        </Descriptions.Item>
+        {deployInfo?.deployErrInfo && (
+          <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             {deployInfo?.deployErrInfo}
           </Descriptions.Item>
         )}

@@ -68,7 +68,7 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                   allowClear={allowClear || true}
                   showSearch={showSelectSearch}
                   optionFilterProp="children"
-                  filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  filterOption={(input, option) => option?.children?.toLowerCase().indexOf(input?.toLowerCase()) >= 0}
                   style={{ width: width, ...styles }}
                   onChange={onChange}
                   disabled={disable}
