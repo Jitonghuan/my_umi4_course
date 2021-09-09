@@ -158,7 +158,7 @@ export default function ApplicationEditor(props: IProps) {
           <Input placeholder="请输入" style={{ width: 320 }} />
         </FormItem>
         <FormItem label="应用部署名" name="deploymentName" rules={[{ required: true, message: '请输入应用部署名' }]}>
-          <Input placeholder="请输入" style={{ width: 320 }} />
+          <Input placeholder="建议和项目路径相同" style={{ width: 320 }} />
         </FormItem>
         <FormItem label="应用分类" name="appCategoryCode" rules={[{ required: true, message: '请选择应用分类' }]}>
           <Select
@@ -267,7 +267,7 @@ export default function ApplicationEditor(props: IProps) {
                           // 子应用
                           <FormItem
                             label="关联信息"
-                            name="relationMainApp"
+                            name="relationMainApps"
                             rules={[
                               {
                                 validator: async (_, value: any) => {
@@ -298,6 +298,7 @@ export default function ApplicationEditor(props: IProps) {
                                 },
                                 { dataIndex: 'routePath', title: '路由' },
                               ]}
+                              limit={1}
                             />
                           </FormItem>
                         )}
