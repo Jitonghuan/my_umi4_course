@@ -28,8 +28,6 @@ export default function TaskEditor(props: TmplListProps) {
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [envCodesArry, setEnvCodesArry] = useState<string[]>([]);
-  const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
   const [isDeployment, setIsDeployment] = useState<string>();
@@ -81,7 +79,6 @@ export default function TaskEditor(props: TmplListProps) {
       tmplConfigurableItem: arr,
       remark: initValues?.remark,
     });
-    // console.log('000000',initValues.jvm)
     changeAppCategory(initValues.appCategoryCode);
     setIsDeployment(initValues.templateType);
     selectTmplType();
@@ -116,7 +113,6 @@ export default function TaskEditor(props: TmplListProps) {
     //调用接口 查询env 参数就是appCategoryCode
     //setEnvDatas
     setEnvDatas([]);
-    setAppCategoryCode(categoryCode);
     getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
       if (resp.success) {
         const datas =
@@ -132,21 +128,19 @@ export default function TaskEditor(props: TmplListProps) {
     });
   };
   //保存编辑模版
+
   const createTmpl = (value: any) => {
-    // console.log('------', value.envCodes);
-    console.log('985544466', value.tmplConfigurableItem);
+    let envCodesArry = [];
     if (Array.isArray(value?.envCodes)) {
-      let envCodesArry = value?.envCodes;
-      setEnvCodesArry(envCodesArry);
+      envCodesArry = value?.envCodes;
     } else {
-      let envCodesArry = [];
-      envCodesArry.push(value?.envCodes);
-      setEnvCodesArry(envCodesArry);
+      envCodesArry = [value?.envCodes];
     }
     const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
+
     putRequest(APIS.update, {
       data: {
         templateName: value.templateName,
@@ -154,7 +148,7 @@ export default function TaskEditor(props: TmplListProps) {
         templateValue: value.templateValue,
         jvm: value?.jvm,
         appCategoryCode: value.appCategoryCode || '',
-        envCodes: envCodesArry || [],
+        envCodes: envCodesArry,
         tmplConfigurableItem: tmplConfigurableItem || {},
         templateCode: templateCode,
         remark: value?.remark,
@@ -162,8 +156,6 @@ export default function TaskEditor(props: TmplListProps) {
     }).then((resp: any) => {
       if (resp.success) {
         const datas = resp.data || [];
-        // setEnvDatas(datas.envCode);
-        // console.log('6666667',datas)
         history.push({
           pathname: 'tmpl-list',
         });

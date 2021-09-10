@@ -32,24 +32,16 @@ export default function Launch() {
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [envCode, setenvCode] = useState<any>(); //环境的值
   const [templateType, setTemplateType] = useState<any>(); //模版类型
-  const [templateName, setTemplateName] = useState<any>(); //模版名称的值
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
-  const [showDrawVisible, setShowDrawVisible] = useState<boolean>(true); //是否展示抽屉
-  const [showDrawInfo, setShowDrawInfo] = useState<any>({
-    type: '',
-    templateCode: '',
-    showDraw: false,
-  });
 
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
 
   const handleEditTask = useCallback(
     (record: TmplEdit, index: number) => {
-      const flushFlag = tmplateData?.templateName;
       setTmplateData(record);
       setTmplEditMode('EDIT');
       setDataSource(dataSource);

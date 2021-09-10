@@ -35,7 +35,7 @@ export default function ticketAlarm() {
   const [alertHistoryData, setAlertHistoryData] = useState<any>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   useEffect(() => {
-    getAlertTickets({ pageIndex: 1, pageSize: 20 });
+    loadListData({ pageIndex: 1, pageSize: 20 });
   }, []);
 
   const handleOk = () => {
@@ -79,7 +79,6 @@ export default function ticketAlarm() {
   // 报警历史
   const showModal = async (record: any) => {
     setIsModalVisible(true);
-    console.log('99999', record);
     await getRequest(APIS.alertRecord, {
       data: {
         id: record.alertRecordId,
@@ -101,7 +100,14 @@ export default function ticketAlarm() {
       pageSize: pagination.pageSize,
     };
     setPageIndex(pagination.current);
-    getAlertTickets(obj);
+    loadListData(obj);
+  };
+  const loadListData = (params: any) => {
+    const values = alertTicketSearch.getFieldsValue();
+    getAlertTickets({
+      ...values,
+      ...params,
+    });
   };
 
   return (
