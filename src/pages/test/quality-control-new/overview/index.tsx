@@ -3,12 +3,22 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import { Select } from 'antd';
+import { getGradeInfo } from '../service';
+import { getRequest } from '@/utils/request';
 import LineChart from './line-chart';
 import RankList from './rank-list';
 import './index.less';
 
 export default function Overview(props: any) {
   const [appSevices, setAppSevices] = useState<any[]>([]);
+  const [gradeInfo, setGradeInfo] = useState<any>();
+
+  useEffect(() => {
+    getRequest(getGradeInfo).then((res) => {
+      console.log('res.data :>> ', res.data);
+      setGradeInfo(res.data);
+    });
+  }, []);
 
   return (
     <PageContainer className="quality-control-overview">
