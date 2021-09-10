@@ -43,7 +43,7 @@ export default function ApplicationParams(props: any) {
           data: n,
         }));
         setTemplateTypes(listTmplType);
-        getAppTempl(listEnv[0].value, appCategoryCode, appData?.appCode, listTmplType[0].value);
+        getAppTempl(listEnv[0].value, appCategoryCode, appData?.appCode, listTmplType[listTmplType.length - 1].value);
       });
     });
   }, []);
