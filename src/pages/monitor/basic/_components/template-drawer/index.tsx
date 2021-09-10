@@ -196,7 +196,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       dataIndex: 'name',
       placeholder: '请输入',
       required: true,
-      disable: type === 'edit',
+      // disable: type === 'edit',
       rules: [
         {
           whitespace: true,
@@ -337,7 +337,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       dataIndex: 'receiver',
       placeholder: '请选择',
       required: true,
-      mode: 'tags',
+      mode: 'multiple',
       showSelectSearch: true,
       option: userOptions,
       rules: [
