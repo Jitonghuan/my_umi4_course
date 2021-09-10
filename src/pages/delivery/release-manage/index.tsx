@@ -173,11 +173,11 @@ export default function appStore(porps: any) {
                 onChange={pageSizeClick}
               >
                 <Table.Column title="id" dataIndex="id" />
-                <Table.Column title="应用名称" dataIndex="appName" ellipsis />
-                <Table.Column title="分类" dataIndex="appName" ellipsis />
-                <Table.Column title="应用版本" dataIndex="appCategoryCode" />
-                <Table.Column title="更新时间" dataIndex="appGroupCode" />
-                <Table.Column title="状态" dataIndex="state" ellipsis />
+                <Table.Column title="应用名称" dataIndex="appCode" ellipsis />
+                <Table.Column title="分类" dataIndex="category" ellipsis />
+                <Table.Column title="应用版本" dataIndex="appVsersion" />
+                <Table.Column title="更新时间" dataIndex="gmtModify" />
+                <Table.Column title="状态" dataIndex="status" ellipsis />
                 <Table.Column
                   title="操作"
                   dataIndex="gmtModify"
