@@ -61,6 +61,7 @@ export default function ApplicationParams(props: any) {
         setId(appTmpl.id);
         setInintDatas(appTmpl);
         showAppList();
+        setIsDeployment(appTmpl.templateType);
       } else {
         message.error('应用模版为空');
       }
@@ -140,7 +141,7 @@ export default function ApplicationParams(props: any) {
   };
   const changeTmplType = (getTmplType: string) => {
     setSelectTmpl(getTmplType);
-    setIsDeployment(selectTmpl);
+    setIsDeployment(getTmplType);
   };
   //点击查询回调
   const queryTmpl = () => {
@@ -163,6 +164,7 @@ export default function ApplicationParams(props: any) {
           }
         }
         setId(applicationlist?.id);
+        setIsDeployment(applicationlist.templateType);
         applicationForm.setFieldsValue({
           // templateValue:list.templateValue,
           tmplConfigurableItem: arr,

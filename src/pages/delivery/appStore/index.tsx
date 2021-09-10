@@ -163,10 +163,10 @@ export default function appStore(props: any) {
                 onChange={pageSizeClick}
               >
                 <Table.Column title="名称" dataIndex="id" width="14%" />
-                <Table.Column title="分类" dataIndex="appName" ellipsis />
-                <Table.Column title="交付版本" dataIndex="appCode" ellipsis />
-                <Table.Column title="应用版本" dataIndex="appCategoryCode" />
-                <Table.Column title="更新时间" dataIndex="appGroupCode" />
+                <Table.Column title="分类" dataIndex="category" ellipsis />
+                <Table.Column title="交付版本" dataIndex="deliverVersion" ellipsis />
+                <Table.Column title="应用版本" dataIndex="appVsersion" />
+                <Table.Column title="更新时间" dataIndex="gmtModify" />
                 <Table.Column
                   title="操作"
                   dataIndex="gmtModify"
@@ -232,7 +232,7 @@ export default function appStore(props: any) {
             <Table>
               <Table.Column title="应用名称" dataIndex="appCode" />
               <Table.Column title="应用版本" dataIndex="appVersion" />
-              <Table.Column title="交付版本" dataIndex="relase" />
+              <Table.Column title="交付版本" dataIndex="deliverVersion" />
             </Table>
           </div>
           <div style={{ marginTop: '4%' }}>
