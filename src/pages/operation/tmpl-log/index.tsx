@@ -160,11 +160,7 @@ export default function Operation() {
           <Table.Column title="操作人" dataIndex="operator" />
           <Table.Column title="操作类型" dataIndex="operateType" />
           <Table.Column title="操作事件" dataIndex="operateEvent" />
-          <Table.Column
-            title="操作时间"
-            dataIndex="operateTime"
-            render={datetimeCellRender}
-          />
+          <Table.Column title="操作时间" dataIndex="operateTime" render={datetimeCellRender} />
           <Table.Column
             title="操作"
             render={(_, record: any) => (

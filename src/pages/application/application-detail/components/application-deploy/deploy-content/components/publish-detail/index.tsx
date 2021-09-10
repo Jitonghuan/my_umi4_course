@@ -35,10 +35,11 @@ export default function PublishDetail(props: IProps) {
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<string[]>();
+  const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
   const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
   const [deployNextEnv, setDeployNextEnv] = useState<string[]>();
-  const [envDataList, setEnvDataList] = useState([]);
-  const [nextEnvDataList, setNextEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<IOption[]>([]);
+  const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
@@ -53,7 +54,6 @@ export default function PublishDetail(props: IProps) {
     }).then((data) => {
       setEnvDataList(data.list);
     });
-
     // 下一个部署环境
     const nextEnvTypeCode = nextEnvTypeCodeMapping[envTypeCode];
     queryEnvsReq({
@@ -141,19 +141,13 @@ export default function PublishDetail(props: IProps) {
   // 发布环境
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
-    const namesArr: any[] = [];
-    if (envs?.indexOf(',') > -1) {
-      const list = envs?.split(',') || [];
-      envDataList?.forEach((item: any) => {
-        list?.forEach((v: any) => {
-          if (item?.envCode === v) {
-            namesArr.push(item.envName);
-          }
-        });
-      });
-      return namesArr.join(',');
-    }
-    return (envDataList as any).find((v: any) => v.envCode === envs)?.envName;
+    const envList = envs?.split(',') || [];
+    return envDataList
+      .filter((envItem) => {
+        return envList.includes(envItem.envCode);
+      })
+      .map((envItem) => `${envItem.envName}(${envItem.envCode})`)
+      .join(',');
   }, [envDataList, deployInfo]);
 
   // 离线部署
@@ -190,7 +184,7 @@ export default function PublishDetail(props: IProps) {
       onOk: () => {
         restartApp({
           appCode: appData?.appCode,
-          envCode: deployInfo.envs,
+          envCode: restartEnv?.[0],
           appCategoryCode: appData?.appCategoryCode,
         })
           .then((resp) => {
@@ -200,6 +194,7 @@ export default function PublishDetail(props: IProps) {
           })
           .finally(() => {
             setRestartVisible(false);
+            setRestartEnv([]);
           });
       },
       onCancel() {},
@@ -209,7 +204,7 @@ export default function PublishDetail(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        {appData?.appType === 'backend' && envTypeCode === 'prod' && (
+        {appData?.appType === 'backend' && envTypeCode === 'prod' && deployEnv?.indexOf('tt-his') !== -1 && (
           <Button type="primary" onClick={() => setRestartVisible(true)}>
             重启应用
           </Button>
@@ -246,18 +241,29 @@ export default function PublishDetail(props: IProps) {
         title="发布详情"
         labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
         contentStyle={{ color: '#000' }}
+        column={4}
+        bordered
       >
-        <Descriptions.Item label="CRID">{deployInfo?.id}</Descriptions.Item>
-        <Descriptions.Item label="部署分支">{deployInfo?.releaseBranch}</Descriptions.Item>
-        <Descriptions.Item label="发布环境">{envNames}</Descriptions.Item>
-        <Descriptions.Item label="冲突分支" span={3}>
-          {deployInfo?.conflictFeature}
+        <Descriptions.Item label="CRID" contentStyle={{ whiteSpace: 'nowrap' }}>
+          {deployInfo?.id || '--'}
         </Descriptions.Item>
-        <Descriptions.Item label="合并分支" span={3}>
-          {deployInfo?.features}
+        <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
+          {deployInfo?.releaseBranch || '--'}
+        </Descriptions.Item>
+        {appData?.appType === 'frontend' && (
+          <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
+            {deployInfo?.version || '--'}
+          </Descriptions.Item>
+        )}
+        <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
+        <Descriptions.Item label="冲突分支" span={4}>
+          {deployInfo?.conflictFeature || '--'}
+        </Descriptions.Item>
+        <Descriptions.Item label="合并分支" span={4}>
+          {deployInfo?.features || '--'}
         </Descriptions.Item>
         {deployInfo?.deployErrInfo !== '' && deployInfo.hasOwnProperty('deployErrInfo') && (
-          <Descriptions.Item label="部署错误信息" span={3} contentStyle={{ color: 'red' }}>
+          <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             {deployInfo?.deployErrInfo}
           </Descriptions.Item>
         )}
@@ -329,13 +335,20 @@ export default function PublishDetail(props: IProps) {
         key="deployRestart"
         title="选择重启环境"
         visible={restartVisible}
-        onCancel={() => setRestartVisible(false)}
+        onCancel={() => {
+          setRestartVisible(false);
+          setRestartEnv([]);
+        }}
         onOk={ensureRestart}
         maskClosable={false}
       >
         <div>
           <span>发布环境：</span>
-          <Checkbox.Group value={deployEnv} onChange={(v: any) => setDeployEnv(v)} options={envDataList || []} />
+          <Checkbox.Group
+            value={restartEnv}
+            onChange={(v: any) => setRestartEnv(v)}
+            options={[{ label: '天台生产', value: 'tt-his' }] || []}
+          />
         </div>
       </Modal>
 

@@ -62,7 +62,7 @@ export const createTableColumns = ({
     dataIndex: 'preDeployTime',
     key: 'preDeployTime',
     width: '8%',
-    render: datetimeCellRender
+    render: datetimeCellRender,
   },
   {
     title: '需求ID',
@@ -80,6 +80,6 @@ export const createTableColumns = ({
     dataIndex: 'gmtCreate',
     key: 'gmtCreate',
     width: '8%',
-    render: datetimeCellRender
+    render: datetimeCellRender,
   },
 ];

@@ -35,16 +35,8 @@ export default function Operation() {
       >
         <Table.Column title="操作人" dataIndex="createUser" />
         <Table.Column title="操作类别" dataIndex="category" />
-        <Table.Column
-          title="创建时间"
-          dataIndex="gmtCreate"
-          render={datetimeCellRender}
-        />
-        <Table.Column
-          title="结束时间"
-          dataIndex="gmtModify"
-          render={datetimeCellRender}
-        />
+        <Table.Column title="创建时间" dataIndex="gmtCreate" render={datetimeCellRender} />
+        <Table.Column title="结束时间" dataIndex="gmtModify" render={datetimeCellRender} />
         {/* <Table.Column title="描述" dataIndex="" /> */}
         <Table.Column
           title="操作"

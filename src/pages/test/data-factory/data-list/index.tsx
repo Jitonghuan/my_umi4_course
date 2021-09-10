@@ -139,11 +139,7 @@ export default function DataFactoryList(props: any) {
             return result?.length ? result[0].label : value || '';
           }}
         />
-        <Table.Column
-          dataIndex="gmtCreate"
-          title="创建时间"
-          render={datetimeCellRender}
-        />
+        <Table.Column dataIndex="gmtCreate" title="创建时间" render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" />
         <Table.Column
           dataIndex="params"

@@ -91,11 +91,7 @@ export default function RecordList(props: ReordListProps) {
             title="状态"
             render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
           />
-          <Table.Column
-            dataIndex="gmtCreate"
-            title="创建时间"
-            render={datetimeCellRender}
-          />
+          <Table.Column dataIndex="gmtCreate" title="创建时间" render={datetimeCellRender} />
           <Table.Column title="创建人" dataIndex="createUser" />
 
           <Table.Column

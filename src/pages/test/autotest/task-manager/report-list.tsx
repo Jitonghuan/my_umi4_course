@@ -59,11 +59,7 @@ export default function ReportList(props: ReportListProps) {
               return `${Math.round(value * 10000) / 100}%`;
             }}
           />
-          <Table.Column
-            title="执行完成时间"
-            dataIndex="endTime"
-            render={datetimeCellRender}
-          />
+          <Table.Column title="执行完成时间" dataIndex="endTime" render={datetimeCellRender} />
           <Table.Column
             title="操作"
             render={(_, record: TaskReportItemVO) => <a onClick={() => setDetailItem(record)}>查看报告</a>}

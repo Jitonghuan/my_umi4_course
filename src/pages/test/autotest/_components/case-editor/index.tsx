@@ -116,10 +116,12 @@ export default function CaseEditor(props: CaseEditorProps) {
       hooks: {
         setup: (values.beforeFuncs || []).map((n: any) => ({
           id: n.id,
+          type: n.type || 0,
           argument: n.argument || '',
         })),
         teardown: (values.afterFuncs || []).map((n: any) => ({
           id: n.id,
+          type: n.type || 0,
           argument: n.argument || '',
         })),
       },
@@ -238,13 +240,13 @@ export default function CaseEditor(props: CaseEditorProps) {
         {/* step 0 前置/后置 */}
         <div className="case-editor-step case-editor-step-0" data-visible={step === 0}>
           <FormItem noStyle name="beforeFuncs">
-            <FuncTableField title="前置函数" />
+            <FuncTableField title="前置脚本" />
           </FormItem>
           <FormItem noStyle name="beforeCases">
             <CaseTableField title="前置用例" />
           </FormItem>
           <FormItem noStyle name="afterFuncs">
-            <FuncTableField title="后置函数" />
+            <FuncTableField title="后置脚本" />
           </FormItem>
         </div>
 

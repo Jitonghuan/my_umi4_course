@@ -2,13 +2,11 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 11:34
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, message, Table, Empty } from 'antd';
-import moment from 'moment';
 import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
-import { postRequest } from '@/utils/request';
 import { datetimeCellRender } from '@/utils';
-import {} from '@/pages/application/service';
+import { rollbackFeApp } from '@/pages/application/service';
 import { FeVersionItemVO } from './types';
 
 export interface RollbackVersionProps {
@@ -23,11 +21,22 @@ export default function RollbackVersion(props: RollbackVersionProps) {
   const { appData, envItem, versionList, onClose, onSubmit } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const handleOk = useCallback(async () => {
-    message.success('操作成功！');
+  useEffect(() => {
+    if (!envItem) return;
 
+    setSelectedRowKeys([]);
+  }, [envItem]);
+
+  const handleOk = useCallback(async () => {
+    await rollbackFeApp({
+      appCode: appData?.appCode,
+      envCode: envItem?.envCode,
+      version: selectedRowKeys[0],
+    });
+
+    message.success('操作成功！');
     onSubmit();
-  }, [appData, envItem, versionList]);
+  }, [appData, envItem, versionList, selectedRowKeys]);
 
   const currVersion = useMemo(() => {
     return versionList?.find((n) => n.isActive === 0);
@@ -54,7 +63,10 @@ export default function RollbackVersion(props: RollbackVersionProps) {
             disabled: record.isActive === 0,
           }),
         }}
-        rowKey="id"
+        onRow={(record) => ({
+          onClick: () => setSelectedRowKeys([record.version]),
+        })}
+        rowKey="version"
         pagination={false}
         bordered
         locale={{ emptyText: <Empty description="没有可回滚的版本" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
@@ -68,12 +80,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         )}
       >
         <Table.Column dataIndex="version" title="版本号" />
-        <Table.Column
-          dataIndex="gmtModify"
-          title="发布时间"
-          render={datetimeCellRender}
-          width={160}
-        />
+        <Table.Column dataIndex="gmtModify" title="发布时间" render={datetimeCellRender} width={160} />
         <Table.Column dataIndex="modifyUser" title="发布人" />
       </Table>
     </Modal>

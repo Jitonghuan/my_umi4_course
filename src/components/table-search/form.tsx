@@ -68,10 +68,9 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                   allowClear={allowClear || true}
                   showSearch={showSelectSearch}
                   optionFilterProp="children"
-                  filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  filterOption={(input, option) => option?.children?.toLowerCase().indexOf(input?.toLowerCase()) >= 0}
                   style={{ width: width, ...styles }}
                   onChange={onChange}
-                  getPopupContainer={(triggerNode) => triggerNode.parentElement}
                   disabled={disable}
                   mode={mode}
                   id={id}
@@ -108,7 +107,6 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
             >
               <Input
                 placeholder={placeholder ?? '请输入'}
-                allowClear
                 style={{ width: width, ...styles }}
                 onChange={onChange}
                 disabled={disable}

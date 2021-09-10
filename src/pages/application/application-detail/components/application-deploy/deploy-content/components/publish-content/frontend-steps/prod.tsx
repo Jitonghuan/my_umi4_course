@@ -11,7 +11,7 @@ import MergeMasterStep from '../step-items/merge-master';
 import BuildingStep from '../step-items/building';
 import PushResourceStep from '../step-items/push-resource';
 import GrayValidationStep from '../step-items/gray-validation';
-import PushHTMLStep from '../step-items/push-html';
+import PushVersionStep from '../step-items/push-version';
 import DeleteFeatureStep from '../step-items/delete-feature';
 import FinishedStep from '../step-items/finished';
 
@@ -57,7 +57,7 @@ export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
       <BuildingStep {...payload} />
       <PushResourceStep {...payload} />
       <GrayValidationStep {...payload} />
-      <PushHTMLStep {...payload} />
+      <PushVersionStep {...payload} />
       <MergeMasterStep {...payload} />
       <DeleteFeatureStep {...payload} />
       <FinishedStep {...payload} />

@@ -3,7 +3,7 @@
 // @create 2021/09/06 10:43
 
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Form, Input, Modal, message, } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import * as APIS from './service';
 import { postRequest } from '@/utils/request';
@@ -32,7 +32,6 @@ export default function SQLEditor(props: FuncEditorProps) {
     editForm.setFieldsValue({
       ...initData,
     });
-
   }, [mode]);
 
   const handleSubmit = useCallback(async () => {
@@ -66,7 +65,6 @@ export default function SQLEditor(props: FuncEditorProps) {
     } finally {
       setPending(false);
     }
-
   }, [mode, editForm]);
 
   return (
