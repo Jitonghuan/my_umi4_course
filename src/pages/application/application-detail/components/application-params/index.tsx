@@ -24,47 +24,32 @@ export default function ApplicationParams(props: any) {
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [id, setId] = useState<string>();
   const [isDeployment, setIsDeployment] = useState<string>();
-
+  // 进入页面显示结果
+  const { appCode, appCategoryCode } = appData || {};
+  const { templateType, envCode } = props?.history.location?.query || {};
   useEffect(() => {
-    getAppCategoryCode().then((result) => {
-      let categoryCode = '';
-      if (result.data.dataSource.length > 0) {
-        categoryCode = result.data.dataSource[0].appCategoryCode;
-      } else {
-        throw '获取应用详情异常，请联系管理员';
-      }
+    selectAppEnv(appCategoryCode).then((result) => {
+      const listEnv = result.data.dataSource?.map((n: any) => ({
+        value: n?.envCode,
+        label: n?.envName,
+        data: n,
+      }));
+      setEnvDatas(listEnv);
 
-      selectAppEnv(categoryCode).then((result) => {
-        const listEnv = result.data.dataSource.map((n: any) => ({
-          value: n?.envCode,
-          label: n?.envName,
+      getRequest(APIS.tmplType).then((result) => {
+        const listTmplType = (result.data || []).map((n: any) => ({
+          label: n,
+          value: n,
           data: n,
         }));
-        setEnvDatas(listEnv);
-
-        getRequest(APIS.tmplType).then((result) => {
-          const listTmplType = (result.data || []).map((n: any) => ({
-            label: n,
-            value: n,
-            data: n,
-          }));
-          setTemplateTypes(listTmplType);
-          getAppTempl(listEnv[0].value, categoryCode, appData?.appCode, listTmplType[0].value);
-        });
+        setTemplateTypes(listTmplType);
+        getAppTempl(listEnv[0].value, appCategoryCode, appData?.appCode, listTmplType[0].value);
       });
     });
   }, []);
 
-  // 进入页面显示结果
-  const { appCode, isClient, isContainClient } = appData || {};
-  const { templateType, envCode } = props?.history.location?.query || {};
-  //通过传入页面的appCode查应用信息 获取到appCategoryCode
-  const getAppCategoryCode = () => {
-    return getRequest(APIS.queryAppsUrl, { data: { appCode } });
-  };
-
   //通过appCategoryCode查询环境信息
-  const selectAppEnv = (categoryCode: string) => {
+  const selectAppEnv = (categoryCode: any) => {
     return getRequest(APIS.envList, { data: { categoryCode: categoryCode } });
   };
 
