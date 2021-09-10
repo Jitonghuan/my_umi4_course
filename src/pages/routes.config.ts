@@ -513,10 +513,10 @@ export default [
             component: '@/pages/test/quality-control-new/overview',
           },
           {
-            path: 'tesk-list',
+            path: 'task-list',
             name: '任务列表',
             key: 'quality-control-new',
-            component: '@/pages/test/quality-control-new/tesk-list',
+            component: '@/pages/test/quality-control-new/task-list',
           },
           {
             path: 'quality-scoring-rules',

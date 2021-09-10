@@ -4,12 +4,25 @@ import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import { Button, Form, Table, Input, Select, Radio, Space } from 'antd';
 import { HeartOutlined, HeartFilled, EditOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import { getRequest, postRequest } from '@/utils/request';
+import { getTaskInfo, taskCare, taskCareCancel, taskExcute, getTaskList, operateTask } from '../service';
+import CreateOrEditTaskModal from './create-or-edit-task-modal';
 import './index.less';
 
-export default function TeskList(props: any) {
+export default function taskList(props: any) {
+  const [setCreateOrEditTaskModalVisible, setSetCreateOrEditTaskModalVisible] = useState<boolean>(false);
+  const [curTask, setCurTask] = useState<any>();
+  // const [taskList, setTaskList] = useState<any[]>();
+
+  // useEffect(() => {
+  //   getRequest(getTaskList).then((res) => {
+  //     console.log('res :>> ', res);
+  //   });
+  // }, []);
+
   return (
-    <PageContainer className="quality-control-tesk-list">
-      <HeaderTabs activeKey="tesk-list" history={props.history} />
+    <PageContainer className="quality-control-task-list">
+      <HeaderTabs activeKey="task-list" history={props.history} />
       <ContentCard>
         <div className="search-header">
           <Form layout="inline">
@@ -41,7 +54,9 @@ export default function TeskList(props: any) {
           </Form>
         </div>
         <div className="add-btn-container">
-          <Button type="primary">新建任务</Button>
+          <Button type="primary" onClick={() => setSetCreateOrEditTaskModalVisible(true)}>
+            新建任务
+          </Button>
         </div>
         <div className="task-list">
           <Table dataSource={[1, 2]}>
@@ -67,6 +82,11 @@ export default function TeskList(props: any) {
             />
           </Table>
         </div>
+        <CreateOrEditTaskModal
+          visible={setCreateOrEditTaskModalVisible}
+          setVisible={setSetCreateOrEditTaskModalVisible}
+          task={curTask}
+        />
       </ContentCard>
     </PageContainer>
   );
