@@ -2,6 +2,7 @@ import React from 'react';
 import { Menu } from 'antd';
 import type { IUmiRrops } from '@cffe/vc-layout/es/bus-layout';
 import { FilterCard } from '@/components/vc-page-content';
+import './index.less';
 
 export interface HeaderTabsProps {
   activeKey:
