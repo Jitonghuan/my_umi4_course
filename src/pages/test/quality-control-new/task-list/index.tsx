@@ -1,24 +1,43 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
-import { Button, Form, Table, Input, Select, Radio, Space } from 'antd';
+import FELayout from '@cffe/vc-layout';
+import { Button, Form, Table, Input, Select, Radio, Space, Tag, Typography } from 'antd';
 import { HeartOutlined, HeartFilled, EditOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { getTaskInfo, taskCare, taskCareCancel, taskExcute, getTaskList, operateTask } from '../service';
+import { taskStatusEnum } from '../constant';
 import CreateOrEditTaskModal from './create-or-edit-task-modal';
+import moment from 'moment';
 import './index.less';
 
 export default function taskList(props: any) {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [setCreateOrEditTaskModalVisible, setSetCreateOrEditTaskModalVisible] = useState<boolean>(false);
   const [curTask, setCurTask] = useState<any>();
-  // const [taskList, setTaskList] = useState<any[]>();
+  const [taskList, setTaskList] = useState<any[]>();
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
 
-  // useEffect(() => {
-  //   getRequest(getTaskList).then((res) => {
-  //     console.log('res :>> ', res);
-  //   });
-  // }, []);
+  const updataDataSource = async () => {
+    const res = await getRequest(getTaskList, { data: { pageIndex, pageSize, currentUser: userInfo.userName } });
+    setTaskList(res.data?.dataSource);
+  };
+
+  useEffect(() => {
+    updataDataSource();
+  }, []);
+
+  const handleTaskCareOperate = (id: string | number, isCare: boolean) => {
+    postRequest((isCare ? taskCare : taskCareCancel) + '/' + id, {
+      data: {
+        currentUser: userInfo.userName,
+      },
+    }).then((res) => {
+      if (res.success) updataDataSource();
+    });
+  };
 
   return (
     <PageContainer className="quality-control-task-list">
@@ -59,20 +78,49 @@ export default function taskList(props: any) {
           </Button>
         </div>
         <div className="task-list">
-          <Table dataSource={[1, 2]}>
-            <Table.Column title="任务名称" dataIndex="" />
-            <Table.Column title="应用分类" dataIndex="" />
-            <Table.Column title="应用code" dataIndex="" />
-            <Table.Column title="最近执行时间" dataIndex="" />
-            <Table.Column title="执行状态" dataIndex="" />
+          <Table dataSource={taskList}>
+            <Table.Column
+              title="任务名称"
+              dataIndex="name"
+              width="220"
+              render={(name: string) => (
+                <Typography.Text style={{ maxWidth: '220px' }} ellipsis={{ suffix: '' }}>
+                  {name}
+                </Typography.Text>
+              )}
+            />
+            <Table.Column title="应用分类" dataIndex="categoryCode" />
+            <Table.Column title="应用code" dataIndex="appCode" />
+            <Table.Column
+              title="最近执行时间"
+              dataIndex="lastedExcuteTime"
+              render={(time: string) => time?.length > 0 && moment(time).format('YYYY-MM-DD HH:mm:ss')}
+            />
+            <Table.Column
+              title="执行状态"
+              dataIndex="status"
+              render={(status) =>
+                taskStatusEnum[status] && <Tag color={taskStatusEnum[status].type}>{taskStatusEnum[status].label}</Tag>
+              }
+            />
             <Table.Column title="检测结果" dataIndex="" />
             <Table.Column
               title="操作"
-              render={() => {
+              render={(record) => {
                 return (
                   <Space>
-                    <HeartOutlined className="can-operate-el" />
-                    <HeartFilled style={{ color: '#CC4631' }} className="can-operate-el" />
+                    {record.isCare ? (
+                      <HeartFilled
+                        style={{ color: '#CC4631' }}
+                        className="can-operate-el"
+                        onClick={() => handleTaskCareOperate(record.id, false)}
+                      />
+                    ) : (
+                      <HeartOutlined
+                        className="can-operate-el"
+                        onClick={() => handleTaskCareOperate(record.id, true)}
+                      />
+                    )}
                     <EditOutlined className="can-operate-el" />
                     <PlayCircleOutlined className="can-operate-el" />
                     <DeleteOutlined className="can-operate-el" />

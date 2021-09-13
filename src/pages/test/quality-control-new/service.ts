@@ -7,7 +7,7 @@ export const getGradeInfo = addAPIPrefix('/qc/codeQuality/getGradeInfo');
 export const getRanking = addAPIPrefix('/qc/codeQuality/ranking');
 
 /** GET 获取任务列表 */
-export const getTaskList = addAPIPrefix('/qc/codeQuality/task/list');
+export const getTaskList = addAPIPrefix('qc/codeQuality/task/list');
 
 /** GET 获取任务详情 */
 export const getTaskInfo = addAPIPrefix('/qc/codeQuality/task');
