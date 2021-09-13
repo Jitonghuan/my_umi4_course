@@ -83,7 +83,7 @@ const pointRulesTableDescribe = [
   },
 ];
 export default function ConfigurePointRulesContent(props: any) {
-  const { isEdit, onChange } = props;
+  const { isEdit, onChange, value } = props;
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState<any>();
 
