@@ -1,24 +1,42 @@
-import React, { useMemo } from 'react';
-import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { Radio, List } from 'antd';
+import React, { useState } from 'react';
+import { Radio, List, Typography } from 'antd';
 import './index.less';
 
-const { ColorContainer } = colorUtil.context;
-
 export interface RankListProps {
-  loading?: boolean;
+  leftLabel: string;
+  rightLabel: string;
+  leftDataSource: any[];
+  rightDataSource: any[];
 }
 
-const optionsWithDisabled = [
-  { label: 'Apple', value: 'Apple' },
-  { label: 'Pear', value: 'Pear' },
-];
-
 export default function RankList(props: RankListProps) {
+  const { leftDataSource, leftLabel, rightDataSource, rightLabel } = props;
+  const [swichValue, setSwichValue] = useState<string>('left');
+
   return (
     <div className="rank-list">
-      <Radio.Group options={optionsWithDisabled} value="Pear" optionType="button" buttonStyle="solid" />
-      <List />
+      <Radio.Group
+        options={[
+          { label: leftLabel, value: 'left' },
+          { label: rightLabel, value: 'right' },
+        ]}
+        value={swichValue}
+        onChange={(e) => {
+          setSwichValue(e.target.value);
+        }}
+        optionType="button"
+        buttonStyle="solid"
+      />
+      <List
+        dataSource={swichValue === 'left' ? leftDataSource : rightDataSource}
+        renderItem={(item, index) => (
+          <List.Item>
+            <span>{index + 1}</span>
+            <Typography.Text>{item[Object.keys(item).filter((s) => s != 'app' && s != 'id')[0]]}</Typography.Text>
+            <Typography.Text>{item.app}</Typography.Text>
+          </List.Item>
+        )}
+      />
     </div>
   );
 }

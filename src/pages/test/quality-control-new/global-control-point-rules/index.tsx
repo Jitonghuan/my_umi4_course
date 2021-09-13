@@ -9,7 +9,12 @@ export default function GlobalControlPointRules(props: any) {
     <PageContainer className="quality-control-global-control-point-rules">
       <HeaderTabs activeKey="global-control-point-rules" history={props.history} />
       <ContentCard>
-        <ConfigurePointRulesForm />
+        <ConfigurePointRulesForm
+          isEdit={true}
+          onChange={(formValues: any) => {
+            console.log('formValues :>> ', formValues);
+          }}
+        />
       </ContentCard>
     </PageContainer>
   );
