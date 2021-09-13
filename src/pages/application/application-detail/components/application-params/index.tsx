@@ -24,27 +24,44 @@ export default function ApplicationParams(props: any) {
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [id, setId] = useState<string>();
   const [isDeployment, setIsDeployment] = useState<string>();
-
+  // 进入页面显示结果
+  const { appCode, appCategoryCode } = appData || {};
+  const { templateType, envCode } = props?.history.location?.query || {};
   useEffect(() => {
-    getApp().then((appCategoryCode) => {
-      selectAppEnv(appCategoryCode);
+    selectAppEnv(appCategoryCode).then((result) => {
+      const listEnv = result.data.dataSource?.map((n: any) => ({
+        value: n?.envCode,
+        label: n?.envName,
+        data: n,
+      }));
+      setEnvDatas(listEnv);
+
+      getRequest(APIS.tmplType).then((result) => {
+        const listTmplType = (result.data || []).map((n: any) => ({
+          label: n,
+          value: n,
+          data: n,
+        }));
+        setTemplateTypes(listTmplType);
+        getAppTempl(listEnv[0].value, appCategoryCode, appData?.appCode, listTmplType[listTmplType.length - 1].value);
+      });
     });
   }, []);
 
-  // 进入页面显示结果
-  const { appCode, isClient, isContainClient } = appData || {};
-  const { templateType, envCode } = props?.history.location?.query || {};
+  //通过appCategoryCode查询环境信息
+  const selectAppEnv = (categoryCode: any) => {
+    return getRequest(APIS.envList, { data: { categoryCode: categoryCode } });
+  };
 
-  const getApp = () => {
-    return getRequest(APIS.paramsList, { data: { appCode, isClient, isContainClient } }).then((result) => {
+  //查询当前模版信息  一进入页面加载
+  const getAppTempl = (envCode?: string, appCategoryCode?: string, appCode?: string, templateType?: string) => {
+    return getRequest(APIS.paramsList, { data: { envCode, appCategoryCode, appCode, templateType } }).then((result) => {
       if (result.data.length > 0) {
-        const app = result.data[0];
-        const appCategoryCode = app.appCategoryCode;
-        setId(app.id);
-        setInintDatas(app);
+        const appTmpl = result.data[0];
+        setId(appTmpl.id);
+        setInintDatas(appTmpl);
         showAppList();
-
-        return appCategoryCode;
+        setIsDeployment(appTmpl.templateType);
       } else {
         message.error('应用模版为空');
       }
@@ -118,34 +135,10 @@ export default function ApplicationParams(props: any) {
     });
   };
 
-  //根据应用分类加载应用环境下拉选择
-  const selectAppEnv = (categoryCode: any) => {
-    getRequest(APIS.envList, { data: { categoryCode } }).then((result) => {
-      const list = result.data.dataSource.map((n: any) => ({
-        value: n?.envCode,
-        label: n?.envName,
-        data: n,
-      }));
-      setEnvDatas(list);
-      selectTmplType();
-    });
-  };
-  //加载模版类型下拉选择
-  const selectTmplType = () => {
-    getRequest(APIS.tmplType).then((result) => {
-      const list = (result.data || []).map((n: any) => ({
-        label: n,
-        value: n,
-        data: n,
-      }));
-      setTemplateTypes(list);
-    });
-  };
   //改变下拉选择后查询结果
   const changeEnvCode = (getEnvCode: string) => {
     setSelectEnvData(getEnvCode);
   };
-
   const changeTmplType = (getTmplType: string) => {
     setSelectTmpl(getTmplType);
     setIsDeployment(getTmplType);
@@ -171,6 +164,7 @@ export default function ApplicationParams(props: any) {
           }
         }
         setId(applicationlist?.id);
+        setIsDeployment(applicationlist.templateType);
         applicationForm.setFieldsValue({
           // templateValue:list.templateValue,
           tmplConfigurableItem: arr,
@@ -189,7 +183,7 @@ export default function ApplicationParams(props: any) {
       }
     });
   };
-  //编辑应用膜拜
+  //编辑应用模版
   const setApplication = (values: any) => {
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;

@@ -27,9 +27,9 @@ export default function Push(porps: any) {
   const [formTmplQuery] = Form.useForm();
   const [selectList, setSelectList] = useState<any[]>([]);
   const [pageTotal, setPageTotal] = useState<number>();
-
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
+
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
       setSelectedRowKeys(selectedRowKeys);
@@ -243,7 +243,6 @@ export default function Push(porps: any) {
                             appCode: record.appCode,
                             templateType: record.templateType,
                             envCode: record.envCode,
-                            // categoryCode: record.categoryCode,
                           };
                           history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
                         }}
