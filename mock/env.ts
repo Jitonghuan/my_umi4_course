@@ -4,6 +4,28 @@ export default {
     "code": 1000,
     "errorMsg": "",
     "data": {
+      "total": [
+        "gmc-dev",
+        "g3a-dev",
+        "hbos-dev",
+        "base-dev",
+        "gmc-test",
+        "g3a-test",
+        "hbos-test",
+        "base-test",
+        "tt-poc",
+        "zy-daily",
+        "hbos-seenewhospital",
+        "ws-prd",
+        "zy-prd",
+        "seenew-health",
+        "tt-health",
+        "tt-manage",
+        "base-prod",
+        "ynrl",
+        "zs-prd",
+        "tt-his",
+      ],
       "dev": [
         {
           "envCode": "gmc-dev",
