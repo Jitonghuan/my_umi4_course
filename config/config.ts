@@ -1,7 +1,6 @@
 // 应用工程配置
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/10 15:41
-// TODO 使用不同的文件来区分环境
 
 import { defineConfig } from 'umi';
 import routes, { baseRoutePath } from '../src/routes.config';
@@ -87,19 +86,16 @@ export default defineConfig({
   publicPath: publicPathPrefix,
 
   // 配置 external 资源外部依赖, react, react-dom
-  externals:
-    NODE_ENV === 'development'
-      ? {}
-      : {
-          react: 'window.React',
-          'react-dom': 'window.ReactDOM',
-        },
+  externals: NODE_ENV === 'development' ? {} : {
+    react: 'window.React',
+    'react-dom': 'window.ReactDOM'
+  },
 
   // HTML 中以 <script> 方式引用的资源
-  scripts:
-    NODE_ENV === 'development'
-      ? []
-      : [{ src: `${publicPathPrefix}react.min.js` }, { src: `${publicPathPrefix}react-dom.min.js` }],
+  scripts: NODE_ENV === 'development' ? [] : [
+    { src: `${publicPathPrefix}react.min.js` },
+    { src: `${publicPathPrefix}react-dom.min.js` }
+  ],
 
   // 开启动态资源加载
   dynamicImport: {
