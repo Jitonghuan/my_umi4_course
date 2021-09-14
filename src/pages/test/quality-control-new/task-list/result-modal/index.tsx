@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Table, Select, Checkbox, DatePicker, Input, Button } from 'antd';
+import { Modal, Table, Menu, Button } from 'antd';
 import { operateTask } from '../../service';
 import { postRequest, getRequest } from '@/utils/request';
+import moment from 'moment';
+import './index.less';
 
 interface IResultModal {
   visible: boolean;
@@ -13,6 +15,7 @@ const resultTableDescribe = [
   {
     title: '单测',
     name: '',
+    key: 1,
     children: [
       {
         title: '单测个数',
@@ -50,6 +53,7 @@ const resultTableDescribe = [
   {
     title: '代码缺陷',
     name: 'unitTest',
+    key: 2,
     children: [
       {
         title: 'BUG',
@@ -80,6 +84,7 @@ const resultTableDescribe = [
   {
     title: '其他',
     name: 'unitTest',
+    key: 3,
     children: [
       {
         title: '代码行',
@@ -102,26 +107,53 @@ export default function ResultModal(props: IResultModal) {
 
   useEffect(() => {
     console.log('taskId :>> ', taskId);
-    if (visible && taskId) {
-      getRequest(`${operateTask}/${taskId}/results`).then((res) => {
-        console.log('res :>> ', res);
-      });
-    }
+    // if (visible && taskId) {
+    //   getRequest(`${operateTask}/${taskId}/results`).then((res) => {
+    //     console.log('res :>> ', res);
+    //   });
+    // }
   }, [visible]);
 
   return (
     <Modal
+      width={740}
       visible={visible}
       maskClosable={false}
       onCancel={() => setVisible(false)}
       footer={<Button onClick={() => setVisible(false)}>关闭</Button>}
       title="任务结果"
     >
-      <Table dataSource={resultTableDescribe} defaultExpandAllRows pagination={false}>
-        <Table.Column dataIndex="title" title="指标" />
-        <Table.Column dataIndex="name" title="当前值" />
-        <Table.Column dataIndex="name" title="目标值" />
-      </Table>
+      <div className="result-modal-container">
+        <Menu
+          className="resultList"
+          onSelect={({ key }) => {
+            console.log('key :>> ', key);
+          }}
+        >
+          <Menu.Item key="123123123123">
+            <div>{moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div>质量分: 64.00</div>
+          </Menu.Item>
+          <Menu.Item>
+            <div>{moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div>质量分: 64.00</div>
+          </Menu.Item>
+          <Menu.Item>
+            <div>{moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div>质量分: 64.00</div>
+          </Menu.Item>
+        </Menu>
+        <div className="resultInfo">
+          <div className="result-summarize">
+            质量分: 64.00 {'>='} 60.00 <Button type="link">执行日志</Button>
+          </div>
+          <Table dataSource={resultTableDescribe} defaultExpandAllRows pagination={false}>
+            <Table.Column dataIndex="title" title="指标" />
+            <Table.Column dataIndex="name" title="当前值" />
+            <Table.Column dataIndex="name" title="目标值" />
+          </Table>
+        </div>
+      </div>
     </Modal>
   );
 }
