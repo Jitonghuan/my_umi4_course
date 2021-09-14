@@ -83,7 +83,7 @@ const pointRulesTableDescribe = [
   },
 ];
 export default function ConfigurePointRulesContent(props: any) {
-  const { isEdit, onChange, value } = props;
+  const { isEdit, onChange, value, isGlobal = false } = props;
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState<any>();
 
@@ -147,6 +147,23 @@ export default function ConfigurePointRulesContent(props: any) {
               );
           }}
         />
+        {isGlobal ? null : (
+          <Table.Column
+            title="全局值"
+            render={(record) => {
+              if (!record?.children?.length)
+                return (
+                  <>
+                    {' '}
+                    {record.ruleStr}{' '}
+                    <Form.Item name={record.name} noStyle>
+                      <Input style={{ width: record.width || '60px' }} disabled addonAfter={record.addonAfter} />
+                    </Form.Item>
+                  </>
+                );
+            }}
+          />
+        )}
       </Table>
     </Form>
   );

@@ -25,6 +25,7 @@ export default function GlobalControlPointRules(props: any) {
           )}
         </div>
         <ConfigurePointRulesForm
+          isGlobal
           isEdit={isEdit}
           onChange={(formValues: any) => {
             console.log('formValues :>> ', formValues);
