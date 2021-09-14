@@ -172,14 +172,10 @@ export default function PublishDetail(props: IProps) {
       if (info.file.status === 'uploading') {
         return;
       }
-      if (info.file.status === 'done' && info.file.response?.success == 'true') {
-        message.success(`${info.file.name} 文件上传成功`);
-      } else if (info.file.status === 'done' && info.file.response?.success == 'false') {
-        message.error(info.file.response?.errorMsg);
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} 上传成功`);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败`);
-      } else {
-        message.error(info.file.response?.errorMsg);
       }
       setDeployVisible(false);
       setDeployEnv([]);
