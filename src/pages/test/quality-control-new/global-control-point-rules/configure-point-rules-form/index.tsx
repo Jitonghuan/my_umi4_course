@@ -156,9 +156,7 @@ export default function ConfigurePointRulesContent(props: any) {
                   <>
                     {' '}
                     {record.ruleStr}{' '}
-                    <Form.Item name={record.name} noStyle>
-                      <Input style={{ width: record.width || '60px' }} disabled addonAfter={record.addonAfter} />
-                    </Form.Item>
+                    <Input style={{ width: record.width || '60px' }} disabled addonAfter={record.addonAfter} />
                   </>
                 );
             }}

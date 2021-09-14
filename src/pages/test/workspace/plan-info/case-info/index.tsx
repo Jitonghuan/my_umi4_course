@@ -39,6 +39,7 @@ export default function UserCaseInfoExec(props: any) {
     className,
     updateCurCase,
     updateTestCaseTree,
+    updateTestPhaseDetail,
     plan,
     projectList,
     updateBugList,
@@ -124,6 +125,7 @@ export default function UserCaseInfoExec(props: any) {
   const handleCaseStatusChange = async (caseStatus: string) => {
     void (await handleCaseStatusSubmit(caseStatus, JSON.stringify(sona.schema)));
     void setCaseStatus(caseStatus);
+    void updateTestPhaseDetail();
     void message.success('用例状态修改成功');
   };
 
@@ -168,6 +170,8 @@ export default function UserCaseInfoExec(props: any) {
     }));
     void setCheckedBugs([]);
     void (await updateCurCase());
+    void updateTestPhaseDetail();
+
     void message.success('关联bug成功');
   };
 
@@ -182,6 +186,8 @@ export default function UserCaseInfoExec(props: any) {
       },
     }));
     void setCheckedBugs([]);
+    void updateTestPhaseDetail();
+
     void message.success('删除bug成功');
   };
 
@@ -201,8 +207,9 @@ export default function UserCaseInfoExec(props: any) {
       },
     }).then((res) => {
       // void loadEnd();
-      void message.success('修改Bug状态成功');
+      void updateTestPhaseDetail();
       void updateCurCase();
+      void message.success('修改Bug状态成功');
     });
   };
 
@@ -237,6 +244,7 @@ export default function UserCaseInfoExec(props: any) {
     const res = await postRequest(addBug, { data: requestParams });
     if (!res) return;
     void updateCurCase();
+    void updateTestPhaseDetail();
     void message.success('一键提交成功');
   };
 

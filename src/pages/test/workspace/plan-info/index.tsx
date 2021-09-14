@@ -61,14 +61,18 @@ export default function PlanInfo(props: any) {
     });
   };
 
-  useEffect(() => {
+  const updateTestPhaseDetail = async () => {
     if (!activeKey) return;
+    const res = await getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } });
+    void setTestPhaseDetail(res.data);
+  };
+
+  useEffect(() => {
     void setCurCaseId(undefined);
     void setCurCase(undefined);
     void setExpendedKeys([]);
-    getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } }).then((res) => {
-      void setTestPhaseDetail(res.data);
-      void updateTestCaseTree();
+    void updateTestPhaseDetail().then(() => {
+      void updateTestCaseTree(); // 在更新完测试阶段详情后再更新测试用例树，是为了解决页面render错误的问题
     });
   }, [activeKey]);
 
@@ -250,6 +254,7 @@ export default function PlanInfo(props: any) {
                     curCase={curCase}
                     updateCurCase={updateCurCase}
                     updateTestCaseTree={updateTestCaseTree}
+                    updateTestPhaseDetail={updateTestPhaseDetail}
                     plan={plan}
                     projectList={projectList}
                     updateBugList={updateBugList}
