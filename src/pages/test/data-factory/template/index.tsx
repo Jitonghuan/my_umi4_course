@@ -127,6 +127,7 @@ export default function DataTemplate() {
         </Button>
       </div>
       <Table
+        rowKey="id"
         dataSource={tableData}
         loading={loading}
         pagination={{

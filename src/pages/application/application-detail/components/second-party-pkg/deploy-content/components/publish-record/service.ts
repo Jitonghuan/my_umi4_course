@@ -1,4 +1,4 @@
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 
 // 查询发布记录数据
-export const queryRecordApi = `${ds.apiPrefix}/releaseManage/deploy/list`;
+export const queryRecordApi = `${appConfig.apiPrefix}/releaseManage/deploy/list`;

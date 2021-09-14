@@ -7,7 +7,7 @@
 
 import React, { useMemo, useContext } from 'react';
 import { Tabs } from 'antd';
-import FeContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import ConfigContent from './config-content';
 import { IProps } from './types';

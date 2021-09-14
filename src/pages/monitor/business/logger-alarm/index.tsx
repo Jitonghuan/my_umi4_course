@@ -169,6 +169,7 @@ export default function LoggerAlarm() {
         </Button>
       </div>
       <Table
+        rowKey="id"
         loading={loading}
         dataSource={tableSource}
         pagination={{

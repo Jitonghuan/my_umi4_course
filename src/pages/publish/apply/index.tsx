@@ -11,7 +11,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { InlineForm } from '@/components/schema-form';
 import usePublicData from '@/utils/usePublicData';
 import { createFilterFormSchema, createTableSchema } from './schema';
@@ -23,7 +23,7 @@ import { queryApplysUrl, queryAppGroupReq } from '../service';
 const rootCls = 'release-apply-page';
 
 export default function ApplyList() {
-  const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(FeContext);
 
   const [createApplyVisible, setCreateApplyVisible] = useState<boolean>(false);
   const [applyDetailVisible, setApplyDetailVisible] = useState<boolean>(false);

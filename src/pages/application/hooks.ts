@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getRequest } from '@/utils/request';
-import { queryBizData } from '@/layouts/basic-layout/service';
+import { queryBizData } from '@/common/apis';
 import { queryApps, queryAppEnvs, queryAppsUrl, queryMyAppsUrl } from './service';
 import { AppItemVO, EnvDataVO } from './interfaces';
 

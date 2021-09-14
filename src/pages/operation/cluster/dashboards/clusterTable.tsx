@@ -13,7 +13,7 @@ export interface ChartCaseListProps {
 }
 export default function ClusterTable(props: ChartCaseListProps) {
   const { loading } = props;
-  const [clusterTableData, setClusterTableData] = useState<any[]>([]); //表格数据
+  const [clusterTableData, setClusterTableData] = useState<any>([]); //表格数据
   useEffect(() => {
     getRequest(getClustersEsDataTable).then((reslut) => {
       if (reslut.success) {
@@ -93,7 +93,14 @@ export default function ClusterTable(props: ChartCaseListProps) {
         <h3>A/B集群流量表</h3>
       </header>
       <div className="clusterTable">
-        <Table bordered columns={columns} dataSource={countList} pagination={false} scroll={{ y: tableHeight }} />
+        <Table
+          rowKey="id"
+          bordered
+          columns={columns}
+          dataSource={countList}
+          pagination={false}
+          scroll={{ y: tableHeight }}
+        />
       </div>
     </section>
   );

@@ -144,6 +144,7 @@ export default function TestPlan(props: any) {
 
         <div className="test-plan-table">
           <Table
+            rowKey="id"
             dataSource={dataSource}
             loading={loading}
             pagination={{

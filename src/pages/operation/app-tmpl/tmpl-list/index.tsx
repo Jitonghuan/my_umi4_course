@@ -257,6 +257,7 @@ export default function Launch() {
       <ContentCard>
         <div>
           <Table
+            rowKey="id"
             dataSource={dataSource}
             bordered
             loading={loading}
