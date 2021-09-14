@@ -26,8 +26,10 @@ export const FeContext = createContext({
 });
 
 /** 修改标题和 favicon */
-export function useDocumentTitle(subtitle?: string) {
+export function useDocumentTitle(subtitle?: string, route?: string) {
   useEffect(() => {
+    console.log('>>>>>>>>>>>', route, appConfig.title);
+
     const link: any = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
     link.rel = 'shortcut icon';
@@ -37,7 +39,7 @@ export function useDocumentTitle(subtitle?: string) {
     setTimeout(() => {
       document.title = subtitle ? `${appConfig.title} | ${subtitle}` : appConfig.title;
     });
-  }, []);
+  }, [subtitle, route]);
 }
 
 /** 页面权限数据 */

@@ -42,8 +42,8 @@ module.exports = {
 
     // `$ fe p` 或 `$ fe publish`
     publish: (options, projectInfo) => {
-      const { t, test, p, prod, local } = options;
-      const envCode = (t || test) ? envCodeMap.test : (p || prod) ? envCodeMap.prod : envCodeMap.dev;
+      const { t, test, p, prod, online, local } = options;
+      const envCode = (t || test) ? envCodeMap.test : (p || prod || online) ? envCodeMap.prod : envCodeMap.dev;
       const project = options.project || projectInfo.project;
       const version = options.version || projectInfo.version || '';
 
@@ -63,27 +63,5 @@ module.exports = {
     analyze: [
       '$ npm run build:analyze'
     ],
-
-    // build1: (options) => {
-    //   const buildEnv = options.online ? 'prod' : 'test';
-    //   return [
-    //     '$ fnpm install',
-    //     `$ npm run build:${buildEnv}`,
-    //     (options.jenkins || options.j) && `#tar ./dist/matrix ./dist/seed.jsbundle --path=build`,
-    //   ];
-    // },
-
-    // // 可以直接是数组，也可以是一个方法，返回一个数组
-    // publish1: async (options) => {
-    //   const buildEnv = options.online ? 'prod' : 'test';
-    //   const ossDir = options.online ? 'prod' : 'dev';
-    //   return [
-    //     '$ fnpm install',
-    //     `$ npm run build:${buildEnv}`,
-    //     `#oss -r ./dist come2future-web:${ossDir}/fe-matrix-front/matrix-front`,
-    //     `#scp ./dist/matrix/index.html root@192.168.0.111:/usr/share/nginx/html/matrix-${buildEnv}/matrix/index.html --pass=&WUb&1u8508P0ohD`,
-    //     '#logger:success publish success!!!',
-    //   ];
-    // },
   },
 };

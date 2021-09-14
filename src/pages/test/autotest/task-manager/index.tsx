@@ -110,6 +110,7 @@ export default function TaskManager() {
         </Button>
       </div>
       <Table
+        rowKey="id"
         dataSource={tableSource}
         loading={loading}
         pagination={{
