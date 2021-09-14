@@ -155,26 +155,39 @@ export default function PublishDetail(props: IProps) {
     return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
   };
 
-  // 上传按钮
+  // 上传按钮 message.error(info.file.response?.errorMsg) ||
   const uploadProps = {
     name: 'image',
     action: uploadImages,
-    headers: {},
+    progress: {
+      strokeColor: {
+        '0%': '#108ee9',
+        '100%': '#87d068',
+      },
+      strokeWidth: 3,
+      format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
+    },
     onChange: (info: any) => {
-      if (info.file.status !== 'uploading') {
-        setConfirmLoading(true);
+      console.log('>>>>>', info);
+      if (info.file.status === 'uploading') {
+        return;
       }
-      if (info.file.status === 'done' && info.file.response?.success == 'true') {
-        message.success(`${info.file.name} 文件上传成功`);
-      } else {
-        message.error(info.file.response?.errorMsg || '上传失败');
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} 上传成功`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} 上传失败`);
       }
-
       setDeployVisible(false);
-      setConfirmLoading(false);
+      setDeployEnv([]);
+      onOperate('uploadImageEnd');
     },
   };
 
+  const handleCancel = () => {
+    setDeployVisible(false);
+    setDeployEnv([]);
+    onOperate('uploadImageEnd');
+  };
   //重启确认
   const { confirm } = Modal;
   const ensureRestart = () => {
@@ -312,17 +325,24 @@ export default function PublishDetail(props: IProps) {
         title="选择部署环境"
         visible={deployVisible}
         footer={null}
-        onCancel={() => setDeployVisible(false)}
+        onCancel={handleCancel}
         maskClosable={false}
       >
         <div>
           <span>发布环境：</span>
-          <Checkbox.Group value={deployEnv} onChange={(v: any) => setDeployEnv(v)} options={envDataList || []} />
+          <Checkbox.Group
+            value={deployEnv}
+            onChange={(v: any) => {
+              onOperate('uploadImageStart');
+              setDeployEnv(v);
+            }}
+            options={envDataList || []}
+          />
         </div>
 
-        <div style={{ display: 'flex', marginTop: '12px' }}>
+        <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
           <span>配置文件：</span>
-          <Upload {...uploadProps}>
+          <Upload {...uploadProps} accept=".tgz">
             <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
               离线部署
             </Button>
