@@ -2,11 +2,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
-import { Table, Button, Input, Form, Space, Typography } from 'antd';
+import { Table, Button, Input, Form, Space, Typography, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import CreateOrEditRuleModal from './create-or-edit-rule-modal';
 import './index.less';
 
 export default function AppControlPointRules(props: any) {
+  const [createOrEditRuleModalVisible, setCreateOrEditRuleModalVisible] = useState(false);
+
+  const handleCreateRule = () => {
+    setCreateOrEditRuleModalVisible(true);
+  };
+
   return (
     <PageContainer className="quality-control-app-control-point-rules">
       <HeaderTabs activeKey="app-control-point-rules" history={props.history} />
@@ -16,7 +23,7 @@ export default function AppControlPointRules(props: any) {
             <Typography.Text strong>已配置规则列表</Typography.Text>
             <Input.Search className="keyword-search-input" placeholder="输入服务关键字搜索" />
           </div>
-          <Button type="primary">
+          <Button type="primary" onClick={handleCreateRule}>
             <PlusOutlined />
             新增规则
           </Button>
@@ -39,6 +46,8 @@ export default function AppControlPointRules(props: any) {
             }}
           />
         </Table>
+
+        <CreateOrEditRuleModal visible={createOrEditRuleModalVisible} setVisible={setCreateOrEditRuleModalVisible} />
       </ContentCard>
     </PageContainer>
   );
