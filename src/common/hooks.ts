@@ -28,8 +28,6 @@ export const FeContext = createContext({
 /** 修改标题和 favicon */
 export function useDocumentTitle(subtitle?: string, route?: string) {
   useEffect(() => {
-    console.log('>>>>>>>>>>>', route, appConfig.title);
-
     const link: any = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
     link.rel = 'shortcut icon';
