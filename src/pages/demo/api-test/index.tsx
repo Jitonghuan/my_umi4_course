@@ -16,6 +16,7 @@ const methodOptions = [
   { label: 'POST', value: 'POST' },
   { label: 'PUT', value: 'PUT' },
   { label: 'DELETE', value: 'DELETE' },
+  { label: 'OPTIONS', value: 'OPTIONS' },
 ];
 
 export default function PageApiTest() {
@@ -41,7 +42,7 @@ export default function PageApiTest() {
     } else if (method === 'PUT') {
       promise = putRequest(api, { data: dataParams, headers: headerParams });
     } else {
-      promise = getRequest(api, { data: dataParams, headers: headerParams });
+      promise = getRequest(api, { data: dataParams, headers: headerParams, method });
     }
 
     promise
