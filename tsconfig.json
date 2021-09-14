@@ -11,8 +11,7 @@
     "strict": true,
     "paths": {
       "@/*": ["src/*"],
-      "@@/*": ["src/.umi/*"],
-      "@config/*": ["config/*"]
+      "@@/*": ["src/.umi/*"]
     },
     "allowSyntheticDefaultImports": true
   },

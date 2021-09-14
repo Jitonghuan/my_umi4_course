@@ -1,6 +1,18 @@
-// fe config
+// FE BUILDER CONFIG
 // @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/08/03 10:02
+// @create 2021/08/01 21:35
+// -----------------------------------------------------------
+// $ xxx 表示执行 shell 命令
+// #oss 表示上传到 oss， -r 表示目录
+// {{group}}, {{project}} 分别对应项目的 git url 中的 group 和 project
+// {{version}} 对应 package.json 中的 version
+// 更多文档见: http://npm.cfuture.cc/package/@cffe/fe-builder-default
+
+const envCodeMap = {
+  dev: 'hbos-dev',
+  test: 'hbos-test',
+  prod: 'prod',
+};
 
 module.exports = {
   type: 'builder',
