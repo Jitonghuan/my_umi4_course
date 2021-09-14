@@ -5,7 +5,7 @@ import { postRequest } from '@/utils/request';
 
 interface ICreateOrEditTaskModal {
   visible: boolean;
-  readOnly: boolean;
+  readOnly?: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   task?: any;
 }

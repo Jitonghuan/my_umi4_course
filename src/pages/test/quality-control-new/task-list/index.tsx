@@ -9,12 +9,14 @@ import { getRequest, postRequest } from '@/utils/request';
 import { getTaskInfo, taskCare, taskCareCancel, taskExcute, getTaskList, operateTask } from '../service';
 import { taskStatusEnum } from '../constant';
 import CreateOrEditTaskModal from './create-or-edit-task-modal';
+import ResultModal from './result-modal';
 import moment from 'moment';
 import './index.less';
 
 export default function taskList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [setCreateOrEditTaskModalVisible, setSetCreateOrEditTaskModalVisible] = useState<boolean>(false);
+  const [resultModalVisible, setResultModalVisible] = useState<boolean>(true);
   const [curTask, setCurTask] = useState<any>();
   const [taskList, setTaskList] = useState<any[]>();
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -39,13 +41,19 @@ export default function taskList(props: any) {
     });
   };
 
+  const handleSeeResult = (task: any) => {
+    console.log('task :>> ', task);
+    setCurTask(task);
+    setResultModalVisible(true);
+  };
+
   return (
     <PageContainer className="quality-control-task-list">
       <HeaderTabs activeKey="task-list" history={props.history} />
       <ContentCard>
         <div className="search-header">
           <Form layout="inline">
-            <Form.Item>
+            <Form.Item name="justCare">
               <Radio.Group
                 options={[
                   { label: '所有', value: 0 },
@@ -56,7 +64,7 @@ export default function taskList(props: any) {
                 buttonStyle="solid"
               />
             </Form.Item>
-            <Form.Item label="任务名称">
+            <Form.Item label="任务名称" name="keyword">
               <Input placeholder="任务名称关键字" />
             </Form.Item>
             <Form.Item label="应用分类">
@@ -103,7 +111,14 @@ export default function taskList(props: any) {
                 taskStatusEnum[status] && <Tag color={taskStatusEnum[status].type}>{taskStatusEnum[status].label}</Tag>
               }
             />
-            <Table.Column title="检测结果" dataIndex="" />
+            <Table.Column
+              title="检测结果"
+              render={(record: any) => (
+                <Button type="link" onClick={() => handleSeeResult(record)}>
+                  查看结果
+                </Button>
+              )}
+            />
             <Table.Column
               title="操作"
               render={(record) => {
@@ -135,6 +150,7 @@ export default function taskList(props: any) {
           setVisible={setSetCreateOrEditTaskModalVisible}
           task={curTask}
         />
+        <ResultModal visible={resultModalVisible} setVisible={setResultModalVisible} taskId={curTask?.id} />
       </ContentCard>
     </PageContainer>
   );
