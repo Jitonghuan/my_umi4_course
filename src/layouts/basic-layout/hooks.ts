@@ -3,8 +3,8 @@
 // @create 2021/08/25 15:15
 
 import { useState, useEffect, useCallback } from 'react';
-import { getRequest, queryUserInfoApi, doLogoutApi } from '@/utils/request';
-import { queryCategoryData, queryBizData, queryEnvTypeData, queryPermission } from './service';
+import { getRequest } from '@/utils/request';
+import { queryCategoryData, queryBizData, queryEnvTypeData } from './service';
 
 // 业务所属
 export function useCategoryData(ready = false) {
