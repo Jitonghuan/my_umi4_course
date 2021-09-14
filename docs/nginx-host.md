@@ -5,7 +5,7 @@
 | name       | username@host        | password       | port |
 | ---------- | -------------------- | -------------- | ---- |
 | production | root@47.97.186.99    | Nc7*wtf_hok3   |      |
-| gmc        | root@192.168.54.139  | Cfuture#k8sNew |      |
+| gmc        | root@192.168.54.139  | seenew123456 |      |
 | tt_poc     | root@47.116.74.55    |                |      |
 | ruili      | root@47.96.37.225    |                |      |
 | g3a        | root@192.168.54.147  | Cfuture#k8sNew |      |

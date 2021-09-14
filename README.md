@@ -6,43 +6,84 @@
 
 ## Getting Started
 
-1. fe 环境初始化 （也可以只执行 1.2，安装 fnpm 即可）
-   - 1.1 `$ fe` 查看是否已安装 fe-cli，如未安装则执行 `$ npm install -g @cffe/fe-cli --registry=http://r.npm.cfuture.cc` ，首次安装完后请执行 `$ fe env init` 初始化开发环境；
-   - 1.2 `$ fnpm -v` 查看是否已安装 fnpm，如未安装则执行 `$ npm install -g @cffe/fnpm --registry=http://r.npm.cfuture.cc`
+### 1. 环境初始化
 
-2. 配置 Host
+fe 环境初始化 （如果仅本地开发，也可以只执行 1.2，安装 fnpm 即可）
 
-绑定 host 是为了在本地开发时，能使用 cfuture.shop 的 cookie 进行接口联调：
+- 1.1 执行 `$ fe` 查看是否已安装 fe-cli
+  - 如未安装则执行 `$ npm install -g @cffe/fe-cli --registry=http://r.npm.cfuture.cc` 
+  - 首次安装完后请执行 `$ fe env init` 初始化开发环境；
+- 1.2 执行 `$ fnpm -v` 查看是否已安装 fnpm
+  - 如未安装则执行 `$ npm install -g @cffe/fnpm --registry=http://r.npm.cfuture.cc`
+
+### 2. 配置 Host
+
+- 绑定 host 是为了在本地开发时，能使用 cfuture.shop 的 cookie 进行接口联调：
+- 本地联调时的接口代理规则配置见 config/config.ts 中的 proxy
 
 ```host
-127.0.0.1 matrix-local.cfuture.shop
+127.0.0.1 local.cfuture.shop
 ```
 
-3. 初始化项目
-   - clone 项目: `$ git clone git@gitlab.cfuture.shop:fe-data-app/fe-matrix.git`
-   - 切换到对应分支，分支规范见下文
-   - 安装依赖: `$ fnpm install`
+### 3. 初始化项目
 
-4. `$ npm start` 启动本地开发， 访问 http://matrix-local.cfuture.shop:9091 （登录账号同 sso ）
-  - 如果安装了 fe，可以直接执行 `$ fe d`
+- clone 项目: `$ git clone git@gitlab.cfuture.shop:_IRIM_GIT_GROUP_/_IRIM_PROJECT_NAME_.git`
+- 切换到对应分支，分支规范见下文
+- 安装依赖: `$ fnpm install`
 
-6. 部署到 test:  [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-test
-   - 如果安装了 fe，可以在 test 分支直接执行 `$ fe p -d`
+### 4. 启动本地开发
 
-7. 部署到 prod: [jenkins](http://jenkins.cfuture.cc/) -> ops/fe-matrix-prod
-   - 如果安装了 fe，可以在 pub 分支直接执行 `$ fe p -o`
+- 执行 `$ npm run dev` 启动本地开发
+- 如果安装了 fe ，也可执行 `$ fe dev`
+- 访问 http://local.cfuture.shop:9003
+- 本地接口代理请在 config/config.ts 中配置 proxy
+
+本地 mock 数据方法见下文 “关于 Mock 数据”
+
+### 5. 部署到服务器
+
+请保证本地的代码是最新的，并且已经安装 fe
+
+- 布署到 dev 环境: `$ fe publish --dev` 
+- 布署到 test 环境: `$ fe publish --test` 
+- 布署到 prod 环境: `$ fe publish --prod`
+
+## 开发文档
+
+### 相关配置
+
+- 应用相关配置:  src/app.config.ts
+- 工程化相关配置: config/config.ts
 
 ### 分支规范
 
 - 开发分支: `feat-xxx/0.0.x` 或 `dev-xxx/0.0.x`
-- 测试分支: `test/0.2.x`
-- 线上分支: `pub/2.x.x`
+- 测试分支: `test/0.1.x`
+- 线上分支: `pub/1.x.x`
 
-## 相关文档
+### 关于 Mock 数据
 
-### 开发技术文档
+- 启动时使用 `$ npm run mock` 
+- 如果安装了 fe，可以用 `$ fe mock`
+- mock 接口写在 `/mock` 目录，每个文件可以代表一个业务模块，可以参照已有的新增接口
 
-- VC 组件文档: http://vdoc.cfuture.cc/vc-doc/#/vc-doc/component/list
+### 权限接入文档
+
+- 权限开启开关: src/app.config.ts 文件中的 `isOpenPermission` 字段
+- 接口返回数据格式参考: mock/auth.ts -> /api/global/permission 中的示例接口 ，其中 `menuUrl` 字段必须要有，其它随意
+- 权限接口定义在 src/services/apis.ts 文件中的 `queryPermissionURL`
+
+权限原理：根据返回的数据，与 `routes.config.ts` 中的路由进行 merge，然后判断当前的 `location.pathname` 是否在权限中，如果不在，则拦截页面，显示无权限的提示；
+- 权限拦截窗口组件请查看 src/components/permission
+- 权限初始化逻辑在 src/layouts/basic-layout/index.tsx
+
+
+### 技术教程文档
+
+- ES6入门教程: https://es6.ruanyifeng.com/
+- Ant Design 文档: https://ant.design/components/overview-cn/
+- Umi 教程: https://umijs.org/zh-CN/config
+- React Hooks入门教程： https://www.ruanyifeng.com/blog/2019/09/react-hooks.html
 - Echarts文档: https://echarts.apache.org/zh/option.html
 
 ### 需求文档

@@ -98,6 +98,7 @@ export default function deliveryList() {
         </div>
         <div>
           <Table
+            rowKey="id"
             dataSource={dataSource}
             bordered
             loading={loading}

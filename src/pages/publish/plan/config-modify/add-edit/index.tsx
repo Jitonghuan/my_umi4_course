@@ -7,7 +7,7 @@ import BaseForm from '../../components/base-form';
 import { InitValue, BaseFormProps } from '../../../typing';
 import { addPublishPlanMultiReq, queryFunctionReq, updatePublishPlanReq } from '@/pages/publish/service';
 import usePublicData from '@/utils/usePublicData';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { queryAppList } from '../../../service';
 import { createTableColumns } from './schema';
 
@@ -38,7 +38,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const [form] = Form.useForm();
   const isCheck = type === 'check';
 
-  const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(FeContext);
 
   const { envsUrlList } = usePublicData({
     isEnvType: false,

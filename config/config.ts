@@ -1,73 +1,26 @@
-// umi config
-// @see https://umijs.org/zh-CN/config
+// 应用工程配置
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/09/10 15:41
+// TODO 使用不同的文件来区分环境
 
 import { defineConfig } from 'umi';
-import path from 'path';
+import routes, { baseRoutePath } from '../src/routes.config';
 
-import ds from './defaultSettings';
-import routes from '../src/pages/routes.config';
+// 资源引用的根路径，此变量与项目在 nginx 中匹配前缀相关，如果
+const sourceRoot = '/';
 
-const publicPathPrefix = {
-  dev: '',
-  test: 'https://come2future-web.oss-cn-hangzhou.aliyuncs.com/dev/fe-matrix-front/matrix-front',
-  prod: 'https://come2future-web.oss-cn-hangzhou.aliyuncs.com/prod/fe-matrix-front/matrix-front',
-}[process.env.BUILD_ENV || 'dev'];
+const { VERSION, NODE_ENV } = process.env;
+const publicPathPrefix = NODE_ENV === 'development' ? '/' : !VERSION ? `${sourceRoot}` : `${sourceRoot}${VERSION}/`;
 
+// 更多配置查看: https://umijs.org/zh-CN/config
 export default defineConfig({
-  /*—————————— 编译性能等配置 start ——————————*/
-  nodeModulesTransform: {
-    type: 'none',
-  },
+  // -----------------------------------------------------------------
+  // ------------------- 可以根据实际情况修改的配置项 -------------------
 
-  plugins: [
-    // path.resolve('./script/plugin')
-  ],
+  // 文件依赖路径别名，默认支持 @/ 指向 src/
+  alias: {},
 
-  themeHbos: {
-    bundleName: ds.appKey, // 项目 bundleName，插件会使用这个 bundleName 来进行样式隔离
-  },
-
-  // 面向浏览器对象，开发环境默认支持 chrome
-  targets: { chrome: 60, firefox: 64, safari: 11 },
-
-  publicPath: `${publicPathPrefix}/${ds.appKey}/`,
-
-  // 配置 external 资源外部依赖, react, react-dom
-  externals: {
-    react: 'window.React',
-    'react-dom': 'window.ReactDOM',
-  },
-
-  // HTML 中以 <script> 方式引用的资源
-  scripts: [
-    { src: `${publicPathPrefix}/${ds.appKey}/react.min.js` },
-    { src: `${publicPathPrefix}/${ds.appKey}/react-dom.min.js` },
-  ],
-
-  dynamicImport: {
-    loading: '@/components/source-loading',
-  },
-
-  // split chunk TODO
-  /*—————————— 编译性能和工程配置 end ——————————*/
-
-  /*—————————— 项目属性配置 start ——————————*/
-  // 文件 hash 后缀
-  hash: true,
-
-  // 路由类型，browser hash
-  history: { type: 'browser' },
-
-  // 全局变量
-  define: {
-    NODE_ENV: process.env.NODE_ENV,
-  },
-
-  alias: {
-    '@config': path.join(__dirname, '../config'),
-  },
-
-  // 代理
+  // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
       target: 'http://60.190.249.92/',
@@ -91,33 +44,65 @@ export default defineConfig({
   },
 
   devServer: {
-    port: 9091,
+    port: 9091, // 本地开发代理的端口号
   },
 
-  // 路由
+  // 路由配置
   routes: [
     {
-      path: `/${ds.appKey}`,
+      path: baseRoutePath,
       component: '../layouts/basic-layout/index',
-      menuRoot: true,
       routes: [...routes],
     },
     {
-      path: '/',
-      redirect: `/${ds.appKey}/index`,
+      path: '/*',
+      redirect: `${baseRoutePath}/index`,
     },
   ],
 
-  // 主题
+  // less 主题变量
   theme: {
-    '@primary-color': ds.primaryColor,
+    '@primary-color': '#1973CC',
   },
 
-  // 项目配置
-  outputPath: `./dist/${ds.appKey}/`,
-  /*—————————— 项目属性配置 end ——————————*/
+  // ------------------------------------------------------------
+  // ------------------- 以下配置项请勿随意修改 -------------------
+  // ------------------------------------------------------------
+  nodeModulesTransform: { type: 'none' },
 
-  /*————————— 插件调试配置 start —————————*/
+  // 默认是 browser 路由
+  history: { type: 'browser' },
 
-  /*—————————— 插件调试配置 end ——————————*/
+  // 文件 hash 后缀 （ hash: true ）
+  hash: NODE_ENV === 'development',
+
+  themeHbos: {
+    // 项目 bundleName，插件会使用这个 bundleName 来进行样式隔离
+    bundleName: 'matrix',
+  },
+
+  // 面向浏览器对象，开发环境默认支持 chrome
+  targets: { chrome: 65, firefox: 64, safari: 11, edge: 13 },
+
+  publicPath: publicPathPrefix,
+
+  // 配置 external 资源外部依赖, react, react-dom
+  externals:
+    NODE_ENV === 'development'
+      ? {}
+      : {
+          react: 'window.React',
+          'react-dom': 'window.ReactDOM',
+        },
+
+  // HTML 中以 <script> 方式引用的资源
+  scripts:
+    NODE_ENV === 'development'
+      ? []
+      : [{ src: `${publicPathPrefix}react.min.js` }, { src: `${publicPathPrefix}react-dom.min.js` }],
+
+  // 开启动态资源加载
+  dynamicImport: {
+    loading: '@/components/source-loading',
+  },
 });

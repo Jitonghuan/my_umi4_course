@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react';
-import FeContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import FELayout from '@cffe/vc-layout';
 
 export interface IProps {

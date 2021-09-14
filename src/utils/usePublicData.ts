@@ -1,20 +1,20 @@
 import { useEffect } from 'react';
 import useRequest from '@/utils/useRequest';
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 import { OptionProps } from '@/components/table-search/typing';
 
 /** 应用名 */
-export const queryappManageList = `${ds.apiPrefix}/appManage/list`;
+export const queryappManageList = `${appConfig.apiPrefix}/appManage/list`;
 /** 环境名 */
-export const queryappManageEnvList = `${ds.apiPrefix}/monitorManage/app/env`;
+export const queryappManageEnvList = `${appConfig.apiPrefix}/monitorManage/app/env`;
 /** 应用分类接口 */
-export const queryAppTypeLists = `${ds.apiPrefix}/appManage/category/list`;
+export const queryAppTypeLists = `${appConfig.apiPrefix}/appManage/category/list`;
 /** 应用分支 */
-export const queryAppBranchLists = `${ds.apiPrefix}/releaseManage/branch/list`;
+export const queryAppBranchLists = `${appConfig.apiPrefix}/releaseManage/branch/list`;
 /** 环境类型 */
-export const queryEnvListType = `${ds.apiPrefix}/appManage/env/listType`;
+export const queryEnvListType = `${appConfig.apiPrefix}/appManage/env/listType`;
 /** 根据应用分类code查询发布环境列表 */
-const queryEnvsUrl = `${ds.apiPrefix}/appManage/env/list`;
+const queryEnvsUrl = `${appConfig.apiPrefix}/appManage/env/list`;
 
 interface UsePublicDataProps {
   appCode?: string;

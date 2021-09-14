@@ -5,14 +5,14 @@ import TableSearch from '@/components/table-search';
 import { OptionProps } from '@/components/table-search/typing';
 import PageContainer from '@/components/page-container';
 import './index.less';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { deleteFunc, queryAppGroupReq, queryFunctionUrl, getExportPublishFunctionLink } from '../service';
 import useTable from '@/utils/useTable';
 import usePublicData from '@/utils/usePublicData';
 import { createFormItems, createTableColumns } from './schema';
 
 const FunctionCom: React.FC = () => {
-  const { categoryData = [], envData = [], businessData = [] } = useContext(FEContext);
+  const { categoryData = [], envTypeData = [], businessData = [] } = useContext(FeContext);
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
   // 用于在点击导出时传参
   const lastSearchRef = useRef<any>();

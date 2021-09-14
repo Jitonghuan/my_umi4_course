@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { parse } from 'qs';
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 
 /** 深度优先搜索处理 func */
 export const DFSFunc = (tree: any[], childKey: string = 'children', func: (treeNode: any) => void) => {
@@ -39,7 +39,7 @@ export const addAPIPrefix = (api: string) => {
     api = `/${api}`;
   }
 
-  return `${origin}${ds.apiPrefix}${api}`;
+  return `${origin}${appConfig.apiPrefix}${api}`;
 };
 
 /** 将 options 转换为 map 映射，用于渲染 */

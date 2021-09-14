@@ -1,12 +1,12 @@
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 
 /** 应用名 */
 
-export const queryappManageList = `${ds.apiPrefix}/appManage/list`;
+export const queryappManageList = `${appConfig.apiPrefix}/appManage/list`;
 
 /** 环境名 */
 
-export const queryappManageEnvList = `${ds.apiPrefix}/monitorManage/app/env`;
+export const queryappManageEnvList = `${appConfig.apiPrefix}/monitorManage/app/env`;
 
 /**
  * Prometheus监控
@@ -15,30 +15,30 @@ export const queryappManageEnvList = `${ds.apiPrefix}/monitorManage/app/env`;
 /* 监控对象 */
 
 // 查询列表
-export const queryPrometheusList = `${ds.apiPrefix}/monitorManage/serviceMonitor/list`;
+export const queryPrometheusList = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/list`;
 
 // 创建
-export const createPrometheus = `${ds.apiPrefix}/monitorManage/serviceMonitor/create`;
+export const createPrometheus = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/create`;
 
 // 编辑
-export const updatePrometheus = `${ds.apiPrefix}/monitorManage/serviceMonitor/update`;
+export const updatePrometheus = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/update`;
 
 // 删除
-export const deletePrometheus = `${ds.apiPrefix}/monitorManage/serviceMonitor/delete`;
+export const deletePrometheus = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/delete`;
 
 /* 报警规则 */
 
 // 查询列表
-export const queryRulesList = `${ds.apiPrefix}/monitorManage/rules/list`;
+export const queryRulesList = `${appConfig.apiPrefix}/monitorManage/rules/list`;
 
 // 创建
-export const createRules = `${ds.apiPrefix}/monitorManage/rules/create`;
+export const createRules = `${appConfig.apiPrefix}/monitorManage/rules/create`;
 
 // 编辑
-export const updateRules = `${ds.apiPrefix}/monitorManage/rules/update`;
+export const updateRules = `${appConfig.apiPrefix}/monitorManage/rules/update`;
 
 // 删除
-export const deleteRules = `${ds.apiPrefix}/monitorManage/rules/delete`;
+export const deleteRules = `${appConfig.apiPrefix}/monitorManage/rules/delete`;
 
 /**
  * 模板管理
@@ -47,31 +47,31 @@ export const deleteRules = `${ds.apiPrefix}/monitorManage/rules/delete`;
 /* 报警规则模板 */
 
 // 查询列表
-export const queryRuleTemplatesList = `${ds.apiPrefix}/monitorManage/ruleTemplates/list`;
+export const queryRuleTemplatesList = `${appConfig.apiPrefix}/monitorManage/ruleTemplates/list`;
 
 // 创建
-export const createRuleTemplates = `${ds.apiPrefix}/monitorManage/ruleTemplates/create`;
+export const createRuleTemplates = `${appConfig.apiPrefix}/monitorManage/ruleTemplates/create`;
 
 // 编辑
-export const updateRuleTemplates = `${ds.apiPrefix}/monitorManage/ruleTemplates/update`;
+export const updateRuleTemplates = `${appConfig.apiPrefix}/monitorManage/ruleTemplates/update`;
 
 // 删除
-export const deleteRuleTemplates = `${ds.apiPrefix}/monitorManage/ruleTemplates/delete`;
+export const deleteRuleTemplates = `${appConfig.apiPrefix}/monitorManage/ruleTemplates/delete`;
 
 /**
  * 报警历史
  */
 
 // 查询列表
-export const queryAlertManageList = `${ds.apiPrefix}/monitorManage/alertrecord/list`;
+export const queryAlertManageList = `${appConfig.apiPrefix}/monitorManage/alertrecord/list`;
 
 /** 分类*/
-export const queryGroupList = `${ds.apiPrefix}/monitorManage/rules/group/list`;
+export const queryGroupList = `${appConfig.apiPrefix}/monitorManage/rules/group/list`;
 
 /** 启用禁用 */
-export const ruleTemplatesSwitch = `${ds.apiPrefix}/monitorManage/ruleTemplates/switch`;
+export const ruleTemplatesSwitch = `${appConfig.apiPrefix}/monitorManage/ruleTemplates/switch`;
 
-export const ruleSwitch = `${ds.apiPrefix}/monitorManage/rules/switch`;
+export const ruleSwitch = `${appConfig.apiPrefix}/monitorManage/rules/switch`;
 
 /** GET 获取用户名 */
-export const getUserList = `${ds.apiPrefix}/appManage/user/listAll`;
+export const getUserList = `${appConfig.apiPrefix}/appManage/user/listAll`;

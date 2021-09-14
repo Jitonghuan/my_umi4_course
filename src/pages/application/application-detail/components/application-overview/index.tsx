@@ -2,10 +2,10 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/30 20:45
 
-import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useMemo, Fragment } from 'react';
 import { Descriptions, Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import ApplicationEditor from '@/pages/application/_components/application-editor';
 import MemberEditor from './member-editor';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -31,7 +31,7 @@ const deployJobUrlOptionsMap = optionsToLabelMap(deployJobUrlOptions);
 
 export default function ApplicationOverview() {
   const { appData, queryAppData } = useContext(DetailContext);
-  const { categoryData = [], businessData = [] } = useContext(FEContext);
+  const { categoryData = [], businessData = [] } = useContext(FeContext);
 
   const [isModifyApp, setIsModifyApp] = useState(false);
   const [memberEditorMode, setMemberEditorMode] = useState<EditorMode>('HIDE');
@@ -126,12 +126,12 @@ export default function ApplicationOverview() {
         )}
         {appData?.microFeType === 'subProject' &&
           appData?.relationMainApps?.map((group, groupIndex) => (
-            <>
+            <Fragment key={groupIndex}>
               <Descriptions.Item label={`关联主应用${groupIndex + 1}`}>{group.appCode}</Descriptions.Item>
               <Descriptions.Item span={2} label={`路由${groupIndex + 1}`}>
                 {group.routePath}
               </Descriptions.Item>
-            </>
+            </Fragment>
           ))}
       </Descriptions>
 

@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import moment, { Moment } from 'moment';
 import { datetimeCellRender } from '@/utils';
 import { history } from 'umi';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { FormProps } from '@/components/table-search/typing';
@@ -48,7 +48,7 @@ interface EditTableProps {
 
 const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultValueObj = {} }) => {
   // 应用分类列表
-  const { categoryData } = useContext(FEContext);
+  const { categoryData } = useContext(FeContext);
   const categorys = useMemo(() => {
     return (
       categoryData?.map((el) => {

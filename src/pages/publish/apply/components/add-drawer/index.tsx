@@ -1,7 +1,7 @@
 import React, { useContext, useState, useCallback, useRef, useMemo } from 'react';
 import { Drawer, Form, Input, Radio, Select, DatePicker, Button, Table } from 'antd';
 
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
 import { createPlanSchemaColumns } from '../../schema';
 import { addPublishApplyReq, queryAppGroupReq, queryEnvsReq, queryPublishPlanReq } from '@/pages/publish/service';
@@ -22,7 +22,7 @@ const tailLayout = {
 
 const AddDrawer = (props: IProps) => {
   const { visible, onClose, envsUrlList } = props;
-  const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(FeContext);
   const [formInstance] = Form.useForm();
 
   const [businessData, setBusinessData] = useState<any[]>([]);

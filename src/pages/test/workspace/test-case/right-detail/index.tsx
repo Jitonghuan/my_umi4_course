@@ -131,6 +131,7 @@ export default function RightDetail(props: any) {
           </Button>
         </div>
         <Table
+          rowKey="id"
           className="detail-table"
           dataSource={useMemo(() => dataSource.map((item) => ({ ...item, key: item.id })), [dataSource])}
           loading={loading}
