@@ -63,6 +63,7 @@ export default ({ element, attributes, children }: IRenderElementProps) => {
     <div {...attributes} className={`${prefix}-wrap`}>
       <Image
         className={cls({ [prefix]: !$readOnly }, { [`${prefix}-selected`]: selected && !$readOnly })}
+        style={{ margin: '1px' }}
         // contentEditable={false}
         src={url}
         width={120}
