@@ -11,7 +11,7 @@ import { history } from 'umi';
 import { testPhaseEnum, caseStatusEnum } from '../constant';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
-import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography } from 'antd';
+import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography, Button } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { LeftOutlined } from '@ant-design/icons';
 import './index.less';
@@ -33,6 +33,25 @@ export default function PlanInfo(props: any) {
   const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
   const [projectList, setProjectList] = useState<any[]>([]);
   const [caseStatusSelect, setCaseStatusSelect] = useState<string>();
+
+  const [allDescendantsMap, setAllDescendantsMap] = useState<any>({});
+
+  useEffect(() => {
+    if (!testCaseTree) return;
+    const ans: any = {};
+    const dfs = (node: any): any[] => {
+      const allDescendants = [node.key];
+      if (node.children) {
+        for (const child of node.children as any[]) {
+          if (child.children?.length) void allDescendants.push(...dfs(child));
+        }
+      }
+      ans[node.key] = [...allDescendants];
+      return allDescendants;
+    };
+    void testCaseTree.forEach((node: any) => node?.children?.length && dfs(node));
+    void setAllDescendantsMap(ans);
+  }, [testCaseTree]);
 
   const updateCurCase = () => {
     getRequest(getPhaseCaseDetail, {
@@ -110,6 +129,18 @@ export default function PlanInfo(props: any) {
     if (!caseStatusSelect) return testCaseTree;
     return dataClean(_.cloneDeep(testCaseTree));
   }, [caseStatusSelect, testCaseTree]);
+
+  const expandAllDescendants = (id: number) => {
+    if (!allDescendantsMap[id]) return;
+    const allDescendants = allDescendantsMap[id];
+    void setExpendedKeys([...new Set([...expendedKeys, ...allDescendants])]);
+  };
+
+  const cancelExpandAllDescendants = (id: number) => {
+    if (!allDescendantsMap[id]) return;
+    const allDescendants = allDescendantsMap[id];
+    void setExpendedKeys(expendedKeys.filter((item: any) => !allDescendants.includes(item)));
+  };
 
   return (
     <PageContainer>
@@ -210,7 +241,7 @@ export default function PlanInfo(props: any) {
                   treeDataEmptyHide={false}
                   onSelect={(keys) => testCaseTreeLeafs.includes(keys[0]) && setCurCaseId(keys[0])}
                   selectedKeys={[curCaseId]}
-                  onExpand={(expendedKeys) => setExpendedKeys(expendedKeys)}
+                  onExpand={setExpendedKeys}
                   expandedKeys={expendedKeys}
                   showIcon={false}
                   showSearch
@@ -234,11 +265,32 @@ export default function PlanInfo(props: any) {
                       );
 
                     return (
-                      <Tooltip placement="right" title={renderTitle}>
-                        <Typography.Text style={{ maxWidth: '100%' }} ellipsis={{ suffix: '' }}>
-                          {renderTitle}
-                        </Typography.Text>
-                      </Tooltip>
+                      <div className="case-select-tree-node">
+                        <Tooltip placement="right" title={renderTitle}>
+                          <Typography.Text style={{ maxWidth: '100%' }} ellipsis={{ suffix: '' }}>
+                            {renderTitle}
+                          </Typography.Text>
+                        </Tooltip>
+
+                        {node.children?.length ? (
+                          <div className="operate-btn-group">
+                            <Button
+                              className="node-operate-btn"
+                              type="link"
+                              onClick={() => expandAllDescendants(node.key)}
+                            >
+                              全部展开
+                            </Button>
+                            <Button
+                              className="node-operate-btn"
+                              type="link"
+                              onClick={() => cancelExpandAllDescendants(node.key)}
+                            >
+                              全部收起
+                            </Button>
+                          </div>
+                        ) : null}
+                      </div>
                     );
                   }}
                 />
