@@ -68,7 +68,7 @@ export default ({ element, attributes, children }: IRenderElementProps) => {
         width={120}
         // alt="图片"
         // style={{ width: '50%' }}
-      />
+      />{' '}
       {children}
     </div>
   );
