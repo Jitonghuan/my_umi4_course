@@ -188,7 +188,7 @@ export default function BugManage(props: any) {
             </Space>
           </Form.Item>
           <Form.Item label="描述" name="desc">
-            <RichText width="524px" sona={sona} schema={schema} />
+            <RichText width="524px" height="500px" sona={sona} schema={schema} />
           </Form.Item>
           <Form.Item label="经办人" name="agent" rules={[{ required: true, message: '请选择经办人' }]}>
             <Select

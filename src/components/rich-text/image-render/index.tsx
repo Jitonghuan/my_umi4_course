@@ -65,7 +65,7 @@ export default ({ element, attributes, children }: IRenderElementProps) => {
         className={cls({ [prefix]: !$readOnly }, { [`${prefix}-selected`]: selected && !$readOnly })}
         // contentEditable={false}
         src={url}
-        width={200}
+        width={120}
         // alt="图片"
         // style={{ width: '50%' }}
       />
