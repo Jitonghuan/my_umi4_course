@@ -77,9 +77,13 @@
       }
 
       .oprate-btn-container {
+        display: flex;
         margin-left: auto;
         display: none;
-        flex-basis: 108px;
+
+        & > * {
+          margin-right: 6px;
+        }
 
         .ant-btn-link {
           padding: 4px;

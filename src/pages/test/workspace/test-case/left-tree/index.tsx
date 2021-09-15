@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Select, Input, Tree, Space, Button, Popconfirm, message, Typography } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { deleteCaseCategory } from '../../service';
 import { postRequest } from '@/utils/request';
 import OperateCaseLibModal from '../oprate-case-module-modal';
-
+import CustomIcon from '@cffe/vc-custom-icon';
 import './index.less';
 
 const { DirectoryTree } = Tree;
@@ -27,6 +27,27 @@ export default function LeftTree(props: any) {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [oprateCaseLibModalVisible, setOprateCaseLibModalVisible] = useState<boolean>(false);
   const [curChooseCate, setCurChooseCate] = useState<any>();
+  const [allDescendantsMap, setAllDescendantsMap] = useState<any>({});
+
+  useEffect(() => {
+    const ans: any = {};
+
+    const dfs = (node: any): any[] => {
+      const allDescendants = [node.key];
+      if (node.children) {
+        for (const child of node.children as any[]) {
+          if (child.children?.length) void allDescendants.push(...dfs(child));
+        }
+      }
+      ans[node.key] = [...allDescendants];
+      return allDescendants;
+    };
+
+    void cateTreeData.forEach((node: any) => dfs(node));
+
+    console.log('ans :>> ', ans);
+    void setAllDescendantsMap(ans);
+  }, [cateTreeData]);
 
   useEffect(() => {
     void searchCateTreeData(rootCateId, keyword);
@@ -40,7 +61,6 @@ export default function LeftTree(props: any) {
   }, [cateTreeData]);
 
   const onCateChange = (val: any) => {
-    console.log('val :>> ', val);
     if (!val) return;
     void setRootCateId(val);
   };
@@ -85,6 +105,10 @@ export default function LeftTree(props: any) {
     });
   };
 
+  const handleExpendChild = () => {
+    //TODO:
+  };
+
   return (
     <div className="test-workspace-test-case-left-tree">
       <div className="search-header">
@@ -124,26 +148,20 @@ export default function LeftTree(props: any) {
                   {node.title}
                 </Typography.Text>
                 <div className="oprate-btn-container">
-                  <Button
-                    type="link"
-                    size="small"
+                  <CustomIcon type="icon-linespace" />
+                  <PlusSquareOutlined
                     onClick={(e) => {
                       void handleAddCaseCate(node);
                       void e.stopPropagation();
                     }}
-                  >
-                    新增
-                  </Button>
-                  <Button
-                    type="link"
-                    size="small"
+                  />
+                  <CustomIcon
+                    type="icon-editblock"
                     onClick={(e) => {
                       void handleEditCaseCate(node);
                       void e.stopPropagation();
                     }}
-                  >
-                    编辑
-                  </Button>
+                  />
                   <Popconfirm
                     title="确定要删除此测试用例库吗？"
                     onConfirm={(e) => {
@@ -152,9 +170,7 @@ export default function LeftTree(props: any) {
                     }}
                     onCancel={(e) => e && e.stopPropagation()}
                   >
-                    <Button type="link" size="small" onClick={(e) => e.stopPropagation()}>
-                      删除
-                    </Button>
+                    <CustomIcon type="icon-delete" onClick={(e) => e.stopPropagation()} />
                   </Popconfirm>
                 </div>
               </div>
