@@ -171,7 +171,13 @@ export default function BugManage(props: any) {
             <Input disabled={readOnly} />
           </Form.Item>
           <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
-            <Cascader expandTrigger="hover" placeholder="请选择" options={projectTreeData} disabled={readOnly} />
+            <Cascader
+              expandTrigger="hover"
+              changeOnSelect
+              placeholder="请选择"
+              options={projectTreeData}
+              disabled={readOnly}
+            />
           </Form.Item>
 
           <Row className="row-form-item">
