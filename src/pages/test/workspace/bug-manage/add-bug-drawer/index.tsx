@@ -1,6 +1,21 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../../constant';
-import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect, Cascader } from 'antd';
+import {
+  Select,
+  Input,
+  Switch,
+  Button,
+  Form,
+  Space,
+  Drawer,
+  message,
+  Radio,
+  Modal,
+  TreeSelect,
+  Cascader,
+  Row,
+  Col,
+} from 'antd';
 import { addBug, modifyBug, getManagerList, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
@@ -148,27 +163,44 @@ export default function BugManage(props: any) {
           <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
             <Cascader placeholder="请选择" options={projectTreeData} />
           </Form.Item>
-          <Form.Item label="优先级" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
-            <Radio.Group>
-              {bugPriorityEnum.map((title, index) => (
-                <Radio value={index} key={index}>
-                  {title}
-                </Radio>
-              ))}
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item label="类型" name="bugType" rules={[{ required: true, message: '请选择类型' }]}>
-            <Select>
-              {bugTypeEnum.map((title, index) => (
-                <Select.Option value={index} key={index}>
-                  {title}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="是否线上Bug" valuePropName="checked" name="onlineBug">
-            <Switch />
-          </Form.Item>
+
+          <Row className="row-form-item">
+            <Col span="10" push="2" className="col-form-item">
+              <span className="form-item-label">优先级: </span>
+              <Form.Item
+                name="priority"
+                rules={[{ required: true, message: '请选择优先级' }]}
+                className="form-item-info"
+              >
+                <Radio.Group>
+                  {bugPriorityEnum.map((title, index) => (
+                    <Radio value={index} key={index}>
+                      {title}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span="7" style={{ display: 'flex' }} className="col-form-item ">
+              <span className="form-item-label">类型: </span>
+              <Form.Item name="bugType" rules={[{ required: true, message: '请选择类型' }]} className="form-item-info">
+                <Select>
+                  {bugTypeEnum.map((title, index) => (
+                    <Select.Option value={index} key={index}>
+                      {title}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span="7" style={{ display: 'flex' }} className="col-form-item ">
+              <span className="form-item-label">是否线上Bug: </span>
+              <Form.Item valuePropName="checked" name="onlineBug" className="form-item-info">
+                <Switch />
+              </Form.Item>
+            </Col>
+          </Row>
+
           <Form.Item label="关联用例" name="relatedCases">
             <Space>
               <TreeSelect
