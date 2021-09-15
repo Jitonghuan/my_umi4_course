@@ -4,7 +4,7 @@
 
 import React, { useContext, useState, useLayoutEffect } from 'react';
 import { Tabs } from 'antd';
-import FeContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
 import SecondPartyPkg from '../second-party-pkg';

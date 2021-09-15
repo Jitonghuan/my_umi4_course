@@ -30,7 +30,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
           {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
           <>{extraNode}</>
         </div>
-        <Table className={className} columns={columns} {...rest} />
+        <Table className={className} columns={columns} {...rest} rowKey={rest.rowKey || 'id'} />
       </ContentCard>
     );
   }
@@ -45,7 +45,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
           {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
           <>{extraNode}</>
         </div>
-        <Table className={className} columns={columns} {...rest} />
+        <Table className={className} columns={columns} {...rest} rowKey={rest.rowKey || 'id'} />
       </ContentCard>
     </>
   );

@@ -116,6 +116,7 @@ export default function RightDetail(props: RightDetailProps) {
         </Form>
       </div>
       <Table
+        rowKey="id"
         dataSource={caseList}
         pagination={{
           pageSize,

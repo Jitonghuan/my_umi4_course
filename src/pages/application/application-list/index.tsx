@@ -7,7 +7,7 @@ import { Button, message, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import ApplicationEditor from '../_components/application-editor';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import PageContainer from '@/components/page-container';
 import { createTableSchema } from './schema';
 import { deleteApp } from '../service';
@@ -17,7 +17,7 @@ import { AppItemVO } from '../interfaces';
 import './index.less';
 
 export default function ApplicationList() {
-  const { categoryData = [], businessData: businessDataList = [] } = useContext(FEContext);
+  const { categoryData = [], businessData: businessDataList = [] } = useContext(FeContext);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [searchParams, setSearchParams] = useState<any>();
@@ -68,6 +68,7 @@ export default function ApplicationList() {
         <Table
           dataSource={appListData}
           loading={isLoading}
+          rowKey="id"
           pagination={{
             pageSize,
             total,

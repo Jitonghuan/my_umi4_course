@@ -3,11 +3,11 @@
  * @description 用于存在接口数据或者接口调用函数
  * @create 2021-04-12 19:15:42
  */
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 import { getRequest } from '@/utils/request';
 import moment from 'moment';
 
-const queryAppListApi = `${ds.apiPrefix}/monitorManage/backendApp/list`;
+const queryAppListApi = `${appConfig.apiPrefix}/monitorManage/backendApp/list`;
 /** 查询应用列表 */
 export const queryAppList = () =>
   getRequest(queryAppListApi, {
@@ -29,7 +29,7 @@ export const queryAppList = () =>
     return [];
   });
 
-const queryEnvListApi = `${ds.apiPrefix}/monitorManage/app/env`;
+const queryEnvListApi = `${appConfig.apiPrefix}/monitorManage/app/env`;
 /** 根据应用查询环境列表 */
 export const queryEnvList = (params: { appCode: string }) =>
   getRequest(queryEnvListApi, { data: params }).then((res: any) => {
@@ -49,10 +49,10 @@ export const queryEnvList = (params: { appCode: string }) =>
   });
 
 /** 查询主机详情 */
-export const queryPodInfoApi = `${ds.apiPrefix}/monitorManage/app/podInfo`;
+export const queryPodInfoApi = `${appConfig.apiPrefix}/monitorManage/app/podInfo`;
 
 // 应⽤GC次数
-export const queryGcCountApi = `${ds.apiPrefix}/monitorManage/app/gcCount`;
+export const queryGcCountApi = `${appConfig.apiPrefix}/monitorManage/app/gcCount`;
 export const queryGcCount = (params: { [key: string]: string }) =>
   getRequest(queryGcCountApi, { ...params }).then((res: any) => {
     if (res.success) {
@@ -85,7 +85,7 @@ export const queryGcCount = (params: { [key: string]: string }) =>
   });
 
 // 应⽤GC耗时
-export const queryGcTimeApi = `${ds.apiPrefix}/monitorManage/app/gcTime`;
+export const queryGcTimeApi = `${appConfig.apiPrefix}/monitorManage/app/gcTime`;
 export const queryGcTime = (params: { [key: string]: string }) =>
   getRequest(queryGcTimeApi, { ...params }).then((res: any) => {
     if (res.success) {
@@ -118,7 +118,7 @@ export const queryGcTime = (params: { [key: string]: string }) =>
   });
 
 // 应⽤JVM堆内存使⽤
-export const queryJvmHeapApi = `${ds.apiPrefix}/monitorManage/app/jvmHeap`;
+export const queryJvmHeapApi = `${appConfig.apiPrefix}/monitorManage/app/jvmHeap`;
 export const queryJvmHeap = (params: { [key: string]: string }) =>
   getRequest(queryJvmHeapApi, { ...params }).then((res: any) => {
     if (res.success) {
@@ -148,7 +148,7 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
   });
 
 // 应⽤JVM元空间使⽤
-export const queryJvmMetaspaceApi = `${ds.apiPrefix}/monitorManage/app/jvmMetaSpace`;
+export const queryJvmMetaspaceApi = `${appConfig.apiPrefix}/monitorManage/app/jvmMetaSpace`;
 export const queryJvmMetaspace = (params: { [key: string]: string }) =>
   getRequest(queryJvmMetaspaceApi, { ...params }).then((res: any) => {
     if (res.success) {

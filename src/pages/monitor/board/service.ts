@@ -3,14 +3,14 @@
  * @description 用于存在接口数据或者接口调用函数
  * @create 2021-04-12 19:13:58
  */
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 import { getRequest } from '@/utils/request';
 import { getColorByValue } from '../util';
 
 /**
  * 获取机构列表
  */
-export const queryEnvListsApi = `${ds.apiPrefix}/monitorManage/cluster`;
+export const queryEnvListsApi = `${appConfig.apiPrefix}/monitorManage/cluster`;
 export const queryEnvLists = () =>
   getRequest(queryEnvListsApi).then((res: any) => {
     if (res.success) {
@@ -30,7 +30,7 @@ export const queryEnvLists = () =>
 /**
  * 资源使用率
  */
-export const queryResUseDataApi = `${ds.apiPrefix}/monitorManage/resource/clusterTotal`;
+export const queryResUseDataApi = `${appConfig.apiPrefix}/monitorManage/resource/clusterTotal`;
 export const queryResUseData = (params: { clusterId: string }) =>
   getRequest(queryResUseDataApi, { data: params }).then((res: any) => {
     if (res.success) {
@@ -72,12 +72,12 @@ export const queryResUseData = (params: { clusterId: string }) =>
 /**
  * 节点使用率
  */
-export const queryNodeUseDataApi = `${ds.apiPrefix}/monitorManage/resource/node`;
+export const queryNodeUseDataApi = `${appConfig.apiPrefix}/monitorManage/resource/node`;
 
 /**
  * 已安装大盘
  */
-export const queryUseMarketDataApi = `${ds.apiPrefix}/monitorManage/grafana/dashboard`;
+export const queryUseMarketDataApi = `${appConfig.apiPrefix}/monitorManage/grafana/dashboard`;
 export const queryUseMarketData = (params: { clusterId: string }) =>
   getRequest(queryUseMarketDataApi, { data: params }).then((res: any) => {
     if (res.success) {

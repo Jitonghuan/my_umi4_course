@@ -4,7 +4,7 @@ import { history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { OptionProps } from '@/components/table-search/typing';
 import PageContainer from '@/components/page-container';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import useTable from '@/utils/useTable';
 import { deletePublishPlanReq, queryAppGroupReq, queryPublishPlanUrl, queryFunctionUrl } from '../service';
 import { createFormColumns, createTableColumns } from './schema';
@@ -12,7 +12,7 @@ import { createFormColumns, createTableColumns } from './schema';
 import './index.less';
 
 const FunctionCom: React.FC = () => {
-  const { categoryData = [], businessData = [] } = useContext(FEContext);
+  const { categoryData = [], businessData = [] } = useContext(FeContext);
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
 
   const [form] = Form.useForm();

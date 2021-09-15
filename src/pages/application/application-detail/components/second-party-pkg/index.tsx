@@ -7,7 +7,7 @@
 
 import React, { useLayoutEffect, useEffect, useState } from 'react';
 import { Tabs } from 'antd';
-import { queryEnvTypeData } from '@/layouts/basic-layout/service';
+import { queryEnvTypeData } from '@/common/apis';
 import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
 import { ContentCard } from '@/components/vc-page-content';

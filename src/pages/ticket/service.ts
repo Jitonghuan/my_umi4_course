@@ -1,4 +1,4 @@
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 
 /**
  * 查询工单列表
@@ -12,7 +12,7 @@ import ds from '@config/defaultSettings';
  */
 import { addAPIPrefix } from '@/utils';
 
-export const queryTicketData = `${ds.apiPrefix}/ticketManage/list`;
+export const queryTicketData = `${appConfig.apiPrefix}/ticketManage/list`;
 
 /** 工单状态 */
 export const statusMap: { label: string; value: number }[] = [
@@ -24,10 +24,10 @@ export const statusMap: { label: string; value: number }[] = [
 ];
 
 // 创建订单
-export const doCreateTicket = `${ds.apiPrefix}/ticketManage/create`;
+export const doCreateTicket = `${appConfig.apiPrefix}/ticketManage/create`;
 
 // 获取工单类型枚举
-export const queryTicketType = `${ds.apiPrefix}/ticketManage/getOptions`;
+export const queryTicketType = `${appConfig.apiPrefix}/ticketManage/getOptions`;
 
 /**
  * 更新工单状态
@@ -36,12 +36,12 @@ export const queryTicketType = `${ds.apiPrefix}/ticketManage/getOptions`;
  *  ticketCode  工单的全局唯一code
  *  status      工单状态
  */
-export const doUpdateStatus = `${ds.apiPrefix}/ticketManage/updateStatus`;
+export const doUpdateStatus = `${appConfig.apiPrefix}/ticketManage/updateStatus`;
 
 /**
  * 上传接口
  */
-export const doUploadUrl = `${ds.apiPrefix}/ticketManage/uploadFile`;
+export const doUploadUrl = `${appConfig.apiPrefix}/ticketManage/uploadFile`;
 //告警工单列表
 export const alertTickets = addAPIPrefix('/ticketManage/alerttickets/list');
 //告警历史

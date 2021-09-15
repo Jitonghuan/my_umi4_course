@@ -75,6 +75,7 @@ export default function UserCaseInfoExec(props: any) {
       <Input.Search className="test-workspace-plan-info-bug-list-search" onSearch={handleSearch} />
 
       <Table
+        rowKey="id"
         className="test-workspace-plan-info-bug-list-table"
         loading={load}
         dataSource={bugList}
