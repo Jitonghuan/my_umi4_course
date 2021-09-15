@@ -26,8 +26,17 @@ import _ from 'lodash';
 import './index.less';
 
 export default function BugManage(props: any) {
-  const { visible, setVisible, bugInfo, updateBugList, defaultRelatedCases, phaseId, onAddBug, projectTreeData } =
-    props;
+  const {
+    visible,
+    setVisible,
+    bugInfo,
+    updateBugList,
+    defaultRelatedCases,
+    phaseId,
+    onAddBug,
+    projectTreeData,
+    readOnly,
+  } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
@@ -158,10 +167,10 @@ export default function BugManage(props: any) {
       >
         <Form {...formItemLayout} form={form}>
           <Form.Item label="标题" name="name" rules={[{ required: true, message: '请输入标题' }]}>
-            <Input />
+            <Input disabled={readOnly} />
           </Form.Item>
           <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
-            <Cascader placeholder="请选择" options={projectTreeData} />
+            <Cascader placeholder="请选择" options={projectTreeData} disabled={readOnly} />
           </Form.Item>
 
           <Row className="row-form-item">
@@ -172,7 +181,7 @@ export default function BugManage(props: any) {
                 rules={[{ required: true, message: '请选择优先级' }]}
                 className="form-item-info"
               >
-                <Radio.Group>
+                <Radio.Group disabled={readOnly}>
                   {bugPriorityEnum.map((title, index) => (
                     <Radio value={index} key={index}>
                       {title}
@@ -184,7 +193,7 @@ export default function BugManage(props: any) {
             <Col span="7" style={{ display: 'flex' }} className="col-form-item ">
               <span className="form-item-label">类型: </span>
               <Form.Item name="bugType" rules={[{ required: true, message: '请选择类型' }]} className="form-item-info">
-                <Select>
+                <Select disabled={readOnly}>
                   {bugTypeEnum.map((title, index) => (
                     <Select.Option value={index} key={index}>
                       {title}
@@ -196,7 +205,7 @@ export default function BugManage(props: any) {
             <Col span="7" style={{ display: 'flex' }} className="col-form-item ">
               <span className="form-item-label">是否线上Bug: </span>
               <Form.Item valuePropName="checked" name="onlineBug" className="form-item-info">
-                <Switch />
+                <Switch disabled={readOnly} />
               </Form.Item>
             </Col>
           </Row>
@@ -204,6 +213,7 @@ export default function BugManage(props: any) {
           <Form.Item label="关联用例" name="relatedCases">
             <Space>
               <TreeSelect
+                disabled={readOnly}
                 className="test-case-tree-select"
                 multiple
                 treeCheckable
@@ -214,41 +224,53 @@ export default function BugManage(props: any) {
                 value={relatedCases}
                 onChange={setRelatedCases}
               />
-              <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
-                新增用例
-              </Button>
+              {readOnly ? null : (
+                <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
+                  新增用例
+                </Button>
+              )}
             </Space>
           </Form.Item>
           <Form.Item label="描述" name="desc">
-            <RichText width="524px" height="500px" sona={sona} schema={schema} />
+            <RichText width="520px" height="500px" sona={sona} schema={schema} readOnly={readOnly} />
           </Form.Item>
           <Form.Item label="经办人" name="agent" rules={[{ required: true, message: '请选择经办人' }]}>
             <Select
+              disabled={readOnly}
               options={manageList.map((item) => ({ label: item, value: item }))}
               optionFilterProp="label"
               showSearch
             />
           </Form.Item>
           <Form.Item label="状态" name="status" rules={[{ required: true, message: '请选择状态' }]}>
-            <Select options={bugStatusEnum}></Select>
+            <Select disabled={readOnly} options={bugStatusEnum}></Select>
           </Form.Item>
         </Form>
 
         <div className="footer">
           <Space>
-            {!bugInfo ? (
-              <Button type="primary" onClick={() => submit(true)}>
-                保存并新增
+            {readOnly ? (
+              <Button type="primary" onClick={() => setVisible(false)}>
+                关闭
               </Button>
             ) : (
-              ''
+              <>
+                {' '}
+                {!bugInfo ? (
+                  <Button type="primary" onClick={() => submit(true)}>
+                    保存并新增
+                  </Button>
+                ) : (
+                  ''
+                )}
+                <Button type="primary" onClick={() => submit(false)}>
+                  保存
+                </Button>
+                <Button className="ml-auto" onClick={() => setVisible(false)}>
+                  取消
+                </Button>
+              </>
             )}
-            <Button type="primary" onClick={() => submit(false)}>
-              保存
-            </Button>
-            <Button className="ml-auto" onClick={() => setVisible(false)}>
-              取消
-            </Button>
           </Space>
         </div>
       </Drawer>

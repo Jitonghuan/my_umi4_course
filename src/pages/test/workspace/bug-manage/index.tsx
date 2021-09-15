@@ -34,6 +34,7 @@ export default function BugManage(props: any) {
   const [loading, setLoading] = useState(false);
   // const [projectList, setProjectList] = useState<any[]>([]);
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
+  const [bugReadOnly, setBugReadOnly] = useState<boolean>(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
   const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
   const [formData, setFormData] = useState<any>({});
@@ -89,6 +90,13 @@ export default function BugManage(props: any) {
   const handleModifyBugBtnClick = (record: any) => {
     void setCurBugInfo(record);
     void setAddBugDrawerVisible(true);
+    void setBugReadOnly(false);
+  };
+
+  const handleSeeBugBtnClick = (record: any) => {
+    void setCurBugInfo(record);
+    void setAddBugDrawerVisible(true);
+    void setBugReadOnly(true);
   };
 
   const handleConfirmDelete = (id: number) => {
@@ -203,9 +211,13 @@ export default function BugManage(props: any) {
             <Table.Column
               title="标题"
               dataIndex="name"
-              render={(title) => (
+              render={(title, record) => (
                 <Tooltip placement="topLeft" title={title}>
-                  <Typography.Text style={{ maxWidth: '220px' }} ellipsis={{ suffix: '' }}>
+                  <Typography.Text
+                    style={{ maxWidth: '220px', cursor: 'pointer', color: '#033980' }}
+                    ellipsis={{ suffix: '' }}
+                    onClick={() => handleSeeBugBtnClick(record)}
+                  >
                     {title}
                   </Typography.Text>
                 </Tooltip>
@@ -247,6 +259,7 @@ export default function BugManage(props: any) {
         <AddBugDrawer
           visible={addBugDrawerVisible}
           setVisible={setAddBugDrawerVisible}
+          readOnly={bugReadOnly}
           bugInfo={curBugInfo}
           updateBugList={updateBugList}
           projectTreeData={projectTreeData}
