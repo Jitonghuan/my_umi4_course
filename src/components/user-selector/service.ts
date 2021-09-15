@@ -1,7 +1,7 @@
 import { getRequest } from '@/utils/request';
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 
-export const searchUserUrl = `${ds.apiPrefix}/appManage/user/list`;
+export const searchUserUrl = `${appConfig.apiPrefix}/appManage/user/list`;
 
 /** 搜索用户：姓名 或 sso账号 */
 export const searchUser = async (keyword: string) => {

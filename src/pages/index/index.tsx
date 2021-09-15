@@ -1,4 +1,4 @@
-import React from 'react';
+import {} from 'react';
 import { useLocation } from 'umi';
 
 import IndexImg from '@/assets/imgs/index.png';

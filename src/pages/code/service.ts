@@ -1,4 +1,4 @@
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 /**
  * service
  * @description 用于存在接口数据或者接口调用函数
@@ -17,10 +17,10 @@ export type ITimeItem = {
 };
 
 // 周期数据获取
-export const queryTimeDataApi = `${ds.apiPrefix}/codeManage/statisticsCycle/list`;
+export const queryTimeDataApi = `${appConfig.apiPrefix}/codeManage/statisticsCycle/list`;
 
 /** 表格数据获取 */
-export const queryTableDataApi = `${ds.apiPrefix}/codeManage/rankingList/list`;
+export const queryTableDataApi = `${appConfig.apiPrefix}/codeManage/rankingList/list`;
 
 // 详情页面表格数据
-export const queryDetailTableDataApi = `${ds.apiPrefix}/codeManage/statisticsCode/list`;
+export const queryDetailTableDataApi = `${appConfig.apiPrefix}/codeManage/statisticsCode/list`;

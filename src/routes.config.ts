@@ -6,12 +6,13 @@ type IRouteItem = {
   routes?: IRouteItem[];
 };
 
-const PAGE_PREFIX = '/matrix';
+/** 基础路由前缀 */
+export const baseRoutePath = '/matrix';
 
 export default [
   {
-    path: PAGE_PREFIX,
-    redirect: `${PAGE_PREFIX}/application`,
+    path: baseRoutePath,
+    redirect: `${baseRoutePath}/application`,
   },
   {
     path: 'index',
@@ -20,64 +21,64 @@ export default [
     component: '@/pages/index',
   },
   {
-    path: `${PAGE_PREFIX}/application`,
-    redirect: `${PAGE_PREFIX}/application/all`,
+    path: `${baseRoutePath}/application`,
+    redirect: `${baseRoutePath}/application/all`,
   },
   {
-    path: `${PAGE_PREFIX}/publish`,
-    redirect: `${PAGE_PREFIX}/publish/function`,
+    path: `${baseRoutePath}/publish`,
+    redirect: `${baseRoutePath}/publish/function`,
   },
   {
-    path: `${PAGE_PREFIX}/test`,
-    redirect: `${PAGE_PREFIX}/test/data-factory/template`,
+    path: `${baseRoutePath}/test`,
+    redirect: `${baseRoutePath}/test/data-factory/template`,
   },
   {
-    path: `${PAGE_PREFIX}/monitor`,
-    redirect: `${PAGE_PREFIX}/monitor/board`,
+    path: `${baseRoutePath}/monitor`,
+    redirect: `${baseRoutePath}/monitor/board`,
   },
   {
-    path: `${PAGE_PREFIX}/ticket`,
-    redirect: `${PAGE_PREFIX}/ticket/list`,
+    path: `${baseRoutePath}/ticket`,
+    redirect: `${baseRoutePath}/ticket/list`,
   },
   {
-    path: `${PAGE_PREFIX}/order`,
-    redirect: `${PAGE_PREFIX}/order/list`,
+    path: `${baseRoutePath}/order`,
+    redirect: `${baseRoutePath}/order/list`,
   },
   {
-    path: `${PAGE_PREFIX}/code`,
-    redirect: `${PAGE_PREFIX}/code/rank`,
+    path: `${baseRoutePath}/code`,
+    redirect: `${baseRoutePath}/code/rank`,
   },
   {
-    path: `${PAGE_PREFIX}/test/scripts`,
-    redirect: `${PAGE_PREFIX}/test/scripts/functions`,
+    path: `${baseRoutePath}/test/scripts`,
+    redirect: `${baseRoutePath}/test/scripts/functions`,
   },
   {
-    path: `${PAGE_PREFIX}/test/autotest`,
-    redirect: `${PAGE_PREFIX}/test/autotest/dashboard`,
+    path: `${baseRoutePath}/test/autotest`,
+    redirect: `${baseRoutePath}/test/autotest/dashboard`,
   },
   {
-    path: `${PAGE_PREFIX}/monitor/business`,
-    redirect: `${PAGE_PREFIX}/monitor/business/prometheus`,
+    path: `${baseRoutePath}/monitor/business`,
+    redirect: `${baseRoutePath}/monitor/business/prometheus`,
   },
   {
-    path: `${PAGE_PREFIX}/monitor/basic`,
-    redirect: `${PAGE_PREFIX}/monitor/basic/prometheus`,
+    path: `${baseRoutePath}/monitor/basic`,
+    redirect: `${baseRoutePath}/monitor/basic/prometheus`,
   },
   {
-    path: `${PAGE_PREFIX}/operation/cluster`,
-    redirect: `${PAGE_PREFIX}/operation/cluster/dashboards`,
+    path: `${baseRoutePath}/operation/cluster`,
+    redirect: `${baseRoutePath}/operation/cluster/dashboards`,
   },
   {
-    path: `${PAGE_PREFIX}/operation/app-tmpl`,
-    redirect: `${PAGE_PREFIX}/operation/app-tmpl/tmpl-list`,
+    path: `${baseRoutePath}/operation/app-tmpl`,
+    redirect: `${baseRoutePath}/operation/app-tmpl/tmpl-list`,
   },
   {
-    path: `${PAGE_PREFIX}/test/data-factory`,
-    redirect: `${PAGE_PREFIX}/test/data-factory/template`,
+    path: `${baseRoutePath}/test/data-factory`,
+    redirect: `${baseRoutePath}/test/data-factory/template`,
   },
   {
-    path: `${PAGE_PREFIX}/test/workspace`,
-    redirect: `${PAGE_PREFIX}/test/workspace/test-case-library`,
+    path: `${baseRoutePath}/test/workspace`,
+    redirect: `${baseRoutePath}/test/workspace/test-case-library`,
   },
 
   {
@@ -120,6 +121,11 @@ export default [
         path: 'apitest',
         name: '接口测试',
         component: '@/pages/demo/api-test',
+      },
+      {
+        path: 'icon-list',
+        name: '图标列表',
+        component: '@/pages/demo/icon-list',
       },
     ],
   },

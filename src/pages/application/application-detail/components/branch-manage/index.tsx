@@ -71,6 +71,7 @@ export default function BranchManage() {
         </Button>
       </div>
       <Table
+        rowKey="id"
         dataSource={tableProps.dataSource}
         pagination={tableProps.pagination}
         loading={tableProps.loading || pending}

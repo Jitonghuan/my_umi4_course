@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { datetimeCellRender } from '@/utils';
 import FELayout from '@cffe/vc-layout';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import usePublicData from '@/utils/usePublicData';
 import DetailModal from '@/components/detail-modal';
@@ -26,7 +26,7 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 
 export default function DataFactoryList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const { categoryData = [] } = useContext(FEContext);
+  const { categoryData = [] } = useContext(FeContext);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [searchField] = Form.useForm();
@@ -98,6 +98,7 @@ export default function DataFactoryList(props: any) {
       </div>
 
       <Table
+        rowKey="id"
         dataSource={tableData}
         loading={loading}
         pagination={{

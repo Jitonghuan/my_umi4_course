@@ -5,7 +5,7 @@
 import React, { useState, useCallback, useEffect, useContext, useMemo } from 'react';
 import { Form, Input, Select, Button } from 'antd';
 import { FilterCard } from '@/components/vc-page-content';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { useAppGroupOptions } from '../../hooks';
 
 const { Item: FormItem } = Form;
@@ -19,7 +19,7 @@ export default function FilterHeader(props: FilterHeaderProps) {
   const { onSearch, trggerSearchOnInit = false } = props;
 
   const [searchField] = Form.useForm();
-  const { categoryData } = useContext(FEContext);
+  const { categoryData } = useContext(FeContext);
   const [categoryCode, setCategoryCode] = useState<string>();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
 

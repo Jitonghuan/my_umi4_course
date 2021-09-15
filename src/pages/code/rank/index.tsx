@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import PageContainer from '@/components/page-container';
 import VcHulkTable from '@cffe/vc-hulk-table';
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 import { getRequest } from '@/utils/request';
 import { queryTimeDataApi, ITimeItem, queryTableDataApi } from '../service';
 import { getTableColumns } from '../dic';

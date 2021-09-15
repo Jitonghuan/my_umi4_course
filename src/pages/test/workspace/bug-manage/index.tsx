@@ -173,6 +173,7 @@ export default function BugManage(props: any) {
             </Button>
           </div>
           <Table
+            rowKey="id"
             className="bug-table"
             dataSource={bugList}
             pagination={{

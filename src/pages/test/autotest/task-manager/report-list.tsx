@@ -35,6 +35,7 @@ export default function ReportList(props: ReportListProps) {
           <RangePicker value={filterRange as any} showTime onChange={(v: any) => setFilterRange(v)} />
         </div>
         <Table
+          rowKey="id"
           dataSource={tableData}
           loading={loading}
           pagination={{
