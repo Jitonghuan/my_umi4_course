@@ -37,11 +37,12 @@ export default function BugManage(props: any) {
   const [bugReadOnly, setBugReadOnly] = useState<boolean>(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
   const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<any>({ justMe: true });
   const [form] = Form.useForm();
 
   const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize, _formData = formData) => {
     const formData = _formData;
+    console.log('formData :>> ', formData);
     const requestParams = {
       ...formData,
       pageIndex: _pageIndex,
@@ -60,12 +61,7 @@ export default function BugManage(props: any) {
   };
 
   useEffect(() => {
-    // getRequest(getProjects).then((res) => {
-    //   void setProjectList(res.data.dataSource);
-    // });
-
-    void updateBugList();
-
+    void form.setFieldsValue({ justMe: true });
     void getRequest(getProjectTreeData).then((res) => {
       const Q = [...res.data];
       while (Q.length) {
@@ -80,11 +76,12 @@ export default function BugManage(props: any) {
 
   useEffect(() => {
     void updateBugList(pageIndex, pageSize);
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, formData.justMe]);
 
   const handleAddBugBtnClick = () => {
     void setCurBugInfo(undefined);
     void setAddBugDrawerVisible(true);
+    void setBugReadOnly(false);
   };
 
   const handleModifyBugBtnClick = (record: any) => {
@@ -117,10 +114,9 @@ export default function BugManage(props: any) {
     );
   };
 
-  const handleFilterPropJustMeChange = () => {
-    const nexFormData = { ...formData, justMe: !formData.justMe };
+  const handleFilterPropJustMeChange = (val: boolean) => {
+    const nexFormData = { ...formData, justMe: val };
     void setFormData(nexFormData);
-    void updateBugList(1, pageSize, nexFormData);
   };
 
   const handleFilterDataList = (data: any) => {
@@ -144,7 +140,13 @@ export default function BugManage(props: any) {
               </Select>
             </Form.Item> */}
             <Form.Item label="项目/需求" name="demandId">
-              <Cascader className="demandId-cascader" placeholder="请选择" options={projectTreeData} />
+              <Cascader
+                expandTrigger="hover"
+                changeOnSelect
+                className="demandId-cascader"
+                placeholder="请选择"
+                options={projectTreeData}
+              />
             </Form.Item>
             <Form.Item label="标题" name="name">
               <Input placeholder="请输入标题" />

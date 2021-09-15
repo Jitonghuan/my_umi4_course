@@ -16,7 +16,7 @@ import './index.less';
 export default function taskList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [setCreateOrEditTaskModalVisible, setSetCreateOrEditTaskModalVisible] = useState<boolean>(false);
-  const [resultModalVisible, setResultModalVisible] = useState<boolean>(true);
+  const [resultModalVisible, setResultModalVisible] = useState<boolean>(false);
   const [curTask, setCurTask] = useState<any>();
   const [taskList, setTaskList] = useState<any[]>();
   const [pageIndex, setPageIndex] = useState<number>(1);

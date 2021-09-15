@@ -107,6 +107,7 @@ export default function BugManage(props: any) {
         }
       } else {
         void form.resetFields();
+        void form.setFieldsValue({ priority: 1, bugType: 0 });
         void setSchema(undefined);
         void setRelatedCases(defaultRelatedCases || []);
       }
@@ -170,12 +171,14 @@ export default function BugManage(props: any) {
             <Input disabled={readOnly} />
           </Form.Item>
           <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
-            <Cascader placeholder="请选择" options={projectTreeData} disabled={readOnly} />
+            <Cascader expandTrigger="hover" placeholder="请选择" options={projectTreeData} disabled={readOnly} />
           </Form.Item>
 
           <Row className="row-form-item">
-            <Col span="10" push="2" className="col-form-item">
-              <span className="form-item-label">优先级: </span>
+            <Col span="10" push="1" className="col-form-item">
+              <span className="form-item-label">
+                <span className="import-identification">* </span>优先级 :{' '}
+              </span>
               <Form.Item
                 name="priority"
                 rules={[{ required: true, message: '请选择优先级' }]}
@@ -191,7 +194,9 @@ export default function BugManage(props: any) {
               </Form.Item>
             </Col>
             <Col span="7" style={{ display: 'flex' }} className="col-form-item ">
-              <span className="form-item-label">类型: </span>
+              <span className="form-item-label">
+                <span className="import-identification">* </span>类型 :{' '}
+              </span>
               <Form.Item name="bugType" rules={[{ required: true, message: '请选择类型' }]} className="form-item-info">
                 <Select disabled={readOnly}>
                   {bugTypeEnum.map((title, index) => (
@@ -203,7 +208,9 @@ export default function BugManage(props: any) {
               </Form.Item>
             </Col>
             <Col span="7" style={{ display: 'flex' }} className="col-form-item ">
-              <span className="form-item-label">是否线上Bug: </span>
+              <span className="form-item-label">
+                <span className="import-identification">* </span>是否线上Bug :{' '}
+              </span>
               <Form.Item valuePropName="checked" name="onlineBug" className="form-item-info">
                 <Switch disabled={readOnly} />
               </Form.Item>
@@ -217,7 +224,7 @@ export default function BugManage(props: any) {
                 className="test-case-tree-select"
                 multiple
                 treeCheckable
-                placeholder="请选择用例集合"
+                placeholder="请选择需要关联的用例"
                 treeNodeLabelProp="title"
                 treeNodeFilterProp="title"
                 treeData={testCaseTree}
@@ -234,17 +241,30 @@ export default function BugManage(props: any) {
           <Form.Item label="描述" name="desc">
             <RichText width="520px" height="500px" sona={sona} schema={schema} readOnly={readOnly} />
           </Form.Item>
-          <Form.Item label="经办人" name="agent" rules={[{ required: true, message: '请选择经办人' }]}>
-            <Select
-              disabled={readOnly}
-              options={manageList.map((item) => ({ label: item, value: item }))}
-              optionFilterProp="label"
-              showSearch
-            />
-          </Form.Item>
-          <Form.Item label="状态" name="status" rules={[{ required: true, message: '请选择状态' }]}>
-            <Select disabled={readOnly} options={bugStatusEnum}></Select>
-          </Form.Item>
+
+          <Row className="row-form-item">
+            <Col span="12" push="1" className="col-form-item">
+              <span className="form-item-label">
+                <span className="import-identification">* </span>经办人 :{' '}
+              </span>
+              <Form.Item name="agent" rules={[{ required: true, message: '请选择经办人' }]} className="form-item-info">
+                <Select
+                  disabled={readOnly}
+                  options={manageList.map((item) => ({ label: item, value: item }))}
+                  optionFilterProp="label"
+                  showSearch
+                />
+              </Form.Item>
+            </Col>
+            <Col span="12" push="1" className="col-form-item">
+              <span className="form-item-label">
+                <span className="import-identification">* </span>状态 :{' '}
+              </span>
+              <Form.Item name="status" rules={[{ required: true, message: '请选择状态' }]} className="form-item-info">
+                <Select disabled={readOnly} options={bugStatusEnum}></Select>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
 
         <div className="footer">

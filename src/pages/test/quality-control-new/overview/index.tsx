@@ -55,13 +55,14 @@ export default function Overview(props: any) {
           应用服务: <Select allowClear placeholder="Please select" />
         </label>
         <div className="line-chart-group">
-          {[1, 2, 3, 4, 5, 6].map(() => (
-            <LineChart />
+          {[1, 2, 3, 4, 5, 6].map((item, index) => (
+            <LineChart key={index} />
           ))}
         </div>
         <div className="rank-list-group">
-          {rankListData.map((item) => (
+          {rankListData.map((item, index) => (
             <RankList
+              key={index}
               leftLabel={item.leftLabel}
               leftDataSource={ranking?.[item.leftDataPropName]}
               rightLabel={item.rightLabel}
