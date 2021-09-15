@@ -3,6 +3,7 @@ import PageContainer from '@/components/page-container';
 import UseCaseTestInfoExec from './use-case-test-info-exec';
 import UserCaseInfoExec from './use-case-info-exec';
 import CustomTree from '@/components/custom-tree';
+import CustomIcon from '@cffe/vc-custom-icon';
 import BugInfoExec from './bug-info-exec';
 import CaseInfo from './case-info';
 import moment from 'moment';
@@ -130,16 +131,14 @@ export default function PlanInfo(props: any) {
     return dataClean(_.cloneDeep(testCaseTree));
   }, [caseStatusSelect, testCaseTree]);
 
-  const expandAllDescendants = (id: number) => {
+  const handleExpendDescendants = (id: number) => {
     if (!allDescendantsMap[id]) return;
     const allDescendants = allDescendantsMap[id];
-    void setExpendedKeys([...new Set([...expendedKeys, ...allDescendants])]);
-  };
-
-  const cancelExpandAllDescendants = (id: number) => {
-    if (!allDescendantsMap[id]) return;
-    const allDescendants = allDescendantsMap[id];
-    void setExpendedKeys(expendedKeys.filter((item: any) => !allDescendants.includes(item)));
+    if (expendedKeys.findIndex((item: any) => allDescendants.includes(item)) !== -1) {
+      void setExpendedKeys(expendedKeys.filter((item: any) => !allDescendants.includes(item)));
+    } else {
+      void setExpendedKeys([...new Set([...expendedKeys, ...allDescendants])]);
+    }
   };
 
   return (
@@ -266,7 +265,7 @@ export default function PlanInfo(props: any) {
 
                     return (
                       <div className="case-select-tree-node">
-                        <Tooltip placement="right" title={renderTitle}>
+                        <Tooltip placement="top" title={renderTitle}>
                           <Typography.Text style={{ maxWidth: '100%' }} ellipsis={{ suffix: '' }}>
                             {renderTitle}
                           </Typography.Text>
@@ -274,20 +273,15 @@ export default function PlanInfo(props: any) {
 
                         {node.children?.length ? (
                           <div className="operate-btn-group">
-                            <Button
-                              className="node-operate-btn"
-                              type="link"
-                              onClick={() => expandAllDescendants(node.key)}
-                            >
-                              全部展开
-                            </Button>
-                            <Button
-                              className="node-operate-btn"
-                              type="link"
-                              onClick={() => cancelExpandAllDescendants(node.key)}
-                            >
-                              全部收起
-                            </Button>
+                            <Tooltip placement="top" title="全部展开/取消全部展开">
+                              <CustomIcon
+                                type="icon-linespace"
+                                onClick={(e) => {
+                                  void handleExpendDescendants(node.key as number);
+                                  void e.stopPropagation();
+                                }}
+                              />
+                            </Tooltip>
                           </div>
                         ) : null}
                       </div>
