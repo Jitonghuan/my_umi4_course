@@ -45,46 +45,44 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
     switch (type) {
       case 'select':
         return (
-          <>
-            <Item label={label} required={required} key={key} style={itemStyle} {...rest}>
-              <Item
-                name={dataIndex}
-                initialValue={defaultValue}
-                noStyle
-                rules={
-                  rules || extraForm
-                    ? rules
-                    : [
-                        {
-                          required: required,
-                          message: validatorMessage ?? '请选择',
-                          pattern,
-                        },
-                      ]
-                }
+          <Item label={label} required={required} key={key} style={itemStyle} {...rest}>
+            <Item
+              name={dataIndex}
+              initialValue={defaultValue}
+              noStyle
+              rules={
+                rules || extraForm
+                  ? rules
+                  : [
+                      {
+                        required: required,
+                        message: validatorMessage ?? '请选择',
+                        pattern,
+                      },
+                    ]
+              }
+            >
+              <Select
+                placeholder={placeholder ?? '请选择'}
+                allowClear={allowClear || true}
+                showSearch={showSelectSearch}
+                optionFilterProp="children"
+                filterOption={(input, option) => option?.children?.toLowerCase().indexOf(input?.toLowerCase()) >= 0}
+                style={{ width: width, ...styles }}
+                onChange={onChange}
+                disabled={disable}
+                mode={mode}
+                id={id}
               >
-                <Select
-                  placeholder={placeholder ?? '请选择'}
-                  allowClear={allowClear || true}
-                  showSearch={showSelectSearch}
-                  optionFilterProp="children"
-                  filterOption={(input, option) => option?.children?.toLowerCase().indexOf(input?.toLowerCase()) >= 0}
-                  style={{ width: width, ...styles }}
-                  onChange={onChange}
-                  disabled={disable}
-                  mode={mode}
-                  id={id}
-                >
-                  {option?.map((item) => (
-                    <Option key={item.key} value={item.key}>
-                      {item.value}
-                    </Option>
-                  ))}
-                </Select>
-              </Item>
-              {extraForm}
+                {option?.map((item) => (
+                  <Option key={item.key} value={item.key}>
+                    {item.value}
+                  </Option>
+                ))}
+              </Select>
             </Item>
-          </>
+            {extraForm}
+          </Item>
         );
       case 'input':
         return (

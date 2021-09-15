@@ -6,7 +6,7 @@ import React, { useState, useContext, useCallback } from 'react';
 import moment from 'moment';
 import { Button, Empty, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import FeContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import DetailContext from '../../context';
 import { EnvDataVO } from '@/pages/application/interfaces';
 import { useAppEnvCodeData } from '@/pages/application/hooks';

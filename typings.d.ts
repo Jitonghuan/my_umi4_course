@@ -8,20 +8,6 @@ declare module '*.svg' {
   const url: string;
   export default url;
 }
-declare interface globalConfig {
-  /** 标题 */
-  title: string;
-  /** icon */
-  favicon: string;
-  /** logo */
-  logo: string;
-  /** 授权 */
-  copyright: string;
-}
-
-declare interface Window {
-  FE_GLOBAL: globalConfig;
-}
 
 declare const NODE_ENV: any;
 declare var window: Window & typeof globalThis;
@@ -35,5 +21,5 @@ declare interface IOption<ValueType = string, T = Record<string, any>> extends R
   children?: IOption<ValueType>[];
 }
 
-/** 弹层显示状态: 隐藏 | 编辑 | 新增 */
+/** 编辑弹层显示状态: 隐藏 | 编辑 | 新增 */
 declare type EditorMode = 'HIDE' | 'EDIT' | 'ADD';

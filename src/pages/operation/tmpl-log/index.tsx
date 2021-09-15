@@ -146,6 +146,7 @@ export default function Operation() {
       </FilterCard>
       <ContentCard>
         <Table
+          rowKey="id"
           bordered
           dataSource={logList}
           loading={loading}

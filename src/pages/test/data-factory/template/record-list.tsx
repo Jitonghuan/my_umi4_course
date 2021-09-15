@@ -72,6 +72,7 @@ export default function RecordList(props: ReordListProps) {
           </div>
         </div>
         <Table
+          rowKey="id"
           dataSource={tableData}
           loading={loading}
           pagination={{

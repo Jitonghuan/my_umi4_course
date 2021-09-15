@@ -3,13 +3,10 @@
   "description": "fe-matrix",
   "version": "2.0.0",
   "scripts": {
-    "umi": "cross-env MOCK=none umi dev",
     "dev": "cross-env NODE_ENV=development MOCK=none umi dev",
+    "mock": "cross-env NODE_ENV=development umi dev",
     "start": "fnpm i && npm run dev",
-    "umi:mock": "umi dev",
-    "build": "cross-env BUILD_ENV=test umi build",
-    "build:test": "cross-env BUILD_ENV=test umi build",
-    "build:prod": "cross-env BUILD_ENV=prod umi build",
+    "build": "cross-env umi build",
     "build:analyze": "cross-env ANALYZE=1 umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
@@ -54,23 +51,12 @@
     "moment": "^2.29.1",
     "qs": "~6.10.1",
     "react-ace": "^9.4.1",
-    "umi": "~3.4.25"
+    "umi": "~3.5.18"
   },
   "devDependencies": {
-    "@hbos/umi-plugin-theme-hbos": "^0.0.22",
-    "@types/events": "3.x",
-    "@types/lodash": "4.x",
-    "@types/react": "16.x",
-    "@types/react-dom": "16.x",
-    "@umijs/preset-react": "1.8.19",
-    "cross-env": "^7.0.3",
-    "lint-staged": "^11.0.1",
-    "prettier": "^2.3.2",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "ts-node": "^10.1.0",
-    "typescript": "^4.3.5",
-    "yorkie": "^2.0.0"
+    "@hbos/umi-plugin-theme-hbos": "^1.0.1",
+    "@hbos/umi-loaders": "^1.0.0",
+    "@umijs/preset-react": "~1.8.23"
   },
   "__npminstall_done": false
 }

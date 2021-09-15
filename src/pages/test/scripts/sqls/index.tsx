@@ -76,6 +76,7 @@ export default function FunctionManager() {
         </Button>
       </div>
       <Table
+        rowKey="id"
         dataSource={dataSource}
         loading={loading}
         pagination={{

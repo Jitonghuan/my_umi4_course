@@ -5,7 +5,7 @@
 import React, { useState, useContext, useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
 import { Select, Button, Tabs, Spin, Empty, Modal, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import FeContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
 import AceEditor from '@/components/ace-editor';

@@ -97,6 +97,7 @@ export default function Workspace(props: any) {
           </Button>
         </div>
         <Table
+          rowKey="id"
           className="test-case-library-table"
           dataSource={dataSource}
           loading={loading}

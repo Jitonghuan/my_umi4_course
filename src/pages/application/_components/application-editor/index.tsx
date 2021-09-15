@@ -5,7 +5,7 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal } from 'antd';
 import FELayout from '@cffe/vc-layout';
-import FEContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import DebounceSelect from '@/components/debounce-select';
 import UserSelector, { stringToList } from '@/components/user-selector';
 import EditorTable from '@cffe/pc-editor-table';
@@ -40,7 +40,7 @@ export interface IProps {
 
 export default function ApplicationEditor(props: IProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const { categoryData } = useContext(FEContext);
+  const { categoryData } = useContext(FeContext);
   const { initData, visible } = props;
   const isEdit = !!initData?.id;
   const [loading, setLoading] = useState(false);

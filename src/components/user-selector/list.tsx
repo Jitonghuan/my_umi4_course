@@ -25,8 +25,8 @@ export default function UserTagList({ data, ...others }: UserTagListProps) {
 
   return (
     <div className="user-tag-list">
-      {displayData.map((str) => (
-        <Tag icon={<UserOutlined />} {...others}>
+      {displayData.map((str, index) => (
+        <Tag key={index} icon={<UserOutlined />} {...others}>
           {str}
         </Tag>
       ))}

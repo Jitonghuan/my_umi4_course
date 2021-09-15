@@ -1,10 +1,10 @@
 import { stringify } from 'qs';
 import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
-import ds from '@config/defaultSettings';
+import appConfig from '@/app.config';
 import { IFuncItem, IPlanItem } from './typing';
 /** 通用接口 */
 /** 根据应用分类code查询应用组列表 */
-const queryAppGroupUrl = `${ds.apiPrefix}/appManage/group/list`;
+const queryAppGroupUrl = `${appConfig.apiPrefix}/appManage/group/list`;
 /** 根据应用分类code查询应用组列表 */
 export const queryAppGroupReq = (params: {
   //所属的应⽤分类CODE
@@ -34,7 +34,7 @@ export const queryAppGroupReq = (params: {
     return { list: [] };
   });
 /** 根据应用分类code查询发布环境列表 */
-const queryEnvsUrl = `${ds.apiPrefix}/appManage/env/list`;
+const queryEnvsUrl = `${appConfig.apiPrefix}/appManage/env/list`;
 export const queryEnvsReq = (params: {
   //所属的应⽤分类CODE
   categoryCode: string;
@@ -65,13 +65,13 @@ export const queryEnvsReq = (params: {
   });
 
 /** 根据应用分类code查询发布环境列表 */
-export const queryJiraUrl = `${ds.apiPrefix}/publishManage/issue/list`;
+export const queryJiraUrl = `${appConfig.apiPrefix}/publishManage/issue/list`;
 /** 通用接口结束 */
 
 /** 发布功能相关 */
 
 /** 查询发布功能列表 */
-export const queryFunctionUrl = `${ds.apiPrefix}/publishManage/function/list`;
+export const queryFunctionUrl = `${appConfig.apiPrefix}/publishManage/function/list`;
 export const queryFunctionReq = (params: {
   id?: number; // 发布功能的数据库⾃增ID
   appCategoryCode?: string; // 应⽤分类CODE
@@ -88,33 +88,33 @@ export const queryFunctionReq = (params: {
     return [];
   });
 /** 新增发布功能 */
-export const addFuncUrl = `${ds.apiPrefix}/publishManage/function/create`;
+export const addFuncUrl = `${appConfig.apiPrefix}/publishManage/function/create`;
 export const addFuncReq = (params: IFuncItem) =>
   postRequest(addFuncUrl, {
     data: params,
   });
 /** 批量新增发布功能 */
-export const addFuncMultiUrl = `${ds.apiPrefix}/publishManage/function/multiCreate`;
+export const addFuncMultiUrl = `${appConfig.apiPrefix}/publishManage/function/multiCreate`;
 export const addFuncMultiReq = (params: IFuncItem[]) =>
   postRequest(addFuncMultiUrl, {
     data: params,
   });
 /** 修改发布功能 */
-export const updateFuncUrl = `${ds.apiPrefix}/publishManage/function/update`;
+export const updateFuncUrl = `${appConfig.apiPrefix}/publishManage/function/update`;
 export const updateFuncReq = (params: IFuncItem) =>
   putRequest(updateFuncUrl, {
     data: params,
   });
 
 /** 删除发布功能 Method: DELETE */
-export const deleteFuncUrl = `${ds.apiPrefix}/publishManage/function`;
+export const deleteFuncUrl = `${appConfig.apiPrefix}/publishManage/function`;
 export const deleteFunc = (params: { funcId: string }) => delRequest(`${deleteFuncUrl}/${params.funcId}`);
 
 /** 发布功能结束 */
 
 /** 发布计划相关 */
 /** 查询发布计划列表 */
-export const queryPublishPlanUrl = `${ds.apiPrefix}/publishManage/plan/list`;
+export const queryPublishPlanUrl = `${appConfig.apiPrefix}/publishManage/plan/list`;
 export const queryPublishPlanReq = (params: {
   id?: number; //发布功能的数据库⾃增ID
   planID?: string; //发布计划的UUID
@@ -135,33 +135,33 @@ export const queryPublishPlanReq = (params: {
     return [];
   });
 /** 新增发布计划 */
-export const addPublishPlanUrl = `${ds.apiPrefix}/publishManage/plan/create`;
+export const addPublishPlanUrl = `${appConfig.apiPrefix}/publishManage/plan/create`;
 export const addPublishPlanReq = (params: IPlanItem) =>
   postRequest(addPublishPlanUrl, {
     data: params,
   });
-export const addPublishPlanMultiUrl = `${ds.apiPrefix}/publishManage/plan/multiCreate`;
+export const addPublishPlanMultiUrl = `${appConfig.apiPrefix}/publishManage/plan/multiCreate`;
 export const addPublishPlanMultiReq = (params: { plan: IPlanItem; funcIds: any[] }) =>
   postRequest(addPublishPlanMultiUrl, {
     data: [params],
   });
 
 /** 修改发布计划 */
-export const updatePublishPlanUrl = `${ds.apiPrefix}/publishManage/plan/update`;
+export const updatePublishPlanUrl = `${appConfig.apiPrefix}/publishManage/plan/update`;
 export const updatePublishPlanReq = (params: IFuncItem) =>
   putRequest(updatePublishPlanUrl, {
     data: params,
   });
 
 /** 删除发布计划 Method: DELETE */
-export const deletePublishPlanUrl = `${ds.apiPrefix}/publishManage/plan`;
+export const deletePublishPlanUrl = `${appConfig.apiPrefix}/publishManage/plan`;
 export const deletePublishPlanReq = (params: { planId: string }) =>
   delRequest(`${deletePublishPlanUrl}/${params.planId}`);
 /** 发布计划结束 */
 
 /** 发布申请相关 */
 /** 查询发布申请列表api */
-export const queryApplysUrl = `${ds.apiPrefix}/publishManage/apply/list`;
+export const queryApplysUrl = `${appConfig.apiPrefix}/publishManage/apply/list`;
 export const queryApplysReq = (params: {
   id?: string;
   title?: string; //申请标题
@@ -186,13 +186,13 @@ export const queryApplysReq = (params: {
     return [];
   });
 /** 新增发布申请 */
-export const addPublishApplyUrl = `${ds.apiPrefix}/publishManage/apply/create`;
+export const addPublishApplyUrl = `${appConfig.apiPrefix}/publishManage/apply/create`;
 export const addPublishApplyReq = (params: { applyInfo: any; planIds: any[] }) =>
   postRequest(addPublishApplyUrl, {
     data: params,
   });
 /** 获取发布申请的关联信息 */
-const getApplyRelInfo = `${ds.apiPrefix}/publishManage/apply/getApplyRelInfo`;
+const getApplyRelInfo = `${appConfig.apiPrefix}/publishManage/apply/getApplyRelInfo`;
 export const getApplyRelInfoReq = (params: { id: string }) =>
   getRequest(getApplyRelInfo, {
     data: params,
@@ -205,13 +205,13 @@ export const getApplyRelInfoReq = (params: { id: string }) =>
 /** 发布申请结束 */
 
 /** 发布功能报表导出 */
-export const exportPublishFunctionUrl = `${ds.apiPrefix}/publishManage/function/exportPublishFunction`;
+export const exportPublishFunctionUrl = `${appConfig.apiPrefix}/publishManage/function/exportPublishFunction`;
 
 export const getExportPublishFunctionLink = (params: any) => {
   return `${exportPublishFunctionUrl}?${stringify(params)}`;
 };
 
-const queryAppListApi = `${ds.apiPrefix}/appManage/list`;
+const queryAppListApi = `${appConfig.apiPrefix}/appManage/list`;
 /** 查询应用列表 */
 export const queryAppList = () => {
   return getRequest(queryAppListApi, {

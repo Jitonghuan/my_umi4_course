@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useLocation } from 'umi';
-import FeContext from '@/layouts/basic-layout/fe-context';
+import { FeContext } from '@/common/hooks';
 import VCPageContent, { IProps as IPageContentProps } from '@/components/vc-page-content';
 import ErrorBoundary from '../error-boundary';
 
