@@ -208,7 +208,7 @@ export default function BugManage(props: any) {
               )}
             />
             <Table.Column title="创建人" dataIndex="createUser" />
-            <Table.Column title="经办人" dataIndex="modifyUser" />
+            <Table.Column title="经办人" dataIndex="agent" />
             <Table.Column
               title="更新时间"
               dataIndex="gmtModify"

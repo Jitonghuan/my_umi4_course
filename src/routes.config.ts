@@ -81,8 +81,8 @@ export default [
     redirect: `${baseRoutePath}/test/workspace/test-case-library`,
   },
   {
-    path: `${PAGE_PREFIX}/test/quality-control-new`,
-    redirect: `${PAGE_PREFIX}/test/quality-control-new/overview`,
+    path: `${baseRoutePath}}/test/quality-control-new`,
+    redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
 
   {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Select, Input, Tree, Space, Button, Popconfirm, message, Typography } from 'antd';
+import { Select, Input, Tree, Space, Button, Popconfirm, message, Typography, Tooltip } from 'antd';
 import { SearchOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { deleteCaseCategory } from '../../service';
 import { postRequest } from '@/utils/request';
@@ -31,7 +31,6 @@ export default function LeftTree(props: any) {
 
   useEffect(() => {
     const ans: any = {};
-
     const dfs = (node: any): any[] => {
       const allDescendants = [node.key];
       if (node.children) {
@@ -42,10 +41,7 @@ export default function LeftTree(props: any) {
       ans[node.key] = [...allDescendants];
       return allDescendants;
     };
-
-    void cateTreeData.forEach((node: any) => dfs(node));
-
-    console.log('ans :>> ', ans);
+    void cateTreeData.forEach((node: any) => node?.children?.length && dfs(node));
     void setAllDescendantsMap(ans);
   }, [cateTreeData]);
 
@@ -97,16 +93,20 @@ export default function LeftTree(props: any) {
   };
 
   const handleDeleteCaseCate = (node: any) => {
-    // const loadEnd = message.loading('正在删除');
     postRequest(deleteCaseCategory + '/' + node.id).then(() => {
-      // void loadEnd();
       void message.success('删除成功');
       void searchCateTreeData(rootCateId, keyword, true);
     });
   };
 
-  const handleExpendChild = () => {
-    //TODO:
+  const handleExpendDescendants = (id: number) => {
+    if (!allDescendantsMap[id]) return;
+    const allDescendants = allDescendantsMap[id];
+    if (expandedKeys.findIndex((item: any) => allDescendants.includes(item)) !== -1) {
+      void setExpandedKeys(expandedKeys.filter((item: any) => !allDescendants.includes(item)));
+    } else {
+      void setExpandedKeys([...new Set([...expandedKeys, ...allDescendants])]);
+    }
   };
 
   return (
@@ -148,30 +148,44 @@ export default function LeftTree(props: any) {
                   {node.title}
                 </Typography.Text>
                 <div className="oprate-btn-container">
-                  <CustomIcon type="icon-linespace" />
-                  <PlusSquareOutlined
-                    onClick={(e) => {
-                      void handleAddCaseCate(node);
-                      void e.stopPropagation();
-                    }}
-                  />
-                  <CustomIcon
-                    type="icon-editblock"
-                    onClick={(e) => {
-                      void handleEditCaseCate(node);
-                      void e.stopPropagation();
-                    }}
-                  />
-                  <Popconfirm
-                    title="确定要删除此测试用例库吗？"
-                    onConfirm={(e) => {
-                      void handleDeleteCaseCate(node);
-                      void (e && e.stopPropagation());
-                    }}
-                    onCancel={(e) => e && e.stopPropagation()}
-                  >
-                    <CustomIcon type="icon-delete" onClick={(e) => e.stopPropagation()} />
-                  </Popconfirm>
+                  <Tooltip placement="top" title="全部展开/取消全部展开">
+                    <CustomIcon
+                      type="icon-linespace"
+                      onClick={(e) => {
+                        void handleExpendDescendants(node.key as number);
+                        void e.stopPropagation();
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip placement="top" title="新增">
+                    <PlusSquareOutlined
+                      onClick={(e) => {
+                        void handleAddCaseCate(node);
+                        void e.stopPropagation();
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip placement="top" title="编辑">
+                    <CustomIcon
+                      type="icon-editblock"
+                      onClick={(e) => {
+                        void handleEditCaseCate(node);
+                        void e.stopPropagation();
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip placement="top" title="删除">
+                    <Popconfirm
+                      title="确定要删除此测试用例库吗？"
+                      onConfirm={(e) => {
+                        void handleDeleteCaseCate(node);
+                        void (e && e.stopPropagation());
+                      }}
+                      onCancel={(e) => e && e.stopPropagation()}
+                    >
+                      <CustomIcon type="icon-delete" onClick={(e) => e.stopPropagation()} />
+                    </Popconfirm>
+                  </Tooltip>
                 </div>
               </div>
             );
