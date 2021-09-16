@@ -7,6 +7,7 @@ import { createSona } from '@cffe/sona';
 import EditorTable from '@cffe/pc-editor-table';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
+import ScriptEditor from '@/components/script-editor';
 import './index.less';
 
 const { TabPane } = Tabs;
@@ -214,7 +215,11 @@ export default function RightDetail(props: any) {
                 <Table dataSource={caseDescArr} pagination={false}>
                   <Table.Column title="编号" render={(_: any, __: number, idx: number) => idx + 1} />
                   <Table.Column title="步骤描述" dataIndex="input" />
-                  <Table.Column title="预期结果" dataIndex="output" />
+                  <Table.Column
+                    title="预期结果"
+                    dataIndex="output"
+                    render={(text) => <Input.TextArea readOnly value={text} />}
+                  />
                 </Table>
               ) : (
                 <EditorTable
@@ -236,7 +241,16 @@ export default function RightDetail(props: any) {
                       colProps: { width: 60, align: 'center' },
                     },
                     { title: '步骤描述', dataIndex: 'value', required: true },
-                    { title: '预期结果', dataIndex: 'desc', required: true },
+                    {
+                      title: '预期结果',
+                      dataIndex: 'desc',
+                      required: true,
+                      fieldType: 'custom',
+                      component: ScriptEditor,
+                      fieldProps: (value, index, record) => {
+                        return { mode: record.type === 'text' };
+                      },
+                    },
                   ]}
                 />
               )}
