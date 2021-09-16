@@ -20,7 +20,8 @@ export default function TestCase(props: any) {
   const [curCase, setCurCase] = useState<any>();
   const [rootCateId, setRootCateId] = useState<string>(testCaseCateId as string);
   const [cateId, setCateId] = useState<string>(testCaseCateId as string);
-  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+  const [caseReadOnly, setCaseReadOnly] = useState<boolean>(false);
 
   /** ------------------------ 更新左侧树列表 start ------------------------ */
 
@@ -72,11 +73,19 @@ export default function TestCase(props: any) {
 
   const onAddCaseBtnClick = () => {
     void setCurCase(undefined);
+    void setCaseReadOnly(false);
     void setDrawerVisible(true);
   };
 
   const onEditCaseBtnClick = (caseInfo: any) => {
     void setCurCase(caseInfo);
+    void setCaseReadOnly(false);
+    void setDrawerVisible(true);
+  };
+
+  const onSeeCaseBtnClick = (caseInfo: any) => {
+    void setCurCase(caseInfo);
+    void setCaseReadOnly(true);
     void setDrawerVisible(true);
   };
 
@@ -115,6 +124,8 @@ export default function TestCase(props: any) {
             setDrawerVisible={setDrawerVisible}
             onAddCaseBtnClick={onAddCaseBtnClick}
             onEditCaseBtnClick={onEditCaseBtnClick}
+            caseReadOnly={caseReadOnly}
+            onSeeCaseBtnClick={onSeeCaseBtnClick}
             caseCateTreeData={caseCateTreeData}
           />
         </ContentCard>

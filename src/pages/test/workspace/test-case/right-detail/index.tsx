@@ -9,8 +9,17 @@ import OprateCaseDrawer from '../oprate-case-modal';
 import './index.less';
 
 export default function RightDetail(props: any) {
-  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible, caseCateTreeData, curCase } =
-    props;
+  const {
+    cateId,
+    caseReadOnly,
+    onAddCaseBtnClick,
+    onEditCaseBtnClick,
+    onSeeCaseBtnClick,
+    drawerVisible,
+    setDrawerVisible,
+    caseCateTreeData,
+    curCase,
+  } = props;
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -163,9 +172,13 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="title"
             title="用例名称"
-            render={(title) => (
+            render={(title, record) => (
               <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
+                <Typography.Text
+                  style={{ maxWidth: '160px', color: '#033980', cursor: 'pointer' }}
+                  ellipsis={{ suffix: '' }}
+                  onClick={() => onSeeCaseBtnClick(record)}
+                >
                   {title}
                 </Typography.Text>
               </Tooltip>
@@ -183,6 +196,7 @@ export default function RightDetail(props: any) {
         </Table>
       </div>
       <AddCaseDrawer
+        readOnly={caseReadOnly}
         caseId={curCase?.id}
         cateId={cateId}
         visible={drawerVisible}

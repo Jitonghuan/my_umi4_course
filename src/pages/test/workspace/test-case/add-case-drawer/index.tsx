@@ -1,5 +1,5 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
-import { Form, Drawer, Modal, Input, Switch, Select, Tabs, Button, message, TreeSelect, Space } from 'antd';
+import { Form, Drawer, Modal, Input, Switch, Select, Tabs, Button, message, TreeSelect, Space, Table } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { createCase, updateCase, getCategoryList, getCaseInfo } from '../../service';
 import { priorityEnum } from '../../constant';
@@ -14,7 +14,7 @@ const { TabPane } = Tabs;
 let Cache: any = {};
 
 export default function RightDetail(props: any) {
-  const { visible, setVisible, onSuccess, caseId, cateId, isModal = false, caseCateTreeData = [] } = props;
+  const { visible, setVisible, readOnly, onSuccess, caseId, cateId, isModal = false, caseCateTreeData = [] } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
@@ -138,13 +138,13 @@ export default function RightDetail(props: any) {
     <>
       <Form {...layout} form={form}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
-          <Input placeholder="请输入标题" />
+          <Input disabled={readOnly} placeholder="请输入标题" />
         </Form.Item>
         <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
-          <TreeSelect treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
+          <TreeSelect disabled={readOnly} treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
         </Form.Item>
         <Form.Item label="优先级:" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
-          <Select>
+          <Select disabled={readOnly}>
             {priorityEnum.map((item) => (
               <Select.Option value={item.value} key={item.value}>
                 {item.label}
@@ -153,10 +153,10 @@ export default function RightDetail(props: any) {
           </Select>
         </Form.Item>
         <Form.Item label="是否自动化:" name="isAuto" valuePropName="checked">
-          <Switch />
+          <Switch disabled={readOnly} />
         </Form.Item>
         <Form.Item label="前置条件:" name="precondition">
-          <Input.TextArea placeholder="请输入前置条件"></Input.TextArea>
+          <Input.TextArea disabled={readOnly} placeholder="请输入前置条件"></Input.TextArea>
         </Form.Item>
         <Form.Item
           label="用例描述:"
@@ -186,6 +186,7 @@ export default function RightDetail(props: any) {
             <TabPane tab="卡片式" key="0">
               <div className="cardtype-case-desc-wrapper">
                 <Input.TextArea
+                  disabled={readOnly}
                   placeholder="输入步骤描述"
                   className="step-desc"
                   value={stepContent}
@@ -196,6 +197,7 @@ export default function RightDetail(props: any) {
                   }}
                 ></Input.TextArea>
                 <Input.TextArea
+                  disabled={readOnly}
                   placeholder="预期结果"
                   className="step-expected-results"
                   value={expectedResult}
@@ -208,51 +210,66 @@ export default function RightDetail(props: any) {
               </div>
             </TabPane>
             <TabPane tab="步骤式" key="1">
-              <EditorTable
-                value={caseDescArr}
-                onChange={(val) => {
-                  void setStepContentFormItemHelp('');
-                  void setStepContentFormItemvalidateStatus(undefined);
-                  void setCaseDescArr(val);
-                  void setStepContent(val.map((item) => item.value));
-                  void setExpectedResult(val.map((item) => item.desc));
-                }}
-                creator={{ record: { value: '', desc: '' } }}
-                columns={[
-                  {
-                    title: '编号',
-                    dataIndex: '__count',
-                    fieldType: 'readonly',
-                    colProps: { width: 60, align: 'center' },
-                  },
-                  { title: '步骤描述', dataIndex: 'value', required: true },
-                  { title: '预期结果', dataIndex: 'desc', required: true },
-                ]}
-              />
+              {readOnly ? (
+                <Table dataSource={caseDescArr} pagination={false}>
+                  <Table.Column title="编号" render={(_: any, __: number, idx: number) => idx + 1} />
+                  <Table.Column title="步骤描述" dataIndex="input" />
+                  <Table.Column title="预期结果" dataIndex="output" />
+                </Table>
+              ) : (
+                <EditorTable
+                  disabled={readOnly}
+                  value={caseDescArr}
+                  onChange={(val) => {
+                    void setStepContentFormItemHelp('');
+                    void setStepContentFormItemvalidateStatus(undefined);
+                    void setCaseDescArr(val);
+                    void setStepContent(val.map((item) => item.value));
+                    void setExpectedResult(val.map((item) => item.desc));
+                  }}
+                  creator={{ record: { value: '', desc: '' } }}
+                  columns={[
+                    {
+                      title: '编号',
+                      dataIndex: '__count',
+                      fieldType: 'readonly',
+                      colProps: { width: 60, align: 'center' },
+                    },
+                    { title: '步骤描述', dataIndex: 'value', required: true },
+                    { title: '预期结果', dataIndex: 'desc', required: true },
+                  ]}
+                />
+              )}
             </TabPane>
           </Tabs>
         </Form.Item>
         <Form.Item label="备注" name="comment">
-          <RichText sona={sona} schema={schema} width="100%" height="200px" />
+          <RichText readOnly={readOnly} sona={sona} schema={schema} width="100%" height="200px" />
         </Form.Item>
       </Form>
 
       <div className="drawer-btn-group">
-        <Space>
-          <Button type="primary" onClick={() => handleSave()}>
-            保存
-          </Button>
-          {!caseId ? (
-            <Button type="primary" onClick={() => handleSave(true)}>
-              保存并继续
-            </Button>
-          ) : (
-            ''
-          )}
+        {readOnly ? (
           <Button type="primary" onClick={handleCancel}>
-            取消
+            关闭
           </Button>
-        </Space>
+        ) : (
+          <Space>
+            <Button type="primary" onClick={() => handleSave()}>
+              保存
+            </Button>
+            {!caseId ? (
+              <Button type="primary" onClick={() => handleSave(true)}>
+                保存并继续
+              </Button>
+            ) : (
+              ''
+            )}
+            <Button type="primary" onClick={handleCancel}>
+              取消
+            </Button>
+          </Space>
+        )}
       </div>
     </>
   );
@@ -262,7 +279,7 @@ export default function RightDetail(props: any) {
       className="add-case-modal"
       visible={visible}
       width="400"
-      title={caseId ? '编辑用例' : '添加用例'}
+      title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onCancel={() => setVisible(false)}
       maskClosable={false}
       footer={false}
@@ -273,7 +290,7 @@ export default function RightDetail(props: any) {
     <Drawer
       visible={visible}
       width="650"
-      title={caseId ? '编辑用例' : '添加用例'}
+      title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onClose={() => setVisible(false)}
       maskClosable={false}
     >
