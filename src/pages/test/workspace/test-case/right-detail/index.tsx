@@ -43,7 +43,6 @@ export default function RightDetail(props: any) {
   };
 
   useEffect(() => {
-    console.log('pageIndex, pageSize :>> ', pageIndex, pageSize);
     void updateDatasource();
   }, [pageIndex, pageSize]);
 

@@ -156,7 +156,7 @@ export default function AddTestPlanDrawer(props: any) {
           <Input placeholder="请输入计划名称" />
         </Form.Item>
         <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
-          <Cascader placeholder="请选择" options={projectTreeData} />
+          <Cascader expandTrigger="hover" changeOnSelect placeholder="请选择" options={projectTreeData} />
         </Form.Item>
         <Form.Item label="关联任务" name="jiraTask" rules={[{ required: true, message: '请输入关联人物' }]}>
           <Input placeholder="请输入关联任务" />

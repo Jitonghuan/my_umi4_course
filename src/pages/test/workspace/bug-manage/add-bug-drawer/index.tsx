@@ -1,6 +1,21 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../../constant';
-import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Modal, TreeSelect, Cascader } from 'antd';
+import {
+  Select,
+  Input,
+  Switch,
+  Button,
+  Form,
+  Space,
+  Drawer,
+  message,
+  Radio,
+  Modal,
+  TreeSelect,
+  Cascader,
+  Row,
+  Col,
+} from 'antd';
 import { addBug, modifyBug, getManagerList, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
@@ -11,8 +26,17 @@ import _ from 'lodash';
 import './index.less';
 
 export default function BugManage(props: any) {
-  const { visible, setVisible, bugInfo, updateBugList, defaultRelatedCases, phaseId, onAddBug, projectTreeData } =
-    props;
+  const {
+    visible,
+    setVisible,
+    bugInfo,
+    updateBugList,
+    defaultRelatedCases,
+    phaseId,
+    onAddBug,
+    projectTreeData,
+    readOnly,
+  } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
@@ -83,6 +107,7 @@ export default function BugManage(props: any) {
         }
       } else {
         void form.resetFields();
+        void form.setFieldsValue({ priority: 1, bugType: 0 });
         void setSchema(undefined);
         void setRelatedCases(defaultRelatedCases || []);
       }
@@ -143,80 +168,135 @@ export default function BugManage(props: any) {
       >
         <Form {...formItemLayout} form={form}>
           <Form.Item label="标题" name="name" rules={[{ required: true, message: '请输入标题' }]}>
-            <Input />
+            <Input disabled={readOnly} />
           </Form.Item>
           <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
-            <Cascader placeholder="请选择" options={projectTreeData} />
+            <Cascader
+              expandTrigger="hover"
+              changeOnSelect
+              placeholder="请选择"
+              options={projectTreeData}
+              disabled={readOnly}
+            />
           </Form.Item>
-          <Form.Item label="优先级" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
-            <Radio.Group>
-              {bugPriorityEnum.map((title, index) => (
-                <Radio value={index} key={index}>
-                  {title}
-                </Radio>
-              ))}
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item label="类型" name="bugType" rules={[{ required: true, message: '请选择类型' }]}>
-            <Select>
-              {bugTypeEnum.map((title, index) => (
-                <Select.Option value={index} key={index}>
-                  {title}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="是否线上Bug" valuePropName="checked" name="onlineBug">
-            <Switch />
-          </Form.Item>
+
+          <Row className="row-form-item">
+            <Col span="10" push="1" className="col-form-item">
+              <span className="form-item-label">
+                <span className="import-identification">* </span>优先级 :{' '}
+              </span>
+              <Form.Item
+                name="priority"
+                rules={[{ required: true, message: '请选择优先级' }]}
+                className="form-item-info"
+              >
+                <Radio.Group disabled={readOnly}>
+                  {bugPriorityEnum.map((title, index) => (
+                    <Radio value={index} key={index}>
+                      {title}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span="7" style={{ display: 'flex' }} className="col-form-item ">
+              <span className="form-item-label">
+                <span className="import-identification">* </span>类型 :{' '}
+              </span>
+              <Form.Item name="bugType" rules={[{ required: true, message: '请选择类型' }]} className="form-item-info">
+                <Select disabled={readOnly}>
+                  {bugTypeEnum.map((title, index) => (
+                    <Select.Option value={index} key={index}>
+                      {title}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span="7" style={{ display: 'flex' }} className="col-form-item ">
+              <span className="form-item-label">
+                <span className="import-identification">* </span>是否线上Bug :{' '}
+              </span>
+              <Form.Item valuePropName="checked" name="onlineBug" className="form-item-info">
+                <Switch disabled={readOnly} />
+              </Form.Item>
+            </Col>
+          </Row>
+
           <Form.Item label="关联用例" name="relatedCases">
             <Space>
               <TreeSelect
+                disabled={readOnly}
                 className="test-case-tree-select"
                 multiple
                 treeCheckable
-                placeholder="请选择用例集合"
+                placeholder="请选择需要关联的用例"
                 treeNodeLabelProp="title"
                 treeNodeFilterProp="title"
                 treeData={testCaseTree}
                 value={relatedCases}
                 onChange={setRelatedCases}
               />
-              <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
-                新增用例
-              </Button>
+              {readOnly ? null : (
+                <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
+                  新增用例
+                </Button>
+              )}
             </Space>
           </Form.Item>
           <Form.Item label="描述" name="desc">
-            <RichText width="524px" sona={sona} schema={schema} />
+            <RichText width="520px" height="500px" sona={sona} schema={schema} readOnly={readOnly} />
           </Form.Item>
-          <Form.Item label="经办人" name="agent" rules={[{ required: true, message: '请选择经办人' }]}>
-            <Select
-              options={manageList.map((item) => ({ label: item, value: item }))}
-              optionFilterProp="label"
-              showSearch
-            />
-          </Form.Item>
-          <Form.Item label="状态" name="status" rules={[{ required: true, message: '请选择状态' }]}>
-            <Select options={bugStatusEnum}></Select>
-          </Form.Item>
+
+          <Row className="row-form-item">
+            <Col span="12" push="1" className="col-form-item">
+              <span className="form-item-label">
+                <span className="import-identification">* </span>经办人 :{' '}
+              </span>
+              <Form.Item name="agent" rules={[{ required: true, message: '请选择经办人' }]} className="form-item-info">
+                <Select
+                  disabled={readOnly}
+                  options={manageList.map((item) => ({ label: item, value: item }))}
+                  optionFilterProp="label"
+                  showSearch
+                />
+              </Form.Item>
+            </Col>
+            <Col span="12" push="1" className="col-form-item">
+              <span className="form-item-label">
+                <span className="import-identification">* </span>状态 :{' '}
+              </span>
+              <Form.Item name="status" rules={[{ required: true, message: '请选择状态' }]} className="form-item-info">
+                <Select disabled={readOnly} options={bugStatusEnum}></Select>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
 
         <div className="footer">
           <Space>
-            {!bugInfo ? (
-              <Button type="primary" onClick={() => submit(true)}>
-                保存并新增
+            {readOnly ? (
+              <Button type="primary" onClick={() => setVisible(false)}>
+                关闭
               </Button>
             ) : (
-              ''
+              <>
+                {' '}
+                {!bugInfo ? (
+                  <Button type="primary" onClick={() => submit(true)}>
+                    保存并新增
+                  </Button>
+                ) : (
+                  ''
+                )}
+                <Button type="primary" onClick={() => submit(false)}>
+                  保存
+                </Button>
+                <Button className="ml-auto" onClick={() => setVisible(false)}>
+                  取消
+                </Button>
+              </>
             )}
-            <Button type="primary" onClick={() => submit(false)}>
-              保存
-            </Button>
-            <Button className="ml-auto" onClick={() => setVisible(false)}>
-              取消
-            </Button>
           </Space>
         </div>
       </Drawer>

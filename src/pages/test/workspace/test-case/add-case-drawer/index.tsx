@@ -11,6 +11,8 @@ import './index.less';
 
 const { TabPane } = Tabs;
 
+let Cache: any = {};
+
 export default function RightDetail(props: any) {
   const { visible, setVisible, onSuccess, caseId, cateId, isModal = false, caseCateTreeData = [] } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
@@ -27,6 +29,7 @@ export default function RightDetail(props: any) {
 
   useEffect(() => {
     if (visible) {
+      Cache = {};
       void setSchema(undefined);
       if (caseId) {
         getRequest(getCaseInfo + '/' + caseId).then((res) => {
@@ -167,12 +170,16 @@ export default function RightDetail(props: any) {
             onChange={(key) => {
               void setDescType(key);
               if (key === '0') {
-                void setStepContent('');
-                void setExpectedResult('');
+                void setStepContent(Cache.stepContent);
+                void setExpectedResult(Cache.expectedResult);
+                Cache.stepContent = stepContent;
+                Cache.expectedResult = expectedResult;
               } else {
-                void setCaseDescArr([]);
-                void setStepContent([]);
-                void setExpectedResult([]);
+                // void setCaseDescArr([]);
+                void setStepContent(Cache.stepContent);
+                void setExpectedResult(Cache.expectedResult);
+                Cache.stepContent = stepContent;
+                Cache.expectedResult = expectedResult;
               }
             }}
           >

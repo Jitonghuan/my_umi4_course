@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Select, Input, Tree, Space, Button, Popconfirm, message, Typography } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Select, Input, Tree, Space, Button, Popconfirm, message, Typography, Tooltip } from 'antd';
+import { SearchOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { deleteCaseCategory } from '../../service';
 import { postRequest } from '@/utils/request';
 import OperateCaseLibModal from '../oprate-case-module-modal';
-
+import CustomIcon from '@cffe/vc-custom-icon';
 import './index.less';
 
 const { DirectoryTree } = Tree;
@@ -27,6 +27,23 @@ export default function LeftTree(props: any) {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [oprateCaseLibModalVisible, setOprateCaseLibModalVisible] = useState<boolean>(false);
   const [curChooseCate, setCurChooseCate] = useState<any>();
+  const [allDescendantsMap, setAllDescendantsMap] = useState<any>({});
+
+  useEffect(() => {
+    const ans: any = {};
+    const dfs = (node: any): any[] => {
+      const allDescendants = [node.key];
+      if (node.children) {
+        for (const child of node.children as any[]) {
+          if (child.children?.length) void allDescendants.push(...dfs(child));
+        }
+      }
+      ans[node.key] = [...allDescendants];
+      return allDescendants;
+    };
+    void cateTreeData.forEach((node: any) => node?.children?.length && dfs(node));
+    void setAllDescendantsMap(ans);
+  }, [cateTreeData]);
 
   useEffect(() => {
     void searchCateTreeData(rootCateId, keyword);
@@ -40,7 +57,6 @@ export default function LeftTree(props: any) {
   }, [cateTreeData]);
 
   const onCateChange = (val: any) => {
-    console.log('val :>> ', val);
     if (!val) return;
     void setRootCateId(val);
   };
@@ -77,12 +93,20 @@ export default function LeftTree(props: any) {
   };
 
   const handleDeleteCaseCate = (node: any) => {
-    // const loadEnd = message.loading('正在删除');
     postRequest(deleteCaseCategory + '/' + node.id).then(() => {
-      // void loadEnd();
       void message.success('删除成功');
       void searchCateTreeData(rootCateId, keyword, true);
     });
+  };
+
+  const handleExpendDescendants = (id: number) => {
+    if (!allDescendantsMap[id]) return;
+    const allDescendants = allDescendantsMap[id];
+    if (expandedKeys.findIndex((item: any) => allDescendants.includes(item)) !== -1) {
+      void setExpandedKeys(expandedKeys.filter((item: any) => !allDescendants.includes(item)));
+    } else {
+      void setExpandedKeys([...new Set([...expandedKeys, ...allDescendants])]);
+    }
   };
 
   return (
@@ -124,38 +148,44 @@ export default function LeftTree(props: any) {
                   {node.title}
                 </Typography.Text>
                 <div className="oprate-btn-container">
-                  <Button
-                    type="link"
-                    size="small"
-                    onClick={(e) => {
-                      void handleAddCaseCate(node);
-                      void e.stopPropagation();
-                    }}
-                  >
-                    新增
-                  </Button>
-                  <Button
-                    type="link"
-                    size="small"
-                    onClick={(e) => {
-                      void handleEditCaseCate(node);
-                      void e.stopPropagation();
-                    }}
-                  >
-                    编辑
-                  </Button>
-                  <Popconfirm
-                    title="确定要删除此测试用例库吗？"
-                    onConfirm={(e) => {
-                      void handleDeleteCaseCate(node);
-                      void (e && e.stopPropagation());
-                    }}
-                    onCancel={(e) => e && e.stopPropagation()}
-                  >
-                    <Button type="link" size="small" onClick={(e) => e.stopPropagation()}>
-                      删除
-                    </Button>
-                  </Popconfirm>
+                  <Tooltip placement="top" title="全部展开/取消全部展开">
+                    <CustomIcon
+                      type="icon-linespace"
+                      onClick={(e) => {
+                        void handleExpendDescendants(node.key as number);
+                        void e.stopPropagation();
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip placement="top" title="新增">
+                    <PlusSquareOutlined
+                      onClick={(e) => {
+                        void handleAddCaseCate(node);
+                        void e.stopPropagation();
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip placement="top" title="编辑">
+                    <CustomIcon
+                      type="icon-editblock"
+                      onClick={(e) => {
+                        void handleEditCaseCate(node);
+                        void e.stopPropagation();
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip placement="top" title="删除">
+                    <Popconfirm
+                      title="确定要删除此测试用例库吗？"
+                      onConfirm={(e) => {
+                        void handleDeleteCaseCate(node);
+                        void (e && e.stopPropagation());
+                      }}
+                      onCancel={(e) => e && e.stopPropagation()}
+                    >
+                      <CustomIcon type="icon-delete" onClick={(e) => e.stopPropagation()} />
+                    </Popconfirm>
+                  </Tooltip>
                 </div>
               </div>
             );

@@ -107,7 +107,7 @@ export default function TestPlan(props: any) {
         <div className="search-header">
           <Form form={form} layout="inline" onFinish={handleFilterDataList} onReset={() => handleFilterDataList({})}>
             <Form.Item label="项目/需求" name="demandId">
-              <Cascader placeholder="请选择" options={projectTreeData} />
+              <Cascader expandTrigger="hover" changeOnSelect placeholder="请选择" options={projectTreeData} />
             </Form.Item>
 
             <Form.Item label="任务名称" name="taskName">

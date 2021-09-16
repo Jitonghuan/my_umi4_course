@@ -6,7 +6,7 @@ import React, { useState, useContext } from 'react';
 import { Modal, Button, message, Popconfirm, Table } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { tableSchema } from './schema';
+import { datetimeCellRender } from '@/utils';
 import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
@@ -144,8 +144,13 @@ export default function PublishContent(props: IProps) {
                 },
               }
         }
-        columns={tableSchema}
-      />
+      >
+        <Table.Column dataIndex="id" title="ID" width={80} />
+        <Table.Column dataIndex="branchName" title="分支名" />
+        <Table.Column dataIndex="desc" title="变更原因" />
+        <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
+        <Table.Column dataIndex="createUser" title="创建人" width={80} />
+      </Table>
     </div>
   );
 }
