@@ -156,6 +156,7 @@ export default function RightDetail(props: any) {
             selectedRowKeys: checkedCaseIds,
             onChange: setCheckedCaseIds,
           }}
+          scroll={{ x: '1000px' }}
         >
           <Table.Column width={60} title="ID" dataIndex="id"></Table.Column>
           <Table.Column
@@ -192,7 +193,7 @@ export default function RightDetail(props: any) {
             render={(date) => moment(date).format('YYYY-MM-DD HH:mm:ss')}
             width={166}
           ></Table.Column>
-          <Table.Column title="操作" render={operateRender} width={120}></Table.Column>
+          <Table.Column title="操作" render={operateRender} width={120} fixed="right"></Table.Column>
         </Table>
       </div>
       <AddCaseDrawer

@@ -102,7 +102,7 @@ export default function TestCase(props: any) {
       </div> */}
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
-        <CardRowGroup.SlideCard noPadding className="slide-card" width={240}>
+        <CardRowGroup.SlideCard noPadding className="slide-card" width={320}>
           <LeftTree
             cateId={cateId}
             setCateId={setCateId}
