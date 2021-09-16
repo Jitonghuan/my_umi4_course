@@ -113,6 +113,7 @@ export default function RightDetail(props: any) {
 
     // 保存后清空表单
     void form.resetFields();
+    void form.setFieldsValue({ categoryId: cateId });
     if (descType === '0') {
       void setStepContent('');
       void setExpectedResult('');
