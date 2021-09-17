@@ -1,9 +1,31 @@
 // 应用变更详情 formatter
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/09/16 16:34
+import React, { useEffect, useState, useContext } from 'react';
+import { getRequest } from '@/utils/request';
+import { changeDetailList, envList } from './service';
+import DetailContext from '@/pages/application/application-detail/context';
+import moment from 'moment';
 
 // 变更详情折线图
 export function appChangeChart(appChangeData: Record<string, any>) {
+  const { appData } = useContext(DetailContext);
+
+  const startDate = moment().subtract(8, 'days').format('YYYY-MM-DD');
+  const endDate = moment().subtract(1, 'days').format('YYYY-MM-DD');
+  console.log('时间：', startDate, endDate);
+  useEffect(() => {}, []);
+  const getChangeDetailList = () => {
+    getRequest(changeDetailList, {
+      data: { appCode: appData?.appCode, cycleStart: startDate, cycleEnd: endDate },
+    })
+      .then((result) => {
+        let changeDetailData = result.data.dataSource;
+        let arr = [];
+        arr.push(changeDetailData);
+      })
+      .finally(() => {});
+  };
   return {
     title: {
       text: '应用变更折线图',

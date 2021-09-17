@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Select } from 'antd';
 import { getRequest } from '@/utils/request';
+import { changeDetailList, listRanking, listUserRanking } from './service';
 
 export interface appChangeTableProps {
   loading?: boolean;
@@ -13,6 +14,7 @@ export default function appChangeTable(props: appChangeTableProps) {
   const { loading } = props;
   const { Option } = Select;
   const [appChangeData, setAppChangeData] = useState<any>([]); //表格数据
+  // const [detailsColumns,setDetailsColumns] = useState<any[]>([]);//表格列
   useEffect(() => {}, []);
 
   const columns = [
@@ -42,6 +44,7 @@ export default function appChangeTable(props: appChangeTableProps) {
       },
     },
   ];
+  // setDetailsColumns(columns);
   const countList = [
     {
       key: '1',
@@ -63,14 +66,13 @@ export default function appChangeTable(props: appChangeTableProps) {
     },
   ];
   const onExpand = () => {
-    debugger;
-    let arr = [];
-    arr.push({
+    columns.push({
       title: '排名列',
       dataIndex: 'sorter',
       key: 'sorter',
     });
-    columns.concat(arr);
+    // detailsColumns.concat(arr);
+    // setDetailsColumns(columns)
 
     //需要考虑当clumns长度大于多少的时候 把数组的最后一个下标删除
   };
@@ -135,7 +137,6 @@ export default function appChangeTable(props: appChangeTableProps) {
             bordered
             columns={columns}
             dataSource={countList}
-            pagination={false}
             //   expandable={{
             //     expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
             //     rowExpandable: record => record.sorter !== 'Not Expandable',
