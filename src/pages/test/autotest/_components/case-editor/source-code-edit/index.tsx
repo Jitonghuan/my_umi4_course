@@ -3,9 +3,8 @@ import AceEditor from '@/components/ace-editor';
 import YAML from 'yaml';
 import * as APIS from '../../../service';
 import DebounceSelect from '@/components/debounce-select';
-import { Button, Input, Table, Select, Space, message } from 'antd';
+import { Button, Input, Table, ConfigProvider, Space, Empty, message } from 'antd';
 import { getRequest } from '@/utils/request';
-import { CaseItemVO } from '../../../interfaces';
 import './index.less';
 
 export default function SourceCodeEdit(props: any) {
@@ -13,6 +12,7 @@ export default function SourceCodeEdit(props: any) {
 
   const [editorValue, setEditorValue] = useState<any>();
   const [finalVariableData, setFinalVariableData] = useState<any[]>(variableData);
+  const [editStatus, setEditStatus] = useState<'success' | 'error' | 'warning' | 'default'>();
 
   useEffect(() => {
     setFinalVariableData(variableData);
@@ -37,6 +37,7 @@ export default function SourceCodeEdit(props: any) {
       finalCaseInfo = YAML.parse(editorValue);
     } catch (e) {
       message.error('格式不正确');
+      setEditStatus('error');
       return;
     }
 
@@ -131,21 +132,36 @@ export default function SourceCodeEdit(props: any) {
                 />
               </label>
             </Space>
-            <AceEditor mode="yaml" height="calc(100vh - 263px)" value={editorValue} onChange={setEditorValue} />
+            <AceEditor
+              status={editStatus}
+              mode="yaml"
+              height="calc(100vh - 263px)"
+              value={editorValue}
+              onChange={(val) => {
+                setEditorValue(val);
+                setEditStatus('default');
+              }}
+            />
           </div>
           <div className="variable-pool">
             <Input.Search className="search-header" onSearch={handleSearch} />
-            <Table
-              bordered
-              className="variable-pool-table"
-              dataSource={finalVariableData}
-              pagination={false}
-              scroll={{ y: 'calc(100vh - 252px)' }}
+            <ConfigProvider
+              renderEmpty={() => (
+                <Empty description="请先定义变量或选择前置用例" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              )}
             >
-              <Table.Column title="变量名" dataIndex="a" />
-              <Table.Column title="变量值" />
-              <Table.Column title="描述" />
-            </Table>
+              <Table
+                bordered
+                className="variable-pool-table"
+                dataSource={finalVariableData}
+                pagination={false}
+                scroll={{ y: 'calc(100vh - 252px)' }}
+              >
+                <Table.Column title="变量名" dataIndex="a" />
+                <Table.Column title="变量值" />
+                <Table.Column title="描述" />
+              </Table>
+            </ConfigProvider>
           </div>
         </div>
       </div>
