@@ -83,7 +83,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       onClose={props.onClose}
       placement="right"
       width={900}
-      className="test-case-editor"
+      className="test-case-detail"
     >
       <Form>
         <FormItem label="用例名称" labelCol={{ flex: '76px' }}>
