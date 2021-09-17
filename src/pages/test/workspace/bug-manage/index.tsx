@@ -3,7 +3,20 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
-import { Select, Input, Switch, Button, Table, Form, Space, Popconfirm, message, Cascader, Typography } from 'antd';
+import {
+  Select,
+  Input,
+  Switch,
+  Button,
+  Table,
+  Form,
+  Space,
+  Popconfirm,
+  message,
+  Cascader,
+  Typography,
+  Tooltip,
+} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { getProjects, getBugList, deleteBug, getProjectTreeData } from '../service';
@@ -21,13 +34,15 @@ export default function BugManage(props: any) {
   const [loading, setLoading] = useState(false);
   // const [projectList, setProjectList] = useState<any[]>([]);
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
+  const [bugReadOnly, setBugReadOnly] = useState<boolean>(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
   const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<any>({ justMe: true });
   const [form] = Form.useForm();
 
   const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize, _formData = formData) => {
     const formData = _formData;
+    console.log('formData :>> ', formData);
     const requestParams = {
       ...formData,
       pageIndex: _pageIndex,
@@ -46,12 +61,7 @@ export default function BugManage(props: any) {
   };
 
   useEffect(() => {
-    // getRequest(getProjects).then((res) => {
-    //   void setProjectList(res.data.dataSource);
-    // });
-
-    void updateBugList();
-
+    void form.setFieldsValue({ justMe: true });
     void getRequest(getProjectTreeData).then((res) => {
       const Q = [...res.data];
       while (Q.length) {
@@ -66,16 +76,24 @@ export default function BugManage(props: any) {
 
   useEffect(() => {
     void updateBugList(pageIndex, pageSize);
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, formData.justMe]);
 
   const handleAddBugBtnClick = () => {
     void setCurBugInfo(undefined);
     void setAddBugDrawerVisible(true);
+    void setBugReadOnly(false);
   };
 
   const handleModifyBugBtnClick = (record: any) => {
     void setCurBugInfo(record);
     void setAddBugDrawerVisible(true);
+    void setBugReadOnly(false);
+  };
+
+  const handleSeeBugBtnClick = (record: any) => {
+    void setCurBugInfo(record);
+    void setAddBugDrawerVisible(true);
+    void setBugReadOnly(true);
   };
 
   const handleConfirmDelete = (id: number) => {
@@ -96,10 +114,9 @@ export default function BugManage(props: any) {
     );
   };
 
-  const handleFilterPropJustMeChange = () => {
-    const nexFormData = { ...formData, justMe: !formData.justMe };
+  const handleFilterPropJustMeChange = (val: boolean) => {
+    const nexFormData = { ...formData, justMe: val };
     void setFormData(nexFormData);
-    void updateBugList(1, pageSize, nexFormData);
   };
 
   const handleFilterDataList = (data: any) => {
@@ -123,7 +140,13 @@ export default function BugManage(props: any) {
               </Select>
             </Form.Item> */}
             <Form.Item label="项目/需求" name="demandId">
-              <Cascader className="demandId-cascader" placeholder="请选择" options={projectTreeData} />
+              <Cascader
+                expandTrigger="hover"
+                changeOnSelect
+                className="demandId-cascader"
+                placeholder="请选择"
+                options={projectTreeData}
+              />
             </Form.Item>
             <Form.Item label="标题" name="name">
               <Input placeholder="请输入标题" />
@@ -190,10 +213,16 @@ export default function BugManage(props: any) {
             <Table.Column
               title="标题"
               dataIndex="name"
-              render={(title) => (
-                <Typography.Text style={{ maxWidth: '220px' }} ellipsis={{ suffix: '' }}>
-                  {title}
-                </Typography.Text>
+              render={(title, record) => (
+                <Tooltip placement="topLeft" title={title}>
+                  <Typography.Text
+                    style={{ maxWidth: '220px', cursor: 'pointer', color: '#033980' }}
+                    ellipsis={{ suffix: '' }}
+                    onClick={() => handleSeeBugBtnClick(record)}
+                  >
+                    {title}
+                  </Typography.Text>
+                </Tooltip>
               )}
             />
             <Table.Column title="类型" dataIndex="bugType" render={(type) => bugTypeEnum[type]} />
@@ -208,7 +237,7 @@ export default function BugManage(props: any) {
               )}
             />
             <Table.Column title="创建人" dataIndex="createUser" />
-            <Table.Column title="经办人" dataIndex="modifyUser" />
+            <Table.Column title="经办人" dataIndex="agent" />
             <Table.Column
               title="更新时间"
               dataIndex="gmtModify"
@@ -232,6 +261,7 @@ export default function BugManage(props: any) {
         <AddBugDrawer
           visible={addBugDrawerVisible}
           setVisible={setAddBugDrawerVisible}
+          readOnly={bugReadOnly}
           bugInfo={curBugInfo}
           updateBugList={updateBugList}
           projectTreeData={projectTreeData}

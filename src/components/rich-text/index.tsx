@@ -49,7 +49,8 @@ const {
   // @ts-ignore
   if (Array.isArray(plugin.toolbarConfig)) {
     plugin.toolbarConfig.forEach((config) => {
-      if (['undo', 'redo', 'preview', 'save', 'unorder-list', 'order-list'].includes(config.key)) config.align = 'left';
+      if (['undo', 'redo', 'preview', 'save', 'unorder-list', 'order-list', 'reset-style'].includes(config.key))
+        config.align = 'left';
     });
   } else {
     plugin.toolbarConfig.align = 'left';

@@ -1,5 +1,20 @@
 import React, { useState, useMemo, useContext, useEffect } from 'react';
-import { Col, Row, Tabs, Table, Input, Select, Tag, Button, Space, List, Typography, Empty, message } from 'antd';
+import {
+  Col,
+  Row,
+  Tabs,
+  Table,
+  Input,
+  Select,
+  Tag,
+  Button,
+  Space,
+  List,
+  Typography,
+  Empty,
+  message,
+  Popconfirm,
+} from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
 import { createSona } from '@cffe/sona';
@@ -24,6 +39,7 @@ export default function UserCaseInfoExec(props: any) {
     className,
     updateCurCase,
     updateTestCaseTree,
+    updateTestPhaseDetail,
     plan,
     projectList,
     updateBugList,
@@ -109,6 +125,7 @@ export default function UserCaseInfoExec(props: any) {
   const handleCaseStatusChange = async (caseStatus: string) => {
     void (await handleCaseStatusSubmit(caseStatus, JSON.stringify(sona.schema)));
     void setCaseStatus(caseStatus);
+    void updateTestPhaseDetail();
     void message.success('用例状态修改成功');
   };
 
@@ -153,6 +170,8 @@ export default function UserCaseInfoExec(props: any) {
     }));
     void setCheckedBugs([]);
     void (await updateCurCase());
+    void updateTestPhaseDetail();
+
     void message.success('关联bug成功');
   };
 
@@ -167,6 +186,8 @@ export default function UserCaseInfoExec(props: any) {
       },
     }));
     void setCheckedBugs([]);
+    void updateTestPhaseDetail();
+
     void message.success('删除bug成功');
   };
 
@@ -186,8 +207,9 @@ export default function UserCaseInfoExec(props: any) {
       },
     }).then((res) => {
       // void loadEnd();
-      void message.success('修改Bug状态成功');
+      void updateTestPhaseDetail();
       void updateCurCase();
+      void message.success('修改Bug状态成功');
     });
   };
 
@@ -222,6 +244,7 @@ export default function UserCaseInfoExec(props: any) {
     const res = await postRequest(addBug, { data: requestParams });
     if (!res) return;
     void updateCurCase();
+    void updateTestPhaseDetail();
     void message.success('一键提交成功');
   };
 
@@ -305,9 +328,11 @@ export default function UserCaseInfoExec(props: any) {
                 <Button type="primary" ghost onClick={() => setAddBugDrawerVisible(true)}>
                   新增Bug
                 </Button>
-                <Button type="primary" ghost onClick={handleSmartSubmit}>
-                  一键提交
-                </Button>
+                <Popconfirm title="确定要提交Bug吗？" onConfirm={handleSmartSubmit}>
+                  <Button type="primary" ghost>
+                    一键提交
+                  </Button>
+                </Popconfirm>
               </Space>
             }
           >

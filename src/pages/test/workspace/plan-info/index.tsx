@@ -3,6 +3,7 @@ import PageContainer from '@/components/page-container';
 import UseCaseTestInfoExec from './use-case-test-info-exec';
 import UserCaseInfoExec from './use-case-info-exec';
 import CustomTree from '@/components/custom-tree';
+import CustomIcon from '@cffe/vc-custom-icon';
 import BugInfoExec from './bug-info-exec';
 import CaseInfo from './case-info';
 import moment from 'moment';
@@ -11,7 +12,7 @@ import { history } from 'umi';
 import { testPhaseEnum, caseStatusEnum } from '../constant';
 import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects } from '../service';
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
-import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography } from 'antd';
+import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography, Button } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { LeftOutlined } from '@ant-design/icons';
 import './index.less';
@@ -33,6 +34,25 @@ export default function PlanInfo(props: any) {
   const [expendedKeys, setExpendedKeys] = useState<React.Key[]>([]);
   const [projectList, setProjectList] = useState<any[]>([]);
   const [caseStatusSelect, setCaseStatusSelect] = useState<string>();
+
+  const [allDescendantsMap, setAllDescendantsMap] = useState<any>({});
+
+  useEffect(() => {
+    if (!testCaseTree) return;
+    const ans: any = {};
+    const dfs = (node: any): any[] => {
+      const allDescendants = [node.key];
+      if (node.children) {
+        for (const child of node.children as any[]) {
+          if (child.children?.length) void allDescendants.push(...dfs(child));
+        }
+      }
+      ans[node.key] = [...allDescendants];
+      return allDescendants;
+    };
+    void testCaseTree.forEach((node: any) => node?.children?.length && dfs(node));
+    void setAllDescendantsMap(ans);
+  }, [testCaseTree]);
 
   const updateCurCase = () => {
     getRequest(getPhaseCaseDetail, {
@@ -61,14 +81,18 @@ export default function PlanInfo(props: any) {
     });
   };
 
-  useEffect(() => {
+  const updateTestPhaseDetail = async () => {
     if (!activeKey) return;
+    const res = await getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } });
+    void setTestPhaseDetail(res.data);
+  };
+
+  useEffect(() => {
     void setCurCaseId(undefined);
     void setCurCase(undefined);
     void setExpendedKeys([]);
-    getRequest(getTestPhaseDetail, { data: { phaseId: +activeKey } }).then((res) => {
-      void setTestPhaseDetail(res.data);
-      void updateTestCaseTree();
+    void updateTestPhaseDetail().then(() => {
+      void updateTestCaseTree(); // 在更新完测试阶段详情后再更新测试用例树，是为了解决页面render错误的问题
     });
   }, [activeKey]);
 
@@ -106,6 +130,16 @@ export default function PlanInfo(props: any) {
     if (!caseStatusSelect) return testCaseTree;
     return dataClean(_.cloneDeep(testCaseTree));
   }, [caseStatusSelect, testCaseTree]);
+
+  const handleExpendDescendants = (id: number) => {
+    if (!allDescendantsMap[id]) return;
+    const allDescendants = allDescendantsMap[id];
+    if (expendedKeys.findIndex((item: any) => allDescendants.includes(item)) !== -1) {
+      void setExpendedKeys(expendedKeys.filter((item: any) => !allDescendants.includes(item)));
+    } else {
+      void setExpendedKeys([...new Set([...expendedKeys, ...allDescendants])]);
+    }
+  };
 
   return (
     <PageContainer>
@@ -206,7 +240,7 @@ export default function PlanInfo(props: any) {
                   treeDataEmptyHide={false}
                   onSelect={(keys) => testCaseTreeLeafs.includes(keys[0]) && setCurCaseId(keys[0])}
                   selectedKeys={[curCaseId]}
-                  onExpand={(expendedKeys) => setExpendedKeys(expendedKeys)}
+                  onExpand={setExpendedKeys}
                   expandedKeys={expendedKeys}
                   showIcon={false}
                   showSearch
@@ -230,11 +264,27 @@ export default function PlanInfo(props: any) {
                       );
 
                     return (
-                      <Tooltip placement="right" title={renderTitle}>
-                        <Typography.Text style={{ maxWidth: '100%' }} ellipsis={{ suffix: '' }}>
-                          {renderTitle}
-                        </Typography.Text>
-                      </Tooltip>
+                      <div className="case-select-tree-node">
+                        <Tooltip placement="top" title={renderTitle}>
+                          <Typography.Text style={{ maxWidth: '100%' }} ellipsis={{ suffix: '' }}>
+                            {renderTitle}
+                          </Typography.Text>
+                        </Tooltip>
+
+                        {node.children?.length ? (
+                          <div className="operate-btn-group">
+                            <Tooltip placement="top" title="全部展开/取消全部展开">
+                              <CustomIcon
+                                type="icon-linespace"
+                                onClick={(e) => {
+                                  void handleExpendDescendants(node.key as number);
+                                  void e.stopPropagation();
+                                }}
+                              />
+                            </Tooltip>
+                          </div>
+                        ) : null}
+                      </div>
                     );
                   }}
                 />
@@ -250,6 +300,7 @@ export default function PlanInfo(props: any) {
                     curCase={curCase}
                     updateCurCase={updateCurCase}
                     updateTestCaseTree={updateTestCaseTree}
+                    updateTestPhaseDetail={updateTestPhaseDetail}
                     plan={plan}
                     projectList={projectList}
                     updateBugList={updateBugList}
