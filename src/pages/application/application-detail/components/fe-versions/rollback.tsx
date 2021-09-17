@@ -46,7 +46,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     <Modal
       visible={!!envItem}
       title="选择回滚版本"
-      width={600}
+      width={666}
       maskClosable={false}
       onCancel={onClose}
       onOk={handleOk}
@@ -59,8 +59,8 @@ export default function RollbackVersion(props: RollbackVersionProps) {
           type: 'radio',
           onChange: (nextKeys) => setSelectedRowKeys(nextKeys),
           getCheckboxProps: (record) => ({
-            // 不能选择当前版本
-            disabled: record.isActive === 0,
+            // 不能选择当前版本或部署中的版本
+            disabled: record.isActive !== 1,
           }),
         }}
         onRow={(record) => ({
@@ -82,6 +82,13 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         <Table.Column dataIndex="version" title="版本号" />
         <Table.Column dataIndex="gmtModify" title="发布时间" render={datetimeCellRender} width={160} />
         <Table.Column dataIndex="modifyUser" title="发布人" />
+        <Table.Column
+          dataIndex="isActive"
+          title="状态"
+          render={(value: number) => {
+            return value === 0 ? '当前' : value === 2 ? '部署中' : '历史';
+          }}
+        />
       </Table>
     </Modal>
   );

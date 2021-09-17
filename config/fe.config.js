@@ -60,6 +60,16 @@ module.exports = {
       ];
     },
 
+    rollback: (options, projectInfo) => {
+      const { t, test, p, prod, online } = options;
+      const envCode = (t || test) ? envCodeMap.test : (p || prod || online) ? envCodeMap.prod : envCodeMap.dev;
+      const project = options.project || projectInfo.project;
+
+      return [
+        `#oss ./dist/index.html c2f-resource:${envCode}/${project}/index.html`,
+      ];
+    },
+
     analyze: [
       '$ npm run build:analyze'
     ],

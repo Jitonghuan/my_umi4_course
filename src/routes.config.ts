@@ -80,6 +80,10 @@ export default [
     path: `${baseRoutePath}/test/workspace`,
     redirect: `${baseRoutePath}/test/workspace/test-case-library`,
   },
+  {
+    path: `${baseRoutePath}}/test/quality-control-new`,
+    redirect: `${baseRoutePath}/test/quality-control-new/overview`,
+  },
 
   {
     path: 'demo',
@@ -235,11 +239,11 @@ export default [
             component: '@/pages/application/application-detail/components/fe-versions',
           },
           {
-            path: 'routeTemplate',
-            name: '路由模板',
+            path: 'routeConfig',
+            name: '路由配置',
             key: 'appList',
             hideInMenu: true,
-            component: '@/pages/application/application-detail/components/route-template',
+            component: '@/pages/application/application-detail/components/route-config',
           },
         ],
       },
@@ -500,6 +504,43 @@ export default [
             name: '计划详情',
             key: 'test-workspace',
             component: '@/pages/test/workspace/plan-info',
+          },
+        ],
+      },
+      {
+        path: 'quality-control-new',
+        name: '质量控制（新）',
+        key: 'quality-control-new',
+        routes: [
+          {
+            path: 'overview',
+            name: '质量看板',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/overview',
+          },
+          {
+            path: 'task-list',
+            name: '任务列表',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/task-list',
+          },
+          {
+            path: 'quality-scoring-rules',
+            name: '质量分规则',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/quality-scoring-rules',
+          },
+          {
+            path: 'global-control-point-rules',
+            name: '全局卡点规则',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/global-control-point-rules',
+          },
+          {
+            path: 'app-control-point-rules',
+            name: '应用卡点规则',
+            key: 'quality-control-new',
+            component: '@/pages/test/quality-control-new/app-control-point-rules',
           },
         ],
       },
