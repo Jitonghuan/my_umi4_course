@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Upload } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import {
@@ -197,7 +197,8 @@ export default function PublishDetail(props: IProps) {
       onOk: () => {
         restartApp({
           appCode: appData?.appCode,
-          envCode: restartEnv?.[0],
+          // envCode: restartEnv?.[0],
+          envCode: restartEnv,
           appCategoryCode: appData?.appCategoryCode,
         })
           .then((resp) => {
@@ -213,6 +214,7 @@ export default function PublishDetail(props: IProps) {
       onCancel() {},
     });
   };
+  console.log('0000', restartEnv);
 
   return (
     <div className={rootCls}>
@@ -364,11 +366,10 @@ export default function PublishDetail(props: IProps) {
       >
         <div>
           <span>发布环境：</span>
-          <Checkbox.Group
-            value={restartEnv}
-            onChange={(v: any) => setRestartEnv(v)}
-            options={[{ label: '天台生产', value: 'tt-his' }] || []}
-          />
+          <Radio.Group value={restartEnv} onChange={(v: any) => setRestartEnv(v.target.value)}>
+            <Radio value="tt-his">天台生产</Radio>
+            <Radio value="tt-health">天台健康</Radio>
+          </Radio.Group>
         </div>
       </Modal>
 
