@@ -23,3 +23,9 @@ export const taskCareCancel = addAPIPrefix('/qc/codeQuality/task/careCancel');
 
 /** POST 执行任务 */
 export const taskExcute = addAPIPrefix('/qc/codeQuality/task/excute');
+
+/** GET 获取应用分类列表 */
+export const getAppCateList = addAPIPrefix('/others/appCategory/all');
+
+/** GET 获取应用Code列表 */
+export const getAppCodeList = addAPIPrefix('/others/app/all');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Select, Checkbox, DatePicker, Input } from 'antd';
+import { Modal, Form, Select, Checkbox, DatePicker, Input, Switch } from 'antd';
 import { operateTask } from '../../service';
 import { postRequest } from '@/utils/request';
 
@@ -75,8 +75,8 @@ export default function CreateOrEditTaskModal(props: ICreateOrEditTaskModal) {
         <Form.Item label="负责人" name="owner">
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="通知对象" name="recipient">
-          <Select />
+        <Form.Item label="钉钉提醒" name="recipient">
+          <Switch />
         </Form.Item>
       </Form>
     </Modal>
