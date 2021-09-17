@@ -2,17 +2,22 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 20:15
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { Drawer, Form, Tabs, message, Button } from 'antd';
 import { CaseItemVO } from '../../interfaces';
 import CaseFormEditor, { getInitAddFieldData, getInitEditFieldData } from './form-editor';
+import FELayout from '@cffe/vc-layout';
+import SourceCodeEdit from './source-code-edit';
 import { CaseEditorProps, ParamType, TabKeys } from './types';
 import './index.less';
 
 export default function CaseEditor(props: CaseEditorProps) {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [editField] = Form.useForm<Record<string, any>>();
   const [paramType, setParamType] = useState<ParamType>('json');
   const [activeKey, setActiveKey] = useState<TabKeys>('form-mode');
+
+  const [sourceCodeData, setSourceCodeData] = useState<any>({});
 
   // 编辑时回填数据
   const initEditField = async (initData: CaseItemVO) => {
@@ -33,7 +38,48 @@ export default function CaseEditor(props: CaseEditorProps) {
 
   const handleTabChange = useCallback((nextKey: TabKeys) => {
     if (nextKey === 'source-mode') {
-      // TODO 重新回填数据
+      editField
+        .validateFields()
+        .then((values: any) => {
+          const payload = {
+            name: values.name,
+            desc: values.desc,
+            allowSkip: values.allowSkip || false,
+            skipReason: values.skipReason || '',
+            headers: values.headers || [],
+            parameters: props.paramType === 'form' ? values.parameters || [] : values.parametersJSON || '',
+            preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
+            customVars: values.customVars || [],
+            savedVars: values.savedVars || [],
+            hooks: {
+              setup: (values.beforeFuncs || []).map((n: any) => ({
+                id: n.id,
+                type: n.type || 0,
+                argument: n.argument || '',
+              })),
+              teardown: (values.afterFuncs || []).map((n: any) => ({
+                id: n.id,
+                type: n.type || 0,
+                argument: n.argument || '',
+              })),
+            },
+            resAssert: values.resAssert || [],
+            // modifyUser: userInfo.userName,
+            // id: props.initData?.id,
+            // apiId: props.initData?.apiId,
+            // createUser: props.initData?.createUser,
+          };
+          setSourceCodeData(payload);
+          console.log('payload :>> ', payload);
+        })
+        .catch((error: any) => {
+          const info = error.errorFields
+            ?.map((n: any) => n.errors)
+            .flat()
+            .join('; ');
+          message.error(info);
+          throw error;
+        });
       setActiveKey(nextKey);
     } else {
       // TODO 先校验数据，再回填表单
@@ -45,7 +91,6 @@ export default function CaseEditor(props: CaseEditorProps) {
   useEffect(() => {
     if (props.mode === 'HIDE') {
       setActiveKey('form-mode');
-
       return;
     }
 
@@ -77,14 +122,7 @@ export default function CaseEditor(props: CaseEditorProps) {
       {activeKey === 'form-mode' && (
         <CaseFormEditor {...props} field={editField} paramType={paramType} onParamTypeChange={(n) => setParamType(n)} />
       )}
-      {activeKey === 'source-mode' && (
-        <>
-          <div className="drawer-body-inner">敬请期待</div>
-          <div className="drawer-custom-footer">
-            <Button type="primary">保存</Button>
-          </div>
-        </>
-      )}
+      {activeKey === 'source-mode' && <SourceCodeEdit data={sourceCodeData} />}
     </Drawer>
   );
 }

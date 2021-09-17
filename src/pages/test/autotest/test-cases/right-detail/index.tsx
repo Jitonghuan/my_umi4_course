@@ -12,7 +12,6 @@ import * as APIS from '../../service';
 import { TreeNode, CaseItemVO } from '../../interfaces';
 import { useApiDetail, useCaseList } from '../hooks';
 import CaseExec from '../../_components/case-exec';
-import SourceCodeEditModal from '../../_components/case-editor/source-code-edit-modal';
 import './index.less';
 
 interface RightDetailProps extends Record<string, any> {
@@ -35,9 +34,6 @@ export default function RightDetail(props: RightDetailProps) {
   );
   const [execCases, setExecCases] = useState<CaseItemVO[]>([]);
   const [searchField] = Form.useForm();
-
-  const [sourceCodeEditModalVisible, setSourceCodeEditModalVisible] = useState(false);
-  const [curCase, setCurCase] = useState<any>();
 
   useEffect(() => {
     const listener = () => {
@@ -65,12 +61,6 @@ export default function RightDetail(props: RightDetailProps) {
 
   const handleEditCaseItem = (record: CaseItemVO) => {
     props.emitter.emit('CASE::EDIT_CASE', record);
-  };
-
-  const handleSourceCodeEditCaseItem = (record: CaseItemVO) => {
-    // props.emitter.emit('CASE::EDIT_CASE', record);
-    setSourceCodeEditModalVisible(true);
-    setCurCase(record);
   };
 
   const handleDetailCaseItem = (record: CaseItemVO) => {
@@ -153,12 +143,11 @@ export default function RightDetail(props: RightDetailProps) {
         <Table.Column dataIndex="createUser" title="创建人" width={120} />
         <Table.Column dataIndex="gmtModify" title="修改时间" width={160} />
         <Table.Column
-          width={200}
+          width={160}
           title="操作"
           render={(_, record: CaseItemVO, index: number) => (
             <div className="action-cell">
               <a onClick={() => handleEditCaseItem(record)}>编辑</a>
-              <a onClick={() => handleSourceCodeEditCaseItem(record)}>源码编辑</a>
               <Popconfirm title="确定要删除该用例吗？" onConfirm={() => handleDelCaseItem(record, index)}>
                 <a>删除</a>
               </Popconfirm>
@@ -168,12 +157,6 @@ export default function RightDetail(props: RightDetailProps) {
         />
       </Table>
       <CaseExec visible={!!execCases.length} caseList={execCases} onClose={() => setExecCases([])} />
-
-      <SourceCodeEditModal
-        visible={sourceCodeEditModalVisible}
-        setVisible={setSourceCodeEditModalVisible}
-        data={curCase}
-      />
     </ContentCard>
   );
 }
