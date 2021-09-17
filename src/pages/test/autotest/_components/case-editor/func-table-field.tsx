@@ -153,7 +153,7 @@ export default function FuncTableField(props: FuncTableFieldProps) {
           <Button>新增SQL</Button>
         </Popover>
       </div>
-      <Table dataSource={props.value || []} bordered pagination={false}>
+      <Table rowKey={(n) => `${n.type}-${n.name}`} dataSource={props.value || []} bordered pagination={false}>
         <Table.Column dataIndex="type" title="类型" render={(value) => (value === 1 ? 'SQL' : '函数')} width={60} />
         <Table.Column dataIndex="name" title="函数" />
         <Table.Column

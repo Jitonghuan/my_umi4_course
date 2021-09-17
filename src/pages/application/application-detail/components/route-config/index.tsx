@@ -21,7 +21,7 @@ export default function RouteTemplate() {
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
   const [appEnvCodeData] = useAppEnvCodeData(appData?.appCode);
   const [envCode, setEnvCode] = useState<string>();
-  const [routeTemplate, isLoading, reloadData] = useRouteItemData(appData!, envCode);
+  const [routeContent, isLoading, reloadData] = useRouteItemData(appData!, envCode);
   const [editValue, setEditValue] = useState<string>();
 
   useLayoutEffect(() => {
@@ -29,8 +29,8 @@ export default function RouteTemplate() {
   }, [tabActive]);
 
   useEffect(() => {
-    setEditValue(routeTemplate?.value || '');
-  }, [routeTemplate]);
+    setEditValue(routeContent?.value || '');
+  }, [routeContent]);
 
   const handleTabChange = useCallback((next: string) => {
     setTabActive(next);
@@ -62,8 +62,8 @@ export default function RouteTemplate() {
 
   // 重置模板
   const handleReset = useCallback(() => {
-    setEditValue(routeTemplate?.value || '');
-  }, [routeTemplate]);
+    setEditValue(routeContent?.value || '');
+  }, [routeContent]);
 
   // 提交数据
   const handleSubmit = useCallback(() => {
@@ -78,10 +78,10 @@ export default function RouteTemplate() {
           value: editValue,
         };
 
-        if (!!routeTemplate?.id) {
+        if (!!routeContent?.id) {
           await putRequest(APIS.updateFeRouteTemplate, {
             data: {
-              id: routeTemplate.id,
+              id: routeContent.id,
               ...payload,
             },
           });
@@ -95,7 +95,7 @@ export default function RouteTemplate() {
         reloadData();
       },
     });
-  }, [appData, envCode, routeTemplate, editValue]);
+  }, [appData, envCode, routeContent, editValue]);
 
   return (
     <ContentCard noPadding className="page-route-template">
