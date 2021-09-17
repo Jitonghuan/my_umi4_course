@@ -3,7 +3,7 @@
 // @create 2021/05/30 20:15
 
 import { useState, useEffect, useCallback } from 'react';
-import { Drawer, Form, Tabs, message } from 'antd';
+import { Drawer, Form, Tabs, message, Button } from 'antd';
 import { CaseItemVO } from '../../interfaces';
 import CaseFormEditor, { getInitAddFieldData, getInitEditFieldData } from './form-editor';
 import { CaseEditorProps, ParamType, TabKeys } from './types';
@@ -77,7 +77,14 @@ export default function CaseEditor(props: CaseEditorProps) {
       {activeKey === 'form-mode' && (
         <CaseFormEditor {...props} field={editField} paramType={paramType} onParamTypeChange={(n) => setParamType(n)} />
       )}
-      {activeKey === 'source-mode' && <div>敬请期待~~</div>}
+      {activeKey === 'source-mode' && (
+        <>
+          <div className="drawer-body-inner">敬请期待</div>
+          <div className="drawer-custom-footer">
+            <Button type="primary">保存</Button>
+          </div>
+        </>
+      )}
     </Drawer>
   );
 }
