@@ -47,7 +47,7 @@ export default function ApplicationEditor(props: IProps) {
 
   const [categoryCode, setCategoryCode] = useState<string>();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
-  const [feMicroMainProjectOptions] = useFeMicroMainProjectOptions();
+  const [feMicroMainProjectOptions] = useFeMicroMainProjectOptions(visible);
 
   const [form] = Form.useForm<AppItemVO>();
 
@@ -86,6 +86,7 @@ export default function ApplicationEditor(props: IProps) {
         ownerList: stringToList(initData?.owner),
       });
     } else {
+      setCategoryCode(undefined);
       form.setFieldsValue({
         ownerList: [userInfo.fullName!],
       });

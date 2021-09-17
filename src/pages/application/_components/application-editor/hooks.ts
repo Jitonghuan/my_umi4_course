@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { queryApps } from '../../service';
 
-export function useFeMicroMainProjectOptions() {
+export function useFeMicroMainProjectOptions(visible?: boolean) {
   const [data, setData] = useState<IOption[]>([]);
 
   const loadData = useCallback(async () => {
@@ -26,8 +26,10 @@ export function useFeMicroMainProjectOptions() {
   }, []);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (visible) {
+      loadData();
+    }
+  }, [visible]);
 
   return [data];
 }

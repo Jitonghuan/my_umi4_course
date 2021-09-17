@@ -33,4 +33,6 @@ export default {
    * 查看具体示例请看 /demo/icon-list 页面
    */
   menuIconUrl: '//at.alicdn.com/t/font_2040858_eeq8erl36fw.js',
+
+  isLocal: IS_LOCAL,
 };
