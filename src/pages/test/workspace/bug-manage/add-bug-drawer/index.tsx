@@ -124,7 +124,6 @@ export default function BugManage(props: any) {
   };
 
   const handleAddCaseSuccess = (newCase: any) => {
-    console.log('newCase :>> ', newCase);
     void updateAssociatingCaseTreeSelect();
     void setRelatedCases([...relatedCases, newCase?.id]);
   };
@@ -224,7 +223,7 @@ export default function BugManage(props: any) {
           </Row>
 
           <Form.Item label="关联用例" name="relatedCases">
-            <Space>
+            <div className="related-cases-container">
               <TreeSelect
                 disabled={readOnly}
                 className="test-case-tree-select"
@@ -242,7 +241,7 @@ export default function BugManage(props: any) {
                   新增用例
                 </Button>
               )}
-            </Space>
+            </div>
           </Form.Item>
           <Form.Item label="描述" name="desc">
             <RichText width="520px" height="500px" sona={sona} schema={schema} readOnly={readOnly} />
