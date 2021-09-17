@@ -3,15 +3,26 @@
 // @create 2021/08/28 14:20
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
+import { addAPIPrefix } from '@/utils';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import versionManageList from 'mock/versionManageList';
+export interface Item {
+  id: string;
+  templateName: string;
+  templateCode: string;
+  appCode: string;
+  appVsersion: string;
+  envCode: string;
+  status?: number;
+}
 export default function deliveryList() {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState<any[]>([
+  const [versionListData, setVersionListData] = useState<any[]>([
     {
       key: '1',
       templateName: '8888',
@@ -22,6 +33,28 @@ export default function deliveryList() {
       id: '1',
     },
   ]);
+  useEffect(() => {
+    versionList();
+  }, []);
+
+  const versionList = () => {
+    getRequest(addAPIPrefix('/deliverManage/versionManage/list')).then((result) => {
+      const source = result.data.dataSource;
+      setVersionListData(source);
+    });
+  };
+
+  type statusTypeItem = {
+    tagText: string;
+    buttonText: string;
+    color: string;
+    status: number;
+  };
+
+  const STATUS_TYPE: Record<number, statusTypeItem> = {
+    1: { tagText: '已上架', buttonText: '下线', color: 'green', status: 2 },
+    2: { tagText: '未上架', buttonText: '上架', color: 'default', status: 1 },
+  };
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -99,7 +132,7 @@ export default function deliveryList() {
         <div>
           <Table
             rowKey="id"
-            dataSource={dataSource}
+            dataSource={versionListData}
             bordered
             loading={loading}
             pagination={{
@@ -119,21 +152,41 @@ export default function deliveryList() {
             <Table.Column title="发布名称" dataIndex="id" width="8%" />
             <Table.Column title="发布环境" dataIndex="templateName" width="12%" ellipsis />
             <Table.Column title="交付版本" dataIndex="templateCode" width="20%" ellipsis />
-            <Table.Column title="应用名称" dataIndex="templateType" width="15%" />
-            <Table.Column title="应用版本" dataIndex="appCategoryCode" width="15%" />
+            <Table.Column title="应用名称" dataIndex="appCode" width="15%" />
+            <Table.Column title="应用版本" dataIndex="appVsersion" width="15%" />
             <Table.Column title="更新时间" dataIndex="envCode" width="12%" />
-            <Table.Column title="状态" dataIndex="envCode" width="10%" />
+            {/* render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag> */}
+            <Table.Column
+              title="状态"
+              dataIndex="status"
+              width="10%"
+              render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.tagText}</Tag>}
+            />
             <Table.Column
               title="操作"
               dataIndex="gmtModify"
               width="8%"
               key="action"
-              render={(_, index) => (
-                <Space size="small">
-                  <a>下线</a>
-                  <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem}>
-                    <a style={{ color: 'red' }}>删除</a>
+              render={(_: string, record: Item, index) => (
+                // <Space size="small">
+                //   <a>下线</a>
+                //   <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem}>
+                //     <a style={{ color: 'red' }}>删除</a>
+                //   </Popconfirm>
+                // </Space>
+                <Space>
+                  <Popconfirm title="确认删除？" onConfirm={() => {}} okText="是" cancelText="否">
+                    <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
                   </Popconfirm>
+                  {/* <Popconfirm
+                  title={`确认${STATUS_TYPE[record.status as number].buttonText}`}
+               
+                  okText="是"
+                  cancelText="否"
+                >
+                  <a>{STATUS_TYPE[record.status as number].buttonText}</a>
+                </Popconfirm> */}
+                  {/* <a>{STATUS_TYPE[record.status as number].buttonText}</a> */}
                 </Space>
               )}
             />
