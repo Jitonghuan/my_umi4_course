@@ -1,5 +1,20 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
-import { Form, Drawer, Modal, Input, Switch, Select, Tabs, Button, message, TreeSelect, Space, Table } from 'antd';
+import {
+  Form,
+  Drawer,
+  Modal,
+  Input,
+  Switch,
+  Select,
+  Tabs,
+  Button,
+  message,
+  TreeSelect,
+  Space,
+  Table,
+  Row,
+  Col,
+} from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { createCase, updateCase, getCategoryList, getCaseInfo } from '../../service';
 import { priorityEnum } from '../../constant';
@@ -138,25 +153,37 @@ export default function RightDetail(props: any) {
 
   const infoEl = (
     <>
-      <Form {...layout} form={form}>
+      <Form className="add-case-form" {...layout} form={form}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
           <Input disabled={readOnly} placeholder="请输入标题" />
         </Form.Item>
         <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
           <TreeSelect disabled={readOnly} treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
         </Form.Item>
-        <Form.Item label="优先级:" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
-          <Select disabled={readOnly}>
-            {priorityEnum.map((item) => (
-              <Select.Option value={item.value} key={item.value}>
-                {item.label}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item label="是否自动化:" name="isAuto" valuePropName="checked">
-          <Switch disabled={readOnly} />
-        </Form.Item>
+
+        <Row className="row-form-item">
+          <Col span="12" className="col-form-item">
+            <span className="form-item-label">
+              <span className="import-identification">* </span>优先级 :{' '}
+            </span>
+            <Form.Item className="form-item-info" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
+              <Select disabled={readOnly}>
+                {priorityEnum.map((item) => (
+                  <Select.Option value={item.value} key={item.value}>
+                    {item.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span="12" style={{ display: 'flex' }} className="col-form-item">
+            <span className="form-item-label">是否自动化 : </span>
+            <Form.Item className="form-item-info ml-8" name="isAuto" valuePropName="checked">
+              <Switch disabled={readOnly} />
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Form.Item label="前置条件:" name="precondition">
           <Input.TextArea disabled={readOnly} placeholder="请输入前置条件"></Input.TextArea>
         </Form.Item>
@@ -259,7 +286,7 @@ export default function RightDetail(props: any) {
           </Tabs>
         </Form.Item>
         <Form.Item label="备注" name="comment">
-          <RichText readOnly={readOnly} sona={sona} schema={schema} width="100%" height="200px" />
+          <RichText readOnly={readOnly} sona={sona} schema={schema} width="100%" height="400px" />
         </Form.Item>
       </Form>
 
@@ -303,6 +330,7 @@ export default function RightDetail(props: any) {
     </Modal>
   ) : (
     <Drawer
+      className="add-case-drawer"
       visible={visible}
       width="650"
       title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
