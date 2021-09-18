@@ -10,19 +10,22 @@ import moment from 'moment';
 // 变更详情折线图
 export function appChangeChart(appChangeData: Record<string, any>) {
   const { appData } = useContext(DetailContext);
-
   const startDate = moment().subtract(8, 'days').format('YYYY-MM-DD');
   const endDate = moment().subtract(1, 'days').format('YYYY-MM-DD');
   console.log('时间：', startDate, endDate);
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getChangeDetailList();
+  }, []);
+  let envCodeArry = [];
   const getChangeDetailList = () => {
     getRequest(changeDetailList, {
       data: { appCode: appData?.appCode, cycleStart: startDate, cycleEnd: endDate },
     })
       .then((result) => {
-        let changeDetailData = result.data.dataSource;
-        let arr = [];
-        arr.push(changeDetailData);
+        let changeDetailData = result.data;
+        for (let index = 0; index < changeDetailData.length; index++) {
+          const element = changeDetailData[index];
+        }
       })
       .finally(() => {});
   };

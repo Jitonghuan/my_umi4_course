@@ -15,34 +15,40 @@ export default function appChangeTable(props: appChangeTableProps) {
   const { loading } = props;
   const { Option } = Select;
   const { appData } = useContext(DetailContext);
-  const [appChangeData, setAppChangeData] = useState<any>([]); //表格数据
+  const [appChangeData, setAppChangeData] = useState<any[]>([]); //文件修改表格数据
+  const [userRankingData, setUserRankingData] = useState<any[]>([]); //子表格文件修改人员数据
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [pageTotal, setPageTotal] = useState<number>();
   let fileName = '';
   useEffect(() => {
-    getRequest(listRanking, {
-      data: { appCode: appData?.appCode, pageIndex: 1, pageSize: 5 },
-    })
-      .then((result) => {
-        if (result.success) {
-          let listRankingData = result.data.dataSource;
-          setAppChangeData(listRankingData);
-          setPageTotal(pageTotal);
-          setPageIndex(pageIndex);
-          fileName = listRankingData.file;
-        }
+    const queryListRanking = () => {
+      getRequest(listRanking, {
+        data: { appCode: appData?.appCode, pageIndex: 1, pageSize: 5 },
       })
-      .finally(() => {});
+        .then((result) => {
+          if (result.success) {
+            let listRankingData = result.data.dataSource;
+            setAppChangeData(listRankingData);
+            setPageTotal(pageTotal);
+            setPageIndex(pageIndex);
+          }
+        })
+        .finally(() => {});
+    };
   }, []);
+
+  const expandListUserRanking = (expanded: any, record: any) => {
+    fileName = record.file;
+  };
   useEffect(() => {
     getRequest(listUserRanking, {
       data: { appCode: appData?.appCode, file: fileName, pageIndex: 1, pageSize: 5 },
     })
-      .then((result) => {
-        if (result.success) {
-          let listRankingData = result.data.dataSource;
-          setAppChangeData(listRankingData);
+      .then((resp) => {
+        if (resp.success) {
+          let listUserRankingData = resp.data.dataSource[0];
+          setUserRankingData(listUserRankingData);
           setPageTotal(pageTotal);
           setPageIndex(pageIndex);
         }
@@ -132,21 +138,11 @@ export default function appChangeTable(props: appChangeTableProps) {
       { title: '应用Code', dataIndex: 'appCode', key: 'appCode' },
       { title: '环境Code', dataIndex: 'envCode', key: 'envCode' },
       { title: '统计周期', dataIndex: 'calculateCycle', key: 'calculateCycle' },
-      { title: 'Upgrade Status', dataIndex: 'file', key: 'file' },
+      { title: '文件', dataIndex: 'file', key: 'file' },
       { title: '修改人员', dataIndex: 'user', key: 'user' },
       { title: '修改次数', dataIndex: 'changeTimes', key: 'changeTimes' },
     ];
-
-    const data = [];
-    for (let i = 0; i < 3; ++i) {
-      data.push({
-        key: i,
-        ranking: '2014-12-24 23:12:00',
-        appCode: 'This is production name',
-        envCode: 'Upgraded: 56',
-      });
-    }
-    return <Table columns={columns} dataSource={data} pagination={false} />;
+    return <Table columns={columns} dataSource={userRankingData} pagination={false} />;
   };
   const handleChange = (value: any) => {
     console.log(`selected ${value}`);
@@ -193,6 +189,7 @@ export default function appChangeTable(props: appChangeTableProps) {
             }}
             onChange={pageSizeClick}
             expandable={{ expandedRowRender }}
+            onExpand={expandListUserRanking}
           />
         </div>
       </div>
