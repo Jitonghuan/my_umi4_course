@@ -66,6 +66,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
     <div className="case-table-field">
       <div className="field-caption">
         <h3>{props.title || '前置用例'}</h3>
+        <s className="flex-air"></s>
         <Popover
           visible={popVisible}
           onVisibleChange={(n) => setPopVisible(n)}
@@ -109,7 +110,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
               <Table.Column title="描述" dataIndex="desc" />
             </Table>
             <h4> 保存返回值</h4>
-            <Table dataSource={n.savedVars || []} pagination={false} bordered>
+            <Table rowKey="name" dataSource={n.savedVars || []} pagination={false} bordered>
               <Table.Column title="变量名" dataIndex="name" />
               <Table.Column title="表达式" dataIndex="jsonpath" />
               <Table.Column title="描述" dataIndex="desc" />

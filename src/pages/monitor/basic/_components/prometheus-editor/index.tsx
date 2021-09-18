@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Form, Input, Select, Button, Drawer, message } from 'antd';
+import { getRequest } from '@/utils/request';
 import EditorTable from '@cffe/pc-editor-table';
 import { KVProps, PromitheusItemProps } from '../../interfaces';
 import { postRequest } from '@/utils/request';
@@ -27,10 +28,9 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
   const [editField] = Form.useForm<PromitheusItemProps>();
   const [intervalOptions] = useIntervalOptions();
   const [appCode, setAppCode] = useState<string>();
-  const [appCodeOptions] = useAppCodeOptions();
   const [envCodeOptions, envCodeLoading] = useEnvCodeOptions(appCode);
+  const [envCodeList, setEnvCodeList] = useState<any[]>([]); //通过通用查询环境接口获取到环境列表
   const [pending, setPending] = useState(false);
-
   useEffect(() => {
     if (mode === 'HIDE') return;
     editField.resetFields();
@@ -52,7 +52,9 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
     };
     editField.setFieldsValue(payload);
   }, [mode]);
-
+  useEffect(() => {
+    envDataList();
+  }, [mode]);
   const handleAppCodeChange = useCallback(
     (next: string) => {
       setAppCode(next);
@@ -60,7 +62,17 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
     },
     [editField],
   );
-
+  //通过接口获取所有环境
+  const envDataList = () => {
+    getRequest(APIS.envList, { data: { pageIndex: 1, pageSize: 100 } }).then((result) => {
+      const envslist = result.data.dataSource?.map((n: any) => ({
+        value: n?.envCode,
+        label: n?.envName,
+        data: n,
+      }));
+      setEnvCodeList(envslist);
+    });
+  };
   // 提交表单
   const handleSubmit = useCallback(async () => {
     const { labelList, ...others } = await editField.validateFields();
@@ -112,12 +124,12 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
         </FormItem>
         <FormItem label="应用code" name="appCode" rules={[{ required: true, message: '请选择应用' }]}>
           {mode === 'ADD' ? (
-            <Select
-              placeholder="请选择"
-              options={appCodeOptions}
-              onChange={handleAppCodeChange}
+            <Input
+              placeholder="请输入"
+              // options={appCodeOptions}
+              // onChange={handleAppCodeChange}
               {...fieldCommon}
-              showSearch
+              // showSearch
             />
           ) : (
             <Input disabled {...fieldCommon} />
@@ -125,13 +137,7 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
         </FormItem>
         <FormItem label="环境code" name="envCode" rules={[{ required: true, message: '请选择环境' }]}>
           {mode === 'ADD' ? (
-            <Select
-              placeholder="请选择"
-              options={envCodeOptions}
-              loading={envCodeLoading}
-              {...fieldCommon}
-              showSearch
-            />
+            <Select placeholder="请选择" options={envCodeList} loading={envCodeLoading} {...fieldCommon} showSearch />
           ) : (
             <Input disabled {...fieldCommon} />
           )}

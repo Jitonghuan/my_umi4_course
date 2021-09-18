@@ -62,8 +62,8 @@ export default function ApplicationDetail(props: IProps) {
       if (key === 'feVersion') {
         return isFrontend;
       }
-      // 只有微前端主工程才有路由模板
-      if (key === 'routeTemplate') {
+      // 只有微前端主工程才有路由配置
+      if (key === 'routeConfig') {
         return isFrontend && appData.projectType === 'micro' && appData.microFeType === 'mainProject';
       }
 
