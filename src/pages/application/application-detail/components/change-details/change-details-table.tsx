@@ -2,10 +2,11 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Table, Select } from 'antd';
 import { getRequest } from '@/utils/request';
-import { changeDetailList, listRanking, listUserRanking } from './service';
+import { listRanking, listUserRanking } from './service';
+import DetailContext from '@/pages/application/application-detail/context';
 
 export interface appChangeTableProps {
   loading?: boolean;
@@ -13,19 +14,41 @@ export interface appChangeTableProps {
 export default function appChangeTable(props: appChangeTableProps) {
   const { loading } = props;
   const { Option } = Select;
+  const { appData } = useContext(DetailContext);
   const [appChangeData, setAppChangeData] = useState<any>([]); //表格数据
   // const [detailsColumns,setDetailsColumns] = useState<any[]>([]);//表格列
-  useEffect(() => {}, []);
-
+  useEffect(() => {
+    //   getRequest(listRanking, {
+    //     data: { appCode: appData?.appCode,pageIndex:1,pageSize:5},
+    //   })
+    //     .then((result) => {
+    //       let changeDetailData = result.data.dataSource;
+    //       let arr = [];
+    //       arr.push(changeDetailData);
+    //     })
+    //     .finally(() => {});
+    // };
+  }, []);
+  const getlistRanking = () => {
+    getRequest(listRanking, {
+      data: { appCode: appData?.appCode },
+    })
+      .then((result) => {
+        let changeDetailData = result.data.dataSource;
+        let arr = [];
+        arr.push(changeDetailData);
+      })
+      .finally(() => {});
+  };
   const columns = [
     {
       title: '排名',
-      dataIndex: 'sorter',
-      key: 'sorter',
+      dataIndex: 'ranking',
+      key: 'ranking',
     },
     {
       title: '统计周期',
-      dataIndex: 'statisticalCycle',
+      dataIndex: 'calculateCycle',
     },
     {
       title: '环境',
@@ -37,70 +60,51 @@ export default function appChangeTable(props: appChangeTableProps) {
     },
     {
       title: '修改次数',
-      dataIndex: 'modificationTimes',
+      dataIndex: 'changeTimes',
       sorter: {
         compare: (a: any, b: any) => a.modificationTimes - b.modificationTimes,
         // multiple: 1,
       },
     },
   ];
-  // setDetailsColumns(columns);
-  const countList = [
-    {
-      key: '1',
-      sorter: '1',
-      statisticalCycle: 'yyy',
-      envCode: 'HBos-dev',
-      file: 'xxxx',
-      modificationTimes: '777',
-      description: '',
-    },
-    {
-      key: '2',
-      sorter: '2',
-      statisticalCycle: 'yyy',
-      envCode: 'HBos-dev',
-      file: 'xxxx',
-      modificationTimes: '887',
-      description: '',
-    },
+  const countList: any = [
+    // {
+    //   key: '1',
+    //   sorter: '1',
+    //   statisticalCycle: 'yyy',
+    //   envCode: 'HBos-dev',
+    //   file: 'xxxx',
+    //   modificationTimes: '777',
+    //   description: '',
+    // },
+    // {
+    //   key: '2',
+    //   sorter: '2',
+    //   statisticalCycle: 'yyy',
+    //   envCode: 'HBos-dev',
+    //   file: 'xxxx',
+    //   modificationTimes: '887',
+    //   description: '',
+    // },
   ];
-  const onExpand = () => {
-    columns.push({
-      title: '排名列',
-      dataIndex: 'sorter',
-      key: 'sorter',
-    });
-    // detailsColumns.concat(arr);
-    // setDetailsColumns(columns)
 
-    //需要考虑当clumns长度大于多少的时候 把数组的最后一个下标删除
-  };
   const expandedRowRender = () => {
     const columns = [
-      { title: '日期', dataIndex: 'date', key: 'date' },
-      { title: '名称', dataIndex: 'name', key: 'name' },
-      { title: 'Upgrade Status', dataIndex: 'upgradeNum', key: 'upgradeNum' },
-
-      // render: () => (
-      //   <Space size="middle">
-      //     <a>Pause</a>
-      //     <a>Stop</a>
-      //     <Dropdown overlay={menu}>
-      //       <a>
-      //         More <DownOutlined />
-      //       </a>
-      //     </Dropdown>
-      //   </Space>
-      // ),
+      { title: '排名', dataIndex: 'ranking', key: 'ranking' },
+      { title: '应用Code', dataIndex: 'appCode', key: 'appCode' },
+      { title: '环境Code', dataIndex: 'envCode', key: 'envCode' },
+      { title: '统计周期', dataIndex: 'calculateCycle', key: 'calculateCycle' },
+      { title: 'Upgrade Status', dataIndex: 'file', key: 'file' },
+      { title: '修改人员', dataIndex: 'user', key: 'user' },
+      { title: '修改次数', dataIndex: 'changeTimes', key: 'changeTimes' },
     ];
     const data = [];
     for (let i = 0; i < 3; ++i) {
       data.push({
         key: i,
-        date: '2014-12-24 23:12:00',
-        name: 'This is production name',
-        upgradeNum: 'Upgraded: 56',
+        ranking: '2014-12-24 23:12:00',
+        appCode: 'This is production name',
+        envCode: 'Upgraded: 56',
       });
     }
     return <Table columns={columns} dataSource={data} pagination={false} />;
@@ -142,7 +146,6 @@ export default function appChangeTable(props: appChangeTableProps) {
             //     rowExpandable: record => record.sorter !== 'Not Expandable',
             //   }}
             expandable={{ expandedRowRender }}
-            onExpand={onExpand}
           />
         </div>
       </div>
