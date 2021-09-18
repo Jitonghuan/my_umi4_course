@@ -66,6 +66,7 @@ const lineChartTmp = [
 
 export default function Overview(props: any) {
   const [ranking] = HOOKS.useAllRanking();
+  const [allAppServices] = HOOKS.useAllAppServices();
   const [appTrendMap] = HOOKS.useAppTrendMap();
 
   return (
@@ -73,7 +74,7 @@ export default function Overview(props: any) {
       <HeaderTabs activeKey="overview" history={props.history} />
       <ContentCard>
         <label>
-          应用服务: <Select allowClear placeholder="Please select" />
+          应用服务: <Select className="app-service-select" placeholder="请选择" mode="tags" options={allAppServices} />
         </label>
         <div className="line-chart-group">
           {lineChartTmp.map((item, index) => (

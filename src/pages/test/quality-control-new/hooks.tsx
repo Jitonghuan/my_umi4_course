@@ -67,7 +67,11 @@ export function useAllRanking() {
 }
 
 export function useAllAppServices() {
-  const [data, setData] = useState<IConfig[]>([]);
+  const [data, setData] = useState<IOption[]>([
+    { label: '测试1', value: 'test1' },
+    { label: '测试2', value: 'test2' },
+    { label: '测试3', value: 'test3' },
+  ]);
 
   // useEffect(() => {
   //   getRequest(APIS.getRanking).then((res) => {
