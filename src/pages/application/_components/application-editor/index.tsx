@@ -262,7 +262,7 @@ export default function ApplicationEditor(props: IProps) {
                             name="routeFile"
                             rules={[{ required: true, message: '请输入路由文件名' }]}
                           >
-                            <Input placeholder="app.json" style={{ width: 320 }} />
+                            <Input placeholder="apps.json、index.html" style={{ width: 320 }} />
                           </FormItem>
                         ) : (
                           // 子应用
