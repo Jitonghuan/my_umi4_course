@@ -166,7 +166,11 @@ export default function RightDetail(props: any) {
             <span className="form-item-label">
               <span className="import-identification">* </span>优先级 :{' '}
             </span>
-            <Form.Item className="form-item-info" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
+            <Form.Item
+              className="form-item-info ml-41"
+              name="priority"
+              rules={[{ required: true, message: '请选择优先级' }]}
+            >
               <Select disabled={readOnly}>
                 {priorityEnum.map((item) => (
                   <Select.Option value={item.value} key={item.value}>
