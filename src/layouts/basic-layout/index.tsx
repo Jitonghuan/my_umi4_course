@@ -21,7 +21,7 @@ import './index.less';
 if (appConfig.isLocal) {
   const oldError = console.error.bind(console);
   console.error = (...args: string[]) => {
-    if (args?.find((n) => n.includes('Warning: '))) {
+    if (args?.find((n) => n?.includes('Warning: '))) {
       return console.log('%c[React Warning] ', 'color:orange', args?.[0]);
     }
     oldError(...args);

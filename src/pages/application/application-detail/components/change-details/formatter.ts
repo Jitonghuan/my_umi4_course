@@ -25,6 +25,7 @@ export function appChangeChart(appChangeData: Record<string, any>) {
         let changeDetailData = result.data;
         for (let index = 0; index < changeDetailData.length; index++) {
           const element = changeDetailData[index];
+          envCodeArry.push(element[0].envCode);
         }
       })
       .finally(() => {});
@@ -39,6 +40,7 @@ export function appChangeChart(appChangeData: Record<string, any>) {
     //图例组件
     legend: {
       data: ['HBOS开发', 'HBOS测试', 'HBOS预发', 'HBOS生产'],
+      // data:envCodeArry  todo
       orient: 'vertical',
       top: 0,
       right: 0,
