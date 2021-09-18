@@ -65,8 +65,10 @@ export default function TestCase(props: any) {
     nedExpandKeys = [];
     void setFilterCaseCateTreeData(filterTreeData(_curTreeData?.filter((node) => node.id == cateId) || [], keyword));
     // 根节点一定展开
-    nedExpandKeys.push(+cateId);
-    void setExpandedKeys(nedExpandKeys);
+    if (!expandedKeys || expandedKeys.length === 0) {
+      nedExpandKeys.push(+cateId);
+      void setExpandedKeys(nedExpandKeys);
+    }
   };
 
   /** ------------------------ 更新左侧树列表 end ------------------------ */
