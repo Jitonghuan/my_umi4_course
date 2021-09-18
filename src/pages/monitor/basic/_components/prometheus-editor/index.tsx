@@ -67,9 +67,10 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
     getRequest(APIS.envList, { data: { pageIndex: 1, pageSize: 100 } }).then((result) => {
       const envslist = result.data.dataSource?.map((n: any) => ({
         value: n?.envCode,
-        label: n?.envName,
+        label: n?.envCode,
         data: n,
       }));
+      console.log('envlist', envslist);
       setEnvCodeList(envslist);
     });
   };
