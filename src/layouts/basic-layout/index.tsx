@@ -17,6 +17,17 @@ import {
 } from '@/common/hooks';
 import './index.less';
 
+// 屏蔽掉 React Development 模式下红色的警告
+if (appConfig.isLocal) {
+  const oldError = console.error.bind(console);
+  console.error = (...args: string[]) => {
+    if (args?.find((n) => n.includes('Warning: '))) {
+      return console.log('%c[React Warning] ', 'color:orange', args?.[0]);
+    }
+    oldError(...args);
+  };
+}
+
 export default function BasicLayout(props: any) {
   // 初始化 doc title hook
   useDocumentTitle('', props?.location?.pathname);
