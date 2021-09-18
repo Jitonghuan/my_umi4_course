@@ -56,9 +56,14 @@ module.exports = {
         `$ fe build --version=${version}`,
         `#oss -r ./dist c2f-resource:${envCode}/${project}/${version}`,
         `#oss ./dist/index.html c2f-resource:${envCode}/${project}/index.html`,
+
         '#logger:success PUBLISH SUCCESS!!',
       ];
     },
+
+    scp: [
+      '#scp ./dist/index.html root@192.168.0.111:/usr/share/nginx/html/matrix-test/matrix/index.html --pass=&WUb&1u8508P0ohD',
+    ],
 
     rollback: (options, projectInfo) => {
       const { t, test, p, prod, online } = options;
