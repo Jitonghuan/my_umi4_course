@@ -22,7 +22,11 @@ export default function SourceCodeEdit(props: any) {
     setFinalVariableData(variableData.filter((item: any) => item?.a?.includes(val)));
   };
 
-  const handleSave = () => {
+  const handleDebug = () => {
+    console.log('调试');
+  };
+
+  const handleSubmit = async () => {
     if (!editorValue) return;
     let finalCaseJSON;
     try {
@@ -34,7 +38,11 @@ export default function SourceCodeEdit(props: any) {
     }
 
     console.log('finalCaseJSON :>> ', finalCaseJSON);
+    const { data: formData } = await postRequest(APIS.ymlToCase, {
+      data: { ...finalCaseJSON, apiId: props.initData?.apiId },
+    });
     //TODO: 保存
+    console.log('formData :>> ', formData);
   };
 
   const beforeCaseLoadOptions = async (keyword: string) => {
@@ -158,8 +166,9 @@ export default function SourceCodeEdit(props: any) {
         </div>
       </div>
       <div className="drawer-custom-footer">
-        <Button type="primary" onClick={handleSave}>
-          保存
+        <Button onClick={handleDebug}>调试</Button>
+        <Button type="primary" onClick={handleSubmit}>
+          提交
         </Button>
       </div>
     </>

@@ -135,7 +135,9 @@ export default function CaseEditor(props: CaseEditorProps) {
       {activeKey === 'form-mode' && (
         <CaseFormEditor {...props} field={editField} paramType={paramType} onParamTypeChange={(n) => setParamType(n)} />
       )}
-      {activeKey === 'source-mode' && <SourceCodeEdit editorValue={editorValue} setEditorValue={setEditorValue} />}
+      {activeKey === 'source-mode' && (
+        <SourceCodeEdit {...props} editorValue={editorValue} setEditorValue={setEditorValue} />
+      )}
     </Drawer>
   );
 }
