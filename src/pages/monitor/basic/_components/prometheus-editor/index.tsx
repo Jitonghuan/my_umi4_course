@@ -70,8 +70,12 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
         label: n?.envCode,
         data: n,
       }));
-      console.log('envlist', envslist);
-      setEnvCodeList(envslist);
+
+      let envslistFilter = envslist.filter((item: any, index: any, self: any) => {
+        return self.indexOf(item) === index;
+      });
+      console.log('envlist', envslistFilter);
+      setEnvCodeList(envslistFilter);
     });
   };
   // 提交表单
