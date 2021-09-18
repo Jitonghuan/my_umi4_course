@@ -4,27 +4,19 @@ import YAML from 'yaml';
 import * as APIS from '../../../service';
 import DebounceSelect from '@/components/debounce-select';
 import { Button, Input, Table, ConfigProvider, Space, Empty, message } from 'antd';
-import { getRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
 
 export default function SourceCodeEdit(props: any) {
-  const { data, variableData } = props;
+  const { data, variableData, editorValue, setEditorValue } = props;
 
-  const [editorValue, setEditorValue] = useState<any>();
+  // const [editorValue, setEditorValue] = useState<any>();
   const [finalVariableData, setFinalVariableData] = useState<any[]>(variableData);
   const [editStatus, setEditStatus] = useState<'success' | 'error' | 'warning' | 'default'>();
 
   useEffect(() => {
     setFinalVariableData(variableData);
-
-    const tmpData = { ...data };
-    try {
-      tmpData.parameters = JSON.parse(tmpData.parameters);
-    } catch (e) {
-      tmpData.parameters = {};
-    }
-    setEditorValue(YAML.stringify(tmpData));
-  }, [variableData, data]);
+  }, [variableData]);
 
   const handleSearch = (val: string) => {
     setFinalVariableData(variableData.filter((item: any) => item?.a?.includes(val)));
@@ -32,16 +24,16 @@ export default function SourceCodeEdit(props: any) {
 
   const handleSave = () => {
     if (!editorValue) return;
-    let finalCaseInfo;
+    let finalCaseJSON;
     try {
-      finalCaseInfo = YAML.parse(editorValue);
+      finalCaseJSON = YAML.parse(editorValue);
     } catch (e) {
       message.error('格式不正确');
       setEditStatus('error');
       return;
     }
 
-    console.log('finalCaseInfo :>> ', finalCaseInfo);
+    console.log('finalCaseJSON :>> ', finalCaseJSON);
     //TODO: 保存
   };
 
