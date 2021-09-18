@@ -16,19 +16,57 @@ export default function appChangeTable(props: appChangeTableProps) {
   const { Option } = Select;
   const { appData } = useContext(DetailContext);
   const [appChangeData, setAppChangeData] = useState<any>([]); //表格数据
-  // const [detailsColumns,setDetailsColumns] = useState<any[]>([]);//表格列
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [pageTotal, setPageTotal] = useState<number>();
+  let fileName = '';
   useEffect(() => {
-    //   getRequest(listRanking, {
-    //     data: { appCode: appData?.appCode,pageIndex:1,pageSize:5},
-    //   })
-    //     .then((result) => {
-    //       let changeDetailData = result.data.dataSource;
-    //       let arr = [];
-    //       arr.push(changeDetailData);
-    //     })
-    //     .finally(() => {});
-    // };
+    getRequest(listRanking, {
+      data: { appCode: appData?.appCode, pageIndex: 1, pageSize: 5 },
+    })
+      .then((result) => {
+        if (result.success) {
+          let listRankingData = result.data.dataSource;
+          setAppChangeData(listRankingData);
+          setPageTotal(pageTotal);
+          setPageIndex(pageIndex);
+          fileName = listRankingData.file;
+        }
+      })
+      .finally(() => {});
   }, []);
+  useEffect(() => {
+    getRequest(listUserRanking, {
+      data: { appCode: appData?.appCode, file: fileName, pageIndex: 1, pageSize: 5 },
+    })
+      .then((result) => {
+        if (result.success) {
+          let listRankingData = result.data.dataSource;
+          setAppChangeData(listRankingData);
+          setPageTotal(pageTotal);
+          setPageIndex(pageIndex);
+        }
+      })
+      .finally(() => {});
+  }, []);
+  const pageSizeClick = (pagination: any) => {
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    // loadListData(obj);
+    setPageIndex(pagination.current);
+  };
+  //Todo.....点击第二页时传值查询
+  // const loadListData = (params: any) => {
+  //   const values = formTmpl.getFieldsValue();
+
+  //   queryList({
+  //     ...values,
+  //     ...params,
+  //   });
+  // };
+
   const getlistRanking = () => {
     getRequest(listRanking, {
       data: { appCode: appData?.appCode },
@@ -98,6 +136,7 @@ export default function appChangeTable(props: appChangeTableProps) {
       { title: '修改人员', dataIndex: 'user', key: 'user' },
       { title: '修改次数', dataIndex: 'changeTimes', key: 'changeTimes' },
     ];
+
     const data = [];
     for (let i = 0; i < 3; ++i) {
       data.push({
@@ -140,11 +179,19 @@ export default function appChangeTable(props: appChangeTableProps) {
             rowKey="sorter"
             bordered
             columns={columns}
-            dataSource={countList}
-            //   expandable={{
-            //     expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
-            //     rowExpandable: record => record.sorter !== 'Not Expandable',
-            //   }}
+            dataSource={appChangeData}
+            pagination={{
+              total: pageTotal,
+              pageSize,
+              current: pageIndex,
+              showSizeChanger: true,
+              onShowSizeChange: (_, size) => {
+                setPageSize(size);
+                setPageIndex(1);
+              },
+              showTotal: () => `总共 ${pageTotal} 条数据`,
+            }}
+            onChange={pageSizeClick}
             expandable={{ expandedRowRender }}
           />
         </div>
