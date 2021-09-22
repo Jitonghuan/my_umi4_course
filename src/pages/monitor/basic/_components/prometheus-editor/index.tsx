@@ -65,13 +65,19 @@ export default function PromitheusEditor(props: PromitheusEditorProps) {
   //通过接口获取所有环境
   const envDataList = () => {
     getRequest(APIS.envList, { data: { pageIndex: 1, pageSize: 100 } }).then((result) => {
-      const envslist = result.data.dataSource?.map((n: any) => ({
-        value: n?.envCode,
-        label: n?.envCode,
-        data: n,
-      }));
-      console.log('envlist', envslist);
-      setEnvCodeList(envslist);
+      let envlistArr: any = [];
+      const envslist = result.data.dataSource?.map((n: any) => {
+        envlistArr.push(n?.envCode);
+      });
+      let setEnvslist = new Set(envlistArr);
+      let newEnvList = Array.from(setEnvslist);
+      let envlistData = newEnvList.map((item: any) => {
+        return {
+          value: item,
+          lable: item,
+        };
+      });
+      setEnvCodeList(envlistData);
     });
   };
   // 提交表单
