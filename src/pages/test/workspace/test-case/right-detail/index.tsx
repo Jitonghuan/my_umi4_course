@@ -102,7 +102,7 @@ export default function RightDetail(props: any) {
       <div className="searchHeader">
         <Form layout="inline" onFinish={handleSearch} onReset={handleSearch} form={form}>
           <Form.Item label="用例标题:" name="keyword">
-            <Input placeholder="输入标题" />
+            <Input className="title-search" placeholder="输入标题" />
           </Form.Item>
           <Form.Item label="优先级:" name="priority">
             <Select placeholder="选择优先级" allowClear style={{ width: '106px' }}>
@@ -163,10 +163,10 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="categoryName"
             title="所属"
-            width={160}
+            width={200}
             render={(title) => (
               <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
+                <Typography.Text style={{ maxWidth: '200px' }} ellipsis={{ suffix: '' }}>
                   {title}
                 </Typography.Text>
               </Tooltip>
@@ -175,11 +175,11 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="title"
             title="用例名称"
-            width={240}
+            width={350}
             render={(title, record) => (
               <Tooltip title={title}>
                 <Typography.Text
-                  style={{ maxWidth: '240px', color: '#033980', cursor: 'pointer' }}
+                  style={{ maxWidth: '350px', color: '#033980', cursor: 'pointer' }}
                   ellipsis={{ suffix: '' }}
                   onClick={() => onSeeCaseBtnClick(record)}
                 >

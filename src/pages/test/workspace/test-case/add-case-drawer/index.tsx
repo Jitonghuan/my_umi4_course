@@ -153,7 +153,7 @@ export default function RightDetail(props: any) {
 
   const infoEl = (
     <>
-      <Form className="add-case-form" {...layout} form={form}>
+      <Form className="add-case-form" {...layout} form={form} initialValues={{ priority: priorityEnum[0].value }}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
           <Input disabled={readOnly} placeholder="请输入标题" />
         </Form.Item>
@@ -171,13 +171,7 @@ export default function RightDetail(props: any) {
               name="priority"
               rules={[{ required: true, message: '请选择优先级' }]}
             >
-              <Select disabled={readOnly}>
-                {priorityEnum.map((item) => (
-                  <Select.Option value={item.value} key={item.value}>
-                    {item.label}
-                  </Select.Option>
-                ))}
-              </Select>
+              <Select disabled={readOnly} options={priorityEnum} />
             </Form.Item>
           </Col>
           <Col span="12" style={{ display: 'flex' }} className="col-form-item">
