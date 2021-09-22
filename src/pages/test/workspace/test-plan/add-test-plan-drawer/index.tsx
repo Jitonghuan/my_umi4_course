@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
-import { createTestPlan, modifyTestPlan, getManagerList, getProjectTreeData } from '../../service';
+import { createTestPlan, modifyTestPlan, getManagerList } from '../../service';
 import { Form, Button, Table, Input, Select, Space, Drawer, message, Cascader } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
 import moment from 'moment';
+import * as HOOKS from '../../hooks';
 import './index.less';
 import _ from 'lodash';
 
@@ -13,7 +14,7 @@ export default function AddTestPlanDrawer(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [manageList, setManageList] = useState<string[]>([]);
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [projectTreeData] = HOOKS.useProjectTreeData();
   const [phaseCollectionFormItemHelp, setPhaseCollectionFormItemHelp] = useState<string>();
   const [phaseCollectionFormItemValidateStatus, setPhaseCollectionFormItemValidateStatus] = useState<any>();
   const [form] = Form.useForm();
@@ -21,17 +22,6 @@ export default function AddTestPlanDrawer(props: any) {
   useEffect(() => {
     void getRequest(getManagerList).then((res) => {
       void setManageList(res.data.usernames);
-    });
-
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
     });
   }, []);
 

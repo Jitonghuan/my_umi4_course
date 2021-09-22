@@ -22,9 +22,10 @@ import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import AddBugDrawer from '../../bug-manage/add-bug-drawer';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects, getProjectTreeData } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
+import * as HOOKS from '../../hooks';
 
 moment.locale('zh-cn');
 
@@ -55,7 +56,7 @@ export default function UserCaseInfoExec(props: any) {
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [projectTreeData] = HOOKS.useProjectTreeData();
 
   useEffect(() => {
     if (curCase) {
@@ -85,19 +86,6 @@ export default function UserCaseInfoExec(props: any) {
       } catch (e) {}
     }
   }, [curCase]);
-
-  useEffect(() => {
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
-    });
-  }, []);
 
   const changeCaseStatus = async (phaseId: number, caseId: number, status: string, executeNote?: string) => {
     // const loadEnd = message.loading('正在修改用例状态');
