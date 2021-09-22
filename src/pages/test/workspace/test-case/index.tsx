@@ -138,11 +138,6 @@ export default function TestCase(props: any) {
 
   return (
     <PageContainer>
-      {/* <div className="back-btn-container">
-        <div onClick={goBack} className="back-btn">
-          <LeftOutlined /> <span className="back-btn-title">返回</span>
-        </div>
-      </div> */}
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
         <CardRowGroup.SlideCard noPadding className="slide-card" width={320}>

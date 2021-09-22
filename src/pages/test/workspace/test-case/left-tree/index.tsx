@@ -52,12 +52,6 @@ export default function LeftTree(props: any) {
     }
   }, [keyword]);
 
-  // useEffect(() => {
-  //   if (cateTreeData[0]?.key) {
-  //     void setSelectedKeys([cateTreeData[0].key]);
-  //   }
-  // }, [cateTreeData]);
-
   const onCateChange = (val: any) => {
     if (!val) return;
     void setRootCateId(val);

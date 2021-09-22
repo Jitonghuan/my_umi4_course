@@ -50,7 +50,7 @@ export default function UserCaseInfoExec(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [associationBug, setAssociationBug] = useState<any[]>([]);
   const [caseStatus, setCaseStatus] = useState<string>();
-  const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(true);
+  const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(false);
   const [schema, setSchema] = useState();
   const sona = useMemo(() => createSona(), []);
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
@@ -119,7 +119,7 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleSaveExecNote = async () => {
     void (await handleCaseStatusSubmit(caseStatus as string, JSON.stringify(sona.schema)));
-    void setExecNoteReadOnly(true);
+    // void setExecNoteReadOnly(true);
     void message.success('执行备注修改成功');
   };
 
@@ -135,7 +135,7 @@ export default function UserCaseInfoExec(props: any) {
         ],
       },
     ]);
-    void setExecNoteReadOnly(true);
+    // void setExecNoteReadOnly(true);
   };
 
   const handleChangeCurCaseIdx = (isToNext: boolean) => {

@@ -131,7 +131,7 @@ export default function AddTestPlanDrawer(props: any) {
     <Drawer
       className="test-workspace-test-plan-add-test-plan-drawer"
       visible={visible}
-      width="650"
+      width="950"
       title={plan ? '编辑计划' : '新增计划'}
       onClose={() => setVisible(false)}
     >
@@ -142,10 +142,10 @@ export default function AddTestPlanDrawer(props: any) {
         <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
           <Cascader expandTrigger="hover" changeOnSelect placeholder="请选择" options={projectTreeData} />
         </Form.Item>
-        <Form.Item label="关联任务" name="jiraTask" rules={[{ required: true, message: '请输入关联人物' }]}>
+        <Form.Item label="关联任务" name="jiraTask">
           <Input placeholder="请输入关联任务" />
         </Form.Item>
-        <Form.Item label="计划说明" name="description" rules={[{ required: true, message: '请输入计划说明' }]}>
+        <Form.Item label="计划说明" name="description">
           <Input.TextArea placeholder="请输入用例前置条件" />
         </Form.Item>
         <Form.Item

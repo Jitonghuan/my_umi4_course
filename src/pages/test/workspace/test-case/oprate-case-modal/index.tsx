@@ -30,13 +30,6 @@ export default function OperateCaseModal(props: PropsInterface) {
     return node;
   };
 
-  // useEffect(() => {
-  //   getRequest(getCaseCategoryDeepList).then((res) => {
-  //     const _curTreeData = dataClean({ key: -1, items: res.data }).children;
-  //     void setDataSource(_curTreeData || []);
-  //   });
-  // }, []);
-
   const submit = async () => {
     void (await postRequest(oprationType === 'copy' ? copyCases : moveCases, {
       data: {
@@ -65,6 +58,8 @@ export default function OperateCaseModal(props: PropsInterface) {
           value={categoryId}
           onChange={setCategoryId}
           treeData={caseCateTreeData}
+          showSearch
+          treeNodeFilterProp="title"
         />
       </div>
     </Modal>
