@@ -130,11 +130,15 @@ export default function BugManage(props: any) {
 
   /** 获得可关联的测试用例树 */
   useEffect(() => {
-    void updateAssociatingCaseTreeSelect();
-    void getRequest(getManagerList).then((res) => {
-      void setManageList(res.data.usernames);
-    });
-  }, []);
+    if (visible && !testCaseTree?.length) {
+      void updateAssociatingCaseTreeSelect();
+    }
+    if (visible && !manageList?.length) {
+      void getRequest(getManagerList).then((res) => {
+        void setManageList(res.data.usernames);
+      });
+    }
+  }, [visible]);
 
   /** -------------------------- 关联用例 end -------------------------- */
 
@@ -148,11 +152,13 @@ export default function BugManage(props: any) {
   };
 
   useEffect(() => {
-    getRequest(getCaseCategoryDeepList).then((res) => {
-      const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
-      void setCaseCateTreeData(curTreeData || []);
-    });
-  }, []);
+    if (visible && !caseCateTreeData?.length) {
+      getRequest(getCaseCategoryDeepList).then((res) => {
+        const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
+        void setCaseCateTreeData(curTreeData || []);
+      });
+    }
+  }, [visible]);
 
   return (
     <>
