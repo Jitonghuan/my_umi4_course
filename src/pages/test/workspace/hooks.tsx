@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRequest } from '@/utils/request';
 import * as APIS from './service';
+import { Options } from '_ahooks@2.10.9@ahooks/lib/useCountDown';
 
 let projectTreeDataCatchWH = false;
 let projectTreeDataCatch: any;
@@ -37,6 +38,26 @@ export function useAllTestCaseTree() {
       setData(res.data);
     });
   }, []);
+
+  return [data];
+}
+
+let userListWH = false;
+let userList: any;
+export function useUserOptions() {
+  const [data, setData] = useState<IOption[]>([]);
+
+  useEffect(() => {
+    if (userListWH) return;
+    userListWH = true;
+    getRequest(APIS.getUsers).then((res) => {
+      userList = res.data;
+    });
+  }, []);
+
+  useEffect(() => {
+    setData(userList);
+  }, [userList]);
 
   return [data];
 }

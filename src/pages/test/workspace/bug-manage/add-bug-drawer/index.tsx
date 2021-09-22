@@ -16,12 +16,13 @@ import {
   Row,
   Col,
 } from 'antd';
-import { addBug, modifyBug, getManagerList, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
+import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
 import AddCaseModal from '../../test-case/add-case-drawer';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
+import * as HOOKS from '../../hooks';
 import _ from 'lodash';
 import './index.less';
 
@@ -42,7 +43,7 @@ export default function BugManage(props: any) {
   const [schema, setSchema] = useState<any[]>();
   const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
-  const [manageList, setManageList] = useState<string[]>([]);
+  const [manageList] = HOOKS.useUserOptions();
   const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
@@ -132,11 +133,6 @@ export default function BugManage(props: any) {
   useEffect(() => {
     if (visible && !testCaseTree?.length) {
       void updateAssociatingCaseTreeSelect();
-    }
-    if (visible && !manageList?.length) {
-      void getRequest(getManagerList).then((res) => {
-        void setManageList(res.data.usernames);
-      });
     }
   }, [visible]);
 
@@ -259,12 +255,7 @@ export default function BugManage(props: any) {
                 <span className="import-identification">* </span>经办人 :{' '}
               </span>
               <Form.Item name="agent" rules={[{ required: true, message: '请选择经办人' }]} className="form-item-info">
-                <Select
-                  disabled={readOnly}
-                  options={manageList.map((item) => ({ label: item, value: item }))}
-                  optionFilterProp="label"
-                  showSearch
-                />
+                <Select disabled={readOnly} options={manageList} optionFilterProp="label" showSearch />
               </Form.Item>
             </Col>
             <Col span="12" push="1" className="col-form-item">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
-import { createTestPlan, modifyTestPlan, getManagerList } from '../../service';
+import { createTestPlan, modifyTestPlan } from '../../service';
 import { Form, Button, Table, Input, Select, Space, Drawer, message, Cascader } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
@@ -13,17 +13,11 @@ export default function AddTestPlanDrawer(props: any) {
   const { plan, visible, setVisible, updateTable, projectList } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
-  const [manageList, setManageList] = useState<string[]>([]);
+  const [manageList] = HOOKS.useUserOptions();
   const [projectTreeData] = HOOKS.useProjectTreeData();
   const [phaseCollectionFormItemHelp, setPhaseCollectionFormItemHelp] = useState<string>();
   const [phaseCollectionFormItemValidateStatus, setPhaseCollectionFormItemValidateStatus] = useState<any>();
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    void getRequest(getManagerList).then((res) => {
-      void setManageList(res.data.usernames);
-    });
-  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -169,7 +163,7 @@ export default function AddTestPlanDrawer(props: any) {
                 title: '负责人',
                 dataIndex: 'head',
                 fieldType: 'select',
-                valueOptions: manageList.map((item) => ({ label: item, value: item })),
+                valueOptions: manageList,
                 fieldProps: { placeholder: '请选择', showSearch: true, optionFilterProp: 'label' },
                 colProps: { width: 140 },
                 required: true,
