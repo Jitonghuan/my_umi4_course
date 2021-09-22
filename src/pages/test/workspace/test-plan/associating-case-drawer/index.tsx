@@ -14,10 +14,12 @@ export default function AssociatingCaseDrawer(props: any) {
   const [selectedTestPlanIds, setselectedTestPlanIds] = useState<React.Key[]>([]);
 
   useEffect(() => {
-    void getRequest(getAllTestCaseTree).then((res) => {
-      void setTestCaseTree(res.data);
-    });
-  }, []);
+    if (visible && testCaseTree.length === 0) {
+      void getRequest(getAllTestCaseTree).then((res) => {
+        void setTestCaseTree(res.data);
+      });
+    }
+  }, [visible]);
 
   useEffect(() => {
     if (visible) {
