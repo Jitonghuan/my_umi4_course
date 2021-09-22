@@ -141,6 +141,7 @@ export default function LeftTree(props: any) {
           onSelect={onSelect}
           onExpand={onExpand}
           showIcon={false}
+          showLine
           titleRender={(node) => {
             return (
               <div className="node-render custom-tree-node">

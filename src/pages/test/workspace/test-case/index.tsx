@@ -7,7 +7,7 @@ import PageContainer from '@/components/page-container';
 import { ContentCard, CardRowGroup } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
-import { LeftOutlined } from '@ant-design/icons';
+import { FileOutlined, FolderOutlined, FolderOpenOutlined } from '@ant-design/icons';
 import './index.less';
 
 export default function TestCase(props: any) {
@@ -29,6 +29,15 @@ export default function TestCase(props: any) {
     node.key = node.id;
     node.title = node.name;
     node.children = node.items;
+    if (!node.children?.length) {
+      node.isLeaf = true;
+      node.icon = <FileOutlined />;
+    } else {
+      node.switcherIcon = (nodeInfo: any) => {
+        if (!nodeInfo.expanded) return <FolderOutlined />;
+        return <FolderOpenOutlined />;
+      };
+    }
     node.children?.forEach((item: any) => dataClean(item));
 
     return node;
