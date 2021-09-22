@@ -16,7 +16,7 @@ export default function TestCase(props: any) {
   const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>();
   const [filterCaseCateTreeData, setFilterCaseCateTreeData] = useState<any[]>();
   const [caseCategories, setCaseCategories] = useState<any[]>([]);
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>();
   const [curCase, setCurCase] = useState<any>();
   const [rootCateId, setRootCateId] = useState<string>(testCaseCateId as string);
   const [cateId, setCateId] = useState<string>(testCaseCateId as string);
@@ -75,22 +75,48 @@ export default function TestCase(props: any) {
     });
   }, []);
 
-  const updateLeftTree = async (cateId: number, keyword?: string, force: boolean = false) => {
+  useEffect(() => {
+    caseCategories?.length &&
+      updateLeftTree(+rootCateId).then(() => {
+        void setExpandedKeys([+rootCateId]);
+      });
+  }, [caseCategories, rootCateId]);
+
+  useEffect(() => {
+    void setCateId(rootCateId);
+  }, [rootCateId]);
+
+  useEffect(() => {
+    void setCateId(rootCateId);
+  }, []);
+
+  const updateLeftTree = async (cateId: number, keyword?: string) => {
     const res = await getRequest(getCaseCategoryDeepList, {
       data: {
         id: cateId,
         deep: -1,
       },
     });
-    const _curTreeData = dataClean({ key: -1, items: res.data }).children;
+    const _curTreeData = [
+      dataClean({
+        ...caseCategories.find((item) => +item.id === +cateId),
+        items: res.data,
+      }),
+    ];
     void setCaseCateTreeData(_curTreeData || []);
-    nedExpandKeys = [];
-    void setFilterCaseCateTreeData(filterTreeData(_curTreeData || [], keyword));
-    // 根节点一定展开
-    if (!expandedKeys || expandedKeys.length === 0) {
-      nedExpandKeys.push(+cateId);
-      void setExpandedKeys(nedExpandKeys);
+    if (keyword) {
+      void searchLeftTree(keyword);
+    } else {
+      void setFilterCaseCateTreeData(_curTreeData);
     }
+  };
+
+  const searchLeftTree = (keyword: string) => {
+    nedExpandKeys = [];
+    void setFilterCaseCateTreeData(filterTreeData(caseCateTreeData || [], keyword));
+    // 根节点一定展开
+    if (!nedExpandKeys.includes(+cateId)) nedExpandKeys.push(+cateId);
+    void setExpandedKeys(nedExpandKeys);
   };
 
   /** ------------------------ 更新左侧树列表 end ------------------------ */
@@ -135,7 +161,8 @@ export default function TestCase(props: any) {
             cateTreeData={filterCaseCateTreeData}
             caseCategories={caseCategories}
             defaultCateId={testCaseCateId}
-            searchCateTreeData={updateLeftTree}
+            updateCateTreeData={updateLeftTree}
+            searchCateTreeData={searchLeftTree}
             expandedKeys={expandedKeys}
             setExpandedKeys={setExpandedKeys}
           />
