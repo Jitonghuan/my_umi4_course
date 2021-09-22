@@ -9,6 +9,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
 import { FileOutlined, FolderOutlined, FolderOpenOutlined } from '@ant-design/icons';
 import './index.less';
+import { Empty } from 'antd';
 
 export default function TestCase(props: any) {
   const testCaseCateId = history.location.query?.testCaseCateId;
@@ -19,7 +20,7 @@ export default function TestCase(props: any) {
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>();
   const [curCase, setCurCase] = useState<any>();
   const [rootCateId, setRootCateId] = useState<string>(testCaseCateId as string);
-  const [cateId, setCateId] = useState<string>(testCaseCateId as string);
+  const [cateId, setCateId] = useState<string>();
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [caseReadOnly, setCaseReadOnly] = useState<boolean>(false);
 
@@ -82,14 +83,6 @@ export default function TestCase(props: any) {
       });
   }, [caseCategories, rootCateId]);
 
-  useEffect(() => {
-    void setCateId(rootCateId);
-  }, [rootCateId]);
-
-  useEffect(() => {
-    void setCateId(rootCateId);
-  }, []);
-
   const updateLeftTree = async (cateId: number, keyword?: string) => {
     const res = await getRequest(getCaseCategoryDeepList, {
       data: {
@@ -115,7 +108,7 @@ export default function TestCase(props: any) {
     nedExpandKeys = [];
     void setFilterCaseCateTreeData(filterTreeData(caseCateTreeData || [], keyword));
     // 根节点一定展开
-    if (!nedExpandKeys.includes(+cateId)) nedExpandKeys.push(+cateId);
+    if (cateId && !nedExpandKeys.includes(+cateId)) nedExpandKeys.push(+cateId);
     void setExpandedKeys(nedExpandKeys);
   };
 
@@ -168,17 +161,21 @@ export default function TestCase(props: any) {
           />
         </CardRowGroup.SlideCard>
         <ContentCard>
-          <RightDetail
-            cateId={cateId}
-            curCase={curCase}
-            drawerVisible={drawerVisible}
-            setDrawerVisible={setDrawerVisible}
-            onAddCaseBtnClick={onAddCaseBtnClick}
-            onEditCaseBtnClick={onEditCaseBtnClick}
-            caseReadOnly={caseReadOnly}
-            onSeeCaseBtnClick={onSeeCaseBtnClick}
-            caseCateTreeData={caseCateTreeData}
-          />
+          {cateId ? (
+            <RightDetail
+              cateId={cateId}
+              curCase={curCase}
+              drawerVisible={drawerVisible}
+              setDrawerVisible={setDrawerVisible}
+              onAddCaseBtnClick={onAddCaseBtnClick}
+              onEditCaseBtnClick={onEditCaseBtnClick}
+              caseReadOnly={caseReadOnly}
+              onSeeCaseBtnClick={onSeeCaseBtnClick}
+              caseCateTreeData={caseCateTreeData}
+            />
+          ) : (
+            <Empty className="empty-div" description="请从目录树选择业务模块" />
+          )}
         </ContentCard>
       </CardRowGroup>
     </PageContainer>
