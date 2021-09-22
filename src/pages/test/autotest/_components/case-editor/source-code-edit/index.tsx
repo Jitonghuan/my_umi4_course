@@ -83,6 +83,17 @@ export default function SourceCodeEdit(props: any) {
 
   const beforeJobHandleSelect = async (_: any, item: any) => {
     console.log('beforeJobHandleSelect :>> ', item);
+    let caseInfo;
+    try {
+      caseInfo = YAML.parse(editorValue);
+    } catch (e) {
+      message.warning('源码格式不正确！');
+      return;
+    }
+    const newJob = { id: item.data.id, type: item.data.type, argument: '' };
+    if (caseInfo.setup_hooks?.findIndex((item: any) => item.id === newJob.id) !== -1) return;
+    caseInfo.setup_hooks = caseInfo.setup_hooks ? [...caseInfo.setup_hooks, newJob] : [newJob];
+    setEditorValue(YAML.stringify(caseInfo));
   };
 
   const afterJobHandleSelect = async (_: any, item: any) => {

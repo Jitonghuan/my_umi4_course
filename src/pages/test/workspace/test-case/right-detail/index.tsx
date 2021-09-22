@@ -162,6 +162,7 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="categoryName"
             title="所属"
+            width={160}
             render={(title) => (
               <Tooltip title={title}>
                 <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
@@ -173,10 +174,11 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="title"
             title="用例名称"
+            width={240}
             render={(title, record) => (
               <Tooltip title={title}>
                 <Typography.Text
-                  style={{ maxWidth: '160px', color: '#033980', cursor: 'pointer' }}
+                  style={{ maxWidth: '240px', color: '#033980', cursor: 'pointer' }}
                   ellipsis={{ suffix: '' }}
                   onClick={() => onSeeCaseBtnClick(record)}
                 >
@@ -186,7 +188,7 @@ export default function RightDetail(props: any) {
             )}
           ></Table.Column>
           <Table.Column dataIndex="priority" title="优先级" width={60}></Table.Column>
-          <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
+          <Table.Column dataIndex="createUser" title="创建人" width={80}></Table.Column>
           <Table.Column
             dataIndex="gmtModify"
             title="更新时间"
