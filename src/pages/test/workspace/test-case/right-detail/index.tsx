@@ -57,6 +57,7 @@ export default function RightDetail(props: any) {
 
   useEffect(() => {
     if (cateIdCache == cateId) return;
+    void setCateIdCache(cateId);
     if (pageIndex !== 1) void setPageIndex(1);
     else void updateDatasource();
   }, [cateId]);

@@ -54,16 +54,29 @@ export default function TestCase(props: any) {
       });
   };
 
+  useEffect(() => {
+    getRequest(getCaseCategoryDeepList, {
+      data: {
+        id: 0,
+        deep: 1,
+      },
+    }).then((res) => {
+      const _data = res.data;
+      void setCaseCategories(_data?.map((item: any) => ({ ...item, key: item.id, title: item.name })) || []);
+    });
+  }, []);
+
   const updateLeftTree = async (cateId: number, keyword?: string, force: boolean = false) => {
-    let _curTreeData = caseCateTreeData;
-    if (!_curTreeData || force) {
-      const res = await getRequest(getCaseCategoryDeepList);
-      _curTreeData = dataClean({ key: -1, items: res.data }).children;
-      void setCaseCateTreeData(_curTreeData || []);
-    }
-    void setCaseCategories(_curTreeData as any[]);
+    const res = await getRequest(getCaseCategoryDeepList, {
+      data: {
+        id: cateId,
+        deep: -1,
+      },
+    });
+    const _curTreeData = dataClean({ key: -1, items: res.data }).children;
+    void setCaseCateTreeData(_curTreeData || []);
     nedExpandKeys = [];
-    void setFilterCaseCateTreeData(filterTreeData(_curTreeData?.filter((node) => node.id == cateId) || [], keyword));
+    void setFilterCaseCateTreeData(filterTreeData(_curTreeData || [], keyword));
     // 根节点一定展开
     if (!expandedKeys || expandedKeys.length === 0) {
       nedExpandKeys.push(+cateId);

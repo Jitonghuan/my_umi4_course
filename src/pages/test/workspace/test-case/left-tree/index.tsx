@@ -52,7 +52,7 @@ export default function LeftTree(props: any) {
   useEffect(() => {
     if (cateTreeData[0]?.key) {
       void setSelectedKeys([cateTreeData[0].key]);
-      void setCateId(cateTreeData[0].key);
+      // void setCateId(cateTreeData[0].key);
     }
   }, [cateTreeData]);
 
