@@ -47,7 +47,7 @@ export default function ApplicationEditor(props: IProps) {
 
   const [categoryCode, setCategoryCode] = useState<string>();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
-  const [feMicroMainProjectOptions] = useFeMicroMainProjectOptions();
+  const [feMicroMainProjectOptions] = useFeMicroMainProjectOptions(visible);
 
   const [form] = Form.useForm<AppItemVO>();
 
@@ -86,6 +86,7 @@ export default function ApplicationEditor(props: IProps) {
         ownerList: stringToList(initData?.owner),
       });
     } else {
+      setCategoryCode(undefined);
       form.setFieldsValue({
         ownerList: [userInfo.fullName!],
       });
@@ -261,7 +262,7 @@ export default function ApplicationEditor(props: IProps) {
                             name="routeFile"
                             rules={[{ required: true, message: '请输入路由文件名' }]}
                           >
-                            <Input placeholder="app.json" style={{ width: 320 }} />
+                            <Input placeholder="apps.json、index.html" style={{ width: 320 }} />
                           </FormItem>
                         ) : (
                           // 子应用
