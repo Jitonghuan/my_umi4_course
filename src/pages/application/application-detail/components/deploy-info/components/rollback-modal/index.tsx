@@ -25,18 +25,17 @@ export default function RollbackModal(props: RollbackModalProps) {
   const queryRollbackVersions = useCallback(async () => {
     const result = await getRequest(APIS.queryHistoryVersions, {
       data: {
-        deploymentName: appData?.deploymentName,
+        appCode: appData?.appCode,
         envCode: props.envCode,
       },
     });
 
-    const { historyVersions: nextList } = result.data || {};
-
-    if (!nextList?.length) {
+    if (!result.data) {
       return message.warning('没有可回滚的版本！');
     }
+    // const { historyVersions: nextList } = result.data || {};
 
-    setRollbackVersions(nextList);
+    setRollbackVersions(result.data || {});
   }, [appData, props.envCode]);
 
   useEffect(() => {
@@ -54,18 +53,17 @@ export default function RollbackModal(props: RollbackModalProps) {
   // 确认回滚
   const handleRollbackSubmit = useCallback(async () => {
     const { version } = await field.validateFields();
-    console.log('>> handleRollbackSubmit', version);
-    const versionItem = rollbackVersions.find((n) => n.packageVersionId === version);
-
+    const versionItem = rollbackVersions.find((n) => n.packageVersionId === version || n.image === version);
     setPending(true);
     try {
       await postRequest(APIS.rollbackApplication, {
         data: {
-          deploymentName: appData?.deploymentName,
+          appCode: appData?.appCode,
           envCode: props.envCode,
-          appId: versionItem.appId,
-          packageVersion: versionItem.packageVersion,
-          packageVersionId: versionItem.packageVersionId,
+          image: versionItem?.image,
+          appId: versionItem?.appId,
+          packageVersion: versionItem?.packageVersion,
+          packageVersionId: versionItem?.packageVersionId,
           owner: appData?.owner,
         },
       });
@@ -89,18 +87,30 @@ export default function RollbackModal(props: RollbackModalProps) {
       confirmLoading={pending}
       okButtonProps={{ disabled: !rollbackVersions.length }}
       onOk={handleRollbackSubmit}
-      width={640}
+      width={'60%'}
     >
-      <Form form={field} labelCol={{ flex: '100px' }}>
+      <Form form={field} labelCol={{ flex: '70px' }}>
         <Form.Item label="环境Code">
           <span className="ant-form-text">{props.envCode}</span>
         </Form.Item>
         <Form.Item label="回滚版本" name="version" rules={[{ required: true, message: '请选择版本' }]}>
           <Radio.Group style={{ width: '100%' }}>
             {rollbackVersions.map((item: any, index) => (
-              <Radio key={index} value={item.packageVersionId} className="flex-radio-wrap">
-                <span>版本号：{item.packageVersion}</span>
-                <span>部署时间：{item.deployTime || '--'}</span>
+              <Radio key={index} value={item.packageVersionId || item.image} className="flex-radio-wrap">
+                {/* 版本号： */}
+                {item?.hasOwnProperty('packageVersionId') ? (
+                  <div className="rollbackVersion">
+                    <div className="packageVersion">版本号：{item.packageVersion}</div>
+                    <div className="deployTime">部署时间：{item.deployTime || '--'}</div>
+                  </div>
+                ) : null}
+                {/* 镜像 */}
+                {item?.hasOwnProperty('image') ? (
+                  <div className="rollbackVersion">
+                    <div className="image">镜像:{item.image}</div>
+                    <div className="deployTime">部署时间：{item.deployedTime || '--'}</div>
+                  </div>
+                ) : null}
               </Radio>
             ))}
           </Radio.Group>
