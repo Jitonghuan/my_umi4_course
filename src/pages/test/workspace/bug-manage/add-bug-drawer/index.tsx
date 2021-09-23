@@ -99,7 +99,7 @@ export default function BugManage(props: any) {
         bugInfo.projectId && demandId.push(bugInfo.projectId);
         bugInfo.demandId && demandId.push(bugInfo.demandId);
         bugInfo.subDemandId && demandId.push(bugInfo.subDemandId);
-        void form.setFieldsValue({ ...bugInfo, demandId });
+        void form.setFieldsValue({ ...bugInfo, demandId, agent: /\((.*)\)/.exec(bugInfo.agent)?.[1] });
         void setRelatedCases(bugInfo.relatedCases);
         try {
           void setSchema(JSON.parse(bugInfo.description));
