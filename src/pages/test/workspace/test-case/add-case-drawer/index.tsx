@@ -54,6 +54,7 @@ export default function RightDetail(props: any) {
       void setStepContentFormItemvalidateStatus(undefined);
       if (caseId) {
         getRequest(getCaseInfo + '/' + caseId).then((res) => {
+          res.data.categoryId && expandA(res.data.categoryId);
           void setDescType(res.data.descType.toString());
           void form.setFieldsValue(res.data);
           if (res.data.descType === '0') {
@@ -83,25 +84,29 @@ export default function RightDetail(props: any) {
   }, [visible]);
 
   useEffect(() => {
-    if (visible) {
-      const exps: any[] = [];
-      const dfs = (nodeArr: any[]) => {
-        if (!nodeArr?.length) return false;
-
-        for (const node of nodeArr) {
-          exps.push(node.key);
-          if (+node.key === +cateId) {
-            exps.pop();
-            return true;
-          }
-          if (dfs(node.children)) return true;
-          exps.pop();
-        }
-      };
-      dfs(caseCateTreeData);
-      setExpandKeys(exps);
+    if (visible && !caseId) {
+      expandA(cateId);
     }
   }, [visible]);
+
+  const expandA = (cateId: number) => {
+    const exps: any[] = [];
+    const dfs = (nodeArr: any[]) => {
+      if (!nodeArr?.length) return false;
+
+      for (const node of nodeArr) {
+        exps.push(node.key);
+        if (+node.key === +cateId) {
+          exps.pop();
+          return true;
+        }
+        if (dfs(node.children)) return true;
+        exps.pop();
+      }
+    };
+    dfs(caseCateTreeData);
+    setExpandKeys(exps);
+  };
 
   const handleSave = async (needContinue: boolean = false) => {
     setSaveLoding(true);
