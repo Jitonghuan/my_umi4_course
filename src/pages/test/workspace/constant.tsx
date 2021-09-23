@@ -19,10 +19,10 @@ export const bugStatusEnum = [
 export const bugTypeEnum = ['功能问题', '性能问题', '接口问题', 'UI界面问题', '易用性问题', '需求问题'];
 export const bugPriorityEnum = ['高', '中', '低'];
 export const priorityEnum = [
-  { label: 'P0', value: 'P0' },
-  { label: 'P1', value: 'P1' },
-  { label: 'P2', value: 'P2' },
-  { label: 'P3', value: 'P3' },
+  { label: 'P0', value: 'P0', color: '#CC4631' },
+  { label: 'P1', value: 'P1', color: '#D16F0D' },
+  { label: 'P2', value: 'P2', color: '#1973CC' },
+  { label: 'P3', value: 'P3', color: '#439D75' },
 ];
 export const testPhaseEnum = [
   {

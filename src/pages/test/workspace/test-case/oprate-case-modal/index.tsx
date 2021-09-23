@@ -13,13 +13,45 @@ interface PropsInterface {
   setCheckedCaseIds: any;
   caseCateTreeData: any;
   updateDatasource: any;
+  cateId?: any;
 }
 
 export default function OperateCaseModal(props: PropsInterface) {
-  const { visible, setVisible, oprationType, checkedCaseIds, setCheckedCaseIds, caseCateTreeData, updateDatasource } =
-    props;
+  const {
+    visible,
+    setVisible,
+    oprationType,
+    checkedCaseIds,
+    setCheckedCaseIds,
+    caseCateTreeData,
+    updateDatasource,
+    cateId,
+  } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [categoryId, setCategoryId] = useState<React.Key>();
+  const [expandKeys, setExpandKeys] = useState<React.Key[]>();
+
+  useEffect(() => {
+    if (visible) {
+      setCategoryId(cateId);
+      const exps: any[] = [];
+      const dfs = (nodeArr: any[]) => {
+        if (!nodeArr?.length) return false;
+
+        for (const node of nodeArr) {
+          exps.push(node.key);
+          if (+node.key === +cateId) {
+            exps.pop();
+            return true;
+          }
+          if (dfs(node.children)) return true;
+          exps.pop();
+        }
+      };
+      dfs(caseCateTreeData);
+      setExpandKeys(exps);
+    }
+  }, [visible]);
 
   const dataClean = (node: any) => {
     node.key = node.id;
@@ -54,6 +86,8 @@ export default function OperateCaseModal(props: PropsInterface) {
       <div className="oprate-case-modal-body">
         <span className="oprate-case-label">目标位置：</span>
         <TreeSelect
+          treeExpandedKeys={expandKeys}
+          onTreeExpand={setExpandKeys}
           className="oprate-case-select-tree"
           value={categoryId}
           onChange={setCategoryId}

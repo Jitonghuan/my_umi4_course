@@ -9,7 +9,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
 import { FileOutlined, FolderOutlined, FolderOpenOutlined } from '@ant-design/icons';
 import './index.less';
-import { Empty } from 'antd';
+import { Empty, message } from 'antd';
 
 export default function TestCase(props: any) {
   const testCaseCateId = history.location.query?.testCaseCateId;
@@ -84,6 +84,8 @@ export default function TestCase(props: any) {
   }, [caseCategories, rootCateId]);
 
   const updateLeftTree = async (cateId: number, keyword?: string) => {
+    const loadEnd = message.loading('正在加载用例库数据');
+
     const res = await getRequest(getCaseCategoryDeepList, {
       data: {
         id: cateId,
@@ -102,6 +104,8 @@ export default function TestCase(props: any) {
     } else {
       void setFilterCaseCateTreeData(_curTreeData);
     }
+
+    loadEnd();
   };
 
   const searchLeftTree = (keyword: string) => {
