@@ -55,6 +55,7 @@ export default function LeftTree(props: any) {
   const onCateChange = (val: any) => {
     if (!val) return;
     void setRootCateId(val);
+    void setCateId(undefined);
   };
 
   const onKeywordChange = (e: any) => {
