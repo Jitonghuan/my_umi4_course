@@ -9,6 +9,8 @@ export const queryappManageList = addAPIPrefix('/appManage/list');
 
 /** GET 环境名 */
 export const queryappManageEnvList = addAPIPrefix('/monitorManage/app/env');
+/** GET 通用查询环境列表 */
+export const envList = addAPIPrefix('/appManage/env/list');
 
 /**
  * Prometheus监控
