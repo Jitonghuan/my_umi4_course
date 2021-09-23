@@ -33,7 +33,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         deployBatch: deployConfig.deployBatch,
       });
     }
-  }, [deployingEnv]);
+  }, []);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -113,7 +113,6 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       );
       text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
     }
-
     return (
       <>
         <div>
@@ -160,7 +159,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
               message.error(res.errorMsg);
             }
           })
-          .finally(() => onOperate('deployEnd'));
+          .finally(() => {
+            onOperate('deployEnd');
+            // window.location.reload();
+          });
       }}
       onCancel={onCancel}
     >
