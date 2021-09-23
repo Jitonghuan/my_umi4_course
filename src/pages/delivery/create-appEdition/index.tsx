@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, message, Popconfirm, Tabs } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { stringify } from 'qs';
+import { addAPIPrefix } from '@/utils';
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 
 export default function appStore() {
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
+  const createVersionByEnv = () => {
+    getRequest(addAPIPrefix('/deliverManage/versionManage/multiple/create'), {
+      data: { appCode: '', envCode: '', category: '', appVersion: '', changeLog: '' },
+    });
+  };
   return (
     <PageContainer>
       <ContentCard>
@@ -33,7 +38,7 @@ export default function appStore() {
 
               <Form.Item name="versionCreateType">
                 <Space size="middle" style={{ marginLeft: '220px' }}>
-                  <Button type="primary" htmlType="submit">
+                  <Button type="primary" htmlType="submit" onClick={createVersionByEnv}>
                     确认
                   </Button>
                   <Button type="ghost" htmlType="reset">
