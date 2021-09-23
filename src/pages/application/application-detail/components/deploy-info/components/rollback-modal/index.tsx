@@ -99,16 +99,16 @@ export default function RollbackModal(props: RollbackModalProps) {
               <Radio key={index} value={item.packageVersionId || item.image} className="flex-radio-wrap">
                 {/* 版本号： */}
                 {item?.hasOwnProperty('packageVersionId') ? (
-                  <div className="rollbackVersion">
-                    <div className="packageVersion">版本号：{item.packageVersion}</div>
-                    <div className="deployTime">部署时间：{item.deployTime || '--'}</div>
+                  <div>
+                    <div>版本号：{item.packageVersion}</div>
+                    <div>部署时间：{item.deployTime || '--'}</div>
                   </div>
                 ) : null}
                 {/* 镜像 */}
                 {item?.hasOwnProperty('image') ? (
-                  <div className="rollbackVersion">
-                    <div className="image">镜像:{item.image}</div>
-                    <div className="deployTime">部署时间：{item.deployedTime || '--'}</div>
+                  <div>
+                    <div>镜像:{item.image}</div>
+                    <div>部署时间：{item.deployedTime || '--'}</div>
                   </div>
                 ) : null}
               </Radio>
