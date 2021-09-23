@@ -39,6 +39,8 @@ export default function RightDetail(props: any) {
   const [stepContentFormItemvalidateStatus, setStepContentFormItemvalidateStatus] = useState<any>('validating');
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
   const [descType, setDescType] = useState('0');
+  const [saveLoding, setSaveLoding] = useState<boolean>(false);
+  const [expandKeys, setExpandKeys] = useState<React.Key[]>();
   const [schema, setSchema] = useState<any>();
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
@@ -47,6 +49,9 @@ export default function RightDetail(props: any) {
     if (visible) {
       Cache = {};
       void setSchema(undefined);
+      form.resetFields();
+      void setStepContentFormItemHelp('');
+      void setStepContentFormItemvalidateStatus(undefined);
       if (caseId) {
         getRequest(getCaseInfo + '/' + caseId).then((res) => {
           void setDescType(res.data.descType.toString());
@@ -77,7 +82,30 @@ export default function RightDetail(props: any) {
     }
   }, [visible]);
 
+  useEffect(() => {
+    if (visible) {
+      const exps: any[] = [];
+      const dfs = (nodeArr: any[]) => {
+        if (!nodeArr?.length) return false;
+
+        for (const node of nodeArr) {
+          exps.push(node.key);
+          if (+node.key === +cateId) {
+            exps.pop();
+            return true;
+          }
+          if (dfs(node.children)) return true;
+          exps.pop();
+        }
+      };
+      dfs(caseCateTreeData);
+      setExpandKeys(exps);
+    }
+  }, [visible]);
+
   const handleSave = async (needContinue: boolean = false) => {
+    setSaveLoding(true);
+
     let finalStepContent = stepContent;
     let finalExpectedResult = expectedResult;
     if (typeof finalStepContent === 'string') {
@@ -99,6 +127,7 @@ export default function RightDetail(props: any) {
         }
       });
     } catch (e) {
+      setSaveLoding(false);
       return;
     }
 
@@ -138,6 +167,8 @@ export default function RightDetail(props: any) {
       void setExpectedResult([]);
     }
 
+    setSaveLoding(false);
+
     !needContinue && setVisible(false);
   };
 
@@ -158,7 +189,14 @@ export default function RightDetail(props: any) {
           <Input disabled={readOnly} placeholder="请输入标题" />
         </Form.Item>
         <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
-          <TreeSelect disabled={readOnly} treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
+          <TreeSelect
+            treeExpandedKeys={expandKeys}
+            onTreeExpand={setExpandKeys}
+            disabled={readOnly}
+            treeData={caseCateTreeData}
+            showSearch
+            treeNodeFilterProp="title"
+          />
         </Form.Item>
 
         <Row className="row-form-item">
@@ -183,7 +221,7 @@ export default function RightDetail(props: any) {
         </Row>
 
         <Form.Item label="前置条件:" name="precondition">
-          <Input.TextArea disabled={readOnly} placeholder="请输入前置条件"></Input.TextArea>
+          <Input.TextArea className="precondition-h" disabled={readOnly} placeholder="请输入前置条件"></Input.TextArea>
         </Form.Item>
         <Form.Item
           label="用例描述:"
@@ -295,7 +333,7 @@ export default function RightDetail(props: any) {
           </Button>
         ) : (
           <Space>
-            <Button type="primary" onClick={() => handleSave()}>
+            <Button type="primary" onClick={() => handleSave()} loading={saveLoding}>
               保存
             </Button>
             {!caseId ? (

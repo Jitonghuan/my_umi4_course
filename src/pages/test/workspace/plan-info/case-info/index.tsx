@@ -251,9 +251,7 @@ export default function UserCaseInfoExec(props: any) {
             onChange={handleCaseStatusChange}
           >
             {caseStatusEnum.map((item) => (
-              <Select.Option value={item.value} style={{ background: item.color }}>
-                {item.label}
-              </Select.Option>
+              <Select.Option value={item.value}>{item.label}</Select.Option>
             ))}
           </Select>
           <Button
