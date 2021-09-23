@@ -30,12 +30,17 @@ export default function RollbackModal(props: RollbackModalProps) {
       },
     });
 
-    if (!result.data) {
-      return message.warning('没有可回滚的版本！');
+    if (result.data.historyVersions && result.data.historyVersions.length) {
+      setRollbackVersions(result.data.historyVersions);
+      return;
     }
-    // const { historyVersions: nextList } = result.data || {};
 
-    setRollbackVersions(result.data || {});
+    if (result.data.length) {
+      setRollbackVersions(result.data);
+      return;
+    }
+
+    setRollbackVersions([]);
   }, [appData, props.envCode]);
 
   useEffect(() => {
@@ -53,7 +58,7 @@ export default function RollbackModal(props: RollbackModalProps) {
   // 确认回滚
   const handleRollbackSubmit = useCallback(async () => {
     const { version } = await field.validateFields();
-    const versionItem = rollbackVersions.find((n) => n.packageVersionId === version || n.image === version);
+    const versionItem = rollbackVersions.find((n) => n?.packageVersionId === version || n.image === version);
     setPending(true);
     try {
       await postRequest(APIS.rollbackApplication, {
@@ -95,7 +100,7 @@ export default function RollbackModal(props: RollbackModalProps) {
         </Form.Item>
         <Form.Item label="回滚版本" name="version" rules={[{ required: true, message: '请选择版本' }]}>
           <Radio.Group style={{ width: '100%' }}>
-            {rollbackVersions.map((item: any, index) => (
+            {rollbackVersions?.map((item: any, index) => (
               <Radio key={index} value={item.packageVersionId || item.image} className="flex-radio-wrap">
                 {/* 版本号： */}
                 {item?.hasOwnProperty('packageVersionId') ? (
