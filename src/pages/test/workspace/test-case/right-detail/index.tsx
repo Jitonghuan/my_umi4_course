@@ -174,25 +174,13 @@ export default function RightDetail(props: any) {
         >
           <Table.Column width={60} title="ID" dataIndex="id"></Table.Column>
           <Table.Column
-            dataIndex="categoryName"
-            title="所属"
-            width={200}
-            render={(title) => (
-              <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '200px' }} ellipsis={{ suffix: '' }}>
-                  {renderCateName(title)}
-                </Typography.Text>
-              </Tooltip>
-            )}
-          ></Table.Column>
-          <Table.Column
             dataIndex="title"
             title="用例名称"
-            width={350}
+            width={420}
             render={(title, record) => (
               <Tooltip title={title}>
                 <Typography.Text
-                  style={{ maxWidth: '350px', color: '#033980', cursor: 'pointer' }}
+                  style={{ maxWidth: '420px', color: '#033980', cursor: 'pointer' }}
                   ellipsis={{ suffix: '' }}
                   onClick={() => onSeeCaseBtnClick(record)}
                 >
@@ -206,6 +194,18 @@ export default function RightDetail(props: any) {
             title="优先级"
             width={60}
             render={(p) => <Tag color={priorityMap[p].color}>{p}</Tag>}
+          ></Table.Column>
+          <Table.Column
+            dataIndex="categoryName"
+            title="所属"
+            width={200}
+            render={(title) => (
+              <Tooltip title={title}>
+                <Typography.Text style={{ maxWidth: '200px' }} ellipsis={{ suffix: '' }}>
+                  {renderCateName(title)}
+                </Typography.Text>
+              </Tooltip>
+            )}
           ></Table.Column>
           <Table.Column dataIndex="createUser" title="创建人" width={180}></Table.Column>
           <Table.Column
