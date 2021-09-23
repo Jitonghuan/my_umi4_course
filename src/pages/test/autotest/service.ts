@@ -180,3 +180,12 @@ export const getSqlInfo = addAPIPrefix('/qc/autotest/getSqlInfo');
 
 /** GET 9、SQL管理-SQL列表 */
 export const getSqlList = addAPIPrefix('/qc/autotest/getSqlList');
+
+/** GET 9、SQL管理-SQL和函数列表 */
+export const getFuncSqlList = addAPIPrefix('/qc/autotest/getFuncSqlList');
+
+/** POST YML转CASE */
+export const ymlToCase = addAPIPrefix('/qc/autotest/ymlToCase');
+
+/** POST CASE转YML */
+export const caseToYml = addAPIPrefix('/qc/autotest/caseToYml');

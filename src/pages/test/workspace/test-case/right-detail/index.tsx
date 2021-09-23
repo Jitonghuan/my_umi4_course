@@ -9,8 +9,17 @@ import OprateCaseDrawer from '../oprate-case-modal';
 import './index.less';
 
 export default function RightDetail(props: any) {
-  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible, caseCateTreeData, curCase } =
-    props;
+  const {
+    cateId,
+    caseReadOnly,
+    onAddCaseBtnClick,
+    onEditCaseBtnClick,
+    onSeeCaseBtnClick,
+    drawerVisible,
+    setDrawerVisible,
+    caseCateTreeData,
+    curCase,
+  } = props;
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -48,6 +57,7 @@ export default function RightDetail(props: any) {
 
   useEffect(() => {
     if (cateIdCache == cateId) return;
+    void setCateIdCache(cateId);
     if (pageIndex !== 1) void setPageIndex(1);
     else void updateDatasource();
   }, [cateId]);
@@ -92,7 +102,7 @@ export default function RightDetail(props: any) {
       <div className="searchHeader">
         <Form layout="inline" onFinish={handleSearch} onReset={handleSearch} form={form}>
           <Form.Item label="用例标题:" name="keyword">
-            <Input placeholder="输入标题" />
+            <Input className="title-search" placeholder="输入标题" />
           </Form.Item>
           <Form.Item label="优先级:" name="priority">
             <Select placeholder="选择优先级" allowClear style={{ width: '106px' }}>
@@ -147,14 +157,16 @@ export default function RightDetail(props: any) {
             selectedRowKeys: checkedCaseIds,
             onChange: setCheckedCaseIds,
           }}
+          scroll={{ x: '1000px' }}
         >
           <Table.Column width={60} title="ID" dataIndex="id"></Table.Column>
           <Table.Column
             dataIndex="categoryName"
             title="所属"
+            width={200}
             render={(title) => (
               <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
+                <Typography.Text style={{ maxWidth: '200px' }} ellipsis={{ suffix: '' }}>
                   {title}
                 </Typography.Text>
               </Tooltip>
@@ -163,26 +175,32 @@ export default function RightDetail(props: any) {
           <Table.Column
             dataIndex="title"
             title="用例名称"
-            render={(title) => (
+            width={350}
+            render={(title, record) => (
               <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
+                <Typography.Text
+                  style={{ maxWidth: '350px', color: '#033980', cursor: 'pointer' }}
+                  ellipsis={{ suffix: '' }}
+                  onClick={() => onSeeCaseBtnClick(record)}
+                >
                   {title}
                 </Typography.Text>
               </Tooltip>
             )}
           ></Table.Column>
           <Table.Column dataIndex="priority" title="优先级" width={60}></Table.Column>
-          <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
+          <Table.Column dataIndex="createUser" title="创建人" width={80}></Table.Column>
           <Table.Column
             dataIndex="gmtModify"
             title="更新时间"
             render={(date) => moment(date).format('YYYY-MM-DD HH:mm:ss')}
             width={166}
           ></Table.Column>
-          <Table.Column title="操作" render={operateRender} width={120}></Table.Column>
+          <Table.Column title="操作" render={operateRender} width={120} fixed="right"></Table.Column>
         </Table>
       </div>
       <AddCaseDrawer
+        readOnly={caseReadOnly}
         caseId={curCase?.id}
         cateId={cateId}
         visible={drawerVisible}

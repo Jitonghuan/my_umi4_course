@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Select, Form } from 'antd';
-import ConfigurePointRulesForm from '../../global-control-point-rules/configure-point-rules-form';
+import ConfigurePointRulesForm from '../../_components/configure-point-rules-form';
+import * as HOOKS from '../../hooks';
 
 export default function CreateOrEditRuleModal(props: any) {
   const { visible, setVisible, ruleId } = props;
   const isCreate = ruleId === undefined;
+  const [appCateEnum] = HOOKS.useAppCateEnum();
+  const [appCodeEnum] = HOOKS.useAppCodeEnum();
 
   return (
     <Modal
@@ -16,10 +19,10 @@ export default function CreateOrEditRuleModal(props: any) {
     >
       <Form>
         <Form.Item label="应用分类">
-          <Select />
+          <Select options={appCateEnum} />
         </Form.Item>
         <Form.Item label="应用code">
-          <Select />
+          <Select options={appCodeEnum} />
         </Form.Item>
       </Form>
       <ConfigurePointRulesForm isEdit />

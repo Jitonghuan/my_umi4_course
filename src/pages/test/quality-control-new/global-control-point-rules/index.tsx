@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
-import ConfigurePointRulesForm from './configure-point-rules-form';
+import ConfigurePointRulesForm from '../_components/configure-point-rules-form';
 import { Button, Typography } from 'antd';
 
 export default function GlobalControlPointRules(props: any) {

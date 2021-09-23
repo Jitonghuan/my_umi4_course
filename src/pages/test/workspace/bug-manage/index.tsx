@@ -19,10 +19,11 @@ import {
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
-import { getProjects, getBugList, deleteBug, getProjectTreeData } from '../service';
+import { getProjects, getBugList, deleteBug } from '../service';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../constant';
 import AddBugDrawer from './add-bug-drawer';
 import moment from 'moment';
+import * as HOOKS from '../hooks';
 import './index.less';
 
 export default function BugManage(props: any) {
@@ -36,7 +37,7 @@ export default function BugManage(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
   const [bugReadOnly, setBugReadOnly] = useState<boolean>(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [projectTreeData] = HOOKS.useProjectTreeData();
   const [formData, setFormData] = useState<any>({ justMe: true });
   const [form] = Form.useForm();
 
@@ -62,16 +63,6 @@ export default function BugManage(props: any) {
 
   useEffect(() => {
     void form.setFieldsValue({ justMe: true });
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
-    });
   }, []);
 
   useEffect(() => {
