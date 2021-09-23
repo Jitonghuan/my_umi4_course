@@ -243,13 +243,7 @@ export default function UserCaseInfoExec(props: any) {
           <span className="case-title">
             #{curCase?.caseInfo?.id} {curCase?.caseInfo?.title}
           </span>
-          <Select
-            className={
-              'w-100 ml-auto ' + ['beExecuted', 'executeSuccess', 'executeFailure', 'block', 'pass'][+(caseStatus || 0)]
-            }
-            value={caseStatus}
-            onChange={handleCaseStatusChange}
-          >
+          <Select className="w-100 ml-auto" value={caseStatus} onChange={handleCaseStatusChange}>
             {caseStatusEnum.map((item) => (
               <Select.Option value={item.value}>{item.label}</Select.Option>
             ))}
