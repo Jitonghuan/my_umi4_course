@@ -106,9 +106,8 @@ export default function RightDetail(props: any) {
 
   const renderCateName = (title: string) => {
     const titArr = title.split('/');
-    if (titArr.length <= 3) return title;
-    titArr.splice(1, titArr.length - 2);
-    return titArr.join('/.../');
+    if (titArr.length <= 2) return title;
+    return '.../' + titArr[titArr.length - 2] + '/' + titArr[titArr.length - 1];
   };
 
   return (
