@@ -42,8 +42,8 @@ module.exports = {
 
     // `$ fe p` 或 `$ fe publish`
     publish: (options, projectInfo) => {
-      const { t, test, p, prod, online, local } = options;
-      const envCode = (t || test) ? envCodeMap.test : (p || prod || online) ? envCodeMap.prod : envCodeMap.dev;
+      const { test, prod, online, local } = options;
+      const envCode = test ? envCodeMap.test : (prod || online) ? envCodeMap.prod : envCodeMap.dev;
       const project = options.project || projectInfo.project;
       const version = options.version || projectInfo.version || '';
 
@@ -61,8 +61,8 @@ module.exports = {
     },
 
     rollback: (options, projectInfo) => {
-      const { t, test, p, prod, online } = options;
-      const envCode = (t || test) ? envCodeMap.test : (p || prod || online) ? envCodeMap.prod : envCodeMap.dev;
+      const { test, prod, online } = options;
+      const envCode = test ? envCodeMap.test : (prod || online) ? envCodeMap.prod : envCodeMap.dev;
       const project = options.project || projectInfo.project;
 
       return [
