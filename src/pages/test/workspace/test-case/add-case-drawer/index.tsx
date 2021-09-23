@@ -40,6 +40,7 @@ export default function RightDetail(props: any) {
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
   const [descType, setDescType] = useState('0');
   const [saveLoding, setSaveLoding] = useState<boolean>(false);
+  const [expandKeys, setExpandKeys] = useState<React.Key[]>();
   const [schema, setSchema] = useState<any>();
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
@@ -78,6 +79,27 @@ export default function RightDetail(props: any) {
         void setExpectedResult('');
         void setSchema(undefined);
       }
+    }
+  }, [visible]);
+
+  useEffect(() => {
+    if (visible) {
+      const exps: any[] = [];
+      const dfs = (nodeArr: any[]) => {
+        if (!nodeArr?.length) return false;
+
+        for (const node of nodeArr) {
+          exps.push(node.key);
+          if (+node.key === +cateId) {
+            exps.pop();
+            return true;
+          }
+          if (dfs(node.children)) return true;
+          exps.pop();
+        }
+      };
+      dfs(caseCateTreeData);
+      setExpandKeys(exps);
     }
   }, [visible]);
 
@@ -167,7 +189,14 @@ export default function RightDetail(props: any) {
           <Input disabled={readOnly} placeholder="请输入标题" />
         </Form.Item>
         <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
-          <TreeSelect disabled={readOnly} treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
+          <TreeSelect
+            treeExpandedKeys={expandKeys}
+            onTreeExpand={setExpandKeys}
+            disabled={readOnly}
+            treeData={caseCateTreeData}
+            showSearch
+            treeNodeFilterProp="title"
+          />
         </Form.Item>
 
         <Row className="row-form-item">
