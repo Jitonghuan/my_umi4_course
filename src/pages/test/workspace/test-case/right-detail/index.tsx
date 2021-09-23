@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import moment from 'moment';
-import { Form, Table, Button, Popconfirm, Input, Select, Space, message, Typography, Tooltip } from 'antd';
+import { Form, Table, Button, Popconfirm, Input, Select, Space, message, Typography, Tooltip, Tag } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList, caseDelete } from '../../service';
 import { priorityEnum } from '../../constant';
 import AddCaseDrawer from '../add-case-drawer';
 import OprateCaseDrawer from '../oprate-case-modal';
 import './index.less';
+
+const priorityMap: any = {};
+priorityEnum.forEach((item) => {
+  priorityMap[item.value] = item;
+});
 
 export default function RightDetail(props: any) {
   const {
@@ -188,8 +193,13 @@ export default function RightDetail(props: any) {
               </Tooltip>
             )}
           ></Table.Column>
-          <Table.Column dataIndex="priority" title="优先级" width={60}></Table.Column>
-          <Table.Column dataIndex="createUser" title="创建人" width={80}></Table.Column>
+          <Table.Column
+            dataIndex="priority"
+            title="优先级"
+            width={60}
+            render={(p) => <Tag color={priorityMap[p].color}>{p}</Tag>}
+          ></Table.Column>
+          <Table.Column dataIndex="createUser" title="创建人" width={180}></Table.Column>
           <Table.Column
             dataIndex="gmtModify"
             title="更新时间"
