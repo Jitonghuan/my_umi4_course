@@ -122,8 +122,8 @@ export default function AddTestPlanDrawer(props: any) {
   };
 
   const layout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 20 },
+    labelCol: { span: 3 },
+    wrapperCol: { span: 21 },
     labelAlign: 'left' as 'left',
   };
 

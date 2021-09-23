@@ -13,13 +13,28 @@ interface PropsInterface {
   setCheckedCaseIds: any;
   caseCateTreeData: any;
   updateDatasource: any;
+  cateId?: any;
 }
 
 export default function OperateCaseModal(props: PropsInterface) {
-  const { visible, setVisible, oprationType, checkedCaseIds, setCheckedCaseIds, caseCateTreeData, updateDatasource } =
-    props;
+  const {
+    visible,
+    setVisible,
+    oprationType,
+    checkedCaseIds,
+    setCheckedCaseIds,
+    caseCateTreeData,
+    updateDatasource,
+    cateId,
+  } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [categoryId, setCategoryId] = useState<React.Key>();
+
+  useEffect(() => {
+    if (visible) {
+      setCategoryId(cateId);
+    }
+  }, [visible]);
 
   const dataClean = (node: any) => {
     node.key = node.id;

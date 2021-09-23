@@ -210,6 +210,7 @@ export default function RightDetail(props: any) {
       />
 
       <OprateCaseDrawer
+        cateId={cateId}
         visible={oprateCaseModalVisible}
         setVisible={setOprateCaseModalVisible}
         oprationType={oprationType as 'copy' | 'move'}
