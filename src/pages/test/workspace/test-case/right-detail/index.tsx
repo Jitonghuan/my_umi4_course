@@ -35,10 +35,13 @@ export default function RightDetail(props: any) {
   const [oprateCaseModalVisible, setOprateCaseModalVisible] = useState<boolean>(false);
   const [oprationType, setOprationType] = useState<string>();
   const [cateIdCache, setCateIdCache] = useState<any>(cateId);
-  const [formData, setFormData] = useState<any>({});
   const [form] = Form.useForm();
 
-  const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize, _formData = formData) => {
+  const updateDatasource = async (
+    _pageIndex: number = pageIndex,
+    _pageSize = pageSize,
+    _formData = form.getFieldsValue(),
+  ) => {
     const { keyword, priority } = _formData;
 
     if (!cateId && cateId !== 0) return;
@@ -88,7 +91,6 @@ export default function RightDetail(props: any) {
   );
 
   const handleSearch = (formData: any) => {
-    void setFormData(formData);
     void updateDatasource(1, pageSize, formData);
   };
 
@@ -100,6 +102,13 @@ export default function RightDetail(props: any) {
   const handleMoveCases = () => {
     void setOprationType('move');
     void setOprateCaseModalVisible(true);
+  };
+
+  const renderCateName = (title: string) => {
+    const titArr = title.split('/');
+    if (titArr.length <= 3) return title;
+    titArr.splice(1, titArr.length - 2);
+    return titArr.join('/.../');
   };
 
   return (
@@ -172,7 +181,7 @@ export default function RightDetail(props: any) {
             render={(title) => (
               <Tooltip title={title}>
                 <Typography.Text style={{ maxWidth: '200px' }} ellipsis={{ suffix: '' }}>
-                  {title}
+                  {renderCateName(title)}
                 </Typography.Text>
               </Tooltip>
             )}
