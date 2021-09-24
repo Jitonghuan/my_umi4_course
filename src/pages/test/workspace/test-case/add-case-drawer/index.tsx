@@ -182,8 +182,8 @@ export default function RightDetail(props: any) {
   };
 
   const layout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 20 },
+    labelCol: { span: readOnly ? 3 : 4 },
+    wrapperCol: { span: readOnly ? 21 : 20 },
     labelAlign: 'left' as 'left',
   };
 
@@ -286,12 +286,12 @@ export default function RightDetail(props: any) {
                   <Table.Column
                     title="步骤描述"
                     dataIndex="input"
-                    render={(text) => <div style={{ whiteSpace: 'pre' }}>{text}</div>}
+                    render={(text) => <div style={{ whiteSpace: 'break-spaces', width: '345px' }}>{text}</div>}
                   />
                   <Table.Column
                     title="预期结果"
                     dataIndex="output"
-                    render={(text) => <div style={{ whiteSpace: 'pre' }}>{text}</div>}
+                    render={(text) => <div style={{ whiteSpace: 'break-spaces', width: '345px' }}>{text}</div>}
                   />
                 </Table>
               ) : (
@@ -305,7 +305,7 @@ export default function RightDetail(props: any) {
                     void setStepContent(val.map((item) => item.value));
                     void setExpectedResult(val.map((item) => item.desc));
                   }}
-                  creator={{ record: { value: '', desc: '' } }}
+                  creator={{ record: { value: '', desc: '' }, insert: 'BOTH' }}
                   columns={[
                     {
                       title: '编号',
@@ -386,7 +386,7 @@ export default function RightDetail(props: any) {
     <Drawer
       className="add-case-drawer"
       visible={visible}
-      width="650"
+      width={readOnly ? '900' : '650'}
       title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onClose={() => setVisible(false)}
       maskClosable={false}

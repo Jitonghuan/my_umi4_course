@@ -32,7 +32,7 @@
     "@cffe/algorithm": "^1.0.5",
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "1.0.0",
-    "@cffe/pc-editor-table": "~1.0.8",
+    "@cffe/pc-editor-table": "~1.0.9",
     "@cffe/sona": "^0.6.10",
     "@cffe/sona-editor": "^1.15.0",
     "@cffe/vc-b-card-layout": "1.0.8",
