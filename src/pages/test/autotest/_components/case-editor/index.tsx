@@ -48,7 +48,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           allowSkip: values.allowSkip || false,
           skipReason: values.skipReason || '',
           headers: values.headers || [],
-          parameters: props.paramType === 'form' ? values.parameters || [] : values.parametersJSON || '',
+          parameters: values.parameters || [],
           preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
           customVars: values.customVars || [],
           savedVars: values.savedVars || [],
@@ -83,8 +83,6 @@ export default function CaseEditor(props: CaseEditorProps) {
           message.warning('数据校验失败，无法切换至表单模式');
           return;
         }
-        console.log('editorValue :>> ', editorValue);
-        console.log('finalJSON :>> ', finalJSON);
         postRequest(APIS.ymlToCase, {
           data: { ...finalJSON, apiId: props.initData?.apiId, validates: finalJSON.validate, validate: undefined },
         })

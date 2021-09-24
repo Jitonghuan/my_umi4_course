@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import AceEditor from '@/components/ace-editor';
+import FELayout from '@cffe/vc-layout';
 import YAML from 'yaml';
 import * as APIS from '../../../service';
 import DebounceSelect from '@/components/debounce-select';
@@ -8,6 +9,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
 
 export default function SourceCodeEdit(props: any) {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { data, variableData, editorValue, setEditorValue } = props;
 
   // const [editorValue, setEditorValue] = useState<any>();
@@ -26,6 +28,35 @@ export default function SourceCodeEdit(props: any) {
     console.log('调试');
   };
 
+  const handleFormDataSubmit = async (values: any) => {
+    if (typeof props.hookBeforeSave === 'function') {
+      const flag = await props.hookBeforeSave(props.mode, values);
+      if (!flag) return false;
+    }
+
+    if (props.mode == 'ADD') {
+      await postRequest(APIS.saveCaseInfo, {
+        data: {
+          ...values,
+          apiId: props.current?.bizId!,
+          createUser: userInfo.userName,
+        },
+      });
+    } else {
+      await postRequest(APIS.updateCaseInfo, {
+        data: {
+          ...values,
+          id: props.initData?.id,
+          apiId: props.initData?.apiId,
+          createUser: props.initData?.createUser,
+          modifyUser: userInfo.userName,
+        },
+      });
+    }
+
+    return true;
+  };
+
   const handleSubmit = async () => {
     if (!editorValue) return;
     let finalCaseJSON;
@@ -37,12 +68,20 @@ export default function SourceCodeEdit(props: any) {
       return;
     }
 
+    const loadEnd = message.loading('正在保存');
+
     console.log('finalCaseJSON :>> ', finalCaseJSON);
     const { data: formData } = await postRequest(APIS.ymlToCase, {
-      data: { ...finalCaseJSON, apiId: props.initData?.apiId },
+      data: { ...finalCaseJSON, apiId: props.initData?.apiId, validates: finalCaseJSON.validate, validate: undefined },
     });
-    //TODO: 保存
-    console.log('formData :>> ', formData);
+
+    const flag = await handleFormDataSubmit(formData);
+
+    loadEnd();
+    if (flag) {
+      props.onSave?.();
+      message.success('保存成功');
+    } else message.warning('保存失败');
   };
 
   const beforeCaseLoadOptions = async (keyword: string) => {
@@ -78,11 +117,24 @@ export default function SourceCodeEdit(props: any) {
   };
 
   const beforeCaseHandleSelect = async (_: any, item: any) => {
-    console.log('beforeCaseHandleSelect :>> ', item);
+    let caseInfo;
+    try {
+      caseInfo = YAML.parse(editorValue);
+    } catch (e) {
+      message.warning('源码格式不正确！');
+      return;
+    }
+    const newCase = item.value;
+    if (caseInfo.pre_cases) {
+      if (caseInfo.pre_cases.includes(newCase)) return;
+      caseInfo.pre_cases.push(newCase);
+    } else {
+      caseInfo.pre_cases = [newCase];
+    }
+    setEditorValue(YAML.stringify(caseInfo));
   };
 
   const beforeJobHandleSelect = async (_: any, item: any) => {
-    console.log('beforeJobHandleSelect :>> ', item);
     let caseInfo;
     try {
       caseInfo = YAML.parse(editorValue);
@@ -101,7 +153,21 @@ export default function SourceCodeEdit(props: any) {
   };
 
   const afterJobHandleSelect = async (_: any, item: any) => {
-    console.log('afterJobHandleSelect :>> ', item);
+    let caseInfo;
+    try {
+      caseInfo = YAML.parse(editorValue);
+    } catch (e) {
+      message.warning('源码格式不正确！');
+      return;
+    }
+    const newJob = { id: item.data.id, type: item.data.type, argument: '' };
+    if (caseInfo.teardown_hooks) {
+      if (caseInfo.teardown_hooks.findIndex((item: any) => item.id === newJob.id) !== -1) return;
+      caseInfo.teardown_hooks.push(newJob);
+    } else {
+      caseInfo.teardown_hooks = [newJob];
+    }
+    setEditorValue(YAML.stringify(caseInfo));
   };
 
   return (
