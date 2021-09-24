@@ -11,10 +11,12 @@ export interface ScriptEditorProps extends Record<string, any> {
   value?: string;
   onChange?: (next: string) => any;
   mode?: AceDataType;
+  title?: string;
+  focus?: boolean;
 }
 
 export default function ScriptEditor(props: ScriptEditorProps) {
-  const { onChange, mode = 'text', ...others } = props;
+  const { onChange, mode = 'text', title = '编辑脚本', focus = false, ...others } = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [tempValue, setTempValue] = useState('');
 
@@ -52,14 +54,14 @@ export default function ScriptEditor(props: ScriptEditorProps) {
         suffix={<EditOutlined onClick={handleShowModal} />}
       />
       <Modal
-        title="编辑脚本"
+        title={title}
         width={720}
         visible={modalVisible}
         maskClosable={false}
         onCancel={handleCancel}
         onOk={handleOk}
       >
-        <AceEditor mode={mode} value={tempValue} onChange={handleAceTempChange} height={320} />
+        <AceEditor focus={focus} mode={mode} value={tempValue} onChange={handleAceTempChange} height={320} />
       </Modal>
     </>
   );

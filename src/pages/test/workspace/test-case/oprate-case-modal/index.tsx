@@ -30,6 +30,7 @@ export default function OperateCaseModal(props: PropsInterface) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [categoryId, setCategoryId] = useState<React.Key>();
   const [expandKeys, setExpandKeys] = useState<React.Key[]>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (visible) {
@@ -63,6 +64,7 @@ export default function OperateCaseModal(props: PropsInterface) {
   };
 
   const submit = async () => {
+    void setLoading(true);
     void (await postRequest(oprationType === 'copy' ? copyCases : moveCases, {
       data: {
         ids: checkedCaseIds,
@@ -72,6 +74,7 @@ export default function OperateCaseModal(props: PropsInterface) {
     }));
     void setCheckedCaseIds([]);
     void updateDatasource();
+    void setLoading(false);
     void setVisible(false);
   };
 
@@ -79,6 +82,7 @@ export default function OperateCaseModal(props: PropsInterface) {
     <Modal
       visible={visible}
       onOk={submit}
+      confirmLoading={loading}
       onCancel={() => setVisible(false)}
       title={oprationType === 'copy' ? '复制用例' : '移动用例'}
       maskClosable={false}
