@@ -91,8 +91,12 @@ export default function SourceCodeEdit(props: any) {
       return;
     }
     const newJob = { id: item.data.id, type: item.data.type, argument: '' };
-    if (caseInfo.setup_hooks?.findIndex((item: any) => item.id === newJob.id) !== -1) return;
-    caseInfo.setup_hooks = caseInfo.setup_hooks ? [...caseInfo.setup_hooks, newJob] : [newJob];
+    if (caseInfo.setup_hooks) {
+      if (caseInfo.setup_hooks.findIndex((item: any) => item.id === newJob.id) !== -1) return;
+      caseInfo.setup_hooks.push(newJob);
+    } else {
+      caseInfo.setup_hooks = [newJob];
+    }
     setEditorValue(YAML.stringify(caseInfo));
   };
 
