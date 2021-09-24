@@ -6,7 +6,7 @@ import moment, { Moment } from 'moment';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import useRequest from '@/utils/useRequest';
-import EditTable from '@/components/edit-table';
+import EditorTable from '@cffe/pc-editor-table';
 import { editColumns } from './colunms';
 import { Item } from '../../typing';
 import { stepTableMap } from '../../util';
@@ -86,6 +86,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
   const labelFun = (value: Item[]) => {
     setLabelTableData(value);
+    console.log('value:', value);
   };
 
   const annotationsFun = (value: Item[]) => {
@@ -299,34 +300,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       itemStyle: { marginBottom: 0 },
       extraForm: (
         <Form.Item noStyle>
-          <EditTable
-            onTableChange={labelFun}
-            initData={labelTableData}
-            headerTitle="标签（Labels):"
-            style={{ marginBottom: 8 }}
-            columns={editColumns}
-            handleAddItem={() => {
-              return {
-                id: labelTableData.length,
-                key: 'key',
-                value: 'value',
-              };
-            }}
-          />
-          <EditTable
-            onTableChange={annotationsFun}
-            initData={annotationsTableData}
-            headerTitle="注释（Annotations):"
-            style={{ marginBottom: 16 }}
-            columns={editColumns}
-            handleAddItem={() => {
-              return {
-                id: annotationsTableData.length,
-                key: 'key',
-                value: 'value',
-              };
-            }}
-          />
+          <span>标签（Labels):</span>
+          <EditorTable columns={editColumns} onChange={labelFun} value={labelTableData}></EditorTable>
+          <span>注释（Annotations):</span>
+          <EditorTable columns={editColumns} onChange={annotationsFun} value={annotationsTableData}></EditorTable>
         </Form.Item>
       ),
     },
