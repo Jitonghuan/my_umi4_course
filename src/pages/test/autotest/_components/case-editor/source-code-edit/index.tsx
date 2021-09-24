@@ -3,6 +3,7 @@ import AceEditor from '@/components/ace-editor';
 import FELayout from '@cffe/vc-layout';
 import YAML from 'yaml';
 import * as APIS from '../../../service';
+import * as HOOKS from '../../../hooks';
 import DebounceSelect from '@/components/debounce-select';
 import YmlDebug from '../../yml-debug';
 import { Button, Input, Table, ConfigProvider, Space, Empty, message } from 'antd';
@@ -11,21 +12,37 @@ import './index.less';
 
 export default function SourceCodeEdit(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const { data, variableData, editorValue, setEditorValue } = props;
+  const { data, editorValue, setEditorValue } = props;
 
-  // const [editorValue, setEditorValue] = useState<any>();
-  const [finalVariableData, setFinalVariableData] = useState<any[]>(variableData);
   const [editStatus, setEditStatus] = useState<'success' | 'error' | 'warning' | 'default'>();
-
   const [debugModalVisible, setDebugModalVisible] = useState<boolean>(false);
   const [ymlData, setYmlData] = useState<any>();
+  const [preCases, setPreCases] = useState<React.Key[]>([]);
+  const [preSavedVars] = HOOKS.usePreSavedVars(preCases);
+  const [finalVariableData, setFinalVariableData] = useState<any[]>(preSavedVars);
+  const [varKeyword, setVarKeyword] = useState<string>('');
 
   useEffect(() => {
-    setFinalVariableData(variableData);
-  }, [variableData]);
+    let JsonData;
+    try {
+      JsonData = YAML.parse(editorValue);
+    } catch (e) {
+      message.error('格式不正确');
+      setEditStatus('error');
+      return;
+    }
 
-  const handleSearch = (val: string) => {
-    setFinalVariableData(variableData.filter((item: any) => item?.a?.includes(val)));
+    setPreCases(JsonData?.pre_cases);
+  }, []);
+
+  useEffect(() => {
+    handleSearch();
+  }, [preSavedVars]);
+
+  const handleSearch = (val: string = varKeyword) => {
+    setVarKeyword(val);
+    setFinalVariableData(preSavedVars.filter((item: any) => item.name?.includes(val)));
+    console.log('preSavedVars :>> ', preSavedVars);
   };
 
   const handleDebug = () => {
@@ -148,6 +165,7 @@ export default function SourceCodeEdit(props: any) {
       caseInfo.pre_cases = [newCase];
     }
     setEditorValue(YAML.stringify(caseInfo));
+    setPreCases(caseInfo.pre_cases);
   };
 
   const beforeJobHandleSelect = async (_: any, item: any) => {
@@ -254,9 +272,9 @@ export default function SourceCodeEdit(props: any) {
                 pagination={false}
                 scroll={{ y: 'calc(100vh - 252px)' }}
               >
-                <Table.Column title="变量名" dataIndex="a" />
-                <Table.Column title="变量值" />
-                <Table.Column title="描述" />
+                <Table.Column title="变量名" dataIndex="name" />
+                <Table.Column title="变量值" dataIndex="value" />
+                <Table.Column title="描述" dataIndex="desc" />
               </Table>
             </ConfigProvider>
           </div>

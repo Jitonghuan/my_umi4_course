@@ -83,3 +83,20 @@ export function useCaseListByScene(
 
   return [data, loading, setData, loadData];
 }
+
+export function usePreSavedVars(preCases: React.Key[]) {
+  const [data, setData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (preCases?.length === 0) return;
+    getRequest(APIS.getPreSavedVars, {
+      data: {
+        preCases,
+      },
+    }).then((res) => {
+      setData(res.data);
+    });
+  }, [preCases]);
+
+  return [data];
+}

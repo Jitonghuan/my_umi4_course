@@ -192,3 +192,6 @@ export const caseToYml = addAPIPrefix('/qc/autotest/caseToYml');
 
 /** POST 调试测试用例 */
 export const debugYml = addAPIPrefix('/qc/autotest/debugYml');
+
+/** POST 调试测试用例 */
+export const getPreSavedVars = addAPIPrefix('/qc/autotest/getPreSavedVars');
