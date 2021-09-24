@@ -4,6 +4,7 @@ import FELayout from '@cffe/vc-layout';
 import YAML from 'yaml';
 import * as APIS from '../../../service';
 import DebounceSelect from '@/components/debounce-select';
+import YmlDebug from '../../yml-debug';
 import { Button, Input, Table, ConfigProvider, Space, Empty, message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
@@ -16,6 +17,9 @@ export default function SourceCodeEdit(props: any) {
   const [finalVariableData, setFinalVariableData] = useState<any[]>(variableData);
   const [editStatus, setEditStatus] = useState<'success' | 'error' | 'warning' | 'default'>();
 
+  const [debugModalVisible, setDebugModalVisible] = useState<boolean>(false);
+  const [ymlData, setYmlData] = useState<any>();
+
   useEffect(() => {
     setFinalVariableData(variableData);
   }, [variableData]);
@@ -25,7 +29,19 @@ export default function SourceCodeEdit(props: any) {
   };
 
   const handleDebug = () => {
-    console.log('调试');
+    try {
+      if (props.mode == 'ADD') {
+        setYmlData({ ...YAML.parse(editorValue), apiId: props.current?.bizId! });
+      } else {
+        setYmlData({ ...YAML.parse(editorValue), apiId: props.initData?.apiId });
+      }
+    } catch (e) {
+      message.error('格式不正确');
+      setEditStatus('error');
+      return;
+    }
+
+    setDebugModalVisible(true);
   };
 
   const handleFormDataSubmit = async (values: any) => {
@@ -252,6 +268,7 @@ export default function SourceCodeEdit(props: any) {
           提交
         </Button>
       </div>
+      <YmlDebug visible={debugModalVisible} ymlData={ymlData} onClose={() => setDebugModalVisible(false)} />
     </>
   );
 }
