@@ -24,29 +24,6 @@ export default function Operation() {
     setLoading(true);
     loadListData({ pageIndex: 1, pageSize: 20 });
   }, []);
-
-  const getLogQuery = (value: any) => {
-    getRequest(APIS.logList, { data: { pageIndex: value.pageIndex, pageSize: value.pageSize } })
-      .then((res: any) => {
-        if (res.success) {
-          const logList = (res.data.dataSource || []).map((n: any) => ({
-            id: n.id,
-            operator: n.operator,
-            operateType: n.operateType,
-            operateTime: n.operateTime,
-            operateEvent: n.operateEvent,
-          }));
-          setLogList(logList);
-          let pageTotal = res.data.pageInfo.total;
-          let pageIndex = res.data.pageInfo.pageIndex;
-          setPageTotal(pageTotal);
-          setPageIndex(pageIndex);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
   //触发分页
   const pageSizeClick = (pagination: any) => {
     let obj = {
@@ -81,7 +58,9 @@ export default function Operation() {
     let endTime =
       value?.operateTime && value.operateTime[1] ? `${value.operateTime[1].format('YYYY-MM-DD')} 23:59:59` : '';
     let operateTime = startTime + '-' + endTime || '';
-    getRequest(APIS.logList, { data: { operator, operateType, startTime, endTime, pageIndex, pageSize } })
+    getRequest(APIS.logList, {
+      data: { operator, operateType, startTime, endTime, pageIndex: value.pageIndex, pageSize: value.pageSize },
+    })
       .then((res: any) => {
         if (res.success) {
           const logList = (res.data.dataSource || []).map((n: any) => ({
