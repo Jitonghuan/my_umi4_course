@@ -283,11 +283,15 @@ export default function RightDetail(props: any) {
               {readOnly ? (
                 <Table dataSource={caseDescArr} pagination={false}>
                   <Table.Column title="编号" render={(_: any, __: number, idx: number) => idx + 1} />
-                  <Table.Column title="步骤描述" dataIndex="input" />
+                  <Table.Column
+                    title="步骤描述"
+                    dataIndex="input"
+                    render={(text) => <div style={{ whiteSpace: 'pre' }}>{text}</div>}
+                  />
                   <Table.Column
                     title="预期结果"
                     dataIndex="output"
-                    render={(text) => <Input.TextArea readOnly value={text} />}
+                    render={(text) => <div style={{ whiteSpace: 'pre' }}>{text}</div>}
                   />
                 </Table>
               ) : (
@@ -309,7 +313,16 @@ export default function RightDetail(props: any) {
                       fieldType: 'readonly',
                       colProps: { width: 60, align: 'center' },
                     },
-                    { title: '步骤描述', dataIndex: 'value', required: true },
+                    {
+                      title: '步骤描述',
+                      dataIndex: 'value',
+                      required: true,
+                      fieldType: 'custom',
+                      component: ScriptEditor,
+                      fieldProps: (value, index, record) => {
+                        return { mode: record.type === 'text' };
+                      },
+                    },
                     {
                       title: '预期结果',
                       dataIndex: 'desc',
