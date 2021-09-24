@@ -70,7 +70,7 @@ export default function LeftTree(props: any) {
 
   const onSelect = (selectedKeysValue: React.Key[]) => {
     void setSelectedKeys(selectedKeysValue);
-    setCateId(selectedKeysValue);
+    setCateId(selectedKeysValue[0]);
   };
 
   const handleAddCaseCate = (node: any) => {
