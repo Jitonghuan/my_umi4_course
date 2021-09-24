@@ -6,7 +6,6 @@ import moment, { Moment } from 'moment';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import useRequest from '@/utils/useRequest';
-import EditTable from '@/components/edit-table';
 import EditorTable from '@cffe/pc-editor-table';
 import { editColumns } from './colunms';
 import { Item } from '../../typing';
