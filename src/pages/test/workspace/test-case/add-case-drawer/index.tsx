@@ -320,7 +320,7 @@ export default function RightDetail(props: any) {
                       fieldType: 'custom',
                       component: ScriptEditor,
                       fieldProps: (value, index, record) => {
-                        return { mode: record.type === 'text' };
+                        return { mode: record.type === 'text', title: '步骤描述' };
                       },
                     },
                     {
@@ -330,7 +330,7 @@ export default function RightDetail(props: any) {
                       fieldType: 'custom',
                       component: ScriptEditor,
                       fieldProps: (value, index, record) => {
-                        return { mode: record.type === 'text' };
+                        return { mode: record.type === 'text', title: '预期结果' };
                       },
                     },
                   ]}
