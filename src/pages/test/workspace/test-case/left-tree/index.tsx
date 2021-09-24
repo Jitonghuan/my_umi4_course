@@ -15,6 +15,7 @@ export default function LeftTree(props: any) {
     caseCategories = [],
     cateTreeData = [],
     defaultCateId,
+    updateCateTreeData,
     searchCateTreeData,
     rootCateId,
     setRootCateId,
@@ -23,7 +24,7 @@ export default function LeftTree(props: any) {
     expandedKeys,
     setExpandedKeys,
   } = props;
-  const [keyword, setKeyword] = useState<string>('');
+  const [keyword, setKeyword] = useState<string>();
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [oprateCaseLibModalVisible, setOprateCaseLibModalVisible] = useState<boolean>(false);
   const [curChooseCate, setCurChooseCate] = useState<any>();
@@ -46,19 +47,15 @@ export default function LeftTree(props: any) {
   }, [cateTreeData]);
 
   useEffect(() => {
-    void searchCateTreeData(rootCateId, keyword);
-  }, [rootCateId, keyword]);
-
-  useEffect(() => {
-    if (cateTreeData[0]?.key) {
-      void setSelectedKeys([cateTreeData[0].key]);
-      void setCateId(cateTreeData[0].key);
+    if (keyword !== undefined) {
+      void searchCateTreeData(keyword);
     }
-  }, [cateTreeData]);
+  }, [keyword]);
 
   const onCateChange = (val: any) => {
     if (!val) return;
     void setRootCateId(val);
+    void setCateId(undefined);
   };
 
   const onKeywordChange = (e: any) => {
@@ -95,7 +92,7 @@ export default function LeftTree(props: any) {
   const handleDeleteCaseCate = (node: any) => {
     postRequest(deleteCaseCategory + '/' + node.id).then(() => {
       void message.success('删除成功');
-      void searchCateTreeData(rootCateId, keyword, true);
+      void updateCateTreeData(rootCateId, keyword);
     });
   };
 
@@ -141,6 +138,7 @@ export default function LeftTree(props: any) {
           onSelect={onSelect}
           onExpand={onExpand}
           showIcon={false}
+          showLine
           titleRender={(node) => {
             return (
               <div className="node-render custom-tree-node">
@@ -199,7 +197,7 @@ export default function LeftTree(props: any) {
         caseCateId={curChooseCate?.id}
         caseCateName={curChooseCate?.name}
         parentId={curChooseCate?.parentId}
-        updateDatasource={() => searchCateTreeData(rootCateId, keyword, true)}
+        updateDatasource={() => updateCateTreeData(rootCateId, keyword)}
       />
     </div>
   );

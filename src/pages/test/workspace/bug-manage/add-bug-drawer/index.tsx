@@ -16,12 +16,13 @@ import {
   Row,
   Col,
 } from 'antd';
-import { addBug, modifyBug, getManagerList, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
+import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
 import AddCaseModal from '../../test-case/add-case-drawer';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
+import * as HOOKS from '../../hooks';
 import _ from 'lodash';
 import './index.less';
 
@@ -42,7 +43,7 @@ export default function BugManage(props: any) {
   const [schema, setSchema] = useState<any[]>();
   const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
-  const [manageList, setManageList] = useState<string[]>([]);
+  const [manageList] = HOOKS.useUserOptions();
   const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
@@ -98,7 +99,7 @@ export default function BugManage(props: any) {
         bugInfo.projectId && demandId.push(bugInfo.projectId);
         bugInfo.demandId && demandId.push(bugInfo.demandId);
         bugInfo.subDemandId && demandId.push(bugInfo.subDemandId);
-        void form.setFieldsValue({ ...bugInfo, demandId });
+        void form.setFieldsValue({ ...bugInfo, demandId, agent: /\((.*)\)/.exec(bugInfo.agent)?.[1] });
         void setRelatedCases(bugInfo.relatedCases);
         try {
           void setSchema(JSON.parse(bugInfo.description));
@@ -130,11 +131,10 @@ export default function BugManage(props: any) {
 
   /** 获得可关联的测试用例树 */
   useEffect(() => {
-    void updateAssociatingCaseTreeSelect();
-    void getRequest(getManagerList).then((res) => {
-      void setManageList(res.data.usernames);
-    });
-  }, []);
+    if (visible && !testCaseTree?.length) {
+      void updateAssociatingCaseTreeSelect();
+    }
+  }, [visible]);
 
   /** -------------------------- 关联用例 end -------------------------- */
 
@@ -148,11 +148,13 @@ export default function BugManage(props: any) {
   };
 
   useEffect(() => {
-    getRequest(getCaseCategoryDeepList).then((res) => {
-      const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
-      void setCaseCateTreeData(curTreeData || []);
-    });
-  }, []);
+    if (visible && !caseCateTreeData?.length) {
+      getRequest(getCaseCategoryDeepList).then((res) => {
+        const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
+        void setCaseCateTreeData(curTreeData || []);
+      });
+    }
+  }, [visible]);
 
   return (
     <>
@@ -253,12 +255,7 @@ export default function BugManage(props: any) {
                 <span className="import-identification">* </span>经办人 :{' '}
               </span>
               <Form.Item name="agent" rules={[{ required: true, message: '请选择经办人' }]} className="form-item-info">
-                <Select
-                  disabled={readOnly}
-                  options={manageList.map((item) => ({ label: item, value: item }))}
-                  optionFilterProp="label"
-                  showSearch
-                />
+                <Select disabled={readOnly} options={manageList} optionFilterProp="label" showSearch />
               </Form.Item>
             </Col>
             <Col span="12" push="1" className="col-form-item">

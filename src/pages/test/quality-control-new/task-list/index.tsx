@@ -15,7 +15,7 @@ import './index.less';
 
 export default function taskList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [setCreateOrEditTaskModalVisible, setSetCreateOrEditTaskModalVisible] = useState<boolean>(false);
+  const [CreateOrEditTaskModalVisible, setCreateOrEditTaskModalVisible] = useState<boolean>(false);
   const [resultModalVisible, setResultModalVisible] = useState<boolean>(false);
   const [curTask, setCurTask] = useState<any>();
   const [taskList, setTaskList] = useState<any[]>();
@@ -81,7 +81,7 @@ export default function taskList(props: any) {
           </Form>
         </div>
         <div className="add-btn-container">
-          <Button type="primary" onClick={() => setSetCreateOrEditTaskModalVisible(true)}>
+          <Button type="primary" onClick={() => setCreateOrEditTaskModalVisible(true)}>
             新建任务
           </Button>
         </div>
@@ -146,8 +146,8 @@ export default function taskList(props: any) {
           </Table>
         </div>
         <CreateOrEditTaskModal
-          visible={setCreateOrEditTaskModalVisible}
-          setVisible={setSetCreateOrEditTaskModalVisible}
+          visible={CreateOrEditTaskModalVisible}
+          setVisible={setCreateOrEditTaskModalVisible}
           task={curTask}
         />
         <ResultModal visible={resultModalVisible} setVisible={setResultModalVisible} taskId={curTask?.id} />

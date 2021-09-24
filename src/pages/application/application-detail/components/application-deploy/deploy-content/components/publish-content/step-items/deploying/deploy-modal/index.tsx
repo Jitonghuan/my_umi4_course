@@ -16,24 +16,15 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
 
-  const [deployConfig, setDeployConfig] = useState({
-    deployEnv: deployingEnv,
-    deployBatch: 12,
-  });
+  const [stateDeployEnv, setStateDeployEnv] = useState<string>();
+  const [deployBatch, setDeployBatch] = useState(12);
   const [envDataList, setEnvDataList] = useState([]);
 
   useEffect(() => {
-    if (!['deploying', 'deployWaitBatch2'].includes(deployStatus)) return;
+    if (!visible) return;
 
-    if (deployingEnv && deployingEnv !== deployConfig.deployEnv) {
-      console.log('>> reset deployEnv: ', deployingEnv);
-
-      setDeployConfig({
-        deployEnv: deployingEnv,
-        deployBatch: deployConfig.deployBatch,
-      });
-    }
-  }, [deployingEnv]);
+    setStateDeployEnv(deployingEnv);
+  }, [visible]);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -113,7 +104,6 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       );
       text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
     }
-
     return (
       <>
         <div>
@@ -139,7 +129,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       confirmLoading={deployStatus === 'deploying'}
       okText={deployStatus === 'deployWaitBatch2' ? '继续' : '确定'}
       onOk={() => {
-        let batch: 0 | 1 | 2 = deployConfig.deployBatch === 12 ? 1 : 0;
+        let batch: 0 | 1 | 2 = deployBatch === 12 ? 1 : 0;
 
         if (deployStatus === 'deployWaitBatch2') {
           batch = 2;
@@ -152,7 +142,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
 
         confirmProdDeploy({
           id: deployInfo.id,
-          hospital: deployConfig.deployEnv,
+          hospital: stateDeployEnv!,
           batch,
         })
           .then((res) => {
@@ -160,7 +150,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
               message.error(res.errorMsg);
             }
           })
-          .finally(() => onOperate('deployEnd'));
+          .finally(() => {
+            onOperate('deployEnd');
+            // window.location.reload();
+          });
       }}
       onCancel={onCancel}
     >
@@ -169,8 +162,8 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         {/* 根据 envs 拿到列表 */}
         <Radio.Group
           disabled={['deploying', 'deployWaitBatch2'].includes(deployStatus)}
-          value={deployConfig.deployEnv}
-          onChange={(v) => setDeployConfig({ ...deployConfig, deployEnv: v.target.value })}
+          value={stateDeployEnv}
+          onChange={(v) => setStateDeployEnv(v.target.value)}
           options={envList?.map((v: any) => ({
             label: v.envName,
             value: v.envCode,
@@ -181,8 +174,8 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         <span>发布批次：</span>
         <Radio.Group
           disabled={deployStatus !== 'deployWait'}
-          value={deployConfig.deployBatch}
-          onChange={(v) => setDeployConfig({ ...deployConfig, deployBatch: v.target.value })}
+          value={deployBatch}
+          onChange={(v) => setDeployBatch(v.target.value)}
           options={[
             { label: '分批', value: 12 },
             { label: '不分批', value: 0 },

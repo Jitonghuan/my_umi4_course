@@ -7,9 +7,10 @@ import { getRanking } from '../service';
 import { getRequest } from '@/utils/request';
 import LineChart from './line-chart';
 import RankList from './rank-list';
+import * as HOOKS from '../hooks';
 import './index.less';
 
-const rankListData = [
+const rankListTmp = [
   {
     leftLabel: '质量分最优Top10',
     leftDataPropName: 'qualityPointsGoodTop10',
@@ -36,31 +37,52 @@ const rankListData = [
   },
 ];
 
-export default function Overview(props: any) {
-  const [appSevices, setAppSevices] = useState<any[]>([]);
-  const [ranking, setRanking] = useState<any>();
+const lineChartTmp = [
+  {
+    title: '代码质量分master分支',
+    key: 'qualityPoints' as 'qualityPoints',
+  },
+  {
+    title: '代码量master',
+    key: 'codeLines' as 'codeLines',
+  },
+  {
+    title: '千行代码问题数master分支',
+    key: 'codeBugs' as 'codeBugs',
+  },
+  {
+    title: '单测成功率',
+    key: 'utPassRate' as 'utPassRate',
+  },
+  {
+    title: '代码重复度master分支',
+    key: 'codeDuplicationsRate' as 'codeDuplicationsRate',
+  },
+  {
+    title: '单测覆盖率',
+    key: 'utCovRate' as 'utCovRate',
+  },
+];
 
-  useEffect(() => {
-    getRequest(getRanking).then((res) => {
-      setRanking(res.data);
-      console.log('res.data :>> ', res.data);
-    });
-  }, []);
+export default function Overview(props: any) {
+  const [ranking] = HOOKS.useAllRanking();
+  const [allAppServices] = HOOKS.useAllAppServices();
+  const [appTrendMap] = HOOKS.useAppTrendMap();
 
   return (
     <PageContainer className="quality-control-overview">
       <HeaderTabs activeKey="overview" history={props.history} />
       <ContentCard>
         <label>
-          应用服务: <Select allowClear placeholder="Please select" />
+          应用服务: <Select className="app-service-select" placeholder="请选择" mode="tags" options={allAppServices} />
         </label>
         <div className="line-chart-group">
-          {[1, 2, 3, 4, 5, 6].map((item, index) => (
-            <LineChart key={index} />
+          {lineChartTmp.map((item, index) => (
+            <LineChart {...item} {...appTrendMap[item.key]} key={index} />
           ))}
         </div>
         <div className="rank-list-group">
-          {rankListData.map((item, index) => (
+          {rankListTmp.map((item, index) => (
             <RankList
               key={index}
               leftLabel={item.leftLabel}

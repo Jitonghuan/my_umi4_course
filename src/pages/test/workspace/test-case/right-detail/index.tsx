@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import moment from 'moment';
-import { Form, Table, Button, Popconfirm, Input, Select, Space, message, Typography, Tooltip } from 'antd';
+import { Form, Table, Button, Popconfirm, Input, Select, Space, message, Typography, Tooltip, Tag } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { getCasePageList, caseDelete } from '../../service';
 import { priorityEnum } from '../../constant';
@@ -8,9 +8,23 @@ import AddCaseDrawer from '../add-case-drawer';
 import OprateCaseDrawer from '../oprate-case-modal';
 import './index.less';
 
+const priorityMap: any = {};
+priorityEnum.forEach((item) => {
+  priorityMap[item.value] = item;
+});
+
 export default function RightDetail(props: any) {
-  const { cateId, onAddCaseBtnClick, onEditCaseBtnClick, drawerVisible, setDrawerVisible, caseCateTreeData, curCase } =
-    props;
+  const {
+    cateId,
+    caseReadOnly,
+    onAddCaseBtnClick,
+    onEditCaseBtnClick,
+    onSeeCaseBtnClick,
+    drawerVisible,
+    setDrawerVisible,
+    caseCateTreeData,
+    curCase,
+  } = props;
 
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -21,10 +35,13 @@ export default function RightDetail(props: any) {
   const [oprateCaseModalVisible, setOprateCaseModalVisible] = useState<boolean>(false);
   const [oprationType, setOprationType] = useState<string>();
   const [cateIdCache, setCateIdCache] = useState<any>(cateId);
-  const [formData, setFormData] = useState<any>({});
   const [form] = Form.useForm();
 
-  const updateDatasource = async (_pageIndex: number = pageIndex, _pageSize = pageSize, _formData = formData) => {
+  const updateDatasource = async (
+    _pageIndex: number = pageIndex,
+    _pageSize = pageSize,
+    _formData = form.getFieldsValue(),
+  ) => {
     const { keyword, priority } = _formData;
 
     if (!cateId && cateId !== 0) return;
@@ -48,6 +65,7 @@ export default function RightDetail(props: any) {
 
   useEffect(() => {
     if (cateIdCache == cateId) return;
+    void setCateIdCache(cateId);
     if (pageIndex !== 1) void setPageIndex(1);
     else void updateDatasource();
   }, [cateId]);
@@ -73,7 +91,6 @@ export default function RightDetail(props: any) {
   );
 
   const handleSearch = (formData: any) => {
-    void setFormData(formData);
     void updateDatasource(1, pageSize, formData);
   };
 
@@ -87,12 +104,18 @@ export default function RightDetail(props: any) {
     void setOprateCaseModalVisible(true);
   };
 
+  const renderCateName = (title: string) => {
+    const titArr = title.split('/');
+    if (titArr.length <= 2) return title;
+    return '.../' + titArr[titArr.length - 2] + '/' + titArr[titArr.length - 1];
+  };
+
   return (
     <div className="test-workspace-test-case-right-detail">
       <div className="searchHeader">
         <Form layout="inline" onFinish={handleSearch} onReset={handleSearch} form={form}>
           <Form.Item label="用例标题:" name="keyword">
-            <Input placeholder="输入标题" />
+            <Input className="title-search" placeholder="输入标题" />
           </Form.Item>
           <Form.Item label="优先级:" name="priority">
             <Select placeholder="选择优先级" allowClear style={{ width: '106px' }}>
@@ -147,42 +170,55 @@ export default function RightDetail(props: any) {
             selectedRowKeys: checkedCaseIds,
             onChange: setCheckedCaseIds,
           }}
+          scroll={{ x: '1000px' }}
         >
           <Table.Column width={60} title="ID" dataIndex="id"></Table.Column>
           <Table.Column
-            dataIndex="categoryName"
-            title="所属"
-            render={(title) => (
+            dataIndex="title"
+            title="用例名称"
+            width={420}
+            render={(title, record) => (
               <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
+                <Typography.Text
+                  style={{ maxWidth: '420px', color: '#033980', cursor: 'pointer' }}
+                  ellipsis={{ suffix: '' }}
+                  onClick={() => onSeeCaseBtnClick(record)}
+                >
                   {title}
                 </Typography.Text>
               </Tooltip>
             )}
           ></Table.Column>
           <Table.Column
-            dataIndex="title"
-            title="用例名称"
+            dataIndex="priority"
+            title="优先级"
+            width={60}
+            render={(p) => <Tag color={priorityMap[p].color}>{p}</Tag>}
+          ></Table.Column>
+          <Table.Column
+            dataIndex="categoryName"
+            title="所属"
+            width={200}
             render={(title) => (
               <Tooltip title={title}>
-                <Typography.Text style={{ maxWidth: '160px' }} ellipsis={{ suffix: '' }}>
-                  {title}
+                <Typography.Text style={{ maxWidth: '200px' }} ellipsis={{ suffix: '' }}>
+                  {renderCateName(title)}
                 </Typography.Text>
               </Tooltip>
             )}
           ></Table.Column>
-          <Table.Column dataIndex="priority" title="优先级" width={60}></Table.Column>
-          <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
+          <Table.Column dataIndex="createUser" title="创建人" width={180}></Table.Column>
           <Table.Column
             dataIndex="gmtModify"
             title="更新时间"
             render={(date) => moment(date).format('YYYY-MM-DD HH:mm:ss')}
             width={166}
           ></Table.Column>
-          <Table.Column title="操作" render={operateRender} width={120}></Table.Column>
+          <Table.Column title="操作" render={operateRender} width={120} fixed="right"></Table.Column>
         </Table>
       </div>
       <AddCaseDrawer
+        readOnly={caseReadOnly}
         caseId={curCase?.id}
         cateId={cateId}
         visible={drawerVisible}
@@ -192,6 +228,7 @@ export default function RightDetail(props: any) {
       />
 
       <OprateCaseDrawer
+        cateId={cateId}
         visible={oprateCaseModalVisible}
         setVisible={setOprateCaseModalVisible}
         oprationType={oprationType as 'copy' | 'move'}

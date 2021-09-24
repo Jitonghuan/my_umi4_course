@@ -22,9 +22,10 @@ import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import AddBugDrawer from '../../bug-manage/add-bug-drawer';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects, getProjectTreeData } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import moment from 'moment';
+import * as HOOKS from '../../hooks';
 
 moment.locale('zh-cn');
 
@@ -49,13 +50,13 @@ export default function UserCaseInfoExec(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [associationBug, setAssociationBug] = useState<any[]>([]);
   const [caseStatus, setCaseStatus] = useState<string>();
-  const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(true);
+  const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(false);
   const [schema, setSchema] = useState();
   const sona = useMemo(() => createSona(), []);
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [projectTreeData] = HOOKS.useProjectTreeData();
 
   useEffect(() => {
     if (curCase) {
@@ -85,19 +86,6 @@ export default function UserCaseInfoExec(props: any) {
       } catch (e) {}
     }
   }, [curCase]);
-
-  useEffect(() => {
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
-    });
-  }, []);
 
   const changeCaseStatus = async (phaseId: number, caseId: number, status: string, executeNote?: string) => {
     // const loadEnd = message.loading('正在修改用例状态');
@@ -131,7 +119,7 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleSaveExecNote = async () => {
     void (await handleCaseStatusSubmit(caseStatus as string, JSON.stringify(sona.schema)));
-    void setExecNoteReadOnly(true);
+    // void setExecNoteReadOnly(true);
     void message.success('执行备注修改成功');
   };
 
@@ -147,7 +135,7 @@ export default function UserCaseInfoExec(props: any) {
         ],
       },
     ]);
-    void setExecNoteReadOnly(true);
+    // void setExecNoteReadOnly(true);
   };
 
   const handleChangeCurCaseIdx = (isToNext: boolean) => {
@@ -255,17 +243,9 @@ export default function UserCaseInfoExec(props: any) {
           <span className="case-title">
             #{curCase?.caseInfo?.id} {curCase?.caseInfo?.title}
           </span>
-          <Select
-            className={
-              'w-100 ml-auto ' + ['beExecuted', 'executeSuccess', 'executeFailure', 'block', 'pass'][+(caseStatus || 0)]
-            }
-            value={caseStatus}
-            onChange={handleCaseStatusChange}
-          >
+          <Select className="w-100 ml-auto" value={caseStatus} onChange={handleCaseStatusChange}>
             {caseStatusEnum.map((item) => (
-              <Select.Option value={item.value} style={{ background: item.color }}>
-                {item.label}
-              </Select.Option>
+              <Select.Option value={item.value}>{item.label}</Select.Option>
             ))}
           </Select>
           <Button

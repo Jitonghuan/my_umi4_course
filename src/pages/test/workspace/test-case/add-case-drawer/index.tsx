@@ -1,5 +1,20 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
-import { Form, Drawer, Modal, Input, Switch, Select, Tabs, Button, message, TreeSelect, Space } from 'antd';
+import {
+  Form,
+  Drawer,
+  Modal,
+  Input,
+  Switch,
+  Select,
+  Tabs,
+  Button,
+  message,
+  TreeSelect,
+  Space,
+  Table,
+  Row,
+  Col,
+} from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { createCase, updateCase, getCategoryList, getCaseInfo } from '../../service';
 import { priorityEnum } from '../../constant';
@@ -7,6 +22,7 @@ import { createSona } from '@cffe/sona';
 import EditorTable from '@cffe/pc-editor-table';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
+import ScriptEditor from '@/components/script-editor';
 import './index.less';
 
 const { TabPane } = Tabs;
@@ -14,7 +30,7 @@ const { TabPane } = Tabs;
 let Cache: any = {};
 
 export default function RightDetail(props: any) {
-  const { visible, setVisible, onSuccess, caseId, cateId, isModal = false, caseCateTreeData = [] } = props;
+  const { visible, setVisible, readOnly, onSuccess, caseId, cateId, isModal = false, caseCateTreeData = [] } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
   const [caseDescArr, setCaseDescArr] = useState<any[]>([]);
@@ -23,6 +39,8 @@ export default function RightDetail(props: any) {
   const [stepContentFormItemvalidateStatus, setStepContentFormItemvalidateStatus] = useState<any>('validating');
   const [expectedResult, setExpectedResult] = useState<string | string[]>('');
   const [descType, setDescType] = useState('0');
+  const [saveLoding, setSaveLoding] = useState<boolean>(false);
+  const [expandKeys, setExpandKeys] = useState<React.Key[]>();
   const [schema, setSchema] = useState<any>();
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
@@ -31,8 +49,12 @@ export default function RightDetail(props: any) {
     if (visible) {
       Cache = {};
       void setSchema(undefined);
+      form.resetFields();
+      void setStepContentFormItemHelp('');
+      void setStepContentFormItemvalidateStatus(undefined);
       if (caseId) {
         getRequest(getCaseInfo + '/' + caseId).then((res) => {
+          res.data.categoryId && expandA(res.data.categoryId);
           void setDescType(res.data.descType.toString());
           void form.setFieldsValue(res.data);
           if (res.data.descType === '0') {
@@ -61,7 +83,34 @@ export default function RightDetail(props: any) {
     }
   }, [visible]);
 
+  useEffect(() => {
+    if (visible && !caseId) {
+      expandA(cateId);
+    }
+  }, [visible]);
+
+  const expandA = (cateId: number) => {
+    const exps: any[] = [];
+    const dfs = (nodeArr: any[]) => {
+      if (!nodeArr?.length) return false;
+
+      for (const node of nodeArr) {
+        exps.push(node.key);
+        if (+node.key === +cateId) {
+          exps.pop();
+          return true;
+        }
+        if (dfs(node.children)) return true;
+        exps.pop();
+      }
+    };
+    dfs(caseCateTreeData);
+    setExpandKeys(exps);
+  };
+
   const handleSave = async (needContinue: boolean = false) => {
+    setSaveLoding(true);
+
     let finalStepContent = stepContent;
     let finalExpectedResult = expectedResult;
     if (typeof finalStepContent === 'string') {
@@ -83,6 +132,7 @@ export default function RightDetail(props: any) {
         }
       });
     } catch (e) {
+      setSaveLoding(false);
       return;
     }
 
@@ -112,6 +162,7 @@ export default function RightDetail(props: any) {
 
     // 保存后清空表单
     void form.resetFields();
+    void form.setFieldsValue({ categoryId: cateId });
     if (descType === '0') {
       void setStepContent('');
       void setExpectedResult('');
@@ -120,6 +171,8 @@ export default function RightDetail(props: any) {
       void setStepContent([]);
       void setExpectedResult([]);
     }
+
+    setSaveLoding(false);
 
     !needContinue && setVisible(false);
   };
@@ -136,27 +189,44 @@ export default function RightDetail(props: any) {
 
   const infoEl = (
     <>
-      <Form {...layout} form={form}>
+      <Form className="add-case-form" {...layout} form={form} initialValues={{ priority: priorityEnum[0].value }}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
-          <Input placeholder="请输入标题" />
+          <Input disabled={readOnly} placeholder="请输入标题" />
         </Form.Item>
         <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
-          <TreeSelect treeData={caseCateTreeData} showSearch treeNodeFilterProp="title" />
+          <TreeSelect
+            treeExpandedKeys={expandKeys}
+            onTreeExpand={setExpandKeys}
+            disabled={readOnly}
+            treeData={caseCateTreeData}
+            showSearch
+            treeNodeFilterProp="title"
+          />
         </Form.Item>
-        <Form.Item label="优先级:" name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
-          <Select>
-            {priorityEnum.map((item) => (
-              <Select.Option value={item.value} key={item.value}>
-                {item.label}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item label="是否自动化:" name="isAuto" valuePropName="checked">
-          <Switch />
-        </Form.Item>
+
+        <Row className="row-form-item">
+          <Col span="12" className="col-form-item">
+            <span className="form-item-label">
+              <span className="import-identification">* </span>优先级 :{' '}
+            </span>
+            <Form.Item
+              className="form-item-info ml-41"
+              name="priority"
+              rules={[{ required: true, message: '请选择优先级' }]}
+            >
+              <Select disabled={readOnly} options={priorityEnum} />
+            </Form.Item>
+          </Col>
+          <Col span="12" style={{ display: 'flex' }} className="col-form-item">
+            <span className="form-item-label">是否自动化 : </span>
+            <Form.Item className="form-item-info ml-8" name="isAuto" valuePropName="checked">
+              <Switch disabled={readOnly} />
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Form.Item label="前置条件:" name="precondition">
-          <Input.TextArea placeholder="请输入前置条件"></Input.TextArea>
+          <Input.TextArea className="precondition-h" disabled={readOnly} placeholder="请输入前置条件"></Input.TextArea>
         </Form.Item>
         <Form.Item
           label="用例描述:"
@@ -186,6 +256,7 @@ export default function RightDetail(props: any) {
             <TabPane tab="卡片式" key="0">
               <div className="cardtype-case-desc-wrapper">
                 <Input.TextArea
+                  disabled={readOnly}
                   placeholder="输入步骤描述"
                   className="step-desc"
                   value={stepContent}
@@ -196,6 +267,7 @@ export default function RightDetail(props: any) {
                   }}
                 ></Input.TextArea>
                 <Input.TextArea
+                  disabled={readOnly}
                   placeholder="预期结果"
                   className="step-expected-results"
                   value={expectedResult}
@@ -208,51 +280,79 @@ export default function RightDetail(props: any) {
               </div>
             </TabPane>
             <TabPane tab="步骤式" key="1">
-              <EditorTable
-                value={caseDescArr}
-                onChange={(val) => {
-                  void setStepContentFormItemHelp('');
-                  void setStepContentFormItemvalidateStatus(undefined);
-                  void setCaseDescArr(val);
-                  void setStepContent(val.map((item) => item.value));
-                  void setExpectedResult(val.map((item) => item.desc));
-                }}
-                creator={{ record: { value: '', desc: '' } }}
-                columns={[
-                  {
-                    title: '编号',
-                    dataIndex: '__count',
-                    fieldType: 'readonly',
-                    colProps: { width: 60, align: 'center' },
-                  },
-                  { title: '步骤描述', dataIndex: 'value', required: true },
-                  { title: '预期结果', dataIndex: 'desc', required: true },
-                ]}
-              />
+              {readOnly ? (
+                <Table dataSource={caseDescArr} pagination={false}>
+                  <Table.Column title="编号" render={(_: any, __: number, idx: number) => idx + 1} />
+                  <Table.Column title="步骤描述" dataIndex="input" />
+                  <Table.Column
+                    title="预期结果"
+                    dataIndex="output"
+                    render={(text) => <Input.TextArea readOnly value={text} />}
+                  />
+                </Table>
+              ) : (
+                <EditorTable
+                  disabled={readOnly}
+                  value={caseDescArr}
+                  onChange={(val) => {
+                    void setStepContentFormItemHelp('');
+                    void setStepContentFormItemvalidateStatus(undefined);
+                    void setCaseDescArr(val);
+                    void setStepContent(val.map((item) => item.value));
+                    void setExpectedResult(val.map((item) => item.desc));
+                  }}
+                  creator={{ record: { value: '', desc: '' } }}
+                  columns={[
+                    {
+                      title: '编号',
+                      dataIndex: '__count',
+                      fieldType: 'readonly',
+                      colProps: { width: 60, align: 'center' },
+                    },
+                    { title: '步骤描述', dataIndex: 'value', required: true },
+                    {
+                      title: '预期结果',
+                      dataIndex: 'desc',
+                      required: true,
+                      fieldType: 'custom',
+                      component: ScriptEditor,
+                      fieldProps: (value, index, record) => {
+                        return { mode: record.type === 'text' };
+                      },
+                    },
+                  ]}
+                />
+              )}
             </TabPane>
           </Tabs>
         </Form.Item>
         <Form.Item label="备注" name="comment">
-          <RichText sona={sona} schema={schema} width="100%" height="200px" />
+          <RichText readOnly={readOnly} sona={sona} schema={schema} width="100%" height="400px" />
         </Form.Item>
       </Form>
 
       <div className="drawer-btn-group">
-        <Space>
-          <Button type="primary" onClick={() => handleSave()}>
-            保存
-          </Button>
-          {!caseId ? (
-            <Button type="primary" onClick={() => handleSave(true)}>
-              保存并继续
-            </Button>
-          ) : (
-            ''
-          )}
+        {readOnly ? (
           <Button type="primary" onClick={handleCancel}>
-            取消
+            关闭
           </Button>
-        </Space>
+        ) : (
+          <Space>
+            <Button type="primary" onClick={() => handleSave()} loading={saveLoding}>
+              保存
+            </Button>
+            {!caseId ? (
+              <Button type="primary" onClick={() => handleSave(true)}>
+                保存并继续
+              </Button>
+            ) : (
+              ''
+            )}
+            <Button type="primary" onClick={handleCancel}>
+              取消
+            </Button>
+          </Space>
+        )}
       </div>
     </>
   );
@@ -262,7 +362,7 @@ export default function RightDetail(props: any) {
       className="add-case-modal"
       visible={visible}
       width="400"
-      title={caseId ? '编辑用例' : '添加用例'}
+      title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onCancel={() => setVisible(false)}
       maskClosable={false}
       footer={false}
@@ -271,9 +371,10 @@ export default function RightDetail(props: any) {
     </Modal>
   ) : (
     <Drawer
+      className="add-case-drawer"
       visible={visible}
       width="650"
-      title={caseId ? '编辑用例' : '添加用例'}
+      title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onClose={() => setVisible(false)}
       maskClosable={false}
     >

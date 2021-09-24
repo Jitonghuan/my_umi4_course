@@ -52,7 +52,8 @@
     "moment": "^2.29.1",
     "qs": "~6.10.1",
     "react-ace": "^9.4.1",
-    "umi": "~3.5.18"
+    "umi": "~3.5.18",
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "@hbos/umi-plugin-theme-hbos": "^1.0.1",

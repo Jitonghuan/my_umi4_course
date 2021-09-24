@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
-import { createTestPlan, modifyTestPlan, getManagerList, getProjectTreeData } from '../../service';
+import { createTestPlan, modifyTestPlan } from '../../service';
 import { Form, Button, Table, Input, Select, Space, Drawer, message, Cascader } from 'antd';
 import EditorTable from '@cffe/pc-editor-table';
 import FELayout from '@cffe/vc-layout';
 import moment from 'moment';
+import * as HOOKS from '../../hooks';
 import './index.less';
 import _ from 'lodash';
 
@@ -12,28 +13,11 @@ export default function AddTestPlanDrawer(props: any) {
   const { plan, visible, setVisible, updateTable, projectList } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
 
-  const [manageList, setManageList] = useState<string[]>([]);
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [manageList] = HOOKS.useUserOptions();
+  const [projectTreeData] = HOOKS.useProjectTreeData();
   const [phaseCollectionFormItemHelp, setPhaseCollectionFormItemHelp] = useState<string>();
   const [phaseCollectionFormItemValidateStatus, setPhaseCollectionFormItemValidateStatus] = useState<any>();
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    void getRequest(getManagerList).then((res) => {
-      void setManageList(res.data.usernames);
-    });
-
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
-    });
-  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -138,8 +122,8 @@ export default function AddTestPlanDrawer(props: any) {
   };
 
   const layout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 20 },
+    labelCol: { span: 3 },
+    wrapperCol: { span: 21 },
     labelAlign: 'left' as 'left',
   };
 
@@ -147,7 +131,7 @@ export default function AddTestPlanDrawer(props: any) {
     <Drawer
       className="test-workspace-test-plan-add-test-plan-drawer"
       visible={visible}
-      width="650"
+      width="950"
       title={plan ? '编辑计划' : '新增计划'}
       onClose={() => setVisible(false)}
     >
@@ -158,10 +142,10 @@ export default function AddTestPlanDrawer(props: any) {
         <Form.Item label="项目/需求" name="demandId" rules={[{ required: true, message: '请选择项目/需求' }]}>
           <Cascader expandTrigger="hover" changeOnSelect placeholder="请选择" options={projectTreeData} />
         </Form.Item>
-        <Form.Item label="关联任务" name="jiraTask" rules={[{ required: true, message: '请输入关联人物' }]}>
+        <Form.Item label="关联任务" name="jiraTask">
           <Input placeholder="请输入关联任务" />
         </Form.Item>
-        <Form.Item label="计划说明" name="description" rules={[{ required: true, message: '请输入计划说明' }]}>
+        <Form.Item label="计划说明" name="description">
           <Input.TextArea placeholder="请输入用例前置条件" />
         </Form.Item>
         <Form.Item
@@ -179,7 +163,7 @@ export default function AddTestPlanDrawer(props: any) {
                 title: '负责人',
                 dataIndex: 'head',
                 fieldType: 'select',
-                valueOptions: manageList.map((item) => ({ label: item, value: item })),
+                valueOptions: manageList,
                 fieldProps: { placeholder: '请选择', showSearch: true, optionFilterProp: 'label' },
                 colProps: { width: 140 },
                 required: true,

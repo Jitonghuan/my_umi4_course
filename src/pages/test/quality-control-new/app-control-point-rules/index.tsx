@@ -5,10 +5,15 @@ import HeaderTabs from '../_components/header-tabs';
 import { Table, Button, Input, Form, Space, Typography, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import CreateOrEditRuleModal from './create-or-edit-rule-modal';
+import * as HOOKS from '../hooks';
+import * as INTERFACES from '../interface';
+import moment from 'moment';
 import './index.less';
 
 export default function AppControlPointRules(props: any) {
   const [createOrEditRuleModalVisible, setCreateOrEditRuleModalVisible] = useState(false);
+  const [keyword, setKeyword] = useState<string>('');
+  const [allAppCodeQualityConf] = HOOKS.useAllAppCodeQualityConf(keyword);
 
   const handleCreateRule = () => {
     setCreateOrEditRuleModalVisible(true);
@@ -21,17 +26,28 @@ export default function AppControlPointRules(props: any) {
         <div className="header">
           <div className="title-and-search">
             <Typography.Text strong>已配置规则列表</Typography.Text>
-            <Input.Search className="keyword-search-input" placeholder="输入服务关键字搜索" />
+            <Input.Search className="keyword-search-input" placeholder="输入服务关键字搜索" onSearch={setKeyword} />
           </div>
           <Button type="primary" onClick={handleCreateRule}>
             <PlusOutlined />
             新增规则
           </Button>
         </div>
-        <Table dataSource={[]}>
-          <Table.Column title="服务" dataIndex="?" />
-          <Table.Column title="创建时间" dataIndex="?" />
-          <Table.Column title="更新时间" dataIndex="?" />
+        <Table dataSource={allAppCodeQualityConf}>
+          <Table.Column
+            title="服务"
+            render={(record: INTERFACES.IConfig) => `${record.categoryCode}/${record.appCode}`}
+          />
+          <Table.Column
+            title="创建时间"
+            dataIndex="gmtCreate"
+            render={(time) => moment(time).format('YYYY-MM-DD HH:mm:ss')}
+          />
+          <Table.Column
+            title="更新时间"
+            dataIndex="gmtModify"
+            render={(time) => moment(time).format('YYYY-MM-DD HH:mm:ss')}
+          />
           <Table.Column
             title="操作"
             width="180"
