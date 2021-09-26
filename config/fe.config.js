@@ -56,8 +56,8 @@ module.exports = {
       }
 
       return [
-        '#gitpush',
-        // `#jenkins fe-single?REPOSITORY={{repository}}&BRANCH={{gitBranch}}&GROUP={{group}}&PROJECT=${project}&VERSION=${version}&ENV=${envCode}`
+        '#autopush',
+        `#jenkins fe-single?REPOSITORY={{repository}}&BRANCH={{gitBranch}}&GROUP={{group}}&PROJECT=${project}&VERSION=${version}&ENV=${envCode}`
       ];
     },
 
