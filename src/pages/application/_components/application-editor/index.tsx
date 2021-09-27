@@ -167,6 +167,7 @@ export default function ApplicationEditor(props: IProps) {
             placeholder="请选择"
             onChange={handleCategoryCodeChange}
             style={{ width: 320 }}
+            showSearch
           />
         </FormItem>
         <FormItem label="应用组" name="appGroupCode">
@@ -176,6 +177,7 @@ export default function ApplicationEditor(props: IProps) {
             placeholder="请选择"
             style={{ width: 320 }}
             allowClear
+            showSearch
           />
         </FormItem>
         <FormItem label="应用负责人" name="ownerList" rules={[{ required: true, message: '请输入应用负责人' }]}>
