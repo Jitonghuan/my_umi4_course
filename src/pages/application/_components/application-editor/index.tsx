@@ -115,6 +115,8 @@ export default function ApplicationEditor(props: IProps) {
       if (isEdit) {
         await updateApp({ id: initData?.id!, ...submitData });
       } else {
+        // 创建应用的时候，如果是前端应用，加上统一的 fe_ 前缀
+        submitData.appCode = submitData.appType === 'frontend' ? `fe_${submitData.appCode}` : submitData.appCode;
         await createApp(submitData);
       }
 
@@ -152,8 +154,17 @@ export default function ApplicationEditor(props: IProps) {
         >
           <Radio.Group options={appTypeOptions} disabled={isEdit} />
         </FormItem>
-        <FormItem label="APPCODE" name="appCode" rules={[{ required: true, message: '请输入应用 Code' }]}>
-          <Input placeholder="请输入应用Code" disabled={isEdit} style={{ width: 320 }} />
+        <FormItem noStyle shouldUpdate={shouldUpdate(['appType'])}>
+          {({ getFieldValue }) => (
+            <FormItem label="APPCODE" name="appCode" rules={[{ required: true, message: '请输入应用 Code' }]}>
+              <Input
+                placeholder="请输入应用Code"
+                disabled={isEdit}
+                style={{ width: 320 }}
+                addonBefore={getFieldValue('appType') === 'frontend' && !isEdit ? 'fe_' : undefined}
+              />
+            </FormItem>
+          )}
         </FormItem>
         <FormItem label="应用名" name="appName" rules={[{ required: true, message: '请输入应用名称' }]}>
           <Input placeholder="请输入" style={{ width: 320 }} />
