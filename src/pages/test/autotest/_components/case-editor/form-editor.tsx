@@ -384,6 +384,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
                   },
                   { title: '期望值', dataIndex: 'value', required: true },
                 ]}
+                creator={{}}
               />
             </FormItem>
           </div>
