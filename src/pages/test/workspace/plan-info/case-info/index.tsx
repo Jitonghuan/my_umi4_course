@@ -359,7 +359,7 @@ export default function UserCaseInfoExec(props: any) {
                 renderItem={(item: any) => (
                   <List.Item>
                     <Text>
-                      {item.createUser} 执行了用例，状态为：{caseStatusEnum[item.status].label}
+                      {item.modifyUser} 执行了用例，状态为：{caseStatusEnum[item.status].label}
                     </Text>
                     <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
                   </List.Item>

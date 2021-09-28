@@ -19,7 +19,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   const [stateDeployEnv, setStateDeployEnv] = useState<string>();
   const [deployBatch, setDeployBatch] = useState(12);
   const [envDataList, setEnvDataList] = useState([]);
-
+  // console.log('deployBatch',deployBatch)
   useEffect(() => {
     if (!visible) return;
 
@@ -129,21 +129,32 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       confirmLoading={deployStatus === 'deploying'}
       okText={deployStatus === 'deployWaitBatch2' ? '继续' : '确定'}
       onOk={() => {
-        let batch: 0 | 1 | 2 = deployBatch === 12 ? 1 : 0;
-
+        // let batch: 0 | 1 | 2 = deployBatch === 12 ? 1 : 0;
+        let batch;
+        if (deployBatch === 0) {
+          batch = 0;
+        } else if (deployBatch === 12) {
+          batch = 1 || 2;
+        }
         if (deployStatus === 'deployWaitBatch2') {
           batch = 2;
         } else if (deployStatus === 'deployWait') {
-          batch = 1;
+          // batch = 1;
+          if (deployBatch === 0) {
+            batch = 0;
+          } else {
+            batch = 1;
+          }
         } else {
           onCancel?.();
           return;
         }
-
+        //  console.log('batch',batch)
+        //  console.log('deployStatus',deployStatus)
         confirmProdDeploy({
           id: deployInfo.id,
           hospital: stateDeployEnv!,
-          batch,
+          batch: batch,
         })
           .then((res) => {
             if (!res.success) {
