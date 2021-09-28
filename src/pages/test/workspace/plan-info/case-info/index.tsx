@@ -50,7 +50,7 @@ export default function UserCaseInfoExec(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [associationBug, setAssociationBug] = useState<any[]>([]);
   const [caseStatus, setCaseStatus] = useState<string>();
-  const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(false);
+  // const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(false);
   const [schema, setSchema] = useState();
   const sona = useMemo(() => createSona(), []);
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
@@ -286,23 +286,23 @@ export default function UserCaseInfoExec(props: any) {
 
         <div className="case-prop-title mt-24">执行备注:</div>
         <div className="executeNote">
-          <RichText sona={sona} readOnly={execNoteReadOnly} schema={schema} />
-          {!execNoteReadOnly ? (
-            <div className="executeNote-btn-container">
-              <Space>
-                <Button type="primary" onClick={handleSaveExecNote}>
-                  保存
-                </Button>
-                <Button onClick={handleCancelSaveExecNote}>取消</Button>
-              </Space>
-            </div>
-          ) : (
+          <RichText sona={sona} schema={schema} />
+          {/* {!execNoteReadOnly ? ( */}
+          <div className="executeNote-btn-container">
+            <Space>
+              <Button type="primary" onClick={handleSaveExecNote}>
+                保存
+              </Button>
+              {/* <Button onClick={handleCancelSaveExecNote}>取消</Button> */}
+            </Space>
+          </div>
+          {/* ) : (
             <div className="executeNote-btn-container">
               <Button type="primary" onClick={() => setExecNoteReadOnly(false)}>
                 编辑
               </Button>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="bug-info mt-24">
