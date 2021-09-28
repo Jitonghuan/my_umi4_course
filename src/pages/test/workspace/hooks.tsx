@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRequest } from '@/utils/request';
 import * as APIS from './service';
-import { Options } from '_ahooks@2.10.9@ahooks/lib/useCountDown';
 
 let projectTreeDataCatchWH = false;
 let projectTreeDataCatch: any;
