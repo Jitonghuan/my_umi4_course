@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRequest } from '@/utils/request';
 import * as APIS from './service';
-import { Options } from '_ahooks@2.10.9@ahooks/lib/useCountDown';
 
 let projectTreeDataCatchWH = false;
 let projectTreeDataCatch: any;
@@ -60,4 +59,27 @@ export function useUserOptions() {
   }, [userList]);
 
   return [data];
+}
+
+export function useSelectedCaseTree(phaseId: string | number) {
+  const [data, setData] = useState<any[]>([]);
+  const [nodeMap, setNodeMap] = useState({});
+
+  useEffect(() => {
+    if (!phaseId?.toString()) return;
+    getRequest(APIS.getSelectedCaseTree, { data: { phaseId } }).then((res) => {
+      setData(res.data);
+
+      // const _nodeMap = {};
+      // const Q:any[]= [];
+      // while(Q.length){
+      //   const cur = Q.shift();
+      //   _nodeMap[cur.id] =
+      // }
+    });
+  }, [phaseId]);
+
+  const querySubNode = (cateId: number | string) => {};
+
+  return data;
 }

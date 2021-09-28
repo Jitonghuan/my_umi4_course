@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import { modifyPhaseCase, getTestPhaseDetail, getAllTestCaseTree, getPhaseCaseTree } from '../../service';
-import { Button, Tabs, Drawer, message, TreeSelect, Space } from 'antd';
+import { Button, Tabs, Drawer, message, Tree, Space } from 'antd';
 import * as HOOKS from '../../hooks';
 import FELayout from '@cffe/vc-layout';
 import './index.less';
@@ -13,6 +13,8 @@ export default function AssociatingCaseDrawer(props: any) {
   const [testCaseTree, setTestCaseTree] = useState([]);
   const [curActivePhase, setCurActivePhase] = useState<string>();
   const [selectedTestPlanIds, setselectedTestPlanIds] = useState<React.Key[]>([]);
+
+  const treeData = HOOKS.useSelectedCaseTree(plan?.phaseCollection?.[0].id);
 
   useEffect(() => {
     if (visible && testCaseTree.length === 0) {
@@ -76,6 +78,10 @@ export default function AssociatingCaseDrawer(props: any) {
     });
   };
 
+  const onLoadData = async ({ id, children }: any) => {
+    console.log('{ id, children } :>> ', { id, children }, !!children);
+  };
+
   return (
     <Drawer
       className="test-workspace-test-plan-add-test-plan-drawer"
@@ -88,17 +94,7 @@ export default function AssociatingCaseDrawer(props: any) {
       <Tabs onChange={(key) => updateSelectTree(key)} activeKey={curActivePhase}>
         {plan?.phaseCollection?.map((item: any) => (
           <Tabs.TabPane tab={item.name} key={item.id}>
-            <TreeSelect
-              className="test-case-tree-select"
-              treeData={testCaseTree}
-              multiple
-              treeCheckable
-              placeholder="请选择用例集合"
-              treeNodeLabelProp="title"
-              treeNodeFilterProp="title"
-              value={selectedTestPlanIds}
-              onChange={onSelectChange}
-            />
+            <Tree loadData={onLoadData} checkable treeData={treeData} titleRender={(record: any) => record.name} />
           </Tabs.TabPane>
         ))}
       </Tabs>
