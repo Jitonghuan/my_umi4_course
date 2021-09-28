@@ -14,6 +14,7 @@ import {
   Empty,
   message,
   Popconfirm,
+  Tooltip,
 } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
@@ -240,10 +241,12 @@ export default function UserCaseInfoExec(props: any) {
     <div className={className}>
       <div className="case-header">
         <div className="title-col">
-          <span className="case-title">
-            #{curCase?.caseInfo?.id} {curCase?.caseInfo?.title}
-          </span>
-          <Select className="w-100 ml-auto" value={caseStatus} onChange={handleCaseStatusChange}>
+          <Tooltip title={`#${curCase?.caseInfo?.id} ${curCase?.caseInfo?.title}`}>
+            <Text className="case-title" ellipsis={{ suffix: '' }}>
+              #{curCase?.caseInfo?.id} {curCase?.caseInfo?.title}
+            </Text>
+          </Tooltip>
+          <Select className="w-100 ml-auto mr-12" value={caseStatus} onChange={handleCaseStatusChange}>
             {caseStatusEnum.map((item) => (
               <Select.Option value={item.value}>{item.label}</Select.Option>
             ))}
