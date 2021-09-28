@@ -14,10 +14,15 @@ export default function Dashboards(props: ChartCaseListProps) {
   const { ColorContainer } = colorUtil.context;
   const { data, loading } = props;
 
-  const clusterAchartOptions = useMemo(() => {
-    return appChangeChart(data);
-  }, [data]);
   useEffect(() => {}, []);
+  const clusterAchartOptions = useMemo(() => {
+    if (data) {
+      return appChangeChart(data || []);
+    }
+
+    // data=="" ?  appChangeChart(data || []) : ""
+    // return appChangeChart(data || []);
+  }, [data]);
   const handleChange = (value: any) => {
     console.log(`selected ${value}`);
   };
