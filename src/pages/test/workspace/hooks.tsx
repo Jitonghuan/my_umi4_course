@@ -61,7 +61,9 @@ export function useUserOptions() {
   return [data];
 }
 
-export function useSelectedCaseTree(phaseId: string | number): [data: any[], nodeMap: Record<number | string, any>] {
+export function useSelectedCaseTree(
+  phaseId: string | number,
+): [data: any[], nodeMap: Record<number | string, any>, querySubNode: (cateId: number | string) => void] {
   const [data, setData] = useState<any[]>([]);
   const [nodeMap, setNodeMap] = useState<Record<number | string, any>>({});
 
@@ -85,5 +87,5 @@ export function useSelectedCaseTree(phaseId: string | number): [data: any[], nod
     if (nodeMap[cateId]) return;
   };
 
-  return [data, nodeMap];
+  return [data, nodeMap, querySubNode];
 }
