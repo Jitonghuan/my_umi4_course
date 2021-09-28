@@ -196,6 +196,7 @@ export default function BugManage(props: any) {
               current: pageIndex,
               total: bugTotal,
               showSizeChanger: true,
+              showTotal: (total) => `共 ${total} 条`,
               onChange: (next) => setPageIndex(next),
               onShowSizeChange: (_, next) => setPageSize(next),
             }}

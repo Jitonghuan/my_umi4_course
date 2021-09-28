@@ -15,8 +15,7 @@ const envCodeMap = {
 };
 
 module.exports = {
-  type: 'builder',
-  builder: '@cffe/fe-builder-default',
+  builder: 'default',
   commands: {
     mock: [
       '$ fnpm i',
@@ -32,6 +31,7 @@ module.exports = {
     // `$ fe b` 或 `$ fe build`
     build: (options, projectInfo) => {
       process.env.VERSION = options.version || '';
+      process.env.BUILD_ENV = options.env?.replace(/^base-/, '');
 
       return [
         '$ fnpm i',
@@ -47,16 +47,17 @@ module.exports = {
       const project = options.project || projectInfo.project;
       const version = options.version || projectInfo.version || '';
 
-      process.env.BUILD_ENV = envCode;
-
-      // TODO 如果 local = false，则触发 jenkins 单工程构建 #jenkins:fe-single
-      //      相关的参数在 fe-builder-default 中默认传入
+      if (local) {
+        return [
+          `$ fe build --version=${version} --env=${envCode}`,
+          `#oss -r ./dist c2f-resource:${envCode}/${project}/${version}`,
+          `#oss ./dist/index.html c2f-resource:${envCode}/${project}/index.html`,
+        ];
+      }
 
       return [
-        `$ fe build --version=${version}`,
-        `#oss -r ./dist c2f-resource:${envCode}/${project}/${version}`,
-        `#oss ./dist/index.html c2f-resource:${envCode}/${project}/index.html`,
-        '#logger:success PUBLISH SUCCESS!!',
+        '#autopush',
+        `#jenkins fe-single?REPOSITORY={{repository}}&BRANCH={{gitBranch}}&GROUP={{group}}&PROJECT=${project}&VERSION=${version}&ENV=${envCode}`
       ];
     },
 
