@@ -269,8 +269,16 @@ export default function UserCaseInfoExec(props: any) {
         <div className="case-prop-title mt-24">步骤描述:</div>
         <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
           <Table.Column title="序号" render={(_: any, __: any, idx: number) => idx + 1} />
-          <Table.Column title="步骤描述" dataIndex="input" />
-          <Table.Column title="预期结果" dataIndex="output" />
+          <Table.Column
+            title="步骤描述"
+            dataIndex="input"
+            render={(str) => <div style={{ whiteSpace: 'break-spaces' }}>{str}</div>}
+          />
+          <Table.Column
+            title="预期结果"
+            dataIndex="output"
+            render={(str) => <div style={{ whiteSpace: 'break-spaces' }}>{str}</div>}
+          />
         </Table>
 
         <div className="case-prop-title mt-24">用例备注:</div>

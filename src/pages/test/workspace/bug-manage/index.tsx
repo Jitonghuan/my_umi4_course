@@ -43,7 +43,7 @@ export default function BugManage(props: any) {
 
   const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize, _formData = formData) => {
     const formData = _formData;
-    console.log('formData :>> ', formData);
+    void setLoading(true);
     const requestParams = {
       ...formData,
       pageIndex: _pageIndex,
@@ -59,6 +59,7 @@ export default function BugManage(props: any) {
     void setPageIndex(pageIndex);
     void setPageSize(pageSize);
     void setBugTotal(total);
+    void setLoading(false);
   };
 
   useEffect(() => {
@@ -195,6 +196,7 @@ export default function BugManage(props: any) {
               current: pageIndex,
               total: bugTotal,
               showSizeChanger: true,
+              showTotal: (total) => `共 ${total} 条`,
               onChange: (next) => setPageIndex(next),
               onShowSizeChange: (_, next) => setPageSize(next),
             }}

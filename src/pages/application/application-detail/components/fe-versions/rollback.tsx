@@ -64,7 +64,10 @@ export default function RollbackVersion(props: RollbackVersionProps) {
           }),
         }}
         onRow={(record) => ({
-          onClick: () => setSelectedRowKeys([record.version]),
+          onClick: () => {
+            if (record.isActive !== 1) return;
+            setSelectedRowKeys([record.version]);
+          },
         })}
         rowKey="version"
         pagination={false}
