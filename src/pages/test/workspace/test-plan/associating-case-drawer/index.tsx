@@ -14,7 +14,17 @@ export default function AssociatingCaseDrawer(props: any) {
   const [curActivePhase, setCurActivePhase] = useState<string>();
   const [selectedTestPlanIds, setselectedTestPlanIds] = useState<React.Key[]>([]);
 
-  const treeData = HOOKS.useSelectedCaseTree(plan?.phaseCollection?.[0].id);
+  const [treeData, nodeMap] = HOOKS.useSelectedCaseTree(plan?.phaseCollection?.[0].id);
+  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+
+  useEffect(() => {
+    const checkedKeys = Object.values(nodeMap)
+      .filter((node) => node.checked)
+      .map((node) => node.key);
+    setCheckedKeys(checkedKeys);
+    setExpandedKeys(checkedKeys);
+  }, [nodeMap]);
 
   useEffect(() => {
     if (visible && testCaseTree.length === 0) {
@@ -94,7 +104,16 @@ export default function AssociatingCaseDrawer(props: any) {
       <Tabs onChange={(key) => updateSelectTree(key)} activeKey={curActivePhase}>
         {plan?.phaseCollection?.map((item: any) => (
           <Tabs.TabPane tab={item.name} key={item.id}>
-            <Tree loadData={onLoadData} checkable treeData={treeData} titleRender={(record: any) => record.name} />
+            <Tree
+              loadData={onLoadData}
+              checkable
+              treeData={treeData}
+              checkedKeys={checkedKeys}
+              onCheck={(checkedKeys) => setCheckedKeys(checkedKeys as React.Key[])}
+              expandedKeys={expandedKeys}
+              onExpand={setExpandedKeys}
+              titleRender={(record: any) => record.name}
+            />
           </Tabs.TabPane>
         ))}
       </Tabs>

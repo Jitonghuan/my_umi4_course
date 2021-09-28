@@ -61,25 +61,29 @@ export function useUserOptions() {
   return [data];
 }
 
-export function useSelectedCaseTree(phaseId: string | number) {
+export function useSelectedCaseTree(phaseId: string | number): [data: any[], nodeMap: Record<number | string, any>] {
   const [data, setData] = useState<any[]>([]);
-  const [nodeMap, setNodeMap] = useState({});
+  const [nodeMap, setNodeMap] = useState<Record<number | string, any>>({});
 
   useEffect(() => {
     if (!phaseId?.toString()) return;
     getRequest(APIS.getSelectedCaseTree, { data: { phaseId } }).then((res) => {
       setData(res.data);
 
-      // const _nodeMap = {};
-      // const Q:any[]= [];
-      // while(Q.length){
-      //   const cur = Q.shift();
-      //   _nodeMap[cur.id] =
-      // }
+      const _nodeMap: any = {};
+      const Q: any[] = [...res.data];
+      while (Q.length) {
+        const cur = Q.shift();
+        _nodeMap[cur.id] = cur;
+        cur.children && Q.push(...cur.children);
+      }
+      setNodeMap(_nodeMap);
     });
   }, [phaseId]);
 
-  const querySubNode = (cateId: number | string) => {};
+  const querySubNode = (cateId: number | string) => {
+    if (nodeMap[cateId]) return;
+  };
 
-  return data;
+  return [data, nodeMap];
 }
