@@ -61,51 +61,70 @@ export function useUserOptions() {
   return [data];
 }
 
-export function useSelectedCaseTree(phaseId: string | number) {
+export function useSelectedCaseTree(phaseId?: string): [any[], React.Key[], React.Key[], (cateId: React.Key) => void] {
   const [data, setData] = useState<any[]>([]);
   const [nodeMap, setNodeMap] = useState<Record<React.Key, any>>({});
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
 
   useEffect(() => {
-    if (!phaseId?.toString()) return;
-    getRequest(APIS.getSelectedCaseTree, { data: { phaseId } }).then((res) => {
-      setData(res.data);
+    setData([]);
+    if (phaseId) {
+      getRequest(APIS.getSelectedCaseTree, { data: { phaseId } }).then((res) => {
+        setData(res.data);
 
-      const _checkedKeys: React.Key[] = [];
-      const _expandedKeys: React.Key[] = [];
-      const _nodeMap: any = {};
+        const _checkedKeys: React.Key[] = [];
+        const _expandedKeys: React.Key[] = [];
+        const _nodeMap: Record<React.Key, any> = {};
 
-      // const dfs = (node: any): boolean => {
-      //   _nodeMap[node.id] = node;
-      //   if (node.isLeaf) {
-      //     if (node.checked) {
-      //       _checkedKeys.push(node.key);
-      //       return true;
-      //     } else {
-      //       return false;
-      //     }
-      //   }
-      //   _expandedKeys.push(node.key);
+        const dfs = (node: any): boolean => {
+          _nodeMap[node.id] = node;
+          if (node.isLeaf) {
+            if (node.checked) {
+              _checkedKeys.push(node.key);
+              return true;
+            } else {
+              return false;
+            }
+          }
+          if (!node.children) {
+            return false;
+          }
+          _expandedKeys.push(node.key);
+          let flag = false;
+          for (const subNode of node.children) {
+            if (dfs(subNode)) flag = true;
+          }
+          if (!flag) _expandedKeys.pop();
+          return flag;
+        };
 
-      //   for (const subNode of node.children) {
-      //     if (!dfs(subNode)) _expandedKeys.pop();
-      //   }
-      // };
-
-      const Q: any[] = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        _nodeMap[cur.id] = cur;
-        if (cur.checked) _checkedKeys.push(cur.key);
-        cur.children && Q.push(...cur.children);
-      }
-      setNodeMap(_nodeMap);
-    });
+        dfs({ children: res.data });
+        setCheckedKeys(_checkedKeys);
+        setExpandedKeys(_expandedKeys);
+        setNodeMap(_nodeMap);
+      });
+    }
   }, [phaseId]);
 
-  const querySubNode = (cateId: number | string) => {
-    if (nodeMap[cateId]) return;
+  const querySubNode = async (cateId: React.Key) => {
+    console.log('nodeMap[cateId] :>> ', nodeMap[cateId]);
+    if (nodeMap[cateId].children) return;
+    const res = await getRequest(APIS.getCaseMultiDeepList, {
+      data: {
+        categoryId: cateId,
+        deep: 1,
+      },
+    });
+
+    const _nodeMap: Record<React.Key, any> = nodeMap;
+    const _data: any[] = data;
+    _nodeMap[cateId].children = res.data.map((item: any) => ({ ...item, children: undefined }));
+    _nodeMap[cateId].children.forEach((node: any) => {
+      if (!node.isLeaf) _nodeMap[node.id] = node;
+    });
+    setData(new Array(..._data));
+    setNodeMap({ ..._nodeMap });
   };
 
   return [data, checkedKeys, expandedKeys, querySubNode];
