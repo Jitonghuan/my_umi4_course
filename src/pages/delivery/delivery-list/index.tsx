@@ -53,8 +53,8 @@ export default function deliveryList() {
   };
 
   const STATUS_TYPE: Record<number, statusTypeItem> = {
-    1: { tagText: '已上架', buttonText: '下线', color: 'green', status: 2 },
-    2: { tagText: '未上架', buttonText: '上架', color: 'default', status: 1 },
+    1: { tagText: '已上线', buttonText: '下线', color: 'green', status: 2 },
+    2: { tagText: '未上线', buttonText: '上线', color: 'default', status: 1 },
   };
 
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -97,6 +97,7 @@ export default function deliveryList() {
       title: '应用名称',
       dataIndex: 'appCode',
       width: '15%',
+      mode: 'multiple',
     },
     {
       title: '应用版本',
