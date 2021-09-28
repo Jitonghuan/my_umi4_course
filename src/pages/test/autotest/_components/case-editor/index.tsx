@@ -48,7 +48,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           allowSkip: values.allowSkip || false,
           skipReason: values.skipReason || '',
           headers: values.headers || [],
-          parameters: values.parameters || [],
+          parameters: values.parameters || (values.parametersJSON && JSON.parse(values.parametersJSON)) || [],
           preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
           customVars: values.customVars || [],
           savedVars: values.savedVars || [],
