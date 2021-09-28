@@ -9,5 +9,7 @@ export const tabsConfig: any = {
   configMgr: '配置管理',
   AppParameters: '应用模版',
   secondPartyPkg: '二方包',
+  changeDetails: '变更详情',
+
   // launchParameters: '启动参数',
 };

@@ -341,8 +341,8 @@ const Coms = (props: IProps) => {
             <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
           </h3>
           <VCCardLayout grid={layoutGrid} className="monitor-app-content">
-            {appConfig.map((el) => (
-              <AppCard {...el} requestParams={{ ...filter, ip: curtIP, startTime, rateNum }} />
+            {appConfig.map((el, index) => (
+              <AppCard key={index} {...el} requestParams={{ ...filter, ip: curtIP, startTime, rateNum }} />
             ))}
           </VCCardLayout>
         </Card>

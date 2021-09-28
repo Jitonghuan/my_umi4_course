@@ -245,6 +245,13 @@ export default [
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/route-config',
           },
+          {
+            path: 'changeDetails',
+            name: '路由配置',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/change-details',
+          },
         ],
       },
     ],
