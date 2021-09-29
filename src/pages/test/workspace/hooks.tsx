@@ -108,7 +108,6 @@ export function useSelectedCaseTree(phaseId?: string): [any[], React.Key[], Reac
   }, [phaseId]);
 
   const querySubNode = async (cateId: React.Key) => {
-    console.log('nodeMap[cateId] :>> ', nodeMap[cateId]);
     if (nodeMap[cateId].children) return;
     const res = await getRequest(APIS.getCaseMultiDeepList, {
       data: {
@@ -128,4 +127,74 @@ export function useSelectedCaseTree(phaseId?: string): [any[], React.Key[], Reac
   };
 
   return [data, checkedKeys, expandedKeys, querySubNode];
+}
+
+export function useBugAssociatedCaseTree(
+  bugId: React.Key,
+): [any[], React.Key[], React.Key[], (cateId: React.Key) => void] {
+  const [data, setData] = useState<any[]>([]);
+  const [nodeMap, setNodeMap] = useState<Record<React.Key, any>>({});
+  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+
+  useEffect(() => {
+    setData([]);
+    if (bugId) {
+      getRequest(APIS.getBugAssociatedCaseTree, { data: { bugId } }).then((res) => {
+        setData(res.data);
+
+        const _checkedKeys: React.Key[] = [];
+        const _expandedKeys: React.Key[] = [];
+        const _nodeMap: Record<React.Key, any> = {};
+
+        const dfs = (node: any): boolean => {
+          _nodeMap[node.id] = node;
+          if (node.isLeaf) {
+            if (node.checked) {
+              _checkedKeys.push(node.key);
+              return true;
+            } else {
+              return false;
+            }
+          }
+          if (!node.children) {
+            return false;
+          }
+          _expandedKeys.push(node.key);
+          let flag = false;
+          for (const subNode of node.children) {
+            if (dfs(subNode)) flag = true;
+          }
+          if (!flag) _expandedKeys.pop();
+          return flag;
+        };
+
+        dfs({ children: res.data });
+        setCheckedKeys(_checkedKeys);
+        setExpandedKeys(_expandedKeys);
+        setNodeMap(_nodeMap);
+      });
+    }
+  }, [bugId]);
+
+  const querySubNode = async (cateId: React.Key) => {
+    if (nodeMap[cateId].children) return;
+    const res = await getRequest(APIS.getCaseMultiDeepList, {
+      data: {
+        categoryId: cateId,
+        deep: 1,
+      },
+    });
+
+    const _nodeMap: Record<React.Key, any> = nodeMap;
+    const _data: any[] = data;
+    _nodeMap[cateId].children = res.data.map((item: any) => ({ ...item, children: undefined }));
+    _nodeMap[cateId].children.forEach((node: any) => {
+      if (!node.isLeaf) _nodeMap[node.id] = node;
+    });
+    setData(new Array(..._data));
+    setNodeMap({ ..._nodeMap });
+  };
+
+  return [data, checkedKeys, expandedKeys, querySubNode]; //
 }

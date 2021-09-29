@@ -1,17 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { getRequest, postRequest } from '@/utils/request';
-import { modifyPhaseCase } from '../../service';
-import { Button, Tabs, Modal, message, Tree, Space, Spin } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, Modal, Tree, Space, Spin } from 'antd';
 import * as HOOKS from '../../hooks';
-import FELayout from '@cffe/vc-layout';
 import './index.less';
 
 export default function AssociatingCaseModal(props: any) {
-  const { plan, visible, setVisible } = props;
-  const userInfo = useContext(FELayout.SSOUserInfoContext);
-
-  const [curActivePhase, setCurActivePhase] = useState<string>();
-  const [treeData, _checkedKeys, _expandedKeys, querySubNode] = HOOKS.useSelectedCaseTree(curActivePhase);
+  const { bugId, visible, setVisible, onSave } = props;
+  const [treeData, _checkedKeys, _expandedKeys, querySubNode] = HOOKS.useBugAssociatedCaseTree(bugId);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
 
@@ -20,35 +14,9 @@ export default function AssociatingCaseModal(props: any) {
     setExpandedKeys(_expandedKeys);
   }, [_checkedKeys, _expandedKeys]);
 
-  useEffect(() => {
-    if (visible) {
-      void setCurActivePhase(plan?.phaseCollection?.[0].id.toString());
-    }
-  }, [visible]);
-
   const submit = () => {
-    void postRequest(modifyPhaseCase, {
-      data: {
-        phaseId: curActivePhase,
-        cases: checkedKeys,
-        modifyUser: userInfo.userName,
-      },
-    }).then(() => {
-      void message.success('关联成功');
-      void setVisible(false);
-    });
-  };
-
-  const submitAndContinue = () => {
-    void postRequest(modifyPhaseCase, {
-      data: {
-        phaseId: curActivePhase,
-        cases: checkedKeys,
-        modifyUser: userInfo.userName,
-      },
-    }).then(() => {
-      void message.success('关联成功');
-    });
+    onSave && onSave(checkedKeys);
+    setVisible(false);
   };
 
   const onLoadData = async ({ id }: any) => {
@@ -65,35 +33,29 @@ export default function AssociatingCaseModal(props: any) {
       onCancel={() => setVisible(false)}
       footer={false}
     >
-      <Tabs onChange={(key) => setCurActivePhase(key)} activeKey={curActivePhase}>
-        {plan?.phaseCollection?.map((item: any) => (
-          <Tabs.TabPane tab={item.name} key={item.id}>
-            {!treeData?.length ? (
-              <div
-                style={{
-                  width: '100%',
-                  height: '400px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Spin tip="Loading..." />
-              </div>
-            ) : (
-              <Tree
-                loadData={onLoadData}
-                checkable
-                treeData={treeData}
-                checkedKeys={checkedKeys}
-                onCheck={(checkedKeys) => setCheckedKeys(checkedKeys as React.Key[])}
-                expandedKeys={expandedKeys}
-                onExpand={setExpandedKeys}
-              />
-            )}
-          </Tabs.TabPane>
-        ))}
-      </Tabs>
+      {!treeData?.length ? (
+        <div
+          style={{
+            width: '100%',
+            height: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Spin tip="Loading..." />
+        </div>
+      ) : (
+        <Tree
+          loadData={onLoadData}
+          checkable
+          treeData={treeData}
+          checkedKeys={checkedKeys}
+          onCheck={(checkedKeys) => setCheckedKeys(checkedKeys as React.Key[])}
+          expandedKeys={expandedKeys}
+          onExpand={setExpandedKeys}
+        />
+      )}
 
       <div className="btn-container">
         <Space>
