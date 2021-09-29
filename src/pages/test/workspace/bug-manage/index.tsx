@@ -255,7 +255,7 @@ export default function BugManage(props: any) {
           visible={addBugDrawerVisible}
           setVisible={setAddBugDrawerVisible}
           readOnly={bugReadOnly}
-          bugInfo={curBugInfo}
+          bugId={curBugInfo?.id}
           updateBugList={updateBugList}
           projectTreeData={projectTreeData}
         />

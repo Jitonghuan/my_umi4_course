@@ -28,11 +28,11 @@ import * as HOOKS from '../../hooks';
 import _ from 'lodash';
 import './index.less';
 
-export default function BugManage(props: any) {
+export default function AddOrEditBugDrawer(props: any) {
   const {
     visible,
     setVisible,
-    bugInfo,
+    bugId,
     updateBugList,
     defaultRelatedCases,
     phaseId,
@@ -41,16 +41,16 @@ export default function BugManage(props: any) {
     readOnly,
   } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  // const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
   const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
   const [manageList] = HOOKS.useUserOptions();
   const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
-  const [relatedCases, setRelatedCases] = useState<React.Key[]>([]);
+  const [relatedCases, setRelatedCases] = useState<{ id: React.Key; title: string }[]>([]);
   const [assoCaseDrawerVisible, setAssoCaseDrawerVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
+  const [bugInfo] = HOOKS.useBug(bugId);
 
   const submit = async (continueAdd = false) => {
     try {
@@ -67,7 +67,7 @@ export default function BugManage(props: any) {
       subDemandId: formData.demandId[2] && +formData.demandId[2],
       desc: JSON.stringify(sona.schema),
       onlineBug: formData.onlineBug ? 1 : 0,
-      relatedCases,
+      relatedCases: relatedCases?.map((item) => item.id),
       id: bugInfo?.id,
       ...(bugInfo ? { modifyUser: userInfo.userName } : { createUser: userInfo.userName }),
       phaseId,
@@ -130,7 +130,11 @@ export default function BugManage(props: any) {
 
   const handleAddCaseSuccess = (newCase: any) => {
     void updateAssociatingCaseTreeSelect();
-    void setRelatedCases([...relatedCases, newCase?.id]);
+    void setRelatedCases([...relatedCases, newCase]);
+  };
+
+  const handleRemoveRelatedCase = (caseId: React.Key) => {
+    setRelatedCases(relatedCases.filter((item) => item.id !== caseId));
   };
 
   /** 获得可关联的测试用例树 */
@@ -230,18 +234,6 @@ export default function BugManage(props: any) {
 
           <Form.Item label="关联用例" name="relatedCases">
             <div className="related-cases-container">
-              {/* <TreeSelect
-                disabled={readOnly}
-                className="test-case-tree-select"
-                multiple
-                treeCheckable
-                placeholder="请选择需要关联的用例"
-                treeNodeLabelProp="title"
-                treeNodeFilterProp="title"
-                treeData={testCaseTree}
-                value={relatedCases}
-                onChange={setRelatedCases}
-              /> */}
               {readOnly ? null : (
                 <>
                   <Button type="primary" ghost onClick={() => setAssoCaseDrawerVisible(true)}>
@@ -253,10 +245,13 @@ export default function BugManage(props: any) {
                 </>
               )}
             </div>
-            <Table>
+            <Table dataSource={relatedCases}>
               <Table.Column title="ID" dataIndex="id" />
               <Table.Column title="标题" dataIndex="title" />
-              <Table.Column title="操作" render={() => <a>删除</a>} />
+              <Table.Column
+                title="操作"
+                render={(record: any) => <a onClick={() => handleRemoveRelatedCase(record.id)}>删除</a>}
+              />
             </Table>
           </Form.Item>
           <Form.Item label="描述" name="desc">

@@ -110,3 +110,6 @@ export const getSelectedCaseTree = addAPIPrefix('/qc/teststation/getSelectedCase
 
 /** GET 获取Bug已关联的用例树 */
 export const getBugAssociatedCaseTree = addAPIPrefix('？？？');
+
+/** GET 根据ID获取Bug详情 */
+export const getBug = addAPIPrefix('/qc/teststation/getBug');
