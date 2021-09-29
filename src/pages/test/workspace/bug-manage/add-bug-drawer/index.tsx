@@ -1,22 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../../constant';
-import {
-  Select,
-  Input,
-  Switch,
-  Button,
-  Form,
-  Space,
-  Drawer,
-  message,
-  Radio,
-  Modal,
-  TreeSelect,
-  Cascader,
-  Row,
-  Col,
-  Table,
-} from 'antd';
+import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Cascader, Row, Col, Table } from 'antd';
 import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
@@ -43,7 +27,6 @@ export default function AddOrEditBugDrawer(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [schema, setSchema] = useState<any[]>();
   const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
-  const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
   const [manageList] = HOOKS.useUserOptions();
   const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
   const [relatedCases, setRelatedCases] = useState<{ id: React.Key; title: string }[]>([]);
@@ -122,32 +105,13 @@ export default function AddOrEditBugDrawer(props: any) {
     }
   }, [bugInfo, visible]);
 
-  /** -------------------------- 关联用例 start -------------------------- */
-
-  const updateAssociatingCaseTreeSelect = () => {
-    void getRequest(getAllTestCaseTree).then((res) => {
-      // 新增用例-用例库数据
-      void setTestCaseTree(res.data);
-    });
-  };
-
   const handleAddCaseSuccess = (newCase: any) => {
-    void updateAssociatingCaseTreeSelect();
     void setRelatedCases([...relatedCases, newCase]);
   };
 
   const handleRemoveRelatedCase = (caseId: React.Key) => {
     setRelatedCases(relatedCases.filter((item) => item.id !== caseId));
   };
-
-  /** 获得可关联的测试用例树 */
-  useEffect(() => {
-    if (visible && !testCaseTree?.length) {
-      void updateAssociatingCaseTreeSelect();
-    }
-  }, [visible]);
-
-  /** -------------------------- 关联用例 end -------------------------- */
 
   const dataCleanCateTree = (node: any) => {
     node.key = node.id;
@@ -317,7 +281,13 @@ export default function AddOrEditBugDrawer(props: any) {
         caseCateTreeData={caseCateTreeData}
       />
 
-      <AssociatingCaseModal visible={assoCaseDrawerVisible} setVisible={setAssoCaseDrawerVisible} />
+      <AssociatingCaseModal
+        visible={assoCaseDrawerVisible}
+        setVisible={setAssoCaseDrawerVisible}
+        bugId={bugId}
+        onSave={setRelatedCases}
+        curRelatedCases={relatedCases}
+      />
     </>
   );
 }

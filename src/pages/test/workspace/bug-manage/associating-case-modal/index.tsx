@@ -4,18 +4,30 @@ import * as HOOKS from '../../hooks';
 import './index.less';
 
 export default function AssociatingCaseModal(props: any) {
-  const { bugId, visible, setVisible, onSave } = props;
-  const [treeData, _checkedKeys, _expandedKeys, querySubNode] = HOOKS.useBugAssociatedCaseTree(bugId);
-  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
+  const { bugId, visible, setVisible, onSave, curRelatedCases } = props;
+  const [treeData, loadData, _checkedNodes, _expandedKeys, querySubNode] = HOOKS.useBugAssociatedCaseTree(bugId);
+  const [checkedNodes, setCheckedNodes] = useState<any[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [nedUpdate, setNedUpdate] = useState<boolean>(true);
 
   useEffect(() => {
-    setCheckedKeys(_checkedKeys);
     setExpandedKeys(_expandedKeys);
-  }, [_checkedKeys, _expandedKeys]);
+  }, [_expandedKeys]);
+
+  useEffect(() => {
+    if (visible && nedUpdate) {
+      setNedUpdate(false);
+      loadData();
+    }
+    if (visible) setCheckedNodes(curRelatedCases.map((item: any) => ({ ...item, key: item.id })));
+  }, [visible]);
+
+  useEffect(() => {
+    setNedUpdate(true);
+  }, [bugId]);
 
   const submit = () => {
-    onSave && onSave(checkedKeys);
+    onSave && onSave(checkedNodes);
     setVisible(false);
   };
 
@@ -33,29 +45,33 @@ export default function AssociatingCaseModal(props: any) {
       onCancel={() => setVisible(false)}
       footer={false}
     >
-      {!treeData?.length ? (
-        <div
-          style={{
-            width: '100%',
-            height: '400px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Spin tip="Loading..." />
-        </div>
-      ) : (
-        <Tree
-          loadData={onLoadData}
-          checkable
-          treeData={treeData}
-          checkedKeys={checkedKeys}
-          onCheck={(checkedKeys) => setCheckedKeys(checkedKeys as React.Key[])}
-          expandedKeys={expandedKeys}
-          onExpand={setExpandedKeys}
-        />
-      )}
+      <div className="body-container">
+        {!treeData?.length ? (
+          <div
+            style={{
+              width: '100%',
+              height: '400px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Spin tip="Loading..." />
+          </div>
+        ) : (
+          <Tree
+            loadData={onLoadData}
+            checkable
+            treeData={treeData}
+            checkedKeys={checkedNodes.map((item: any) => item.key)}
+            onCheck={(_, { checkedNodes }) => {
+              setCheckedNodes(checkedNodes);
+            }}
+            expandedKeys={expandedKeys}
+            onExpand={setExpandedKeys}
+          />
+        )}
+      </div>
 
       <div className="btn-container">
         <Space>
