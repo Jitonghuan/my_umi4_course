@@ -138,17 +138,32 @@ export default function SceneDetail(props: SceneDetailProps) {
           <Button type="primary">新增用例</Button>
         </Popover>
       </div>
-      <Table dataSource={caseList} pagination={false} loading={loading}>
+      <Table
+        rowKey="id"
+        dataSource={caseList}
+        pagination={false}
+        loading={loading}
+        expandable={{
+          expandedRowRender: (record) => (
+            <div>
+              <p style={{ margin: 0 }}>{'所属模块:' + record.moduleName}</p>
+              <p style={{ margin: 0 }}>{'接口名称:' + record.apiName}</p>
+              <p style={{ margin: 0 }}>{'接口地址:' + record.apiPath}</p>
+            </div>
+          ),
+          rowExpandable: (record) => record.desc !== '',
+        }}
+      >
         <Table.Column title="ID" dataIndex="id" />
-        <Table.Column title="项目" dataIndex="projectName" />
+        {/* <Table.Column title="项目" dataIndex="projectName" />
         <Table.Column title="模块" dataIndex="moduleName" />
         <Table.Column
           title="接口"
           dataIndex="apiName"
           render={(value: string, record: CaseItemVO) => <Tooltip title={record.apiPath}>{value}</Tooltip>}
-        />
+        /> */}
         <Table.Column
-          title="用例"
+          title="用例名称"
           dataIndex="name"
           render={(value: string, record: CaseItemVO) => (
             <Tooltip title={record.desc}>
