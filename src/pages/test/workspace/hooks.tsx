@@ -202,12 +202,15 @@ export function useBugAssociatedCaseTree(
 export function useBug(id: React.Key) {
   const [data, setData] = useState<any>();
 
-  useEffect(() => {
-    if (id === undefined) return;
+  const loadData = useCallback(() => {
+    if (id === undefined) {
+      setData(undefined);
+      return;
+    }
     getRequest(APIS.getBug, { data: { id } }).then((res) => {
       setData(res.data);
     });
   }, [id]);
 
-  return [data];
+  return [data, loadData];
 }

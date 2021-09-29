@@ -50,7 +50,7 @@ export default function AddOrEditBugDrawer(props: any) {
   const [assoCaseDrawerVisible, setAssoCaseDrawerVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
-  const [bugInfo] = HOOKS.useBug(bugId);
+  const [bugInfo, updateBugInfo] = HOOKS.useBug(bugId);
 
   const submit = async (continueAdd = false) => {
     try {
@@ -95,29 +95,32 @@ export default function AddOrEditBugDrawer(props: any) {
     wrapperCol: { span: 19 },
   };
 
+  useEffect(() => {
+    if (visible) updateBugInfo();
+  }, [visible]);
+
   // 如果是编辑，则回填信息
   useEffect(() => {
-    if (visible) {
-      if (bugInfo) {
-        const demandId = [];
-        bugInfo.projectId && demandId.push(bugInfo.projectId);
-        bugInfo.demandId && demandId.push(bugInfo.demandId);
-        bugInfo.subDemandId && demandId.push(bugInfo.subDemandId);
-        void form.setFieldsValue({ ...bugInfo, demandId, agent: /\((.*)\)/.exec(bugInfo.agent)?.[1] });
-        void setRelatedCases(bugInfo.relatedCases);
-        try {
-          void setSchema(JSON.parse(bugInfo.description));
-        } catch {
-          void setSchema(undefined);
-        }
-      } else {
-        void form.resetFields();
-        void form.setFieldsValue({ priority: 1, bugType: 0 });
+    if (!visible) return;
+    if (bugInfo) {
+      const demandId = [];
+      bugInfo.projectId && demandId.push(bugInfo.projectId);
+      bugInfo.demandId && demandId.push(bugInfo.demandId);
+      bugInfo.subDemandId && demandId.push(bugInfo.subDemandId);
+      void form.setFieldsValue({ ...bugInfo, demandId });
+      void setRelatedCases(bugInfo.relatedCases);
+      try {
+        void setSchema(JSON.parse(bugInfo.description));
+      } catch {
         void setSchema(undefined);
-        void setRelatedCases(defaultRelatedCases || []);
       }
+    } else {
+      void form.resetFields();
+      void form.setFieldsValue({ priority: 1, bugType: 0 });
+      void setSchema(undefined);
+      void setRelatedCases(defaultRelatedCases || []);
     }
-  }, [visible]);
+  }, [bugInfo, visible]);
 
   /** -------------------------- 关联用例 start -------------------------- */
 
