@@ -32,3 +32,6 @@ export const getAppCodeList = addAPIPrefix('/others/app/all');
 
 /** GET 获取所有应用已配置的卡点规则 */
 export const getAllAppCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/allConf');
+
+/** GET 根据ID获取Bug详情 */
+export const getBug = addAPIPrefix('/qc/teststation/getBug');
