@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRequest } from '@/utils/request';
 import * as APIS from './service';
 import type * as INTERFACES from './interface';
-import { IConfig } from '_@umijs_core@3.5.18@@umijs/core';
 
 export function useAppCateEnum() {
   const [data, setData] = useState<IOption[]>([]);
