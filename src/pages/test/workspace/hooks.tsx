@@ -139,7 +139,6 @@ export function useBugAssociatedCaseTree(
 
   const loadData = useCallback(() => {
     setData([]);
-    // if (bugId === undefined) return;
     getRequest(APIS.getBugAssociatedCaseTree, { data: { id: bugId } }).then((res) => {
       setData(res.data);
 
@@ -159,6 +158,10 @@ export function useBugAssociatedCaseTree(
         }
         node.checkable = false;
         if (!node.children) {
+          return false;
+        }
+        if (node.children.length === 0) {
+          node.children = undefined;
           return false;
         }
         _expandedKeys.push(node.key);

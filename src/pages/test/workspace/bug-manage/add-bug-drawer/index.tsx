@@ -212,14 +212,16 @@ export default function AddOrEditBugDrawer(props: any) {
                 </>
               )}
             </div>
-            <Table dataSource={relatedCases}>
-              <Table.Column title="ID" dataIndex="id" />
-              <Table.Column title="标题" dataIndex="title" />
-              <Table.Column
-                title="操作"
-                render={(record: any) => <a onClick={() => handleRemoveRelatedCase(record.id)}>删除</a>}
-              />
-            </Table>
+            {relatedCases?.length ? (
+              <Table dataSource={relatedCases} pagination={false}>
+                <Table.Column title="ID" dataIndex="id" />
+                <Table.Column title="标题" dataIndex="title" />
+                <Table.Column
+                  title="操作"
+                  render={(record: any) => <a onClick={() => handleRemoveRelatedCase(record.id)}>删除</a>}
+                />
+              </Table>
+            ) : null}
           </Form.Item>
           <Form.Item label="描述" name="desc">
             <RichText width="520px" height="500px" sona={sona} schema={schema} readOnly={readOnly} />
