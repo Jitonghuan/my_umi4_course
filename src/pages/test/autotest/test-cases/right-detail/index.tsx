@@ -128,8 +128,19 @@ export default function RightDetail(props: RightDetailProps) {
             setPageIndex(1);
             setPageSize(next);
           },
+          showTotal: (total) => `共 ${total} 条`,
         }}
         loading={caseLoading}
+        scroll={{ x: 1000 }}
+        expandable={{
+          expandedRowRender: (record) => (
+            <div>
+              <p style={{ margin: 0 }}>{'所属模块:' + record.moduleName}</p>
+              <p style={{ margin: 0 }}>{'接口名称:' + record.apiName}</p>
+            </div>
+          ),
+          rowExpandable: (record) => record.apiName !== '',
+        }}
       >
         <Table.Column
           dataIndex="id"
@@ -137,14 +148,15 @@ export default function RightDetail(props: RightDetailProps) {
           render={(value, record: CaseItemVO) => <a onClick={() => handleDetailCaseItem(record)}>{value}</a>}
           width={80}
         />
-        <Table.Column dataIndex="moduleName" title="模块" width={160} />
-        <Table.Column dataIndex="apiName" title="接口" ellipsis />
+        {/* <Table.Column dataIndex="moduleName" title="模块" width={160} />
+        <Table.Column dataIndex="apiName" title="接口" ellipsis /> */}
         <Table.Column dataIndex="name" title="用例名称" ellipsis />
         <Table.Column dataIndex="createUser" title="创建人" width={120} />
         <Table.Column dataIndex="gmtModify" title="修改时间" width={160} />
         <Table.Column
           width={160}
           title="操作"
+          fixed="right"
           render={(_, record: CaseItemVO, index: number) => (
             <div className="action-cell">
               <a onClick={() => handleEditCaseItem(record)}>编辑</a>
