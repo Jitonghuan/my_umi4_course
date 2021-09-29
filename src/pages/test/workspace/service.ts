@@ -107,3 +107,9 @@ export const getUsers = addAPIPrefix('/qc/teststation/getUsers');
 
 /** GET 获取已选择的用例树 */
 export const getSelectedCaseTree = addAPIPrefix('/qc/teststation/getSelectedCaseTree');
+
+/** GET 获取Bug已关联的用例树 */
+export const getBugAssociatedCaseTree = addAPIPrefix('/qc/teststation/getRelatedCaseTree');
+
+/** GET 根据ID获取Bug详情 */
+export const getBug = addAPIPrefix('/qc/teststation/getBug');
