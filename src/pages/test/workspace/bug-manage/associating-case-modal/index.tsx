@@ -27,7 +27,7 @@ export default function AssociatingCaseModal(props: any) {
     <Modal
       className="test-workspace-test-plan-add-test-plan-modal"
       visible={visible}
-      width="650"
+      width={650}
       title="关联用例"
       maskClosable={false}
       onCancel={() => setVisible(false)}
