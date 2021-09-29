@@ -15,11 +15,13 @@ import {
   Cascader,
   Row,
   Col,
+  Table,
 } from 'antd';
 import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
 import AddCaseModal from '../../test-case/add-case-drawer';
+import AssociatingCaseModal from '../associating-case-modal';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
 import * as HOOKS from '../../hooks';
@@ -39,12 +41,14 @@ export default function BugManage(props: any) {
     readOnly,
   } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [relatedCases, setRelatedCases] = useState<any[]>([]);
+  // const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
   const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
   const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
   const [manageList] = HOOKS.useUserOptions();
   const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
+  const [relatedCases, setRelatedCases] = useState<React.Key[]>([]);
+  const [assoCaseDrawerVisible, setAssoCaseDrawerVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
@@ -226,7 +230,7 @@ export default function BugManage(props: any) {
 
           <Form.Item label="关联用例" name="relatedCases">
             <div className="related-cases-container">
-              <TreeSelect
+              {/* <TreeSelect
                 disabled={readOnly}
                 className="test-case-tree-select"
                 multiple
@@ -237,13 +241,23 @@ export default function BugManage(props: any) {
                 treeData={testCaseTree}
                 value={relatedCases}
                 onChange={setRelatedCases}
-              />
+              /> */}
               {readOnly ? null : (
-                <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
-                  新增用例
-                </Button>
+                <>
+                  <Button type="primary" ghost onClick={() => setAssoCaseDrawerVisible(true)}>
+                    关联用例
+                  </Button>
+                  <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
+                    新增用例
+                  </Button>
+                </>
               )}
             </div>
+            <Table>
+              <Table.Column title="ID" dataIndex="id" />
+              <Table.Column title="标题" dataIndex="title" />
+              <Table.Column title="操作" render={() => <a>删除</a>} />
+            </Table>
           </Form.Item>
           <Form.Item label="描述" name="desc">
             <RichText width="520px" height="500px" sona={sona} schema={schema} readOnly={readOnly} />
@@ -304,6 +318,8 @@ export default function BugManage(props: any) {
         onSuccess={handleAddCaseSuccess}
         caseCateTreeData={caseCateTreeData}
       />
+
+      <AssociatingCaseModal visible={assoCaseDrawerVisible} setVisible={setAssoCaseDrawerVisible} />
     </>
   );
 }
