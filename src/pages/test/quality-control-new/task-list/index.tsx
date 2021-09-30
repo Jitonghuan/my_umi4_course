@@ -12,24 +12,18 @@ import CreateOrEditTaskModal from './create-or-edit-task-modal';
 import ResultModal from './result-modal';
 import moment from 'moment';
 import './index.less';
+import * as HOOKS from '../hooks';
 
 export default function taskList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [CreateOrEditTaskModalVisible, setCreateOrEditTaskModalVisible] = useState<boolean>(false);
   const [resultModalVisible, setResultModalVisible] = useState<boolean>(false);
   const [curTask, setCurTask] = useState<any>();
-  const [taskList, setTaskList] = useState<any[]>();
-  const [pageIndex, setPageIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-
-  const updataDataSource = async () => {
-    const res = await getRequest(getTaskList, { data: { pageIndex, pageSize, currentUser: userInfo.userName } });
-    setTaskList(res.data?.dataSource);
-  };
+  const [taskList, [pageIndex, setPageIndex], [pageSize, setPageSize], total, form, loadTaskList] = HOOKS.useTaskList();
 
   useEffect(() => {
-    updataDataSource();
-  }, []);
+    loadTaskList();
+  }, [pageIndex, pageSize]);
 
   const handleTaskCareOperate = (id: string | number, isCare: boolean) => {
     postRequest((isCare ? taskCare : taskCareCancel) + '/' + id, {
@@ -37,7 +31,7 @@ export default function taskList(props: any) {
         currentUser: userInfo.userName,
       },
     }).then((res) => {
-      if (res.success) updataDataSource();
+      if (res.success) loadTaskList();
     });
   };
 
@@ -52,7 +46,7 @@ export default function taskList(props: any) {
       <HeaderTabs activeKey="task-list" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form layout="inline">
+          <Form form={form} layout="inline">
             <Form.Item name="justCare">
               <Radio.Group
                 options={[
@@ -86,7 +80,22 @@ export default function taskList(props: any) {
           </Button>
         </div>
         <div className="task-list">
-          <Table dataSource={taskList}>
+          <Table
+            dataSource={taskList}
+            pagination={{
+              pageSize,
+              current: pageIndex,
+              total: total,
+              onChange: (page, pageSz) => {
+                setPageIndex(page);
+                if (pageSize !== pageSz && pageSz !== undefined) {
+                  setPageSize(pageSz);
+                  setPageIndex(1);
+                }
+              },
+              showTotal: (total) => `共 ${total} 条`,
+            }}
+          >
             <Table.Column
               title="任务名称"
               dataIndex="name"
