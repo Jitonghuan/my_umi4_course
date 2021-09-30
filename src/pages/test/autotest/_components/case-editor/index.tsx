@@ -96,7 +96,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           });
       }
     },
-    [props.initData, props.paramType, editorValue],
+    [props.initData, props.paramType, props.apiDetail, editorValue],
   );
 
   useEffect(() => {
