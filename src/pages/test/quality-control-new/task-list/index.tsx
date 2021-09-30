@@ -41,12 +41,16 @@ export default function taskList(props: any) {
     setResultModalVisible(true);
   };
 
+  const handleSearch = () => {
+    loadTaskList();
+  };
+
   return (
     <PageContainer className="quality-control-task-list">
       <HeaderTabs activeKey="task-list" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form form={form} layout="inline">
+          <Form form={form} layout="inline" onFinish={handleSearch}>
             <Form.Item name="justCare">
               <Radio.Group
                 options={[
