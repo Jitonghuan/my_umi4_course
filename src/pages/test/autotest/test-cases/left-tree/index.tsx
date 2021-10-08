@@ -220,7 +220,7 @@ export default function LeftTree(props: LeftTreeProps) {
   );
 
   return (
-    <CardRowGroup.SlideCard noPadding width={244} className="page-case-list">
+    <CardRowGroup.SlideCard noPadding width={350} className="page-case-list">
       <div className="case-list-header">
         <Select
           options={projectOptions}
@@ -250,6 +250,7 @@ export default function LeftTree(props: LeftTreeProps) {
         expandedKeys={expandedKeys}
         onExpand={(keys, info) => setExpandedKeys(keys)}
         showSearch
+        showLine
         searchPlaceholder="搜索模块、接口"
         titleRender={
           ((nodeData: TreeNode) => (

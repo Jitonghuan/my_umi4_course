@@ -2,9 +2,9 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/25 17:31
 
-import React, { useMemo, useEffect } from 'react';
-import { history } from 'umi';
-import { Tabs, Spin } from 'antd';
+import { useMemo, useEffect } from 'react';
+import { history, Link } from 'umi';
+import { Tabs, Spin, Empty } from 'antd';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
@@ -26,7 +26,7 @@ const activeKeyMap: Record<string, any> = {
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
   const { id: appId, appCode } = location.query || {};
-  const [appData, queryAppData] = useAppDetail(+appId, appCode);
+  const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);
 
   const tabActiveKey = useMemo(() => {
     const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
@@ -53,16 +53,23 @@ export default function ApplicationDetail(props: IProps) {
           isBackendAndNotClient && (appData.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1')
         );
       }
+      // 二方包 tab
       if (key === 'secondPartyPkg') {
         return appData.isContainClient === 1;
       }
+      // 后端非二方项目
       if (['monitor', 'AppParameters', 'deployInfo'].includes(key)) {
         return isBackendAndNotClient;
       }
-      if (key === 'feVersion') {
+      // 仅后端项目有
+      if (['changeDetails'].includes(key)) {
+        return !isFrontend;
+      }
+      // 仅前端项目有
+      if (['feVersion'].includes(key)) {
         return isFrontend;
       }
-      // 只有微前端主工程才有路由配置
+      // 仅微前端主工程才有路由配置
       if (key === 'routeConfig') {
         return isFrontend && appData.projectType === 'micro' && appData.microFeType === 'mainProject';
       }
@@ -83,11 +90,27 @@ export default function ApplicationDetail(props: IProps) {
   }
 
   // 没有数据的时整体不显示，防止出现空数据异常
-  if (!appData) {
+  if (!appData && isLoading) {
     return (
       <PageContainer>
         <div className="block-loading">
           <Spin tip="数据初始化中" />
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (!appData && !isLoading) {
+    return (
+      <PageContainer>
+        <div className="block-empty">
+          <Empty
+            description={
+              <span>
+                未找到应用，返回 <Link to="/matrix/application/all">应用列表</Link>
+              </span>
+            }
+          />
         </div>
       </PageContainer>
     );

@@ -384,7 +384,7 @@ export default function UserCaseInfoExec(props: any) {
         setVisible={setAddBugDrawerVisible}
         updateCaseTable={updateBugList}
         projectList={projectList}
-        defaultRelatedCases={[curCase?.caseInfo.id]}
+        defaultRelatedCases={[curCase?.caseInfo]}
         phaseId={phaseId}
         onAddBug={(newBugInfo: any) => {
           void setCheckedBugs([newBugInfo]);

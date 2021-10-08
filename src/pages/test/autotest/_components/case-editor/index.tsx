@@ -48,7 +48,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           allowSkip: values.allowSkip || false,
           skipReason: values.skipReason || '',
           headers: values.headers || [],
-          parameters: values.parameters || (values.parametersJSON && JSON.parse(values.parametersJSON)) || [],
+          parameters: values.parameters || values.parametersJSON || [],
           preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
           customVars: values.customVars || [],
           savedVars: values.savedVars || [],
@@ -67,7 +67,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           resAssert: values.resAssert || [],
           modifyUser: userInfo.userName,
           id: props.initData?.id,
-          apiId: props.initData?.apiId,
+          apiId: props.initData?.apiId || props.apiDetail?.id,
           createUser: props.initData?.createUser,
         };
         if (Object.keys(payload).length === 0) return;
@@ -96,7 +96,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           });
       }
     },
-    [props.initData, props.paramType, editorValue],
+    [props.initData, props.paramType, props.apiDetail, editorValue],
   );
 
   useEffect(() => {
