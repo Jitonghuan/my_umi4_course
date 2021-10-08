@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { getRequest } from '@/utils/request';
+import { Form } from 'antd';
+import FELayout from '@cffe/vc-layout';
 import * as APIS from './service';
 import type * as INTERFACES from './interface';
 
@@ -272,4 +274,31 @@ export function useAppTrendMap() {
   // }, []);
 
   return [data];
+}
+
+export function useTaskList(): [
+  any[],
+  [number, React.Dispatch<React.SetStateAction<number>>],
+  [number, React.Dispatch<React.SetStateAction<number>>],
+  number,
+  any,
+  () => void,
+] {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
+  const [data, setData] = useState<any[]>([]);
+  const [form] = Form.useForm();
+
+  const loadData = () => {
+    getRequest(APIS.getTaskList, {
+      data: { pageIndex, pageSize, currentUser: userInfo.userName, ...form.getFieldsValue() },
+    }).then((res) => {
+      setData(res.data?.dataSource);
+      setTotal(res.data?.pageInfo.total);
+    });
+  };
+
+  return [data, [pageIndex, setPageIndex], [pageSize, setPageSize], total, form, loadData];
 }

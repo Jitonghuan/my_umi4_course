@@ -122,14 +122,15 @@ export default function AddOrEditBugDrawer(props: any) {
     return node;
   };
 
-  useEffect(() => {
-    if (visible && !caseCateTreeData?.length) {
+  const handleOpenAddCaseModal = () => {
+    if (!caseCateTreeData?.length) {
       getRequest(getCaseCategoryDeepList).then((res) => {
         const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
         void setCaseCateTreeData(curTreeData || []);
       });
     }
-  }, [visible]);
+    setAddCaseModalVisible(true);
+  };
 
   return (
     <>
@@ -206,7 +207,7 @@ export default function AddOrEditBugDrawer(props: any) {
                   <Button type="primary" ghost onClick={() => setAssoCaseDrawerVisible(true)}>
                     关联用例
                   </Button>
-                  <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
+                  <Button type="primary" ghost onClick={handleOpenAddCaseModal}>
                     新增用例
                   </Button>
                 </>
