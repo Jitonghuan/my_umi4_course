@@ -123,6 +123,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
     // 是否是输入框搜索，否表示编辑时初始化查询
     isSearch?: boolean;
   }) => {
+    debugger;
     queryFunctionReq({ ...params }).then((result) => {
       if (!result) return;
       if (params.isSearch) {
@@ -169,7 +170,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
       });
     });
   };
-
+  // queryFuncs
   const handleSearch = (value: string) => {
     const appCode = form.getFieldValue('appCode');
     if (appCode) {
@@ -193,7 +194,6 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
       message.info('请先选择应用');
     }
   };
-
   const handleChange = (value: string) => {
     if (value) {
       const func = options.filter((option) => option.id === value);
@@ -218,6 +218,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
               appChange={() => {
                 setTableData([]);
                 setOptions([]);
+                handleSearch('');
               }}
             />
           }
