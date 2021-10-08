@@ -53,16 +53,23 @@ export default function ApplicationDetail(props: IProps) {
           isBackendAndNotClient && (appData.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1')
         );
       }
+      // 二方包 tab
       if (key === 'secondPartyPkg') {
         return appData.isContainClient === 1;
       }
+      // 后端非二方项目
       if (['monitor', 'AppParameters', 'deployInfo'].includes(key)) {
         return isBackendAndNotClient;
       }
-      if (key === 'feVersion') {
+      // 仅后端项目有
+      if (['changeDetails'].includes(key)) {
+        return !isFrontend;
+      }
+      // 仅前端项目有
+      if (['feVersion'].includes(key)) {
         return isFrontend;
       }
-      // 只有微前端主工程才有路由配置
+      // 仅微前端主工程才有路由配置
       if (key === 'routeConfig') {
         return isFrontend && appData.projectType === 'micro' && appData.microFeType === 'mainProject';
       }
