@@ -50,7 +50,7 @@ export async function getInitEditFieldData(initData: CaseItemVO) {
     beforeCases: await getCaseListByIds(beforeCaseIds),
     customVars: initData.customVars || [],
     headers: initData.headers || [],
-    parameters: nextParamType === 'form' ? initData.parameters || [] : [],
+    parameters: nextParamType === 'form' ? (typeof initData.parameters !== 'string' ? initData.parameters : []) : [],
     parametersJSON:
       nextParamType === 'json' ? (typeof initData.parameters === 'string' ? initData.parameters : '{}') : '',
     savedVars: initData.savedVars || [],
