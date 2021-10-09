@@ -128,10 +128,10 @@ export default function ApiEditor(props: ApiEditorProps) {
 
   const fetchAppList = useCallback(async (keyword: string) => {
     const result = await getRequest(APIS.getAppList, {
-      data: { pageSize: 50, appName: keyword },
+      data: { keyword: keyword },
     });
-    const dataSource = (result.data.dataSource || []).map((n: any) => ({
-      label: n.appName,
+    const dataSource = (result.data || []).map((n: any) => ({
+      label: n.appName + '【' + n.appCode + '】',
       value: n.id,
     }));
     return dataSource;

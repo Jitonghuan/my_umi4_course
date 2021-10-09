@@ -88,7 +88,7 @@ export const updateCaseInfo = addAPIPrefix('/qc/autotest/updateCaseInfo');
 export const getProjects = addAPIPrefix('/qc/autotest/getProjects');
 
 /** GET 27、查看应用列表 {  } */
-export const getAppList = addAPIPrefix('/appManage/list');
+export const getAppList = addAPIPrefix('/qc/others/app/search');
 
 // -------------- 三期接口 ----------------
 
