@@ -91,7 +91,7 @@ export default function CaseEditor(props: CaseEditorProps) {
             await initEditField({
               ...res.data,
               hooks: JSON.stringify(res.data.hooks || {}),
-              apiId: props.initData?.apiId,
+              apiId: props.initData?.apiId || props.apiDetail?.id,
             });
             setActiveKey(nextKey);
           })
