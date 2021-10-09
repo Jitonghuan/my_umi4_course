@@ -30,6 +30,30 @@ export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) =
   return [histogramData, loading, loadHistogram];
 }
 
+// 获取AB集群各院区表格流量数
+export function useClusterTable(): [AnyObject, boolean, (showLoading?: boolean) => Promise<any>] {
+  const [loading, setLoading] = useState(false);
+  const [clusterTableData, setClusterTableData] = useState(<any>[{}]);
+  useEffect(() => {
+    loadClusterTable();
+  }, []);
+  const loadClusterTable = useCallback((showLoading = true) => {
+    showLoading && setLoading(true);
+
+    return getRequest(APIS.getClustersEsDataTable)
+      .then((reslut) => {
+        if (reslut.success) {
+          let data = reslut?.data;
+          setClusterTableData(data);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  return [clusterTableData, loading, loadClusterTable];
+}
 /** A集群各院区流量 */
 export function useClusterA(): [any, boolean, (showLoading?: boolean) => Promise<void>, any] {
   const [clusterAData, setClusterAData] = useState<any>([]);
