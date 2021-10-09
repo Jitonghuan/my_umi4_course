@@ -5,10 +5,6 @@
 import React, { useMemo } from 'react';
 import { Table } from 'antd';
 import './index.less';
-import { getRequest } from '@/utils/request';
-import { getClustersEsDataTable } from './service';
-import { useClusterTable } from './hook';
-
 export interface ChartCaseListProps {
   loading?: boolean;
   tableData?: any;
