@@ -2,26 +2,22 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Table } from 'antd';
 import './index.less';
 import { getRequest } from '@/utils/request';
 import { getClustersEsDataTable } from './service';
+import { useClusterTable } from './hook';
 
 export interface ChartCaseListProps {
   loading?: boolean;
+  tableData?: any;
 }
 export default function ClusterTable(props: ChartCaseListProps) {
-  const { loading } = props;
-  const [clusterTableData, setClusterTableData] = useState<any>([]); //表格数据
-  useEffect(() => {
-    getRequest(getClustersEsDataTable).then((reslut) => {
-      if (reslut.success) {
-        let data = reslut.data;
-        setClusterTableData(data);
-      }
-    });
-  }, []);
+  const { loading, tableData } = props;
+  const clusterTableData = useMemo(() => {
+    return tableData;
+  }, [tableData]);
   const columns = [
     {
       title: '院区',
