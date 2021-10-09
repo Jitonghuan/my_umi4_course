@@ -22,7 +22,7 @@ export default function CustomTree(props: CustomTreeProps) {
     onSideSelectChange,
     sideSelectValue,
     sideSelectPlaceholder = '请选择',
-    sideSelectOptions,
+    sideSelectOptions = [],
     treeDataEmptyHide = true,
     ...others
   } = props;
@@ -55,7 +55,7 @@ export default function CustomTree(props: CustomTreeProps) {
         {showSideSelect ? (
           <Select
             className="custom-tree-header-side-select"
-            options={sideSelectOptions || []}
+            options={sideSelectOptions}
             placeholder={sideSelectPlaceholder}
             value={sideSelectValue}
             onChange={onSideSelectChange}

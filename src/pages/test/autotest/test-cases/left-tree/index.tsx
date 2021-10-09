@@ -110,7 +110,7 @@ export default function LeftTree(props: LeftTreeProps) {
           key: targetNode.key,
           desc: data.desc,
         },
-        (item, addon) => item.key === addon.key,
+        (item: any, addon) => item.key === addon.key,
       );
       setTreeData(nextTreeData);
     }
