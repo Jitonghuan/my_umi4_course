@@ -105,7 +105,13 @@ export default function SourceCodeEdit(props: any) {
 
     console.log('finalCaseJSON :>> ', finalCaseJSON);
     const { data: formData } = await postRequest(APIS.ymlToCase, {
-      data: { ...finalCaseJSON, apiId: props.initData?.apiId, validates: finalCaseJSON.validate, validate: undefined },
+      data: {
+        ...finalCaseJSON,
+        apiId: props.initData?.apiId,
+        validates: finalCaseJSON.validate,
+        validate: undefined,
+        modifyUser: userInfo.userName,
+      },
     });
 
     const flag = await handleFormDataSubmit(formData);
