@@ -20,6 +20,7 @@ export default function taskList(props: any) {
   const [resultModalVisible, setResultModalVisible] = useState<boolean>(false);
   const [curTask, setCurTask] = useState<any>();
   const [taskList, [pageIndex, setPageIndex], [pageSize, setPageSize], total, form, loadTaskList] = HOOKS.useTaskList();
+  const [appCateOptions] = HOOKS.useAppCateOptions();
 
   useEffect(() => {
     loadTaskList();
@@ -41,12 +42,16 @@ export default function taskList(props: any) {
     setResultModalVisible(true);
   };
 
+  const handleSearch = () => {
+    loadTaskList();
+  };
+
   return (
     <PageContainer className="quality-control-task-list">
       <HeaderTabs activeKey="task-list" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form form={form} layout="inline">
+          <Form form={form} layout="inline" onFinish={handleSearch} initialValues={{ justCare: 0 }}>
             <Form.Item name="justCare">
               <Radio.Group
                 options={[

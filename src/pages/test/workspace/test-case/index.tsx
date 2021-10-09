@@ -100,7 +100,7 @@ export default function TestCase(props: any) {
     ];
     void setCaseCateTreeData(_curTreeData || []);
     if (keyword) {
-      void searchLeftTree(keyword);
+      void searchLeftTree(keyword, _curTreeData);
     } else {
       void setFilterCaseCateTreeData(_curTreeData);
     }
@@ -108,9 +108,9 @@ export default function TestCase(props: any) {
     loadEnd();
   };
 
-  const searchLeftTree = (keyword: string) => {
+  const searchLeftTree = (keyword: string, _caseCateTreeData = caseCateTreeData) => {
     nedExpandKeys = [];
-    void setFilterCaseCateTreeData(filterTreeData(caseCateTreeData || [], keyword));
+    void setFilterCaseCateTreeData(filterTreeData(_caseCateTreeData || [], keyword));
     // 根节点一定展开
     if (cateId && !nedExpandKeys.includes(+cateId)) nedExpandKeys.push(+cateId);
     void setExpandedKeys(nedExpandKeys);

@@ -5,14 +5,14 @@ import ClusterAChart from './chart-case-Acluster';
 import ClusterBChart from './chart-case-Bcluster';
 import ABHistorgram from './ABHistogram';
 import ClusterTable from './clusterTable';
-import { useABHistogram, useClusterA, useClusterB } from './hook';
+import { useABHistogram, useClusterA, useClusterB, useClusterTable } from './hook';
 import './index.less';
 
 export default function Dashboards() {
   const [clusterAData, clusterALoading, loadClusterA] = useClusterA();
   const [clusterBData, clusterBLoading, loadClusterB] = useClusterB();
   const [histogramData, loading, loadHistogram] = useABHistogram();
-
+  const [clusterTableData, loadingTable, loadClusterTable] = useClusterTable();
   useEffect(() => {
     let intervalId = setInterval(() => {
       loadHistogram(false);
@@ -30,7 +30,7 @@ export default function Dashboards() {
         <Button
           type="primary"
           onClick={() => {
-            loadHistogram(), loadClusterA(), loadClusterB();
+            loadHistogram(), loadClusterA(), loadClusterB(), loadClusterTable();
           }}
         >
           刷新数据
@@ -38,7 +38,7 @@ export default function Dashboards() {
       </div>
       <div className="section-group">
         <ABHistorgram data={histogramData} loading={loading} />
-        <ClusterTable data={histogramData} loading={loading} />
+        <ClusterTable data={clusterTableData} loading={loadingTable} />
       </div>
       <div className="section-group">
         <ClusterAChart data={clusterAData} loading={clusterALoading} />
