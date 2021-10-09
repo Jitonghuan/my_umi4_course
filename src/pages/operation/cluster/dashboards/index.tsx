@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import ClusterAChart from './chart-case-Acluster';
