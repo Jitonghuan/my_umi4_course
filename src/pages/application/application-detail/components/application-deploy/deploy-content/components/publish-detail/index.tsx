@@ -16,7 +16,7 @@ import {
 } from '@/pages/application/service';
 import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
-import RollbackModal from '../rollback-modal';
+// import RollbackModal from '../rollback-modal';
 import ServerStatus from '../server-status';
 import './index.less';
 
@@ -40,7 +40,7 @@ export default function PublishDetail(props: IProps) {
   const [deployNextEnv, setDeployNextEnv] = useState<string[]>();
   const [envDataList, setEnvDataList] = useState<IOption[]>([]);
   const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
-  const [rollbackVisible, setRollbackVisible] = useState(false);
+  // const [rollbackVisible, setRollbackVisible] = useState(false);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
 
@@ -232,11 +232,11 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        {envTypeCode === 'prod' ? (
+        {/* {envTypeCode === 'prod' ? (
           <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
             发布回滚
           </Button>
-        ) : null}
+        ) : null} */}
         {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
             部署Master
@@ -376,7 +376,7 @@ export default function PublishDetail(props: IProps) {
       </Modal>
 
       {/* 回滚版本 */}
-      <RollbackModal
+      {/* <RollbackModal
         visible={rollbackVisible}
         deployInfo={deployInfo}
         onClose={() => setRollbackVisible(false)}
@@ -384,7 +384,7 @@ export default function PublishDetail(props: IProps) {
           onOperate('rollbackVersion');
           setRollbackVisible(false);
         }}
-      />
+      /> */}
     </div>
   );
 }
