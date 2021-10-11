@@ -16,13 +16,12 @@ import {
   Col,
 } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
-import { createCase, updateCase, getCategoryList, getCaseInfo } from '../../service';
+import { createCase, updateCase, getCaseInfo } from '../../service';
 import { priorityEnum } from '../../constant';
 import { createSona } from '@cffe/sona';
-import EditorTable from '@cffe/pc-editor-table';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
-import ScriptEditor from '@/components/script-editor';
+import EditableTable from '../../_components/editable-table';
 import './index.less';
 
 const { TabPane } = Tabs;
@@ -47,6 +46,7 @@ export default function RightDetail(props: any) {
 
   useEffect(() => {
     if (visible) {
+      let cnt = 0;
       Cache = {};
       void setSchema(undefined);
       form.resetFields();
@@ -62,7 +62,12 @@ export default function RightDetail(props: any) {
             void setExpectedResult(res.data.stepContent[0].output);
           } else {
             void setCaseDescArr(
-              res.data.stepContent.map((item: any) => ({ ...item, value: item.input, desc: item.output })),
+              res.data.stepContent.map((item: any) => ({
+                ...item,
+                value: item.input,
+                desc: item.output,
+                key: `init-${cnt++}`,
+              })),
             );
             void setStepContent(res.data.stepContent.map((item: any) => item.input));
             void setExpectedResult(res.data.stepContent.map((item: any) => item.output));
@@ -125,10 +130,15 @@ export default function RightDetail(props: any) {
     try {
       form.validateFields();
       await form.validateFields().finally(() => {
-        if (finalStepContent.length === 0 || finalExpectedResult.length === 0) {
-          void setStepContentFormItemHelp('请输入步骤描述');
+        if (
+          finalStepContent.length === 0 ||
+          finalExpectedResult.length === 0 ||
+          (finalStepContent as string[]).includes('') ||
+          (finalExpectedResult as string[]).includes('')
+        ) {
+          void setStepContentFormItemHelp('请将"步骤描述"和"预期结果"填充完整');
           void setStepContentFormItemvalidateStatus('error');
-          throw '请输入步骤描述';
+          throw '请将"步骤描述"和"预期结果"填充完整';
         }
       });
     } catch (e) {
@@ -182,8 +192,8 @@ export default function RightDetail(props: any) {
   };
 
   const layout = {
-    labelCol: { span: readOnly ? 3 : 4 },
-    wrapperCol: { span: readOnly ? 21 : 20 },
+    labelCol: { span: readOnly ? 3 : 3 },
+    wrapperCol: { span: readOnly ? 21 : 21 },
     labelAlign: 'left' as 'left',
   };
 
@@ -295,45 +305,15 @@ export default function RightDetail(props: any) {
                   />
                 </Table>
               ) : (
-                <EditorTable
-                  disabled={readOnly}
-                  value={caseDescArr}
+                <EditableTable
+                  data={caseDescArr}
+                  setData={setCaseDescArr}
                   onChange={(val) => {
                     void setStepContentFormItemHelp('');
                     void setStepContentFormItemvalidateStatus(undefined);
-                    void setCaseDescArr(val);
                     void setStepContent(val.map((item) => item.value));
                     void setExpectedResult(val.map((item) => item.desc));
                   }}
-                  creator={{ record: { value: '', desc: '' }, insert: 'BOTH' }}
-                  columns={[
-                    {
-                      title: '编号',
-                      dataIndex: '__count',
-                      fieldType: 'readonly',
-                      colProps: { width: 60, align: 'center' },
-                    },
-                    {
-                      title: '步骤描述',
-                      dataIndex: 'value',
-                      required: true,
-                      fieldType: 'custom',
-                      component: ScriptEditor,
-                      fieldProps: (value, index, record) => {
-                        return { mode: record.type === 'text', title: '步骤描述', focus: true };
-                      },
-                    },
-                    {
-                      title: '预期结果',
-                      dataIndex: 'desc',
-                      required: true,
-                      fieldType: 'custom',
-                      component: ScriptEditor,
-                      fieldProps: (value, index, record) => {
-                        return { mode: record.type === 'text', title: '预期结果', focus: true };
-                      },
-                    },
-                  ]}
                 />
               )}
             </TabPane>
@@ -374,7 +354,7 @@ export default function RightDetail(props: any) {
     <Modal
       className="add-case-modal"
       visible={visible}
-      width="400"
+      width={900}
       title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onCancel={() => setVisible(false)}
       maskClosable={false}
@@ -386,7 +366,7 @@ export default function RightDetail(props: any) {
     <Drawer
       className="add-case-drawer"
       visible={visible}
-      width={readOnly ? '900' : '650'}
+      width={900}
       title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onClose={() => setVisible(false)}
       maskClosable={false}
