@@ -73,6 +73,7 @@ export default function SourceCodeEdit(props: any) {
           ...values,
           apiId: props.current?.bizId!,
           createUser: userInfo.userName,
+          modifyUser: userInfo.userName,
         },
       });
     } else {
@@ -103,7 +104,6 @@ export default function SourceCodeEdit(props: any) {
 
     const loadEnd = message.loading('正在保存');
 
-    console.log('finalCaseJSON :>> ', finalCaseJSON);
     const { data: formData } = await postRequest(APIS.ymlToCase, {
       data: {
         ...finalCaseJSON,
