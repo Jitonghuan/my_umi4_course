@@ -4,25 +4,21 @@
 
 import React from 'react';
 import PageContainer from '@/components/page-container';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import request, { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
-import { useContext, useState, useEffect, useRef } from 'react';
+import { postRequest, getRequest } from '@/utils/request';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
-import { Table, Input, Button, Popconfirm, Form, Row, Col, Select, Space } from 'antd';
+import { Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
 export default function DemoPageTb(porps: any) {
-  const [dataSource, setDataSource] = useState<any[]>([]);
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
-  const [editingKey, setEditingKey] = useState<string[]>([]); //编辑
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]); //每一行数据
   const children: any = [];
   const { TextArea } = Input;
-  const [tmplDetail, setTmplDetail] = useState<any>();
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境

@@ -7,13 +7,13 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { history } from 'umi';
-import { Form, Select, Input, Popconfirm, Button, message } from 'antd';
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
+import { Form, Select, Input, Popconfirm, Button, message, Space } from 'antd';
+import { usePaginated } from '@cffe/vc-hulk-table';
 import DetailContext from '@/pages/application/application-detail/context';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
-import { createTableSchema } from './schema';
-import { queryConfigListUrl, deleteConfig, deleteMultipleConfig } from '@/pages/application/service';
+import AceEditor from '@/components/ace-editor';
+import { queryConfigListUrl, deleteConfig, deleteMultipleConfig, tmplType, envList } from '@/pages/application/service';
 import { IProps } from './types';
 import { ConfigData } from '../types';
 import { queryVersionApi, doRestoreVersionApi } from './service';
@@ -24,7 +24,7 @@ const rootCls = 'config-content-compo';
 
 export default function ConfigContent({ env, configType }: IProps) {
   const { appData } = useContext(DetailContext);
-  const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
+  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [importCfgVisible, setImportCfgVisible] = useState(false);
   const [editCfgData, setEditCfgData] = useState<{
     type: EditConfigIProps['type'];
@@ -37,7 +37,30 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   const [filterFormRef] = Form.useForm();
   const [versionData, setVersionData] = useState<any[]>([]);
+  // 进入页面显示结果
+  const { appCategoryCode } = appData || {};
+  useEffect(() => {
+    selectAppEnv(appCategoryCode).then((result) => {
+      const listEnv = result.data.dataSource?.map((n: any) => ({
+        value: n?.envCode,
+        label: n?.envName,
+        data: n,
+      }));
+      setEnvDatas(listEnv);
+    });
+  }, []);
 
+  //通过appCategoryCode查询环境信息
+  const selectAppEnv = (categoryCode: any) => {
+    return getRequest(envList, { data: { categoryCode: categoryCode } });
+  };
+  //改变下拉选择后查询结果
+  let getEnvCode: any;
+  const changeEnvCode = (getEnvCodes: string) => {
+    getEnvCode = getEnvCodes;
+    console.log('getEnvCodes', getEnvCodes);
+    queryVersionData();
+  };
   // 当前选中版本
   const [currentVersion, setCurrentVersion] = useState<{
     id: number;
@@ -77,12 +100,13 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   // 查询版本数据
   const queryVersionData = async (listParams?: any) => {
+    console.log('listParams', listParams);
     const resp = await getRequest(queryVersionApi, {
       data: {
         pageSize: 30,
         pageIndex: 1,
         appCode,
-        env,
+        env: getEnvCode,
         type: configType,
       },
     });
@@ -103,11 +127,11 @@ export default function ConfigContent({ env, configType }: IProps) {
     });
   };
 
-  useEffect(() => {
-    if (!appCode) return;
+  // useEffect(() => {
+  //   if (!appCode) return;
 
-    queryVersionData();
-  }, [appCode, env, configType]);
+  //   queryVersionData();
+  // }, [appCode, env, configType]);
 
   // 回退操作
   const handleRollBack = async () => {
@@ -211,6 +235,9 @@ export default function ConfigContent({ env, configType }: IProps) {
             });
           }}
         >
+          <Form.Item label="环境" name="appEnvCode">
+            <Select placeholder="请选择" style={{ width: 140 }} options={envDatas} onChange={changeEnvCode} />
+          </Form.Item>
           <Form.Item label="版本" name="versionID">
             <Select
               options={versionData?.map((el: any) => ({
@@ -221,12 +248,6 @@ export default function ConfigContent({ env, configType }: IProps) {
               style={{ width: 140 }}
             />
           </Form.Item>
-          <Form.Item label="Key" name="key">
-            <Input placeholder="请输入key" style={{ width: 140 }} />
-          </Form.Item>
-          <Form.Item label="Value" name="value">
-            <Input placeholder="请输入value" style={{ width: 140 }} />
-          </Form.Item>
           <Form.Item>
             <Button htmlType="submit" type="primary" style={{ marginRight: 12 }}>
               查询
@@ -236,96 +257,50 @@ export default function ConfigContent({ env, configType }: IProps) {
             </Button>
           </Form.Item>
         </Form>
-
         <div className={`${rootCls}__filter-btns`}>
           <Popconfirm
             title="确定回退到当前版本？"
             disabled={!currentVersion || versionData?.[0]?.id === currentVersion?.id}
             onConfirm={handleRollBack}
           >
-            <Button type="primary" danger disabled={!currentVersion || versionData?.[0]?.id === currentVersion?.id}>
+            <Button type="primary" danger disabled={!currentVersion} style={{ marginRight: '34%' }}>
               回退
             </Button>
-          </Popconfirm>
-          <Button
-            onClick={() => {
-              setImportCfgVisible(true);
-            }}
-          >
-            导入配置
-          </Button>
-          <Button
-            onClick={() => {
-              history.push({
-                pathname: configType === 'app' ? 'addConfig' : 'addLaunchParameters',
-                query: {
-                  env,
-                  type: configType,
-                  appCode: appCode!,
-                  id: `${appId}`,
-                },
-              });
-            }}
-          >
-            新增
-          </Button>
-          <Popconfirm
-            title="确定要删除选中项吗？"
-            disabled={!selectedKeys.length}
-            onConfirm={() => {
-              deleteMultipleConfig({ ids: selectedKeys }).then((res: any) => {
-                if (res.success) {
-                  // queryConfigList();
-                  queryVersionData();
-                  return;
-                }
-                message.error(res.errorMsg);
-              });
-            }}
-            okText="确定"
-            cancelText="取消"
-            placement="topLeft"
-          >
-            <Button disabled={!selectedKeys.length}>删除</Button>
           </Popconfirm>
         </div>
       </div>
 
-      <HulkTable
-        rowKey="id"
-        className={`${rootCls}__table`}
-        rowSelection={{
-          type: 'checkbox',
-          onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            setSelectedKeys(selectedRowKeys);
-          },
-        }}
-        columns={
-          createTableSchema({
-            currentVersion,
-            onOperateClick: (type, record, i) => {
-              if (type === 'detail' || type === 'edit') {
-                setEditCfgData({
-                  type: type === 'detail' ? 'look' : 'edit',
-                  visible: true,
-                  curRecord: record,
-                });
-              } else if (type === 'delete') {
-                deleteConfig(record.id).then((res: any) => {
-                  if (res.success) {
-                    queryVersionData();
-                    // queryConfigList();
-                    return;
-                  }
-                  message.error(res.errorMsg);
-                });
+      <div style={{ fontStyle: '#f7f8fa' }}>
+        <span>
+          版本号：<Input disabled style={{ width: 140, marginTop: 20, marginBottom: 10 }} bordered={false}></Input>
+        </span>
+      </div>
+
+      <Form>
+        <div style={{ width: '96%' }}>
+          <Form.Item name="configYaml" rules={[{ required: true, message: '这是必填项' }]}>
+            <AceEditor mode="yaml" height={600} />
+          </Form.Item>
+        </div>
+        <div style={{ marginTop: '10px', float: 'right' }}>
+          <Form.Item name="ensure">
+            <Button
+              type="ghost"
+              htmlType="reset"
+              onClick={() =>
+                history.push({
+                  pathname: 'tmpl-list',
+                })
               }
-            },
-          }) as any
-        }
-        {...tableProps}
-      />
+            >
+              取消
+            </Button>
+            <Button type="primary" htmlType="submit" disabled={true} style={{ marginLeft: '4px' }}>
+              确定
+            </Button>
+          </Form.Item>
+        </div>
+      </Form>
     </div>
   );
 }
