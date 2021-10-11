@@ -83,7 +83,7 @@ export default function UserCaseInfoExec(props: any) {
         curCase.executeNote?.length > 0 && void setSchema(JSON.parse(curCase.executeNote));
       } catch (e) {}
       try {
-        curCase.caseInfo?.comment > 0 && void setCaseNote(JSON.parse(curCase.caseInfo.comment));
+        curCase.caseInfo?.comment?.length > 0 && void setCaseNote(JSON.parse(curCase.caseInfo.comment));
       } catch (e) {}
     }
   }, [curCase]);
@@ -296,16 +296,8 @@ export default function UserCaseInfoExec(props: any) {
               <Button type="primary" onClick={handleSaveExecNote}>
                 保存
               </Button>
-              {/* <Button onClick={handleCancelSaveExecNote}>取消</Button> */}
             </Space>
           </div>
-          {/* ) : (
-            <div className="executeNote-btn-container">
-              <Button type="primary" onClick={() => setExecNoteReadOnly(false)}>
-                编辑
-              </Button>
-            </div>
-          )} */}
         </div>
 
         <div className="bug-info mt-24">

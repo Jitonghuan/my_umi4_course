@@ -16,6 +16,7 @@ import { getFuncListByIds, getCaseListByIds } from './common';
 import AceEditor, { JSONValidator } from '@/components/ace-editor';
 import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../../common';
 import { CaseEditorProps, ParamType } from './types';
+import { getRequest } from '@/utils/request';
 
 const { Item: FormItem } = Form;
 
@@ -32,7 +33,10 @@ export async function getInitEditFieldData(initData: CaseItemVO) {
   const afterFuncs: FuncProps[] = hooks.teardown || [];
   const beforeCaseIds: number[] = initData.preStep ? initData.preStep.split(',').map((n: string) => +n) : [];
 
-  const nextParamType: ParamType = typeof initData.parameters === 'string' ? 'json' : 'form';
+  const res = await getRequest(APIS.getApiInfo, {
+    data: { id: initData.apiId },
+  });
+  const nextParamType: ParamType = res.data.paramType === PARAM_TYPE.JSON ? 'json' : 'form';
 
   return {
     nextParamType,
@@ -46,8 +50,9 @@ export async function getInitEditFieldData(initData: CaseItemVO) {
     beforeCases: await getCaseListByIds(beforeCaseIds),
     customVars: initData.customVars || [],
     headers: initData.headers || [],
-    parameters: nextParamType === 'form' ? initData.parameters || [] : [],
-    parametersJSON: nextParamType === 'json' ? initData.parameters || '' : '',
+    parameters: nextParamType === 'form' ? (typeof initData.parameters !== 'string' ? initData.parameters : []) : [],
+    parametersJSON:
+      nextParamType === 'json' ? (typeof initData.parameters === 'string' ? initData.parameters : '{}') : '',
     savedVars: initData.savedVars || [],
     resAssert: initData.resAssert || [],
   };
@@ -64,7 +69,7 @@ export async function getInitAddFieldData(apiDetail?: Record<string, any>) {
 
     headers: apiDetail.headers || [],
     parameters: apiDetail.paramType === PARAM_TYPE.JSON ? [] : apiDetail.parameters || [],
-    parametersJSON: apiDetail.paramType === PARAM_TYPE.JSON ? apiDetail.parameters || '' : '',
+    parametersJSON: apiDetail.paramType === PARAM_TYPE.JSON ? apiDetail.parameters || '{}' : '',
   };
 }
 
@@ -252,7 +257,8 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
                     options={['form', 'json']}
                     value={props.paramType}
                     onChange={(e) => props.onParamTypeChange?.(e.target.value)}
-                    disabled={props.mode === 'EDIT'}
+                    // disabled={props.mode === 'EDIT'}
+                    disabled={true}
                   />
                 </FormItem>
                 {props.paramType == 'form' ? (

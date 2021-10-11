@@ -94,7 +94,7 @@ export default function CaseDebug(props: CaseDebugProps) {
         bodyStyle={{ padding: 0 }}
         maskClosable={false}
       >
-        <iframe src={resultURL} frameBorder="0" style={{ width: 1000, height: '72vh' }} />
+        <iframe src={resultURL} frameBorder="0" style={{ width: 1000, height: '72vh', minHeight: '850px' }} />
       </Modal>
     </>
   );
