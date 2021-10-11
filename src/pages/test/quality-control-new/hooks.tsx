@@ -302,3 +302,15 @@ export function useTaskList(): [
 
   return [data, [pageIndex, setPageIndex], [pageSize, setPageSize], total, form, loadData];
 }
+
+export function useAppCateOptions() {
+  const [data, setData] = useState<IOption[]>();
+
+  // useEffect(() => {
+  //   getRequest(APIS.getAppCateList).then((res) => {
+  //     console.log('res :>> ', res);
+  //   });
+  // }, []);
+
+  return [data];
+}

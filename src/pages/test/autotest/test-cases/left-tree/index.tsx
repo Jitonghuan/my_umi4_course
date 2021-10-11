@@ -10,7 +10,6 @@ import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
 import { TreeNode, TreeNodeSaveData } from '../../interfaces';
-import { useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey, getMergedList } from '../../common';
 import { useProjectOptions } from '../../hooks';
 import ProjectEditor from '../../_components/project-editor';
@@ -38,9 +37,8 @@ type nodeAction =
   | 'delApi';
 
 export default function LeftTree(props: LeftTreeProps) {
+  const { searchProject, setSearchProject, treeData, treeLoading, setTreeData, reloadTreeData } = props;
   const [projectOptions, setProjectOptions, reloadProjectOptions] = useProjectOptions();
-  const [searchProject, setSearchProject] = useState<number>();
-  const [treeData, treeLoading, setTreeData, reloadTreeData] = useLeftTreeData(searchProject);
   const [selectedItem, setSelectedItem] = useState<TreeNode>();
   // 当前操作的节点（或者触发节点）
   const targetNodeRef = useRef<TreeNode>();
@@ -112,7 +110,7 @@ export default function LeftTree(props: LeftTreeProps) {
           key: targetNode.key,
           desc: data.desc,
         },
-        (item, addon) => item.key === addon.key,
+        (item: any, addon) => item.key === addon.key,
       );
       setTreeData(nextTreeData);
     }

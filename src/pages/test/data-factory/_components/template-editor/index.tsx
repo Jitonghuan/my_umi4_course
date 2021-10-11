@@ -227,7 +227,7 @@ export default function TemplateEditor(props: TemplateEditorProps) {
             ]}
           >
             <EditorTable<any>
-              creator={{ clone: true }}
+              creator={{ clone: ['type', 'name', 'script'] }}
               columns={[
                 {
                   title: '序号',
