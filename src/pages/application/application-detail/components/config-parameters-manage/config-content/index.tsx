@@ -7,7 +7,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { history } from 'umi';
-import { Form, Select, Input, Popconfirm, Button, message, Space } from 'antd';
+import { Form, Select, Input, Popconfirm, Button, message } from 'antd';
 import { usePaginated } from '@cffe/vc-hulk-table';
 import DetailContext from '@/pages/application/application-detail/context';
 import EditConfig, { EditConfigIProps } from './edit-config';
@@ -36,6 +36,7 @@ export default function ConfigContent({ env, configType }: IProps) {
   });
 
   const [filterFormRef] = Form.useForm();
+  const [editVersionForm] = Form.useForm();
   const [versionData, setVersionData] = useState<any[]>([]);
   // 进入页面显示结果
   const { appCategoryCode } = appData || {};
@@ -58,7 +59,6 @@ export default function ConfigContent({ env, configType }: IProps) {
   let getEnvCode: any;
   const changeEnvCode = (getEnvCodes: string) => {
     getEnvCode = getEnvCodes;
-    console.log('getEnvCodes', getEnvCodes);
     queryVersionData();
   };
   // 当前选中版本
@@ -70,44 +70,43 @@ export default function ConfigContent({ env, configType }: IProps) {
   const { appCode, id: appId } = appData || {};
 
   // 查询数据
-  const {
-    run: queryConfigList,
-    tableProps,
-    reset,
-  } = usePaginated({
-    requestUrl: queryConfigListUrl,
-    requestMethod: 'GET',
-    showRequestError: true,
-    formatResult: (res: any) => {
-      let version = res.data?.dataSource?.version;
-      if (version) {
-        setCurrentVersion(version);
-      }
 
-      return {
-        dataSource: res.data?.dataSource?.configs || [],
-        pageInfo: res.data?.pageInfo || {},
-      };
-    },
-    pagination: {
-      showSizeChanger: true,
-      showTotal: (total: number) => `总共 ${total} 条数据`,
-    },
-    initParams: {
-      appCode,
-    },
-  });
+  // const {
+  //   run: queryConfigList,
+  //   tableProps,
+  //   reset,
+  // } = usePaginated({
+  //   requestUrl: queryConfigListUrl,
+  //   requestMethod: 'GET',
+  //   showRequestError: true,
+  //   formatResult: (res: any) => {
+  //     let version = res.data?.dataSource?.version;
+  //     if (version) {
+  //       setCurrentVersion(version);
+  //     }
+
+  //     return {
+  //       dataSource: res.data?.dataSource?.configs || [],
+  //       pageInfo: res.data?.pageInfo || {},
+  //     };
+  //   },
+  //   pagination: {
+  //     showSizeChanger: true,
+  //     showTotal: (total: number) => `总共 ${total} 条数据`,
+  //   },
+  //   initParams: {
+  //     appCode,
+  //   },
+  // });
 
   // 查询版本数据
   const queryVersionData = async (listParams?: any) => {
-    console.log('listParams', listParams);
     const resp = await getRequest(queryVersionApi, {
       data: {
         pageSize: 30,
         pageIndex: 1,
         appCode,
-        env: getEnvCode,
-        type: configType,
+        envCode: getEnvCode,
       },
     });
 
@@ -127,6 +126,12 @@ export default function ConfigContent({ env, configType }: IProps) {
     });
   };
 
+  // 确认配置
+  const editVersion = (values: any) => {
+    if (values !== '') {
+    } else {
+    }
+  };
   // useEffect(() => {
   //   if (!appCode) return;
 
@@ -235,7 +240,7 @@ export default function ConfigContent({ env, configType }: IProps) {
             });
           }}
         >
-          <Form.Item label="环境" name="appEnvCode">
+          <Form.Item label="环境" name="envCode">
             <Select placeholder="请选择" style={{ width: 140 }} options={envDatas} onChange={changeEnvCode} />
           </Form.Item>
           <Form.Item label="版本" name="versionID">
@@ -257,6 +262,7 @@ export default function ConfigContent({ env, configType }: IProps) {
             </Button>
           </Form.Item>
         </Form>
+
         <div className={`${rootCls}__filter-btns`}>
           <Popconfirm
             title="确定回退到当前版本？"
@@ -269,15 +275,21 @@ export default function ConfigContent({ env, configType }: IProps) {
           </Popconfirm>
         </div>
       </div>
-
-      <div style={{ fontStyle: '#f7f8fa' }}>
-        <span>
-          版本号：<Input disabled style={{ width: 140, marginTop: 20, marginBottom: 10 }} bordered={false}></Input>
+      <div>
+        <span style={{ fontStyle: '#F5F5F5' }}>
+          版本号：<Input disabled style={{ width: 140, marginTop: 8, marginBottom: 10 }} bordered={false}></Input>
         </span>
       </div>
-
-      <Form>
-        <div style={{ width: '96%' }}>
+      <Form
+        form={editVersionForm}
+        onReset={() => {
+          editVersionForm.setFieldsValue({
+            configYaml: '',
+          });
+        }}
+        onFinish={editVersion}
+      >
+        <div>
           <Form.Item name="configYaml" rules={[{ required: true, message: '这是必填项' }]}>
             <AceEditor mode="yaml" height={600} />
           </Form.Item>
