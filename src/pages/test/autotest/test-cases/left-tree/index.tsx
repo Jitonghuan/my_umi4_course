@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Modal, Select, Spin, Empty, message } from 'antd';
-import { PlusSquareFilled, PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { PlusSquareFilled, PlusOutlined, EditOutlined, CopyOutlined } from '@ant-design/icons';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
@@ -16,6 +16,7 @@ import ProjectEditor from '../../_components/project-editor';
 import ModuleEditor from '../../_components/module-editor';
 import ApiEditor from '../../_components/api-editor';
 import CustomTree from '@/components/custom-tree';
+import ApiClone from '../../_components/api-clone';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
@@ -34,7 +35,8 @@ type nodeAction =
   | 'delModule'
   | 'addApi'
   | 'editApi'
-  | 'delApi';
+  | 'delApi'
+  | 'copyApi';
 
 export default function LeftTree(props: LeftTreeProps) {
   const { searchProject, setSearchProject, treeData, treeLoading, setTreeData, reloadTreeData } = props;
@@ -46,6 +48,8 @@ export default function LeftTree(props: LeftTreeProps) {
   const [moduleEditorMode, setModuleEditoraMode] = useState<EditorMode>('HIDE');
   const [apiEditorMode, setApiEditorMode] = useState<EditorMode>('HIDE');
   const [expandedKeys, setExpandedKeys] = useState<(number | string)[]>([]);
+
+  const [curOpApi, setCurOpApi] = useState<any>();
 
   // ----- hooks
   // projectOptions 变更后重新判断选中状态
@@ -210,6 +214,8 @@ export default function LeftTree(props: LeftTreeProps) {
             },
           });
           break;
+        case 'copyApi':
+          setCurOpApi(node);
         default:
           break;
       }
@@ -292,6 +298,12 @@ export default function LeftTree(props: LeftTreeProps) {
                 </a>
               )}
 
+              {/* 复制接口 */}
+              {nodeData.level === 3 && (
+                <a title="复制接口" {...stopProp}>
+                  <CopyOutlined onClick={() => handleNodeAction('copyApi', nodeData)} />
+                </a>
+              )}
               {/* 编辑接口 */}
               {nodeData.level === 3 && (
                 <a title="编辑接口" {...stopProp}>
@@ -328,6 +340,15 @@ export default function LeftTree(props: LeftTreeProps) {
         targetNode={targetNodeRef.current}
         onClose={() => setApiEditorMode('HIDE')}
         onSave={handleApiEditorSave}
+      />
+
+      <ApiClone
+        target={curOpApi}
+        onClose={() => setCurOpApi(undefined)}
+        onSave={() => {
+          setCurOpApi(undefined);
+          reloadTreeData();
+        }}
       />
     </CardRowGroup.SlideCard>
   );

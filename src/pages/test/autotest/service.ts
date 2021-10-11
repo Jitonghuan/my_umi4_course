@@ -198,3 +198,9 @@ export const getPreSavedVars = addAPIPrefix('/qc/autotest/getPreSavedVars');
 
 /** POST 批量复制 */
 export const copyCases = addAPIPrefix('/qc/autotest/copyCases');
+
+/** POST 复制API */
+export const copyApi = addAPIPrefix('/qc/autotest/copyApi');
+
+/** GET 获取模块树 */
+export const getModules = addAPIPrefix('/qc/autotest/getModules');
