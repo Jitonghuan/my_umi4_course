@@ -23,7 +23,7 @@ export function useRouteItemData(
     setLoading(true);
 
     try {
-      const result = await getRequest(APIS.queryFeRouteTemplate, {
+      const result = await getRequest(APIS.queryFeRouteConfig, {
         data: {
           appCode: appData.appCode,
           appCategoryCode: appData.appCategoryCode,

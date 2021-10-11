@@ -56,8 +56,8 @@
     "yaml": "^1.10.2"
   },
   "devDependencies": {
-    "@hbos/umi-plugin-theme-hbos": "^1.0.1",
     "@hbos/umi-loaders": "^1.0.0",
+    "@hbos/umi-plugin-theme-hbos": "^1.0.1",
     "@umijs/preset-react": "~1.8.23"
   },
   "__npminstall_done": false
