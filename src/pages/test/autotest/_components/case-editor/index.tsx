@@ -86,9 +86,13 @@ export default function CaseEditor(props: CaseEditorProps) {
         postRequest(APIS.ymlToCase, {
           data: { ...finalJSON, apiId: props.initData?.apiId, validates: finalJSON.validate, validate: undefined },
         })
-          .then((res) => {
+          .then(async (res) => {
             editField.resetFields();
-            initEditField({ ...res.data, hooks: JSON.stringify(res.data.hooks || {}) });
+            await initEditField({
+              ...res.data,
+              hooks: JSON.stringify(res.data.hooks || {}),
+              apiId: props.initData?.apiId || props.apiDetail?.id,
+            });
             setActiveKey(nextKey);
           })
           .catch((e) => {

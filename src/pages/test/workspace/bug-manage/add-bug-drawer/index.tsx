@@ -34,11 +34,14 @@ export default function AddOrEditBugDrawer(props: any) {
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
   const [bugInfo, updateBugInfo] = HOOKS.useBug(bugId);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const submit = async (continueAdd = false) => {
+    setSaveLoading(true);
     try {
       void (await form.validateFields());
     } catch (e) {
+      setSaveLoading(false);
       return;
     }
     // const finishLoading = message.loading(bugInfo ? '正在修改' : '正在新增');
@@ -69,6 +72,7 @@ export default function AddOrEditBugDrawer(props: any) {
     void setRelatedCases([]);
     void setSchema(undefined);
 
+    setSaveLoading(false);
     if (continueAdd && !bugInfo) return;
     void setVisible(false);
   };
@@ -258,13 +262,13 @@ export default function AddOrEditBugDrawer(props: any) {
               <>
                 {' '}
                 {!bugInfo ? (
-                  <Button type="primary" onClick={() => submit(true)}>
+                  <Button loading={saveLoading} type="primary" onClick={() => submit(true)}>
                     保存并新增
                   </Button>
                 ) : (
                   ''
                 )}
-                <Button type="primary" onClick={() => submit(false)}>
+                <Button loading={saveLoading} type="primary" onClick={() => submit(false)}>
                   保存
                 </Button>
                 <Button className="ml-auto" onClick={() => setVisible(false)}>

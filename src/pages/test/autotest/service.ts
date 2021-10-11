@@ -195,3 +195,6 @@ export const debugYml = addAPIPrefix('/qc/autotest/debugYml');
 
 /** POST 调试测试用例 */
 export const getPreSavedVars = addAPIPrefix('/qc/autotest/getPreSavedVars');
+
+/** POST 批量复制 */
+export const copyCases = addAPIPrefix('/qc/autotest/copyCases');
