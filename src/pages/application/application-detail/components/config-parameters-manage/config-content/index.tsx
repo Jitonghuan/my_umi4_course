@@ -26,7 +26,6 @@ export default function ConfigContent({ env, configType }: IProps) {
   const [importCfgVisible, setImportCfgVisible] = useState(false);
   const [version, setVersion] = useState(''); //版本号
   const [configId, setConfigId] = useState(''); //配置Id
-  const [isLatest, setIsLatest] = useState<boolean>(false); //是否为最新版本
   const [filterFormRef] = Form.useForm();
   const [editVersionForm] = Form.useForm();
   const [versionData, setVersionData] = useState<any[]>([]); //版本下拉选择框数据
@@ -34,6 +33,7 @@ export default function ConfigContent({ env, configType }: IProps) {
   const { appCategoryCode, appCode, id: appId } = appData || {};
   // 当前选中版本
   const [currentVersion, setCurrentVersion] = useState<any>(); //当前Version
+  const [latestVersion, setLatestVersion] = useState<any>(); //最新的版本
   const [versionConfig, setversionConfig] = useState(''); //展示配置信息
   let currentEnvCode = '';
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function ConfigContent({ env, configType }: IProps) {
         }));
         setEnvDatas(listEnv);
         currentEnvCode = listEnv[0]?.data?.envCode;
-
+        setCurrentEnvData(listEnv[0]?.data?.envCode);
         queryVersionData(currentEnvCode); //一进入页面根据默认显示的环境查询的版本信息选项
         //加载环境、版本、版本号默认显示在页面上
         filterFormRef.setFieldsValue({
@@ -72,15 +72,16 @@ export default function ConfigContent({ env, configType }: IProps) {
     editVersionForm.setFieldsValue({
       configYaml: '',
     }); //清除上个环境配置信息
-    queryVersionData(getEnvCode, 'isOnchange'); //改变环境后查询版本信息选项
+    setCurrentEnvData(getEnvCode);
+    queryVersionData(getEnvCode); //改变环境后查询版本信息选项
 
     console.log('getEnvCode', getEnvCode);
   };
-  // 查询版本数据
+  // 查询版本下拉框数据
   let getVersionData: any = [];
   let currentVersionNumber = '';
-  let currentVersionId = '';
-  const queryVersionData = async (envCodeParams?: any, isOnchange?: any) => {
+  let currentVersionId = 0;
+  const queryVersionData = async (envCodeParams?: any) => {
     await getRequest(queryVersionApi, {
       data: {
         pageSize: 30,
@@ -100,6 +101,7 @@ export default function ConfigContent({ env, configType }: IProps) {
           if (el.isLatest === 0) {
             currentVersionId = el.id;
             currentVersionNumber = el.versionNumber;
+            setLatestVersion(currentVersionId);
             setVersion(el.versionNumber);
           }
         });
@@ -111,7 +113,7 @@ export default function ConfigContent({ env, configType }: IProps) {
           appCode,
           pageIndex: 1,
           envCode: currentEnvCode || getEnvCode,
-          versionID: currentVersionId,
+          versionID: currentVersionId || '',
         };
         getQueryConfig(queryConfigValue); //一进入页面查询配置信息
         setVersion(currentVersionNumber); //存储版本号
@@ -122,17 +124,19 @@ export default function ConfigContent({ env, configType }: IProps) {
   };
   //改变版本
   const changeVersion = (el: any) => {
-    setCurrentVersion(el.value);
-    if (el.isLatest === 1) {
-      setIsLatest(true);
-    } else {
-      setIsLatest(false);
-    }
+    setCurrentVersion(el);
+    let getConfigValue = {
+      appCode,
+      pageIndex: 1,
+      envCode: currentEnvData || getEnvCode,
+      versionID: el || '',
+    };
+    getQueryConfig(getConfigValue); //切换版本后自动去查询配置信息
   };
   // 查询配置信息
   const getQueryConfig = (values: any) => {
     queryConfigList({ appCode: appCode, pageIndex: 1, ...values }).then((reslut: any) => {
-      let configs = reslut?.list[0].value;
+      let configs = reslut?.list[0]?.value;
       if (configs) {
         setversionConfig(configs); //存储当前的配置信息
         // setCurrentVersion(configs);
@@ -177,7 +181,6 @@ export default function ConfigContent({ env, configType }: IProps) {
           }
         })
         .finally(() => {
-          console.log('currentEnvData:', currentEnvData);
           queryVersionData(currentEnvData);
         });
     }
@@ -188,14 +191,13 @@ export default function ConfigContent({ env, configType }: IProps) {
     const resp = await postRequest(doRestoreVersionApi, {
       data: {
         id: currentVersion,
-        envCode: currentEnvData,
       },
     });
     if (!resp.success) {
       return;
     }
     message.success('回退成功');
-    queryVersionData();
+    queryVersionData(currentEnvData);
   };
 
   return (
@@ -246,18 +248,22 @@ export default function ConfigContent({ env, configType }: IProps) {
             />
           </Form.Item>
           <Form.Item>
-            <Button htmlType="submit" type="primary" style={{ marginRight: 12 }}>
+            {/* <Button htmlType="submit" type="primary" style={{ marginRight: 12 }}>
               查询
-            </Button>
+            </Button> */}
             <Button htmlType="reset" type="default">
               重置
             </Button>
           </Form.Item>
         </Form>
-
-        <div className={`${rootCls}__filter-btns`} style={{ marginRight: '18%' }}>
-          <Popconfirm title="确定回退到当前版本？" disabled={isLatest} onConfirm={handleRollBack}>
-            <Button type="primary" danger disabled={versionData.length > 1 && isLatest}>
+        {/* versionData.length > 1 && */}
+        <div className={`${rootCls}__filter-btns`} style={{ marginRight: '4%' }}>
+          <Popconfirm
+            title="确定回退到当前版本？"
+            disabled={latestVersion === currentVersion}
+            onConfirm={handleRollBack}
+          >
+            <Button type="primary" danger disabled={latestVersion === currentVersion}>
               回退
             </Button>
           </Popconfirm>
