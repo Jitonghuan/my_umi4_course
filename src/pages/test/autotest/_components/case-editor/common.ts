@@ -20,7 +20,7 @@ export async function getFuncListByIds(funcs: FuncProps[]) {
           data: { id: n.id },
         }).catch((err) => ({} as any));
 
-        return { ...data, type: 1, arguments: n.argument };
+        return { ...data, type: 1, argument: n.argument };
       } else {
         const { data } = await getRequest(APIS.getFunc, {
           data: { id: n.id },
