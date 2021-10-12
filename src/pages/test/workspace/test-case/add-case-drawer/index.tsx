@@ -166,14 +166,24 @@ export default function RightDetail(props: any) {
                   name={['stepContent', 0, 'input']}
                   rules={[{ required: true, message: '请输入步骤描述' }]}
                 >
-                  <Input.TextArea disabled={readOnly} placeholder="步骤描述" className="step-desc" />
+                  <Input.TextArea
+                    autoSize={{ minRows: 10 }}
+                    disabled={readOnly}
+                    placeholder="步骤描述"
+                    className="step-desc"
+                  />
                 </Form.Item>
                 <Form.Item
                   noStyle
                   name={['stepContent', 0, 'output']}
                   rules={[{ required: true, message: '请输入预期结果' }]}
                 >
-                  <Input.TextArea disabled={readOnly} placeholder="预期结果" className="step-expected-results" />
+                  <Input.TextArea
+                    autoSize={{ minRows: 10 }}
+                    disabled={readOnly}
+                    placeholder="预期结果"
+                    className="step-expected-results"
+                  />
                 </Form.Item>
               </div>
             </TabPane>

@@ -133,7 +133,13 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
               name={['stepContent', index, 'input']}
               rules={[{ required: true, message: '请输入步骤描述' }]}
             >
-              <Input.TextArea className="text-area" placeholder="步骤描述" value={value} disabled={props.readOnly} />
+              <Input.TextArea
+                autoSize={{ minRows: 2 }}
+                className="text-area"
+                placeholder="步骤描述"
+                value={value}
+                disabled={props.readOnly}
+              />
             </Form.Item>
           )}
         />
@@ -146,7 +152,13 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
               name={['stepContent', index, 'output']}
               rules={[{ required: true, message: '请输入步骤描述' }]}
             >
-              <Input.TextArea className="text-area" placeholder="预期结果" value={value} disabled={props.readOnly} />
+              <Input.TextArea
+                autoSize={{ minRows: 2 }}
+                className="text-area"
+                placeholder="预期结果"
+                value={value}
+                disabled={props.readOnly}
+              />
             </Form.Item>
           )}
         />
