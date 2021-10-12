@@ -7,6 +7,7 @@ import * as HOOKS from '../../../hooks';
 import DebounceSelect from '@/components/debounce-select';
 import YmlDebug from '../../yml-debug';
 import { Button, Input, Table, ConfigProvider, Space, Empty, message } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
 
@@ -21,6 +22,8 @@ export default function SourceCodeEdit(props: any) {
   const [preSavedVars] = HOOKS.usePreSavedVars(preCases);
   const [finalVariableData, setFinalVariableData] = useState<any[]>(preSavedVars);
   const [varKeyword, setVarKeyword] = useState<string>('');
+
+  const [hideRight, setHideRight] = useState<boolean>(false);
 
   useEffect(() => {
     let JsonData;
@@ -42,7 +45,6 @@ export default function SourceCodeEdit(props: any) {
   const handleSearch = (val: string = varKeyword) => {
     setVarKeyword(val);
     setFinalVariableData(preSavedVars.filter((item: any) => item.name?.includes(val)));
-    console.log('preSavedVars :>> ', preSavedVars);
   };
 
   const handleDebug = () => {
@@ -214,7 +216,7 @@ export default function SourceCodeEdit(props: any) {
     <>
       <div className="drawer-body-inner source-code-edit-container">
         <div className="source-code-edit-container">
-          <div className="edit-container">
+          <div className={`edit-container ${hideRight ? 'edit-container-expand' : ''}`}>
             <Space className="select-container">
               <label className="select-item-container">
                 前置脚本:{' '}
@@ -264,25 +266,35 @@ export default function SourceCodeEdit(props: any) {
               }}
             />
           </div>
-          <div className="variable-pool">
-            <Input.Search className="search-header" onSearch={handleSearch} />
-            <ConfigProvider
-              renderEmpty={() => (
-                <Empty description="请先定义变量或选择前置用例" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-              )}
+          <div className={`variable-pool ${hideRight ? 'variable-pool-hide' : ''}`}>
+            <div
+              className={`hide-icon hide-icon-${hideRight ? 'true' : 'false'}`}
+              onClick={() => setHideRight(!hideRight)}
             >
-              <Table
-                bordered
-                className="variable-pool-table"
-                dataSource={finalVariableData}
-                pagination={false}
-                scroll={{ y: 'calc(100vh - 252px)' }}
-              >
-                <Table.Column title="变量名" dataIndex="name" />
-                <Table.Column title="变量值" dataIndex="value" />
-                <Table.Column title="描述" dataIndex="desc" />
-              </Table>
-            </ConfigProvider>
+              {hideRight ? <LeftOutlined /> : <RightOutlined />}
+            </div>
+            {hideRight ? null : (
+              <>
+                <Input.Search className="search-header" onSearch={handleSearch} />
+                <ConfigProvider
+                  renderEmpty={() => (
+                    <Empty description="请先定义变量或选择前置用例" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  )}
+                >
+                  <Table
+                    bordered
+                    className="variable-pool-table"
+                    dataSource={finalVariableData}
+                    pagination={false}
+                    scroll={{ y: 'calc(100vh - 252px)' }}
+                  >
+                    <Table.Column title="变量名" dataIndex="name" />
+                    <Table.Column title="变量值" dataIndex="value" />
+                    <Table.Column title="描述" dataIndex="desc" />
+                  </Table>
+                </ConfigProvider>
+              </>
+            )}
           </div>
         </div>
       </div>
