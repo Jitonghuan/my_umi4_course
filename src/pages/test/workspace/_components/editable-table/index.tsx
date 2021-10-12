@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Table, Input, Button, Space } from 'antd';
+import { Table, Input, Button, Space, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -8,10 +8,9 @@ import update from 'immutability-helper';
 import './index.less';
 
 interface IEditableTable {
-  data: any[];
-  setData: React.Dispatch<React.SetStateAction<any[]>>;
+  value?: any[];
   readOnly?: boolean;
-  onChange?: (value: any[]) => void;
+  onChange?: (value?: any[]) => void;
 }
 
 const type = 'DraggableBodyRow';
@@ -54,12 +53,12 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }: an
 };
 
 const DragSortingTable: React.FC<IEditableTable> = (props) => {
-  const { data, setData } = props;
+  const { value } = props;
   const [cnt, setCnt] = useState<number>(0);
 
   useEffect(() => {
-    props.onChange?.(data);
-  }, [data]);
+    props.onChange?.(value);
+  }, [value]);
 
   const getKey = (): string => {
     setCnt(cnt + 1);
@@ -67,21 +66,25 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
   };
 
   const addRow = () => {
-    setData([...data, { key: getKey(), value: '', desc: '' }]);
+    if (!value) return;
+    props.onChange?.([...value, { key: getKey(), value: '', desc: '' }]);
   };
 
   const cloneRow = (key: string) => {
-    const baseData = data.find((item) => item.key === key);
-    setData([...data, { ...baseData, key: getKey() }]);
+    if (!value) return;
+    const baseData = value.find((item) => item.key === key);
+    props.onChange?.([...value, { ...baseData, key: getKey() }]);
   };
 
   const deleteRow = (key: string) => {
-    setData([...data.filter((item) => item.key !== key)]);
+    if (!value) return;
+    props.onChange?.([...value.filter((item) => item.key !== key)]);
   };
 
   const editRow = (idx: number, propName: string, propValue: string) => {
-    data[idx][propName] = propValue;
-    setData([...data]);
+    if (!value) return;
+    value[idx][propName] = propValue;
+    props.onChange?.([...value]);
   };
 
   const components = {
@@ -92,9 +95,10 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
 
   const moveRow = useCallback(
     (dragIndex, hoverIndex) => {
-      const dragRow = data[dragIndex];
-      setData(
-        update(data, {
+      if (!value) return;
+      const dragRow = value[dragIndex];
+      props.onChange?.(
+        update(value, {
           $splice: [
             [dragIndex, 1],
             [hoverIndex, 0, dragRow],
@@ -102,14 +106,14 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
         }),
       );
     },
-    [data],
+    [value],
   );
 
   return (
     <DndProvider backend={HTML5Backend}>
       <Table
         className="editable-table"
-        dataSource={data}
+        dataSource={value}
         components={components}
         // @ts-ignore
         onRow={(_, index) => ({
@@ -125,13 +129,9 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
           dataIndex="value"
           render={(value, _: any, index: number) => (
             <div className="text-area-container">
-              <Input.TextArea
-                className="text-area"
-                placeholder="输入步骤描述"
-                value={value}
-                disabled={props.readOnly}
-                onChange={(e) => editRow(index, 'value', e.target.value)}
-              />
+              <Form.Item name={['stepContent', index, 'input']} rules={[{ required: true, message: '请输入步骤描述' }]}>
+                <Input.TextArea className="text-area" placeholder="步骤描述" value={value} disabled={props.readOnly} />
+              </Form.Item>
             </div>
           )}
         />
@@ -140,13 +140,12 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
           dataIndex="desc"
           render={(value, _: any, index: number) => (
             <div className="text-area-container">
-              <Input.TextArea
-                className="text-area"
-                placeholder="输入预期结果"
-                value={value}
-                disabled={props.readOnly}
-                onChange={(e) => editRow(index, 'desc', e.target.value)}
-              />
+              <Form.Item
+                name={['stepContent', index, 'output']}
+                rules={[{ required: true, message: '请输入步骤描述' }]}
+              >
+                <Input.TextArea className="text-area" placeholder="预期结果" value={value} disabled={props.readOnly} />
+              </Form.Item>
             </div>
           )}
         />
