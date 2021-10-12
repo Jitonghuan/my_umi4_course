@@ -121,44 +121,50 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
           moveRow,
         })}
         pagination={false}
-        footer={() => <Button block icon={<PlusOutlined />} onClick={addRow} />}
+        footer={() => {
+          if (props.readOnly) return null;
+          return <Button block icon={<PlusOutlined />} onClick={addRow} />;
+        }}
       >
         <Table.Column title="编号" render={(_: any, __: any, index: number) => 1 + index} />
         <Table.Column
           title="步骤描述"
           dataIndex="value"
           render={(value, _: any, index: number) => (
-            <div className="text-area-container">
-              <Form.Item name={['stepContent', index, 'input']} rules={[{ required: true, message: '请输入步骤描述' }]}>
-                <Input.TextArea className="text-area" placeholder="步骤描述" value={value} disabled={props.readOnly} />
-              </Form.Item>
-            </div>
+            <Form.Item
+              noStyle
+              name={['stepContent', index, 'input']}
+              rules={[{ required: true, message: '请输入步骤描述' }]}
+            >
+              <Input.TextArea className="text-area" placeholder="步骤描述" value={value} disabled={props.readOnly} />
+            </Form.Item>
           )}
         />
         <Table.Column
           title="预期结果"
           dataIndex="desc"
           render={(value, _: any, index: number) => (
-            <div className="text-area-container">
-              <Form.Item
-                name={['stepContent', index, 'output']}
-                rules={[{ required: true, message: '请输入步骤描述' }]}
-              >
-                <Input.TextArea className="text-area" placeholder="预期结果" value={value} disabled={props.readOnly} />
-              </Form.Item>
-            </div>
+            <Form.Item
+              noStyle
+              name={['stepContent', index, 'output']}
+              rules={[{ required: true, message: '请输入步骤描述' }]}
+            >
+              <Input.TextArea className="text-area" placeholder="预期结果" value={value} disabled={props.readOnly} />
+            </Form.Item>
           )}
         />
-        <Table.Column
-          title="操作"
-          dataIndex="key"
-          render={(key: string) => (
-            <Space>
-              <a onClick={() => cloneRow(key)}>复制</a>
-              <a onClick={() => deleteRow(key)}>删除</a>
-            </Space>
-          )}
-        />
+        {props.readOnly ? null : (
+          <Table.Column
+            title="操作"
+            dataIndex="key"
+            render={(key: string) => (
+              <Space>
+                <a onClick={() => cloneRow(key)}>复制</a>
+                <a onClick={() => deleteRow(key)}>删除</a>
+              </Space>
+            )}
+          />
+        )}
       </Table>
     </DndProvider>
   );

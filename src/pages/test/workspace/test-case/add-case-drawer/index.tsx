@@ -161,10 +161,18 @@ export default function RightDetail(props: any) {
           <Tabs activeKey={descType} onChange={setDescType}>
             <TabPane tab="卡片式" key="0">
               <div className="cardtype-case-desc-wrapper">
-                <Form.Item name={['stepContent', 0, 'input']} rules={[{ required: true, message: '请输入步骤描述' }]}>
+                <Form.Item
+                  noStyle
+                  name={['stepContent', 0, 'input']}
+                  rules={[{ required: true, message: '请输入步骤描述' }]}
+                >
                   <Input.TextArea disabled={readOnly} placeholder="步骤描述" className="step-desc" />
                 </Form.Item>
-                <Form.Item name={['stepContent', 0, 'output']} rules={[{ required: true, message: '请输入预期结果' }]}>
+                <Form.Item
+                  noStyle
+                  name={['stepContent', 0, 'output']}
+                  rules={[{ required: true, message: '请输入预期结果' }]}
+                >
                   <Input.TextArea disabled={readOnly} placeholder="预期结果" className="step-expected-results" />
                 </Form.Item>
               </div>
