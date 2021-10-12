@@ -21,10 +21,46 @@
     }
   }
 
-  .variable-pool {
-    width: 300px;
+  .edit-container-expand {
+    width: 800px;
+  }
+
+  .variable-pool,
+  .variable-pool-hide {
+    width: 360px;
     display: flex;
     flex-direction: column;
+    background-color: #f7f8fa;
+    box-shadow: rgba(#0b4485, 40%) -2px 0 6px;
+
+    position: absolute;
+    right: 0;
+    top: 79px;
+    bottom: 50px;
+
+    padding: 12px;
+
+    .hide-icon {
+      width: 36px;
+      height: 36px;
+      font-size: 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      position: absolute;
+      left: -18px;
+      top: 50px;
+
+      border-radius: 50%;
+      border: 1px solid #d4d8e0;
+      box-shadow: rgba(#0b4485, 20%) 0 2px 6px;
+      background-color: #fff;
+      color: rgb(185, 190, 204);
+
+      z-index: 2;
+    }
 
     .search-header {
       margin-bottom: 12px;
@@ -33,5 +69,9 @@
     .variable-pool-table {
       flex: 1;
     }
+  }
+
+  .variable-pool-hide {
+    width: 40px;
   }
 }

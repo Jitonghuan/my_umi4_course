@@ -48,16 +48,19 @@
     "classnames": "~2.3.1",
     "echarts": "^5.1.2",
     "events": "~3.3.0",
+    "immutability-helper": "^3.1.1",
     "lodash": "~4.17.21",
     "moment": "^2.29.1",
     "qs": "~6.10.1",
     "react-ace": "^9.4.1",
+    "react-dnd": "^14.0.4",
+    "react-dnd-html5-backend": "^14.0.2",
     "umi": "~3.5.18",
     "yaml": "^1.10.2"
   },
   "devDependencies": {
-    "@hbos/umi-plugin-theme-hbos": "^1.0.1",
     "@hbos/umi-loaders": "^1.0.0",
+    "@hbos/umi-plugin-theme-hbos": "^1.0.1",
     "@umijs/preset-react": "~1.8.23"
   },
   "__npminstall_done": false

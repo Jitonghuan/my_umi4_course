@@ -4,18 +4,17 @@
 
 import React, { useState, useContext, useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
 import { Select, Button, Tabs, Spin, Empty, Modal, message } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
-import AceEditor from '@/components/ace-editor';
+import AceDiff from '@/components/ace-diff';
 import * as APIS from '@/pages/application/service';
 import { putRequest, postRequest } from '@/utils/request';
 import { useRouteItemData } from './hooks';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import './index.less';
 
-export default function RouteTemplate() {
+export default function RouteConfig() {
   const { appData } = useContext(DetailContext);
   const { envTypeData } = useContext(FeContext);
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
@@ -69,7 +68,7 @@ export default function RouteTemplate() {
   const handleSubmit = useCallback(() => {
     Modal.confirm({
       title: '操作确认',
-      content: `确定要修改吗？（下次发布至 ${envCode} 环境时生效）`,
+      content: `确定要修改吗？（保存后会立即对 ${envCode} 环境生效！）`,
       onOk: async () => {
         const payload = {
           appCode: appData?.appCode,
@@ -79,19 +78,19 @@ export default function RouteTemplate() {
         };
 
         if (!!routeContent?.id) {
-          await putRequest(APIS.updateFeRouteTemplate, {
+          await putRequest(APIS.updateFeRouteConfig, {
             data: {
               id: routeContent.id,
               ...payload,
             },
           });
         } else {
-          await postRequest(APIS.createFeRouteTemplate, {
+          await postRequest(APIS.createFeRouteConfig, {
             data: payload,
           });
         }
 
-        message.success(`保存成功！下次发布至 ${envCode} 环境时生效`);
+        message.success(`保存成功！请及时到 ${envCode} 环境验证`);
         reloadData();
       },
     });
@@ -128,7 +127,13 @@ export default function RouteTemplate() {
 
         {envCode ? (
           <Spin spinning={isLoading}>
-            <AceEditor mode={editorLanguage} height="100%" value={editValue} onChange={(n) => setEditValue(n)} />
+            <AceDiff
+              originValue={routeContent?.value}
+              mode={editorLanguage}
+              height="100%"
+              value={editValue}
+              onChange={(n) => setEditValue(n)}
+            />
           </Spin>
         ) : (
           <Empty description="请选择发布环境" image={Empty.PRESENTED_IMAGE_SIMPLE} />

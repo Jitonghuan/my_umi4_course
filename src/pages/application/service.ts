@@ -113,13 +113,13 @@ export const updateAppUrl = `${appConfig.apiPrefix}/appManage/update`;
 export const searchGitAddressUrl = `${appConfig.apiPrefix}/appManage/searchGitAddress`;
 
 /** POST 创建前端路由模板 */
-export const createFeRouteTemplate = `${appConfig.apiPrefix}/appManage/feRouteTemplate/create`;
+export const createFeRouteConfig = `${appConfig.apiPrefix}/appManage/feRouteTemplate/create`;
 
 /** GET 查询前端路由模板 */
-export const queryFeRouteTemplate = `${appConfig.apiPrefix}/appManage/feRouteTemplate/list`;
+export const queryFeRouteConfig = `${appConfig.apiPrefix}/appManage/feRouteTemplate/list`;
 
 /** PUT 更新前端路由模板 */
-export const updateFeRouteTemplate = `${appConfig.apiPrefix}/appManage/feRouteTemplate/update`;
+export const updateFeRouteConfig = `${appConfig.apiPrefix}/appManage/feRouteTemplate/update`;
 
 /** GET 查看前端版本 */
 export const queryFeVersions = `${appConfig.apiPrefix}/appManage/feVersion/list`;
