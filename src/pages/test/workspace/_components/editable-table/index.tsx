@@ -66,7 +66,10 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
   };
 
   const addRow = () => {
-    if (!value) return;
+    if (!value) {
+      props.onChange?.([{ key: getKey(), value: '', desc: '' }]);
+      return;
+    }
     props.onChange?.([...value, { key: getKey(), value: '', desc: '' }]);
   };
 
@@ -79,12 +82,6 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
   const deleteRow = (key: string) => {
     if (!value) return;
     props.onChange?.([...value.filter((item) => item.key !== key)]);
-  };
-
-  const editRow = (idx: number, propName: string, propValue: string) => {
-    if (!value) return;
-    value[idx][propName] = propValue;
-    props.onChange?.([...value]);
   };
 
   const components = {
