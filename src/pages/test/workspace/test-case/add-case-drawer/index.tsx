@@ -126,6 +126,7 @@ export default function RightDetail(props: any) {
         </Form.Item>
         <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
           <TreeSelect
+            treeLine
             treeExpandedKeys={expandKeys}
             onTreeExpand={setExpandKeys}
             disabled={readOnly}
