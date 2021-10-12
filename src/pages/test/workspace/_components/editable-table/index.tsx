@@ -124,24 +124,30 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
           title="步骤描述"
           dataIndex="value"
           render={(value, _: any, index: number) => (
-            <Input.TextArea
-              placeholder="输入步骤描述"
-              value={value}
-              disabled={props.readOnly}
-              onChange={(e) => editRow(index, 'value', e.target.value)}
-            />
+            <div className="text-area-container">
+              <Input.TextArea
+                className="text-area"
+                placeholder="输入步骤描述"
+                value={value}
+                disabled={props.readOnly}
+                onChange={(e) => editRow(index, 'value', e.target.value)}
+              />
+            </div>
           )}
         />
         <Table.Column
           title="预期结果"
           dataIndex="desc"
           render={(value, _: any, index: number) => (
-            <Input.TextArea
-              placeholder="输入预期结果"
-              disabled={props.readOnly}
-              value={value}
-              onChange={(e) => editRow(index, 'desc', e.target.value)}
-            />
+            <div className="text-area-container">
+              <Input.TextArea
+                className="text-area"
+                placeholder="输入预期结果"
+                value={value}
+                disabled={props.readOnly}
+                onChange={(e) => editRow(index, 'desc', e.target.value)}
+              />
+            </div>
           )}
         />
         <Table.Column
