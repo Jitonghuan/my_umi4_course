@@ -19,6 +19,7 @@ export default function RightDetail(props: any) {
     caseReadOnly,
     onAddCaseBtnClick,
     onEditCaseBtnClick,
+    onSeeCaseInfoBtnClick,
     onSeeCaseBtnClick,
     drawerVisible,
     setDrawerVisible,
@@ -81,8 +82,8 @@ export default function RightDetail(props: any) {
 
   const operateRender = (record: any) => (
     <>
-      <Button type="link" onClick={() => onEditCaseBtnClick(record)}>
-        编辑
+      <Button type="link" onClick={() => onSeeCaseInfoBtnClick(record)}>
+        查看
       </Button>
       <Popconfirm title="确定要删除此用例吗？" onConfirm={() => onDeleteConfirm(record.id)}>
         <Button type="link">删除</Button>
