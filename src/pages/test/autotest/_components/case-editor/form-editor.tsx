@@ -12,6 +12,7 @@ import { CaseItemVO, TreeNode, FuncProps } from '../../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import EditorTable from '@cffe/pc-editor-table';
+import YmlDebug from '../yml-debug';
 import { getFuncListByIds, getCaseListByIds } from './common';
 import AceEditor, { JSONValidator } from '@/components/ace-editor';
 import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../../common';
@@ -77,6 +78,10 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [step, setSetp] = useState<number>(0);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const [debugModalVisible, setDebugModalVisible] = useState<boolean>(false);
+
+  // 名字不要太在意，直接复制过来的，又不知道取啥名字好
+  const [ymlData, setYmlData] = useState<any>();
 
   const handleSubmit = async () => {
     setSubmitLoading(true);
@@ -155,6 +160,64 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
 
   const gotoNextStep = async () => {
     setSetp(step + 1);
+  };
+
+  const handleDebug = async () => {
+    // apiId: 1473
+    // desc: "设置"
+    // envId: 13
+    // name: "设置"
+    // pre_cases: [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,…]
+    // request: {headers: {authorization: "${get_token($token)}"}, data: [], method: "POST",…}
+    // validate: [{eq: ["status_code", 200]}]
+
+    const values = await props.field.validateFields().catch((error) => {
+      const info = error.errorFields
+        ?.map((n: any) => n.errors)
+        .flat()
+        .join('; ');
+      message.error(info);
+      throw error;
+    });
+
+    const payload = {
+      name: values.name,
+      desc: values.desc,
+      allowSkip: values.allowSkip || false,
+      skipReason: values.skipReason || '',
+      headers: values.headers || [],
+      parameters: values.parameters || values.parametersJSON || [],
+      preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
+      customVars: values.customVars || [],
+      savedVars: values.savedVars || [],
+      hooks: {
+        setup: (values.beforeFuncs || []).map((n: any) => ({
+          id: n.id,
+          type: n.type || 0,
+          argument: n.argument || '',
+        })),
+        teardown: (values.afterFuncs || []).map((n: any) => ({
+          id: n.id,
+          type: n.type || 0,
+          argument: n.argument || '',
+        })),
+      },
+      resAssert: values.resAssert || [],
+      modifyUser: userInfo.userName,
+      id: props.initData?.id,
+      apiId: props.initData?.apiId || props.apiDetail?.id,
+      createUser: props.initData?.createUser,
+    };
+    if (Object.keys(payload).length === 0) return;
+    const { data: ymlData } = await postRequest(APIS.caseToYml, { data: payload });
+
+    if (props.mode == 'ADD') {
+      setYmlData({ ...ymlData, apiId: props.current?.bizId! });
+    } else {
+      setYmlData({ ...ymlData, apiId: props.initData?.apiId });
+    }
+
+    setDebugModalVisible(true);
   };
 
   return (
@@ -403,6 +466,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
       </div>
 
       <div className="drawer-custom-footer">
+        <Button onClick={handleDebug}>调试</Button>
         {step > 0 ? (
           <Button type="primary" onClick={() => setSetp(step - 1)}>
             上一步
@@ -420,6 +484,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
           取消
         </Button>
       </div>
+      <YmlDebug visible={debugModalVisible} ymlData={ymlData} onClose={() => setDebugModalVisible(false)} />
     </>
   );
 }
