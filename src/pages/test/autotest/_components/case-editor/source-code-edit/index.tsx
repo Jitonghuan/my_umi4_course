@@ -258,7 +258,7 @@ export default function SourceCodeEdit(props: any) {
             <AceEditor
               status={editStatus}
               mode="yaml"
-              height="calc(100vh - 263px)"
+              height={`calc(100vh - ${hideRight ? 205 : 227}px)`}
               value={editorValue}
               onChange={(val) => {
                 setEditorValue(val);
