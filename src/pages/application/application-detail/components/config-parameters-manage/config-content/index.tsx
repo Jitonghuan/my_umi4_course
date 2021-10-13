@@ -9,12 +9,9 @@ import React, { useEffect, useState, useContext } from 'react';
 import { history } from 'umi';
 import { Form, Select, Popconfirm, Button, message } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
-import EditConfig, { EditConfigIProps } from './edit-config';
-import ImportConfig from './import-config';
 import AceEditor from '@/components/ace-editor';
 import { queryConfigList, envList } from '@/pages/application/service';
 import { IProps } from './types';
-import { ConfigData } from '../types';
 import { queryVersionApi, doRestoreVersionApi, configAdd, configUpdate } from './service';
 import './index.less';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
@@ -22,23 +19,21 @@ const rootCls = 'config-content-compo';
 export default function ConfigContent({ env, configType }: IProps) {
   const { appData } = useContext(DetailContext);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [currentEnvData, setCurrentEnvData] = useState(); //当前的环境；
-  const [importCfgVisible, setImportCfgVisible] = useState(false);
+  const [currentEnvData, setCurrentEnvData] = useState(); //当前选中的环境；
   const [version, setVersion] = useState(''); //版本号
-  const [configId, setConfigId] = useState(''); //配置Id
+  const [configId, setConfigId] = useState(''); //配置内容的Id
   const [filterFormRef] = Form.useForm();
   const [editVersionForm] = Form.useForm();
-  const [versionData, setVersionData] = useState<any[]>([]); //版本下拉选择框数据
-  // 进入页面加载环境和版本信息
+  const [versionData, setVersionData] = useState<any[]>([]); //版本下拉选择框的全部数据
   const { appCategoryCode, appCode, id: appId } = appData || {};
-  // 当前选中版本
-  const [currentVersion, setCurrentVersion] = useState<any>(); //当前Version
+  const [currentVersion, setCurrentVersion] = useState<any>(); //当前选中的Version
   const [latestVersion, setLatestVersion] = useState<any>(); //最新的版本
-  const [versionConfig, setversionConfig] = useState(''); //展示配置信息
+  const [versionConfig, setversionConfig] = useState(''); //展示配置内容
   let currentEnvCode = '';
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
+  // 进入页面加载环境和版本信息
   useEffect(() => {
     try {
       selectAppEnv(appCategoryCode).then((result: any) => {
@@ -59,7 +54,7 @@ export default function ConfigContent({ env, configType }: IProps) {
     } catch (error) {
       message.warning(error);
     }
-  }, []);
+  }, [env]);
 
   //通过appCategoryCode和env查询环境信息
   const selectAppEnv = (categoryCode: any) => {
@@ -74,8 +69,6 @@ export default function ConfigContent({ env, configType }: IProps) {
     }); //清除上个环境配置信息
     setCurrentEnvData(getEnvCode);
     queryVersionData(getEnvCode); //改变环境后查询版本信息选项
-
-    console.log('getEnvCode', getEnvCode);
   };
   // 查询版本下拉框数据
   let getVersionData: any = [];
@@ -112,7 +105,7 @@ export default function ConfigContent({ env, configType }: IProps) {
         let queryConfigValue = {
           appCode,
           pageIndex: 1,
-          envCode: currentEnvCode || getEnvCode,
+          envCode: currentEnvCode || getEnvCode || currentEnvData,
           versionID: currentVersionId || '',
         };
         getQueryConfig(queryConfigValue); //一进入页面查询配置信息
@@ -123,8 +116,14 @@ export default function ConfigContent({ env, configType }: IProps) {
     });
   };
   //改变版本
+  let getVersionNumber = '';
   const changeVersion = (el: any) => {
     setCurrentVersion(el);
+    versionData?.map((item: any) => {
+      if (item.value == el) {
+        getVersionNumber = item.label;
+      }
+    });
     let getConfigValue = {
       appCode,
       pageIndex: 1,
@@ -132,6 +131,7 @@ export default function ConfigContent({ env, configType }: IProps) {
       versionID: el || '',
     };
     getQueryConfig(getConfigValue); //切换版本后自动去查询配置信息
+    setVersion(getVersionNumber); //切换版本后去刷新版本号展示
   };
   // 查询配置信息
   const getQueryConfig = (values: any) => {
@@ -150,7 +150,6 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   // 确认配置
   const editVersion = (values: any) => {
-    console.log('values', values);
     if (currentVersion == '') {
       postRequest(configAdd, {
         data: {
@@ -202,21 +201,6 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   return (
     <div className={rootCls}>
-      <ImportConfig
-        env={env}
-        configType={configType}
-        appCode={appCode!}
-        visible={importCfgVisible}
-        onClose={() => setImportCfgVisible(false)}
-        onSubmit={() => {
-          setImportCfgVisible(false);
-          // 提交成功后，重新请求数据
-          queryVersionData({
-            pageIndex: 1,
-          });
-        }}
-      />
-
       <div className={`${rootCls}__filter`}>
         <Form
           className={`${rootCls}__filter-form`}
@@ -233,6 +217,7 @@ export default function ConfigContent({ env, configType }: IProps) {
             editVersionForm.setFieldsValue({
               configYaml: '',
             });
+            setVersion('');
           }}
           onFinish={getQueryConfig}
         >
@@ -244,7 +229,7 @@ export default function ConfigContent({ env, configType }: IProps) {
               options={versionData || []}
               placeholder="请选择版本"
               onChange={changeVersion}
-              style={{ width: 170 }}
+              style={{ width: 200 }}
             />
           </Form.Item>
           <Form.Item>
