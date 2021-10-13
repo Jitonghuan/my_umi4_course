@@ -238,15 +238,9 @@ export const updateAppMember = (params: {
 /** 查看最新版本的配置 */
 export const queryConfigList = (params: {
   /** 应用CODE */
-  appCode: string;
-  /** 配置项的KEY */
-  key?: string;
-  /**  配置项的Value */
-  value?: string;
-  /** 配置的类型 boot启动参数，app应用配置 */
-  type?: string;
+  appCode?: string;
   /** 环境参数 */
-  env?: string;
+  envCode?: string;
   /** 分页索引 */
   pageIndex: number;
   /** 分页大小 */

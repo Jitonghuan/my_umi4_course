@@ -18,6 +18,7 @@ export default function Dashboards() {
       loadHistogram(false);
       loadClusterB(false);
       loadClusterA(false);
+      loadClusterTable(false);
     }, 1000 * 60);
     return () => {
       clearInterval(intervalId);
@@ -38,7 +39,7 @@ export default function Dashboards() {
       </div>
       <div className="section-group">
         <ABHistorgram data={histogramData} loading={loading} />
-        <ClusterTable data={clusterTableData} loading={loadingTable} />
+        <ClusterTable tableData={clusterTableData} loading={loadingTable} />
       </div>
       <div className="section-group">
         <ClusterAChart data={clusterAData} loading={clusterALoading} />

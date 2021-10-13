@@ -7,126 +7,197 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { history } from 'umi';
-import { Form, Select, Input, Popconfirm, Button, message } from 'antd';
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
+import { Form, Select, Popconfirm, Button, message } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import EditConfig, { EditConfigIProps } from './edit-config';
 import ImportConfig from './import-config';
-import { createTableSchema } from './schema';
-import { queryConfigListUrl, deleteConfig, deleteMultipleConfig } from '@/pages/application/service';
+import AceEditor from '@/components/ace-editor';
+import { queryConfigList, envList } from '@/pages/application/service';
 import { IProps } from './types';
 import { ConfigData } from '../types';
-import { queryVersionApi, doRestoreVersionApi } from './service';
+import { queryVersionApi, doRestoreVersionApi, configAdd, configUpdate } from './service';
 import './index.less';
-import { getRequest, postRequest } from '@/utils/request';
-
+import { getRequest, postRequest, putRequest } from '@/utils/request';
 const rootCls = 'config-content-compo';
-
 export default function ConfigContent({ env, configType }: IProps) {
   const { appData } = useContext(DetailContext);
-  const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
+  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
+  const [currentEnvData, setCurrentEnvData] = useState(); //当前的环境；
   const [importCfgVisible, setImportCfgVisible] = useState(false);
-  const [editCfgData, setEditCfgData] = useState<{
-    type: EditConfigIProps['type'];
-    visible: boolean;
-    curRecord?: ConfigData;
-  }>({
-    type: 'look',
-    visible: false,
-  });
-
+  const [version, setVersion] = useState(''); //版本号
+  const [configId, setConfigId] = useState(''); //配置Id
   const [filterFormRef] = Form.useForm();
-  const [versionData, setVersionData] = useState<any[]>([]);
-
+  const [editVersionForm] = Form.useForm();
+  const [versionData, setVersionData] = useState<any[]>([]); //版本下拉选择框数据
+  // 进入页面加载环境和版本信息
+  const { appCategoryCode, appCode, id: appId } = appData || {};
   // 当前选中版本
-  const [currentVersion, setCurrentVersion] = useState<{
-    id: number;
-    versionNumber: string;
-  }>();
+  const [currentVersion, setCurrentVersion] = useState<any>(); //当前Version
+  const [latestVersion, setLatestVersion] = useState<any>(); //最新的版本
+  const [versionConfig, setversionConfig] = useState(''); //展示配置信息
+  let currentEnvCode = '';
+  useEffect(() => {
+    if (!appCode) return;
+  }, [appCode]);
+  useEffect(() => {
+    try {
+      selectAppEnv(appCategoryCode).then((result: any) => {
+        const listEnv = result.data.dataSource?.map((n: any) => ({
+          value: n?.envCode,
+          label: n?.envName,
+          data: n,
+        }));
+        setEnvDatas(listEnv);
+        currentEnvCode = listEnv[0]?.data?.envCode;
+        setCurrentEnvData(listEnv[0]?.data?.envCode);
+        queryVersionData(currentEnvCode); //一进入页面根据默认显示的环境查询的版本信息选项
+        //加载环境、版本、版本号默认显示在页面上
+        filterFormRef.setFieldsValue({
+          envCode: listEnv[0]?.data?.envCode, //环境一进入页面显示
+        });
+      });
+    } catch (error) {
+      message.warning(error);
+    }
+  }, []);
 
-  const { appCode, id: appId } = appData || {};
+  //通过appCategoryCode和env查询环境信息
+  const selectAppEnv = (categoryCode: any) => {
+    return getRequest(envList, { data: { categoryCode: categoryCode, envTypeCode: env } });
+  };
+  //改变环境下拉选择后查询结果
+  let getEnvCode: any;
+  const changeEnvCode = (getEnvCodes: string) => {
+    getEnvCode = getEnvCodes;
+    editVersionForm.setFieldsValue({
+      configYaml: '',
+    }); //清除上个环境配置信息
+    setCurrentEnvData(getEnvCode);
+    queryVersionData(getEnvCode); //改变环境后查询版本信息选项
 
-  // 查询数据
-  const {
-    run: queryConfigList,
-    tableProps,
-    reset,
-  } = usePaginated({
-    requestUrl: queryConfigListUrl,
-    requestMethod: 'GET',
-    showRequestError: true,
-    formatResult: (res: any) => {
-      let version = res.data?.dataSource?.version;
-      if (version) {
-        setCurrentVersion(version);
-      }
-
-      return {
-        dataSource: res.data?.dataSource?.configs || [],
-        pageInfo: res.data?.pageInfo || {},
-      };
-    },
-    pagination: {
-      showSizeChanger: true,
-      showTotal: (total: number) => `总共 ${total} 条数据`,
-    },
-    initParams: {
-      appCode,
-    },
-  });
-
-  // 查询版本数据
-  const queryVersionData = async (listParams?: any) => {
-    const resp = await getRequest(queryVersionApi, {
+    console.log('getEnvCode', getEnvCode);
+  };
+  // 查询版本下拉框数据
+  let getVersionData: any = [];
+  let currentVersionNumber = '';
+  let currentVersionId = 0;
+  const queryVersionData = async (envCodeParams?: any) => {
+    await getRequest(queryVersionApi, {
       data: {
         pageSize: 30,
         pageIndex: 1,
         appCode,
-        env,
-        type: configType,
+        envCode: envCodeParams,
       },
+    }).then((resp: any) => {
+      if (resp.success) {
+        resp?.data.dataSource?.map((el: any) => {
+          getVersionData.push({
+            label: el.versionNumber,
+            value: el.id,
+            isLatest: el.isLatest,
+          });
+          // if (el.isLatest === 0 && !isOnchange)
+          if (el.isLatest === 0) {
+            currentVersionId = el.id;
+            currentVersionNumber = el.versionNumber;
+            setLatestVersion(currentVersionId);
+            setVersion(el.versionNumber);
+          }
+        });
+        filterFormRef.setFieldsValue({
+          versionID: currentVersionId, //版本一进入页面显示
+        });
+
+        let queryConfigValue = {
+          appCode,
+          pageIndex: 1,
+          envCode: currentEnvCode || getEnvCode,
+          versionID: currentVersionId || '',
+        };
+        getQueryConfig(queryConfigValue); //一进入页面查询配置信息
+        setVersion(currentVersionNumber); //存储版本号
+        setCurrentVersion(currentVersionId); //存储当前的版本ID
+        setVersionData(getVersionData);
+      }
     });
-
-    const { dataSource = [] } = resp?.data || {};
-
-    if (dataSource.length === 0) {
-      return;
-    }
-
-    setVersionData(dataSource);
-    filterFormRef.setFieldsValue({
-      versionID: dataSource[0].id,
-    });
-    queryConfigList({
-      versionID: dataSource[0].id,
-      ...(listParams || {}),
+  };
+  //改变版本
+  const changeVersion = (el: any) => {
+    setCurrentVersion(el);
+    let getConfigValue = {
+      appCode,
+      pageIndex: 1,
+      envCode: currentEnvData || getEnvCode,
+      versionID: el || '',
+    };
+    getQueryConfig(getConfigValue); //切换版本后自动去查询配置信息
+  };
+  // 查询配置信息
+  const getQueryConfig = (values: any) => {
+    queryConfigList({ appCode: appCode, pageIndex: 1, ...values }).then((reslut: any) => {
+      let configs = reslut?.list[0]?.value;
+      if (configs) {
+        setversionConfig(configs); //存储当前的配置信息
+        // setCurrentVersion(configs);
+        setConfigId(reslut?.list[0].id); //存储当前的配置ID
+        editVersionForm.setFieldsValue({
+          configYaml: configs,
+        });
+      }
     });
   };
 
-  useEffect(() => {
-    if (!appCode) return;
-
-    queryVersionData();
-  }, [appCode, env, configType]);
+  // 确认配置
+  const editVersion = (values: any) => {
+    console.log('values', values);
+    if (currentVersion == '') {
+      postRequest(configAdd, {
+        data: {
+          appCode,
+          value: values.configYaml,
+          envCode: currentEnvData,
+        },
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success('配置创建成功！');
+          }
+        })
+        .finally(() => {
+          queryVersionData(currentEnvData);
+        });
+    } else {
+      putRequest(configUpdate, {
+        data: {
+          id: configId,
+          appCode,
+          value: values.configYaml,
+        },
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success('配置编辑成功！');
+          }
+        })
+        .finally(() => {
+          queryVersionData(currentEnvData);
+        });
+    }
+  };
 
   // 回退操作
   const handleRollBack = async () => {
-    if (!currentVersion) {
-      return;
-    }
-
     const resp = await postRequest(doRestoreVersionApi, {
       data: {
-        id: currentVersion.id,
+        id: currentVersion,
       },
     });
-
     if (!resp.success) {
       return;
     }
-
     message.success('回退成功');
-    queryVersionData();
+    queryVersionData(currentEnvData);
   };
 
   return (
@@ -143,35 +214,6 @@ export default function ConfigContent({ env, configType }: IProps) {
           queryVersionData({
             pageIndex: 1,
           });
-          // queryConfigList({
-          //   pageIndex: 1,
-          // });
-        }}
-      />
-
-      <EditConfig
-        env={env}
-        configType={configType}
-        appCode={appCode!}
-        type={editCfgData.type}
-        formValue={editCfgData.curRecord}
-        visible={editCfgData.visible}
-        onClose={() =>
-          setEditCfgData({
-            type: 'look',
-            visible: false,
-            curRecord: undefined,
-          })
-        }
-        onSubmit={() => {
-          setEditCfgData({
-            type: 'look',
-            visible: false,
-            curRecord: undefined,
-          });
-          // 提交成功后，重新请求数据
-          queryVersionData();
-          // queryConfigList();
         }}
       />
 
@@ -181,151 +223,80 @@ export default function ConfigContent({ env, configType }: IProps) {
           layout="inline"
           form={filterFormRef}
           onValuesChange={(changeVals, values) => {
-            const [name, value] = (Object.entries(changeVals)?.[0] || []) as [string, any];
-            if (name && name === 'versionID') {
-              const version = versionData?.find((item: any) => item.id === value);
-              if (version && tableProps.pagination) {
-                const { pageSize = 10 } = tableProps.pagination;
-                queryConfigList({
-                  pageIndex: 1,
-                  pageSize,
-                  versionID: version.id,
-                });
-              }
-              setCurrentVersion(version || undefined);
+            if (values) {
+              // const version = versionData?.find((item: any) => item.id === value);
+              setCurrentVersion(values.versionID);
+              setCurrentEnvData(values.envCode);
             }
           }}
           onReset={() => {
-            queryConfigList({
-              versionID: undefined,
-              key: undefined,
-              value: undefined,
-              pageIndex: 1,
+            editVersionForm.setFieldsValue({
+              configYaml: '',
             });
           }}
-          onFinish={(values) => {
-            if (tableProps.loading) return;
-            queryConfigList({
-              pageIndex: 1,
-              ...values,
-            });
-          }}
+          onFinish={getQueryConfig}
         >
+          <Form.Item label="环境" name="envCode">
+            <Select placeholder="请选择" style={{ width: 140 }} options={envDatas} onChange={changeEnvCode} />
+          </Form.Item>
           <Form.Item label="版本" name="versionID">
             <Select
-              options={versionData?.map((el: any) => ({
-                label: el.versionNumber,
-                value: el.id,
-              }))}
+              options={versionData || []}
               placeholder="请选择版本"
-              style={{ width: 140 }}
+              onChange={changeVersion}
+              style={{ width: 170 }}
             />
           </Form.Item>
-          <Form.Item label="Key" name="key">
-            <Input placeholder="请输入key" style={{ width: 140 }} />
-          </Form.Item>
-          <Form.Item label="Value" name="value">
-            <Input placeholder="请输入value" style={{ width: 140 }} />
-          </Form.Item>
           <Form.Item>
-            <Button htmlType="submit" type="primary" style={{ marginRight: 12 }}>
+            {/* <Button htmlType="submit" type="primary" style={{ marginRight: 12 }}>
               查询
-            </Button>
+            </Button> */}
             <Button htmlType="reset" type="default">
               重置
             </Button>
           </Form.Item>
         </Form>
-
-        <div className={`${rootCls}__filter-btns`}>
+        {/* versionData.length > 1 && */}
+        <div className={`${rootCls}__filter-btns`} style={{ marginRight: '4%' }}>
           <Popconfirm
             title="确定回退到当前版本？"
-            disabled={!currentVersion || versionData?.[0]?.id === currentVersion?.id}
+            disabled={latestVersion === currentVersion}
             onConfirm={handleRollBack}
           >
-            <Button type="primary" danger disabled={!currentVersion || versionData?.[0]?.id === currentVersion?.id}>
+            <Button type="primary" danger disabled={latestVersion === currentVersion}>
               回退
             </Button>
           </Popconfirm>
-          <Button
-            onClick={() => {
-              setImportCfgVisible(true);
-            }}
-          >
-            导入配置
-          </Button>
-          <Button
-            onClick={() => {
-              history.push({
-                pathname: configType === 'app' ? 'addConfig' : 'addLaunchParameters',
-                query: {
-                  env,
-                  type: configType,
-                  appCode: appCode!,
-                  id: `${appId}`,
-                },
-              });
-            }}
-          >
-            新增
-          </Button>
-          <Popconfirm
-            title="确定要删除选中项吗？"
-            disabled={!selectedKeys.length}
-            onConfirm={() => {
-              deleteMultipleConfig({ ids: selectedKeys }).then((res: any) => {
-                if (res.success) {
-                  // queryConfigList();
-                  queryVersionData();
-                  return;
-                }
-                message.error(res.errorMsg);
-              });
-            }}
-            okText="确定"
-            cancelText="取消"
-            placement="topLeft"
-          >
-            <Button disabled={!selectedKeys.length}>删除</Button>
-          </Popconfirm>
         </div>
       </div>
-
-      <HulkTable
-        rowKey="id"
-        className={`${rootCls}__table`}
-        rowSelection={{
-          type: 'checkbox',
-          onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            setSelectedKeys(selectedRowKeys);
-          },
+      <div style={{ color: '#A9A9A9', marginTop: '18px' }}>
+        <span>版本号：{version}</span>
+      </div>
+      <Form
+        form={editVersionForm}
+        onReset={() => {
+          editVersionForm.setFieldsValue({
+            configYaml: versionConfig,
+          });
         }}
-        columns={
-          createTableSchema({
-            currentVersion,
-            onOperateClick: (type, record, i) => {
-              if (type === 'detail' || type === 'edit') {
-                setEditCfgData({
-                  type: type === 'detail' ? 'look' : 'edit',
-                  visible: true,
-                  curRecord: record,
-                });
-              } else if (type === 'delete') {
-                deleteConfig(record.id).then((res: any) => {
-                  if (res.success) {
-                    queryVersionData();
-                    // queryConfigList();
-                    return;
-                  }
-                  message.error(res.errorMsg);
-                });
-              }
-            },
-          }) as any
-        }
-        {...tableProps}
-      />
+        onFinish={editVersion}
+      >
+        <div style={{ width: '96%' }}>
+          <Form.Item name="configYaml" rules={[{ required: true, message: '这是必填项' }]}>
+            <AceEditor mode="yaml" height={400} />
+          </Form.Item>
+        </div>
+        <div style={{ marginTop: '14px', marginRight: '34px', float: 'right' }}>
+          <Form.Item name="ensure">
+            <Button type="ghost" htmlType="reset">
+              取消
+            </Button>
+            <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }}>
+              确定
+            </Button>
+          </Form.Item>
+        </div>
+      </Form>
     </div>
   );
 }
