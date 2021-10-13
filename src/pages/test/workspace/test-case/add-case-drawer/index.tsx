@@ -136,7 +136,7 @@ export default function RightDetail(props: any) {
 
   const infoEl = (
     <>
-      <Form className="add-case-form" {...layout} form={form}>
+      <Form className="add-case-form" {...layout} form={form} initialValues={{ priority: 'P2' }}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
           {isEdit ? <Input disabled={!isEdit} placeholder="请输入标题" /> : <ReadOnlyDiv />}
         </Form.Item>
