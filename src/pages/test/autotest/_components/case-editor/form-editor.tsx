@@ -76,8 +76,10 @@ export async function getInitAddFieldData(apiDetail?: Record<string, any>) {
 export default function CaseFormEditor(props: CaseFormEditorProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [step, setSetp] = useState<number>(0);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
 
   const handleSubmit = async () => {
+    setSubmitLoading(true);
     const values = await props.field.validateFields().catch((error) => {
       const info = error.errorFields
         ?.map((n: any) => n.errors)
@@ -117,6 +119,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
 
     if (typeof props.hookBeforeSave === 'function') {
       const flag = await props.hookBeforeSave(props.mode, payload);
+      setSubmitLoading(false);
       if (!flag) return;
     }
 
@@ -142,6 +145,8 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
     message.success('用例保存成功！');
     setSetp(0);
     props.onSave?.();
+
+    setSubmitLoading(false);
   };
 
   useEffect(() => {
@@ -408,7 +413,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
             下一步
           </Button>
         ) : null}
-        <Button type="primary" onClick={handleSubmit}>
+        <Button loading={submitLoading} type="primary" onClick={handleSubmit}>
           提交
         </Button>
         <Button type="default" onClick={props.onCancel}>
