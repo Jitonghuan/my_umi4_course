@@ -140,7 +140,6 @@ export default function ConfigContent({ env, configType }: IProps) {
       if (configs) {
         if (values.versionID === '') {
           window.location.reload();
-          return;
         }
         setversionConfig(configs); //存储当前的配置信息
         // setCurrentVersion(configs);
