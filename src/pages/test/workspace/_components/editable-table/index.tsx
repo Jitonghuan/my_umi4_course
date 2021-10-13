@@ -106,6 +106,10 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
     [value],
   );
 
+  const PreWrapDiv = (props: any) => {
+    return <div style={{ whiteSpace: 'pre-wrap' }}>{props.value}</div>;
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Table
@@ -133,13 +137,11 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
               name={['stepContent', index, 'input']}
               rules={[{ required: true, message: '请输入步骤描述' }]}
             >
-              <Input.TextArea
-                autoSize={{ minRows: 2 }}
-                className="text-area"
-                placeholder="步骤描述"
-                value={value}
-                disabled={props.readOnly}
-              />
+              {props.readOnly ? (
+                <PreWrapDiv />
+              ) : (
+                <Input.TextArea autoSize={{ minRows: 2 }} className="text-area" placeholder="步骤描述" />
+              )}
             </Form.Item>
           )}
         />
@@ -152,13 +154,11 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
               name={['stepContent', index, 'output']}
               rules={[{ required: true, message: '请输入步骤描述' }]}
             >
-              <Input.TextArea
-                autoSize={{ minRows: 2 }}
-                className="text-area"
-                placeholder="预期结果"
-                value={value}
-                disabled={props.readOnly}
-              />
+              {props.readOnly ? (
+                <PreWrapDiv />
+              ) : (
+                <Input.TextArea autoSize={{ minRows: 2 }} className="text-area" placeholder="预期结果" />
+              )}
             </Form.Item>
           )}
         />

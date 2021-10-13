@@ -495,6 +495,12 @@ export default [
             component: '@/pages/test/workspace/test-case',
           },
           {
+            path: 'case-info',
+            name: '测试用例详情',
+            key: 'test-workspace',
+            component: '@/pages/test/workspace/case-info',
+          },
+          {
             path: 'bug-manage',
             name: 'Bug管理',
             key: 'test-workspace',

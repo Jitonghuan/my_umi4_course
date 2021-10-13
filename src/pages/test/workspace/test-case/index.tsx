@@ -131,9 +131,8 @@ export default function TestCase(props: any) {
   };
 
   const onSeeCaseBtnClick = (caseInfo: any) => {
-    void setCurCase(caseInfo);
-    void setCaseReadOnly(true);
-    void setDrawerVisible(true);
+    console.log('caseInfo.id :>> ', caseInfo.id);
+    history.push(`/matrix/test/workspace/case-info?caseId=${caseInfo.id}&cateId=${caseInfo.categoryId}`);
   };
 
   const goBack = () => {
