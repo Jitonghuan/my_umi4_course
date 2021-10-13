@@ -24,6 +24,7 @@ export default function SourceCodeEdit(props: any) {
   const [varKeyword, setVarKeyword] = useState<string>('');
 
   const [hideRight, setHideRight] = useState<boolean>(false);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
 
   useEffect(() => {
     let JsonData;
@@ -95,12 +96,14 @@ export default function SourceCodeEdit(props: any) {
 
   const handleSubmit = async () => {
     if (!editorValue) return;
+    setSubmitLoading(true);
     let finalCaseJSON;
     try {
       finalCaseJSON = YAML.parse(editorValue);
     } catch (e) {
       message.error('格式不正确');
       setEditStatus('error');
+      setSubmitLoading(false);
       return;
     }
 
@@ -123,6 +126,8 @@ export default function SourceCodeEdit(props: any) {
       props.onSave?.();
       message.success('保存成功');
     } else message.warning('保存失败');
+
+    setSubmitLoading(false);
   };
 
   const beforeCaseLoadOptions = async (keyword: string) => {
@@ -300,7 +305,7 @@ export default function SourceCodeEdit(props: any) {
       </div>
       <div className="drawer-custom-footer">
         <Button onClick={handleDebug}>调试</Button>
-        <Button type="primary" onClick={handleSubmit}>
+        <Button loading={submitLoading} type="primary" onClick={handleSubmit}>
           提交
         </Button>
       </div>

@@ -60,7 +60,7 @@ export default function SceneDetail(props: SceneDetailProps) {
 
   const handleSelect = async (_: any, item: any) => {
     const idList = caseList.map((n) => n.id);
-    updateSceneCase([...idList, item.value]);
+    updateSceneCase([...idList, ...(item.data?.preCases?.split(',') || []), item.value]);
   };
 
   const handleSortItem = (record: any, index: number, dir: -1 | 1) => {

@@ -204,3 +204,6 @@ export const copyApi = addAPIPrefix('/qc/autotest/copyApi');
 
 /** GET 获取模块树 */
 export const getModules = addAPIPrefix('/qc/autotest/getModules');
+
+// 批量获取前置用例信息
+export const getCaseInfoBatch = addAPIPrefix('/qc/autotest/getCaseInfoBatch');

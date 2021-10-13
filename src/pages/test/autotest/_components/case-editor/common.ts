@@ -37,13 +37,5 @@ export async function getFuncListByIds(funcs: FuncProps[]) {
 export async function getCaseListByIds(ids: number[]): Promise<CaseItemVO[]> {
   if (!ids?.length) return [];
 
-  return await Promise.all(
-    ids.map(async (id) => {
-      const { data } = await getRequest(APIS.getCaseInfo, {
-        data: { id },
-      });
-
-      return data;
-    }),
-  );
+  return (await getRequest(APIS.getCaseInfoBatch + '?ids=' + ids.join(','))).data;
 }
