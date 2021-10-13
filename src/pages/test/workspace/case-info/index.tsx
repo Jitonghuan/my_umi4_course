@@ -147,7 +147,7 @@ export default function CaseInfo(props: any) {
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
         <ContentCard>
-          <div className="case-info-container">
+          <div className="case-info-containerr">
             <Form className="add-case-form" {...layout} form={form}>
               <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
                 <Input disabled={!isEdit} placeholder="请输入标题" />

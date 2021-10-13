@@ -9,6 +9,7 @@ import VCCustomIcon from '@cffe/vc-custom-icon';
 import DebounceSelect from '@/components/debounce-select';
 import * as APIS from '../../service';
 import { CaseItemVO, PreCaseItemProps } from '../../interfaces';
+import { getCaseListByIds } from './common';
 import './index.less';
 
 export type CaseTableValueProps = CaseItemVO & PreCaseItemProps;
@@ -40,18 +41,19 @@ export default function CaseTable(props: CaseTableFieldProps) {
 
   const handleSelect = async (_: any, item: any) => {
     // 选中后再调详情接口获取接口详情信息，并 push 到列表中
-    console.log('>>> handleSelect', item.data);
-
     const nextValue = props.value?.slice(0) || [];
+
     if (nextValue.find((n) => n.id === item.data?.caseId)) {
       return message.warn('此用例已选择!');
     }
 
-    const { data }: { data: CaseItemVO } = await getRequest(APIS.getCaseInfo, {
-      data: { id: item.data.caseId },
-    });
+    let newPreCaseIds = [...(item.data.preCases?.split(',').map((id: string) => +id) || []), item.data.caseId];
+    const alreadyHas = nextValue.map((item) => item.id);
+    newPreCaseIds = newPreCaseIds.filter((id) => !alreadyHas.includes(id));
 
-    nextValue.push({ ...data, ...item.data });
+    const newCases = await getCaseListByIds(newPreCaseIds);
+
+    nextValue.push(...newCases.map((item) => ({ ...item, ...item.data })));
     props.onChange?.(nextValue);
     setPopVisible(false);
   };
