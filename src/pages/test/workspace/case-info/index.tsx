@@ -122,7 +122,6 @@ export default function CaseInfo(props: any) {
         exps.push(node.key);
         if (+node.key === +cateId) {
           setCaseCate(node);
-          console.log('node :>> ', node);
           exps.pop();
           return true;
         }

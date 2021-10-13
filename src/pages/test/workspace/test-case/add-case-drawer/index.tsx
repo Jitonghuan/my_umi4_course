@@ -23,6 +23,8 @@ export default function RightDetail(props: any) {
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
+  const [caseCate, setCaseCate] = useState<any>();
+
   useEffect(() => {
     setIsEdit(!readOnly);
   }, [visible]);
@@ -70,6 +72,7 @@ export default function RightDetail(props: any) {
       for (const node of nodeArr) {
         exps.push(node.key);
         if (+node.key === +cateId) {
+          setCaseCate(node);
           exps.pop();
           return true;
         }
@@ -124,46 +127,42 @@ export default function RightDetail(props: any) {
   const layout = {
     labelCol: { span: isEdit ? 3 : 3 },
     wrapperCol: { span: isEdit ? 21 : 21 },
-    labelAlign: 'left' as 'left',
+    labelAlign: 'right' as 'right',
+  };
+
+  const ReadOnlyDiv = (props: any) => {
+    return <div>{props.render?.(props.value) || props.value}</div>;
   };
 
   const infoEl = (
     <>
-      <Form className="add-case-form" {...layout} form={form} initialValues={{ priority: priorityEnum[0].value }}>
+      <Form className="add-case-form" {...layout} form={form}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
-          <Input disabled={!isEdit} placeholder="请输入标题" />
+          {isEdit ? <Input disabled={!isEdit} placeholder="请输入标题" /> : <ReadOnlyDiv />}
         </Form.Item>
         <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
-          <TreeSelect
-            treeLine
-            treeExpandedKeys={expandKeys}
-            onTreeExpand={setExpandKeys}
-            disabled={!isEdit}
-            treeData={caseCateTreeData}
-            showSearch
-            treeNodeFilterProp="title"
-          />
+          {isEdit ? (
+            <TreeSelect
+              treeLine
+              treeExpandedKeys={expandKeys}
+              onTreeExpand={setExpandKeys}
+              disabled={!isEdit}
+              treeData={caseCateTreeData}
+              showSearch
+              treeNodeFilterProp="title"
+            />
+          ) : (
+            <ReadOnlyDiv render={() => caseCate?.name} />
+          )}
         </Form.Item>
-        <Row className="row-form-item">
-          <Col span="12" className="col-form-item">
-            <span className="form-item-label">
-              <span className="import-identification">* </span>优先级 :{' '}
-            </span>
-            <Form.Item
-              className="form-item-info ml-41"
-              name="priority"
-              rules={[{ required: true, message: '请选择优先级' }]}
-            >
-              <Select disabled={!isEdit} options={priorityEnum} />
-            </Form.Item>
-          </Col>
-          <Col span="12" style={{ display: 'flex' }} className="col-form-item">
-            <span className="form-item-label">是否自动化 : </span>
-            <Form.Item className="form-item-info ml-8" name="isAuto" valuePropName="checked">
-              <Switch disabled={!isEdit} />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item label="优先级" className="inline-form-item-group">
+          <Form.Item name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
+            {isEdit ? <Select disabled={!isEdit} options={priorityEnum} style={{ width: '300px' }} /> : <ReadOnlyDiv />}
+          </Form.Item>
+          <Form.Item name="isAuto" label="是否自动化" valuePropName="checked" style={{ marginBottom: 'unset' }}>
+            <Switch disabled={!isEdit} />
+          </Form.Item>
+        </Form.Item>
         <Form.Item label="前置条件:" name="precondition">
           <Input.TextArea className="precondition-h" disabled={!isEdit} placeholder="请输入前置条件"></Input.TextArea>
         </Form.Item>
@@ -215,25 +214,15 @@ export default function RightDetail(props: any) {
             <Button type="primary" onClick={handleEditBtnClick}>
               编辑
             </Button>
-            <Button type="primary" onClick={handleCancel}>
-              关闭
-            </Button>
           </Space>
         ) : (
           <Space>
             <Button type="primary" onClick={() => handleSave()} loading={saveLoding}>
               保存
             </Button>
-            {!caseId ? (
-              <Button type="primary" onClick={() => handleSave(true)}>
-                保存并继续
-              </Button>
-            ) : (
-              ''
-            )}
-            <Button type="primary" onClick={handleCancel}>
+            {/* <Button type="primary" onClick={handleCancel}>
               取消
-            </Button>
+            </Button> */}
           </Space>
         )}
       </div>
