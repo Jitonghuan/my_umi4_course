@@ -16,6 +16,7 @@ interface IEditableTable {
 
 const type = 'DraggableBodyRow';
 
+/** 可以复用，但没必要 */
 const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }: any) => {
   const ref = useRef();
   const [{ isOver, dropClassName }, drop] = useDrop({
@@ -131,11 +132,11 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
         <Table.Column title="编号" render={(_: any, __: any, index: number) => 1 + index} />
         <Table.Column
           title="类型"
-          dataIndex="category"
+          dataIndex="type"
           render={(value, _: any, index: number) => (
             <Form.Item
               noStyle
-              name={['precondition', index, 'category']}
+              name={['precondition', index, 'type']}
               rules={[{ required: true, message: '请选择前置条件类型' }]}
             >
               {props.readOnly ? <PreWrapDiv value /> : <Select options={preconditionOptions} placeholder="请选择" />}
@@ -144,11 +145,11 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
         />
         <Table.Column
           title="描述"
-          dataIndex="desc"
+          dataIndex="value"
           render={(value, _: any, index: number) => (
             <Form.Item
               noStyle
-              name={['precondition', index, 'desc']}
+              name={['precondition', index, 'value']}
               rules={[{ required: true, message: '请输入前置条件描述' }]}
             >
               {props.readOnly ? (

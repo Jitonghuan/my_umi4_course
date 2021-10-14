@@ -67,7 +67,7 @@ export const caseStatusEnum = [
 ];
 
 export const preconditionOptions = [
-  { label: '用例', value: '0' },
-  { label: '数据', value: '1' },
-  { label: '其他', value: '2' },
+  { label: '其他', value: '0' },
+  { label: '用例', value: '1' },
+  { label: '数据', value: '2' },
 ];
