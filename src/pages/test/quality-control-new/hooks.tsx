@@ -9,8 +9,8 @@ export function useAppCateEnum() {
   const [data, setData] = useState<IOption[]>([]);
 
   useEffect(() => {
-    getRequest(APIS.getAppCateList).then((result) => {
-      const source = (result.data || []).map((n: any) => ({
+    getRequest(APIS.getAppCateList_new).then((result) => {
+      const source = (result.data.dataSource || []).map((n: any) => ({
         label: n.categoryName,
         value: n.id,
       }));
@@ -26,7 +26,7 @@ export function useAppCodeEnum() {
   const [data, setData] = useState<IOption[]>([]);
 
   useEffect(() => {
-    getRequest(APIS.getAppCodeList).then((result) => {
+    getRequest(APIS.getAppCodeList_old).then((result) => {
       const source = (result.data || []).map((n: any) => ({
         label: n.categoryCode,
         value: n.id,
@@ -266,13 +266,6 @@ export function useAppTrendMap() {
       xAxis: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
     },
   });
-
-  // useEffect(() => {
-  //   getRequest(APIS.getRanking).then((res) => {
-  //     setData(res.data);
-  //   });
-  // }, []);
-
   return [data];
 }
 
@@ -303,14 +296,17 @@ export function useTaskList(): [
   return [data, [pageIndex, setPageIndex], [pageSize, setPageSize], total, form, loadData];
 }
 
-export function useAppCateOptions() {
+export function useAppCategoryOptions() {
   const [data, setData] = useState<IOption[]>();
-
-  // useEffect(() => {
-  //   getRequest(APIS.getAppCateList).then((res) => {
-  //     console.log('res :>> ', res);
-  //   });
-  // }, []);
-
+  useEffect(() => {
+    getRequest(APIS.getAppCateList_new).then((res) => {
+      const source = res.data.dataSource.map((item: any) => ({
+        label: item.categoryName,
+        value: item.categoryCode,
+        data: item,
+      }));
+      setData(source);
+    });
+  }, []);
   return [data];
 }
