@@ -81,7 +81,6 @@ export default function BranchManage() {
         <Table.Column title="应用code" dataIndex="appCode" />
         <Table.Column title="分支名" dataIndex="branchName" />
         <Table.Column title="描述" dataIndex="desc" width={200} />
-        <Table.Column title="reviewID" dataIndex="reviewId" width={200} />
         <Table.Column title="创建时间" dataIndex="gmtCreate" width={160} render={datetimeCellRender} />
         <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
         <Table.Column title="创建人" dataIndex="createUser" width={100} />
@@ -90,9 +89,6 @@ export default function BranchManage() {
           width={200}
           render={(_, record: any, index) => (
             <div className="action-cell">
-              <Button type="primary" size="small">
-                创建Review
-              </Button>
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
                 <Button type="primary" danger size="small">
                   作废
