@@ -5,7 +5,8 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { preconditionOptions } from '../../constant';
 import update from 'immutability-helper';
-
+import SelectCaseModal from './_component/select-case-modal';
+import SelectDataTmpModal from './_component/select-data-tmp-modal';
 import './index.less';
 
 interface IEditableTable {
@@ -56,15 +57,18 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }: an
 
 const DragSortingTable: React.FC<IEditableTable> = (props) => {
   const { value } = props;
-  const [cnt, setCnt] = useState<number>(0);
+  // const [cnt, setCnt] = useState<number>(0);
+
+  const [selectCaseModalVisible, setSelectCaseModalVisible] = useState<boolean>(false);
+  const [selectDataTmpModalVisible, setSelectDataTmpModalVisible] = useState<boolean>(false);
+  const [curIndex, setCurIndex] = useState<number>(-1);
 
   useEffect(() => {
     props.onChange?.(value);
   }, [value]);
 
   const getKey = (): string => {
-    setCnt(cnt + 1);
-    return new Number(cnt).toString();
+    return (new Date().getTime() * Math.random()).toString(36);
   };
 
   const addRow = () => {
@@ -108,72 +112,131 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
     [value],
   );
 
+  const handleCaseSelect = (node: any) => {
+    props.onChange?.(
+      update(value, {
+        [curIndex]: { value: { $set: { ...node, type: 'case' } } },
+      }),
+    );
+  };
+
+  const handleDataTmpSelect = (data: any) => {
+    props.onChange?.(
+      update(value, {
+        [curIndex]: { value: { $set: { ...data, type: 'data_tmp' } } },
+      }),
+    );
+  };
+
+  const handleToCase = (cateId: string, caseId: string) => {
+    window.open(`/matrix/test/workspace/case-info?caseId=${caseId}&cateId=${cateId}`);
+  };
+
   const PreWrapDiv = (props: any) => {
-    return <div style={{ whiteSpace: 'pre-wrap' }}>{props.value}</div>;
+    return <div style={{ whiteSpace: 'pre-wrap' }}>{props.render?.(props.value) || props.value}</div>;
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Table
-        className="editable-table"
-        dataSource={value}
-        components={components}
-        // @ts-ignore
-        onRow={(_, index) => ({
-          index,
-          moveRow,
-        })}
-        pagination={false}
-        footer={() => {
-          if (props.readOnly) return null;
-          return <Button block icon={<PlusOutlined />} onClick={addRow} />;
-        }}
-      >
-        <Table.Column title="编号" render={(_: any, __: any, index: number) => 1 + index} />
-        <Table.Column
-          title="类型"
-          dataIndex="type"
-          render={(value, _: any, index: number) => (
-            <Form.Item
-              noStyle
-              name={['precondition', index, 'type']}
-              rules={[{ required: true, message: '请选择前置条件类型' }]}
-            >
-              {props.readOnly ? <PreWrapDiv value /> : <Select options={preconditionOptions} placeholder="请选择" />}
-            </Form.Item>
-          )}
-        />
-        <Table.Column
-          title="描述"
-          dataIndex="value"
-          render={(value, _: any, index: number) => (
-            <Form.Item
-              noStyle
-              name={['precondition', index, 'value']}
-              rules={[{ required: true, message: '请输入前置条件描述' }]}
-            >
-              {props.readOnly ? (
-                <PreWrapDiv />
-              ) : (
-                <Input.TextArea autoSize={{ minRows: 1 }} className="text-area" placeholder="请输入前置条件描述" />
-              )}
-            </Form.Item>
-          )}
-        />
-        {props.readOnly ? null : (
+    <>
+      <DndProvider backend={HTML5Backend}>
+        <Table
+          className="editable-table"
+          dataSource={value}
+          components={components}
+          // @ts-ignore
+          onRow={(_, index) => ({
+            index,
+            moveRow,
+          })}
+          pagination={false}
+          footer={() => {
+            if (props.readOnly) return null;
+            return <Button block icon={<PlusOutlined />} onClick={addRow} />;
+          }}
+        >
+          <Table.Column title="编号" render={(_: any, __: any, index: number) => 1 + index} />
           <Table.Column
-            title="操作"
-            dataIndex="key"
-            render={(key: string) => (
-              <Space>
-                <a onClick={() => cloneRow(key)}>复制</a>
-                <a onClick={() => deleteRow(key)}>删除</a>
-              </Space>
+            title="类型"
+            dataIndex="type"
+            render={(value, _: any, index: number) => (
+              <Form.Item
+                noStyle
+                name={['precondition', index, 'type']}
+                rules={[{ required: true, message: '请选择前置条件类型' }]}
+              >
+                {props.readOnly ? (
+                  <PreWrapDiv
+                    render={(value: string) => preconditionOptions.find((n) => n.value == value)?.label || value}
+                  />
+                ) : (
+                  <Select
+                    options={preconditionOptions}
+                    placeholder="请选择"
+                    onChange={(val: string) => {
+                      setCurIndex(index);
+                      if (val == preconditionOptions[1].value) {
+                        // 用例
+                        setSelectCaseModalVisible(true);
+                      } else if (val == preconditionOptions[2].value) {
+                        // 数据模板
+                        setSelectDataTmpModalVisible(true);
+                      }
+                    }}
+                  />
+                )}
+              </Form.Item>
             )}
           />
-        )}
-      </Table>
-    </DndProvider>
+          <Table.Column
+            title="描述"
+            dataIndex="value"
+            render={(value, record: any, index: number) => (
+              <Form.Item
+                noStyle
+                name={['precondition', index, 'value']}
+                rules={[{ required: true, message: '请输入前置条件描述' }]}
+              >
+                {record.type === '0' ? (
+                  props.readOnly ? (
+                    <PreWrapDiv />
+                  ) : (
+                    <Input.TextArea autoSize={{ minRows: 1 }} className="text-area" placeholder="请输入前置条件描述" />
+                  )
+                ) : value.type === 'case' ? (
+                  <a onClick={() => handleToCase(value.categoryId, value.id)}>
+                    {value.id !== undefined && `#${value.id} ${value.title}`}
+                  </a>
+                ) : (
+                  <span>{value.id !== undefined && `#${value.id} ${value.title}`}</span>
+                )}
+              </Form.Item>
+            )}
+          />
+          {props.readOnly ? null : (
+            <Table.Column
+              title="操作"
+              dataIndex="key"
+              render={(key: string) => (
+                <Space>
+                  <a onClick={() => cloneRow(key)}>复制</a>
+                  <a onClick={() => deleteRow(key)}>删除</a>
+                </Space>
+              )}
+            />
+          )}
+        </Table>
+      </DndProvider>
+      <SelectCaseModal
+        visible={selectCaseModalVisible}
+        setVisible={setSelectCaseModalVisible}
+        onSelect={handleCaseSelect}
+      />
+      <SelectDataTmpModal
+        visible={selectDataTmpModalVisible}
+        setVisible={setSelectDataTmpModalVisible}
+        onSelect={handleDataTmpSelect}
+      />
+    </>
   );
 };
 
