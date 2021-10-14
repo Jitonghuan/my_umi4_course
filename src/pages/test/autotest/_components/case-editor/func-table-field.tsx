@@ -3,7 +3,7 @@
 // @create 2021/06/06 11:35
 
 import React, { useState } from 'react';
-import { Table, Button, Popover, message, Input, Tooltip } from 'antd';
+import { Table, Button, Popover, message, Input, Tooltip, Space } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import * as APIS from '../../service';
@@ -100,6 +100,26 @@ export default function FuncTableField(props: FuncTableFieldProps) {
     props.onChange?.(nextValue);
   };
 
+  const handleMoveUp = (index: number) => {
+    const nextValue = props.value?.slice(0) || [];
+    if (index > 0) {
+      let m = nextValue[index];
+      nextValue[index] = nextValue[index - 1];
+      nextValue[index - 1] = m;
+    }
+    props.onChange?.(nextValue);
+  };
+
+  const handleMoveDown = (index: number) => {
+    const nextValue = props.value?.slice(0) || [];
+    if (index < nextValue.length - 1) {
+      let m = nextValue[index];
+      nextValue[index] = nextValue[index + 1];
+      nextValue[index + 1] = m;
+    }
+    props.onChange?.(nextValue);
+  };
+
   return (
     <div className="func-table-field">
       <div className="field-caption">
@@ -174,8 +194,14 @@ export default function FuncTableField(props: FuncTableFieldProps) {
         <Table.Column dataIndex="desc" title="描述" />
         <Table.Column
           title="操作"
-          render={(_, __, index) => <a onClick={() => handleDelRecord(index)}>删除</a>}
-          width={80}
+          render={(_, __, index) => (
+            <Space>
+              <a onClick={() => handleDelRecord(index)}>删除</a>
+              <a onClick={() => handleMoveUp(index)}>上移</a>
+              <a onClick={() => handleMoveDown(index)}>下移</a>
+            </Space>
+          )}
+          width={120}
         />
       </Table>
     </div>
