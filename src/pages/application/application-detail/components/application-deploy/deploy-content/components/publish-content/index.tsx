@@ -148,7 +148,6 @@ export default function PublishContent(props: IProps) {
         <Table.Column dataIndex="id" title="ID" width={80} />
         <Table.Column dataIndex="branchName" title="分支名" />
         <Table.Column dataIndex="desc" title="变更原因" />
-        <Table.Column dataIndex="reviewStatus" title="review状态" />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={80} />
       </Table>
