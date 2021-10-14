@@ -274,7 +274,7 @@ export default function ConfigContent({ env, configType }: IProps) {
             <AceEditor mode="yaml" height={400} />
           </Form.Item>
         </div>
-        <div style={{ marginTop: '14px', marginRight: '34px', float: 'right' }}>
+        <div style={{ marginTop: '14px', marginRight: '4%', float: 'right' }}>
           <Form.Item name="ensure">
             <Button type="ghost" htmlType="reset">
               取消
