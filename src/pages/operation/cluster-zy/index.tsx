@@ -19,7 +19,7 @@ export default function Dashboard(props: any) {
   return (
     <PageContainer>
       <FilterCard className="layout-compact">
-        <Tabs activeKey={activeKey} onChange={(next) => props.history.push(`/matrix/operation/cluster/${next}`)}>
+        <Tabs activeKey={activeKey} onChange={(next) => props.history.push(`/matrix/operation/cluster-zy/${next}`)}>
           {/* <Tabs.TabPane tab="集群看板" key="dashboard" /> */}
           <Tabs.TabPane tab="集群看板" key="dashboards" />
           <Tabs.TabPane tab="流量调度" key="scheduling" />
