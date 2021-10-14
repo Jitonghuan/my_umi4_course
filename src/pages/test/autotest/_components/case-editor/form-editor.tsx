@@ -236,7 +236,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
             label="用例描述"
             name="desc"
             labelCol={{ flex: '76px' }}
-            rules={[{ required: true, message: '请输入用例描述' }]}
+            // rules={[{ required: true, message: '请输入用例描述' }]}
           >
             <Input placeholder="请输入用例描述" />
           </FormItem>
