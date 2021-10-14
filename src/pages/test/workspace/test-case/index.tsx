@@ -132,7 +132,8 @@ export default function TestCase(props: any) {
 
   const onSeeCaseInfoBtnClick = (caseInfo: any) => {
     console.log('caseInfo.id :>> ', caseInfo.id);
-    history.push(`/matrix/test/workspace/case-info?caseId=${caseInfo.id}&cateId=${testCaseCateId}`);
+    // history.push(`/matrix/test/workspace/case-info?caseId=${caseInfo.id}&cateId=${testCaseCateId}`);
+    window.open(`/matrix/test/workspace/case-info?caseId=${caseInfo.id}&cateId=${testCaseCateId}`);
   };
 
   const onSeeCaseBtnClick = (caseInfo: any) => {
