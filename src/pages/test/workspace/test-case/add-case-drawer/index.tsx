@@ -95,6 +95,7 @@ export default function RightDetail(props: any) {
         descType: +descType,
         isAuto: _data.isAuto ? 1 : 0,
         categoryId: +_data.categoryId,
+        precondition: _data.precondition || [],
       };
 
       let res;
