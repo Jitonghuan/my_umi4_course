@@ -95,6 +95,19 @@ export default function PublishBranch(props: PublishBranchProps) {
     });
   }, [appCategoryCode, env]);
 
+  const branchNameRender = (name: string, record: any) => {
+    return (
+      <Button
+        type="link"
+        onClick={() => {
+          // props.history.push(`/matrix/test/workspace/test-case?testCaseCateId=${record.id}`);
+        }}
+      >
+        {name}
+      </Button>
+    );
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>待发布的分支</div>
@@ -130,7 +143,7 @@ export default function PublishBranch(props: PublishBranchProps) {
         }}
       >
         <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column dataIndex="branchName" title="分支名" />
+        <Table.Column dataIndex="branchName" title="分支名" render={branchNameRender} />
         <Table.Column dataIndex="desc" title="变更原因" />
         <Table.Column dataIndex="reviewStatus" title="review状态" />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
