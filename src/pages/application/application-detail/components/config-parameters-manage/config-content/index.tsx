@@ -153,7 +153,7 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   // 确认配置
   const editVersion = (values: any) => {
-    if (currentVersion == '') {
+    if (currentVersion === '' || configId === '') {
       postRequest(configAdd, {
         data: {
           appCode,
