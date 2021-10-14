@@ -14,7 +14,7 @@ export function useFeMicroMainProjectOptions(visible?: boolean) {
       projectType: 'micro',
       microFeType: 'mainProject',
       pageIndex: 1,
-      pageSize: 20,
+      pageSize: 100,
     });
 
     let next: IOption[] = appList.map((item) => ({
