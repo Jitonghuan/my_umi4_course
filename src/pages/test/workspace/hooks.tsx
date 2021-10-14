@@ -221,3 +221,49 @@ export function useBug(id: React.Key) {
 
   return [data, loadData];
 }
+
+export function useAssociatedCaseTree(): [any[], (cateId: React.Key) => void] {
+  const [data, setData] = useState<any[]>([]);
+  const [nodeMap, setNodeMap] = useState<Record<React.Key, any>>({});
+
+  useEffect(() => {
+    getRequest(APIS.getCaseCategoryDeepList, { data: { deep: 1 } }).then((res: any) => {
+      const _nodeMap: any = {};
+      const _data = res.data.map((n: any) => {
+        return { ...n, title: n.name, key: n.id };
+      });
+      _data.forEach((n: any) => {
+        _nodeMap[n.id] = n;
+      });
+      setData(_data);
+      setNodeMap(_nodeMap);
+    });
+  }, []);
+
+  const querySubNode = async (cateId: React.Key) => {
+    if (nodeMap[cateId].children) return;
+    const res = await getRequest(APIS.getCaseMultiDeepList, {
+      data: {
+        categoryId: cateId,
+        deep: 1,
+      },
+    });
+    const _nodeMap: Record<React.Key, any> = nodeMap;
+    const _data: any[] = data;
+    _nodeMap[cateId].children = res.data.map((item: any) => ({
+      ...item,
+      children: undefined,
+      checkable: !!item.isLeaf,
+    }));
+    console.log('cateId :>> ', cateId);
+    console.log('_nodeMap[cateId] :>> ', _nodeMap[cateId]);
+    console.log('_data :>> ', _data);
+    _nodeMap[cateId].children.forEach((node: any) => {
+      if (!node.isLeaf) _nodeMap[node.id] = node;
+    });
+    setData(new Array(..._data));
+    setNodeMap({ ..._nodeMap });
+  };
+
+  return [data, querySubNode];
+}

@@ -113,3 +113,6 @@ export const getBugAssociatedCaseTree = addAPIPrefix('/qc/teststation/getRelated
 
 /** GET 根据ID获取Bug详情 */
 export const getBug = addAPIPrefix('/qc/teststation/getBug');
+
+/** GET 数据模板查询 */
+export const queryDataFactory = addAPIPrefix('/qc/dataFactory/queryDataFactory');
