@@ -163,6 +163,12 @@ export const fePublishVerifyUrl = `${appConfig.apiPrefix}/releaseManage/deploy/f
 /** POST 前端版本回滚 */
 export const rollbackFeAppUrl = `${appConfig.apiPrefix}/appManage/rollbackFeApp`;
 
+/** POST 创建review */
+export const createReview = `${appConfig.apiPrefix}/releaseManage/branch/createReview`;
+
+/** POST  获取分支review状态 */
+export const getReviewStatus = `${appConfig.apiPrefix}/releaseManage/branch/getReviewStatus`;
+
 /** 查询应用列表 (返回的数据没有分页) */
 export const queryApps = async (
   params: Partial<AppItemVO> & {
@@ -537,3 +543,9 @@ export const fePublishVerify = async (data: any) => postRequest(fePublishVerifyU
 
 /** POST 前端版本回滚 */
 export const rollbackFeApp = async (data: any) => postRequest(rollbackFeAppUrl, { data });
+
+/** POST 创建review */
+// export const createReview = async (data: any) => postRequest(createReviewUrl, { data });
+
+/** POST 获取分支review状态 */
+// export const getReviewStatus = async (data: any) => postRequest(getReviewStatusUrl, { data });

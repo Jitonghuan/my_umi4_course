@@ -11,7 +11,7 @@ import moment from 'moment';
 import { Table, Input, Button, Modal, Checkbox } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
+import { createDeploy, updateFeatures, queryEnvsReq, getReviewStatus } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';
 import './index.less';
