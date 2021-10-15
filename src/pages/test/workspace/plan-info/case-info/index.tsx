@@ -25,6 +25,7 @@ import AddBugDrawer from '../../bug-manage/add-bug-drawer';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
 import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
+import PreconditionEditableTbale from '../../_components/precondition-editable-table';
 import moment from 'moment';
 import * as HOOKS from '../../hooks';
 
@@ -267,7 +268,9 @@ export default function UserCaseInfoExec(props: any) {
 
       <div className="case-body">
         <div className="case-prop-title">前置条件:</div>
-        <div className="mh-40">{curCase?.caseInfo?.precondition}</div>
+        <div className="mh-40">
+          <PreconditionEditableTbale readOnly value={curCase?.caseInfo?.precondition || []} />
+        </div>
 
         <div className="case-prop-title mt-24">步骤描述:</div>
         <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
