@@ -3,7 +3,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
-import { Button, Form, Table, Input, Select, Radio, Space, Tag, Typography, Popconfirm } from 'antd';
+import { Button, Form, Table, Input, Select, Radio, Space, Tag, Typography, Popconfirm, message } from 'antd';
 import {
   HeartOutlined,
   HeartFilled,
@@ -35,6 +35,13 @@ export default function taskList(props: any) {
     loadTaskList();
   }, [pageIndex, pageSize]);
 
+  useEffect(() => {
+    const interval = setInterval(loadTaskList, 10000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   const handleTaskCareOperate = (id: number, isCare: boolean) => {
     postRequest((isCare ? taskCare : taskCareCancel) + '/' + id, {
       data: {
@@ -61,7 +68,15 @@ export default function taskList(props: any) {
   };
 
   const carryTask = (id: Number) => {
-    postRequest(taskExcute(id)).then((res) => {});
+    postRequest(taskExcute(id)).then((res) => {
+      if (res.success) {
+        message.success('执行完成');
+      } else {
+        message.error('未知错误');
+      }
+
+      loadTaskList();
+    });
   };
 
   const openEditTask = (id: Number) => {
