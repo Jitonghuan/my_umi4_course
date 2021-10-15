@@ -254,7 +254,7 @@ export default function SourceCodeEdit(props: any) {
                     dropdownStyle={{ width: '200px' }}
                   />
                   <DebounceSelect
-                    style={{ flex: '1' }}
+                    style={{ flex: '1', minWidth: '134px' }}
                     fetchOnMount
                     fetchOptions={beforeCaseLoadOptions}
                     onSelect={beforeCaseHandleSelect}
