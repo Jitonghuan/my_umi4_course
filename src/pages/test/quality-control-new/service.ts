@@ -35,3 +35,9 @@ export const getAppCodeList = addAPIPrefix('/qc/others/app/all');
 
 /** GET 获取所有应用已配置的卡点规则 */
 export const getAllAppCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/allConf');
+
+/** GET 获取全局卡点规则 */
+export const getGlobalConf = addAPIPrefix('/qc/codeQuality/guard/getGlobalConf');
+
+/** POST 更新卡点规则  */
+export const updateConf = addAPIPrefix('/qc/codeQuality/guard/updateConf');
