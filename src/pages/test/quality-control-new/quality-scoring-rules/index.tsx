@@ -20,7 +20,7 @@ const qualityScoringRules = [
   },
   {
     title: '代码重复度',
-    name: 'codeCoverageGrade',
+    name: 'codeDuplicationsGrade',
   },
   {
     title: '代码复杂度',
@@ -56,7 +56,7 @@ export default function QualityScoringRules(props: any) {
     if (isEdit) {
       form.validateFields().then((values: any) => {
         postRequest(APIS.updateGradeInfo, {
-          data: { ...values, id: gradeInfo.id, modifyUser: userInfo.userName },
+          data: { ...values, id: gradeInfo.id, modifyUser: userInfo.userName, currentUser: userInfo.userName },
         }).then((res) => {
           if (res.success) {
             message.success('保存成功');
