@@ -5,6 +5,7 @@
 import React, { useState, useContext } from 'react';
 import { Modal, Button, message, Popconfirm, Table, Tag } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { datetimeCellRender } from '@/utils';
 import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
@@ -37,6 +38,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
   const { appData } = useContext(DetailContext);
+  const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
 
@@ -107,6 +109,14 @@ export default function PublishContent(props: IProps) {
   const isFrontend = appData?.appType === 'frontend';
   const CurrSteps = isFrontend ? frontendStepsMapping[envTypeCode] : backendStepsMapping[envTypeCode];
 
+  const branchNameRender = (branchName: string, record: any) => {
+    return (
+      <div>
+        <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
+      </div>
+    );
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
@@ -160,7 +170,7 @@ export default function PublishContent(props: IProps) {
         }
       >
         <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column dataIndex="branchName" title="分支名" />
+        <Table.Column dataIndex="branchName" title="分支名" render={branchNameRender} width={320} />
         <Table.Column dataIndex="desc" title="变更原因" />
         <Table.Column
           dataIndex="status"

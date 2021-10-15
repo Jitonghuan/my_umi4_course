@@ -156,7 +156,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         }}
       >
         <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column dataIndex="branchName" title="分支名" render={branchNameRender} />
+        <Table.Column dataIndex="branchName" title="分支名" render={branchNameRender} width={320} />
         <Table.Column dataIndex="desc" title="变更原因" />
         <Table.Column
           dataIndex="status"
