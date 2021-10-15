@@ -6,7 +6,7 @@ import * as APIS from '../../../service';
 import * as HOOKS from '../../../hooks';
 import DebounceSelect from '@/components/debounce-select';
 import YmlDebug from '../../yml-debug';
-import { Button, Input, Table, ConfigProvider, Space, Empty, message } from 'antd';
+import { Button, Input, Table, ConfigProvider, Space, Empty, Select, message } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
@@ -25,6 +25,9 @@ export default function SourceCodeEdit(props: any) {
 
   const [hideRight, setHideRight] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+
+  const [projectOptions] = HOOKS.useProjectOptions();
+  const [projectId, setProjectId] = useState<any>();
 
   useEffect(() => {
     let JsonData;
@@ -135,6 +138,7 @@ export default function SourceCodeEdit(props: any) {
 
     const result = await getRequest(APIS.getPreCaseList, {
       data: {
+        projectId,
         keyword: keyword?.trim() || '',
       },
     });
@@ -235,17 +239,30 @@ export default function SourceCodeEdit(props: any) {
                   placeholder="输入关键字搜索"
                 />
               </label>
-              <label className="select-item-container">
-                前置用例:{' '}
-                <DebounceSelect
-                  className="select-item"
-                  fetchOnMount
-                  fetchOptions={beforeCaseLoadOptions}
-                  onSelect={beforeCaseHandleSelect}
-                  autoFocus
-                  suffixIcon={null}
-                  placeholder="输入关键字搜索"
-                />
+              <label
+                className="select-item-container"
+                style={{ width: '300px', display: hideRight ? 'flex' : undefined }}
+              >
+                <span style={{ width: '70px', textAlign: 'center', paddingTop: '2px' }}>前置用例: </span>
+                <div style={{ display: 'flex', flex: '1' }}>
+                  <Select
+                    style={{ width: '60px' }}
+                    options={projectOptions}
+                    onSelect={setProjectId}
+                    value={projectId}
+                    dropdownMatchSelectWidth={false}
+                    dropdownStyle={{ width: '200px' }}
+                  />
+                  <DebounceSelect
+                    style={{ flex: '1' }}
+                    fetchOnMount
+                    fetchOptions={beforeCaseLoadOptions}
+                    onSelect={beforeCaseHandleSelect}
+                    autoFocus
+                    suffixIcon={null}
+                    placeholder="输入关键字搜索"
+                  />
+                </div>
               </label>
               <label className="select-item-container">
                 后置脚本:{' '}

@@ -31,6 +31,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
 
     const result = await getRequest(APIS.getPreCaseList, {
       data: {
+        projectId,
         keyword: keyword?.trim() || '',
       },
     });
