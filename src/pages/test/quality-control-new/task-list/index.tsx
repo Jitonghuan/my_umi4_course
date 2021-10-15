@@ -177,6 +177,7 @@ export default function taskList(props: any) {
             />
             <Table.Column
               title="操作"
+              width={100}
               render={(record) => {
                 return (
                   <Space>

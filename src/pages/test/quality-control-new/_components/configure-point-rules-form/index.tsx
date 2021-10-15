@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Input, Radio } from 'antd';
+import { Form, Table, Input, Radio, Tag } from 'antd';
 import './index.less';
 
 const pointRulesTableDescribe = [
@@ -85,6 +85,11 @@ const pointRulesTableDescribe = [
 export default function ConfigurePointRulesContent(props: any) {
   const { isEdit, form, isGlobal = false } = props;
 
+  const ReadOnlySwitch = (props: any) => {
+    if (props.value === 0) return <Tag color="default">关闭</Tag>;
+    return <Tag color="success">开启</Tag>;
+  };
+
   return (
     <Form form={form} className="configure-point-rules-form">
       <Table dataSource={pointRulesTableDescribe} defaultExpandAllRows pagination={false}>
@@ -97,15 +102,19 @@ export default function ConfigurePointRulesContent(props: any) {
                 <div>
                   {title}{' '}
                   <Form.Item name={record.name} noStyle>
-                    <Radio.Group
-                      options={[
-                        { label: '开启', value: 1 },
-                        { label: '关闭', value: 0 },
-                      ]}
-                      optionType="button"
-                      buttonStyle="solid"
-                      disabled={!isEdit}
-                    />
+                    {isEdit ? (
+                      <Radio.Group
+                        options={[
+                          { label: '开启', value: 1 },
+                          { label: '关闭', value: 0 },
+                        ]}
+                        optionType="button"
+                        buttonStyle="solid"
+                        disabled={!isEdit}
+                      />
+                    ) : (
+                      <ReadOnlySwitch />
+                    )}
                   </Form.Item>
                 </div>
               );
