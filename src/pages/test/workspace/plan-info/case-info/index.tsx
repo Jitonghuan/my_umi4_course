@@ -15,6 +15,7 @@ import {
   message,
   Popconfirm,
   Tooltip,
+  Form,
 } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
@@ -60,8 +61,13 @@ export default function UserCaseInfoExec(props: any) {
   const [caseNote, setCaseNote] = useState<any>();
   const [projectTreeData] = HOOKS.useProjectTreeData();
 
+  const [form] = Form.useForm();
+
   useEffect(() => {
     if (curCase) {
+      form.setFieldsValue(curCase?.caseInfo);
+      console.log('curCase?.caseInfo :>> ', curCase?.caseInfo);
+
       curCase.status !== undefined && void setCaseStatus(curCase.status.toString());
 
       void setAssociationBug(curCase.bugs);
@@ -269,7 +275,11 @@ export default function UserCaseInfoExec(props: any) {
       <div className="case-body">
         <div className="case-prop-title">前置条件:</div>
         <div className="mh-40">
-          <PreconditionEditableTbale readOnly value={curCase?.caseInfo?.precondition || []} />
+          <Form form={form}>
+            <Form.Item label="前置条件:" name="precondition">
+              <PreconditionEditableTbale readOnly />
+            </Form.Item>
+          </Form>
         </div>
 
         <div className="case-prop-title mt-24">步骤描述:</div>
