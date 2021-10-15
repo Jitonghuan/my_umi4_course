@@ -40,12 +40,7 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
     if (ruleModalType !== 'add' && ruleId) {
       getRequest(APIS.getCodeQualityConf, { data: { id: ruleId } }).then((res) => {
         const { data } = res;
-        const formdata = {
-          ...data,
-          utSwitch: data.utSwitch == 0 ? false : true,
-          sonarSwitch: data.sonarSwitch == 0 ? false : true,
-        };
-        form.setFieldsValue(res.data);
+        form.setFieldsValue(data);
       });
     }
   }, [ruleId, ruleModalType]);
@@ -67,8 +62,6 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
       const requestParams = {
         ...formdata,
         createUser: userInfo.userName,
-        utSwitch: formdata.utSwitch ? 1 : 0,
-        sonarSwitch: formdata.sonarSwitch ? 1 : 0,
       };
       postRequest(APIS.addCodeQualityConf, { data: requestParams }).then((res) => {
         loadData();
@@ -79,8 +72,6 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
       const requestParams = {
         ...formdata,
         modifyUser: userInfo.userName,
-        utSwitch: formdata.utSwitch ? 1 : 0,
-        sonarSwitch: formdata.sonarSwitch ? 1 : 0,
         id: ruleId,
       };
       postRequest(APIS.updateConf, { data: requestParams }).then((res) => {
