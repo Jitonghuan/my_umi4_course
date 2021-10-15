@@ -8,6 +8,7 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import { Table, Input, Button, Modal, Checkbox, Tag } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -101,7 +102,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
     setDeployVisible(true);
   };
-  console.log('props', props);
+
   useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
@@ -114,14 +115,20 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
   const branchNameRender = (branchName: string, record: any) => {
     return (
-      <Button
-        type="link"
-        onClick={() => {
-          // props.history.push('/matrix/application/application-detail/components/branch-manage');
-        }}
-      >
-        {branchName}
-      </Button>
+      <div>
+        <Link to="/matrix/application/detail/branch?appCode=dubbo-consumer&id=196">{branchName}</Link>
+      </div>
+
+      // <Button
+      //   type="link"
+      //   onClick={() => {
+      //     debugger
+      //     console.log('props', props);
+      //     props.history.push('/matrix/application/application-detail/components/branch-manage');
+      //   }}
+      // >
+      //   {branchName}
+      // </Button>
     );
   };
 
