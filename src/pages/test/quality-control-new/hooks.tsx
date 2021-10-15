@@ -326,3 +326,15 @@ export function useGradeInfo() {
 
   return [data, setData];
 }
+
+export function useGlobalConf() {
+  const [data, setData] = useState<any>();
+
+  useEffect(() => {
+    getRequest(APIS.getGlobalConf).then((res: any) => {
+      setData(res.data);
+    });
+  }, []);
+
+  return [data];
+}
