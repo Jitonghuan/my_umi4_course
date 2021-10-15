@@ -43,7 +43,7 @@ export interface PublishBranchProps {
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
   const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch } = publishBranchProps;
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode, appCode } = appData || {};
+  const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
@@ -116,19 +116,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const branchNameRender = (branchName: string, record: any) => {
     return (
       <div>
-        <Link to="/matrix/application/detail/branch?appCode=dubbo-consumer&id=196">{branchName}</Link>
+        <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
       </div>
-
-      // <Button
-      //   type="link"
-      //   onClick={() => {
-      //     debugger
-      //     console.log('props', props);
-      //     props.history.push('/matrix/application/application-detail/components/branch-manage');
-      //   }}
-      // >
-      //   {branchName}
-      // </Button>
     );
   };
 
