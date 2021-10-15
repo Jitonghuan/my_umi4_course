@@ -51,7 +51,7 @@ export const getAppBranch = addAPIPrefix('/qc/matrix/branch/list');
 /** GET 获取所有应用已配置的卡点规则 */
 export const getAllAppCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/allConf');
 
-/** DELETE 删除卡点规则 */
+/** POST 删除卡点规则 */
 export const deleteCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/deleteConf');
 
 /** GET 查看卡点规则 */

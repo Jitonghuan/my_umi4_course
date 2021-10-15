@@ -39,20 +39,24 @@ export function useAppCodeEnum() {
   return [data];
 }
 
-export function useAllAppCodeQualityConf(keyword: string) {
+export function useAllAppCodeQualityConf(keyword: string): [any[], () => void] {
   const [data, setData] = useState<INTERFACES.IConfig[]>([]);
 
   useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = () => {
     getRequest(APIS.getAllAppCodeQualityConf).then((res) => {
       setData(res.data || []);
     });
-  }, []);
+  };
 
   if (keyword?.length) {
-    return [data.filter((item) => item.appCode.includes(keyword) || item.categoryCode.includes(keyword))];
+    return [data.filter((item) => item.appCode.includes(keyword) || item.categoryCode.includes(keyword)), loadData];
   }
 
-  return [data];
+  return [data, loadData];
 }
 
 export function useAllRanking() {

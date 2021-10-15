@@ -9,7 +9,7 @@ import * as HOOKS from '../hooks';
 import * as INTERFACES from '../interface';
 import moment from 'moment';
 import './index.less';
-import { delRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import * as APIS from '../service';
 
 type ModalType = 'add' | 'edit' | 'view';
@@ -17,15 +17,31 @@ type ModalType = 'add' | 'edit' | 'view';
 export default function AppControlPointRules(props: any) {
   const [createOrEditRuleModalVisible, setCreateOrEditRuleModalVisible] = useState(false);
   const [keyword, setKeyword] = useState<string>('');
-  const [allAppCodeQualityConf] = HOOKS.useAllAppCodeQualityConf(keyword);
+  const [allAppCodeQualityConf, loadData] = HOOKS.useAllAppCodeQualityConf(keyword);
   const [ruleModalType, setRuleModalType] = useState<ModalType>('add');
+  const [ruleId, setRuleId] = useState<number>();
 
   const handleCreateRule = () => {
+    setRuleModalType('add');
     setCreateOrEditRuleModalVisible(true);
   };
 
   const deleteQualityConf = (id: number) => {
-    delRequest(APIS.deleteCodeQualityConf, { data: { id: id } });
+    postRequest(APIS.deleteCodeQualityConf, { data: { id: id } }).then((res) => {
+      loadData();
+    });
+  };
+
+  const viewQualityConf = (id: number) => {
+    setRuleModalType('view');
+    setRuleId(id);
+    setCreateOrEditRuleModalVisible(true);
+  };
+
+  const editQualityConf = (id: number) => {
+    setRuleModalType('edit');
+    setRuleId(id);
+    setCreateOrEditRuleModalVisible(true);
   };
 
   return (
@@ -63,8 +79,22 @@ export default function AppControlPointRules(props: any) {
             render={(value, record: any) => {
               return (
                 <Space>
-                  <Button type="link">查看</Button>
-                  <Button type="link">编辑</Button>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      viewQualityConf(record.id);
+                    }}
+                  >
+                    查看
+                  </Button>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      editQualityConf(record.id);
+                    }}
+                  >
+                    编辑
+                  </Button>
                   <Popconfirm
                     title="确定删除这条规则吗?"
                     onConfirm={() => {
@@ -81,7 +111,13 @@ export default function AppControlPointRules(props: any) {
           />
         </Table>
 
-        <CreateOrEditRuleModal visible={createOrEditRuleModalVisible} setVisible={setCreateOrEditRuleModalVisible} />
+        <CreateOrEditRuleModal
+          ruleId={ruleId}
+          visible={createOrEditRuleModalVisible}
+          setVisible={setCreateOrEditRuleModalVisible}
+          ruleModalType={ruleModalType}
+          loadData={loadData}
+        />
       </ContentCard>
     </PageContainer>
   );
