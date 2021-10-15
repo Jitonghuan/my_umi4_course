@@ -102,9 +102,9 @@ export default function CaseEditor(props: CaseEditorProps) {
 
         {/* step 0 前置/后置 */}
         <div className="case-editor-step case-editor-step-0" data-visible={step === 0}>
-          <FuncTableField title="前置函数" data={displayData.beforeFuncs} />
+          <FuncTableField title="前置脚本" data={displayData.beforeFuncs} />
           <CaseTableField title="前置用例" data={displayData.beforeCases} />
-          <FuncTableField title="后置函数" data={displayData.afterFuncs} />
+          <FuncTableField title="后置脚本" data={displayData.afterFuncs} />
         </div>
 
         {/* step 1 定义变量 */}

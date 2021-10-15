@@ -207,3 +207,6 @@ export const getModules = addAPIPrefix('/qc/autotest/getModules');
 
 // 批量获取前置用例信息
 export const getCaseInfoBatch = addAPIPrefix('/qc/autotest/getCaseInfoBatch');
+
+/** GET 获取数据工厂模板列表 */
+export const getDataFacList = addAPIPrefix('/qc/dataFactory/queryDataFactory');

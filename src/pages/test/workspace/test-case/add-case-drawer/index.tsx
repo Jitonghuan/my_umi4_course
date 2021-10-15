@@ -7,6 +7,7 @@ import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
 import EditableTable from '../../_components/editable-table';
+import PreconditionEditableTable from '../../_components/precondition-editable-table';
 import './index.less';
 
 const { TabPane } = Tabs;
@@ -94,6 +95,7 @@ export default function RightDetail(props: any) {
         descType: +descType,
         isAuto: _data.isAuto ? 1 : 0,
         categoryId: +_data.categoryId,
+        precondition: _data.precondition || [],
       };
 
       let res;
@@ -164,7 +166,8 @@ export default function RightDetail(props: any) {
           </Form.Item>
         </Form.Item>
         <Form.Item label="前置条件:" name="precondition">
-          <Input.TextArea className="precondition-h" disabled={!isEdit} placeholder="请输入前置条件"></Input.TextArea>
+          <PreconditionEditableTable readOnly={!isEdit} />
+          {/* <Input.TextArea className="precondition-h" disabled={!isEdit} placeholder="请输入前置条件"></Input.TextArea> */}
         </Form.Item>
         <Form.Item label="用例描述:" className="step-content-form-item">
           <Tabs activeKey={descType} onChange={setDescType}>

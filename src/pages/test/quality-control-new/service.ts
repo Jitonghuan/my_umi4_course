@@ -3,6 +3,9 @@ import { addAPIPrefix } from '@/utils';
 /** GET 查看质量分规则 */
 export const getGradeInfo = addAPIPrefix('/qc/codeQuality/getGradeInfo');
 
+/** POST 更新质量分规则 */
+export const updateGradeInfo = addAPIPrefix('/qc/codeQuality/updateGrade');
+
 /** GET 获取排行榜数据 */
 export const getRanking = addAPIPrefix('/qc/codeQuality/ranking');
 

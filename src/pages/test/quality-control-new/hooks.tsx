@@ -314,3 +314,15 @@ export function useAppCateOptions() {
 
   return [data];
 }
+
+export function useGradeInfo() {
+  const [data, setData] = useState<any>();
+
+  useEffect(() => {
+    getRequest(APIS.getGradeInfo).then((res) => {
+      setData({ ...res.data, codeCoverageGrade: res.data.codeDuplicationsGrade });
+    });
+  }, []);
+
+  return [data, setData];
+}

@@ -11,6 +11,7 @@ import HeaderTabs from '../_components/header-tabs';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
 import EditableTable from '../_components/editable-table';
+import PreconditionEditableTable from '../_components/precondition-editable-table';
 import { history } from 'umi';
 import './index.less';
 
@@ -219,11 +220,7 @@ export default function CaseInfo(props: any) {
                 </Form.Item>
               </Form.Item>
               <Form.Item label="前置条件:" name="precondition">
-                <Input.TextArea
-                  className="precondition-h"
-                  disabled={!isEdit}
-                  placeholder="请输入前置条件"
-                ></Input.TextArea>
+                <PreconditionEditableTable readOnly={!isEdit} />
               </Form.Item>
               <Form.Item label="用例描述:" className="step-content-form-item">
                 <Tabs activeKey={descType} onChange={setDescType}>

@@ -69,6 +69,8 @@ export default function AddOrEditBugDrawer(props: any) {
 
     // 保存后清空form
     void form.resetFields();
+    // 设置默form 默认值
+    void form.setFieldsValue({ priority: 1, bugType: 0, status: 0 });
     void setRelatedCases([]);
     void setSchema(undefined);
 
@@ -103,7 +105,7 @@ export default function AddOrEditBugDrawer(props: any) {
       }
     } else {
       void form.resetFields();
-      void form.setFieldsValue({ priority: 1, bugType: 0 });
+      void form.setFieldsValue({ priority: 1, bugType: 0, status: 0 });
       void setSchema(undefined);
       void setRelatedCases(defaultRelatedCases || []);
     }
