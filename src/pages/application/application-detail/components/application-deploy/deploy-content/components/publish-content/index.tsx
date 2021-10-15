@@ -3,8 +3,9 @@
 // @create 2021/09/05 22:57
 
 import React, { useState, useContext } from 'react';
-import { Modal, Button, message, Popconfirm, Table } from 'antd';
+import { Modal, Button, message, Popconfirm, Table, Tag } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { datetimeCellRender } from '@/utils';
 import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
@@ -37,8 +38,23 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
   const { appData } = useContext(DetailContext);
+  const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
+
+  type reviewStatusTypeItem = {
+    color: string;
+    text: string;
+  };
+
+  const STATUS_TYPE: Record<number, reviewStatusTypeItem> = {
+    1: { text: '未创建', color: 'default' },
+    2: { text: '审核中', color: 'blue' },
+    3: { text: '已关闭', color: 'yellow' },
+    4: { text: '未通过', color: 'red' },
+    5: { text: '已删除', color: 'gray' },
+    6: { text: '已通过', color: 'green' },
+  };
 
   // 重新部署
   const handleReDeploy = () => {
@@ -93,6 +109,14 @@ export default function PublishContent(props: IProps) {
   const isFrontend = appData?.appType === 'frontend';
   const CurrSteps = isFrontend ? frontendStepsMapping[envTypeCode] : backendStepsMapping[envTypeCode];
 
+  const branchNameRender = (branchName: string, record: any) => {
+    return (
+      <div>
+        <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
+      </div>
+    );
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
@@ -146,9 +170,13 @@ export default function PublishContent(props: IProps) {
         }
       >
         <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column dataIndex="branchName" title="分支名" />
+        <Table.Column dataIndex="branchName" title="分支名" render={branchNameRender} width={320} />
         <Table.Column dataIndex="desc" title="变更原因" />
-        <Table.Column dataIndex="reviewStatus" title="review状态" />
+        <Table.Column
+          dataIndex="status"
+          title="review状态"
+          render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
+        />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={80} />
       </Table>

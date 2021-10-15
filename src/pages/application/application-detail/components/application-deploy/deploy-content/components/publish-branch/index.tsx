@@ -8,12 +8,15 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
-import { Table, Input, Button, Modal, Checkbox } from 'antd';
+import { Link } from 'react-router-dom';
+import { Table, Input, Button, Modal, Checkbox, Tag } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';
+import { getReviewStatus } from '@/pages/application/service';
+import { postRequest } from '@/utils/request';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
@@ -31,15 +34,16 @@ export interface PublishBranchProps {
     desc: string;
     createUser: string;
     gmtCreate: string;
+    status: string | number;
   }[];
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
 }
 
-export default function PublishBranch(props: PublishBranchProps) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch } = props;
+export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch } = publishBranchProps;
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode, appCode } = appData || {};
+  const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
@@ -47,6 +51,20 @@ export default function PublishBranch(props: PublishBranchProps) {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
+
+  type reviewStatusTypeItem = {
+    color: string;
+    text: string;
+  };
+
+  const STATUS_TYPE: Record<number, reviewStatusTypeItem> = {
+    1: { text: '未创建', color: 'default' },
+    2: { text: '审核中', color: 'blue' },
+    3: { text: '已关闭', color: 'yellow' },
+    4: { text: '未通过', color: 'red' },
+    5: { text: '已删除', color: 'gray' },
+    6: { text: '已通过', color: 'green' },
+  };
 
   const submit = async () => {
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
@@ -95,6 +113,14 @@ export default function PublishBranch(props: PublishBranchProps) {
     });
   }, [appCategoryCode, env]);
 
+  const branchNameRender = (branchName: string, record: any) => {
+    return (
+      <div>
+        <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
+      </div>
+    );
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>待发布的分支</div>
@@ -130,9 +156,13 @@ export default function PublishBranch(props: PublishBranchProps) {
         }}
       >
         <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column dataIndex="branchName" title="分支名" />
+        <Table.Column dataIndex="branchName" title="分支名" render={branchNameRender} width={320} />
         <Table.Column dataIndex="desc" title="变更原因" />
-        <Table.Column dataIndex="reviewStatus" title="review状态" />
+        <Table.Column
+          dataIndex="status"
+          title="review状态"
+          render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
+        />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={80} />
       </Table>
