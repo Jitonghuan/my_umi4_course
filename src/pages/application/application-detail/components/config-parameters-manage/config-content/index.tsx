@@ -26,8 +26,8 @@ export default function ConfigContent({ env, configType }: IProps) {
   const [editVersionForm] = Form.useForm();
   const [versionData, setVersionData] = useState<any[]>([]); //版本下拉选择框的全部数据
   const { appCategoryCode, appCode, id: appId } = appData || {};
-  const [currentVersion, setCurrentVersion] = useState<any>(); //当前选中的Version
-  const [latestVersion, setLatestVersion] = useState<any>(); //最新的版本
+  const [currentVersion, setCurrentVersion] = useState<any>(0); //当前选中的Version
+  const [latestVersion, setLatestVersion] = useState<any>(0); //最新的版本
   const [versionConfig, setversionConfig] = useState(''); //展示配置内容
   let currentEnvCode = '';
   useEffect(() => {
@@ -153,7 +153,7 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   // 确认配置
   const editVersion = (values: any) => {
-    if (currentVersion === '' || configId === '') {
+    if (currentVersion === 0 || configId === '') {
       postRequest(configAdd, {
         data: {
           appCode,
