@@ -279,7 +279,12 @@ export default function ConfigContent({ env, configType }: IProps) {
             <Button type="ghost" htmlType="reset">
               取消
             </Button>
-            <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ marginLeft: '4px' }}
+              disabled={latestVersion !== currentVersion}
+            >
               确定
             </Button>
           </Form.Item>
