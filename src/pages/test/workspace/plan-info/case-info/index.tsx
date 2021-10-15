@@ -276,7 +276,7 @@ export default function UserCaseInfoExec(props: any) {
         <div className="case-prop-title">前置条件:</div>
         <div className="mh-40">
           <Form form={form}>
-            <Form.Item label="前置条件:" name="precondition">
+            <Form.Item label="前置条件:" name="precondition" noStyle>
               <PreconditionEditableTbale readOnly />
             </Form.Item>
           </Form>
