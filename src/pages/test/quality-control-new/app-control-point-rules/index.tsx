@@ -2,20 +2,45 @@ import React, { useState, useEffect, useContext } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
-import { Table, Button, Input, Form, Space, Typography, Modal } from 'antd';
+import { Table, Button, Input, Form, Space, Typography, Modal, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import CreateOrEditRuleModal from './create-or-edit-rule-modal';
 import * as HOOKS from '../hooks';
 import * as INTERFACES from '../interface';
 import moment from 'moment';
 import './index.less';
+import { postRequest } from '@/utils/request';
+import * as APIS from '../service';
+
+type ModalType = 'add' | 'edit' | 'view';
 
 export default function AppControlPointRules(props: any) {
   const [createOrEditRuleModalVisible, setCreateOrEditRuleModalVisible] = useState(false);
   const [keyword, setKeyword] = useState<string>('');
-  const [allAppCodeQualityConf] = HOOKS.useAllAppCodeQualityConf(keyword);
+  const [allAppCodeQualityConf, loadData] = HOOKS.useAllAppCodeQualityConf(keyword);
+  const [ruleModalType, setRuleModalType] = useState<ModalType>('add');
+  const [ruleId, setRuleId] = useState<number>();
 
   const handleCreateRule = () => {
+    setRuleModalType('add');
+    setCreateOrEditRuleModalVisible(true);
+  };
+
+  const deleteQualityConf = (id: number) => {
+    postRequest(APIS.deleteCodeQualityConf, { data: { id: id } }).then((res) => {
+      loadData();
+    });
+  };
+
+  const viewQualityConf = (id: number) => {
+    setRuleModalType('view');
+    setRuleId(id);
+    setCreateOrEditRuleModalVisible(true);
+  };
+
+  const editQualityConf = (id: number) => {
+    setRuleModalType('edit');
+    setRuleId(id);
     setCreateOrEditRuleModalVisible(true);
   };
 
@@ -51,19 +76,48 @@ export default function AppControlPointRules(props: any) {
           <Table.Column
             title="操作"
             width="180"
-            render={() => {
+            render={(value, record: any) => {
               return (
                 <Space>
-                  <Button type="link">查看</Button>
-                  <Button type="link">编辑</Button>
-                  <Button type="link">删除</Button>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      viewQualityConf(record.id);
+                    }}
+                  >
+                    查看
+                  </Button>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      editQualityConf(record.id);
+                    }}
+                  >
+                    编辑
+                  </Button>
+                  <Popconfirm
+                    title="确定删除这条规则吗?"
+                    onConfirm={() => {
+                      deleteQualityConf(record.id);
+                    }}
+                    okText="是"
+                    cancelText="否"
+                  >
+                    <Button type="link">删除</Button>
+                  </Popconfirm>
                 </Space>
               );
             }}
           />
         </Table>
 
-        <CreateOrEditRuleModal visible={createOrEditRuleModalVisible} setVisible={setCreateOrEditRuleModalVisible} />
+        <CreateOrEditRuleModal
+          ruleId={ruleId}
+          visible={createOrEditRuleModalVisible}
+          setVisible={setCreateOrEditRuleModalVisible}
+          ruleModalType={ruleModalType}
+          loadData={loadData}
+        />
       </ContentCard>
     </PageContainer>
   );

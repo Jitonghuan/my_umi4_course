@@ -3,9 +3,16 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
-import { Button, Form, Table, Input, Select, Radio, Space, Tag, Typography } from 'antd';
-import { HeartOutlined, HeartFilled, EditOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
-import { getRequest, postRequest } from '@/utils/request';
+import { Button, Form, Table, Input, Select, Radio, Space, Tag, Typography, Popconfirm } from 'antd';
+import {
+  HeartOutlined,
+  HeartFilled,
+  EditOutlined,
+  PlayCircleOutlined,
+  DeleteOutlined,
+  EditFilled,
+} from '@ant-design/icons';
+import { delRequest, getRequest, postRequest } from '@/utils/request';
 import { getTaskInfo, taskCare, taskCareCancel, taskExcute, getTaskList, operateTask } from '../service';
 import { taskStatusEnum } from '../constant';
 import CreateOrEditTaskModal from './create-or-edit-task-modal';
@@ -13,6 +20,7 @@ import ResultModal from './result-modal';
 import moment from 'moment';
 import './index.less';
 import * as HOOKS from '../hooks';
+import * as APIS from '../service';
 
 export default function taskList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
@@ -20,13 +28,14 @@ export default function taskList(props: any) {
   const [resultModalVisible, setResultModalVisible] = useState<boolean>(false);
   const [curTask, setCurTask] = useState<any>();
   const [taskList, [pageIndex, setPageIndex], [pageSize, setPageSize], total, form, loadTaskList] = HOOKS.useTaskList();
-  const [appCateOptions] = HOOKS.useAppCateOptions();
+  const [appCateOptions] = HOOKS.useAppCategoryOptions();
+  const [appCodeOptions, setAppCodeOptions] = useState<IOption[]>();
 
   useEffect(() => {
     loadTaskList();
   }, [pageIndex, pageSize]);
 
-  const handleTaskCareOperate = (id: string | number, isCare: boolean) => {
+  const handleTaskCareOperate = (id: number, isCare: boolean) => {
     postRequest((isCare ? taskCare : taskCareCancel) + '/' + id, {
       data: {
         currentUser: userInfo.userName,
@@ -37,13 +46,40 @@ export default function taskList(props: any) {
   };
 
   const handleSeeResult = (task: any) => {
-    console.log('task :>> ', task);
     setCurTask(task);
     setResultModalVisible(true);
   };
 
   const handleSearch = () => {
     loadTaskList();
+  };
+
+  const deleteTask = (id: Number) => {
+    delRequest(`${operateTask}/${id}`).then((res) => {
+      loadTaskList();
+    });
+  };
+
+  const carryTask = (id: Number) => {
+    postRequest(taskExcute(id)).then((res) => {});
+  };
+
+  const openEditTask = (id: Number) => {
+    setCreateOrEditTaskModalVisible(true);
+    getRequest(`${operateTask}/${id}`).then((res) => {
+      setCurTask(res.data);
+    });
+  };
+
+  const getAppCodeByCategory = (value: any) => {
+    getRequest(APIS.getAppInfoList, { data: { appCategoryCode: value } }).then((res) => {
+      const source = res.data.dataSource.map((item: any) => ({
+        label: item.appCode,
+        value: item.appCode,
+        data: item,
+      }));
+      setAppCodeOptions(source);
+    });
   };
 
   return (
@@ -67,10 +103,16 @@ export default function taskList(props: any) {
               <Input placeholder="任务名称关键字" />
             </Form.Item>
             <Form.Item label="应用分类">
-              <Select placeholder="请选择" />
+              <Select
+                placeholder="请选择"
+                options={appCateOptions}
+                onChange={(value) => {
+                  getAppCodeByCategory(value);
+                }}
+              />
             </Form.Item>
             <Form.Item label="应用code">
-              <Select placeholder="请选择" />
+              <Select placeholder="请选择" options={appCodeOptions} />
             </Form.Item>
             <Form.Item>
               <Button htmlType="submit" type="primary">
@@ -146,13 +188,36 @@ export default function taskList(props: any) {
                       />
                     ) : (
                       <HeartOutlined
+                        style={{ color: '#CC4631' }}
                         className="can-operate-el"
                         onClick={() => handleTaskCareOperate(record.id, true)}
                       />
                     )}
-                    <EditOutlined className="can-operate-el" />
-                    <PlayCircleOutlined className="can-operate-el" />
-                    <DeleteOutlined className="can-operate-el" />
+                    <EditFilled
+                      style={{ color: '#236ADD' }}
+                      className="can-operate-el"
+                      onClick={() => {
+                        openEditTask(record.id);
+                      }}
+                    />
+                    <PlayCircleOutlined
+                      style={{ color: '#3CC86A' }}
+                      className="can-operate-el"
+                      onClick={() => {
+                        carryTask(record.id);
+                      }}
+                    />
+                    <Popconfirm
+                      title="确定删除这个任务吗?"
+                      onConfirm={() => {
+                        deleteTask(record.id);
+                      }}
+                      // onCancel={cancel}
+                      okText="是"
+                      cancelText="否"
+                    >
+                      <DeleteOutlined className="can-operate-el" />
+                    </Popconfirm>
                   </Space>
                 );
               }}
@@ -163,8 +228,15 @@ export default function taskList(props: any) {
           visible={CreateOrEditTaskModalVisible}
           setVisible={setCreateOrEditTaskModalVisible}
           task={curTask}
+          setTask={setCurTask}
+          handleSearch={handleSearch}
         />
-        <ResultModal visible={resultModalVisible} setVisible={setResultModalVisible} taskId={curTask?.id} />
+        <ResultModal
+          visible={resultModalVisible}
+          setVisible={setResultModalVisible}
+          taskId={curTask?.id}
+          setTask={setCurTask}
+        />
       </ContentCard>
     </PageContainer>
   );

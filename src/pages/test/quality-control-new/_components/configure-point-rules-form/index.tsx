@@ -99,11 +99,12 @@ export default function ConfigurePointRulesContent(props: any) {
                   <Form.Item name={record.name} noStyle>
                     <Radio.Group
                       options={[
-                        { label: '开启', value: true },
-                        { label: '关闭', value: false },
+                        { label: '开启', value: 1 },
+                        { label: '关闭', value: 0 },
                       ]}
                       optionType="button"
                       buttonStyle="solid"
+                      disabled={!isEdit}
                     />
                   </Form.Item>
                 </div>
