@@ -61,9 +61,17 @@ export default function SceneDetail(props: SceneDetailProps) {
   const handleSelect = async (_: any, item: any) => {
     const idList = caseList.map((n) => n.id);
 
-    const allCases = [...idList, ...(item.data?.preCases?.split(',').map((n: string) => +n) || []), item.value];
+    const nextCases = [...idList] as number[];
 
-    const nextCases = [...new Set(allCases)] as number[];
+    const preCase =
+      item.data?.preCases
+        ?.split(',')
+        .filter((n: string) => n.length > 0)
+        .map((n: string) => +n) || [];
+
+    nextCases.push(...preCase.filter((caseId: number) => !idList.includes(caseId)));
+
+    nextCases.push(item.value);
 
     updateSceneCase(nextCases);
   };

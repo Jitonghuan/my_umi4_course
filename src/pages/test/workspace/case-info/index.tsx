@@ -270,9 +270,9 @@ export default function CaseInfo(props: any) {
                   <Button type="primary" onClick={handleEditBtnClick}>
                     编辑
                   </Button>
-                  <Button type="primary" onClick={handleGoBackBtnClick}>
+                  {/* <Button type="primary" onClick={handleGoBackBtnClick}>
                     返回
-                  </Button>
+                  </Button> */}
                 </Space>
               ) : (
                 <Space>
