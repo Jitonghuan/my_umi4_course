@@ -65,3 +65,9 @@ export const caseStatusEnum = [
   { label: '阻塞', color: '#FECD3A', icon: <SyncOutlined />, value: '3' },
   { label: '跳过', color: '#6C82AA', icon: <RightCircleOutlined />, value: '4' },
 ];
+
+export const preconditionOptions = [
+  { label: '其他', value: '0' },
+  { label: '用例', value: '1' },
+  { label: '数据', value: '2' },
+];

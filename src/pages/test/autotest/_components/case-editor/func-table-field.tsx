@@ -3,7 +3,7 @@
 // @create 2021/06/06 11:35
 
 import React, { useState } from 'react';
-import { Table, Button, Popover, message, Input, Tooltip } from 'antd';
+import { Table, Button, Popover, message, Input, Tooltip, Space } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import * as APIS from '../../service';
@@ -19,6 +19,7 @@ export interface FuncTableFieldProps {
 export default function FuncTableField(props: FuncTableFieldProps) {
   const [popVisible, setPopVisible] = useState(false);
   const [sqlPopVisible, setSqlPopVisible] = useState(false);
+  const [dataPopVisible, setDataPopVisible] = useState(false);
   // const [searchKey, setSearchKey] = useState<string>();
 
   // ---- func
@@ -85,6 +86,38 @@ export default function FuncTableField(props: FuncTableFieldProps) {
     // setSearchKey(undefined);
   };
 
+  // ---- dataFactory
+  // 加载数据
+  const loadDataFacOptions = async (name: string) => {
+    const result = await getRequest(APIS.getDataFacList, {
+      data: {
+        name: name?.trim() || '',
+        pageIndex: 1,
+        pageSize: 50,
+      },
+    });
+
+    return (result.data?.dataSource || []).map((n: any) => ({
+      value: n.id,
+      label: `${n.name}`,
+      data: n,
+    }));
+  };
+
+  const handleDataSelect = (_: any, item: any) => {
+    const nextValue = props.value?.slice(0) || [];
+
+    //  去重校验
+    if (nextValue.find((n) => n.id === item.data?.id)) {
+      return message.warn('此造数模板已选择!');
+    }
+
+    nextValue.push({ type: 2, ...item.data });
+    props.onChange?.(nextValue);
+    setDataPopVisible(false);
+    // setSearchKey(undefined);
+  };
+
   const handleDelRecord = (index: number) => {
     const nextValue = props.value?.slice(0) || [];
     nextValue.splice(index, 1);
@@ -100,6 +133,26 @@ export default function FuncTableField(props: FuncTableFieldProps) {
     props.onChange?.(nextValue);
   };
 
+  const handleMoveUp = (index: number) => {
+    const nextValue = props.value?.slice(0) || [];
+    if (index > 0) {
+      let m = nextValue[index];
+      nextValue[index] = nextValue[index - 1];
+      nextValue[index - 1] = m;
+    }
+    props.onChange?.(nextValue);
+  };
+
+  const handleMoveDown = (index: number) => {
+    const nextValue = props.value?.slice(0) || [];
+    if (index < nextValue.length - 1) {
+      let m = nextValue[index];
+      nextValue[index] = nextValue[index + 1];
+      nextValue[index + 1] = m;
+    }
+    props.onChange?.(nextValue);
+  };
+
   return (
     <div className="func-table-field">
       <div className="field-caption">
@@ -110,6 +163,28 @@ export default function FuncTableField(props: FuncTableFieldProps) {
           </Tooltip>
         </h3>
         <s className="flex-air"></s>
+        <Popover
+          visible={dataPopVisible}
+          onVisibleChange={(n) => setDataPopVisible(n)}
+          trigger={['click']}
+          content={
+            <DebounceSelect
+              fetchOnMount
+              fetchOptions={loadDataFacOptions}
+              onSelect={handleDataSelect}
+              style={{ width: '100%' }}
+              autoFocus
+              suffixIcon={null}
+              placeholder="输入函数名搜索"
+            />
+          }
+          placement="left"
+          overlayInnerStyle={{ width: 400 }}
+          overlayStyle={{ width: 400 }}
+        >
+          <Button>引用工厂</Button>
+        </Popover>
+
         <Popover
           visible={popVisible}
           onVisibleChange={(n) => setPopVisible(n)}
@@ -154,8 +229,14 @@ export default function FuncTableField(props: FuncTableFieldProps) {
         </Popover>
       </div>
       <Table rowKey={(n) => `${n.type}-${n.name}`} dataSource={props.value || []} bordered pagination={false}>
-        <Table.Column dataIndex="type" title="类型" render={(value) => (value === 1 ? 'SQL' : '函数')} width={60} />
-        <Table.Column dataIndex="name" title="函数" />
+        <Table.Column
+          dataIndex="type"
+          title="类型"
+          render={(value) => (value === 0 ? '函数' : value === 1 ? 'SQL' : '工厂')}
+          width={60}
+        />
+        <Table.Column dataIndex="id" title="ID" />
+        <Table.Column dataIndex="name" title="名称" />
         <Table.Column
           dataIndex="argument"
           title="入参"
@@ -174,8 +255,14 @@ export default function FuncTableField(props: FuncTableFieldProps) {
         <Table.Column dataIndex="desc" title="描述" />
         <Table.Column
           title="操作"
-          render={(_, __, index) => <a onClick={() => handleDelRecord(index)}>删除</a>}
-          width={80}
+          render={(_, __, index) => (
+            <Space>
+              <a onClick={() => handleDelRecord(index)}>删除</a>
+              <a onClick={() => handleMoveUp(index)}>上移</a>
+              <a onClick={() => handleMoveDown(index)}>下移</a>
+            </Space>
+          )}
+          width={120}
         />
       </Table>
     </div>

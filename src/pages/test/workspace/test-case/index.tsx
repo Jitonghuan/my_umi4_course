@@ -130,9 +130,16 @@ export default function TestCase(props: any) {
     void setDrawerVisible(true);
   };
 
-  const onSeeCaseBtnClick = (caseInfo: any) => {
+  const onSeeCaseInfoBtnClick = (caseInfo: any) => {
     console.log('caseInfo.id :>> ', caseInfo.id);
-    history.push(`/matrix/test/workspace/case-info?caseId=${caseInfo.id}&cateId=${caseInfo.categoryId}`);
+    // history.push(`/matrix/test/workspace/case-info?caseId=${caseInfo.id}&cateId=${testCaseCateId}`);
+    window.open(`/matrix/test/workspace/case-info?caseId=${caseInfo.id}&cateId=${testCaseCateId}`);
+  };
+
+  const onSeeCaseBtnClick = (caseInfo: any) => {
+    void setCurCase(caseInfo);
+    void setCaseReadOnly(true);
+    void setDrawerVisible(true);
   };
 
   const goBack = () => {
@@ -169,6 +176,7 @@ export default function TestCase(props: any) {
               onEditCaseBtnClick={onEditCaseBtnClick}
               caseReadOnly={caseReadOnly}
               onSeeCaseBtnClick={onSeeCaseBtnClick}
+              onSeeCaseInfoBtnClick={onSeeCaseInfoBtnClick}
               caseCateTreeData={caseCateTreeData}
             />
           ) : (

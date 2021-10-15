@@ -310,3 +310,27 @@ export function useAppCategoryOptions() {
   }, []);
   return [data];
 }
+
+export function useGradeInfo() {
+  const [data, setData] = useState<any>();
+
+  useEffect(() => {
+    getRequest(APIS.getGradeInfo).then((res) => {
+      setData({ ...res.data, codeCoverageGrade: res.data.codeDuplicationsGrade });
+    });
+  }, []);
+
+  return [data, setData];
+}
+
+export function useGlobalConf() {
+  const [data, setData] = useState<any>();
+
+  useEffect(() => {
+    getRequest(APIS.getGlobalConf).then((res: any) => {
+      setData(res.data);
+    });
+  }, []);
+
+  return [data];
+}

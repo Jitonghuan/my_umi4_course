@@ -7,6 +7,7 @@ import { createSona } from '@cffe/sona';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
 import EditableTable from '../../_components/editable-table';
+import PreconditionEditableTable from '../../_components/precondition-editable-table';
 import './index.less';
 
 const { TabPane } = Tabs;
@@ -19,8 +20,15 @@ export default function RightDetail(props: any) {
   const [saveLoding, setSaveLoding] = useState<boolean>(false);
   const [expandKeys, setExpandKeys] = useState<React.Key[]>();
   const [schema, setSchema] = useState<any>();
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
+
+  const [caseCate, setCaseCate] = useState<any>();
+
+  useEffect(() => {
+    setIsEdit(!readOnly);
+  }, [visible]);
 
   useEffect(() => {
     if (visible) {
@@ -65,6 +73,7 @@ export default function RightDetail(props: any) {
       for (const node of nodeArr) {
         exps.push(node.key);
         if (+node.key === +cateId) {
+          setCaseCate(node);
           exps.pop();
           return true;
         }
@@ -86,6 +95,7 @@ export default function RightDetail(props: any) {
         descType: +descType,
         isAuto: _data.isAuto ? 1 : 0,
         categoryId: +_data.categoryId,
+        precondition: _data.precondition || [],
       };
 
       let res;
@@ -112,51 +122,52 @@ export default function RightDetail(props: any) {
     void setVisible(false);
   };
 
+  const handleEditBtnClick = () => {
+    setIsEdit(true);
+  };
+
   const layout = {
-    labelCol: { span: readOnly ? 3 : 3 },
-    wrapperCol: { span: readOnly ? 21 : 21 },
-    labelAlign: 'left' as 'left',
+    labelCol: { span: isEdit ? 3 : 3 },
+    wrapperCol: { span: isEdit ? 21 : 21 },
+    labelAlign: 'right' as 'right',
+  };
+
+  const ReadOnlyDiv = (props: any) => {
+    return <div>{props.render?.(props.value) || props.value}</div>;
   };
 
   const infoEl = (
     <>
-      <Form className="add-case-form" {...layout} form={form} initialValues={{ priority: priorityEnum[0].value }}>
+      <Form className="add-case-form" {...layout} form={form} initialValues={{ priority: 'P2' }}>
         <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
-          <Input disabled={readOnly} placeholder="请输入标题" />
+          {isEdit ? <Input disabled={!isEdit} placeholder="请输入标题" /> : <ReadOnlyDiv />}
         </Form.Item>
         <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
-          <TreeSelect
-            treeLine
-            treeExpandedKeys={expandKeys}
-            onTreeExpand={setExpandKeys}
-            disabled={readOnly}
-            treeData={caseCateTreeData}
-            showSearch
-            treeNodeFilterProp="title"
-          />
+          {isEdit ? (
+            <TreeSelect
+              treeLine
+              treeExpandedKeys={expandKeys}
+              onTreeExpand={setExpandKeys}
+              disabled={!isEdit}
+              treeData={caseCateTreeData}
+              showSearch
+              treeNodeFilterProp="title"
+            />
+          ) : (
+            <ReadOnlyDiv render={() => caseCate?.name} />
+          )}
         </Form.Item>
-        <Row className="row-form-item">
-          <Col span="12" className="col-form-item">
-            <span className="form-item-label">
-              <span className="import-identification">* </span>优先级 :{' '}
-            </span>
-            <Form.Item
-              className="form-item-info ml-41"
-              name="priority"
-              rules={[{ required: true, message: '请选择优先级' }]}
-            >
-              <Select disabled={readOnly} options={priorityEnum} />
-            </Form.Item>
-          </Col>
-          <Col span="12" style={{ display: 'flex' }} className="col-form-item">
-            <span className="form-item-label">是否自动化 : </span>
-            <Form.Item className="form-item-info ml-8" name="isAuto" valuePropName="checked">
-              <Switch disabled={readOnly} />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item label="优先级" className="inline-form-item-group">
+          <Form.Item name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
+            {isEdit ? <Select disabled={!isEdit} options={priorityEnum} style={{ width: '300px' }} /> : <ReadOnlyDiv />}
+          </Form.Item>
+          <Form.Item name="isAuto" label="是否自动化" valuePropName="checked" style={{ marginBottom: 'unset' }}>
+            <Switch disabled={!isEdit} />
+          </Form.Item>
+        </Form.Item>
         <Form.Item label="前置条件:" name="precondition">
-          <Input.TextArea className="precondition-h" disabled={readOnly} placeholder="请输入前置条件"></Input.TextArea>
+          <PreconditionEditableTable readOnly={!isEdit} />
+          {/* <Input.TextArea className="precondition-h" disabled={!isEdit} placeholder="请输入前置条件"></Input.TextArea> */}
         </Form.Item>
         <Form.Item label="用例描述:" className="step-content-form-item">
           <Tabs activeKey={descType} onChange={setDescType}>
@@ -169,7 +180,7 @@ export default function RightDetail(props: any) {
                 >
                   <Input.TextArea
                     autoSize={{ minRows: 10 }}
-                    disabled={readOnly}
+                    disabled={!isEdit}
                     placeholder="步骤描述"
                     className="step-desc"
                   />
@@ -181,7 +192,7 @@ export default function RightDetail(props: any) {
                 >
                   <Input.TextArea
                     autoSize={{ minRows: 10 }}
-                    disabled={readOnly}
+                    disabled={!isEdit}
                     placeholder="预期结果"
                     className="step-expected-results"
                   />
@@ -190,36 +201,31 @@ export default function RightDetail(props: any) {
             </TabPane>
             <TabPane tab="步骤式" key="1">
               <Form.Item name="stepContent">
-                <EditableTable readOnly={readOnly} />
+                <EditableTable readOnly={!isEdit} />
               </Form.Item>
             </TabPane>
           </Tabs>
         </Form.Item>
         <Form.Item label="备注" name="comment">
-          <RichText readOnly={readOnly} sona={sona} schema={schema} width="100%" height="400px" />
+          <RichText readOnly={!isEdit} sona={sona} schema={schema} width="100%" height="400px" />
         </Form.Item>
       </Form>
 
       <div className="drawer-btn-group">
-        {readOnly ? (
-          <Button type="primary" onClick={handleCancel}>
-            关闭
-          </Button>
+        {!isEdit ? (
+          <Space>
+            <Button type="primary" onClick={handleEditBtnClick}>
+              编辑
+            </Button>
+          </Space>
         ) : (
           <Space>
             <Button type="primary" onClick={() => handleSave()} loading={saveLoding}>
               保存
             </Button>
-            {!caseId ? (
-              <Button type="primary" onClick={() => handleSave(true)}>
-                保存并继续
-              </Button>
-            ) : (
-              ''
-            )}
-            <Button type="primary" onClick={handleCancel}>
+            {/* <Button type="primary" onClick={handleCancel}>
               取消
-            </Button>
+            </Button> */}
           </Space>
         )}
       </div>
@@ -231,7 +237,7 @@ export default function RightDetail(props: any) {
       className="add-case-modal"
       visible={visible}
       width={900}
-      title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
+      title={!isEdit ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onCancel={() => setVisible(false)}
       maskClosable={false}
       footer={false}
@@ -243,7 +249,7 @@ export default function RightDetail(props: any) {
       className="add-case-drawer"
       visible={visible}
       width={900}
-      title={readOnly ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
+      title={!isEdit ? '查看用例' : caseId ? '编辑用例' : '添加用例'}
       onClose={() => setVisible(false)}
       maskClosable={false}
     >

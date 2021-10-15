@@ -138,6 +138,9 @@ export default function ConfigContent({ env, configType }: IProps) {
     queryConfigList({ appCode: appCode, pageIndex: 1, ...values }).then((reslut: any) => {
       let configs = reslut?.list[0]?.value;
       if (configs) {
+        if (values.versionID === '') {
+          window.location.reload();
+        }
         setversionConfig(configs); //存储当前的配置信息
         // setCurrentVersion(configs);
         setConfigId(reslut?.list[0].id); //存储当前的配置ID
@@ -150,7 +153,7 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   // 确认配置
   const editVersion = (values: any) => {
-    if (currentVersion == '') {
+    if (currentVersion === '' || configId === '') {
       postRequest(configAdd, {
         data: {
           appCode,

@@ -1,5 +1,6 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { Form, Drawer, Modal, Input, Switch, Select, Tabs, Button, message, TreeSelect, Space, Row, Col } from 'antd';
+import { FileOutlined, FolderOutlined, FolderOpenOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { createCase, updateCase, getCaseInfo, getCaseCategoryDeepList } from '../service';
 import { priorityEnum } from '../constant';
@@ -10,6 +11,7 @@ import HeaderTabs from '../_components/header-tabs';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
 import EditableTable from '../_components/editable-table';
+import PreconditionEditableTable from '../_components/precondition-editable-table';
 import { history } from 'umi';
 import './index.less';
 
@@ -30,13 +32,16 @@ export default function CaseInfo(props: any) {
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
 
+  const [caseData, setCaseData] = useState<any>();
+  const [caseCate, setCaseCate] = useState<any>();
+
   useEffect(() => {
     let cnt = 0;
     void setSchema(undefined);
     form.resetFields();
     if (caseId) {
       getRequest(getCaseInfo + '/' + caseId).then((res) => {
-        res.data.categoryId && expandA(res.data.categoryId);
+        setCaseData(res.data);
         void setDescType(res.data.descType.toString());
         res.data.stepContent = res.data.stepContent.map((item: any) => ({
           ...item,
@@ -58,24 +63,54 @@ export default function CaseInfo(props: any) {
   }, []);
 
   useEffect(() => {
-    if (!caseId) {
-      expandA(cateId);
+    if (cateId) {
+      const dataClean = (node: any) => {
+        node.key = node.id;
+        node.title = node.name;
+        node.children = node.items;
+        if (!node.children?.length) {
+          node.isLeaf = true;
+          node.icon = <FileOutlined />;
+        } else {
+          node.switcherIcon = (nodeInfo: any) => {
+            if (!nodeInfo.expanded) return <FolderOutlined />;
+            return <FolderOpenOutlined />;
+          };
+        }
+        node.children?.forEach((item: any) => dataClean(item));
+
+        return node;
+      };
+
+      Promise.all([
+        getRequest(getCaseCategoryDeepList, {
+          data: {
+            id: 0,
+            deep: 1,
+          },
+        }),
+        getRequest(getCaseCategoryDeepList, {
+          data: {
+            id: cateId,
+            deep: -1,
+          },
+        }),
+      ]).then(([{ data: rootArr }, { data: caseCateTreeData }]) => {
+        const _root = rootArr?.map((item: any) => ({ ...item, key: item.id, title: item.name })) || [];
+        const _curTreeData = [
+          dataClean({
+            ..._root.find((item: any) => +item.id === +cateId),
+            items: caseCateTreeData,
+          }),
+        ];
+        setCaseCateTreeData(_curTreeData || []);
+      });
     }
   }, []);
 
   useEffect(() => {
-    if (cateId) {
-      getRequest(getCaseCategoryDeepList, {
-        data: {
-          id: cateId,
-          deep: -1,
-        },
-      }).then((res) => {
-        console.log('res.data :>> ', res.data);
-        setCaseCateTreeData(res.data);
-      });
-    }
-  }, []);
+    caseData?.categoryId && expandA(caseData.categoryId);
+  }, [caseData, caseCateTreeData]);
 
   const expandA = (cateId: number) => {
     if (!caseCateTreeData) return;
@@ -87,6 +122,7 @@ export default function CaseInfo(props: any) {
       for (const node of nodeArr) {
         exps.push(node.key);
         if (+node.key === +cateId) {
+          setCaseCate(node);
           exps.pop();
           return true;
         }
@@ -142,41 +178,49 @@ export default function CaseInfo(props: any) {
     labelAlign: 'right' as 'right',
   };
 
+  const ReadOnlyDiv = (props: any) => {
+    return <div>{props.render?.(props.value) || props.value}</div>;
+  };
+
   return (
     <PageContainer>
       <HeaderTabs activeKey="test-case-library" history={props.history} />
       <CardRowGroup>
         <ContentCard>
-          <div className="case-info-container">
+          <div className="case-info-containerr">
             <Form className="add-case-form" {...layout} form={form}>
               <Form.Item label="标题:" name="title" rules={[{ required: true, message: '请输入标题' }]}>
-                <Input disabled={!isEdit} placeholder="请输入标题" />
+                {isEdit ? <Input disabled={!isEdit} placeholder="请输入标题" /> : <ReadOnlyDiv />}
               </Form.Item>
               <Form.Item label="所属:" name="categoryId" rules={[{ required: true, message: '请选择所属模块' }]}>
-                <TreeSelect
-                  treeLine
-                  treeExpandedKeys={expandKeys}
-                  onTreeExpand={setExpandKeys}
-                  disabled={!isEdit}
-                  treeData={caseCateTreeData}
-                  showSearch
-                  treeNodeFilterProp="title"
-                />
+                {isEdit ? (
+                  <TreeSelect
+                    treeLine
+                    treeExpandedKeys={expandKeys}
+                    onTreeExpand={setExpandKeys}
+                    disabled={!isEdit}
+                    treeData={caseCateTreeData}
+                    showSearch
+                    treeNodeFilterProp="title"
+                  />
+                ) : (
+                  <ReadOnlyDiv render={() => caseCate?.name} />
+                )}
               </Form.Item>
               <Form.Item label="优先级" className="inline-form-item-group">
                 <Form.Item name="priority" rules={[{ required: true, message: '请选择优先级' }]}>
-                  <Select disabled={!isEdit} options={priorityEnum} style={{ width: '300px' }} />
+                  {isEdit ? (
+                    <Select disabled={!isEdit} options={priorityEnum} style={{ width: '300px' }} />
+                  ) : (
+                    <ReadOnlyDiv />
+                  )}
                 </Form.Item>
                 <Form.Item name="isAuto" label="是否自动化" valuePropName="checked" style={{ marginBottom: 'unset' }}>
                   <Switch disabled={!isEdit} />
                 </Form.Item>
               </Form.Item>
               <Form.Item label="前置条件:" name="precondition">
-                <Input.TextArea
-                  className="precondition-h"
-                  disabled={!isEdit}
-                  placeholder="请输入前置条件"
-                ></Input.TextArea>
+                <PreconditionEditableTable readOnly={!isEdit} />
               </Form.Item>
               <Form.Item label="用例描述:" className="step-content-form-item">
                 <Tabs activeKey={descType} onChange={setDescType}>

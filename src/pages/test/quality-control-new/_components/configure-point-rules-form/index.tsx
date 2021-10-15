@@ -6,24 +6,24 @@ const pointRulesTableDescribe = [
   {
     key: 1,
     title: '质量分',
-    name: 'a',
+    name: 'qualityPoints',
     ruleStr: '>=',
   },
   {
     key: 2,
     title: '单元测试',
-    name: 'unitTest',
+    name: 'utSwitch',
     children: [
       {
         key: 3,
         title: '单测用例数',
-        name: 'c',
+        name: 'utTotal',
         ruleStr: '>=',
       },
       {
         key: 4,
         title: '单测通过率',
-        name: 'd',
+        name: 'utPassRate',
         ruleStr: '>=',
         addonAfter: '%',
         width: '90px',
@@ -31,7 +31,7 @@ const pointRulesTableDescribe = [
       {
         key: 5,
         title: '单测覆盖率',
-        name: 'e',
+        name: 'utCovRate',
         ruleStr: '>=',
         addonAfter: '%',
         width: '90px',
@@ -41,55 +41,49 @@ const pointRulesTableDescribe = [
   {
     key: 6,
     title: '代码扫描',
-    name: 'scanner',
+    name: 'sonarSwitch',
     children: [
       {
         key: 7,
         title: '阻塞级别BUG数',
-        name: 'c',
+        name: 'bugsBlocker',
         ruleStr: '<=',
       },
       {
         key: 8,
         title: '严重级别BUG数',
-        name: 'c',
+        name: 'bugsCritical',
         ruleStr: '<=',
       },
       {
         key: 9,
         title: '主要级别BUG数',
-        name: 'c',
+        name: 'bugsMajor',
         ruleStr: '<=',
       },
       {
         key: 10,
-        title: '阻塞界别漏洞数',
-        name: 'c',
+        title: '阻塞级别漏洞数',
+        name: 'vulnerabilityBlocker',
         ruleStr: '<=',
       },
       {
         key: 11,
         title: '严重级别漏洞数',
-        name: 'c',
+        name: 'vulnerabilityCritical',
         ruleStr: '<=',
       },
       {
         key: 12,
         title: '主要级别漏洞数',
-        name: 'c',
+        name: 'vulnerabilityMajor',
         ruleStr: '<=',
       },
     ],
   },
 ];
 export default function ConfigurePointRulesContent(props: any) {
-  const { isEdit, onChange, value, isGlobal = false } = props;
-  const [form] = Form.useForm();
-  const [formValues, setFormValues] = useState<any>();
-
-  useEffect(() => {
-    onChange && onChange(formValues);
-  }, [formValues]);
+  const { isEdit, form, isGlobal = false } = props;
 
   return (
     <Form form={form} className="configure-point-rules-form">
@@ -110,9 +104,6 @@ export default function ConfigurePointRulesContent(props: any) {
                       ]}
                       optionType="button"
                       buttonStyle="solid"
-                      onChange={() => {
-                        setFormValues(form.getFieldsValue());
-                      }}
                     />
                   </Form.Item>
                 </div>
@@ -129,18 +120,29 @@ export default function ConfigurePointRulesContent(props: any) {
                 <>
                   {' '}
                   {record.ruleStr}{' '}
-                  <Form.Item name={record.name} noStyle>
+                  <Form.Item
+                    name={record.name}
+                    noStyle
+                    rules={[
+                      {
+                        validator: (_, value) => {
+                          if (value.length === 0) {
+                            return Promise.reject(new Error(`请输入${record.title}`));
+                          }
+                          const num = Number(value);
+                          if (Number.isNaN(num)) {
+                            return Promise.reject(new Error(`请输入数字`));
+                          }
+
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
                     <Input
                       style={{ width: record.width || '60px' }}
                       disabled={!isEdit}
                       addonAfter={record.addonAfter}
-                      onChange={(e) => {
-                        if (!isNaN(Number(e.target.value))) {
-                          setFormValues(form.getFieldsValue());
-                        } else {
-                          form.setFieldsValue(formValues);
-                        }
-                      }}
                     />
                   </Form.Item>
                 </>

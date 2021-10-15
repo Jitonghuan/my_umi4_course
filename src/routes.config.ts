@@ -493,12 +493,14 @@ export default [
             name: '测试用例库详情',
             key: 'test-workspace',
             component: '@/pages/test/workspace/test-case',
+            hideInMenu: true,
           },
           {
             path: 'case-info',
             name: '测试用例详情',
             key: 'test-workspace',
             component: '@/pages/test/workspace/case-info',
+            hideInMenu: true,
           },
           {
             path: 'bug-manage',
@@ -517,6 +519,7 @@ export default [
             name: '计划详情',
             key: 'test-workspace',
             component: '@/pages/test/workspace/plan-info',
+            hideInMenu: true,
           },
         ],
       },

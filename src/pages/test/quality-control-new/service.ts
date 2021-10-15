@@ -3,6 +3,9 @@ import { addAPIPrefix } from '@/utils';
 /** GET 查看质量分规则 */
 export const getGradeInfo = addAPIPrefix('/qc/codeQuality/getGradeInfo');
 
+/** POST 更新质量分规则 */
+export const updateGradeInfo = addAPIPrefix('/qc/codeQuality/updateGrade');
+
 /** GET 获取排行榜数据 */
 export const getRanking = addAPIPrefix('/qc/codeQuality/ranking');
 
@@ -51,11 +54,14 @@ export const getAllAppCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/allC
 /** DELETE 删除卡点规则 */
 export const deleteCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/deleteConf');
 
-/** POST 更新卡点规则 */
-export const updateCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/updateConf');
-
 /** GET 查看卡点规则 */
 export const getCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/getConf');
 
 /** POST 新增卡点规则 */
 export const addCodeQualityConf = addAPIPrefix('/qc/codeQuality/guard/addConf');
+
+/** GET 获取全局卡点规则 */
+export const getGlobalConf = addAPIPrefix('/qc/codeQuality/guard/getGlobalConf');
+
+/** POST 更新卡点规则  */
+export const updateConf = addAPIPrefix('/qc/codeQuality/guard/updateConf');

@@ -14,19 +14,24 @@ export async function getFuncListByIds(funcs: FuncProps[]) {
       if (typeof n === 'number' || typeof n === 'string') {
         n = { id: n, type: 1 };
       }
+      if (n.type === 0) {
+        const { data } = await getRequest(APIS.getFunc, {
+          data: { id: n.id },
+        }).catch((err) => ({} as any));
 
-      if (n.type === 1) {
+        return { ...data, type: 0, argument: n.argument };
+      } else if (n.type === 1) {
         const { data } = await getRequest(APIS.getSqlInfo, {
           data: { id: n.id },
         }).catch((err) => ({} as any));
 
         return { ...data, type: 1, argument: n.argument };
       } else {
-        const { data } = await getRequest(APIS.getFunc, {
+        const { data } = await getRequest(APIS.getDataFacList, {
           data: { id: n.id },
         }).catch((err) => ({} as any));
 
-        return { ...data, type: 0, argument: n.argument };
+        return { ...data.dataSource[0], type: 2, argument: n.argument };
       }
     }),
   );
@@ -37,13 +42,5 @@ export async function getFuncListByIds(funcs: FuncProps[]) {
 export async function getCaseListByIds(ids: number[]): Promise<CaseItemVO[]> {
   if (!ids?.length) return [];
 
-  return await Promise.all(
-    ids.map(async (id) => {
-      const { data } = await getRequest(APIS.getCaseInfo, {
-        data: { id },
-      });
-
-      return data;
-    }),
-  );
+  return (await getRequest(APIS.getCaseInfoBatch + '?ids=' + ids.join(','))).data;
 }
