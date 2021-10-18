@@ -75,16 +75,19 @@ export function useAllAppServices() {
   const [data, setData] = useState<IOption[]>([{ label: '测试1', value: 'test1' }]);
 
   useEffect(() => {
-    getRequest(APIS.getAppList).then((res) => {
-      let source = res.data.dataSource.map((item: any) => {
-        return {
-          value: item.appCode,
-          label: item.appName,
-          ...item,
-        };
-      });
-      setData(source);
-    });
+    getRequest(APIS.getAppList, { data: { appType: 'backend', appDevelopLanguage: 'java', pageSize: -1 } }).then(
+      (res) => {
+        let source = res.data.dataSource.map((item: any) => {
+          return {
+            // value: `${item.appCategoryCode}/${item.appCode}`,
+            value: `${item.appCode}`,
+            label: `${item.appCategoryCode}/${item.appCode}`,
+            ...item,
+          };
+        });
+        setData(source);
+      },
+    );
   }, []);
 
   return [data];

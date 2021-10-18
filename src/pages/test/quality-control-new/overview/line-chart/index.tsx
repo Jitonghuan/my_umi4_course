@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 
 const { ColorContainer } = colorUtil.context;
@@ -46,13 +46,13 @@ export default function LineChart(props: LineChartProps) {
       },
       series: data,
     };
-  }, []) as any;
+  }, [data, xAxis]) as any;
 
   return (
     <section style={{ width: 500 }} data-loading={loading}>
       <div style={{ height: 330 + legendLineNum * 20, background: '#fff' }}>
         <ColorContainer roleKeys={['color']}>
-          <EchartsReact option={chartOptions} />
+          <EchartsReact option={chartOptions} notMerge={true} lazyUpdate={false} />
         </ColorContainer>
       </div>
     </section>
