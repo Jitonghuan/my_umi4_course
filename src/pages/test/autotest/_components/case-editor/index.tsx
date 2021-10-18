@@ -140,7 +140,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           field={editField}
           paramType={paramType}
           onParamTypeChange={(n) => setParamType(n)}
-          selectedItem={props.selectedItem}
+          defaultProjectId={props.defaultProjectId}
         />
       )}
       {activeKey === 'source-mode' && (
@@ -148,7 +148,7 @@ export default function CaseEditor(props: CaseEditorProps) {
           {...props}
           editorValue={editorValue}
           setEditorValue={setEditorValue}
-          selectedItem={props.selectedItem}
+          defaultProjectId={props.defaultProjectId}
         />
       )}
     </Drawer>

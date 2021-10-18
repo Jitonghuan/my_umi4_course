@@ -19,7 +19,7 @@ export interface CaseTableFieldProps {
   title?: React.ReactNode;
   value?: CaseTableValueProps[];
   onChange?: (next: CaseTableValueProps[]) => any;
-  selectedItem: TreeNode;
+  defaultProjectId: React.Key;
 }
 
 export default function CaseTable(props: CaseTableFieldProps) {
@@ -28,7 +28,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
   const [projectId, setProjectId] = useState<any>();
 
   useEffect(() => {
-    setProjectId(props.selectedItem.bizId);
+    setProjectId(props.defaultProjectId);
   }, [popVisible]);
 
   const loadOptions = async (keyword: string) => {

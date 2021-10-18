@@ -14,7 +14,7 @@ import './index.less';
 
 export default function SourceCodeEdit(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const { data, editorValue, setEditorValue, selectedItem } = props;
+  const { data, editorValue, setEditorValue, defaultProjectId } = props;
 
   const [editStatus, setEditStatus] = useState<'success' | 'error' | 'warning' | 'default'>();
   const [debugModalVisible, setDebugModalVisible] = useState<boolean>(false);
@@ -31,8 +31,8 @@ export default function SourceCodeEdit(props: any) {
   const [projectId, setProjectId] = useState<any>();
 
   useEffect(() => {
-    setProjectId(selectedItem.bizId);
-  }, [selectedItem]);
+    setProjectId(defaultProjectId);
+  }, [defaultProjectId]);
 
   useEffect(() => {
     let JsonData;
