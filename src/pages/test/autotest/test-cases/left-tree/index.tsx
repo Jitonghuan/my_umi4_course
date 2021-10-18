@@ -39,9 +39,17 @@ type nodeAction =
   | 'copyApi';
 
 export default function LeftTree(props: LeftTreeProps) {
-  const { searchProject, setSearchProject, treeData, treeLoading, setTreeData, reloadTreeData } = props;
+  const {
+    searchProject,
+    setSearchProject,
+    treeData,
+    treeLoading,
+    setTreeData,
+    reloadTreeData,
+    selectedItem,
+    setSelectedItem,
+  } = props;
   const [projectOptions, setProjectOptions, reloadProjectOptions] = useProjectOptions();
-  const [selectedItem, setSelectedItem] = useState<TreeNode>();
   // 当前操作的节点（或者触发节点）
   const targetNodeRef = useRef<TreeNode>();
   const [projectEditorMode, setProjectEditorMode] = useState<EditorMode>('HIDE');
