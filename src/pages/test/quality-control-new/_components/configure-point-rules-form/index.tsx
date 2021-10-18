@@ -13,6 +13,7 @@ const pointRulesTableDescribe = [
     key: 2,
     title: '单元测试',
     name: 'utSwitch',
+    defaultValue: false,
     children: [
       {
         key: 3,
@@ -42,6 +43,7 @@ const pointRulesTableDescribe = [
     key: 6,
     title: '代码扫描',
     name: 'sonarSwitch',
+    defaultValue: true,
     children: [
       {
         key: 7,
@@ -90,6 +92,17 @@ export default function ConfigurePointRulesContent(props: any) {
     return <Tag color="success">开启</Tag>;
   };
 
+  const handleSwitch = (e: any, fieldName: string) => {
+    const nextValue = e.target.value;
+    if (nextValue === 1) return;
+
+    const formData = form.getFieldsValue();
+    const trueCnt = formData.utSwitch + formData.sonarSwitch;
+    if (trueCnt === 0) {
+      form.setFieldsValue({ [fieldName]: 1 });
+    }
+  };
+
   return (
     <Form form={form} className="configure-point-rules-form">
       <Table dataSource={pointRulesTableDescribe} defaultExpandAllRows pagination={false}>
@@ -111,6 +124,7 @@ export default function ConfigurePointRulesContent(props: any) {
                         optionType="button"
                         buttonStyle="solid"
                         disabled={!isEdit}
+                        onChange={(e) => handleSwitch(e, record.name)}
                       />
                     ) : (
                       <ReadOnlySwitch />

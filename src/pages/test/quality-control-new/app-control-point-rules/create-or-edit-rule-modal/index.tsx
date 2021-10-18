@@ -46,6 +46,12 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
     }
   }, [ruleId, ruleModalType]);
 
+  useEffect(() => {
+    if (visible && isCreate) {
+      form.setFieldsValue({ utSwitch: 0, sonarSwitch: 1 });
+    }
+  }, [visible, isCreate]);
+
   const getAppCodeByCategory = (value: any) => {
     getRequest(APIS.getAppInfoList, { data: { appCategoryCode: value } }).then((res) => {
       const source = res.data.dataSource.map((item: any) => ({
