@@ -86,6 +86,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
   const handleSubmit = async () => {
     setSubmitLoading(true);
     const values = await props.field.validateFields().catch((error) => {
+      setSubmitLoading(false);
       const info = error.errorFields
         ?.map((n: any) => n.errors)
         .flat()
