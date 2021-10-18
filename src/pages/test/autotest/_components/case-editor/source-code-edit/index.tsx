@@ -182,8 +182,10 @@ export default function SourceCodeEdit(props: any) {
 
     caseInfo.pre_cases = caseInfo.pre_cases || [];
 
-    let newPreCaseIds = item.data.preCases?.split(',').map((id: string) => +id || []);
-    newPreCaseIds = newPreCaseIds.filter((id: number) => caseInfo.pre_cases.includes(id));
+    console.log('caseInfo.pre_cases :>> ', caseInfo.pre_cases);
+
+    let newPreCaseIds = item.data.preCases?.split(',').map((id: string) => +id) || [];
+    newPreCaseIds = newPreCaseIds.filter((id: number) => !caseInfo.pre_cases.includes(id));
     caseInfo.pre_cases.push(...[...newPreCaseIds, item.data.caseId]);
 
     setEditorValue(YAML.stringify(caseInfo));
@@ -244,7 +246,7 @@ export default function SourceCodeEdit(props: any) {
                   placeholder="输入关键字搜索"
                 />
               </label>
-              <label
+              <span
                 className="select-item-container"
                 style={{ width: '300px', display: hideRight ? 'flex' : undefined }}
               >
@@ -259,7 +261,7 @@ export default function SourceCodeEdit(props: any) {
                     dropdownStyle={{ width: '200px' }}
                   />
                   <DebounceSelect
-                    style={{ flex: '1', minWidth: '134px' }}
+                    style={{ flex: '1', minWidth: '134px', maxWidth: '170px' }}
                     fetchOnMount
                     fetchOptions={beforeCaseLoadOptions}
                     onSelect={beforeCaseHandleSelect}
@@ -268,7 +270,7 @@ export default function SourceCodeEdit(props: any) {
                     placeholder="输入关键字搜索"
                   />
                 </div>
-              </label>
+              </span>
               <label className="select-item-container">
                 后置脚本:{' '}
                 <DebounceSelect
