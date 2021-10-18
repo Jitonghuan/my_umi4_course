@@ -83,7 +83,7 @@ const pointRulesTableDescribe = [
   },
 ];
 export default function ConfigurePointRulesContent(props: any) {
-  const { isEdit, form, isGlobal = false } = props;
+  const { isEdit, form, isGlobal = false, globalConf } = props;
 
   const ReadOnlySwitch = (props: any) => {
     if (props.value === 0) return <Tag color="default">关闭</Tag>;
@@ -168,7 +168,12 @@ export default function ConfigurePointRulesContent(props: any) {
                   <>
                     {' '}
                     {record.ruleStr}{' '}
-                    <Input style={{ width: record.width || '60px' }} disabled addonAfter={record.addonAfter} />
+                    <Input
+                      style={{ width: record.width || '60px' }}
+                      disabled
+                      addonAfter={record.addonAfter}
+                      value={globalConf[record.name]}
+                    />
                   </>
                 );
             }}

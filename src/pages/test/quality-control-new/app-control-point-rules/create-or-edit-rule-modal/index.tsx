@@ -27,6 +27,7 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
   const [appCategoryOptions] = HOOKS.useAppCategoryOptions();
 
   const [appCodeOptions, setAppCodeOptions] = useState<IOption[]>();
+  const [globalConf] = HOOKS.useGlobalConf();
 
   useEffect(() => {
     if (ruleModalType === 'view') {
@@ -115,7 +116,7 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
           <Select options={appCodeOptions} disabled={ruleModalType !== 'add'} />
         </Form.Item>
       </Form>
-      <ConfigurePointRulesForm form={form} isEdit={isEdit} />
+      <ConfigurePointRulesForm form={form} isEdit={isEdit} globalConf={globalConf} />
     </Modal>
   );
 }
