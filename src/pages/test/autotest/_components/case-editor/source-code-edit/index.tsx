@@ -182,9 +182,7 @@ export default function SourceCodeEdit(props: any) {
 
     caseInfo.pre_cases = caseInfo.pre_cases || [];
 
-    console.log('caseInfo.pre_cases :>> ', caseInfo.pre_cases);
-
-    let newPreCaseIds = item.data.preCases?.split(',').map((id: string) => +id) || [];
+    let newPreCaseIds = (item.data.preCases.length && item.data.preCases?.split(',').map((id: string) => +id)) || [];
     newPreCaseIds = newPreCaseIds.filter((id: number) => !caseInfo.pre_cases.includes(id));
     caseInfo.pre_cases.push(...[...newPreCaseIds, item.data.caseId]);
 

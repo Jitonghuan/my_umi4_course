@@ -52,7 +52,7 @@ export default function CaseTable(props: CaseTableFieldProps) {
     // 选中后再调详情接口获取接口详情信息，并 push 到列表中
     const nextValue = props.value?.slice(0) || [];
 
-    let newPreCaseIds = item.data.preCases?.split(',').map((id: string) => +id) || [];
+    let newPreCaseIds = (item.data.preCases.length && item.data.preCases?.split(',').map((id: string) => +id)) || [];
     const alreadyHas = nextValue.map((item) => item.id);
     newPreCaseIds = newPreCaseIds.filter((id: number) => !alreadyHas.includes(id));
     const newCases = await getCaseListByIds([...newPreCaseIds, item.data.caseId]);
