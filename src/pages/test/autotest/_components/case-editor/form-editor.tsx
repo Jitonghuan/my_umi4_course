@@ -274,7 +274,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
               <FuncTableField title="前置脚本" />
             </FormItem>
             <FormItem noStyle name="beforeCases">
-              <CaseTableField title="前置用例" />
+              <CaseTableField title="前置用例" selectedItem={props.selectedItem} />
             </FormItem>
             <FormItem noStyle name="afterFuncs">
               <FuncTableField title="后置脚本" />

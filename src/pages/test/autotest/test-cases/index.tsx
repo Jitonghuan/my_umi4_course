@@ -14,6 +14,7 @@ import { useLeftTreeData } from './hooks';
 import './index.less';
 
 export default function TestCaseManager() {
+  const [selectedItem, setSelectedItem] = useState<TreeNode>();
   const [current, setCurrent] = useState<TreeNode>();
   const [editorData, setEditorData] = useState<CaseItemVO>();
   const [caseEditorMode, setCaseEditorMode] = useState<EditorMode>('HIDE');
@@ -51,6 +52,8 @@ export default function TestCaseManager() {
   return (
     <CardRowGroup>
       <LeftTree
+        selectedItem={selectedItem}
+        setSelectedItem={setSelectedItem}
         onItemClick={(item) => setCurrent(item)}
         searchProject={searchProject}
         setSearchProject={setSearchProject}
@@ -61,6 +64,7 @@ export default function TestCaseManager() {
       />
       <RightDetail key={current?.key || 1} current={current} emitter={emitter} apiTreeData={treeData} />
       <CaseEditor
+        selectedItem={selectedItem}
         mode={caseEditorMode}
         initData={editorData}
         current={current}

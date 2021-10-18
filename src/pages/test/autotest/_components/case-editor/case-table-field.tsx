@@ -2,13 +2,13 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/06 15:09
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Popover, Collapse, Empty, message, Select, Table } from 'antd';
 import { getRequest } from '@/utils/request';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import DebounceSelect from '@/components/debounce-select';
 import * as APIS from '../../service';
-import { CaseItemVO, PreCaseItemProps } from '../../interfaces';
+import { CaseItemVO, PreCaseItemProps, TreeNode } from '../../interfaces';
 import { getCaseListByIds } from './common';
 import { useProjectOptions } from '../../hooks';
 import './index.less';
@@ -19,12 +19,17 @@ export interface CaseTableFieldProps {
   title?: React.ReactNode;
   value?: CaseTableValueProps[];
   onChange?: (next: CaseTableValueProps[]) => any;
+  selectedItem: TreeNode;
 }
 
 export default function CaseTable(props: CaseTableFieldProps) {
   const [popVisible, setPopVisible] = useState(false);
   const [projectOptions] = useProjectOptions();
   const [projectId, setProjectId] = useState<any>();
+
+  useEffect(() => {
+    setProjectId(props.selectedItem.bizId);
+  }, [popVisible]);
 
   const loadOptions = async (keyword: string) => {
     if (!keyword) return [];
@@ -47,17 +52,12 @@ export default function CaseTable(props: CaseTableFieldProps) {
     // 选中后再调详情接口获取接口详情信息，并 push 到列表中
     const nextValue = props.value?.slice(0) || [];
 
-    if (nextValue.find((n) => n.id === item.data?.caseId)) {
-      return message.warn('此用例已选择!');
-    }
-
-    let newPreCaseIds = [...(item.data.preCases?.split(',').map((id: string) => +id) || []), item.data.caseId];
+    let newPreCaseIds = item.data.preCases?.split(',').map((id: string) => +id) || [];
     const alreadyHas = nextValue.map((item) => item.id);
-    newPreCaseIds = newPreCaseIds.filter((id) => !alreadyHas.includes(id));
-
-    const newCases = await getCaseListByIds(newPreCaseIds);
-
+    newPreCaseIds = newPreCaseIds.filter((id: number) => !alreadyHas.includes(id));
+    const newCases = await getCaseListByIds([...newPreCaseIds, item.data.caseId]);
     nextValue.push(...newCases.map((item) => ({ ...item, ...item.data })));
+
     props.onChange?.(nextValue);
     setPopVisible(false);
   };

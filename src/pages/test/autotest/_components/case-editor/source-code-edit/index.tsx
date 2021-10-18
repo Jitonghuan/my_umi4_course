@@ -6,6 +6,7 @@ import * as APIS from '../../../service';
 import * as HOOKS from '../../../hooks';
 import DebounceSelect from '@/components/debounce-select';
 import YmlDebug from '../../yml-debug';
+import { getCaseListByIds } from '../common';
 import { Button, Input, Table, ConfigProvider, Space, Empty, Select, message } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
@@ -13,7 +14,7 @@ import './index.less';
 
 export default function SourceCodeEdit(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const { data, editorValue, setEditorValue } = props;
+  const { data, editorValue, setEditorValue, selectedItem } = props;
 
   const [editStatus, setEditStatus] = useState<'success' | 'error' | 'warning' | 'default'>();
   const [debugModalVisible, setDebugModalVisible] = useState<boolean>(false);
@@ -28,6 +29,10 @@ export default function SourceCodeEdit(props: any) {
 
   const [projectOptions] = HOOKS.useProjectOptions();
   const [projectId, setProjectId] = useState<any>();
+
+  useEffect(() => {
+    setProjectId(selectedItem.bizId);
+  }, [selectedItem]);
 
   useEffect(() => {
     let JsonData;
@@ -167,20 +172,20 @@ export default function SourceCodeEdit(props: any) {
   };
 
   const beforeCaseHandleSelect = async (_: any, item: any) => {
-    let caseInfo;
+    let caseInfo: any;
     try {
       caseInfo = YAML.parse(editorValue);
     } catch (e) {
       message.warning('源码格式不正确！');
       return;
     }
-    const newCase = item.value;
-    if (caseInfo.pre_cases) {
-      if (caseInfo.pre_cases.includes(newCase)) return;
-      caseInfo.pre_cases.push(newCase);
-    } else {
-      caseInfo.pre_cases = [newCase];
-    }
+
+    caseInfo.pre_cases = caseInfo.pre_cases || [];
+
+    let newPreCaseIds = item.data.preCases?.split(',').map((id: string) => +id || []);
+    newPreCaseIds = newPreCaseIds.filter((id: number) => caseInfo.pre_cases.includes(id));
+    caseInfo.pre_cases.push(...[...newPreCaseIds, item.data.caseId]);
+
     setEditorValue(YAML.stringify(caseInfo));
     setPreCases(caseInfo.pre_cases);
   };
