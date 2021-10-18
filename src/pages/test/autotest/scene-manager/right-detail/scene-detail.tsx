@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/30 20:48
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Button, Table, Popover, Popconfirm, Tooltip, Modal, Select } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import DebounceSelect from '@/components/debounce-select';
@@ -20,6 +20,7 @@ export interface SceneDetailProps extends Record<string, any> {
   emitter: Emitter;
   /** 当前选中的节点 */
   current?: TreeNode;
+  defaultProjectId: React.Key;
 }
 
 export default function SceneDetail(props: SceneDetailProps) {
@@ -31,6 +32,10 @@ export default function SceneDetail(props: SceneDetailProps) {
 
   const [projectOptions] = useProjectOptions();
   const [projectId, setProjectId] = useState<any>();
+
+  useEffect(() => {
+    setProjectId(props.defaultProjectId);
+  }, [props.defaultProjectId]);
 
   // 加载数据
   const loadOptions = async (keyword: string) => {
