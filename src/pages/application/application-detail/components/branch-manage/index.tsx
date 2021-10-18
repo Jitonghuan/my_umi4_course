@@ -67,6 +67,7 @@ export default function BranchManage() {
         queryBranchList();
       } else {
         message.error(reslut.errorMsg);
+        queryBranchList();
       }
     });
   };
