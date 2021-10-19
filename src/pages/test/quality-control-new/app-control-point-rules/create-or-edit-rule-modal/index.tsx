@@ -27,6 +27,7 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
   const [appCategoryOptions] = HOOKS.useAppCategoryOptions();
 
   const [appCodeOptions, setAppCodeOptions] = useState<IOption[]>();
+  const [globalConf] = HOOKS.useGlobalConf();
 
   useEffect(() => {
     if (ruleModalType === 'view') {
@@ -44,6 +45,12 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
       });
     }
   }, [ruleId, ruleModalType]);
+
+  useEffect(() => {
+    if (visible && isCreate) {
+      form.setFieldsValue({ utSwitch: 0, sonarSwitch: 1 });
+    }
+  }, [visible, isCreate]);
 
   const getAppCodeByCategory = (value: any) => {
     getRequest(APIS.getAppInfoList, { data: { appCategoryCode: value } }).then((res) => {
@@ -115,7 +122,7 @@ export default function CreateOrEditRuleModal(props: ICreateOrEditRuleModal) {
           <Select options={appCodeOptions} disabled={ruleModalType !== 'add'} />
         </Form.Item>
       </Form>
-      <ConfigurePointRulesForm form={form} isEdit={isEdit} />
+      <ConfigurePointRulesForm form={form} isEdit={isEdit} globalConf={globalConf} />
     </Modal>
   );
 }

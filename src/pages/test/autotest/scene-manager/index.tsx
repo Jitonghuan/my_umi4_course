@@ -12,6 +12,7 @@ import './index.less';
 
 export default function SceneManager() {
   const [current, setCurrent] = useState<TreeNode>();
+  const [searchProject, setSearchProject] = useState<number>();
 
   const emitter = useMemo(() => {
     return new Emitter();
@@ -19,8 +20,13 @@ export default function SceneManager() {
 
   return (
     <CardRowGroup className="page-autotest-scene">
-      <LeftTree emitter={emitter} onItemClick={(item) => setCurrent(item)} />
-      <RightDetail key={current?.key || 1} current={current} emitter={emitter} />
+      <LeftTree
+        emitter={emitter}
+        onItemClick={(item) => setCurrent(item)}
+        searchProject={searchProject}
+        setSearchProject={setSearchProject}
+      />
+      <RightDetail key={current?.key || 1} current={current} emitter={emitter} curProjectId={searchProject} />
     </CardRowGroup>
   );
 }

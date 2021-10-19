@@ -41,9 +41,9 @@ type nodeAction =
 export default function LeftTree(props: LeftTreeProps) {
   const { searchProject, setSearchProject, treeData, treeLoading, setTreeData, reloadTreeData } = props;
   const [projectOptions, setProjectOptions, reloadProjectOptions] = useProjectOptions();
-  const [selectedItem, setSelectedItem] = useState<TreeNode>();
   // 当前操作的节点（或者触发节点）
   const targetNodeRef = useRef<TreeNode>();
+  const [selectedItem, setSelectedItem] = useState<TreeNode>();
   const [projectEditorMode, setProjectEditorMode] = useState<EditorMode>('HIDE');
   const [moduleEditorMode, setModuleEditoraMode] = useState<EditorMode>('HIDE');
   const [apiEditorMode, setApiEditorMode] = useState<EditorMode>('HIDE');

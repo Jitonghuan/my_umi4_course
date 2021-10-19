@@ -61,6 +61,7 @@ export default function TestCaseManager() {
       />
       <RightDetail key={current?.key || 1} current={current} emitter={emitter} apiTreeData={treeData} />
       <CaseEditor
+        defaultProjectId={searchProject}
         mode={caseEditorMode}
         initData={editorData}
         current={current}

@@ -2,8 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/30 20:48
 
-import React, { useState, useContext } from 'react';
-import { Button, Table, Popover, Popconfirm, Tooltip, Modal } from 'antd';
+import React, { useState, useContext, useEffect } from 'react';
+import { Button, Table, Popover, Popconfirm, Tooltip, Modal, Select } from 'antd';
 import FELayout from '@cffe/vc-layout';
 import DebounceSelect from '@/components/debounce-select';
 import type Emitter from 'events';
@@ -14,11 +14,13 @@ import { useCaseListByScene } from '../../hooks';
 import CaseEditor from '../../_components/case-editor';
 import { TreeNode, CaseItemVO } from '../../interfaces';
 import SceneExec from '../../_components/scene-exec';
+import { useProjectOptions } from '../../hooks';
 
 export interface SceneDetailProps extends Record<string, any> {
   emitter: Emitter;
   /** 当前选中的节点 */
   current?: TreeNode;
+  defaultProjectId: React.Key;
 }
 
 export default function SceneDetail(props: SceneDetailProps) {
@@ -28,12 +30,20 @@ export default function SceneDetail(props: SceneDetailProps) {
   const [detailData, setDetailData] = useState<CaseItemVO>();
   const [targetExecNode, setTargetExecNode] = useState<TreeNode>();
 
+  const [projectOptions] = useProjectOptions();
+  const [projectId, setProjectId] = useState<any>();
+
+  useEffect(() => {
+    setProjectId(props.defaultProjectId);
+  }, [props.defaultProjectId]);
+
   // 加载数据
   const loadOptions = async (keyword: string) => {
     if (!keyword) return [];
 
     const result = await getRequest(APIS.getPreCaseList, {
       data: {
+        projectId,
         keyword: keyword?.trim() || '',
       },
     });
@@ -134,15 +144,18 @@ export default function SceneDetail(props: SceneDetailProps) {
           onVisibleChange={(n) => setPopVisible(n)}
           trigger={['click']}
           content={
-            <DebounceSelect
-              fetchOnMount
-              fetchOptions={loadOptions}
-              onSelect={handleSelect}
-              style={{ width: '100%' }}
-              autoFocus
-              suffixIcon={null}
-              placeholder="输入用例名搜索"
-            />
+            <div style={{ display: 'flex' }}>
+              <Select style={{ width: '20%' }} options={projectOptions} onSelect={setProjectId} value={projectId} />
+              <DebounceSelect
+                fetchOnMount
+                fetchOptions={loadOptions}
+                onSelect={handleSelect}
+                style={{ width: '80%' }}
+                autoFocus
+                suffixIcon={null}
+                placeholder="输入用例名搜索"
+              />
+            </div>
           }
           placement="bottomLeft"
           overlayInnerStyle={{ width: 600 }}

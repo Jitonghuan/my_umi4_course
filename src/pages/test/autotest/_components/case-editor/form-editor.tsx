@@ -86,6 +86,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
   const handleSubmit = async () => {
     setSubmitLoading(true);
     const values = await props.field.validateFields().catch((error) => {
+      setSubmitLoading(false);
       const info = error.errorFields
         ?.map((n: any) => n.errors)
         .flat()
@@ -274,7 +275,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
               <FuncTableField title="前置脚本" />
             </FormItem>
             <FormItem noStyle name="beforeCases">
-              <CaseTableField title="前置用例" />
+              <CaseTableField title="前置用例" defaultProjectId={props.defaultProjectId} />
             </FormItem>
             <FormItem noStyle name="afterFuncs">
               <FuncTableField title="后置脚本" />

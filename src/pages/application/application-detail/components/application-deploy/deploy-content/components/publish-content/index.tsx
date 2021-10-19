@@ -50,7 +50,7 @@ export default function PublishContent(props: IProps) {
   const STATUS_TYPE: Record<number, reviewStatusTypeItem> = {
     1: { text: '未创建', color: 'default' },
     2: { text: '审核中', color: 'blue' },
-    3: { text: '已关闭', color: 'yellow' },
+    3: { text: '已关闭', color: 'orange' },
     4: { text: '未通过', color: 'red' },
     5: { text: '已删除', color: 'gray' },
     6: { text: '已通过', color: 'green' },
@@ -174,7 +174,7 @@ export default function PublishContent(props: IProps) {
         <Table.Column dataIndex="desc" title="变更原因" />
         <Table.Column
           dataIndex="status"
-          title="review状态"
+          title="分支review状态"
           render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
         />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />

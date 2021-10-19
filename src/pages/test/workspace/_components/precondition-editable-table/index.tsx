@@ -133,8 +133,11 @@ const DragSortingTable: React.FC<IEditableTable> = (props) => {
   };
 
   const PreWrapDiv = (props: any) => {
+    console.log('props :>> ', props);
     return <div style={{ whiteSpace: 'pre-wrap' }}>{props.render?.(props.value) || props.value}</div>;
   };
+
+  console.log('value :>> ', value);
 
   return (
     <>

@@ -135,10 +135,21 @@ export default function CaseEditor(props: CaseEditorProps) {
         <Tabs.TabPane tab="源码模式" key="source-mode" />
       </Tabs>
       {activeKey === 'form-mode' && (
-        <CaseFormEditor {...props} field={editField} paramType={paramType} onParamTypeChange={(n) => setParamType(n)} />
+        <CaseFormEditor
+          {...props}
+          field={editField}
+          paramType={paramType}
+          onParamTypeChange={(n) => setParamType(n)}
+          defaultProjectId={props.defaultProjectId}
+        />
       )}
       {activeKey === 'source-mode' && (
-        <SourceCodeEdit {...props} editorValue={editorValue} setEditorValue={setEditorValue} />
+        <SourceCodeEdit
+          {...props}
+          editorValue={editorValue}
+          setEditorValue={setEditorValue}
+          defaultProjectId={props.defaultProjectId}
+        />
       )}
     </Drawer>
   );

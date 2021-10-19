@@ -67,13 +67,14 @@ export default function BranchManage() {
         queryBranchList();
       } else {
         message.error(reslut.errorMsg);
+        queryBranchList();
       }
     });
   };
 
   const reviewUrl = (reviewId: string, record: any) => {
     return (
-      <a href={'http://upsource.cfuture.shop/workflow-runtime/review/' + reviewId} target="_blank">
+      <a href={'http://upsource.cfuture.shop/' + appCode + '/review/' + reviewId} target="_blank">
         {reviewId}
       </a>
     );
@@ -99,7 +100,7 @@ export default function BranchManage() {
         scroll={{ y: window.innerHeight - 330 }}
       >
         <Table.Column title="ID" dataIndex="id" width={80} />
-        <Table.Column title="应用code" dataIndex="appCode" width={100} />
+        <Table.Column title="应用code" dataIndex="appCode" width={200} />
         <Table.Column title="分支名" dataIndex="branchName" width={400} />
         <Table.Column title="描述" dataIndex="desc" width={200} />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />

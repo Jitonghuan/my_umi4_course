@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Input, Radio } from 'antd';
+import { Form, Table, Input, Radio, Tag } from 'antd';
 import './index.less';
 
 const pointRulesTableDescribe = [
@@ -13,6 +13,7 @@ const pointRulesTableDescribe = [
     key: 2,
     title: '单元测试',
     name: 'utSwitch',
+    defaultValue: false,
     children: [
       {
         key: 3,
@@ -42,6 +43,7 @@ const pointRulesTableDescribe = [
     key: 6,
     title: '代码扫描',
     name: 'sonarSwitch',
+    defaultValue: true,
     children: [
       {
         key: 7,
@@ -83,7 +85,23 @@ const pointRulesTableDescribe = [
   },
 ];
 export default function ConfigurePointRulesContent(props: any) {
-  const { isEdit, form, isGlobal = false } = props;
+  const { isEdit, form, isGlobal = false, globalConf } = props;
+
+  const ReadOnlySwitch = (props: any) => {
+    if (props.value === 0) return <Tag color="default">关闭</Tag>;
+    return <Tag color="success">开启</Tag>;
+  };
+
+  const handleSwitch = (e: any, fieldName: string) => {
+    const nextValue = e.target.value;
+    if (nextValue === 1) return;
+
+    const formData = form.getFieldsValue();
+    const trueCnt = formData.utSwitch + formData.sonarSwitch;
+    if (trueCnt === 0) {
+      form.setFieldsValue({ [fieldName]: 1 });
+    }
+  };
 
   return (
     <Form form={form} className="configure-point-rules-form">
@@ -97,15 +115,20 @@ export default function ConfigurePointRulesContent(props: any) {
                 <div>
                   {title}{' '}
                   <Form.Item name={record.name} noStyle>
-                    <Radio.Group
-                      options={[
-                        { label: '开启', value: 1 },
-                        { label: '关闭', value: 0 },
-                      ]}
-                      optionType="button"
-                      buttonStyle="solid"
-                      disabled={!isEdit}
-                    />
+                    {isEdit ? (
+                      <Radio.Group
+                        options={[
+                          { label: '开启', value: 1 },
+                          { label: '关闭', value: 0 },
+                        ]}
+                        optionType="button"
+                        buttonStyle="solid"
+                        disabled={!isEdit}
+                        onChange={(e) => handleSwitch(e, record.name)}
+                      />
+                    ) : (
+                      <ReadOnlySwitch />
+                    )}
                   </Form.Item>
                 </div>
               );
@@ -159,7 +182,12 @@ export default function ConfigurePointRulesContent(props: any) {
                   <>
                     {' '}
                     {record.ruleStr}{' '}
-                    <Input style={{ width: record.width || '60px' }} disabled addonAfter={record.addonAfter} />
+                    <Input
+                      style={{ width: record.width || '60px' }}
+                      disabled
+                      addonAfter={record.addonAfter}
+                      value={globalConf[record.name]}
+                    />
                   </>
                 );
             }}

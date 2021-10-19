@@ -23,6 +23,7 @@ export default function AppControlPointRules(props: any) {
 
   const handleCreateRule = () => {
     setRuleModalType('add');
+    setRuleId(undefined);
     setCreateOrEditRuleModalVisible(true);
   };
 
