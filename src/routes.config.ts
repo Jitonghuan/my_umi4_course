@@ -367,6 +367,7 @@ export default [
     path: 'test',
     name: '测试管理',
     icon: 'icon-poc_mining',
+    hideInMenu: true,
     routes: [
       {
         path: 'data-factory',
