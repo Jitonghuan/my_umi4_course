@@ -3,7 +3,7 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, message, Modal } from 'antd';
+import { Form, Input, Select, Button, Table, Space, message, Modal, Radio } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';
@@ -11,7 +11,7 @@ import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 
-export default function Push(porps: any) {
+export default function Push(props: any) {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -19,31 +19,72 @@ export default function Push(porps: any) {
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [categoryCode, setCategoryCode] = useState<any[]>([]); //应用CODE
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
-  const [appCodes, setAppCodes] = useState<string>(); //应用Code获取到的值
   const [envCodes, setEnvCodes] = useState<string[]>([]); //环境CODE获取到的值
   const [formTmpl] = Form.useForm();
   const [formTmplQuery] = Form.useForm();
+  const [tmplDetailForm] = Form.useForm();
   const [selectList, setSelectList] = useState<any[]>([]);
   const [pageTotal, setPageTotal] = useState<number>();
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
+  const [tmplDetailOptions, setTmplDetailOptions] = useState<any[]>([]);
+
+  //通过session缓存信息
+  let tmplDetailData = JSON.parse(sessionStorage.getItem('tmplDetailData'));
+
+  //处理通过session传递过来的可配置项信息和jvm参数信息
+  let tmplItemarry: any = [];
+  let jvm = '';
+
+  if (tmplDetailData.templateType === 'deployment') {
+    for (const key in tmplDetailData?.tmplConfigurableItem) {
+      if (key === 'jvm') {
+        jvm = tmplDetailData?.tmplConfigurableItem[key];
+      } else {
+        tmplItemarry.push({
+          key: key,
+          value: tmplDetailData?.tmplConfigurableItem[key],
+        });
+      }
+    }
+  }
+
+  // if (!tmplDetailData){
+
+  // }
+  //  let tmplDetailOption=[];
+  let allTmplDetail = [];
+  allTmplDetail.push({ templateValue: tmplDetailData?.templateValue, tmplItem: tmplItemarry, jvm: jvm });
+
+  let allTmplData = []; //全部数据
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
       setSelectedRowKeys(selectedRowKeys);
       setCurrentData(selectedRows);
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`,'selectedRows: ', selectedRows);
     },
   };
-  // console.log('>>>>>>',currentData);
+
   const showModal = () => {
     if (appCategoryCode) {
       setIsModalVisible(true);
     } else {
       message.error('请选择要推送的应用分类');
     }
+
+    //加载默认的下拉选择框，当模版为deployment时，可配置项才可以显示jvm
+    let tmplListdata = [
+      { label: '模版详情', value: '模版详情' },
+      { label: '可配置项', value: '可配置项' },
+      // {label:'jvm参数',value:'jvm参数'},
+      { label: '全部', value: 'all' },
+    ];
+    if (tmplDetailData.templateType === 'deployment') {
+      tmplListdata.unshift({ label: 'jvm参数', value: 'jvm参数' });
+    }
+
+    setTmplDetailOptions(tmplListdata);
   };
 
   const handleCancel = () => {
@@ -55,6 +96,9 @@ export default function Push(porps: any) {
     loadListData({ pageIndex: 1, pageSize: 20 });
     // getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
+
+  // 页面销毁时清空缓存
+  // useEffect(() => () => sessionStorage.removeItem("tmplDetailData"), []);
   // 根据选择的应用分类查询要推送的环境
   const changeAppCategory = (value: any) => {
     setEnvDatas([{ value: '', label: '' }]);
@@ -75,6 +119,7 @@ export default function Push(porps: any) {
       }
     });
   };
+
   //获取环境的值
   const changeEnvCode = (value: any) => {
     setEnvCodes(value);
@@ -82,20 +127,34 @@ export default function Push(porps: any) {
   //推送模版 模版Code 应用分类 环境Code 应用Code
   const handleOk = async () => {
     setIsModalVisible(false);
-    const templateCode = porps.history.location.query.templateCode;
-    const appCodes = currentData.map((item, index) => {
-      return Object.assign(item.appCode);
+    const values = tmplDetailForm.getFieldsValue();
+    console.log('values', values);
+    let pushArry = [];
+    values.pushItem.map((el: any) => {
+      if (el === '模版详情') {
+        pushArry.push(tmplDetailData?.templateValue);
+      } else if (el === '可配置项') {
+        pushArry.push(tmplItemarry);
+      } else if (el === 'jvm') {
+        pushArry.push(jvm);
+      } else if (el === 'all') {
+        pushArry.push(tmplDetailData?.templateValue, tmplItemarry, jvm);
+      }
     });
+    // const templateCode = props.history.location.query.templateCode;
+    // const appCodes = currentData.map((item, index) => {
+    //   return Object.assign(item.appCode);
+    // });
     let getEnvCodes = [...envCodes];
     if (appCategoryCode && envCodes) {
-      await postRequest(APIS.pushTmpl, {
-        data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes },
-      }).then((resp: any) => {
-        if (resp.success) {
-          message.success('推送成功！');
-          window.location.reload();
-        }
-      });
+      // await postRequest(APIS.pushTmpl, {
+      //   data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes },
+      // }).then((resp: any) => {
+      //   if (resp.success) {
+      //     message.success('推送成功！');
+      //     window.location.reload();
+      //   }
+      // });
     } else {
       message.error('请选择要推送的应用分类');
     }
@@ -162,6 +221,54 @@ export default function Push(porps: any) {
       }));
       setCategoryData(list);
     });
+  };
+
+  //选择推送项
+  const selectTmplItem = (values: any) => {
+    if (values.length > 0) {
+      values.map((item: any) => {
+        debugger;
+        if (item === 'all') {
+          tmplDetailForm.setFieldsValue({ pushItem: 'all' });
+          let tmplDetail = [
+            { label: '模版详情', value: '模版详情', disabled: true },
+            { label: '可配置项', value: '可配置项', disabled: true },
+            // {label:'jvm参数',value:'jvm参数',disabled:true},
+            { label: '全部', value: 'all' },
+          ];
+          if (tmplDetailData.templateType === 'deployment') {
+            tmplDetail.unshift({ label: 'jvm参数', value: 'jvm参数', disabled: true });
+          }
+
+          setTmplDetailOptions(tmplDetail);
+        } else {
+          let tmplDetail = [
+            { label: '模版详情', value: '模版详情', disabled: false },
+            { label: '可配置项', value: '可配置项', disabled: false },
+            // {label:'jvm参数',value:'jvm参数',disabled:false},
+
+            { label: '全部', value: 'all' },
+          ];
+          if (tmplDetailData.templateType === 'deployment') {
+            tmplDetail.unshift({ label: 'jvm参数', value: 'jvm参数', disabled: false });
+          }
+          //  tmplDetail.map((item)=>{
+          //    if (item.label!=='all') {
+          //      item.disabled=false
+          //    }
+          //  })
+          setTmplDetailOptions(tmplDetail);
+        }
+      });
+    } else {
+      let tmplDetail = [
+        { label: '模版详情', value: '模版详情', disabled: false },
+        { label: '可配置项', value: '可配置项', disabled: false },
+        { label: 'jvm参数', value: 'jvm参数', disabled: false },
+        { label: '全部', value: 'all' },
+      ];
+      setTmplDetailOptions(tmplDetail);
+    }
   };
 
   const pushTmpls = () => {};
@@ -267,8 +374,24 @@ export default function Push(porps: any) {
               </Form.Item>
             </Space>
           </Form>
-          <Modal title="请选择推送环境" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-            <Form>
+          <Modal
+            title="请选择"
+            visible={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            style={{ height: '600px' }}
+          >
+            <Form layout="inline" form={tmplDetailForm}>
+              <Form.Item label="推送项：" name="pushItem" rules={[{ required: true, message: '这是必选项' }]}>
+                <Select
+                  allowClear
+                  mode="multiple"
+                  style={{ width: 160 }}
+                  placeholder="请选择"
+                  onChange={selectTmplItem}
+                  options={tmplDetailOptions}
+                />
+              </Form.Item>
               <Form.Item label="环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select
                   showSearch
@@ -283,6 +406,8 @@ export default function Push(porps: any) {
               </Form.Item>
             </Form>
           </Modal>
+          {/* visible={pushItemVisible} */}
+          <Modal title="预览推送详情"></Modal>
         </div>
       </ContentCard>
     </PageContainer>

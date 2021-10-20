@@ -36,10 +36,9 @@ export default function Launch() {
   const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
-
+  const [tmplDetailData, setTmplDetailData] = useState<any>(' ');
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
-
   const handleEditTask = useCallback(
     (record: TmplEdit, index: number) => {
       setTmplateData(record);
@@ -319,7 +318,14 @@ export default function Launch() {
                   <a onClick={() => handleEditTask(record, index)}>编辑</a>
                   <a
                     onClick={() => {
-                      history.push(`push?templateCode=${record.templateCode}`);
+                      console.log('tmplDetailData', record);
+                      sessionStorage.setItem('tmplDetailData', JSON.stringify(record || ''));
+                      history.push({
+                        pathname: 'push',
+                        query: {
+                          templateCode: record?.templateCode,
+                        },
+                      });
                     }}
                   >
                     推送

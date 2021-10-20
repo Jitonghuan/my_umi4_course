@@ -40,6 +40,7 @@ export default function ClusterPage(props: any) {
         // dataSource={tableData}
         loading={{ spinning: loading, tip: '正在进行数据比对中，请耐心等待' }}
         pagination={false}
+        scroll={{ y: window.innerHeight - 330 }}
         locale={{
           emptyText: (
             <div className="custom-table-holder">
