@@ -32,7 +32,7 @@ export default function ApplicationDetail(props: IProps) {
     const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
     return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
-
+  console.log('appData.appCategoryCode', appData);
   // 页面销毁时清空缓存
   useEffect(() => () => sessionStorage.removeItem('__init_env_tab__'), []);
 
@@ -46,11 +46,16 @@ export default function ApplicationDetail(props: IProps) {
     const isFrontend = appData.appType === 'frontend';
 
     return Object.keys(tabsConfig).filter((key) => {
-      // 只有 HBOS 才显示 配置管理 和 启动参数
+      // 只有 HBOS、HMOS、健康运营，数据中台可以显示配置管理 和 启动参数
       // if (key === 'configMgr' || key === 'launchParameters')
       if (key === 'configMgr') {
         return (
-          isBackendAndNotClient && (appData.appCategoryCode === 'hbos' || localStorage.getItem('SHOW_CONFIG') === '1')
+          isBackendAndNotClient &&
+          (appData.appCategoryCode === 'hbos' ||
+            appData.appCategoryCode === 'health-operation' ||
+            appData.appCategoryCode === 'hmos' ||
+            appData.appCategoryCode === 'data' ||
+            localStorage.getItem('SHOW_CONFIG') === '1')
         );
       }
       // 二方包 tab

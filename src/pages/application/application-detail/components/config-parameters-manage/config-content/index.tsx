@@ -37,14 +37,25 @@ export default function ConfigContent({ env, configType }: IProps) {
   useEffect(() => {
     try {
       selectAppEnv(appCategoryCode).then((result: any) => {
-        const listEnv = result.data.dataSource?.map((n: any) => ({
+        const dataSources = result.data.dataSource?.map((n: any) => ({
           value: n?.envCode,
           label: n?.envName,
           data: n,
         }));
+        let listEnv: any = [];
+        dataSources.forEach((el: any) => {
+          if (el.value === 'hbos-dev' || el.value === 'hbos-test' || el.value === 'hbos-seenewhospital') {
+            listEnv.push(el);
+          }
+        });
         setEnvDatas(listEnv);
         currentEnvCode = listEnv[0]?.data?.envCode;
         setCurrentEnvData(listEnv[0]?.data?.envCode);
+
+        if (listEnv.length === 0) {
+          return;
+        }
+
         queryVersionData(currentEnvCode); //一进入页面根据默认显示的环境查询的版本信息选项
         //加载环境、版本、版本号默认显示在页面上
         filterFormRef.setFieldsValue({
