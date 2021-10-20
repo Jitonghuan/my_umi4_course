@@ -271,40 +271,40 @@ export default function Push(props: any) {
   };
 
   let selectTmplcontent = [];
-  switch (selectTmplOption) {
-    case 'all':
-      selectTmplcontent = allTmplDetail;
-      break;
-    case 'templateValue':
-      selectTmplcontent.push(tmplDetailData?.templateValue);
-      break;
-    case 'item':
-      selectTmplcontent.push(tmplItemarry);
-      break;
-    case 'jvm':
-      selectTmplcontent.push(jvm);
-      break;
-    case 'jvm' && 'item':
-      selectTmplcontent.push(jvm, tmplItemarry);
-      break;
-    case 'templateValue' && 'item':
-      selectTmplcontent.push(tmplDetailData?.templateValue, tmplItemarry);
-      break;
-    case 'templateValue' && 'jvm':
-      selectTmplcontent.push(tmplDetailData?.templateValue, jvm);
-      break;
-  }
-  // if(selectTmplOption =='all'){
-  //   selectTmplcontent=allTmplDetail
-  // }else if(selectTmplOption=='templateValue'){
-  //   selectTmplcontent.push(tmplDetailData?.templateValue)
-  // }else if(selectTmplOption=='item'){
-  //   selectTmplcontent.push(tmplItemarry)
-  // }else if (selectTmplOption=='jvm'){
-  //   selectTmplcontent.push(jvm)
-  // }else if(selectTmplOption=='jvm'&&selectTmplOption=='item'){
-
+  // switch (selectTmplOption) {
+  //   case 'all':
+  //     selectTmplcontent = allTmplDetail;
+  //     break;
+  //   case 'templateValue':
+  //     selectTmplcontent.push(tmplDetailData?.templateValue);
+  //     break;
+  //   case 'item':
+  //     selectTmplcontent.push(tmplItemarry);
+  //     break;
+  //   case 'jvm':
+  //     selectTmplcontent.push(jvm);
+  //     break;
+  //   case 'jvm' && 'item':
+  //     selectTmplcontent.push(jvm, tmplItemarry);
+  //     break;
+  //   case 'templateValue' && 'item':
+  //     selectTmplcontent.push(tmplDetailData?.templateValue, tmplItemarry);
+  //     break;
+  //   case 'templateValue' && 'jvm':
+  //     selectTmplcontent.push(tmplDetailData?.templateValue, jvm);
+  //     break;
   // }
+  console.log('selectTmplOption', selectTmplOption);
+  if (selectTmplOption == 'all') {
+    selectTmplcontent = allTmplDetail;
+  } else if (selectTmplOption == 'templateValue') {
+    selectTmplcontent.push(tmplDetailData?.templateValue);
+  } else if (selectTmplOption == 'item') {
+    selectTmplcontent.push(tmplItemarry);
+  } else if (selectTmplOption == 'jvm') {
+    selectTmplcontent.push(jvm);
+  } else if (selectTmplOption == 'jvm' && selectTmplOption == 'item') {
+  }
   const pushTmpls = () => {};
 
   const handleVisibleChange = (visible: any) => {
