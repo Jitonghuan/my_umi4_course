@@ -46,7 +46,7 @@ export default function ApplicationDetail(props: IProps) {
     const isFrontend = appData.appType === 'frontend';
 
     return Object.keys(tabsConfig).filter((key) => {
-      // 只有 HBOS 才显示 配置管理 和 启动参数
+      // 只有 HBOS、HMOS、健康运营，数据中台可以显示配置管理 和 启动参数
       // if (key === 'configMgr' || key === 'launchParameters')
       if (key === 'configMgr') {
         return (
