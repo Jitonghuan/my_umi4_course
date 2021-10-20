@@ -12,6 +12,9 @@ export const getRanking = addAPIPrefix('/qc/codeQuality/ranking');
 /** GET 获取应用服务最近一段时间的指标趋势数据 */
 export const getTrend = addAPIPrefix('qc/codeQuality/trend');
 
+/** GET 获取应用信息列表 */
+export const getAppList = addAPIPrefix('/qc/matrix/app/list');
+
 /** GET 获取任务列表 */
 export const getTaskList = addAPIPrefix('qc/codeQuality/task/list');
 

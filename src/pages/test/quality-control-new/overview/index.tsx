@@ -3,12 +3,13 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import { Select } from 'antd';
-import { getRanking } from '../service';
 import { getRequest } from '@/utils/request';
 import LineChart from './line-chart';
 import RankList from './rank-list';
 import * as HOOKS from '../hooks';
 import './index.less';
+import { SelectValue } from 'antd/lib/select';
+import * as APIS from '../service';
 
 const rankListTmp = [
   {
@@ -64,17 +65,239 @@ const lineChartTmp = [
   },
 ];
 
+const dataDemo = {
+  qualityPoints: {
+    data: [
+      {
+        name: '邮件营销',
+        type: 'line',
+        data: [120, 132, 101, 134, 90, 230, 210],
+      },
+      {
+        name: '联盟广告',
+        type: 'line',
+        data: [220, 182, 191, 234, 290, 330, 310],
+      },
+      {
+        name: '视频广告',
+        type: 'line',
+        data: [150, 232, 201, 154, 190, 330, 410],
+      },
+      {
+        name: '直接访问',
+        type: 'line',
+        data: [320, 332, 301, 334, 390, 330, 320],
+      },
+      {
+        name: '搜索引擎',
+        type: 'line',
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+      },
+    ],
+    xAxis: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+  },
+  codeLines: {
+    data: [
+      {
+        name: '邮件营销',
+        type: 'line',
+        data: [120, 132, 101, 134, 90, 230, 210],
+      },
+      {
+        name: '联盟广告',
+        type: 'line',
+        data: [220, 182, 191, 234, 290, 330, 310],
+      },
+      {
+        name: '视频广告',
+        type: 'line',
+        data: [150, 232, 201, 154, 190, 330, 410],
+      },
+      {
+        name: '直接访问',
+        type: 'line',
+        data: [320, 332, 301, 334, 390, 330, 320],
+      },
+      {
+        name: '搜索引擎',
+        type: 'line',
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+      },
+    ],
+    xAxis: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+  },
+  codeBugs: {
+    data: [
+      {
+        name: '邮件营销',
+        type: 'line',
+        data: [120, 132, 101, 134, 90, 230, 210],
+      },
+      {
+        name: '联盟广告',
+        type: 'line',
+        data: [220, 182, 191, 234, 290, 330, 310],
+      },
+      {
+        name: '视频广告',
+        type: 'line',
+        data: [150, 232, 201, 154, 190, 330, 410],
+      },
+      {
+        name: '直接访问',
+        type: 'line',
+        data: [320, 332, 301, 334, 390, 330, 320],
+      },
+      {
+        name: '搜索引擎',
+        type: 'line',
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+      },
+    ],
+    xAxis: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+  },
+  utPassRate: {
+    data: [
+      {
+        name: '邮件营销',
+        type: 'line',
+        data: [120, 132, 101, 134, 90, 230, 210],
+      },
+      {
+        name: '联盟广告',
+        type: 'line',
+        data: [220, 182, 191, 234, 290, 330, 310],
+      },
+      {
+        name: '视频广告',
+        type: 'line',
+        data: [150, 232, 201, 154, 190, 330, 410],
+      },
+      {
+        name: '直接访问',
+        type: 'line',
+        data: [320, 332, 301, 334, 390, 330, 320],
+      },
+      {
+        name: '搜索引擎',
+        type: 'line',
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+      },
+    ],
+    xAxis: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+  },
+  codeDuplicationsRate: {
+    data: [
+      {
+        name: '邮件营销',
+        type: 'line',
+        data: [120, 132, 101, 134, 90, 230, 210],
+      },
+      {
+        name: '联盟广告',
+        type: 'line',
+        data: [220, 182, 191, 234, 290, 330, 310],
+      },
+      {
+        name: '视频广告',
+        type: 'line',
+        data: [150, 232, 201, 154, 190, 330, 410],
+      },
+      {
+        name: '直接访问',
+        type: 'line',
+        data: [320, 332, 301, 334, 390, 330, 320],
+      },
+      {
+        name: '搜索引擎',
+        type: 'line',
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+      },
+    ],
+    xAxis: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+  },
+  utCovRate: {
+    data: [
+      {
+        name: '邮件营销',
+        type: 'line',
+        data: [120, 132, 101, 134, 90, 230, 210],
+      },
+      {
+        name: '联盟广告',
+        type: 'line',
+        data: [220, 182, 191, 234, 290, 330, 310],
+      },
+      {
+        name: '视频广告',
+        type: 'line',
+        data: [150, 232, 201, 154, 190, 330, 410],
+      },
+      {
+        name: '直接访问',
+        type: 'line',
+        data: [320, 332, 301, 334, 390, 330, 320],
+      },
+      {
+        name: '搜索引擎',
+        type: 'line',
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+      },
+    ],
+    xAxis: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+  },
+};
+
 export default function Overview(props: any) {
   const [ranking] = HOOKS.useAllRanking();
   const [allAppServices] = HOOKS.useAllAppServices();
-  const [appTrendMap] = HOOKS.useAppTrendMap();
+  // const [appTrendMap] = HOOKS.useAppTrendMap();
+
+  const [selectedApp, setSelectedApp] = useState<SelectValue>(['ALL']);
+  const [appTrendMap, setAppTrendMap] = useState<any>(dataDemo);
+
+  const getEchartData = () => {
+    console.log('onblur');
+    let appList = selectedApp as any[];
+    appList = appList.length > 0 ? appList : ['ALL'];
+    getRequest(APIS.getTrend, { data: { apps: appList } }).then((res) => {
+      console.log(res);
+      let source = {} as any;
+      Object.keys(dataDemo).map((k) => {
+        console.log(k);
+        source[k] = { data: [], xAxis: [] };
+        source[k]['xAxis'] = [];
+        source[k]['data'] = res.data[k];
+        source[k]['data']['type'] = 'line';
+        res.data[k].length > 0
+          ? res.data[k].map((item: any) => {
+              item['type'] = 'line';
+            })
+          : null;
+        source[k]['xAxis'] = res.data[k].length > 0 ? res.data[k][0].xAxis : [];
+      });
+      setAppTrendMap(source);
+    });
+  };
 
   return (
     <PageContainer className="quality-control-overview">
       <HeaderTabs activeKey="overview" history={props.history} />
       <ContentCard>
         <label>
-          应用服务: <Select className="app-service-select" placeholder="请选择" mode="tags" options={allAppServices} />
+          应用服务:
+          <Select
+            className="app-service-select"
+            placeholder="请选择"
+            mode="tags"
+            options={allAppServices}
+            onChange={(value) => {
+              setSelectedApp(value);
+            }}
+            onBlur={() => {
+              getEchartData();
+            }}
+          />
         </label>
         <div className="line-chart-group">
           {lineChartTmp.map((item, index) => (

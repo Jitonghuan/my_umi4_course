@@ -72,17 +72,23 @@ export function useAllRanking() {
 }
 
 export function useAllAppServices() {
-  const [data, setData] = useState<IOption[]>([
-    { label: '测试1', value: 'test1' },
-    { label: '测试2', value: 'test2' },
-    { label: '测试3', value: 'test3' },
-  ]);
+  const [data, setData] = useState<IOption[]>([{ label: '测试1', value: 'test1' }]);
 
-  // useEffect(() => {
-  //   getRequest(APIS.getRanking).then((res) => {
-  //     setData(res.data);
-  //   });
-  // }, []);
+  useEffect(() => {
+    getRequest(APIS.getAppList, { data: { appType: 'backend', appDevelopLanguage: 'java', pageSize: -1 } }).then(
+      (res) => {
+        let source = res.data.dataSource.map((item: any) => {
+          return {
+            // value: `${item.appCategoryCode}/${item.appCode}`,
+            value: `${item.appCode}`,
+            label: `${item.appCategoryCode}/${item.appCode}`,
+            ...item,
+          };
+        });
+        setData(source);
+      },
+    );
+  }, []);
 
   return [data];
 }
