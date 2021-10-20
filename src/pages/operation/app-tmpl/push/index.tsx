@@ -3,7 +3,7 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, message, Modal, Radio } from 'antd';
+import { Form, Input, Select, Button, Table, Space, message, Modal, Popover } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';
@@ -28,7 +28,9 @@ export default function Push(props: any) {
   const [pageTotal, setPageTotal] = useState<number>();
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
+  const [pushItemVisible, setPushItemVisible] = useState(false); //是否显示推送项弹窗
   const [tmplDetailOptions, setTmplDetailOptions] = useState<any[]>([]);
+  const [selectTmplOption, setSelectTmplOption] = useState<any>(); //获取当前选中值显示在推送项弹窗
 
   //通过session缓存信息
   let tmplDetailData = JSON.parse(sessionStorage.getItem('tmplDetailData'));
@@ -37,7 +39,7 @@ export default function Push(props: any) {
   let tmplItemarry: any = [];
   let jvm = '';
 
-  if (tmplDetailData.templateType === 'deployment') {
+  if (tmplDetailData?.templateType === 'deployment') {
     for (const key in tmplDetailData?.tmplConfigurableItem) {
       if (key === 'jvm') {
         jvm = tmplDetailData?.tmplConfigurableItem[key];
@@ -54,7 +56,7 @@ export default function Push(props: any) {
 
   // }
   //  let tmplDetailOption=[];
-  let allTmplDetail = [];
+  let allTmplDetail: any = [];
   allTmplDetail.push({ templateValue: tmplDetailData?.templateValue, tmplItem: tmplItemarry, jvm: jvm });
 
   let allTmplData = []; //全部数据
@@ -75,13 +77,12 @@ export default function Push(props: any) {
 
     //加载默认的下拉选择框，当模版为deployment时，可配置项才可以显示jvm
     let tmplListdata = [
-      { label: '模版详情', value: '模版详情' },
-      { label: '可配置项', value: '可配置项' },
-      // {label:'jvm参数',value:'jvm参数'},
+      { label: '模版详情', value: 'templateValue' },
+      { label: '可配置项', value: 'item' },
       { label: '全部', value: 'all' },
     ];
-    if (tmplDetailData.templateType === 'deployment') {
-      tmplListdata.unshift({ label: 'jvm参数', value: 'jvm参数' });
+    if (tmplDetailData?.templateType === 'deployment') {
+      tmplListdata.unshift({ label: 'jvm参数', value: 'jvm' });
     }
 
     setTmplDetailOptions(tmplListdata);
@@ -98,7 +99,7 @@ export default function Push(props: any) {
   }, []);
 
   // 页面销毁时清空缓存
-  // useEffect(() => () => sessionStorage.removeItem("tmplDetailData"), []);
+  useEffect(() => () => sessionStorage.removeItem('tmplDetailData'), []);
   // 根据选择的应用分类查询要推送的环境
   const changeAppCategory = (value: any) => {
     setEnvDatas([{ value: '', label: '' }]);
@@ -133,8 +134,9 @@ export default function Push(props: any) {
     values.pushItem.map((el: any) => {
       if (el === '模版详情') {
         pushArry.push(tmplDetailData?.templateValue);
+        [''];
       } else if (el === '可配置项') {
-        pushArry.push(tmplItemarry);
+        pushArry.push(tmplItemarry); //[{}]
       } else if (el === 'jvm') {
         pushArry.push(jvm);
       } else if (el === 'all') {
@@ -148,7 +150,7 @@ export default function Push(props: any) {
     let getEnvCodes = [...envCodes];
     if (appCategoryCode && envCodes) {
       // await postRequest(APIS.pushTmpl, {
-      //   data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes },
+      //   data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes,},
       // }).then((resp: any) => {
       //   if (resp.success) {
       //     message.success('推送成功！');
@@ -178,7 +180,6 @@ export default function Push(props: any) {
     })
       .then((res: any) => {
         if (res.success) {
-          // console.log('.......',res.data)
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
@@ -227,51 +228,88 @@ export default function Push(props: any) {
   const selectTmplItem = (values: any) => {
     if (values.length > 0) {
       values.map((item: any) => {
-        debugger;
+        //全选时置灰其他单项选择
         if (item === 'all') {
           tmplDetailForm.setFieldsValue({ pushItem: 'all' });
-          let tmplDetail = [
-            { label: '模版详情', value: '模版详情', disabled: true },
-            { label: '可配置项', value: '可配置项', disabled: true },
-            // {label:'jvm参数',value:'jvm参数',disabled:true},
+          let tmplDetailQuery = [
+            { label: '模版详情', value: 'templateValue', disabled: true },
+            { label: '可配置项', value: 'item', disabled: true },
             { label: '全部', value: 'all' },
           ];
-          if (tmplDetailData.templateType === 'deployment') {
-            tmplDetail.unshift({ label: 'jvm参数', value: 'jvm参数', disabled: true });
+          if (tmplDetailData?.templateType === 'deployment') {
+            tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: true });
           }
-
-          setTmplDetailOptions(tmplDetail);
+          setTmplDetailOptions(tmplDetailQuery);
         } else {
-          let tmplDetail = [
-            { label: '模版详情', value: '模版详情', disabled: false },
-            { label: '可配置项', value: '可配置项', disabled: false },
-            // {label:'jvm参数',value:'jvm参数',disabled:false},
-
+          //不选全选时其他项都可以选
+          let tmplDetailQuery = [
+            { label: '模版详情', value: 'templateValue', disabled: false },
+            { label: '可配置项', value: 'item', disabled: false },
             { label: '全部', value: 'all' },
           ];
-          if (tmplDetailData.templateType === 'deployment') {
-            tmplDetail.unshift({ label: 'jvm参数', value: 'jvm参数', disabled: false });
+          if (tmplDetailData?.templateType === 'deployment') {
+            tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: false });
           }
-          //  tmplDetail.map((item)=>{
-          //    if (item.label!=='all') {
-          //      item.disabled=false
-          //    }
-          //  })
-          setTmplDetailOptions(tmplDetail);
+          setTmplDetailOptions(tmplDetailQuery);
         }
       });
     } else {
-      let tmplDetail = [
-        { label: '模版详情', value: '模版详情', disabled: false },
-        { label: '可配置项', value: '可配置项', disabled: false },
-        { label: 'jvm参数', value: 'jvm参数', disabled: false },
+      let tmplDetailQuery = [
+        { label: '模版详情', value: 'templateValue', disabled: false },
+        { label: '可配置项', value: 'item', disabled: false },
+        // { label: 'jvm参数', value: 'jvm参数', disabled: false },
         { label: '全部', value: 'all' },
       ];
-      setTmplDetailOptions(tmplDetail);
+      if (tmplDetailData?.templateType === 'deployment') {
+        tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: false });
+      }
+      setTmplDetailOptions(tmplDetailQuery);
     }
+
+    setPushItemVisible(true); //展示弹窗
+    setSelectTmplOption(values); //展示所选择的信息
   };
 
+  let selectTmplcontent = [];
+  switch (selectTmplOption) {
+    case 'all':
+      selectTmplcontent = allTmplDetail;
+      break;
+    case 'templateValue':
+      selectTmplcontent.push(tmplDetailData?.templateValue);
+      break;
+    case 'item':
+      selectTmplcontent.push(tmplItemarry);
+      break;
+    case 'jvm':
+      selectTmplcontent.push(jvm);
+      break;
+    case 'jvm' && 'item':
+      selectTmplcontent.push(jvm, tmplItemarry);
+      break;
+    case 'templateValue' && 'item':
+      selectTmplcontent.push(tmplDetailData?.templateValue, tmplItemarry);
+      break;
+    case 'templateValue' && 'jvm':
+      selectTmplcontent.push(tmplDetailData?.templateValue, jvm);
+      break;
+  }
+  // if(selectTmplOption =='all'){
+  //   selectTmplcontent=allTmplDetail
+  // }else if(selectTmplOption=='templateValue'){
+  //   selectTmplcontent.push(tmplDetailData?.templateValue)
+  // }else if(selectTmplOption=='item'){
+  //   selectTmplcontent.push(tmplItemarry)
+  // }else if (selectTmplOption=='jvm'){
+  //   selectTmplcontent.push(jvm)
+  // }else if(selectTmplOption=='jvm'&&selectTmplOption=='item'){
+
+  // }
   const pushTmpls = () => {};
+
+  const handleVisibleChange = (visible: any) => {
+    setPushItemVisible(visible);
+  };
   return (
     <PageContainer>
       <FilterCard>
@@ -406,8 +444,28 @@ export default function Push(props: any) {
               </Form.Item>
             </Form>
           </Modal>
-          {/* visible={pushItemVisible} */}
-          <Modal title="预览推送详情"></Modal>
+
+          <Popover
+            title="查看预览推送项详情"
+            trigger="click"
+            overlayStyle={{ width: 320 }}
+            overlayInnerStyle={{ width: 320 }}
+            visible={pushItemVisible}
+            onVisibleChange={handleVisibleChange}
+            content={
+              <div>
+                <div>{selectTmplcontent} </div>
+                <Button
+                  onClick={() => {
+                    setPushItemVisible(false);
+                  }}
+                  style={{ float: 'right' }}
+                >
+                  关闭
+                </Button>
+              </div>
+            }
+          ></Popover>
         </div>
       </ContentCard>
     </PageContainer>
