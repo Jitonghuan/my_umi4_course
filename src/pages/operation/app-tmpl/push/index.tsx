@@ -10,6 +10,7 @@ import { stringify } from 'qs';
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
+import AceEditor from '@/components/ace-editor';
 import './index.less';
 
 export default function Push(props: any) {
@@ -77,6 +78,7 @@ export default function Push(props: any) {
 
   const showModal = () => {
     if (appCategoryCode) {
+      tmplDetailForm.setFieldsValue('');
       setIsModalVisible(true);
     } else {
       message.error('请选择要推送的应用分类');
@@ -86,7 +88,7 @@ export default function Push(props: any) {
     let tmplListdata = [
       { label: '模版详情', value: 'templateValue' },
       { label: '可配置项', value: 'item' },
-      { label: '全部', value: 'all' },
+      { label: '全部推送', value: 'all' },
     ];
     if (tmplDetailData?.templateType === 'deployment') {
       tmplListdata.unshift({ label: 'jvm参数', value: 'jvm' });
@@ -97,6 +99,7 @@ export default function Push(props: any) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    tmplDetailForm.setFieldsValue('');
   };
   const [dataSource, setDataSource] = useState<any[]>([]);
   useEffect(() => {
@@ -206,7 +209,6 @@ export default function Push(props: any) {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
-
           setPageTotal(pageTotal);
           setDataSource(dataSource);
           setPageIndex(pageIndex);
@@ -257,7 +259,7 @@ export default function Push(props: any) {
           let tmplDetailQuery = [
             { label: '模版详情', value: 'templateValue', disabled: true },
             { label: '可配置项', value: 'item', disabled: true },
-            { label: '全部', value: 'all' },
+            { label: '全部推送', value: 'all' },
           ];
           if (tmplDetailData?.templateType === 'deployment') {
             tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: true });
@@ -268,7 +270,7 @@ export default function Push(props: any) {
           let tmplDetailQuery = [
             { label: '模版详情', value: 'templateValue', disabled: false },
             { label: '可配置项', value: 'item', disabled: false },
-            { label: '全部', value: 'all' },
+            { label: '全部推送', value: 'all' },
           ];
           if (tmplDetailData?.templateType === 'deployment') {
             tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: false });
@@ -281,7 +283,7 @@ export default function Push(props: any) {
         { label: '模版详情', value: 'templateValue', disabled: false },
         { label: '可配置项', value: 'item', disabled: false },
         // { label: 'jvm参数', value: 'jvm参数', disabled: false },
-        { label: '全部', value: 'all' },
+        { label: '全部推送', value: 'all' },
       ];
       if (tmplDetailData?.templateType === 'deployment') {
         tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: false });
@@ -320,6 +322,15 @@ export default function Push(props: any) {
         <Form
           layout="inline"
           form={formTmplQuery}
+          // onValuesChange={
+          //   (value)=>{
+          //     getApplication({
+          //       ...value,
+          //       pageIndex: pageIndex,
+          //       pageSize: pageSize,
+          //     });
+          //   }
+          // }
           onFinish={(values) => {
             getApplication({
               ...values,
@@ -442,7 +453,6 @@ export default function Push(props: any) {
                   mode="multiple"
                   placeholder="请选择"
                   onChange={changeEnvCode}
-                  // defaultValue={['a10', 'c12']}
                   options={envDatas}
                 />
               </Form.Item>
@@ -452,15 +462,20 @@ export default function Push(props: any) {
           <Popover
             title="查看预览推送项详情"
             trigger="click"
-            overlayStyle={{ width: 320 }}
-            overlayInnerStyle={{ width: 320 }}
+            overlayStyle={{ width: 650 }}
+            overlayInnerStyle={{ width: 646 }}
             visible={pushItemVisible}
             onVisibleChange={handleVisibleChange}
             content={
               <div>
-                <div>{selectTmplcontent[0] || ''} </div>
-                <div>{selectTmplcontent[1] || ''} </div>
-                <div>{selectTmplcontent[2] || ''} </div>
+                <AceEditor mode="yaml" height={300} value={selectTmplcontent[0] || ''} />
+                <br />
+                <AceEditor mode="yaml" height={300} value={selectTmplcontent[1] || ''} />
+                <br />
+                <AceEditor mode="yaml" height={100} value={selectTmplcontent[2] || ''} />
+                {/* {/* <div>{selectTmplcontent[0] || ''} </div> */}
+                {/* <div>{selectTmplcontent[1] || ''} </div> */}
+                {/* <div>{selectTmplcontent[2] || ''} </div>  */}
 
                 <Button
                   onClick={() => {
