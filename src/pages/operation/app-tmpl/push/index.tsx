@@ -78,7 +78,10 @@ export default function Push(props: any) {
 
   const showModal = () => {
     if (appCategoryCode) {
-      tmplDetailForm.setFieldsValue('');
+      tmplDetailForm.setFieldsValue({
+        pushItem: undefined,
+        envCodes: undefined,
+      });
       setIsModalVisible(true);
     } else {
       message.error('请选择要推送的应用分类');
@@ -99,7 +102,10 @@ export default function Push(props: any) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    tmplDetailForm.setFieldsValue('');
+    tmplDetailForm.setFieldsValue({
+      pushItem: undefined,
+      envCodes: undefined,
+    });
   };
   const [dataSource, setDataSource] = useState<any[]>([]);
   useEffect(() => {
@@ -462,21 +468,24 @@ export default function Push(props: any) {
           <Popover
             title="查看预览推送项详情"
             trigger="click"
-            overlayStyle={{ width: 650 }}
-            overlayInnerStyle={{ width: 646 }}
+            overlayStyle={{ width: '57%' }}
+            overlayInnerStyle={{ width: '57%' }}
             visible={pushItemVisible}
             onVisibleChange={handleVisibleChange}
             content={
               <div>
-                <AceEditor mode="yaml" height={300} value={selectTmplcontent[0] || ''} />
+                {selectTmplcontent.length >= 1 && (
+                  <AceEditor mode="yaml" height={150} value={selectTmplcontent[0] || ''} />
+                )}
                 <br />
-                <AceEditor mode="yaml" height={300} value={selectTmplcontent[1] || ''} />
+                {selectTmplcontent.length >= 2 && (
+                  <AceEditor mode="yaml" height={150} value={selectTmplcontent[1] || ''} />
+                )}
                 <br />
-                <AceEditor mode="yaml" height={100} value={selectTmplcontent[2] || ''} />
-                {/* {/* <div>{selectTmplcontent[0] || ''} </div> */}
-                {/* <div>{selectTmplcontent[1] || ''} </div> */}
-                {/* <div>{selectTmplcontent[2] || ''} </div>  */}
-
+                {selectTmplcontent.length >= 3 && (
+                  <AceEditor mode="yaml" height={150} value={selectTmplcontent[2] || ''} />
+                )}
+                <br />
                 <Button
                   onClick={() => {
                     setPushItemVisible(false);
