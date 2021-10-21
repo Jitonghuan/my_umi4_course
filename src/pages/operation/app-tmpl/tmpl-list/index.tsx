@@ -318,7 +318,6 @@ export default function Launch() {
                   <a onClick={() => handleEditTask(record, index)}>编辑</a>
                   <a
                     onClick={() => {
-                      console.log('tmplDetailData', record);
                       sessionStorage.setItem('tmplDetailData', JSON.stringify(record || ''));
                       history.push({
                         pathname: 'push',

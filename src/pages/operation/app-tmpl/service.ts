@@ -39,3 +39,6 @@ export const appList = addAPIPrefix('/appManage/list');
 
 //  GET 查看操作日志
 export const logList = addAPIPrefix('/opsManage/opLog/list');
+
+//  GET 分类型推送模版
+export const customPush = addAPIPrefix('/opsManage/appTemplate/customPush');

@@ -10,6 +10,7 @@ import { stringify } from 'qs';
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
+import './index.less';
 
 export default function Push(props: any) {
   const { Option } = Select;
@@ -39,10 +40,14 @@ export default function Push(props: any) {
   let tmplItemarry: any = [];
   let jvm = '';
 
+  let jvmString = ''; //
+  let tmplateDataString = ''; //
+  let tmplItemString = '';
+
   if (tmplDetailData?.templateType === 'deployment') {
     for (const key in tmplDetailData?.tmplConfigurableItem) {
       if (key === 'jvm') {
-        jvm = tmplDetailData?.tmplConfigurableItem[key];
+        jvm = 'jvm：' + tmplDetailData?.tmplConfigurableItem[key];
       } else {
         tmplItemarry.push({
           key: key,
@@ -50,16 +55,18 @@ export default function Push(props: any) {
         });
       }
     }
+  } else {
+    for (const key in tmplDetailData?.tmplConfigurableItem) {
+      tmplItemarry.push({
+        key: key,
+        value: tmplDetailData?.tmplConfigurableItem[key],
+      });
+    }
   }
 
-  // if (!tmplDetailData){
-
-  // }
-  //  let tmplDetailOption=[];
-  let allTmplDetail: any = [];
-  allTmplDetail.push({ templateValue: tmplDetailData?.templateValue, tmplItem: tmplItemarry, jvm: jvm });
-
-  let allTmplData = []; //全部数据
+  tmplItemarry.map((item: any) => {
+    tmplItemString += '可配置项：' + item.key + ':' + item.value;
+  });
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
@@ -125,40 +132,56 @@ export default function Push(props: any) {
   const changeEnvCode = (value: any) => {
     setEnvCodes(value);
   };
-  //推送模版 模版Code 应用分类 环境Code 应用Code
-  const handleOk = async () => {
+  //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
+  const templateCode = props.history.location.query.templateCode;
+  const appCodes = currentData.map((item, index) => {
+    return Object.assign(item.appCode);
+  });
+  let getEnvCodes = [...envCodes];
+  let pushItemArry: any = [];
+  const handleOk = () => {
     setIsModalVisible(false);
     const values = tmplDetailForm.getFieldsValue();
-    console.log('values', values);
-    let pushArry = [];
-    values.pushItem.map((el: any) => {
-      if (el === '模版详情') {
-        pushArry.push(tmplDetailData?.templateValue);
-        [''];
-      } else if (el === '可配置项') {
-        pushArry.push(tmplItemarry); //[{}]
-      } else if (el === 'jvm') {
-        pushArry.push(jvm);
-      } else if (el === 'all') {
-        pushArry.push(tmplDetailData?.templateValue, tmplItemarry, jvm);
+    // 如果选择all时走原来的推送接口
+    if (values?.pushItem === 'all') {
+      if (appCategoryCode && envCodes) {
+        postRequest(APIS.pushTmpl, {
+          data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes },
+        }).then((resp: any) => {
+          if (resp.success) {
+            message.success('推送成功！');
+            window.location.reload();
+          }
+        });
+      } else {
+        message.error('请选择要推送的应用分类');
       }
-    });
-    // const templateCode = props.history.location.query.templateCode;
-    // const appCodes = currentData.map((item, index) => {
-    //   return Object.assign(item.appCode);
-    // });
-    let getEnvCodes = [...envCodes];
-    if (appCategoryCode && envCodes) {
-      // await postRequest(APIS.pushTmpl, {
-      //   data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes,},
-      // }).then((resp: any) => {
-      //   if (resp.success) {
-      //     message.success('推送成功！');
-      //     window.location.reload();
-      //   }
-      // });
     } else {
-      message.error('请选择要推送的应用分类');
+      //如果不是选择all 就把所有选择放入pushItemArry数组中
+      values?.pushItem?.map((el: any) => {
+        pushItemArry.push(el);
+      });
+    }
+    //当不选择all且选择其他时则为长度>0，走新的接口
+    if (pushItemArry.length > 0) {
+      if (appCategoryCode && envCodes) {
+        postRequest(APIS.customPush, {
+          data: {
+            appCategoryCode: appCategoryCode,
+            templateCode,
+            appCodes,
+            envCodes: getEnvCodes,
+            customItems: pushItemArry,
+          },
+        }).then((resp: any) => {
+          if (resp.success) {
+            message.success('推送成功！');
+            window.location.reload();
+          }
+        });
+      } else {
+        message.error('请选择要推送的应用分类');
+      }
     }
   };
 
@@ -270,41 +293,22 @@ export default function Push(props: any) {
     setSelectTmplOption(values); //展示所选择的信息
   };
 
-  let selectTmplcontent = [];
-  // switch (selectTmplOption) {
-  //   case 'all':
-  //     selectTmplcontent = allTmplDetail;
-  //     break;
-  //   case 'templateValue':
-  //     selectTmplcontent.push(tmplDetailData?.templateValue);
-  //     break;
-  //   case 'item':
-  //     selectTmplcontent.push(tmplItemarry);
-  //     break;
-  //   case 'jvm':
-  //     selectTmplcontent.push(jvm);
-  //     break;
-  //   case 'jvm' && 'item':
-  //     selectTmplcontent.push(jvm, tmplItemarry);
-  //     break;
-  //   case 'templateValue' && 'item':
-  //     selectTmplcontent.push(tmplDetailData?.templateValue, tmplItemarry);
-  //     break;
-  //   case 'templateValue' && 'jvm':
-  //     selectTmplcontent.push(tmplDetailData?.templateValue, jvm);
-  //     break;
-  // }
-  console.log('selectTmplOption', selectTmplOption);
-  if (selectTmplOption == 'all') {
-    selectTmplcontent = allTmplDetail;
-  } else if (selectTmplOption == 'templateValue') {
-    selectTmplcontent.push(tmplDetailData?.templateValue);
-  } else if (selectTmplOption == 'item') {
-    selectTmplcontent.push(tmplItemarry);
-  } else if (selectTmplOption == 'jvm') {
-    selectTmplcontent.push(jvm);
-  } else if (selectTmplOption == 'jvm' && selectTmplOption == 'item') {
-  }
+  let selectTmplcontent: any = [];
+  selectTmplOption?.map((item: any) => {
+    if (item == 'all') {
+      selectTmplcontent = [jvm, tmplItemString, '模版详情：' + tmplDetailData?.templateValue];
+    }
+    if (item == 'item') {
+      selectTmplcontent.push(tmplItemString || '');
+    }
+    if (item == 'jvm') {
+      selectTmplcontent.push(jvm);
+    }
+    if (item == 'templateValue') {
+      selectTmplcontent.push('模版详情：' + tmplDetailData?.templateValue);
+    }
+  });
+
   const pushTmpls = () => {};
 
   const handleVisibleChange = (visible: any) => {
@@ -454,12 +458,15 @@ export default function Push(props: any) {
             onVisibleChange={handleVisibleChange}
             content={
               <div>
-                <div>{selectTmplcontent} </div>
+                <div>{selectTmplcontent[0] || ''} </div>
+                <div>{selectTmplcontent[1] || ''} </div>
+                <div>{selectTmplcontent[2] || ''} </div>
+
                 <Button
                   onClick={() => {
                     setPushItemVisible(false);
                   }}
-                  style={{ float: 'right' }}
+                  style={{ position: 'absolute', bottom: 10, right: 0 }}
                 >
                   关闭
                 </Button>
