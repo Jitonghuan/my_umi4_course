@@ -22,23 +22,6 @@ export function useAppCateEnum() {
   return [data];
 }
 
-export function useAppCodeEnum() {
-  const [data, setData] = useState<IOption[]>([]);
-
-  useEffect(() => {
-    getRequest(APIS.getAppCodeList_old).then((result) => {
-      const source = (result.data || []).map((n: any) => ({
-        label: n.categoryCode,
-        value: n.id,
-      }));
-
-      setData(source);
-    });
-  }, []);
-
-  return [data];
-}
-
 export function useAllAppCodeQualityConf(keyword: string): [any[], () => void] {
   const [data, setData] = useState<INTERFACES.IConfig[]>([]);
 

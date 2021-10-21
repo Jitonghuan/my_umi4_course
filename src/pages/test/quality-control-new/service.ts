@@ -39,11 +39,7 @@ export const taskResults = (taskId: Number) => {
 };
 
 /** GET 获取应用分类列表 */
-export const getAppCateList = addAPIPrefix('/qc/others/appCategory/all');
 export const getAppCateList_new = addAPIPrefix('qc/matrix/appCategory/list');
-
-/** GET 获取应用Code列表 */
-export const getAppCodeList_old = addAPIPrefix('/qc/others/app/all');
 
 /** GET 获取应用信息列表 */
 export const getAppInfoList = addAPIPrefix('/qc/matrix/app/list');
