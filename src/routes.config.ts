@@ -88,10 +88,6 @@ export default [
     path: `${baseRoutePath}/test/quality-control-new`,
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
-  {
-    path: `${baseRoutePath}/traffic-map/map-dashboard`,
-    redirect: `${baseRoutePath}/traffic-map/map-dashboard`,
-  },
 
   {
     path: 'demo',
@@ -897,7 +893,7 @@ export default [
       {
         path: 'map-dashboard',
         name: '流量地图',
-        key: 'traffic-map',
+        key: 'map-dashboard',
         component: '@/pages/traffic-map/map-dashboard',
       },
     ],

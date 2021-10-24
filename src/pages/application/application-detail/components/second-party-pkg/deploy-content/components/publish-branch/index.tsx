@@ -86,7 +86,6 @@ export default function PublishBranch(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>待发布的分支</div>
-
       <div className={`${rootCls}__list-wrap`}>
         <div className={`${rootCls}__list-header`}>
           <span className={`${rootCls}__list-header-text`}>分支列表</span>
