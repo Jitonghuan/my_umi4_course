@@ -19,7 +19,14 @@ export default function mapDashboards(props: ChartCaseListProps) {
   }, [data]);
 
   useEffect(() => {}, []);
+  const eventEchart = (echart: any) => {
+    echart.on('click', function (params: any) {
+      //    这里的点击是加到全部的节点上 通过数据里的uuid来判断 是不是当前点击的节点或者判断有没有uuid来判断点的是不是➕号
+      alert('这里是当前的节点的数据打印在控制台');
 
+      console.log(params);
+    });
+  };
   return (
     // style={{ backgroundImage: `url(${backgroundImg})` }}
 
@@ -29,7 +36,7 @@ export default function mapDashboards(props: ChartCaseListProps) {
       </header>
       <div style={{ height: '50rem' }}>
         <ColorContainer roleKeys={['color']}>
-          <EchartsReact option={mapIndexOptions} />
+          <EchartsReact onChartReady={eventEchart} id="mapIndexID" option={mapIndexOptions} />
         </ColorContainer>
       </div>
       <div className="action-groups"></div>
