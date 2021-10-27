@@ -1,6 +1,6 @@
 import React from 'react';
 import { history } from 'umi';
-import { Popconfirm } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
@@ -57,9 +57,20 @@ export const createTableSchema = ({
     {
       title: '应用code',
       dataIndex: 'appCode',
+      width: 180,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (value) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       title: 'git仓库名',
+      width: 320,
+      ellipsis: true,
       dataIndex: 'gitAddress',
       render: (value: string) =>
         value && (
@@ -71,13 +82,13 @@ export const createTableSchema = ({
     {
       title: '应用分类',
       dataIndex: 'appCategoryCode',
-      width: 90,
+      width: 100,
       render: (value) => categoryData?.find((v) => v.categoryCode === value)?.categoryName || '-',
     },
     {
       title: '应用类型',
       dataIndex: 'appType',
-      width: 80,
+      width: 100,
       render: (appType: AppType) => (
         <>
           {APP_TYPE_ICON[appType]}&nbsp;
@@ -94,15 +105,26 @@ export const createTableSchema = ({
     {
       title: '责任人',
       dataIndex: 'owner',
-      width: 100,
+      ellipsis: true,
+      width: 300,
     },
     {
       title: '应用描述',
       dataIndex: 'desc',
+      width: 200,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (value) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       width: 140,
       title: '操作',
+      fixed: 'right',
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
