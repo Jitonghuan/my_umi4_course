@@ -1,5 +1,6 @@
 export const tabsConfig: any = {
   overview: '概述',
+  envManage: '环境管理',
   monitor: '应用监控',
   branch: '分支',
   appDeploy: '应用部署',

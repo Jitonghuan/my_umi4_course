@@ -77,6 +77,10 @@ export default [
     redirect: `${baseRoutePath}/operation/app-tmpl/tmpl-list`,
   },
   {
+    path: `${baseRoutePath}/operation/env-manage`,
+    redirect: `${baseRoutePath}/operation/env-manage/env-list`,
+  },
+  {
     path: `${baseRoutePath}/test/data-factory`,
     redirect: `${baseRoutePath}/test/data-factory/template`,
   },
@@ -166,6 +170,13 @@ export default [
             key: 'appList',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/application-overview',
+          },
+          {
+            path: 'envManage',
+            name: '环境管理',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/application-envManage',
           },
           {
             path: 'monitor',
@@ -830,6 +841,27 @@ export default [
         ],
       },
       {
+        path: 'env-manage',
+        name: '环境管理',
+        key: 'env-manage',
+        routes: [
+          {
+            path: 'env-list',
+            name: '环境列表',
+            key: 'env-manage',
+            component: '@/pages/operation/env-manage/env-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'push-env',
+            name: '推送环境',
+            key: 'env-manage',
+            component: '@/pages/operation/env-manage/push-env',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
         path: 'tmpl-log',
         name: '操作日志',
         key: 'tmpl-log',
@@ -880,21 +912,6 @@ export default [
         key: 'updateAppEdition',
         component: '@/pages/delivery/update-appEdition',
         hideInMenu: true,
-      },
-    ],
-    //测试环境和正式环境暂不展示
-    hideInMenu: process.env.BUILD_ENV === 'prod',
-  },
-  {
-    path: 'traffic-map',
-    name: '流量地图',
-    icon: 'icon-code',
-    routes: [
-      {
-        path: 'map-dashboard',
-        name: '流量地图',
-        key: 'map-dashboard',
-        component: '@/pages/traffic-map/map-dashboard',
       },
     ],
     //测试环境和正式环境暂不展示

@@ -28,3 +28,6 @@ export const queryEnvTypeData = `${appConfig.apiPrefix}/appManage/env/listType`;
 
 /** 获取权限数据 */
 export const queryPermission = `${appConfig.apiPrefix}/rightManage/getUserMenus`;
+
+/** 获取应用环境类型 */
+export const listAppEnvType = `${appConfig.apiPrefix}/appManage/env/listAppEnvType`;

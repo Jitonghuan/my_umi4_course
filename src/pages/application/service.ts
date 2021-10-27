@@ -2,6 +2,21 @@ import { AppItemVO } from './interfaces';
 import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 
+/** 查看应用分类接口 */
+export const appTypeList = `${appConfig.apiPrefix}/appManage/category/list`;
+
+/** 获取应用环境 */
+export const listAppEnv = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
+
+/** 应用绑定环境 */
+export const addAppEnv = `${appConfig.apiPrefix}/appManage/env/addAppEnv`;
+
+/** 应用删除环境 */
+export const delAppEnv = `${appConfig.apiPrefix}/appManage/env/delAppEnv`;
+
+/** 查看环境 */
+export const queryEnvList = `${appConfig.apiPrefix}/appManage/env/list`;
+
 /** 查询应用列表 */
 export const queryAppsUrl = `${appConfig.apiPrefix}/appManage/list`;
 
