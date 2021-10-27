@@ -4,7 +4,7 @@
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import moment from 'moment';
-import { Button, message, Form, Input, Table, Popconfirm } from 'antd';
+import { Button, message, Form, Input, Table, Popconfirm, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -75,18 +75,31 @@ export default function BranchManage() {
         dataSource={tableProps.dataSource}
         pagination={tableProps.pagination}
         loading={tableProps.loading || pending}
-        scroll={{ y: window.innerHeight - 330 }}
+        scroll={{ y: window.innerHeight - 330, x: '100%' }}
       >
         <Table.Column title="ID" dataIndex="id" width={80} />
-        <Table.Column title="应用code" dataIndex="appCode" />
-        <Table.Column title="分支名" dataIndex="branchName" />
-        <Table.Column title="描述" dataIndex="desc" width={200} />
+        <Table.Column title="应用code" dataIndex="appCode" width={300} ellipsis />
+        <Table.Column title="分支名" dataIndex="branchName" width={300} />
+        <Table.Column
+          title="描述"
+          dataIndex="desc"
+          width={200}
+          ellipsis={{
+            showTitle: false,
+          }}
+          render={(value) => (
+            <Tooltip placement="topLeft" title={value}>
+              {value}
+            </Tooltip>
+          )}
+        />
         <Table.Column title="创建时间" dataIndex="gmtCreate" width={160} render={datetimeCellRender} />
-        <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
+        <Table.Column title="已部署环境" dataIndex="deployedEnv" width={180} />
         <Table.Column title="创建人" dataIndex="createUser" width={100} />
         <Table.Column
           title="操作"
           width={100}
+          fixed="right"
           render={(_, record: any, index) => (
             <div className="action-cell">
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
