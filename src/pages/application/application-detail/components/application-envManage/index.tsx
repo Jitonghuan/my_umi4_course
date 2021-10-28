@@ -183,6 +183,9 @@ export default function appEnvPageList() {
             <Form.Item label="环境大类" name="envTypeCode">
               <Select showSearch style={{ width: 150 }} options={envTypeData} />
             </Form.Item>
+            <Form.Item label="默认分类：" name="categoryCode">
+              <Select showSearch style={{ width: 120 }} options={categoryData} />
+            </Form.Item>
             <Form.Item label=" 环境CODE：" name="envCode">
               <Input placeholder="请输入环境CODE"></Input>
             </Form.Item>
@@ -235,11 +238,12 @@ export default function appEnvPageList() {
               <Table.Column title="环境大类" dataIndex="envTypeCode" width={200} />
               <Table.Column title="环境CODE" dataIndex="envCode" ellipsis />
               <Table.Column title="环境名" dataIndex="envName" ellipsis />
+              <Table.Column title="默认分类" dataIndex="categoryCode" width={120} />
               <Table.Column
                 title="是否启用配置管理"
                 dataIndex="useNacos"
                 width={180}
-                render={(_, record, index) => <Switch checked={checkedOption} />}
+                render={(_, record, index) => <Switch checked={checkedOption} disabled={true} />}
               />
             </Table>
           </div>
@@ -295,6 +299,7 @@ export default function appEnvPageList() {
                 }}
               >
                 <PlusOutlined />
+                绑定环境
               </Button>
             </div>
           </Form>

@@ -8,9 +8,10 @@ import { Input, Table, Popconfirm, Form, Button, Select, Switch, message } from 
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { getRequest, delRequest } from '@/utils/request';
+import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddEnvDraw from '../addEnv';
-import { queryEnvList, appTypeList, deleteEnv } from '../service';
+import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
+import appConfig from '@/app.config';
 
 /** 编辑页回显数据 */
 export interface EnvEditData extends Record<string, any> {
@@ -37,8 +38,10 @@ export default function envManageList(props: any) {
   const [addEnvMode, setAddEnvMode] = useState<EditorMode>('HIDE');
   const [EnvForm] = Form.useForm();
   const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
-  const [checkedOption, setCheckedOption] = useState<boolean>();
-  const [isBlockChangeOption, setIsBlockChangeOption] = useState<boolean>();
+  const [checkedOption, setCheckedOption] = useState<number>(0); //是否启用nacos
+  const [nacosChecked, setNacosChecked] = useState<boolean>(false);
+  const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>(0); //是否封网
+  const [isBlockChecked, setIsBlockChecked] = useState<boolean>(false);
   const envTypeData = [
     {
       label: 'DEV',
@@ -110,19 +113,24 @@ export default function envManageList(props: any) {
           setEnvDataSource(result?.data?.dataSource);
           setTotal(pageTotal);
           if (result?.data?.dataSource?.isBlock === 1) {
-            setIsBlockChangeOption(true);
+            setIsBlockChangeOption(1);
+            setIsBlockChecked(true);
           } else {
-            setIsBlockChangeOption(false);
+            setIsBlockChangeOption(0);
+            setIsBlockChecked(false);
           }
           if (result?.data?.dataSource?.useNacos === 1) {
-            setCheckedOption(true);
+            setCheckedOption(1);
+            setNacosChecked(true);
           } else {
-            setCheckedOption(false);
+            setCheckedOption(0);
+            setNacosChecked(false);
           }
         }
       })
       .finally(() => {
         setLoading(false);
+        setPageCurrentIndex(pageIndex);
       });
   };
 
@@ -141,25 +149,80 @@ export default function envManageList(props: any) {
 
   const loadListData = (params: any) => {
     const values = EnvForm.getFieldsValue();
-    console.log('values', values);
     queryEnvData({
       ...values,
       ...params,
     });
+    setPageCurrentIndex(pageIndex);
   };
 
-  //删除数据
+  //删除数据  delRequest(`${appConfig.apiPrefix}/appManage/delete/${params.id}`);
   const handleDelEnv = (record: any) => {
     let id = record.id;
-    delRequest(deleteEnv, { data: { envCode: record.envCode } }).then((res: any) => {
-      if (res.success) {
-        message.success('删除成功！');
-        loadListData({
-          pageIndex: 1,
-          pageSize: 20,
-        });
+    console.log('record', record);
+    delRequest(`${appConfig.apiPrefix}/appManage/env/delete/${record.envCode}`);
+    // message.success('删除成功！');
+    loadListData({
+      pageIndex: 1,
+      pageSize: 20,
+    });
+  };
+
+  let useNacosData: number;
+  let isBlockData: number;
+  const editEnvData = (checked: any, values: any) => {
+    console.log('record====>', values);
+
+    if (values.useNacos === 0) {
+      useNacosData = 1;
+    } else {
+      useNacosData = 0;
+    }
+    if (values.isBlock === 0) {
+      isBlockData = 1;
+    } else {
+      isBlockData = 0;
+    }
+    putRequest(updateEnv, {
+      data: {
+        envCode: values?.envCode,
+        envName: values?.envName,
+        useNacos: useNacosData,
+        isBlock: isBlockData,
+        mark: values?.mark,
+      },
+    }).then((result) => {
+      if (result.success) {
+        message.success('更改成功！');
+      } else {
+        message.error(result.errorMsg);
       }
     });
+  };
+
+  //启用配置管理选择
+  const handleNacosChange = (checked: any, record: any) => {
+    if (checked === 1) {
+      setCheckedOption(1);
+      setNacosChecked(true);
+    } else {
+      setCheckedOption(0);
+      setNacosChecked(false);
+    }
+    editEnvData(checked, record);
+    queryEnvData({ pageIndex: 1, pageSize: 20 });
+  };
+  //是否封网
+  const isBlockChange = (checked: any, record: any) => {
+    if (checked === 1) {
+      setIsBlockChangeOption(1);
+      setIsBlockChecked(true);
+    } else {
+      setIsBlockChangeOption(0);
+      setIsBlockChecked(false);
+    }
+    editEnvData(checked, record);
+    queryEnvData({ pageIndex: 1, pageSize: 20 });
   };
 
   return (
@@ -168,7 +231,12 @@ export default function envManageList(props: any) {
         <AddEnvDraw
           mode={addEnvMode}
           initData={initEnvData}
-          onSave={() => setAddEnvMode('HIDE')}
+          onSave={() => {
+            setAddEnvMode('HIDE');
+            setTimeout(() => {
+              queryEnvData({ pageIndex: 1, pageSize: 20 });
+            }, 100);
+          }}
           onClose={() => setAddEnvMode('HIDE')}
         />
         <div>
@@ -256,13 +324,27 @@ export default function envManageList(props: any) {
               title="启用配置管理"
               dataIndex="useNacos"
               width={80}
-              render={(_, record, index) => <Switch checked={checkedOption} />}
+              render={(value, record, index) => (
+                <Switch
+                  onChange={() => handleNacosChange(value, record)}
+                  checkedChildren="开启"
+                  unCheckedChildren="关闭"
+                  checked={value === 1 ? true : false}
+                />
+              )}
             />
             <Table.Column
               title="封网"
               dataIndex="isBlock"
               width={80}
-              render={(_, record, index) => <Switch checked={isBlockChangeOption} />}
+              render={(value, record, index) => (
+                <Switch
+                  onChange={() => isBlockChange(value, record)}
+                  checkedChildren="开启"
+                  unCheckedChildren="关闭"
+                  checked={value === 1 ? true : false}
+                />
+              )}
             />
             <Table.Column
               title="操作"

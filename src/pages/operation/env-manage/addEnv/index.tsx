@@ -4,11 +4,11 @@
 
 import React from 'react';
 import { history } from 'umi';
-import { getRequest, postRequest } from '@/utils/request';
+import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from 'antd';
 import { EnvEditData } from '../env-list/index';
-import { createEnv, appTypeList } from '../service';
+import { createEnv, appTypeList, updateEnv } from '../service';
 export interface EnvEditorProps {
   mode?: EditorMode;
   initData?: EnvEditData;
@@ -19,10 +19,13 @@ export interface EnvEditorProps {
 export default function addEnvData(props: EnvEditorProps) {
   const [createEnvForm] = Form.useForm();
   const { mode, onClose, onSave, initData } = props;
-  const [checkedOption, setCheckedOption] = useState<number>();
-  const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>();
+  const [checkedOption, setCheckedOption] = useState<number>(0); //是否启用nacos
+  const [nacosChecked, setNacosChecked] = useState<boolean>(false);
+  const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>(0); //是否封网
+  const [isBlockChecked, setIsBlockChecked] = useState<boolean>(false);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [editEnvCode, setEditEnvCode] = useState<boolean>(false);
 
   useEffect(() => {
     selectCategory();
@@ -36,19 +39,24 @@ export default function addEnvData(props: EnvEditorProps) {
     } else {
       setIsDisabled(false);
     }
+    if (mode === 'EDIT') {
+      setEditEnvCode(true);
+    }
     if (initData) {
-      let isBlockCurrent;
-      let useNacosCurrent;
       if (initData?.isBlock === 1) {
-        isBlockCurrent == true;
+        setIsBlockChecked(true);
+        setIsBlockChangeOption(1);
       } else {
-        isBlockCurrent == false;
+        setIsBlockChecked(false);
+        setIsBlockChangeOption(0);
       }
 
       if (initData?.useNacos === 1) {
-        useNacosCurrent == true;
+        setNacosChecked(true);
+        setCheckedOption(1);
       } else {
-        useNacosCurrent == false;
+        setNacosChecked(false);
+        setCheckedOption(0);
       }
       createEnvForm.setFieldsValue({
         // envTypeCode: initData?.envTypeCode,
@@ -57,8 +65,8 @@ export default function addEnvData(props: EnvEditorProps) {
         // categoryCode: initData?.categoryCode,
         // mark: initData?.mark,
         ...initData,
-        isBlock: isBlockCurrent,
-        useNacos: useNacosCurrent,
+        isBlock: isBlockChecked,
+        useNacos: nacosChecked,
         // nacosAddress: initData?.nacosAddress,
         // clusterName:initData?.clusterName,
         // clusterType:initData?.clusterType,
@@ -81,43 +89,71 @@ export default function addEnvData(props: EnvEditorProps) {
   const handleNacosChange = (checked: boolean) => {
     if (checked === true) {
       setCheckedOption(1);
+      setNacosChecked(true);
     } else {
       setCheckedOption(0);
+      setNacosChecked(false);
     }
   };
   //是否封网
   const isBlockChange = (checked: boolean) => {
     if (checked === true) {
       setIsBlockChangeOption(1);
+      setIsBlockChecked(true);
     } else {
       setIsBlockChangeOption(0);
+      setIsBlockChecked(false);
     }
   };
-  //新增环境
-  const addEnv = (params: any) => {
-    console.log('params', params);
-    postRequest(createEnv, {
-      data: {
-        envTypeCode: params?.envTypeCode,
-        categoryCode: params?.categoryCode,
-        isBlock: isBlockChangeOption,
-        useNacos: checkedOption,
-        nacosAddress: params?.nacosAddress,
-        envCode: params?.envCode,
-        envName: params?.envName,
-        clusterName: params?.clusterName,
-        clusterType: params?.clusterType,
-        clusterNetType: params?.clusterNetType,
-        mark: params?.mark,
-      },
-    }).then((result) => {
-      if (result.success) {
-        message.success('新增环境成功！');
-        onSave?.();
-      } else {
-        message.error(result.errorMsg);
-      }
-    });
+
+  const handleSubmit = () => {
+    if (mode === 'ADD') {
+      const params = createEnvForm.getFieldsValue();
+      console.log('>> handleSubmit', params);
+      //新增环境
+      postRequest(createEnv, {
+        data: {
+          envTypeCode: params?.envTypeCode,
+          categoryCode: params?.categoryCode,
+          isBlock: isBlockChangeOption,
+          useNacos: checkedOption,
+          nacosAddress: params?.nacosAddress,
+          envCode: params?.envCode,
+          envName: params?.envName,
+          clusterName: params?.clusterName,
+          clusterType: params?.clusterType,
+          clusterNetType: params?.clusterNetType,
+          mark: params?.mark,
+        },
+      }).then((result) => {
+        if (result.success) {
+          message.success('新增环境成功！');
+          onSave?.();
+        } else {
+          message.error(result.errorMsg);
+        }
+      });
+    } else if (mode === 'EDIT') {
+      //编辑环境
+      const initValue = createEnvForm.getFieldsValue();
+      console.log('params,initValue', initValue);
+      putRequest(updateEnv, {
+        data: {
+          envCode: initValue?.envCode,
+          envName: initValue?.envName,
+          useNacos: checkedOption,
+          isBlock: isBlockChangeOption,
+          mark: initValue?.mark,
+        },
+      }).then((result) => {
+        if (result.success) {
+          message.success('编辑环境成功！');
+          onSave?.();
+        } else {
+          message.error(result.errorMsg);
+        }
+      });
+    }
   };
   return (
     <Drawer
@@ -132,7 +168,7 @@ export default function addEnvData(props: EnvEditorProps) {
         <Form
           form={createEnvForm}
           labelCol={{ flex: '120px' }}
-          onFinish={addEnv}
+          // onFinish={addEnv}
           onReset={() => {
             createEnvForm.resetFields();
           }}
@@ -153,7 +189,7 @@ export default function addEnvData(props: EnvEditorProps) {
           </div>
           <div>
             <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
-              <Input style={{ width: 220 }} placeholder="请输入环境CODE" disabled={isDisabled}></Input>
+              <Input style={{ width: 220 }} placeholder="请输入环境CODE" disabled={isDisabled || editEnvCode}></Input>
             </Form.Item>
           </div>
           <div>
@@ -173,13 +209,30 @@ export default function addEnvData(props: EnvEditorProps) {
           <Divider />
           <div>
             <Form.Item name="isBlock" label="是否封网：">
-              <Switch onChange={isBlockChange} disabled={isDisabled}></Switch>
+              <Switch
+                onChange={isBlockChange}
+                checkedChildren="开启"
+                unCheckedChildren="关闭"
+                checked={isBlockChecked}
+                disabled={isDisabled}
+              ></Switch>
             </Form.Item>
             <Form.Item name="useNacos" label="启用配置管理：">
-              <Switch onChange={handleNacosChange} disabled={isDisabled}></Switch>
+              <Switch
+                onChange={handleNacosChange}
+                checkedChildren="开启"
+                unCheckedChildren="关闭"
+                checked={nacosChecked}
+                disabled={isDisabled}
+              ></Switch>
             </Form.Item>
-            {checkedOption === 1 && (
-              <Form.Item name="nacosAddress" label="NaCos地址：">
+            {mode !== 'ADD' && checkedOption === 1 && (
+              <Form.Item name="nacosAddress" label="Nacos地址：">
+                <Input style={{ width: 280 }} placeholder="请输入NaCos地址" disabled={isDisabled}></Input>
+              </Form.Item>
+            )}
+            {mode === 'ADD' && checkedOption === 1 && (
+              <Form.Item name="nacosAddress" label="Nacos地址：">
                 <Input style={{ width: 280 }} placeholder="请输入NaCos地址" disabled={isDisabled}></Input>
               </Form.Item>
             )}
@@ -208,7 +261,7 @@ export default function addEnvData(props: EnvEditorProps) {
                 <Button type="ghost" htmlType="reset" onClick={onClose}>
                   取消
                 </Button>
-                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }}>
+                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }} onClick={handleSubmit}>
                   保存
                 </Button>
               </Form.Item>
