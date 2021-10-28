@@ -36,11 +36,24 @@ export default function ApplicationDeploy(props: any) {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
       const { data } = result || [];
-      const next = (data || []).map((el: any) => ({
-        ...el,
-        label: el?.typeName,
-        value: el?.typeCode,
-      }));
+      let next: any = [];
+      (data || []).map((el: any) => {
+        if (el?.typeCode === 'dev') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+        }
+        if (el?.typeCode === 'test') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+        }
+        if (el?.typeCode === 'pre') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+        }
+        if (el?.typeCode === 'prod') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+        }
+      });
+      next.sort((a: any, b: any) => {
+        return a.sortType - b.sortType;
+      }); //升序
       setEnvTypeData(next);
     });
   };

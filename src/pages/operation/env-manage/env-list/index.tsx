@@ -58,13 +58,6 @@ export default function envManageList(props: any) {
     },
   ]; //环境大类
 
-  // const handleEditTask = useCallback(() => {
-  //     setAddEnvMode('ADD');
-  //     setEnvDataSource(envDataSource);
-  //   },
-  //   [envDataSource],
-  // );
-
   useEffect(() => {
     selectCategory();
   }, []);
@@ -100,6 +93,7 @@ export default function envManageList(props: any) {
   );
 
   const queryEnvData = (value: any) => {
+    setLoading(true);
     getRequest(queryEnvList, {
       data: {
         envTypeCode: value?.envTypeCode,
@@ -109,26 +103,27 @@ export default function envManageList(props: any) {
         pageIndex: value?.pageIndex,
         pageSize: value?.pageSize,
       },
-    }).then((result) => {
-      if (result?.success) {
-        let pageTotal = result.data.pageInfo.total;
-        // let pageIndex = result.data.pageInfo.pageIndex;
-        setEnvDataSource(result?.data?.dataSource);
-        // setInitEnvData(result?.data?.dataSource)
-        setTotal(pageTotal);
-        // setPageCurrentIndex(pageIndex);
-        if (result?.data?.dataSource?.isBlock === 1) {
-          setIsBlockChangeOption(true);
-        } else {
-          setIsBlockChangeOption(false);
+    })
+      .then((result) => {
+        if (result?.success) {
+          let pageTotal = result.data.pageInfo.total;
+          setEnvDataSource(result?.data?.dataSource);
+          setTotal(pageTotal);
+          if (result?.data?.dataSource?.isBlock === 1) {
+            setIsBlockChangeOption(true);
+          } else {
+            setIsBlockChangeOption(false);
+          }
+          if (result?.data?.dataSource?.useNacos === 1) {
+            setCheckedOption(true);
+          } else {
+            setCheckedOption(false);
+          }
         }
-        if (result?.data?.dataSource?.useNacos === 1) {
-          setCheckedOption(true);
-        } else {
-          setCheckedOption(false);
-        }
-      }
-    });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   //触发分页

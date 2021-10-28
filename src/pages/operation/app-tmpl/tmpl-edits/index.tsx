@@ -181,7 +181,7 @@ export default function TaskEditor(props: TmplListProps) {
       <ContentCard className="tmpl-edits">
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
-            <Col span={6}>
+            <Col span={7}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select
                   showSearch
@@ -192,7 +192,7 @@ export default function TaskEditor(props: TmplListProps) {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col span={9} style={{ marginLeft: 10 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
                 <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
               </Form.Item>
@@ -200,7 +200,7 @@ export default function TaskEditor(props: TmplListProps) {
           </Row>
           <Row style={{ marginTop: '20px' }}>
             <Col span={12}>
-              <div style={{ fontSize: 18 }}>模版详情：</div>
+              <div style={{ fontSize: 15, color: '#696969' }}>模版详情：</div>
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
                 <AceEditor mode="yaml" height={700} />
@@ -208,7 +208,7 @@ export default function TaskEditor(props: TmplListProps) {
             </Col>
 
             <Col span={10} offset={2}>
-              <div style={{ fontSize: 18 }}>可配置项：</div>
+              <div style={{ fontSize: 15, color: '#696969' }}>可配置项：</div>
               <Form.Item name="tmplConfigurableItem">
                 <EditorTable
                   value={source}
@@ -223,7 +223,7 @@ export default function TaskEditor(props: TmplListProps) {
                   ]}
                 />
               </Form.Item>
-              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
               <Form.Item name="remark">
                 <Input.TextArea placeholder="请输入" style={{ width: 520 }}></Input.TextArea>
               </Form.Item>

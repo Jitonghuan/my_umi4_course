@@ -532,7 +532,7 @@ export const queryEnvsReq = (params: {
     if (res.success) {
       return {
         list:
-          res.data?.dataSource?.map((el: any) => {
+          res.data?.map((el: any) => {
             return {
               ...el,
               value: el.envCode,

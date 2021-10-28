@@ -110,6 +110,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       envTypeCode: env,
       appCode: appCode,
     }).then((data) => {
+      console.log('data:', data);
       setEnvDataList(data.list);
     });
   }, [appCategoryCode, env]);

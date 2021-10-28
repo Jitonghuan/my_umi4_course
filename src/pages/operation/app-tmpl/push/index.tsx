@@ -77,14 +77,15 @@ export default function Push(props: any) {
   };
 
   const showModal = () => {
-    if (appCategoryCode) {
+    if (selectedRowKeys.length > 0) {
       tmplDetailForm.setFieldsValue({
         pushItem: undefined,
         envCodes: undefined,
+        appCategoryCode: undefined,
       });
       setIsModalVisible(true);
     } else {
-      message.error('请选择要推送的应用分类');
+      message.warning('请先勾选应用！');
     }
 
     //加载默认的下拉选择框，当模版为deployment时，可配置项才可以显示jvm
@@ -328,15 +329,6 @@ export default function Push(props: any) {
         <Form
           layout="inline"
           form={formTmplQuery}
-          // onValuesChange={
-          //   (value)=>{
-          //     getApplication({
-          //       ...value,
-          //       pageIndex: pageIndex,
-          //       pageSize: pageSize,
-          //     });
-          //   }
-          // }
           onFinish={(values) => {
             getApplication({
               ...values,
@@ -351,7 +343,7 @@ export default function Push(props: any) {
             });
           }}
         >
-          <Form.Item label="应用分类：" name="appCategoryCode" rules={[{ required: true, message: '这是必选项' }]}>
+          <Form.Item label="应用分类：" name="appCategoryCode">
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
           <Form.Item label="应用CODE：" name="appCode">
@@ -438,30 +430,49 @@ export default function Push(props: any) {
             visible={isModalVisible}
             onOk={handleOk}
             onCancel={handleCancel}
-            style={{ height: '600px' }}
+            bodyStyle={{ height: '300px' }}
           >
-            <Form layout="inline" form={tmplDetailForm}>
-              <Form.Item label="推送项：" name="pushItem" rules={[{ required: true, message: '这是必选项' }]}>
-                <Select
-                  allowClear
-                  mode="multiple"
-                  style={{ width: 160 }}
-                  placeholder="请选择"
-                  onChange={selectTmplItem}
-                  options={tmplDetailOptions}
-                />
-              </Form.Item>
-              <Form.Item label="环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
-                <Select
-                  showSearch
-                  allowClear
-                  style={{ width: 160 }}
-                  mode="multiple"
-                  placeholder="请选择"
-                  onChange={changeEnvCode}
-                  options={envDatas}
-                />
-              </Form.Item>
+            <Form layout="inline" form={tmplDetailForm} labelCol={{ flex: '120px' }}>
+              <div style={{ width: '100%' }}>
+                <Form.Item
+                  label="应用分类："
+                  name="appCategoryCode"
+                  rules={[{ required: true, message: '这是必选项' }]}
+                >
+                  <Select
+                    showSearch
+                    allowClear
+                    style={{ width: 160 }}
+                    options={categoryData}
+                    onChange={changeAppCategory}
+                  />
+                </Form.Item>
+              </div>
+              <div style={{ width: '100%', marginTop: 16 }}>
+                <Form.Item label="推送项：" name="pushItem" rules={[{ required: true, message: '这是必选项' }]}>
+                  <Select
+                    allowClear
+                    mode="multiple"
+                    style={{ width: 160 }}
+                    placeholder="请选择"
+                    onChange={selectTmplItem}
+                    options={tmplDetailOptions}
+                  />
+                </Form.Item>
+              </div>
+              <div style={{ width: '100%', marginTop: 16 }}>
+                <Form.Item label="环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
+                  <Select
+                    showSearch
+                    allowClear
+                    style={{ width: 160 }}
+                    mode="multiple"
+                    placeholder="请选择"
+                    onChange={changeEnvCode}
+                    options={envDatas}
+                  />
+                </Form.Item>
+              </div>
             </Form>
           </Modal>
 

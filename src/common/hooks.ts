@@ -22,8 +22,6 @@ export const FeContext = createContext({
   categoryData: [] as IOption[],
   /** 应用组 */
   businessData: [] as IOption[],
-  /** 环境类型枚举 */
-  envTypeData: [] as IOption[],
 });
 
 /** 修改标题和 favicon */
@@ -121,11 +119,24 @@ export function useEnvTypeData() {
   const { appData } = useContext(DetailContext);
   const loadData = useCallback(async () => {
     const result = await getRequest(APIS.listAppEnvType, { data: { appCode: appData?.appCode, isClient: false } });
-    const next = (result.data || []).map((el: any) => ({
-      ...el,
-      label: el?.typeName,
-      value: el?.typeCode,
-    }));
+    let next: any = [];
+    (result.data || []).map((el: any) => {
+      if (el?.typeCode === 'dev') {
+        next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+      }
+      if (el?.typeCode === 'test') {
+        next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+      }
+      if (el?.typeCode === 'pre') {
+        next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+      }
+      if (el?.typeCode === 'prod') {
+        next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+      }
+    });
+    next.sort((a: any, b: any) => {
+      return a.sortType - b.sortType;
+    }); //升序
     setData(next);
   }, []);
 

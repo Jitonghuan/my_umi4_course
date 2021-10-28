@@ -86,6 +86,7 @@ export default function appEnvPageList() {
   };
   // 查询应用环境数据
   const queryAppEnvData = (value: any) => {
+    setLoading(true);
     getRequest(listAppEnv, {
       data: {
         appCode,
@@ -94,11 +95,15 @@ export default function appEnvPageList() {
         envName: value?.envName,
         categoryCode: value?.categoryCode,
       },
-    }).then((result) => {
-      if (result?.success) {
-        setAppEnvDataSource(result?.data);
-      }
-    });
+    })
+      .then((result) => {
+        if (result?.success) {
+          setAppEnvDataSource(result?.data);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   //删除数据
@@ -114,7 +119,7 @@ export default function appEnvPageList() {
   };
   //查看modal弹窗环境信息
   const queryEnvData = (value: any) => {
-    debugger;
+    setLoading(true);
     getRequest(queryEnvList, {
       data: {
         envTypeCode: value?.envTypeCode,
@@ -124,20 +129,24 @@ export default function appEnvPageList() {
         pageIndex: value?.pageIndex,
         pageSize: value?.pageSize,
       },
-    }).then((result) => {
-      if (result?.success) {
-        let pageTotal = result.data.pageInfo.total;
-        // let pageIndex = result.data.pageInfo.pageIndex;
-        setEnvDataSource(result?.data?.dataSource);
-        setTotal(pageTotal);
-        // setPageCurrentIndex(pageIndex);
-        if (result?.data?.dataSource?.useNacos === 1) {
-          setCheckedOption(true);
-        } else {
-          setCheckedOption(false);
+    })
+      .then((result) => {
+        if (result?.success) {
+          let pageTotal = result.data.pageInfo.total;
+          // let pageIndex = result.data.pageInfo.pageIndex;
+          setEnvDataSource(result?.data?.dataSource);
+          setTotal(pageTotal);
+          // setPageCurrentIndex(pageIndex);
+          if (result?.data?.dataSource?.useNacos === 1) {
+            setCheckedOption(true);
+          } else {
+            setCheckedOption(false);
+          }
         }
-      }
-    });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (

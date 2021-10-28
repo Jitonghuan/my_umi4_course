@@ -5,7 +5,7 @@
 import React from 'react';
 import { history } from 'umi';
 import { getRequest, postRequest } from '@/utils/request';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from 'antd';
 import { EnvEditData } from '../env-list/index';
 import { createEnv, appTypeList } from '../service';
@@ -23,7 +23,6 @@ export default function addEnvData(props: EnvEditorProps) {
   const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>();
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const openEnvEditRef = useRef<any>();
 
   useEffect(() => {
     selectCategory();

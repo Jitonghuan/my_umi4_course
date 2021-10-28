@@ -211,15 +211,15 @@ export default function ApplicationParams(props: any) {
         <Row>
           <Col span={7}>
             <Form.Item label=" 应用环境：" name="appEnvCode">
-              <Select showSearch style={{ width: 220 }} options={envDatas} onChange={changeEnvCode} />
+              <Select showSearch style={{ width: 200 }} options={envDatas} onChange={changeEnvCode} />
             </Form.Item>
           </Col>
-          <Col span={7}>
+          <Col span={6} style={{ marginLeft: 6 }}>
             <Form.Item label=" 模版类型" name="tmplType">
-              <Select showSearch style={{ width: 220 }} options={templateTypes} onChange={changeTmplType} />
+              <Select showSearch style={{ width: 200 }} options={templateTypes} onChange={changeTmplType} />
             </Form.Item>
           </Col>
-          <Col span={2}>
+          <Col span={2} style={{ marginLeft: 6 }}>
             <Button type="primary" onClick={queryTmpl}>
               查询
             </Button>
@@ -227,14 +227,14 @@ export default function ApplicationParams(props: any) {
         </Row>
         <Row style={{ marginTop: '20px' }}>
           <Col span={10}>
-            <div style={{ fontSize: 18 }}>模版详情：</div>
+            <div style={{ fontSize: 15, color: '#696969' }}>模版详情：</div>
             <Form.Item name="value">
               {/* <TextArea rows={18} disabled /> */}
               <AceEditor mode="yaml" height={600} readOnly />
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>
-            <div style={{ fontSize: 18 }}>可配置项：</div>
+            <div style={{ fontSize: 15, color: '#696969' }}>可配置项：</div>
             <Form.Item name="tmplConfigurableItem">
               <EditorTable
                 readOnly

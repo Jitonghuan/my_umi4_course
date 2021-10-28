@@ -149,7 +149,7 @@ export default function DemoPageTb(porps: any) {
           </Row>
           <Row style={{ marginTop: '20px' }}>
             <Col span={10}>
-              <div style={{ fontSize: 18 }}>模版详情：</div>
+              <div style={{ fontSize: 15, color: '#696969' }}>模版详情：</div>
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
                 {/* <TextArea rows={18} disabled={isDisabled} /> */}
@@ -158,7 +158,7 @@ export default function DemoPageTb(porps: any) {
             </Col>
 
             <Col span={10} offset={2}>
-              <div style={{ fontSize: 18 }}>可配置项：</div>
+              <div style={{ fontSize: 15, color: '#696969' }}>可配置项：</div>
               <Form.Item name="tmplConfigurableItem">
                 <EditorTable
                   value={source}
@@ -173,7 +173,7 @@ export default function DemoPageTb(porps: any) {
                   ]}
                 />
               </Form.Item>
-              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
               <Form.Item name="remark">
                 <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
               </Form.Item>
