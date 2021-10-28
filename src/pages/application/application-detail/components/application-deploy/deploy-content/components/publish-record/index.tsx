@@ -54,8 +54,10 @@ export default function PublishRecord(props: IProps) {
       envTypeCode: env,
       appCode,
     }).then((data) => {
-      let envSelect = [];
-      envSelect.push({ label: data?.list?.envName, value: data?.list?.envCode });
+      let envSelect: any = [];
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
       setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);

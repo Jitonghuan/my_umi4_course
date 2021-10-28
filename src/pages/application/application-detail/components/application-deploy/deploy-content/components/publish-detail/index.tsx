@@ -53,8 +53,10 @@ export default function PublishDetail(props: IProps) {
       appCode: appData?.appCode,
     }).then((data) => {
       // setEnvDataList(data.list);
-      let envSelect = [];
-      envSelect.push({ label: data?.list?.envName, value: data?.list?.envCode });
+      let envSelect: any = [];
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
       setEnvDataList(envSelect);
     });
     // 下一个部署环境
@@ -64,8 +66,10 @@ export default function PublishDetail(props: IProps) {
       categoryCode: appCategoryCode,
       envTypeCode: nextEnvTypeCode,
     }).then((data) => {
-      let envSelect = [];
-      envSelect.push({ label: data?.list?.envName, value: data?.list?.envCode });
+      let envSelect: any = [];
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
       setNextEnvDataList(envSelect);
     });
   }, [appCategoryCode, envTypeCode]);

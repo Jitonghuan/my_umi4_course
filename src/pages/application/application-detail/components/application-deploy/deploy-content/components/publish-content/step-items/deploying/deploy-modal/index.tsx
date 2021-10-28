@@ -34,8 +34,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       appCode: appData?.appCode,
     }).then((data) => {
       let envSelect = [];
-      envSelect.push({ label: data?.list.envName, value: data?.list.envCode });
-      setEnvDataList(envSelect);
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
+      setEnvDataList(data.list);
     });
   }, [appCategoryCode, envTypeCode]);
 

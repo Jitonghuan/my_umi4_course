@@ -110,8 +110,11 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       envTypeCode: env,
       appCode: appCode,
     }).then((data) => {
-      let envSelect = [];
-      envSelect.push({ label: data?.list.envName, value: data?.list.envCode });
+      console.log('data?.list.envName', data?.list.envName, data);
+      let envSelect: any = [];
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
       setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);

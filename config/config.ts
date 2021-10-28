@@ -26,8 +26,8 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      // target: 'http://matrix-test.cfuture.shop/',
-      target: 'http://matrix.cfuture.shop/',
+      target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.128.243:8080/',
       // target: 'http://10.10.129.177:8080/',
