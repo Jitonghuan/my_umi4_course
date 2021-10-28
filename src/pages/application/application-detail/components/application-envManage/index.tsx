@@ -10,6 +10,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import { datetimeCellRender } from '@/utils';
 import { PlusOutlined } from '@ant-design/icons';
+import './index.less';
 import { appTypeList, listAppEnv, addAppEnv, delAppEnv, queryEnvList } from '@/pages/application/service';
 
 export default function appEnvPageList() {
@@ -247,7 +248,9 @@ export default function appEnvPageList() {
                 title="是否启用配置管理"
                 dataIndex="useNacos"
                 width={180}
-                render={(value, record, index) => <Switch checked={value === 1 ? true : false} disabled={true} />}
+                render={(value, record, index) => (
+                  <Switch className="useNacos" checked={value === 1 ? true : false} disabled={true} />
+                )}
               />
             </Table>
           </div>
@@ -278,7 +281,7 @@ export default function appEnvPageList() {
               <Input placeholder="请输入环境名"></Input>
             </Form.Item>
             <Form.Item label=" 环境CODE：" name="envCode">
-              <Input placeholder="请输入环境CODE"></Input>
+              <Input placeholder="请输入环境CODE" style={{ width: 150 }}></Input>
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -290,7 +293,7 @@ export default function appEnvPageList() {
                 重置
               </Button>
             </Form.Item>
-            <div style={{ marginLeft: '32px' }}>
+            <div style={{ marginLeft: '18px' }}>
               <Button
                 type="primary"
                 onClick={() => {
