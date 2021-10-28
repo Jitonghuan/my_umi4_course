@@ -9,7 +9,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { Table, Input, Button, Modal, Checkbox, Tag } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
@@ -147,6 +147,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         bordered
         dataSource={dataSource}
         pagination={false}
+        scroll={{ x: '100%' }}
         rowSelection={{
           type: 'checkbox',
           selectedRowKeys,
@@ -155,11 +156,25 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           },
         }}
       >
+        <Table.Column dataIndex="branchName" title="分支名" fixed="left" render={branchNameRender} width={320} />
         <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column dataIndex="branchName" title="分支名" render={branchNameRender} width={320} />
-        <Table.Column dataIndex="desc" title="变更原因" />
+        <Table.Column
+          dataIndex="desc"
+          title="变更原因"
+          width={200}
+          ellipsis={{
+            showTitle: false,
+          }}
+          render={(value) => (
+            <Tooltip placement="topLeft" title={value}>
+              {value}
+            </Tooltip>
+          )}
+        />
         <Table.Column
           dataIndex="status"
+          width={120}
+          align="center"
           title="分支review状态"
           render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
         />

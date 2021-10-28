@@ -3,7 +3,7 @@
 // @create 2021/09/05 22:57
 
 import React, { useState, useContext } from 'react';
-import { Modal, Button, message, Popconfirm, Table, Tag } from 'antd';
+import { Modal, Button, message, Popconfirm, Table, Tag, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -157,6 +157,7 @@ export default function PublishContent(props: IProps) {
         dataSource={deployedList}
         pagination={false}
         bordered
+        scroll={{ x: '100%' }}
         rowSelection={
           isProd
             ? {}
@@ -169,16 +170,30 @@ export default function PublishContent(props: IProps) {
               }
         }
       >
+        <Table.Column dataIndex="branchName" title="分支名" fixed="left" render={branchNameRender} width={320} />
         <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column dataIndex="branchName" title="分支名" render={branchNameRender} width={320} />
-        <Table.Column dataIndex="desc" title="变更原因" />
+        <Table.Column
+          dataIndex="desc"
+          title="变更原因"
+          width={200}
+          ellipsis={{
+            showTitle: false,
+          }}
+          render={(value) => (
+            <Tooltip placement="topLeft" title={value}>
+              {value}
+            </Tooltip>
+          )}
+        />
         <Table.Column
           dataIndex="status"
+          width={120}
+          align="center"
           title="分支review状态"
           render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
         />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
-        <Table.Column dataIndex="createUser" title="创建人" width={80} />
+        <Table.Column dataIndex="createUser" title="创建人" width={100} />
       </Table>
     </div>
   );

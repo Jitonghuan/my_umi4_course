@@ -33,6 +33,7 @@ export default function PublishDetail(props: IProps) {
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  // const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
   const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
@@ -214,7 +215,18 @@ export default function PublishDetail(props: IProps) {
       onCancel() {},
     });
   };
-  // console.log('0000', restartEnv);
+  let envDataOption: any = []; //重启时选择环境option
+  envDataList?.map((item) => {
+    if (item?.value === 'tt-his') {
+      envDataOption.push({ label: item.label, value: item.value });
+    }
+    if (item?.value === 'tt-health') {
+      envDataOption.push({ label: item.label, value: item.value });
+    }
+    if (item?.value === 'seenew-health') {
+      envDataOption.push({ label: item.label, value: item.value });
+    }
+  });
 
   return (
     <div className={rootCls}>
@@ -366,10 +378,13 @@ export default function PublishDetail(props: IProps) {
       >
         <div>
           <span>发布环境：</span>
-          <Radio.Group value={restartEnv} onChange={(v: any) => setRestartEnv(v.target.value)}>
-            <Radio value="tt-his">天台生产</Radio>
-            <Radio value="tt-health">天台健康</Radio>
-          </Radio.Group>
+          {envDataOption.length > 0 && (
+            <Radio.Group
+              value={restartEnv}
+              onChange={(v: any) => setRestartEnv(v.target.value)}
+              options={envDataOption}
+            ></Radio.Group>
+          )}
         </div>
       </Modal>
     </div>
