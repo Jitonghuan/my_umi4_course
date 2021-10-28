@@ -37,7 +37,7 @@ export const createTableSchema = ({
     {
       title: '应用名',
       dataIndex: 'appName',
-      width: 200,
+      width: 230,
       render: (text, record) => (
         <a
           onClick={() =>
@@ -82,7 +82,7 @@ export const createTableSchema = ({
     {
       title: '应用分类',
       dataIndex: 'appCategoryCode',
-      width: 100,
+      width: 120,
       render: (value) => categoryData?.find((v) => v.categoryCode === value)?.categoryName || '-',
     },
     {
@@ -99,7 +99,7 @@ export const createTableSchema = ({
     {
       title: '应用组',
       dataIndex: 'appGroupCode',
-      width: 90,
+      width: 120,
       render: (value) => businessDataList?.find((v) => v.groupCode === value)?.groupName || '-',
     },
     {
@@ -126,6 +126,7 @@ export const createTableSchema = ({
       title: '操作',
       fixed: 'right',
       dataIndex: 'operate',
+      align: 'center',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
           <a onClick={() => onEditClick(record, index)}>编辑</a>

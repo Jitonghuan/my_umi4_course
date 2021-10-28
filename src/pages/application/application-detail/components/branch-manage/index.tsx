@@ -94,13 +94,14 @@ export default function BranchManage() {
       </div>
       <Table
         rowKey="id"
+        bordered
         dataSource={tableProps.dataSource}
         pagination={tableProps.pagination}
         loading={tableProps.loading || pending}
         scroll={{ y: window.innerHeight - 330, x: '100%' }}
       >
         <Table.Column title="ID" dataIndex="id" width={80} />
-        <Table.Column title="应用code" dataIndex="appCode" width={200} />
+        <Table.Column title="应用code" dataIndex="appCode" width={300} />
         <Table.Column title="分支名" dataIndex="branchName" width={400} />
         <Table.Column
           title="描述"
@@ -123,6 +124,7 @@ export default function BranchManage() {
           title="操作"
           width={200}
           fixed="right"
+          align="center"
           render={(_, record: any, index) => (
             <div className="action-cell">
               <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>

@@ -69,6 +69,7 @@ export default function ApplicationList() {
           dataSource={appListData}
           loading={isLoading}
           scroll={{ x: '100%' }}
+          bordered
           rowKey="id"
           pagination={{
             pageSize,
