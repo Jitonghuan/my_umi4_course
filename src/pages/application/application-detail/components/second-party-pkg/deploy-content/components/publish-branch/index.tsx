@@ -102,6 +102,8 @@ export default function PublishBranch(props: IProps) {
           rowKey="id"
           className={`${rootCls}__list-table`}
           dataSource={dataSource}
+          bordered
+          scroll={{ x: '100%' }}
           pagination={false}
           rowSelection={{
             type: 'checkbox',

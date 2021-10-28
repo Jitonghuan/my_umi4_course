@@ -48,7 +48,7 @@ export default function ApplicationList() {
   }, [categoryData, businessDataList, appListData]);
 
   return (
-    <PageContainer>
+    <PageContainer className="application-list-page">
       <FilterHeader onSearch={handleFilterSearch} />
 
       <ContentCard>
@@ -68,6 +68,8 @@ export default function ApplicationList() {
         <Table
           dataSource={appListData}
           loading={isLoading}
+          scroll={{ x: '100%' }}
+          bordered
           rowKey="id"
           pagination={{
             pageSize,

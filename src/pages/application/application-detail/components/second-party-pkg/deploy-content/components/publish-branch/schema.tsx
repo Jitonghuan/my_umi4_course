@@ -1,4 +1,6 @@
 import { datetimeCellRender } from '@/utils';
+import { Tooltip } from 'antd';
+import React from 'react';
 
 // 表格 schema
 export const createTableSchema = () => [
@@ -9,11 +11,21 @@ export const createTableSchema = () => [
   },
   {
     title: '分支名',
+    width: 300,
     dataIndex: 'branchName',
   },
   {
     title: '变更原因',
     dataIndex: 'desc',
+    width: 180,
+    ellipsis: {
+      showTitle: false,
+    },
+    render: (value: string) => (
+      <Tooltip placement="topLeft" title={value}>
+        {value}
+      </Tooltip>
+    ),
   },
   {
     width: 160,
