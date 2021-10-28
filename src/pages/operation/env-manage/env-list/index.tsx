@@ -12,6 +12,7 @@ import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddEnvDraw from '../addEnv';
 import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
 import appConfig from '@/app.config';
+import './index.less';
 
 /** 编辑页回显数据 */
 export interface EnvEditData extends Record<string, any> {
@@ -38,10 +39,6 @@ export default function envManageList(props: any) {
   const [addEnvMode, setAddEnvMode] = useState<EditorMode>('HIDE');
   const [EnvForm] = Form.useForm();
   const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
-  const [checkedOption, setCheckedOption] = useState<number>(0); //是否启用nacos
-  const [nacosChecked, setNacosChecked] = useState<boolean>(false);
-  const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>(0); //是否封网
-  const [isBlockChecked, setIsBlockChecked] = useState<boolean>(false);
   const envTypeData = [
     {
       label: 'DEV',
@@ -110,27 +107,15 @@ export default function envManageList(props: any) {
       .then((result) => {
         if (result?.success) {
           let pageTotal = result.data.pageInfo.total;
+          let pageIndex = result.data.pageInfo.pageIndex;
           setEnvDataSource(result?.data?.dataSource);
           setTotal(pageTotal);
-          if (result?.data?.dataSource?.isBlock === 1) {
-            setIsBlockChangeOption(1);
-            setIsBlockChecked(true);
-          } else {
-            setIsBlockChangeOption(0);
-            setIsBlockChecked(false);
-          }
-          if (result?.data?.dataSource?.useNacos === 1) {
-            setCheckedOption(1);
-            setNacosChecked(true);
-          } else {
-            setCheckedOption(0);
-            setNacosChecked(false);
-          }
+          setPageCurrentIndex(pageIndex);
         }
       })
       .finally(() => {
         setLoading(false);
-        setPageCurrentIndex(pageIndex);
+        // setPageCurrentIndex(1);
       });
   };
 
@@ -153,7 +138,7 @@ export default function envManageList(props: any) {
       ...values,
       ...params,
     });
-    setPageCurrentIndex(pageIndex);
+    // setPageCurrentIndex(pageIndex);
   };
 
   //删除数据  delRequest(`${appConfig.apiPrefix}/appManage/delete/${params.id}`);
@@ -170,26 +155,21 @@ export default function envManageList(props: any) {
 
   let useNacosData: number;
   let isBlockData: number;
-  const editEnvData = (checked: any, values: any) => {
-    console.log('record====>', values);
 
-    if (values.useNacos === 0) {
+  //启用配置管理选择
+  const handleNacosChange = async (checked: any, record: any) => {
+    if (checked === 0) {
       useNacosData = 1;
     } else {
       useNacosData = 0;
     }
-    if (values.isBlock === 0) {
-      isBlockData = 1;
-    } else {
-      isBlockData = 0;
-    }
-    putRequest(updateEnv, {
+    await putRequest(updateEnv, {
       data: {
-        envCode: values?.envCode,
-        envName: values?.envName,
+        envCode: record?.envCode,
+        envName: record?.envName,
         useNacos: useNacosData,
-        isBlock: isBlockData,
-        mark: values?.mark,
+        isBlock: record.isBlock,
+        mark: record?.mark,
       },
     }).then((result) => {
       if (result.success) {
@@ -198,31 +178,37 @@ export default function envManageList(props: any) {
         message.error(result.errorMsg);
       }
     });
-  };
-
-  //启用配置管理选择
-  const handleNacosChange = (checked: any, record: any) => {
-    if (checked === 1) {
-      setCheckedOption(1);
-      setNacosChecked(true);
-    } else {
-      setCheckedOption(0);
-      setNacosChecked(false);
-    }
-    editEnvData(checked, record);
-    queryEnvData({ pageIndex: 1, pageSize: 20 });
+    loadListData({
+      pageIndex: 1,
+      pageSize: 20,
+    });
   };
   //是否封网
-  const isBlockChange = (checked: any, record: any) => {
-    if (checked === 1) {
-      setIsBlockChangeOption(1);
-      setIsBlockChecked(true);
+  const isBlockChange = async (checked: any, record: any) => {
+    if (checked === 0) {
+      isBlockData = 1;
     } else {
-      setIsBlockChangeOption(0);
-      setIsBlockChecked(false);
+      isBlockData = 0;
     }
-    editEnvData(checked, record);
-    queryEnvData({ pageIndex: 1, pageSize: 20 });
+    await putRequest(updateEnv, {
+      data: {
+        envCode: record?.envCode,
+        envName: record?.envName,
+        useNacos: record?.useNacos,
+        isBlock: isBlockData,
+        mark: record?.mark,
+      },
+    }).then((result) => {
+      if (result.success) {
+        message.success('更改成功！');
+      } else {
+        message.error(result.errorMsg);
+      }
+    });
+    loadListData({
+      pageIndex: 1,
+      pageSize: 20,
+    });
   };
 
   return (
@@ -323,12 +309,11 @@ export default function envManageList(props: any) {
             <Table.Column
               title="启用配置管理"
               dataIndex="useNacos"
-              width={80}
+              width={110}
               render={(value, record, index) => (
                 <Switch
+                  className="useNacos"
                   onChange={() => handleNacosChange(value, record)}
-                  checkedChildren="开启"
-                  unCheckedChildren="关闭"
                   checked={value === 1 ? true : false}
                 />
               )}
@@ -339,9 +324,8 @@ export default function envManageList(props: any) {
               width={80}
               render={(value, record, index) => (
                 <Switch
+                  className="isBlock"
                   onChange={() => isBlockChange(value, record)}
-                  checkedChildren="开启"
-                  unCheckedChildren="关闭"
                   checked={value === 1 ? true : false}
                 />
               )}

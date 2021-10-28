@@ -24,12 +24,13 @@ export default function ApplicationParams(props: any) {
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [id, setId] = useState<string>();
   const [isDeployment, setIsDeployment] = useState<string>();
+
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
   const { templateType, envCode } = props?.history.location?.query || {};
   useEffect(() => {
     selectAppEnv(appCategoryCode).then((result) => {
-      const listEnv = result.data.dataSource?.map((n: any) => ({
+      const listEnv = result.data?.map((n: any) => ({
         value: n?.envCode,
         label: n?.envName,
         data: n,
@@ -51,14 +52,30 @@ export default function ApplicationParams(props: any) {
             tmplType = element.value;
           }
         });
-        getAppTempl(listEnv[0].value, appCategoryCode, appData?.appCode, tmplType);
+        getAppTempl(listEnv[0]?.value, appCategoryCode, appData?.appCode, tmplType);
       });
     });
   }, []);
+  // 查询应用环境数据
+  const queryAppEnvData = (value: any) => {
+    getRequest(APIS.listAppEnv, {
+      data: {
+        appCode,
+        envTypeCode: value?.envTypeCode,
+        envCode: value?.envCode,
+        envName: value?.envName,
+        categoryCode: value?.categoryCode,
+      },
+    }).then((result) => {
+      if (result?.success) {
+        // setAppEnvDataSource(result?.data);
+      }
+    });
+  };
 
   //通过appCategoryCode查询环境信息
   const selectAppEnv = (categoryCode: any) => {
-    return getRequest(APIS.envList, { data: { categoryCode: categoryCode } });
+    return getRequest(APIS.listAppEnv, { data: { appCode, categoryCode: categoryCode } });
   };
 
   //查询当前模版信息  一进入页面加载

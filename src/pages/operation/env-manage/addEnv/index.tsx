@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from 'antd';
 import { EnvEditData } from '../env-list/index';
 import { createEnv, appTypeList, updateEnv } from '../service';
+import './index.less';
 export interface EnvEditorProps {
   mode?: EditorMode;
   initData?: EnvEditData;
@@ -210,18 +211,16 @@ export default function addEnvData(props: EnvEditorProps) {
           <div>
             <Form.Item name="isBlock" label="是否封网：">
               <Switch
+                className="isBlock"
                 onChange={isBlockChange}
-                checkedChildren="开启"
-                unCheckedChildren="关闭"
                 checked={isBlockChecked}
                 disabled={isDisabled}
               ></Switch>
             </Form.Item>
             <Form.Item name="useNacos" label="启用配置管理：">
               <Switch
+                className="useNacos"
                 onChange={handleNacosChange}
-                checkedChildren="开启"
-                unCheckedChildren="关闭"
                 checked={nacosChecked}
                 disabled={isDisabled}
               ></Switch>

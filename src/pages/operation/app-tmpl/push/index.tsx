@@ -3,7 +3,7 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, message, Modal, Popover } from 'antd';
+import { Form, Input, Select, Button, Table, Space, message, Modal, Popover, Row, Col } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';
@@ -430,25 +430,43 @@ export default function Push(props: any) {
             visible={isModalVisible}
             onOk={handleOk}
             onCancel={handleCancel}
+            width={650}
             bodyStyle={{ height: '300px' }}
           >
-            <Form layout="inline" form={tmplDetailForm} labelCol={{ flex: '120px' }}>
+            <Form layout="inline" form={tmplDetailForm}>
               <div style={{ width: '100%' }}>
-                <Form.Item
-                  label="应用分类："
-                  name="appCategoryCode"
-                  rules={[{ required: true, message: '这是必选项' }]}
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    style={{ width: 160 }}
-                    options={categoryData}
-                    onChange={changeAppCategory}
-                  />
-                </Form.Item>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item
+                      label="应用分类："
+                      name="appCategoryCode"
+                      rules={[{ required: true, message: '这是必选项' }]}
+                    >
+                      <Select
+                        showSearch
+                        allowClear
+                        style={{ width: 160 }}
+                        options={categoryData}
+                        onChange={changeAppCategory}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
+                      <Select
+                        showSearch
+                        allowClear
+                        style={{ width: 160 }}
+                        mode="multiple"
+                        placeholder="请选择"
+                        onChange={changeEnvCode}
+                        options={envDatas}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </div>
-              <div style={{ width: '100%', marginTop: 16 }}>
+              <div style={{ width: '100%', marginTop: 18, marginLeft: 14 }}>
                 <Form.Item label="推送项：" name="pushItem" rules={[{ required: true, message: '这是必选项' }]}>
                   <Select
                     allowClear
@@ -460,19 +478,7 @@ export default function Push(props: any) {
                   />
                 </Form.Item>
               </div>
-              <div style={{ width: '100%', marginTop: 16 }}>
-                <Form.Item label="环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
-                  <Select
-                    showSearch
-                    allowClear
-                    style={{ width: 160 }}
-                    mode="multiple"
-                    placeholder="请选择"
-                    onChange={changeEnvCode}
-                    options={envDatas}
-                  />
-                </Form.Item>
-              </div>
+              <div style={{ width: '100%', marginTop: 16 }}></div>
             </Form>
           </Modal>
 

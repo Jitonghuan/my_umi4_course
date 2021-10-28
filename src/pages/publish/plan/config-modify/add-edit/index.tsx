@@ -123,7 +123,6 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
     // 是否是输入框搜索，否表示编辑时初始化查询
     isSearch?: boolean;
   }) => {
-    debugger;
     queryFunctionReq({ ...params }).then((result) => {
       if (!result) return;
       if (params.isSearch) {

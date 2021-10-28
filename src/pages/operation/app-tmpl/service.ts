@@ -42,3 +42,6 @@ export const logList = addAPIPrefix('/opsManage/opLog/list');
 
 //  GET 分类型推送模版
 export const customPush = addAPIPrefix('/opsManage/appTemplate/customPush');
+
+/** 获取应用环境 */
+export const listAppEnv = addAPIPrefix('/appManage/env/listAppEnv');

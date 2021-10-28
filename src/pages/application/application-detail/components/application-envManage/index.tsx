@@ -46,7 +46,6 @@ export default function appEnvPageList() {
       value: 'prod',
     },
   ]; //环境大类
-
   // 加载应用分类下拉选择
   const selectCategory = () => {
     getRequest(appTypeList).then((result) => {
@@ -118,6 +117,7 @@ export default function appEnvPageList() {
     });
   };
   //查看modal弹窗环境信息
+
   const queryEnvData = (value: any) => {
     setLoading(true);
     getRequest(queryEnvList, {
@@ -133,22 +133,36 @@ export default function appEnvPageList() {
       .then((result) => {
         if (result?.success) {
           let pageTotal = result.data.pageInfo.total;
-          // let pageIndex = result.data.pageInfo.pageIndex;
+          let pageIndex = result.data.pageInfo.pageIndex;
           setEnvDataSource(result?.data?.dataSource);
           setTotal(pageTotal);
-          // setPageCurrentIndex(pageIndex);
-          if (result?.data?.dataSource?.useNacos === 1) {
-            setCheckedOption(true);
-          } else {
-            setCheckedOption(false);
-          }
+          setPageIndex(pageIndex);
+          setPageSize(result.data.pageInfo.pageSize);
         }
       })
       .finally(() => {
         setLoading(false);
       });
   };
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    setPageIndex(pagination.current);
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    loadListData(obj);
 
+    // console.log('pageIndexInfo',pageIndexInfo);
+  };
+
+  const loadListData = (params: any) => {
+    const values = EnvForm.getFieldsValue();
+    queryEnvData({
+      ...values,
+      ...params,
+    });
+  };
   return (
     <PageContainer>
       <ContentCard>
@@ -158,7 +172,7 @@ export default function appEnvPageList() {
           onOk={handleOk}
           onCancel={handleCancel}
           width={900}
-          bodyStyle={{ height: '500px' }}
+          bodyStyle={{ height: '580px' }}
         >
           <Form
             layout="inline"
@@ -217,23 +231,13 @@ export default function appEnvPageList() {
                 total,
                 pageSize,
                 showSizeChanger: true,
-                onChange: (next) => {
-                  setPageIndex(next);
-                  const values = EnvForm.getFieldsValue();
-                  queryEnvData({
-                    ...values,
-                    pageIndex: next,
-                    pageSize: pageSize,
-                  });
+                onShowSizeChange: (_, size) => {
+                  setPageSize(size);
+                  setPageIndex(1); //
                 },
-                onShowSizeChange: (_, next) => {
-                  setPageSize(next);
-                  queryEnvData({
-                    pageIndex: pageIndex,
-                    pageSize: pageSize,
-                  });
-                },
+                showTotal: () => `总共 ${total} 条数据`,
               }}
+              onChange={pageSizeClick}
             >
               <Table.Column title="环境大类" dataIndex="envTypeCode" width={200} />
               <Table.Column title="环境CODE" dataIndex="envCode" ellipsis />
@@ -243,7 +247,7 @@ export default function appEnvPageList() {
                 title="是否启用配置管理"
                 dataIndex="useNacos"
                 width={180}
-                render={(_, record, index) => <Switch checked={checkedOption} disabled={true} />}
+                render={(value, record, index) => <Switch checked={value === 1 ? true : false} disabled={true} />}
               />
             </Table>
           </div>
@@ -296,6 +300,7 @@ export default function appEnvPageList() {
                   let obj = { pageIndex: 1, pageSize: 10 };
                   queryEnvData(obj);
                   setSelectedRowKeys(['undefined']);
+                  setPageIndex(1);
                 }}
               >
                 <PlusOutlined />
@@ -310,7 +315,7 @@ export default function appEnvPageList() {
             <Table.Column title="环境名" dataIndex="envName" width={150} />
             <Table.Column title="环境CODE" dataIndex="envCode" width={150} />
             <Table.Column title="环境大类" dataIndex="envTypeCode" width={140} />
-            <Table.Column title="默认分类" dataIndex="categoryCode" width={120} />
+            <Table.Column title="默认分类" dataIndex="categoryCode" width={140} />
             <Table.Column title="备注" dataIndex="mark" width={180} />
             <Table.Column
               title="操作"
