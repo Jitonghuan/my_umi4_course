@@ -49,7 +49,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [envDataList, setEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
 
   type reviewStatusTypeItem = {
@@ -110,8 +110,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       envTypeCode: env,
       appCode: appCode,
     }).then((data) => {
-      console.log('data:', data);
-      setEnvDataList(data.list);
+      let envSelect = [];
+      envSelect.push({ label: data?.list.envName, value: data?.list.envCode });
+      setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);
 

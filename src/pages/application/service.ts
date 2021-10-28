@@ -526,7 +526,7 @@ export const queryEnvsReq = (params: {
     data: {
       ...params,
       pageIndex: -1,
-      pageSize: 100,
+      pageSize: -1,
     },
   }).then((res: any) => {
     if (res.success) {

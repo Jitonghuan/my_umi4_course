@@ -18,7 +18,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
 
   const [stateDeployEnv, setStateDeployEnv] = useState<string>();
   const [deployBatch, setDeployBatch] = useState(12);
-  const [envDataList, setEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<any>([]);
   // console.log('deployBatch',deployBatch)
   useEffect(() => {
     if (!visible) return;
@@ -33,7 +33,9 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       envTypeCode,
       appCode: appData?.appCode,
     }).then((data) => {
-      setEnvDataList(data.list);
+      let envSelect = [];
+      envSelect.push({ label: data?.list.envName, value: data?.list.envCode });
+      setEnvDataList(envSelect);
     });
   }, [appCategoryCode, envTypeCode]);
 

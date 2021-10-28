@@ -23,7 +23,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
-  const [envDataList, setEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<any>([]);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -32,7 +32,9 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
       envTypeCode: env,
       appCode: appData?.appCode,
     }).then((data) => {
-      setEnvDataList(data.list);
+      let envSelect = [];
+      envSelect.push({ label: data?.list?.envName, value: data?.list?.envCode });
+      setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);
 

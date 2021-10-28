@@ -26,7 +26,7 @@ export default function PublishBranch(props: IProps) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [envDataList, setEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
 
   const submit = () => {
@@ -80,7 +80,9 @@ export default function PublishBranch(props: IProps) {
       envTypeCode: env,
       appCode,
     }).then((data) => {
-      setEnvDataList(data.list);
+      let envSelect = [];
+      envSelect.push({ label: data?.list?.envName, value: data?.list?.envCode });
+      setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);
 
