@@ -21,23 +21,23 @@ export default function TowPartyPkg(props: any) {
   const [envTypeData, setEnvTypeData] = useState<any[]>([]);
 
   // 环境数据
-  // const queryEnvDataList = async () => {
-  //   const envResp = await getRequest(queryEnvTypeData, {
-  //     data: { isClient: true },
-  //   });
-  //   const envTypeData = envResp?.data || [];
-  //   setEnvTypeData(
-  //     envTypeData.map((el: any) => ({
-  //       ...el,
-  //       label: el.typeName,
-  //       value: el.typeCode,
-  //     })),
-  //   );
-  // };
+  const queryEnvDataList = async () => {
+    const envResp = await getRequest(listAppEnvType, {
+      data: { isClient: true },
+    });
+    const envTypeData = envResp?.data || [];
+    setEnvTypeData(
+      envTypeData.map((el: any) => ({
+        ...el,
+        label: el.typeName,
+        value: el.typeCode,
+      })),
+    );
+  };
 
-  // useEffect(() => {
-  //   queryEnvDataList();
-  // }, []);
+  useEffect(() => {
+    queryEnvDataList();
+  }, []);
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_secondpartypkg_env_tab__', tabActive);

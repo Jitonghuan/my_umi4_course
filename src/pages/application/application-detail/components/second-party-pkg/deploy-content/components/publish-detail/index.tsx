@@ -30,6 +30,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
     queryEnvsReq({
       categoryCode: appCategoryCode as string,
       envTypeCode: env,
+      appCode: appData?.appCode,
     }).then((data) => {
       setEnvDataList(data.list);
     });

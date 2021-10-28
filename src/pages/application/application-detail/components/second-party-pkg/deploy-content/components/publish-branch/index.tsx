@@ -78,6 +78,7 @@ export default function PublishBranch(props: IProps) {
     queryEnvsReq({
       categoryCode: appCategoryCode as string,
       envTypeCode: env,
+      appCode,
     }).then((data) => {
       setEnvDataList(data.list);
     });

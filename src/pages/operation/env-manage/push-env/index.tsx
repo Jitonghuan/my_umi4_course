@@ -59,8 +59,8 @@ export default function PushEnv(props: any) {
         envCode: value.envCode,
         appType: 'backend',
         isClient: 0,
-        pageSize: pageSize,
-        pageIndex: pageIndex,
+        pageSize: value?.pageSize,
+        pageIndex: value?.pageIndex,
 
         // pageSize: value.pageSize,
       },
@@ -69,10 +69,10 @@ export default function PushEnv(props: any) {
         if (res.success) {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
-          let pageIndex = res.data.pageInfo.pageIndex;
+          // let pageIndex = res.data.pageInfo.pageIndex;
           setPageTotal(pageTotal);
           setDataSource(dataSource);
-          setPageIndex(pageIndex);
+          // setPageIndex(pageIndex);
         }
       })
       .finally(() => {
@@ -94,14 +94,14 @@ export default function PushEnv(props: any) {
 
   //触发分页
 
-  const pageSizeClick = (pagination: any, currentDataSource: any) => {
+  const pageSizeClick = (pagination: any) => {
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
+
     setPageIndex(pagination.current);
     loadListData(obj);
-    setSelectList(currentDataSource);
   };
   const loadListData = (params: any) => {
     const values = formEnvQuery.getFieldsValue();

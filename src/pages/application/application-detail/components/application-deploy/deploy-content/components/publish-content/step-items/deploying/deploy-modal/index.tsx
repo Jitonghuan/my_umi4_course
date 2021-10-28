@@ -31,6 +31,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
     queryEnvsReq({
       categoryCode: appCategoryCode as string,
       envTypeCode,
+      appCode: appData?.appCode,
     }).then((data) => {
       setEnvDataList(data.list);
     });

@@ -3,9 +3,10 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/10 11:37
 
-import { useState, useEffect, useCallback, createContext } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import type { IPermission } from '@cffe/vc-layout/lib/sider-menu';
 import appConfig from '@/app.config';
+import DetailContext from '../pages/application/application-detail/context';
 import { getRequest } from '@/utils/request';
 import * as APIS from './apis';
 
@@ -27,6 +28,7 @@ export const FeContext = createContext({
 
 /** 修改标题和 favicon */
 export function useDocumentTitle(subtitle?: string, route?: string) {
+  const { appData } = useContext(DetailContext);
   useEffect(() => {
     const link: any = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/x-icon';
@@ -116,9 +118,9 @@ export function useBusinessData() {
 // 环境类型数据
 export function useEnvTypeData() {
   const [data, setData] = useState<IOption[]>([]);
-
+  const { appData } = useContext(DetailContext);
   const loadData = useCallback(async () => {
-    const result = await getRequest(APIS.queryEnvTypeData);
+    const result = await getRequest(APIS.listAppEnvType, { data: { appCode: appData?.appCode, isClient: false } });
     const next = (result.data || []).map((el: any) => ({
       ...el,
       label: el?.typeName,

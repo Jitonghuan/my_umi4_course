@@ -50,12 +50,14 @@ export default function PublishDetail(props: IProps) {
     queryEnvsReq({
       categoryCode: appCategoryCode,
       envTypeCode: envTypeCode,
+      appCode: appData?.appCode,
     }).then((data) => {
       setEnvDataList(data.list);
     });
     // 下一个部署环境
     const nextEnvTypeCode = nextEnvTypeCodeMapping[envTypeCode];
     queryEnvsReq({
+      appCode: appData?.appCode,
       categoryCode: appCategoryCode,
       envTypeCode: nextEnvTypeCode,
     }).then((data) => {
@@ -164,7 +166,7 @@ export default function PublishDetail(props: IProps) {
         '100%': '#87d068',
       },
       strokeWidth: 3,
-      format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
+      format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
     },
     onChange: (info: any) => {
       console.log('>>>>>', info);

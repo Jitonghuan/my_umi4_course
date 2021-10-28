@@ -24,7 +24,8 @@ export const queryBizData = `${appConfig.apiPrefix}/appManage/group/list`;
 export const queryBizModuleData = `${appConfig.apiPrefix}/orgManage/buSys/list`;
 
 /** 获取环境类型接口 */
-export const queryEnvTypeData = `${appConfig.apiPrefix}/appManage/env/listType`;
+// export const queryEnvTypeData = `${appConfig.apiPrefix}/appManage/env/listType`;
+export const queryEnvTypeData = `${appConfig.apiPrefix}/appManage/env/listAppEnvType`;
 
 /** 获取权限数据 */
 export const queryPermission = `${appConfig.apiPrefix}/rightManage/getUserMenus`;

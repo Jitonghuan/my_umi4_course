@@ -84,7 +84,7 @@ export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reuse
 export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/deployMaster`;
 
 /** GET 根据应用分类code查询发布环境列表 */
-export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/list`;
+export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 
 /** POST 应用模版-创建模版 NOT USED */
 export const createAppTemplate = `${appConfig.apiPrefix}/opsManage/appTemplate/create`;
@@ -519,6 +519,8 @@ export const queryEnvsReq = (params: {
   categoryCode: string;
   // 当前所处环境
   envTypeCode?: string;
+  //AppCode
+  appCode: string | undefined;
 }) =>
   getRequest(queryEnvsReqUrl, {
     data: {

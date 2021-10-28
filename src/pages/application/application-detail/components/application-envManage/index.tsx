@@ -70,11 +70,15 @@ export default function appEnvPageList() {
     selectedRows?.map((item: any) => {
       envCodes.push(item?.envCode);
     });
-    postRequest(addAppEnv, { data: { appCode, envCodes: envCodes } }).then((res: any) => {
-      if (res.success) {
-        message.success('绑定环境成功！');
-      }
-    });
+    postRequest(addAppEnv, { data: { appCode, envCodes: envCodes } })
+      .then((res: any) => {
+        if (res.success) {
+          message.success('绑定环境成功！');
+        }
+      })
+      .finally(() => {
+        queryAppEnvData(appCode);
+      });
     setIsModalVisible(false);
   };
   const handleCancel = () => {
@@ -110,14 +114,15 @@ export default function appEnvPageList() {
   };
   //查看modal弹窗环境信息
   const queryEnvData = (value: any) => {
+    debugger;
     getRequest(queryEnvList, {
       data: {
         envTypeCode: value?.envTypeCode,
         envCode: value?.envCode,
         envName: value?.envName,
         categoryCode: value?.categoryCode,
-        pageIndex: pageIndex,
-        pageSize: pageSize,
+        pageIndex: value?.pageIndex,
+        pageSize: value?.pageSize,
       },
     }).then((result) => {
       if (result?.success) {
@@ -144,12 +149,13 @@ export default function appEnvPageList() {
           onOk={handleOk}
           onCancel={handleCancel}
           width={900}
-          bodyStyle={{ height: '600px' }}
+          bodyStyle={{ height: '500px' }}
         >
           <Form
             layout="inline"
             form={EnvForm}
             onFinish={(values: any) => {
+              setPageIndex(1);
               queryEnvData({
                 ...values,
                 pageIndex: 1,
@@ -158,6 +164,7 @@ export default function appEnvPageList() {
             }}
             onReset={() => {
               EnvForm.resetFields();
+
               queryEnvData({
                 pageIndex: 1,
                 // pageSize: pageSize,
@@ -200,8 +207,10 @@ export default function appEnvPageList() {
                 showSizeChanger: true,
                 onChange: (next) => {
                   setPageIndex(next);
+                  const values = EnvForm.getFieldsValue();
                   queryEnvData({
-                    pageIndex: pageIndex,
+                    ...values,
+                    pageIndex: next,
                     pageSize: pageSize,
                   });
                 },
@@ -268,8 +277,9 @@ export default function appEnvPageList() {
               <Button
                 type="primary"
                 onClick={() => {
+                  EnvForm.resetFields();
+                  //  appEnvForm.setFieldsValue(undefined)
                   setIsModalVisible(true);
-                  appEnvForm.resetFields();
                   let obj = { pageIndex: 1, pageSize: 10 };
                   queryEnvData(obj);
                   setSelectedRowKeys(['undefined']);

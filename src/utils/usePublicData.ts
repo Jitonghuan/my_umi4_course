@@ -12,7 +12,8 @@ export const queryAppTypeLists = `${appConfig.apiPrefix}/appManage/category/list
 /** 应用分支 */
 export const queryAppBranchLists = `${appConfig.apiPrefix}/releaseManage/branch/list`;
 /** 环境类型 */
-export const queryEnvListType = `${appConfig.apiPrefix}/appManage/env/listType`;
+// export const queryEnvListType = `${appConfig.apiPrefix}/appManage/env/listType`;
+export const queryEnvListType = `${appConfig.apiPrefix}/appManage/env/listAppEnvType`;
 /** 根据应用分类code查询发布环境列表 */
 const queryEnvsUrl = `${appConfig.apiPrefix}/appManage/env/list`;
 
@@ -121,20 +122,20 @@ const usePublicData = (props: UsePublicDataProps) => {
   });
 
   // 查询环境类型
-  const { run: envTypeListFun, data: envListType } = useRequest({
-    api: queryEnvListType,
-    method: 'GET',
-    formatData: (data) => {
-      return data?.map((v: any) => {
-        return {
-          ...v,
-          key: v?.typeCode,
-          value: useCodeValue ? v?.typeCode : v?.typeName,
-          label: v?.typeName,
-        };
-      });
-    },
-  });
+  // const { run: envTypeListFun, data: envListType } = useRequest({
+  //   api: queryEnvListType,
+  //   method: 'GET',
+  //   formatData: (data) => {
+  //     return data?.map((v: any) => {
+  //       return {
+  //         ...v,
+  //         key: v?.typeCode,
+  //         value: useCodeValue ? v?.typeCode : v?.typeName,
+  //         label: v?.typeName,
+  //       };
+  //     });
+  //   },
+  // });
 
   // 查询环境类型
   const { run: envsUrlFun, data: envsUrlList } = useRequest({
@@ -156,9 +157,9 @@ const usePublicData = (props: UsePublicDataProps) => {
     if (isUseAppType) {
       queryAppTypeListsFun({ pageSize: '-1' });
     }
-    if (isEnvType) {
-      envTypeListFun({ pageSize: '-1' });
-    }
+    // if (isEnvType) {
+    //   envTypeListFun({ pageSize: '-1' });
+    // }
     if (isEnvsUrl) {
       envsUrlFun({ pageSize: '-1' });
     }
@@ -182,7 +183,7 @@ const usePublicData = (props: UsePublicDataProps) => {
     appManageEnvData,
     appTypeData,
     appBranchData,
-    envListType,
+    // envListType,
     envsUrlList,
   } as {
     appManageListData: OptionProps[];

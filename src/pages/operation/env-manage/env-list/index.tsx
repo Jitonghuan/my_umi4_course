@@ -105,9 +105,9 @@ export default function envManageList(props: any) {
         envTypeCode: value?.envTypeCode,
         envCode: value?.envCode,
         envName: value?.envName,
-        categoryCode: value?.defaultCategoryCode,
-        pageIndex: pageIndex,
-        pageSize: pageSize,
+        categoryCode: value?.categoryCode,
+        pageIndex: value?.pageIndex,
+        pageSize: value?.pageSize,
       },
     }).then((result) => {
       if (result?.success) {
@@ -134,18 +134,17 @@ export default function envManageList(props: any) {
   //触发分页
   const pageSizeClick = (pagination: any) => {
     //  setPageIndexInfo(pagination.current);
+    setPageCurrentIndex(pagination.current);
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
     loadListData(obj);
 
-    setPageCurrentIndex(pagination.current);
     // console.log('pageIndexInfo',pageIndexInfo);
   };
 
   const loadListData = (params: any) => {
-    debugger;
     const values = EnvForm.getFieldsValue();
     console.log('values', values);
     queryEnvData({
@@ -196,7 +195,7 @@ export default function envManageList(props: any) {
               });
             }}
           >
-            <Form.Item label="默认分类：" name="defaultCategoryCode">
+            <Form.Item label="默认分类：" name="categoryCode">
               <Select showSearch style={{ width: 130 }} options={categoryData} />
             </Form.Item>
             <Form.Item label="环境大类：" name="envTypeCode">
