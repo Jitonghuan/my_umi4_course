@@ -77,6 +77,10 @@ export default [
     redirect: `${baseRoutePath}/operation/app-tmpl/tmpl-list`,
   },
   {
+    path: `${baseRoutePath}/operation/env-manage`,
+    redirect: `${baseRoutePath}/operation/env-manage/env-list`,
+  },
+  {
     path: `${baseRoutePath}/test/data-factory`,
     redirect: `${baseRoutePath}/test/data-factory/template`,
   },
@@ -166,6 +170,13 @@ export default [
             key: 'appList',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/application-overview',
+          },
+          {
+            path: 'envManage',
+            name: '环境管理',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/application-envManage',
           },
           {
             path: 'monitor',
@@ -825,6 +836,27 @@ export default [
             name: '复制应用模版',
             key: 'app-tmpl',
             component: '@/pages/operation/app-tmpl/tmpl-copy',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'env-manage',
+        name: '环境管理',
+        key: 'env-manage',
+        routes: [
+          {
+            path: 'env-list',
+            name: '环境列表',
+            key: 'env-manage',
+            component: '@/pages/operation/env-manage/env-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'push-env',
+            name: '推送环境',
+            key: 'env-manage',
+            component: '@/pages/operation/env-manage/push-env',
             hideInMenu: true,
           },
         ],

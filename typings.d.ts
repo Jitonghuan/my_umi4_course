@@ -22,4 +22,4 @@ declare interface IOption<ValueType = string, T = Record<string, any>> extends R
 }
 
 /** 编辑弹层显示状态: 隐藏 | 编辑 | 新增 */
-declare type EditorMode = 'HIDE' | 'EDIT' | 'ADD';
+declare type EditorMode = 'HIDE' | 'EDIT' | 'ADD' | 'VIEW';

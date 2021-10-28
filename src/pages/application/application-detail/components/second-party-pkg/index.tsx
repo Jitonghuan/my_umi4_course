@@ -11,6 +11,7 @@ import { queryEnvTypeData } from '@/common/apis';
 import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
 import { ContentCard } from '@/components/vc-page-content';
+import { listAppEnvType } from '@/common/apis';
 
 const { TabPane } = Tabs;
 
@@ -21,7 +22,7 @@ export default function TowPartyPkg(props: any) {
 
   // 环境数据
   const queryEnvDataList = async () => {
-    const envResp = await getRequest(queryEnvTypeData, {
+    const envResp = await getRequest(listAppEnvType, {
       data: { isClient: true },
     });
     const envTypeData = envResp?.data || [];
@@ -41,6 +42,23 @@ export default function TowPartyPkg(props: any) {
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_secondpartypkg_env_tab__', tabActive);
   }, [tabActive]);
+
+  useEffect(() => {
+    queryData();
+  }, []);
+  const queryData = () => {
+    getRequest(listAppEnvType, {
+      data: { isClient: true },
+    }).then((result) => {
+      const dataSource = result?.data || {};
+      const next = (dataSource || []).map((el: any) => ({
+        ...el,
+        label: el?.typeName,
+        value: el?.typeCode,
+      }));
+      setEnvTypeData(next);
+    });
+  };
 
   return (
     <ContentCard noPadding>

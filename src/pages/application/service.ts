@@ -2,6 +2,21 @@ import { AppItemVO } from './interfaces';
 import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 
+/** 查看应用分类接口 */
+export const appTypeList = `${appConfig.apiPrefix}/appManage/category/list`;
+
+/** 获取应用环境 */
+export const listAppEnv = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
+
+/** 应用绑定环境 */
+export const addAppEnv = `${appConfig.apiPrefix}/appManage/env/addAppEnv`;
+
+/** 应用删除环境 */
+export const delAppEnv = `${appConfig.apiPrefix}/appManage/env/delAppEnv`;
+
+/** 查看环境 */
+export const queryEnvList = `${appConfig.apiPrefix}/appManage/env/list`;
+
 /** 查询应用列表 */
 export const queryAppsUrl = `${appConfig.apiPrefix}/appManage/list`;
 
@@ -69,7 +84,7 @@ export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reuse
 export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/deployMaster`;
 
 /** GET 根据应用分类code查询发布环境列表 */
-export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/list`;
+export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 
 /** POST 应用模版-创建模版 NOT USED */
 export const createAppTemplate = `${appConfig.apiPrefix}/opsManage/appTemplate/create`;
@@ -504,6 +519,8 @@ export const queryEnvsReq = (params: {
   categoryCode: string;
   // 当前所处环境
   envTypeCode?: string;
+  //AppCode
+  appCode: string | undefined;
 }) =>
   getRequest(queryEnvsReqUrl, {
     data: {
