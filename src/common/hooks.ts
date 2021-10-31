@@ -22,6 +22,7 @@ export const FeContext = createContext({
   categoryData: [] as IOption[],
   /** 应用组 */
   businessData: [] as IOption[],
+  envTypeData: [] as IOption[],
 });
 
 /** 修改标题和 favicon */

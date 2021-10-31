@@ -5,12 +5,15 @@
  * @create 2021-04-19 18:26
  */
 
-import React, { useMemo, useContext } from 'react';
+import React, { useMemo, useContext, useState, useEffect } from 'react';
 import { Tabs } from 'antd';
 import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
+import DetailContext from '../../context';
 import ConfigContent from './config-content';
 import { IProps } from './types';
+import { listAppEnvType } from '@/common/apis';
+import { getRequest } from '@/utils/request';
 import './index.less';
 
 const { TabPane } = Tabs;
@@ -21,10 +24,42 @@ const typeMap = {
 };
 
 export default function ConfigParametersManage(props: IProps) {
+  const { appData } = useContext(DetailContext);
   const {
     location: { pathname },
   } = props;
-  const { envTypeData } = useContext(FeContext);
+  // const { envTypeData,categoryData } = useContext(FeContext);
+  const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  useEffect(() => {
+    queryData();
+  }, []);
+  const queryData = () => {
+    getRequest(listAppEnvType, {
+      data: { appCode: appData?.appCode, isClient: false },
+    }).then((result) => {
+      const { data } = result || [];
+      let next: any = [];
+      (data || []).map((el: any) => {
+        if (el?.typeCode === 'dev') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+        }
+        if (el?.typeCode === 'test') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+        }
+        if (el?.typeCode === 'pre') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+        }
+        if (el?.typeCode === 'prod') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+        }
+      });
+      next.sort((a: any, b: any) => {
+        return a.sortType - b.sortType;
+      }); //升序
+      setEnvTypeData(next);
+    });
+  };
+
   const configType = useMemo(() => {
     const paths = pathname.split('/');
     const name = paths[paths.length - 1];

@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/02 14:22
 
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
 import moment from 'moment';
 import { Button, Empty, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
@@ -11,12 +11,14 @@ import DetailContext from '../../context';
 import { EnvDataVO } from '@/pages/application/interfaces';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useFeVersions } from './hooks';
+import { listAppEnvType } from '@/common/apis';
+import { getRequest } from '@/utils/request';
 import RollbackVersion from './rollback';
 import './index.less';
 
 export default function FEVersions() {
   const { appData } = useContext(DetailContext);
-  const { envTypeData } = useContext(FeContext);
+  // const { envTypeData } = useContext(FeContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [feVersionData, isVersionLoading, reloadVersionData] = useFeVersions(appData!);
   const [rollbackEnv, setRollbackEnv] = useState<EnvDataVO>();
@@ -29,6 +31,36 @@ export default function FEVersions() {
     setRollbackEnv(undefined);
     reloadVersionData();
   }, []);
+  const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  useEffect(() => {
+    queryData();
+  }, []);
+  const queryData = () => {
+    getRequest(listAppEnvType, {
+      data: { appCode: appData?.appCode, isClient: false },
+    }).then((result) => {
+      const { data } = result || [];
+      let next: any = [];
+      (data || []).map((el: any) => {
+        if (el?.typeCode === 'dev') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+        }
+        if (el?.typeCode === 'test') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+        }
+        if (el?.typeCode === 'pre') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+        }
+        if (el?.typeCode === 'prod') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+        }
+      });
+      next.sort((a: any, b: any) => {
+        return a.sortType - b.sortType;
+      }); //升序
+      setEnvTypeData(next);
+    });
+  };
 
   return (
     <ContentCard className="page-fe-version">

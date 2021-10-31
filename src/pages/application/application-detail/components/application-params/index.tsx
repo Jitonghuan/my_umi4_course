@@ -29,7 +29,7 @@ export default function ApplicationParams(props: any) {
   const { appCode, appCategoryCode } = appData || {};
   const { templateType, envCode } = props?.history.location?.query || {};
   useEffect(() => {
-    selectAppEnv(appCategoryCode).then((result) => {
+    selectAppEnv().then((result) => {
       const listEnv = result.data?.map((n: any) => ({
         value: n?.envCode,
         label: n?.envName,
@@ -74,8 +74,8 @@ export default function ApplicationParams(props: any) {
   };
 
   //通过appCategoryCode查询环境信息
-  const selectAppEnv = (categoryCode: any) => {
-    return getRequest(APIS.listAppEnv, { data: { appCode, categoryCode: categoryCode } });
+  const selectAppEnv = () => {
+    return getRequest(APIS.listAppEnv, { data: { appCode } });
   };
 
   //查询当前模版信息  一进入页面加载
