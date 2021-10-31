@@ -24,7 +24,6 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [envDataList, setEnvDataList] = useState<any>([]);
-
   useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
@@ -42,6 +41,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
 
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
+
     const namesArr: any[] = [];
     if (envs?.indexOf(',') > -1) {
       const list = envs?.split(',') || [];

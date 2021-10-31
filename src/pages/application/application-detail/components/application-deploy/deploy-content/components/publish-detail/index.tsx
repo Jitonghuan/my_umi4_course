@@ -158,14 +158,17 @@ export default function PublishDetail(props: IProps) {
   };
 
   // 发布环境
+  let I = 0;
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
     const envList = envs?.split(',') || [];
+
+    // console.log(envDataList,I++);
     return envDataList
       .filter((envItem) => {
-        return envList.includes(envItem.envCode);
+        return envList.includes(envItem.value);
       })
-      .map((envItem) => `${envItem.envName}(${envItem.envCode})`)
+      .map((envItem) => `${envItem.label}(${envItem.value})`)
       .join(',');
   }, [envDataList, deployInfo]);
 
