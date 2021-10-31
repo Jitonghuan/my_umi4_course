@@ -5,7 +5,9 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
+import { listAppEnv } from '@/pages/application/service';
 import {
   cancelDeploy,
   deployReuse,
@@ -47,30 +49,37 @@ export default function PublishDetail(props: IProps) {
     if (!appCategoryCode) return;
 
     // 当前部署环境
-    queryEnvsReq({
-      categoryCode: appCategoryCode,
-      envTypeCode: envTypeCode,
-      appCode: appData?.appCode,
-    }).then((data) => {
-      // setEnvDataList(data.list);
+    getRequest(listAppEnv, {
+      data: {
+        envTypeCode: envTypeCode,
+        appCode: appData?.appCode,
+      },
+    }).then((result) => {
       let envSelect: any = [];
-      data?.list?.map((item: any) => {
-        envSelect.push({ label: item.envName, value: item.envCode });
-      });
-      setEnvDataList(envSelect);
+      if (result?.success) {
+        result?.data?.map((item: any) => {
+          envSelect.push({ label: item.envName, value: item.envCode });
+        });
+        setEnvDataList(envSelect);
+      }
+      // setEnvDataList(data.list);
     });
     // 下一个部署环境
     const nextEnvTypeCode = nextEnvTypeCodeMapping[envTypeCode];
-    queryEnvsReq({
-      appCode: appData?.appCode,
-      categoryCode: appCategoryCode,
-      envTypeCode: nextEnvTypeCode,
-    }).then((data) => {
-      let envSelect: any = [];
-      data?.list?.map((item: any) => {
-        envSelect.push({ label: item.envName, value: item.envCode });
-      });
-      setNextEnvDataList(envSelect);
+    console.log('nextEnvTypeCode', nextEnvTypeCode);
+    getRequest(listAppEnv, {
+      data: {
+        envTypeCode: nextEnvTypeCode,
+        appCode: appData?.appCode,
+      },
+    }).then((resp) => {
+      if (resp?.success) {
+        let envSelect: any = [];
+        resp?.data?.map((item: any) => {
+          envSelect.push({ label: item.envName, value: item.envCode });
+        });
+        setNextEnvDataList(envSelect);
+      }
     });
   }, [appCategoryCode, envTypeCode]);
 

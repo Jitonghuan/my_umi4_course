@@ -15,8 +15,8 @@ import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';
-import { getReviewStatus } from '@/pages/application/service';
-import { postRequest } from '@/utils/request';
+import { listAppEnv } from '@/pages/application/service';
+import { getRequest } from '@/utils/request';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
@@ -105,17 +105,20 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
   useEffect(() => {
     if (!appCategoryCode) return;
-    queryEnvsReq({
-      categoryCode: appCategoryCode as string,
-      envTypeCode: env,
-      appCode: appCode,
-    }).then((data) => {
-      console.log('data?.list.envName', data?.list.envName, data);
+    getRequest(listAppEnv, {
+      data: {
+        envTypeCode: env,
+        appCode: appData?.appCode,
+      },
+    }).then((result) => {
       let envSelect: any = [];
-      data?.list?.map((item: any) => {
-        envSelect.push({ label: item.envName, value: item.envCode });
-      });
-      setEnvDataList(envSelect);
+      if (result?.success) {
+        result?.data?.map((item: any) => {
+          envSelect.push({ label: item.envName, value: item.envCode });
+        });
+        setEnvDataList(envSelect);
+      }
+      // setEnvDataList(data.list);
     });
   }, [appCategoryCode, env]);
 
