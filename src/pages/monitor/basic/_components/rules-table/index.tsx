@@ -39,12 +39,12 @@ export default function RulesTable(props: RulesTableProps) {
   } = useTable({
     url: queryRulesList,
     method: 'GET',
-    formatter: () => {
-      return {
-        serviceId,
-        pageIndex: -1,
-      };
-    },
+    // formatter: () => {
+    //   return {
+    //     serviceId,
+    //     pageIndex: -1,
+    //   };
+    // },
   });
 
   //新增
@@ -204,7 +204,15 @@ export default function RulesTable(props: RulesTableProps) {
           </Button>
         </div>
       </div>
-      <Table columns={columns} {...tableProps} pagination={false} />
+      <Table
+        columns={columns}
+        {...tableProps}
+        pagination={{
+          ...tableProps.pagination,
+          showTotal: (total) => `共 ${total} 条`,
+          showSizeChanger: true,
+        }}
+      />
       <TemplateDrawer
         visible={drawerVisible}
         onClose={onClose}

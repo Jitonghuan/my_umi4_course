@@ -164,7 +164,7 @@ export default function PublishDetail(props: IProps) {
         '100%': '#87d068',
       },
       strokeWidth: 3,
-      format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
+      format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
     },
     onChange: (info: any) => {
       console.log('>>>>>', info);
