@@ -102,7 +102,6 @@ export default function ApplicationEditor(props: IProps) {
   // 提交数据
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
-    console.log('>> handleSubmit', values);
     const { ownerList, ...others } = values;
 
     const submitData = {

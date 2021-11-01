@@ -26,8 +26,6 @@ export default function ServerStatus(props: ServerStatusProps) {
     if (!selectedRowKey) {
       return message.warning('请选择服务器!');
     }
-
-    console.log('>> handleOk: ', selectedRowKey);
     const item = appStatusInfo.find((n) => n.eccid === selectedRowKey);
     await postRequest(APIS.restartApplication, {
       data: {

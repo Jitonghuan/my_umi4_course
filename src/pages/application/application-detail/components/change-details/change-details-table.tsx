@@ -144,9 +144,7 @@ export default function appChangeTable(props: appChangeTableProps) {
     ];
     return <Table columns={columns} dataSource={userRankingData} pagination={false} />;
   };
-  const handleChange = (value: any) => {
-    console.log(`selected ${value}`);
-  };
+  const handleChange = (value: any) => {};
 
   return (
     <section data-loading={loading}>

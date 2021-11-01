@@ -80,7 +80,6 @@ export default function ClusterSyncDetail(props: any) {
     setPending(true);
     try {
       const result = await getRequest(APIS.queryWorkState);
-      console.log('> current work state: ', result.data);
       const initState = result.data.category;
 
       if (initState === 'DeployClusterApp') {

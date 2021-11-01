@@ -60,18 +60,9 @@ export default function addEnvData(props: EnvEditorProps) {
         setCheckedOption(0);
       }
       createEnvForm.setFieldsValue({
-        // envTypeCode: initData?.envTypeCode,
-        // envName: initData?.envName,
-        // envCode: initData?.envCode,
-        // categoryCode: initData?.categoryCode,
-        // mark: initData?.mark,
         ...initData,
         isBlock: isBlockChecked,
         useNacos: nacosChecked,
-        // nacosAddress: initData?.nacosAddress,
-        // clusterName:initData?.clusterName,
-        // clusterType:initData?.clusterType,
-        // clusterNetType:initData?.clusterNetType,
       });
     }
   }, [mode]);
@@ -111,6 +102,7 @@ export default function addEnvData(props: EnvEditorProps) {
     if (mode === 'ADD') {
       const params = createEnvForm.getFieldsValue();
       console.log('>> handleSubmit', params);
+      debugger;
       //新增环境
       postRequest(createEnv, {
         data: {
@@ -145,6 +137,12 @@ export default function addEnvData(props: EnvEditorProps) {
           useNacos: checkedOption,
           isBlock: isBlockChangeOption,
           mark: initValue?.mark,
+          nacosAddress: initValue?.nacosAddress,
+          envTypeCode: initValue?.envTypeCode,
+          categoryCode: initValue?.categoryCode,
+          clusterName: initValue?.clusterName,
+          clusterType: initValue?.clusterType,
+          clusterNetType: initValue?.clusterNetType,
         },
       }).then((result) => {
         if (result.success) {
@@ -169,7 +167,7 @@ export default function addEnvData(props: EnvEditorProps) {
         <Form
           form={createEnvForm}
           labelCol={{ flex: '120px' }}
-          // onFinish={addEnv}
+          onFinish={handleSubmit}
           onReset={() => {
             createEnvForm.resetFields();
           }}
@@ -260,9 +258,10 @@ export default function addEnvData(props: EnvEditorProps) {
                 <Button type="ghost" htmlType="reset" onClick={onClose}>
                   取消
                 </Button>
-                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }} onClick={handleSubmit}>
+                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }}>
                   保存
                 </Button>
+                {/* onClick={handleSubmit} */}
               </Form.Item>
             </Space>
           )}

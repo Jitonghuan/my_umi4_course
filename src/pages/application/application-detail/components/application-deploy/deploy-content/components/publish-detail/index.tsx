@@ -7,7 +7,7 @@ import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload } from 'a
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
-import { listAppEnv } from '@/pages/application/service';
+import { listAppEnv, checkNextEnv } from '@/pages/application/service';
 import {
   cancelDeploy,
   deployReuse,
@@ -44,7 +44,7 @@ export default function PublishDetail(props: IProps) {
   const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
-
+  let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode) return;
 
@@ -64,25 +64,40 @@ export default function PublishDetail(props: IProps) {
       }
       // setEnvDataList(data.list);
     });
-    // 下一个部署环境
-    const nextEnvTypeCode = nextEnvTypeCodeMapping[envTypeCode];
-    console.log('nextEnvTypeCode', nextEnvTypeCode);
-    getRequest(listAppEnv, {
+
+    if (deployInfo.id !== undefined) {
+      getRequest(checkNextEnv, {
+        data: {
+          id: deployInfo.id,
+        },
+      }).then((response) => {
+        if (response?.success) {
+          console.log('response', response);
+          newNextEnvTypeCode = response?.data;
+          console.log('newNextEnvTypeCode', newNextEnvTypeCode);
+          getNextEnv(newNextEnvTypeCode).then((resp) => {
+            if (resp?.success) {
+              let envSelect: any = [];
+              resp?.data?.map((item: any) => {
+                envSelect.push({ label: item.envName, value: item.envCode });
+              });
+              setNextEnvDataList(envSelect);
+            }
+          });
+        }
+      });
+    }
+    // const nextEnvTypeCode = nextEnvTypeCodeMapping[envTypeCode];
+  }, [appCategoryCode, envTypeCode, deployInfo.id]);
+  // 下一个部署环境
+  const getNextEnv = (envTypeCode: string) => {
+    return getRequest(listAppEnv, {
       data: {
-        envTypeCode: nextEnvTypeCode,
+        envTypeCode: newNextEnvTypeCode,
         appCode: appData?.appCode,
       },
-    }).then((resp) => {
-      if (resp?.success) {
-        let envSelect: any = [];
-        resp?.data?.map((item: any) => {
-          envSelect.push({ label: item.envName, value: item.envCode });
-        });
-        setNextEnvDataList(envSelect);
-      }
     });
-  }, [appCategoryCode, envTypeCode]);
-
+  };
   // 取消发布
   const handleCancelPublish = () => {
     onOperate('cancelDeployStart');
@@ -190,7 +205,6 @@ export default function PublishDetail(props: IProps) {
       format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
     },
     onChange: (info: any) => {
-      console.log('>>>>>', info);
       if (info.file.status === 'uploading') {
         return;
       }

@@ -8,6 +8,8 @@ export const appTypeList = `${appConfig.apiPrefix}/appManage/category/list`;
 /** 获取应用环境 */
 export const listAppEnv = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 
+/** 获取部署的下一个环境 */
+export const checkNextEnv = `${appConfig.apiPrefix}/releaseManage/deploy/checkNextEnv`;
 /** 应用绑定环境 */
 export const addAppEnv = `${appConfig.apiPrefix}/appManage/env/addAppEnv`;
 

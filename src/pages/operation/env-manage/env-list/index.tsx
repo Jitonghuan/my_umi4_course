@@ -158,30 +158,35 @@ export default function envManageList(props: any) {
 
   //启用配置管理选择
   const handleNacosChange = async (checked: any, record: any) => {
+    console.log('recordNacos:', record);
     if (checked === 0) {
       useNacosData = 1;
     } else {
       useNacosData = 0;
     }
-    await putRequest(updateEnv, {
-      data: {
-        envCode: record?.envCode,
-        envName: record?.envName,
-        useNacos: useNacosData,
-        isBlock: record.isBlock,
-        mark: record?.mark,
-      },
-    }).then((result) => {
-      if (result.success) {
-        message.success('更改成功！');
-      } else {
-        message.error(result.errorMsg);
-      }
-    });
-    loadListData({
-      pageIndex: 1,
-      pageSize: 20,
-    });
+    if (record.nacosAddress !== '') {
+      await putRequest(updateEnv, {
+        data: {
+          envCode: record?.envCode,
+          envName: record?.envName,
+          useNacos: useNacosData,
+          isBlock: record.isBlock,
+          mark: record?.mark,
+        },
+      }).then((result) => {
+        if (result.success) {
+          message.success('更改成功！');
+        } else {
+          message.error(result.errorMsg);
+        }
+      });
+      loadListData({
+        pageIndex: 1,
+        pageSize: 20,
+      });
+    } else {
+      message.warning('请先检查Nacos地址是否为空！');
+    }
   };
   //是否封网
   const isBlockChange = async (checked: any, record: any) => {

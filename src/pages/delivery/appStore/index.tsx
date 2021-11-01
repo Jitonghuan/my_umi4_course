@@ -42,7 +42,6 @@ export default function appStore(props: any) {
       // console.log(`selectedRowKeys: ${selectedRowKeys}`,'selectedRows: ', selectedRows);
     },
   };
-  // console.log('>>>>>>',currentData);
   const showModal = () => {
     setIsModalVisible(true);
   };

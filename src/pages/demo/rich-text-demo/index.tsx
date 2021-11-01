@@ -4,9 +4,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import RichText from '@/components/rich-text';
 
 export default function DemoPageTb() {
-  const onChange = (val: string) => {
-    console.log(val);
-  };
+  const onChange = (val: string) => {};
   return (
     <PageContainer>
       <ContentCard>

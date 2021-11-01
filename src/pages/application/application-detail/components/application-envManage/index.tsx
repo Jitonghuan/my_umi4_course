@@ -8,8 +8,6 @@ import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
-import { datetimeCellRender } from '@/utils';
-import { PlusOutlined } from '@ant-design/icons';
 import './index.less';
 import { appTypeList, listAppEnv, addAppEnv, delAppEnv, queryEnvList } from '@/pages/application/service';
 
@@ -278,10 +276,10 @@ export default function appEnvPageList() {
               <Select options={envTypeData} allowClear showSearch style={{ width: 120 }} />
             </Form.Item>
             <Form.Item label="环境名：" name="envName">
-              <Input placeholder="请输入环境名"></Input>
+              <Input placeholder="请输入环境名" style={{ width: 140 }}></Input>
             </Form.Item>
             <Form.Item label=" 环境CODE：" name="envCode">
-              <Input placeholder="请输入环境CODE" style={{ width: 150 }}></Input>
+              <Input placeholder="请输入环境CODE" style={{ width: 140 }}></Input>
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -306,7 +304,6 @@ export default function appEnvPageList() {
                   setPageIndex(1);
                 }}
               >
-                <PlusOutlined />
                 绑定环境
               </Button>
             </div>

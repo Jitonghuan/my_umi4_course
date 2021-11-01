@@ -13,6 +13,7 @@ import AceEditor from '@/components/ace-editor';
 import { queryConfigList, envList } from '@/pages/application/service';
 import { IProps } from './types';
 import { queryVersionApi, doRestoreVersionApi, configAdd, configUpdate } from './service';
+import { listAppEnv } from '@/pages/application/service';
 import './index.less';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
 const rootCls = 'config-content-compo';
@@ -22,6 +23,7 @@ export default function ConfigContent({ env, configType }: IProps) {
   const [currentEnvData, setCurrentEnvData] = useState(); //当前选中的环境；
   const [version, setVersion] = useState(''); //版本号
   const [configId, setConfigId] = useState(''); //配置内容的Id
+  const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
   const [filterFormRef] = Form.useForm();
   const [editVersionForm] = Form.useForm();
   const [versionData, setVersionData] = useState<any[]>([]); //版本下拉选择框的全部数据
@@ -33,18 +35,43 @@ export default function ConfigContent({ env, configType }: IProps) {
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
+  let currentUseNacos: any = [];
+  let useNacosIndex: any;
+  // 查询应用环境数据  获取到的该应用的环境信息用来判断useNacose的值
+  const queryAppEnvData = () => {
+    getRequest(listAppEnv, {
+      data: {
+        appCode,
+        categoryCode: appData?.appCategoryCode,
+      },
+    }).then((result) => {
+      if (result?.success) {
+        let dataSource = result?.data;
+        setAppEnvDataSource(dataSource);
+      }
+    });
+  };
+
+  appEnvDataSource.map((item: any) => {
+    currentUseNacos.push({
+      useNacos: item.useNacos,
+      envCode: item.envCode,
+      envName: item.envName,
+    });
+  });
   // 进入页面加载环境和版本信息
   useEffect(() => {
     try {
       selectAppEnv(appCategoryCode).then((result: any) => {
-        const dataSources = result.data.dataSource?.map((n: any) => ({
+        const dataSources = result.data?.map((n: any) => ({
           value: n?.envCode,
           label: n?.envName,
+          useNacos: n?.useNacos,
           data: n,
         }));
         let listEnv: any = [];
         dataSources.forEach((el: any) => {
-          if (el.value === 'hbos-dev' || el.value === 'hbos-test' || el.value === 'hbos-seenewhospital') {
+          if (el.useNacos === 1) {
             listEnv.push(el);
           }
         });
@@ -67,10 +94,11 @@ export default function ConfigContent({ env, configType }: IProps) {
     }
   }, [env]);
 
-  //通过appCategoryCode和env查询环境信息
+  //通过appCode,appCategoryCode和env查询环境信息
   const selectAppEnv = (categoryCode: any) => {
-    return getRequest(envList, { data: { categoryCode: categoryCode, envTypeCode: env } });
+    return getRequest(listAppEnv, { data: { appCode, categoryCode: categoryCode, envTypeCode: env } });
   };
+
   //改变环境下拉选择后查询结果
   let getEnvCode: any;
   const changeEnvCode = (getEnvCodes: string) => {
@@ -247,9 +275,6 @@ export default function ConfigContent({ env, configType }: IProps) {
             />
           </Form.Item>
           <Form.Item>
-            {/* <Button htmlType="submit" type="primary" style={{ marginRight: 12 }}>
-              查询
-            </Button> */}
             <Button htmlType="reset" type="default">
               重置
             </Button>

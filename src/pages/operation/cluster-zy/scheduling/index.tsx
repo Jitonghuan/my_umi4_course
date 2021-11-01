@@ -33,7 +33,6 @@ export default function TrafficScheduling() {
 
   const handleSubmit = useCallback(async () => {
     const values = await editField.validateFields();
-    console.log('> handleSubmit', values);
 
     Modal.confirm({
       title: '操作确认',
