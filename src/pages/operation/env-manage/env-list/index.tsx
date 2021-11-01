@@ -158,7 +158,6 @@ export default function envManageList(props: any) {
 
   //启用配置管理选择
   const handleNacosChange = async (checked: any, record: any) => {
-    console.log('recordNacos:', record);
     if (checked === 0) {
       useNacosData = 1;
     } else {

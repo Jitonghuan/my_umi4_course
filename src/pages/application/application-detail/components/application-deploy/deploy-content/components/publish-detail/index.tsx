@@ -72,9 +72,7 @@ export default function PublishDetail(props: IProps) {
         },
       }).then((response) => {
         if (response?.success) {
-          console.log('response', response);
           newNextEnvTypeCode = response?.data;
-          console.log('newNextEnvTypeCode', newNextEnvTypeCode);
           getNextEnv(newNextEnvTypeCode).then((resp) => {
             if (resp?.success) {
               let envSelect: any = [];

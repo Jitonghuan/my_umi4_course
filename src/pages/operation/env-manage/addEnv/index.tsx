@@ -101,8 +101,6 @@ export default function addEnvData(props: EnvEditorProps) {
   const handleSubmit = () => {
     if (mode === 'ADD') {
       const params = createEnvForm.getFieldsValue();
-      console.log('>> handleSubmit', params);
-      debugger;
       //新增环境
       postRequest(createEnv, {
         data: {
@@ -129,7 +127,6 @@ export default function addEnvData(props: EnvEditorProps) {
     } else if (mode === 'EDIT') {
       //编辑环境
       const initValue = createEnvForm.getFieldsValue();
-      console.log('params,initValue', initValue);
       putRequest(updateEnv, {
         data: {
           envCode: initValue?.envCode,
