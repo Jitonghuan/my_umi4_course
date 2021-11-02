@@ -1,18 +1,18 @@
 // api list
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/07/27 14:37
-// https://come-future.yuque.com/sekh46/bbgc7f/dnkgfm
+// @author JITONGHUAN <muxi@come-future.com>
+// @create 2021/11/2 09:37
+// https://come-future.yuque.com/sekh46/bbgc7f/oq5agr
 
 import { addAPIPrefix } from '@/utils';
 
 /** GET 流量地图 */
 export const trafficMap = addAPIPrefix('/opsManage/multiple/map');
 
-/** POST 流量调度 */
-export const trafficScheduling = addAPIPrefix('/opsManage/multiple/switch');
+/** POST 集群流量切换 流量调度 */
+export const switchCluster = addAPIPrefix('/opsManage/multiple/switchCluster');
 
-/** GET 集群同步-单应用对比 */
-export const singleAppDiff = addAPIPrefix('/opsManage/multiple/appDiff');
+/** GET 任务查询 */
+export const queryCurrentWorkState = addAPIPrefix('/opsManage/multiple/queryCurrentWorkState');
 
 /** POST 集群同步-单应用发布 */
 export const singleAppDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');

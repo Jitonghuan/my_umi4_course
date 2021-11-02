@@ -1,12 +1,12 @@
 // operation log hooks
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/07/29 15:38
+// @author JITONGHUAN <muxi@come-future.com>
+// @create 2021/11/2 10:38
 
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
 
-export function useLogSource(searchParams: any, pageIndex: number, pageSize: number): [any[], number, boolean] {
+export function useLogSource(pageIndex: number, pageSize: number): [any[], number, boolean] {
   const [data, setData] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -15,8 +15,8 @@ export function useLogSource(searchParams: any, pageIndex: number, pageSize: num
     setLoading(true);
 
     try {
-      const result = await getRequest(APIS.queryOperateLog, {
-        data: { ...searchParams, pageIndex, pageSize },
+      const result = await getRequest(APIS.queryCurrentWorkState, {
+        data: { envCode: 'tt-health', pageIndex, pageSize },
       });
 
       let resultData = result.data || {};
@@ -30,11 +30,11 @@ export function useLogSource(searchParams: any, pageIndex: number, pageSize: num
     } finally {
       setLoading(false);
     }
-  }, [searchParams, pageIndex, pageSize]);
+  }, [pageIndex, pageSize]);
 
   useEffect(() => {
     loadData();
-  }, [searchParams, pageIndex, pageSize]);
+  }, [pageIndex, pageSize]);
 
   return [data, total, loading];
 }

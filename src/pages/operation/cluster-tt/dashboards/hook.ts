@@ -15,7 +15,7 @@ export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) =
 
   const loadHistogram = useCallback((showLoading = true) => {
     showLoading && setLoading(true);
-    return getRequest(APIS.getClustersEsData)
+    return getRequest(APIS.getCurrentClusterTrafficData)
       .then((result) => {
         setHistogramData(result.data || {});
       })

@@ -42,7 +42,7 @@ export default function ConfigContent({ env, configType }: IProps) {
     getRequest(listAppEnv, {
       data: {
         appCode,
-        categoryCode: appData?.appCategoryCode,
+        // categoryCode: appData?.appCategoryCode,
       },
     }).then((result) => {
       if (result?.success) {
@@ -96,7 +96,7 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   //通过appCode,appCategoryCode和env查询环境信息
   const selectAppEnv = (categoryCode: any) => {
-    return getRequest(listAppEnv, { data: { appCode, categoryCode: categoryCode, envTypeCode: env } });
+    return getRequest(listAppEnv, { data: { appCode, envTypeCode: env } });
   };
 
   //改变环境下拉选择后查询结果

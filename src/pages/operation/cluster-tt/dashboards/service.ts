@@ -1,7 +1,7 @@
 import { addAPIPrefix } from '@/utils';
 
-/** GET 0、获取AB集群各院区流量数据 */
-export const getClustersEsData = addAPIPrefix('/opsManage/multiple/getClustersEsData');
+/** GET 0、获取当前访问量 */
+export const getCurrentClusterTrafficData = addAPIPrefix('/opsManage/multiple/getCurrentClusterTrafficData');
 
 /** GET 1、获取A集群各院区流量数据 */
 export const getAClusterEsData = addAPIPrefix('/opsManage/multiple/getAClusterEsData');

@@ -1,6 +1,6 @@
 // 操作记录
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/07/27 14:35
+// @author JITONGHUAN <muxi.jth@come-future.com>
+// @create 2021/11/2 10:35
 
 import React, { useState } from 'react';
 import { Table, Modal } from 'antd';
@@ -12,14 +12,13 @@ import ExecResult from '@/components/exec-result';
 export default function Operation() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [searchParams, setSearchParams] = useState<any>();
-  const [tableSouce, total, loading] = useLogSource(searchParams, pageIndex, pageSize);
+  const [tableSouce, total, loading] = useLogSource(pageIndex, pageSize);
   const [detailItem, setDetailItem] = useState<any>();
 
   return (
     <ContentCard>
       <Table
-        // dataSource={tableSouce}
+        dataSource={tableSouce}
         loading={loading}
         pagination={{
           current: pageIndex,
@@ -37,7 +36,6 @@ export default function Operation() {
         <Table.Column title="操作类别" dataIndex="category" />
         <Table.Column title="创建时间" dataIndex="gmtCreate" render={datetimeCellRender} />
         <Table.Column title="结束时间" dataIndex="gmtModify" render={datetimeCellRender} />
-        {/* <Table.Column title="描述" dataIndex="" /> */}
         <Table.Column
           title="操作"
           render={(_, record: any) => (

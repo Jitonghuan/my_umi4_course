@@ -1,6 +1,6 @@
 // scheduling hooks
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/07/28 09:29
+// @author JITONGHUAN <muxi@come-future.com>
+// @create 2021/11/2 09:29
 
 import { useState, useEffect } from 'react';
 // import { getRequest } from '@/utils/request';
@@ -29,29 +29,37 @@ export function useClusterSource() {
   useEffect(() => {
     setData([
       {
-        title: '天台人民医院',
-        name: '天台',
+        title: '天台县医院',
+        name: 'xyy',
         options: [
           { label: 'A集群', value: 'cluster_a' },
           { label: 'B集群', value: 'cluster_b' },
         ],
       },
       {
-        title: '乡镇卫生院',
-        name: 'yuhang',
+        title: '县卫生院',
+        name: 'xwsy',
         options: [
           { label: 'A集群', value: 'cluster_a' },
           { label: 'B集群', value: 'cluster_b' },
         ],
       },
-      // {
-      //   title: '城站院区',
-      //   name: 'chengzhan',
-      //   options: [
-      //     { label: 'A集群', value: 'cluster_a' },
-      //     { label: 'B集群', value: 'cluster_b' },
-      //   ],
-      // },
+      {
+        title: '赤城街道',
+        name: 'ccjd',
+        options: [
+          { label: 'A集群', value: 'cluster_a' },
+          { label: 'B集群', value: 'cluster_b' },
+        ],
+      },
+      {
+        title: '平桥镇',
+        name: 'pqz',
+        options: [
+          { label: 'A集群', value: 'cluster_a' },
+          { label: 'B集群', value: 'cluster_b' },
+        ],
+      },
     ]);
   }, []);
 
