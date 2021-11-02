@@ -327,7 +327,7 @@ export default function ClusterSyncDetail(props: any) {
             // <Button key="again" type="primary" onClick={reDeploy}>
             //   再次同步集群
             // </Button>,
-            <Button key="showlist" type="default" onClick={() => props.history.push('./dashboard')}>
+            <Button key="showlist" type="default" onClick={() => props.history.push('./dashboards')}>
               查看集群看板
             </Button>,
           ]}
