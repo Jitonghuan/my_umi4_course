@@ -11,8 +11,8 @@ export const trafficMap = addAPIPrefix('/opsManage/multiple/map');
 /** POST 集群流量切换 流量调度 */
 export const switchCluster = addAPIPrefix('/opsManage/multiple/switchCluster');
 
-/** GET 任务查询 */
-export const queryCurrentWorkState = addAPIPrefix('/opsManage/multiple/queryCurrentWorkState');
+/** GET 操作日志查询查询 */
+export const queryOperateLog = addAPIPrefix('/opsManage/multiple/queryOperateLog');
 
 /** POST 集群同步-单应用发布 */
 export const singleAppDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
@@ -58,9 +58,6 @@ export const queryWorkState = addAPIPrefix('/opsManage/multiple/queryWorkState')
 
 /** GET 获取浙一应用列表 */
 export const queryAppList = addAPIPrefix('/opsManage/multiple/queryAppList');
-
-/** GET 操作日志 */
-export const queryOperateLog = addAPIPrefix('/opsManage/multiple/queryOperateLog');
 
 /** GET 获取 dashboard 页面地址 */
 export const getDashboardUrl = addAPIPrefix('/opsManage/multiple/getDashboardUrl');

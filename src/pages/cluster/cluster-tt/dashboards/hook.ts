@@ -15,7 +15,7 @@ export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) =
 
   const loadHistogram = useCallback((showLoading = true) => {
     showLoading && setLoading(true);
-    return getRequest(APIS.getCurrentClusterTrafficData)
+    return getRequest(APIS.getCurrentClusterTrafficData, { data: { envCode: 'tt-health' } })
       .then((result) => {
         setHistogramData(result.data || {});
       })

@@ -15,7 +15,7 @@ export function useLogSource(pageIndex: number, pageSize: number): [any[], numbe
     setLoading(true);
 
     try {
-      const result = await getRequest(APIS.queryCurrentWorkState, {
+      const result = await getRequest(APIS.queryOperateLog, {
         data: { envCode: 'tt-health', pageIndex, pageSize },
       });
 
