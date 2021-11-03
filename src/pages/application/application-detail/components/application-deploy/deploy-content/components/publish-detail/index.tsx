@@ -261,6 +261,9 @@ export default function PublishDetail(props: IProps) {
     if (item?.value === 'seenew-health') {
       envDataOption.push({ label: item.label, value: item.value });
     }
+    if (item?.value === 'tt-his-clusterb') {
+      envDataOption.push({ label: item.label, value: item.value });
+    }
   });
 
   return (

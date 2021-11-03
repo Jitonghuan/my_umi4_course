@@ -244,8 +244,8 @@ export default function addEnvData(props: EnvEditorProps) {
           <Form.Item label="集群网络类型:" name="clusterNetType" rules={[{ required: true, message: '这是必填项' }]}>
             {/* onChange={onClusterNetTypeChange} value={clusterNetType} */}
             <Radio.Group disabled={isDisabled}>
-              <Radio value={'vpc'}>私有环境</Radio>
-              <Radio value={'public'}>公有环境</Radio>
+              <Radio value={'vpc'}>私有环境(VPC)</Radio>
+              <Radio value={'public'}>公有环境(Public)</Radio>
             </Radio.Group>
           </Form.Item>
           <Divider />
