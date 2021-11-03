@@ -184,9 +184,16 @@ export default function addEnvData(props: EnvEditorProps) {
             </Form.Item>
           </div>
           <div>
-            <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
-              <Input style={{ width: 220 }} placeholder="请输入环境CODE" disabled={isDisabled || editEnvCode}></Input>
-            </Form.Item>
+            {mode !== 'EDIT' && (
+              <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
+                <Input style={{ width: 220 }} placeholder="请输入环境CODE" disabled={isDisabled}></Input>
+              </Form.Item>
+            )}
+            {mode === 'EDIT' && (
+              <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
+                <Input style={{ width: 220 }} placeholder="请输入环境CODE" disabled={editEnvCode}></Input>
+              </Form.Item>
+            )}
           </div>
           <div>
             <Form.Item label="默认分类：" name="categoryCode" rules={[{ required: true, message: '这是必选项' }]}>

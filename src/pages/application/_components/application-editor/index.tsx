@@ -155,9 +155,16 @@ export default function ApplicationEditor(props: IProps) {
         </FormItem>
         <FormItem noStyle shouldUpdate={shouldUpdate(['appType'])}>
           {({ getFieldValue }) => (
-            <FormItem label="APPCODE" name="appCode" rules={[{ required: true, message: '请输入应用 Code' }]}>
+            <FormItem
+              label="APPCODE"
+              name="appCode"
+              rules={[{ required: true, message: '请输入应用 Code' }]}
+              getValueFromEvent={(event) => {
+                return event.target.value.replace(/[^\w\.\/]/gi, '');
+              }}
+            >
               <Input
-                placeholder="请输入应用Code"
+                placeholder="请输入应用Code(不要包含中文）"
                 disabled={isEdit}
                 style={{ width: 320 }}
                 addonBefore={getFieldValue('appType') === 'frontend' && !isEdit ? 'fe_' : undefined}
