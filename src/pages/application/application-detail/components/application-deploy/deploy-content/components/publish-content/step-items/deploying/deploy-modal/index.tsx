@@ -30,7 +30,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
     if (!appCategoryCode) return;
     queryEnvsReq({
       // categoryCode: appCategoryCode as string,
-      // envTypeCode,
+      envTypeCode,
       appCode: appData?.appCode,
     }).then((data) => {
       let envSelect = [];
