@@ -8,16 +8,19 @@ export const createTableSchema = () => [
     width: 80,
     title: 'ID',
     dataIndex: 'id',
+    key: 1,
   },
   {
     title: '分支名',
     width: 300,
     dataIndex: 'branchName',
+    key: 2,
   },
   {
     title: '变更原因',
     dataIndex: 'desc',
     width: 180,
+    key: 3,
     ellipsis: {
       showTitle: false,
     },
@@ -32,10 +35,12 @@ export const createTableSchema = () => [
     title: '创建时间',
     dataIndex: 'gmtCreate',
     render: datetimeCellRender,
+    key: 4,
   },
   {
     width: 80,
     title: '创建人',
     dataIndex: 'createUser',
+    key: 5,
   },
 ];

@@ -114,8 +114,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     let silenceTime: Moment[] = [];
 
     //回显数据
+    console.log('record', record);
     const setValues = {
       ...record,
+      receiver: record?.receiver?.split(',') || [],
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
@@ -342,7 +344,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           required: true,
           message: '请选择',
-          type: 'array',
         },
       ],
     },
