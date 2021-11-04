@@ -518,7 +518,7 @@ export const deployMaster = (params: {
 /** 根据应用分类code查询发布环境列表 */
 export const queryEnvsReq = (params: {
   //所属的应⽤分类CODE
-  categoryCode: string;
+  categoryCode?: string;
   // 当前所处环境
   envTypeCode?: string;
   //AppCode

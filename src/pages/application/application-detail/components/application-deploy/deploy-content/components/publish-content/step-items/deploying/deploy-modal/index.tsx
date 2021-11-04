@@ -29,7 +29,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
-      categoryCode: appCategoryCode as string,
+      // categoryCode: appCategoryCode as string,
       envTypeCode,
       appCode: appData?.appCode,
     }).then((data) => {
