@@ -115,6 +115,11 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       top: 0,
       right: 0,
       icon: 'circle',
+      itemHeight: 10,
+      textStyle: {
+        //图例字体大小
+        fontSize: 10,
+      },
     },
     grid: {
       left: '0%',
@@ -138,6 +143,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         name: '赤城街道',
         type: 'line',
         // stack: '访问量',
+        showSymbol: false,
         color: '#FFA500',
         data: clusterAData[0],
       },
@@ -145,6 +151,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         name: '平桥镇',
         type: 'line',
         color: '#CC99CC',
+        showSymbol: false,
         // stack: '访问量',
         data: clusterAData[1],
       },
@@ -152,12 +159,14 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         name: '其他',
         type: 'line',
         // stack: '访问量',
+        showSymbol: false,
         color: '#FF99CC',
         data: clusterAData[2],
       },
       {
         name: '天医-门诊楼',
         type: 'line',
+        showSymbol: false,
         // stack: '访问量',
         color: '#FF0000',
         data: clusterAData[3],
@@ -165,6 +174,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       {
         name: '天医-其他楼',
         type: 'line',
+        showSymbol: false,
         // stack: '访问量',
         color: '#CD5C5C',
         data: clusterAData[4],
@@ -173,12 +183,14 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         name: '天医-医技楼',
         type: 'line',
         color: '#FFA07A',
+        showSymbol: false,
         // stack: '访问量',
         data: clusterAData[5],
       },
       {
         name: '天医-住院楼',
         type: 'line',
+        showSymbol: false,
         color: '#FFCC33',
         // stack: '访问量',
         data: clusterAData[6],
@@ -186,6 +198,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       {
         name: '乡镇其他',
         type: 'line',
+        showSymbol: false,
         color: '#8A2BE2',
         // stack: '访问量',
         data: clusterAData[7],
@@ -207,6 +220,11 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       top: 0,
       right: 0,
       icon: 'circle',
+      itemHeight: 10,
+      textStyle: {
+        //图例字体大小
+        fontSize: 10,
+      },
     },
     grid: {
       left: '5%',
@@ -225,6 +243,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
     series: [
       {
         name: '赤城街道',
+        showSymbol: false,
         type: 'line',
         // stack: '访问量',
         color: '#00CCFF',
@@ -233,6 +252,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '平桥镇',
         type: 'line',
+        showSymbol: false,
         color: '#339900',
         // stack: '访问量',
         data: clusterBData[1],
@@ -240,6 +260,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '其他',
         type: 'line',
+        showSymbol: false,
         // stack: '访问量',
         color: '#6699FF',
         data: clusterBData[2],
@@ -247,6 +268,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '天医-门诊楼',
         type: 'line',
+        showSymbol: false,
         // stack: '访问量',
         color: '#3300FF',
         data: clusterBData[3],
@@ -254,6 +276,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '天医-其他楼',
         type: 'line',
+        showSymbol: false,
         // stack: '访问量',
         color: '#999900',
         data: clusterBData[4],
@@ -261,6 +284,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '天医-医技楼',
         type: 'line',
+        showSymbol: false,
         color: '#808080',
         // stack: '访问量',
         data: clusterBData[5],
@@ -268,6 +292,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '天医-住院楼',
         type: 'line',
+        showSymbol: false,
         color: '#99FF33',
         // stack: '访问量',
         data: clusterBData[6],
@@ -275,6 +300,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       {
         name: '乡镇其他',
         type: 'line',
+        showSymbol: false,
         color: '#336666',
         // stack: '访问量',
         data: clusterBData[7],

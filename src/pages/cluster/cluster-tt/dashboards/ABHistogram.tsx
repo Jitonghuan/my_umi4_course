@@ -28,7 +28,7 @@ export default function ABHistorgram(props: ChartCaseListProps) {
             <EchartsReact option={ABHistorgramOptions} />
           </ColorContainer>
         </div>
-        <div style={{ display: 'flex', width: '80%', fontSize: 12 }}>
+        <div style={{ display: 'flex', width: '54%', fontSize: 12 }}>
           <div style={{ flex: 1, textAlign: 'center' }}>A集群</div>
           <div style={{ flex: 1, textAlign: 'center' }}>B集群</div>
         </div>

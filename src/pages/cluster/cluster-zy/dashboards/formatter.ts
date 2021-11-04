@@ -41,6 +41,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         type: 'line',
         // stack: '访问量',
         color: '#BC8F8F',
+        showSymbol: false,
         data: clusterAData[0],
       },
       {
@@ -48,6 +49,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         type: 'line',
         color: '#EE6363',
         // stack: '访问量',
+        showSymbol: false,
         data: clusterAData[1],
       },
       {
@@ -55,6 +57,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         type: 'line',
         // stack: '访问量',
         color: '#DDA0DD',
+        showSymbol: false,
         data: clusterAData[2],
       },
       {
@@ -62,6 +65,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         type: 'line',
         // stack: '访问量',
         color: '#FF8247',
+        showSymbol: false,
         data: clusterAData[3],
       },
       {
@@ -69,12 +73,14 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
         type: 'line',
         // stack: '访问量',
         color: '#FF69B4',
+        showSymbol: false,
         data: clusterAData[4],
       },
       {
         name: '庆春城站无线',
         type: 'line',
         color: '#9370DB',
+        showSymbol: false,
         // stack: '访问量',
         data: clusterAData[5],
       },
@@ -116,12 +122,14 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
         type: 'line',
         // stack: '访问量',
         color: '#191970',
+        showSymbol: false,
         data: clusterBData[0],
       },
       {
         name: '之江',
         type: 'line',
         color: '#2E8B57',
+        showSymbol: false,
         // stack: '访问量',
         data: clusterBData[1],
       },
@@ -130,6 +138,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
         type: 'line',
         // stack: '访问量',
         color: '#8B864E',
+        showSymbol: false,
         data: clusterBData[2],
       },
       {
@@ -137,6 +146,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
         type: 'line',
         // stack: '访问量',
         color: '#3A5FCD',
+        showSymbol: false,
         data: clusterBData[3],
       },
       {
@@ -144,12 +154,14 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
         type: 'line',
         // stack: '访问量',
         color: '#8C8898',
+        showSymbol: false,
         data: clusterBData[4],
       },
       {
         name: '之江无线',
         type: 'line',
         color: '#4682B4',
+        showSymbol: false,
         // stack: '访问量',
         data: clusterBData[5],
       },
@@ -167,8 +179,6 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     countList.push(histogramData[i]);
     categoryList.push(i);
   }
-  console.log('categoryListzy', categoryList);
-  console.log('countListzy', countList);
   return {
     //图例组件
     legend: {
