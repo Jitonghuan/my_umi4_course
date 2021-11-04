@@ -23,37 +23,12 @@ export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) =
         setLoading(false);
       });
   }, []);
-
   useEffect(() => {
     loadHistogram();
   }, []);
   return [histogramData, loading, loadHistogram];
 }
 
-// 获取AB集群各院区表格流量数
-export function useClusterTable(): [AnyObject, boolean, (showLoading?: boolean) => Promise<any>] {
-  const [loading, setLoading] = useState(false);
-  const [clusterTableData, setClusterTableData] = useState(<any>[{}]);
-  useEffect(() => {
-    loadClusterTable();
-  }, []);
-  const loadClusterTable = useCallback((showLoading = true) => {
-    showLoading && setLoading(true);
-
-    return getRequest(APIS.getClustersEsDataTable)
-      .then((reslut) => {
-        if (reslut.success) {
-          let data = reslut?.data;
-          setClusterTableData(data);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  return [clusterTableData, loading, loadClusterTable];
-}
 /** A集群各院区流量 */
 export function useClusterA(): [any, boolean, (showLoading?: boolean) => Promise<void>, any] {
   const [clusterAData, setClusterAData] = useState<any>([]);
@@ -62,55 +37,45 @@ export function useClusterA(): [any, boolean, (showLoading?: boolean) => Promise
   const loadClusterA = (showLoading = true) => {
     showLoading && setLoading(true);
 
-    return getRequest(APIS.getAClusterEsData)
+    return getRequest(APIS.getCurrentClusterTrafficDataSet, {
+      data: {
+        envCode: 'tt-health',
+        cluster: 'A',
+      },
+    })
       .then((result) => {
-        let dataList = result.data;
-        let timeStampList = [];
-        let clusterADataList = [];
-        let clusterAZJ = [];
-        let clusterAZJWX = [];
-        let clusterYH = [];
-        let clusterYHWX = [];
-        let clusterAQCCZ = [];
-        let clusterAQCCZWX = [];
+        let dataList = result?.data;
+        let clusterADataList: any = [];
+        let timeStampList: any = [];
+        let a_ccjd_cnt: any = [];
+        let a_pqz_cnt: any = [];
+        let a_qt_cnt: any = [];
+        let a_ty_mzl_cnt: any = [];
+        let a_ty_qtl_cnt: any = [];
+        let a_ty_yjl_cnt: any = [];
+        let a_ty_zyl_cnt: any = [];
+        let a_xzqt_cnt: any = [];
 
-        for (let index = 0; index < dataList.length; index++) {
-          let dataObj = dataList[index].buckets;
-          let time = moment(parseInt(dataList[index].timeStamp)).format('HH:mm:ss');
-          timeStampList.push(time);
-          for (const key in dataObj) {
-            switch (key) {
-              case '之江':
-                clusterAZJ.push(dataObj[key]);
-                break;
-              case '之江无线':
-                clusterAZJWX.push(dataObj[key]);
-                break;
-              case '余杭':
-                clusterYH.push(dataObj[key]);
-                break;
-              case '余杭无线':
-                clusterYHWX.push(dataObj[key]);
-                break;
-              case '庆春城站':
-                clusterAQCCZ.push(dataObj[key]);
-                break;
-              case '庆春城站无线':
-                clusterAQCCZWX.push(dataObj[key]);
-                break;
-              default:
-                break;
-            }
-          }
-        }
-
+        dataList.map((item: any) => {
+          a_ccjd_cnt.push(item.ccjd_cnt);
+          a_pqz_cnt.push(item.pqz_cnt);
+          a_qt_cnt.push(item.qt_cnt);
+          a_ty_mzl_cnt.push(item.ty_mzl_cnt);
+          a_ty_qtl_cnt.push(item.ty_qtl_cnt);
+          a_ty_yjl_cnt.push(item.ty_yjl_cnt);
+          a_ty_zyl_cnt.push(item.ty_zyl_cnt);
+          a_xzqt_cnt.push(item.xzqt_cnt);
+          timeStampList.push(item?.time);
+        });
         clusterADataList.push(
-          clusterAZJ,
-          clusterAZJWX,
-          clusterYH,
-          clusterYHWX,
-          clusterAQCCZ,
-          clusterAQCCZWX,
+          a_ccjd_cnt,
+          a_pqz_cnt,
+          a_qt_cnt,
+          a_ty_mzl_cnt,
+          a_ty_qtl_cnt,
+          a_ty_yjl_cnt,
+          a_ty_zyl_cnt,
+          a_xzqt_cnt,
           timeStampList,
         );
         setClusterAData(clusterADataList);
@@ -136,57 +101,48 @@ export function useClusterB(): [any, boolean, (showLoading?: boolean) => Promise
   const loadClusterB = (showLoading = true) => {
     showLoading && setLoading(true);
 
-    return getRequest(APIS.getBClusterEsData)
+    return getRequest(APIS.getCurrentClusterTrafficDataSet, {
+      data: {
+        envCode: 'tt-health',
+        cluster: 'B',
+      },
+    })
       .then((result) => {
-        let dataList = result.data;
-        let timeStampList = [];
-        let clusterBDataList = [];
-        let clusterAZJ = [];
-        let clusterAZJWX = [];
-        let clusterYH = [];
-        let clusterYHWX = [];
-        let clusterAQCCZ = [];
-        let clusterAQCCZWX = [];
+        let dataList = result?.data;
+        let clusterBDataList: any = [];
+        let timeStampList: any = [];
+        let b_ccjd_cnt: any = [];
+        let b_pqz_cnt: any = [];
+        let b_qt_cnt: any = [];
+        let b_ty_mzl_cnt: any = [];
+        let b_ty_qtl_cnt: any = [];
+        let b_ty_yjl_cnt: any = [];
+        let b_ty_zyl_cnt: any = [];
+        let b_xzqt_cnt: any = [];
 
-        for (let index = 0; index < dataList.length; index++) {
-          let dataObj = dataList[index].buckets;
-          let time = moment(parseInt(dataList[index].timeStamp)).format('HH:mm:ss');
-          timeStampList.push(time);
-          for (const key in dataObj) {
-            switch (key) {
-              case '之江':
-                clusterAZJ.push(dataObj[key]);
-                break;
-              case '之江无线':
-                clusterAZJWX.push(dataObj[key]);
-                break;
-              case '余杭':
-                clusterYH.push(dataObj[key]);
-                break;
-              case '余杭无线':
-                clusterYHWX.push(dataObj[key]);
-                break;
-              case '庆春城站':
-                clusterAQCCZ.push(dataObj[key]);
-                break;
-              case '庆春城站无线':
-                clusterAQCCZWX.push(dataObj[key]);
-                break;
-              default:
-                break;
-            }
-          }
-        }
-
+        dataList.map((item: any) => {
+          b_ccjd_cnt.push(item.ccjd_cnt);
+          b_pqz_cnt.push(item.pqz_cnt);
+          b_qt_cnt.push(item.qt_cnt);
+          b_ty_mzl_cnt.push(item.ty_mzl_cnt);
+          b_ty_qtl_cnt.push(item.ty_qtl_cnt);
+          b_ty_yjl_cnt.push(item.ty_yjl_cnt);
+          b_ty_zyl_cnt.push(item.ty_zyl_cnt);
+          b_xzqt_cnt.push(item.xzqt_cnt);
+          timeStampList.push(item?.time);
+        });
         clusterBDataList.push(
-          clusterAZJ,
-          clusterAZJWX,
-          clusterYH,
-          clusterYHWX,
-          clusterAQCCZ,
-          clusterAQCCZWX,
+          b_ccjd_cnt,
+          b_pqz_cnt,
+          b_qt_cnt,
+          b_ty_mzl_cnt,
+          b_ty_qtl_cnt,
+          b_ty_yjl_cnt,
+          b_ty_zyl_cnt,
+          b_xzqt_cnt,
           timeStampList,
         );
+
         setClusterBData(clusterBDataList);
         setTimeStamp(timeStampList);
       })

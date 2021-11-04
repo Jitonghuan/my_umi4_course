@@ -167,7 +167,8 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     countList.push(histogramData[i]);
     categoryList.push(i);
   }
-
+  console.log('categoryListzy', categoryList);
+  console.log('countListzy', countList);
   return {
     //图例组件
     legend: {
