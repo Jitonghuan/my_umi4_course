@@ -86,7 +86,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
   const labelFun = (value: Item[]) => {
     setLabelTableData(value);
-    console.log('value:', value);
   };
 
   const annotationsFun = (value: Item[]) => {
@@ -119,6 +118,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     //回显数据
     const setValues = {
       ...record,
+      receiver: record?.receiver?.split(',') || [],
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
@@ -313,7 +313,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       label: '通知对象',
       dataIndex: 'receiver',
       placeholder: '请选择',
-      required: true,
+      // required: true,
       mode: 'multiple',
       showSelectSearch: true,
       option: userOptions,
@@ -321,7 +321,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         {
           required: true,
           message: '请选择',
-          type: 'array',
         },
       ],
     },
@@ -387,6 +386,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     form.validateFields().then((value) => {
       const obj = {
         ...value,
+        receiver: (value?.receiver || []).join(','),
         labels: stepTableMap(labelTableData),
         annotations: stepTableMap(annotationsTableData),
         duration: `${value.duration}${value.timeType}`,

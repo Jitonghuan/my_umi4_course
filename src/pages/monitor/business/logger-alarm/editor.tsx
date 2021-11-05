@@ -225,9 +225,9 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           label="通知对象"
           name="receiver"
           required={false}
-          rules={[{ required: true, message: '通知对象不能为空' }]}
+          // rules={[{ required: true, message: '通知对象不能为空' }]}
         >
-          <Select placeholder="请选择" options={userOptions} showSearch mode="tags" />
+          <Select placeholder="请选择" options={userOptions} showSearch mode="multiple" />
         </FormItem>
         {/* <FormItem
           label="通知方式"

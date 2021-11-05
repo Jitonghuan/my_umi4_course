@@ -114,7 +114,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     let silenceTime: Moment[] = [];
 
     //回显数据
-    console.log('record', record);
     const setValues = {
       ...record,
       receiver: record?.receiver?.split(',') || [],
@@ -336,8 +335,8 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       label: '通知对象',
       dataIndex: 'receiver',
       placeholder: '请选择',
+      mode: 'multiple',
       required: true,
-      mode: 'tags',
       showSelectSearch: true,
       option: userOptions,
       rules: [
