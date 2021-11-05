@@ -334,15 +334,13 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       type: 'select',
       label: '通知对象',
       dataIndex: 'receiver',
-      placeholder: '请选择',
       mode: 'multiple',
-      required: true,
       showSelectSearch: true,
       option: userOptions,
+      required: false,
       rules: [
         {
-          required: true,
-          message: '请选择',
+          required: false,
         },
       ],
     },

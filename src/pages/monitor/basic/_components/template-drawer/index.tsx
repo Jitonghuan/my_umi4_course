@@ -312,15 +312,13 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       type: 'select',
       label: '通知对象',
       dataIndex: 'receiver',
-      placeholder: '请选择',
-      // required: true,
       mode: 'multiple',
       showSelectSearch: true,
       option: userOptions,
+      required: false,
       rules: [
         {
-          required: true,
-          message: '请选择',
+          required: false,
         },
       ],
     },
@@ -414,6 +412,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
 
   return (
     <Drawer
+      className="rulesEdit"
       title={drawerTitle}
       onClose={onCancel}
       visible={visible}

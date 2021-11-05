@@ -158,10 +158,13 @@ export default function ApplicationEditor(props: IProps) {
             <FormItem
               label="APPCODE"
               name="appCode"
-              rules={[{ required: true, message: '请输入应用 Code' }]}
-              // getValueFromEvent={(event) => {
-              //   return event.target.value.replace(/[^\w\.\/]/gi, '');
-              // }}
+              rules={[
+                {
+                  required: true,
+                  message: '输入的应用Code里请不要包含中文',
+                  pattern: /^[^\u4e00-\u9fa5]*$/,
+                },
+              ]}
             >
               <Input
                 placeholder="请输入应用Code(不要包含中文）"

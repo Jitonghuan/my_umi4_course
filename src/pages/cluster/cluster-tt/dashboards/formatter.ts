@@ -136,6 +136,9 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
     },
     yAxis: {
       type: 'value',
+      axisTick: {
+        inside: true,
+      },
     },
 
     series: [
@@ -239,6 +242,12 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
     },
     yAxis: {
       type: 'value',
+      axisTick: {
+        inside: true,
+      },
+      grid: {
+        left: 35,
+      },
     },
     series: [
       {
