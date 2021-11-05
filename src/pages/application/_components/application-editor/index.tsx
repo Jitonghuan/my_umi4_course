@@ -159,9 +159,9 @@ export default function ApplicationEditor(props: IProps) {
               label="APPCODE"
               name="appCode"
               rules={[{ required: true, message: '请输入应用 Code' }]}
-              getValueFromEvent={(event) => {
-                return event.target.value.replace(/[^\w\.\/]/gi, '');
-              }}
+              // getValueFromEvent={(event) => {
+              //   return event.target.value.replace(/[^\w\.\/]/gi, '');
+              // }}
             >
               <Input
                 placeholder="请输入应用Code(不要包含中文）"
