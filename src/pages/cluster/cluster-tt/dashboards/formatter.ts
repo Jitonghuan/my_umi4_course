@@ -14,17 +14,51 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
 
   return {
     //图例组件
-    legend: {
-      orient: 'vertical',
-      top: 0,
-      right: 0,
-      icon: 'circle',
-      textStyle: {
-        //图例字体大小
-        fontSize: 10,
+    legend: [
+      {
+        orient: 'vertical',
+        top: 0,
+        right: 100,
+        icon: 'circle',
+        textStyle: {
+          //图例字体大小
+          fontSize: 10,
+        },
+        data: [
+          'A-赤城街道',
+          'A-平桥镇',
+          'A-其他',
+          'A-天医-门诊楼',
+          'A-天医-其他楼',
+          'A-天医-医技楼',
+          'A-天医-住院楼',
+          'A-乡镇其他',
+        ],
+        itemHeight: 10,
       },
-      itemHeight: 10,
-    },
+      {
+        orient: 'vertical',
+        top: 0,
+        right: 0,
+        icon: 'circle',
+        textStyle: {
+          //图例字体大小
+          fontSize: 10,
+        },
+        data: [
+          'B-赤城街道',
+          'B-平桥镇',
+          'B-其他',
+          'B-天医-门诊楼',
+          'B-天医-其他楼',
+          'B-天医-医技楼',
+          'B-天医-住院楼',
+          'B-乡镇其他',
+        ],
+        itemHeight: 10,
+      },
+    ],
+
     //提示信息
     tooltip: {},
     color: [
