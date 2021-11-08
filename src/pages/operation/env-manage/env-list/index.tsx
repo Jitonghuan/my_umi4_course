@@ -166,7 +166,7 @@ export default function envManageList(props: any) {
     if (record.nacosAddress !== '') {
       await putRequest(updateEnv, {
         data: {
-          // envCode: record?.envCode,
+          envCode: record?.envCode,
           // envName: record?.envName,
           useNacos: useNacosData,
           // isBlock: record.isBlock,
@@ -196,7 +196,7 @@ export default function envManageList(props: any) {
     }
     await putRequest(updateEnv, {
       data: {
-        // envCode: record?.envCode,
+        envCode: record?.envCode,
         // envName: record?.envName,
         // useNacos: record?.useNacos,
         isBlock: isBlockData,
