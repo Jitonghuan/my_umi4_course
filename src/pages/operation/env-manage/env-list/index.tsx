@@ -169,7 +169,7 @@ export default function envManageList(props: any) {
           envCode: record?.envCode,
           // envName: record?.envName,
           useNacos: useNacosData,
-          // isBlock: record.isBlock,
+          isBlock: record.isBlock,
           // mark: record?.mark,
         },
       }).then((result) => {
@@ -198,7 +198,7 @@ export default function envManageList(props: any) {
       data: {
         envCode: record?.envCode,
         // envName: record?.envName,
-        // useNacos: record?.useNacos,
+        useNacos: record?.useNacos,
         isBlock: isBlockData,
         // mark: record?.mark,
       },
