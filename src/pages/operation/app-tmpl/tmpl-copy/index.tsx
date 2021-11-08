@@ -114,13 +114,12 @@ export default function DemoPageTb(porps: any) {
     });
   };
 
-  // 根据应用分类查询环境
+  // 查询环境
   const changeAppCategory = (categoryCode: string) => {
-    //调用接口 查询env 参数就是appCategoryCode
-
+    //调用接口 查询env
     setEnvDatas([]);
     setAppCategoryCode(categoryCode);
-    getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
+    getRequest(APIS.envList).then((resp: any) => {
       if (resp.success) {
         const datas =
           resp?.data?.dataSource?.map((el: any) => {
@@ -253,7 +252,8 @@ export default function DemoPageTb(porps: any) {
                   mode="multiple"
                   allowClear
                   style={{ width: 220 }}
-                  placeholder="Please select"
+                  showSearch
+                  placeholder="支持通过envCode搜索环境"
                   // defaultValue={['a10', 'c12']}
                   onChange={clickChange}
                   options={envDatas}
