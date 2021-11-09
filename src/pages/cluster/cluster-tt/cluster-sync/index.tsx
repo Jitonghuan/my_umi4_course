@@ -1,6 +1,6 @@
 // 集群同步
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/07/27 14:33
+// @author JITONGHUAN <muxi@come-future.com>
+// @create 2021/11/9 10:05
 
 import React from 'react';
 import { Button, Table, Alert } from 'antd';
@@ -15,10 +15,14 @@ export default function ClusterPage(props: any) {
       <div className="table-caption">
         <h3>集群列表</h3>
         <div className="caption-right">
-          <Button type="primary" ghost disabled={loading}>
+          <Button type="primary" ghost disabled={loading} onClick={() => reloadData(false)}>
             开始比对
           </Button>
-          <Button type="primary" disabled={loading || !tableData?.length}>
+          <Button
+            type="primary"
+            disabled={loading || !tableData?.length}
+            onClick={() => props.history.push('./cluster-sync-detail')}
+          >
             开始集群同步
           </Button>
         </div>
