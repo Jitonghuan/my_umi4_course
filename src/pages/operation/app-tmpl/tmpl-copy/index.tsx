@@ -119,7 +119,7 @@ export default function DemoPageTb(porps: any) {
     //调用接口 查询env
     setEnvDatas([]);
     setAppCategoryCode(categoryCode);
-    getRequest(APIS.envList).then((resp: any) => {
+    getRequest(APIS.envList, { data: { pageSize: -1 } }).then((resp: any) => {
       if (resp.success) {
         const datas =
           resp?.data?.dataSource?.map((el: any) => {
