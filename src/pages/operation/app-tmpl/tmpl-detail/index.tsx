@@ -74,27 +74,6 @@ export default function DemoPageTb(porps: any) {
     });
   };
 
-  // 根据应用分类查询环境
-  const changeAppCategory = (categoryCode: string) => {
-    //调用接口 查询env 参数就是appCategoryCode
-    //setEnvDatas
-    setEnvDatas([]);
-    setAppCategoryCode(categoryCode);
-    getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
-      if (resp.success) {
-        const datas =
-          resp?.data?.dataSource?.map((el: any) => {
-            return {
-              ...el,
-              value: el?.envCode,
-              label: el?.envName,
-            };
-          }) || [];
-        setEnvDatas(datas);
-      }
-    });
-  };
-
   return (
     <PageContainer className="tmpl-detail">
       <ContentCard>
@@ -144,13 +123,7 @@ export default function DemoPageTb(porps: any) {
                 name="appCategoryCode"
                 style={{ marginTop: '80px' }}
               >
-                <Select
-                  showSearch
-                  style={{ width: 220 }}
-                  options={categoryData}
-                  onChange={changeAppCategory}
-                  disabled={isDisabled}
-                />
+                <Select showSearch style={{ width: 220 }} options={categoryData} disabled={isDisabled} />
               </Form.Item>
 
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">

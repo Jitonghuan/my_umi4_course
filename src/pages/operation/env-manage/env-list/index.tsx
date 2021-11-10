@@ -167,10 +167,10 @@ export default function envManageList(props: any) {
       await putRequest(updateEnv, {
         data: {
           envCode: record?.envCode,
-          envName: record?.envName,
+          // envName: record?.envName,
           useNacos: useNacosData,
           isBlock: record.isBlock,
-          mark: record?.mark,
+          // mark: record?.mark,
         },
       }).then((result) => {
         if (result.success) {
@@ -197,10 +197,10 @@ export default function envManageList(props: any) {
     await putRequest(updateEnv, {
       data: {
         envCode: record?.envCode,
-        envName: record?.envName,
+        // envName: record?.envName,
         useNacos: record?.useNacos,
         isBlock: isBlockData,
-        mark: record?.mark,
+        // mark: record?.mark,
       },
     }).then((result) => {
       if (result.success) {

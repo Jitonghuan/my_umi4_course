@@ -430,15 +430,15 @@ export default function Push(props: any) {
             visible={isModalVisible}
             onOk={handleOk}
             onCancel={handleCancel}
-            width={650}
+            width={750}
             bodyStyle={{ height: '300px' }}
           >
-            <Form layout="inline" form={tmplDetailForm}>
+            <Form layout="inline" form={tmplDetailForm} labelCol={{ flex: '150px' }}>
               <div style={{ width: '100%' }}>
                 <Row>
                   <Col span={12}>
                     <Form.Item
-                      label="应用分类："
+                      label="部署环境的应用分类："
                       name="appCategoryCode"
                       rules={[{ required: true, message: '这是必选项' }]}
                     >
@@ -452,7 +452,7 @@ export default function Push(props: any) {
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item label="环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
+                    <Form.Item label="部署环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
                       <Select
                         showSearch
                         allowClear
@@ -466,7 +466,7 @@ export default function Push(props: any) {
                   </Col>
                 </Row>
               </div>
-              <div style={{ width: '100%', marginTop: 18, marginLeft: 14 }}>
+              <div style={{ width: '100%', marginTop: 18 }}>
                 <Form.Item label="推送项：" name="pushItem" rules={[{ required: true, message: '这是必选项' }]}>
                   <Select
                     allowClear

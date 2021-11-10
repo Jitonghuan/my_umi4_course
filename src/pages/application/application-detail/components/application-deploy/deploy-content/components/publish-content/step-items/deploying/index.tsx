@@ -52,20 +52,30 @@ export default function DeployingStep(props: StepItemProps) {
         description={
           (isError || isLoading) && (
             <>
-              {/* dev  显示错误详情 */}
-              {isError && envTypeCode === 'dev' && deployInfo.deployErrInfo && (
+              {/* dev,test, pre,prod 在部署过程中出现错误时  显示错误详情 */}
+              {isError && deployInfo.deployErrInfo && (
                 <div style={{ marginTop: 2 }} onClick={handleShowErrorDetail}>
                   部署错误详情
                 </div>
               )}
-              {/* test, pre, prod 显示 jenkins 详情 */}
-              {envTypeCode !== 'dev' && deployInfo.jenkinsUrl && (
+
+              {/* prod环境 在部署过程中出现错误时 判断如果是在构建显示查看Jenkins详情，如果是部署出现错误显示部署错误详情*/}
+              {envTypeCode === 'prod' && deployInfo.jenkinsUrl && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={deployInfo.jenkinsUrl}>
                     查看Jenkins详情
                   </a>
                 </div>
               )}
+
+              {/* test, pre, prod 显示 jenkins 详情 */}
+              {/* {envTypeCode !== 'dev' && deployInfo.jenkinsUrl && (
+                <div style={{ marginTop: 2 }}>
+                  <a target="_blank" href={deployInfo.}>
+                    查看Jenkins详情
+                  </a>
+                </div>
+              )} */}
               {isError && (
                 <Button style={{ marginTop: 4 }} onClick={handleReDeployClick}>
                   重新部署

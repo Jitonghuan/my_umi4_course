@@ -108,12 +108,11 @@ export default function TaskEditor(props: TmplListProps) {
     });
   };
 
-  // 根据应用分类查询环境
+  // 查询环境
   const changeAppCategory = (categoryCode: string) => {
-    //调用接口 查询env 参数就是appCategoryCode
-    //setEnvDatas
+    //调用接口 查询env
     setEnvDatas([]);
-    getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
+    getRequest(APIS.envList).then((resp: any) => {
       if (resp.success) {
         const datas =
           resp?.data?.dataSource?.map((el: any) => {
@@ -253,7 +252,8 @@ export default function TaskEditor(props: TmplListProps) {
                 <Select
                   allowClear
                   style={{ width: 220 }}
-                  placeholder="请选择"
+                  placeholder="支持通过envCode搜索环境"
+                  showSearch
                   onChange={clickChange}
                   options={envDatas}
                   disabled={isDisabled}
