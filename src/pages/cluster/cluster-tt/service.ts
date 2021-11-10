@@ -11,53 +11,47 @@ export const trafficMap = addAPIPrefix('/opsManage/multiple/map');
 /** POST 集群流量切换 流量调度 */
 export const switchCluster = addAPIPrefix('/opsManage/multiple/switchCluster');
 
-/** GET 操作日志查询查询 */
+/** GET 操作日志查询 */
 export const queryOperateLog = addAPIPrefix('/opsManage/multiple/queryOperateLog');
 
-/** POST 集群同步-单应用发布 */
-export const singleAppDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
-
-/** GET 集群同步-MQ对比 */
-export const mqDiff = addAPIPrefix('/opsManage/multiple/mqDiff');
-
-/** POST 集群同步-MQ Topic同步 */
-export const deployTopic = addAPIPrefix('/opsManage/multiple/deployTopic');
-
-/** POST 集群同步-MQ Group同步 */
-export const deployGroup = addAPIPrefix('/opsManage/multiple/deployGroup');
-
-/** GET 集群同步-配置对比 */
-export const configServerDiff = addAPIPrefix('/opsManage/multiple/configServerDiff');
-
-/** POST 集群同步-配置同步 */
-export const configServerDeploy = addAPIPrefix('/opsManage/multiple/configServerDeploy');
-
-/** POST 集群同步-应用同步 */
-export const appDeploy = addAPIPrefix('/opsManage/multiple/deployClusterApp');
-
-/** GET 集群同步-集群应用发布查询 */
-export const queryClusterApp = addAPIPrefix('/opsManage/multiple/queryClusterApp');
-
-/** POST 集群同步-前端资源同步 */
-export const frontendSourceDeploy = addAPIPrefix('/opsManage/multiple/frontendSourceDeploy');
-
-/** GET 集群同步-获取前端资源同步状态 */
-export const queryFrontendSource = addAPIPrefix('/opsManage/multiple/queryFrontendSource');
-
-/** POST 集群同步-前端版本同步 */
-export const frontendVersionDeploy = addAPIPrefix('/opsManage/multiple/frontendVersionDeploy');
-
-/** POST 集群同步-完成同步 */
-export const clusterDeployOver = addAPIPrefix('/opsManage/multiple/clusterDeployOver');
-
 /** GET 集群应用比对 */
-export const diffClusterApp = addAPIPrefix('/opsManage/multiple/diffClusterApp');
+export const diffClusterApp = addAPIPrefix('/opsManage/k8s/multiple/diffClusterApp');
+
+/** GET 集群应用同步查询 */
+export const queryClusterApp = addAPIPrefix('/opsManage/k8s/multiple/queryClusterApp');
+
+/** POST 集群应用同步 */
+export const syncClusterApp = addAPIPrefix('/opsManage/k8s/multiple/syncClusterApp');
+
+/** GET Nacos配置比对 */
+export const configDiff = addAPIPrefix('/opsManage/k8s/multiple/configDiff');
+
+/** POST Nacos同步 */
+export const syncConfig = addAPIPrefix('/opsManage/k8s/multiple/syncConfig');
+
+/** GET XXL-Job比对 */
+export const xxlJobDiff = addAPIPrefix('/opsManage/k8s/multiple/xxlJobDiff');
+
+/** POST XXL-Job同步 */
+export const syncXxlJob = addAPIPrefix('/opsManage/k8s/multiple/syncXxlJob');
+
+/** POST 前端资源同步 */
+export const syncFrontendSource = addAPIPrefix('/opsManage/k8s/multiple/syncFrontendSource');
+
+/** GET 集群同步完成 */
+export const syncClusterOver = addAPIPrefix('/opsManage/k8s/multiple/syncClusterOver');
 
 /** GET 任务状态查询 */
-export const queryWorkState = addAPIPrefix('/opsManage/multiple/queryWorkState');
+export const querySyncState = addAPIPrefix('/opsManage/k8s/multiple/querySyncState');
 
-/** GET 获取浙一应用列表 */
-export const queryAppList = addAPIPrefix('/opsManage/multiple/queryAppList');
+/** GET 获取天台应用列表 */
+export const queryAppList = addAPIPrefix('/opsManage/k8s/multiple/queryAppList');
+
+/** POST 集群同步-单应用比对 */
+export const singleDiffApp = addAPIPrefix('opsManage/k8s/multiple/diffApp');
+
+/** POST 集群同步-单应用同步 */
+export const syncSingleApp = addAPIPrefix('/opsManage/k8s/multiple/syncSingleApp');
 
 /** GET 获取 dashboard 页面地址 */
 export const getDashboardUrl = addAPIPrefix('/opsManage/multiple/getDashboardUrl');
