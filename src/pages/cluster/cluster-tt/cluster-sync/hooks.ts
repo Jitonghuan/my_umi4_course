@@ -45,19 +45,14 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
       const result = await getRequest(APIS.diffClusterApp, { data: { envCode: 'tt-health' } });
       const resultData = result?.data || [];
       const next = resultData?.map((item: any, index: number) => {
-        const diffdata = Object.keys(item).map((appName: string) => {
-          return {
-            appName,
-            ...item[appName],
-          };
-        });
-        diffdata.concat(diffdata);
-        return [...diffdata];
+        const appDiffInfo = Object.keys(item);
+        let appName = appDiffInfo[0];
+        return { appName, ...item[appName] };
       });
-      console.log('next', next[0]);
-      sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next[0] }));
+      console.log('next', next);
+      sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
       setFromCache('');
-      setData(next[0]);
+      setData(next);
     } finally {
       setLoading(false);
       setCompleted(true);
