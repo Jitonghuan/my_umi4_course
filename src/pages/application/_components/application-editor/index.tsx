@@ -321,7 +321,7 @@ export default function ApplicationEditor(props: IProps) {
                                 },
                                 { dataIndex: 'routePath', title: '路由' },
                               ]}
-                              limit={1}
+                              limit={5}
                             />
                           </FormItem>
                         )}
