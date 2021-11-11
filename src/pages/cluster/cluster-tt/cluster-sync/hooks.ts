@@ -54,10 +54,10 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
         diffdata.concat(diffdata);
         return [...diffdata];
       });
-      console.log('next', next[0]);
-      sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next[0] }));
+      console.log('next', next);
+      sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
       setFromCache('');
-      setData(next[0]);
+      setData(next);
     } finally {
       setLoading(false);
       setCompleted(true);
