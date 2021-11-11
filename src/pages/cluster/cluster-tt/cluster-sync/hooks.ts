@@ -52,7 +52,7 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
           };
         });
         diffdata.concat(diffdata);
-        return [...diffdata];
+        return { ...diffdata };
       });
       console.log('next', next);
       sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
