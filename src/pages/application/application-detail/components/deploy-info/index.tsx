@@ -25,19 +25,6 @@ import { listAppEnvType } from '@/common/apis';
 import { getRequest } from '@/utils/request';
 import './index.less';
 
-export interface IProps {
-  children: ReactNode;
-  location: {
-    pathname: string;
-    query: {
-      id: string;
-      appCode: string;
-    };
-  };
-  route: {
-    name: string;
-  };
-}
 const { TabPane } = Tabs;
 const getStatusClazz = (text: string) => {
   return /成功|正常/.test(text) ? 'text-success' : /失败|错误|异常/.test(text) ? 'text-error' : '';
@@ -48,7 +35,7 @@ useLayoutEffect(() => {
   sessionStorage.setItem('__init_env_tab__', tabActive);
 }, [tabActive]);
 
-export default function AppDeployInfo(props: IProps) {
+export default function AppDeployInfo() {
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -61,10 +48,7 @@ export default function AppDeployInfo(props: IProps) {
   );
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const intervalRef = useRef<any>();
-  const {
-    location: { pathname },
-  } = props;
-  const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
+  // const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
 
   const handleTabActiveChange = (next: string) => {
     sessionStorage.setItem('__init_env_tab__', next);
@@ -99,11 +83,11 @@ export default function AppDeployInfo(props: IProps) {
       setEnvTypeData(next);
     });
   };
-  useEffect(() => {
-    if (envList.length && !currEnvCode) {
-      setCurrEnv(envList[0].envCode);
-    }
-  }, [envList]);
+  // useEffect(() => {
+  //   if (envList.length && !currEnvCode) {
+  //     setCurrEnv(envList[0].envCode);
+  //   }
+  // }, [envList]);
   //改变环境下拉选择后查询结果
   let getEnvCode: any;
   const changeEnvCode = (getEnvCodes: string) => {
@@ -146,9 +130,9 @@ export default function AppDeployInfo(props: IProps) {
       </div>
     );
   }
-  if (!envList.length) {
-    return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="该应用没有可使用的环境" />;
-  }
+  // if (!envList.length) {
+  //   return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="该应用没有可使用的环境" />;
+  // }
 
   return (
     <ContentCard noPadding>
