@@ -200,6 +200,20 @@ export default [
             component: '@/pages/application/application-detail/components/deploy-info',
           },
           {
+            path: 'loginShell',
+            name: '登陆shell',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/deploy-info/login-shell',
+          },
+          {
+            path: 'viewLog',
+            name: '查看日志',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/deploy-info/view-log',
+          },
+          {
             path: 'branch',
             name: '分支',
             key: 'appList',
