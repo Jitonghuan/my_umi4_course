@@ -17,7 +17,9 @@ export default function FinishedStep(props: StepItemProps) {
       title="执行完成"
       description={
         (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
-        (deployInfo.envs?.includes('zs-prd') || deployInfo.envs?.includes('zs-pre')) && (
+        (deployInfo.envs?.includes('zs-prd') ||
+          deployInfo.envs?.includes('zs-pre') ||
+          deployInfo.envs?.includes('xiehe')) && (
           <Button
             download
             style={{ marginTop: 4 }}
