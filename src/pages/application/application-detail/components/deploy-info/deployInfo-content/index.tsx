@@ -164,7 +164,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   //加载容器信息
   let currentContainerName = '';
-  let currentInstName = '';
+  const [currentInstName, setCurrentInstName] = useState<string>('');
   const getContainerData = async (appCode: any, envCode: any, instName: string) => {
     getRequest(listContainer, { data: { appCode, envCode, instName } }).then((result) => {
       let data = result.data;
@@ -182,6 +182,7 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   const downLogFile = (values: any) => {
+    console.log('currentInstName', currentInstName);
     downloadLog(appData?.appCode, currentEnvData, currentInstName, values?.containerName, values?.filePath);
     setIsLogModalVisible(false);
   };
@@ -320,7 +321,7 @@ export default function DeployContent(props: DeployContentProps) {
                       type="primary"
                       onClick={() => {
                         setIsLogModalVisible(true);
-                        currentInstName = record?.instName;
+                        setCurrentInstName(record?.instName);
                         getContainerData(appData?.appCode, currentEnvData, record?.instName);
                       }}
                     >

@@ -4,8 +4,8 @@
 
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { Select, Card, message, Form, Divider, Button } from 'antd';
-import AceEditor from '@/components/ace-editor';
 import { ContentCard } from '@/components/vc-page-content';
+import { AnsiUp } from 'ansi-up';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -14,40 +14,16 @@ import './index.less';
 export default function ViewLog(props: any) {
   const [viewLogform] = Form.useForm();
   const { appData } = useContext(DetailContext);
-  const [log, setLog] = useState<string>();
+  const [log, setLog] = useState<string>('');
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
   const { appCode, envCode, instName } = props.location.query;
   let currentContainerName = '';
   let resultLogData = '';
   let socket: any = null;
+  let ansi_up = new AnsiUp();
 
   useEffect(() => {
-    socket = new WebSocket(`ws://47.101.65.157/zjgs/admin/websocket/zjic-obu-list`); //建立通道
-    let dom = document?.getElementById('result-log');
-    socket.onopen = () => {
-      console.log(socket);
-      message.success('WebSocket初次链接成功!');
-    };
-
-    socket.onmessage = (evt: any) => {
-      // debugger
-      if (dom) {
-        // debugger
-        let scroll = dom.scrollHeight;
-        // dom.scrollTop = 20;
-        dom.scrollTo(0, scroll);
-      }
-      //如果返回结果是字符串，就拼接字符串，或者push到数组，
-      // console.log('======>',evt.data)
-      // term.write(evt.data.data);
-      // resultLogData=''
-      resultLogData = resultLogData + evt.data;
-
-      // console.log('..........',evt.data);
-      // console.log('===111111111111111',resultLogData);
-      setLog(resultLogData);
-    };
     getRequest(APIS.listContainer, { data: { appCode, envCode, instName: instName } }).then((result) => {
       let data = result.data;
       if (result.success) {
@@ -60,27 +36,28 @@ export default function ViewLog(props: any) {
         viewLogform.setFieldsValue({ containerName: currentContainerName });
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
-        // let socket = new WebSocket(
-        //   `ws://10.10.129.176:8080/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
-        // ); //建立通道
+        let socket = new WebSocket(
+          `ws://10.10.129.129:8080/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+        ); //建立通道
 
-        //   socket.onopen = () => {
-        //         console.log(socket);
-        //         message.success('WebSocket初次链接成功!');
-        //       };
-        //   let dom = document?.getElementById('result-log');
-
-        //   socket.onmessage =(evt:any)=> {
-        //   if (dom) {
-        //   dom.scrollTop = dom?.scrollHeight;
-        //   }
-        // //如果返回结果是字符串，就拼接字符串，或者push到数组，
-        //  console.log('======>',evt.data)
-        // // term.write(evt.data.data);
-        // resultLogData+=evt.data;
-        // console.log('===',resultLogData);
-        // setLog(resultLogData)
-        //  };
+        socket.onopen = () => {
+          console.log(socket);
+          message.success('WebSocket初次链接成功!');
+        };
+        let dom = document?.getElementById('result-log');
+        socket.onmessage = (evt: any) => {
+          if (dom) {
+            let scroll = dom?.scrollHeight;
+            dom.scrollTo(0, scroll);
+          }
+          //如果返回结果是字符串，就拼接字符串，或者push到数组，
+          resultLogData = resultLogData + evt.data;
+          setLog(resultLogData);
+          let html = ansi_up.ansi_to_html(resultLogData);
+          if (dom) {
+            dom.innerHTML = html;
+          }
+        };
         socket.onerror = () => {
           // term.writeln('webSocket 链接失败');
           message.warning('webSocket 链接失败');
@@ -95,34 +72,30 @@ export default function ViewLog(props: any) {
     socket.onclose = () => {
       message.info('关闭websocket!');
     };
+
     socket.onopen = () => {
       // console.log(socket);
       message.success('更换容器，WebSocket链接成功!');
     };
+    let dom = document?.getElementById('result-log');
+    socket.onmessage = (evt: any) => {
+      if (dom) {
+        let scroll = dom?.scrollHeight;
+        dom.scrollTo(0, scroll);
+      }
+      //如果返回结果是字符串，就拼接字符串，或者push到数组，
+      resultLogData = resultLogData + evt.data;
+      setLog(resultLogData);
+      let html = ansi_up.ansi_to_html(resultLogData);
+      if (dom) {
+        dom.innerHTML = html;
+      }
+    };
+    socket.onerror = () => {
+      message.warning('webSocket 链接失败');
+    };
   };
 
-  // useEffect(() => {
-  //   socket.onopen = () => {
-  //     console.log(socket);
-  //     message.success('WebSocket链接成功!');
-  //   };
-
-  //   let dom = document?.getElementById('result-log');
-  //   let resultLogData=''
-  //   socket.onmessage =(evt)=> {
-  //     if (dom) {
-  //       dom.scrollTop = dom?.scrollHeight;
-  //     }
-  //     //如果返回结果是字符串，就拼接字符串，或者push到数组，
-  //     console.log('======>',evt.data)
-  //     // term.write(evt.data.data);
-  //   };
-
-  //   socket.onerror = () => {
-  //     // term.writeln('webSocket 链接失败');
-  //     message.warning('webSocket 链接失败');
-  //   };
-  // }, []);
   //回到顶部
   const scrollTop = () => {
     let dom = document?.getElementById('result-log');
@@ -133,7 +106,6 @@ export default function ViewLog(props: any) {
   const scrollBottom = () => {
     let dom = document?.getElementById('result-log');
     if (dom) {
-      // debugger
       let scroll = dom.scrollHeight;
       // dom.scrollTop = 20;
       dom.scrollTo(0, scroll);
@@ -158,8 +130,11 @@ export default function ViewLog(props: any) {
             <Select style={{ width: 120 }} options={queryListContainer} onChange={selectListContainer}></Select>
           </Form.Item>
         </Form>
-        {/* <Divider/> */}
-        <div id="result-log" className="result-log" style={{ color: 'white' }}>
+        <div
+          id="result-log"
+          className="result-log"
+          style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, color: '#0a944f', wordBreak: 'break-word' }}
+        >
           {log}
         </div>
         <div style={{ height: 30, textAlign: 'center' }}>
