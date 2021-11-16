@@ -10,7 +10,7 @@ export function useAppOptions() {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    getRequest(APIS.queryAppList).then((result) => {
+    getRequest(APIS.queryAppList, { data: { envCode: 'tt-his' } }).then((result) => {
       const next = (result.data || []).map((item: any) => {
         return { label: item.appCode, value: item.appCode };
       });

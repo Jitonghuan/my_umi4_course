@@ -15,46 +15,38 @@ type ResPromise = Promise<IResponse<any>>;
 
 /**
  * - `DiffApp`: 单应用比对
- * - `DeployApp`: 单应用发布
+ * - `SyncSingleApp` 单应用同步
  * - `GetDiffClusterApp`: 集群应用比对
- * - `GetDiffClusterMq`: MQ比对
- * - `GetDiffClusterConfig`: 配置比对
- * - `DeployClusterMqTopic`: MQ Topic发布
- * - `DeployClusterMqGroup`: MQ Group发布
- * - `DeployClusterConfig`: 配置发布
- * - `DeployClusterApp`: 集群应用发布
- * - `DeployClusterWebSource`: 前端资源发布
- * - `DeployClusterWebVersion`: 前端版本号发布
- * - `ClusterDeployOver`: 双集群同步完成
- * - `SwitchFlow`: 集群流量调度
- * - `Pass`: 可继续集群同步
+ * - `GetDiffClusterConfig`: Nacos比对
+ * - `syncClusterConfig`: Nacos配置同步
+ * - `GetDiffXxlJob`: xxl-job比对
+ * - `SyncXxlJob`: xxl-job同步
+ * - `SyncClusterApp`: 集群应用同步
+ * - `SyncClusterWebSource`: 前端资源同步
+ * - `ClusterSyncOver`: 集群同步完成
  */
 type ICategory =
   | 'Pass'
-  | 'GetDiffClusterMq'
-  | 'DeployClusterMqTopic'
-  | 'DeployClusterMqGroup'
   | 'GetDiffClusterConfig'
-  | 'DeployClusterConfig'
+  | 'syncClusterConfig'
+  | 'GetDiffXxlJob'
+  | 'syncXxlJob'
   | 'GetDiffClusterApp'
-  | 'DeployClusterApp'
-  | 'DeployClusterWebSource'
-  | 'DeployClusterWebVersion'
-  | 'ClusterDeployOver';
+  | 'SyncClusterApp'
+  | 'SyncClusterWebSource'
+  | 'ClusterSyncOver';
 
 // 每一个状态对应的显示步骤
 const category2stepMapping: Record<ICategory, number> = {
   Pass: 0,
-  GetDiffClusterMq: 0,
-  DeployClusterMqTopic: 0,
-  DeployClusterMqGroup: 1,
-  GetDiffClusterConfig: 1,
-  DeployClusterConfig: 2,
+  GetDiffClusterConfig: 0,
+  syncClusterConfig: 0,
+  GetDiffXxlJob: 1,
+  syncXxlJob: 1,
   GetDiffClusterApp: 2,
-  DeployClusterApp: 3,
-  DeployClusterWebSource: 3,
-  DeployClusterWebVersion: 3,
-  ClusterDeployOver: 4,
+  SyncClusterApp: 2,
+  SyncClusterWebSource: 3,
+  ClusterSyncOver: 4,
 };
 
 const sleep = (s: number) => new Promise((resolve) => setTimeout(resolve, s));
@@ -79,15 +71,18 @@ export default function ClusterSyncDetail(props: any) {
   const queryCurrStatus = useCallback(async () => {
     setPending(true);
     try {
-      const result = await getRequest(APIS.queryWorkState);
+      const result = await getRequest(APIS.querySyncState, { data: { envCode: 'tt-health' } });
       const initState = result.data.category;
 
-      if (initState === 'DeployClusterApp') {
-        updateResultLog(result.data.log || '<no initial log>');
+      if (initState === 'SyncClusterApp') {
+        updateResultLog(result?.data?.log || '<no initial log>');
         return await getClusterApp();
-      } else if (initState === 'DeployClusterWebSource') {
-        setCurrState('DeployClusterApp');
-        await getFESourceDeployProcess();
+      } else if (initState === 'SyncClusterWebSource') {
+        setCurrState('SyncClusterApp');
+        // await getFESourceDeployProcess();
+      } else if (initState === 'Pass') {
+        setCurrState('Pass');
+        updateResultLog(result.data.log || '<no initial log>');
       } else {
         updateResultLog(result.data.log || '<no initial log>');
         setCurrState(initState);
@@ -98,15 +93,24 @@ export default function ClusterSyncDetail(props: any) {
       setPending(false);
     }
   }, []);
-
+  let nextDeploymentName = '';
   const doAction = useCallback(async (promise: ResPromise) => {
     try {
       setPending(true);
       const result = await promise;
-      let addon = result.data;
-
-      if (typeof addon === 'object' && 'appCode' in addon) {
-        addon = addon.appCode === 'Pass' ? '应用同步完成' : `下一个要同步的应用: ${addon.appCode || '--'}`;
+      let addon = result?.data;
+      if (typeof addon === 'object' && 'log' in addon) {
+        if (addon?.log === 'null') {
+          addon = '';
+        } else {
+          addon = addon?.log;
+        }
+      }
+      if (typeof addon === 'object' && 'nextSyncDeployment' in addon) {
+        addon = addon.nextSyncDeployment === 'End' ? ` ${addon.syncLog || '--'}` : ` ${addon.syncLog || '--'}`;
+      }
+      if (typeof addon === 'object' && 'deploymentName' in addon) {
+        addon = `当前同步的应用: ${addon.deploymentName || '--'}`;
       }
 
       updateResultLog(addon);
@@ -134,96 +138,60 @@ export default function ClusterSyncDetail(props: any) {
     resultRef.current?.scrollTo({ top: 9999, behavior: 'smooth' });
   }, [resultLog]);
 
-  // 1. get mq diff
-  const getMqDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.mqDiff));
-    setCurrState('GetDiffClusterMq');
-  }, []);
-  // 2. deploy mq topic
-  const deployTopic = useCallback(async () => {
-    await doAction(postRequest(APIS.deployTopic));
-    setCurrState('DeployClusterMqTopic');
-  }, []);
-  // 3. deploy mq group
-  const deployGroup = useCallback(async () => {
-    await doAction(postRequest(APIS.deployGroup));
-    setCurrState('DeployClusterMqGroup');
-  }, []);
-  // 4. get config diff
-  const getConfigDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.configServerDiff));
+  // 1. get nacos 配置比对
+  const configDiff = useCallback(async () => {
+    await doAction(getRequest(APIS.configDiff, { data: { envCode: 'tt-health' } }));
     setCurrState('GetDiffClusterConfig');
   }, []);
-  // 5. deploy config
-  const deployConfig = useCallback(async () => {
-    await doAction(postRequest(APIS.configServerDeploy));
-    setCurrState('DeployClusterConfig');
+  // 2. Nacos同步
+  const syncConfig = useCallback(async () => {
+    await doAction(postRequest(APIS.syncConfig, { data: { envCode: 'tt-health' } }));
+    setCurrState('syncClusterConfig');
   }, []);
-  // 6. get cluster app
+  // 3. XXL-Job比对
+  const xxlJobDiff = useCallback(async () => {
+    await doAction(getRequest(APIS.xxlJobDiff, { data: { envCode: 'tt-health' } }));
+    setCurrState('GetDiffXxlJob');
+  }, []);
+  // 4. XXL-Job同步
+  const syncXxlJob = useCallback(async () => {
+    await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: 'tt-health' } }));
+    setCurrState('syncXxlJob');
+  }, []);
+  // 5. get cluster app
   const getClusterApp = useCallback(async () => {
-    const nextApp = await doAction(getRequest(APIS.queryClusterApp));
-    // if (!nextApp?.appCode) {
-    //   return message.warning('返回数据异常，appCode 为空值!');
-    // }
-    if (nextApp?.appCode && nextApp.appCode !== 'Pass') {
-      setCurrState('GetDiffClusterApp');
-      setNextDeployApp(nextApp.appCode);
-    } else {
-      setCurrState('DeployClusterApp');
-    }
+    const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: 'tt-health' } }));
+    nextDeploymentName = nextApp?.deploymentName;
+    console.log('nextApp', nextApp);
+    setCurrState('GetDiffClusterApp');
   }, []);
-  // 7. deploy app
+  // 6. deploy app
   const deployApp = useCallback(async () => {
-    await doAction(
-      postRequest(APIS.appDeploy, {
-        data: { appCode: nextDeployApp },
+    console.log('nextDeploymentName', nextDeploymentName);
+    const result = await doAction(
+      postRequest(APIS.syncClusterApp, {
+        data: { deploymentName: nextDeploymentName, envCode: 'tt-health' },
       }),
     );
-    // 成功后再调一次 queryClusterApp 接口
-    await getClusterApp();
-  }, [nextDeployApp]);
-  // 8. deploy fe source
-  const deployFESource = useCallback(async () => {
-    setPending(true);
-    // 1. 触发资源同步
-    await postRequest(APIS.frontendSourceDeploy);
-    updateResultLog('前端资源同步开始...');
-    // 2. 轮循调接口获取当前的部署状态，直到没有数据为止
-    await getFESourceDeployProcess();
-  }, []);
-  // 8.5 获取前端资源同步进度
-  const getFESourceDeployProcess = useCallback(async () => {
-    let logCache = resultLogCache;
-    let addonLog = '';
-    while (true) {
-      await sleep(6000); // 延迟 6 秒获取一次状态
-      try {
-        const result = await getRequest(APIS.queryFrontendSource);
-        // 没有数据表示已经结束
-        if (!result.data || result.data === 'Pass') {
-          updateResultLog(addonLog);
-          updateResultLog('前端资源同步完成！');
-          setPending(false);
-          return setCurrState('DeployClusterWebSource');
-        }
-
-        addonLog = result.data;
-        const nextLog = logCache + addonLog;
-        setResultLog(nextLog);
-      } catch (ex) {
-        // updateResultLog('资源同步状态获取异常！');
-      }
+    if (result?.nextSyncDeployment && result.nextSyncDeployment !== 'End') {
+      nextDeploymentName = result?.nextSyncDeployment;
+      setNextDeployApp(result?.nextSyncDeployment);
+      // 成功后再调一次 deployApp 接口
+      await deployApp();
+      setCurrState('GetDiffClusterApp');
+    } else if (result.nextSyncDeployment === 'End') {
+      setCurrState('SyncClusterApp');
     }
   }, []);
-  // 9. deploy fe version
-  const deployFEVersion = useCallback(async () => {
-    await doAction(postRequest(APIS.frontendVersionDeploy));
-    setCurrState('DeployClusterWebVersion');
+  // 7. 前端资源同步
+  const syncFrontendSource = useCallback(async () => {
+    await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: 'tt-health' } }));
+    setCurrState('SyncClusterWebSource');
   }, []);
-  // 10. finish
-  const finishDeploy = useCallback(async () => {
-    await doAction(postRequest(APIS.clusterDeployOver));
-    setCurrState('ClusterDeployOver');
+  // 8. finish
+  const syncClusterOver = useCallback(async () => {
+    await doAction(getRequest(APIS.syncClusterOver, { data: { envCode: 'tt-health' } }));
+    setCurrState('ClusterSyncOver');
   }, []);
 
   // 不同的状态对应不同的 step
@@ -234,99 +202,79 @@ export default function ClusterSyncDetail(props: any) {
 
     // 如果是 pass 状态，自动进行第一步
     if (currState === 'Pass') {
-      setTimeout(() => getMqDiff());
+      setTimeout(() => configDiff());
     }
   }, [currState]);
-
-  // const reDeploy = useCallback(() => {
-  //   setCurrState('Pass');
-  //   setCurrStep(1);
-  //   resultLogCache = '';
-  //   setResultLog('');
-  // }, []);
 
   return (
     <ContentCard className="page-cluster-sync-detail">
       <Steps current={currStep}>
-        <Steps.Step title="MQ同步" />
-        <Steps.Step title="配置同步" />
-        <Steps.Step title="应用同步" />
+        <Steps.Step title="Nacos配置同步" />
+        <Steps.Step title="XXL-Job同步" />
+        <Steps.Step title="集群应用同步" />
         <Steps.Step title="前端资源同步" />
-        <Steps.Step title="完成" />
+        <Steps.Step title="集群同步完成" />
       </Steps>
-      {currStep !== 4 ? (
+      {currStep !== 7 ? (
         <pre className="result-log" ref={resultRef}>
           {resultLog}
         </pre>
       ) : null}
-      {currStep !== 4 ? (
+      {currStep !== 7 ? (
         <Spin spinning={pending} tip="执行中，请勿关闭或切换页面">
           <div className="action-row">
             {currState === 'Pass' ? (
-              <Button type="primary" onClick={getMqDiff}>
-                开始 MQ 对比
-              </Button>
-            ) : null}
-            {currState === 'GetDiffClusterMq' ? (
-              <Button type="primary" onClick={deployTopic}>
-                开始同步 MQ Topic
-              </Button>
-            ) : null}
-            {currState === 'DeployClusterMqTopic' ? (
-              <Button type="primary" onClick={deployGroup}>
-                开始同步 MQ Group
-              </Button>
-            ) : null}
-            {currState === 'DeployClusterMqGroup' ? (
-              <Button type="primary" onClick={getConfigDiff}>
-                开始进行配置对比
+              <Button type="primary" onClick={configDiff}>
+                开始Nacos配置对比
               </Button>
             ) : null}
             {currState === 'GetDiffClusterConfig' ? (
-              <Button type="primary" onClick={deployConfig}>
-                开始配置同步
+              <Button type="primary" onClick={syncConfig}>
+                开始Nacos配置同步
               </Button>
             ) : null}
-            {currState === 'DeployClusterConfig' ? (
+            {currState === 'syncClusterConfig' ? (
+              <Button type="primary" onClick={xxlJobDiff}>
+                开始XXL-Job比对
+              </Button>
+            ) : null}
+            {currState === 'GetDiffXxlJob' ? (
+              <Button type="primary" onClick={syncXxlJob}>
+                开始XXL-Job同步
+              </Button>
+            ) : null}
+            {currState === 'syncXxlJob' ? (
               <Button type="primary" onClick={getClusterApp}>
                 开始查询发布应用
               </Button>
             ) : null}
             {currState === 'GetDiffClusterApp' ? (
               <Button type="primary" onClick={deployApp}>
-                同步下一个应用
+                同步应用
               </Button>
             ) : null}
-            {currState === 'DeployClusterApp' ? (
-              <Button type="primary" onClick={deployFESource}>
+            {currState === 'SyncClusterApp' ? (
+              <Button type="primary" onClick={syncFrontendSource}>
                 开始前端资源同步
               </Button>
             ) : null}
-            {currState === 'DeployClusterWebSource' ? (
-              <Button type="primary" onClick={deployFEVersion}>
-                开始前端版本同步
-              </Button>
-            ) : null}
-            {currState === 'DeployClusterWebVersion' ? (
-              <Button type="primary" onClick={finishDeploy}>
+            {currState === 'SyncClusterWebSource' ? (
+              <Button type="primary" onClick={syncClusterOver}>
                 完成集群同步
               </Button>
             ) : null}
             <Button type="default" onClick={() => props.history.push('./cluster-sync')}>
-              取消
+              返回
             </Button>
           </div>
         </Spin>
       ) : null}
-      {currStep === 4 ? (
+      {currStep === 7 ? (
         <Result
           status="success"
           title="同步成功"
           extra={[
-            // <Button key="again" type="primary" onClick={reDeploy}>
-            //   再次同步集群
-            // </Button>,
-            <Button key="showlist" type="default" onClick={() => props.history.push('./dashboard')}>
+            <Button key="showlist" type="default" onClick={() => props.history.push('./dashboards')}>
               查看集群看板
             </Button>,
           ]}

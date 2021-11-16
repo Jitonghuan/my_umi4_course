@@ -29,7 +29,7 @@ export default defineConfig({
       target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
-      // target: 'http://10.10.128.243:8080/',
+      // target: 'http://10.10.128.239:8080/',//青枫本地
       // target: 'http://10.10.129.177:8080/',
       // target: 'http://10.10.129.128:8080',
       // target: 'http://10.10.128.182:8081/', // 羁绊本地

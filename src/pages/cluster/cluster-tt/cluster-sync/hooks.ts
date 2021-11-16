@@ -1,6 +1,6 @@
-// cluster sync hooks
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/07/29 16:12
+// cluster-tt sync 集群同步 hooks
+// @author JITONGHUAN <muxi@come-future.com>
+// @create 2021/11/9 10:33
 
 import { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
@@ -41,15 +41,15 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
 
     setLoading(true);
     try {
-      const result = await getRequest(APIS.diffClusterApp);
-      const resultData = result.data || {};
-      const next = Object.keys(resultData).map((appName: string) => {
-        return {
-          appName,
-          ...resultData[appName],
-        };
+      //集群应用比对
+      const result = await getRequest(APIS.diffClusterApp, { data: { envCode: 'tt-health' } });
+      const resultData = result?.data || [];
+      const next = resultData?.map((item: any, index: number) => {
+        const appDiffInfo = Object.keys(item);
+        let appName = appDiffInfo[0];
+        return { appName, ...item[appName] };
       });
-
+      console.log('next', next);
       sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
       setFromCache('');
       setData(next);
