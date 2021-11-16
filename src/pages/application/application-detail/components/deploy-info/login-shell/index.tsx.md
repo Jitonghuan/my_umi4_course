@@ -3,7 +3,7 @@
 // @create 2021/11/12	17:04
 
 import React, { useState, useEffect, useContext } from 'react';
-import { Tabs, Select, Form, Divider, Button } from 'antd';
+import { Tabs, Select, Form,Divider ,Button} from 'antd';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
@@ -20,7 +20,8 @@ export default function AppDeployInfo(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   let currentContainerName = '';
   useEffect(() => {
-    if (appCode && envCode && instName) {
+   
+    if(appCode&&envCode&&instName){
       getRequest(APIS.listContainer, { data: { appCode, envCode, instName } }).then((result) => {
         let data = result.data;
         if (result.success) {
@@ -34,19 +35,22 @@ export default function AppDeployInfo(props: any) {
           initWS();
         }
       });
+
     }
   }, [appCode, envCode]);
 
   const initWS = () => {
-    let dom: any = document.getElementById('terminal');
-    let socket = new WebSocket(`ws://47.101.65.157/zjg/admin/websocket/zjic-obu-list`); //建立通道
+    let dom: any  = document.getElementById('terminal')
+    let socket = new WebSocket(
+      `ws://47.101.65.157/zjg/admin/websocket/zjic-obu-list`,
+    ); //建立通道
 
     socket.onopen = () => {
       const term = new Terminal({
-        altClickMovesCursor: true,
+        altClickMovesCursor:true,
         rendererType: 'canvas', //渲染类型
         // yrows: 100, //行数
-        rows: 40,
+        rows:40,
         cols: 100, // 不指定行数，自动回车后光标从下一行开始
         convertEol: true, //启用时，光标将设置为下一行的开头
         disableStdin: false, //是否应禁用输入。
@@ -70,13 +74,16 @@ export default function AppDeployInfo(props: any) {
       term.writeln('WebSocket链接成功');
       fitAddon.fit();
       // window.addEventListener('resize', handleResize()); //监听窗口大小改变
-
-      window.addEventListener('resize', function () {
+      
+      window.addEventListener('resize', function() {
         // 变化后需要做的事
-
+        
         fitAddon.fit();
-      });
-
+        
+  
+        
+    })
+  
       term.focus();
       // term.onKey((e) => {
       //   let sendJSON = {
@@ -98,47 +105,49 @@ export default function AppDeployInfo(props: any) {
       socket.onerror = () => {
         term.writeln('webSocket 链接失败');
       };
-      term.onResize((cols, rows) => {
-        console.log('cols,rows:', cols, rows);
-      });
+      term.onResize((cols,rows)=>{
+        console.log("cols,rows:",cols,rows)
+      })
     };
-  };
+  }
 
-  const handleResize = (fie: any) => {
+  const  handleResize =(fie:any)  => {
     fie.fit();
-  };
+  }
+
 
   //监听窗口变化
-  // const [collapsed,setCollapsed]=useState<boolean>(false);
-  //   const  handleClientW = (width:any,num:any)=>{
-  //     if(width < num){
-  //       setCollapsed(true)
-  //     }else{
-  //       setCollapsed(false)
-  //     }
-  //   }
+// const [collapsed,setCollapsed]=useState<boolean>(false);
+//   const  handleClientW = (width:any,num:any)=>{
+//     if(width < num){
+//       setCollapsed(true)
+//     }else{
+//       setCollapsed(false)
+//     }
+//   }
+
+
 
   // useEffect(()=>{
   //   // window.addEventListener('resize', handleResize); //监听窗口大小改变
   //   // let clientW = document.documentElement.clientWidth;//获取窗口可见区域的高度
   //   // handleClientW(clientW,1040);
-
+    
   // },[])
+   
+    //关闭页面时注销掉监听事件
+  useEffect(()=>{
+    return()=>{window.removeEventListener('resize',handleResize);}
+  },[])
 
-  //关闭页面时注销掉监听事件
-  useEffect(() => {
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   const selectListContainer = (getContainer: string) => {
     currentContainerName = getContainer;
   };
 
   return (
-    <div className="loginShell">
-      <div style={{ paddingBottom: '1%', paddingTop: '1%' }}>
+    <div className="loginShell" >
+      <div style={{ paddingBottom: '1%',paddingTop:'1%' }} >
         <Form form={viewLogform} layout="inline">
           <span>选择容器： </span>
           <Form.Item name="containerName">
@@ -152,7 +161,9 @@ export default function AppDeployInfo(props: any) {
         </Form>
       </div>
       {/* <Divider/> */}
-      <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
+      <div id="terminal" className="xterm" style={{  width: '100%',backgroundColor: '#060101'}}>
+      </div>
+     
     </div>
   );
 }

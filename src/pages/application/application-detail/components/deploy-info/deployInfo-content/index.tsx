@@ -252,19 +252,19 @@ export default function DeployContent(props: DeployContentProps) {
             >
               <Table.Column
                 title="名称"
-                dataIndex="insName"
+                dataIndex="instName"
                 width={140}
                 render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
               />
               <Table.Column
                 title="IP"
-                dataIndex="insIP"
+                dataIndex="instIP"
                 width={100}
                 render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
               />
               <Table.Column
                 title="节点IP"
-                dataIndex="insNode"
+                dataIndex="instNode"
                 width={100}
                 render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
               />
@@ -276,7 +276,7 @@ export default function DeployContent(props: DeployContentProps) {
               />
               <Table.Column
                 title="状态"
-                dataIndex="insStatus"
+                dataIndex="instStatus"
                 width={100}
                 render={(status, record) => {
                   return status === 'Running' ? (
@@ -297,7 +297,7 @@ export default function DeployContent(props: DeployContentProps) {
                       type="primary"
                       onClick={() => {
                         window.open(
-                          `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&insName=${record?.insName}`,
+                          `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
                         );
                       }}
                     >
@@ -308,7 +308,7 @@ export default function DeployContent(props: DeployContentProps) {
                       type="primary"
                       onClick={() => {
                         window.open(
-                          `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&insName=${record?.insName}`,
+                          `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
                         );
                       }}
                     >
@@ -320,8 +320,8 @@ export default function DeployContent(props: DeployContentProps) {
                       type="primary"
                       onClick={() => {
                         setIsLogModalVisible(true);
-                        currentInstName = record?.insName;
-                        getContainerData(appData?.appCode, currentEnvData, record?.insName);
+                        currentInstName = record?.instName;
+                        getContainerData(appData?.appCode, currentEnvData, record?.instName);
                       }}
                     >
                       文件下载
@@ -329,7 +329,7 @@ export default function DeployContent(props: DeployContentProps) {
                     <Popconfirm
                       title="确定要删除该信息吗？"
                       onConfirm={() => {
-                        deleteInstance(appData?.appCode, currentEnvData, record.insName);
+                        deleteInstance(appData?.appCode, currentEnvData, record.instName);
                       }}
                     >
                       <Button size="small" type="default" danger style={{ color: 'red' }}>
