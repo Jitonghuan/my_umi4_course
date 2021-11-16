@@ -73,7 +73,7 @@ export default function ClusterPage(props: any) {
             width={140}
             render={(current, record: any) => (
               // current !== record?.ClusterA?.appImageTag && <span color="red">{current}</span>
-              <span color={current !== record?.ClusterA?.appImageTag ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.appImageTag ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>

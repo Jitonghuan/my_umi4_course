@@ -129,7 +129,7 @@ export default function Application() {
             width={140}
             // render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.appImageTag ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.appImageTag ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
