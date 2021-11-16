@@ -128,8 +128,8 @@ export default function Application() {
             dataIndex={['ClusterB', 'appImageTag']}
             width={140}
             // render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
-            render={(current, record: any) =>
-              current !== record?.ClusterA?.appImageTag && <span color="red">{current}</span>
+            render={
+              (current, record: any) => current !== record?.ClusterA?.appImageTag && <span color="red">{current}</span>
               // <span color={current !== record?.ClusterA?.appImageTag ? 'red' : 'black'}>{current}</span>
             }
           />
