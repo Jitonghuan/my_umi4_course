@@ -174,11 +174,11 @@ export default function ClusterSyncDetail(props: any) {
       }),
     );
     if (result?.nextSyncDeployment && result.nextSyncDeployment !== 'End') {
-      setCurrState('GetDiffClusterApp');
       nextDeploymentName = result?.nextSyncDeployment;
       setNextDeployApp(result?.nextSyncDeployment);
       // 成功后再调一次 deployApp 接口
       await deployApp();
+      setCurrState('GetDiffClusterApp');
     } else if (result.nextSyncDeployment === 'End') {
       setCurrState('SyncClusterApp');
     }
