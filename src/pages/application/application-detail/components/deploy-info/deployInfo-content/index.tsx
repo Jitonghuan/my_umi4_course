@@ -7,17 +7,17 @@
 
 import React, { useState, useContext, useCallback, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
+import { IProps } from '../../application-deploy/deploy-content/components/publish-content/types';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest } from '@/utils/request';
-import { listContainer } from './service';
-import * as APIS from '@/pages/application/service';
+import { restartApp, rollbackApplication } from '@/pages/application/service';
+import { listContainer, fileDownload } from './service';
+// import * as APIS from '@/pages/application/service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeployInfoData, useInstanceList, useDownloadLog, useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
-import { queryDeployList, queryFeatureDeployed, queryApplicationStatus } from '@/pages/application/service';
-import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
@@ -29,6 +29,7 @@ export interface DeployContentProps {
   isActive?: boolean;
   /** 环境参数 */
   envTypeCode: string;
+  // deployData:any
   /** 部署下个环境成功回调 */
   onDeployNextEnvSuccess: () => void;
 }
@@ -60,14 +61,11 @@ export default function DeployContent(props: DeployContentProps) {
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
   const { envTypeCode, isActive, onDeployNextEnvSuccess } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
-  const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(
-    // currEnvCode,
-    appData?.deploymentName,
-  );
+  const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
-    // currEnvCode,
+    currentEnvData,
     appData?.deploymentName,
   );
   useEffect(() => {
@@ -134,24 +132,6 @@ export default function DeployContent(props: DeployContentProps) {
       setEnvTypeData(next);
     });
   };
-  // 重启机器
-  const handleRestartItem = useCallback(
-    async (record: IStatusInfoProps) => {
-      await postRequest(APIS.restartApplication, {
-        data: {
-          deploymentName: appData?.deploymentName,
-          envCode: record.envCode,
-          eccid: record?.eccid,
-          owner: appData?.owner,
-        },
-      });
-
-      message.success('操作成功！');
-      reloadDeployData();
-      reloadChangeOrderData();
-    },
-    [appData], //currEnvCode
-  );
 
   //改变环境下拉选择后查询结果
   //   let getEnvCode: any;
@@ -163,8 +143,9 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   //加载容器信息
-  let currentContainerName = '';
+  const [currentContainerName, setCurrentContainerName] = useState<string>('');
   const [currentInstName, setCurrentInstName] = useState<string>('');
+  const [currentFilePath, setCurrentFilePath] = useState<string>('');
   const getContainerData = async (appCode: any, envCode: any, instName: string) => {
     getRequest(listContainer, { data: { appCode, envCode, instName } }).then((result) => {
       let data = result.data;
@@ -178,14 +159,45 @@ export default function DeployContent(props: DeployContentProps) {
     });
   };
   const selectListContainer = (getContainer: string) => {
-    currentContainerName = getContainer;
+    setCurrentContainerName(getContainer);
   };
 
   const downLogFile = (values: any) => {
     console.log('currentInstName', currentInstName);
+
     downloadLog(appData?.appCode, currentEnvData, currentInstName, values?.containerName, values?.filePath);
     setIsLogModalVisible(false);
   };
+
+  //
+
+  // 确认回滚
+  const handleRollbackSubmit = () => {
+    postRequest(rollbackApplication, {
+      data: {
+        appCode: appData?.appCode,
+        envCode: currentEnvData,
+      },
+    })
+      .then((res: any) => {
+        if (res.sucess) {
+          message.success('应用回滚完成！');
+        }
+      })
+      .finally(() => {
+        setRollbackVisible(false);
+      });
+    //  postRequest(rollbackApplication, {
+    //   data: {
+    //     appCode: appData?.appCode,
+    //     envCode: props.envCode,
+    //     image: versionItem?.image,
+    //     appId: versionItem?.appId,
+    //     packageVersion: versionItem?.packageVersion,
+    //     packageVersionId: versionItem?.packageVersionId,
+    //     owner: appData?.owner,
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}-body`}>
@@ -233,12 +245,28 @@ export default function DeployContent(props: DeployContentProps) {
                       </Button>
                     </Popconfirm> */}
               <div className="caption-right">
-                <Popconfirm title={`确定重启吗？`}>
+                <Popconfirm
+                  title={`确定重启 ${appData?.appName}吗？`}
+                  onConfirm={async () => {
+                    await restartApp({
+                      appCode,
+                      envCode: currentEnvData,
+                      appCategoryCode: appData?.appCategoryCode,
+                    });
+                    message.success('操作成功！');
+                  }}
+                >
                   <Button type="primary" ghost>
                     重启
                   </Button>
                 </Popconfirm>
-                <Button type="default" danger onClick={() => setRollbackVisible(true)}>
+                <Button
+                  type="default"
+                  danger
+                  onClick={() => {
+                    setRollbackVisible(true);
+                  }}
+                >
                   发布回滚
                 </Button>
               </div>
@@ -264,18 +292,6 @@ export default function DeployContent(props: DeployContentProps) {
                 render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
               />
               <Table.Column
-                title="节点IP"
-                dataIndex="instNode"
-                width={100}
-                render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
-              />
-              <Table.Column
-                title="镜像"
-                dataIndex="image"
-                width={260}
-                render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
-              />
-              <Table.Column
                 title="状态"
                 dataIndex="instStatus"
                 width={100}
@@ -286,6 +302,18 @@ export default function DeployContent(props: DeployContentProps) {
                     <Tag color="volcano">Initialization</Tag>
                   ) : null;
                 }}
+              />
+              <Table.Column
+                title="镜像"
+                dataIndex="image"
+                width={260}
+                render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
+              />
+              <Table.Column
+                title="节点IP"
+                dataIndex="instNode"
+                width={100}
+                render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
               />
               <Table.Column
                 width={330}
@@ -379,15 +407,25 @@ export default function DeployContent(props: DeployContentProps) {
           footer={null}
           onCancel={() => setIsLogModalVisible(false)}
         >
-          <Form form={downloadLogform} onFinish={downLogFile} labelCol={{ flex: '120px' }}>
+          <Form form={downloadLogform} labelCol={{ flex: '120px' }}>
             <Form.Item label="容器：" name="containerName" rules={[{ required: true, message: '这是必填项' }]}>
               <Select style={{ width: 140 }} options={queryListContainer} onChange={selectListContainer}></Select>
             </Form.Item>
             <Form.Item label="文件路径：" name="filePath" rules={[{ required: true, message: '这是必填项' }]}>
               <Input placeholder="请输入文件绝对路径" style={{ width: 200 }}></Input>
             </Form.Item>
-            <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
-              <Button type="primary" htmlType="submit">
+            <Form.Item wrapperCol={{ offset: 6 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="downloadButton"
+                // target="_blank"
+                onClick={() => {
+                  setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
+                  message.info('日志开始下载');
+                }}
+                href={`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`}
+              >
                 提交
               </Button>
             </Form.Item>
@@ -395,13 +433,14 @@ export default function DeployContent(props: DeployContentProps) {
         </Modal>
         <RollbackModal
           visible={rollbackVisible}
-          // envCode={currEnvCode}
+          envCode={currentEnvData}
           onClose={() => setRollbackVisible(false)}
-          // onSave={() => {
-          //     setRollbackVisible(false);
-          //     reloadChangeOrderData();
-          //     reloadDeployData();
-          // }}
+          onSave={() => {
+            reloadChangeOrderData(); //刷新操作记录信息
+            queryInstanceList(appData?.appCode, currentEnvData); //刷新表格信息
+            handleRollbackSubmit(); //回滚走的接口
+            // reloadDeployData();
+          }}
         />
       </div>
     </div>

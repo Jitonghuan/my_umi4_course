@@ -3,7 +3,7 @@
 // @create 2021/11/12	17:04
 
 import React, { useState, useEffect, useContext } from 'react';
-import { Tabs, Select, Form, Divider, Button } from 'antd';
+import { Tabs, Select, Form, message, Button } from 'antd';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
@@ -69,9 +69,9 @@ export default function AppDeployInfo(props: any) {
       term.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
       term.writeln('WebSocket链接成功');
       fitAddon.fit();
-      window.addEventListener('resize', function () {
+      window?.addEventListener('resize', function () {
         // 变化后需要做的事
-        fitAddon.fit();
+        fitAddon?.fit();
       });
       term.focus();
 
@@ -90,6 +90,9 @@ export default function AppDeployInfo(props: any) {
   //     window.removeEventListener('resize', handleResize);
   //   };
   // }, []);
+  const closeSocket = () => {
+    window.close();
+  };
 
   const selectListContainer = (getContainer: string) => {
     currentContainerName = getContainer;
@@ -112,6 +115,13 @@ export default function AppDeployInfo(props: any) {
       </div>
       {/* <Divider/> */}
       <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
+      <div style={{ height: 50, textAlign: 'center', zIndex: 20 }}>
+        <span className="eventButton">
+          <Button type="primary" onClick={closeSocket}>
+            关闭
+          </Button>
+        </span>
+      </div>
     </div>
   );
 }
