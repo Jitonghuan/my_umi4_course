@@ -164,7 +164,7 @@ export default function ClusterSyncDetail(props: any) {
     if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
       setCurrState('GetDiffClusterApp');
       setNextDeployApp(nextApp?.deploymentName);
-      console.log('nextApp?.deploymentName1111', nextApp?.deploymentName);
+      console.log('nextApp?.deploymentName1111', nextApp, nextApp?.deploymentName);
     } else {
       setCurrState('SyncClusterApp');
     }
