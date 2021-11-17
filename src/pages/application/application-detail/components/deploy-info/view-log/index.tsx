@@ -118,6 +118,10 @@ export default function ViewLog(props: any) {
     setLog(resultLogData);
     // console.log('log',resultLogData)
   };
+  //关闭页面
+  const closeSocket = () => {
+    window.close();
+  };
 
   return (
     <ContentCard noPadding className="loginShell">
@@ -147,6 +151,9 @@ export default function ViewLog(props: any) {
             </Button>
             <Button type="primary" onClick={clearSreen} style={{ marginLeft: 4 }}>
               清空屏幕
+            </Button>
+            <Button type="primary" onClick={closeSocket} style={{ marginLeft: 4 }}>
+              关闭
             </Button>
           </span>
         </div>

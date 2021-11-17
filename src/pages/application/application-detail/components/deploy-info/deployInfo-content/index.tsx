@@ -11,7 +11,7 @@ import { IProps } from '../../application-deploy/deploy-content/components/publi
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
-import { postRequest } from '@/utils/request';
+import { postRequest, delRequest } from '@/utils/request';
 import { restartApp, rollbackApplication } from '@/pages/application/service';
 import { listContainer, fileDownload } from './service';
 // import * as APIS from '@/pages/application/service';
@@ -22,6 +22,7 @@ import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
 import './index.less';
+import OldAppDeployInfo from './old-deployInfo-page';
 const rootCls = 'deploy-content-compo';
 
 export interface DeployContentProps {
@@ -60,6 +61,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
   const { envTypeCode, isActive, onDeployNextEnvSuccess } = props;
+  const [downloading, setDownloading] = useState<boolean>(false);
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
@@ -84,11 +86,15 @@ export default function DeployContent(props: DeployContentProps) {
         }));
 
         setEnvDatas(dataSources);
+
         initEnvCode = dataSources[0]?.value;
         setCurrentEnvData(dataSources[0]?.value);
         formInstance.setFieldsValue({ envCode: initEnvCode });
-        loadInfoData(initEnvCode);
-        queryInstanceList(appData?.appCode, initEnvCode);
+
+        if (initEnvCode !== '' && initEnvCode !== 'zy-prd' && initEnvCode !== 'ws-prd') {
+          loadInfoData(initEnvCode);
+          queryInstanceList(appData?.appCode, initEnvCode);
+        }
       });
     } catch (error) {
       message.warning(error);
@@ -209,239 +215,249 @@ export default function DeployContent(props: DeployContentProps) {
             </Form.Item>
           </Form>
         </div>
-        {/* <Divider>分割线</Divider> */}
-        <div className="tab-content section-group">
-          <section className="section-left">
-            <div className="section-clusterInfo">
-              <Spin spinning={deployInfoLoading}>
-                <div className="clusterInfo">
-                  <h3>集群信息</h3>{' '}
-                </div>
-                <div className="clusterInfo">
-                  <span>
-                    集群类型:<Tag>{listEnvClusterData?.clusterType}</Tag>
-                  </span>
-                  <span style={{ paddingLeft: 20 }}>
-                    集群名称：<Tag>{listEnvClusterData?.clusterName}</Tag>
-                  </span>
-                  <span style={{ paddingLeft: 20 }}>
-                    集群状态：
-                    {listEnvClusterData?.clusterStatus === 'health' ? (
-                      <Tag color="success">健康</Tag>
-                    ) : listEnvClusterData?.clusterStatus === 'unhealth' ? (
-                      <Tag color="error">不健康</Tag>
-                    ) : null}
-                  </span>
-                </div>
-              </Spin>
-            </div>
-            <div className="table-caption">
-              <div className="caption-left">
-                <h3>实例列表：</h3>
-              </div>
-              {/* <Popconfirm title={`确定重启 ${record.ip} 吗？`} onConfirm={() => handleRestartItem(record)}>
-                      <Button size="small" type="primary" ghost loading={record.taskState === 1}>
-                        重启
-                      </Button>
-                    </Popconfirm> */}
-              <div className="caption-right">
-                <Popconfirm
-                  title={`确定重启 ${appData?.appName}吗？`}
-                  onConfirm={async () => {
-                    await restartApp({
-                      appCode,
-                      envCode: currentEnvData,
-                      appCategoryCode: appData?.appCategoryCode,
-                    });
-                    message.success('操作成功！');
-                  }}
-                >
-                  <Button type="primary" ghost>
-                    重启
-                  </Button>
-                </Popconfirm>
-                <Button
-                  type="default"
-                  danger
-                  onClick={() => {
-                    setRollbackVisible(true);
-                  }}
-                >
-                  发布回滚
-                </Button>
-              </div>
-            </div>
-
-            <Table
-              dataSource={instanceTableData}
-              loading={instanceloading}
-              bordered
-              pagination={false}
-              scroll={{ y: window.innerHeight - 340 }}
-            >
-              <Table.Column
-                title="名称"
-                dataIndex="instName"
-                width={140}
-                render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
-              />
-              <Table.Column
-                title="IP"
-                dataIndex="instIP"
-                width={100}
-                render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
-              />
-              <Table.Column
-                title="状态"
-                dataIndex="instStatus"
-                width={100}
-                render={(status, record) => {
-                  return status === 'Running' ? (
-                    <Tag color="green">Running</Tag>
-                  ) : status === 'Initialization' ? (
-                    <Tag color="volcano">Initialization</Tag>
-                  ) : null;
-                }}
-              />
-              <Table.Column
-                title="镜像"
-                dataIndex="image"
-                width={260}
-                render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
-              />
-              <Table.Column
-                title="节点IP"
-                dataIndex="instNode"
-                width={100}
-                render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
-              />
-              <Table.Column
-                width={330}
-                title="操作"
-                fixed="right"
-                render={(_, record: any) => (
-                  <div className="action-cell">
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => {
-                        window.open(
-                          `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
-                        );
-                      }}
-                    >
-                      查看日志
-                    </Button>
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => {
-                        window.open(
-                          `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
-                        );
-                      }}
-                    >
-                      登陆shell
-                    </Button>
-                    {/* downloadLog */}
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => {
-                        setIsLogModalVisible(true);
-                        setCurrentInstName(record?.instName);
-                        getContainerData(appData?.appCode, currentEnvData, record?.instName);
-                      }}
-                    >
-                      文件下载
-                    </Button>
-                    <Popconfirm
-                      title="确定要删除该信息吗？"
-                      onConfirm={() => {
-                        deleteInstance(appData?.appCode, currentEnvData, record.instName);
-                      }}
-                    >
-                      <Button size="small" type="default" danger style={{ color: 'red' }}>
-                        删除
-                      </Button>
-                    </Popconfirm>
+        {currentEnvData === 'zy-prd' || currentEnvData === 'ws-prd' ? (
+          <OldAppDeployInfo />
+        ) : (
+          <div className="tab-content section-group">
+            <section className="section-left">
+              <div className="section-clusterInfo">
+                <Spin spinning={deployInfoLoading}>
+                  <div className="clusterInfo">
+                    <h3>集群信息</h3>
                   </div>
-                )}
-              />
-            </Table>
-          </section>
-          <section className="section-right1">
-            <h3>操作记录</h3>
-            <div className="section-inner">
-              {changeOrderDataLoading ? (
-                <div className="block-loading">
-                  <Spin />
+                  <div className="clusterInfo">
+                    <span>
+                      集群类型:<Tag>{listEnvClusterData?.clusterType}</Tag>
+                    </span>
+                    <span style={{ paddingLeft: 20 }}>
+                      集群名称：<Tag>{listEnvClusterData?.clusterName}</Tag>
+                    </span>
+                    <span style={{ paddingLeft: 20 }}>
+                      集群状态：
+                      {listEnvClusterData?.clusterStatus === 'health' ? (
+                        <Tag color="success">健康</Tag>
+                      ) : listEnvClusterData?.clusterStatus === 'unhealth' ? (
+                        <Tag color="error">不健康</Tag>
+                      ) : null}
+                    </span>
+                  </div>
+                </Spin>
+              </div>
+              <div className="table-caption">
+                <div className="caption-left">
+                  <h3>实例列表：</h3>
                 </div>
-              ) : null}
-              {changeOrderData.map((item, index) => (
-                <div className="change-order-item" key={index}>
-                  <p>
-                    <span>时间：</span>
-                    <b>{item.createTime}</b>
-                  </p>
-                  <p>
-                    <span>操作人：</span>
-                    <b>{item.finishTime}</b>
-                  </p>
-                  <p>
-                    <span>操作类型：</span>
-                    <b>{item.coType}</b>
-                  </p>
-                  <p>
-                    <span>操作结果：</span>
-                    <b>{item.changeOrderDescription}</b>
-                  </p>
+                {/* <Popconfirm title={`确定重启 ${record.ip} 吗？`} onConfirm={() => handleRestartItem(record)}>
+                        <Button size="small" type="primary" ghost loading={record.taskState === 1}>
+                          重启
+                        </Button>
+                      </Popconfirm> */}
+                <div className="caption-right">
+                  <Popconfirm
+                    title={`确定重启 ${appData?.appName}吗？`}
+                    onConfirm={async () => {
+                      await restartApp({
+                        appCode,
+                        envCode: currentEnvData,
+                        appCategoryCode: appData?.appCategoryCode,
+                      });
+                      message.success('操作成功！');
+                    }}
+                  >
+                    <Button type="primary" ghost>
+                      重启
+                    </Button>
+                  </Popconfirm>
+                  <Button
+                    type="default"
+                    danger
+                    onClick={() => {
+                      setRollbackVisible(true);
+                    }}
+                  >
+                    发布回滚
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </section>
-        </div>
-        <Modal
-          title="下载日志文件"
-          visible={isLogModalVisible}
-          footer={null}
-          onCancel={() => setIsLogModalVisible(false)}
-        >
-          <Form form={downloadLogform} labelCol={{ flex: '120px' }}>
-            <Form.Item label="容器：" name="containerName" rules={[{ required: true, message: '这是必填项' }]}>
-              <Select style={{ width: 140 }} options={queryListContainer} onChange={selectListContainer}></Select>
-            </Form.Item>
-            <Form.Item label="文件路径：" name="filePath" rules={[{ required: true, message: '这是必填项' }]}>
-              <Input placeholder="请输入文件绝对路径" style={{ width: 200 }}></Input>
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 6 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="downloadButton"
-                onClick={() => {
-                  setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
-                  message.info('日志开始下载');
-                }}
-                href={`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`}
+              </div>
+
+              <Table
+                dataSource={instanceTableData}
+                loading={instanceloading}
+                bordered
+                pagination={false}
+                scroll={{ y: window.innerHeight - 340 }}
               >
-                下载
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-        <RollbackModal
-          visible={rollbackVisible}
-          envCode={currentEnvData}
-          onClose={() => setRollbackVisible(false)}
-          onSave={() => {
-            reloadChangeOrderData(); //刷新操作记录信息
-            queryInstanceList(appData?.appCode, currentEnvData); //刷新表格信息
-            handleRollbackSubmit(); //回滚走的接口
-            // reloadDeployData();
-          }}
-        />
+                <Table.Column
+                  title="名称"
+                  dataIndex="instName"
+                  width={140}
+                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
+                />
+                <Table.Column
+                  title="IP"
+                  dataIndex="instIP"
+                  width={100}
+                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
+                />
+                <Table.Column
+                  title="状态"
+                  dataIndex="instStatus"
+                  width={100}
+                  render={(status, record) => {
+                    return status === 'Running' ? (
+                      <Tag color="green">Running</Tag>
+                    ) : status === 'Initialization' ? (
+                      <Tag color="volcano">Initialization</Tag>
+                    ) : null;
+                  }}
+                />
+                <Table.Column
+                  title="镜像"
+                  dataIndex="image"
+                  width={260}
+                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
+                />
+                <Table.Column
+                  title="节点IP"
+                  dataIndex="instNode"
+                  width={100}
+                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
+                />
+                <Table.Column
+                  width={330}
+                  title="操作"
+                  fixed="right"
+                  render={(_, record: any) => (
+                    <div className="action-cell">
+                      <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => {
+                          window.open(
+                            `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                          );
+                        }}
+                      >
+                        查看日志
+                      </Button>
+                      <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => {
+                          window.open(
+                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                          );
+                        }}
+                      >
+                        登陆shell
+                      </Button>
+                      {/* downloadLog */}
+                      <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => {
+                          setIsLogModalVisible(true);
+                          setCurrentInstName(record?.instName);
+                          getContainerData(appData?.appCode, currentEnvData, record?.instName);
+                        }}
+                      >
+                        文件下载
+                      </Button>
+                      <Popconfirm
+                        title="确定要删除该信息吗？"
+                        onConfirm={() => {
+                          postRequest(
+                            `${deleteInstance}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record.instName}`,
+                          );
+                          deleteInstance(appData?.appCode, currentEnvData, record.instName);
+                          queryInstanceList(appData?.appCode, currentEnvData);
+                        }}
+                      >
+                        <Button size="small" type="default" danger style={{ color: 'red' }}>
+                          删除
+                        </Button>
+                      </Popconfirm>
+                    </div>
+                  )}
+                />
+              </Table>
+            </section>
+            <section className="section-right1">
+              <h3>操作记录</h3>
+              <div className="section-inner">
+                {changeOrderDataLoading ? (
+                  <div className="block-loading">
+                    <Spin />
+                  </div>
+                ) : null}
+                {changeOrderData.map((item, index) => (
+                  <div className="change-order-item" key={index}>
+                    <p>
+                      <span>时间：</span>
+                      <b>{item.createTime}</b>
+                    </p>
+                    <p>
+                      <span>操作人：</span>
+                      <b>{item.finishTime}</b>
+                    </p>
+                    <p>
+                      <span>操作类型：</span>
+                      <b>{item.coType}</b>
+                    </p>
+                    <p>
+                      <span>操作结果：</span>
+                      <b>{item.changeOrderDescription}</b>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
+        {/* <Divider>分割线</Divider> */}
       </div>
+      <Modal
+        title="下载日志文件"
+        visible={isLogModalVisible}
+        footer={null}
+        onCancel={() => setIsLogModalVisible(false)}
+      >
+        <Form form={downloadLogform} labelCol={{ flex: '120px' }}>
+          <Form.Item label="容器：" name="containerName" rules={[{ required: true, message: '这是必填项' }]}>
+            <Select style={{ width: 140 }} options={queryListContainer} onChange={selectListContainer}></Select>
+          </Form.Item>
+          <Form.Item label="文件路径：" name="filePath" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input placeholder="请输入文件绝对路径" style={{ width: 200 }}></Input>
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 6 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="downloadButton"
+              loading={downloading}
+              onClick={() => {
+                setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
+                setDownloading(true);
+                message.info('日志开始下载');
+              }}
+              href={`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`}
+            >
+              下载
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <RollbackModal
+        visible={rollbackVisible}
+        envCode={currentEnvData}
+        onClose={() => setRollbackVisible(false)}
+        onSave={() => {
+          reloadChangeOrderData(); //刷新操作记录信息
+          queryInstanceList(appData?.appCode, currentEnvData); //刷新表格信息
+          handleRollbackSubmit(); //回滚走的接口
+          // reloadDeployData();
+        }}
+      />
     </div>
   );
 }
