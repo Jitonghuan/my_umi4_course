@@ -164,13 +164,15 @@ export default function ClusterSyncDetail(props: any) {
     if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
       setCurrState('GetDiffClusterApp');
       setNextDeployApp(nextApp?.deploymentName);
+      console.log('nextApp?.deploymentName1111', nextApp?.deploymentName);
     } else {
       setCurrState('SyncClusterApp');
     }
+    console.log('nextApp?.deploymentName2222', nextApp?.deploymentName);
   }, []);
   // 6. deploy app
   const deployApp = useCallback(async () => {
-    console.log('nextDeploymentName', nextDeploymentName);
+    console.log('nextDeployApp', nextDeployApp);
     await doAction(
       postRequest(APIS.syncClusterApp, {
         data: { deploymentName: nextDeployApp, envCode: 'tt-health' },
