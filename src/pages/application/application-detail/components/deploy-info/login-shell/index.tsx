@@ -84,7 +84,7 @@ export default function AppDeployInfo(props: any) {
     window?.addEventListener('resize', function () {
       // 变化后需要做的事
       fitAddon?.fit();
-      console.log(' fitAddon?.fit()', JSON.stringify(fitAddon?.fit()));
+
       let sendJson = {
         operation: 'resize',
         cols: term.cols,
