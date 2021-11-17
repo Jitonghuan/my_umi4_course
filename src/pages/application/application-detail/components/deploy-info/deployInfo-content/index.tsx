@@ -419,14 +419,13 @@ export default function DeployContent(props: DeployContentProps) {
                 type="primary"
                 htmlType="submit"
                 className="downloadButton"
-                // target="_blank"
                 onClick={() => {
                   setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
                   message.info('日志开始下载');
                 }}
                 href={`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`}
               >
-                提交
+                下载
               </Button>
             </Form.Item>
           </Form>
