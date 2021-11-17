@@ -42,7 +42,7 @@ export default function AppDeployInfo(props: any) {
     let dom: any = document.getElementById('terminal');
     let socket = new WebSocket(
       // http://matrix-test.cfuture.shop/
-      `ws://matrix-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
     //初始化terminal
     const term = new Terminal({
@@ -84,6 +84,7 @@ export default function AppDeployInfo(props: any) {
     window?.addEventListener('resize', function () {
       // 变化后需要做的事
       fitAddon?.fit();
+      console.log(' fitAddon?.fit()', JSON.stringify(fitAddon?.fit()));
       let sendJson = {
         operation: 'resize',
         cols: term.cols,
