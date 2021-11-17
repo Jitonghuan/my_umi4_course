@@ -93,7 +93,6 @@ export default function ClusterSyncDetail(props: any) {
       setPending(false);
     }
   }, []);
-  let nextDeploymentName = '';
   const doAction = useCallback(async (promise: ResPromise) => {
     try {
       setPending(true);
@@ -158,6 +157,7 @@ export default function ClusterSyncDetail(props: any) {
     await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: 'tt-health' } }));
     setCurrState('syncXxlJob');
   }, []);
+  let nextDeploymentName = '';
   // 5. get cluster app
   const getClusterApp = useCallback(async () => {
     const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: 'tt-health' } }));
@@ -168,19 +168,21 @@ export default function ClusterSyncDetail(props: any) {
     } else {
       setCurrState('SyncClusterApp');
     }
-    console.log('nextApp?.deploymentName2222', nextApp?.deploymentName);
+    nextDeploymentName = nextApp?.deploymentName;
+    console.log('nextApp?.deploymentName2222', nextApp?.deploymentName, nextDeploymentName);
   }, []);
   // 6. deploy app
   const deployApp = useCallback(async () => {
-    console.log('nextDeployApp', nextDeployApp);
+    console.log('nextDeployApp1', nextDeployApp);
+    console.log('nextDeploymentName2', nextDeploymentName);
     await doAction(
       postRequest(APIS.syncClusterApp, {
-        data: { deploymentName: nextDeployApp, envCode: 'tt-health' },
+        data: { deploymentName: nextDeployApp || nextDeploymentName, envCode: 'tt-health' },
       }),
     );
     // 成功后再调一次 queryClusterApp 接口
     await getClusterApp();
-  }, []);
+  }, [nextDeploymentName]);
   // 7. 前端资源同步
   const syncFrontendSource = useCallback(async () => {
     await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: 'tt-health' } }));
