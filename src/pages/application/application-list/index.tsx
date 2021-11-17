@@ -20,7 +20,9 @@ export default function ApplicationList() {
   const { categoryData = [], businessData: businessDataList = [] } = useContext(FeContext);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [searchParams, setSearchParams] = useState<any>();
+  const [searchParams, setSearchParams] = useState<any>(
+    localStorage.APPLICATIO_LIST_SEARCH ? JSON.parse(localStorage.APPLICATIO_LIST_SEARCH) : {},
+  );
   const [appListData, total, isLoading, loadAppListData] = useAppListData(searchParams, pageIndex, pageSize);
   const [createAppVisible, setCreateAppVisible] = useState(false);
   const [curRecord, setCurRecord] = useState<AppItemVO>();
@@ -28,6 +30,7 @@ export default function ApplicationList() {
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
     setSearchParams(next);
+    localStorage.APPLICATIO_LIST_SEARCH = JSON.stringify(next || {});
   }, []);
 
   // 表格列配置
@@ -49,7 +52,7 @@ export default function ApplicationList() {
 
   return (
     <PageContainer className="application-list-page">
-      <FilterHeader onSearch={handleFilterSearch} />
+      <FilterHeader onSearch={handleFilterSearch} searchParams={searchParams} />
 
       <ContentCard>
         <div className="table-caption">
