@@ -2,7 +2,7 @@
 // @author JITONGHUAN <moyan@come-future.com>
 // @create 2021/11/12 17:35
 
-import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffect } from 'react';
 import { Select, Card, message, Form, Divider, Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
@@ -23,7 +23,7 @@ export default function ViewLog(props: any) {
   let socket: any = null;
   let ansi_up = new AnsiUp();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getRequest(APIS.listContainer, { data: { appCode, envCode, instName: instName } }).then((result) => {
       let data = result.data;
       if (result.success) {
@@ -46,6 +46,7 @@ export default function ViewLog(props: any) {
         };
         let dom = document?.getElementById('result-log');
         socket.onmessage = (evt: any) => {
+          console.log('000');
           if (dom) {
             let scroll = dom?.scrollHeight;
             dom.scrollTo(0, scroll);
