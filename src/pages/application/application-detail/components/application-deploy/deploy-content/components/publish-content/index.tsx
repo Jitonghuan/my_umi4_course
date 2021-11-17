@@ -170,7 +170,7 @@ export default function PublishContent(props: IProps) {
               }
         }
       >
-        <Table.Column dataIndex="id" title="ID" width={80} />
+        <Table.Column dataIndex="id" title="ID" fixed="left" width={80} />
         <Table.Column dataIndex="branchName" title="分支名" fixed="left" render={branchNameRender} width={320} />
         <Table.Column
           dataIndex="desc"
