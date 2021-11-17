@@ -93,7 +93,6 @@ export default function ClusterSyncDetail(props: any) {
       setPending(false);
     }
   }, []);
-  let nextDeploymentName = '';
   const doAction = useCallback(async (promise: ResPromise) => {
     try {
       setPending(true);
@@ -106,8 +105,9 @@ export default function ClusterSyncDetail(props: any) {
           addon = addon?.log;
         }
       }
-      if (typeof addon === 'object' && 'nextSyncDeployment' in addon) {
-        addon = addon.nextSyncDeployment === 'End' ? ` ${addon.syncLog || '--'}` : ` ${addon.syncLog || '--'}`;
+      if (typeof addon === 'object' && 'syncLog' in addon) {
+        //  addon.deploymentName === 'Pass' ? ` ${addon.syncLog || '--'}` :
+        addon = ` ${addon.syncLog || '--'}`;
       }
       if (typeof addon === 'object' && 'deploymentName' in addon) {
         addon = `当前同步的应用: ${addon.deploymentName || '--'}`;
@@ -158,30 +158,28 @@ export default function ClusterSyncDetail(props: any) {
     await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: 'tt-health' } }));
     setCurrState('syncXxlJob');
   }, []);
+  let nextDeploymentName = '';
   // 5. get cluster app
   const getClusterApp = useCallback(async () => {
     const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: 'tt-health' } }));
+    if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
+      setCurrState('GetDiffClusterApp');
+      setNextDeployApp(nextApp?.deploymentName);
+    } else {
+      setCurrState('SyncClusterApp');
+    }
     nextDeploymentName = nextApp?.deploymentName;
-    console.log('nextApp', nextApp);
-    setCurrState('GetDiffClusterApp');
   }, []);
   // 6. deploy app
   const deployApp = useCallback(async () => {
-    console.log('nextDeploymentName', nextDeploymentName);
-    const result = await doAction(
+    await doAction(
       postRequest(APIS.syncClusterApp, {
-        data: { deploymentName: nextDeploymentName, envCode: 'tt-health' },
+        data: { deploymentName: nextDeployApp || nextDeploymentName, envCode: 'tt-health' },
       }),
     );
-    if (result?.nextSyncDeployment && result.nextSyncDeployment !== 'End') {
-      setCurrState('GetDiffClusterApp');
-      setNextDeployApp(result.nextSyncDeployment);
-      // 成功后再调一次 deployApp 接口
-      await deployApp();
-    } else if (result.nextSyncDeployment === 'End') {
-      setCurrState('SyncClusterApp');
-    }
-  }, []);
+    // 成功后再调一次 queryClusterApp 接口
+    await getClusterApp();
+  }, [nextDeploymentName]);
   // 7. 前端资源同步
   const syncFrontendSource = useCallback(async () => {
     await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: 'tt-health' } }));

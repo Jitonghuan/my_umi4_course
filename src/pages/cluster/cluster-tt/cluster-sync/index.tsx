@@ -65,37 +65,74 @@ export default function ClusterPage(props: any) {
         }}
       >
         <Table.Column title="应用名" dataIndex="appName" width={140} />
-        <Table.ColumnGroup title="A集群版本">
-          <Table.Column title="应用镜像Tag" dataIndex={['ClusterA', 'appImageTag']} width={140} />
-          <Table.Column title="基础镜像Tag" dataIndex={['ClusterA', 'baseImageTag']} width={140} />
-          <Table.Column title="CPU限制值" dataIndex={['ClusterA', 'cpuLimits']} width={120} />
+        <Table.ColumnGroup title="应用镜像Tag">
+          <Table.Column title="A集群" dataIndex={['ClusterA', 'appImageTag']} width={140} />
           <Table.Column
-            title="JVM参数"
-            dataIndex={['ClusterA', 'jvmConfig']}
-            width={340}
-            ellipsis
-            //  render={(_, record:any, index) => {
-            //    return <DetailModal limit={60} data={record} dataType="json" />;
-            //  }}
+            title="B集群"
+            dataIndex={['ClusterB', 'appImageTag']}
+            width={140}
+            render={(current, record: any) => (
+              // current !== record?.ClusterA?.appImageTag && <span color="red">{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.appImageTag ? 'red' : 'black' }}>{current}</span>
+            )}
           />
-          <Table.Column title="内存限制值" dataIndex={['ClusterA', 'memoryLimits']} width={120} />
-          <Table.Column title="副本数" dataIndex={['ClusterA', 'replicas']} width={120} />
         </Table.ColumnGroup>
-        <Table.ColumnGroup title="B集群版本">
-          <Table.Column title="应用镜像Tag" dataIndex={['ClusterB', 'appImageTag']} width={140} />
-          <Table.Column title="基础镜像Tag" dataIndex={['ClusterB', 'baseImageTag']} width={140} />
-          <Table.Column title="CPU限制值" dataIndex={['ClusterB', 'cpuLimits']} width={120} />
+        <Table.ColumnGroup title="基础镜像Tag">
+          <Table.Column title="A集群" dataIndex={['ClusterA', 'baseImageTag']} width={140} />
           <Table.Column
-            title="JVM参数"
+            title="B集群"
+            dataIndex={['ClusterB', 'baseImageTag']}
+            width={140}
+            render={(current, record: any) => (
+              // current !== record?.ClusterA?.baseImageTag && <span color="red">{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.baseImageTag ? 'red' : 'black' }}>{current}</span>
+            )}
+          />
+        </Table.ColumnGroup>
+        <Table.ColumnGroup title="CPU限制值">
+          <Table.Column title="A集群" dataIndex={['ClusterA', 'cpuLimits']} width={120} />
+          <Table.Column
+            title="B集群"
+            dataIndex={['ClusterB', 'cpuLimits']}
+            width={120}
+            render={(current, record: any) => (
+              <span style={{ color: current !== record?.ClusterA?.cpuLimits ? 'red' : 'black' }}>{current}</span>
+            )}
+          />
+        </Table.ColumnGroup>
+        <Table.ColumnGroup title="JVM参数">
+          <Table.Column title="A集群" dataIndex={['ClusterA', 'jvmConfig']} width={340} ellipsis />
+          <Table.Column
+            title="B集群"
             dataIndex={['ClusterB', 'jvmConfig']}
             width={340}
             ellipsis
-            //  render={(_, record:any, index) => {
-            //    return <DetailModal limit={60} data={record} dataType="json" />;
-            //  }}
+            render={(current, record: any) => (
+              <span style={{ color: current !== record?.ClusterA?.jvmConfig ? 'red' : 'black' }}>{current}</span>
+            )}
           />
-          <Table.Column title="内存限制值" dataIndex={['ClusterB', 'memoryLimits']} width={120} />
-          <Table.Column title="副本数" dataIndex={['ClusterB', 'replicas']} width={120} />
+        </Table.ColumnGroup>
+        <Table.ColumnGroup title="内存限制值">
+          <Table.Column title="A集群" dataIndex={['ClusterA', 'memoryLimits']} width={120} />
+          <Table.Column
+            title="B集群"
+            dataIndex={['ClusterB', 'memoryLimits']}
+            width={120}
+            render={(current, record: any) => (
+              <span style={{ color: current !== record?.ClusterA?.memoryLimits ? 'red' : 'black' }}>{current}</span>
+            )}
+          />
+        </Table.ColumnGroup>
+        <Table.ColumnGroup title="副本数">
+          <Table.Column title="A集群" dataIndex={['ClusterA', 'replicas']} width={120} />
+          <Table.Column
+            title="B集群"
+            dataIndex={['ClusterB', 'replicas']}
+            width={120}
+            render={(current, record: any) => (
+              <span style={{ color: current !== record?.ClusterA?.replicas ? 'red' : 'black' }}>{current}</span>
+            )}
+          />
         </Table.ColumnGroup>
       </Table>
     </ContentCard>

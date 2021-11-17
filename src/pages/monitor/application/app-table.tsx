@@ -66,6 +66,18 @@ export const START_TIME_ENUMS = [
     label: 'Last 24 hours',
     value: 24 * 60 * 60 * 1000,
   },
+  {
+    label: 'Last 3 days',
+    value: 24 * 60 * 60 * 1000 * 3,
+  },
+  {
+    label: 'Last 7 days',
+    value: 24 * 60 * 60 * 1000 * 7,
+  },
+  {
+    label: 'Last 30 days',
+    value: 24 * 60 * 60 * 1000 * 30,
+  },
 ];
 
 // 请求频次枚举
@@ -115,11 +127,9 @@ const Coms = (props: IProps) => {
   const [rateNum, setRateNum] = useState<number>(0);
   const prevRateNum = useRef<number>(0);
   const [formInstance] = Form.useForm();
-
+  const now = new Date().getTime();
   const selectRef = useRef(null);
-
   const timeRateInterval = useRef<NodeJS.Timeout>();
-
   const appConfig = [
     {
       title: 'GC瞬时次数/每分钟',
@@ -185,6 +195,8 @@ const Coms = (props: IProps) => {
     formatRequestParams: (params) => {
       return {
         ...params,
+        start: Number((now - startTime) / 1000),
+        end: Number(now / 1000),
         pageSize: 1000,
         ...prevFilter.current,
       };

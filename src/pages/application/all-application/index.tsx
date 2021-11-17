@@ -23,7 +23,9 @@ export default function AllApplication() {
 
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [searchParams, setSearchParams] = useState<any>();
+  const [searchParams, setSearchParams] = useState<any>(
+    localStorage.ALL_APPLICATIO_SEARCH ? JSON.parse(localStorage.ALL_APPLICATIO_SEARCH) : {},
+  );
 
   const hookParams = useMemo(() => ({ ...searchParams, requestType: type }), [type, searchParams]);
   const [appListData, total, isLoading, loadAppListData] = useAppListData(hookParams, pageIndex, pageSize);
@@ -37,11 +39,12 @@ export default function AllApplication() {
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
     setSearchParams(next);
+    localStorage.ALL_APPLICATIO_SEARCH = JSON.stringify(next || {});
   }, []);
 
   return (
     <PageContainer className={rootCls}>
-      <FilterHeader onSearch={handleFilterSearch} />
+      <FilterHeader onSearch={handleFilterSearch} searchParams={searchParams} />
 
       <ContentCard>
         <div className="table-caption">
