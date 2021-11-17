@@ -48,11 +48,7 @@ export default function ApplicationCardList(props: IProps) {
             })
           }
         >
-          {item.appType === 'frontend' ? (
-            <div className={`${cardCls}-sub-header`}>{item.deploymentName}</div>
-          ) : (
-            <div className={`${cardCls}-header`}>{item.appName}</div>
-          )}
+          <div className={`${cardCls}-header`}>{item.deploymentName}</div>
 
           <div className={`${cardCls}-content`}>
             {/* <div>应用类型：{APP_TYPE_MAP[item.appType]}</div> */}
