@@ -105,8 +105,9 @@ export default function ClusterSyncDetail(props: any) {
           addon = addon?.log;
         }
       }
-      if (typeof addon === 'object' && 'nextSyncDeployment' in addon) {
-        addon = addon.nextSyncDeployment === 'End' ? ` ${addon.syncLog || '--'}` : ` ${addon.syncLog || '--'}`;
+      if (typeof addon === 'object' && 'syncLog' in addon) {
+        //  addon.deploymentName === 'Pass' ? ` ${addon.syncLog || '--'}` :
+        addon = ` ${addon.syncLog || '--'}`;
       }
       if (typeof addon === 'object' && 'deploymentName' in addon) {
         addon = `当前同步的应用: ${addon.deploymentName || '--'}`;
@@ -164,17 +165,13 @@ export default function ClusterSyncDetail(props: any) {
     if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
       setCurrState('GetDiffClusterApp');
       setNextDeployApp(nextApp?.deploymentName);
-      console.log('nextApp?.deploymentName1111', nextApp, nextApp?.deploymentName);
     } else {
       setCurrState('SyncClusterApp');
     }
     nextDeploymentName = nextApp?.deploymentName;
-    console.log('nextApp?.deploymentName2222', nextApp?.deploymentName, nextDeploymentName);
   }, []);
   // 6. deploy app
   const deployApp = useCallback(async () => {
-    console.log('nextDeployApp1', nextDeployApp);
-    console.log('nextDeploymentName2', nextDeploymentName);
     await doAction(
       postRequest(APIS.syncClusterApp, {
         data: { deploymentName: nextDeployApp || nextDeploymentName, envCode: 'tt-health' },
