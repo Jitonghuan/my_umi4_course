@@ -29,9 +29,9 @@ export default function AppDeployInfo(props: any) {
           currentContainerName = listContainer[0].value;
           viewLogform.setFieldsValue({ containerName: currentContainerName });
           setQueryListContainer(listContainer);
-          initWS();
         }
       });
+      initWS();
     }
   }, [appCode, envCode]);
 
@@ -39,7 +39,7 @@ export default function AppDeployInfo(props: any) {
     let dom: any = document.getElementById('terminal');
     let socket = new WebSocket(
       `ws://10.10.129.129:8080/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
-    ); //建立通道
+    ); //建立通道c
 
     socket.onopen = () => {
       const term = new Terminal({
@@ -115,7 +115,7 @@ export default function AppDeployInfo(props: any) {
       </div>
       {/* <Divider/> */}
       <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
-      <div style={{ height: 50, textAlign: 'center', zIndex: 20 }}>
+      <div style={{ height: 32, width: '100%', textAlign: 'center', position: 'absolute', marginTop: 4 }}>
         <span className="eventButton">
           <Button type="primary" onClick={closeSocket}>
             关闭
