@@ -41,7 +41,8 @@ export default function AppDeployInfo(props: any) {
   const initWS = () => {
     let dom: any = document.getElementById('terminal');
     let socket = new WebSocket(
-      `ws://10.10.129.121:8080/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      // http://matrix-test.cfuture.shop/
+      `ws://matrix-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
     //初始化terminal
     const term = new Terminal({

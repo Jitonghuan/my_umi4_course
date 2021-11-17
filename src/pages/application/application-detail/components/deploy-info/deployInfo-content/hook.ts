@@ -11,8 +11,14 @@ import { message } from 'antd';
 export function useDeployInfoData(envCode: any) {
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
   const [deployInfoLoading, setDeployInfoLoading] = useState<boolean>(false);
-  const loadInfoData = async (envCode: any) => {
-    setDeployInfoLoading(true);
+  const loadInfoData = async (envCode: any, operateType: boolean) => {
+    console.log('operateType:', operateType);
+    if (operateType) {
+      setDeployInfoLoading(false);
+    } else {
+      setDeployInfoLoading(true);
+    }
+
     await getRequest(APIS.listEnvCluster, { data: { envCode: envCode } })
       .then((result) => {
         let data = result.data;

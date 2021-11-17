@@ -24,7 +24,6 @@ import { listAppEnvType } from '@/common/apis';
 import './index.less';
 import OldAppDeployInfo from './old-deployInfo-page';
 const rootCls = 'deploy-content-compo';
-
 export interface DeployContentProps {
   /** 当前页面是否激活 */
   isActive?: boolean;
@@ -61,7 +60,6 @@ export default function DeployContent(props: DeployContentProps) {
   const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
   const { envTypeCode, isActive, onDeployNextEnvSuccess } = props;
-  const [downloading, setDownloading] = useState<boolean>(false);
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
@@ -73,7 +71,9 @@ export default function DeployContent(props: DeployContentProps) {
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
+
   let initEnvCode = '';
+  let operateType = false;
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
@@ -88,6 +88,7 @@ export default function DeployContent(props: DeployContentProps) {
         setEnvDatas(dataSources);
 
         initEnvCode = dataSources[0]?.value;
+
         setCurrentEnvData(dataSources[0]?.value);
         formInstance.setFieldsValue({ envCode: initEnvCode });
 
@@ -95,11 +96,30 @@ export default function DeployContent(props: DeployContentProps) {
           loadInfoData(initEnvCode);
           queryInstanceList(appData?.appCode, initEnvCode);
         }
+
+        let intervalId = setInterval(() => {
+          operateType = true;
+          if (operateType) {
+            if (currentEnvData) {
+              loadInfoData(currentEnvData);
+              queryInstanceList(appData?.appCode, currentEnvData);
+            } else if (initEnvCode) {
+              loadInfoData(initEnvCode, operateType);
+              queryInstanceList(appData?.appCode, initEnvCode);
+            }
+          }
+        }, 2000);
+        //关闭页面清楚定时器
+
+        return () => {
+          clearInterval(intervalId);
+        };
       });
     } catch (error) {
       message.warning(error);
     }
-  }, [envTypeCode]);
+  }, []);
+
   const [listEnvClusterData, loadInfoData, deployInfoLoading] = useDeployInfoData(initEnvCode);
   const [deleteInstance] = useDeleteInstance();
   const [downloadLog] = useDownloadLog();
@@ -112,6 +132,7 @@ export default function DeployContent(props: DeployContentProps) {
   useEffect(() => {
     queryData();
   }, []);
+
   const queryData = () => {
     getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
@@ -140,14 +161,11 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   //改变环境下拉选择后查询结果
-  //   let getEnvCode: any;
   const changeEnvCode = (getEnvCodes: string) => {
-    // getEnvCode = getEnvCodes;
     setCurrentEnvData(getEnvCodes);
     loadInfoData(getEnvCodes);
     queryInstanceList(appData?.appCode, getEnvCodes);
   };
-
   //加载容器信息
   const [currentContainerName, setCurrentContainerName] = useState<string>('');
   const [currentInstName, setCurrentInstName] = useState<string>('');
@@ -167,16 +185,6 @@ export default function DeployContent(props: DeployContentProps) {
   const selectListContainer = (getContainer: string) => {
     setCurrentContainerName(getContainer);
   };
-
-  const downLogFile = (values: any) => {
-    console.log('currentInstName', currentInstName);
-
-    downloadLog(appData?.appCode, currentEnvData, currentInstName, values?.containerName, values?.filePath);
-    setIsLogModalVisible(false);
-  };
-
-  //
-
   // 确认回滚
   const handleRollbackSubmit = () => {
     postRequest(rollbackApplication, {
@@ -297,7 +305,7 @@ export default function DeployContent(props: DeployContentProps) {
                   title="IP"
                   dataIndex="instIP"
                   width={100}
-                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
+                  render={(v, record) => <span style={{ fontSize: 10 }}>{v || '--'}</span>}
                 />
                 <Table.Column
                   title="状态"
@@ -308,6 +316,8 @@ export default function DeployContent(props: DeployContentProps) {
                       <Tag color="green">Running</Tag>
                     ) : status === 'Initialization' ? (
                       <Tag color="volcano">Initialization</Tag>
+                    ) : status === 'Pending' ? (
+                      <Tag color="gold">Pending</Tag>
                     ) : null;
                   }}
                 />
@@ -321,7 +331,7 @@ export default function DeployContent(props: DeployContentProps) {
                   title="节点IP"
                   dataIndex="instNode"
                   width={100}
-                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
+                  render={(v, record) => <span style={{ fontSize: 10 }}>{v || '--'}</span>}
                 />
                 <Table.Column
                   width={330}
@@ -351,12 +361,12 @@ export default function DeployContent(props: DeployContentProps) {
                       >
                         登陆shell
                       </Button>
-                      {/* downloadLog */}
                       <Button
                         size="small"
                         type="primary"
                         onClick={() => {
                           setIsLogModalVisible(true);
+                          downloadLogform.setFieldsValue({ containerName: '', filePath: '' });
                           setCurrentInstName(record?.instName);
                           getContainerData(appData?.appCode, currentEnvData, record?.instName);
                         }}
@@ -366,11 +376,10 @@ export default function DeployContent(props: DeployContentProps) {
                       <Popconfirm
                         title="确定要删除该信息吗？"
                         onConfirm={() => {
-                          postRequest(
-                            `${deleteInstance}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record.instName}`,
-                          );
                           deleteInstance(appData?.appCode, currentEnvData, record.instName);
-                          queryInstanceList(appData?.appCode, currentEnvData);
+                          setTimeout(() => {
+                            queryInstanceList(appData?.appCode, currentEnvData);
+                          }, 200);
                         }}
                       >
                         <Button size="small" type="default" danger style={{ color: 'red' }}>
@@ -414,7 +423,6 @@ export default function DeployContent(props: DeployContentProps) {
             </section>
           </div>
         )}
-        {/* <Divider>分割线</Divider> */}
       </div>
       <Modal
         title="下载日志文件"
@@ -434,11 +442,12 @@ export default function DeployContent(props: DeployContentProps) {
               type="primary"
               htmlType="submit"
               className="downloadButton"
-              loading={downloading}
               onClick={() => {
                 setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
-                setDownloading(true);
                 message.info('日志开始下载');
+                setTimeout(() => {
+                  setIsLogModalVisible(false);
+                }, 100);
               }}
               href={`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`}
             >
