@@ -85,7 +85,7 @@ export default function ClusterPage(props: any) {
             width={140}
             render={(current, record: any) => (
               // current !== record?.ClusterA?.baseImageTag && <span color="red">{current}</span>
-              <span color={current !== record?.ClusterA?.baseImageTag ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.baseImageTag ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
@@ -96,7 +96,7 @@ export default function ClusterPage(props: any) {
             dataIndex={['ClusterB', 'cpuLimits']}
             width={120}
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.cpuLimits ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.cpuLimits ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
@@ -108,7 +108,7 @@ export default function ClusterPage(props: any) {
             width={340}
             ellipsis
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.jvmConfig ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.jvmConfig ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
@@ -119,7 +119,7 @@ export default function ClusterPage(props: any) {
             dataIndex={['ClusterB', 'memoryLimits']}
             width={120}
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.memoryLimits ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.memoryLimits ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
@@ -130,7 +130,7 @@ export default function ClusterPage(props: any) {
             dataIndex={['ClusterB', 'replicas']}
             width={120}
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.replicas ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.replicas ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
