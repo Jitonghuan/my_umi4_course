@@ -2,8 +2,10 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/11/12	17:04
 
-import React, { useState, useEffect } from 'react';
-import { Select, Form, Button } from 'antd';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { Select, Form, Button, message, Space } from 'antd';
+import { ContentCard } from '@/components/vc-page-content';
+import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
@@ -12,11 +14,13 @@ import { AttachAddon } from 'xterm-addon-attach';
 import './index.less';
 
 export default function AppDeployInfo(props: any) {
+  const { appData } = useContext(DetailContext);
   const [viewLogform] = Form.useForm();
   const { appCode, envCode } = props.location.query;
   const instName = props.location.query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   let currentContainerName = '';
+  const ws = useRef<WebSocket>();
   useEffect(() => {
     if (appCode && envCode && instName) {
       getRequest(APIS.listContainer, { data: { appCode, envCode, instName } })
@@ -32,18 +36,19 @@ export default function AppDeployInfo(props: any) {
             setQueryListContainer(listContainer);
           }
         })
-        .finally(() => {
+        .then(() => {
           initWS();
         });
     }
-  }, [appCode, envCode]);
+  }, [envCode]);
 
   const initWS = () => {
-    let dom: any = document.getElementById('terminal');
-    let socket = new WebSocket(
+    let dom: any = document?.getElementById('terminal');
+    ws.current = new WebSocket(
       // http://matrix-test.cfuture.shop/
       `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
+
     //初始化terminal
     const term = new Terminal({
       altClickMovesCursor: true,
@@ -65,32 +70,47 @@ export default function AppDeployInfo(props: any) {
     const fitAddon = new FitAddon();
     term.loadAddon(fitAddon);
     fitAddon.fit();
-    socket.onopen = () => {
-      const attachAddon = new AttachAddon(socket);
-      term.loadAddon(attachAddon);
-      term.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
-      term.writeln('WebSocket链接成功');
-      let sendJson = {
-        operation: 'resize',
-        cols: term.cols,
-        rows: term.rows,
-      };
-      socket.send(JSON.stringify(sendJson));
-      term.focus();
-      socket.onerror = () => {
-        term.writeln('webSocket 链接失败，请刷新页面');
-      };
+    ws.current.onopen = () => {
+      if (ws.current) {
+        const attachAddon = new AttachAddon(ws.current);
+        term.loadAddon(attachAddon);
+        term.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+        term.writeln('WebSocket链接成功');
+        let sendJson = {
+          operation: 'resize',
+          cols: term.cols,
+          rows: term.rows,
+        };
+        ws.current.send(JSON.stringify(sendJson));
+        term.focus();
+        ws.current.onerror = () => {
+          term.writeln('webSocket 链接失败，请刷新页面');
+        };
+      }
+    };
+    ws.current.onclose = () => {
+      message.info('websocket已关闭！');
     };
     window?.addEventListener('resize', function () {
-      // 变化后需要做的事
-      fitAddon?.fit();
-
-      let sendJson = {
-        operation: 'resize',
-        cols: term.cols,
-        rows: term.rows,
-      };
-      socket.send(JSON.stringify(sendJson));
+      if (ws.current) {
+        // 变化后需要做的事
+        // if (Number.isInteger(term.cols) && Number.isInteger(term.rows)) {
+        //   fitAddon.fit()
+        // } else {
+        //   window.location.reload();
+        // }
+        try {
+          fitAddon.fit();
+        } catch (error) {
+          message.info(error);
+        }
+        let sendJson = {
+          operation: 'resize',
+          cols: term.cols,
+          rows: term.rows,
+        };
+        ws.current.send(JSON.stringify(sendJson));
+      }
     });
   };
 
@@ -101,7 +121,10 @@ export default function AppDeployInfo(props: any) {
     };
   }, []);
   const closeSocket = () => {
-    window.close();
+    if (ws.current) {
+      ws.current.close();
+      history.back();
+    }
   };
   //选择容器
   const selectListContainer = (getContainer: string) => {
@@ -110,28 +133,30 @@ export default function AppDeployInfo(props: any) {
   };
 
   return (
-    <div className="loginShell">
-      <div style={{ paddingBottom: '1%', paddingTop: '1%' }}>
-        <Form form={viewLogform} layout="inline">
-          <span>选择容器： </span>
-          <Form.Item name="containerName">
-            <Select
-              style={{ width: 120 }}
-              options={queryListContainer}
-              onChange={selectListContainer}
-              defaultValue={currentContainerName}
-            ></Select>
-          </Form.Item>
-        </Form>
+    <ContentCard noPadding className="viewLog">
+      <div className="loginShell">
+        <div style={{ paddingBottom: '6px', paddingTop: '6px', display: 'flex' }}>
+          <Form form={viewLogform} layout="inline">
+            <span style={{ paddingLeft: '10px' }}>选择容器： </span>
+            <Form.Item name="containerName">
+              <Select
+                style={{ width: 120 }}
+                options={queryListContainer}
+                onChange={selectListContainer}
+                defaultValue={currentContainerName}
+              ></Select>
+            </Form.Item>
+          </Form>
+        </div>
+        <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
+        <div style={{ height: 28, width: '100%', textAlign: 'center', position: 'absolute', marginTop: 4 }}>
+          <span className="eventButton">
+            <Button type="primary" onClick={closeSocket}>
+              关闭
+            </Button>
+          </span>
+        </div>
       </div>
-      <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
-      <div style={{ height: 32, width: '100%', textAlign: 'center', position: 'absolute', marginTop: 4 }}>
-        <span className="eventButton">
-          <Button type="primary" onClick={closeSocket}>
-            关闭
-          </Button>
-        </span>
-      </div>
-    </div>
+    </ContentCard>
   );
 }

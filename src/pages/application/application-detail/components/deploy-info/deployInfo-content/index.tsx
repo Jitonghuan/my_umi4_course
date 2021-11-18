@@ -279,6 +279,7 @@ export default function DeployContent(props: DeployContentProps) {
                   <Button
                     type="default"
                     danger
+                    disabled={true}
                     onClick={() => {
                       setRollbackVisible(true);
                     }}
@@ -295,18 +296,14 @@ export default function DeployContent(props: DeployContentProps) {
                 pagination={false}
                 scroll={{ y: window.innerHeight - 340 }}
               >
-                <Table.Column
-                  title="名称"
-                  dataIndex="instName"
-                  width={140}
-                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
-                />
+                <Table.Column title="名称" dataIndex="instName" width={140} render={(v, record) => <span>{v}</span>} />
                 <Table.Column
                   title="IP"
                   dataIndex="instIP"
                   width={100}
-                  render={(v, record) => <span style={{ fontSize: 10 }}>{v || '--'}</span>}
+                  render={(v, record) => <span>{v || '--'}</span>}
                 />
+                {/* 状态列举  Pending Running Succeeded Failed Unknown */}
                 <Table.Column
                   title="状态"
                   dataIndex="instStatus"
@@ -314,12 +311,22 @@ export default function DeployContent(props: DeployContentProps) {
                   render={(status, record) => {
                     return status === 'Running' ? (
                       <Tag color="green">Running</Tag>
-                    ) : status === 'Initialization' ? (
-                      <Tag color="volcano">Initialization</Tag>
+                    ) : status === 'Succeeded' ? (
+                      <Tag color="cyan">Succeeded</Tag>
                     ) : status === 'Pending' ? (
                       <Tag color="gold">Pending</Tag>
+                    ) : status === 'Failed' ? (
+                      <Tag color="red">Failed</Tag>
+                    ) : status === 'Unknown' ? (
+                      <Tag color="default">Unknown</Tag>
                     ) : null;
                   }}
+                />
+                <Table.Column
+                  title="重启次数"
+                  dataIndex="restartCount"
+                  width={100}
+                  render={(v, record) => <span>{v || '0'}</span>}
                 />
                 <Table.Column
                   title="镜像"
@@ -331,7 +338,13 @@ export default function DeployContent(props: DeployContentProps) {
                   title="节点IP"
                   dataIndex="instNode"
                   width={100}
-                  render={(v, record) => <span style={{ fontSize: 10 }}>{v || '--'}</span>}
+                  render={(v, record) => <span>{v || '--'}</span>}
+                />
+                <Table.Column
+                  title="创建时间"
+                  dataIndex="createTime"
+                  width={110}
+                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
                 />
                 <Table.Column
                   width={330}
@@ -342,11 +355,11 @@ export default function DeployContent(props: DeployContentProps) {
                       <Button
                         size="small"
                         type="primary"
-                        onClick={() => {
-                          window.open(
+                        onClick={() =>
+                          history.push(
                             `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
-                          );
-                        }}
+                          )
+                        }
                       >
                         查看日志
                       </Button>
@@ -354,7 +367,7 @@ export default function DeployContent(props: DeployContentProps) {
                         size="small"
                         type="primary"
                         onClick={() => {
-                          window.open(
+                          history.push(
                             `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
                           );
                         }}

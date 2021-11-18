@@ -18,10 +18,10 @@ export default function ViewLog(props: any) {
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
   const { appCode, envCode, instName } = props.location.query;
+  const logData = useRef<string>('');
   let currentContainerName = '';
-  let resultLogData = '';
-  let socket: any = null;
   let ansi_up = new AnsiUp();
+  let ws = useRef<WebSocket>();
 
   useLayoutEffect(() => {
     getRequest(APIS.listContainer, { data: { appCode, envCode, instName: instName } }).then((result) => {
@@ -32,36 +32,32 @@ export default function ViewLog(props: any) {
           label: item?.containerName,
         }));
         currentContainerName = listContainer[0].value;
-        // console.log('currentContainerName', currentContainerName);
         viewLogform.setFieldsValue({ containerName: currentContainerName });
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
-        let socket = new WebSocket(
+        ws.current = new WebSocket(
           `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
         ); //建立通道
 
-        socket.onopen = () => {
-          console.log(socket);
-          message.success('WebSocket初次链接成功!');
-        };
         let dom = document?.getElementById('result-log');
-        socket.onmessage = (evt: any) => {
-          console.log('000');
+        ws.current.onmessage = (evt: any) => {
           if (dom) {
-            let scroll = dom?.scrollHeight;
-            dom.scrollTo(0, scroll);
+            dom.scrollTo(0, dom.scrollHeight);
           }
+
           //如果返回结果是字符串，就拼接字符串，或者push到数组，
-          resultLogData = resultLogData + evt.data;
-          setLog(resultLogData);
-          let html = ansi_up.ansi_to_html(resultLogData);
+          logData.current += evt.data;
+          setLog(logData.current);
+          let html = ansi_up.ansi_to_html(logData.current);
           if (dom) {
             dom.innerHTML = html;
           }
         };
-        socket.onerror = () => {
-          // term.writeln('webSocket 链接失败');
+        ws.current.onerror = () => {
           message.warning('webSocket 链接失败');
+        };
+        ws.current.onclose = () => {
+          message.info('websocket已关闭！');
         };
       }
     });
@@ -70,31 +66,35 @@ export default function ViewLog(props: any) {
   const selectListContainer = (getContainer: string) => {
     currentContainerName = getContainer;
     setCurrentContainer(getContainer);
-    socket.onclose = () => {
-      message.info('关闭websocket!');
-    };
+    if (ws.current) {
+      ws.current.onclose = () => {
+        message.info('关闭websocket!');
+      };
 
-    socket.onopen = () => {
-      // console.log(socket);
-      message.success('更换容器，WebSocket链接成功!');
-    };
-    let dom = document?.getElementById('result-log');
-    socket.onmessage = (evt: any) => {
-      if (dom) {
-        let scroll = dom?.scrollHeight;
-        dom.scrollTo(0, scroll);
-      }
-      //如果返回结果是字符串，就拼接字符串，或者push到数组，
-      resultLogData = resultLogData + evt.data;
-      setLog(resultLogData);
-      let html = ansi_up.ansi_to_html(resultLogData);
-      if (dom) {
-        dom.innerHTML = html;
-      }
-    };
-    socket.onerror = () => {
-      message.warning('webSocket 链接失败');
-    };
+      ws.current.onopen = () => {
+        message.success('更换容器，WebSocket链接成功!');
+      };
+      let dom = document?.getElementById('result-log');
+      ws.current.onmessage = (evt: any) => {
+        if (dom) {
+          let scroll = dom?.scrollHeight;
+          dom.scrollTo(0, scroll);
+        }
+        //如果返回结果是字符串，就拼接字符串，或者push到数组，
+        let resultLogData = log + evt.data;
+        setLog(resultLogData);
+        let html = ansi_up.ansi_to_html(resultLogData);
+        if (dom) {
+          dom.innerHTML = html;
+        }
+      };
+      ws.current.onclose = () => {
+        message.info('websocket已关闭！');
+      };
+      ws.current.onerror = () => {
+        message.warning('webSocket 链接失败');
+      };
+    }
   };
 
   //回到顶部
@@ -108,24 +108,24 @@ export default function ViewLog(props: any) {
     let dom = document?.getElementById('result-log');
     if (dom) {
       let scroll = dom.scrollHeight;
-      // dom.scrollTop = 20;
       dom.scrollTo(0, scroll);
     }
   };
   //清空屏幕
-  const clearSreen = () => {
-    resultLogData = '';
-    // log =''
-    setLog(resultLogData);
-    // console.log('log',resultLogData)
+  const clearScreen = () => {
+    logData.current = '';
+    setLog(logData.current);
   };
   //关闭页面
   const closeSocket = () => {
-    window.close();
+    if (ws.current) {
+      ws.current.close();
+      history.back();
+    }
   };
 
   return (
-    <ContentCard noPadding className="loginShell">
+    <ContentCard noPadding className="viewLog">
       <div className="loginShellContent" style={{ height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 6 }}>
         {/* <pre>查看日志{'>>>>'}</pre> */}
 
@@ -134,6 +134,7 @@ export default function ViewLog(props: any) {
           <Form.Item name="containerName">
             <Select style={{ width: 120 }} options={queryListContainer} onChange={selectListContainer}></Select>
           </Form.Item>
+          {/* <span style={{paddingRight:3}}><h3>{appData?.appCode},{appData?.appName}</h3> </span> */}
         </Form>
         <div
           id="result-log"
@@ -150,7 +151,7 @@ export default function ViewLog(props: any) {
             <Button type="primary" onClick={scrollBottom} style={{ marginLeft: 4 }}>
               回到底部
             </Button>
-            <Button type="primary" onClick={clearSreen} style={{ marginLeft: 4 }}>
+            <Button type="primary" onClick={clearScreen} style={{ marginLeft: 4 }}>
               清空屏幕
             </Button>
             <Button type="primary" onClick={closeSocket} style={{ marginLeft: 4 }}>
