@@ -72,7 +72,7 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode) return;
   }, [appCode]);
 
-  let initEnvCode = '';
+  const initEnvCode = useRef<string>('');
   let operateType = false;
 
   // 进入页面加载环境和版本信息
@@ -87,30 +87,34 @@ export default function DeployContent(props: DeployContentProps) {
 
         setEnvDatas(dataSources);
 
-        initEnvCode = dataSources[0]?.value;
+        initEnvCode.current = dataSources[0]?.value;
 
         setCurrentEnvData(dataSources[0]?.value);
-        formInstance.setFieldsValue({ envCode: initEnvCode });
+        formInstance.setFieldsValue({ envCode: initEnvCode.current });
 
-        if (initEnvCode !== '' && initEnvCode !== 'zy-prd' && initEnvCode !== 'ws-prd') {
-          loadInfoData(initEnvCode);
-          queryInstanceList(appData?.appCode, initEnvCode);
+        if (
+          initEnvCode.current !== '' &&
+          initEnvCode.current !== 'zy-prd' &&
+          initEnvCode.current !== 'ws-prd' &&
+          initEnvCode.current !== 'zy-daily'
+        ) {
+          loadInfoData(initEnvCode.current);
+          queryInstanceList(appData?.appCode, initEnvCode.current);
+          operateType = true;
         }
 
         let intervalId = setInterval(() => {
-          operateType = true;
           if (operateType) {
-            if (currentEnvData) {
-              loadInfoData(currentEnvData);
-              queryInstanceList(appData?.appCode, currentEnvData);
-            } else if (initEnvCode) {
-              loadInfoData(initEnvCode, operateType);
-              queryInstanceList(appData?.appCode, initEnvCode);
+            if (listEnvClusterData) {
+              if (initEnvCode.current) {
+                loadInfoData(initEnvCode.current, operateType);
+                queryInstanceList(appData?.appCode, initEnvCode.current);
+              }
             }
           }
         }, 2000);
-        //关闭页面清楚定时器
 
+        //关闭页面清楚定时器
         return () => {
           clearInterval(intervalId);
         };
@@ -118,9 +122,9 @@ export default function DeployContent(props: DeployContentProps) {
     } catch (error) {
       message.warning(error);
     }
-  }, []);
+  }, [operateType]);
 
-  const [listEnvClusterData, loadInfoData, deployInfoLoading] = useDeployInfoData(initEnvCode);
+  const [listEnvClusterData, loadInfoData, deployInfoLoading] = useDeployInfoData(initEnvCode.current);
   const [deleteInstance] = useDeleteInstance();
   const [downloadLog] = useDownloadLog();
   const [instanceTableData, instanceloading, queryInstanceList] = useInstanceList(appData?.appCode, currentEnvData);
@@ -165,6 +169,7 @@ export default function DeployContent(props: DeployContentProps) {
     setCurrentEnvData(getEnvCodes);
     loadInfoData(getEnvCodes);
     queryInstanceList(appData?.appCode, getEnvCodes);
+    initEnvCode.current = getEnvCodes;
   };
   //加载容器信息
   const [currentContainerName, setCurrentContainerName] = useState<string>('');

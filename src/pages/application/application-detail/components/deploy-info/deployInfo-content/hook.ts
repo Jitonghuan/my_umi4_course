@@ -20,8 +20,12 @@ export function useDeployInfoData(envCode: any) {
 
     await getRequest(APIS.listEnvCluster, { data: { envCode: envCode } })
       .then((result) => {
-        let data = result.data;
-        setListEnvClusterData(data);
+        if (result.success) {
+          let data = result.data;
+          setListEnvClusterData(data);
+        } else {
+          return;
+        }
       })
       .finally(() => {
         setDeployInfoLoading(false);
