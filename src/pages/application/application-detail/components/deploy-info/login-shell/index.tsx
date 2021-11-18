@@ -128,6 +128,9 @@ export default function AppDeployInfo(props: any) {
   };
   //选择容器
   const selectListContainer = (getContainer: string) => {
+    if (ws.current) {
+      ws.current.close();
+    }
     currentContainerName = getContainer;
     initWS();
   };
