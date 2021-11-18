@@ -22,7 +22,7 @@ export default function AppDeployInfo(props: any) {
   let currentContainerName = '';
   const ws = useRef<WebSocket>();
   useEffect(() => {
-    if (appCode && envCode && instName) {
+    if (appCode && envCode) {
       getRequest(APIS.listContainer, { data: { appCode, envCode, instName } })
         .then((result) => {
           let data = result.data;
@@ -102,7 +102,7 @@ export default function AppDeployInfo(props: any) {
         try {
           fitAddon.fit();
         } catch (error) {
-          message.info(error);
+          window.location.reload();
         }
         let sendJson = {
           operation: 'resize',

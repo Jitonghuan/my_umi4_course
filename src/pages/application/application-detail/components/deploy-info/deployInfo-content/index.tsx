@@ -344,7 +344,7 @@ export default function DeployContent(props: DeployContentProps) {
                   title="创建时间"
                   dataIndex="createTime"
                   width={110}
-                  render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
+                  render={(v, record) => <span>{v}</span>}
                 />
                 <Table.Column
                   width={330}
