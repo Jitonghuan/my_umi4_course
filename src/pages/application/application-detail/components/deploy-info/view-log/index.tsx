@@ -59,6 +59,7 @@ export default function ViewLog(props: any) {
             dom.innerHTML = html;
           }
         };
+
         socket.onerror = () => {
           // term.writeln('webSocket 链接失败');
           message.warning('webSocket 链接失败');
@@ -114,9 +115,7 @@ export default function ViewLog(props: any) {
   };
   //清空屏幕
   const clearSreen = () => {
-    resultLogData = '';
-    // log =''
-    setLog(resultLogData);
+    setLog('');
     // console.log('log',resultLogData)
   };
   //关闭页面
