@@ -23,14 +23,13 @@ export function useDeployInfoData(envCode: any) {
         if (result.success) {
           let data = result.data;
           setListEnvClusterData(data);
-        } else {
-          return;
         }
       })
       .finally(() => {
         setDeployInfoLoading(false);
       });
   };
+  console.log('listEnvClusterData11111', listEnvClusterData);
 
   return [listEnvClusterData, loadInfoData, deployInfoLoading];
 }
