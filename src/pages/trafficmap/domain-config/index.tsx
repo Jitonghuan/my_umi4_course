@@ -3,7 +3,7 @@ import { Form, Select, Input, Drawer, Button, Transfer, Table, Popconfirm } from
 import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
-
+import TableTransfer from './component/TableTransfer';
 import './index.less';
 
 const { Item: FormItem } = Form;
@@ -16,6 +16,35 @@ for (let i = 0; i < 20; i++) {
   });
 }
 const initialTargetKeys = mockData.filter((item) => +item.key > 10).map((item) => item.key);
+
+const leftTableColumns = [
+  {
+    dataIndex: 'title',
+    title: 'Name',
+  },
+];
+
+const rightTableColumns = [
+  {
+    dataIndex: 'title',
+    title: 'Name',
+  },
+  {
+    dataIndex: 'level',
+    title: 'level',
+    render: (text: string, record: any) => {
+      return (
+        <>
+          <Select
+            onMouseEnter={(e) => {
+              e.preventDefault();
+            }}
+          />
+        </>
+      );
+    },
+  },
+];
 
 const DomainConfig: React.FC = () => {
   // 工单创建表单对象
@@ -149,14 +178,13 @@ const DomainConfig: React.FC = () => {
             <Input.TextArea placeholder="请输入备注" />
           </FormItem>
           <FormItem label="选择应用">
-            <Transfer
+            <TableTransfer
               dataSource={mockData}
-              titles={['Source', 'Target']}
               targetKeys={targetKeys}
-              selectedKeys={selectedKeys}
               onChange={onChange}
               onSelectChange={onSelectChange}
-              render={(item) => item.title}
+              leftColumns={leftTableColumns}
+              rightColumns={rightTableColumns}
             />
           </FormItem>
         </Form>
