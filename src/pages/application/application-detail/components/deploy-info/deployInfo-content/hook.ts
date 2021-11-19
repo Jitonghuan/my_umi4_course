@@ -29,8 +29,6 @@ export function useDeployInfoData(envCode: any) {
         setDeployInfoLoading(false);
       });
   };
-  console.log('listEnvClusterData11111', listEnvClusterData);
-
   return [listEnvClusterData, loadInfoData, deployInfoLoading];
 }
 

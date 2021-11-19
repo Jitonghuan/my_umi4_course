@@ -137,9 +137,6 @@ export default function DeployContent(props: DeployContentProps) {
     [],
   );
 
-  // 定时请求发布内容
-  // const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(questIntervalData, 2000, { immediate: true });
-
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
     return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode } });
@@ -320,7 +317,7 @@ export default function DeployContent(props: DeployContentProps) {
                   width={100}
                   render={(v, record) => <span>{v || '--'}</span>}
                 />
-                {/* 状态列举  Pending Running Succeeded Failed Unknown */}
+                {/* 状态枚举  Pending Running Succeeded Failed Unknown Terminating unavailable  removing*/}
                 <Table.Column
                   title="状态"
                   dataIndex="instStatus"
@@ -338,6 +335,10 @@ export default function DeployContent(props: DeployContentProps) {
                       <Tag color="default">Unknown</Tag>
                     ) : status === 'Terminating' ? (
                       <Tag color="red">Terminating</Tag>
+                    ) : status === 'unavailable' ? (
+                      <Tag color="red">unavailable</Tag>
+                    ) : status === 'removing' ? (
+                      <Tag color="geekblue">removing</Tag>
                     ) : null;
                   }}
                 />
