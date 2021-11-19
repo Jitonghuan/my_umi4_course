@@ -46,7 +46,7 @@ export default function AppDeployInfo(props: any) {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
       // http://matrix-test.cfuture.shop/
-      `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
 
     //初始化terminal

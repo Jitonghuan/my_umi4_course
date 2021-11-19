@@ -36,7 +36,7 @@ export default function ViewLog(props: any) {
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
         ws.current = new WebSocket(
-          `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+          `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
         ); //建立通道
 
         let dom = document?.getElementById('result-log');
