@@ -72,8 +72,16 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode) return;
   }, [appCode]);
 
-  let initEnvCode = '';
+  const initEnvCode = useRef<string>('');
   let operateType = false;
+  const [listEnvClusterData, loadInfoData, deployInfoLoading] = useDeployInfoData(initEnvCode.current);
+  const [deleteInstance] = useDeleteInstance();
+  const [downloadLog] = useDownloadLog();
+  const [instanceTableData, instanceloading, queryInstanceList] = useInstanceList(appData?.appCode, currentEnvData);
+
+  const envCLusterData = useRef();
+  envCLusterData.current = listEnvClusterData;
+  const intervalId = useRef<any>();
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
@@ -87,43 +95,48 @@ export default function DeployContent(props: DeployContentProps) {
 
         setEnvDatas(dataSources);
 
-        initEnvCode = dataSources[0]?.value;
+        initEnvCode.current = dataSources[0]?.value;
 
         setCurrentEnvData(dataSources[0]?.value);
-        formInstance.setFieldsValue({ envCode: initEnvCode });
+        formInstance.setFieldsValue({ envCode: initEnvCode.current });
 
-        if (initEnvCode !== '' && initEnvCode !== 'zy-prd' && initEnvCode !== 'ws-prd') {
-          loadInfoData(initEnvCode);
-          queryInstanceList(appData?.appCode, initEnvCode);
-        }
-
-        let intervalId = setInterval(() => {
+        if (
+          initEnvCode.current !== '' &&
+          initEnvCode.current !== 'zy-prd' &&
+          initEnvCode.current !== 'ws-prd' &&
+          initEnvCode.current !== 'zy-daily'
+        ) {
+          loadInfoData(initEnvCode.current);
+          queryInstanceList(appData?.appCode, initEnvCode.current);
           operateType = true;
+        }
+        // if (window.intenID) {
+        //     clearInterval(window.intenID);
+        // }
+        intervalId.current = setInterval(() => {
+          console.log(' intervalId.current ', intervalId.current);
           if (operateType) {
-            if (currentEnvData) {
-              loadInfoData(currentEnvData);
-              queryInstanceList(appData?.appCode, currentEnvData);
-            } else if (initEnvCode) {
-              loadInfoData(initEnvCode, operateType);
-              queryInstanceList(appData?.appCode, initEnvCode);
+            if (envCLusterData.current) {
+              if (initEnvCode.current) {
+                loadInfoData(initEnvCode.current, operateType);
+                queryInstanceList(appData?.appCode, initEnvCode.current);
+              }
             }
           }
-        }, 2000);
-        //关闭页面清楚定时器
-
-        return () => {
-          clearInterval(intervalId);
-        };
+        }, 3000);
       });
     } catch (error) {
       message.warning(error);
     }
   }, []);
+  //  清除定时器
+  useEffect(
+    () => () => {
+      clearInterval(intervalId.current);
+    },
+    [],
+  );
 
-  const [listEnvClusterData, loadInfoData, deployInfoLoading] = useDeployInfoData(initEnvCode);
-  const [deleteInstance] = useDeleteInstance();
-  const [downloadLog] = useDownloadLog();
-  const [instanceTableData, instanceloading, queryInstanceList] = useInstanceList(appData?.appCode, currentEnvData);
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
     return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode } });
@@ -165,6 +178,7 @@ export default function DeployContent(props: DeployContentProps) {
     setCurrentEnvData(getEnvCodes);
     loadInfoData(getEnvCodes);
     queryInstanceList(appData?.appCode, getEnvCodes);
+    initEnvCode.current = getEnvCodes;
   };
   //加载容器信息
   const [currentContainerName, setCurrentContainerName] = useState<string>('');
@@ -303,7 +317,7 @@ export default function DeployContent(props: DeployContentProps) {
                   width={100}
                   render={(v, record) => <span>{v || '--'}</span>}
                 />
-                {/* 状态列举  Pending Running Succeeded Failed Unknown */}
+                {/* 状态枚举  Pending Running Succeeded Failed Unknown Terminating unavailable  removing*/}
                 <Table.Column
                   title="状态"
                   dataIndex="instStatus"
@@ -319,6 +333,12 @@ export default function DeployContent(props: DeployContentProps) {
                       <Tag color="red">Failed</Tag>
                     ) : status === 'Unknown' ? (
                       <Tag color="default">Unknown</Tag>
+                    ) : status === 'Terminating' ? (
+                      <Tag color="red">Terminating</Tag>
+                    ) : status === 'unavailable' ? (
+                      <Tag color="red">unavailable</Tag>
+                    ) : status === 'removing' ? (
+                      <Tag color="geekblue">removing</Tag>
                     ) : null;
                   }}
                 />
@@ -437,12 +457,7 @@ export default function DeployContent(props: DeployContentProps) {
           </div>
         )}
       </div>
-      <Modal
-        title="下载日志文件"
-        visible={isLogModalVisible}
-        footer={null}
-        onCancel={() => setIsLogModalVisible(false)}
-      >
+      <Modal title="下载文件" visible={isLogModalVisible} footer={null} onCancel={() => setIsLogModalVisible(false)}>
         <Form form={downloadLogform} labelCol={{ flex: '120px' }}>
           <Form.Item label="容器：" name="containerName" rules={[{ required: true, message: '这是必填项' }]}>
             <Select style={{ width: 140 }} options={queryListContainer} onChange={selectListContainer}></Select>
@@ -457,7 +472,7 @@ export default function DeployContent(props: DeployContentProps) {
               className="downloadButton"
               onClick={() => {
                 setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
-                message.info('日志开始下载');
+                message.info('文件开始下载');
                 setTimeout(() => {
                   setIsLogModalVisible(false);
                 }, 100);

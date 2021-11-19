@@ -19,12 +19,16 @@ export default function AppDeployInfo() {
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
-  const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
+  const [tabActive, setTabActive] = useState(localStorage.getItem('__init_env_tab__') || 'dev');
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currEnvCode,
     appData?.deploymentName,
   );
   const intervalRef = useRef<any>();
+  const changeTab = (value: any) => {
+    setTabActive(value);
+    localStorage.setItem('__init_env_tab__', value);
+  };
 
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   useEffect(() => {
@@ -76,7 +80,7 @@ export default function AppDeployInfo() {
 
   return (
     <ContentCard noPadding className="page-app-deploy-info">
-      <Tabs onChange={(v) => setTabActive(v)} activeKey={tabActive} type="card">
+      <Tabs onChange={changeTab} activeKey={tabActive} type="card">
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployInfoContent
