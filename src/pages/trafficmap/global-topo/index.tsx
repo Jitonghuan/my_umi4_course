@@ -1,4 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react';
+/*
+ * @Author: shixia.ds
+ * @Date: 2021-11-17 16:07:16
+ * @Description:
+ */
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Form, Input, Select, Button, DatePicker, Space, Popconfirm, message, Tag } from 'antd';
 import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
@@ -22,16 +27,20 @@ const globalTopo = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
 
+  const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
 
-  type statusTypeItem = {
-    tagText: string;
-    buttonText: string;
-    color: string;
-    status: number;
-  };
-
   useEffect(() => {}, []);
+
+  const handleFullScreen = useCallback(() => {
+    if (isFullScreen) {
+      setIsFullScreen(false);
+      document.exitFullscreen();
+    } else {
+      setIsFullScreen(true);
+      frameRef.current?.requestFullscreen();
+    }
+  }, [isFullScreen]);
 
   return (
     <PageContainer className="global-topo">
@@ -45,25 +54,31 @@ const globalTopo = () => {
           </Form.Item>
         </Form>
       </FilterCard>
-      <ContentCard>
-        <div style={{ marginBottom: '10px' }} id="topo-box">
-          <section className="content-header">
-            <h3>浙一生产环境</h3>
-            <div className="action-bar">
-              <Button type="default" icon={<PlusCircleOutlined />}>
-                红线追踪
-              </Button>
-              <Button type="default" icon={<PlusCircleOutlined />}>
-                全部展开
-              </Button>
-              <Button type="default" icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}>
-                全屏查看
-              </Button>
+      <div style={{ height: '100%' }} ref={frameRef}>
+        <ContentCard>
+          <section style={{ marginBottom: '10px' }} id="topo-box" ref={frameRef}>
+            <div className="content-header">
+              <h3>浙一生产环境</h3>
+              <div className="action-bar">
+                <Button type="default" icon={<PlusCircleOutlined />}>
+                  红线追踪
+                </Button>
+                <Button type="default" icon={<PlusCircleOutlined />}>
+                  全部展开
+                </Button>
+                <Button
+                  type="default"
+                  icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                  onClick={handleFullScreen}
+                >
+                  全屏查看
+                </Button>
+              </div>
             </div>
+            <div className="graph-box"></div>
           </section>
-          <section className="graph-box"></section>
-        </div>
-      </ContentCard>
+        </ContentCard>
+      </div>
     </PageContainer>
   );
 };
