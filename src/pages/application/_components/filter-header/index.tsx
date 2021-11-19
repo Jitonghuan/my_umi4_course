@@ -44,7 +44,9 @@ export default function FilterHeader(props: FilterHeaderProps) {
 
   const handleAppCategoryChange = useCallback(
     (next: string) => {
-      searchField.resetFields(['appGroupCode']);
+      searchField.setFieldsValue({
+        appGroupCode: '',
+      });
       setCategoryCode(next);
       handleSearch();
     },
