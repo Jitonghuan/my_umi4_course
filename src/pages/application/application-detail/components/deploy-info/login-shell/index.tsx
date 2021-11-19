@@ -7,6 +7,7 @@ import { Select, Form, Button, message, Space } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '../deployInfo-content/service';
+import { history } from 'umi';
 import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -121,7 +122,7 @@ export default function AppDeployInfo(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.back();
+      history.goBack();
     }
   };
   //选择容器

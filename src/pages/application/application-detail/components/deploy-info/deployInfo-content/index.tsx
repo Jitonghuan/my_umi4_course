@@ -473,6 +473,7 @@ export default function DeployContent(props: DeployContentProps) {
               onClick={() => {
                 setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
                 message.info('文件开始下载');
+                // window.open(`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`)
                 setTimeout(() => {
                   setIsLogModalVisible(false);
                 }, 100);
