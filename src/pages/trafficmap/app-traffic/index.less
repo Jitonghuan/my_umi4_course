@@ -1,0 +1,61 @@
+.app-traffic {
+  .app-traffic-content {
+    flex: 1 1;
+    height: 100%;
+    overflow: auto;
+
+    height: 100%;
+
+    .ant-card-body {
+      height: 100%;
+      overflow: hidden;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      background-color: #f7f8fa;
+    }
+
+    .action-tabs {
+      .ant-tabs-tab {
+        padding-left: 32px;
+        padding-right: 32px;
+        border-top: none;
+        border-left: 0;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        background-color: #e6ebf5;
+        border-bottom: 1px solid #cacfdb;
+        border-right: 1px solid #cacfdb;
+
+        &.ant-tabs-tab-active {
+          background-color: #f7f8fa;
+          border-bottom: 1px solid #f7f8fa;
+        }
+      }
+
+      .ant-tabs-nav {
+        margin-bottom: 0;
+        background-color: #e6ebf5;
+      }
+    }
+  }
+  .tab-content {
+    padding: 10px 12px;
+    height: 100%;
+    overflow: auto;
+    .app-topo {
+      height: 400px;
+      background-color: lightblue;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .chart-group {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 10px;
+      background-color: lightyellow;
+    }
+  }
+}
