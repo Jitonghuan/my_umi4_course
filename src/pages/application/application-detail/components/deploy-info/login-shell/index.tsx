@@ -46,7 +46,7 @@ export default function AppDeployInfo(props: any) {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
       // http://matrix-test.cfuture.shop/
-      `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `ws://10.10.128.157:8080/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
 
     //初始化terminal
@@ -84,13 +84,11 @@ export default function AppDeployInfo(props: any) {
         ws.current.send(JSON.stringify(sendJson));
         term.focus();
         ws.current.onerror = () => {
-          term.writeln('webSocket 链接失败，请刷新页面');
+          term.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
         };
       }
     };
-    ws.current.onclose = () => {
-      message.info('websocket已关闭！');
-    };
+
     window?.addEventListener('resize', function () {
       if (ws.current) {
         // 变化后需要做的事

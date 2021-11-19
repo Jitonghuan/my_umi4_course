@@ -22,6 +22,7 @@ export default function ViewLog(props: any) {
   let currentContainerName = '';
   let ansi_up = new AnsiUp();
   let ws = useRef<WebSocket>();
+  let scrollBegin = useRef<boolean>(true);
 
   useLayoutEffect(() => {
     getRequest(APIS.listContainer, { data: { appCode, envCode, instName: instName } }).then((result) => {
@@ -36,13 +37,15 @@ export default function ViewLog(props: any) {
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
         ws.current = new WebSocket(
-          `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+          `ws://10.10.128.157:8080/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
         ); //建立通道
 
         let dom = document?.getElementById('result-log');
         ws.current.onmessage = (evt: any) => {
           if (dom) {
-            dom.scrollTo(0, dom.scrollHeight);
+            if (scrollBegin.current) {
+              dom.scrollTo(0, dom.scrollHeight);
+            }
           }
 
           //如果返回结果是字符串，就拼接字符串，或者push到数组，
@@ -56,9 +59,6 @@ export default function ViewLog(props: any) {
         ws.current.onerror = () => {
           message.warning('webSocket 链接失败');
         };
-        ws.current.onclose = () => {
-          message.info('websocket已关闭！');
-        };
       }
     });
   }, []);
@@ -68,7 +68,7 @@ export default function ViewLog(props: any) {
     setCurrentContainer(getContainer);
     if (ws.current) {
       ws.current.onclose = () => {
-        message.info('关闭websocket!');
+        message.info('websocket已关闭，请刷新页面!');
       };
 
       ws.current.onopen = () => {
@@ -88,9 +88,6 @@ export default function ViewLog(props: any) {
           dom.innerHTML = html;
         }
       };
-      ws.current.onclose = () => {
-        message.info('websocket已关闭！');
-      };
       ws.current.onerror = () => {
         message.warning('webSocket 链接失败');
       };
@@ -101,6 +98,7 @@ export default function ViewLog(props: any) {
   const scrollTop = () => {
     let dom = document?.getElementById('result-log');
     dom?.scrollTo(0, 0);
+    scrollBegin.current = false;
   };
 
   //回到底部
@@ -109,12 +107,14 @@ export default function ViewLog(props: any) {
     if (dom) {
       let scroll = dom.scrollHeight;
       dom.scrollTo(0, scroll);
+      scrollBegin.current = true;
     }
   };
   //清空屏幕
   const clearScreen = () => {
     logData.current = '';
     setLog(logData.current);
+    scrollBegin.current = true;
   };
   //关闭页面
   const closeSocket = () => {
