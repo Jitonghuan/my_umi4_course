@@ -84,13 +84,11 @@ export default function AppDeployInfo(props: any) {
         ws.current.send(JSON.stringify(sendJson));
         term.focus();
         ws.current.onerror = () => {
-          term.writeln('webSocket 链接失败，请刷新页面');
+          term.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
         };
       }
     };
-    ws.current.onclose = () => {
-      message.info('websocket已关闭！');
-    };
+
     window?.addEventListener('resize', function () {
       if (ws.current) {
         // 变化后需要做的事
