@@ -1,3 +1,8 @@
+/*
+ * @Author: shixia.ds
+ * @Date: 2021-11-17 16:07:16
+ * @Description:
+ */
 import React, { useEffect, useState } from 'react';
 import { Form, Select, Tag, Input, Table, Button, message } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
@@ -98,7 +103,7 @@ const tracking = () => {
           </Form.Item>
         </Form>
       </FilterCard>
-      <section className="tag-card">
+      <div className="tag-card">
         {Object.keys(selectParams).length > 0
           ? Object.keys(selectParams).map((key: any) => {
               return (
@@ -114,7 +119,7 @@ const tracking = () => {
               );
             })
           : null}
-      </section>
+      </div>
       <ContentCard>
         <div className="tracking-table-header">
           <h3>追踪列表</h3>
