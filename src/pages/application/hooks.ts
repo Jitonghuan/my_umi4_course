@@ -86,7 +86,6 @@ export function useAppListData(
 export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | undefined, boolean, () => Promise<void>] {
   const [data, setData] = useState<AppItemVO>();
   const [loading, setLoading] = useState(false);
-
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
@@ -97,7 +96,19 @@ export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | und
         pageIndex: 1,
         pageSize: 10,
       });
-      setData(appList?.[0]);
+      appList.map((item: any) => {
+        if (appCode) {
+          if (item?.appCode === appCode) {
+            setData(item);
+          }
+          return;
+        } else if (appId) {
+          if (item?.id === appId) {
+            setData(item);
+          }
+          return;
+        }
+      });
     } finally {
       setLoading(false);
     }
