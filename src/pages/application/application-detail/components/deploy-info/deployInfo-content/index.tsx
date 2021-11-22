@@ -293,7 +293,6 @@ export default function DeployContent(props: DeployContentProps) {
                   <Button
                     type="default"
                     danger
-                    disabled={true}
                     onClick={() => {
                       setRollbackVisible(true);
                     }}
