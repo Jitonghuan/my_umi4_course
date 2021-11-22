@@ -136,7 +136,7 @@ export default function PublishContent(props: IProps) {
               批量退出
             </Button>
           ) : null}
-          {!isFrontend && !isProd && (
+          {/* {!isFrontend && !isProd && (
             <Popconfirm
               title="确定要重启应用吗？"
               onConfirm={async () => {
@@ -150,7 +150,7 @@ export default function PublishContent(props: IProps) {
             >
               <Button>重启</Button>
             </Popconfirm>
-          )}
+          )} */}
         </div>
       </div>
 
