@@ -330,14 +330,14 @@ export default function DeployContent(props: DeployContentProps) {
                       <Tag color="gold">Pending</Tag>
                     ) : status === 'Failed' ? (
                       <Tag color="red">Failed</Tag>
-                    ) : status === 'Unknown' ? (
-                      <Tag color="default">Unknown</Tag>
-                    ) : status === 'Terminating' ? (
-                      <Tag color="red">Terminating</Tag>
-                    ) : status === 'unavailable' ? (
-                      <Tag color="red">unavailable</Tag>
-                    ) : status === 'removing' ? (
-                      <Tag color="geekblue">removing</Tag>
+                    ) : status === 'Initializing' ? (
+                      <Tag color="default">Initializing</Tag>
+                    ) : status === 'NotReady' ? (
+                      <Tag color="lime">NotReady</Tag>
+                    ) : status === 'Unavailable' ? (
+                      <Tag color="red">Unavailable</Tag>
+                    ) : status === 'Scheduling' ? (
+                      <Tag color="geekblue">Scheduling</Tag>
                     ) : null;
                   }}
                 />
@@ -472,6 +472,7 @@ export default function DeployContent(props: DeployContentProps) {
               onClick={() => {
                 setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
                 message.info('文件开始下载');
+                // window.open(`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`)
                 setTimeout(() => {
                   setIsLogModalVisible(false);
                 }, 100);

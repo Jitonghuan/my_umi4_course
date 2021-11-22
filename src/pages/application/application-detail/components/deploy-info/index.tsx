@@ -19,6 +19,7 @@ export default function AppDeployInfo() {
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
+  // localStorage.removeItem('__init_env_tab__');
   const [tabActive, setTabActive] = useState(localStorage.getItem('__init_env_tab__') || 'dev');
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currEnvCode,

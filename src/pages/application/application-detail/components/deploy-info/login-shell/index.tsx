@@ -7,6 +7,7 @@ import { Select, Form, Button, message, Space } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '../deployInfo-content/service';
+import { history } from 'umi';
 import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -46,7 +47,7 @@ export default function AppDeployInfo(props: any) {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
       // http://matrix-test.cfuture.shop/
-      `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
 
     //初始化terminal
@@ -121,7 +122,7 @@ export default function AppDeployInfo(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.back();
+      history.goBack();
     }
   };
   //选择容器

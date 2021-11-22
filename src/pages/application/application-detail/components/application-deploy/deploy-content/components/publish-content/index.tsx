@@ -126,13 +126,17 @@ export default function PublishContent(props: IProps) {
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>
         <div className="caption-right">
-          <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-            重新部署
-          </Button>
-          <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-            批量退出
-          </Button>
-          {!isFrontend && (
+          {!isProd && (
+            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
+              重新部署
+            </Button>
+          )}
+          {!isProd || isFrontend ? (
+            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
+              批量退出
+            </Button>
+          ) : null}
+          {/* {!isFrontend && !isProd && (
             <Popconfirm
               title="确定要重启应用吗？"
               onConfirm={async () => {
@@ -146,7 +150,7 @@ export default function PublishContent(props: IProps) {
             >
               <Button>重启</Button>
             </Popconfirm>
-          )}
+          )} */}
         </div>
       </div>
 
