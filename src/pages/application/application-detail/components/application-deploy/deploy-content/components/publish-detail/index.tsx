@@ -269,11 +269,11 @@ export default function PublishDetail(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        {appData?.appType === 'backend' && envTypeCode === 'prod' && deployEnv?.indexOf('tt-his') !== -1 && (
+        {/* {appData?.appType === 'backend' && envTypeCode === 'prod' && deployEnv?.indexOf('tt-his') !== -1 && (
           <Button type="primary" onClick={() => setRestartVisible(true)}>
             重启应用
           </Button>
-        )}
+        )} */}
         {envTypeCode === 'prod' && (
           <Button type="primary" onClick={() => setDeployVisible(true)} icon={<UploadOutlined />}>
             离线部署

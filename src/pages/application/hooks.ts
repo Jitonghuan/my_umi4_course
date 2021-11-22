@@ -89,7 +89,6 @@ export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | und
 
   const loadData = useCallback(async () => {
     setLoading(true);
-
     try {
       const appList = await queryApps({
         id: appId || undefined,
@@ -98,7 +97,6 @@ export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | und
         pageIndex: 1,
         pageSize: 10,
       });
-
       setData(appList?.[0]);
     } finally {
       setLoading(false);

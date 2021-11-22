@@ -7,6 +7,7 @@
 
 import React, { useState, useContext, useCallback, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
+import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { IProps } from '../../application-deploy/deploy-content/components/publish-content/types';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -14,7 +15,6 @@ import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest, delRequest } from '@/utils/request';
 import { restartApp, rollbackApplication } from '@/pages/application/service';
 import { listContainer, fileDownload } from './service';
-// import * as APIS from '@/pages/application/service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeployInfoData, useInstanceList, useDownloadLog, useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
@@ -32,6 +32,8 @@ export interface DeployContentProps {
   // deployData:any
   /** 部署下个环境成功回调 */
   onDeployNextEnvSuccess: () => void;
+  intervalStop: () => void;
+  intervalStart: () => void;
 }
 export interface insStatusInfo {
   insName?: string;
@@ -59,7 +61,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
-  const { envTypeCode, isActive, onDeployNextEnvSuccess } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
@@ -71,7 +73,6 @@ export default function DeployContent(props: DeployContentProps) {
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
-
   const initEnvCode = useRef<string>('');
   let operateType = false;
   const [listEnvClusterData, loadInfoData, deployInfoLoading] = useDeployInfoData(initEnvCode.current);
@@ -110,32 +111,30 @@ export default function DeployContent(props: DeployContentProps) {
           queryInstanceList(appData?.appCode, initEnvCode.current);
           operateType = true;
         }
-        // if (window.intenID) {
-        //     clearInterval(window.intenID);
-        // }
-        intervalId.current = setInterval(() => {
-          console.log(' intervalId.current ', intervalId.current);
-          if (operateType) {
-            if (envCLusterData.current) {
-              if (initEnvCode.current) {
-                loadInfoData(initEnvCode.current, operateType);
-                queryInstanceList(appData?.appCode, initEnvCode.current);
-              }
+
+        if (operateType) {
+          //定义定时器方法
+          const intervalFunc = () => {
+            loadInfoData(initEnvCode.current, operateType);
+            queryInstanceList(appData?.appCode, initEnvCode.current);
+          };
+
+          // 定时请求发布内容
+          const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, {
+            immediate: false,
+          });
+          console.log('envCLusterData.current', envCLusterData.current);
+          if (envCLusterData.current) {
+            if (initEnvCode.current) {
+              timerHandle('do', true);
             }
           }
-        }, 3000);
+        }
       });
     } catch (error) {
       message.warning(error);
     }
   }, []);
-  //  清除定时器
-  useEffect(
-    () => () => {
-      clearInterval(intervalId.current);
-    },
-    [],
-  );
 
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
@@ -176,8 +175,10 @@ export default function DeployContent(props: DeployContentProps) {
   //改变环境下拉选择后查询结果
   const changeEnvCode = (getEnvCodes: string) => {
     setCurrentEnvData(getEnvCodes);
-    loadInfoData(getEnvCodes);
-    queryInstanceList(appData?.appCode, getEnvCodes);
+    if (envCLusterData.current) {
+      loadInfoData(getEnvCodes);
+      queryInstanceList(appData?.appCode, getEnvCodes);
+    }
     initEnvCode.current = getEnvCodes;
   };
   //加载容器信息
@@ -215,15 +216,6 @@ export default function DeployContent(props: DeployContentProps) {
       .finally(() => {
         setRollbackVisible(false);
       });
-    //  postRequest(rollbackApplication, {
-    //   data: {
-    //     appCode: appData?.appCode,
-    //     envCode: props.envCode,
-    //     image: versionItem?.image,
-    //     appId: versionItem?.appId,
-    //     packageVersion: versionItem?.packageVersion,
-    //     packageVersionId: versionItem?.packageVersionId,
-    //     owner: appData?.owner,
   };
 
   return (
@@ -293,9 +285,10 @@ export default function DeployContent(props: DeployContentProps) {
                   <Button
                     type="default"
                     danger
-                    disabled={true}
                     onClick={() => {
                       setRollbackVisible(true);
+                      intervalStop;
+                      // timerHandle('stop')
                     }}
                   >
                     发布回滚
@@ -488,7 +481,11 @@ export default function DeployContent(props: DeployContentProps) {
       <RollbackModal
         visible={rollbackVisible}
         envCode={currentEnvData}
-        onClose={() => setRollbackVisible(false)}
+        onClose={() => {
+          setRollbackVisible(false);
+          // timerHandle('do',true);
+          intervalStart;
+        }}
         onSave={() => {
           reloadChangeOrderData(); //刷新操作记录信息
           queryInstanceList(appData?.appCode, currentEnvData); //刷新表格信息

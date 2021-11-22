@@ -41,8 +41,10 @@ export default function ApplicationDetail(props: IProps) {
   useEffect(() => {
     queryAppEnvData();
   }, []);
+  console.log('locationQuery:', location.query);
+  console.log('appCode:', appCode);
+  console.log('appData:', appData);
   // 查询应用环境数据  获取到的该应用的环境信息用来判断useNacose的值
-
   const queryAppEnvData = () => {
     getRequest(listAppEnv, {
       data: {
