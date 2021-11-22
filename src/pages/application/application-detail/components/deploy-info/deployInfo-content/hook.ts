@@ -10,26 +10,15 @@ import { message } from 'antd';
 //查看环境集群信息
 export function useDeployInfoData(envCode: any) {
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
-  const [deployInfoLoading, setDeployInfoLoading] = useState<boolean>(false);
   const loadInfoData = async (envCode: any, operateType: boolean) => {
-    if (operateType) {
-      setDeployInfoLoading(false);
-    } else {
-      setDeployInfoLoading(true);
-    }
-
-    await getRequest(APIS.listEnvCluster, { data: { envCode: envCode } })
-      .then((result) => {
-        if (result.success) {
-          let data = result.data;
-          setListEnvClusterData(data);
-        }
-      })
-      .finally(() => {
-        setDeployInfoLoading(false);
-      });
+    await getRequest(APIS.listEnvCluster, { data: { envCode: envCode } }).then((result) => {
+      if (result.success) {
+        let data = result.data;
+        setListEnvClusterData(data);
+      }
+    });
   };
-  return [listEnvClusterData, loadInfoData, deployInfoLoading];
+  return [listEnvClusterData, loadInfoData, setListEnvClusterData];
 }
 
 export function useInstanceList(appCode: any, envCode: any) {
@@ -47,7 +36,7 @@ export function useInstanceList(appCode: any, envCode: any) {
         setInstanceLoading(false);
       });
   };
-  return [instanceListData, instanceLoading, queryInstanceList];
+  return [instanceListData, instanceLoading, queryInstanceList, setInstanceListData];
 }
 
 //还有一个参数需要传过来>>instName

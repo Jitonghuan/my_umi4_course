@@ -19,7 +19,9 @@ const getStatusClazz = (text: string) => {
   return /成功|正常/.test(text) ? 'text-success' : /失败|错误|异常/.test(text) ? 'text-error' : '';
 };
 
-export default function OldAppDeployInfo() {
+export default function OldAppDeployInfo(props: any) {
+  const { intervalStop, intervalStart } = props;
+  console.log('props', props);
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
@@ -98,6 +100,7 @@ export default function OldAppDeployInfo() {
                 onClick={() => {
                   setRollbackVisible(true);
                   timerHandle('stop');
+                  intervalStop();
                 }}
               >
                 发布回滚
@@ -175,6 +178,7 @@ export default function OldAppDeployInfo() {
         onClose={() => {
           setRollbackVisible(false);
           timerHandle('do', true);
+          intervalStart();
         }}
         onSave={() => {
           setRollbackVisible(false);

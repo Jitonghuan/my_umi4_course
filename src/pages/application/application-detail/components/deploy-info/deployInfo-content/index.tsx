@@ -75,14 +75,32 @@ export default function DeployContent(props: DeployContentProps) {
   }, [appCode]);
   const initEnvCode = useRef<string>('');
   let operateType = false;
-  const [listEnvClusterData, loadInfoData, deployInfoLoading] = useDeployInfoData(initEnvCode.current);
+  const [listEnvClusterData, loadInfoData, setListEnvClusterData] = useDeployInfoData(initEnvCode.current);
   const [deleteInstance] = useDeleteInstance();
   const [downloadLog] = useDownloadLog();
-  const [instanceTableData, instanceloading, queryInstanceList] = useInstanceList(appData?.appCode, currentEnvData);
+  const [instanceTableData, instanceloading, queryInstanceList, setInstanceTableData] = useInstanceList(
+    appData?.appCode,
+    currentEnvData,
+  );
 
-  const envCLusterData = useRef();
-  envCLusterData.current = listEnvClusterData;
-  const intervalId = useRef<any>();
+  const envClusterData = useRef();
+  envClusterData.current = listEnvClusterData;
+
+  //定义定时器方法
+  const intervalFunc = () => {
+    loadInfoData(initEnvCode.current, operateType)
+      .then(() => {
+        queryInstanceList(appData?.appCode, initEnvCode.current);
+      })
+      .catch((e: any) => {
+        console.log('error happend in intervalFunc:', e);
+      });
+  };
+
+  //引用定时器
+  const { getStatus: getTimerStatus, handle: timerHandler } = useInterval(intervalFunc, 3000, {
+    immediate: false,
+  });
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
@@ -107,29 +125,20 @@ export default function DeployContent(props: DeployContentProps) {
           initEnvCode.current !== 'ws-prd' &&
           initEnvCode.current !== 'zy-daily'
         ) {
-          loadInfoData(initEnvCode.current);
-          queryInstanceList(appData?.appCode, initEnvCode.current);
-          operateType = true;
-        }
-
-        if (operateType) {
-          //定义定时器方法
-          const intervalFunc = () => {
-            loadInfoData(initEnvCode.current, operateType);
-            queryInstanceList(appData?.appCode, initEnvCode.current);
-          };
-
-          // 定时请求发布内容
-          const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, {
-            immediate: false,
+          loadInfoData(initEnvCode.current).then(() => {
+            queryInstanceList(appData?.appCode, initEnvCode.current).then(() => {
+              operateType = true;
+            });
           });
-          console.log('envCLusterData.current', envCLusterData.current);
-          if (envCLusterData.current) {
-            if (initEnvCode.current) {
-              timerHandle('do', true);
-            }
-          }
         }
+
+        setTimeout(() => {
+          if (operateType && initEnvCode.current) {
+            timerHandler('do', true);
+          } else {
+            timerHandler('stop');
+          }
+        }, 100);
       });
     } catch (error) {
       message.warning(error);
@@ -173,13 +182,27 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   //改变环境下拉选择后查询结果
-  const changeEnvCode = (getEnvCodes: string) => {
-    setCurrentEnvData(getEnvCodes);
-    if (envCLusterData.current) {
-      loadInfoData(getEnvCodes);
-      queryInstanceList(appData?.appCode, getEnvCodes);
+  const changeEnvCode = (envCode: string) => {
+    timerHandler('stop');
+    setCurrentEnvData(envCode);
+    initEnvCode.current = envCode;
+    if (envClusterData.current) {
+      loadInfoData(envCode)
+        .then(() => {
+          queryInstanceList(appData?.appCode, envCode)
+            .then((result2: any) => {
+              timerHandler('do', true);
+            })
+            .catch(() => {
+              setListEnvClusterData([]);
+              setInstanceTableData([]);
+            });
+        })
+        .catch(() => {
+          setListEnvClusterData([]);
+          setInstanceTableData([]);
+        });
     }
-    initEnvCode.current = getEnvCodes;
   };
   //加载容器信息
   const [currentContainerName, setCurrentContainerName] = useState<string>('');
@@ -230,32 +253,30 @@ export default function DeployContent(props: DeployContentProps) {
           </Form>
         </div>
         {currentEnvData === 'zy-prd' || currentEnvData === 'ws-prd' ? (
-          <OldAppDeployInfo />
+          <OldAppDeployInfo intervalStop={() => intervalStop()} intervalStart={() => intervalStart()} />
         ) : (
           <div className="tab-content section-group">
             <section className="section-left">
               <div className="section-clusterInfo">
-                <Spin spinning={deployInfoLoading}>
-                  <div className="clusterInfo">
-                    <h3>集群信息</h3>
-                  </div>
-                  <div className="clusterInfo">
-                    <span>
-                      集群类型:<Tag>{listEnvClusterData?.clusterType}</Tag>
-                    </span>
-                    <span style={{ paddingLeft: 20 }}>
-                      集群名称：<Tag>{listEnvClusterData?.clusterName}</Tag>
-                    </span>
-                    <span style={{ paddingLeft: 20 }}>
-                      集群状态：
-                      {listEnvClusterData?.clusterStatus === 'health' ? (
-                        <Tag color="success">健康</Tag>
-                      ) : listEnvClusterData?.clusterStatus === 'unhealth' ? (
-                        <Tag color="error">不健康</Tag>
-                      ) : null}
-                    </span>
-                  </div>
-                </Spin>
+                <div className="clusterInfo">
+                  <h3>集群信息</h3>
+                </div>
+                <div className="clusterInfo">
+                  <span>
+                    集群类型:<Tag>{listEnvClusterData?.clusterType}</Tag>
+                  </span>
+                  <span style={{ paddingLeft: 20 }}>
+                    集群名称：<Tag>{listEnvClusterData?.clusterName}</Tag>
+                  </span>
+                  <span style={{ paddingLeft: 20 }}>
+                    集群状态：
+                    {listEnvClusterData?.clusterStatus === 'health' ? (
+                      <Tag color="success">健康</Tag>
+                    ) : listEnvClusterData?.clusterStatus === 'unhealth' ? (
+                      <Tag color="error">不健康</Tag>
+                    ) : null}
+                  </span>
+                </div>
               </div>
               <div className="table-caption">
                 <div className="caption-left">
@@ -287,8 +308,8 @@ export default function DeployContent(props: DeployContentProps) {
                     danger
                     onClick={() => {
                       setRollbackVisible(true);
-                      intervalStop;
-                      // timerHandle('stop')
+                      intervalStop();
+                      timerHandler('stop');
                     }}
                   >
                     发布回滚
@@ -483,8 +504,8 @@ export default function DeployContent(props: DeployContentProps) {
         envCode={currentEnvData}
         onClose={() => {
           setRollbackVisible(false);
-          // timerHandle('do',true);
-          intervalStart;
+          timerHandler('do', true);
+          intervalStart();
         }}
         onSave={() => {
           reloadChangeOrderData(); //刷新操作记录信息

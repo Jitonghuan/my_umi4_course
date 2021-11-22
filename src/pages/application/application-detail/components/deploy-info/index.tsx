@@ -77,10 +77,6 @@ export default function AppDeployInfo() {
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
   useEffect(() => {
     timerHandle('do', true);
-
-    // return () => {
-    //   clearInterval(intervalRef.current);
-    // };
   }, [currEnvCode, appData]);
 
   return (
