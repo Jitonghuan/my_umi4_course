@@ -32,12 +32,21 @@ export default function FilterHeader(props: FilterHeaderProps) {
 
   const handleReset = useCallback(() => {
     setCategoryCode(undefined);
+    searchField.setFieldsValue({
+      appType: '',
+      appCategoryCode: '',
+      appGroupCode: '',
+      appName: '',
+      appCode: '',
+    });
     handleSearch();
   }, [searchField]);
 
   const handleAppCategoryChange = useCallback(
     (next: string) => {
-      searchField.resetFields(['appGroupCode']);
+      searchField.setFieldsValue({
+        appGroupCode: '',
+      });
       setCategoryCode(next);
       handleSearch();
     },

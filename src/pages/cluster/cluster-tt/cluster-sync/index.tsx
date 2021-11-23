@@ -2,17 +2,33 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/11/9 10:05
 
-import React from 'react';
-import { Button, Table, Alert } from 'antd';
+import React, { useState, useRef } from 'react';
+import { Button, Table, Alert, Modal } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useTableData } from './hooks';
 import DetailModal from '@/components/detail-modal';
 
 export default function ClusterPage(props: any) {
   const [tableData, fromCache, loading, completed, reloadData] = useTableData();
+  const [jvmConfigInfo, setJvmConfigInfo] = useState<any>('');
+  const [jvmVisiable, setJvmVisiable] = useState<boolean>(false);
+  const showModal = (current: any) => {
+    setJvmConfigInfo(current);
+    setJvmVisiable(true);
+  };
 
   return (
     <ContentCard>
+      <Modal
+        title="查看JVM"
+        visible={jvmVisiable}
+        footer={false}
+        onCancel={() => {
+          setJvmVisiable(false);
+        }}
+      >
+        <span>{jvmConfigInfo}</span>
+      </Modal>
       <div className="table-caption">
         <h3>集群列表</h3>
         <div className="caption-right">
@@ -108,7 +124,15 @@ export default function ClusterPage(props: any) {
             width={340}
             ellipsis
             render={(current, record: any) => (
-              <span style={{ color: current !== record?.ClusterA?.jvmConfig ? 'red' : 'black' }}>{current}</span>
+              <a
+                onClick={() => showModal(current)}
+                style={{
+                  textDecoration: 'underline',
+                  color: current !== record?.ClusterA?.jvmConfig ? 'red' : 'black',
+                }}
+              >
+                {current}
+              </a>
             )}
           />
         </Table.ColumnGroup>

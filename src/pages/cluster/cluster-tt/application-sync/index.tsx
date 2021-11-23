@@ -17,6 +17,12 @@ export default function Application() {
   const [loading, setLoading] = useState(false);
   const [pending, setPending] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [jvmConfigInfo, setJvmConfigInfo] = useState();
+  const [jvmVisiable, setJvmVisiable] = useState<boolean>(false);
+  const showModal = (current: any) => {
+    setJvmConfigInfo(current);
+    setJvmVisiable(true);
+  };
 
   const loadAppList = useCallback(async () => {
     setLoading(true);
@@ -163,7 +169,15 @@ export default function Application() {
             width={340}
             ellipsis
             render={(current, record: any) => (
-              <span style={{ color: current !== record?.ClusterA?.jvmConfig ? 'red' : 'black' }}>{current}</span>
+              <a
+                onClick={() => showModal(current)}
+                style={{
+                  textDecoration: 'underline',
+                  color: current !== record?.ClusterA?.jvmConfig ? 'red' : 'black',
+                }}
+              >
+                {jvmConfigInfo}
+              </a>
             )}
           />
         </Table.ColumnGroup>
@@ -190,6 +204,16 @@ export default function Application() {
           />
         </Table.ColumnGroup>
       </Table>
+      <Modal
+        title="查看JVM"
+        visible={jvmVisiable}
+        footer={false}
+        onCancel={() => {
+          setJvmVisiable(false);
+        }}
+      >
+        <div>{jvmConfigInfo}</div>
+      </Modal>
     </ContentCard>
   );
 }

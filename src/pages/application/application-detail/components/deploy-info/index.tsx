@@ -3,6 +3,7 @@
 // @create 2021/08/18 09:45
 
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
+import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Tabs } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -19,6 +20,7 @@ export default function AppDeployInfo() {
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
+  // localStorage.removeItem('__init_env_tab__');
   const [tabActive, setTabActive] = useState(localStorage.getItem('__init_env_tab__') || 'dev');
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currEnvCode,
@@ -66,16 +68,15 @@ export default function AppDeployInfo() {
       setCurrEnv(envList[0].envCode);
     }
   }, [envList]);
-
+  //定义定时器方法
+  const intervalFunc = () => {
+    reloadDeployData(false);
+    reloadChangeOrderData(false);
+  };
+  // 定时请求发布内容
+  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      reloadDeployData(false);
-      reloadChangeOrderData(false);
-    }, 3000);
-
-    return () => {
-      clearInterval(intervalRef.current);
-    };
+    timerHandle('do', true);
   }, [currEnvCode, appData]);
 
   return (
@@ -89,6 +90,12 @@ export default function AppDeployInfo() {
               onDeployNextEnvSuccess={() => {
                 const i = envTypeData.findIndex((item) => item.value === tabActive);
                 setTabActive(envTypeData[i + 1]?.value);
+              }}
+              intervalStop={() => {
+                timerHandle('stop');
+              }}
+              intervalStart={() => {
+                timerHandle('do', true);
               }}
             />
           </TabPane>

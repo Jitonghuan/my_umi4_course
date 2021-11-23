@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect, useCallback, useContext, useRef, useMemo } from 'react';
 import { Tabs, Button, Table, message, Popconfirm, Spin, Empty } from 'antd';
+import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
@@ -18,7 +19,9 @@ const getStatusClazz = (text: string) => {
   return /成功|正常/.test(text) ? 'text-success' : /失败|错误|异常/.test(text) ? 'text-error' : '';
 };
 
-export default function OldAppDeployInfo() {
+export default function OldAppDeployInfo(props: any) {
+  const { intervalStop, intervalStart } = props;
+  console.log('props', props);
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
@@ -29,24 +32,24 @@ export default function OldAppDeployInfo() {
   );
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const intervalRef = useRef<any>();
-
+  const initEnvCode = useRef<string>('');
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
-
+  initEnvCode.current = envList[0]?.envCode;
   useEffect(() => {
     if (envList.length && !currEnvCode) {
       setCurrEnv(envList[0].envCode);
     }
   }, [envList]);
 
+  //定义定时器方法
+  const intervalFunc = () => {
+    reloadDeployData(false);
+    reloadChangeOrderData(false);
+  };
+  // 定时请求发布内容
+  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      reloadDeployData(false);
-      reloadChangeOrderData(false);
-    }, 3000);
-
-    return () => {
-      clearInterval(intervalRef.current);
-    };
+    timerHandle('do', true);
   }, [currEnvCode, appData]);
 
   // 重启机器
@@ -91,7 +94,15 @@ export default function OldAppDeployInfo() {
           <div className="table-caption">
             <div className="caption-left"></div>
             <div className="caption-right">
-              <Button type="default" danger onClick={() => setRollbackVisible(true)}>
+              <Button
+                type="default"
+                danger
+                onClick={() => {
+                  setRollbackVisible(true);
+                  timerHandle('stop');
+                  intervalStop();
+                }}
+              >
                 发布回滚
               </Button>
             </div>
@@ -164,7 +175,11 @@ export default function OldAppDeployInfo() {
       <RollbackModal
         visible={rollbackVisible}
         envCode={currEnvCode}
-        onClose={() => setRollbackVisible(false)}
+        onClose={() => {
+          setRollbackVisible(false);
+          timerHandle('do', true);
+          intervalStart();
+        }}
         onSave={() => {
           setRollbackVisible(false);
           reloadChangeOrderData();
