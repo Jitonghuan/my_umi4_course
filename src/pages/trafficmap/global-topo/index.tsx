@@ -4,13 +4,11 @@
  * @Description:
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Input, Select, Button, DatePicker, Space, Popconfirm, message, Tag } from 'antd';
+import { Form, Input, Select, Button, DatePicker } from 'antd';
 import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
-import { getRequest, delRequest } from '@/utils/request';
-import { history } from 'umi';
-import { addAPIPrefix } from '@/utils';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import Topo from './Topo';
 import './index.less';
 export interface Item {
   id: string;
@@ -75,7 +73,9 @@ const globalTopo = () => {
                 </Button>
               </div>
             </div>
-            <div className="graph-box"></div>
+            <div className="graph-box">
+              <Topo />
+            </div>
           </section>
         </ContentCard>
       </div>
