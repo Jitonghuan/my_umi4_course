@@ -28,8 +28,10 @@ export const recordFieldMap: { [key: string]: string } = {
   deployedTime: '发布时间',
   envs: '发布环境',
   deployStatus: '发布状态',
+  conflictFeature: '冲突分支',
   jenkinsUrl: 'jenkins',
   features: '功能分支',
   releaseBranch: '发布分支',
-  merge: 'git merge',
+  version: '版本号',
+  tagName: 'tag',
 };
