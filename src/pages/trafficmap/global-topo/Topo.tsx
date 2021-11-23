@@ -58,7 +58,7 @@ const Topo = () => {
           default: [
             'drag-canvas',
             'drag-node',
-            'activate-relations',
+            // 'activate-relations',
             {
               type: 'zoom-canvas',
             },
@@ -89,13 +89,8 @@ const Topo = () => {
           },
           /* icon configuration */
           icon: {
-            /* whether show the icon, false by default */
             show: true,
-            /* icon's img address, string type */
             img: 'https://gw.alipayobjects.com/zos/bmw-prod/dc1ced06-417d-466f-927b-b4a4d3265791.svg',
-            /* icon's size, 20 * 20 by default: */
-            // width: 35,
-            // height: 35,
           },
         },
         defaultEdge: {
@@ -103,6 +98,10 @@ const Topo = () => {
           style: {
             stroke: '#e2e2e2',
             lineAppendWidth: 2,
+            endArrow: {
+              path: G6.Arrow.triangle(),
+              fill: '#e2e2e2',
+            },
           },
         },
         nodeStateStyles: {
@@ -115,11 +114,20 @@ const Topo = () => {
             lineWidth: 5,
             fillOpacity: 0.2,
           },
+          focus: {
+            lineWidth: 5,
+            fillOpacity: 0.2,
+          },
         },
         edgeStateStyles: {
-          yourStateName: {
-            stroke: '#f00',
-            lineWidth: 3,
+          selected: {
+            // stroke: '#e2e2e2',
+            // fill: '#e2e2e2',
+            // lineWidth: 3,
+          },
+          focus: {
+            lineWidth: 5,
+            fillOpacity: 0.2,
           },
         },
       });
@@ -137,15 +145,47 @@ const Topo = () => {
 
       graph.on('node:click', (evt: any) => {
         const { item } = evt;
-        graph.setItemState(item, 'selected', true);
+        clearFocusItemState(graph);
+        graph.setItemState(item, 'focus', true);
+        const relatedEdges = item.getEdges();
+        relatedEdges.forEach((edge: any) => {
+          console.log(edge);
+          graph.setItemState(edge, 'focus', true);
+        });
       });
+
       graph.on('canvas:click', (evt: any) => {
         graph.getNodes().forEach((node: any) => {
           graph.clearItemStates(node);
         });
+        graph.getEdges().forEach((edge: any) => {
+          graph.clearItemStates(edge);
+        });
       });
     }
   }, []);
+
+  const clearFocusItemState = (graph: any) => {
+    if (!graph) return;
+    clearFocusNodeState(graph);
+    clearFocusEdgeState(graph);
+  };
+
+  // 清除图上所有节点的 focus 状态及相应样式
+  const clearFocusNodeState = (graph: any) => {
+    const focusNodes = graph.findAllByState('node', 'focus');
+    focusNodes.forEach((fnode: any) => {
+      graph.setItemState(fnode, 'focus', false); // false
+    });
+  };
+
+  // 清除图上所有边的 focus 状态及相应样式
+  const clearFocusEdgeState = (graph: any) => {
+    const focusEdges = graph.findAllByState('edge', 'focus');
+    focusEdges.forEach((fedge: any) => {
+      graph.setItemState(fedge, 'focus', false);
+    });
+  };
 
   if (typeof window !== 'undefined')
     window.onresize = () => {
