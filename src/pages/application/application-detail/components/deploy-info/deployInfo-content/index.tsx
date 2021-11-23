@@ -185,24 +185,26 @@ export default function DeployContent(props: DeployContentProps) {
   const changeEnvCode = (envCode: string) => {
     timerHandler('stop');
     setCurrentEnvData(envCode);
+
     initEnvCode.current = envCode;
-    if (envClusterData.current) {
-      loadInfoData(envCode)
-        .then(() => {
-          queryInstanceList(appData?.appCode, envCode)
-            .then((result2: any) => {
-              timerHandler('do', true);
-            })
-            .catch(() => {
-              setListEnvClusterData([]);
-              setInstanceTableData([]);
-            });
-        })
-        .catch(() => {
-          setListEnvClusterData([]);
-          setInstanceTableData([]);
-        });
-    }
+    console.log('initEnvCode.current', initEnvCode.current, envClusterData.current);
+    // if (envClusterData.current) {
+    loadInfoData(envCode)
+      .then(() => {
+        queryInstanceList(appData?.appCode, envCode)
+          .then((result2: any) => {
+            timerHandler('do', true);
+          })
+          .catch(() => {
+            setListEnvClusterData([]);
+            setInstanceTableData([]);
+          });
+      })
+      .catch(() => {
+        setListEnvClusterData([]);
+        setInstanceTableData([]);
+      });
+    // }
   };
   //加载容器信息
   const [currentContainerName, setCurrentContainerName] = useState<string>('');

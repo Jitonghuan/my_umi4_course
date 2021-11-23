@@ -75,3 +75,29 @@ export function useFrameUrl(envCode?: string, logStore?: string): [string, boole
 
   return [url, loading];
 }
+
+/** 日志检索柱状图 */
+type AnyObject = Record<string, any>;
+export function useLoggerData(): [AnyObject, boolean] {
+  const [data, setData] = useState<AnyObject>({});
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    getRequest(APIS.logHistorm, {
+      data: { envCode: '', indexMode: '', startTime: '', endTime: '', querySql: '', filterIs: '', fllterNot: '' },
+    })
+      .then((result) => {
+        if (result.success) {
+          let aggregationsArry = [];
+
+          setData(result.data.aggregations.aggs_over_time.buckets || {});
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  return [data, loading];
+}

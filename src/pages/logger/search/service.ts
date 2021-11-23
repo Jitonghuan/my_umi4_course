@@ -12,3 +12,5 @@ export const getSearchUrl = addAPIPrefix('/logManage/logSearch/url');
 export const ruleGroupOptions = addAPIPrefix('/logManage/alertrule/group/list');
 
 export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');
+
+export const logHistorm = addAPIPrefix('/logManage/logSearch/Search');
