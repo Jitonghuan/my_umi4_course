@@ -3,7 +3,7 @@
  * @Date: 2021-11-23 14:29:03
  * @Description:
  */
-export const data = {
+export const OriginData = {
   nodes: [
     { id: 'region0', label: '0', type: 'card-node', statue: 'normal', nodeType: 'region' },
     { id: 'region1', label: '1', type: 'card-node', status: 'normal', nodeType: 'region' },
@@ -66,8 +66,8 @@ export const data = {
     { source: 'node8', target: 'node12', label: '8-12' },
   ],
   combos: [
-    { id: 'combo1', label: 'Combo 1', type: 'card-combo' },
-    { id: 'combo2', label: 'Combo 2' },
-    { id: 'combo3', label: 'Combo 3' },
+    // { id: 'combo1', label: 'Combo 1', type: 'card-combo' },
+    // { id: 'combo2', label: 'Combo 2' },
+    // { id: 'combo3', label: 'Combo 3' },
   ],
 };

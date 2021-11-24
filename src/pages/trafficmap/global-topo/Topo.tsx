@@ -5,8 +5,7 @@
  */
 import G6, { ModelConfig } from '@antv/g6';
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
-import { data } from './data';
+import { OriginData } from './data';
 
 const Topo = () => {
   const [loading, setLoading] = useState(false);
@@ -203,9 +202,7 @@ const Topo = () => {
 
     setState: (name: string, value: any, item: { [x: string]: any; get: (arg0: string) => any }) => {
       const group = item.get('group');
-      console.log(item);
       const cfg = item['_cfg'];
-      console.log(cfg);
       if (name === 'hover') {
         const fillShape = group.find((e: { get: (arg0: string) => string }) => e.get('name') === 'rect-shape');
         if (value) {
@@ -220,7 +217,6 @@ const Topo = () => {
   };
 
   const getNodeConfig = (node: ModelConfig | undefined) => {
-    console.log('status', node?.status);
     let config = {
       basicColor: enumcolor[node.status || 'normal'],
       fontColor: enumcolor[node.status || 'normal'],
@@ -474,14 +470,14 @@ const Topo = () => {
       });
       const regionData: any[] = [];
       const appData = [];
-      data.nodes.forEach((node) => {
+      OriginData.nodes.forEach((node) => {
         if (node.nodeType == 'region') {
           regionData.push(node);
         } else {
           appData.push(node);
         }
       });
-      graph.data({ nodes: regionData, edges: data.edges });
+      graph.data({ nodes: regionData, edges: OriginData.edges });
       expandArr = regionData;
       graph.render();
       graph.on('node:mouseenter', (evt: any) => {
@@ -500,7 +496,6 @@ const Topo = () => {
         graph.setItemState(item, 'focus', true);
         const relatedEdges = item.getEdges();
         relatedEdges.forEach((edge: any) => {
-          console.log(edge);
           graph.setItemState(edge, 'focus', true);
         });
       });
@@ -520,10 +515,10 @@ const Topo = () => {
       graph.on('combo:click', (evt: any) => {
         if (evt.target.get('name') === 'combo-marker-shape') {
           // graph.collapseExpandCombo(e.item.getModel().id);
-          graph.collapseExpandCombo(evt.item);
+          // graph.collapseExpandCombo(evt.item);
           // if (graph.get('layout')) graph.layout();
           // else graph.refreshPositions();
-          // evt.item.changeVisibility(false);
+          handleCollapse(evt);
         }
       });
     }
@@ -552,31 +547,49 @@ const Topo = () => {
   };
 
   const handleCollapse = (evt: any) => {
-    const { item } = evt;
-    const model = item && item.getModel();
+    const nodes = evt.item.getNodes();
+    console.log('nodes', nodes[0]);
+    const regionId = nodes[0]['_cfg']['model']['nodeRegionCode'];
+    if (regionId) {
+      OriginData.nodes.forEach((node) => {
+        if (node.id == regionId) {
+          expandArr.push(node);
+        }
+      });
+    }
+    evt.item.changeVisibility(false);
+    graph.uncombo(evt.item);
+
+    // nodes.forEach((node:any)=>{
+    //   graph.hideItem(node)
+    // })
+    console.log('filter regionId', regionId);
+    const newArr = expandArr.filter(
+      (item) => !item.nodeRegionCode || (item.nodeType !== 'region' && item.nodeRegionCode !== regionId),
+    );
+    console.log('newArr', newArr);
+    graph.data({ nodes: newArr, edges: OriginData.edges });
+    expandArr = newArr;
+    graph.render();
   };
 
   const handleExpand = (evt: any) => {
     const { item } = evt;
     const model = item && item.getModel();
     console.log(model);
-
-    let expandIndex = expandArr.findIndex((node) => (node.id = model.id));
+    debugger;
+    let expandIndex = expandArr.findIndex((node) => node.id == model.id);
+    console.log(expandIndex);
     expandArr.splice(expandIndex, 1);
 
-    data.nodes.forEach((node) => {
+    OriginData.nodes.forEach((node) => {
       if (node.nodeRegionCode == model.id) {
         expandArr.push(node);
       }
     });
     console.log(expandArr);
-    graph.data({ nodes: expandArr, edges: data.edges });
-    // graph.createCombo({
-    //   id:'combo1',
-    //   type:'card-combo',
-    // },['node0'])
+    graph.data({ nodes: expandArr, edges: OriginData.edges });
     graph.render();
-    // graph.createCombo('combo1',['node0'])
     graph.createCombo(
       {
         id: 'combo1',
