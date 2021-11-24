@@ -35,6 +35,8 @@ const Topo = () => {
     ];
   };
 
+  let expandArr = [];
+
   const DANGER_COLOR = '#F5222D';
   const WARNING_COLOR = '#FFC020';
   const NORMAL_COLOR = '#3592FE';
@@ -94,7 +96,7 @@ const Topo = () => {
           fill: 'white',
           stroke: config.borderColor,
           radius: 2,
-          cursor: 'pointer',
+          // cursor: 'pointer',
         },
         name: 'rect-shape',
       });
@@ -277,7 +279,7 @@ const Topo = () => {
             // if (d.source.id === 'node0') {
             //   return 200;
             // }
-            return 3;
+            return 200;
           },
           unitRadius: 100,
           nodeStrength: (d: any) => {
@@ -376,7 +378,17 @@ const Topo = () => {
           },
         },
       });
-      graph.data(data);
+      const regionData: any[] = [];
+      const appData = [];
+      data.nodes.forEach((node) => {
+        if (node.nodeType == 'region') {
+          regionData.push(node);
+        } else {
+          appData.push(node);
+        }
+      });
+      graph.data({ nodes: regionData, edges: data.edges });
+      expandArr = regionData;
       graph.render();
       graph.on('node:mouseenter', (evt: any) => {
         const { item } = evt;
@@ -407,6 +419,9 @@ const Topo = () => {
           graph.clearItemStates(edge);
         });
       });
+      graph.on('collapse-icon:click', (evt: any) => {
+        handleExpand(evt);
+      });
     }
   }, []);
 
@@ -430,6 +445,26 @@ const Topo = () => {
     focusEdges.forEach((fedge: any) => {
       graph.setItemState(fedge, 'focus', false);
     });
+  };
+
+  const handleCollapse = (e: any) => {};
+
+  const handleExpand = (evt: any) => {
+    const { item } = evt;
+    const model = item && item.getModel();
+    console.log(model);
+
+    let expandIndex = expandArr.findIndex((node) => (node.id = model.id));
+    expandArr.splice(expandIndex, 1);
+
+    data.nodes.forEach((node) => {
+      if (node.nodeRegionCode == model.id) {
+        expandArr.push(node);
+      }
+    });
+    console.log(expandArr);
+    graph.data({ nodes: expandArr, edges: data.edges });
+    graph.render();
   };
 
   if (typeof window !== 'undefined')

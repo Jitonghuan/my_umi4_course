@@ -5,14 +5,15 @@
  */
 export const data = {
   nodes: [
-    { id: 'region0', label: '0', type: 'card-node', statue: 'normal' },
-    { id: 'region1', label: '1', type: 'card-node', status: 'normal' },
-    { id: 'region2', label: '2', type: 'card-node', status: 'warning' },
-    { id: 'region3', label: '3', type: 'card-node', status: 'danger' },
-    { id: 'region4', label: '4', type: 'card-node', status: 'normal' },
-    { id: 'region5', label: '5', type: 'card-node', status: 'normal' },
+    { id: 'region0', label: '0', type: 'card-node', statue: 'normal', nodeType: 'region' },
+    { id: 'region1', label: '1', type: 'card-node', status: 'normal', nodeType: 'region' },
+    { id: 'region2', label: '2', type: 'card-node', status: 'warning', nodeType: 'region' },
+    { id: 'region3', label: '3', type: 'card-node', status: 'danger', nodeType: 'region' },
+    { id: 'region4', label: '4', type: 'card-node', status: 'normal', nodeType: 'region' },
+    { id: 'region5', label: '5', type: 'card-node', status: 'normal', nodeType: 'region' },
 
-    { id: 'node0', label: '0', type: 'circle', statue: 'normal' },
+    { id: 'node0', label: '0', type: 'circle', statue: 'normal', nodeRegionCode: 'region0' },
+
     { id: 'node1', label: '1', type: 'circle', status: 'normal' },
     { id: 'node2', label: '2', comboId: 'combo2', status: 'warning' },
     { id: 'node3', label: '3', comboId: 'combo3', status: 'danger' },
@@ -36,6 +37,12 @@ export const data = {
     { source: 'region0', target: 'region3', label: '0-1\n0-2' },
     { source: 'region0', target: 'region4', label: '0-1\n0-2' },
     { source: 'region0', target: 'region5', label: '0-1\n0-2' },
+
+    { source: 'node0', target: 'region1', label: '0-1\n0-2' },
+    { source: 'node0', target: 'region2', label: '0-1\n0-2' },
+    { source: 'node0', target: 'region3', label: '0-1\n0-2' },
+    { source: 'node0', target: 'region4', label: '0-1\n0-2' },
+    { source: 'node0', target: 'region5', label: '0-1\n0-2' },
 
     { source: 'node0', target: 'node1', label: '0-1\n0-2' },
     { source: 'node0', target: 'node2', label: '0-2' },
