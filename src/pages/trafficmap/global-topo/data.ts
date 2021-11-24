@@ -12,7 +12,7 @@ export const data = {
     { id: 'region4', label: '4', type: 'card-node', status: 'normal', nodeType: 'region' },
     { id: 'region5', label: '5', type: 'card-node', status: 'normal', nodeType: 'region' },
 
-    { id: 'node0', label: '0', type: 'circle', statue: 'normal', nodeRegionCode: 'region0' },
+    { id: 'node0', label: '0', type: 'circle', statue: 'normal', nodeRegionCode: 'region0', combo: 'combo1' },
 
     { id: 'node1', label: '1', type: 'circle', status: 'normal' },
     { id: 'node2', label: '2', comboId: 'combo2', status: 'warning' },
@@ -65,9 +65,9 @@ export const data = {
     { source: 'node8', target: 'node13', label: '8-13' },
     { source: 'node8', target: 'node12', label: '8-12' },
   ],
-  //   combos: [
-  //   { id: 'combo1', label: 'Combo 1' },
-  //   { id: 'combo2', label: 'Combo 2'},
-  //   { id: 'combo3', label: 'Combo 3' },
-  // ],
+  combos: [
+    { id: 'combo1', label: 'Combo 1', type: 'card-combo' },
+    { id: 'combo2', label: 'Combo 2' },
+    { id: 'combo3', label: 'Combo 3' },
+  ],
 };

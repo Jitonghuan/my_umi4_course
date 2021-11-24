@@ -174,7 +174,7 @@ const Topo = () => {
           x: x - 30,
           y,
           r: 7,
-          symbol: collapsed ? EXPAND_ICON : COLLAPSE_ICON,
+          symbol: EXPAND_ICON,
           stroke: 'rgba(0,0,0,0.25)',
           fill: 'rgba(0,0,0,0)',
           lineWidth: 1,
@@ -260,6 +260,100 @@ const Topo = () => {
     afterDraw: nodeBasicMethod.afterDraw,
     setState: nodeBasicMethod.setState,
   });
+
+  G6.registerCombo(
+    'card-combo',
+    {
+      drawShape: function drawShape(cfg, group) {
+        const self = this;
+        // Get the padding from the configuration
+        cfg.padding = cfg.padding || [50, 20, 20, 20];
+        // Get the shape's style, where the style.width and style.height correspond to the width and height in the figure of Illustration of Built-in Rect Combo
+        const style = self.getShapeStyle(cfg);
+        const color = cfg.error ? '#F4664A' : '#30BF78';
+        const r = 2;
+        const shape = group.addShape('rect', {
+          attrs: {
+            ...style,
+            x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
+            y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
+            stroke: color,
+            radius: r,
+          },
+          name: 'main-box',
+          draggable: true,
+        });
+
+        group.addShape('rect', {
+          attrs: {
+            ...style,
+            x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
+            y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
+            height: 20,
+            fill: color,
+            width: style.width,
+            radius: [r, r, 0, 0],
+          },
+          name: 'title-box',
+          draggable: true,
+        });
+        group.addShape('marker', {
+          attrs: {
+            ...style,
+            fill: '#fff',
+            opacity: 1,
+            // cfg.style.width and cfg.style.heigth correspond to the innerWidth and innerHeight in the figure of Illustration of Built-in Rect Combo
+            x: 5,
+            y: -(style.height / 2) - 15,
+            r: 10,
+            symbol: COLLAPSE_ICON,
+          },
+          draggable: true,
+          name: 'combo-marker-shape',
+        });
+        return shape;
+      },
+      // 定义新增的右侧圆的位置更新逻辑
+      afterUpdate: function afterUpdate(cfg, combo) {
+        // console.log(cfg.collapsed)
+        // if(cfg.collapsed){
+        //   // combo.update({type:'card-combo'});
+
+        // }else{
+        // console.log('card-combo')
+        // combo.update({type:'cRect'})
+
+        // combo.update({type:'card-combo'});
+        //   combo.refresh();
+        // }
+        const self = this;
+        // Get the shape's style, where the style.width and style.height correspond to the width and height in the figure of Illustration of Built-in Rect Combo
+        const style = self.getShapeStyle(cfg);
+        const group = combo.get('group');
+        // 在该 Combo 的图形分组根据 name 找到右侧圆图形
+        const rect = group.find((ele) => ele.get('name') === 'title-box');
+        // 更新右侧圆位置
+        rect.attr({
+          // cfg.style.width 与 cfg.style.heigth 对应 rect Combo 位置说明图中的 innerWdth 与 innerHeight
+          x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
+          y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
+          width: style.width,
+          height: 20,
+        });
+        const marker = group.find((ele) => ele.get('name') === 'combo-marker-shape');
+        // Update the position of the right circle
+        marker.attr({
+          // cfg.style.width and cfg.style.heigth correspond to the innerWidth and innerHeight in the figure of Illustration of Built-in Rect Combo
+          x: cfg.style.width / 2 + cfg.padding[1],
+          y: (cfg.padding[2] - cfg.padding[0]) / 2,
+          // The property 'collapsed' in the combo data represents the collapsing state of the Combo
+          // Update the symbol according to 'collapsed'
+          symbol: cfg.collapsed ? EXPAND_ICON : COLLAPSE_ICON,
+        });
+      },
+    },
+    'rect',
+  );
 
   useEffect(() => {
     const container = document.getElementById('topo');
@@ -419,8 +513,18 @@ const Topo = () => {
           graph.clearItemStates(edge);
         });
       });
+
       graph.on('collapse-icon:click', (evt: any) => {
         handleExpand(evt);
+      });
+      graph.on('combo:click', (evt: any) => {
+        if (evt.target.get('name') === 'combo-marker-shape') {
+          // graph.collapseExpandCombo(e.item.getModel().id);
+          graph.collapseExpandCombo(evt.item);
+          // if (graph.get('layout')) graph.layout();
+          // else graph.refreshPositions();
+          // evt.item.changeVisibility(false);
+        }
       });
     }
   }, []);
@@ -447,7 +551,10 @@ const Topo = () => {
     });
   };
 
-  const handleCollapse = (e: any) => {};
+  const handleCollapse = (evt: any) => {
+    const { item } = evt;
+    const model = item && item.getModel();
+  };
 
   const handleExpand = (evt: any) => {
     const { item } = evt;
@@ -464,7 +571,19 @@ const Topo = () => {
     });
     console.log(expandArr);
     graph.data({ nodes: expandArr, edges: data.edges });
+    // graph.createCombo({
+    //   id:'combo1',
+    //   type:'card-combo',
+    // },['node0'])
     graph.render();
+    // graph.createCombo('combo1',['node0'])
+    graph.createCombo(
+      {
+        id: 'combo1',
+        type: 'card-combo',
+      },
+      ['node0'],
+    );
   };
 
   if (typeof window !== 'undefined')
