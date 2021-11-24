@@ -331,7 +331,7 @@ export default function DeployContent(props: DeployContentProps) {
                   width={100}
                   render={(v, record) => <span>{v || '--'}</span>}
                 />
-                {/* 状态枚举  Pending Running Succeeded Failed Unknown Terminating unavailable  removing*/}
+                {/* 状态枚举  Pending Running Succeeded Failed Initializing NotReady Unavailable  Scheduling Removing*/}
                 <Table.Column
                   title="状态"
                   dataIndex="instStatus"
@@ -353,6 +353,8 @@ export default function DeployContent(props: DeployContentProps) {
                       <Tag color="red">Unavailable</Tag>
                     ) : status === 'Scheduling' ? (
                       <Tag color="geekblue">Scheduling</Tag>
+                    ) : status === 'Removing' ? (
+                      <Tag color="purple">Removing</Tag>
                     ) : null;
                   }}
                 />
