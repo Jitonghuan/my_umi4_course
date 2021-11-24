@@ -2,7 +2,15 @@
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2021/11/23 16:49
 // 最后一次执行情况
-export function loggerChart(data: Record<string, any>) {
+export function loggerChart(data: any) {
+  console.log('data', data);
+  let logHistormData = data;
+  const countList = [];
+  const timeList = [];
+  for (let item in logHistormData) {
+    // countList.push(item?.doc_count);
+    // timeList.push(i);
+  }
   return {
     tooltip: {
       show: true,

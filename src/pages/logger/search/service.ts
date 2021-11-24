@@ -13,4 +13,11 @@ export const ruleGroupOptions = addAPIPrefix('/logManage/alertrule/group/list');
 
 export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');
 
-export const logHistorm = addAPIPrefix('/logManage/logSearch/Search');
+//新增索引模式
+export const createIndexMode = addAPIPrefix('/logManage/logSearch/indexMode/create');
+
+//获取索引模式列表
+export const queryIndexMode = addAPIPrefix('logManage/logSearch/indexMode');
+
+//检索日志
+export const logSearch = addAPIPrefix('logManage/logSearch/query');

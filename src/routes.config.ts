@@ -686,6 +686,11 @@ export default [
         name: '日志检索',
         component: '@/pages/logger/search',
       },
+      {
+        path: 'index-manage',
+        name: '索引管理',
+        component: '@/pages/logger/index-manage',
+      },
     ],
   },
   {
