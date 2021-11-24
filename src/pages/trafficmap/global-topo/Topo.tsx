@@ -12,6 +12,7 @@ const Topo = () => {
 
   const ref = React.useRef(null);
   let graph = null as any;
+  const { uniqueId } = G6.Util;
 
   const COLLAPSE_ICON = function COLLAPSE_ICON(x: number, y: any, r: number) {
     return [
@@ -35,7 +36,7 @@ const Topo = () => {
   };
 
   let expandArr = [];
-
+  let comboArr = [];
   const DANGER_COLOR = '#F5222D';
   const WARNING_COLOR = '#FFC020';
   const NORMAL_COLOR = '#3592FE';
@@ -557,12 +558,13 @@ const Topo = () => {
         }
       });
     }
+
+    let comboIdx = comboArr.findIndex((combo) => combo.regionCode == regionId);
+    comboArr.splice(comboIdx, 1);
+
     evt.item.changeVisibility(false);
     graph.uncombo(evt.item);
 
-    // nodes.forEach((node:any)=>{
-    //   graph.hideItem(node)
-    // })
     console.log('filter regionId', regionId);
     const newArr = expandArr.filter(
       (item) => !item.nodeRegionCode || (item.nodeType !== 'region' && item.nodeRegionCode !== regionId),
@@ -571,6 +573,16 @@ const Topo = () => {
     graph.data({ nodes: newArr, edges: OriginData.edges });
     expandArr = newArr;
     graph.render();
+
+    comboArr.forEach((combo) => {
+      graph.createCombo(
+        {
+          id: combo.id,
+          type: combo.type,
+        },
+        combo.nodes,
+      );
+    });
   };
 
   const handleExpand = (evt: any) => {
@@ -581,21 +593,34 @@ const Topo = () => {
     console.log(expandIndex);
     expandArr.splice(expandIndex, 1);
 
+    const newNode: any[] = [];
     OriginData.nodes.forEach((node) => {
       if (node.nodeRegionCode == model.id) {
         expandArr.push(node);
+        newNode.push(node.id);
       }
     });
-    console.log(expandArr);
+
+    let newcombo = {
+      id: `combo-${uniqueId()}`,
+      type: 'card-combo',
+      regionCode: model.id,
+      nodes: newNode,
+    };
+    comboArr.push(newcombo);
+
     graph.data({ nodes: expandArr, edges: OriginData.edges });
     graph.render();
-    graph.createCombo(
-      {
-        id: 'combo1',
-        type: 'card-combo',
-      },
-      ['node0'],
-    );
+
+    comboArr.forEach((combo) => {
+      graph.createCombo(
+        {
+          id: combo.id,
+          type: combo.type,
+        },
+        combo.nodes,
+      );
+    });
   };
 
   if (typeof window !== 'undefined')
