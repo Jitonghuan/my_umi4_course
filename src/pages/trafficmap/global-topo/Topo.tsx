@@ -577,7 +577,6 @@ const Topo = () => {
     const { item } = evt;
     const model = item && item.getModel();
     console.log(model);
-    debugger;
     let expandIndex = expandArr.findIndex((node) => node.id == model.id);
     console.log(expandIndex);
     expandArr.splice(expandIndex, 1);
