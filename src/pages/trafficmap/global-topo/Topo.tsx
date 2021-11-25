@@ -293,6 +293,8 @@ const Topo = () => {
         const shape = group.addShape('rect', {
           attrs: {
             ...style,
+            width: 500,
+            height: 300,
             x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
             stroke: color,
@@ -331,6 +333,7 @@ const Topo = () => {
           },
           name: 'name-text-shape',
         });
+
         group?.addShape('marker', {
           attrs: {
             ...style,
@@ -349,21 +352,18 @@ const Topo = () => {
       },
       // 定义新增的右侧圆的位置更新逻辑
       afterUpdate: function afterUpdate(cfg, combo) {
-        // console.log(cfg.collapsed)
-        // if(cfg.collapsed){
-        //   // combo.update({type:'card-combo'});
-
-        // }else{
-        // console.log('card-combo')
-        // combo.update({type:'cRect'})
-
-        // combo.update({type:'card-combo'});
-        //   combo.refresh();
-        // }
         const self = this;
         // Get the shape's style, where the style.width and style.height correspond to the width and height in the figure of Illustration of Built-in Rect Combo
         const style = self.getShapeStyle(cfg);
+        console.log(style);
         const group = combo.get('group');
+
+        const keyshape = group.find((ele) => ele.get('name') === 'main-box');
+        console.log(keyshape);
+        keyshape.attr({
+          ...style,
+        });
+
         // 在该 Combo 的图形分组根据 name 找到右侧圆图形
         const rect = group.find((ele) => ele.get('name') === 'title-box');
         // 更新右侧圆位置
@@ -374,14 +374,12 @@ const Topo = () => {
           width: style.width,
           height: 20,
         });
+
         const marker = group.find((ele) => ele.get('name') === 'combo-marker-shape');
         // Update the position of the right circle
         marker.attr({
-          // cfg.style.width and cfg.style.heigth correspond to the innerWidth and innerHeight in the figure of Illustration of Built-in Rect Combo
           x: style.width / 4,
           y: -style.height / 2,
-          // The property 'collapsed' in the combo data represents the collapsing state of the Combo
-          // Update the symbol according to 'collapsed'
           symbol: cfg.collapsed ? EXPAND_ICON : COLLAPSE_ICON,
         });
       },
@@ -421,6 +419,7 @@ const Topo = () => {
         defaultCombo: {
           // The type of the combos. You can also assign type in the data of combos
           type: 'cRect',
+          size: [500, 300],
           // ... Other global configurations for combos
         },
         comboStateStyles: {
@@ -617,6 +616,7 @@ const Topo = () => {
         {
           id: combo.id,
           type: combo.type,
+          size: [500, 300],
         },
         combo.nodes,
       );
