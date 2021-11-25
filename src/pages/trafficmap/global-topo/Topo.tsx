@@ -35,8 +35,8 @@ const Topo = () => {
     ];
   };
 
-  let expandArr = [];
-  let comboArr = [];
+  let expandArr: any = [];
+  let comboArr: any = [];
   const DANGER_COLOR = '#F5222D';
   const WARNING_COLOR = '#FFC020';
   const NORMAL_COLOR = '#3592FE';
@@ -48,33 +48,7 @@ const Topo = () => {
   };
 
   const nodeBasicMethod = {
-    createNodeBox: (
-      group: {
-        addShape: (
-          arg0: string,
-          arg1: {
-            attrs:
-              | { x: number; y: number; width: any; heigh: any }
-              | {
-                  x: number;
-                  y: number;
-                  width: number;
-                  height: any;
-                  fill: string;
-                  stroke: any;
-                  radius: number;
-                  cursor: string;
-                }
-              | { x: number; y: number; width: any; heigh: any; fill: string; opacity: number }
-              | { x: number; y: number; width: number; height: any; fill: any; radius: number };
-            name: string;
-          },
-        ) => void;
-      },
-      config: { borderColor: any; basicColor: any },
-      w: number,
-      h: any,
-    ) => {
+    createNodeBox: (group: any, config: { borderColor: any; basicColor: any }, w: number, h: any) => {
       /* 最外面的大矩形 */
       const container = group.addShape('rect', {
         attrs: {
@@ -286,15 +260,12 @@ const Topo = () => {
         const self = this;
         // Get the padding from the configuration
         cfg.padding = cfg.padding || [50, 20, 20, 20];
-        // Get the shape's style, where the style.width and style.height correspond to the width and height in the figure of Illustration of Built-in Rect Combo
         const style = self.getShapeStyle(cfg);
         const color = cfg.error ? '#F4664A' : '#30BF78';
         const r = 2;
         const shape = group.addShape('rect', {
           attrs: {
             ...style,
-            width: 500,
-            height: 300,
             x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
             stroke: color,
@@ -339,7 +310,6 @@ const Topo = () => {
             ...style,
             fill: '#fff',
             opacity: 1,
-            // cfg.style.width and cfg.style.heigth correspond to the innerWidth and innerHeight in the figure of Illustration of Built-in Rect Combo
             x: 0,
             y: 0,
             r: 10,
@@ -353,7 +323,6 @@ const Topo = () => {
       // 定义新增的右侧圆的位置更新逻辑
       afterUpdate: function afterUpdate(cfg, combo) {
         const self = this;
-        // Get the shape's style, where the style.width and style.height correspond to the width and height in the figure of Illustration of Built-in Rect Combo
         const style = self.getShapeStyle(cfg);
         console.log(style);
         const group = combo.get('group');
@@ -367,7 +336,6 @@ const Topo = () => {
         // 在该 Combo 的图形分组根据 name 找到右侧圆图形
         const rect = group.find((ele) => ele.get('name') === 'title-box');
         rect.attr({
-          // cfg.style.width 与 cfg.style.heigth 对应 rect Combo 位置说明图中的 innerWdth 与 innerHeight
           x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
           y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
           width: style.width,
@@ -375,7 +343,6 @@ const Topo = () => {
         });
 
         const marker = group.find((ele) => ele.get('name') === 'combo-marker-shape');
-        // Update the position of the right circle
         marker.attr({
           x: style.width / 2 - cfg.padding[1] / 2,
           y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2 + 10,
@@ -416,9 +383,8 @@ const Topo = () => {
           preventOverlap: true,
         },
         defaultCombo: {
-          // The type of the combos. You can also assign type in the data of combos
           type: 'cRect',
-          size: [500, 300],
+          // fixSize: [500, 300],
           labelCfg: {
             refY: 2,
             style: {
@@ -427,7 +393,6 @@ const Topo = () => {
               fontWeight: 700,
             },
           },
-          // ... Other global configurations for combos
         },
         comboStateStyles: {
           dragenter: {
