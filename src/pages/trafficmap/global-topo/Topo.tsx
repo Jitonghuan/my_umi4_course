@@ -74,7 +74,6 @@ const Topo = () => {
       config: { borderColor: any; basicColor: any },
       w: number,
       h: any,
-      isRoot: any,
     ) => {
       /* 最外面的大矩形 */
       const container = group.addShape('rect', {
@@ -82,7 +81,7 @@ const Topo = () => {
           x: 0,
           y: 0,
           width: w,
-          heigh: h,
+          height: h,
         },
         name: 'big-rect-shape',
       });
@@ -228,35 +227,57 @@ const Topo = () => {
     return config;
   };
 
-  G6.registerNode('card-node', {
-    draw: (cfg, group) => {
-      const config = getNodeConfig(cfg);
-      const isRoot = cfg?.dataType === 'root';
-      /* the biggest rect */
-      const container = nodeBasicMethod.createNodeBox(group, config, 243, 60, isRoot);
+  G6.registerNode(
+    'card-node',
+    {
+      /**
+       * 绘制节点，包含文本
+       * @param  {Object} cfg 节点的配置项
+       * @param  {G.Group} group 图形分组，节点中图形对象的容器
+       * @return {G.Shape} 返回一个绘制的图形作为 keyShape，通过 node.get('keyShape') 可以获取。
+       * 关于 keyShape 可参考文档 核心概念-节点/边/Combo-图形 Shape 与 keyShape
+       */
+      draw: (cfg, group) => {
+        const config = getNodeConfig(cfg);
+        /* the biggest rect */
+        const container = nodeBasicMethod.createNodeBox(group, config, 243, 60);
 
-      /* name */
-      group?.addShape('text', {
-        attrs: {
-          text: cfg?.name || cfg?.id,
-          x: 19,
-          y: 30,
-          fontSize: 14,
-          fontWeight: 700,
-          textAlign: 'left',
-          textBaseline: 'middle',
-          fill: config.fontColor,
-          cursor: 'pointer',
-        },
-        name: 'name-text-shape',
-      });
+        /* name */
+        group?.addShape('text', {
+          attrs: {
+            text: cfg?.name || cfg?.id,
+            x: 19,
+            y: 30,
+            fontSize: 14,
+            fontWeight: 700,
+            textAlign: 'left',
+            textBaseline: 'middle',
+            fill: config.fontColor,
+            cursor: 'pointer',
+          },
+          name: 'name-text-shape',
+        });
 
-      nodeBasicMethod.createNodeMarker(group, cfg.collapsed, 236, 32);
-      return container;
+        nodeBasicMethod.createNodeMarker(group, cfg.collapsed, 236, 32);
+        return container;
+      },
+      afterDraw: nodeBasicMethod.afterDraw,
+      setState: nodeBasicMethod.setState,
+      getAnchorPoints() {
+        return [
+          [0, 0],
+          [0.5, 0],
+          [1, 0],
+          [0, 0.5],
+          [1, 0.5],
+          [0, 1],
+          [0.5, 1],
+          [1, 1],
+        ];
+      },
     },
-    afterDraw: nodeBasicMethod.afterDraw,
-    setState: nodeBasicMethod.setState,
-  });
+    'single-node',
+  );
 
   G6.registerCombo(
     'card-combo',
@@ -294,14 +315,30 @@ const Topo = () => {
           name: 'title-box',
           draggable: true,
         });
-        group.addShape('marker', {
+
+        /* name */
+        group?.addShape('text', {
+          attrs: {
+            text: cfg?.name || cfg?.id || cfg?.label,
+            x: -style.width / 2,
+            y: -style.height / 2,
+            fontSize: 14,
+            fontWeight: 700,
+            textAlign: 'left',
+            textBaseline: 'middle',
+            fill: '#fff',
+            cursor: 'pointer',
+          },
+          name: 'name-text-shape',
+        });
+        group?.addShape('marker', {
           attrs: {
             ...style,
             fill: '#fff',
             opacity: 1,
             // cfg.style.width and cfg.style.heigth correspond to the innerWidth and innerHeight in the figure of Illustration of Built-in Rect Combo
-            x: 5,
-            y: -(style.height / 2) - 15,
+            x: 0,
+            y: 0,
             r: 10,
             symbol: COLLAPSE_ICON,
           },
@@ -341,8 +378,8 @@ const Topo = () => {
         // Update the position of the right circle
         marker.attr({
           // cfg.style.width and cfg.style.heigth correspond to the innerWidth and innerHeight in the figure of Illustration of Built-in Rect Combo
-          x: cfg.style.width / 2 + cfg.padding[1],
-          y: (cfg.padding[2] - cfg.padding[0]) / 2,
+          x: style.width / 4,
+          y: -style.height / 2,
           // The property 'collapsed' in the combo data represents the collapsing state of the Combo
           // Update the symbol according to 'collapsed'
           symbol: cfg.collapsed ? EXPAND_ICON : COLLAPSE_ICON,
@@ -436,6 +473,7 @@ const Topo = () => {
           style: {
             stroke: '#e2e2e2',
             lineAppendWidth: 2,
+            cursor: 'pointer',
             endArrow: {
               path: G6.Arrow.triangle(),
               fill: '#e2e2e2',
