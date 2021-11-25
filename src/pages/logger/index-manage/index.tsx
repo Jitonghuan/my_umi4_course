@@ -8,12 +8,22 @@ import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest } from '@/utils/request';
 import { datetimeCellRender } from '@/utils';
-import { useEnvOptions, useCreateIndexMode } from '../search/hooks';
+import {
+  useEnvOptions,
+  useCreateIndexMode,
+  useQueryIndexMode,
+  useDeleteIndexMode,
+  useEditIndexMode,
+} from '../search/hooks';
 
 export default function DemoPageList() {
   const [addIndexForm] = Form.useForm();
   const [envOptions] = useEnvOptions();
-  const [createIndexMode] = useCreateIndexMode();
+  const [addMode, setAddMode] = useState<EditorMode>('HIDE');
+  const [createIndexMode] = useCreateIndexMode(); //创建
+  const [queryIndexTable, queryIndexModeData] = useQueryIndexMode(); //查询
+  const [deleteIndexTable] = useDeleteIndexMode(); //删除
+  const [editIndexTable] = useEditIndexMode(); //编辑
   const [keyword, setKeyword] = useState<string>('');
   const [addIndexVisiable, setAddIndexVisiable] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -38,10 +48,13 @@ export default function DemoPageList() {
   return (
     <PageContainer>
       <Drawer
-        title={'新增索引'}
-        visible={addIndexVisiable}
+        // title={'新增索引'}
+        visible={addMode !== 'HIDE'}
+        title={addMode === 'EDIT' ? '编辑环境' : addMode === 'ADD' ? '新增环境' : null}
+        // visible={addIndexVisiable}
         onClose={() => {
-          setAddIndexVisiable(false);
+          setAddMode('HIDE');
+          // setAddIndexVisiable(false);
         }}
         width={400}
         footer={
@@ -52,7 +65,8 @@ export default function DemoPageList() {
             <Button
               type="default"
               onClick={() => {
-                setAddIndexVisiable(false);
+                setAddMode('HIDE');
+                // setAddIndexVisiable(false);
               }}
             >
               取消
@@ -77,7 +91,8 @@ export default function DemoPageList() {
           <Button
             type="primary"
             onClick={() => {
-              setAddIndexVisiable(true);
+              // setAddIndexVisiable(true);
+              setAddMode('ADD');
             }}
           >
             新增
@@ -109,7 +124,14 @@ export default function DemoPageList() {
             width={120}
             render={(_, record: Record<string, any>, index) => (
               <div className="action-cell">
-                <a>编辑</a>
+                <a
+                  onClick={() => {
+                    // setAddIndexVisiable(true);
+                    setAddMode('EDIT');
+                  }}
+                >
+                  编辑
+                </a>
                 <Popconfirm title="确定要删除吗？" onConfirm={() => console.log(record, index)}>
                   <a>删除</a>
                 </Popconfirm>
