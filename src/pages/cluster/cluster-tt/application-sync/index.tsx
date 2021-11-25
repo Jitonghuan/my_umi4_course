@@ -176,7 +176,7 @@ export default function Application() {
                   color: current !== record?.ClusterA?.jvmConfig ? 'red' : 'black',
                 }}
               >
-                {jvmConfigInfo}
+                {current}
               </a>
             )}
           />
