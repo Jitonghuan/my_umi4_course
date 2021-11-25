@@ -182,12 +182,11 @@ export default function LoggerSearch(props: any) {
       }
     });
 
-    localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(filterIs);
-    localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(filterNot);
+    tagListArryIs = filterIs;
+    tagListArryNot = filterNot;
 
-    tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
-    console.log(tagListArryIs);
-    tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
+    localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
+    localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(tagListArryNot);
   };
   const queryLogInfo = (n: any = logStore) => {
     postRequest(APIS.logSearch, {
@@ -218,13 +217,13 @@ export default function LoggerSearch(props: any) {
 
   const closeTagIs = (index: number, type: string) => {
     tagListArryIs.splice(index, 1);
-    localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
+    localStorage.LOG_SEARCH_FILTER_IS = JSON?.stringify(tagListArryIs);
     queryLogInfo();
   };
 
   const closeTagNot = (index: number, type: string) => {
     tagListArryNot.splice(index, 1);
-    localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(tagListArryNot);
+    localStorage.LOG_SEARCH_FILTER_NOT = JSON?.stringify(tagListArryNot);
     queryLogInfo();
   };
 
