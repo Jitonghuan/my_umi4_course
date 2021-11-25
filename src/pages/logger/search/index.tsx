@@ -140,7 +140,7 @@ export default function LoggerSearch(props: any) {
     return <DatePicker picker={type} onChange={onChange} />;
   };
   if (!localStorage.LOG_SEARCH_FILTER_IS) {
-    (localStorage.LOG_SEARCH_FILTER_IS = ''), (tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS));
+    (localStorage.LOG_SEARCH_FILTER_IS = []), (tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS));
     tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
   } else if (localStorage.LOG_SEARCH_FILTER_IS) {
     tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
