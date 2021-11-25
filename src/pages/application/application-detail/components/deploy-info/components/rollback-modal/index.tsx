@@ -14,6 +14,8 @@ export interface RollbackModalProps {
   envCode?: string;
   onClose?: () => any;
   onSave?: () => any;
+  intervalStop?: () => void;
+  intervalStart?: () => void;
 }
 
 export default function RollbackModal(props: RollbackModalProps) {
@@ -35,7 +37,7 @@ export default function RollbackModal(props: RollbackModalProps) {
       return;
     }
 
-    if (result?.data?.length) {
+    if (result?.data && result.data.length) {
       setRollbackVersions(result.data);
       return;
     }
@@ -100,9 +102,13 @@ export default function RollbackModal(props: RollbackModalProps) {
         </Form.Item>
         <Form.Item label="回滚版本" name="version" rules={[{ required: true, message: '请选择版本' }]}>
           <Radio.Group style={{ width: '100%' }}>
-            {/* rollbackVersions.reverse().map() */}
             {rollbackVersions?.reverse()?.map((item: any, index) => (
-              <Radio key={index} value={item.packageVersionId || item.image} className="flex-radio-wrap">
+              <Radio
+                key={index}
+                disabled={index === 0 ? true : false}
+                value={item.packageVersionId || item.image}
+                className="flex-radio-wrap"
+              >
                 {/* 版本号： */}
                 {item?.hasOwnProperty('packageVersionId') ? (
                   <div>

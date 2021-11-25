@@ -12,7 +12,6 @@ export function appChangeChart(appChangeData: Record<string, any>) {
   const { appData } = useContext(DetailContext);
   const startDate = moment().subtract(8, 'days').format('YYYY-MM-DD');
   const endDate = moment().subtract(1, 'days').format('YYYY-MM-DD');
-  console.log('时间：', startDate, endDate);
   useEffect(() => {
     getChangeDetailList();
   }, []);
