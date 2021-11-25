@@ -24,6 +24,11 @@ export function loggerChart(data: any) {
         },
       },
     },
+    grid: {
+      top: '2%',
+      bottom: '10%',
+      // containLabel: true,
+    },
     xAxis: {
       type: 'category',
       name: '时间',

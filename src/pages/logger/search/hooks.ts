@@ -120,24 +120,10 @@ export function useCreateIndexMode() {
   return [createIndexMode];
 }
 
-//查询表格数据  queryIndexMode
-export function useQueryIndexMode() {
-  const [queryIndexModeData, setQueryIndexModeData] = useState<any[]>([]);
-  useEffect(() => {}, []);
-  const queryIndexTable = () => {
-    postRequest(APIS.queryIndexMode).then((resp) => {
-      if (resp.success) {
-        setQueryIndexModeData(resp?.data);
-      }
-    });
-  };
-  return [queryIndexTable, queryIndexModeData];
-}
-
 //删除数据
-
 export function useDeleteIndexMode() {
   const deleteIndexTable = (id: number) => {
+    console.log('id', id);
     postRequest(APIS.deleteIndexMode, {
       data: { id },
     }).then((resp) => {
@@ -151,9 +137,9 @@ export function useDeleteIndexMode() {
 
 //编辑数据
 export function useEditIndexMode() {
-  const editIndexTable = (id: number, envCode: string, indexMode: string, fields: string) => {
+  const editIndexTable = (id: number, envCode: string, fields: string, indexMode: string) => {
     postRequest(APIS.editIndexMode, {
-      data: { id, envCode, indexMode, fields },
+      data: { id, envCode, fields, indexMode },
     }).then((resp) => {
       if (resp.success) {
         message.info('编辑索引成功！');

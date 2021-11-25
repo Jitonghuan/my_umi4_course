@@ -23,6 +23,7 @@ import {
   Avatar,
   Skeleton,
   Divider,
+  Tabs,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import { AnsiUp } from 'ansi-up';
@@ -73,6 +74,7 @@ export const START_TIME_ENUMS = [
 ];
 
 export default function LoggerSearch(props: any) {
+  const { TabPane } = Tabs;
   const { Search } = Input;
   const { Panel } = Collapse;
   const { Option } = Select;
@@ -90,20 +92,20 @@ export default function LoggerSearch(props: any) {
   console.log('logSearchTableInfo', logSearchTableInfo);
   const [hitInfo, setHitInfo] = useState<string>(''); //命中次数
   const [timestamp, setTimestamp] = useState<any>(''); //时间
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); //无限下拉loading
   const [editScreenVisible, setEditScreenVisible] = useState<boolean>(false);
   const [envCode, setEnvCode] = useState<string>();
   const [editEnvCode, setEditEnvCode] = useState<string>('');
+
   const [logStore, setLogStore] = useState<string>();
   const [envOptions] = useEnvOptions();
   const [logStoreOptions] = useLogStoreOptions(envCode);
+
   const [frameUrl, urlLoading, logType] = useFrameUrl(envCode, logStore);
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList();
   const [framePending, setFramePending] = useState(false);
   const timmerRef = useRef<any>();
   const frameRef = useRef<any>();
-  // const tagListArryIs = useRef<any>();
-  // const tagListArryNot = useRef<any>();
   let tagListArryIs: any = [];
   let tagListArryNot: any = [];
 
@@ -143,13 +145,8 @@ export default function LoggerSearch(props: any) {
     return <DatePicker picker={type} onChange={onChange} />;
   };
 
-  // tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS)
-  // tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT)
-
   tagListArryIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
   tagListArryNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
-
-  useEffect(() => {}, []);
 
   const submitEditScreen = (params: any) => {
     let filterIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
@@ -188,6 +185,42 @@ export default function LoggerSearch(props: any) {
 
     localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
     localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(tagListArryNot);
+  };
+
+  const loadMoreData = (n: any = logStore) => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    postRequest(APIS.logSearch, {
+      data: {
+        startTime: start,
+        endTime: end,
+        querySql: '',
+        filterIs: tagListArryIs || [],
+        filterNot: tagListArryNot || [],
+        envCode: envCode,
+        indexMode: n,
+      },
+    })
+      .then((resp) => {
+        if (resp?.success) {
+          //柱状图数据 buckets
+          let logHistorm = resp?.data?.aggregations?.aggs_over_time?.buckets;
+          setLogHistormData;
+          setLogHistormData(logHistorm);
+          //手风琴下拉框数据 hits
+          let logSearchTableInfodata = resp.data.hits.hits;
+          setLogSearchTableInfo(logSearchTableInfodata);
+          //命中率
+          let hitNumber = resp.data.hits.total.value;
+          setHitInfo(hitNumber);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   };
   const queryLogInfo = (n: any = logStore) => {
     postRequest(APIS.logSearch, {
@@ -242,20 +275,8 @@ export default function LoggerSearch(props: any) {
       });
   };
   //实现无限加载滚动
-
-  const content = (
-    <div>
-      <Popover title="查看lucene语法" placement="topLeft" content="">
-        <Button>
-          lucene
-          <QuestionCircleOutlined />
-        </Button>
-      </Popover>
-      <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 290 }} />
-    </div>
-  );
   return (
-    <PageContainer>
+    <PageContainer className="content">
       <FilterCard>
         <Row>
           <Col span={17}>
@@ -331,79 +352,31 @@ export default function LoggerSearch(props: any) {
           <div>
             <div style={{ marginBottom: 18, width: '100%' }}>
               <div>
-                <Form form={editScreenForm} onFinish={submitEditScreen}>
-                  <Row gutter={[2, 12]} style={{ width: 800 }}>
-                    <Col className="gutter-row" span={8}>
-                      <div>字段</div>
-                    </Col>
-                    <Col className="gutter-row" span={8}>
-                      <div>运算符</div>
-                    </Col>
-                    <Col className="gutter-row" span={8}>
-                      <div>值</div>
-                    </Col>
-                    <Col className="gutter-row" span={8}>
-                      <div>appCode</div>
-                    </Col>
-                    <Col className="gutter-row" span={8}>
-                      <div>
-                        <Select placeholder="请选择" style={{ width: 120 }}>
-                          <Select.Option key="filterIs" value="filterIs">
-                            是
-                          </Select.Option>
-                          <Select.Option key="filterNot" value="filterNot">
-                            否
-                          </Select.Option>
-                        </Select>
-                      </div>
-                    </Col>
-                    <Col className="gutter-row" span={8}>
-                      <div>
-                        {' '}
-                        <Input style={{ width: 140 }} placeholder="单行输入"></Input>
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row gutter={[2, 12]} style={{ width: 400 }}>
-                    <Col className="gutter-row" span={8}>
-                      <div>
-                        <Select
-                          placeholder="envCode"
-                          allowClear
-                          style={{ width: 120 }}
-                          options={indexModeData}
-                        ></Select>
-                      </div>
-                    </Col>
-                    <Col className="gutter-row" span={8}>
-                      <div>
-                        {' '}
-                        <Select placeholder="请选择" style={{ width: 120 }}>
-                          <Select.Option key="filterIs" value="filterIs">
-                            是
-                          </Select.Option>
-                          <Select.Option key="filterNot" value="filterNot">
-                            否
-                          </Select.Option>
-                        </Select>
-                      </div>
-                    </Col>
-                    <Col className="gutter-row" span={8}>
-                      <div>
-                        {' '}
-                        <Input style={{ width: 140 }} placeholder="单行输入"></Input>
-                      </div>
-                    </Col>
-                  </Row>
+                <Form layout="inline" labelCol={{ flex: 4 }}>
+                  <Form.Item label="appCode">
+                    <Input style={{ width: 120 }}></Input>
+                  </Form.Item>
+                  <Form.Item label="traceId">
+                    <Select placeholder="请选择" style={{ width: 120 }} defaultValue="filterIs">
+                      <Select.Option key="filterIs" value="filterIs">
+                        是
+                      </Select.Option>
+                      <Select.Option key="filterNot" value="filterNot">
+                        否
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item label="message">
+                    <Input style={{ width: 180 }} placeholder="单行输入"></Input>
+                  </Form.Item>
                 </Form>
               </div>
-
-              <div>
+              <div style={{ marginTop: 4, width: '100%', marginLeft: 30 }}>
                 <Form form={editScreenForm} onFinish={submitEditScreen} layout="inline">
                   <Form.Item label="字段" name="fields">
                     <Select placeholder="envCode" allowClear style={{ width: 120 }} options={indexModeData}></Select>
                   </Form.Item>
-                  <Form.Item label="运算符" name="isfilter">
+                  <Form.Item label="运算符" name="isfilter" style={{ marginLeft: 4 }}>
                     <Select placeholder="请选择" style={{ width: 120 }}>
                       <Select.Option key="filterIs" value="filterIs">
                         是
@@ -413,113 +386,153 @@ export default function LoggerSearch(props: any) {
                       </Select.Option>
                     </Select>
                   </Form.Item>
-                  <Form.Item label="值" name="editValue">
-                    <Input style={{ width: 140 }} placeholder="单行输入"></Input>
+                  <Form.Item label="值" name="editValue" style={{ marginLeft: 44, width: 280 }}>
+                    <Input style={{ width: 180 }} placeholder="单行输入"></Input>
                   </Form.Item>
                   <Form.Item>
-                    <Button htmlType="submit" type="primary" style={{ marginLeft: 2 }}>
+                    <Button htmlType="submit" type="primary">
                       <PlusOutlined />
-                      添加筛选查询
                     </Button>
                   </Form.Item>
                   <Form.Item>
-                    <Button htmlType="reset" style={{ marginLeft: 2 }}>
-                      取消
+                    <Button type="primary" style={{ marginLeft: 2 }} onClick={() => setEditScreenVisible(true)}>
+                      高级搜索
                     </Button>
                   </Form.Item>
                   <Form.Item>
-                    <Button>使用Lucene语法</Button>
+                    <Button type="default" onClick={() => setEditScreenVisible(false)}>
+                      关闭高级搜索
+                    </Button>
                   </Form.Item>
                 </Form>
-              </div>
-              <div>
-                {tagListArryIs?.map((el: any, index: number) => {
-                  return (
-                    <Tag
-                      closable={true}
-                      visible={true}
-                      color="green"
-                      onClose={() => {
-                        closeTagIs(index, 'LOG_SEARCH_FILTER_IS');
-                      }}
-                    >
-                      {el}
-                    </Tag>
-                  );
-                })}
-                {tagListArryNot?.map((el: any, index: number) => {
-                  return (
-                    <Tag
-                      closable={true}
-                      color="gold"
-                      visible={true}
-                      onClose={() => {
-                        closeTagNot(index, 'LOG_SEARCH_FILTER_NOT');
-                      }}
-                    >
-                      <span style={{ color: 'red' }}>非</span> {el}
-                    </Tag>
-                  );
-                })}
+                <div style={{ marginTop: 4 }}>
+                  {tagListArryIs?.map((el: any, index: number) => {
+                    return (
+                      <Tag
+                        closable={true}
+                        visible={true}
+                        color="green"
+                        onClose={() => {
+                          closeTagIs(index, 'LOG_SEARCH_FILTER_IS');
+                        }}
+                      >
+                        {el}
+                      </Tag>
+                    );
+                  })}
+                  {tagListArryNot?.map((el: any, index: number) => {
+                    return (
+                      <Tag
+                        closable={true}
+                        color="gold"
+                        visible={true}
+                        onClose={() => {
+                          closeTagNot(index, 'LOG_SEARCH_FILTER_NOT');
+                        }}
+                      >
+                        <span style={{ color: 'red' }}>非</span> {el}
+                      </Tag>
+                    );
+                  })}
+                </div>
+                {editScreenVisible === true ? (
+                  <div style={{ marginTop: 4 }}>
+                    <Popover title="查看lucene语法" placement="topLeft" content="">
+                      <Button>
+                        lucene
+                        <QuestionCircleOutlined />
+                      </Button>
+                    </Popover>
+                    <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 290 }} />
+                  </div>
+                ) : null}
               </div>
             </div>
-            <Divider />
+            <Divider style={{ height: 10, marginTop: 0, marginBottom: 0 }} />
             <div>
-              <RangePicker
-                showTime={{
-                  hideDisabledOptions: true,
-                  defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
-                }}
-                format="YYYY-MM-DD HH:mm:ss"
-              />
-              <span>
-                <Select
-                  value={startTime}
-                  onChange={(value) => {
-                    setStartTime(value);
-                  }}
-                  style={{ width: 150 }}
-                >
-                  <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
-                  {START_TIME_ENUMS.map((time) => (
-                    <Select.Option key={time.value} value={time.value}>
-                      {time.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </span>
-              <Button type="default">查询</Button>
-            </div>
-            <div style={{ marginBottom: 20, marginTop: 20 }}>
               <ChartCaseList data={logHistormData} loading={loading} hitsData={hitInfo} />
             </div>
             <div>
               {/* let html = ansi_up.ansi_to_html(resultLogData);
-        if (dom) {
-          dom.innerHTML = html;
-        }
-      }; */}
-              <Collapse defaultActiveKey={['1']} onChange={callback}>
-                {logSearchTableInfo?.map((item: any, index: number) => {
-                  let html = ansi_up.ansi_to_html(JSON.stringify(item?._source));
-                  let panelInfo = document.getElementById('panelInfo');
-                  if (panelInfo) {
-                    panelInfo.innerHTML = html;
-                  }
+               if (dom) {
+                dom.innerHTML = html;
+                 }
+                }; */}
 
-                  // {console.log('logSearchTableInfo0000000',logSearchTableInfo)}
-                  return (
-                    <Panel
-                      className="panelInfo"
-                      style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
-                      header={item?._source?.timestamp}
-                      key={index}
-                    >
-                      <p>{JSON.stringify(item?._source)}</p>
-                    </Panel>
-                  );
-                })}
-              </Collapse>
+              <div
+                id="scrollableDiv"
+                style={{
+                  height: 400,
+                  overflow: 'auto',
+                  padding: '0 16px',
+                  border: '1px solid rgba(140, 140, 140, 0.35)',
+                }}
+              >
+                <InfiniteScroll
+                  dataLength={50}
+                  next={loadMoreData}
+                  hasMore={logSearchTableInfo?.length < 1000}
+                  loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+                  endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+                  scrollableTarget="scrollableDiv"
+                >
+                  <List
+                    dataSource={logSearchTableInfo}
+                    renderItem={(item: any, index) => (
+                      <List.Item key={item}>
+                        <Collapse onChange={callback}>
+                          {
+                            // let html = ansi_up.ansi_to_html(JSON.stringify(item?._source));
+                            // let panelInfo = document.getElementById('panelInfo');
+                            // if (panelInfo) {
+                            //   panelInfo.innerHTML = html;
+                            // }
+
+                            // {console.log('logSearchTableInfo0000000',logSearchTableInfo)}
+                            // return (
+                            <Panel
+                              className="panelInfo"
+                              style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
+                              header={
+                                <div style={{ display: 'flex' }}>
+                                  <div style={{ width: '15%' }}>2021年11月23日</div>{' '}
+                                  <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div>
+                                </div>
+                              }
+                              key={index}
+                            >
+                              {/* <p>{JSON.stringify(item?._source)}</p> */}
+                              <Tabs defaultActiveKey="1" onChange={callback}>
+                                <TabPane tab="表" key="1">
+                                  <p>
+                                    <span>@timestamp:</span>
+                                    <span>{item?._source?.appCode}</span>
+                                  </p>
+                                  Content of Tab Pane 1
+                                </TabPane>
+                                <TabPane tab="JSON" key="2">
+                                  Content of Tab Pane 2
+                                </TabPane>
+                              </Tabs>
+                            </Panel>
+                            // )}
+                          }
+                          {/* {logSearchTableInfo?.map((item: any, index: number) => {
+
+
+
+
+
+
+
+
+                          })} */}
+                        </Collapse>
+                      </List.Item>
+                    )}
+                  />
+                </InfiniteScroll>
+              </div>
             </div>
           </div>
         ) : null}

@@ -5,6 +5,7 @@
 import React, { useMemo } from 'react';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import { loggerChart } from './formatter';
+import { Tag } from 'antd';
 
 const { ColorContainer } = colorUtil.context;
 
@@ -24,11 +25,9 @@ export default function ChartCaseList(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-        <h3>
-          <span style={{ color: 'blue' }}>{hitsData}</span>次命中
-        </h3>
+        <Tag color="blue">{hitsData}次命中</Tag>
       </div>
-      <div style={{ height: 380 }}>
+      <div style={{ height: 205 }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={chartOptions} />
         </ColorContainer>

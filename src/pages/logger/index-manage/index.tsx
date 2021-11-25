@@ -5,56 +5,78 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Input, Table, Popconfirm, Button, Drawer, Form, Select } from 'antd';
 import PageContainer from '@/components/page-container';
+import { getRequest, postRequest, delRequest } from '@/utils/request';
+import appConfig from '@/app.config';
+import * as APIS from '../search/service';
 import { ContentCard } from '@/components/vc-page-content';
-import { getRequest } from '@/utils/request';
 import { datetimeCellRender } from '@/utils';
-import {
-  useEnvOptions,
-  useCreateIndexMode,
-  useQueryIndexMode,
-  useDeleteIndexMode,
-  useEditIndexMode,
-} from '../search/hooks';
-
+import { useEnvOptions, useCreateIndexMode, useDeleteIndexMode, useEditIndexMode } from '../search/hooks';
 export default function DemoPageList() {
   const [addIndexForm] = Form.useForm();
   const [envOptions] = useEnvOptions();
   const [addMode, setAddMode] = useState<EditorMode>('HIDE');
+  const [initValue, setInitValue] = useState<any>(); //编辑时候的初始值
   const [createIndexMode] = useCreateIndexMode(); //创建
-  const [queryIndexTable, queryIndexModeData] = useQueryIndexMode(); //查询
   const [deleteIndexTable] = useDeleteIndexMode(); //删除
   const [editIndexTable] = useEditIndexMode(); //编辑
   const [keyword, setKeyword] = useState<string>('');
+  const [id, setId] = useState<number>(0);
   const [addIndexVisiable, setAddIndexVisiable] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageSize, setPageSize] = useState<number>(20);
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [queryIndexModeData, setQueryIndexModeData] = useState<any[]>([]);
 
-  useEffect(() => {}, [pageIndex, pageSize]);
+  //查询表格信息
+  const queryIndexTable = (pageIndex?: any, pageSize?: any) => {
+    getRequest(APIS.queryIndexMode, { data: { pageIndex, pageSize } }).then((resp) => {
+      if (resp.success) {
+        setQueryIndexModeData(resp?.data.dataSource);
+        setTotal(resp?.data?.pageInfo?.total);
+        setPageSize(resp?.data?.pageInfo?.pageSize);
+        setPageIndex(resp?.data?.pageInfo?.pageIndex);
+      }
+    });
+  };
+
+  useEffect(() => {
+    queryIndexTable();
+  }, [pageIndex, pageSize]);
+
+  useEffect(() => {}, [addMode]);
+
   //提交新增数据
   const handleSubmit = () => {
     const paramsdata = addIndexForm.getFieldsValue();
-    let envCode = paramsdata?.envCode;
+    let envCode = paramsdata?.env_code;
     let fields = paramsdata?.fields;
-    let indexMode = paramsdata?.indexMode;
-    console.log('paramsdata', paramsdata);
-    setAddIndexVisiable(false);
-    createIndexMode(envCode, fields, indexMode);
+    let indexMode = paramsdata?.index_mode;
+    if (addMode === 'ADD') {
+      createIndexMode(envCode, fields, indexMode);
+      setTimeout(() => {
+        queryIndexTable();
+      }, 200);
+
+      setAddMode('HIDE');
+    } else if (addMode === 'EDIT') {
+      editIndexTable(id, envCode, fields, indexMode);
+      setTimeout(() => {
+        queryIndexTable();
+      }, 200);
+      setAddMode('HIDE');
+    }
   };
 
   return (
     <PageContainer>
       <Drawer
-        // title={'新增索引'}
         visible={addMode !== 'HIDE'}
         title={addMode === 'EDIT' ? '编辑环境' : addMode === 'ADD' ? '新增环境' : null}
-        // visible={addIndexVisiable}
         onClose={() => {
           setAddMode('HIDE');
-          // setAddIndexVisiable(false);
         }}
         width={400}
         footer={
@@ -66,7 +88,6 @@ export default function DemoPageList() {
               type="default"
               onClick={() => {
                 setAddMode('HIDE');
-                // setAddIndexVisiable(false);
               }}
             >
               取消
@@ -75,10 +96,10 @@ export default function DemoPageList() {
         }
       >
         <Form form={addIndexForm} labelCol={{ flex: '120px' }}>
-          <Form.Item label="环境Code" name="envCode" rules={[{ required: true, message: '请输入环境Code' }]}>
+          <Form.Item label="环境Code" name="env_code" rules={[{ required: true, message: '请输入环境Code' }]}>
             <Select options={envOptions} style={{ width: 140 }} placeholder="请选择" />
           </Form.Item>
-          <Form.Item label="日志库(索引模式)" name="indexMode">
+          <Form.Item label="日志库(索引模式)" name="index_mode">
             <Input placeholder="请输入" style={{ width: 140 }} />
           </Form.Item>
           <Form.Item label="字段" name="fields" rules={[{ required: true }]}>
@@ -91,7 +112,7 @@ export default function DemoPageList() {
           <Button
             type="primary"
             onClick={() => {
-              // setAddIndexVisiable(true);
+              addIndexForm.resetFields();
               setAddMode('ADD');
             }}
           >
@@ -99,13 +120,9 @@ export default function DemoPageList() {
           </Button>
         </div>
         <Table
-          dataSource={dataSource}
+          dataSource={queryIndexModeData}
           loading={loading}
           rowKey="id"
-          rowSelection={{
-            selectedRowKeys,
-            onChange: (next) => setSelectedRowKeys(next),
-          }}
           pagination={{
             current: pageIndex,
             total,
@@ -116,23 +133,36 @@ export default function DemoPageList() {
           }}
         >
           <Table.Column title="序号" dataIndex="id" width={60} />
-          <Table.Column title="环境Code" dataIndex="name" ellipsis />
-          <Table.Column title="日志库(索引模式)" dataIndex="desc" ellipsis />
-          <Table.Column title="字段" dataIndex="createUser" width={140} />
+          <Table.Column title="环境Code" dataIndex="envCode" width={120} ellipsis />
+          <Table.Column title="日志库(索引模式)" dataIndex="indexMode" width={140} ellipsis />
+          <Table.Column title="字段" dataIndex="fields" width={120} />
           <Table.Column
             title="操作"
-            width={120}
-            render={(_, record: Record<string, any>, index) => (
+            width={160}
+            render={(current, record: any, index) => (
               <div className="action-cell">
                 <a
                   onClick={() => {
-                    // setAddIndexVisiable(true);
                     setAddMode('EDIT');
+                    console.log('current', current, record);
+                    setId(current?.id);
+                    setInitValue(record);
+                    addIndexForm.setFieldsValue({
+                      ...record,
+                    });
                   }}
                 >
                   编辑
                 </a>
-                <Popconfirm title="确定要删除吗？" onConfirm={() => console.log(record, index)}>
+                <Popconfirm
+                  title="确定要删除吗？"
+                  onConfirm={() => {
+                    postRequest(`${appConfig.apiPrefix}/logManage/logSearch/indexMode/delete?id=${record.id}`);
+                    setTimeout(() => {
+                      queryIndexTable();
+                    }, 200);
+                  }}
+                >
                   <a>删除</a>
                 </Popconfirm>
               </div>
