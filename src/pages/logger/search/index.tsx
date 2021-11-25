@@ -139,14 +139,14 @@ export default function LoggerSearch(props: any) {
     if (type === 'date') return <DatePicker onChange={onChange} />;
     return <DatePicker picker={type} onChange={onChange} />;
   };
-  if (!localStorage.LOG_SEARCH_FILTER_IS) {
-    (localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify('')),
-      (tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS));
-    tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
-  } else if (localStorage.LOG_SEARCH_FILTER_IS) {
-    tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
-    tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
-  }
+  // if (!localStorage.LOG_SEARCH_FILTER_IS) {
+  //   (localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify('')),
+  //     (tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS));
+  //   tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
+  // } else if (localStorage.LOG_SEARCH_FILTER_IS) {
+  //   tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
+  //   tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
+  // }
   // tagListArryIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
   // tagListArryNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
 
