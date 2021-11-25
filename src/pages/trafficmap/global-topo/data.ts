@@ -5,14 +5,14 @@
  */
 export const OriginData = {
   nodes: [
-    { id: 'region0', label: '0', type: 'card-node', statue: 'normal', nodeType: 'region' },
+    { id: 'region0', label: '0', type: 'card-node', status: 'normal', nodeType: 'region' },
     { id: 'region1', label: '1', type: 'card-node', status: 'normal', nodeType: 'region' },
     { id: 'region2', label: '2', type: 'card-node', status: 'warning', nodeType: 'region' },
     { id: 'region3', label: '3', type: 'card-node', status: 'danger', nodeType: 'region' },
     { id: 'region4', label: '4', type: 'card-node', status: 'normal', nodeType: 'region' },
     { id: 'region5', label: '5', type: 'card-node', status: 'normal', nodeType: 'region' },
 
-    { id: 'node0', label: '0', type: 'circle', statue: 'normal', nodeRegionCode: 'region0' },
+    { id: 'node0', label: '0', type: 'circle', status: 'normal', nodeRegionCode: 'region0' },
     { id: 'node1', label: '1', type: 'circle', status: 'normal', nodeRegionCode: 'region1' },
     { id: 'node2', label: '2', status: 'warning', nodeRegionCode: 'region2' },
     { id: 'node3', label: '3', status: 'danger', nodeRegionCode: 'region3' },

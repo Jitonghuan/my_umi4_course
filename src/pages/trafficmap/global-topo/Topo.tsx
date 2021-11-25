@@ -104,33 +104,7 @@ const Topo = () => {
       return container;
     },
     /* 生成树上的 marker */
-    createNodeMarker: (
-      group: {
-        addShape: (
-          arg0: string,
-          arg1: {
-            attrs:
-              | { x: number; y: any; r: number; fill: string; opacity: number; zIndex: number }
-              | {
-                  x: number;
-                  y: any;
-                  r: number;
-                  symbol:
-                    | ((x: number, y: any, r: number) => any[][])
-                    | ((x: number, y: number, r: number) => (string | number)[][]);
-                  stroke: string;
-                  fill: string;
-                  lineWidth: number;
-                  cursor: string;
-                };
-            name: string;
-          },
-        ) => void;
-      },
-      collapsed: any,
-      x: number,
-      y: any,
-    ) => {
+    createNodeMarker: (group: any, collapsed: any, x: number, y: any) => {
       group.addShape('circle', {
         attrs: {
           x: x - 30,
@@ -257,18 +231,18 @@ const Topo = () => {
     'card-combo',
     {
       drawShape: function drawShape(cfg, group) {
+        console.log(cfg);
         const self = this;
         // Get the padding from the configuration
         cfg.padding = cfg.padding || [50, 20, 20, 20];
         const style = self.getShapeStyle(cfg);
-        const color = cfg.error ? '#F4664A' : '#30BF78';
         const r = 2;
         const shape = group.addShape('rect', {
           attrs: {
             ...style,
             x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
-            stroke: color,
+            stroke: enumcolor[cfg.status || 'normal'],
             radius: r,
           },
           name: 'main-box',
@@ -281,7 +255,7 @@ const Topo = () => {
             x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
             height: 20,
-            fill: color,
+            fill: enumcolor[cfg.status || 'normal'],
             width: style.width,
             radius: [r, r, 0, 0],
           },
@@ -570,11 +544,9 @@ const Topo = () => {
     evt.item.changeVisibility(false);
     graph.uncombo(evt.item);
 
-    console.log('filter regionId', regionId);
     const newArr = expandArr.filter(
       (item) => !item.nodeRegionCode || (item.nodeType !== 'region' && item.nodeRegionCode !== regionId),
     );
-    console.log('newArr', newArr);
     graph.data({ nodes: newArr, edges: OriginData.edges });
     expandArr = newArr;
     graph.render();
@@ -585,6 +557,7 @@ const Topo = () => {
           id: combo.id,
           type: combo.type,
           label: combo.label,
+          status: combo.status,
         },
         combo.nodes,
       );
@@ -612,6 +585,7 @@ const Topo = () => {
       label: model.id,
       type: 'card-combo',
       regionCode: model.id,
+      status: model.status,
       nodes: newNode,
     };
     comboArr.push(newcombo);
@@ -625,6 +599,7 @@ const Topo = () => {
           id: combo.id,
           type: combo.type,
           label: combo.label,
+          status: combo.status,
         },
         combo.nodes,
       );
