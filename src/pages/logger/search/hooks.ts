@@ -123,6 +123,7 @@ export function useCreateIndexMode() {
 //查询表格数据  queryIndexMode
 export function useQueryIndexMode() {
   const [queryIndexModeData, setQueryIndexModeData] = useState<any[]>([]);
+  useEffect(() => {}, []);
   const queryIndexTable = () => {
     postRequest(APIS.queryIndexMode).then((resp) => {
       if (resp.success) {

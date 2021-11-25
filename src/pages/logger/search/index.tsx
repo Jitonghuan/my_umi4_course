@@ -24,6 +24,7 @@ import {
   Divider,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
+import { AnsiUp } from 'ansi-up';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {} from './hooks';
 import * as APIS from './service';
@@ -74,6 +75,7 @@ export default function LoggerSearch(props: any) {
   const { Search } = Input;
   const { Panel } = Collapse;
   const { Option } = Select;
+  let ansi_up = new AnsiUp();
   const { RangePicker } = DatePicker;
   const [editScreenForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
@@ -139,16 +141,12 @@ export default function LoggerSearch(props: any) {
     if (type === 'date') return <DatePicker onChange={onChange} />;
     return <DatePicker picker={type} onChange={onChange} />;
   };
-  // if (!localStorage.LOG_SEARCH_FILTER_IS) {
-  //   (localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify('')),
-  //     (tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS));
-  //   tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
-  // } else if (localStorage.LOG_SEARCH_FILTER_IS) {
-  //   tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
-  //   tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
-  // }
-  // tagListArryIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
-  // tagListArryNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
+
+  // tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS)
+  // tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT)
+
+  tagListArryIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
+  tagListArryNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
 
   useEffect(() => {}, []);
 
@@ -248,65 +246,7 @@ export default function LoggerSearch(props: any) {
   };
   //实现无限加载滚动
 
-  const content = (
-    <div>
-      <Form form={editScreenForm} onFinish={submitEditScreen} labelCol={{ flex: '100px' }}>
-        <Row>
-          <Col span={12}>
-            <Form.Item label="字段" name="fields">
-              <Select placeholder="envCode" allowClear style={{ width: 120 }} options={indexModeData}></Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="运算符" name="isfilter">
-              <Select placeholder="请选择" style={{ width: 120 }}>
-                <Select.Option key="filterIs" value="filterIs">
-                  是
-                </Select.Option>
-                <Select.Option key="filterNot" value="filterNot">
-                  否
-                </Select.Option>
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item label="值" name="editValue">
-              <Input style={{ width: 140 }} placeholder="单行输入"></Input>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24} style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
-            <Form.Item>
-              <Button
-                htmlType="reset"
-                onClick={() => {
-                  setEditScreenVisible(false);
-                }}
-              >
-                取消
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button
-                htmlType="submit"
-                type="primary"
-                style={{ marginLeft: 8 }}
-                onClick={() => {
-                  setEditScreenVisible(false);
-                }}
-              >
-                保存
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-    </div>
-  );
-
+  const content = <div></div>;
   return (
     <PageContainer>
       <FilterCard>
@@ -353,30 +293,43 @@ export default function LoggerSearch(props: any) {
 
         {logType === '0' && envCode && logStore ? (
           <div>
-            <div style={{ marginBottom: 18 }}>
-              <Popover
-                placement="bottomLeft"
-                title="编辑筛选"
-                content={content}
-                trigger="click"
-                overlayStyle={{ width: 600 }}
-                visible={editScreenVisible}
-              >
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    setEditScreenVisible(true);
-                  }}
-                >
-                  <PlusOutlined />
-                  添加筛选查询
-                </Button>
-              </Popover>
-              <span>
+            <div style={{ marginBottom: 18, width: '100%' }}>
+              <div>
+                <Form form={editScreenForm} onFinish={submitEditScreen} layout="inline">
+                  <Form.Item label="字段" name="fields">
+                    <Select placeholder="envCode" allowClear style={{ width: 120 }} options={indexModeData}></Select>
+                  </Form.Item>
+                  <Form.Item label="运算符" name="isfilter">
+                    <Select placeholder="请选择" style={{ width: 120 }}>
+                      <Select.Option key="filterIs" value="filterIs">
+                        是
+                      </Select.Option>
+                      <Select.Option key="filterNot" value="filterNot">
+                        否
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item label="值" name="editValue">
+                    <Input style={{ width: 140 }} placeholder="单行输入"></Input>
+                  </Form.Item>
+                  <Form.Item>
+                    <Button htmlType="submit" type="primary" style={{ marginLeft: 2 }}>
+                      <PlusOutlined />
+                      添加筛选查询
+                    </Button>
+                  </Form.Item>
+                  <Form.Item>
+                    <Button htmlType="reset" style={{ marginLeft: 2 }}>
+                      取消
+                    </Button>
+                  </Form.Item>
+                  <Form.Item>
+                    <Button>使用Lucene语法</Button>
+                  </Form.Item>
+                </Form>
+              </div>
+              <div>
                 {tagListArryIs?.map((el: any, index: number) => {
-                  {
-                    console.log(el, 'esdasdsadasdas');
-                  }
                   return (
                     <Tag
                       closable={true}
@@ -404,7 +357,7 @@ export default function LoggerSearch(props: any) {
                     </Tag>
                   );
                 })}
-              </span>
+              </div>
             </div>
             <Divider />
             <div>
@@ -445,11 +398,27 @@ export default function LoggerSearch(props: any) {
               <ChartCaseList data={logHistormData} loading={loading} hitsData={hitInfo} />
             </div>
             <div>
+              {/* let html = ansi_up.ansi_to_html(resultLogData);
+        if (dom) {
+          dom.innerHTML = html;
+        }
+      }; */}
               <Collapse defaultActiveKey={['1']} onChange={callback}>
                 {logSearchTableInfo?.map((item: any, index: number) => {
+                  let html = ansi_up.ansi_to_html(JSON.stringify(item?._source));
+                  let panelInfo = document.getElementById('panelInfo');
+                  if (panelInfo) {
+                    panelInfo.innerHTML = html;
+                  }
+
                   // {console.log('logSearchTableInfo0000000',logSearchTableInfo)}
                   return (
-                    <Panel header={item?._source?.timestamp} key={index}>
+                    <Panel
+                      className="panelInfo"
+                      style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
+                      header={item?._source?.timestamp}
+                      key={index}
+                    >
                       <p>{JSON.stringify(item?._source)}</p>
                     </Panel>
                   );
