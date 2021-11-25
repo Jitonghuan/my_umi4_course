@@ -6,7 +6,15 @@
 import G6, { ModelConfig } from '@antv/g6';
 import React, { useEffect, useState } from 'react';
 import { OriginData } from './data';
+import serverblue from '@/assets/imgs/serverblue.svg';
+import serverred from '@/assets/imgs/serverred.svg';
+import serveryellow from '@/assets/imgs/serveryellow.svg';
 
+const iconenum = {
+  warning: serveryellow,
+  danger: serverred,
+  normal: serverblue,
+};
 const Topo = () => {
   const [loading, setLoading] = useState(false);
 
@@ -48,7 +56,7 @@ const Topo = () => {
   };
 
   const nodeBasicMethod = {
-    createNodeBox: (group: any, config: { borderColor: any; basicColor: any }, w: number, h: any) => {
+    createNodeBox: (group: any, config: any, w: number, h: any) => {
       /* 最外面的大矩形 */
       const container = group.addShape('rect', {
         attrs: {
@@ -227,6 +235,9 @@ const Topo = () => {
     'single-node',
   );
 
+  /**
+   * desc：自定义combo
+   */
   G6.registerCombo(
     'card-combo',
     {
@@ -327,6 +338,77 @@ const Topo = () => {
     'rect',
   );
 
+  /**
+   * desc：自定义app node
+   */
+
+  G6.registerNode(
+    'app-node',
+    {
+      draw(cfg, group) {
+        const { style } = cfg;
+        console.log(style);
+        const keyShape = group.addShape('circle', {
+          attrs: {
+            ...style,
+            r: 20,
+            x: 0,
+            y: 0,
+            // fill: enumcolor[cfg.status || 'normal'],
+            fill: '#fff',
+            stroke: enumcolor[cfg.status || 'normal'],
+          },
+        });
+        group.addShape('image', {
+          attrs: {
+            height: 20,
+            img: iconenum[cfg.status || 'normal'],
+            show: true,
+            width: 20,
+            x: -10,
+            y: -10,
+          },
+        });
+        group.addShape('text', {
+          attrs: {},
+        });
+        return keyShape;
+      },
+
+      setState(name, value, item) {
+        const cfg = item['_cfg'];
+        const group = item.getContainer();
+        console.log(group.get('children'));
+        const shape = group.get('children')[0]; // 顺序根据 draw 时确定
+        console.log(shape);
+        if (name === 'focus') {
+          if (value) {
+            shape.attr('shadowBlur', 10);
+            shape.attr('shadowColor', enumcolor[cfg.model.status || 'normal']);
+            shape.attr('lineWidth', 4);
+          } else {
+            shape.attr('shadowBlur', 0);
+            shape.attr('shadowColor', '');
+            shape.attr('lineWidth', 3);
+          }
+        } else if (name == 'active') {
+          if (value) {
+            shape.attr('shadowBlur', 10);
+            shape.attr('shadowColor', enumcolor[cfg.model.status || 'normal']);
+          } else {
+            const state = item.hasState('focus');
+            if (!state) {
+              shape.attr('shadowBlur', 0);
+              shape.attr('shadowColor', '');
+              shape.attr('lineWidth', 3);
+            }
+          }
+        }
+      },
+    },
+    'circle',
+  );
+
   useEffect(() => {
     const container = document.getElementById('topo');
 
@@ -386,7 +468,7 @@ const Topo = () => {
         },
         defaultNode: {
           /* node type */
-          type: 'circle',
+          type: 'app-node',
           /* node size */
           size: 50,
           /* style for the keyShape */
@@ -410,7 +492,7 @@ const Topo = () => {
           /* icon configuration */
           icon: {
             show: true,
-            img: 'https://gw.alipayobjects.com/zos/bmw-prod/dc1ced06-417d-466f-927b-b4a4d3265791.svg',
+            img: serverblue,
           },
         },
         defaultEdge: {
