@@ -139,8 +139,15 @@ export default function LoggerSearch(props: any) {
     if (type === 'date') return <DatePicker onChange={onChange} />;
     return <DatePicker picker={type} onChange={onChange} />;
   };
-  tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
-  tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
+  if (!localStorage.LOG_SEARCH_FILTER_IS) {
+    (localStorage.LOG_SEARCH_FILTER_IS = ''), (tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS));
+    tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
+  } else if (localStorage.LOG_SEARCH_FILTER_IS) {
+    tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
+    tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
+  }
+  // tagListArryIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
+  // tagListArryNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
 
   useEffect(() => {}, []);
 
@@ -179,9 +186,12 @@ export default function LoggerSearch(props: any) {
     localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(filterIs);
     localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(filterNot);
 
-    tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
-    console.log(tagListArryIs);
-    tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
+    tagListArryIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
+    tagListArryNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
+
+    // tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
+    // console.log(tagListArryIs);
+    // tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
   };
   const queryLogInfo = (n: any = logStore) => {
     postRequest(APIS.logSearch, {
@@ -212,13 +222,13 @@ export default function LoggerSearch(props: any) {
 
   const closeTagIs = (index: number, type: string) => {
     tagListArryIs.splice(index, 1);
-    localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
+    localStorage.LOG_SEARCH_FILTER_IS = JSON?.stringify(tagListArryIs);
     queryLogInfo();
   };
 
   const closeTagNot = (index: number, type: string) => {
     tagListArryNot.splice(index, 1);
-    localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(tagListArryNot);
+    localStorage.LOG_SEARCH_FILTER_NOT = JSON?.stringify(tagListArryNot);
     queryLogInfo();
   };
 
