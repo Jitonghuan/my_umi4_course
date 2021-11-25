@@ -243,7 +243,17 @@ export default function LoggerSearch(props: any) {
   };
   //实现无限加载滚动
 
-  const content = <div></div>;
+  const content = (
+    <div>
+      <Popover title="查看lucene语法" placement="topLeft" content="">
+        <Button>
+          lucene
+          <QuestionCircleOutlined />
+        </Button>
+      </Popover>
+      <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 290 }} />
+    </div>
+  );
   return (
     <PageContainer>
       <FilterCard>
@@ -358,14 +368,6 @@ export default function LoggerSearch(props: any) {
             </div>
             <Divider />
             <div>
-              <Popover title="查看lucene语法" placement="topLeft" content="">
-                <Button>
-                  lucene
-                  <QuestionCircleOutlined />
-                </Button>
-              </Popover>
-              <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 290 }} />
-
               <RangePicker
                 showTime={{
                   hideDisabledOptions: true,
