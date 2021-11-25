@@ -15,6 +15,7 @@ import {
   TimePicker,
   Collapse,
   Popover,
+  Descriptions,
   Row,
   Col,
   List,
@@ -256,27 +257,56 @@ export default function LoggerSearch(props: any) {
   return (
     <PageContainer>
       <FilterCard>
-        <Form layout="inline">
-          <Form.Item label="环境Code">
-            <Select
-              value={envCode}
-              onChange={handleEnvCodeChange}
-              options={envOptions}
-              style={{ width: 200 }}
-              placeholder="请选择环境"
+        <Row>
+          <Col span={17}>
+            <Form layout="inline">
+              <Form.Item label="环境Code">
+                <Select
+                  value={envCode}
+                  onChange={handleEnvCodeChange}
+                  options={envOptions}
+                  style={{ width: 140 }}
+                  placeholder="请选择环境"
+                />
+              </Form.Item>
+              <Form.Item label="日志库">
+                <Select
+                  value={logStore}
+                  onChange={chooseIndexMode}
+                  options={logStoreOptions}
+                  style={{ width: 140 }}
+                  placeholder="请选择日志库"
+                />
+              </Form.Item>
+            </Form>
+          </Col>
+          <Col span={7}>
+            <RangePicker
+              style={{ width: 150 }}
+              showTime={{
+                hideDisabledOptions: true,
+                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+              }}
+              format="YYYY-MM-DD HH:mm:ss"
             />
-          </Form.Item>
-          <Form.Item label="日志库">
-            <Select
-              value={logStore}
-              onChange={chooseIndexMode}
-              options={logStoreOptions}
-              style={{ width: 200 }}
-              placeholder="请选择日志库"
-            />
-          </Form.Item>
-          <s className="flex-air"></s>
-        </Form>
+            <span>
+              <Select
+                value={startTime}
+                onChange={(value) => {
+                  setStartTime(value);
+                }}
+                style={{ width: 140 }}
+              >
+                <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
+                {START_TIME_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </span>
+          </Col>
+        </Row>
       </FilterCard>
       <ContentCard className="page-logger-search-content">
         {logType === '1' && (urlLoading || framePending) ? (
@@ -300,6 +330,74 @@ export default function LoggerSearch(props: any) {
         {logType === '0' && envCode && logStore ? (
           <div>
             <div style={{ marginBottom: 18, width: '100%' }}>
+              <div>
+                <Form form={editScreenForm} onFinish={submitEditScreen}>
+                  <Row gutter={[2, 12]} style={{ width: 800 }}>
+                    <Col className="gutter-row" span={8}>
+                      <div>字段</div>
+                    </Col>
+                    <Col className="gutter-row" span={8}>
+                      <div>运算符</div>
+                    </Col>
+                    <Col className="gutter-row" span={8}>
+                      <div>值</div>
+                    </Col>
+                    <Col className="gutter-row" span={8}>
+                      <div>appCode</div>
+                    </Col>
+                    <Col className="gutter-row" span={8}>
+                      <div>
+                        <Select placeholder="请选择" style={{ width: 120 }}>
+                          <Select.Option key="filterIs" value="filterIs">
+                            是
+                          </Select.Option>
+                          <Select.Option key="filterNot" value="filterNot">
+                            否
+                          </Select.Option>
+                        </Select>
+                      </div>
+                    </Col>
+                    <Col className="gutter-row" span={8}>
+                      <div>
+                        {' '}
+                        <Input style={{ width: 140 }} placeholder="单行输入"></Input>
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row gutter={[2, 12]} style={{ width: 400 }}>
+                    <Col className="gutter-row" span={8}>
+                      <div>
+                        <Select
+                          placeholder="envCode"
+                          allowClear
+                          style={{ width: 120 }}
+                          options={indexModeData}
+                        ></Select>
+                      </div>
+                    </Col>
+                    <Col className="gutter-row" span={8}>
+                      <div>
+                        {' '}
+                        <Select placeholder="请选择" style={{ width: 120 }}>
+                          <Select.Option key="filterIs" value="filterIs">
+                            是
+                          </Select.Option>
+                          <Select.Option key="filterNot" value="filterNot">
+                            否
+                          </Select.Option>
+                        </Select>
+                      </div>
+                    </Col>
+                    <Col className="gutter-row" span={8}>
+                      <div>
+                        {' '}
+                        <Input style={{ width: 140 }} placeholder="单行输入"></Input>
+                      </div>
+                    </Col>
+                  </Row>
+                </Form>
+              </div>
+
               <div>
                 <Form form={editScreenForm} onFinish={submitEditScreen} layout="inline">
                   <Form.Item label="字段" name="fields">
