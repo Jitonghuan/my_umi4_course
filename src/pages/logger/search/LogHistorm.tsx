@@ -11,10 +11,11 @@ const { ColorContainer } = colorUtil.context;
 export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
+  hitsData: any;
 }
 
 export default function ChartCaseList(props: ChartCaseListProps) {
-  const { data, loading } = props;
+  const { data, loading, hitsData } = props;
 
   const chartOptions = useMemo(() => {
     return loggerChart(data);
@@ -22,8 +23,10 @@ export default function ChartCaseList(props: ChartCaseListProps) {
 
   return (
     <section data-loading={loading}>
-      <div>
-        <h3>多少次命中</h3>
+      <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+        <h3>
+          <span style={{ color: 'blue' }}>{hitsData}</span>次命中
+        </h3>
       </div>
       <div style={{ height: 380 }}>
         <ColorContainer roleKeys={['color']}>

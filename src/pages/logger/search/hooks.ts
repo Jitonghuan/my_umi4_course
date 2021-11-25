@@ -34,14 +34,13 @@ export function useLogStoreOptions(envCode?: string) {
 
   useEffect(() => {
     setSource([]);
-
     if (!envCode) return;
-
     getRequest(APIS.ruleIndexOptions, {
       data: { envCode },
     }).then((result) => {
-      const { Index } = result.data || {};
-      const next = (Index || []).map((n: string) => ({
+      let indexdata = result.data;
+      // const { Index } = result.data || [];
+      const next = (indexdata || []).map((n: string) => ({
         label: n,
         value: n,
       }));
@@ -87,57 +86,27 @@ export function useFrameUrl(envCode?: string, logStore?: string): [string, boole
   return [url, loading, logType];
 }
 
-/** 日志检索 */
-// type AnyObject = Record<string, any>;
-// export function useLoggerData(){
-//   const [logHistormDataIs, setLogHistormDataIs] = useState<any>();
-//   const [logHistormDataNot, setLogHistormDataNot] = useState<any>();
-//   const [logSearchTableInfoIs,setLogSearchTableInfoIS]=useState<any>();
-//   const [logSearchTableInfoNot,setLogSearchTableInfoNot]=useState<any>();
-//   const [loading, setLoading] = useState(false);
-//    const queryLogInfo = async(queryParams:any)=>{
-//     setLoading(true);
-//     await  postRequest(APIS.logSearch, {
-//       data: {
-//         envCode: queryParams?.envCode,
-//         indexMode: queryParams?.indexMode,
-//         startTime: queryParams?.startTime,
-//         endTime:  queryParams?.endTime,
-//         querySql: queryParams?.querySql,
-//         filterIs: queryParams?.filterIs,
-//         fllterNot: queryParams?.fllterNot },
-//     })
-//       .then((result) => {
-//         if (result.success) {
-//           if(queryParams?.filterIs){
-//               //柱状图数据
-//             let logSearchTableInfodata=result?.data?.aggregations?.aggs_over_time?.buckets
-//             setLogHistormDataIs(logSearchTableInfodata);
-//             //手风琴下拉框数据
-//             let logHistorm=result.data.hits.hits
-//             setLogSearchTableInfoIS(logHistorm);
-
-//           }else if(queryParams?.fllterNot){
-//                  //柱状图数据
-//                  let logSearchTableInfodata=result?.data?.aggregations?.aggs_over_time?.buckets
-//                  setLogHistormDataNot(logSearchTableInfodata);
-//                  //手风琴下拉框数据
-//                  let logHistorm=result.data.hits.hits
-//                  setLogSearchTableInfoNot(logHistorm);
-
-//           }
-
-//         }
-//       })
-//       .finally(() => {
-//         setLoading(false);
-//       });
-//     }
-//   return [logHistormData, logSearchTableInfo,loading,queryLogInfo];
-// }
+//获取字段列表  indexModeList
+export function useIndexModeList() {
+  const [indexModeData, setIndexModeData] = useState<any>();
+  const queryIndexModeList = async (envCode: any, indexMode: any) => {
+    await getRequest(APIS.indexModeList, {
+      data: { envCode, indexMode },
+    }).then((resp) => {
+      if (resp.success) {
+        let data = resp?.data;
+        const next = (data || []).map((n: string) => ({
+          label: n,
+          value: n,
+        }));
+        setIndexModeData(next);
+      }
+    });
+  };
+  return [queryIndexModeList, indexModeData, setIndexModeData];
+}
 
 //新增索引
-
 export function useCreateIndexMode() {
   const createIndexMode = async (envCode: any, fields: any, indexMode: any) => {
     await postRequest(APIS.createIndexMode, {
@@ -153,14 +122,42 @@ export function useCreateIndexMode() {
 
 //查询表格数据  queryIndexMode
 export function useQueryIndexMode() {
-  const [createIndexModeData, setCreateIndexModeData] = useState<any>();
-  postRequest(APIS.queryIndexMode, {
-    data: {},
-  }).then((resp) => {
-    if (resp.success) {
-      message.info('新增索引成功！');
-      setCreateIndexModeData(resp?.data);
-    }
-  });
-  return [createIndexModeData];
+  const [queryIndexModeData, setQueryIndexModeData] = useState<any[]>([]);
+  const queryIndexTable = () => {
+    postRequest(APIS.queryIndexMode).then((resp) => {
+      if (resp.success) {
+        setQueryIndexModeData(resp?.data);
+      }
+    });
+  };
+  return [queryIndexTable, queryIndexModeData];
+}
+
+//删除数据
+
+export function useDeleteIndexMode() {
+  const deleteIndexTable = (id: number) => {
+    postRequest(APIS.deleteIndexMode, {
+      data: { id },
+    }).then((resp) => {
+      if (resp.success) {
+        message.info('删除索引成功！');
+      }
+    });
+  };
+  return [deleteIndexTable];
+}
+
+//编辑数据
+export function useEditIndexMode() {
+  const editIndexTable = (id: number, envCode: string, indexMode: string, fields: string) => {
+    postRequest(APIS.editIndexMode, {
+      data: { id, envCode, indexMode, fields },
+    }).then((resp) => {
+      if (resp.success) {
+        message.info('编辑索引成功！');
+      }
+    });
+  };
+  return [editIndexTable];
 }

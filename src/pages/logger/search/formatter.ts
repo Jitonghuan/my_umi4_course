@@ -1,16 +1,17 @@
 // 日志检索柱状图
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2021/11/23 16:49
-// 最后一次执行情况
+import moment from 'moment';
 export function loggerChart(data: any) {
-  console.log('data', data);
+  // console.log('data', data);
   let logHistormData = data;
-  const countList = [];
-  const timeList = [];
-  for (let item in logHistormData) {
-    // countList.push(item?.doc_count);
-    // timeList.push(i);
-  }
+  const countList: any = [];
+  const timeList: any = [];
+  logHistormData.map((item: any) => {
+    countList.push(item?.doc_count);
+    timeList.push(moment(item?.key).format('HH:mm:ss'));
+  });
+
   return {
     tooltip: {
       show: true,
@@ -26,7 +27,8 @@ export function loggerChart(data: any) {
     xAxis: {
       type: 'category',
       name: '时间',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      data: timeList,
     },
     yAxis: {
       type: 'value',
@@ -34,7 +36,8 @@ export function loggerChart(data: any) {
     },
     series: [
       {
-        data: [120, 200, 150, 80, 70, 110, 130],
+        // data: [120, 200, 150, 80, 70, 110, 130],
+        data: countList,
         type: 'bar',
         showBackground: true,
         backgroundStyle: {

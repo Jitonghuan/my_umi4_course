@@ -17,16 +17,21 @@ import {
   Popover,
   Row,
   Col,
+  List,
+  message,
+  Avatar,
+  Skeleton,
   Divider,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {} from './hooks';
 import * as APIS from './service';
 import { getRequest, postRequest } from '@/utils/request';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { useEnvOptions, useLogStoreOptions, useFrameUrl } from './hooks';
+import { useEnvOptions, useLogStoreOptions, useFrameUrl, useIndexModeList } from './hooks';
 import moment from 'moment';
 import './index.less';
 // 时间枚举
@@ -77,8 +82,11 @@ export default function LoggerSearch(props: any) {
   //默认传最近30分钟，处理为秒级的时间戳
   let start = Number((now - startTime) / 1000).toString();
   let end = Number(now / 1000).toString();
-  const [logHistormData, setLogHistormData] = useState<any>();
+  const [logHistormData, setLogHistormData] = useState<any>([]);
   const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>();
+  console.log('logSearchTableInfo', logSearchTableInfo);
+  const [hitInfo, setHitInfo] = useState<string>(''); //命中次数
+  const [timestamp, setTimestamp] = useState<any>(''); //时间
   const [loading, setLoading] = useState(false);
   const [editScreenVisible, setEditScreenVisible] = useState<boolean>(false);
   const [envCode, setEnvCode] = useState<string>();
@@ -87,6 +95,7 @@ export default function LoggerSearch(props: any) {
   const [envOptions] = useEnvOptions();
   const [logStoreOptions] = useLogStoreOptions(envCode);
   const [frameUrl, urlLoading, logType] = useFrameUrl(envCode, logStore);
+  const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList();
   const [framePending, setFramePending] = useState(false);
   const timmerRef = useRef<any>();
   const frameRef = useRef<any>();
@@ -116,12 +125,6 @@ export default function LoggerSearch(props: any) {
       setFramePending(false);
     }, 500);
   };
-
-  const text = `
-    A dog is a type of domesticated animal.
-    Known for its loyalty and faithfulness,
-    it can be found as a welcome guest in many households across the world.
-  `;
 
   function range(start: any, end: any) {
     const result = [];
@@ -164,20 +167,75 @@ export default function LoggerSearch(props: any) {
       },
     }).then((resp) => {
       if (resp?.success) {
-        //柱状图数据
-        let logSearchTableInfodata = resp?.data?.aggregations?.aggs_over_time?.buckets;
-        setLogSearchTableInfo(logSearchTableInfodata);
-        //手风琴下拉框数据
-        let logHistorm = resp.data.hits.hits;
+        //柱状图数据 buckets
+        let logHistorm = resp?.data?.aggregations?.aggs_over_time?.buckets;
         setLogHistormData(logHistorm);
+        //手风琴下拉框数据 hits
+        let logSearchTableInfodata = resp.data.hits.hits;
+        setLogSearchTableInfo(logSearchTableInfodata);
       }
     });
 
     localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(filterIs);
     localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(filterNot);
-    tagListArryIs = JSON.parse(filterIs);
-    tagListArryNot = JSON.parse(filterNot);
+
+    tagListArryIs = JSON.parse(localStorage.LOG_SEARCH_FILTER_IS);
+    console.log(tagListArryIs);
+    tagListArryNot = JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT);
   };
+  const queryLogInfo = (n: any = logStore) => {
+    postRequest(APIS.logSearch, {
+      data: {
+        startTime: start,
+        endTime: end,
+        querySql: '',
+        filterIs: tagListArryIs || [],
+        filterNot: tagListArryNot || [],
+        envCode: envCode,
+        indexMode: n,
+      },
+    }).then((resp) => {
+      if (resp?.success) {
+        //柱状图数据 buckets
+        let logHistorm = resp?.data?.aggregations?.aggs_over_time?.buckets;
+        setLogHistormData;
+        setLogHistormData(logHistorm);
+        //手风琴下拉框数据 hits
+        let logSearchTableInfodata = resp.data.hits.hits;
+        setLogSearchTableInfo(logSearchTableInfodata);
+        //命中率
+        let hitNumber = resp.data.hits.total.value;
+        setHitInfo(hitNumber);
+      }
+    });
+  };
+
+  const closeTagIs = (index: number, type: string) => {
+    tagListArryIs.splice(index, 1);
+    localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
+    queryLogInfo();
+  };
+
+  const closeTagNot = (index: number, type: string) => {
+    tagListArryNot.splice(index, 1);
+    localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(tagListArryNot);
+    queryLogInfo();
+  };
+
+  const chooseIndexMode = (n: any) => {
+    setLogStore(n);
+    queryIndexModeList(envCode, n)
+      .then(() => {
+        queryLogInfo(n);
+      })
+      .catch(() => {
+        setIndexModeData([]);
+        setHitInfo('');
+        setLogSearchTableInfo('');
+        setLogHistormData('');
+      });
+  };
+  //实现无限加载滚动
 
   const content = (
     <div>
@@ -185,7 +243,7 @@ export default function LoggerSearch(props: any) {
         <Row>
           <Col span={12}>
             <Form.Item label="字段" name="fields">
-              <Select placeholder="envCode" allowClear style={{ width: 120 }} options={envOptions}></Select>
+              <Select placeholder="envCode" allowClear style={{ width: 120 }} options={indexModeData}></Select>
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -237,40 +295,6 @@ export default function LoggerSearch(props: any) {
       </Form>
     </div>
   );
-
-  const closeTagIs = (index: number, type: string) => {
-    tagListArryIs.splice(index, 1);
-    localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
-  };
-
-  const closeTagNot = (index: number, type: string) => {
-    tagListArryNot.splice(index, 1);
-    localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(tagListArryNot);
-  };
-  const chooseIndexMode = (n: any) => {
-    setLogStore(n);
-
-    postRequest(APIS.logSearch, {
-      data: {
-        startTime: start,
-        endTime: end,
-        querySql: '',
-        filterIs: tagListArryIs || [],
-        filterNot: tagListArryNot || [],
-        envCode: envCode,
-        indexMode: n,
-      },
-    }).then((resp) => {
-      if (resp?.success) {
-        //柱状图数据
-        let logSearchTableInfodata = resp?.data?.aggregations?.aggs_over_time?.buckets;
-        setLogSearchTableInfo(logSearchTableInfodata);
-        //手风琴下拉框数据
-        let logHistorm = resp.data.hits.hits;
-        setLogHistormData(logHistorm);
-      }
-    });
-  };
 
   return (
     <PageContainer>
@@ -339,9 +363,13 @@ export default function LoggerSearch(props: any) {
               </Popover>
               <span>
                 {tagListArryIs?.map((el: any, index: number) => {
+                  {
+                    console.log(el, 'esdasdsadasdas');
+                  }
                   return (
                     <Tag
-                      closable
+                      closable={true}
+                      visible={true}
                       color="green"
                       onClose={() => {
                         closeTagIs(index, 'LOG_SEARCH_FILTER_IS');
@@ -351,11 +379,12 @@ export default function LoggerSearch(props: any) {
                     </Tag>
                   );
                 })}
-                {tagListArryNot.current?.map((el: any, index: number) => {
+                {tagListArryNot?.map((el: any, index: number) => {
                   return (
                     <Tag
-                      closable
+                      closable={true}
                       color="gold"
+                      visible={true}
                       onClose={() => {
                         closeTagNot(index, 'LOG_SEARCH_FILTER_NOT');
                       }}
@@ -402,19 +431,18 @@ export default function LoggerSearch(props: any) {
               <Button type="default">查询</Button>
             </div>
             <div style={{ marginBottom: 20, marginTop: 20 }}>
-              <ChartCaseList data={logHistormData} loading={loading} />
+              <ChartCaseList data={logHistormData} loading={loading} hitsData={hitInfo} />
             </div>
             <div>
               <Collapse defaultActiveKey={['1']} onChange={callback}>
-                <Panel header="This is panel header 1" key="1">
-                  <p>{text}</p>
-                </Panel>
-                <Panel header="This is panel header 2" key="2">
-                  <p>{text}</p>
-                </Panel>
-                <Panel header="This is panel header 3" key="3">
-                  <p>{text}</p>
-                </Panel>
+                {logSearchTableInfo?.map((item: any, index: number) => {
+                  // {console.log('logSearchTableInfo0000000',logSearchTableInfo)}
+                  return (
+                    <Panel header={item?._source?.timestamp} key={index}>
+                      <p>{JSON.stringify(item?._source)}</p>
+                    </Panel>
+                  );
+                })}
               </Collapse>
             </div>
           </div>

@@ -11,13 +11,22 @@ export const getSearchUrl = addAPIPrefix('/logManage/logSearch/url');
 
 export const ruleGroupOptions = addAPIPrefix('/logManage/alertrule/group/list');
 
-export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');
-
+// export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');
+export const ruleIndexOptions = addAPIPrefix('/logManage/logSearch/indexModeList');
 //新增索引模式
 export const createIndexMode = addAPIPrefix('/logManage/logSearch/indexMode/create');
+
+//获取字段
+export const indexModeList = addAPIPrefix('/logManage/logSearch/indexModeList');
 
 //获取索引模式列表
 export const queryIndexMode = addAPIPrefix('logManage/logSearch/indexMode');
 
 //检索日志
 export const logSearch = addAPIPrefix('logManage/logSearch/query');
+
+//编辑索引模式
+export const editIndexMode = addAPIPrefix('logManage/logSearch/indexMode/edit');
+
+//删除索引模式
+export const deleteIndexMode = addAPIPrefix('logManage/logSearch/indexMode/delete');
