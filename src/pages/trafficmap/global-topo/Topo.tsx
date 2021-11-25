@@ -45,6 +45,7 @@ const Topo = () => {
 
   let expandArr: any = [];
   let comboArr: any = [];
+  let nodeMap = {};
   const DANGER_COLOR = '#F5222D';
   const WARNING_COLOR = '#FFC020';
   const NORMAL_COLOR = '#3592FE';
@@ -309,11 +310,9 @@ const Topo = () => {
       afterUpdate: function afterUpdate(cfg, combo) {
         const self = this;
         const style = self.getShapeStyle(cfg);
-        console.log(style);
         const group = combo.get('group');
 
         const keyshape = group.find((ele) => ele.get('name') === 'main-box');
-        console.log(keyshape);
         keyshape.attr({
           ...style,
         });
@@ -419,13 +418,23 @@ const Topo = () => {
         container: 'topo',
         width,
         height,
+        // linkCenter: true,
         layout: {
-          type: 'comboForce',
+          type: 'force',
+          // type: 'GForce',
+          // minMovement: 0.01,
+          // maxIteration: 5000,
+          // preventOverlap: true,
+          // damping: 0.99,
+          preventOverlap: true,
           nodeSpacing: (d: any) => 100,
           focusNode: 'li',
           linkDistance: (d: any) => {
-            // if (d.source.id === 'node0') {
-            //   return 200;
+            // let dist = 225
+            // const sourceNode = nodeMap[d.source];
+            // const targetNode = nodeMap[d.target];
+            // if(sourceNode.nodeType==targetNode.nodeType && sourceNode.nodeRegionCode==targetNode.nodeRegionCode){
+            //   dist=dist*0.3
             // }
             return 200;
           },
@@ -436,7 +445,6 @@ const Topo = () => {
             }
             return -0;
           },
-          preventOverlap: true,
         },
         defaultCombo: {
           type: 'cRect',
@@ -534,15 +542,20 @@ const Topo = () => {
           },
         },
       });
+      // graph.get('canvas').set('localRefresh', false);
+
       const regionData: any[] = [];
       const appData = [];
+
       OriginData.nodes.forEach((node) => {
+        // nodeMap[node.id]=node
         if (node.nodeType == 'region') {
           regionData.push(node);
         } else {
           appData.push(node);
         }
       });
+
       graph.data({ nodes: regionData, edges: OriginData.edges });
       expandArr = regionData;
       graph.render();
@@ -609,9 +622,7 @@ const Topo = () => {
   };
 
   const handleCollapse = (evt: any) => {
-    const nodes = evt.item.getNodes();
-    console.log('nodes', nodes[0]);
-    const regionId = nodes[0]['_cfg']['model']['nodeRegionCode'];
+    const regionId = evt.item['_cfg']['model']['regionCode'];
     if (regionId) {
       OriginData.nodes.forEach((node) => {
         if (node.id == regionId) {
@@ -640,6 +651,7 @@ const Topo = () => {
           type: combo.type,
           label: combo.label,
           status: combo.status,
+          regionCode: combo.regionCode,
         },
         combo.nodes,
       );
@@ -682,6 +694,7 @@ const Topo = () => {
           type: combo.type,
           label: combo.label,
           status: combo.status,
+          regionCode: combo.regionCode,
         },
         combo.nodes,
       );
