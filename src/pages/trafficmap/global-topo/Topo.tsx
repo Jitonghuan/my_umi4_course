@@ -319,20 +319,20 @@ const Topo = () => {
         });
 
         /* name */
-        group?.addShape('text', {
-          attrs: {
-            text: cfg?.name || cfg?.id || cfg?.label,
-            x: -style.width / 2,
-            y: -style.height / 2,
-            fontSize: 14,
-            fontWeight: 700,
-            textAlign: 'left',
-            textBaseline: 'middle',
-            fill: '#fff',
-            cursor: 'pointer',
-          },
-          name: 'name-text-shape',
-        });
+        // group?.addShape('text', {
+        //   attrs: {
+        //     text: cfg?.name || cfg?.label,
+        //     x: 0.5,
+        //     y: -(style.height) / 2,
+        //     fontSize: 14,
+        //     fontWeight: 700,
+        //     textAlign: 'left',
+        //     textBaseline: 'middle',
+        //     fill: '#fff',
+        //     cursor: 'pointer',
+        //   },
+        //   name: 'name-text-shape',
+        // });
 
         group?.addShape('marker', {
           attrs: {
@@ -366,7 +366,6 @@ const Topo = () => {
 
         // 在该 Combo 的图形分组根据 name 找到右侧圆图形
         const rect = group.find((ele) => ele.get('name') === 'title-box');
-        // 更新右侧圆位置
         rect.attr({
           // cfg.style.width 与 cfg.style.heigth 对应 rect Combo 位置说明图中的 innerWdth 与 innerHeight
           x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
@@ -378,8 +377,8 @@ const Topo = () => {
         const marker = group.find((ele) => ele.get('name') === 'combo-marker-shape');
         // Update the position of the right circle
         marker.attr({
-          x: style.width / 4,
-          y: -style.height / 2,
+          x: style.width / 2 - cfg.padding[1] / 2,
+          y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2 + 10,
           symbol: cfg.collapsed ? EXPAND_ICON : COLLAPSE_ICON,
         });
       },
@@ -420,6 +419,14 @@ const Topo = () => {
           // The type of the combos. You can also assign type in the data of combos
           type: 'cRect',
           size: [500, 300],
+          labelCfg: {
+            refY: 2,
+            style: {
+              fill: '#fff',
+              fontSize: 14,
+              fontWeight: 700,
+            },
+          },
           // ... Other global configurations for combos
         },
         comboStateStyles: {
@@ -552,10 +559,6 @@ const Topo = () => {
       });
       graph.on('combo:click', (evt: any) => {
         if (evt.target.get('name') === 'combo-marker-shape') {
-          // graph.collapseExpandCombo(e.item.getModel().id);
-          // graph.collapseExpandCombo(evt.item);
-          // if (graph.get('layout')) graph.layout();
-          // else graph.refreshPositions();
           handleCollapse(evt);
         }
       });
@@ -616,7 +619,7 @@ const Topo = () => {
         {
           id: combo.id,
           type: combo.type,
-          size: [500, 300],
+          label: combo.label,
         },
         combo.nodes,
       );
@@ -641,6 +644,7 @@ const Topo = () => {
 
     let newcombo = {
       id: `combo-${uniqueId()}`,
+      label: model.id,
       type: 'card-combo',
       regionCode: model.id,
       nodes: newNode,
@@ -655,6 +659,7 @@ const Topo = () => {
         {
           id: combo.id,
           type: combo.type,
+          label: combo.label,
         },
         combo.nodes,
       );
