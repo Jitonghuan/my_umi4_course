@@ -24,6 +24,7 @@ import {
   Divider,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
+import { AnsiUp } from 'ansi-up';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {} from './hooks';
 import * as APIS from './service';
@@ -74,6 +75,7 @@ export default function LoggerSearch(props: any) {
   const { Search } = Input;
   const { Panel } = Collapse;
   const { Option } = Select;
+  let ansi_up = new AnsiUp();
   const { RangePicker } = DatePicker;
   const [editScreenForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
@@ -434,11 +436,27 @@ export default function LoggerSearch(props: any) {
               <ChartCaseList data={logHistormData} loading={loading} hitsData={hitInfo} />
             </div>
             <div>
+              {/* let html = ansi_up.ansi_to_html(resultLogData);
+        if (dom) {
+          dom.innerHTML = html;
+        }
+      }; */}
               <Collapse defaultActiveKey={['1']} onChange={callback}>
                 {logSearchTableInfo?.map((item: any, index: number) => {
+                  let html = ansi_up.ansi_to_html(JSON.stringify(item?._source));
+                  let panelInfo = document.getElementById('panelInfo');
+                  if (panelInfo) {
+                    panelInfo.innerHTML = html;
+                  }
+
                   // {console.log('logSearchTableInfo0000000',logSearchTableInfo)}
                   return (
-                    <Panel header={item?._source?.timestamp} key={index}>
+                    <Panel
+                      className="panelInfo"
+                      style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
+                      header={item?._source?.timestamp}
+                      key={index}
+                    >
                       <p>{JSON.stringify(item?._source)}</p>
                     </Panel>
                   );
