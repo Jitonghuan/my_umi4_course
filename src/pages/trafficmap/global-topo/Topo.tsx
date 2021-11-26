@@ -420,30 +420,43 @@ const Topo = () => {
         height,
         // linkCenter: true,
         layout: {
-          type: 'force',
+          type: 'gForce',
           // type: 'GForce',
-          // minMovement: 0.01,
-          // maxIteration: 5000,
-          // preventOverlap: true,
-          // damping: 0.99,
+          minMovement: 0.4,
+          maxIteration: 5000,
+          damping: 0.99,
+          nodeSize: 50,
           preventOverlap: true,
           nodeSpacing: (d: any) => 100,
           focusNode: 'li',
           linkDistance: (d: any) => {
-            // let dist = 225
-            // const sourceNode = nodeMap[d.source];
-            // const targetNode = nodeMap[d.target];
-            // if(sourceNode.nodeType==targetNode.nodeType && sourceNode.nodeRegionCode==targetNode.nodeRegionCode){
-            //   dist=dist*0.3
-            // }
-            return 200;
+            const sourceNode = nodeMap[d.source];
+            const targetNode = nodeMap[d.target];
+            if (
+              sourceNode.nodeType == 'app' &&
+              targetNode.nodeType == 'app' &&
+              sourceNode.nodeRegionCode == targetNode.nodeRegionCode
+            ) {
+              console.log('source', d.source);
+              console.log('target', d.target);
+              return 10;
+            }
+            return 500;
           },
           unitRadius: 100,
           nodeStrength: (d: any) => {
-            if (d.isLeaf) {
+            const sourceNode = nodeMap[d.source];
+            const targetNode = nodeMap[d.target];
+            if (
+              sourceNode?.nodeType == 'app' &&
+              targetNode?.nodeType == 'app' &&
+              sourceNode.nodeRegionCode == targetNode.nodeRegionCode
+            ) {
+              console.log('source', d.source);
+              console.log('target', d.target);
               return -50;
             }
-            return -0;
+            return 1000;
           },
         },
         defaultCombo: {
@@ -548,7 +561,7 @@ const Topo = () => {
       const appData = [];
 
       OriginData.nodes.forEach((node) => {
-        // nodeMap[node.id]=node
+        nodeMap[node.id] = node;
         if (node.nodeType == 'region') {
           regionData.push(node);
         } else {
