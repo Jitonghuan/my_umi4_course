@@ -54,7 +54,7 @@ const globalTopo = () => {
       </FilterCard>
       <div style={{ height: '100%' }} ref={frameRef}>
         <ContentCard>
-          <section style={{ marginBottom: '10px' }} id="topo-box" ref={frameRef}>
+          <section style={{ marginBottom: '10px' }} id="topo-box" className="topo-box" ref={frameRef}>
             <div className="content-header">
               <h3>浙一生产环境</h3>
               <div className="action-bar">
@@ -74,7 +74,7 @@ const globalTopo = () => {
               </div>
             </div>
             <div className="graph-box">
-              <Topo />
+              <Topo isFullScreen={isFullScreen} />
             </div>
           </section>
         </ContentCard>

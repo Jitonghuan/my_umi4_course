@@ -15,7 +15,7 @@ const iconenum = {
   danger: serverred,
   normal: serverblue,
 };
-const Topo = () => {
+const Topo = (props: any) => {
   const [loading, setLoading] = useState(false);
 
   const ref = React.useRef(null);
@@ -714,15 +714,24 @@ const Topo = () => {
     });
   };
 
-  if (typeof window !== 'undefined')
-    window.onresize = () => {
-      if (!graph || graph.get('destroyed')) return;
-      const container = document.getElementById('topo');
-      if (!container) return;
-      graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
-    };
+  useEffect(() => {
+    if (typeof window !== 'undefined')
+      window.onresize = () => {
+        if (!graph || graph.get('destroyed')) return;
+        const container = document.getElementById('topo');
+        if (!container) return;
+        graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
+      };
+  }, []);
 
-  return <div id="topo"></div>;
+  useEffect(() => {
+    if (!graph || graph.get('destroyed')) return;
+    const container = document.getElementById('topo');
+    if (!container) return;
+    graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
+  }, [props.isFullScreen]);
+
+  return <div id="topo" style={{ height: '100%' }}></div>;
 };
 
 export default Topo;
