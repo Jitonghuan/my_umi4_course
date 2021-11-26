@@ -422,7 +422,7 @@ const Topo = (props: any) => {
         layout: {
           type: 'gForce',
           // type: 'GForce',
-          minMovement: 0.4,
+          minMovement: 0.04,
           maxIteration: 5000,
           damping: 0.99,
           nodeSize: 50,

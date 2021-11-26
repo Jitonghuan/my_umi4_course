@@ -36,6 +36,9 @@ export const OriginData = {
     { source: 'region0', target: 'region3', label: '0-1\n0-2' },
     { source: 'region0', target: 'region4', label: '0-1\n0-2' },
     { source: 'region0', target: 'region5', label: '0-1\n0-2' },
+    { source: 'region1', target: 'region4', label: '0-1\n0-2' },
+    { source: 'region2', target: 'region3', label: '0-1\n0-2' },
+    { source: 'region2', target: 'region4', label: '0-1\n0-2' },
 
     { source: 'node0', target: 'region1', label: '0-1\n0-2' },
     { source: 'node0', target: 'region2', label: '0-1\n0-2' },
@@ -62,6 +65,7 @@ export const OriginData = {
     { source: 'node8', target: 'node10', label: '8-10' },
     { source: 'node8', target: 'node13', label: '8-13' },
     { source: 'node8', target: 'node12', label: '8-12' },
+    { source: 'node4', target: 'node5', label: '4-5' },
   ],
   combos: [
     { id: 'combo1', label: 'Combo 1', type: 'card-combo' },
