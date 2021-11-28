@@ -421,13 +421,12 @@ const Topo = (props: any) => {
         // linkCenter: true,
         layout: {
           type: 'gForce',
-          // type: 'GForce',
           minMovement: 0.04,
           maxIteration: 5000,
           damping: 0.99,
-          nodeSize: 50,
+          nodeSize: 100,
           preventOverlap: true,
-          nodeSpacing: (d: any) => 100,
+          // nodeSpacing: (d: any) => 100,
           focusNode: 'li',
           linkDistance: (d: any) => {
             const sourceNode = nodeMap[d.source];
@@ -439,24 +438,30 @@ const Topo = (props: any) => {
             ) {
               console.log('source', d.source);
               console.log('target', d.target);
-              return 10;
+              return 50;
             }
-            return 500;
+            return 400;
           },
-          unitRadius: 100,
-          nodeStrength: (d: any) => {
-            const sourceNode = nodeMap[d.source];
-            const targetNode = nodeMap[d.target];
+          nodeSpacing: (d) => {
+            if (d.nodeType === 'app') return 10;
+            if (d.nodeType == 'region') return 100;
+            return 100;
+          },
+          edgeStrength: (d) => {
+            const sourceNode = nodeMap[d.source] || aggregatedNodeMap[d.source];
+            const targetNode = nodeMap[d.target] || aggregatedNodeMap[d.target];
+            // 聚合节点之间的引力小
+            if (sourceNode.nodeType == 'region' && targetNode.nodeType == 'region') {
+              return 25;
+            }
             if (
-              sourceNode?.nodeType == 'app' &&
-              targetNode?.nodeType == 'app' &&
+              sourceNode.nodeType == 'app' &&
+              targetNode.nodeType == 'app' &&
               sourceNode.nodeRegionCode == targetNode.nodeRegionCode
             ) {
-              console.log('source', d.source);
-              console.log('target', d.target);
-              return -50;
+              return 50;
             }
-            return 1000;
+            return 50;
           },
         },
         defaultCombo: {
