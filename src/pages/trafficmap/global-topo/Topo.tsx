@@ -233,7 +233,7 @@ const Topo = (props: any) => {
         ];
       },
     },
-    'single-node',
+    'rect',
   );
 
   /**
@@ -243,7 +243,6 @@ const Topo = (props: any) => {
     'card-combo',
     {
       drawShape: function drawShape(cfg, group) {
-        console.log(cfg);
         const self = this;
         // Get the padding from the configuration
         cfg.padding = cfg.padding || [50, 20, 20, 20];
@@ -346,7 +345,6 @@ const Topo = (props: any) => {
     {
       draw(cfg, group) {
         const { style } = cfg;
-        console.log(style);
         const keyShape = group.addShape('circle', {
           attrs: {
             ...style,
@@ -377,9 +375,7 @@ const Topo = (props: any) => {
       setState(name, value, item) {
         const cfg = item['_cfg'];
         const group = item.getContainer();
-        console.log(group.get('children'));
         const shape = group.get('children')[0]; // 顺序根据 draw 时确定
-        console.log(shape);
         if (name === 'focus') {
           if (value) {
             shape.attr('shadowBlur', 10);
@@ -411,8 +407,64 @@ const Topo = (props: any) => {
   G6.registerEdge(
     'can-running',
     {
+      // draw(cfg: any, group: any) {
+      //   const { startPoint, endPoint,middlePoint } = cfg;
+      //   const keyShape = group.addShape('path', {
+      //     attrs: {
+      //       stroke: enumcolor[cfg.status || 'normal'],
+      //       fill:enumcolor[cfg.status || 'normal'],
+      //       path: [
+      //         ['M', startPoint.x, startPoint.y],
+      //         ['L', endPoint.x, endPoint.y],
+      //       ],
+      //       lineWidth: 1,
+      //       endArrow: {
+      //         // 自定义箭头指向(0, 0)，尾部朝向 x 轴正方向的 path
+      //         path: G6.Arrow.triangle(),
+      //         // 箭头的偏移量，负值代表向 x 轴正方向移动
+      //         // d: -10,
+      //         // v3.4.1 后支持各样式属性
+      //         // fill: '#333',
+      //         // stroke: '#666',
+      //         fill: enumcolor[cfg.status || 'normal'],
+      //         stroke: enumcolor[cfg.status || 'normal'],
+      //         opacity: 0.8,
+      //         // ...
+      //       },
+      //       // endArrow: {
+      //       //   // 自定义箭头指向(0, 0)，尾部朝向 x 轴正方向的 path
+      //       //   path: 'M 0,0 L 20,10 L 20,-10 Z',
+      //       //   // 箭头的偏移量，负值代表向 x 轴正方向移动
+      //       //   // d: -10,
+      //       //   // v3.4.1 后支持各样式属性
+      //       //   fill: '#333',
+      //       //   stroke: '#666',
+      //       //   opacity: 0.8,
+      //       //   // ...
+      //       // },
+      //     },
+      //     // must be assigned in G6 3.3 and later versions. it can be any value you want
+      //     name: 'path-shape',
+      //   });
+
+      //   group.addShape('text', {
+      //     attrs: {
+      //       text: cfg.label,
+      //       fill: '#595959',
+      //       textAlign: 'start',
+      //       textBaseline: 'middle',
+      //       x: (startPoint.x+endPoint.x)/2,
+      //       y: (startPoint.y+endPoint.y)/2,
+      //     },
+      //     name: 'text-shape',
+      //   });
+
+      //   return keyShape;
+      // },
       setState(name, value, item) {
         const shape = item.get('keyShape');
+        const cfg = item['_cfg'];
+
         if (name === 'focus') {
           if (value) {
             let index = 0;
@@ -426,7 +478,7 @@ const Topo = (props: any) => {
                   lineDash: [4, 4, 4, 4],
                   lineDashOffset: -index,
                   lineWidth: 2,
-                  stroke: '#999',
+                  stroke: enumcolor[cfg.model.status || 'normal'],
                 };
                 // return the params for this frame
                 return res;
@@ -440,7 +492,7 @@ const Topo = (props: any) => {
             shape.stopAnimate();
             shape.attr('lineDash', null);
             shape.attr('lineWidth', 1);
-            shape.attr('stroke', '#e2e2e2');
+            shape.attr('stroke', enumcolor[cfg.model.status || 'normal']);
           }
         }
       },
@@ -476,8 +528,6 @@ const Topo = (props: any) => {
               targetNode.nodeType == 'app' &&
               sourceNode.nodeRegionCode == targetNode.nodeRegionCode
             ) {
-              console.log('source', d.source);
-              console.log('target', d.target);
               return 50;
             }
             return 400;
@@ -523,14 +573,7 @@ const Topo = (props: any) => {
           },
         },
         modes: {
-          default: [
-            'drag-canvas',
-            'drag-node',
-            // 'activate-relations',
-            {
-              type: 'zoom-canvas',
-            },
-          ],
+          default: ['drag-combo', 'drag-node', 'drag-canvas', 'zoom-canvas'],
         },
         defaultNode: {
           /* node type */
@@ -564,15 +607,15 @@ const Topo = (props: any) => {
         defaultEdge: {
           type: 'can-running',
           size: 1,
-          style: {
-            stroke: '#e2e2e2',
-            lineAppendWidth: 2,
-            cursor: 'pointer',
-            endArrow: {
-              path: G6.Arrow.triangle(),
-              fill: '#e2e2e2',
-            },
-          },
+          // style: {
+          //   stroke: '#e2e2e2',
+          //   lineAppendWidth: 2,
+          //   cursor: 'pointer',
+          //   endArrow: {
+          //     path: G6.Arrow.triangle(),
+          //     fill: '#e2e2e2',
+          //   },
+          // },
         },
         nodeStateStyles: {
           // node style of active state
@@ -725,9 +768,7 @@ const Topo = (props: any) => {
   const handleExpand = (evt: any) => {
     const { item } = evt;
     const model = item && item.getModel();
-    console.log(model);
     let expandIndex = expandArr.findIndex((node) => node.id == model.id);
-    console.log(expandIndex);
     expandArr.splice(expandIndex, 1);
 
     const newNode: any[] = [];
