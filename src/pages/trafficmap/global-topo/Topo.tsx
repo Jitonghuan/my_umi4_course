@@ -408,6 +408,46 @@ const Topo = (props: any) => {
     'circle',
   );
 
+  G6.registerEdge(
+    'can-running',
+    {
+      setState(name, value, item) {
+        const shape = item.get('keyShape');
+        if (name === 'focus') {
+          if (value) {
+            let index = 0;
+            shape.animate(
+              () => {
+                index++;
+                if (index > 9) {
+                  index = 0;
+                }
+                const res = {
+                  lineDash: [4, 4, 4, 4],
+                  lineDashOffset: -index,
+                  lineWidth: 2,
+                  stroke: '#999',
+                };
+                // return the params for this frame
+                return res;
+              },
+              {
+                repeat: true,
+                duration: 3000,
+              },
+            );
+          } else {
+            shape.stopAnimate();
+            shape.attr('lineDash', null);
+            shape.attr('lineWidth', 1);
+            shape.attr('stroke', '#e2e2e2');
+          }
+        }
+      },
+    },
+    'line',
+  );
+
   useEffect(() => {
     const container = document.getElementById('topo');
 
@@ -522,6 +562,7 @@ const Topo = (props: any) => {
           },
         },
         defaultEdge: {
+          type: 'can-running',
           size: 1,
           style: {
             stroke: '#e2e2e2',
@@ -604,6 +645,11 @@ const Topo = (props: any) => {
         graph.getEdges().forEach((edge: any) => {
           graph.clearItemStates(edge);
         });
+      });
+
+      graph.on('edge:click', (evt: any) => {
+        const { item } = evt;
+        graph.setItemState(item, 'focus', true);
       });
 
       graph.on('collapse-icon:click', (evt: any) => {
