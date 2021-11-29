@@ -2,14 +2,13 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/11/23 19:10
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input, Table, Popconfirm, Button, Drawer, Form, Select } from 'antd';
 import PageContainer from '@/components/page-container';
-import { getRequest, postRequest, delRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 import * as APIS from '../search/service';
 import { ContentCard } from '@/components/vc-page-content';
-import { datetimeCellRender } from '@/utils';
 import { useEnvOptions, useCreateIndexMode, useDeleteIndexMode, useEditIndexMode } from '../search/hooks';
 export default function DemoPageList() {
   const [addIndexForm] = Form.useForm();
@@ -19,34 +18,31 @@ export default function DemoPageList() {
   const [createIndexMode] = useCreateIndexMode(); //创建
   const [deleteIndexTable] = useDeleteIndexMode(); //删除
   const [editIndexTable] = useEditIndexMode(); //编辑
-  const [keyword, setKeyword] = useState<string>('');
   const [id, setId] = useState<number>(0);
-  const [addIndexVisiable, setAddIndexVisiable] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [queryIndexModeData, setQueryIndexModeData] = useState<any[]>([]);
 
   //查询表格信息
-  const queryIndexTable = (pageIndex?: any, pageSize?: any) => {
-    getRequest(APIS.queryIndexMode, { data: { pageIndex, pageSize } }).then((resp) => {
-      if (resp.success) {
-        setQueryIndexModeData(resp?.data.dataSource);
-        setTotal(resp?.data?.pageInfo?.total);
-        setPageSize(resp?.data?.pageInfo?.pageSize);
-        setPageIndex(resp?.data?.pageInfo?.pageIndex);
-      }
-    });
+  const queryIndexTable = (index?: any, size?: any) => {
+    getRequest(APIS.queryIndexMode, { data: { pageIndex: index || pageIndex, pageSize: size || pageSize } }).then(
+      (resp) => {
+        if (resp.success) {
+          setQueryIndexModeData(resp?.data.dataSource);
+          setTotal(resp?.data?.pageInfo?.total);
+          setPageSize(resp?.data?.pageInfo?.pageSize);
+          setPageIndex(resp?.data?.pageInfo?.pageIndex);
+        }
+      },
+    );
   };
 
   useEffect(() => {
-    queryIndexTable();
+    queryIndexTable(pageIndex, pageSize);
   }, [pageIndex, pageSize]);
-
-  useEffect(() => {}, [addMode]);
 
   //提交新增数据
   const handleSubmit = () => {
@@ -144,7 +140,6 @@ export default function DemoPageList() {
                 <a
                   onClick={() => {
                     setAddMode('EDIT');
-                    console.log('current', current, record);
                     setId(current?.id);
                     setInitValue(record);
                     addIndexForm.setFieldsValue({
@@ -159,7 +154,7 @@ export default function DemoPageList() {
                   onConfirm={() => {
                     postRequest(`${appConfig.apiPrefix}/logManage/logSearch/indexMode/delete?id=${record.id}`);
                     setTimeout(() => {
-                      queryIndexTable();
+                      queryIndexTable(pageIndex, pageSize);
                     }, 200);
                   }}
                 >
