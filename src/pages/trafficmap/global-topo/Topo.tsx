@@ -556,6 +556,10 @@ const Topo = (props: any) => {
             }
             return 25;
           },
+          nodeStrength: (d) => {
+            if (d.nodeType == 'region') return 3000;
+            return 1000;
+          },
         },
         defaultCombo: {
           type: 'cRect',
