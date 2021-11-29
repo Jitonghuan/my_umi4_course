@@ -9,24 +9,119 @@ import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import Topo from './Topo';
+import DragModal from './_component/DragModal';
 import './index.less';
-export interface Item {
+import * as echarts from 'echarts';
+
+const dataDemo = {
+  requests: {
+    data: [
+      {
+        data: ['9', '9', '9', '9', '9', '9', '9'],
+        name: 'http',
+        type: 'line',
+      },
+      {
+        data: ['10', '10', '10', '10', '10', '10', '10'],
+        name: 'dubbo',
+        type: 'line',
+      },
+    ],
+    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
+  },
+  averageResponseTime: {
+    data: [
+      {
+        data: ['9', '9', '9', '9', '9', '9', '9'],
+        name: 'hbos/hbos-osc',
+        type: 'line',
+        color: 'rgba(101,159,235,1)',
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 0,
+              color: 'rgba(101,159,235,0.2)',
+            },
+            {
+              offset: 1,
+              color: 'rgba(101,159,235,0)',
+            },
+          ]),
+        },
+      },
+    ],
+    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
+  },
+  responseCodes: {
+    data: [
+      {
+        data: ['9', '9', '9', '9', '9', '9', '9'],
+        name: '200',
+        type: 'line',
+      },
+      {
+        data: ['3', '4', '5', '7', '9', '3', '1'],
+        name: '300',
+        type: 'line',
+      },
+      {
+        data: ['6', '7', '8', '9', '4', '3', '5'],
+        name: '400',
+        type: 'line',
+      },
+
+      {
+        data: ['4', '5', '3', '3', '3', '6', '2'],
+        name: '500',
+        type: 'line',
+      },
+    ],
+    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
+  },
+};
+interface IAppInfo {
   id: string;
-  templateName: string;
-  templateCode: string;
-  appCode: string;
-  appVsersion: string;
-  envCode: string;
-  status?: number;
+  name: string;
+  chartData: {
+    requests: {
+      data: IChartData[];
+      xAxis: string[];
+    };
+    averageResponseTime: {
+      data: IChartData[];
+      xAxis: string[];
+    };
+    responseCodes: {
+      data: IChartData[];
+      xAxis: string[];
+    };
+  };
+}
+interface IChartData {
+  data: string[];
+  name: string;
+  type: string;
 }
 
 const globalTopo = () => {
   const [loading, setLoading] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-
+  const [number, setNumber] = useState([1, 2]);
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
+  const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
+    {
+      id: '1',
+      name: 'app1',
+      chartData: dataDemo,
+    },
+    {
+      id: '2',
+      name: 'app2',
+      chartData: dataDemo,
+    },
+  ]);
 
   useEffect(() => {}, []);
 
@@ -61,7 +156,13 @@ const globalTopo = () => {
                 <Button type="default" icon={<PlusCircleOutlined />}>
                   红线追踪
                 </Button>
-                <Button type="default" icon={<PlusCircleOutlined />}>
+                <Button
+                  type="default"
+                  icon={<PlusCircleOutlined />}
+                  onClick={() => {
+                    setNumber([1, 2, 3]);
+                  }}
+                >
                   全部展开
                 </Button>
                 <Button
@@ -73,7 +174,10 @@ const globalTopo = () => {
                 </Button>
               </div>
             </div>
-            <div className="graph-box">
+            <div className="graph-box" style={{ position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '0px', pointerEvents: 'none', width: '100%' }}>
+                <DragModal number={number} appInfoList={appInfoList} />
+              </div>
               <Topo isFullScreen={isFullScreen} />
             </div>
           </section>

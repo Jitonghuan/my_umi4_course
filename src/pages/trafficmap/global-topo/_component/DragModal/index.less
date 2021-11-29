@@ -1,0 +1,113 @@
+.react-draggable,
+.cursor {
+  cursor: move;
+}
+
+.no-cursor {
+  cursor: auto;
+}
+
+.cursor-y {
+  cursor: ns-resize;
+}
+
+.cursor-x {
+  cursor: ew-resize;
+}
+
+.react-draggable strong {
+  background: #ddd;
+  border: 1px solid #999;
+  border-radius: 3px;
+  display: block;
+  margin-bottom: 10px;
+  padding: 3px 5px;
+  text-align: center;
+}
+
+.box {
+  background: #fff;
+  border: 1px solid #999;
+  border-radius: 3px;
+  width: 180px;
+  height: 180px;
+  margin: 10px;
+  padding: 10px;
+  float: left;
+}
+
+.no-pointer-events {
+  pointer-events: none;
+}
+
+.hovered {
+  background-color: gray;
+}
+
+.app-modal {
+  box-sizing: border-box;
+  padding: 0 0 24px;
+  color: #000000d9;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: 'tnum';
+  pointer-events: none;
+  float: right;
+  // top: 100px;
+  width: auto;
+  max-width: calc(100vw - 32px);
+  margin: 0 auto;
+}
+.app-modal-content {
+  position: relative;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
+  pointer-events: auto;
+  .app-modal-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    padding: 0;
+    color: #00000073;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    background: 0 0;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    transition: color 0.3s;
+    width: 56px;
+    height: 56px;
+  }
+
+  .app-modal-header {
+    padding: 16px 24px;
+    color: #000000d9;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 2px 2px 0 0;
+
+    .app-modal-title {
+      margin: 0;
+      color: #000000d9;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 22px;
+      word-wrap: break-word;
+    }
+  }
+
+  .app-modal-body {
+    padding: 24px;
+    font-size: 14px;
+    line-height: 1.5715;
+    word-wrap: break-word;
+  }
+}
