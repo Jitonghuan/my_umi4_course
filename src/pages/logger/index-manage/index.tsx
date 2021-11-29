@@ -47,9 +47,9 @@ export default function DemoPageList() {
   //提交新增数据
   const handleSubmit = () => {
     const paramsdata = addIndexForm.getFieldsValue();
-    let envCode = paramsdata?.env_code;
+    let envCode = paramsdata?.envCode;
     let fields = paramsdata?.fields;
-    let indexMode = paramsdata?.index_mode;
+    let indexMode = paramsdata?.indexMode;
     if (addMode === 'ADD') {
       createIndexMode(envCode, fields, indexMode);
       setTimeout(() => {
@@ -92,10 +92,10 @@ export default function DemoPageList() {
         }
       >
         <Form form={addIndexForm} labelCol={{ flex: '120px' }}>
-          <Form.Item label="环境Code" name="env_code" rules={[{ required: true, message: '请输入环境Code' }]}>
+          <Form.Item label="环境Code" name="envCode" rules={[{ required: true, message: '请输入环境Code' }]}>
             <Select options={envOptions} style={{ width: 140 }} placeholder="请选择" />
           </Form.Item>
-          <Form.Item label="日志库(索引模式)" name="index_mode">
+          <Form.Item label="日志库(索引模式)" name="indexMode">
             <Input placeholder="请输入" style={{ width: 140 }} />
           </Form.Item>
           <Form.Item label="字段" name="fields" rules={[{ required: true }]}>
@@ -142,8 +142,12 @@ export default function DemoPageList() {
                     setAddMode('EDIT');
                     setId(current?.id);
                     setInitValue(record);
+                    console.log('record', record);
                     addIndexForm.setFieldsValue({
-                      ...record,
+                      id: record?.id,
+                      envCode: record?.envCode,
+                      indexMode: record?.indexMode,
+                      fields: record?.fields,
                     });
                   }}
                 >

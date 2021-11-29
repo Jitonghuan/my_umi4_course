@@ -7,7 +7,7 @@ export function loggerChart(data: any) {
   let logHistormData = data;
   const countList: any = [];
   const timeList: any = [];
-  logHistormData.map((item: any) => {
+  logHistormData?.map((item: any) => {
     countList.push(item?.doc_count);
     timeList.push(moment(item?.key).format('HH:mm:ss'));
   });

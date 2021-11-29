@@ -17,7 +17,7 @@ export const ruleIndexOptions = addAPIPrefix('/logManage/logSearch/indexModeList
 export const createIndexMode = addAPIPrefix('/logManage/logSearch/indexMode/create');
 
 //获取字段
-export const indexModeList = addAPIPrefix('/logManage/logSearch/indexModeList');
+export const indexModeFields = addAPIPrefix('/logManage/logSearch/indexMode/fields');
 
 //获取索引模式列表
 export const queryIndexMode = addAPIPrefix('logManage/logSearch/indexMode');

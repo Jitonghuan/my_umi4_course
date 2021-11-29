@@ -103,7 +103,6 @@ export default function LoggerSearch(props: any) {
   const [framePending, setFramePending] = useState(false);
   const timmerRef = useRef<any>();
   const frameRef = useRef<any>();
-
   useEffect(() => {
     if (logType === '1') {
       setFramePending(!!frameUrl);
@@ -170,13 +169,44 @@ export default function LoggerSearch(props: any) {
     let params = subInfoForm.getFieldsValue();
     let filterIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
     let filterNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
-    let querySqlInfo = params?.message;
+    let querySqlInfo = params.message;
+    let value = params.appCode;
+
+    if (querySqlInfo && !value) {
+      setQuerySql(querySqlInfo);
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, filterIs);
+    }
+    if (value && !querySqlInfo) {
+      filterIs.push('appCode:' + value);
+      setQuerySql(querySqlInfo);
+      tagListArryIs = filterIs;
+      localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, tagListArryIs);
+    }
+    if (querySqlInfo && value) {
+      setQuerySql(querySqlInfo);
+      filterIs.push('appCode:' + value);
+      tagListArryIs = filterIs;
+      localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, tagListArryIs);
+    }
+  };
+  const subAppCode = () => {
+    let params = subInfoForm.getFieldsValue();
     let value = params?.appCode;
+    let querySqlInfo = params.message;
+    let filterIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
     filterIs.push('appCode:' + value);
-    setQuerySql(querySqlInfo);
+    console.log('filterIs', filterIs);
+    loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, filterIs);
     tagListArryIs = filterIs;
     localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, filterIs);
+  };
+  const subMessage = () => {
+    let params = subInfoForm.getFieldsValue();
+    let querySqlInfo = params?.message;
+    setQuerySql(querySqlInfo);
+    loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, tagListArryIs);
   };
 
   //选择字段触发事件
@@ -343,7 +373,7 @@ export default function LoggerSearch(props: any) {
       <ContentCard className="page-logger-search-content">
         {logType === '1' && (urlLoading || framePending) ? (
           <div className="loading-wrapper">
-            <Spin tip="加载中" />
+            <Spin tip="加载中" spinning={urlLoading} />
           </div>
         ) : null}
 
@@ -365,18 +395,23 @@ export default function LoggerSearch(props: any) {
               <div>
                 <Form form={subInfoForm} layout="inline" labelCol={{ flex: 4 }}>
                   <Form.Item label="appCode" name="appCode">
-                    <Input style={{ width: 120 }} onPressEnter={subInfo}></Input>
+                    <Input style={{ width: 120 }} onPressEnter={subAppCode}></Input>
                   </Form.Item>
                   <Form.Item label="message" name="message">
                     <Input
-                      style={{ width: 180 }}
+                      style={{ width: 498 }}
                       placeholder="单行输入"
-                      onPressEnter={subInfo}
+                      onPressEnter={subMessage}
                       addonBefore="like"
                     ></Input>
                   </Form.Item>
-                  <Form.Item label="traceId">
+                  {/* <Form.Item label="traceId">
                     <Input placeholder="单行输入" style={{ width: 350 }}></Input>
+                  </Form.Item> */}
+                  <Form.Item>
+                    <Button type="primary" onClick={subInfo}>
+                      <PlusOutlined />
+                    </Button>
                   </Form.Item>
                 </Form>
               </div>
@@ -416,6 +451,16 @@ export default function LoggerSearch(props: any) {
                   >
                     高级搜索
                   </Button>
+                  <Button
+                    type="default"
+                    style={{ marginLeft: 2 }}
+                    onClick={() => {
+                      editScreenForm.resetFields();
+                      subInfoForm.resetFields();
+                    }}
+                  >
+                    重置筛选信息
+                  </Button>
                 </Form>
 
                 <div style={{ marginTop: 4 }}>
@@ -450,7 +495,18 @@ export default function LoggerSearch(props: any) {
                 </div>
                 {editScreenVisible === true ? (
                   <div style={{ marginTop: 4 }}>
-                    <Popover title="查看lucene语法" placement="topLeft" content="">
+                    <Popover
+                      title="查看lucene语法"
+                      placement="topLeft"
+                      content={
+                        <a
+                          target="_blank"
+                          href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
+                        >
+                          lucene语法网址
+                        </a>
+                      }
+                    >
                       <Button>
                         lucene
                         <QuestionCircleOutlined />
@@ -497,8 +553,10 @@ export default function LoggerSearch(props: any) {
                                 className="panelInfo"
                                 style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
                                 header={
-                                  <div style={{ display: 'flex' }}>
-                                    <div style={{ width: '20%', color: '#6495ED' }}>{item?._source['@timestamp']}</div>
+                                  <div style={{ display: 'flex', maxHeight: 138, overflow: 'hidden' }}>
+                                    <div style={{ width: '20%', color: '#6495ED' }}>
+                                      {moment(item?._source['@timestamp']).format('YYYY-MM-DD,HH:mm:ss')}
+                                    </div>
                                     {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
                                     <div style={{ width: '80%' }}>
                                       {ansi_up.ansi_to_html(JSON.stringify(item?._source))}

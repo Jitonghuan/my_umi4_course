@@ -71,7 +71,7 @@ export function useFrameUrl(envCode?: string, logStore?: string): [string, boole
       .then((result) => {
         if (result.success) {
           if (result.data.logType === '1') {
-            setUrl(result.data || '');
+            setUrl(result.data.url || '');
             setLogType('1');
           } else {
             setLogType('0');
@@ -90,7 +90,7 @@ export function useFrameUrl(envCode?: string, logStore?: string): [string, boole
 export function useIndexModeList() {
   const [indexModeData, setIndexModeData] = useState<any>();
   const queryIndexModeList = async (envCode: any, indexMode: any) => {
-    await getRequest(APIS.indexModeList, {
+    await getRequest(APIS.indexModeFields, {
       data: { envCode, indexMode },
     }).then((resp) => {
       if (resp.success) {
