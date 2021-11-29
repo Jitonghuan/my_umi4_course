@@ -104,7 +104,6 @@ interface IChartData {
 }
 
 const globalTopo = () => {
-  const [loading, setLoading] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [number, setNumber] = useState([1, 2]);
@@ -135,6 +134,16 @@ const globalTopo = () => {
     }
   }, [isFullScreen]);
 
+  const deleteModal = (app: IAppInfo) => {
+    console.log(app);
+    const idx = appInfoList.findIndex((item) => item.id == app.id);
+    if (idx !== -1) {
+      let newAppInfoList = JSON.parse(JSON.stringify(appInfoList));
+      newAppInfoList.splice(idx, 1);
+      setAppInfoList(newAppInfoList);
+    }
+  };
+
   return (
     <PageContainer className="global-topo">
       <FilterCard>
@@ -156,13 +165,7 @@ const globalTopo = () => {
                 <Button type="default" icon={<PlusCircleOutlined />}>
                   红线追踪
                 </Button>
-                <Button
-                  type="default"
-                  icon={<PlusCircleOutlined />}
-                  onClick={() => {
-                    setNumber([1, 2, 3]);
-                  }}
-                >
+                <Button type="default" icon={<PlusCircleOutlined />}>
                   全部展开
                 </Button>
                 <Button
@@ -176,7 +179,7 @@ const globalTopo = () => {
             </div>
             <div className="graph-box" style={{ position: 'relative' }}>
               <div style={{ position: 'absolute', top: '0px', pointerEvents: 'none', width: '100%' }}>
-                <DragModal number={number} appInfoList={appInfoList} />
+                <DragModal number={number} appInfoList={appInfoList} deleteModal={deleteModal} />
               </div>
               <Topo isFullScreen={isFullScreen} />
             </div>

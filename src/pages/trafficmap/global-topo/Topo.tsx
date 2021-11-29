@@ -242,7 +242,7 @@ const Topo = (props: any) => {
   G6.registerCombo(
     'card-combo',
     {
-      drawShape: function drawShape(cfg, group) {
+      drawShape: function drawShape(cfg: any, group) {
         const self = this;
         // Get the padding from the configuration
         cfg.padding = cfg.padding || [50, 20, 20, 20];

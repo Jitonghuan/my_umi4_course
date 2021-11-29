@@ -119,7 +119,13 @@ export default class DragModal extends React.Component<any, any> {
             <Draggable handle=".drag-header" {...dragHandlers}>
               <div className="app-modal" style={{ width: '520px', transformOrigin: '78px -58px' }}>
                 <div className="app-modal-content no-cursor">
-                  <Button className="app-modal-close" icon={<CloseOutlined />}></Button>
+                  <Button
+                    className="app-modal-close"
+                    icon={<CloseOutlined />}
+                    onClick={() => {
+                      this.props.deleteModal(appInfo);
+                    }}
+                  />
                   {/* <strong className="cursor"> */}
                   <div className="app-modal-header drag-header cursor">
                     <div className="app-modal-title">{appInfo.name}</div>
