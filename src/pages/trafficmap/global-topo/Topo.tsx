@@ -66,6 +66,7 @@ const Topo = (props: any) => {
           width: w,
           height: h,
         },
+        draggable: true,
         name: 'big-rect-shape',
       });
       /* 矩形 */
@@ -80,6 +81,7 @@ const Topo = (props: any) => {
           radius: 2,
           // cursor: 'pointer',
         },
+        draggable: true,
         name: 'rect-shape',
       });
 
@@ -108,6 +110,7 @@ const Topo = (props: any) => {
           fill: config.basicColor,
           radius: 1.5,
         },
+        draggable: true,
         name: 'left-border-shape',
       });
       return container;
@@ -139,23 +142,23 @@ const Topo = (props: any) => {
         name: 'collapse-icon',
       });
     },
-    afterDraw: (cfg: any, group: any[]) => {
-      /* 操作 marker 的背景色显示隐藏 */
-      const icon = group.find((element: { get: (arg0: string) => string }) => element.get('name') === 'collapse-icon');
-      if (icon) {
-        const bg = group.find(
-          (element: { get: (arg0: string) => string }) => element.get('name') === 'collapse-icon-bg',
-        );
-        icon.on('mouseenter', () => {
-          bg.attr('opacity', 1);
-          graph.get('canvas').draw();
-        });
-        icon.on('mouseleave', () => {
-          bg.attr('opacity', 0);
-          graph.get('canvas').draw();
-        });
-      }
-    },
+    // afterDraw: (cfg: any, group: any[]) => {
+    //   /* 操作 marker 的背景色显示隐藏 */
+    //   const icon = group.find((element: { get: (arg0: string) => string }) => element.get('name') === 'collapse-icon');
+    //   if (icon) {
+    //     const bg = group.find(
+    //       (element: { get: (arg0: string) => string }) => element.get('name') === 'collapse-icon-bg',
+    //     );
+    //     icon.on('mouseenter', () => {
+    //       bg.attr('opacity', 1);
+    //       graph.get('canvas').draw();
+    //     });
+    //     icon.on('mouseleave', () => {
+    //       bg.attr('opacity', 0);
+    //       graph.get('canvas').draw();
+    //     });
+    //   }
+    // },
 
     setState: (name: string, value: any, item: { [x: string]: any; get: (arg0: string) => any }) => {
       const group = item.get('group');
@@ -516,7 +519,7 @@ const Topo = (props: any) => {
           minMovement: 0.04,
           maxIteration: 5000,
           damping: 0.99,
-          nodeSize: 100,
+          nodeSize: 500,
           preventOverlap: true,
           // nodeSpacing: (d: any) => 100,
           focusNode: 'li',
@@ -551,7 +554,7 @@ const Topo = (props: any) => {
             ) {
               return 50;
             }
-            return 50;
+            return 25;
           },
         },
         defaultCombo: {
