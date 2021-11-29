@@ -23,7 +23,7 @@ import { AnsiUp } from 'ansi-up';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
 import { postRequest } from '@/utils/request';
-import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { useEnvOptions, useLogStoreOptions, useFrameUrl, useIndexModeList } from './hooks';
@@ -73,7 +73,6 @@ export default function LoggerSearch(props: any) {
   let ansi_up = new AnsiUp();
   const { RangePicker } = DatePicker;
   const [subInfoForm] = Form.useForm();
-  const [editScreenForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
   const now = new Date().getTime();
@@ -89,13 +88,12 @@ export default function LoggerSearch(props: any) {
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
   const [querySql, setQuerySql] = useState<string>(''); //querySql选择
-  let tagListArryIs: any = []; //运算符为是
-  let tagListArryNot: any = []; //运算符为否
-  tagListArryIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
-  tagListArryNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
+  const [podName, setPodName] = useState<string>(''); //podName
+  const [appCodeValue, setAppCodeValue] = useState<any>([]); //appCode
   const [srollLoading, setScrollLoading] = useState(false); //无限下拉loading
   const [infoLoading, setInfoLoading] = useState(false); //日志检索信息loading
   const [editScreenVisible, setEditScreenVisible] = useState<boolean>(false); //是否展示lucene语法输入框
+  const [editConditionType, setEditConditionType] = useState<boolean>(false); //使用高级搜索时禁用筛选条件输入
   const [envOptions] = useEnvOptions(); //环境下拉框选项数据
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [frameUrl, urlLoading, logType] = useFrameUrl(envCode, logStore);
@@ -111,7 +109,7 @@ export default function LoggerSearch(props: any) {
   //使用lucene语法搜索时的事件
   const onSearch = (values: any) => {
     setQuerySql(values);
-    loadMoreData(logStore, startTimestamp, endTimestamp, values, tagListArryIs, tagListArryNot);
+    loadMoreData(logStore, startTimestamp, endTimestamp, values, podName, appCodeValue);
   };
 
   //选择时间间隔
@@ -122,9 +120,9 @@ export default function LoggerSearch(props: any) {
     setEndTimestamp(end);
 
     if (start !== 'NaN' && end !== 'NaN') {
-      loadMoreData(logStore, start, end, querySql, tagListArryIs, tagListArryNot);
+      loadMoreData(logStore, start, end, querySql, podName);
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, tagListArryIs, tagListArryNot);
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, podName, appCodeValue);
     }
   };
 
@@ -135,7 +133,7 @@ export default function LoggerSearch(props: any) {
     let endTimepl = Number(now / 1000).toString();
     setStartTimestamp(startTimepl);
     setEndTimestamp(endTimepl);
-    loadMoreData(logStore, startTimepl, endTimepl, querySql);
+    loadMoreData(logStore, startTimepl, endTimepl, querySql, podName, appCodeValue);
   };
   //选择环境事件
   const handleEnvCodeChange = (next: string) => {
@@ -164,68 +162,19 @@ export default function LoggerSearch(props: any) {
     return <DatePicker picker={type} onChange={onChange} />;
   };
 
-  //输入appCode、message、traceId时按下回车键触发查询日志事件
-  const subInfo = () => {
+  //查询
+  const submitEditScreen = () => {
     let params = subInfoForm.getFieldsValue();
-    let filterIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
-    let filterNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
-    let querySqlInfo = params.message;
-    let value = params.appCode;
-
-    if (querySqlInfo && !value) {
-      setQuerySql(querySqlInfo);
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, filterIs);
-    }
-    if (value && !querySqlInfo) {
-      filterIs.push('appCode:' + value);
-      setQuerySql(querySqlInfo);
-      tagListArryIs = filterIs;
-      localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, tagListArryIs);
-    }
-    if (querySqlInfo && value) {
-      setQuerySql(querySqlInfo);
-      filterIs.push('appCode:' + value);
-      tagListArryIs = filterIs;
-      localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, tagListArryIs);
-    }
-  };
-  const subAppCode = () => {
-    let params = subInfoForm.getFieldsValue();
-    let value = params?.appCode;
-    let querySqlInfo = params.message;
-    let filterIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
-    filterIs.push('appCode:' + value);
-    console.log('filterIs', filterIs);
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, filterIs);
-    tagListArryIs = filterIs;
-    localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
-  };
-  const subMessage = () => {
-    let params = subInfoForm.getFieldsValue();
+    let podNameInfo = params?.podName;
     let querySqlInfo = params?.message;
+    let appCodeValue = params?.appCode;
     setQuerySql(querySqlInfo);
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, tagListArryIs);
-  };
-
-  //选择字段触发事件
-  const submitEditScreen = (params: any) => {
-    let filterIs = localStorage.LOG_SEARCH_FILTER_IS ? JSON.parse(localStorage.LOG_SEARCH_FILTER_IS) : [];
-    let filterNot = localStorage.LOG_SEARCH_FILTER_NOT ? JSON.parse(localStorage.LOG_SEARCH_FILTER_NOT) : [];
-    let key = params.fields;
-    let value = params.editValue;
-    if (params.isfilter === 'filterIs') {
-      filterIs.push(key + ':' + value);
-    } else if (params.isfilter === 'filterNot') {
-      filterNot.push(key + ':' + value);
+    setPodName(podNameInfo);
+    let appCodeArry = [];
+    if (appCodeValue) {
+      appCodeArry.push('appCode:' + appCodeValue);
     }
-    setInfoLoading(true);
-    tagListArryIs = filterIs;
-    tagListArryNot = filterNot;
-    localStorage.LOG_SEARCH_FILTER_IS = JSON.stringify(tagListArryIs);
-    localStorage.LOG_SEARCH_FILTER_NOT = JSON.stringify(tagListArryNot);
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySql, filterIs, filterNot);
+    loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, podNameInfo, appCodeArry);
   };
 
   //接收参数：日志库选择logStore,日期开始时间，日期结束时间，querySql,运算符为是（filterIs）,运算符为否（filterNot）,环境Code（envCode）
@@ -234,8 +183,8 @@ export default function LoggerSearch(props: any) {
     startTime?: string,
     endTime?: string,
     querySqlParam?: string,
-    filterIsParam?: any,
-    filterNotParam?: any,
+    podNameParam?: string,
+    appCodeParam?: any,
   ) => {
     // setLoading(true);
     setInfoLoading(true);
@@ -245,8 +194,8 @@ export default function LoggerSearch(props: any) {
         startTime: startTime || startTimestamp,
         endTime: endTime || endTimestamp,
         querySql: querySqlParam || '',
-        filterIs: tagListArryIs || [],
-        filterNot: tagListArryNot || [],
+        podName: podNameParam || '',
+        filterIs: appCodeParam || [],
         envCode: envCode,
       },
     })
@@ -274,21 +223,7 @@ export default function LoggerSearch(props: any) {
         setInfoLoading(false);
       });
   };
-  //关闭tag是
-  const closeTagIs = (index: number, type: string) => {
-    tagListArryIs.splice(index, 1);
-    localStorage.LOG_SEARCH_FILTER_IS = JSON?.stringify(tagListArryIs);
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySql);
-    // editScreenForm.resetFields();
-    // subInfoForm.resetFields();
-  };
-  //关闭tag否
-  const closeTagNot = (index: number, type: string) => {
-    tagListArryNot.splice(index, 1);
-    localStorage.LOG_SEARCH_FILTER_NOT = JSON?.stringify(tagListArryNot);
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySql);
-    // editScreenForm.resetFields();
-  };
+
   //切换日志库
   const chooseIndexMode = (n: any) => {
     setLogStore(n);
@@ -303,6 +238,15 @@ export default function LoggerSearch(props: any) {
         setLogHistormData('');
       });
   };
+
+  //重置筛选信息
+  const resetQueryInfo = () => {
+    subInfoForm.resetFields();
+    setAppCodeValue([]);
+    setQuerySql('');
+    setPodName('');
+    loadMoreData(logStore, startTimestamp, endTimestamp, '');
+  };
   // 无限滚动下拉事件
   const ScrollMore = () => {
     setScrollLoading(true);
@@ -312,7 +256,7 @@ export default function LoggerSearch(props: any) {
       let vivelist = vivelogSearchTabInfo.concat(moreList);
       setVivelogSeaechTabInfo(vivelist);
       setScrollLoading(false);
-    }, 2000);
+    }, 1800);
   };
 
   //实现无限加载滚动
@@ -395,106 +339,47 @@ export default function LoggerSearch(props: any) {
               <div>
                 <Form form={subInfoForm} layout="inline" labelCol={{ flex: 4 }}>
                   <Form.Item label="appCode" name="appCode">
-                    <Input style={{ width: 120 }} onPressEnter={subAppCode}></Input>
+                    <Input style={{ width: 120 }} disabled={editConditionType}></Input>
+                  </Form.Item>
+                  <Form.Item label="podName" name="podName">
+                    <Input style={{ width: 140 }} disabled={editConditionType}></Input>
                   </Form.Item>
                   <Form.Item label="message" name="message">
-                    <Input
-                      style={{ width: 498 }}
-                      placeholder="单行输入"
-                      onPressEnter={subMessage}
-                      addonBefore="like"
-                    ></Input>
+                    <Input style={{ width: 300 }} placeholder="单行输入" disabled={editConditionType}></Input>
                   </Form.Item>
-                  {/* <Form.Item label="traceId">
-                    <Input placeholder="单行输入" style={{ width: 350 }}></Input>
-                  </Form.Item> */}
+
                   <Form.Item>
-                    <Button type="primary" onClick={subInfo}>
-                      <PlusOutlined />
+                    <Button htmlType="submit" type="primary" onClick={submitEditScreen}>
+                      查询
                     </Button>
                   </Form.Item>
-                </Form>
-              </div>
-              <div style={{ marginTop: 4, width: '100%', marginLeft: 18 }}>
-                <Form form={editScreenForm} onFinish={submitEditScreen} layout="inline">
-                  <Form.Item label="字段" name="fields" rules={[{ required: true }]}>
-                    <Select placeholder="envCode" allowClear style={{ width: 120 }} options={indexModeData}></Select>
-                  </Form.Item>
-                  <Form.Item label="运算符" name="isfilter" style={{ marginLeft: 7 }} rules={[{ required: true }]}>
-                    <Select placeholder="请选择" style={{ width: 180 }}>
-                      <Select.Option key="filterIs" value="filterIs">
-                        是
-                      </Select.Option>
-                      <Select.Option key="filterNot" value="filterNot">
-                        否
-                      </Select.Option>
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    label="值"
-                    name="editValue"
-                    style={{ marginLeft: 20, width: 280 }}
-                    rules={[{ required: true }]}
-                  >
-                    <Input style={{ width: 180 }} placeholder="单行输入"></Input>
-                  </Form.Item>
-                  <Form.Item>
-                    <Button htmlType="submit" type="primary">
-                      <PlusOutlined />
-                    </Button>
-                  </Form.Item>
+                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo}>
+                    重置
+                  </Button>
                   <Button
                     type="primary"
-                    style={{ marginLeft: 2 }}
-                    onClick={() => setEditScreenVisible(true)}
-                    onDoubleClick={() => setEditScreenVisible(false)}
+                    style={{ marginLeft: '11%' }}
+                    onClick={() => {
+                      setEditScreenVisible(true);
+                      setQuerySql('');
+                      setPodName('');
+                      setEditConditionType(true);
+                    }}
+                    onDoubleClick={() => {
+                      setEditScreenVisible(false);
+                      setQuerySql('');
+                      setPodName('');
+                      setEditConditionType(false);
+                    }}
                   >
                     高级搜索
                   </Button>
-                  <Button
-                    type="default"
-                    style={{ marginLeft: 2 }}
-                    onClick={() => {
-                      editScreenForm.resetFields();
-                      subInfoForm.resetFields();
-                    }}
-                  >
-                    重置筛选信息
-                  </Button>
                 </Form>
-
-                <div style={{ marginTop: 4 }}>
-                  {tagListArryIs?.map((el: any, index: number) => {
-                    return (
-                      <Tag
-                        closable={true}
-                        visible={true}
-                        color="green"
-                        onClose={() => {
-                          closeTagIs(index, 'LOG_SEARCH_FILTER_IS');
-                        }}
-                      >
-                        {el}
-                      </Tag>
-                    );
-                  })}
-                  {tagListArryNot?.map((el: any, index: number) => {
-                    return (
-                      <Tag
-                        closable={true}
-                        color="gold"
-                        visible={true}
-                        onClose={() => {
-                          closeTagNot(index, 'LOG_SEARCH_FILTER_NOT');
-                        }}
-                      >
-                        <span style={{ color: 'red' }}>非</span> {el}
-                      </Tag>
-                    );
-                  })}
-                </div>
+              </div>
+              <div style={{ marginTop: 4, width: '100%' }}>
                 {editScreenVisible === true ? (
                   <div style={{ marginTop: 4 }}>
+                    <Divider />
                     <Popover
                       title="查看lucene语法"
                       placement="topLeft"
@@ -512,7 +397,7 @@ export default function LoggerSearch(props: any) {
                         <QuestionCircleOutlined />
                       </Button>
                     </Popover>
-                    <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 290 }} />
+                    <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} />
                   </div>
                 ) : null}
               </div>
