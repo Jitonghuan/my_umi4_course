@@ -12,6 +12,7 @@ import Topo from './Topo';
 import DragWrapper from './_component/DragWrapper';
 import './index.less';
 import * as echarts from 'echarts';
+import RedLineModal from './_component/RedLineModal';
 
 const dataDemo = {
   requests: {
@@ -200,30 +201,13 @@ const globalTopo = () => {
           </section>
         </ContentCard>
       </div>
-      {/* <Modal
-        title="Basic Modal"
+      <RedLineModal
         visible={isRedLineVisible}
-        onCancel={() => { setIsRedLineVisible(false) }}
-        footer={false}
-        width='300px'
-      >
-        <List
-          // header={<div>Header</div>}
-          // footer={<div>Footer</div>}
-          style={{ width: '200px' }}
-          bordered
-          dataSource={redLineList}
-          renderItem={item => (
-            <List.Item >
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3929" width="20" height="20"><path d="M512 298.666667c103.210667 0 189.301333 73.290667 209.066667 170.666666H981.333333a42.666667 42.666667 0 0 1 1.333334 85.312L981.333333 554.666667h-260.266666c-19.770667 97.376-105.861333 170.666667-209.066667 170.666666-103.205333 0-189.296-73.290667-209.066667-170.666666H42.666667a42.666667 42.666667 0 0 1-1.333334-85.312L42.666667 469.333333h260.266666C322.698667 371.957333 408.789333 298.666667 512 298.666667z" p-id="3930" fill="#F5222D"></path></svg>
-                <span>2021-11-30 10:26:00</span>
-              </div>
-            </List.Item>
-          )}
-        />
-      </Modal> */}
-      {/* <RedLineModal visible={isRedLineVisible} handleCancel={() => { setIsRedLineVisible(false) }} /> */}
+        redLineList={redLineList}
+        handleCancel={() => {
+          setIsRedLineVisible(false);
+        }}
+      />
     </PageContainer>
   );
 };
