@@ -5,7 +5,7 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Form, Radio, Button, Modal, Card } from 'antd';
+import { Form, Radio, Button, Modal, Card, Select, Input } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
@@ -16,7 +16,23 @@ export default function OperatorScheduling() {
   return (
     <ContentCard className="page-scheduling">
       <div className="site-card-border-less-wrapper">
-        <Card title="Card title" bordered={false} style={{ width: 300 }}>
+        <Card title="操作" bordered={false} style={{ width: 300 }}>
+          <p>
+            集群选择:<Select></Select>
+          </p>
+          <p>
+            人员选择:<Select></Select>
+          </p>
+          <p>
+            ID:<Input></Input>
+          </p>
+        </Card>
+        <Card title="A集群" bordered={false} style={{ width: 300 }}>
+          <p>Card content</p>
+          <p>Card content</p>
+          <p>Card content</p>
+        </Card>
+        <Card title="B集群" bordered={false} style={{ width: 300 }}>
           <p>Card content</p>
           <p>Card content</p>
           <p>Card content</p>
