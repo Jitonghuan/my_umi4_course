@@ -40,7 +40,7 @@ export default class DragWrapper extends React.Component<any, any> {
           return (
             <DragModal
               title={appInfo.name}
-              handleClose={() => {
+              onCancel={() => {
                 this.props.deleteModal(appInfo);
               }}
             >
