@@ -65,7 +65,7 @@ export const OriginData = {
     { id: 'node16', label: '16', status: 'normal', nodeRegionCode: 'region3', nodeType: 'app' },
   ],
   edges: [
-    { source: 'region0', target: 'region1', label: '0-1\n0-2', style: arrowStyleType.normal },
+    { id: 'edge1', source: 'region0', target: 'region1', label: '0-1\n0-2', style: arrowStyleType.normal },
     { source: 'region0', target: 'region2', label: '0-1\n0-2', style: arrowStyleType.normal },
     { source: 'region0', target: 'region3', label: '0-1\n0-2', style: arrowStyleType.normal },
     { source: 'region0', target: 'region4', label: '0-1\n0-2', style: arrowStyleType.normal },

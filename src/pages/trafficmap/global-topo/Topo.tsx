@@ -680,6 +680,7 @@ const Topo = (props: any) => {
 
       graph.on('node:click', (evt: any) => {
         const { item } = evt;
+        props.onAppClick(item._cfg.model.id);
         clearFocusItemState(graph);
         graph.setItemState(item, 'focus', true);
         const relatedEdges = item.getEdges();
@@ -699,6 +700,7 @@ const Topo = (props: any) => {
 
       graph.on('edge:click', (evt: any) => {
         const { item } = evt;
+        props.onRedLineClick(item._cfg.model.id);
         graph.setItemState(item, 'focus', true);
       });
 

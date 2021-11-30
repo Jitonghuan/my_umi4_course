@@ -144,6 +144,14 @@ const globalTopo = () => {
     }
   };
 
+  const onAppClick = (id: string) => {
+    console.log('id', id);
+  };
+
+  const onRedLineClick = (id: string) => {
+    console.log('redline', id);
+  };
+
   return (
     <PageContainer className="global-topo">
       <FilterCard>
@@ -181,7 +189,7 @@ const globalTopo = () => {
               <div style={{ position: 'absolute', top: '0px', pointerEvents: 'none', width: '100%' }}>
                 <DragModal number={number} appInfoList={appInfoList} deleteModal={deleteModal} />
               </div>
-              <Topo isFullScreen={isFullScreen} />
+              <Topo isFullScreen={isFullScreen} onAppClick={onAppClick} onRedLineClick={onRedLineClick} />
             </div>
           </section>
         </ContentCard>
