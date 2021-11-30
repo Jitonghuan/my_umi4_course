@@ -32,6 +32,10 @@ import './index.less';
 // 时间枚举
 export const START_TIME_ENUMS = [
   {
+    label: 'Last 15 minutes',
+    value: 15 * 60 * 1000,
+  },
+  {
     label: 'Last 30 minutes',
     value: 30 * 60 * 1000,
   },
@@ -74,7 +78,7 @@ export default function LoggerSearch(props: any) {
   const { RangePicker } = DatePicker;
   const [subInfoForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
+  const [startTime, setStartTime] = useState<number>(15 * 60 * 1000);
   const now = new Date().getTime();
   //默认传最近30分钟，处理为秒级的时间戳
   let start = Number((now - startTime) / 1000).toString();
@@ -150,14 +154,27 @@ export default function LoggerSearch(props: any) {
   }, [frameUrl]);
   //使用lucene语法搜索时的事件
   const onSearch = (values: any) => {
+    subInfoForm.resetFields();
     setQuerySql(values);
-    loadMoreData(logStore, startTimestamp, endTimestamp, values, podName, messageValue, appCodeValue);
+    const now = new Date().getTime();
+    //默认传最近30分钟，处理为秒级的时间戳
+    let start = Number((now - startTime) / 1000).toString();
+    let end = Number(now / 1000).toString();
+    if (startTimestamp !== start) {
+      setStartTimestamp(start);
+      setEndTimestamp(end);
+
+      loadMoreData(logStore, start, end, values, podName, messageValue, appCodeValue);
+    } else {
+      loadMoreData(logStore, startTimestamp, endTimestamp, values, podName, messageValue, appCodeValue);
+    }
   };
 
   //选择时间间隔
   const selectTime = (time: any, timeString: string) => {
     let start = moment(timeString[0]).unix().toString();
     let end = moment(timeString[1]).unix().toString();
+
     setStartTimestamp(start);
     setEndTimestamp(end);
 
@@ -170,6 +187,7 @@ export default function LoggerSearch(props: any) {
 
   // 选择就近时间触发的事件
   const selectRelativeTime = (value: any) => {
+    const now = new Date().getTime();
     setStartTime(value);
     let startTimepl = Number((now - value) / 1000).toString();
     let endTimepl = Number(now / 1000).toString();
@@ -220,7 +238,17 @@ export default function LoggerSearch(props: any) {
       appCodeArry.push('appCode:' + appCodeValue);
     }
     setAppCodeValue(appCodeArry);
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySql, podNameInfo, messageInfo, appCodeArry);
+    const now = new Date().getTime();
+    //默认传最近30分钟，处理为秒级的时间戳
+    let start = Number((now - startTime) / 1000).toString();
+    let end = Number(now / 1000).toString();
+    if (startTimestamp !== start) {
+      setStartTimestamp(start);
+      setEndTimestamp(end);
+      loadMoreData(logStore, start, end, querySql, podNameInfo, messageInfo, appCodeArry);
+    } else {
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, podNameInfo, messageInfo, appCodeArry);
+    }
   };
 
   //接收参数：日志库选择logStore,日期开始时间，日期结束时间，querySql,运算符为是（filterIs）,运算符为否（filterNot）,环境Code（envCode）
@@ -275,6 +303,7 @@ export default function LoggerSearch(props: any) {
   //切换日志库
   const chooseIndexMode = (n: any) => {
     setLogStore(n);
+    subInfoForm.resetFields();
   };
 
   //重置筛选信息
@@ -284,7 +313,17 @@ export default function LoggerSearch(props: any) {
     // setQuerySql('');
     setMessageValue('');
     setPodName('');
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySql, '', '');
+    const now = new Date().getTime();
+    //默认传最近30分钟，处理为秒级的时间戳
+    let start = Number((now - startTime) / 1000).toString();
+    let end = Number(now / 1000).toString();
+    if (startTimestamp !== start) {
+      setStartTimestamp(start);
+      setEndTimestamp(end);
+      loadMoreData(logStore, start, end, querySql, '', '');
+    } else {
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, '', '');
+    }
   };
   // 无限滚动下拉事件
   const ScrollMore = () => {
@@ -297,6 +336,11 @@ export default function LoggerSearch(props: any) {
       setScrollLoading(false);
     }, 1800);
   };
+  // let html =ansi_up.ansi_to_html(JSON.stringify(vivelogSearchTabInfo));
+  // var scrollableDiv= document.getElementById("scrollableDiv"); //statusLog 即是页面需要展示内容的div
+  // if(scrollableDiv){
+  //   scrollableDiv.innerHTML=html
+  // }
 
   //实现无限加载滚动
   return (
@@ -398,10 +442,12 @@ export default function LoggerSearch(props: any) {
                   <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo}>
                     重置
                   </Button>
+
                   <Button
                     type="primary"
                     style={{ marginLeft: '11%' }}
                     onClick={() => {
+                      subInfoForm.resetFields();
                       setEditScreenVisible(true);
                       setQuerySql('');
                       setMessageValue('');
@@ -420,6 +466,7 @@ export default function LoggerSearch(props: any) {
                   >
                     高级搜索
                   </Button>
+                  {/* <span style={{color: '#708090' }}>双击关闭</span> */}
                 </Form>
               </div>
               <div style={{ marginTop: 4, width: '100%' }}>
@@ -489,8 +536,11 @@ export default function LoggerSearch(props: any) {
                                       {moment(item?._source['@timestamp']).format('YYYY-MM-DD,HH:mm:ss')}
                                     </div>
                                     {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
-                                    <div style={{ width: '80%' }}>
-                                      {ansi_up.ansi_to_html(JSON.stringify(item?._source))}
+                                    <div
+                                      style={{ width: '80%' }}
+                                      dangerouslySetInnerHTML={{ __html: JSON.stringify(item?._source) }}
+                                    >
+                                      {/* {ansi_up.ansi_to_html(JSON.stringify(item?._source))} */}
                                     </div>
                                   </div>
                                 }
@@ -499,49 +549,47 @@ export default function LoggerSearch(props: any) {
                                 <Tabs defaultActiveKey="1" onChange={callback}>
                                   <TabPane tab="表" key="1">
                                     <div style={{ marginLeft: 14 }}>
-                                      <p className="tab-header">
-                                        <span className="tab-left">@timestamp:</span>
-                                        <span className="tab-right">{item?._source['@timestamp']}</span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">@version:</span>
-                                        <span className="tab-right">{item?._source['@version']}</span>
-                                      </p>
+                                      {Object.keys(item?._source).map((key: any) => {
+                                        return (
+                                          <p className="tab-header">
+                                            <span
+                                              className="tab-left"
+                                              dangerouslySetInnerHTML={{ __html: `${key}:` }}
+                                            ></span>
+                                            <span
+                                              className="tab-right"
+                                              dangerouslySetInnerHTML={{ __html: JSON.stringify(item?._source[key]) }}
+                                            ></span>
+                                          </p>
+                                        );
+                                      })}
                                       <p className="tab-header">
                                         <span className="tab-left">_id:</span>
-                                        <span className="tab-right">{item?._id}</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{ __html: item?._id }}
+                                        ></span>
                                       </p>
                                       <p className="tab-header">
                                         <span className="tab-left">_index:</span>
-                                        <span className="tab-right">{item?._index}</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{ __html: item?._index }}
+                                        ></span>
                                       </p>
                                       <p className="tab-header">
                                         <span className="tab-left">_score:</span>
-                                        <span className="tab-right">{item?._score}</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{ __html: item?._score }}
+                                        ></span>
                                       </p>
                                       <p className="tab-header">
                                         <span className="tab-left">_type:</span>
-                                        <span className="tab-right">{item?._type}</span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">appCode:</span>
-                                        <span className="tab-right">{item?._source?.appCode}</span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">envCode:</span>
-                                        <span className="tab-right">{item?._source?.envCode}</span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">hostName:</span>
-                                        <span className="tab-right">{item?._source?.hostName}</span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">log:</span>
-                                        <span className="tab-right">{item?._source?.log}</span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">tags:</span>
-                                        <span className="tab-right">{item?._source?.tags[0]}</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{ __html: item?._type }}
+                                        ></span>
                                       </p>
                                     </div>
                                   </TabPane>
