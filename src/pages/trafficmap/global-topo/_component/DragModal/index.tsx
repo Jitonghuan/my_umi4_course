@@ -116,8 +116,8 @@ export default class DragModal extends React.Component<any, any> {
             //     </div>
             //   </div>
             // </Draggable>
-            <Draggable handle=".drag-header" {...dragHandlers}>
-              <div className="app-modal" style={{ width: '520px', transformOrigin: '78px -58px' }}>
+            <Draggable handle=".drag-header" {...dragHandlers} bounds="body">
+              <div className="app-modal" style={{ minWidth: '260px', maxWidth: '400px' }}>
                 <div className="app-modal-content no-cursor">
                   <Button
                     className="app-modal-close"

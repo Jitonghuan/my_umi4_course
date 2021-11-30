@@ -25,6 +25,9 @@ export default function LineChart(props: LineChartProps) {
       title: {
         text: title,
         left: 'left',
+        textStyle: {
+          fontSize: 16,
+        },
       },
       tooltip: {
         trigger: 'axis',
@@ -62,7 +65,7 @@ export default function LineChart(props: LineChartProps) {
 
   return (
     <section data-loading={loading}>
-      <div style={{ height: 220 + legendLineNum * 20, background: '#fff' }}>
+      <div style={{ height: 200 + legendLineNum * 20, background: '#fff' }}>
         <ColorContainer roleKeys={['color']}>
           {/**
            * 参数说明

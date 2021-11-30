@@ -4,7 +4,7 @@
  * @Description:
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Input, Select, Button, DatePicker } from 'antd';
+import { Form, Modal, Select, Button, DatePicker, List } from 'antd';
 import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -122,6 +122,8 @@ const globalTopo = () => {
     },
   ]);
 
+  const [isRedLineVisible, setIsRedLineVisible] = useState(false);
+  const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
   useEffect(() => {}, []);
 
   const handleFullScreen = useCallback(() => {
@@ -170,7 +172,13 @@ const globalTopo = () => {
             <div className="content-header">
               <h3>浙一生产环境</h3>
               <div className="action-bar">
-                <Button type="default" icon={<PlusCircleOutlined />}>
+                <Button
+                  type="default"
+                  icon={<PlusCircleOutlined />}
+                  onClick={() => {
+                    setIsRedLineVisible(true);
+                  }}
+                >
                   红线追踪
                 </Button>
                 <Button type="default" icon={<PlusCircleOutlined />}>
@@ -186,7 +194,7 @@ const globalTopo = () => {
               </div>
             </div>
             <div className="graph-box" style={{ position: 'relative' }}>
-              <div style={{ position: 'absolute', top: '0px', pointerEvents: 'none', width: '100%' }}>
+              <div className="drag-area">
                 <DragModal number={number} appInfoList={appInfoList} deleteModal={deleteModal} />
               </div>
               <Topo isFullScreen={isFullScreen} onAppClick={onAppClick} onRedLineClick={onRedLineClick} />
