@@ -27,7 +27,7 @@ export default function ChartCaseList(props: ChartCaseListProps) {
       <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
         <Tag color="blue">{hitsData}次命中</Tag>
       </div>
-      <div style={{ height: 210 }}>
+      <div style={{ height: 170 }}>
         <ColorContainer roleKeys={['color']}>
           <EchartsReact option={chartOptions} />
         </ColorContainer>

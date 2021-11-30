@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect } from 'react';
 import {
   Form,
   Select,
@@ -22,7 +22,7 @@ import ReactJson from 'react-json-view';
 import { AnsiUp } from 'ansi-up';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
-import { postRequest } from '@/utils/request';
+import { postRequest, getRequest } from '@/utils/request';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -89,18 +89,60 @@ export default function LoggerSearch(props: any) {
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
   const [querySql, setQuerySql] = useState<string>(''); //querySql选择
   const [podName, setPodName] = useState<string>(''); //podName
-  const [appCodeValue, setAppCodeValue] = useState<any>([]); //appCode
+  const [appCodeValue, setAppCodeValue] = useState<any[]>([]); //appCode
+  const [messageValue, setMessageValue] = useState<string>(''); //message
   const [srollLoading, setScrollLoading] = useState(false); //无限下拉loading
   const [infoLoading, setInfoLoading] = useState(false); //日志检索信息loading
   const [editScreenVisible, setEditScreenVisible] = useState<boolean>(false); //是否展示lucene语法输入框
   const [editConditionType, setEditConditionType] = useState<boolean>(false); //使用高级搜索时禁用筛选条件输入
   const [envOptions] = useEnvOptions(); //环境下拉框选项数据
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
-  const [frameUrl, urlLoading, logType] = useFrameUrl(envCode, logStore);
+  // const [frameUrl, urlLoading, logType] = useFrameUrl(envCode, logStore);
+  const [frameUrl, setFrameUrl] = useState<string>('');
+  const [logType, setLogType] = useState<string>('');
+  const [urlLoading, setUrlLoading] = useState(false);
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   const [framePending, setFramePending] = useState(false);
   const timmerRef = useRef<any>();
   const frameRef = useRef<any>();
+  let urlType = '';
+  var iframe = document.createElement('iframe');
+  useLayoutEffect(() => {
+    if (!envCode || !logStore) {
+      setUrlLoading(false);
+      setFrameUrl('');
+      return;
+    }
+    setUrlLoading(true);
+    getRequest(APIS.getSearchUrl, {
+      data: { envCode, logStore },
+    })
+      .then((result) => {
+        if (result.success) {
+          if (result.data.logType === '1') {
+            setFrameUrl(result.data.url || '');
+            setLogType('1');
+            urlType = '1';
+          } else {
+            setLogType('0');
+            urlType = '0';
+          }
+          queryIndexModeList(envCode, logStore)
+            .then(() => {
+              if (urlType === '0') {
+                loadMoreData(logStore, startTimestamp, endTimestamp);
+              }
+            })
+            .catch(() => {
+              setIndexModeData([]);
+              setHitInfo('');
+              setLogSearchTableInfo('');
+              setLogHistormData('');
+            });
+        }
+      })
+      .finally(() => {});
+  }, [logStore]);
   useEffect(() => {
     if (logType === '1') {
       setFramePending(!!frameUrl);
@@ -109,7 +151,7 @@ export default function LoggerSearch(props: any) {
   //使用lucene语法搜索时的事件
   const onSearch = (values: any) => {
     setQuerySql(values);
-    loadMoreData(logStore, startTimestamp, endTimestamp, values, podName, appCodeValue);
+    loadMoreData(logStore, startTimestamp, endTimestamp, values, podName, messageValue, appCodeValue);
   };
 
   //选择时间间隔
@@ -122,7 +164,7 @@ export default function LoggerSearch(props: any) {
     if (start !== 'NaN' && end !== 'NaN') {
       loadMoreData(logStore, start, end, querySql, podName);
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, podName, appCodeValue);
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, podName, messageValue, appCodeValue);
     }
   };
 
@@ -133,7 +175,7 @@ export default function LoggerSearch(props: any) {
     let endTimepl = Number(now / 1000).toString();
     setStartTimestamp(startTimepl);
     setEndTimestamp(endTimepl);
-    loadMoreData(logStore, startTimepl, endTimepl, querySql, podName, appCodeValue);
+    loadMoreData(logStore, startTimepl, endTimepl, querySql, podName, messageValue, appCodeValue);
   };
   //选择环境事件
   const handleEnvCodeChange = (next: string) => {
@@ -143,6 +185,7 @@ export default function LoggerSearch(props: any) {
 
   const callback = (key: any) => {};
   const handleFrameComplete = () => {
+    setUrlLoading(false);
     clearTimeout(timmerRef.current);
     timmerRef.current = setTimeout(() => {
       setFramePending(false);
@@ -166,15 +209,18 @@ export default function LoggerSearch(props: any) {
   const submitEditScreen = () => {
     let params = subInfoForm.getFieldsValue();
     let podNameInfo = params?.podName;
-    let querySqlInfo = params?.message;
+    // let querySqlInfo = params?.message;
+    let messageInfo = params?.message;
     let appCodeValue = params?.appCode;
-    setQuerySql(querySqlInfo);
+    setMessageValue(messageInfo);
+    // setQuerySql(querySqlInfo);
     setPodName(podNameInfo);
     let appCodeArry = [];
     if (appCodeValue) {
       appCodeArry.push('appCode:' + appCodeValue);
     }
-    loadMoreData(logStore, startTimestamp, endTimestamp, querySqlInfo, podNameInfo, appCodeArry);
+    setAppCodeValue(appCodeArry);
+    loadMoreData(logStore, startTimestamp, endTimestamp, querySql, podNameInfo, messageInfo, appCodeArry);
   };
 
   //接收参数：日志库选择logStore,日期开始时间，日期结束时间，querySql,运算符为是（filterIs）,运算符为否（filterNot）,环境Code（envCode）
@@ -184,6 +230,7 @@ export default function LoggerSearch(props: any) {
     endTime?: string,
     querySqlParam?: string,
     podNameParam?: string,
+    messageParam?: any,
     appCodeParam?: any,
   ) => {
     // setLoading(true);
@@ -195,6 +242,7 @@ export default function LoggerSearch(props: any) {
         endTime: endTime || endTimestamp,
         querySql: querySqlParam || '',
         podName: podNameParam || '',
+        message: messageParam || '',
         filterIs: appCodeParam || [],
         envCode: envCode,
       },
@@ -227,25 +275,16 @@ export default function LoggerSearch(props: any) {
   //切换日志库
   const chooseIndexMode = (n: any) => {
     setLogStore(n);
-    queryIndexModeList(envCode, n)
-      .then(() => {
-        loadMoreData(n, startTimestamp, endTimestamp);
-      })
-      .catch(() => {
-        setIndexModeData([]);
-        setHitInfo('');
-        setLogSearchTableInfo('');
-        setLogHistormData('');
-      });
   };
 
   //重置筛选信息
   const resetQueryInfo = () => {
     subInfoForm.resetFields();
     setAppCodeValue([]);
-    setQuerySql('');
+    // setQuerySql('');
+    setMessageValue('');
     setPodName('');
-    loadMoreData(logStore, startTimestamp, endTimestamp, '');
+    loadMoreData(logStore, startTimestamp, endTimestamp, querySql, '', '');
   };
   // 无限滚动下拉事件
   const ScrollMore = () => {
@@ -320,6 +359,9 @@ export default function LoggerSearch(props: any) {
             <Spin tip="加载中" spinning={urlLoading} />
           </div>
         ) : null}
+        {/* {urlLoading?  <div className="loading-wrapper">
+            <Spin tip="加载中" spinning={urlLoading} />
+          </div>:null} */}
 
         {/* {(logType==="1")&&!urlLoading && (!envCode || !logStore) ? <div className="empty-holder">请选择环境和日志库</div> : null} */}
 
@@ -327,7 +369,7 @@ export default function LoggerSearch(props: any) {
           <div className="empty-holder">未找到日志检索页面</div>
         ) : null}
 
-        {logType === '1' && !urlLoading && frameUrl ? (
+        {logType === '1' && frameUrl ? (
           <iframe onLoad={handleFrameComplete} src={frameUrl} frameBorder="0" ref={frameRef} />
         ) : null}
 
@@ -362,13 +404,17 @@ export default function LoggerSearch(props: any) {
                     onClick={() => {
                       setEditScreenVisible(true);
                       setQuerySql('');
+                      setMessageValue('');
                       setPodName('');
+                      setAppCodeValue([]);
                       setEditConditionType(true);
                     }}
                     onDoubleClick={() => {
                       setEditScreenVisible(false);
                       setQuerySql('');
+                      setMessageValue('');
                       setPodName('');
+                      setAppCodeValue([]);
                       setEditConditionType(false);
                     }}
                   >
@@ -404,7 +450,7 @@ export default function LoggerSearch(props: any) {
             </div>
             <Divider style={{ height: 10, marginTop: 0, marginBottom: 0 }} />
             <Spin size="large" spinning={infoLoading}>
-              <div>
+              <div style={{ marginBottom: 4 }}>
                 <ChartCaseList data={logHistormData} loading={infoLoading} hitsData={hitInfo} />
               </div>
             </Spin>
