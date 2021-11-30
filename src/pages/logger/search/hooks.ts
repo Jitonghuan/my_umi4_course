@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/23 16:49
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useLayoutEffect } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from './service';
 import { message } from 'antd';
@@ -57,8 +57,34 @@ export function useFrameUrl(envCode?: string, logStore?: string): [string, boole
   const [url, setUrl] = useState<string>('');
   const [logType, setLogType] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  // const getUrl =()=>{
 
-  useEffect(() => {
+  //   if (!envCode || !logStore) {
+  //         setLoading(false);
+  //         setUrl('');
+  //         return;
+  //       }
+  //       setLoading(true);
+  //       console.log("envCode,logStore",envCode,logStore)
+  //       getRequest(APIS.getSearchUrl, {
+  //       data: { envCode, logStore },
+  //      })
+  //     .then((result) => {
+  //       if (result.success) {
+  //         if (result.data.logType === '1') {
+  //           setUrl(result.data.url || '');
+  //           setLogType('1');
+  //         } else {
+  //           setLogType('0');
+  //         }
+  //       }
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // }
+
+  useLayoutEffect(() => {
     if (!envCode || !logStore) {
       setLoading(false);
       setUrl('');
