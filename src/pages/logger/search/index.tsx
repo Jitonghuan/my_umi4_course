@@ -107,6 +107,7 @@ export default function LoggerSearch(props: any) {
   const [urlLoading, setUrlLoading] = useState(false);
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   const [framePending, setFramePending] = useState(false);
+  const [turnOnButton, setTurnOnButton] = useState<boolean>(false); //是否展开高级搜索
   const timmerRef = useRef<any>();
   const frameRef = useRef<any>();
   let urlType = '';
@@ -448,20 +449,18 @@ export default function LoggerSearch(props: any) {
                     style={{ marginLeft: '11%' }}
                     onClick={() => {
                       subInfoForm.resetFields();
-                      setEditScreenVisible(true);
+                      // setTurnOnButton(true)
+                      if (!editScreenVisible) {
+                        setEditScreenVisible(true);
+                      } else {
+                        setEditScreenVisible(false);
+                      }
+
                       setQuerySql('');
                       setMessageValue('');
                       setPodName('');
                       setAppCodeValue([]);
                       setEditConditionType(true);
-                    }}
-                    onDoubleClick={() => {
-                      setEditScreenVisible(false);
-                      setQuerySql('');
-                      setMessageValue('');
-                      setPodName('');
-                      setAppCodeValue([]);
-                      setEditConditionType(false);
                     }}
                   >
                     高级搜索
@@ -469,6 +468,7 @@ export default function LoggerSearch(props: any) {
                   {/* <span style={{color: '#708090' }}>双击关闭</span> */}
                 </Form>
               </div>
+
               <div style={{ marginTop: 4, width: '100%' }}>
                 {editScreenVisible === true ? (
                   <div style={{ marginTop: 4 }}>
