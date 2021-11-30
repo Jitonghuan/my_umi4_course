@@ -80,10 +80,10 @@ const AppTraffic: React.FC = () => {
               <div className="tab-content">
                 <div className="app-topo"></div>
                 <div className="chart-group">
-                  <div style={{ width: 480, height: 330, backgroundColor: 'lightgray' }}></div>
-                  <div style={{ width: 480, height: 330, backgroundColor: 'lightgray' }}></div>
-                  <div style={{ width: 480, height: 330, backgroundColor: 'lightgray' }}></div>
-                  <div style={{ width: 480, height: 330, backgroundColor: 'lightgray' }}></div>
+                  <div className="chart-item"></div>
+                  <div className="chart-item"></div>
+                  <div className="chart-item"></div>
+                  <div className="chart-item"></div>
                 </div>
               </div>
             </TabPane>

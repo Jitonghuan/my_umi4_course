@@ -39,23 +39,35 @@
       }
     }
   }
+
   .tab-content {
     padding: 10px 12px;
     height: 100%;
     overflow: auto;
+
     .app-topo {
-      height: 400px;
+      min-height: 400px;
+      height: 50%;
       background-color: lightblue;
       width: 100%;
       margin-bottom: 10px;
     }
+
     .chart-group {
-      width: 100%;
+      // width: 100%;
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-around;
-      gap: 10px;
+      // justify-content: space-around;
+      // gap: 10px;
       background-color: lightyellow;
+
+      .chart-item {
+        width: 50%;
+        max-width: 50%;
+        height: 330px;
+        background-color: lightgray;
+        padding: 10px;
+      }
     }
   }
 }
