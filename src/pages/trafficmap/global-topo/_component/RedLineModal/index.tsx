@@ -4,7 +4,7 @@
  * @Description: 红线追踪弹窗：可拖动
  */
 import React, { useRef, useState } from 'react';
-import { List } from 'antd';
+import { Select } from 'antd';
 import DragModal from '../DragModal';
 import './index.less';
 interface IProps {
@@ -14,6 +14,32 @@ interface IProps {
 }
 
 const RedLineModal: React.FC<IProps> = (props) => {
+  const [options, setOptions] = useState([
+    {
+      label: '最近五分钟',
+      value: '5',
+    },
+    {
+      label: '最近十分钟',
+      value: '10',
+    },
+    {
+      label: '最近十五分钟',
+      value: '15',
+    },
+    {
+      label: '最近二十分钟',
+      value: '20',
+    },
+    {
+      label: '最近二十五分钟',
+      value: '25',
+    },
+    {
+      label: '最近三十分钟',
+      value: '30',
+    },
+  ]);
   // const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 })
   // const [disabled, setDisabled] = useState(true)
   // const draggleRef = useRef<any>();
@@ -35,7 +61,8 @@ const RedLineModal: React.FC<IProps> = (props) => {
   return (
     <div className="drag-redline-modal" style={{ display: props.visible ? 'block' : 'none' }}>
       <DragModal title={'红线追踪'} onCancel={props.handleCancel}>
-        <div>
+        <Select options={options} style={{ width: '195px' }} />
+        <div style={{ marginTop: '12px' }}>
           {props.redLineList.map((item) => {
             return (
               <div className="redline-container">
