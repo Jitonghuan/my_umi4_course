@@ -43,6 +43,7 @@
     "@cffe/vc-layout": "1.0.53",
     "@cffe/vc-loading": "1.0.4",
     "@cffe/vc-request": "2.0.16",
+    "@types/react-resizable": "^1.7.4",
     "@umijs/hooks": "~1.9.3",
     "ace-diff": "^3.0.3",
     "ahooks": "~2.10.8",
@@ -57,6 +58,7 @@
     "react-dnd": "^14.0.4",
     "react-dnd-html5-backend": "^14.0.2",
     "react-draggable": "^4.4.4",
+    "react-resizable": "^3.0.4",
     "umi": "~3.5.18",
     "yaml": "^1.10.2"
   },
