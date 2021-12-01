@@ -9,6 +9,8 @@ import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import Draggable from 'react-draggable';
 import './index.less';
+import { Resizable, ResizeCallbackData } from 'react-resizable';
+
 interface ModalProps {
   title: string;
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void;
@@ -36,17 +38,38 @@ const DragModal: React.FC<ModalProps> = (props) => {
     onCancel?.(e);
   };
 
+  const [height, setheight] = useState(810);
+  const [width, setwidth] = useState(300);
+  const onResize = (e: React.SyntheticEvent<Element, Event>, data: ResizeCallbackData) => {
+    setheight(data.size.height);
+    setwidth(data.size.width);
+  };
+
   return (
     <Draggable handle=".drag-header" onStart={onStart} onStop={onStop} bounds="body">
-      <div className="app-modal" style={{ minWidth: '260px', maxWidth: '400px' }}>
+      {/* <Resizable width={width} height={height} onResize={onResize} resizeHandles={['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}> */}
+      <div className="app-modal" style={{ width: `${width}px`, minWidth: '260px', maxWidth: '400px' }}>
         <div className="app-modal-content no-cursor">
           <Button className="app-modal-close" icon={<CloseOutlined />} onClick={handleCancel} />
           <div className="app-modal-header drag-header cursor">
             <div className="app-modal-title">{props.title}</div>
           </div>
-          <div className="app-modal-body">{props.children}</div>
+          {/* <div className="app-modal-body">{props.children}</div> */}
+
+          <Resizable width={width} height={height} onResize={onResize} resizeHandles={['se', 'e', 's']}>
+            <div
+              className="app-modal-body"
+              style={{ width: `${width}px`, height: `${height}px`, minWidth: '260px', maxWidth: '400px' }}
+            >
+              {props.children}
+            </div>
+          </Resizable>
         </div>
       </div>
+      {/* <div className="box" style={{ width: width + 'px', height: height + 'px' }}>
+          <span>Contents</span>
+        </div> */}
+      {/* </Resizable> */}
     </Draggable>
   );
 };
