@@ -452,15 +452,16 @@ export default function LoggerSearch(props: any) {
                       // setTurnOnButton(true)
                       if (!editScreenVisible) {
                         setEditScreenVisible(true);
+                        setEditConditionType(true);
                       } else {
                         setEditScreenVisible(false);
+                        setEditConditionType(false);
                       }
 
                       setQuerySql('');
                       setMessageValue('');
                       setPodName('');
                       setAppCodeValue([]);
-                      setEditConditionType(true);
                     }}
                   >
                     高级搜索
