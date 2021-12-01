@@ -111,7 +111,6 @@ export default function OperatorScheduling() {
                   />
                 </div>
                 <div>
-                  {' '}
                   <Table
                     columns={clusterA_operatorColumns}
                     dataSource={data}
@@ -122,12 +121,10 @@ export default function OperatorScheduling() {
               </div>
             </Card>
             <Card title="B集群" bordered={false}>
-              <div>
-                {' '}
+              <div className="clusterBFlex">
                 <Table columns={clusterB_patientColumns} dataSource={data} pagination={false} style={{ width: 300 }} />
               </div>
               <div>
-                {' '}
                 <Table columns={clusterB_operatorColumns} dataSource={data} pagination={false} style={{ width: 300 }} />
               </div>
             </Card>
