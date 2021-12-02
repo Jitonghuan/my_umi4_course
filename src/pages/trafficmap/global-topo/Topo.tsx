@@ -3,22 +3,14 @@
  * @Date: 2021-11-23 15:41:41
  * @Description:
  */
-import G6, { ModelConfig } from '@antv/g6';
+import G6, { IItemBaseConfig, Item, ModelConfig } from '@antv/g6';
 import React, { useEffect, useState } from 'react';
 import { OriginData } from './data';
 import serverblue from '@/assets/imgs/serverblue.svg';
 import serverred from '@/assets/imgs/serverred.svg';
 import serveryellow from '@/assets/imgs/serveryellow.svg';
 
-const iconenum = {
-  warning: serveryellow,
-  danger: serverred,
-  normal: serverblue,
-};
 const Topo = (props: any) => {
-  const [loading, setLoading] = useState(false);
-
-  const ref = React.useRef(null);
   let graph = null as any;
   const { uniqueId } = G6.Util;
 
@@ -45,26 +37,33 @@ const Topo = (props: any) => {
 
   let expandArr: any = [];
   let comboArr: any = [];
-  let nodeMap = {};
-  const DANGER_COLOR = '#F5222D';
-  const WARNING_COLOR = '#FFC020';
-  const NORMAL_COLOR = '#3592FE';
+  let nodeMap = new Map();
+  const DANGER_COLOR = '#F54F37';
+  const WARNING_COLOR = '#FFC21A';
+  const NORMAL_COLOR = '#3692FD';
 
   const DANGER_COLOR_Fill = '#FEEDEB';
   const WARNING_COLOR_Fill = '#FFF8E8';
   const NORMAL_COLOR_Fill = '#EAF4FE';
 
-  const enumcolor = {
+  interface IColor {
+    [propName: string]: any;
+  }
+  const enumcolor: IColor = {
     danger: DANGER_COLOR,
     warning: WARNING_COLOR,
     normal: NORMAL_COLOR,
   };
-  const enumfillcolor = {
+  const enumfillcolor: IColor = {
     danger: DANGER_COLOR_Fill,
     warning: WARNING_COLOR_Fill,
     normal: NORMAL_COLOR_Fill,
   };
-
+  const iconenum: IColor = {
+    warning: serveryellow,
+    danger: serverred,
+    normal: serverblue,
+  };
   const nodeBasicMethod = {
     createNodeBox: (group: any, config: any, w: number, h: any) => {
       /* 最外面的大矩形 */
@@ -169,23 +168,21 @@ const Topo = (props: any) => {
     //   }
     // },
 
-    setState: (name: string, value: any, item: { [x: string]: any; get: (arg0: string) => any }) => {
+    setState: (name?: string | undefined, value?: string | boolean | undefined, item?: any) => {
       const group = item.get('group');
       const cfg = item['_cfg'];
       if (name === 'hover') {
         const fillShape = group.find((e: { get: (arg0: string) => string }) => e.get('name') === 'rect-shape');
         if (value) {
-          fillShape.attr('fill', enumfillcolor[cfg.model.status || 'normal']);
-          // fillShape.attr('opacity', 0.2);
+          fillShape?.attr('fill', enumfillcolor[cfg.model.status || 'normal']);
         } else {
-          fillShape.attr('fill', 'white');
-          // fillShape.attr('opacity', 1);
+          fillShape?.attr('fill', 'white');
         }
       }
     },
   };
 
-  const getNodeConfig = (node: ModelConfig | undefined) => {
+  const getNodeConfig = (node: any | undefined) => {
     let config = {
       basicColor: enumcolor[node.status || 'normal'],
       fontColor: enumcolor[node.status || 'normal'],
@@ -206,7 +203,7 @@ const Topo = (props: any) => {
        * @return {G.Shape} 返回一个绘制的图形作为 keyShape，通过 node.get('keyShape') 可以获取。
        * 关于 keyShape 可参考文档 核心概念-节点/边/Combo-图形 Shape 与 keyShape
        */
-      draw: (cfg, group) => {
+      draw: (cfg: any, group: any) => {
         const config = getNodeConfig(cfg);
         /* the biggest rect */
         const container = nodeBasicMethod.createNodeBox(group, config, 243, 60);
@@ -254,10 +251,11 @@ const Topo = (props: any) => {
   G6.registerCombo(
     'card-combo',
     {
-      drawShape: function drawShape(cfg: any, group) {
+      drawShape: function drawShape(cfg: any, group: any) {
         const self = this;
         // Get the padding from the configuration
         cfg.padding = cfg.padding || [50, 20, 20, 20];
+        cfg.status = cfg.status || 'normal';
         const style = self.getShapeStyle(cfg);
         const r = 2;
         const shape = group.addShape('rect', {
@@ -265,7 +263,7 @@ const Topo = (props: any) => {
             ...style,
             x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
-            stroke: enumcolor[cfg.status || 'normal'],
+            stroke: enumcolor[cfg.status],
             radius: r,
           },
           name: 'main-box',
@@ -278,7 +276,7 @@ const Topo = (props: any) => {
             x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
             height: 20,
-            fill: enumcolor[cfg.status || 'normal'],
+            fill: enumcolor[cfg.status],
             width: style.width,
             radius: [r, r, 0, 0],
           },
@@ -318,18 +316,18 @@ const Topo = (props: any) => {
         return shape;
       },
       // 定义新增的右侧圆的位置更新逻辑
-      afterUpdate: function afterUpdate(cfg, combo) {
+      afterUpdate: function afterUpdate(cfg?: any, item?: Item | undefined) {
         const self = this;
         const style = self.getShapeStyle(cfg);
-        const group = combo.get('group');
+        const group = item?.get('group');
 
-        const keyshape = group.find((ele) => ele.get('name') === 'main-box');
+        const keyshape = group.find((ele: any) => ele.get('name') === 'main-box');
         keyshape.attr({
           ...style,
         });
 
         // 在该 Combo 的图形分组根据 name 找到右侧圆图形
-        const rect = group.find((ele) => ele.get('name') === 'title-box');
+        const rect = group.find((ele: any) => ele.get('name') === 'title-box');
         rect.attr({
           x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
           y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
@@ -337,11 +335,11 @@ const Topo = (props: any) => {
           height: 20,
         });
 
-        const marker = group.find((ele) => ele.get('name') === 'combo-marker-shape');
+        const marker = group.find((ele: any) => ele.get('name') === 'combo-marker-shape');
         marker.attr({
           x: style.width / 2 - cfg.padding[1] / 2,
           y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2 + 10,
-          symbol: cfg.collapsed ? EXPAND_ICON : COLLAPSE_ICON,
+          symbol: cfg?.collapsed ? EXPAND_ICON : COLLAPSE_ICON,
         });
       },
     },
@@ -355,7 +353,7 @@ const Topo = (props: any) => {
   G6.registerNode(
     'app-node',
     {
-      draw(cfg, group) {
+      draw(cfg: any, group: any) {
         const { style } = cfg;
         const keyShape = group.addShape('circle', {
           attrs: {
@@ -384,7 +382,7 @@ const Topo = (props: any) => {
         return keyShape;
       },
 
-      setState(name, value, item) {
+      setState(name: any, value: any, item: any) {
         const cfg = item['_cfg'];
         const group = item.getContainer();
         const shape = group.get('children')[0]; // 顺序根据 draw 时确定
@@ -419,64 +417,10 @@ const Topo = (props: any) => {
   G6.registerEdge(
     'can-running',
     {
-      // draw(cfg: any, group: any) {
-      //   const { startPoint, endPoint,middlePoint } = cfg;
-      //   const keyShape = group.addShape('path', {
-      //     attrs: {
-      //       stroke: enumcolor[cfg.status || 'normal'],
-      //       fill:enumcolor[cfg.status || 'normal'],
-      //       path: [
-      //         ['M', startPoint.x, startPoint.y],
-      //         ['L', endPoint.x, endPoint.y],
-      //       ],
-      //       lineWidth: 1,
-      //       endArrow: {
-      //         // 自定义箭头指向(0, 0)，尾部朝向 x 轴正方向的 path
-      //         path: G6.Arrow.triangle(),
-      //         // 箭头的偏移量，负值代表向 x 轴正方向移动
-      //         // d: -10,
-      //         // v3.4.1 后支持各样式属性
-      //         // fill: '#333',
-      //         // stroke: '#666',
-      //         fill: enumcolor[cfg.status || 'normal'],
-      //         stroke: enumcolor[cfg.status || 'normal'],
-      //         opacity: 0.8,
-      //         // ...
-      //       },
-      //       // endArrow: {
-      //       //   // 自定义箭头指向(0, 0)，尾部朝向 x 轴正方向的 path
-      //       //   path: 'M 0,0 L 20,10 L 20,-10 Z',
-      //       //   // 箭头的偏移量，负值代表向 x 轴正方向移动
-      //       //   // d: -10,
-      //       //   // v3.4.1 后支持各样式属性
-      //       //   fill: '#333',
-      //       //   stroke: '#666',
-      //       //   opacity: 0.8,
-      //       //   // ...
-      //       // },
-      //     },
-      //     // must be assigned in G6 3.3 and later versions. it can be any value you want
-      //     name: 'path-shape',
-      //   });
-
-      //   group.addShape('text', {
-      //     attrs: {
-      //       text: cfg.label,
-      //       fill: '#595959',
-      //       textAlign: 'start',
-      //       textBaseline: 'middle',
-      //       x: (startPoint.x+endPoint.x)/2,
-      //       y: (startPoint.y+endPoint.y)/2,
-      //     },
-      //     name: 'text-shape',
-      //   });
-
-      //   return keyShape;
-      // },
-      setState(name, value, item) {
-        const shape = item.get('keyShape');
-        const cfg = item['_cfg'];
-
+      setState(name?: string | undefined, value?: string | boolean | undefined, item?: Item | undefined) {
+        const shape = item?.get('keyShape');
+        const cfg: any = item?._cfg || {};
+        const status = cfg?.model?.status || 'normal';
         if (name === 'focus') {
           if (value) {
             let index = 0;
@@ -490,7 +434,7 @@ const Topo = (props: any) => {
                   lineDash: [4, 4, 4, 4],
                   lineDashOffset: -index,
                   lineWidth: 2,
-                  stroke: enumcolor[cfg.model.status || 'normal'],
+                  stroke: enumcolor[status],
                 };
                 // return the params for this frame
                 return res;
@@ -504,7 +448,7 @@ const Topo = (props: any) => {
             shape.stopAnimate();
             shape.attr('lineDash', null);
             shape.attr('lineWidth', 1);
-            shape.attr('stroke', enumcolor[cfg.model.status || 'normal']);
+            shape.attr('stroke', enumcolor[status]);
           }
         }
       },
@@ -533,8 +477,8 @@ const Topo = (props: any) => {
           // nodeSpacing: (d: any) => 100,
           focusNode: 'li',
           linkDistance: (d: any) => {
-            const sourceNode = nodeMap[d.source];
-            const targetNode = nodeMap[d.target];
+            const sourceNode = nodeMap.get(d.source);
+            const targetNode = nodeMap.get(d.target);
             if (
               sourceNode.nodeType == 'app' &&
               targetNode.nodeType == 'app' &&
@@ -544,14 +488,14 @@ const Topo = (props: any) => {
             }
             return 400;
           },
-          nodeSpacing: (d) => {
+          nodeSpacing: (d: any) => {
             if (d.nodeType === 'app') return 10;
             if (d.nodeType == 'region') return 100;
             return 100;
           },
-          edgeStrength: (d) => {
-            const sourceNode = nodeMap[d.source] || aggregatedNodeMap[d.source];
-            const targetNode = nodeMap[d.target] || aggregatedNodeMap[d.target];
+          edgeStrength: (d: any) => {
+            const sourceNode = nodeMap.get(d.source);
+            const targetNode = nodeMap.get(d.source);
             // 聚合节点之间的引力小
             if (sourceNode.nodeType == 'region' && targetNode.nodeType == 'region') {
               return 25;
@@ -565,7 +509,7 @@ const Topo = (props: any) => {
             }
             return 25;
           },
-          nodeStrength: (d) => {
+          nodeStrength: (d: any) => {
             if (d.nodeType == 'region') return 3000;
             return 1000;
           },
@@ -666,7 +610,8 @@ const Topo = (props: any) => {
       const appData = [];
 
       OriginData.nodes.forEach((node) => {
-        nodeMap[node.id] = node;
+        // nodeMap[node.id] = node;
+        nodeMap.set(node.id, node);
         if (node.nodeType == 'region') {
           regionData.push(node);
         } else {
@@ -758,20 +703,20 @@ const Topo = (props: any) => {
       });
     }
 
-    let comboIdx = comboArr.findIndex((combo) => combo.regionCode == regionId);
+    let comboIdx = comboArr.findIndex((combo: any) => combo.regionCode == regionId);
     comboArr.splice(comboIdx, 1);
 
     evt.item.changeVisibility(false);
     graph.uncombo(evt.item);
 
     const newArr = expandArr.filter(
-      (item) => !item.nodeRegionCode || (item.nodeType !== 'region' && item.nodeRegionCode !== regionId),
+      (item: any) => !item.nodeRegionCode || (item.nodeType !== 'region' && item.nodeRegionCode !== regionId),
     );
     graph.data({ nodes: newArr, edges: OriginData.edges });
     expandArr = newArr;
     graph.render();
 
-    comboArr.forEach((combo) => {
+    comboArr.forEach((combo: any) => {
       graph.createCombo(
         {
           id: combo.id,
@@ -788,7 +733,7 @@ const Topo = (props: any) => {
   const handleExpand = (evt: any) => {
     const { item } = evt;
     const model = item && item.getModel();
-    let expandIndex = expandArr.findIndex((node) => node.id == model.id);
+    let expandIndex = expandArr.findIndex((node: any) => node.id == model.id);
     expandArr.splice(expandIndex, 1);
 
     const newNode: any[] = [];
@@ -812,7 +757,7 @@ const Topo = (props: any) => {
     graph.data({ nodes: expandArr, edges: OriginData.edges });
     graph.render();
 
-    comboArr.forEach((combo) => {
+    comboArr.forEach((combo: any) => {
       graph.createCombo(
         {
           id: combo.id,
