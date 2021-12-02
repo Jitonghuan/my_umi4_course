@@ -110,21 +110,22 @@ const globalTopo = () => {
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
-    // {
-    //   id: '1',
-    //   name: 'app1',
-    //   chartData: dataDemo,
-    // },
-    // {
-    //   id: '2',
-    //   name: 'app2',
-    //   chartData: dataDemo,
-    // },
+    {
+      id: '1',
+      name: 'app1',
+      chartData: dataDemo,
+    },
+    {
+      id: '2',
+      name: 'app2',
+      chartData: dataDemo,
+    },
   ]);
 
   const [isRedLineVisible, setIsRedLineVisible] = useState(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
 
+  console.log('appInfoList', appInfoList);
   const handleFullScreen = useCallback(() => {
     if (isFullScreen) {
       setIsFullScreen(false);
@@ -147,6 +148,16 @@ const globalTopo = () => {
 
   const onAppClick = (id: string) => {
     console.log('id', id);
+    // console.log('appInfoList',appInfoList)
+    // let appList=JSON.parse(JSON.stringify(appInfoList))
+    // appList.push(
+    //   {
+    //     id: id,
+    //     name: 'app1',
+    //     chartData: dataDemo,
+    //   },
+    //   )
+    // setAppInfoList(appList)
   };
 
   const onRedLineClick = (id: string) => {
@@ -194,7 +205,12 @@ const globalTopo = () => {
             </div>
             <div className="graph-box" style={{ position: 'relative' }}>
               <DragWrapper number={number} appInfoList={appInfoList} deleteModal={deleteModal} />
-              <Topo isFullScreen={isFullScreen} onAppClick={onAppClick} onRedLineClick={onRedLineClick} />
+              <Topo
+                isFullScreen={isFullScreen}
+                onAppClick={onAppClick}
+                onRedLineClick={onRedLineClick}
+                appInfoList={appInfoList}
+              />
             </div>
           </section>
         </ContentCard>
