@@ -6,6 +6,7 @@ import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
+import { history } from 'umi';
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
 import {
@@ -329,7 +330,18 @@ export default function PublishDetail(props: IProps) {
         </Descriptions.Item>
         {deployInfo?.deployErrInfo !== '' && deployInfo.hasOwnProperty('deployErrInfo') && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
-            {deployInfo?.deployErrInfo}
+            <a
+              style={{ color: 'red', textDecoration: 'underline' }}
+              onClick={() => {
+                localStorage.__init_env_tab__ = JSON.stringify(deployInfo?.envTypeCode);
+                history.push(
+                  `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${deployInfo?.id}`,
+                );
+              }}
+            >
+              {deployInfo?.deployErrInfo}
+            </a>
+            <span style={{ color: 'gray' }}>（点击跳转）</span>
           </Descriptions.Item>
         )}
       </Descriptions>
@@ -351,7 +363,18 @@ export default function PublishDetail(props: IProps) {
       >
         <div>
           <span>发布环境：</span>
+          {/* <Radio.Group value={type} onChange={handleTypeChange}> */}
+          {/* <Radio.Group  value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList}></Radio.Group> */}
           <Checkbox.Group value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList} />
+
+          {/* {nextEnvDataList.map((item,index)=>{
+            return(
+              <Radio.Group  onChange={(v: any) => setDeployNextEnv(v)}  value={deployNextEnv}>
+              <Radio key={index} value={item.value}  autoFocus >{item.label}</Radio>
+  
+            </Radio.Group>
+            )
+          })} */}
         </div>
       </Modal>
 
