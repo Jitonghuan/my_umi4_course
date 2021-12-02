@@ -181,6 +181,9 @@ const DomainConfig: React.FC = () => {
             <TableTransfer
               dataSource={mockData}
               targetKeys={targetKeys}
+              showSearch={true}
+              titles={['可添加应用', '已添加应用']}
+              filterOption={(inputValue: any, item: any) => item.title.indexOf(inputValue) !== -1}
               onChange={onChange}
               onSelectChange={onSelectChange}
               leftColumns={leftTableColumns}
