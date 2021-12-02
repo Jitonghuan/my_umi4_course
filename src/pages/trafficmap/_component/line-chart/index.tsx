@@ -29,7 +29,7 @@ export default function LineChart(props: LineChartProps) {
   let observer: any;
   useEffect(() => {
     // let ResizeObserver = window.ResizeObserver || window.WebKitResizeObserver || window.MozResizeObserver
-    let element = document.querySelector('.line-chart-group') || document.body;
+    let element = document.querySelector('.echart-group') || document.body;
     observer = new ResizeObserver((entries) => {
       // for(let entry of entries) {
       //   console.log(entry)

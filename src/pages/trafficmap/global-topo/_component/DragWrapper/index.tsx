@@ -4,6 +4,7 @@
  * @Description:
  */
 import React from 'react';
+import { Button } from 'antd';
 import LineChart from '../../../_component/line-chart';
 import './index.less';
 import { IAppInfo } from '@/pages/trafficmap/interface';
@@ -41,11 +42,12 @@ const DragWrapper: React.FC<any> = (props) => {
               props.deleteModal(appInfo);
             }}
           >
-            <div className="line-chart-group">
+            <div className="echart-group">
               {lineChartTmp.map((item, index: number) => (
                 <LineChart {...item} {...appInfo.chartData[item.key]} key={index} />
               ))}
             </div>
+            <Button style={{ float: 'right' }}>应用流量</Button>
           </DragModal>
         );
       })}
