@@ -50,10 +50,19 @@ const Topo = (props: any) => {
   const WARNING_COLOR = '#FFC020';
   const NORMAL_COLOR = '#3592FE';
 
+  const DANGER_COLOR_Fill = '#FEEDEB';
+  const WARNING_COLOR_Fill = '#FFF8E8';
+  const NORMAL_COLOR_Fill = '#EAF4FE';
+
   const enumcolor = {
     danger: DANGER_COLOR,
     warning: WARNING_COLOR,
     normal: NORMAL_COLOR,
+  };
+  const enumfillcolor = {
+    danger: DANGER_COLOR_Fill,
+    warning: WARNING_COLOR_Fill,
+    normal: NORMAL_COLOR_Fill,
   };
 
   const nodeBasicMethod = {
@@ -166,11 +175,11 @@ const Topo = (props: any) => {
       if (name === 'hover') {
         const fillShape = group.find((e: { get: (arg0: string) => string }) => e.get('name') === 'rect-shape');
         if (value) {
-          fillShape.attr('fill', enumcolor[cfg.model.status || 'normal']);
-          fillShape.attr('opacity', 0.2);
+          fillShape.attr('fill', enumfillcolor[cfg.model.status || 'normal']);
+          // fillShape.attr('opacity', 0.2);
         } else {
           fillShape.attr('fill', 'white');
-          fillShape.attr('opacity', 1);
+          // fillShape.attr('opacity', 1);
         }
       }
     },
@@ -221,7 +230,7 @@ const Topo = (props: any) => {
         nodeBasicMethod.createNodeMarker(group, cfg.collapsed, 236, 32);
         return container;
       },
-      afterDraw: nodeBasicMethod.afterDraw,
+      // afterDraw: nodeBasicMethod.afterDraw,
       setState: nodeBasicMethod.setState,
       getAnchorPoints() {
         return [
@@ -671,11 +680,13 @@ const Topo = (props: any) => {
       graph.on('node:mouseenter', (evt: any) => {
         const { item } = evt;
         graph.setItemState(item, 'active', true);
+        graph.setItemState(item, 'hover', true);
       });
 
       graph.on('node:mouseleave', (evt: any) => {
         const { item } = evt;
         graph.setItemState(item, 'active', false);
+        graph.setItemState(item, 'hover', false);
       });
 
       graph.on('node:click', (evt: any) => {
