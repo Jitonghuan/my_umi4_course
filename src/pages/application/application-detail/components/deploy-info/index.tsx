@@ -24,6 +24,11 @@ export default function AppDeployInfo() {
   // );
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
   // localStorage.removeItem('__init_env_tab__');
+  try {
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'dev';
+  } catch (error) {
+    localStorage.setItem('__init_env_tab__', 'dev');
+  }
   const [tabActive, setTabActive] = useState<any>(
     localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'dev',
   );
