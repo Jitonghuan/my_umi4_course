@@ -31,6 +31,12 @@ const DragWrapper: React.FC<any> = (props) => {
         return (
           <DragModal
             title={appInfo.name}
+            modalResize={{
+              width: 260,
+              height: 810,
+              resizeHandles: ['se', 'e', 's'],
+              minConstraints: [260, 810],
+            }}
             onCancel={() => {
               props.deleteModal(appInfo);
             }}
