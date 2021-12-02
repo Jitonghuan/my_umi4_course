@@ -30,7 +30,7 @@ export default function Application() {
 
     try {
       const result = await getRequest(APIS.singleDiffApp, {
-        data: { appCode, envCode: 'tt-health' },
+        data: { appCode, envCode: 'hbos-test' },
       });
 
       const source = result.data || {};
@@ -70,7 +70,7 @@ export default function Application() {
         try {
           setPending(true);
           const res = await postRequest(APIS.syncSingleApp, {
-            data: { appCode, envCode: 'tt-health' },
+            data: { appCode, envCode: 'hbos-test' },
           });
           const sourceInfo = res?.data || '';
           if (res.success) {

@@ -42,7 +42,7 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
     setLoading(true);
     try {
       //集群应用比对
-      const result = await getRequest(APIS.diffClusterApp, { data: { envCode: 'tt-health' } });
+      const result = await getRequest(APIS.diffClusterApp, { data: { envCode: 'hbos-test' } });
       const resultData = result?.data || [];
       const next = resultData?.map((item: any, index: number) => {
         const appDiffInfo = Object.keys(item);

@@ -26,7 +26,6 @@ export default function FilterHeader(props: FilterHeaderProps) {
 
   const handleSearch = useCallback(() => {
     const values = searchField.getFieldsValue();
-    console.log('> handleSearch', values);
     onSearch?.(values);
   }, [searchField]);
 

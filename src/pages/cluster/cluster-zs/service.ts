@@ -8,8 +8,8 @@ import { addAPIPrefix } from '@/utils';
 /** GET 流量地图 */
 export const trafficMap = addAPIPrefix('/opsManage/multiple/map');
 
-/** POST 集群流量切换 流量调度 */
-export const switchCluster = addAPIPrefix('/opsManage/multiple/switchCluster');
+/** POST 集群维度流量调度通用接口 */
+export const switchCluster = addAPIPrefix('/opsManage/multiple/common/switchCluster');
 
 /** GET 操作日志查询 */
 export const queryOperateLog = addAPIPrefix('/opsManage/multiple/queryOperateLog');
@@ -55,3 +55,6 @@ export const syncSingleApp = addAPIPrefix('/opsManage/k8s/multiple/syncSingleApp
 
 /** GET 获取 dashboard 页面地址 */
 export const getDashboardUrl = addAPIPrefix('/opsManage/multiple/getDashboardUrl');
+
+/** GET 获取 获取院区列表 */
+export const getHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/common/getHospitalDistrictInfo');

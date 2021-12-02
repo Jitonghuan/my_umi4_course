@@ -39,7 +39,17 @@ export default function TrafficScheduling() {
 
   const handleSubmit = useCallback(async () => {
     const values = await editField.validateFields();
-    console.log('> handleSubmit', values);
+    // console.log('> handleSubmit', values,values?.zslnyy,Object.keys(values)[0]);
+    let item = sourceData.map((item: any, index) => {
+      return item;
+    });
+    let ip = '';
+    if (values?.zslnyy === 'cluster_a') {
+      ip = item[0]?.options[0].ip;
+    }
+    if (values?.zslnyy === 'cluster_b') {
+      ip = item[0]?.options[1].ip;
+    }
 
     Modal.confirm({
       title: '操作确认',
@@ -58,9 +68,18 @@ export default function TrafficScheduling() {
       cancelText: '取消',
       onOk: async () => {
         setPending(true);
+
         try {
           const result = await postRequest(APIS.switchCluster, {
-            data: values,
+            data: [
+              {
+                envCode: 'hbos-test',
+                cluster: values?.zslnyy,
+                hospitalDistrictCode: Object.keys(values)[0],
+                hospitalDistrictName: item[0]?.title,
+                ip: ip,
+              },
+            ],
           });
           setLogger(result.data || '');
         } finally {

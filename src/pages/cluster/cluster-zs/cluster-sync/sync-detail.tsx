@@ -71,7 +71,7 @@ export default function ClusterSyncDetail(props: any) {
   const queryCurrStatus = useCallback(async () => {
     setPending(true);
     try {
-      const result = await getRequest(APIS.querySyncState, { data: { envCode: 'tt-health' } });
+      const result = await getRequest(APIS.querySyncState, { data: { envCode: 'hbos-test' } });
       const initState = result.data.category;
 
       if (initState === 'SyncClusterApp') {
@@ -140,28 +140,28 @@ export default function ClusterSyncDetail(props: any) {
 
   // 1. get nacos 配置比对
   const configDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.configDiff, { data: { envCode: 'tt-health' } }));
+    await doAction(getRequest(APIS.configDiff, { data: { envCode: 'hbos-test' } }));
     setCurrState('GetDiffClusterConfig');
   }, []);
   // 2. Nacos同步
   const syncConfig = useCallback(async () => {
-    await doAction(postRequest(APIS.syncConfig, { data: { envCode: 'tt-health' } }));
+    await doAction(postRequest(APIS.syncConfig, { data: { envCode: 'hbos-test' } }));
     setCurrState('syncClusterConfig');
   }, []);
   // 3. XXL-Job比对
   const xxlJobDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.xxlJobDiff, { data: { envCode: 'tt-health' } }));
+    await doAction(getRequest(APIS.xxlJobDiff, { data: { envCode: 'hbos-test' } }));
     setCurrState('GetDiffXxlJob');
   }, []);
   // 4. XXL-Job同步
   const syncXxlJob = useCallback(async () => {
-    await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: 'tt-health' } }));
+    await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: 'hbos-test' } }));
     setCurrState('syncXxlJob');
   }, []);
   let nextDeploymentName = '';
   // 5. get cluster app
   const getClusterApp = useCallback(async () => {
-    const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: 'tt-health' } }));
+    const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: 'hbos-test' } }));
     if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
       setCurrState('GetDiffClusterApp');
       setNextDeployApp(nextApp?.deploymentName);
@@ -174,7 +174,7 @@ export default function ClusterSyncDetail(props: any) {
   const deployApp = useCallback(async () => {
     await doAction(
       postRequest(APIS.syncClusterApp, {
-        data: { deploymentName: nextDeployApp || nextDeploymentName, envCode: 'tt-health' },
+        data: { deploymentName: nextDeployApp || nextDeploymentName, envCode: 'hbos-test' },
       }),
     );
     // 成功后再调一次 queryClusterApp 接口
@@ -182,12 +182,12 @@ export default function ClusterSyncDetail(props: any) {
   }, [nextDeploymentName]);
   // 7. 前端资源同步
   const syncFrontendSource = useCallback(async () => {
-    await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: 'tt-health' } }));
+    await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: 'hbos-test' } }));
     setCurrState('SyncClusterWebSource');
   }, []);
   // 8. finish
   const syncClusterOver = useCallback(async () => {
-    await doAction(getRequest(APIS.syncClusterOver, { data: { envCode: 'tt-health' } }));
+    await doAction(getRequest(APIS.syncClusterOver, { data: { envCode: 'hbos-test' } }));
     setCurrState('ClusterSyncOver');
   }, []);
 

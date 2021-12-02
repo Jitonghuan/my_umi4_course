@@ -16,7 +16,7 @@ export function useLogSource(pageIndex: number, pageSize: number): [any[], numbe
 
     try {
       const result = await getRequest(APIS.queryOperateLog, {
-        data: { envCode: 'tt-health', pageIndex, pageSize },
+        data: { envCode: 'hbos-test', pageIndex, pageSize },
       });
 
       let resultData = result.data || {};
