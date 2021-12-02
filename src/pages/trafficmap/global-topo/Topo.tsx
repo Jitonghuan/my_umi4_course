@@ -446,9 +446,8 @@ const Topo = (props: any) => {
             );
           } else {
             shape.stopAnimate();
-            shape.attr('lineDash', null);
             shape.attr('lineWidth', 1);
-            shape.attr('stroke', enumcolor[status]);
+            // shape.attr('stroke', enumcolor[status]);
           }
         }
       },

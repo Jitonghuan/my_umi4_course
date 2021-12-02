@@ -110,11 +110,11 @@ const globalTopo = () => {
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
-    {
-      id: '1',
-      name: 'app1',
-      chartData: dataDemo,
-    },
+    // {
+    //   id: '1',
+    //   name: 'app1',
+    //   chartData: dataDemo,
+    // },
     // {
     //   id: '2',
     //   name: 'app2',

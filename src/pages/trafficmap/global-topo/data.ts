@@ -13,6 +13,8 @@ const arrowStyleType = {
     stroke: DANGER_COLOR,
     lineAppendWidth: 2,
     cursor: 'pointer',
+    lineDash: [4, 4, 4, 4],
+    lineWidth: 1,
     endArrow: {
       path: G6.Arrow.triangle(),
       fill: DANGER_COLOR,
@@ -22,6 +24,8 @@ const arrowStyleType = {
     stroke: WARNING_COLOR,
     lineAppendWidth: 2,
     cursor: 'pointer',
+    lineDash: [4, 4, 4, 4],
+    lineWidth: 1,
     endArrow: {
       path: G6.Arrow.triangle(),
       fill: WARNING_COLOR,
@@ -31,6 +35,8 @@ const arrowStyleType = {
     stroke: NORMAL_COLOR,
     lineAppendWidth: 2,
     cursor: 'pointer',
+    lineDash: [4, 4, 4, 4],
+    lineWidth: 1,
     endArrow: {
       path: G6.Arrow.triangle(),
       fill: NORMAL_COLOR,
