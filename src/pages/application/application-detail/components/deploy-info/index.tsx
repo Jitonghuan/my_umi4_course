@@ -24,9 +24,8 @@ export default function AppDeployInfo() {
   // );
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
   // localStorage.removeItem('__init_env_tab__');
-  const [tabActive, setTabActive] = useState<any>(
-    localStorage.__init_env_tab__ ? JSON.parse(localStorage.__init_env_tab__) : 'dev',
-  );
+  const [tabActive, setTabActive] = useState<any>();
+  // localStorage.__init_env_tab__ ? JSON.parse(localStorage.__init_env_tab__) : 'dev',
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currEnvCode,
     appData?.deploymentName,
@@ -34,7 +33,7 @@ export default function AppDeployInfo() {
   const intervalRef = useRef<any>();
   const changeTab = (value: any) => {
     setTabActive(value);
-    localStorage.__init_env_tab__ = JSON.stringify(value || 'dev');
+    // localStorage.__init_env_tab__ = JSON.stringify(value || 'dev');
     // localStorage.setItem('__init_env_tab__', value);
   };
 

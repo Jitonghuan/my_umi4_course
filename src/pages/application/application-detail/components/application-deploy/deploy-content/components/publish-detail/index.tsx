@@ -333,7 +333,7 @@ export default function PublishDetail(props: IProps) {
             <a
               style={{ color: 'red', textDecoration: 'underline' }}
               onClick={() => {
-                localStorage.__init_env_tab__ = JSON.stringify(deployInfo?.envTypeCode);
+                // localStorage.__init_env_tab__ = JSON.stringify(deployInfo?.envTypeCode);
                 history.push(
                   `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${deployInfo?.id}`,
                 );
