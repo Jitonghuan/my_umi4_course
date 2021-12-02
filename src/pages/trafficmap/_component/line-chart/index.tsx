@@ -3,7 +3,7 @@
  * @Date: 2021-11-29 14:45:44
  * @Description:
  */
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 
 const { ColorContainer } = colorUtil.context;
@@ -19,6 +19,31 @@ export default function LineChart(props: LineChartProps) {
   const { loading, title, data, xAxis } = props;
 
   const legendLineNum = data.length / 3 + (data.length % 3 ? 1 : 0);
+
+  let chart: echarts.ECharts | undefined;
+  const getChart = (echart?: echarts.ECharts) => {
+    console.log(echart);
+    chart = echart;
+  };
+
+  let observer: any;
+  useEffect(() => {
+    // let ResizeObserver = window.ResizeObserver || window.WebKitResizeObserver || window.MozResizeObserver
+    let element = document.querySelector('.line-chart-group') || document.body;
+    observer = new ResizeObserver((entries) => {
+      // for(let entry of entries) {
+      //   console.log(entry)
+      // }
+      let width = getComputedStyle(element).getPropertyValue('width');
+      let height = getComputedStyle(element).getPropertyValue('height');
+      console.log('width', width);
+      chart?.resize();
+    });
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const chartOptions = useMemo(() => {
     return {
@@ -72,7 +97,13 @@ export default function LineChart(props: LineChartProps) {
            * @option echart配置
            * @notMerge echart更新时是否和先前option merge 为true时画布会删除历史数据
            *  */}
-          <EchartsReact option={chartOptions} notMerge={true} />
+          <EchartsReact
+            option={chartOptions}
+            notMerge={true}
+            onChartReady={(echart?: echarts.ECharts) => {
+              getChart(echart);
+            }}
+          />
         </ColorContainer>
       </div>
     </section>

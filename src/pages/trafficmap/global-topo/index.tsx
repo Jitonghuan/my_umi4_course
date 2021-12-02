@@ -13,7 +13,6 @@ import DragWrapper from './_component/DragWrapper';
 import './index.less';
 import * as echarts from 'echarts';
 import RedLineModal from './_component/RedLineModal';
-
 const dataDemo = {
   requests: {
     data: [
@@ -111,11 +110,11 @@ const globalTopo = () => {
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
-    // {
-    //   id: '1',
-    //   name: 'app1',
-    //   chartData: dataDemo,
-    // },
+    {
+      id: '1',
+      name: 'app1',
+      chartData: dataDemo,
+    },
     // {
     //   id: '2',
     //   name: 'app2',
@@ -125,7 +124,6 @@ const globalTopo = () => {
 
   const [isRedLineVisible, setIsRedLineVisible] = useState(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
-  useEffect(() => {}, []);
 
   const handleFullScreen = useCallback(() => {
     if (isFullScreen) {

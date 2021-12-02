@@ -47,7 +47,6 @@ const DragModal: React.FC<ModalProps> = (props) => {
 
   return (
     <Draggable handle=".drag-header" onStart={onStart} onStop={onStop} bounds="body">
-      {/* <Resizable width={width} height={height} onResize={onResize} resizeHandles={['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}> */}
       <div className="app-modal" style={{ width: `${width}px`, minWidth: '260px', maxWidth: '400px' }}>
         <div className="app-modal-content no-cursor">
           <Button className="app-modal-close" icon={<CloseOutlined />} onClick={handleCancel} />
@@ -55,8 +54,13 @@ const DragModal: React.FC<ModalProps> = (props) => {
             <div className="app-modal-title">{props.title}</div>
           </div>
           {/* <div className="app-modal-body">{props.children}</div> */}
-
-          <Resizable width={width} height={height} onResize={onResize} resizeHandles={['se', 'e', 's']}>
+          <Resizable
+            width={width}
+            height={height}
+            onResize={onResize}
+            resizeHandles={['se', 'e', 's']}
+            minConstraints={[260, 810]}
+          >
             <div
               className="app-modal-body"
               style={{ width: `${width}px`, height: `${height}px`, minWidth: '260px', maxWidth: '400px' }}
@@ -66,10 +70,6 @@ const DragModal: React.FC<ModalProps> = (props) => {
           </Resizable>
         </div>
       </div>
-      {/* <div className="box" style={{ width: width + 'px', height: height + 'px' }}>
-          <span>Contents</span>
-        </div> */}
-      {/* </Resizable> */}
     </Draggable>
   );
 };
