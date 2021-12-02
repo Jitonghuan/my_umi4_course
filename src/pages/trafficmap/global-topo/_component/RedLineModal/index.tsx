@@ -40,27 +40,15 @@ const RedLineModal: React.FC<IProps> = (props) => {
       value: '30',
     },
   ]);
-  // const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 })
-  // const [disabled, setDisabled] = useState(true)
-  // const draggleRef = useRef<any>();
-
-  // const onStart = (event: any, uiData: any) => {
-  //   const { clientWidth, clientHeight } = window.document.documentElement;
-  //   const targetRect = draggleRef.current?.getBoundingClientRect();
-  //   if (!targetRect) {
-  //     return;
-  //   }
-  //   setBounds({
-  //     left: -targetRect.left + uiData.x,
-  //     right: clientWidth - (targetRect.right - uiData.x),
-  //     top: -targetRect.top + uiData.y,
-  //     bottom: clientHeight - (targetRect.bottom - uiData.y),
-  //   })
-  // };
 
   return (
     <div className="drag-redline-modal" style={{ display: props.visible ? 'block' : 'none' }}>
-      <DragModal title={'红线追踪'} onCancel={props.handleCancel}>
+      <DragModal
+        title={'红线追踪'}
+        onCancel={props.handleCancel}
+        modalResize={false}
+        style={{ position: 'absolute', top: '14%', right: '0px' }}
+      >
         <Select options={options} style={{ width: '195px' }} />
         <div style={{ marginTop: '12px' }}>
           {props.redLineList.map((item) => {
