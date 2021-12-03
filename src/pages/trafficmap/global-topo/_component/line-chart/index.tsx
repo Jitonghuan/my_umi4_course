@@ -22,32 +22,9 @@ export default function LineChart(props: LineChartProps) {
 
   const legendLineNum = data.length / 3 + (data.length % 3 ? 1 : 0);
 
-  // let chart: echarts.ECharts | undefined;
   const getChart = (echart?: echarts.ECharts) => {
-    // console.log(props.lineId,props.appId)
-    // console.log('line', echart);
-    // chart = echart;
-    // props?å.getChart(echart);
+    props?.getChart(echart);
   };
-
-  // let observer: any;
-  // useEffect(() => {
-  //   // let ResizeObserver = window.ResizeObserver || window.WebKitResizeObserver || window.MozResizeObserver
-  //   let element = document.querySelector('.echart-group') || document.body;
-  //   observer = new ResizeObserver((entries) => {
-  //     // for(let entry of entries) {
-  //     //   console.log(entry)
-  //     // }
-  //     let width = getComputedStyle(element).getPropertyValue('width');
-  //     let height = getComputedStyle(element).getPropertyValue('height');
-  //     console.log('width', width);
-  //     chart?.resize();
-  //   });
-  //   observer.observe(element);
-  //   return () => {
-  //     observer.disconnect();
-  //   };
-  // }, []);
 
   const chartOptions = useMemo(() => {
     return {
