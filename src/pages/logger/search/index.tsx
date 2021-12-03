@@ -260,8 +260,8 @@ export default function LoggerSearch(props: any) {
   //接收参数：日志库选择logStore,日期开始时间，日期结束时间，querySql,运算符为是（filterIs）,运算符为否（filterNot）,环境Code（envCode）
   const loadMoreData = (
     n: any = logStore,
-    startTime?: string,
-    endTime?: string,
+    startTimeParam?: string,
+    endTimeParam?: string,
     querySqlParam?: string,
     // podNameParam?: string,
     messageParam?: any,
@@ -272,8 +272,8 @@ export default function LoggerSearch(props: any) {
     postRequest(APIS.logSearch, {
       data: {
         indexMode: n,
-        startTime: startTime || startTimestamp,
-        endTime: endTime || endTimestamp,
+        startTime: startTimeParam || startTimestamp,
+        endTime: endTimeParam || endTimestamp,
         querySql: querySqlParam || '',
         // podName: podNameParam || '',
         message: messageParam || '',
