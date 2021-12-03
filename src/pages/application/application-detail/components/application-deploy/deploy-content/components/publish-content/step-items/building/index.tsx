@@ -38,30 +38,30 @@ export default function BuildingStep(props: StepItemProps) {
       icon={isLoading && <LoadingOutlined />}
       status={isError ? 'error' : others.status}
       description={
-        isLoading && (
-          <>
-            {/* 浙一日常环境下的部署步骤显示jenkins链接,构建步骤下不显示。其他环境都是构建步骤下显示Jenkins详情 */}
-            {deployInfo.jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
-              <div style={{ marginTop: 2 }}>
-                <a target="_blank" href={deployInfo.jenkinsUrl}>
-                  查看Jenkins详情
-                </a>
-              </div>
-            ) : null}
-            {/* {deployInfo.jenkinsUrl && (
+        // isLoading && (
+        <>
+          {/* 浙一日常环境下的部署步骤显示jenkins链接,构建步骤下不显示。其他环境都是构建步骤下显示Jenkins详情 */}
+          {deployInfo.jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
+            <div style={{ marginTop: 2 }}>
+              <a target="_blank" href={deployInfo.jenkinsUrl}>
+                查看Jenkins详情
+              </a>
+            </div>
+          ) : null}
+          {/* {deployInfo.jenkinsUrl && (
               <div style={{ marginTop: 2 }}>
                 <a target="_blank" href={deployInfo.jenkinsUrl}>
                   查看Jenkins详情
                 </a>
               </div>
             )} */}
-            {isError && (
-              <Button style={{ marginTop: 4 }} onClick={handleRebuildClick}>
-                重新构建
-              </Button>
-            )}
-          </>
-        )
+          {isError && (
+            <Button style={{ marginTop: 4 }} onClick={handleRebuildClick}>
+              重新构建
+            </Button>
+          )}
+        </>
+        // )
       }
     />
   );
