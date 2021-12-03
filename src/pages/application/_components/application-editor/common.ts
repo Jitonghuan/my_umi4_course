@@ -41,7 +41,7 @@ export const appMicroFeTypeOptions: IOption<AppMicroFeType>[] = [
 export const deployJobUrlOptions: IOption[] = [
   { label: 'SEENEW HIS 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/seenew-his' },
   { label: 'HBOS 工程构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-hbos' },
-  { label: '单工程通用构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-single' },
+  { label: '通用构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-single' },
   { label: 'HIS EMR', value: 'http://jenkins-fe.cfuture.shop/job/emr-loader' },
   { label: 'HIS ICU', value: 'http://jenkins-fe.cfuture.shop/job/future-his-icu' },
 ];

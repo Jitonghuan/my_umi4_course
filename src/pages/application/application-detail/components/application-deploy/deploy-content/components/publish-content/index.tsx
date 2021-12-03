@@ -125,31 +125,33 @@ export default function PublishContent(props: IProps) {
 
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>
-        {!isProd && (
-          <div className="caption-right">
+        <div className="caption-right">
+          {!isProd && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
               重新部署
             </Button>
+          )}
+          {!isProd || isFrontend ? (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
               批量退出
             </Button>
-            {!isFrontend && (
-              <Popconfirm
-                title="确定要重启应用吗？"
-                onConfirm={async () => {
-                  await restartApp({
-                    appCode,
-                    envCode: deployInfo.envs,
-                    appCategoryCode: appData?.appCategoryCode,
-                  });
-                  message.success('操作成功！');
-                }}
-              >
-                <Button>重启</Button>
-              </Popconfirm>
-            )}
-          </div>
-        )}
+          ) : null}
+          {/* {!isFrontend && !isProd && (
+            <Popconfirm
+              title="确定要重启应用吗？"
+              onConfirm={async () => {
+                await restartApp({
+                  appCode,
+                  envCode: deployInfo.envs,
+                  appCategoryCode: appData?.appCategoryCode,
+                });
+                message.success('操作成功！');
+              }}
+            >
+              <Button>重启</Button>
+            </Popconfirm>
+          )} */}
+        </div>
       </div>
 
       <Table
@@ -158,19 +160,15 @@ export default function PublishContent(props: IProps) {
         pagination={false}
         bordered
         scroll={{ x: '100%' }}
-        rowSelection={
-          isProd
-            ? {}
-            : {
-                type: 'checkbox',
-                selectedRowKeys,
-                onChange: (selectedRowKeys: React.Key[]) => {
-                  setSelectedRowKeys(selectedRowKeys as string[]);
-                },
-              }
-        }
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys,
+          onChange: (selectedRowKeys: React.Key[]) => {
+            setSelectedRowKeys(selectedRowKeys as string[]);
+          },
+        }}
       >
-        <Table.Column dataIndex="id" title="ID" width={80} />
+        <Table.Column dataIndex="id" title="ID" fixed="left" width={80} />
         <Table.Column dataIndex="branchName" title="分支名" fixed="left" render={branchNameRender} width={320} />
         <Table.Column
           dataIndex="desc"

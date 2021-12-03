@@ -141,7 +141,7 @@ export default function envManageList(props: any) {
     // setPageCurrentIndex(pageIndex);
   };
 
-  //删除数据  delRequest(`${appConfig.apiPrefix}/appManage/delete/${params.id}`);
+  //删除数据
   const handleDelEnv = (record: any) => {
     let id = record.id;
     console.log('record', record);

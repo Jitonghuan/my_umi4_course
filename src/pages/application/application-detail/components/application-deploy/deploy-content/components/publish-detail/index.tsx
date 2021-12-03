@@ -6,6 +6,7 @@ import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
+import { history } from 'umi';
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
 import {
@@ -269,11 +270,11 @@ export default function PublishDetail(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
-        {appData?.appType === 'backend' && envTypeCode === 'prod' && deployEnv?.indexOf('tt-his') !== -1 && (
+        {/* {appData?.appType === 'backend' && envTypeCode === 'prod' && deployEnv?.indexOf('tt-his') !== -1 && (
           <Button type="primary" onClick={() => setRestartVisible(true)}>
             重启应用
           </Button>
-        )}
+        )} */}
         {envTypeCode === 'prod' && (
           <Button type="primary" onClick={() => setDeployVisible(true)} icon={<UploadOutlined />}>
             离线部署
@@ -329,7 +330,25 @@ export default function PublishDetail(props: IProps) {
         </Descriptions.Item>
         {deployInfo?.deployErrInfo !== '' && deployInfo.hasOwnProperty('deployErrInfo') && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
-            {deployInfo?.deployErrInfo}
+            <a
+              style={{ color: 'red', textDecoration: 'underline' }}
+              onClick={() => {
+                if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') !== -1) {
+                  <a target="_blank" href={deployInfo.jenkinsUrl}>
+                    查看Jenkins详情
+                  </a>;
+                }
+                if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') === -1) {
+                  localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
+                  history.push(
+                    `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${deployInfo?.id}`,
+                  );
+                }
+              }}
+            >
+              {deployInfo?.deployErrInfo}
+            </a>
+            <span style={{ color: 'gray' }}>（点击跳转）</span>
           </Descriptions.Item>
         )}
       </Descriptions>
@@ -351,7 +370,18 @@ export default function PublishDetail(props: IProps) {
       >
         <div>
           <span>发布环境：</span>
+          {/* <Radio.Group value={type} onChange={handleTypeChange}> */}
+          {/* <Radio.Group  value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList}></Radio.Group> */}
           <Checkbox.Group value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList} />
+
+          {/* {nextEnvDataList.map((item,index)=>{
+            return(
+              <Radio.Group  onChange={(v: any) => setDeployNextEnv(v)}  value={deployNextEnv}>
+              <Radio key={index} value={item.value}  autoFocus >{item.label}</Radio>
+  
+            </Radio.Group>
+            )
+          })} */}
         </div>
       </Modal>
 

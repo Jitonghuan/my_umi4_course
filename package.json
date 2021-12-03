@@ -60,7 +60,13 @@
     "react-draggable": "^4.4.4",
     "react-resizable": "^3.0.4",
     "umi": "~3.5.18",
-    "yaml": "^1.10.2"
+    "yaml": "^1.10.2",
+    "xterm": "^4.15.0",
+    "xterm-addon-attach": "^0.6.0",
+    "xterm-addon-fit": "^0.5.0",
+    "ansi-up":"^1.0.0",
+    "react-infinite-scroll-component":"^6.1.0",
+    "react-json-view":"^1.21.3"
   },
   "devDependencies": {
     "@hbos/umi-loaders": "^1.0.0",

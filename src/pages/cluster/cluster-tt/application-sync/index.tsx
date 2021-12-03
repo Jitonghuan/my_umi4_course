@@ -17,6 +17,12 @@ export default function Application() {
   const [loading, setLoading] = useState(false);
   const [pending, setPending] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [jvmConfigInfo, setJvmConfigInfo] = useState();
+  const [jvmVisiable, setJvmVisiable] = useState<boolean>(false);
+  const showModal = (current: any) => {
+    setJvmConfigInfo(current);
+    setJvmVisiable(true);
+  };
 
   const loadAppList = useCallback(async () => {
     setLoading(true);
@@ -128,10 +134,9 @@ export default function Application() {
             dataIndex={['ClusterB', 'appImageTag']}
             width={140}
             // render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
-            render={(current, record: any) =>
-              current !== record?.ClusterA?.appImageTag && <span color="red">{current}</span>
-              // <span color={current !== record?.ClusterA?.appImageTag ? 'red' : 'black'}>{current}</span>
-            }
+            render={(current, record: any) => (
+              <span style={{ color: current !== record?.ClusterA?.appImageTag ? 'red' : 'black' }}>{current}</span>
+            )}
           />
         </Table.ColumnGroup>
         <Table.ColumnGroup title="基础镜像Tag">
@@ -141,7 +146,7 @@ export default function Application() {
             dataIndex={['ClusterB', 'baseImageTag']}
             width={140}
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.baseImageTag ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.baseImageTag ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
@@ -152,7 +157,7 @@ export default function Application() {
             dataIndex={['ClusterB', 'cpuLimits']}
             width={120}
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.cpuLimits ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.cpuLimits ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
@@ -164,7 +169,15 @@ export default function Application() {
             width={340}
             ellipsis
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.jvmConfig ? 'red' : 'black'}>{current}</span>
+              <a
+                onClick={() => showModal(current)}
+                style={{
+                  textDecoration: 'underline',
+                  color: current !== record?.ClusterA?.jvmConfig ? 'red' : 'black',
+                }}
+              >
+                {current}
+              </a>
             )}
           />
         </Table.ColumnGroup>
@@ -175,7 +188,7 @@ export default function Application() {
             dataIndex={['ClusterB', 'memoryLimits']}
             width={120}
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.memoryLimits ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.memoryLimits ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
@@ -186,11 +199,21 @@ export default function Application() {
             dataIndex={['ClusterB', 'replicas']}
             width={120}
             render={(current, record: any) => (
-              <span color={current !== record?.ClusterA?.replicas ? 'red' : 'black'}>{current}</span>
+              <span style={{ color: current !== record?.ClusterA?.replicas ? 'red' : 'black' }}>{current}</span>
             )}
           />
         </Table.ColumnGroup>
       </Table>
+      <Modal
+        title="查看JVM"
+        visible={jvmVisiable}
+        footer={false}
+        onCancel={() => {
+          setJvmVisiable(false);
+        }}
+      >
+        <div>{jvmConfigInfo}</div>
+      </Modal>
     </ContentCard>
   );
 }

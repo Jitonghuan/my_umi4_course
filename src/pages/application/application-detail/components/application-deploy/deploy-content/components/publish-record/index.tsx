@@ -76,13 +76,11 @@ export default function PublishRecord(props: IProps) {
       });
       return {
         ...curRecord,
-        envs: namesArr.join(','),
       };
     }
 
     return {
       ...curRecord,
-      envs: (envDataList as any).find((v: any) => v.envCode === envs)?.envName,
     };
   }, [envDataList, curRecord]);
 
