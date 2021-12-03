@@ -25,7 +25,7 @@ const lineChartTmp = [
   },
 ];
 
-const DragWrapper: React.FC<any> = (props) => {
+const DragWrapper = (props: any) => {
   const [chartArr, setChartArr] = useState<any>([]);
 
   const getChart = (echart: echarts.ECharts) => {
@@ -50,6 +50,7 @@ const DragWrapper: React.FC<any> = (props) => {
       {props.appInfoList.map((appInfo: IAppInfo, appId: number) => {
         return (
           <DragModal
+            key={appInfo.id}
             title={appInfo.name}
             modalResize={{
               width: 260,

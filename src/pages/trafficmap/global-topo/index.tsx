@@ -89,22 +89,25 @@ const globalTopo = () => {
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
-    {
-      id: '1',
-      name: 'app1',
-      chartData: dataDemo,
-    },
-    {
-      id: '2',
-      name: 'app2',
-      chartData: dataDemo,
-    },
+    // {
+    //   id: '1',
+    //   name: 'app1',
+    //   chartData: dataDemo,
+    // },
+    // {
+    //   id: '2',
+    //   name: 'app2',
+    //   chartData: dataDemo,
+    // },
   ]);
+
+  console.info(appInfoList);
 
   const [isRedLineVisible, setIsRedLineVisible] = useState(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
 
-  console.log('appInfoList', appInfoList);
+  const [clickId, setClickId] = useState<any>('');
+
   const handleFullScreen = useCallback(() => {
     if (isFullScreen) {
       setIsFullScreen(false);
@@ -124,20 +127,23 @@ const globalTopo = () => {
       setAppInfoList(newAppInfoList);
     }
   };
-
   const onAppClick = (id: string) => {
-    console.log('id', id);
-    // console.log('appInfoList',appInfoList)
-    // let appList=JSON.parse(JSON.stringify(appInfoList))
-    // appList.push(
-    //   {
-    //     id: id,
-    //     name: 'app1',
-    //     chartData: dataDemo,
-    //   },
-    //   )
-    // setAppInfoList(appList)
+    const array = appInfoList.slice(0);
+    array.push({
+      id: id,
+      name: 'app' + id,
+      chartData: dataDemo,
+    });
+    setAppInfoList(array);
   };
+
+  const onNodeClick = (id: string) => {
+    setClickId(id);
+  };
+
+  useEffect(() => {
+    onAppClick(clickId);
+  }, [clickId]);
 
   const onRedLineClick = (id: string) => {
     console.log('redline', id);
@@ -170,7 +176,13 @@ const globalTopo = () => {
                 >
                   红线追踪
                 </Button>
-                <Button type="default" icon={<PlusCircleOutlined />}>
+                <Button
+                  type="default"
+                  icon={<PlusCircleOutlined />}
+                  onClick={() => {
+                    onAppClick('any');
+                  }}
+                >
                   全部展开
                 </Button>
                 <Button
@@ -186,7 +198,7 @@ const globalTopo = () => {
               <DragWrapper number={number} appInfoList={appInfoList} deleteModal={deleteModal} />
               <Topo
                 isFullScreen={isFullScreen}
-                onAppClick={onAppClick}
+                onAppClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
                 appInfoList={appInfoList}
               />

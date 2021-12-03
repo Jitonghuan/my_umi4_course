@@ -12,6 +12,7 @@ import serveryellow from '@/assets/imgs/serveryellow.svg';
 
 const Topo = (props: any) => {
   let graph = null as any;
+  const { onAppClick } = props;
   const { uniqueId } = G6.Util;
 
   const COLLAPSE_ICON = function COLLAPSE_ICON(x: number, y: any, r: number) {
@@ -621,54 +622,62 @@ const Topo = (props: any) => {
       graph.data({ nodes: regionData, edges: OriginData.edges });
       expandArr = regionData;
       graph.render();
-      graph.on('node:mouseenter', (evt: any) => {
-        const { item } = evt;
-        graph.setItemState(item, 'active', true);
-        graph.setItemState(item, 'hover', true);
-      });
-
-      graph.on('node:mouseleave', (evt: any) => {
-        const { item } = evt;
-        graph.setItemState(item, 'active', false);
-        graph.setItemState(item, 'hover', false);
-      });
-
-      graph.on('node:click', (evt: any) => {
-        const { item } = evt;
-        props.onAppClick(item._cfg.model.id);
-        clearFocusItemState(graph);
-        graph.setItemState(item, 'focus', true);
-        const relatedEdges = item.getEdges();
-        relatedEdges.forEach((edge: any) => {
-          graph.setItemState(edge, 'focus', true);
-        });
-      });
-
-      graph.on('canvas:click', (evt: any) => {
-        graph.getNodes().forEach((node: any) => {
-          graph.clearItemStates(node);
-        });
-        graph.getEdges().forEach((edge: any) => {
-          graph.clearItemStates(edge);
-        });
-      });
-
-      graph.on('edge:click', (evt: any) => {
-        const { item } = evt;
-        props.onRedLineClick(item._cfg.model.id);
-        graph.setItemState(item, 'focus', true);
-      });
-
-      graph.on('collapse-icon:click', (evt: any) => {
-        handleExpand(evt);
-      });
-      graph.on('combo:click', (evt: any) => {
-        if (evt.target.get('name') === 'combo-marker-shape') {
-          handleCollapse(evt);
-        }
-      });
+      bindListener(graph);
     }
   }, []);
+
+  const bindListener = (graph: any) => {
+    graph.on('node:mouseenter', (evt: any) => {
+      const { item } = evt;
+      graph.setItemState(item, 'active', true);
+      graph.setItemState(item, 'hover', true);
+    });
+
+    graph.on('node:mouseleave', (evt: any) => {
+      const { item } = evt;
+      graph.setItemState(item, 'active', false);
+      graph.setItemState(item, 'hover', false);
+    });
+
+    graph.on('node:click', (evt: any) => {
+      const { item } = evt;
+      onAppClick(item._cfg.model.id);
+      clearFocusItemState(graph);
+      graph.setItemState(item, 'focus', true);
+      const relatedEdges = item.getEdges();
+      relatedEdges.forEach((edge: any) => {
+        graph.setItemState(edge, 'focus', true);
+      });
+    });
+
+    graph.on('canvas:click', (evt: any) => {
+      graph.getNodes().forEach((node: any) => {
+        graph.clearItemStates(node);
+      });
+      graph.getEdges().forEach((edge: any) => {
+        graph.clearItemStates(edge);
+      });
+    });
+
+    graph.on('edge:click', (evt: any) => {
+      const { item } = evt;
+      props.onRedLineClick(item._cfg.model.id);
+      graph.setItemState(item, 'focus', true);
+    });
+
+    graph.on('collapse-icon:click', (evt: any) => {
+      handleExpand(evt);
+    });
+    graph.on('combo:click', (evt: any) => {
+      if (evt.target.get('name') === 'combo-marker-shape') {
+        handleCollapse(evt);
+      }
+    });
+  };
+
+  // useEffect(() => {
+  //   graph&&bindListener(graph)
+  // }, [props.appInfoList])
 
   const clearFocusItemState = (graph: any) => {
     if (!graph) return;
