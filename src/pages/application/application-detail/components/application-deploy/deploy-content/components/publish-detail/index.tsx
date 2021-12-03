@@ -333,10 +333,17 @@ export default function PublishDetail(props: IProps) {
             <a
               style={{ color: 'red', textDecoration: 'underline' }}
               onClick={() => {
-                localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
-                history.push(
-                  `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${deployInfo?.id}`,
-                );
+                if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') !== -1) {
+                  <a target="_blank" href={deployInfo.jenkinsUrl}>
+                    查看Jenkins详情
+                  </a>;
+                }
+                if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') === -1) {
+                  localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
+                  history.push(
+                    `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${deployInfo?.id}`,
+                  );
+                }
               }}
             >
               {deployInfo?.deployErrInfo}
