@@ -13,6 +13,7 @@ export interface LineChartProps {
   title: string;
   data: any[];
   xAxis: string[];
+  getChart?: any;
 }
 
 export default function LineChart(props: LineChartProps) {
@@ -20,30 +21,32 @@ export default function LineChart(props: LineChartProps) {
 
   const legendLineNum = data.length / 3 + (data.length % 3 ? 1 : 0);
 
-  let chart: echarts.ECharts | undefined;
+  // let chart: echarts.ECharts | undefined;
   const getChart = (echart?: echarts.ECharts) => {
-    console.log(echart);
-    chart = echart;
+    // console.log(props.lineId,props.appId)
+    // console.log('line', echart);
+    // chart = echart;
+    props.getChart(echart);
   };
 
-  let observer: any;
-  useEffect(() => {
-    // let ResizeObserver = window.ResizeObserver || window.WebKitResizeObserver || window.MozResizeObserver
-    let element = document.querySelector('.echart-group') || document.body;
-    observer = new ResizeObserver((entries) => {
-      // for(let entry of entries) {
-      //   console.log(entry)
-      // }
-      let width = getComputedStyle(element).getPropertyValue('width');
-      let height = getComputedStyle(element).getPropertyValue('height');
-      console.log('width', width);
-      chart?.resize();
-    });
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  // let observer: any;
+  // useEffect(() => {
+  //   // let ResizeObserver = window.ResizeObserver || window.WebKitResizeObserver || window.MozResizeObserver
+  //   let element = document.querySelector('.echart-group') || document.body;
+  //   observer = new ResizeObserver((entries) => {
+  //     // for(let entry of entries) {
+  //     //   console.log(entry)
+  //     // }
+  //     let width = getComputedStyle(element).getPropertyValue('width');
+  //     let height = getComputedStyle(element).getPropertyValue('height');
+  //     console.log('width', width);
+  //     chart?.resize();
+  //   });
+  //   observer.observe(element);
+  //   return () => {
+  //     observer.disconnect();
+  //   };
+  // }, []);
 
   const chartOptions = useMemo(() => {
     return {
@@ -98,6 +101,7 @@ export default function LineChart(props: LineChartProps) {
            * @notMerge echart更新时是否和先前option merge 为true时画布会删除历史数据
            *  */}
           <EchartsReact
+            style={{ width: '100%', height: '100%' }}
             option={chartOptions}
             notMerge={true}
             onChartReady={(echart?: echarts.ECharts) => {

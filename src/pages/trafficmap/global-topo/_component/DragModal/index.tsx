@@ -17,6 +17,8 @@ interface ResizeProps {
   resizeHandles: string[];
   minConstraints?: [number, number] | undefined;
   maxConstraints?: [number, number] | undefined;
+  onResizeStart?: ((e: React.SyntheticEvent<Element, Event>, data: ResizeCallbackData) => any) | undefined;
+  onResizeStop?: ((e: React.SyntheticEvent<Element, Event>, data: ResizeCallbackData) => any) | undefined;
   // onResize?: ((e: React.SyntheticEvent<Element, Event>, data: ResizeCallbackData) => any) | undefined;
 }
 
@@ -68,6 +70,8 @@ const DragModal: React.FC<ModalProps> = (props) => {
               onResize={onResize}
               resizeHandles={['se', 'e', 's']}
               minConstraints={[260, 810]}
+              onResizeStart={props.modalResize.onResizeStart}
+              onResizeStop={props.modalResize.onResizeStop}
             >
               <div
                 className="app-modal-body"
