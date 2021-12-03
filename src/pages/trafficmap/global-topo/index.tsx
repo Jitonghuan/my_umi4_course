@@ -142,7 +142,7 @@ const globalTopo = () => {
   };
 
   useEffect(() => {
-    onAppClick(clickId);
+    clickId && onAppClick(clickId);
   }, [clickId]);
 
   const onRedLineClick = (id: string) => {
@@ -176,13 +176,7 @@ const globalTopo = () => {
                 >
                   红线追踪
                 </Button>
-                <Button
-                  type="default"
-                  icon={<PlusCircleOutlined />}
-                  onClick={() => {
-                    onAppClick('any');
-                  }}
-                >
+                <Button type="default" icon={<PlusCircleOutlined />}>
                   全部展开
                 </Button>
                 <Button
