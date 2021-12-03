@@ -13,6 +13,7 @@ export interface LineChartProps {
   title: string;
   data: any[];
   xAxis: string[];
+  key: any;
   getChart?: any;
 }
 
@@ -26,7 +27,7 @@ export default function LineChart(props: LineChartProps) {
     // console.log(props.lineId,props.appId)
     // console.log('line', echart);
     // chart = echart;
-    props.getChart(echart);
+    // props?å.getChart(echart);
   };
 
   // let observer: any;
@@ -61,13 +62,13 @@ export default function LineChart(props: LineChartProps) {
         trigger: 'axis',
       },
       legend:
-        data.length > 1
-          ? {
-              data: data.map((item) => item.name),
-              top: '35px',
-              left: 'center',
-            }
-          : null,
+        // data.length > 1?
+        {
+          data: data.map((item) => item.name),
+          top: '35px',
+          left: 'center',
+        },
+      // : null,
       //调整绘制的echart在canvas里距离各边的距离
       grid: {
         top: `${30 + legendLineNum * 20}px`,

@@ -13,6 +13,8 @@ import DragWrapper from './_component/DragWrapper';
 import './index.less';
 import * as echarts from 'echarts';
 import RedLineModal from './_component/RedLineModal';
+import { IAppInfo } from '../interface';
+
 const dataDemo = {
   requests: {
     data: [
@@ -79,29 +81,6 @@ const dataDemo = {
     xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
   },
 };
-interface IAppInfo {
-  id: string;
-  name: string;
-  chartData: {
-    requests: {
-      data: IChartData[];
-      xAxis: string[];
-    };
-    averageResponseTime: {
-      data: IChartData[];
-      xAxis: string[];
-    };
-    responseCodes: {
-      data: IChartData[];
-      xAxis: string[];
-    };
-  };
-}
-interface IChartData {
-  data: string[];
-  name: string;
-  type: string;
-}
 
 const globalTopo = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);

@@ -3,13 +3,35 @@
  * @Date: 2021-11-17 16:07:16
  * @Description:Page 流量地图-应用流量
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import { Button, DatePicker, Form, Select, Tabs, Tree, Card } from 'antd';
 import './index.less';
+import * as echarts from 'echarts';
+import { IAppInfo } from '../interface';
+import VCCardLayout from '@cffe/vc-b-card-layout';
+import LineChart from './_component/line-chart';
 
 const { TabPane } = Tabs;
+const lineChartTmp = [
+  {
+    title: '请求数/每分钟',
+    key: 'requests' as 'requests',
+  },
+  {
+    title: '平均响应时间/分钟',
+    key: 'averageResponseTime' as 'averageResponseTime',
+  },
+  {
+    title: 'HTTP-响应码',
+    key: 'responseCodes' as 'responseCodes',
+  },
+  {
+    title: '错误数',
+    key: 'errors' as 'errors',
+  },
+];
 
 const treeData = [
   {
@@ -32,13 +54,122 @@ const treeData = [
   },
 ];
 
+const dataDemo = {
+  requests: {
+    data: [
+      {
+        data: ['9', '9', '9', '9', '9', '9', '9'],
+        name: 'http',
+        type: 'line',
+      },
+      {
+        data: ['10', '10', '10', '10', '10', '10', '10'],
+        name: 'dubbo',
+        type: 'line',
+      },
+    ],
+    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
+  },
+  averageResponseTime: {
+    data: [
+      {
+        data: ['9', '9', '9', '9', '9', '9', '9'],
+        name: 'hbos/hbos-osc',
+        type: 'line',
+        color: 'rgba(101,159,235,1)',
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 0,
+              color: 'rgba(101,159,235,0.2)',
+            },
+            {
+              offset: 1,
+              color: 'rgba(101,159,235,0)',
+            },
+          ]),
+        },
+      },
+    ],
+    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
+  },
+  responseCodes: {
+    data: [
+      {
+        data: ['9', '9', '9', '9', '9', '9', '9'],
+        name: '200',
+        type: 'line',
+      },
+      {
+        data: ['3', '4', '5', '7', '9', '3', '1'],
+        name: '300',
+        type: 'line',
+      },
+      {
+        data: ['6', '7', '8', '9', '4', '3', '5'],
+        name: '400',
+        type: 'line',
+      },
+
+      {
+        data: ['4', '5', '3', '3', '3', '6', '2'],
+        name: '500',
+        type: 'line',
+      },
+    ],
+    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
+  },
+  errors: {
+    data: [
+      {
+        data: ['9', '9', '9', '9', '9', '9', '9'],
+        name: 'hbos/hbos-osc',
+        type: 'line',
+        color: 'rgba(246,106,81,1)',
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 0,
+              color: 'rgba(246,106,81,0.3)',
+            },
+            {
+              offset: 1,
+              color: 'rgba(246,106,81,0)',
+            },
+          ]),
+        },
+      },
+    ],
+    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
+  },
+};
 const AppTraffic: React.FC = () => {
+  // const [appInfo, setAppInfo] = useState<IAppInfo>(
+  //   {
+  //     id: '1',
+  //     name: 'app1',
+  //     chartData: dataDemo,
+  //   }
+  // );
+
+  const [appTrendMap, setAppTrendMap] = useState<any>(dataDemo);
+
   const onSelect = (selectedKeys: React.Key[], info: any) => {
     console.log('selected', selectedKeys, info);
   };
 
   const onCheck = (checkedKeys: React.Key[], info: any) => {
     console.log('onCheck', checkedKeys, info);
+  };
+
+  const layoutGrid = {
+    xs: 1,
+    sm: 1,
+    md: 1,
+    lg: 2,
+    xl: 2,
+    xxl: 2,
+    xxxl: 2,
   };
 
   return (
@@ -79,12 +210,16 @@ const AppTraffic: React.FC = () => {
             <TabPane tab="应用详情" key="1">
               <div className="tab-content">
                 <div className="app-topo"></div>
-                <div className="chart-group">
-                  <div className="chart-item"></div>
-                  <div className="chart-item"></div>
-                  <div className="chart-item"></div>
-                  <div className="chart-item"></div>
-                </div>
+                {/* <div className="chart-group"> */}
+                <VCCardLayout grid={layoutGrid} className="chart-group">
+                  {lineChartTmp.map((item, index: number) => {
+                    return (
+                      <div className="chart-group-item">
+                        <LineChart title={item.title} {...appTrendMap[item.key]} key={index} />
+                      </div>
+                    );
+                  })}
+                </VCCardLayout>
               </div>
             </TabPane>
             <TabPane tab="JVM信息" key="2">

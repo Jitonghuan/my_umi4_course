@@ -19,6 +19,10 @@ export interface IAppInfo {
       data: IChartData[];
       xAxis: string[];
     };
+    errors?: {
+      data: IChartData[];
+      xAxis: string[];
+    };
   };
 }
 export interface IChartData {

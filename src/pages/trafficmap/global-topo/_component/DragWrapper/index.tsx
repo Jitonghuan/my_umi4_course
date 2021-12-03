@@ -5,7 +5,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
-import LineChart from '../../../_component/line-chart';
+import LineChart from '../line-chart';
 import './index.less';
 import { IAppInfo } from '@/pages/trafficmap/interface';
 import DragModal from '../DragModal';
