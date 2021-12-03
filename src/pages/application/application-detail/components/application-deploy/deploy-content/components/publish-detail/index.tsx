@@ -334,9 +334,7 @@ export default function PublishDetail(props: IProps) {
               style={{ color: 'red', textDecoration: 'underline' }}
               onClick={() => {
                 if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') !== -1) {
-                  <a target="_blank" href={deployInfo.jenkinsUrl}>
-                    查看Jenkins详情
-                  </a>;
+                  window.open(deployInfo.jenkinsUrl);
                 }
                 if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') === -1) {
                   localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
