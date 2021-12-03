@@ -223,7 +223,8 @@ export default function LoggerSearch(props: any) {
     if (type === 'date') return <DatePicker onChange={onChange} />;
     return <DatePicker picker={type} onChange={onChange} />;
   };
-
+  let fiterArry: any = [];
+  fiterArry.push('envCode:' + envCode);
   //查询
   const submitEditScreen = () => {
     let params = subInfoForm.getFieldsValue();
@@ -276,7 +277,7 @@ export default function LoggerSearch(props: any) {
         querySql: querySqlParam || '',
         // podName: podNameParam || '',
         message: messageParam || '',
-        filterIs: appCodeParam || [],
+        filterIs: appCodeParam || fiterArry || [],
         envCode: envCode,
       },
     })
