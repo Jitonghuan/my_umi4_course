@@ -101,8 +101,6 @@ const globalTopo = () => {
     // },
   ]);
 
-  console.info(appInfoList);
-
   const [isRedLineVisible, setIsRedLineVisible] = useState(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
 

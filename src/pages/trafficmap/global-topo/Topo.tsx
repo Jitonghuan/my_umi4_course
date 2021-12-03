@@ -456,6 +456,29 @@ const Topo = (props: any) => {
     'line',
   );
 
+  const tooltip = new G6.Tooltip({
+    offsetX: 10,
+    offsetY: 10,
+    // the types of items that allow the tooltip show up
+    // 允许出现 tooltip 的 item 类型
+    itemTypes: ['node'],
+    // custom the tooltip's content
+    // 自定义 tooltip 内容
+    getContent: (e: any) => {
+      const outDiv = document.createElement('div');
+      outDiv.style.width = 'fit-content';
+      //outDiv.style.padding = '0px 0px 20px 0px';
+      outDiv.innerHTML = `
+        <ul>
+          <li>Type: ${e.item.getType()}</li>
+        </ul>
+        <ul>
+          <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
+        </ul>`;
+      return outDiv;
+    },
+  });
+
   useEffect(() => {
     const container = document.getElementById('topo');
 
@@ -467,6 +490,7 @@ const Topo = (props: any) => {
         width,
         height,
         // linkCenter: true,
+        plugins: [tooltip],
         layout: {
           type: 'gForce',
           minMovement: 0.04,
