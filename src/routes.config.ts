@@ -85,6 +85,10 @@ export default [
     redirect: `${baseRoutePath}/operation/env-manage/env-list`,
   },
   {
+    path: `${baseRoutePath}/operation/label-manage`,
+    redirect: `${baseRoutePath}/operation/label-manage/label-list`,
+  },
+  {
     path: `${baseRoutePath}/test/data-factory`,
     redirect: `${baseRoutePath}/test/data-factory/template`,
   },
@@ -780,6 +784,34 @@ export default [
             name: '推送环境',
             key: 'env-manage',
             component: '@/pages/operation/env-manage/push-env',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'label-manage',
+        name: '标签管理',
+        key: 'label-manage',
+        routes: [
+          {
+            path: 'label-list',
+            name: '标签列表',
+            key: 'label-manage',
+            component: '@/pages/operation/label-manage/label-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'label-bind',
+            name: '绑定标签',
+            key: 'label-manage',
+            component: '@/pages/operation/label-manage/label-bind',
+            hideInMenu: true,
+          },
+          {
+            path: 'label-unbound',
+            name: '绑定标签',
+            key: 'label-manage',
+            component: '@/pages/operation/label-manage/label-unbound',
             hideInMenu: true,
           },
         ],
