@@ -953,14 +953,14 @@ export default [
         routes: [
           {
             path: 'operator-scheduling',
-            name: '流量调度',
+            name: '集群调度',
             key: 'cluster-clusterZs',
             component: '@/pages/cluster/cluster-zs/operator-scheduling',
             hideInMenu: true,
           },
           {
             path: 'scheduling',
-            name: '集群调度',
+            name: '流量调度',
             key: 'cluster-clusterZs',
             component: '@/pages/cluster/cluster-zs/scheduling',
             hideInMenu: true,
@@ -997,6 +997,38 @@ export default [
         hideInMenu: process.env.BUILD_ENV === 'prod',
       },
     ],
+  },
+  {
+    path: 'trafficmap',
+    name: '流量地图',
+    icon: 'icon-ic_flow',
+    routes: [
+      {
+        path: 'global-topo',
+        name: '全局拓扑',
+        key: 'trafficmap-topo',
+        component: '@/pages/trafficmap/global-topo',
+      },
+      {
+        path: 'app-traffic',
+        name: '应用流量',
+        key: 'trafficmap-app',
+        component: '@/pages/trafficmap/app-traffic',
+      },
+      {
+        path: 'tracking',
+        name: '追踪',
+        key: 'trafficmap-track',
+        component: '@/pages/trafficmap/tracking',
+      },
+      {
+        path: 'domain-config',
+        name: '配置域',
+        key: 'trafficmap-domainconfig',
+        component: '@/pages/trafficmap/domain-config',
+      },
+    ],
+    // hideInMenu: process.env.BUILD_ENV === 'prod',
   },
   {
     path: '*',
