@@ -165,9 +165,9 @@ export default function LoggerSearch(props: any) {
       setStartTimestamp(start);
       setEndTimestamp(end);
 
-      loadMoreData(logStore, start, end, values, podName, messageValue, appCodeValue);
+      loadMoreData(logStore, start, end, values, messageValue, appCodeValue);
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, values, podName, messageValue, appCodeValue);
+      loadMoreData(logStore, startTimestamp, endTimestamp, values, messageValue, appCodeValue);
     }
   };
 
@@ -180,9 +180,9 @@ export default function LoggerSearch(props: any) {
     setEndTimestamp(end);
 
     if (start !== 'NaN' && end !== 'NaN') {
-      loadMoreData(logStore, start, end, querySql, podName);
+      loadMoreData(logStore, start, end, querySql, messageValue, appCodeValue);
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, podName, messageValue, appCodeValue);
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, messageValue, appCodeValue);
     }
   };
 
@@ -194,7 +194,7 @@ export default function LoggerSearch(props: any) {
     let endTimepl = Number(now / 1000).toString();
     setStartTimestamp(startTimepl);
     setEndTimestamp(endTimepl);
-    loadMoreData(logStore, startTimepl, endTimepl, querySql, podName, messageValue, appCodeValue);
+    loadMoreData(logStore, startTimepl, endTimepl, querySql, messageValue, appCodeValue);
   };
   //选择环境事件
   const handleEnvCodeChange = (next: string) => {
@@ -223,7 +223,8 @@ export default function LoggerSearch(props: any) {
     if (type === 'date') return <DatePicker onChange={onChange} />;
     return <DatePicker picker={type} onChange={onChange} />;
   };
-
+  let fiterArry: any = [];
+  fiterArry.push('envCode:' + envCode);
   //查询
   const submitEditScreen = () => {
     let params = subInfoForm.getFieldsValue();
@@ -238,6 +239,10 @@ export default function LoggerSearch(props: any) {
     if (appCodeValue) {
       appCodeArry.push('appCode:' + appCodeValue);
     }
+    if (podNameInfo) {
+      appCodeArry.push('podName:' + podNameInfo);
+    }
+    appCodeArry.push('envCode:' + envCode);
     setAppCodeValue(appCodeArry);
     const now = new Date().getTime();
     //默认传最近30分钟，处理为秒级的时间戳
@@ -246,19 +251,19 @@ export default function LoggerSearch(props: any) {
     if (startTimestamp !== start) {
       setStartTimestamp(start);
       setEndTimestamp(end);
-      loadMoreData(logStore, start, end, querySql, podNameInfo, messageInfo, appCodeArry);
+      loadMoreData(logStore, start, end, querySql, messageInfo, appCodeArry);
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, podNameInfo, messageInfo, appCodeArry);
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, messageInfo, appCodeArry);
     }
   };
 
   //接收参数：日志库选择logStore,日期开始时间，日期结束时间，querySql,运算符为是（filterIs）,运算符为否（filterNot）,环境Code（envCode）
   const loadMoreData = (
     n: any = logStore,
-    startTime?: string,
-    endTime?: string,
+    startTimeParam?: string,
+    endTimeParam?: string,
     querySqlParam?: string,
-    podNameParam?: string,
+    // podNameParam?: string,
     messageParam?: any,
     appCodeParam?: any,
   ) => {
@@ -267,12 +272,12 @@ export default function LoggerSearch(props: any) {
     postRequest(APIS.logSearch, {
       data: {
         indexMode: n,
-        startTime: startTime || startTimestamp,
-        endTime: endTime || endTimestamp,
+        startTime: startTimeParam || startTimestamp,
+        endTime: endTimeParam || endTimestamp,
         querySql: querySqlParam || '',
-        podName: podNameParam || '',
+        // podName: podNameParam || '',
         message: messageParam || '',
-        filterIs: appCodeParam || [],
+        filterIs: appCodeParam || fiterArry || [],
         envCode: envCode,
       },
     })
@@ -321,9 +326,9 @@ export default function LoggerSearch(props: any) {
     if (startTimestamp !== start) {
       setStartTimestamp(start);
       setEndTimestamp(end);
-      loadMoreData(logStore, start, end, querySql, '', '');
+      loadMoreData(logStore, start, end, querySql, '');
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, '', '');
+      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, '');
     }
   };
   // 无限滚动下拉事件

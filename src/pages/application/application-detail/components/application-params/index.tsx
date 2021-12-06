@@ -253,7 +253,7 @@ export default function ApplicationParams(props: any) {
             <div style={{ fontSize: 15, color: '#696969' }}>模版详情：</div>
             <Form.Item name="value">
               {/* <TextArea rows={18} disabled /> */}
-              <AceEditor mode="yaml" height={600} readOnly />
+              <AceEditor mode="yaml" height={600} />
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>

@@ -985,14 +985,14 @@ export default [
         routes: [
           {
             path: 'operator-scheduling',
-            name: '集群调度',
+            name: '流量调度',
             key: 'cluster-clusterZs',
             component: '@/pages/cluster/cluster-zs/operator-scheduling',
             hideInMenu: true,
           },
           {
             path: 'scheduling',
-            name: '流量调度',
+            name: '集群调度',
             key: 'cluster-clusterZs',
             component: '@/pages/cluster/cluster-zs/scheduling',
             hideInMenu: true,
@@ -1026,6 +1026,7 @@ export default [
             hideInMenu: true,
           },
         ],
+        hideInMenu: process.env.BUILD_ENV === 'prod',
       },
     ],
   },

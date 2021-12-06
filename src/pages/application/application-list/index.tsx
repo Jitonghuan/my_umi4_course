@@ -18,6 +18,7 @@ import './index.less';
 
 export default function ApplicationList() {
   const { categoryData = [], businessData: businessDataList = [] } = useContext(FeContext);
+  console.log('businessDataList', businessDataList);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [searchParams, setSearchParams] = useState<any>(

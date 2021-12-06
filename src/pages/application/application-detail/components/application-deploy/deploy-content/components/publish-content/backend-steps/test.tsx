@@ -35,7 +35,10 @@ const deployStatusMapping: Record<string, number> = {
 
 export default function TestEnvSteps({ deployInfo, onOperate }: StepsProps) {
   const { deployStatus } = deployInfo || {};
-  const status = deployStatusMapping[deployStatus] || -1;
+  let status = deployStatusMapping[deployStatus] || -1;
+  if (deployStatus === 'deployAborted') {
+    status = -1;
+  }
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'test' };
 

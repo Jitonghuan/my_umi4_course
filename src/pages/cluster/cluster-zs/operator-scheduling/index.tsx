@@ -281,7 +281,7 @@ export default function OperatorScheduling() {
       <div className="site-card-border-less-wrapper">
         <div className="content-Card">
           <div className="leftCard">
-            <Card title="操作" bordered={false} style={{ width: 420, height: 400, marginTop: 110 }}>
+            <Card title="操作" bordered={false} style={{ width: 360, height: 400, marginTop: 80 }}>
               <Form form={form} labelCol={{ flex: '100px' }} onFinish={addUser}>
                 <Form.Item label="集群选择" name="userCluster">
                   <Select style={{ width: 180 }}>
@@ -321,7 +321,7 @@ export default function OperatorScheduling() {
               </Form>
             </Card>
           </div>
-          <div className="RightCard">
+          <div className="RightCard" style={{ marginTop: 6 }}>
             <Card title="A集群" bordered={false}>
               <div className="clusterAFlex">
                 <div style={{ height: '100%', overflow: 'auto' }}>
@@ -330,49 +330,58 @@ export default function OperatorScheduling() {
                     columns={clusterA_patientColumns}
                     dataSource={clusterA_patientData}
                     pagination={false}
-                    style={{ width: 300 }}
+                    style={{ width: 300, height: 178 }}
                     bordered
-                    scroll={{ y: window.innerHeight - 814 }}
+                    scroll={{ y: window.innerHeight - 560 }}
                   />
                 </div>
-                <div style={{ marginLeft: 10 }}>
+
+                <div style={{ marginLeft: 10, height: '100%', overflow: 'auto' }}>
                   <Table
                     columns={clusterA_operatorColumns}
                     dataSource={clusterA_operatorData}
                     pagination={false}
-                    style={{ width: 300 }}
+                    style={{ width: 300, height: 178 }}
                     bordered
-                    scroll={{ y: window.innerHeight - 814 }}
+                    scroll={{ y: window.innerHeight - 560 }}
                   />
                 </div>
               </div>
             </Card>
-            <Divider />
+            <Divider style={{ height: 10, marginTop: 0, marginBottom: 0 }} />
             <Card title="B集群" bordered={false}>
               <div className="clusterBFlex">
-                <div>
+                <div style={{ height: '100%', overflow: 'auto' }}>
                   <Table
                     columns={clusterB_patientColumns}
                     dataSource={clusterB_patientData}
                     pagination={false}
-                    style={{ width: 300 }}
-                    scroll={{ y: window.innerHeight - 814 }}
+                    style={{
+                      width: 300,
+                      height: 178,
+                      // height:window.innerHeight - 1050
+                    }}
+                    scroll={{ y: window.innerHeight - 560 }}
                     bordered
                   />
                 </div>
-                <div style={{ marginLeft: 10 }}>
+                <div style={{ marginLeft: 10, height: '100%', overflow: 'auto' }}>
                   <Table
                     columns={clusterB_operatorColumns}
                     dataSource={clusterB_operatorData}
                     pagination={false}
-                    style={{ width: 300 }}
-                    scroll={{ y: window.innerHeight - 814 }}
+                    style={{
+                      width: 300,
+                      height: 178,
+                      // height:window.innerHeight - 1050
+                    }}
+                    scroll={{ y: window.innerHeight - 560 }}
                     bordered
                   />
                 </div>
               </div>
             </Card>
-            <div style={{ float: 'right', marginTop: 14 }}>
+            <div style={{ float: 'right', marginTop: 8 }}>
               <Button type="primary" onClick={addMultipleCluster}>
                 提交
               </Button>

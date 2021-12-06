@@ -15,7 +15,8 @@ export default function DeployingStep(props: StepItemProps) {
 
   const isLoading =
     deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
-  const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
+  const isError = deployStatus === 'deployErr';
+  // || deployStatus === 'deployAborted';
 
   const [deployVisible, setDeployVisible] = useState(false);
 
@@ -53,12 +54,19 @@ export default function DeployingStep(props: StepItemProps) {
           (isError || isLoading) && (
             <>
               {/* dev,test, pre,prod 在部署过程中出现错误时  显示错误详情 */}
-              {isError && deployInfo.deployErrInfo && (
-                <div style={{ marginTop: 2 }} onClick={handleShowErrorDetail}>
-                  部署错误详情
+              {/* {isError && deployInfo.deployErrInfo && (
+                <Button type='primary' style={{ marginTop: 2 }} onClick={()=>{history.push(`/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${deployInfo?.id}`)}}>
+                  错误详情
+                </Button>
+              )} */}
+              {/* 浙一日常环境下的部署步骤显示jenkins链接 */}
+              {envTypeCode === 'pre' && deployInfo.jenkinsUrl && deployInfo.envs?.includes('zy-daily') && (
+                <div style={{ marginTop: 2 }}>
+                  <a target="_blank" href={deployInfo.jenkinsUrl}>
+                    查看Jenkins详情
+                  </a>
                 </div>
               )}
-
               {/* prod环境 在部署过程中出现错误时 判断如果是在构建显示查看Jenkins详情，如果是部署出现错误显示部署错误详情*/}
               {envTypeCode === 'prod' && deployInfo.jenkinsUrl && (
                 <div style={{ marginTop: 2 }}>

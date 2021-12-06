@@ -9,5 +9,11 @@ import { StepItemProps } from '../../types';
 export default function CreateTaskStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
 
-  return <Steps.Step {...others} title="创建任务" />;
+  return (
+    <Steps.Step
+      {...others}
+      title="创建任务"
+      //  status={isError ? 'error' : others.status}
+    />
+  );
 }
