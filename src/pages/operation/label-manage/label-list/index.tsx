@@ -143,6 +143,9 @@ export default function LanbelList() {
                     onClick={() => {
                       history.push({
                         pathname: 'label-bind',
+                        query: {
+                          tagName: record.tagName,
+                        },
                       });
                     }}
                   >
@@ -152,6 +155,9 @@ export default function LanbelList() {
                     onClick={() => {
                       history.push({
                         pathname: 'label-unbound',
+                        query: {
+                          tagName: record.tagName,
+                        },
                       });
                     }}
                   >

@@ -20,9 +20,10 @@ export interface TmplEdit extends Record<string, any> {
   templateValue: string;
   remark: string;
 }
-export default function Launch() {
+export default function UnBound(props: any) {
   const { Option } = Select;
   const [labelForm] = Form.useForm();
+  const tagName = props?.tagName;
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [currentData, setCurrentData] = useState<any[]>([]);
@@ -71,6 +72,7 @@ export default function Launch() {
             </Button>
           </Form.Item>
         </Form>
+        <span>{tagName}</span>
       </FilterCard>
       <ContentCard>
         <div>

@@ -60,7 +60,7 @@ export default function LabelEditor(props: LabelListProps) {
   };
 
   return (
-    <Drawer width={'30%'} visible={mode !== 'HIDE'} title={mode === 'EDIT' ? '编辑标签' : '新增标签'} onClose={onClose}>
+    <Drawer width={'36%'} visible={mode !== 'HIDE'} title={mode === 'EDIT' ? '编辑标签' : '新增标签'} onClose={onClose}>
       <ContentCard className="label-edit">
         <Form form={createLabelForm} onFinish={createLabelFrom} labelCol={{ flex: '120px' }}>
           <Form.Item label="标签名称" name="tagName" rules={[{ required: true, message: '这是必选项' }]}>
@@ -74,7 +74,7 @@ export default function LabelEditor(props: LabelListProps) {
           </Form.Item>
           <span style={{ marginLeft: 120, color: 'gray' }}>(该分类下新建应用时会自动绑定该标签)</span>
           <Form.Item>
-            <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
+            <Space size="small" style={{ marginTop: '50px', marginLeft: '220px' }}>
               <Button type="ghost" htmlType="reset" onClick={onClose}>
                 取消
               </Button>

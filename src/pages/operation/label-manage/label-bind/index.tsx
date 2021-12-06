@@ -7,9 +7,10 @@ import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from '
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-export default function LabelBind() {
+export default function LabelBind(props: any) {
   const { Option } = Select;
   const [labelBindForm] = Form.useForm();
+  const tagName = props?.tagName;
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [currentData, setCurrentData] = useState<any[]>([]);
@@ -70,6 +71,7 @@ export default function LabelBind() {
             </Button>
           </Form.Item>
         </Form>
+        <span>{tagName}</span>
       </FilterCard>
       <ContentCard>
         <div>
