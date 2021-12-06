@@ -1001,7 +1001,7 @@ export default [
   {
     path: 'trafficmap',
     name: '流量地图',
-    icon: 'icon-extension',
+    icon: 'icon-ic_flow',
     routes: [
       {
         path: 'global-topo',

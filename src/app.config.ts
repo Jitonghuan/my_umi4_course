@@ -32,7 +32,7 @@ export default {
    * 导航栏图标库，取自 http://iconfont.cn，可根据实际情况自行替换链接
    * 查看具体示例请看 /demo/icon-list 页面
    */
-  menuIconUrl: '//at.alicdn.com/t/font_2040858_eeq8erl36fw.js',
+  menuIconUrl: '//at.alicdn.com/t/font_2040858_koauyaochzp.js',
 
   isLocal: IS_LOCAL,
 };
