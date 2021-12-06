@@ -269,7 +269,7 @@ export default function OperatorScheduling() {
   });
   let arryParams = clusterAP.concat(clusterBP, clusterAO, clusterBO);
   const addMultipleCluster = () => {
-    postRequest(APIS.addMultipleClusterUser, { data: [...arryParams] }).then((res) => {
+    postRequest(`${APIS.addMultipleClusterUser}?envCode=hbos-test`, { data: [...arryParams] }).then((res) => {
       if (res.success) {
         message.success('新增成功！');
       }
