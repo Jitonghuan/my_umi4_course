@@ -809,7 +809,7 @@ export default [
           },
           {
             path: 'label-unbound',
-            name: '绑定标签',
+            name: '解绑标签',
             key: 'label-manage',
             component: '@/pages/operation/label-manage/label-unbound',
             hideInMenu: true,

@@ -346,6 +346,9 @@ export default function Push(props: any) {
           <Form.Item label="应用分类：" name="appCategoryCode">
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
+          <Form.Item label="应用标签：" name="tagName">
+            <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
+          </Form.Item>
           <Form.Item label="应用CODE：" name="appCode">
             <Input placeholder="请输入应用CODE" style={{ width: 180 }}></Input>
           </Form.Item>
@@ -387,7 +390,7 @@ export default function Push(props: any) {
                 <Table.Column title="应用名" dataIndex="appName" ellipsis />
                 <Table.Column title="应用CODE" dataIndex="appCode" ellipsis />
                 <Table.Column title="应用分类" dataIndex="appCategoryCode" />
-                <Table.Column title="应用分组" dataIndex="appGroupCode" />
+                <Table.Column title="应用标签" dataIndex="tagName" />
                 <Table.Column
                   title="操作"
                   dataIndex="gmtModify"

@@ -7,96 +7,78 @@ import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
-import EditorTable from '@cffe/pc-editor-table';
-import AceEditor from '@/components/ace-editor';
+import { LabelEdit } from '../label-list';
 import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from 'antd';
+import { useCreateLabelTag, useEditLabel } from '../hook';
 
-export interface TmplListProps {
+export interface LabelListProps {
   mode?: EditorMode;
-  //   initData?: TmplEdit;
+  initData?: LabelEdit;
   onClose?: () => any;
   onSave?: () => any;
 }
 
-export default function TaskEditor(props: TmplListProps) {
+export default function LabelEditor(props: LabelListProps) {
   const [count, setCount] = useState<any>([0]);
-  const [createTmplForm] = Form.useForm();
-  const children: any = [];
-  //   const { mode, initData, onClose, onSave } = props;
-  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
-  const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
-  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [source, setSource] = useState<any[]>([]);
-  const [isDisabled, setIsdisabled] = useState<any>();
-  const [isDeployment, setIsDeployment] = useState<string>();
-  //   const templateCode = initData?.templateCode;
-  const handleChange = (next: any[]) => {
-    setSource(next);
-  };
-
-  const handleAdd = () => {
-    setCount(count + 1);
-  };
-  const clickChange = () => {};
-
-  //加载模版类型下拉选择
-  const selectTmplType = () => {};
-  //加载应用分类下拉选择
-  const selectCategory = () => {};
-
-  // 查询环境
-  const changeAppCategory = (categoryCode: string) => {
-    //调用接口 查询env
-    setEnvDatas([]);
-  };
-  //保存编辑模版
-
-  const createTmpl = (value: any) => {
-    let envCodesArry = [];
-    if (Array.isArray(value?.envCodes)) {
-      envCodesArry = value?.envCodes;
-    } else {
-      envCodesArry = [value?.envCodes];
+  const [createLabelForm] = Form.useForm();
+  const { mode, initData, onClose, onSave } = props;
+  const [createTag] = useCreateLabelTag(); //新增标签
+  const [editLabel] = useEditLabel(); //编辑标签
+  const id = initData?.id;
+  useEffect(() => {
+    //进入页面赋值给表单
+    if (mode === 'HIDE') {
+      return;
     }
-    const tmplConfigurableItem = value?.tmplConfigurableItem?.reduce((prev: any, el: any) => {
-      prev[el.key] = el?.value;
-      return prev;
-    }, {} as any);
+    if (mode === 'EDIT') {
+      createLabelForm.setFieldsValue({ ...initData });
+    }
+    if (mode === 'ADD') {
+      createLabelForm.resetFields();
+    }
+  }, []);
+  //提交数据
+  const createLabelFrom = (params: any) => {
+    if (mode === 'ADD') {
+      createTag(params?.tagName, params?.tagMark, params?.categoryCodes)
+        .then(() => {
+          onSave?.();
+        })
+        .catch((error) => {
+          message.error(error);
+        });
+    }
+    if (mode === 'EDIT') {
+      editLabel(id, params?.tagName, params?.tagMark, params?.categoryCodes)
+        .then(() => {
+          onSave?.();
+        })
+        .catch((error) => {
+          message.error(error);
+        });
+    }
   };
 
-  const changeTmplType = (value: any) => {
-    setIsDeployment(value);
-  };
   return (
-    <Drawer width={'40%'}>
+    <Drawer width={'30%'} visible={mode !== 'HIDE'} title={mode === 'EDIT' ? '编辑标签' : '新增标签'} onClose={onClose}>
       <ContentCard className="label-edit">
-        <Form form={createTmplForm} onFinish={createTmpl} labelCol={{ flex: '120px' }}>
-          <Form.Item label="标签名称" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
-            <Select
-              showSearch
-              style={{ width: 150 }}
-              options={templateTypes}
-              disabled={isDisabled}
-              onChange={changeTmplType}
-            />
+        <Form form={createLabelForm} onFinish={createLabelFrom} labelCol={{ flex: '120px' }}>
+          <Form.Item label="标签名称" name="tagName" rules={[{ required: true, message: '这是必选项' }]}>
+            <Input style={{ width: 220 }} placeholder="请输入"></Input>
           </Form.Item>
-
-          <Form.Item label="标签备注" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
+          <Form.Item label="标签备注" name="tagMark" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="用于标记"></Input>
           </Form.Item>
-          <Form.Item name="默认环境" rules={[{ required: true, message: '这是必填项' }]}>
-            <AceEditor mode="yaml" height={700} />
+          <Form.Item label="默认环境" name="categoryCodes" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="单行输入"></Input>
           </Form.Item>
+          <span style={{ marginLeft: 120, color: 'gray' }}>(该分类下新建应用时会自动绑定该标签)</span>
           <Form.Item>
             <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
-              <Button
-                type="ghost"
-                htmlType="reset"
-                //   onClick={onClose}
-              >
+              <Button type="ghost" htmlType="reset" onClick={onClose}>
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" disabled={isDisabled}>
+              <Button type="primary" htmlType="submit">
                 保存
               </Button>
             </Space>
