@@ -4,13 +4,20 @@
  * @Description:
  */
 import G6, { IItemBaseConfig, Item, ModelConfig } from '@antv/g6';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { OriginData } from './data';
 import serverblue from '@/assets/imgs/serverblue.svg';
 import serverred from '@/assets/imgs/serverred.svg';
 import serveryellow from '@/assets/imgs/serveryellow.svg';
+import { Collapse } from 'antd';
 
-const Topo = (props: any) => {
+const Topo = forwardRef((props: any, ref: any) => {
+  // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
+  useImperativeHandle(ref, () => ({
+    // changeVal 就是暴露给父组件的方法
+    expandAll,
+  }));
+
   let graph = null as any;
   const { onNodeClick } = props;
   const { uniqueId } = G6.Util;
@@ -721,6 +728,10 @@ const Topo = (props: any) => {
     });
   };
 
+  /**
+   * @param evt
+   * @description 收起combo
+   */
   const handleCollapse = (evt: any) => {
     const regionId = evt.item['_cfg']['model']['regionCode'];
     if (regionId) {
@@ -758,15 +769,23 @@ const Topo = (props: any) => {
     });
   };
 
+  /**
+   * 展开
+   * @param evt
+   */
   const handleExpand = (evt: any) => {
     const { item } = evt;
     const model = item && item.getModel();
-    let expandIndex = expandArr.findIndex((node: any) => node.id == model.id);
+    comboExpand(model.id);
+  };
+
+  const comboExpand = (expandId: any) => {
+    let expandIndex = expandArr.findIndex((node: any) => node.id == expandId);
     expandArr.splice(expandIndex, 1);
 
     const newNode: any[] = [];
     OriginData.nodes.forEach((node) => {
-      if (node.nodeRegionCode == model.id) {
+      if (node.nodeRegionCode == expandId) {
         expandArr.push(node);
         newNode.push(node.id);
       }
@@ -774,10 +793,10 @@ const Topo = (props: any) => {
 
     let newcombo = {
       id: `combo-${uniqueId()}`,
-      label: model.id,
+      label: expandId,
       type: 'card-combo',
-      regionCode: model.id,
-      status: model.status,
+      regionCode: expandId,
+      status: expandId.status,
       nodes: newNode,
     };
     comboArr.push(newcombo);
@@ -799,6 +818,17 @@ const Topo = (props: any) => {
     });
   };
 
+  const expandAll = () => {
+    const collapseNode = expandArr.filter((item: any) => {
+      if (item.nodeType == 'region') {
+        return item;
+      }
+    });
+    collapseNode.map((item: any) => {
+      comboExpand(item.id);
+    });
+  };
+
   if (typeof window !== 'undefined')
     window.onresize = () => {
       if (!graph || graph.get('destroyed')) return;
@@ -815,6 +845,5 @@ const Topo = (props: any) => {
   }, [props.isFullScreen]);
 
   return <div id="topo" style={{ height: '100%' }}></div>;
-};
-
+});
 export default Topo;

@@ -107,6 +107,13 @@ const globalTopo = () => {
 
   const [clickId, setClickId] = useState<any>('');
 
+  const TopoRef: any = useRef();
+
+  const expandAll = () => {
+    // changeVal就是子组件暴露给父组件的方法
+    TopoRef?.current?.expandAll();
+  };
+
   const handleFullScreen = useCallback(() => {
     if (isFullScreen) {
       setIsFullScreen(false);
@@ -190,7 +197,7 @@ const globalTopo = () => {
                 >
                   红线追踪
                 </Button>
-                <Button type="default" icon={<PlusCircleOutlined />}>
+                <Button type="default" icon={<PlusCircleOutlined />} onClick={expandAll}>
                   全部展开
                 </Button>
                 <Button
@@ -209,6 +216,7 @@ const globalTopo = () => {
                 onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
                 appInfoList={appInfoList}
+                ref={TopoRef}
               />
             </div>
           </section>
