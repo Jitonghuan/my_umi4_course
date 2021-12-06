@@ -4,7 +4,7 @@
  * @Description:
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Modal, Select, Button, DatePicker, List } from 'antd';
+import { Form, Modal, Select, Button, DatePicker, List, message } from 'antd';
 import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -101,6 +101,7 @@ const globalTopo = () => {
     // },
   ]);
 
+  const [appIdList, setAppIdList] = useState<string[]>([]);
   const [isRedLineVisible, setIsRedLineVisible] = useState(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
 
@@ -117,22 +118,37 @@ const globalTopo = () => {
   }, [isFullScreen]);
 
   const deleteModal = (app: IAppInfo) => {
-    console.log(app);
+    if (app.id == clickId) setClickId('');
     const idx = appInfoList.findIndex((item) => item.id == app.id);
+    const idIdx = appIdList.findIndex((item) => item == app.id);
     if (idx !== -1) {
       let newAppInfoList = JSON.parse(JSON.stringify(appInfoList));
+      let newAppIdList = JSON.parse(JSON.stringify(appIdList));
+      newAppIdList.splice(idIdx, 1);
       newAppInfoList.splice(idx, 1);
+      setAppIdList(newAppIdList);
       setAppInfoList(newAppInfoList);
     }
   };
+
   const onAppClick = (id: string) => {
-    const array = appInfoList.slice(0);
-    array.push({
-      id: id,
-      name: 'app' + id,
-      chartData: dataDemo,
-    });
-    setAppInfoList(array);
+    let appIdx = appIdList.findIndex((item: any) => item == id);
+    if (appIdx == -1) {
+      const idArray = appIdList;
+      idArray.push(id);
+      setAppIdList(idArray);
+
+      const array = appInfoList.slice(0);
+      array.push({
+        id: id,
+        name: 'app' + id,
+        chartData: dataDemo,
+      });
+
+      setAppInfoList(array);
+    } else {
+      message.info('窗口已经存在');
+    }
   };
 
   const onNodeClick = (id: string) => {
@@ -190,7 +206,7 @@ const globalTopo = () => {
               <DragWrapper number={number} appInfoList={appInfoList} deleteModal={deleteModal} />
               <Topo
                 isFullScreen={isFullScreen}
-                onAppClick={onNodeClick}
+                onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
                 appInfoList={appInfoList}
               />

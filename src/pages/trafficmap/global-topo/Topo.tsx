@@ -12,7 +12,7 @@ import serveryellow from '@/assets/imgs/serveryellow.svg';
 
 const Topo = (props: any) => {
   let graph = null as any;
-  const { onAppClick } = props;
+  const { onNodeClick } = props;
   const { uniqueId } = G6.Util;
 
   const COLLAPSE_ICON = function COLLAPSE_ICON(x: number, y: any, r: number) {
@@ -665,7 +665,7 @@ const Topo = (props: any) => {
 
     graph.on('node:click', (evt: any) => {
       const { item } = evt;
-      onAppClick(item._cfg.model.id);
+      onNodeClick(item._cfg.model.id);
       clearFocusItemState(graph);
       graph.setItemState(item, 'focus', true);
       const relatedEdges = item.getEdges();
@@ -698,10 +698,6 @@ const Topo = (props: any) => {
       }
     });
   };
-
-  // useEffect(() => {
-  //   graph&&bindListener(graph)
-  // }, [props.appInfoList])
 
   const clearFocusItemState = (graph: any) => {
     if (!graph) return;
