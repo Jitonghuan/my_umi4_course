@@ -994,6 +994,7 @@ export default [
             hideInMenu: true,
           },
         ],
+        hideInMenu: process.env.BUILD_ENV === 'prod',
       },
     ],
   },
