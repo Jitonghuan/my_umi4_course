@@ -10,14 +10,20 @@ import serverblue from '@/assets/imgs/serverblue.svg';
 import serverred from '@/assets/imgs/serverred.svg';
 import serveryellow from '@/assets/imgs/serveryellow.svg';
 
-const Topo = forwardRef((props: any, ref: any) => {
+interface ITopoProps {
+  onNodeClick: (id: string) => void;
+  onRedLineClick: (id: string) => void;
+  isFullScreen: boolean;
+}
+
+const Topo = forwardRef((props: ITopoProps, ref: any) => {
   //传给父组件 「全部展开」 的方法
   useImperativeHandle(ref, () => ({
     expandAll,
   }));
+  const { onNodeClick, onRedLineClick, isFullScreen } = props;
 
   let graph = null as any;
-  const { onNodeClick } = props;
   const { uniqueId } = G6.Util;
 
   const COLLAPSE_ICON = function COLLAPSE_ICON(x: number, y: any, r: number) {
@@ -664,7 +670,7 @@ const Topo = forwardRef((props: any, ref: any) => {
 
     graph.on('edge:click', (evt: any) => {
       const { item } = evt;
-      props.onRedLineClick(item._cfg.model.id);
+      onRedLineClick(item._cfg.model.id);
       graph.setItemState(item, 'focus', true);
     });
 
@@ -814,7 +820,7 @@ const Topo = forwardRef((props: any, ref: any) => {
     const container = document.getElementById('topo');
     if (!container) return;
     graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
-  }, [props.isFullScreen]);
+  }, [isFullScreen]);
 
   return <div id="topo" style={{ height: '100%' }}></div>;
 });

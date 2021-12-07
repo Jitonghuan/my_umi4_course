@@ -4,16 +4,16 @@
  * @Description: 全局拓扑页面
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Modal, Select, Button, DatePicker, List, message } from 'antd';
+import { Form, Select, Button, DatePicker, message } from 'antd';
 import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+import * as echarts from 'echarts';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import Topo from './Topo';
 import DragWrapper from './_component/DragWrapper';
-import './index.less';
-import * as echarts from 'echarts';
 import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
+import './index.less';
 
 const dataDemo = {
   requests: {
@@ -82,10 +82,9 @@ const dataDemo = {
   },
 };
 
-const globalTopo = () => {
-  const [isFullScreen, setIsFullScreen] = useState(false);
+const globalTopo: React.FC = () => {
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [number, setNumber] = useState([1, 2]);
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
@@ -102,15 +101,13 @@ const globalTopo = () => {
   ]);
 
   const [appIdList, setAppIdList] = useState<string[]>([]);
-  const [isRedLineVisible, setIsRedLineVisible] = useState(false);
+  const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
+  const [clickId, setClickId] = useState<string>('');
 
-  const [clickId, setClickId] = useState<any>('');
-
-  const TopoRef: any = useRef();
+  const TopoRef = useRef<any>();
 
   const expandAll = () => {
-    // changeVal就是子组件暴露给父组件的方法
     TopoRef?.current?.expandAll();
   };
 
@@ -210,18 +207,24 @@ const globalTopo = () => {
               </div>
             </div>
             <div className="graph-box" style={{ position: 'relative' }}>
-              <DragWrapper number={number} appInfoList={appInfoList} deleteModal={deleteModal} />
+              {/**
+               * DragWrapper:可拖拽弹窗组件
+               * Topo:拓扑图
+               */}
+              <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
               <Topo
                 isFullScreen={isFullScreen}
                 onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
-                appInfoList={appInfoList}
                 ref={TopoRef}
               />
             </div>
           </section>
         </ContentCard>
       </div>
+      {/**
+       * 红线追踪弹窗
+       */}
       <RedLineModal
         visible={isRedLineVisible}
         redLineList={redLineList}

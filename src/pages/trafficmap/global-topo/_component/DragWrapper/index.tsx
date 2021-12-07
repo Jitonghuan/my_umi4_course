@@ -1,7 +1,7 @@
 /*
  * @Author: shixia.ds
  * @Date: 2021-11-30 16:13:42
- * @Description:
+ * @Description: 应用信息AppInfo 可拖拽弹窗弹层。
  */
 import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
@@ -25,29 +25,38 @@ const lineChartTmp = [
   },
 ];
 
-const DragWrapper = (props: any) => {
-  const [chartArr, setChartArr] = useState<any>([]);
+interface DragWrapperProps {
+  appInfoList: IAppInfo[];
+  deleteModal: (app: IAppInfo) => void;
+}
 
+const DragWrapper: React.FC<DragWrapperProps> = (props) => {
+  const [chartArr, setChartArr] = useState<echarts.ECharts[]>([]);
+  const { appInfoList, deleteModal } = props;
+
+  /**
+   * 存储echart实例
+   * @param echart
+   */
   const getChart = (echart: echarts.ECharts) => {
     chartArr.push(echart);
     setChartArr(chartArr);
   };
 
+  /**
+   * resize结束时改变echart的大小
+   */
   const onResizeStop = () => {
-    chartArr.map((item: any) => {
+    chartArr.map((item: echarts.ECharts) => {
       item.resize();
     });
-    // Object.keys(chartArr).forEach((item) => {
-    //   chartArr[item].map((i) => {
-    //     i.resize()
-    //   })
-    // })
   };
+
   const onResizeStart = () => {};
 
   return (
     <div className="drag-wrapper">
-      {props.appInfoList.map((appInfo: IAppInfo, appId: number) => {
+      {appInfoList.map((appInfo: IAppInfo, appId: number) => {
         return (
           <DragModal
             key={appInfo.id}
@@ -61,7 +70,7 @@ const DragWrapper = (props: any) => {
               onResizeStop: onResizeStop,
             }}
             onCancel={() => {
-              props.deleteModal(appInfo);
+              deleteModal(appInfo);
             }}
           >
             <div className="echart-group">
