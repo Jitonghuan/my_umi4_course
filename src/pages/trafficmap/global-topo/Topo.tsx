@@ -1,7 +1,7 @@
 /*
  * @Author: shixia.ds
  * @Date: 2021-11-23 15:41:41
- * @Description:
+ * @Description: 拓扑图
  */
 import G6, { IItemBaseConfig, Item, ModelConfig } from '@antv/g6';
 import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
@@ -9,12 +9,10 @@ import { OriginData } from './data';
 import serverblue from '@/assets/imgs/serverblue.svg';
 import serverred from '@/assets/imgs/serverred.svg';
 import serveryellow from '@/assets/imgs/serveryellow.svg';
-import { Collapse } from 'antd';
 
 const Topo = forwardRef((props: any, ref: any) => {
-  // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
+  //传给父组件 「全部展开」 的方法
   useImperativeHandle(ref, () => ({
-    // changeVal 就是暴露给父组件的方法
     expandAll,
   }));
 
@@ -202,7 +200,7 @@ const Topo = forwardRef((props: any, ref: any) => {
   };
 
   G6.registerNode(
-    'card-node',
+    'region-node',
     {
       /**
        * 绘制节点，包含文本
@@ -257,7 +255,7 @@ const Topo = forwardRef((props: any, ref: any) => {
    * desc：自定义combo
    */
   G6.registerCombo(
-    'card-combo',
+    'region-combo',
     {
       drawShape: function drawShape(cfg: any, group: any) {
         const self = this;
@@ -357,7 +355,6 @@ const Topo = forwardRef((props: any, ref: any) => {
   /**
    * desc：自定义app node
    */
-
   G6.registerNode(
     'app-node',
     {
@@ -423,7 +420,7 @@ const Topo = forwardRef((props: any, ref: any) => {
   );
 
   G6.registerEdge(
-    'can-running',
+    'custom-edge',
     {
       setState(name?: string | undefined, value?: string | boolean | undefined, item?: Item | undefined) {
         const shape = item?.get('keyShape');
@@ -455,7 +452,6 @@ const Topo = forwardRef((props: any, ref: any) => {
           } else {
             shape.stopAnimate();
             shape.attr('lineWidth', 1);
-            // shape.attr('stroke', enumcolor[status]);
           }
         }
       },
@@ -463,14 +459,13 @@ const Topo = forwardRef((props: any, ref: any) => {
     'line',
   );
 
+  // node tooltip
   const tooltip = new G6.Tooltip({
     offsetX: 10,
     offsetY: 10,
     // the types of items that allow the tooltip show up
-    // 允许出现 tooltip 的 item 类型
     itemTypes: ['node'],
     // custom the tooltip's content
-    // 自定义 tooltip 内容
     getContent: (e: any) => {
       const outDiv = document.createElement('div');
       outDiv.style.width = 'fit-content';
@@ -524,10 +519,10 @@ const Topo = forwardRef((props: any, ref: any) => {
             if (d.nodeType == 'region') return 100;
             return 100;
           },
+
           edgeStrength: (d: any) => {
             const sourceNode = nodeMap.get(d.source);
             const targetNode = nodeMap.get(d.source);
-            // 聚合节点之间的引力小
             if (sourceNode.nodeType == 'region' && targetNode.nodeType == 'region') {
               return 25;
             }
@@ -555,12 +550,6 @@ const Topo = forwardRef((props: any, ref: any) => {
               fontSize: 14,
               fontWeight: 700,
             },
-          },
-        },
-        comboStateStyles: {
-          dragenter: {
-            lineWidth: 4,
-            stroke: '#FE9797',
           },
         },
         modes: {
@@ -596,7 +585,7 @@ const Topo = forwardRef((props: any, ref: any) => {
           },
         },
         defaultEdge: {
-          type: 'can-running',
+          type: 'custom-edge',
           size: 1,
           // style: {
           //   stroke: '#e2e2e2',
@@ -608,34 +597,7 @@ const Topo = forwardRef((props: any, ref: any) => {
           //   },
           // },
         },
-        nodeStateStyles: {
-          // node style of active state
-          active: {
-            fillOpacity: 0.2,
-          },
-          // node style of selected state
-          selected: {
-            lineWidth: 5,
-            fillOpacity: 0.2,
-          },
-          focus: {
-            lineWidth: 5,
-            fillOpacity: 0.2,
-          },
-        },
-        edgeStateStyles: {
-          selected: {
-            // stroke: '#e2e2e2',
-            // fill: '#e2e2e2',
-            // lineWidth: 3,
-          },
-          focus: {
-            lineWidth: 5,
-            fillOpacity: 0.2,
-          },
-        },
       });
-      // graph.get('canvas').set('localRefresh', false);
 
       const regionData: any[] = [];
       const appData = [];
@@ -657,6 +619,10 @@ const Topo = forwardRef((props: any, ref: any) => {
     }
   }, []);
 
+  /**
+   * graph实例事件绑定
+   * @param graph
+   */
   const bindListener = (graph: any) => {
     graph.on('node:mouseenter', (evt: any) => {
       const { item } = evt;
@@ -673,8 +639,14 @@ const Topo = forwardRef((props: any, ref: any) => {
     graph.on('node:click', (evt: any) => {
       const { item } = evt;
       onNodeClick(item._cfg.model.id);
+
+      //清除现有的focus状态
       clearFocusItemState(graph);
+
+      //给对应节点设置focus状态
       graph.setItemState(item, 'focus', true);
+
+      //关联的edge也focus
       const relatedEdges = item.getEdges();
       relatedEdges.forEach((edge: any) => {
         graph.setItemState(edge, 'focus', true);
@@ -794,7 +766,7 @@ const Topo = forwardRef((props: any, ref: any) => {
     let newcombo = {
       id: `combo-${uniqueId()}`,
       label: expandId,
-      type: 'card-combo',
+      type: 'region-combo',
       regionCode: expandId,
       status: expandId.status,
       nodes: newNode,
@@ -846,4 +818,5 @@ const Topo = forwardRef((props: any, ref: any) => {
 
   return <div id="topo" style={{ height: '100%' }}></div>;
 });
+
 export default Topo;
