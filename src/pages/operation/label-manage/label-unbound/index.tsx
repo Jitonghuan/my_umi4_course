@@ -12,6 +12,8 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 export default function UnBound(props: any) {
   const { Option } = Select;
   const [labelBindedForm] = Form.useForm();
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const { tagName, tagCode } = props.location?.query;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
@@ -99,6 +101,19 @@ export default function UnBound(props: any) {
             rowKey="id"
             dataSource={bindedLabelsource}
             bordered
+            pagination={{
+              pageSize: pageSize,
+              current: pageIndex,
+              showSizeChanger: true,
+              onShowSizeChange: (_, size) => {
+                setPageSize(size);
+                setPageIndex(1);
+              },
+              onChange: (page, size: any) => {
+                setPageSize(size);
+                setPageIndex(page);
+              },
+            }}
             // rowSelection={{ ...rowSelection }}
             rowSelection={{
               selectedRowKeys,

@@ -12,7 +12,8 @@ export default function LabelBind(props: any) {
   const { Option } = Select;
   const [labelBindForm] = Form.useForm();
   const { tagName, tagCode } = props.location?.query;
-
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [unbindLabelsource, getUnBindTagAppList, loading, bindTagNamesArry] = useUnbindLabelList(); //获取未绑定的标签列表
   const [categoryData] = useAppCategoryOption(); //获取应用分类下拉选择
   const [bindLabelTag] = useBindLabelTag(); //绑定标签
@@ -99,6 +100,19 @@ export default function LabelBind(props: any) {
             rowKey="id"
             dataSource={unbindLabelsource}
             bordered
+            pagination={{
+              pageSize: pageSize,
+              current: pageIndex,
+              showSizeChanger: true,
+              onShowSizeChange: (_, size) => {
+                setPageSize(size);
+                setPageIndex(1);
+              },
+              onChange: (page, size: any) => {
+                setPageSize(size);
+                setPageIndex(page);
+              },
+            }}
             // rowSelection={{ ...rowSelection }}
             rowSelection={{
               selectedRowKeys,
