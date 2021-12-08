@@ -1,23 +1,38 @@
 .global-topo {
-  .content-header {
-    height: 40px;
-    width: 100%;
-    border-bottom: 1px solid #d2d8e6;
+  background-color: #d2d8e6;
 
-    display: flex;
-    justify-content: space-between;
+  .topo-header {
+    background-color: '#F7F8FA';
+    padding: 14px;
+    border: 1px solid #d2d8e6;
+    border-bottom: none;
+    .content-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      .env-name {
+        font-size: 16px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #000000;
+      }
+    }
   }
 
   .graph-box {
     height: 100%;
   }
+
   .topo-box {
     height: 100%;
   }
+
   .ant-card-body {
     height: 100%;
   }
 }
+
 .box {
   display: flex;
   justify-content: center;
@@ -33,6 +48,7 @@
   position: relative;
   margin: 20px;
 }
+
 .box .text {
   text-align: center;
 }

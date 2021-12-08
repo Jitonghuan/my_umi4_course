@@ -104,7 +104,6 @@ const globalTopo: React.FC = () => {
   const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
   const [clickId, setClickId] = useState<string>('');
-  const [graph, setGraph] = useState<any>(null);
 
   const TopoRef = useRef<any>();
 
@@ -168,13 +167,9 @@ const globalTopo: React.FC = () => {
     console.log('redline', id);
   }, []);
 
-  const getGraph = (graph: any) => {
-    setGraph(graph);
-  };
-
   return (
     <PageContainer className="global-topo">
-      <FilterCard>
+      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
         <Form layout="inline" form={formTmpl} style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Form.Item label="环境：" name="envCode">
             <Select options={envDatas} allowClear onChange={(n) => {}} showSearch style={{ width: 140 }} />
@@ -184,33 +179,37 @@ const globalTopo: React.FC = () => {
           </Form.Item>
         </Form>
       </FilterCard>
+
       <div style={{ height: '100%' }} ref={frameRef}>
-        <ContentCard>
-          <section style={{ marginBottom: '10px' }} id="topo-box" className="topo-box">
-            <div className="content-header">
-              <h3>浙一生产环境</h3>
-              <div className="action-bar">
-                <Button
-                  type="default"
-                  icon={<PlusCircleOutlined />}
-                  onClick={() => {
-                    setIsRedLineVisible(true);
-                  }}
-                >
-                  红线追踪
-                </Button>
-                <Button type="default" icon={<PlusCircleOutlined />} onClick={expandAll}>
-                  全部展开
-                </Button>
-                <Button
-                  type="default"
-                  icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
-                  onClick={handleFullScreen}
-                >
-                  全屏查看
-                </Button>
-              </div>
+        <div className="topo-header">
+          <div className="content-header">
+            <div className="env-name">浙一生产环境</div>
+            <div className="action-bar">
+              <Button
+                type="default"
+                icon={<PlusCircleOutlined />}
+                onClick={() => {
+                  setIsRedLineVisible(true);
+                }}
+              >
+                红线追踪
+              </Button>
+              <Button type="default" icon={<PlusCircleOutlined />} onClick={expandAll}>
+                全部展开
+              </Button>
+              <Button
+                type="default"
+                icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                onClick={handleFullScreen}
+              >
+                全屏查看
+              </Button>
             </div>
+          </div>
+        </div>
+
+        <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
+          <div style={{ marginBottom: '10px' }} id="topo-box" className="topo-box">
             <div className="graph-box" style={{ position: 'relative' }}>
               {/**
                * DragWrapper:可拖拽弹窗组件
@@ -224,7 +223,7 @@ const globalTopo: React.FC = () => {
                 ref={TopoRef}
               />
             </div>
-          </section>
+          </div>
         </ContentCard>
       </div>
       {/**
