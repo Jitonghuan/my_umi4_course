@@ -46,7 +46,6 @@ const RedLineModal: React.FC<IProps> = (props) => {
       <DragModal
         title={'红线追踪'}
         onCancel={props.handleCancel}
-        modalResize={false}
         style={{ position: 'absolute', top: '14%', right: '0px' }}
       >
         <Select options={options} style={{ width: '195px' }} />
