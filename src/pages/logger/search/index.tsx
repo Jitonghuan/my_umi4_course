@@ -107,7 +107,6 @@ export default function LoggerSearch(props: any) {
   const [urlLoading, setUrlLoading] = useState(false);
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   const [framePending, setFramePending] = useState(false);
-  const [turnOnButton, setTurnOnButton] = useState<boolean>(false); //是否展开高级搜索
   const timmerRef = useRef<any>();
   const frameRef = useRef<any>();
   let urlType = '';

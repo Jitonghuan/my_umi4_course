@@ -15,11 +15,19 @@ export const updateTag = addAPIPrefix('opsManage/tagManage/updateTag');
 export const deleteTag = addAPIPrefix('opsManage/tagManage/deleteTag');
 /** POST 绑定标签 */
 export const bindTag = addAPIPrefix('/opsManage/tagManage/bindTag');
+/** POST 解绑标签 */
+export const unBindTag = addAPIPrefix('/opsManage/tagManage/unBindTag');
 /** GET 获取应用标签 */
 export const getAppTag = addAPIPrefix('/opsManage/tagManage/getAppTag');
 /** POST 应用绑定标签 */
 export const bindAppTag = addAPIPrefix('/opsManage/tagManage/bindAppTag');
 /** DELETE 应用删除标签 */
 export const delAppTag = addAPIPrefix('/opsManage/tagManage/delAppTag');
-// 查看应用/appManage/list
-export const getAppList = addAPIPrefix('/appManage/list');
+
+// 获取未绑定指定标签的应用(用于绑定标签)
+export const getUnBindTagApp = addAPIPrefix('/opsManage/tagManage/getUnBindTagApp');
+//获取已绑定指定标签的应用(用于解绑标签)
+export const getBindedTagApp = addAPIPrefix('/opsManage/tagManage/getBindedTagApp');
+
+/** 查看应用分类接口 */
+export const appTypeList = addAPIPrefix('/appManage/category/list');

@@ -7,8 +7,9 @@ import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } f
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import LabelEditDrawer from '../label-add';
-import { useLabelList, useDeleteLabel } from '../hook';
+import { useDeleteLabel } from '../hook';
 import { getRequest, delRequest } from '@/utils/request';
+import { getTagList } from '../service';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 
 /** 编辑页回显数据 */
@@ -27,10 +28,32 @@ export default function LanbelList() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [pageTotal, setPageTotal] = useState<number>();
-  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
-  const [labelListSource, getLabelList, setLabelListSource] = useLabelList(); //获取标签列表
+  // const [labelListSource, getLabelList, setLabelListSource] = useLabelList(); //获取标签列表
   const [tagNameCurrent, setTagNameCurrent] = useState<string>(''); //当前输入的标签名称搜索内容
   const [deleteLabel] = useDeleteLabel(); //删除标签
+
+  const [labelListSource, setLabelListSource] = useState<any>();
+
+  const getLabelList = (pageIndex?: number, pageSize?: number, tagName?: string) => {
+    setLoading(true);
+    getRequest(getTagList, {
+      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, tagName },
+    })
+      .then((result) => {
+        const { dataSource } = result.data || [];
+        setLabelListSource(dataSource);
+        const pageInfo = result.data.pageInfo;
+        setPageIndex(pageInfo?.pageIndex);
+        setPageTotal(pageInfo.total);
+        setPageSize(pageInfo?.pageSize);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+  useEffect(() => {
+    getLabelList(pageIndex, pageSize);
+  }, [pageIndex, pageSize]);
 
   //触发分页
 
@@ -40,15 +63,15 @@ export default function LanbelList() {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    getLabelList(obj, tagNameParam);
+    // getLabelList(obj.pageIndex,obj.pageSize, tagNameParam);
     setPageIndex(pagination.current);
   };
   //抽屉保存
   const saveEditData = () => {
     setLabelEditMode('HIDE');
     setTimeout(() => {
-      getLabelList({ pageIndex: 1, pageSize: 20 });
-    }, 100);
+      getLabelList(1, 20);
+    }, 200);
   };
   //点击编辑
   const handleEditTask = useCallback(
@@ -59,9 +82,11 @@ export default function LanbelList() {
     },
     [labelListSource],
   );
-  const queryLabelList = (valus: any) => {
-    setTagNameCurrent(valus);
-    getLabelList(pageIndex, pageSize, valus);
+
+  //点击查询按钮时按照搜索条件查询
+  const queryLabelList = (values: any) => {
+    setTagNameCurrent(values?.tagName);
+    getLabelList(pageIndex, pageSize, values?.tagName);
   };
   return (
     <PageContainer>
@@ -78,6 +103,7 @@ export default function LanbelList() {
           onFinish={queryLabelList}
           onReset={() => {
             labelForm.resetFields();
+            getLabelList(1, 20);
           }}
         >
           <Form.Item label="标签名称" name="tagName">
@@ -125,16 +151,16 @@ export default function LanbelList() {
             <Table.Column
               title="标签名称"
               dataIndex="tagName"
-              width="30%"
+              width="20%"
               render={(current, record) => {
                 return <Tag color="success">{current}</Tag>;
               }}
             />
-            <Table.Column title="标签备注" dataIndex="tagMark" width="26%" ellipsis />
-            <Table.Column title="默认环境" dataIndex="categoryCodes" width="12%" />
+            <Table.Column title="标签备注" dataIndex="tagMark" width="45%" ellipsis />
+            <Table.Column title="默认应用分类" dataIndex="categoryCodes" width="20%" />
             <Table.Column
               title="操作"
-              width="18%"
+              width="15%"
               key="action"
               render={(_, record: LabelEdit, index) => (
                 <Space size="small">
@@ -145,6 +171,7 @@ export default function LanbelList() {
                         pathname: 'label-bind',
                         query: {
                           tagName: record.tagName,
+                          tagCode: record.tagCode,
                         },
                       });
                     }}
@@ -157,6 +184,7 @@ export default function LanbelList() {
                         pathname: 'label-unbound',
                         query: {
                           tagName: record.tagName,
+                          tagCode: record.tagCode,
                         },
                       });
                     }}
@@ -168,8 +196,8 @@ export default function LanbelList() {
                     onConfirm={() => {
                       deleteLabel(record?.id);
                       setTimeout(() => {
-                        getLabelList({ pageIndex: 1, pageSize: 20, tagNameCurrent });
-                      }, 100);
+                        getLabelList(1, 20, tagNameCurrent);
+                      }, 200);
                     }}
                   >
                     <a style={{ color: 'red' }}>删除</a>

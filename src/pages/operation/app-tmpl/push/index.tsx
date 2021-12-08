@@ -3,7 +3,7 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, message, Modal, Popover, Row, Col } from 'antd';
+import { Form, Input, Select, Button, Table, Space, message, Modal, Popover, Row, Col, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';
@@ -200,11 +200,12 @@ export default function Push(props: any) {
     setLoading(true);
     getRequest(APIS.appList, {
       data: {
+        tagName: value.tagName,
         appCategoryCode: value.appCategoryCode,
         appCode: value.appCode,
-        envCode: value.envCode,
+        // envCode: value.envCode,
         appType: 'backend',
-        isClient: 0,
+        // isClient: 0,
         pageSize: value.pageSize,
         pageIndex: value.pageIndex,
 
@@ -347,7 +348,7 @@ export default function Push(props: any) {
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
           <Form.Item label="应用标签：" name="tagName">
-            <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
+            <Input placeholder="请输入标签名称" style={{ width: 180 }}></Input>
           </Form.Item>
           <Form.Item label="应用CODE：" name="appCode">
             <Input placeholder="请输入应用CODE" style={{ width: 180 }}></Input>
@@ -369,6 +370,7 @@ export default function Push(props: any) {
           <Form onFinish={pushTmpls} form={formTmpl}>
             <Form.Item name="tableData">
               <Table
+                bordered
                 dataSource={dataSource}
                 rowKey="id"
                 loading={loading}
@@ -386,12 +388,25 @@ export default function Push(props: any) {
                 }}
                 onChange={pageSizeClick}
               >
-                <Table.Column title="ID" dataIndex="id" />
-                <Table.Column title="应用名" dataIndex="appName" ellipsis />
-                <Table.Column title="应用CODE" dataIndex="appCode" ellipsis />
-                <Table.Column title="应用分类" dataIndex="appCategoryCode" />
-                <Table.Column title="应用标签" dataIndex="tagName" />
+                <Table.Column title="ID" dataIndex="id" width="4%" />
+                <Table.Column title="应用名" dataIndex="appName" width="18%" />
+                <Table.Column title="应用CODE" dataIndex="appCode" width="18%" />
+                <Table.Column title="应用分类" dataIndex="appCategoryCode" width="14%" />
                 <Table.Column
+                  title="应用标签"
+                  dataIndex="bindTagNames"
+                  width="32%"
+                  render={(current) => (
+                    <span>
+                      {current?.map((tag: any) => {
+                        let color = 'green';
+                        return <Tag color={color}>{tag}</Tag>;
+                      })}
+                    </span>
+                  )}
+                />
+                <Table.Column
+                  width="14%"
                   title="操作"
                   dataIndex="gmtModify"
                   key="action"

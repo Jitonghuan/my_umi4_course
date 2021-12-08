@@ -9,22 +9,6 @@ import * as APIS from './service';
 import { message } from 'antd';
 
 //标签列表数据
-export function useLabelList() {
-  const [labelListSource, setLabelListSource] = useState<any>();
-  const getLabelList = (pageIndex?: string, pageSize?: string, tagNameParam?: string) => {
-    getRequest(APIS.getTagList, {
-      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, tagName: tagNameParam || '' },
-    }).then((result) => {
-      const { dataSource } = result.data || [];
-      setLabelListSource(dataSource);
-    });
-  };
-  useEffect(() => {
-    getLabelList();
-  }, []);
-
-  return [labelListSource, getLabelList, setLabelListSource];
-}
 
 //新增标签
 export function useCreateLabelTag() {
@@ -56,10 +40,9 @@ export function useEditLabel() {
 
 //删除标签
 export function useDeleteLabel() {
+  //  delRequest(`${APIS.deleteTmpl}/${id}`)
   const deleteLabel = (id: number) => {
-    delRequest(APIS.deleteTag, {
-      data: { id },
-    }).then((resp) => {
+    delRequest(`${APIS.deleteTag}/${id}`).then((resp) => {
       if (resp.success) {
         message.success('删除标签成功！');
       }
@@ -70,9 +53,9 @@ export function useDeleteLabel() {
 
 //绑定标签
 export function useBindLabelTag() {
-  const bindLabelTag = async (id: number, appCodes: any) => {
+  const bindLabelTag = async (tagCode: string, tagName: string, appCodes: any) => {
     await postRequest(APIS.bindTag, {
-      data: { id, appCodes },
+      data: { tagCode, tagName, appCodes },
     }).then((resp) => {
       if (resp.success) {
         message.success('绑定标签成功！');
@@ -80,6 +63,20 @@ export function useBindLabelTag() {
     });
   };
   return [bindLabelTag];
+}
+
+//解绑标签
+export function useUnBindLabelTag() {
+  const unbindLabelTag = async (tagCode: string, appCodes: any) => {
+    await postRequest(APIS.unBindTag, {
+      data: { tagCode, appCodes },
+    }).then((resp) => {
+      if (resp.success) {
+        message.success('解绑标签成功！');
+      }
+    });
+  };
+  return [unbindLabelTag];
 }
 
 //获取应用标签 下拉选择数据
@@ -116,23 +113,71 @@ export function useBindAppTag() {
   return [bindLabelTag];
 }
 
-//查询绑定列表
-export function usebindLabelList() {
-  const [bindLabelsource, setBindLabelSource] = useState<IOption[]>([]);
+//查询绑定列表 获取未绑定指定标签的应用(用于绑定标签)
+export function useUnbindLabelList() {
+  const [unbindLabelsource, setunBindLabelSource] = useState<any>([]);
+  const [bindTagNames, setBindTagNames] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+  let bindTag: any = [];
 
-  const getAppList = () => {
-    getRequest(APIS.getAppList, {
-      data: { pageSize: -1 },
-    }).then((result) => {
-      const { dataSource } = result.data || {};
-      const next = (dataSource || []).map((item: any) => ({
-        label: item.appCode,
-        value: item.appCode,
-      }));
+  const getUnBindTagAppList = async (tagCode: string, appCategoryCode?: string, appCode?: string, appType?: string) => {
+    setLoading(true);
 
-      setBindLabelSource(next);
-    });
+    await getRequest(APIS.getUnBindTagApp, {
+      data: { tagCode, appCategoryCode, appCode, appType },
+    })
+      .then((result) => {
+        const { data } = result || {};
+        setunBindLabelSource(data);
+        data.map((item: any) => {
+          bindTag.push(item.bindTagNames);
+        });
+        setBindTagNames(bindTag);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
-  return [bindLabelsource];
+  return [unbindLabelsource, getUnBindTagAppList, loading, bindTagNames];
+}
+
+//获取已绑定指定标签的应用(用于解绑标签)
+export function usebindedLabelList() {
+  const [bindedLabelsource, setBindedLabelSource] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+
+  const getBindedTagAppList = async (tagCode: string, appCategoryCode?: string, appCode?: string, appType?: string) => {
+    setLoading(true);
+    await getRequest(APIS.getBindedTagApp, {
+      data: { tagCode, appCategoryCode, appCode, appType },
+    })
+      .then((result) => {
+        const { data } = result || {};
+        setBindedLabelSource(data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [bindedLabelsource, getBindedTagAppList, loading];
+}
+
+//获取应用分类下拉选择
+
+export function useAppCategoryOption() {
+  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
+  useEffect(() => {
+    getRequest(APIS.appTypeList).then((result) => {
+      const list = (result.data.dataSource || []).map((n: any) => ({
+        label: n.categoryName,
+        value: n.categoryCode,
+        data: n,
+      }));
+      setCategoryData(list);
+    });
+  }, []);
+
+  return [categoryData];
 }

@@ -8,6 +8,7 @@ import { history } from 'umi';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { LabelEdit } from '../label-list';
+import { useAppCategoryOption } from '../hook';
 import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from 'antd';
 import { useCreateLabelTag, useEditLabel } from '../hook';
 
@@ -22,25 +23,41 @@ export default function LabelEditor(props: LabelListProps) {
   const [count, setCount] = useState<any>([0]);
   const [createLabelForm] = Form.useForm();
   const { mode, initData, onClose, onSave } = props;
+  const [categoryData] = useAppCategoryOption(); //获取应用分类下拉选择
   const [createTag] = useCreateLabelTag(); //新增标签
   const [editLabel] = useEditLabel(); //编辑标签
   const id = initData?.id;
+  if (mode === 'EDIT') {
+    let categoryCodesData = initData?.categoryCodes.split(',');
+
+    createLabelForm.setFieldsValue({ ...initData, categoryCodes: categoryCodesData });
+  }
+  if (mode === 'ADD') {
+    createLabelForm.resetFields();
+    // createLabelForm.setFieldsValue({
+    //   tagName:'',
+    //   tagMark:'',
+    //   categoryCodes:undefined
+
+    // })
+  }
   useEffect(() => {
-    //进入页面赋值给表单
     if (mode === 'HIDE') {
       return;
     }
-    if (mode === 'EDIT') {
-      createLabelForm.setFieldsValue({ ...initData });
-    }
-    if (mode === 'ADD') {
-      createLabelForm.resetFields();
-    }
   }, []);
   //提交数据
+
   const createLabelFrom = (params: any) => {
+    let categoryCodesParams: string = '';
+    let categoryCodesData = '';
     if (mode === 'ADD') {
-      createTag(params?.tagName, params?.tagMark, params?.categoryCodes)
+      params?.categoryCodes?.map((item: any) => {
+        categoryCodesParams += item + ',';
+        categoryCodesData = categoryCodesParams.substring(0, categoryCodesParams.length - 1);
+      });
+
+      createTag(params?.tagName, params?.tagMark, categoryCodesData)
         .then(() => {
           onSave?.();
         })
@@ -49,7 +66,11 @@ export default function LabelEditor(props: LabelListProps) {
         });
     }
     if (mode === 'EDIT') {
-      editLabel(id, params?.tagName, params?.tagMark, params?.categoryCodes)
+      params?.categoryCodes?.map((item: any) => {
+        categoryCodesParams += item + ',';
+        categoryCodesData = categoryCodesParams.substring(0, categoryCodesParams.length - 1);
+      });
+      editLabel(id, params?.tagName, params?.tagMark, categoryCodesData)
         .then(() => {
           onSave?.();
         })
@@ -69,8 +90,8 @@ export default function LabelEditor(props: LabelListProps) {
           <Form.Item label="标签备注" name="tagMark" rules={[{ required: true, message: '这是必填项' }]}>
             <Input style={{ width: 220 }} placeholder="用于标记"></Input>
           </Form.Item>
-          <Form.Item label="默认环境" name="categoryCodes" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="单行输入"></Input>
+          <Form.Item label="默认应用分类" name="categoryCodes" rules={[{ required: true, message: '这是必填项' }]}>
+            <Select showSearch style={{ width: 220 }} options={categoryData} mode="multiple" allowClear />
           </Form.Item>
           <span style={{ marginLeft: 120, color: 'gray' }}>(该分类下新建应用时会自动绑定该标签)</span>
           <Form.Item>
