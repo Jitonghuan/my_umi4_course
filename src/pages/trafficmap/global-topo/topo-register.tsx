@@ -8,6 +8,22 @@ import React from 'react';
 import G6, { Item } from '@antv/g6';
 import { APP_STATUS_COLOR_MAP, APP_STATUS_FILL_COLOR_MAP, APP_STATUS_ICON_MAP } from './const';
 
+const APP_NODE_FOCUS_SHADOWBLUR = 10;
+const APP_NODE_FOCUS_LineWidth = 4;
+
+const APP_NODE_DEFAULT_SHADOWBLUR = 0;
+const APP_NODE_DEFAULT_LINEWIDTH = 3;
+
+const COMBO_RADIUS = 2;
+const COMBO_HEADER_HEIGHT = 20;
+
+//hover mouseEnter
+const NODE_STATUS_HOVER = 'hover';
+
+//focus click
+const NODE_STATUS_FOCUS = 'focus';
+const EDGE_STATUS_FOCUS = 'focus';
+
 const COLLAPSE_ICON = function COLLAPSE_ICON(x: number, y: any, r: number) {
   return [
     ['M', x - r, y],
@@ -29,6 +45,17 @@ const EXPAND_ICON = function EXPAND_ICON(x: number, y: number, r: number) {
   ];
 };
 
+const getRegionNodeConfig = (node: any | undefined) => {
+  let config = {
+    fontColor: APP_STATUS_COLOR_MAP[node.status || 'normal'],
+    borderColor: APP_STATUS_COLOR_MAP[node.status || 'normal'],
+    fillColor: APP_STATUS_FILL_COLOR_MAP[node.status || 'normal'],
+  };
+  return config;
+};
+/**
+ * region-node
+ */
 const nodeBasicMethod = {
   createNodeBox: (group: any, config: any, w: number, h: any) => {
     /* 最外面的大矩形 */
@@ -80,7 +107,7 @@ const nodeBasicMethod = {
         y: 0,
         width: 5,
         height: h,
-        fill: config.basicColor,
+        fill: config.borderColor,
         radius: 1.5,
       },
       draggable: true,
@@ -88,7 +115,7 @@ const nodeBasicMethod = {
     });
     return container;
   },
-  /* 生成树上的 marker */
+
   createNodeMarker: (group: any, collapsed: any, x: number, y: any) => {
     group.addShape('circle', {
       attrs: {
@@ -115,28 +142,11 @@ const nodeBasicMethod = {
       name: 'collapse-icon',
     });
   },
-  // afterDraw: (cfg: any, group: any[]) => {
-  //   /* 操作 marker 的背景色显示隐藏 */
-  //   const icon = group.find((element: { get: (arg0: string) => string }) => element.get('name') === 'collapse-icon');
-  //   if (icon) {
-  //     const bg = group.find(
-  //       (element: { get: (arg0: string) => string }) => element.get('name') === 'collapse-icon-bg',
-  //     );
-  //     icon.on('mouseenter', () => {
-  //       bg.attr('opacity', 1);
-  //       graph.get('canvas').draw();
-  //     });
-  //     icon.on('mouseleave', () => {
-  //       bg.attr('opacity', 0);
-  //       graph.get('canvas').draw();
-  //     });
-  //   }
-  // },
 
   setState: (name?: string | undefined, value?: string | boolean | undefined, item?: any) => {
     const group = item.get('group');
     const cfg = item['_cfg'];
-    if (name === 'hover') {
+    if (name === NODE_STATUS_HOVER) {
       const fillShape = group.find((e: { get: (arg0: string) => string }) => e.get('name') === 'rect-shape');
       if (value) {
         fillShape?.attr('fill', APP_STATUS_FILL_COLOR_MAP[cfg.model.status || 'normal']);
@@ -145,17 +155,6 @@ const nodeBasicMethod = {
       }
     }
   },
-};
-
-const getNodeConfig = (node: any | undefined) => {
-  let config = {
-    basicColor: APP_STATUS_COLOR_MAP[node.status || 'normal'],
-    fontColor: APP_STATUS_COLOR_MAP[node.status || 'normal'],
-    // fontColor: 'black',
-    borderColor: APP_STATUS_COLOR_MAP[node.status || 'normal'],
-    bgColor: '#C6E5FF',
-  };
-  return config;
 };
 
 if (G6) {
@@ -173,10 +172,9 @@ if (G6) {
        * 关于 keyShape 可参考文档 核心概念-节点/边/Combo-图形 Shape 与 keyShape
        */
       draw: (cfg: any, group: any) => {
-        const config = getNodeConfig(cfg);
+        const config = getRegionNodeConfig(cfg);
         /* the biggest rect */
         const container = nodeBasicMethod.createNodeBox(group, config, 243, 60);
-
         /* name */
         group?.addShape('text', {
           attrs: {
@@ -196,8 +194,9 @@ if (G6) {
         nodeBasicMethod.createNodeMarker(group, cfg.collapsed, 236, 32);
         return container;
       },
-      // afterDraw: nodeBasicMethod.afterDraw,
+
       setState: nodeBasicMethod.setState,
+
       getAnchorPoints() {
         return [
           [0, 0],
@@ -222,18 +221,16 @@ if (G6) {
     {
       drawShape: function drawShape(cfg: any, group: any) {
         const self = this;
-        // Get the padding from the configuration
         cfg.padding = cfg.padding || [50, 20, 20, 20];
         cfg.status = cfg.status || 'normal';
         const style = self.getShapeStyle(cfg);
-        const r = 2;
         const shape = group.addShape('rect', {
           attrs: {
             ...style,
             x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
             stroke: APP_STATUS_COLOR_MAP[cfg.status],
-            radius: r,
+            radius: COMBO_RADIUS,
           },
           name: 'main-box',
           draggable: true,
@@ -244,10 +241,10 @@ if (G6) {
             ...style,
             x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
-            height: 20,
+            height: COMBO_HEADER_HEIGHT,
             fill: APP_STATUS_COLOR_MAP[cfg.status],
             width: style.width,
-            radius: [r, r, 0, 0],
+            radius: [COMBO_RADIUS, COMBO_RADIUS, 0, 0],
           },
           name: 'title-box',
           draggable: true,
@@ -301,7 +298,7 @@ if (G6) {
           x: -style.width / 2 - (cfg.padding[3] - cfg.padding[1]) / 2,
           y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
           width: style.width,
-          height: 20,
+          height: COMBO_HEADER_HEIGHT,
         });
 
         const marker = group.find((ele: any) => ele.get('name') === 'combo-marker-shape');
@@ -354,26 +351,26 @@ if (G6) {
         const cfg = item['_cfg'];
         const group = item.getContainer();
         const shape = group.get('children')[0]; // 顺序根据 draw 时确定
-        if (name === 'focus') {
+        if (name === NODE_STATUS_FOCUS) {
           if (value) {
-            shape.attr('shadowBlur', 10);
+            shape.attr('shadowBlur', APP_NODE_FOCUS_SHADOWBLUR);
             shape.attr('shadowColor', APP_STATUS_COLOR_MAP[cfg.model.status || 'normal']);
-            shape.attr('lineWidth', 4);
+            shape.attr('lineWidth', APP_NODE_FOCUS_LineWidth);
           } else {
-            shape.attr('shadowBlur', 0);
+            shape.attr('shadowBlur', APP_NODE_DEFAULT_SHADOWBLUR);
             shape.attr('shadowColor', '');
-            shape.attr('lineWidth', 3);
+            shape.attr('lineWidth', APP_NODE_DEFAULT_LINEWIDTH);
           }
-        } else if (name == 'active') {
+        } else if (name == NODE_STATUS_HOVER) {
           if (value) {
-            shape.attr('shadowBlur', 10);
+            shape.attr('shadowBlur', APP_NODE_FOCUS_SHADOWBLUR);
             shape.attr('shadowColor', APP_STATUS_COLOR_MAP[cfg.model.status || 'normal']);
           } else {
             const state = item.hasState('focus');
             if (!state) {
-              shape.attr('shadowBlur', 0);
+              shape.attr('shadowBlur', APP_NODE_DEFAULT_SHADOWBLUR);
               shape.attr('shadowColor', '');
-              shape.attr('lineWidth', 3);
+              shape.attr('lineWidth', APP_NODE_DEFAULT_LINEWIDTH);
             }
           }
         }
@@ -389,7 +386,7 @@ if (G6) {
         const shape = item?.get('keyShape');
         const cfg: any = item?._cfg || {};
         const status = cfg?.model?.status || 'normal';
-        if (name === 'focus') {
+        if (name === EDGE_STATUS_FOCUS) {
           if (value) {
             let index = 0;
             shape.animate(

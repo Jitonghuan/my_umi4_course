@@ -163,24 +163,20 @@ const Topo = memo(
      * graph实例事件绑定
      * @param graph
      */
-
     const bindListener = (graph: any) => {
       graph.on('node:mouseenter', (evt: any) => {
         const { item } = evt;
-        graph.setItemState(item, 'active', true);
         graph.setItemState(item, 'hover', true);
       });
 
       graph.on('node:mouseleave', (evt: any) => {
         const { item } = evt;
-        graph.setItemState(item, 'active', false);
         graph.setItemState(item, 'hover', false);
       });
 
       graph.on('node:click', (evt: any) => {
         const { item } = evt;
         onNodeClick(item._cfg.model.id);
-
         //清除现有的focus状态
         clearFocusItemState(graph);
 
@@ -249,6 +245,7 @@ const Topo = memo(
     /**
      * 收起combo
      * @param evt
+     * 基本思路：先找到对应的region的node，从存储combo的arr中删掉收起的combo，同时从graph上移除，从要渲染的数组中移除收起region包含的app
      */
     const handleCollapse = (evt: any) => {
       const regionId = evt.item['_cfg']['model']['regionCode'];
@@ -269,6 +266,7 @@ const Topo = memo(
       const newArr = expandArr.filter(
         (item: any) => !item.nodeRegionCode || (item.nodeType !== 'region' && item.nodeRegionCode !== regionId),
       );
+
       graph.data({ nodes: newArr, edges: OriginData.edges });
       expandArr = newArr;
       graph.render();
@@ -300,6 +298,7 @@ const Topo = memo(
     /**
      * 展开 regionNode
      * @param expandId
+     * 基本逻辑是从渲染的节点中移除展开前的node，然后把region包含的app 对应的node放到数组里，渲染
      */
     const regionNodeExpand = (expandId: any) => {
       let expandIndex = expandArr.findIndex((node: any) => node.id == expandId);
@@ -341,6 +340,7 @@ const Topo = memo(
 
     /**
      * 全部展开
+     * 把当前渲染的所有的region 都执行一遍 regionNodeExpand
      */
     const expandAll = () => {
       const collapseNode = expandArr.filter((item: any) => {
@@ -353,22 +353,9 @@ const Topo = memo(
       });
     };
 
-    if (typeof window !== 'undefined')
-      window.onresize = () => {
-        if (!graph || graph.get('destroyed')) return;
-        const container = document.getElementById('topo');
-        if (!container) return;
-        graph?.changeSize(container.scrollWidth, container.scrollHeight - 30);
-      };
-
-    // useEffect(() => {
-    //   console.log(graph)
-    //   if (!graph || graph.get('destroyed')) return;
-    //   const container = document.getElementById('topo');
-    //   if (!container) return;
-    //   graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
-    // }, [isFullScreen]);
-
+    /**
+     * 监听dom大小的改变resize graph
+     */
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
       }
