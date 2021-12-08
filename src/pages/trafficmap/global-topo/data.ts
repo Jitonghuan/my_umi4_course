@@ -45,12 +45,12 @@ const arrowStyleType = {
 };
 export const OriginData = {
   nodes: [
-    { id: 'region0', label: '0', type: 'card-node', status: 'normal', nodeType: 'region' },
-    { id: 'region1', label: '1', type: 'card-node', status: 'normal', nodeType: 'region' },
-    { id: 'region2', label: '2', type: 'card-node', status: 'warning', nodeType: 'region' },
-    { id: 'region3', label: '3', type: 'card-node', status: 'danger', nodeType: 'region' },
-    { id: 'region4', label: '4', type: 'card-node', status: 'normal', nodeType: 'region' },
-    { id: 'region5', label: '5', type: 'card-node', status: 'normal', nodeType: 'region' },
+    { id: 'region0', label: '0', type: 'region-node', status: 'normal', nodeType: 'region' },
+    { id: 'region1', label: '1', type: 'region-node', status: 'normal', nodeType: 'region' },
+    { id: 'region2', label: '2', type: 'region-node', status: 'warning', nodeType: 'region' },
+    { id: 'region3', label: '3', type: 'region-node', status: 'danger', nodeType: 'region' },
+    { id: 'region4', label: '4', type: 'region-node', status: 'normal', nodeType: 'region' },
+    { id: 'region5', label: '5', type: 'region-node', status: 'normal', nodeType: 'region' },
 
     { id: 'node0', label: '0', status: 'normal', nodeRegionCode: 'region0', nodeType: 'app' },
     { id: 'node1', label: '1', status: 'normal', nodeRegionCode: 'region1', nodeType: 'app' },

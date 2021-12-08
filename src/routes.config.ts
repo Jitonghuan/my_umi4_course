@@ -1060,7 +1060,7 @@ export default [
         component: '@/pages/trafficmap/domain-config',
       },
     ],
-    // hideInMenu: process.env.BUILD_ENV === 'prod',
+    hideInMenu: process.env.BUILD_ENV === 'prod',
   },
   {
     path: '*',

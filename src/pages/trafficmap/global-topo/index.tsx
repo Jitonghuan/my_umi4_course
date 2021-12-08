@@ -1,19 +1,19 @@
 /*
  * @Author: shixia.ds
  * @Date: 2021-11-17 16:07:16
- * @Description:
+ * @Description: 全局拓扑页面
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Modal, Select, Button, DatePicker, List, message } from 'antd';
+import { Form, Select, Button, DatePicker, message } from 'antd';
 import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+import * as echarts from 'echarts';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import Topo from './Topo';
 import DragWrapper from './_component/DragWrapper';
-import './index.less';
-import * as echarts from 'echarts';
 import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
+import './index.less';
 
 const dataDemo = {
   requests: {
@@ -82,10 +82,9 @@ const dataDemo = {
   },
 };
 
-const globalTopo = () => {
-  const [isFullScreen, setIsFullScreen] = useState(false);
+const globalTopo: React.FC = () => {
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [number, setNumber] = useState([1, 2]);
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
@@ -102,10 +101,16 @@ const globalTopo = () => {
   ]);
 
   const [appIdList, setAppIdList] = useState<string[]>([]);
-  const [isRedLineVisible, setIsRedLineVisible] = useState(false);
+  const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
+  const [clickId, setClickId] = useState<string>('');
+  const [graph, setGraph] = useState<any>(null);
 
-  const [clickId, setClickId] = useState<any>('');
+  const TopoRef = useRef<any>();
+
+  const expandAll = () => {
+    TopoRef?.current?.expandAll();
+  };
 
   const handleFullScreen = useCallback(() => {
     if (isFullScreen) {
@@ -151,16 +156,20 @@ const globalTopo = () => {
     }
   };
 
-  const onNodeClick = (id: string) => {
+  const onNodeClick = useCallback((id: string) => {
     setClickId(id);
-  };
+  }, []);
 
   useEffect(() => {
     clickId && onAppClick(clickId);
   }, [clickId]);
 
-  const onRedLineClick = (id: string) => {
+  const onRedLineClick = useCallback((id: string) => {
     console.log('redline', id);
+  }, []);
+
+  const getGraph = (graph: any) => {
+    setGraph(graph);
   };
 
   return (
@@ -177,7 +186,7 @@ const globalTopo = () => {
       </FilterCard>
       <div style={{ height: '100%' }} ref={frameRef}>
         <ContentCard>
-          <section style={{ marginBottom: '10px' }} id="topo-box" className="topo-box" ref={frameRef}>
+          <section style={{ marginBottom: '10px' }} id="topo-box" className="topo-box">
             <div className="content-header">
               <h3>浙一生产环境</h3>
               <div className="action-bar">
@@ -190,7 +199,7 @@ const globalTopo = () => {
                 >
                   红线追踪
                 </Button>
-                <Button type="default" icon={<PlusCircleOutlined />}>
+                <Button type="default" icon={<PlusCircleOutlined />} onClick={expandAll}>
                   全部展开
                 </Button>
                 <Button
@@ -203,17 +212,24 @@ const globalTopo = () => {
               </div>
             </div>
             <div className="graph-box" style={{ position: 'relative' }}>
-              <DragWrapper number={number} appInfoList={appInfoList} deleteModal={deleteModal} />
+              {/**
+               * DragWrapper:可拖拽弹窗组件
+               * Topo:拓扑图
+               */}
+              <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
               <Topo
-                isFullScreen={isFullScreen}
+                // isFullScreen={isFullScreen}
                 onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
-                appInfoList={appInfoList}
+                ref={TopoRef}
               />
             </div>
           </section>
         </ContentCard>
       </div>
+      {/**
+       * 红线追踪弹窗
+       */}
       <RedLineModal
         visible={isRedLineVisible}
         redLineList={redLineList}

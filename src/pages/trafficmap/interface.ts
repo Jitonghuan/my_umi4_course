@@ -7,26 +7,21 @@ export interface IAppInfo {
   id: string;
   name: string;
   chartData: {
-    requests: {
-      data: IChartData[];
-      xAxis: string[];
-    };
-    averageResponseTime: {
-      data: IChartData[];
-      xAxis: string[];
-    };
-    responseCodes: {
-      data: IChartData[];
-      xAxis: string[];
-    };
-    errors?: {
-      data: IChartData[];
-      xAxis: string[];
-    };
+    requests: IAppChartData;
+    averageResponseTime: IAppChartData;
+    responseCodes: IAppChartData;
+    errors?: IAppChartData;
   };
+}
+export interface IAppChartData {
+  data: IChartData[];
+  xAxis: string[];
 }
 export interface IChartData {
   data: string[];
   name: string;
   type: string;
+}
+export interface IColor {
+  [propName: string]: any;
 }
