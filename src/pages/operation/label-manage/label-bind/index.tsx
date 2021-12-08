@@ -52,9 +52,9 @@ export default function LabelBind(props: any) {
     getUnBindTagAppList(tagCode, values?.appType, values?.appCategoryCode, values?.appCode);
   };
   return (
-    <PageContainer>
+    <PageContainer className="bind">
       <FilterCard>
-        <div style={{ display: 'flex', justifyContent: 'end' }}>
+        <div style={{ display: 'flex' }}>
           <div style={{ width: 840 }}>
             <Form
               layout="inline"

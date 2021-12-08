@@ -52,10 +52,10 @@ export default function UnBound(props: any) {
     // setSelectedRowKeys(['undefined']);
   };
   return (
-    <PageContainer>
+    <PageContainer className="unBound">
       <FilterCard>
-        <Row>
-          <Col span={20}>
+        <div style={{ display: 'flex' }}>
+          <div style={{ width: 840 }}>
             <Form
               layout="inline"
               form={labelBindedForm}
@@ -85,13 +85,13 @@ export default function UnBound(props: any) {
                 </Button>
               </Form.Item>
             </Form>
-          </Col>
-          <Col span={4}>
-            <span style={{ display: 'flex', width: 220, height: 24 }}>
+          </div>
+          <div style={{ width: '28%' }}>
+            <span style={{ display: 'flex', height: 24, width: '100%' }}>
               <h3>当前解绑标签：</h3> <Tag color="success">{tagName}</Tag>
             </span>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </FilterCard>
       <ContentCard>
         <div>

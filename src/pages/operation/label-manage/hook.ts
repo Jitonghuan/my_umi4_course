@@ -26,9 +26,9 @@ export function useCreateLabelTag() {
 
 //编辑标签
 export function useEditLabel() {
-  const editLabel = async (id: any, tagName: string, tagMark: string, categoryCodes: string) => {
+  const editLabel = async (id: any, tagName: string, tagMark: string, categoryCodes: string, tagCode: any) => {
     await putRequest(APIS.updateTag, {
-      data: { id, tagName, tagMark, categoryCodes },
+      data: { id, tagName, tagMark, categoryCodes, tagCode },
     }).then((resp) => {
       if (resp.success) {
         message.success('编辑标签成功！');

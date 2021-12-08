@@ -18,6 +18,7 @@ export interface LabelEdit extends Record<string, any> {
   tagName: string;
   tagMark: string;
   categoryCodes: string;
+  tagCode: string;
 }
 export default function LanbelList() {
   const { Option } = Select;
@@ -79,7 +80,7 @@ export default function LanbelList() {
     (record: LabelEdit, index: number) => {
       setLabelData(record);
       setLabelEditMode('EDIT');
-      setIsDisable(true);
+      // setIsDisable(true);
       setLabelListSource(labelListSource);
     },
     [labelListSource],
@@ -94,7 +95,7 @@ export default function LanbelList() {
     <PageContainer>
       <LabelEditDrawer
         mode={labelEditMode}
-        type={isDisable}
+        // type={isDisable}
         initData={labelData}
         onClose={() => setLabelEditMode('HIDE')}
         onSave={saveEditData}
@@ -127,7 +128,7 @@ export default function LanbelList() {
               type="primary"
               onClick={() => {
                 setLabelEditMode('ADD');
-                setIsDisable(false);
+                // setIsDisable(false);
               }}
             >
               新增标签

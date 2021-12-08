@@ -14,7 +14,7 @@ import { useCreateLabelTag, useEditLabel } from '../hook';
 
 export interface LabelListProps {
   mode?: EditorMode;
-  type: boolean;
+  // type: boolean;
   initData?: LabelEdit;
   onClose?: () => any;
   onSave?: () => any;
@@ -23,12 +23,13 @@ export interface LabelListProps {
 export default function LabelEditor(props: LabelListProps) {
   const [count, setCount] = useState<any>([0]);
   const [createLabelForm] = Form.useForm();
-  const { mode, type, initData, onClose, onSave } = props;
+  const { mode, initData, onClose, onSave } = props;
   const [categoryData] = useAppCategoryOption(); //获取应用分类下拉选择
   const [createTag] = useCreateLabelTag(); //新增标签
   const [editLabel] = useEditLabel(); //编辑标签
 
   const id = initData?.id;
+  const tagCode = initData?.tagCode;
   if (mode === 'EDIT') {
     let categoryCodesData = initData?.categoryCodes.split(',');
 
@@ -63,16 +64,14 @@ export default function LabelEditor(props: LabelListProps) {
         .then(() => {
           onSave?.();
         })
-        .catch((error) => {
-          message.error(error);
-        });
+        .catch((error) => {});
     }
     if (mode === 'EDIT') {
       params?.categoryCodes?.map((item: any) => {
         categoryCodesParams += item + ',';
         categoryCodesData = categoryCodesParams.substring(0, categoryCodesParams.length - 1);
       });
-      editLabel(id, params?.tagName, params?.tagMark, categoryCodesData)
+      editLabel(id, params?.tagName, params?.tagMark, categoryCodesData, tagCode)
         .then(() => {
           onSave?.();
         })
@@ -87,7 +86,7 @@ export default function LabelEditor(props: LabelListProps) {
       <ContentCard className="label-edit">
         <Form form={createLabelForm} onFinish={createLabelFrom} labelCol={{ flex: '120px' }}>
           <Form.Item label="标签名称" name="tagName" rules={[{ required: true, message: '这是必选项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入" disabled={type}></Input>
+            <Input style={{ width: 220 }} placeholder="请输入"></Input>
           </Form.Item>
           <Form.Item label="标签备注" name="tagMark">
             <Input style={{ width: 220 }} placeholder="用于标记"></Input>
