@@ -400,7 +400,11 @@ export default function Push(props: any) {
                     <span>
                       {current?.map((tag: any) => {
                         let color = 'green';
-                        return <Tag color={color}>{tag}</Tag>;
+                        return (
+                          <span style={{ marginTop: 2 }}>
+                            <Tag color={color}>{tag}</Tag>
+                          </span>
+                        );
                       })}
                     </span>
                   )}

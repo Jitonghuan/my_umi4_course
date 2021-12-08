@@ -123,7 +123,7 @@ export default function LanbelList() {
               重置
             </Button>
           </Form.Item>
-          <div style={{ float: 'right', display: 'flex', marginLeft: '658px' }}>
+          <div style={{ float: 'right', display: 'flex', marginLeft: '12px' }}>
             <Button
               type="primary"
               onClick={() => {

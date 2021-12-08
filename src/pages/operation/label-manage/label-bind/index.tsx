@@ -138,7 +138,7 @@ export default function LabelBind(props: any) {
                   {bindTagNames?.map((tag: any) => {
                     let color = 'green';
                     return (
-                      <span style={{ marginLeft: 4 }}>
+                      <span style={{ marginLeft: 4, marginTop: 2 }}>
                         <Tag color={color}>{tag}</Tag>
                       </span>
                     );
