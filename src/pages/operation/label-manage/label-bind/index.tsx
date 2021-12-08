@@ -20,7 +20,7 @@ export default function LabelBind(props: any) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   useEffect(() => {
-    getUnBindTagAppList(tagCode);
+    getUnBindTagAppList(tagCode, 'backend');
   }, []);
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
@@ -44,12 +44,12 @@ export default function LabelBind(props: any) {
       appCodesArry.push(item.appCode);
     });
     bindLabelTag(tagCode, tagName, appCodesArry).then(() => {
-      getUnBindTagAppList(tagCode);
+      getUnBindTagAppList(tagCode, 'backend');
     });
   };
 
   const search = (values: any) => {
-    getUnBindTagAppList(tagCode, values?.appCategoryCode, values?.appCode, values?.appType);
+    getUnBindTagAppList(tagCode, values?.appType, values?.appCategoryCode, values?.appCode);
   };
   return (
     <PageContainer>
@@ -62,7 +62,7 @@ export default function LabelBind(props: any) {
               onFinish={search}
               onReset={() => {
                 labelBindForm.resetFields();
-                getUnBindTagAppList(tagCode);
+                getUnBindTagAppList(tagCode, 'backend');
               }}
             >
               <Form.Item label="应用类型" name="appType">
@@ -141,7 +141,7 @@ export default function LabelBind(props: any) {
                 setSelectedRowKeys(['undefined']);
               }}
             >
-              取消
+              清空
             </Button>
             <Button type="primary" onClick={bindTag}>
               绑定

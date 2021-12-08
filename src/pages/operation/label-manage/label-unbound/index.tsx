@@ -26,7 +26,7 @@ export default function UnBound(props: any) {
     },
   };
   useEffect(() => {
-    getBindedTagAppList(tagCode);
+    getBindedTagAppList(tagCode, 'backend');
   }, []);
 
   const appTypeOptions = useMemo(
@@ -37,7 +37,7 @@ export default function UnBound(props: any) {
     [],
   );
   const search = (values: any) => {
-    getBindedTagAppList(tagCode, values?.appCategoryCode, values?.appCode, values?.appType);
+    getBindedTagAppList(tagCode, values?.appType, values?.appCategoryCode, values?.appCode);
   };
 
   //点击解绑按钮
@@ -47,7 +47,7 @@ export default function UnBound(props: any) {
       appCodesArry.push(item.appCode);
     });
     unbindLabelTag(tagCode, appCodesArry).then(() => {
-      getBindedTagAppList(tagCode);
+      getBindedTagAppList(tagCode, 'backend');
     });
     // setSelectedRowKeys(['undefined']);
   };
@@ -62,7 +62,7 @@ export default function UnBound(props: any) {
               onFinish={search}
               onReset={() => {
                 labelBindedForm.resetFields();
-                getBindedTagAppList(tagCode);
+                getBindedTagAppList(tagCode, 'backend');
               }}
             >
               <Form.Item label="应用类型" name="appType">
@@ -123,7 +123,7 @@ export default function UnBound(props: any) {
                 setSelectedRowKeys(['undefined']);
               }}
             >
-              取消
+              清空
             </Button>
             <Button type="primary" onClick={unbindTag}>
               解绑

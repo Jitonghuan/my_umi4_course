@@ -14,6 +14,7 @@ import { useCreateLabelTag, useEditLabel } from '../hook';
 
 export interface LabelListProps {
   mode?: EditorMode;
+  type: boolean;
   initData?: LabelEdit;
   onClose?: () => any;
   onSave?: () => any;
@@ -22,10 +23,11 @@ export interface LabelListProps {
 export default function LabelEditor(props: LabelListProps) {
   const [count, setCount] = useState<any>([0]);
   const [createLabelForm] = Form.useForm();
-  const { mode, initData, onClose, onSave } = props;
+  const { mode, type, initData, onClose, onSave } = props;
   const [categoryData] = useAppCategoryOption(); //获取应用分类下拉选择
   const [createTag] = useCreateLabelTag(); //新增标签
   const [editLabel] = useEditLabel(); //编辑标签
+
   const id = initData?.id;
   if (mode === 'EDIT') {
     let categoryCodesData = initData?.categoryCodes.split(',');
@@ -85,9 +87,9 @@ export default function LabelEditor(props: LabelListProps) {
       <ContentCard className="label-edit">
         <Form form={createLabelForm} onFinish={createLabelFrom} labelCol={{ flex: '120px' }}>
           <Form.Item label="标签名称" name="tagName" rules={[{ required: true, message: '这是必选项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入"></Input>
+            <Input style={{ width: 220 }} placeholder="请输入" disabled={type}></Input>
           </Form.Item>
-          <Form.Item label="标签备注" name="tagMark" rules={[{ required: true, message: '这是必填项' }]}>
+          <Form.Item label="标签备注" name="tagMark">
             <Input style={{ width: 220 }} placeholder="用于标记"></Input>
           </Form.Item>
           <Form.Item label="默认应用分类" name="categoryCodes" rules={[{ required: true, message: '这是必填项' }]}>
