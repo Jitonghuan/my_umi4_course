@@ -104,6 +104,7 @@ const globalTopo: React.FC = () => {
   const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
   const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
   const [clickId, setClickId] = useState<string>('');
+  const [graph, setGraph] = useState<any>(null);
 
   const TopoRef = useRef<any>();
 
@@ -155,16 +156,20 @@ const globalTopo: React.FC = () => {
     }
   };
 
-  const onNodeClick = (id: string) => {
+  const onNodeClick = useCallback((id: string) => {
     setClickId(id);
-  };
+  }, []);
 
   useEffect(() => {
     clickId && onAppClick(clickId);
   }, [clickId]);
 
-  const onRedLineClick = (id: string) => {
+  const onRedLineClick = useCallback((id: string) => {
     console.log('redline', id);
+  }, []);
+
+  const getGraph = (graph: any) => {
+    setGraph(graph);
   };
 
   return (
@@ -181,7 +186,7 @@ const globalTopo: React.FC = () => {
       </FilterCard>
       <div style={{ height: '100%' }} ref={frameRef}>
         <ContentCard>
-          <section style={{ marginBottom: '10px' }} id="topo-box" className="topo-box" ref={frameRef}>
+          <section style={{ marginBottom: '10px' }} id="topo-box" className="topo-box">
             <div className="content-header">
               <h3>浙一生产环境</h3>
               <div className="action-bar">
@@ -213,7 +218,7 @@ const globalTopo: React.FC = () => {
                */}
               <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
               <Topo
-                isFullScreen={isFullScreen}
+                // isFullScreen={isFullScreen}
                 onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
                 ref={TopoRef}
