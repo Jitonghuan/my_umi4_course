@@ -31,8 +31,11 @@ export default function LineChart(props: LineChartProps) {
       title: {
         text: title,
         left: 'left',
+        x: '20px',
+        y: '12px',
         textStyle: {
-          fontSize: 16,
+          fontSize: 12,
+          // fontWeight: 400
         },
       },
       tooltip: {
@@ -43,14 +46,16 @@ export default function LineChart(props: LineChartProps) {
         {
           data: data.map((item) => item.name),
           top: '35px',
-          left: 'center',
+          left: 'left',
+          icon: 'circle',
+          itemHeight: 5,
+          itemWidth: 5,
         },
       // : null,
       //调整绘制的echart在canvas里距离各边的距离
       grid: {
         top: `${30 + legendLineNum * 20}px`,
-        left: '5%',
-        right: '6%',
+        left: '12px',
         bottom: '3%',
         containLabel: true,
       },
@@ -58,9 +63,9 @@ export default function LineChart(props: LineChartProps) {
         type: 'category',
         boundaryGap: false,
         data: xAxis,
-        axisLabel: {
-          interval: 0, // 显示所有的 x 轴上的文字不隐藏
-        },
+        // axisLabel: {
+        //   interval: 0, // 显示所有的 x 轴上的文字不隐藏
+        // },
       },
       yAxis: {
         type: 'value',
@@ -71,7 +76,7 @@ export default function LineChart(props: LineChartProps) {
 
   return (
     <section data-loading={loading}>
-      <div style={{ height: 200 + legendLineNum * 20, background: '#fff' }}>
+      <div style={{ height: 200 + legendLineNum * 20, background: '#F7F8FA', marginTop: '8px' }}>
         <ColorContainer roleKeys={['color']}>
           {/**
            * 参数说明

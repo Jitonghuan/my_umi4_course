@@ -61,12 +61,11 @@ const DragWrapper: React.FC<DragWrapperProps> = (props) => {
           <DragModal
             key={appInfo.id}
             title={appInfo.name}
-            width={300}
+            width={260}
             height={810}
             modalResize={{
               resizeHandles: ['se', 'e', 's'],
               minConstraints: [260, 810],
-              // onResizeStart: onResizeStart,
               onResizeStop: onResizeStop,
             }}
             onCancel={() => {
