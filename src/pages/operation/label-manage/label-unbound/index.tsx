@@ -55,7 +55,7 @@ export default function UnBound(props: any) {
     <PageContainer>
       <FilterCard>
         <Row>
-          <Col span={22}>
+          <Col span={20}>
             <Form
               layout="inline"
               form={labelBindedForm}
@@ -86,9 +86,9 @@ export default function UnBound(props: any) {
               </Form.Item>
             </Form>
           </Col>
-          <Col span={2}>
-            <span style={{ justifyContent: 'end', width: 120 }}>
-              <Tag color="success">{tagName}</Tag>
+          <Col span={4}>
+            <span style={{ display: 'flex', width: 220, height: 24 }}>
+              <h3>当前解绑标签：</h3> <Tag color="success">{tagName}</Tag>
             </span>
           </Col>
         </Row>

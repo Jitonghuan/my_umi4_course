@@ -54,8 +54,8 @@ export default function LabelBind(props: any) {
   return (
     <PageContainer>
       <FilterCard>
-        <Row>
-          <Col span={22}>
+        <div style={{ display: 'flex', justifyContent: 'end' }}>
+          <div style={{ width: 840 }}>
             <Form
               layout="inline"
               form={labelBindForm}
@@ -85,13 +85,13 @@ export default function LabelBind(props: any) {
                 </Button>
               </Form.Item>
             </Form>
-          </Col>
-          <Col span={2}>
-            <span style={{ justifyContent: 'end', width: 120 }}>
-              <Tag color="success">{tagName}</Tag>
+          </div>
+          <div style={{ width: '28%' }}>
+            <span style={{ display: 'flex', height: 24, width: '100%' }}>
+              <h3>当前绑定标签：</h3> <Tag color="success">{tagName}</Tag>
             </span>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </FilterCard>
       <ContentCard>
         <div>
@@ -123,7 +123,11 @@ export default function LabelBind(props: any) {
                 <span>
                   {bindTagNames?.map((tag: any) => {
                     let color = 'green';
-                    return <Tag color={color}>{tag}</Tag>;
+                    return (
+                      <span style={{ marginLeft: 4 }}>
+                        <Tag color={color}>{tag}</Tag>
+                      </span>
+                    );
                   })}
                 </span>
               )}
