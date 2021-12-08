@@ -68,9 +68,10 @@ export default function TrafficScheduling() {
       cancelText: '取消',
       onOk: async () => {
         setPending(true);
+        // delRequest(`${APIS.deleteTmpl}/${id}`)
 
         try {
-          const result = await postRequest(APIS.switchCluster, {
+          const result = await postRequest(`${APIS.switchCluster}?envCode=hbos-test`, {
             data: [
               {
                 envCode: 'hbos-test',

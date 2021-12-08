@@ -35,7 +35,8 @@ export const paramsList = addAPIPrefix('/appManage/appTemplate/list');
 export const editParams = addAPIPrefix('/appManage/appTemplate/update');
 
 // 查看应用/appManage/list
-export const appList = addAPIPrefix('/appManage/list');
+// export const appList = addAPIPrefix('/appManage/list');
+export const appList = addAPIPrefix('/opsManage/appTemplate/getPushApp');
 
 //  GET 查看操作日志
 export const logList = addAPIPrefix('/opsManage/opLog/list');
