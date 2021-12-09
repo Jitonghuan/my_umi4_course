@@ -91,7 +91,7 @@ export default function LabelEditor(props: LabelListProps) {
           <Form.Item label="标签备注" name="tagMark">
             <Input style={{ width: 220 }} placeholder="用于标记"></Input>
           </Form.Item>
-          <Form.Item label="默认应用分类" name="categoryCodes" rules={[{ required: true, message: '这是必填项' }]}>
+          <Form.Item label="默认应用分类" name="categoryCodes">
             <Select showSearch style={{ width: 220 }} options={categoryData} mode="multiple" allowClear />
           </Form.Item>
           <span style={{ marginLeft: 120, color: 'gray' }}>(该分类下新建应用时会自动绑定该标签)</span>
