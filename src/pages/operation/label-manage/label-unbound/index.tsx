@@ -12,6 +12,8 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 export default function UnBound(props: any) {
   const { Option } = Select;
   const [labelBindedForm] = Form.useForm();
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const { tagName, tagCode } = props.location?.query;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
@@ -26,7 +28,7 @@ export default function UnBound(props: any) {
     },
   };
   useEffect(() => {
-    getBindedTagAppList(tagCode);
+    getBindedTagAppList(tagCode, 'backend');
   }, []);
 
   const appTypeOptions = useMemo(
@@ -37,7 +39,7 @@ export default function UnBound(props: any) {
     [],
   );
   const search = (values: any) => {
-    getBindedTagAppList(tagCode, values?.appCategoryCode, values?.appCode, values?.appType);
+    getBindedTagAppList(tagCode, values?.appType, values?.appCategoryCode, values?.appCode);
   };
 
   //点击解绑按钮
@@ -47,22 +49,22 @@ export default function UnBound(props: any) {
       appCodesArry.push(item.appCode);
     });
     unbindLabelTag(tagCode, appCodesArry).then(() => {
-      getBindedTagAppList(tagCode);
+      getBindedTagAppList(tagCode, 'backend');
     });
     // setSelectedRowKeys(['undefined']);
   };
   return (
-    <PageContainer>
+    <PageContainer className="unBound">
       <FilterCard>
-        <Row>
-          <Col span={22}>
+        <div style={{ display: 'flex' }}>
+          <div style={{ width: 840 }}>
             <Form
               layout="inline"
               form={labelBindedForm}
               onFinish={search}
               onReset={() => {
                 labelBindedForm.resetFields();
-                getBindedTagAppList(tagCode);
+                getBindedTagAppList(tagCode, 'backend');
               }}
             >
               <Form.Item label="应用类型" name="appType">
@@ -85,13 +87,13 @@ export default function UnBound(props: any) {
                 </Button>
               </Form.Item>
             </Form>
-          </Col>
-          <Col span={2}>
-            <span style={{ justifyContent: 'end', width: 120 }}>
-              <Tag color="success">{tagName}</Tag>
+          </div>
+          <div style={{ width: '28%' }}>
+            <span style={{ display: 'flex', height: 24, width: '100%' }}>
+              <h3>当前解绑标签：</h3> <Tag color="success">{tagName}</Tag>
             </span>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </FilterCard>
       <ContentCard>
         <div>
@@ -99,6 +101,19 @@ export default function UnBound(props: any) {
             rowKey="id"
             dataSource={bindedLabelsource}
             bordered
+            pagination={{
+              pageSize: pageSize,
+              current: pageIndex,
+              showSizeChanger: true,
+              onShowSizeChange: (_, size) => {
+                setPageSize(size);
+                setPageIndex(1);
+              },
+              onChange: (page, size: any) => {
+                setPageSize(size);
+                setPageIndex(page);
+              },
+            }}
             // rowSelection={{ ...rowSelection }}
             rowSelection={{
               selectedRowKeys,
@@ -123,7 +138,7 @@ export default function UnBound(props: any) {
                 setSelectedRowKeys(['undefined']);
               }}
             >
-              取消
+              清空
             </Button>
             <Button type="primary" onClick={unbindTag}>
               解绑

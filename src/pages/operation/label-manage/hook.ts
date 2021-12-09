@@ -26,9 +26,9 @@ export function useCreateLabelTag() {
 
 //编辑标签
 export function useEditLabel() {
-  const editLabel = async (id: any, tagName: string, tagMark: string, categoryCodes: string) => {
+  const editLabel = async (id: any, tagName: string, tagMark: string, categoryCodes: string, tagCode: any) => {
     await putRequest(APIS.updateTag, {
-      data: { id, tagName, tagMark, categoryCodes },
+      data: { id, tagName, tagMark, categoryCodes, tagCode },
     }).then((resp) => {
       if (resp.success) {
         message.success('编辑标签成功！');
@@ -120,11 +120,11 @@ export function useUnbindLabelList() {
   const [loading, setLoading] = useState(false);
   let bindTag: any = [];
 
-  const getUnBindTagAppList = async (tagCode: string, appCategoryCode?: string, appCode?: string, appType?: string) => {
+  const getUnBindTagAppList = async (tagCode: string, appType?: string, appCategoryCode?: string, appCode?: string) => {
     setLoading(true);
 
     await getRequest(APIS.getUnBindTagApp, {
-      data: { tagCode, appCategoryCode, appCode, appType },
+      data: { tagCode, appType, appCategoryCode, appCode },
     })
       .then((result) => {
         const { data } = result || {};
@@ -147,10 +147,10 @@ export function usebindedLabelList() {
   const [bindedLabelsource, setBindedLabelSource] = useState<any>([]);
   const [loading, setLoading] = useState(false);
 
-  const getBindedTagAppList = async (tagCode: string, appCategoryCode?: string, appCode?: string, appType?: string) => {
+  const getBindedTagAppList = async (tagCode: string, appType?: string, appCategoryCode?: string, appCode?: string) => {
     setLoading(true);
     await getRequest(APIS.getBindedTagApp, {
-      data: { tagCode, appCategoryCode, appCode, appType },
+      data: { tagCode, appType, appCategoryCode, appCode },
     })
       .then((result) => {
         const { data } = result || {};

@@ -12,7 +12,8 @@ export default function LabelBind(props: any) {
   const { Option } = Select;
   const [labelBindForm] = Form.useForm();
   const { tagName, tagCode } = props.location?.query;
-
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [unbindLabelsource, getUnBindTagAppList, loading, bindTagNamesArry] = useUnbindLabelList(); //获取未绑定的标签列表
   const [categoryData] = useAppCategoryOption(); //获取应用分类下拉选择
   const [bindLabelTag] = useBindLabelTag(); //绑定标签
@@ -20,7 +21,7 @@ export default function LabelBind(props: any) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   useEffect(() => {
-    getUnBindTagAppList(tagCode);
+    getUnBindTagAppList(tagCode, 'backend');
   }, []);
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
@@ -44,25 +45,25 @@ export default function LabelBind(props: any) {
       appCodesArry.push(item.appCode);
     });
     bindLabelTag(tagCode, tagName, appCodesArry).then(() => {
-      getUnBindTagAppList(tagCode);
+      getUnBindTagAppList(tagCode, 'backend');
     });
   };
 
   const search = (values: any) => {
-    getUnBindTagAppList(tagCode, values?.appCategoryCode, values?.appCode, values?.appType);
+    getUnBindTagAppList(tagCode, values?.appType, values?.appCategoryCode, values?.appCode);
   };
   return (
-    <PageContainer>
+    <PageContainer className="bind">
       <FilterCard>
-        <Row>
-          <Col span={22}>
+        <div style={{ display: 'flex' }}>
+          <div style={{ width: 840 }}>
             <Form
               layout="inline"
               form={labelBindForm}
               onFinish={search}
               onReset={() => {
                 labelBindForm.resetFields();
-                getUnBindTagAppList(tagCode);
+                getUnBindTagAppList(tagCode, 'backend');
               }}
             >
               <Form.Item label="应用类型" name="appType">
@@ -85,13 +86,13 @@ export default function LabelBind(props: any) {
                 </Button>
               </Form.Item>
             </Form>
-          </Col>
-          <Col span={2}>
-            <span style={{ justifyContent: 'end', width: 120 }}>
-              <Tag color="success">{tagName}</Tag>
+          </div>
+          <div style={{ width: '28%' }}>
+            <span style={{ display: 'flex', height: 24, width: '100%' }}>
+              <h3>当前绑定标签：</h3> <Tag color="success">{tagName}</Tag>
             </span>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </FilterCard>
       <ContentCard>
         <div>
@@ -99,6 +100,19 @@ export default function LabelBind(props: any) {
             rowKey="id"
             dataSource={unbindLabelsource}
             bordered
+            pagination={{
+              pageSize: pageSize,
+              current: pageIndex,
+              showSizeChanger: true,
+              onShowSizeChange: (_, size) => {
+                setPageSize(size);
+                setPageIndex(1);
+              },
+              onChange: (page, size: any) => {
+                setPageSize(size);
+                setPageIndex(page);
+              },
+            }}
             // rowSelection={{ ...rowSelection }}
             rowSelection={{
               selectedRowKeys,
@@ -123,7 +137,11 @@ export default function LabelBind(props: any) {
                 <span>
                   {bindTagNames?.map((tag: any) => {
                     let color = 'green';
-                    return <Tag color={color}>{tag}</Tag>;
+                    return (
+                      <span style={{ marginLeft: 4, marginTop: 2 }}>
+                        <Tag color={color}>{tag}</Tag>
+                      </span>
+                    );
                   })}
                 </span>
               )}
@@ -137,7 +155,7 @@ export default function LabelBind(props: any) {
                 setSelectedRowKeys(['undefined']);
               }}
             >
-              取消
+              清空
             </Button>
             <Button type="primary" onClick={bindTag}>
               绑定

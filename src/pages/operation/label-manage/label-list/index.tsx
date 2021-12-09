@@ -18,11 +18,13 @@ export interface LabelEdit extends Record<string, any> {
   tagName: string;
   tagMark: string;
   categoryCodes: string;
+  tagCode: string;
 }
 export default function LanbelList() {
   const { Option } = Select;
   const [labelForm] = Form.useForm();
   const [labelEditMode, setLabelEditMode] = useState<EditorMode>('HIDE');
+  const [isDisable, setIsDisable] = useState<boolean>(false);
   const [labelData, setLabelData] = useState<LabelEdit>();
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState(1);
@@ -78,6 +80,7 @@ export default function LanbelList() {
     (record: LabelEdit, index: number) => {
       setLabelData(record);
       setLabelEditMode('EDIT');
+      // setIsDisable(true);
       setLabelListSource(labelListSource);
     },
     [labelListSource],
@@ -92,6 +95,7 @@ export default function LanbelList() {
     <PageContainer>
       <LabelEditDrawer
         mode={labelEditMode}
+        // type={isDisable}
         initData={labelData}
         onClose={() => setLabelEditMode('HIDE')}
         onSave={saveEditData}
@@ -119,8 +123,14 @@ export default function LanbelList() {
               重置
             </Button>
           </Form.Item>
-          <div style={{ float: 'right', display: 'flex', marginLeft: '658px' }}>
-            <Button type="primary" onClick={() => setLabelEditMode('ADD')}>
+          <div style={{ float: 'right', display: 'flex', marginLeft: '12px' }}>
+            <Button
+              type="primary"
+              onClick={() => {
+                setLabelEditMode('ADD');
+                // setIsDisable(false);
+              }}
+            >
               新增标签
             </Button>
           </div>
