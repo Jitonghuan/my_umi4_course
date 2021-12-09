@@ -79,6 +79,7 @@ export default function DemoPageTb(porps: any) {
           envCodes: envCode,
           tmplConfigurableItem: arr,
           jvm: jvm,
+          languageCode: tmplresult.languageCode,
           remark: tmplresult.remark,
         });
         setIsDeployment(tmplresult.templateType);
@@ -157,6 +158,7 @@ export default function DemoPageTb(porps: any) {
         envCodes: valArr || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
         jvm: value?.jvm,
+        languageCode: value?.languageCode,
         remark: value?.remark,
         // templateCode:templateCode
       },
@@ -185,6 +187,11 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                   onChange={selectTemplType}
                 />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
+                <Select showSearch style={{ width: 150 }} disabled={true} />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -220,32 +227,13 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
-              <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
-              <Form.Item name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
-              </Form.Item>
-              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-              {isDeployment == 'deployment' ? (
-                <Form.Item name="jvm">
-                  <AceEditor mode="yaml" height={300} />
-                </Form.Item>
-              ) : (
-                ''
-              )}
-
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
                 style={{ marginTop: '50px' }}
               >
-                <Select
-                  showSearch
-                  style={{ width: 220 }}
-                  options={categoryData}
-                  onChange={changeAppCategory}
-                  disabled={isDisabled}
-                />
+                <Select showSearch style={{ width: 220 }} disabled={isDisabled} />
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
@@ -262,10 +250,23 @@ export default function DemoPageTb(porps: any) {
                   {children}
                 </Select>
               </Form.Item>
+
+              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
+              {isDeployment == 'deployment' ? (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              ) : (
+                ''
+              )}
+              <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
+              </Form.Item>
             </Col>
           </Row>
           <Form.Item>
-            <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
+            <Space size="small" style={{ float: 'right' }}>
               <Button
                 type="ghost"
                 htmlType="reset"

@@ -68,6 +68,7 @@ export default function DemoPageTb(porps: any) {
           appCategoryCode: tmplresult.appCategoryCode,
           envCodes: envCode,
           jvm: jvm,
+          languageCode: tmplresult?.languageCode,
           remark: tmplresult.remark,
         });
       }
@@ -82,6 +83,11 @@ export default function DemoPageTb(porps: any) {
             <Col span={6}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select showSearch style={{ width: 150 }} disabled={isDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
+                <Select showSearch style={{ width: 150 }} disabled={true} />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -105,23 +111,11 @@ export default function DemoPageTb(porps: any) {
                 <Table.Column title="Key" dataIndex="key" width="10%" />
                 <Table.Column title="缺省值" dataIndex="value" width="20%" ellipsis />
               </Table>
-
-              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
-              <Form.Item name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
-              </Form.Item>
-              {templateTypes == 'deployment' && <span>JVM参数:</span>}
-
-              {templateTypes == 'deployment' && (
-                <Form.Item name="jvm">
-                  <AceEditor mode="yaml" height={300} />
-                </Form.Item>
-              )}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '80px' }}
+                style={{ marginTop: '50px' }}
               >
                 <Select showSearch style={{ width: 220 }} options={categoryData} disabled={isDisabled} />
               </Form.Item>
@@ -138,10 +132,22 @@ export default function DemoPageTb(porps: any) {
                   {children}
                 </Select>
               </Form.Item>
+
+              {templateTypes == 'deployment' && <span>JVM参数:</span>}
+
+              {templateTypes == 'deployment' && (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              )}
+              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
+              </Form.Item>
             </Col>
           </Row>
           <Form.Item>
-            <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
+            <Space size="small" style={{ float: 'right' }}>
               <Button
                 type="ghost"
                 htmlType="reset"

@@ -14,6 +14,13 @@ import EditorTable from '@cffe/pc-editor-table';
 import { Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
+/** 应用开发语言(后端) */
+export type AppDevelopLanguage = 'java' | 'golang' | 'python';
+export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
+  { label: 'GOLANG', value: 'golang' },
+  { label: 'JAVA', value: 'java' },
+  { label: 'PYTHON', value: 'python' },
+];
 export default function DemoPageTb(porps: any) {
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
@@ -107,6 +114,7 @@ export default function DemoPageTb(porps: any) {
         appCategoryCode: value.appCategoryCode || '',
         envCodes: value.envCodes || [],
         tmplConfigurableItem: tmplConfigurableItem || {},
+        languageCode: value?.languageCode,
         jvm: value?.jvm,
         remark: value?.remark,
       },
@@ -121,7 +129,6 @@ export default function DemoPageTb(porps: any) {
         });
       }
     });
-    // console.log('获取到的00000:', value.envCodes);
   };
 
   return (
@@ -138,6 +145,11 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                   onChange={selectTemplType}
                 />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
+                <Select showSearch style={{ width: 150 }} options={appDevelopLanguageOptions} disabled={isDisabled} />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -172,24 +184,11 @@ export default function DemoPageTb(porps: any) {
                   ]}
                 />
               </Form.Item>
-              <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
-              <Form.Item name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
-              </Form.Item>
-              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-              {isDeployment == 'deployment' ? (
-                <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
-                  <AceEditor mode="yaml" height={300} />
-                </Form.Item>
-              ) : (
-                ''
-              )}
-
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '80px' }}
+                style={{ marginTop: '50px' }}
               >
                 <Select
                   showSearch
@@ -214,10 +213,23 @@ export default function DemoPageTb(porps: any) {
                   {children}
                 </Select>
               </Form.Item>
+
+              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
+              {isDeployment == 'deployment' ? (
+                <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              ) : (
+                ''
+              )}
+              <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
+              </Form.Item>
             </Col>
           </Row>
           <Form.Item>
-            <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
+            <Space size="small" style={{ float: 'right' }}>
               <Button
                 type="ghost"
                 htmlType="reset"

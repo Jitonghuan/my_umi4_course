@@ -10,7 +10,13 @@ import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from '../tmpl-edits';
-
+/** 应用开发语言(后端) */
+export type AppDevelopLanguage = 'java' | 'golang' | 'python';
+export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
+  { label: 'GOLANG', value: 'golang' },
+  { label: 'JAVA', value: 'java' },
+  { label: 'PYTHON', value: 'python' },
+];
 /** 编辑页回显数据 */
 export interface TmplEdit extends Record<string, any> {
   templateCode: string;
@@ -20,6 +26,7 @@ export interface TmplEdit extends Record<string, any> {
   appCategoryCode: any;
   envCodes: string;
   templateValue: string;
+  languageCode: string;
   remark: string;
 }
 export default function Launch() {
@@ -131,6 +138,7 @@ export default function Launch() {
         envCode: value.envCode,
         templateType: value.templateType,
         templateName: value.templateName,
+        languageCode: value.languageCode,
         pageIndex: value.pageIndex,
         pageSize: value.pageSize,
       },
@@ -225,6 +233,9 @@ export default function Launch() {
                 setTemplateType(n);
               }}
             />
+          </Form.Item>
+          <Form.Item label="模版语言：" name="languageCode">
+            <Select showSearch allowClear style={{ width: 120 }} options={appDevelopLanguageOptions} />
           </Form.Item>
           <Form.Item label=" 模版名称：" name="templateName">
             <Input placeholder="请输入模版名称"></Input>
