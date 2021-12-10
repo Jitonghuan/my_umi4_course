@@ -39,7 +39,7 @@ export default function LineChart(props: LineChartProps) {
       grid: {
         top: `30px`,
         left: '14px',
-        right: '35px',
+        right: '50px',
         bottom: '0px',
         containLabel: true,
       },

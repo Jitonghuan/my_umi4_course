@@ -12,6 +12,7 @@ import * as echarts from 'echarts';
 import { IAppInfo } from '../interface';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import LineChart from './_component/line-chart';
+import { TreePro } from '@cffe/h2o-design';
 
 const { TabPane } = Tabs;
 const lineChartTmp = [
@@ -35,21 +36,11 @@ const lineChartTmp = [
 
 const treeData = [
   {
-    title: 'appName',
+    title: 'parent 0',
     key: '0-0',
     children: [
-      {
-        title: '1-0',
-        key: '0-0-1',
-      },
-      {
-        title: '1-1',
-        key: '0-0-2',
-      },
-      {
-        title: '1-2',
-        key: '0-0-13',
-      },
+      { title: 'leaf 0-0', key: '0-0-0' },
+      { title: 'leaf 0-1', key: '0-0-1' },
     ],
   },
 ];
@@ -180,7 +171,7 @@ const AppTraffic: React.FC = () => {
 
   return (
     <PageContainer className="app-traffic">
-      <FilterCard>
+      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
         <Form layout="inline">
           <Form.Item label="环境">
             <Select style={{ width: '150px' }} />
@@ -197,21 +188,16 @@ const AppTraffic: React.FC = () => {
         </Form>
       </FilterCard>
       <CardRowGroup>
-        <CardRowGroup.SlideCard width={200}>
+        <CardRowGroup.SlideCard width={200} style={{ backgroundColor: '#F7F8FA' }}>
           <div className="table-caption">
             <h3>应用列表</h3>
           </div>
           <div>
-            <Tree
-              defaultExpandedKeys={['0-0-0', '0-0-1']}
-              defaultSelectedKeys={['0-0-0', '0-0-1']}
-              onSelect={onSelect}
-              treeData={treeData}
-            />
+            <TreePro defaultExpandAll treeData={treeData} showSearch={false} />
           </div>
         </CardRowGroup.SlideCard>
 
-        <Card className="app-traffic-content">
+        <Card className="app-traffic-content" style={{ backgroundColor: '#F7F8FA' }}>
           <Tabs activeKey={'1'} type="card" className="action-tabs">
             <TabPane tab="应用详情" key="1">
               <div className="tab-content">

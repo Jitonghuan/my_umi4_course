@@ -114,8 +114,8 @@ const DomainConfig: React.FC = () => {
   };
 
   return (
-    <PageContainer>
-      <FilterCard>
+    <PageContainer className="domain-config">
+      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
         <Form layout="inline">
           <Form.Item label="域名">
             <Input />
@@ -131,7 +131,7 @@ const DomainConfig: React.FC = () => {
           </Form.Item>
         </Form>
       </FilterCard>
-      <ContentCard>
+      <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
         <div className="domian-table-header">
           <h3>配置域列表</h3>
           <Button type="primary" onClick={() => setVisible(true)}>
