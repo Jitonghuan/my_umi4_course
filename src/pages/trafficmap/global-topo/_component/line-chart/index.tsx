@@ -42,16 +42,16 @@ export default function LineChart(props: LineChartProps) {
         trigger: 'axis',
       },
       legend:
-        // data.length > 1?
-        {
-          data: data.map((item) => item.name),
-          top: '35px',
-          left: 'left',
-          icon: 'circle',
-          itemHeight: 5,
-          itemWidth: 5,
-        },
-      // : null,
+        data.length > 1
+          ? {
+              data: data.map((item) => item.name),
+              top: '35px',
+              left: 'left',
+              icon: 'circle',
+              itemHeight: 5,
+              itemWidth: 5,
+            }
+          : null,
       //调整绘制的echart在canvas里距离各边的距离
       grid: {
         top: `${30 + legendLineNum * 20}px`,

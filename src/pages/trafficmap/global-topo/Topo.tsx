@@ -114,8 +114,7 @@ const Topo = memo(
             },
           },
           defaultCombo: {
-            type: 'cRect',
-            // fixSize: [500, 300],
+            type: 'region-combo',
             labelCfg: {
               refY: 2,
               style: {
@@ -123,6 +122,9 @@ const Topo = memo(
                 fontSize: 14,
                 fontWeight: 700,
               },
+            },
+            style: {
+              fill: '#fff',
             },
           },
           modes: {

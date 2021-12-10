@@ -22,11 +22,13 @@ const dataDemo = {
         data: ['9', '9', '9', '9', '9', '9', '9'],
         name: 'http',
         type: 'line',
+        color: '#4BA2FF',
       },
       {
         data: ['10', '10', '10', '10', '10', '10', '10'],
         name: 'dubbo',
         type: 'line',
+        color: '#00BFAA',
       },
     ],
     xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
@@ -60,22 +62,26 @@ const dataDemo = {
         data: ['9', '9', '9', '9', '9', '9', '9'],
         name: '200',
         type: 'line',
+        color: '#4BA2FF',
       },
       {
         data: ['3', '4', '5', '7', '9', '3', '1'],
         name: '300',
         type: 'line',
+        color: '#5C61F3',
       },
       {
         data: ['6', '7', '8', '9', '4', '3', '5'],
         name: '400',
         type: 'line',
+        color: '#FFCB30',
       },
 
       {
         data: ['4', '5', '3', '3', '3', '6', '2'],
         name: '500',
         type: 'line',
+        color: '#F66A51',
       },
     ],
     xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
@@ -102,7 +108,16 @@ const globalTopo: React.FC = () => {
 
   const [appIdList, setAppIdList] = useState<string[]>([]);
   const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
-  const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
+  const [redLineList, setRedLineList] = useState<any[]>([
+    {
+      id: '1',
+      time: '2021-11-30 10:26:00',
+    },
+    {
+      id: '2',
+      time: '2021-11-30 10:27:00',
+    },
+  ]);
   const [clickId, setClickId] = useState<string>('');
 
   const TopoRef = useRef<any>();
@@ -202,7 +217,7 @@ const globalTopo: React.FC = () => {
                 icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
                 onClick={handleFullScreen}
               >
-                全屏查看
+                {isFullScreen ? '退出全屏' : '全屏查看'}
               </Button>
             </div>
           </div>
