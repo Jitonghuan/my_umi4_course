@@ -68,9 +68,12 @@ const Topo = memo(
           plugins: [tooltip],
           layout: {
             type: 'gForce',
-            minMovement: 0.04,
+            //当一次迭代的平均移动长度小于该值时停止迭代。数字越小，布局越收敛，所用时间将越长
+            minMovement: 0.05,
+            //最大迭代次数。当迭代次数超过该值，但平均移动长度仍然没有达到 minMovement，也将强制停止迭代
             maxIteration: 5000,
-            damping: 0.99,
+            //阻尼系数，取值范围 [0, 1]。数字越大，速度降低得越慢
+            damping: 0.9,
             preventOverlap: true,
             linkDistance: (d: any) => {
               const sourceNode = nodeMap.get(d.source);
@@ -97,7 +100,7 @@ const Topo = memo(
           defaultCombo: {
             type: 'region-combo',
             labelCfg: {
-              refY: 2,
+              refY: 3,
               style: {
                 fill: '#fff',
                 fontSize: 14,

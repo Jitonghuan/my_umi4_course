@@ -169,7 +169,6 @@ if (G6) {
        * @param  {Object} cfg 节点的配置项
        * @param  {G.Group} group 图形分组，节点中图形对象的容器
        * @return {G.Shape} 返回一个绘制的图形作为 keyShape，通过 node.get('keyShape') 可以获取。
-       * 关于 keyShape 可参考文档 核心概念-节点/边/Combo-图形 Shape 与 keyShape
        */
       draw: (cfg: any, group: any) => {
         const config = getRegionNodeConfig(cfg);
@@ -270,7 +269,7 @@ if (G6) {
         group?.addShape('marker', {
           attrs: {
             ...style,
-            storke: '#fff',
+            storke: '#ffffff',
             fill: 'rgba(255,255,255,0)',
             x: 0,
             y: 0,
