@@ -20,8 +20,6 @@ export interface LineChartProps {
 export default function LineChart(props: LineChartProps) {
   const { loading, title, data, xAxis } = props;
 
-  const legendLineNum = data.length / 3 + (data.length % 3 ? 1 : 0);
-
   const chartOptions = useMemo(() => {
     return {
       tooltip: {
@@ -41,6 +39,7 @@ export default function LineChart(props: LineChartProps) {
       grid: {
         top: `30px`,
         left: '14px',
+        right: '35px',
         bottom: '0px',
         containLabel: true,
       },
@@ -69,7 +68,7 @@ export default function LineChart(props: LineChartProps) {
            * @option echart配置
            * @notMerge echart更新时是否和先前option merge 为true时画布会删除历史数据
            *  */}
-          <EchartsReact style={{ width: 'calc(100%-12px)', height: '100%' }} option={chartOptions} notMerge={true} />
+          <EchartsReact style={{ width: '100%', height: '100%' }} option={chartOptions} notMerge={true} />
         </ColorContainer>
       </div>
     </section>
