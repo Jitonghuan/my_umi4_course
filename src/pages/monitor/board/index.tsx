@@ -62,6 +62,11 @@ type IMarket = {
 const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
   const [currentTab, setCurrentTab] = useState<string>('');
+  const tabList = [
+    { label: 'DEV', value: 'dev' },
+    { label: 'PRE', value: 'pre' },
+    { label: 'PROD', value: 'prod' },
+  ];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
   const [useMarket, setUseMarket] = useState<IMarket[]>([]);
   const [searchParams, setSearchParams] = useState<any>();
@@ -262,9 +267,15 @@ const Coms = (props: any) => {
   return (
     <PageContainer className="monitor-board">
       <Card className="monitor-board-content">
-        <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
-          {tabData?.map((el) => (
-            <Tabs.TabPane key={el.key} tab={el.title} />
+        <Tabs onChange={handleTabChange} activeKey={currentTab} type="card">
+          {tabList?.map((item) => (
+            <Tabs.TabPane tab={item.label} key={item.value}>
+              {/* <DeployInfoContent
+              isActive={item.value === tabActive}
+              envTypeCode={item.value}
+           
+            /> */}
+            </Tabs.TabPane>
           ))}
         </Tabs>
 

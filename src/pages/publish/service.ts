@@ -114,7 +114,8 @@ export const deleteFunc = (params: { funcId: string }) => delRequest(`${deleteFu
 
 /** 发布计划相关 */
 /** 查询发布计划列表 */
-export const queryPublishPlanUrl = `${appConfig.apiPrefix}/publishManage/plan/list`;
+export const queryPublishPlanUrl = `${appConfig.apiPrefix}/appManage/group/list`;
+
 export const queryPublishPlanReq = (params: {
   id?: number; //发布功能的数据库⾃增ID
   planID?: string; //发布计划的UUID

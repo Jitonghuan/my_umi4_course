@@ -3,7 +3,7 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { getRequest, delRequest } from '@/utils/request';
@@ -287,11 +287,26 @@ export default function Launch() {
           >
             <Table.Column title="ID" dataIndex="id" width="4%" />
             <Table.Column title="模版名称" dataIndex="templateName" width="20%" ellipsis />
-            {/* <Table.Column title="模版CODE" dataIndex="templateCode" width="22%" ellipsis /> */}
+            <Table.Column title="模版语言" dataIndex="languageCode" width="8%" ellipsis />
             <Table.Column title="模版类型" dataIndex="templateType" width="8%" ellipsis />
-            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="12%" ellipsis />
-            <Table.Column title="环境" dataIndex="envCode" width="12%" />
-            <Table.Column title="备注" dataIndex="remark" width="26%" ellipsis />
+            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="8%" ellipsis />
+            <Table.Column
+              title="环境"
+              dataIndex="envCode"
+              width="16%"
+              render={(current) => (
+                <span>
+                  {current?.map((item: any) => {
+                    return (
+                      <span style={{ marginLeft: 4, marginTop: 2 }}>
+                        <Tag color={'green'}>{item}</Tag>
+                      </span>
+                    );
+                  })}
+                </span>
+              )}
+            />
+            <Table.Column title="备注" dataIndex="remark" width="18%" ellipsis />
             <Table.Column
               title="操作"
               dataIndex="gmtModify"
