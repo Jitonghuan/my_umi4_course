@@ -71,10 +71,7 @@ const Topo = memo(
             minMovement: 0.04,
             maxIteration: 5000,
             damping: 0.99,
-            nodeSize: 500,
             preventOverlap: true,
-            // nodeSpacing: (d: any) => 100,
-            focusNode: 'li',
             linkDistance: (d: any) => {
               const sourceNode = nodeMap.get(d.source);
               const targetNode = nodeMap.get(d.target);
@@ -84,29 +81,13 @@ const Topo = memo(
                 sourceNode.nodeRegionCode == targetNode.nodeRegionCode
               ) {
                 return 50;
+              } else {
+                return 400;
               }
-              return 400;
             },
             nodeSpacing: (d: any) => {
               if (d.nodeType === 'app') return 10;
               if (d.nodeType == 'region') return 100;
-              return 100;
-            },
-
-            edgeStrength: (d: any) => {
-              const sourceNode = nodeMap.get(d.source);
-              const targetNode = nodeMap.get(d.source);
-              if (sourceNode.nodeType == 'region' && targetNode.nodeType == 'region') {
-                return 25;
-              }
-              if (
-                sourceNode.nodeType == 'app' &&
-                targetNode.nodeType == 'app' &&
-                sourceNode.nodeRegionCode == targetNode.nodeRegionCode
-              ) {
-                return 50;
-              }
-              return 25;
             },
             nodeStrength: (d: any) => {
               if (d.nodeType == 'region') return 3000;
