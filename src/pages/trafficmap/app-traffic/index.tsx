@@ -183,7 +183,9 @@ const AppTraffic: React.FC = () => {
             <DatePicker style={{ width: '200px' }} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary">查询</Button>
+            <Button type="primary" ghost>
+              查询
+            </Button>
           </Form.Item>
         </Form>
       </FilterCard>

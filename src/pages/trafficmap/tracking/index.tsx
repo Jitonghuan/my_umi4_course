@@ -99,7 +99,9 @@ const tracking = () => {
             <Input style={{ width: '400px' }} allowClear placeholder="参数值" />
           </Form.Item>
           <Form.Item>
-            <Button htmlType="submit">添加查询参数</Button>
+            <Button htmlType="submit" type="primary" ghost>
+              添加查询参数
+            </Button>
           </Form.Item>
         </Form>
       </FilterCard>

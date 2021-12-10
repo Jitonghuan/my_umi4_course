@@ -127,14 +127,16 @@ const DomainConfig: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item>
-            <Button type="primary">查询</Button>
+            <Button type="primary" ghost>
+              查询
+            </Button>
           </Form.Item>
         </Form>
       </FilterCard>
       <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
         <div className="domian-table-header">
           <h3>配置域列表</h3>
-          <Button type="primary" onClick={() => setVisible(true)}>
+          <Button type="primary" onClick={() => setVisible(true)} ghost>
             <PlusOutlined />
             新增域
           </Button>
