@@ -15,7 +15,7 @@ const APP_NODE_DEFAULT_SHADOWBLUR = 0;
 const APP_NODE_DEFAULT_LINEWIDTH = 2;
 
 const COMBO_RADIUS = 2;
-const COMBO_HEADER_HEIGHT = 20;
+const COMBO_HEADER_HEIGHT = 24;
 
 //hover mouseEnter
 const NODE_STATUS_HOVER = 'hover';
