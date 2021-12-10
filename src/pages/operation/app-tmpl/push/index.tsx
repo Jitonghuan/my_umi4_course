@@ -144,6 +144,7 @@ export default function Push(props: any) {
   };
   //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
   const templateCode = props.history.location.query.templateCode;
+  const languageCode = props.history.location.query.languageCode;
   const appCodes = currentData.map((item, index) => {
     return Object.assign(item.appCode);
   });
@@ -203,6 +204,7 @@ export default function Push(props: any) {
         tagName: value.tagName,
         appCategoryCode: value.appCategoryCode,
         appCode: value.appCode,
+        languageCode,
         // envCode: value.envCode,
         appType: 'backend',
         // isClient: 0,

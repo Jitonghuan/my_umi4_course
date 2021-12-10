@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import { Tabs, Card, Form, Input, Spin } from 'antd';
+import { Tabs, Card, Form, Input, Spin, Select, Divider } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
 import PageContainer from '@/components/page-container';
@@ -269,16 +269,14 @@ const Coms = (props: any) => {
       <Card className="monitor-board-content">
         <Tabs onChange={handleTabChange} activeKey={currentTab} type="card">
           {tabList?.map((item) => (
-            <Tabs.TabPane tab={item.label} key={item.value}>
-              {/* <DeployInfoContent
-              isActive={item.value === tabActive}
-              envTypeCode={item.value}
-           
-            /> */}
-            </Tabs.TabPane>
+            <Tabs.TabPane tab={item.label} key={item.value}></Tabs.TabPane>
           ))}
         </Tabs>
-
+        <div style={{ marginLeft: 28, fontSize: 16 }}>
+          <span>选择集群:</span>
+          <Select style={{ width: 140 }}></Select>
+        </div>
+        <Divider />
         <div className="monitor-tabs-content">
           <Spin spinning={resLoading}>
             <h3 className="monitor-tabs-content-title">

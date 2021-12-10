@@ -49,6 +49,7 @@ export default function DemoPageTb(porps: any) {
   }, []);
   //进入页面加载信息
   const templateCode: string = porps.history.location.query.templateCode;
+  const languageCode = porps.history.location.query.languageCode;
   const tmplDetialResult = (templateCode: string) => {
     getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
       if (res.success) {
@@ -134,6 +135,7 @@ export default function DemoPageTb(porps: any) {
       }
     });
   };
+
   //提交复制模版
   const createTmpl = (value: any) => {
     // const templateCode:string = porps.history.location.query.templateCode;
@@ -149,28 +151,53 @@ export default function DemoPageTb(porps: any) {
     } else {
       valArr.push(value.envCodes);
     }
-    postRequest(APIS.create, {
-      data: {
-        templateName: value.templateName,
-        templateType: value.templateType,
-        templateValue: value.templateValue,
-        appCategoryCode: value.appCategoryCode || '',
-        envCodes: valArr || [],
-        tmplConfigurableItem: tmplConfigurableItem || {},
-        jvm: value?.jvm,
-        languageCode: value?.languageCode,
-        remark: value?.remark,
-        // templateCode:templateCode
-      },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas = resp.data || [];
-        setEnvDatas(datas.envCodes);
-        history.push({
-          pathname: 'tmpl-list',
-        });
-      }
-    });
+    if (languageCode === 'java') {
+      postRequest(APIS.create, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: valArr || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          jvm: value?.jvm,
+          languageCode: value?.languageCode,
+          remark: value?.remark,
+          // templateCode:templateCode
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          setEnvDatas(datas.envCodes);
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      });
+    } else {
+      postRequest(APIS.create, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: valArr || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+
+          languageCode: value?.languageCode,
+          remark: value?.remark,
+          // templateCode:templateCode
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          setEnvDatas(datas.envCodes);
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      });
+    }
   };
 
   return (
@@ -227,6 +254,14 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
+              {isDeployment === 'deployment' && languageCode === 'java' ? <span>JVM参数:</span> : ''}
+              {isDeployment === 'deployment' && languageCode === 'java' ? (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              ) : (
+                ''
+              )}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
@@ -251,14 +286,6 @@ export default function DemoPageTb(porps: any) {
                 </Select>
               </Form.Item>
 
-              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-              {isDeployment == 'deployment' ? (
-                <Form.Item name="jvm">
-                  <AceEditor mode="yaml" height={300} />
-                </Form.Item>
-              ) : (
-                ''
-              )}
               <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
               <Form.Item name="remark">
                 <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>

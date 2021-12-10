@@ -144,31 +144,56 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-
-    putRequest(APIS.update, {
-      data: {
-        templateName: value.templateName,
-        templateType: value.templateType,
-        templateValue: value.templateValue,
-        jvm: value?.jvm,
-        appCategoryCode: value.appCategoryCode || '',
-        envCodes: envCodesArry,
-        tmplConfigurableItem: tmplConfigurableItem || {},
-        templateCode: templateCode,
-        remark: value?.remark,
-      },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas = resp.data || [];
-        history.push({
-          pathname: 'tmpl-list',
-        });
-        message.success('保存成功！');
-        onSave?.();
-      } else {
-        message.error('保存失败');
-      }
-    });
+    if (initData?.languageCode === 'java') {
+      putRequest(APIS.update, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          jvm: value?.jvm,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: envCodesArry,
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          templateCode: templateCode,
+          remark: value?.remark,
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          history.push({
+            pathname: 'tmpl-list',
+          });
+          message.success('保存成功！');
+          onSave?.();
+        } else {
+          message.error('保存失败');
+        }
+      });
+    } else {
+      putRequest(APIS.update, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: envCodesArry,
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          templateCode: templateCode,
+          remark: value?.remark,
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          history.push({
+            pathname: 'tmpl-list',
+          });
+          message.success('保存成功！');
+          onSave?.();
+        } else {
+          message.error('保存失败');
+        }
+      });
+    }
   };
 
   const changeTmplType = (value: any) => {
@@ -233,11 +258,17 @@ export default function TaskEditor(props: TmplListProps) {
                   ]}
                 />
               </Form.Item>
+              {isDeployment == 'deployment' && initData?.languageCode === 'java' ? <span>JVM参数:</span> : null}
+              {isDeployment == 'deployment' && initData?.languageCode === 'java' ? (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              ) : null}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '10px' }}
+                style={{ marginTop: '30px' }}
               >
                 <Select
                   showSearch
@@ -262,15 +293,6 @@ export default function TaskEditor(props: TmplListProps) {
                   {children}
                 </Select>
               </Form.Item>
-
-              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-              {isDeployment == 'deployment' ? (
-                <Form.Item name="jvm">
-                  <AceEditor mode="yaml" height={300} />
-                </Form.Item>
-              ) : (
-                ''
-              )}
 
               <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
               <Form.Item name="remark">

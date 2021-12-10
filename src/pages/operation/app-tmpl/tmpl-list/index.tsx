@@ -321,6 +321,7 @@ export default function Launch() {
                         query: {
                           type: 'edit',
                           templateCode: record.templateCode,
+                          languageCode: record?.languageCode,
                         },
                       })
                     }
@@ -334,6 +335,7 @@ export default function Launch() {
                         query: {
                           type: 'info',
                           templateCode: record.templateCode,
+                          languageCode: record?.languageCode,
                         },
                       })
                     }
@@ -349,6 +351,7 @@ export default function Launch() {
                         pathname: 'push',
                         query: {
                           templateCode: record?.templateCode,
+                          languageCode: record?.languageCode,
                         },
                       });
                     }}

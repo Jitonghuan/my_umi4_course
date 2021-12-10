@@ -37,6 +37,7 @@ export default function DemoPageTb(porps: any) {
   }, []);
   //进入页面加载信息
   const templateCode: string = porps.history.location.query.templateCode;
+  const languageCode = porps.history.location.query.languageCode;
   const tmplDetialResult = (templateCode: string) => {
     getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
       if (res.success) {
@@ -111,11 +112,18 @@ export default function DemoPageTb(porps: any) {
                 <Table.Column title="Key" dataIndex="key" width="10%" />
                 <Table.Column title="缺省值" dataIndex="value" width="20%" ellipsis />
               </Table>
+              {templateTypes == 'deployment' && languageCode === 'java' && <span>JVM参数:</span>}
+
+              {templateTypes == 'deployment' && languageCode === 'java' && (
+                <Form.Item name="jvm">
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              )}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '50px' }}
+                style={{ marginTop: '30px' }}
               >
                 <Select showSearch style={{ width: 220 }} options={categoryData} disabled={isDisabled} />
               </Form.Item>
@@ -133,13 +141,6 @@ export default function DemoPageTb(porps: any) {
                 </Select>
               </Form.Item>
 
-              {templateTypes == 'deployment' && <span>JVM参数:</span>}
-
-              {templateTypes == 'deployment' && (
-                <Form.Item name="jvm">
-                  <AceEditor mode="yaml" height={300} />
-                </Form.Item>
-              )}
               <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
               <Form.Item name="remark">
                 <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>

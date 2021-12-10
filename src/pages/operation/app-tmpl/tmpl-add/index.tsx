@@ -33,6 +33,7 @@ export default function DemoPageTb(porps: any) {
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
   const [isDeployment, setIsDeployment] = useState<string>();
+  const [languageCurrent, setLanguageCurrent] = useState<string>('');
   const handleChange = (next: any[]) => {
     setSource(next);
   };
@@ -105,32 +106,60 @@ export default function DemoPageTb(porps: any) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    // console.log('tmplConfigurableItem:', tmplConfigurableItem);
-    postRequest(APIS.create, {
-      data: {
-        templateName: value.templateName,
-        templateType: value.templateType,
-        templateValue: value.templateValue,
-        appCategoryCode: value.appCategoryCode || '',
-        envCodes: value.envCodes || [],
-        tmplConfigurableItem: tmplConfigurableItem || {},
-        languageCode: value?.languageCode,
-        jvm: value?.jvm,
-        remark: value?.remark,
-      },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas = resp.data || [];
-        setEnvDatas(datas.envCodes);
-        setAppCategoryCode(datas.appCategoryCode);
 
-        history.push({
-          pathname: 'tmpl-list',
-        });
-      }
-    });
+    if (value?.languageCode === 'java') {
+      postRequest(APIS.create, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: value.envCodes || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          languageCode: value?.languageCode,
+          jvm: value?.jvm,
+          remark: value?.remark,
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          setEnvDatas(datas.envCodes);
+          setAppCategoryCode(datas.appCategoryCode);
+
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      });
+    } else {
+      postRequest(APIS.create, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: value.envCodes || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          languageCode: value?.languageCode,
+          remark: value?.remark,
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          setEnvDatas(datas.envCodes);
+          setAppCategoryCode(datas.appCategoryCode);
+
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      });
+    }
   };
 
+  const selectLanguage = (values: any) => {
+    setLanguageCurrent(values);
+  };
   return (
     <PageContainer className="tmpl-detail">
       <ContentCard>
@@ -149,7 +178,13 @@ export default function DemoPageTb(porps: any) {
             </Col>
             <Col span={6}>
               <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
-                <Select showSearch style={{ width: 150 }} options={appDevelopLanguageOptions} disabled={isDisabled} />
+                <Select
+                  showSearch
+                  style={{ width: 150 }}
+                  options={appDevelopLanguageOptions}
+                  onChange={selectLanguage}
+                  disabled={isDisabled}
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -184,6 +219,14 @@ export default function DemoPageTb(porps: any) {
                   ]}
                 />
               </Form.Item>
+              {isDeployment === 'deployment' && languageCurrent === 'java' ? <span>JVM参数:</span> : ''}
+              {isDeployment === 'deployment' && languageCurrent === 'java' ? (
+                <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
+                  <AceEditor mode="yaml" height={300} />
+                </Form.Item>
+              ) : (
+                ''
+              )}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
@@ -214,14 +257,6 @@ export default function DemoPageTb(porps: any) {
                 </Select>
               </Form.Item>
 
-              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-              {isDeployment == 'deployment' ? (
-                <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>
-                  <AceEditor mode="yaml" height={300} />
-                </Form.Item>
-              ) : (
-                ''
-              )}
               <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
               <Form.Item name="remark">
                 <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
