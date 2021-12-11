@@ -267,16 +267,16 @@ const Coms = (props: any) => {
   return (
     <PageContainer className="monitor-board">
       <Card className="monitor-board-content">
-        <Tabs onChange={handleTabChange} activeKey={currentTab} type="card">
-          {tabList?.map((item) => (
-            <Tabs.TabPane tab={item.label} key={item.value}></Tabs.TabPane>
+        <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
+          {tabData?.map((el) => (
+            <Tabs.TabPane key={el.key} tab={el.title} />
           ))}
         </Tabs>
-        <div style={{ marginLeft: 28, fontSize: 16 }}>
+        {/* <div style={{ marginLeft: 28, fontSize: 16 }}>
           <span>选择集群:</span>
           <Select style={{ width: 140 }}></Select>
         </div>
-        <Divider />
+        <Divider /> */}
         <div className="monitor-tabs-content">
           <Spin spinning={resLoading}>
             <h3 className="monitor-tabs-content-title">
