@@ -7,7 +7,7 @@ import VCCardLayout from '@cffe/vc-b-card-layout';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import { queryEnvLists, queryResUseData, queryNodeUseDataApi, queryUseMarketData } from './service';
-import { resUseTableSchema } from './schema';
+import { resUseTableSchema, podUseTableSchema } from './schema';
 
 import './index.less';
 import { getColorByValue } from './../util';
@@ -291,6 +291,52 @@ const Coms = (props: any) => {
           <div className="table-caption" style={{ marginTop: 28 }}>
             <h3 className="monitor-tabs-content-title" style={{ margin: 0 }}>
               节点资源明细
+            </h3>
+            <Form form={searchField} layout="inline">
+              <Form.Item name="keyword">
+                <Input.Search placeholder="搜索主机名、IP" style={{ width: 320 }} onSearch={handleSearchRes} />
+              </Form.Item>
+            </Form>
+          </div>
+
+          <div className="monitor-tabs-content-sec">
+            <HulkTable
+              rowKey="id"
+              size="small"
+              columns={podUseTableSchema as any}
+              scroll={{ y: 313 }}
+              {...tableProps}
+              customColumnMap={{
+                // ip: (value, record) => {
+                //   return <span className="monitor-tabs-content-ip" onClick={() => handleIpClick(record)}>{record.ip}</span>
+                // },
+                cpuUsageRate: (value, record) => {
+                  return (
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
+                      {value}%
+                    </span>
+                  );
+                },
+                memoryUsageRate: (value, record) => {
+                  return (
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
+                      {value}%
+                    </span>
+                  );
+                },
+                diskUsageRate: (value, record) => {
+                  return (
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
+                      {value}%
+                    </span>
+                  );
+                },
+              }}
+            />
+          </div>
+          <div className="table-caption" style={{ marginTop: 28 }}>
+            <h3 className="monitor-tabs-content-title" style={{ margin: 0 }}>
+              Pod资源明细
             </h3>
             <Form form={searchField} layout="inline">
               <Form.Item name="keyword">
