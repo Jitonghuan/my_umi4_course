@@ -4,7 +4,13 @@ import { Drawer, Form, Input, Radio, Select, DatePicker, Button, Table } from 'a
 import { FeContext } from '@/common/hooks';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
 import { createPlanSchemaColumns } from '../../schema';
-import { addPublishApplyReq, queryAppGroupReq, queryEnvsReq, queryPublishPlanReq } from '@/pages/publish/service';
+import {
+  addPublishApplyReq,
+  queryAppGroupReq,
+  queryEnvsReq,
+  queryPublishPlanReq,
+  queryPlanNoApplyRel,
+} from '@/pages/publish/service';
 
 export interface IProps {
   visible: boolean;
@@ -49,7 +55,7 @@ const AddDrawer = (props: IProps) => {
   // 根据应用分类和应用组查询未上线的计划
   const queryDeployPlan = (appCategoryCode: string, appGroupCode: string, deployStatus: number) => {
     setDeployPlanData([]);
-    queryPublishPlanReq({ appGroupCode, appCategoryCode, deployStatus }).then((datas) => {
+    queryPlanNoApplyRel({ appGroupCode, appCategoryCode, deployStatus }).then((datas) => {
       setDeployPlanData(
         datas.map((data: any) => {
           return {

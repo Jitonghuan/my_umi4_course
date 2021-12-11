@@ -114,7 +114,8 @@ export const deleteFunc = (params: { funcId: string }) => delRequest(`${deleteFu
 
 /** 发布计划相关 */
 /** 查询发布计划列表 */
-export const queryPublishPlanUrl = `${appConfig.apiPrefix}/appManage/group/list`;
+export const queryPublishPlanUrl = `${appConfig.apiPrefix}/publishManage/plan/list`;
+export const queryPlanNoApplyRelUrl = `${appConfig.apiPrefix}/planNoApplyRel/list`;
 
 export const queryPublishPlanReq = (params: {
   id?: number; //发布功能的数据库⾃增ID
@@ -128,6 +129,26 @@ export const queryPublishPlanReq = (params: {
   pageSize?: number; //分⻚⼤⼩
 }) =>
   getRequest(queryPublishPlanUrl, {
+    data: params,
+  }).then((resp) => {
+    if (resp.success) {
+      return resp?.data?.dataSource || [];
+    }
+    return [];
+  });
+
+export const queryPlanNoApplyRel = (params: {
+  id?: number; //发布功能的数据库⾃增ID
+  planID?: string; //发布计划的UUID
+  deployer?: string; //部署⼈---⽀持模糊搜索
+  preDeployTime?: string; //预发布时间---⽀持模糊搜索
+  appGroupCode?: string; //应⽤组CODE
+  appCategoryCode?: string; //应⽤分类CODE
+  deployStatus?: number; //发布状态0/1/2 未发布/已发布/已上线
+  pageIndex?: number; //分⻚索引
+  pageSize?: number; //分⻚⼤⼩
+}) =>
+  getRequest(queryPlanNoApplyRelUrl, {
     data: params,
   }).then((resp) => {
     if (resp.success) {
