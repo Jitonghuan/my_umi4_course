@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import { Tabs, Card, Form, Input, Spin, Select, Divider } from 'antd';
+import { Tabs, Card, Form, Input, Spin } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
 import PageContainer from '@/components/page-container';
@@ -62,11 +62,6 @@ type IMarket = {
 const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
   const [currentTab, setCurrentTab] = useState<string>('');
-  const tabList = [
-    { label: 'DEV', value: 'dev' },
-    { label: 'PRE', value: 'pre' },
-    { label: 'PROD', value: 'prod' },
-  ];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
   const [useMarket, setUseMarket] = useState<IMarket[]>([]);
   const [searchParams, setSearchParams] = useState<any>();
@@ -272,11 +267,7 @@ const Coms = (props: any) => {
             <Tabs.TabPane key={el.key} tab={el.title} />
           ))}
         </Tabs>
-        {/* <div style={{ marginLeft: 28, fontSize: 16 }}>
-          <span>选择集群:</span>
-          <Select style={{ width: 140 }}></Select>
-        </div>
-        <Divider /> */}
+
         <div className="monitor-tabs-content">
           <Spin spinning={resLoading}>
             <h3 className="monitor-tabs-content-title">
