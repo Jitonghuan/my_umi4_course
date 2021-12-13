@@ -1,12 +1,12 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Tabs, Card, Form, Input, Spin, Select, Divider } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
-
+import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { queryEnvLists, queryResUseData, queryNodeUseDataApi, queryUseMarketData } from './service';
+import { queryEnvLists, queryResUseData, queryNodeUseDataApi, queryUseMarketData, queryClustersData } from './service';
 import { resUseTableSchema, podUseTableSchema } from './schema';
 
 import './index.less';
@@ -61,29 +61,31 @@ type IMarket = {
  */
 const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
-  const [currentTab, setCurrentTab] = useState<string>('');
+  const [currentTab, setCurrentTab] = useState<string>('dev');
   const tabList = [
     { label: 'DEV', value: 'dev' },
     { label: 'PRE', value: 'pre' },
+    { label: 'TEST', value: 'test' },
     { label: 'PROD', value: 'prod' },
   ];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
   const [useMarket, setUseMarket] = useState<IMarket[]>([]);
   const [searchParams, setSearchParams] = useState<any>();
-  // const [nodeDetailShow, setNodeDetailShow] = useState<boolean>(false);
+  const [ipDetailShow, setIpDetailShow] = useState<boolean>(false);
   // const prevNode = useRef<INode>()
   const [resLoading, setResLoading] = useState<boolean>(false);
   const [searchField] = Form.useForm();
+  const [clusterList, setClusterList] = useState<any>([]);
 
-  // 查询机构列表
-  const queryEnvList = () => {
-    queryEnvLists().then((list) => {
-      setTabData(list);
-      if (list.length) {
-        setCurrentTab(`${list[0].key}`);
-      }
-    });
-  };
+  // // 查询机构列表
+  // const queryEnvList = () => {
+  //   queryEnvLists().then((list) => {
+  //     setTabData(list);
+  //     if (list.length) {
+  //       setCurrentTab(`${list[0].key}`);
+  //     }
+  //   });
+  // };
 
   // 查询资源使用情况
   const queryResData = () => {
@@ -146,7 +148,10 @@ const Coms = (props: any) => {
   };
 
   useEffect(() => {
-    queryEnvList();
+    queryClustersData({ envTypeCode: currentTab }).then((resp) => {
+      setClusterList(res);
+    });
+    // queryEnvList();
   }, []);
 
   useEffect(() => {
@@ -162,13 +167,12 @@ const Coms = (props: any) => {
     setCurrentTab(activeKey);
   };
 
-  // const handleIpClick = (record: INode) => {
-  //   if (record.href) {
-  //     prevNode.current = record;
-  //     setNodeDetailShow(true);
-  //   }
-  // }
+  const handleIpClick = (record: any) => {
+    // prevNode.current = record;
+    setIpDetailShow(true);
+  };
 
+  const handlePodClick = () => {};
   // 页面刷新
   const handleRefresh = () => {
     queryResData();
@@ -230,6 +234,13 @@ const Coms = (props: any) => {
     setSearchParams(searchField.getFieldsValue());
   };
 
+  const handleOk = () => {
+    setIpDetailShow(false);
+  };
+
+  const handleCancel = () => {
+    setIpDetailShow(false);
+  };
   // 顶部的 card
   const renderCard = (record: ICard) => {
     const { mode = '1', title, value = '-', unit = '', dataSource = [] } = record;
@@ -267,16 +278,17 @@ const Coms = (props: any) => {
   return (
     <PageContainer className="monitor-board">
       <Card className="monitor-board-content">
+        <DashboardsModal ipDetailVisiable={ipDetailShow} onOk={handleOk} onCancel={handleCancel} />
         <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
-          {tabData?.map((el) => (
-            <Tabs.TabPane key={el.key} tab={el.title} />
+          {tabList?.map((el) => (
+            <Tabs.TabPane key={el.value} tab={el.label} />
           ))}
         </Tabs>
-        {/* <div style={{ marginLeft: 28, fontSize: 16 }}>
+        <div style={{ marginLeft: 28, fontSize: 16, marginTop: 14 }}>
           <span>选择集群:</span>
-          <Select style={{ width: 140 }}></Select>
+          <Select style={{ width: 140 }} options={clusterList}></Select>
         </div>
-        <Divider /> */}
+        <Divider />
         <div className="monitor-tabs-content">
           <Spin spinning={resLoading}>
             <h3 className="monitor-tabs-content-title">
@@ -307,9 +319,13 @@ const Coms = (props: any) => {
               scroll={{ y: 313 }}
               {...tableProps}
               customColumnMap={{
-                // ip: (value, record) => {
-                //   return <span className="monitor-tabs-content-ip" onClick={() => handleIpClick(record)}>{record.ip}</span>
-                // },
+                ip: (value, record) => {
+                  return (
+                    <span className="monitor-tabs-content-ip" onClick={() => handleIpClick(record)}>
+                      {record.ip}
+                    </span>
+                  );
+                },
                 cpuUsageRate: (value, record) => {
                   return (
                     <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
@@ -352,9 +368,13 @@ const Coms = (props: any) => {
               scroll={{ y: 313 }}
               {...tableProps}
               customColumnMap={{
-                // ip: (value, record) => {
-                //   return <span className="monitor-tabs-content-ip" onClick={() => handleIpClick(record)}>{record.ip}</span>
-                // },
+                ip: (value, record) => {
+                  return (
+                    <span className="monitor-tabs-content-ip" onClick={() => handlePodClick()}>
+                      {record.ip}
+                    </span>
+                  );
+                },
                 cpuUsageRate: (value, record) => {
                   return (
                     <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>

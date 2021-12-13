@@ -95,3 +95,21 @@ export const queryUseMarketData = (params: { clusterId: string }) =>
     }
     return [];
   });
+
+/**
+ * 集群查询
+ */
+export const queryClustersUrl = `${appConfig.apiPrefix}/monitorManage/clusters`;
+export const queryClustersData = (params: { envTypeCode: string }) =>
+  getRequest(queryClustersUrl, { data: params }).then((resp: any) => {
+    if (resp.success) {
+      let data = resp?.data;
+      let clusterData: any = [];
+      data.map((item: string) => {
+        clusterData.push({ label: item, value: item });
+      });
+
+      return clusterData;
+    }
+    return [];
+  });
