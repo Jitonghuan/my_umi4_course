@@ -1,16 +1,72 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import { Tabs, Card, Form, Input, Spin, Select, Divider } from 'antd';
+import { Tabs, Card, Form, Input, Spin, Select, Divider, Button } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { queryEnvLists, queryResUseData, queryNodeUseDataApi, queryUseMarketData, queryClustersData } from './service';
+import {
+  useQueryNodeCpu,
+  usequeryNodeMem,
+  useQueryNodeDisk,
+  useQueryNodeLoad,
+  useQueryNodeIO,
+  useQueryNodeFile,
+  useQueryNodeSocket,
+  useQueryNodeNetWork,
+} from './dashboard/hooks';
+import {
+  queryEnvLists,
+  queryResUseData,
+  queryNodeUseDataApi,
+  queryUseMarketData,
+  queryClustersData,
+  queryPodUseData,
+  queryPodUrl,
+} from './service';
 import { resUseTableSchema, podUseTableSchema } from './schema';
 
 import './index.less';
 import { getColorByValue } from './../util';
+export const START_TIME_ENUMS = [
+  {
+    label: 'Last 15 minutes',
+    value: 15 * 60 * 1000,
+  },
+  {
+    label: 'Last 30 minutes',
+    value: 30 * 60 * 1000,
+  },
+  {
+    label: 'Last 1 hours',
+    value: 60 * 60 * 1000,
+  },
+  {
+    label: 'Last 6 hours',
+    value: 6 * 60 * 60 * 1000,
+  },
+  {
+    label: 'Last 12 hours',
+    value: 12 * 60 * 60 * 1000,
+  },
+  {
+    label: 'Last 24 hours',
+    value: 24 * 60 * 60 * 1000,
+  },
+  {
+    label: 'Last 3 days',
+    value: 24 * 60 * 60 * 1000 * 3,
+  },
+  {
+    label: 'Last 7 days',
+    value: 24 * 60 * 60 * 1000 * 7,
+  },
+  {
+    label: 'Last 30 days',
+    value: 24 * 60 * 60 * 1000 * 30,
+  },
+];
 
 type ITab = {
   /** key */
@@ -74,28 +130,68 @@ const Coms = (props: any) => {
   const [ipDetailShow, setIpDetailShow] = useState<boolean>(false);
   // const prevNode = useRef<INode>()
   const [resLoading, setResLoading] = useState<boolean>(false);
+  const [podLoading, setPodLoading] = useState<boolean>(false);
+  const [podDataSource, setPodDataSource] = useState<any>([]);
   const [searchField] = Form.useForm();
   const [clusterList, setClusterList] = useState<any>([]);
+  const [currentCluster, setCurrentCluster] = useState<any>();
+  const [queryNodeCpuData, nodeCpuloading, queryNodeCpu] = useQueryNodeCpu();
+  const [queryNodeMemData, nodeMemloading, queryNodeMem] = usequeryNodeMem();
+  const [queryNodeDiskData, nodeDiskloading, queryNodeDisk] = useQueryNodeDisk();
+  const [queryNodeLoadData, nodeLoadloading, queryNodeLoad] = useQueryNodeLoad();
+  const [queryNodeIOData, nodeIoloading, queryNodeIO] = useQueryNodeIO();
+  const [queryNodeFileData, nodeFileloading, queryNodeFile] = useQueryNodeFile();
+  const [queryNodeSocketData, nodeSocketloading, queryNodeSocket] = useQueryNodeSocket();
+  const [queryNodeNetWorkData, nodeNetWorkloading, queryNodeNetWork] = useQueryNodeNetWork();
 
+  // 请求开始时间，由当前时间往前
+  const [startTime, setStartTime] = useState<number>(15 * 60 * 1000);
+  const now = new Date().getTime();
+  //默认传最近30分钟，处理为秒级的时间戳
+  let start = Number((now - startTime) / 1000).toString();
+  let end = Number(now / 1000).toString();
+  const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
+  const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
+
+  // 选择就近时间触发的事件
+  const selectRelativeTime = (value: any) => {
+    const now = new Date().getTime();
+    setStartTime(value);
+    let startTimepl = Number((now - value) / 1000).toString();
+    let endTimepl = Number(now / 1000).toString();
+    setStartTimestamp(startTimepl);
+    setEndTimestamp(endTimepl);
+  };
   // // 查询机构列表
-  // const queryEnvList = () => {
-  //   queryEnvLists().then((list) => {
-  //     setTabData(list);
-  //     if (list.length) {
-  //       setCurrentTab(`${list[0].key}`);
-  //     }
-  //   });
-  // };
+  const selectCluster = (param: any) => {
+    setCurrentCluster(param?.value);
+    queryResData(param?.value);
+    queryPodData(param?.value);
+    reset();
+    queryNodeList({ clusterId: param?.value });
+    queryUseMarket(param?.value);
+  };
 
   // 查询资源使用情况
-  const queryResData = () => {
+  const queryResData = (value: any) => {
     setResLoading(true);
-    queryResUseData({ clusterId: currentTab })
+    queryResUseData({ clusterId: value })
       .then((res) => {
         setCardDataLists(res as ICard[]);
       })
       .finally(() => {
         setResLoading(false);
+      });
+  };
+  //查询pod列表数据    queryPodUseData
+  const queryPodData = (value: any) => {
+    setPodLoading(true);
+    queryPodUseData({ clusterId: value, pageIdex: 1, pageSize: 20 })
+      .then((res) => {
+        setPodDataSource(res);
+      })
+      .finally(() => {
+        setPodLoading(false);
       });
   };
 
@@ -117,10 +213,11 @@ const Coms = (props: any) => {
       showSizeChanger: true,
       pageSizeOptions: ['20', '50', '100', '1000'],
     },
+
     formatRequestParams: (params) => {
       return {
         ...params,
-        clusterId: currentTab,
+        clusterId: params?.clusterId,
       };
     },
     formatResult: (resp) => {
@@ -141,44 +238,57 @@ const Coms = (props: any) => {
   });
 
   // 查询已安装大盘
-  const queryUseMarket = () => {
-    queryUseMarketData({ clusterId: currentTab }).then((res) => {
+  const queryUseMarket = (value: any) => {
+    queryUseMarketData({ clusterId: value }).then((res) => {
       setUseMarket(res);
     });
   };
 
   useEffect(() => {
-    queryClustersData({ envTypeCode: currentTab }).then((resp) => {
-      setClusterList(res);
-    });
-    // queryEnvList();
-  }, []);
-
-  useEffect(() => {
     if (currentTab) {
-      queryResData();
-      reset();
-      queryNodeList();
-      queryUseMarket();
+      queryClustersData({ envTypeCode: currentTab }).then((resp) => {
+        setClusterList(resp);
+        setCurrentCluster(resp[0]?.value);
+
+        if (resp[0]?.value) {
+          queryResData(resp[0]?.value);
+          queryPodData(resp[0]?.value);
+          reset();
+          queryNodeList({ clusterId: resp[0]?.value });
+          // queryNodeList(resp[0]?.value);
+          queryUseMarket(resp[0]?.value);
+        } else {
+          return;
+        }
+      });
     }
-  }, [currentTab]);
+  }, [currentTab, currentCluster]);
 
   const handleTabChange = (activeKey: string) => {
     setCurrentTab(activeKey);
   };
 
-  const handleIpClick = (record: any) => {
+  const handleIpClick = (ip: string) => {
     // prevNode.current = record;
     setIpDetailShow(true);
+    queryNodeCpu(currentCluster, ip, startTimestamp, endTimestamp);
+    queryNodeMem(currentCluster, ip, startTimestamp, endTimestamp);
+    queryNodeDisk(currentCluster, ip, startTimestamp, endTimestamp);
+    queryNodeLoad(currentCluster, ip, startTimestamp, endTimestamp);
+    queryNodeIO(currentCluster, ip, startTimestamp, endTimestamp);
+    queryNodeFile(currentCluster, ip, startTimestamp, endTimestamp);
+    queryNodeSocket(currentCluster, ip, startTimestamp, endTimestamp);
+    queryNodeNetWork(currentCluster, ip, startTimestamp, endTimestamp);
   };
 
   const handlePodClick = () => {};
   // 页面刷新
   const handleRefresh = () => {
-    queryResData();
+    queryResData(currentCluster);
+    queryPodData(currentCluster);
     reset();
-    queryNodeList();
-    queryUseMarket();
+    queryNodeList({ clusterId: currentCluster });
+    queryUseMarket(currentCluster);
   };
 
   // 获取资源使用率图
@@ -241,6 +351,7 @@ const Coms = (props: any) => {
   const handleCancel = () => {
     setIpDetailShow(false);
   };
+
   // 顶部的 card
   const renderCard = (record: ICard) => {
     const { mode = '1', title, value = '-', unit = '', dataSource = [] } = record;
@@ -278,7 +389,21 @@ const Coms = (props: any) => {
   return (
     <PageContainer className="monitor-board">
       <Card className="monitor-board-content">
-        <DashboardsModal ipDetailVisiable={ipDetailShow} onOk={handleOk} onCancel={handleCancel} />
+        <DashboardsModal
+          ipDetailVisiable={ipDetailShow}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          initData={{
+            nodeCpu: queryNodeCpuData,
+            nodeMem: queryNodeMemData,
+            nodeDisk: queryNodeDiskData,
+            nodeLoad: queryNodeLoadData,
+            nodeIO: queryNodeIOData,
+            nodeFile: queryNodeFileData,
+            nodeSocket: queryNodeSocketData,
+            nodeNetWork: queryNodeNetWorkData,
+          }}
+        />
         <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
           {tabList?.map((el) => (
             <Tabs.TabPane key={el.value} tab={el.label} />
@@ -286,7 +411,20 @@ const Coms = (props: any) => {
         </Tabs>
         <div style={{ marginLeft: 28, fontSize: 16, marginTop: 14 }}>
           <span>选择集群:</span>
-          <Select style={{ width: 140 }} options={clusterList}></Select>
+          <Select style={{ width: 140 }} options={clusterList} onChange={selectCluster} value={currentCluster}></Select>
+          <span>
+            <Select value={startTime} onChange={selectRelativeTime} style={{ width: 140 }}>
+              <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
+              {START_TIME_ENUMS.map((time) => (
+                <Select.Option key={time.value} value={time.value}>
+                  {time.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </span>
+          <span>
+            <Button type="primary">刷新</Button>
+          </span>
         </div>
         <Divider />
         <div className="monitor-tabs-content">
@@ -315,15 +453,16 @@ const Coms = (props: any) => {
             <HulkTable
               rowKey="id"
               size="small"
-              columns={podUseTableSchema as any}
+              // dataSource={dataSource}
+              columns={resUseTableSchema as any}
               scroll={{ y: 313 }}
               {...tableProps}
               customColumnMap={{
                 ip: (value, record) => {
                   return (
-                    <span className="monitor-tabs-content-ip" onClick={() => handleIpClick(record)}>
+                    <a className="monitor-tabs-content-ip" onClick={() => handleIpClick(value)}>
                       {record.ip}
-                    </span>
+                    </a>
                   );
                 },
                 cpuUsageRate: (value, record) => {
@@ -355,7 +494,7 @@ const Coms = (props: any) => {
               Pod资源明细
             </h3>
             <Form form={searchField} layout="inline">
-              <Form.Item name="keyword">
+              <Form.Item name="keysword">
                 <Input.Search placeholder="搜索主机名、IP" style={{ width: 320 }} onSearch={handleSearchRes} />
               </Form.Item>
             </Form>
@@ -364,9 +503,10 @@ const Coms = (props: any) => {
             <HulkTable
               rowKey="id"
               size="small"
-              columns={resUseTableSchema as any}
+              columns={podUseTableSchema as any}
               scroll={{ y: 313 }}
-              {...tableProps}
+              dataSource={[]}
+              // {...tableProps}
               customColumnMap={{
                 ip: (value, record) => {
                   return (

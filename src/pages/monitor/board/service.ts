@@ -105,11 +105,32 @@ export const queryClustersData = (params: { envTypeCode: string }) =>
     if (resp.success) {
       let data = resp?.data;
       let clusterData: any = [];
-      data.map((item: string) => {
-        clusterData.push({ label: item, value: item });
+      data.map((item: any) => {
+        clusterData.push({ label: item?.clusterName, value: item?.id });
       });
 
       return clusterData;
+    }
+    return [];
+  });
+/**
+ * POD明细列表
+ */
+export const queryPodUrl = `${appConfig.apiPrefix}/monitorManage/resource/pod`;
+export const queryPodUseData = (params: {
+  clusterId?: string;
+  pageIdex?: number;
+  pageSize?: number;
+  envCode?: string;
+  keyword?: string;
+  nameSpace?: string;
+}) =>
+  getRequest(queryPodUrl, { data: params }).then((res: any) => {
+    if (res.success) {
+      let podResourceData: any = [];
+      podResourceData = res.dataSource;
+
+      return podResourceData;
     }
     return [];
   });

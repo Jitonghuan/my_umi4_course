@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { Button, Modal } from 'antd';
+import CpuUtilization from './cpu-utilization-line';
 import './index.less';
 
 export interface minitorDashboardProps {
   ipDetailVisiable?: boolean;
   onOk?: () => any;
   onCancel?: () => any;
+  initData?: any;
 }
 export default function DashboardsModal(props: minitorDashboardProps) {
   const { ipDetailVisiable, onOk, onCancel } = props;
@@ -21,15 +23,24 @@ export default function DashboardsModal(props: minitorDashboardProps) {
       width={'90%'}
       bodyStyle={{ height: '80%' }}
     >
-      <div className="section-group">
+      {/* <div className="section-group">
         11111
-        {/* <ABHistorgram data={histogramData} loading={loading} /> */}
-        {/* <ClusterTable tableData={clusterTableData} loading={loadingTable} /> */}
       </div>
       <div className="section-group">
         2222
-        {/* <ClusterAChart data={clusterAData} loading={clusterALoading} /> */}
-        {/* <ClusterBChart data={clusterBData} loading={clusterBLoading} /> */}
+      </div> */}
+      <div className="blockDiv">
+        <div className="block">
+          <CpuUtilization data={[]} loading={false} />
+        </div>
+        <div className="block"></div>
+        <div className="block"></div>
+        <div className="block"></div>
+        <div className="block"></div>
+        <div className="block"></div>
+        <div className="block"></div>
+        <div className="block"></div>
+        <div className="block"></div>
       </div>
     </Modal>
   );
