@@ -143,7 +143,7 @@ export default function DemoPageTb(porps: any) {
 
               <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
               <Form.Item name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
+                <Input.TextArea placeholder="请输入" style={{ width: 660, height: 220 }}></Input.TextArea>
               </Form.Item>
             </Col>
           </Row>

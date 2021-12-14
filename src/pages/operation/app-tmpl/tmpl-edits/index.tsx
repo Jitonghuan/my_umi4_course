@@ -296,7 +296,7 @@ export default function TaskEditor(props: TmplListProps) {
 
               <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
               <Form.Item name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 520 }}></Input.TextArea>
+                <Input.TextArea placeholder="请输入" style={{ width: 520, height: 220 }}></Input.TextArea>
               </Form.Item>
             </Col>
           </Row>
