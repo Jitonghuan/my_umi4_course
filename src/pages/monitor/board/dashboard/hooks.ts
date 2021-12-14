@@ -18,7 +18,30 @@ export function useQueryNodeCpu() {
     await getRequest(APIS.queryNodeCpu, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
-          setQueryNodeCpuData(res?.data);
+          let dataSource = res?.data;
+          let nodeCpuDataArry: any = [];
+          for (const key in dataSource) {
+            if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
+              const element = dataSource[key];
+              if (key === 'nodeCpuSys') {
+                dataSource['nodeCpuSys'].map((ele: any) => {
+                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                });
+              }
+              if (key === 'nodeCpuTotal') {
+                dataSource['nodeCpuTotal'].map((ele: any) => {
+                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                });
+              }
+              if (key === 'nodeCpuUser') {
+                dataSource['nodeCpuUser'].map((ele: any) => {
+                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                });
+              }
+            }
+          }
+
+          setQueryNodeCpuData(nodeCpuDataArry);
         }
       })
       .finally(() => {
@@ -38,7 +61,13 @@ export function usequeryNodeMem() {
     getRequest(APIS.queryNodeMem, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
-          setQueryNodeMemData(res?.data);
+          let nodeMemDataArry: any = [];
+          let dataSource = res?.data.nodeMem;
+          dataSource.map((item: any) => {
+            nodeMemDataArry.push({ time: item[0], precentage: item[1].toFixed(1) });
+          });
+
+          setQueryNodeMemData(nodeMemDataArry);
         }
       })
       .finally(() => {
@@ -58,6 +87,11 @@ export function useQueryNodeDisk() {
     getRequest(APIS.queryNodeDisk, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
+          let nodeDiskDataArry: any = [];
+          let dataSource = res?.data.nodeMem;
+          dataSource.map((item: any) => {
+            nodeDiskDataArry.push({ time: item[0], precentage: item[1].toFixed(1) });
+          });
           setQueryNodeDiskData(res?.data);
         }
       })
@@ -78,7 +112,30 @@ export function useQueryNodeLoad() {
     getRequest(APIS.queryNodeLoad, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
-          setQueryNodeLoadData(res?.data);
+          let dataSource = res?.data;
+          let nodeLoadDataArry: any = [];
+          for (const key in dataSource) {
+            if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
+              const element = dataSource[key];
+              if (key === 'nodeLoad1') {
+                dataSource['nodeLoad1'].map((ele: any) => {
+                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                });
+              }
+              if (key === 'nodeLoad5') {
+                dataSource['nodeCpuTotal'].map((ele: any) => {
+                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                });
+              }
+              if (key === 'nodeLoad15') {
+                dataSource['nodeCpuUser'].map((ele: any) => {
+                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                });
+              }
+            }
+          }
+
+          setQueryNodeLoadData(nodeLoadDataArry);
         }
       })
       .finally(() => {

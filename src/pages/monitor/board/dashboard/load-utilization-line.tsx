@@ -12,7 +12,7 @@ export interface ChartCaseListProps {
   loading?: boolean;
 }
 const { ColorContainer } = colorUtil.context;
-export default function CpuUsingLine(props: ChartCaseListProps) {
+export default function LoadUsingLine(props: ChartCaseListProps) {
   const config = {
     data,
     // padding:[10,10,20,20],
@@ -32,7 +32,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
     // data-loading={loading}
     >
       <header>
-        <h3>cpu利用率折线图</h3>
+        <h3>LOAD</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>

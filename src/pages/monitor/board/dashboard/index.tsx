@@ -10,7 +10,7 @@ export interface minitorDashboardProps {
   initData?: any;
 }
 export default function DashboardsModal(props: minitorDashboardProps) {
-  const { ipDetailVisiable, onOk, onCancel } = props;
+  const { ipDetailVisiable, onOk, onCancel, initData } = props;
   useEffect(() => {}, []);
 
   return (
@@ -31,7 +31,7 @@ export default function DashboardsModal(props: minitorDashboardProps) {
       </div> */}
       <div className="blockDiv">
         <div className="block">
-          <CpuUtilization data={[]} loading={false} />
+          <CpuUtilization data={initData?.nodeCpu} loading={false} />
         </div>
         <div className="block"></div>
         <div className="block"></div>

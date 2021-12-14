@@ -3,7 +3,7 @@
 // @create 2021/08/09 10:30
 
 import React, { useMemo, useState, useEffect } from 'react';
-import { Line } from '@ant-design/charts';
+import { Area } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
 import { getRequest } from '@/utils/request';
 import * as APIS from './service';
@@ -12,17 +12,20 @@ export interface ChartCaseListProps {
   loading?: boolean;
 }
 const { ColorContainer } = colorUtil.context;
-export default function CpuUsingLine(props: ChartCaseListProps) {
+export default function MemoryUsingLine(props: ChartCaseListProps) {
   const config = {
     data,
-    // padding:[10,10,20,20],
     xField: 'Date',
     yField: 'scales',
     xAxis: {
-      // type: 'timeCat',
+      range: [0, 1],
       tickCount: 5,
     },
-    smooth: true,
+    areaStyle: () => {
+      return {
+        fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
+      };
+    },
     width: 550,
     height: 260,
   };
@@ -32,12 +35,12 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
     // data-loading={loading}
     >
       <header>
-        <h3>cpu利用率折线图</h3>
+        <h3>内存使用率折线面积图</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>
           <ColorContainer roleKeys={['color']}>
-            <Line {...config} />
+            <Area {...config} />
           </ColorContainer>
         </div>
       </div>
