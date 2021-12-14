@@ -185,52 +185,54 @@ export default function OperatorScheduling() {
     }
   };
   //患者和操作员查询
+  let arryAp: any = [];
+  let arryAO: any = [];
+  let arryBp: any = [];
+  let arryBO: any = [];
   useEffect(() => {
     getRequest(APIS.listClusterUser, { data: { envCode: 'hbos-test' } }).then((resp) => {
       if (resp?.success) {
         let dataSource = resp?.data;
+
         dataSource.map((ele: any) => {
           if (ele?.userCluster === 'cluster_a' && ele?.userType === 'patient') {
             let userType = ele?.userType;
             let userCluster = ele?.userCluster;
             let userId = ele?.userId;
-            let dataArry = [];
-            dataArry.push({ userType, userCluster, userId });
-            console.log('clusterA_patientData', dataArry);
-            localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(dataArry);
-            setClusterA_patientData(dataArry);
+            arryAp.push({ userType, userCluster, userId });
+
+            localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(arryAp);
           }
           if (ele?.userCluster === 'cluster_b' && ele?.userType === 'patient') {
             let userType = ele?.userType;
             let userCluster = ele?.userCluster;
             let userId = ele?.userId;
-            let dataArry = [];
-            dataArry.push({ userType, userCluster, userId });
+            arryBp.push({ userType, userCluster, userId });
             // clusterB_patientData.push({type,cluster,id})
-            localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(dataArry);
-            setClusterB_patientData(dataArry);
+            localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(arryBp);
           }
           if (ele?.userCluster === 'cluster_a' && ele?.userType === 'operator') {
             let userType = ele?.userType;
             let userCluster = ele?.userCluster;
             let userId = ele?.userId;
-            let dataArry = [];
-            dataArry.push({ userType, userCluster, userId });
+            arryAO.push({ userType, userCluster, userId });
             // clusterA_operatorData.push({type,cluster,id})
-            localStorage.CLUSTERA_OPERATOR_DATA = JSON.stringify(dataArry);
-            setClusterA_operatorData(dataArry);
+            localStorage.CLUSTERA_OPERATOR_DATA = JSON.stringify(arryAO);
           }
           if (ele?.userCluster === 'cluster_b' && ele?.userType === 'operator') {
             let userType = ele?.userType;
             let userCluster = ele?.userCluster;
             let userId = ele?.userId;
-            let dataArry = [];
-            dataArry.push({ userType, userCluster, userId });
+            arryBO.push({ userType, userCluster, userId });
             // clusterB_operatorData.push({type,cluster,id})
-            setClusterB_operatorData(dataArry);
-            localStorage.CLUSTERB_OPERATOR_DATA = JSON.stringify(dataArry);
+
+            localStorage.CLUSTERB_OPERATOR_DATA = JSON.stringify(arryBO);
           }
         });
+        setClusterA_patientData(arryAp);
+        setClusterB_patientData(arryBp);
+        setClusterA_operatorData(arryAO);
+        setClusterB_operatorData(arryBO);
       }
     });
   }, []);
@@ -242,6 +244,7 @@ export default function OperatorScheduling() {
       localStorage.removeItem('CLUSTERA_PATIENT_DATA');
     };
   }, []);
+
   //患者或操作员提交按钮
   let clusterAP: any = [];
   let clusterBP: any = [];
