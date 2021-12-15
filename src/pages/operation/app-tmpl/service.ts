@@ -46,3 +46,6 @@ export const customPush = addAPIPrefix('/opsManage/appTemplate/customPush');
 
 /** 获取应用环境 */
 export const listAppEnv = addAPIPrefix('/appManage/env/listAppEnv');
+
+/** GET 标签管理列表接口  */
+export const getTagList = addAPIPrefix('/opsManage/tagManage/getTagList');
