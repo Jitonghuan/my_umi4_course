@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Card, Select, Form, Tooltip } from 'antd';
+import { Card, Select, Form, Tooltip, Tabs, Button } from 'antd';
 import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
@@ -112,7 +112,7 @@ export const RATE_ENUMS = [
 const Coms = (props: IProps) => {
   // 该组件会被作为路由组件使用，接收地址栏传参数
   const appCode = props.location?.query?.appCode;
-
+  const { TabPane } = Tabs;
   const [filter, setFilter] = useState<IFilter>({} as IFilter);
   const prevFilter = useRef<IFilter>({} as IFilter);
   const [appData, setAppData] = useState([]);
@@ -312,6 +312,9 @@ const Coms = (props: IProps) => {
                 ))}
               </Select>
             </Tooltip>
+            <span style={{ marginLeft: 4 }}>
+              <Button type="primary">刷新</Button>
+            </span>
           </div>
         </Card>
 
@@ -347,16 +350,22 @@ const Coms = (props: IProps) => {
               },
             }}
           />
-
-          <h3 className="monitor-tabs-content-title">
-            监控图表&nbsp;&nbsp;
-            <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
-          </h3>
-          <VCCardLayout grid={layoutGrid} className="monitor-app-content">
-            {appConfig.map((el, index) => (
-              <AppCard key={index} {...el} requestParams={{ ...filter, ip: curtIP, startTime, rateNum }} />
-            ))}
-          </VCCardLayout>
+          <div style={{ marginTop: 14 }}>
+            <Tabs defaultActiveKey="1" type="card">
+              <TabPane tab={<span>进程监控</span>} key="1">
+                <h3 className="monitor-tabs-content-title">
+                  监控图表&nbsp;&nbsp;
+                  <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
+                </h3>
+                <VCCardLayout grid={layoutGrid} className="monitor-app-content">
+                  {appConfig.map((el, index) => (
+                    <AppCard key={index} {...el} requestParams={{ ...filter, ip: curtIP, startTime, rateNum }} />
+                  ))}
+                </VCCardLayout>
+              </TabPane>
+              <TabPane tab={<span>基础监控</span>} key="2"></TabPane>
+            </Tabs>
+          </div>
         </Card>
       </div>
     </div>

@@ -25,17 +25,17 @@ export function useQueryNodeCpu() {
               const element = dataSource[key];
               if (key === 'nodeCpuSys') {
                 dataSource['nodeCpuSys'].map((ele: any) => {
-                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
                 });
               }
               if (key === 'nodeCpuTotal') {
                 dataSource['nodeCpuTotal'].map((ele: any) => {
-                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
                 });
               }
               if (key === 'nodeCpuUser') {
                 dataSource['nodeCpuUser'].map((ele: any) => {
-                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
                 });
               }
             }
@@ -64,7 +64,7 @@ export function usequeryNodeMem() {
           let nodeMemDataArry: any = [];
           let dataSource = res?.data.nodeMem;
           dataSource.map((item: any) => {
-            nodeMemDataArry.push({ time: item[0], precentage: item[1].toFixed(1) });
+            nodeMemDataArry.push({ time: item[0], precentage: Number(item[1]).toFixed(1) });
           });
 
           setQueryNodeMemData(nodeMemDataArry);
@@ -77,7 +77,7 @@ export function usequeryNodeMem() {
   return [queryNodeMemData, loading, queryNodeMem];
 }
 
-// 获取节点趋势图-磁盘数据
+// 获取节点趋势图-磁盘使用率数据
 export function useQueryNodeDisk() {
   const [queryNodeDiskData, setQueryNodeDiskData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -88,11 +88,24 @@ export function useQueryNodeDisk() {
       .then((res) => {
         if (res?.success) {
           let nodeDiskDataArry: any = [];
-          let dataSource = res?.data.nodeMem;
-          dataSource.map((item: any) => {
-            nodeDiskDataArry.push({ time: item[0], precentage: item[1].toFixed(1) });
-          });
-          setQueryNodeDiskData(res?.data);
+          let dataSource = res?.data;
+          for (const key in dataSource) {
+            if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
+              //   const element = object[key];
+              if (key === 'nodeDiskInode') {
+                dataSource['nodeDiskInode']?.map((ele: any) => {
+                  nodeDiskDataArry.push({ value: Number(ele[1]).toFixed(1), time: ele[0], category: key });
+                });
+              }
+              if (key === 'nodeDiskRoot') {
+                dataSource['nodeDiskRoot']?.map((ele: any) => {
+                  nodeDiskDataArry.push({ value: Number(ele[1]).toFixed(1), time: ele[0], category: key });
+                });
+              }
+            }
+          }
+
+          setQueryNodeDiskData(nodeDiskDataArry);
         }
       })
       .finally(() => {
@@ -119,17 +132,17 @@ export function useQueryNodeLoad() {
               const element = dataSource[key];
               if (key === 'nodeLoad1') {
                 dataSource['nodeLoad1'].map((ele: any) => {
-                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
                 });
               }
               if (key === 'nodeLoad5') {
                 dataSource['nodeCpuTotal'].map((ele: any) => {
-                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
                 });
               }
               if (key === 'nodeLoad15') {
                 dataSource['nodeCpuUser'].map((ele: any) => {
-                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: ele[1].toFixed(1) });
+                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
                 });
               }
             }
@@ -155,7 +168,27 @@ export function useQueryNodeIO() {
     getRequest(APIS.queryNodeIO, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
-          setQueryNodeIOData(res?.data);
+          if (res?.success) {
+            let nodeIODataArry: any = [];
+            let dataSource = res?.data;
+            for (const key in dataSource) {
+              if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
+                //   const element = object[key];
+                if (key === 'nodeIORead') {
+                  dataSource['nodeIORead']?.map((ele: any) => {
+                    nodeIODataArry.push({ time: ele[0], value: Number(ele[1]).toFixed(1), category: key });
+                  });
+                }
+                if (key === 'nodeIOWrite') {
+                  dataSource['nodeIOWrite']?.map((ele: any) => {
+                    nodeIODataArry.push({ time: ele[0], value: Number(ele[1]).toFixed(1), category: key });
+                  });
+                }
+              }
+            }
+
+            setQueryNodeIOData(nodeIODataArry);
+          }
         }
       })
       .finally(() => {
@@ -215,7 +248,25 @@ export function useQueryNodeNetWork() {
     getRequest(APIS.queryNodeNetWork, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
-          setQueryNodeNetWorkData(res?.data);
+          let nodeNetWorkDataArry: any = [];
+          let dataSource = res?.data;
+          for (const key in dataSource) {
+            if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
+              //   const element = object[key];
+              if (key === 'nodeNetReceive') {
+                dataSource['nodeNetReceive']?.map((ele: any) => {
+                  nodeNetWorkDataArry.push({ time: ele[0], value: Number(ele[1]).toFixed(1), category: key });
+                });
+              }
+              if (key === 'nodeNetTransmit') {
+                dataSource['nodeNetTransmit']?.map((ele: any) => {
+                  nodeNetWorkDataArry.push({ time: ele[0], value: Number(ele[1]).toFixed(1), category: key });
+                });
+              }
+            }
+          }
+
+          setQueryNodeNetWorkData(nodeNetWorkDataArry);
         }
       })
       .finally(() => {

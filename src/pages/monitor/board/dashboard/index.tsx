@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { Button, Modal } from 'antd';
 import CpuUtilization from './cpu-utilization-line';
+import LoadUtilization from './load-utilization-line';
+import MemroyUtilization from './memory-utilization-line';
+
 import './index.less';
 
 export interface minitorDashboardProps {
@@ -33,14 +36,18 @@ export default function DashboardsModal(props: minitorDashboardProps) {
         <div className="block">
           <CpuUtilization data={initData?.nodeCpu} loading={false} />
         </div>
+        <div className="block">
+          <LoadUtilization data={initData?.nodeLoad} loading={false} />
+        </div>
+        <div className="block">
+          <MemroyUtilization data={initData?.nodeMem} loading={false} />
+        </div>
         <div className="block"></div>
         <div className="block"></div>
         <div className="block"></div>
-        <div className="block"></div>
-        <div className="block"></div>
-        <div className="block"></div>
-        <div className="block"></div>
-        <div className="block"></div>
+        {/* <div className="block"></div> */}
+        <div className="blockLeft"></div>
+        <div className="`blockRight`"></div>
       </div>
     </Modal>
   );

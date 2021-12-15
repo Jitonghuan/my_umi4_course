@@ -412,7 +412,7 @@ const Coms = (props: any) => {
         <div style={{ marginLeft: 28, fontSize: 16, marginTop: 14 }}>
           <span>选择集群:</span>
           <Select style={{ width: 140 }} options={clusterList} onChange={selectCluster} value={currentCluster}></Select>
-          <span>
+          <span style={{ marginLeft: '62%' }}>
             <Select value={startTime} onChange={selectRelativeTime} style={{ width: 140 }}>
               <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
               {START_TIME_ENUMS.map((time) => (
@@ -422,7 +422,7 @@ const Coms = (props: any) => {
               ))}
             </Select>
           </span>
-          <span>
+          <span style={{ marginLeft: 14 }}>
             <Button type="primary">刷新</Button>
           </span>
         </div>

@@ -13,14 +13,16 @@ export interface ChartCaseListProps {
 }
 const { ColorContainer } = colorUtil.context;
 export default function LoadUsingLine(props: ChartCaseListProps) {
+  const { data, loading } = props;
   const config = {
     data,
     // padding:[10,10,20,20],
-    xField: 'Date',
-    yField: 'scales',
+    xField: 'time',
+    yField: 'precentage',
+    seriesField: 'category',
     xAxis: {
-      // type: 'timeCat',
-      tickCount: 5,
+      type: 'time',
+      // tickCount: 5,
     },
     smooth: true,
     width: 550,

@@ -36,7 +36,7 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
     // data-loading={loading}
     >
       <header>
-        <h3>内存使用率折线面积图</h3>
+        <h3>网卡流量图</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>

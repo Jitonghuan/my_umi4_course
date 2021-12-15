@@ -13,15 +13,23 @@ export interface ChartCaseListProps {
 }
 const { ColorContainer } = colorUtil.context;
 export default function CpuUsingLine(props: ChartCaseListProps) {
+  const { data, loading } = props;
   const config = {
     data,
     // padding:[10,10,20,20],
-    xField: 'Date',
-    yField: 'scales',
+    xField: 'time',
+    yField: 'precentage',
+    seriesField: 'category',
     xAxis: {
-      // type: 'timeCat',
-      tickCount: 5,
+      type: 'time',
+      // tickCount: 5,
     },
+    // yAxis: {
+    //   label: {
+    //     // 数值格式化为千分位
+    //     formatter: (v:any) => `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
+    //   },
+    // },
     smooth: true,
     width: 550,
     height: 260,
