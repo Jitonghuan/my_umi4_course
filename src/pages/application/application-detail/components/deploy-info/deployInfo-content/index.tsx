@@ -224,23 +224,6 @@ export default function DeployContent(props: DeployContentProps) {
   const selectListContainer = (getContainer: string) => {
     setCurrentContainerName(getContainer);
   };
-  // 确认回滚
-  const handleRollbackSubmit = () => {
-    postRequest(rollbackApplication, {
-      data: {
-        appCode: appData?.appCode,
-        envCode: currentEnvData,
-      },
-    })
-      .then((res: any) => {
-        if (res.sucess) {
-          message.success('应用回滚完成！');
-        }
-      })
-      .finally(() => {
-        setRollbackVisible(false);
-      });
-  };
 
   return (
     <div className={rootCls}>
@@ -513,7 +496,8 @@ export default function DeployContent(props: DeployContentProps) {
         onSave={() => {
           reloadChangeOrderData(); //刷新操作记录信息
           queryInstanceList(appData?.appCode, currentEnvData); //刷新表格信息
-          handleRollbackSubmit(); //回滚走的接口
+          setRollbackVisible(false);
+          // handleRollbackSubmit(); //回滚走的接口
           // reloadDeployData();
         }}
       />

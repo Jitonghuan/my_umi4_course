@@ -36,6 +36,8 @@ export default function Push(props: any) {
 
   //通过session缓存信息
   let tmplDetailData = JSON.parse(sessionStorage.getItem('tmplDetailData'));
+  // const [tmplName,setTmplName]=useState<string>(tmplDetailData?.templateName)
+  let tmplName = tmplDetailData?.templateName;
 
   //处理通过session传递过来的可配置项信息和jvm参数信息
   let tmplItemarry: any = [];
@@ -365,6 +367,9 @@ export default function Push(props: any) {
               重置
             </Button>
           </Form.Item>
+          <span>
+            当前模版：<Tag color="blue">{tmplName}</Tag>
+          </span>
         </Form>
       </FilterCard>
       <ContentCard>

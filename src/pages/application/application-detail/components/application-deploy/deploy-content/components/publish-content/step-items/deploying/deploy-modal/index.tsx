@@ -6,15 +6,16 @@
  */
 
 import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { Modal, Radio, Spin, message } from 'antd';
+import { Modal, Radio, Spin, message, Select } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
-import { confirmProdDeploy, queryEnvsReq } from '@/pages/application/service';
+import { confirmProdDeploy, queryEnvsReq, applyHaveNoUpPlanList } from '@/pages/application/service';
 import { IProps } from './types';
+import { getRequest, postRequest } from '@/utils/request';
 
 export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel, onOperate }: IProps) {
   const { deployStatus, deployedEnvs, deployingEnv, deployingHosBatch, jenkinsUrl } = deployInfo || {};
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode } = appData || {};
+  const { appCategoryCode, appCode } = appData || {};
 
   const [stateDeployEnv, setStateDeployEnv] = useState<string>();
   const [deployBatch, setDeployBatch] = useState(12);
@@ -24,6 +25,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
     if (!visible) return;
 
     setStateDeployEnv(deployingEnv);
+    deployApply();
   }, [visible]);
 
   useEffect(() => {
@@ -126,6 +128,12 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       </>
     );
   }, [deployInfo]);
+  const deployApply = () => {
+    getRequest(applyHaveNoUpPlanList, { data: { appCode } }).then((res) => {
+      if (res.success) {
+      }
+    });
+  };
 
   return (
     <Modal
@@ -160,6 +168,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
           id: deployInfo.id,
           hospital: stateDeployEnv!,
           batch: batch,
+          // applys
         })
           .then((res) => {
             if (!res.success) {
@@ -197,6 +206,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
             { label: '不分批', value: 0 },
           ]}
         />
+      </div>
+      <div style={{ marginTop: 8 }}>
+        <span>发布申请：</span>
+        <Select style={{ width: 140 }} mode="multiple"></Select>
       </div>
       <h3 style={{ marginTop: 20 }}>发布详情</h3>
       {deployedEnvs &&

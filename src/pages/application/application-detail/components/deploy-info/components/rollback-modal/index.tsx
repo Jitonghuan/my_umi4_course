@@ -73,12 +73,13 @@ export default function RollbackModal(props: RollbackModalProps) {
           packageVersionId: versionItem?.packageVersionId,
           owner: appData?.owner,
         },
+      }).then((res) => {
+        if (res.success) {
+          message.success('应用回滚完成！');
+          setRollbackVersions([]);
+          props.onSave?.();
+        }
       });
-
-      message.success('应用回滚完成！');
-      setRollbackVersions([]);
-
-      props.onSave?.();
     } finally {
       setPending(false);
     }
