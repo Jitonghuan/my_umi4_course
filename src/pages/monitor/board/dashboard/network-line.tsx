@@ -12,23 +12,31 @@ export interface ChartCaseListProps {
   loading?: boolean;
 }
 const { ColorContainer } = colorUtil.context;
-export default function MemoryUsingLine(props: ChartCaseListProps) {
+export default function NetWorkLine(props: ChartCaseListProps) {
   const { data, loading } = props;
   const config = {
     data,
     xField: 'time',
-    yField: 'precentage',
-    xAxis: {
-      range: [0, 1],
-      tickCount: 5,
+    yField: 'value',
+    seriesField: 'category',
+    color: ['#8bc0d6', '#60d7a7'],
+    yAxis: {
+      label: {
+        // 数值格式化为带百分号
+        formatter: (v: any) => `${v}kb/s`,
+      },
     },
-    areaStyle: () => {
-      return {
-        fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
-      };
-    },
+
+    // areaStyle: () => {
+    //   return {
+    //     fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
+    //   };
+    // },
     width: 550,
     height: 260,
+    // legend: {
+    //   position: 'top',
+    // },
   };
 
   return (

@@ -270,7 +270,7 @@ const Coms = (props: any) => {
 
   const handleIpClick = (ip: string) => {
     // prevNode.current = record;
-    setIpDetailShow(true);
+
     queryNodeCpu(currentCluster, ip, startTimestamp, endTimestamp);
     queryNodeMem(currentCluster, ip, startTimestamp, endTimestamp);
     queryNodeDisk(currentCluster, ip, startTimestamp, endTimestamp);
@@ -279,6 +279,9 @@ const Coms = (props: any) => {
     queryNodeFile(currentCluster, ip, startTimestamp, endTimestamp);
     queryNodeSocket(currentCluster, ip, startTimestamp, endTimestamp);
     queryNodeNetWork(currentCluster, ip, startTimestamp, endTimestamp);
+    setTimeout(() => {
+      setIpDetailShow(true);
+    }, 200);
   };
 
   const handlePodClick = () => {};

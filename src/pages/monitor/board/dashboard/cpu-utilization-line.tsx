@@ -5,8 +5,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Line } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
-import { getRequest } from '@/utils/request';
-import * as APIS from './service';
+import { useQueryNodeCpu } from './hooks';
 export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
@@ -14,23 +13,22 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function CpuUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
+
   const config = {
     data,
-    // padding:[10,10,20,20],
     xField: 'time',
     yField: 'precentage',
     seriesField: 'category',
     xAxis: {
-      type: 'time',
-      // tickCount: 5,
+      // tickInterval:6,
+      // tickCount:20
     },
-    // yAxis: {
-    //   label: {
-    //     // 数值格式化为千分位
-    //     formatter: (v:any) => `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
-    //   },
-    // },
-    smooth: true,
+    yAxis: {
+      label: {
+        // 数值格式化为带百分号
+        formatter: (v: any) => `${v}%`,
+      },
+    },
     width: 550,
     height: 260,
   };
@@ -40,7 +38,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
     // data-loading={loading}
     >
       <header>
-        <h3>cpu利用率折线图</h3>
+        <h3>cpu利用率</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>

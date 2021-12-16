@@ -25,17 +25,29 @@ export function useQueryNodeCpu() {
               const element = dataSource[key];
               if (key === 'nodeCpuSys') {
                 dataSource['nodeCpuSys'].map((ele: any) => {
-                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
+                  nodeCpuDataArry.push({
+                    category: key,
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    precentage: Number(ele[1]).toFixed(1),
+                  });
                 });
               }
               if (key === 'nodeCpuTotal') {
                 dataSource['nodeCpuTotal'].map((ele: any) => {
-                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
+                  nodeCpuDataArry.push({
+                    category: key,
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    precentage: Number(ele[1]).toFixed(1),
+                  });
                 });
               }
               if (key === 'nodeCpuUser') {
                 dataSource['nodeCpuUser'].map((ele: any) => {
-                  nodeCpuDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
+                  nodeCpuDataArry.push({
+                    category: key,
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    precentage: Number(ele[1]).toFixed(1),
+                  });
                 });
               }
             }
@@ -64,7 +76,11 @@ export function usequeryNodeMem() {
           let nodeMemDataArry: any = [];
           let dataSource = res?.data.nodeMem;
           dataSource.map((item: any) => {
-            nodeMemDataArry.push({ time: item[0], precentage: Number(item[1]).toFixed(1) });
+            nodeMemDataArry.push({
+              time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
+              precentage: Number(item[1]).toFixed(1),
+              category: '内存',
+            });
           });
 
           setQueryNodeMemData(nodeMemDataArry);
@@ -82,9 +98,9 @@ export function useQueryNodeDisk() {
   const [queryNodeDiskData, setQueryNodeDiskData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const queryNodeDisk = (clusterId: string, nodeIP: string, startTime: any, endTime: any) => {
+  const queryNodeDisk = async (clusterId: string, nodeIP: string, startTime: any, endTime: any) => {
     setLoading(true);
-    getRequest(APIS.queryNodeDisk, { data: { clusterId, nodeIP, startTime, endTime } })
+    await getRequest(APIS.queryNodeDisk, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
           let nodeDiskDataArry: any = [];
@@ -94,12 +110,20 @@ export function useQueryNodeDisk() {
               //   const element = object[key];
               if (key === 'nodeDiskInode') {
                 dataSource['nodeDiskInode']?.map((ele: any) => {
-                  nodeDiskDataArry.push({ value: Number(ele[1]).toFixed(1), time: ele[0], category: key });
+                  nodeDiskDataArry.push({
+                    value: Number(ele[1]).toFixed(1),
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    category: key,
+                  });
                 });
               }
               if (key === 'nodeDiskRoot') {
                 dataSource['nodeDiskRoot']?.map((ele: any) => {
-                  nodeDiskDataArry.push({ value: Number(ele[1]).toFixed(1), time: ele[0], category: key });
+                  nodeDiskDataArry.push({
+                    value: Number(ele[1]).toFixed(1),
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    category: key,
+                  });
                 });
               }
             }
@@ -131,18 +155,30 @@ export function useQueryNodeLoad() {
             if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
               const element = dataSource[key];
               if (key === 'nodeLoad1') {
-                dataSource['nodeLoad1'].map((ele: any) => {
-                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
+                dataSource['nodeLoad1']?.map((ele: any) => {
+                  nodeLoadDataArry.push({
+                    category: key,
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    precentage: Number(ele[1]).toFixed(1),
+                  });
                 });
               }
               if (key === 'nodeLoad5') {
-                dataSource['nodeCpuTotal'].map((ele: any) => {
-                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
+                dataSource['nodeLoad5']?.map((ele: any) => {
+                  nodeLoadDataArry.push({
+                    category: key,
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    precentage: Number(ele[1]).toFixed(1),
+                  });
                 });
               }
               if (key === 'nodeLoad15') {
-                dataSource['nodeCpuUser'].map((ele: any) => {
-                  nodeLoadDataArry.push({ category: key, time: ele[0], precentage: Number(ele[1]).toFixed(1) });
+                dataSource['nodeLoad15']?.map((ele: any) => {
+                  nodeLoadDataArry.push({
+                    category: key,
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    precentage: Number(ele[1]).toFixed(1),
+                  });
                 });
               }
             }
@@ -168,27 +204,33 @@ export function useQueryNodeIO() {
     getRequest(APIS.queryNodeIO, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
-          if (res?.success) {
-            let nodeIODataArry: any = [];
-            let dataSource = res?.data;
-            for (const key in dataSource) {
-              if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
-                //   const element = object[key];
-                if (key === 'nodeIORead') {
-                  dataSource['nodeIORead']?.map((ele: any) => {
-                    nodeIODataArry.push({ time: ele[0], value: Number(ele[1]).toFixed(1), category: key });
+          let nodeIODataArry: any = [];
+          let dataSource = res?.data;
+          for (const key in dataSource) {
+            if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
+              //   const element = object[key];
+              if (key === 'nodeIORead') {
+                dataSource['nodeIORead']?.map((ele: any) => {
+                  nodeIODataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(ele[1]).toFixed(1),
+                    category: '读次数（次/min)',
                   });
-                }
-                if (key === 'nodeIOWrite') {
-                  dataSource['nodeIOWrite']?.map((ele: any) => {
-                    nodeIODataArry.push({ time: ele[0], value: Number(ele[1]).toFixed(1), category: key });
+                });
+              }
+              if (key === 'nodeIOWrite') {
+                dataSource['nodeIOWrite']?.map((ele: any) => {
+                  nodeIODataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(ele[1]).toFixed(1),
+                    category: '写次数（次/min)',
                   });
-                }
+                });
               }
             }
-
-            setQueryNodeIOData(nodeIODataArry);
           }
+
+          setQueryNodeIOData(nodeIODataArry);
         }
       })
       .finally(() => {
@@ -202,13 +244,39 @@ export function useQueryNodeIO() {
 export function useQueryNodeFile() {
   const [queryNodeFileData, setQueryNodeFileData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  //上下文切换为散点图，使用文件为折线
   const queryNodeFile = (clusterId: string, nodeIP: string, startTime: any, endTime: any) => {
     setLoading(true);
     getRequest(APIS.queryNodeFile, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
-          setQueryNodeFileData(res?.data);
+          let nodeFileDataArry: any = [];
+          let dataSource = res?.data;
+          for (const key in dataSource) {
+            if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
+              //   const element = object[key];
+              if (key === 'nodeContext') {
+                dataSource['nodeContext']?.map((ele: any) => {
+                  nodeFileDataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(Number(ele[1]).toFixed(1)),
+                    category: key,
+                  });
+                });
+              }
+              if (key === 'nodeFilefd') {
+                dataSource['nodeFilefd']?.map((ele: any) => {
+                  nodeFileDataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(Number(ele[1]).toFixed(1)),
+                    category: key,
+                  });
+                });
+              }
+            }
+          }
+
+          setQueryNodeFileData(nodeFileDataArry);
         }
       })
       .finally(() => {
@@ -228,7 +296,42 @@ export function useQueryNodeSocket() {
     getRequest(APIS.queryNodeSocket, { data: { clusterId, nodeIP, startTime, endTime } })
       .then((res) => {
         if (res?.success) {
-          setQueryNodeSocketData(res?.data);
+          let nodeSocketDataArry: any = [];
+          let dataSource = res?.data;
+          for (const key in dataSource) {
+            if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
+              //   const element = object[key];
+              if (key === 'nodeTCPES') {
+                dataSource['nodeTCPES']?.map((ele: any) => {
+                  nodeSocketDataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(ele[1]).toFixed(1),
+                    category: key,
+                  });
+                });
+              }
+              if (key === 'nodeTCPTW') {
+                dataSource['nodeTCPTW']?.map((ele: any) => {
+                  nodeSocketDataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(ele[1]).toFixed(1),
+                    category: key,
+                  });
+                });
+              }
+              if (key === 'nodeTCPTotal') {
+                dataSource['nodeTCPTotal']?.map((ele: any) => {
+                  nodeSocketDataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(ele[1]).toFixed(1),
+                    category: key,
+                  });
+                });
+              }
+            }
+          }
+
+          setQueryNodeSocketData(nodeSocketDataArry);
         }
       })
       .finally(() => {
@@ -255,12 +358,20 @@ export function useQueryNodeNetWork() {
               //   const element = object[key];
               if (key === 'nodeNetReceive') {
                 dataSource['nodeNetReceive']?.map((ele: any) => {
-                  nodeNetWorkDataArry.push({ time: ele[0], value: Number(ele[1]).toFixed(1), category: key });
+                  nodeNetWorkDataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(ele[1]).toFixed(1),
+                    category: '入流量',
+                  });
                 });
               }
               if (key === 'nodeNetTransmit') {
                 dataSource['nodeNetTransmit']?.map((ele: any) => {
-                  nodeNetWorkDataArry.push({ time: ele[0], value: Number(ele[1]).toFixed(1), category: key });
+                  nodeNetWorkDataArry.push({
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    value: Number(ele[1]).toFixed(1),
+                    category: '出流量',
+                  });
                 });
               }
             }

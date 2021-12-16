@@ -20,13 +20,40 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
     yField: 'precentage',
     xAxis: {
       range: [0, 1],
-      tickCount: 5,
+      // tickCount: 5,
     },
+    yAxis: {
+      title: {
+        text: '内存',
+      },
+      label: {
+        // 数值格式化为带百分号
+        formatter: (v: any) => `${v}%`,
+      },
+    },
+    LegendCfg: {
+      legend: {
+        position: 'top-left',
+        text: '内存',
+      },
+    },
+
+    // pattern: {
+    //   type: 'dot',
+    //   cfg: {
+    //     size: 4,
+    //     padding: 4,
+    //     rotation: 0,
+    //     fill: '#gray',
+    //     isStagger: true,
+    //   },
+    // },
     areaStyle: () => {
       return {
         fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
       };
     },
+
     width: 550,
     height: 260,
   };
@@ -36,7 +63,7 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
     // data-loading={loading}
     >
       <header>
-        <h3>内存使用率折线面积图</h3>
+        <h3>内存使用率</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>

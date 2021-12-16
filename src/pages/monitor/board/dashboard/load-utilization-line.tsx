@@ -5,8 +5,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Line } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
-import { getRequest } from '@/utils/request';
-import * as APIS from './service';
 export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
@@ -16,15 +14,23 @@ export default function LoadUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
   const config = {
     data,
-    // padding:[10,10,20,20],
     xField: 'time',
     yField: 'precentage',
     seriesField: 'category',
+    color: ['#6897a7', '#8bc0d6', '#60d7a7'],
     xAxis: {
-      type: 'time',
+      // type: 'time',
       // tickCount: 5,
     },
-    smooth: true,
+    yAxis: {
+      // title:{
+      //   text:'内存'
+      // },
+      // label: {
+      //   // 数值格式化为带百分号
+      //   formatter: (v:any) => `${v}%`,
+      // },
+    },
     width: 550,
     height: 260,
   };

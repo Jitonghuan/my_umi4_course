@@ -5,28 +5,36 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Area } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
-import { getRequest } from '@/utils/request';
-import * as APIS from './service';
+
 export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
 }
 const { ColorContainer } = colorUtil.context;
-export default function MemoryUsingLine(props: ChartCaseListProps) {
+export default function DiskUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
   const config = {
-    data,
+    data: data || [],
     xField: 'time',
-    yField: 'precentage',
-    xAxis: {
-      range: [0, 1],
-      tickCount: 5,
+    yField: 'value',
+    seriesField: 'category',
+    color: ['#1890ff', '#8bc0d6'],
+    // xAxis: {
+    //   type: 'time',
+    //   mask: 'YYYY',
+    // },
+    yAxis: {
+      label: {
+        // 数值格式化为带百分号
+        formatter: (v: any) => `${v}%`,
+      },
     },
-    areaStyle: () => {
-      return {
-        fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
-      };
+    LegendCfg: {
+      legend: {
+        position: 'top-left',
+      },
     },
+
     width: 550,
     height: 260,
   };
@@ -36,7 +44,7 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
     // data-loading={loading}
     >
       <header>
-        <h3>内存使用率折线面积图</h3>
+        <h3>磁盘使用率</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>

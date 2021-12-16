@@ -3,7 +3,11 @@ import { Button, Modal } from 'antd';
 import CpuUtilization from './cpu-utilization-line';
 import LoadUtilization from './load-utilization-line';
 import MemroyUtilization from './memory-utilization-line';
-
+import DiskUtilization from './disk-utilization-line';
+import DiskIOChart from './diskIO-line';
+import NetWorkChart from './network-line';
+import FileOpen from './file-charts';
+import SocketCharts from './socket-charts';
 import './index.less';
 
 export interface minitorDashboardProps {
@@ -15,6 +19,7 @@ export interface minitorDashboardProps {
 export default function DashboardsModal(props: minitorDashboardProps) {
   const { ipDetailVisiable, onOk, onCancel, initData } = props;
   useEffect(() => {}, []);
+  console.log('initData', initData);
 
   return (
     <Modal
@@ -37,17 +42,27 @@ export default function DashboardsModal(props: minitorDashboardProps) {
           <CpuUtilization data={initData?.nodeCpu} loading={false} />
         </div>
         <div className="block">
-          <LoadUtilization data={initData?.nodeLoad} loading={false} />
-        </div>
-        <div className="block">
           <MemroyUtilization data={initData?.nodeMem} loading={false} />
         </div>
-        <div className="block"></div>
-        <div className="block"></div>
-        <div className="block"></div>
-        {/* <div className="block"></div> */}
-        <div className="blockLeft"></div>
-        <div className="`blockRight`"></div>
+        <div className="block">
+          <LoadUtilization data={initData?.nodeLoad} loading={false} />
+        </div>
+
+        <div className="block">
+          <DiskUtilization data={initData?.nodeDisk} loading={false} />
+        </div>
+        <div className="block">
+          <DiskIOChart data={initData?.nodeIO} loading={false} />
+        </div>
+        <div className="block">
+          <NetWorkChart data={initData?.nodeNetWork} loading={false} />
+        </div>
+        <div className="blockLeft">
+          <SocketCharts data={initData?.nodeSocket} loading={false} />
+        </div>
+        <div className="blockRight">
+          <FileOpen data={initData?.nodeFile} loading={false} />
+        </div>
       </div>
     </Modal>
   );
