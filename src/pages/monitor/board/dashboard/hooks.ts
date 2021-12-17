@@ -28,7 +28,7 @@ export function useQueryNodeCpu() {
                   nodeCpuDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    precentage: Number(ele[1]).toFixed(1),
+                    precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
               }
@@ -37,7 +37,7 @@ export function useQueryNodeCpu() {
                   nodeCpuDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    precentage: Number(ele[1]).toFixed(1),
+                    precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
               }
@@ -46,7 +46,7 @@ export function useQueryNodeCpu() {
                   nodeCpuDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    precentage: Number(ele[1]).toFixed(1),
+                    precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
               }
@@ -78,7 +78,7 @@ export function usequeryNodeMem() {
           dataSource.map((item: any) => {
             nodeMemDataArry.push({
               time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
-              precentage: Number(item[1]).toFixed(1),
+              precentage: Number(Number(item[1]).toFixed(1)),
               category: '内存',
             });
           });
@@ -108,21 +108,22 @@ export function useQueryNodeDisk() {
           for (const key in dataSource) {
             if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
               //   const element = object[key];
-              if (key === 'nodeDiskInode') {
-                dataSource['nodeDiskInode']?.map((ele: any) => {
-                  nodeDiskDataArry.push({
-                    value: Number(ele[1]).toFixed(1),
-                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    category: key,
-                  });
-                });
-              }
+
               if (key === 'nodeDiskRoot') {
                 dataSource['nodeDiskRoot']?.map((ele: any) => {
                   nodeDiskDataArry.push({
-                    value: Number(ele[1]).toFixed(1),
+                    value: Number(Number(ele[1]).toFixed(1)),
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    category: key,
+                    category: '磁盘使用率',
+                  });
+                });
+              }
+              if (key === 'nodeDiskInode') {
+                dataSource['nodeDiskInode']?.map((ele: any) => {
+                  nodeDiskDataArry.push({
+                    value: Number(Number(ele[1]).toFixed(1)),
+                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    category: 'Inode使用率',
                   });
                 });
               }
@@ -159,7 +160,7 @@ export function useQueryNodeLoad() {
                   nodeLoadDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    precentage: Number(ele[1]).toFixed(1),
+                    precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
               }
@@ -168,7 +169,7 @@ export function useQueryNodeLoad() {
                   nodeLoadDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    precentage: Number(ele[1]).toFixed(1),
+                    precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
               }
@@ -177,7 +178,7 @@ export function useQueryNodeLoad() {
                   nodeLoadDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    precentage: Number(ele[1]).toFixed(1),
+                    precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
               }
@@ -213,7 +214,7 @@ export function useQueryNodeIO() {
                 dataSource['nodeIORead']?.map((ele: any) => {
                   nodeIODataArry.push({
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    value: Number(ele[1]).toFixed(1),
+                    value: Number(Number(ele[1]).toFixed(1)),
                     category: '读次数（次/min)',
                   });
                 });
@@ -222,7 +223,7 @@ export function useQueryNodeIO() {
                 dataSource['nodeIOWrite']?.map((ele: any) => {
                   nodeIODataArry.push({
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    value: Number(ele[1]).toFixed(1),
+                    value: Number(Number(ele[1]).toFixed(1)),
                     category: '写次数（次/min)',
                   });
                 });
@@ -305,7 +306,7 @@ export function useQueryNodeSocket() {
                 dataSource['nodeTCPES']?.map((ele: any) => {
                   nodeSocketDataArry.push({
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    value: Number(ele[1]).toFixed(1),
+                    value: Number(Number(ele[1]).toFixed(1)),
                     category: key,
                   });
                 });
@@ -314,7 +315,7 @@ export function useQueryNodeSocket() {
                 dataSource['nodeTCPTW']?.map((ele: any) => {
                   nodeSocketDataArry.push({
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    value: Number(ele[1]).toFixed(1),
+                    value: Number(Number(ele[1]).toFixed(1)),
                     category: key,
                   });
                 });
@@ -323,7 +324,7 @@ export function useQueryNodeSocket() {
                 dataSource['nodeTCPTotal']?.map((ele: any) => {
                   nodeSocketDataArry.push({
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    value: Number(ele[1]).toFixed(1),
+                    value: Number(Number(ele[1]).toFixed(1)),
                     category: key,
                   });
                 });
@@ -360,7 +361,7 @@ export function useQueryNodeNetWork() {
                 dataSource['nodeNetReceive']?.map((ele: any) => {
                   nodeNetWorkDataArry.push({
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    value: Number(ele[1]).toFixed(1),
+                    value: Number(Number(ele[1]).toFixed(1)),
                     category: '入流量',
                   });
                 });
@@ -369,7 +370,7 @@ export function useQueryNodeNetWork() {
                 dataSource['nodeNetTransmit']?.map((ele: any) => {
                   nodeNetWorkDataArry.push({
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
-                    value: Number(ele[1]).toFixed(1),
+                    value: Number(Number(ele[1]).toFixed(1)),
                     category: '出流量',
                   });
                 });

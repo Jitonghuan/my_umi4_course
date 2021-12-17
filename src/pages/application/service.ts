@@ -468,6 +468,7 @@ export const confirmProdDeploy = (params: {
   /** 发布批次，0不分批，1发布第一批，2发布第二批 */
   // batch: 0 | 1 | 2;
   batch: number;
+  applyIds: any;
 }) =>
   postRequest(confirmProdDeployUrl, {
     data: params,

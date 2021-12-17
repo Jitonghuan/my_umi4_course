@@ -39,7 +39,7 @@ export default function BranchEditor(props: IProps) {
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
   const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
   const [projectId, setProjectId] = useState<string>('');
-  const [demandId, setDemandId] = useState<string>('');
+  const [demandId, setDemandId] = useState<number>();
 
   const queryPortal = () => {
     postRequest(queryPortalList).then((result) => {
@@ -53,11 +53,15 @@ export default function BranchEditor(props: IProps) {
       }
     });
   };
-  const onChangeProtal = (data: any) => {
-    setProjectId(data.value);
+  const onChangeProtal = (value: any) => {
+    setProjectId(value);
+
+    queryDemand(value);
   };
-  const queryDemand = () => {
-    postRequest(getDemandByProjectList, { data: { projectId: projectId } }).then((result) => {
+  const queryDemand = async (param: string, searchTextParams?: string) => {
+    await postRequest(getDemandByProjectList, {
+      data: { projectId: param, current: 1, size: 9999, searchText: searchTextParams },
+    }).then((result) => {
       if (result.success) {
         let dataSource = result.data.records;
         let dataArry: any = [];
@@ -73,12 +77,15 @@ export default function BranchEditor(props: IProps) {
     setDemandId(data?.value);
   };
 
+  const onSearch = (val: any) => {
+    // queryDemand(projectId,val);
+  };
+
   useEffect(() => {
     if (mode === 'HIDE') return;
 
     form.resetFields();
     queryPortal();
-    queryDemand();
   }, [mode]);
 
   return (
@@ -100,7 +107,16 @@ export default function BranchEditor(props: IProps) {
           <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
         </Form.Item>
         <Form.Item label="需求列表">
-          <Select options={queryDemandOptions} onChange={onChangeDemand}></Select>
+          <Select
+            options={queryDemandOptions}
+            onChange={onChangeDemand}
+            showSearch
+            onSearch={onSearch}
+            optionFilterProp="label"
+            // filterOption={(input, option) =>
+            //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            // }
+          ></Select>
         </Form.Item>
         <Form.Item label="描述" name="desc">
           <Input.TextArea placeholder="请输入描述" rows={3} />
