@@ -104,6 +104,11 @@ export default function ApplicationOverview() {
         {appData?.appDevelopLanguage === 'java' && (
           <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
         )}
+        {appData?.appType === 'backend' && (
+          <Descriptions.Item label="自定义maven构建">
+            {appData?.customParams ? JSON.parse(appData.customParams).custom_maven : ''}
+          </Descriptions.Item>
+        )}
 
         {/* 前端 */}
         {appData?.appType === 'frontend' && (
