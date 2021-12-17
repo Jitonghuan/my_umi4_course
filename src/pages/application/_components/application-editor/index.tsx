@@ -9,7 +9,7 @@ import { FeContext } from '@/common/hooks';
 import DebounceSelect from '@/components/debounce-select';
 import UserSelector, { stringToList } from '@/components/user-selector';
 import EditorTable from '@cffe/pc-editor-table';
-import { createApp, updateApp, searchGitAddress } from './service';
+import { createApp, updateApp, searchGitAddress, fetchEnvList } from './service';
 import { useAppGroupOptions } from '../../hooks';
 import {
   appTypeOptions,
@@ -41,15 +41,26 @@ export interface IProps {
 export default function ApplicationEditor(props: IProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { categoryData } = useContext(FeContext);
-  const { initData, visible } = props;
+  const { visible } = props;
+  const initData = props.initData ? JSON.parse(JSON.stringify(props.initData)) : {};
   const isEdit = !!initData?.id;
   const [loading, setLoading] = useState(false);
 
   const [categoryCode, setCategoryCode] = useState<string>();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
   const [feMicroMainProjectOptions] = useFeMicroMainProjectOptions(visible);
+  const [envDataSource, setEnvDataSource] = useState<any[]>([]); //环境信息
 
   const [form] = Form.useForm<AppItemVO>();
+
+  // 获取环境列表
+  async function getEnvData() {
+    const res = await fetchEnvList({
+      pageIndex: 1,
+      pageSize: 1000,
+    });
+    setEnvDataSource(res || []);
+  }
 
   // 前端应用在修改 git address 时同步到 deployment name
   const handleGitAddressChange = useCallback(
@@ -79,8 +90,30 @@ export default function ApplicationEditor(props: IProps) {
 
     form.resetFields();
 
+    void getEnvData();
+
     if (isEdit) {
       setCategoryCode(initData?.appCategoryCode);
+      if (initData?.customParams) {
+        let obj = JSON.parse(initData.customParams);
+        if (initData.appType === 'frontend') {
+          let list = [];
+          for (const item in obj) {
+            list.push({
+              key: item.split('#')[0],
+              curEnv: item.split('#')[1] || '',
+              value: obj[item],
+            });
+          }
+          Object.assign(initData, {
+            customParams: list,
+          });
+        } else {
+          Object.assign(initData, {
+            customMaven: obj.custom_maven || '',
+          });
+        }
+      }
       form.setFieldsValue({
         ...initData,
         ownerList: stringToList(initData?.owner),
@@ -104,10 +137,35 @@ export default function ApplicationEditor(props: IProps) {
     const values = await form.validateFields();
     const { ownerList, ...others } = values;
 
-    const submitData = {
+    const submitData: any = {
       ...others,
       owner: ownerList?.join(',') || '',
     };
+
+    // 自定义配置处理
+    if (submitData.appType === 'frontend') {
+      // 前端
+      if (submitData.customParams?.length) {
+        let Obj: any = {};
+        for (const item of submitData.customParams.filter((data: any) => data.key && data.value)) {
+          if (item.key === 'version') {
+            Obj[item.key] = item.value;
+          } else {
+            Obj[`${item.key}#${item.curEnv}`] = item.value;
+          }
+        }
+        Object.assign(submitData, {
+          customParams: JSON.stringify(Obj),
+        });
+      }
+    } else {
+      // 后端
+      Object.assign(submitData, {
+        customParams: JSON.stringify({
+          custom_maven: submitData.customMaven,
+        }),
+      });
+    }
 
     setLoading(true);
     try {
@@ -253,6 +311,9 @@ export default function ApplicationEditor(props: IProps) {
                     )
                   }
                 </FormItem>
+                <FormItem label="自定义maven构建" name="customMaven">
+                  <Input />
+                </FormItem>
               </>
             ) : (
               // 前端相关字段
@@ -335,6 +396,22 @@ export default function ApplicationEditor(props: IProps) {
                   rules={[{ required: true, message: '请选择构建任务类型' }]}
                 >
                   <Select options={deployJobUrlOptions} placeholder="请选择" style={{ width: 320 }} />
+                </FormItem>
+                <FormItem label="自定义配置项" name="customParams">
+                  <EditorTable
+                    columns={[
+                      { dataIndex: 'key', title: '配置项' },
+                      { dataIndex: 'value', title: '参数值' },
+                      {
+                        dataIndex: 'curEnv',
+                        title: '生效环境',
+                        fieldType: 'select',
+                        valueOptions: envDataSource,
+                        colProps: { width: 120 },
+                      },
+                    ]}
+                    limit={30}
+                  />
                 </FormItem>
               </>
             )
