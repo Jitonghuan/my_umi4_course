@@ -228,6 +228,7 @@ export default function ApplicationParams(props: any) {
       }
     });
   };
+
   return (
     <ContentCard>
       <Form form={applicationForm} onFinish={setApplication}>
@@ -272,8 +273,8 @@ export default function ApplicationParams(props: any) {
                 ]}
               />
             </Form.Item>
-            {isDeployment == 'deployment' && <span>JVM参数:</span>}
-            {isDeployment == 'deployment' && (
+            {isDeployment == 'deployment' && appData?.appDevelopLanguage === 'java' && <span>JVM参数:</span>}
+            {isDeployment == 'deployment' && appData?.appDevelopLanguage === 'java' && (
               <Form.Item name="jvm">
                 <AceEditor mode="yaml" height={300} />
               </Form.Item>

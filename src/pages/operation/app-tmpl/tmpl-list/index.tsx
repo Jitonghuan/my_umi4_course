@@ -65,7 +65,7 @@ export default function Launch() {
   // 加载应用分类下拉选择
   const selectCategory = () => {
     getRequest(APIS.appTypeList).then((result) => {
-      const list = (result.data.dataSource || []).map((n: any) => ({
+      const list = (result.data.dataSource || [])?.map((n: any) => ({
         label: n.categoryName,
         value: n.categoryCode,
         data: n,
@@ -77,7 +77,7 @@ export default function Launch() {
   //加载模版类型下拉选择
   const selectTmplType = () => {
     getRequest(APIS.tmplType).then((result) => {
-      const list = (result.data || []).map((n: any) => ({
+      const list = (result.data || [])?.map((n: any) => ({
         label: n,
         value: n,
         data: n,

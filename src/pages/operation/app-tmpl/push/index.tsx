@@ -33,9 +33,28 @@ export default function Push(props: any) {
   const [pushItemVisible, setPushItemVisible] = useState(false); //是否显示推送项弹窗
   const [tmplDetailOptions, setTmplDetailOptions] = useState<any[]>([]);
   const [selectTmplOption, setSelectTmplOption] = useState<any>(); //获取当前选中值显示在推送项弹窗
+  const [labelListSource, setLabelListSource] = useState<any>();
+  const [labelLoading, setLabelLoading] = useState<boolean>(false);
 
+  const getLabelList = () => {
+    setLabelLoading(true);
+    let arry: any = [];
+    getRequest(APIS.getTagList, {
+      data: { pageIndex: -1 },
+    })
+      .then((result) => {
+        const { dataSource } = result.data || [];
+        dataSource.map((el: any) => {
+          arry.push({ label: el.tagName, value: el.tagName });
+        });
+        setLabelListSource(arry);
+      })
+      .finally(() => {
+        setLabelLoading(false);
+      });
+  };
   //通过session缓存信息
-  let tmplDetailData = JSON.parse(sessionStorage.getItem('tmplDetailData'));
+  let tmplDetailData = JSON.parse(sessionStorage.getItem('tmplDetailData') || '');
   // const [tmplName,setTmplName]=useState<string>(tmplDetailData?.templateName)
   let tmplName = tmplDetailData?.templateName;
 
@@ -113,6 +132,7 @@ export default function Push(props: any) {
   const [dataSource, setDataSource] = useState<any[]>([]);
   useEffect(() => {
     selectCategory();
+    getLabelList();
     loadListData({ pageIndex: 1, pageSize: 20 });
     // getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
@@ -201,9 +221,10 @@ export default function Push(props: any) {
   //点击查询
   const getApplication = (value: any) => {
     setLoading(true);
+    console.log('value', value);
     getRequest(APIS.appList, {
       data: {
-        tagName: value.tagName,
+        tagNames: value?.tagName,
         appCategoryCode: value.appCategoryCode,
         appCode: value.appCode,
         languageCode,
@@ -245,6 +266,7 @@ export default function Push(props: any) {
     const values = formTmplQuery.getFieldsValue();
     getApplication({
       ...values,
+
       ...params,
     });
   };
@@ -337,6 +359,7 @@ export default function Push(props: any) {
           onFinish={(values) => {
             getApplication({
               ...values,
+
               pageIndex: pageIndex,
               pageSize: pageSize,
             });
@@ -352,7 +375,15 @@ export default function Push(props: any) {
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
           <Form.Item label="应用标签：" name="tagName">
-            <Input placeholder="请输入标签名称" style={{ width: 180 }}></Input>
+            <Select
+              mode="multiple"
+              allowClear
+              showSearch
+              placeholder="输入标签名称"
+              style={{ width: 220 }}
+              options={labelListSource}
+              loading={labelLoading}
+            ></Select>
           </Form.Item>
           <Form.Item label="应用CODE：" name="appCode">
             <Input placeholder="请输入应用CODE" style={{ width: 180 }}></Input>
