@@ -65,6 +65,8 @@ export interface AppItemVO {
   }[];
   /** 构建任务 */
   deployJobUrl?: string;
+  /** 自定义配置参数 */
+  customParams?: string;
 }
 
 export interface AppMemberInfo {
