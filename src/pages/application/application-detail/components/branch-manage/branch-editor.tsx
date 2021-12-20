@@ -60,10 +60,10 @@ export default function BranchEditor(props: IProps) {
   };
   const queryDemand = async (param: string, searchTextParams?: string) => {
     await postRequest(getDemandByProjectList, {
-      data: { projectId: param, current: 1, size: 9999, searchText: searchTextParams },
+      data: { projectId: param, searchText: searchTextParams },
     }).then((result) => {
       if (result.success) {
-        let dataSource = result.data.records;
+        let dataSource = result.data;
         let dataArry: any = [];
         dataSource?.map((item: any) => {
           dataArry.push({ label: item?.title, value: item?.id });
@@ -111,6 +111,7 @@ export default function BranchEditor(props: IProps) {
             options={queryDemandOptions}
             onChange={onChangeDemand}
             showSearch
+            allowClear
             onSearch={onSearch}
             optionFilterProp="label"
             // filterOption={(input, option) =>

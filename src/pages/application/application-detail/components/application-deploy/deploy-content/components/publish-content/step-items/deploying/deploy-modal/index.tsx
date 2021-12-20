@@ -145,6 +145,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   const [deployApplyOptions, setDeployApplyOptions] = useState<any>([]);
   let appIds: any = [];
   const [currentAppIds, setCurrentAppIds] = useState<any>([]);
+  let resData;
   const deployApply = () => {
     getRequest(applyHaveNoUpPlanList, { data: { appCode } }).then((res) => {
       if (res.success) {
@@ -154,6 +155,9 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
           dataArry.push({ label: item?.ApplyTitle, value: item?.ApplyId });
         });
         setDeployApplyOptions(dataArry);
+        if (res.data === null) {
+          resData = null;
+        }
       }
     });
   };
@@ -237,17 +241,20 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
           ]}
         />
       </div>
-      <div style={{ marginTop: 8 }}>
-        <span>发布申请：</span>
-        <Select
-          disabled={deployStatus !== 'deployWait'}
-          style={{ width: 220 }}
-          mode="multiple"
-          options={deployApplyOptions}
-          onChange={changeDeployApply}
-          value={currentAppIds}
-        ></Select>
-      </div>
+      {resData !== null && (
+        <div style={{ marginTop: 8 }}>
+          <span>发布申请：</span>
+          <Select
+            disabled={deployStatus !== 'deployWait'}
+            style={{ width: 220 }}
+            mode="multiple"
+            options={deployApplyOptions}
+            onChange={changeDeployApply}
+            value={currentAppIds}
+          ></Select>
+        </div>
+      )}
+
       <h3 style={{ marginTop: 20 }}>发布详情</h3>
       {deployedEnvs &&
         deployedEnvList.map((item: any) => {
