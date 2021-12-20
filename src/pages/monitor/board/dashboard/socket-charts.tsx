@@ -35,9 +35,7 @@ export default function LoadUsingLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section
-    // data-loading={loading}
-    >
+    <section data-loading={loading}>
       <header>
         <h3>TCP连接数（Count）</h3>
         <span>周期：15s</span>

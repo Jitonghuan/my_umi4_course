@@ -40,9 +40,7 @@ export default function NetWorkLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section
-    // data-loading={loading}
-    >
+    <section data-loading={loading}>
       <header>
         <h3>网卡流量图</h3>
       </header>

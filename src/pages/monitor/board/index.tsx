@@ -133,6 +133,7 @@ const Coms = (props: any) => {
   const [podLoading, setPodLoading] = useState<boolean>(false);
   const [podDataSource, setPodDataSource] = useState<any>([]);
   const [searchField] = Form.useForm();
+  const [searchPodField] = Form.useForm();
   const [clusterList, setClusterList] = useState<any>([]);
   const [currentCluster, setCurrentCluster] = useState<any>();
   const [queryNodeCpuData, nodeCpuloading, queryNodeCpu] = useQueryNodeCpu();
@@ -183,12 +184,18 @@ const Coms = (props: any) => {
         setResLoading(false);
       });
   };
-  //查询pod列表数据    queryPodUseData
-  const queryPodData = (value: any) => {
+  //查询pod列表数据
+  const queryPodData = (value: any, keyWordParams?: any) => {
     setPodLoading(true);
-    queryPodUseData({ clusterId: value, pageIdex: 1, pageSize: 20 })
-      .then((res) => {
-        setPodDataSource(res);
+    queryPodUseData(value, 1, 20, keyWordParams)
+      .then((result) => {
+        const resultDataSouce = result?.map((item: Record<string, object>) => {
+          const key = Object.keys(item)[0];
+          return {
+            ...item[key],
+          };
+        });
+        setPodDataSource(resultDataSouce);
       })
       .finally(() => {
         setPodLoading(false);
@@ -215,10 +222,14 @@ const Coms = (props: any) => {
     },
 
     formatRequestParams: (params) => {
-      return {
-        ...params,
-        clusterId: params?.clusterId,
-      };
+      if (!params) {
+        return [];
+      } else {
+        return {
+          ...params,
+          clusterId: params?.clusterId,
+        };
+      }
     },
     formatResult: (resp) => {
       const { dataSource = [], pageInfo = {} } = resp.data;
@@ -249,20 +260,23 @@ const Coms = (props: any) => {
       queryClustersData({ envTypeCode: currentTab }).then((resp) => {
         setClusterList(resp);
         setCurrentCluster(resp[0]?.value);
-
+        // selectCluster(resp[0]);
         if (resp[0]?.value) {
           queryResData(resp[0]?.value);
           queryPodData(resp[0]?.value);
-          reset();
+          // // reset();
           queryNodeList({ clusterId: resp[0]?.value });
-          // queryNodeList(resp[0]?.value);
+          // // queryNodeList(resp[0]?.value);
           queryUseMarket(resp[0]?.value);
         } else {
-          return;
+          reset();
+          setUseMarket([]);
+          setPodDataSource([]);
+          // queryNodeList({ clusterId: "" });
         }
       });
     }
-  }, [currentTab, currentCluster]);
+  }, [currentTab]);
 
   const handleTabChange = (activeKey: string) => {
     setCurrentTab(activeKey);
@@ -291,6 +305,7 @@ const Coms = (props: any) => {
     queryPodData(currentCluster);
     reset();
     queryNodeList({ clusterId: currentCluster });
+
     queryUseMarket(currentCluster);
   };
 
@@ -345,6 +360,10 @@ const Coms = (props: any) => {
 
   const handleSearchRes = () => {
     setSearchParams(searchField.getFieldsValue());
+  };
+  const handleSearchPod = () => {
+    let param = searchPodField.getFieldsValue();
+    queryPodData(currentCluster, param.keysword);
   };
 
   const handleOk = () => {
@@ -406,6 +425,16 @@ const Coms = (props: any) => {
             nodeSocket: queryNodeSocketData,
             nodeNetWork: queryNodeNetWorkData,
           }}
+          loadings={{
+            nodeCpu: nodeCpuloading,
+            nodeMem: nodeMemloading,
+            nodeDisk: nodeDiskloading,
+            nodeLoad: nodeLoadloading,
+            nodeIO: nodeIoloading,
+            nodeFile: nodeFileloading,
+            nodeSocket: nodeSocketloading,
+            nodeNetWork: nodeNetWorkloading,
+          }}
         />
         <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
           {tabList?.map((el) => (
@@ -426,7 +455,9 @@ const Coms = (props: any) => {
             </Select>
           </span>
           <span style={{ marginLeft: 14 }}>
-            <Button type="primary">刷新</Button>
+            <Button type="primary" onClick={handleRefresh}>
+              刷新
+            </Button>
           </span>
         </div>
         <Divider />
@@ -496,9 +527,9 @@ const Coms = (props: any) => {
             <h3 className="monitor-tabs-content-title" style={{ margin: 0 }}>
               Pod资源明细
             </h3>
-            <Form form={searchField} layout="inline">
+            <Form form={searchPodField} layout="inline">
               <Form.Item name="keysword">
-                <Input.Search placeholder="搜索主机名、IP" style={{ width: 320 }} onSearch={handleSearchRes} />
+                <Input.Search placeholder="搜索主机名、IP" style={{ width: 320 }} onSearch={handleSearchPod} />
               </Form.Item>
             </Form>
           </div>
@@ -508,31 +539,43 @@ const Coms = (props: any) => {
               size="small"
               columns={podUseTableSchema as any}
               scroll={{ y: 313 }}
-              dataSource={[]}
+              dataSource={podDataSource}
+              loading={podLoading}
+              pagination={{
+                showSizeChanger: true,
+                pageSizeOptions: ['20', '50', '100', '1000'],
+              }}
               // {...tableProps}
               customColumnMap={{
-                ip: (value, record) => {
+                HostIP: (value, record) => {
                   return (
                     <span className="monitor-tabs-content-ip" onClick={() => handlePodClick()}>
-                      {record.ip}
+                      {record.HostIP}
                     </span>
                   );
                 },
-                cpuUsageRate: (value, record) => {
+                Cpu: (value, record) => {
                   return (
                     <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
                       {value}%
                     </span>
                   );
                 },
-                memoryUsageRate: (value, record) => {
+                Wss: (value, record) => {
                   return (
                     <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
                       {value}%
                     </span>
                   );
                 },
-                diskUsageRate: (value, record) => {
+                Rss: (value, record) => {
+                  return (
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
+                      {value}%
+                    </span>
+                  );
+                },
+                Disk: (value, record) => {
                   return (
                     <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
                       {value}%

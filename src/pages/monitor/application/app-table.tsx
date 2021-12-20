@@ -5,6 +5,11 @@ import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import AppCard from './app-card';
+import CpuUtilization from './dashboard/cpu-utilization-line';
+import MemroyUtilization from './dashboard/memory-utilization-line';
+import DiskIOChart from './dashboard/diskIO-line';
+import NetWorkChart from './dashboard/network-line';
+import { useQueryPodCpu, usequeryPodMem, useQueryPodDisk, useQueryPodNetwork } from './dashboard/hooks';
 import {
   tableSchema,
   getGCTimeChartOption,
@@ -121,6 +126,7 @@ const Coms = (props: IProps) => {
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
   // pod ip
   const [curtIP, setCurtIp] = useState<string>('');
+  const [hostName, setHostName] = useState<string>('');
   // 刷新频率
   const [timeRate, setTimeRate] = useState<number>(0);
   // 定时器累计数，初始为0，每次定时器执行时加1，触发图的数据刷新，清除定时器后不再增长
@@ -130,6 +136,10 @@ const Coms = (props: IProps) => {
   const now = new Date().getTime();
   const selectRef = useRef(null);
   const timeRateInterval = useRef<NodeJS.Timeout>();
+  const [queryPodCpuData, podCpuloading, queryPodCpu] = useQueryPodCpu();
+  const [queryPodMemData, podMemloading, queryPodMem] = usequeryPodMem();
+  const [queryPodDiskData, podDiskloading, queryPodDisk] = useQueryPodDisk();
+  const [queryPodNetworkData, podNetworkloading, queryPodNetwork] = useQueryPodNetwork();
   const appConfig = [
     {
       title: 'GC瞬时次数/每分钟',
@@ -204,6 +214,7 @@ const Coms = (props: IProps) => {
     formatResult: (resp) => {
       if (resp.data && resp.data[0]) {
         setCurtIp(resp.data[0].hostIP);
+        setHostName(resp.data[0].hostName);
       }
       return {
         dataSource: resp.data || [],
@@ -212,6 +223,40 @@ const Coms = (props: IProps) => {
           pageSize: 1000,
         },
       };
+    },
+    successFunc: (resp: any) => {
+      queryPodCpu(
+        resp.data[0].hostName,
+        filter.envCode,
+        Number((now - startTime) / 1000),
+        Number(now / 1000),
+        filter.appCode,
+        resp.data[0].hostIP,
+      );
+      queryPodMem(
+        resp.data[0].hostName,
+        filter.envCode,
+        Number((now - startTime) / 1000),
+        Number(now / 1000),
+        filter.appCode,
+        resp.data[0].hostIP,
+      );
+      queryPodDisk(
+        resp.data[0].hostName,
+        filter.envCode,
+        Number((now - startTime) / 1000),
+        Number(now / 1000),
+        filter.appCode,
+        resp.data[0].hostIP,
+      );
+      queryPodNetwork(
+        resp.data[0].hostName,
+        filter.envCode,
+        Number((now - startTime) / 1000),
+        Number(now / 1000),
+        filter.appCode,
+        resp.data[0].hostIP,
+      );
     },
     pagination: false,
   });
@@ -242,6 +287,40 @@ const Coms = (props: IProps) => {
       selector?.forEach((el) => {
         el.setAttribute('title', '');
       });
+      if (hostName && curtIP) {
+        queryPodCpu(
+          hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          curtIP,
+        );
+        queryPodMem(
+          hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          curtIP,
+        );
+        queryPodDisk(
+          hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          curtIP,
+        );
+        queryPodNetwork(
+          hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          curtIP,
+        );
+      }
     }
   }, [startTime, timeRate]);
 
@@ -249,6 +328,7 @@ const Coms = (props: IProps) => {
   const handleFilter = useCallback(
     (vals) => {
       setCurtIp('');
+      setHostName('');
       if (vals.appCode) {
         prevFilter.current = {
           ...vals,
@@ -278,6 +358,14 @@ const Coms = (props: IProps) => {
         setRateNum(prevRateNum.current);
       }, value * 1000);
     }
+  };
+  const refreash = () => {
+    reset();
+    queryNodeList();
+    // {appConfig.map((el, index) => {
+    //   el.queryFn({ ...filter, ip: curtIP, startTime, rateNum,hostName:hostName })
+
+    // })}
   };
 
   return (
@@ -313,7 +401,9 @@ const Coms = (props: IProps) => {
               </Select>
             </Tooltip>
             <span style={{ marginLeft: 4 }}>
-              <Button type="primary">刷新</Button>
+              <Button type="primary" onClick={refreash}>
+                刷新
+              </Button>
             </span>
           </div>
         </Card>
@@ -326,6 +416,11 @@ const Coms = (props: IProps) => {
               onClick={() => {
                 reset();
                 queryNodeList();
+                // {appConfig.map((el, index) => {
+
+                //   el.queryFn()
+
+                // })}
               }}
             />
           </h3>
@@ -336,7 +431,10 @@ const Coms = (props: IProps) => {
             columns={tableSchema as ColumnProps[]}
             onRow={(record) => {
               return {
-                onClick: () => setCurtIp(record.hostIP),
+                onClick: () => {
+                  setCurtIp(record.hostIP);
+                  setHostName(record.hostName);
+                },
               };
             }}
             // scroll={{ y: 300 }}
@@ -357,13 +455,37 @@ const Coms = (props: IProps) => {
                   监控图表&nbsp;&nbsp;
                   <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
                 </h3>
+
                 <VCCardLayout grid={layoutGrid} className="monitor-app-content">
                   {appConfig.map((el, index) => (
-                    <AppCard key={index} {...el} requestParams={{ ...filter, ip: curtIP, startTime, rateNum }} />
+                    <AppCard
+                      key={index}
+                      {...el}
+                      requestParams={{ ...filter, ip: curtIP, startTime, rateNum, hostName: hostName }}
+                    />
                   ))}
                 </VCCardLayout>
               </TabPane>
-              <TabPane tab={<span>基础监控</span>} key="2"></TabPane>
+              <TabPane tab={<span>基础监控</span>} key="2">
+                <h3 className="monitor-tabs-content-title">
+                  监控图表&nbsp;&nbsp;
+                  <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
+                </h3>
+                <div style={{ width: '100%', height: '100%' }}>
+                  <div className="base-monitor-charts">
+                    <MemroyUtilization data={queryPodMemData} loading={podMemloading} />
+                  </div>
+                  <div className="base-monitor-charts">
+                    <CpuUtilization data={queryPodCpuData} loading={podCpuloading} />
+                  </div>
+                  <div className="base-monitor-charts">
+                    <NetWorkChart data={queryPodNetworkData} loading={podNetworkloading} />
+                  </div>
+                  <div className="base-monitor-charts">
+                    <DiskIOChart data={queryPodDiskData} loading={podDiskloading} />
+                  </div>
+                </div>
+              </TabPane>
             </Tabs>
           </div>
         </Card>

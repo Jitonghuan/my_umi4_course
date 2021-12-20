@@ -35,9 +35,7 @@ export default function LoadUsingLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section
-    // data-loading={loading}
-    >
+    <section data-loading={loading}>
       <header>
         <h3>使用的文件描述符/每秒上下文切换次数</h3>
       </header>

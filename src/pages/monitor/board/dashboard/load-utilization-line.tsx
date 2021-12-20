@@ -36,9 +36,7 @@ export default function LoadUsingLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section
-    // data-loading={loading}
-    >
+    <section data-loading={loading}>
       <header>
         <h3>LOAD</h3>
       </header>

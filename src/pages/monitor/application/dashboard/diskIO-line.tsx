@@ -2,8 +2,8 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-import React, { useMemo, useState, useEffect } from 'react';
-import { Area } from '@ant-design/charts';
+import React from 'react';
+import { Line } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
 
 export interface ChartCaseListProps {
@@ -24,12 +24,13 @@ export default function DiskIOLine(props: ChartCaseListProps) {
         position: 'top-left',
       },
     },
-    // yAxis: {
-    //   label: {
-    //     // 数值格式化为带百分号
-    //     formatter: (v:any) => `${v}%`,
-    //   },
-    // },
+    title: 'fs writes/reads',
+    yAxis: {
+      label: {
+        // 数值格式化为带百分号
+        formatter: (v: any) => `${v}Bs`,
+      },
+    },
     width: 550,
     height: 260,
   };
@@ -37,12 +38,12 @@ export default function DiskIOLine(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>磁盘读写</h3>
+        <h3>fs writes/reads</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>
           <ColorContainer roleKeys={['color']}>
-            <Area {...config} />
+            <Line {...config} />
           </ColorContainer>
         </div>
       </div>

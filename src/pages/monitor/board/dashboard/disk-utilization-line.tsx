@@ -40,9 +40,7 @@ export default function DiskUsingLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section
-    // data-loading={loading}
-    >
+    <section data-loading={loading}>
       <header>
         <h3>磁盘使用率</h3>
       </header>

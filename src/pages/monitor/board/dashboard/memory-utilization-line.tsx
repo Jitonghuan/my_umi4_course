@@ -59,9 +59,7 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section
-    // data-loading={loading}
-    >
+    <section data-loading={loading}>
       <header>
         <h3>内存使用率</h3>
       </header>

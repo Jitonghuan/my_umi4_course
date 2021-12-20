@@ -38,8 +38,13 @@ export const tableSchema = [
     width: 100,
   },
   {
-    dataIndex: 'memory',
-    title: '内存使用率',
+    dataIndex: 'RSS',
+    title: '内存使用率(RSS)',
+    width: 100,
+  },
+  {
+    dataIndex: 'WSS',
+    title: '内存使用率(WSS)',
     width: 100,
   },
   {

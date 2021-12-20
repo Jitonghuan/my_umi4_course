@@ -15,11 +15,11 @@ export interface minitorDashboardProps {
   onOk?: () => any;
   onCancel?: () => any;
   initData?: any;
+  loadings?: any;
 }
 export default function DashboardsModal(props: minitorDashboardProps) {
-  const { ipDetailVisiable, onOk, onCancel, initData } = props;
+  const { ipDetailVisiable, onOk, onCancel, initData, loadings } = props;
   useEffect(() => {}, []);
-  console.log('initData', initData);
 
   return (
     <Modal
@@ -39,29 +39,29 @@ export default function DashboardsModal(props: minitorDashboardProps) {
       </div> */}
       <div className="blockDiv">
         <div className="block">
-          <CpuUtilization data={initData?.nodeCpu} loading={false} />
+          <CpuUtilization data={initData?.nodeCpu} loading={loadings?.nodeCpu} />
         </div>
         <div className="block">
-          <MemroyUtilization data={initData?.nodeMem} loading={false} />
+          <MemroyUtilization data={initData?.nodeMem} loading={loadings?.nodeMem} />
         </div>
         <div className="block">
-          <LoadUtilization data={initData?.nodeLoad} loading={false} />
+          <LoadUtilization data={initData?.nodeLoad} loading={loadings?.nodeLoad} />
         </div>
 
         <div className="block">
-          <DiskUtilization data={initData?.nodeDisk} loading={false} />
+          <DiskUtilization data={initData?.nodeDisk} loading={loadings?.nodeDisk} />
         </div>
         <div className="block">
-          <DiskIOChart data={initData?.nodeIO} loading={false} />
+          <DiskIOChart data={initData?.nodeIO} loading={loadings?.nodeIO} />
         </div>
         <div className="block">
-          <NetWorkChart data={initData?.nodeNetWork} loading={false} />
+          <NetWorkChart data={initData?.nodeNetWork} loading={loadings?.nodeNetWork} />
         </div>
         <div className="blockLeft">
-          <SocketCharts data={initData?.nodeSocket} loading={false} />
+          <SocketCharts data={initData?.nodeSocket} loading={loadings?.nodeSocket} />
         </div>
         <div className="blockRight">
-          <FileOpen data={initData?.nodeFile} loading={false} />
+          <FileOpen data={initData?.nodeFile} loading={loadings?.nodeFile} />
         </div>
       </div>
     </Modal>

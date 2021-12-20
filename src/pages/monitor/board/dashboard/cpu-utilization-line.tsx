@@ -34,9 +34,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section
-    // data-loading={loading}
-    >
+    <section data-loading={loading}>
       <header>
         <h3>cpu利用率</h3>
       </header>
