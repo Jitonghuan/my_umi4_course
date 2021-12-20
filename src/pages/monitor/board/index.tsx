@@ -145,7 +145,7 @@ const Coms = (props: any) => {
   const [queryNodeSocketData, nodeSocketloading, queryNodeSocket] = useQueryNodeSocket();
   const [queryNodeNetWorkData, nodeNetWorkloading, queryNodeNetWork] = useQueryNodeNetWork();
   const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState<number>(20);
   const [total, setTotal] = useState(0);
 
   // 请求开始时间，由当前时间往前
@@ -548,15 +548,18 @@ const Coms = (props: any) => {
                 current: pageIndex,
                 showSizeChanger: true,
                 onShowSizeChange: (_, next) => {
+                  // debugger
                   setPageIndex(1);
                   setPageSize(next);
-                  queryPodData(currentCluster, 1, next, searchKeyWords.keysword);
+                  // queryPodData(currentCluster, 1, next, searchKeyWords?.keysword);
                 },
                 showTotal: () => `总共 ${total} 条数据`,
 
                 // showTotal: () => `总共 ${total} 条数据`,
-                onChange: (next) => {
-                  setPageIndex(next), queryPodData(currentCluster, next, pageSize, searchKeyWords.keysword);
+                onChange: (next, size: any) => {
+                  console.log('next', next, size);
+                  setPageSize(size);
+                  setPageIndex(next), queryPodData(currentCluster, next, size, searchKeyWords?.keysword);
                 },
               }}
               customColumnMap={{
