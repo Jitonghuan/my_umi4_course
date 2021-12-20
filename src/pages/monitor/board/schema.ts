@@ -56,3 +56,70 @@ export const resUseTableSchema = [
     },
   },
 ];
+
+export const podUseTableSchema = [
+  {
+    title: 'Name space',
+    dataIndex: 'NameSpace',
+    align: 'left',
+    width: 140,
+  },
+  {
+    title: 'Name',
+    dataIndex: 'HostName',
+    align: 'left',
+    sorter: {
+      compare: (a: any, b: any) => a.HostName.localeCompare(b.HostName),
+    },
+    width: 200,
+  },
+  {
+    title: 'IP',
+    dataIndex: 'HostIP',
+    align: 'left',
+    width: 200,
+  },
+  {
+    title: '内存(GB)',
+    dataIndex: 'MemLimit',
+    width: 120,
+  },
+  {
+    title: 'CPU核',
+    dataIndex: 'CpuLimit',
+    width: 120,
+  },
+
+  {
+    title: 'CPU使用率',
+    dataIndex: 'Cpu',
+    width: 140,
+    sorter: {
+      compare: (a: any, b: any) => a.Cpu - b.Cpu,
+    },
+  },
+  {
+    title: '内存使用率(WSS)',
+    dataIndex: 'Wss',
+    width: 140,
+    sorter: {
+      compare: (a: any, b: any) => a.Wss - b.Wss,
+    },
+  },
+  {
+    title: '内存使用率（RSS)',
+    dataIndex: 'Rss',
+    width: 140,
+    sorter: {
+      compare: (a: any, b: any) => a.Rss - b.Rss,
+    },
+  },
+  {
+    title: '磁盘使用量（MB)',
+    dataIndex: 'Disk',
+    width: 140,
+    sorter: {
+      compare: (a: any, b: any) => a.Disk - b.Disk,
+    },
+  },
+];

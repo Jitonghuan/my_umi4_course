@@ -173,3 +173,25 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       sum: {},
     };
   });
+
+/**
+ * POD明细列表
+ */
+export const queryPodUrl = `${appConfig.apiPrefix}/monitorManage/app/CpuUseInfo`;
+export const queryPodUseData = (params: {
+  clusterId?: string;
+  pageIdex?: number;
+  pageSize?: number;
+  envCode?: string;
+  keyword?: string;
+  nameSpace?: string;
+}) =>
+  getRequest(queryPodUrl, { data: params }).then((res: any) => {
+    if (res.success) {
+      let podResourceData: any = [];
+      podResourceData = res.dataSource;
+
+      return podResourceData;
+    }
+    return [];
+  });

@@ -186,6 +186,14 @@ export const createReview = `${appConfig.apiPrefix}/releaseManage/branch/createR
 /** POST  获取分支review状态 */
 export const getReviewStatus = `${appConfig.apiPrefix}/releaseManage/branch/getReviewStatus`;
 
+/** POST 新建分支关联需求 */
+export const queryPortalList = `http://kapi-base-dev.cfuture.shop/eip-demand/portal/list`;
+
+export const getDemandByProjectList = `http://kapi-base-dev.cfuture.shop/eip-demand/portal/getDemandByProject`;
+
+/** GET 当前应用下已通过且存在未上线发布计划的发布申请列表 */
+export const applyHaveNoUpPlanList = `${appConfig.apiPrefix}/publishManage/applyHaveNoUpPlan/list`;
+
 /** 查询应用列表 (返回的数据没有分页) */
 export const queryApps = async (
   params: Partial<AppItemVO> & {
@@ -460,6 +468,7 @@ export const confirmProdDeploy = (params: {
   /** 发布批次，0不分批，1发布第一批，2发布第二批 */
   // batch: 0 | 1 | 2;
   batch: number;
+  applyIds: any;
 }) =>
   postRequest(confirmProdDeployUrl, {
     data: params,

@@ -6,24 +6,36 @@
  */
 
 import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { Modal, Radio, Spin, message } from 'antd';
+import { Modal, Radio, Spin, message, Select } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
-import { confirmProdDeploy, queryEnvsReq } from '@/pages/application/service';
+import { confirmProdDeploy, queryEnvsReq, applyHaveNoUpPlanList } from '@/pages/application/service';
 import { IProps } from './types';
+import { getRequest, postRequest } from '@/utils/request';
 
 export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel, onOperate }: IProps) {
-  const { deployStatus, deployedEnvs, deployingEnv, deployingHosBatch, jenkinsUrl } = deployInfo || {};
+  const { deployStatus, deployedEnvs, deployingEnv, deployingHosBatch, jenkinsUrl, deployApplyIds } = deployInfo || {};
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode } = appData || {};
-
+  const { appCategoryCode, appCode } = appData || {};
   const [stateDeployEnv, setStateDeployEnv] = useState<string>();
   const [deployBatch, setDeployBatch] = useState(12);
   const [envDataList, setEnvDataList] = useState<any>([]);
-  // console.log('deployBatch',deployBatch)
+  useEffect(() => {
+    let batch = localStorage.DEPLOYBATCH ? localStorage.DEPLOYBATCH : 12;
+    let applyIdsData;
+    if (localStorage.APPLY_IDS) {
+      applyIdsData = JSON.parse(localStorage.APPLY_IDS);
+    } else {
+      applyIdsData = [];
+    }
+    setDeployBatch(parseInt(batch));
+    setCurrentAppIds(applyIdsData);
+  }, []);
+
   useEffect(() => {
     if (!visible) return;
 
     setStateDeployEnv(deployingEnv);
+    deployApply();
   }, [visible]);
 
   useEffect(() => {
@@ -85,6 +97,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
     // TODO 如何判断哪个机构被部署了
     let text1 = null;
     let text2 = null;
+    if (deployStatus === 'deployFinish' || deployStatus === 'merging') {
+      localStorage.removeItem('DEPLOYBATCH');
+      localStorage.removeItem('APPLY_IDS');
+    }
     if (deployStatus !== 'deploying' && deployStatus !== 'deployWaitBatch2') {
       return null;
     }
@@ -126,6 +142,31 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       </>
     );
   }, [deployInfo]);
+  const [deployApplyOptions, setDeployApplyOptions] = useState<any>([]);
+  let appIds: any = [];
+  const [currentAppIds, setCurrentAppIds] = useState<any>([]);
+  let resData;
+  const deployApply = () => {
+    getRequest(applyHaveNoUpPlanList, { data: { appCode } }).then((res) => {
+      if (res.success) {
+        let dataArry: any = [];
+        let dataSource = res.data || [];
+        dataSource?.map((item: any) => {
+          dataArry.push({ label: item?.ApplyTitle, value: item?.ApplyId });
+        });
+        setDeployApplyOptions(dataArry);
+        if (res.data === null) {
+          resData = null;
+          setDeployApplyOptions(null);
+        }
+      }
+    });
+  };
+  const changeDeployApply = (value: any) => {
+    appIds = value;
+    setCurrentAppIds(value);
+    localStorage.APPLY_IDS = JSON.stringify(value || []);
+  };
 
   return (
     <Modal
@@ -154,12 +195,12 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
           onCancel?.();
           return;
         }
-        //  console.log('batch',batch)
-        //  console.log('deployStatus',deployStatus)
+
         confirmProdDeploy({
           id: deployInfo.id,
           hospital: stateDeployEnv!,
           batch: batch,
+          applyIds: currentAppIds!,
         })
           .then((res) => {
             if (!res.success) {
@@ -191,13 +232,30 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         <Radio.Group
           disabled={deployStatus !== 'deployWait'}
           value={deployBatch}
-          onChange={(v) => setDeployBatch(v.target.value)}
+          onChange={(v) => {
+            setDeployBatch(v.target.value);
+            localStorage.DEPLOYBATCH = v.target.value;
+          }}
           options={[
             { label: '分批', value: 12 },
             { label: '不分批', value: 0 },
           ]}
         />
       </div>
+      {deployApplyOptions !== null && (
+        <div style={{ marginTop: 8 }}>
+          <span>发布申请：</span>
+          <Select
+            disabled={deployStatus !== 'deployWait'}
+            style={{ width: 220 }}
+            mode="multiple"
+            options={deployApplyOptions}
+            onChange={changeDeployApply}
+            value={currentAppIds}
+          ></Select>
+        </div>
+      )}
+
       <h3 style={{ marginTop: 20 }}>发布详情</h3>
       {deployedEnvs &&
         deployedEnvList.map((item: any) => {
