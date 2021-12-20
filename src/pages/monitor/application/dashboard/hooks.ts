@@ -33,7 +33,7 @@ export function useQueryPodCpu() {
                 dataSource['cpulimit']?.map((ele: any) => {
                   podCpuDataArry.push({
                     category: 'cpulimit',
-                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                     precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
@@ -42,7 +42,7 @@ export function useQueryPodCpu() {
                 dataSource['cpurequest']?.map((ele: any) => {
                   podCpuDataArry.push({
                     category: 'cpurequest',
-                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                     precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
@@ -51,7 +51,7 @@ export function useQueryPodCpu() {
                 dataSource['cpuuse']?.map((ele: any) => {
                   podCpuDataArry.push({
                     category: 'cpuuse',
-                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                     precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
@@ -85,7 +85,7 @@ export function usequeryPodMem() {
             if (key === 'menlimitinfo') {
               dataSource['menlimitinfo']?.map((item: any) => {
                 podMemDataArry.push({
-                  time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
+                  time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
                   precentage: Number(Number(item[1]).toFixed(1)),
                   category: key,
                 });
@@ -94,7 +94,7 @@ export function usequeryPodMem() {
             if (key === 'rssinfo') {
               dataSource['rssinfo']?.map((item: any) => {
                 podMemDataArry.push({
-                  time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
+                  time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
                   precentage: Number(Number(item[1]).toFixed(1)),
                   category: key,
                 });
@@ -103,7 +103,7 @@ export function usequeryPodMem() {
             if (key === 'wssinfo') {
               dataSource['wssinfo']?.map((item: any) => {
                 podMemDataArry.push({
-                  time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
+                  time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
                   precentage: Number(Number(item[1]).toFixed(1)),
                   category: key,
                 });
@@ -147,7 +147,7 @@ export function useQueryPodDisk() {
                 dataSource['diskreads']?.map((ele: any) => {
                   podDiskDataArry.push({
                     value: Number(Number(ele[1]).toFixed(1)),
-                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                     category: key,
                   });
                 });
@@ -156,7 +156,7 @@ export function useQueryPodDisk() {
                 dataSource['diskwrites']?.map((ele: any) => {
                   podDiskDataArry.push({
                     value: Number(Number(ele[1]).toFixed(1)),
-                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                     category: key,
                   });
                 });
@@ -193,7 +193,7 @@ export function useQueryPodNetwork() {
                 dataSource['receive']?.map((ele: any) => {
                   podNetworkDataArry.push({
                     category: key,
-                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                     precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });
@@ -202,7 +202,7 @@ export function useQueryPodNetwork() {
                 dataSource['transmit']?.map((ele: any) => {
                   podNetworkDataArry.push({
                     category: key,
-                    time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                     precentage: Number(Number(ele[1]).toFixed(1)),
                   });
                 });

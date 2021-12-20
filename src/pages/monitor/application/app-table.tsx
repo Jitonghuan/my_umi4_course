@@ -203,8 +203,10 @@ const Coms = (props: IProps) => {
     showRequestError: true,
     didMounted: false,
     formatRequestParams: (params) => {
+      console.log('params', params);
       return {
         ...params,
+
         start: Number((now - startTime) / 1000),
         end: Number(now / 1000),
         pageSize: 1000,
@@ -378,7 +380,45 @@ const Coms = (props: IProps) => {
           </Form>
           <div className="monitor-time-select" ref={selectRef}>
             <Tooltip title="Relative time ranges" placement="top">
-              <Select value={startTime} onChange={(value) => setStartTime(value)} style={{ width: 150 }}>
+              <Select
+                value={startTime}
+                onChange={(value) => {
+                  setStartTime(value);
+                  queryPodCpu(
+                    hostName,
+                    filter.envCode,
+                    Number((now - value) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    curtIP,
+                  );
+                  queryPodMem(
+                    hostName,
+                    filter.envCode,
+                    Number((now - value) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    curtIP,
+                  );
+                  queryPodDisk(
+                    hostName,
+                    filter.envCode,
+                    Number((now - value) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    curtIP,
+                  );
+                  queryPodNetwork(
+                    hostName,
+                    filter.envCode,
+                    Number((now - value) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    curtIP,
+                  );
+                }}
+                style={{ width: 150 }}
+              >
                 <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
                 {START_TIME_ENUMS.map((time) => (
                   <Select.Option key={time.value} value={time.value}>
@@ -425,6 +465,38 @@ const Coms = (props: IProps) => {
                 onClick: () => {
                   setCurtIp(record.hostIP);
                   setHostName(record.hostName);
+                  queryPodCpu(
+                    record.hostName,
+                    filter.envCode,
+                    Number((now - startTime) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    record.hostIP,
+                  );
+                  queryPodMem(
+                    record.hostName,
+                    filter.envCode,
+                    Number((now - startTime) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    record.hostIP,
+                  );
+                  queryPodDisk(
+                    record.hostName,
+                    filter.envCode,
+                    Number((now - startTime) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    record.hostIP,
+                  );
+                  queryPodNetwork(
+                    record.hostName,
+                    filter.envCode,
+                    Number((now - startTime) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    record.hostIP,
+                  );
                 },
               };
             }}
