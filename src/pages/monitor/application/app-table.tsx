@@ -437,6 +437,12 @@ const Coms = (props: IProps) => {
               memory: (value) => {
                 return value ? `${value}%` : '';
               },
+              RSS: (value) => {
+                return value ? `${value}%` : '';
+              },
+              WSS: (value) => {
+                return value ? `${value}%` : '';
+              },
             }}
           />
           <div style={{ marginTop: 14 }}>

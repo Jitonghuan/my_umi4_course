@@ -157,6 +157,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         setDeployApplyOptions(dataArry);
         if (res.data === null) {
           resData = null;
+          setDeployApplyOptions(null);
         }
       }
     });
@@ -241,7 +242,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
           ]}
         />
       </div>
-      {resData !== null && (
+      {deployApplyOptions !== null && (
         <div style={{ marginTop: 8 }}>
           <span>发布申请：</span>
           <Select

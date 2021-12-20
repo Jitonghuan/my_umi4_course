@@ -146,7 +146,7 @@ const Coms = (props: any) => {
   const [queryNodeNetWorkData, nodeNetWorkloading, queryNodeNetWork] = useQueryNodeNetWork();
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [total, setTotal] = useState();
+  const [total, setTotal] = useState(0);
 
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
@@ -182,14 +182,14 @@ const Coms = (props: any) => {
     setPodLoading(true);
     queryPodUseData(value, pageIndexParam, pageSizeParam, keyWordParams)
       .then((result) => {
-        const resultDataSouce = result?.map((item: Record<string, object>) => {
+        const resultDataSouce = result?.dataSource?.map((item: Record<string, object>) => {
           const key = Object.keys(item)[0];
           return {
             ...item[key],
           };
         });
         setPodDataSource(resultDataSouce);
-        let pageInfo = result?.data?.pageInfo;
+        let pageInfo = result?.pageInfo;
         setPageIndex(pageInfo?.pageIndex);
         setPageSize(pageInfo?.pageSize);
         setTotal(pageInfo?.total);
@@ -198,7 +198,6 @@ const Coms = (props: any) => {
         setPodLoading(false);
       });
   };
-
   // 查询节点使用率
   const {
     run: queryNodeList,
@@ -366,14 +365,14 @@ const Coms = (props: any) => {
 
     return options;
   }, []);
-  const [searchKeyWords, setSearchKeyWords] = useState<string>('');
+  const [searchKeyWords, setSearchKeyWords] = useState<any>();
   const handleSearchRes = () => {
     setSearchParams(searchField.getFieldsValue());
   };
   const handleSearchPod = () => {
     let param = searchPodField.getFieldsValue();
     setSearchKeyWords(param);
-    queryPodData(currentCluster, param.keysword);
+    queryPodData(currentCluster, pageIndex, pageSize, param.keysword);
   };
 
   const handleOk = () => {
@@ -551,11 +550,13 @@ const Coms = (props: any) => {
                 onShowSizeChange: (_, next) => {
                   setPageIndex(1);
                   setPageSize(next);
-                  queryPodData(currentCluster, 1, next, searchKeyWords);
+                  queryPodData(currentCluster, 1, next, searchKeyWords.keysword);
                 },
+                showTotal: () => `总共 ${total} 条数据`,
+
                 // showTotal: () => `总共 ${total} 条数据`,
                 onChange: (next) => {
-                  setPageIndex(next), queryPodData(currentCluster, next, pageSize, searchKeyWords);
+                  setPageIndex(next), queryPodData(currentCluster, next, pageSize, searchKeyWords.keysword);
                 },
               }}
               customColumnMap={{

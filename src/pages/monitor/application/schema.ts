@@ -40,12 +40,12 @@ export const tableSchema = [
   {
     dataIndex: 'RSS',
     title: '内存使用率(RSS)',
-    width: 100,
+    width: 160,
   },
   {
     dataIndex: 'WSS',
     title: '内存使用率(WSS)',
-    width: 100,
+    width: 160,
   },
   {
     dataIndex: 'disk',
