@@ -144,25 +144,18 @@ const Coms = (props: any) => {
   const [queryNodeFileData, nodeFileloading, queryNodeFile] = useQueryNodeFile();
   const [queryNodeSocketData, nodeSocketloading, queryNodeSocket] = useQueryNodeSocket();
   const [queryNodeNetWorkData, nodeNetWorkloading, queryNodeNetWork] = useQueryNodeNetWork();
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState();
 
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(15 * 60 * 1000);
+  const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
   const now = new Date().getTime();
   //默认传最近30分钟，处理为秒级的时间戳
   let start = Number((now - startTime) / 1000).toString();
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
-
-  // 选择就近时间触发的事件
-  const selectRelativeTime = (value: any) => {
-    const now = new Date().getTime();
-    setStartTime(value);
-    let startTimepl = Number((now - value) / 1000).toString();
-    let endTimepl = Number(now / 1000).toString();
-    setStartTimestamp(startTimepl);
-    setEndTimestamp(endTimepl);
-  };
   // // 查询机构列表
   const selectCluster = (param: any) => {
     setCurrentCluster(param?.value);
@@ -185,9 +178,9 @@ const Coms = (props: any) => {
       });
   };
   //查询pod列表数据
-  const queryPodData = (value: any, keyWordParams?: any) => {
+  const queryPodData = (value: any, pageIndexParam?: number, pageSizeParam?: number, keyWordParams?: any) => {
     setPodLoading(true);
-    queryPodUseData(value, 1, 20, keyWordParams)
+    queryPodUseData(value, pageIndexParam, pageSizeParam, keyWordParams)
       .then((result) => {
         const resultDataSouce = result?.map((item: Record<string, object>) => {
           const key = Object.keys(item)[0];
@@ -196,6 +189,10 @@ const Coms = (props: any) => {
           };
         });
         setPodDataSource(resultDataSouce);
+        let pageInfo = result?.data?.pageInfo;
+        setPageIndex(pageInfo?.pageIndex);
+        setPageSize(pageInfo?.pageSize);
+        setTotal(pageInfo?.total);
       })
       .finally(() => {
         setPodLoading(false);
@@ -232,19 +229,28 @@ const Coms = (props: any) => {
       }
     },
     formatResult: (resp) => {
-      const { dataSource = [], pageInfo = {} } = resp.data;
-      const result = dataSource.map((item: Record<string, object>) => {
-        const key = Object.keys(item)[0];
+      let result: any = [];
+      if (resp.data === null) {
+        result = [];
+        let pageInfo: any = {};
         return {
-          ip: key,
-          ...item[key],
+          dataSource: result,
+          pageInfo,
         };
-      });
-
-      return {
-        dataSource: result,
-        pageInfo,
-      };
+      } else {
+        const { dataSource = [], pageInfo = {} } = resp.data;
+        result = dataSource.map((item: Record<string, object>) => {
+          const key = Object.keys(item)[0];
+          return {
+            ip: key,
+            ...item[key],
+          };
+        });
+        return {
+          dataSource: result,
+          pageInfo,
+        };
+      }
     },
   });
 
@@ -272,7 +278,7 @@ const Coms = (props: any) => {
           reset();
           setUseMarket([]);
           setPodDataSource([]);
-          // queryNodeList({ clusterId: "" });
+          queryNodeList({ clusterId: '' });
         }
       });
     }
@@ -281,6 +287,8 @@ const Coms = (props: any) => {
   const handleTabChange = (activeKey: string) => {
     setCurrentTab(activeKey);
   };
+
+  const [currentIp, setCurrentIp] = useState<string>('');
 
   const handleIpClick = (ip: string) => {
     // prevNode.current = record;
@@ -293,6 +301,7 @@ const Coms = (props: any) => {
     queryNodeFile(currentCluster, ip, startTimestamp, endTimestamp);
     queryNodeSocket(currentCluster, ip, startTimestamp, endTimestamp);
     queryNodeNetWork(currentCluster, ip, startTimestamp, endTimestamp);
+    setCurrentIp(ip);
     setTimeout(() => {
       setIpDetailShow(true);
     }, 200);
@@ -357,12 +366,13 @@ const Coms = (props: any) => {
 
     return options;
   }, []);
-
+  const [searchKeyWords, setSearchKeyWords] = useState<string>('');
   const handleSearchRes = () => {
     setSearchParams(searchField.getFieldsValue());
   };
   const handleSearchPod = () => {
     let param = searchPodField.getFieldsValue();
+    setSearchKeyWords(param);
     queryPodData(currentCluster, param.keysword);
   };
 
@@ -435,6 +445,8 @@ const Coms = (props: any) => {
             nodeSocket: nodeSocketloading,
             nodeNetWork: nodeNetWorkloading,
           }}
+          currentIpData={currentIp}
+          currentClusterData={currentCluster}
         />
         <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
           {tabList?.map((el) => (
@@ -444,17 +456,7 @@ const Coms = (props: any) => {
         <div style={{ marginLeft: 28, fontSize: 16, marginTop: 14 }}>
           <span>选择集群:</span>
           <Select style={{ width: 140 }} options={clusterList} onChange={selectCluster} value={currentCluster}></Select>
-          <span style={{ marginLeft: '62%' }}>
-            <Select value={startTime} onChange={selectRelativeTime} style={{ width: 140 }}>
-              <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
-              {START_TIME_ENUMS.map((time) => (
-                <Select.Option key={time.value} value={time.value}>
-                  {time.label}
-                </Select.Option>
-              ))}
-            </Select>
-          </span>
-          <span style={{ marginLeft: 14 }}>
+          <span style={{ marginRight: '14px', float: 'right' }}>
             <Button type="primary" onClick={handleRefresh}>
               刷新
             </Button>
@@ -542,10 +544,20 @@ const Coms = (props: any) => {
               dataSource={podDataSource}
               loading={podLoading}
               pagination={{
+                pageSize,
+                total,
+                current: pageIndex,
                 showSizeChanger: true,
-                pageSizeOptions: ['20', '50', '100', '1000'],
+                onShowSizeChange: (_, next) => {
+                  setPageIndex(1);
+                  setPageSize(next);
+                  queryPodData(currentCluster, 1, next, searchKeyWords);
+                },
+                // showTotal: () => `总共 ${total} 条数据`,
+                onChange: (next) => {
+                  setPageIndex(next), queryPodData(currentCluster, next, pageSize, searchKeyWords);
+                },
               }}
-              // {...tableProps}
               customColumnMap={{
                 HostIP: (value, record) => {
                   return (
@@ -576,11 +588,7 @@ const Coms = (props: any) => {
                   );
                 },
                 Disk: (value, record) => {
-                  return (
-                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
-                      {value}%
-                    </span>
-                  );
+                  return <span className="monitor-tabs-content-tag">{value}</span>;
                 },
               }}
             />

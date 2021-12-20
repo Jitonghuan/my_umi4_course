@@ -115,7 +115,7 @@ export const podUseTableSchema = [
     },
   },
   {
-    title: '磁盘使用率（RSS)',
+    title: '磁盘使用量（MB)',
     dataIndex: 'Disk',
     width: 140,
     sorter: {

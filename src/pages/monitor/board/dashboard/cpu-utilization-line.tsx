@@ -2,10 +2,9 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React from 'react';
 import { Line } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
-import { useQueryNodeCpu } from './hooks';
 export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
@@ -13,7 +12,7 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function CpuUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
-
+  console.log('datarevier:', data);
   const config = {
     data,
     xField: 'time',

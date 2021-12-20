@@ -362,10 +362,6 @@ const Coms = (props: IProps) => {
   const refreash = () => {
     reset();
     queryNodeList();
-    // {appConfig.map((el, index) => {
-    //   el.queryFn({ ...filter, ip: curtIP, startTime, rateNum,hostName:hostName })
-
-    // })}
   };
 
   return (
@@ -416,11 +412,6 @@ const Coms = (props: IProps) => {
               onClick={() => {
                 reset();
                 queryNodeList();
-                // {appConfig.map((el, index) => {
-
-                //   el.queryFn()
-
-                // })}
               }}
             />
           </h3>
