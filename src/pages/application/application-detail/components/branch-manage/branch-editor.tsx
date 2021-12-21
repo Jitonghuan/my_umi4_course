@@ -83,7 +83,6 @@ export default function BranchEditor(props: IProps) {
 
   useEffect(() => {
     if (mode === 'HIDE') return;
-
     form.resetFields();
     queryPortal();
   }, [mode]);
