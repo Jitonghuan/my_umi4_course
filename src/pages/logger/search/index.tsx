@@ -91,6 +91,8 @@ export default function LoggerSearch(props: any) {
   const [logStore, setLogStore] = useState<string>(); //日志库选择
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
+  const [startRangePicker, setStartRangePicker] = useState<any>();
+  const [endRangePicker, setEndRangePicker] = useState<any>();
   const [querySql, setQuerySql] = useState<string>(''); //querySql选择
   const [podName, setPodName] = useState<string>(''); //podName
   const [appCodeValue, setAppCodeValue] = useState<any[]>([]); //appCode
@@ -174,9 +176,10 @@ export default function LoggerSearch(props: any) {
   const selectTime = (time: any, timeString: string) => {
     let start = moment(timeString[0]).unix().toString();
     let end = moment(timeString[1]).unix().toString();
-
-    setStartTimestamp(start);
-    setEndTimestamp(end);
+    setStartRangePicker(start);
+    setEndRangePicker(end);
+    // setStartTimestamp(start);
+    // setEndTimestamp(end);
 
     if (start !== 'NaN' && end !== 'NaN') {
       loadMoreData(logStore, start, end, querySql, messageValue, appCodeValue);
