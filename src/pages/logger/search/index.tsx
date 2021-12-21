@@ -378,7 +378,8 @@ export default function LoggerSearch(props: any) {
             {logType === '0' && envCode && logStore ? (
               <div>
                 <RangePicker
-                  style={{ width: 200 }}
+                  allowClear
+                  style={{ width: 240 }}
                   onChange={(v: any, b: any) => selectTime(v, b)}
                   // onChange={()=>selectTime}
                   showTime={{
