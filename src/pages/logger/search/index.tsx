@@ -77,6 +77,7 @@ export default function LoggerSearch(props: any) {
   let ansi_up = new AnsiUp();
   const { RangePicker } = DatePicker;
   const [subInfoForm] = Form.useForm();
+  const [rangePickerForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(15 * 60 * 1000);
   const now = new Date().getTime();
@@ -176,12 +177,9 @@ export default function LoggerSearch(props: any) {
   const selectTime = (time: any, timeString: string) => {
     let start = moment(timeString[0]).unix().toString();
     let end = moment(timeString[1]).unix().toString();
-    setStartRangePicker(start);
-    setEndRangePicker(end);
-    // setStartTimestamp(start);
-    // setEndTimestamp(end);
-
     if (start !== 'NaN' && end !== 'NaN') {
+      setStartRangePicker(start);
+      setEndRangePicker(end);
       loadMoreData(logStore, start, end, querySql, messageValue, appCodeValue);
     } else {
       loadMoreData(logStore, startTimestamp, endTimestamp, querySql, messageValue, appCodeValue);
@@ -190,6 +188,10 @@ export default function LoggerSearch(props: any) {
 
   // 选择就近时间触发的事件
   const selectRelativeTime = (value: any) => {
+    rangePickerForm.resetFields();
+    setStartRangePicker('');
+    setEndRangePicker('');
+
     const now = new Date().getTime();
     setStartTime(value);
     let startTimepl = Number((now - value) / 1000).toString();
@@ -250,10 +252,13 @@ export default function LoggerSearch(props: any) {
     //默认传最近30分钟，处理为秒级的时间戳
     let start = Number((now - startTime) / 1000).toString();
     let end = Number(now / 1000).toString();
-    if (startTimestamp !== start) {
+
+    if (startTimestamp !== start && !startRangePicker && !endRangePicker) {
       setStartTimestamp(start);
       setEndTimestamp(end);
       loadMoreData(logStore, start, end, querySql, messageInfo, appCodeArry);
+    } else if (startRangePicker || endRangePicker) {
+      loadMoreData(logStore, startRangePicker, endRangePicker, querySql, messageInfo, appCodeArry);
     } else {
       loadMoreData(logStore, startTimestamp, endTimestamp, querySql, messageInfo, appCodeArry);
     }
@@ -355,7 +360,7 @@ export default function LoggerSearch(props: any) {
     <PageContainer className="content">
       <FilterCard>
         <Row>
-          <Col span={14}>
+          <Col span={16}>
             <Form layout="inline">
               <Form.Item label="环境Code">
                 <Select
@@ -377,21 +382,23 @@ export default function LoggerSearch(props: any) {
               </Form.Item>
             </Form>
           </Col>
-          <Col span={10}>
+          <Col span={8}>
             {logType === '0' && envCode && logStore ? (
               <div>
-                <RangePicker
-                  allowClear
-                  style={{ width: 240 }}
-                  onChange={(v: any, b: any) => selectTime(v, b)}
-                  // onChange={()=>selectTime}
-                  showTime={{
-                    hideDisabledOptions: true,
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
-                  }}
-                  format="YYYY-MM-DD HH:mm:ss"
-                />
-                <span>
+                <Form form={rangePickerForm}>
+                  <Form.Item name="rangeDate" noStyle>
+                    <RangePicker
+                      allowClear
+                      style={{ width: 200 }}
+                      onChange={(v: any, b: any) => selectTime(v, b)}
+                      // onChange={()=>selectTime}
+                      showTime={{
+                        hideDisabledOptions: true,
+                        defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                      }}
+                      format="YYYY-MM-DD HH:mm:ss"
+                    />
+                  </Form.Item>
                   <Select value={startTime} onChange={selectRelativeTime} style={{ width: 140 }}>
                     <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
                     {START_TIME_ENUMS.map((time) => (
@@ -400,7 +407,7 @@ export default function LoggerSearch(props: any) {
                       </Select.Option>
                     ))}
                   </Select>
-                </span>
+                </Form>
               </div>
             ) : null}
           </Col>

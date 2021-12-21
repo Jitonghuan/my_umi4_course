@@ -82,8 +82,8 @@ export function usequeryPodMem() {
           let podMemDataArry: any = [];
           let dataSource = res?.data;
           for (const key in dataSource) {
-            if (key === 'menlimitinfo') {
-              dataSource['menlimitinfo']?.map((item: any) => {
+            if (key === 'memlimitinfo') {
+              dataSource['memlimitinfo']?.map((item: any) => {
                 podMemDataArry.push({
                   time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
                   precentage: Number(Number(item[1]).toFixed(1)),
