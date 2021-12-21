@@ -120,8 +120,8 @@ const Coms = (props: any) => {
   const [currentTab, setCurrentTab] = useState<string>('dev');
   const tabList = [
     { label: 'DEV', value: 'dev' },
-    { label: 'PRE', value: 'pre' },
     { label: 'TEST', value: 'test' },
+    { label: 'PRE', value: 'pre' },
     { label: 'PROD', value: 'prod' },
   ];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
