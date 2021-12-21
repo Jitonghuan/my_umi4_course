@@ -42,16 +42,20 @@ export default function BranchEditor(props: IProps) {
   const [demandId, setDemandId] = useState<number>();
 
   const queryPortal = () => {
-    postRequest(queryPortalList).then((result) => {
-      if (result.success) {
-        let dataSource = result.data;
-        let dataArry: any = [];
-        dataSource?.map((item: any) => {
-          dataArry.push({ label: item?.projectName, value: item?.projectId });
-        });
-        setQueryPortalOptions(dataArry);
-      }
-    });
+    try {
+      postRequest(queryPortalList).then((result) => {
+        if (result.success) {
+          let dataSource = result.data;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({ label: item?.projectName, value: item?.projectId });
+          });
+          setQueryPortalOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
   };
   const onChangeProtal = (value: any) => {
     setProjectId(value);
@@ -59,18 +63,22 @@ export default function BranchEditor(props: IProps) {
     queryDemand(value);
   };
   const queryDemand = async (param: string, searchTextParams?: string) => {
-    await postRequest(getDemandByProjectList, {
-      data: { projectId: param, searchText: searchTextParams },
-    }).then((result) => {
-      if (result.success) {
-        let dataSource = result.data;
-        let dataArry: any = [];
-        dataSource?.map((item: any) => {
-          dataArry.push({ label: item?.title, value: item?.id });
-        });
-        setQueryDemandOptions(dataArry);
-      }
-    });
+    try {
+      await postRequest(getDemandByProjectList, {
+        data: { projectId: param, searchText: searchTextParams },
+      }).then((result) => {
+        if (result.success) {
+          let dataSource = result.data;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({ label: item?.title, value: item?.id });
+          });
+          setQueryDemandOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const onChangeDemand = (data: any) => {
