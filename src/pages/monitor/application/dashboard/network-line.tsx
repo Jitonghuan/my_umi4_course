@@ -29,7 +29,7 @@ export default function NetWorkLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section data-loading={loading}>
+    <section data-loading={loading} style={{ marginLeft: 10 }}>
       <header>
         <h3>Network I/O pressure</h3>
       </header>

@@ -37,9 +37,13 @@ export default function LoadUsingLine(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>TCP连接数（Count）</h3>
-        <span>周期：15s</span>
-        <span style={{ marginLeft: 10 }}>聚合方式：Average</span>
+        <h3>
+          TCP连接数（Count）
+          <span style={{ marginLeft: 300 }}>
+            <span>周期：15s</span>
+            <span style={{ marginLeft: 10 }}>聚合方式：Average</span>
+          </span>
+        </h3>
       </header>
       <div>
         {/* <div style={{ height: 'calc(100% - 120px)' }}>

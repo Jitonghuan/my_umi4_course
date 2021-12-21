@@ -21,6 +21,7 @@ export const tableSchema = [
     title: '主机名',
     dataIndex: 'hostName',
     align: 'left',
+    width: 240,
   },
   {
     dataIndex: 'memLimit',

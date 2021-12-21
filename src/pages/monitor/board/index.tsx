@@ -120,8 +120,8 @@ const Coms = (props: any) => {
   const [currentTab, setCurrentTab] = useState<string>('dev');
   const tabList = [
     { label: 'DEV', value: 'dev' },
-    { label: 'PRE', value: 'pre' },
     { label: 'TEST', value: 'test' },
+    { label: 'PRE', value: 'pre' },
     { label: 'PROD', value: 'prod' },
   ];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
@@ -158,12 +158,12 @@ const Coms = (props: any) => {
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
   // // 查询机构列表
   const selectCluster = (param: any) => {
-    setCurrentCluster(param?.value);
-    queryResData(param?.value);
-    queryPodData(param?.value);
+    setCurrentCluster(param);
+    queryResData(param);
+    queryPodData(param);
     reset();
-    queryNodeList({ clusterId: param?.value });
-    queryUseMarket(param?.value);
+    queryNodeList({ clusterId: param });
+    queryUseMarket(param);
   };
 
   // 查询资源使用情况

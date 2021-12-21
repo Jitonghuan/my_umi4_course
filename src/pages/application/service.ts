@@ -187,9 +187,9 @@ export const createReview = `${appConfig.apiPrefix}/releaseManage/branch/createR
 export const getReviewStatus = `${appConfig.apiPrefix}/releaseManage/branch/getReviewStatus`;
 
 /** POST 新建分支关联需求 */
-export const queryPortalList = `http://kapi-base-dev.cfuture.shop/eip-demand/portal/list`;
+export const queryPortalList = `http://kapi-base-prod.cfuture.shop/eip-demand/portal/list`;
 
-export const getDemandByProjectList = `http://kapi-base-dev.cfuture.shop/eip-demand/portal/getDemandByProject`;
+export const getDemandByProjectList = `http://kapi-base-prod.cfuture.shop/eip-demand/portal/getDemandByProject`;
 
 /** GET 当前应用下已通过且存在未上线发布计划的发布申请列表 */
 export const applyHaveNoUpPlanList = `${appConfig.apiPrefix}/publishManage/applyHaveNoUpPlan/list`;

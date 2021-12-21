@@ -121,7 +121,7 @@ export default function DashboardsModal(props: minitorDashboardProps) {
         2222
       </div> */}
       <div>
-        <span style={{ marginLeft: '90%' }}>
+        <span style={{ marginLeft: '88%' }}>
           <Select value={startTime} onChange={selectRelativeTime} style={{ width: 140 }}>
             <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
             {START_TIME_ENUMS.map((time) => (
