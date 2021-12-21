@@ -60,7 +60,7 @@ export default function BranchEditor(props: IProps) {
   const onChangeProtal = (value: any) => {
     setProjectId(value);
 
-    queryDemand(value);
+    // queryDemand(value);
   };
   const queryDemand = async (param: string, searchTextParams?: string) => {
     try {
@@ -93,7 +93,7 @@ export default function BranchEditor(props: IProps) {
     if (mode === 'HIDE') return;
 
     form.resetFields();
-    queryPortal();
+    // queryPortal();
   }, [mode]);
 
   return (
