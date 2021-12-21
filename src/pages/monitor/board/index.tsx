@@ -158,12 +158,12 @@ const Coms = (props: any) => {
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
   // // 查询机构列表
   const selectCluster = (param: any) => {
-    setCurrentCluster(param?.value);
-    queryResData(param?.value);
-    queryPodData(param?.value);
+    setCurrentCluster(param);
+    queryResData(param);
+    queryPodData(param);
     reset();
-    queryNodeList({ clusterId: param?.value });
-    queryUseMarket(param?.value);
+    queryNodeList({ clusterId: param });
+    queryUseMarket(param);
   };
 
   // 查询资源使用情况
