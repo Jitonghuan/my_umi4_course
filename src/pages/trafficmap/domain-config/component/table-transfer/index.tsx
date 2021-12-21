@@ -1,10 +1,6 @@
-/*
- * @Author: shixia.ds
- * @Date: 2021-11-19 15:09:54
- * @Description:
- */
-import { Transfer, Table, Select, Button } from 'antd';
+import { Transfer, Table } from 'antd';
 import difference from 'lodash/difference';
+import './index.less';
 
 interface IProp {
   leftColumns: any;
@@ -14,7 +10,7 @@ interface IProp {
 
 // Customize Table Transfer
 const TableTransfer: React.FC<IProp> = ({ leftColumns, rightColumns, ...restProps }) => (
-  <Transfer {...restProps}>
+  <Transfer {...restProps} className="customize-transfer">
     {({
       direction,
       filteredItems,
