@@ -7,13 +7,14 @@
 
 import React, { useState, useContext, useCallback, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
+import moment from 'moment';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { IProps } from '../../application-deploy/deploy-content/components/publish-content/types';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest, delRequest } from '@/utils/request';
-import { restartApp, rollbackApplication, restartApplication } from '@/pages/application/service';
+import { restartApp, rollbackApplication, restartApplication, queryAppOperate } from '@/pages/application/service';
 import { listContainer, fileDownload } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeployInfoData, useInstanceList, useDownloadLog, useDeleteInstance } from './hook';
@@ -65,11 +66,25 @@ export default function DeployContent(props: DeployContentProps) {
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
+  const [appOperateLog, setAppOperateLog] = useState<any>([]);
+  const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currentEnvData,
     appData?.deploymentName,
   );
+  const queryAppOperateLog = (envCodeParam: any) => {
+    getRequest(queryAppOperate, { data: { appCode, envCode: envCodeParam } })
+      .then((resp) => {
+        setAppOperateLoading(true);
+        if (resp.success) {
+          setAppOperateLog(resp?.data);
+        }
+      })
+      .finally(() => {
+        setAppOperateLoading(false);
+      });
+  };
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
@@ -119,14 +134,10 @@ export default function DeployContent(props: DeployContentProps) {
         setCurrentEnvData(dataSources[0]?.value);
         formInstance.setFieldsValue({ envCode: initEnvCode.current });
 
-        if (
-          initEnvCode.current !== '' &&
-          initEnvCode.current !== 'zy-prd' &&
-          initEnvCode.current !== 'ws-prd' &&
-          initEnvCode.current !== 'zy-daily'
-        ) {
+        if (initEnvCode.current !== '') {
           loadInfoData(initEnvCode.current).then(() => {
-            queryInstanceList(appData?.appCode, initEnvCode.current).then(() => {
+            queryAppOperateLog(initEnvCode.current);
+            queryInstanceList(appData?.appCode, initEnvCode.current).then((res: any) => {
               operateType = true;
             });
           });
@@ -185,14 +196,17 @@ export default function DeployContent(props: DeployContentProps) {
   const changeEnvCode = (envCode: string) => {
     timerHandler('stop');
     setCurrentEnvData(envCode);
-
     initEnvCode.current = envCode;
-    // if (envClusterData.current) {
     loadInfoData(envCode)
       .then(() => {
         queryInstanceList(appData?.appCode, envCode)
           .then((result2: any) => {
-            timerHandler('do', true);
+            if (instanceTableData !== undefined && instanceTableData.length !== 0) {
+              timerHandler('do', true);
+            }
+            if (initEnvCode.current !== '') {
+              queryAppOperateLog(initEnvCode.current);
+            }
           })
           .catch(() => {
             setListEnvClusterData([]);
@@ -233,22 +247,24 @@ export default function DeployContent(props: DeployContentProps) {
         appCategoryCode: appData?.appCategoryCode,
       }).then(() => {
         message.success('操作成功！');
+        queryAppOperateLog(currentEnvData);
+        timerHandler('do', true);
       });
     } else if (listEnvClusterData?.clusterType === 'vm') {
-      // async (record: IStatusInfoProps) => {
       await postRequest(restartApplication, {
         data: {
           deploymentName: appData?.deploymentName,
           envCode: currentEnvData,
           // eccid: record?.eccid,
+          appCode,
           owner: appData?.owner,
         },
+      }).then(() => {
+        message.success('操作成功！');
+        // reloadDeployData();
+        queryAppOperateLog(currentEnvData);
+        timerHandler('do', true);
       });
-
-      message.success('操作成功！');
-      // reloadDeployData();
-      reloadChangeOrderData();
-      // },
     }
   };
 
@@ -455,29 +471,41 @@ export default function DeployContent(props: DeployContentProps) {
           </section>
           <section className="section-right1">
             <h3>操作记录</h3>
+
             <div className="section-inner">
-              {changeOrderDataLoading ? (
+              {appOperateLoading ? (
                 <div className="block-loading">
                   <Spin />
                 </div>
               ) : null}
-              {changeOrderData.map((item, index) => (
+              {appOperateLog?.map((item: any, index: any) => (
                 <div className="change-order-item" key={index}>
                   <p>
                     <span>时间：</span>
-                    <b>{item.createTime}</b>
+                    <b>{moment(item?.operateTime).format('YYYY-MM-DD,HH:mm:ss')}</b>
                   </p>
                   <p>
                     <span>操作人：</span>
-                    <b>{item.createUserId}</b>
+                    <b>{item.operator}</b>
                   </p>
                   <p>
                     <span>操作类型：</span>
-                    <b>{item.coType}</b>
+                    <b>{item.operateType}</b>
                   </p>
+
                   <p>
-                    <span>操作结果：</span>
-                    <b>{item.changeOrderDescription}</b>
+                    <span>操作事件：</span>
+                    <b>
+                      {item.operateEvent === 'PodFileDownload'
+                        ? '文件下载'
+                        : item.operateEvent === 'restartApp'
+                        ? '重启应用'
+                        : item.operateEvent === 'rollback'
+                        ? '回滚应用'
+                        : item.operateEvent === 'DeletePod'
+                        ? '删除Pod'
+                        : null}
+                    </b>
                   </p>
                 </div>
               ))}
@@ -522,9 +550,11 @@ export default function DeployContent(props: DeployContentProps) {
           intervalStart();
         }}
         onSave={() => {
-          reloadChangeOrderData(); //刷新操作记录信息
           queryInstanceList(appData?.appCode, currentEnvData); //刷新表格信息
           setRollbackVisible(false);
+          queryAppOperateLog(currentEnvData);
+          timerHandler('do', true);
+
           // handleRollbackSubmit(); //回滚走的接口
           // reloadDeployData();
         }}

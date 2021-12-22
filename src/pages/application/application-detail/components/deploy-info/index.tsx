@@ -82,7 +82,7 @@ export default function AppDeployInfo() {
   //定义定时器方法
   const intervalFunc = () => {
     reloadDeployData(false);
-    reloadChangeOrderData(false);
+    // reloadChangeOrderData(false);
   };
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
