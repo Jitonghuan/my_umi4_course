@@ -8,9 +8,9 @@ import { FormProps, OptionProps } from '@/components/table-search/typing';
 import useRequest from '@/utils/useRequest';
 import EditorTable from '@cffe/pc-editor-table';
 import { editColumns } from './colunms';
-import { Item } from '../../typing';
-import { stepTableMap } from '../../util';
-import { queryRuleTemplatesList, queryGroupList } from '../../services';
+import { Item } from '../../../monitor/basic/typing';
+import { stepTableMap } from '../../../monitor/basic/util';
+import { queryRuleTemplatesList, queryGroupList } from '../../../monitor/basic/services';
 import { useUserOptions } from './hooks';
 import './index.less';
 
@@ -213,7 +213,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     {
       key: '3',
       type: 'select',
-      label: '分类',
+      label: '报警分类',
       dataIndex: 'group',
       placeholder: '请选择',
       required: true,
@@ -221,6 +221,43 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     },
     {
       key: '4',
+      type: 'select',
+      label: '选择环境',
+      dataIndex: 'duration',
+      placeholder: '开发',
+      width: '40%',
+      required: true,
+      style: { marginRight: 10 },
+      extraForm: (
+        <div>
+          <Form.Item name="timeType" noStyle initialValue="m">
+            <Select style={{ width: '90%' }} placeholder="选择时间单位">
+              <Select.Option value="h">小时</Select.Option>
+              <Select.Option value="m">分钟</Select.Option>
+              <Select.Option value="s">秒</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="timeType" noStyle initialValue="m">
+            <Select style={{ width: '90%' }} placeholder="选择时间单位">
+              <Select.Option value="h">小时</Select.Option>
+              <Select.Option value="m">分钟</Select.Option>
+              <Select.Option value="s">秒</Select.Option>
+            </Select>
+          </Form.Item>
+        </div>
+      ),
+    },
+    {
+      key: '5',
+      type: 'select',
+      label: '关联应用',
+      dataIndex: 'group',
+      placeholder: '请选择',
+      required: true,
+      option: groupData,
+    },
+    {
+      key: '6',
       type: 'area',
       label: '告警表达式(PromQL)',
       dataIndex: 'expression',
@@ -228,9 +265,9 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       required: true,
     },
     {
-      key: '5',
+      key: '7',
       type: 'inputNumber',
-      label: '持续时间',
+      label: '报警持续时间',
       dataIndex: 'duration',
       placeholder: '请输入',
       width: '90%',
@@ -248,17 +285,9 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         </Form.Item>
       ),
     },
+
     {
-      key: '6',
-      type: 'input',
-      label: '告警消息',
-      dataIndex: 'message',
-      // width: '144px',
-      placeholder: '请输入',
-      required: true,
-    },
-    {
-      key: '7',
+      key: '8',
       type: 'select',
       label: '告警级别',
       dataIndex: 'level',
@@ -291,24 +320,17 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       ],
     },
     {
-      key: '8',
-      type: 'other',
-      label: '高级配置',
-      dataIndex: '',
+      key: '9',
+      type: 'input',
+      label: '报警消息',
+      dataIndex: 'message',
       // width: '144px',
       placeholder: '请输入',
-      itemStyle: { marginBottom: 0 },
-      extraForm: (
-        <Form.Item noStyle>
-          <span>标签（Labels):</span>
-          <EditorTable columns={editColumns} onChange={labelFun} value={labelTableData}></EditorTable>
-          <span>注释（Annotations):</span>
-          <EditorTable columns={editColumns} onChange={annotationsFun} value={annotationsTableData}></EditorTable>
-        </Form.Item>
-      ),
+      required: true,
     },
+
     {
-      key: '9',
+      key: '10',
       type: 'select',
       label: '通知对象',
       dataIndex: 'receiver',
@@ -360,6 +382,23 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
               </Form.Item>
             ) : null;
           }}
+        </Form.Item>
+      ),
+    },
+    {
+      key: '12',
+      type: 'other',
+      label: '高级配置',
+      dataIndex: '',
+      // width: '144px',
+      placeholder: '请输入',
+      itemStyle: { marginBottom: 0 },
+      extraForm: (
+        <Form.Item noStyle>
+          <span>标签（Labels):</span>
+          <EditorTable columns={editColumns} onChange={labelFun} value={labelTableData}></EditorTable>
+          <span>注释（Annotations):</span>
+          <EditorTable columns={editColumns} onChange={annotationsFun} value={annotationsTableData}></EditorTable>
         </Form.Item>
       ),
     },

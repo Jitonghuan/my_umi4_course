@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
 import useRequest from '@/utils/useRequest';
 import useTable from '@/utils/useTable';
-import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../services';
+import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../../monitor/basic/services';
 import TemplateDrawer from '../template-drawer';
-import { Item } from '../../typing';
+import { Item } from '../../../monitor/basic/typing';
 import './index.less';
 
 interface RulesTableProps {
