@@ -133,7 +133,7 @@ export default function DeployContent(props: DeployContentProps) {
         }
 
         setTimeout(() => {
-          if (operateType && initEnvCode.current) {
+          if (operateType && initEnvCode.current && instanceTableData) {
             timerHandler('do', true);
           } else {
             timerHandler('stop');
