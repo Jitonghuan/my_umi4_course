@@ -664,12 +664,12 @@ export default [
             key: 'basic-monitor',
             component: '@/pages/monitor/basic/prometheus',
           },
-          {
-            path: 'alarm-rules',
-            name: '报警配置',
-            key: 'basic-monitor',
-            component: '@/pages/monitor/basic/alarm-rules',
-          },
+          // {
+          //   path: 'alarm-rules',
+          //   name: '报警配置',
+          //   key: 'basic-monitor',
+          //   component: '@/pages/monitor/basic/alarm-rules',
+          // },
         ],
       },
       {
@@ -698,6 +698,12 @@ export default [
         path: 'index-manage',
         name: '索引管理',
         component: '@/pages/logger/index-manage',
+      },
+      {
+        path: 'alarm-rules',
+        name: '报警管理',
+        // key: 'basic-monitor',
+        component: '@/pages/logger/alarm-rules',
       },
     ],
   },

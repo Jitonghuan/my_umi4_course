@@ -4,6 +4,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { getRequest } from '@/utils/request';
-import * as APIS from '../services';
+import * as APIS from '../../monitor/basic/services';
 
 export function useRuleListData() {}

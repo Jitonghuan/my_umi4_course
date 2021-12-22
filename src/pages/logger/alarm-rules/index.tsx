@@ -5,7 +5,7 @@
 import React from 'react';
 import {} from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import RulesTable from '../_components/rules-table';
+import RulesTable from '../../monitor/basic/_components/rules-table';
 
 export default function AlarmRules() {
   return (
