@@ -1,5 +1,5 @@
 import { addAPIPrefix } from '@/utils';
-import { delRequest, getRequest, putRequest } from '@/utils/request';
+import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
 import { IRegionInfo } from './interface';
 
 /**
@@ -19,7 +19,7 @@ export const getRegionList = (data: any) => {
  */
 export const createRegion = (data: IRegionInfo) => {
   const url = addAPIPrefix('/trafficMap/region/create');
-  return getRequest(url, { data: data });
+  return postRequest(url, { data: data });
 };
 
 /**

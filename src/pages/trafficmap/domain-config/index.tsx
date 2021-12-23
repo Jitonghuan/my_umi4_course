@@ -5,7 +5,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import './index.less';
-import { getRegionList } from '../service';
+import { deleteRegion, getRegionList } from '../service';
 import CreateRegionDrawer from './component/create-region-drawer';
 
 const DomainConfig: React.FC = () => {
@@ -44,6 +44,14 @@ const DomainConfig: React.FC = () => {
 
   const onSearch = (values: any) => {
     setSearchValue(values);
+  };
+
+  const handleEdit = (record: any) => {
+    createRegionRef.current.editDrawer(record);
+  };
+
+  const handleDeleteRegion = async (id: string) => {
+    await deleteRegion(id);
   };
 
   const columns = [
@@ -86,8 +94,17 @@ const DomainConfig: React.FC = () => {
         return (
           <>
             <Button type="link">查看</Button>
-            <Button type="link">编辑</Button>
-            <Popconfirm title="确认删除" okText="是" cancelText="否">
+            <Button type="link" onClick={() => handleEdit(record)}>
+              编辑
+            </Button>
+            <Popconfirm
+              title="确认删除"
+              okText="是"
+              cancelText="否"
+              onConfirm={() => {
+                handleDeleteRegion(record.id);
+              }}
+            >
               <Button type="link">删除</Button>
             </Popconfirm>
           </>

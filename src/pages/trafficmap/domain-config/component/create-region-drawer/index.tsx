@@ -12,7 +12,13 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
 
   const [visible, setVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [envOptions, setEnvOptions] = useState<any[]>([]);
+  const [drawerType, setDrawerT] = useState();
+  const [envOptions, setEnvOptions] = useState<any[]>([
+    {
+      label: 'hbos-dev',
+      value: 'hbos-dev',
+    },
+  ]);
   const [form] = Form.useForm();
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -20,12 +26,19 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
 
   const [appList, setAppList] = useState<IRelApp[]>([]);
 
-  const [regionCode, setRegionCode] = useState<string>('scm');
-  const [envCode, setEnvCode] = useState<string>('hbos-dev');
+  const [regionCode, setRegionCode] = useState<string>('');
+  const [envCode, setEnvCode] = useState<string>('');
 
   useImperativeHandle(ref, () => ({
     showDrawer: () => {
       showDrawer();
+    },
+    editDrawer: (data: any) => {
+      showDrawer();
+      form.setFieldsValue(data);
+      setRegionCode(data.regionCode);
+      setEnvCode(data.envCode);
+      setIsEdit(true);
     },
   }));
 
@@ -48,7 +61,6 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
     const httpArray = [getAppByRegion({ ...data, isRelation: 1 }), getAppByRegion({ ...data, isRelation: 0 })];
     const res: any = await Promise.all(httpArray);
     const appList = [...res[0].data, ...res[1].data];
-    console.log(appList);
     const newList = getTransferData(appList);
     setAppList(newList);
   };
@@ -134,12 +146,6 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
     setTargetKeys(nextTargetKeys);
   };
 
-  const onSelectChange = (sourceSelectedKeys: any[], targetSelectedKeys: any[]) => {
-    console.log('sourceSelectedKeys', sourceSelectedKeys);
-    console.log('targetSelectedKeys', targetSelectedKeys);
-    setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
-  };
-
   /**
    * 提交
    */
@@ -155,7 +161,17 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
       relApps,
     };
     console.log(data);
-    // let res = await createRegion(data)
+    let res = await createRegion(data);
+  };
+
+  const onClose = () => {
+    setVisible(false);
+    form.resetFields();
+    setRegionCode('');
+    setEnvCode('');
+    setIsEdit(false);
+    setAppList([]);
+    setTargetKeys([]);
   };
 
   return (
@@ -163,8 +179,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
       title="创建域"
       visible={visible}
       onClose={() => {
-        setVisible(false);
-        createFormRef.resetFields();
+        onClose();
       }}
       width={800}
       maskClosable={true}
@@ -177,7 +192,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
           <Button
             type="default"
             onClick={() => {
-              setVisible(false);
+              onClose();
             }}
           >
             取消
@@ -231,7 +246,6 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
             titles={['可添加应用', '已添加应用']}
             filterOption={(inputValue: any, item: any) => item.title.indexOf(inputValue) !== -1}
             onChange={onChange}
-            onSelectChange={onSelectChange}
             leftColumns={leftTableColumns}
             rightColumns={rightTableColumns}
           />
