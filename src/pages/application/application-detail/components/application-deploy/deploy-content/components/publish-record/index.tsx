@@ -109,25 +109,28 @@ export default function PublishRecord(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布记录</div>
       {tableProps.dataSource?.filter((v) => v?.envTypeCode === env)?.length ? (
-        <List
-          className="demo-loadmore-list"
-          loading={tableProps.loading}
-          itemLayout="vertical"
-          loadMore={renderLoadMore()}
-          dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
-          renderItem={(item) => (
-            <List.Item>
-              {Object.keys(recordFieldMap)
-                .slice(0, 3)
-                .map((key) => (
-                  <span className={`${rootCls}-row ${key}`}>
-                    <label>{recordFieldMap[key]}</label>：{item[key]}
-                  </span>
-                ))}
-              <a onClick={() => handleShowDetail(item)}>详情</a>
-            </List.Item>
-          )}
-        />
+        <div>
+          <p>fbauren </p>
+          <List
+            className="demo-loadmore-list"
+            loading={tableProps.loading}
+            itemLayout="vertical"
+            loadMore={renderLoadMore()}
+            dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
+            renderItem={(item) => (
+              <List.Item>
+                {Object.keys(recordFieldMap)
+                  .slice(0, 3)
+                  .map((key) => (
+                    <span className={`${rootCls}-row ${key}`}>
+                      <label>{recordFieldMap[key]}</label>：{item[key]}
+                    </span>
+                  ))}
+                <a onClick={() => handleShowDetail(item)}>详情</a>
+              </List.Item>
+            )}
+          />
+        </div>
       ) : null}
 
       <Modal title="发布详情" width={600} visible={visible} footer={false} onCancel={() => setVisible(false)}>
