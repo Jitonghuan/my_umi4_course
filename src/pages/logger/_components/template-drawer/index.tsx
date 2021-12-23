@@ -225,26 +225,18 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       label: '选择环境',
       dataIndex: 'duration',
       placeholder: '开发',
-      width: '40%',
+      width: '20%',
       required: true,
       style: { marginRight: 10 },
       extraForm: (
-        <div>
-          <Form.Item name="timeType" noStyle initialValue="m">
-            <Select style={{ width: '90%' }} placeholder="选择时间单位">
-              <Select.Option value="h">小时</Select.Option>
-              <Select.Option value="m">分钟</Select.Option>
-              <Select.Option value="s">秒</Select.Option>
-            </Select>
+        <span>
+          <Form.Item name="timeType" noStyle>
+            <Select style={{ width: '30%' }} placeholder="选择监控的集群环境"></Select>
           </Form.Item>
-          <Form.Item name="timeType" noStyle initialValue="m">
-            <Select style={{ width: '90%' }} placeholder="选择时间单位">
-              <Select.Option value="h">小时</Select.Option>
-              <Select.Option value="m">分钟</Select.Option>
-              <Select.Option value="s">秒</Select.Option>
-            </Select>
+          <Form.Item name="timeType" noStyle>
+            <Select style={{ width: '30%' }} placeholder="选择Namespace名称（可选）"></Select>
           </Form.Item>
-        </div>
+        </span>
       ),
     },
     {
@@ -252,7 +244,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       type: 'select',
       label: '关联应用',
       dataIndex: 'group',
-      placeholder: '请选择',
+      placeholder: '请选择关联应用（可选）',
       required: true,
       option: groupData,
     },
@@ -325,7 +317,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       label: '报警消息',
       dataIndex: 'message',
       // width: '144px',
-      placeholder: '请输入',
+      placeholder: '消息便于更好识别报警',
       required: true,
     },
 

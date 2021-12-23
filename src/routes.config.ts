@@ -617,6 +617,42 @@ export default [
         component: '@/pages/monitor/application',
       },
       {
+        path: 'business-new',
+        name: '业务监控(新)',
+        key: 'business-monitor',
+        component: '@/pages/monitor/business-new/index',
+        routes: [
+          {
+            path: 'prometheus',
+            name: '接口方式接入',
+            key: 'business-monitor',
+            component: '@/pages/monitor/business-new/prometheus',
+            hideInMenu: true,
+          },
+          {
+            path: 'prometheus-add',
+            name: '接入Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business-new/prometheus/prometheus-form',
+          },
+          {
+            path: 'prometheus-edit',
+            name: '编辑Prometheus',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business-new/prometheus/prometheus-form',
+          },
+          {
+            path: 'logger-alarm',
+            name: '日志方式接入',
+            key: 'business-monitor',
+            hideInMenu: true,
+            component: '@/pages/monitor/business-new/logger-alarm',
+          },
+        ],
+      },
+      {
         path: 'business',
         name: '业务监控',
         key: 'business-monitor',
