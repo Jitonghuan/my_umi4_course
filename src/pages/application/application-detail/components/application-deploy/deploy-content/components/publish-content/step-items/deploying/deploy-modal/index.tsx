@@ -35,7 +35,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
     if (!visible) return;
 
     setStateDeployEnv(deployingEnv);
-    deployApply();
+    deployApply(deployingEnv);
   }, [visible]);
 
   useEffect(() => {
@@ -146,23 +146,21 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   let appIds: any = [];
   const [currentAppIds, setCurrentAppIds] = useState<any>([]);
   let resData;
-  const deployApply = () => {
-    if (stateDeployEnv) {
-      getRequest(applyHaveNoUpPlanList, { data: { appCode, envCode: stateDeployEnv } }).then((res) => {
-        if (res.success) {
-          let dataArry: any = [];
-          let dataSource = res.data || [];
-          dataSource?.map((item: any) => {
-            dataArry.push({ label: item?.ApplyTitle, value: item?.ApplyId });
-          });
-          setDeployApplyOptions(dataArry);
-          if (res.data === null) {
-            resData = null;
-            setDeployApplyOptions(null);
-          }
+  const deployApply = async (currentEnv: any) => {
+    await getRequest(applyHaveNoUpPlanList, { data: { appCode, envCode: currentEnv } }).then((res) => {
+      if (res.success) {
+        let dataArry: any = [];
+        let dataSource = res.data || [];
+        dataSource?.map((item: any) => {
+          dataArry.push({ label: item?.ApplyTitle, value: item?.ApplyId });
+        });
+        setDeployApplyOptions(dataArry);
+        if (res.data === null) {
+          resData = null;
+          setDeployApplyOptions(null);
         }
-      });
-    }
+      }
+    });
   };
   const changeDeployApply = (value: any) => {
     appIds = value;
@@ -222,7 +220,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         <Radio.Group
           disabled={['deploying', 'deployWaitBatch2'].includes(deployStatus)}
           value={stateDeployEnv}
-          onChange={(v) => setStateDeployEnv(v.target.value)}
+          onChange={(v) => {
+            setStateDeployEnv(v.target.value);
+            deployApply(v.target.value);
+          }}
           options={envList?.map((v: any) => ({
             label: v.envName,
             value: v.envCode,
