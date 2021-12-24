@@ -7,7 +7,7 @@ export type IOption = {
   /** label */
   label?: string;
   /** value */
-  value?: string;
+  value?: any;
 };
 
 export interface IProps extends DescriptionsProps {
@@ -43,20 +43,24 @@ const funcName = (props: IProps) => {
   return (
     <Descriptions {...rest}>
       {dataSource.map((el) => (
-        <Descriptions.Item label={el.label}>
-          {el.label == 'jenkins' ? (
-            <a href={el.value} target="_blank">
-              {el.value}
-            </a>
-          ) : (
-            el.value
-          )}
-        </Descriptions.Item>
+        <div>
+          <Descriptions.Item label={el.label}>
+            {el.label == 'jenkins' ? (
+              <a href={el.value} target="_blank">
+                {el.value}
+              </a>
+            ) : el.label === 'branchInfo' ? (
+              <Descriptions.Item label="功能分支">
+                <Table style={{ width: '80%' }} columns={columns} dataSource={el.value}></Table>
+              </Descriptions.Item>
+            ) : (
+              el.value
+            )}
+          </Descriptions.Item>
+        </div>
       ))}
-      <Descriptions.Item label="相关功能分支">
-        <Table style={{ width: '80%' }} columns={columns} dataSource={[]}></Table>
-      </Descriptions.Item>
     </Descriptions>
+
     // 添加Jenkins字段显示并以可点击链接形式展示
   );
 };

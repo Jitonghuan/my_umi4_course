@@ -9,7 +9,7 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Modal, Button, List } from 'antd';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '@/pages/application/application-detail/context';
-import { recordFieldMap } from './schema';
+import { recordFieldMap, recordFieldMapOut } from './schema';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -42,8 +42,8 @@ export default function PublishRecord(props: IProps) {
   useEffect(() => {
     queryDataSource({
       appCode,
-      env,
-      isActive: 0,
+      envTypeCode: env,
+      pageIndex: 1,
     });
   }, []);
 
@@ -118,11 +118,11 @@ export default function PublishRecord(props: IProps) {
             dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
             renderItem={(item) => (
               <List.Item>
-                {Object.keys(recordFieldMap)
+                {Object.keys(recordFieldMapOut)
                   .slice(0, 3)
                   .map((key) => (
                     <span className={`${rootCls}-row ${key}`}>
-                      <label>{recordFieldMap[key]}</label>：{item[key]}
+                      <label>{recordFieldMapOut[key]}</label>：{item[key]}
                     </span>
                   ))}
                 <a onClick={() => handleShowDetail(item)}>详情</a>
