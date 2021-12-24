@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, Select } from 'antd';
 import CpuUtilization from './cpu-utilization-line';
 import LoadUtilization from './load-utilization-line';
@@ -8,16 +8,6 @@ import DiskIOChart from './diskIO-line';
 import NetWorkChart from './network-line';
 import FileOpen from './file-charts';
 import SocketCharts from './socket-charts';
-import {
-  useQueryNodeCpu,
-  usequeryNodeMem,
-  useQueryNodeDisk,
-  useQueryNodeLoad,
-  useQueryNodeIO,
-  useQueryNodeFile,
-  useQueryNodeSocket,
-  useQueryNodeNetWork,
-} from './hooks';
 import './index.less';
 
 export interface minitorDashboardProps {
@@ -28,6 +18,8 @@ export interface minitorDashboardProps {
   loadings?: any;
   currentIpData: string;
   currentClusterData: string;
+  querChartData: (getCluster: any, startTime: any, endTime: any, ip: any, isOpen: boolean) => any;
+  queryCount: number;
 }
 export const START_TIME_ENUMS = [
   {
@@ -67,17 +59,29 @@ export const START_TIME_ENUMS = [
     value: 24 * 60 * 60 * 1000 * 30,
   },
 ];
-export default function DashboardsModal(props: minitorDashboardProps) {
-  const { ipDetailVisiable, onOk, onCancel, initData, loadings, currentIpData, currentClusterData } = props;
-  const [queryNodeCpuData, nodeCpuloading, queryNodeCpu] = useQueryNodeCpu();
-  const [queryNodeMemData, nodeMemloading, queryNodeMem] = usequeryNodeMem();
-  const [queryNodeDiskData, nodeDiskloading, queryNodeDisk] = useQueryNodeDisk();
-  const [queryNodeLoadData, nodeLoadloading, queryNodeLoad] = useQueryNodeLoad();
-  const [queryNodeIOData, nodeIoloading, queryNodeIO] = useQueryNodeIO();
-  const [queryNodeFileData, nodeFileloading, queryNodeFile] = useQueryNodeFile();
-  const [queryNodeSocketData, nodeSocketloading, queryNodeSocket] = useQueryNodeSocket();
-  const [queryNodeNetWorkData, nodeNetWorkloading, queryNodeNetWork] = useQueryNodeNetWork();
 
+export default function DashboardsModal(props: minitorDashboardProps) {
+  const {
+    ipDetailVisiable,
+    onOk,
+    onCancel,
+    initData,
+    loadings,
+    currentIpData,
+    currentClusterData,
+    querChartData,
+    queryCount,
+  } = props;
+
+  //数据驱动视图 ，需要用useState来驱动，不可以在选择事件中直接赋值
+  const [nodeCpuData, setNodeCpuData] = useState<any>();
+  const [nodeMemData, setNodeMemData] = useState<any>();
+  const [nodeDiskData, setNodeDiskData] = useState<any>();
+  const [nodeLoadData, setNodeLoadData] = useState<any>();
+  const [nodeIOData, setNodeIOData] = useState<any>();
+  const [nodeFileData, setNodeFileData] = useState<any>();
+  const [nodeNetWorkData, setNodeNetWorkData] = useState<any>();
+  const [nodeSocketData, setNodeSocketData] = useState<any>();
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
   const now = new Date().getTime();
@@ -86,6 +90,19 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
+  useEffect(() => {
+    if (initData) {
+      setNodeCpuData(initData?.nodeCpu);
+      setNodeMemData(initData?.nodeMem);
+      setNodeDiskData(initData?.nodeDisk);
+      setNodeLoadData(initData?.nodeLoad);
+      setNodeIOData(initData?.nodeIO);
+      setNodeFileData(initData?.nodeFile);
+      setNodeNetWorkData(initData?.nodeNetWork);
+      setNodeSocketData(initData?.nodeSocket);
+    }
+  }, [initData]);
+
   // 选择就近时间触发的事件
   const selectRelativeTime = (value: any) => {
     const now = new Date().getTime();
@@ -94,14 +111,7 @@ export default function DashboardsModal(props: minitorDashboardProps) {
     let endTimepl = Number(now / 1000).toString();
     setStartTimestamp(startTimepl);
     setEndTimestamp(endTimepl);
-    queryNodeCpu(currentClusterData, currentIpData, startTimepl, endTimepl);
-    queryNodeMem(currentClusterData, currentIpData, startTimepl, endTimepl);
-    queryNodeDisk(currentClusterData, currentIpData, startTimepl, endTimepl);
-    queryNodeLoad(currentClusterData, currentIpData, startTimepl, endTimepl);
-    queryNodeIO(currentClusterData, currentIpData, startTimepl, endTimepl);
-    queryNodeFile(currentClusterData, currentIpData, startTimepl, endTimepl);
-    queryNodeSocket(currentClusterData, currentIpData, startTimepl, endTimepl);
-    queryNodeNetWork(currentClusterData, currentIpData, startTimepl, endTimepl);
+    querChartData(currentClusterData, startTimepl, endTimepl, currentIpData, false);
   };
 
   return (
@@ -114,12 +124,6 @@ export default function DashboardsModal(props: minitorDashboardProps) {
       width={'90%'}
       bodyStyle={{ height: '80%' }}
     >
-      {/* <div className="section-group">
-        11111
-      </div>
-      <div className="section-group">
-        2222
-      </div> */}
       <div>
         <span style={{ marginLeft: '88%' }}>
           <Select value={startTime} onChange={selectRelativeTime} style={{ width: 140 }}>
@@ -134,44 +138,29 @@ export default function DashboardsModal(props: minitorDashboardProps) {
       </div>
       <div className="blockDiv">
         <div className="block">
-          <CpuUtilization data={initData?.nodeCpu || queryNodeCpuData} loading={loadings?.nodeCpu || nodeCpuloading} />
+          <CpuUtilization data={nodeCpuData} loading={loadings?.nodeCpu} />
         </div>
         <div className="block">
-          <MemroyUtilization
-            data={initData?.nodeMem || queryNodeMemData}
-            loading={loadings?.nodeMem || nodeMemloading}
-          />
+          <MemroyUtilization data={nodeMemData} loading={loadings?.nodeMem} />
         </div>
         <div className="block">
-          <LoadUtilization
-            data={initData?.nodeLoad || queryNodeLoadData}
-            loading={loadings?.nodeLoad || nodeLoadloading}
-          />
+          <LoadUtilization data={nodeLoadData} loading={loadings?.nodeLoad} />
         </div>
 
         <div className="block">
-          <DiskUtilization
-            data={initData?.nodeDisk || queryNodeDiskData}
-            loading={loadings?.nodeDisk || nodeDiskloading}
-          />
+          <DiskUtilization data={nodeDiskData} loading={loadings?.nodeDisk} />
         </div>
         <div className="block">
-          <DiskIOChart data={initData?.nodeIO || queryNodeIOData} loading={loadings?.nodeIO || nodeIoloading} />
+          <DiskIOChart data={nodeIOData} loading={loadings?.nodeIO} />
         </div>
         <div className="block">
-          <NetWorkChart
-            data={initData?.nodeNetWork || queryNodeNetWorkData}
-            loading={loadings?.nodeNetWork || nodeNetWorkloading}
-          />
+          <NetWorkChart data={nodeNetWorkData} loading={loadings?.nodeNetWork} />
         </div>
         <div className="blockLeft">
-          <SocketCharts
-            data={initData?.nodeSocket || queryNodeSocketData}
-            loading={loadings?.nodeSocket || nodeSocketloading}
-          />
+          <SocketCharts data={nodeSocketData} loading={loadings?.nodeSocket} />
         </div>
         <div className="blockRight">
-          <FileOpen data={initData?.nodeFile || queryNodeFileData} loading={loadings?.nodeFile || nodeFileloading} />
+          <FileOpen data={nodeFileData} loading={loadings?.nodeFile} />
         </div>
       </div>
     </Modal>

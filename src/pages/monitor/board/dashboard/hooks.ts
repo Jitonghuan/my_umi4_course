@@ -24,7 +24,7 @@ export function useQueryNodeCpu() {
             if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
               const element = dataSource[key];
               if (key === 'nodeCpuSys') {
-                dataSource['nodeCpuSys'].map((ele: any) => {
+                dataSource['nodeCpuSys']?.map((ele: any) => {
                   nodeCpuDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
@@ -33,7 +33,7 @@ export function useQueryNodeCpu() {
                 });
               }
               if (key === 'nodeCpuTotal') {
-                dataSource['nodeCpuTotal'].map((ele: any) => {
+                dataSource['nodeCpuTotal']?.map((ele: any) => {
                   nodeCpuDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
@@ -42,7 +42,7 @@ export function useQueryNodeCpu() {
                 });
               }
               if (key === 'nodeCpuUser') {
-                dataSource['nodeCpuUser'].map((ele: any) => {
+                dataSource['nodeCpuUser']?.map((ele: any) => {
                   nodeCpuDataArry.push({
                     category: key,
                     time: moment(parseInt(ele[0]) * 1000).format('HH:mm'),
@@ -75,7 +75,7 @@ export function usequeryNodeMem() {
         if (res?.success) {
           let nodeMemDataArry: any = [];
           let dataSource = res?.data.nodeMem;
-          dataSource.map((item: any) => {
+          dataSource?.map((item: any) => {
             nodeMemDataArry.push({
               time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
               precentage: Number(Number(item[1]).toFixed(1)),

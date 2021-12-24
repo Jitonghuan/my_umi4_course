@@ -144,7 +144,6 @@ export default function envManageList(props: any) {
   //删除数据
   const handleDelEnv = (record: any) => {
     let id = record.id;
-    console.log('record', record);
     delRequest(`${appConfig.apiPrefix}/appManage/env/delete/${record.envCode}`);
     // message.success('删除成功！');
     loadListData({
@@ -155,6 +154,33 @@ export default function envManageList(props: any) {
 
   let useNacosData: number;
   let isBlockData: number;
+  let needApplyData: number;
+  //启用配置管理选择 启用发布审批为0，不启用为1
+  const handleNeedApplyChange = async (checked: any, record: any) => {
+    if (checked === 0) {
+      needApplyData = 1;
+    } else {
+      needApplyData = 0;
+    }
+    await putRequest(updateEnv, {
+      data: {
+        envCode: record?.envCode,
+        useNacos: record?.useNacos,
+        isBlock: record.isBlock,
+        needApply: needApplyData,
+      },
+    }).then((result) => {
+      if (result.success) {
+        message.success('更改成功！');
+      } else {
+        message.error(result.errorMsg);
+      }
+    });
+    loadListData({
+      pageIndex: 1,
+      pageSize: 20,
+    });
+  };
 
   //启用配置管理选择
   const handleNacosChange = async (checked: any, record: any) => {
@@ -167,10 +193,9 @@ export default function envManageList(props: any) {
       await putRequest(updateEnv, {
         data: {
           envCode: record?.envCode,
-          // envName: record?.envName,
           useNacos: useNacosData,
           isBlock: record.isBlock,
-          // mark: record?.mark,
+          needApply: record.needApply,
         },
       }).then((result) => {
         if (result.success) {
@@ -200,6 +225,7 @@ export default function envManageList(props: any) {
         // envName: record?.envName,
         useNacos: record?.useNacos,
         isBlock: isBlockData,
+        needApply: record.needApply,
         // mark: record?.mark,
       },
     }).then((result) => {
@@ -310,6 +336,18 @@ export default function envManageList(props: any) {
             <Table.Column title="环境大类" dataIndex="envTypeCode" width={90} />
             <Table.Column title="默认分类" dataIndex="categoryCode" width={130} />
             <Table.Column title="备注" dataIndex="mark" width={200} />
+            <Table.Column
+              title="启用发布审批"
+              dataIndex="needApply"
+              width={110}
+              render={(value, record, index) => (
+                <Switch
+                  className="needApply"
+                  onChange={() => handleNeedApplyChange(value, record)}
+                  checked={value === 0 ? true : false}
+                />
+              )}
+            />
             <Table.Column
               title="启用配置管理"
               dataIndex="useNacos"

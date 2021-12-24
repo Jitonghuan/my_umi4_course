@@ -482,7 +482,7 @@ export default function DeployContent(props: DeployContentProps) {
                 <div className="change-order-item" key={index}>
                   <p>
                     <span>时间：</span>
-                    <b>{moment(item?.operateTime).format('YYYY-MM-DD,HH:mm:ss')}</b>
+                    <b>{moment(item?.operateTime).format('YYYY-MM-DD HH:mm:ss')}</b>
                   </p>
                   <p>
                     <span>操作人：</span>

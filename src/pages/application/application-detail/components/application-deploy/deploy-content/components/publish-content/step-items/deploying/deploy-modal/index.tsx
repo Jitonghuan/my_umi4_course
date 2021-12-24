@@ -147,20 +147,22 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   const [currentAppIds, setCurrentAppIds] = useState<any>([]);
   let resData;
   const deployApply = () => {
-    getRequest(applyHaveNoUpPlanList, { data: { appCode } }).then((res) => {
-      if (res.success) {
-        let dataArry: any = [];
-        let dataSource = res.data || [];
-        dataSource?.map((item: any) => {
-          dataArry.push({ label: item?.ApplyTitle, value: item?.ApplyId });
-        });
-        setDeployApplyOptions(dataArry);
-        if (res.data === null) {
-          resData = null;
-          setDeployApplyOptions(null);
+    if (stateDeployEnv) {
+      getRequest(applyHaveNoUpPlanList, { data: { appCode, envCode: stateDeployEnv } }).then((res) => {
+        if (res.success) {
+          let dataArry: any = [];
+          let dataSource = res.data || [];
+          dataSource?.map((item: any) => {
+            dataArry.push({ label: item?.ApplyTitle, value: item?.ApplyId });
+          });
+          setDeployApplyOptions(dataArry);
+          if (res.data === null) {
+            resData = null;
+            setDeployApplyOptions(null);
+          }
         }
-      }
-    });
+      });
+    }
   };
   const changeDeployApply = (value: any) => {
     appIds = value;

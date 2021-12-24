@@ -12,7 +12,6 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function CpuUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
-  console.log('datarevier:', data);
   const config = {
     data,
     xField: 'time',

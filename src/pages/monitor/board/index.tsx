@@ -290,20 +290,28 @@ const Coms = (props: any) => {
   const [currentIp, setCurrentIp] = useState<string>('');
 
   const handleIpClick = (ip: string) => {
-    // prevNode.current = record;
-
-    queryNodeCpu(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeMem(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeDisk(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeLoad(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeIO(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeFile(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeSocket(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeNetWork(currentCluster, ip, startTimestamp, endTimestamp);
     setCurrentIp(ip);
-    setTimeout(() => {
-      setIpDetailShow(true);
-    }, 200);
+    querChartData(currentCluster, startTimestamp, endTimestamp, ip, true);
+  };
+
+  const [queryCount, setQueryCount] = useState<number>(0);
+  const querChartData = (getCluster: any, startTime: any, endTime: any, ip: any, isOpen: boolean) => {
+    setQueryCount(queryCount + 1);
+
+    queryNodeCpu(getCluster, ip, startTime, endTime);
+    queryNodeMem(getCluster, ip, startTime, endTime);
+    queryNodeDisk(getCluster, ip, startTime, endTime);
+    queryNodeLoad(getCluster, ip, startTime, endTime);
+    queryNodeIO(getCluster, ip, startTime, endTime);
+    queryNodeFile(getCluster, ip, startTime, endTime);
+    queryNodeSocket(getCluster, ip, startTime, endTime);
+    queryNodeNetWork(getCluster, ip, startTime, endTime);
+
+    if (isOpen) {
+      setTimeout(() => {
+        setIpDetailShow(true);
+      }, 200);
+    }
   };
 
   const handlePodClick = () => {};
@@ -446,6 +454,11 @@ const Coms = (props: any) => {
           }}
           currentIpData={currentIp}
           currentClusterData={currentCluster}
+          // getCluster:any,startTime:any,endTime:any,ip:any,isOpen:boolean
+          querChartData={(getCluster: any, startTime: any, endTime: any, ip: any, isOpen: boolean) =>
+            querChartData(getCluster, startTime, endTime, ip, isOpen)
+          }
+          queryCount={queryCount}
         />
         <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
           {tabList?.map((el) => (
