@@ -110,7 +110,6 @@ export default function PublishRecord(props: IProps) {
       <div className={`${rootCls}__title`}>发布记录</div>
       {tableProps.dataSource?.filter((v) => v?.envTypeCode === env)?.length ? (
         <div>
-          <p>fbauren </p>
           <List
             className="demo-loadmore-list"
             loading={tableProps.loading}

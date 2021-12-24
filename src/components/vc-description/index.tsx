@@ -1,5 +1,5 @@
 import React from 'react';
-import { Descriptions } from 'antd';
+import { Descriptions, Table } from 'antd';
 
 import type { DescriptionsProps } from 'antd/lib/descriptions';
 
@@ -24,6 +24,21 @@ export interface IProps extends DescriptionsProps {
  */
 const funcName = (props: IProps) => {
   const { dataSource = [], ...rest } = props;
+  const columns = [
+    {
+      title: '分支名',
+      dataIndex: 'branchName',
+      key: 'branchName',
+    },
+    {
+      title: '变更原因',
+      dataIndex: 'modifyResion',
+    },
+    {
+      title: '创建人',
+      dataIndex: 'createUser',
+    },
+  ];
 
   return (
     <Descriptions {...rest}>
@@ -38,6 +53,9 @@ const funcName = (props: IProps) => {
           )}
         </Descriptions.Item>
       ))}
+      <Descriptions.Item label="相关功能分支">
+        <Table style={{ width: '80%' }} columns={columns} dataSource={[]}></Table>
+      </Descriptions.Item>
     </Descriptions>
     // 添加Jenkins字段显示并以可点击链接形式展示
   );
