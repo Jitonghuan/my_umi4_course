@@ -38,20 +38,20 @@ export const recordFieldMapOut: { [key: string]: any } = {
   branchInfo: '功能分支',
   // releaseBranch: '发布分支',
   // version: '版本号',
-  // tagName: 'tag',
+  tagName: 'tag',
 };
 
 // 发布记录字段 map
 export const recordFieldMap: { [key: string]: any } = {
-  id: '发布Id',
+  deployId: '发布Id',
   modifyUser: '发布人',
   deployedTime: '发布时间',
   envs: '发布环境',
   deployStatus: '发布状态',
   // conflictFeature: '冲突分支',
   jenkinsUrl: 'jenkins',
+  tagName: 'tag',
   branchInfo: '功能分支',
   // releaseBranch: '发布分支',
   // version: '版本号',
-  // tagName: 'tag',
 };
