@@ -18,16 +18,19 @@ export default function BranchEditor(props: IProps) {
   const { mode, appCode, onClose, onSubmit } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
+  const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
+  const [projectId, setProjectId] = useState<string>('');
+  const [demandId, setDemandId] = useState<any>([]);
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
 
     setLoading(true);
-
     try {
       await createFeatureBranch({
         appCode,
-        demandId: demandId,
+        // demandId: demandId,
         ...values,
       });
       message.success('操作成功！');
@@ -36,10 +39,6 @@ export default function BranchEditor(props: IProps) {
       setLoading(false);
     }
   }, [form, appCode]);
-  const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
-  const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
-  const [projectId, setProjectId] = useState<string>('');
-  const [demandId, setDemandId] = useState<number>();
 
   const queryPortal = () => {
     try {
@@ -59,7 +58,6 @@ export default function BranchEditor(props: IProps) {
   };
   const onChangeProtal = (value: any) => {
     setProjectId(value);
-
     queryDemand(value);
   };
   const queryDemand = async (param: string, searchTextParams?: string) => {
@@ -82,7 +80,8 @@ export default function BranchEditor(props: IProps) {
   };
 
   const onChangeDemand = (data: any) => {
-    setDemandId(data?.value);
+    setDemandId(data);
+    // handleSubmit(data);
   };
 
   const onSearch = (val: any) => {
@@ -113,8 +112,9 @@ export default function BranchEditor(props: IProps) {
         <Form.Item label="项目列表">
           <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
         </Form.Item>
-        <Form.Item label="需求列表">
+        <Form.Item label="需求列表" name="demandId">
           <Select
+            mode="multiple"
             options={queryDemandOptions}
             onChange={onChangeDemand}
             showSearch
