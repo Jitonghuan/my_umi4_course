@@ -39,14 +39,17 @@ const funcName = (props: any) => {
       title: '分支名',
       dataIndex: 'branchName',
       key: 'branchName',
+      width: 188,
     },
     {
       title: '变更原因',
       dataIndex: 'modifyResion',
+      width: 170,
     },
     {
       title: '创建人',
       dataIndex: 'createUser',
+      width: 60,
     },
   ];
 
@@ -84,7 +87,8 @@ const funcName = (props: any) => {
       <div style={{ borderTop: '1px solid #d3d7e0', height: '1px' }}></div>
       <Descriptions.Item label="功能分支" labelStyle={{}}>
         <Table
-          style={{ width: '94%' }}
+          scroll={{ y: window.innerHeight - 515, x: '100%' }}
+          style={{ width: '96%' }}
           columns={columns}
           dataSource={dataSource.branchInfo || []}
           pagination={false}
