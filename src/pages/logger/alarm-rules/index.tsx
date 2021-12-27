@@ -10,13 +10,14 @@ import TemplateDrawer from '../_components/template-drawer';
 import RulesTable from '../_components/rules-table';
 
 export default function AlarmRules() {
+  const [searchRulesForm] = Form.useForm();
   const { Search } = Input;
   return (
     <PageContainer>
       <FilterCard>
         <Form
           layout="inline"
-          // form={formTmpl}
+          form={searchRulesForm}
           // onFinish={(values: any) => {
           //   queryList({
           //     ...values,
@@ -25,7 +26,7 @@ export default function AlarmRules() {
           //   });
           // }}
           onReset={() => {
-            // formTmpl.resetFields();
+            searchRulesForm.resetFields();
             // queryList({
             //   pageIndex: 1,
             //   // pageSize: pageSize,
