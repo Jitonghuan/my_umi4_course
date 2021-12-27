@@ -10,7 +10,8 @@ import EditorTable from '@cffe/pc-editor-table';
 import { editColumns } from './colunms';
 import { Item } from '../../../monitor/basic/typing';
 import { stepTableMap } from '../../../monitor/basic/util';
-import { queryRuleTemplatesList, queryGroupList } from '../../../monitor/basic/services';
+import { getRequest } from '@/utils/request';
+import { queryRuleTemplatesList, queryGroupList, getEnvCodeList } from '../../../monitor/basic/services';
 import { useUserOptions } from './hooks';
 import './index.less';
 
@@ -48,26 +49,28 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [annotationsTableData, setAnnotationsTableData] = useState<Item[]>([]);
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
   const [ruleTemplate, setRuleTemplate] = useState('');
+  const [envTypeCode, setEnvtypeCode] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
+
   const envTypeData = [
     {
-      key: 1,
+      key: 'dev',
       label: 'DEV',
       value: 'dev',
     },
     {
-      key: 2,
+      key: 'test',
       label: 'TEST',
       value: 'test',
     },
     {
-      key: 3,
+      key: 'pre',
       label: 'PRE',
       value: 'pre',
     },
     {
-      key: 4,
+      key: 'prod',
       label: 'PROD',
       value: 'prod',
     },
@@ -88,6 +91,23 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       );
     },
   });
+  //集群环境 下拉选择数据
+
+  const [clusterEnvOptions, setClusterEnvOptions] = useState<any[]>([]);
+  const queryEnvCodeList = async (envTypeCode: string) => {
+    await getRequest(getEnvCodeList, {
+      data: { envTypeCode },
+    }).then((resp) => {
+      if (resp.success) {
+        let data = resp?.data;
+        const next = (data || []).map((n: any) => ({
+          label: n.envName,
+          value: n.envCode,
+        }));
+        setClusterEnvOptions(next);
+      }
+    });
+  };
 
   //获取模板列表
   const { run: queryRuleTemplatesListFun } = useRequest({
@@ -216,7 +236,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       key: '2',
       type: 'input',
       label: drawerType === 'rules' ? '规则名称' : '模板名称',
-      dataIndex: 'name',
+      dataIndex: 'ruleName',
       placeholder: '请输入',
       required: true,
       // disable: type === 'edit',
@@ -245,17 +265,22 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       key: '4',
       type: 'select',
       label: '选择环境',
-      dataIndex: 'duration',
+      dataIndex: 'envTypeCode',
       option: envTypeData,
       width: '20%',
       required: true,
       style: { marginRight: 10 },
+      onChange: (e: string) => {
+        console.log('e', e);
+        setEnvtypeCode(e);
+        queryEnvCodeList(e);
+      },
       extraForm: (
         <span>
-          <Form.Item name="timeType" noStyle>
-            <Select style={{ width: '30%' }} placeholder="选择监控的集群环境"></Select>
+          <Form.Item name="clusterEnvs" noStyle>
+            <Select style={{ width: '30%' }} options={clusterEnvOptions} placeholder="选择监控的集群环境"></Select>
           </Form.Item>
-          <Form.Item name="timeType" noStyle>
+          <Form.Item name="namespace" noStyle>
             <Select style={{ width: '30%' }} placeholder="选择Namespace名称（可选）"></Select>
           </Form.Item>
         </span>
@@ -265,7 +290,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       key: '5',
       type: 'select',
       label: '关联应用',
-      dataIndex: 'group',
+      dataIndex: 'appCode',
       placeholder: '请选择关联应用（可选）',
       required: true,
       option: groupData,
