@@ -50,6 +50,28 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [ruleTemplate, setRuleTemplate] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
+  const envTypeData = [
+    {
+      key: 1,
+      label: 'DEV',
+      value: 'dev',
+    },
+    {
+      key: 2,
+      label: 'TEST',
+      value: 'test',
+    },
+    {
+      key: 3,
+      label: 'PRE',
+      value: 'pre',
+    },
+    {
+      key: 4,
+      label: 'PROD',
+      value: 'prod',
+    },
+  ]; //环境大类
 
   //分类
   const { run: groupList } = useRequest({
@@ -224,7 +246,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       type: 'select',
       label: '选择环境',
       dataIndex: 'duration',
-      placeholder: '开发',
+      option: envTypeData,
       width: '20%',
       required: true,
       style: { marginRight: 10 },

@@ -22,7 +22,7 @@ export function useAppOptions() {
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
-        label: item.appCode,
+        label: item.appName,
         value: item.appCode,
       }));
 
@@ -49,7 +49,7 @@ export function useEnvOptions(appCode?: string) {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
         // label: item.envName,
-        label: item.envCode,
+        label: item.envName,
         value: item.envCode,
       }));
 

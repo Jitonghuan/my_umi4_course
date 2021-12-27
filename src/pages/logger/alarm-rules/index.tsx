@@ -79,6 +79,9 @@ export default function AlarmRules() {
           <Form.Item label="环境大类" name="envTypeCode">
             <Select showSearch style={{ width: 150 }} options={envTypeData} />
           </Form.Item>
+          <Form.Item label="应用" name="appCode">
+            <Select showSearch allowClear style={{ width: 120 }} options={appOptions} onChange={handleAppCodeChange} />
+          </Form.Item>
           <Form.Item label="环境" name="envCode">
             <Select
               options={envOptions}
@@ -90,9 +93,7 @@ export default function AlarmRules() {
               style={{ width: 120 }}
             />
           </Form.Item>
-          <Form.Item label="应用" name="appCode">
-            <Select showSearch allowClear style={{ width: 120 }} options={appOptions} onChange={handleAppCodeChange} />
-          </Form.Item>
+
           <Form.Item label="状态" name="status">
             <Select showSearch allowClear style={{ width: 120 }} options={statusOptions} />
           </Form.Item>
