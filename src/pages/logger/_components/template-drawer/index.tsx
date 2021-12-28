@@ -1,7 +1,7 @@
 // fork from business/component/template-drawer
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Button, Space, Drawer, Form, Select, TimePicker } from 'antd';
+import { Button, Space, Drawer, Form, Select, TimePicker, Input, InputNumber, Radio } from 'antd';
 import moment, { Moment } from 'moment';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
@@ -11,6 +11,7 @@ import { editColumns } from './colunms';
 import { Item } from '../../../monitor/basic/typing';
 import { stepTableMap } from '../../../monitor/basic/util';
 import { getRequest } from '@/utils/request';
+import { useAppOptions } from '../../alarm-rules/hooks';
 import { queryRuleTemplatesList, queryGroupList, getEnvCodeList } from '../../../monitor/basic/services';
 import { useUserOptions } from './hooks';
 import './index.less';
@@ -45,11 +46,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   onSubmit,
 }) => {
   const [form] = Form.useForm();
+  const [appOptions] = useAppOptions();
   const [labelTableData, setLabelTableData] = useState<Item[]>([]);
   const [annotationsTableData, setAnnotationsTableData] = useState<Item[]>([]);
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
   const [ruleTemplate, setRuleTemplate] = useState('');
-  const [envTypeCode, setEnvtypeCode] = useState('');
+  const [envTypeCode, setEnvTypeCode] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
 
@@ -75,7 +77,18 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       value: 'prod',
     },
   ]; //环境大类
-
+  const silenceOptions = [
+    {
+      key: 1,
+      value: '是',
+      label: '是',
+    },
+    {
+      key: 0,
+      value: '否',
+      label: '否',
+    },
+  ];
   //分类
   const { run: groupList } = useRequest({
     api: queryGroupList,
@@ -92,7 +105,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     },
   });
   //集群环境 下拉选择数据
-
+  let envOptions: any = [];
   const [clusterEnvOptions, setClusterEnvOptions] = useState<any[]>([]);
   const queryEnvCodeList = async (envTypeCode: string) => {
     await getRequest(getEnvCodeList, {
@@ -100,14 +113,21 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     }).then((resp) => {
       if (resp.success) {
         let data = resp?.data;
-        const next = (data || []).map((n: any) => ({
-          label: n.envName,
-          value: n.envCode,
-        }));
-        setClusterEnvOptions(next);
+        data?.map((item: any) => {
+          envOptions.push({
+            label: item.envCode,
+            value: item.envCode,
+          });
+        });
+        // const next = (data || []).map((n: any) => ({
+        //   label: n.envCode,
+        //   value: n.envCode,
+        // }));
+        setClusterEnvOptions(envOptions);
       }
     });
   };
+  console.log('clusterEnvOptions', clusterEnvOptions);
 
   //获取模板列表
   const { run: queryRuleTemplatesListFun } = useRequest({
@@ -217,230 +237,71 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       editDataDetail(record);
     }
   }, [type, record, visible]);
+  const rulesOptions = [
+    {
+      key: 2,
+      value: '警告',
+      label: '警告',
+    },
+    {
+      key: 3,
+      value: '严重',
+      label: '严重',
+    },
+    {
+      key: 4,
+      value: '灾难',
+      label: '灾难',
+    },
+  ];
 
   const formOptions: FormProps[] = [
-    {
-      key: '1',
-      type: 'select',
-      label: '报警模版',
-      dataIndex: 'ruleTemplate',
-      placeholder: '选择告警模版，根据模版自动填充以下内容',
-      required: true,
-      option: ruleTemplatesList as OptionProps[],
-      rules: [],
-      onChange: (e: string) => {
-        setRuleTemplate(e);
-      },
-    },
-    {
-      key: '2',
-      type: 'input',
-      label: drawerType === 'rules' ? '规则名称' : '模板名称',
-      dataIndex: 'ruleName',
-      placeholder: '请输入',
-      required: true,
-      // disable: type === 'edit',
-      rules: [
-        {
-          whitespace: true,
-          required: true,
-          message: '请输入正确的名称',
-          // message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
-          // pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
-          type: 'string',
-          max: 200,
-        },
-      ],
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '报警分类',
-      dataIndex: 'group',
-      placeholder: '请选择',
-      required: true,
-      option: groupData,
-    },
-    {
-      key: '4',
-      type: 'select',
-      label: '选择环境',
-      dataIndex: 'envTypeCode',
-      option: envTypeData,
-      width: '20%',
-      required: true,
-      style: { marginRight: 10 },
-      onChange: (e: string) => {
-        console.log('e', e);
-        setEnvtypeCode(e);
-        queryEnvCodeList(e);
-      },
-      extraForm: (
-        <span>
-          <Form.Item name="clusterEnvs" noStyle>
-            <Select style={{ width: '30%' }} options={clusterEnvOptions} placeholder="选择监控的集群环境"></Select>
-          </Form.Item>
-          <Form.Item name="namespace" noStyle>
-            <Select style={{ width: '30%' }} placeholder="选择Namespace名称（可选）"></Select>
-          </Form.Item>
-        </span>
-      ),
-    },
-    {
-      key: '5',
-      type: 'select',
-      label: '关联应用',
-      dataIndex: 'appCode',
-      placeholder: '请选择关联应用（可选）',
-      required: true,
-      option: groupData,
-    },
-    {
-      key: '6',
-      type: 'area',
-      label: '告警表达式(PromQL)',
-      dataIndex: 'expression',
-      placeholder: '请输入',
-      required: true,
-    },
-    {
-      key: '7',
-      type: 'inputNumber',
-      label: '报警持续时间',
-      dataIndex: 'duration',
-      placeholder: '请输入',
-      width: '90%',
-      required: true,
-      style: { marginRight: 10 },
-      className: 'extraStyleTime',
-      min: 1,
-      extraForm: (
-        <Form.Item name="timeType" noStyle initialValue="m">
-          <Select style={{ width: '90%' }} placeholder="选择时间单位">
-            <Select.Option value="h">小时</Select.Option>
-            <Select.Option value="m">分钟</Select.Option>
-            <Select.Option value="s">秒</Select.Option>
-          </Select>
-        </Form.Item>
-      ),
-    },
-
-    {
-      key: '8',
-      type: 'select',
-      label: '告警级别',
-      dataIndex: 'level',
-      // width: '144px',
-      placeholder: '请选择',
-      required: true,
-      rules: [
-        {
-          required: true,
-          message: '请选择',
-          type: 'number',
-        },
-      ],
-      option: [
-        {
-          key: 2,
-          value: '警告',
-          label: '警告',
-        },
-        {
-          key: 3,
-          value: '严重',
-          label: '严重',
-        },
-        {
-          key: 4,
-          value: '灾难',
-          label: '灾难',
-        },
-      ],
-    },
-    {
-      key: '9',
-      type: 'input',
-      label: '报警消息',
-      dataIndex: 'message',
-      // width: '144px',
-      placeholder: '消息便于更好识别报警',
-      required: true,
-    },
-
-    {
-      key: '10',
-      type: 'select',
-      label: '通知对象',
-      dataIndex: 'receiver',
-      mode: 'multiple',
-      showSelectSearch: true,
-      option: userOptions,
-      required: false,
-      rules: [
-        {
-          required: false,
-        },
-      ],
-    },
-    {
-      key: '11',
-      type: 'radio',
-      label: '是否静默',
-      dataIndex: 'silence',
-      placeholder: '请选择',
-      required: true,
-      defaultValue: 0,
-      style: { verticalAlign: 'sub' },
-      option: [
-        {
-          key: 1,
-          value: '是',
-          label: '是',
-        },
-        {
-          key: 0,
-          value: '否',
-          label: '否',
-        },
-      ],
-      extraForm: (
-        <Form.Item noStyle shouldUpdate={(prevValues, curValues) => prevValues.silence !== curValues.silence}>
-          {({ getFieldValue }) => {
-            return getFieldValue('silence') === 1 ? (
-              <Form.Item
-                name="silenceTime"
-                rules={[
-                  {
-                    required: true,
-                    message: '请选择',
-                  },
-                ]}
-              >
-                <TimePicker.RangePicker format="HH:mm" style={{ width: '100%', marginTop: 8 }} />
-              </Form.Item>
-            ) : null;
-          }}
-        </Form.Item>
-      ),
-    },
-    {
-      key: '12',
-      type: 'other',
-      label: '高级配置',
-      dataIndex: '',
-      // width: '144px',
-      placeholder: '请输入',
-      itemStyle: { marginBottom: 0 },
-      extraForm: (
-        <Form.Item noStyle>
-          <span>标签（Labels):</span>
-          <EditorTable columns={editColumns} onChange={labelFun} value={labelTableData}></EditorTable>
-          <span>注释（Annotations):</span>
-          <EditorTable columns={editColumns} onChange={annotationsFun} value={annotationsTableData}></EditorTable>
-        </Form.Item>
-      ),
-    },
+    // {
+    //   key: '12',
+    //   type: 'radio',
+    //   label: '是否静默',
+    //   dataIndex: 'silence',
+    //   placeholder: '请选择',
+    //   required: true,
+    //   defaultValue: 0,
+    //   style: { verticalAlign: 'sub' },
+    //   extraForm: (
+    //     <Form.Item noStyle shouldUpdate={(prevValues, curValues) => prevValues.silence !== curValues.silence}>
+    //       {({ getFieldValue }) => {
+    //         return getFieldValue('silence') === 1 ? (
+    //           <Form.Item
+    //             name="silenceTime"
+    //             rules={[
+    //               {
+    //                 required: true,
+    //                 message: '请选择',
+    //               },
+    //             ]}
+    //           >
+    //             <TimePicker.RangePicker format="HH:mm" style={{ width: '100%', marginTop: 8 }} />
+    //           </Form.Item>
+    //         ) : null;
+    //       }}
+    //     </Form.Item>
+    //   ),
+    // },
+    // {
+    //   key: '13',
+    //   type: 'other',
+    //   label: '高级配置',
+    //   dataIndex: '',
+    //   // width: '144px',
+    //   placeholder: '请输入',
+    //   itemStyle: { marginBottom: 0 },
+    //   extraForm: (
+    //     <Form.Item noStyle>
+    //       <span>标签（Labels):</span>
+    //       <EditorTable columns={editColumns} onChange={labelFun} value={labelTableData}></EditorTable>
+    //       <span>注释（Annotations):</span>
+    //       <EditorTable columns={editColumns} onChange={annotationsFun} value={annotationsTableData}></EditorTable>
+    //     </Form.Item>
+    //   ),
+    // },
   ];
 
   formOptions.forEach((v) => {
@@ -488,6 +349,15 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     onClose();
   };
 
+  const suffixSelector = (
+    <Form.Item name="timeType" noStyle initialValue="m">
+      <Select style={{ width: '90%' }} placeholder="选择时间单位">
+        <Select.Option value="h">小时</Select.Option>
+        <Select.Option value="m">分钟</Select.Option>
+        <Select.Option value="s">秒</Select.Option>
+      </Select>
+    </Form.Item>
+  );
   return (
     <Drawer
       className="rulesEdit"
@@ -508,7 +378,114 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       footerStyle={{ textAlign: 'right' }}
       destroyOnClose
     >
-      <Form form={form}>{renderForm(formList)}</Form>
+      <Form form={form} labelCol={{ flex: '140px' }}>
+        {/* {renderForm(formList)} */}
+        <Form.Item label="报警模版" name="ruleTemplate">
+          <Select
+            style={{ width: '200px' }}
+            options={ruleTemplatesList as OptionProps[]}
+            onChange={(e: string) => {
+              setRuleTemplate(e);
+            }}
+            placeholder="选择告警模版，根据模版自动填充以下内容"
+          ></Select>
+        </Form.Item>
+        <Form.Item
+          label={drawerType === 'rules' ? '规则名称' : '模板名称'}
+          name="ruleName"
+          rules={[
+            {
+              whitespace: true,
+              required: true,
+              message: '请输入正确的名称',
+              // message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
+              // pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
+              type: 'string',
+              max: 200,
+            },
+          ]}
+        >
+          <Input placeholder="请输入" style={{ width: '200px' }}></Input>
+        </Form.Item>
+        <Form.Item label="报警分类" name="group" required={true}>
+          <Select options={groupData} placeholder="请选择" style={{ width: '200px' }}></Select>
+        </Form.Item>
+        <Form.Item label="选择环境" name="envTypeCode" required={true}>
+          <Select
+            options={envTypeData}
+            style={{ width: '200px' }}
+            onChange={(e: string) => {
+              setEnvTypeCode(e);
+              queryEnvCodeList(e);
+            }}
+          ></Select>
+        </Form.Item>
+        <Form.Item label="集群环境" name="envCode">
+          <Select options={clusterEnvOptions} style={{ width: '200px' }} placeholder="选择监控的集群环境"></Select>
+        </Form.Item>
+        <Form.Item label="Namespace" name="namespace">
+          <Input style={{ width: '200px' }} placeholder="输入Namespace名称"></Input>
+        </Form.Item>
+
+        <Form.Item label="关联应用" name="appCode">
+          <Select options={appOptions} style={{ width: '200px' }}></Select>
+        </Form.Item>
+        <Form.Item label="告警表达式(PromQL)" name="expression">
+          <Input.TextArea placeholder="请输入" style={{ width: '200px' }}></Input.TextArea>
+        </Form.Item>
+        <Form.Item label="报警持续时间" name="duration" className="extraStyleTime">
+          <InputNumber addonAfter={suffixSelector} width="90%" style={{ marginRight: 10 }}></InputNumber>
+        </Form.Item>
+        <Form.Item
+          label="告警级别"
+          name="level"
+          required={true}
+          rules={[
+            {
+              required: true,
+              message: '请选择',
+              type: 'number',
+            },
+          ]}
+        >
+          <Select options={rulesOptions} placeholder="请选择" style={{ width: '200px' }}></Select>
+        </Form.Item>
+        <Form.Item label="报警消息" name="message" required={true}>
+          <Input placeholder="消息便于更好识别报警" style={{ width: '200px' }}></Input>
+        </Form.Item>
+        <Form.Item label="通知对象" name="receiver">
+          <Select mode="multiple" options={userOptions} showSearch style={{ width: '200px' }}></Select>
+        </Form.Item>
+        <Form.Item label="是否静默" name="silence">
+          <Radio.Group options={silenceOptions} defaultValue style={{ verticalAlign: 'sub' }}></Radio.Group>
+          <Form.Item noStyle shouldUpdate={(prevValues, curValues) => prevValues.silence !== curValues.silence}>
+            {({ getFieldValue }) => {
+              return getFieldValue('silence') === 1 ? (
+                <Form.Item
+                  name="silenceTime"
+                  rules={[
+                    {
+                      required: true,
+                      message: '请选择',
+                    },
+                  ]}
+                >
+                  <TimePicker.RangePicker format="HH:mm" style={{ width: '100%', marginTop: 8 }} />
+                </Form.Item>
+              ) : null;
+            }}
+          </Form.Item>
+        </Form.Item>
+
+        <Form.Item label="高级配置">
+          <Form.Item noStyle>
+            <span>标签（Labels):</span>
+            <EditorTable columns={editColumns} onChange={labelFun} value={labelTableData}></EditorTable>
+            <span>注释（Annotations):</span>
+            <EditorTable columns={editColumns} onChange={annotationsFun} value={annotationsTableData}></EditorTable>
+          </Form.Item>
+        </Form.Item>
+      </Form>
     </Drawer>
   );
 };
