@@ -19,7 +19,7 @@ export default function DemoPageTb(porps: any) {
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
   const children: any = [];
-  const [categoryData, setCategoryData] = useState<string>(); //应用分类
+  const [categoryData, setCategoryData] = useState<any>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
@@ -268,7 +268,7 @@ export default function DemoPageTb(porps: any) {
                 name="appCategoryCode"
                 style={{ marginTop: '50px' }}
               >
-                <Select showSearch style={{ width: 220 }} disabled={isDisabled} />
+                <Select showSearch style={{ width: 220 }} disabled={isDisabled} options={categoryData} />
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
