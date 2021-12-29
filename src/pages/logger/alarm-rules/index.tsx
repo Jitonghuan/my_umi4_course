@@ -77,7 +77,7 @@ export default function AlarmRules() {
             <Search placeholder="按表达式或消息模糊搜索" style={{ width: 200 }} />
           </Form.Item>
           <Form.Item label="环境大类" name="envTypeCode">
-            <Select showSearch style={{ width: 150 }} options={envTypeData} />
+            <Select showSearch style={{ width: 100 }} options={envTypeData} />
           </Form.Item>
           <Form.Item label="应用" name="appCode">
             <Select showSearch allowClear style={{ width: 120 }} options={appOptions} onChange={handleAppCodeChange} />

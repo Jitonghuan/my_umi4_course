@@ -34,3 +34,31 @@ export const recordFieldMap: { [key: string]: string } = {
   releaseBranch: '发布分支',
   merge: 'git merge', // TODO
 };
+
+export const recordDisplayMap = {
+  merging: '正在合并',
+  mergeErr: '合并错误',
+  conflict: '合并冲突',
+  building: '正在构建',
+  buildErr: '构建错误',
+  buildAborted: '构建取消',
+  deployWait: '等待部署',
+  deploying: '正在部署',
+  deployWaitBatch2: '等待第二批部署',
+  deployErr: '部署错误',
+  deployAborted: '部署取消',
+  deployed: '部署完成',
+  mergingMaster: '正在合并Master',
+  mergeMasterErr: '合并Master错误',
+  deletingFeature: '正在删除Feature',
+  deleteFeatureErr: '删除Feature错误',
+  deployFinish: '发布完成',
+  qualityChecking: '质量检测中',
+  qualityFailed: '质量检测失败',
+  pushFeResource: '正在推送前端资源',
+  pushFeResourceErr: '推送前端资源错误',
+  pushVersion: '正在推送前端版本',
+  pushVersionErr: '推送前端版本失败',
+  verifyWait: '等待灰度验证',
+  verifyFailed: '灰度验证失败',
+};
