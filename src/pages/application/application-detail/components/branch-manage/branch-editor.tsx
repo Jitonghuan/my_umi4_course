@@ -18,16 +18,19 @@ export default function BranchEditor(props: IProps) {
   const { mode, appCode, onClose, onSubmit } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
+  const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
+  const [projectId, setProjectId] = useState<string>('');
+  const [demandId, setDemandId] = useState<any>([]);
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
 
     setLoading(true);
-
     try {
       await createFeatureBranch({
         appCode,
-        demandId: demandId,
+        // demandId: demandId,
         ...values,
       });
       message.success('操作成功！');
@@ -36,56 +39,59 @@ export default function BranchEditor(props: IProps) {
       setLoading(false);
     }
   }, [form, appCode]);
-  const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
-  const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
-  const [projectId, setProjectId] = useState<string>('');
-  const [demandId, setDemandId] = useState<number>();
 
   const queryPortal = () => {
-    postRequest(queryPortalList).then((result) => {
-      if (result.success) {
-        let dataSource = result.data;
-        let dataArry: any = [];
-        dataSource?.map((item: any) => {
-          dataArry.push({ label: item?.projectName, value: item?.projectId });
-        });
-        setQueryPortalOptions(dataArry);
-      }
-    });
+    try {
+      postRequest(queryPortalList).then((result) => {
+        if (result.success) {
+          let dataSource = result.data;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({ label: item?.projectName, value: item?.projectId });
+          });
+          setQueryPortalOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
   };
   const onChangeProtal = (value: any) => {
     setProjectId(value);
-
     queryDemand(value);
   };
   const queryDemand = async (param: string, searchTextParams?: string) => {
-    await postRequest(getDemandByProjectList, {
-      data: { projectId: param, searchText: searchTextParams },
-    }).then((result) => {
-      if (result.success) {
-        let dataSource = result.data;
-        let dataArry: any = [];
-        dataSource?.map((item: any) => {
-          dataArry.push({ label: item?.title, value: item?.id });
-        });
-        setQueryDemandOptions(dataArry);
-      }
-    });
+    try {
+      await postRequest(getDemandByProjectList, {
+        data: { projectId: param, searchText: searchTextParams },
+      }).then((result) => {
+        if (result.success) {
+          let dataSource = result.data;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({ label: item?.title, value: item?.id });
+          });
+          setQueryDemandOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const onChangeDemand = (data: any) => {
-    setDemandId(data?.value);
+    setDemandId(data);
+    // handleSubmit(data);
   };
 
   const onSearch = (val: any) => {
-    // queryDemand(projectId,val);
+    // queryDemand(projectId, val);
   };
 
   useEffect(() => {
     if (mode === 'HIDE') return;
-
     form.resetFields();
-    queryPortal();
+    // queryPortal();
   }, [mode]);
 
   return (
@@ -106,8 +112,9 @@ export default function BranchEditor(props: IProps) {
         <Form.Item label="项目列表">
           <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
         </Form.Item>
-        <Form.Item label="需求列表">
+        <Form.Item label="需求列表" name="demandId">
           <Select
+            mode="multiple"
             options={queryDemandOptions}
             onChange={onChangeDemand}
             showSearch

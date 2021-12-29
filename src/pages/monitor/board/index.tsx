@@ -120,8 +120,8 @@ const Coms = (props: any) => {
   const [currentTab, setCurrentTab] = useState<string>('dev');
   const tabList = [
     { label: 'DEV', value: 'dev' },
-    { label: 'PRE', value: 'pre' },
     { label: 'TEST', value: 'test' },
+    { label: 'PRE', value: 'pre' },
     { label: 'PROD', value: 'prod' },
   ];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
@@ -145,8 +145,8 @@ const Coms = (props: any) => {
   const [queryNodeSocketData, nodeSocketloading, queryNodeSocket] = useQueryNodeSocket();
   const [queryNodeNetWorkData, nodeNetWorkloading, queryNodeNetWork] = useQueryNodeNetWork();
   const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [total, setTotal] = useState();
+  const [pageSize, setPageSize] = useState<number>(20);
+  const [total, setTotal] = useState(0);
 
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
@@ -158,12 +158,12 @@ const Coms = (props: any) => {
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
   // // 查询机构列表
   const selectCluster = (param: any) => {
-    setCurrentCluster(param?.value);
-    queryResData(param?.value);
-    queryPodData(param?.value);
+    setCurrentCluster(param);
+    queryResData(param);
+    queryPodData(param);
     reset();
-    queryNodeList({ clusterId: param?.value });
-    queryUseMarket(param?.value);
+    queryNodeList({ clusterId: param });
+    queryUseMarket(param);
   };
 
   // 查询资源使用情况
@@ -182,14 +182,14 @@ const Coms = (props: any) => {
     setPodLoading(true);
     queryPodUseData(value, pageIndexParam, pageSizeParam, keyWordParams)
       .then((result) => {
-        const resultDataSouce = result?.map((item: Record<string, object>) => {
+        const resultDataSouce = result?.dataSource?.map((item: Record<string, object>) => {
           const key = Object.keys(item)[0];
           return {
             ...item[key],
           };
         });
         setPodDataSource(resultDataSouce);
-        let pageInfo = result?.data?.pageInfo;
+        let pageInfo = result?.pageInfo;
         setPageIndex(pageInfo?.pageIndex);
         setPageSize(pageInfo?.pageSize);
         setTotal(pageInfo?.total);
@@ -198,7 +198,6 @@ const Coms = (props: any) => {
         setPodLoading(false);
       });
   };
-
   // 查询节点使用率
   const {
     run: queryNodeList,
@@ -291,20 +290,28 @@ const Coms = (props: any) => {
   const [currentIp, setCurrentIp] = useState<string>('');
 
   const handleIpClick = (ip: string) => {
-    // prevNode.current = record;
-
-    queryNodeCpu(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeMem(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeDisk(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeLoad(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeIO(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeFile(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeSocket(currentCluster, ip, startTimestamp, endTimestamp);
-    queryNodeNetWork(currentCluster, ip, startTimestamp, endTimestamp);
     setCurrentIp(ip);
-    setTimeout(() => {
-      setIpDetailShow(true);
-    }, 200);
+    querChartData(currentCluster, startTimestamp, endTimestamp, ip, true);
+  };
+
+  const [queryCount, setQueryCount] = useState<number>(0);
+  const querChartData = (getCluster: any, startTime: any, endTime: any, ip: any, isOpen: boolean) => {
+    setQueryCount(queryCount + 1);
+
+    queryNodeCpu(getCluster, ip, startTime, endTime);
+    queryNodeMem(getCluster, ip, startTime, endTime);
+    queryNodeDisk(getCluster, ip, startTime, endTime);
+    queryNodeLoad(getCluster, ip, startTime, endTime);
+    queryNodeIO(getCluster, ip, startTime, endTime);
+    queryNodeFile(getCluster, ip, startTime, endTime);
+    queryNodeSocket(getCluster, ip, startTime, endTime);
+    queryNodeNetWork(getCluster, ip, startTime, endTime);
+
+    if (isOpen) {
+      setTimeout(() => {
+        setIpDetailShow(true);
+      }, 200);
+    }
   };
 
   const handlePodClick = () => {};
@@ -366,14 +373,14 @@ const Coms = (props: any) => {
 
     return options;
   }, []);
-  const [searchKeyWords, setSearchKeyWords] = useState<string>('');
+  const [searchKeyWords, setSearchKeyWords] = useState<any>();
   const handleSearchRes = () => {
     setSearchParams(searchField.getFieldsValue());
   };
   const handleSearchPod = () => {
     let param = searchPodField.getFieldsValue();
     setSearchKeyWords(param);
-    queryPodData(currentCluster, param.keysword);
+    queryPodData(currentCluster, pageIndex, pageSize, param.keysword);
   };
 
   const handleOk = () => {
@@ -447,6 +454,11 @@ const Coms = (props: any) => {
           }}
           currentIpData={currentIp}
           currentClusterData={currentCluster}
+          // getCluster:any,startTime:any,endTime:any,ip:any,isOpen:boolean
+          querChartData={(getCluster: any, startTime: any, endTime: any, ip: any, isOpen: boolean) =>
+            querChartData(getCluster, startTime, endTime, ip, isOpen)
+          }
+          queryCount={queryCount}
         />
         <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
           {tabList?.map((el) => (
@@ -549,13 +561,18 @@ const Coms = (props: any) => {
                 current: pageIndex,
                 showSizeChanger: true,
                 onShowSizeChange: (_, next) => {
+                  // debugger
                   setPageIndex(1);
                   setPageSize(next);
-                  queryPodData(currentCluster, 1, next, searchKeyWords);
+                  // queryPodData(currentCluster, 1, next, searchKeyWords?.keysword);
                 },
+                showTotal: () => `总共 ${total} 条数据`,
+
                 // showTotal: () => `总共 ${total} 条数据`,
-                onChange: (next) => {
-                  setPageIndex(next), queryPodData(currentCluster, next, pageSize, searchKeyWords);
+                onChange: (next, size: any) => {
+                  console.log('next', next, size);
+                  setPageSize(size);
+                  setPageIndex(next), queryPodData(currentCluster, next, size, searchKeyWords?.keysword);
                 },
               }}
               customColumnMap={{

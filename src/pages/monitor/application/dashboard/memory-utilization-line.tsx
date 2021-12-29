@@ -39,12 +39,12 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section data-loading={loading}>
+    <section data-loading={loading} style={{ marginLeft: 10 }}>
       <header>
         <h3>Pods memory usage</h3>
       </header>
       <div>
-        <div style={{ height: 'calc(100% - 120px)' }}>
+        <div>
           <ColorContainer roleKeys={['color']}>
             <Line {...config} />
           </ColorContainer>

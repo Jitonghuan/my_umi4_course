@@ -123,7 +123,7 @@ export const queryPodUseData = (clusterId: number, pageIndex?: number, pageSize?
     (res: any) => {
       if (res.success) {
         let podResourceData: any = [];
-        podResourceData = res.data?.dataSource;
+        podResourceData = res.data;
         return podResourceData;
       }
       return [];

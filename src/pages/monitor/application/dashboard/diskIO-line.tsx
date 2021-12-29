@@ -36,7 +36,7 @@ export default function DiskIOLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section data-loading={loading}>
+    <section data-loading={loading} style={{ marginLeft: 10 }}>
       <header>
         <h3>fs writes/reads</h3>
       </header>

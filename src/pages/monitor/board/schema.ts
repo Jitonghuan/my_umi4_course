@@ -59,7 +59,7 @@ export const resUseTableSchema = [
 
 export const podUseTableSchema = [
   {
-    title: 'Name space',
+    title: 'Namespace',
     dataIndex: 'NameSpace',
     align: 'left',
     width: 140,
@@ -80,7 +80,7 @@ export const podUseTableSchema = [
     width: 200,
   },
   {
-    title: '内存(GB)',
+    title: '内存(MB)',
     dataIndex: 'MemLimit',
     width: 120,
   },

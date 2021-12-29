@@ -44,7 +44,7 @@ export default function OldAppDeployInfo(props: any) {
   //定义定时器方法
   const intervalFunc = () => {
     reloadDeployData(false);
-    reloadChangeOrderData(false);
+    // reloadChangeOrderData(false);
   };
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
@@ -61,12 +61,13 @@ export default function OldAppDeployInfo(props: any) {
           envCode: record.envCode,
           eccid: record?.eccid,
           owner: appData?.owner,
+          appCode: appData?.appCode,
         },
       });
 
       message.success('操作成功！');
       reloadDeployData();
-      reloadChangeOrderData();
+      // reloadChangeOrderData();
     },
     [appData, currEnvCode],
   );
@@ -182,7 +183,7 @@ export default function OldAppDeployInfo(props: any) {
         }}
         onSave={() => {
           setRollbackVisible(false);
-          reloadChangeOrderData();
+          // reloadChangeOrderData();
           reloadDeployData();
         }}
       />

@@ -7,13 +7,14 @@
 
 import React, { useState, useContext, useCallback, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
+import moment from 'moment';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { IProps } from '../../application-deploy/deploy-content/components/publish-content/types';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest, delRequest } from '@/utils/request';
-import { restartApp, rollbackApplication } from '@/pages/application/service';
+import { restartApp, rollbackApplication, restartApplication, queryAppOperate } from '@/pages/application/service';
 import { listContainer, fileDownload } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeployInfoData, useInstanceList, useDownloadLog, useDeleteInstance } from './hook';
@@ -65,11 +66,25 @@ export default function DeployContent(props: DeployContentProps) {
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
+  const [appOperateLog, setAppOperateLog] = useState<any>([]);
+  const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currentEnvData,
     appData?.deploymentName,
   );
+  const queryAppOperateLog = (envCodeParam: any) => {
+    getRequest(queryAppOperate, { data: { appCode, envCode: envCodeParam } })
+      .then((resp) => {
+        setAppOperateLoading(true);
+        if (resp.success) {
+          setAppOperateLog(resp?.data);
+        }
+      })
+      .finally(() => {
+        setAppOperateLoading(false);
+      });
+  };
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
@@ -119,21 +134,17 @@ export default function DeployContent(props: DeployContentProps) {
         setCurrentEnvData(dataSources[0]?.value);
         formInstance.setFieldsValue({ envCode: initEnvCode.current });
 
-        if (
-          initEnvCode.current !== '' &&
-          initEnvCode.current !== 'zy-prd' &&
-          initEnvCode.current !== 'ws-prd' &&
-          initEnvCode.current !== 'zy-daily'
-        ) {
+        if (initEnvCode.current !== '') {
           loadInfoData(initEnvCode.current).then(() => {
-            queryInstanceList(appData?.appCode, initEnvCode.current).then(() => {
+            queryAppOperateLog(initEnvCode.current);
+            queryInstanceList(appData?.appCode, initEnvCode.current).then((res: any) => {
               operateType = true;
             });
           });
         }
 
         setTimeout(() => {
-          if (operateType && initEnvCode.current) {
+          if (operateType && initEnvCode.current && instanceTableData) {
             timerHandler('do', true);
           } else {
             timerHandler('stop');
@@ -185,14 +196,17 @@ export default function DeployContent(props: DeployContentProps) {
   const changeEnvCode = (envCode: string) => {
     timerHandler('stop');
     setCurrentEnvData(envCode);
-
     initEnvCode.current = envCode;
-    // if (envClusterData.current) {
     loadInfoData(envCode)
       .then(() => {
         queryInstanceList(appData?.appCode, envCode)
           .then((result2: any) => {
-            timerHandler('do', true);
+            if (instanceTableData !== undefined && instanceTableData.length !== 0) {
+              timerHandler('do', true);
+            }
+            if (initEnvCode.current !== '') {
+              queryAppOperateLog(initEnvCode.current);
+            }
           })
           .catch(() => {
             setListEnvClusterData([]);
@@ -225,6 +239,35 @@ export default function DeployContent(props: DeployContentProps) {
     setCurrentContainerName(getContainer);
   };
 
+  const restartEnsure = async () => {
+    if (listEnvClusterData?.clusterType === 'k8s') {
+      await restartApp({
+        appCode,
+        envCode: currentEnvData,
+        appCategoryCode: appData?.appCategoryCode,
+      }).then(() => {
+        message.success('操作成功！');
+        queryAppOperateLog(currentEnvData);
+        timerHandler('do', true);
+      });
+    } else if (listEnvClusterData?.clusterType === 'vm') {
+      await postRequest(restartApplication, {
+        data: {
+          deploymentName: appData?.deploymentName,
+          envCode: currentEnvData,
+          // eccid: record?.eccid,
+          appCode,
+          owner: appData?.owner,
+        },
+      }).then(() => {
+        message.success('操作成功！');
+        // reloadDeployData();
+        queryAppOperateLog(currentEnvData);
+        timerHandler('do', true);
+      });
+    }
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}-body`}>
@@ -236,136 +279,137 @@ export default function DeployContent(props: DeployContentProps) {
             </Form.Item>
           </Form>
         </div>
-        {currentEnvData === 'zy-prd' || currentEnvData === 'ws-prd' ? (
-          <OldAppDeployInfo intervalStop={() => intervalStop()} intervalStart={() => intervalStart()} />
-        ) : (
-          <div className="tab-content section-group">
-            <section className="section-left">
-              <div className="section-clusterInfo">
-                <div className="clusterInfo">
-                  <h3>集群信息</h3>
-                </div>
-                <div className="clusterInfo">
-                  <span>
-                    集群类型:<Tag>{listEnvClusterData?.clusterType}</Tag>
-                  </span>
-                  <span style={{ paddingLeft: 20 }}>
-                    集群名称：<Tag>{listEnvClusterData?.clusterName}</Tag>
-                  </span>
-                  <span style={{ paddingLeft: 20 }}>
-                    集群状态：
-                    {listEnvClusterData?.clusterStatus === 'health' ? (
-                      <Tag color="success">健康</Tag>
-                    ) : listEnvClusterData?.clusterStatus === 'unhealth' ? (
-                      <Tag color="error">不健康</Tag>
-                    ) : null}
-                  </span>
-                </div>
+
+        <div className="tab-content section-group">
+          <section className="section-left">
+            <div className="section-clusterInfo">
+              <div className="clusterInfo">
+                <h3>集群信息</h3>
               </div>
-              <div className="table-caption">
-                <div className="caption-left">
-                  <h3>实例列表：</h3>
-                </div>
-                {/* <Popconfirm title={`确定重启 ${record.ip} 吗？`} onConfirm={() => handleRestartItem(record)}>
+              <div className="clusterInfo">
+                <span>
+                  集群类型:<Tag>{listEnvClusterData?.clusterType}</Tag>
+                </span>
+                <span style={{ paddingLeft: 20 }}>
+                  集群名称：<Tag>{listEnvClusterData?.clusterName}</Tag>
+                </span>
+                <span style={{ paddingLeft: 20 }}>
+                  集群状态：
+                  {listEnvClusterData?.clusterStatus === 'health' ? (
+                    <Tag color="success">健康</Tag>
+                  ) : listEnvClusterData?.clusterStatus === 'unhealth' ? (
+                    <Tag color="error">不健康</Tag>
+                  ) : null}
+                </span>
+              </div>
+            </div>
+            <div className="table-caption">
+              <div className="caption-left">
+                <h3>实例列表：</h3>
+              </div>
+              {/* <Popconfirm title={`确定重启 ${record.ip} 吗？`} onConfirm={() => handleRestartItem(record)}>
                         <Button size="small" type="primary" ghost loading={record.taskState === 1}>
                           重启
                         </Button>
                       </Popconfirm> */}
-                <div className="caption-right">
-                  <Popconfirm
-                    title={`确定重启 ${appData?.appName}吗？`}
-                    onConfirm={async () => {
-                      await restartApp({
-                        appCode,
-                        envCode: currentEnvData,
-                        appCategoryCode: appData?.appCategoryCode,
-                      });
-                      message.success('操作成功！');
-                    }}
-                  >
-                    <Button type="primary" ghost>
-                      重启
-                    </Button>
-                  </Popconfirm>
-                  <Button
-                    type="default"
-                    danger
-                    onClick={() => {
-                      setRollbackVisible(true);
-                      intervalStop();
-                      timerHandler('stop');
-                    }}
-                  >
-                    发布回滚
+              <div className="caption-right">
+                <Popconfirm title={`确定重启 ${appData?.appName}吗？`} onConfirm={restartEnsure}>
+                  <Button type="primary" ghost>
+                    重启
                   </Button>
-                </div>
-              </div>
-
-              <Table
-                dataSource={instanceTableData}
-                loading={instanceloading}
-                bordered
-                pagination={false}
-                scroll={{ y: window.innerHeight - 340 }}
-              >
-                <Table.Column title="名称" dataIndex="instName" width={140} render={(v, record) => <span>{v}</span>} />
-                <Table.Column
-                  title="IP"
-                  dataIndex="instIP"
-                  width={100}
-                  render={(v, record) => <span>{v || '--'}</span>}
-                />
-                {/* 状态枚举  Pending Running Succeeded Failed Initializing NotReady Unavailable  Scheduling Removing*/}
-                <Table.Column
-                  title="状态"
-                  dataIndex="instStatus"
-                  width={100}
-                  render={(status, record) => {
-                    return status === 'Running' ? (
-                      <Tag color="green">Running</Tag>
-                    ) : status === 'Succeeded' ? (
-                      <Tag color="cyan">Succeeded</Tag>
-                    ) : status === 'Pending' ? (
-                      <Tag color="gold">Pending</Tag>
-                    ) : status === 'Failed' ? (
-                      <Tag color="red">Failed</Tag>
-                    ) : status === 'Initializing' ? (
-                      <Tag color="default">Initializing</Tag>
-                    ) : status === 'NotReady' ? (
-                      <Tag color="lime">NotReady</Tag>
-                    ) : status === 'Unavailable' ? (
-                      <Tag color="red">Unavailable</Tag>
-                    ) : status === 'Scheduling' ? (
-                      <Tag color="geekblue">Scheduling</Tag>
-                    ) : status === 'Removing' ? (
-                      <Tag color="purple">Removing</Tag>
-                    ) : null;
+                </Popconfirm>
+                <Button
+                  type="default"
+                  danger
+                  onClick={() => {
+                    setRollbackVisible(true);
+                    intervalStop();
+                    timerHandler('stop');
                   }}
-                />
-                <Table.Column
-                  title="重启次数"
-                  dataIndex="restartCount"
-                  width={100}
-                  render={(v, record) => <span>{v || '0'}</span>}
-                />
+                >
+                  发布回滚
+                </Button>
+              </div>
+            </div>
+
+            <Table
+              dataSource={instanceTableData}
+              loading={instanceloading}
+              bordered
+              pagination={false}
+              scroll={{ y: window.innerHeight - 340 }}
+            >
+              <Table.Column title="名称" dataIndex="instName" width={140} render={(v, record) => <span>{v}</span>} />
+              <Table.Column
+                title="IP"
+                dataIndex="instIP"
+                width={100}
+                render={(v, record) => <span>{v || '--'}</span>}
+              />
+              {/* 状态枚举  Pending Running Succeeded Failed Initializing NotReady Unavailable  Scheduling Removing*/}
+              <Table.Column
+                title="状态"
+                dataIndex="instStatus"
+                width={100}
+                render={(status, record) => {
+                  return status === 'Running' ? (
+                    <Tag color="green">Running</Tag>
+                  ) : status === 'Succeeded' ? (
+                    <Tag color="cyan">Succeeded</Tag>
+                  ) : status === 'Pending' ? (
+                    <Tag color="gold">Pending</Tag>
+                  ) : status === 'Failed' ? (
+                    <Tag color="red">Failed</Tag>
+                  ) : status === 'Initializing' ? (
+                    <Tag color="default">Initializing</Tag>
+                  ) : status === 'NotReady' ? (
+                    <Tag color="lime">NotReady</Tag>
+                  ) : status === 'Unavailable' ? (
+                    <Tag color="red">Unavailable</Tag>
+                  ) : status === 'Scheduling' ? (
+                    <Tag color="geekblue">Scheduling</Tag>
+                  ) : status === 'Removing' ? (
+                    <Tag color="purple">Removing</Tag>
+                  ) : status === '运行正常' ? (
+                    <Tag color="green">运行正常</Tag>
+                  ) : status === '已运行但健康检查异常' ? (
+                    <Tag color="yellow">已运行但健康检查异常</Tag>
+                  ) : (
+                    <Tag>{status}</Tag>
+                  );
+                }}
+              />
+              <Table.Column
+                title="重启次数"
+                dataIndex="restartCount"
+                width={100}
+                render={(v, record) => <span>{v || '0'}</span>}
+              />
+              {listEnvClusterData?.clusterType !== 'vm' ? (
                 <Table.Column
                   title="镜像"
                   dataIndex="image"
                   width={260}
                   render={(v, record) => <span style={{ fontSize: 10 }}>{v}</span>}
                 />
-                <Table.Column
-                  title="节点IP"
-                  dataIndex="instNode"
-                  width={100}
-                  render={(v, record) => <span>{v || '--'}</span>}
-                />
+              ) : null}
+
+              <Table.Column
+                title="节点IP"
+                dataIndex="instNode"
+                width={100}
+                render={(v, record) => <span>{v || '--'}</span>}
+              />
+              {listEnvClusterData?.clusterType !== 'vm' ? (
                 <Table.Column
                   title="创建时间"
                   dataIndex="createTime"
                   width={110}
                   render={(v, record) => <span>{v}</span>}
                 />
+              ) : null}
+
+              {listEnvClusterData?.clusterType !== 'vm' ? (
                 <Table.Column
                   width={330}
                   title="操作"
@@ -422,40 +466,52 @@ export default function DeployContent(props: DeployContentProps) {
                     </div>
                   )}
                 />
-              </Table>
-            </section>
-            <section className="section-right1">
-              <h3>操作记录</h3>
-              <div className="section-inner">
-                {changeOrderDataLoading ? (
-                  <div className="block-loading">
-                    <Spin />
-                  </div>
-                ) : null}
-                {changeOrderData.map((item, index) => (
-                  <div className="change-order-item" key={index}>
-                    <p>
-                      <span>时间：</span>
-                      <b>{item.createTime}</b>
-                    </p>
-                    <p>
-                      <span>操作人：</span>
-                      <b>{item.finishTime}</b>
-                    </p>
-                    <p>
-                      <span>操作类型：</span>
-                      <b>{item.coType}</b>
-                    </p>
-                    <p>
-                      <span>操作结果：</span>
-                      <b>{item.changeOrderDescription}</b>
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </div>
-        )}
+              ) : null}
+            </Table>
+          </section>
+          <section className="section-right1">
+            <h3>操作记录</h3>
+
+            <div className="section-inner">
+              {appOperateLoading ? (
+                <div className="block-loading">
+                  <Spin />
+                </div>
+              ) : null}
+              {appOperateLog?.map((item: any, index: any) => (
+                <div className="change-order-item" key={index}>
+                  <p>
+                    <span>时间：</span>
+                    <b>{moment(item?.operateTime).format('YYYY-MM-DD HH:mm:ss')}</b>
+                  </p>
+                  <p>
+                    <span>操作人：</span>
+                    <b>{item.operator}</b>
+                  </p>
+                  <p>
+                    <span>操作类型：</span>
+                    <b>{item.operateType}</b>
+                  </p>
+
+                  <p>
+                    <span>操作事件：</span>
+                    <b>
+                      {item.operateEvent === 'PodFileDownload'
+                        ? '文件下载'
+                        : item.operateEvent === 'restartApp'
+                        ? '重启应用'
+                        : item.operateEvent === 'rollback'
+                        ? '回滚应用'
+                        : item.operateEvent === 'DeletePod'
+                        ? '删除Pod'
+                        : null}
+                    </b>
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
       <Modal title="下载文件" visible={isLogModalVisible} footer={null} onCancel={() => setIsLogModalVisible(false)}>
         <Form form={downloadLogform} labelCol={{ flex: '120px' }}>
@@ -494,9 +550,11 @@ export default function DeployContent(props: DeployContentProps) {
           intervalStart();
         }}
         onSave={() => {
-          reloadChangeOrderData(); //刷新操作记录信息
           queryInstanceList(appData?.appCode, currentEnvData); //刷新表格信息
           setRollbackVisible(false);
+          queryAppOperateLog(currentEnvData);
+          timerHandler('do', true);
+
           // handleRollbackSubmit(); //回滚走的接口
           // reloadDeployData();
         }}

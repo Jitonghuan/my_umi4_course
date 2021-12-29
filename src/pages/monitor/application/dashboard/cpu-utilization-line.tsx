@@ -38,7 +38,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
   };
 
   return (
-    <section data-loading={loading}>
+    <section data-loading={loading} style={{ marginLeft: 10 }}>
       <header>
         <h3>Pods CPU usage</h3>
       </header>

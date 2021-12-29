@@ -152,6 +152,7 @@ export const queryAppEnvs = `${appConfig.apiPrefix}/monitorManage/app/env`;
 /** GET 获取应用变更记录列表 */
 export const queryRecentChangeOrder = `${appConfig.apiPrefix}/releaseManage/queryRecentChangeOrder`;
 
+export const queryAppOperate = `${appConfig.apiPrefix}/appManage/deployInfo/instance/appOperate`;
 /** GET 获取应用运行和变更状态 */
 export const queryApplicationStatus = `${appConfig.apiPrefix}/releaseManage/queryApplicationStatus`;
 

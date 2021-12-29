@@ -22,6 +22,9 @@ export default function addEnvData(props: EnvEditorProps) {
   const { mode, onClose, onSave, initData } = props;
   const [checkedOption, setCheckedOption] = useState<number>(0); //是否启用nacos
   const [nacosChecked, setNacosChecked] = useState<boolean>(false);
+  const [needApplyOption, setNeedApplyOption] = useState<number>(1); //是否启用发布审批
+  const [needApplyChecked, setNeedApplyChecked] = useState<boolean>(false);
+
   const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>(0); //是否封网
   const [isBlockChecked, setIsBlockChecked] = useState<boolean>(false);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -59,10 +62,18 @@ export default function addEnvData(props: EnvEditorProps) {
         setNacosChecked(false);
         setCheckedOption(0);
       }
+      if (initData?.needApply === 0) {
+        setNeedApplyChecked(true);
+        setNeedApplyOption(0);
+      } else {
+        setNeedApplyChecked(false);
+        setNeedApplyOption(1);
+      }
       createEnvForm.setFieldsValue({
         ...initData,
         isBlock: isBlockChecked,
         useNacos: nacosChecked,
+        needApply: needApplyChecked,
       });
     }
   }, [mode]);
@@ -76,6 +87,16 @@ export default function addEnvData(props: EnvEditorProps) {
       }));
       setCategoryData(list);
     });
+  };
+  //启用发布审批 启用发布审批为0，不启用为1
+  const handleNeedApplyChange = (checked: boolean) => {
+    if (checked === true) {
+      setNeedApplyChecked(true);
+      setNeedApplyOption(0);
+    } else {
+      setNeedApplyChecked(false);
+      setNeedApplyOption(1);
+    }
   };
   //启用配置管理选择
   const handleNacosChange = (checked: boolean) => {
@@ -108,6 +129,7 @@ export default function addEnvData(props: EnvEditorProps) {
           categoryCode: params?.categoryCode,
           isBlock: isBlockChangeOption,
           useNacos: checkedOption,
+          needApply: needApplyOption,
           nacosAddress: params?.nacosAddress,
           envCode: params?.envCode,
           envName: params?.envName,
@@ -133,6 +155,7 @@ export default function addEnvData(props: EnvEditorProps) {
           envName: initValue?.envName,
           useNacos: checkedOption,
           isBlock: isBlockChangeOption,
+          needApply: needApplyOption,
           mark: initValue?.mark,
           nacosAddress: initValue?.nacosAddress,
           envTypeCode: initValue?.envTypeCode,
@@ -216,6 +239,14 @@ export default function addEnvData(props: EnvEditorProps) {
                 className="isBlock"
                 onChange={isBlockChange}
                 checked={isBlockChecked}
+                disabled={isDisabled}
+              ></Switch>
+            </Form.Item>
+            <Form.Item name="needApply" label="启用发布审批：">
+              <Switch
+                className="needApply"
+                onChange={handleNeedApplyChange}
+                checked={needApplyChecked}
                 disabled={isDisabled}
               ></Switch>
             </Form.Item>

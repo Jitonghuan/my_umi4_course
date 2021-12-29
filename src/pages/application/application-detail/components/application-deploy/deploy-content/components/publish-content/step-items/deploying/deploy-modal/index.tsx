@@ -35,7 +35,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
     if (!visible) return;
 
     setStateDeployEnv(deployingEnv);
-    deployApply();
+    // deployApply(deployingEnv);
   }, [visible]);
 
   useEffect(() => {
@@ -146,8 +146,8 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   let appIds: any = [];
   const [currentAppIds, setCurrentAppIds] = useState<any>([]);
   let resData;
-  const deployApply = () => {
-    getRequest(applyHaveNoUpPlanList, { data: { appCode } }).then((res) => {
+  const deployApply = async (currentEnv: any) => {
+    await getRequest(applyHaveNoUpPlanList, { data: { appCode, envCode: currentEnv } }).then((res) => {
       if (res.success) {
         let dataArry: any = [];
         let dataSource = res.data || [];
@@ -157,6 +157,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         setDeployApplyOptions(dataArry);
         if (res.data === null) {
           resData = null;
+          setDeployApplyOptions(null);
         }
       }
     });
@@ -219,7 +220,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         <Radio.Group
           disabled={['deploying', 'deployWaitBatch2'].includes(deployStatus)}
           value={stateDeployEnv}
-          onChange={(v) => setStateDeployEnv(v.target.value)}
+          onChange={(v) => {
+            setStateDeployEnv(v.target.value);
+            deployApply(v.target.value);
+          }}
           options={envList?.map((v: any) => ({
             label: v.envName,
             value: v.envCode,
@@ -241,7 +245,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
           ]}
         />
       </div>
-      {resData !== null && (
+      {deployApplyOptions !== null && (
         <div style={{ marginTop: 8 }}>
           <span>发布申请：</span>
           <Select

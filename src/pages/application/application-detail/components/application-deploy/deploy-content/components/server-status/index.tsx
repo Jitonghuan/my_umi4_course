@@ -29,6 +29,7 @@ export default function ServerStatus(props: ServerStatusProps) {
     const item = appStatusInfo.find((n) => n.eccid === selectedRowKey);
     await postRequest(APIS.restartApplication, {
       data: {
+        appCode: appData?.appCode,
         deploymentName: appData?.deploymentName,
         envCode: item?.envCode,
         eccid: item?.eccid,
