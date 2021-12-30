@@ -22,7 +22,7 @@ export function useAppOptions() {
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
-        label: item.appName,
+        label: item.appCode,
         value: item.appCode,
       }));
 

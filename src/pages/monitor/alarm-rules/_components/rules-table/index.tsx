@@ -14,6 +14,11 @@ interface RulesTableProps {
   onQuery: () => void;
   serviceId?: string;
 }
+const ALERT_LEVEL: Record<number, { text: string; value: number; color: string }> = {
+  2: { text: '警告', value: 2, color: 'yellow' },
+  3: { text: '严重', value: 3, color: 'orange' },
+  4: { text: '灾难', value: 4, color: 'red' },
+};
 
 type StatusTypeItem = {
   color: string;
@@ -81,20 +86,41 @@ export default function RulesTable(props: RulesTableProps) {
 
   const columns = [
     {
-      title: '规则名称',
+      title: '报警名称',
       dataIndex: 'name',
       key: 'name',
+      width: 140,
+    },
+    {
+      title: '环境',
+      dataIndex: 'envName',
+      key: 'envName',
+      width: 120,
+    },
+    {
+      title: '关联应用',
+      dataIndex: 'appCode',
+      key: 'appCode',
+      width: 120,
+    },
+    {
+      title: '报警级别',
+      dataIndex: 'level',
+      key: 'level',
+      render: (text: number) => <Tag color={ALERT_LEVEL[text]?.color}>{ALERT_LEVEL[text]?.text}</Tag>,
+      width: 120,
     },
     {
       title: '告警表达式',
       dataIndex: 'expression',
       key: 'expression',
+      width: 220,
       render: (text: string) => (
         <Tooltip title={text}>
           <span
             style={{
               display: 'inline-block',
-              width: 100,
+              width: 220,
               overflow: 'hidden',
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
@@ -109,11 +135,13 @@ export default function RulesTable(props: RulesTableProps) {
       title: '告警消息',
       dataIndex: 'message',
       key: 'message',
+      width: 200,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
+      width: 100,
       render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>,
     },
     {
