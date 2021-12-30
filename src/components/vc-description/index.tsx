@@ -85,7 +85,8 @@ const funcName = (props: any) => {
 
       {dataSource?.tagName !== '' && <Descriptions.Item label="tag">{dataSource?.tagName}</Descriptions.Item>}
       <div style={{ borderTop: '1px solid #d3d7e0', height: '1px' }}></div>
-      <Descriptions.Item label="功能分支" labelStyle={{}}>
+      <div style={{ marginLeft: 24, display: 'block' }}>功能分支:</div>
+      <div>
         <Table
           scroll={{ y: window.innerHeight - 515, x: '100%' }}
           style={{ width: '96%' }}
@@ -93,7 +94,10 @@ const funcName = (props: any) => {
           dataSource={dataSource.branchInfo || []}
           pagination={false}
         ></Table>
-      </Descriptions.Item>
+      </div>
+      {/* <Descriptions.Item label="功能分支" labelStyle={{}}>
+       
+      </Descriptions.Item> */}
     </Descriptions>
 
     // 添加Jenkins字段显示并以可点击链接形式展示

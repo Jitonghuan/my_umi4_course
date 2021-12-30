@@ -3,13 +3,15 @@
 import React, { useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
 import useRequest from '@/utils/useRequest';
-import useTable from '@/utils/useTable';
-import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../services';
+
+import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../../basic/services';
 import TemplateDrawer from '../template-drawer';
-import { Item } from '../../typing';
+import { Item } from '../../../basic/typing';
 import './index.less';
 
 interface RulesTableProps {
+  dataSource?: any;
+  onQuery: () => void;
   serviceId?: string;
 }
 
@@ -26,26 +28,12 @@ const STATUS_TYPE: Record<number, StatusTypeItem> = {
 };
 
 export default function RulesTable(props: RulesTableProps) {
-  const { serviceId } = props;
+  const { dataSource, onQuery, serviceId } = props;
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
   const [type, setType] = useState<'add' | 'edit'>('add');
   const [editRecord, setEditRecord] = useState<Item>({});
 
-  //列表
-  const {
-    tableProps,
-    search: { submit: queryList },
-  } = useTable({
-    url: queryRulesList,
-    method: 'GET',
-    // formatter: () => {
-    //   return {
-    //     serviceId,
-    //     pageIndex: -1,
-    //   };
-    // },
-  });
   //新增
   const { run: createRulesFun } = useRequest({
     api: createRules,
@@ -54,7 +42,7 @@ export default function RulesTable(props: RulesTableProps) {
     isSuccessModal: true,
     onSuccess: () => {
       setDrawerVisible(false);
-      queryList();
+      onQuery();
     },
   });
 
@@ -66,7 +54,7 @@ export default function RulesTable(props: RulesTableProps) {
     isSuccessModal: true,
     onSuccess: () => {
       setDrawerVisible(false);
-      queryList();
+      onQuery();
     },
   });
 
@@ -77,7 +65,7 @@ export default function RulesTable(props: RulesTableProps) {
     successText: '操作成功',
     isSuccessModal: true,
     onSuccess: () => {
-      queryList();
+      onQuery();
     },
   });
 
@@ -87,7 +75,7 @@ export default function RulesTable(props: RulesTableProps) {
     successText: '删除成功',
     isSuccessModal: true,
     onSuccess: () => {
-      queryList();
+      onQuery();
     },
   });
 
@@ -189,7 +177,9 @@ export default function RulesTable(props: RulesTableProps) {
   return (
     <>
       <div className="table-caption">
-        <div className="caption-left"></div>
+        <div className="caption-left">
+          <h3>报警列表</h3>
+        </div>
         <div className="caption-right">
           <Button
             type="primary"
@@ -205,9 +195,9 @@ export default function RulesTable(props: RulesTableProps) {
       </div>
       <Table
         columns={columns}
-        {...tableProps}
+        {...dataSource}
         pagination={{
-          ...tableProps.pagination,
+          ...dataSource.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
         }}
