@@ -7,7 +7,7 @@ import { history } from 'umi';
 import { Input, Table, Popconfirm, Form, Button, Select, Switch, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
-import { ContentCard } from '@/components/vc-page-content';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddEnvDraw from '../addEnv';
 import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
@@ -242,18 +242,7 @@ export default function envManageList(props: any) {
 
   return (
     <PageContainer>
-      <ContentCard>
-        <AddEnvDraw
-          mode={addEnvMode}
-          initData={initEnvData}
-          onSave={() => {
-            setAddEnvMode('HIDE');
-            setTimeout(() => {
-              queryEnvData({ pageIndex: 1, pageSize: 20 });
-            }, 100);
-          }}
-          onClose={() => setAddEnvMode('HIDE')}
-        />
+      <FilterCard>
         <div>
           <Form
             layout="inline"
@@ -310,6 +299,20 @@ export default function envManageList(props: any) {
             </div>
           </Form>
         </div>
+      </FilterCard>
+      <ContentCard>
+        <AddEnvDraw
+          mode={addEnvMode}
+          initData={initEnvData}
+          onSave={() => {
+            setAddEnvMode('HIDE');
+            setTimeout(() => {
+              queryEnvData({ pageIndex: 1, pageSize: 20 });
+            }, 100);
+          }}
+          onClose={() => setAddEnvMode('HIDE')}
+        />
+
         <div style={{ marginTop: '15px' }}>
           <Table
             dataSource={envDataSource}
@@ -373,7 +376,7 @@ export default function envManageList(props: any) {
             />
             <Table.Column
               title="操作"
-              width={170}
+              width={180}
               render={(_, record: EnvEditData, index) => (
                 <div className="action-cell">
                   <a onClick={() => handleEditEnv(record, index, 'VIEW')}>查看</a>
