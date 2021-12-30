@@ -226,7 +226,6 @@ export default function envManageList(props: any) {
         useNacos: record?.useNacos,
         isBlock: isBlockData,
         needApply: record.needApply,
-        // mark: record?.mark,
       },
     }).then((result) => {
       if (result.success) {

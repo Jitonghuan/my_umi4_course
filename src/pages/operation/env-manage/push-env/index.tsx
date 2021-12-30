@@ -45,7 +45,7 @@ export default function PushEnv(props: any) {
 
   useEffect(() => {
     selectCategory();
-    // loadListData({ pageIndex: 1, pageSize: 20 });
+    // loadListData({ pageIndex: 1, pageSize: 20 })
     getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
 
