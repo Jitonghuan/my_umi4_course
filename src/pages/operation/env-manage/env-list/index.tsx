@@ -7,7 +7,7 @@ import { history } from 'umi';
 import { Input, Table, Popconfirm, Form, Button, Select, Switch, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddEnvDraw from '../addEnv';
 import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
@@ -242,151 +242,163 @@ export default function envManageList(props: any) {
 
   return (
     <PageContainer>
-      <AddEnvDraw
-        mode={addEnvMode}
-        initData={initEnvData}
-        onSave={() => {
-          setAddEnvMode('HIDE');
-          setTimeout(() => {
-            queryEnvData({ pageIndex: 1, pageSize: 20 });
-          }, 100);
-        }}
-        onClose={() => setAddEnvMode('HIDE')}
-      />
-      <FilterCard>
-        <Form
-          layout="inline"
-          form={EnvForm}
-          onFinish={(values: any) => {
-            queryEnvData({
-              ...values,
-              pageIndex: 1,
-              pageSize: 20,
-            });
-          }}
-          onReset={() => {
-            EnvForm.resetFields();
-            queryEnvData({
-              pageIndex: 1,
-              // pageSize: pageSize,
-            });
-          }}
-        >
-          <Form.Item label="默认分类：" name="categoryCode">
-            <Select showSearch style={{ width: 130 }} options={categoryData} />
-          </Form.Item>
-          <Form.Item label="环境大类：" name="envTypeCode">
-            <Select options={envTypeData} allowClear showSearch style={{ width: 130 }} />
-          </Form.Item>
-          <Form.Item label="环境名：" name="envName">
-            <Input placeholder="请输入环境名称" style={{ width: 130 }} />
-          </Form.Item>
-          <Form.Item label=" 环境CODE：" name="envCode">
-            <Input placeholder="请输入环境CODE" style={{ width: 130 }}></Input>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              查询
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button type="ghost" htmlType="reset">
-              重置
-            </Button>
-          </Form.Item>
-          <div style={{ marginLeft: '32px' }}>
-            {/* onClick={() => handleAddEnv()} */}
-            <Button
-              type="primary"
-              onClick={() => {
-                setInitEnvData(undefined);
-                setAddEnvMode('ADD');
-              }}
-            >
-              <PlusOutlined />
-              新增环境
-            </Button>
-          </div>
-        </Form>
-      </FilterCard>
       <ContentCard>
-        {/* <div style={{ marginTop: '15px' }}> */}
-        <Table
-          dataSource={envDataSource}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            current: pageIndex,
-            total,
-            pageSize,
-            showSizeChanger: true,
-            // onChange: (next) => setPageIndex(next),
-            onShowSizeChange: (_, size) => {
-              setPageSize(size);
-              setPageCurrentIndex(1); //
-            },
-            showTotal: () => `总共 ${total} 条数据`,
+        <AddEnvDraw
+          mode={addEnvMode}
+          initData={initEnvData}
+          onSave={() => {
+            setAddEnvMode('HIDE');
+            setTimeout(() => {
+              queryEnvData({ pageIndex: 1, pageSize: 20 });
+            }, 100);
           }}
-          onChange={pageSizeClick}
-        >
-          <Table.Column title="ID" dataIndex="id" width={50} />
-          <Table.Column title="环境名" dataIndex="envName" width={150} />
-          <Table.Column title="环境CODE" dataIndex="envCode" width={130} />
-          <Table.Column title="环境大类" dataIndex="envTypeCode" width={90} />
-          <Table.Column title="默认分类" dataIndex="categoryCode" width={130} />
-          <Table.Column title="备注" dataIndex="mark" width={200} />
-          <Table.Column
-            title="启用配置管理"
-            dataIndex="useNacos"
-            width={110}
-            render={(value, record, index) => (
-              <Switch
-                className="useNacos"
-                onChange={() => handleNacosChange(value, record)}
-                checked={value === 1 ? true : false}
-              />
-            )}
-          />
-          <Table.Column
-            title="封网"
-            dataIndex="isBlock"
-            width={80}
-            render={(value, record, index) => (
-              <Switch
-                className="isBlock"
-                onChange={() => isBlockChange(value, record)}
-                checked={value === 1 ? true : false}
-              />
-            )}
-          />
-          <Table.Column
-            title="操作"
-            width={170}
-            render={(_, record: EnvEditData, index) => (
-              <div className="action-cell">
-                <a onClick={() => handleEditEnv(record, index, 'VIEW')}>查看</a>
+          onClose={() => setAddEnvMode('HIDE')}
+        />
+        <div>
+          <Form
+            layout="inline"
+            form={EnvForm}
+            onFinish={(values: any) => {
+              queryEnvData({
+                ...values,
+                pageIndex: 1,
+                pageSize: 20,
+              });
+            }}
+            onReset={() => {
+              EnvForm.resetFields();
+              queryEnvData({
+                pageIndex: 1,
+                // pageSize: pageSize,
+              });
+            }}
+          >
+            <Form.Item label="默认分类：" name="categoryCode">
+              <Select showSearch style={{ width: 130 }} options={categoryData} />
+            </Form.Item>
+            <Form.Item label="环境大类：" name="envTypeCode">
+              <Select options={envTypeData} allowClear showSearch style={{ width: 130 }} />
+            </Form.Item>
+            <Form.Item label="环境名：" name="envName">
+              <Input placeholder="请输入环境名称" style={{ width: 130 }} />
+            </Form.Item>
+            <Form.Item label=" 环境CODE：" name="envCode">
+              <Input placeholder="请输入环境CODE" style={{ width: 130 }}></Input>
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button type="ghost" htmlType="reset">
+                重置
+              </Button>
+            </Form.Item>
+            <div style={{ marginLeft: '32px' }}>
+              {/* onClick={() => handleAddEnv()} */}
+              <Button
+                type="primary"
+                onClick={() => {
+                  setInitEnvData(undefined);
+                  setAddEnvMode('ADD');
+                }}
+              >
+                <PlusOutlined />
+                新增环境
+              </Button>
+            </div>
+          </Form>
+        </div>
+        <div style={{ marginTop: '15px' }}>
+          <Table
+            dataSource={envDataSource}
+            loading={loading}
+            rowKey="id"
+            pagination={{
+              current: pageIndex,
+              total,
+              pageSize,
+              showSizeChanger: true,
+              // onChange: (next) => setPageIndex(next),
+              onShowSizeChange: (_, size) => {
+                setPageSize(size);
+                setPageCurrentIndex(1); //
+              },
+              showTotal: () => `总共 ${total} 条数据`,
+            }}
+            onChange={pageSizeClick}
+          >
+            <Table.Column title="ID" dataIndex="id" width={50} />
+            <Table.Column title="环境名" dataIndex="envName" width={150} />
+            <Table.Column title="环境CODE" dataIndex="envCode" width={130} />
+            <Table.Column title="环境大类" dataIndex="envTypeCode" width={90} />
+            <Table.Column title="默认分类" dataIndex="categoryCode" width={130} />
+            <Table.Column title="备注" dataIndex="mark" width={200} />
+            <Table.Column
+              title="启用发布审批"
+              dataIndex="needApply"
+              width={110}
+              render={(value, record, index) => (
+                <Switch
+                  className="needApply"
+                  onChange={() => handleNeedApplyChange(value, record)}
+                  checked={value === 0 ? true : false}
+                />
+              )}
+            />
+            <Table.Column
+              title="启用配置管理"
+              dataIndex="useNacos"
+              width={110}
+              render={(value, record, index) => (
+                <Switch
+                  className="useNacos"
+                  onChange={() => handleNacosChange(value, record)}
+                  checked={value === 1 ? true : false}
+                />
+              )}
+            />
+            <Table.Column
+              title="封网"
+              dataIndex="isBlock"
+              width={80}
+              render={(value, record, index) => (
+                <Switch
+                  className="isBlock"
+                  onChange={() => isBlockChange(value, record)}
+                  checked={value === 1 ? true : false}
+                />
+              )}
+            />
+            <Table.Column
+              title="操作"
+              width={170}
+              render={(_, record: EnvEditData, index) => (
+                <div className="action-cell">
+                  <a onClick={() => handleEditEnv(record, index, 'VIEW')}>查看</a>
 
-                <a onClick={() => handleEditEnv(record, index, 'EDIT')}>编辑</a>
-                <a
-                  onClick={() => {
-                    history.push({
-                      pathname: '/matrix/operation/env-manage/push-env',
-                      query: {
-                        envCode: record.envCode,
-                      },
-                    });
-                  }}
-                >
-                  推送
-                </a>
-                <Popconfirm title="确定要删除吗？" onConfirm={() => handleDelEnv(record)}>
-                  <a style={{ color: 'red' }}>删除</a>
-                </Popconfirm>
-              </div>
-            )}
-          />
-        </Table>
-        {/* </div> */}
+                  <a onClick={() => handleEditEnv(record, index, 'EDIT')}>编辑</a>
+                  <a
+                    onClick={() => {
+                      history.push({
+                        pathname: '/matrix/operation/env-manage/push-env',
+                        query: {
+                          envCode: record.envCode,
+                        },
+                      });
+                    }}
+                  >
+                    推送
+                  </a>
+                  <Popconfirm title="确定要删除吗？" onConfirm={() => handleDelEnv(record)}>
+                    <a style={{ color: 'red' }}>删除</a>
+                  </Popconfirm>
+                </div>
+              )}
+            />
+          </Table>
+        </div>
       </ContentCard>
     </PageContainer>
   );
