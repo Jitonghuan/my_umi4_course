@@ -9,7 +9,7 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Modal, Button, List } from 'antd';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '@/pages/application/application-detail/context';
-import { recordFieldMap, recordDisplayMap } from './schema';
+import { recordFieldMap } from './schema';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -123,15 +123,9 @@ const PublishRecord = (props: IProps) => {
                 .slice(0, 3)
                 .map((key) => (
                   <span className={`${rootCls}-row ${key}`}>
-                    <label>{recordFieldMap[key]}</label>
-                    {console.log('mapkey', key, item[key])}：
-                    {recordFieldMap['deployStatus']
-                      ? // recordDisplayMap[item[key]]
-                        ''
-                      : item[key]}
+                    <label>{recordFieldMap[key]}</label>：{item[key]}
                   </span>
                 ))}
-
               <a onClick={() => handleShowDetail(item)}>详情</a>
             </List.Item>
           )}

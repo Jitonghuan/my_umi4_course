@@ -6,11 +6,11 @@ import React, { useState } from 'react';
 import { Form, Select, Input, Button } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
-import TemplateDrawer from '../_components/template-drawer';
-import RulesTable from '../_components/rules-table';
+import TemplateDrawer from './_components/template-drawer';
+import RulesTable from './_components/rules-table';
 import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
 import useTable from '@/utils/useTable';
-import { queryRulesList } from '../../monitor/basic/services';
+import { queryRulesList } from '../basic/services';
 
 export default function AlarmRules() {
   const [searchRulesForm] = Form.useForm();
@@ -71,13 +71,15 @@ export default function AlarmRules() {
           onReset={() => {
             searchRulesForm.resetFields();
             reset;
+
+            queryList();
           }}
         >
-          <Form.Item label="报警名称" name="ruleName">
+          <Form.Item label="报警名称" name="name">
             <Search placeholder="按表达式或消息模糊搜索" style={{ width: 200 }} />
           </Form.Item>
           <Form.Item label="环境大类" name="envTypeCode">
-            <Select showSearch style={{ width: 100 }} options={envTypeData} />
+            <Select showSearch style={{ width: 100 }} options={envTypeData} allowClear />
           </Form.Item>
           <Form.Item label="应用" name="appCode">
             <Select showSearch allowClear style={{ width: 120 }} options={appOptions} onChange={handleAppCodeChange} />

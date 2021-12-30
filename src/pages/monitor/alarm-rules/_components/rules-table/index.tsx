@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
 import useRequest from '@/utils/useRequest';
 
-import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../../monitor/basic/services';
+import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../../basic/services';
 import TemplateDrawer from '../template-drawer';
-import { Item } from '../../../monitor/basic/typing';
+import { Item } from '../../../basic/typing';
 import './index.less';
 
 interface RulesTableProps {
@@ -177,7 +177,9 @@ export default function RulesTable(props: RulesTableProps) {
   return (
     <>
       <div className="table-caption">
-        <div className="caption-left"></div>
+        <div className="caption-left">
+          <h3>报警列表</h3>
+        </div>
         <div className="caption-right">
           <Button
             type="primary"

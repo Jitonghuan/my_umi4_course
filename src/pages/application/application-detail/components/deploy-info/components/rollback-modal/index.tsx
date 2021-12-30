@@ -106,7 +106,7 @@ export default function RollbackModal(props: RollbackModalProps) {
             {rollbackVersions?.reverse()?.map((item: any, index) => (
               <Radio
                 key={index}
-                disabled={index === 0 ? true : false}
+                disabled={item?.isDeployImage === 1 ? true : false}
                 value={item.packageVersionId || item.image}
                 className="flex-radio-wrap"
               >

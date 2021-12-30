@@ -6,11 +6,11 @@
  */
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Modal, Button, List } from 'antd';
+import { Modal, Button, List, Tag } from 'antd';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '@/pages/application/application-detail/context';
-import { recordFieldMap, recordFieldMapOut } from './schema';
+import { recordFieldMap, recordFieldMapOut, recordDisplayMap } from './schema';
 import moment from 'moment';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';
@@ -146,8 +146,13 @@ export default function PublishRecord(props: IProps) {
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
                 <div>
-                  {' '}
-                  <label>{recordFieldMapOut['deployStatus']}</label>:{item['deployStatus']}
+                  {console.log('item', recordDisplayMap[item['deployStatus']], item['deployStatus'])}
+                  <label>{recordFieldMapOut['deployStatus']}</label>:
+                  {
+                    <Tag color={recordDisplayMap[item['deployStatus']].color}>
+                      {recordDisplayMap[item['deployStatus']].text}
+                    </Tag>
+                  }
                 </div>
                 <a onClick={() => handleShowDetail(item)}>详情</a>
               </List.Item>

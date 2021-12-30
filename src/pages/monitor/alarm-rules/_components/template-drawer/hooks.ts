@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import { getRequest } from '@/utils/request';
-import * as APIS from '../../../monitor/basic/services';
+import * as APIS from '../../../basic/services';
 
 export function useUserOptions() {
   const [source, setSource] = useState<any[]>([]);
