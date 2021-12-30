@@ -76,13 +76,10 @@ export default function AlarmRules() {
           }}
         >
           <Form.Item label="报警名称" name="name">
-            <Search placeholder="按表达式或消息模糊搜索" style={{ width: 200 }} />
+            <Input style={{ width: 200 }} />
           </Form.Item>
           <Form.Item label="环境大类" name="envTypeCode">
             <Select showSearch style={{ width: 100 }} options={envTypeData} allowClear />
-          </Form.Item>
-          <Form.Item label="应用" name="appCode">
-            <Select showSearch allowClear style={{ width: 120 }} options={appOptions} onChange={handleAppCodeChange} />
           </Form.Item>
           <Form.Item label="环境" name="envCode">
             <Select
@@ -95,7 +92,9 @@ export default function AlarmRules() {
               style={{ width: 120 }}
             />
           </Form.Item>
-
+          <Form.Item label="应用" name="appCode">
+            <Select showSearch allowClear style={{ width: 120 }} options={appOptions} onChange={handleAppCodeChange} />
+          </Form.Item>
           <Form.Item label="状态" name="status">
             <Select showSearch allowClear style={{ width: 120 }} options={statusOptions} />
           </Form.Item>

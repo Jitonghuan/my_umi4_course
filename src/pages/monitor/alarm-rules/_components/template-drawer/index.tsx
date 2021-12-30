@@ -351,10 +351,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           <Input placeholder="请输入" style={{ width: '400px' }}></Input>
         </Form.Item>
         <Form.Item label="报警分类" name="group" required={true}>
-          <Select options={groupData} placeholder="请选择" style={{ width: '400px' }}></Select>
+          <Select options={groupData} placeholder="请选择" style={{ width: '400px' }} allowClear></Select>
         </Form.Item>
-        <Form.Item label="选择环境" name="envTypeCode" required={true}>
+        <Form.Item label="环境分类" name="envTypeCode" required={true}>
           <Select
+            showSearch
+            allowClear
             options={envTypeData}
             style={{ width: '400px' }}
             onChange={(e: string) => {
@@ -363,15 +365,27 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             }}
           ></Select>
         </Form.Item>
-        <Form.Item label="集群环境" name="envCode" rules={[{ required: true, message: '请选择集群环境！' }]}>
-          <Select options={clusterEnvOptions} style={{ width: '400px' }} placeholder="选择监控的集群环境"></Select>
+        <Form.Item label="选择环境" name="envCode" rules={[{ required: true, message: '请选择集群环境！' }]}>
+          <Select
+            options={clusterEnvOptions}
+            style={{ width: '400px' }}
+            placeholder="选择监控的集群环境"
+            showSearch
+            allowClear
+          ></Select>
         </Form.Item>
         <Form.Item label="Namespace" name="namespace">
           <Input style={{ width: '400px' }} placeholder="输入Namespace名称"></Input>
         </Form.Item>
 
         <Form.Item label="关联应用" name="appCode">
-          <Select options={appOptions} style={{ width: '400px' }} placeholder="选择关联应用"></Select>
+          <Select
+            options={appOptions}
+            style={{ width: '400px' }}
+            placeholder="选择关联应用"
+            showSearch
+            allowClear
+          ></Select>
         </Form.Item>
         <Form.Item
           label="告警表达式(PromQL)"
@@ -385,7 +399,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             <InputNumber style={{ width: '290px' }} />
           </Form.Item>
           <Form.Item name="timeType" noStyle initialValue="m" className="extraStyleTime">
-            <Select style={{ width: '20%' }} placeholder="选择时间单位">
+            <Select style={{ width: '20%' }} placeholder="选择时间单位" allowClear>
               <Select.Option value="h">小时</Select.Option>
               <Select.Option value="m">分钟</Select.Option>
               <Select.Option value="s">秒</Select.Option>
@@ -405,13 +419,13 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           //   },
           // ]}
         >
-          <Select options={rulesOptions} placeholder="请选择" style={{ width: '400px' }}></Select>
+          <Select options={rulesOptions} placeholder="请选择" style={{ width: '400px' }} allowClear></Select>
         </Form.Item>
         <Form.Item label="报警消息" name="message" required={true}>
           <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }}></Input>
         </Form.Item>
         <Form.Item label="通知对象" name="receiver" rules={[{ required: true, message: '请选择告警对象!' }]}>
-          <Select mode="multiple" options={userOptions} showSearch style={{ width: '400px' }}></Select>
+          <Select mode="multiple" options={userOptions} showSearch style={{ width: '400px' }} allowClear></Select>
         </Form.Item>
         <Form.Item
           label="是否静默"
