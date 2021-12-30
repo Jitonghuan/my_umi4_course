@@ -88,7 +88,7 @@ export default function addEnvData(props: EnvEditorProps) {
       setCategoryData(list);
     });
   };
-  //启用发布审批 启用发布审批为0，不启用为1
+  // 启用发布审批为0，不启用为1
   const handleNeedApplyChange = (checked: boolean) => {
     if (checked === true) {
       setNeedApplyChecked(true);
