@@ -318,17 +318,19 @@ export default function DeployContent(props: DeployContentProps) {
                     重启
                   </Button>
                 </Popconfirm>
-                <Button
-                  type="default"
-                  danger
-                  onClick={() => {
-                    setRollbackVisible(true);
-                    intervalStop();
-                    timerHandler('stop');
-                  }}
-                >
-                  发布回滚
-                </Button>
+                {currentEnvData && currentEnvData !== 'zy-prd' && (
+                  <Button
+                    type="default"
+                    danger
+                    onClick={() => {
+                      setRollbackVisible(true);
+                      intervalStop();
+                      timerHandler('stop');
+                    }}
+                  >
+                    发布回滚
+                  </Button>
+                )}
               </div>
             </div>
 
