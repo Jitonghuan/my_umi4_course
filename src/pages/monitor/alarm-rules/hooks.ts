@@ -60,6 +60,30 @@ export function useEnvOptions(appCode?: string) {
   return [source];
 }
 
+//集群环境 下拉选择数据
+export function useEnvListOptions() {
+  let envOptions: any = [];
+  const [clusterEnvOptions, setClusterEnvOptions] = useState<any[]>([]);
+  const queryEnvCodeList = async (envTypeCode: string) => {
+    await getRequest(APIS.getEnvCodeList, {
+      data: { envTypeCode },
+    }).then((resp) => {
+      if (resp.success) {
+        let data = resp?.data;
+        data?.map((item: any) => {
+          envOptions.push({
+            label: item.envCode,
+            value: item.envCode,
+          });
+        });
+        setClusterEnvOptions(envOptions);
+      }
+    });
+  };
+
+  return [clusterEnvOptions, queryEnvCodeList];
+}
+
 export function useStatusOptions() {
   const [source, setSource] = useState<IOption<number>[]>([]);
 

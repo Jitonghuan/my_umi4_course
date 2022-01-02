@@ -8,7 +8,7 @@ import routes, { baseRoutePath } from '../src/routes.config';
 // 资源引用的根路径，此变量与项目在 nginx 中匹配前缀相关，如果
 const sourceRoot = '/';
 
-const { VERSION, NODE_ENV } = process.env;
+const { VERSION, NODE_ENV, BUILD_ENV } = process.env;
 const publicPathPrefix = NODE_ENV === 'development' ? '/' : !VERSION ? `${sourceRoot}` : `${sourceRoot}${VERSION}/`;
 
 // 更多配置查看: https://umijs.org/zh-CN/config
@@ -26,7 +26,7 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.128.239:8080/',//青枫本地
@@ -35,7 +35,7 @@ export default defineConfig({
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
       // target: 'https://release.zy91.com:4443/futuredog',
       // target: 'http://10.10.128.157:8080',//木南本地
-      // target: 'http://10.10.129.34:8080',//时雨本地
+      target: 'http://10.10.129.113:8080',//时雨本地
       // target: 'http://10.10.128.214:8080',//习习本地
 
 
@@ -95,7 +95,8 @@ export default defineConfig({
   // HTML 中以 <script> 方式引用的资源
   scripts: NODE_ENV === 'development' ? [] : [
     { src: `${publicPathPrefix}react.min.js` },
-    { src: `${publicPathPrefix}react-dom.min.js` }
+    { src: `${publicPathPrefix}react-dom.min.js` },
+    `window.BUILD_ENV = "${BUILD_ENV}"`
   ],
 
   // 开启动态资源加载

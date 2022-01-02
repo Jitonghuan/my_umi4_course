@@ -78,7 +78,7 @@ export function useCategoryData() {
 
   const loadData = useCallback(async () => {
     const result = await getRequest(APIS.queryCategoryData);
-    const next = (result.data?.dataSource || []).map((el: any) => ({
+    const next = (result?.data?.dataSource || []).map((el: any) => ({
       ...el,
       label: el?.categoryName,
       value: el?.categoryCode,
@@ -99,7 +99,7 @@ export function useBusinessData() {
 
   const loadData = useCallback(async () => {
     const result = await getRequest(APIS.queryBizData);
-    const next = (result.data?.dataSource || []).map((el: any) => ({
+    const next = (result?.data?.dataSource || []).map((el: any) => ({
       ...el,
       label: el?.groupName,
       value: el?.groupCode,
@@ -121,7 +121,7 @@ export function useEnvTypeData() {
   const loadData = useCallback(async () => {
     const result = await getRequest(APIS.listAppEnvType, { data: { appCode: appData?.appCode, isClient: false } });
     let next: any = [];
-    (result.data || []).map((el: any) => {
+    (result?.data || []).map((el: any) => {
       if (el?.typeCode === 'dev') {
         next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
       }

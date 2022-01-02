@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Button, Space, Drawer, Form, Select, TimePicker, Input, InputNumber, Radio, Row, Col } from 'antd';
 import moment, { Moment } from 'moment';
-import { renderForm } from '@/components/table-search/form';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
+import { OptionProps } from '@/components/table-search/typing';
 import useRequest from '@/utils/useRequest';
 import EditorTable from '@cffe/pc-editor-table';
 import { editColumns } from './colunms';
@@ -185,7 +184,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
     };
-    console.log('setValues', setValues);
     //规则情况
     if (drawerType === 'rules') {
       //回显时间
@@ -407,18 +405,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           </Form.Item>
         </Row>
 
-        <Form.Item
-          label="告警级别"
-          name="level"
-          rules={[{ required: true, message: '请选择告警级别!' }]}
-          // rules={[
-          //   {
-          //     required: true,
-          //     message: '请选择',
-          //     type: 'number',
-          //   },
-          // ]}
-        >
+        <Form.Item label="告警级别" name="level" rules={[{ required: true, message: '请选择告警级别!' }]}>
           <Select options={rulesOptions} placeholder="请选择" style={{ width: '400px' }} allowClear></Select>
         </Form.Item>
         <Form.Item label="报警消息" name="message" required={true}>

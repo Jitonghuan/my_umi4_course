@@ -146,12 +146,13 @@ export default function PublishRecord(props: IProps) {
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
                 <div>
-                  {console.log('item', recordDisplayMap[item['deployStatus']], item['deployStatus'])}
                   <label>{recordFieldMapOut['deployStatus']}</label>:
                   {
-                    <Tag color={recordDisplayMap[item['deployStatus']].color}>
-                      {recordDisplayMap[item['deployStatus']].text}
-                    </Tag>
+                    <span style={{ marginLeft: 6 }}>
+                      <Tag color={recordDisplayMap[item['deployStatus']].color}>
+                        {recordDisplayMap[item['deployStatus']].text}
+                      </Tag>
+                    </span>
                   }
                 </div>
                 <a onClick={() => handleShowDetail(item)}>详情</a>

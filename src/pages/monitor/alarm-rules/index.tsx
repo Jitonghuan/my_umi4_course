@@ -6,9 +6,8 @@ import React, { useState } from 'react';
 import { Form, Select, Input, Button } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
-import TemplateDrawer from './_components/template-drawer';
 import RulesTable from './_components/rules-table';
-import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
+import { useAppOptions, useStatusOptions, useEnvListOptions } from './hooks';
 import useTable from '@/utils/useTable';
 import { queryRulesList } from '../basic/services';
 
@@ -17,7 +16,7 @@ export default function AlarmRules() {
   const [statusOptions] = useStatusOptions();
   const [appOptions] = useAppOptions();
   const [appCode, setAppCode] = useState<string>();
-  const [envOptions] = useEnvOptions(appCode);
+  const [clusterEnvOptions, queryEnvCodeList] = useEnvListOptions();
 
   const { Search } = Input;
 
@@ -79,18 +78,18 @@ export default function AlarmRules() {
             <Input style={{ width: 200 }} />
           </Form.Item>
           <Form.Item label="环境大类" name="envTypeCode">
-            <Select showSearch style={{ width: 100 }} options={envTypeData} allowClear />
+            <Select
+              showSearch
+              style={{ width: 100 }}
+              options={envTypeData}
+              allowClear
+              onChange={(n) => {
+                queryEnvCodeList(n);
+              }}
+            />
           </Form.Item>
           <Form.Item label="环境" name="envCode">
-            <Select
-              options={envOptions}
-              allowClear
-              // onChange={(n) => {
-              //   setenvCode(n);
-              // }}
-              showSearch
-              style={{ width: 120 }}
-            />
+            <Select options={clusterEnvOptions} allowClear showSearch style={{ width: 120 }} />
           </Form.Item>
           <Form.Item label="应用" name="appCode">
             <Select showSearch allowClear style={{ width: 120 }} options={appOptions} onChange={handleAppCodeChange} />

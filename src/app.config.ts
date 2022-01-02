@@ -35,4 +35,6 @@ export default {
   menuIconUrl: '//at.alicdn.com/t/font_2040858_koauyaochzp.js',
 
   isLocal: IS_LOCAL,
+  // 当前环境
+  BUILD_ENV: window.BUILD_ENV || 'dev',
 };

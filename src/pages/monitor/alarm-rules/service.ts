@@ -16,3 +16,5 @@ export const getEnvListByAppCode = addAPIPrefix('/monitorManage/app/env');
 export const getMonitorList = addAPIPrefix('/logManage/alertrule/list');
 
 export const getAppList = addAPIPrefix('/appManage/list');
+/** GET 集群环境查询 */
+export const getEnvCodeList = addAPIPrefix('/monitorManage/rules/envCodeList');

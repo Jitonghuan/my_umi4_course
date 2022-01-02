@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
-import FELayout from '@cffe/vc-layout';
+// import FELayout from '@cffe/vc-layout';
+import { BasicLayout } from '@cffe/layout';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
-import { queryUserInfoApi, doLogoutApi } from '@/utils/request';
+import { IconMap } from '@/components/vc-icons';
 import { FeContext, useDocumentTitle, usePermissionData, useCategoryData, useBusinessData } from '@/common/hooks';
 import './index.less';
 
@@ -21,7 +22,7 @@ if (appConfig.isLocal) {
   };
 }
 
-export default function BasicLayout(props: any) {
+export default function Layout(props: any) {
   // 初始化 doc title hook
   useDocumentTitle('', props?.location?.pathname);
   // 权限数据
@@ -54,26 +55,29 @@ export default function BasicLayout(props: any) {
         }}
       >
         <ChartsContext.Provider value={{ effectResize }}>
-          <FELayout.SSOLayout
+          <BasicLayout
             {...(props as any)}
+            isOpenLogin={true}
             pagePrefix={appConfig.pagePrefix}
-            showFooter={false}
-            title={appConfig.title}
             siderMenuProps={{
               isOpenPermission: appConfig.isOpenPermission,
               permissionData,
-              scriptUrl: appConfig.menuIconUrl,
+              IconMap,
             }}
             headerProps={{
-              logo: appConfig.logo,
+              env: appConfig.BUILD_ENV,
+              title: (
+                <div>
+                  <img src={appConfig.logo} style={{ marginRight: '5px' }} />
+                  {appConfig.title}
+                </div>
+              ),
+              positionText: '部门',
               isShowGlobalMenu: false,
               onBrandClick: () => {
                 props.history.push('/matrix/index');
               },
             }}
-            userApi={queryUserInfoApi}
-            logoutApi={doLogoutApi}
-            // loginUrl={}
           />
         </ChartsContext.Provider>
       </FeContext.Provider>

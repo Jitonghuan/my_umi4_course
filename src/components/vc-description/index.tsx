@@ -1,5 +1,5 @@
 import React from 'react';
-import { Descriptions, Table, Divider } from 'antd';
+import { Descriptions, Table, Divider, Tag } from 'antd';
 import moment from 'moment';
 import type { DescriptionsProps } from 'antd/lib/descriptions';
 // 发布记录字段 map
@@ -52,6 +52,33 @@ const funcName = (props: any) => {
       width: 60,
     },
   ];
+  const recordDisplayMap: any = {
+    merging: { text: '正在合并', color: 'blue' },
+    mergeErr: { text: '合并错误', color: 'red' },
+    conflict: { text: '合并冲突', color: 'red' },
+    building: { text: '正在构建', color: 'blue' },
+    buildErr: { text: '构建错误', color: 'red' },
+    buildAborted: { text: '构建取消', color: 'orange' },
+    deployWait: { text: '等待部署', color: 'blue' },
+    deploying: { text: '正在部署', color: 'geekblue' },
+    deployWaitBatch2: { text: '等待第二批部署', color: 'green' },
+    deployErr: { text: '部署错误', color: 'red' },
+    deployAborted: { text: '部署取消', color: 'orange' },
+    deployed: { text: '部署完成', color: 'green' },
+    mergingMaster: { text: '正在合并Master', color: 'geekblue' },
+    mergeMasterErr: { text: '合并Master错误', color: 'red' },
+    deletingFeature: { text: '正在删除Feature', color: 'purple' },
+    deleteFeatureErr: { text: '删除Feature错误', color: 'red' },
+    deployFinish: { text: '发布完成', color: 'green' },
+    qualityChecking: { text: '质量检测中', color: 'geekblue' },
+    qualityFailed: { text: '质量检测失败', color: 'red' },
+    pushFeResource: { text: '正在推送前端资源', color: 'geekblue' },
+    pushFeResourceErr: { text: '推送前端资源错误', color: 'red' },
+    pushVersion: { text: '正在推送前端版本', color: 'geekblue' },
+    pushVersionErr: { text: '推送前端版本失败', color: 'red' },
+    verifyWait: { text: '等待灰度验证', color: 'geekblue' },
+    verifyFailed: { text: '灰度验证失败', color: 'red' },
+  };
 
   const { dataSource = {}, ...rest } = props;
 
@@ -75,7 +102,14 @@ const funcName = (props: any) => {
         {moment(dataSource?.deployedTime).format('YYYY-MM-DD HH:mm:ss')}
       </Descriptions.Item>
       <Descriptions.Item label="发布环境">{dataSource?.envs}</Descriptions.Item>
-      <Descriptions.Item label="发布状态">{dataSource?.deployStatus}</Descriptions.Item>
+      <Descriptions.Item label="发布状态">
+        {/* {dataSource?.deployStatus} */}
+        {
+          <Tag color={recordDisplayMap[dataSource?.deployStatus].color}>
+            {recordDisplayMap[dataSource?.deployStatus].text}
+          </Tag>
+        }
+      </Descriptions.Item>
       <Descriptions.Item label="jenkins">
         {' '}
         <a href={dataSource?.jenkinsUrl} target="_blank">
