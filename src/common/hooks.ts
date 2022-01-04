@@ -51,8 +51,8 @@ export function usePermissionData(): [IPermission[], boolean, () => Promise<any>
     try {
       const result = await getRequest(APIS.queryPermission);
       const next =
-        result.data?.map((item: any) => ({
-          permissionId: item.menuCode,
+        result?.data?.map((item: any) => ({
+          // permissionId: item.permissionCode,
           permissionName: item.menuName,
           permissionUrl: item.menuUrl,
         })) || [];

@@ -39,7 +39,7 @@ export default function Layout(props: any) {
     return map;
   }, [props.routes]);
   {
-    console.log('appConfig.BUILD_ENV', appConfig.BUILD_ENV);
+    console.log('appConfig.BUILD_ENV', appConfig.BUILD_ENV, permissionData);
   }
   // 页面图表宽度自动适配
   const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
