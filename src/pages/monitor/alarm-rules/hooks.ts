@@ -20,7 +20,7 @@ export function useAppOptions() {
     getRequest(APIS.getAppList, {
       data: { pageSize: -1 },
     }).then((result) => {
-      const { dataSource } = result.data || {};
+      const { dataSource } = result?.data || {};
       const next = (dataSource || []).map((item: any) => ({
         label: item.appCode,
         value: item.appCode,
@@ -46,7 +46,7 @@ export function useEnvOptions(appCode?: string) {
     getRequest(APIS.getEnvListByAppCode, {
       data: { pageIndex: 1, pageSize: 100, appCode },
     }).then((result) => {
-      const { dataSource } = result.data || {};
+      const { dataSource } = result?.data || {};
       const next = (dataSource || []).map((item: any) => ({
         // label: item.envName,
         label: item.envName,
@@ -68,7 +68,7 @@ export function useEnvListOptions() {
     await getRequest(APIS.getEnvCodeList, {
       data: { envTypeCode },
     }).then((resp) => {
-      if (resp.success) {
+      if (resp?.success) {
         let data = resp?.data;
         data?.map((item: any) => {
           envOptions.push({
