@@ -35,7 +35,7 @@
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "1.0.0",
     "@cffe/internal-icon": "^1.0.0",
-    "@cffe/layout": "^0.1.5",
+    "@cffe/layout": "^0.1.6",
     "@cffe/pc-editor-table": "~1.0.10",
     "@cffe/sona": "^0.6.10",
     "@cffe/sona-editor": "^1.15.0",

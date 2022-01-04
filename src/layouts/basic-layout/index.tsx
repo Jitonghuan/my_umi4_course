@@ -38,7 +38,9 @@ export default function Layout(props: any) {
     DFSFunc(props.routes, 'routes', (node) => (map[node.path] = node));
     return map;
   }, [props.routes]);
-
+  {
+    console.log('appConfig.BUILD_ENV', appConfig.BUILD_ENV);
+  }
   // 页面图表宽度自动适配
   const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
   const effectResize = useDebounce(width, 100);
@@ -65,7 +67,7 @@ export default function Layout(props: any) {
               IconMap,
             }}
             headerProps={{
-              env: appConfig.BUILD_ENV,
+              env: appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev',
               title: (
                 <div>
                   <img src={appConfig.logo} style={{ marginRight: '5px' }} />
