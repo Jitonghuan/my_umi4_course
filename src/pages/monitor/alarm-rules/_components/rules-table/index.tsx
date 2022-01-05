@@ -3,15 +3,22 @@
 import React, { useState } from 'react';
 import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
 import useRequest from '@/utils/useRequest';
-import useTable from '@/utils/useTable';
-import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../services';
+
+import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../../basic/services';
 import TemplateDrawer from '../template-drawer';
-import { Item } from '../../typing';
+import { Item } from '../../../basic/typing';
 import './index.less';
 
 interface RulesTableProps {
+  dataSource?: any;
+  onQuery: () => void;
   serviceId?: string;
 }
+const ALERT_LEVEL: Record<number, { text: string; value: number; color: string }> = {
+  2: { text: '警告', value: 2, color: 'yellow' },
+  3: { text: '严重', value: 3, color: 'orange' },
+  4: { text: '灾难', value: 4, color: 'red' },
+};
 
 type StatusTypeItem = {
   color: string;
@@ -26,26 +33,12 @@ const STATUS_TYPE: Record<number, StatusTypeItem> = {
 };
 
 export default function RulesTable(props: RulesTableProps) {
-  const { serviceId } = props;
+  const { dataSource, onQuery, serviceId } = props;
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
   const [type, setType] = useState<'add' | 'edit'>('add');
   const [editRecord, setEditRecord] = useState<Item>({});
 
-  //列表
-  const {
-    tableProps,
-    search: { submit: queryList },
-  } = useTable({
-    url: queryRulesList,
-    method: 'GET',
-    // formatter: () => {
-    //   return {
-    //     serviceId,
-    //     pageIndex: -1,
-    //   };
-    // },
-  });
   //新增
   const { run: createRulesFun } = useRequest({
     api: createRules,
@@ -54,7 +47,7 @@ export default function RulesTable(props: RulesTableProps) {
     isSuccessModal: true,
     onSuccess: () => {
       setDrawerVisible(false);
-      queryList();
+      onQuery();
     },
   });
 
@@ -66,7 +59,7 @@ export default function RulesTable(props: RulesTableProps) {
     isSuccessModal: true,
     onSuccess: () => {
       setDrawerVisible(false);
-      queryList();
+      onQuery();
     },
   });
 
@@ -77,7 +70,7 @@ export default function RulesTable(props: RulesTableProps) {
     successText: '操作成功',
     isSuccessModal: true,
     onSuccess: () => {
-      queryList();
+      onQuery();
     },
   });
 
@@ -87,26 +80,47 @@ export default function RulesTable(props: RulesTableProps) {
     successText: '删除成功',
     isSuccessModal: true,
     onSuccess: () => {
-      queryList();
+      onQuery();
     },
   });
 
   const columns = [
     {
-      title: '规则名称',
+      title: '报警名称',
       dataIndex: 'name',
       key: 'name',
+      width: 140,
+    },
+    {
+      title: '环境',
+      dataIndex: 'envName',
+      key: 'envName',
+      width: 120,
+    },
+    {
+      title: '关联应用',
+      dataIndex: 'appCode',
+      key: 'appCode',
+      width: 120,
+    },
+    {
+      title: '报警级别',
+      dataIndex: 'level',
+      key: 'level',
+      render: (text: number) => <Tag color={ALERT_LEVEL[text]?.color}>{ALERT_LEVEL[text]?.text}</Tag>,
+      width: 120,
     },
     {
       title: '告警表达式',
       dataIndex: 'expression',
       key: 'expression',
+      width: 220,
       render: (text: string) => (
         <Tooltip title={text}>
           <span
             style={{
               display: 'inline-block',
-              width: 100,
+              width: 220,
               overflow: 'hidden',
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
@@ -121,11 +135,13 @@ export default function RulesTable(props: RulesTableProps) {
       title: '告警消息',
       dataIndex: 'message',
       key: 'message',
+      width: 200,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
+      width: 100,
       render: (text: number) => <Tag color={STATUS_TYPE[text].color}>{STATUS_TYPE[text].tagText}</Tag>,
     },
     {
@@ -189,7 +205,9 @@ export default function RulesTable(props: RulesTableProps) {
   return (
     <>
       <div className="table-caption">
-        <div className="caption-left"></div>
+        <div className="caption-left">
+          <h3>报警列表</h3>
+        </div>
         <div className="caption-right">
           <Button
             type="primary"
@@ -205,9 +223,9 @@ export default function RulesTable(props: RulesTableProps) {
       </div>
       <Table
         columns={columns}
-        {...tableProps}
+        {...dataSource}
         pagination={{
-          ...tableProps.pagination,
+          ...dataSource.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
         }}

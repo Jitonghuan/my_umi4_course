@@ -141,7 +141,14 @@ export default function ViewLog(props: any) {
         <div
           id="result-log"
           className="result-log"
-          style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, color: '#0a944f', wordBreak: 'break-word' }}
+          style={{
+            whiteSpace: 'pre-line',
+            padding: 8,
+            lineHeight: 2,
+            fontSize: 16,
+            color: '#12a182',
+            wordBreak: 'break-word',
+          }}
         >
           {log}
         </div>

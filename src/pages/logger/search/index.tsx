@@ -359,8 +359,8 @@ export default function LoggerSearch(props: any) {
   return (
     <PageContainer className="content">
       <FilterCard>
-        <Row>
-          <Col span={16}>
+        <div className="table-caption">
+          <div className="caption-left">
             <Form layout="inline">
               <Form.Item label="环境Code">
                 <Select
@@ -381,8 +381,8 @@ export default function LoggerSearch(props: any) {
                 />
               </Form.Item>
             </Form>
-          </Col>
-          <Col span={8}>
+          </div>
+          <div className="caption-right">
             {logType === '0' && envCode && logStore ? (
               <div>
                 <Form form={rangePickerForm}>
@@ -410,8 +410,8 @@ export default function LoggerSearch(props: any) {
                 </Form>
               </div>
             ) : null}
-          </Col>
-        </Row>
+          </div>
+        </div>
       </FilterCard>
       <ContentCard className="page-logger-search-content">
         {logType === '1' && (urlLoading || framePending) ? (
@@ -461,7 +461,7 @@ export default function LoggerSearch(props: any) {
 
                   <Button
                     type="primary"
-                    style={{ marginLeft: '11%' }}
+                    style={{ marginLeft: '8vw' }}
                     onClick={() => {
                       subInfoForm.resetFields();
                       // setTurnOnButton(true)

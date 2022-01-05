@@ -133,12 +133,21 @@ export default function Push(props: any) {
   useEffect(() => {
     selectCategory();
     getLabelList();
-    loadListData({ pageIndex: 1, pageSize: 20 });
+    let param = localStorage.getItem('TEMPLATE_PUSH_SEARCH')
+      ? JSON.parse(localStorage.getItem('TEMPLATE_PUSH_SEARCH'))
+      : '';
+    formTmplQuery.setFieldsValue({
+      appCategoryCode: param.appCategoryCode,
+      appCode: param.appCode,
+      tagNames: param.tagNames,
+    });
+
+    loadListData({ ...param, pageIndex: 1, pageSize: 20 });
     // getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
 
   // 页面销毁时清空缓存
-  useEffect(() => () => sessionStorage.removeItem('tmplDetailData'), []);
+  // useEffect(() => () => sessionStorage.removeItem('tmplDetailData'), []);
   // 根据选择的应用分类查询要推送的环境
   const changeAppCategory = (value: any) => {
     setEnvDatas([{ value: '', label: '' }]);
@@ -221,10 +230,9 @@ export default function Push(props: any) {
   //点击查询
   const getApplication = (value: any) => {
     setLoading(true);
-    console.log('value', value);
     getRequest(APIS.appList, {
       data: {
-        tagNames: value?.tagName,
+        tagNames: value?.tagNames,
         appCategoryCode: value.appCategoryCode,
         appCode: value.appCode,
         languageCode,
@@ -266,7 +274,6 @@ export default function Push(props: any) {
     const values = formTmplQuery.getFieldsValue();
     getApplication({
       ...values,
-
       ...params,
     });
   };
@@ -357,6 +364,7 @@ export default function Push(props: any) {
           layout="inline"
           form={formTmplQuery}
           onFinish={(values) => {
+            localStorage.setItem('TEMPLATE_PUSH_SEARCH', JSON.stringify(values));
             getApplication({
               ...values,
 
@@ -374,7 +382,7 @@ export default function Push(props: any) {
           <Form.Item label="应用分类：" name="appCategoryCode">
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
-          <Form.Item label="应用标签：" name="tagName">
+          <Form.Item label="应用标签：" name="tagNames">
             <Select
               mode="multiple"
               allowClear

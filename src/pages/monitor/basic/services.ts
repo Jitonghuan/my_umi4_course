@@ -79,3 +79,6 @@ export const ruleSwitch = addAPIPrefix('/monitorManage/rules/switch');
 
 /** GET 获取用户名 */
 export const getUserList = addAPIPrefix('/appManage/user/listAll');
+
+/** GET 集群环境查询 */
+export const getEnvCodeList = addAPIPrefix('/monitorManage/rules/envCodeList');
