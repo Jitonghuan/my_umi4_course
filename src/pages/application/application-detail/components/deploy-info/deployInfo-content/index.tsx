@@ -8,6 +8,7 @@
 import React, { useState, useContext, useCallback, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
+import { ContentCard } from '@/components/vc-page-content';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { IProps } from '../../application-deploy/deploy-content/components/publish-content/types';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
@@ -335,6 +336,7 @@ export default function DeployContent(props: DeployContentProps) {
             </div>
 
             <Table
+              className="deploy-info-table"
               dataSource={instanceTableData}
               loading={instanceloading}
               bordered
@@ -490,23 +492,25 @@ export default function DeployContent(props: DeployContentProps) {
                     <span>操作人：</span>
                     <b>{item.operator}</b>
                   </p>
-                  <p>
+                  {/* <p>
                     <span>操作类型：</span>
                     <b>{item.operateType}</b>
-                  </p>
+                  </p> */}
 
                   <p>
                     <span>操作事件：</span>
                     <b>
-                      {item.operateEvent === 'PodFileDownload'
-                        ? '文件下载'
-                        : item.operateEvent === 'restartApp'
-                        ? '重启应用'
-                        : item.operateEvent === 'rollback'
-                        ? '回滚应用'
-                        : item.operateEvent === 'DeletePod'
-                        ? '删除Pod'
-                        : null}
+                      <Tag color="geekblue">
+                        {item.operateEvent === 'PodFileDownload'
+                          ? '文件下载'
+                          : item.operateEvent === 'restartApp'
+                          ? '重启应用'
+                          : item.operateEvent === 'rollback'
+                          ? '回滚应用'
+                          : item.operateEvent === 'DeletePod'
+                          ? '删除Pod'
+                          : null}
+                      </Tag>
                     </b>
                   </p>
                 </div>

@@ -210,7 +210,7 @@ export default function Launch() {
           }}
         >
           <Form.Item label="应用分类：" name="appCategoryCode">
-            <Select showSearch style={{ width: 120 }} options={categoryData} onChange={changeAppCategory} />
+            <Select showSearch style={{ width: 110 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
           <Form.Item label="环境：" name="envCode">
             <Select
@@ -235,7 +235,7 @@ export default function Launch() {
             />
           </Form.Item>
           <Form.Item label="模版语言：" name="languageCode">
-            <Select showSearch allowClear style={{ width: 120 }} options={appDevelopLanguageOptions} />
+            <Select showSearch allowClear style={{ width: 100 }} options={appDevelopLanguageOptions} />
           </Form.Item>
           <Form.Item label=" 模版名称：" name="templateName">
             <Input placeholder="请输入模版名称"></Input>
@@ -250,7 +250,14 @@ export default function Launch() {
               重置
             </Button>
           </Form.Item>
-          <div style={{ float: 'right', display: 'flex' }}>
+        </Form>
+      </FilterCard>
+      <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>模版列表</h3>
+          </div>
+          <div className="caption-right">
             <Button
               type="primary"
               onClick={() =>
@@ -262,9 +269,7 @@ export default function Launch() {
               新增模版
             </Button>
           </div>
-        </Form>
-      </FilterCard>
-      <ContentCard>
+        </div>
         <div>
           <Table
             rowKey="id"

@@ -7,7 +7,8 @@ import { useState, useEffect, useCallback, createContext, useContext } from 'rea
 import type { IPermission } from '@cffe/vc-layout/lib/sider-menu';
 import appConfig from '@/app.config';
 import DetailContext from '../pages/application/application-detail/context';
-import { getRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
+import { BasicData } from '@hbos/component-position-switcher';
 import * as APIS from './apis';
 
 /** 全局上下文 */
@@ -51,8 +52,8 @@ export function usePermissionData(): [IPermission[], boolean, () => Promise<any>
     try {
       const result = await getRequest(APIS.queryPermission);
       const next =
-        result.data?.map((item: any) => ({
-          permissionId: item.menuCode,
+        result?.data?.map((item: any) => ({
+          // permissionId: item.permissionCode,
           permissionName: item.menuName,
           permissionUrl: item.menuUrl,
         })) || [];
@@ -78,7 +79,7 @@ export function useCategoryData() {
 
   const loadData = useCallback(async () => {
     const result = await getRequest(APIS.queryCategoryData);
-    const next = (result.data?.dataSource || []).map((el: any) => ({
+    const next = (result?.data?.dataSource || []).map((el: any) => ({
       ...el,
       label: el?.categoryName,
       value: el?.categoryCode,
@@ -99,7 +100,7 @@ export function useBusinessData() {
 
   const loadData = useCallback(async () => {
     const result = await getRequest(APIS.queryBizData);
-    const next = (result.data?.dataSource || []).map((el: any) => ({
+    const next = (result?.data?.dataSource || []).map((el: any) => ({
       ...el,
       label: el?.groupName,
       value: el?.groupCode,
@@ -121,7 +122,7 @@ export function useEnvTypeData() {
   const loadData = useCallback(async () => {
     const result = await getRequest(APIS.listAppEnvType, { data: { appCode: appData?.appCode, isClient: false } });
     let next: any = [];
-    (result.data || []).map((el: any) => {
+    (result?.data || []).map((el: any) => {
       if (el?.typeCode === 'dev') {
         next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
       }
@@ -146,4 +147,49 @@ export function useEnvTypeData() {
   }, []);
 
   return [data];
+}
+
+// 请求所属机构数据
+export function useStaffOrgData(): [any, () => Promise<void>] {
+  const [orgData, setOrgData] = useState<BasicData[]>();
+
+  const loadData = useCallback(async () => {
+    await postRequest(APIS.getStaffOrgList).then((result) => {
+      if (result.success) {
+        const next = (result?.data || []).map((el: any) => ({
+          name: el.name,
+          id: el.id,
+        }));
+        setOrgData(next);
+      }
+    });
+  }, []);
+  return [orgData, loadData];
+}
+
+// 请求所属机构数据
+export function useStaffDepData(): [any, (orgId: any) => Promise<void>] {
+  const [deptData, setDeptData] = useState<BasicData[]>();
+
+  const loadData = useCallback(async (orgId) => {
+    await postRequest(APIS.getStaffDeptList, { data: { orgId } }).then((result) => {
+      if (result.success) {
+        const next = (result?.data || []).map((el: any) => ({
+          name: el.name,
+          id: el.id,
+        }));
+        setDeptData(next);
+      }
+    });
+  }, []);
+  return [deptData, loadData];
+}
+
+// 切换部门确认
+export function useChooseDept(): [(deptId: any) => Promise<void>] {
+  const chooseDept = useCallback(async (deptId: any) => {
+    await postRequest(APIS.chooseDept, { data: { deptId } });
+  }, []);
+
+  return [chooseDept];
 }
