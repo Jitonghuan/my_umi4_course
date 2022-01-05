@@ -40,7 +40,9 @@ export default function Layout(props: any) {
   const [categoryData] = useCategoryData();
   // 业务线
   const [businessData] = useBusinessData();
+
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '');
+
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
     // campusId: 2000001,
