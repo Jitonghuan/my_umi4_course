@@ -13,6 +13,7 @@ import './topo-register';
 interface ITopoProps {
   onNodeClick: (id: string) => void;
   onRedLineClick: (id: string) => void;
+  selectTime: string;
 }
 
 const Topo = memo(
@@ -59,7 +60,7 @@ const Topo = memo(
     });
 
     const getTopoData = async () => {
-      let res = await getTopoList({});
+      let res = await getTopoList({ duration: props.selectTime });
       const edges = res.data.Calls.map((item: any) => {
         return {
           id: item.callId,
@@ -85,7 +86,7 @@ const Topo = memo(
 
     useEffect(() => {
       getTopoData();
-    }, []);
+    }, [props.selectTime]);
 
     useEffect(() => {
       if (origionData?.nodes?.length > 0) {

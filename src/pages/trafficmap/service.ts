@@ -62,7 +62,7 @@ export const getTopoList = (data: any) => {
   return getRequest(url, {
     data: {
       envCode: 'hbos-dev',
-      duration: '2022-01-05 15:29',
+      duration: data.duration || '2022-01-05 15:29',
     },
   });
 };

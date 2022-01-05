@@ -14,7 +14,9 @@ import DragWrapper from './_component/DragWrapper';
 import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
 import './index.less';
+import moment from '_moment@2.29.1@moment';
 
+const dateFormat = 'YYYY-MM-DD HH:mm';
 const dataDemo = {
   requests: {
     data: [
@@ -90,7 +92,12 @@ const dataDemo = {
 
 const globalTopo: React.FC = () => {
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
-  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
+  const [envDatas, setEnvDatas] = useState<any[]>([
+    {
+      label: 'hbos-dev',
+      value: 'hbos-dev',
+    },
+  ]); //环境
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
@@ -119,6 +126,7 @@ const globalTopo: React.FC = () => {
     },
   ]);
   const [clickId, setClickId] = useState<string>('');
+  const [selectTime, setSelectTime] = useState('');
 
   const TopoRef = useRef<any>();
 
@@ -187,10 +195,23 @@ const globalTopo: React.FC = () => {
       <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
         <Form layout="inline" form={formTmpl} style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Form.Item label="环境：" name="envCode">
-            <Select options={envDatas} allowClear onChange={(n) => {}} showSearch style={{ width: 140 }} />
+            <Select
+              options={envDatas}
+              defaultValue={'hbos-dev'}
+              onChange={(n) => {}}
+              showSearch
+              style={{ width: 140 }}
+            />
           </Form.Item>
           <Form.Item label="时间：" name="templateType">
-            <DatePicker />
+            <DatePicker
+              showTime={{ format: 'HH:mm' }}
+              format="YYYY-MM-DD HH:mm"
+              defaultValue={moment('2022-01-05 15:29', dateFormat)}
+              onChange={(value, dateString) => {
+                setSelectTime(dateString);
+              }}
+            />
           </Form.Item>
         </Form>
       </FilterCard>
@@ -236,6 +257,7 @@ const globalTopo: React.FC = () => {
                 onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
                 ref={TopoRef}
+                selectTime={selectTime}
               />
             </div>
           </div>
