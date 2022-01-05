@@ -46,6 +46,7 @@
     "@cffe/vc-layout": "1.0.53",
     "@cffe/vc-loading": "1.0.4",
     "@cffe/vc-request": "2.0.16",
+    "@hbos/component-position-switcher": "^1.0.6",
     "@types/react-resizable": "^1.7.4",
     "@umijs/hooks": "~1.9.3",
     "ace-diff": "^3.0.3",
