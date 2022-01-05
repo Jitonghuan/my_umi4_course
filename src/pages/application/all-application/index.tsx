@@ -22,8 +22,10 @@ export default function AllApplication() {
   const [createAppVisible, setCreateAppVisible] = useState(false);
 
   const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [searchParams, setSearchParams] = useState<any>();
+  const [pageSize, setPageSize] = useState(50);
+  const [searchParams, setSearchParams] = useState<any>(
+    localStorage.ALL_APPLICATIO_SEARCH ? JSON.parse(localStorage.ALL_APPLICATIO_SEARCH) : {},
+  );
 
   const hookParams = useMemo(() => ({ ...searchParams, requestType: type }), [type, searchParams]);
   const [appListData, total, isLoading, loadAppListData] = useAppListData(hookParams, pageIndex, pageSize);
@@ -37,11 +39,12 @@ export default function AllApplication() {
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
     setSearchParams(next);
+    localStorage.ALL_APPLICATIO_SEARCH = JSON.stringify(next || {});
   }, []);
 
   return (
     <PageContainer className={rootCls}>
-      <FilterHeader onSearch={handleFilterSearch} />
+      <FilterHeader onSearch={handleFilterSearch} searchParams={searchParams} />
 
       <ContentCard>
         <div className="table-caption">
@@ -61,7 +64,7 @@ export default function AllApplication() {
             {!isLoading && !appListData.length && (
               <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
-            <ApplicationCardList key={type} dataSource={appListData} />
+            <ApplicationCardList key={type} type={type} dataSource={appListData} />
             {total > 10 && (
               <div className={`${rootCls}-pagination-wrap`}>
                 <Pagination

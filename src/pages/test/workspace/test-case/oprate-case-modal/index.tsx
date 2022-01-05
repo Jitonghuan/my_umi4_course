@@ -13,13 +13,46 @@ interface PropsInterface {
   setCheckedCaseIds: any;
   caseCateTreeData: any;
   updateDatasource: any;
+  cateId?: any;
 }
 
 export default function OperateCaseModal(props: PropsInterface) {
-  const { visible, setVisible, oprationType, checkedCaseIds, setCheckedCaseIds, caseCateTreeData, updateDatasource } =
-    props;
+  const {
+    visible,
+    setVisible,
+    oprationType,
+    checkedCaseIds,
+    setCheckedCaseIds,
+    caseCateTreeData,
+    updateDatasource,
+    cateId,
+  } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [categoryId, setCategoryId] = useState<React.Key>();
+  const [expandKeys, setExpandKeys] = useState<React.Key[]>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (visible) {
+      setCategoryId(cateId);
+      const exps: any[] = [];
+      const dfs = (nodeArr: any[]) => {
+        if (!nodeArr?.length) return false;
+
+        for (const node of nodeArr) {
+          exps.push(node.key);
+          if (+node.key === +cateId) {
+            exps.pop();
+            return true;
+          }
+          if (dfs(node.children)) return true;
+          exps.pop();
+        }
+      };
+      dfs(caseCateTreeData);
+      setExpandKeys(exps);
+    }
+  }, [visible]);
 
   const dataClean = (node: any) => {
     node.key = node.id;
@@ -30,14 +63,8 @@ export default function OperateCaseModal(props: PropsInterface) {
     return node;
   };
 
-  // useEffect(() => {
-  //   getRequest(getCaseCategoryDeepList).then((res) => {
-  //     const _curTreeData = dataClean({ key: -1, items: res.data }).children;
-  //     void setDataSource(_curTreeData || []);
-  //   });
-  // }, []);
-
   const submit = async () => {
+    void setLoading(true);
     void (await postRequest(oprationType === 'copy' ? copyCases : moveCases, {
       data: {
         ids: checkedCaseIds,
@@ -47,6 +74,7 @@ export default function OperateCaseModal(props: PropsInterface) {
     }));
     void setCheckedCaseIds([]);
     void updateDatasource();
+    void setLoading(false);
     void setVisible(false);
   };
 
@@ -54,6 +82,7 @@ export default function OperateCaseModal(props: PropsInterface) {
     <Modal
       visible={visible}
       onOk={submit}
+      confirmLoading={loading}
       onCancel={() => setVisible(false)}
       title={oprationType === 'copy' ? '复制用例' : '移动用例'}
       maskClosable={false}
@@ -61,10 +90,14 @@ export default function OperateCaseModal(props: PropsInterface) {
       <div className="oprate-case-modal-body">
         <span className="oprate-case-label">目标位置：</span>
         <TreeSelect
+          treeExpandedKeys={expandKeys}
+          onTreeExpand={setExpandKeys}
           className="oprate-case-select-tree"
           value={categoryId}
           onChange={setCategoryId}
           treeData={caseCateTreeData}
+          showSearch
+          treeNodeFilterProp="title"
         />
       </div>
     </Modal>

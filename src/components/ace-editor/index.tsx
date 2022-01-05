@@ -31,10 +31,11 @@ export interface AceEditorProps {
   readOnly?: boolean;
   status?: 'success' | 'error' | 'warning' | 'default';
   placeholder?: string;
+  focus?: boolean;
 }
 
 export default function AceEditor(props: AceEditorProps) {
-  const { mode = 'text' } = props;
+  const { mode = 'text', focus = false } = props;
   const [stateValue, setStateValue] = useState<string>('value' in props ? props.value! : props.defaultValue ?? '');
   const [wrap, setWrap] = useState(false);
   const errorRef = useRef<any>();
@@ -76,6 +77,7 @@ export default function AceEditor(props: AceEditorProps) {
   return (
     <div className="ace-editor-wrapper" data-status={props.status || 'default'}>
       <Editor
+        focus={focus}
         mode={mode}
         width="100%"
         height={props.height ? `${props.height}${typeof props.height === 'string' ? '' : 'px'}` : undefined}

@@ -2,175 +2,116 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/18 09:45
 
-import React, { useState, useEffect, useCallback, useContext, useRef, useMemo } from 'react';
-import { Tabs, Button, Table, message, Popconfirm, Spin, Empty } from 'antd';
+import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
+import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
+import { Tabs } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
-import { postRequest } from '@/utils/request';
-import { IStatusInfoProps } from '@/pages/application/application-detail/types';
-import * as APIS from '@/pages/application/service';
 import { useAppDeployInfo, useAppChangeOrder } from './hooks';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
-import RollbackModal from './components/rollback-modal';
+import { getRequest } from '@/utils/request';
+import { listAppEnvType } from '@/common/apis';
+import DeployInfoContent from './deployInfo-content';
 import './index.less';
-
-const getStatusClazz = (text: string) => {
-  return /成功|正常/.test(text) ? 'text-success' : /失败|错误|异常/.test(text) ? 'text-error' : '';
-};
-
+const { TabPane } = Tabs;
 export default function AppDeployInfo() {
   const { appData } = useContext(DetailContext);
+  const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
+  // const [searchParams, setSearchParams] = useState<any>(
+  //   localStorage.ALL_APPLICATIO_SEARCH ? JSON.parse(localStorage.ALL_APPLICATIO_SEARCH) : {},
+  // );
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
+  // localStorage.removeItem('__init_env_tab__');
+  try {
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'dev';
+  } catch (error) {
+    localStorage.setItem('__init_env_tab__', 'dev');
+  }
+  const [tabActive, setTabActive] = useState<any>(
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'dev',
+  );
+
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currEnvCode,
     appData?.deploymentName,
   );
-  const [rollbackVisible, setRollbackVisible] = useState(false);
   const intervalRef = useRef<any>();
+  const changeTab = (value: any) => {
+    setTabActive(value);
+    localStorage.setItem('__init_env_tab__', value || 'dev');
+  };
 
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
+  useEffect(() => {
+    queryData();
+  }, []);
+  const queryData = () => {
+    getRequest(listAppEnvType, {
+      data: { appCode: appData?.appCode, isClient: false },
+    }).then((result) => {
+      const { data } = result || [];
+      let next: any = [];
+      (data || []).map((el: any) => {
+        if (el?.typeCode === 'dev') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+        }
+        if (el?.typeCode === 'test') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+        }
+        if (el?.typeCode === 'pre') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+        }
+        if (el?.typeCode === 'prod') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+        }
+      });
+      next.sort((a: any, b: any) => {
+        return a.sortType - b.sortType;
+      }); //升序
+      setEnvTypeData(next);
+    });
+  };
 
   useEffect(() => {
     if (envList.length && !currEnvCode) {
       setCurrEnv(envList[0].envCode);
     }
   }, [envList]);
-
+  //定义定时器方法
+  const intervalFunc = () => {
+    reloadDeployData(false);
+    // reloadChangeOrderData(false);
+  };
+  // 定时请求发布内容
+  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      reloadDeployData(false);
-      reloadChangeOrderData(false);
-    }, 3000);
-
-    return () => {
-      clearInterval(intervalRef.current);
-    };
+    timerHandle('do', true);
   }, [currEnvCode, appData]);
-
-  // 重启机器
-  const handleRestartItem = useCallback(
-    async (record: IStatusInfoProps) => {
-      await postRequest(APIS.restartApplication, {
-        data: {
-          deploymentName: appData?.deploymentName,
-          envCode: record.envCode,
-          eccid: record?.eccid,
-          owner: appData?.owner,
-        },
-      });
-
-      message.success('操作成功！');
-      reloadDeployData();
-      reloadChangeOrderData();
-    },
-    [appData, currEnvCode],
-  );
-
-  if (isLoading) {
-    return (
-      <div className="block-loading">
-        <Spin tip="正在获取环境信息" />
-      </div>
-    );
-  }
-  if (!envList.length) {
-    return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="该应用没有可使用的环境" />;
-  }
 
   return (
     <ContentCard noPadding className="page-app-deploy-info">
-      <Tabs activeKey={currEnvCode} type="card" onChange={(next) => setCurrEnv(next)}>
-        {envList.map((item) => (
-          <Tabs.TabPane tab={item.envName} key={item.envCode} />
+      <Tabs onChange={changeTab} activeKey={tabActive} type="card">
+        {envTypeData?.map((item) => (
+          <TabPane tab={item.label} key={item.value}>
+            <DeployInfoContent
+              isActive={item.value === tabActive}
+              envTypeCode={item.value}
+              onDeployNextEnvSuccess={() => {
+                const i = envTypeData.findIndex((item) => item.value === tabActive);
+                setTabActive(envTypeData[i + 1]?.value);
+              }}
+              intervalStop={() => {
+                timerHandle('stop');
+              }}
+              intervalStart={() => {
+                timerHandle('do', true);
+              }}
+            />
+          </TabPane>
         ))}
       </Tabs>
-      <div className="tab-content section-group">
-        <section className="section-left">
-          <div className="table-caption">
-            <div className="caption-left"></div>
-            <div className="caption-right">
-              <Button type="default" danger onClick={() => setRollbackVisible(true)}>
-                发布回滚
-              </Button>
-            </div>
-          </div>
-          <Table
-            dataSource={deployData}
-            loading={deployDataLoading}
-            bordered
-            pagination={false}
-            scroll={{ y: window.innerHeight - 340 }}
-          >
-            <Table.Column title="所属环境" dataIndex="envName" />
-            <Table.Column title="节点IP" dataIndex="ip" />
-            <Table.Column
-              title="运行状态"
-              dataIndex="appStateName"
-              render={(v: string) => <span className={getStatusClazz(v)}>{v}</span>}
-            />
-            <Table.Column
-              title="变更状态"
-              dataIndex="taskStateName"
-              render={(v: string) => <span className={getStatusClazz(v)}>{v}</span>}
-            />
-            <Table.Column
-              title="操作"
-              render={(_, record: IStatusInfoProps) => (
-                <div className="action-cell">
-                  <Popconfirm title={`确定重启 ${record.ip} 吗？`} onConfirm={() => handleRestartItem(record)}>
-                    <Button size="small" type="primary" ghost loading={record.taskState === 1}>
-                      重启
-                    </Button>
-                  </Popconfirm>
-                </div>
-              )}
-              width={100}
-            />
-          </Table>
-        </section>
-        <section className="section-right">
-          <h3>变更信息</h3>
-          <div className="section-inner">
-            {changeOrderDataLoading ? (
-              <div className="block-loading">
-                <Spin />
-              </div>
-            ) : null}
-            {changeOrderData.map((item, index) => (
-              <div className="change-order-item" key={index}>
-                <p>
-                  <span>创建时间：</span>
-                  <b>{item.createTime}</b>
-                </p>
-                <p>
-                  <span>结束时间：</span>
-                  <b>{item.finishTime}</b>
-                </p>
-                <p>
-                  <span>变更类型：</span>
-                  <b>{item.coType}</b>
-                </p>
-                <p>
-                  <span>变更信息：</span>
-                  <b>{item.changeOrderDescription}</b>
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-      <RollbackModal
-        visible={rollbackVisible}
-        envCode={currEnvCode}
-        onClose={() => setRollbackVisible(false)}
-        onSave={() => {
-          setRollbackVisible(false);
-          reloadChangeOrderData();
-          reloadDeployData();
-        }}
-      />
     </ContentCard>
   );
 }

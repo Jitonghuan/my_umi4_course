@@ -95,3 +95,37 @@ export const queryUseMarketData = (params: { clusterId: string }) =>
     }
     return [];
   });
+
+/**
+ * 集群查询
+ */
+export const queryClustersUrl = `${appConfig.apiPrefix}/monitorManage/clusters`;
+export const queryClustersData = (params: { envTypeCode: string }) =>
+  getRequest(queryClustersUrl, { data: params }).then((resp: any) => {
+    if (resp.success) {
+      let data = resp?.data;
+      let clusterData: any = [];
+      data.map((item: any) => {
+        clusterData.push({ label: item?.clusterName, value: item?.id });
+      });
+
+      return clusterData;
+    }
+    return [];
+  });
+/**
+ * POD明细列表
+ */
+
+export const queryPodUrl = `${appConfig.apiPrefix}/monitorManage/resource/pod`;
+export const queryPodUseData = (clusterId: number, pageIndex?: number, pageSize?: number, keyword?: any) =>
+  getRequest(queryPodUrl, { data: { clusterId, pageIndex: pageIndex || 1, pageSize: pageSize || 20, keyword } }).then(
+    (res: any) => {
+      if (res.success) {
+        let podResourceData: any = [];
+        podResourceData = res.data;
+        return podResourceData;
+      }
+      return [];
+    },
+  );

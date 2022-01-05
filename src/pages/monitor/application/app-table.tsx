@@ -1,10 +1,15 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Card, Select, Form, Tooltip } from 'antd';
+import { Card, Select, Form, Tooltip, Tabs, Button } from 'antd';
 import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import AppCard from './app-card';
+import CpuUtilization from './dashboard/cpu-utilization-line';
+import MemroyUtilization from './dashboard/memory-utilization-line';
+import DiskIOChart from './dashboard/diskIO-line';
+import NetWorkChart from './dashboard/network-line';
+import { useQueryPodCpu, usequeryPodMem, useQueryPodDisk, useQueryPodNetwork } from './dashboard/hooks';
 import {
   tableSchema,
   getGCTimeChartOption,
@@ -66,6 +71,18 @@ export const START_TIME_ENUMS = [
     label: 'Last 24 hours',
     value: 24 * 60 * 60 * 1000,
   },
+  {
+    label: 'Last 3 days',
+    value: 24 * 60 * 60 * 1000 * 3,
+  },
+  {
+    label: 'Last 7 days',
+    value: 24 * 60 * 60 * 1000 * 7,
+  },
+  {
+    label: 'Last 30 days',
+    value: 24 * 60 * 60 * 1000 * 30,
+  },
 ];
 
 // 请求频次枚举
@@ -100,7 +117,7 @@ export const RATE_ENUMS = [
 const Coms = (props: IProps) => {
   // 该组件会被作为路由组件使用，接收地址栏传参数
   const appCode = props.location?.query?.appCode;
-
+  const { TabPane } = Tabs;
   const [filter, setFilter] = useState<IFilter>({} as IFilter);
   const prevFilter = useRef<IFilter>({} as IFilter);
   const [appData, setAppData] = useState([]);
@@ -109,17 +126,20 @@ const Coms = (props: IProps) => {
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
   // pod ip
   const [curtIP, setCurtIp] = useState<string>('');
+  const [hostName, setHostName] = useState<string>('');
   // 刷新频率
   const [timeRate, setTimeRate] = useState<number>(0);
   // 定时器累计数，初始为0，每次定时器执行时加1，触发图的数据刷新，清除定时器后不再增长
   const [rateNum, setRateNum] = useState<number>(0);
   const prevRateNum = useRef<number>(0);
   const [formInstance] = Form.useForm();
-
+  const now = new Date().getTime();
   const selectRef = useRef(null);
-
   const timeRateInterval = useRef<NodeJS.Timeout>();
-
+  const [queryPodCpuData, podCpuloading, queryPodCpu] = useQueryPodCpu();
+  const [queryPodMemData, podMemloading, queryPodMem] = usequeryPodMem();
+  const [queryPodDiskData, podDiskloading, queryPodDisk] = useQueryPodDisk();
+  const [queryPodNetworkData, podNetworkloading, queryPodNetwork] = useQueryPodNetwork();
   const appConfig = [
     {
       title: 'GC瞬时次数/每分钟',
@@ -183,8 +203,12 @@ const Coms = (props: IProps) => {
     showRequestError: true,
     didMounted: false,
     formatRequestParams: (params) => {
+      console.log('params', params);
       return {
         ...params,
+
+        start: Number((now - startTime) / 1000),
+        end: Number(now / 1000),
         pageSize: 1000,
         ...prevFilter.current,
       };
@@ -192,6 +216,7 @@ const Coms = (props: IProps) => {
     formatResult: (resp) => {
       if (resp.data && resp.data[0]) {
         setCurtIp(resp.data[0].hostIP);
+        setHostName(resp.data[0].hostName);
       }
       return {
         dataSource: resp.data || [],
@@ -200,6 +225,40 @@ const Coms = (props: IProps) => {
           pageSize: 1000,
         },
       };
+    },
+    successFunc: (resp: any) => {
+      queryPodCpu(
+        resp.data[0].hostName,
+        filter.envCode,
+        Number((now - startTime) / 1000),
+        Number(now / 1000),
+        filter.appCode,
+        resp.data[0].hostIP,
+      );
+      queryPodMem(
+        resp.data[0].hostName,
+        filter.envCode,
+        Number((now - startTime) / 1000),
+        Number(now / 1000),
+        filter.appCode,
+        resp.data[0].hostIP,
+      );
+      queryPodDisk(
+        resp.data[0].hostName,
+        filter.envCode,
+        Number((now - startTime) / 1000),
+        Number(now / 1000),
+        filter.appCode,
+        resp.data[0].hostIP,
+      );
+      queryPodNetwork(
+        resp.data[0].hostName,
+        filter.envCode,
+        Number((now - startTime) / 1000),
+        Number(now / 1000),
+        filter.appCode,
+        resp.data[0].hostIP,
+      );
     },
     pagination: false,
   });
@@ -230,6 +289,40 @@ const Coms = (props: IProps) => {
       selector?.forEach((el) => {
         el.setAttribute('title', '');
       });
+      if (hostName && curtIP) {
+        queryPodCpu(
+          hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          curtIP,
+        );
+        queryPodMem(
+          hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          curtIP,
+        );
+        queryPodDisk(
+          hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          curtIP,
+        );
+        queryPodNetwork(
+          hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          curtIP,
+        );
+      }
     }
   }, [startTime, timeRate]);
 
@@ -237,6 +330,7 @@ const Coms = (props: IProps) => {
   const handleFilter = useCallback(
     (vals) => {
       setCurtIp('');
+      setHostName('');
       if (vals.appCode) {
         prevFilter.current = {
           ...vals,
@@ -267,6 +361,10 @@ const Coms = (props: IProps) => {
       }, value * 1000);
     }
   };
+  const refreash = () => {
+    reset();
+    queryNodeList();
+  };
 
   return (
     <div style={{ flex: 1, overflowY: 'auto' }}>
@@ -282,7 +380,45 @@ const Coms = (props: IProps) => {
           </Form>
           <div className="monitor-time-select" ref={selectRef}>
             <Tooltip title="Relative time ranges" placement="top">
-              <Select value={startTime} onChange={(value) => setStartTime(value)} style={{ width: 150 }}>
+              <Select
+                value={startTime}
+                onChange={(value) => {
+                  setStartTime(value);
+                  queryPodCpu(
+                    hostName,
+                    filter.envCode,
+                    Number((now - value) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    curtIP,
+                  );
+                  queryPodMem(
+                    hostName,
+                    filter.envCode,
+                    Number((now - value) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    curtIP,
+                  );
+                  queryPodDisk(
+                    hostName,
+                    filter.envCode,
+                    Number((now - value) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    curtIP,
+                  );
+                  queryPodNetwork(
+                    hostName,
+                    filter.envCode,
+                    Number((now - value) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    curtIP,
+                  );
+                }}
+                style={{ width: 150 }}
+              >
                 <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
                 {START_TIME_ENUMS.map((time) => (
                   <Select.Option key={time.value} value={time.value}>
@@ -300,6 +436,11 @@ const Coms = (props: IProps) => {
                 ))}
               </Select>
             </Tooltip>
+            <span style={{ marginLeft: 4 }}>
+              <Button type="primary" onClick={refreash}>
+                刷新
+              </Button>
+            </span>
           </div>
         </Card>
 
@@ -321,7 +462,42 @@ const Coms = (props: IProps) => {
             columns={tableSchema as ColumnProps[]}
             onRow={(record) => {
               return {
-                onClick: () => setCurtIp(record.hostIP),
+                onClick: () => {
+                  setCurtIp(record.hostIP);
+                  setHostName(record.hostName);
+                  queryPodCpu(
+                    record.hostName,
+                    filter.envCode,
+                    Number((now - startTime) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    record.hostIP,
+                  );
+                  queryPodMem(
+                    record.hostName,
+                    filter.envCode,
+                    Number((now - startTime) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    record.hostIP,
+                  );
+                  queryPodDisk(
+                    record.hostName,
+                    filter.envCode,
+                    Number((now - startTime) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    record.hostIP,
+                  );
+                  queryPodNetwork(
+                    record.hostName,
+                    filter.envCode,
+                    Number((now - startTime) / 1000),
+                    Number(now / 1000),
+                    filter.appCode,
+                    record.hostIP,
+                  );
+                },
               };
             }}
             // scroll={{ y: 300 }}
@@ -333,18 +509,54 @@ const Coms = (props: IProps) => {
               memory: (value) => {
                 return value ? `${value}%` : '';
               },
+              RSS: (value) => {
+                return value ? `${value}%` : '';
+              },
+              WSS: (value) => {
+                return value ? `${value}%` : '';
+              },
             }}
           />
+          <div style={{ marginTop: 14 }}>
+            <Tabs defaultActiveKey="1" type="card">
+              <TabPane tab={<span>进程监控</span>} key="1">
+                <h3 className="monitor-tabs-content-title">
+                  监控图表&nbsp;&nbsp;
+                  <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
+                </h3>
 
-          <h3 className="monitor-tabs-content-title">
-            监控图表&nbsp;&nbsp;
-            <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
-          </h3>
-          <VCCardLayout grid={layoutGrid} className="monitor-app-content">
-            {appConfig.map((el) => (
-              <AppCard {...el} requestParams={{ ...filter, ip: curtIP, startTime, rateNum }} />
-            ))}
-          </VCCardLayout>
+                <VCCardLayout grid={layoutGrid} className="monitor-app-content">
+                  {appConfig.map((el, index) => (
+                    <AppCard
+                      key={index}
+                      {...el}
+                      requestParams={{ ...filter, ip: curtIP, startTime, rateNum, hostName: hostName }}
+                    />
+                  ))}
+                </VCCardLayout>
+              </TabPane>
+              <TabPane tab={<span>基础监控</span>} key="2">
+                <h3 className="monitor-tabs-content-title">
+                  监控图表&nbsp;&nbsp;
+                  <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
+                </h3>
+                <div style={{ width: '100%', height: '100%' }}>
+                  <div className="base-monitor-charts">
+                    <MemroyUtilization data={queryPodMemData} loading={podMemloading} />
+                  </div>
+                  <div className="base-monitor-charts">
+                    <CpuUtilization data={queryPodCpuData} loading={podCpuloading} />
+                  </div>
+                  <div className="base-monitor-charts">
+                    <NetWorkChart data={queryPodNetworkData} loading={podNetworkloading} />
+                  </div>
+                  <div className="base-monitor-charts">
+                    <DiskIOChart data={queryPodDiskData} loading={podDiskloading} />
+                  </div>
+                </div>
+              </TabPane>
+            </Tabs>
+          </div>
         </Card>
       </div>
     </div>

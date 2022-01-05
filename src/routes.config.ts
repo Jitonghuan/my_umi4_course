@@ -65,12 +65,28 @@ export default [
     redirect: `${baseRoutePath}/monitor/basic/prometheus`,
   },
   {
-    path: `${baseRoutePath}/operation/cluster`,
-    redirect: `${baseRoutePath}/operation/cluster/dashboards`,
+    path: `${baseRoutePath}/cluster/cluster-zy`,
+    redirect: `${baseRoutePath}/cluster/cluster-zy/dashboards`,
+  },
+  {
+    path: `${baseRoutePath}/cluster/cluster-tt`,
+    redirect: `${baseRoutePath}/cluster/cluster-tt/dashboards`,
+  },
+  {
+    path: `${baseRoutePath}/cluster/cluster-zs`,
+    redirect: `${baseRoutePath}/cluster/cluster-zs/operator-scheduling`,
   },
   {
     path: `${baseRoutePath}/operation/app-tmpl`,
     redirect: `${baseRoutePath}/operation/app-tmpl/tmpl-list`,
+  },
+  {
+    path: `${baseRoutePath}/operation/env-manage`,
+    redirect: `${baseRoutePath}/operation/env-manage/env-list`,
+  },
+  {
+    path: `${baseRoutePath}/operation/label-manage`,
+    redirect: `${baseRoutePath}/operation/label-manage/label-list`,
   },
   {
     path: `${baseRoutePath}/test/data-factory`,
@@ -81,7 +97,7 @@ export default [
     redirect: `${baseRoutePath}/test/workspace/test-case-library`,
   },
   {
-    path: `${baseRoutePath}}/test/quality-control-new`,
+    path: `${baseRoutePath}/test/quality-control-new`,
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
 
@@ -164,6 +180,13 @@ export default [
             component: '@/pages/application/application-detail/components/application-overview',
           },
           {
+            path: 'envManage',
+            name: '环境管理',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/application-envManage',
+          },
+          {
             path: 'monitor',
             name: '应用监控',
             key: 'appList',
@@ -183,6 +206,20 @@ export default [
             key: 'appList',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/deploy-info',
+          },
+          {
+            path: 'loginShell',
+            name: '登陆shell',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/deploy-info/login-shell',
+          },
+          {
+            path: 'viewLog',
+            name: '查看日志',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/deploy-info/view-log',
           },
           {
             path: 'branch',
@@ -244,6 +281,13 @@ export default [
             key: 'appList',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/route-config',
+          },
+          {
+            path: 'changeDetails',
+            name: '路由配置',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/change-details',
           },
         ],
       },
@@ -356,6 +400,7 @@ export default [
     path: 'test',
     name: '测试管理',
     icon: 'icon-poc_mining',
+    hideInMenu: true,
     routes: [
       {
         path: 'data-factory',
@@ -486,6 +531,14 @@ export default [
             name: '测试用例库详情',
             key: 'test-workspace',
             component: '@/pages/test/workspace/test-case',
+            hideInMenu: true,
+          },
+          {
+            path: 'case-info',
+            name: '测试用例详情',
+            key: 'test-workspace',
+            component: '@/pages/test/workspace/case-info',
+            hideInMenu: true,
           },
           {
             path: 'bug-manage',
@@ -504,6 +557,7 @@ export default [
             name: '计划详情',
             key: 'test-workspace',
             component: '@/pages/test/workspace/plan-info',
+            hideInMenu: true,
           },
         ],
       },
@@ -640,6 +694,11 @@ export default [
         name: '日志检索',
         component: '@/pages/logger/search',
       },
+      {
+        path: 'index-manage',
+        name: '索引管理',
+        component: '@/pages/logger/index-manage',
+      },
     ],
   },
   {
@@ -665,56 +724,6 @@ export default [
     name: '运维管理',
     icon: 'icon-atomic',
     routes: [
-      {
-        path: 'cluster',
-        name: '双集群管理',
-        key: 'operation-cluster',
-        component: '@/pages/operation/cluster',
-        routes: [
-          {
-            path: 'dashboards',
-            name: '集群看板',
-            key: 'operation-cluster',
-            component: '@/pages/operation/cluster/dashboards',
-            hideInMenu: true,
-          },
-          {
-            path: 'scheduling',
-            name: '流量调度',
-            key: 'operation-cluster',
-            component: '@/pages/operation/cluster/scheduling',
-            hideInMenu: true,
-          },
-          {
-            path: 'cluster-sync',
-            name: '集群同步',
-            key: 'operation-cluster',
-            component: '@/pages/operation/cluster/cluster-sync',
-            hideInMenu: true,
-          },
-          {
-            path: 'cluster-sync-detail',
-            name: '集群同步',
-            key: 'operation-cluster',
-            component: '@/pages/operation/cluster/cluster-sync/sync-detail',
-            hideInMenu: true,
-          },
-          {
-            path: 'application-sync',
-            name: '应用同步',
-            key: 'operation-cluster',
-            component: '@/pages/operation/cluster/application-sync',
-            hideInMenu: true,
-          },
-          {
-            path: 'operation-log',
-            name: '操作记录',
-            key: 'operation-cluster',
-            component: '@/pages/operation/cluster/operation-log',
-            hideInMenu: true,
-          },
-        ],
-      },
       {
         path: 'app-tmpl',
         name: '应用模版',
@@ -759,6 +768,55 @@ export default [
         ],
       },
       {
+        path: 'env-manage',
+        name: '环境管理',
+        key: 'env-manage',
+        routes: [
+          {
+            path: 'env-list',
+            name: '环境列表',
+            key: 'env-manage',
+            component: '@/pages/operation/env-manage/env-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'push-env',
+            name: '推送环境',
+            key: 'env-manage',
+            component: '@/pages/operation/env-manage/push-env',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'label-manage',
+        name: '标签管理',
+        key: 'label-manage',
+        routes: [
+          {
+            path: 'label-list',
+            name: '标签列表',
+            key: 'label-manage',
+            component: '@/pages/operation/label-manage/label-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'label-bind',
+            name: '绑定标签',
+            key: 'label-manage',
+            component: '@/pages/operation/label-manage/label-bind',
+            hideInMenu: true,
+          },
+          {
+            path: 'label-unbound',
+            name: '解绑标签',
+            key: 'label-manage',
+            component: '@/pages/operation/label-manage/label-unbound',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
         path: 'tmpl-log',
         name: '操作日志',
         key: 'tmpl-log',
@@ -769,7 +827,7 @@ export default [
   {
     path: 'delivery',
     name: '交付管理',
-    icon: 'icon-code',
+    icon: 'icon-activity',
     routes: [
       {
         path: 'deliveryList',
@@ -812,6 +870,197 @@ export default [
       },
     ],
     //测试环境和正式环境暂不展示
+    hideInMenu: process.env.BUILD_ENV === 'prod',
+  },
+  {
+    path: 'cluster',
+    name: '双集群管理',
+    icon: 'icon-extension',
+    routes: [
+      {
+        path: 'cluster-zy',
+        name: '浙一双集群管理',
+        key: 'cluster-cluster-zy',
+        component: '@/pages/cluster/cluster-zy',
+        routes: [
+          {
+            path: 'dashboards',
+            name: '集群看板',
+            key: 'cluster-cluster-zy',
+            component: '@/pages/cluster/cluster-zy/dashboards',
+            hideInMenu: true,
+          },
+          {
+            path: 'scheduling',
+            name: '流量调度',
+            key: 'cluster-cluster-zy',
+            component: '@/pages/cluster/cluster-zy/scheduling',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync',
+            name: '集群同步',
+            key: 'cluster-cluster-zy',
+            component: '@/pages/cluster/cluster-zy/cluster-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync-detail',
+            name: '集群同步',
+            key: 'cluster-cluster-zy',
+            component: '@/pages/cluster/cluster-zy/cluster-sync/sync-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'application-sync',
+            name: '应用同步',
+            key: 'cluster-cluster-zy',
+            component: '@/pages/cluster/cluster-zy/application-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'operation-log',
+            name: '操作记录',
+            key: 'cluster-cluster-zy',
+            component: '@/pages/cluster/cluster-zy/operation-log',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'cluster-tt',
+        name: '天台双集群管理',
+        key: 'cluster-clusterTt',
+        component: '@/pages/cluster/cluster-tt',
+        routes: [
+          {
+            path: 'dashboards',
+            name: '集群看板',
+            key: 'cluster-clusterTt',
+            component: '@/pages/cluster/cluster-tt/dashboards',
+            hideInMenu: true,
+          },
+          {
+            path: 'scheduling',
+            name: '流量调度',
+            key: 'cluster-clusterTt',
+            component: '@/pages/cluster/cluster-tt/scheduling',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync',
+            name: '集群同步',
+            key: 'cluster-clusterTt',
+            component: '@/pages/cluster/cluster-tt/cluster-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync-detail',
+            name: '集群同步',
+            key: 'cluster-clusterTt',
+            component: '@/pages/cluster/cluster-tt/cluster-sync/sync-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'application-sync',
+            name: '应用同步',
+            key: 'cluster-clusterTt',
+            component: '@/pages/cluster/cluster-tt/application-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'operation-log',
+            name: '操作记录',
+            key: 'cluster-clusterTt',
+            component: '@/pages/cluster/cluster-tt/operation-log',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'cluster-zs',
+        name: '中山双集群管理',
+        key: 'cluster-clusterZs',
+        component: '@/pages/cluster/cluster-zs',
+        routes: [
+          {
+            path: 'operator-scheduling',
+            name: '集群调度',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/operator-scheduling',
+            hideInMenu: true,
+          },
+          {
+            path: 'scheduling',
+            name: '流量调度',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/scheduling',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync',
+            name: '集群同步',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/cluster-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'cluster-sync-detail',
+            name: '集群同步',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/cluster-sync/sync-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'application-sync',
+            name: '应用同步',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/application-sync',
+            hideInMenu: true,
+          },
+          {
+            path: 'operation-log',
+            name: '操作记录',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/operation-log',
+            hideInMenu: true,
+          },
+        ],
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+      },
+    ],
+  },
+  {
+    path: 'trafficmap',
+    name: '流量地图',
+    icon: 'icon-ic_flow',
+    hideInMenu: process.env.BUILD_ENV === 'prod',
+    routes: [
+      {
+        path: 'global-topo',
+        name: '全局拓扑',
+        key: 'trafficmap-topo',
+        component: '@/pages/trafficmap/global-topo',
+      },
+      {
+        path: 'app-traffic',
+        name: '应用流量',
+        key: 'trafficmap-app',
+        component: '@/pages/trafficmap/app-traffic',
+      },
+      {
+        path: 'tracking',
+        name: '追踪',
+        key: 'trafficmap-track',
+        component: '@/pages/trafficmap/tracking',
+      },
+      {
+        path: 'domain-config',
+        name: '配置域',
+        key: 'trafficmap-domainconfig',
+        component: '@/pages/trafficmap/domain-config',
+      },
+    ],
     hideInMenu: process.env.BUILD_ENV === 'prod',
   },
   {

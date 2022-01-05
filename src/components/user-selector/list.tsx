@@ -12,7 +12,7 @@ export interface UserTagListProps extends TagProps {
   data?: string | string[];
 }
 
-export default function UserTagList({ data, ...others }: UserTagListProps) {
+export default function UserTagList({ data, color, ...others }: UserTagListProps) {
   const displayData = useMemo(() => {
     if (!data) return [];
 
@@ -26,7 +26,7 @@ export default function UserTagList({ data, ...others }: UserTagListProps) {
   return (
     <div className="user-tag-list">
       {displayData.map((str, index) => (
-        <Tag key={index} icon={<UserOutlined />} {...others}>
+        <Tag key={index} icon={<UserOutlined />} {...others} color="#f0f0f0" style={{ color: color || '#666' }}>
           {str}
         </Tag>
       ))}

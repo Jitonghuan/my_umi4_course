@@ -2,13 +2,15 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/06/06 15:09
 
-import React, { useState } from 'react';
-import { Button, Popover, Collapse, Empty, message, Table } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, Popover, Collapse, Empty, message, Select, Table } from 'antd';
 import { getRequest } from '@/utils/request';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import DebounceSelect from '@/components/debounce-select';
 import * as APIS from '../../service';
-import { CaseItemVO, PreCaseItemProps } from '../../interfaces';
+import { CaseItemVO, PreCaseItemProps, TreeNode } from '../../interfaces';
+import { getCaseListByIds } from './common';
+import { useProjectOptions } from '../../hooks';
 import './index.less';
 
 export type CaseTableValueProps = CaseItemVO & PreCaseItemProps;
@@ -17,16 +19,24 @@ export interface CaseTableFieldProps {
   title?: React.ReactNode;
   value?: CaseTableValueProps[];
   onChange?: (next: CaseTableValueProps[]) => any;
+  defaultProjectId: React.Key;
 }
 
 export default function CaseTable(props: CaseTableFieldProps) {
   const [popVisible, setPopVisible] = useState(false);
+  const [projectOptions] = useProjectOptions();
+  const [projectId, setProjectId] = useState<any>();
+
+  useEffect(() => {
+    setProjectId(props.defaultProjectId);
+  }, [popVisible]);
 
   const loadOptions = async (keyword: string) => {
     if (!keyword) return [];
 
     const result = await getRequest(APIS.getPreCaseList, {
       data: {
+        projectId,
         keyword: keyword?.trim() || '',
       },
     });
@@ -40,18 +50,14 @@ export default function CaseTable(props: CaseTableFieldProps) {
 
   const handleSelect = async (_: any, item: any) => {
     // 选中后再调详情接口获取接口详情信息，并 push 到列表中
-    console.log('>>> handleSelect', item.data);
-
     const nextValue = props.value?.slice(0) || [];
-    if (nextValue.find((n) => n.id === item.data?.caseId)) {
-      return message.warn('此用例已选择!');
-    }
 
-    const { data }: { data: CaseItemVO } = await getRequest(APIS.getCaseInfo, {
-      data: { id: item.data.caseId },
-    });
+    let newPreCaseIds = (item.data.preCases.length && item.data.preCases?.split(',').map((id: string) => +id)) || [];
+    const alreadyHas = nextValue.map((item) => item.id);
+    newPreCaseIds = newPreCaseIds.filter((id: number) => !alreadyHas.includes(id));
+    const newCases = await getCaseListByIds([...newPreCaseIds, item.data.caseId]);
+    nextValue.push(...newCases.map((item) => ({ ...item, ...item.data })));
 
-    nextValue.push({ ...data, ...item.data });
     props.onChange?.(nextValue);
     setPopVisible(false);
   };
@@ -72,19 +78,22 @@ export default function CaseTable(props: CaseTableFieldProps) {
           onVisibleChange={(n) => setPopVisible(n)}
           trigger={['click']}
           content={
-            <DebounceSelect
-              fetchOnMount
-              fetchOptions={loadOptions}
-              onSelect={handleSelect}
-              style={{ width: '100%' }}
-              autoFocus
-              suffixIcon={null}
-              placeholder="输入关键字搜索"
-            />
+            <div style={{ display: 'flex' }}>
+              <Select style={{ width: '20%' }} options={projectOptions} onSelect={setProjectId} value={projectId} />
+              <DebounceSelect
+                fetchOnMount
+                fetchOptions={loadOptions}
+                onSelect={handleSelect}
+                style={{ width: '80%' }}
+                autoFocus
+                suffixIcon={null}
+                placeholder="输入关键字搜索"
+              />
+            </div>
           }
           placement="left"
-          overlayInnerStyle={{ width: 520 }}
-          overlayStyle={{ width: 520 }}
+          overlayInnerStyle={{ width: 620 }}
+          overlayStyle={{ width: 620 }}
         >
           <Button>新增</Button>
         </Popover>

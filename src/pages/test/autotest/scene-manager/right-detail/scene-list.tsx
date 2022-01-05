@@ -105,6 +105,7 @@ export default function SceneList(props: SceneListProps) {
         </Form>
       </div>
       <Table
+        rowKey="id"
         dataSource={sceneSource}
         loading={isLoading}
         pagination={{
@@ -117,6 +118,16 @@ export default function SceneList(props: SceneListProps) {
             setPageIndex(1);
             setPageSize(next);
           },
+          showTotal: (total) => `共 ${total} 条`,
+        }}
+        expandable={{
+          expandedRowRender: (record) => (
+            <div>
+              <p style={{ margin: 0 }}>{'所属模块:' + record.moduleName}</p>
+              <p style={{ margin: 0 }}>{'场景描述:' + record.desc}</p>
+            </div>
+          ),
+          rowExpandable: (record) => record.desc !== '',
         }}
       >
         <Table.Column
@@ -125,10 +136,10 @@ export default function SceneList(props: SceneListProps) {
           width={80}
           render={(value, record: SceneItemVO) => <a onClick={() => handleSelectSceneItem(record)}>{value}</a>}
         />
-        <Table.Column dataIndex="projectName" title="项目" width={120} />
-        <Table.Column dataIndex="moduleName" title="模块" />
+        {/* <Table.Column dataIndex="projectName" title="项目" width={120} /> */}
+        {/* <Table.Column dataIndex="moduleName" title="模块" /> */}
         <Table.Column dataIndex="name" title="场景名称" />
-        <Table.Column dataIndex="desc" title="场景描述" />
+        {/* <Table.Column dataIndex="desc" title="场景描述" /> */}
         <Table.Column dataIndex="cases" title="用例数" render={(value: number[]) => value?.length || 0} />
         <Table.Column
           title="操作"

@@ -106,6 +106,7 @@ export default function Workspace(props: any) {
             total,
             pageSize,
             showSizeChanger: true,
+            showTotal: (total) => `共 ${total} 条`,
             onChange: (next) => setPageIndex(next),
             onShowSizeChange: (_, next) => setPageSize(next),
           }}

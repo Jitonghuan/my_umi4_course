@@ -37,6 +37,7 @@ export default function DemoPageTb(porps: any) {
   }, []);
   //进入页面加载信息
   const templateCode: string = porps.history.location.query.templateCode;
+  const languageCode = porps.history.location.query.languageCode;
   const tmplDetialResult = (templateCode: string) => {
     getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
       if (res.success) {
@@ -68,29 +69,9 @@ export default function DemoPageTb(porps: any) {
           appCategoryCode: tmplresult.appCategoryCode,
           envCodes: envCode,
           jvm: jvm,
+          languageCode: tmplresult?.languageCode,
           remark: tmplresult.remark,
         });
-      }
-    });
-  };
-
-  // 根据应用分类查询环境
-  const changeAppCategory = (categoryCode: string) => {
-    //调用接口 查询env 参数就是appCategoryCode
-    //setEnvDatas
-    setEnvDatas([]);
-    setAppCategoryCode(categoryCode);
-    getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
-      if (resp.success) {
-        const datas =
-          resp?.data?.dataSource?.map((el: any) => {
-            return {
-              ...el,
-              value: el?.envCode,
-              label: el?.envName,
-            };
-          }) || [];
-        setEnvDatas(datas);
       }
     });
   };
@@ -103,6 +84,11 @@ export default function DemoPageTb(porps: any) {
             <Col span={6}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select showSearch style={{ width: 150 }} disabled={isDisabled} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
+                <Select showSearch style={{ width: 150 }} disabled={true} />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -126,14 +112,9 @@ export default function DemoPageTb(porps: any) {
                 <Table.Column title="Key" dataIndex="key" width="10%" />
                 <Table.Column title="缺省值" dataIndex="value" width="20%" ellipsis />
               </Table>
+              {templateTypes == 'deployment' && languageCode === 'java' && <span>JVM参数:</span>}
 
-              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
-              <Form.Item name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
-              </Form.Item>
-              {templateTypes == 'deployment' && <span>JVM参数:</span>}
-
-              {templateTypes == 'deployment' && (
+              {templateTypes == 'deployment' && languageCode === 'java' && (
                 <Form.Item name="jvm">
                   <AceEditor mode="yaml" height={300} />
                 </Form.Item>
@@ -142,15 +123,9 @@ export default function DemoPageTb(porps: any) {
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '80px' }}
+                style={{ marginTop: '30px' }}
               >
-                <Select
-                  showSearch
-                  style={{ width: 220 }}
-                  options={categoryData}
-                  onChange={changeAppCategory}
-                  disabled={isDisabled}
-                />
+                <Select showSearch style={{ width: 220 }} options={categoryData} disabled={isDisabled} />
               </Form.Item>
 
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
@@ -165,10 +140,15 @@ export default function DemoPageTb(porps: any) {
                   {children}
                 </Select>
               </Form.Item>
+
+              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660, height: 220 }}></Input.TextArea>
+              </Form.Item>
             </Col>
           </Row>
           <Form.Item>
-            <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
+            <Space size="small" style={{ float: 'right' }}>
               <Button
                 type="ghost"
                 htmlType="reset"

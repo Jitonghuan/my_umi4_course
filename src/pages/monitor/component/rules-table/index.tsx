@@ -181,10 +181,12 @@ const RulesTable: React.FC<StepTwoProps> = ({ serviceId, isShowAddButton = true 
   };
 
   const onSubmit = (value: any) => {
+    let receiver = (value.receiver || []).join(',');
+    //  let receiver=value.receiver?.split(',') || ''
     if (type === 'add') {
-      createRulesFun({ ...value, serviceId });
+      createRulesFun({ ...value, receiver, serviceId });
     } else {
-      updateRulesFun({ ...value, serviceId });
+      updateRulesFun({ ...value, receiver, serviceId });
     }
   };
 

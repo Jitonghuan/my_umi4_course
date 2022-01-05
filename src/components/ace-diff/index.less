@@ -1,0 +1,57 @@
+.ace-editor-wrapper {
+  position: relative;
+  border: 1px solid #cacfdb;
+
+  .ace-editor-type {
+    position: absolute;
+    z-index: 100;
+    bottom: 0;
+    right: 0;
+    padding: 0 8px;
+    border: 1px solid #cacfdb;
+    border-width: 1px 0 0 1px;
+    background-color: #f8f9fa;
+    color: #999;
+    cursor: pointer;
+  }
+
+  .codeMarker {
+    background: #fff677;
+    position: absolute;
+    z-index: 20;
+  }
+
+  .error-tips {
+    position: absolute;
+    z-index: 200;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ff1122;
+    white-space: pre;
+    animation: fadeIn 300ms ease-in 0s both;
+  }
+}
+
+.ant-form-item-has-error .ace-editor-wrapper,
+.ace-editor-wrapper[data-status='error'] {
+  border-color: #cc4631;
+
+  .ace-editor-type {
+    border-color: #cc4631;
+    background-color: #faebe9;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

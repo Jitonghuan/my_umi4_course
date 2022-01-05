@@ -4,20 +4,20 @@
 
 import React, { useState, useContext, useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
 import { Select, Button, Tabs, Spin, Empty, Modal, message } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
-import AceEditor from '@/components/ace-editor';
+import AceDiff from '@/components/ace-diff';
 import * as APIS from '@/pages/application/service';
-import { putRequest, postRequest } from '@/utils/request';
+import { putRequest, postRequest, getRequest } from '@/utils/request';
 import { useRouteItemData } from './hooks';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
+import { listAppEnvType } from '@/common/apis';
 import './index.less';
 
-export default function RouteTemplate() {
+export default function RouteConfig() {
   const { appData } = useContext(DetailContext);
-  const { envTypeData } = useContext(FeContext);
+  // const { envTypeData } = useContext(FeContext);
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
   const [appEnvCodeData] = useAppEnvCodeData(appData?.appCode);
   const [envCode, setEnvCode] = useState<string>();
@@ -38,6 +38,36 @@ export default function RouteTemplate() {
     setEnvCode(undefined);
   }, []);
 
+  const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  useEffect(() => {
+    queryData();
+  }, []);
+  const queryData = () => {
+    getRequest(listAppEnvType, {
+      data: { appCode: appData?.appCode, isClient: false },
+    }).then((result) => {
+      const { data } = result || [];
+      let next: any = [];
+      (data || []).map((el: any) => {
+        if (el?.typeCode === 'dev') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+        }
+        if (el?.typeCode === 'test') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+        }
+        if (el?.typeCode === 'pre') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+        }
+        if (el?.typeCode === 'prod') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+        }
+      });
+      next.sort((a: any, b: any) => {
+        return a.sortType - b.sortType;
+      }); //升序
+      setEnvTypeData(next);
+    });
+  };
   const envCodeOptions: IOption[] = useMemo(() => {
     const next = appEnvCodeData[tabActive] || [];
     return next.map((n) => ({
@@ -69,7 +99,7 @@ export default function RouteTemplate() {
   const handleSubmit = useCallback(() => {
     Modal.confirm({
       title: '操作确认',
-      content: `确定要修改吗？（下次发布至 ${envCode} 环境时生效）`,
+      content: `确定要修改吗？（保存后会立即对 ${envCode} 环境生效！）`,
       onOk: async () => {
         const payload = {
           appCode: appData?.appCode,
@@ -79,19 +109,19 @@ export default function RouteTemplate() {
         };
 
         if (!!routeContent?.id) {
-          await putRequest(APIS.updateFeRouteTemplate, {
+          await putRequest(APIS.updateFeRouteConfig, {
             data: {
               id: routeContent.id,
               ...payload,
             },
           });
         } else {
-          await postRequest(APIS.createFeRouteTemplate, {
+          await postRequest(APIS.createFeRouteConfig, {
             data: payload,
           });
         }
 
-        message.success(`保存成功！下次发布至 ${envCode} 环境时生效`);
+        message.success(`保存成功！请及时到 ${envCode} 环境验证`);
         reloadData();
       },
     });
@@ -100,7 +130,7 @@ export default function RouteTemplate() {
   return (
     <ContentCard noPadding className="page-route-template">
       <Tabs onChange={handleTabChange} activeKey={tabActive} type="card">
-        {envTypeData?.map((item) => (
+        {envTypeData?.map((item: any) => (
           <Tabs.TabPane tab={item.label} key={item.value} />
         ))}
       </Tabs>
@@ -128,7 +158,13 @@ export default function RouteTemplate() {
 
         {envCode ? (
           <Spin spinning={isLoading}>
-            <AceEditor mode={editorLanguage} height="100%" value={editValue} onChange={(n) => setEditValue(n)} />
+            <AceDiff
+              originValue={routeContent?.value}
+              mode={editorLanguage}
+              height="100%"
+              value={editValue}
+              onChange={(n) => setEditValue(n)}
+            />
           </Spin>
         ) : (
           <Empty description="请选择发布环境" image={Empty.PRESENTED_IMAGE_SIMPLE} />

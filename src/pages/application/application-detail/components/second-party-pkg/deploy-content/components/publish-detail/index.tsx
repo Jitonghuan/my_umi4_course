@@ -23,20 +23,25 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
-  const [envDataList, setEnvDataList] = useState([]);
-
+  const [envDataList, setEnvDataList] = useState<any>([]);
   useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
       categoryCode: appCategoryCode as string,
       envTypeCode: env,
+      appCode: appData?.appCode,
     }).then((data) => {
-      setEnvDataList(data.list);
+      let envSelect: any = [];
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
+      setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);
 
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
+
     const namesArr: any[] = [];
     if (envs?.indexOf(',') > -1) {
       const list = envs?.split(',') || [];

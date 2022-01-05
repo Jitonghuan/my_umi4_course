@@ -14,7 +14,7 @@ import { getTestPhaseDetail, getPhaseCaseTree, getPhaseCaseDetail, getProjects }
 import { ContentCard, CardRowGroup, FilterCard } from '@/components/vc-page-content';
 import { Col, Row, Tabs, Tag, Empty, Tooltip, Typography, Button } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined, RollbackOutlined, LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import './index.less';
 
 export default function PlanInfo(props: any) {
@@ -36,6 +36,8 @@ export default function PlanInfo(props: any) {
   const [caseStatusSelect, setCaseStatusSelect] = useState<string>();
 
   const [allDescendantsMap, setAllDescendantsMap] = useState<any>({});
+
+  const [leftExtend, setLeftExtend] = useState(false);
 
   useEffect(() => {
     if (!testCaseTree) return;
@@ -143,14 +145,24 @@ export default function PlanInfo(props: any) {
 
   return (
     <PageContainer>
-      <div className="back-btn-container">
-        <div onClick={goBack} className="back-btn">
-          <LeftOutlined /> <span className="back-btn-title">{plan.name}</span>
-        </div>
-      </div>
       <FilterCard className="layout-compact">
         <div className="tabs-container">
-          <Tabs className="tabs" activeKey={activeKey} onChange={(key) => setActiveKey(key)}>
+          <Tabs
+            className="tabs"
+            activeKey={activeKey}
+            onChange={(key) => setActiveKey(key)}
+            tabBarExtraContent={
+              <div className="tab-right-extra">
+                <div className="back-btn-container">
+                  <div onClick={goBack} className="back-btn">
+                    {' '}
+                    <RollbackOutlined />
+                    <span className="back-btn-title"> {plan.name}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          >
             {plan?.phaseCollection?.map((item: any) => (
               <Tabs.TabPane tab={item.name} key={item.id}></Tabs.TabPane>
             ))}
@@ -158,83 +170,107 @@ export default function PlanInfo(props: any) {
         </div>
       </FilterCard>
       <CardRowGroup className="test-workspace-plan-info">
-        <CardRowGroup.SlideCard noPadding width={312} className="left-card">
-          <Row>
-            <Col className="mt-1x left-cart-sub-title" push={1}>
-              基本信息
-            </Col>
-          </Row>
-          <Row>
-            <Col className="mt-1x" span={1}></Col>
-            <Col className="mt-1x left-cart-sub-sub-title" span={6}>
-              负责人:
-            </Col>
-            <Col className="mt-1x">{testPhaseDetail.phaseInfo?.head}</Col>
-          </Row>
-          <Row>
-            <Col className="mt-1x" span={1}></Col>
-            <Col className="mt-1x left-cart-sub-sub-title" span={6}>
-              开始时间:
-            </Col>
-            <Col className="mt-1x">
-              {testPhaseDetail.phaseInfo?.startTime &&
-                moment(testPhaseDetail.phaseInfo?.startTime).format('YYYY-MM-DD HH:mm:ss')}
-            </Col>
-          </Row>
-          <Row>
-            <Col className="mt-1x" span={1}></Col>
-            <Col className="mt-1x left-cart-sub-sub-title" span={6}>
-              结束时间:
-            </Col>
-            <Col className="mt-1x">
-              {testPhaseDetail.phaseInfo?.endTime &&
-                moment(testPhaseDetail.phaseInfo?.endTime).format('YYYY-MM-DD HH:mm:ss')}
-            </Col>
-          </Row>
+        {leftExtend ? (
+          <div className="expand">
+            <span className="collect" style={{ right: -8 }} onClick={() => setLeftExtend(false)}>
+              <RightCircleOutlined
+                style={{ fontSize: 20, color: '#8991A3', backgroundColor: '#fff', borderRadius: 10 }}
+              />
+            </span>
+          </div>
+        ) : (
+          <div style={{ position: 'relative' }}>
+            <span
+              className="collect"
+              onClick={() => {
+                setLeftExtend(true);
+              }}
+            >
+              <Tooltip title="收起基本信息">
+                <LeftCircleOutlined
+                  style={{ fontSize: 20, color: '#8991A3', backgroundColor: '#fff', borderRadius: 10 }}
+                />
+              </Tooltip>
+            </span>
+            <CardRowGroup.SlideCard noPadding width={312} className="left-card">
+              <Row>
+                <Col className="mt-1x left-cart-sub-title" push={1}>
+                  基本信息
+                </Col>
+              </Row>
+              <Row>
+                <Col className="mt-1x" span={1}></Col>
+                <Col className="mt-1x left-cart-sub-sub-title" span={6}>
+                  负责人:
+                </Col>
+                <Col className="mt-1x">{testPhaseDetail.phaseInfo?.head}</Col>
+              </Row>
+              <Row>
+                <Col className="mt-1x" span={1}></Col>
+                <Col className="mt-1x left-cart-sub-sub-title" span={6}>
+                  开始时间:
+                </Col>
+                <Col className="mt-1x">
+                  {testPhaseDetail.phaseInfo?.startTime &&
+                    moment(testPhaseDetail.phaseInfo?.startTime).format('YYYY-MM-DD HH:mm:ss')}
+                </Col>
+              </Row>
+              <Row>
+                <Col className="mt-1x" span={1}></Col>
+                <Col className="mt-1x left-cart-sub-sub-title" span={6}>
+                  结束时间:
+                </Col>
+                <Col className="mt-1x">
+                  {testPhaseDetail.phaseInfo?.endTime &&
+                    moment(testPhaseDetail.phaseInfo?.endTime).format('YYYY-MM-DD HH:mm:ss')}
+                </Col>
+              </Row>
 
-          <Row className="mt-1x">
-            <Col className="mt-1x left-cart-sub-title" span={8} push={1}>
-              执行情况
-            </Col>
-            <Col className="mt-1x">
-              {testPhaseDetail.phaseInfo?.status.toString() && (
-                <Tag color={testPhaseEnum[testPhaseDetail.phaseInfo.status].type}>
-                  {testPhaseEnum[testPhaseDetail.phaseInfo.status].title}
-                </Tag>
-              )}
-            </Col>
-          </Row>
-          <Row className="ml-8">
-            <Col className="mt-1x">
-              <UseCaseTestInfoExec
-                data={{
-                  notTested: testPhaseDetail.executedInfo?.caseTotal - testPhaseDetail.executedInfo?.executed,
-                  tested: testPhaseDetail.executedInfo?.executed,
-                  total: testPhaseDetail.executedInfo?.caseTotal,
-                }}
-              />
-            </Col>
-          </Row>
-          <Row className="ml-8">
-            <Col className="mt-1x">
-              <UserCaseInfoExec data={testPhaseDetail.executedInfo || {}} />
-            </Col>
-          </Row>
-          <Row className="ml-8">
-            <Col className="mt-1x pb-24">
-              <BugInfoExec
-                data={{
-                  notFixed: testPhaseDetail.bugInfo?.bugTotal - testPhaseDetail.bugInfo?.closedNum,
-                  fixed: testPhaseDetail.bugInfo?.closedNum,
-                }}
-              />
-            </Col>
-          </Row>
-        </CardRowGroup.SlideCard>
+              <Row className="mt-1x">
+                <Col className="mt-1x left-cart-sub-title" span={8} push={1}>
+                  执行情况
+                </Col>
+                <Col className="mt-1x">
+                  {testPhaseDetail.phaseInfo?.status.toString() && (
+                    <Tag color={testPhaseEnum[testPhaseDetail.phaseInfo.status].type}>
+                      {testPhaseEnum[testPhaseDetail.phaseInfo.status].title}
+                    </Tag>
+                  )}
+                </Col>
+              </Row>
+              <Row className="ml-8">
+                <Col className="mt-1x">
+                  <UseCaseTestInfoExec
+                    data={{
+                      notTested: testPhaseDetail.executedInfo?.caseTotal - testPhaseDetail.executedInfo?.executed,
+                      tested: testPhaseDetail.executedInfo?.executed,
+                      total: testPhaseDetail.executedInfo?.caseTotal,
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Row className="ml-8">
+                <Col className="mt-1x">
+                  <UserCaseInfoExec data={testPhaseDetail.executedInfo || {}} />
+                </Col>
+              </Row>
+              <Row className="ml-8">
+                <Col className="mt-1x pb-24">
+                  <BugInfoExec
+                    data={{
+                      notFixed: testPhaseDetail.bugInfo?.bugTotal - testPhaseDetail.bugInfo?.closedNum,
+                      fixed: testPhaseDetail.bugInfo?.closedNum,
+                    }}
+                  />
+                </Col>
+              </Row>
+            </CardRowGroup.SlideCard>
+          </div>
+        )}
         <ContentCard>
           {testCaseTree?.length ? (
-            <div className="right-card">
-              <div className="case-select-container">
+            <div className="right-card" style={{ display: 'flex' }}>
+              <div className="case-select-container" style={{ width: leftExtend ? 500 : '' }}>
                 <CustomTree
                   treeData={filteredCaseTreeData}
                   treeDataEmptyHide={false}
@@ -290,7 +326,7 @@ export default function PlanInfo(props: any) {
                 />
               </div>
 
-              <div className="case-info-container">
+              <div className="case-info-container" style={{ flex: 1 }}>
                 {curCase ? (
                   <CaseInfo
                     className="case-info"

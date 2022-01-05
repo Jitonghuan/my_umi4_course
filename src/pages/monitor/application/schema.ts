@@ -21,6 +21,7 @@ export const tableSchema = [
     title: '主机名',
     dataIndex: 'hostName',
     align: 'left',
+    width: 240,
   },
   {
     dataIndex: 'memLimit',
@@ -38,9 +39,14 @@ export const tableSchema = [
     width: 100,
   },
   {
-    dataIndex: 'memory',
-    title: '内存使用率',
-    width: 100,
+    dataIndex: 'RSS',
+    title: '内存使用率(RSS)',
+    width: 160,
+  },
+  {
+    dataIndex: 'WSS',
+    title: '内存使用率(WSS)',
+    width: 160,
   },
   {
     dataIndex: 'disk',

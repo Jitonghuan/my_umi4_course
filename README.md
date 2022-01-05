@@ -44,9 +44,9 @@ fe 环境初始化 （如果仅本地开发，也可以只执行 1.2，安装 fn
 
 请保证本地的代码是最新的，并且已经安装 fe
 
-- 布署到 dev 环境: `$ fe publish --dev` 
-- 布署到 test 环境: `$ fe publish --test` 
-- 布署到 prod 环境: `$ fe publish --prod`
+- 布署到 dev 环境: `$ fe publish --dev`  （或 `$ fe p -d`）
+- 布署到 test 环境: `$ fe publish --test`  （或 `$ fe p -t`）
+- 布署到 prod 环境: `$ fe publish --prod` （或 `$ fe p -p`）
 
 ## 开发文档
 

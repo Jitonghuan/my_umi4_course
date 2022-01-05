@@ -83,30 +83,47 @@ export function useAppListData(
 }
 
 // 获取应用详情
-export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | undefined, () => Promise<void>] {
+export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | undefined, boolean, () => Promise<void>] {
   const [data, setData] = useState<AppItemVO>();
-
+  const [loading, setLoading] = useState(false);
   const loadData = useCallback(async () => {
-    const appList = await queryApps({
-      id: appId || undefined,
-      // 有 appId 时就不需要 appCode
-      appCode: appId ? undefined : appCode,
-      pageIndex: 1,
-      pageSize: 10,
-    });
-
-    setData(appList?.[0]);
+    setLoading(true);
+    try {
+      const appList = await queryApps({
+        id: appId || undefined,
+        // 有 appId 时就不需要 appCode
+        appCode: appId ? undefined : appCode,
+        pageIndex: 1,
+        pageSize: 10,
+      });
+      appList.map((item: any) => {
+        if (appCode) {
+          if (item?.appCode === appCode) {
+            setData(item);
+          }
+          return;
+        } else if (appId) {
+          if (item?.id === appId) {
+            setData(item);
+          }
+          return;
+        }
+      });
+    } finally {
+      setLoading(false);
+    }
   }, [appId, appCode]);
 
   useEffect(() => {
     if (!appId && !appCode) {
+      setLoading(false);
       return setData(undefined);
     }
 
     loadData();
   }, [appId, appCode]);
 
-  return [data, loadData];
+  return [data, loading, loadData];
 }
 
 /**

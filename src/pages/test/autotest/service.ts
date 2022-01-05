@@ -88,7 +88,7 @@ export const updateCaseInfo = addAPIPrefix('/qc/autotest/updateCaseInfo');
 export const getProjects = addAPIPrefix('/qc/autotest/getProjects');
 
 /** GET 27、查看应用列表 {  } */
-export const getAppList = addAPIPrefix('/appManage/list');
+export const getAppList = addAPIPrefix('/qc/matrix/app/search');
 
 // -------------- 三期接口 ----------------
 
@@ -180,3 +180,33 @@ export const getSqlInfo = addAPIPrefix('/qc/autotest/getSqlInfo');
 
 /** GET 9、SQL管理-SQL列表 */
 export const getSqlList = addAPIPrefix('/qc/autotest/getSqlList');
+
+/** GET 9、SQL管理-SQL和函数列表 */
+export const getFuncSqlList = addAPIPrefix('/qc/autotest/getFuncSqlList');
+
+/** POST YML转CASE */
+export const ymlToCase = addAPIPrefix('/qc/autotest/ymlToCase');
+
+/** POST CASE转YML */
+export const caseToYml = addAPIPrefix('/qc/autotest/caseToYml');
+
+/** POST 调试测试用例 */
+export const debugYml = addAPIPrefix('/qc/autotest/debugYml');
+
+/** POST 调试测试用例 */
+export const getPreSavedVars = addAPIPrefix('/qc/autotest/getPreSavedVars');
+
+/** POST 批量复制 */
+export const copyCases = addAPIPrefix('/qc/autotest/copyCases');
+
+/** POST 复制API */
+export const copyApi = addAPIPrefix('/qc/autotest/copyApi');
+
+/** GET 获取模块树 */
+export const getModules = addAPIPrefix('/qc/autotest/getModules');
+
+// 批量获取前置用例信息
+export const getCaseInfoBatch = addAPIPrefix('/qc/autotest/getCaseInfoBatch');
+
+/** GET 获取数据工厂模板列表 */
+export const getDataFacList = addAPIPrefix('/qc/dataFactory/queryDataFactory');

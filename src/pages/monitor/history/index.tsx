@@ -40,7 +40,6 @@ const HistoryCom: React.FC = () => {
     method: 'GET',
     form,
   });
-  console.log('获取到的结果：', tableProps);
   const columns: ColumnsType<Item> = [
     {
       title: '序号',

@@ -59,6 +59,15 @@ export default function DataTemplate() {
     setSearchParams(values);
   }, []);
 
+  // 复制模板
+  const handleCopyItem = useCallback(async (record) => {
+    await postRequest(APIS.copyDataFactory, {
+      data: { factoryId: record.id, createUser: userInfo.userName },
+    });
+    message.success('复制成功');
+    handleSearch();
+  }, []);
+
   // 删除模板
   const handleDelItem = useCallback(async (record) => {
     await postRequest(APIS.delDataFactory, {
@@ -144,7 +153,11 @@ export default function DataTemplate() {
         }}
       >
         <Table.Column dataIndex="id" title="序号" width={80} />
-        <Table.Column dataIndex="name" title="模板名称" />
+        <Table.Column
+          dataIndex="name"
+          title="模板名称"
+          render={(name: string, record: any) => <a onClick={() => handleEditItem(record)}>{name}</a>}
+        />
         <Table.Column dataIndex="desc" title="描述" />
         <Table.Column dataIndex="projectName" title="业务线" />
         <Table.Column dataIndex="env" title="支持环境" />
@@ -165,7 +178,10 @@ export default function DataTemplate() {
           render={(_, record: any) => (
             <div className="action-cell">
               <a onClick={() => handleExecItem(record)}>执行</a>
-              <a onClick={() => handleEditItem(record)}>编辑</a>
+              {/* <a onClick={() => handleEditItem(record)}>编辑</a> */}
+              <Popconfirm title="确定要复制此模板吗？" onConfirm={() => handleCopyItem(record)}>
+                <a>复制</a>
+              </Popconfirm>
               <Popconfirm title="确定要删除此模板吗？" onConfirm={() => handleDelItem(record)}>
                 <a style={{ color: 'red' }}>删除</a>
               </Popconfirm>

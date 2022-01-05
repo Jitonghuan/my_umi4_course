@@ -19,10 +19,11 @@ import {
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
-import { getProjects, getBugList, deleteBug, getProjectTreeData } from '../service';
+import { getProjects, getBugList, deleteBug } from '../service';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../constant';
 import AddBugDrawer from './add-bug-drawer';
 import moment from 'moment';
+import * as HOOKS from '../hooks';
 import './index.less';
 
 export default function BugManage(props: any) {
@@ -36,13 +37,13 @@ export default function BugManage(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState(false);
   const [bugReadOnly, setBugReadOnly] = useState<boolean>(false);
   const [curBugInfo, setCurBugInfo] = useState<any>();
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [projectTreeData] = HOOKS.useProjectTreeData();
   const [formData, setFormData] = useState<any>({ justMe: true });
   const [form] = Form.useForm();
 
   const updateBugList = async (_pageIndex: number = pageIndex, _pageSuze: number = pageSize, _formData = formData) => {
     const formData = _formData;
-    console.log('formData :>> ', formData);
+    void setLoading(true);
     const requestParams = {
       ...formData,
       pageIndex: _pageIndex,
@@ -58,20 +59,11 @@ export default function BugManage(props: any) {
     void setPageIndex(pageIndex);
     void setPageSize(pageSize);
     void setBugTotal(total);
+    void setLoading(false);
   };
 
   useEffect(() => {
     void form.setFieldsValue({ justMe: true });
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
-    });
   }, []);
 
   useEffect(() => {
@@ -204,6 +196,7 @@ export default function BugManage(props: any) {
               current: pageIndex,
               total: bugTotal,
               showSizeChanger: true,
+              showTotal: (total) => `共 ${total} 条`,
               onChange: (next) => setPageIndex(next),
               onShowSizeChange: (_, next) => setPageSize(next),
             }}
@@ -262,7 +255,7 @@ export default function BugManage(props: any) {
           visible={addBugDrawerVisible}
           setVisible={setAddBugDrawerVisible}
           readOnly={bugReadOnly}
-          bugInfo={curBugInfo}
+          bugId={curBugInfo?.id}
           updateBugList={updateBugList}
           projectTreeData={projectTreeData}
         />

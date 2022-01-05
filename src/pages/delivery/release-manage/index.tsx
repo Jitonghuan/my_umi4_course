@@ -3,12 +3,13 @@
 // @create 2021/08/31 11:32
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, message, Popconfirm, Modal } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Tag, Popconfirm, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { stringify } from 'qs';
+import { addAPIPrefix } from '@/utils';
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import versionManage from 'mock/versionManage';
 
 export default function appStore(porps: any) {
   const { Option } = Select;
@@ -16,6 +17,7 @@ export default function appStore(porps: any) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
+  const [versionManageData, setVersionManageData] = useState<any[]>([]);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [categoryCode, setCategoryCode] = useState<any[]>([]); //应用CODE
@@ -26,7 +28,6 @@ export default function appStore(porps: any) {
   const [formTmplQuery] = Form.useForm();
   const [selectList, setSelectList] = useState<any[]>([]);
   const [pageTotal, setPageTotal] = useState<number>();
-
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
   const rowSelection = {
@@ -37,6 +38,22 @@ export default function appStore(porps: any) {
     },
   };
   // console.log('>>>>>>',currentData);
+  type statusTypeItem = {
+    tagText: string;
+    color: string;
+    status: number;
+  };
+
+  const STATUS_TYPE: Record<number, statusTypeItem> = {
+    1: { tagText: '已上架', color: 'green', status: 2 },
+    2: { tagText: '未上架', color: 'default', status: 1 },
+  };
+  const versionList = () => {
+    getRequest(addAPIPrefix('/deliverManage/versionManage/list')).then((result) => {
+      const source = result.data.dataSource;
+      setVersionManageData(source);
+    });
+  };
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -48,19 +65,8 @@ export default function appStore(porps: any) {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  const [dataSource, setDataSource] = useState<any[]>([
-    {
-      key: '1',
-      templateName: '8888',
-      appName: '应用模版',
-      templateCode: 'xuxu',
-      appCategoryCode: 'xiniuyiliao',
-      envCode: '天台',
-      id: '1',
-    },
-  ]);
   useEffect(() => {
-    getApplication({ pageIndex: 1, pageSize: 20 });
+    versionList(), getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
   // 根据选择的应用分类查询要推送的环境
   const changeAppCategory = (value: any) => {
@@ -124,7 +130,7 @@ export default function appStore(porps: any) {
           <Form.Item label="应用版本：" name="manage">
             <Select style={{ width: 140 }}></Select>
           </Form.Item>
-          <Form.Item label="状态：" name="state">
+          <Form.Item label="状态：" name="status">
             <Select style={{ width: 120 }}></Select>
           </Form.Item>
           <Form.Item>
@@ -155,7 +161,7 @@ export default function appStore(porps: any) {
           <Form onFinish={pushTmpls} form={formTmpl}>
             <Form.Item name="tableData">
               <Table
-                dataSource={dataSource}
+                dataSource={versionManageData}
                 rowKey="id"
                 // loading={loading}
                 rowSelection={{ ...rowSelection }}
@@ -177,7 +183,12 @@ export default function appStore(porps: any) {
                 <Table.Column title="分类" dataIndex="category" ellipsis />
                 <Table.Column title="应用版本" dataIndex="appVsersion" />
                 <Table.Column title="更新时间" dataIndex="gmtModify" />
-                <Table.Column title="状态" dataIndex="status" ellipsis />
+                <Table.Column
+                  title="状态"
+                  dataIndex="status"
+                  render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.tagText}</Tag>}
+                  ellipsis
+                />
                 <Table.Column
                   title="操作"
                   dataIndex="gmtModify"

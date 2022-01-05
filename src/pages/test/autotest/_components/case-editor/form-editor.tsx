@@ -12,10 +12,12 @@ import { CaseItemVO, TreeNode, FuncProps } from '../../interfaces';
 import FuncTableField from './func-table-field';
 import CaseTableField from './case-table-field';
 import EditorTable from '@cffe/pc-editor-table';
+import YmlDebug from '../yml-debug';
 import { getFuncListByIds, getCaseListByIds } from './common';
 import AceEditor, { JSONValidator } from '@/components/ace-editor';
 import { ASSERT_COMPARE_ENUM, VALUE_TYPE_ENUM, PARAM_TYPE } from '../../common';
 import { CaseEditorProps, ParamType } from './types';
+import { getRequest } from '@/utils/request';
 
 const { Item: FormItem } = Form;
 
@@ -32,7 +34,10 @@ export async function getInitEditFieldData(initData: CaseItemVO) {
   const afterFuncs: FuncProps[] = hooks.teardown || [];
   const beforeCaseIds: number[] = initData.preStep ? initData.preStep.split(',').map((n: string) => +n) : [];
 
-  const nextParamType: ParamType = typeof initData.parameters === 'string' ? 'json' : 'form';
+  const res = await getRequest(APIS.getApiInfo, {
+    data: { id: initData.apiId },
+  });
+  const nextParamType: ParamType = res.data.paramType === PARAM_TYPE.JSON ? 'json' : 'form';
 
   return {
     nextParamType,
@@ -46,8 +51,9 @@ export async function getInitEditFieldData(initData: CaseItemVO) {
     beforeCases: await getCaseListByIds(beforeCaseIds),
     customVars: initData.customVars || [],
     headers: initData.headers || [],
-    parameters: nextParamType === 'form' ? initData.parameters || [] : [],
-    parametersJSON: nextParamType === 'json' ? initData.parameters || '' : '',
+    parameters: nextParamType === 'form' ? (typeof initData.parameters !== 'string' ? initData.parameters : []) : [],
+    parametersJSON:
+      nextParamType === 'json' ? (typeof initData.parameters === 'string' ? initData.parameters : '{}') : '',
     savedVars: initData.savedVars || [],
     resAssert: initData.resAssert || [],
   };
@@ -64,16 +70,23 @@ export async function getInitAddFieldData(apiDetail?: Record<string, any>) {
 
     headers: apiDetail.headers || [],
     parameters: apiDetail.paramType === PARAM_TYPE.JSON ? [] : apiDetail.parameters || [],
-    parametersJSON: apiDetail.paramType === PARAM_TYPE.JSON ? apiDetail.parameters || '' : '',
+    parametersJSON: apiDetail.paramType === PARAM_TYPE.JSON ? apiDetail.parameters || '{}' : '',
   };
 }
 
 export default function CaseFormEditor(props: CaseFormEditorProps) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [step, setSetp] = useState<number>(0);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const [debugModalVisible, setDebugModalVisible] = useState<boolean>(false);
+
+  // 名字不要太在意，直接复制过来的，又不知道取啥名字好
+  const [ymlData, setYmlData] = useState<any>();
 
   const handleSubmit = async () => {
+    setSubmitLoading(true);
     const values = await props.field.validateFields().catch((error) => {
+      setSubmitLoading(false);
       const info = error.errorFields
         ?.map((n: any) => n.errors)
         .flat()
@@ -112,6 +125,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
 
     if (typeof props.hookBeforeSave === 'function') {
       const flag = await props.hookBeforeSave(props.mode, payload);
+      setSubmitLoading(false);
       if (!flag) return;
     }
 
@@ -137,6 +151,8 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
     message.success('用例保存成功！');
     setSetp(0);
     props.onSave?.();
+
+    setSubmitLoading(false);
   };
 
   useEffect(() => {
@@ -145,6 +161,64 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
 
   const gotoNextStep = async () => {
     setSetp(step + 1);
+  };
+
+  const handleDebug = async () => {
+    // apiId: 1473
+    // desc: "设置"
+    // envId: 13
+    // name: "设置"
+    // pre_cases: [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,…]
+    // request: {headers: {authorization: "${get_token($token)}"}, data: [], method: "POST",…}
+    // validate: [{eq: ["status_code", 200]}]
+
+    const values = await props.field.validateFields().catch((error) => {
+      const info = error.errorFields
+        ?.map((n: any) => n.errors)
+        .flat()
+        .join('; ');
+      message.error(info);
+      throw error;
+    });
+
+    const payload = {
+      name: values.name,
+      desc: values.desc,
+      allowSkip: values.allowSkip || false,
+      skipReason: values.skipReason || '',
+      headers: values.headers || [],
+      parameters: values.parameters || values.parametersJSON || [],
+      preStep: (values.beforeCases || []).map((n: any) => n.id).join(','),
+      customVars: values.customVars || [],
+      savedVars: values.savedVars || [],
+      hooks: {
+        setup: (values.beforeFuncs || []).map((n: any) => ({
+          id: n.id,
+          type: n.type || 0,
+          argument: n.argument || '',
+        })),
+        teardown: (values.afterFuncs || []).map((n: any) => ({
+          id: n.id,
+          type: n.type || 0,
+          argument: n.argument || '',
+        })),
+      },
+      resAssert: values.resAssert || [],
+      modifyUser: userInfo.userName,
+      id: props.initData?.id,
+      apiId: props.initData?.apiId || props.apiDetail?.id,
+      createUser: props.initData?.createUser,
+    };
+    if (Object.keys(payload).length === 0) return;
+    const { data: ymlData } = await postRequest(APIS.caseToYml, { data: payload });
+
+    if (props.mode == 'ADD') {
+      setYmlData({ ...ymlData, apiId: props.current?.bizId! });
+    } else {
+      setYmlData({ ...ymlData, apiId: props.initData?.apiId });
+    }
+
+    setDebugModalVisible(true);
   };
 
   return (
@@ -163,7 +237,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
             label="用例描述"
             name="desc"
             labelCol={{ flex: '76px' }}
-            rules={[{ required: true, message: '请输入用例描述' }]}
+            // rules={[{ required: true, message: '请输入用例描述' }]}
           >
             <Input placeholder="请输入用例描述" />
           </FormItem>
@@ -201,7 +275,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
               <FuncTableField title="前置脚本" />
             </FormItem>
             <FormItem noStyle name="beforeCases">
-              <CaseTableField title="前置用例" />
+              <CaseTableField title="前置用例" defaultProjectId={props.defaultProjectId} />
             </FormItem>
             <FormItem noStyle name="afterFuncs">
               <FuncTableField title="后置脚本" />
@@ -252,7 +326,8 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
                     options={['form', 'json']}
                     value={props.paramType}
                     onChange={(e) => props.onParamTypeChange?.(e.target.value)}
-                    disabled={props.mode === 'EDIT'}
+                    // disabled={props.mode === 'EDIT'}
+                    disabled={true}
                   />
                 </FormItem>
                 {props.paramType == 'form' ? (
@@ -384,6 +459,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
                   },
                   { title: '期望值', dataIndex: 'value', required: true },
                 ]}
+                creator={{}}
               />
             </FormItem>
           </div>
@@ -391,6 +467,7 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
       </div>
 
       <div className="drawer-custom-footer">
+        <Button onClick={handleDebug}>调试</Button>
         {step > 0 ? (
           <Button type="primary" onClick={() => setSetp(step - 1)}>
             上一步
@@ -401,13 +478,14 @@ export default function CaseFormEditor(props: CaseFormEditorProps) {
             下一步
           </Button>
         ) : null}
-        <Button type="primary" onClick={handleSubmit}>
+        <Button loading={submitLoading} type="primary" onClick={handleSubmit}>
           提交
         </Button>
         <Button type="default" onClick={props.onCancel}>
           取消
         </Button>
       </div>
+      <YmlDebug visible={debugModalVisible} ymlData={ymlData} onClose={() => setDebugModalVisible(false)} />
     </>
   );
 }

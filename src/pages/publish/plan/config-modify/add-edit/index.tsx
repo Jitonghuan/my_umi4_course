@@ -169,7 +169,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
       });
     });
   };
-
+  // queryFuncs
   const handleSearch = (value: string) => {
     const appCode = form.getFieldValue('appCode');
     if (appCode) {
@@ -193,7 +193,6 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
       message.info('请先选择应用');
     }
   };
-
   const handleChange = (value: string) => {
     if (value) {
       const func = options.filter((option) => option.id === value);
@@ -218,6 +217,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
               appChange={() => {
                 setTableData([]);
                 setOptions([]);
+                handleSearch('');
               }}
             />
           }
