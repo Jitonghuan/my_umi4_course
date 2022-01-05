@@ -30,17 +30,20 @@ const AddDrawer = (props: IProps) => {
   const { visible, onClose, envsUrlList } = props;
   const { categoryData = [], businessData: businessDataList = [] } = useContext(FeContext);
   const [formInstance] = Form.useForm();
-
   const [businessData, setBusinessData] = useState<any[]>([]);
+  const [businessCurrent, setBusinessCurrent] = useState<string>();
+  const [appCategoryCodeCurrent, setAppCategoryCodeCurrent] = useState<string>();
   const [deployEnvData, setDeployEnvData] = useState<any[]>([]);
   const [deployPlanData, setDeployPlanData] = useState<any[]>([]);
   const [selectPlan, setSelectPlan] = useState<React.Key[]>([]);
+  const [businessPlanData, setBusinessPlanData] = useState<any[]>([]);
 
   // 根据应用分类查询应用组
   const queryBusiness = (categoryCode: string) => {
     setBusinessData([]);
     queryAppGroupReq({ categoryCode }).then((datas) => {
       setBusinessData(datas.list);
+      setBusinessPlanData(datas.list);
     });
   };
 
@@ -66,6 +69,21 @@ const AddDrawer = (props: IProps) => {
     });
   };
 
+  const changeAppGroupCode = (value: string) => {
+    setBusinessCurrent(value);
+  };
+  const planAppCategory = (categoryCode: string) => {
+    setAppCategoryCodeCurrent(categoryCode);
+    queryAppGroupReq({ categoryCode }).then((datas) => {
+      setBusinessPlanData(datas.list);
+    });
+    setBusinessCurrent('');
+  };
+
+  const planAppGroup = (appGroupValue: string) => {
+    setBusinessCurrent(appGroupValue);
+    queryDeployPlan(appCategoryCodeCurrent || '', appGroupValue, 0);
+  };
   const rowSelection = useMemo(() => {
     return {
       selectedRowKeys: selectPlan,
@@ -82,11 +100,13 @@ const AddDrawer = (props: IProps) => {
       if (name && name === 'appCategoryCode') {
         formInstance.resetFields(['appGroupCode']);
         formInstance.resetFields(['deployEnv']);
+        setBusinessCurrent('');
         queryBusiness(value);
         queryDeployEnv(value);
         setDeployPlanData([]);
         setSelectPlan([]);
         setAppCategoryCode(value);
+        setAppCategoryCodeCurrent(value);
       }
       if (name && name === 'appGroupCode') {
         setSelectPlan([]);
@@ -153,7 +173,7 @@ const AddDrawer = (props: IProps) => {
           </Radio.Group>
         </Form.Item>
         <Form.Item label="应用组" name="appGroupCode" rules={[{ required: true, message: '请选择应用组!' }]}>
-          <Select placeholder="请选择">
+          <Select placeholder="请选择" onChange={changeAppGroupCode}>
             {businessData?.map((el) => (
               <Select.Option key={el.value} value={el.value}>
                 {el.label}
@@ -190,6 +210,19 @@ const AddDrawer = (props: IProps) => {
         </Form.Item>
         <Form.Item label="发布负责人" name="deployUser" rules={[{ required: true, message: '请输入发布负责人!' }]}>
           <Input placeholder="请输入" />
+        </Form.Item>
+        <Divider />
+        <Form.Item label="发布计划的应用分类">
+          <Select options={categoryData} value={appCategoryCodeCurrent} onChange={planAppCategory}></Select>
+        </Form.Item>
+        <Form.Item label="发布计划的应用组">
+          <Select placeholder="请选择" value={businessCurrent} onChange={planAppGroup}>
+            {businessPlanData?.map((el) => (
+              <Select.Option key={el.value} value={el.value}>
+                {el.label}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item {...tailLayout} extra="请在此表单中选择关联的发布计划!" label="" name="planIds">
           <Table
