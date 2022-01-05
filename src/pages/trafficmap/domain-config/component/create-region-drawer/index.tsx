@@ -3,16 +3,15 @@ import { Drawer, Form, Select, Button, Input } from 'antd';
 import TableTransfer from '../table-transfer';
 import { DEFAULT_LEVEL, LevelEnum } from '@/pages/trafficmap/constant';
 import { IRelApp } from '@/pages/trafficmap/interface';
-import { createRegion, getAppByRegion } from '@/pages/trafficmap/service';
+import { createRegion, getAppByRegion, updateRegion } from '@/pages/trafficmap/service';
 
 const { Item: FormItem } = Form;
+type DrawerStatusType = 'view' | 'edit' | 'create';
 
 const CreateRegionDrawer = React.forwardRef((props, ref) => {
   const [createFormRef] = Form.useForm();
-
   const [visible, setVisible] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [drawerType, setDrawerT] = useState();
+  const [drawerStatus, setDrawerStatus] = useState<DrawerStatusType>('create');
   const [envOptions, setEnvOptions] = useState<any[]>([
     {
       label: 'hbos-dev',
@@ -21,7 +20,6 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
   ]);
   const [form] = Form.useForm();
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [appList, setAppList] = useState<IRelApp[]>([]);
@@ -32,13 +30,21 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     showDrawer: () => {
       showDrawer();
+      setDrawerStatus('create');
     },
     editDrawer: (data: any) => {
       showDrawer();
       form.setFieldsValue(data);
       setRegionCode(data.regionCode);
       setEnvCode(data.envCode);
-      setIsEdit(true);
+      setDrawerStatus('edit');
+    },
+    viewDrawer: (data: any) => {
+      showDrawer();
+      form.setFieldsValue(data);
+      setRegionCode(data.regionCode);
+      setEnvCode(data.envCode);
+      setDrawerStatus('view');
     },
   }));
 
@@ -60,8 +66,13 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
     };
     const httpArray = [getAppByRegion({ ...data, isRelation: 1 }), getAppByRegion({ ...data, isRelation: 0 })];
     const res: any = await Promise.all(httpArray);
+    console.log(res);
     const appList = [...res[0].data, ...res[1].data];
     const newList = getTransferData(appList);
+    let selectedKey = res[0].data.map((item: any) => {
+      return item.appCode;
+    });
+    setTargetKeys(selectedKey);
     setAppList(newList);
   };
 
@@ -157,19 +168,30 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
       }
     });
     const data = {
+      envCode,
+      regionCode,
       ...formValue,
       relApps,
     };
     console.log(data);
-    let res = await createRegion(data);
+    if (regionCode) {
+      await updateRegion(data);
+      onClose();
+    } else {
+      await createRegion(data);
+      onClose();
+    }
   };
 
+  /**
+   * 关闭Drawer
+   */
   const onClose = () => {
     setVisible(false);
     form.resetFields();
     setRegionCode('');
     setEnvCode('');
-    setIsEdit(false);
+    setDrawerStatus('create');
     setAppList([]);
     setTargetKeys([]);
   };
@@ -186,7 +208,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
       className="create-ticket-drawer"
       footer={
         <div className="drawer-footer">
-          <Button type="primary" loading={isLoading} onClick={handleSubmit}>
+          <Button type="primary" loading={isLoading} onClick={handleSubmit} disabled={drawerStatus == 'view'}>
             保存
           </Button>
           <Button
@@ -202,7 +224,11 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
         <FormItem label="域名" name="regionName" rules={[{ required: true, message: '请输入域名' }]}>
-          <Input placeholder="请输入域名" disabled={isEdit} style={{ width: 320 }} />
+          <Input
+            placeholder="请输入域名"
+            disabled={drawerStatus == 'view' || drawerStatus == 'edit'}
+            style={{ width: 320 }}
+          />
         </FormItem>
         <FormItem
           label="域CODE"
@@ -217,7 +243,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
         >
           <Input
             placeholder="请输入域Code(不要包含中文）"
-            disabled={isEdit}
+            disabled={drawerStatus == 'view' || drawerStatus == 'edit'}
             style={{ width: 320 }}
             onChange={(e) => {
               setRegionCode(e.target.value);
@@ -230,6 +256,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
             placeholder="请选择"
             style={{ width: 320 }}
             showSearch
+            disabled={drawerStatus == 'view' || drawerStatus == 'edit'}
             onChange={(value: any) => {
               setEnvCode(value);
             }}
@@ -248,6 +275,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
             onChange={onChange}
             leftColumns={leftTableColumns}
             rightColumns={rightTableColumns}
+            disabled={drawerStatus == 'view'}
           />
         </FormItem>
       </Form>

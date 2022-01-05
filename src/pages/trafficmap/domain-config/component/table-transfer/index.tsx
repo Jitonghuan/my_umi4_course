@@ -5,6 +5,7 @@ import './index.less';
 interface IProp {
   leftColumns: any;
   rightColumns: any;
+  disabled: boolean;
   [x: string]: any;
 }
 
@@ -20,9 +21,8 @@ const TableTransfer: React.FC<IProp> = ({ leftColumns, rightColumns, ...restProp
       disabled: listDisabled,
     }) => {
       const columns = direction === 'left' ? leftColumns : rightColumns;
-
       const rowSelection = {
-        getCheckboxProps: (item: any) => ({ disabled: listDisabled || item.disabled }),
+        getCheckboxProps: (item: any) => ({ disabled: restProps.disabled || item.disabled }),
         onSelectAll(selected: boolean, selectedRows: any[]) {
           const treeSelectedKeys = selectedRows.filter((item) => !item.disabled).map(({ key }) => key);
           const diffKeys = selected
@@ -55,7 +55,7 @@ const TableTransfer: React.FC<IProp> = ({ leftColumns, rightColumns, ...restProp
               : undefined
           }
           pagination={false}
-        ></Table>
+        />
       );
     }}
   </Transfer>

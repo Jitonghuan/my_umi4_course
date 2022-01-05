@@ -54,6 +54,10 @@ const DomainConfig: React.FC = () => {
     await deleteRegion(id);
   };
 
+  const handleView = (record: any) => {
+    createRegionRef.current.viewDrawer(record);
+  };
+
   const columns = [
     {
       title: '域名',
@@ -93,7 +97,9 @@ const DomainConfig: React.FC = () => {
       render: (text: string, record: any) => {
         return (
           <>
-            <Button type="link">查看</Button>
+            <Button type="link" onClick={() => handleView(record)}>
+              查看
+            </Button>
             <Button type="link" onClick={() => handleEdit(record)}>
               编辑
             </Button>
