@@ -5,6 +5,8 @@
  */
 import G6 from '@antv/g6';
 import React, { useEffect, useImperativeHandle, forwardRef, useState, memo } from 'react';
+import { arrowStyleType } from '../constant';
+import { getTopoList } from '../service';
 import { OriginData } from './data';
 import './topo-register';
 
@@ -21,6 +23,7 @@ const Topo = memo(
     }));
 
     const { onNodeClick, onRedLineClick } = props;
+    const [origionData, setOrigionData] = useState<any>({});
 
     let graph = null as any;
     const { uniqueId } = G6.Util;
@@ -55,95 +58,126 @@ const Topo = memo(
       },
     });
 
+    const getTopoData = async () => {
+      let res = await getTopoList({});
+      const edges = res.data.Calls.map((item: any) => {
+        return {
+          id: item.callId,
+          style: arrowStyleType['normal'],
+          ...item,
+        };
+      });
+      const nodes = res.data.Nodes.map((item: any) => {
+        return {
+          id: item.nodeId,
+          label: '',
+          type: item.nodeType == 'region' ? 'region-node' : 'app-node',
+          nodeRegionCode: item.nodeType == 'region' ? undefined : item.nodeRegion,
+          ...item,
+        };
+      });
+      setOrigionData({
+        nodes,
+        edges,
+      });
+      // setOrigionData(OriginData)
+    };
+
     useEffect(() => {
-      const container = document.getElementById('topo');
-      const width = container?.scrollWidth;
-      const height = container?.scrollHeight;
-      if (!graph) {
-        graph = new G6.Graph({
-          container: 'topo',
-          width,
-          height,
-          // linkCenter: true,
-          plugins: [tooltip],
-          layout: {
-            type: 'gForce',
-            //当一次迭代的平均移动长度小于该值时停止迭代。数字越小，布局越收敛，所用时间将越长
-            minMovement: 0.05,
-            //最大迭代次数。当迭代次数超过该值，但平均移动长度仍然没有达到 minMovement，也将强制停止迭代
-            maxIteration: 5000,
-            //阻尼系数，取值范围 [0, 1]。数字越大，速度降低得越慢
-            damping: 0.9,
-            preventOverlap: true,
-            linkDistance: (d: any) => {
-              const sourceNode = nodeMap.get(d.source);
-              const targetNode = nodeMap.get(d.target);
-              if (
-                sourceNode.nodeType == 'app' &&
-                targetNode.nodeType == 'app' &&
-                sourceNode.nodeRegionCode == targetNode.nodeRegionCode
-              ) {
-                return 50;
-              } else {
-                return 400;
-              }
-            },
-            nodeSpacing: (d: any) => {
-              if (d.nodeType === 'app') return 10;
-              if (d.nodeType == 'region') return 100;
-            },
-            nodeStrength: (d: any) => {
-              if (d.nodeType == 'region') return 3000;
-              return 1000;
-            },
-          },
-          defaultCombo: {
-            type: 'region-combo',
-            labelCfg: {
-              refY: 3,
-              style: {
-                fill: '#fff',
-                fontSize: 14,
-                fontWeight: 700,
+      getTopoData();
+    }, []);
+
+    useEffect(() => {
+      if (origionData?.nodes?.length > 0) {
+        const container = document.getElementById('topo');
+        const width = container?.scrollWidth;
+        const height = container?.scrollHeight;
+        if (!graph) {
+          graph = new G6.Graph({
+            container: 'topo',
+            width,
+            height,
+            // linkCenter: true,
+            plugins: [tooltip],
+            layout: {
+              type: 'gForce',
+              //当一次迭代的平均移动长度小于该值时停止迭代。数字越小，布局越收敛，所用时间将越长
+              minMovement: 0.05,
+              //最大迭代次数。当迭代次数超过该值，但平均移动长度仍然没有达到 minMovement，也将强制停止迭代
+              maxIteration: 5000,
+              //阻尼系数，取值范围 [0, 1]。数字越大，速度降低得越慢
+              damping: 0.9,
+              preventOverlap: true,
+              linkDistance: (d: any) => {
+                const sourceNode = nodeMap.get(d.source);
+                const targetNode = nodeMap.get(d.target);
+                if (
+                  sourceNode.nodeType == 'app' &&
+                  targetNode.nodeType == 'app' &&
+                  sourceNode.nodeRegionCode == targetNode.nodeRegionCode
+                ) {
+                  return 50;
+                } else {
+                  return 400;
+                }
+              },
+              nodeSpacing: (d: any) => {
+                if (d.nodeType === 'app') return 10;
+                if (d.nodeType == 'region') return 100;
+              },
+              nodeStrength: (d: any) => {
+                if (d.nodeType == 'region') return 3000;
+                return 1000;
               },
             },
-            style: {
-              fill: '#fff',
+            defaultCombo: {
+              type: 'region-combo',
+              labelCfg: {
+                refY: 3,
+                style: {
+                  fill: '#fff',
+                  fontSize: 14,
+                  fontWeight: 700,
+                },
+              },
+              style: {
+                fill: '#fff',
+              },
             },
-          },
-          modes: {
-            default: ['drag-combo', 'drag-node', 'drag-canvas', 'zoom-canvas'],
-          },
-          defaultNode: {
-            type: 'app-node',
-          },
-          defaultEdge: {
-            type: 'custom-edge',
-          },
-        });
+            modes: {
+              default: ['drag-combo', 'drag-node', 'drag-canvas', 'zoom-canvas'],
+            },
+            defaultNode: {
+              type: 'app-node',
+            },
+            defaultEdge: {
+              type: 'custom-edge',
+            },
+          });
 
-        const regionData: any[] = [];
-        const appData = [];
+          const regionData: any[] = [];
+          const appData = [];
 
-        OriginData.nodes.forEach((node) => {
-          // nodeMap[node.id] = node;
-          nodeMap.set(node.id, node);
-          if (node.nodeType == 'region') {
-            regionData.push(node);
-          } else {
-            appData.push(node);
-          }
-        });
+          origionData.nodes.forEach((node) => {
+            // nodeMap[node.id] = node;
+            nodeMap.set(node.id, node);
+            if (node.nodeType == 'region') {
+              regionData.push(node);
+            } else {
+              appData.push(node);
+            }
+          });
 
-        graph.data({ nodes: regionData, edges: OriginData.edges });
-        expandArr = regionData;
-        graph.render();
-        bindListener(graph);
+          graph.data({ nodes: regionData, edges: origionData.edges });
+          expandArr = regionData;
+          graph.render();
+          bindListener(graph);
+        }
+        return () => {
+          resizeObserver.disconnect();
+        };
       }
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }, []);
+    }, [origionData]);
 
     /**
      * graph实例事件绑定
@@ -236,7 +270,7 @@ const Topo = memo(
     const handleCollapse = (evt: any) => {
       const regionId = evt.item['_cfg']['model']['regionCode'];
       if (regionId) {
-        OriginData.nodes.forEach((node) => {
+        origionData.nodes.forEach((node) => {
           if (node.id == regionId) {
             expandArr.push(node);
           }
@@ -253,7 +287,7 @@ const Topo = memo(
         (item: any) => !item.nodeRegionCode || (item.nodeType !== 'region' && item.nodeRegionCode !== regionId),
       );
 
-      graph.data({ nodes: newArr, edges: OriginData.edges });
+      graph.data({ nodes: newArr, edges: origionData.edges });
       expandArr = newArr;
       graph.render();
 
@@ -291,7 +325,7 @@ const Topo = memo(
       expandArr.splice(expandIndex, 1);
 
       const newNode: any[] = [];
-      OriginData.nodes.forEach((node) => {
+      origionData.nodes.forEach((node) => {
         if (node.nodeRegionCode == expandId) {
           expandArr.push(node);
           newNode.push(node.id);
@@ -307,7 +341,7 @@ const Topo = memo(
         nodes: newNode,
       };
       comboArr.push(newcombo);
-      graph.data({ nodes: expandArr, edges: OriginData.edges });
+      graph.data({ nodes: expandArr, edges: origionData.edges });
       graph.render();
 
       comboArr.forEach((combo: any) => {

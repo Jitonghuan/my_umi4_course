@@ -1,3 +1,5 @@
+import G6 from '@antv/g6';
+
 export const LevelEnum = [
   {
     label: '未分配',
@@ -28,3 +30,57 @@ export const AppRelationEnum = [
     value: 1,
   },
 ];
+
+const DANGER_COLOR = '#F5222D';
+const WARNING_COLOR = '#FFC020';
+const NORMAL_COLOR = '#3592FE';
+export const NodeStatusEnum = [
+  {
+    label: 'dangerous',
+  },
+  {
+    label: 'warning',
+  },
+  {
+    label: 'normal',
+  },
+];
+
+export const arrowStyleType = {
+  dangerous: {
+    stroke: DANGER_COLOR,
+    lineAppendWidth: 2,
+    cursor: 'pointer',
+    lineDash: [4, 4, 4, 4],
+    lineWidth: 1,
+    endArrow: {
+      path: G6.Arrow.triangle(),
+      fill: DANGER_COLOR,
+      strokeOpacity: 0,
+    },
+  },
+  warning: {
+    stroke: WARNING_COLOR,
+    lineAppendWidth: 2,
+    cursor: 'pointer',
+    lineDash: [4, 4, 4, 4],
+    lineWidth: 1,
+    endArrow: {
+      path: G6.Arrow.triangle(),
+      fill: WARNING_COLOR,
+      strokeOpacity: 0,
+    },
+  },
+  normal: {
+    stroke: NORMAL_COLOR,
+    lineAppendWidth: 2,
+    cursor: 'pointer',
+    lineDash: [4, 4, 4, 4],
+    lineWidth: 1,
+    endArrow: {
+      path: G6.Arrow.triangle(),
+      fill: NORMAL_COLOR,
+      strokeOpacity: 0,
+    },
+  },
+};
