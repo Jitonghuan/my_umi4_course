@@ -1034,6 +1034,7 @@ export default [
     path: 'trafficmap',
     name: '流量地图',
     icon: 'icon-ic_flow',
+    hideInMenu: process.env.BUILD_ENV === 'prod',
     routes: [
       {
         path: 'global-topo',
