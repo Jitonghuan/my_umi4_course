@@ -27,7 +27,7 @@ const DomainConfig: React.FC = () => {
     requestRegionList();
   }, [pageIndex, pageSize, searchValue]);
 
-  const requestRegionList = async (paginationParams?: any) => {
+  const requestRegionList = async () => {
     let data = {
       pageSize,
       pageIndex,
@@ -125,9 +125,9 @@ const DomainConfig: React.FC = () => {
         <Form
           layout="inline"
           onFinish={onSearch}
-          onReset={() => {
-            requestRegionList();
-          }}
+          // onReset={() => {
+          //   requestRegionList();
+          // }}
         >
           <Form.Item label="域名" name="regionName">
             <Input />
