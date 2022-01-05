@@ -13,9 +13,9 @@ import { getColorByValue } from '../util';
 export const queryEnvListsApi = `${appConfig.apiPrefix}/monitorManage/cluster`;
 export const queryEnvLists = () =>
   getRequest(queryEnvListsApi).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       return (
-        res.data?.map((item: any) => {
+        res?.data?.map((item: any) => {
           return {
             key: item.id,
             title: item.clusterName,
@@ -33,7 +33,7 @@ export const queryEnvLists = () =>
 export const queryResUseDataApi = `${appConfig.apiPrefix}/monitorManage/resource/clusterTotal`;
 export const queryResUseData = (params: { clusterId: string }) =>
   getRequest(queryResUseDataApi, { data: params }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       const { data = {} } = res;
       return [
         {
@@ -80,7 +80,7 @@ export const queryNodeUseDataApi = `${appConfig.apiPrefix}/monitorManage/resourc
 export const queryUseMarketDataApi = `${appConfig.apiPrefix}/monitorManage/grafana/dashboard`;
 export const queryUseMarketData = (params: { clusterId: string }) =>
   getRequest(queryUseMarketDataApi, { data: params }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       const { data = {} } = res;
       const result = [];
       for (const key in data) {
@@ -102,7 +102,7 @@ export const queryUseMarketData = (params: { clusterId: string }) =>
 export const queryClustersUrl = `${appConfig.apiPrefix}/monitorManage/clusters`;
 export const queryClustersData = (params: { envTypeCode: string }) =>
   getRequest(queryClustersUrl, { data: params }).then((resp: any) => {
-    if (resp.success) {
+    if (resp?.success) {
       let data = resp?.data;
       let clusterData: any = [];
       data.map((item: any) => {
@@ -121,7 +121,7 @@ export const queryPodUrl = `${appConfig.apiPrefix}/monitorManage/resource/pod`;
 export const queryPodUseData = (clusterId: number, pageIndex?: number, pageSize?: number, keyword?: any) =>
   getRequest(queryPodUrl, { data: { clusterId, pageIndex: pageIndex || 1, pageSize: pageSize || 20, keyword } }).then(
     (res: any) => {
-      if (res.success) {
+      if (res?.success) {
         let podResourceData: any = [];
         podResourceData = res.data;
         return podResourceData;

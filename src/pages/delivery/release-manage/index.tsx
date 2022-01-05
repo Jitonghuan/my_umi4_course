@@ -50,7 +50,7 @@ export default function appStore(porps: any) {
   };
   const versionList = () => {
     getRequest(addAPIPrefix('/deliverManage/versionManage/list')).then((result) => {
-      const source = result.data.dataSource;
+      const source = result?.data?.dataSource;
       setVersionManageData(source);
     });
   };
