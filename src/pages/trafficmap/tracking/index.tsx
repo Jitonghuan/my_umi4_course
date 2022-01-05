@@ -90,7 +90,7 @@ const tracking = () => {
 
   return (
     <PageContainer className="tracking-page">
-      <FilterCard>
+      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
         <Form form={form} layout="inline" onFinish={addParams}>
           <Form.Item label="参数" name="param" rules={[{ required: true, message: '请选择参数' }]}>
             <Select options={paramOptions} style={{ width: '300px' }} placeholder="选取参数" />
@@ -99,11 +99,13 @@ const tracking = () => {
             <Input style={{ width: '400px' }} allowClear placeholder="参数值" />
           </Form.Item>
           <Form.Item>
-            <Button htmlType="submit">添加查询参数</Button>
+            <Button htmlType="submit" type="primary" ghost>
+              添加查询参数
+            </Button>
           </Form.Item>
         </Form>
       </FilterCard>
-      <div className="tag-card">
+      <div className="tag-card" style={{ backgroundColor: '#F7F8FA' }}>
         {Object.keys(selectParams).length > 0
           ? Object.keys(selectParams).map((key: any) => {
               return (
@@ -120,7 +122,7 @@ const tracking = () => {
             })
           : null}
       </div>
-      <ContentCard>
+      <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
         <div className="tracking-table-header">
           <h3>追踪列表</h3>
         </div>

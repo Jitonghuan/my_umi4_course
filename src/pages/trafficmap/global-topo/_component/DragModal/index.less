@@ -77,34 +77,33 @@
 
   .app-modal-close {
     position: absolute;
-    top: 0;
+    top: 5px;
     right: 0;
     z-index: 10;
     padding: 0;
-    color: #00000073;
+    color: rgba(0, 0, 0, 0.45);
     font-weight: 700;
     line-height: 1;
     text-decoration: none;
-    background: 0 0;
+    background: transparent;
     border: 0;
     outline: 0;
     cursor: pointer;
     transition: color 0.3s;
-    width: 56px;
-    height: 56px;
   }
 
   .app-modal-header {
-    padding: 16px 24px;
-    color: #000000d9;
+    padding: 8px 20px;
+    color: rgba(0, 0, 0, 0.85);
     background: #e6ebf5;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #d2d8e6;
     border-radius: 2px 2px 0 0;
 
     .app-modal-title {
       margin: 0;
-      color: #000000d9;
+      color: #000000;
       font-weight: 500;
+      font-family: PingFangSC-Medium, PingFang SC;
       font-size: 16px;
       line-height: 22px;
       word-wrap: break-word;
@@ -112,12 +111,10 @@
   }
 
   .app-modal-body {
-    padding: 24px;
+    padding: 20px;
     font-size: 14px;
     line-height: 1.5715;
     word-wrap: break-word;
-    min-height: 200x;
-    // height: auto;
   }
 }
 

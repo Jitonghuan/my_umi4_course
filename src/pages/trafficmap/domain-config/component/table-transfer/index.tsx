@@ -1,20 +1,17 @@
-/*
- * @Author: shixia.ds
- * @Date: 2021-11-19 15:09:54
- * @Description:
- */
-import { Transfer, Table, Select, Button } from 'antd';
+import { Transfer, Table } from 'antd';
 import difference from 'lodash/difference';
+import './index.less';
 
 interface IProp {
   leftColumns: any;
   rightColumns: any;
+  disabled: boolean;
   [x: string]: any;
 }
 
 // Customize Table Transfer
 const TableTransfer: React.FC<IProp> = ({ leftColumns, rightColumns, ...restProps }) => (
-  <Transfer {...restProps}>
+  <Transfer {...restProps} className="customize-transfer">
     {({
       direction,
       filteredItems,
@@ -24,9 +21,8 @@ const TableTransfer: React.FC<IProp> = ({ leftColumns, rightColumns, ...restProp
       disabled: listDisabled,
     }) => {
       const columns = direction === 'left' ? leftColumns : rightColumns;
-
       const rowSelection = {
-        getCheckboxProps: (item: any) => ({ disabled: listDisabled || item.disabled }),
+        getCheckboxProps: (item: any) => ({ disabled: restProps.disabled || item.disabled }),
         onSelectAll(selected: boolean, selectedRows: any[]) {
           const treeSelectedKeys = selectedRows.filter((item) => !item.disabled).map(({ key }) => key);
           const diffKeys = selected
@@ -59,7 +55,7 @@ const TableTransfer: React.FC<IProp> = ({ leftColumns, rightColumns, ...restProp
               : undefined
           }
           pagination={false}
-        ></Table>
+        />
       );
     }}
   </Transfer>

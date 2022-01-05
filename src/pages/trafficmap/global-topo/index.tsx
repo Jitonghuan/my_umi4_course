@@ -14,7 +14,9 @@ import DragWrapper from './_component/DragWrapper';
 import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
 import './index.less';
+import moment from '_moment@2.29.1@moment';
 
+const dateFormat = 'YYYY-MM-DD HH:mm';
 const dataDemo = {
   requests: {
     data: [
@@ -22,11 +24,13 @@ const dataDemo = {
         data: ['9', '9', '9', '9', '9', '9', '9'],
         name: 'http',
         type: 'line',
+        color: '#4BA2FF',
       },
       {
         data: ['10', '10', '10', '10', '10', '10', '10'],
         name: 'dubbo',
         type: 'line',
+        color: '#00BFAA',
       },
     ],
     xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
@@ -60,22 +64,26 @@ const dataDemo = {
         data: ['9', '9', '9', '9', '9', '9', '9'],
         name: '200',
         type: 'line',
+        color: '#4BA2FF',
       },
       {
         data: ['3', '4', '5', '7', '9', '3', '1'],
         name: '300',
         type: 'line',
+        color: '#5C61F3',
       },
       {
         data: ['6', '7', '8', '9', '4', '3', '5'],
         name: '400',
         type: 'line',
+        color: '#FFCB30',
       },
 
       {
         data: ['4', '5', '3', '3', '3', '6', '2'],
         name: '500',
         type: 'line',
+        color: '#F66A51',
       },
     ],
     xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
@@ -84,7 +92,12 @@ const dataDemo = {
 
 const globalTopo: React.FC = () => {
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
-  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
+  const [envDatas, setEnvDatas] = useState<any[]>([
+    {
+      label: 'hbos-dev',
+      value: 'hbos-dev',
+    },
+  ]); //环境
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
@@ -102,9 +115,18 @@ const globalTopo: React.FC = () => {
 
   const [appIdList, setAppIdList] = useState<string[]>([]);
   const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
-  const [redLineList, setRedLineList] = useState<any[]>(['1', '2']);
+  const [redLineList, setRedLineList] = useState<any[]>([
+    {
+      id: '1',
+      time: '2021-11-30 10:26:00',
+    },
+    {
+      id: '2',
+      time: '2021-11-30 10:27:00',
+    },
+  ]);
   const [clickId, setClickId] = useState<string>('');
-  const [graph, setGraph] = useState<any>(null);
+  const [selectTime, setSelectTime] = useState('');
 
   const TopoRef = useRef<any>();
 
@@ -168,49 +190,62 @@ const globalTopo: React.FC = () => {
     console.log('redline', id);
   }, []);
 
-  const getGraph = (graph: any) => {
-    setGraph(graph);
-  };
-
   return (
     <PageContainer className="global-topo">
-      <FilterCard>
+      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
         <Form layout="inline" form={formTmpl} style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Form.Item label="环境：" name="envCode">
-            <Select options={envDatas} allowClear onChange={(n) => {}} showSearch style={{ width: 140 }} />
+            <Select
+              options={envDatas}
+              defaultValue={'hbos-dev'}
+              onChange={(n) => {}}
+              showSearch
+              style={{ width: 140 }}
+            />
           </Form.Item>
           <Form.Item label="时间：" name="templateType">
-            <DatePicker />
+            <DatePicker
+              showTime={{ format: 'HH:mm' }}
+              format="YYYY-MM-DD HH:mm"
+              defaultValue={moment('2022-01-05 15:29', dateFormat)}
+              onChange={(value, dateString) => {
+                setSelectTime(dateString);
+              }}
+            />
           </Form.Item>
         </Form>
       </FilterCard>
+
       <div style={{ height: '100%' }} ref={frameRef}>
-        <ContentCard>
-          <section style={{ marginBottom: '10px' }} id="topo-box" className="topo-box">
-            <div className="content-header">
-              <h3>浙一生产环境</h3>
-              <div className="action-bar">
-                <Button
-                  type="default"
-                  icon={<PlusCircleOutlined />}
-                  onClick={() => {
-                    setIsRedLineVisible(true);
-                  }}
-                >
-                  红线追踪
-                </Button>
-                <Button type="default" icon={<PlusCircleOutlined />} onClick={expandAll}>
-                  全部展开
-                </Button>
-                <Button
-                  type="default"
-                  icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
-                  onClick={handleFullScreen}
-                >
-                  全屏查看
-                </Button>
-              </div>
+        <div className="topo-header">
+          <div className="content-header">
+            <div className="env-name">浙一生产环境</div>
+            <div className="action-bar">
+              <Button
+                type="default"
+                icon={<PlusCircleOutlined />}
+                onClick={() => {
+                  setIsRedLineVisible(true);
+                }}
+              >
+                红线追踪
+              </Button>
+              <Button type="default" icon={<PlusCircleOutlined />} onClick={expandAll}>
+                全部展开
+              </Button>
+              <Button
+                type="default"
+                icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                onClick={handleFullScreen}
+              >
+                {isFullScreen ? '退出全屏' : '全屏查看'}
+              </Button>
             </div>
+          </div>
+        </div>
+
+        <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
+          <div style={{ marginBottom: '10px' }} id="topo-box" className="topo-box">
             <div className="graph-box" style={{ position: 'relative' }}>
               {/**
                * DragWrapper:可拖拽弹窗组件
@@ -222,9 +257,10 @@ const globalTopo: React.FC = () => {
                 onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
                 ref={TopoRef}
+                selectTime={selectTime}
               />
             </div>
-          </section>
+          </div>
         </ContentCard>
       </div>
       {/**

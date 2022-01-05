@@ -41,18 +41,26 @@ const RedLineModal: React.FC<IProps> = (props) => {
     },
   ]);
 
+  const [selected, setSelected] = useState<any>('');
+
   return (
     <div className="drag-redline-modal" style={{ display: props.visible ? 'block' : 'none' }}>
       <DragModal
         title={'红线追踪'}
         onCancel={props.handleCancel}
-        style={{ position: 'absolute', top: '14%', right: '0px' }}
+        width={219}
+        style={{ position: 'absolute', top: '14%', right: '0px', minWidth: '200px' }}
       >
         <Select options={options} style={{ width: '195px' }} />
         <div style={{ marginTop: '12px' }}>
-          {props.redLineList.map((item) => {
+          {props.redLineList.map((item: any) => {
             return (
-              <div className="redline-container">
+              <div
+                className={selected == item.id ? 'redline-container redline-container-selected' : 'redline-container'}
+                onClick={() => {
+                  setSelected(item.id);
+                }}
+              >
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                   <svg
                     viewBox="0 0 1024 1024"
@@ -68,7 +76,7 @@ const RedLineModal: React.FC<IProps> = (props) => {
                       fill="#F5222D"
                     />
                   </svg>
-                  <span>2021-11-30 10:26:00</span>
+                  <span>{item.time}</span>
                 </div>
               </div>
             );

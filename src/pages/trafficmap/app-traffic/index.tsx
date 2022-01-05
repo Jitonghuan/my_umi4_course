@@ -12,6 +12,7 @@ import * as echarts from 'echarts';
 import { IAppInfo } from '../interface';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import LineChart from './_component/line-chart';
+import { TreePro } from '@cffe/h2o-design';
 
 const { TabPane } = Tabs;
 const lineChartTmp = [
@@ -35,21 +36,11 @@ const lineChartTmp = [
 
 const treeData = [
   {
-    title: 'appName',
+    title: 'parent 0',
     key: '0-0',
     children: [
-      {
-        title: '1-0',
-        key: '0-0-1',
-      },
-      {
-        title: '1-1',
-        key: '0-0-2',
-      },
-      {
-        title: '1-2',
-        key: '0-0-13',
-      },
+      { title: 'leaf 0-0', key: '0-0-0' },
+      { title: 'leaf 0-1', key: '0-0-1' },
     ],
   },
 ];
@@ -61,11 +52,13 @@ const dataDemo = {
         data: ['9', '9', '9', '9', '9', '9', '9'],
         name: 'http',
         type: 'line',
+        color: '#4BA2FF',
       },
       {
         data: ['10', '10', '10', '10', '10', '10', '10'],
         name: 'dubbo',
         type: 'line',
+        color: '#00BFAA',
       },
     ],
     xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
@@ -99,22 +92,26 @@ const dataDemo = {
         data: ['9', '9', '9', '9', '9', '9', '9'],
         name: '200',
         type: 'line',
+        color: '#4BA2FF',
       },
       {
         data: ['3', '4', '5', '7', '9', '3', '1'],
         name: '300',
         type: 'line',
+        color: '#5C61F3',
       },
       {
         data: ['6', '7', '8', '9', '4', '3', '5'],
         name: '400',
         type: 'line',
+        color: '#FFCB30',
       },
 
       {
         data: ['4', '5', '3', '3', '3', '6', '2'],
         name: '500',
         type: 'line',
+        color: '#F66A51',
       },
     ],
     xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
@@ -123,7 +120,7 @@ const dataDemo = {
     data: [
       {
         data: ['9', '9', '9', '9', '9', '9', '9'],
-        name: 'hbos/hbos-osc',
+        name: '错误码',
         type: 'line',
         color: 'rgba(246,106,81,1)',
         areaStyle: {
@@ -174,7 +171,7 @@ const AppTraffic: React.FC = () => {
 
   return (
     <PageContainer className="app-traffic">
-      <FilterCard>
+      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
         <Form layout="inline">
           <Form.Item label="环境">
             <Select style={{ width: '150px' }} />
@@ -186,26 +183,23 @@ const AppTraffic: React.FC = () => {
             <DatePicker style={{ width: '200px' }} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary">查询</Button>
+            <Button type="primary" ghost>
+              查询
+            </Button>
           </Form.Item>
         </Form>
       </FilterCard>
       <CardRowGroup>
-        <CardRowGroup.SlideCard width={200}>
+        <CardRowGroup.SlideCard width={200} style={{ backgroundColor: '#F7F8FA' }}>
           <div className="table-caption">
             <h3>应用列表</h3>
           </div>
           <div>
-            <Tree
-              defaultExpandedKeys={['0-0-0', '0-0-1']}
-              defaultSelectedKeys={['0-0-0', '0-0-1']}
-              onSelect={onSelect}
-              treeData={treeData}
-            />
+            <TreePro defaultExpandAll treeData={treeData} showSearch={false} />
           </div>
         </CardRowGroup.SlideCard>
 
-        <Card className="app-traffic-content">
+        <Card className="app-traffic-content" style={{ backgroundColor: '#F7F8FA' }}>
           <Tabs activeKey={'1'} type="card" className="action-tabs">
             <TabPane tab="应用详情" key="1">
               <div className="tab-content">
