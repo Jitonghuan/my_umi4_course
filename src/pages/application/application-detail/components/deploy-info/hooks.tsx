@@ -20,15 +20,17 @@ export function useAppDeployInfo(
       if (!envCode || !deploymentName) return;
 
       showLoading && setLoading(true);
-      try {
-        const result = await getRequest(APIS.queryApplicationStatus, {
-          data: { deploymentName, envCode },
-        });
+      if (envCode === 'zy-prd' || envCode === 'ws-prd' || envCode === 'zy-daily') {
+        try {
+          const result = await getRequest(APIS.queryApplicationStatus, {
+            data: { deploymentName, envCode },
+          });
 
-        const { Status: nextAppStatus } = result.data || {};
-        setData(nextAppStatus || []);
-      } finally {
-        setLoading(false);
+          const { Status: nextAppStatus } = result.data || {};
+          setData(nextAppStatus || []);
+        } finally {
+          setLoading(false);
+        }
       }
     },
     [envCode, deploymentName],

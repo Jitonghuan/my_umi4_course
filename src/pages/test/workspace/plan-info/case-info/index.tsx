@@ -14,6 +14,8 @@ import {
   Empty,
   message,
   Popconfirm,
+  Tooltip,
+  Form,
 } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import FELayout from '@cffe/vc-layout';
@@ -22,9 +24,11 @@ import RichText from '@/components/rich-text';
 import AssociationBugModal from '../association-bug-modal';
 import AddBugDrawer from '../../bug-manage/add-bug-drawer';
 import { caseStatusEnum, bugStatusEnum } from '../../constant';
-import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects, getProjectTreeData } from '../../service';
+import { executePhaseCase, relatedBug, modifyBug, addBug, getProjects } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
+import PreconditionEditableTbale from '../../_components/precondition-editable-table';
 import moment from 'moment';
+import * as HOOKS from '../../hooks';
 
 moment.locale('zh-cn');
 
@@ -49,16 +53,21 @@ export default function UserCaseInfoExec(props: any) {
   const [addBugDrawerVisible, setAddBugDrawerVisible] = useState<boolean>(false);
   const [associationBug, setAssociationBug] = useState<any[]>([]);
   const [caseStatus, setCaseStatus] = useState<string>();
-  const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(true);
+  // const [execNoteReadOnly, setExecNoteReadOnly] = useState<boolean>(false);
   const [schema, setSchema] = useState();
   const sona = useMemo(() => createSona(), []);
   const [associationBugModalVisible, setAssociationBugModalVisible] = useState<boolean>(false);
   const [checkedBugs, setCheckedBugs] = useState<any[]>([]);
   const [caseNote, setCaseNote] = useState<any>();
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [projectTreeData] = HOOKS.useProjectTreeData();
+
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (curCase) {
+      form.setFieldsValue(curCase?.caseInfo);
+      console.log('curCase?.caseInfo :>> ', curCase?.caseInfo);
+
       curCase.status !== undefined && void setCaseStatus(curCase.status.toString());
 
       void setAssociationBug(curCase.bugs);
@@ -81,23 +90,10 @@ export default function UserCaseInfoExec(props: any) {
         curCase.executeNote?.length > 0 && void setSchema(JSON.parse(curCase.executeNote));
       } catch (e) {}
       try {
-        curCase.caseInfo?.comment > 0 && void setCaseNote(JSON.parse(curCase.caseInfo.comment));
+        curCase.caseInfo?.comment?.length > 0 && void setCaseNote(JSON.parse(curCase.caseInfo.comment));
       } catch (e) {}
     }
   }, [curCase]);
-
-  useEffect(() => {
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
-    });
-  }, []);
 
   const changeCaseStatus = async (phaseId: number, caseId: number, status: string, executeNote?: string) => {
     // const loadEnd = message.loading('正在修改用例状态');
@@ -131,7 +127,7 @@ export default function UserCaseInfoExec(props: any) {
 
   const handleSaveExecNote = async () => {
     void (await handleCaseStatusSubmit(caseStatus as string, JSON.stringify(sona.schema)));
-    void setExecNoteReadOnly(true);
+    // void setExecNoteReadOnly(true);
     void message.success('执行备注修改成功');
   };
 
@@ -147,7 +143,7 @@ export default function UserCaseInfoExec(props: any) {
         ],
       },
     ]);
-    void setExecNoteReadOnly(true);
+    // void setExecNoteReadOnly(true);
   };
 
   const handleChangeCurCaseIdx = (isToNext: boolean) => {
@@ -252,20 +248,14 @@ export default function UserCaseInfoExec(props: any) {
     <div className={className}>
       <div className="case-header">
         <div className="title-col">
-          <span className="case-title">
-            #{curCase?.caseInfo?.id} {curCase?.caseInfo?.title}
-          </span>
-          <Select
-            className={
-              'w-100 ml-auto ' + ['beExecuted', 'executeSuccess', 'executeFailure', 'block', 'pass'][+(caseStatus || 0)]
-            }
-            value={caseStatus}
-            onChange={handleCaseStatusChange}
-          >
+          <Tooltip title={`#${curCase?.caseInfo?.id} ${curCase?.caseInfo?.title}`}>
+            <Text className="case-title" ellipsis={{ suffix: '' }}>
+              #{curCase?.caseInfo?.id} {curCase?.caseInfo?.title}
+            </Text>
+          </Tooltip>
+          <Select className="w-100 ml-auto mr-12" value={caseStatus} onChange={handleCaseStatusChange}>
             {caseStatusEnum.map((item) => (
-              <Select.Option value={item.value} style={{ background: item.color }}>
-                {item.label}
-              </Select.Option>
+              <Select.Option value={item.value}>{item.label}</Select.Option>
             ))}
           </Select>
           <Button
@@ -284,13 +274,27 @@ export default function UserCaseInfoExec(props: any) {
 
       <div className="case-body">
         <div className="case-prop-title">前置条件:</div>
-        <div className="mh-40">{curCase?.caseInfo?.precondition}</div>
+        <div className="mh-40">
+          <Form form={form}>
+            <Form.Item label="前置条件:" name="precondition" noStyle>
+              <PreconditionEditableTbale readOnly />
+            </Form.Item>
+          </Form>
+        </div>
 
         <div className="case-prop-title mt-24">步骤描述:</div>
         <Table dataSource={curCase?.caseInfo?.stepContent} bordered pagination={false}>
           <Table.Column title="序号" render={(_: any, __: any, idx: number) => idx + 1} />
-          <Table.Column title="步骤描述" dataIndex="input" />
-          <Table.Column title="预期结果" dataIndex="output" />
+          <Table.Column
+            title="步骤描述"
+            dataIndex="input"
+            render={(str) => <div style={{ whiteSpace: 'break-spaces' }}>{str}</div>}
+          />
+          <Table.Column
+            title="预期结果"
+            dataIndex="output"
+            render={(str) => <div style={{ whiteSpace: 'break-spaces' }}>{str}</div>}
+          />
         </Table>
 
         <div className="case-prop-title mt-24">用例备注:</div>
@@ -298,23 +302,15 @@ export default function UserCaseInfoExec(props: any) {
 
         <div className="case-prop-title mt-24">执行备注:</div>
         <div className="executeNote">
-          <RichText sona={sona} readOnly={execNoteReadOnly} schema={schema} />
-          {!execNoteReadOnly ? (
-            <div className="executeNote-btn-container">
-              <Space>
-                <Button type="primary" onClick={handleSaveExecNote}>
-                  保存
-                </Button>
-                <Button onClick={handleCancelSaveExecNote}>取消</Button>
-              </Space>
-            </div>
-          ) : (
-            <div className="executeNote-btn-container">
-              <Button type="primary" onClick={() => setExecNoteReadOnly(false)}>
-                编辑
+          <RichText sona={sona} schema={schema} />
+          {/* {!execNoteReadOnly ? ( */}
+          <div className="executeNote-btn-container">
+            <Space>
+              <Button type="primary" onClick={handleSaveExecNote}>
+                保存
               </Button>
-            </div>
-          )}
+            </Space>
+          </div>
         </div>
 
         <div className="bug-info mt-24">
@@ -368,7 +364,7 @@ export default function UserCaseInfoExec(props: any) {
                 renderItem={(item: any) => (
                   <List.Item>
                     <Text>
-                      {item.createUser} 执行了用例，状态为：{caseStatusEnum[item.status].label}
+                      {item.modifyUser} 执行了用例，状态为：{caseStatusEnum[item.status].label}
                     </Text>
                     <Text type="secondary">{moment(item.gmtModify).fromNow()}</Text>
                   </List.Item>
@@ -393,7 +389,7 @@ export default function UserCaseInfoExec(props: any) {
         setVisible={setAddBugDrawerVisible}
         updateCaseTable={updateBugList}
         projectList={projectList}
-        defaultRelatedCases={[curCase?.caseInfo.id]}
+        defaultRelatedCases={[curCase?.caseInfo]}
         phaseId={phaseId}
         onAddBug={(newBugInfo: any) => {
           void setCheckedBugs([newBugInfo]);

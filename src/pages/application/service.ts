@@ -2,6 +2,23 @@ import { AppItemVO } from './interfaces';
 import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 
+/** 查看应用分类接口 */
+export const appTypeList = `${appConfig.apiPrefix}/appManage/category/list`;
+
+/** 获取应用环境 */
+export const listAppEnv = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
+
+/** 获取部署的下一个环境 */
+export const checkNextEnv = `${appConfig.apiPrefix}/releaseManage/deploy/checkNextEnv`;
+/** 应用绑定环境 */
+export const addAppEnv = `${appConfig.apiPrefix}/appManage/env/addAppEnv`;
+
+/** 应用删除环境 */
+export const delAppEnv = `${appConfig.apiPrefix}/appManage/env/delAppEnv`;
+
+/** 查看环境 */
+export const queryEnvList = `${appConfig.apiPrefix}/appManage/env/list`;
+
 /** 查询应用列表 */
 export const queryAppsUrl = `${appConfig.apiPrefix}/appManage/list`;
 
@@ -69,7 +86,7 @@ export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reuse
 export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/deployMaster`;
 
 /** GET 根据应用分类code查询发布环境列表 */
-export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/list`;
+export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 
 /** POST 应用模版-创建模版 NOT USED */
 export const createAppTemplate = `${appConfig.apiPrefix}/opsManage/appTemplate/create`;
@@ -113,13 +130,13 @@ export const updateAppUrl = `${appConfig.apiPrefix}/appManage/update`;
 export const searchGitAddressUrl = `${appConfig.apiPrefix}/appManage/searchGitAddress`;
 
 /** POST 创建前端路由模板 */
-export const createFeRouteTemplate = `${appConfig.apiPrefix}/appManage/feRouteTemplate/create`;
+export const createFeRouteConfig = `${appConfig.apiPrefix}/appManage/feRouteTemplate/create`;
 
 /** GET 查询前端路由模板 */
-export const queryFeRouteTemplate = `${appConfig.apiPrefix}/appManage/feRouteTemplate/list`;
+export const queryFeRouteConfig = `${appConfig.apiPrefix}/appManage/feRouteTemplate/list`;
 
 /** PUT 更新前端路由模板 */
-export const updateFeRouteTemplate = `${appConfig.apiPrefix}/appManage/feRouteTemplate/update`;
+export const updateFeRouteConfig = `${appConfig.apiPrefix}/appManage/feRouteTemplate/update`;
 
 /** GET 查看前端版本 */
 export const queryFeVersions = `${appConfig.apiPrefix}/appManage/feVersion/list`;
@@ -135,6 +152,7 @@ export const queryAppEnvs = `${appConfig.apiPrefix}/monitorManage/app/env`;
 /** GET 获取应用变更记录列表 */
 export const queryRecentChangeOrder = `${appConfig.apiPrefix}/releaseManage/queryRecentChangeOrder`;
 
+export const queryAppOperate = `${appConfig.apiPrefix}/appManage/deployInfo/instance/appOperate`;
 /** GET 获取应用运行和变更状态 */
 export const queryApplicationStatus = `${appConfig.apiPrefix}/releaseManage/queryApplicationStatus`;
 
@@ -162,6 +180,20 @@ export const fePublishVerifyUrl = `${appConfig.apiPrefix}/releaseManage/deploy/f
 
 /** POST 前端版本回滚 */
 export const rollbackFeAppUrl = `${appConfig.apiPrefix}/appManage/rollbackFeApp`;
+
+/** POST 创建review */
+export const createReview = `${appConfig.apiPrefix}/releaseManage/branch/createReview`;
+
+/** POST  获取分支review状态 */
+export const getReviewStatus = `${appConfig.apiPrefix}/releaseManage/branch/getReviewStatus`;
+
+/** POST 新建分支关联需求 */
+export const queryPortalList = `http://kapi-base-dev.cfuture.shop/eip-demand/portal/list`;
+
+export const getDemandByProjectList = `http://kapi-base-dev.cfuture.shop/eip-demand/portal/getDemandByProject`;
+
+/** GET 当前应用下已通过且存在未上线发布计划的发布申请列表 */
+export const applyHaveNoUpPlanList = `${appConfig.apiPrefix}/publishManage/applyHaveNoUpPlan/list`;
 
 /** 查询应用列表 (返回的数据没有分页) */
 export const queryApps = async (
@@ -238,15 +270,9 @@ export const updateAppMember = (params: {
 /** 查看最新版本的配置 */
 export const queryConfigList = (params: {
   /** 应用CODE */
-  appCode: string;
-  /** 配置项的KEY */
-  key?: string;
-  /**  配置项的Value */
-  value?: string;
-  /** 配置的类型 boot启动参数，app应用配置 */
-  type?: string;
+  appCode?: string;
   /** 环境参数 */
-  env?: string;
+  envCode?: string;
   /** 分页索引 */
   pageIndex: number;
   /** 分页大小 */
@@ -441,7 +467,9 @@ export const confirmProdDeploy = (params: {
   /** 发布机构: tian/weishan */
   hospital: string;
   /** 发布批次，0不分批，1发布第一批，2发布第二批 */
-  batch: 0 | 1 | 2;
+  // batch: 0 | 1 | 2;
+  batch: number;
+  applyIds: any;
 }) =>
   postRequest(confirmProdDeployUrl, {
     data: params,
@@ -500,9 +528,11 @@ export const deployMaster = (params: {
 /** 根据应用分类code查询发布环境列表 */
 export const queryEnvsReq = (params: {
   //所属的应⽤分类CODE
-  categoryCode: string;
+  categoryCode?: string;
   // 当前所处环境
   envTypeCode?: string;
+  //AppCode
+  appCode: string | undefined;
 }) =>
   getRequest(queryEnvsReqUrl, {
     data: {
@@ -514,7 +544,7 @@ export const queryEnvsReq = (params: {
     if (res.success) {
       return {
         list:
-          res.data?.dataSource?.map((el: any) => {
+          res.data?.map((el: any) => {
             return {
               ...el,
               value: el.envCode,
@@ -542,3 +572,9 @@ export const fePublishVerify = async (data: any) => postRequest(fePublishVerifyU
 
 /** POST 前端版本回滚 */
 export const rollbackFeApp = async (data: any) => postRequest(rollbackFeAppUrl, { data });
+
+/** POST 创建review */
+// export const createReview = async (data: any) => postRequest(createReviewUrl, { data });
+
+/** POST 获取分支review状态 */
+// export const getReviewStatus = async (data: any) => postRequest(getReviewStatusUrl, { data });

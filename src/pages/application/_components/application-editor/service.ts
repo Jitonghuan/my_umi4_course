@@ -1,12 +1,21 @@
 import { postRequest, getRequest, putRequest } from '@/utils/request';
 import { AppItemVO } from '../../interfaces';
-import { createAppUrl, updateAppUrl, searchGitAddressUrl } from '../../service';
+import { createAppUrl, updateAppUrl, searchGitAddressUrl, queryEnvList } from '../../service';
 
 /** 新建应用 */
 export const createApp = (params: AppItemVO) => postRequest(createAppUrl, { data: params });
 
 /** 编辑应用 */
 export const updateApp = (params: AppItemVO) => putRequest(updateAppUrl, { data: params });
+
+/** 查看环境 */
+export const fetchEnvList = async (data: any) => {
+  const result = await getRequest(queryEnvList, {
+    data: data,
+  });
+  const { dataSource } = result.data || {};
+  return (dataSource || []).map((item: any) => ({ label: item.envName, value: item.envCode })) as IOption[];
+};
 
 /** 搜索 git 仓库 */
 export const searchGitAddress = async (keyword: string) => {

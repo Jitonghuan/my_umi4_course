@@ -5,9 +5,10 @@ import HeaderTabs from '../_components/header-tabs';
 import AddTestPlanDrawer from './add-test-plan-drawer';
 import AssociatingCaseDrawer from './associating-case-drawer';
 import { getRequest, postRequest } from '@/utils/request';
-import { getTestPlanList, deleteTestPlan, getProjects, getProjectTreeData } from '../service';
+import { getTestPlanList, deleteTestPlan, getProjects } from '../service';
 import { Form, Button, Table, Input, Select, Space, message, Popconfirm, Cascader, Tag } from 'antd';
 import { testPlanStatusEnum } from '../constant';
+import * as HOOKS from '../hooks';
 import './index.less';
 import _ from 'lodash';
 
@@ -21,26 +22,13 @@ export default function TestPlan(props: any) {
   const [associatingVisible, setAssociatingVisible] = useState(false);
   const [curSelectPlan, setCurSelectPlan] = useState<null | string>(null);
   const [projectList, setProjectList] = useState<any[]>([]);
-  const [projectTreeData, setProjectTreeData] = useState<any[]>([]);
+  const [projectTreeData] = HOOKS.useProjectTreeData();
   const [formData, setFormData] = useState<any>({});
   const [form] = Form.useForm();
 
   useEffect(() => {
-    void updateTable(pageIndex, pageSize);
-
     getRequest(getProjects).then((res) => {
       void setProjectList(res.data.dataSource);
-    });
-
-    void getRequest(getProjectTreeData).then((res) => {
-      const Q = [...res.data];
-      while (Q.length) {
-        const cur = Q.shift();
-        cur.label = cur.name;
-        cur.value = cur.id;
-        cur.children && Q.push(...cur.children);
-      }
-      void setProjectTreeData(res.data);
     });
   }, []);
 
@@ -152,6 +140,7 @@ export default function TestPlan(props: any) {
               total,
               pageSize,
               showSizeChanger: true,
+              showTotal: (total) => `共 ${total} 条`,
               onChange: (next) => setPageIndex(next),
               onShowSizeChange: (_, next) => setPageSize(next),
             }}

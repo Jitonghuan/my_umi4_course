@@ -26,7 +26,7 @@ const PublishRecord = (props: IProps) => {
 
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
-  const [envDataList, setEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<any>([]);
 
   const {
     run: queryDataSource,
@@ -52,8 +52,13 @@ const PublishRecord = (props: IProps) => {
     queryEnvsReq({
       categoryCode: appCategoryCode as string,
       envTypeCode: env,
+      appCode,
     }).then((data) => {
-      setEnvDataList(data.list);
+      let envSelect: any = [];
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
+      setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);
 

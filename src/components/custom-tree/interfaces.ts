@@ -32,7 +32,7 @@ export interface CustomTreeProps extends TreeProps {
   sideSelectValue?: string;
   onSideSelectChange?: (val: string) => void;
   sideSelectPlaceholder?: string;
-  sideSelectOptions: any[];
+  sideSelectOptions?: any[];
 
-  treeDataEmptyHide: boolean;
+  treeDataEmptyHide?: boolean;
 }

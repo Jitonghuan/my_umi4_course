@@ -2,8 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 16:25
 
-import React, { useState, useEffect } from 'react';
-import { Button, Tag, Table, message, Empty, Spin, Form, Input, Popconfirm } from 'antd';
+import React, { useState, useEffect, useContext } from 'react';
+import { Button, Tag, Table, message, Empty, Spin, Form, Input, Popconfirm, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type Emitter from 'events';
 import { ContentCard } from '@/components/vc-page-content';
@@ -12,15 +12,19 @@ import * as APIS from '../../service';
 import { TreeNode, CaseItemVO } from '../../interfaces';
 import { useApiDetail, useCaseList } from '../hooks';
 import CaseExec from '../../_components/case-exec';
+import CopyCasesModal from '../copy-cases-modal';
+import FELayout from '@cffe/vc-layout';
 import './index.less';
 
 interface RightDetailProps extends Record<string, any> {
   emitter: Emitter;
   /** 当前选中的节点 */
   current?: TreeNode;
+  apiTreeData: any[];
 }
 
 export default function RightDetail(props: RightDetailProps) {
+  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const [apiDetail, apiLoading] = useApiDetail(props.current?.bizId!, props.current?.level!);
   const [searchParams, setSearchParams] = useState<any>();
   const [pageIndex, setPageIndex] = useState(1);
@@ -34,6 +38,8 @@ export default function RightDetail(props: RightDetailProps) {
   );
   const [execCases, setExecCases] = useState<CaseItemVO[]>([]);
   const [searchField] = Form.useForm();
+  const [selectedCases, setSelectedCases] = useState<any[]>([]);
+  const [copyCasesModalVisible, setCopyCasesModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const listener = () => {
@@ -72,6 +78,27 @@ export default function RightDetail(props: RightDetailProps) {
     setSearchParams(searchField.getFieldsValue());
   };
 
+  const handleCopyCases = (apiId: string) => {
+    if (!apiId) {
+      message.warning('请选择API');
+      return;
+    }
+    const requestBody = {
+      apiId: apiId,
+      cases: selectedCases,
+      createUser: userInfo.userName,
+    };
+
+    postRequest(APIS.copyCases, { data: requestBody }).then((res) => {
+      if (res.success) message.success('复制成功');
+      setCopyCasesModalVisible(false);
+    });
+  };
+
+  const handleOpenCopyCasesModal = () => {
+    setCopyCasesModalVisible(true);
+  };
+
   if (!props.current) {
     return (
       <ContentCard className="page-case-right-detail">
@@ -104,15 +131,20 @@ export default function RightDetail(props: RightDetailProps) {
           <Form.Item name="keyword">
             <Input.Search placeholder="输入关键字，回车搜索" onSearch={handleSearch} style={{ width: 320 }} />
           </Form.Item>
-          {props.current.level === 3 ? (
-            <Button
-              onClick={() => props.emitter.emit('CASE::ADD_CASE', apiDetail)}
-              type="primary"
-              icon={<PlusOutlined />}
-            >
-              新增用例
+          <Space>
+            {props.current.level === 3 ? (
+              <Button
+                onClick={() => props.emitter.emit('CASE::ADD_CASE', apiDetail)}
+                type="primary"
+                // icon={<PlusOutlined />}
+              >
+                新增用例
+              </Button>
+            ) : null}
+            <Button type="primary" onClick={handleOpenCopyCasesModal}>
+              复制用例
             </Button>
-          ) : null}
+          </Space>
         </Form>
       </div>
       <Table
@@ -128,8 +160,20 @@ export default function RightDetail(props: RightDetailProps) {
             setPageIndex(1);
             setPageSize(next);
           },
+          showTotal: (total) => `共 ${total} 条`,
         }}
         loading={caseLoading}
+        scroll={{ x: 1000 }}
+        expandable={{
+          expandedRowRender: (record) => (
+            <div>
+              <p style={{ margin: 0 }}>{'所属模块:' + record.moduleName}</p>
+              <p style={{ margin: 0 }}>{'接口名称:' + record.apiName}</p>
+            </div>
+          ),
+          rowExpandable: (record) => record.apiName !== '',
+        }}
+        rowSelection={{ onChange: setSelectedCases }}
       >
         <Table.Column
           dataIndex="id"
@@ -137,14 +181,15 @@ export default function RightDetail(props: RightDetailProps) {
           render={(value, record: CaseItemVO) => <a onClick={() => handleDetailCaseItem(record)}>{value}</a>}
           width={80}
         />
-        <Table.Column dataIndex="moduleName" title="模块" width={160} />
-        <Table.Column dataIndex="apiName" title="接口" ellipsis />
+        {/* <Table.Column dataIndex="moduleName" title="模块" width={160} />
+        <Table.Column dataIndex="apiName" title="接口" ellipsis /> */}
         <Table.Column dataIndex="name" title="用例名称" ellipsis />
         <Table.Column dataIndex="createUser" title="创建人" width={120} />
         <Table.Column dataIndex="gmtModify" title="修改时间" width={160} />
         <Table.Column
           width={160}
           title="操作"
+          fixed="right"
           render={(_, record: CaseItemVO, index: number) => (
             <div className="action-cell">
               <a onClick={() => handleEditCaseItem(record)}>编辑</a>
@@ -157,6 +202,12 @@ export default function RightDetail(props: RightDetailProps) {
         />
       </Table>
       <CaseExec visible={!!execCases.length} caseList={execCases} onClose={() => setExecCases([])} />
+      <CopyCasesModal
+        visible={copyCasesModalVisible}
+        onOk={handleCopyCases}
+        onCancel={() => setCopyCasesModalVisible(false)}
+        treeData={props.apiTreeData}
+      />
     </ContentCard>
   );
 }

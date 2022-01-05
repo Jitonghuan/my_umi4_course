@@ -13,10 +13,11 @@ const { Item: FormItem } = Form;
 export interface FilterHeaderProps {
   onSearch?: (values: any) => any;
   trggerSearchOnInit?: boolean;
+  searchParams?: any;
 }
 
 export default function FilterHeader(props: FilterHeaderProps) {
-  const { onSearch, trggerSearchOnInit = false } = props;
+  const { onSearch, trggerSearchOnInit = false, searchParams = {} } = props;
 
   const [searchField] = Form.useForm();
   const { categoryData } = useContext(FeContext);
@@ -25,18 +26,26 @@ export default function FilterHeader(props: FilterHeaderProps) {
 
   const handleSearch = useCallback(() => {
     const values = searchField.getFieldsValue();
-    console.log('> handleSearch', values);
     onSearch?.(values);
   }, [searchField]);
 
   const handleReset = useCallback(() => {
     setCategoryCode(undefined);
+    searchField.setFieldsValue({
+      appType: '',
+      appCategoryCode: '',
+      appGroupCode: '',
+      appName: '',
+      appCode: '',
+    });
     handleSearch();
   }, [searchField]);
 
   const handleAppCategoryChange = useCallback(
     (next: string) => {
-      searchField.resetFields(['appGroupCode']);
+      searchField.setFieldsValue({
+        appGroupCode: '',
+      });
       setCategoryCode(next);
       handleSearch();
     },
@@ -59,7 +68,13 @@ export default function FilterHeader(props: FilterHeaderProps) {
 
   return (
     <FilterCard>
-      <Form layout="inline" form={searchField} onFinish={handleSearch} onReset={handleReset}>
+      <Form
+        layout="inline"
+        initialValues={searchParams}
+        form={searchField}
+        onFinish={handleSearch}
+        onReset={handleReset}
+      >
         <FormItem label="应用类型" name="appType">
           <Select
             options={appTypeOptions}

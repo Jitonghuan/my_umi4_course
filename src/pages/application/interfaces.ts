@@ -46,6 +46,8 @@ export interface AppItemVO {
   isClient?: number;
   /** 描述 */
   desc?: string;
+  /**是否启用Nacos */
+  useNacos?: number;
 
   // ----- 前端应用类型相关属性
   /** 前端工程类型 */
@@ -63,6 +65,8 @@ export interface AppItemVO {
   }[];
   /** 构建任务 */
   deployJobUrl?: string;
+  /** 自定义配置参数 */
+  customParams?: string;
 }
 
 export interface AppMemberInfo {

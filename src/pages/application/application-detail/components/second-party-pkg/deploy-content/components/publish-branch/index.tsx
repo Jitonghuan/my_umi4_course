@@ -26,7 +26,7 @@ export default function PublishBranch(props: IProps) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [envDataList, setEnvDataList] = useState([]);
+  const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
 
   const submit = () => {
@@ -78,15 +78,19 @@ export default function PublishBranch(props: IProps) {
     queryEnvsReq({
       categoryCode: appCategoryCode as string,
       envTypeCode: env,
+      appCode,
     }).then((data) => {
-      setEnvDataList(data.list);
+      let envSelect: any = [];
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
+      setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);
 
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>待发布的分支</div>
-
       <div className={`${rootCls}__list-wrap`}>
         <div className={`${rootCls}__list-header`}>
           <span className={`${rootCls}__list-header-text`}>分支列表</span>
@@ -102,6 +106,8 @@ export default function PublishBranch(props: IProps) {
           rowKey="id"
           className={`${rootCls}__list-table`}
           dataSource={dataSource}
+          bordered
+          scroll={{ x: '100%' }}
           pagination={false}
           rowSelection={{
             type: 'checkbox',

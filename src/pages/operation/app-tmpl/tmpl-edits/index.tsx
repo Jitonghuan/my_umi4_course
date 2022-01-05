@@ -11,7 +11,7 @@ import * as APIS from '../service';
 import { TmplEdit } from '../tmpl-list';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from 'antd';
+import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
 
 export interface TmplListProps {
   mode?: EditorMode;
@@ -21,7 +21,6 @@ export interface TmplListProps {
 }
 
 export default function TaskEditor(props: TmplListProps) {
-  const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
   const children: any = [];
   const { mode, initData, onClose, onSave } = props;
@@ -36,9 +35,6 @@ export default function TaskEditor(props: TmplListProps) {
     setSource(next);
   };
 
-  const handleAdd = () => {
-    setCount(count + 1);
-  };
   const clickChange = () => {};
 
   useEffect(() => {
@@ -53,8 +49,16 @@ export default function TaskEditor(props: TmplListProps) {
       appCategoryCode: initData?.appCategoryCode || '',
       envCodes: initData?.envCode || [],
       templateValue: initData?.templateValue,
+      languageCode: initData?.languageCode,
       remark: initData?.remark,
     };
+
+    let envCodeCurrent: any = [];
+    if (initData?.envCode.indexOf('') === 0) {
+      envCodeCurrent = [];
+    } else if (initData?.envCode.indexOf('') === -1) {
+      envCodeCurrent = initValues.envCodes;
+    }
 
     let arr = [];
     let jvm = '';
@@ -74,9 +78,10 @@ export default function TaskEditor(props: TmplListProps) {
       templateName: initValues.templateName,
       templateValue: initValues.templateValue,
       appCategoryCode: initValues.appCategoryCode,
-      envCodes: initValues.envCodes,
+      envCodes: envCodeCurrent,
       jvm: jvm,
       tmplConfigurableItem: arr,
+      languageCode: initValues.languageCode,
       remark: initValues?.remark,
     });
     changeAppCategory(initValues.appCategoryCode);
@@ -108,12 +113,11 @@ export default function TaskEditor(props: TmplListProps) {
     });
   };
 
-  // 根据应用分类查询环境
+  // 查询环境
   const changeAppCategory = (categoryCode: string) => {
-    //调用接口 查询env 参数就是appCategoryCode
-    //setEnvDatas
+    //调用接口 查询env
     setEnvDatas([]);
-    getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
+    getRequest(APIS.envList, { data: { pageSize: -1 } }).then((resp: any) => {
       if (resp.success) {
         const datas =
           resp?.data?.dataSource?.map((el: any) => {
@@ -140,31 +144,56 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-
-    putRequest(APIS.update, {
-      data: {
-        templateName: value.templateName,
-        templateType: value.templateType,
-        templateValue: value.templateValue,
-        jvm: value?.jvm,
-        appCategoryCode: value.appCategoryCode || '',
-        envCodes: envCodesArry,
-        tmplConfigurableItem: tmplConfigurableItem || {},
-        templateCode: templateCode,
-        remark: value?.remark,
-      },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas = resp.data || [];
-        history.push({
-          pathname: 'tmpl-list',
-        });
-        message.success('保存成功！');
-        onSave?.();
-      } else {
-        message.error('保存失败');
-      }
-    });
+    if (initData?.languageCode === 'java') {
+      putRequest(APIS.update, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          jvm: value?.jvm,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: envCodesArry,
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          templateCode: templateCode,
+          remark: value?.remark,
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          history.push({
+            pathname: 'tmpl-list',
+          });
+          message.success('保存成功！');
+          onSave?.();
+        } else {
+          message.error('保存失败');
+        }
+      });
+    } else {
+      putRequest(APIS.update, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: envCodesArry,
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          templateCode: templateCode,
+          remark: value?.remark,
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          history.push({
+            pathname: 'tmpl-list',
+          });
+          message.success('保存成功！');
+          onSave?.();
+        } else {
+          message.error('保存失败');
+        }
+      });
+    }
   };
 
   const changeTmplType = (value: any) => {
@@ -181,7 +210,7 @@ export default function TaskEditor(props: TmplListProps) {
       <ContentCard className="tmpl-edits">
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
-            <Col span={6}>
+            <Col span={7}>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select
                   showSearch
@@ -192,7 +221,13 @@ export default function TaskEditor(props: TmplListProps) {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+
+            <Col span={7}>
+              <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
+                <Select showSearch style={{ width: 150 }} disabled={true} />
+              </Form.Item>
+            </Col>
+            <Col span={9} style={{ marginLeft: 10 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
                 <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
               </Form.Item>
@@ -200,7 +235,7 @@ export default function TaskEditor(props: TmplListProps) {
           </Row>
           <Row style={{ marginTop: '20px' }}>
             <Col span={12}>
-              <div style={{ fontSize: 18 }}>模版详情：</div>
+              <div style={{ fontSize: 15, color: '#696969' }}>模版详情：</div>
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
                 <AceEditor mode="yaml" height={700} />
@@ -208,7 +243,7 @@ export default function TaskEditor(props: TmplListProps) {
             </Col>
 
             <Col span={10} offset={2}>
-              <div style={{ fontSize: 18 }}>可配置项：</div>
+              <div style={{ fontSize: 15, color: '#696969' }}>可配置项：</div>
               <Form.Item name="tmplConfigurableItem">
                 <EditorTable
                   value={source}
@@ -223,23 +258,17 @@ export default function TaskEditor(props: TmplListProps) {
                   ]}
                 />
               </Form.Item>
-              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
-              <Form.Item name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 520 }}></Input.TextArea>
-              </Form.Item>
-              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-              {isDeployment == 'deployment' ? (
+              {isDeployment == 'deployment' && initData?.languageCode === 'java' ? <span>JVM参数:</span> : null}
+              {isDeployment == 'deployment' && initData?.languageCode === 'java' ? (
                 <Form.Item name="jvm">
                   <AceEditor mode="yaml" height={300} />
                 </Form.Item>
-              ) : (
-                ''
-              )}
+              ) : null}
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
-                style={{ marginTop: '50px' }}
+                style={{ marginTop: '30px' }}
               >
                 <Select
                   showSearch
@@ -249,11 +278,14 @@ export default function TaskEditor(props: TmplListProps) {
                   disabled={isDisabled}
                 />
               </Form.Item>
-              <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
+
+              <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes" style={{ marginTop: '20px' }}>
                 <Select
                   allowClear
+                  mode="multiple"
+                  showSearch
                   style={{ width: 220 }}
-                  placeholder="请选择"
+                  placeholder="支持通过envCode搜索环境"
                   onChange={clickChange}
                   options={envDatas}
                   disabled={isDisabled}
@@ -261,10 +293,15 @@ export default function TaskEditor(props: TmplListProps) {
                   {children}
                 </Select>
               </Form.Item>
+
+              <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 520, height: 220 }}></Input.TextArea>
+              </Form.Item>
             </Col>
           </Row>
           <Form.Item>
-            <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
+            <Space size="small" style={{ float: 'right' }}>
               <Button type="ghost" htmlType="reset" onClick={onClose}>
                 取消
               </Button>

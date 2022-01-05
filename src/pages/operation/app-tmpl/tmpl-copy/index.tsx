@@ -19,7 +19,7 @@ export default function DemoPageTb(porps: any) {
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
   const children: any = [];
-  const [categoryData, setCategoryData] = useState<string>(); //应用分类
+  const [categoryData, setCategoryData] = useState<any>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
@@ -49,6 +49,7 @@ export default function DemoPageTb(porps: any) {
   }, []);
   //进入页面加载信息
   const templateCode: string = porps.history.location.query.templateCode;
+  const languageCode = porps.history.location.query.languageCode;
   const tmplDetialResult = (templateCode: string) => {
     getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
       if (res.success) {
@@ -79,6 +80,7 @@ export default function DemoPageTb(porps: any) {
           envCodes: envCode,
           tmplConfigurableItem: arr,
           jvm: jvm,
+          languageCode: tmplresult.languageCode,
           remark: tmplresult.remark,
         });
         setIsDeployment(tmplresult.templateType);
@@ -114,13 +116,12 @@ export default function DemoPageTb(porps: any) {
     });
   };
 
-  // 根据应用分类查询环境
+  // 查询环境
   const changeAppCategory = (categoryCode: string) => {
-    //调用接口 查询env 参数就是appCategoryCode
-
+    //调用接口 查询env
     setEnvDatas([]);
     setAppCategoryCode(categoryCode);
-    getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
+    getRequest(APIS.envList, { data: { pageSize: -1 } }).then((resp: any) => {
       if (resp.success) {
         const datas =
           resp?.data?.dataSource?.map((el: any) => {
@@ -134,6 +135,7 @@ export default function DemoPageTb(porps: any) {
       }
     });
   };
+
   //提交复制模版
   const createTmpl = (value: any) => {
     // const templateCode:string = porps.history.location.query.templateCode;
@@ -149,27 +151,53 @@ export default function DemoPageTb(porps: any) {
     } else {
       valArr.push(value.envCodes);
     }
-    postRequest(APIS.create, {
-      data: {
-        templateName: value.templateName,
-        templateType: value.templateType,
-        templateValue: value.templateValue,
-        appCategoryCode: value.appCategoryCode || '',
-        envCodes: valArr || [],
-        tmplConfigurableItem: tmplConfigurableItem || {},
-        jvm: value?.jvm,
-        remark: value?.remark,
-        // templateCode:templateCode
-      },
-    }).then((resp: any) => {
-      if (resp.success) {
-        const datas = resp.data || [];
-        setEnvDatas(datas.envCodes);
-        history.push({
-          pathname: 'tmpl-list',
-        });
-      }
-    });
+    if (languageCode === 'java') {
+      postRequest(APIS.create, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: valArr || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          jvm: value?.jvm,
+          languageCode: value?.languageCode,
+          remark: value?.remark,
+          // templateCode:templateCode
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          setEnvDatas(datas.envCodes);
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      });
+    } else {
+      postRequest(APIS.create, {
+        data: {
+          templateName: value.templateName,
+          templateType: value.templateType,
+          templateValue: value.templateValue,
+          appCategoryCode: value.appCategoryCode || '',
+          envCodes: valArr || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+
+          languageCode: value?.languageCode,
+          remark: value?.remark,
+          // templateCode:templateCode
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          const datas = resp.data || [];
+          setEnvDatas(datas.envCodes);
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      });
+    }
   };
 
   return (
@@ -188,6 +216,11 @@ export default function DemoPageTb(porps: any) {
                 />
               </Form.Item>
             </Col>
+            <Col span={6}>
+              <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
+                <Select showSearch style={{ width: 150 }} disabled={true} />
+              </Form.Item>
+            </Col>
             <Col span={8}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
                 <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
@@ -196,7 +229,7 @@ export default function DemoPageTb(porps: any) {
           </Row>
           <Row style={{ marginTop: '20px' }}>
             <Col span={10}>
-              <div style={{ fontSize: 18 }}>模版详情：</div>
+              <div style={{ fontSize: 15, color: '#696969' }}>模版详情：</div>
 
               <Form.Item name="templateValue" rules={[{ required: true, message: '这是必填项' }]}>
                 {/* <TextArea rows={18} disabled={isDisabled} /> */}
@@ -205,7 +238,7 @@ export default function DemoPageTb(porps: any) {
             </Col>
 
             <Col span={10} offset={2}>
-              <div style={{ fontSize: 18 }}>可配置项：</div>
+              <div style={{ fontSize: 15, color: '#696969' }}>可配置项：</div>
               <Form.Item name="tmplConfigurableItem">
                 <EditorTable
                   value={source}
@@ -221,39 +254,29 @@ export default function DemoPageTb(porps: any) {
                   disabled={isDisabled}
                 />
               </Form.Item>
-              <div style={{ fontSize: 18, marginTop: 20 }}>备注：</div>
-              <Form.Item name="remark">
-                <Input.TextArea placeholder="请输入" style={{ width: 660 }}></Input.TextArea>
-              </Form.Item>
-              {isDeployment == 'deployment' ? <span>JVM参数:</span> : ''}
-              {isDeployment == 'deployment' ? (
+              {isDeployment === 'deployment' && languageCode === 'java' ? <span>JVM参数:</span> : ''}
+              {isDeployment === 'deployment' && languageCode === 'java' ? (
                 <Form.Item name="jvm">
                   <AceEditor mode="yaml" height={300} />
                 </Form.Item>
               ) : (
                 ''
               )}
-
               <Form.Item
                 label="选择默认应用分类："
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
                 style={{ marginTop: '50px' }}
               >
-                <Select
-                  showSearch
-                  style={{ width: 220 }}
-                  options={categoryData}
-                  onChange={changeAppCategory}
-                  disabled={isDisabled}
-                />
+                <Select showSearch style={{ width: 220 }} disabled={isDisabled} options={categoryData} />
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
                   mode="multiple"
                   allowClear
                   style={{ width: 220 }}
-                  placeholder="Please select"
+                  showSearch
+                  placeholder="支持通过envCode搜索环境"
                   // defaultValue={['a10', 'c12']}
                   onChange={clickChange}
                   options={envDatas}
@@ -262,10 +285,15 @@ export default function DemoPageTb(porps: any) {
                   {children}
                 </Select>
               </Form.Item>
+
+              <div style={{ fontSize: 15, color: '#696969', marginTop: 20 }}>备注：</div>
+              <Form.Item name="remark">
+                <Input.TextArea placeholder="请输入" style={{ width: 660, height: 220 }}></Input.TextArea>
+              </Form.Item>
             </Col>
           </Row>
           <Form.Item>
-            <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
+            <Space size="small" style={{ float: 'right' }}>
               <Button
                 type="ghost"
                 htmlType="reset"

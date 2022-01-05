@@ -6,41 +6,49 @@
  */
 
 import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { Modal, Radio, Spin, message } from 'antd';
+import { Modal, Radio, Spin, message, Select } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
-import { confirmProdDeploy, queryEnvsReq } from '@/pages/application/service';
+import { confirmProdDeploy, queryEnvsReq, applyHaveNoUpPlanList } from '@/pages/application/service';
 import { IProps } from './types';
+import { getRequest, postRequest } from '@/utils/request';
 
 export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel, onOperate }: IProps) {
-  const { deployStatus, deployedEnvs, deployingEnv, deployingHosBatch, jenkinsUrl } = deployInfo || {};
+  const { deployStatus, deployedEnvs, deployingEnv, deployingHosBatch, jenkinsUrl, deployApplyIds } = deployInfo || {};
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode } = appData || {};
-
-  const [deployConfig, setDeployConfig] = useState({
-    deployEnv: deployingEnv,
-    deployBatch: 12,
-  });
-  const [envDataList, setEnvDataList] = useState([]);
+  const { appCategoryCode, appCode } = appData || {};
+  const [stateDeployEnv, setStateDeployEnv] = useState<string>();
+  const [deployBatch, setDeployBatch] = useState(12);
+  const [envDataList, setEnvDataList] = useState<any>([]);
+  useEffect(() => {
+    let batch = localStorage.DEPLOYBATCH ? localStorage.DEPLOYBATCH : 12;
+    let applyIdsData;
+    if (localStorage.APPLY_IDS) {
+      applyIdsData = JSON.parse(localStorage.APPLY_IDS);
+    } else {
+      applyIdsData = [];
+    }
+    setDeployBatch(parseInt(batch));
+    setCurrentAppIds(applyIdsData);
+  }, []);
 
   useEffect(() => {
-    if (!['deploying', 'deployWaitBatch2'].includes(deployStatus)) return;
+    if (!visible) return;
 
-    if (deployingEnv && deployingEnv !== deployConfig.deployEnv) {
-      console.log('>> reset deployEnv: ', deployingEnv);
-
-      setDeployConfig({
-        deployEnv: deployingEnv,
-        deployBatch: deployConfig.deployBatch,
-      });
-    }
-  }, [deployingEnv]);
+    setStateDeployEnv(deployingEnv);
+    // deployApply(deployingEnv);
+  }, [visible]);
 
   useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
-      categoryCode: appCategoryCode as string,
+      // categoryCode: appCategoryCode as string,
       envTypeCode,
+      appCode: appData?.appCode,
     }).then((data) => {
+      let envSelect = [];
+      data?.list?.map((item: any) => {
+        envSelect.push({ label: item.envName, value: item.envCode });
+      });
       setEnvDataList(data.list);
     });
   }, [appCategoryCode, envTypeCode]);
@@ -89,6 +97,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
     // TODO 如何判断哪个机构被部署了
     let text1 = null;
     let text2 = null;
+    if (deployStatus === 'deployFinish' || deployStatus === 'merging') {
+      localStorage.removeItem('DEPLOYBATCH');
+      localStorage.removeItem('APPLY_IDS');
+    }
     if (deployStatus !== 'deploying' && deployStatus !== 'deployWaitBatch2') {
       return null;
     }
@@ -113,7 +125,6 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       );
       text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
     }
-
     return (
       <>
         <div>
@@ -131,6 +142,31 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       </>
     );
   }, [deployInfo]);
+  const [deployApplyOptions, setDeployApplyOptions] = useState<any>([]);
+  let appIds: any = [];
+  const [currentAppIds, setCurrentAppIds] = useState<any>([]);
+  let resData;
+  const deployApply = async (currentEnv: any) => {
+    await getRequest(applyHaveNoUpPlanList, { data: { appCode, envCode: currentEnv } }).then((res) => {
+      if (res.success) {
+        let dataArry: any = [];
+        let dataSource = res.data || [];
+        dataSource?.map((item: any) => {
+          dataArry.push({ label: item?.ApplyTitle, value: item?.ApplyId });
+        });
+        setDeployApplyOptions(dataArry);
+        if (res.data === null) {
+          resData = null;
+          setDeployApplyOptions(null);
+        }
+      }
+    });
+  };
+  const changeDeployApply = (value: any) => {
+    appIds = value;
+    setCurrentAppIds(value);
+    localStorage.APPLY_IDS = JSON.stringify(value || []);
+  };
 
   return (
     <Modal
@@ -139,12 +175,22 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       confirmLoading={deployStatus === 'deploying'}
       okText={deployStatus === 'deployWaitBatch2' ? '继续' : '确定'}
       onOk={() => {
-        let batch: 0 | 1 | 2 = deployConfig.deployBatch === 12 ? 1 : 0;
-
+        // let batch: 0 | 1 | 2 = deployBatch === 12 ? 1 : 0;
+        let batch;
+        if (deployBatch === 0) {
+          batch = 0;
+        } else if (deployBatch === 12) {
+          batch = 1 || 2;
+        }
         if (deployStatus === 'deployWaitBatch2') {
           batch = 2;
         } else if (deployStatus === 'deployWait') {
-          batch = 1;
+          // batch = 1;
+          if (deployBatch === 0) {
+            batch = 0;
+          } else {
+            batch = 1;
+          }
         } else {
           onCancel?.();
           return;
@@ -152,15 +198,19 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
 
         confirmProdDeploy({
           id: deployInfo.id,
-          hospital: deployConfig.deployEnv,
-          batch,
+          hospital: stateDeployEnv!,
+          batch: batch,
+          applyIds: currentAppIds!,
         })
           .then((res) => {
             if (!res.success) {
               message.error(res.errorMsg);
             }
           })
-          .finally(() => onOperate('deployEnd'));
+          .finally(() => {
+            onOperate('deployEnd');
+            // window.location.reload();
+          });
       }}
       onCancel={onCancel}
     >
@@ -169,8 +219,11 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         {/* 根据 envs 拿到列表 */}
         <Radio.Group
           disabled={['deploying', 'deployWaitBatch2'].includes(deployStatus)}
-          value={deployConfig.deployEnv}
-          onChange={(v) => setDeployConfig({ ...deployConfig, deployEnv: v.target.value })}
+          value={stateDeployEnv}
+          onChange={(v) => {
+            setStateDeployEnv(v.target.value);
+            deployApply(v.target.value);
+          }}
           options={envList?.map((v: any) => ({
             label: v.envName,
             value: v.envCode,
@@ -181,14 +234,31 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         <span>发布批次：</span>
         <Radio.Group
           disabled={deployStatus !== 'deployWait'}
-          value={deployConfig.deployBatch}
-          onChange={(v) => setDeployConfig({ ...deployConfig, deployBatch: v.target.value })}
+          value={deployBatch}
+          onChange={(v) => {
+            setDeployBatch(v.target.value);
+            localStorage.DEPLOYBATCH = v.target.value;
+          }}
           options={[
             { label: '分批', value: 12 },
             { label: '不分批', value: 0 },
           ]}
         />
       </div>
+      {deployApplyOptions !== null && (
+        <div style={{ marginTop: 8 }}>
+          <span>发布申请：</span>
+          <Select
+            disabled={deployStatus !== 'deployWait'}
+            style={{ width: 220 }}
+            mode="multiple"
+            options={deployApplyOptions}
+            onChange={changeDeployApply}
+            value={currentAppIds}
+          ></Select>
+        </div>
+      )}
+
       <h3 style={{ marginTop: 20 }}>发布详情</h3>
       {deployedEnvs &&
         deployedEnvList.map((item: any) => {

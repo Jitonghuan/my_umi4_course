@@ -46,7 +46,6 @@ const PrometheusForm: React.FC = () => {
     api: queryPrometheusList,
     method: 'GET',
     onSuccess: (data) => {
-      console.log(data, 'uuu');
       if (!data) return;
       form?.setFieldsValue({
         ...data.dataSource[0],

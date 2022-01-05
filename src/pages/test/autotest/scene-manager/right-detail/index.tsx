@@ -29,7 +29,7 @@ export default function RightDetail(props: RightDetailProps) {
   }
 
   if (props.current.level === 3) {
-    return <SceneDetail emitter={props.emitter} current={props.current} />;
+    return <SceneDetail emitter={props.emitter} current={props.current} defaultProjectId={props.curProjectId} />;
   }
 
   return <SceneList emitter={props.emitter} current={props.current} />;

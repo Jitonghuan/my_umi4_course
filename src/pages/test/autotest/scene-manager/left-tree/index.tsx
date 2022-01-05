@@ -31,10 +31,10 @@ const stopProp = {
 type nodeAction = 'addScene' | 'editScene' | 'delScene' | 'cloneScene';
 
 export default function LeftTree(props: LeftTreeProps) {
+  const { searchProject, setSearchProject } = props;
   const [projectOptions] = useProjectOptions();
-  const [searchProject, setSearchProject] = useState<number>();
-  const [treeData, treeLoading, setTreeData, reloadTreeData] = useLeftTreeData(searchProject);
   const [selectedItem, setSelectedItem] = useState<TreeNode>();
+  const [treeData, treeLoading, setTreeData, reloadTreeData] = useLeftTreeData(searchProject);
   // 当前操作的节点（或者触发节点）
   const targetNodeRef = useRef<TreeNode>();
   const [sceneEditorMode, setSceneEditorMode] = useState<EditorMode>('HIDE');
@@ -165,7 +165,7 @@ export default function LeftTree(props: LeftTreeProps) {
   );
 
   return (
-    <CardRowGroup.SlideCard noPadding width={244} className="page-scane-tree">
+    <CardRowGroup.SlideCard noPadding width={350} className="page-scane-tree">
       <div className="scane-list-header">
         <Select
           options={projectOptions}
@@ -192,6 +192,7 @@ export default function LeftTree(props: LeftTreeProps) {
         expandedKeys={expandedKeys}
         onExpand={(keys, info) => setExpandedKeys(keys)}
         showSearch
+        showLine
         searchPlaceholder="搜索模块、场景"
         titleRender={
           ((nodeData: TreeNode) => (

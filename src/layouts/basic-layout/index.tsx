@@ -7,15 +7,19 @@ import { useSize, useDebounce } from '@umijs/hooks';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
 import { queryUserInfoApi, doLogoutApi } from '@/utils/request';
-import {
-  FeContext,
-  useDocumentTitle,
-  usePermissionData,
-  useCategoryData,
-  useBusinessData,
-  useEnvTypeData,
-} from '@/common/hooks';
+import { FeContext, useDocumentTitle, usePermissionData, useCategoryData, useBusinessData } from '@/common/hooks';
 import './index.less';
+
+// 屏蔽掉 React Development 模式下红色的警告
+if (appConfig.isLocal) {
+  const oldError = console.error.bind(console);
+  console.error = (...args: string[]) => {
+    if (args?.find((n) => n?.includes?.('Warning: '))) {
+      return console.log('%c[React Warning] ', 'color:orange', args?.[0]);
+    }
+    oldError(...args);
+  };
+}
 
 export default function BasicLayout(props: any) {
   // 初始化 doc title hook
@@ -26,8 +30,6 @@ export default function BasicLayout(props: any) {
   const [categoryData] = useCategoryData();
   // 业务线
   const [businessData] = useBusinessData();
-  // 环境
-  const [envTypeData] = useEnvTypeData();
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -49,7 +51,6 @@ export default function BasicLayout(props: any) {
           permissionData,
           businessData,
           categoryData,
-          envTypeData,
         }}
       >
         <ChartsContext.Provider value={{ effectResize }}>

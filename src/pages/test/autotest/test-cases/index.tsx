@@ -10,6 +10,7 @@ import RightDetail from './right-detail';
 import CaseEditor from '../_components/case-editor';
 import CaseDetail from '../_components/case-detail';
 import { TreeNode, CaseItemVO } from '../interfaces';
+import { useLeftTreeData } from './hooks';
 import './index.less';
 
 export default function TestCaseManager() {
@@ -17,6 +18,8 @@ export default function TestCaseManager() {
   const [editorData, setEditorData] = useState<CaseItemVO>();
   const [caseEditorMode, setCaseEditorMode] = useState<EditorMode>('HIDE');
   const [detailData, setDetailData] = useState<CaseItemVO>();
+  const [searchProject, setSearchProject] = useState<number>();
+  const [treeData, treeLoading, setTreeData, reloadTreeData] = useLeftTreeData(searchProject);
   const apiDetailRef = useRef<Record<string, any>>();
 
   const emitter = useMemo(() => {
@@ -47,9 +50,18 @@ export default function TestCaseManager() {
 
   return (
     <CardRowGroup>
-      <LeftTree onItemClick={(item) => setCurrent(item)} />
-      <RightDetail key={current?.key || 1} current={current} emitter={emitter} />
+      <LeftTree
+        onItemClick={(item) => setCurrent(item)}
+        searchProject={searchProject}
+        setSearchProject={setSearchProject}
+        treeData={treeData}
+        treeLoading={treeLoading}
+        setTreeData={setTreeData}
+        reloadTreeData={reloadTreeData}
+      />
+      <RightDetail key={current?.key || 1} current={current} emitter={emitter} apiTreeData={treeData} />
       <CaseEditor
+        defaultProjectId={searchProject}
         mode={caseEditorMode}
         initData={editorData}
         current={current}

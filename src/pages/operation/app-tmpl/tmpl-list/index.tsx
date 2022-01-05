@@ -3,14 +3,20 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from '../tmpl-edits';
-
+/** 应用开发语言(后端) */
+export type AppDevelopLanguage = 'java' | 'golang' | 'python';
+export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
+  { label: 'GOLANG', value: 'golang' },
+  { label: 'JAVA', value: 'java' },
+  { label: 'PYTHON', value: 'python' },
+];
 /** 编辑页回显数据 */
 export interface TmplEdit extends Record<string, any> {
   templateCode: string;
@@ -20,6 +26,7 @@ export interface TmplEdit extends Record<string, any> {
   appCategoryCode: any;
   envCodes: string;
   templateValue: string;
+  languageCode: string;
   remark: string;
 }
 export default function Launch() {
@@ -36,10 +43,9 @@ export default function Launch() {
   const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
-
+  const [tmplDetailData, setTmplDetailData] = useState<any>(' ');
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
-
   const handleEditTask = useCallback(
     (record: TmplEdit, index: number) => {
       setTmplateData(record);
@@ -59,7 +65,7 @@ export default function Launch() {
   // 加载应用分类下拉选择
   const selectCategory = () => {
     getRequest(APIS.appTypeList).then((result) => {
-      const list = (result.data.dataSource || []).map((n: any) => ({
+      const list = (result.data.dataSource || [])?.map((n: any) => ({
         label: n.categoryName,
         value: n.categoryCode,
         data: n,
@@ -71,7 +77,7 @@ export default function Launch() {
   //加载模版类型下拉选择
   const selectTmplType = () => {
     getRequest(APIS.tmplType).then((result) => {
-      const list = (result.data || []).map((n: any) => ({
+      const list = (result.data || [])?.map((n: any) => ({
         label: n,
         value: n,
         data: n,
@@ -132,6 +138,7 @@ export default function Launch() {
         envCode: value.envCode,
         templateType: value.templateType,
         templateName: value.templateName,
+        languageCode: value.languageCode,
         pageIndex: value.pageIndex,
         pageSize: value.pageSize,
       },
@@ -227,6 +234,9 @@ export default function Launch() {
               }}
             />
           </Form.Item>
+          <Form.Item label="模版语言：" name="languageCode">
+            <Select showSearch allowClear style={{ width: 120 }} options={appDevelopLanguageOptions} />
+          </Form.Item>
           <Form.Item label=" 模版名称：" name="templateName">
             <Input placeholder="请输入模版名称"></Input>
           </Form.Item>
@@ -277,11 +287,26 @@ export default function Launch() {
           >
             <Table.Column title="ID" dataIndex="id" width="4%" />
             <Table.Column title="模版名称" dataIndex="templateName" width="20%" ellipsis />
-            {/* <Table.Column title="模版CODE" dataIndex="templateCode" width="22%" ellipsis /> */}
+            <Table.Column title="模版语言" dataIndex="languageCode" width="8%" ellipsis />
             <Table.Column title="模版类型" dataIndex="templateType" width="8%" ellipsis />
-            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="12%" ellipsis />
-            <Table.Column title="环境" dataIndex="envCode" width="12%" />
-            <Table.Column title="备注" dataIndex="remark" width="26%" ellipsis />
+            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="8%" ellipsis />
+            <Table.Column
+              title="环境"
+              dataIndex="envCode"
+              width="16%"
+              render={(current) => (
+                <span>
+                  {current?.map((item: any) => {
+                    return (
+                      <span style={{ marginLeft: 4, marginTop: 2 }}>
+                        <Tag color={'green'}>{item}</Tag>
+                      </span>
+                    );
+                  })}
+                </span>
+              )}
+            />
+            <Table.Column title="备注" dataIndex="remark" width="18%" ellipsis />
             <Table.Column
               title="操作"
               dataIndex="gmtModify"
@@ -296,6 +321,7 @@ export default function Launch() {
                         query: {
                           type: 'edit',
                           templateCode: record.templateCode,
+                          languageCode: record?.languageCode,
                         },
                       })
                     }
@@ -309,6 +335,7 @@ export default function Launch() {
                         query: {
                           type: 'info',
                           templateCode: record.templateCode,
+                          languageCode: record?.languageCode,
                         },
                       })
                     }
@@ -319,7 +346,14 @@ export default function Launch() {
                   <a onClick={() => handleEditTask(record, index)}>编辑</a>
                   <a
                     onClick={() => {
-                      history.push(`push?templateCode=${record.templateCode}`);
+                      sessionStorage.setItem('tmplDetailData', JSON.stringify(record || ''));
+                      history.push({
+                        pathname: 'push',
+                        query: {
+                          templateCode: record?.templateCode,
+                          languageCode: record?.languageCode,
+                        },
+                      });
                     }}
                   >
                     推送

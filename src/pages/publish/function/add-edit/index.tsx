@@ -437,7 +437,6 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                 });
                 setEditingKey(newEditingKey);
                 setData(newData);
-                console.log(data, 'data');
                 setTimeout(() => {
                   for (let i = start - 1; i < start - 1 + selectRows.length; i++) {
                     // edit(newData[i] as Partial<IFuncItem> & { key: React.Key; })

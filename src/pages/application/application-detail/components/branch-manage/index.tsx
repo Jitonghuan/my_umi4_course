@@ -4,7 +4,7 @@
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import moment from 'moment';
-import { Button, message, Form, Input, Table, Popconfirm } from 'antd';
+import { Button, message, Form, Input, Table, Popconfirm, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -12,6 +12,8 @@ import { datetimeCellRender } from '@/utils';
 import BranchEditor from './branch-editor';
 import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
+import { createReview } from '@/pages/application/service';
+import { postRequest } from '@/utils/request';
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
@@ -19,6 +21,7 @@ export default function BranchManage() {
   const [searchForm] = Form.useForm();
   const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
   const [pending, setPending] = useState(false);
+  const [reviewId, setReviewId] = useState<string>('');
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -56,7 +59,26 @@ export default function BranchManage() {
       setPending(false);
     }
   }, []);
+  //创建Review
+  const creatReviewUrl = async (record: any) => {
+    await postRequest(createReview, { data: { appCode: record.appCode, branch: record.branchName } }).then((reslut) => {
+      if (reslut.success) {
+        message.success('创建Review成功！');
+        queryBranchList();
+      } else {
+        message.error(reslut.errorMsg);
+        queryBranchList();
+      }
+    });
+  };
 
+  const reviewUrl = (reviewId: string, record: any) => {
+    return (
+      <a href={'http://upsource.cfuture.shop/' + appCode + '/review/' + reviewId} target="_blank">
+        {reviewId}
+      </a>
+    );
+  };
   return (
     <ContentCard>
       <div className="table-caption">
@@ -72,23 +94,42 @@ export default function BranchManage() {
       </div>
       <Table
         rowKey="id"
+        bordered
         dataSource={tableProps.dataSource}
         pagination={tableProps.pagination}
         loading={tableProps.loading || pending}
-        scroll={{ y: window.innerHeight - 330 }}
+        scroll={{ y: window.innerHeight - 330, x: '100%' }}
       >
         <Table.Column title="ID" dataIndex="id" width={80} />
-        <Table.Column title="应用code" dataIndex="appCode" />
-        <Table.Column title="分支名" dataIndex="branchName" />
-        <Table.Column title="描述" dataIndex="desc" width={200} />
+        <Table.Column title="应用code" dataIndex="appCode" width={300} />
+        <Table.Column title="分支名" dataIndex="branchName" width={400} />
+        <Table.Column
+          title="描述"
+          dataIndex="desc"
+          width={200}
+          ellipsis={{
+            showTitle: false,
+          }}
+          render={(value) => (
+            <Tooltip placement="topLeft" title={value}>
+              {value}
+            </Tooltip>
+          )}
+        />
+        <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
         <Table.Column title="创建时间" dataIndex="gmtCreate" width={160} render={datetimeCellRender} />
         <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
         <Table.Column title="创建人" dataIndex="createUser" width={100} />
         <Table.Column
           title="操作"
-          width={100}
+          width={200}
+          fixed="right"
+          align="center"
           render={(_, record: any, index) => (
             <div className="action-cell">
+              <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
+                创建Review
+              </Button>
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
                 <Button type="primary" danger size="small">
                   作废

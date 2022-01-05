@@ -1,35 +1,22 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { bugTypeEnum, bugStatusEnum, bugPriorityEnum } from '../../constant';
-import {
-  Select,
-  Input,
-  Switch,
-  Button,
-  Form,
-  Space,
-  Drawer,
-  message,
-  Radio,
-  Modal,
-  TreeSelect,
-  Cascader,
-  Row,
-  Col,
-} from 'antd';
-import { addBug, modifyBug, getManagerList, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
+import { Select, Input, Switch, Button, Form, Space, Drawer, message, Radio, Cascader, Row, Col, Table } from 'antd';
+import { addBug, modifyBug, getAllTestCaseTree, getCaseCategoryDeepList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import { createSona } from '@cffe/sona';
 import AddCaseModal from '../../test-case/add-case-drawer';
+import AssociatingCaseModal from '../associating-case-modal';
 import RichText from '@/components/rich-text';
 import FELayout from '@cffe/vc-layout';
+import * as HOOKS from '../../hooks';
 import _ from 'lodash';
 import './index.less';
 
-export default function BugManage(props: any) {
+export default function AddOrEditBugDrawer(props: any) {
   const {
     visible,
     setVisible,
-    bugInfo,
+    bugId,
     updateBugList,
     defaultRelatedCases,
     phaseId,
@@ -38,19 +25,23 @@ export default function BugManage(props: any) {
     readOnly,
   } = props;
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [relatedCases, setRelatedCases] = useState<any[]>([]);
   const [schema, setSchema] = useState<any[]>();
   const [addCaseModalVisible, setAddCaseModalVisible] = useState<boolean>(false);
-  const [testCaseTree, setTestCaseTree] = useState<any[]>([]);
-  const [manageList, setManageList] = useState<string[]>([]);
+  const [manageList] = HOOKS.useUserOptions();
   const [caseCateTreeData, setCaseCateTreeData] = useState<any[]>([]);
+  const [relatedCases, setRelatedCases] = useState<{ id: React.Key; title: string }[]>([]);
+  const [assoCaseDrawerVisible, setAssoCaseDrawerVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const sona = useMemo(() => createSona(), []);
+  const [bugInfo, updateBugInfo] = HOOKS.useBug(bugId);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const submit = async (continueAdd = false) => {
+    setSaveLoading(true);
     try {
       void (await form.validateFields());
     } catch (e) {
+      setSaveLoading(false);
       return;
     }
     // const finishLoading = message.loading(bugInfo ? '正在修改' : '正在新增');
@@ -62,7 +53,7 @@ export default function BugManage(props: any) {
       subDemandId: formData.demandId[2] && +formData.demandId[2],
       desc: JSON.stringify(sona.schema),
       onlineBug: formData.onlineBug ? 1 : 0,
-      relatedCases,
+      relatedCases: relatedCases?.map((item) => item.id),
       id: bugInfo?.id,
       ...(bugInfo ? { modifyUser: userInfo.userName } : { createUser: userInfo.userName }),
       phaseId,
@@ -78,9 +69,12 @@ export default function BugManage(props: any) {
 
     // 保存后清空form
     void form.resetFields();
+    // 设置默form 默认值
+    void form.setFieldsValue({ priority: 1, bugType: 0, status: 0 });
     void setRelatedCases([]);
     void setSchema(undefined);
 
+    setSaveLoading(false);
     if (continueAdd && !bugInfo) return;
     void setVisible(false);
   };
@@ -90,53 +84,40 @@ export default function BugManage(props: any) {
     wrapperCol: { span: 19 },
   };
 
-  // 如果是编辑，则回填信息
   useEffect(() => {
-    if (visible) {
-      if (bugInfo) {
-        const demandId = [];
-        bugInfo.projectId && demandId.push(bugInfo.projectId);
-        bugInfo.demandId && demandId.push(bugInfo.demandId);
-        bugInfo.subDemandId && demandId.push(bugInfo.subDemandId);
-        void form.setFieldsValue({ ...bugInfo, demandId });
-        void setRelatedCases(bugInfo.relatedCases);
-        try {
-          void setSchema(JSON.parse(bugInfo.description));
-        } catch {
-          void setSchema(undefined);
-        }
-      } else {
-        void form.resetFields();
-        void form.setFieldsValue({ priority: 1, bugType: 0 });
-        void setSchema(undefined);
-        void setRelatedCases(defaultRelatedCases || []);
-      }
-    }
+    if (visible) updateBugInfo();
   }, [visible]);
 
-  /** -------------------------- 关联用例 start -------------------------- */
-
-  const updateAssociatingCaseTreeSelect = () => {
-    void getRequest(getAllTestCaseTree).then((res) => {
-      // 新增用例-用例库数据
-      void setTestCaseTree(res.data);
-    });
-  };
+  // 如果是编辑，则回填信息
+  useEffect(() => {
+    if (!visible) return;
+    if (bugInfo) {
+      const demandId = [];
+      bugInfo.projectId && demandId.push(bugInfo.projectId);
+      bugInfo.demandId && demandId.push(bugInfo.demandId);
+      bugInfo.subDemandId && demandId.push(bugInfo.subDemandId);
+      void form.setFieldsValue({ ...bugInfo, demandId });
+      void setRelatedCases(bugInfo.relatedCases);
+      try {
+        void setSchema(JSON.parse(bugInfo.description));
+      } catch {
+        void setSchema(undefined);
+      }
+    } else {
+      void form.resetFields();
+      void form.setFieldsValue({ priority: 1, bugType: 0, status: 0 });
+      void setSchema(undefined);
+      void setRelatedCases(defaultRelatedCases || []);
+    }
+  }, [bugInfo, visible]);
 
   const handleAddCaseSuccess = (newCase: any) => {
-    void updateAssociatingCaseTreeSelect();
-    void setRelatedCases([...relatedCases, newCase?.id]);
+    void setRelatedCases([...relatedCases, newCase]);
   };
 
-  /** 获得可关联的测试用例树 */
-  useEffect(() => {
-    void updateAssociatingCaseTreeSelect();
-    void getRequest(getManagerList).then((res) => {
-      void setManageList(res.data.usernames);
-    });
-  }, []);
-
-  /** -------------------------- 关联用例 end -------------------------- */
+  const handleRemoveRelatedCase = (caseId: React.Key) => {
+    setRelatedCases(relatedCases.filter((item) => item.id !== caseId));
+  };
 
   const dataCleanCateTree = (node: any) => {
     node.key = node.id;
@@ -147,12 +128,15 @@ export default function BugManage(props: any) {
     return node;
   };
 
-  useEffect(() => {
-    getRequest(getCaseCategoryDeepList).then((res) => {
-      const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
-      void setCaseCateTreeData(curTreeData || []);
-    });
-  }, []);
+  const handleOpenAddCaseModal = () => {
+    if (!caseCateTreeData?.length) {
+      getRequest(getCaseCategoryDeepList).then((res) => {
+        const curTreeData = dataCleanCateTree({ key: -1, items: res.data }).children;
+        void setCaseCateTreeData(curTreeData || []);
+      });
+    }
+    setAddCaseModalVisible(true);
+  };
 
   return (
     <>
@@ -224,24 +208,27 @@ export default function BugManage(props: any) {
 
           <Form.Item label="关联用例" name="relatedCases">
             <div className="related-cases-container">
-              <TreeSelect
-                disabled={readOnly}
-                className="test-case-tree-select"
-                multiple
-                treeCheckable
-                placeholder="请选择需要关联的用例"
-                treeNodeLabelProp="title"
-                treeNodeFilterProp="title"
-                treeData={testCaseTree}
-                value={relatedCases}
-                onChange={setRelatedCases}
-              />
               {readOnly ? null : (
-                <Button type="primary" ghost onClick={() => setAddCaseModalVisible(true)}>
-                  新增用例
-                </Button>
+                <>
+                  <Button type="primary" ghost onClick={() => setAssoCaseDrawerVisible(true)}>
+                    关联用例
+                  </Button>
+                  <Button type="primary" ghost onClick={handleOpenAddCaseModal}>
+                    新增用例
+                  </Button>
+                </>
               )}
             </div>
+            {relatedCases?.length ? (
+              <Table dataSource={relatedCases} pagination={false}>
+                <Table.Column title="ID" dataIndex="id" />
+                <Table.Column title="标题" dataIndex="title" />
+                <Table.Column
+                  title="操作"
+                  render={(record: any) => <a onClick={() => handleRemoveRelatedCase(record.id)}>删除</a>}
+                />
+              </Table>
+            ) : null}
           </Form.Item>
           <Form.Item label="描述" name="desc">
             <RichText width="520px" height="500px" sona={sona} schema={schema} readOnly={readOnly} />
@@ -253,12 +240,7 @@ export default function BugManage(props: any) {
                 <span className="import-identification">* </span>经办人 :{' '}
               </span>
               <Form.Item name="agent" rules={[{ required: true, message: '请选择经办人' }]} className="form-item-info">
-                <Select
-                  disabled={readOnly}
-                  options={manageList.map((item) => ({ label: item, value: item }))}
-                  optionFilterProp="label"
-                  showSearch
-                />
+                <Select disabled={readOnly} options={manageList} optionFilterProp="label" showSearch />
               </Form.Item>
             </Col>
             <Col span="12" push="1" className="col-form-item">
@@ -282,13 +264,13 @@ export default function BugManage(props: any) {
               <>
                 {' '}
                 {!bugInfo ? (
-                  <Button type="primary" onClick={() => submit(true)}>
+                  <Button loading={saveLoading} type="primary" onClick={() => submit(true)}>
                     保存并新增
                   </Button>
                 ) : (
                   ''
                 )}
-                <Button type="primary" onClick={() => submit(false)}>
+                <Button loading={saveLoading} type="primary" onClick={() => submit(false)}>
                   保存
                 </Button>
                 <Button className="ml-auto" onClick={() => setVisible(false)}>
@@ -306,6 +288,14 @@ export default function BugManage(props: any) {
         setVisible={setAddCaseModalVisible}
         onSuccess={handleAddCaseSuccess}
         caseCateTreeData={caseCateTreeData}
+      />
+
+      <AssociatingCaseModal
+        visible={assoCaseDrawerVisible}
+        setVisible={setAssoCaseDrawerVisible}
+        bugId={bugId}
+        onSave={setRelatedCases}
+        curRelatedCases={relatedCases}
       />
     </>
   );

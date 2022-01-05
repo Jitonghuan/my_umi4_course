@@ -106,6 +106,8 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
           className={`${rootCls}__list-table`}
           dataSource={deployedList}
           pagination={false}
+          bordered
+          scroll={{ x: '100%' }}
           rowSelection={
             isProd
               ? undefined

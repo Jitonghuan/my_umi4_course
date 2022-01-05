@@ -69,7 +69,7 @@ export default function ApplicationOverview() {
         <Descriptions.Item label="应用分类">{categoryDataMap[appData?.appCategoryCode!] || '--'}</Descriptions.Item>
         <Descriptions.Item label="应用组">{businessDataMap[appData?.appGroupCode!] || '--'}</Descriptions.Item>
         <Descriptions.Item label="责任人">
-          <UserTagList color="blue" data={appData?.owner} />
+          <UserTagList color="#1973CC" data={appData?.owner} />
         </Descriptions.Item>
         <Descriptions.Item label="git地址" span={2}>
           <a href={appData?.gitAddress} target="_blank">
@@ -103,6 +103,11 @@ export default function ApplicationOverview() {
         )}
         {appData?.appDevelopLanguage === 'java' && (
           <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
+        )}
+        {appData?.appType === 'backend' && (
+          <Descriptions.Item label="自定义maven构建">
+            {appData?.customParams ? JSON.parse(appData.customParams).custom_maven : ''}
+          </Descriptions.Item>
         )}
 
         {/* 前端 */}
@@ -145,7 +150,7 @@ export default function ApplicationOverview() {
         extra={<Button onClick={() => setMemberEditorMode('EDIT')}>修改</Button>}
       >
         <Descriptions.Item label="应用Owner">
-          <UserTagList color="blue" data={memberData?.owner} />
+          <UserTagList color="#1973CC" data={memberData?.owner} />
         </Descriptions.Item>
         <Descriptions.Item label="开发负责人">
           <UserTagList data={memberData?.developerOwner} />

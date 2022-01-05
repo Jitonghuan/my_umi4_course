@@ -31,3 +31,6 @@ export const getRecords = addAPIPrefix('/qc/dataFactory/getRecords');
 
 /** GET 查询造数日志 */
 export const getInstanceList = addAPIPrefix('/qc/dataFactory/getInstanceList');
+
+/** POST 复制数据模板 */
+export const copyDataFactory = addAPIPrefix('/qc/dataFactory/copyTemplate');

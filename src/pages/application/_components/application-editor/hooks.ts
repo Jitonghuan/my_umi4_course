@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { queryApps } from '../../service';
 
-export function useFeMicroMainProjectOptions() {
+export function useFeMicroMainProjectOptions(visible?: boolean) {
   const [data, setData] = useState<IOption[]>([]);
 
   const loadData = useCallback(async () => {
@@ -14,7 +14,7 @@ export function useFeMicroMainProjectOptions() {
       projectType: 'micro',
       microFeType: 'mainProject',
       pageIndex: 1,
-      pageSize: 20,
+      pageSize: 100,
     });
 
     let next: IOption[] = appList.map((item) => ({
@@ -26,8 +26,10 @@ export function useFeMicroMainProjectOptions() {
   }, []);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (visible) {
+      loadData();
+    }
+  }, [visible]);
 
   return [data];
 }

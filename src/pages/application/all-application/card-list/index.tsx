@@ -27,10 +27,11 @@ const APP_TYPE_TAG: Record<string, [string, React.ReactNode]> = {
 
 export interface IProps {
   dataSource: AppItemVO[];
+  type?: string;
 }
 
 export default function ApplicationCardList(props: IProps) {
-  const { dataSource } = props;
+  const { dataSource, type } = props;
 
   return (
     <CardLayout>
@@ -49,9 +50,20 @@ export default function ApplicationCardList(props: IProps) {
           }
         >
           <div className={`${cardCls}-header`}>{item.appName}</div>
+          {item.appType === 'frontend' && type === 'mine' ? (
+            <>
+              <div className={`${cardCls}-sub-header`}>
+                {item.appType === 'frontend' ? `工程：${item.deploymentName}` : ''}
+              </div>
+              <div className={`${cardCls}-router`}>
+                {item.relationMainApps && item.relationMainApps.length
+                  ? `路由：${item.relationMainApps[0].routePath}`
+                  : ''}
+              </div>
+            </>
+          ) : null}
 
           <div className={`${cardCls}-content`}>
-            {/* <div>应用类型：{APP_TYPE_MAP[item.appType]}</div> */}
             <div>
               <Tag color={APP_TYPE_TAG[item.appType]?.[0]} icon={APP_TYPE_TAG[item.appType]?.[1]}>
                 {APP_TYPE_MAP[item.appType]}

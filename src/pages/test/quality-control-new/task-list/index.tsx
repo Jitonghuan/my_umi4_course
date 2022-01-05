@@ -3,48 +3,98 @@ import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HeaderTabs from '../_components/header-tabs';
 import FELayout from '@cffe/vc-layout';
-import { Button, Form, Table, Input, Select, Radio, Space, Tag, Typography } from 'antd';
-import { HeartOutlined, HeartFilled, EditOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
-import { getRequest, postRequest } from '@/utils/request';
+import { Button, Form, Table, Input, Select, Radio, Space, Tag, Typography, Popconfirm, message } from 'antd';
+import {
+  HeartOutlined,
+  HeartFilled,
+  EditOutlined,
+  PlayCircleOutlined,
+  DeleteOutlined,
+  EditFilled,
+} from '@ant-design/icons';
+import { delRequest, getRequest, postRequest } from '@/utils/request';
 import { getTaskInfo, taskCare, taskCareCancel, taskExcute, getTaskList, operateTask } from '../service';
 import { taskStatusEnum } from '../constant';
 import CreateOrEditTaskModal from './create-or-edit-task-modal';
 import ResultModal from './result-modal';
 import moment from 'moment';
 import './index.less';
+import * as HOOKS from '../hooks';
+import * as APIS from '../service';
 
 export default function taskList(props: any) {
   const userInfo = useContext(FELayout.SSOUserInfoContext);
-  const [setCreateOrEditTaskModalVisible, setSetCreateOrEditTaskModalVisible] = useState<boolean>(false);
+  const [CreateOrEditTaskModalVisible, setCreateOrEditTaskModalVisible] = useState<boolean>(false);
   const [resultModalVisible, setResultModalVisible] = useState<boolean>(false);
   const [curTask, setCurTask] = useState<any>();
-  const [taskList, setTaskList] = useState<any[]>();
-  const [pageIndex, setPageIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-
-  const updataDataSource = async () => {
-    const res = await getRequest(getTaskList, { data: { pageIndex, pageSize, currentUser: userInfo.userName } });
-    setTaskList(res.data?.dataSource);
-  };
+  const [taskList, [pageIndex, setPageIndex], [pageSize, setPageSize], total, form, loadTaskList] = HOOKS.useTaskList();
+  const [appCateOptions] = HOOKS.useAppCategoryOptions();
+  const [appCodeOptions, setAppCodeOptions] = useState<IOption[]>();
 
   useEffect(() => {
-    updataDataSource();
+    loadTaskList();
+  }, [pageIndex, pageSize]);
+
+  useEffect(() => {
+    const interval = setInterval(loadTaskList, 10000);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
-  const handleTaskCareOperate = (id: string | number, isCare: boolean) => {
+  const handleTaskCareOperate = (id: number, isCare: boolean) => {
     postRequest((isCare ? taskCare : taskCareCancel) + '/' + id, {
       data: {
         currentUser: userInfo.userName,
       },
     }).then((res) => {
-      if (res.success) updataDataSource();
+      if (res.success) loadTaskList();
     });
   };
 
   const handleSeeResult = (task: any) => {
-    console.log('task :>> ', task);
     setCurTask(task);
     setResultModalVisible(true);
+  };
+
+  const handleSearch = () => {
+    loadTaskList();
+  };
+
+  const deleteTask = (id: Number) => {
+    delRequest(`${operateTask}/${id}`).then((res) => {
+      loadTaskList();
+    });
+  };
+
+  const carryTask = (id: Number) => {
+    postRequest(taskExcute(id)).then((res) => {
+      if (res.success) {
+        message.success('执行完成');
+      } else {
+        message.error('未知错误');
+      }
+
+      loadTaskList();
+    });
+  };
+
+  const openEditTask = (id: Number) => {
+    setCreateOrEditTaskModalVisible(true);
+    getRequest(`${operateTask}/${id}`).then((res) => {
+      setCurTask(res.data);
+    });
+  };
+
+  const getAppCodeByCategory = (value: any) => {
+    getRequest(APIS.getAppInfoList, { data: { appCategoryCode: value } }).then((res) => {
+      const source = res.data.dataSource.map((item: any) => ({
+        label: item.appCode,
+        value: item.appCode,
+        data: item,
+      }));
+      setAppCodeOptions(source);
+    });
   };
 
   return (
@@ -52,7 +102,7 @@ export default function taskList(props: any) {
       <HeaderTabs activeKey="task-list" history={props.history} />
       <ContentCard>
         <div className="search-header">
-          <Form layout="inline">
+          <Form form={form} layout="inline" onFinish={handleSearch} initialValues={{ justCare: 0 }}>
             <Form.Item name="justCare">
               <Radio.Group
                 options={[
@@ -68,10 +118,16 @@ export default function taskList(props: any) {
               <Input placeholder="任务名称关键字" />
             </Form.Item>
             <Form.Item label="应用分类">
-              <Select placeholder="请选择" />
+              <Select
+                placeholder="请选择"
+                options={appCateOptions}
+                onChange={(value) => {
+                  getAppCodeByCategory(value);
+                }}
+              />
             </Form.Item>
             <Form.Item label="应用code">
-              <Select placeholder="请选择" />
+              <Select placeholder="请选择" options={appCodeOptions} />
             </Form.Item>
             <Form.Item>
               <Button htmlType="submit" type="primary">
@@ -81,12 +137,27 @@ export default function taskList(props: any) {
           </Form>
         </div>
         <div className="add-btn-container">
-          <Button type="primary" onClick={() => setSetCreateOrEditTaskModalVisible(true)}>
+          <Button type="primary" onClick={() => setCreateOrEditTaskModalVisible(true)}>
             新建任务
           </Button>
         </div>
         <div className="task-list">
-          <Table dataSource={taskList}>
+          <Table
+            dataSource={taskList}
+            pagination={{
+              pageSize,
+              current: pageIndex,
+              total: total,
+              onChange: (page, pageSz) => {
+                setPageIndex(page);
+                if (pageSize !== pageSz && pageSz !== undefined) {
+                  setPageSize(pageSz);
+                  setPageIndex(1);
+                }
+              },
+              showTotal: (total) => `共 ${total} 条`,
+            }}
+          >
             <Table.Column
               title="任务名称"
               dataIndex="name"
@@ -121,6 +192,7 @@ export default function taskList(props: any) {
             />
             <Table.Column
               title="操作"
+              width={100}
               render={(record) => {
                 return (
                   <Space>
@@ -132,13 +204,36 @@ export default function taskList(props: any) {
                       />
                     ) : (
                       <HeartOutlined
+                        style={{ color: '#CC4631' }}
                         className="can-operate-el"
                         onClick={() => handleTaskCareOperate(record.id, true)}
                       />
                     )}
-                    <EditOutlined className="can-operate-el" />
-                    <PlayCircleOutlined className="can-operate-el" />
-                    <DeleteOutlined className="can-operate-el" />
+                    <EditFilled
+                      style={{ color: '#236ADD' }}
+                      className="can-operate-el"
+                      onClick={() => {
+                        openEditTask(record.id);
+                      }}
+                    />
+                    <PlayCircleOutlined
+                      style={{ color: '#3CC86A' }}
+                      className="can-operate-el"
+                      onClick={() => {
+                        carryTask(record.id);
+                      }}
+                    />
+                    <Popconfirm
+                      title="确定删除这个任务吗?"
+                      onConfirm={() => {
+                        deleteTask(record.id);
+                      }}
+                      // onCancel={cancel}
+                      okText="是"
+                      cancelText="否"
+                    >
+                      <DeleteOutlined className="can-operate-el" />
+                    </Popconfirm>
                   </Space>
                 );
               }}
@@ -146,11 +241,18 @@ export default function taskList(props: any) {
           </Table>
         </div>
         <CreateOrEditTaskModal
-          visible={setCreateOrEditTaskModalVisible}
-          setVisible={setSetCreateOrEditTaskModalVisible}
+          visible={CreateOrEditTaskModalVisible}
+          setVisible={setCreateOrEditTaskModalVisible}
           task={curTask}
+          setTask={setCurTask}
+          handleSearch={handleSearch}
         />
-        <ResultModal visible={resultModalVisible} setVisible={setResultModalVisible} taskId={curTask?.id} />
+        <ResultModal
+          visible={resultModalVisible}
+          setVisible={setResultModalVisible}
+          taskId={curTask?.id}
+          setTask={setCurTask}
+        />
       </ContentCard>
     </PageContainer>
   );

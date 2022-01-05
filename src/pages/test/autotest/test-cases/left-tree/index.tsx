@@ -4,19 +4,19 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Modal, Select, Spin, Empty, message } from 'antd';
-import { PlusSquareFilled, PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { PlusSquareFilled, PlusOutlined, EditOutlined, CopyOutlined } from '@ant-design/icons';
 import VCCustomIcon from '@cffe/vc-custom-icon';
 import { CardRowGroup } from '@/components/vc-page-content';
 import * as APIS from '../../service';
 import { postRequest } from '@/utils/request';
 import { TreeNode, TreeNodeSaveData } from '../../interfaces';
-import { useLeftTreeData } from '../hooks';
 import { findTreeNodeByKey, getMergedList } from '../../common';
 import { useProjectOptions } from '../../hooks';
 import ProjectEditor from '../../_components/project-editor';
 import ModuleEditor from '../../_components/module-editor';
 import ApiEditor from '../../_components/api-editor';
 import CustomTree from '@/components/custom-tree';
+import ApiClone from '../../_components/api-clone';
 import './index.less';
 
 export interface LeftTreeProps extends Record<string, any> {
@@ -35,19 +35,21 @@ type nodeAction =
   | 'delModule'
   | 'addApi'
   | 'editApi'
-  | 'delApi';
+  | 'delApi'
+  | 'copyApi';
 
 export default function LeftTree(props: LeftTreeProps) {
+  const { searchProject, setSearchProject, treeData, treeLoading, setTreeData, reloadTreeData } = props;
   const [projectOptions, setProjectOptions, reloadProjectOptions] = useProjectOptions();
-  const [searchProject, setSearchProject] = useState<number>();
-  const [treeData, treeLoading, setTreeData, reloadTreeData] = useLeftTreeData(searchProject);
-  const [selectedItem, setSelectedItem] = useState<TreeNode>();
   // 当前操作的节点（或者触发节点）
   const targetNodeRef = useRef<TreeNode>();
+  const [selectedItem, setSelectedItem] = useState<TreeNode>();
   const [projectEditorMode, setProjectEditorMode] = useState<EditorMode>('HIDE');
   const [moduleEditorMode, setModuleEditoraMode] = useState<EditorMode>('HIDE');
   const [apiEditorMode, setApiEditorMode] = useState<EditorMode>('HIDE');
   const [expandedKeys, setExpandedKeys] = useState<(number | string)[]>([]);
+
+  const [curOpApi, setCurOpApi] = useState<any>();
 
   // ----- hooks
   // projectOptions 变更后重新判断选中状态
@@ -112,7 +114,7 @@ export default function LeftTree(props: LeftTreeProps) {
           key: targetNode.key,
           desc: data.desc,
         },
-        (item, addon) => item.key === addon.key,
+        (item: any, addon) => item.key === addon.key,
       );
       setTreeData(nextTreeData);
     }
@@ -212,6 +214,8 @@ export default function LeftTree(props: LeftTreeProps) {
             },
           });
           break;
+        case 'copyApi':
+          setCurOpApi(node);
         default:
           break;
       }
@@ -220,7 +224,7 @@ export default function LeftTree(props: LeftTreeProps) {
   );
 
   return (
-    <CardRowGroup.SlideCard noPadding width={244} className="page-case-list">
+    <CardRowGroup.SlideCard noPadding width={350} className="page-case-list">
       <div className="case-list-header">
         <Select
           options={projectOptions}
@@ -250,6 +254,7 @@ export default function LeftTree(props: LeftTreeProps) {
         expandedKeys={expandedKeys}
         onExpand={(keys, info) => setExpandedKeys(keys)}
         showSearch
+        showLine
         searchPlaceholder="搜索模块、接口"
         titleRender={
           ((nodeData: TreeNode) => (
@@ -293,6 +298,12 @@ export default function LeftTree(props: LeftTreeProps) {
                 </a>
               )}
 
+              {/* 复制接口 */}
+              {nodeData.level === 3 && (
+                <a title="复制接口" {...stopProp}>
+                  <CopyOutlined onClick={() => handleNodeAction('copyApi', nodeData)} />
+                </a>
+              )}
               {/* 编辑接口 */}
               {nodeData.level === 3 && (
                 <a title="编辑接口" {...stopProp}>
@@ -329,6 +340,15 @@ export default function LeftTree(props: LeftTreeProps) {
         targetNode={targetNodeRef.current}
         onClose={() => setApiEditorMode('HIDE')}
         onSave={handleApiEditorSave}
+      />
+
+      <ApiClone
+        target={curOpApi}
+        onClose={() => setCurOpApi(undefined)}
+        onSave={() => {
+          setCurOpApi(undefined);
+          reloadTreeData();
+        }}
       />
     </CardRowGroup.SlideCard>
   );

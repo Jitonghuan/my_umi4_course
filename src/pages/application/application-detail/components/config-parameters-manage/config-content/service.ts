@@ -8,3 +8,9 @@ export const queryVersionApi = `${appConfig.apiPrefix}/appManage/config/version/
 
 // 回退版本接口
 export const doRestoreVersionApi = `${appConfig.apiPrefix}/appManage/config/version/restore`;
+
+//新增单个配置
+export const configAdd = `${appConfig.apiPrefix}/appManage/config/add`;
+
+// 编辑单个配置
+export const configUpdate = `${appConfig.apiPrefix}/appManage/config/update`;

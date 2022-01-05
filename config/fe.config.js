@@ -15,8 +15,7 @@ const envCodeMap = {
 };
 
 module.exports = {
-  type: 'builder',
-  builder: '@cffe/fe-builder-default',
+  builder: 'default',
   commands: {
     mock: [
       '$ fnpm i',
@@ -32,6 +31,7 @@ module.exports = {
     // `$ fe b` 或 `$ fe build`
     build: (options, projectInfo) => {
       process.env.VERSION = options.version || '';
+      process.env.BUILD_ENV = options.envType || 'test';
 
       return [
         '$ fnpm i',
@@ -41,34 +41,35 @@ module.exports = {
     },
 
     // `$ fe p` 或 `$ fe publish`
-    publish: (options, projectInfo) => {
-      const { t, test, p, prod, online, local } = options;
-      const envCode = (t || test) ? envCodeMap.test : (p || prod || online) ? envCodeMap.prod : envCodeMap.dev;
-      const project = options.project || projectInfo.project;
-      const version = options.version || projectInfo.version || '';
-
-      process.env.BUILD_ENV = envCode;
-
-      // TODO 如果 local = false，则触发 jenkins 单工程构建 #jenkins:fe-single
-      //      相关的参数在 fe-builder-default 中默认传入
-
-      return [
-        `$ fe build --version=${version}`,
-        `#oss -r ./dist c2f-resource:${envCode}/${project}/${version}`,
-        `#oss ./dist/index.html c2f-resource:${envCode}/${project}/index.html`,
-        '#logger:success PUBLISH SUCCESS!!',
-      ];
-    },
-
-    rollback: (options, projectInfo) => {
-      const { t, test, p, prod, online } = options;
-      const envCode = (t || test) ? envCodeMap.test : (p || prod || online) ? envCodeMap.prod : envCodeMap.dev;
-      const project = options.project || projectInfo.project;
-
-      return [
-        `#oss ./dist/index.html c2f-resource:${envCode}/${project}/index.html`,
-      ];
-    },
+    // publish: (options, projectInfo) => {
+    //   const { test, prod, online, local } = options;
+    //   const envCode = test ? envCodeMap.test : (prod || online) ? envCodeMap.prod : envCodeMap.dev;
+    //   const project = options.project || projectInfo.project;
+    //   const version = options.version || projectInfo.version || '';
+    //
+    //   if (local) {
+    //     return [
+    //       `$ fe build --version=${version} --env=${envCode}`,
+    //       `#oss -r ./dist c2f-resource:${envCode}/${project}/${version}`,
+    //       `#oss ./dist/index.html c2f-resource:${envCode}/${project}/index.html`,
+    //     ];
+    //   }
+    //
+    //   return [
+    //     '#autopush',
+    //     `#jenkins fe-single?REPOSITORY={{repository}}&BRANCH={{gitBranch}}&GROUP={{group}}&PROJECT=${project}&VERSION=${version}&ENV=${envCode}`
+    //   ];
+    // },
+    //
+    // rollback: (options, projectInfo) => {
+    //   const { test, prod, online } = options;
+    //   const envCode = test ? envCodeMap.test : (prod || online) ? envCodeMap.prod : envCodeMap.dev;
+    //   const project = options.project || projectInfo.project;
+    //
+    //   return [
+    //     `#oss ./dist/index.html c2f-resource:${envCode}/${project}/index.html`,
+    //   ];
+    // },
 
     analyze: [
       '$ npm run build:analyze'
