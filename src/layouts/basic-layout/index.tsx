@@ -41,12 +41,12 @@ export default function Layout(props: any) {
   // 业务线
   const [businessData] = useBusinessData();
 
-  let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '');
+  let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
 
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
     // campusId: 2000001,
-    deptId: userInfo.deptInfo.deptId,
+    deptId: userInfo?.deptInfo?.deptId,
   });
   //所属机构数据
   const [staffOrgData, loadStaffOrgData] = useStaffOrgData();
