@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useRef, useMemo } from 'react';
-import { Drawer, Form, Input, Radio, Select, DatePicker, Button, Table } from 'antd';
+import { Drawer, Form, Input, Radio, Select, DatePicker, Button, Table, Divider } from 'antd';
 
 import { FeContext } from '@/common/hooks';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';
@@ -190,6 +190,26 @@ const AddDrawer = (props: IProps) => {
         </Form.Item>
         <Form.Item label="发布负责人" name="deployUser" rules={[{ required: true, message: '请输入发布负责人!' }]}>
           <Input placeholder="请输入" />
+        </Form.Item>
+        <Divider />
+        <Form.Item label="发布计划的应用分类">
+          <Select options={categoryData}></Select>
+          {/* <Radio.Group>
+            {categoryData?.map((el) => (
+              <Radio key={el.value} value={el.value}>
+                {el.label}
+              </Radio>
+            ))}
+          </Radio.Group> */}
+        </Form.Item>
+        <Form.Item label="发布计划的应用组">
+          <Select placeholder="请选择">
+            {businessData?.map((el) => (
+              <Select.Option key={el.value} value={el.value}>
+                {el.label}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item {...tailLayout} extra="请在此表单中选择关联的发布计划!" label="" name="planIds">
           <Table

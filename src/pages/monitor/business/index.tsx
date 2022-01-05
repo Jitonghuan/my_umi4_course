@@ -22,7 +22,7 @@ export default function Dashboard(props: any) {
       <FilterCard className="layout-compact">
         <Tabs activeKey={activeKey} onChange={(next) => props.history.push(`/matrix/monitor/business/${next}`)}>
           <Tabs.TabPane tab="接口方式接入" key="prometheus" />
-          <Tabs.TabPane tab="日志方式接入" key="logger-alarm" />
+          {/* <Tabs.TabPane tab="日志方式接入" key="logger-alarm" /> */}
         </Tabs>
       </FilterCard>
       <VCPermission code={window.location.pathname} isShowErrorPage>
