@@ -9,7 +9,6 @@ const { Item: FormItem } = Form;
 type DrawerStatusType = 'view' | 'edit' | 'create';
 
 const CreateRegionDrawer = React.forwardRef((props, ref) => {
-  const [createFormRef] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatusType>('create');
   const [envOptions, setEnvOptions] = useState<any[]>([
@@ -263,7 +262,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
           />
         </FormItem>
         <FormItem label="备注" name="remark">
-          <Input.TextArea placeholder="请输入备注" />
+          <Input.TextArea placeholder="请输入备注" disabled={drawerStatus == 'view'} />
         </FormItem>
         <FormItem label="选择应用" name="relApps">
           <TableTransfer
@@ -271,7 +270,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
             targetKeys={targetKeys}
             showSearch={true}
             titles={['可添加应用', '已添加应用']}
-            filterOption={(inputValue: any, item: any) => item.title.indexOf(inputValue) !== -1}
+            filterOption={(inputValue: any, item: any) => item.appName.indexOf(inputValue) !== -1}
             onChange={onChange}
             leftColumns={leftTableColumns}
             rightColumns={rightTableColumns}
