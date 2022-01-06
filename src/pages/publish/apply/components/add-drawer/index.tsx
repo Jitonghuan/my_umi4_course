@@ -118,7 +118,6 @@ const AddDrawer = (props: IProps) => {
 
   const handleSubmit = () => {
     formInstance.validateFields().then((vals) => {
-      console.log('validateFields', vals);
       addPublishApplyReq({
         applyInfo: {
           ...vals,
