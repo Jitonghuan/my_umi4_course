@@ -58,7 +58,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/monitor/business`,
-    redirect: `${baseRoutePath}/monitor/business/prometheus`,
+    redirect: `${baseRoutePath}/monitor/business`,
   },
   {
     path: `${baseRoutePath}/monitor/basic`,
@@ -617,6 +617,12 @@ export default [
         component: '@/pages/monitor/application',
       },
       {
+        path: 'business',
+        name: '业务监控',
+        component: '@/pages/monitor/business',
+        // hideInMenu: process.env.BUILD_ENV === 'prod',
+      },
+      {
         path: 'alarm-rules',
         name: '报警管理',
         // key: 'basic-monitor',
@@ -1017,7 +1023,6 @@ export default [
         component: '@/pages/trafficmap/domain-config',
       },
     ],
-    hideInMenu: process.env.BUILD_ENV === 'prod',
   },
   {
     path: '*',
