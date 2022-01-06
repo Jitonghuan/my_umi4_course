@@ -118,6 +118,7 @@ const AddDrawer = (props: IProps) => {
 
   const handleSubmit = () => {
     formInstance.validateFields().then((vals) => {
+      console.log('validateFields', vals);
       addPublishApplyReq({
         applyInfo: {
           ...vals,
@@ -126,7 +127,7 @@ const AddDrawer = (props: IProps) => {
         },
         planIds: selectPlan,
       }).then((resp) => {
-        if (resp.success) {
+        if (resp?.success) {
           handleClose(true);
         }
       });
