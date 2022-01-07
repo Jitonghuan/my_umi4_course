@@ -50,15 +50,15 @@ export const getRequest = ssoRequest;
  * @param reserveError
  */
 export const delRequest = (url: string, options?: RequestOptionsInit, reserveError?: boolean) => {
-  return request(url, { body: { ...(options?.data || options?.params || {}) }, method: 'DELETE' });
+  return request(url, { body: options?.data || options?.params || {}, method: 'DELETE' });
 };
 
 export const postRequest = (url: string, options?: RequestOptionsInit, reserveError?: boolean) => {
-  return request(url, { body: { ...(options?.data || options?.params || {}) }, method: 'post' });
+  return request(url, { body: options?.data || options?.params || {}, method: 'post' });
 };
 
 export const putRequest = (url: string, options?: RequestOptionsInit, reserveError?: boolean) => {
-  return request(url, { body: { ...(options?.data || options?.params || {}) }, method: 'PUT' });
+  return request(url, { body: options?.data || options?.params || {}, method: 'PUT' });
 };
 
 export default ssoRequest;

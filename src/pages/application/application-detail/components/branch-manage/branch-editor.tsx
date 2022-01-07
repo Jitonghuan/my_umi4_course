@@ -30,7 +30,7 @@ export default function BranchEditor(props: IProps) {
     try {
       await createFeatureBranch({
         appCode,
-        // demandId: demandId,
+        demandId: demandId,
         ...values,
       });
       message.success('操作成功！');
@@ -85,13 +85,13 @@ export default function BranchEditor(props: IProps) {
   };
 
   const onSearch = (val: any) => {
-    // queryDemand(projectId, val);
+    queryDemand(projectId, val);
   };
 
   useEffect(() => {
     if (mode === 'HIDE') return;
     form.resetFields();
-    // queryPortal();
+    queryPortal();
   }, [mode]);
 
   return (

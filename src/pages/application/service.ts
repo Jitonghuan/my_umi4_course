@@ -186,11 +186,11 @@ export const createReview = `${appConfig.apiPrefix}/releaseManage/branch/createR
 
 /** POST  获取分支review状态 */
 export const getReviewStatus = `${appConfig.apiPrefix}/releaseManage/branch/getReviewStatus`;
-
+let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 /** POST 新建分支关联需求 */
-export const queryPortalList = `http://kapi-base-dev.cfuture.shop/eip-demand/portal/list`;
+export const queryPortalList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/list`;
 
-export const getDemandByProjectList = `http://kapi-base-dev.cfuture.shop/eip-demand/portal/getDemandByProject`;
+export const getDemandByProjectList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/getDemandByProject`;
 
 /** GET 当前应用下已通过且存在未上线发布计划的发布申请列表 */
 export const applyHaveNoUpPlanList = `${appConfig.apiPrefix}/publishManage/applyHaveNoUpPlan/list`;

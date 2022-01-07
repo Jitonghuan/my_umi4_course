@@ -145,7 +145,7 @@ export default function ApplicationEditor(props: IProps) {
     // 自定义配置处理
     if (submitData.appType === 'frontend') {
       // 前端
-      if (submitData.customParams?.length) {
+      if (submitData.customParams) {
         let Obj: any = {};
         for (const item of submitData.customParams.filter((data: any) => data.key && data.value)) {
           if (item.key === 'version') {

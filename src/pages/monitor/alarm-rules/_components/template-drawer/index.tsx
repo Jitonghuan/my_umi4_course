@@ -215,7 +215,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   useEffect(() => {
     //报警规则
     if (drawerType === 'rules') {
-      queryRuleTemplatesListFun({ pageIndex: -1, status: 0 });
+      queryRuleTemplatesListFun({ pageSize: -1, status: 0 });
     }
   }, [drawerType]);
 
@@ -319,11 +319,12 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       footerStyle={{ textAlign: 'right' }}
       destroyOnClose
     >
-      <Form form={form} labelCol={{ flex: '140px' }}>
+      <Form form={form} labelCol={{ flex: '150px' }}>
         {/* {renderForm(formList)} */}
         <Form.Item label="报警模版" name="ruleId">
           <Select
             style={{ width: '400px' }}
+            allowClear
             options={ruleTemplatesList as OptionProps[]}
             onChange={(e: string) => {
               setRuleTemplate(e);
@@ -411,7 +412,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="报警消息" name="message" required={true}>
           <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }}></Input>
         </Form.Item>
-        <Form.Item label="通知对象" name="receiver" rules={[{ required: true, message: '请选择告警对象!' }]}>
+        <Form.Item label="通知对象" name="receiver">
           <Select mode="multiple" options={userOptions} showSearch style={{ width: '400px' }} allowClear></Select>
         </Form.Item>
         <Form.Item

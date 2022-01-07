@@ -16,8 +16,8 @@ export const queryAppList = () =>
       pageSize: 1000,
     },
   }).then((res: any) => {
-    if (res.success) {
-      const { dataSource = [] } = res.data || {};
+    if (res?.success) {
+      const { dataSource = [] } = res?.data || {};
       return dataSource.map((app: any) => {
         return {
           ...app,
@@ -33,8 +33,8 @@ const queryEnvListApi = `${appConfig.apiPrefix}/monitorManage/app/env`;
 /** 根据应用查询环境列表 */
 export const queryEnvList = (params: { appCode: string }) =>
   getRequest(queryEnvListApi, { data: params }).then((res: any) => {
-    if (res.success) {
-      const { dataSource = [] } = res.data;
+    if (res?.success) {
+      const { dataSource = [] } = res?.data;
       return (
         dataSource?.map((env: any) => {
           return {
@@ -55,7 +55,7 @@ export const queryPodInfoApi = `${appConfig.apiPrefix}/monitorManage/app/podInfo
 export const queryGcCountApi = `${appConfig.apiPrefix}/monitorManage/app/gcCount`;
 export const queryGcCount = (params: { [key: string]: string }) =>
   getRequest(queryGcCountApi, { ...params }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       const { fullGCCount = [], youngGCCount = [], fullGCSum = [], youngGCSum = [] } = res.data;
       const xAxis: string[] = [];
       const fullCount: string[] = [];
@@ -88,7 +88,7 @@ export const queryGcCount = (params: { [key: string]: string }) =>
 export const queryGcTimeApi = `${appConfig.apiPrefix}/monitorManage/app/gcTime`;
 export const queryGcTime = (params: { [key: string]: string }) =>
   getRequest(queryGcTimeApi, { ...params }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       const { fullGCTime = [], youngGCTime = [], fullGCTimeSum = [], youngGCTimeSum = [] } = res.data;
       const xAxis: string[] = [];
       const fullTime: string[] = [];
@@ -121,7 +121,7 @@ export const queryGcTime = (params: { [key: string]: string }) =>
 export const queryJvmHeapApi = `${appConfig.apiPrefix}/monitorManage/app/jvmHeap`;
 export const queryJvmHeap = (params: { [key: string]: string }) =>
   getRequest(queryJvmHeapApi, { ...params }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       const { heapEdenSpace = [], heapMemSum = [], heapOldGen = [], heapSurvivorSpace = [] } = res.data;
       const xAxis: string[] = [];
       const heapEden: string[] = [];
@@ -187,7 +187,7 @@ export const queryPodUseData = (params: {
   nameSpace?: string;
 }) =>
   getRequest(queryPodUrl, { data: params }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       let podResourceData: any = [];
       podResourceData = res.dataSource;
 
