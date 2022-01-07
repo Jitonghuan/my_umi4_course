@@ -163,14 +163,25 @@ const AddDrawer = (props: IProps) => {
       }}
     >
       <Form {...layout} name="basic" form={formInstance} onValuesChange={handleFormChange}>
-        <Form.Item label="应用分类" name="appCategoryCode" rules={[{ required: true, message: '请选择应用分类!' }]}>
-          <Radio.Group>
+        <Form.Item
+          label="发布环境的应用分类"
+          name="appCategoryCode"
+          rules={[{ required: true, message: '请选择应用分类!' }]}
+        >
+          <Select>
+            {categoryData?.map((el) => (
+              <Select.Option key={el.value} value={el.value}>
+                {el.label}
+              </Select.Option>
+            ))}
+          </Select>
+          {/* <Radio.Group>
             {categoryData?.map((el) => (
               <Radio key={el.value} value={el.value}>
                 {el.label}
               </Radio>
             ))}
-          </Radio.Group>
+          </Radio.Group> */}
         </Form.Item>
         <Form.Item label="应用组" name="appGroupCode" rules={[{ required: true, message: '请选择应用组!' }]}>
           <Select placeholder="请选择" onChange={changeAppGroupCode}>

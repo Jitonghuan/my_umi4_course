@@ -215,7 +215,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   useEffect(() => {
     //报警规则
     if (drawerType === 'rules') {
-      queryRuleTemplatesListFun({ pageIndex: -1, status: 0 });
+      queryRuleTemplatesListFun({ pageSize: -1, status: 0 });
     }
   }, [drawerType]);
 
@@ -324,6 +324,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="报警模版" name="ruleId">
           <Select
             style={{ width: '400px' }}
+            allowClear
             options={ruleTemplatesList as OptionProps[]}
             onChange={(e: string) => {
               setRuleTemplate(e);
