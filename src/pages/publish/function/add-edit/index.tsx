@@ -267,6 +267,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     }
     const params: IFuncItem[] = data.map((el) => {
       const { envs = [], preDeployTime, key, ...rest } = el;
+
       const deployTime = preDeployTime as Moment;
       const _envs = envs as string[];
       return {

@@ -126,7 +126,7 @@ const AddDrawer = (props: IProps) => {
         },
         planIds: selectPlan,
       }).then((resp) => {
-        if (resp.success) {
+        if (resp?.success) {
           handleClose(true);
         }
       });
