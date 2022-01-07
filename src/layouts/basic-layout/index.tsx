@@ -73,7 +73,6 @@ export default function Layout(props: any) {
 
   //切换部门确认
   const onPositionSubmit = (data: UserPositionProps) => {
-    console.log(data);
     chooseDept(data.deptId);
     setPosVisible(false);
     setUserPosition({
@@ -84,10 +83,13 @@ export default function Layout(props: any) {
       window.location.reload();
     }, 200);
   };
-
+  let deptitle = { modal_title: '切换部门' };
   return (
     <ConfigProvider locale={zhCN}>
       <PositionSwitcher
+        propsTitle={{
+          modal_title: '切换部门',
+        }}
         visible={posVisible}
         userPosition={userPosition} //用户当前所在的机构、院区、科室或者部门
         orgData={staffOrgData} //机构数据

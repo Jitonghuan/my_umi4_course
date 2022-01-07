@@ -58,7 +58,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/monitor/business`,
-    redirect: `${baseRoutePath}/monitor/business/prometheus`,
+    redirect: `${baseRoutePath}/monitor/business`,
   },
   {
     path: `${baseRoutePath}/monitor/basic`,
@@ -617,6 +617,30 @@ export default [
         component: '@/pages/monitor/application',
       },
       {
+        path: 'business',
+        name: '业务监控',
+        key: 'business-monitor',
+        //测试环境和正式环境暂不展示
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+        component: '@/pages/monitor/business/index',
+        routes: [
+          // {
+          //   path: 'prometheus',
+          //   name: '接口方式接入',
+          //   key: 'business-monitor',
+          //   component: '@/pages/monitor/business/prometheus',
+          //   hideInMenu: true,
+          // },
+          {
+            path: 'log-monitor',
+            name: '日志监控',
+            component: '@/pages/monitor/business/log-monitor',
+            hideInMenu: true,
+          },
+        ],
+      },
+
+      {
         path: 'alarm-rules',
         name: '报警管理',
         // key: 'basic-monitor',
@@ -1017,7 +1041,6 @@ export default [
         component: '@/pages/trafficmap/domain-config',
       },
     ],
-    hideInMenu: process.env.BUILD_ENV === 'prod',
   },
   {
     path: '*',

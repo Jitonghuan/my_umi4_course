@@ -9,12 +9,14 @@ import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
 import TemplateDrawer from '../component/template-drawer';
 import { Item } from '../typing';
+import { OptionProps } from '@/components/table-search/typing';
 import {
   queryRuleTemplatesList,
   createRuleTemplates,
   updateRuleTemplates,
   deleteRuleTemplates,
   ruleTemplatesSwitch,
+  queryGroupList,
 } from '../service';
 import './index.less';
 
@@ -35,9 +37,12 @@ const TemplateCom: React.FC = () => {
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则模版');
   const [editRecord, setEditRecord] = useState<Item>({});
   const [type, setType] = useState<'add' | 'edit'>('add');
+  const [groupData, setGroupData] = useState<OptionProps[]>([]);
 
   const [form] = Form.useForm();
-
+  useEffect(() => {
+    groupList();
+  }, []);
   const {
     tableProps,
     search: { submit: queryList, reset },
@@ -243,6 +248,15 @@ const TemplateCom: React.FC = () => {
     {
       key: '2',
       type: 'select',
+      label: '分类',
+      dataIndex: 'group',
+      width: '144px',
+      placeholder: '请选择报警分类',
+      option: groupData,
+    },
+    {
+      key: '3',
+      type: 'select',
       label: '状态',
       dataIndex: 'status',
       width: '144px',
@@ -261,7 +275,21 @@ const TemplateCom: React.FC = () => {
       ],
     },
   ];
-
+  //分类
+  const { run: groupList } = useRequest({
+    api: queryGroupList,
+    method: 'GET',
+    onSuccess: (data) => {
+      setGroupData(
+        data?.map((v: any) => {
+          return {
+            key: v,
+            value: v,
+          };
+        }),
+      );
+    },
+  });
   const onClose = () => {
     setDrawerVisible(false);
   };
