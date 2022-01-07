@@ -35,8 +35,8 @@ export default defineConfig({
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
       // target: 'https://release.zy91.com:4443/futuredog',
       // target: 'http://10.10.128.157:8080',//木南本地
-      // target: 'http://10.10.129.144:8080',//时雨本地
-      // target: 'http:/10.10.129.8:8080',//习习本地
+      // target: 'http://10.10.129.203:8080',//时雨本地
+      // target: 'http://10.10.128.214:8080',//习习本地
 
 
       changeOrigin: true,

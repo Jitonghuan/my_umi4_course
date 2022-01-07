@@ -277,7 +277,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     });
     if (type === 'add') {
       addFuncMultiReq(params).then((resp) => {
-        if (resp.success) {
+        if (resp?.success) {
           history.goBack();
         }
       });
