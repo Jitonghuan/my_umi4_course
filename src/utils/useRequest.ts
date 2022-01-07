@@ -48,7 +48,7 @@ const useRequest = <K>(props: UseRequestProps) => {
         break;
     }
 
-    if (!resp.success) return;
+    if (!resp?.success) return;
     if (onSuccess) {
       onSuccess(resp.data);
     }

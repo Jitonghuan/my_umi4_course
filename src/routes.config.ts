@@ -619,9 +619,27 @@ export default [
       {
         path: 'business',
         name: '业务监控',
-        component: '@/pages/monitor/business',
-        // hideInMenu: process.env.BUILD_ENV === 'prod',
+        key: 'business-monitor',
+        //测试环境和正式环境暂不展示
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+        component: '@/pages/monitor/business/index',
+        routes: [
+          // {
+          //   path: 'prometheus',
+          //   name: '接口方式接入',
+          //   key: 'business-monitor',
+          //   component: '@/pages/monitor/business/prometheus',
+          //   hideInMenu: true,
+          // },
+          {
+            path: 'log-monitor',
+            name: '日志监控',
+            component: '@/pages/monitor/business/log-monitor',
+            hideInMenu: true,
+          },
+        ],
       },
+
       {
         path: 'alarm-rules',
         name: '报警管理',
