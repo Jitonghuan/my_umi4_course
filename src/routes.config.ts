@@ -56,10 +56,11 @@ export default [
     path: `${baseRoutePath}/test/autotest`,
     redirect: `${baseRoutePath}/test/autotest/dashboard`,
   },
-  {
-    path: `${baseRoutePath}/monitor/business`,
-    redirect: `${baseRoutePath}/monitor/business`,
-  },
+  // {
+  //   path: `${baseRoutePath}/monitor`,
+  //   redirect: `${baseRoutePath}/monitor/business`,
+
+  // },
   {
     path: `${baseRoutePath}/monitor/basic`,
     redirect: `${baseRoutePath}/monitor/basic/prometheus`,
@@ -616,28 +617,35 @@ export default [
         name: '应用监控',
         component: '@/pages/monitor/application',
       },
+
       {
         path: 'business',
         name: '业务监控',
-        key: 'business-monitor',
+        // key: 'business-monitor',
         //测试环境和正式环境暂不展示
-        hideInMenu: process.env.BUILD_ENV === 'prod',
+        // hideInMenu: process.env.BUILD_ENV === 'prod',
         component: '@/pages/monitor/business/index',
-        routes: [
-          // {
-          //   path: 'prometheus',
-          //   name: '接口方式接入',
-          //   key: 'business-monitor',
-          //   component: '@/pages/monitor/business/prometheus',
-          //   hideInMenu: true,
-          // },
-          {
-            path: 'log-monitor',
-            name: '日志监控',
-            component: '@/pages/monitor/business/log-monitor',
-            hideInMenu: true,
-          },
-        ],
+        // routes: [
+        //   // {
+        //   //   path: 'prometheus',
+        //   //   name: '接口方式接入',
+        //   //   key: 'business-monitor',
+        //   //   component: '@/pages/monitor/business/prometheus',
+        //   //   hideInMenu: true,
+        //   // },
+        //   {
+        //     path: 'log-monitor',
+        //     name: '日志监控',
+        //     component: '@/pages/monitor/business/log-monitor',
+        //     hideInMenu: true,
+        //   },
+        // ],
+      },
+      {
+        path: 'log-monitor',
+        name: '创建日志监控',
+        component: '@/pages/monitor/business/log-monitor',
+        hideInMenu: true,
       },
 
       {

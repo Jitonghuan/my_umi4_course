@@ -85,7 +85,7 @@ export default function Dashboard(props: any) {
     );
   }
   const creatLogMinitor = () => {
-    history.push('/matrix/monitor/business/log-monitor');
+    history.push('/matrix/monitor/log-monitor');
   };
 
   return (

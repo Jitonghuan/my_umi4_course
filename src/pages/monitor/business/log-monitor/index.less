@@ -1,8 +1,65 @@
 .monitor-log {
-  .log-config {
-    display: flex;
-    justify-content: space-around;
-    .log-config-left {
+  .log-config-collapse {
+    .ant-collapse-content-box {
+      height: 300px;
+    }
+
+    .log-config {
+      display: flex;
+      height: 100%;
+
+      // justify-content: space-around;
+      .log-config-left {
+        width: 50%;
+        .ant-form,
+        .ant-form-horizontal {
+          margin-top: 30px;
+        }
+      }
+
+      .log-config-right {
+        width: 50%;
+        // height: 100%;
+        .log-board,
+        .target-board {
+          width: 100%;
+          height: 90%;
+          background-color: black;
+        }
+      }
+    }
+  }
+  .target-config-collapse {
+    .ant-collapse-content-box {
+      height: 370px;
+    }
+    .target-config {
+      display: flex;
+      height: 100%;
+      .target-config-left {
+        width: 50%;
+        .target-item {
+          &::before {
+            display: inline-block;
+            content: '';
+            margin-right: 8px;
+            width: 4px;
+            height: 16px;
+            background: #1973cc;
+          }
+        }
+      }
+    }
+
+    .target-config-right {
+      width: 50%;
+      // height: 100%;
+      .log-board,
+      .target-board {
+        width: 100%;
+        height: 90%;
+        background-color: black;
+      }
     }
   }
 }
