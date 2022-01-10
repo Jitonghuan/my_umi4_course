@@ -52,6 +52,7 @@ const DomainConfig: React.FC = () => {
 
   const handleDeleteRegion = async (id: string) => {
     await deleteRegion(id);
+    await requestRegionList();
   };
 
   const handleView = (record: any) => {
@@ -182,7 +183,7 @@ const DomainConfig: React.FC = () => {
           }}
         />
       </ContentCard>
-      <CreateRegionDrawer ref={createRegionRef} />
+      <CreateRegionDrawer ref={createRegionRef} requestRegionList={requestRegionList} />
     </PageContainer>
   );
 };

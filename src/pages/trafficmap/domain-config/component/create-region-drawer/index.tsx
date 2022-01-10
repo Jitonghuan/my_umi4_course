@@ -7,8 +7,13 @@ import { createRegion, getAppByRegion, updateRegion } from '@/pages/trafficmap/s
 
 const { Item: FormItem } = Form;
 type DrawerStatusType = 'view' | 'edit' | 'create';
+const TitleEnum = {
+  view: '查看域',
+  edit: '编辑域',
+  create: '创建域',
+};
 
-const CreateRegionDrawer = React.forwardRef((props, ref) => {
+const CreateRegionDrawer = React.forwardRef((props: any, ref) => {
   const [visible, setVisible] = useState(false);
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatusType>('create');
   const [envOptions, setEnvOptions] = useState<any[]>([
@@ -172,14 +177,14 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
       ...formValue,
       relApps,
     };
-    console.log(data);
-    if (regionCode) {
+    if (drawerStatus === 'edit') {
       await updateRegion(data);
       onClose();
     } else {
       await createRegion(data);
       onClose();
     }
+    await props.requestRegionList();
   };
 
   /**
@@ -197,7 +202,7 @@ const CreateRegionDrawer = React.forwardRef((props, ref) => {
 
   return (
     <Drawer
-      title="创建域"
+      title={TitleEnum[drawerStatus]}
       visible={visible}
       onClose={() => {
         onClose();
