@@ -1,8 +1,3 @@
-/*
- * @Author: shixia.ds
- * @Date: 2021-11-29 17:47:46
- * @Description:
- */
 export interface IAppInfo {
   id: string;
   name: string;
@@ -24,4 +19,36 @@ export interface IChartData {
 }
 export interface IColor {
   [propName: string]: any;
+}
+
+/**1-重要 2-中等 3-普通 */
+type LevelType = 1 | 2 | 3;
+
+/**
+ * 域信息
+ */
+export interface IRegionInfo {
+  envCode: string;
+  regionName: string;
+  regionCode: string;
+  relApps: [];
+  remark?: string;
+}
+/**
+ * 域应用
+ */
+export interface IRelApp {
+  appCode: string;
+  level: LevelType;
+  appName: string;
+}
+/**
+ * 查看域应用
+ */
+export interface IAppListSearch {
+  envCode: string;
+  regionCode: string;
+  appCode?: string;
+  //TODO:appCode似乎没有用
+  isRelation: number;
 }
