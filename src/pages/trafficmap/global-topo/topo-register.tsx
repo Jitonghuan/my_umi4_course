@@ -9,13 +9,13 @@ import G6, { Item } from '@antv/g6';
 import { APP_STATUS_COLOR_MAP, APP_STATUS_FILL_COLOR_MAP, APP_STATUS_ICON_MAP } from './const';
 
 const APP_NODE_FOCUS_SHADOWBLUR = 10;
-const APP_NODE_FOCUS_LineWidth = 4;
+const APP_NODE_FOCUS_LineWidth = 3;
 
 const APP_NODE_DEFAULT_SHADOWBLUR = 0;
-const APP_NODE_DEFAULT_LINEWIDTH = 3;
+const APP_NODE_DEFAULT_LINEWIDTH = 2;
 
 const COMBO_RADIUS = 2;
-const COMBO_HEADER_HEIGHT = 20;
+const COMBO_HEADER_HEIGHT = 24;
 
 //hover mouseEnter
 const NODE_STATUS_HOVER = 'hover';
@@ -47,7 +47,8 @@ const EXPAND_ICON = function EXPAND_ICON(x: number, y: number, r: number) {
 
 const getRegionNodeConfig = (node: any | undefined) => {
   let config = {
-    fontColor: APP_STATUS_COLOR_MAP[node.status || 'normal'],
+    // fontColor: APP_STATUS_COLOR_MAP[node.status || 'normal'],
+    fontColor: '#000000',
     borderColor: APP_STATUS_COLOR_MAP[node.status || 'normal'],
     fillColor: APP_STATUS_FILL_COLOR_MAP[node.status || 'normal'],
   };
@@ -74,7 +75,7 @@ const nodeBasicMethod = {
       attrs: {
         x: 3,
         y: 0,
-        width: w - 19,
+        width: w,
         height: h,
         fill: 'white',
         stroke: config.borderColor,
@@ -116,10 +117,10 @@ const nodeBasicMethod = {
     return container;
   },
 
-  createNodeMarker: (group: any, collapsed: any, x: number, y: any) => {
+  createNodeMarker: (group: any, collapsed: any, x: number, y: any, config: any) => {
     group.addShape('circle', {
       attrs: {
-        x: x - 30,
+        x: x - 15,
         y,
         r: 13,
         fill: 'rgba(47, 84, 235, 0.05)',
@@ -130,12 +131,11 @@ const nodeBasicMethod = {
     });
     group.addShape('marker', {
       attrs: {
-        x: x - 30,
+        x: x - 15,
         y,
         r: 7,
         symbol: EXPAND_ICON,
-        stroke: 'rgba(0,0,0,0.25)',
-        fill: 'rgba(0,0,0,0)',
+        stroke: config.borderColor,
         lineWidth: 1,
         cursor: 'pointer',
       },
@@ -169,12 +169,11 @@ if (G6) {
        * @param  {Object} cfg 节点的配置项
        * @param  {G.Group} group 图形分组，节点中图形对象的容器
        * @return {G.Shape} 返回一个绘制的图形作为 keyShape，通过 node.get('keyShape') 可以获取。
-       * 关于 keyShape 可参考文档 核心概念-节点/边/Combo-图形 Shape 与 keyShape
        */
       draw: (cfg: any, group: any) => {
         const config = getRegionNodeConfig(cfg);
         /* the biggest rect */
-        const container = nodeBasicMethod.createNodeBox(group, config, 243, 60);
+        const container = nodeBasicMethod.createNodeBox(group, config, 168, 60);
         /* name */
         group?.addShape('text', {
           attrs: {
@@ -182,16 +181,16 @@ if (G6) {
             x: 19,
             y: 30,
             fontSize: 14,
-            fontWeight: 700,
+            fontWeight: 500,
             textAlign: 'left',
             textBaseline: 'middle',
             fill: config.fontColor,
-            cursor: 'pointer',
           },
+          draggable: true,
           name: 'name-text-shape',
         });
 
-        nodeBasicMethod.createNodeMarker(group, cfg.collapsed, 236, 32);
+        nodeBasicMethod.createNodeMarker(group, cfg.collapsed, 168, 32, config);
         return container;
       },
 
@@ -231,6 +230,7 @@ if (G6) {
             y: -style.height / 2 - (cfg.padding[0] - cfg.padding[2]) / 2,
             stroke: APP_STATUS_COLOR_MAP[cfg.status],
             radius: COMBO_RADIUS,
+            opacity: 1,
           },
           name: 'main-box',
           draggable: true,
@@ -269,12 +269,13 @@ if (G6) {
         group?.addShape('marker', {
           attrs: {
             ...style,
-            fill: '#fff',
-            opacity: 1,
+            storke: '#ffffff',
+            fill: 'rgba(255,255,255,0)',
             x: 0,
             y: 0,
-            r: 10,
+            r: 7,
             symbol: COLLAPSE_ICON,
+            cursor: 'pointer',
           },
           draggable: true,
           name: 'combo-marker-shape',
@@ -329,6 +330,7 @@ if (G6) {
             // fill: enumcolor[cfg.status || 'normal'],
             fill: '#fff',
             stroke: APP_STATUS_COLOR_MAP[cfg.status || 'normal'],
+            lineWidth: APP_NODE_DEFAULT_LINEWIDTH,
           },
         });
         group.addShape('image', {

@@ -18,6 +18,7 @@ const arrowStyleType = {
     endArrow: {
       path: G6.Arrow.triangle(),
       fill: DANGER_COLOR,
+      strokeOpacity: 0,
     },
   },
   warning: {
@@ -29,6 +30,7 @@ const arrowStyleType = {
     endArrow: {
       path: G6.Arrow.triangle(),
       fill: WARNING_COLOR,
+      strokeOpacity: 0,
     },
   },
   normal: {
@@ -40,6 +42,7 @@ const arrowStyleType = {
     endArrow: {
       path: G6.Arrow.triangle(),
       fill: NORMAL_COLOR,
+      strokeOpacity: 0,
     },
   },
 };

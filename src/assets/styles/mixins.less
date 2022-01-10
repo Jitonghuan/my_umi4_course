@@ -36,3 +36,25 @@
     display: none;
   }
 }
+
+//单位换算为vh和vw,解决大小屏切换样式像素值变化的问题
+.convert(@vw,@vh) {
+  width: (@vw / 1920) * 100vw;
+  height: (@vh / 1080) * 100vh;
+}
+.convertBoxWidth(@key,@vw) {
+  @{key}: (@vw / 1920) * 100vw;
+}
+.convertBoxHeight(@key,@vh) {
+  @{key}: (@vh / 1080) * 100vh;
+}
+//使用方式：
+// <div class="el-mixin-one"></div>
+// <div class="el-mixin-two"></div>
+// .el-mixin-one {
+//   .convert(300,150);
+//   background: red;
+// }
+// .el-mixin-two{
+//  .convertBoxHeight(margin-top,60);
+// }

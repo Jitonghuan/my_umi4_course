@@ -1,88 +1,95 @@
-import React, { useState } from 'react';
-import { Form, Select, Input, Drawer, Button, Transfer, Table, Popconfirm } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Form, Select, Input, Drawer, Button, Table, Popconfirm } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
-import TableTransfer from './component/TableTransfer';
 import './index.less';
-
-const { Item: FormItem } = Form;
-const mockData: any[] = [];
-for (let i = 0; i < 20; i++) {
-  mockData.push({
-    key: i.toString(),
-    title: `content${i + 1}`,
-    description: `description of content${i + 1}`,
-  });
-}
-const initialTargetKeys = mockData.filter((item) => +item.key > 10).map((item) => item.key);
-
-const leftTableColumns = [
-  {
-    dataIndex: 'title',
-    title: 'Name',
-  },
-];
-
-const rightTableColumns = [
-  {
-    dataIndex: 'title',
-    title: 'Name',
-  },
-  {
-    dataIndex: 'level',
-    title: 'level',
-    render: (text: string, record: any) => {
-      return (
-        <>
-          <Select
-            onMouseEnter={(e) => {
-              e.preventDefault();
-            }}
-          />
-        </>
-      );
-    },
-  },
-];
+import { deleteRegion, getRegionList } from '../service';
+import CreateRegionDrawer from './component/create-region-drawer';
 
 const DomainConfig: React.FC = () => {
   // 工单创建表单对象
-  const [createFormRef] = Form.useForm();
 
-  const [visible, setVisible] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [envOptions, setEnvOptions] = useState<any[]>([]);
-  const [form] = Form.useForm();
-  const [targetKeys, setTargetKeys] = useState(initialTargetKeys);
-  const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const [domianList, setDomianList] = useState<any[]>([]);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [total, setTotal] = useState<number>(0);
+  const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<any>({});
+  const createRegionRef = useRef<any>();
+
+  useEffect(() => {
+    requestRegionList();
+  }, []);
+
+  useEffect(() => {
+    requestRegionList();
+  }, [pageIndex, pageSize, searchValue]);
+
+  const requestRegionList = async () => {
+    let data = {
+      pageSize,
+      pageIndex,
+      ...searchValue,
+    };
+    setIsTableLoading(true);
+
+    let res = await getRegionList(data);
+
+    setDomianList(res.data.dataSource);
+    setTotal(res.data.pageInfo.total);
+    setIsTableLoading(false);
+  };
+
+  const onSearch = (values: any) => {
+    setSearchValue(values);
+  };
+
+  const handleEdit = (record: any) => {
+    createRegionRef.current.editDrawer(record);
+  };
+
+  const handleDeleteRegion = async (id: string) => {
+    await deleteRegion(id);
+    await requestRegionList();
+  };
+
+  const handleView = (record: any) => {
+    createRegionRef.current.viewDrawer(record);
+  };
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
       title: '域名',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'regionName',
+      key: 'regionName',
     },
     {
       title: '域CODE',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'regionCode',
+      key: 'regionCode',
     },
     {
-      title: '环境',
-      dataIndex: 'address',
-      key: 'address',
+      title: '环境CODE',
+      dataIndex: 'envCode',
+      key: 'envCode',
+    },
+    {
+      title: '创建人',
+      dataIndex: 'createUser',
+      key: 'createUser',
+    },
+    {
+      title: '修改人',
+      dataIndex: 'modifyUser',
+      key: 'modifyUser',
     },
     {
       title: '备注',
-      dataIndex: 'description',
-      key: 'description',
+      dataIndex: 'remark',
+      key: 'remark',
+      ellipsis: true,
     },
     {
       title: '操作',
@@ -91,9 +98,20 @@ const DomainConfig: React.FC = () => {
       render: (text: string, record: any) => {
         return (
           <>
-            <Button type="link">查看</Button>
-            <Button type="link">编辑</Button>
-            <Popconfirm title="确认删除" okText="是" cancelText="否">
+            <Button type="link" onClick={() => handleView(record)}>
+              查看
+            </Button>
+            <Button type="link" onClick={() => handleEdit(record)}>
+              编辑
+            </Button>
+            <Popconfirm
+              title="确认删除"
+              okText="是"
+              cancelText="否"
+              onConfirm={() => {
+                handleDeleteRegion(record.id);
+              }}
+            >
               <Button type="link">删除</Button>
             </Popconfirm>
           </>
@@ -102,96 +120,70 @@ const DomainConfig: React.FC = () => {
     },
   ];
 
-  const onChange = (nextTargetKeys: any, direction: any, moveKeys: any) => {
-    console.log('targetKeys:', nextTargetKeys);
-    console.log('direction:', direction);
-    console.log('moveKeys:', moveKeys);
-    setTargetKeys(nextTargetKeys);
-  };
-
-  const onSelectChange = (sourceSelectedKeys: any[], targetSelectedKeys: any[]) => {
-    setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
-  };
-
   return (
-    <PageContainer>
-      <FilterCard>
-        <Form layout="inline">
-          <Form.Item label="域名">
+    <PageContainer className="domain-config">
+      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
+        <Form
+          layout="inline"
+          onFinish={onSearch}
+          // onReset={() => {
+          //   requestRegionList();
+          // }}
+        >
+          <Form.Item label="域名" name="regionName">
             <Input />
           </Form.Item>
-          <Form.Item label="域code">
+          <Form.Item label="域code" name="regionCode">
             <Input />
           </Form.Item>
-          <Form.Item label="环境code">
+          <Form.Item label="环境code" name="envCode">
             <Input />
           </Form.Item>
           <Form.Item>
-            <Button type="primary">查询</Button>
+            <Button type="primary" htmlType="submit">
+              搜索
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="ghost" htmlType="reset">
+              重置
+            </Button>
           </Form.Item>
         </Form>
       </FilterCard>
-      <ContentCard>
+      <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
         <div className="domian-table-header">
           <h3>配置域列表</h3>
-          <Button type="primary" onClick={() => setVisible(true)}>
+          <Button
+            type="primary"
+            ghost
+            onClick={() => {
+              createRegionRef.current.showDrawer();
+            }}
+          >
             <PlusOutlined />
             新增域
           </Button>
         </div>
 
-        <Table columns={columns} dataSource={domianList} />
+        <Table
+          columns={columns}
+          dataSource={domianList}
+          loading={isTableLoading}
+          pagination={{
+            current: pageIndex,
+            total,
+            pageSize,
+            showSizeChanger: true,
+            onShowSizeChange: (_, size) => {
+              setPageSize(size);
+              setPageIndex(1); //
+            },
+            showTotal: () => `总共 ${total} 条数据`,
+          }}
+        />
       </ContentCard>
-
-      <Drawer
-        title="创建域"
-        visible={visible}
-        onClose={() => {
-          setVisible(false);
-          createFormRef.resetFields();
-        }}
-        width={800}
-        maskClosable={false}
-        className="create-ticket-drawer"
-      >
-        <Form form={form} labelCol={{ flex: '120px' }}>
-          <FormItem label="域名" name="name" rules={[{ required: true, message: '请输入域名' }]}>
-            <Input placeholder="请输入域名" disabled={isEdit} style={{ width: 320 }} />
-          </FormItem>
-          <FormItem
-            label="域CODE"
-            name="code"
-            rules={[
-              {
-                required: true,
-                message: '输入的域Code里请不要包含中文',
-                pattern: /^[^\u4e00-\u9fa5]*$/,
-              },
-            ]}
-          >
-            <Input placeholder="请输入域Code(不要包含中文）" disabled={isEdit} style={{ width: 320 }} />
-          </FormItem>
-          <FormItem label="环境" name="env" rules={[{ required: true, message: '请选择环境' }]}>
-            <Select options={envOptions} placeholder="请选择" style={{ width: 320 }} showSearch />
-          </FormItem>
-          <FormItem label="备注" name="desc">
-            <Input.TextArea placeholder="请输入备注" />
-          </FormItem>
-          <FormItem label="选择应用">
-            <TableTransfer
-              dataSource={mockData}
-              targetKeys={targetKeys}
-              showSearch={true}
-              titles={['可添加应用', '已添加应用']}
-              filterOption={(inputValue: any, item: any) => item.title.indexOf(inputValue) !== -1}
-              onChange={onChange}
-              onSelectChange={onSelectChange}
-              leftColumns={leftTableColumns}
-              rightColumns={rightTableColumns}
-            />
-          </FormItem>
-        </Form>
-      </Drawer>
+      <CreateRegionDrawer ref={createRegionRef} requestRegionList={requestRegionList} />
     </PageContainer>
   );
 };

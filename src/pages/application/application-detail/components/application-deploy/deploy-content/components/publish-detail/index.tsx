@@ -339,7 +339,7 @@ export default function PublishDetail(props: IProps) {
                 if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') === -1) {
                   localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
                   history.push(
-                    `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${deployInfo?.id}`,
+                    `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
                   );
                 }
               }}
