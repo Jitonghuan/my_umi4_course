@@ -13,7 +13,11 @@ export default function DemoPageTb() {
       <FilterCard>TOP</FilterCard>
       <CardRowGroup>
         <CardRowGroup.SlideCard width={200}>LEFT</CardRowGroup.SlideCard>
-        <ContentCard>RIGHT</ContentCard>
+        <ContentCard>
+          RIGHT
+          <div className="rigth_top"></div>
+          <div className="rigth_down"></div>
+        </ContentCard>
       </CardRowGroup>
     </PageContainer>
   );
