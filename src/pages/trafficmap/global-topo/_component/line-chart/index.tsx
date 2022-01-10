@@ -20,47 +20,39 @@ export interface LineChartProps {
 export default function LineChart(props: LineChartProps) {
   const { loading, title, data, xAxis } = props;
 
-  const legendLineNum = data.length / 3 + (data.length % 3 ? 1 : 0);
-
   const getChart = (echart?: echarts.ECharts) => {
     props?.getChart(echart);
   };
 
   const chartOptions = useMemo(() => {
     return {
-      title: {
-        text: title,
-        left: 'left',
-        textStyle: {
-          fontSize: 16,
-        },
-      },
       tooltip: {
         trigger: 'axis',
       },
       legend:
-        // data.length > 1?
-        {
-          data: data.map((item) => item.name),
-          top: '35px',
-          left: 'center',
-        },
-      // : null,
+        data.length > 1
+          ? {
+              data: data.map((item) => item.name),
+              left: 'left',
+              icon: 'circle',
+              itemHeight: 5,
+              itemWidth: 5,
+            }
+          : null,
       //调整绘制的echart在canvas里距离各边的距离
       grid: {
-        top: `${30 + legendLineNum * 20}px`,
-        left: '5%',
-        right: '6%',
-        bottom: '3%',
+        top: `30px`,
+        left: '14px',
+        bottom: '0px',
         containLabel: true,
       },
       xAxis: {
         type: 'category',
         boundaryGap: false,
         data: xAxis,
-        axisLabel: {
-          interval: 0, // 显示所有的 x 轴上的文字不隐藏
-        },
+        // axisLabel: {
+        //   interval: 0, // 显示所有的 x 轴上的文字不隐藏
+        // },
       },
       yAxis: {
         type: 'value',
@@ -71,7 +63,8 @@ export default function LineChart(props: LineChartProps) {
 
   return (
     <section data-loading={loading}>
-      <div style={{ height: 200 + legendLineNum * 20, background: '#fff' }}>
+      <div style={{ height: '184px', background: '#F7F8FA', marginBottom: '8px', padding: '12px' }}>
+        <div className="echart-title">{title}</div>
         <ColorContainer roleKeys={['color']}>
           {/**
            * 参数说明
@@ -79,7 +72,7 @@ export default function LineChart(props: LineChartProps) {
            * @notMerge echart更新时是否和先前option merge 为true时画布会删除历史数据
            *  */}
           <EchartsReact
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '140px' }}
             option={chartOptions}
             notMerge={true}
             onChartReady={(echart?: echarts.ECharts) => {

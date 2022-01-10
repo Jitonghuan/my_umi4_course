@@ -61,12 +61,11 @@ const DragWrapper: React.FC<DragWrapperProps> = (props) => {
           <DragModal
             key={appInfo.id}
             title={appInfo.name}
-            width={300}
-            height={810}
+            width={260}
+            height={632}
             modalResize={{
               resizeHandles: ['se', 'e', 's'],
-              minConstraints: [260, 810],
-              // onResizeStart: onResizeStart,
+              minConstraints: [260, 632],
               onResizeStop: onResizeStop,
             }}
             onCancel={() => {
@@ -78,7 +77,9 @@ const DragWrapper: React.FC<DragWrapperProps> = (props) => {
                 <LineChart {...item} {...appInfo.chartData[item.key]} key={index} getChart={getChart} />
               ))}
             </div>
-            <Button style={{ float: 'right' }}>应用流量</Button>
+            <div className="footer">
+              <Button>应用流量</Button>
+            </div>
           </DragModal>
         );
       })}
