@@ -48,7 +48,7 @@ export const updateRegion = (data: any) => {
  * @returns
  */
 export const deleteRegion = (id: string) => {
-  const url = addAPIPrefix('/trafficMap/region/delete:id');
+  const url = addAPIPrefix(`/trafficMap/region/delete/${id}`);
   return delRequest(url, { data: { id: id } });
 };
 
@@ -62,7 +62,7 @@ export const getTopoList = (data: any) => {
   return getRequest(url, {
     data: {
       envCode: 'hbos-dev',
-      duration: data.duration || '2022-01-05 15:29',
+      duration: data.duration,
     },
   });
 };
