@@ -126,7 +126,7 @@ const globalTopo: React.FC = () => {
     },
   ]);
   const [clickId, setClickId] = useState<string>('');
-  const [selectTime, setSelectTime] = useState('');
+  const [selectTime, setSelectTime] = useState(moment().format(dateFormat));
 
   const TopoRef = useRef<any>();
 
@@ -207,7 +207,7 @@ const globalTopo: React.FC = () => {
             <DatePicker
               showTime={{ format: 'HH:mm' }}
               format="YYYY-MM-DD HH:mm"
-              defaultValue={moment('2022-01-05 15:29', dateFormat)}
+              defaultValue={moment(moment(), dateFormat)}
               onChange={(value, dateString) => {
                 setSelectTime(dateString);
               }}
