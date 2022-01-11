@@ -28,6 +28,27 @@ export function useEnvOptions() {
   return [source];
 }
 
+//新增编辑页选择环境
+export function useEDitEnvOptions() {
+  const [source, setSource] = useState<{ label: string; value: string }[]>([]);
+
+  useEffect(() => {
+    getRequest(APIS.getEnvList, {
+      data: { pageIndex: 1, pageSize: 100 },
+    }).then((result) => {
+      const { dataSource } = result.data || {};
+      const next = (dataSource || []).map((item: any) => ({
+        label: item?.envCode,
+        value: item?.envCode,
+      }));
+
+      setSource(next);
+    });
+  }, []);
+
+  return [source];
+}
+
 //选择日志库
 export function useLogStoreOptions(envCode?: string) {
   const [source, setSource] = useState<{ label: string; value: string }[]>([]);
@@ -57,33 +78,6 @@ export function useFrameUrl(envCode?: string, logStore?: string): [string, boole
   const [url, setUrl] = useState<string>('');
   const [logType, setLogType] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  // const getUrl =()=>{
-
-  //   if (!envCode || !logStore) {
-  //         setLoading(false);
-  //         setUrl('');
-  //         return;
-  //       }
-  //       setLoading(true);
-  //       console.log("envCode,logStore",envCode,logStore)
-  //       getRequest(APIS.getSearchUrl, {
-  //       data: { envCode, logStore },
-  //      })
-  //     .then((result) => {
-  //       if (result.success) {
-  //         if (result.data.logType === '1') {
-  //           setUrl(result.data.url || '');
-  //           setLogType('1');
-  //         } else {
-  //           setLogType('0');
-  //         }
-  //       }
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // }
-
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
       setLoading(false);

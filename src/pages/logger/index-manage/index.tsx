@@ -9,10 +9,10 @@ import { getRequest, postRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 import * as APIS from '../search/service';
 import { ContentCard } from '@/components/vc-page-content';
-import { useEnvOptions, useCreateIndexMode, useDeleteIndexMode, useEditIndexMode } from '../search/hooks';
+import { useEDitEnvOptions, useCreateIndexMode, useDeleteIndexMode, useEditIndexMode } from '../search/hooks';
 export default function DemoPageList() {
   const [addIndexForm] = Form.useForm();
-  const [envOptions] = useEnvOptions();
+  const [envOptions] = useEDitEnvOptions();
   const [addMode, setAddMode] = useState<EditorMode>('HIDE');
   const [initValue, setInitValue] = useState<any>(); //编辑时候的初始值
   const [createIndexMode] = useCreateIndexMode(); //创建
