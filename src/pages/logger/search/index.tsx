@@ -82,7 +82,7 @@ export default function LoggerSearch(props: any) {
   let end = Number(now / 1000).toString();
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
   const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>(); //手风琴下拉框数据 hits
-  const [vivelogSearchTabInfo, setVivelogSeaechTabInfo] = useState<any>(); //手风琴展示数据
+  const [viewLogSearchTabInfo, setViewlogSeaechTabInfo] = useState<any>(); //手风琴展示数据
   const [hitInfo, setHitInfo] = useState<string>(''); //命中次数
   const [envCode, setEnvCode] = useState<string>(''); //环境envcode选择
   const [logStore, setLogStore] = useState<string>(); //日志库选择
@@ -174,6 +174,7 @@ export default function LoggerSearch(props: any) {
     setHitInfo('');
     setLogSearchTableInfo('');
     setLogHistormData([]);
+    setViewlogSeaechTabInfo([]);
   };
 
   const callback = (key: any) => {};
@@ -259,9 +260,9 @@ export default function LoggerSearch(props: any) {
           setLogHistormData(logHistorm);
           //手风琴下拉框数据 hits
           let logSearchTableInfodata = resp.data.logs;
-          let vivelogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
+          let viewLogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
           setLogSearchTableInfo(logSearchTableInfodata);
-          setVivelogSeaechTabInfo(vivelogSearchTabInfo);
+          setViewlogSeaechTabInfo(viewLogSearchTabInfo);
           //命中率
           let hitNumber = resp.data.total;
           setHitInfo(hitNumber);
@@ -283,6 +284,7 @@ export default function LoggerSearch(props: any) {
     setHitInfo('');
     setLogSearchTableInfo('');
     setLogHistormData([]);
+    setViewlogSeaechTabInfo([]);
   };
 
   //重置筛选信息
@@ -310,8 +312,8 @@ export default function LoggerSearch(props: any) {
 
     setTimeout(() => {
       let moreList = logSearchTableInfo.splice(0, 20);
-      let vivelist = vivelogSearchTabInfo.concat(moreList);
-      setVivelogSeaechTabInfo(vivelist);
+      let vivelist = viewLogSearchTabInfo.concat(moreList);
+      setViewlogSeaechTabInfo(vivelist);
       setScrollLoading(false);
     }, 1500);
   };
@@ -470,15 +472,15 @@ export default function LoggerSearch(props: any) {
               >
                 <Spin spinning={infoLoading}>
                   <InfiniteScroll
-                    dataLength={vivelogSearchTabInfo?.length || 0}
+                    dataLength={viewLogSearchTabInfo?.length || 0}
                     next={ScrollMore}
-                    hasMore={vivelogSearchTabInfo?.length < 500}
-                    loader={<Skeleton paragraph={{ rows: 1 }} active />}
+                    hasMore={viewLogSearchTabInfo?.length < 500}
+                    loader={<Skeleton paragraph={{ rows: 1 }} />}
                     endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                     scrollableTarget="scrollableDiv"
                   >
                     <List
-                      dataSource={vivelogSearchTabInfo}
+                      dataSource={viewLogSearchTabInfo}
                       loading={srollLoading}
                       renderItem={(item: any, index) => (
                         <List.Item key={index}>
