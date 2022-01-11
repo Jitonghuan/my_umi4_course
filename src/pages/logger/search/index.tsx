@@ -108,17 +108,17 @@ export default function LoggerSearch(props: any) {
     if (!envCode || !logStore) {
       return;
     }
-
-    queryIndexModeList(envCode, logStore)
-      .then(() => {
-        message.info('请输入筛选条件进行查询哦～');
-      })
-      .catch(() => {
-        setIndexModeData([]);
-        setHitInfo('');
-        setLogSearchTableInfo('');
-        setLogHistormData('');
-      });
+    message.info('请输入筛选条件进行查询哦～');
+    // queryIndexModeList(envCode, logStore)
+    //   .then(() => {
+    //     message.info('请输入筛选条件进行查询哦～');
+    //   })
+    //   .catch(() => {
+    //     setIndexModeData([]);
+    //     setHitInfo('');
+    //     setLogSearchTableInfo('');
+    //     setLogHistormData([]);
+    //   });
   }, [logStore]);
 
   //使用lucene语法搜索时的事件
@@ -170,6 +170,10 @@ export default function LoggerSearch(props: any) {
   const handleEnvCodeChange = (next: string) => {
     setEnvCode(next);
     setLogStore(undefined);
+    setIndexModeData([]);
+    setHitInfo('');
+    setLogSearchTableInfo('');
+    setLogHistormData([]);
   };
 
   const callback = (key: any) => {};
@@ -275,6 +279,10 @@ export default function LoggerSearch(props: any) {
   const chooseIndexMode = (n: any) => {
     setLogStore(n);
     subInfoForm.resetFields();
+    setIndexModeData([]);
+    setHitInfo('');
+    setLogSearchTableInfo('');
+    setLogHistormData([]);
   };
 
   //重置筛选信息
