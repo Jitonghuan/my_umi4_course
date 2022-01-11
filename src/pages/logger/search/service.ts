@@ -30,3 +30,6 @@ export const editIndexMode = addAPIPrefix('logManage/logSearch/indexMode/edit');
 
 //删除索引模式
 export const deleteIndexMode = addAPIPrefix('logManage/logSearch/indexMode/delete');
+
+//获取可用环境code列表
+export const getEnvCodesAvailable = addAPIPrefix('logManage/logSearch/indexMode/envCodes');

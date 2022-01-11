@@ -8,8 +8,8 @@ export function loggerChart(data: any) {
   const countList: any = [];
   const timeList: any = [];
   logHistormData?.map((item: any) => {
-    countList.push(item?.doc_count);
-    timeList.push(moment(item?.key).format('HH:mm:ss'));
+    countList.push(item?.count);
+    timeList.push(moment(item?.timePoint).format('HH:mm:ss'));
   });
 
   return {

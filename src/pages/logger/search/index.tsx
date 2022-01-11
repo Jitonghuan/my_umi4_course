@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import {
   Form,
   Select,
   Button,
   Input,
-  Tag,
+  message,
   Spin,
   DatePicker,
   TimePicker,
   Collapse,
   Popover,
-  Row,
-  Col,
   List,
   Skeleton,
   Divider,
@@ -19,10 +17,9 @@ import {
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
-import { AnsiUp } from 'ansi-up';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
-import { postRequest, getRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -74,7 +71,6 @@ export default function LoggerSearch(props: any) {
   const { Search } = Input;
   const { Panel } = Collapse;
   const { Option } = Select;
-  let ansi_up = new AnsiUp();
   const { RangePicker } = DatePicker;
   const [subInfoForm] = Form.useForm();
   const [rangePickerForm] = Form.useForm();
@@ -104,57 +100,27 @@ export default function LoggerSearch(props: any) {
   const [editConditionType, setEditConditionType] = useState<boolean>(false); //使用高级搜索时禁用筛选条件输入
   const [envOptions] = useEnvOptions(); //环境下拉框选项数据
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
-  // const [frameUrl, urlLoading, logType] = useFrameUrl(envCode, logStore);
-  const [frameUrl, setFrameUrl] = useState<string>('');
-  const [logType, setLogType] = useState<string>('');
-  const [urlLoading, setUrlLoading] = useState(false);
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
-  const [framePending, setFramePending] = useState(false);
   const timmerRef = useRef<any>();
   const frameRef = useRef<any>();
-  let urlType = '';
   var iframe = document.createElement('iframe');
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
-      setUrlLoading(false);
-      setFrameUrl('');
       return;
     }
-    setUrlLoading(true);
-    getRequest(APIS.getSearchUrl, {
-      data: { envCode, logStore },
-    })
-      .then((result) => {
-        if (result.success) {
-          if (result.data.logType === '1') {
-            setFrameUrl(result.data.url || '');
-            setLogType('1');
-            urlType = '1';
-          } else {
-            setLogType('0');
-            urlType = '0';
-          }
-          queryIndexModeList(envCode, logStore)
-            .then(() => {
-              if (urlType === '0') {
-                loadMoreData(logStore, startTimestamp, endTimestamp);
-              }
-            })
-            .catch(() => {
-              setIndexModeData([]);
-              setHitInfo('');
-              setLogSearchTableInfo('');
-              setLogHistormData('');
-            });
-        }
+
+    queryIndexModeList(envCode, logStore)
+      .then(() => {
+        message.info('请输入筛选条件进行查询哦～');
       })
-      .finally(() => {});
+      .catch(() => {
+        setIndexModeData([]);
+        setHitInfo('');
+        setLogSearchTableInfo('');
+        setLogHistormData('');
+      });
   }, [logStore]);
-  useEffect(() => {
-    if (logType === '1') {
-      setFramePending(!!frameUrl);
-    }
-  }, [frameUrl]);
+
   //使用lucene语法搜索时的事件
   const onSearch = (values: any) => {
     subInfoForm.resetFields();
@@ -207,13 +173,6 @@ export default function LoggerSearch(props: any) {
   };
 
   const callback = (key: any) => {};
-  const handleFrameComplete = () => {
-    setUrlLoading(false);
-    clearTimeout(timmerRef.current);
-    timmerRef.current = setTimeout(() => {
-      setFramePending(false);
-    }, 500);
-  };
 
   function range(start: any, end: any) {
     const result = [];
@@ -291,17 +250,16 @@ export default function LoggerSearch(props: any) {
       .then((resp) => {
         if (resp?.success) {
           //柱状图数据 buckets
-          let logHistorm = resp?.data?.aggregations?.aggs_over_time?.buckets;
-          setLogHistormData;
+          let logHistorm = resp?.data?.histograms;
+          // setLogHistormData;
           setLogHistormData(logHistorm);
           //手风琴下拉框数据 hits
-          let logSearchTableInfodata = resp.data.hits.hits;
+          let logSearchTableInfodata = resp.data.logs;
           let vivelogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
           setLogSearchTableInfo(logSearchTableInfodata);
-
           setVivelogSeaechTabInfo(vivelogSearchTabInfo);
           //命中率
-          let hitNumber = resp.data.hits.total.value;
+          let hitNumber = resp.data.total;
           setHitInfo(hitNumber);
           // setLoading(false);
           setInfoLoading(false);
@@ -347,13 +305,8 @@ export default function LoggerSearch(props: any) {
       let vivelist = vivelogSearchTabInfo.concat(moreList);
       setVivelogSeaechTabInfo(vivelist);
       setScrollLoading(false);
-    }, 1800);
+    }, 1500);
   };
-  // let html =ansi_up.ansi_to_html(JSON.stringify(vivelogSearchTabInfo));
-  // var scrollableDiv= document.getElementById("scrollableDiv"); //statusLog 即是页面需要展示内容的div
-  // if(scrollableDiv){
-  //   scrollableDiv.innerHTML=html
-  // }
 
   //实现无限加载滚动
   return (
@@ -383,7 +336,7 @@ export default function LoggerSearch(props: any) {
             </Form>
           </div>
           <div className="caption-right">
-            {logType === '0' && envCode && logStore ? (
+            {envCode && logStore ? (
               <div>
                 <Form form={rangePickerForm}>
                   <Form.Item name="rangeDate" noStyle>
@@ -414,28 +367,8 @@ export default function LoggerSearch(props: any) {
         </div>
       </FilterCard>
       <ContentCard className="page-logger-search-content">
-        {logType === '1' && (urlLoading || framePending) ? (
-          <div className="loading-wrapper">
-            <Spin tip="加载中" spinning={urlLoading} />
-          </div>
-        ) : null}
-        {/* {urlLoading?  <div className="loading-wrapper">
-            <Spin tip="加载中" spinning={urlLoading} />
-          </div>:null} */}
-
-        {/* {(logType==="1")&&!urlLoading && (!envCode || !logStore) ? <div className="empty-holder">请选择环境和日志库</div> : null} */}
-
-        {logType === '1' && !urlLoading && envCode && logStore && !frameUrl ? (
-          <div className="empty-holder">未找到日志检索页面</div>
-        ) : null}
-
-        {logType === '1' && frameUrl ? (
-          <iframe onLoad={handleFrameComplete} src={frameUrl} frameBorder="0" ref={frameRef} />
-        ) : null}
-
         {!envCode && !logStore ? <div className="empty-holder">请选择环境和日志库</div> : null}
-
-        {logType === '0' && envCode && logStore ? (
+        {envCode && logStore ? (
           <div>
             <div style={{ marginBottom: 18, width: '100%' }}>
               <div>
@@ -532,7 +465,7 @@ export default function LoggerSearch(props: any) {
                     dataLength={vivelogSearchTabInfo?.length || 0}
                     next={ScrollMore}
                     hasMore={vivelogSearchTabInfo?.length < 500}
-                    loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+                    loader={<Skeleton paragraph={{ rows: 1 }} active />}
                     endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                     scrollableTarget="scrollableDiv"
                   >
@@ -549,12 +482,12 @@ export default function LoggerSearch(props: any) {
                                 header={
                                   <div style={{ display: 'flex', maxHeight: 138, overflow: 'hidden' }}>
                                     <div style={{ width: '20%', color: '#6495ED' }}>
-                                      {moment(item?._source['@timestamp']).format('YYYY-MM-DD,HH:mm:ss')}
+                                      {moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss')}
                                     </div>
                                     {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
                                     <div
                                       style={{ width: '80%' }}
-                                      dangerouslySetInnerHTML={{ __html: JSON.stringify(item?._source) }}
+                                      dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
                                     >
                                       {/* {ansi_up.ansi_to_html(JSON.stringify(item?._source))} */}
                                     </div>
@@ -564,50 +497,40 @@ export default function LoggerSearch(props: any) {
                               >
                                 <Tabs defaultActiveKey="1" onChange={callback}>
                                   <TabPane tab="表" key="1">
-                                    <div style={{ marginLeft: 14 }}>
-                                      {Object.keys(item?._source).map((key: any) => {
-                                        return (
-                                          <p className="tab-header">
-                                            <span
-                                              className="tab-left"
-                                              dangerouslySetInnerHTML={{ __html: `${key}:` }}
-                                            ></span>
-                                            <span
-                                              className="tab-right"
-                                              dangerouslySetInnerHTML={{ __html: JSON.stringify(item?._source[key]) }}
-                                            ></span>
-                                          </p>
-                                        );
-                                      })}
-                                      <p className="tab-header">
-                                        <span className="tab-left">_id:</span>
-                                        <span
-                                          className="tab-right"
-                                          dangerouslySetInnerHTML={{ __html: item?._id }}
-                                        ></span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">_index:</span>
-                                        <span
-                                          className="tab-right"
-                                          dangerouslySetInnerHTML={{ __html: item?._index }}
-                                        ></span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">_score:</span>
-                                        <span
-                                          className="tab-right"
-                                          dangerouslySetInnerHTML={{ __html: item?._score }}
-                                        ></span>
-                                      </p>
-                                      <p className="tab-header">
-                                        <span className="tab-left">_type:</span>
-                                        <span
-                                          className="tab-right"
-                                          dangerouslySetInnerHTML={{ __html: item?._type }}
-                                        ></span>
-                                      </p>
-                                    </div>
+                                    {Object.keys(item)?.map((key: any) => {
+                                      return key === '@timestamp' ? (
+                                        <p className="tab-header">
+                                          <span className="tab-left">@timestamp:</span>
+                                          <span
+                                            className="tab-right"
+                                            dangerouslySetInnerHTML={{
+                                              __html: moment(item?.['@timestamp']).format('YYYY-MM-DD,HH:mm:ss'),
+                                            }}
+                                          ></span>
+                                        </p>
+                                      ) : key === '__time__' ? (
+                                        <p className="tab-header">
+                                          <span className="tab-left">time:</span>
+                                          <span
+                                            className="tab-right"
+                                            dangerouslySetInnerHTML={{
+                                              __html: moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss'),
+                                            }}
+                                          ></span>
+                                        </p>
+                                      ) : (
+                                        <p className="tab-header">
+                                          <span
+                                            className="tab-left"
+                                            dangerouslySetInnerHTML={{ __html: `${key}:` }}
+                                          ></span>
+                                          <span
+                                            className="tab-right"
+                                            dangerouslySetInnerHTML={{ __html: JSON.stringify(item?.[key]) }}
+                                          ></span>
+                                        </p>
+                                      );
+                                    })}
                                   </TabPane>
                                   <TabPane tab="JSON" key="2">
                                     <ReactJson src={item} name={false} />
