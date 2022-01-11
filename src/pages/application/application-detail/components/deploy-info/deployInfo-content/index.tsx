@@ -210,7 +210,7 @@ export default function DeployContent(props: DeployContentProps) {
             }
           })
           .catch(() => {
-            setListEnvClusterData([]);
+            // setListEnvClusterData([]);
             setInstanceTableData([]);
           });
       })
@@ -246,8 +246,10 @@ export default function DeployContent(props: DeployContentProps) {
         appCode,
         envCode: currentEnvData,
         appCategoryCode: appData?.appCategoryCode,
-      }).then(() => {
-        message.success('操作成功！');
+      }).then((res) => {
+        if (res.success) {
+          message.success('操作成功！');
+        }
         queryAppOperateLog(currentEnvData);
         timerHandler('do', true);
       });
