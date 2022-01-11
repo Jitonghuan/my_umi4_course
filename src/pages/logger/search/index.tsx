@@ -4,7 +4,7 @@ import {
   Select,
   Button,
   Input,
-  Tag,
+  message,
   Spin,
   DatePicker,
   TimePicker,
@@ -136,9 +136,10 @@ export default function LoggerSearch(props: any) {
           }
           queryIndexModeList(envCode, logStore)
             .then(() => {
-              if (urlType === '0') {
-                loadMoreData(logStore, startTimestamp, endTimestamp);
-              }
+              // if (urlType === '0') {
+              //   loadMoreData(logStore, startTimestamp, endTimestamp);
+              // }
+              message.info('请输入筛选条件进行查询哦～');
             })
             .catch(() => {
               setIndexModeData([]);
@@ -291,17 +292,16 @@ export default function LoggerSearch(props: any) {
       .then((resp) => {
         if (resp?.success) {
           //柱状图数据 buckets
-          let logHistorm = resp?.data?.aggregations?.aggs_over_time?.buckets;
-          setLogHistormData;
+          let logHistorm = resp?.data?.histograms;
+          // setLogHistormData;
           setLogHistormData(logHistorm);
           //手风琴下拉框数据 hits
-          let logSearchTableInfodata = resp.data.hits.hits;
+          let logSearchTableInfodata = resp.data.logs;
           let vivelogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
           setLogSearchTableInfo(logSearchTableInfodata);
-
           setVivelogSeaechTabInfo(vivelogSearchTabInfo);
           //命中率
-          let hitNumber = resp.data.hits.total.value;
+          let hitNumber = resp.data.total;
           setHitInfo(hitNumber);
           // setLoading(false);
           setInfoLoading(false);
@@ -347,7 +347,7 @@ export default function LoggerSearch(props: any) {
       let vivelist = vivelogSearchTabInfo.concat(moreList);
       setVivelogSeaechTabInfo(vivelist);
       setScrollLoading(false);
-    }, 1800);
+    }, 1500);
   };
   // let html =ansi_up.ansi_to_html(JSON.stringify(vivelogSearchTabInfo));
   // var scrollableDiv= document.getElementById("scrollableDiv"); //statusLog 即是页面需要展示内容的div
@@ -532,7 +532,7 @@ export default function LoggerSearch(props: any) {
                     dataLength={vivelogSearchTabInfo?.length || 0}
                     next={ScrollMore}
                     hasMore={vivelogSearchTabInfo?.length < 500}
-                    loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+                    loader={<Skeleton paragraph={{ rows: 1 }} active />}
                     endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                     scrollableTarget="scrollableDiv"
                   >
@@ -549,12 +549,12 @@ export default function LoggerSearch(props: any) {
                                 header={
                                   <div style={{ display: 'flex', maxHeight: 138, overflow: 'hidden' }}>
                                     <div style={{ width: '20%', color: '#6495ED' }}>
-                                      {moment(item?._source['@timestamp']).format('YYYY-MM-DD,HH:mm:ss')}
+                                      {moment(item?.['@timestamp']).format('YYYY-MM-DD,HH:mm:ss')}
                                     </div>
                                     {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
                                     <div
                                       style={{ width: '80%' }}
-                                      dangerouslySetInnerHTML={{ __html: JSON.stringify(item?._source) }}
+                                      dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
                                     >
                                       {/* {ansi_up.ansi_to_html(JSON.stringify(item?._source))} */}
                                     </div>
@@ -565,46 +565,64 @@ export default function LoggerSearch(props: any) {
                                 <Tabs defaultActiveKey="1" onChange={callback}>
                                   <TabPane tab="表" key="1">
                                     <div style={{ marginLeft: 14 }}>
-                                      {Object.keys(item?._source).map((key: any) => {
-                                        return (
-                                          <p className="tab-header">
-                                            <span
-                                              className="tab-left"
-                                              dangerouslySetInnerHTML={{ __html: `${key}:` }}
-                                            ></span>
-                                            <span
-                                              className="tab-right"
-                                              dangerouslySetInnerHTML={{ __html: JSON.stringify(item?._source[key]) }}
-                                            ></span>
-                                          </p>
-                                        );
-                                      })}
                                       <p className="tab-header">
-                                        <span className="tab-left">_id:</span>
+                                        <span className="tab-left">@timestamp:</span>
                                         <span
                                           className="tab-right"
-                                          dangerouslySetInnerHTML={{ __html: item?._id }}
+                                          dangerouslySetInnerHTML={{
+                                            __html: moment(item?.['@timestamp']).format('YYYY-MM-DD,HH:mm:ss'),
+                                          }}
                                         ></span>
                                       </p>
                                       <p className="tab-header">
-                                        <span className="tab-left">_index:</span>
+                                        <span className="tab-left">@version:</span>
                                         <span
                                           className="tab-right"
-                                          dangerouslySetInnerHTML={{ __html: item?._index }}
+                                          dangerouslySetInnerHTML={{ __html: item?.['@version'] }}
                                         ></span>
                                       </p>
                                       <p className="tab-header">
-                                        <span className="tab-left">_score:</span>
+                                        <span className="tab-left">appCode:</span>
                                         <span
                                           className="tab-right"
-                                          dangerouslySetInnerHTML={{ __html: item?._score }}
+                                          dangerouslySetInnerHTML={{ __html: item?.appCode }}
                                         ></span>
                                       </p>
                                       <p className="tab-header">
-                                        <span className="tab-left">_type:</span>
+                                        <span className="tab-left">envCode:</span>
                                         <span
                                           className="tab-right"
-                                          dangerouslySetInnerHTML={{ __html: item?._type }}
+                                          dangerouslySetInnerHTML={{ __html: item?.envCode }}
+                                        ></span>
+                                      </p>
+                                      <p className="tab-header">
+                                        <span className="tab-left">log:</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{ __html: item?.log }}
+                                        ></span>
+                                      </p>
+                                      <p className="tab-header">
+                                        <span className="tab-left">podName:</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{ __html: item?.podName }}
+                                        ></span>
+                                      </p>
+                                      <p className="tab-header">
+                                        <span className="tab-left">tags:</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{ __html: item?.tags }}
+                                        ></span>
+                                      </p>
+                                      <p className="tab-header">
+                                        <span className="tab-left">time:</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{
+                                            __html: moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss'),
+                                          }}
                                         ></span>
                                       </p>
                                     </div>

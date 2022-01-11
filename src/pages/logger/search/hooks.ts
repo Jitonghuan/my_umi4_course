@@ -12,13 +12,13 @@ export function useEnvOptions() {
   const [source, setSource] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
-    getRequest(APIS.getEnvList, {
+    getRequest(APIS.getEnvCodesAvailable, {
       data: { pageIndex: 1, pageSize: 100 },
     }).then((result) => {
-      const { dataSource } = result.data || {};
+      const dataSource = result.data || [];
       const next = (dataSource || []).map((item: any) => ({
-        label: item.envCode,
-        value: item.envCode,
+        label: item,
+        value: item,
       }));
 
       setSource(next);
@@ -38,7 +38,7 @@ export function useLogStoreOptions(envCode?: string) {
     getRequest(APIS.ruleIndexOptions, {
       data: { envCode },
     }).then((result) => {
-      let indexdata = result.data;
+      let indexdata = result?.data;
       // const { Index } = result.data || [];
       const next = (indexdata || []).map((n: string) => ({
         label: n,
