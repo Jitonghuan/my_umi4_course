@@ -25,6 +25,10 @@ export default [
     redirect: `${baseRoutePath}/application/all`,
   },
   {
+    path: `${baseRoutePath}/pedestal`,
+    redirect: `${baseRoutePath}/pedestal/storage-management`,
+  },
+  {
     path: `${baseRoutePath}/publish`,
     redirect: `${baseRoutePath}/publish/function`,
   },
@@ -290,6 +294,19 @@ export default [
             component: '@/pages/application/application-detail/components/change-details',
           },
         ],
+      },
+    ],
+  },
+  {
+    path: 'pedestal',
+    name: '基座管理',
+    icon: 'icon-dataset',
+    routes: [
+      {
+        path: 'storage-management',
+        name: '存储管理',
+        key: 'storage-management',
+        component: '@/pages/pedestal/storage-management',
       },
     ],
   },
