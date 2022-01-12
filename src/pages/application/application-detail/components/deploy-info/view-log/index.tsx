@@ -121,9 +121,10 @@ export default function ViewLog(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.goBack();
+
       // history.push(`/matrix/application/detail/deployInfo?appCode=${appData?.appCode}&id=${appData?.id}`);
     }
+    history.goBack();
   };
 
   return (
@@ -153,7 +154,7 @@ export default function ViewLog(props: any) {
           {log}
         </div>
         <div style={{ height: 30, textAlign: 'center' }}>
-          <span className="eventButton">
+          <span className="event-button">
             <Button type="primary" onClick={scrollTop}>
               回到顶部
             </Button>
