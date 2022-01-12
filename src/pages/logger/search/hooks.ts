@@ -12,13 +12,34 @@ export function useEnvOptions() {
   const [source, setSource] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
+    getRequest(APIS.getEnvCodesAvailable, {
+      data: { pageIndex: 1, pageSize: 100 },
+    }).then((result) => {
+      const dataSource = result.data || [];
+      const next = (dataSource || []).map((item: any) => ({
+        label: item,
+        value: item,
+      }));
+
+      setSource(next);
+    });
+  }, []);
+
+  return [source];
+}
+
+//新增编辑页选择环境
+export function useEDitEnvOptions() {
+  const [source, setSource] = useState<{ label: string; value: string }[]>([]);
+
+  useEffect(() => {
     getRequest(APIS.getEnvList, {
       data: { pageIndex: 1, pageSize: 100 },
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
-        label: item.envCode,
-        value: item.envCode,
+        label: item?.envCode,
+        value: item?.envCode,
       }));
 
       setSource(next);
@@ -38,7 +59,7 @@ export function useLogStoreOptions(envCode?: string) {
     getRequest(APIS.ruleIndexOptions, {
       data: { envCode },
     }).then((result) => {
-      let indexdata = result.data;
+      let indexdata = result?.data;
       // const { Index } = result.data || [];
       const next = (indexdata || []).map((n: string) => ({
         label: n,
@@ -57,33 +78,6 @@ export function useFrameUrl(envCode?: string, logStore?: string): [string, boole
   const [url, setUrl] = useState<string>('');
   const [logType, setLogType] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  // const getUrl =()=>{
-
-  //   if (!envCode || !logStore) {
-  //         setLoading(false);
-  //         setUrl('');
-  //         return;
-  //       }
-  //       setLoading(true);
-  //       console.log("envCode,logStore",envCode,logStore)
-  //       getRequest(APIS.getSearchUrl, {
-  //       data: { envCode, logStore },
-  //      })
-  //     .then((result) => {
-  //       if (result.success) {
-  //         if (result.data.logType === '1') {
-  //           setUrl(result.data.url || '');
-  //           setLogType('1');
-  //         } else {
-  //           setLogType('0');
-  //         }
-  //       }
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // }
-
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
       setLoading(false);
