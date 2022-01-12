@@ -168,7 +168,6 @@ export default function PublishContent(props: IProps) {
           },
         }}
       >
-        <Table.Column dataIndex="id" title="ID" fixed="left" width={80} />
         <Table.Column dataIndex="branchName" title="分支名" fixed="left" render={branchNameRender} width={320} />
         <Table.Column
           dataIndex="desc"
@@ -183,6 +182,7 @@ export default function PublishContent(props: IProps) {
             </Tooltip>
           )}
         />
+        <Table.Column dataIndex="id" title="ID" width={80} />
         <Table.Column
           dataIndex="status"
           width={120}
@@ -192,6 +192,22 @@ export default function PublishContent(props: IProps) {
         />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={100} />
+        {appData?.appType === 'frontend' ? (
+          <Table.Column
+            fixed="right"
+            title="和master对比"
+            align="center"
+            width={110}
+            render={(item) => (
+              <a
+                target="_blank"
+                href={`${appData?.gitAddress.replace('.git', '')}/-/compare/master...${item.branchName}?view=parallel`}
+              >
+                查看
+              </a>
+            )}
+          />
+        ) : null}
       </Table>
     </div>
   );
