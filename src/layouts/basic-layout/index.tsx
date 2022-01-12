@@ -42,6 +42,7 @@ export default function Layout(props: any) {
   const [businessData] = useBusinessData();
 
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
+  const { fromThird } = props.location.query;
 
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
@@ -120,6 +121,8 @@ export default function Layout(props: any) {
               permissionData,
               IconMap,
             }}
+            showHeader={!fromThird}
+            showSiderMenu={!fromThird}
             headerProps={{
               env: appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev',
               onClickPosition: () => {
