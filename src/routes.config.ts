@@ -26,7 +26,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/pedestal`,
-    redirect: `${baseRoutePath}/pedestal/storage-management`,
+    redirect: `${baseRoutePath}/pedestal/storage-dashboard`,
   },
   {
     path: `${baseRoutePath}/publish`,
@@ -303,10 +303,33 @@ export default [
     icon: 'icon-dataset',
     routes: [
       {
-        path: 'storage-management',
+        path: 'storage-dashboard',
         name: '存储管理',
-        key: 'storage-management',
-        component: '@/pages/pedestal/storage-management',
+        key: 'storage-dashboard',
+        component: '@/pages/pedestal/storage-dashboard',
+        routes: [
+          {
+            path: 'records',
+            name: '数据列表',
+            key: 'data-factory',
+            component: '@/pages/test/data-factory/data-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'add',
+            name: '新增数据',
+            key: 'data-factory',
+            hideInMenu: true,
+            component: '@/pages/test/data-factory/create-data',
+          },
+          {
+            path: 'template',
+            name: '数据模板',
+            key: 'data-factory',
+            component: '@/pages/test/data-factory/template',
+            hideInMenu: true,
+          },
+        ],
       },
     ],
   },
