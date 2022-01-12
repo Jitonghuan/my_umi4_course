@@ -204,16 +204,13 @@ export default function LogMonitor(props: any) {
           </Collapse>
 
           <Collapse bordered={false} defaultActiveKey={['1']} className="target-config-collapse">
-            <Panel
-              header={`指标配置    上报指标格式：指标名称(过滤字段1="值1",  过滤字段2="值2")   指标值   时间戳`}
-              key="2"
-            >
+            <Panel header={`指标配置    上报指标格式：指标名称(过滤字段1="值1",  过滤字段2="值2")   指标值`} key="2">
               <div className="target-config">
                 <div className="target-config-left">
                   <Form labelCol={{ flex: '100px' }}>
-                    <Form.Item label="时间戳字段">
+                    {/* <Form.Item label="时间戳字段">
                       <Select style={{ width: '220px' }}></Select>
-                    </Form.Item>
+                    </Form.Item> */}
                     <div className="target-item">指标项</div>
                     <Form.Item label="指标名称">
                       <Input style={{ width: '220px' }}></Input>
@@ -235,9 +232,9 @@ export default function LogMonitor(props: any) {
                       </Button>
                     </Form.Item>
                     <Form.Item>
-                      <Select style={{ width: 100, marginLeft: 40 }}></Select>
+                      <Select style={{ width: 100, marginLeft: 40 }} placeholder="选择过滤字段"></Select>
                       <Select style={{ width: 80, paddingLeft: 10 }}></Select>
-                      <Input style={{ width: 180, paddingLeft: 10 }}></Input>
+                      <Input style={{ width: 180, paddingLeft: 10 }} placeholder="输入字段值"></Input>
                       <span style={{ marginLeft: 10, color: '#1973cc' }}>
                         {' '}
                         <DeleteFilled />
