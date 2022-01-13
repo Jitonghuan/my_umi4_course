@@ -68,6 +68,17 @@ export const getTopoList = (data: any) => {
 };
 
 /**
+ * 获取环境列表
+ * @returns
+ */
+export const getEnvList = () => {
+  const url = addAPIPrefix('/appManage/env/list');
+  return getRequest(url, {
+    data: { pageSize: 1000 },
+  });
+};
+
+/**
  *
  * @param data envCode  duration  appCode
  * @returns
