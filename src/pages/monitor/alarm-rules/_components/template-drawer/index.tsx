@@ -54,7 +54,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
   const [getSilenceValue, setGetSilenceValue] = useState(0);
-
   const envTypeData = [
     {
       key: 'dev',
@@ -133,6 +132,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     api: queryRuleTemplatesList,
     method: 'GET',
     onSuccess: (data) => {
+      console.log('data', data);
       setRuleTemplatesList(
         data?.dataSource.map((v: any) => {
           return {
@@ -175,6 +175,8 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     // let receiver: string[] | undefined = [];
     // let receiverType: string[] | undefined = [];
     let silenceTime: Moment[] = [];
+    let silenceStart: any;
+    let silenceEnd: any;
 
     //回显数据
     const setValues = {
@@ -184,15 +186,21 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
     };
+
     //规则情况
     if (drawerType === 'rules') {
       //回显时间
+
       if (record?.silence) {
-        silenceTime[0] = moment(record?.silenceStart, 'HH:mm');
-        silenceTime[1] = moment(record?.silenceEnd, 'HH:mm');
+        silenceStart = moment(record?.silenceStart, 'HH:mm');
+        silenceEnd = moment(record?.silenceEnd, 'HH:mm');
+        setGetSilenceValue(record.silence);
+      } else {
+        setGetSilenceValue(0);
       }
 
-      setValues.silenceTime = silenceTime;
+      setValues.silenceStart = silenceStart;
+      setValues.silenceEnd = silenceStart;
     }
 
     form.setFieldsValue({
@@ -278,9 +286,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         annotations: stepTableMap(annotationsTableData),
         duration: `${value.duration}${value.timeType}`,
       };
+
       if (value?.silence) {
-        obj.silenceStart = moment(value.silenceTime[0]).format('HH:mm');
-        obj.silenceEnd = moment(value.silenceTime[1]).format('HH:mm');
+        obj.silenceStart = moment(value.silenceStart).format('HH:mm');
+        obj.silenceEnd = moment(value.silenceEnd).format('HH:mm');
         delete obj.silenceTime;
       }
       if (type === 'edit') {
@@ -433,18 +442,15 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           <Col span={5}></Col>
           <Col span={19}>
             <Form.Item noStyle shouldUpdate={(prevValues, curValues) => prevValues.silence !== curValues.silence}>
-              {getSilenceValue !== 0 ? (
-                <Form.Item
-                  name="silenceTime"
-                  rules={[
-                    {
-                      required: true,
-                      message: '请选择',
-                    },
-                  ]}
-                >
-                  <TimePicker.RangePicker format="HH:mm" style={{ width: '90%', marginTop: 8 }} />
-                </Form.Item>
+              {getSilenceValue === 1 ? (
+                <div>
+                  <Form.Item label="开始时间" name="silenceStart" rules={[{ required: true, message: '请选择' }]}>
+                    <TimePicker format="HH:mm" style={{ width: '40%', marginTop: 8 }} />
+                  </Form.Item>
+                  <Form.Item label="结束时间" name="silenceEnd" rules={[{ required: true, message: '请选择' }]}>
+                    <TimePicker format="HH:mm" style={{ width: '40%', marginTop: 8 }} />
+                  </Form.Item>
+                </div>
               ) : null}
             </Form.Item>
           </Col>
