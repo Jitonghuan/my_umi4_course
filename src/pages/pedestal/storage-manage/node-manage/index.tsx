@@ -1,7 +1,7 @@
 /**
- * @description: 基座管理-存储管理-存储大盘
+ * @description: 基座管理-存储管理-节点管理
  * @name {muxi.jth}
- * @date {2022/01/11 16:43}
+ * @date {2022/01/12 10:43}
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
@@ -32,50 +32,15 @@ export default function Storage() {
             </Form.Item>
             <Divider />
           </Form>
-          <Form layout="inline">
-            <Form.Item label="卷名" name="appCategoryCode">
-              <Input style={{ width: 140 }} />
-            </Form.Item>
-            <Form.Item label="卷类型" name="envCode">
-              <Select allowClear showSearch style={{ width: 140 }} />
-            </Form.Item>
-            <Form.Item label="PV" name="templateType">
-              <Input placeholder="请输入K8s pv name" style={{ width: 140 }} />
-            </Form.Item>
-            <Form.Item label="PVC" name="templateName">
-              <Input placeholder="请输入模版名称"></Input>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button type="ghost" htmlType="reset">
-                重置
-              </Button>
-            </Form.Item>
-          </Form>
         </div>
         <div style={{ marginTop: 20 }}>
           <Table rowKey="id" bordered>
-            <Table.Column title="ID" dataIndex="id" width="4%" />
-            <Table.Column title="卷名" dataIndex="templateName" width="20%" ellipsis />
-            <Table.Column title="类型" dataIndex="languageCode" width="8%" ellipsis />
-            <Table.Column title="brick数量" dataIndex="templateType" width="8%" ellipsis />
-            <Table.Column title="传输协议" dataIndex="appCategoryCode" width="8%" ellipsis />
-            <Table.Column
-              title="开启NFS"
-              dataIndex="useNacos"
-              width={110}
-              render={(value, record, index) => (
-                <Switch
-                  className="useNacos"
-                  onChange={() => handleNacosChange(value, record)}
-                  checked={value === 1 ? true : false}
-                />
-              )}
-            />
+            <Table.Column title="主机名" dataIndex="id" width="4%" />
+            <Table.Column title="IP" dataIndex="templateName" width="20%" ellipsis />
+            <Table.Column title="brick数量" dataIndex="languageCode" width="8%" ellipsis />
+            <Table.Column title="device数量" dataIndex="templateType" width="8%" ellipsis />
+            <Table.Column title="可用空间" dataIndex="appCategoryCode" width="8%" ellipsis />
+            <Table.Column title="已用空间" dataIndex="appCategoryCode" width="8%" ellipsis />
             <Table.Column
               title="状态"
               dataIndex="tagName"
@@ -106,19 +71,24 @@ export default function Storage() {
                       })
                     }
                   >
-                    详细状态
+                    详情
                   </a>
                   <Popconfirm
                     title="确定要停止吗？"
                     //  onConfirm={() => handleDelItem(record)}
                   >
-                    <a style={{ color: 'red' }}>停止</a>
+                    <a style={{ color: 'red' }}>移除</a>
                   </Popconfirm>
                 </Space>
               )}
             />
           </Table>
+          <div>
+            <Button type="primary">新增节点</Button>
+          </div>
         </div>
+        <Divider />
+        <div></div>
       </ContentCard>
     </PageContainer>
   );

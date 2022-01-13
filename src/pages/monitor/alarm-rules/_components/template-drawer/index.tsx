@@ -111,7 +111,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     await getRequest(getEnvCodeList, {
       data: { envTypeCode },
     }).then((resp) => {
-      if (resp.success) {
+      if (resp?.success) {
         let data = resp?.data;
         data?.map((item: any) => {
           envOptions.push({

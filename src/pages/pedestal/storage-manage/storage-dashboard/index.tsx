@@ -1,7 +1,7 @@
 /**
- * @description: 基座管理-存储管理-节点管理
+ * @description: 基座管理-存储管理-存储大盘
  * @name {muxi.jth}
- * @date {2022/01/12 10:43}
+ * @date {2022/01/11 16:43}
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
@@ -33,7 +33,17 @@ export default function Storage() {
             <Divider />
           </Form>
         </div>
+        <div className="volume-status"></div>
         <div style={{ marginTop: 20 }}>
+          <Table rowKey="id" bordered>
+            <Table.Column title="类型" dataIndex="id" width="4%" />
+            <Table.Column title="数量" dataIndex="templateName" width="20%" ellipsis />
+            <Table.Column title="可用" dataIndex="languageCode" width="8%" ellipsis />
+            <Table.Column title="不可用" dataIndex="templateType" width="8%" ellipsis />
+          </Table>
+        </div>
+        <div className="volume-dashboard-one"></div>
+        <div className="cluster-node-info">
           <Table rowKey="id" bordered>
             <Table.Column title="主机名" dataIndex="id" width="4%" />
             <Table.Column title="IP" dataIndex="templateName" width="20%" ellipsis />
@@ -49,40 +59,11 @@ export default function Storage() {
                 return <Tag color="success">{current}</Tag>;
               }}
             />
-            <Table.Column title="快照数量" dataIndex="remark" width={110} ellipsis />
-            <Table.Column title="可用空间" dataIndex="remark" width={110} ellipsis />
-            <Table.Column title="总空间" dataIndex="remark" width={110} ellipsis />
-            <Table.Column
-              title="操作"
-              dataIndex="gmtModify"
-              width="18%"
-              key="action"
-              render={(_, record: any, index) => (
-                <Space size="small">
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-detail',
-                        query: {
-                          type: 'info',
-                          templateCode: record.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      })
-                    }
-                  >
-                    详情
-                  </a>
-                  <Popconfirm
-                    title="确定要停止吗？"
-                    //  onConfirm={() => handleDelItem(record)}
-                  >
-                    <a style={{ color: 'red' }}>移除</a>
-                  </Popconfirm>
-                </Space>
-              )}
-            />
           </Table>
+        </div>
+        <div className="volume-dashboard-two">
+          <div className="volume-dashboard-two-left"></div>
+          <div className="volume-dashboard-two-right"></div>
         </div>
       </ContentCard>
     </PageContainer>
