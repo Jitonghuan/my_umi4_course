@@ -200,7 +200,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       }
 
       setValues.silenceStart = silenceStart;
-      setValues.silenceEnd = silenceStart;
+      setValues.silenceEnd = silenceEnd;
     }
 
     form.setFieldsValue({
