@@ -13,8 +13,9 @@ import Topo from './Topo';
 import DragWrapper from './_component/DragWrapper';
 import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
+import moment from 'moment';
+import { useEnvOptions } from '../hooks';
 import './index.less';
-import moment from '_moment@2.29.1@moment';
 
 const dateFormat = 'YYYY-MM-DD HH:mm';
 const dataDemo = {
@@ -92,12 +93,6 @@ const dataDemo = {
 
 const globalTopo: React.FC = () => {
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
-  const [envDatas, setEnvDatas] = useState<any[]>([
-    {
-      label: 'hbos-dev',
-      value: 'hbos-dev',
-    },
-  ]); //环境
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
   const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
@@ -127,8 +122,14 @@ const globalTopo: React.FC = () => {
   ]);
   const [clickId, setClickId] = useState<string>('');
   const [selectTime, setSelectTime] = useState(moment().subtract(1, 'minutes').format(dateFormat));
+  const [selectEnv, setSelectEnv] = useState('hbos-dev');
+  const [envOptions] = useEnvOptions();
 
   const TopoRef = useRef<any>();
+
+  useEffect(() => {
+    clickId && onAppClick(clickId);
+  }, [clickId]);
 
   const expandAll = () => {
     TopoRef?.current?.expandAll();
@@ -182,10 +183,6 @@ const globalTopo: React.FC = () => {
     setClickId(id);
   }, []);
 
-  useEffect(() => {
-    clickId && onAppClick(clickId);
-  }, [clickId]);
-
   const onRedLineClick = useCallback((id: string) => {
     console.log('redline', id);
   }, []);
@@ -196,9 +193,11 @@ const globalTopo: React.FC = () => {
         <Form layout="inline" form={formTmpl} style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Form.Item label="环境：" name="envCode">
             <Select
-              options={envDatas}
-              defaultValue={'hbos-dev'}
-              onChange={(n) => {}}
+              options={envOptions}
+              defaultValue={selectEnv}
+              onChange={(env) => {
+                setSelectEnv(env);
+              }}
               showSearch
               style={{ width: 140 }}
             />
@@ -259,6 +258,7 @@ const globalTopo: React.FC = () => {
                 onRedLineClick={onRedLineClick}
                 ref={TopoRef}
                 selectTime={selectTime}
+                selectEnv={selectEnv}
               />
             </div>
           </div>

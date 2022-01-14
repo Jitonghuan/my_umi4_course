@@ -61,7 +61,7 @@ export const getTopoList = (data: any) => {
   const url = addAPIPrefix('/trafficMap/topology/list');
   return getRequest(url, {
     data: {
-      envCode: 'hbos-dev',
+      envCode: data.envCode,
       duration: data.duration,
     },
   });

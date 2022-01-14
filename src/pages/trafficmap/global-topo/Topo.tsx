@@ -14,6 +14,7 @@ interface ITopoProps {
   onNodeClick: (id: string) => void;
   onRedLineClick: (id: string) => void;
   selectTime: string;
+  selectEnv: string;
 }
 
 const Topo = memo(
@@ -42,7 +43,7 @@ const Topo = memo(
       offsetX: 10,
       offsetY: 10,
       // the types of items that allow the tooltip show up
-      itemTypes: ['node'],
+      itemTypes: ['node', 'edge'],
       // custom the tooltip's content
       getContent: (e: any) => {
         const outDiv = document.createElement('div');
@@ -58,9 +59,10 @@ const Topo = memo(
         return outDiv;
       },
     });
+
     const toolbar = new G6.ToolBar();
     const getTopoData = async () => {
-      let res = await getTopoList({ duration: props.selectTime });
+      let res = await getTopoList({ duration: props.selectTime, envCode: props.selectEnv });
       const edges = res.data.Calls.map((item: any) => {
         return {
           id: item.callId,
@@ -77,15 +79,16 @@ const Topo = memo(
           ...item,
         };
       });
-      setOriginData({
-        nodes,
-        edges,
-      });
+      // setOriginData({
+      //   nodes,
+      //   edges,
+      // });
+      setOriginData(OriginData);
     };
 
     useEffect(() => {
       getTopoData();
-    }, [props.selectTime]);
+    }, [props.selectTime, props.selectEnv]);
 
     useEffect(() => {
       if (originData?.nodes?.length > 0) {
@@ -101,7 +104,7 @@ const Topo = memo(
           layout: {
             type: 'gForce',
             //当一次迭代的平均移动长度小于该值时停止迭代。数字越小，布局越收敛，所用时间将越长
-            minMovement: 0.05,
+            minMovement: 0.5,
             //最大迭代次数。当迭代次数超过该值，但平均移动长度仍然没有达到 minMovement，也将强制停止迭代
             maxIteration: 5000,
             //阻尼系数，取值范围 [0, 1]。数字越大，速度降低得越慢
@@ -125,8 +128,12 @@ const Topo = memo(
               if (d.nodeType == 'region') return 100;
             },
             nodeStrength: (d: any) => {
-              if (d.nodeType == 'region') return 3000;
+              if (d.nodeType == 'region') return 10000;
               return 1000;
+            },
+            nodeSize: (d: any) => {
+              if (d.nodeType == 'region') return 150;
+              return 50;
             },
           },
           defaultCombo: {
@@ -151,6 +158,9 @@ const Topo = memo(
           },
           defaultEdge: {
             type: 'custom-edge',
+            style: {
+              lineAppendWidth: 7,
+            },
           },
         });
 
