@@ -26,7 +26,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/pedestal`,
-    redirect: `${baseRoutePath}/pedestal/storage-manage`,
+    redirect: `${baseRoutePath}/pedestal/storage-manage/storage-dashboard`,
   },
   {
     path: `${baseRoutePath}/publish`,
@@ -307,29 +307,37 @@ export default [
         name: '存储管理',
         key: 'storage-manage',
         component: '@/pages/pedestal/storage-manage',
+
         routes: [
           {
             path: 'storage-dashboard',
             name: '存储大盘',
-            key: 'storage-dashboard',
+            key: 'storage-manage',
             component: '@/pages/pedestal/storage-manage/storage-dashboard',
             hideInMenu: true,
           },
           {
             path: 'node-manage',
             name: '节点管理',
-            key: 'node-manage',
+            key: 'storage-manage',
             hideInMenu: true,
             component: '@/pages/pedestal/storage-manage/node-manage',
           },
           {
             path: 'volume-manage',
             name: '卷管理',
-            key: 'volume-manage',
+            key: 'storage-manage',
             component: '@/pages/pedestal/storage-manage/volume-manage',
             hideInMenu: true,
           },
         ],
+      },
+      {
+        path: 'volume-detail',
+        name: '卷详情',
+        key: 'storage-manage',
+        component: '@/pages/pedestal/storage-manage/volume-detail',
+        hideInMenu: true,
       },
     ],
   },

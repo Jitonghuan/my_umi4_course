@@ -62,13 +62,14 @@ export default function ApplicationDetail(props: any) {
   //       </PageContainer>
   //     );
   //   }
-
+  const [tabKey, setTabKey] = useState<string>('storage-dashboard');
   return (
     <PageContainer className="application-detail-page">
       <FilterCard className="layout-compact">
         <Tabs
-          defaultActiveKey="1"
+          defaultActiveKey="storage-dashboard"
           onChange={(key) => {
+            setTabKey(key);
             history.replace({
               pathname: `${detailPath}/${key}`,
             });
@@ -80,12 +81,11 @@ export default function ApplicationDetail(props: any) {
         </Tabs>
       </FilterCard>
 
-      <ContentCard>111</ContentCard>
-      {/* <DetailContext.Provider value={{ appData, queryAppData }}>
-        <VCPermission code={window.location.pathname} isShowErrorPage>
-          {children}
-        </VCPermission>
-      </DetailContext.Provider> */}
+      <div>
+        {tabKey === 'volume-manage' && <VolumeManage />}
+        {tabKey === 'storage-dashboard' && <StorageDashboard />}
+        {tabKey === 'node-manage' && <NodeManage />}
+      </div>
     </PageContainer>
   );
 }
