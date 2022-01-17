@@ -4,7 +4,7 @@
  * @Description: 全局拓扑页面
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Select, Button, DatePicker, message } from 'antd';
+import { Form, Select, Button, DatePicker, message, Switch } from 'antd';
 import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import * as echarts from 'echarts';
 import PageContainer from '@/components/page-container';
@@ -123,6 +123,7 @@ const globalTopo: React.FC = () => {
   const [clickId, setClickId] = useState<string>('');
   const [selectTime, setSelectTime] = useState(moment().subtract(1, 'minutes').format(dateFormat));
   const [selectEnv, setSelectEnv] = useState('hbos-dev');
+  const [isMock, setIsMock] = useState(false);
   const [envOptions] = useEnvOptions();
 
   const TopoRef = useRef<any>();
@@ -165,7 +166,6 @@ const globalTopo: React.FC = () => {
       const idArray = appIdList;
       idArray.push(id);
       setAppIdList(idArray);
-
       const array = appInfoList.slice(0);
       array.push({
         id: id,
@@ -186,6 +186,10 @@ const globalTopo: React.FC = () => {
   const onRedLineClick = useCallback((id: string) => {
     console.log('redline', id);
   }, []);
+
+  const handleMockData = () => {
+    setIsMock(true);
+  };
 
   return (
     <PageContainer className="global-topo">
@@ -240,6 +244,8 @@ const globalTopo: React.FC = () => {
               >
                 {isFullScreen ? '退出全屏' : '全屏查看'}
               </Button>
+              使用mock数据：
+              <Switch checked={isMock} onChange={setIsMock} />
             </div>
           </div>
         </div>
@@ -259,6 +265,8 @@ const globalTopo: React.FC = () => {
                 ref={TopoRef}
                 selectTime={selectTime}
                 selectEnv={selectEnv}
+                isMock={isMock}
+                setIsMock={setIsMock}
               />
             </div>
           </div>

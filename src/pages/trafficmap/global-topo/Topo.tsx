@@ -13,8 +13,10 @@ import './topo-register';
 interface ITopoProps {
   onNodeClick: (id: string) => void;
   onRedLineClick: (id: string) => void;
+  setIsMock: any;
   selectTime: string;
   selectEnv: string;
+  isMock: boolean;
 }
 
 const Topo = memo(
@@ -43,7 +45,7 @@ const Topo = memo(
       offsetX: 10,
       offsetY: 10,
       // the types of items that allow the tooltip show up
-      itemTypes: ['node', 'edge'],
+      itemTypes: ['node'],
       // custom the tooltip's content
       getContent: (e: any) => {
         const outDiv = document.createElement('div');
@@ -51,16 +53,43 @@ const Topo = memo(
         //outDiv.style.padding = '0px 0px 20px 0px';
         outDiv.innerHTML = `
         <ul>
-          <li>Type: ${e.item.getType()}</li>
+          <li>Type: ${e.item.getModel().nodeType}</li>
         </ul>
         <ul>
-          <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
+          <li>Label: ${e.item?.getModel().nodeLabel || e.item?.getModel().id}</li>
         </ul>`;
         return outDiv;
       },
     });
 
     const toolbar = new G6.ToolBar();
+
+    const menu = new G6.Menu({
+      offsetX: -10,
+      offsetY: -10,
+      itemTypes: ['edge'],
+      trigger: 'click',
+      getContent: (e: any) => {
+        const outDiv = document.createElement('div');
+        outDiv.style.width = '160px';
+        outDiv.innerHTML = `
+        <ul>
+          <li>rt(响应时间): ${e.item?.getModel().rt || ''}</li>
+        </ul>
+        <ul>
+          <li>suc(调用成功率): ${e.item?.getModel().suc || ''}</li>
+        </ul>
+        <ul>
+          <li>qps(请求频率): ${e.item?.getModel().qps || ''}</li>
+        </ul>
+        `;
+        return outDiv;
+      },
+      handleMenuClick(target, item) {
+        console.log(target, item);
+      },
+    });
+
     const getTopoData = async () => {
       let res = await getTopoList({ duration: props.selectTime, envCode: props.selectEnv });
       const edges = res.data.Calls.map((item: any) => {
@@ -79,16 +108,21 @@ const Topo = memo(
           ...item,
         };
       });
-      // setOriginData({
-      //   nodes,
-      //   edges,
-      // });
-      setOriginData(OriginData);
+      setOriginData({
+        nodes,
+        edges,
+      });
+      // setOriginData(OriginData);
     };
 
     useEffect(() => {
+      props.setIsMock(false);
       getTopoData();
     }, [props.selectTime, props.selectEnv]);
+
+    useEffect(() => {
+      props.isMock ? setOriginData(OriginData) : getTopoData();
+    }, [props.isMock]);
 
     useEffect(() => {
       if (originData?.nodes?.length > 0) {
@@ -100,16 +134,18 @@ const Topo = memo(
           width,
           height,
           // linkCenter: true,
-          plugins: [tooltip, toolbar],
+          plugins: [tooltip, toolbar, menu],
           layout: {
             type: 'gForce',
             //当一次迭代的平均移动长度小于该值时停止迭代。数字越小，布局越收敛，所用时间将越长
             minMovement: 0.5,
             //最大迭代次数。当迭代次数超过该值，但平均移动长度仍然没有达到 minMovement，也将强制停止迭代
-            maxIteration: 5000,
+            maxIteration: 50000,
             //阻尼系数，取值范围 [0, 1]。数字越大，速度降低得越慢
-            damping: 0.9,
+            damping: 0.99,
             preventOverlap: true,
+            // gpuEnabled:true,
+            // workerEnabled:true,
             linkDistance: (d: any) => {
               const sourceNode = nodeMap.get(d.source);
               const targetNode = nodeMap.get(d.target);
@@ -228,6 +264,9 @@ const Topo = memo(
       });
 
       graph.on('edge:click', (evt: any) => {
+        graph.getEdges().forEach((edge: any) => {
+          graph.clearItemStates(edge);
+        });
         const { item } = evt;
         onRedLineClick(item._cfg.model.id);
         graph.setItemState(item, 'focus', true);

@@ -79,7 +79,7 @@ export const getEnvList = () => {
 };
 
 /**
- *
+ * 获取应用信息
  * @param data envCode  duration  appCode
  * @returns
  */
