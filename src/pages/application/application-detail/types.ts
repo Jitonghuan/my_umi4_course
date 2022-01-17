@@ -97,4 +97,8 @@ export type DeployStatusType =
   | 'deleteFeatureErr'
   // 部署完成
   | 'deployFinish'
-  | 'deployed';
+  | 'deployed'
+  // 多环境发布状态
+  | 'multiEnvDeploying'
+  // 其他
+  | 'other';

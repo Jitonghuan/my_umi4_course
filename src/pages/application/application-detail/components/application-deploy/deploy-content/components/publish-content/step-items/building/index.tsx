@@ -10,7 +10,7 @@ import { StepItemProps } from '../../types';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, jenkinsUrl, ...others } = props;
 
   const isLoading = deployStatus === 'building';
   const isError = deployStatus === 'buildErr' || deployStatus === 'buildAborted';
@@ -41,9 +41,9 @@ export default function BuildingStep(props: StepItemProps) {
         // isLoading && (
         <>
           {/* 浙一日常环境下的部署步骤显示jenkins链接,构建步骤下不显示。其他环境都是构建步骤下显示Jenkins详情 */}
-          {deployInfo.jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
+          {jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
             <div style={{ marginTop: 2 }}>
-              <a target="_blank" href={deployInfo.jenkinsUrl}>
+              <a target="_blank" href={jenkinsUrl}>
                 查看Jenkins详情
               </a>
             </div>

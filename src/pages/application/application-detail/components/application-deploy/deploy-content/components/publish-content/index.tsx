@@ -3,12 +3,13 @@
 // @create 2021/09/05 22:57
 
 import React, { useState, useContext } from 'react';
-import { Modal, Button, message, Popconfirm, Table, Tag, Tooltip } from 'antd';
+import { Modal, Button, Table, Tag, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
+import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
-import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
+import { createDeploy, updateFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import BackendTestEnvSteps from './backend-steps/test';
@@ -41,6 +42,7 @@ export default function PublishContent(props: IProps) {
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
+  const [fullScreeVisible, setFullScreeVisible] = useState(false);
 
   type reviewStatusTypeItem = {
     color: string;
@@ -122,6 +124,9 @@ export default function PublishContent(props: IProps) {
       <div className={`${rootCls}__title`}>发布内容</div>
 
       <CurrSteps deployInfo={deployInfo} onOperate={onOperate} />
+      <div className="full-scree-icon">
+        <Fullscreen onClick={() => setFullScreeVisible(true)} />
+      </div>
 
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>
@@ -193,6 +198,16 @@ export default function PublishContent(props: IProps) {
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={100} />
       </Table>
+      <Modal
+        title="发布流程"
+        footer={null}
+        width="95%"
+        className="full-scree-modal"
+        visible={fullScreeVisible}
+        onCancel={() => setFullScreeVisible(false)}
+      >
+        <CurrSteps deployInfo={deployInfo} onOperate={onOperate} />
+      </Modal>
     </div>
   );
 }
