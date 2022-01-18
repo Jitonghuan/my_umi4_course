@@ -121,7 +121,7 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} />
+      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} isFrontend={isFrontend} appData={appData} />
 
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>

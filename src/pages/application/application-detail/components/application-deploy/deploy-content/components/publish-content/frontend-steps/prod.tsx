@@ -44,11 +44,18 @@ const deployStatusMapping: Record<string, number> = {
   deployed: 8,
 };
 
-export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
+export default function ProdEnvSteps({ deployInfo, onOperate, isFrontend, appData }: StepsProps) {
   const { deployStatus } = deployInfo || {};
   const status = deployStatusMapping[deployStatus] || -1;
 
-  const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'prod' };
+  const payload = {
+    deployInfo,
+    onOperate,
+    deployStatus: deployInfo.deployStatus,
+    envTypeCode: 'prod',
+    isFrontend,
+    appData,
+  };
 
   return (
     <Steps className="publish-content-compo__steps" size="small" current={parseInt(status + '')}>

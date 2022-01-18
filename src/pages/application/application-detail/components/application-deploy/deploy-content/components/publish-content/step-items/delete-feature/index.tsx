@@ -2,15 +2,16 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 21:09
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
-import { retryDelFeature } from '@/pages/application/service';
+import { retryDelFeature, venusAnalyze } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 删除feature */
 export default function DeleteFeatureStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, appData, ...others } = props;
+  const [venusLoading, setVenusLoading] = useState<boolean>(false);
 
   const isLoading = deployStatus === 'deletingFeature';
   const isError = deployStatus === 'deleteFeatureErr';
@@ -22,6 +23,22 @@ export default function DeleteFeatureStep(props: StepItemProps) {
       onOperate('deleteFeatureRetryEnd');
     }
   };
+
+  async function analyze() {
+    setVenusLoading(true);
+    await venusAnalyze({
+      appCode: appData.appCode,
+      gitUrl: appData.gitAddress,
+    });
+    setVenusLoading(false);
+  }
+
+  useEffect(() => {
+    if (deployStatus === 'deployFinish' && isFrontend && !venusLoading) {
+      console.log('调用Venus分析');
+      void analyze();
+    }
+  }, [deployStatus]);
 
   return (
     <Steps.Step
