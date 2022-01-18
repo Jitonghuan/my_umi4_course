@@ -208,7 +208,7 @@ export const queryApps = async (
 ) => {
   const { requestType, ...data } = params;
   const result = await getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, { data });
-  return (result.data?.dataSource || []) as AppItemVO[];
+  return (result?.data?.dataSource || []) as AppItemVO[];
 };
 
 /** 删除应用 */

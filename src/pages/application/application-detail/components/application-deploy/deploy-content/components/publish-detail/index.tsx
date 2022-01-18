@@ -17,6 +17,7 @@ import {
   offlineDeploy,
   restartApp,
 } from '@/pages/application/service';
+import MergeConflict from '../merge-conflict';
 import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
 import ServerStatus from '../server-status';
@@ -45,6 +46,7 @@ export default function PublishDetail(props: IProps) {
   const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
+  const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -251,6 +253,13 @@ export default function PublishDetail(props: IProps) {
       onCancel() {},
     });
   };
+  // 冲突代码的查看详情
+  const handleMergeDetail = () => {
+    setMergeVisible(true);
+  };
+  const handleCancelMerge = () => {
+    setMergeVisible(false);
+  };
   let envDataOption: any = []; //重启时选择环境option
   envDataList?.map((item) => {
     if (item?.value === 'tt-his') {
@@ -324,6 +333,11 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
           {deployInfo?.conflictFeature || '--'}
+          {!deployInfo?.conflictFeature && (
+            <Button type="primary" onClick={handleMergeDetail} className="ml10">
+              查看详情
+            </Button>
+          )}
         </Descriptions.Item>
         <Descriptions.Item label="合并分支" span={4}>
           {deployInfo?.features || '--'}
@@ -453,6 +467,7 @@ export default function PublishDetail(props: IProps) {
           )}
         </div>
       </Modal>
+      <MergeConflict visible={mergeVisible} handleCancel={handleCancelMerge}></MergeConflict>
     </div>
   );
 }
