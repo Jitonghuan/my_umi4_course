@@ -14,10 +14,17 @@ import DiskUsagePieChart from './dashboards/disk-usage-pieChart';
 import DiskUsageLineChart from './dashboards/disk-usage-lineChart';
 import VolumeChangeLineChart from './dashboards/volume-change-lineChart';
 import BrickChangeLineChart from './dashboards/brick-change-lineChart';
+import { useGlusterfsClusterInfo, useGlusterfsNodeList, useGlusterfsClusterMetrics } from './hooks';
+import { useGlusterfsClusterCode } from '../hook';
 import './index.less';
 
 export default function Storage() {
   const { Option } = Select;
+  const [queryClusterInfoData, clusterInfoloading, queryGlusterfsClusterInfo] = useGlusterfsClusterInfo(); //获取gfs大盘数据
+  const [queryNodeListData, nodeListloading, queryNodeList] = useGlusterfsNodeList(); //获取节点数据
+  const [diskUsedPieData, diskUsedLineData, volumeNumLineData, brickNumLineData, loading, queryGlusterfsMetrics] =
+    useGlusterfsClusterInfo(); //获取集群趋势数据
+  const [queryClusterCodeData, clusterCodeLoading, queryGlusterfsClusterCode] = useGlusterfsClusterCode(); //获取集群Code
   //启用配置管理选择
   let useNacosData: number;
   const handleNacosChange = async (checked: any, record: any) => {
@@ -27,13 +34,17 @@ export default function Storage() {
       useNacosData = 0;
     }
   };
+  useEffect(() => {
+    queryGlusterfsClusterCode();
+  }, []);
+  const selectCluster = (value: string) => {};
   return (
     <ContentCard>
       <div className="storage-body">
         <div className="storage-dashboard">
           <Form layout="inline">
             <Form.Item label="选择集群">
-              <Select style={{ width: 140 }}></Select>
+              <Select style={{ width: 140 }} options={queryClusterCodeData} onChange={selectCluster}></Select>
             </Form.Item>
             <Divider />
           </Form>
