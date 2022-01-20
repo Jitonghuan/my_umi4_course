@@ -1,185 +1,87 @@
+.merge-tips {
+  color: red;
+  padding-bottom: 10px;
+}
 .merge-container {
   display: flex;
-  // flex-direction: column;
+  background: #f6f8fa;
+  border-top: 1px solid #ddd;
+  .conflict-file,
+  .merge-status {
+    padding: 10px 10px;
+    font-size: 12px;
+    color: #57606a;
+    line-height: 24px;
+    .ant-btn-sm {
+      font-size: 12px;
+    }
+  }
+
   .left-menu {
     min-width: 150px;
     max-width: 150px;
-
     .merge-status {
-      padding: 10px 0px;
-      font-size: 12px;
+      border-bottom: 1px solid #ddd;
     }
     .file-list {
       margin-right: 20px;
       height: 100%;
-      // background-color: mintcream;
+      padding-left: 5px;
       &-item {
-        border-left: 3px solid cornflowerblue;
+        margin-top: 10px;
+        text-overflow: ellipsis;
+        border-left: 3px solid #a8bed4;
         padding: 10px;
         margin-bottom: 10px;
         border-radius: 5px;
         background-color: white;
+        border-bottom: 1px solid #d2d8e6;
+        &-name {
+          display: block;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          max-width: 85px;
+          white-space: nowrap;
+        }
+        &:hover {
+          background-color: #f0f8ff;
+          cursor: pointer;
+        }
+      }
+      .choose-item {
+        border-left: 3px solid #4889ca;
+        background-color: #f0f8ff;
       }
     }
   }
   .content-editor {
+    flex: 1;
+    max-width: 1100px;
     .conflict-file {
-      padding: 10px 0px;
+      border-left: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
     }
-    button {
-      float: right;
+    .title-panel {
+      padding: 5px 30px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .cm-s-material {
+      padding-bottom: 30px;
+    }
+    .CodeMirror-merge,
+    .CodeMirror-merge .CodeMirror {
+      min-height: 500px;
+    }
+    .readOnly {
+      //   background-color: #cccccc;
+      .CodeMirror-merge-copy {
+        display: none;
+      }
+    }
+    .code-view {
+      border: 1px solid cornflowerblue;
     }
   }
 }
-
-.CodeMirror-scroll {
-  min-width: 900px;
-}
-.code-view {
-  border: 1px solid cornflowerblue;
-}
-
-.CodeMirror-merge-gap {
-  display: none;
-}
-
-// /*
-//   Name:       material
-//   Author:     Mattia Astorino (http://github.com/equinusocio)
-//   Website:    https://material-theme.site/
-// */
-
-// .cm-s-material .CodeMirror {
-//     background-color: #263238;
-//     color: #EEFFFF;
-//   }
-
-//   .cm-s-material .CodeMirror-gutters {
-//     background: #263238;
-//     color: #546E7A;
-//     border: none;
-//   }
-
-//   .cm-s-material .CodeMirror-guttermarker,
-//   .cm-s-material .CodeMirror-guttermarker-subtle,
-//   .cm-s-material .CodeMirror-linenumber {
-//     color: #546E7A;
-//   }
-
-//   .cm-s-material .CodeMirror-cursor {
-//     border-left: 1px solid #FFCC00;
-//   }
-//   .cm-s-material .cm-fat-cursor .CodeMirror-cursor {
-//     background-color: #5d6d5c80 !important;
-//   }
-//   .cm-s-material .cm-animate-fat-cursor {
-//     background-color: #5d6d5c80 !important;
-//   }
-
-//   .cm-s-material div.CodeMirror-selected {
-//     background: rgba(128, 203, 196, 0.2);
-//   }
-
-//   .cm-s-material .CodeMirror-focused div.CodeMirror-selected {
-//     background: rgba(128, 203, 196, 0.2);
-//   }
-
-//   .cm-s-material .CodeMirror-line::selection,
-//   .cm-s-material .CodeMirror-line>span::selection,
-//   .cm-s-material .CodeMirror-line>span>span::selection {
-//     background: rgba(128, 203, 196, 0.2);
-//   }
-
-//   .cm-s-material .CodeMirror-line::-moz-selection,
-//   .cm-s-material .CodeMirror-line>span::-moz-selection,
-//   .cm-s-material .CodeMirror-line>span>span::-moz-selection {
-//     background: rgba(128, 203, 196, 0.2);
-//   }
-
-//   .cm-s-material .CodeMirror-activeline-background {
-//     background: rgba(0, 0, 0, 0.5);
-//   }
-
-//   .cm-s-material .cm-keyword {
-//     color: #C792EA;
-//   }
-
-//   .cm-s-material .cm-operator {
-//     color: #89DDFF;
-//   }
-
-//   .cm-s-material .cm-variable-2 {
-//     color: #EEFFFF;
-//   }
-
-//   .cm-s-material .cm-variable-3,
-//   .cm-s-material .cm-type {
-//     color: #f07178;
-//   }
-
-//   .cm-s-material .cm-builtin {
-//     color: #FFCB6B;
-//   }
-
-//   .cm-s-material .cm-atom {
-//     color: #F78C6C;
-//   }
-
-//   .cm-s-material .cm-number {
-//     color: #FF5370;
-//   }
-
-//   .cm-s-material .cm-def {
-//     color: #82AAFF;
-//   }
-
-//   .cm-s-material .cm-string {
-//     color: #C3E88D;
-//   }
-
-//   .cm-s-material .cm-string-2 {
-//     color: #f07178;
-//   }
-
-//   .cm-s-material .cm-comment {
-//     color: #546E7A;
-//   }
-
-//   .cm-s-material .cm-variable {
-//     color: #f07178;
-//   }
-
-//   .cm-s-material .cm-tag {
-//     color: #FF5370;
-//   }
-
-//   .cm-s-material .cm-meta {
-//     color: #FFCB6B;
-//   }
-
-//   .cm-s-material .cm-attribute {
-//     color: #C792EA;
-//   }
-
-//   .cm-s-material .cm-property {
-//     color: #C792EA;
-//   }
-
-//   .cm-s-material .cm-qualifier {
-//     color: #DECB6B;
-//   }
-
-//   .cm-s-material .cm-variable-3,
-//   .cm-s-material .cm-type {
-//     color: #DECB6B;
-//   }
-
-//   .cm-s-material .cm-error {
-//     color: rgba(255, 255, 255, 1.0);
-//     background-color: #FF5370;
-//   }
-
-//   .cm-s-material .CodeMirror-matchingbracket {
-//     text-decoration: underline;
-//     color: white !important;
-//   }

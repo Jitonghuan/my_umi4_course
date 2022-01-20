@@ -14,6 +14,7 @@ import './index.less';
 export interface ServerStatusProps {
   appStatusInfo: IStatusInfoProps[];
   onOperate: (name: any) => any;
+  // deployInfo:any;
 }
 
 export default function ServerStatus(props: ServerStatusProps) {

@@ -48,4 +48,7 @@ export type OperateType =
   | 'fePublishVerifyStart'
   | 'fePublishVerifyEnd'
   | 'rollbackFeAppStart'
-  | 'rollbackFeAppEnd';
+  | 'rollbackFeAppEnd'
+  // 解决冲突相关
+  | 'mergeStart'
+  | 'mergeEnd';

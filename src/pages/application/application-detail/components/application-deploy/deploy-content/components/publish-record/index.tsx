@@ -149,9 +149,9 @@ export default function PublishRecord(props: IProps) {
                   <label>{recordFieldMapOut['deployStatus']}</label>:
                   {
                     <span style={{ marginLeft: 6 }}>
-                      <Tag color={recordDisplayMap[item['deployStatus']].color}>
+                      {/* <Tag color={recordDisplayMap[item['deployStatus']].color}>
                         {recordDisplayMap[item['deployStatus']].text}
-                      </Tag>
+                      </Tag> */}
                     </span>
                   }
                 </div>
