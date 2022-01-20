@@ -1,19 +1,18 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, Button, List, Tooltip } from 'antd';
+import { Modal, Button, List, Tooltip, message } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import CodeMirrorEditor from './CodeMirrorEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
 import { pushMergeMessage } from '@/pages/application/service';
-import { use } from 'echarts';
-import { message } from '@cffe/h2o-design';
 
 export default function MergeConflict(prop: MergeProp) {
   const { visible, handleCancel, mergeMessage, releaseBranch } = prop;
   const [allFile, setAllFile] = useState<any>([]); //所有冲突的文件
   const [chooseFile, setChooseFile] = useState<any>([]); //当前选中的文件
-  const conflictCount = useMemo(() => allFile.filter((e: any) => !e.resolved).length, [allFile]);
-  const resolvedCount = useMemo(() => allFile.filter((e: any) => e.resolved).length, [allFile]);
+  const [loading, setLoading] = useState(false);
+  const conflictCount = useMemo(() => allFile.filter((e: conflictItem) => !e.resolved).length, [allFile]);
+  const resolvedCount = useMemo(() => allFile.filter((e: conflictItem) => e.resolved).length, [allFile]);
   const fileChange = (file: any) => {
     setChooseFile(file);
   };
@@ -43,7 +42,9 @@ export default function MergeConflict(prop: MergeProp) {
       filePath: item.filePath,
       context: item.releaseBranch.context,
     }));
+    setLoading(true);
     await pushMergeMessage({ releaseBranch: releaseBranch, messages: params });
+    setLoading(false);
     message.success('提交成功!');
     handleCancel();
   };
@@ -77,14 +78,16 @@ export default function MergeConflict(prop: MergeProp) {
           <Button key="submit" type="primary" onClick={handleCancel}>
             取消
           </Button>,
-          <Button type="primary" onClick={handleOk} disabled={allFile.some((item: conflictItem) => !item.resolved)}>
+          <Button
+            type="primary"
+            onClick={handleOk}
+            loading={loading}
+            disabled={allFile.some((item: conflictItem) => !item.resolved)}
+          >
             提交
           </Button>,
         ]}
       >
-        {/* <div className="merge-tips">
-          <span>* 左边为release分支，右边为feature分支，请在左边代码编辑框内进行代码合并</span>
-        </div> */}
         <div className="merge-container">
           <div className="left-menu">
             <div className="merge-status">
