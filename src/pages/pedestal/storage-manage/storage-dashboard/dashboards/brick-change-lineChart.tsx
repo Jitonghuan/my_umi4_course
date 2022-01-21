@@ -9,22 +9,18 @@ import { colorUtil } from '@cffe/fe-datav-components';
 export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
+  clusterCode: string;
+  queryChartData: (clusterCode: any, date: any) => void;
 }
 const { ColorContainer } = colorUtil.context;
 export default function BrickChangeLineChart(props: ChartCaseListProps) {
-  const { data, loading } = props;
-
+  const { data, loading, clusterCode, queryChartData } = props;
+  const [currentTime, setCurrentTime] = useState<number>(7);
   const config = {
     data,
     xField: 'time',
-    yField: 'precentage',
-    seriesField: 'category',
-    color: ['#60d7a7'],
-    xAxis: {
-      // tickInterval:6,
-      // tickCount:20
-    },
-    title: 'fs writes/reads',
+    yField: 'number',
+    color: '#1ba784',
     yAxis: {
       title: {
         text: 'cores',
@@ -36,16 +32,29 @@ export default function BrickChangeLineChart(props: ChartCaseListProps) {
     },
     width: 550,
     height: 260,
-    padding: 20,
+    padding: 30,
   };
-
+  const timeRanger = [
+    { label: '7天', value: 7 },
+    { label: '15天', value: 15 },
+    { label: '30天', value: 30 },
+  ];
+  const selectTimeRanger = (value: number) => {
+    setCurrentTime(value);
+    queryChartData(clusterCode, value);
+  };
   return (
     <section data-loading={loading} style={{ paddingLeft: 18 }}>
       <header>
         <h3 className="brick-line-section-header">
           <span>brick变化趋势图 </span>
           <span>
-            <Select style={{ width: 140 }}></Select>
+            <Select
+              style={{ width: 140 }}
+              options={timeRanger}
+              value={currentTime}
+              onChange={selectTimeRanger}
+            ></Select>
           </span>
         </h3>
       </header>

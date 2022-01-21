@@ -13,23 +13,15 @@ export interface ChartCaseListProps {
 }
 const { ColorContainer } = colorUtil.context;
 export default function DiskUsagePieChart(props: ChartCaseListProps) {
-  //   const { data, loading } = props;
-  const data = [
-    {
-      type: '可用空间',
-      value: 27,
-    },
-    {
-      type: '已用空间',
-      value: 73,
-    },
-  ];
+  const { data, loading } = props;
   const config = {
     appendPadding: 10,
     data,
     angleField: 'value',
-    colorField: 'type',
-    radius: 0.75,
+    // colorField: 'type',
+    colorField: 'type', // 部分图表使用 seriesField
+    color: ['#60d7a7', '#8bc0d6'],
+    radius: 0.95,
     label: {
       type: 'spider',
       labelHeight: 28,
@@ -46,16 +38,13 @@ export default function DiskUsagePieChart(props: ChartCaseListProps) {
   };
 
   return (
-    <section
-      // data-loading={loading}
-      style={{ marginLeft: 10 }}
-    >
+    <section data-loading={loading} style={{ marginLeft: 10 }}>
       <header>
         <h3 className="disk-pie-section-header">
           <span>磁盘使用 </span>
-          <span>
+          {/* <span>
             <Select style={{ width: 140 }}></Select>
-          </span>
+          </span> */}
         </h3>
       </header>
       <div>

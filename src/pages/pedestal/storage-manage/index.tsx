@@ -26,14 +26,14 @@ const activeKeyMap: Record<string, any> = {
 };
 
 export default function ApplicationDetail(props: any) {
-  const tabActiveKey = useMemo(() => {
+  let tabActiveKey = useMemo(() => {
     const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
     return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
   // 页面销毁时清空缓存
+  const volumeManage = props.location.query.info;
+  console.log('volumeManage', location.pathname);
 
-  let currentUseNacos: any = [];
-  let useNacosIndex: any;
   useEffect(() => {}, []);
 
   // 没有数据的时整体不显示，防止出现空数据异常
@@ -63,11 +63,24 @@ export default function ApplicationDetail(props: any) {
   //     );
   //   }
   const [tabKey, setTabKey] = useState<string>('storage-dashboard');
+  useEffect(() => {
+    if (volumeManage) {
+      setTabKey('volume-manage');
+    } else {
+      setTabKey('storage-dashboard');
+      tabActiveKey = 'storage-dashboard';
+      history.replace({
+        pathname: `${detailPath}/${tabKey}`,
+      });
+    }
+  }, []);
+
   return (
     <PageContainer className="application-detail-page">
       <FilterCard className="layout-compact">
         <Tabs
-          defaultActiveKey="storage-dashboard"
+          // defaultActiveKey="storage-dashboard"
+          activeKey={tabActiveKey}
           onChange={(key) => {
             setTabKey(key);
             history.replace({

@@ -30,10 +30,15 @@ export const delGlusterfsNode = `${appConfig.apiPrefix}/infraManage/storage/glus
 export const addGlusterfsDevice = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/device/add`;
 /* 8、GET 获取未部署glusterfs的k8s节点 */
 export const getGlusterfsNonNodeList = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/nonnode/list`;
-
+/* 23、GET 获取可用设备名称 */
+export const getDeviceNameList = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/deviceName/list`;
 // 卷管理
 /* 9、GET 获取卷数据 */
 export const getGlusterfsVolumeList = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/volume/list`;
+/* 24、GET 获取卷类型 */
+export const getVolumeTypeList = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/volumeType/list`;
+/* 25、GET 获取卷治愈方式 */
+export const getHealMethodList = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/healMethod/list`;
 /* 10、GET 获取卷brick信息 */
 export const getVolumeBrickInfo = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/volume/brick/info`;
 /* 11、GET 获取卷快照信息 */

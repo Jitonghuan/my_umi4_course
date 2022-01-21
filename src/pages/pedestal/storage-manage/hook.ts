@@ -6,9 +6,9 @@ export function useGlusterfsClusterCode() {
   const [queryClusterCodeData, setQueryClusterCodeData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const queryGlusterfsClusterCode = (clusterCode: string) => {
+  const queryGlusterfsClusterCode = async () => {
     setLoading(true);
-    getRequest(useGlusterfsList, { data: { clusterCode } })
+    await getRequest(useGlusterfsList)
       .then((res) => {
         if (res?.success) {
           let dataSource = res?.data;
@@ -16,7 +16,6 @@ export function useGlusterfsClusterCode() {
             label: n,
             value: n,
           }));
-
           setQueryClusterCodeData(source);
         }
       })

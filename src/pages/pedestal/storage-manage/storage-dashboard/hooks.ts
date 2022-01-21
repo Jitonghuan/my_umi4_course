@@ -12,21 +12,49 @@ import * as APIS from '../service';
 export function useGlusterfsClusterInfo() {
   const [queryClusterInfoData, setQueryClusterInfoData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [clusterDataSource, setClusterDataSource] = useState<any>([]);
 
-  const queryGlusterfsClusterInfo = (clusterCode: string) => {
+  const queryGlusterfsClusterInfo = async (clusterCode: string) => {
     setLoading(true);
-    getRequest(APIS.getGlusterfsClusterInfo, { data: { clusterCode } })
+    await getRequest(APIS.getGlusterfsClusterInfo, { data: { clusterCode } })
       .then((res) => {
         if (res?.success) {
           let dataSource = res?.data;
           setQueryClusterInfoData(dataSource);
+          let tableData: any = [];
+          for (const key in dataSource?.resourceInfo) {
+            if (Object.prototype.hasOwnProperty.call(dataSource?.resourceInfo, key)) {
+              const element = dataSource?.resourceInfo[key];
+              if (key === 'brick') {
+                tableData.push({ type: 'brick', ...element });
+              }
+              if (key === 'device') {
+                tableData.push({ type: 'device', ...element });
+              }
+              if (key === 'disk') {
+                tableData.push({ type: 'disk', online: element?.used, offline: element?.free, total: element?.total });
+              }
+              if (key === 'node') {
+                tableData.push({ type: 'node', ...element });
+              }
+              if (key === 'volume') {
+                tableData.push({
+                  type: 'volume',
+                  online: element?.started,
+                  offline: element?.other,
+                  total: element?.total,
+                });
+              }
+            }
+          }
+          setClusterDataSource(tableData);
         }
       })
       .finally(() => {
         setLoading(false);
       });
   };
-  return [queryClusterInfoData, loading, queryGlusterfsClusterInfo];
+  return [queryClusterInfoData, clusterDataSource, loading, queryGlusterfsClusterInfo];
 }
 
 // 获取节点数据
@@ -57,40 +85,74 @@ export function useGlusterfsClusterMetrics() {
   const [volumeNumLineData, setVolumeNumLineData] = useState<any>([]);
   const [brickNumLineData, setBrickNumLineData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const queryGlusterfsMetrics = (clusterCode: string) => {
+  const queryGlusterfsMetrics = async (
+    clusterCode: string,
+    diskViewDay: number,
+    brickViewDay: number,
+    volumeViewDay: number,
+  ) => {
     setLoading(true);
-    getRequest(APIS.getGlusterfsMetrics, { data: { clusterCode } })
+    await getRequest(APIS.getGlusterfsMetrics, {
+      data: {
+        clusterCode,
+        diskViewDay: diskViewDay || 7,
+        brickViewDay: brickViewDay || 7,
+        volumeViewDay: volumeViewDay || 7,
+      },
+    })
       .then((res) => {
         if (res?.success) {
           let diskPieDataArry: any = [];
-          let diskUsedPieDataSource = res?.data.diskUsedPie;
-          diskUsedPieDataSource?.map((item: any) => {
-            diskPieDataArry.push({
-              time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
-              precentage: Number(Number(item[1]).toFixed(1)),
-              category: '使用量',
-            });
-          });
-          setDiskUsedPieData(diskPieDataArry);
+          let diskUsedPieDataSource = res?.data.diskPie;
+          for (const key in diskUsedPieDataSource) {
+            if (Object.prototype.hasOwnProperty.call(diskUsedPieDataSource, key)) {
+              if (key === 'free') {
+                diskPieDataArry.push({
+                  value: Number(Number(diskUsedPieDataSource.free[1]).toFixed(1)),
+                  type: '可用空间',
+                });
+              } else {
+                diskPieDataArry.push({
+                  value: Number(Number(diskUsedPieDataSource.used[1]).toFixed(1)),
+                  type: '已用空间',
+                });
+              }
+            }
+            setDiskUsedPieData(diskPieDataArry);
+          }
 
           let diskLineDataArry: any = [];
-          let diskUsedLineDataSource = res?.data.diskUsedLine;
-          diskUsedLineDataSource?.map((item: any) => {
-            diskLineDataArry.push({
-              time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
-              precentage: Number(Number(item[1]).toFixed(1)),
-              category: '使用量',
-            });
-          });
+          let diskUsedLineDataSource = res?.data.diskLine;
+          for (const key in diskUsedLineDataSource) {
+            if (Object.prototype.hasOwnProperty.call(diskUsedLineDataSource, key)) {
+              const element = diskUsedLineDataSource[key];
+            }
+            if (key === 'free') {
+              diskUsedLineDataSource['free'].map((item: any) => {
+                diskLineDataArry.push({
+                  time: moment(parseInt(item[0]) * 1000).format('YYYY-MM-DD '),
+                  precentage: Number(Number(item[1]).toFixed(1)),
+                  category: '可用空间',
+                });
+              });
+            } else if (key === 'used') {
+              diskUsedLineDataSource['used'].map((item: any) => {
+                diskLineDataArry.push({
+                  time: moment(parseInt(item[0]) * 1000).format('YYYY-MM-DD '),
+                  precentage: Number(Number(item[1]).toFixed(1)),
+                  category: '已用空间',
+                });
+              });
+            }
+          }
           setDiskUsedLineData(diskLineDataArry);
 
           let volumeNumLineDataArry: any = [];
           let volumeNumLineDataSource = res?.data.volumeNumLine;
           volumeNumLineDataSource?.map((item: any) => {
             volumeNumLineDataArry.push({
-              time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
-              precentage: Number(Number(item[1]).toFixed(1)),
-              category: '使用量',
+              time: moment(parseInt(item[0]) * 1000).format('YYYY-MM-DD '),
+              number: Number(item[1]),
             });
           });
           setVolumeNumLineData(volumeNumLineDataArry);
@@ -99,12 +161,11 @@ export function useGlusterfsClusterMetrics() {
           let brickNumLineDataSource = res?.data.brickNumLine;
           brickNumLineDataSource?.map((item: any) => {
             brickNumLineDataArry.push({
-              time: moment(parseInt(item[0]) * 1000).format('HH:mm'),
-              precentage: Number(Number(item[1]).toFixed(1)),
-              category: '使用量',
+              time: moment(parseInt(item[0]) * 1000).format('YYYY-MM-DD '),
+              number: Number(item[1]),
             });
           });
-          setBrickNumLineData(brickNumLineDataSource);
+          setBrickNumLineData(brickNumLineDataArry);
         }
       })
       .finally(() => {

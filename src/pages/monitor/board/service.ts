@@ -38,9 +38,9 @@ export const queryResUseData = (params: { clusterId: string }) =>
       return [
         {
           title: 'CPU使用率',
-          value: data.clusterAvgCpu,
+          value: data?.clusterAvgCpu,
           unit: '%',
-          color: getColorByValue(data.clusterAvgCpu),
+          color: getColorByValue(data?.clusterAvgCpu),
         },
         {
           title: '内存使用率',
