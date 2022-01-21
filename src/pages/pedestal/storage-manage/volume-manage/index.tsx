@@ -50,15 +50,22 @@ export default function Storage() {
         setLoading(false);
       });
   };
-  //启用配置管理选择
+  //启用NFS选择
   let useNFS: string;
+
   const handleNFSChange = async (checked: any, record: any) => {
+    let value = searhForm.getFieldsValue();
     if (checked === 'on') {
       useNFS = 'off';
-      enableNfs(currentClusterCode, record?.volumeName, useNFS);
+
+      enableNfs(currentClusterCode, record?.volumeName, useNFS).then(() => {
+        queryVolumeList(currentClusterCode, value?.volumeName, value?.volumeType, value?.pvName, value?.pvcName);
+      });
     } else {
       useNFS = 'on';
-      enableNfs(currentClusterCode, record?.volumeName, useNFS);
+      enableNfs(currentClusterCode, record?.volumeName, useNFS).then(() => {
+        queryVolumeList(currentClusterCode, value?.volumeName, value?.volumeType, value?.pvName, value?.pvcName);
+      });
     }
   };
   const selectCluster = (value: string) => {
@@ -91,10 +98,10 @@ export default function Storage() {
             <Select allowClear showSearch style={{ width: 180 }} options={volumeTypeOption} />
           </Form.Item>
           <Form.Item label="PV" name="pvName">
-            <Input placeholder="请输入K8s pv name" style={{ width: 180 }} />
+            <Input placeholder="请输入pv名称" style={{ width: 180 }} />
           </Form.Item>
           <Form.Item label="PVC" name="pvcName">
-            <Input placeholder="请输入模版名称"></Input>
+            <Input placeholder="请输入pvc名称"></Input>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -118,9 +125,9 @@ export default function Storage() {
           pagination={false}
           scroll={{ x: '100%', y: window.innerHeight - 380 }}
         >
-          <Table.Column title="ID" dataIndex="volumeId" width="16%" />
-          <Table.Column title="卷名" dataIndex="volumeName" width="15%" ellipsis />
-          <Table.Column title="类型" dataIndex="volumeType" width="15%" ellipsis />
+          {/* <Table.Column title="ID" dataIndex="volumeId" width="16%" /> */}
+          <Table.Column title="卷名" dataIndex="volumeName" width="26%" />
+          <Table.Column title="类型" dataIndex="volumeType" width="20%" ellipsis />
           <Table.Column title="brick数量" dataIndex="brickCount" width="10%" ellipsis />
           <Table.Column title="传输协议" dataIndex="transportType" width="10%" ellipsis />
           <Table.Column
@@ -149,12 +156,12 @@ export default function Storage() {
               );
             }}
           />
-          <Table.Column title="快照数量" dataIndex="snapshotCount" width={110} ellipsis />
+          <Table.Column title="快照数量" dataIndex="snapshotCount" width={90} ellipsis />
           <Table.Column title="可用空间" dataIndex="volumeAvailable" width={110} ellipsis />
           <Table.Column title="总空间" dataIndex="volumeCapacity" width={110} ellipsis />
           <Table.Column
             title="操作"
-            width="14%"
+            width="16%"
             key="action"
             render={(_, record: any, index) => (
               <Space size="middle">

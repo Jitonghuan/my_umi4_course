@@ -121,7 +121,13 @@ export default function Storage() {
             </span>
           </div>
           <div style={{ marginTop: 10 }}>
-            <Table rowKey="type" bordered dataSource={clusterDataSource} loading={clusterInfoloading}>
+            <Table
+              rowKey="type"
+              bordered
+              dataSource={clusterDataSource}
+              loading={clusterInfoloading}
+              pagination={false}
+            >
               <Table.Column title="类型" dataIndex="type" width="25%" />
               <Table.Column title="数量" dataIndex="total" width="25%" />
               <Table.Column title="在线/可用" dataIndex="online" width="25%" />

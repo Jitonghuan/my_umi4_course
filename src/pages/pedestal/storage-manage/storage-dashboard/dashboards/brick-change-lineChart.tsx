@@ -22,17 +22,27 @@ export default function BrickChangeLineChart(props: ChartCaseListProps) {
     yField: 'number',
     color: '#1ba784',
     yAxis: {
-      title: {
-        text: 'cores',
-      },
+      // title: {
+      //   text: 'cores',
+      // },
       label: {
         // 数值格式化
-        formatter: (v: any) => `${v}`,
+        formatter: (v: any) => `${v}个`,
+      },
+    },
+    tooltip: {
+      formatter: (datum: any) => {
+        console.log('datum.category', datum);
+        return { name: 'number', value: datum.number + '个' };
       },
     },
     width: 550,
     height: 260,
-    padding: 30,
+    // padding: '34px' ,'30px', '28px', '40px'
+    paddingTop: 34,
+    paddingLeft: 34,
+    paddingBottom: 30,
+    paddingRight: 40,
   };
   const timeRanger = [
     { label: '7天', value: 7 },

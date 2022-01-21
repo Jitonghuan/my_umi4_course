@@ -34,13 +34,13 @@ export function useAddNode() {
     diskName?: string,
     isWipe?: boolean,
   ) => {
-    await postRequest(APIS.addGlusterfsNode, { data: { clusterCode, nodeName, isNewDevice, diskName, isWipe } }).then(
-      (res) => {
-        if (res?.success) {
-          message.success(res?.data);
-        }
-      },
-    );
+    await postRequest(
+      `${APIS.addGlusterfsNode}?clusterCode=${clusterCode}&nodeName=${nodeName}&isNewDevice=${isNewDevice}&diskName=${diskName}&isWipe=${isWipe}`,
+    ).then((res) => {
+      if (res?.success) {
+        message.success(res?.data);
+      }
+    });
   };
   return [addNode];
 }
@@ -48,7 +48,7 @@ export function useAddNode() {
 //删除节点
 export function useDeleteNode() {
   const deleteNode = async (clusterCode: string, nodeName: string) => {
-    await postRequest(APIS.delGlusterfsNode, { data: { clusterCode, nodeName } }).then((res) => {
+    await postRequest(`${APIS.delGlusterfsNode}?clusterCode=${clusterCode}&nodeName=${nodeName}`).then((res) => {
       if (res?.success) {
         message.success(res?.data);
       }
@@ -59,7 +59,9 @@ export function useDeleteNode() {
 //新增设备
 export function useAddDevice() {
   const addDevice = async (clusterCode: string, nodeName: string, diskName?: string, isWipe?: boolean) => {
-    await postRequest(APIS.addGlusterfsDevice, { data: { clusterCode, nodeName, diskName, isWipe } }).then((res) => {
+    await postRequest(
+      `${APIS.addGlusterfsDevice}?clusterCode=${clusterCode}&nodeName=${nodeName}&diskName=${diskName}&isWipe=${isWipe}`,
+    ).then((res) => {
       if (res?.success) {
         message.success(res?.data);
       }

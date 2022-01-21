@@ -22,6 +22,11 @@ export default function DiskUsagePieChart(props: ChartCaseListProps) {
     colorField: 'type', // 部分图表使用 seriesField
     color: ['#60d7a7', '#8bc0d6'],
     radius: 0.95,
+    tooltip: {
+      formatter: (datum: any) => {
+        return { name: datum.type, value: datum.value + 'G' };
+      },
+    },
     label: {
       type: 'spider',
       labelHeight: 28,

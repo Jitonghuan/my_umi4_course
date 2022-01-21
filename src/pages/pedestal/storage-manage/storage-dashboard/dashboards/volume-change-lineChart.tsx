@@ -23,17 +23,26 @@ export default function VolumeChangeLineChart(props: ChartCaseListProps) {
     yField: 'number',
     color: '#69a794',
     yAxis: {
-      title: {
-        text: '数量',
-      },
+      // title: {
+      //   text: '数量',
+      // },
       label: {
         // 数值格式化
-        formatter: (v: any) => `${v}`,
+        formatter: (v: any) => `${v}个`,
+      },
+    },
+    tooltip: {
+      formatter: (datum: any) => {
+        return { name: 'number', value: datum.number + '个' };
       },
     },
     width: 550,
     height: 260,
-    padding: 30,
+    // padding: 34,
+    paddingTop: 34,
+    paddingLeft: 34,
+    paddingBottom: 30,
+    paddingRight: 40,
   };
   const timeRanger = [
     { label: '7天', value: 7 },

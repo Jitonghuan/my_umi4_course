@@ -27,14 +27,20 @@ export default function DiskUsageLineChart(props: ChartCaseListProps) {
       // tickInterval:6,
       // tickCount:20
     },
+
+    tooltip: {
+      formatter: (datum: any) => {
+        return { name: datum.category, value: datum.precentage + 'G' };
+      },
+    },
     title: 'fs writes/reads',
     yAxis: {
       title: {
-        text: '磁盘使用量',
+        text: '磁盘使用量 /G',
       },
       label: {
         // 数值格式化
-        formatter: (v: any) => `${v}`,
+        formatter: (v: any) => `${v}G`,
       },
     },
     width: 550,

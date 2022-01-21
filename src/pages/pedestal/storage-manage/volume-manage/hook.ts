@@ -53,7 +53,9 @@ export function useVolumeTypeList() {
 //是否开启卷的NFS功能
 export function useEnableNfs() {
   const enableNfs = async (clusterCode: string, volumeName: string, enableNfs?: string) => {
-    await postRequest(APIS.enableNfs, { data: { clusterCode, volumeName, enableNfs } }).then((res) => {
+    await postRequest(
+      `${APIS.enableNfs}?clusterCode=${clusterCode}&volumeName=${volumeName}&enableNfs=${enableNfs}`,
+    ).then((res) => {
       if (res?.success) {
         message.success(res?.data);
       }
