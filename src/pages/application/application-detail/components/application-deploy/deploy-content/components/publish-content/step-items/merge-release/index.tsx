@@ -15,6 +15,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [mergeMessage, setMergeMessage] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
   const isLoading = deployStatus === 'merging';
   const isError = deployStatus === 'mergeErr' || deployStatus === 'conflict';
 
@@ -27,20 +28,24 @@ export default function MergeReleaseStep(props: StepItemProps) {
   };
 
   const openMergeConflict = () => {
-    getMergeMessage({ releaseBranch: deployInfo.releaseBranch }).then((res) => {
-      if (!res.success) {
-        // message.error(res.errorMsg);
-        return;
-      }
-      const dataArray = res?.data.map((item: conflictItem, index: number) => ({
-        ...item,
-        id: index + 1,
-        resolved: false,
-      }));
-      setMergeMessage(dataArray);
-      setMergeVisible(true);
-      onOperate('mergeStart');
-    });
+    getMergeMessage({ releaseBranch: deployInfo.releaseBranch })
+      .then((res) => {
+        setLoading(true);
+        if (!res.success) {
+          return;
+        }
+        const dataArray = res?.data.map((item: conflictItem, index: number) => ({
+          ...item,
+          id: index + 1,
+          resolved: false,
+        }));
+        setMergeMessage(dataArray);
+        setMergeVisible(true);
+        onOperate('mergeStart');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   const handleCancelMerge = () => {
     setMergeVisible(false);
@@ -65,14 +70,12 @@ export default function MergeReleaseStep(props: StepItemProps) {
             <>
               {deployInfo.mergeWebUrl && (
                 <div style={{ marginTop: 2 }}>
-                  <a target="_blank" onClick={openMergeConflict}>
-                    解决冲突
-                  </a>
+                  <Button onClick={openMergeConflict}>解决冲突</Button>
                 </div>
               )}
-              <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
+              {/* <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
                 重试
-              </Button>
+              </Button> */}
             </>
           )
         }
