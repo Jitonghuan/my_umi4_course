@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/25 09:26
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Radio, Button, Spin, Pagination, Empty } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
@@ -35,7 +35,6 @@ export default function AllApplication() {
     setType(next);
     localStorage.setItem('__last_application_type', next);
   }, []);
-
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
     setSearchParams(next);

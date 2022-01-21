@@ -131,8 +131,8 @@ export default function DeployContent(props: DeployContentProps) {
 
   return (
     <div className={rootCls}>
-      <Spin spinning={loading}>
-        <div className={`${rootCls}-body`}>
+      <div className={`${rootCls}-body`}>
+        <Spin spinning={loading}>
           <PublishDetail
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
@@ -166,11 +166,11 @@ export default function DeployContent(props: DeployContentProps) {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
             }}
           />
-        </div>
-        <div className={`${rootCls}-sider`}>
-          <PublishRecord env={envTypeCode} appCode={appCode} />
-        </div>
-      </Spin>
+        </Spin>
+      </div>
+      <div className={`${rootCls}-sider`}>
+        <PublishRecord env={envTypeCode} appCode={appCode} />
+      </div>
     </div>
   );
 }
