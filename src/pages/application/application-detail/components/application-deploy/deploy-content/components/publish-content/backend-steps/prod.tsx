@@ -34,14 +34,21 @@ const deployStatusMapping: Record<string, number> = {
   deployed: 5,
 };
 
-export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
+export default function ProdEnvSteps({ deployInfo, onOperate, onSpin, stopSpin }: StepsProps) {
   const { deployStatus } = deployInfo || {};
   let status = deployStatusMapping[deployStatus] || -1;
   if (deployStatus === 'deployAborted') {
     status = -1;
   }
 
-  const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'prod' };
+  const payload = {
+    deployInfo,
+    onOperate,
+    deployStatus: deployInfo.deployStatus,
+    envTypeCode: 'prod',
+    onSpin,
+    stopSpin,
+  };
 
   return (
     <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>

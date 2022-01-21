@@ -7,12 +7,16 @@ export interface IProps {
   deployedList: any[];
   appStatusInfo: IStatusInfoProps[];
   onOperate: (type: OperateType) => void;
+  onSpin: any;
+  stopSpin: any;
 }
 
 // 执行步骤组合
 export interface StepsProps {
   deployInfo: DeployInfoVO;
   onOperate: (type: OperateType) => void;
+  onSpin: any;
+  stopSpin: any;
 }
 
 // 执行步骤组件

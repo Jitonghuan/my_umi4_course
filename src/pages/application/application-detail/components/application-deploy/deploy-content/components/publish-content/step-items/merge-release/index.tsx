@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Steps, Button, message } from 'antd';
+import { Steps, Button, message, Spin } from 'antd';
 import { retryMerge, getMergeMessage } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import MergeConflict from '../../../merge-conflict';
@@ -12,10 +12,9 @@ import { conflictItem } from '../../../merge-conflict/types';
 
 /** 合并release */
 export default function MergeReleaseStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, onSpin, stopSpin, ...others } = props;
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [mergeMessage, setMergeMessage] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
   const isLoading = deployStatus === 'merging';
   const isError = deployStatus === 'mergeErr' || deployStatus === 'conflict';
 
@@ -28,9 +27,9 @@ export default function MergeReleaseStep(props: StepItemProps) {
   };
 
   const openMergeConflict = () => {
+    onSpin();
     getMergeMessage({ releaseBranch: deployInfo.releaseBranch })
       .then((res) => {
-        setLoading(true);
         if (!res.success) {
           return;
         }
@@ -44,7 +43,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
         onOperate('mergeStart');
       })
       .finally(() => {
-        setLoading(false);
+        stopSpin();
       });
   };
   const handleCancelMerge = () => {

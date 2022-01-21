@@ -29,14 +29,21 @@ const deployStatusMapping: Record<string, number> = {
   deployed: 4,
 };
 
-export default function DevEnvSteps({ deployInfo, onOperate }: StepsProps) {
+export default function DevEnvSteps({ deployInfo, onOperate, onSpin, stopSpin }: StepsProps) {
   const { deployStatus } = deployInfo || {};
   let status = deployStatusMapping[deployStatus] || -1;
   if (deployStatus === 'deployAborted') {
     status = -1;
   }
 
-  const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'dev' };
+  const payload = {
+    deployInfo,
+    onOperate,
+    deployStatus: deployInfo.deployStatus,
+    envTypeCode: 'dev',
+    onSpin,
+    stopSpin,
+  };
 
   return (
     <>

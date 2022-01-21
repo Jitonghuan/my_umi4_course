@@ -15,6 +15,7 @@ import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
+import { Spin } from 'antd';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';
@@ -42,7 +43,7 @@ export default function DeployContent(props: DeployContentProps) {
   }>({ deployed: [], unDeployed: [] });
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
-
+  const [loading, setLoading] = useState(false);
   const requestData = async () => {
     if (!appCode || !isActive) return;
 
@@ -120,44 +121,56 @@ export default function DeployContent(props: DeployContentProps) {
     timerHandle('do', true);
   }, [appCode, isActive]);
 
+  const onSpin = () => {
+    setLoading(true);
+  };
+
+  const stopSpin = () => {
+    setLoading(false);
+  };
+
   return (
     <div className={rootCls}>
-      <div className={`${rootCls}-body`}>
-        <PublishDetail
-          envTypeCode={envTypeCode}
-          deployInfo={deployInfo}
-          appStatusInfo={appStatusInfo}
-          onOperate={(type) => {
-            if (type === 'deployNextEnvSuccess') {
-              onDeployNextEnvSuccess();
-              return;
-            }
-            requestData();
-            onOperate(type);
-          }}
-        />
-        <PublishContent
-          appCode={appCode!}
-          envTypeCode={envTypeCode}
-          deployInfo={deployInfo}
-          deployedList={branchInfo.deployed}
-          appStatusInfo={appStatusInfo}
-          onOperate={onOperate}
-        />
-        <PublishBranch
-          deployInfo={deployInfo}
-          hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
-          dataSource={branchInfo.unDeployed}
-          env={envTypeCode}
-          onSearch={searchUndeployedBranch}
-          onSubmitBranch={(status) => {
-            timerHandle(status === 'start' ? 'stop' : 'do', true);
-          }}
-        />
-      </div>
-      <div className={`${rootCls}-sider`}>
-        <PublishRecord env={envTypeCode} appCode={appCode} />
-      </div>
+      <Spin spinning={loading}>
+        <div className={`${rootCls}-body`}>
+          <PublishDetail
+            envTypeCode={envTypeCode}
+            deployInfo={deployInfo}
+            appStatusInfo={appStatusInfo}
+            onOperate={(type) => {
+              if (type === 'deployNextEnvSuccess') {
+                onDeployNextEnvSuccess();
+                return;
+              }
+              requestData();
+              onOperate(type);
+            }}
+          />
+          <PublishContent
+            appCode={appCode!}
+            envTypeCode={envTypeCode}
+            deployInfo={deployInfo}
+            deployedList={branchInfo.deployed}
+            appStatusInfo={appStatusInfo}
+            onOperate={onOperate}
+            onSpin={onSpin}
+            stopSpin={stopSpin}
+          />
+          <PublishBranch
+            deployInfo={deployInfo}
+            hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
+            dataSource={branchInfo.unDeployed}
+            env={envTypeCode}
+            onSearch={searchUndeployedBranch}
+            onSubmitBranch={(status) => {
+              timerHandle(status === 'start' ? 'stop' : 'do', true);
+            }}
+          />
+        </div>
+        <div className={`${rootCls}-sider`}>
+          <PublishRecord env={envTypeCode} appCode={appCode} />
+        </div>
+      </Spin>
     </div>
   );
 }

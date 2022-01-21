@@ -32,11 +32,18 @@ const deployStatusMapping: Record<string, number> = {
   deployed: 5,
 };
 
-export default function DevEnvSteps({ deployInfo, onOperate }: StepsProps) {
+export default function DevEnvSteps({ deployInfo, onOperate, onSpin, stopSpin }: StepsProps) {
   const { deployStatus } = deployInfo || {};
   const status = deployStatusMapping[deployStatus] || -1;
 
-  const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'dev' };
+  const payload = {
+    deployInfo,
+    onOperate,
+    deployStatus: deployInfo.deployStatus,
+    envTypeCode: 'dev',
+    onSpin,
+    stopSpin,
+  };
 
   return (
     <>

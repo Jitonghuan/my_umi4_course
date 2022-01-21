@@ -36,7 +36,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin } = props;
   const { appData } = useContext(DetailContext);
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -121,7 +121,7 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} />
+      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} stopSpin={stopSpin} onSpin={onSpin} />
 
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>
