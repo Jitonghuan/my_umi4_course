@@ -39,8 +39,8 @@ export default function MergeReleaseStep(props: StepItemProps) {
       }));
       setMergeMessage(dataArray);
       setMergeVisible(true);
+      onOperate('mergeStart');
     });
-    onOperate('mergeStart');
   };
   const handleCancelMerge = () => {
     setMergeVisible(false);
@@ -78,7 +78,5 @@ export default function MergeReleaseStep(props: StepItemProps) {
         }
       />
     </>
-    // isError &&
-    // deployInfo.mergeWebUrl &&
   );
 }

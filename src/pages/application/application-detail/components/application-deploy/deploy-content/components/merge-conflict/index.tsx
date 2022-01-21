@@ -37,16 +37,21 @@ export default function MergeConflict(prop: MergeProp) {
     });
   };
   // 提交冲突
-  const handleOk = async () => {
+  const handleOk = () => {
     const params = allFile.map((item: conflictItem) => ({
       filePath: item.filePath,
       context: item.releaseBranch.context,
     }));
     setLoading(true);
-    await pushMergeMessage({ releaseBranch: releaseBranch, messages: params });
-    setLoading(false);
-    message.success('提交成功!');
-    handleCancel();
+    pushMergeMessage({ releaseBranch: releaseBranch, messages: params })
+      .then(() => {
+        setLoading(false);
+        message.success('提交成功!');
+        handleCancel();
+      })
+      .catch((e) => {
+        setLoading(false);
+      });
   };
   // 编辑器代码改变时同步更新数据
   const handleChange = (value: string) => {

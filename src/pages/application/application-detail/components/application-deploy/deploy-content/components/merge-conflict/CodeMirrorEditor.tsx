@@ -9,9 +9,17 @@ import 'codemirror/addon/display/panel';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/css/css';
+import 'codemirror/mode/sass/sass';
 import 'codemirror/mode/jsx/jsx';
 import 'codemirror/mode/go/go';
+import 'codemirror/mode/sql/sql';
+import 'codemirror/mode/python/python';
+import 'codemirror/mode/markdown/markdown';
 import 'codemirror/mode/clike/clike';
+import 'codemirror/mode/protobuf/protobuf';
+import 'codemirror/mode/shell/shell';
+import 'codemirror/mode/dockerfile/dockerfile';
+import 'codemirror/mode/yaml/yaml';
 
 window.diff_match_patch = DiffMatchPatch;
 window.DIFF_DELETE = -1;
@@ -42,6 +50,19 @@ function makePanel(content: string) {
 }
 const extModeMap = {
   go: 'go',
+  css: 'css',
+  less: 'css',
+  sass: 'sass',
+  scss: 'css',
+  xml: 'xml',
+  txt: 'txt',
+  sql: 'sql',
+  md: 'markdown',
+  py: 'python',
+  pb: 'protobuf',
+  sh: 'shell',
+  Dockerfile: 'dockerfile',
+  yml: 'yml',
   java: 'clike',
   js: 'jsx',
   ts: { name: 'jsx', typescript: true },
@@ -52,7 +73,7 @@ export default function CodeMirrorEditor(props: any) {
   const [leftPanel, setLeftPanel]: any = useState(null);
   const [rightPanel, setRightPanel]: any = useState(null);
   const ext = useMemo(() => filePath?.substring(filePath?.lastIndexOf('.') + 1), [filePath]);
-  const mode = useMemo(() => extModeMap[ext] || 'clike', [ext]);
+  const mode = useMemo(() => extModeMap[ext] || ext, [ext]);
   useEffect(() => {
     if (dv) {
       leftPanel.node.innerText = releaseBranch?.branchName;
