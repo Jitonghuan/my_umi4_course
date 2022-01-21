@@ -11,8 +11,20 @@ import { getRequest } from '@/utils/request';
 import { ContentCard } from '@/components/vc-page-content';
 import { useGlusterfsList } from '../service';
 import { useVolumeList, useVolumeTypeList, useEnableNfs } from './hook';
-import { useStopVolume } from '../volume-detail/hook';
+import { useStopVolume, useStartVolume } from '../volume-detail/hook';
 import './index.less';
+type statusTypeItem = {
+  tagText: string;
+  buttonText: string;
+  color: string;
+  status: string;
+  disabled: boolean;
+};
+
+const STATUS_TYPE: Record<string, statusTypeItem> = {
+  Stopped: { tagText: 'Stopped', buttonText: '启用', color: 'green', status: 'Stopped', disabled: true },
+  Started: { tagText: 'Started', buttonText: '停止', color: 'red', status: 'Started', disabled: false },
+};
 
 export default function Storage() {
   const { Option } = Select;
@@ -24,6 +36,7 @@ export default function Storage() {
   const [volumeTypeOption, queryDeviceName] = useVolumeTypeList();
   const [enableNfs] = useEnableNfs();
   const [stopVolume] = useStopVolume();
+  const [startVolume] = useStartVolume();
 
   useEffect(() => {
     queryGlusterfsClusterCode();
@@ -181,14 +194,23 @@ export default function Storage() {
                   详细状态
                 </a>
                 <Popconfirm
-                  title="确定要停止吗？"
+                  title={`确定要${STATUS_TYPE[record?.status].buttonText}吗？`}
                   onConfirm={() => {
-                    stopVolume(currentClusterCode, record.volumeName).then(() => {
-                      queryVolumeList(currentClusterCode);
-                    });
+                    if (record?.status === 'Stopped') {
+                      startVolume(currentClusterCode, record.volumeName).then(() => {
+                        queryVolumeList(currentClusterCode);
+                      });
+                    }
+                    if (record?.status === 'Started') {
+                      stopVolume(currentClusterCode, record.volumeName).then(() => {
+                        queryVolumeList(currentClusterCode);
+                      });
+                    }
                   }}
                 >
-                  <a style={{ color: 'red' }}>停止</a>
+                  <a style={{ color: `${STATUS_TYPE[record?.status].color}` }}>
+                    {STATUS_TYPE[record?.status].buttonText}
+                  </a>
                 </Popconfirm>
               </Space>
             )}

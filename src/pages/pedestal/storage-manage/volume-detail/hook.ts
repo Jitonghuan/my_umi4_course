@@ -55,10 +55,22 @@ export function useStopVolume() {
   return [stopVolume];
 }
 
+//启动卷
+export function useStartVolume() {
+  const startVolume = async (clusterCode: string, volumeName: string) => {
+    await postRequest(`${APIS.startVolume}?clusterCode=${clusterCode}&volumeName=${volumeName}`).then((res) => {
+      if (res?.success) {
+        message.success(res?.data);
+      }
+    });
+  };
+  return [startVolume];
+}
+
 //删除卷
 export function useDeleteVolume() {
-  const deleteVolume = async (clusterCode: string, volumeId: string) => {
-    await postRequest(`${APIS.deleteVolume}?clusterCode=${clusterCode}&volumeId=${volumeId}`).then((res) => {
+  const deleteVolume = async (clusterCode: string, volumeName: string) => {
+    await postRequest(`${APIS.deleteVolume}?clusterCode=${clusterCode}&volumeName=${volumeName}`).then((res) => {
       if (res?.success) {
         message.success(res?.data);
       }

@@ -1,17 +1,20 @@
+/*
+ * @Author: your name
+ * @Date: 2022-01-18 13:48:13
+ * @LastEditTime: 2022-01-21 17:13:20
+ * @LastEditors: your name
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: /fe-matrix/src/pages/pedestal/storage-manage/index.tsx
+ */
 // 基座管理-存储管理
 // @author muxi.jth
 // @create 2022/1/12 14:18
 
 import { useMemo, useEffect, useState } from 'react';
-import { history, Link } from 'umi';
-import { Tabs, Spin, Empty } from 'antd';
-import VCPermission from '@/components/vc-permission';
+import { history } from 'umi';
+import { Tabs } from 'antd';
 import PageContainer from '@/components/page-container';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import { getRequest } from '@/utils/request';
-import DetailContext from '../storage-manage/context';
-import { tabsConfig } from '../storage-manage/tab-config';
-import { listAppEnv } from '@/pages/application/service';
+import { FilterCard } from '@/components/vc-page-content';
 import VolumeManage from './volume-manage';
 import StorageDashboard from './storage-dashboard';
 import NodeManage from './node-manage';

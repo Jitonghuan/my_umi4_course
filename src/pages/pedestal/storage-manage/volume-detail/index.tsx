@@ -24,6 +24,7 @@ import {
   useDeleteSnapshot,
   useDeviceNameList,
   useEvictBrick,
+  useDeactivateSnapshot,
 } from './hook';
 
 type statusTypeItem = {
@@ -84,16 +85,8 @@ export default function VolumeDetail() {
   const [healMethodOption, queryHealMethod] = useDeviceNameList();
   const [cureVolume] = useCureVolume();
   const [evictBrick] = useEvictBrick();
+  const [deactivateSnapshot] = useDeactivateSnapshot();
 
-  //启用配置管理选择
-  let useNacosData: number;
-  const handleNacosChange = async (checked: any, record: any) => {
-    if (checked === 0) {
-      useNacosData = 1;
-    } else {
-      useNacosData = 0;
-    }
-  };
   const onChange = (e: any) => {
     console.log(`checked = ${e.target.checked}`);
     setUseTimestamp(e.target.checked);
@@ -282,9 +275,15 @@ export default function VolumeDetail() {
                       <Button
                         type="primary"
                         onClick={() => {
-                          activateSnapshot(volumeInfo.clusterCode, record?.snapshotName).then(() => {
-                            getSnapshotList(volumeInfo.clusterCode, volumeInfo.volumeName);
-                          });
+                          if (record.status === 'Started') {
+                            deactivateSnapshot(volumeInfo.clusterCode, record?.snapshotName).then(() => {
+                              getSnapshotList(volumeInfo.clusterCode, volumeInfo.volumeName);
+                            });
+                          } else {
+                            activateSnapshot(volumeInfo.clusterCode, record?.snapshotName).then(() => {
+                              getSnapshotList(volumeInfo.clusterCode, volumeInfo.volumeName);
+                            });
+                          }
                         }}
                       >
                         {STATUS_TYPE[record?.snapVolStatus]?.buttonText}
@@ -302,7 +301,9 @@ export default function VolumeDetail() {
                       <Popconfirm
                         title="确定要删除快照吗？"
                         onConfirm={() => {
-                          deleteSnapshot(volumeInfo.clusterCode, record?.snapshotName);
+                          deleteSnapshot(volumeInfo.clusterCode, record?.snapshotName).then(() => {
+                            getSnapshotList(volumeInfo.clusterCode, volumeInfo.volumeName);
+                          });
                         }}
                       >
                         <Button danger>删除</Button>
@@ -346,7 +347,7 @@ export default function VolumeDetail() {
                   <Button
                     danger
                     onClick={() => {
-                      deleteVolume(volumeInfo.clusterCode, volumeId);
+                      deleteVolume(volumeInfo.clusterCode, volumeInfo.volumeName);
                     }}
                   >
                     删除
@@ -389,13 +390,9 @@ export default function VolumeDetail() {
             okText="治愈"
             onOk={() => {
               let params = cureForm.getFieldsValue();
-              cureVolume(volumeInfo.clusterCode, volumeInfo.volumeName, params.healMethod, params.object)
-                .then(() => {
-                  getSnapshotList(volumeInfo.clusterCode, volumeInfo.volumeName);
-                })
-                .finally(() => {
-                  setCreateCureVisiable(false);
-                });
+              cureVolume(volumeInfo.clusterCode, volumeInfo.volumeName, params.healMethod, params.object).then(() => {
+                getBrickInfo(volumeInfo.clusterCode, volumeInfo.volumeName);
+              });
             }}
             onCancel={() => {
               setCreateCureVisiable(false);

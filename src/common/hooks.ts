@@ -173,7 +173,7 @@ export function useStaffDepData(): [any, (orgId: any) => Promise<void>] {
 
   const loadData = useCallback(async (orgId) => {
     await postRequest(APIS.getStaffDeptList, { data: { orgId } }).then((result) => {
-      if (result.success) {
+      if (result?.success) {
         const next = (result?.data || []).map((el: any) => ({
           name: el.name,
           id: el.id,

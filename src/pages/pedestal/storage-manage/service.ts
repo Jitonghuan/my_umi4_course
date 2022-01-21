@@ -45,6 +45,8 @@ export const getVolumeBrickInfo = `${appConfig.apiPrefix}/infraManage/storage/gl
 export const getVolumeSnapshotList = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/volume/snapshot/list`;
 /* 12、POST 停止卷 */
 export const stopVolume = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/volume/stop`;
+/* 26、POST 启动卷 */
+export const startVolume = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/volume/start`;
 /* 13、POST 删除卷 */
 export const deleteVolume = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/volume/delete`;
 /* 14、POST  治愈卷 */

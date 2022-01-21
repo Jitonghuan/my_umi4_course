@@ -158,7 +158,7 @@ export default function Storage() {
               </div>
             </div>
           </div>
-          <Table rowKey="nodeId" bordered dataSource={nodeListData} loading={nodeListloading}>
+          <Table rowKey="ip" bordered dataSource={nodeListData} loading={nodeListloading}>
             <Table.Column title="主机名" dataIndex="hostname" width="30%" />
             <Table.Column title="IP" dataIndex="ip" width="20%" ellipsis />
             <Table.Column title="brick数量" dataIndex="brickCount" width="8%" ellipsis />
