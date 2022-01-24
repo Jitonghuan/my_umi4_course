@@ -10,7 +10,7 @@ export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
   clusterCode: string;
-  queryChartData: (clusterCode: any, date: any) => void;
+  queryChartData: (clusterCode: any, diskDate: any) => void;
 }
 const { ColorContainer } = colorUtil.context;
 export default function BrickChangeLineChart(props: ChartCaseListProps) {
@@ -32,7 +32,6 @@ export default function BrickChangeLineChart(props: ChartCaseListProps) {
     },
     tooltip: {
       formatter: (datum: any) => {
-        console.log('datum.category', datum);
         return { name: 'number', value: datum.number + '个' };
       },
     },

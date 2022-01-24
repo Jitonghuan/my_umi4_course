@@ -81,23 +81,13 @@ export function useGlusterfsNodeList() {
 // 获取集群趋势数据
 export function useGlusterfsClusterMetrics() {
   const [diskUsedPieData, setDiskUsedPieData] = useState<any>([]);
-  const [diskUsedLineData, setDiskUsedLineData] = useState<any>([]);
-  const [volumeNumLineData, setVolumeNumLineData] = useState<any>([]);
-  const [brickNumLineData, setBrickNumLineData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const queryGlusterfsMetrics = async (
-    clusterCode: string,
-    diskViewDay: number,
-    brickViewDay: number,
-    volumeViewDay: number,
-  ) => {
+  const queryGlusterfsMetrics = async (clusterCode: string) => {
     setLoading(true);
     await getRequest(APIS.getGlusterfsMetrics, {
       data: {
         clusterCode,
-        diskViewDay: diskViewDay || 7,
-        brickViewDay: brickViewDay || 7,
-        volumeViewDay: volumeViewDay || 7,
+        diskViewDay: 7,
       },
     })
       .then((res) => {
@@ -118,9 +108,30 @@ export function useGlusterfsClusterMetrics() {
                 });
               }
             }
-            setDiskUsedPieData(diskPieDataArry);
           }
+          setDiskUsedPieData(diskPieDataArry);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+  return [diskUsedPieData, loading, queryGlusterfsMetrics];
+}
 
+export function useDiskLineInfo() {
+  const [diskUsedLineData, setDiskUsedLineData] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const getDiskLineInfo = async (clusterCode: string, diskViewDay: any) => {
+    setLoading(true);
+    await getRequest(APIS.getGlusterfsMetrics, {
+      data: {
+        clusterCode,
+        diskViewDay: diskViewDay,
+      },
+    })
+      .then((res) => {
+        if (res?.success) {
           let diskLineDataArry: any = [];
           let diskUsedLineDataSource = res?.data.diskLine;
           for (const key in diskUsedLineDataSource) {
@@ -146,17 +157,29 @@ export function useGlusterfsClusterMetrics() {
             }
           }
           setDiskUsedLineData(diskLineDataArry);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+  return [diskUsedLineData, loading, getDiskLineInfo];
+}
 
-          let volumeNumLineDataArry: any = [];
-          let volumeNumLineDataSource = res?.data.volumeNumLine;
-          volumeNumLineDataSource?.map((item: any) => {
-            volumeNumLineDataArry.push({
-              time: moment(parseInt(item[0]) * 1000).format('YYYY-MM-DD '),
-              number: Number(item[1]),
-            });
-          });
-          setVolumeNumLineData(volumeNumLineDataArry);
+export function useBrickLineInfo() {
+  const [brickNumLineData, setBrickNumLineData] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const getBrickLineInfo = async (clusterCode: string, brickViewDay: any) => {
+    setLoading(true);
+    await getRequest(APIS.getGlusterfsMetrics, {
+      data: {
+        clusterCode,
+        brickViewDay: brickViewDay,
+      },
+    })
+      .then((res) => {
+        if (res?.success) {
           let brickNumLineDataArry: any = [];
           let brickNumLineDataSource = res?.data.brickNumLine;
           brickNumLineDataSource?.map((item: any) => {
@@ -172,5 +195,35 @@ export function useGlusterfsClusterMetrics() {
         setLoading(false);
       });
   };
-  return [diskUsedPieData, diskUsedLineData, volumeNumLineData, brickNumLineData, loading, queryGlusterfsMetrics];
+
+  return [brickNumLineData, loading, getBrickLineInfo];
+}
+
+export function useVolumeLineInfo() {
+  const [volumeNumLineData, setVolumeNumLineData] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const getVolumeLineInfo = async (clusterCode: string, volumeViewDay: any) => {
+    setLoading(true);
+    await getRequest(APIS.getGlusterfsMetrics, {
+      data: {
+        clusterCode,
+        volumeViewDay: volumeViewDay,
+      },
+    })
+      .then((res) => {
+        let volumeNumLineDataArry: any = [];
+        let volumeNumLineDataSource = res?.data.volumeNumLine;
+        volumeNumLineDataSource?.map((item: any) => {
+          volumeNumLineDataArry.push({
+            time: moment(parseInt(item[0]) * 1000).format('YYYY-MM-DD '),
+            number: Number(item[1]),
+          });
+        });
+        setVolumeNumLineData(volumeNumLineDataArry);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+  return [volumeNumLineData, loading, getVolumeLineInfo];
 }

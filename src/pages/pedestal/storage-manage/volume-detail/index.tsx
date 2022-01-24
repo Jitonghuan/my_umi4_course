@@ -88,7 +88,7 @@ export default function VolumeDetail() {
   const [deactivateSnapshot] = useDeactivateSnapshot();
 
   const onChange = (e: any) => {
-    console.log(`checked = ${e.target.checked}`);
+    // console.log(`checked = ${e.target.checked}`);
     setUseTimestamp(e.target.checked);
   };
 
@@ -251,9 +251,6 @@ export default function VolumeDetail() {
                       <Tag>{current}</Tag>
                     );
                   }}
-                  // render={(current, record) => {
-                  //   return <Tag color="success">{current}</Tag>;
-                  // }}
                 />
                 <Table.Column
                   title="操作"

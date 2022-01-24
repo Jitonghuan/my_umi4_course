@@ -10,7 +10,7 @@ export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
   clusterCode: string;
-  queryChartData: (clusterCode: any, date: any) => void;
+  queryChartData: (clusterCode: any, dateParam: any) => void;
 }
 const { ColorContainer } = colorUtil.context;
 export default function VolumeChangeLineChart(props: ChartCaseListProps) {

@@ -4,18 +4,22 @@
  * @date {2022/01/11 16:43}
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Divider, Switch } from 'antd';
-import PageContainer from '@/components/page-container';
-import { history } from 'umi';
-import { getRequest, delRequest } from '@/utils/request';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import React, { useState, useEffect } from 'react';
+import { Form, Select, Table, Tag, Divider } from 'antd';
+import { getRequest } from '@/utils/request';
+import { ContentCard } from '@/components/vc-page-content';
 import DiskUsagePieChart from './dashboards/disk-usage-pieChart';
 import DiskUsageLineChart from './dashboards/disk-usage-lineChart';
 import VolumeChangeLineChart from './dashboards/volume-change-lineChart';
 import BrickChangeLineChart from './dashboards/brick-change-lineChart';
-import { useGlusterfsClusterInfo, useGlusterfsNodeList, useGlusterfsClusterMetrics } from './hooks';
-import { useGlusterfsClusterCode } from '../hook';
+import {
+  useGlusterfsClusterInfo,
+  useGlusterfsNodeList,
+  useGlusterfsClusterMetrics,
+  useDiskLineInfo,
+  useBrickLineInfo,
+  useVolumeLineInfo,
+} from './hooks';
 import { useGlusterfsList } from '../service';
 import './index.less';
 
@@ -23,28 +27,14 @@ export default function Storage() {
   const { Option } = Select;
   const [clusterInfoData, clusterDataSource, clusterInfoloading, queryGlusterfsClusterInfo] = useGlusterfsClusterInfo(); //获取gfs大盘数据
   const [nodeListData, nodeListloading, queryNodeList] = useGlusterfsNodeList(); //获取节点数据
-  const [
-    diskUsedPieData,
-    diskUsedLineData,
-    volumeNumLineData,
-    brickNumLineData,
-    dashboardloading,
-    queryGlusterfsMetrics,
-  ] = useGlusterfsClusterMetrics(); //获取集群趋势数据
+  const [diskUsedPieData, diskPieloading, queryGlusterfsMetrics] = useGlusterfsClusterMetrics(); //获取Disk饼图趋势数据
+  const [diskUsedLineData, diskLineLoading, getDiskLineInfo] = useDiskLineInfo();
+  const [brickNumLineData, brickLoading, getBrickLineInfo] = useBrickLineInfo();
+  const [volumeNumLineData, volumeLoading, getVolumeLineInfo] = useVolumeLineInfo();
 
   const [currentClusterCode, setCurrentClusterCode] = useState<string>('');
   const [clusterCodeData, setClusterCodeData] = useState<any>([]); //获取集群Code
   const [loading, setLoading] = useState<boolean>(false);
-  //启用配置管理选择
-  let useNacosData: number;
-  const handleNacosChange = async (checked: any, record: any) => {
-    if (checked === 0) {
-      useNacosData = 1;
-    } else {
-      useNacosData = 0;
-    }
-  };
-
   const queryGlusterfsClusterCode = () => {
     setLoading(true);
     getRequest(useGlusterfsList)
@@ -60,6 +50,9 @@ export default function Storage() {
           queryGlusterfsClusterInfo(dataSource[0]);
           queryNodeList(dataSource[0]);
           queryGlusterfsMetrics(dataSource[0]);
+          getDiskLineInfo(dataSource[0]);
+          getBrickLineInfo(dataSource[0]);
+          getVolumeLineInfo(dataSource[0]);
         }
       })
       .finally(() => {
@@ -75,6 +68,9 @@ export default function Storage() {
     queryGlusterfsClusterInfo(value);
     queryNodeList(value);
     queryGlusterfsMetrics(value);
+    getDiskLineInfo(value);
+    getBrickLineInfo(value);
+    getVolumeLineInfo(value);
   };
   return (
     <ContentCard>
@@ -130,7 +126,7 @@ export default function Storage() {
             >
               <Table.Column title="类型" dataIndex="type" width="25%" />
               <Table.Column title="数量" dataIndex="total" width="25%" />
-              <Table.Column title="在线/可用" dataIndex="online" width="25%" />
+              <Table.Column title="在线/已用" dataIndex="online" width="25%" />
               <Table.Column title="离线/未用" dataIndex="offline" width="25%" />
             </Table>
           </div>
@@ -138,14 +134,15 @@ export default function Storage() {
 
         <div className="disk-dashboard">
           <div className="disk-usage-pie">
-            <DiskUsagePieChart data={diskUsedPieData} />
+            <DiskUsagePieChart data={diskUsedPieData} loading={diskPieloading} />
           </div>
           <div className="disk-usage-divider"></div>
           <div className="disk-usage-line">
             <DiskUsageLineChart
               data={diskUsedLineData}
               clusterCode={currentClusterCode}
-              queryChartData={(clusterCode, date) => queryGlusterfsMetrics(clusterCode, date)}
+              queryChartData={(clusterCode, diskViewDay) => getDiskLineInfo(clusterCode, diskViewDay)}
+              loading={diskLineLoading}
             />
           </div>
         </div>
@@ -186,7 +183,8 @@ export default function Storage() {
             <VolumeChangeLineChart
               data={volumeNumLineData}
               clusterCode={currentClusterCode}
-              queryChartData={(clusterCode, date) => queryGlusterfsMetrics(clusterCode, date)}
+              queryChartData={(clusterCode, volumeViewDay) => getVolumeLineInfo(clusterCode, volumeViewDay)}
+              loading={volumeLoading}
             />
           </div>
           {/* <div className='volume-usage-divider'></div> */}
@@ -194,7 +192,8 @@ export default function Storage() {
             <BrickChangeLineChart
               data={brickNumLineData}
               clusterCode={currentClusterCode}
-              queryChartData={(clusterCode, date) => queryGlusterfsMetrics(clusterCode, date)}
+              queryChartData={(clusterCode, brickViewDay) => getBrickLineInfo(clusterCode, brickViewDay)}
+              loading={brickLoading}
             />
           </div>
         </div>

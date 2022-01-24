@@ -4,7 +4,7 @@
  * @date {2022/01/12 11:00}
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, Tag, Divider, Switch } from 'antd';
 import { history } from 'umi';
 import { getRequest } from '@/utils/request';
@@ -140,9 +140,13 @@ export default function Storage() {
         >
           {/* <Table.Column title="ID" dataIndex="volumeId" width="16%" /> */}
           <Table.Column title="卷名" dataIndex="volumeName" width="26%" />
-          <Table.Column title="类型" dataIndex="volumeType" width="20%" ellipsis />
-          <Table.Column title="brick数量" dataIndex="brickCount" width="10%" ellipsis />
-          <Table.Column title="传输协议" dataIndex="transportType" width="10%" ellipsis />
+          <Table.Column title="类型" dataIndex="volumeType" width="16%" />
+          <Table.Column title="pv" dataIndex="pvName" width="16%" />
+          <Table.Column title="pvc" dataIndex="pvcName" width="16%" />
+          <Table.Column title="命名空间" dataIndex="namespace" width="16%" />
+          <Table.Column title="快照数量" dataIndex="snapshotCount" width={90} ellipsis />
+          <Table.Column title="可用空间" dataIndex="volumeAvailable" width={110} ellipsis />
+          <Table.Column title="总空间" dataIndex="volumeCapacity" width={110} ellipsis />
           <Table.Column
             title="开启NFS"
             dataIndex="enableNfs"
@@ -158,7 +162,7 @@ export default function Storage() {
           <Table.Column
             title="状态"
             dataIndex="status"
-            width="10%"
+            width={90}
             render={(current, record) => {
               return current === 'Started' ? (
                 <Tag color="success">{current}</Tag>
@@ -169,9 +173,6 @@ export default function Storage() {
               );
             }}
           />
-          <Table.Column title="快照数量" dataIndex="snapshotCount" width={90} ellipsis />
-          <Table.Column title="可用空间" dataIndex="volumeAvailable" width={110} ellipsis />
-          <Table.Column title="总空间" dataIndex="volumeCapacity" width={110} ellipsis />
           <Table.Column
             title="操作"
             width="16%"
