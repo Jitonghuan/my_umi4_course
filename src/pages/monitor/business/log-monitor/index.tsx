@@ -204,7 +204,7 @@ export default function LogMonitor(props: any) {
           </Collapse>
 
           <Collapse bordered={false} defaultActiveKey={['1']} className="target-config-collapse">
-            <Panel header={`指标配置    上报指标格式：指标名称(过滤字段1="值1",  过滤字段2="值2")   指标值`} key="2">
+            <Panel header={`指标配置`} key="2">
               <div className="target-config">
                 <div className="target-config-left">
                   <Form labelCol={{ flex: '100px' }}>
@@ -213,13 +213,13 @@ export default function LogMonitor(props: any) {
                     </Form.Item> */}
                     <div className="target-item">指标项</div>
                     <Form.Item label="指标名称">
-                      <Input style={{ width: '220px' }}></Input>
+                      <Input style={{ width: '260px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
                     </Form.Item>
                     <Form.Item label="指标类型">
-                      <Select style={{ width: '220px' }}></Select>
+                      <Select style={{ width: '260px' }}></Select>
                     </Form.Item>
                     <Form.Item label="指标值字段">
-                      <Select style={{ width: '220px' }}></Select>
+                      <Select style={{ width: '260px' }}></Select>
                     </Form.Item>
                     <Form.Item>
                       <Button
