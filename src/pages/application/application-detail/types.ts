@@ -89,6 +89,7 @@ export type DeployStatusType =
   // 前端线上验证
   | 'verifyWait'
   | 'verifyFailed'
+  | 'verifySuccess'
   // 合并主干
   | 'mergingMaster'
   | 'mergeMasterErr'

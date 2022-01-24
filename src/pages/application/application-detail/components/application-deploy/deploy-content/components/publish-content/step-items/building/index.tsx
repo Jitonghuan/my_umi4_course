@@ -10,7 +10,7 @@ import { StepItemProps } from '../../types';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, jenkinsUrl, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, jenkinsUrl, envCode, ...others } = props;
 
   const isLoading = deployStatus === 'building';
   const isError = deployStatus === 'buildErr' || deployStatus === 'buildAborted';
@@ -22,7 +22,7 @@ export default function BuildingStep(props: StepItemProps) {
       title: '确定要重新构建吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryBuild({ id: deployInfo.id });
+        await retryBuild({ id: deployInfo.id, envCode });
         onOperate('retryDeployEnd');
       },
       onCancel: () => {

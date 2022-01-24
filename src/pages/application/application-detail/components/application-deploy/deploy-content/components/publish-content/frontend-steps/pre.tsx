@@ -30,24 +30,91 @@ const deployStatusMapping: Record<string, number> = {
   // 完成
   deployFinish: 5,
   deployed: 5,
+  multiEnvDeploying: 2,
 };
 
 export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
-  const { deployStatus } = deployInfo || {};
+  const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo;
   const status = deployStatusMapping[deployStatus] || -1;
+  const envList = envs ? envs.split(',') : [];
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'pre' };
 
+  function getItemByKey(listStr: string, envCode: string) {
+    const list = listStr ? JSON.parse(listStr) : [];
+    const item = list.find((val: any) => val.envCode === envCode);
+    return item || {};
+  }
+
+  function getSubStateStatus(envCode: string) {
+    const item = getItemByKey(deploySubStates, envCode);
+    return item?.subState || 'other';
+  }
+
+  function getCurrentStatus(envCode: string) {
+    const subState = getSubStateStatus(envCode);
+    const status = deployStatusMapping[subState] || -1;
+    return parseInt(status + '');
+  }
+
   return (
-    <>
-      <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
-        <CreateTaskStep {...payload} />
-        <MergeReleaseStep {...payload} />
-        <BuildingStep {...payload} />
-        <PushResourceStep {...payload} />
-        <PushVersionStep {...payload} />
-        <FinishedStep {...payload} />
-      </Steps>
-    </>
+    <div className="publish-content-compo-wrapper">
+      {envList.length > 1 ? (
+        <>
+          <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+            <CreateTaskStep {...payload} />
+            <MergeReleaseStep {...payload} />
+            {buildType === 'multiBuild' ? (
+              <BuildingStep
+                {...payload}
+                deployStatus={getSubStateStatus(envList[0])}
+                jenkinsUrl={getItemByKey(jenkinsUrl, envList[0]).subJenkinsUrl}
+                envCode={envList[0]}
+              />
+            ) : null}
+          </Steps>
+          <div
+            className={`sub_process-wrapper ${parseInt(status + '') > 1 ? 'sub_process-wrapper-active' : ''}`}
+            style={{ marginLeft: buildType === 'multiBuild' ? '480px' : '330px' }}
+          >
+            {envList.map((envCode, i) => (
+              <div
+                key={envCode}
+                className={`sub_process sub_process-${i} ${getCurrentStatus(envCode) > 1 ? 'sub_process-active' : ''}`}
+              >
+                <span className="sub_process-title">{envCode}</span>
+                <Steps initial={2} current={getCurrentStatus(envCode)} className="sub_process-steps">
+                  {buildType !== 'multiBuild' ? (
+                    <BuildingStep
+                      {...payload}
+                      deployStatus={getSubStateStatus(envCode)}
+                      jenkinsUrl={getItemByKey(jenkinsUrl, envCode).subJenkinsUrl}
+                      envCode={envCode}
+                    />
+                  ) : null}
+                  <PushResourceStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
+                  <PushVersionStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
+                  <FinishedStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
+                </Steps>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+          <CreateTaskStep {...payload} />
+          <MergeReleaseStep {...payload} />
+          <BuildingStep
+            {...payload}
+            deployStatus={getSubStateStatus(envList[0])}
+            jenkinsUrl={getItemByKey(jenkinsUrl, envList[0]).subJenkinsUrl}
+            envCode={envList[0]}
+          />
+          <PushResourceStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
+          <PushVersionStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
+          <FinishedStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
+        </Steps>
+      )}
+    </div>
   );
 }

@@ -38,7 +38,7 @@ export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'pre' };
 
   return (
-    <>
+    <div className="publish-content-compo-wrapper">
       <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
         <CreateTaskStep {...payload} />
         <MergeReleaseStep {...payload} />
@@ -46,6 +46,6 @@ export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
         <DeployingStep {...payload} />
         <FinishedStep {...payload} />
       </Steps>
-    </>
+    </div>
   );
 }

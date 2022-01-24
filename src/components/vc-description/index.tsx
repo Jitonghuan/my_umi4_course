@@ -59,6 +59,7 @@ const funcName = (props: any) => {
     building: { text: '正在构建', color: 'blue' },
     buildErr: { text: '构建错误', color: 'red' },
     buildAborted: { text: '构建取消', color: 'orange' },
+    multiEnvDeploying: { text: '正在部署', color: 'geekblue' },
     deployWait: { text: '等待部署', color: 'blue' },
     deploying: { text: '正在部署', color: 'geekblue' },
     deployWaitBatch2: { text: '等待第二批部署', color: 'green' },
@@ -105,16 +106,24 @@ const funcName = (props: any) => {
       <Descriptions.Item label="发布状态">
         {/* {dataSource?.deployStatus} */}
         {
-          <Tag color={recordDisplayMap[dataSource?.deployStatus].color}>
-            {recordDisplayMap[dataSource?.deployStatus].text}
+          <Tag color={recordDisplayMap[dataSource?.deployStatus]?.color}>
+            {recordDisplayMap[dataSource?.deployStatus]?.text}
           </Tag>
         }
       </Descriptions.Item>
-      <Descriptions.Item label="jenkins">
-        {' '}
-        <a href={dataSource?.jenkinsUrl} target="_blank">
-          {dataSource?.jenkinsUrl}
-        </a>
+      <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
+        {dataSource?.jenkinsUrl ? (
+          <>
+            {JSON.parse(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+              <div style={{ marginBottom: '5px' }}>
+                {jenkinsItem?.subJenkinsUrl ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                  {jenkinsItem?.subJenkinsUrl}
+                </a>
+              </div>
+            ))}
+          </>
+        ) : null}
       </Descriptions.Item>
 
       {dataSource?.tagName !== '' && <Descriptions.Item label="tag">{dataSource?.tagName}</Descriptions.Item>}
@@ -130,7 +139,7 @@ const funcName = (props: any) => {
         ></Table>
       </div>
       {/* <Descriptions.Item label="功能分支" labelStyle={{}}>
-       
+
       </Descriptions.Item> */}
     </Descriptions>
 

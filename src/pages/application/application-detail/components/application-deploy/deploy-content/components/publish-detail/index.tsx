@@ -334,7 +334,8 @@ export default function PublishDetail(props: IProps) {
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>
               {deployErrInfo.map((errInfo) => (
-                <>
+                <div>
+                  <span style={{ color: 'black' }}> {errInfo?.subErrInfo ? `${errInfo?.envCode}：` : ''}</span>
                   <a
                     style={{ color: 'red', textDecoration: 'underline' }}
                     onClick={() => {
@@ -351,8 +352,8 @@ export default function PublishDetail(props: IProps) {
                   >
                     {errInfo?.subErrInfo}
                   </a>
-                  <span style={{ color: 'gray' }}>（点击跳转）</span>
-                </>
+                  <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                </div>
               ))}
             </div>
           </Descriptions.Item>

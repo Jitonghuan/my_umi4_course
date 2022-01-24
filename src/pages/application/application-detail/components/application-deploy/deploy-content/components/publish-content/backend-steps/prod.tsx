@@ -44,13 +44,15 @@ export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'prod' };
 
   return (
-    <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
-      <CreateTaskStep {...payload} />
-      <MergeReleaseStep {...payload} />
-      <DeployingStep {...payload} />
-      <MergeMasterStep {...payload} />
-      <DeleteFeatureStep {...payload} />
-      <FinishedStep {...payload} />
-    </Steps>
+    <div className="publish-content-compo-wrapper">
+      <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+        <CreateTaskStep {...payload} />
+        <MergeReleaseStep {...payload} />
+        <DeployingStep {...payload} />
+        <MergeMasterStep {...payload} />
+        <DeleteFeatureStep {...payload} />
+        <FinishedStep {...payload} />
+      </Steps>
+    </div>
   );
 }

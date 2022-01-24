@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
-import { createDeploy, updateFeatures } from '@/pages/application/service';
+import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import BackendTestEnvSteps from './backend-steps/test';
@@ -119,11 +119,24 @@ export default function PublishContent(props: IProps) {
     );
   };
 
+  function onCancelDeploy(envCode?: string) {
+    Modal.confirm({
+      title: '确定要取消当前发布吗？',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        return cancelDeploy({
+          id: deployInfo.id,
+          envCode,
+        }).then(() => {});
+      },
+    });
+  }
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} />
+      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} onCancelDeploy={onCancelDeploy} />
       <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />
       </div>

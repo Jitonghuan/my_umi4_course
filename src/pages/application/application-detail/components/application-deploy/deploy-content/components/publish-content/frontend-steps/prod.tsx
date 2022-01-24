@@ -30,9 +30,11 @@ const deployStatusMapping: Record<string, number> = {
   // 前端线上验证
   verifyWait: 4.1,
   verifyFailed: 4.2,
+  verifySuccess: 5.0,
   // 推送前端版本
   pushVersion: 5.1,
   pushVersionErr: 5.2,
+  pushVersionSuccess: 6.0,
   // 合并master
   mergingMaster: 6.1,
   mergeMasterErr: 6.2,
@@ -42,44 +44,11 @@ const deployStatusMapping: Record<string, number> = {
   // 完成
   deployFinish: 8,
   deployed: 8,
+  multiEnvDeploying: 2,
 };
 
 export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
-  const { deployStatus, envs, deploySubStates, jenkinsUrl } = {
-    id: 18617,
-    appCode: 'gmc-emr',
-    envTypeCode: 'test',
-    releaseBranch: 'master',
-    features: 'master',
-    unMergedFeatures: '',
-    conflictFeature: '',
-    mergeWebUrl: '',
-    deployStatus: 'multiEnvDeploying',
-    deploySubStates:
-      '[{"envCode":"gmc-test","subState":"building"},{"envCode":"hbos-test","subState":"verifyWait"},{"envCode":"gmc-dev","subState":"building"}]',
-    envs: 'gmc-test,hbos-test,gmc-dev',
-    deployedEnvs: 'gmc-test,hbos-test,gmc-dev',
-    deployingEnv: 'gmc-test,hbos-test,gmc-dev',
-    deployingEnvBatch: 0,
-    tagName: '',
-    jenkinsUrl:
-      '[{"envCode":"gmc-test","subJenkinsUrl":"http://jenkins-gmc-dev.cfuture.shop/job/gmc-emr/550/console"},{"envCode":"hbos-test","subJenkinsUrl":"http://jenkins-gmc-dev.cfuture.shop/job/gmc-emr/551/console"}]',
-    image:
-      '[{"envCode":"gmc-test","image":"cfuture-harbor-registry-vpc.cn-hangzhou.cr.aliyuncs.com/c2f/hbos-emr:1638860778","deployTime":"2021-12-07 15:06:18"}]',
-    jarPath: 'hbos-emr.jar',
-    deployedTime: '',
-    groupId: 'com.c2f.hbos',
-    artifactId: 'hbos-emr-starter',
-    version: '1.1.0-SNAPSHOT',
-    deployType: 0,
-    isActive: 1,
-    deployErrInfo: '[{"envCode":"gmc-test","subErrInfo":"错误信息1"},{"envCode":"hbos-test","subErrInfo":"错误信息2"}]',
-    filePath: '',
-    createUser: '张久明',
-    modifyUser: '张久明',
-    gmtCreate: '2021-12-07T15:06:18+08:00',
-    gmtModify: '2022-01-10T20:56:51+08:00',
-  };
+  const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType = 'multiBuild' } = deployInfo;
   const status = deployStatusMapping[deployStatus] || -1;
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'prod' };
@@ -114,12 +83,20 @@ export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
           <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
             <CreateTaskStep {...payload} />
             <MergeReleaseStep {...payload} />
+            {buildType === 'multiBuild' ? (
+              <BuildingStep
+                {...payload}
+                deployStatus={getSubStateStatus(envList[0])}
+                jenkinsUrl={getItemByKey(jenkinsUrl, envList[0]).subJenkinsUrl}
+                envCode={envList[0]}
+              />
+            ) : null}
           </Steps>
 
           <Steps
             className="last_process-wrapper"
             initial={6}
-            style={{ left: getSubConW() }}
+            style={{ left: getSubConW(), marginLeft: buildType === 'multiBuild' ? '480px' : '330px' }}
             current={parseInt(status + '')}
           >
             <MergeMasterStep {...payload} />
@@ -131,6 +108,7 @@ export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
             className={`prod-sub_process-wrapper sub_process-wrapper ${
               parseInt(status + '') > 1 ? 'sub_process-wrapper-active' : ''
             } ${parseInt(status + '') > 5 ? 'sub_process-wrapper-finish' : ''}`}
+            style={{ marginLeft: buildType === 'multiBuild' ? '480px' : '330px' }}
           >
             {envList.map((envCode, i) => (
               <div
@@ -140,12 +118,14 @@ export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
                 <span className="sub_process-title">{envCode}</span>
 
                 <Steps initial={2} current={getCurrentStatus(envCode)} className="sub_process-steps">
-                  <BuildingStep
-                    {...payload}
-                    deployStatus={getSubStateStatus(envCode)}
-                    jenkinsUrl={getItemByKey(jenkinsUrl, envCode).subJenkinsUrl}
-                    envCode={envCode}
-                  />
+                  {buildType !== 'multiBuild' ? (
+                    <BuildingStep
+                      {...payload}
+                      deployStatus={getSubStateStatus(envCode)}
+                      jenkinsUrl={getItemByKey(jenkinsUrl, envCode).subJenkinsUrl}
+                      envCode={envCode}
+                    />
+                  ) : null}
                   <PushResourceStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
                   <GrayValidationStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
                   <PushVersionStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
