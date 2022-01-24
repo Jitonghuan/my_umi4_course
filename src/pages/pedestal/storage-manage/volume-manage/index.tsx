@@ -141,16 +141,16 @@ export default function Storage() {
           {/* <Table.Column title="ID" dataIndex="volumeId" width="16%" /> */}
           <Table.Column title="卷名" dataIndex="volumeName" width="26%" />
           <Table.Column title="类型" dataIndex="volumeType" width="16%" />
-          <Table.Column title="pv" dataIndex="pvName" width="16%" />
-          <Table.Column title="pvc" dataIndex="pvcName" width="16%" />
+          <Table.Column title="pv" dataIndex="pvName" width="18%" />
+          <Table.Column title="pvc" dataIndex="pvcName" width="18%" />
           <Table.Column title="命名空间" dataIndex="namespace" width="16%" />
-          <Table.Column title="快照数量" dataIndex="snapshotCount" width={90} ellipsis />
-          <Table.Column title="可用空间" dataIndex="volumeAvailable" width={110} ellipsis />
-          <Table.Column title="总空间" dataIndex="volumeCapacity" width={110} ellipsis />
+          {/* <Table.Column title="快照数量" dataIndex="snapshotCount" width={90} ellipsis /> */}
+          <Table.Column title="可用空间" dataIndex="volumeAvailable" width={100} ellipsis />
+          <Table.Column title="总空间" dataIndex="volumeCapacity" width={100} ellipsis />
           <Table.Column
             title="开启NFS"
             dataIndex="enableNfs"
-            width="10%"
+            width="12%"
             render={(value, record, index) => (
               <Switch
                 className="enableNfs"
@@ -162,7 +162,7 @@ export default function Storage() {
           <Table.Column
             title="状态"
             dataIndex="status"
-            width={90}
+            width={120}
             render={(current, record) => {
               return current === 'Started' ? (
                 <Tag color="success">{current}</Tag>
@@ -175,7 +175,7 @@ export default function Storage() {
           />
           <Table.Column
             title="操作"
-            width="16%"
+            width={120}
             key="action"
             render={(_, record: any, index) => (
               <Space size="middle">
