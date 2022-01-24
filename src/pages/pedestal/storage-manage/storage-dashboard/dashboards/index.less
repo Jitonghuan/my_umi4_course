@@ -1,0 +1,23 @@
+@import '../../../../../assets/styles/mixins.less';
+// style={{ height: 265,width:336}}
+.dashboard-disk-usage-pie {
+  .convert(500,300);
+}
+.dashboard-disk-usage-line {
+  .convert(800,280);
+}
+.volume-change-line-Chart {
+  .convertBoxHeight(height,260);
+}
+.brick-change-line-Chart {
+  .convertBoxHeight(height,260);
+}
+.disk-pie-section-header,
+.disk-line-section-header,
+.brick-line-section-header,
+.volume-line-section-header {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 10px;
+  margin-top: 4px;
+}

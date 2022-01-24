@@ -1,0 +1,66 @@
+@import '../../../../assets/styles/mixins.less';
+.vc-page-content.is-flex .vc-page-content-body {
+  // min-height: 1151px;
+  // height:100%;
+  // overflow: auto;
+  .storage-body {
+    overflow: auto;
+    .convertBoxHeight(height,780);
+  }
+  .volume-dashboard {
+    display: flex;
+    width: 100%;
+    .volume-line-chart {
+      width: 50%;
+      background-color: #f7f8fa;
+      border: 1px solid rgb(219, 216, 216);
+      // .convert(746,290);
+    }
+    .brick-line-chart {
+      width: 50%;
+      background-color: #f7f8fa;
+      border: 1px solid rgb(219, 216, 216);
+
+      // .convertBoxWidth(margin-left,8);
+      // .convert(746,290);
+    }
+  }
+}
+.cluster-info,
+.volume-status {
+  margin-top: 10px;
+}
+.cluster-node-info {
+  // border: 1px solid rgb(194, 192, 192);
+
+  .info-title {
+    display: flex;
+    justify-content: center;
+    background-color: rgb(245, 245, 245);
+    padding-top: 10px;
+  }
+}
+.info-title {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(245, 245, 245);
+  padding-top: 10px;
+}
+.disk-dashboard {
+  display: flex;
+  margin-top: 6px;
+  .disk-usage-pie {
+    .convertBoxWidth(width,550);
+    background-color: #f7f8fa;
+  }
+  .disk-usage-divider {
+    width: 1px;
+    background-color: rgb(194, 192, 192);
+    height: .convertBoxHeight(height, 300);
+  }
+  .disk-usage-line {
+    background-color: #f7f8fa;
+
+    .convertBoxWidth(width,1140);
+  }
+}
