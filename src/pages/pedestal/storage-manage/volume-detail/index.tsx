@@ -235,7 +235,7 @@ export default function VolumeDetail() {
             <div style={{ marginTop: 10 }}>
               <div>snapshots:</div>
               <Table rowKey="id" bordered dataSource={snapshotData} loading={snapshotLoading}>
-                <Table.Column title="snapshots" dataIndex="snapshotName" width="32%" ellipsis />
+                <Table.Column title="snapshots" dataIndex="snapshotName" width="28%" ellipsis />
                 <Table.Column title="UUID" dataIndex="uuid" width="32%" ellipsis />
                 <Table.Column title="创建时间" dataIndex="createTime" width="18%" ellipsis />
                 <Table.Column
@@ -257,7 +257,7 @@ export default function VolumeDetail() {
                 />
                 <Table.Column
                   title="操作"
-                  width="18%"
+                  width="22%"
                   key="action"
                   render={(text, record: any, index) => (
                     <Space size="small">
