@@ -19,6 +19,15 @@ export const getGlusterfsNodeList = `${appConfig.apiPrefix}/infraManage/storage/
 /*3、 GET 获取集群趋势数据 */
 export const getGlusterfsMetrics = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/metrics`;
 
+/*27、 GET 获取Disk指标数据 */
+export const getDiskMetrics = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/disk/metrics`;
+
+/*28、 GET 获取卷指标数据 */
+export const getVolumeMetrics = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/volume/metrics`;
+
+/*29、 GET 获取brick指标数据 */
+export const getBrickMetrics = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/brick/metrics`;
+
 // 节点管理
 /* 4、 GET 获取节点详情 */
 export const getGlusterfsNodeDetail = `${appConfig.apiPrefix}/infraManage/storage/glusterfs/node/detail`;

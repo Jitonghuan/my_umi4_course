@@ -124,10 +124,10 @@ export function useDiskLineInfo() {
   const [loading, setLoading] = useState<boolean>(false);
   const getDiskLineInfo = async (clusterCode: string, diskViewDay: any) => {
     setLoading(true);
-    await getRequest(APIS.getGlusterfsMetrics, {
+    await getRequest(APIS.getDiskMetrics, {
       data: {
         clusterCode,
-        diskViewDay: diskViewDay,
+        diskViewDay: diskViewDay || 7,
       },
     })
       .then((res) => {
@@ -172,10 +172,10 @@ export function useBrickLineInfo() {
 
   const getBrickLineInfo = async (clusterCode: string, brickViewDay: any) => {
     setLoading(true);
-    await getRequest(APIS.getGlusterfsMetrics, {
+    await getRequest(APIS.getBrickMetrics, {
       data: {
         clusterCode,
-        brickViewDay: brickViewDay,
+        brickViewDay: brickViewDay || 7,
       },
     })
       .then((res) => {
@@ -204,10 +204,10 @@ export function useVolumeLineInfo() {
   const [loading, setLoading] = useState<boolean>(false);
   const getVolumeLineInfo = async (clusterCode: string, volumeViewDay: any) => {
     setLoading(true);
-    await getRequest(APIS.getGlusterfsMetrics, {
+    await getRequest(APIS.getVolumeMetrics, {
       data: {
         clusterCode,
-        volumeViewDay: volumeViewDay,
+        volumeViewDay: volumeViewDay || 7,
       },
     })
       .then((res) => {
