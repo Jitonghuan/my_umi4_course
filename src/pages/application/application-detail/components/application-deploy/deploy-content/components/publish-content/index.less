@@ -46,6 +46,7 @@
 
   .sub_process-wrapper {
     margin-left: 330px;
+    margin-top: -10px;
     position: relative;
     display: inline-block;
 
@@ -55,13 +56,14 @@
       left: 0;
       top: 0;
       width: 1px;
-      height: calc(100% - 48px);
+      height: calc(100% - 62px);
       background-color: #d2d8e6;
     }
 
     .sub_process {
       box-sizing: border-box;
       padding-left: 90px;
+      height: 100px;
       position: relative;
 
       .sub_process-steps {
@@ -78,14 +80,13 @@
         position: absolute;
         left: 0;
         top: -1px;
-        width: 100px;
+        width: 125px;
         height: 42px;
         border-bottom: 1px solid #d2d8e6;
         border-radius: 0 0 0 12px;
         box-sizing: border-box;
         padding: 4px;
         display: flex;
-        justify-content: center;
         align-items: flex-end;
         cursor: pointer;
 
@@ -129,7 +130,7 @@
       right: 0;
       top: 0;
       width: 1px;
-      height: calc(100% - 44px);
+      height: calc(100% - 62px);
       background-color: #d2d8e6;
     }
 
@@ -206,5 +207,10 @@
     margin-top: 0;
     border: 0;
     position: relative;
+
+    .single-cancel-btn {
+      right: 4px;
+      top: 4px;
+    }
   }
 }
