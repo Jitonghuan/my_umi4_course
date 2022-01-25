@@ -94,6 +94,7 @@ export default function PublishDetail(props: IProps) {
       onOk: async () => {
         return cancelDeploy({
           id: deployInfo.id,
+          envCode: '',
         }).then(() => {
           onOperate('cancelDeployEnd');
         });
@@ -300,9 +301,11 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        <Button type="primary" danger onClick={handleCancelPublish}>
-          取消发布
-        </Button>
+        {envTypeCode === 'prod' && appData?.appType === 'backend' && (
+          <Button type="primary" danger onClick={handleCancelPublish}>
+            取消发布
+          </Button>
+        )}
       </div>
 
       <Descriptions

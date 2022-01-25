@@ -15,7 +15,7 @@ export default function DeployingStep(props: StepItemProps) {
 
   const isLoading =
     deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
-  const isError = deployStatus === 'deployErr';
+  const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
   // || deployStatus === 'deployAborted';
 
   const [deployVisible, setDeployVisible] = useState(false);

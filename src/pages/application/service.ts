@@ -511,6 +511,7 @@ export const deployReuse = (params: {
   id: number;
   /** poc环境复用到生产环境需要 */
   envs?: string[];
+  envCode?: string;
 }) =>
   postRequest(deployReuseUrl, {
     data: params,

@@ -171,6 +171,25 @@
     top: -25px;
     right: 5px;
   }
+
+  .cancel-btn {
+    color: #d48806;
+    position: absolute;
+    left: 10px;
+    top: 42px;
+  }
+
+  .single-cancel-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .finish-step {
+    .ant-steps-item-title::after {
+      content: none;
+    }
+  }
 }
 
 .full-scree-modal {
@@ -186,5 +205,6 @@
   .publish-content-compo-wrapper {
     margin-top: 0;
     border: 0;
+    position: relative;
   }
 }
