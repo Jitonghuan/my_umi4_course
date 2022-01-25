@@ -33,18 +33,12 @@ const deployStatusMapping: Record<string, number> = {
   multiEnvDeploying: 2,
 };
 
-export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
+export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo;
   const status = deployStatusMapping[deployStatus] || -1;
   const envList = envs ? envs.split(',') : [];
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'pre' };
-
-  function getItemByKey(listStr: string, envCode: string) {
-    const list = listStr ? JSON.parse(listStr) : [];
-    const item = list.find((val: any) => val.envCode === envCode);
-    return item || {};
-  }
 
   function getSubStateStatus(envCode: string) {
     const item = getItemByKey(deploySubStates, envCode);
@@ -64,7 +58,7 @@ export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
           <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
             <CreateTaskStep {...payload} />
             <MergeReleaseStep {...payload} />
-            {buildType === 'multiBuild' ? (
+            {buildType === 'singleBuild' ? (
               <BuildingStep
                 {...payload}
                 deployStatus={getSubStateStatus(envList[0])}
@@ -75,7 +69,7 @@ export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
           </Steps>
           <div
             className={`sub_process-wrapper ${parseInt(status + '') > 1 ? 'sub_process-wrapper-active' : ''}`}
-            style={{ marginLeft: buildType === 'multiBuild' ? '480px' : '330px' }}
+            style={{ marginLeft: buildType === 'singleBuild' ? '480px' : '330px' }}
           >
             {envList.map((envCode, i) => (
               <div
@@ -84,7 +78,7 @@ export default function PreEnvSteps({ deployInfo, onOperate }: StepsProps) {
               >
                 <span className="sub_process-title">{envCode}</span>
                 <Steps initial={2} current={getCurrentStatus(envCode)} className="sub_process-steps">
-                  {buildType !== 'multiBuild' ? (
+                  {buildType !== 'singleBuild' ? (
                     <BuildingStep
                       {...payload}
                       deployStatus={getSubStateStatus(envCode)}

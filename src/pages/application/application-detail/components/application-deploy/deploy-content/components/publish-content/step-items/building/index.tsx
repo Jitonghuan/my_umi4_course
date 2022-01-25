@@ -44,7 +44,7 @@ export default function BuildingStep(props: StepItemProps) {
           {jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
             <div style={{ marginTop: 2 }}>
               <a target="_blank" href={jenkinsUrl}>
-                查看Jenkins详情
+                Jenkins详情
               </a>
             </div>
           ) : null}

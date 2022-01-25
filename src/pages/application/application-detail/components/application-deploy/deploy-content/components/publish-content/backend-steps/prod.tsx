@@ -32,6 +32,7 @@ const deployStatusMapping: Record<string, number> = {
   // 完成
   deployFinish: 5,
   deployed: 5,
+  multiEnvDeploying: 2,
 };
 
 export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {

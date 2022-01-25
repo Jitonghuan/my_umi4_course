@@ -132,11 +132,30 @@ export default function PublishContent(props: IProps) {
     });
   }
 
+  function getItemByKey(listStr: string, envCode: string) {
+    try {
+      const list = listStr ? JSON.parse(listStr) : [];
+      const item = list.find((val: any) => val.envCode === envCode);
+      return item || {};
+    } catch (e) {
+      return listStr
+        ? {
+            subJenkinsUrl: listStr,
+          }
+        : {};
+    }
+  }
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} onCancelDeploy={onCancelDeploy} />
+      <CurrSteps
+        deployInfo={deployInfo}
+        onOperate={onOperate}
+        onCancelDeploy={onCancelDeploy}
+        getItemByKey={getItemByKey}
+      />
       <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />
       </div>
@@ -219,7 +238,12 @@ export default function PublishContent(props: IProps) {
         visible={fullScreeVisible}
         onCancel={() => setFullScreeVisible(false)}
       >
-        <CurrSteps deployInfo={deployInfo} onOperate={onOperate} />
+        <CurrSteps
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          getItemByKey={getItemByKey}
+          onCancelDeploy={onCancelDeploy}
+        />
       </Modal>
     </div>
   );

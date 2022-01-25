@@ -91,6 +91,20 @@ const funcName = (props: any) => {
     }
   }
 
+  function getJenkins(url: string) {
+    try {
+      return url ? JSON.parse(url) : [];
+    } catch (e) {
+      return url
+        ? [
+            {
+              subJenkinsUrl: url,
+            },
+          ]
+        : [];
+    }
+  }
+
   return (
     <Descriptions
       // {...rest}
@@ -114,9 +128,9 @@ const funcName = (props: any) => {
       <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
         {dataSource?.jenkinsUrl ? (
           <>
-            {JSON.parse(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+            {getJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.subJenkinsUrl ? `${jenkinsItem.envCode}：` : ''}
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
                 <a href={jenkinsItem.subJenkinsUrl} target="_blank">
                   {jenkinsItem?.subJenkinsUrl}
                 </a>

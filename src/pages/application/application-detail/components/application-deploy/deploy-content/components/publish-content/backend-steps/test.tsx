@@ -31,9 +31,10 @@ const deployStatusMapping: Record<string, number> = {
   // 完成
   deployFinish: 5,
   deployed: 5,
+  multiEnvDeploying: 2,
 };
 
-export default function TestEnvSteps({ deployInfo, onOperate }: StepsProps) {
+export default function TestEnvSteps({ deployInfo, onOperate, getItemByKey }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
   let status = deployStatusMapping[deployStatus] || -1;
   if (deployStatus === 'deployAborted') {
@@ -42,20 +43,6 @@ export default function TestEnvSteps({ deployInfo, onOperate }: StepsProps) {
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'test' };
   const envList = envs ? envs.split(',') : [];
-
-  function getItemByKey(listStr: string, envCode: string) {
-    try {
-      const list = listStr ? JSON.parse(listStr) : [];
-      const item = list.find((val: any) => val.envCode === envCode);
-      return item || {};
-    } catch (e) {
-      return listStr
-        ? {
-            subJenkinsUrl: listStr,
-          }
-        : {};
-    }
-  }
 
   function getSubStateStatus(envCode: string) {
     const item = getItemByKey(deploySubStates, envCode);
