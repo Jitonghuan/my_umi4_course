@@ -9,25 +9,13 @@ import { getRequest } from '@/utils/request';
 import { history } from 'umi';
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
-import {
-  cancelDeploy,
-  deployReuse,
-  deployMaster,
-  queryEnvsReq,
-  offlineDeploy,
-  restartApp,
-} from '@/pages/application/service';
+import { cancelDeploy, deployReuse, deployMaster, offlineDeploy, restartApp } from '@/pages/application/service';
 import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
 import ServerStatus from '../server-status';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
-const nextEnvTypeCodeMapping: Record<string, string> = {
-  dev: 'test',
-  test: 'pre',
-  pre: 'prod',
-};
 
 export default function PublishDetail(props: IProps) {
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
@@ -86,7 +74,6 @@ export default function PublishDetail(props: IProps) {
         }
       });
     }
-    // const nextEnvTypeCode = nextEnvTypeCodeMapping[envTypeCode];
   }, [appCategoryCode, envTypeCode, deployInfo.id]);
   // 下一个部署环境
   const getNextEnv = (envTypeCode: string) => {
@@ -107,6 +94,7 @@ export default function PublishDetail(props: IProps) {
       onOk: async () => {
         return cancelDeploy({
           id: deployInfo.id,
+          envCode: '',
         }).then(() => {
           onOperate('cancelDeployEnd');
         });
@@ -267,6 +255,21 @@ export default function PublishDetail(props: IProps) {
     }
   });
 
+  let deployErrInfo: any[] = [];
+  try {
+    deployErrInfo = deployInfo.deployErrInfo ? JSON.parse(deployInfo.deployErrInfo) : [];
+  } catch (e) {
+    console.log(e);
+  }
+
+  function goToJenkins(item: any) {
+    const jenkinsUrl: any[] = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
+    const data = jenkinsUrl.find((val) => val.envCode === item.envCode);
+    if (data && data.subJenkinsUrl) {
+      window.open(data.subJenkinsUrl, '_blank');
+    }
+  }
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
@@ -298,9 +301,11 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        <Button type="primary" danger onClick={handleCancelPublish}>
-          取消发布
-        </Button>
+        {envTypeCode === 'prod' && appData?.appType === 'backend' && (
+          <Button type="primary" danger onClick={handleCancelPublish}>
+            取消发布
+          </Button>
+        )}
       </div>
 
       <Descriptions
@@ -328,25 +333,32 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="合并分支" span={4}>
           {deployInfo?.features || '--'}
         </Descriptions.Item>
-        {deployInfo?.deployErrInfo !== '' && deployInfo.hasOwnProperty('deployErrInfo') && (
+        {deployInfo?.deployErrInfo && deployErrInfo.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
-            <a
-              style={{ color: 'red', textDecoration: 'underline' }}
-              onClick={() => {
-                if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') !== -1) {
-                  window.open(deployInfo.jenkinsUrl);
-                }
-                if (deployInfo?.deployErrInfo.indexOf('请查看jenkins详情') === -1) {
-                  localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
-                  history.push(
-                    `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
-                  );
-                }
-              }}
-            >
-              {deployInfo?.deployErrInfo}
-            </a>
-            <span style={{ color: 'gray' }}>（点击跳转）</span>
+            <div>
+              {deployErrInfo.map((errInfo) => (
+                <div>
+                  <span style={{ color: 'black' }}> {errInfo?.subErrInfo ? `${errInfo?.envCode}：` : ''}</span>
+                  <a
+                    style={{ color: 'red', textDecoration: 'underline' }}
+                    onClick={() => {
+                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') !== -1) {
+                        goToJenkins(errInfo);
+                      }
+                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1) {
+                        localStorage.setItem('__init_env_tab__', errInfo?.envCode);
+                        history.push(
+                          `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
+                        );
+                      }
+                    }}
+                  >
+                    {errInfo?.subErrInfo}
+                  </a>
+                  <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                </div>
+              ))}
+            </div>
           </Descriptions.Item>
         )}
       </Descriptions>
@@ -376,7 +388,7 @@ export default function PublishDetail(props: IProps) {
             return(
               <Radio.Group  onChange={(v: any) => setDeployNextEnv(v)}  value={deployNextEnv}>
               <Radio key={index} value={item.value}  autoFocus >{item.label}</Radio>
-  
+
             </Radio.Group>
             )
           })} */}

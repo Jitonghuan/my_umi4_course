@@ -13,6 +13,8 @@ export interface IProps {
 export interface StepsProps {
   deployInfo: DeployInfoVO;
   onOperate: (type: OperateType) => void;
+  onCancelDeploy?: (envCode: string) => void;
+  getItemByKey: (listStr: string, envCode: string) => any;
 }
 
 // 执行步骤组件

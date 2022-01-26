@@ -89,6 +89,7 @@ export type DeployStatusType =
   // 前端线上验证
   | 'verifyWait'
   | 'verifyFailed'
+  | 'verifySuccess'
   // 合并主干
   | 'mergingMaster'
   | 'mergeMasterErr'
@@ -97,4 +98,8 @@ export type DeployStatusType =
   | 'deleteFeatureErr'
   // 部署完成
   | 'deployFinish'
-  | 'deployed';
+  | 'deployed'
+  // 多环境发布状态
+  | 'multiEnvDeploying'
+  // 其他
+  | 'other';

@@ -10,7 +10,7 @@ import { StepItemProps } from '../../types';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, jenkinsUrl, envCode, ...others } = props;
 
   const isLoading = deployStatus === 'building';
   const isError = deployStatus === 'buildErr' || deployStatus === 'buildAborted';
@@ -22,7 +22,7 @@ export default function BuildingStep(props: StepItemProps) {
       title: '确定要重新构建吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryBuild({ id: deployInfo.id });
+        await retryBuild({ id: deployInfo.id, envCode });
         onOperate('retryDeployEnd');
       },
       onCancel: () => {
@@ -41,10 +41,10 @@ export default function BuildingStep(props: StepItemProps) {
         // isLoading && (
         <>
           {/* 浙一日常环境下的部署步骤显示jenkins链接,构建步骤下不显示。其他环境都是构建步骤下显示Jenkins详情 */}
-          {deployInfo.jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
+          {jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
             <div style={{ marginTop: 2 }}>
-              <a target="_blank" href={deployInfo.jenkinsUrl}>
-                查看Jenkins详情
+              <a target="_blank" href={jenkinsUrl}>
+                构建详情
               </a>
             </div>
           ) : null}
@@ -56,7 +56,7 @@ export default function BuildingStep(props: StepItemProps) {
               </div>
             )} */}
           {isError && (
-            <Button style={{ marginTop: 4 }} onClick={handleRebuildClick}>
+            <Button style={{ marginTop: 4, paddingLeft: 4, paddingRight: 4 }} onClick={handleRebuildClick}>
               重新构建
             </Button>
           )}

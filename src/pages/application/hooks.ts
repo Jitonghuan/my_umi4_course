@@ -146,7 +146,7 @@ export function useAppEnvCodeData(appCode?: string): [Record<string, EnvDataVO[]
           pageSize: -1,
         },
       });
-      const next: EnvDataVO[] = result.data?.dataSource || [];
+      const next: EnvDataVO[] = result.data || [];
       // 根据 envTypeCode 分成多组
       const map: Record<string, EnvDataVO[]> = {};
       next.forEach((n) => {

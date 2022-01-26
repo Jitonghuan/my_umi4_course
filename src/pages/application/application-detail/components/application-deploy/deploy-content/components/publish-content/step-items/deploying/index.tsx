@@ -11,11 +11,11 @@ import DeployModal from './deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
 
   const isLoading =
     deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
-  const isError = deployStatus === 'deployErr';
+  const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
   // || deployStatus === 'deployAborted';
 
   const [deployVisible, setDeployVisible] = useState(false);
@@ -34,7 +34,7 @@ export default function DeployingStep(props: StepItemProps) {
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryDeploy({ id: deployInfo.id });
+        await retryDeploy({ id: deployInfo.id, envCode });
         onOperate('retryDeployEnd');
       },
       onCancel() {
