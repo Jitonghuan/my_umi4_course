@@ -36,10 +36,6 @@ const deployStatusMapping: Record<string, number> = {
 
 export default function TestEnvSteps({ deployInfo, onOperate, getItemByKey, onCancelDeploy }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
-  let status = deployStatusMapping[deployStatus] || -1;
-  if (deployStatus === 'deployAborted') {
-    status = -1;
-  }
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'test' };
   const envList = envs ? envs.split(',') : [];
@@ -53,6 +49,13 @@ export default function TestEnvSteps({ deployInfo, onOperate, getItemByKey, onCa
     const subState = getSubStateStatus(envCode);
     const status = deployStatusMapping[subState] || -1;
     return parseInt(status + '');
+  }
+
+  let status = deployStatusMapping[deployStatus] || -1;
+  if (deployStatus === 'deployAborted') {
+    status = -1;
+  } else if (deployStatus === 'multiEnvDeploying' && envList.length < 2) {
+    status = getCurrentStatus(envList[0]);
   }
 
   return (

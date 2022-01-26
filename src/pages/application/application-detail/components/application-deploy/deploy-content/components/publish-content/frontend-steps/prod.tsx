@@ -44,13 +44,12 @@ const deployStatusMapping: Record<string, number> = {
   // 完成
   deployFinish: 8,
   deployed: 8,
-  multiEnvDeploying: 2,
 };
 
 export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCancelDeploy }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo;
-  const status = deployStatusMapping[deployStatus] || -1;
   const subStepInitial = buildType === 'singleBuild' ? 3 : 2;
+  deployStatusMapping['multiEnvDeploying'] = subStepInitial;
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'prod' };
   const envList = envs ? envs.split(',') : [];
@@ -69,6 +68,13 @@ export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCa
   function getSubConW() {
     const $el = document.querySelector('.prod-sub_process-wrapper');
     return $el ? $el.clientWidth + 'px' : '10px';
+  }
+
+  let status = deployStatusMapping[deployStatus] || -1;
+  if (deployStatus === 'deployAborted') {
+    status = -1;
+  } else if (deployStatus === 'multiEnvDeploying' && envList.length < 2) {
+    status = getCurrentStatus(envList[0]);
   }
 
   return (
@@ -91,7 +97,7 @@ export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCa
           <Steps
             className="last_process-wrapper"
             initial={6}
-            style={{ left: getSubConW(), marginLeft: buildType === 'singleBuild' ? '480px' : '330px' }}
+            style={{ left: getSubConW(), marginLeft: buildType === 'singleBuild' ? '410px' : '320px' }}
             current={parseInt(status + '')}
           >
             <MergeMasterStep {...payload} />
@@ -103,7 +109,7 @@ export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCa
             className={`prod-sub_process-wrapper sub_process-wrapper ${
               parseInt(status + '') > subStepInitial - 1 ? 'sub_process-wrapper-active' : ''
             } ${parseInt(status + '') > 5 ? 'sub_process-wrapper-finish' : ''}`}
-            style={{ marginLeft: buildType === 'singleBuild' ? '480px' : '330px' }}
+            style={{ marginLeft: buildType === 'singleBuild' ? '410px' : '320px' }}
           >
             {envList.map((envCode, i) => (
               <div

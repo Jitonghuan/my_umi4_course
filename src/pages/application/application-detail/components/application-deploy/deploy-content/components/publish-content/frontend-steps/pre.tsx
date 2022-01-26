@@ -30,14 +30,13 @@ const deployStatusMapping: Record<string, number> = {
   // 完成
   deployFinish: 5,
   deployed: 5,
-  multiEnvDeploying: 2,
 };
 
 export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCancelDeploy }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo;
-  const status = deployStatusMapping[deployStatus] || -1;
   const envList = envs ? envs.split(',') : [];
   const subStepInitial = buildType === 'singleBuild' ? 3 : 2;
+  deployStatusMapping['multiEnvDeploying'] = subStepInitial;
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'pre' };
 
@@ -50,6 +49,13 @@ export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCan
     const subState = getSubStateStatus(envCode);
     const status = deployStatusMapping[subState] || -1;
     return parseInt(status + '');
+  }
+
+  let status = deployStatusMapping[deployStatus] || -1;
+  if (deployStatus === 'deployAborted') {
+    status = -1;
+  } else if (deployStatus === 'multiEnvDeploying' && envList.length < 2) {
+    status = getCurrentStatus(envList[0]);
   }
 
   return (
@@ -72,7 +78,7 @@ export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCan
             className={`sub_process-wrapper ${
               parseInt(status + '') > subStepInitial - 1 ? 'sub_process-wrapper-active' : ''
             }`}
-            style={{ marginLeft: buildType === 'singleBuild' ? '480px' : '330px' }}
+            style={{ marginLeft: buildType === 'singleBuild' ? '410px' : '310px' }}
           >
             {envList.map((envCode, i) => (
               <div

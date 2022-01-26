@@ -14,7 +14,7 @@ export default function FinishedStep(props: StepItemProps) {
   return (
     <Steps.Step
       {...others}
-      title="执行完成"
+      title="完成"
       description={
         (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
         (deployInfo.envs?.includes('zs-prd') ||

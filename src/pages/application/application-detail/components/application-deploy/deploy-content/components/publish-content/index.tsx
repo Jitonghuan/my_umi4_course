@@ -233,7 +233,7 @@ export default function PublishContent(props: IProps) {
       <Modal
         title="发布流程"
         footer={null}
-        width="95%"
+        width="98%"
         className="full-scree-modal"
         visible={fullScreeVisible}
         onCancel={() => setFullScreeVisible(false)}
