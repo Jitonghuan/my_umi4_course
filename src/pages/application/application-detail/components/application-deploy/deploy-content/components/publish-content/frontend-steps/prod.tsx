@@ -3,7 +3,7 @@
 // @create 2021/09/05 22:43
 
 import React from 'react';
-import { Steps } from 'antd';
+import { Button, Steps } from 'antd';
 import { StepsProps } from '../types';
 import CreateTaskStep from '../step-items/create-task';
 import MergeReleaseStep from '../step-items/merge-release';
@@ -30,9 +30,11 @@ const deployStatusMapping: Record<string, number> = {
   // 前端线上验证
   verifyWait: 4.1,
   verifyFailed: 4.2,
+  verifySuccess: 5.0,
   // 推送前端版本
   pushVersion: 5.1,
   pushVersionErr: 5.2,
+  pushVersionSuccess: 6.0,
   // 合并master
   mergingMaster: 6.1,
   mergeMasterErr: 6.2,
@@ -44,23 +46,127 @@ const deployStatusMapping: Record<string, number> = {
   deployed: 8,
 };
 
-export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
-  const { deployStatus } = deployInfo || {};
-  const status = deployStatusMapping[deployStatus] || -1;
+export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCancelDeploy }: StepsProps) {
+  const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo;
+  const subStepInitial = buildType === 'singleBuild' ? 3 : 2;
+  deployStatusMapping['multiEnvDeploying'] = subStepInitial;
 
   const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'prod' };
+  const envList = envs ? envs.split(',') : [];
+
+  function getSubStateStatus(envCode: string) {
+    const item = getItemByKey(deploySubStates, envCode);
+    return item?.subState || 'other';
+  }
+
+  function getCurrentStatus(envCode: string) {
+    const subState = getSubStateStatus(envCode);
+    const status = deployStatusMapping[subState] || -1;
+    return parseInt(status + '');
+  }
+
+  function getSubConW() {
+    const $el = document.querySelector('.prod-sub_process-wrapper');
+    return $el ? $el.clientWidth + 'px' : '10px';
+  }
+
+  let status = deployStatusMapping[deployStatus] || -1;
+  if (deployStatus === 'deployAborted') {
+    status = -1;
+  } else if (deployStatus === 'multiEnvDeploying' && envList.length < 2) {
+    status = getCurrentStatus(envList[0]);
+  }
 
   return (
-    <Steps className="publish-content-compo__steps" size="small" current={parseInt(status + '')}>
-      <CreateTaskStep {...payload} />
-      <MergeReleaseStep {...payload} />
-      <BuildingStep {...payload} />
-      <PushResourceStep {...payload} />
-      <GrayValidationStep {...payload} />
-      <PushVersionStep {...payload} />
-      <MergeMasterStep {...payload} />
-      <DeleteFeatureStep {...payload} />
-      <FinishedStep {...payload} />
-    </Steps>
+    <div className="publish-content-compo-wrapper">
+      {envList.length > 1 ? (
+        <>
+          <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+            <CreateTaskStep {...payload} />
+            <MergeReleaseStep {...payload} />
+            {buildType === 'singleBuild' ? (
+              <BuildingStep
+                {...payload}
+                deployStatus={getSubStateStatus(envList[0])}
+                jenkinsUrl={getItemByKey(jenkinsUrl, envList[0]).subJenkinsUrl}
+                envCode={envList[0]}
+              />
+            ) : null}
+          </Steps>
+
+          <Steps
+            className="last_process-wrapper"
+            initial={6}
+            style={{ left: getSubConW(), marginLeft: buildType === 'singleBuild' ? '440px' : '320px' }}
+            current={parseInt(status + '')}
+          >
+            <MergeMasterStep {...payload} />
+            <DeleteFeatureStep {...payload} />
+            <FinishedStep {...payload} />
+          </Steps>
+
+          <div
+            className={`prod-sub_process-wrapper sub_process-wrapper ${
+              parseInt(status + '') > subStepInitial - 1 ? 'sub_process-wrapper-active' : ''
+            } ${parseInt(status + '') > 5 ? 'sub_process-wrapper-finish' : ''}`}
+            style={{ marginLeft: buildType === 'singleBuild' ? '440px' : '320px' }}
+          >
+            {envList.map((envCode, i) => (
+              <div
+                key={envCode}
+                className={`sub_process sub_process-${i} ${
+                  getCurrentStatus(envCode) > subStepInitial - 1 ? 'sub_process-active' : ''
+                }`}
+              >
+                <span className="sub_process-title">{envCode}</span>
+
+                <Steps initial={subStepInitial} current={getCurrentStatus(envCode)} className="sub_process-steps">
+                  {buildType !== 'singleBuild' ? (
+                    <BuildingStep
+                      {...payload}
+                      deployStatus={getSubStateStatus(envCode)}
+                      jenkinsUrl={getItemByKey(jenkinsUrl, envCode).subJenkinsUrl}
+                      envCode={envCode}
+                    />
+                  ) : null}
+                  <PushResourceStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
+                  <GrayValidationStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
+                  <PushVersionStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
+                </Steps>
+                {parseInt(status + '') > 1 && parseInt(status + '') < 8 ? (
+                  <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envCode)}>
+                    取消发布
+                  </Button>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+            <CreateTaskStep {...payload} />
+            <MergeReleaseStep {...payload} />
+            <BuildingStep
+              {...payload}
+              deployStatus={getSubStateStatus(envList[0])}
+              jenkinsUrl={getItemByKey(jenkinsUrl, envList[0]).subJenkinsUrl}
+              envCode={envList[0]}
+            />
+            <PushResourceStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
+            <GrayValidationStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
+            <PushVersionStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
+            <MergeMasterStep {...payload} />
+            <DeleteFeatureStep {...payload} />
+            <FinishedStep {...payload} />
+          </Steps>
+          {parseInt(status + '') > 1 && parseInt(status + '') < 8 ? (
+            <Button danger className="single-cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envList[0])}>
+              取消发布
+            </Button>
+          ) : null}
+        </>
+      )}
+    </div>
   );
 }

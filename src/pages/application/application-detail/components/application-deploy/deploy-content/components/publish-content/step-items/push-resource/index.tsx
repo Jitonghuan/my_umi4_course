@@ -10,14 +10,14 @@ import { StepItemProps } from '../../types';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
 
   const isLoading = deployStatus === 'pushFeResource';
   const isError = deployStatus === 'pushFeResourceErr';
 
   const handleRetryClick = async () => {
     try {
-      await rePushFeResource({ id: deployInfo.id });
+      await rePushFeResource({ id: deployInfo.id, envCode });
     } finally {
       onOperate('rePushFeResourceEnd');
     }
