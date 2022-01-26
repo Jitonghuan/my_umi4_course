@@ -79,9 +79,11 @@ export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCan
                   <DeployingStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
                   <FinishedStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
                 </Steps>
-                <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envCode)}>
-                  取消发布
-                </Button>
+                {parseInt(status + '') > 1 && parseInt(status + '') < 4 ? (
+                  <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envCode)}>
+                    取消发布
+                  </Button>
+                ) : null}
               </div>
             ))}
           </div>
@@ -100,9 +102,11 @@ export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCan
             <DeployingStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
             <FinishedStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
           </Steps>
-          <Button danger className="single-cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envList[0])}>
-            取消发布
-          </Button>
+          {parseInt(status + '') > 1 && parseInt(status + '') < 4 ? (
+            <Button danger className="single-cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envList[0])}>
+              取消发布
+            </Button>
+          ) : null}
         </>
       )}
     </div>

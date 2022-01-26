@@ -133,9 +133,11 @@ export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCa
                   <GrayValidationStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
                   <PushVersionStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
                 </Steps>
-                <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envCode)}>
-                  取消发布
-                </Button>
+                {parseInt(status + '') > 1 && parseInt(status + '') < 8 ? (
+                  <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envCode)}>
+                    取消发布
+                  </Button>
+                ) : null}
               </div>
             ))}
           </div>
@@ -158,9 +160,11 @@ export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCa
             <DeleteFeatureStep {...payload} />
             <FinishedStep {...payload} />
           </Steps>
-          <Button danger className="single-cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envList[0])}>
-            取消发布
-          </Button>
+          {parseInt(status + '') > 1 && parseInt(status + '') < 8 ? (
+            <Button danger className="single-cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envList[0])}>
+              取消发布
+            </Button>
+          ) : null}
         </>
       )}
     </div>
