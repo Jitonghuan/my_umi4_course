@@ -97,7 +97,7 @@ export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCa
           <Steps
             className="last_process-wrapper"
             initial={6}
-            style={{ left: getSubConW(), marginLeft: buildType === 'singleBuild' ? '410px' : '320px' }}
+            style={{ left: getSubConW(), marginLeft: buildType === 'singleBuild' ? '440px' : '320px' }}
             current={parseInt(status + '')}
           >
             <MergeMasterStep {...payload} />
@@ -109,7 +109,7 @@ export default function ProdEnvSteps({ deployInfo, onOperate, getItemByKey, onCa
             className={`prod-sub_process-wrapper sub_process-wrapper ${
               parseInt(status + '') > subStepInitial - 1 ? 'sub_process-wrapper-active' : ''
             } ${parseInt(status + '') > 5 ? 'sub_process-wrapper-finish' : ''}`}
-            style={{ marginLeft: buildType === 'singleBuild' ? '410px' : '320px' }}
+            style={{ marginLeft: buildType === 'singleBuild' ? '440px' : '320px' }}
           >
             {envList.map((envCode, i) => (
               <div

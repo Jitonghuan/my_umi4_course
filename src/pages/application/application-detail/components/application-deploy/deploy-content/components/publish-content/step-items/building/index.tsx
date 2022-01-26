@@ -44,7 +44,7 @@ export default function BuildingStep(props: StepItemProps) {
           {jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
             <div style={{ marginTop: 2 }}>
               <a target="_blank" href={jenkinsUrl}>
-                详情
+                构建详情
               </a>
             </div>
           ) : null}
@@ -56,7 +56,7 @@ export default function BuildingStep(props: StepItemProps) {
               </div>
             )} */}
           {isError && (
-            <Button style={{ marginTop: 4 }} onClick={handleRebuildClick}>
+            <Button style={{ marginTop: 4, paddingLeft: 4, paddingRight: 4 }} onClick={handleRebuildClick}>
               重新构建
             </Button>
           )}

@@ -78,7 +78,7 @@ export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCan
             className={`sub_process-wrapper ${
               parseInt(status + '') > subStepInitial - 1 ? 'sub_process-wrapper-active' : ''
             }`}
-            style={{ marginLeft: buildType === 'singleBuild' ? '410px' : '310px' }}
+            style={{ marginLeft: buildType === 'singleBuild' ? '440px' : '310px' }}
           >
             {envList.map((envCode, i) => (
               <div

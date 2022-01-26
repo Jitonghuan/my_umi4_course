@@ -147,7 +147,7 @@ export const queryFeVersions = `${appConfig.apiPrefix}/appManage/feVersion/list`
 export const queryDeployListUrl = `${appConfig.apiPrefix}/releaseManage/deploy/list`;
 
 /** 获取应用大类的环境列表 */
-export const queryAppEnvs = `${appConfig.apiPrefix}/monitorManage/app/env`;
+export const queryAppEnvs = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 
 /** GET 获取应用变更记录列表 */
 export const queryRecentChangeOrder = `${appConfig.apiPrefix}/releaseManage/queryRecentChangeOrder`;
