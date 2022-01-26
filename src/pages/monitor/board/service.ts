@@ -44,24 +44,24 @@ export const queryResUseData = (params: { clusterId: string }) =>
         },
         {
           title: '内存使用率',
-          value: data.clusterAvgMemory,
+          value: data?.clusterAvgMemory || 0,
           unit: '%',
-          color: getColorByValue(data.clusterAvgMemory),
+          color: getColorByValue(data?.clusterAvgMemory),
         },
         {
           title: '磁盘使用率',
-          value: data.clusterAvgDisk,
-          color: getColorByValue(data.clusterAvgDisk),
+          value: data?.clusterAvgDisk || 0,
+          color: getColorByValue(data?.clusterAvgDisk),
           unit: '%',
-          ...(data.clusterAvgDisk && Number(data.clusterAvgDisk) > 90 ? { warn: '容量不足' } : {}),
+          ...(data?.clusterAvgDisk && Number(data?.clusterAvgDisk) > 90 ? { warn: '容量不足' } : {}),
         },
         {
           mode: '2',
           dataSource: [
-            { title: '节点数', value: data.clusterNodeNum },
-            { title: 'POD数', value: data.clusterPodNum },
-            { title: 'Deployment数', value: data.clusterDeploymentNum },
-            { title: '告警数', value: data.clusterAlertsNum },
+            { title: '节点数', value: data?.clusterNodeNum },
+            { title: 'POD数', value: data?.clusterPodNum },
+            { title: 'Deployment数', value: data?.clusterDeploymentNum },
+            { title: '告警数', value: data?.clusterAlertsNum },
           ],
         },
       ];
