@@ -621,7 +621,7 @@ export default [
       {
         path: 'business',
         name: '业务监控',
-        // key: 'business-monitor',
+        key: 'business-monitor',
         //测试环境和正式环境暂不展示
         // hideInMenu: process.env.BUILD_ENV === 'prod',
         component: '@/pages/monitor/business/index',
@@ -644,6 +644,7 @@ export default [
       {
         path: 'log-monitor',
         name: '创建日志监控',
+        key: 'business-monitor',
         component: '@/pages/monitor/business/log-monitor',
         hideInMenu: true,
       },

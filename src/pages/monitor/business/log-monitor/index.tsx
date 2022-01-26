@@ -6,120 +6,51 @@
 
 import React, { useState } from 'react';
 import {
-  List,
-  Card,
-  Table,
   Collapse,
   Form,
   Select,
   Input,
   Button,
-  Space,
   Row,
   InputNumber,
   Radio,
   Col,
   TimePicker,
+  Spin,
+  message,
+  Space,
 } from 'antd';
 import PageContainer from '@/components/page-container';
-import {
-  PauseCircleFilled,
-  ClockCircleFilled,
-  FileTextOutlined,
-  EyeFilled,
-  PlusOutlined,
-  DeleteFilled,
-} from '@ant-design/icons';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { FileTextOutlined, EyeFilled, PlusOutlined, DeleteFilled, MinusCircleOutlined } from '@ant-design/icons';
+import { putRequest } from '@/utils/request';
+import ReactJson from 'react-json-view';
+import { ContentCard } from '@/components/vc-page-content';
 import { Item } from '../../basic/typing';
 import EditorTable from '@cffe/pc-editor-table';
+import { editColumns, targetOptions, silenceOptions, rulesOptions, envTypeData, operatorOption } from './schema';
+import { useEnvListOptions, useAppOptions } from '../hooks';
+import { useLogStoreOptions, useQueryLogSample } from './hooks';
+import { addMonitor, updateMonitor } from '../service';
 import './index.less';
 const { Panel } = Collapse;
 const { Search } = Input;
-const activeKeyMap: Record<string, any> = {
-  'prometheus-add': 'prometheus',
-  'prometheus-edit': 'prometheus',
-};
 
 export default function LogMonitor(props: any) {
-  const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
-  const activeKey = activeKeyMap[currRoute!] || currRoute;
+  const [envCodeOption, getEnvCodeList] = useEnvListOptions();
+  const [appOptions] = useAppOptions();
+  const [tagrgetForm] = Form.useForm();
   const [getSilenceValue, setGetSilenceValue] = useState(0);
   const [labelTableData, setLabelTableData] = useState<Item[]>([]);
   const [annotationsTableData, setAnnotationsTableData] = useState<Item[]>([]);
+  const [currentTarget, setCurrentTarget] = useState<string>('');
+  const [currentEnvCode, setCurrentEnvCode] = useState<string>('');
+  const [currentAppCode, setCurrentAppCode] = useState<string>('');
+  const [currentIndex, setCurrentIndex] = useState<string>('');
+  const [logStoreOptions, getRuleIndex] = useLogStoreOptions(); //日志库选项下拉框数据
+  const [logSample, loading, getLogSample] = useQueryLogSample();
+  const [filterVisiable, setFilterVisiable] = useState<boolean>(false);
+  const [renderForm, setRenderForm] = useState<any>(['targetForm']);
 
-  const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
-  const callback = (key: any) => {
-    console.log(key);
-  };
-  const editColumns = [
-    {
-      title: '键（点击可修改）',
-      dataIndex: 'key',
-      editable: true,
-      width: '45%',
-    },
-    {
-      title: '值（点击可修改）',
-      dataIndex: 'value',
-      key: 'value',
-      editable: true,
-      width: '45%',
-    },
-  ];
-
-  const colunms = [
-    {
-      title: '指标名',
-      dataIndex: 'name',
-      key: 'name',
-      width: 150,
-    },
-    {
-      title: '指标类型',
-      dataIndex: 'type',
-      key: 'type',
-      width: 150,
-    },
-    {
-      title: '过滤条件',
-      dataIndex: 'filter',
-      key: 'filter',
-    },
-  ];
-  const rulesOptions = [
-    {
-      key: 2,
-      value: 2,
-      label: '警告',
-    },
-    {
-      key: 3,
-      value: 3,
-      label: '严重',
-    },
-    {
-      key: 4,
-      value: 4,
-      label: '灾难',
-    },
-  ];
-  const silenceOptions = [
-    {
-      key: 1,
-      value: 1,
-      label: '是',
-    },
-    {
-      key: 0,
-      value: 0,
-      label: '否',
-    },
-  ];
   const labelFun = (value: Item[]) => {
     setLabelTableData(value);
   };
@@ -127,39 +58,33 @@ export default function LogMonitor(props: any) {
   const annotationsFun = (value: Item[]) => {
     setAnnotationsTableData(value);
   };
+  const selectTarget = (value: any) => {
+    setCurrentTarget(value);
+  };
+  const selectEnvType = (value: string) => {
+    getEnvCodeList(value);
+  };
+  const selectEnvCode = (value: string) => {
+    setCurrentEnvCode(value);
+    getRuleIndex(value);
+  };
+  const selectIndex = (index: string) => {
+    setCurrentIndex(index);
+  };
+  const selectAppCode = (appCode: string) => {
+    setCurrentAppCode(appCode);
+  };
+  const queryLogSample = () => {
+    getLogSample(currentEnvCode, currentIndex, currentAppCode);
+  };
 
-  const listData = [];
-  for (let i = 0; i < 9; i++) {
-    listData.push(
-      <Collapse onChange={callback}>
-        <Panel
-          header={
-            <p>
-              <span>"监控名称"</span>
-              <span style={{ marginLeft: '20px', display: 'inline-block' }}>
-                <PauseCircleFilled style={{ color: 'red' }} />
-                停止
-              </span>
-              <Space style={{ paddingRight: '20px', float: 'right' }}>
-                <Button type="primary">看板</Button>
-                <Button type="primary">编辑</Button>
-                <Button type="primary">启动</Button>
-                <Button type="dashed">停止</Button>
-              </Space>
-            </p>
-          }
-          key="1"
-        >
-          <Table
-            columns={colunms}
-            pagination={false}
-            rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
-          />
-        </Panel>
-      </Collapse>,
-    );
-  }
   const creatLogMinitor = () => {};
+
+  const getFields = () => {
+    let length = renderForm.length + 1;
+    renderForm.push('targetForm' + length);
+    setRenderForm(renderForm);
+  };
 
   return (
     <PageContainer className="monitor-log">
@@ -170,17 +95,40 @@ export default function LogMonitor(props: any) {
               <div className="log-config">
                 <div className="log-config-left">
                   <Form labelCol={{ flex: '100px' }}>
-                    <Form.Item label="监控名称">
-                      <Input style={{ width: '220px' }}></Input>
+                    <Form.Item label="监控名称" name="monitorName">
+                      <Input style={{ width: '362px' }}></Input>
                     </Form.Item>
-                    <Form.Item label="选择环境">
-                      <Select style={{ width: '140px' }}></Select> <Select style={{ width: '220px' }}></Select>
+                    <Form.Item label="选择环境" name="envCode">
+                      <Select
+                        style={{ width: '140px' }}
+                        options={envTypeData}
+                        onChange={selectEnvType}
+                        allowClear
+                      ></Select>
+                      <Select
+                        style={{ width: '220px' }}
+                        options={envCodeOption}
+                        onChange={selectEnvCode}
+                        allowClear
+                      ></Select>
                     </Form.Item>
-                    <Form.Item label="应用">
-                      <Select style={{ width: '220px' }}></Select>
+                    <Form.Item label="选择日志索引" name="index">
+                      <Select
+                        style={{ width: '362px' }}
+                        options={logStoreOptions}
+                        onChange={selectIndex}
+                        showSearch
+                        allowClear
+                      ></Select>
                     </Form.Item>
-                    <Form.Item label="选择日志索引">
-                      <Select style={{ width: '220px' }}></Select>
+                    <Form.Item label="应用" name="appCode">
+                      <Select
+                        style={{ width: '362px' }}
+                        options={appOptions}
+                        onChange={selectAppCode}
+                        showSearch
+                        allowClear
+                      ></Select>
                     </Form.Item>
                   </Form>
                 </div>
@@ -191,13 +139,24 @@ export default function LogMonitor(props: any) {
                       日志抓取结果预览
                     </span>
                     <span>
-                      <Button type="primary">
+                      <Button type="primary" onClick={queryLogSample}>
                         <EyeFilled />
                         日志抓取预览
                       </Button>
                     </span>
                   </div>
-                  <div className="log-board"></div>
+
+                  <div className="log-board">
+                    <Spin spinning={loading} style={{ height: '100%', overflow: 'auto' }}>
+                      <ReactJson
+                        src={logSample}
+                        name={false}
+                        theme="apathy"
+                        style={{ height: '100%', overflow: 'auto' }}
+                        collapsed={false}
+                      />
+                    </Spin>
+                  </div>
                 </div>
               </div>
             </Panel>
@@ -207,58 +166,103 @@ export default function LogMonitor(props: any) {
             <Panel header={`指标配置`} key="2">
               <div className="target-config">
                 <div className="target-config-left">
-                  <Form labelCol={{ flex: '100px' }}>
-                    {/* <Form.Item label="时间戳字段">
-                      <Select style={{ width: '220px' }}></Select>
-                    </Form.Item> */}
-                    <div className="target-item">指标项</div>
-                    <Form.Item label="指标名称">
-                      <Input style={{ width: '260px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
-                    </Form.Item>
-                    <Form.Item label="指标类型">
-                      <Select style={{ width: '260px' }}></Select>
-                    </Form.Item>
-                    <Form.Item label="指标值字段">
-                      <Select style={{ width: '260px' }}></Select>
-                    </Form.Item>
-                    <Form.Item>
-                      <Button
-                        type="dashed"
-                        // onClick={() => add()}
-                        style={{ width: '50%', marginLeft: 40 }}
-                        icon={<PlusOutlined />}
-                      >
-                        新增过滤条件
-                      </Button>
-                    </Form.Item>
-                    <Form.Item>
-                      <Select style={{ width: 100, marginLeft: 40 }} placeholder="选择过滤字段"></Select>
-                      <Select style={{ width: 80, paddingLeft: 10 }}></Select>
-                      <Input style={{ width: 180, paddingLeft: 10 }} placeholder="输入字段值"></Input>
-                      <span style={{ marginLeft: 10, color: '#1973cc' }}>
-                        {' '}
-                        <DeleteFilled />
-                      </span>
-                    </Form.Item>
-                    <Form.Item>
-                      <Button
-                        type="dashed"
-                        // onClick={() => add()}
-                        style={{ width: '50%', marginLeft: 40 }}
-                        icon={<PlusOutlined />}
-                      >
-                        继续新增指标
-                      </Button>
-                    </Form.Item>
-                    <Form.Item>
-                      <Button
-                        type="primary"
-                        // onClick={() => add()}
-                      >
-                        报存监控配置
-                      </Button>
-                    </Form.Item>
-                  </Form>
+                  {renderForm.map((item: any, index: number) => {
+                    return (
+                      <div key={item}>
+                        <Form labelCol={{ flex: '100px' }} form={tagrgetForm}>
+                          <div className="target-item">指标项</div>
+                          <Form.Item label="指标名称" name="metricName">
+                            <Input style={{ width: '352px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
+                          </Form.Item>
+                          <Form.Item label="指标类型" name="metricType">
+                            <Select
+                              style={{ width: '352px' }}
+                              options={targetOptions}
+                              value={currentTarget}
+                              onChange={selectTarget}
+                            ></Select>
+                          </Form.Item>
+                          {currentTarget === 'Histogram' && (
+                            <Form.Item label="Buckets" name="buckets">
+                              <Input style={{ width: 352 }} placeholder="格式: 0.001;0.05;0.1   	冒号分割"></Input>
+                            </Form.Item>
+                          )}
+                          {currentTarget === 'Summary' && (
+                            <div>
+                              <Form.Item label="Objectives" name="objectives">
+                                <Input style={{ width: 352 }} placeholder="格式: 0.5: 0.05;0.1:0.01 冒号分割"></Input>
+                              </Form.Item>
+                              <Form.Item label="MaxAge" name="MaxAge">
+                                <Input style={{ width: 352 }} placeholder="MaxAge"></Input>
+                              </Form.Item>
+                              <Form.Item label="AgeBuckets" name="AgeBuckets">
+                                <Input style={{ width: 352 }} placeholder="AgeBuckets"></Input>
+                              </Form.Item>
+                            </div>
+                          )}
+                          <Form.Item label="指标值字段" name="metricValueField">
+                            <Select style={{ width: '352px' }}></Select>
+                          </Form.Item>
+                          <Form.Item label="指标描述" name="metricDesc">
+                            <Input style={{ width: 352 }}></Input>
+                          </Form.Item>
+
+                          <Form.List name="filters">
+                            {(fields, { add, remove }) => (
+                              <>
+                                <Form.Item>
+                                  <Button
+                                    type="dashed"
+                                    onClick={() => add()}
+                                    block
+                                    icon={<PlusOutlined />}
+                                    style={{ width: 414, marginLeft: 40 }}
+                                  >
+                                    新增过滤条件
+                                  </Button>
+                                </Form.Item>
+                                {fields.map(({ key, name, ...restField }) => (
+                                  <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                                    <Form.Item {...restField} name={['key', 'first']}>
+                                      <Select
+                                        style={{ width: 140, marginLeft: 40 }}
+                                        placeholder="选择过滤字段"
+                                      ></Select>
+                                    </Form.Item>
+                                    <Form.Item {...restField} name={['operator', 'second']}>
+                                      <Select style={{ width: 80, paddingLeft: 5 }} options={operatorOption}></Select>
+                                    </Form.Item>
+                                    <Form.Item {...restField} name={['value', 'last']}>
+                                      <Input style={{ width: 180, marginLeft: 5 }} placeholder="输入字段值"></Input>
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(name)} />
+                                  </Space>
+                                ))}
+                              </>
+                            )}
+                          </Form.List>
+                          <Form.Item>
+                            <Button
+                              type="dashed"
+                              onClick={getFields}
+                              style={{ width: 414, marginLeft: 40 }}
+                              icon={<PlusOutlined />}
+                            >
+                              继续新增指标
+                            </Button>
+                          </Form.Item>
+                          <Form.Item>
+                            <Button
+                              type="primary"
+                              // onClick={() => add()}
+                            >
+                              报存监控配置
+                            </Button>
+                          </Form.Item>
+                        </Form>
+                      </div>
+                    );
+                  })}
                 </div>
                 <div className="target-config-right">
                   <div style={{ fontSize: 10, display: 'flex', justifyContent: 'space-between' }}>
@@ -273,7 +277,17 @@ export default function LogMonitor(props: any) {
                       </Button>
                     </span>
                   </div>
-                  <div className="target-board"></div>
+                  <div className="target-board">
+                    <Spin spinning={loading} style={{ height: '100%', overflow: 'auto' }}>
+                      <ReactJson
+                        src={logSample}
+                        name={false}
+                        theme="apathy"
+                        style={{ height: '100%', overflow: 'auto' }}
+                        collapsed={false}
+                      />
+                    </Spin>
+                  </div>
                 </div>
               </div>
             </Panel>
@@ -389,11 +403,13 @@ export default function LogMonitor(props: any) {
                   </Form.Item>
                 </Form.Item>
               </Form>
+              <div style={{ marginTop: 14 }}>
+                <Button type="primary" onClick={creatLogMinitor}>
+                  新增报警
+                </Button>
+              </div>
             </Panel>
           </Collapse>
-        </div>
-        <div style={{ marginTop: 14 }}>
-          <Button type="primary">新增报警</Button>
         </div>
       </ContentCard>
     </PageContainer>
