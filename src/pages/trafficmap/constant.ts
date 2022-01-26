@@ -46,7 +46,7 @@ export const NodeStatusEnum = [
   },
 ];
 
-export const arrowStyleType = {
+export const arrowStyleType: any = {
   dangerous: {
     stroke: DANGER_COLOR,
     lineAppendWidth: 2,

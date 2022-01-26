@@ -85,57 +85,10 @@ export const getEnvList = () => {
  */
 export const getAppMonitorInfo = (data: any) => {
   const url = addAPIPrefix('/trafficMap/topology/listAppMonInfo');
-  return new Promise((resolve, reject) => {
-    resolve({
-      code: 1000,
-      success: true,
-      errorMsg: '',
-      data: {
-        qps: [
-          {
-            time: '2021-11-22 13:34',
-            qps: 23,
-            unit: 'minute', //单位minute-每分钟 second-每秒
-          },
-          {
-            time: '2021-11-22 13:33',
-            qps: 21,
-            unit: 'minute', //单位minute-每分钟 second-每秒
-          },
-        ],
-        rt: [
-          {
-            time: '2021-11-22 13:34',
-            rt: 23,
-            unit: 'ms', //单位ms-毫秒 s-秒
-          },
-          {
-            time: '2021-11-22 13:33',
-            rt: 23,
-            unit: 'ms', //单位ms-毫秒 s-秒
-          },
-        ],
-        respCode: [
-          {
-            time: '2021-11-22 13:34',
-            HTTP200: 23,
-            HTTP2XX: 23,
-            HTTP3XX: 0,
-            HTTP4XX: 9,
-            HTTP5XX: 1,
-            unit: '个', //个
-          },
-          {
-            time: '2021-11-22 13:33',
-            HTTP200: 23,
-            HTTP2XX: 23,
-            HTTP3XX: 0,
-            HTTP4XX: 9,
-            HTTP5XX: 1,
-            unit: '个', //个
-          },
-        ],
-      },
-    });
-  });
+  return getRequest(url, { data: data });
+};
+
+export const listDangerousCalls = (data: any) => {
+  const url = addAPIPrefix('/trafficMap/topology/listDangerousCalls');
+  return getRequest(url, { data: data });
 };

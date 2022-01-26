@@ -3,62 +3,97 @@
  * @Date: 2021-11-30 15:44:26
  * @Description: 红线追踪弹窗：可拖动
  */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Select } from 'antd';
+import moment from 'moment';
+import { listDangerousCalls } from '@/pages/trafficmap/service';
 import DragModal from '../DragModal';
 import './index.less';
 interface IProps {
+  envCode: string;
   visible: boolean;
-  redLineList: any[];
   handleCancel: () => void;
+  onRedLineSelect: (item: any) => void;
 }
 
 const RedLineModal: React.FC<IProps> = (props) => {
   const [options, setOptions] = useState([
     {
       label: '最近五分钟',
-      value: '5',
+      value: 5,
     },
     {
       label: '最近十分钟',
-      value: '10',
+      value: 10,
     },
     {
       label: '最近十五分钟',
-      value: '15',
+      value: 15,
     },
     {
       label: '最近二十分钟',
-      value: '20',
+      value: 20,
     },
     {
       label: '最近二十五分钟',
-      value: '25',
+      value: 25,
     },
     {
       label: '最近三十分钟',
-      value: '30',
+      value: 30,
     },
   ]);
+  const [selectedOptions, setSelectedOptions] = useState<number>(5);
 
   const [selected, setSelected] = useState<any>('');
 
+  const [redLineList, setRedLineList] = useState<any[]>([]);
+
+  const { envCode, visible, handleCancel, onRedLineSelect } = props;
+
+  useEffect(() => {
+    visible && getRedLineList();
+  }, [visible]);
+
+  useEffect(() => {
+    visible && getRedLineList();
+  }, [selectedOptions]);
+
+  const getRedLineList = async () => {
+    const timeStart = moment()
+      .subtract(selectedOptions + 1, 'minutes')
+      .format('YYYY-MM-DD HH:mm');
+    const timeEnd = moment().subtract(1, 'minute').format('YYYY-MM-DD HH:mm');
+
+    let res = await listDangerousCalls({
+      envCode: envCode,
+      timeStart: timeStart,
+      timeEnd: timeEnd,
+    });
+    setRedLineList(res.data);
+  };
+
+  const onOptionsChange = (value: number) => {
+    setSelectedOptions(value);
+  };
+
   return (
-    <div className="drag-redline-modal" style={{ display: props.visible ? 'block' : 'none' }}>
+    <div className="drag-redline-modal" style={{ display: visible ? 'block' : 'none' }}>
       <DragModal
         title={'红线追踪'}
-        onCancel={props.handleCancel}
+        onCancel={handleCancel}
         width={219}
         style={{ position: 'absolute', top: '14%', right: '0px', minWidth: '200px' }}
       >
-        <Select options={options} style={{ width: '195px' }} />
+        <Select options={options} style={{ width: '195px' }} onChange={onOptionsChange} value={selectedOptions} />
         <div style={{ marginTop: '12px' }}>
-          {props.redLineList.map((item: any) => {
+          {redLineList.map((item: any) => {
             return (
               <div
-                className={selected == item.id ? 'redline-container redline-container-selected' : 'redline-container'}
+                className={selected == item.time ? 'redline-container redline-container-selected' : 'redline-container'}
                 onClick={() => {
-                  setSelected(item.id);
+                  setSelected(item.time);
+                  onRedLineSelect(item);
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
