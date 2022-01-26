@@ -7,121 +7,29 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Form, Select, Button, DatePicker, message, Switch } from 'antd';
 import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import * as echarts from 'echarts';
+import moment from 'moment';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import Topo from './Topo';
 import DragWrapper from './_component/DragWrapper';
 import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
-import moment from 'moment';
 import { useEnvOptions } from '../hooks';
+import { getAppMonitorInfo } from '../service';
 import './index.less';
-
-const dateFormat = 'YYYY-MM-DD HH:mm';
-const dataDemo = {
-  requests: {
-    data: [
-      {
-        data: ['9', '9', '9', '9', '9', '9', '9'],
-        name: 'http',
-        type: 'line',
-        color: '#4BA2FF',
-      },
-      {
-        data: ['10', '10', '10', '10', '10', '10', '10'],
-        name: 'dubbo',
-        type: 'line',
-        color: '#00BFAA',
-      },
-    ],
-    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
-  },
-  averageResponseTime: {
-    data: [
-      {
-        data: ['9', '9', '9', '9', '9', '9', '9'],
-        name: 'hbos/hbos-osc',
-        type: 'line',
-        color: 'rgba(101,159,235,1)',
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 0,
-              color: 'rgba(101,159,235,0.2)',
-            },
-            {
-              offset: 1,
-              color: 'rgba(101,159,235,0)',
-            },
-          ]),
-        },
-      },
-    ],
-    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
-  },
-  responseCodes: {
-    data: [
-      {
-        data: ['9', '9', '9', '9', '9', '9', '9'],
-        name: '200',
-        type: 'line',
-        color: '#4BA2FF',
-      },
-      {
-        data: ['3', '4', '5', '7', '9', '3', '1'],
-        name: '300',
-        type: 'line',
-        color: '#5C61F3',
-      },
-      {
-        data: ['6', '7', '8', '9', '4', '3', '5'],
-        name: '400',
-        type: 'line',
-        color: '#FFCB30',
-      },
-
-      {
-        data: ['4', '5', '3', '3', '3', '6', '2'],
-        name: '500',
-        type: 'line',
-        color: '#F66A51',
-      },
-    ],
-    xAxis: ['2021-10-24', '2021-10-31', '2021-11-07', '2021-11-14', '2021-11-21', '2021-11-28', '2021-11-29'],
-  },
-};
 
 const globalTopo: React.FC = () => {
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const frameRef = useRef<any>();
   const [formTmpl] = Form.useForm();
-  const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([
-    // {
-    //   id: '1',
-    //   name: 'app1',
-    //   chartData: dataDemo,
-    // },
-    // {
-    //   id: '2',
-    //   name: 'app2',
-    //   chartData: dataDemo,
-    // },
-  ]);
+  const [appInfoList, setAppInfoList] = useState<IAppInfo[]>([]);
 
   const [appIdList, setAppIdList] = useState<string[]>([]);
   const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
-  const [redLineList, setRedLineList] = useState<any[]>([
-    {
-      id: '1',
-      time: '2021-11-30 10:26:00',
-    },
-    {
-      id: '2',
-      time: '2021-11-30 10:27:00',
-    },
-  ]);
+
   const [clickId, setClickId] = useState<string>('');
-  const [selectTime, setSelectTime] = useState(moment().subtract(1, 'minutes').format(dateFormat));
+  const [selectTime, setSelectTime] = useState(moment().subtract(1, 'minutes'));
+  console.log(selectTime);
   const [selectEnv, setSelectEnv] = useState('hbos-dev');
   const [isMock, setIsMock] = useState(false);
   const [envOptions] = useEnvOptions();
@@ -160,17 +68,119 @@ const globalTopo: React.FC = () => {
     }
   };
 
-  const onAppClick = (id: string) => {
+  const onAppClick = async (id: string) => {
     let appIdx = appIdList.findIndex((item: any) => item == id);
     if (appIdx == -1) {
       const idArray = appIdList;
       idArray.push(id);
       setAppIdList(idArray);
-      const array = appInfoList.slice(0);
+      const array: any[] = appInfoList.slice(0);
+      const res = await getAppMonitorInfo({
+        envCode: selectEnv,
+        timeStart: moment().subtract(6, 'minutes').format('YYYY-MM-DD HH:mm'), //"2022-01-25 15:22",
+        timeEnd: moment().subtract(1, 'minutes').format('YYYY-MM-DD HH:mm'),
+        appCode: id,
+      });
+
+      const init = {
+        http: {
+          data: [],
+          xAxis: [],
+        },
+      };
+
+      const data1 = res.data.qpss.reduce(
+        (acc: any, item: any) => {
+          if (!acc[item.reqType]) return;
+          acc[item.reqType].data.push(item.qps);
+          acc[item.reqType].xAxis.push(item.time);
+          return acc;
+        },
+        { ...init },
+      );
+      const requests = {
+        data: [
+          {
+            data: data1.http.data,
+            name: 'http',
+            type: 'line',
+            color: '#4BA2FF',
+          },
+        ],
+        xAxis: data1.http.xAxis,
+      };
+
+      const data2 = res.data.rts.reduce(
+        (acc: any, item: any) => {
+          acc.rts.data.push(item.rt);
+          acc.rts.xAxis.push(item.time);
+          return acc;
+        },
+        {
+          rts: {
+            data: [],
+            xAxis: [],
+          },
+        },
+      );
+      const averageResponseTime = {
+        data: [
+          {
+            data: data2.rts.data,
+            name: 'hbos/hbos-osc',
+            type: 'line',
+            color: 'rgba(101,159,235,1)',
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: 'rgba(101,159,235,0.2)',
+                },
+                {
+                  offset: 1,
+                  color: 'rgba(101,159,235,0)',
+                },
+              ]),
+            },
+          },
+        ],
+        xAxis: data2.rts.xAxis,
+      };
+
+      const xAxis: any[] = [];
+      const data3 = res.data.httpResps.reduce(
+        (acc: any, item: any) => {
+          Object.keys(acc).forEach((key) => {
+            acc[key].data.push(item[key]);
+          });
+          xAxis.push(item.time);
+          return acc;
+        },
+        {
+          HTTP200: { data: [], type: 'line', color: '#4BA2FF', name: '200' },
+          HTTP2XX: { data: [], type: 'line', color: '#5C61F3', name: '2XX' },
+          HTTP3XX: { data: [], type: 'line', color: '#FFCB30', name: '3XX' },
+          HTTP4XX: { data: [], type: 'line', color: '#F66A51', name: '4XX' },
+          HTTP5XX: { data: [], type: 'line', color: '#DC143C', name: '5XX' },
+        },
+      );
+
+      const responseCodes: any = {
+        data: [],
+        xAxis: xAxis,
+      };
+      Object.values(data3).forEach((item: any) => {
+        responseCodes.data.push(item);
+      });
+
       array.push({
         id: id,
-        name: 'app' + id,
-        chartData: dataDemo,
+        name: 'app:' + id,
+        chartData: {
+          requests,
+          averageResponseTime,
+          responseCodes,
+        },
       });
 
       setAppInfoList(array);
@@ -187,9 +197,9 @@ const globalTopo: React.FC = () => {
     console.log('redline', id);
   }, []);
 
-  const handleMockData = () => {
-    setIsMock(true);
-  };
+  const onRedLineSelect = useCallback((record) => {
+    setSelectTime(moment(record.time));
+  }, []);
 
   return (
     <PageContainer className="global-topo">
@@ -206,15 +216,14 @@ const globalTopo: React.FC = () => {
               style={{ width: 140 }}
             />
           </Form.Item>
-          <Form.Item label="时间：" name="templateType">
+          <Form.Item label="时间：" initialValue={selectTime}>
             <DatePicker
               showTime={{ format: 'HH:mm' }}
               format="YYYY-MM-DD HH:mm"
-              defaultValue={moment(selectTime, dateFormat)}
+              value={selectTime}
               onChange={(value, dateString) => {
-                setSelectTime(dateString);
+                setSelectTime(value || moment());
               }}
-              allowClear={false}
             />
           </Form.Item>
         </Form>
@@ -277,10 +286,11 @@ const globalTopo: React.FC = () => {
        */}
       <RedLineModal
         visible={isRedLineVisible}
-        redLineList={redLineList}
+        envCode={selectEnv}
         handleCancel={() => {
           setIsRedLineVisible(false);
         }}
+        onRedLineSelect={onRedLineSelect}
       />
     </PageContainer>
   );

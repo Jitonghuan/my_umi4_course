@@ -4,6 +4,7 @@
  * @Description: 拓扑图
  */
 import G6 from '@antv/g6';
+import moment, { Moment } from 'moment';
 import React, { useEffect, useImperativeHandle, forwardRef, useState, memo } from 'react';
 import { arrowStyleType } from '../constant';
 import { getTopoList } from '../service';
@@ -14,7 +15,7 @@ interface ITopoProps {
   onNodeClick: (id: string) => void;
   onRedLineClick: (id: string) => void;
   setIsMock: any;
-  selectTime: string;
+  selectTime: Moment;
   selectEnv: string;
   isMock: boolean;
 }
@@ -91,11 +92,14 @@ const Topo = memo(
     });
 
     const getTopoData = async () => {
-      let res = await getTopoList({ duration: props.selectTime, envCode: props.selectEnv });
+      let res = await getTopoList({
+        duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'),
+        envCode: props.selectEnv,
+      });
       const edges = res.data.Calls.map((item: any) => {
         return {
           id: item.callId,
-          style: arrowStyleType['normal'],
+          style: arrowStyleType[item.status] || arrowStyleType['normal'],
           ...item,
         };
       });
@@ -112,7 +116,6 @@ const Topo = memo(
         nodes,
         edges,
       });
-      // setOriginData(OriginData);
     };
 
     useEffect(() => {
@@ -203,7 +206,7 @@ const Topo = memo(
         const regionData: any[] = [];
         const appData = [];
 
-        originData.nodes.forEach((node) => {
+        originData.nodes.forEach((node: any) => {
           // nodeMap[node.id] = node;
           nodeMap.set(node.id, node);
           if (node.nodeType == 'region') {
@@ -240,7 +243,7 @@ const Topo = memo(
 
       graph.on('node:click', (evt: any) => {
         const { item } = evt;
-        onNodeClick(item._cfg.model.id);
+        onNodeClick(item._cfg.model.nodeLabel);
         //清除现有的focus状态
         clearFocusItemState(graph);
 
@@ -317,7 +320,7 @@ const Topo = memo(
     const handleCollapse = (evt: any) => {
       const regionId = evt.item['_cfg']['model']['regionCode'];
       if (regionId) {
-        originData.nodes.forEach((node) => {
+        originData.nodes.forEach((node: any) => {
           if (node.id == regionId) {
             expandArr.push(node);
           }
@@ -372,7 +375,7 @@ const Topo = memo(
       expandArr.splice(expandIndex, 1);
 
       const newNode: any[] = [];
-      originData.nodes.forEach((node) => {
+      originData.nodes.forEach((node: any) => {
         if (node.nodeRegionCode == expandId) {
           expandArr.push(node);
           newNode.push(node.id);
