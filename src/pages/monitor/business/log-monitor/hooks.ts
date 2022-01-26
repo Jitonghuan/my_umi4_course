@@ -23,6 +23,29 @@ export function useLogStoreOptions() {
 
   return [source, getRuleIndex];
 }
+// indexModeFields
+
+export function useIndexModeFieldsOptions() {
+  const [source, setSource] = useState<any>([]);
+  const getIndexModeFields = async (envCode: string, indexMode: string) => {
+    await getRequest(APIS.indexModeFields, {
+      data: { envCode, indexMode },
+    }).then((resp) => {
+      if (resp?.success) {
+        let indexdata = resp.data;
+        // const { Index } = result.data || [];
+        const next = (indexdata || []).map((n: string) => ({
+          label: n,
+          value: n,
+        }));
+
+        setSource(next);
+      }
+    });
+  };
+
+  return [source, getIndexModeFields];
+}
 
 export function useQueryLogSample() {
   const [source, setSource] = useState<any>([]);

@@ -4,7 +4,7 @@
  * @date {2022/1/6 19:00}
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Collapse,
   Form,
@@ -17,6 +17,7 @@ import {
   Col,
   TimePicker,
   Spin,
+  Divider,
   message,
   Space,
 } from 'antd';
@@ -29,7 +30,7 @@ import { Item } from '../../basic/typing';
 import EditorTable from '@cffe/pc-editor-table';
 import { editColumns, targetOptions, silenceOptions, rulesOptions, envTypeData, operatorOption } from './schema';
 import { useEnvListOptions, useAppOptions } from '../hooks';
-import { useLogStoreOptions, useQueryLogSample } from './hooks';
+import { useLogStoreOptions, useQueryLogSample, useIndexModeFieldsOptions } from './hooks';
 import { addMonitor, updateMonitor } from '../service';
 import './index.less';
 const { Panel } = Collapse;
@@ -49,8 +50,9 @@ export default function LogMonitor(props: any) {
   const [logStoreOptions, getRuleIndex] = useLogStoreOptions(); //日志库选项下拉框数据
   const [logSample, loading, getLogSample] = useQueryLogSample();
   const [filterVisiable, setFilterVisiable] = useState<boolean>(false);
-  const [renderForm, setRenderForm] = useState<any>(['targetForm']);
-
+  const [indexModeFieldsOption, getIndexModeFields] = useIndexModeFieldsOptions();
+  // const [renderForm, setRenderForm] = useState<any>(['targetForm']);
+  const renderForm = useRef<any>(['targetForm']);
   const labelFun = (value: Item[]) => {
     setLabelTableData(value);
   };
@@ -70,6 +72,7 @@ export default function LogMonitor(props: any) {
   };
   const selectIndex = (index: string) => {
     setCurrentIndex(index);
+    getIndexModeFields(currentEnvCode, index);
   };
   const selectAppCode = (appCode: string) => {
     setCurrentAppCode(appCode);
@@ -81,11 +84,10 @@ export default function LogMonitor(props: any) {
   const creatLogMinitor = () => {};
 
   const getFields = () => {
-    let length = renderForm.length + 1;
-    renderForm.push('targetForm' + length);
-    setRenderForm(renderForm);
+    let length = renderForm.current.length + 1;
+    renderForm.current.push('targetForm' + length);
   };
-
+  console.log('renderForm', renderForm);
   return (
     <PageContainer className="monitor-log">
       <ContentCard>
@@ -166,103 +168,135 @@ export default function LogMonitor(props: any) {
             <Panel header={`指标配置`} key="2">
               <div className="target-config">
                 <div className="target-config-left">
-                  {renderForm.map((item: any, index: number) => {
-                    return (
-                      <div key={item}>
-                        <Form labelCol={{ flex: '100px' }} form={tagrgetForm}>
-                          <div className="target-item">指标项</div>
-                          <Form.Item label="指标名称" name="metricName">
-                            <Input style={{ width: '352px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
-                          </Form.Item>
-                          <Form.Item label="指标类型" name="metricType">
-                            <Select
-                              style={{ width: '352px' }}
-                              options={targetOptions}
-                              value={currentTarget}
-                              onChange={selectTarget}
-                            ></Select>
-                          </Form.Item>
-                          {currentTarget === 'Histogram' && (
-                            <Form.Item label="Buckets" name="buckets">
-                              <Input style={{ width: 352 }} placeholder="格式: 0.001;0.05;0.1   	冒号分割"></Input>
-                            </Form.Item>
-                          )}
-                          {currentTarget === 'Summary' && (
-                            <div>
-                              <Form.Item label="Objectives" name="objectives">
-                                <Input style={{ width: 352 }} placeholder="格式: 0.5: 0.05;0.1:0.01 冒号分割"></Input>
+                  <Form labelCol={{ flex: '100px' }} form={tagrgetForm}>
+                    <div className="target-item">指标项</div>
+                    <Form.List name="users">
+                      {(fields, { add, remove }) => (
+                        <>
+                          {fields.map(({ key, name, ...restField }) => (
+                            <Space key={key} style={{ marginBottom: 8, display: 'block' }} direction="vertical">
+                              <Form.Item
+                                {...restField}
+                                label="指标名称"
+                                name={['metricName', 'first']}
+                                rules={[{ required: true, message: 'Missing first name' }]}
+                              >
+                                <Input
+                                  style={{ width: '352px' }}
+                                  placeholder="指标名称仅支持数字、字母、下划线"
+                                ></Input>
                               </Form.Item>
-                              <Form.Item label="MaxAge" name="MaxAge">
-                                <Input style={{ width: 352 }} placeholder="MaxAge"></Input>
+                              <Form.Item
+                                label="指标类型"
+                                {...restField}
+                                name={['metricType', 'second']}
+                                rules={[{ required: true, message: 'Missing last name' }]}
+                              >
+                                <Select
+                                  style={{ width: '352px' }}
+                                  options={targetOptions}
+                                  value={currentTarget}
+                                  onChange={selectTarget}
+                                ></Select>
                               </Form.Item>
-                              <Form.Item label="AgeBuckets" name="AgeBuckets">
-                                <Input style={{ width: 352 }} placeholder="AgeBuckets"></Input>
-                              </Form.Item>
-                            </div>
-                          )}
-                          <Form.Item label="指标值字段" name="metricValueField">
-                            <Select style={{ width: '352px' }}></Select>
-                          </Form.Item>
-                          <Form.Item label="指标描述" name="metricDesc">
-                            <Input style={{ width: 352 }}></Input>
-                          </Form.Item>
-
-                          <Form.List name="filters">
-                            {(fields, { add, remove }) => (
-                              <>
-                                <Form.Item>
-                                  <Button
-                                    type="dashed"
-                                    onClick={() => add()}
-                                    block
-                                    icon={<PlusOutlined />}
-                                    style={{ width: 414, marginLeft: 40 }}
-                                  >
-                                    新增过滤条件
-                                  </Button>
+                              {currentTarget === 'Histogram' && (
+                                <Form.Item label="Buckets" name="buckets">
+                                  <Input style={{ width: 352 }} placeholder="格式: 0.001;0.05;0.1   	冒号分割"></Input>
                                 </Form.Item>
-                                {fields.map(({ key, name, ...restField }) => (
-                                  <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                                    <Form.Item {...restField} name={['key', 'first']}>
-                                      <Select
-                                        style={{ width: 140, marginLeft: 40 }}
-                                        placeholder="选择过滤字段"
-                                      ></Select>
+                              )}
+                              {currentTarget === 'Summary' && (
+                                <div>
+                                  <Form.Item label="Objectives" name="objectives">
+                                    <Input
+                                      style={{ width: 352 }}
+                                      placeholder="格式: 0.5: 0.05;0.1:0.01 冒号分割"
+                                    ></Input>
+                                  </Form.Item>
+                                  <Form.Item label="MaxAge" name="MaxAge">
+                                    <Input style={{ width: 352 }} placeholder="MaxAge"></Input>
+                                  </Form.Item>
+                                  <Form.Item label="AgeBuckets" name="AgeBuckets">
+                                    <Input style={{ width: 352 }} placeholder="AgeBuckets"></Input>
+                                  </Form.Item>
+                                </div>
+                              )}
+                              <Form.Item
+                                label="指标值字段"
+                                {...restField}
+                                name={['metricValueField', 'third']}
+                                rules={[{ required: true, message: 'Missing last name' }]}
+                              >
+                                <Select style={{ width: '352px' }} options={indexModeFieldsOption}></Select>
+                              </Form.Item>
+                              <Form.Item label="指标描述" name={['metricDesc', 'forth']} {...restField}>
+                                <Input style={{ width: 352 }}></Input>
+                              </Form.Item>
+                              <Form.List name="filters">
+                                {(fields, { add, remove }) => (
+                                  <>
+                                    <Form.Item>
+                                      <Button
+                                        type="dashed"
+                                        onClick={() => add()}
+                                        block
+                                        icon={<PlusOutlined />}
+                                        style={{ width: 414, marginLeft: 40 }}
+                                      >
+                                        新增过滤条件
+                                      </Button>
                                     </Form.Item>
-                                    <Form.Item {...restField} name={['operator', 'second']}>
-                                      <Select style={{ width: 80, paddingLeft: 5 }} options={operatorOption}></Select>
-                                    </Form.Item>
-                                    <Form.Item {...restField} name={['value', 'last']}>
-                                      <Input style={{ width: 180, marginLeft: 5 }} placeholder="输入字段值"></Input>
-                                    </Form.Item>
-                                    <MinusCircleOutlined onClick={() => remove(name)} />
-                                  </Space>
-                                ))}
-                              </>
-                            )}
-                          </Form.List>
+                                    {fields.map(({ key, name, ...restField }) => (
+                                      <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                                        <Form.Item {...restField} name={['key', 'first']}>
+                                          <Select
+                                            style={{ width: 140, marginLeft: 40 }}
+                                            options={indexModeFieldsOption}
+                                            placeholder="选择过滤字段"
+                                          ></Select>
+                                        </Form.Item>
+                                        <Form.Item {...restField} name={['operator', 'second']}>
+                                          <Select
+                                            style={{ width: 80, paddingLeft: 5 }}
+                                            options={operatorOption}
+                                          ></Select>
+                                        </Form.Item>
+                                        <Form.Item {...restField} name={['value', 'last']}>
+                                          <Input style={{ width: 180, marginLeft: 5 }} placeholder="输入字段值"></Input>
+                                        </Form.Item>
+                                        <MinusCircleOutlined onClick={() => remove(name)} />
+                                      </Space>
+                                    ))}
+                                  </>
+                                )}
+                              </Form.List>
+                              <MinusCircleOutlined onClick={() => remove(name)} />
+                              <Divider />
+                            </Space>
+                          ))}
                           <Form.Item>
                             <Button
-                              type="dashed"
-                              onClick={getFields}
+                              type="primary"
                               style={{ width: 414, marginLeft: 40 }}
+                              onClick={() => add()}
+                              block
                               icon={<PlusOutlined />}
                             >
                               继续新增指标
                             </Button>
                           </Form.Item>
-                          <Form.Item>
-                            <Button
-                              type="primary"
-                              // onClick={() => add()}
-                            >
-                              报存监控配置
-                            </Button>
-                          </Form.Item>
-                        </Form>
-                      </div>
-                    );
-                  })}
+                        </>
+                      )}
+                    </Form.List>
+
+                    <Form.Item>
+                      <Button
+                        type="primary"
+                        // onClick={() => add()}
+                      >
+                        保存监控配置
+                      </Button>
+                    </Form.Item>
+                  </Form>
                 </div>
                 <div className="target-config-right">
                   <div style={{ fontSize: 10, display: 'flex', justifyContent: 'space-between' }}>

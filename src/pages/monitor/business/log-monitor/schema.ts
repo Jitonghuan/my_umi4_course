@@ -62,20 +62,20 @@ export const silenceOptions = [
 ];
 export const targetOptions = [
   {
-    label: 'Counter',
-    value: 'Counter',
+    label: 'counter',
+    value: 'counter',
   },
   {
-    label: 'Gauge',
-    value: 'Gauge',
+    label: 'gauge',
+    value: 'gauge',
   },
   {
-    label: 'Histogram',
-    value: 'Histogram',
+    label: 'histogram',
+    value: 'histogram',
   },
   {
-    label: 'Summary',
-    value: 'Summary',
+    label: 'summary',
+    value: 'summary',
   },
 ];
 

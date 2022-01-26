@@ -65,7 +65,7 @@ export function useGetListMonitor() {
     await getRequest(APIS.getListMonitor, {
       data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, monitorName, metricName, appCode, envCode },
     }).then((result) => {
-      if (result.success) {
+      if (result?.success) {
         let ListSource = result?.data?.dataSource || [];
         setListSource(ListSource);
         ListSource?.map((item: any) => {

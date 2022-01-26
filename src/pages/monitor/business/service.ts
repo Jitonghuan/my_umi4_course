@@ -25,3 +25,5 @@ export const getEnvCodeList = `${appConfig.apiPrefix}/monitorManage/rules/envCod
 export const getAppList = `${appConfig.apiPrefix}/appManage/list`;
 
 export const ruleIndexOptions = `${appConfig.apiPrefix}/logManage/logSearch/indexModeList`;
+
+export const indexModeFields = `${appConfig.apiPrefix}/logManage/logSearch/indexMode/fields`;
