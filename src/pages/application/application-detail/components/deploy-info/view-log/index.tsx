@@ -40,21 +40,24 @@ export default function ViewLog(props: any) {
         ws.current = new WebSocket(
           `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
         ); //建立通道
-
-        let dom = document?.getElementById('result-log');
+        let dom: any = document?.getElementById('result-log');
         ws.current.onmessage = (evt: any) => {
           if (dom) {
-            if (scrollBegin.current) {
+            // 获取滚动条到滚动区域底部的高度
+            const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
+            let bottom = 0;
+            if (scrollB) {
+              // 计算滚动条到日志div底部的距离
+              bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+            }
+            //如果返回结果是字符串，就拼接字符串，或者push到数组，
+            logData.current += evt.data;
+            setLog(logData.current);
+            let html = ansi_up.ansi_to_html(logData.current);
+            dom.innerHTML = html;
+            if (bottom <= 20) {
               dom.scrollTo(0, dom.scrollHeight);
             }
-          }
-
-          //如果返回结果是字符串，就拼接字符串，或者push到数组，
-          logData.current += evt.data;
-          setLog(logData.current);
-          let html = ansi_up.ansi_to_html(logData.current);
-          if (dom) {
-            dom.innerHTML = html;
           }
         };
         ws.current.onerror = () => {
@@ -75,24 +78,40 @@ export default function ViewLog(props: any) {
       ws.current.onopen = () => {
         message.success('更换容器，WebSocket链接成功!');
       };
-      let dom = document?.getElementById('result-log');
+      let dom: any = document?.getElementById('result-log');
       ws.current.onmessage = (evt: any) => {
         if (dom) {
-          let scroll = dom?.scrollHeight;
-          dom.scrollTo(0, scroll);
-        }
-        //如果返回结果是字符串，就拼接字符串，或者push到数组，
-        let resultLogData = log + evt.data;
-        setLog(resultLogData);
-        let html = ansi_up.ansi_to_html(resultLogData);
-        if (dom) {
+          // 获取滚动条到滚动区域底部的高度
+          const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
+          let bottom = 0;
+          if (scrollB) {
+            // 计算滚动条到日志div底部的距离
+            bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+          }
+          //如果返回结果是字符串，就拼接字符串，或者push到数组，
+          logData.current += evt.data;
+          setLog(logData.current);
+          let html = ansi_up.ansi_to_html(logData.current);
           dom.innerHTML = html;
+          if (bottom <= 20) {
+            dom.scrollTo(0, dom.scrollHeight);
+          }
         }
       };
       ws.current.onerror = () => {
         message.warning('webSocket 链接失败');
       };
     }
+  };
+
+  // 下载日志
+  const downloadLog = () => {
+    const element = document.createElement('a');
+    const file = new Blob([log], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = '日志.txt';
+    document.body.appendChild(element);
+    element.click();
   };
 
   //回到顶部
@@ -107,6 +126,8 @@ export default function ViewLog(props: any) {
     let dom = document?.getElementById('result-log');
     if (dom) {
       let scroll = dom.scrollHeight;
+      console.log('scrollHeight', scroll);
+
       dom.scrollTo(0, scroll);
       scrollBegin.current = true;
     }
@@ -155,7 +176,10 @@ export default function ViewLog(props: any) {
         </div>
         <div style={{ height: 30, textAlign: 'center' }}>
           <span className="event-button">
-            <Button type="primary" onClick={scrollTop}>
+            <Button type="primary" onClick={downloadLog}>
+              下载日志
+            </Button>
+            <Button type="primary" onClick={scrollTop} style={{ marginLeft: 4 }}>
               回到顶部
             </Button>
             <Button type="primary" onClick={scrollBottom} style={{ marginLeft: 4 }}>
