@@ -266,7 +266,6 @@ const globalTopo: React.FC = () => {
                * DragWrapper:可拖拽弹窗组件
                * Topo:拓扑图
                */}
-              <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
               <Topo
                 // isFullScreen={isFullScreen}
                 onNodeClick={onNodeClick}
@@ -277,6 +276,7 @@ const globalTopo: React.FC = () => {
                 isMock={isMock}
                 setIsMock={setIsMock}
               />
+              <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
             </div>
           </div>
         </ContentCard>
