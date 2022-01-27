@@ -86,7 +86,7 @@ const RedLineModal: React.FC<IProps> = (props) => {
         style={{ position: 'absolute', top: '14%', right: '0px', minWidth: '200px' }}
       >
         <Select options={options} style={{ width: '195px' }} onChange={onOptionsChange} value={selectedOptions} />
-        <div style={{ marginTop: '12px' }}>
+        <div style={{ marginTop: '12px', height: '500px', overflow: 'auto' }}>
           {redLineList.map((item: any) => {
             return (
               <div
