@@ -268,6 +268,8 @@ export default function DeployContent(props: DeployContentProps) {
         queryAppOperateLog(currentEnvData);
         timerHandler('do', true);
       });
+    } else {
+      message.info('不存在集群类型！');
     }
   };
 

@@ -120,9 +120,14 @@ export default function ApplicationEditor(props: IProps) {
       });
     } else {
       setCategoryCode(undefined);
-      form.setFieldsValue({
-        ownerList: [userInfo.fullName!],
-      });
+      // 新增应用时自动添加应用负责人
+      let userMessage: any = localStorage.getItem('USER_INFO');
+      if (userMessage) {
+        userMessage = JSON.parse(userMessage);
+        form.setFieldsValue({
+          ownerList: [userMessage.name],
+        });
+      }
     }
   }, [isEdit, visible]);
 

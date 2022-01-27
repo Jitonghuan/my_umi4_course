@@ -35,7 +35,7 @@
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "1.0.0",
     "@cffe/h2o-design": "^1.0.51",
-    "@cffe/internal-icon": "^1.0.0",
+    "@cffe/internal-icon": "^1.0.1",
     "@cffe/layout": "^0.1.11",
     "@cffe/pc-editor-table": "~1.0.10",
     "@cffe/sona": "^0.6.10",
@@ -65,6 +65,7 @@
     "moment": "^2.29.1",
     "qs": "~6.10.1",
     "react-ace": "^9.4.1",
+    "react-copy-to-clipboard": "^5.0.4",
     "react-dnd": "^14.0.4",
     "react-dnd-html5-backend": "^14.0.2",
     "react-draggable": "^4.4.4",
@@ -80,6 +81,7 @@
   "devDependencies": {
     "@hbos/umi-loaders": "^1.0.0",
     "@hbos/umi-plugin-theme-hbos": "^1.0.1",
+    "@types/react-copy-to-clipboard": "^5.0.2",
     "@umijs/preset-react": "~1.8.23"
   },
   "__npminstall_done": false

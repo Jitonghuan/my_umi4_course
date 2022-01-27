@@ -99,6 +99,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
               onOk() {
                 return cancelDeploy({
                   id: deployInfo.id,
+                  envCode: '',
                 }).then(() => {
                   onOperate('cancelDeployEnd');
                 });

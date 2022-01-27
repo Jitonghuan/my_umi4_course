@@ -32,6 +32,7 @@ const deployStatusMapping: Record<string, number> = {
   // 完成
   deployFinish: 5,
   deployed: 5,
+  multiEnvDeploying: 2,
 };
 
 export default function ProdEnvSteps({ deployInfo, onOperate, onSpin, stopSpin }: StepsProps) {
@@ -51,13 +52,15 @@ export default function ProdEnvSteps({ deployInfo, onOperate, onSpin, stopSpin }
   };
 
   return (
-    <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
-      <CreateTaskStep {...payload} />
-      <MergeReleaseStep {...payload} />
-      <DeployingStep {...payload} />
-      <MergeMasterStep {...payload} />
-      <DeleteFeatureStep {...payload} />
-      <FinishedStep {...payload} />
-    </Steps>
+    <div className="publish-content-compo-wrapper">
+      <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+        <CreateTaskStep {...payload} />
+        <MergeReleaseStep {...payload} />
+        <DeployingStep {...payload} />
+        <MergeMasterStep {...payload} />
+        <DeleteFeatureStep {...payload} />
+        <FinishedStep {...payload} />
+      </Steps>
+    </div>
   );
 }

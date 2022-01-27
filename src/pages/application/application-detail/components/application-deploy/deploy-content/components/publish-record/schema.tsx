@@ -63,6 +63,7 @@ export const recordDisplayMap: any = {
   building: { text: '正在构建', color: 'blue' },
   buildErr: { text: '构建错误', color: 'red' },
   buildAborted: { text: '构建取消', color: 'orange' },
+  multiEnvDeploying: { text: '正在部署', color: 'geekblue' },
   deployWait: { text: '等待部署', color: 'blue' },
   deploying: { text: '正在部署', color: 'geekblue' },
   deployWaitBatch2: { text: '等待第二批部署', color: 'green' },

@@ -3,12 +3,13 @@
 // @create 2021/09/05 22:57
 
 import React, { useState, useContext } from 'react';
-import { Modal, Button, message, Popconfirm, Table, Tag, Tooltip } from 'antd';
+import { Modal, Button, Table, Tag, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
+import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
-import { createDeploy, updateFeatures, restartApp } from '@/pages/application/service';
+import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import BackendTestEnvSteps from './backend-steps/test';
@@ -41,6 +42,7 @@ export default function PublishContent(props: IProps) {
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
+  const [fullScreeVisible, setFullScreeVisible] = useState(false);
 
   type reviewStatusTypeItem = {
     color: string;
@@ -117,11 +119,48 @@ export default function PublishContent(props: IProps) {
     );
   };
 
+  function onCancelDeploy(envCode?: string) {
+    Modal.confirm({
+      title: '确定要取消当前发布吗？',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        return cancelDeploy({
+          id: deployInfo.id,
+          envCode,
+        }).then(() => {});
+      },
+    });
+  }
+
+  function getItemByKey(listStr: string, envCode: string) {
+    try {
+      const list = listStr ? JSON.parse(listStr) : [];
+      const item = list.find((val: any) => val.envCode === envCode);
+      return item || {};
+    } catch (e) {
+      return listStr
+        ? {
+            subJenkinsUrl: listStr,
+          }
+        : {};
+    }
+  }
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      <CurrSteps deployInfo={deployInfo} onOperate={onOperate} stopSpin={stopSpin} onSpin={onSpin} />
+      <CurrSteps
+        deployInfo={deployInfo}
+        onOperate={onOperate}
+        onCancelDeploy={onCancelDeploy}
+        stopSpin={stopSpin}
+        onSpin={onSpin}
+        getItemByKey={getItemByKey}
+      />
+      <div className="full-scree-icon">
+        <Fullscreen onClick={() => setFullScreeVisible(true)} />
+      </div>
 
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>
@@ -209,6 +248,21 @@ export default function PublishContent(props: IProps) {
           />
         ) : null}
       </Table>
+      <Modal
+        title="发布流程"
+        footer={null}
+        width="98%"
+        className="full-scree-modal"
+        visible={fullScreeVisible}
+        onCancel={() => setFullScreeVisible(false)}
+      >
+        <CurrSteps
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          getItemByKey={getItemByKey}
+          onCancelDeploy={onCancelDeploy}
+        />
+      </Modal>
     </div>
   );
 }

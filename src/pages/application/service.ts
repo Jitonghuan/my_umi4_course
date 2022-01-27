@@ -147,7 +147,7 @@ export const queryFeVersions = `${appConfig.apiPrefix}/appManage/feVersion/list`
 export const queryDeployListUrl = `${appConfig.apiPrefix}/releaseManage/deploy/list`;
 
 /** 获取应用大类的环境列表 */
-export const queryAppEnvs = `${appConfig.apiPrefix}/monitorManage/app/env`;
+export const queryAppEnvs = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 
 /** GET 获取应用变更记录列表 */
 export const queryRecentChangeOrder = `${appConfig.apiPrefix}/releaseManage/queryRecentChangeOrder`;
@@ -446,6 +446,7 @@ export const retryMerge = (params: {
 export const retryBuild = (params: {
   /** 部署的数据库自增ID */
   id: number;
+  envCode: string;
 }) =>
   postRequest(retryBuildUrl, {
     data: params,
@@ -455,6 +456,7 @@ export const retryBuild = (params: {
 export const retryDeploy = (params: {
   /** 部署的数据库自增ID */
   id: number;
+  envCode: string;
 }) =>
   postRequest(retryDeployUrl, {
     data: params,
@@ -497,6 +499,7 @@ export const retryDelFeature = (params: {
 export const cancelDeploy = (params: {
   /** 部署的数据库自增ID */
   id: number;
+  envCode?: string;
 }) =>
   postRequest(cancelDeployUrl, {
     data: params,
@@ -508,6 +511,7 @@ export const deployReuse = (params: {
   id: number;
   /** poc环境复用到生产环境需要 */
   envs?: string[];
+  envCode?: string;
 }) =>
   postRequest(deployReuseUrl, {
     data: params,

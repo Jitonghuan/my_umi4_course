@@ -145,20 +145,34 @@ export default function PublishRecord(props: IProps) {
                   <label>{recordFieldMapOut['deployedTime']}</label>:
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
-                <div>
-                  <label>{recordFieldMapOut['deployStatus']}</label>:
-                  {
-                    <span style={{ marginLeft: 6 }}>
-                      {recordDisplayMap[item['deployStatus']] ? (
+                {item.deployStatus === 'multiEnvDeploying' && item.deploySubStates ? (
+                  <div>
+                    <label>{recordFieldMapOut['deployStatus']}</label>:
+                    {JSON.parse(item.deploySubStates).map((subItem: any) => (
+                      <div>
+                        <label>{subItem.envCode}</label>:
+                        {
+                          <span style={{ marginLeft: 6 }}>
+                            <Tag color={recordDisplayMap[subItem['subState']]?.color}>
+                              {recordDisplayMap[subItem['subState']]?.text}
+                            </Tag>
+                          </span>
+                        }
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div>
+                    <label>{recordFieldMapOut['deployStatus']}</label>:
+                    {
+                      <span style={{ marginLeft: 6 }}>
                         <Tag color={recordDisplayMap[item['deployStatus']]?.color}>
                           {recordDisplayMap[item['deployStatus']]?.text}
                         </Tag>
-                      ) : (
-                        <Tag>{item['deployStatus']}</Tag>
-                      )}
-                    </span>
-                  }
-                </div>
+                      </span>
+                    }
+                  </div>
+                )}
                 <a onClick={() => handleShowDetail(item)}>详情</a>
               </List.Item>
             )}
