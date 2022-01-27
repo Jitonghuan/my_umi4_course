@@ -35,7 +35,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
     if (!visible) return;
 
     setStateDeployEnv(deployingEnv);
-    // deployApply(deployingEnv);
+    deployApply(deployingEnv);
   }, [visible]);
 
   useEffect(() => {
