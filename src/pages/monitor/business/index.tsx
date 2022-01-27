@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React from 'react';
+import React, { useState } from 'react';
 import { List, Card, Table, Collapse, Form, Select, Input, Button, Space, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { PauseCircleFilled, ClockCircleFilled } from '@ant-design/icons';
@@ -30,14 +30,21 @@ export default function Dashboard(props: any) {
   const [listSource, tablesource, getListMonitor] = useGetListMonitor();
   const [enableMonitor] = useEnableMonitor();
   const [disableMonitor] = useDisableMonitor();
+
   const [delMonitor] = useDelMonitor();
 
   const callback = (key: any) => {
     console.log(key);
   };
 
-  const editMonitor = () => {
-    history.push({ pathname: '/matrix/monitor/log-monitor', query: { type: 'edit' } });
+  const editMonitor = (item: any) => {
+    history.push({
+      pathname: '/matrix/monitor/log-monitor',
+      state: {
+        type: 'edit',
+        recordData: item,
+      },
+    });
   };
   const enableMonitorClick = (monitorName: string) => {
     enableMonitor(monitorName);
@@ -48,6 +55,16 @@ export default function Dashboard(props: any) {
   const disableMonitorClick = (monitorName: string) => {
     disableMonitor(monitorName);
   };
+  // //触发分页
+  // const pageSizeClick = (pagination: any) => {
+  //   //  setPageIndexInfo(pagination.current);
+  //   setPageCurrentIndex(pagination.current);
+  //   let obj = {
+  //     pageIndex: pagination.current,
+  //     pageSize: pagination.pageSize,
+  //   };
+  //   getListMonitor(obj)
+  // };
   let listData: any = [];
   for (let i = 0; i < listSource.length; i++) {
     listData = listSource.map((item: any) => {
@@ -65,7 +82,12 @@ export default function Dashboard(props: any) {
                 </span>
                 <Space style={{ paddingRight: '20px', float: 'right' }}>
                   <Button type="primary">看板</Button>
-                  <Button type="primary" onClick={editMonitor}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      editMonitor(item);
+                    }}
+                  >
                     编辑
                   </Button>
                   <Button
@@ -99,7 +121,8 @@ export default function Dashboard(props: any) {
           >
             <Table
               columns={colunms}
-              pagination={false}
+              // pagination={false}
+              // onChange={pageSizeClick}
               dataSource={item?.MonitorBizMetric}
               rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
             />
@@ -125,18 +148,14 @@ export default function Dashboard(props: any) {
               layout="inline"
               form={form}
               onFinish={(values: any) => {
-                getListMonitor({
-                  ...values,
-                  pageIndex: 1,
-                  pageSize: 20,
-                });
+                getListMonitor(1, 20, values?.monitorName, values?.metricName, values?.appCode, values?.envCode);
               }}
               onReset={() => {
                 form.resetFields();
-                getListMonitor({
-                  pageIndex: 1,
+                getListMonitor(
+                  1,
                   // pageSize: pageSize,
-                });
+                );
               }}
             >
               <Form.Item label="环境大类" name="envTypeCode">

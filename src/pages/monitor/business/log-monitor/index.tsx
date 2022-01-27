@@ -4,7 +4,7 @@
  * @date {2022/1/6 19:00}
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Collapse,
   Form,
@@ -47,7 +47,10 @@ const { Panel } = Collapse;
 const { Search } = Input;
 
 export default function LogMonitor(props: any) {
-  let type = props.location.query.type;
+  let type = props.location.state?.type;
+  let recordData = props.location.state?.recordData;
+  console.log('props.location', props.location);
+  console.log('recordData', recordData);
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [appOptions] = useAppOptions();
   const [tagrgetForm] = Form.useForm();
@@ -129,7 +132,6 @@ export default function LogMonitor(props: any) {
   //收集数据
   const onFinish = () => {
     alarmForm.validateFields().then((value) => {
-      console.log('value', value);
       const obj = {
         ...value,
         receiver: (value?.receiver || []).join(','),
@@ -153,10 +155,10 @@ export default function LogMonitor(props: any) {
     setSelectNum('1');
   };
   const submitMintorConfig = () => {
-    setSelectNum('3');
+    // setSelectNum('3');
     let params1 = logForm.getFieldsValue();
     let params2 = tagrgetForm.getFieldsValue();
-    console.log('params1,params2', params1, '----', params2);
+    // console.log('params1,params2', params1, '----', params2);
     let metricsList: any = []; //传参的整个metrics数组对象
     let metricOptionsObject = {}; //根据metrics对象选择值拿到的
     let continueMetricList: any = []; //继续新增的指标项
@@ -204,7 +206,7 @@ export default function LogMonitor(props: any) {
         });
     }
     if (type === 'edit') {
-      putRequest(updateMonitor, { data: {} })
+      putRequest(updateMonitor, { data: { ...params1, envCode: currentEnvCode, metrics: allMetricsList } })
         .then((resp) => {
           if (resp?.success) {
             message.info('编辑成功！');
@@ -216,7 +218,46 @@ export default function LogMonitor(props: any) {
     }
   };
 
-  const metrics = targetOptions;
+  //编辑回显数据
+  useEffect(() => {
+    if (type === 'add') {
+      return;
+    } else {
+      logForm.setFieldsValue({
+        monitorName: recordData?.monitorName,
+        appCode: recordData?.appCode,
+        index: recordData?.index,
+      });
+      setCurrentEnvCode(recordData?.envCode);
+      let metricsArry: any = [];
+      recordData.MonitorBizMetric.map((item: any, index: number) => {
+        if (index !== 0) {
+          metricsArry.push({
+            filters: item?.filters,
+            metricDesc: { forth: item?.metricDesc },
+            metricName: { first: item?.metricName },
+            metricType: { second: item?.metricType },
+            metricValueField: { third: item?.metricValueField },
+            buckets: item?.metricOptions?.buckets,
+            objectives: item?.metricOptions?.objectives,
+            MaxAge: item?.metricOptions?.MaxAge,
+            AgeBuckets: item?.metricOptions?.AgeBuckets,
+          });
+        }
+      });
+
+      tagrgetForm.setFieldsValue({
+        buckets: recordData?.MonitorBizMetric[0].buckets,
+        filters: recordData?.MonitorBizMetric[0].filters,
+        metricDesc: recordData?.MonitorBizMetric[0].metricDesc,
+        metricName: recordData?.MonitorBizMetric[0].metricName,
+        metricType: recordData?.MonitorBizMetric[0].metricType,
+        metricValueField: recordData?.MonitorBizMetric[0].metricValueField,
+        metrics: metricsArry,
+      });
+    }
+  }, [type]);
+
   return (
     <PageContainer className="monitor-log">
       <ContentCard>
@@ -577,7 +618,7 @@ export default function LogMonitor(props: any) {
                   <div className="target-board">
                     <Spin spinning={loading} style={{ height: '100%', overflow: 'auto' }}>
                       <ReactJson
-                        src={logSample}
+                        src={[]}
                         name={false}
                         theme="apathy"
                         style={{ height: '100%', overflow: 'auto' }}
@@ -590,7 +631,7 @@ export default function LogMonitor(props: any) {
             </Panel>
           </Collapse>
 
-          <Collapse bordered={false} activeKey={[selectNum]} onChange={onChangeTab}>
+          {/* <Collapse bordered={false} activeKey={[selectNum]} onChange={onChangeTab}>
             <Panel header="报警配置" key="3">
               <Form labelCol={{ flex: '148px' }} form={alarmForm} onFinish={onFinish}>
                 <Form.Item
@@ -704,7 +745,7 @@ export default function LogMonitor(props: any) {
                 </Form.Item>
               </Form>
             </Panel>
-          </Collapse>
+          </Collapse> */}
         </div>
       </ContentCard>
     </PageContainer>

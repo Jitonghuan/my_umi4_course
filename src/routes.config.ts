@@ -643,7 +643,7 @@ export default [
       },
       {
         path: 'log-monitor',
-        name: '创建日志监控',
+        name: '日志监控',
         key: 'business-monitor',
         component: '@/pages/monitor/business/log-monitor',
         hideInMenu: true,

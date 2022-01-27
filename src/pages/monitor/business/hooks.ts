@@ -47,6 +47,9 @@ export function useAppOptions() {
 export function useGetListMonitor() {
   const [tablesource, setTableSource] = useState<any>([]);
   const [listSource, setListSource] = useState<any>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [pageIndex, setPageCurrentIndex] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(20);
 
   useEffect(() => {
     getListMonitor(1, 20);
