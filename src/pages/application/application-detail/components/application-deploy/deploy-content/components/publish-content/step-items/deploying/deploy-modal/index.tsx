@@ -36,7 +36,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
 
     // setStateDeployEnv(deployingEnv);
 
-    console.log('deployingEnv', deployingEnv, deployingEnv.length, deployApplyOptions);
+    // console.log('deployingEnv', deployingEnv, deployingEnv.length, deployApplyOptions);
     // deployApply(deployingEnv);
   }, [visible]);
 
