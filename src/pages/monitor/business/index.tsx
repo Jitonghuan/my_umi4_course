@@ -48,15 +48,21 @@ export default function Dashboard(props: any) {
   };
   const enableMonitorClick = (monitorName: string) => {
     enableMonitor(monitorName);
-    getListMonitor(1, 20);
+    setTimeout(() => {
+      getListMonitor(1, 20);
+    }, 300);
   };
   const delMonitorClick = (monitorName: string) => {
     delMonitor(monitorName);
-    getListMonitor(1, 20);
+    setTimeout(() => {
+      getListMonitor(1, 20);
+    }, 300);
   };
   const disableMonitorClick = (monitorName: string) => {
     disableMonitor(monitorName);
-    getListMonitor(1, 20);
+    setTimeout(() => {
+      getListMonitor(1, 20);
+    }, 300);
   };
   // //触发分页
   // const pageSizeClick = (pagination: any) => {
@@ -128,7 +134,7 @@ export default function Dashboard(props: any) {
               columns={colunms}
               pagination={false}
               // onChange={pageSizeClick}
-              scroll={{ y: window.innerHeight - 1025, x: '100%' }}
+              scroll={{ y: window.innerHeight - 635, x: '100%' }}
               dataSource={item?.MonitorBizMetric}
               rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
             />

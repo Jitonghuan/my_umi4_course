@@ -157,11 +157,14 @@ export default function LogMonitor(props: any) {
   const onChangeTab = () => {
     setSelectNum('1');
   };
-  const submitMintorConfig = () => {
+  const submitMintorConfig = async () => {
     // setSelectNum('3');
+    // const values = await form.validateFields();
+    const values1 = await logForm.validateFields();
+    const values2 = await tagrgetForm.validateFields();
     let params1 = logForm.getFieldsValue();
     let params2 = tagrgetForm.getFieldsValue();
-    // console.log('params1,params2', params1, '----', params2);
+    console.log('values1,values2', values1, '----', values2);
     let metricsList: any = []; //传参的整个metrics数组对象
     let metricOptionsObject = {}; //根据metrics对象选择值拿到的
     let continueMetricList: any = []; //继续新增的指标项
@@ -266,13 +269,13 @@ export default function LogMonitor(props: any) {
     });
 
     tagrgetForm.setFieldsValue({
-      buckets: recordData?.MonitorBizMetric[0].buckets,
-      filters: recordData?.MonitorBizMetric[0].filters,
-      metricDesc: recordData?.MonitorBizMetric[0].metricDesc,
-      metricName: recordData?.MonitorBizMetric[0].metricName,
-      metricType: recordData?.MonitorBizMetric[0].metricType,
-      metricValueField: recordData?.MonitorBizMetric[0].metricValueField,
-      metrics: metricsArry,
+      buckets: recordData?.MonitorBizMetric[0]?.buckets || '',
+      filters: recordData?.MonitorBizMetric[0]?.filters || [],
+      metricDesc: recordData?.MonitorBizMetric[0]?.metricDesc || '',
+      metricName: recordData?.MonitorBizMetric[0]?.metricName || '',
+      metricType: recordData?.MonitorBizMetric[0]?.metricType || '',
+      metricValueField: recordData?.MonitorBizMetric[0]?.metricValueField || '',
+      metrics: metricsArry || [{}],
     });
   }, [type]);
 
