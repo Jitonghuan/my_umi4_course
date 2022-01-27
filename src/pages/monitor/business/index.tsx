@@ -140,7 +140,7 @@ export default function Dashboard(props: any) {
   };
 
   return (
-    <PageContainer className="monitor-application">
+    <PageContainer className="monitor-business">
       <FilterCard>
         <div className="table-caption">
           <div className="caption-left">
@@ -188,7 +188,7 @@ export default function Dashboard(props: any) {
           <div className="caption-right">
             <span>
               <Button type="primary" onClick={creatLogMinitor}>
-                创建日志监控
+                创建业务监控
               </Button>
             </span>
           </div>

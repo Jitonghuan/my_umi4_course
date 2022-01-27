@@ -63,6 +63,7 @@ export default function LogMonitor(props: any) {
   const [currentEnvCode, setCurrentEnvCode] = useState<string>('');
   const [currentAppCode, setCurrentAppCode] = useState<string>('');
   const [currentIndex, setCurrentIndex] = useState<string>('');
+  const [currentEnvType, setCurrentEnvType] = useState<string>('');
   const [currentIndexModeField, setCurrentIndexModeField] = useState<string>('');
   const [logStoreOptions, getRuleIndex] = useLogStoreOptions(); //日志库选项下拉框数据
   const [logSample, loading, getLogSample] = useQueryLogSample();
@@ -82,6 +83,7 @@ export default function LogMonitor(props: any) {
   };
   const selectEnvType = (value: string) => {
     getEnvCodeList(value);
+    setCurrentEnvType(value);
   };
   const selectEnvCode = (value: string) => {
     setCurrentEnvCode(value);
@@ -228,6 +230,15 @@ export default function LogMonitor(props: any) {
         appCode: recordData?.appCode,
         index: recordData?.index,
       });
+      if (recordData?.envCode.indexOf('dev') != -1) {
+        setCurrentEnvType('dev');
+      } else if (recordData?.envCode.indexOf('test') != -1) {
+        setCurrentEnvType('test');
+      } else if (recordData?.envCode.indexOf('pre') != -1) {
+        setCurrentEnvType('pre');
+      } else if (recordData?.envCode.indexOf('prod') != -1) {
+        setCurrentEnvType('prod');
+      }
       setCurrentEnvCode(recordData?.envCode);
       let metricsArry: any = [];
       recordData.MonitorBizMetric.map((item: any, index: number) => {
@@ -275,6 +286,7 @@ export default function LogMonitor(props: any) {
                         disabled={editDisable}
                         style={{ width: '140px' }}
                         options={envTypeData}
+                        value={currentEnvType}
                         onChange={selectEnvType}
                         allowClear
                       ></Select>
