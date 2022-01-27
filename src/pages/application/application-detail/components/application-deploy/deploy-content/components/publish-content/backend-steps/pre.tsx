@@ -76,7 +76,12 @@ export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCan
                     jenkinsUrl={getItemByKey(jenkinsUrl, envCode).subJenkinsUrl}
                     envCode={envCode}
                   />
-                  <DeployingStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
+                  <DeployingStep
+                    {...payload}
+                    deployStatus={getSubStateStatus(envCode)}
+                    envCode={envCode}
+                    jenkinsUrl={getItemByKey(jenkinsUrl, envCode).subJenkinsUrl}
+                  />
                   <FinishedStep {...payload} deployStatus={getSubStateStatus(envCode)} envCode={envCode} />
                 </Steps>
                 {parseInt(status + '') > 1 && parseInt(status + '') < 4 ? (
@@ -99,7 +104,12 @@ export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCan
               jenkinsUrl={getItemByKey(jenkinsUrl, envList[0]).subJenkinsUrl}
               envCode={envList[0]}
             />
-            <DeployingStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
+            <DeployingStep
+              {...payload}
+              deployStatus={getSubStateStatus(envList[0])}
+              envCode={envList[0]}
+              jenkinsUrl={getItemByKey(jenkinsUrl, envList[0]).subJenkinsUrl}
+            />
             <FinishedStep {...payload} deployStatus={getSubStateStatus(envList[0])} envCode={envList[0]} />
           </Steps>
           {parseInt(status + '') > 1 && parseInt(status + '') < 4 ? (
