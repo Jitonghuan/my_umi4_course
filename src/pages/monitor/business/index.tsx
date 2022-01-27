@@ -3,7 +3,7 @@
 // @create 2021/05/30 10:10
 
 import React, { useState } from 'react';
-import { List, Card, Table, Collapse, Form, Select, Input, Button, Space, Tag } from 'antd';
+import { List, Card, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from 'antd';
 import PageContainer from '@/components/page-container';
 import { PauseCircleFilled, ClockCircleFilled } from '@ant-design/icons';
 import { history } from 'umi';
@@ -49,19 +49,19 @@ export default function Dashboard(props: any) {
   const enableMonitorClick = (monitorName: string) => {
     enableMonitor(monitorName);
     setTimeout(() => {
-      getListMonitor(1, 20);
+      getListMonitor(1, 5);
     }, 300);
   };
   const delMonitorClick = (monitorName: string) => {
     delMonitor(monitorName);
     setTimeout(() => {
-      getListMonitor(1, 20);
+      getListMonitor(1, 5);
     }, 300);
   };
   const disableMonitorClick = (monitorName: string) => {
     disableMonitor(monitorName);
     setTimeout(() => {
-      getListMonitor(1, 20);
+      getListMonitor(1, 5);
     }, 300);
   };
   // //触发分页
@@ -160,12 +160,13 @@ export default function Dashboard(props: any) {
               layout="inline"
               form={form}
               onFinish={(values: any) => {
-                getListMonitor(1, 20, values?.monitorName, values?.metricName, values?.appCode, values?.envCode);
+                getListMonitor(1, 5, values?.monitorName, values?.metricName, values?.appCode, values?.envCode);
               }}
               onReset={() => {
                 form.resetFields();
                 getListMonitor(
                   1,
+                  5,
                   // pageSize: pageSize,
                 );
               }}
@@ -207,25 +208,29 @@ export default function Dashboard(props: any) {
         </div>
       </FilterCard>
       <ContentCard>
-        <List
-          itemLayout="vertical"
-          size="large"
-          pagination={{
-            onChange: (page) => {
-              console.log(page);
-            },
-            pageSize: 5,
-          }}
-          dataSource={listData}
-          renderItem={(item: any) => (
-            <List.Item
-            // key={item.title}
-            >
-              {item}
-            </List.Item>
-          )}
-        />
-        ,
+        {listData ? (
+          <List
+            itemLayout="vertical"
+            size="large"
+            pagination={{
+              onChange: (page) => {
+                console.log(page);
+                getListMonitor(page, 5);
+              },
+              pageSize: 5,
+            }}
+            dataSource={listData}
+            renderItem={(item: any) => (
+              <List.Item
+              // key={item.title}
+              >
+                {item}
+              </List.Item>
+            )}
+          />
+        ) : (
+          <Empty />
+        )}
       </ContentCard>
     </PageContainer>
   );

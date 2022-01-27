@@ -52,7 +52,7 @@ export function useGetListMonitor() {
   const [pageSize, setPageSize] = useState<number>(20);
 
   useEffect(() => {
-    getListMonitor(1, 20);
+    getListMonitor(1, 5);
   }, []);
 
   let itemString: string;
@@ -66,14 +66,13 @@ export function useGetListMonitor() {
     envCode?: string,
   ) => {
     await getRequest(APIS.getListMonitor, {
-      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, monitorName, metricName, appCode, envCode },
+      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 5, monitorName, metricName, appCode, envCode },
     }).then((result) => {
       if (result?.success) {
         let ListSource = result?.data?.dataSource || [];
         setListSource(ListSource);
         ListSource?.map((item: any) => {
           item?.MonitorBizMetric.map((filters: any) => {
-            console.log('filters', filters);
             itemString = JSON.stringify(filters.filters || {});
             filters['filtersData'] = itemString;
             tableData.push(filters);
@@ -112,7 +111,7 @@ export function useDisableMonitor() {
 export function useDelMonitor() {
   const delMonitor = async (monitorName: string) => {
     await delRequest(`${APIS.delMonitor}?monitorName=${monitorName}`).then((result) => {
-      if (result.success) {
+      if (result?.success) {
         message.success('删除业务监控成功！');
       }
     });
