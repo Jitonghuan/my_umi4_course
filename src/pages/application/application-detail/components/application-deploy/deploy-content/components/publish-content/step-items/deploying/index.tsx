@@ -11,7 +11,7 @@ import DeployModal from './deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, jenkinsUrl, ...others } = props;
 
   const isLoading =
     deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
@@ -60,18 +60,18 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )} */}
               {/* 浙一日常环境下的部署步骤显示jenkins链接 */}
-              {envTypeCode === 'pre' && deployInfo.jenkinsUrl && deployInfo.envs?.includes('zy-daily') && (
+              {envTypeCode === 'pre' && jenkinsUrl && deployInfo.envs?.includes('zy-daily') && (
                 <div style={{ marginTop: 2 }}>
-                  <a target="_blank" href={deployInfo.jenkinsUrl}>
-                    查看Jenkins详情
+                  <a target="_blank" href={jenkinsUrl}>
+                    部署详情
                   </a>
                 </div>
               )}
               {/* prod环境 在部署过程中出现错误时 判断如果是在构建显示查看Jenkins详情，如果是部署出现错误显示部署错误详情*/}
-              {envTypeCode === 'prod' && deployInfo.jenkinsUrl && (
+              {envTypeCode === 'prod' && jenkinsUrl && (
                 <div style={{ marginTop: 2 }}>
-                  <a target="_blank" href={deployInfo.jenkinsUrl}>
-                    查看Jenkins详情
+                  <a target="_blank" href={jenkinsUrl}>
+                    部署详情
                   </a>
                 </div>
               )}
