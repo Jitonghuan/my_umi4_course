@@ -48,12 +48,15 @@ export default function Dashboard(props: any) {
   };
   const enableMonitorClick = (monitorName: string) => {
     enableMonitor(monitorName);
+    getListMonitor(1, 20);
   };
   const delMonitorClick = (monitorName: string) => {
     delMonitor(monitorName);
+    getListMonitor(1, 20);
   };
   const disableMonitorClick = (monitorName: string) => {
     disableMonitor(monitorName);
+    getListMonitor(1, 20);
   };
   // //触发分页
   // const pageSizeClick = (pagination: any) => {
@@ -92,6 +95,7 @@ export default function Dashboard(props: any) {
                   </Button>
                   <Button
                     type="primary"
+                    disabled={item.status === 0 ? false : true}
                     onClick={() => {
                       enableMonitorClick(item.monitorName);
                     }}
@@ -100,6 +104,7 @@ export default function Dashboard(props: any) {
                   </Button>
                   <Button
                     type="dashed"
+                    disabled={item.status === 0 ? true : false}
                     onClick={() => {
                       disableMonitorClick(item.monitorName);
                     }}
@@ -121,8 +126,9 @@ export default function Dashboard(props: any) {
           >
             <Table
               columns={colunms}
-              // pagination={false}
+              pagination={false}
               // onChange={pageSizeClick}
+              scroll={{ y: window.innerHeight - 1025, x: '100%' }}
               dataSource={item?.MonitorBizMetric}
               rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
             />
@@ -133,7 +139,7 @@ export default function Dashboard(props: any) {
   }
 
   const creatLogMinitor = () => {
-    history.push({ pathname: '/matrix/monitor/log-monitor', query: { type: 'add' } });
+    history.push({ pathname: '/matrix/monitor/log-monitor', state: { type: 'add' } });
   };
   const selectEnvType = (value: string) => {
     getEnvCodeList(value);

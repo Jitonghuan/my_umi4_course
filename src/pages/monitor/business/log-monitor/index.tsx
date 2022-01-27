@@ -24,6 +24,7 @@ import {
 import PageContainer from '@/components/page-container';
 import moment, { Moment } from 'moment';
 import useRequest from '@/utils/useRequest';
+import { history } from 'umi';
 import { FileTextOutlined, EyeFilled, PlusOutlined, DeleteFilled, MinusCircleOutlined } from '@ant-design/icons';
 import { putRequest, postRequest } from '@/utils/request';
 import ReactJson from 'react-json-view';
@@ -204,7 +205,8 @@ export default function LogMonitor(props: any) {
           }
         })
         .then(() => {
-          setEditDisable(true);
+          history.push('/matrix/monitor/business');
+          // setEditDisable(true);
         });
     }
     if (type === 'edit') {
@@ -215,7 +217,8 @@ export default function LogMonitor(props: any) {
           }
         })
         .then(() => {
-          setEditDisable(true);
+          history.push('/matrix/monitor/business');
+          // setEditDisable(true);
         });
     }
   };
@@ -231,6 +234,10 @@ export default function LogMonitor(props: any) {
       appCode: recordData?.appCode,
       index: recordData?.index,
     });
+    if (recordData?.envCode && recordData?.index) {
+      getIndexModeFields(recordData?.envCode, recordData?.index);
+    }
+
     if (recordData?.envCode.indexOf('dev') != -1) {
       setCurrentEnvType('dev');
     } else if (recordData?.envCode.indexOf('test') != -1) {
@@ -278,10 +285,10 @@ export default function LogMonitor(props: any) {
               <div className="log-config">
                 <div className="log-config-left">
                   <Form labelCol={{ flex: '100px' }} form={logForm}>
-                    <Form.Item label="监控名称" name="monitorName">
+                    <Form.Item label="监控名称" name="monitorName" required={true}>
                       <Input style={{ width: '362px' }} disabled={editDisable}></Input>
                     </Form.Item>
-                    <Form.Item label="选择环境" name="envCode">
+                    <Form.Item label="选择环境" name="envCode" required={true}>
                       <Select
                         disabled={editDisable}
                         style={{ width: '140px' }}
@@ -299,7 +306,7 @@ export default function LogMonitor(props: any) {
                         allowClear
                       ></Select>
                     </Form.Item>
-                    <Form.Item label="选择日志索引" name="index">
+                    <Form.Item label="选择日志索引" name="index" required={true}>
                       <Select
                         style={{ width: '362px' }}
                         disabled={editDisable}
@@ -351,17 +358,17 @@ export default function LogMonitor(props: any) {
             </Panel>
           </Collapse>
 
-          <Collapse bordered={false} className="target-config-collapse">
+          <Collapse bordered={false} className="target-config-collapse" defaultActiveKey={['2']}>
             <Panel header={`指标配置`} key="2">
               <div className="target-config">
                 <div className="target-config-left">
                   <Form labelCol={{ flex: '100px' }} form={tagrgetForm}>
                     <div className="target-item">指标项</div>
 
-                    <Form.Item label="指标名称" name="metricName">
+                    <Form.Item label="指标名称" name="metricName" required={true}>
                       <Input style={{ width: '352px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
                     </Form.Item>
-                    <Form.Item label="指标类型" name="metricType">
+                    <Form.Item label="指标类型" name="metricType" required={true}>
                       <Select
                         style={{ width: '352px' }}
                         options={targetOptions}
@@ -396,14 +403,16 @@ export default function LogMonitor(props: any) {
                         </Form.Item>
                       </div>
                     )}
-                    <Form.Item label="指标值字段" name="metricValueField">
-                      <Select
-                        style={{ width: '352px' }}
-                        options={indexModeFieldsOption}
-                        disabled={editDisable}
-                      ></Select>
-                    </Form.Item>
-                    <Form.Item label="指标描述" name="metricDesc">
+                    {tagrgetForm.getFieldValue('metricType') !== 'counter' && (
+                      <Form.Item label="指标值字段" name="metricValueField" required={true}>
+                        <Select
+                          style={{ width: '352px' }}
+                          options={indexModeFieldsOption}
+                          disabled={editDisable}
+                        ></Select>
+                      </Form.Item>
+                    )}
+                    <Form.Item label="指标描述" name="metricDesc" required={true}>
                       <Input style={{ width: 352 }} disabled={editDisable}></Input>
                     </Form.Item>
 
@@ -424,7 +433,7 @@ export default function LogMonitor(props: any) {
                           </Form.Item>
                           {fields.map(({ key, name, ...restField }) => (
                             <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                              <Form.Item {...restField} name={[name, 'key']}>
+                              <Form.Item {...restField} name={[name, 'key']} required={true}>
                                 <Select
                                   style={{ width: 140, marginLeft: 40 }}
                                   options={indexModeFieldsOption}
@@ -434,14 +443,14 @@ export default function LogMonitor(props: any) {
                                   value={currentIndexModeField}
                                 ></Select>
                               </Form.Item>
-                              <Form.Item {...restField} name={[name, 'operator']}>
+                              <Form.Item {...restField} name={[name, 'operator']} required={true}>
                                 <Select
                                   style={{ width: 80, paddingLeft: 5 }}
                                   options={operatorOption}
                                   disabled={editDisable}
                                 ></Select>
                               </Form.Item>
-                              <Form.Item {...restField} name={[name, 'value']}>
+                              <Form.Item {...restField} name={[name, 'value']} required={true}>
                                 <Input
                                   style={{ width: 180, marginLeft: 5 }}
                                   placeholder="输入字段值"
@@ -464,7 +473,7 @@ export default function LogMonitor(props: any) {
                                 {...restField}
                                 label="指标名称"
                                 name={[name, 'metricName', 'first']}
-                                rules={[{ required: true, message: 'Missing first name' }]}
+                                rules={[{ required: true, message: '输入指标名称' }]}
                               >
                                 <Input
                                   style={{ width: '352px' }}
@@ -476,7 +485,7 @@ export default function LogMonitor(props: any) {
                                 label="指标类型"
                                 {...restField}
                                 name={[name, 'metricType', 'second']}
-                                rules={[{ required: true, message: 'Missing last name' }]}
+                                rules={[{ required: true, message: '输入指标类型' }]}
                               >
                                 <Select
                                   style={{ width: '352px' }}
@@ -519,18 +528,22 @@ export default function LogMonitor(props: any) {
                                   </Form.Item>
                                 </div>
                               )}
-                              <Form.Item
-                                label="指标值字段"
-                                {...restField}
-                                name={[name, 'metricValueField', 'third']}
-                                rules={[{ required: true, message: 'Missing last name' }]}
-                              >
-                                <Select
-                                  style={{ width: '352px' }}
-                                  options={indexModeFieldsOption}
-                                  disabled={editDisable}
-                                ></Select>
-                              </Form.Item>
+                              {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.third !==
+                                'counter' && (
+                                <Form.Item
+                                  label="指标值字段"
+                                  {...restField}
+                                  name={[name, 'metricValueField', 'third']}
+                                  rules={[{ required: true, message: '输入指标值字段' }]}
+                                >
+                                  <Select
+                                    style={{ width: '352px' }}
+                                    options={indexModeFieldsOption}
+                                    disabled={editDisable}
+                                  ></Select>
+                                </Form.Item>
+                              )}
+
                               <Form.Item label="指标描述" name={[name, 'metricDesc', 'forth']} {...restField}>
                                 <Input style={{ width: 352 }} disabled={editDisable}></Input>
                               </Form.Item>
@@ -557,7 +570,7 @@ export default function LogMonitor(props: any) {
                                     </Form.Item>
                                     {field.map(({ key, name, ...restField }) => (
                                       <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                                        <Form.Item {...restField} name={[name, 'key']}>
+                                        <Form.Item {...restField} name={[name, 'key']} required={true}>
                                           <Select
                                             style={{ width: 140, marginLeft: 40 }}
                                             options={indexModeFieldsOption}
@@ -567,14 +580,14 @@ export default function LogMonitor(props: any) {
                                             value={currentIndexModeField}
                                           ></Select>
                                         </Form.Item>
-                                        <Form.Item {...restField} name={[name, 'operator']}>
+                                        <Form.Item {...restField} name={[name, 'operator']} required={true}>
                                           <Select
                                             style={{ width: 80, paddingLeft: 5 }}
                                             options={operatorOption}
                                             disabled={editDisable}
                                           ></Select>
                                         </Form.Item>
-                                        <Form.Item {...restField} name={[name, 'value']}>
+                                        <Form.Item {...restField} name={[name, 'value']} required={true}>
                                           <Input
                                             style={{ width: 180, marginLeft: 5 }}
                                             placeholder="输入字段值"
