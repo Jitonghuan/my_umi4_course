@@ -224,49 +224,49 @@ export default function LogMonitor(props: any) {
   useEffect(() => {
     if (type === 'add') {
       return;
-    } else {
-      logForm.setFieldsValue({
-        monitorName: recordData?.monitorName,
-        appCode: recordData?.appCode,
-        index: recordData?.index,
-      });
-      if (recordData?.envCode.indexOf('dev') != -1) {
-        setCurrentEnvType('dev');
-      } else if (recordData?.envCode.indexOf('test') != -1) {
-        setCurrentEnvType('test');
-      } else if (recordData?.envCode.indexOf('pre') != -1) {
-        setCurrentEnvType('pre');
-      } else if (recordData?.envCode.indexOf('prod') != -1) {
-        setCurrentEnvType('prod');
-      }
-      setCurrentEnvCode(recordData?.envCode);
-      let metricsArry: any = [];
-      recordData.MonitorBizMetric.map((item: any, index: number) => {
-        if (index !== 0) {
-          metricsArry.push({
-            filters: item?.filters,
-            metricDesc: { forth: item?.metricDesc },
-            metricName: { first: item?.metricName },
-            metricType: { second: item?.metricType },
-            metricValueField: { third: item?.metricValueField },
-            buckets: item?.metricOptions?.buckets,
-            objectives: item?.metricOptions?.objectives,
-            MaxAge: item?.metricOptions?.MaxAge,
-            AgeBuckets: item?.metricOptions?.AgeBuckets,
-          });
-        }
-      });
-
-      tagrgetForm.setFieldsValue({
-        buckets: recordData?.MonitorBizMetric[0].buckets,
-        filters: recordData?.MonitorBizMetric[0].filters,
-        metricDesc: recordData?.MonitorBizMetric[0].metricDesc,
-        metricName: recordData?.MonitorBizMetric[0].metricName,
-        metricType: recordData?.MonitorBizMetric[0].metricType,
-        metricValueField: recordData?.MonitorBizMetric[0].metricValueField,
-        metrics: metricsArry,
-      });
     }
+
+    logForm.setFieldsValue({
+      monitorName: recordData?.monitorName,
+      appCode: recordData?.appCode,
+      index: recordData?.index,
+    });
+    if (recordData?.envCode.indexOf('dev') != -1) {
+      setCurrentEnvType('dev');
+    } else if (recordData?.envCode.indexOf('test') != -1) {
+      setCurrentEnvType('test');
+    } else if (recordData?.envCode.indexOf('pre') != -1) {
+      setCurrentEnvType('pre');
+    } else if (recordData?.envCode.indexOf('prod') != -1) {
+      setCurrentEnvType('prod');
+    }
+    setCurrentEnvCode(recordData?.envCode);
+    let metricsArry: any = [];
+    recordData?.MonitorBizMetric?.map((item: any, index: number) => {
+      if (index !== 0) {
+        metricsArry.push({
+          filters: item?.filters,
+          metricDesc: { forth: item?.metricDesc },
+          metricName: { first: item?.metricName },
+          metricType: { second: item?.metricType },
+          metricValueField: { third: item?.metricValueField },
+          buckets: item?.metricOptions?.buckets,
+          objectives: item?.metricOptions?.objectives,
+          MaxAge: item?.metricOptions?.MaxAge,
+          AgeBuckets: item?.metricOptions?.AgeBuckets,
+        });
+      }
+    });
+
+    tagrgetForm.setFieldsValue({
+      buckets: recordData?.MonitorBizMetric[0].buckets,
+      filters: recordData?.MonitorBizMetric[0].filters,
+      metricDesc: recordData?.MonitorBizMetric[0].metricDesc,
+      metricName: recordData?.MonitorBizMetric[0].metricName,
+      metricType: recordData?.MonitorBizMetric[0].metricType,
+      metricValueField: recordData?.MonitorBizMetric[0].metricValueField,
+      metrics: metricsArry,
+    });
   }, [type]);
 
   return (
