@@ -159,71 +159,80 @@ export default function LogMonitor(props: any) {
   };
   const submitMintorConfig = async () => {
     // setSelectNum('3');
-    // const values = await form.validateFields();
-    const values1 = await logForm.validateFields();
-    const values2 = await tagrgetForm.validateFields();
-    let params1 = logForm.getFieldsValue();
-    let params2 = tagrgetForm.getFieldsValue();
-    console.log('values1,values2', values1, '----', values2);
-    let metricsList: any = []; //传参的整个metrics数组对象
-    let metricOptionsObject = {}; //根据metrics对象选择值拿到的
-    let continueMetricList: any = []; //继续新增的指标项
-    let continueMetricOptionsObject = {};
-    if (params2?.metricType === 'histogram') {
-      metricOptionsObject = { buckets: params2.buckets };
-    } else if (params2?.metricType === 'summary') {
-      metricOptionsObject = { objectives: params2.objectives, MaxAge: params2.MaxAge, AgeBuckets: params2.AgeBuckets };
-    }
+    logForm.validateFields().then((logparams) => {
+      tagrgetForm.validateFields().then((targetParams) => {
+        // console.log('params1,params2', logparams, '----', targetParams);
+        let metricsList: any = []; //传参的整个metrics数组对象
+        let metricOptionsObject = {}; //根据metrics对象选择值拿到的
+        let continueMetricList: any = []; //继续新增的指标项
+        let continueMetricOptionsObject = {};
+        if (targetParams?.metricType === 'histogram') {
+          metricOptionsObject = { buckets: targetParams.buckets };
+        } else if (targetParams?.metricType === 'summary') {
+          metricOptionsObject = {
+            objectives: targetParams.objectives,
+            MaxAge: targetParams.MaxAge,
+            AgeBuckets: targetParams.AgeBuckets,
+          };
+        }
 
-    params2?.metrics?.map((item: any) => {
-      if (item?.metricType.second === 'histogram') {
-        continueMetricOptionsObject = { buckets: item.buckets };
-      } else if (item?.metricType.second === 'summary') {
-        continueMetricOptionsObject = { objectives: item.objectives, MaxAge: item.MaxAge, AgeBuckets: item.AgeBuckets };
-      }
-      continueMetricList.push({
-        filters: item.filters,
-        metricDesc: item.metricDesc.forth,
-        metricName: item.metricName.first,
-        metricType: item.metricType.second,
-        metricValueField: item.metricValueField.third,
-        metricOptions: continueMetricOptionsObject,
+        targetParams?.metrics?.map((item: any) => {
+          if (item?.metricType.second === 'histogram') {
+            continueMetricOptionsObject = { buckets: item.buckets };
+          } else if (item?.metricType.second === 'summary') {
+            continueMetricOptionsObject = {
+              objectives: item.objectives,
+              MaxAge: item.MaxAge,
+              AgeBuckets: item.AgeBuckets,
+            };
+          }
+          continueMetricList.push({
+            filters: item.filters,
+            metricDesc: item.metricDesc.forth,
+            metricName: item.metricName.first,
+            metricType: item.metricType.second,
+            metricValueField: item.metricValueField.third,
+            metricOptions: continueMetricOptionsObject,
+          });
+        });
+        metricsList.push({
+          // ...params2,
+          filters: targetParams.filters,
+          metricDesc: targetParams.metricDesc,
+          metricName: targetParams.metricName,
+          metricType: targetParams.metricType,
+          metricValueField: targetParams.metricValueField,
+          metricOptions: metricOptionsObject,
+        });
+        let allMetricsList = metricsList.concat(continueMetricList);
+        if (type === 'add') {
+          postRequest(addMonitor, { data: { ...logparams, envCode: currentEnvCode, metrics: allMetricsList } })
+            .then((resp) => {
+              if (resp?.success) {
+                message.info('新增成功！');
+              }
+            })
+            .then(() => {
+              history.push('/matrix/monitor/business');
+              // setEditDisable(true);
+            });
+        }
+        if (type === 'edit') {
+          putRequest(updateMonitor, { data: { ...logparams, envCode: currentEnvCode, metrics: allMetricsList } })
+            .then((resp) => {
+              if (resp?.success) {
+                message.info('编辑成功！');
+              }
+            })
+            .then(() => {
+              history.push('/matrix/monitor/business');
+              // setEditDisable(true);
+            });
+        }
       });
     });
-    metricsList.push({
-      // ...params2,
-      filters: params2.filters,
-      metricDesc: params2.metricDesc,
-      metricName: params2.metricName,
-      metricType: params2.metricType,
-      metricValueField: params2.metricValueField,
-      metricOptions: metricOptionsObject,
-    });
-    let allMetricsList = metricsList.concat(continueMetricList);
-    if (type === 'add') {
-      postRequest(addMonitor, { data: { ...params1, envCode: currentEnvCode, metrics: allMetricsList } })
-        .then((resp) => {
-          if (resp?.success) {
-            message.info('新增成功！');
-          }
-        })
-        .then(() => {
-          history.push('/matrix/monitor/business');
-          // setEditDisable(true);
-        });
-    }
-    if (type === 'edit') {
-      putRequest(updateMonitor, { data: { ...params1, envCode: currentEnvCode, metrics: allMetricsList } })
-        .then((resp) => {
-          if (resp?.success) {
-            message.info('编辑成功！');
-          }
-        })
-        .then(() => {
-          history.push('/matrix/monitor/business');
-          // setEditDisable(true);
-        });
-    }
+    // let params1 = logForm.getFieldsValue();
+    // let params2 = tagrgetForm.getFieldsValue();
   };
 
   //编辑回显数据
@@ -288,7 +297,11 @@ export default function LogMonitor(props: any) {
               <div className="log-config">
                 <div className="log-config-left">
                   <Form labelCol={{ flex: '100px' }} form={logForm}>
-                    <Form.Item label="监控名称" name="monitorName" required={true}>
+                    <Form.Item
+                      label="监控名称"
+                      name="monitorName"
+                      rules={[{ required: true, message: '请输入监控名称!' }]}
+                    >
                       <Input style={{ width: '362px' }} disabled={editDisable}></Input>
                     </Form.Item>
                     <Form.Item label="选择环境" name="envCode" required={true}>
@@ -309,7 +322,11 @@ export default function LogMonitor(props: any) {
                         allowClear
                       ></Select>
                     </Form.Item>
-                    <Form.Item label="选择日志索引" name="index" required={true}>
+                    <Form.Item
+                      label="选择日志索引"
+                      name="index"
+                      rules={[{ required: true, message: '请选择日志索引!' }]}
+                    >
                       <Select
                         style={{ width: '362px' }}
                         disabled={editDisable}
@@ -368,10 +385,18 @@ export default function LogMonitor(props: any) {
                   <Form labelCol={{ flex: '100px' }} form={tagrgetForm}>
                     <div className="target-item">指标项</div>
 
-                    <Form.Item label="指标名称" name="metricName" required={true}>
+                    <Form.Item
+                      label="指标名称"
+                      name="metricName"
+                      rules={[{ required: true, message: '请输入指标名称!' }]}
+                    >
                       <Input style={{ width: '352px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
                     </Form.Item>
-                    <Form.Item label="指标类型" name="metricType" required={true}>
+                    <Form.Item
+                      label="指标类型"
+                      name="metricType"
+                      rules={[{ required: true, message: '请选择指标类型!' }]}
+                    >
                       <Select
                         style={{ width: '352px' }}
                         options={targetOptions}
@@ -407,7 +432,11 @@ export default function LogMonitor(props: any) {
                       </div>
                     )}
                     {tagrgetForm.getFieldValue('metricType') !== 'counter' && (
-                      <Form.Item label="指标值字段" name="metricValueField" required={true}>
+                      <Form.Item
+                        label="指标值字段"
+                        name="metricValueField"
+                        rules={[{ required: true, message: '请选择指标值字段!' }]}
+                      >
                         <Select
                           style={{ width: '352px' }}
                           options={indexModeFieldsOption}
@@ -415,7 +444,11 @@ export default function LogMonitor(props: any) {
                         ></Select>
                       </Form.Item>
                     )}
-                    <Form.Item label="指标描述" name="metricDesc" required={true}>
+                    <Form.Item
+                      label="指标描述"
+                      name="metricDesc"
+                      rules={[{ required: true, message: '请选择指标描述!' }]}
+                    >
                       <Input style={{ width: 352 }} disabled={editDisable}></Input>
                     </Form.Item>
 
@@ -436,7 +469,11 @@ export default function LogMonitor(props: any) {
                           </Form.Item>
                           {fields.map(({ key, name, ...restField }) => (
                             <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                              <Form.Item {...restField} name={[name, 'key']} required={true}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, 'key']}
+                                rules={[{ required: true, message: '请选择选择过滤字段!' }]}
+                              >
                                 <Select
                                   style={{ width: 140, marginLeft: 40 }}
                                   options={indexModeFieldsOption}
@@ -446,14 +483,22 @@ export default function LogMonitor(props: any) {
                                   value={currentIndexModeField}
                                 ></Select>
                               </Form.Item>
-                              <Form.Item {...restField} name={[name, 'operator']} required={true}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, 'operator']}
+                                rules={[{ required: true, message: '请选择!' }]}
+                              >
                                 <Select
                                   style={{ width: 80, paddingLeft: 5 }}
                                   options={operatorOption}
                                   disabled={editDisable}
                                 ></Select>
                               </Form.Item>
-                              <Form.Item {...restField} name={[name, 'value']} required={true}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, 'value']}
+                                rules={[{ required: true, message: '请输入字段值!' }]}
+                              >
                                 <Input
                                   style={{ width: 180, marginLeft: 5 }}
                                   placeholder="输入字段值"
@@ -488,7 +533,7 @@ export default function LogMonitor(props: any) {
                                 label="指标类型"
                                 {...restField}
                                 name={[name, 'metricType', 'second']}
-                                rules={[{ required: true, message: '输入指标类型' }]}
+                                rules={[{ required: true, message: '选择指标类型' }]}
                               >
                                 <Select
                                   style={{ width: '352px' }}
@@ -537,7 +582,7 @@ export default function LogMonitor(props: any) {
                                   label="指标值字段"
                                   {...restField}
                                   name={[name, 'metricValueField', 'third']}
-                                  rules={[{ required: true, message: '输入指标值字段' }]}
+                                  rules={[{ required: true, message: '选择指标值字段' }]}
                                 >
                                   <Select
                                     style={{ width: '352px' }}
@@ -573,7 +618,11 @@ export default function LogMonitor(props: any) {
                                     </Form.Item>
                                     {field.map(({ key, name, ...restField }) => (
                                       <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                                        <Form.Item {...restField} name={[name, 'key']} required={true}>
+                                        <Form.Item
+                                          {...restField}
+                                          name={[name, 'key']}
+                                          rules={[{ required: true, message: '请选择过滤字段!' }]}
+                                        >
                                           <Select
                                             style={{ width: 140, marginLeft: 40 }}
                                             options={indexModeFieldsOption}
@@ -583,14 +632,22 @@ export default function LogMonitor(props: any) {
                                             value={currentIndexModeField}
                                           ></Select>
                                         </Form.Item>
-                                        <Form.Item {...restField} name={[name, 'operator']} required={true}>
+                                        <Form.Item
+                                          {...restField}
+                                          name={[name, 'operator']}
+                                          rules={[{ required: true, message: '请选择!' }]}
+                                        >
                                           <Select
                                             style={{ width: 80, paddingLeft: 5 }}
                                             options={operatorOption}
                                             disabled={editDisable}
                                           ></Select>
                                         </Form.Item>
-                                        <Form.Item {...restField} name={[name, 'value']} required={true}>
+                                        <Form.Item
+                                          {...restField}
+                                          name={[name, 'value']}
+                                          rules={[{ required: true, message: '请输入字段值!' }]}
+                                        >
                                           <Input
                                             style={{ width: 180, marginLeft: 5 }}
                                             placeholder="输入字段值"
@@ -644,15 +701,15 @@ export default function LogMonitor(props: any) {
                     </span>
                   </div>
                   <div className="target-board">
-                    <Spin spinning={loading} style={{ height: '100%', overflow: 'auto' }}>
-                      <ReactJson
-                        src={[]}
-                        name={false}
-                        theme="apathy"
-                        style={{ height: '100%', overflow: 'auto' }}
-                        collapsed={false}
-                      />
-                    </Spin>
+                    {/* <Spin  style={{ height: '100%', overflow: 'auto' }}> */}
+                    <ReactJson
+                      src={[]}
+                      name={false}
+                      theme="apathy"
+                      style={{ height: '100%', overflow: 'auto' }}
+                      collapsed={false}
+                    />
+                    {/* </Spin> */}
                   </div>
                 </div>
               </div>
