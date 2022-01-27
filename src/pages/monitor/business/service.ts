@@ -27,3 +27,9 @@ export const getAppList = `${appConfig.apiPrefix}/appManage/list`;
 export const ruleIndexOptions = `${appConfig.apiPrefix}/logManage/logSearch/indexModeList`;
 
 export const indexModeFields = `${appConfig.apiPrefix}/logManage/logSearch/indexMode/fields`;
+
+// 创建
+export const createRules = `${appConfig.apiPrefix}/monitorManage/rules/create`;
+
+// 编辑
+export const updateRules = `${appConfig.apiPrefix}/monitorManage/rules/update`;

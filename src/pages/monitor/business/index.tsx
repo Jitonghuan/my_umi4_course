@@ -37,7 +37,7 @@ export default function Dashboard(props: any) {
   };
 
   const editMonitor = () => {
-    history.push('/matrix/monitor/log-monitor');
+    history.push({ pathname: '/matrix/monitor/log-monitor', query: { type: 'edit' } });
   };
   const enableMonitorClick = (monitorName: string) => {
     enableMonitor(monitorName);
@@ -110,7 +110,7 @@ export default function Dashboard(props: any) {
   }
 
   const creatLogMinitor = () => {
-    history.push('/matrix/monitor/log-monitor');
+    history.push({ pathname: '/matrix/monitor/log-monitor', query: { type: 'add' } });
   };
   const selectEnvType = (value: string) => {
     getEnvCodeList(value);
