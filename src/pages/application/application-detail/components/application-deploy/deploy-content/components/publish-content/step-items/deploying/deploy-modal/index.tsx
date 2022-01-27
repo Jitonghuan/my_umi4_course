@@ -34,8 +34,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   useEffect(() => {
     if (!visible) return;
 
-    setStateDeployEnv(deployingEnv);
-    deployApply(deployingEnv);
+    // setStateDeployEnv(deployingEnv);
+
+    console.log('deployingEnv', deployingEnv, deployingEnv.length, deployApplyOptions);
+    // deployApply(deployingEnv);
   }, [visible]);
 
   useEffect(() => {
@@ -142,7 +144,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
       </>
     );
   }, [deployInfo]);
-  const [deployApplyOptions, setDeployApplyOptions] = useState<any>([]);
+  const [deployApplyOptions, setDeployApplyOptions] = useState<any>();
   let appIds: any = [];
   const [currentAppIds, setCurrentAppIds] = useState<any>([]);
   let resData;
@@ -245,7 +247,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
           ]}
         />
       </div>
-      {deployApplyOptions !== null && (
+      {deployApplyOptions !== undefined && deployApplyOptions !== null && (
         <div style={{ marginTop: 8 }}>
           <span>发布申请：</span>
           <Select
