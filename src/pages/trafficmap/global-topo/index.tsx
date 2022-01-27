@@ -28,8 +28,7 @@ const globalTopo: React.FC = () => {
   const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
 
   const [clickId, setClickId] = useState<string>('');
-  const [selectTime, setSelectTime] = useState(moment().subtract(1, 'minutes'));
-  console.log(selectTime);
+  const [selectTime, setSelectTime] = useState(moment().subtract(2, 'minutes'));
   const [selectEnv, setSelectEnv] = useState('hbos-dev');
   const [isMock, setIsMock] = useState(false);
   const [envOptions] = useEnvOptions();
