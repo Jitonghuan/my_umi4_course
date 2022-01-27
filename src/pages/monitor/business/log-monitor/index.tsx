@@ -47,7 +47,7 @@ const { Panel } = Collapse;
 const { Search } = Input;
 
 export default function LogMonitor(props: any) {
-  let type = props.location.state?.type;
+  let type = props.location.state?.type || props.location.query?.type;
   let recordData = props.location.state?.recordData;
   console.log('props.location', props.location);
   console.log('recordData', recordData);
