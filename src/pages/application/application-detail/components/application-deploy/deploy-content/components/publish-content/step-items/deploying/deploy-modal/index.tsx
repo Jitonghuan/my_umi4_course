@@ -34,9 +34,10 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
   useEffect(() => {
     if (!visible) return;
 
-    // setStateDeployEnv(deployingEnv);
-
-    // console.log('deployingEnv', deployingEnv, deployingEnv.length, deployApplyOptions);
+    setStateDeployEnv(deployingEnv);
+    if (deployingEnv.indexOf(',') == -1) {
+      deployApply(deployingEnv);
+    }
     // deployApply(deployingEnv);
   }, [visible]);
 
