@@ -50,8 +50,8 @@ const { Search } = Input;
 export default function LogMonitor(props: any) {
   let type = props.location.state?.type || props.location.query?.type;
   let recordData = props.location.state?.recordData;
-  console.log('props.location', props.location);
-  console.log('recordData', recordData);
+  // console.log('props.location', props.location);
+  // console.log('recordData', recordData);
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [appOptions] = useAppOptions();
   const [tagrgetForm] = Form.useForm();
@@ -577,20 +577,30 @@ export default function LogMonitor(props: any) {
                                 </div>
                               )}
 
+                              {console.log(
+                                'tagrgetForm',
+                                tagrgetForm.getFieldsValue().metrics[name]?.metricType?.second,
+                              )}
                               {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second !==
                                 'counter' && (
-                                <Form.Item
-                                  label="指标值字段"
-                                  {...restField}
-                                  name={[name, 'metricValueField', 'third']}
-                                  rules={[{ required: true, message: '选择指标值字段' }]}
-                                >
-                                  <Select
-                                    style={{ width: '352px' }}
-                                    options={indexModeFieldsOption}
-                                    disabled={editDisable}
-                                  ></Select>
-                                </Form.Item>
+                                <div>
+                                  {console.log(
+                                    'test=test',
+                                    tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second,
+                                  )}
+                                  <Form.Item
+                                    label="指标值字段"
+                                    {...restField}
+                                    name={[name, 'metricValueField', 'third']}
+                                    rules={[{ required: true, message: '选择指标值字段' }]}
+                                  >
+                                    <Select
+                                      style={{ width: '352px' }}
+                                      options={indexModeFieldsOption}
+                                      disabled={editDisable}
+                                    ></Select>
+                                  </Form.Item>
+                                </div>
                               )}
 
                               <Form.Item label="指标描述" name={[name, 'metricDesc', 'forth']} {...restField}>
@@ -599,12 +609,12 @@ export default function LogMonitor(props: any) {
                               <Form.List name={[name, 'filters']}>
                                 {(field, { add, remove }) => (
                                   <>
-                                    {console.log(
+                                    {/* {console.log(
                                       'name',
                                       tagrgetForm.getFieldsValue(['metrics', name, 'metricType', 'second']).metrics[
                                         name
                                       ]?.metricType?.second,
-                                    )}
+                                    )} */}
                                     <Form.Item>
                                       <Button
                                         type="dashed"
