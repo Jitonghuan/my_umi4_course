@@ -50,7 +50,7 @@ const { Search } = Input;
 export default function LogMonitor(props: any) {
   let type = props.location.state?.type || props.location.query?.type;
   let recordData = props.location.state?.recordData;
-  // console.log('props.location', props.location);
+  console.log('props.location', props.location, '-----', type);
   // console.log('recordData', recordData);
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [appOptions] = useAppOptions();
@@ -186,12 +186,13 @@ export default function LogMonitor(props: any) {
               AgeBuckets: item.AgeBuckets,
             };
           }
+
           continueMetricList.push({
             filters: item.filters,
             metricDesc: item.metricDesc.forth,
             metricName: item.metricName.first,
             metricType: item.metricType.second,
-            metricValueField: item.metricValueField.third,
+            metricValueField: item?.metricValueField?.third || '',
             metricOptions: continueMetricOptionsObject,
           });
         });
@@ -201,7 +202,7 @@ export default function LogMonitor(props: any) {
           metricDesc: targetParams.metricDesc,
           metricName: targetParams.metricName,
           metricType: targetParams.metricType,
-          metricValueField: targetParams.metricValueField,
+          metricValueField: targetParams.metricValueField || '',
           metricOptions: metricOptionsObject,
         });
         let allMetricsList = metricsList.concat(continueMetricList);
