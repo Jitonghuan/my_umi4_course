@@ -50,8 +50,6 @@ const { Search } = Input;
 export default function LogMonitor(props: any) {
   let type = props.location.state?.type || props.location.query?.type;
   let recordData = props.location.state?.recordData;
-  console.log('props.location', props.location, '-----', type);
-  // console.log('recordData', recordData);
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [appOptions] = useAppOptions();
   const [tagrgetForm] = Form.useForm();
@@ -72,6 +70,9 @@ export default function LogMonitor(props: any) {
   const [indexModeFieldsOption, getIndexModeFields] = useIndexModeFieldsOptions();
   const [editDisable, setEditDisable] = useState<boolean>(false);
   const [selectNum, setSelectNum] = useState<string>('');
+  // const [, updateState] = React.useState();
+  // const forceUpdate = React.useCallback(() => updateState({} as any), []);
+
   const labelFun = (value: Item[]) => {
     setLabelTableData(value);
   };
@@ -81,6 +82,9 @@ export default function LogMonitor(props: any) {
   };
   const selectTarget = (value: any) => {
     setCurrentTarget(value);
+    console.log(222);
+
+    // forceUpdate();
   };
   const selectEnvType = (value: string) => {
     getEnvCodeList(value);
@@ -161,7 +165,6 @@ export default function LogMonitor(props: any) {
     // setSelectNum('3');
     logForm.validateFields().then((logparams) => {
       tagrgetForm.validateFields().then((targetParams) => {
-        // console.log('params1,params2', logparams, '----', targetParams);
         let metricsList: any = []; //传参的整个metrics数组对象
         let metricOptionsObject = {}; //根据metrics对象选择值拿到的
         let continueMetricList: any = []; //继续新增的指标项
@@ -232,8 +235,6 @@ export default function LogMonitor(props: any) {
         }
       });
     });
-    // let params1 = logForm.getFieldsValue();
-    // let params2 = tagrgetForm.getFieldsValue();
   };
 
   //编辑回显数据
@@ -394,7 +395,7 @@ export default function LogMonitor(props: any) {
                       <Input style={{ width: '352px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
                     </Form.Item>
                     <Form.Item
-                      shouldUpdate={(prev, curr) => prev.metricType !== curr.metricType}
+                      // shouldUpdate={(prev, curr) => prev.metricType !== curr.metricType}
                       label="指标类型"
                       name="metricType"
                       rules={[{ required: true, message: '请选择指标类型!' }]}
@@ -438,6 +439,7 @@ export default function LogMonitor(props: any) {
                         label="指标值字段"
                         name="metricValueField"
                         rules={[{ required: true, message: '请选择指标值字段!' }]}
+                        shouldUpdate
                       >
                         <Select
                           style={{ width: '352px' }}
@@ -450,6 +452,7 @@ export default function LogMonitor(props: any) {
                       label="指标描述"
                       name="metricDesc"
                       rules={[{ required: true, message: '请选择指标描述!' }]}
+                      shouldUpdate
                     >
                       <Input style={{ width: 352 }} disabled={editDisable}></Input>
                     </Form.Item>
@@ -520,83 +523,130 @@ export default function LogMonitor(props: any) {
                           {fields.map(({ key, name, ...restField }) => (
                             <Space key={key} style={{ marginBottom: 8, display: 'block' }} direction="vertical">
                               <Form.Item
-                                {...restField}
-                                label="指标名称"
-                                name={[name, 'metricName', 'first']}
-                                rules={[{ required: true, message: '输入指标名称' }]}
+                                noStyle
+                                shouldUpdate={(prevValues, curValues) =>
+                                  prevValues.name.metricName == curValues.name.metricName
+                                }
                               >
-                                <Input
-                                  style={{ width: '352px' }}
-                                  disabled={editDisable}
-                                  placeholder="指标名称仅支持数字、字母、下划线"
-                                ></Input>
-                              </Form.Item>
-                              <Form.Item
-                                label="指标类型"
-                                {...restField}
-                                name={[name, 'metricType', 'second']}
-                                rules={[{ required: true, message: '选择指标类型' }]}
-                              >
-                                <Select
-                                  style={{ width: '352px' }}
-                                  options={targetOptions}
-                                  disabled={editDisable}
-                                  // value={currentTarget}
-                                  // name={[name,'currentTarget']}
-                                  onChange={selectTarget}
-                                ></Select>
-                              </Form.Item>
-                              {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second ===
-                                'histogram' && (
-                                <Form.Item label="Buckets" name={[name, 'buckets']}>
+                                <Form.Item
+                                  {...restField}
+                                  label="指标名称"
+                                  name={[name, 'metricName', 'first']}
+                                  rules={[{ required: true, message: '输入指标名称' }]}
+                                >
                                   <Input
-                                    style={{ width: 352 }}
-                                    placeholder="格式: 0.001;0.05;0.1   	冒号分割"
+                                    style={{ width: '352px' }}
                                     disabled={editDisable}
+                                    placeholder="指标名称仅支持数字、字母、下划线"
                                   ></Input>
                                 </Form.Item>
-                              )}
-                              {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second ===
-                                'summary' && (
-                                <div>
-                                  <Form.Item label="Objectives" name={[name, 'objectives']}>
-                                    <Input
-                                      style={{ width: 352 }}
-                                      placeholder="格式: 0.5: 0.05;0.1:0.01 冒号分割"
-                                      disabled={editDisable}
-                                    ></Input>
-                                  </Form.Item>
-                                  <Form.Item label="MaxAge" name={[name, 'MaxAge']}>
-                                    <Input style={{ width: 352 }} placeholder="MaxAge" disabled={editDisable}></Input>
-                                  </Form.Item>
-                                  <Form.Item label="AgeBuckets" name={[name, 'AgeBuckets']}>
-                                    <Input
-                                      style={{ width: 352 }}
-                                      placeholder="AgeBuckets"
-                                      disabled={editDisable}
-                                    ></Input>
-                                  </Form.Item>
-                                </div>
-                              )}
-                              {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second !==
-                                'counter' && (
-                                <div>
-                                  <Form.Item
-                                    label="指标值字段"
-                                    {...restField}
-                                    name={[name, 'metricValueField', 'third']}
-                                    rules={[{ required: true, message: '选择指标值字段' }]}
-                                  >
-                                    <Select
-                                      style={{ width: '352px' }}
-                                      options={indexModeFieldsOption}
-                                      disabled={editDisable}
-                                    ></Select>
-                                  </Form.Item>
-                                </div>
-                              )}
 
-                              <Form.Item label="指标描述" name={[name, 'metricDesc', 'forth']} {...restField}>
+                                <Form.Item
+                                  label="指标类型"
+                                  {...restField}
+                                  name={[name, 'metricType', 'second']}
+                                  rules={[{ required: true, message: '选择指标类型' }]}
+                                >
+                                  <Select
+                                    style={{ width: '352px' }}
+                                    options={targetOptions}
+                                    disabled={editDisable}
+                                    // value={currentTarget}
+                                    // name={[name,'currentTarget']}
+                                    onChange={selectTarget}
+                                  ></Select>
+                                </Form.Item>
+
+                                <Form.Item noStyle shouldUpdate>
+                                  {() => {
+                                    if (
+                                      tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second ===
+                                      'histogram'
+                                    ) {
+                                      return (
+                                        <Form.Item
+                                          dependencies={[name, 'metricType', 'second']}
+                                          label="Buckets"
+                                          name={[name, 'buckets']}
+                                        >
+                                          <Input
+                                            style={{ width: 352 }}
+                                            placeholder="格式: 0.001;0.05;0.1   	冒号分割"
+                                            disabled={editDisable}
+                                          ></Input>
+                                        </Form.Item>
+                                      );
+                                    } else if (
+                                      tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second ===
+                                      'summary'
+                                    ) {
+                                      return (
+                                        <div>
+                                          <Form.Item
+                                            dependencies={[name, 'metricType', 'second']}
+                                            label="Objectives"
+                                            name={[name, 'objectives']}
+                                          >
+                                            <Input
+                                              style={{ width: 352 }}
+                                              placeholder="格式: 0.5: 0.05;0.1:0.01 冒号分割"
+                                              disabled={editDisable}
+                                            ></Input>
+                                          </Form.Item>
+                                          <Form.Item
+                                            dependencies={[name, 'metricType', 'second']}
+                                            label="MaxAge"
+                                            name={[name, 'MaxAge']}
+                                          >
+                                            <Input
+                                              style={{ width: 352 }}
+                                              placeholder="MaxAge"
+                                              disabled={editDisable}
+                                            ></Input>
+                                          </Form.Item>
+                                          <Form.Item
+                                            dependencies={[name, 'metricType', 'second']}
+                                            label="AgeBuckets"
+                                            name={[name, 'AgeBuckets']}
+                                          >
+                                            <Input
+                                              style={{ width: 352 }}
+                                              placeholder="AgeBuckets"
+                                              disabled={editDisable}
+                                            ></Input>
+                                          </Form.Item>
+                                        </div>
+                                      );
+                                    } else if (
+                                      tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second !==
+                                      'counter'
+                                    ) {
+                                      return (
+                                        <Form.Item
+                                          label="指标值字段"
+                                          {...restField}
+                                          name={[name, 'metricValueField', 'third']}
+                                          rules={[{ required: true, message: '选择指标值字段' }]}
+                                          dependencies={[name, 'metricType', 'second']}
+                                        >
+                                          <Select
+                                            style={{ width: '352px' }}
+                                            options={indexModeFieldsOption}
+                                            disabled={editDisable}
+                                          ></Select>
+                                        </Form.Item>
+                                      );
+                                    }
+                                  }}
+                                </Form.Item>
+                              </Form.Item>
+
+                              <Form.Item
+                                dependencies={[name, 'metricType', 'second']}
+                                label="指标描述"
+                                name={[name, 'metricDesc', 'forth']}
+                                {...restField}
+                              >
                                 <Input style={{ width: 352 }} disabled={editDisable}></Input>
                               </Form.Item>
                               <Form.List name={[name, 'filters']}>
