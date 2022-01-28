@@ -5,7 +5,7 @@
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Form, Select, Button, DatePicker, message, Switch } from 'antd';
-import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import * as echarts from 'echarts';
 import moment from 'moment';
 import PageContainer from '@/components/page-container';
@@ -31,6 +31,8 @@ const globalTopo: React.FC = () => {
   const [selectTime, setSelectTime] = useState(moment().subtract(2, 'minutes'));
   const [selectEnv, setSelectEnv] = useState('hbos-dev');
   const [isMock, setIsMock] = useState(false);
+  const [isExpand, setIsExpand] = useState(true); // true显示全屏展开  false显示全屏收起。
+
   const [envOptions] = useEnvOptions();
 
   const TopoRef = useRef<any>();
@@ -39,9 +41,13 @@ const globalTopo: React.FC = () => {
     clickId && onAppClick(clickId);
   }, [clickId]);
 
-  const expandAll = () => {
-    TopoRef?.current?.expandAll();
-  };
+  const expandAll = useCallback(() => {
+    if (isExpand) {
+      TopoRef?.current?.expandAll();
+    } else {
+      TopoRef?.current?.collapseAll();
+    }
+  }, [isExpand]);
 
   const handleFullScreen = useCallback(() => {
     if (isFullScreen) {
@@ -174,7 +180,7 @@ const globalTopo: React.FC = () => {
 
       array.push({
         id: id,
-        name: 'app:' + id,
+        name: id,
         chartData: {
           requests,
           averageResponseTime,
@@ -242,8 +248,12 @@ const globalTopo: React.FC = () => {
               >
                 红线追踪
               </Button>
-              <Button type="default" icon={<PlusCircleOutlined />} onClick={expandAll}>
-                全部展开
+              <Button
+                type="default"
+                icon={isExpand ? <PlusCircleOutlined /> : <MinusCircleOutlined />}
+                onClick={expandAll}
+              >
+                {isExpand ? '全部展开' : '全部收起'}
               </Button>
               <Button
                 type="default"
@@ -274,6 +284,7 @@ const globalTopo: React.FC = () => {
                 selectEnv={selectEnv}
                 isMock={isMock}
                 setIsMock={setIsMock}
+                setIsExpand={setIsExpand}
               />
               <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
             </div>

@@ -14,6 +14,7 @@ import './topo-register';
 interface ITopoProps {
   onNodeClick: (id: string) => void;
   onRedLineClick: (id: string) => void;
+  setIsExpand: any;
   setIsMock: any;
   selectTime: Moment;
   selectEnv: string;
@@ -25,9 +26,10 @@ const Topo = memo(
     //传给父组件 「全部展开」 的方法
     useImperativeHandle(ref, () => ({
       expandAll,
+      collapseAll,
     }));
 
-    const { onNodeClick, onRedLineClick } = props;
+    const { onNodeClick, onRedLineClick, setIsExpand } = props;
     const [originData, setOriginData] = useState<any>({});
 
     let graph = null as any;
@@ -120,6 +122,7 @@ const Topo = memo(
 
     useEffect(() => {
       props.setIsMock(false);
+      setIsExpand(true);
       getTopoData();
     }, [props.selectTime, props.selectEnv]);
 
@@ -280,7 +283,7 @@ const Topo = memo(
       });
       graph.on('combo:click', (evt: any) => {
         if (evt.target.get('name') === 'combo-marker-shape') {
-          handleCollapse(evt);
+          handleCollapse(evt.item);
         }
       });
     };
@@ -317,8 +320,8 @@ const Topo = memo(
      * @param evt
      * 基本思路：先找到对应的region的node，从存储combo的arr中删掉收起的combo，同时从graph上移除，从要渲染的数组中移除收起region包含的app
      */
-    const handleCollapse = (evt: any) => {
-      const regionId = evt.item['_cfg']['model']['regionCode'];
+    const handleCollapse = (item: any) => {
+      const regionId = item['_cfg']['model']['regionCode'];
       if (regionId) {
         originData.nodes.forEach((node: any) => {
           if (node.id == regionId) {
@@ -328,11 +331,14 @@ const Topo = memo(
       }
 
       let comboIdx = comboArr.findIndex((combo: any) => combo.regionCode == regionId);
-      comboArr.splice(comboIdx, 1);
+      if (comboArr.length == 1) {
+        comboArr = [];
+      } else {
+        comboArr.splice(comboIdx, 1);
+      }
 
-      evt.item.changeVisibility(false);
-      graph.uncombo(evt.item);
-
+      item.changeVisibility(false);
+      graph.uncombo(item);
       const newArr = expandArr.filter(
         (item: any) => !item.nodeRegionCode || (item.nodeType !== 'region' && item.nodeRegionCode !== regionId),
       );
@@ -340,7 +346,6 @@ const Topo = memo(
       graph.data({ nodes: newArr, edges: originData.edges });
       expandArr = newArr;
       graph.render();
-
       comboArr.forEach((combo: any) => {
         graph.createCombo(
           {
@@ -353,6 +358,7 @@ const Topo = memo(
           combo.nodes,
         );
       });
+      getExpandStatus();
     };
 
     /**
@@ -363,6 +369,19 @@ const Topo = memo(
       const { item } = evt;
       const model = item && item.getModel();
       regionNodeExpand(model.id);
+    };
+
+    const getExpandStatus = () => {
+      const collapseNode = expandArr.filter((item: any) => {
+        if (item.nodeType == 'region') {
+          return item;
+        }
+      });
+      if (collapseNode.length > 0) {
+        setIsExpand(true);
+      } else {
+        setIsExpand(false);
+      }
     };
 
     /**
@@ -406,6 +425,7 @@ const Topo = memo(
           combo.nodes,
         );
       });
+      getExpandStatus();
     };
 
     /**
@@ -421,6 +441,26 @@ const Topo = memo(
       collapseNode.map((item: any) => {
         regionNodeExpand(item.id);
       });
+    };
+
+    const collapseAll = () => {
+      //
+      const regionData: any[] = [];
+      const appData = [];
+
+      originData.nodes.forEach((node: any) => {
+        nodeMap.set(node.id, node);
+        if (node.nodeType == 'region') {
+          regionData.push(node);
+        } else {
+          appData.push(node);
+        }
+      });
+      graph.data({ nodes: regionData, edges: originData.edges });
+      expandArr = regionData;
+      comboArr = [];
+      graph.render();
+      getExpandStatus();
     };
 
     /**

@@ -5,19 +5,19 @@
  */
 import G6, { ModelConfig } from '@antv/g6';
 
-const DANGER_COLOR = '#F5222D';
+const dangerous_COLOR = '#F5222D';
 const WARNING_COLOR = '#FFC020';
 const NORMAL_COLOR = '#3592FE';
 const arrowStyleType = {
-  dangerous: {
-    stroke: DANGER_COLOR,
+  dangerousous: {
+    stroke: dangerous_COLOR,
     lineAppendWidth: 10,
     cursor: 'pointer',
     lineDash: [4, 4, 4, 4],
     lineWidth: 1,
     endArrow: {
       path: G6.Arrow.triangle(),
-      fill: DANGER_COLOR,
+      fill: dangerous_COLOR,
       strokeOpacity: 0,
     },
   },
@@ -51,22 +51,22 @@ export const OriginData = {
     { id: 'region0', nodeLabel: '0', type: 'region-node', status: 'normal', nodeType: 'region' },
     { id: 'region1', nodeLabel: '1', type: 'region-node', status: 'normal', nodeType: 'region' },
     { id: 'region2', nodeLabel: '2', type: 'region-node', status: 'warning', nodeType: 'region' },
-    { id: 'region3', nodeLabel: '3', type: 'region-node', status: 'danger', nodeType: 'region' },
+    { id: 'region3', nodeLabel: '3', type: 'region-node', status: 'dangerous', nodeType: 'region' },
     { id: 'region4', nodeLabel: '4', type: 'region-node', status: 'normal', nodeType: 'region' },
     { id: 'region5', nodeLabel: '5', type: 'region-node', status: 'normal', nodeType: 'region' },
 
     { id: 'node0', nodeLabel: '0', status: 'normal', nodeRegionCode: 'region0', nodeType: 'app' },
     { id: 'node1', nodeLabel: '1', status: 'normal', nodeRegionCode: 'region1', nodeType: 'app' },
     { id: 'node2', nodeLabel: '2', status: 'warning', nodeRegionCode: 'region2', nodeType: 'app' },
-    { id: 'node3', nodeLabel: '3', status: 'danger', nodeRegionCode: 'region3', nodeType: 'app' },
+    { id: 'node3', nodeLabel: '3', status: 'dangerous', nodeRegionCode: 'region3', nodeType: 'app' },
     { id: 'node4', nodeLabel: '4', status: 'normal', nodeRegionCode: 'region4', nodeType: 'app' },
     { id: 'node5', nodeLabel: '5', status: 'normal', nodeRegionCode: 'region4', nodeType: 'app' },
-    { id: 'node6', nodeLabel: '6', status: 'danger', nodeRegionCode: 'region1', nodeType: 'app' },
+    { id: 'node6', nodeLabel: '6', status: 'dangerous', nodeRegionCode: 'region1', nodeType: 'app' },
     { id: 'node7', nodeLabel: '7', status: 'normal', nodeRegionCode: 'region1', nodeType: 'app' },
     { id: 'node8', nodeLabel: '8', status: 'normal', nodeRegionCode: 'region2', nodeType: 'app' },
     { id: 'node9', nodeLabel: '9', status: 'normal', nodeRegionCode: 'region2', nodeType: 'app' },
     { id: 'node10', nodeLabel: '10', status: 'normal', nodeRegionCode: 'region2', nodeType: 'app' },
-    { id: 'node11', nodeLabel: '11', status: 'danger', nodeRegionCode: 'region2', nodeType: 'app' },
+    { id: 'node11', nodeLabel: '11', status: 'dangerous', nodeRegionCode: 'region2', nodeType: 'app' },
     { id: 'node12', nodeLabel: '12', status: 'normal', nodeRegionCode: 'region2', nodeType: 'app' },
     { id: 'node13', nodeLabel: '13', status: 'normal', nodeRegionCode: 'region2', nodeType: 'app' },
     { id: 'node14', nodeLabel: '14', status: 'normal', nodeRegionCode: 'region3', nodeType: 'app' },
@@ -113,8 +113,8 @@ export const OriginData = {
       rt: '124ms',
       suc: '97%',
       qps: '234/s',
-      status: 'danger',
-      style: arrowStyleType.dangerous,
+      status: 'dangerous',
+      style: arrowStyleType.dangerousous,
     },
     {
       source: 'node0',
@@ -149,8 +149,8 @@ export const OriginData = {
       rt: '124ms',
       suc: '97%',
       qps: '234/s',
-      status: 'danger',
-      style: arrowStyleType.dangerous,
+      status: 'dangerous',
+      style: arrowStyleType.dangerousous,
     },
     {
       source: 'node1',
@@ -212,8 +212,8 @@ export const OriginData = {
       rt: '124ms',
       suc: '97%',
       qps: '234/s',
-      status: 'danger',
-      style: arrowStyleType.dangerous,
+      status: 'dangerous',
+      style: arrowStyleType.dangerousous,
     },
     {
       source: 'node3',
