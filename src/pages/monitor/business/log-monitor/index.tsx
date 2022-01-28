@@ -393,6 +393,7 @@ export default function LogMonitor(props: any) {
                       <Input style={{ width: '352px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
                     </Form.Item>
                     <Form.Item
+                      shouldUpdate={(prev, curr) => prev.metricType !== curr.metricType}
                       label="指标类型"
                       name="metricType"
                       rules={[{ required: true, message: '请选择指标类型!' }]}
@@ -576,18 +577,9 @@ export default function LogMonitor(props: any) {
                                   </Form.Item>
                                 </div>
                               )}
-
-                              {console.log(
-                                'tagrgetForm',
-                                tagrgetForm.getFieldsValue().metrics[name]?.metricType?.second,
-                              )}
                               {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second !==
                                 'counter' && (
                                 <div>
-                                  {console.log(
-                                    'test=test',
-                                    tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second,
-                                  )}
                                   <Form.Item
                                     label="指标值字段"
                                     {...restField}
