@@ -134,7 +134,7 @@ export default function Dashboard(props: any) {
               columns={colunms}
               pagination={false}
               // onChange={pageSizeClick}
-              scroll={{ y: window.innerHeight - 635, x: '100%' }}
+              scroll={{ y: window.innerHeight - 1010, x: '100%' }}
               dataSource={item?.MonitorBizMetric}
               rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
             />
