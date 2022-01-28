@@ -334,6 +334,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           <Select
             style={{ width: '400px' }}
             allowClear
+            showSearch
             options={ruleTemplatesList as OptionProps[]}
             onChange={(e: string) => {
               setRuleTemplate(e);
