@@ -27,7 +27,7 @@ export default function Dashboard(props: any) {
   const activeKey = activeKeyMap[currRoute!] || currRoute;
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [appOptions] = useAppOptions();
-  const [listSource, tablesource, getListMonitor] = useGetListMonitor();
+  const [listSource, tablesource, total, getListMonitor] = useGetListMonitor();
   const [enableMonitor] = useEnableMonitor();
   const [disableMonitor] = useDisableMonitor();
 
@@ -172,7 +172,7 @@ export default function Dashboard(props: any) {
               }}
             >
               <Form.Item label="环境大类" name="envTypeCode">
-                <Select showSearch style={{ width: 150 }} options={envTypeData} onChange={selectEnvType} />
+                <Select showSearch style={{ width: 110 }} options={envTypeData} onChange={selectEnvType} />
               </Form.Item>
               <Form.Item label="环境：" name="envCode">
                 <Select options={envCodeOption} allowClear showSearch style={{ width: 120 }} />
@@ -181,10 +181,10 @@ export default function Dashboard(props: any) {
                 <Select showSearch allowClear style={{ width: 120 }} options={appOptions} />
               </Form.Item>
               <Form.Item name="monitorName" label="监控名称">
-                <Input placeholder="按监控名称模糊搜索" style={{ width: 200 }} />
+                <Input placeholder="按监控名称模糊搜索" style={{ width: 180 }} />
               </Form.Item>
               <Form.Item name="metricName" label="指标名称">
-                <Input placeholder="按指标名称模糊搜索" style={{ width: 200 }} />
+                <Input placeholder="按指标名称模糊搜索" style={{ width: 180 }} />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
@@ -217,6 +217,7 @@ export default function Dashboard(props: any) {
                 console.log(page);
                 getListMonitor(page, 5);
               },
+              total: total,
               pageSize: 5,
             }}
             dataSource={listData}

@@ -71,6 +71,7 @@ export function useGetListMonitor() {
       if (result?.success) {
         let ListSource = result?.data?.dataSource || [];
         setListSource(ListSource);
+        setTotal(result?.data?.pageInfo.total);
         ListSource?.map((item: any) => {
           item?.MonitorBizMetric.map((filters: any) => {
             itemString = JSON.stringify(filters.filters || {});
@@ -83,7 +84,7 @@ export function useGetListMonitor() {
     });
   };
 
-  return [listSource, tablesource, getListMonitor];
+  return [listSource, tablesource, total, getListMonitor];
 }
 
 export function useEnableMonitor() {

@@ -5,7 +5,7 @@ export const addMonitor = `${appConfig.apiPrefix}/monitorManage/biz/addMonitor`;
 /* 2、PUT 修改业务监控 */
 export const updateMonitor = `${appConfig.apiPrefix}/monitorManage/biz/updateMonitor`;
 /* 3、DELETE 删除业务监控 */
-export const delMonitor = `${appConfig.apiPrefix}/monitorManage/biz/delMonitor`;
+export const delMonitor = `${appConfig.apiPrefix}/monitorManage/biz/deleteMonitor`;
 
 /* 4、GET 业务监控列表 */
 export const getListMonitor = `${appConfig.apiPrefix}/monitorManage/biz/listMonitor`;

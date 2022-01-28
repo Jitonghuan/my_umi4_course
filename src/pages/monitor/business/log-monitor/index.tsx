@@ -576,7 +576,8 @@ export default function LogMonitor(props: any) {
                                   </Form.Item>
                                 </div>
                               )}
-                              {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.third !==
+
+                              {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second !==
                                 'counter' && (
                                 <Form.Item
                                   label="指标值字段"
@@ -660,7 +661,7 @@ export default function LogMonitor(props: any) {
                                   </>
                                 )}
                               </Form.List>
-                              <DeleteFilled style={{ color: 'lightsteelblue' }} onClick={() => remove(name)} />
+                              <DeleteFilled style={{ color: '#346c9c' }} onClick={() => remove(name)} />
                               <Divider />
                             </Space>
                           ))}
