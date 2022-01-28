@@ -72,6 +72,9 @@ export default function LogMonitor(props: any) {
   const [indexModeFieldsOption, getIndexModeFields] = useIndexModeFieldsOptions();
   const [editDisable, setEditDisable] = useState<boolean>(false);
   const [selectNum, setSelectNum] = useState<string>('');
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({} as any), []);
+
   const labelFun = (value: Item[]) => {
     setLabelTableData(value);
   };
@@ -81,6 +84,7 @@ export default function LogMonitor(props: any) {
   };
   const selectTarget = (value: any) => {
     setCurrentTarget(value);
+    forceUpdate();
   };
   const selectEnvType = (value: string) => {
     getEnvCodeList(value);
