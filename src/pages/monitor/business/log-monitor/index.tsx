@@ -50,7 +50,7 @@ const { Search } = Input;
 export default function LogMonitor(props: any) {
   let type = props.location.state?.type || props.location.query?.type;
   let recordData = props.location.state?.recordData;
-  // console.log('props.location', props.location);
+  console.log('props.location', props.location, '-----', type);
   // console.log('recordData', recordData);
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [appOptions] = useAppOptions();
@@ -190,12 +190,13 @@ export default function LogMonitor(props: any) {
               AgeBuckets: item.AgeBuckets,
             };
           }
+
           continueMetricList.push({
             filters: item.filters,
             metricDesc: item.metricDesc.forth,
             metricName: item.metricName.first,
             metricType: item.metricType.second,
-            metricValueField: item.metricValueField.third,
+            metricValueField: item?.metricValueField?.third || '',
             metricOptions: continueMetricOptionsObject,
           });
         });
@@ -205,7 +206,7 @@ export default function LogMonitor(props: any) {
           metricDesc: targetParams.metricDesc,
           metricName: targetParams.metricName,
           metricType: targetParams.metricType,
-          metricValueField: targetParams.metricValueField,
+          metricValueField: targetParams.metricValueField || '',
           metricOptions: metricOptionsObject,
         });
         let allMetricsList = metricsList.concat(continueMetricList);
@@ -397,6 +398,7 @@ export default function LogMonitor(props: any) {
                       <Input style={{ width: '352px' }} placeholder="指标名称仅支持数字、字母、下划线"></Input>
                     </Form.Item>
                     <Form.Item
+                      shouldUpdate={(prev, curr) => prev.metricType !== curr.metricType}
                       label="指标类型"
                       name="metricType"
                       rules={[{ required: true, message: '请选择指标类型!' }]}
@@ -580,18 +582,9 @@ export default function LogMonitor(props: any) {
                                   </Form.Item>
                                 </div>
                               )}
-
-                              {console.log(
-                                'tagrgetForm',
-                                tagrgetForm.getFieldsValue().metrics[name]?.metricType?.second,
-                              )}
                               {tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second !==
                                 'counter' && (
                                 <div>
-                                  {console.log(
-                                    'test=test',
-                                    tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second,
-                                  )}
                                   <Form.Item
                                     label="指标值字段"
                                     {...restField}
