@@ -4,6 +4,7 @@
 
 import { defineConfig } from 'umi';
 import routes, { baseRoutePath } from '../src/routes.config';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 
 // 资源引用的根路径，此变量与项目在 nginx 中匹配前缀相关，如果
 const sourceRoot = '/';
@@ -18,7 +19,9 @@ export default defineConfig({
 
   // 文件依赖路径别名，默认支持 @/ 指向 src/
   alias: {},
-
+  chainWebpack(config, { webpack }) {
+    config.plugin('monaco-editor').use(MonacoWebpackPlugin);
+  },
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {

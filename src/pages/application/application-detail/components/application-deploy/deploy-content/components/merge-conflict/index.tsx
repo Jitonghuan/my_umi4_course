@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, List, Tooltip, message } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import CodeMirrorEditor from './CodeMirrorEditor';
+import MonacoEditor from './MonacoEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
 import { pushMergeMessage } from '@/pages/application/service';
@@ -123,12 +124,18 @@ export default function MergeConflict(prop: MergeProp) {
                 {chooseFile?.resolved ? '标记为未解决' : '标记为已解决'}
               </Button>
             </div>
-            <CodeMirrorEditor
+            {/* <CodeMirrorEditor
               {...chooseFile}
               value={chooseFile?.releaseBranch?.context}
               orig={chooseFile?.featureBranch?.context}
               onchange={handleChange}
-            />
+            /> */}
+            <MonacoEditor
+              {...chooseFile}
+              value={chooseFile?.releaseBranch?.context}
+              orig={chooseFile?.featureBranch?.context}
+              onchange={handleChange}
+            ></MonacoEditor>
           </div>
         </div>
       </Modal>
