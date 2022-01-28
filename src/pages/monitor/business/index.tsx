@@ -208,7 +208,7 @@ export default function Dashboard(props: any) {
         </div>
       </FilterCard>
       <ContentCard>
-        {listData ? (
+        {listData.length !== 0 ? (
           <List
             itemLayout="vertical"
             size="large"
