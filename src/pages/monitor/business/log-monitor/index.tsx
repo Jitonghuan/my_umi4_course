@@ -234,23 +234,32 @@ export default function LogMonitor(props: any) {
       });
       return;
     }
+
     logForm.setFieldsValue({
       monitorName: recordData?.monitorName,
       appCode: recordData?.appCode,
       index: recordData?.index,
     });
+    if (recordData?.envCode) {
+      getRuleIndex(recordData?.envCode);
+    }
+
     if (recordData?.envCode && recordData?.index) {
       getIndexModeFields(recordData?.envCode, recordData?.index);
     }
 
     if (recordData?.envCode.indexOf('dev') != -1) {
       setCurrentEnvType('dev');
+      getEnvCodeList('dev');
     } else if (recordData?.envCode.indexOf('test') != -1) {
       setCurrentEnvType('test');
+      getEnvCodeList('test');
     } else if (recordData?.envCode.indexOf('pre') != -1) {
       setCurrentEnvType('pre');
+      getEnvCodeList('pre');
     } else if (recordData?.envCode.indexOf('prod') != -1) {
       setCurrentEnvType('prod');
+      getEnvCodeList('prod');
     }
     setCurrentEnvCode(recordData?.envCode);
     let metricsArry: any = [];
