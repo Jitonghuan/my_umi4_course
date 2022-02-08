@@ -1,42 +1,40 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
-// import monaco from 'monaco-editor';
-// import monaco from '@monaco-editor/react';
-// import { editor } from 'monaco-editor';
 import * as monaco from 'monaco-editor';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import './monaco.less';
 import detect from 'language-detect';
+import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
+import ReactDOM from 'react-dom';
 
 export default function MonacoEditor(prop: any) {
-  const { filePath, value, orig, releaseBranch, featureBranch, resolved, onchange } = prop;
+  const { filePath, context, resolved, onchange } = prop;
   const ext = useMemo(() => detect.filename(filePath)?.toLowerCase(), [filePath]);
 
-  const [dv, setDv] = useState<editor.IStandaloneDiffEditor | undefined>(undefined);
+  const [dv, setDv] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
 
   const codeContainer = useCallback((node) => {
     if (node) {
-      var diffEditor = monaco.editor.createDiffEditor(node, {});
+      var editor = monaco.editor.create(node, {});
 
-      setDv(diffEditor);
+      setDv(editor);
     }
   }, []);
 
   useEffect(() => {
     if (dv) {
       dv.updateOptions({ readOnly: resolved });
-      const editor = dv.getModifiedEditor();
-      const messageContribution: any = editor.getContribution('editor.contrib.messageController');
-      const diposable = editor.onDidAttemptReadOnlyEdit(() => {
-        messageContribution.showMessage('已解决模式下不能编辑', editor.getPosition());
+      const messageContribution: any = dv.getContribution('editor.contrib.messageController');
+      const diposable = dv?.onDidAttemptReadOnlyEdit(() => {
+        messageContribution.showMessage('已解决模式下不能编辑', dv?.getPosition());
       });
     }
   }, [resolved]);
 
   useEffect(() => {
     if (dv) {
-      const d = dv.getModifiedEditor().onDidChangeModelContent((a) => {
-        const editor = dv.getModifiedEditor();
-        onchange(editor.getModel()?.getValue());
+      const d = dv.onDidChangeModelContent((a) => {
+        const editor = dv.getModel();
+        onchange(editor?.getValue());
       });
       return () => d.dispose();
     }
@@ -44,35 +42,20 @@ export default function MonacoEditor(prop: any) {
   useEffect(() => {
     if (dv) {
       const model = dv.getModel();
-      if (model?.modified?.getValue() != value || model?.original?.getValue() != orig) {
-        let originalModel = monaco.editor.createModel(orig, ext);
-        let modifiedModel = monaco.editor.createModel(value, ext);
+      if (model?.getValue() != context) {
+        let modifiedModel = monaco.editor.createModel(context, ext);
 
-        dv.setModel({
-          original: originalModel,
-          modified: modifiedModel,
-        });
-        // const m = dv.getModel();
-        // if (m) {
-        //   monaco.editor.setModelLanguage(m.original, ext);
-        //   monaco.editor.setModelLanguage(m.modified, ext);
-        // }
-
+        dv.setModel(modifiedModel);
         return () => {
-          originalModel.dispose();
-          modifiedModel.dispose();
+          //   model?.dispose();
         };
       }
     }
   }, [dv, filePath]);
   return (
     <div>
-      <div className="editor-header-title">
-        <div>{featureBranch.branchName}</div>
-        <div>{releaseBranch.branchName}</div>
-      </div>
       <div style={{ height: '100%', minHeight: '590px' }}>
-        <div style={{ height: '500px' }} ref={codeContainer}></div>
+        <div style={{ height: '590px' }} ref={codeContainer}></div>
       </div>
     </div>
   );

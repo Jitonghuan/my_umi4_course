@@ -2,10 +2,12 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, List, Tooltip, message } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import CodeMirrorEditor from './CodeMirrorEditor';
+import MonacoEditorMerge from './MonacoEditorMerge';
 import MonacoEditor from './MonacoEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
 import { pushMergeMessage } from '@/pages/application/service';
+import context from '@/pages/application/application-detail/context';
 
 export default function MergeConflict(prop: MergeProp) {
   const { visible, handleCancel, mergeMessage, releaseBranch } = prop;
@@ -41,7 +43,7 @@ export default function MergeConflict(prop: MergeProp) {
   const handleOk = () => {
     const params = allFile.map((item: conflictItem) => ({
       filePath: item.filePath,
-      context: item.releaseBranch.context,
+      context: item.context,
     }));
     setLoading(true);
     pushMergeMessage({ releaseBranch: releaseBranch, messages: params })
@@ -56,22 +58,31 @@ export default function MergeConflict(prop: MergeProp) {
   };
   // 编辑器代码改变时同步更新数据
   const handleChange = (value: string) => {
-    // if (value === chooseFile.releaseBranch.context) {
-    //   return;
-    // }
+    // 如果只是单一编辑器
     let f: any;
     let newArr = allFile.map((item: conflictItem) => {
       if (item.id === chooseFile.id) {
-        item.releaseBranch.context = value;
+        item.context = value;
         f = item;
       }
       return item;
     });
-
     setAllFile(newArr);
     if (f) {
       setChooseFile({ ...f });
     }
+    // let f: any;
+    // let newArr = allFile.map((item: conflictItem) => {
+    //   if (item.id === chooseFile.id) {
+    //     item.releaseBranch.context = value;
+    //     f = item;
+    //   }
+    //   return item;
+    // });
+    // setAllFile(newArr);
+    // if (f) {
+    //   setChooseFile({ ...f });
+    // }
   };
   return (
     <>
@@ -130,12 +141,13 @@ export default function MergeConflict(prop: MergeProp) {
               orig={chooseFile?.featureBranch?.context}
               onchange={handleChange}
             /> */}
-            <MonacoEditor
+            {/* <MonacoEditorMerge
               {...chooseFile}
               value={chooseFile?.releaseBranch?.context}
               orig={chooseFile?.featureBranch?.context}
               onchange={handleChange}
-            ></MonacoEditor>
+            ></MonacoEditorMerge> */}
+            <MonacoEditor onchange={handleChange} {...chooseFile}></MonacoEditor>
           </div>
         </div>
       </Modal>
