@@ -401,7 +401,7 @@ if (G6) {
                   lineDash: [4, 4, 4, 4],
                   lineDashOffset: -index,
                   lineWidth: 2,
-                  stroke: APP_STATUS_COLOR_MAP[status],
+                  stroke: APP_STATUS_COLOR_MAP[status] || APP_STATUS_COLOR_MAP['normal'],
                 };
                 // return the params for this frame
                 return res;
