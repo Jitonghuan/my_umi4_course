@@ -418,7 +418,7 @@ if (G6) {
         }
       },
     },
-    'line',
+    'quadratic',
   );
 }
 
