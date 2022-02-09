@@ -711,12 +711,14 @@ export default [
         name: '应用流量',
         key: 'trafficmap-app',
         component: '@/pages/trafficmap/app-traffic',
+        hideInMenu: process.env.BUILD_ENV === 'prod',
       },
       {
         path: 'tracking',
         name: '追踪',
         key: 'trafficmap-track',
         component: '@/pages/trafficmap/tracking',
+        hideInMenu: process.env.BUILD_ENV === 'prod',
       },
       {
         path: 'domain-config',
