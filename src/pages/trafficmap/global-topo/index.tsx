@@ -262,8 +262,8 @@ const globalTopo: React.FC = () => {
               >
                 {isFullScreen ? '退出全屏' : '全屏查看'}
               </Button>
-              使用mock数据：
-              <Switch checked={isMock} onChange={setIsMock} />
+              {/* 使用mock数据：
+              <Switch checked={isMock} onChange={setIsMock} /> */}
             </div>
           </div>
         </div>
