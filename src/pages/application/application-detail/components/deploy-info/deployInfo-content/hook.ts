@@ -10,15 +10,18 @@ import { message } from 'antd';
 //查看环境集群信息
 export function useDeployInfoData(envCode: any) {
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
+  let isSucess: boolean = false;
   const loadInfoData = async (envCode: any, operateType: boolean) => {
     await getRequest(APIS.listEnvCluster, { data: { envCode: envCode } }).then((result) => {
       if (result.success) {
         let data = result.data;
         setListEnvClusterData(data);
+        isSucess = true;
+        return 'aaa';
       }
     });
   };
-  return [listEnvClusterData, loadInfoData, setListEnvClusterData];
+  return [listEnvClusterData, loadInfoData, setListEnvClusterData, isSucess];
 }
 
 export function useInstanceList(appCode: any, envCode: any) {

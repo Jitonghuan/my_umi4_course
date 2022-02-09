@@ -138,7 +138,7 @@ export default function DeployModal({ envTypeCode, visible, deployInfo, onCancel
         {jenkinsUrl && (
           <div>
             <a target="_blank" href={jenkinsUrl}>
-              查看Jenkins详情
+              查看构建详情
             </a>
           </div>
         )}

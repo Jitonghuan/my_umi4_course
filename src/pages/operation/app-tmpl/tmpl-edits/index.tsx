@@ -210,7 +210,7 @@ export default function TaskEditor(props: TmplListProps) {
       <ContentCard className="tmpl-edits">
         <Form form={createTmplForm} onFinish={createTmpl}>
           <Row>
-            <Col span={7}>
+            <div>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select
                   showSearch
@@ -220,18 +220,18 @@ export default function TaskEditor(props: TmplListProps) {
                   onChange={changeTmplType}
                 />
               </Form.Item>
-            </Col>
+            </div>
 
-            <Col span={7}>
+            <div style={{ marginLeft: 10 }}>
               <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select showSearch style={{ width: 150 }} disabled={true} />
               </Form.Item>
-            </Col>
-            <Col span={9} style={{ marginLeft: 10 }}>
+            </div>
+            <div style={{ marginLeft: 10 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
                 <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
               </Form.Item>
-            </Col>
+            </div>
           </Row>
           <Row style={{ marginTop: '20px' }}>
             <Col span={12}>
