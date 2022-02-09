@@ -29,6 +29,8 @@ const globalTopo: React.FC = () => {
 
   const [clickId, setClickId] = useState<string>('');
   const [selectTime, setSelectTime] = useState(moment().subtract(2, 'minutes'));
+  const [refreshFrequency, setRefreshFrequency] = useState<string>('infinity');
+
   const [selectEnv, setSelectEnv] = useState('hbos-dev');
   const [isMock, setIsMock] = useState(false);
   const [isExpand, setIsExpand] = useState(true); // true显示全屏展开  false显示全屏收起。
@@ -216,21 +218,32 @@ const globalTopo: React.FC = () => {
               defaultValue={selectEnv}
               onChange={(env) => {
                 setSelectEnv(env);
+                setSelectTime(moment().subtract(2, 'minutes'));
+                setRefreshFrequency('infinity');
               }}
               showSearch
               style={{ width: 140 }}
             />
           </Form.Item>
-          <Form.Item label="时间：" initialValue={selectTime}>
-            <DatePicker
-              showTime={{ format: 'HH:mm' }}
-              format="YYYY-MM-DD HH:mm"
-              value={selectTime}
-              onChange={(value, dateString) => {
-                setSelectTime(value || moment());
-              }}
-            />
-          </Form.Item>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Form.Item label="时间：" initialValue={selectTime}>
+              <DatePicker
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
+                value={selectTime}
+                onChange={(value, dateString) => {
+                  setSelectTime(value || moment());
+                }}
+              />
+            </Form.Item>
+            <Form.Item label="是否自动刷新" initialValue={refreshFrequency}>
+              <Select style={{ width: '100px' }} value={refreshFrequency} onChange={setRefreshFrequency}>
+                <Select.Option value="1">1min</Select.Option>
+                <Select.Option value="5">5min</Select.Option>
+                <Select.Option value="infinity">不刷新</Select.Option>
+              </Select>
+            </Form.Item>
+          </div>
         </Form>
       </FilterCard>
 
@@ -282,9 +295,11 @@ const globalTopo: React.FC = () => {
                 ref={TopoRef}
                 selectTime={selectTime}
                 selectEnv={selectEnv}
+                refreshFrequency={refreshFrequency}
                 isMock={isMock}
                 setIsMock={setIsMock}
                 setIsExpand={setIsExpand}
+                setSelectTime={setSelectTime}
               />
               <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
             </div>

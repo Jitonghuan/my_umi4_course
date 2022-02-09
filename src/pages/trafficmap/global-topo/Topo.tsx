@@ -16,8 +16,10 @@ interface ITopoProps {
   onRedLineClick: (id: string) => void;
   setIsExpand: any;
   setIsMock: any;
+  setSelectTime: any;
   selectTime: Moment;
   selectEnv: string;
+  refreshFrequency: string;
   isMock: boolean;
 }
 
@@ -29,8 +31,10 @@ const Topo = memo(
       collapseAll,
     }));
 
-    const { onNodeClick, onRedLineClick, setIsExpand } = props;
+    const { onNodeClick, onRedLineClick, setIsExpand, setSelectTime } = props;
     const [originData, setOriginData] = useState<any>({});
+
+    let dataInterval: any;
 
     let graph = null as any;
     const { uniqueId } = G6.Util;
@@ -98,6 +102,7 @@ const Topo = memo(
         duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'),
         envCode: props.selectEnv,
       });
+      console.log('gettopodata', moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'), props.selectEnv);
       const edges = res.data.Calls.map((item: any) => {
         return {
           id: item.callId,
@@ -121,14 +126,32 @@ const Topo = memo(
     };
 
     useEffect(() => {
-      props.setIsMock(false);
+      // props.setIsMock(false);
       setIsExpand(true);
       getTopoData();
     }, [props.selectTime, props.selectEnv]);
 
     useEffect(() => {
-      props.isMock ? setOriginData(OriginData) : getTopoData();
-    }, [props.isMock]);
+      if (props.refreshFrequency == 'infinity') {
+      } else if (props.refreshFrequency == '1') {
+        setSelectTime(moment().subtract(2, 'minutes'));
+        dataInterval = setInterval(() => {
+          setSelectTime(moment().subtract(2, 'minutes'));
+        }, 60 * 1000);
+      } else if (props.refreshFrequency == '5') {
+        setSelectTime(moment().subtract(2, 'minutes'));
+        dataInterval = setInterval(() => {
+          setSelectTime(moment().subtract(2, 'minutes'));
+        }, 60 * 5 * 1000);
+      }
+      return () => {
+        clearInterval(dataInterval);
+      };
+    }, [props.refreshFrequency]);
+
+    // useEffect(() => {
+    //   props.isMock ? setOriginData(OriginData) : getTopoData();
+    // }, [props.isMock]);
 
     useEffect(() => {
       if (originData?.nodes?.length > 0) {
