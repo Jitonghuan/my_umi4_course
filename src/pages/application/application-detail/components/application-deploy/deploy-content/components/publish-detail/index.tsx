@@ -365,7 +365,7 @@ export default function PublishDetail(props: IProps) {
                         goToJenkins(errInfo);
                       }
                       if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1) {
-                        localStorage.setItem('__init_env_tab__', errInfo?.envCode);
+                        localStorage.setItem('__init_env_tab__', errInfo?.envTypeCode);
                         history.push(
                           `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
                         );
