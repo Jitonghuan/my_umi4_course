@@ -672,6 +672,29 @@ export default [
     ],
   },
   {
+    path: 'logger',
+    name: '日志管理',
+    icon: 'icon-diagnose',
+    routes: [
+      {
+        path: 'search',
+        name: '日志检索',
+        component: '@/pages/logger/search',
+      },
+      {
+        path: 'index-manage',
+        name: '索引管理',
+        component: '@/pages/logger/index-manage',
+      },
+      {
+        path: 'logger-alarm',
+        name: '日志告警',
+        key: 'business-monitor',
+        component: '@/pages/logger/logger-alarm',
+      },
+    ],
+  },
+  {
     path: 'trafficmap',
     name: '流量地图',
     icon: 'icon-ic_flow',
@@ -700,29 +723,6 @@ export default [
         name: '配置域',
         key: 'trafficmap-domainconfig',
         component: '@/pages/trafficmap/domain-config',
-      },
-    ],
-  },
-  {
-    path: 'logger',
-    name: '日志管理',
-    icon: 'icon-diagnose',
-    routes: [
-      {
-        path: 'search',
-        name: '日志检索',
-        component: '@/pages/logger/search',
-      },
-      {
-        path: 'index-manage',
-        name: '索引管理',
-        component: '@/pages/logger/index-manage',
-      },
-      {
-        path: 'logger-alarm',
-        name: '日志告警',
-        key: 'business-monitor',
-        component: '@/pages/logger/logger-alarm',
       },
     ],
   },
