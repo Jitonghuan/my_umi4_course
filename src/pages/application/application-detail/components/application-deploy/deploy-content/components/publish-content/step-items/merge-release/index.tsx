@@ -15,7 +15,6 @@ export default function MergeReleaseStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, onSpin, stopSpin, deployedList, ...others } = props;
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [mergeMessage, setMergeMessage] = useState<any>([]);
-  // const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const isLoading = deployStatus === 'merging';
   const isError = deployStatus === 'mergeErr' || deployStatus === 'conflict';
 
@@ -28,8 +27,6 @@ export default function MergeReleaseStep(props: StepItemProps) {
   };
 
   const openMergeConflict = () => {
-    // setMergeVisible(true);
-    // onOperate('mergeStart');
     onSpin();
     getMergeMessage({ releaseBranch: deployInfo.releaseBranch })
       .then((res) => {
@@ -42,7 +39,6 @@ export default function MergeReleaseStep(props: StepItemProps) {
           resolved: false,
         }));
         setMergeMessage(dataArray);
-        // setIsUpdate(true);
         setMergeVisible(true);
         onOperate('mergeStart');
       })
@@ -51,7 +47,6 @@ export default function MergeReleaseStep(props: StepItemProps) {
       });
   };
   const handleCancelMerge = () => {
-    // setIsUpdate(false);
     setMergeVisible(false);
     onOperate('mergeEnd');
   };

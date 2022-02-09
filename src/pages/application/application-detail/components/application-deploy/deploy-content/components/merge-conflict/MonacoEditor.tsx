@@ -7,7 +7,6 @@ import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
 import ReactDOM from 'react-dom';
 
 export default function MonacoEditor(prop: any) {
-  console.log(prop, 1222);
   const { filePath, context, resolved, onchange } = prop;
   const ext = useMemo(() => detect.filename(filePath)?.toLowerCase(), [filePath]);
   const [dv, setDv] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
@@ -91,7 +90,7 @@ export default function MonacoEditor(prop: any) {
           }
       }
     } while (index++ < str.length);
-    console.log(res);
+    // console.log(res);
 
     return res;
   };

@@ -10,7 +10,6 @@ import { pushMergeMessage } from '@/pages/application/service';
 
 export default function MergeConflict(prop: MergeProp) {
   const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick } = prop;
-  console.log('mergeMessage', mergeMessage);
   const [allFile, setAllFile] = useState<any>([]); //所有冲突的文件
   const [chooseFile, setChooseFile] = useState<any>([]); //当前选中的文件
   const [loading, setLoading] = useState(false);
@@ -20,7 +19,6 @@ export default function MergeConflict(prop: MergeProp) {
     setChooseFile(file);
   };
   useEffect(() => {
-    console.log(111);
     if (mergeMessage) {
       setAllFile(mergeMessage);
       setChooseFile(mergeMessage[0]);
