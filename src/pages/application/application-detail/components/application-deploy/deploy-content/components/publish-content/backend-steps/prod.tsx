@@ -46,7 +46,7 @@ export default function ProdEnvSteps({ deployInfo, onOperate }: StepsProps) {
 
   return (
     <div className="publish-content-compo-wrapper">
-      <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+      <Steps className="publish-content-compo__steps single-publish__steps" current={parseInt(status + '')}>
         <CreateTaskStep {...payload} />
         <MergeReleaseStep {...payload} />
         <DeployingStep {...payload} />

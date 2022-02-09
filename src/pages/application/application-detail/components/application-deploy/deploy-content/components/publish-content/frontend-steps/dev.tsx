@@ -113,7 +113,7 @@ export default function DevEnvSteps({ deployInfo, onOperate, getItemByKey, onCan
         </>
       ) : (
         <>
-          <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+          <Steps className="publish-content-compo__steps single-publish__steps" current={parseInt(status + '')}>
             <CreateTaskStep {...payload} />
             <MergeReleaseStep {...payload} />
             <BuildingStep
