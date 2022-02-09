@@ -42,6 +42,19 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     return versionList?.find((n) => n.isActive === 0);
   }, [versionList]);
 
+  function getStatusName(status: number) {
+    switch (status) {
+      case 0:
+        return '当前';
+      case 2:
+        return '部署中';
+      case 3:
+        return '部署失败';
+      default:
+        return '历史';
+    }
+  }
+
   return (
     <Modal
       visible={!!envItem}
@@ -89,7 +102,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
           dataIndex="isActive"
           title="状态"
           render={(value: number) => {
-            return value === 0 ? '当前' : value === 2 ? '部署中' : '历史';
+            return getStatusName(value);
           }}
         />
       </Table>

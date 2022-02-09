@@ -259,11 +259,30 @@ export default function PublishDetail(props: IProps) {
   try {
     deployErrInfo = deployInfo.deployErrInfo ? JSON.parse(deployInfo.deployErrInfo) : [];
   } catch (e) {
-    console.log(e);
+    if (deployInfo.deployErrInfo) {
+      deployErrInfo = [
+        {
+          subErrInfo: deployInfo.deployErrInfo,
+          envCode: deployInfo.envs,
+        },
+      ];
+    }
   }
 
   function goToJenkins(item: any) {
-    const jenkinsUrl: any[] = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
+    let jenkinsUrl: any[] = [];
+    try {
+      jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
+    } catch (e) {
+      if (deployInfo.jenkinsUrl) {
+        jenkinsUrl = [
+          {
+            subJenkinsUrl: deployInfo.jenkinsUrl,
+            envCode: deployInfo.envs,
+          },
+        ];
+      }
+    }
     const data = jenkinsUrl.find((val) => val.envCode === item.envCode);
     if (data && data.subJenkinsUrl) {
       window.open(data.subJenkinsUrl, '_blank');
