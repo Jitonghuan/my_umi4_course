@@ -35,7 +35,7 @@ const deployStatusMapping: Record<string, number> = {
   multiEnvDeploying: 2,
 };
 
-export default function ProdEnvSteps({ deployInfo, onOperate, onSpin, stopSpin }: StepsProps) {
+export default function ProdEnvSteps({ deployInfo, onOperate, onSpin, stopSpin, deployedList }: StepsProps) {
   const { deployStatus } = deployInfo || {};
   let status = deployStatusMapping[deployStatus] || -1;
   if (deployStatus === 'deployAborted') {
@@ -49,6 +49,7 @@ export default function ProdEnvSteps({ deployInfo, onOperate, onSpin, stopSpin }
     envTypeCode: 'prod',
     onSpin,
     stopSpin,
+    deployedList,
   };
 
   return (

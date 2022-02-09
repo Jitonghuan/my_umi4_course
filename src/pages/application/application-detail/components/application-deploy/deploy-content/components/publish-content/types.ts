@@ -17,6 +17,7 @@ export interface StepsProps {
   onOperate: (type: OperateType) => void;
   onSpin: any;
   stopSpin: any;
+  deployedList: any;
   onCancelDeploy?: (envCode: string) => void;
   getItemByKey: (listStr: string, envCode: string) => any;
 }

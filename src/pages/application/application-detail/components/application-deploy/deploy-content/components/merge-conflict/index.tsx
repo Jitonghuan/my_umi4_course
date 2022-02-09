@@ -7,10 +7,10 @@ import MonacoEditor from './MonacoEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
 import { pushMergeMessage } from '@/pages/application/service';
-import context from '@/pages/application/application-detail/context';
 
 export default function MergeConflict(prop: MergeProp) {
-  const { visible, handleCancel, mergeMessage, releaseBranch } = prop;
+  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick } = prop;
+  console.log('mergeMessage', mergeMessage);
   const [allFile, setAllFile] = useState<any>([]); //所有冲突的文件
   const [chooseFile, setChooseFile] = useState<any>([]); //当前选中的文件
   const [loading, setLoading] = useState(false);
@@ -20,10 +20,13 @@ export default function MergeConflict(prop: MergeProp) {
     setChooseFile(file);
   };
   useEffect(() => {
+    console.log(111);
     if (mergeMessage) {
       setAllFile(mergeMessage);
       setChooseFile(mergeMessage[0]);
     }
+    // setAllFile(temp);
+    // setChooseFile(temp[0]);
   }, [prop]);
   // 标记为已解决
   const handleResolved = () => {
@@ -55,6 +58,12 @@ export default function MergeConflict(prop: MergeProp) {
       .catch((e) => {
         setLoading(false);
       });
+  };
+  // 重试
+  const handleRetry = () => {
+    // setLoading(true);
+    handleCancel();
+    retryMergeClick();
   };
   // 编辑器代码改变时同步更新数据
   const handleChange = (value: string) => {
@@ -92,7 +101,15 @@ export default function MergeConflict(prop: MergeProp) {
         onCancel={handleCancel}
         width={1300}
         footer={[
-          <Button key="submit" type="primary" onClick={handleCancel}>
+          <Button
+            type="primary"
+            onClick={handleRetry}
+            style={{ display: 'inline-block', marginRight: '960px' }}
+            loading={loading}
+          >
+            本地已解决（重试）
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleCancel} loading={loading}>
             取消
           </Button>,
           <Button

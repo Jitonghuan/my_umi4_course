@@ -1,6 +1,7 @@
 export interface MergeProp {
   visible: boolean;
   handleCancel: any;
+  retryMergeClick: any;
   mergeMessage: conflictItem[];
   releaseBranch: string;
 }

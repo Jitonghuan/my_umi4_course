@@ -37,6 +37,7 @@ export default function PreEnvSteps({
   onCancelDeploy,
   onSpin,
   stopSpin,
+  deployedList,
 }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
 
@@ -47,6 +48,7 @@ export default function PreEnvSteps({
     envTypeCode: 'pre',
     onSpin,
     stopSpin,
+    deployedList,
   };
   const envList = envs ? envs.split(',') : [];
 

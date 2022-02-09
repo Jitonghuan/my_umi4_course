@@ -156,6 +156,7 @@ export default function PublishContent(props: IProps) {
         onCancelDeploy={onCancelDeploy}
         stopSpin={stopSpin}
         onSpin={onSpin}
+        deployedList={deployedList}
         getItemByKey={getItemByKey}
       />
       <div className="full-scree-icon">

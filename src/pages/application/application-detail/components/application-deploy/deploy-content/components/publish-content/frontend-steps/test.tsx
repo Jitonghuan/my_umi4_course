@@ -39,6 +39,7 @@ export default function TestEnvSteps({
   onCancelDeploy,
   onSpin,
   stopSpin,
+  deployedList,
 }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo || {};
   const envList = envs ? envs.split(',') : [];
@@ -52,6 +53,7 @@ export default function TestEnvSteps({
     envTypeCode: 'test',
     onSpin,
     stopSpin,
+    deployedList,
   };
 
   function getSubStateStatus(envCode: string) {
