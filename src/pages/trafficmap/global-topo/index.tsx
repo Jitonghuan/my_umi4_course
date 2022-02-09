@@ -233,6 +233,7 @@ const globalTopo: React.FC = () => {
                 value={selectTime}
                 onChange={(value, dateString) => {
                   setSelectTime(value || moment());
+                  setRefreshFrequency('infinity');
                 }}
               />
             </Form.Item>
