@@ -126,7 +126,7 @@ export default function MonacoEditor(prop: any) {
 
     function replaceValue(area: any, rep: string) {
       if (!dv) return;
-      //  使用这个api  https://stackoverflow.com/a/41667840
+      //    https://stackoverflow.com/a/41667840
       //   let ns = strSplice(dv.getModel()?.getValue() || '', area.start, area.repStop - area.start, rep);
       //   dv.getModel()?.setValue(ns);
     }

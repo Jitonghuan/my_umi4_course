@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, Button, List, Tooltip, message } from 'antd';
+import { Modal, Button, List, Tooltip, message, Popconfirm } from 'antd';
 import { CheckCircleTwoTone, QuestionCircleFilled } from '@ant-design/icons';
 import CodeMirrorEditor from './CodeMirrorEditor';
 import MonacoEditorMerge from './MonacoEditorMerge';
@@ -15,6 +15,7 @@ export default function MergeConflict(prop: MergeProp) {
   const [loading, setLoading] = useState(false);
   const conflictCount = useMemo(() => allFile.filter((e: conflictItem) => !e.resolved).length, [allFile]);
   const resolvedCount = useMemo(() => allFile.filter((e: conflictItem) => e.resolved).length, [allFile]);
+  const text = '你确定已本地解决冲突，要重新部署吗？';
   const fileChange = (file: any) => {
     setChooseFile(file);
   };
@@ -23,8 +24,6 @@ export default function MergeConflict(prop: MergeProp) {
       setAllFile(mergeMessage);
       setChooseFile(mergeMessage[0]);
     }
-    // setAllFile(temp);
-    // setChooseFile(temp[0]);
   }, [prop]);
   // 标记为已解决
   const handleResolved = () => {
@@ -99,17 +98,14 @@ export default function MergeConflict(prop: MergeProp) {
         onCancel={handleCancel}
         width={1300}
         footer={[
-          <Button
-            type="primary"
-            onClick={handleRetry}
-            style={{ display: 'inline-block', marginRight: '990px' }}
-            loading={loading}
-          >
-            本地已解决
-            <Tooltip title="本地已解决冲突，点击触发重试">
-              <QuestionCircleFilled />
-            </Tooltip>
-          </Button>,
+          <Popconfirm placement="top" title={text} onConfirm={handleRetry} okText="确定" cancelText="取消">
+            <Button type="primary" style={{ position: 'absolute', left: '20px' }} loading={loading}>
+              本地已解决
+              <Tooltip title="本地已解决冲突，点击触发重试">
+                <QuestionCircleFilled />
+              </Tooltip>
+            </Button>
+          </Popconfirm>,
           <Button key="submit" type="primary" onClick={handleCancel} loading={loading}>
             取消
           </Button>,

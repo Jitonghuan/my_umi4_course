@@ -12,3 +12,9 @@ export interface conflictItem {
   filePath: string;
   context: string;
 }
+
+export interface IProp {
+  visible: boolean;
+  handleCancel: any;
+  retryMergeClick: any;
+}

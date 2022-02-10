@@ -8,12 +8,14 @@ import { Steps, Button, message, Spin } from 'antd';
 import { retryMerge, getMergeMessage } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import MergeConflict from '../../../merge-conflict';
+import NoConflict from '../../../merge-conflict/NoConflict';
 import { conflictItem } from '../../../merge-conflict/types';
 
 /** 合并release */
 export default function MergeReleaseStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, onSpin, stopSpin, deployedList, ...others } = props;
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
+  const [visible, setVisible] = useState(false); //无冲突
   const [mergeMessage, setMergeMessage] = useState<any>([]);
   const isLoading = deployStatus === 'merging';
   const isError = deployStatus === 'mergeErr' || deployStatus === 'conflict';
@@ -33,6 +35,12 @@ export default function MergeReleaseStep(props: StepItemProps) {
         if (!res.success) {
           return;
         }
+        // 如果data为null 则显示无冲突弹窗
+        if (!res.data) {
+          setVisible(true);
+          onOperate('mergeStart');
+          return;
+        }
         const dataArray = res?.data.map((item: conflictItem, index: number) => ({
           ...item,
           id: index + 1,
@@ -50,6 +58,10 @@ export default function MergeReleaseStep(props: StepItemProps) {
     setMergeVisible(false);
     onOperate('mergeEnd');
   };
+  const handleCancel = () => {
+    setVisible(false);
+    onOperate('mergeEnd');
+  };
 
   return (
     <>
@@ -60,6 +72,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
         releaseBranch={deployInfo.releaseBranch}
         retryMergeClick={retryMergeClick}
       ></MergeConflict>
+      <NoConflict visible={visible} handleCancel={handleCancel} retryMergeClick={retryMergeClick}></NoConflict>
       <Steps.Step
         {...others}
         title="合并release"
