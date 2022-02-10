@@ -24,6 +24,7 @@ export default function ApplicationParams(props: any) {
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
   const [id, setId] = useState<string>();
   const [isDeployment, setIsDeployment] = useState<string>();
+  const [ensureDisable, setEnsureDisable] = useState<boolean>(false);
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
   const { templateType, envCode } = props?.history.location?.query || {};
@@ -83,6 +84,7 @@ export default function ApplicationParams(props: any) {
       if (result.data.length > 0) {
         const appTmpl = result.data[0];
         setId(appTmpl.id);
+        console.log('appTmpl.id', appTmpl.id);
         setInintDatas(appTmpl);
         showAppList(envCode, templateType);
         setIsDeployment(appTmpl.templateType);
@@ -162,13 +164,16 @@ export default function ApplicationParams(props: any) {
   //改变下拉选择后查询结果
   const changeEnvCode = (getEnvCode: string) => {
     setSelectEnvData(getEnvCode);
+    setEnsureDisable(false);
     // queryTmpl(getEnvCode,selectTmpl);
   };
   const changeTmplType = (getTmplType: string) => {
     setSelectTmpl(getTmplType);
     setIsDeployment(getTmplType);
     queryTmpl(selectEnvData || envCode, getTmplType);
+    setEnsureDisable(false);
   };
+
   //点击查询回调
   const queryTmpl = (envCodeCurrent: string, templateTypeCurrent: string) => {
     // data里的参数是根据下拉选项来查询配置项和模版详情的
@@ -191,6 +196,7 @@ export default function ApplicationParams(props: any) {
           }
         }
         setId(applicationlist?.id);
+        console.log('applicationlist?.id', applicationlist?.id);
         setIsDeployment(applicationlist.templateType);
         applicationForm.setFieldsValue({
           // templateValue:list.templateValue,
@@ -201,11 +207,13 @@ export default function ApplicationParams(props: any) {
           jvm: jvm,
         });
       } else {
+        debugger;
         applicationForm.setFieldsValue({
           tmplConfigurableItem: [],
           jvm: '',
           value: '',
         });
+        setEnsureDisable(true);
         message.error('应用模版不存在');
       }
     });
@@ -221,7 +229,14 @@ export default function ApplicationParams(props: any) {
       if (result.success) {
         message.success('提交成功！');
         // window.location.reload();
-        showAppList(selectEnvData, selectTmpl);
+        applicationForm.setFieldsValue({
+          tmplConfigurableItem: [],
+          jvm: '',
+          value: '',
+        });
+        setTimeout(() => {
+          showAppList(selectEnvData, selectTmpl);
+        }, 200);
       }
     });
   };
@@ -286,7 +301,7 @@ export default function ApplicationParams(props: any) {
             <Button type="ghost" onClick={inintData}>
               重置
             </Button>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" disabled={ensureDisable}>
               提交
             </Button>
           </Space>
