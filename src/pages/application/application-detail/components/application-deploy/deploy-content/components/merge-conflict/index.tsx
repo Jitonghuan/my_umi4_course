@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, List, Tooltip, message } from 'antd';
-import { CheckCircleTwoTone } from '@ant-design/icons';
+import { CheckCircleTwoTone, QuestionCircleFilled } from '@ant-design/icons';
 import CodeMirrorEditor from './CodeMirrorEditor';
 import MonacoEditorMerge from './MonacoEditorMerge';
 import MonacoEditor from './MonacoEditor';
@@ -102,10 +102,13 @@ export default function MergeConflict(prop: MergeProp) {
           <Button
             type="primary"
             onClick={handleRetry}
-            style={{ display: 'inline-block', marginRight: '960px' }}
+            style={{ display: 'inline-block', marginRight: '990px' }}
             loading={loading}
           >
-            本地已解决（重试）
+            本地已解决
+            <Tooltip title="本地已解决冲突，点击触发重试">
+              <QuestionCircleFilled />
+            </Tooltip>
           </Button>,
           <Button key="submit" type="primary" onClick={handleCancel} loading={loading}>
             取消
