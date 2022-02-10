@@ -214,7 +214,7 @@ export default function ApplicationParams(props: any) {
           value: '',
         });
         setEnsureDisable(true);
-        message.error('应用模版不存在');
+        message.error('应用模版不存在,请先推送模板');
       }
     });
   };
