@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Select, Input, Drawer, Button, Table, Popconfirm } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { Form, Select, Input, Button, Table, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import './index.less';
 import { deleteRegion, getRegionList } from '../service';
 import CreateRegionDrawer from './component/create-region-drawer';
+import { useEnvOptions } from '../hooks';
 
 const DomainConfig: React.FC = () => {
   // 工单创建表单对象
@@ -17,6 +17,8 @@ const DomainConfig: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<any>({});
+  const [envOptions] = useEnvOptions();
+
   const createRegionRef = useRef<any>();
 
   useEffect(() => {
@@ -137,7 +139,7 @@ const DomainConfig: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item label="环境code" name="envCode">
-            <Input />
+            <Select options={envOptions} style={{ width: '200px' }} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -183,7 +185,7 @@ const DomainConfig: React.FC = () => {
           }}
         />
       </ContentCard>
-      <CreateRegionDrawer ref={createRegionRef} requestRegionList={requestRegionList} />
+      <CreateRegionDrawer ref={createRegionRef} requestRegionList={requestRegionList} envOptions={envOptions} />
     </PageContainer>
   );
 };

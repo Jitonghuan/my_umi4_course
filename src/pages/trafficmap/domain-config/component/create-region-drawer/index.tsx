@@ -16,12 +16,6 @@ const TitleEnum = {
 const CreateRegionDrawer = React.forwardRef((props: any, ref) => {
   const [visible, setVisible] = useState(false);
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatusType>('create');
-  const [envOptions, setEnvOptions] = useState<any[]>([
-    {
-      label: 'hbos-dev',
-      value: 'hbos-dev',
-    },
-  ]);
   const [form] = Form.useForm();
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,6 +24,8 @@ const CreateRegionDrawer = React.forwardRef((props: any, ref) => {
 
   const [regionCode, setRegionCode] = useState<string>('');
   const [envCode, setEnvCode] = useState<string>('');
+
+  const { envOptions } = props;
 
   useImperativeHandle(ref, () => ({
     showDrawer: () => {
