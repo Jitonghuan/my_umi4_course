@@ -35,7 +35,6 @@ export default function AllApplication() {
     setType(next);
     localStorage.setItem('__last_application_type', next);
   }, []);
-
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
     setSearchParams(next);

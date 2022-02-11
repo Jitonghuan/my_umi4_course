@@ -17,6 +17,8 @@ export interface IProps {
       | 'rollbackVersion'
       | 'reloadServer'
       | 'uploadImageStart'
-      | 'uploadImageEnd',
+      | 'uploadImageEnd'
+      | 'mergeStart'
+      | 'mergeEnd',
   ) => void;
 }
