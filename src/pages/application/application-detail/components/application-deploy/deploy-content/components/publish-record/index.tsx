@@ -137,11 +137,9 @@ export default function PublishRecord(props: IProps) {
             renderItem={(item) => (
               <List.Item>
                 <div>
-                  {' '}
                   <label>{recordFieldMapOut['modifyUser']}</label>:{item['modifyUser']}
                 </div>
                 <div>
-                  {' '}
                   <label>{recordFieldMapOut['deployedTime']}</label>:
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
