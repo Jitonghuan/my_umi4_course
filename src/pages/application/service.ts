@@ -208,7 +208,7 @@ export const queryApps = async (
 ) => {
   const { requestType, ...data } = params;
   const result = await getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, { data });
-  return (result.data?.dataSource || []) as AppItemVO[];
+  return (result?.data?.dataSource || []) as AppItemVO[];
 };
 
 /** 删除应用 */
@@ -582,3 +582,11 @@ export const rollbackFeApp = async (data: any) => postRequest(rollbackFeAppUrl, 
 
 /** POST 获取分支review状态 */
 // export const getReviewStatus = async (data: any) => postRequest(getReviewStatusUrl, { data });
+
+/** GET 解决冲突-获取冲突信息 */
+export const getMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/getChanges`;
+export const getMergeMessage = async (params: any) => await getRequest(getMergeMessageUrl, { data: params });
+
+/** POST 解决冲突-提交冲突 */
+export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/commit`;
+export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });

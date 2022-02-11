@@ -30,7 +30,15 @@ const deployStatusMapping: Record<string, number> = {
   multiEnvDeploying: 2,
 };
 
-export default function DevEnvSteps({ deployInfo, onOperate, onCancelDeploy, getItemByKey }: StepsProps) {
+export default function DevEnvSteps({
+  deployInfo,
+  onOperate,
+  onCancelDeploy,
+  getItemByKey,
+  onSpin,
+  deployedList,
+  stopSpin,
+}: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
 
   const payload = {
@@ -38,6 +46,9 @@ export default function DevEnvSteps({ deployInfo, onOperate, onCancelDeploy, get
     onOperate,
     deployStatus: deployInfo.deployStatus,
     envTypeCode: 'dev',
+    onSpin,
+    stopSpin,
+    deployedList,
   };
   const envList = envs ? envs.split(',') : [];
 

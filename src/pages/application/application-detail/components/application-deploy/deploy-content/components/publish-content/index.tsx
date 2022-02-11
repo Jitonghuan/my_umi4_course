@@ -37,7 +37,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin } = props;
   const { appData } = useContext(DetailContext);
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -154,6 +154,9 @@ export default function PublishContent(props: IProps) {
         deployInfo={deployInfo}
         onOperate={onOperate}
         onCancelDeploy={onCancelDeploy}
+        stopSpin={stopSpin}
+        onSpin={onSpin}
+        deployedList={deployedList}
         getItemByKey={getItemByKey}
       />
       <div className="full-scree-icon">

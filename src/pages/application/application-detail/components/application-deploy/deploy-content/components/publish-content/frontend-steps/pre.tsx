@@ -32,13 +32,29 @@ const deployStatusMapping: Record<string, number> = {
   deployed: 5,
 };
 
-export default function PreEnvSteps({ deployInfo, onOperate, getItemByKey, onCancelDeploy }: StepsProps) {
+export default function PreEnvSteps({
+  deployInfo,
+  onOperate,
+  getItemByKey,
+  onCancelDeploy,
+  onSpin,
+  stopSpin,
+  deployedList,
+}: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo;
   const envList = envs ? envs.split(',') : [];
   const subStepInitial = buildType === 'singleBuild' ? 3 : 2;
   deployStatusMapping['multiEnvDeploying'] = subStepInitial;
 
-  const payload = { deployInfo, onOperate, deployStatus: deployInfo.deployStatus, envTypeCode: 'pre' };
+  const payload = {
+    deployInfo,
+    onOperate,
+    deployStatus: deployInfo.deployStatus,
+    envTypeCode: 'pre',
+    onSpin,
+    stopSpin,
+    deployedList,
+  };
 
   function getSubStateStatus(envCode: string) {
     const item = getItemByKey(deploySubStates, envCode);
