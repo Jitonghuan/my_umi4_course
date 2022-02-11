@@ -18,19 +18,19 @@ const WARNING_COLOR_Fill = '#FFF8E8';
 const NORMAL_COLOR_Fill = '#EAF4FE';
 
 export const APP_STATUS_COLOR_MAP: IColor = {
-  danger: DANGER_COLOR,
+  dangerous: DANGER_COLOR,
   warning: WARNING_COLOR,
   normal: NORMAL_COLOR,
 };
 
 export const APP_STATUS_FILL_COLOR_MAP: IColor = {
-  danger: DANGER_COLOR_Fill,
+  dangerous: DANGER_COLOR_Fill,
   warning: WARNING_COLOR_Fill,
   normal: NORMAL_COLOR_Fill,
 };
 
 export const APP_STATUS_ICON_MAP: IColor = {
   warning: serveryellow,
-  danger: serverred,
+  dangerous: serverred,
   normal: serverblue,
 };
