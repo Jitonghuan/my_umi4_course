@@ -47,9 +47,12 @@ export default function MergeConflict(prop: MergeProp) {
     }));
     setLoading(true);
     pushMergeMessage({ releaseBranch: releaseBranch, messages: params })
-      .then(() => {
+      .then((res) => {
+        if (res.success) {
+          // setLoading(false);
+          message.success('提交成功!');
+        }
         setLoading(false);
-        message.success('提交成功!');
         handleCancel();
       })
       .catch((e) => {
@@ -96,6 +99,7 @@ export default function MergeConflict(prop: MergeProp) {
         title="冲突详情"
         visible={visible}
         onCancel={handleCancel}
+        closable={!loading}
         width={1300}
         footer={[
           <Popconfirm placement="top" title={text} onConfirm={handleRetry} okText="确定" cancelText="取消">

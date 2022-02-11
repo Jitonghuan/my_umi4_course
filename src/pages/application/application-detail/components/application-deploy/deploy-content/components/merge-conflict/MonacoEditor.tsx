@@ -9,42 +9,43 @@ import { strSplice } from '@/common/util';
 
 export default function MonacoEditor(prop: any) {
   const { filePath, context, resolved, onchange } = prop;
-  const ext = useMemo(() => detect.filename(filePath)?.toLowerCase(), [filePath]);
-  const [dv, setDv] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
+  const language = useMemo(() => detect.filename(filePath)?.toLowerCase(), [filePath]);
+  const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
   const [decorations, setDecorations] = useState<string[]>([]);
   const [oldZones, setOldZones] = useState<string[]>([]);
   const codeContainer = useCallback((node) => {
     if (node) {
       var editor = monaco.editor.create(node, {});
 
-      setDv(editor);
+      setInstance(editor);
     }
   }, []);
 
   useEffect(() => {
-    if (dv) {
-      dv.updateOptions({ readOnly: resolved });
-      const messageContribution: any = dv.getContribution('editor.contrib.messageController');
-      const diposable = dv?.onDidAttemptReadOnlyEdit(() => {
-        messageContribution.showMessage('已解决模式下不能编辑', dv?.getPosition());
+    if (instance) {
+      instance.updateOptions({ readOnly: resolved });
+      const messageContribution: any = instance.getContribution('editor.contrib.messageController');
+      const diposable = instance?.onDidAttemptReadOnlyEdit(() => {
+        messageContribution.showMessage('已解决模式下不能编辑', instance?.getPosition());
       });
     }
   }, [resolved]);
 
   useEffect(() => {
-    if (dv) {
-      const d = dv.onDidChangeModelContent((a) => {
-        const editor = dv.getModel();
+    if (instance) {
+      const d = instance.onDidChangeModelContent((a) => {
+        const editor = instance.getModel();
         renderMergeTools();
         onchange(editor?.getValue());
       });
       return () => d.dispose();
     }
   });
+
   //计算冲突区域
   const diffAreas = () => {
-    if (!dv) return;
-    const str = dv?.getValue();
+    if (!instance) return;
+    const str = instance?.getValue();
     const s = 'start',
       m = 'split',
       e = 'end';
@@ -56,10 +57,10 @@ export default function MonacoEditor(prop: any) {
     const continueWith = (s: string, i: number) => str.substring(i, i + s.length) === s;
 
     do {
-      const cha = str[index];
+      const char = str[index];
       switch (mode) {
         case s:
-          if (cha === '<') {
+          if (char === '<') {
             if (continueWith('<<<<<<<', index)) {
               current[mode] = index;
               mode = m;
@@ -68,10 +69,10 @@ export default function MonacoEditor(prop: any) {
           }
           break;
         case m:
-          if (cha === '=') {
+          if (char === '=') {
             if (continueWith('=======', index)) {
               current[mode] = index;
-              current.oldValue = str.substring(str.indexOf('\n', current.start), current.split);
+              //   current.oldValue = str.substring(str.indexOf('\n', current.start), current.split);
               mode = e;
               index += '======='.length;
             }
@@ -79,11 +80,11 @@ export default function MonacoEditor(prop: any) {
 
           break;
         case e:
-          if (cha === '>') {
+          if (char === '>') {
             if (continueWith('>>>>>>>', index)) {
               current[mode] = index;
-              current.newValue = str.substring(str.indexOf('\n', current.split), current.end);
-              current.repStop = str.indexOf('\n', current.end);
+              //   current.newValue = str.substring(str.indexOf('\n', current.split), current.end);
+              //   current.repStop = str.indexOf('\n', current.end);
               res.push(current);
               current = {};
               mode = s;
@@ -97,7 +98,7 @@ export default function MonacoEditor(prop: any) {
   };
 
   let renderMergeTools = () => {
-    if (!dv) return;
+    if (!instance) return;
     const areas = diffAreas();
     // 冲突区域高亮
     const newDecorations = areas.map((position: any) => ({
@@ -116,22 +117,22 @@ export default function MonacoEditor(prop: any) {
       },
       range: {
         startColumn: 1,
-        startLineNumber: dv.getModel()?.getPositionAt(position.start).lineNumber,
-        endLineNumber: dv.getModel()?.getPositionAt(position.end).lineNumber,
+        startLineNumber: instance.getModel()?.getPositionAt(position.start).lineNumber,
+        endLineNumber: instance.getModel()?.getPositionAt(position.end).lineNumber,
         endColumn: 1,
       },
     }));
     // 保证有更新时清除旧的高亮 同时更新最新的高亮区域
-    setDecorations(dv.deltaDecorations(decorations, newDecorations));
+    setDecorations(instance.deltaDecorations(decorations, newDecorations));
 
     function replaceValue(area: any, rep: string) {
-      if (!dv) return;
+      if (!instance) return;
       //    https://stackoverflow.com/a/41667840
-      //   let ns = strSplice(dv.getModel()?.getValue() || '', area.start, area.repStop - area.start, rep);
-      //   dv.getModel()?.setValue(ns);
+      //   let ns = strSplice(instance.getModel()?.getValue() || '', area.start, area.repStop - area.start, rep);
+      //   instance.getModel()?.setValue(ns);
     }
     // // 增加快速操作按钮
-    // dv.changeViewZones(function (changeAccessor) {
+    // instance.changeViewZones(function (changeAccessor) {
     //   oldZones.forEach((e) => changeAccessor.removeZone(e));
     //   setOldZones(
     //     areas.map((area: any) => {
@@ -150,7 +151,7 @@ export default function MonacoEditor(prop: any) {
     //         domNode,
     //       );
     //       return changeAccessor.addZone({
-    //         afterLineNumber: (dv.getModel()?.getPositionAt(area.start).lineNumber || 0) - 1,
+    //         afterLineNumber: (instance.getModel()?.getPositionAt(area.start).lineNumber || 0) - 1,
     //         heightInLines: 1,
     //         domNode: domNode,
     //       });
@@ -160,19 +161,19 @@ export default function MonacoEditor(prop: any) {
   };
 
   useEffect(() => {
-    if (dv) {
-      const model = dv.getModel();
+    if (instance) {
+      const model = instance.getModel();
       if (model?.getValue() != context) {
-        let modifiedModel = monaco.editor.createModel(context, ext);
+        let modifiedModel = monaco.editor.createModel(context, language);
 
-        dv.setModel(modifiedModel);
+        instance.setModel(modifiedModel);
         renderMergeTools();
         return () => {
           //   model?.dispose();
         };
       }
     }
-  }, [dv, filePath, context]);
+  }, [instance, filePath, context]);
 
   return (
     <div>
