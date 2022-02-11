@@ -88,6 +88,11 @@ export default function MergeReleaseStep(props: StepItemProps) {
                   </Button>
                 </div>
               )}
+              {deployStatus === 'mergeErr' && !deployInfo.mergeWebUrl && (
+                <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
+                  重试
+                </Button>
+              )}
               {/* <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
                 重试
               </Button> */}
