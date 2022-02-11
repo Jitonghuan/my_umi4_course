@@ -128,7 +128,7 @@ const Topo = memo(
     useEffect(() => {
       // props.setIsMock(false);
       setIsExpand(true);
-      getTopoData();
+      props.selectEnv && getTopoData();
     }, [props.selectTime, props.selectEnv]);
 
     useEffect(() => {
