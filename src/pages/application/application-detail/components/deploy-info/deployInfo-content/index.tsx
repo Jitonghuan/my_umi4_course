@@ -429,9 +429,10 @@ export default function DeployContent(props: DeployContentProps) {
                         size="small"
                         type="primary"
                         onClick={() =>
-                          history.push(
-                            `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
-                          )
+                          history.push({
+                            pathname: `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                            state: currentEnvData,
+                          })
                         }
                       >
                         查看日志
