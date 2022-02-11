@@ -31,17 +31,23 @@ const globalTopo: React.FC = () => {
   const [selectTime, setSelectTime] = useState(moment().subtract(2, 'minutes'));
   const [refreshFrequency, setRefreshFrequency] = useState<string>('infinity');
 
-  const [selectEnv, setSelectEnv] = useState('hbos-dev');
+  const [selectEnv, setSelectEnv] = useState('');
+  const [selectEnvName, setSelectEnvName] = useState('');
   const [isMock, setIsMock] = useState(false);
   const [isExpand, setIsExpand] = useState(true); // true显示全屏展开  false显示全屏收起。
 
-  const [envOptions] = useEnvOptions();
+  const [envOptions]: any[][] = useEnvOptions();
 
   const TopoRef = useRef<any>();
 
   useEffect(() => {
     clickId && onAppClick(clickId);
   }, [clickId]);
+
+  useEffect(() => {
+    setSelectEnv(envOptions[0]?.value);
+    setSelectEnvName(envOptions[0]?.label);
+  }, [envOptions]);
 
   const expandAll = useCallback(() => {
     if (isExpand) {
@@ -211,22 +217,25 @@ const globalTopo: React.FC = () => {
   return (
     <PageContainer className="global-topo">
       <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
-        <Form layout="inline" form={formTmpl} style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Form.Item label="环境：" name="envCode">
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>环境：</div>
             <Select
               options={envOptions}
-              defaultValue={selectEnv}
-              onChange={(env) => {
+              value={selectEnv}
+              onChange={(env, option: any) => {
                 setSelectEnv(env);
+                setSelectEnvName(option.label || env);
                 setSelectTime(moment().subtract(2, 'minutes'));
                 setRefreshFrequency('infinity');
               }}
               showSearch
               style={{ width: 140 }}
             />
-          </Form.Item>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Form.Item label="时间：" initialValue={selectTime}>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>时间：</div>
               <DatePicker
                 showTime={{ format: 'HH:mm' }}
                 format="YYYY-MM-DD HH:mm"
@@ -236,22 +245,23 @@ const globalTopo: React.FC = () => {
                   setRefreshFrequency('infinity');
                 }}
               />
-            </Form.Item>
-            <Form.Item label="是否自动刷新" initialValue={refreshFrequency}>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginLeft: '10px' }}>
+              <div>是否自动刷新：</div>
               <Select style={{ width: '100px' }} value={refreshFrequency} onChange={setRefreshFrequency}>
                 <Select.Option value="1">1min</Select.Option>
                 <Select.Option value="5">5min</Select.Option>
                 <Select.Option value="infinity">不刷新</Select.Option>
               </Select>
-            </Form.Item>
+            </div>
           </div>
-        </Form>
+        </div>
       </FilterCard>
 
       <div style={{ height: '100%' }} ref={frameRef}>
         <div className="topo-header">
           <div className="content-header">
-            <div className="env-name">浙一生产环境</div>
+            <div className="env-name">{selectEnvName}</div>
             <div className="action-bar">
               <Button
                 type="default"
