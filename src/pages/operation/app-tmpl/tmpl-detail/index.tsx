@@ -81,21 +81,21 @@ export default function DemoPageTb(porps: any) {
       <ContentCard>
         <Form form={createTmplForm}>
           <Row>
-            <Col span={6}>
+            <div>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select showSearch style={{ width: 150 }} disabled={isDisabled} />
               </Form.Item>
-            </Col>
-            <Col span={6}>
+            </div>
+            <div style={{ paddingLeft: 12 }}>
               <Form.Item label="模版语言：" name="languageCode" rules={[{ required: true, message: '这是必选项' }]}>
                 <Select showSearch style={{ width: 150 }} disabled={true} />
               </Form.Item>
-            </Col>
-            <Col span={8}>
+            </div>
+            <div style={{ paddingLeft: 12 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
                 <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
               </Form.Item>
-            </Col>
+            </div>
           </Row>
           <Row style={{ marginTop: '20px' }}>
             <Col span={10}>

@@ -177,11 +177,16 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     let silenceTime: Moment[] = [];
     let silenceStart: any;
     let silenceEnd: any;
-
+    let currentReceiver: any = [];
+    if (!record?.receiver) {
+      currentReceiver = [];
+    } else {
+      currentReceiver = record?.receiver?.split(',');
+    }
     //回显数据
     const setValues = {
       ...record,
-      receiver: record?.receiver?.split(',') || [],
+      receiver: currentReceiver,
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
