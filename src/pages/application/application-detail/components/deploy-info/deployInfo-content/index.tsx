@@ -198,21 +198,23 @@ export default function DeployContent(props: DeployContentProps) {
     setListEnvClusterData({});
     await loadInfoData(envCode)
       .then(() => {
-        if (isSucess) {
-          queryInstanceList(appData?.appCode, envCode)
-            .then((result2: any) => {
-              if (instanceTableData !== undefined && instanceTableData.length !== 0) {
-                timerHandler('do', true);
-              }
-              if (initEnvCode.current !== '') {
-                queryAppOperateLog(initEnvCode.current);
-              }
-            })
-            .catch(() => {
-              // setListEnvClusterData([]);
-              setInstanceTableData([]);
-            });
-        }
+        // console.log('issucess',isSucess)
+        // if (isSucess) {
+        //   debugger
+        queryInstanceList(appData?.appCode, envCode)
+          .then(() => {
+            if (instanceTableData !== undefined && instanceTableData.length !== 0) {
+              timerHandler('do', true);
+            }
+            if (initEnvCode.current !== '') {
+              queryAppOperateLog(initEnvCode.current);
+            }
+          })
+          .catch(() => {
+            // setListEnvClusterData([]);
+            setInstanceTableData([]);
+          });
+        // }
       })
       .catch(() => {
         setListEnvClusterData([]);
