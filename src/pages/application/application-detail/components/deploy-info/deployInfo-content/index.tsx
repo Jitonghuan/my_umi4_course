@@ -5,16 +5,14 @@
  * @create 2021-11-11 14:15
  */
 
-import React, { useState, useContext, useCallback, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
-import { ContentCard } from '@/components/vc-page-content';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { IProps } from '../../application-deploy/deploy-content/components/publish-content/types';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
-import { postRequest, delRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import { restartApp, rollbackApplication, restartApplication, queryAppOperate } from '@/pages/application/service';
 import { listContainer, fileDownload } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
@@ -24,7 +22,6 @@ import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
 import './index.less';
-import OldAppDeployInfo from './old-deployInfo-page';
 const rootCls = 'deploy-content-compo';
 export interface DeployContentProps {
   /** 当前页面是否激活 */
@@ -91,7 +88,7 @@ export default function DeployContent(props: DeployContentProps) {
   }, [appCode]);
   const initEnvCode = useRef<string>('');
   let operateType = false;
-  const [listEnvClusterData, loadInfoData, setListEnvClusterData] = useDeployInfoData(initEnvCode.current);
+  const [listEnvClusterData, loadInfoData, setListEnvClusterData, isSucess] = useDeployInfoData(initEnvCode.current);
   const [deleteInstance] = useDeleteInstance();
   const [downloadLog] = useDownloadLog();
   const [instanceTableData, instanceloading, queryInstanceList, setInstanceTableData] = useInstanceList(
@@ -194,31 +191,33 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   //改变环境下拉选择后查询结果
-  const changeEnvCode = (envCode: string) => {
+  const changeEnvCode = async (envCode: string) => {
     timerHandler('stop');
     setCurrentEnvData(envCode);
     initEnvCode.current = envCode;
-    loadInfoData(envCode)
+    setListEnvClusterData({});
+    await loadInfoData(envCode)
       .then(() => {
-        queryInstanceList(appData?.appCode, envCode)
-          .then((result2: any) => {
-            if (instanceTableData !== undefined && instanceTableData.length !== 0) {
-              timerHandler('do', true);
-            }
-            if (initEnvCode.current !== '') {
-              queryAppOperateLog(initEnvCode.current);
-            }
-          })
-          .catch(() => {
-            // setListEnvClusterData([]);
-            setInstanceTableData([]);
-          });
+        if (isSucess) {
+          queryInstanceList(appData?.appCode, envCode)
+            .then((result2: any) => {
+              if (instanceTableData !== undefined && instanceTableData.length !== 0) {
+                timerHandler('do', true);
+              }
+              if (initEnvCode.current !== '') {
+                queryAppOperateLog(initEnvCode.current);
+              }
+            })
+            .catch(() => {
+              // setListEnvClusterData([]);
+              setInstanceTableData([]);
+            });
+        }
       })
       .catch(() => {
         setListEnvClusterData([]);
         setInstanceTableData([]);
       });
-    // }
   };
   //加载容器信息
   const [currentContainerName, setCurrentContainerName] = useState<string>('');
