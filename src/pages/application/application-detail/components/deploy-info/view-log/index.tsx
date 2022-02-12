@@ -18,7 +18,7 @@ export default function ViewLog(props: any) {
   const [log, setLog] = useState<string>('');
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
-  const { appCode, envCode, instName } = props.location.query;
+  const { appCode, envCode, instName, viewLogEnvType } = props.location.query;
   const logData = useRef<string>('');
   let currentContainerName = '';
   let ansi_up = new AnsiUp();
@@ -126,8 +126,6 @@ export default function ViewLog(props: any) {
     let dom = document?.getElementById('result-log');
     if (dom) {
       let scroll = dom.scrollHeight;
-      console.log('scrollHeight', scroll);
-
       dom.scrollTo(0, scroll);
       scrollBegin.current = true;
     }
@@ -139,13 +137,22 @@ export default function ViewLog(props: any) {
     scrollBegin.current = true;
   };
   //关闭页面
+  const id = appData?.id;
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-
-      // history.push(`/matrix/application/detail/deployInfo?appCode=${appData?.appCode}&id=${appData?.id}`);
+      history.push({
+        pathname: `/matrix/application/detail/deployInfo`,
+        query: {
+          appCode: appCode,
+          id: id + '',
+          viewLogEnv: envCode,
+          type: 'viewLog_goBack',
+          viewLogEnvType: viewLogEnvType,
+        },
+      });
     }
-    history.goBack();
+    // history.goBack({envCode});
   };
 
   return (

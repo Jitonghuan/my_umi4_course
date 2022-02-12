@@ -14,7 +14,8 @@ import { listAppEnvType } from '@/common/apis';
 import DeployInfoContent from './deployInfo-content';
 import './index.less';
 const { TabPane } = Tabs;
-export default function AppDeployInfo() {
+export default function AppDeployInfo(props: any) {
+  const { type, viewLogEnv, viewLogEnvType } = props.location.query;
   const { appData } = useContext(DetailContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
@@ -108,6 +109,9 @@ export default function AppDeployInfo() {
               intervalStart={() => {
                 timerHandle('do', true);
               }}
+              viewLogEnv={viewLogEnv}
+              type={type}
+              viewLogEnvType={viewLogEnvType}
             />
           </TabPane>
         ))}
