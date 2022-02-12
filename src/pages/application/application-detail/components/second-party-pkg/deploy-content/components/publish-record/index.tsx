@@ -47,6 +47,13 @@ const PublishRecord = (props: IProps) => {
   //     isActive: 0,
   //   });
   // }, []);
+  useEffect(() => {
+    queryDataSource({
+      appCode,
+      envTypeCode: env,
+      pageIndex: 1,
+    });
+  }, []);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -176,7 +183,11 @@ const PublishRecord = (props: IProps) => {
         />
       ) : null}
 
-      <Modal title="发布详情" visible={visible} onCancel={() => setVisible(false)}>
+      <Modal title="发布详情" width={600} visible={visible} footer={false} onCancel={() => setVisible(false)}>
+        <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
+      </Modal>
+
+      {/* <Modal title="发布详情" visible={visible} onCancel={() => setVisible(false)}>
         <VCDescription
           column={1}
           dataSource={Object.keys(recordFieldMap).map((field) => ({
@@ -184,7 +195,7 @@ const PublishRecord = (props: IProps) => {
             value: envNames[field],
           }))}
         />
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
