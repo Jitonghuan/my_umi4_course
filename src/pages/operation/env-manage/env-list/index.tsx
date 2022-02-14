@@ -265,6 +265,9 @@ export default function envManageList(props: any) {
             <Form.Item label="默认分类：" name="categoryCode">
               <Select showSearch style={{ width: 130 }} options={categoryData} />
             </Form.Item>
+            <Form.Item label="项目环境分类：" name="categoryCode">
+              <Select showSearch style={{ width: 130 }} options={categoryData} />
+            </Form.Item>
             <Form.Item label="环境大类：" name="envTypeCode">
               <Select options={envTypeData} allowClear showSearch style={{ width: 130 }} />
             </Form.Item>
