@@ -74,6 +74,21 @@ export default function MonacoEditor(prop: any) {
     }
   });
 
+  useEffect(() => {
+    if (instance) {
+      const model = instance.getModel();
+      if (model?.getValue() != context) {
+        let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
+
+        instance.setModel(modifiedModel);
+        renderMergeTools();
+        return () => {
+          modifiedModel?.dispose();
+        };
+      }
+    }
+  }, [instance, filePath, context]);
+
   //计算冲突区域
   const diffAreas = () => {
     if (!instance) return;
@@ -147,7 +162,7 @@ export default function MonacoEditor(prop: any) {
     });
     setTooltipWidgets(currentWidgets.concat(inComingWidgets));
   };
-
+  // 创建提示div
   let createWidget = (position: number, domNode: any) => {
     if (!instance) return;
     let id = Math.floor(Math.random() * (100000000 - 1) + 1);
@@ -169,14 +184,20 @@ export default function MonacoEditor(prop: any) {
       },
     };
     instance.addContentWidget(contentWidget);
-    return createWidget;
+    return contentWidget;
   };
 
   let renderMergeTools = () => {
     if (!instance) return;
     const areas = diffAreas();
+    renderHighLight(areas);
     renderTooltipWidget(areas);
-    // 冲突区域高亮
+    renderMergeButton(areas);
+  };
+
+  // 冲突区域高亮
+  const renderHighLight = (areas: any) => {
+    if (!instance) return;
     const newDecorations = areas.map((position: any) => ({
       options: {
         isWholeLine: true,
@@ -200,11 +221,11 @@ export default function MonacoEditor(prop: any) {
     }));
     // 保证有更新时清除旧的高亮 同时更新最新的高亮区域
     setDecorations(instance.deltaDecorations(decorations, newDecorations));
-    // 点击按钮时更新值
-    function replaceValue(area: any, rep: string) {
-      if (!instance) return;
-    }
+  };
 
+  // 冲突按钮
+  const renderMergeButton = (areas: any) => {
+    if (!instance) return;
     // 增加快速操作按钮
     instance.changeViewZones(function (changeAccessor) {
       oldZones.forEach((e) => changeAccessor.removeZone(e));
@@ -237,21 +258,22 @@ export default function MonacoEditor(prop: any) {
       );
     });
   };
-
-  useEffect(() => {
-    if (instance) {
-      const model = instance.getModel();
-      if (model?.getValue() != context) {
-        let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
-
-        instance.setModel(modifiedModel);
-        renderMergeTools();
-        return () => {
-          //   model?.dispose();
-        };
-      }
-    }
-  }, [instance, filePath, context]);
+  // 点击按钮时更新值
+  const replaceValue = (area: any, rep: string) => {
+    if (!instance) return;
+    instance.executeEdits('merge-button', [
+      {
+        forceMoveMarkers: true,
+        range: {
+          startLineNumber: instance.getModel()?.getPositionAt(area.start).lineNumber || 0,
+          startColumn: 1,
+          endLineNumber: (instance.getModel()?.getPositionAt(area.repStop).lineNumber || 0) + 1,
+          endColumn: 1,
+        },
+        text: rep,
+      },
+    ]);
+  };
 
   return (
     <div>
