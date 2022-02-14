@@ -167,7 +167,7 @@ export default function MonacoEditor(prop: any) {
         instance.setModel(modifiedModel);
         renderMergeTools();
         return () => {
-          //   model?.dispose();
+          model?.dispose();
         };
       }
     }
