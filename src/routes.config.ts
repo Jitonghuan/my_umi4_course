@@ -296,6 +296,12 @@ export default [
           },
         ],
       },
+      {
+        path: 'project-environment',
+        name: '项目环境',
+        key: 'project-environment',
+        component: '@/pages/application/project-environment',
+      },
     ],
   },
   {
