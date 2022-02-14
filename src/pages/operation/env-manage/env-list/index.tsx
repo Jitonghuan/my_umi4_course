@@ -339,6 +339,7 @@ export default function envManageList(props: any) {
             <Table.Column title="环境名" dataIndex="envName" width={150} />
             <Table.Column title="环境CODE" dataIndex="envCode" width={130} />
             <Table.Column title="环境大类" dataIndex="envTypeCode" width={90} />
+            <Table.Column title="项目环境分类" dataIndex="" width={90} />
             <Table.Column title="默认分类" dataIndex="categoryCode" width={130} />
             <Table.Column title="备注" dataIndex="mark" width={200} />
             <Table.Column
