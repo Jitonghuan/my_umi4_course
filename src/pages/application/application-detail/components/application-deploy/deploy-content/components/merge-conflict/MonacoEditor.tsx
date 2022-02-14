@@ -2,14 +2,12 @@ import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import * as monaco from 'monaco-editor';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import './monaco.less';
-import detect from 'language-detect';
 import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
 import ReactDOM from 'react-dom';
 import { strSplice } from '@/common/util';
 
 export default function MonacoEditor(prop: any) {
   const { filePath, context, resolved, onchange } = prop;
-  const language = useMemo(() => detect.filename(filePath)?.toLowerCase(), [filePath]);
   const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
   const [decorations, setDecorations] = useState<string[]>([]);
   const [oldZones, setOldZones] = useState<string[]>([]);
@@ -164,7 +162,7 @@ export default function MonacoEditor(prop: any) {
     if (instance) {
       const model = instance.getModel();
       if (model?.getValue() != context) {
-        let modifiedModel = monaco.editor.createModel(context, language);
+        let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
 
         instance.setModel(modifiedModel);
         renderMergeTools();
