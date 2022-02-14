@@ -5,42 +5,9 @@ import './monaco.less';
 import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
 import ReactDOM from 'react-dom';
 import { strSplice } from '@/common/util';
-const temp: any = `import org.springframework.web.bind.annotation.Requ222estMapping;
-import org.springframework.web.bind.annotation.Re22stController;
-import org.springframework.web.bind.annotation.Re22stController;
-import org.springframework.web.bind.annotation.Re22stController;
-import org.springframework.web.bind.annotation.Re22stController;
-import org.springframework.web.bind.annotation.Re22stController;
 
-@RestController
-public class HealthCheckContr222oller {
-
-    @RequestMapping("/health")
-    public String heakthCheck() {
-    
-<<<<<<< HEAD
-        return "successfefef222";
-=======
-        return "success111";
->>>>>>> feature_conflict1_20220127184906
-
-<<<<<<< HEAD
-        return "success333";
-=======
-        return "success444";
->>>>>>> feature_conflict1_20220127184906
-    }
-
-<<<<<<< HEAD
-          return "success333";
-=======
-          return "success444";
->>>>>>> feature_conflict1_20220127184906
-    }
-}`;
-const file = 'aa.jave';
 export default function MonacoEditor(prop: any) {
-  const { filePath = file, context = temp, resolved, onchange } = prop;
+  const { filePath, context, resolved, onchange } = prop;
   const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
   const [decorations, setDecorations] = useState<string[]>([]);
   const [oldZones, setOldZones] = useState<string[]>([]);
@@ -79,7 +46,6 @@ export default function MonacoEditor(prop: any) {
       const model = instance.getModel();
       if (model?.getValue() != context) {
         let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
-
         instance.setModel(modifiedModel);
         renderMergeTools();
         return () => {
@@ -243,7 +209,7 @@ export default function MonacoEditor(prop: any) {
                 Accept Incoming Change
               </button>
               |
-              <button className="merge-item" onClick={() => replaceValue(area, area.newValue)}>
+              <button className="merge-item" onClick={() => replaceValue(area, `${area.oldValue}${area.newValue}`)}>
                 Accept Both Change
               </button>
             </>,
