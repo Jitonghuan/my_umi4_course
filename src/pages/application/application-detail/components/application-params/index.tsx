@@ -56,22 +56,6 @@ export default function ApplicationParams(props: any) {
       });
     });
   }, []);
-  // 查询应用环境数据
-  const queryAppEnvData = (value: any) => {
-    getRequest(APIS.listAppEnv, {
-      data: {
-        appCode,
-        envTypeCode: value?.envTypeCode,
-        envCode: value?.envCode,
-        envName: value?.envName,
-        categoryCode: value?.categoryCode,
-      },
-    }).then((result) => {
-      if (result?.success) {
-        // setAppEnvDataSource(result?.data);
-      }
-    });
-  };
 
   //通过appCategoryCode查询环境信息
   const selectAppEnv = () => {
@@ -86,19 +70,17 @@ export default function ApplicationParams(props: any) {
         if (result.data.length > 0) {
           const appTmpl = result.data[0];
           setId(appTmpl.id);
-          console.log('appTmpl.id', appTmpl.id);
           setInintDatas(appTmpl);
           showAppList(envCode, templateType);
           setIsDeployment(appTmpl.templateType);
         } else {
-          message.error('应用模版为空');
+          message.error(`${envCode}环境的${templateType}类型模版为空`);
         }
       })
       .finally(() => {
         setInfoloading(false);
       });
   };
-
   //重置时恢复初始化数据
   const inintData = () => {
     let arr1 = [];
@@ -149,11 +131,11 @@ export default function ApplicationParams(props: any) {
             tmplConfigurableItem: arr1,
             jvm: jvm,
           });
-          changeEnvCode(applicationlist.envCode);
-          changeTmplType(applicationlist.templateType);
+          // changeEnvCode(applicationlist.envCode);
+          // changeTmplType(applicationlist.templateType);
           setIsDeployment(applicationlist.templateType);
         } else {
-          message.error('应用模版为空');
+          message.error(`${envCode}的${templateType}类型模版为空`);
         }
 
         //处理添加进表格的数据
@@ -174,7 +156,7 @@ export default function ApplicationParams(props: any) {
   const changeEnvCode = (getEnvCode: string) => {
     setSelectEnvData(getEnvCode);
     setEnsureDisable(false);
-    // queryTmpl(getEnvCode,selectTmpl);
+    queryTmpl(getEnvCode, selectTmpl);
   };
   const changeTmplType = (getTmplType: string) => {
     setSelectTmpl(getTmplType);
@@ -184,12 +166,12 @@ export default function ApplicationParams(props: any) {
   };
 
   //点击查询回调
-  const queryTmpl = (envCodeCurrent: string, templateTypeCurrent: string) => {
+  const queryTmpl = async (envCodeCurrent: string, templateTypeCurrent: string) => {
     setInfoloading(true);
     // data里的参数是根据下拉选项来查询配置项和模版详情的
-    getRequest(APIS.paramsList, {
+    await getRequest(APIS.paramsList, {
       // data: { envCode: selectEnvData || envCode, appCode, templateType: selectTmpl || {} },
-      data: { envCode: envCodeCurrent || envCode, appCode, templateType: templateTypeCurrent || {} },
+      data: { envCode: envCodeCurrent || envCode, appCode, templateType: templateTypeCurrent || '' },
     })
       .then((result) => {
         const applicationlist = result.data[0];
@@ -207,7 +189,6 @@ export default function ApplicationParams(props: any) {
             }
           }
           setId(applicationlist?.id);
-          console.log('applicationlist?.id', applicationlist?.id);
           setIsDeployment(applicationlist.templateType);
           applicationForm.setFieldsValue({
             // templateValue:list.templateValue,
@@ -218,14 +199,13 @@ export default function ApplicationParams(props: any) {
             jvm: jvm,
           });
         } else {
-          debugger;
           applicationForm.setFieldsValue({
             tmplConfigurableItem: [],
             jvm: '',
             value: '',
           });
           setEnsureDisable(true);
-          message.error('应用模版不存在,请先推送模板');
+          message.error(`${envCodeCurrent}环境的${templateTypeCurrent}类型模版不存在,请先推送模板！`);
         }
       })
       .finally(() => {
