@@ -78,7 +78,7 @@ export default function ApplicationParams(props: any) {
         }
       })
       .finally(() => {
-        setInfoloading(false);
+        setInfoloading(false); //
       });
   };
   //重置时恢复初始化数据
