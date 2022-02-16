@@ -826,7 +826,7 @@ export default [
           {
             path: 'ng-list',
             name: 'NG实例列表',
-            key: 'ng-list',
+            key: 'ng-manage',
             component: '@/pages/operation/ng-manage/ng-list',
             hideInMenu: true,
           },
