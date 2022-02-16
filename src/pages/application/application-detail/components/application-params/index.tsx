@@ -48,8 +48,12 @@ export default function ApplicationParams(props: any) {
         listTmplType.forEach((element: any) => {
           if (element.value === 'deployment') {
             tmplType = element.value;
+            applicationForm.setFieldsValue({ appEnvCode: listEnv[0]?.value, tmplType: tmplType });
+            setSelectTmpl(element.value);
           } else if (element.value === 'service') {
             tmplType = element.value;
+            applicationForm.setFieldsValue({ appEnvCode: listEnv[0]?.value, tmplType: tmplType });
+            setSelectTmpl(element.value);
           }
         });
         getAppTempl(listEnv[0]?.value, appData?.appCode, tmplType, appCategoryCode);
@@ -65,6 +69,7 @@ export default function ApplicationParams(props: any) {
   //查询当前模版信息  一进入页面加载
   const getAppTempl = (envCode: string, appCode: any, templateType: string, appCategoryCode?: string) => {
     setInfoloading(true);
+    debugger;
     return getRequest(APIS.paramsList, { data: { envCode, appCode, templateType, appCategoryCode } })
       .then((result) => {
         if (result.data.length > 0) {
