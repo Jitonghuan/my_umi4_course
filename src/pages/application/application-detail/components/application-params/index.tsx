@@ -37,6 +37,7 @@ export default function ApplicationParams(props: any) {
         data: n,
       }));
       setEnvDatas(listEnv);
+      setSelectEnvData(listEnv[0]?.value);
       getRequest(APIS.tmplType).then((result) => {
         const listTmplType = (result.data || []).map((n: any) => ({
           label: n,
@@ -69,7 +70,6 @@ export default function ApplicationParams(props: any) {
   //查询当前模版信息  一进入页面加载
   const getAppTempl = (envCode: string, appCode: any, templateType: string, appCategoryCode?: string) => {
     setInfoloading(true);
-    debugger;
     return getRequest(APIS.paramsList, { data: { envCode, appCode, templateType, appCategoryCode } })
       .then((result) => {
         if (result.data.length > 0) {
