@@ -14,7 +14,7 @@ import { conflictItem } from '../../../merge-conflict/types';
 /** 合并release */
 export default function MergeReleaseStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, onSpin, stopSpin, deployedList, ...others } = props;
-  const [mergeVisible, setMergeVisible] = useState(true); //冲突详情
+  const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [visible, setVisible] = useState(false); //无冲突
   const [mergeMessage, setMergeMessage] = useState<any>([]);
   const isLoading = deployStatus === 'merging';

@@ -85,15 +85,3 @@ export const base64Encode = (str: string) => {
 export const base64Decode = (str: string) => {
   return window.decodeURIComponent(window.escape(window.atob(str)));
 };
-
-/** 替换字符串 */
-export const strSplice = (str: string, index: number, count: number, add: string) => {
-  if (index < 0) {
-    index = str.length + index;
-    if (index < 0) {
-      index = 0;
-    }
-  }
-
-  return str.slice(0, index) + (add || '') + str.slice(index + count);
-};

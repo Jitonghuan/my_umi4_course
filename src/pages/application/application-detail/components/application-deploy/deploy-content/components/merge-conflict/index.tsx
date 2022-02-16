@@ -7,73 +7,7 @@ import MonacoEditor from './MonacoEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
 import { pushMergeMessage } from '@/pages/application/service';
-const temp: any = [
-  {
-    context: `import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public class HealthCheckController {
-
-    @RequestMapping("/health")
-    public String heakthCheck() {
-  
-<<<<<<< HEAD
-        return "success222";
-=======
-        return "success111";
->>>>>>> feature_conflict1_20220127184906
-
-<<<<<<< HEAD
-        return "success333";
-=======
-        return "success444";
->>>>>>> feature_conflict1_20220127184906
-    }
-}`,
-    filePath: 'src/main/java/com/alibaba/edas/DubboApplication.java',
-    resolved: false,
-    id: 1,
-  },
-  {
-    context: `import org.springframework.web.bind.annotation.Requ222estMapping;
-import org.springframework.web.bind.annotation.Re22stController;
-import org.springframework.web.bind.annotation.Re22stController;
-import org.springframework.web.bind.annotation.Re22stController;
-import org.springframework.web.bind.annotation.Re22stController;
-import org.springframework.web.bind.annotation.Re22stController;
-
-@RestController
-public class HealthCheckContr222oller {
-
-    @RequestMapping("/health")
-    public String heakthCheck() {
-    
-  <<<<<<< HEAD
-          return "successfefef222";
-  =======
-          return "success111";
-  >>>>>>> feature_conflict1_20220127184906
-    
-  <<<<<<< HEAD
-            return "success333";
-  =======
-            return "success444";
-  >>>>>>> feature_conflict1_20220127184906
-    }
-
-<<<<<<< HEAD
-          return "success333";
-=======
-          return "success444";
->>>>>> feature_conflict1_20220127184906
-    }
-}`,
-    filePath: 'src/main/java/com/alibaba/edas/Du2bboApplication.java',
-    resolved: false,
-    id: 2,
-  },
-];
 export default function MergeConflict(prop: MergeProp) {
   const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick } = prop;
   const [allFile, setAllFile] = useState<any>([]); //所有冲突的文件
@@ -86,12 +20,10 @@ export default function MergeConflict(prop: MergeProp) {
     setChooseFile(file);
   };
   useEffect(() => {
-    // if (mergeMessage) {
-    //   setAllFile(mergeMessage);
-    //   setChooseFile(mergeMessage[0]);
-    // }
-    setAllFile(temp);
-    setChooseFile(temp[0]);
+    if (mergeMessage) {
+      setAllFile(mergeMessage);
+      setChooseFile(mergeMessage[0]);
+    }
   }, [prop]);
   // 标记为已解决
   const handleResolved = () => {

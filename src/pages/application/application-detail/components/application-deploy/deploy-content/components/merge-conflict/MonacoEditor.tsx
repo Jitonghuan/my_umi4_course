@@ -4,7 +4,6 @@ import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import './monaco.less';
 import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
 import ReactDOM from 'react-dom';
-import { strSplice } from '@/common/util';
 
 export default function MonacoEditor(prop: any) {
   const { filePath, context, resolved, onchange } = prop;
@@ -43,17 +42,22 @@ export default function MonacoEditor(prop: any) {
 
   useEffect(() => {
     if (instance) {
-      const model = instance.getModel();
-      if (model?.getValue() != context) {
-        let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
-        instance.setModel(modifiedModel);
-        renderMergeTools();
-        return () => {
-          modifiedModel?.dispose();
-        };
-      }
+      let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
+      instance.setModel(modifiedModel);
+      renderMergeTools();
+      return () => {
+        modifiedModel?.dispose();
+      };
     }
-  }, [instance, filePath, context]);
+  }, [instance, filePath]);
+
+  useEffect(() => {
+    if (!instance) return;
+    if (instance.getModel()?.getValue() != context) {
+      instance.getModel()?.setValue(context);
+      renderMergeTools();
+    }
+  }, [context]);
 
   //计算冲突区域
   const diffAreas = () => {
@@ -85,7 +89,7 @@ export default function MonacoEditor(prop: any) {
           if (char === '=') {
             if (continueWith('=======', index)) {
               current[mode] = index;
-              current.oldValue = str.substring(str.indexOf('\n', current.start), current.split);
+              current.oldValue = str.substring(str.indexOf('\n', current.start) + 2, current.split);
               current.startEnd = str.indexOf('\n', current.start);
               mode = e;
               index += '======='.length;
@@ -97,7 +101,7 @@ export default function MonacoEditor(prop: any) {
           if (char === '>') {
             if (continueWith('>>>>>>>', index)) {
               current[mode] = index;
-              current.newValue = str.substring(str.indexOf('\n', current.split), current.end);
+              current.newValue = str.substring(str.indexOf('\n', current.split) + 2, current.end);
               current.repStop = str.indexOf('\n', current.end);
               res.push(current);
               current = {};
@@ -107,7 +111,6 @@ export default function MonacoEditor(prop: any) {
           }
       }
     } while (index++ < str.length);
-    console.log(res, 11);
     return res;
   };
   // head后以及尾部后面的提示文字
@@ -227,6 +230,14 @@ export default function MonacoEditor(prop: any) {
   // 点击按钮时更新值
   const replaceValue = (area: any, rep: string) => {
     if (!instance) return;
+    const select: any = instance.getSelection();
+    const s = instance.getModel()?.getPositionAt(area.start).lineNumber || 0;
+    const { endColumn, endLineNumber, startColumn, startLineNumber } = select;
+    // 如果光标不存在或者在第一位 则初始化光标
+    if (!select || (endColumn === 1 && endLineNumber === 1 && startColumn === 1 && startLineNumber === 1)) {
+      instance.setSelection(new monaco.Selection(s, 1, s, 1));
+    }
+    // 不能用setValue更新 否则无法回退
     instance.executeEdits('merge-button', [
       {
         forceMoveMarkers: true,
@@ -239,6 +250,12 @@ export default function MonacoEditor(prop: any) {
         text: rep,
       },
     ]);
+    // 防止回退有问题
+    instance.pushUndoStop();
+    // 选中编辑器
+    instance.focus();
+    // 设置光标位置
+    instance.setSelection(new monaco.Selection(s, 1, s, 1));
   };
 
   return (
