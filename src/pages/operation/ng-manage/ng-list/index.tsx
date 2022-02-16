@@ -28,7 +28,6 @@ const mock: any = [
     modifyUser: '王安楠',
     gmtCreate: '2022-02-16T15:52:04.000704+08:00',
     gmtModify: '2022-02-16T15:52:04.000707+08:00',
-    value: 'fasdfds',
   },
   {
     id: 2,
@@ -43,7 +42,6 @@ const mock: any = [
     modifyUser: '王安楠',
     gmtCreate: '2022-02-16T15:52:04.000704+08:00',
     gmtModify: '2022-02-16T15:52:04.000707+08:00',
-    value: 'fasdfds',
   },
 ];
 export default function NgList() {
@@ -90,7 +88,7 @@ export default function NgList() {
   //   删除实例
   const handleDelNg = (data: record) => {
     let id = data.id;
-    delRequest(`${appConfig.apiPrefix}/opsManage/ngInstance/delete/id:${id}`);
+    delRequest(`${appConfig.apiPrefix}/opsManage/ngInstance/delete/${id}`);
     loadListData({
       pageIndex: 1,
       pageSize: 20,
@@ -158,11 +156,10 @@ export default function NgList() {
               </Button>
             </Form.Item>
             <div style={{ marginLeft: '32px' }}>
-              {/* onClick={() => handleAddEnv()} */}
               <Button
                 type="primary"
                 onClick={() => {
-                  initNgData(undefined);
+                  setInitNgData(undefined);
                   setNgMode('ADD');
                 }}
               >
@@ -185,7 +182,7 @@ export default function NgList() {
           }}
           onClose={() => setNgMode('HIDE')}
         />
-        <ConfigModal visible={visible} handleCancel={handleCancel} value={value} code={code} />
+        <ConfigModal visible={visible} handleCancel={handleCancel} templateContext={value} code={code} />
         <div style={{ marginTop: '15px' }}>
           <Table
             dataSource={NgDataSource}
@@ -218,7 +215,7 @@ export default function NgList() {
                 <Button
                   type="link"
                   onClick={() => {
-                    setValue(record.value);
+                    setValue(record.templateContext);
                     setCode(record.ngInstCode);
                     setVisible(true);
                   }}

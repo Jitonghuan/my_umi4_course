@@ -11,12 +11,11 @@ export interface record {
   modifyUser?: string;
   gmtCreate?: string;
   gmtModify?: string;
-  value?: string;
 }
 
 export interface ConfigProp {
   visible: boolean;
-  value: string;
+  templateContext: string;
   handleCancel: any;
   code: string;
 }

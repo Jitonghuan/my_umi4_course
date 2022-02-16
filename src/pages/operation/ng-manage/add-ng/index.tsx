@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from 'antd';
 import { record } from '../type';
 import AceEditor from '@/components/ace-editor';
+import { createNg, updateNg } from '../service';
 export interface IProps {
   mode?: EditorMode;
   initData?: record;
@@ -36,59 +37,34 @@ export default function addEnvData(props: IProps) {
   }, [mode]);
 
   const handleSubmit = () => {
-    //     if (mode === 'ADD') {
-    //       const params = createNgForm.getFieldsValue();
-    //       //新增环境
-    //       postRequest(createEnv, {
-    //         data: {
-    //           envTypeCode: params?.envTypeCode,
-    //           categoryCode: params?.categoryCode,
-    //           isBlock: isBlockChangeOption,
-    //           useNacos: checkedOption,
-    //           needApply: needApplyOption,
-    //           nacosAddress: params?.nacosAddress,
-    //           envCode: params?.envCode,
-    //           envName: params?.envName,
-    //           clusterName: params?.clusterName,
-    //           clusterType: params?.clusterType,
-    //           clusterNetType: params?.clusterNetType,
-    //           mark: params?.mark,
-    //         },
-    //       }).then((result) => {
-    //         if (result.success) {
-    //           message.success('新增环境成功！');
-    //           onSave?.();
-    //         } else {
-    //           message.error(result.errorMsg);
-    //         }
-    //       });
-    //     } else if (mode === 'EDIT') {
-    //       //编辑环境
-    //       const initValue = createNgForm.getFieldsValue();
-    //       putRequest(updateEnv, {
-    //         data: {
-    //           envCode: initValue?.envCode,
-    //           envName: initValue?.envName,
-    //           useNacos: checkedOption,
-    //           isBlock: isBlockChangeOption,
-    //           needApply: needApplyOption,
-    //           mark: initValue?.mark,
-    //           nacosAddress: initValue?.nacosAddress,
-    //           envTypeCode: initValue?.envTypeCode,
-    //           categoryCode: initValue?.categoryCode,
-    //           clusterName: initValue?.clusterName,
-    //           clusterType: initValue?.clusterType,
-    //           clusterNetType: initValue?.clusterNetType,
-    //         },
-    //       }).then((result) => {
-    //         if (result.success) {
-    //           message.success('编辑环境成功！');
-    //           onSave?.();
-    //         } else {
-    //           message.error(result.errorMsg);
-    //         }
-    //       });
-    //     }
+    if (mode === 'ADD') {
+      const params = createNgForm.getFieldsValue();
+      console.log(params, 111);
+      //新增环境
+      //   postRequest(createNg, {
+      //     data: params,
+      //   }).then((result) => {
+      //     if (result.success) {
+      //       message.success('新增实例成功！');
+      //       onSave?.();
+      //     } else {
+      //       message.error(result.errorMsg);
+      //     }
+      //   });
+    } else if (mode === 'EDIT') {
+      //编辑环境
+      const initValue = createNgForm.getFieldsValue();
+      putRequest(updateNg, {
+        data: initValue,
+      }).then((result) => {
+        if (result.success) {
+          message.success('编辑环境成功！');
+          onSave?.();
+        } else {
+          message.error(result.errorMsg);
+        }
+      });
+    }
   };
   return (
     <Drawer
@@ -110,7 +86,11 @@ export default function addEnvData(props: IProps) {
         >
           <div>
             <Form.Item label="实例CODE：" name="ngInstCode" rules={[{ required: true, message: '这是必填项' }]}>
-              <Input style={{ width: 220 }} placeholder="请输入实例CODE" disabled={isDisabled}></Input>
+              <Input
+                style={{ width: 220 }}
+                placeholder="请输入实例CODE"
+                disabled={isDisabled || mode === 'EDIT'}
+              ></Input>
             </Form.Item>
           </div>
           <div>
@@ -143,9 +123,9 @@ export default function addEnvData(props: IProps) {
             </Form.Item>
           </div>
           <div>
-            <Form.Item label="配置模版" name="value">
+            <Form.Item label="配置模版" name="templateContext">
               {/* <TextArea rows={18} disabled /> */}
-              <AceEditor mode="yaml" height={400} />
+              <AceEditor mode="yaml" height={400} readOnly={mode === 'VIEW'} />
             </Form.Item>
           </div>
           {isDisabled !== true && (

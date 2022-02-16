@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'antd';
 import { record, ConfigProp } from '../type';
 import AceEditor from '@/components/ace-editor';
+import './config-template.less';
 export default function ConfigT(props: ConfigProp) {
-  const { visible, value, handleCancel, code } = props;
+  const { visible, templateContext, handleCancel, code } = props;
+  console.log('context:', templateContext);
   const [form] = Form.useForm();
-  //   console.log(value, code, 1333);
-  console.log(value, 11);
-  console.log(code, 122);
-
-  const [readOnly, setReadOnly] = useState<boolean>(false);
+  const [readOnly, setReadOnly] = useState<boolean>(true);
   const handleOk = () => {
     const values = form.getFieldValue('value');
     console.log(values, 7777);
@@ -18,12 +16,12 @@ export default function ConfigT(props: ConfigProp) {
     setReadOnly((value) => !value);
   };
   useEffect(() => {
-    if (value) {
+    if (templateContext) {
       form.setFieldsValue({
-        value,
+        value: templateContext,
       });
     }
-  }, [value]);
+  }, [templateContext]);
   return (
     <Modal
       title="配置模版"
@@ -32,11 +30,9 @@ export default function ConfigT(props: ConfigProp) {
       onCancel={handleCancel}
       width={800}
       footer={[
-        { readOnly } && (
-          <Button type="primary" style={{ position: 'absolute', left: '20px' }} onClick={handleEdit}>
-            编辑
-          </Button>
-        ),
+        <Button type="primary" danger={!readOnly} style={{ position: 'absolute', left: '20px' }} onClick={handleEdit}>
+          {readOnly ? '编辑' : '取消编辑'}
+        </Button>,
         <Button key="submit" type="primary" onClick={handleCancel}>
           取消
         </Button>,
@@ -45,11 +41,13 @@ export default function ConfigT(props: ConfigProp) {
         </Button>,
       ]}
     >
-      <div className="code-title">NG实例CODE：{code}</div>
+      <div className="code-title">
+        NG实例CODE：<span>{code}</span>
+      </div>
       <div>
-        <Form>
-          <Form.Item name="value" form={form}>
-            <AceEditor mode="yaml" height={600} readOnly={readOnly} />
+        <Form form={form}>
+          <Form.Item name="value">
+            <AceEditor mode="yaml" height={450} readOnly={readOnly} />
           </Form.Item>
         </Form>
       </div>
