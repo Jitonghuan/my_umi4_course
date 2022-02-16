@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Select, Switch, message } from 'antd';
+import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -57,7 +57,16 @@ export default function envManageList(props: any) {
       value: 'prod',
     },
   ]; //环境大类
-
+  const proEnvTypeData = [
+    {
+      label: '项目环境',
+      value: 'project',
+    },
+    {
+      label: '基准环境',
+      value: 'benchmark',
+    },
+  ]; //项目环境分类选择
   useEffect(() => {
     selectCategory();
   }, []);
@@ -102,6 +111,7 @@ export default function envManageList(props: any) {
         categoryCode: value?.categoryCode,
         pageIndex: value?.pageIndex,
         pageSize: value?.pageSize,
+        proEnvType: value?.proEnvType,
       },
     })
       .then((result) => {
@@ -241,7 +251,7 @@ export default function envManageList(props: any) {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="env-list">
       <FilterCard>
         <div>
           <Form
@@ -273,6 +283,9 @@ export default function envManageList(props: any) {
             </Form.Item>
             <Form.Item label=" 环境CODE：" name="envCode">
               <Input placeholder="请输入环境CODE" style={{ width: 130 }}></Input>
+            </Form.Item>
+            <Form.Item label="项目环境分类：" name="proEnvType">
+              <Select showSearch style={{ width: 120 }} options={proEnvTypeData} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -336,7 +349,16 @@ export default function envManageList(props: any) {
             <Table.Column title="环境名" dataIndex="envName" width={150} />
             <Table.Column title="环境CODE" dataIndex="envCode" width={130} />
             <Table.Column title="环境大类" dataIndex="envTypeCode" width={90} />
-            <Table.Column title="项目环境分类" dataIndex="" width={90} />
+            <Table.Column
+              title="项目环境分类"
+              dataIndex="proEnvTypeData"
+              width={140}
+              render={(value, record: any, index) => (
+                <span>
+                  {value === 'benchmark' ? <Tag color="geekblue">基准环境</Tag> : <Tag color="green">项目环境</Tag>}
+                </span>
+              )}
+            />
             <Table.Column title="默认分类" dataIndex="categoryCode" width={130} />
             <Table.Column title="备注" dataIndex="mark" width={200} />
             <Table.Column
@@ -375,6 +397,7 @@ export default function envManageList(props: any) {
                 />
               )}
             />
+            <Table.Column title="NG实例" dataIndex="" width={140} />
             <Table.Column
               title="操作"
               width={180}

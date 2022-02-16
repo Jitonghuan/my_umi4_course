@@ -7,11 +7,12 @@ import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } f
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
-import { getRequest, delRequest } from '@/utils/request';
+import { getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { queryProjectEnvList } from './service';
 import { useDeleteProjectEnv, useQueryCategory, useEnvList } from './hook';
 import EnvironmentEditDraw from './add-environment';
+import './index.less';
 /** 环境大类 */
 const envTypeData = [
   {
@@ -102,7 +103,7 @@ export default function Launch() {
     loadListData({ pageIndex: 1, pageSize: 20 });
   };
   return (
-    <PageContainer>
+    <PageContainer className="project-env-list">
       <EnvironmentEditDraw
         mode={enviroEditMode}
         initData={enviroInitData}
