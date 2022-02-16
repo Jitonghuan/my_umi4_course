@@ -90,6 +90,10 @@ export default [
     redirect: `${baseRoutePath}/operation/env-manage/env-list`,
   },
   {
+    path: `${baseRoutePath}/operation/ng-manage`,
+    redirect: `${baseRoutePath}/operation/ng-manage/ng-list`,
+  },
+  {
     path: `${baseRoutePath}/operation/label-manage`,
     redirect: `${baseRoutePath}/operation/label-manage/label-list`,
   },
@@ -812,6 +816,27 @@ export default [
             component: '@/pages/operation/env-manage/push-env',
             hideInMenu: true,
           },
+        ],
+      },
+      {
+        path: 'ng-manage',
+        name: 'NG实例管理',
+        key: 'ng-manage',
+        routes: [
+          {
+            path: 'ng-list',
+            name: 'NG实例列表',
+            key: 'ng-list',
+            component: '@/pages/operation/ng-manage/ng-list',
+            hideInMenu: true,
+          },
+          // {
+          //   path: 'push-env',
+          //   name: '推送环境',
+          //   key: 'env-manage',
+          //   component: '@/pages/operation/env-manage/push-env',
+          //   hideInMenu: true,
+          // },
         ],
       },
       {
