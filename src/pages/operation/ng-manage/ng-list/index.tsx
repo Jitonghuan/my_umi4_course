@@ -57,7 +57,7 @@ export default function NgList() {
         // setPageIndex(1);
       });
   };
-  //   编辑 查看实例
+  // 编辑 查看实例
   const handleEditNg = (data: record, index: number, type: EditorMode) => {
     setInitNgData(data);
     setNgMode(type);

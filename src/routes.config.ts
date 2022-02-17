@@ -820,12 +820,12 @@ export default [
       },
       {
         path: 'ng-manage',
-        name: 'NG实例管理',
+        name: 'NG配置管理',
         key: 'ng-manage',
         routes: [
           {
             path: 'ng-list',
-            name: 'NG实例列表',
+            name: 'NG配置列表',
             key: 'ng-manage',
             component: '@/pages/operation/ng-manage/ng-list',
             hideInMenu: true,
