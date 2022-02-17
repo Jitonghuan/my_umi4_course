@@ -28,7 +28,7 @@ export default function MonacoEditor(prop: any) {
       });
     }
   }, [resolved]);
-
+  // 编辑时触发
   useEffect(() => {
     if (instance) {
       const d = instance.onDidChangeModelContent((a) => {
@@ -39,7 +39,7 @@ export default function MonacoEditor(prop: any) {
       return () => d.dispose();
     }
   });
-
+  // 切换文件时触发
   useEffect(() => {
     if (instance) {
       let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
@@ -50,12 +50,12 @@ export default function MonacoEditor(prop: any) {
       };
     }
   }, [instance, filePath]);
-
+  // prop中context传入时触发
   useEffect(() => {
     if (!instance) return;
     if (instance.getModel()?.getValue() != context) {
       instance.getModel()?.setValue(context);
-      renderMergeTools();
+      // renderMergeTools();
     }
   }, [context]);
 
@@ -89,7 +89,7 @@ export default function MonacoEditor(prop: any) {
           if (char === '=') {
             if (continueWith('=======', index)) {
               current[mode] = index;
-              current.oldValue = str.substring(str.indexOf('\n', current.start) + 2, current.split);
+              current.oldValue = str.substring(str.indexOf('\n', current.start) + 1, current.split);
               current.startEnd = str.indexOf('\n', current.start);
               mode = e;
               index += '======='.length;
@@ -101,7 +101,7 @@ export default function MonacoEditor(prop: any) {
           if (char === '>') {
             if (continueWith('>>>>>>>', index)) {
               current[mode] = index;
-              current.newValue = str.substring(str.indexOf('\n', current.split) + 2, current.end);
+              current.newValue = str.substring(str.indexOf('\n', current.split) + 1, current.end);
               current.repStop = str.indexOf('\n', current.end);
               res.push(current);
               current = {};
@@ -134,6 +134,7 @@ export default function MonacoEditor(prop: any) {
   // 创建提示div
   let createWidget = (position: number, domNode: any) => {
     if (!instance) return;
+    // id必须唯一
     let id = Math.floor(Math.random() * (100000000 - 1) + 1);
     var contentWidget: any = {
       getId: function () {
@@ -197,6 +198,7 @@ export default function MonacoEditor(prop: any) {
     if (!instance) return;
     // 增加快速操作按钮
     instance.changeViewZones(function (changeAccessor) {
+      // 每次更新时需要把旧的zones销毁
       oldZones.forEach((e) => changeAccessor.removeZone(e));
       setOldZones(
         areas.map((area: any) => {
