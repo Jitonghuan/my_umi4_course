@@ -29,27 +29,39 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   const [editDisabled, setEditDisabled] = useState<boolean>(false);
   const [ensureDisabled, setEnsureDisabled] = useState<boolean>(false);
   const [appsListData, setAppsListData] = useState<any>([]);
-  const [targetKeys, setTargetKeys] = useState(); //目标选择的key值
+  const [targetKeys, setTargetKeys] = useState([]); //目标选择的key值
   const [selectedKeys, setSelectedKeys] = useState<any>([]); //已经选择的key值
-
+  let categoryCurrent: any = [];
   const onChange = (nextTargetKeys: any, direction: any, moveKeys: any) => {
     setTargetKeys(nextTargetKeys);
+    console.log('targetKeys: ', nextTargetKeys);
   };
 
   const onSelectChange = (sourceSelectedKeys: any, targetSelectedKeys: any) => {
     setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
+
+    // setTargetKeys(targetSelectedKeys)
+    console.log('sourceSelectedKeys: ', sourceSelectedKeys);
+    console.log('targetSelectedKeys: ', targetSelectedKeys);
   };
 
   const onScroll = (direction: any, e: any) => {};
   const handleOk = () => {
     let selectedAppCode: any = [];
+
     // let params = addEnvironmentForm.getFieldsValue();
     addEnvironmentForm.validateFields().then((params) => {
-      appsListData.filter((item: any, index: number) => {
-        if (selectedKeys.includes(item.key)) {
-          selectedAppCode.push(item.title);
-        }
-      });
+      if (params.categoryCode) {
+        appsListData.filter((item: any, index: number) => {
+          if (params.categoryCode?.includes(item.key)) {
+            selectedAppCode.push(item.title);
+          }
+        });
+      }
+      if (categoryCurrent) {
+        selectedAppCode.concat(categoryCurrent);
+      }
+
       if (mode === 'ADD') {
         console.log('selectedAppCode', selectedAppCode);
         let addParamsObj = {
@@ -60,7 +72,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           relationApps: selectedAppCode || [],
         };
         createProjectEnv(addParamsObj).then(() => {
-          onSave;
+          onSave();
         });
       }
       if (mode === 'EDIT') {
@@ -70,7 +82,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           relationApps: selectedAppCode || [],
         };
         updateProjectEnv(editParamsObj).then(() => {
-          onSave;
+          onSave();
         });
       }
     });
@@ -82,25 +94,52 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     await getRequest(queryAppsList, { data: { benchmarkEnvCode, projectEnvCode } }).then((res) => {
       if (res?.success) {
         let data = res?.data;
-        if (data.canAddApps) {
+        if (data.canAddApps && !data.alreadyAddApps) {
           data.canAddApps?.map((item: any, index: number) => {
             canAddAppsData.push({
               key: index.toString(),
               title: item,
             });
-
-            // setTargetKeys(canAddAppsData);
           });
           setAppsListData(canAddAppsData);
         }
-        if (data?.alreadyAddApps) {
-          data.alreadyAddApps?.map((item: any, index: number) => {
-            alreadyAddAppsData.push({
+
+        if (data.alreadyAddApps) {
+          debugger;
+          let arry: any = [];
+          let selectedAppCode: any = [];
+          data.canAddApps?.map((item: any, index: number) => {
+            canAddAppsData.push({
+              key: index.toString(),
+              title: item,
+            });
+            arry.push({
               key: index.toString(),
               title: item,
             });
           });
-          // setSelectedKeys(alreadyAddAppsData);
+          data.alreadyAddApps?.map((item: any, index: number) => {
+            arry.push({
+              key: arry.length.toString(),
+              title: item,
+            });
+          });
+          let arryData = arry;
+          console.log('arryData', arryData);
+          setAppsListData(arryData);
+          let keyArry: any = [];
+          canAddAppsData.map((item: any) => {
+            keyArry.push(item.key);
+          });
+          arryData?.filter((item: any) => {
+            if (keyArry.includes(item.key) === false) {
+              // selectedAppCode.push({key:item.key,title:item.title})
+              categoryCurrent.push(item.title);
+              selectedAppCode.push(item.key);
+            }
+          });
+
+          setTargetKeys(selectedAppCode);
         }
       }
     });
@@ -117,6 +156,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       setEditDisabled(true);
     }
     if (mode !== 'HIDE' && mode !== 'ADD') {
+      addEnvironmentForm.resetFields();
       if (initData) {
         addEnvironmentForm.setFieldsValue({
           envName: initData?.envName,
@@ -130,6 +170,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     return () => {
       setEnsureDisabled(false);
       setEditDisabled(false);
+      setTargetKeys([]);
       addEnvironmentForm.setFieldsValue({
         envName: '',
         envCode: '',
@@ -197,12 +238,14 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           <Form.Item label="备注：" name="mark">
             <Input.TextArea style={{ width: '300px' }} placeholder="多行输入"></Input.TextArea>
           </Form.Item>
-          <Form.Item label="选择应用" name="categoryCode">
+          <p>选择应用:</p>
+          <Form.Item label="选择应用" name="categoryCode" noStyle>
             <Transfer
               dataSource={appsListData}
               titles={['可添加应用', '已添加应用']}
               targetKeys={targetKeys}
               selectedKeys={selectedKeys}
+              // oneWay
               onChange={onChange}
               onSelectChange={onSelectChange}
               onScroll={onScroll}
