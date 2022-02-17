@@ -8,13 +8,13 @@ import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from 'antd';
 import { EnvEditData } from '../env-list/index';
-import { createEnv, appTypeList, updateEnv } from '../service';
+import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 import './index.less';
 export interface EnvEditorProps {
   mode?: EditorMode;
   initData?: EnvEditData;
-  onClose?: () => any;
-  onSave?: () => any;
+  onClose: () => any;
+  onSave: () => any;
 }
 
 export default function addEnvData(props: EnvEditorProps) {
@@ -69,6 +69,7 @@ export default function addEnvData(props: EnvEditorProps) {
         setNeedApplyChecked(false);
         setNeedApplyOption(1);
       }
+      queryNGlist();
       createEnvForm.setFieldsValue({
         ...initData,
         isBlock: isBlockChecked,
@@ -119,6 +120,20 @@ export default function addEnvData(props: EnvEditorProps) {
     }
   };
 
+  //查询NG实例
+  const [ngInstOptions, setNgInstOptions] = useState<any>([]);
+  const queryNGlist = () => {
+    getRequest(queryNGList, { data: { pageIndex: -1 } }).then((res) => {
+      if (res?.success) {
+        let data = res?.data?.dataSource;
+        let ngList = data?.map((el: any) => ({
+          label: el?.ngInsName,
+          value: el?.ngInstCode,
+        }));
+        setNgInstOptions(ngList);
+      }
+    });
+  };
   const handleSubmit = () => {
     if (mode === 'ADD') {
       const params = createEnvForm.getFieldsValue();
@@ -269,6 +284,9 @@ export default function addEnvData(props: EnvEditorProps) {
               </Form.Item>
             )}
           </div>
+          <Form.Item name="ngInstCode" label="NG实例" rules={[{ required: true, message: '这是必填项' }]}>
+            <Select placeholder="请选择NG实例" style={{ width: 280 }} disabled={isDisabled}></Select>
+          </Form.Item>
           <Form.Item name="clusterName" label="集群名称" rules={[{ required: true, message: '这是必填项' }]}>
             <Input placeholder="请输入集群名称" style={{ width: 280 }} disabled={isDisabled}></Input>
           </Form.Item>

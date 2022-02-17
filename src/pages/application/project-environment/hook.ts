@@ -39,7 +39,7 @@ export function useDeleteProjectEnv() {
 export function useQueryAppsList() {
   const [dataSource, setDataSource] = useState<any>({});
   const queryAppsList = async (envCode: string) => {
-    await getRequest(APIS.queryAppsList, { data: envCode }).then((res) => {
+    await getRequest(APIS.queryAppsList, { data: { envCode } }).then((res) => {
       if (res?.success) {
         let data = res?.data?.dataSource;
         setDataSource(data);

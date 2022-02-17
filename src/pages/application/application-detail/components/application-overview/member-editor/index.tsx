@@ -11,8 +11,8 @@ import { AppMemberInfo } from '@/pages/application/interfaces';
 export interface MemberEditorProps {
   mode?: EditorMode;
   initData?: AppMemberInfo;
-  onClose?: () => any;
-  onSave?: () => any;
+  onClose: () => any;
+  onSave: () => any;
 }
 
 export default function MemberEditor(props: MemberEditorProps) {

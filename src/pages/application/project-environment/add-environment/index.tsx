@@ -13,8 +13,8 @@ import './index.less';
 export interface EnvironmentListProps {
   mode?: EditorMode;
   initData?: any;
-  onClose?: () => any;
-  onSave?: () => any;
+  onClose: () => any;
+  onSave: () => any;
 }
 
 export default function EnvironmentEditor(props: EnvironmentListProps) {
@@ -33,13 +33,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   // .filter((item:any) => +item.key > 10).map((item:any) => item.key);
   const [targetKeys, setTargetKeys] = useState(initialTargetKeys);
   const [selectedKeys, setSelectedKeys] = useState<any>([]);
-  for (let i = 0; i < 20; i++) {
-    canAddAppsData.push({
-      key: i.toString(),
-      title: `content${i + 1}`,
-      description: `description of content${i + 1}`,
-    });
-  }
+
   const onChange = (nextTargetKeys: any, direction: any, moveKeys: any) => {
     console.log('targetKeys:', nextTargetKeys);
     console.log('direction:', direction);
@@ -94,8 +88,10 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     if (mode === 'VIEW') {
       setEnsureDisabled(true);
     }
-    if (mode !== 'HIDE' && mode !== 'ADD') {
+    if (mode === 'EDIT') {
       setEditDisabled(true);
+    }
+    if (mode !== 'HIDE') {
       if (appsListData.canAddApps) {
         appsListData.canAddApps?.map((item: any, index: number) => {
           canAddAppsData.push({
@@ -113,26 +109,32 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
         });
         setSelectedKeys(alreadyAddAppsData);
       }
-      addEnvironmentForm.setFieldsValue({
-        envName: initData?.envName,
-        envCode: initData?.envCode,
-        benchmarkEnvCode: initData?.benchmarkEnvCode,
-        mark: initData?.mark,
-      });
+      if (initData) {
+        addEnvironmentForm.setFieldsValue({
+          envName: initData?.envName,
+          envCode: initData?.envCode,
+          benchmarkEnvCode: initData?.benchmarkEnvCode,
+          mark: initData?.mark,
+        });
+      }
     }
   }, []);
+  console.log('canAddAppsData', canAddAppsData);
   const selectEnvCode = (value: any) => {
     queryAppsList(value);
   };
   const handleClose = () => {
-    onClose;
+    onClose();
+    if (mode === 'ADD') {
+      addEnvironmentForm.resetFields();
+    }
   };
   return (
     <Drawer
       visible={mode !== 'HIDE'}
       title={mode === 'EDIT' ? '编辑项目环境' : mode === 'ADD' ? '新增项目环境' : '查看环境'}
       maskClosable={false}
-      onClose={onClose}
+      onClose={() => onClose()}
       width={'40%'}
       footer={
         <div className="drawer-environ-footer">
@@ -153,12 +155,13 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
           </Form.Item>
           <Form.Item label="项目环境CODE" name="envCode">
-            <Input style={{ width: 300 }} placeholder="单行输入" onChange={selectEnvCode}></Input>
+            <Input style={{ width: 300 }} placeholder="单行输入"></Input>
           </Form.Item>
           <Form.Item label="选择基准环境" name="benchmarkEnvCode">
             <Select
               style={{ width: 300 }}
               options={envDataSource}
+              onChange={selectEnvCode}
               loading={loading}
               showSearch
               allowClear
