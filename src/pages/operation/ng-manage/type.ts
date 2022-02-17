@@ -14,8 +14,10 @@ export interface record {
 }
 
 export interface ConfigProp {
+  id: number;
   visible: boolean;
   templateContext: string;
   handleCancel: any;
   code: string;
+  onSave: any;
 }

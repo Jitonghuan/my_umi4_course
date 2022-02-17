@@ -14,70 +14,47 @@ import AddNgDraw from '../add-ng';
 import appConfig from '@/app.config';
 import { record } from '../type';
 import ConfigModal from './config-template';
-const mock: any = [
-  {
-    id: 1,
-    ngInstCode: 'testCode1',
-    ngInstName: 'testName1',
-    confFilePath: '/etc/nginx/conf.d/1-dev.conf',
-    templateContext: 'this is for test',
-    resourceFilePath: '/usr/share/nginx/1-dev',
-    ipAddress: '192.168.54.123',
-    reMark: 'test',
-    createUser: '王安楠',
-    modifyUser: '王安楠',
-    gmtCreate: '2022-02-16T15:52:04.000704+08:00',
-    gmtModify: '2022-02-16T15:52:04.000707+08:00',
-  },
-  {
-    id: 2,
-    ngInstCode: 'testCode2',
-    ngInstName: 'testName2',
-    confFilePath: '/etc/nginx/conf.d/2-dev.conf',
-    templateContext: 'this is for test',
-    resourceFilePath: '/usr/share/nginx/2-dev',
-    ipAddress: '192.168.54.123',
-    reMark: 'test2',
-    createUser: '王安楠',
-    modifyUser: '王安楠',
-    gmtCreate: '2022-02-16T15:52:04.000704+08:00',
-    gmtModify: '2022-02-16T15:52:04.000707+08:00',
-  },
-];
+
 export default function NgList() {
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [searchParams, setSearchParams] = useState<any>();
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(20);
   const [loading, setLoading] = useState<boolean>(false);
-  const [detailItem, setDetailItem] = useState<any>();
-  const [pageTotal, setPageTotal] = useState<number>();
   const [total, setTotal] = useState<number>(0);
-  const [pageCurrentIndex, setPageCurrentIndex] = useState<number>(1);
-  const [logList, setLogList] = useState<any>([]); //查看日志列表信息
-  const [NgDataSource, setNgDataSource] = useState<any>(mock); //ng实例列表
+  const [NgDataSource, setNgDataSource] = useState<any>([]); //ng实例列表
   const [NgForm] = Form.useForm();
   const [ngMode, setNgMode] = useState<EditorMode>('HIDE');
   const [initNgData, setInitNgData] = useState<any>({});
   const [visible, setVisible] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
   const [code, setCode] = useState<string>('');
+  const [id, setId] = useState<number>(0);
+  useEffect(() => {
+    let obj = { pageIndex: 1, pageSize: 20 };
+    queryNgData(obj);
+  }, []);
   //  查询
   const queryNgData = (value: any) => {
-    // setLoading(true);
+    setLoading(true);
     getRequest(queryNgList, {
-      data: value,
+      data: {
+        ngInstCode: value?.ngInstCode,
+        ngInstName: value?.ngInstName,
+        ipAddress: value?.ipAddress,
+        pageIndex: value?.pageIndex,
+        pageSize: value?.pageSize,
+      },
     })
       .then((result) => {
         if (result?.success) {
-          let { pageTotal, pageIndex } = result.data.pageInfo.total;
+          let { total, pageIndex } = result.data.pageInfo;
           setNgDataSource(result?.data?.dataSource);
-          setTotal(pageTotal);
-          setPageCurrentIndex(pageIndex);
+          setTotal(total);
+          setPageIndex(pageIndex);
         }
       })
       .finally(() => {
         setLoading(false);
-        setPageCurrentIndex(1);
+        // setPageIndex(1);
       });
   };
   //   编辑 查看实例
@@ -86,9 +63,9 @@ export default function NgList() {
     setNgMode(type);
   };
   //   删除实例
-  const handleDelNg = (data: record) => {
-    let id = data.id;
-    delRequest(`${appConfig.apiPrefix}/opsManage/ngInstance/delete/${id}`);
+  const handleDelNg = async (data: record) => {
+    let ngInstCode = data.ngInstCode;
+    await delRequest(`${appConfig.apiPrefix}/opsManage/ngInstance/delete/${ngInstCode}`);
     loadListData({
       pageIndex: 1,
       pageSize: 20,
@@ -96,7 +73,7 @@ export default function NgList() {
   };
   //   分页
   const pageSizeClick = (pagination: any) => {
-    setPageCurrentIndex(pagination.current);
+    setPageIndex(pagination.current);
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -132,7 +109,7 @@ export default function NgList() {
               NgForm.resetFields();
               queryNgData({
                 pageIndex: 1,
-                // pageSize: pageSize,
+                pageSize: 20,
               });
             }}
           >
@@ -182,7 +159,19 @@ export default function NgList() {
           }}
           onClose={() => setNgMode('HIDE')}
         />
-        <ConfigModal visible={visible} handleCancel={handleCancel} templateContext={value} code={code} />
+        <ConfigModal
+          visible={visible}
+          handleCancel={handleCancel}
+          templateContext={value}
+          code={code}
+          id={id}
+          onSave={() => {
+            setVisible(false);
+            setTimeout(() => {
+              queryNgData({ pageIndex: 1, pageSize: 20 });
+            }, 100);
+          }}
+        />
         <div style={{ marginTop: '15px' }}>
           <Table
             dataSource={NgDataSource}
@@ -196,7 +185,7 @@ export default function NgList() {
               // onChange: (next) => setPageIndex(next),
               onShowSizeChange: (_, size) => {
                 setPageSize(size);
-                setPageCurrentIndex(1); //
+                setPageIndex(1);
               },
               showTotal: () => `总共 ${total} 条数据`,
             }}
@@ -218,6 +207,7 @@ export default function NgList() {
                     setValue(record.templateContext);
                     setCode(record.ngInstCode);
                     setVisible(true);
+                    setId(record.id);
                   }}
                 >
                   查看

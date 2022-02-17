@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'antd';
+import { Modal, Button, Form, message } from 'antd';
 import { record, ConfigProp } from '../type';
 import AceEditor from '@/components/ace-editor';
 import './config-template.less';
+import { updateNg } from '../service';
+import { putRequest } from '@/utils/request';
 export default function ConfigT(props: ConfigProp) {
-  const { visible, templateContext, handleCancel, code } = props;
-  console.log('context:', templateContext);
+  const { visible, templateContext, handleCancel, code, id, onSave } = props;
   const [form] = Form.useForm();
   const [readOnly, setReadOnly] = useState<boolean>(true);
   const handleOk = () => {
     const values = form.getFieldValue('value');
-    console.log(values, 7777);
+    putRequest(updateNg, {
+      data: {
+        id: id,
+        templateContext: values,
+        ngInstCode: code,
+      },
+    }).then((result) => {
+      if (result.success) {
+        message.success('编辑配置模版成功！');
+        onSave?.();
+      } else {
+        message.error(result.errorMsg);
+      }
+    });
   };
   const handleEdit = () => {
     setReadOnly((value) => !value);
@@ -47,7 +61,7 @@ export default function ConfigT(props: ConfigProp) {
       <div>
         <Form form={form}>
           <Form.Item name="value">
-            <AceEditor mode="yaml" height={450} readOnly={readOnly} />
+            <AceEditor mode="yaml" height={500} readOnly={readOnly} />
           </Form.Item>
         </Form>
       </div>
