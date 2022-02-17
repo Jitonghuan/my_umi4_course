@@ -45,7 +45,7 @@ export interface TmplEdit extends Record<string, any> {
   languageCode: string;
   remark: string;
 }
-export default function Launch() {
+export default function EnvironmentList() {
   const { Option } = Select;
   const [formList] = Form.useForm();
   const [enviroInitData, setEnviroInitData] = useState<any>();
@@ -66,7 +66,7 @@ export default function Launch() {
           let data = res?.data?.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
-          setPageSize(pageIndex);
+          setPageIndex(pageIndex);
           setDataSource(data);
           setPageTotal(pageTotal);
         }
@@ -165,7 +165,13 @@ export default function Launch() {
             <h3>项目环境列表</h3>
           </div>
           <div className="caption-right">
-            <Button type="primary" onClick={() => setEnviroEditMode('ADD')}>
+            <Button
+              type="primary"
+              onClick={() => {
+                setEnviroEditMode('ADD');
+                console.log(2);
+              }}
+            >
               <PlusOutlined />
               新增项目环境
             </Button>
@@ -193,7 +199,7 @@ export default function Launch() {
             <Table.Column title="ID" dataIndex="id" width="4%" />
             <Table.Column title="环境名" dataIndex="envName" width="20%" ellipsis />
             <Table.Column title="环境CODE" dataIndex="envCode" width="8%" ellipsis />
-            <Table.Column title="基准环境" dataIndex="benchmarkEnvCode" width="8%" ellipsis />
+            <Table.Column title="基准环境" dataIndex="relEnvs" width="8%" ellipsis />
             <Table.Column title="默认分类" dataIndex="categoryCode" width="8%" ellipsis />
             <Table.Column title="环境大类" dataIndex="envTypeCode" width="16%" />
             <Table.Column title="备注" dataIndex="mark" width="18%" ellipsis />
@@ -222,7 +228,7 @@ export default function Launch() {
                   <Popconfirm
                     title="确定要删除该信息吗？"
                     onConfirm={() => {
-                      deleteProjectEnv(record?.id).then(() => {
+                      deleteProjectEnv(record?.envCode).then(() => {
                         queryProjectEnv({
                           pageIndex: 1,
                           // pageSize: pageSize,

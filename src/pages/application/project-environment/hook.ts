@@ -2,16 +2,23 @@ import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request
 import * as APIS from './service';
 import { message } from 'antd';
 import { useEffect, useState } from 'react';
+import appConfig from '@/app.config';
 
 export function useCreateProjectEnv() {
+  const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
   const createProjectEnv = async (creatParamsObj: any) => {
-    await postRequest(APIS.createProjectEnv, { data: creatParamsObj }).then((res) => {
-      if (res.success) {
-        message.success('新增项目环境成功！');
-      }
-    });
+    setEnsureLoading(true);
+    await postRequest(APIS.createProjectEnv, { data: creatParamsObj })
+      .then((res) => {
+        if (res.success) {
+          message.success('新增项目环境成功！');
+        }
+      })
+      .finally(() => {
+        setEnsureLoading(false);
+      });
   };
-  return [createProjectEnv];
+  return [ensureLoading, createProjectEnv];
 }
 
 export function useUpdateProjectEnv() {
@@ -26,10 +33,10 @@ export function useUpdateProjectEnv() {
 }
 
 export function useDeleteProjectEnv() {
-  const deleteProjectEnv = async (id: number) => {
-    await delRequest(APIS.deleteProjectEnv, { data: id }).then((res) => {
-      if (res.success) {
-        message.success('删除项目环境成功！');
+  const deleteProjectEnv = async (envCode: string) => {
+    await delRequest(`${appConfig.apiPrefix}/appManage/projectEnv/delete/${envCode}`).then((res) => {
+      if (res?.success) {
+        message.success('删除成功！');
       }
     });
   };
