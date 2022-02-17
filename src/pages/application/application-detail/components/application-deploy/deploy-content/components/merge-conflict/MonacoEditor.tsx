@@ -59,6 +59,25 @@ export default function MonacoEditor(prop: any) {
     }
   }, [context]);
 
+  useEffect(() => {
+    if (instance) {
+      let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
+      instance.setModel(modifiedModel);
+      renderMergeTools();
+      return () => {
+        modifiedModel?.dispose();
+      };
+    }
+  }, [instance, filePath]);
+
+  useEffect(() => {
+    if (!instance) return;
+    if (instance.getModel()?.getValue() != context) {
+      instance.getModel()?.setValue(context);
+      renderMergeTools();
+    }
+  }, [context]);
+
   //计算冲突区域
   const diffAreas = () => {
     if (!instance) return;
