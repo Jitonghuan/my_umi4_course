@@ -116,16 +116,20 @@ export default function appEnvPageList() {
 
   //删除数据
   const handleDelEnv = (record: any) => {
-    postRequest(delAppEnv, { data: { appCode, envCode: record.envCode, proEnvType: record.proEnvType } }).then(
-      (res: any) => {
-        if (res.success) {
-          message.success('删除成功！');
-          queryAppEnvData({
-            appCode,
-          });
-        }
-      },
-    );
+    if ((record.proEnvType = 'benchmark')) {
+      postRequest(delAppEnv, { data: { appCode, envCode: record.envCode, proEnvType: record.proEnvType } }).then(
+        (res: any) => {
+          if (res.success) {
+            message.success('删除成功！');
+            queryAppEnvData({
+              appCode,
+            });
+          }
+        },
+      );
+    } else {
+      message.info('项目环境请到项目管理中进行删除！');
+    }
   };
   //查看modal弹窗环境信息
 

@@ -242,6 +242,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               onChange={onChange}
               onSelectChange={onSelectChange}
               onScroll={onScroll}
+              disabled={ensureDisabled}
               render={(item) => item.title || ''}
             />
           </Form.Item>
