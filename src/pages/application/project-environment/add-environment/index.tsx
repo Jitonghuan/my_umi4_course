@@ -8,7 +8,7 @@ import { history } from 'umi';
 import { useState, useEffect } from 'react';
 import { getRequest } from '@/utils/request';
 import { useCreateProjectEnv, useUpdateProjectEnv, useEnvList } from '../hook';
-import { Drawer, Input, Button, Form, Transfer, Select, Space } from 'antd';
+import { Drawer, Input, Button, Form, Transfer, Select, Space, Badge } from 'antd';
 import { queryAppsList } from '../service';
 import './index.less';
 
@@ -18,6 +18,10 @@ export interface EnvironmentListProps {
   onClose: () => any;
   onSave: () => any;
 }
+const APP_TYPE_MAP = {
+  frontend: '前端',
+  backend: '后端',
+};
 
 export default function EnvironmentEditor(props: EnvironmentListProps) {
   const [addEnvironmentForm] = Form.useForm();
@@ -40,6 +44,8 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   };
 
   const onScroll = (direction: any, e: any) => {};
+  let getfilterOption = (inputValue: string, option: any) => option?.title?.indexOf(inputValue) > -1;
+
   const handleOk = () => {
     let selectedAppCode: any = [];
     addEnvironmentForm.validateFields().then((params) => {
@@ -89,7 +95,8 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           data.canAddApps?.map((item: any, index: number) => {
             canAddAppsData.push({
               key: index.toString(),
-              title: item,
+              title: item.appCode,
+              appType: item.appType,
             });
           });
           setAppsListData(canAddAppsData);
@@ -101,17 +108,20 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           data.canAddApps?.map((item: any, index: number) => {
             canAddAppsData.push({
               key: index.toString(),
-              title: item,
+              title: item.appCode,
+              appType: item.appType,
             });
             arry.push({
               key: index.toString(),
-              title: item,
+              title: item.appCode,
+              appType: item.appType,
             });
           });
           data.alreadyAddApps?.map((item: any, index: number) => {
             arry.push({
               key: arry.length.toString(),
-              title: item,
+              title: item.appCode,
+              appType: item.appType,
             });
           });
           let arryData = arry;
@@ -182,6 +192,13 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   const handleClose = () => {
     onClose();
   };
+  const handleSearch = (dir: any, value: any) => {
+    console.log('search:', dir, value);
+  };
+  // const getAppType=(appType:string)=>{
+  //     let params = addEnvironmentForm.getFieldsValue();
+  //     queryAppsListData(params.benchmarkEnvCode, params.envCode,appType);
+  // }
   return (
     <Drawer
       visible={mode !== 'HIDE'}
@@ -208,7 +225,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
           </Form.Item>
           <Form.Item label="项目环境CODE" name="envCode" rules={[{ required: true, message: '请输入项目环境CODE!' }]}>
-            <Input style={{ width: 300 }} placeholder="单行输入" disabled={ensureDisabled}></Input>
+            <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
           </Form.Item>
           <Form.Item
             label="选择基准环境"
@@ -232,18 +249,38 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               disabled={ensureDisabled}
             ></Input.TextArea>
           </Form.Item>
-          <p>选择应用:</p>
+          <p>
+            选择应用:
+            {/* <span style={{paddingLeft:10}}>
+               <Select options={appTypeOptions} placeholder='筛选前端/后端应用' style={{width:256}} onChange={getAppType} allowClear></Select>
+             </span> */}
+          </p>
           <Form.Item label="选择应用" name="categoryCode" noStyle>
             <Transfer
               dataSource={appsListData}
               titles={['可添加应用', '已添加应用']}
               targetKeys={targetKeys}
+              showSearch
+              filterOption={getfilterOption}
               selectedKeys={selectedKeys}
               onChange={onChange}
               onSelectChange={onSelectChange}
               onScroll={onScroll}
               disabled={ensureDisabled}
-              render={(item) => item.title || ''}
+              onSearch={handleSearch}
+              render={(item) => (
+                <div>
+                  {item.appType === 'backend' ? (
+                    <Badge.Ribbon placement="end" text="后端">
+                      {item.title || ''}
+                    </Badge.Ribbon>
+                  ) : (
+                    <Badge.Ribbon text="前端" color="cyan">
+                      {item.title || ''}
+                    </Badge.Ribbon>
+                  )}
+                </div>
+              )}
             />
           </Form.Item>
         </Form>
