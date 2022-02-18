@@ -24,7 +24,7 @@ export default function addEnvData(props: EnvEditorProps) {
   const [nacosChecked, setNacosChecked] = useState<boolean>(false);
   const [needApplyOption, setNeedApplyOption] = useState<number>(1); //是否启用发布审批
   const [needApplyChecked, setNeedApplyChecked] = useState<boolean>(false);
-
+  //ngInstCode
   const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>(0); //是否封网
   const [isBlockChecked, setIsBlockChecked] = useState<boolean>(false);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -37,6 +37,7 @@ export default function addEnvData(props: EnvEditorProps) {
 
   useEffect(() => {
     if (mode === 'HIDE') return;
+    queryNGlist();
     createEnvForm.resetFields();
     if (mode === 'VIEW') {
       setIsDisabled(true);
@@ -69,7 +70,7 @@ export default function addEnvData(props: EnvEditorProps) {
         setNeedApplyChecked(false);
         setNeedApplyOption(1);
       }
-      queryNGlist();
+
       createEnvForm.setFieldsValue({
         ...initData,
         isBlock: isBlockChecked,
@@ -127,7 +128,7 @@ export default function addEnvData(props: EnvEditorProps) {
       if (res?.success) {
         let data = res?.data?.dataSource;
         let ngList = data?.map((el: any) => ({
-          label: el?.ngInsName,
+          label: el?.ngInstName,
           value: el?.ngInstCode,
         }));
         setNgInstOptions(ngList);
@@ -136,56 +137,63 @@ export default function addEnvData(props: EnvEditorProps) {
   };
   const handleSubmit = () => {
     if (mode === 'ADD') {
-      const params = createEnvForm.getFieldsValue();
+      // const params = createEnvForm.getFieldsValue();
       //新增环境
-      postRequest(createEnv, {
-        data: {
-          envTypeCode: params?.envTypeCode,
-          categoryCode: params?.categoryCode,
-          isBlock: isBlockChangeOption,
-          useNacos: checkedOption,
-          needApply: needApplyOption,
-          nacosAddress: params?.nacosAddress,
-          envCode: params?.envCode,
-          envName: params?.envName,
-          clusterName: params?.clusterName,
-          clusterType: params?.clusterType,
-          clusterNetType: params?.clusterNetType,
-          mark: params?.mark,
-        },
-      }).then((result) => {
-        if (result.success) {
-          message.success('新增环境成功！');
-          onSave?.();
-        } else {
-          message.error(result.errorMsg);
-        }
+      createEnvForm.validateFields().then((params) => {
+        postRequest(createEnv, {
+          data: {
+            envTypeCode: params?.envTypeCode,
+            categoryCode: params?.categoryCode,
+            isBlock: isBlockChangeOption,
+            useNacos: checkedOption,
+            needApply: needApplyOption,
+            nacosAddress: params?.nacosAddress,
+            envCode: params?.envCode,
+            envName: params?.envName,
+            clusterName: params?.clusterName,
+            clusterType: params?.clusterType,
+            clusterNetType: params?.clusterNetType,
+            mark: params?.mark,
+            ngInstCode: params?.ngInstCode,
+          },
+        }).then((result) => {
+          if (result.success) {
+            message.success('新增环境成功！');
+            onSave?.();
+          } else {
+            message.error(result.errorMsg);
+          }
+        });
       });
     } else if (mode === 'EDIT') {
       //编辑环境
-      const initValue = createEnvForm.getFieldsValue();
-      putRequest(updateEnv, {
-        data: {
-          envCode: initValue?.envCode,
-          envName: initValue?.envName,
-          useNacos: checkedOption,
-          isBlock: isBlockChangeOption,
-          needApply: needApplyOption,
-          mark: initValue?.mark,
-          nacosAddress: initValue?.nacosAddress,
-          envTypeCode: initValue?.envTypeCode,
-          categoryCode: initValue?.categoryCode,
-          clusterName: initValue?.clusterName,
-          clusterType: initValue?.clusterType,
-          clusterNetType: initValue?.clusterNetType,
-        },
-      }).then((result) => {
-        if (result.success) {
-          message.success('编辑环境成功！');
-          onSave?.();
-        } else {
-          message.error(result.errorMsg);
-        }
+      // const initValue = createEnvForm.getFieldsValue();
+      createEnvForm.validateFields().then((params) => {
+        putRequest(updateEnv, {
+          data: {
+            ...params,
+            // envCode: initValue?.envCode,
+            // envName: initValue?.envName,
+            useNacos: checkedOption,
+            isBlock: isBlockChangeOption,
+            needApply: needApplyOption,
+            // mark: initValue?.mark,
+            // nacosAddress: initValue?.nacosAddress,
+            // envTypeCode: initValue?.envTypeCode,
+            // categoryCode: initValue?.categoryCode,
+            // clusterName: initValue?.clusterName,
+            // clusterType: initValue?.clusterType,
+            // clusterNetType: initValue?.clusterNetType,
+            // ngInstCode:params?.ngInstCode,
+          },
+        }).then((result) => {
+          if (result.success) {
+            message.success('编辑环境成功！');
+            onSave?.();
+          } else {
+            message.error(result.errorMsg);
+          }
+        });
       });
     }
   };
@@ -285,7 +293,8 @@ export default function addEnvData(props: EnvEditorProps) {
             )}
           </div>
           <Form.Item name="ngInstCode" label="NG实例" rules={[{ required: true, message: '这是必填项' }]}>
-            <Select placeholder="请选择NG实例" style={{ width: 280 }} disabled={isDisabled}></Select>
+            <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} />
+            {/* <Select placeholder="请选择NG实例" style={{ width: 280 }} disabled={isDisabled} options={ngInstOptions}></Select> */}
           </Form.Item>
           <Form.Item name="clusterName" label="集群名称" rules={[{ required: true, message: '这是必填项' }]}>
             <Input placeholder="请输入集群名称" style={{ width: 280 }} disabled={isDisabled}></Input>

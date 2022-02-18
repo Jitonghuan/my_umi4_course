@@ -25,7 +25,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   const [ensureLoading, createProjectEnv] = useCreateProjectEnv();
   const [updateProjectEnv] = useUpdateProjectEnv();
   const [loading, envDataSource] = useEnvList();
-
   const [editDisabled, setEditDisabled] = useState<boolean>(false);
   const [ensureDisabled, setEnsureDisabled] = useState<boolean>(false);
   const [appsListData, setAppsListData] = useState<any>([]);
@@ -34,22 +33,15 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   let categoryCurrent: any = [];
   const onChange = (nextTargetKeys: any, direction: any, moveKeys: any) => {
     setTargetKeys(nextTargetKeys);
-    console.log('targetKeys: ', nextTargetKeys);
   };
 
   const onSelectChange = (sourceSelectedKeys: any, targetSelectedKeys: any) => {
     setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
-
-    // setTargetKeys(targetSelectedKeys)
-    console.log('sourceSelectedKeys: ', sourceSelectedKeys);
-    console.log('targetSelectedKeys: ', targetSelectedKeys);
   };
 
   const onScroll = (direction: any, e: any) => {};
   const handleOk = () => {
     let selectedAppCode: any = [];
-
-    // let params = addEnvironmentForm.getFieldsValue();
     addEnvironmentForm.validateFields().then((params) => {
       if (params.categoryCode) {
         appsListData.filter((item: any, index: number) => {
@@ -63,7 +55,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       }
 
       if (mode === 'ADD') {
-        console.log('selectedAppCode', selectedAppCode);
         let addParamsObj = {
           benchmarkEnvCode: params.benchmarkEnvCode || '',
           projectEnvCode: params.envCode || '',
@@ -105,7 +96,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
         }
 
         if (data.alreadyAddApps) {
-          debugger;
           let arry: any = [];
           let selectedAppCode: any = [];
           data.canAddApps?.map((item: any, index: number) => {
@@ -125,7 +115,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             });
           });
           let arryData = arry;
-          console.log('arryData', arryData);
           setAppsListData(arryData);
           let keyArry: any = [];
           canAddAppsData.map((item: any) => {
@@ -138,7 +127,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               selectedAppCode.push(item.key);
             }
           });
-
           setTargetKeys(selectedAppCode);
         }
       }
@@ -148,9 +136,11 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   useEffect(() => {
     if (mode === 'ADD') {
       addEnvironmentForm.resetFields();
+      setAppsListData([]);
     }
     if (mode === 'VIEW') {
       setEnsureDisabled(true);
+      setEditDisabled(true);
     }
     if (mode === 'EDIT') {
       setEditDisabled(true);
@@ -218,7 +208,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
           </Form.Item>
           <Form.Item label="项目环境CODE" name="envCode" rules={[{ required: true, message: '请输入项目环境CODE!' }]}>
-            <Input style={{ width: 300 }} placeholder="单行输入"></Input>
+            <Input style={{ width: 300 }} placeholder="单行输入" disabled={ensureDisabled}></Input>
           </Form.Item>
           <Form.Item
             label="选择基准环境"
@@ -236,7 +226,11 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             ></Select>
           </Form.Item>
           <Form.Item label="备注：" name="mark">
-            <Input.TextArea style={{ width: '300px' }} placeholder="多行输入"></Input.TextArea>
+            <Input.TextArea
+              style={{ width: '300px' }}
+              placeholder="多行输入"
+              disabled={ensureDisabled}
+            ></Input.TextArea>
           </Form.Item>
           <p>选择应用:</p>
           <Form.Item label="选择应用" name="categoryCode" noStyle>
@@ -245,7 +239,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               titles={['可添加应用', '已添加应用']}
               targetKeys={targetKeys}
               selectedKeys={selectedKeys}
-              // oneWay
               onChange={onChange}
               onSelectChange={onSelectChange}
               onScroll={onScroll}

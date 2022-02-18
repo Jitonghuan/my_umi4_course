@@ -34,21 +34,19 @@ const envTypeData = [
 ];
 
 /** 编辑页回显数据 */
-export interface TmplEdit extends Record<string, any> {
-  templateCode: string;
-  templateType: string;
-  templateName: string;
-  tmplConfigurableItem: object;
-  appCategoryCode: any;
-  envCodes: string;
-  templateValue: string;
-  languageCode: string;
-  remark: string;
+export interface EnvironmentEdit extends Record<string, any> {
+  id: number;
+  envName: string;
+  envCode: string;
+  relEnvs: string;
+  categoryCode: string;
+  envTypeCode: string;
+  mark: string;
 }
 export default function EnvironmentList() {
   const { Option } = Select;
   const [formList] = Form.useForm();
-  const [enviroInitData, setEnviroInitData] = useState<any>();
+  const [enviroInitData, setEnviroInitData] = useState<EnvironmentEdit>();
   const [deleteProjectEnv] = useDeleteProjectEnv();
   const [categoryData] = useQueryCategory();
   const [loading, envDataSource] = useEnvList();
@@ -207,7 +205,7 @@ export default function EnvironmentList() {
               title="操作"
               width="18%"
               key="action"
-              render={(_, record: any, index) => (
+              render={(_, record: EnvironmentEdit, index) => (
                 <Space size="small">
                   <a
                     onClick={() => {
