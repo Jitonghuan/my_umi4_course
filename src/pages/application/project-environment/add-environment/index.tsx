@@ -171,6 +171,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       setEnsureDisabled(false);
       setEditDisabled(false);
       setTargetKeys([]);
+      setSelectedKeys(undefined);
       addEnvironmentForm.setFieldsValue({
         envName: '',
         envCode: '',
