@@ -86,11 +86,12 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   };
 
   const queryAppsListData = async (benchmarkEnvCode: string, projectEnvCode?: string) => {
-    let canAddAppsData: any = [];
+    let canAddAppsData: any = []; //可选数据数组
     let alreadyAddAppsData: any = [];
     await getRequest(queryAppsList, { data: { benchmarkEnvCode, projectEnvCode } }).then((res) => {
       if (res?.success) {
         let data = res?.data;
+        //如果只存在可选数据，不存在目标数据
         if (data.canAddApps && !data.alreadyAddApps) {
           data.canAddApps?.map((item: any, index: number) => {
             canAddAppsData.push({
@@ -99,44 +100,44 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               appType: item.appType,
             });
           });
-          setAppsListData(canAddAppsData);
+          setAppsListData(canAddAppsData); //如果只存在可选数据，则可选数据为整体的总数据源
         }
-
+        //如果已选目标数据存在
         if (data.alreadyAddApps) {
-          let arry: any = [];
-          let selectedAppCode: any = [];
+          let arry: any = []; //存放整体的数组
+          let selectedAppCode: any = []; //已选目标数据数组
           data.canAddApps?.map((item: any, index: number) => {
             canAddAppsData.push({
               key: index.toString(),
               title: item.appCode,
               appType: item.appType,
-            });
+            }); //如果已选目标数据存在，仍旧先取出可选数据
             arry.push({
               key: index.toString(),
               title: item.appCode,
               appType: item.appType,
             });
-          });
+          }); //存放整体的数组arry中放入目标数据
           data.alreadyAddApps?.map((item: any, index: number) => {
             arry.push({
               key: arry.length.toString(),
               title: item.appCode,
               appType: item.appType,
             });
-          });
+          }); //存放整体的数组arry中继续放入已选数据，此时已选数据的key必须唯一且延续上面的可选数据的key值往下
           let arryData = arry;
-          setAppsListData(arryData);
+          setAppsListData(arryData); //将拿到的整体全部数据放入穿梭框的dataSource源
           let keyArry: any = [];
           canAddAppsData.map((item: any) => {
             keyArry.push(item.key);
-          });
+          }); //取出可选数据中所有的key值
           arryData?.filter((item: any) => {
             if (keyArry.includes(item.key) === false) {
               // selectedAppCode.push({key:item.key,title:item.title})
               categoryCurrent.push(item.title);
               selectedAppCode.push(item.key);
             }
-          });
+          }); //从整体数据源中筛选，其中不包含可选数据中所有的key值，即为已选数据，则setState目标数据key数组中,视图渲染
           setTargetKeys(selectedAppCode);
         }
       }
