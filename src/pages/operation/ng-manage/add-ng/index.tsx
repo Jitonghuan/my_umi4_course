@@ -158,7 +158,7 @@ export default function addEnvData(props: IProps) {
           </div>
           <div>
             <Form.Item label="配置模版" name="value" className="form-ace" style={{ flexDirection: 'column' }}>
-              <AceEditor mode="yaml" height={400} readOnly={mode === 'VIEW'} />
+              <AceEditor mode="yaml" height={450} readOnly={mode === 'VIEW'} />
             </Form.Item>
           </div>
         </Form>

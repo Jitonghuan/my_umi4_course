@@ -830,13 +830,6 @@ export default [
             component: '@/pages/operation/ng-manage/ng-list',
             hideInMenu: true,
           },
-          // {
-          //   path: 'push-env',
-          //   name: '推送环境',
-          //   key: 'env-manage',
-          //   component: '@/pages/operation/env-manage/push-env',
-          //   hideInMenu: true,
-          // },
         ],
       },
       {
