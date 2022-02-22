@@ -3,7 +3,7 @@
 // @create 2022/02/21 17:10
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Modal } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Modal, Descriptions } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { addAPIPrefix } from '@/utils';
@@ -100,6 +100,18 @@ export default function deliveryList() {
     <PageContainer>
       <ContentCard>
         <div>
+          <h3>基本信息</h3>
+          <Descriptions title="User Info">
+            <Descriptions.Item label="UserName">Zhou Maomao</Descriptions.Item>
+            <Descriptions.Item label="Telephone">1810000000</Descriptions.Item>
+            <Descriptions.Item label="Live">Hangzhou, Zhejiang</Descriptions.Item>
+            <Descriptions.Item label="Remark">empty</Descriptions.Item>
+            <Descriptions.Item label="Address">
+              No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
+            </Descriptions.Item>
+          </Descriptions>
+        </div>
+        <div className="version-manage">
           <div>
             <h3>版本管理</h3>
           </div>
