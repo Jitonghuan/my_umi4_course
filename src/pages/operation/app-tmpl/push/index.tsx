@@ -12,6 +12,7 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import './index.less';
+import { queryAppGroupReq } from './service';
 
 export default function Push(props: any) {
   const { Option } = Select;
@@ -21,7 +22,8 @@ export default function Push(props: any) {
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
+  const [appCategoryCode, setAppCategoryCode] = useState<string>(''); //应用分类获取到的值
+  const [appGroupCode, setAppGroupCode] = useState<string>(''); //应用分类获取到的值
   const [envCodes, setEnvCodes] = useState<string[]>([]); //环境CODE获取到的值
   const [formTmpl] = Form.useForm();
   const [formTmplQuery] = Form.useForm();
@@ -35,6 +37,7 @@ export default function Push(props: any) {
   const [selectTmplOption, setSelectTmplOption] = useState<any>(); //获取当前选中值显示在推送项弹窗
   const [labelListSource, setLabelListSource] = useState<any>();
   const [labelLoading, setLabelLoading] = useState<boolean>(false);
+  const [businessData, setBusinessData] = useState<any[]>([]);
 
   const getLabelList = () => {
     setLabelLoading(true);
@@ -61,9 +64,6 @@ export default function Push(props: any) {
   //处理通过session传递过来的可配置项信息和jvm参数信息
   let tmplItemarry: any = [];
   let jvm = '';
-
-  let jvmString = ''; //
-  let tmplateDataString = ''; //
   let tmplItemString = '';
 
   if (tmplDetailData?.templateType === 'deployment') {
@@ -140,6 +140,7 @@ export default function Push(props: any) {
       appCategoryCode: param.appCategoryCode,
       appCode: param.appCode,
       tagNames: param.tagNames,
+      appGroupCode: param.appGroupCode,
     });
 
     loadListData({ ...param, pageIndex: 1, pageSize: 20 });
@@ -152,8 +153,13 @@ export default function Push(props: any) {
   const changeAppCategory = (value: any) => {
     setEnvDatas([{ value: '', label: '' }]);
     setEnvCodes(['']);
+    formTmplQuery.setFieldsValue({ appGroupCode: '' });
     const appCategoryCode = value;
     setAppCategoryCode(appCategoryCode);
+    queryAppGroupReq({ categoryCode: value }).then((datas) => {
+      setBusinessData(datas.list);
+    });
+
     getRequest(APIS.envList, { data: { categoryCode: appCategoryCode } }).then((resp: any) => {
       if (resp.success) {
         const datas =
@@ -169,6 +175,18 @@ export default function Push(props: any) {
     });
   };
 
+  //选择应用组
+  const selectAppGroup = (appGroupCode: string) => {
+    setAppGroupCode(appGroupCode);
+  };
+  useEffect(() => {
+    let values = formTmplQuery.getFieldsValue();
+    if (values.appCategoryCode) {
+      queryAppGroupReq({ categoryCode: values.appCategoryCode }).then((datas) => {
+        setBusinessData(datas.list);
+      });
+    }
+  }, []);
   //获取环境的值
   const changeEnvCode = (value: any) => {
     setEnvCodes(value);
@@ -238,6 +256,7 @@ export default function Push(props: any) {
         languageCode,
         // envCode: value.envCode,
         appType: 'backend',
+        appGroupCode: value.appGroupCode,
         // isClient: 0,
         pageSize: value.pageSize,
         pageIndex: value.pageIndex,
@@ -367,7 +386,6 @@ export default function Push(props: any) {
             localStorage.setItem('TEMPLATE_PUSH_SEARCH', JSON.stringify(values));
             getApplication({
               ...values,
-
               pageIndex: pageIndex,
               pageSize: pageSize,
             });
@@ -391,6 +409,16 @@ export default function Push(props: any) {
               style={{ width: 220 }}
               options={labelListSource}
               loading={labelLoading}
+            ></Select>
+          </Form.Item>
+          <Form.Item label="应用组：" name="appGroupCode">
+            <Select
+              allowClear
+              showSearch
+              placeholder="请选择应用组Code"
+              style={{ width: 190 }}
+              options={businessData}
+              onChange={selectAppGroup}
             ></Select>
           </Form.Item>
           <Form.Item label="应用CODE：" name="appCode">
