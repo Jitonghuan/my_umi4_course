@@ -856,6 +856,18 @@ export default [
     icon: 'icon-activity',
     routes: [
       {
+        path: 'product-list',
+        name: '产品列表',
+        key: 'product-list',
+        component: '@/pages/delivery/product-list',
+      },
+      {
+        path: 'product-description',
+        name: '产品描述',
+        key: 'product-description',
+        component: '@/pages/delivery/product-description',
+      },
+      {
         path: 'deliveryList',
         name: '交付列表',
         key: 'deliveryList',
