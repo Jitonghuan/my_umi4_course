@@ -41,7 +41,6 @@ export default function addEnvData(props: IProps) {
   const handleSubmit = async () => {
     if (mode === 'ADD') {
       const params = await createNgForm.validateFields();
-      // const params = createNgForm.getFieldsValue();
       // 新增实例
       postRequest(createNg, {
         data: {
@@ -52,10 +51,12 @@ export default function addEnvData(props: IProps) {
           resourceFilePath: params?.resourceFilePath,
           reMark: params?.reMark,
           templateContext: params?.value,
+          serverName: params?.serverName,
+          beDomainName: params?.beDomainName,
         },
       }).then((result) => {
         if (result.success) {
-          message.success('新增实例成功！');
+          message.success('新增NG配置成功！');
           onSave?.();
         } else {
           message.error(result.errorMsg);
@@ -74,10 +75,12 @@ export default function addEnvData(props: IProps) {
           resourceFilePath: initValue?.resourceFilePath,
           reMark: initValue?.reMark,
           templateContext: initValue?.value,
+          serverName: initValue?.serverName,
+          beDomainName: initValue?.beDomainName,
         },
       }).then((result) => {
         if (result.success) {
-          message.success('编辑实例成功！');
+          message.success('编辑配置成功！');
           onSave?.();
         } else {
           message.error(result.errorMsg);
@@ -88,7 +91,7 @@ export default function addEnvData(props: IProps) {
   return (
     <Drawer
       visible={mode !== 'HIDE'}
-      title={mode === 'EDIT' ? '编辑NG实例' : mode === 'VIEW' ? '查看NG实例' : '新增NG实例'}
+      title={mode === 'EDIT' ? '编辑NG配置' : mode === 'VIEW' ? '查看NG配置' : '新增NG配置'}
       maskClosable={false}
       onClose={onClose}
       width={'40%'}
@@ -114,48 +117,39 @@ export default function addEnvData(props: IProps) {
             createNgForm.resetFields();
           }}
         >
-          <div>
-            <Form.Item label="实例CODE：" name="ngInstCode" rules={[{ required: true, message: '这是必填项' }]}>
-              <Input
-                style={{ width: 220 }}
-                placeholder="请输入实例CODE"
-                disabled={isDisabled || mode === 'EDIT'}
-              ></Input>
-            </Form.Item>
-          </div>
-          <div>
-            <Form.Item label="实例名：" name="ngInstName" rules={[{ required: true, message: '这是必填项' }]}>
-              <Input style={{ width: 220 }} placeholder="请输入实例名" disabled={isDisabled}></Input>
-            </Form.Item>
-          </div>
-          <div>
-            <Form.Item label="实例IP：" name="ipAddress" rules={[{ required: true, message: '这是必填项' }]}>
-              <Input style={{ width: 220 }} placeholder="请输入实例IP" disabled={isDisabled}></Input>
-            </Form.Item>
-          </div>
-          <div>
-            <Form.Item label="配置文件路径：" name="confFilePath" rules={[{ required: true, message: '这是必填项' }]}>
-              <Input style={{ width: 220 }} placeholder="请输入配置文件路径" disabled={isDisabled}></Input>
-            </Form.Item>
-          </div>
-          <div>
-            <Form.Item
-              label="静态资源路径："
-              name="resourceFilePath"
-              rules={[{ required: true, message: '这是必填项' }]}
-            >
-              <Input style={{ width: 220 }} placeholder="请输入静态资源路径" disabled={isDisabled}></Input>
-            </Form.Item>
-          </div>
-          <div>
-            <Form.Item name="reMark" label="备注：">
-              <Input.TextArea
-                placeholder="请输入"
-                style={{ width: 480, height: 80 }}
-                disabled={isDisabled}
-              ></Input.TextArea>
-            </Form.Item>
-          </div>
+          <Form.Item label="实例CODE：" name="ngInstCode" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="请输入实例CODE" disabled={isDisabled || mode === 'EDIT'}></Input>
+          </Form.Item>
+          <Form.Item label="实例名：" name="ngInstName" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="请输入实例名" disabled={isDisabled}></Input>
+          </Form.Item>
+
+          <Form.Item label="实例IP：" name="ipAddress" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="请输入实例IP" disabled={isDisabled}></Input>
+          </Form.Item>
+
+          <Form.Item label="配置文件路径：" name="confFilePath" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="请输入配置文件路径" disabled={isDisabled}></Input>
+          </Form.Item>
+
+          <Form.Item label="静态资源路径：" name="resourceFilePath" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="请输入静态资源路径" disabled={isDisabled}></Input>
+          </Form.Item>
+
+          <Form.Item label="前端域名：" name="serverName" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="请输入前端域名" disabled={isDisabled}></Input>
+          </Form.Item>
+          <Form.Item label="后端域名：" name="beDomainName" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 220 }} placeholder="请输入后端域名" disabled={isDisabled}></Input>
+          </Form.Item>
+
+          <Form.Item name="reMark" label="备注：">
+            <Input.TextArea
+              placeholder="请输入"
+              style={{ width: 480, height: 80 }}
+              disabled={isDisabled}
+            ></Input.TextArea>
+          </Form.Item>
           <div>
             <Form.Item label="配置模版" name="value" className="form-ace" style={{ flexDirection: 'column' }}>
               <AceEditor mode="yaml" height={450} readOnly={mode === 'VIEW'} />

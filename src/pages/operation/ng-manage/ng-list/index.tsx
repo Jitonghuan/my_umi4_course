@@ -132,18 +132,6 @@ export default function NgList() {
                 重置
               </Button>
             </Form.Item>
-            <div style={{ marginLeft: '32px' }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  setInitNgData(undefined);
-                  setNgMode('ADD');
-                }}
-              >
-                <PlusOutlined />
-                新增实例
-              </Button>
-            </div>
           </Form>
         </div>
       </FilterCard>
@@ -172,6 +160,23 @@ export default function NgList() {
             }, 100);
           }}
         />
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>NG配置列表</h3>
+          </div>
+          <div className="caption-right">
+            <Button
+              type="primary"
+              onClick={() => {
+                setInitNgData(undefined);
+                setNgMode('ADD');
+              }}
+            >
+              <PlusOutlined />
+              新增NG配置
+            </Button>
+          </div>
+        </div>
         <div style={{ marginTop: '15px' }}>
           <Table
             dataSource={NgDataSource}
@@ -197,6 +202,8 @@ export default function NgList() {
             <Table.Column title="实例IP" dataIndex="ipAddress" width={90} />
             <Table.Column title="配置文件路径" dataIndex="confFilePath" width={180} />
             <Table.Column title="静态资源路径" dataIndex="resourceFilePath" width={180} />
+            <Table.Column title="前端域名" dataIndex="serverName" width={180} />
+            <Table.Column title="后端域名" dataIndex="beDomainName" width={180} />
             <Table.Column
               title="配置模版"
               width={80}
