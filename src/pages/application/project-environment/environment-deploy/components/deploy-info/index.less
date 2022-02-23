@@ -1,0 +1,70 @@
+.page-app-deploy-info {
+  .ant-card-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-group {
+    padding-bottom: 20px;
+    display: flex;
+  }
+
+  .section-left {
+    flex: 1 1 0;
+    height: 100%;
+    overflow: auto;
+    padding: 0 20px;
+  }
+
+  .section-right {
+    flex: 0 0 360px;
+    border-left: 1px solid #cacfdb;
+    padding: 0 20px;
+    height: 100%;
+    overflow: hidden;
+
+    h3 {
+      font-size: 16px;
+      line-height: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid #1973cc;
+      padding-left: 8px;
+    }
+
+    .section-inner {
+      height: ~'calc(100% - 32px)';
+      overflow: auto;
+    }
+  }
+
+  .change-order-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+
+    P {
+      display: flex;
+      margin-bottom: 4px;
+
+      > span {
+        flex: 0 0 auto;
+        color: #777;
+        white-space: nowrap;
+      }
+
+      > b {
+        flex: 1 1 0;
+        color: #222;
+        font-weight: normal;
+        white-space: pre-wrap;
+      }
+    }
+  }
+
+  .text-error {
+    color: red;
+  }
+  .text-success {
+    color: green;
+  }
+}

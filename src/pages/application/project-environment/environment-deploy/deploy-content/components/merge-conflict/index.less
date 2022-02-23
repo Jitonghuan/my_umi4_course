@@ -1,0 +1,89 @@
+.merge-tips {
+  color: red;
+  padding-bottom: 10px;
+}
+.merge-container {
+  display: flex;
+  background: #f6f8fa;
+  border-top: 1px solid #ddd;
+  .conflict-file,
+  .merge-status {
+    padding: 10px 10px;
+    font-size: 12px;
+    color: #57606a;
+    line-height: 24px;
+    .ant-btn-sm {
+      font-size: 12px;
+    }
+  }
+
+  .left-menu {
+    min-width: 150px;
+    max-width: 150px;
+    .merge-status {
+      border-bottom: 1px solid #ddd;
+    }
+    .file-list {
+      margin-right: 20px;
+      height: 100%;
+      padding-left: 5px;
+      &-item {
+        margin-top: 10px;
+        text-overflow: ellipsis;
+        border-left: 3px solid #87b4e0;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background-color: white;
+        border-bottom: 1px solid #d2d8e6;
+        &-name {
+          display: block;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          max-width: 85px;
+          white-space: nowrap;
+        }
+        &:hover {
+          background-color: #c2dbf5;
+          // background-color: #f0f8ff;
+
+          cursor: pointer;
+        }
+      }
+      .choose-item {
+        border-left: 3px solid #4889ca;
+        background-color: #c2dbf5;
+      }
+    }
+  }
+  .content-editor {
+    flex: 1;
+    max-width: 1100px;
+    .conflict-file {
+      border-left: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+    }
+    .title-panel {
+      padding: 5px 30px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .cm-s-material {
+      padding-bottom: 30px;
+    }
+    .CodeMirror-merge,
+    .CodeMirror-merge .CodeMirror {
+      min-height: 500px;
+    }
+    .readOnly {
+      //   background-color: #cccccc;
+      .CodeMirror-merge-copy {
+        display: none;
+      }
+    }
+    .code-view {
+      border: 1px solid cornflowerblue;
+    }
+  }
+}

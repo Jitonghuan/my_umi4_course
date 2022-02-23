@@ -8,26 +8,38 @@ export function useCreateProjectEnv() {
   const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
   const createProjectEnv = async (creatParamsObj: any) => {
     setEnsureLoading(true);
-    await postRequest(APIS.createProjectEnv, { data: creatParamsObj })
-      .then((res) => {
-        if (res.success) {
-          message.success('新增项目环境成功！');
-        }
-      })
-      .finally(() => {
-        setEnsureLoading(false);
-      });
+    try {
+      await postRequest(APIS.createProjectEnv, { data: creatParamsObj })
+        .then((res) => {
+          if (res.success) {
+            message.success('新增项目环境成功！');
+          } else {
+            message.error('新增项目环境失败！');
+          }
+        })
+        .finally(() => {
+          setEnsureLoading(false);
+        });
+    } catch (error) {
+      message.error(error);
+    }
   };
   return [ensureLoading, createProjectEnv];
 }
 
 export function useUpdateProjectEnv() {
   const updateProjectEnv = async (updateParamsObj: any) => {
-    await putRequest(APIS.updateProjectEnv, { data: updateParamsObj }).then((res) => {
-      if (res.success) {
-        message.success('编辑项目环境成功！');
-      }
-    });
+    try {
+      await putRequest(APIS.updateProjectEnv, { data: updateParamsObj }).then((res) => {
+        if (res.success) {
+          message.success('编辑项目环境成功！');
+        } else {
+          message.error('编辑项目环境失败！');
+        }
+      });
+    } catch (error) {
+      message.error(error);
+    }
   };
   return [updateProjectEnv];
 }

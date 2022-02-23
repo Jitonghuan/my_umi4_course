@@ -87,7 +87,6 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode) return;
   }, [appCode]);
   const initEnvCode = useRef<string>('');
-  let operateType = false;
   const [listEnvClusterData, loadInfoData, setListEnvClusterData, isSucess] = useDeployInfoData(initEnvCode.current);
   const [deleteInstance] = useDeleteInstance();
   const [downloadLog] = useDownloadLog();
@@ -95,13 +94,12 @@ export default function DeployContent(props: DeployContentProps) {
     appData?.appCode,
     currentEnvData,
   );
-
   const envClusterData = useRef();
   envClusterData.current = listEnvClusterData;
 
   //定义定时器方法
   const intervalFunc = () => {
-    loadInfoData(initEnvCode.current, operateType)
+    loadInfoData(initEnvCode.current)
       .then(() => {
         queryInstanceList(appData?.appCode, initEnvCode.current);
       })
@@ -117,6 +115,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
+    let operateType = false;
     try {
       selectAppEnv().then((result: any) => {
         const dataSources = result.data?.map((n: any) => ({
@@ -142,7 +141,7 @@ export default function DeployContent(props: DeployContentProps) {
         }
 
         setTimeout(() => {
-          if (operateType && initEnvCode.current && instanceTableData) {
+          if (operateType && initEnvCode.current) {
             timerHandler('do', true);
           } else {
             timerHandler('stop');
@@ -346,7 +345,7 @@ export default function DeployContent(props: DeployContentProps) {
               loading={instanceloading}
               bordered
               pagination={false}
-              scroll={{ y: window.innerHeight - 340 }}
+              scroll={{ y: window.innerHeight - 280 }}
             >
               <Table.Column title="名称" dataIndex="instName" width={140} render={(v, record) => <span>{v}</span>} />
               <Table.Column

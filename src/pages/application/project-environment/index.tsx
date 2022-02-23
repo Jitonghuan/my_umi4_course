@@ -209,8 +209,14 @@ export default function EnvironmentList() {
                 <Space size="small">
                   <a
                     onClick={() => {
-                      setEnviroEditMode('VIEW');
-                      setEnviroInitData(record);
+                      history.push({
+                        pathname: 'environment-detail',
+                        state: {
+                          envCode: record.envCode,
+                          benchmarkEnvCode: record.relEnvs,
+                          type: 'projectEnvironment',
+                        },
+                      });
                     }}
                   >
                     查看

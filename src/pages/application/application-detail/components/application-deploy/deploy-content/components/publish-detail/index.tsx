@@ -3,27 +3,40 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { history } from 'umi';
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
-import { cancelDeploy, deployReuse, deployMaster, offlineDeploy, restartApp } from '@/pages/application/service';
+import {
+  cancelDeploy,
+  deployReuse,
+  deployMaster,
+  offlineDeploy,
+  restartApp,
+  queryProjectEnvList,
+} from '@/pages/application/service';
 import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
+import { useEnvList } from '@/pages/application/project-environment/hook';
 import ServerStatus from '../server-status';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
 
 export default function PublishDetail(props: IProps) {
+  const [envProjectForm] = Form.useForm();
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
+  const [loading, envDataSource] = useEnvList();
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
+  const [envProjectVisible, setEnvProjectVisible] = useState(false);
+  const [listLoading, setListLoading] = useState<boolean>(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [projectEnvCodeOptions, setProjectEnvCodeOptions] = useState<any>([]);
   // const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
@@ -213,6 +226,40 @@ export default function PublishDetail(props: IProps) {
     setDeployEnv([]);
     onOperate('uploadImageEnd');
   };
+  const queryProjectEnv = async (benchmarkEnvCode: any) => {
+    setListLoading(true);
+    await getRequest(queryProjectEnvList, { data: { benchmarkEnvCode, pageIndex: -1 } })
+      .then((res) => {
+        if (res?.success) {
+          let data = res.data.dataSource;
+          let option = (data || []).map((item: any) => ({
+            label: item.envName,
+            value: item.envCode,
+          }));
+          setProjectEnvCodeOptions(option);
+        }
+      })
+      .finally(() => {
+        setListLoading(false);
+      });
+  };
+  const selectEnvProject = (value: string) => {
+    queryProjectEnv(value);
+  };
+  const ensureProjectEnv = () => {
+    envProjectForm.validateFields().then((value) => {
+      console.log('envName', value);
+      history.push({
+        pathname: '/matrix/application/environment-detail',
+        state: {
+          envCode: value.envCode,
+          benchmarkEnvCode: value.benchmarkEnvCode,
+          type: 'appDeploy',
+        },
+      });
+    });
+  };
+
   //重启确认
   const { confirm } = Modal;
   const ensureRestart = () => {
@@ -308,6 +355,16 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
+        {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
+          <Button
+            type="primary"
+            onClick={() => {
+              setEnvProjectVisible(true);
+            }}
+          >
+            项目环境部署
+          </Button>
+        )}
         {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
             部署Master
@@ -482,6 +539,45 @@ export default function PublishDetail(props: IProps) {
               options={envDataOption}
             ></Radio.Group>
           )}
+        </div>
+      </Modal>
+      {/* 跳转项目环境信息页面按钮 */}
+      <Modal
+        key="envProjectDetail"
+        title="选择环境"
+        visible={envProjectVisible}
+        onCancel={() => {
+          setEnvProjectVisible(false);
+        }}
+        onOk={ensureProjectEnv}
+        maskClosable={false}
+      >
+        <div>
+          <Form form={envProjectForm} layout="inline">
+            <Form.Item
+              label="基准环境:"
+              name="benchmarkEnvCode"
+              rules={[{ required: true, message: '请选择基准环境' }]}
+            >
+              <Select
+                options={envDataSource}
+                allowClear
+                showSearch
+                loading={loading}
+                style={{ width: 140 }}
+                onChange={selectEnvProject}
+              ></Select>
+            </Form.Item>
+            <Form.Item label="项目环境:" name="envCode" rules={[{ required: true, message: '请选择项目环境' }]}>
+              <Select
+                style={{ width: 140 }}
+                allowClear
+                showSearch
+                loading={listLoading}
+                options={projectEnvCodeOptions}
+              ></Select>
+            </Form.Item>
+          </Form>
         </div>
       </Modal>
     </div>

@@ -165,6 +165,9 @@ export const rollbackApplication = `${appConfig.apiPrefix}/releaseManage/rollbac
 /** POST 应用重启 */
 export const restartApplication = `${appConfig.apiPrefix}/releaseManage/restartApplication`;
 
+/** GET 查询项目环境 */
+export const queryProjectEnvList = `${appConfig.apiPrefix}/appManage/projectEnv/list`;
+
 /** GET 查询卡点任务结果 */
 export const qualityGuardInfo = `${appConfig.apiPrefix}/qc/qualitycontrol/qualityGuardInfo`;
 
