@@ -22,8 +22,7 @@ export default function FilterHeader(props: FilterHeaderProps) {
   const [searchField] = Form.useForm();
   const { categoryData } = useContext(FeContext);
   const [categoryCode, setCategoryCode] = useState<string>();
-  const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
-
+  const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode || searchParams.appCategoryCode);
   const handleSearch = useCallback(() => {
     const values = searchField.getFieldsValue();
     onSearch?.(values);
