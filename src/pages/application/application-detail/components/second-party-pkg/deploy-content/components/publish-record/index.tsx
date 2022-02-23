@@ -6,14 +6,15 @@
  */
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Modal, Button, List } from 'antd';
+import { Modal, Button, List, Tag } from 'antd';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '@/pages/application/application-detail/context';
-import { recordFieldMap } from './schema';
+import { recordFieldMap, recordFieldMapOut, recordDisplayMap } from './schema';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';
 import { usePaginated } from '@cffe/vc-hulk-table';
 import { queryEnvsReq } from '@/pages/application/service';
+import moment from 'moment';
 import './index.less';
 
 const rootCls = 'publish-record-compo';
@@ -39,11 +40,18 @@ const PublishRecord = (props: IProps) => {
     loadMore: true,
   });
 
+  // useEffect(() => {
+  //   queryDataSource({
+  //     appCode,
+  //     env,
+  //     isActive: 0,
+  //   });
+  // }, []);
   useEffect(() => {
     queryDataSource({
       appCode,
-      env,
-      isActive: 0,
+      envTypeCode: env,
+      pageIndex: 1,
     });
   }, []);
 
@@ -61,6 +69,21 @@ const PublishRecord = (props: IProps) => {
       setEnvDataList(envSelect);
     });
   }, [appCategoryCode, env]);
+  useEffect(() => {
+    let intervalId = setInterval(() => {
+      if (appCode && env) {
+        queryDataSource({
+          appCode,
+          envTypeCode: env,
+          pageIndex: 1,
+        });
+      }
+    }, 8000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const envNames: IRecord = useMemo(() => {
     const { envs } = curRecord;
@@ -113,26 +136,58 @@ const PublishRecord = (props: IProps) => {
       {tableProps.dataSource?.filter((v) => v?.envTypeCode === env)?.length ? (
         <List
           className="demo-loadmore-list"
-          loading={tableProps.loading}
+          // loading={tableProps.loading}
           itemLayout="vertical"
           loadMore={renderLoadMore()}
           dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
           renderItem={(item) => (
             <List.Item>
-              {Object.keys(recordFieldMap)
-                .slice(0, 3)
-                .map((key) => (
-                  <span className={`${rootCls}-row ${key}`}>
-                    <label>{recordFieldMap[key]}</label>：{item[key]}
-                  </span>
-                ))}
+              <div>
+                <label>{recordFieldMapOut['modifyUser']}</label>:{item['modifyUser']}
+              </div>
+              <div>
+                <label>{recordFieldMapOut['deployedTime']}</label>:
+                {item['deployedTime'] ? moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss') : null}
+              </div>
+              {item.deployStatus === 'multiEnvDeploying' && item.deploySubStates ? (
+                <div>
+                  <label>{recordFieldMapOut['deployStatus']}</label>:
+                  {JSON.parse(item.deploySubStates).map((subItem: any) => (
+                    <div>
+                      <label>{subItem.envCode}</label>:
+                      {
+                        <span style={{ marginLeft: 6 }}>
+                          <Tag color={recordDisplayMap[subItem['subState']]?.color}>
+                            {recordDisplayMap[subItem['subState']]?.text}
+                          </Tag>
+                        </span>
+                      }
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div>
+                  <label>{recordFieldMapOut['deployStatus']}</label>:
+                  {
+                    <span style={{ marginLeft: 6 }}>
+                      <Tag color={recordDisplayMap[item['deployStatus']]?.color}>
+                        {recordDisplayMap[item['deployStatus']]?.text}
+                      </Tag>
+                    </span>
+                  }
+                </div>
+              )}
               <a onClick={() => handleShowDetail(item)}>详情</a>
             </List.Item>
           )}
         />
       ) : null}
 
-      <Modal title="发布详情" visible={visible} onCancel={() => setVisible(false)}>
+      <Modal title="发布详情" width={600} visible={visible} footer={false} onCancel={() => setVisible(false)}>
+        <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
+      </Modal>
+
+      {/* <Modal title="发布详情" visible={visible} onCancel={() => setVisible(false)}>
         <VCDescription
           column={1}
           dataSource={Object.keys(recordFieldMap).map((field) => ({
@@ -140,7 +195,7 @@ const PublishRecord = (props: IProps) => {
             value: envNames[field],
           }))}
         />
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
