@@ -206,7 +206,6 @@ export default function DeployContent(props: DeployContentProps) {
                         setInstanceTableData(data);
 
                         if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
-                          debugger;
                           timerHandler('do', true);
                         } else {
                           timerHandler('stop');
