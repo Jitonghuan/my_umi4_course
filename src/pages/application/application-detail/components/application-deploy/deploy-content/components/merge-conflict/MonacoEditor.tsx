@@ -13,7 +13,9 @@ export default function MonacoEditor(prop: any) {
   const [tooltipWidgets, setTooltipWidgets] = useState<any[]>([]);
   const codeContainer = useCallback((node) => {
     if (node) {
-      var editor = monaco.editor.create(node, {});
+      var editor = monaco.editor.create(node, {
+        automaticLayout: true,
+      });
 
       setInstance(editor);
     }
