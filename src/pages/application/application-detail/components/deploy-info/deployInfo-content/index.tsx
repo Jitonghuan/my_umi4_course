@@ -64,7 +64,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
-  // const [listEnvClusterData, setListEnvClusterData] = useState<any>();
+  const [listEnvClusterData, setListEnvClusterData] = useState<any>();
   // const [isSucess, setIsSucess] = useState<boolean>(false);
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
   const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
@@ -72,7 +72,6 @@ export default function DeployContent(props: DeployContentProps) {
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
-
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
@@ -95,7 +94,7 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode) return;
   }, [appCode]);
   const initEnvCode = useRef<string>('');
-  const [listEnvClusterData, loadInfoData, setListEnvClusterData, isSucess] = useDeployInfoData(initEnvCode.current);
+  // const [listEnvClusterData, loadInfoData, setListEnvClusterData, isSucess] = useDeployInfoData(initEnvCode.current);
   const [deleteInstance] = useDeleteInstance();
   const [downloadLog] = useDownloadLog();
   const [instanceTableData, instanceloading, queryInstanceList, setInstanceTableData] = useInstanceList(
@@ -238,14 +237,14 @@ export default function DeployContent(props: DeployContentProps) {
       setEnvTypeData(next);
     });
   };
-  // const loadInfoData = async (envCode: any, operateType?: boolean) => {
-  //   await getRequest(listEnvCluster, { data: { envCode: envCode } }).then((result) => {
-  //     if (result.success) {
-  //       let data = result.data;
-  //       setListEnvClusterData(data);
-  //     }
-  //   });
-  // };
+  const loadInfoData = async (envCode: any, operateType?: boolean) => {
+    await getRequest(listEnvCluster, { data: { envCode: envCode } }).then((result) => {
+      if (result.success) {
+        let data = result.data;
+        setListEnvClusterData(data);
+      }
+    });
+  };
   //改变环境下拉选择后查询结果
   let clusterInfoData: any;
   const changeEnvCode = async (envCode: string) => {
