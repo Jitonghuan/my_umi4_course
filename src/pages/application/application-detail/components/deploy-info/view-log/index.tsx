@@ -6,6 +6,7 @@ import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffec
 import { Select, Card, message, Form, Divider, Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
+import appConfig from '@/app.config';
 import { history } from 'umi';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
@@ -37,9 +38,17 @@ export default function ViewLog(props: any) {
         viewLogform.setFieldsValue({ containerName: currentContainerName });
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
-        ws.current = new WebSocket(
-          `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
-        ); //建立通道
+        let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'test' ? 'test' : 'dev';
+        if (env === 'prod') {
+          ws.current = new WebSocket(
+            `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+          ); //建立通道
+        } else {
+          ws.current = new WebSocket(
+            `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+          ); //建立通道
+        }
+
         let dom: any = document?.getElementById('result-log');
         ws.current.onmessage = (evt: any) => {
           if (dom) {

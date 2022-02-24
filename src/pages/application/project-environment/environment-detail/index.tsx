@@ -271,7 +271,7 @@ export default function EnvironmentList() {
                   <a
                     onClick={() => {
                       history.push({
-                        pathname: `/matrix/application/environment-deploy/overview`,
+                        pathname: `/matrix/application/environment-deploy/appDeploy`,
                         query: {
                           appCode: record.appCode,
                           id: record.id,

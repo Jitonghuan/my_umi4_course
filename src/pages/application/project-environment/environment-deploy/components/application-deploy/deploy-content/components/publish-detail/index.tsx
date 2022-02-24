@@ -21,22 +21,18 @@ export default function PublishDetail(props: IProps) {
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
-  const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   // const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
   const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
-  const [deployNextEnv, setDeployNextEnv] = useState<string[]>();
   const [envDataList, setEnvDataList] = useState<IOption[]>([]);
-  const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode) return;
-
     // 当前部署环境
     getRequest(listAppEnv, {
       data: {
@@ -54,36 +50,28 @@ export default function PublishDetail(props: IProps) {
       // setEnvDataList(data.list);
     });
 
-    if (deployInfo.id !== undefined) {
-      getRequest(checkNextEnv, {
-        data: {
-          id: deployInfo.id,
-        },
-      }).then((response) => {
-        if (response?.success) {
-          newNextEnvTypeCode = response?.data;
-          getNextEnv(newNextEnvTypeCode).then((resp) => {
-            if (resp?.success) {
-              let envSelect: any = [];
-              resp?.data?.map((item: any) => {
-                envSelect.push({ label: item.envName, value: item.envCode });
-              });
-              setNextEnvDataList(envSelect);
-            }
-          });
-        }
-      });
-    }
+    // if (deployInfo.id !== undefined) {
+    //   getRequest(checkNextEnv, {
+    //     data: {
+    //       id: deployInfo.id,
+    //     },
+    //   }).then((response) => {
+    //     if (response?.success) {
+    //       newNextEnvTypeCode = response?.data;
+    //       getNextEnv(newNextEnvTypeCode).then((resp) => {
+    //         if (resp?.success) {
+    //           let envSelect: any = [];
+    //           resp?.data?.map((item: any) => {
+    //             envSelect.push({ label: item.envName, value: item.envCode });
+    //           });
+    //           // setNextEnvDataList(envSelect);
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
   }, [appCategoryCode, envTypeCode, deployInfo.id]);
-  // 下一个部署环境
-  const getNextEnv = (envTypeCode: string) => {
-    return getRequest(listAppEnv, {
-      data: {
-        envTypeCode: newNextEnvTypeCode,
-        appCode: appData?.appCode,
-      },
-    });
-  };
+
   // 取消发布
   const handleCancelPublish = () => {
     onOperate('cancelDeployStart');
@@ -103,30 +91,6 @@ export default function PublishDetail(props: IProps) {
         onOperate('cancelDeployEnd');
       },
     });
-  };
-
-  // 部署到下一个环境
-  const deployNext = () => {
-    onOperate('deployNextEnvStart');
-    setDeployNextEnvVisible(true);
-  };
-  // 放弃部署到下一个环境
-  const cancelDeployNext = () => {
-    onOperate('deployNextEnvEnd');
-    setDeployNextEnvVisible(false);
-    setConfirmLoading(false);
-  };
-  // 确认发布操作
-  const confirmPublishNext = async () => {
-    setConfirmLoading(true);
-    try {
-      await deployReuse({ id: deployInfo.id, envs: deployNextEnv });
-      message.success('操作成功，正在部署中...');
-      setDeployNextEnvVisible(false);
-      onOperate('deployNextEnvSuccess');
-    } finally {
-      setConfirmLoading(false);
-    }
   };
 
   // 部署 master
@@ -323,13 +287,6 @@ export default function PublishDetail(props: IProps) {
             部署Master
           </Button>
         )}
-
-        {envTypeCode !== 'prod' && (
-          <Button type="primary" onClick={deployNext}>
-            部署到下个环境
-          </Button>
-        )}
-
         {envTypeCode === 'prod' && appData?.appType === 'backend' && (
           <Button type="primary" danger onClick={handleCancelPublish}>
             取消发布
@@ -396,33 +353,6 @@ export default function PublishDetail(props: IProps) {
       ) : null}
 
       {/* --------------------- modals --------------------- */}
-
-      {/* 部署到 下一个环境 */}
-      <Modal
-        key="deployNext"
-        title="选择发布环境"
-        visible={deployNextEnvVisible}
-        confirmLoading={confirmLoading}
-        onOk={confirmPublishNext}
-        maskClosable={false}
-        onCancel={cancelDeployNext}
-      >
-        <div>
-          <span>发布环境：</span>
-          {/* <Radio.Group value={type} onChange={handleTypeChange}> */}
-          {/* <Radio.Group  value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList}></Radio.Group> */}
-          <Checkbox.Group value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList} />
-
-          {/* {nextEnvDataList.map((item,index)=>{
-            return(
-              <Radio.Group  onChange={(v: any) => setDeployNextEnv(v)}  value={deployNextEnv}>
-              <Radio key={index} value={item.value}  autoFocus >{item.label}</Radio>
-
-            </Radio.Group>
-            )
-          })} */}
-        </div>
-      </Modal>
 
       {/* 部署到 master */}
       <Modal

@@ -26,11 +26,11 @@ export interface DeployContentProps {
   /** 环境参数 */
   envTypeCode: string;
   /** 部署下个环境成功回调 */
-  onDeployNextEnvSuccess: () => void;
+  // onDeployNextEnvSuccess: () => void;
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, isActive, onDeployNextEnvSuccess } = props;
+  const { envTypeCode, isActive } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -45,7 +45,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
   const requestData = async () => {
-    if (!appCode || !isActive) return;
+    if (!appCode) return;
 
     setUpdating(true);
 
@@ -116,10 +116,10 @@ export default function DeployContent(props: DeployContentProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode || !isActive) return;
+    if (!appCode) return;
 
     timerHandle('do', true);
-  }, [appCode, isActive]);
+  }, [appCode]);
 
   const onSpin = () => {
     setLoading(true);
@@ -138,10 +138,10 @@ export default function DeployContent(props: DeployContentProps) {
             deployInfo={deployInfo}
             appStatusInfo={appStatusInfo}
             onOperate={(type) => {
-              if (type === 'deployNextEnvSuccess') {
-                onDeployNextEnvSuccess();
-                return;
-              }
+              // if (type === 'deployNextEnvSuccess') {
+              //   onDeployNextEnvSuccess();
+              //   return;
+              // }
               requestData();
               onOperate(type);
             }}

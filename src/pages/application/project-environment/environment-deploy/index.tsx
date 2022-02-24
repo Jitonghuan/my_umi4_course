@@ -108,7 +108,7 @@ export default function ApplicationDetail(props: IProps) {
   if (location.pathname === detailPath) {
     return (
       history.replace({
-        pathname: `${location.pathname}/overview`,
+        pathname: `${location.pathname}/appDeploy`,
         query: { ...location.query },
       }),
       null
@@ -156,13 +156,13 @@ export default function ApplicationDetail(props: IProps) {
           tabBarExtraContent={
             <div className="tab-right-extra">
               <Badge status="processing" text="当前项目环境：" />
-              <h4>{projectEnvCode}</h4>
+              {/* <h4>{projectEnvCode}</h4> */}
               <span>
                 <Tag color="blue">{projectEnvName}</Tag>
               </span>
               ｜当前应用：
               <h4>{appData?.appCode}</h4>
-              <span>{appData?.appName}</span>
+              {/* <span>{appData?.appName}</span> */}
             </div>
           }
         >

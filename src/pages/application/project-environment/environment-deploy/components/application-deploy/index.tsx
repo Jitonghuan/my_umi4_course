@@ -53,21 +53,11 @@ export default function ApplicationDeploy(props: any) {
   };
 
   return (
-    <ContentCard noPadding>
-      <Tabs onChange={(v) => setTabActive(v)} activeKey={tabActive} type="card">
-        {envTypeData?.map((item) => (
-          <TabPane tab={item.label} key={item.value}>
-            <DeployContent
-              isActive={item.value === tabActive}
-              envTypeCode={item.value}
-              onDeployNextEnvSuccess={() => {
-                const i = envTypeData.findIndex((item) => item.value === tabActive);
-                setTabActive(envTypeData[i + 1]?.value);
-              }}
-            />
-          </TabPane>
-        ))}
-      </Tabs>
+    <ContentCard>
+      <DeployContent
+        // isActive={item.value === tabActive}
+        envTypeCode="dev"
+      />
     </ContentCard>
   );
 }
