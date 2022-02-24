@@ -2,22 +2,8 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/14 10:20
 
-import React, { useState, useCallback, useEffect } from 'react';
-import {
-  Form,
-  Input,
-  Select,
-  Button,
-  Table,
-  Space,
-  Popconfirm,
-  message,
-  Modal,
-  Descriptions,
-  Badge,
-  Divider,
-  Drawer,
-} from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, Modal, Descriptions, Divider } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { PlusOutlined, DiffOutlined } from '@ant-design/icons';
@@ -25,7 +11,7 @@ import { getRequest } from '@/utils/request';
 import { queryProjectEnvList, queryAppsList } from '../service';
 import { ContentCard } from '@/components/vc-page-content';
 import EnvironmentEditDraw from '../add-environment';
-import { useCreateProjectEnv, useUpdateProjectEnv, useEnvList } from '../hook';
+import { useRemoveApps, useUpdateProjectEnv, useAddAPPS } from '../hook';
 import './index.less';
 
 /** 编辑页回显数据 */
@@ -38,25 +24,34 @@ export interface EnvironmentEdit extends Record<string, any> {
   envTypeCode: string;
   mark: string;
 }
+interface DataType {
+  key: React.Key;
+  id: number;
+  appName: string;
+  appCode: string;
+  appType: string;
+}
+
 export default function EnvironmentList() {
   const projectEnvInfo: any = history.location.state;
-  console.log('projectEnvInfo', projectEnvInfo);
   const { Option } = Select;
   const [formList] = Form.useForm();
   const [addAppForm] = Form.useForm();
   const [updateProjectEnv] = useUpdateProjectEnv();
+  const [removeApps] = useRemoveApps();
+  const [addApps] = useAddAPPS();
   const [enviroInitData, setEnviroInitData] = useState<EnvironmentEdit>();
   const [enviroEditMode, setEnviroEditMode] = useState<EditorMode>('HIDE');
   const [appsListData, setAppsListData] = useState<any>([]);
   const [projectEnvData, setProjectEnvData] = useState<any>([]);
   const [dataSource, setDataSource] = useState<any>([]);
-  const [pageIndex, setPageIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(20);
-  const [pageTotal, setPageTotal] = useState<number>(0);
-  const [env, setEnv] = useState<string>('');
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [addAppsvisible, setAddAppsvisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any>(0);
+  const [selectedRows, setSelectedRows] = useState<DataType[]>([]);
+  const [delLoading, setDelLoading] = useState<boolean>(false);
+  const hasSelected = selectedRowKeys?.length > 0;
   const queryProjectEnv = async (benchmarkEnvCode: string, envCode: string) => {
     setListLoading(true);
     await getRequest(queryProjectEnvList, { data: { benchmarkEnvCode, envCode } })
@@ -64,7 +59,7 @@ export default function EnvironmentList() {
         if (res?.success) {
           let data = res.data.dataSource;
           setProjectEnvData(data[0]);
-          setEnv(data.envCode);
+          setEnviroInitData(data[0]);
         }
       })
       .finally(() => {
@@ -72,22 +67,29 @@ export default function EnvironmentList() {
       });
   };
 
-  const queryAppsListData = async (benchmarkEnvCode: string, projectEnvCode: string) => {
+  const queryAppsListData = async (
+    benchmarkEnvCode: string,
+    projectEnvCode: string,
+    appName?: string,
+    appCode?: string,
+  ) => {
     setLoading(true);
     let canAddAppsData: any = []; //可选数据数组
-    await getRequest(queryAppsList, { data: { benchmarkEnvCode, projectEnvCode } })
+    await getRequest(queryAppsList, { data: { benchmarkEnvCode, projectEnvCode, appName, appCode } })
       .then((res) => {
         if (res?.success) {
           let data = res?.data;
-          if (data.canAddApps) {
-            setDataSource(data.canAddApps);
-            data.canAddApps?.map((item: any, index: number) => {
-              canAddAppsData.push({
-                value: item.appCode,
-                label: item.appName,
-              });
+          data.canAddApps?.map((item: any, index: number) => {
+            canAddAppsData.push({
+              value: item.appCode,
+              label: item.appName,
             });
-            setAppsListData(canAddAppsData);
+          });
+          setAppsListData(canAddAppsData);
+          if (data.alreadyAddApps) {
+            setDataSource(data.alreadyAddApps);
+          } else {
+            setDataSource([]);
           }
         }
       })
@@ -108,14 +110,46 @@ export default function EnvironmentList() {
   const ensureAdd = () => {
     addAppForm.validateFields().then((params) => {
       let editParamsObj = {
-        projectEnvCode: params.envCode || '',
-        mark: params.mark || '',
-        relationApps: params.appCode || [],
+        projectEnvCode: projectEnvInfo.envCode || '',
+        appCodes: params.appCode || [],
       };
-      updateProjectEnv(editParamsObj).then(() => {
-        setAddAppsvisible(false);
-      });
+      addApps(editParamsObj)
+        .then(() => {
+          setAddAppsvisible(false);
+        })
+        .then(() => {
+          queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+        });
     });
+  };
+
+  const onSelectChange = (currentSelectedRowKeys: React.Key[], currentSelectedRows: DataType[]) => {
+    setSelectedRowKeys(currentSelectedRowKeys);
+    setSelectedRows(currentSelectedRows);
+  };
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+  const start = () => {
+    setDelLoading(true);
+    let appCodeArry: any = [];
+    selectedRows.map((item: any) => {
+      appCodeArry.push(item.appCode);
+    });
+    console.log('selectedRows', selectedRows);
+    let removeParams = {
+      projectEnvCode: projectEnvInfo.envCode,
+      appCodes: appCodeArry,
+    };
+    removeApps(removeParams)
+      .then(() => {
+        queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+      })
+      .finally(() => {
+        setDelLoading(false);
+        setSelectedRowKeys(undefined);
+      });
   };
   return (
     <PageContainer className="project-env-detail">
@@ -124,10 +158,10 @@ export default function EnvironmentList() {
         initData={enviroInitData}
         onClose={() => {
           setEnviroEditMode('HIDE');
-          //   loadListData({ pageIndex: 1, pageSize: 20 });
         }}
         onSave={() => {
           setEnviroEditMode('HIDE');
+          queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
         }}
       />
 
@@ -141,7 +175,6 @@ export default function EnvironmentList() {
               type="primary"
               onClick={() => {
                 setEnviroEditMode('EDIT');
-                console.log(2);
               }}
             >
               <DiffOutlined />
@@ -167,13 +200,14 @@ export default function EnvironmentList() {
         <Divider />
         <div className="table-caption">
           <div className="caption-left">
-            <h3>项目环境应用列表</h3>
+            <h3>项目环境已添加应用列表</h3>
           </div>
           <div className="caption-right">
             <Button
               type="primary"
               onClick={() => {
                 setAddAppsvisible(true);
+                addAppForm.resetFields();
               }}
             >
               <PlusOutlined />
@@ -185,15 +219,23 @@ export default function EnvironmentList() {
           <Form
             layout="inline"
             form={formList}
-            onFinish={(values: any) => {}}
+            onFinish={(values: any) => {
+              queryAppsListData(
+                projectEnvInfo.benchmarkEnvCode,
+                projectEnvInfo.envCode,
+                values.appName,
+                values.appCode,
+              );
+            }}
             onReset={() => {
               formList.resetFields();
+              queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
             }}
           >
-            <Form.Item label="应用名：" name="envName">
-              <Input style={{ width: 150 }} />
+            <Form.Item label="应用名：" name="appName">
+              <Input style={{ width: 190 }} />
             </Form.Item>
-            <Form.Item label=" 应用CODE" name="envCode">
+            <Form.Item label=" 应用CODE" name="appCode">
               <Input placeholder="请输入应用CODE"></Input>
             </Form.Item>
             <Form.Item>
@@ -209,51 +251,49 @@ export default function EnvironmentList() {
           </Form>
         </div>
         <div>
-          <Table
-            rowKey="id"
-            bordered
-            dataSource={dataSource}
-            loading={loading}
-            // pagination={{
-            //   current: pageIndex,
-            //   total: pageTotal,
-            //   pageSize,
-            //   showSizeChanger: true,
-            //   onShowSizeChange: (_, size) => {
-            //     setPageSize(size);
-            //     setPageIndex(1);
-            //   },
-            //   showTotal: () => `总共 ${pageTotal} 条数据`,
-            // }}
-          >
+          <div style={{ marginBottom: 8 }}>
+            <Button type="primary" onClick={start} disabled={!hasSelected} loading={delLoading}>
+              批量删除应用
+            </Button>
+            <span style={{ marginLeft: 8 }}>{hasSelected ? `选中 ${selectedRowKeys.length} 个应用` : ''}</span>
+          </div>
+          <Table rowKey="id" bordered dataSource={dataSource} loading={loading} rowSelection={rowSelection}>
             <Table.Column title="ID" dataIndex="id" width="4%" />
-            <Table.Column title="应用名" dataIndex="appName" width="20%" ellipsis />
-            <Table.Column title="应用CODE" dataIndex="appCode" width="20%" ellipsis />
+            <Table.Column title="应用名" dataIndex="appName" width="30%" ellipsis />
+            <Table.Column title="应用CODE" dataIndex="appCode" width="30%" ellipsis />
             <Table.Column title="应用类型" dataIndex="appType" width="20%" ellipsis />
             <Table.Column
               title="操作"
-              width="18%"
+              width="16%"
               key="action"
               render={(_, record: any, index) => (
                 <Space size="small">
                   <a
                     onClick={() => {
-                      history.push(`/matrix/application/environment-deploy?appCode=${record.appCode}&id=${record.id}`);
-                      setEnviroInitData(record);
+                      history.push({
+                        pathname: `/matrix/application/environment-deploy/overview`,
+                        query: {
+                          appCode: record.appCode,
+                          id: record.id,
+                          projectEnvCode: projectEnvData.envCode,
+                          projectEnvName: projectEnvData.envName,
+                        },
+                      });
                     }}
                   >
                     部署
                   </a>
                   <Popconfirm
                     title="确定要删除该信息吗？"
-                    // onConfirm={() => {
-                    //   deleteProjectEnv(record?.envCode).then(() => {
-                    //     queryProjectEnv({
-                    //       pageIndex: 1,
-                    //       // pageSize: pageSize,
-                    //     });
-                    //   });
-                    // }}
+                    onConfirm={() => {
+                      let removeParams = {
+                        projectEnvCode: projectEnvData.envCode,
+                        appCodes: [record.appCode],
+                      };
+                      removeApps(removeParams).then(() => {
+                        queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+                      });
+                    }}
                   >
                     <a style={{ color: 'red' }}>删除</a>
                   </Popconfirm>
@@ -275,7 +315,7 @@ export default function EnvironmentList() {
             <Button
               type="primary"
               onClick={() => {
-                ensureAdd;
+                ensureAdd();
               }}
             >
               确认

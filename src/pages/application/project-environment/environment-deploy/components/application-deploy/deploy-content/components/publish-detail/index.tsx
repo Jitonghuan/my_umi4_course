@@ -7,7 +7,7 @@ import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload } from 'a
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { history } from 'umi';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../../../context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
 import { cancelDeploy, deployReuse, deployMaster, offlineDeploy, restartApp } from '@/pages/application/service';
 import { UploadOutlined } from '@ant-design/icons';
@@ -308,7 +308,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
-        {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
+        {/* {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
           <Button
             type="primary"
             onClick={() => {
@@ -317,7 +317,7 @@ export default function PublishDetail(props: IProps) {
           >
             项目环境部署
           </Button>
-        )}
+        )} */}
         {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
             部署Master

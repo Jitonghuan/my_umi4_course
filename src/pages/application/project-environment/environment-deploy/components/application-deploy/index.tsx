@@ -1,10 +1,9 @@
-// 应用部署
+// 项目环境部署
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/25 16:21
 
 import React, { useContext, useState, useLayoutEffect, useEffect } from 'react';
 import { Tabs } from 'antd';
-import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
 import DeployContent from './deploy-content';

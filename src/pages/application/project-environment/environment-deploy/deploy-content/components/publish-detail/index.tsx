@@ -164,8 +164,6 @@ export default function PublishDetail(props: IProps) {
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
     const envList = envs?.split(',') || [];
-
-    // console.log(envDataList,I++);
     return envDataList
       .filter((envItem) => {
         return envList.includes(envItem.value);

@@ -7,7 +7,7 @@
 
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import useInterval from './useInterval';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../context';
 import { queryDeployList, queryFeatureDeployed, queryApplicationStatus } from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';

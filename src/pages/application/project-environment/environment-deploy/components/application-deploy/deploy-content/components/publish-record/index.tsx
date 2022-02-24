@@ -9,7 +9,7 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Modal, Button, List, Tag } from 'antd';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import VCDescription from '@/components/vc-description';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../../../context';
 import { recordFieldMap, recordFieldMapOut, recordDisplayMap } from './schema';
 import moment from 'moment';
 import { IProps, IRecord } from './types';

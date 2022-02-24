@@ -120,3 +120,37 @@ export function useEnvList() {
 
   return [loading, envDataSource];
 }
+
+export function useAddAPPS() {
+  const addApps = async (addAppsParamsObj: any) => {
+    try {
+      await postRequest(APIS.addApps, { data: addAppsParamsObj }).then((res) => {
+        if (res.success) {
+          message.success('添加应用成功！');
+        } else {
+          message.error('添加应用失败！');
+        }
+      });
+    } catch (error) {
+      message.error(error);
+    }
+  };
+  return [addApps];
+}
+
+export function useRemoveApps() {
+  const removeApps = async (removeAppsParamsObj: any) => {
+    try {
+      await postRequest(APIS.removeApps, { data: removeAppsParamsObj }).then((res) => {
+        if (res.success) {
+          message.success('移除应用成功！');
+        } else {
+          message.error('移除应用失败！');
+        }
+      });
+    } catch (error) {
+      message.error(error);
+    }
+  };
+  return [removeApps];
+}

@@ -164,7 +164,7 @@ export default function ApplicationDetail(props: IProps) {
           ))}
         </Tabs>
       </FilterCard>
-
+      {console.log('window.location', window.location.pathname)}
       <DetailContext.Provider value={{ appData, queryAppData }}>
         <VCPermission code={window.location.pathname} isShowErrorPage>
           {children}

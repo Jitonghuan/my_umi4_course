@@ -11,7 +11,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../../../context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';

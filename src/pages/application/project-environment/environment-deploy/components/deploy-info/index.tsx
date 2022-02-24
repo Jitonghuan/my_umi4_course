@@ -6,7 +6,7 @@ import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Tabs } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../context';
 import { useAppDeployInfo, useAppChangeOrder } from './hooks';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { getRequest } from '@/utils/request';

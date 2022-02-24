@@ -8,7 +8,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import AceEditor from '@/components/ace-editor';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../context';
 import EditorTable from '@cffe/pc-editor-table';
 import * as APIS from '@/pages/application/service';
 import './index.less';
@@ -84,7 +84,6 @@ export default function ApplicationParams(props: any) {
       if (result.data.length > 0) {
         const appTmpl = result.data[0];
         setId(appTmpl.id);
-        console.log('appTmpl.id', appTmpl.id);
         setInintDatas(appTmpl);
         showAppList(envCode, templateType);
         setIsDeployment(appTmpl.templateType);
@@ -196,7 +195,6 @@ export default function ApplicationParams(props: any) {
           }
         }
         setId(applicationlist?.id);
-        console.log('applicationlist?.id', applicationlist?.id);
         setIsDeployment(applicationlist.templateType);
         applicationForm.setFieldsValue({
           // templateValue:list.templateValue,

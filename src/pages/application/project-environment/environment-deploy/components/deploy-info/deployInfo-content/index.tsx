@@ -10,7 +10,7 @@ import { history } from 'umi';
 import moment from 'moment';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest } from '@/utils/request';
 import { restartApp, rollbackApplication, restartApplication, queryAppOperate } from '@/pages/application/service';
@@ -198,9 +198,6 @@ export default function DeployContent(props: DeployContentProps) {
     setListEnvClusterData({});
     await loadInfoData(envCode)
       .then(() => {
-        // console.log('issucess',isSucess)
-        // if (isSucess) {
-        //   debugger
         queryInstanceList(appData?.appCode, envCode)
           .then(() => {
             if (instanceTableData !== undefined && instanceTableData.length !== 0) {
