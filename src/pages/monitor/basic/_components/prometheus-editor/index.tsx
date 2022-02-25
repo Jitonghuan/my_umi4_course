@@ -19,8 +19,8 @@ const fieldCommon = {
 export interface PromitheusEditorProps {
   mode?: EditorMode;
   initData?: PromitheusItemProps;
-  onClose?: () => any;
-  onSave?: () => any;
+  onClose: () => any;
+  onSave: () => any;
 }
 
 export default function PromitheusEditor(props: PromitheusEditorProps) {

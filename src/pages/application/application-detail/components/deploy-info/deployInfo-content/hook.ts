@@ -30,7 +30,7 @@ export function useInstanceList(appCode: any, envCode: any) {
   const [instanceLoading, setInstanceLoading] = useState<boolean>(false);
 
   const queryInstanceList = async (appCode: any, envCode: any) => {
-    getRequest(APIS.queryInstanceList, { data: { appCode, envCode } })
+    getRequest(APIS.queryInstanceListApi, { data: { appCode, envCode } })
       .then((result) => {
         setInstanceLoading(true);
         let data = result.data;
@@ -40,7 +40,7 @@ export function useInstanceList(appCode: any, envCode: any) {
         setInstanceLoading(false);
       });
   };
-  return [instanceListData, instanceLoading, queryInstanceList, setInstanceListData];
+  return [instanceListData, instanceLoading, queryInstanceList, setInstanceListData, setInstanceLoading];
 }
 
 //还有一个参数需要传过来>>instName

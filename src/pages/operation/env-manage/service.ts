@@ -25,3 +25,6 @@ export const appList = addAPIPrefix('/appManage/list');
 
 /** 应用绑定环境 */
 export const pushAppEnv = addAPIPrefix('/appManage/env/pushAppEnv');
+
+/** 查询NGINX 实例 */
+export const queryNGList = addAPIPrefix('/opsManage/ngInstance/list');
