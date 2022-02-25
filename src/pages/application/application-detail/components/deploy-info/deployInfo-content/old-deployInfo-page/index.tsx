@@ -21,7 +21,6 @@ const getStatusClazz = (text: string) => {
 
 export default function OldAppDeployInfo(props: any) {
   const { intervalStop, intervalStart } = props;
-  console.log('props', props);
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();

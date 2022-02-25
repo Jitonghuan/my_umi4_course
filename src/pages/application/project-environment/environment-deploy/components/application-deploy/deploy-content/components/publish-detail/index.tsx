@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload } from 'antd';
+import { Descriptions, Button, Modal, message, Radio, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { history } from 'umi';
@@ -18,10 +18,9 @@ import './index.less';
 const rootCls = 'publish-detail-compo';
 
 export default function PublishDetail(props: IProps) {
-  let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
+  let { deployInfo, envTypeCode, onOperate } = props;
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
-  const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   // const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<string[]>();
@@ -33,22 +32,23 @@ export default function PublishDetail(props: IProps) {
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode) return;
+    if (!envTypeCode) return;
     // 当前部署环境
-    getRequest(listAppEnv, {
-      data: {
-        envTypeCode: envTypeCode,
-        appCode: appData?.appCode,
-      },
-    }).then((result) => {
-      let envSelect: any = [];
-      if (result?.success) {
-        result?.data?.map((item: any) => {
-          envSelect.push({ label: item.envName, value: item.envCode });
-        });
-        setEnvDataList(envSelect);
-      }
-      // setEnvDataList(data.list);
-    });
+    // getRequest(listAppEnv, {
+    //   data: {
+    //     envTypeCode: envTypeCode,
+    //     appCode: appData?.appCode,
+    //   },
+    // }).then((result) => {
+    //   let envSelect: any = [];
+    //   if (result?.success) {
+    //     result?.data?.map((item: any) => {
+    //       envSelect.push({ label: item.envName, value: item.envCode });
+    //     });
+    //     setEnvDataList(envSelect);
+    //   }
+    //   // setEnvDataList(data.list);
+    // });
 
     // if (deployInfo.id !== undefined) {
     //   getRequest(checkNextEnv, {
@@ -96,12 +96,11 @@ export default function PublishDetail(props: IProps) {
   // 部署 master
   const deployToMaster = () => {
     onOperate('deployMasterStart');
-    setDeployMasterVisible(true);
+    confirmPublishToMaster();
   };
   // 放弃部署 master
   const cancelDeployToMaster = () => {
     onOperate('deployMasterEnd');
-    setDeployMasterVisible(false);
     setConfirmLoading(false);
   };
   // 确认发布操master作
@@ -111,12 +110,10 @@ export default function PublishDetail(props: IProps) {
       await deployMaster({
         appCode: appData?.appCode,
         envTypeCode: envTypeCode,
-        envCodes: deployMasterEnv,
+        envCodes: envTypeCode,
         isClient: appData?.isClient === 1,
       });
       message.success('操作成功，正在部署中...');
-      setDeployMasterVisible(false);
-      setDeployMasterEnv([]);
       onOperate('deployMasterEnd');
     } finally {
       setConfirmLoading(false);
@@ -261,33 +258,22 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {envTypeCode === 'prod' && (
-          <Button type="primary" onClick={() => setDeployVisible(true)} icon={<UploadOutlined />}>
-            离线部署
-          </Button>
-        )}
-
-        {/* {envTypeCode === 'prod' ? (
-          <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
-            发布回滚
-          </Button>
-        ) : null} */}
-        {/* {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
-          <Button
-            type="primary"
-            onClick={() => {
-              history.push('/matrix/application/environment-detail');
+        {appData?.appType === 'backend' && (
+          <Popconfirm
+            title="确定要部署Master吗？"
+            onConfirm={() => {
+              deployToMaster();
+            }}
+            onCancel={() => {
+              cancelDeployToMaster();
             }}
           >
-            项目环境部署
-          </Button>
-        )} */}
-        {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
-          <Button type="primary" onClick={deployToMaster}>
-            部署Master
-          </Button>
+            <Button type="primary" loading={confirmLoading}>
+              部署Master
+            </Button>
+          </Popconfirm>
         )}
-        {envTypeCode === 'prod' && appData?.appType === 'backend' && (
+        {appData?.appType === 'backend' && (
           <Button type="primary" danger onClick={handleCancelPublish}>
             取消发布
           </Button>
@@ -312,7 +298,7 @@ export default function PublishDetail(props: IProps) {
             {deployInfo?.version || '--'}
           </Descriptions.Item>
         )}
-        <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
+        <Descriptions.Item label="发布环境">{envTypeCode || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
           {deployInfo?.conflictFeature || '--'}
         </Descriptions.Item>
@@ -332,7 +318,6 @@ export default function PublishDetail(props: IProps) {
                         goToJenkins(errInfo);
                       }
                       if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1) {
-                        localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
                         history.push(
                           `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
                         );
@@ -348,61 +333,10 @@ export default function PublishDetail(props: IProps) {
           </Descriptions.Item>
         )}
       </Descriptions>
-      {envTypeCode === 'prod' && appStatusInfo?.length ? (
-        <ServerStatus onOperate={onOperate} appStatusInfo={appStatusInfo} />
-      ) : null}
 
       {/* --------------------- modals --------------------- */}
-
-      {/* 部署到 master */}
-      <Modal
-        key="deployMaster"
-        title="选择发布环境"
-        visible={deployMasterVisible}
-        confirmLoading={confirmLoading}
-        onOk={confirmPublishToMaster}
-        maskClosable={false}
-        onCancel={cancelDeployToMaster}
-      >
-        <div>
-          <span>发布环境：</span>
-          <Checkbox.Group value={deployMasterEnv} onChange={(v: any) => setDeployMasterEnv(v)} options={envDataList} />
-        </div>
-      </Modal>
-
-      {/* 离线部署 */}
-      <Modal
-        key="deployOffline"
-        title="选择部署环境"
-        visible={deployVisible}
-        footer={null}
-        onCancel={handleCancel}
-        maskClosable={false}
-      >
-        <div>
-          <span>发布环境：</span>
-          <Checkbox.Group
-            value={deployEnv}
-            onChange={(v: any) => {
-              onOperate('uploadImageStart');
-              setDeployEnv(v);
-            }}
-            options={envDataList || []}
-          />
-        </div>
-
-        <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
-          <span>配置文件：</span>
-          <Upload {...uploadProps} accept=".tgz">
-            <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
-              离线部署
-            </Button>
-          </Upload>
-        </div>
-      </Modal>
-
       {/* 重启按钮 */}
-      <Modal
+      {/* <Modal
         key="deployRestart"
         title="选择重启环境"
         visible={restartVisible}
@@ -423,7 +357,7 @@ export default function PublishDetail(props: IProps) {
             ></Radio.Group>
           )}
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

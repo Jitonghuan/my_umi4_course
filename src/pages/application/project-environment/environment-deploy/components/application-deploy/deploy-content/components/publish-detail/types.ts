@@ -4,7 +4,7 @@ export interface IProps {
   deployInfo: DeployInfoVO;
   envTypeCode: string;
   // nextEnvTypeCode?: string;
-  appStatusInfo: IStatusInfoProps[];
+  // appStatusInfo: IStatusInfoProps[];
   onOperate: (
     type:
       | 'deployNextEnvStart'

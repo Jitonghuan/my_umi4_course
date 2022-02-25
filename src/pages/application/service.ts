@@ -525,7 +525,7 @@ export const deployMaster = (params: {
   /** 应用code */
   appCode?: string;
   envTypeCode?: string;
-  envCodes?: string[];
+  envCodes?: string;
   isClient?: boolean;
 }) =>
   postRequest(deployMasterUrl, {

@@ -140,8 +140,6 @@ export default function envManageList(props: any) {
       pageSize: pagination.pageSize,
     };
     loadListData(obj);
-
-    // console.log('pageIndexInfo',pageIndexInfo);
   };
 
   const loadListData = (params: any) => {

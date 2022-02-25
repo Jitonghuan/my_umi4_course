@@ -126,7 +126,7 @@ export default function PublishContent(props: IProps) {
       onOk: async () => {
         return cancelDeploy({
           id: deployInfo.id,
-          envCode,
+          envCode: envTypeCode,
         }).then(() => {});
       },
     });

@@ -163,8 +163,6 @@ export default function appEnvPageList() {
       pageSize: pagination.pageSize,
     };
     loadListData(obj);
-
-    // console.log('pageIndexInfo',pageIndexInfo);
   };
 
   const loadListData = (params: any) => {

@@ -248,7 +248,6 @@ export default function PublishDetail(props: IProps) {
   };
   const ensureProjectEnv = () => {
     envProjectForm.validateFields().then((value) => {
-      console.log('envName', value);
       history.push({
         pathname: '/matrix/application/environment-detail',
         state: {

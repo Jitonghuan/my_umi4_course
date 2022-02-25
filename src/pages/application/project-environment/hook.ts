@@ -97,7 +97,8 @@ export function useEnvList() {
     setLoading(true);
     getRequest(APIS.queryEnvList, {
       data: {
-        pageIndex: -1,
+        pageSize: -1,
+        envTypeCode: 'notProd',
       },
     })
       .then((result) => {

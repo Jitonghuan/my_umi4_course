@@ -28,7 +28,6 @@ const activeKeyMap: Record<string, any> = {
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
   const { id: appId, appCode, projectEnvCode, projectEnvName } = location.query || {};
-  console.log('location.query', location.query);
   const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);
   const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
   const tabActiveKey = useMemo(() => {
