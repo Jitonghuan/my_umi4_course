@@ -11,7 +11,7 @@ import DeployModal from './deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, projectEnvCode, ...others } = props;
   const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
 
   const isLoading =
