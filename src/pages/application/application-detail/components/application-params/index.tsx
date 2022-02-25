@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 17:20
 
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Button, Row, Col, Form, Select, Space, message, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
@@ -29,6 +29,9 @@ export default function ApplicationParams(props: any) {
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
   const { templateType, envCode } = props?.history.location?.query || {};
+  const intervalRef = useRef<any>();
+  let firstEnvChoose = useRef<string>('');
+  let firstTmplType = useRef<string>('');
   useEffect(() => {
     selectAppEnv().then((result) => {
       const listEnv = result.data?.map((n: any) => ({
@@ -38,6 +41,7 @@ export default function ApplicationParams(props: any) {
       }));
       setEnvDatas(listEnv);
       setSelectEnvData(listEnv[0]?.value);
+      firstEnvChoose.current = listEnv[0]?.value;
       getRequest(APIS.tmplType).then((result) => {
         const listTmplType = (result.data || []).map((n: any) => ({
           label: n,
@@ -45,16 +49,19 @@ export default function ApplicationParams(props: any) {
           data: n,
         }));
         setTemplateTypes(listTmplType);
+
         let tmplType = '';
         listTmplType.forEach((element: any) => {
           if (element.value === 'deployment') {
             tmplType = element.value;
             applicationForm.setFieldsValue({ appEnvCode: listEnv[0]?.value, tmplType: tmplType });
             setSelectTmpl(element.value);
+            firstTmplType.current = element.value;
           } else if (element.value === 'service') {
             tmplType = element.value;
             applicationForm.setFieldsValue({ appEnvCode: listEnv[0]?.value, tmplType: tmplType });
             setSelectTmpl(element.value);
+            firstTmplType.current = element.value;
           }
         });
         getAppTempl(listEnv[0]?.value, appData?.appCode, tmplType, appCategoryCode);
@@ -79,7 +86,7 @@ export default function ApplicationParams(props: any) {
           showAppList(envCode, templateType);
           setIsDeployment(appTmpl.templateType);
         } else {
-          message.error(`${envCode}环境的${templateType}类型模版为空`);
+          message.info(`${envCode}环境的${templateType}类型模版为空`);
         }
       })
       .finally(() => {
@@ -90,6 +97,15 @@ export default function ApplicationParams(props: any) {
   const inintData = () => {
     let arr1 = [];
     let jvm = '';
+    if (inintDatas.length === 0) {
+      applicationForm.setFieldsValue({
+        appEnvCode: firstEnvChoose.current,
+        tmplType: firstTmplType.current,
+        value: '',
+        tmplConfigurableItem: [],
+        jvm: '',
+      });
+    }
     for (const key in inintDatas.tmplConfigurableItem) {
       if (key === 'jvm') {
         jvm = inintDatas.tmplConfigurableItem[key];
@@ -140,7 +156,7 @@ export default function ApplicationParams(props: any) {
           // changeTmplType(applicationlist.templateType);
           setIsDeployment(applicationlist.templateType);
         } else {
-          message.error(`${envCode}的${templateType}类型模版为空`);
+          message.info(`${envCode}的${templateType}类型模版为空`);
         }
 
         //处理添加进表格的数据

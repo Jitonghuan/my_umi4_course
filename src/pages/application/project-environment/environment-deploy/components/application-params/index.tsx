@@ -13,12 +13,10 @@ import EditorTable from '@cffe/pc-editor-table';
 import * as APIS from '@/pages/application/service';
 import './index.less';
 
-export default function ApplicationParams(props: any) {
-  const { appData } = useContext(DetailContext);
+export default function ApplicationParams() {
+  const { appData, projectEnvCode } = useContext(DetailContext);
   const [applicationForm] = Form.useForm();
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
-  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [selectEnvData, setSelectEnvData] = useState<string>(''); //下拉选择应用环境
   const [selectTmpl, setSelectTmpl] = useState<string>(''); //下拉选择应用模版
   const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
@@ -28,58 +26,43 @@ export default function ApplicationParams(props: any) {
   const [infoLoading, setInfoloading] = useState<boolean>(false);
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
-  const { templateType, envCode } = props?.history.location?.query || {};
   useEffect(() => {
-    selectAppEnv().then((result) => {
-      const listEnv = result.data?.map((n: any) => ({
-        value: n?.envCode,
-        label: n?.envName,
+    getRequest(APIS.tmplType).then((result) => {
+      const listTmplType = (result.data || []).map((n: any) => ({
+        label: n,
+        value: n,
         data: n,
       }));
-      setEnvDatas(listEnv);
-      setSelectEnvData(listEnv[0]?.value);
-      getRequest(APIS.tmplType).then((result) => {
-        const listTmplType = (result.data || []).map((n: any) => ({
-          label: n,
-          value: n,
-          data: n,
-        }));
-        setTemplateTypes(listTmplType);
-        let tmplType = '';
-        listTmplType.forEach((element: any) => {
-          if (element.value === 'deployment') {
-            tmplType = element.value;
-            applicationForm.setFieldsValue({ appEnvCode: listEnv[0]?.value, tmplType: tmplType });
-            setSelectTmpl(element.value);
-          } else if (element.value === 'service') {
-            tmplType = element.value;
-            applicationForm.setFieldsValue({ appEnvCode: listEnv[0]?.value, tmplType: tmplType });
-            setSelectTmpl(element.value);
-          }
-        });
-        getAppTempl(listEnv[0]?.value, appData?.appCode, tmplType, appCategoryCode);
+      setTemplateTypes(listTmplType);
+      let tmplType = '';
+      listTmplType.forEach((element: any) => {
+        if (element.value === 'deployment') {
+          tmplType = element.value;
+          applicationForm.setFieldsValue({ tmplType: tmplType });
+          setSelectTmpl(element.value);
+        } else if (element.value === 'service') {
+          tmplType = element.value;
+          applicationForm.setFieldsValue({ tmplType: tmplType });
+          setSelectTmpl(element.value);
+        }
       });
+      getAppTempl(appData?.appCode, tmplType, appCategoryCode);
     });
   }, []);
 
-  //通过appCategoryCode查询环境信息
-  const selectAppEnv = () => {
-    return getRequest(APIS.listAppEnv, { data: { appCode } });
-  };
-
   //查询当前模版信息  一进入页面加载
-  const getAppTempl = (envCode: string, appCode: any, templateType: string, appCategoryCode?: string) => {
+  const getAppTempl = (appCode: any, templateType: string, appCategoryCode?: string) => {
     setInfoloading(true);
-    return getRequest(APIS.paramsList, { data: { envCode, appCode, templateType, appCategoryCode } })
+    return getRequest(APIS.paramsList, { data: { envCode: projectEnvCode, appCode, templateType, appCategoryCode } })
       .then((result) => {
         if (result.data.length > 0) {
           const appTmpl = result.data[0];
           setId(appTmpl.id);
           setInintDatas(appTmpl);
-          showAppList(envCode, templateType);
           setIsDeployment(appTmpl.templateType);
+          showAppList(templateType);
         } else {
-          message.error(`${envCode}环境的${templateType}类型模版为空`);
+          message.info(`${projectEnvCode}环境的${templateType}类型模版为空`);
         }
       })
       .finally(() => {
@@ -90,6 +73,14 @@ export default function ApplicationParams(props: any) {
   const inintData = () => {
     let arr1 = [];
     let jvm = '';
+    if (inintDatas.length === 0) {
+      applicationForm.setFieldsValue({
+        tmplType: inintDatas.templateType,
+        value: '',
+        tmplConfigurableItem: [],
+        jvm: '',
+      });
+    }
     for (const key in inintDatas.tmplConfigurableItem) {
       if (key === 'jvm') {
         jvm = inintDatas.tmplConfigurableItem[key];
@@ -100,7 +91,6 @@ export default function ApplicationParams(props: any) {
         });
       }
       applicationForm.setFieldsValue({
-        appEnvCode: inintDatas.envCode,
         tmplType: inintDatas.templateType,
         value: inintDatas.value,
         tmplConfigurableItem: arr1,
@@ -110,9 +100,9 @@ export default function ApplicationParams(props: any) {
     }
   };
 
-  const showAppList = (envCode: string, templateType: string) => {
+  const showAppList = (templateType: string) => {
     setInfoloading(true);
-    getRequest(APIS.paramsList, { data: { appCode, templateType: templateType, envCode: envCode } })
+    getRequest(APIS.paramsList, { data: { appCode, templateType: templateType, envCode: projectEnvCode } })
       .then((result) => {
         if (result.data.length > 0) {
           const applicationlist = result.data[0];
@@ -130,17 +120,14 @@ export default function ApplicationParams(props: any) {
             }
           }
           applicationForm.setFieldsValue({
-            appEnvCode: applicationlist.envCode,
             tmplType: applicationlist.templateType,
             value: applicationlist.value,
             tmplConfigurableItem: arr1,
             jvm: jvm,
           });
-          // changeEnvCode(applicationlist.envCode);
-          // changeTmplType(applicationlist.templateType);
           setIsDeployment(applicationlist.templateType);
         } else {
-          message.error(`${envCode}的${templateType}类型模版为空`);
+          message.info(`${projectEnvCode}的${templateType}类型模版为空`);
         }
 
         //处理添加进表格的数据
@@ -157,26 +144,20 @@ export default function ApplicationParams(props: any) {
       });
   };
 
-  //改变下拉选择后查询结果
-  const changeEnvCode = (getEnvCode: string) => {
-    setSelectEnvData(getEnvCode);
-    setEnsureDisable(false);
-    queryTmpl(getEnvCode, selectTmpl);
-  };
   const changeTmplType = (getTmplType: string) => {
     setSelectTmpl(getTmplType);
     setIsDeployment(getTmplType);
-    queryTmpl(selectEnvData || envCode, getTmplType);
+    queryTmpl(getTmplType);
     setEnsureDisable(false);
   };
 
   //点击查询回调
-  const queryTmpl = async (envCodeCurrent: string, templateTypeCurrent: string) => {
+  const queryTmpl = async (templateTypeCurrent: string) => {
     setInfoloading(true);
     // data里的参数是根据下拉选项来查询配置项和模版详情的
     await getRequest(APIS.paramsList, {
       // data: { envCode: selectEnvData || envCode, appCode, templateType: selectTmpl || {} },
-      data: { envCode: envCodeCurrent || envCode, appCode, templateType: templateTypeCurrent || '' },
+      data: { envCode: projectEnvCode, appCode, templateType: templateTypeCurrent || '' },
     })
       .then((result) => {
         const applicationlist = result.data[0];
@@ -210,7 +191,7 @@ export default function ApplicationParams(props: any) {
             value: '',
           });
           setEnsureDisable(true);
-          message.error(`${envCodeCurrent}环境的${templateTypeCurrent}类型模版不存在,请先推送模板！`);
+          message.error(`${projectEnvCode}环境的${templateTypeCurrent}类型模版不存在,请先推送模板！`);
         }
       })
       .finally(() => {
@@ -218,7 +199,7 @@ export default function ApplicationParams(props: any) {
       });
   };
   //编辑应用模版
-  const setApplication = (values: any) => {
+  const editApplication = (values: any) => {
     const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
       prev[el.key] = el.value;
       return prev;
@@ -227,14 +208,13 @@ export default function ApplicationParams(props: any) {
     putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
       if (result.success) {
         message.success('提交成功！');
-        // window.location.reload();
         applicationForm.setFieldsValue({
           tmplConfigurableItem: [],
           jvm: '',
           value: '',
         });
         setTimeout(() => {
-          showAppList(selectEnvData, selectTmpl);
+          showAppList(selectTmpl);
         }, 200);
       }
     });
@@ -242,14 +222,9 @@ export default function ApplicationParams(props: any) {
 
   return (
     <ContentCard>
-      <Form form={applicationForm} onFinish={setApplication}>
+      <Form form={applicationForm} onFinish={editApplication}>
         <Row>
-          <div>
-            <Form.Item label=" 应用环境：" name="appEnvCode">
-              <Select showSearch style={{ width: 200 }} options={envDatas} onChange={changeEnvCode} />
-            </Form.Item>
-          </div>
-          <div style={{ marginLeft: 16 }}>
+          <div style={{ marginLeft: 12 }}>
             <Form.Item label=" 模版类型" name="tmplType">
               <Select showSearch style={{ width: 200 }} options={templateTypes} onChange={changeTmplType} />
             </Form.Item>

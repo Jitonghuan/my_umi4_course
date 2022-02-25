@@ -14,7 +14,8 @@ import { listAppEnvType } from '@/common/apis';
 import DeployInfoContent from './deployInfo-content';
 import './index.less';
 const { TabPane } = Tabs;
-export default function AppDeployInfo() {
+export default function AppDeployInfo(props: any) {
+  const { type, viewLogEnv, viewLogEnvType } = props.location.query;
   const { appData } = useContext(DetailContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
@@ -92,26 +93,17 @@ export default function AppDeployInfo() {
 
   return (
     <ContentCard noPadding className="page-app-deploy-info">
-      <Tabs onChange={changeTab} activeKey={tabActive} type="card">
-        {envTypeData?.map((item) => (
-          <TabPane tab={item.label} key={item.value}>
-            <DeployInfoContent
-              isActive={item.value === tabActive}
-              envTypeCode={item.value}
-              onDeployNextEnvSuccess={() => {
-                const i = envTypeData.findIndex((item) => item.value === tabActive);
-                setTabActive(envTypeData[i + 1]?.value);
-              }}
-              intervalStop={() => {
-                timerHandle('stop');
-              }}
-              intervalStart={() => {
-                timerHandle('do', true);
-              }}
-            />
-          </TabPane>
-        ))}
-      </Tabs>
+      <DeployInfoContent
+        intervalStop={() => {
+          timerHandle('stop');
+        }}
+        intervalStart={() => {
+          timerHandle('do', true);
+        }}
+        viewLogEnv={viewLogEnv}
+        type={type}
+        viewLogEnvType={viewLogEnvType}
+      />
     </ContentCard>
   );
 }

@@ -6,6 +6,7 @@ import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffec
 import { Select, Card, message, Form, Divider, Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
+import appConfig from '@/app.config';
 import { history } from 'umi';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
@@ -18,7 +19,7 @@ export default function ViewLog(props: any) {
   const [log, setLog] = useState<string>('');
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
-  const { appCode, envCode, instName } = props.location.query;
+  const { appCode, envCode, instName, viewLogEnvType } = props.location.query;
   const logData = useRef<string>('');
   let currentContainerName = '';
   let ansi_up = new AnsiUp();
@@ -37,9 +38,17 @@ export default function ViewLog(props: any) {
         viewLogform.setFieldsValue({ containerName: currentContainerName });
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
-        ws.current = new WebSocket(
-          `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
-        ); //建立通道
+        let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'test' ? 'test' : 'dev';
+        if (env === 'prod') {
+          ws.current = new WebSocket(
+            `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+          ); //建立通道
+        } else {
+          ws.current = new WebSocket(
+            `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+          ); //建立通道
+        }
+
         let dom: any = document?.getElementById('result-log');
         ws.current.onmessage = (evt: any) => {
           if (dom) {
@@ -126,8 +135,6 @@ export default function ViewLog(props: any) {
     let dom = document?.getElementById('result-log');
     if (dom) {
       let scroll = dom.scrollHeight;
-      console.log('scrollHeight', scroll);
-
       dom.scrollTo(0, scroll);
       scrollBegin.current = true;
     }
@@ -139,13 +146,22 @@ export default function ViewLog(props: any) {
     scrollBegin.current = true;
   };
   //关闭页面
+  const id = appData?.id;
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-
-      // history.push(`/matrix/application/detail/deployInfo?appCode=${appData?.appCode}&id=${appData?.id}`);
+      history.push({
+        pathname: `/matrix/application/detail/deployInfo`,
+        query: {
+          appCode: appCode,
+          id: id + '',
+          viewLogEnv: envCode,
+          type: 'viewLog_goBack',
+          viewLogEnvType: viewLogEnvType,
+        },
+      });
     }
-    history.goBack();
+    // history.goBack({envCode});
   };
 
   return (
