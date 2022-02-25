@@ -40,7 +40,7 @@ export default defineConfig({
       // target: 'http://10.10.128.157:8080',//木南本地
       // target: 'http://10.10.129.43:8080',//时雨本地
       // target: 'http://10.10.128.214:8080',//习习本地
-      // target: 'http://10.10.129.116:8080',//不辣本地
+      // target: 'http://10.10.129.173:8080',//不辣本地
 
 
       changeOrigin: true,

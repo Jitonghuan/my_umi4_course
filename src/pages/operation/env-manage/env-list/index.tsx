@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Select, Switch, message } from 'antd';
+import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -27,6 +27,8 @@ export interface EnvEditData extends Record<string, any> {
   clusterName: string;
   clusterType: string;
   clusterNetType: string;
+  ngInstCode: string;
+  proEnvType: string;
 }
 
 export default function envManageList(props: any) {
@@ -57,7 +59,16 @@ export default function envManageList(props: any) {
       value: 'prod',
     },
   ]; //环境大类
-
+  const proEnvTypeData = [
+    {
+      label: '项目环境',
+      value: 'project',
+    },
+    {
+      label: '基准环境',
+      value: 'benchmark',
+    },
+  ]; //项目环境分类选择
   useEffect(() => {
     selectCategory();
   }, []);
@@ -102,6 +113,7 @@ export default function envManageList(props: any) {
         categoryCode: value?.categoryCode,
         pageIndex: value?.pageIndex,
         pageSize: value?.pageSize,
+        proEnvType: value?.proEnvType,
       },
     })
       .then((result) => {
@@ -241,7 +253,7 @@ export default function envManageList(props: any) {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="env-list">
       <FilterCard>
         <div>
           <Form
@@ -373,6 +385,12 @@ export default function envManageList(props: any) {
                   checked={value === 1 ? true : false}
                 />
               )}
+            />
+            <Table.Column
+              title="NG配置"
+              dataIndex="ngInstCode"
+              width={140}
+              render={(value: string, record: EnvEditData, index) => <span>{value === '' ? '--' : value}</span>}
             />
             <Table.Column
               title="操作"

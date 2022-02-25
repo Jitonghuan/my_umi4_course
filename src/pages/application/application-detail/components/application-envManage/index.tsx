@@ -3,8 +3,7 @@
 // @create 2021/10/25 11:14
 
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { Input, Table, Popconfirm, Form, Button, Select, Switch, Modal, message } from 'antd';
-import PageContainer from '@/components/page-container';
+import { Input, Table, Popconfirm, Form, Button, Select, Switch, Modal, message, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -45,6 +44,16 @@ export default function appEnvPageList() {
       value: 'prod',
     },
   ]; //环境大类
+  const proEnvTypeData = [
+    {
+      label: '项目环境',
+      value: 'project',
+    },
+    {
+      label: '基准环境',
+      value: 'benchmark',
+    },
+  ]; //项目环境分类选择
   // 加载应用分类下拉选择
   const selectCategory = () => {
     getRequest(appTypeList).then((result) => {
@@ -92,6 +101,7 @@ export default function appEnvPageList() {
         envCode: value?.envCode,
         envName: value?.envName,
         categoryCode: value?.categoryCode,
+        proEnvType: value?.proEnvType,
       },
     })
       .then((result) => {
@@ -106,14 +116,16 @@ export default function appEnvPageList() {
 
   //删除数据
   const handleDelEnv = (record: any) => {
-    postRequest(delAppEnv, { data: { appCode, envCode: record.envCode } }).then((res: any) => {
-      if (res.success) {
-        message.success('删除成功！');
-        queryAppEnvData({
-          appCode,
-        });
-      }
-    });
+    postRequest(delAppEnv, { data: { appCode, envCode: record.envCode, proEnvType: record.proEnvType } }).then(
+      (res: any) => {
+        if (res.success) {
+          message.success('删除成功！');
+          queryAppEnvData({
+            appCode,
+          });
+        }
+      },
+    );
   };
   //查看modal弹窗环境信息
 
@@ -163,7 +175,7 @@ export default function appEnvPageList() {
     });
   };
   return (
-    <ContentCard>
+    <ContentCard className="app-env-management">
       <Modal
         title="请选择要绑定的环境"
         visible={isModalVisible}
@@ -271,6 +283,9 @@ export default function appEnvPageList() {
           <Form.Item label="默认分类：" name="categoryCode">
             <Select showSearch style={{ width: 120 }} options={categoryData} />
           </Form.Item>
+          <Form.Item label="项目环境分类：" name="proEnvType">
+            <Select showSearch style={{ width: 130 }} options={proEnvTypeData} />
+          </Form.Item>
           <Form.Item label="环境大类：" name="envTypeCode">
             <Select options={envTypeData} allowClear showSearch style={{ width: 120 }} />
           </Form.Item>
@@ -314,6 +329,16 @@ export default function appEnvPageList() {
           <Table.Column title="环境名" dataIndex="envName" width={150} />
           <Table.Column title="环境CODE" dataIndex="envCode" width={150} />
           <Table.Column title="环境大类" dataIndex="envTypeCode" width={140} />
+          <Table.Column
+            title="项目环境分类"
+            dataIndex="proEnvType"
+            width={140}
+            render={(value, record: any, index) => (
+              <span>
+                {value === 'benchmark' ? <Tag color="geekblue">基准环境</Tag> : <Tag color="green">项目环境</Tag>}
+              </span>
+            )}
+          />
           <Table.Column title="默认分类" dataIndex="categoryCode" width={140} />
           <Table.Column title="备注" dataIndex="mark" width={180} />
           <Table.Column
