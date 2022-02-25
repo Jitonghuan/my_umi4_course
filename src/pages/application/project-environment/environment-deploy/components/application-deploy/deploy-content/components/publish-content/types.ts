@@ -2,7 +2,7 @@ import { DeployInfoVO, IStatusInfoProps, DeployStatusType } from '@/pages/applic
 
 export interface IProps {
   appCode: string;
-  envTypeCode: string;
+  envTypeCode: any;
   deployInfo: DeployInfoVO;
   deployedList: any[];
   // appStatusInfo: IStatusInfoProps[];
@@ -20,6 +20,7 @@ export interface StepsProps {
   deployedList: any;
   onCancelDeploy?: (envCode: string) => void;
   getItemByKey: (listStr: string, envCode: string) => any;
+  projectEnvCode: any;
 }
 
 // 执行步骤组件

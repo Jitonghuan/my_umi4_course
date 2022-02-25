@@ -239,6 +239,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               options={envDataSource}
               onChange={selectEnvCode}
               loading={loading}
+              placeholder="请通过Code搜索"
               showSearch
               allowClear
               disabled={editDisabled}

@@ -12,33 +12,21 @@ import { datetimeCellRender } from '@/utils';
 import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
-import BackendTestEnvSteps from './backend-steps/test';
-import BackendPreEnvSteps from './backend-steps/pre';
-import BackendProdEnvSteps from './backend-steps/prod';
 import FrontendDevEnvSteps from './frontend-steps/dev';
-import FrontendTestEnvSteps from './frontend-steps/test';
-import FrontendPreEnvSteps from './frontend-steps/pre';
-import FrontendProdEnvSteps from './frontend-steps/prod';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
 
 const backendStepsMapping: Record<string, typeof BackendDevEnvSteps> = {
   dev: BackendDevEnvSteps,
-  test: BackendTestEnvSteps,
-  pre: BackendPreEnvSteps,
-  prod: BackendProdEnvSteps,
 };
 const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
   dev: FrontendDevEnvSteps,
-  test: FrontendTestEnvSteps,
-  pre: FrontendPreEnvSteps,
-  prod: FrontendProdEnvSteps,
 };
 
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin } = props;
-  const { appData } = useContext(DetailContext);
+  const { appData, projectEnvCode } = useContext(DetailContext);
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
@@ -158,6 +146,7 @@ export default function PublishContent(props: IProps) {
         onSpin={onSpin}
         deployedList={deployedList}
         getItemByKey={getItemByKey}
+        projectEnvCode={projectEnvCode}
       />
       <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />
@@ -257,12 +246,12 @@ export default function PublishContent(props: IProps) {
         visible={fullScreeVisible}
         onCancel={() => setFullScreeVisible(false)}
       >
-        <CurrSteps
+        {/* <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
           getItemByKey={getItemByKey}
           onCancelDeploy={onCancelDeploy}
-        />
+        /> */}
       </Modal>
     </div>
   );

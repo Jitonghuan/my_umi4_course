@@ -96,7 +96,7 @@ export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | und
         pageIndex: 1,
         pageSize: 10,
       });
-      appList.map((item: any) => {
+      appList?.map((item: any) => {
         if (appCode) {
           if (item?.appCode === appCode) {
             setData(item);

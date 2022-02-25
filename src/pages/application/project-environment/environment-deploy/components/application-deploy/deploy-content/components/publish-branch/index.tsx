@@ -26,7 +26,7 @@ export interface PublishBranchProps {
   /** 是否有发布内容 */
   hasPublishContent: boolean;
   deployInfo: DeployInfoVO;
-  env: string;
+  env: any;
   onSearch: (name?: string) => any;
   dataSource: {
     id: string | number;
@@ -80,7 +80,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       appCode: appCode!,
       envTypeCode: env,
       features: filter,
-      envCodes: deployEnv,
+      envCodes: env,
       isClient: +appData?.isClient! === 1,
     });
   };
@@ -89,37 +89,51 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const submitClick = () => {
     // 二方包 或 有已发布
     // if (String(appData?.isClient) === '1' || hasPublishContent) {
-    if (hasPublishContent) {
-      return confirm({
-        title: '确定要提交发布吗?',
-        icon: <ExclamationCircleOutlined />,
-        onOk: async () => {
-          await submit();
-          onSubmitBranch?.('end');
-        },
-      });
-    }
+    // onOk={() => {
+    //   setConfirmLoading(true);
+    //   return submit()
+    //     .then(() => {
+    //       setDeployVisible(false);
+    //       onSubmitBranch?.('end');
+    //     })
+    //     .finally(() => setConfirmLoading(false));
+    // }}
+    // onCancel={() => {
+    //   setDeployVisible(false);
+    //   setConfirmLoading(false);
+    //   onSubmitBranch?.('end');
+    // }}
+    // if (hasPublishContent) {
+    return confirm({
+      title: '确定要提交发布吗?',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        await submit();
+        onSubmitBranch?.('end');
+      },
+    });
+    // }
 
-    setDeployVisible(true);
+    // setDeployVisible(true);
   };
 
   useEffect(() => {
     if (!appCategoryCode) return;
-    getRequest(listAppEnv, {
-      data: {
-        envTypeCode: env,
-        appCode: appData?.appCode,
-      },
-    }).then((result) => {
-      let envSelect: any = [];
-      if (result?.success) {
-        result?.data?.map((item: any) => {
-          envSelect.push({ label: item.envName, value: item.envCode });
-        });
-        setEnvDataList(envSelect);
-      }
-      // setEnvDataList(data.list);
-    });
+    // getRequest(listAppEnv, {
+    //   data: {
+    //     envTypeCode: env,
+    //     appCode: appData?.appCode,
+    //   },
+    // }).then((result) => {
+    //   let envSelect: any = [];
+    //   if (result?.success) {
+    //     result?.data?.map((item: any) => {
+    //       envSelect.push({ label: item.envName, value: item.envCode });
+    //     });
+    //     setEnvDataList(envSelect);
+    //   }
+    //   // setEnvDataList(data.list);
+    // });
   }, [appCategoryCode, env]);
 
   const branchNameRender = (branchName: string, record: any) => {
@@ -207,7 +221,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         ) : null}
       </Table>
 
-      <Modal
+      {/* <Modal
         title="选择发布环境"
         visible={deployVisible}
         confirmLoading={confirmLoading}
@@ -231,7 +245,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           <span>发布环境：</span>
           <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

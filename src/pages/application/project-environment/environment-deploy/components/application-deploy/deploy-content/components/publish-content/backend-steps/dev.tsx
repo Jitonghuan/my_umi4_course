@@ -38,6 +38,7 @@ export default function DevEnvSteps({
   onSpin,
   deployedList,
   stopSpin,
+  projectEnvCode,
 }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
 

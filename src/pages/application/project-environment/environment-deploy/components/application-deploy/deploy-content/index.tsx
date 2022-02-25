@@ -137,7 +137,7 @@ export default function DeployContent(props: DeployContentProps) {
       <div className={`${rootCls}-body`}>
         <Spin spinning={loading}>
           <PublishDetail
-            envTypeCode={projectEnvCode || ''}
+            envTypeCode={projectEnvCode}
             deployInfo={deployInfo}
             // appStatusInfo={appStatusInfo}
             onOperate={(type: any) => {
@@ -151,7 +151,7 @@ export default function DeployContent(props: DeployContentProps) {
           />
           <PublishContent
             appCode={appCode!}
-            envTypeCode={projectEnvCode || ''}
+            envTypeCode={projectEnvCode}
             deployInfo={deployInfo}
             deployedList={branchInfo.deployed}
             // appStatusInfo={appStatusInfo}
@@ -163,7 +163,7 @@ export default function DeployContent(props: DeployContentProps) {
             deployInfo={deployInfo}
             hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
             dataSource={branchInfo.unDeployed}
-            env={projectEnvCode || ''}
+            env={projectEnvCode}
             onSearch={searchUndeployedBranch}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
@@ -172,7 +172,7 @@ export default function DeployContent(props: DeployContentProps) {
         </Spin>
       </div>
       <div className={`${rootCls}-sider`}>
-        <PublishRecord env={projectEnvCode || ''} appCode={appCode} />
+        <PublishRecord env={projectEnvCode} appCode={appCode} />
       </div>
     </div>
   );

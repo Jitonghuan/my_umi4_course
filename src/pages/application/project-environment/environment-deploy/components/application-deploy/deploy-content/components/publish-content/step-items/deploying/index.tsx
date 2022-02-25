@@ -61,21 +61,21 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )} */}
               {/* 浙一日常环境下的部署步骤显示jenkins链接 */}
-              {envTypeCode === 'pre' && jenkinsUrl && deployInfo.envs?.includes('zy-daily') && (
+              {/* {envTypeCode === 'pre' && jenkinsUrl && deployInfo.envs?.includes('zy-daily') && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={jenkinsUrl}>
                     部署详情
                   </a>
                 </div>
-              )}
+              )} */}
               {/* prod环境 在部署过程中出现错误时 判断如果是在构建显示查看Jenkins详情，如果是部署出现错误显示部署错误详情*/}
-              {envTypeCode === 'prod' && jenkinsUrl && (
+              {/* {envTypeCode === 'prod' && jenkinsUrl && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={jenkinsUrl}>
                     部署详情
                   </a>
                 </div>
-              )}
+              )} */}
 
               {/* test, pre, prod 显示 jenkins 详情 */}
               {/* {envTypeCode !== 'dev' && deployInfo.jenkinsUrl && (
@@ -91,7 +91,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )}
               {/* prod 需要确认部署 */}
-              {envTypeCode === 'prod' && isLoading && (
+              {/* {envTypeCode === 'prod' && isLoading && (
                 <a
                   style={{ marginTop: 4 }}
                   onClick={() => {
@@ -100,7 +100,7 @@ export default function DeployingStep(props: StepItemProps) {
                 >
                   确认部署
                 </a>
-              )}
+              )} */}
             </>
           )
         }
