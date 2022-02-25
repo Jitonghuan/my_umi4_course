@@ -47,7 +47,7 @@ export default function ConfigContent({ env, configType }: IProps) {
         }));
         let listEnv: any = [];
         dataSources.forEach((el: any) => {
-          if (el.useNacos === 1 && el?.proEnvType === 'project') {
+          if (el.useNacos === 1) {
             listEnv.push(el);
           }
         });
