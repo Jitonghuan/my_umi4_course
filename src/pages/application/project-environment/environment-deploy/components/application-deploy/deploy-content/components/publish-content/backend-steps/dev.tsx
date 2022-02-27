@@ -74,55 +74,56 @@ export default function DevEnvSteps({
 
   return (
     <div className="publish-content-compo-wrapper">
-      {projectEnvCode ? (
-        <>
-          <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
-            <CreateTaskStep {...payload} />
-            <MergeReleaseStep {...payload} />
-          </Steps>
-          <div className={`sub_process-wrapper ${parseInt(status + '') > 1 ? 'sub_process-wrapper-active' : ''}`}>
-            {
-              // envList.map((envCode, i) => (
-              <div
-                key={projectEnvCode}
-                className={`sub_process sub_process-${0} ${
-                  getCurrentStatus(projectEnvCode) > 1 ? 'sub_process-active' : ''
-                }`}
-              >
-                <span className="sub_process-title">{projectEnvCode}</span>
-                <Steps initial={2} current={getCurrentStatus(projectEnvCode)} className="sub_process-steps">
-                  <BuildingStep
-                    {...payload}
-                    deployStatus={getSubStateStatus(projectEnvCode)}
-                    jenkinsUrl={getItemByKey(jenkinsUrl, projectEnvCode).subJenkinsUrl}
-                    envCode={projectEnvCode}
-                  />
-                  <DeployingStep
-                    {...payload}
-                    deployStatus={getSubStateStatus(projectEnvCode)}
-                    envCode={projectEnvCode}
-                  />
-                  <FinishedStep
-                    {...payload}
-                    deployStatus={getSubStateStatus(projectEnvCode)}
-                    envCode={projectEnvCode}
-                  />
-                </Steps>
-                {parseInt(status + '') > 1 && parseInt(status + '') < 4 ? (
-                  <Button
-                    type="link"
-                    className="cancel-btn"
-                    onClick={() => onCancelDeploy && onCancelDeploy(projectEnvCode)}
-                  >
-                    取消发布
-                  </Button>
-                ) : null}
-              </div>
-              // ))
-            }
-          </div>
-        </>
-      ) : (
+      {projectEnvCode && (
+        // (
+        //   <>
+        //     {/* <Steps className="publish-content-compo__steps" current={parseInt(status + '')}>
+        //       <CreateTaskStep {...payload} />
+        //       <MergeReleaseStep {...payload} />
+        //     </Steps> */}
+        //     {/* <div className={`sub_process-wrapper ${parseInt(status + '') > 1 ? 'sub_process-wrapper-active' : ''}`}>
+        //       {
+        //         // envList.map((envCode, i) => (
+        //         <div
+        //           key={projectEnvCode}
+        //           className={`sub_process sub_process-${0} ${
+        //             getCurrentStatus(projectEnvCode) > 1 ? 'sub_process-active' : ''
+        //           }`}
+        //         >
+        //           <span className="sub_process-title">{projectEnvCode}</span>
+        //           <Steps initial={2} current={getCurrentStatus(projectEnvCode)} className="sub_process-steps">
+        //             <BuildingStep
+        //               {...payload}
+        //               deployStatus={getSubStateStatus(projectEnvCode)}
+        //               jenkinsUrl={getItemByKey(jenkinsUrl, projectEnvCode).subJenkinsUrl}
+        //               envCode={projectEnvCode}
+        //             />
+        //             <DeployingStep
+        //               {...payload}
+        //               deployStatus={getSubStateStatus(projectEnvCode)}
+        //               envCode={projectEnvCode}
+        //             />
+        //             <FinishedStep
+        //               {...payload}
+        //               deployStatus={getSubStateStatus(projectEnvCode)}
+        //               envCode={projectEnvCode}
+        //             />
+        //           </Steps>
+        //           {parseInt(status + '') > 1 && parseInt(status + '') < 4 ? (
+        //             <Button
+        //               type="link"
+        //               className="cancel-btn"
+        //               onClick={() => onCancelDeploy && onCancelDeploy(projectEnvCode)}
+        //             >
+        //               取消发布
+        //             </Button>
+        //           ) : null}
+        //         </div>
+        //         // ))
+        //       }
+        //     </div> */}
+        //   </>
+        // ) :
         <>
           <Steps className="publish-content-compo__steps single-publish__steps" current={parseInt(status + '')}>
             <CreateTaskStep {...payload} />

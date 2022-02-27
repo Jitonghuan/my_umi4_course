@@ -36,7 +36,6 @@ export default function DeployContent(props: DeployContentProps) {
   } = props;
   const { appData, projectEnvCode } = useContext(DetailContext);
   const { appCode } = appData || {};
-  console.log('projectEnvCode', projectEnvCode);
   const cachebranchName = useRef<string>();
   const [updating, setUpdating] = useState(false);
   const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);

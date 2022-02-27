@@ -97,7 +97,7 @@ export default function PublishContent(props: IProps) {
   };
 
   const isFrontend = appData?.appType === 'frontend';
-  const CurrSteps = isFrontend ? frontendStepsMapping[envTypeCode] : backendStepsMapping[envTypeCode];
+  const CurrSteps = isFrontend ? frontendStepsMapping['dev'] : backendStepsMapping['dev'];
 
   const branchNameRender = (branchName: string, record: any) => {
     return (
