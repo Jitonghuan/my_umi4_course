@@ -782,7 +782,7 @@ export default [
       {
         path: 'logger-alarm',
         name: '日志告警',
-        key: 'business-monitor',
+        key: 'logger-alarm',
         component: '@/pages/logger/logger-alarm',
       },
     ],
