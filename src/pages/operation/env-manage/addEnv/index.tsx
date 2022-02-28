@@ -6,7 +6,7 @@ import React from 'react';
 import { history } from 'umi';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
-import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from 'antd';
+import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag } from 'antd';
 import { EnvEditData } from '../env-list/index';
 import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 import './index.less';
@@ -147,6 +147,7 @@ export default function addEnvData(props: EnvEditorProps) {
             isBlock: isBlockChangeOption,
             useNacos: checkedOption,
             needApply: needApplyOption,
+            proEnvType: 'benchmark',
             nacosAddress: params?.nacosAddress,
             envCode: params?.envCode,
             envName: params?.envName,
@@ -177,6 +178,7 @@ export default function addEnvData(props: EnvEditorProps) {
             useNacos: checkedOption,
             isBlock: isBlockChangeOption,
             needApply: needApplyOption,
+            proEnvType: 'benchmark',
             // mark: initValue?.mark,
             // nacosAddress: initValue?.nacosAddress,
             // envTypeCode: initValue?.envTypeCode,
@@ -241,6 +243,9 @@ export default function addEnvData(props: EnvEditorProps) {
               </Form.Item>
             )}
           </div>
+          <Form.Item label="当前环境：">
+            <Tag color="geekblue">基准环境</Tag>
+          </Form.Item>
           <div>
             <Form.Item label="默认分类：" name="categoryCode" rules={[{ required: true, message: '这是必选项' }]}>
               <Select showSearch style={{ width: 150 }} options={categoryData} disabled={isDisabled} />

@@ -251,7 +251,7 @@ export default function envManageList(props: any) {
   };
 
   return (
-    <PageContainer className="env-list">
+    <PageContainer className="env-list-content">
       <FilterCard>
         <div>
           <Form

@@ -77,6 +77,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           projectEnvCode: params.envCode || '',
           mark: params.mark || '',
           relationApps: selectedAppCode || [],
+          projectEnvName: params.envName || '',
         };
         updateProjectEnv(editParamsObj).then(() => {
           onSave();
@@ -224,7 +225,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       <ContentCard className="tmpl-edits">
         <Form labelCol={{ flex: '120px' }} form={addEnvironmentForm}>
           <Form.Item label="项目环境名" name="envName" rules={[{ required: true, message: '请输入环境名!' }]}>
-            <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+            <Input style={{ width: 300 }} placeholder="单行输入"></Input>
           </Form.Item>
           <Form.Item label="项目环境CODE" name="envCode" rules={[{ required: true, message: '请输入项目环境CODE!' }]}>
             <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
