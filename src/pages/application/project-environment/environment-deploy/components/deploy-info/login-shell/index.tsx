@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Select, Form, Button, message, Space } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../context';
 import * as APIS from '../deployInfo-content/service';
 import { history } from 'umi';
 import { getRequest } from '@/utils/request';
@@ -15,7 +15,7 @@ import { AttachAddon } from 'xterm-addon-attach';
 import './index.less';
 
 export default function AppDeployInfo(props: any) {
-  const { appData } = useContext(DetailContext);
+  const { appData, projectEnvCode } = useContext(DetailContext);
   const [viewLogform] = Form.useForm();
   const { appCode, envCode } = props.location.query;
   const instName = props.location.query.instName;
@@ -23,7 +23,7 @@ export default function AppDeployInfo(props: any) {
   let currentContainerName = '';
   const ws = useRef<WebSocket>();
   useEffect(() => {
-    if (appCode && envCode) {
+    if (appCode) {
       getRequest(APIS.listContainer, { data: { appCode, envCode, instName } })
         .then((result) => {
           let data = result.data;

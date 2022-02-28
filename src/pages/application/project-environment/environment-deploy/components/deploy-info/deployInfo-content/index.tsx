@@ -54,6 +54,7 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 };
 
 export default function DeployContent(props: DeployContentProps) {
+  console.log('props', props);
   const { viewLogEnv, type, viewLogEnvType } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
@@ -92,6 +93,7 @@ export default function DeployContent(props: DeployContentProps) {
   };
   useEffect(() => {
     if (!appCode) return;
+    queryData();
   }, [appCode]);
   const initEnvCode = useRef<any>('');
   const [deleteInstance] = useDeleteInstance();
@@ -120,17 +122,18 @@ export default function DeployContent(props: DeployContentProps) {
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
-    let operateType = false;
     try {
-      // selectAppEnv().then((result: any) => {
-      // const dataSources = result.data?.map((n: any) => ({
-      //   value: n?.envCode,
-      //   label: n?.envName,
-      //   data: n,
-      // }));
-      // setEnvDatas(dataSources);
-      initEnvCode.current = projectEnvCode;
-      setCurrentEnvData(projectEnvCode);
+      if (type === 'viewLog_goBack') {
+        debugger;
+        setCurrentEnvData(viewLogEnv);
+        initEnvCode.current = viewLogEnv;
+      } else {
+        debugger;
+        setCurrentEnvData(projectEnvCode);
+        initEnvCode.current = projectEnvCode;
+      }
+      // initEnvCode.current = projectEnvCode;
+
       formInstance.setFieldsValue({ envCode: initEnvCode.current });
       if (initEnvCode.current !== '') {
         let initLoadInfoData: any = [];
@@ -139,7 +142,6 @@ export default function DeployContent(props: DeployContentProps) {
             if (result.success) {
               initLoadInfoData = result.data;
               setListEnvClusterData(initLoadInfoData);
-              console.log('initLoadInfoData', initLoadInfoData);
             }
           })
           .then(() => {
@@ -179,10 +181,6 @@ export default function DeployContent(props: DeployContentProps) {
   // const selectAppEnv = () => {
   //   return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode } });
   // };
-
-  useEffect(() => {
-    queryData();
-  }, []);
 
   const queryData = () => {
     getRequest(listAppEnvType, {
@@ -466,7 +464,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() =>
                           history.push(
-                            `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                            `/matrix/application/environment-deploy/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
                           )
                         }
                       >
@@ -477,7 +475,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                            `/matrix/application/environment-deploy/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
                           );
                         }}
                       >

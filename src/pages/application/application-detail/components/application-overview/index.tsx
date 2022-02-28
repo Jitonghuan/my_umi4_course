@@ -31,7 +31,6 @@ const deployJobUrlOptionsMap = optionsToLabelMap(deployJobUrlOptions);
 
 export default function ApplicationOverview() {
   const { appData, queryAppData } = useContext(DetailContext);
-  console.log('appData99999999--', appData);
   const { categoryData = [], businessData = [] } = useContext(FeContext);
 
   const [isModifyApp, setIsModifyApp] = useState(false);

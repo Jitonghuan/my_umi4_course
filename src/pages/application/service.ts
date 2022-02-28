@@ -417,7 +417,7 @@ export const createDeploy = (params: {
   /** 选择的feature分支 */
   features: string[];
   /** 发布环境code */
-  envCodes: string[];
+  envCodes?: string[];
   /** 是否是二方包*/
   isClient: boolean;
 }) =>

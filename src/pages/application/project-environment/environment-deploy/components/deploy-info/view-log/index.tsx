@@ -10,7 +10,7 @@ import appConfig from '@/app.config';
 import { history } from 'umi';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../context';
 import './index.less';
 
 export default function ViewLog(props: any) {
@@ -146,18 +146,15 @@ export default function ViewLog(props: any) {
     scrollBegin.current = true;
   };
   //关闭页面
-  const id = appData?.id;
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
       history.push({
-        pathname: `/matrix/application/detail/deployInfo`,
+        pathname: `/matrix/application/environment-deploy/deployInfo`,
         query: {
           appCode: appCode,
-          id: id + '',
           viewLogEnv: envCode,
           type: 'viewLog_goBack',
-          viewLogEnvType: viewLogEnvType,
         },
       });
     }

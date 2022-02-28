@@ -110,7 +110,7 @@ export default function PublishDetail(props: IProps) {
       await deployMaster({
         appCode: appData?.appCode,
         envTypeCode: envTypeCode,
-        envCodes: envTypeCode,
+        envCodes: [envTypeCode],
         isClient: appData?.isClient === 1,
       });
       message.success('操作成功，正在部署中...');

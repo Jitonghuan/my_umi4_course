@@ -84,6 +84,7 @@ export default function PublishContent(props: IProps) {
         return createDeploy({
           appCode,
           envTypeCode,
+          // envCodes:[envTypeCode],
           features,
           isClient: false,
         }).then(() => {
@@ -102,7 +103,9 @@ export default function PublishContent(props: IProps) {
   const branchNameRender = (branchName: string, record: any) => {
     return (
       <div>
-        <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
+        <Link to={'/matrix/application/environment-deploy/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>
+          {branchName}
+        </Link>
       </div>
     );
   };
@@ -246,12 +249,12 @@ export default function PublishContent(props: IProps) {
         visible={fullScreeVisible}
         onCancel={() => setFullScreeVisible(false)}
       >
-        {/* <CurrSteps
+        <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
           getItemByKey={getItemByKey}
           onCancelDeploy={onCancelDeploy}
-        /> */}
+        />
       </Modal>
     </div>
   );
