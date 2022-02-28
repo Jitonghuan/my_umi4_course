@@ -36,6 +36,11 @@ export default function ConfigT(props: ConfigProp) {
       });
     }
   }, [templateContext]);
+  useEffect(() => {
+    if (visible) {
+      setReadOnly(true);
+    }
+  }, [visible]);
   return (
     <Modal
       title="配置模版"
