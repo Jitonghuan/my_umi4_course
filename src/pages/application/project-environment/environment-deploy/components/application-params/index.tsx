@@ -145,10 +145,10 @@ export default function ApplicationParams() {
   };
 
   const changeTmplType = (getTmplType: string) => {
+    setEnsureDisable(false);
     setSelectTmpl(getTmplType);
     setIsDeployment(getTmplType);
     queryTmpl(getTmplType);
-    setEnsureDisable(false);
   };
 
   //点击查询回调

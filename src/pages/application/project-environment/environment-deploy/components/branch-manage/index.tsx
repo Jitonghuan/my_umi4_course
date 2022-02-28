@@ -5,7 +5,7 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import moment from 'moment';
 import { Button, message, Form, Input, Table, Popconfirm, Tooltip } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
 import { datetimeCellRender } from '@/utils';
@@ -14,6 +14,7 @@ import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
 import { createReview } from '@/pages/application/service';
 import { postRequest } from '@/utils/request';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
@@ -102,7 +103,23 @@ export default function BranchManage() {
       >
         <Table.Column title="ID" dataIndex="id" width={80} />
         <Table.Column title="应用code" dataIndex="appCode" width={300} />
-        <Table.Column title="分支名" dataIndex="branchName" width={400} />
+        <Table.Column
+          title="分支名"
+          dataIndex="branchName"
+          width={400}
+          render={(value) => (
+            <div>
+              <p>
+                <span>{value}</span>
+                <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
+                  <span style={{ marginLeft: 8, color: 'royalblue' }}>
+                    <CopyOutlined />
+                  </span>
+                </CopyToClipboard>
+              </p>
+            </div>
+          )}
+        />
         <Table.Column
           title="描述"
           dataIndex="desc"

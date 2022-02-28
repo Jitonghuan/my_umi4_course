@@ -80,7 +80,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       appCode: appCode!,
       envTypeCode: env,
       features: filter,
-      envCodes: env,
+      envCodes: [env],
       isClient: +appData?.isClient! === 1,
     });
   };
