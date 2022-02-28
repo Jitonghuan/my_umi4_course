@@ -37,6 +37,7 @@ export default function PublishDetail(props: IProps) {
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [projectEnvCodeOptions, setProjectEnvCodeOptions] = useState<any>([]);
+  const [projectEnvName, setProjectEnvName] = useState<string>('');
   // const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
@@ -48,7 +49,7 @@ export default function PublishDetail(props: IProps) {
   const [restartVisible, setRestartVisible] = useState(false);
   let newNextEnvTypeCode = '';
   useEffect(() => {
-    if (!appCategoryCode) return;
+    if (!appCategoryCode || !appData) return;
 
     // 当前部署环境
     getRequest(listAppEnv, {
@@ -243,27 +244,24 @@ export default function PublishDetail(props: IProps) {
         setListLoading(false);
       });
   };
-  const selectEnvProject = (value: string) => {
+  const selectEnvProject = (value: string, option: any) => {
     queryProjectEnv(value);
+  };
+
+  const selectProjectEnv = (value: string, option: any) => {
+    setProjectEnvName(option.label);
   };
   const ensureProjectEnv = () => {
     envProjectForm.validateFields().then((value) => {
-      // history.push({
-      //   pathname: '/matrix/application/environment-deploy/appDeploy',
-      //   query: {
-      //     appCode: appData.appCode,
-      //     benchmarkEnvCode: value.benchmarkEnvCode,
-      //     // type: 'appDeploy',
-      //   },
-      // });
-      //   history.push({
-      //     pathname: `/matrix/application/environment-deploy/appDeploy`,
-      //     query: {
-      //       appCode: appData.appCode,
-      //       id: appData.id,
-      //       projectEnvCode: envCode.envCode,
-      //     },
-      //   });
+      history.push({
+        pathname: `/matrix/application/environment-deploy/appDeploy`,
+        query: {
+          appCode: appData.appCode,
+          id: appData.id + '',
+          projectEnvCode: value.envCode,
+          projectEnvName: projectEnvName,
+        },
+      });
     });
   };
 
@@ -582,6 +580,7 @@ export default function PublishDetail(props: IProps) {
                 showSearch
                 loading={listLoading}
                 options={projectEnvCodeOptions}
+                onChange={selectProjectEnv}
               ></Select>
             </Form.Item>
           </Form>
