@@ -19,7 +19,7 @@ export default function ViewLog(props: any) {
   const [log, setLog] = useState<string>('');
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
-  const { appCode, envCode, instName, viewLogEnvType } = props.location.query;
+  const { appCode, envCode, instName, viewLogEnvType, projectEnvCode, projectEnvName } = props.location.query;
   const logData = useRef<string>('');
   let currentContainerName = '';
   let ansi_up = new AnsiUp();
@@ -27,53 +27,55 @@ export default function ViewLog(props: any) {
   let scrollBegin = useRef<boolean>(true);
 
   useLayoutEffect(() => {
-    getRequest(APIS.listContainer, { data: { appCode, envCode, instName: instName } }).then((result) => {
-      let data = result.data;
-      if (result.success) {
-        const listContainer = data.map((item: any) => ({
-          value: item?.containerName,
-          label: item?.containerName,
-        }));
-        currentContainerName = listContainer[0].value;
-        viewLogform.setFieldsValue({ containerName: currentContainerName });
-        setCurrentContainer(currentContainerName);
-        setQueryListContainer(listContainer);
-        let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'test' ? 'test' : 'dev';
-        if (env === 'prod') {
-          ws.current = new WebSocket(
-            `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
-          ); //建立通道
-        } else {
-          ws.current = new WebSocket(
-            `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
-          ); //建立通道
-        }
-
-        let dom: any = document?.getElementById('result-log');
-        ws.current.onmessage = (evt: any) => {
-          if (dom) {
-            // 获取滚动条到滚动区域底部的高度
-            const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
-            let bottom = 0;
-            if (scrollB) {
-              // 计算滚动条到日志div底部的距离
-              bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
-            }
-            //如果返回结果是字符串，就拼接字符串，或者push到数组，
-            logData.current += evt.data;
-            setLog(logData.current);
-            let html = ansi_up.ansi_to_html(logData.current);
-            dom.innerHTML = html;
-            if (bottom <= 20) {
-              dom.scrollTo(0, dom.scrollHeight);
-            }
+    getRequest(APIS.listContainer, { data: { appCode, envCode: projectEnvCode, instName: instName } }).then(
+      (result) => {
+        let data = result.data;
+        if (result.success) {
+          const listContainer = data.map((item: any) => ({
+            value: item?.containerName,
+            label: item?.containerName,
+          }));
+          currentContainerName = listContainer[0].value;
+          viewLogform.setFieldsValue({ containerName: currentContainerName });
+          setCurrentContainer(currentContainerName);
+          setQueryListContainer(listContainer);
+          let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'test' ? 'test' : 'dev';
+          if (env === 'prod') {
+            ws.current = new WebSocket(
+              `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+            ); //建立通道
+          } else {
+            ws.current = new WebSocket(
+              `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+            ); //建立通道
           }
-        };
-        ws.current.onerror = () => {
-          message.warning('webSocket 链接失败');
-        };
-      }
-    });
+
+          let dom: any = document?.getElementById('result-log');
+          ws.current.onmessage = (evt: any) => {
+            if (dom) {
+              // 获取滚动条到滚动区域底部的高度
+              const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
+              let bottom = 0;
+              if (scrollB) {
+                // 计算滚动条到日志div底部的距离
+                bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+              }
+              //如果返回结果是字符串，就拼接字符串，或者push到数组，
+              logData.current += evt.data;
+              setLog(logData.current);
+              let html = ansi_up.ansi_to_html(logData.current);
+              dom.innerHTML = html;
+              if (bottom <= 20) {
+                dom.scrollTo(0, dom.scrollHeight);
+              }
+            }
+          };
+          ws.current.onerror = () => {
+            message.warning('webSocket 链接失败');
+          };
+        }
+      },
+    );
   }, []);
 
   const selectListContainer = (getContainer: string) => {
@@ -153,8 +155,10 @@ export default function ViewLog(props: any) {
         pathname: `/matrix/application/environment-deploy/deployInfo`,
         query: {
           appCode: appCode,
-          viewLogEnv: envCode,
-          type: 'viewLog_goBack',
+          projectEnvCode: projectEnvCode,
+          // type: 'viewLog_goBack',
+          projectEnvName: projectEnvName,
+          // viewLogEnv:projectEnvCode
         },
       });
     }

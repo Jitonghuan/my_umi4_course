@@ -35,6 +35,8 @@ export interface DeployContentProps {
   viewLogEnv: string;
   type: string;
   viewLogEnvType: string;
+  projectEnvCode: string;
+  projectEnvName: string;
   // viewLogEnvType:string
 }
 export interface insStatusInfo {
@@ -54,12 +56,11 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 };
 
 export default function DeployContent(props: DeployContentProps) {
-  console.log('props', props);
   const { viewLogEnv, type, viewLogEnvType } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
   const [formInstance] = Form.useForm();
-  const { appData, projectEnvCode } = useContext(DetailContext);
+  const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -123,15 +124,13 @@ export default function DeployContent(props: DeployContentProps) {
   // 进入页面加载环境和版本信息
   useEffect(() => {
     try {
-      if (type === 'viewLog_goBack') {
-        debugger;
-        setCurrentEnvData(viewLogEnv);
-        initEnvCode.current = viewLogEnv;
-      } else {
-        debugger;
-        setCurrentEnvData(projectEnvCode);
-        initEnvCode.current = projectEnvCode;
-      }
+      // if (type === 'viewLog_goBack') {
+      //   setCurrentEnvData(viewLogEnv);
+      //   initEnvCode.current = viewLogEnv;
+      // } else {
+      setCurrentEnvData(projectEnvCode);
+      initEnvCode.current = projectEnvCode;
+      // }
       // initEnvCode.current = projectEnvCode;
 
       formInstance.setFieldsValue({ envCode: initEnvCode.current });
@@ -464,7 +463,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() =>
                           history.push(
-                            `/matrix/application/environment-deploy/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                            `/matrix/application/environment-deploy/viewLog?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}`,
                           )
                         }
                       >
@@ -475,7 +474,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/environment-deploy/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                            `/matrix/application/environment-deploy/loginShell?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}`,
                           );
                         }}
                       >
