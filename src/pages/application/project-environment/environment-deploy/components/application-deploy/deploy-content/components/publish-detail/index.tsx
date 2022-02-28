@@ -273,11 +273,11 @@ export default function PublishDetail(props: IProps) {
             </Button>
           </Popconfirm>
         )}
-        {appData?.appType === 'backend' && (
+        {/* {appData?.appType === 'backend' && (
           <Button type="primary" danger onClick={handleCancelPublish}>
             取消发布
           </Button>
-        )}
+        )} */}
       </div>
 
       <Descriptions

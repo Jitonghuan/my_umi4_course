@@ -3,7 +3,7 @@
 // @create 2022/02/14 10:20
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, Modal, Descriptions, Divider } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, Modal, Descriptions, Divider, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { PlusOutlined, DiffOutlined } from '@ant-design/icons';
@@ -31,7 +31,16 @@ interface DataType {
   appCode: string;
   appType: string;
 }
-
+export const appTypeOptions = [
+  {
+    label: '前端',
+    value: 'frontend',
+  },
+  {
+    label: '后端',
+    value: 'backend',
+  },
+];
 export default function EnvironmentList() {
   const projectEnvInfo: any = history.location.state;
   const { Option } = Select;
@@ -72,10 +81,11 @@ export default function EnvironmentList() {
     projectEnvCode: string,
     appName?: string,
     appCode?: string,
+    appType?: string,
   ) => {
     setLoading(true);
     let canAddAppsData: any = []; //可选数据数组
-    await getRequest(queryAppsList, { data: { benchmarkEnvCode, projectEnvCode, appName, appCode } })
+    await getRequest(queryAppsList, { data: { benchmarkEnvCode, projectEnvCode, appName, appCode, appType } })
       .then((res) => {
         if (res?.success) {
           let data = res?.data;
@@ -224,6 +234,7 @@ export default function EnvironmentList() {
                 projectEnvInfo.envCode,
                 values.appName,
                 values.appCode,
+                values.appType,
               );
             }}
             onReset={() => {
@@ -236,6 +247,9 @@ export default function EnvironmentList() {
             </Form.Item>
             <Form.Item label=" 应用CODE" name="appCode">
               <Input placeholder="请输入应用CODE"></Input>
+            </Form.Item>
+            <Form.Item label=" 应用类型" name="appType">
+              <Select placeholder="请选择应用类型" options={appTypeOptions} style={{ width: 190 }}></Select>
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -258,9 +272,22 @@ export default function EnvironmentList() {
           </div>
           <Table rowKey="id" bordered dataSource={dataSource} loading={loading} rowSelection={rowSelection}>
             <Table.Column title="ID" dataIndex="id" width="4%" />
-            <Table.Column title="应用名" dataIndex="appName" width="30%" ellipsis />
-            <Table.Column title="应用CODE" dataIndex="appCode" width="30%" ellipsis />
-            <Table.Column title="应用类型" dataIndex="appType" width="20%" ellipsis />
+            <Table.Column title="应用名" dataIndex="appName" width="30%" />
+            <Table.Column title="应用CODE" dataIndex="appCode" width="30%" />
+            <Table.Column
+              title="应用类型"
+              dataIndex="appType"
+              width="20%"
+              render={(value, record: any, index) =>
+                value === 'backend' ? (
+                  <Tag color="geekblue">后端</Tag>
+                ) : value === 'frontend' ? (
+                  <Tag color="cyan">前端</Tag>
+                ) : (
+                  <Tag>{value}</Tag>
+                )
+              }
+            />
             <Table.Column
               title="操作"
               width="16%"
