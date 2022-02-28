@@ -248,14 +248,22 @@ export default function PublishDetail(props: IProps) {
   };
   const ensureProjectEnv = () => {
     envProjectForm.validateFields().then((value) => {
-      history.push({
-        pathname: '/matrix/application/environment-detail',
-        state: {
-          envCode: value.envCode,
-          benchmarkEnvCode: value.benchmarkEnvCode,
-          type: 'appDeploy',
-        },
-      });
+      // history.push({
+      //   pathname: '/matrix/application/environment-deploy/appDeploy',
+      //   query: {
+      //     appCode: appData.appCode,
+      //     benchmarkEnvCode: value.benchmarkEnvCode,
+      //     // type: 'appDeploy',
+      //   },
+      // });
+      //   history.push({
+      //     pathname: `/matrix/application/environment-deploy/appDeploy`,
+      //     query: {
+      //       appCode: appData.appCode,
+      //       id: appData.id,
+      //       projectEnvCode: envCode.envCode,
+      //     },
+      //   });
     });
   };
 

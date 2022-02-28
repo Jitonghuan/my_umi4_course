@@ -98,14 +98,14 @@ export default function EnvironmentList() {
       });
   };
   useEffect(() => {
-    if (projectEnvInfo.type === 'appDeploy') {
-      queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
-      queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
-    }
-    if (projectEnvInfo.type === 'projectEnvironment') {
-      queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
-      queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
-    }
+    // if (projectEnvInfo.type === 'appDeploy') {
+    queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+    queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+    // }
+    // if (projectEnvInfo.type === 'projectEnvironment') {
+    //   queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+    //   queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+    // }
   }, []);
   const ensureAdd = () => {
     addAppForm.validateFields().then((params) => {
@@ -137,7 +137,6 @@ export default function EnvironmentList() {
     selectedRows.map((item: any) => {
       appCodeArry.push(item.appCode);
     });
-    console.log('selectedRows', selectedRows);
     let removeParams = {
       projectEnvCode: projectEnvInfo.envCode,
       appCodes: appCodeArry,
