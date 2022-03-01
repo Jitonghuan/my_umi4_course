@@ -9,8 +9,8 @@ import { ContentCard } from '@/components/vc-page-content';
 import { FeContext } from '@/common/hooks';
 import DetailContext from '../../context';
 import { EnvDataVO } from '@/pages/application/interfaces';
-import { useAppEnvCodeData } from '@/pages/application/hooks';
-import { useFeVersions } from './hooks';
+// import { useAppEnvCodeData } from '@/pages/application/hooks';
+import { useFeVersions, useAppEnvCodeData } from './hooks';
 import { listAppEnvType } from '@/common/apis';
 import { getRequest } from '@/utils/request';
 import RollbackVersion from './rollback';
@@ -18,7 +18,6 @@ import './index.less';
 
 export default function FEVersions() {
   const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
-  // const { envTypeData } = useContext(FeContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [feVersionData, isVersionLoading, reloadVersionData] = useFeVersions(appData!);
   const [rollbackEnv, setRollbackEnv] = useState<EnvDataVO>();
@@ -32,12 +31,12 @@ export default function FEVersions() {
     reloadVersionData();
   }, []);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  let appCode = appData?.appCode;
   useEffect(() => {
-    if (appData.appCode) {
-      debugger;
+    if (appCode) {
       queryData();
     }
-  }, [appData.appCode]);
+  }, [appCode]);
   const queryData = () => {
     getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },

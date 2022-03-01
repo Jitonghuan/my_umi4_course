@@ -371,7 +371,7 @@ export default [
             name: '版本管理',
             key: 'project-environment',
             hideInMenu: true,
-            component: '@/pages/application/application-detail/components/fe-versions',
+            component: '@/pages/application/project-environment/environment-deploy/components/fe-versions',
           },
           {
             path: 'routeConfig',
