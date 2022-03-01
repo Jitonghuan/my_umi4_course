@@ -4,6 +4,7 @@ export const tabsConfig: any = {
   appDeploy: '项目环境部署',
   deployInfo: '部署信息',
   AppParameters: '应用模版',
+  feVersion: '版本管理',
   // changeDetails: '变更详情',
 
   // launchParameters: '启动参数',
