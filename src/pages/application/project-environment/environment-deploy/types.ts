@@ -9,6 +9,7 @@ export interface IProps {
       appCode: string;
       projectEnvCode: string;
       projectEnvName: string;
+      benchmarkEnvCode?: string;
     };
   };
   route: {

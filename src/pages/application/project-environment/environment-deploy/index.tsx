@@ -4,7 +4,8 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { history, Link } from 'umi';
-import { Tabs, Spin, Empty, Tag, Badge } from 'antd';
+import { Tabs, Spin, Empty, Tag, Badge, Button } from 'antd';
+import { CloseCircleTwoTone } from '@ant-design/icons';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
@@ -27,7 +28,7 @@ const activeKeyMap: Record<string, any> = {
 
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
-  const { id: appId, appCode, projectEnvCode, projectEnvName } = location.query || {};
+  const { id: appId, appCode, projectEnvCode, projectEnvName, benchmarkEnvCode } = location.query || {};
   const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);
   const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
   const tabActiveKey = useMemo(() => {
@@ -161,6 +162,22 @@ export default function ApplicationDetail(props: IProps) {
               </span>
               ｜当前应用：
               <h4>{appData?.appCode}</h4>
+              <Tag color="volcano">
+                {/* <CloseCircleTwoTone style={{fontSize:14}} /> */}
+                <a
+                  onClick={() => {
+                    history.push({
+                      pathname: '/matrix/application/environment-detail',
+                      state: {
+                        envCode: projectEnvCode,
+                        benchmarkEnvCode: benchmarkEnvCode,
+                      },
+                    });
+                  }}
+                >
+                  关闭部署
+                </a>
+              </Tag>
               {/* <span>{appData?.appName}</span> */}
             </div>
           }

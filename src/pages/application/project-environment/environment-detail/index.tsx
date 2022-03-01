@@ -303,6 +303,7 @@ export default function EnvironmentList() {
                           id: record.id,
                           projectEnvCode: projectEnvData.envCode,
                           projectEnvName: projectEnvData.envName,
+                          benchmarkEnvCode: projectEnvInfo.benchmarkEnvCode,
                         },
                       });
                     }}
