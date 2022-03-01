@@ -424,7 +424,7 @@ export default function PublishDetail(props: IProps) {
                       if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') !== -1) {
                         goToJenkins(errInfo);
                       }
-                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1) {
+                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
                         localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
                         history.push(
                           `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
@@ -434,7 +434,9 @@ export default function PublishDetail(props: IProps) {
                   >
                     {errInfo?.subErrInfo}
                   </a>
-                  <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                  {appData?.appType !== 'frontend' && (
+                    <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                  )}
                 </div>
               ))}
             </div>
