@@ -19,7 +19,7 @@ const rootCls = 'publish-detail-compo';
 
 export default function PublishDetail(props: IProps) {
   let { deployInfo, envTypeCode, onOperate } = props;
-  const { appData } = useContext(DetailContext);
+  const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [confirmLoading, setConfirmLoading] = useState(false);
   // const [envDataList, setEnvDataList] = useState([]);
@@ -319,7 +319,7 @@ export default function PublishDetail(props: IProps) {
                       }
                       if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1) {
                         history.push(
-                          `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
+                          `/matrix/application/environment-deploy/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}`,
                         );
                       }
                     }}
