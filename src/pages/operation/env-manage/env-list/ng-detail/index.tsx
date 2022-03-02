@@ -23,10 +23,14 @@ export default function NGModalDetail(props: NGInfo) {
   const [createNgForm] = Form.useForm();
   const { visible, onClose, ngCode } = props;
   const [loading, setLoading] = useState<boolean>(false);
+  const [editIsable, setEditIsable] = useState<boolean>(false);
   useEffect(() => {
     if (ngCode) {
       queryNgData();
     }
+    return () => {
+      setEditIsable(false);
+    };
   }, [ngCode]);
   //  查询
   const queryNgData = () => {
@@ -44,6 +48,7 @@ export default function NGModalDetail(props: NGInfo) {
             createNgForm.setFieldsValue({
               ngInstCode: ngCode,
             });
+            setEditIsable(true);
           }
           createNgForm.setFieldsValue({
             ...data,
@@ -74,6 +79,7 @@ export default function NGModalDetail(props: NGInfo) {
         </Button>,
         <Button
           type="primary"
+          disabled={editIsable}
           onClick={() => {
             history.push({
               pathname: '/matrix/operation/ng-manage/ng-list',
