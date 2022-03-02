@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Tag } from 'antd';
+import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -41,6 +41,7 @@ export default function envManageList(props: any) {
   const [addEnvMode, setAddEnvMode] = useState<EditorMode>('HIDE');
   const [EnvForm] = Form.useForm();
   const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
+  const [ngModalVisiable, setNgModalVisiable] = useState<boolean>(false);
   const envTypeData = [
     {
       label: 'DEV',
@@ -252,6 +253,7 @@ export default function envManageList(props: any) {
 
   return (
     <PageContainer className="env-list-content">
+      <Modal></Modal>
       <FilterCard>
         <div>
           <Form
@@ -294,19 +296,6 @@ export default function envManageList(props: any) {
                 重置
               </Button>
             </Form.Item>
-            <div style={{ marginLeft: '32px' }}>
-              {/* onClick={() => handleAddEnv()} */}
-              <Button
-                type="primary"
-                onClick={() => {
-                  setInitEnvData(undefined);
-                  setAddEnvMode('ADD');
-                }}
-              >
-                <PlusOutlined />
-                新增环境
-              </Button>
-            </div>
           </Form>
         </div>
       </FilterCard>
@@ -322,6 +311,23 @@ export default function envManageList(props: any) {
           }}
           onClose={() => setAddEnvMode('HIDE')}
         />
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>环境列表</h3>
+          </div>
+          <div className="caption-right">
+            <Button
+              type="primary"
+              onClick={() => {
+                setInitEnvData(undefined);
+                setAddEnvMode('ADD');
+              }}
+            >
+              <PlusOutlined />
+              新增环境
+            </Button>
+          </div>
+        </div>
 
         <div style={{ marginTop: '15px' }}>
           <Table
@@ -388,7 +394,19 @@ export default function envManageList(props: any) {
               title="NG配置"
               dataIndex="ngInstCode"
               width={140}
-              render={(value: string, record: EnvEditData, index) => <span>{value === '' ? '--' : value}</span>}
+              render={(value: string, record: EnvEditData, index) =>
+                value ? (
+                  <a
+                    onClick={() => {
+                      setNgModalVisiable(true);
+                    }}
+                  >
+                    {value}
+                  </a>
+                ) : (
+                  '---'
+                )
+              }
             />
             <Table.Column
               title="操作"
