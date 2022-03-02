@@ -913,23 +913,16 @@ export default [
       },
       {
         path: 'ng-manage',
-        name: 'NG实例管理',
+        name: 'NG配置管理',
         key: 'ng-manage',
         routes: [
           {
             path: 'ng-list',
-            name: 'NG实例列表',
-            key: 'ng-list',
+            name: 'NG配置列表',
+            key: 'ng-manage',
             component: '@/pages/operation/ng-manage/ng-list',
             hideInMenu: true,
           },
-          // {
-          //   path: 'push-env',
-          //   name: '推送环境',
-          //   key: 'env-manage',
-          //   component: '@/pages/operation/env-manage/push-env',
-          //   hideInMenu: true,
-          // },
         ],
       },
       {
