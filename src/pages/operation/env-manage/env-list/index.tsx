@@ -12,6 +12,7 @@ import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddEnvDraw from '../addEnv';
 import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
 import appConfig from '@/app.config';
+import NGDetailModal from './ng-detail';
 import './index.less';
 
 /** 编辑页回显数据 */
@@ -42,6 +43,7 @@ export default function envManageList(props: any) {
   const [EnvForm] = Form.useForm();
   const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
   const [ngModalVisiable, setNgModalVisiable] = useState<boolean>(false);
+  const [currentNgCode, setCurrentNgCode] = useState<string>('');
   const envTypeData = [
     {
       label: 'DEV',
@@ -253,7 +255,13 @@ export default function envManageList(props: any) {
 
   return (
     <PageContainer className="env-list-content">
-      <Modal></Modal>
+      <NGDetailModal
+        visible={ngModalVisiable}
+        onClose={() => {
+          setNgModalVisiable(false);
+        }}
+        ngCode={currentNgCode}
+      />
       <FilterCard>
         <div>
           <Form
@@ -399,6 +407,7 @@ export default function envManageList(props: any) {
                   <a
                     onClick={() => {
                       setNgModalVisiable(true);
+                      setCurrentNgCode(value);
                     }}
                   >
                     {value}

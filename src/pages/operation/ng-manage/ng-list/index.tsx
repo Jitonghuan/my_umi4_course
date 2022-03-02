@@ -3,12 +3,12 @@
 // @create 2021/07/27 14:35
 
 import React, { useState, useEffect } from 'react';
-import { Table, Modal, Form, Input, Button, DatePicker, Select, Popconfirm } from 'antd';
-import { datetimeCellRender } from '@/utils';
+import { Table, Form, Input, Button, Popconfirm } from 'antd';
+import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
-import { getRequest, delRequest, putRequest } from '@/utils/request';
+import { getRequest, delRequest } from '@/utils/request';
 import { queryNgList } from '../service';
 import AddNgDraw from '../add-ng';
 import appConfig from '@/app.config';
@@ -16,6 +16,7 @@ import { record } from '../type';
 import ConfigModal from './config-template';
 
 export default function NgList() {
+  const editNGInfo: any = history.location.state;
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,34 +29,73 @@ export default function NgList() {
   const [value, setValue] = useState<string>('');
   const [code, setCode] = useState<string>('');
   const [id, setId] = useState<number>(0);
+
   useEffect(() => {
-    let obj = { pageIndex: 1, pageSize: 20 };
-    queryNgData(obj);
+    if (editNGInfo?.type === 'editNGInfo') {
+      queryNgData(editNGInfo.ngCode, editNGInfo.type).then(() => {
+        setNgMode('EDIT');
+      });
+    }
+    if (!editNGInfo?.type || editNGInfo?.type !== 'editNGInfo') {
+      let obj = { pageIndex: 1, pageSize: 20 };
+      queryNgData(obj);
+    }
   }, []);
   //  查询
-  const queryNgData = (value: any) => {
+  const queryNgData = async (value: any, type?: string) => {
     setLoading(true);
-    getRequest(queryNgList, {
-      data: {
-        ngInstCode: value?.ngInstCode,
-        ngInstName: value?.ngInstName,
-        ipAddress: value?.ipAddress,
-        pageIndex: value?.pageIndex,
-        pageSize: value?.pageSize,
-      },
-    })
-      .then((result) => {
-        if (result?.success) {
-          let { total, pageIndex } = result.data.pageInfo;
-          setNgDataSource(result?.data?.dataSource);
-          setTotal(total);
-          setPageIndex(pageIndex);
-        }
+    if (type === 'editNGInfo') {
+      await getRequest(queryNgList, {
+        data: {
+          ngInstCode: value,
+        },
       })
-      .finally(() => {
-        setLoading(false);
-        // setPageIndex(1);
-      });
+        .then((result) => {
+          if (result?.success) {
+            if (result?.success) {
+              let data = result?.data.dataSource[0];
+              setInitNgData(data);
+            }
+          }
+        })
+        .finally(() => {
+          getRequest(queryNgList)
+            .then((result) => {
+              if (result?.success) {
+                let { total, pageIndex } = result.data.pageInfo;
+                setNgDataSource(result?.data?.dataSource);
+                setTotal(total);
+                setPageIndex(pageIndex);
+              }
+            })
+            .finally(() => {
+              setLoading(false);
+              // setPageIndex(1);
+            });
+        });
+    } else {
+      await getRequest(queryNgList, {
+        data: {
+          ngInstCode: value?.ngInstCode,
+          ngInstName: value?.ngInstName,
+          ipAddress: value?.ipAddress,
+          pageIndex: value?.pageIndex,
+          pageSize: value?.pageSize,
+        },
+      })
+        .then((result) => {
+          if (result?.success) {
+            let { total, pageIndex } = result.data.pageInfo;
+            setNgDataSource(result?.data?.dataSource);
+            setTotal(total);
+            setPageIndex(pageIndex);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+          // setPageIndex(1);
+        });
+    }
   };
   // 编辑 查看实例
   const handleEditNg = (data: record, index: number, type: EditorMode) => {
@@ -141,11 +181,25 @@ export default function NgList() {
           initData={initNgData}
           onSave={() => {
             setNgMode('HIDE');
+            if (editNGInfo?.type === 'editNGInfo') {
+              history.replace({
+                pathname: '/matrix/operation/ng-manage/ng-list',
+                state: { type: 'editNGInfoEND' },
+              });
+            }
             setTimeout(() => {
               queryNgData({ pageIndex: 1, pageSize: 20 });
             }, 100);
           }}
-          onClose={() => setNgMode('HIDE')}
+          onClose={() => {
+            setNgMode('HIDE');
+            if (editNGInfo?.type === 'editNGInfo') {
+              history.replace({
+                pathname: '/matrix/operation/ng-manage/ng-list',
+                state: { type: 'editNGInfoEND' },
+              });
+            }
+          }}
         />
         <ConfigModal
           visible={visible}
