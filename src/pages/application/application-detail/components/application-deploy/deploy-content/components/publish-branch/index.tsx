@@ -109,6 +109,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       data: {
         envTypeCode: env,
         appCode: appData?.appCode,
+        proEnvType: 'benchmark',
       },
     }).then((result) => {
       let envSelect: any = [];
