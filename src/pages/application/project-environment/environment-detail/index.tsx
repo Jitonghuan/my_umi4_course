@@ -358,7 +358,7 @@ export default function EnvironmentList() {
           </div>
         }
       >
-        <Form form={addAppForm} layout="vertical" style={{ paddingLeft: 30 }}>
+        <Form form={addAppForm} style={{ paddingLeft: 30 }}>
           <Form.Item label="选择应用：" rules={[{ required: true, message: '请选择应用' }]} name="appCode">
             <Select style={{ width: 320 }} options={appsListData} allowClear showSearch mode="multiple"></Select>
           </Form.Item>

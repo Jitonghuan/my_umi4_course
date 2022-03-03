@@ -124,7 +124,7 @@ export default function addEnvData(props: EnvEditorProps) {
   //查询NG实例
   const [ngInstOptions, setNgInstOptions] = useState<any>([]);
   const queryNGlist = () => {
-    getRequest(queryNGList, { data: { pageIndex: -1 } }).then((res) => {
+    getRequest(queryNGList).then((res) => {
       if (res?.success) {
         let data = res?.data?.dataSource;
         let ngList = data?.map((el: any) => ({
