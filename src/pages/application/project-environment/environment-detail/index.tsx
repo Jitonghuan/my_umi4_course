@@ -242,13 +242,13 @@ export default function EnvironmentList() {
               queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
             }}
           >
-            <Form.Item label="应用名：" name="appName">
+            <Form.Item label="应用名:" name="appName">
               <Input style={{ width: 190 }} />
             </Form.Item>
-            <Form.Item label=" 应用CODE" name="appCode">
+            <Form.Item label=" 应用CODE:" name="appCode">
               <Input placeholder="请输入应用CODE"></Input>
             </Form.Item>
-            <Form.Item label=" 应用类型" name="appType">
+            <Form.Item label=" 应用类型:" name="appType">
               <Select placeholder="请选择应用类型" options={appTypeOptions} style={{ width: 190 }}></Select>
             </Form.Item>
             <Form.Item>
@@ -358,9 +358,9 @@ export default function EnvironmentList() {
           </div>
         }
       >
-        <Form form={addAppForm}>
+        <Form form={addAppForm} layout="vertical" style={{ paddingLeft: 30 }}>
           <Form.Item label="选择应用：" rules={[{ required: true, message: '请选择应用' }]} name="appCode">
-            <Select style={{ width: 400 }} options={appsListData} allowClear showSearch mode="multiple"></Select>
+            <Select style={{ width: 320 }} options={appsListData} allowClear showSearch mode="multiple"></Select>
           </Form.Item>
         </Form>
       </Modal>
