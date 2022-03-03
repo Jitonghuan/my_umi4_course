@@ -13,6 +13,7 @@ import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
+import appConfig from '@/app.config';
 import './index.less';
 
 export default function loginShell(props: any) {
@@ -46,20 +47,10 @@ export default function loginShell(props: any) {
 
   const initWS = () => {
     let dom: any = document?.getElementById('terminal');
-    let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'test' ? 'test' : 'dev';
-    if (env === 'prod') {
-      ws.current = new WebSocket(
-        `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
-      ); //建立通道
-    } else {
-      ws.current = new WebSocket(
-        `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
-      ); //建立通道
-    }
-    // ws.current = new WebSocket(
-    //   // http://matrix-test.cfuture.shop/
-    //   `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
-    // ); //建立通道
+    ws.current = new WebSocket(
+      // http://matrix-test.cfuture.shop/
+      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+    ); //建立通道
 
     //初始化terminal
     const term = new Terminal({

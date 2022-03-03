@@ -72,6 +72,13 @@ export default function Layout(props: any) {
     loadStaffDepData(orgId);
   };
 
+  function getEnv() {
+    if (window.location.href.includes('fygs')) {
+      return 'fygs';
+    }
+    return appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
+  }
+
   //切换部门确认
   const onPositionSubmit = (data: UserPositionProps) => {
     chooseDept(data.deptId);
@@ -124,7 +131,7 @@ export default function Layout(props: any) {
             showHeader={!fromThird}
             showSiderMenu={!fromThird}
             headerProps={{
-              env: appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev',
+              env: getEnv(),
               onClickPosition: () => {
                 setPosVisible(true);
                 loadStaffOrgData();

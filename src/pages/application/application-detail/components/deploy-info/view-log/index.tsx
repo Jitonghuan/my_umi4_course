@@ -38,17 +38,9 @@ export default function ViewLog(props: any) {
         viewLogform.setFieldsValue({ containerName: currentContainerName });
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
-        let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'test' ? 'test' : 'dev';
-        if (env === 'prod') {
-          ws.current = new WebSocket(
-            `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
-          ); //建立通道
-        } else {
-          ws.current = new WebSocket(
-            `ws://matrix-api-test.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
-          ); //建立通道
-        }
-
+        ws.current = new WebSocket(
+          `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+        ); //建立通道
         let dom: any = document?.getElementById('result-log');
         ws.current.onmessage = (evt: any) => {
           if (dom) {
