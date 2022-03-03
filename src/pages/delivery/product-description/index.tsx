@@ -23,6 +23,7 @@ export interface Item {
 export default function deliveryList() {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
+  const [creatVersionVisiable, setCreatVersionVisiable] = useState<boolean>(false);
   const [versionListData, setVersionListData] = useState<any[]>([
     {
       key: '1',
@@ -98,27 +99,45 @@ export default function deliveryList() {
   };
   return (
     <PageContainer>
+      <Modal
+        title="创建版本"
+        visible={creatVersionVisiable}
+        onCancel={() => {
+          setCreatVersionVisiable(false);
+        }}
+        onOk={() => {
+          setCreatVersionVisiable(false);
+        }}
+      >
+        <Form layout="vertical" style={{ paddingLeft: 30 }}>
+          <Form.Item label="版本号:">
+            <Input style={{ width: 420 }} placeholder="请输入版本号"></Input>
+          </Form.Item>
+          <Form.Item label="版本描述:">
+            <Input style={{ width: 420 }} placeholder="请输入版本描述"></Input>
+          </Form.Item>
+        </Form>
+      </Modal>
       <ContentCard>
         <div>
-          <h3>基本信息</h3>
-          <Descriptions title="User Info" extra={<Button type="primary">编辑</Button>}>
-            <Descriptions.Item label="UserName">Zhou Maomao</Descriptions.Item>
-            <Descriptions.Item label="Telephone">1810000000</Descriptions.Item>
-            <Descriptions.Item label="Live">Hangzhou, Zhejiang</Descriptions.Item>
-            <Descriptions.Item label="Remark">empty</Descriptions.Item>
-            <Descriptions.Item label="Address">
-              No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
+          <Descriptions title="基本信息" column={2} extra={<Button type="primary">编辑</Button>}>
+            <Descriptions.Item label="产品名称">Zhou Maomao</Descriptions.Item>
+            <Descriptions.Item label="产品描述">1810000000</Descriptions.Item>
+            <Descriptions.Item label="创建时间" span={2}>
+              empty
             </Descriptions.Item>
           </Descriptions>
         </div>
         <div className="version-manage">
-          <div>
-            <h3>版本管理</h3>
-          </div>
-          <div className="creat-version">
-            <p className="creat-version-button">
-              <Button type="primary">创建版本</Button>
-            </p>
+          <div className="table-caption">
+            <div className="caption-left">
+              <h3>版本管理</h3>
+            </div>
+            <div className="caption-right">
+              <Button type="primary" onClick={() => setCreatVersionVisiable(true)}>
+                创建版本
+              </Button>
+            </div>
           </div>
           <div>
             <Table
