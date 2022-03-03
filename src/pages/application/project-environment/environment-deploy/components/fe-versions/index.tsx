@@ -69,53 +69,53 @@ export default function FEVersions() {
       {envTypeData?.map((envTypeItem) => {
         const envCodeList = appEnvCodeData[envTypeItem.value] || [];
         return (
-          <section key={envTypeItem.value}>
-            <header>{envTypeItem.label}</header>
-            <div className="version-card-list clearfix">
-              {isLoading && <Spin className="block-loading" />}
-              {!isLoading && !envCodeList.length && (
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />
-              )}
-              {envCodeList.map((envCodeItem) => {
-                const versionList = feVersionData[envCodeItem.envCode] || [];
-                const latestVersion = versionList.find((n) => n.isActive === 0);
-
-                return (
-                  envCodeItem.proEnvType === 'project' && (
-                    <div className="version-card-item" key={envCodeItem.envCode}>
-                      <div className="card-item-header">
-                        <h4>{envCodeItem.envName}</h4>
-                        <small>{envCodeItem.envCode}</small>
-                      </div>
-                      <div className="card-item-body">
-                        <p>
-                          当前版本: <b>{latestVersion?.version || '--'}</b>
-                        </p>
-                        <p>
-                          发布时间:{' '}
-                          {(latestVersion?.gmtModify &&
-                            moment(latestVersion.gmtModify).format('YYYY-MM-DD HH:mm:ss')) ||
-                            '--'}
-                        </p>
-                      </div>
-                      <div className="card-item-actions">
-                        <Button
-                          type="default"
-                          danger
-                          size="small"
-                          loading={isVersionLoading}
-                          disabled={!latestVersion}
-                          onClick={() => handleRollbackClick(envCodeItem)}
-                        >
-                          {envTypeItem.value === 'prod' ? '回滚' : '切换版本'}
-                        </Button>
-                      </div>
+          // <section key={envTypeItem.value}>
+          //   <header>{envTypeItem.label}</header>
+          <div className="version-card-list clearfix">
+            {isLoading && <Spin className="block-loading" />}
+            {!isLoading &&
+              !envCodeList.length &&
+              // <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />
+              null}
+            {envCodeList.map((envCodeItem) => {
+              const versionList = feVersionData[envCodeItem.envCode] || [];
+              const latestVersion = versionList.find((n) => n.isActive === 0);
+              return (
+                envCodeItem.proEnvType === 'project' &&
+                envCodeItem.envCode === projectEnvCode && (
+                  <div className="version-card-item" key={envCodeItem.envCode}>
+                    <div className="card-item-header">
+                      <h4>{envCodeItem.envName}</h4>
+                      <small>{envCodeItem.envCode}</small>
                     </div>
-                  )
-                );
-              })}
-            </div>
-          </section>
+                    <div className="card-item-body">
+                      <p>
+                        当前版本: <b>{latestVersion?.version || '--'}</b>
+                      </p>
+                      <p>
+                        发布时间:{' '}
+                        {(latestVersion?.gmtModify && moment(latestVersion.gmtModify).format('YYYY-MM-DD HH:mm:ss')) ||
+                          '--'}
+                      </p>
+                    </div>
+                    <div className="card-item-actions">
+                      <Button
+                        type="default"
+                        danger
+                        size="small"
+                        loading={isVersionLoading}
+                        disabled={!latestVersion}
+                        onClick={() => handleRollbackClick(envCodeItem)}
+                      >
+                        {envTypeItem.value === 'prod' ? '回滚' : '切换版本'}
+                      </Button>
+                    </div>
+                  </div>
+                )
+              );
+            })}
+          </div>
+          // </section>
         );
       })}
 
