@@ -1,4 +1,4 @@
-// 产品列表页
+// 产品描述页
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/21 17:10
 
@@ -101,7 +101,7 @@ export default function deliveryList() {
       <ContentCard>
         <div>
           <h3>基本信息</h3>
-          <Descriptions title="User Info">
+          <Descriptions title="User Info" extra={<Button type="primary">编辑</Button>}>
             <Descriptions.Item label="UserName">Zhou Maomao</Descriptions.Item>
             <Descriptions.Item label="Telephone">1810000000</Descriptions.Item>
             <Descriptions.Item label="Live">Hangzhou, Zhejiang</Descriptions.Item>
