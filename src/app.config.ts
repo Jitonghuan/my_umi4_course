@@ -9,15 +9,16 @@ import { baseRoutePath } from './routes.config';
 /** 是否是本地开发环境 */
 const IS_LOCAL = process.env.NODE_ENV === 'development';
 
+// @ts-ignore
 const BUILD_ENV = window.BUILD_ENV || 'dev';
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
 
-const domainName = {
+const domainName: any = {
   fygs: 'http://c2f.apex-fygs.seenew.info:180',
   prod: 'http://c2f.apex.cfuture.shop',
-  env: 'http://c2f.apex-dev.cfuture.shop',
+  dev: 'http://c2f.apex-dev.cfuture.shop',
 };
 
 export default {
