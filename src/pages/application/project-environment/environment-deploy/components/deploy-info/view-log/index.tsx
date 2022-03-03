@@ -9,6 +9,7 @@ import { AnsiUp } from 'ansi-up';
 import { history } from 'umi';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
+import appConfig from '@/app.config';
 import DetailContext from '@/pages/application/application-detail/context';
 import './index.less';
 
@@ -38,7 +39,7 @@ export default function ViewLog(props: any) {
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
         ws.current = new WebSocket(
-          `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+          `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
         ); //建立通道
         let dom: any = document?.getElementById('result-log');
         ws.current.onmessage = (evt: any) => {

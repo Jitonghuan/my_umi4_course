@@ -12,6 +12,7 @@ import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
+import appConfig from '@/app.config';
 import './index.less';
 
 export default function AppDeployInfo(props: any) {
@@ -47,7 +48,7 @@ export default function AppDeployInfo(props: any) {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
       // http://matrix-test.cfuture.shop/
-      `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
 
     //初始化terminal
