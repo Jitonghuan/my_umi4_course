@@ -13,7 +13,6 @@ import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
-import appConfig from '@/app.config';
 import './index.less';
 
 export default function loginShell(props: any) {
