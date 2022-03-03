@@ -80,7 +80,15 @@ export default function deliveryList() {
       render: (_: string, record: Item) => (
         <Space>
           <a>管理</a>
-          <a>发布</a>
+          <Popconfirm
+            title="发布后编排不可修改，是否确认发布？"
+            onConfirm={() => {}}
+            // onCancel={cancel}
+            okText="确认"
+            cancelText="取消"
+          >
+            <a>发布</a>
+          </Popconfirm>
           <Popconfirm
             title="确认删除？"
             onConfirm={() => {}}

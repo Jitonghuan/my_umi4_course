@@ -868,6 +868,12 @@ export default [
         component: '@/pages/delivery/product-description',
       },
       {
+        path: 'version-detail',
+        name: '版本详情',
+        key: 'version-detail',
+        component: '@/pages/delivery/version-detail',
+      },
+      {
         path: 'deliveryList',
         name: '交付列表',
         key: 'deliveryList',
