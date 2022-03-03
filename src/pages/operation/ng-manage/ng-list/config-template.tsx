@@ -34,8 +34,12 @@ export default function ConfigT(props: ConfigProp) {
       form.setFieldsValue({
         value: templateContext,
       });
+    } else {
+      form.setFieldsValue({
+        value: '',
+      });
     }
-  }, [templateContext]);
+  }, [templateContext, visible]);
   useEffect(() => {
     if (visible) {
       setReadOnly(true);

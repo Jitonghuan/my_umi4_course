@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/27 14:35
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Form, Input, Button, Popconfirm } from 'antd';
 import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
@@ -41,6 +41,24 @@ export default function NgList() {
       queryNgData(obj);
     }
   }, []);
+  //点击查看配置模版
+  const handleEditConfig = useCallback(
+    (record: record, index: number) => {
+      setValue(record.templateContext);
+      setCode(record.ngInstCode);
+      setVisible(true);
+      setId(record.id);
+    },
+    [NgDataSource],
+  );
+  // 编辑 查看实例
+  const handleEditNg = useCallback(
+    (data: record, index: number, type: EditorMode) => {
+      setInitNgData(data);
+      setNgMode(type);
+    },
+    [NgDataSource],
+  );
   //  查询
   const queryNgData = async (value: any, type?: string) => {
     setLoading(true);
@@ -97,11 +115,7 @@ export default function NgList() {
         });
     }
   };
-  // 编辑 查看实例
-  const handleEditNg = (data: record, index: number, type: EditorMode) => {
-    setInitNgData(data);
-    setNgMode(type);
-  };
+
   //   删除实例
   const handleDelNg = async (data: record) => {
     let ngInstCode = data.ngInstCode;
@@ -262,15 +276,7 @@ export default function NgList() {
               title="配置模版"
               width={80}
               render={(_, record: record, index) => (
-                <Button
-                  type="link"
-                  onClick={() => {
-                    setValue(record.templateContext);
-                    setCode(record.ngInstCode);
-                    setVisible(true);
-                    setId(record.id);
-                  }}
-                >
+                <Button type="link" onClick={() => handleEditConfig(record, index)}>
                   查看
                 </Button>
               )}
