@@ -10,7 +10,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
 import { Input, Spin, Form, Button, Modal, message } from 'antd';
 import AceEditor from '@/components/ace-editor';
-import { queryNGList } from '../../service';
+import { queryNgListDetail } from '../../service';
 import { getRequest } from '@/utils/request';
 
 export interface NGInfo extends Record<string, any> {
@@ -35,7 +35,7 @@ export default function NGModalDetail(props: NGInfo) {
   //  查询
   const queryNgData = () => {
     setLoading(true);
-    getRequest(queryNGList, {
+    getRequest(queryNgListDetail, {
       data: {
         ngInstCode: ngCode,
       },

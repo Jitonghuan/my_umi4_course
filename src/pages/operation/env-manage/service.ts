@@ -36,3 +36,6 @@ export const pushAppEnv = addAPIPrefix('/appManage/env/pushAppEnv');
 
 /** 查询NGINX 实例 */
 export const queryNGList = addAPIPrefix('/opsManage/ngInstanceNoBindEnv/list');
+
+/** 查看实例 */
+export const queryNgListDetail = addAPIPrefix('/opsManage/ngInstance/list');
