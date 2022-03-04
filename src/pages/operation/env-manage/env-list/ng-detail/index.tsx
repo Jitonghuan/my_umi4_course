@@ -12,6 +12,7 @@ import { Input, Spin, Form, Button, Modal, message } from 'antd';
 import AceEditor from '@/components/ace-editor';
 import { queryNgListDetail } from '../../service';
 import { getRequest } from '@/utils/request';
+import './index.less';
 
 export interface NGInfo extends Record<string, any> {
   visible: boolean;
