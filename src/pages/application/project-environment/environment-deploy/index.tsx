@@ -175,7 +175,7 @@ export default function ApplicationDetail(props: IProps) {
                     });
                   }}
                 >
-                  关闭部署
+                  返回项目环境
                 </a>
               </Tag>
               {/* <span>{appData?.appName}</span> */}
