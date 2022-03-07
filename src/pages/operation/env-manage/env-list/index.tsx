@@ -157,12 +157,14 @@ export default function envManageList(props: any) {
   //删除数据
   const handleDelEnv = (record: any) => {
     let id = record.id;
-    delRequest(`${appConfig.apiPrefix}/appManage/env/delete/${record.envCode}`);
-    // message.success('删除成功！');
-    loadListData({
-      pageIndex: 1,
-      pageSize: 20,
+    delRequest(`${appConfig.apiPrefix}/appManage/env/delete/${record.envCode}`).then(() => {
+      message.success('删除成功！');
+      loadListData({
+        pageIndex: 1,
+        pageSize: 20,
+      });
     });
+    // message.success('删除成功！');
   };
 
   let useNacosData: number;
