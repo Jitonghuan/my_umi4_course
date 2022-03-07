@@ -19,7 +19,8 @@ export default function FinishedStep(props: StepItemProps) {
         (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
         (deployInfo.envs?.includes('zs-prd') ||
           deployInfo.envs?.includes('zs-pre') ||
-          deployInfo.envs?.includes('xiehe')) && (
+          deployInfo.envs?.includes('xiehe') ||
+          deployInfo.envs?.includes('fygs-prd')) && (
           <Button
             download
             style={{ marginTop: 4 }}
