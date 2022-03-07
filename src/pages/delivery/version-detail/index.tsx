@@ -1,6 +1,15 @@
+/*
+ * @Author: your name
+ * @Date: 2022-03-07 01:01:37
+ * @LastEditTime: 2022-03-07 11:04:27
+ * @LastEditors: Please set LastEditors
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
+ */
 import PageContainer from '@/components/page-container';
 import { Tabs, Radio, Space, Descriptions, Button, Input, Form } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import './index.less';
 const { TabPane } = Tabs;
 export default function VersionDetail() {
   return (
@@ -21,9 +30,9 @@ export default function VersionDetail() {
             <TabPane tab="产品编排" key="2">
               <Tabs>
                 <TabPane tab="应用" key="1">
-                  <div className="table-caption">
+                  <div className="table-caption-application">
                     <div className="caption-left">
-                      <Form layout="horizontal">
+                      <Form layout="inline">
                         <Form.Item>
                           <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
                         </Form.Item>
