@@ -1,17 +1,41 @@
 /*
  * @Author: your name
  * @Date: 2022-03-07 01:01:37
- * @LastEditTime: 2022-03-07 11:04:27
+ * @LastEditTime: 2022-03-07 14:11:26
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
  */
+import React, { useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { Tabs, Radio, Space, Descriptions, Button, Input, Form } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import EditorTable from '@cffe/pc-editor-table';
 import './index.less';
+
+const editColumns = [
+  {
+    title: '键（点击可修改）',
+    dataIndex: 'key',
+    editable: true,
+    width: '45%',
+  },
+  {
+    title: '值（点击可修改）',
+    dataIndex: 'value',
+    key: 'value',
+    editable: true,
+    width: '45%',
+  },
+];
 const { TabPane } = Tabs;
 export default function VersionDetail() {
+  const [matchlabels, setMatchlabels] = useState<any[]>([]);
+
+  const matchlabelsFun = (value: any[]) => {
+    setMatchlabels(value);
+  };
+
   return (
     <PageContainer>
       <ContentCard>
@@ -45,6 +69,7 @@ export default function VersionDetail() {
                       <Button type="primary">添加应用</Button>
                     </div>
                   </div>
+                  <div></div>
                 </TabPane>
                 <TabPane tab="中间件" key="2">
                   <div>
