@@ -281,7 +281,7 @@ export default function LogMonitor(props: any) {
         AgeBuckets: item?.metricOptions?.AgeBuckets,
       });
     });
-    console.log('recordData?.MonitorBizMetric.length', recordData?.MonitorBizMetric.length);
+
     setInitLength(recordData?.MonitorBizMetric.length);
 
     tagrgetForm.setFieldsValue({
@@ -386,7 +386,6 @@ export default function LogMonitor(props: any) {
                         <>
                           {fields.map(({ key, name, ...restField }) => (
                             <Space key={key} style={{ marginBottom: 8, display: 'block' }} direction="vertical">
-                              {console.log('*****', key, '----')}
                               <Form.Item
                                 noStyle
                                 shouldUpdate={(prevValues, curValues) =>
