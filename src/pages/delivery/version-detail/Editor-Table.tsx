@@ -7,7 +7,7 @@
  * @FilePath: /fe-matrix/src/pages/delivery/version-detail/Editor-Table.jsx
  */
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Table, Input, Button, Popconfirm, Form } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, Space } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -137,35 +137,38 @@ export default function EditorTable() {
   ]);
   const [count, setCount] = useState<number>(2);
 
-  const columns = [
+  let columns = [
     {
-      title: 'name',
+      title: '组件名称',
       dataIndex: 'name',
       width: '30%',
       editable: true,
     },
     {
-      title: 'age',
+      title: '组件版本',
       dataIndex: 'age',
     },
     {
-      title: 'address',
+      title: '组件描述',
       dataIndex: 'address',
     },
     {
-      title: 'operation',
+      title: '操作',
       dataIndex: 'operation',
       render: (value: any, record: { key: React.Key }) =>
         dataSource.length >= 1 ? (
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-            <a>Delete</a>
-          </Popconfirm>
+          <Space>
+            <a>配置</a>
+            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+              <a>删除</a>
+            </Popconfirm>
+          </Space>
         ) : null,
     },
   ];
 
   const handleDelete = (key: React.Key) => {
-    setDataSource({ dataSource: dataSource.filter((item) => item.key !== key) });
+    setDataSource({ dataSource: dataSource.filter((item: any) => item.key !== key) });
   };
 
   const handleAdd = () => {
@@ -198,21 +201,21 @@ export default function EditorTable() {
       cell: EditableCell,
     },
   };
-  // const columns = columns.map(col => {
-  //   if (!col.editable) {
-  //     return col;
-  //   }
-  //   return {
-  //     ...col,
-  //     onCell: (record: DataType) => ({
-  //       record,
-  //       editable: col.editable,
-  //       dataIndex: col.dataIndex,
-  //       title: col.title,
-  //       handleSave: handleSave,
-  //     }),
-  //   };
-  // });
+  const columnsData = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: DataType) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave: handleSave,
+      }),
+    };
+  });
 
   return (
     <div>
@@ -224,7 +227,7 @@ export default function EditorTable() {
         rowClassName={() => 'editable-row'}
         bordered
         dataSource={dataSource}
-        columns={columns as ColumnTypes}
+        columns={columnsData as ColumnTypes}
       />
     </div>
   );

@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { Tabs, Radio, Space, Descriptions, Button, Input, Form } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import EditorTable from '@cffe/pc-editor-table';
+import EditorTable from './Editor-Table';
 import './index.less';
 
 const editColumns = [
@@ -69,7 +69,9 @@ export default function VersionDetail() {
                       <Button type="primary">添加应用</Button>
                     </div>
                   </div>
-                  <div></div>
+                  <div>
+                    <EditorTable />
+                  </div>
                 </TabPane>
                 <TabPane tab="中间件" key="2">
                   <div>
