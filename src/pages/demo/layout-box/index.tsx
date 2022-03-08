@@ -8,6 +8,25 @@ import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 
 export default function DemoPageTb() {
+  // let numsArry=[-9,-6,0,13,16];
+  let numsArry = [-9, -6, -5, -4, -1];
+  let nums1 = 0;
+  let nums2 = numsArry.length - 1;
+  let newArry = [];
+
+  while (nums1 <= nums2) {
+    let a = numsArry[nums1] * numsArry[nums1];
+    let b = numsArry[nums2] * numsArry[nums2];
+    if (a > b) {
+      nums2--;
+      newArry.push(b);
+    } else {
+      nums1++;
+      newArry.push(a);
+    }
+    console.log('newArry', newArry);
+  }
+
   return (
     <PageContainer>
       <FilterCard>TOP</FilterCard>

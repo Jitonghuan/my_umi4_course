@@ -163,8 +163,6 @@ export default function appEnvPageList() {
       pageSize: pagination.pageSize,
     };
     loadListData(obj);
-
-    // console.log('pageIndexInfo',pageIndexInfo);
   };
 
   const loadListData = (params: any) => {
@@ -329,7 +327,7 @@ export default function appEnvPageList() {
           <Table.Column title="环境名" dataIndex="envName" width={150} />
           <Table.Column title="环境CODE" dataIndex="envCode" width={150} />
           <Table.Column title="环境大类" dataIndex="envTypeCode" width={140} />
-          {/* <Table.Column
+          <Table.Column
             title="项目环境分类"
             dataIndex="proEnvType"
             width={140}
@@ -338,7 +336,7 @@ export default function appEnvPageList() {
                 {value === 'benchmark' ? <Tag color="geekblue">基准环境</Tag> : <Tag color="green">项目环境</Tag>}
               </span>
             )}
-          /> */}
+          />
           <Table.Column title="默认分类" dataIndex="categoryCode" width={140} />
           <Table.Column title="备注" dataIndex="mark" width={180} />
           <Table.Column

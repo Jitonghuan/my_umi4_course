@@ -6,6 +6,8 @@ export interface ContextTypes {
   appData?: AppItemVO;
   /** 请求应用数据 */
   queryAppData?: () => void;
+  projectEnvCode?: string;
+  projectEnvName?: string;
 }
 
 export default createContext<ContextTypes>({});

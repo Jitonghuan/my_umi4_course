@@ -1,6 +1,6 @@
 export interface IProps {
   // 环境
-  env: string;
+  env: any;
   // appcode
   appCode?: string;
 }

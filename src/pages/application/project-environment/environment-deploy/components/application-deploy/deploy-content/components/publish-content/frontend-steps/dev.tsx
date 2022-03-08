@@ -41,6 +41,7 @@ export default function DevEnvSteps({
   onSpin,
   stopSpin,
   deployedList,
+  projectEnvCode,
 }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo || {};
   const subStepInitial = buildType === 'singleBuild' ? 3 : 2;
@@ -54,6 +55,7 @@ export default function DevEnvSteps({
     onSpin,
     stopSpin,
     deployedList,
+    projectEnvCode,
   };
   const envList = envs ? envs.split(',') : [];
 

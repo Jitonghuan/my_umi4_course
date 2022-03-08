@@ -4,7 +4,7 @@ import appConfig from '@/app.config';
 export const listEnvCluster = `${appConfig.apiPrefix}/appManage/deployInfo/listEnvCluster`;
 
 // 2 GET 查看应用实例信息
-export const queryInstanceList = `${appConfig.apiPrefix}/appManage/deployInfo/instance/list`;
+export const queryInstanceListApi = `${appConfig.apiPrefix}/appManage/deployInfo/instance/list`;
 
 // 3 GET 查看应用实例容器信息
 export const listContainer = `${appConfig.apiPrefix}/appManage/deployInfo/instance/listContainer`;

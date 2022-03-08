@@ -8,11 +8,12 @@ import { ContentCard } from '@/components/vc-page-content';
 import { FeContext } from '@/common/hooks';
 import ApplicationEditor from '@/pages/application/_components/application-editor';
 import MemberEditor from './member-editor';
-import DetailContext from '@/pages/application/application-detail/context';
+// import DetailContext from '@/pages/application/application-detail/context';
 import UserTagList from '@/components/user-selector/list';
 import { queryAppMember } from '@/pages/application/service';
 import { AppMemberInfo } from '@/pages/application/interfaces';
 import { optionsToLabelMap } from '@/utils/index';
+import DetailContext from '../../context';
 import {
   appFeProjectTypeOptions,
   appMicroFeTypeOptions,
@@ -29,10 +30,9 @@ const appFeProjectTypeOptionsMap = optionsToLabelMap(appFeProjectTypeOptions);
 const appMicroFeTypeOptionsMap = optionsToLabelMap(appMicroFeTypeOptions);
 const deployJobUrlOptionsMap = optionsToLabelMap(deployJobUrlOptions);
 
-export default function ApplicationOverview() {
+export default function ApplicationProjectOverview() {
   const { appData, queryAppData } = useContext(DetailContext);
   const { categoryData = [], businessData = [] } = useContext(FeContext);
-
   const [isModifyApp, setIsModifyApp] = useState(false);
   const [memberEditorMode, setMemberEditorMode] = useState<EditorMode>('HIDE');
   const [memberData, setMemberData] = useState<AppMemberInfo>();
@@ -178,7 +178,7 @@ export default function ApplicationOverview() {
         visible={isModifyApp}
         onClose={() => setIsModifyApp(false)}
         onSubmit={() => {
-          queryAppData?.();
+          // queryAppData?.();
           setIsModifyApp(false);
           queryMemberData();
         }}
@@ -190,7 +190,7 @@ export default function ApplicationOverview() {
         onClose={() => setMemberEditorMode('HIDE')}
         onSave={() => {
           queryMemberData();
-          queryAppData?.();
+          // queryAppData?.();
           setMemberEditorMode('HIDE');
         }}
       />

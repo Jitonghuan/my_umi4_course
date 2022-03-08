@@ -90,6 +90,10 @@ export default [
     redirect: `${baseRoutePath}/operation/env-manage/env-list`,
   },
   {
+    path: `${baseRoutePath}/operation/ng-manage`,
+    redirect: `${baseRoutePath}/operation/ng-manage/ng-list`,
+  },
+  {
     path: `${baseRoutePath}/operation/label-manage`,
     redirect: `${baseRoutePath}/operation/label-manage/label-list`,
   },
@@ -371,7 +375,7 @@ export default [
             name: '版本管理',
             key: 'project-environment',
             hideInMenu: true,
-            component: '@/pages/application/application-detail/components/fe-versions',
+            component: '@/pages/application/project-environment/environment-deploy/components/fe-versions',
           },
           {
             path: 'routeConfig',
@@ -903,6 +907,20 @@ export default [
             name: '推送环境',
             key: 'env-manage',
             component: '@/pages/operation/env-manage/push-env',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'ng-manage',
+        name: 'NG配置管理',
+        key: 'ng-manage',
+        routes: [
+          {
+            path: 'ng-list',
+            name: 'NG配置列表',
+            key: 'ng-manage',
+            component: '@/pages/operation/ng-manage/ng-list',
             hideInMenu: true,
           },
         ],

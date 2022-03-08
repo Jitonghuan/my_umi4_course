@@ -9,16 +9,15 @@ import { ContentCard } from '@/components/vc-page-content';
 import { FeContext } from '@/common/hooks';
 import DetailContext from '../../context';
 import { EnvDataVO } from '@/pages/application/interfaces';
-import { useAppEnvCodeData } from '@/pages/application/hooks';
-import { useFeVersions } from './hooks';
+// import { useAppEnvCodeData } from '@/pages/application/hooks';
+import { useFeVersions, useAppEnvCodeData } from './hooks';
 import { listAppEnvType } from '@/common/apis';
 import { getRequest } from '@/utils/request';
 import RollbackVersion from './rollback';
 import './index.less';
 
 export default function FEVersions() {
-  const { appData } = useContext(DetailContext);
-  // const { envTypeData } = useContext(FeContext);
+  const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [feVersionData, isVersionLoading, reloadVersionData] = useFeVersions(appData!);
   const [rollbackEnv, setRollbackEnv] = useState<EnvDataVO>();
@@ -32,9 +31,12 @@ export default function FEVersions() {
     reloadVersionData();
   }, []);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  let appCode = appData?.appCode;
   useEffect(() => {
-    queryData();
-  }, []);
+    if (appCode) {
+      queryData();
+    }
+  }, [appCode]);
   const queryData = () => {
     getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
@@ -66,20 +68,21 @@ export default function FEVersions() {
     <ContentCard className="page-fe-version">
       {envTypeData?.map((envTypeItem) => {
         const envCodeList = appEnvCodeData[envTypeItem.value] || [];
-
         return (
-          <section key={envTypeItem.value}>
-            <header>{envTypeItem.label}</header>
-            <div className="version-card-list clearfix">
-              {isLoading && <Spin className="block-loading" />}
-              {!isLoading && !envCodeList.length && (
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />
-              )}
-              {envCodeList.map((envCodeItem) => {
-                const versionList = feVersionData[envCodeItem.envCode] || [];
-                const latestVersion = versionList.find((n) => n.isActive === 0);
-
-                return (
+          // <section key={envTypeItem.value}>
+          //   <header>{envTypeItem.label}</header>
+          <div className="version-card-list clearfix">
+            {isLoading && <Spin className="block-loading" />}
+            {!isLoading &&
+              !envCodeList.length &&
+              // <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />
+              null}
+            {envCodeList.map((envCodeItem) => {
+              const versionList = feVersionData[envCodeItem.envCode] || [];
+              const latestVersion = versionList.find((n) => n.isActive === 0);
+              return (
+                envCodeItem.proEnvType === 'project' &&
+                envCodeItem.envCode === projectEnvCode && (
                   <div className="version-card-item" key={envCodeItem.envCode}>
                     <div className="card-item-header">
                       <h4>{envCodeItem.envName}</h4>
@@ -108,10 +111,11 @@ export default function FEVersions() {
                       </Button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </section>
+                )
+              );
+            })}
+          </div>
+          // </section>
         );
       })}
 

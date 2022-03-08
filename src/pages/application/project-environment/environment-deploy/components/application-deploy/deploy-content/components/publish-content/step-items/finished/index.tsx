@@ -9,7 +9,7 @@ import { downloadImage } from '@/pages/application/service';
 
 /** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, projectEnvCode, ...others } = props;
   // const [downLoadStatus, setDownLoadStatus] = useState(false);
   return (
     <Steps.Step
@@ -17,9 +17,9 @@ export default function FinishedStep(props: StepItemProps) {
       title="完成"
       description={
         (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
-        (deployInfo.envs?.includes('zs-prd') ||
-          deployInfo.envs?.includes('zs-pre') ||
-          deployInfo.envs?.includes('xiehe')) && (
+        (projectEnvCode?.includes('zs-prd') ||
+          projectEnvCode?.includes('zs-pre') ||
+          projectEnvCode?.includes('xiehe')) && (
           <Button
             download
             style={{ marginTop: 4 }}
