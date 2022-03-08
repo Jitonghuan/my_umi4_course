@@ -297,10 +297,10 @@ export default function addEnvData(props: EnvEditorProps) {
               </Form.Item>
             )}
           </div>
-          <Form.Item name="ngInstCode" label="NG实例" rules={[{ required: true, message: '这是必填项' }]}>
+          {/* <Form.Item name="ngInstCode" label="NG实例" rules={[{ required: true, message: '这是必填项' }]}>
             <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} />
-            {/* <Select placeholder="请选择NG实例" style={{ width: 280 }} disabled={isDisabled} options={ngInstOptions}></Select> */}
-          </Form.Item>
+
+          </Form.Item> */}
           <Form.Item name="clusterName" label="集群名称" rules={[{ required: true, message: '这是必填项' }]}>
             <Input placeholder="请输入集群名称" style={{ width: 280 }} disabled={isDisabled}></Input>
           </Form.Item>

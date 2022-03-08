@@ -98,9 +98,19 @@ export function useRuleIndexOptions(envCode?: string) {
     getRequest(APIS.ruleIndexOptions, {
       data: { envCode },
     }).then((result) => {
-      const { Index } = result.data || {};
-
-      setSource((Index || []).map((n: string) => ({ label: n, value: n })));
+      // const { Index } = result.data || {};
+      let indexArry: any = [];
+      if (result.success) {
+        let data = result.data;
+        data?.map((item: any) => {
+          indexArry.push({
+            label: item,
+            value: item,
+          });
+        });
+      }
+      setSource(indexArry);
+      // setSource((Index || []).map((n: string) => ({ label: n, value: n })));
     });
   }, [envCode]);
 
