@@ -355,7 +355,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
-        {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
+        {/* {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
           <Button
             type="primary"
             onClick={() => {
@@ -364,7 +364,7 @@ export default function PublishDetail(props: IProps) {
           >
             项目环境部署
           </Button>
-        )}
+        )} */}
         {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
             部署Master
