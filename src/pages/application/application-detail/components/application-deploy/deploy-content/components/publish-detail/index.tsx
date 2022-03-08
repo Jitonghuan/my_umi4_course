@@ -37,6 +37,7 @@ export default function PublishDetail(props: IProps) {
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [projectEnvCodeOptions, setProjectEnvCodeOptions] = useState<any>([]);
+  const [projectEnvName, setProjectEnvName] = useState<string>('');
   // const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
@@ -48,7 +49,7 @@ export default function PublishDetail(props: IProps) {
   const [restartVisible, setRestartVisible] = useState(false);
   let newNextEnvTypeCode = '';
   useEffect(() => {
-    if (!appCategoryCode) return;
+    if (!appCategoryCode || !appData) return;
 
     // 当前部署环境
     getRequest(listAppEnv, {
@@ -177,8 +178,6 @@ export default function PublishDetail(props: IProps) {
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
     const envList = envs?.split(',') || [];
-
-    // console.log(envDataList,I++);
     return envDataList
       .filter((envItem) => {
         return envList.includes(envItem.value);
@@ -243,18 +242,22 @@ export default function PublishDetail(props: IProps) {
         setListLoading(false);
       });
   };
-  const selectEnvProject = (value: string) => {
+  const selectEnvProject = (value: string, option: any) => {
     queryProjectEnv(value);
+  };
+
+  const selectProjectEnv = (value: string, option: any) => {
+    setProjectEnvName(option.label);
   };
   const ensureProjectEnv = () => {
     envProjectForm.validateFields().then((value) => {
-      console.log('envName', value);
       history.push({
-        pathname: '/matrix/application/environment-detail',
-        state: {
-          envCode: value.envCode,
-          benchmarkEnvCode: value.benchmarkEnvCode,
-          type: 'appDeploy',
+        pathname: `/matrix/application/environment-deploy/appDeploy`,
+        query: {
+          appCode: appData.appCode,
+          id: appData.id + '',
+          projectEnvCode: value.envCode,
+          projectEnvName: projectEnvName,
         },
       });
     });
@@ -355,7 +358,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
-        {/* {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && (
           <Button
             type="primary"
             onClick={() => {
@@ -364,7 +367,7 @@ export default function PublishDetail(props: IProps) {
           >
             项目环境部署
           </Button>
-        )} */}
+        )}
         {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
             部署Master
@@ -421,7 +424,7 @@ export default function PublishDetail(props: IProps) {
                       if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') !== -1) {
                         goToJenkins(errInfo);
                       }
-                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1) {
+                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
                         localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
                         history.push(
                           `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
@@ -431,7 +434,9 @@ export default function PublishDetail(props: IProps) {
                   >
                     {errInfo?.subErrInfo}
                   </a>
-                  <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                  {appData?.appType !== 'frontend' && (
+                    <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -575,6 +580,7 @@ export default function PublishDetail(props: IProps) {
                 showSearch
                 loading={listLoading}
                 options={projectEnvCodeOptions}
+                onChange={selectProjectEnv}
               ></Select>
             </Form.Item>
           </Form>

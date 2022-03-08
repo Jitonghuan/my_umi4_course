@@ -142,7 +142,6 @@ export default function DemoPageList() {
                     setAddMode('EDIT');
                     setId(current?.id);
                     setInitValue(record);
-                    console.log('record', record);
                     addIndexForm.setFieldsValue({
                       id: record?.id,
                       envCode: record?.envCode,

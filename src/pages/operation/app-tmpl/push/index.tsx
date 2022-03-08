@@ -210,7 +210,11 @@ export default function Push(props: any) {
         }).then((resp: any) => {
           if (resp.success) {
             message.success('推送成功！');
-            window.location.reload();
+            // window.location.reload();
+            loadListData({ pageIndex: 1, pageSize: 20 });
+            setTimeout(() => {
+              setSelectedRowKeys(['undefined']);
+            }, 200);
           }
         });
       } else {
@@ -236,7 +240,11 @@ export default function Push(props: any) {
         }).then((resp: any) => {
           if (resp.success) {
             message.success('推送成功！');
-            window.location.reload();
+            // window.location.reload();
+            loadListData({ pageIndex: 1, pageSize: 20 });
+            setTimeout(() => {
+              setSelectedRowKeys(['undefined']);
+            }, 200);
           }
         });
       } else {

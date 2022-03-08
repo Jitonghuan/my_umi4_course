@@ -7,6 +7,9 @@ export interface IProps {
     query: {
       id: string;
       appCode: string;
+      projectEnvCode: string;
+      projectEnvName: string;
+      benchmarkEnvCode?: string;
     };
   };
   route: {

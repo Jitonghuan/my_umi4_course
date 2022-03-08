@@ -242,7 +242,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
-    return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode } });
+    return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark' } });
   };
 
   useEffect(() => {

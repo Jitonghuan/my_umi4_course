@@ -20,3 +20,9 @@ export const appTypeList = `${appConfig.apiPrefix}/appManage/category/list`;
 
 /** 查看基准环境 */
 export const queryEnvList = `${appConfig.apiPrefix}/appManage/env/list`;
+
+/** 查看基准环境 */
+export const addApps = `${appConfig.apiPrefix}/appManage/projectEnv/apps/add`;
+
+/** 查看基准环境 */
+export const removeApps = `${appConfig.apiPrefix}/appManage/projectEnv/apps/remove`;

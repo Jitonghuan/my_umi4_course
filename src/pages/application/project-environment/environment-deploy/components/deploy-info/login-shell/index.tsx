@@ -5,7 +5,8 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Select, Form, Button, message, Space } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../context';
+import appConfig from '@/app.config';
 import * as APIS from '../deployInfo-content/service';
 import { history } from 'umi';
 import { getRequest } from '@/utils/request';
@@ -14,17 +15,17 @@ import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
 import './index.less';
 
-export default function AppDeployInfo(props: any) {
+export default function loginShell(props: any) {
   const { appData } = useContext(DetailContext);
   const [viewLogform] = Form.useForm();
-  const { appCode, envCode } = props.location.query;
+  const { appCode, projectEnvCode } = props.location.query;
   const instName = props.location.query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   let currentContainerName = '';
   const ws = useRef<WebSocket>();
   useEffect(() => {
-    if (appCode && envCode) {
-      getRequest(APIS.listContainer, { data: { appCode, envCode, instName } })
+    if (appCode) {
+      getRequest(APIS.listContainer, { data: { appCode, envCode: projectEnvCode, instName } })
         .then((result) => {
           let data = result.data;
           if (result.success) {
@@ -41,13 +42,13 @@ export default function AppDeployInfo(props: any) {
           initWS();
         });
     }
-  }, [envCode]);
+  }, [projectEnvCode]);
 
   const initWS = () => {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
       // http://matrix-test.cfuture.shop/
-      `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
 
     //初始化terminal

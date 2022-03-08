@@ -1,8 +1,8 @@
-// 上下布局页面 推送页面
+//  推送环境页面
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Form, Input, Select, Button, Table, Space, message } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
@@ -23,7 +23,13 @@ export default function PushEnv(props: any) {
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [dataSource, setDataSource] = useState<any[]>([]);
   const envCodeCurrent = props.history.location.query.envCode;
-
+  const appTypeOptions = useMemo(
+    () => [
+      { value: 'backend', label: '后端' },
+      { value: 'frontend', label: '前端' },
+    ],
+    [],
+  );
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
       setSelectedRowKeys(selectedRowKeys);
@@ -57,7 +63,7 @@ export default function PushEnv(props: any) {
         appCategoryCode: value.appCategoryCode,
         appCode: value.appCode,
         envCode: value.envCode,
-        appType: 'backend',
+        appType: value.appType,
         isClient: 0,
         pageSize: value?.pageSize,
         pageIndex: value?.pageIndex,
@@ -131,6 +137,9 @@ export default function PushEnv(props: any) {
             });
           }}
         >
+          <Form.Item label="应用类型：" name="appType">
+            <Select showSearch allowClear style={{ width: 140 }} options={appTypeOptions} />
+          </Form.Item>
           <Form.Item label="应用分类：" name="appCategoryCode">
             {/* onChange={changeAppCategory}  */}
             <Select showSearch allowClear style={{ width: 140 }} options={categoryData} />

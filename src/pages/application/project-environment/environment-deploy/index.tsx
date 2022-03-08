@@ -4,7 +4,8 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { history, Link } from 'umi';
-import { Tabs, Spin, Empty } from 'antd';
+import { Tabs, Spin, Empty, Tag, Badge, Button } from 'antd';
+import { CloseCircleTwoTone } from '@ant-design/icons';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
@@ -27,7 +28,7 @@ const activeKeyMap: Record<string, any> = {
 
 export default function ApplicationDetail(props: IProps) {
   const { location, children } = props;
-  const { id: appId, appCode } = location.query || {};
+  const { id: appId, appCode, projectEnvCode, projectEnvName, benchmarkEnvCode } = location.query || {};
   const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);
   const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
   const tabActiveKey = useMemo(() => {
@@ -107,7 +108,7 @@ export default function ApplicationDetail(props: IProps) {
   if (location.pathname === detailPath) {
     return (
       history.replace({
-        pathname: `${location.pathname}/overview`,
+        pathname: `${location.pathname}/appDeploy`,
         query: { ...location.query },
       }),
       null
@@ -154,8 +155,30 @@ export default function ApplicationDetail(props: IProps) {
           }}
           tabBarExtraContent={
             <div className="tab-right-extra">
+              <Badge status="processing" text="当前项目环境：" />
+              {/* <h4>{projectEnvCode}</h4> */}
+              <span>
+                <Tag color="blue">{projectEnvName}</Tag>
+              </span>
+              ｜当前应用：
               <h4>{appData?.appCode}</h4>
-              <span>{appData?.appName}</span>
+              <Tag color="volcano">
+                {/* <CloseCircleTwoTone style={{fontSize:14}} /> */}
+                <a
+                  onClick={() => {
+                    history.push({
+                      pathname: '/matrix/application/environment-detail',
+                      state: {
+                        envCode: projectEnvCode,
+                        benchmarkEnvCode: benchmarkEnvCode,
+                      },
+                    });
+                  }}
+                >
+                  返回项目环境
+                </a>
+              </Tag>
+              {/* <span>{appData?.appName}</span> */}
             </div>
           }
         >
@@ -164,8 +187,7 @@ export default function ApplicationDetail(props: IProps) {
           ))}
         </Tabs>
       </FilterCard>
-
-      <DetailContext.Provider value={{ appData, queryAppData }}>
+      <DetailContext.Provider value={{ appData, queryAppData, projectEnvCode, projectEnvName }}>
         <VCPermission code={window.location.pathname} isShowErrorPage>
           {children}
         </VCPermission>

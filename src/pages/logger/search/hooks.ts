@@ -143,7 +143,6 @@ export function useCreateIndexMode() {
 //删除数据
 export function useDeleteIndexMode() {
   const deleteIndexTable = (id: number) => {
-    console.log('id', id);
     postRequest(APIS.deleteIndexMode, {
       data: { id },
     }).then((resp) => {

@@ -6,39 +6,27 @@ import React, { useState, useContext } from 'react';
 import { Modal, Button, Table, Tag, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../../../../context';
 import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
 import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
-import BackendTestEnvSteps from './backend-steps/test';
-import BackendPreEnvSteps from './backend-steps/pre';
-import BackendProdEnvSteps from './backend-steps/prod';
 import FrontendDevEnvSteps from './frontend-steps/dev';
-import FrontendTestEnvSteps from './frontend-steps/test';
-import FrontendPreEnvSteps from './frontend-steps/pre';
-import FrontendProdEnvSteps from './frontend-steps/prod';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
 
 const backendStepsMapping: Record<string, typeof BackendDevEnvSteps> = {
   dev: BackendDevEnvSteps,
-  test: BackendTestEnvSteps,
-  pre: BackendPreEnvSteps,
-  prod: BackendProdEnvSteps,
 };
 const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
   dev: FrontendDevEnvSteps,
-  test: FrontendTestEnvSteps,
-  pre: FrontendPreEnvSteps,
-  prod: FrontendProdEnvSteps,
 };
 
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin } = props;
-  const { appData } = useContext(DetailContext);
+  const { appData, projectEnvCode } = useContext(DetailContext);
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
@@ -96,6 +84,7 @@ export default function PublishContent(props: IProps) {
         return createDeploy({
           appCode,
           envTypeCode,
+          // envCodes:[envTypeCode],
           features,
           isClient: false,
         }).then(() => {
@@ -109,12 +98,14 @@ export default function PublishContent(props: IProps) {
   };
 
   const isFrontend = appData?.appType === 'frontend';
-  const CurrSteps = isFrontend ? frontendStepsMapping[envTypeCode] : backendStepsMapping[envTypeCode];
+  const CurrSteps = isFrontend ? frontendStepsMapping['dev'] : backendStepsMapping['dev'];
 
   const branchNameRender = (branchName: string, record: any) => {
     return (
       <div>
-        <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
+        <Link to={'/matrix/application/environment-deploy/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>
+          {branchName}
+        </Link>
       </div>
     );
   };
@@ -126,7 +117,7 @@ export default function PublishContent(props: IProps) {
       onOk: async () => {
         return cancelDeploy({
           id: deployInfo.id,
-          envCode,
+          envCode: envTypeCode,
         }).then(() => {});
       },
     });
@@ -158,6 +149,7 @@ export default function PublishContent(props: IProps) {
         onSpin={onSpin}
         deployedList={deployedList}
         getItemByKey={getItemByKey}
+        projectEnvCode={projectEnvCode}
       />
       <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />

@@ -167,7 +167,6 @@ export default function EnvironmentList() {
               type="primary"
               onClick={() => {
                 setEnviroEditMode('ADD');
-                console.log(2);
               }}
             >
               <PlusOutlined />

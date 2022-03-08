@@ -132,7 +132,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     api: queryRuleTemplatesList,
     method: 'GET',
     onSuccess: (data) => {
-      console.log('data', data);
       setRuleTemplatesList(
         data?.dataSource.map((v: any) => {
           return {
