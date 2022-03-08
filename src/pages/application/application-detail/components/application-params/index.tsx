@@ -29,19 +29,25 @@ export default function ApplicationParams(props: any) {
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
   const { templateType, envCode } = props?.history.location?.query || {};
-  const intervalRef = useRef<any>();
   let firstEnvChoose = useRef<string>('');
   let firstTmplType = useRef<string>('');
   useEffect(() => {
     selectAppEnv().then((result) => {
-      const listEnv = result.data?.map((n: any) => ({
-        value: n?.envCode,
-        label: n?.envName,
-        data: n,
-      }));
-      setEnvDatas(listEnv);
-      setSelectEnvData(listEnv[0]?.value);
-      firstEnvChoose.current = listEnv[0]?.value;
+      let dataArry: any = [];
+      if (result.success) {
+        result.data?.map((n: any) => {
+          if (n.proEnvType === 'benchmark') {
+            dataArry.push({
+              value: n?.envCode,
+              label: n?.envName,
+              data: n,
+            });
+          }
+        });
+      }
+      setEnvDatas(dataArry);
+      setSelectEnvData(dataArry[0]?.value);
+      firstEnvChoose.current = dataArry[0]?.value;
       getRequest(APIS.tmplType).then((result) => {
         const listTmplType = (result.data || []).map((n: any) => ({
           label: n,
@@ -54,17 +60,17 @@ export default function ApplicationParams(props: any) {
         listTmplType.forEach((element: any) => {
           if (element.value === 'deployment') {
             tmplType = element.value;
-            applicationForm.setFieldsValue({ appEnvCode: listEnv[0]?.value, tmplType: tmplType });
+            applicationForm.setFieldsValue({ appEnvCode: dataArry[0]?.value, tmplType: tmplType });
             setSelectTmpl(element.value);
             firstTmplType.current = element.value;
           } else if (element.value === 'service') {
             tmplType = element.value;
-            applicationForm.setFieldsValue({ appEnvCode: listEnv[0]?.value, tmplType: tmplType });
+            applicationForm.setFieldsValue({ appEnvCode: dataArry[0]?.value, tmplType: tmplType });
             setSelectTmpl(element.value);
             firstTmplType.current = element.value;
           }
         });
-        getAppTempl(listEnv[0]?.value, appData?.appCode, tmplType, appCategoryCode);
+        getAppTempl(dataArry[0]?.value, appData?.appCode, tmplType, appCategoryCode);
       });
     });
   }, []);
