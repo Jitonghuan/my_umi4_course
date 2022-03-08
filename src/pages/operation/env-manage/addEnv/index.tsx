@@ -124,7 +124,7 @@ export default function addEnvData(props: EnvEditorProps) {
   //查询NG实例
   const [ngInstOptions, setNgInstOptions] = useState<any>([]);
   const queryNGlist = () => {
-    getRequest(queryNGList, { data: { pageIndex: -1 } }).then((res) => {
+    getRequest(queryNGList).then((res) => {
       if (res?.success) {
         let data = res?.data?.dataSource;
         let ngList = data?.map((el: any) => ({
@@ -297,10 +297,9 @@ export default function addEnvData(props: EnvEditorProps) {
               </Form.Item>
             )}
           </div>
-          {/* <Form.Item name="ngInstCode" label="NG实例" rules={[{ required: true, message: '这是必填项' }]}>
+          <Form.Item name="ngInstCode" label="NG实例" rules={[{ required: true, message: '这是必填项' }]}>
             <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} />
-
-          </Form.Item> */}
+          </Form.Item>
           <Form.Item name="clusterName" label="集群名称" rules={[{ required: true, message: '这是必填项' }]}>
             <Input placeholder="请输入集群名称" style={{ width: 280 }} disabled={isDisabled}></Input>
           </Form.Item>

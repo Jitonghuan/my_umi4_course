@@ -8,7 +8,7 @@ import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
 import { datetimeCellRender } from '@/utils';
 import { rollbackFeApp } from '@/pages/application/service';
 import { FeVersionItemVO } from './types';
-
+import './index.less';
 export interface RollbackVersionProps {
   appData?: AppItemVO;
   envItem?: EnvDataVO;
@@ -66,6 +66,13 @@ export default function RollbackVersion(props: RollbackVersionProps) {
       okButtonProps={{ disabled: !selectedRowKeys.length }}
     >
       <Table
+        rowClassName={(record) => {
+          if (record.isActive === 0) {
+            return 'table-color-rollback';
+          } else {
+            return 'table-rollback';
+          }
+        }}
         dataSource={versionList || []}
         rowSelection={{
           selectedRowKeys,
@@ -81,6 +88,12 @@ export default function RollbackVersion(props: RollbackVersionProps) {
             if (record.isActive !== 1) return;
             setSelectedRowKeys([record.version]);
           },
+
+          // onMouseEnter:(record:any)=>{
+          //   if (record.isActive === 0) {return 'table-color-rollback' }else{
+          //     return 'table-rollback'
+          //   };
+          // }
         })}
         rowKey="version"
         pagination={false}

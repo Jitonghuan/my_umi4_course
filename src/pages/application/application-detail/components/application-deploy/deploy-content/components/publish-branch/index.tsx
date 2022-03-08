@@ -45,7 +45,6 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
-
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);

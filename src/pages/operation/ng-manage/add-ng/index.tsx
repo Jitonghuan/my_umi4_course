@@ -117,30 +117,44 @@ export default function addEnvData(props: IProps) {
             createNgForm.resetFields();
           }}
         >
-          <Form.Item label="实例CODE：" name="ngInstCode" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入实例CODE" disabled={isDisabled || mode === 'EDIT'}></Input>
+          <Form.Item
+            label="实例CODE："
+            name="ngInstCode"
+            rules={[
+              {
+                required: true,
+                message: '输入的实例Code里请不要包含中文',
+                pattern: /^[^\u4e00-\u9fa5]*$/,
+              },
+            ]}
+          >
+            <Input
+              style={{ width: 230 }}
+              placeholder="请输入实例Code(不要包含中文）"
+              disabled={isDisabled || mode === 'EDIT'}
+            ></Input>
           </Form.Item>
           <Form.Item label="实例名：" name="ngInstName" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入实例名" disabled={isDisabled}></Input>
+            <Input style={{ width: 230 }} placeholder="请输入实例名" disabled={isDisabled}></Input>
           </Form.Item>
 
           <Form.Item label="实例IP：" name="ipAddress" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入实例IP" disabled={isDisabled}></Input>
+            <Input style={{ width: 230 }} placeholder="请输入实例IP" disabled={isDisabled}></Input>
           </Form.Item>
 
           <Form.Item label="配置文件路径：" name="confFilePath" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入配置文件路径" disabled={isDisabled}></Input>
+            <Input style={{ width: 230 }} placeholder="请输入配置文件路径" disabled={isDisabled}></Input>
           </Form.Item>
 
           <Form.Item label="静态资源路径：" name="resourceFilePath" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入静态资源路径" disabled={isDisabled}></Input>
+            <Input style={{ width: 230 }} placeholder="请输入静态资源路径" disabled={isDisabled}></Input>
           </Form.Item>
 
           <Form.Item label="前端域名：" name="serverName" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入前端域名" disabled={isDisabled}></Input>
+            <Input style={{ width: 230 }} placeholder="请输入前端域名" disabled={isDisabled}></Input>
           </Form.Item>
           <Form.Item label="后端域名：" name="beDomainName" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 220 }} placeholder="请输入后端域名" disabled={isDisabled}></Input>
+            <Input style={{ width: 230 }} placeholder="请输入后端域名" disabled={isDisabled}></Input>
           </Form.Item>
 
           <Form.Item name="reMark" label="备注：">

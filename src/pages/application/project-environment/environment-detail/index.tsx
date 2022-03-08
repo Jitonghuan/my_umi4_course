@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/14 10:20
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, Modal, Descriptions, Divider, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
@@ -75,17 +75,24 @@ export default function EnvironmentList() {
         setListLoading(false);
       });
   };
-
-  const queryAppsListData = async (
-    benchmarkEnvCode: string,
-    projectEnvCode: string,
-    appName?: string,
-    appCode?: string,
-    appType?: string,
-  ) => {
+  const queryCommonParamsRef = useRef<{ benchmarkEnvCode: string; projectEnvCode: string; whichApps: String }>({
+    benchmarkEnvCode: projectEnvInfo.benchmarkEnvCode,
+    projectEnvCode: projectEnvInfo.envCode,
+    whichApps: 'alreadyAdd',
+  });
+  const queryAppsListData = async (paramObj: any) => {
     setLoading(true);
     let canAddAppsData: any = []; //可选数据数组
-    await getRequest(queryAppsList, { data: { benchmarkEnvCode, projectEnvCode, appName, appCode, appType } })
+    await getRequest(queryAppsList, {
+      data: {
+        benchmarkEnvCode: paramObj.benchmarkEnvCode,
+        projectEnvCode: paramObj.projectEnvCode,
+        appName: paramObj?.appName,
+        appCode: paramObj?.appCode,
+        appType: paramObj?.appType,
+        whichApps: paramObj?.whichApps,
+      },
+    })
       .then((res) => {
         if (res?.success) {
           let data = res?.data;
@@ -107,15 +114,19 @@ export default function EnvironmentList() {
         setLoading(false);
       });
   };
+  const selectAppType = (appTypeValue: string) => {
+    let queryObj = {
+      benchmarkEnvCode: projectEnvInfo.benchmarkEnvCode,
+      projectEnvCode: projectEnvInfo.envCode,
+      appType: appTypeValue,
+      whichApps: 'canAdd',
+    };
+    queryAppsListData(queryObj);
+  };
+
   useEffect(() => {
-    // if (projectEnvInfo.type === 'appDeploy') {
     queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
-    queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
-    // }
-    // if (projectEnvInfo.type === 'projectEnvironment') {
-    //   queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
-    //   queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
-    // }
+    queryAppsListData(queryCommonParamsRef.current);
   }, []);
   const ensureAdd = () => {
     addAppForm.validateFields().then((params) => {
@@ -128,7 +139,7 @@ export default function EnvironmentList() {
           setAddAppsvisible(false);
         })
         .then(() => {
-          queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+          queryAppsListData(queryCommonParamsRef.current);
         });
     });
   };
@@ -153,7 +164,7 @@ export default function EnvironmentList() {
     };
     removeApps(removeParams)
       .then(() => {
-        queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+        queryAppsListData(queryCommonParamsRef.current);
       })
       .finally(() => {
         setDelLoading(false);
@@ -170,7 +181,7 @@ export default function EnvironmentList() {
         }}
         onSave={() => {
           setEnviroEditMode('HIDE');
-          queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+          queryAppsListData(queryCommonParamsRef.current);
         }}
       />
 
@@ -229,26 +240,28 @@ export default function EnvironmentList() {
             layout="inline"
             form={formList}
             onFinish={(values: any) => {
-              queryAppsListData(
-                projectEnvInfo.benchmarkEnvCode,
-                projectEnvInfo.envCode,
-                values.appName,
-                values.appCode,
-                values.appType,
-              );
+              let queryObj = {
+                benchmarkEnvCode: projectEnvInfo.benchmarkEnvCode,
+                projectEnvCode: projectEnvInfo.envCode,
+                appName: values.appName,
+                appCode: values.appCode,
+                appType: values.appType,
+              };
+              queryAppsListData(queryObj);
             }}
             onReset={() => {
               formList.resetFields();
-              queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+
+              queryAppsListData(queryCommonParamsRef.current);
             }}
           >
-            <Form.Item label="应用名：" name="appName">
+            <Form.Item label="应用名:" name="appName">
               <Input style={{ width: 190 }} />
             </Form.Item>
-            <Form.Item label=" 应用CODE" name="appCode">
+            <Form.Item label=" 应用CODE:" name="appCode">
               <Input placeholder="请输入应用CODE"></Input>
             </Form.Item>
-            <Form.Item label=" 应用类型" name="appType">
+            <Form.Item label=" 应用类型:" name="appType">
               <Select placeholder="请选择应用类型" options={appTypeOptions} style={{ width: 190 }}></Select>
             </Form.Item>
             <Form.Item>
@@ -311,14 +324,14 @@ export default function EnvironmentList() {
                     部署
                   </a>
                   <Popconfirm
-                    title="确定要删除该信息吗？"
+                    title="确定要删除该应用吗？"
                     onConfirm={() => {
                       let removeParams = {
                         projectEnvCode: projectEnvData.envCode,
                         appCodes: [record.appCode],
                       };
                       removeApps(removeParams).then(() => {
-                        queryAppsListData(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+                        queryAppsListData(queryCommonParamsRef.current);
                       });
                     }}
                   >
@@ -359,8 +372,23 @@ export default function EnvironmentList() {
         }
       >
         <Form form={addAppForm}>
-          <Form.Item label="选择应用：" rules={[{ required: true, message: '请选择应用' }]} name="appCode">
-            <Select style={{ width: 400 }} options={appsListData} allowClear showSearch mode="multiple"></Select>
+          <Form.Item label="应用类型：" name="appType" style={{ paddingLeft: 36 }}>
+            <Select
+              style={{ width: 320 }}
+              options={appTypeOptions}
+              allowClear
+              placeholder="请选择前端/后端"
+              showSearch
+              onChange={selectAppType}
+            ></Select>
+          </Form.Item>
+          <Form.Item
+            label="选择应用："
+            rules={[{ required: true, message: '请选择应用' }]}
+            name="appCode"
+            style={{ paddingLeft: 30 }}
+          >
+            <Select style={{ width: 320 }} options={appsListData} allowClear showSearch mode="multiple"></Select>
           </Form.Item>
         </Form>
       </Modal>
