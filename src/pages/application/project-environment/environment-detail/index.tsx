@@ -321,7 +321,7 @@ export default function EnvironmentList() {
                     部署
                   </a>
                   <Popconfirm
-                    title="确定要删除该信息吗？"
+                    title="确定要删除该应用吗？"
                     onConfirm={() => {
                       let removeParams = {
                         projectEnvCode: projectEnvData.envCode,

@@ -358,7 +358,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
-        {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && (
           <Button
             type="primary"
             onClick={() => {

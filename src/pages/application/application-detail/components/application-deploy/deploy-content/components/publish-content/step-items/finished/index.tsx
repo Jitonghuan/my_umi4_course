@@ -11,6 +11,7 @@ import { downloadImage } from '@/pages/application/service';
 export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
   // const [downLoadStatus, setDownLoadStatus] = useState(false);
+
   return (
     <Steps.Step
       {...others}
