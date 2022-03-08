@@ -86,7 +86,9 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
             <p>
               <span>单测覆盖检测：</span>
               <div>
-                <Tag color={resultColor[result_uc.result]}>{resultMapping.uc[result_uc.result] || '未知状态'}</Tag>
+                <Tag color={resultColor[result_uc.result] || 'red'}>
+                  {resultMapping.uc[result_uc.result] || '未知状态'}
+                </Tag>
                 {result_uc.report_url ? (
                   <a href={result_uc.report_url} target="_blank">
                     查看报告
@@ -97,7 +99,9 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
             <p>
               <span>代码质量检测：</span>
               <div>
-                <Tag color={resultColor[result_qc.result]}>{resultMapping.qc[result_qc.result] || '未知状态'}</Tag>
+                <Tag color={resultColor[result_qc.result] || 'red'}>
+                  {resultMapping.qc[result_qc.result] || '未知状态'}
+                </Tag>
                 {result_qc.report_url ? (
                   <a href={result_qc.report_url} target="_blank">
                     查看报告
