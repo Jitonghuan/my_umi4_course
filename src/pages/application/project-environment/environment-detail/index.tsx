@@ -75,9 +75,10 @@ export default function EnvironmentList() {
         setListLoading(false);
       });
   };
-  const queryCommonParamsRef = useRef<{ benchmarkEnvCode: string; projectEnvCode: string }>({
+  const queryCommonParamsRef = useRef<{ benchmarkEnvCode: string; projectEnvCode: string; whichApps: String }>({
     benchmarkEnvCode: projectEnvInfo.benchmarkEnvCode,
     projectEnvCode: projectEnvInfo.envCode,
+    whichApps: 'alreadyAdd',
   });
   const queryAppsListData = async (paramObj: any) => {
     setLoading(true);
@@ -89,6 +90,7 @@ export default function EnvironmentList() {
         appName: paramObj?.appName,
         appCode: paramObj?.appCode,
         appType: paramObj?.appType,
+        whichApps: paramObj?.whichApps,
       },
     })
       .then((res) => {
@@ -117,6 +119,7 @@ export default function EnvironmentList() {
       benchmarkEnvCode: projectEnvInfo.benchmarkEnvCode,
       projectEnvCode: projectEnvInfo.envCode,
       appType: appTypeValue,
+      whichApps: 'canAdd',
     };
     queryAppsListData(queryObj);
   };
