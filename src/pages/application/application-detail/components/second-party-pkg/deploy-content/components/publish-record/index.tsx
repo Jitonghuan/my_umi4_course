@@ -157,8 +157,8 @@ const PublishRecord = (props: IProps) => {
                       <label>{subItem.envCode}</label>:
                       {
                         <span style={{ marginLeft: 6 }}>
-                          <Tag color={recordDisplayMap[subItem['subState']]?.color}>
-                            {recordDisplayMap[subItem['subState']]?.text}
+                          <Tag color={recordDisplayMap[subItem['subState']]?.color || 'red'}>
+                            {recordDisplayMap[subItem['subState']]?.text || '---'}
                           </Tag>
                         </span>
                       }
@@ -170,8 +170,8 @@ const PublishRecord = (props: IProps) => {
                   <label>{recordFieldMapOut['deployStatus']}</label>:
                   {
                     <span style={{ marginLeft: 6 }}>
-                      <Tag color={recordDisplayMap[item['deployStatus']]?.color}>
-                        {recordDisplayMap[item['deployStatus']]?.text}
+                      <Tag color={recordDisplayMap[item['deployStatus']]?.color || 'red'}>
+                        {recordDisplayMap[item['deployStatus']]?.text || '---'}
                       </Tag>
                     </span>
                   }
