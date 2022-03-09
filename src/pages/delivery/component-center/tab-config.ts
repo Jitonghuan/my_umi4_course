@@ -1,15 +1,18 @@
 export const productionTabsConfig: any = [
   {
-    label: '应用',
-    value: 'application',
+    label: '用户组件',
+    value: 'user-component',
+    type: 'user',
   },
   {
-    label: '中间件',
-    value: 'middleware',
+    label: '平台组件',
+    value: 'middleware-component',
+    type: 'middleware',
   },
   {
     label: '基础数据',
-    value: 'basicData',
+    value: 'basicData-component',
+    type: 'basicData',
   },
 ];
 

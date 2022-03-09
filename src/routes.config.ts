@@ -874,6 +874,21 @@ export default [
         component: '@/pages/delivery/version-detail',
       },
       {
+        path: 'component-center',
+        name: '组件中心',
+        key: 'component-center',
+        component: '@/pages/delivery/component-center',
+        routes: [
+          {
+            path: 'component-detail',
+            name: '产品列表',
+            key: 'component-detail',
+            component: '@/pages/delivery/component-center/component-detail',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
         path: 'deliveryList',
         name: '交付列表',
         key: 'deliveryList',
