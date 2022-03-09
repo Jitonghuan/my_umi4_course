@@ -67,6 +67,7 @@ export default function ProdEnvSteps({
     onSpin,
     stopSpin,
     deployedList,
+    isFrontend: true,
   };
   const envList = envs ? envs.split(',') : [];
 

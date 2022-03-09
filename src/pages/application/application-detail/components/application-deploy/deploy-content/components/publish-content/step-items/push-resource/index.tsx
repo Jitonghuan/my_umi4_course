@@ -10,10 +10,11 @@ import { StepItemProps } from '../../types';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, envCode, ...others } = props;
 
   const isLoading = deployStatus === 'pushFeResource';
   const isError = deployStatus === 'pushFeResourceErr';
+  const isDownload = envTypeCode === 'prod' && isFrontend;
 
   const handleRetryClick = async () => {
     try {
@@ -23,6 +24,10 @@ export default function PushResourceStep(props: StepItemProps) {
     }
   };
 
+  const handleDownload = () => {
+    console.log('wo xia zai le');
+  };
+
   return (
     <Steps.Step
       {...others}
@@ -30,11 +35,18 @@ export default function PushResourceStep(props: StepItemProps) {
       icon={isLoading && <LoadingOutlined />}
       status={isError ? 'error' : others.status}
       description={
-        isError && (
-          <Button type="primary" style={{ marginTop: 4 }} ghost onClick={handleRetryClick}>
-            重试
-          </Button>
-        )
+        <>
+          {isError && (
+            <Button type="primary" style={{ marginTop: 4 }} ghost onClick={handleRetryClick}>
+              重试
+            </Button>
+          )}
+          {isDownload && (
+            <Button type="primary" style={{ marginTop: 4 }} ghost onClick={handleDownload} size="small">
+              下载资源包
+            </Button>
+          )}
+        </>
       }
     />
   );
