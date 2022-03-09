@@ -76,6 +76,9 @@ export default function Layout(props: any) {
     if (window.location.href.includes('fygs')) {
       return 'fygs';
     }
+    if (window.location.href.includes('zslnyy')) {
+      return 'zslnyy';
+    }
     return appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
   }
 
