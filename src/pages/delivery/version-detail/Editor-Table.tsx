@@ -7,7 +7,7 @@
  * @FilePath: /fe-matrix/src/pages/delivery/version-detail/Editor-Table.jsx
  */
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Table, Input, Button, Popconfirm, Form, Space } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, Space, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -54,6 +54,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 }) => {
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<Input>(null);
+
   const form = useContext(EditableContext)!;
 
   useEffect(() => {
@@ -218,9 +219,9 @@ export default function EditorTable() {
   });
 
   return (
-    <div>
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-        Add a row
+    <div style={{ paddingTop: 10 }}>
+      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 10 }}>
+        添加应用
       </Button>
       <Table
         components={components}
