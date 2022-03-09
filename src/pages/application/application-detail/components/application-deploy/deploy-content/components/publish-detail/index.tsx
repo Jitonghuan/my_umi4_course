@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { history } from 'umi';
@@ -24,7 +24,7 @@ import ServerStatus from '../server-status';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
-
+const { Paragraph } = Typography;
 export default function PublishDetail(props: IProps) {
   const [envProjectForm] = Form.useForm();
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
@@ -398,11 +398,11 @@ export default function PublishDetail(props: IProps) {
           {deployInfo?.id || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
-          {deployInfo?.releaseBranch || '--'}
+          <Paragraph copyable>{deployInfo?.releaseBranch || '--'}</Paragraph>
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {deployInfo?.version || '--'}
+            <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph>
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
