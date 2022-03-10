@@ -188,7 +188,11 @@ export default function PublishDetail(props: IProps) {
 
   // 离线部署
   const uploadImages = () => {
-    return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
+    if (appData?.appType === 'frontend') {
+      return `${offlineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
+    } else {
+      return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
+    }
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
