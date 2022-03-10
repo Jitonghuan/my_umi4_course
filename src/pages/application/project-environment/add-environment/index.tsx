@@ -208,7 +208,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       title={mode === 'EDIT' ? '编辑项目环境' : mode === 'ADD' ? '新增项目环境' : '查看环境'}
       maskClosable={false}
       onClose={() => onClose()}
-      width={'40%'}
+      width={'50%'}
       footer={
         <div className="drawer-environ-footer">
           <Space>
@@ -273,14 +273,18 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               disabled={ensureDisabled}
               onSearch={handleSearch}
               render={(item) => (
-                <div>
+                <div className="transfer-text">
                   {item.appType === 'backend' ? (
                     <Badge.Ribbon placement="end" text="后端">
-                      {item.title || ''}
+                      <span className="transfer-text-backend" title={item.title}>
+                        {item.title || ''}
+                      </span>
                     </Badge.Ribbon>
                   ) : (
                     <Badge.Ribbon text="前端" color="cyan">
-                      {item.title || ''}
+                      <span className="transfer-text-fronted" title={item.title}>
+                        {item.title || ''}
+                      </span>
                     </Badge.Ribbon>
                   )}
                 </div>
