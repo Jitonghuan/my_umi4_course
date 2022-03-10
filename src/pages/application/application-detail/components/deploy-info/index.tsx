@@ -42,7 +42,7 @@ export default function AppDeployInfo(props: any) {
   const intervalRef = useRef<any>();
   const changeTab = (value: any) => {
     setTabActive(value);
-    localStorage.setItem('__init_env_tab__', value || 'prod');
+    localStorage.setItem('__init_env_tab__', value || env);
   };
 
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
