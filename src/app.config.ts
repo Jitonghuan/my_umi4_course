@@ -57,6 +57,6 @@ export default {
   wsPrefix: window.location.href.includes('fygs')
     ? 'ws://matrix-fygs.seenew.info:180'
     : window.location.href.includes('zslnyy')
-    ? 'ws://kapi-devops.cfuture.shop/matrix'
+    ? 'ws://matrix-api.cfuture.shop'
     : 'ws://matrix-api.cfuture.shop',
 };

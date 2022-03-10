@@ -25,13 +25,14 @@ export default function AppDeployInfo(props: any) {
   // );
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
   // localStorage.removeItem('__init_env_tab__');
+  let env = window.location.href.includes('zslnyy') || window.location.href.includes('fygs') ? 'prod' : 'dev';
   try {
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'prod';
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
   } catch (error) {
-    localStorage.setItem('__init_env_tab__', 'prod');
+    localStorage.setItem('__init_env_tab__', env);
   }
   const [tabActive, setTabActive] = useState<any>(
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'prod',
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env,
   );
 
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
