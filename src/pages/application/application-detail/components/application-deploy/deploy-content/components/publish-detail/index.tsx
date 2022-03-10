@@ -398,11 +398,13 @@ export default function PublishDetail(props: IProps) {
           {deployInfo?.id || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
-          <Paragraph copyable>{deployInfo?.releaseBranch || '--'}</Paragraph>
+          {deployInfo?.releaseBranch ? <Paragraph copyable>{deployInfo?.releaseBranch}</Paragraph> : '---'}
+          {/* <Paragraph copyable>{deployInfo?.releaseBranch || '--'}</Paragraph> */}
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph>
+            {deployInfo?.version ? <Paragraph copyable>{deployInfo?.version}</Paragraph> : '---'}
+            {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>

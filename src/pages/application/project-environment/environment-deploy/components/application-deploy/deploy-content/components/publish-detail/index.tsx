@@ -3,26 +3,22 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Radio, Popconfirm } from 'antd';
+import { Descriptions, Button, Modal, message, Typography, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { getRequest } from '@/utils/request';
 import { history } from 'umi';
 import DetailContext from '../../../../../context';
-import { listAppEnv, checkNextEnv } from '@/pages/application/service';
-import { cancelDeploy, deployReuse, deployMaster, offlineDeploy, restartApp } from '@/pages/application/service';
-import { UploadOutlined } from '@ant-design/icons';
+import { cancelDeploy, deployMaster, offlineDeploy, restartApp } from '@/pages/application/service';
 import { IProps } from './types';
-import ServerStatus from '../server-status';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
+const { Paragraph } = Typography;
 
 export default function PublishDetail(props: IProps) {
   let { deployInfo, envTypeCode, onOperate } = props;
   const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [confirmLoading, setConfirmLoading] = useState(false);
-  // const [envDataList, setEnvDataList] = useState([]);
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
   const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
@@ -33,43 +29,6 @@ export default function PublishDetail(props: IProps) {
   useEffect(() => {
     if (!appCategoryCode) return;
     if (!envTypeCode) return;
-    // 当前部署环境
-    // getRequest(listAppEnv, {
-    //   data: {
-    //     envTypeCode: envTypeCode,
-    //     appCode: appData?.appCode,
-    //   },
-    // }).then((result) => {
-    //   let envSelect: any = [];
-    //   if (result?.success) {
-    //     result?.data?.map((item: any) => {
-    //       envSelect.push({ label: item.envName, value: item.envCode });
-    //     });
-    //     setEnvDataList(envSelect);
-    //   }
-    //   // setEnvDataList(data.list);
-    // });
-
-    // if (deployInfo.id !== undefined) {
-    //   getRequest(checkNextEnv, {
-    //     data: {
-    //       id: deployInfo.id,
-    //     },
-    //   }).then((response) => {
-    //     if (response?.success) {
-    //       newNextEnvTypeCode = response?.data;
-    //       getNextEnv(newNextEnvTypeCode).then((resp) => {
-    //         if (resp?.success) {
-    //           let envSelect: any = [];
-    //           resp?.data?.map((item: any) => {
-    //             envSelect.push({ label: item.envName, value: item.envCode });
-    //           });
-    //           // setNextEnvDataList(envSelect);
-    //         }
-    //       });
-    //     }
-    //   });
-    // }
   }, [appCategoryCode, envTypeCode, deployInfo.id]);
 
   // 取消发布
@@ -125,8 +84,6 @@ export default function PublishDetail(props: IProps) {
   const envNames = useMemo(() => {
     const { envs } = deployInfo;
     const envList = envs?.split(',') || [];
-
-    // console.log(envDataList,I++);
     return envDataList
       .filter((envItem) => {
         return envList.includes(envItem.value);
@@ -291,11 +248,12 @@ export default function PublishDetail(props: IProps) {
           {deployInfo?.id || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
-          {deployInfo?.releaseBranch || '--'}
+          {deployInfo?.releaseBranch ? <Paragraph copyable>{deployInfo?.releaseBranch}</Paragraph> : '---'}
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {deployInfo?.version || '--'}
+            {deployInfo?.releaseBranch ? <Paragraph copyable>{deployInfo?.releaseBranch}</Paragraph> : '---'}
+            {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envTypeCode || '--'}</Descriptions.Item>
