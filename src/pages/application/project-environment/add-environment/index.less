@@ -1,8 +1,31 @@
+@import '../../../../assets/styles/mixins.less';
 .ant-transfer {
   display: flex;
+
   .ant-transfer-list {
-    width: 400px;
-    height: 400px;
+    .convertBoxWidth(width,380);
+    .convertBoxHeight(height,430);
+  }
+  .ant-ribbon-wrapper {
+    display: flex;
+    align-items: center;
+    .transfer-text-fronted,
+    .transfer-text-backend {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      display: inline-block;
+      .convertBoxWidth(width,250);
+
+      &:hover {
+        text-overflow: inherit;
+        overflow: visible;
+        //  overflow: scroll;
+        white-space: pre-line;
+      }
+    }
+
+    height: 30px;
   }
   .ant-transfer-operation {
     width: 30px;

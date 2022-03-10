@@ -66,7 +66,7 @@ export default function EnvironmentList() {
     await getRequest(queryProjectEnvList, { data: { benchmarkEnvCode, envCode } })
       .then((res) => {
         if (res?.success) {
-          let data = res.data.dataSource;
+          let data = res?.data?.dataSource;
           setProjectEnvData(data[0]);
           setEnviroInitData(data[0]);
         }
@@ -208,12 +208,12 @@ export default function EnvironmentList() {
             column={2}
             labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap', width: 175 }}
           >
-            <Descriptions.Item label="项目环境名">{projectEnvData.envName}</Descriptions.Item>
-            <Descriptions.Item label="项目环境CODE">{projectEnvData.envCode}</Descriptions.Item>
-            <Descriptions.Item label="基准环境CODE">{projectEnvData.relEnvs}</Descriptions.Item>
-            <Descriptions.Item label="环境大类">{projectEnvData.envTypeCode}</Descriptions.Item>
+            <Descriptions.Item label="项目环境名">{projectEnvData?.envName || '--'}</Descriptions.Item>
+            <Descriptions.Item label="项目环境CODE">{projectEnvData?.envCode || '--'}</Descriptions.Item>
+            <Descriptions.Item label="基准环境CODE">{projectEnvData?.relEnvs || '--'}</Descriptions.Item>
+            <Descriptions.Item label="环境大类">{projectEnvData?.envTypeCode || '--'}</Descriptions.Item>
             <Descriptions.Item label="备注" span={3}>
-              {projectEnvData.mark || '--'}
+              {projectEnvData?.mark || '--'}
             </Descriptions.Item>
           </Descriptions>
         </div>
