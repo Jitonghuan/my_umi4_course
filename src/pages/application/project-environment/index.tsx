@@ -3,16 +3,18 @@
 // @create 2022/02/14 10:20
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Divider } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, StarFilled, StarTwoTone } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { queryProjectEnvList } from './service';
-import { useDeleteProjectEnv, useQueryCategory, useEnvList } from './hook';
+import { queryProjectEnvList, queryCollectProjectEnvList } from './service';
+import { useDeleteProjectEnv, useQueryCategory, useEnvList, useUpdateProjectEnv } from './hook';
 import EnvironmentEditDraw from './add-environment';
 import './index.less';
+import { Radio } from '@cffe/h2o-design';
+import DetailList from './environment-detail/detail-list';
 /** 环境大类 */
 const envTypeData = [
   {
@@ -44,24 +46,31 @@ export interface EnvironmentEdit extends Record<string, any> {
   mark: string;
 }
 export default function EnvironmentList() {
-  const { Option } = Select;
   const [formList] = Form.useForm();
   const [enviroInitData, setEnviroInitData] = useState<EnvironmentEdit>();
   const [deleteProjectEnv] = useDeleteProjectEnv();
   const [categoryData] = useQueryCategory();
   const [loading, envDataSource] = useEnvList();
+  const [updateProjectEnv] = useUpdateProjectEnv();
   const [enviroEditMode, setEnviroEditMode] = useState<EditorMode>('HIDE');
   const [dataSource, setDataSource] = useState<any>([]);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [pageTotal, setPageTotal] = useState<number>(0);
   const [listLoading, setListLoading] = useState<boolean>(false);
+  const [type, setType] = useState<'collect' | 'all'>('collect');
+  const [rowData, setRowData] = useState<any>({}); //选中一行后
   const queryProjectEnv = async (queryParamsObj: any) => {
+    const url = type === 'collect' ? queryCollectProjectEnvList : queryProjectEnvList;
     setListLoading(true);
-    await getRequest(queryProjectEnvList, { data: queryParamsObj })
+    await getRequest(url, { data: queryParamsObj })
       .then((res) => {
         if (res?.success) {
-          let data = res?.data?.dataSource;
+          // let data = res.data.dataSource;
+          let data = [
+            { ...res?.data?.dataSource[0], star: 0 },
+            { ...res?.data?.dataSource[0], id: 200, star: 1 },
+          ];
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
           setPageIndex(pageIndex);
@@ -77,6 +86,40 @@ export default function EnvironmentList() {
     let obj = { pageIndex: 1, pageSize: 20 };
     queryProjectEnv(obj);
   }, []);
+
+  useEffect(() => {
+    if (dataSource.length !== 0 && type === 'collect') {
+      // 如果用户没选中任一行或者选中了一行之后但是该行之后被删除了 都要默认选中第一行
+      const idList = dataSource.map((item: any) => item.id);
+      if (!idList.includes(rowData.id) || !rowData.id) {
+        let { id, envCode, relEnvs } = dataSource[0];
+        setRowData({
+          id,
+          envCode,
+          benchmarkEnvCode: relEnvs,
+          type: 'projectEnvironment',
+        });
+      }
+    }
+    if (dataSource.length === 0 && type === 'collect') {
+      setRowData({
+        id: '',
+        envCode: '',
+        benchmarkEnvCode: '',
+        type: 'projectEnvironment',
+      });
+    }
+  }, [dataSource, type]);
+
+  // tab切换
+  const handleTypeChange = useCallback(
+    (e: any) => {
+      const next = e.target.value;
+      setType(next);
+      loadListData({ pageIndex, pageSize });
+    },
+    [type],
+  );
   //触发分页
   const pageSizeClick = (pagination: any) => {
     setPageIndex(pagination.current);
@@ -99,6 +142,21 @@ export default function EnvironmentList() {
   const saveEditData = () => {
     setEnviroEditMode('HIDE');
     loadListData({ pageIndex: 1, pageSize: 20 });
+  };
+  // 点击收藏图标
+  const switchStar = (record: any, e: any) => {
+    e.stopPropagation();
+    let editParamsObj = {
+      projectEnvCode: record.envCode || '',
+      mark: record.mark || '',
+      relationApps: record || [],
+      projectEnvName: record.envName || '',
+      star: record.star === 0 ? '1' : '0',
+    };
+    Object.assign(record, { record: record.star === 0 ? '1' : '0' });
+    // updateProjectEnv(editParamsObj).then(() => {
+    //   loadListData({ pageIndex, pageSize });
+    // });
   };
   return (
     <PageContainer className="project-env-list">
@@ -159,10 +217,14 @@ export default function EnvironmentList() {
       </FilterCard>
       <ContentCard>
         <div className="table-caption">
-          <div className="caption-left">
+          <Radio.Group value={type} onChange={handleTypeChange}>
+            <Radio.Button value="collect">我的收藏</Radio.Button>
+            <Radio.Button value="all">全部项目环境</Radio.Button>
+          </Radio.Group>
+          {/* <div className="caption-left">
             <h3>项目环境列表</h3>
-          </div>
-          <div className="caption-right">
+          </div> */}
+          {type === 'all' && (
             <Button
               type="primary"
               onClick={() => {
@@ -172,14 +234,29 @@ export default function EnvironmentList() {
               <PlusOutlined />
               新增项目环境
             </Button>
-          </div>
+          )}
         </div>
         <div>
           <Table
             rowKey="id"
             bordered
+            rowClassName={(record, index) => {
+              return `${type === 'collect' && rowData.id == record.id ? 'selected' : ''}`;
+            }}
             dataSource={dataSource}
             loading={listLoading}
+            onRow={(record: any, index: any) => {
+              return {
+                onClick: (event) => {
+                  setRowData({
+                    id: record.id,
+                    envCode: record.envCode,
+                    benchmarkEnvCode: record.relEnvs,
+                    type: 'projectEnvironment',
+                  });
+                }, // 点击行
+              };
+            }}
             pagination={{
               current: pageIndex,
               total: pageTotal,
@@ -194,7 +271,25 @@ export default function EnvironmentList() {
             onChange={pageSizeClick}
           >
             <Table.Column title="ID" dataIndex="id" width="4%" />
-            <Table.Column title="环境名" dataIndex="envName" width="20%" ellipsis />
+            {/* <Table.Column title="环境名" dataIndex="envName" width="20%" ellipsis />
+             */}
+            <Table.Column
+              title="环境名"
+              render={(_, record: EnvironmentEdit) => (
+                <>
+                  <span
+                    style={{
+                      color: '#ff8419',
+                      marginRight: '5px',
+                    }}
+                    onClick={(e) => switchStar(record, e)}
+                  >
+                    {record.star ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+                  </span>
+                  {record.envName}
+                </>
+              )}
+            />
             <Table.Column title="环境CODE" dataIndex="envCode" width="8%" ellipsis />
             <Table.Column title="基准环境" dataIndex="relEnvs" width="8%" ellipsis />
             <Table.Column title="默认分类" dataIndex="categoryCode" width="8%" ellipsis />
@@ -246,6 +341,7 @@ export default function EnvironmentList() {
             />
           </Table>
         </div>
+        {type === 'collect' && <DetailList dataInfo={rowData}></DetailList>}
       </ContentCard>
     </PageContainer>
   );

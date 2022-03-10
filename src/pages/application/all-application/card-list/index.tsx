@@ -5,17 +5,17 @@
  * @create 2021-04-08 16:09
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { history } from 'umi';
 import { Tag, Tooltip } from 'antd';
-import { Html5Outlined, CodeOutlined, UserOutlined } from '@ant-design/icons';
+import { StarFilled, StarTwoTone, Html5Outlined, CodeOutlined, UserOutlined } from '@ant-design/icons';
 import CardLayout from '@cffe/vc-b-card-layout';
 import { AppItemVO } from '../../interfaces';
 import './index.less';
 
 const cardCls = 'all-application-page__card';
 
-const APP_TYPE_MAP = {
+const APP_TYPE_MAP: { [index: string]: any } = {
   frontend: '前端',
   backend: '后端',
 };
@@ -24,58 +24,83 @@ const APP_TYPE_TAG: Record<string, [string, React.ReactNode]> = {
   frontend: ['geekblue', <Html5Outlined />],
   backend: ['default', <CodeOutlined />],
 };
+export function isValidKey(key: string | number | symbol, object: object): key is keyof typeof object {
+  return key in object;
+}
 
 export interface IProps {
   dataSource: AppItemVO[];
   type?: string;
 }
+export function AppCard(props: any) {
+  const { item, type } = props;
+  const [star, setStar] = useState(item.isStar);
+  const switchStar = (a: AppItemVO, evt: any) => {
+    setStar(star ? 0 : 1);
+    evt.stopPropagation();
+  };
 
+  return (
+    <div
+      key={item.id}
+      className={cardCls}
+      onClick={() =>
+        history.push({
+          pathname: 'detail',
+          query: {
+            id: `${item.id}`,
+            appCode: item.appCode,
+          },
+        })
+      }
+    >
+      <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
+        {item.appName}
+        <span
+          style={{
+            top: 0,
+            right: 0,
+            position: 'absolute',
+            color: '#ff8419',
+          }}
+          onClick={(e) => switchStar(item, e)}
+        >
+          {star ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+        </span>
+      </div>
+      {item.appType === 'frontend' && type === 'mine' ? (
+        <>
+          <div className={`${cardCls}-sub-header`}>
+            {item.appType === 'frontend' ? `工程：${item.deploymentName}` : ''}
+          </div>
+          <div className={`${cardCls}-router`}>
+            {item.relationMainApps && item.relationMainApps.length ? `路由：${item.relationMainApps[0].routePath}` : ''}
+          </div>
+        </>
+      ) : null}
+
+      <div className={`${cardCls}-content`}>
+        <div>
+          <Tag color={APP_TYPE_TAG[item.appType]?.[0]} icon={APP_TYPE_TAG[item.appType]?.[1]}>
+            {APP_TYPE_MAP[item.appType]}
+          </Tag>
+        </div>
+        <Tooltip title={item.owner}>
+          <div>
+            <UserOutlined /> {item.owner}
+          </div>
+        </Tooltip>
+      </div>
+    </div>
+  );
+}
 export default function ApplicationCardList(props: IProps) {
   const { dataSource, type } = props;
 
   return (
     <CardLayout>
       {dataSource.map((item) => (
-        <div
-          key={item.id}
-          className={cardCls}
-          onClick={() =>
-            history.push({
-              pathname: 'detail',
-              query: {
-                id: `${item.id}`,
-                appCode: item.appCode,
-              },
-            })
-          }
-        >
-          <div className={`${cardCls}-header`}>{item.appName}</div>
-          {item.appType === 'frontend' && type === 'mine' ? (
-            <>
-              <div className={`${cardCls}-sub-header`}>
-                {item.appType === 'frontend' ? `工程：${item.deploymentName}` : ''}
-              </div>
-              <div className={`${cardCls}-router`}>
-                {item.relationMainApps && item.relationMainApps.length
-                  ? `路由：${item.relationMainApps[0].routePath}`
-                  : ''}
-              </div>
-            </>
-          ) : null}
-
-          <div className={`${cardCls}-content`}>
-            <div>
-              <Tag color={APP_TYPE_TAG[item.appType]?.[0]} icon={APP_TYPE_TAG[item.appType]?.[1]}>
-                {APP_TYPE_MAP[item.appType]}
-              </Tag>
-            </div>
-            <Tooltip title={item.owner}>
-              <div>
-                <UserOutlined /> {item.owner}
-              </div>
-            </Tooltip>
-          </div>
-        </div>
+        <AppCard item={item} type={type} />
       ))}
     </CardLayout>
   );
