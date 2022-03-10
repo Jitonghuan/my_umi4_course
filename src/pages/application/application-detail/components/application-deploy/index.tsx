@@ -18,7 +18,7 @@ export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
-  const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
+  const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'prod');
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
