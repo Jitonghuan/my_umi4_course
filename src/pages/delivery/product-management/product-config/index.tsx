@@ -1,11 +1,10 @@
-//组件详情
+//制品管理-配置交付参数
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import AceEditor from '@/components/ace-editor';
 import { Form, Tabs, Input, Select, Button, Descriptions, Typography, Card, message, Popconfirm, Divider } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import './index.less';
 export default function ComponentDetail() {
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
@@ -15,15 +14,12 @@ export default function ComponentDetail() {
     <PageContainer>
       <ContentCard>
         <div className="table-caption">
-          <div className="caption-left">
-            <h3>组件名称：Metrics-server</h3>
-            <Select style={{ width: 220, paddingLeft: 20 }}></Select>
-          </div>
+          <div className="caption-left"></div>
           <div className="caption-right">
             <Button
               onClick={() => {
                 history.push({
-                  pathname: '/matrix/delivery/component-center',
+                  pathname: '/matrix/delivery/product-management',
                 });
               }}
             >
@@ -35,13 +31,13 @@ export default function ComponentDetail() {
           <TabPane tab="组件信息" key="1">
             <div>
               <Descriptions title="基本信息" column={2} extra={<Button type="primary">编辑</Button>}>
-                <Descriptions.Item label="组件名称">Zhou Maomao</Descriptions.Item>
-                <Descriptions.Item label="组件描述">
+                <Descriptions.Item label="制品名称">Zhou Maomao</Descriptions.Item>
+                <Descriptions.Item label="制品描述">
                   <Paragraph editable={{ onChange: setEditableStr }}>{editableStr}</Paragraph>
                 </Descriptions.Item>
-                <Descriptions.Item label="组件类型">Zhou Maomao</Descriptions.Item>
-                <Descriptions.Item label="创建时间">1810000000</Descriptions.Item>
-                <Descriptions.Item label="组件地址" span={2}>
+                <Descriptions.Item label="交付版本">Zhou Maomao</Descriptions.Item>
+                <Descriptions.Item label="交付项目">1810000000</Descriptions.Item>
+                <Descriptions.Item label="创建时间" span={2}>
                   empty
                 </Descriptions.Item>
               </Descriptions>

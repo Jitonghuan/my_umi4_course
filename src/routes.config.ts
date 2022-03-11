@@ -866,6 +866,7 @@ export default [
         name: '产品描述',
         key: 'product-description',
         component: '@/pages/delivery/product-description',
+        hideInMenu: true,
       },
       {
         path: 'version-detail',
@@ -878,21 +879,27 @@ export default [
         name: '组件中心',
         key: 'component-center',
         component: '@/pages/delivery/component-center',
-        routes: [
-          {
-            path: 'component-detail',
-            name: '产品列表',
-            key: 'component-detail',
-            component: '@/pages/delivery/component-center/component-detail',
-            hideInMenu: true,
-          },
-        ],
+        routes: [],
+      },
+      {
+        path: 'component-detail',
+        name: '组件详情',
+        key: 'component-center',
+        component: '@/pages/delivery/component-center/component-detail',
+        hideInMenu: true,
       },
       {
         path: 'product-management',
         name: '制品管理',
         key: 'product-management',
         component: '@/pages/delivery/product-management',
+      },
+      {
+        path: 'product-config',
+        name: '配置交付参数',
+        key: 'product-management',
+        component: '@/pages/delivery/product-management/product-config',
+        hideInMenu: true,
       },
     ],
     //测试环境和正式环境暂不展示

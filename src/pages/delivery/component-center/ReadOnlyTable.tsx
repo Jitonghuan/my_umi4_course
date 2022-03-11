@@ -7,6 +7,7 @@
  * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
  */
 import React, { useState } from 'react';
+import { history } from 'umi';
 import { Table, Tag, Space } from 'antd';
 
 export default function VersionDetail() {
@@ -37,7 +38,15 @@ export default function VersionDetail() {
       key: 'action',
       render: (text: string, record: any) => (
         <Space size="middle">
-          <a>详情</a>
+          <a
+            onClick={() => {
+              history.push({
+                pathname: '/matrix/delivery/component-detail',
+              });
+            }}
+          >
+            详情
+          </a>
           <a>删除</a>
         </Space>
       ),
