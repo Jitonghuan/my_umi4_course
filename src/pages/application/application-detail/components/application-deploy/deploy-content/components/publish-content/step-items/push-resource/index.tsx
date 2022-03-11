@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/06 21:14
 
-import React, { useRef, useContext, useEffect } from 'react';
+import React, { useRef, useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button, message } from 'antd';
 import { rePushFeResource } from '@/pages/application/service';
@@ -16,7 +16,7 @@ import { deployStatusMapping } from '../../frontend-steps/prod';
 export default function PushResourceStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
   const { appData } = useContext(DetailContext);
-  const downLoadSupportEnv = useRef<string[]>(['']);
+  const [supportEnv, setSupportEnv] = useState<string[]>(['']); //支持离线部署的环境
   const isLoading = deployStatus === 'pushFeResource';
   const isError = deployStatus === 'pushFeResourceErr';
   const isFrontend = appData?.appType === 'frontend';
@@ -42,8 +42,7 @@ export default function PushResourceStep(props: StepItemProps) {
         result?.data?.map((item: any) => {
           downloadImageEnv.push(item.envCode);
         });
-        downLoadSupportEnv.current = downloadImageEnv;
-        console.log('downLoadSupportEnv', downLoadSupportEnv.current);
+        setSupportEnv(downloadImageEnv);
       }
     });
   };
@@ -68,7 +67,7 @@ export default function PushResourceStep(props: StepItemProps) {
               重试
             </Button>
           )}
-          {downLoadSupportEnv.current?.includes(envCode) && canDownload && (
+          {supportEnv.includes(envCode) && canDownload && (
             <Button
               style={{ marginTop: 4 }}
               target="_blank"
