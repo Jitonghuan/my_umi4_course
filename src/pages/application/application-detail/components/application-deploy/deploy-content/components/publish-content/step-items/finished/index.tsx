@@ -14,7 +14,7 @@ export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
   const { appData } = useContext(DetailContext);
   const downLoadSupportEnv = useRef<string[]>(['']);
-  const isFrontend = appData?.appType === 'frontend';
+  const isNotFrontend = appData?.appType !== 'frontend';
 
   useEffect(() => {
     if (!appData?.appCode) return;
@@ -46,7 +46,7 @@ export default function FinishedStep(props: StepItemProps) {
       description={
         (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
         downLoadSupportEnv.current?.filter((item) => deployInfo.envs?.indexOf(item) > -1).length > 0 &&
-        isFrontend && (
+        isNotFrontend && (
           <Button
             download
             style={{ marginTop: 4 }}
