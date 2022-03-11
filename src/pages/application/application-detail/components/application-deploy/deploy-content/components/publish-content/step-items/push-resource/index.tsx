@@ -10,31 +10,20 @@ import { StepItemProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
 import { downloadResource, listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
+import { deployStatusMapping } from '../../frontend-steps/prod';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
   const { appData } = useContext(DetailContext);
   const downLoadSupportEnv = useRef<string[]>(['']);
   const isLoading = deployStatus === 'pushFeResource';
   const isError = deployStatus === 'pushFeResourceErr';
+  const isFrontend = appData?.appType === 'frontend';
 
-  const temp = [
-    'verifyWait',
-    'verifyFailed',
-    'verifySuccess',
-    'pushVersion',
-    'pushVersionErr',
-    'pushVersionSuccess',
-    'mergingMaster',
-    'mergeMasterErr',
-    'deletingFeature',
-    'deleteFeatureErr',
-    'deployFinish',
-    'deployed',
-  ];
   // 用于前端离线部署
-  const isDownload = envTypeCode === 'prod' && isFrontend && temp.includes(deployStatus);
+  const canDownload = envTypeCode === 'prod' && isFrontend && Math.floor(deployStatusMapping[deployStatus]) >= 4;
+
   useEffect(() => {
     if (!appData?.appCode) return;
     queryDownloadImageEnv();
@@ -79,7 +68,7 @@ export default function PushResourceStep(props: StepItemProps) {
               重试
             </Button>
           )}
-          {downLoadSupportEnv.current?.includes(envCode) && isDownload && (
+          {downLoadSupportEnv.current?.includes(envCode) && canDownload && (
             <Button
               style={{ marginTop: 4 }}
               target="_blank"

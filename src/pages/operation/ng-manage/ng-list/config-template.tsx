@@ -54,7 +54,7 @@ export default function ConfigT(props: ConfigProp) {
       width={800}
       footer={[
         <Button type="primary" danger={!readOnly} style={{ position: 'absolute', left: '20px' }} onClick={handleEdit}>
-          {readOnly ? '编辑' : '取消编辑'}
+          {readOnly ? '编辑' : '保存编辑'}
         </Button>,
         <Button key="submit" type="primary" onClick={handleCancel}>
           取消

@@ -14,6 +14,7 @@ export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
   const { appData } = useContext(DetailContext);
   const downLoadSupportEnv = useRef<string[]>(['']);
+  const isFrontend = appData?.appType === 'frontend';
 
   useEffect(() => {
     if (!appData?.appCode) return;
@@ -44,7 +45,8 @@ export default function FinishedStep(props: StepItemProps) {
       title="完成"
       description={
         (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
-        downLoadSupportEnv.current?.filter((item) => deployInfo.envs?.indexOf(item) > -1).length > 0 && (
+        downLoadSupportEnv.current?.filter((item) => deployInfo.envs?.indexOf(item) > -1).length > 0 &&
+        isFrontend && (
           <Button
             download
             style={{ marginTop: 4 }}
