@@ -228,7 +228,7 @@ export default function PublishDetail(props: IProps) {
         message.success(`${info.file.name} 上传成功`);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败`);
-      } else {
+      } else if (info.file?.response.success == 'false') {
         message.error(info.file.response.errorMsg || '');
       }
       setDeployVisible(false);
@@ -540,7 +540,7 @@ export default function PublishDetail(props: IProps) {
 
         <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
           <span>配置文件：</span>
-          <Upload {...uploadProps} accept=".tgz">
+          <Upload {...uploadProps} accept=".tgz,.tar.gz">
             <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
               离线部署
             </Button>
