@@ -111,6 +111,9 @@ export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/dow
 /** Post 上传镜像*/
 export const offlineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDeploy`;
 
+// 前端离线部署上传资源
+export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/feOfflineDeploy`;
+
 /** POST 重启应用 */
 export const restartAppUrl = `${appConfig.apiPrefix}/appManage/restart`;
 

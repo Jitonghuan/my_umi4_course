@@ -14,6 +14,7 @@ import {
   deployReuse,
   deployMaster,
   offlineDeploy,
+  feOfflineDeploy,
   restartApp,
   queryProjectEnvList,
 } from '@/pages/application/service';
@@ -201,7 +202,7 @@ export default function PublishDetail(props: IProps) {
   // 离线部署
   const uploadImages = () => {
     if (appData?.appType === 'frontend') {
-      return `${offlineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
+      return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
     } else {
       return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
     }
@@ -209,7 +210,7 @@ export default function PublishDetail(props: IProps) {
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
   const uploadProps = {
-    name: 'image',
+    name: appData?.appType === 'frontend' ? 'file' : 'name',
     action: uploadImages,
     progress: {
       strokeColor: {
