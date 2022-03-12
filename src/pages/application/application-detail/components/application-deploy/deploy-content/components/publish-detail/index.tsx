@@ -211,7 +211,7 @@ export default function PublishDetail(props: IProps) {
         message.success(`${info.file.name} 上传成功`);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败`);
-      } else {
+      } else if (info.file?.response.success == 'false') {
         message.error(info.file.response.errorMsg || '');
       }
       setDeployVisible(false);
