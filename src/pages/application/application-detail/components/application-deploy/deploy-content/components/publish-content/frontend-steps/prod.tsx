@@ -54,20 +54,13 @@ export default function ProdEnvSteps({
   onSpin,
   stopSpin,
   deployedList,
+  isFrontend,
+  appData,
 }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl, buildType } = deployInfo;
   const subStepInitial = buildType === 'singleBuild' ? 3 : 2;
   deployStatusMapping['multiEnvDeploying'] = subStepInitial;
 
-  const payload = {
-    deployInfo,
-    onOperate,
-    deployStatus: deployInfo.deployStatus,
-    envTypeCode: 'prod',
-    onSpin,
-    stopSpin,
-    deployedList,
-  };
   const envList = envs ? envs.split(',') : [];
 
   function getSubStateStatus(envCode: string) {
@@ -92,6 +85,19 @@ export default function ProdEnvSteps({
   } else if (deployStatus === 'multiEnvDeploying' && envList.length < 2) {
     status = getCurrentStatus(envList[0]);
   }
+
+  const payload = {
+    deployInfo,
+    onOperate,
+    deployStatus: deployInfo.deployStatus,
+    envTypeCode: 'prod',
+    onSpin,
+    stopSpin,
+    deployedList,
+    isFrontend,
+    appData,
+    steps: status,
+  };
 
   return (
     <div className="publish-content-compo-wrapper">
