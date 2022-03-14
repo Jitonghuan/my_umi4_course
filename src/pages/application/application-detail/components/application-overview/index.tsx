@@ -46,6 +46,7 @@ export default function ApplicationOverview() {
 
   useEffect(() => {
     if (!appData?.appCode) return;
+    // if(!) return
     queryMemberData();
   }, [appData?.appCode]);
 

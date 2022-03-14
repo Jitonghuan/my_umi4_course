@@ -37,6 +37,8 @@ const AddDrawer = (props: IProps) => {
   const [deployPlanData, setDeployPlanData] = useState<any[]>([]);
   const [selectPlan, setSelectPlan] = useState<React.Key[]>([]);
   const [businessPlanData, setBusinessPlanData] = useState<any[]>([]);
+  const [submitDisable, setSubmitDisable] = useState<boolean>(false);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
 
   // 根据应用分类查询应用组
   const queryBusiness = (categoryCode: string) => {
@@ -118,6 +120,8 @@ const AddDrawer = (props: IProps) => {
 
   const handleSubmit = () => {
     formInstance.validateFields().then((vals) => {
+      setSubmitDisable(true);
+      setSubmitLoading(true);
       addPublishApplyReq({
         applyInfo: {
           ...vals,
@@ -128,6 +132,8 @@ const AddDrawer = (props: IProps) => {
       }).then((resp) => {
         if (resp?.success) {
           handleClose(true);
+          setSubmitLoading(false);
+          setSubmitDisable(false);
         }
       });
     });
@@ -151,7 +157,13 @@ const AddDrawer = (props: IProps) => {
       maskClosable={false}
       footer={
         <>
-          <Button type="primary" style={{ marginRight: '12px' }} onClick={handleSubmit}>
+          <Button
+            type="primary"
+            style={{ marginRight: '12px' }}
+            onClick={handleSubmit}
+            disabled={submitDisable}
+            loading={submitLoading}
+          >
             确定
           </Button>
           <Button onClick={() => handleClose()}>取消</Button>

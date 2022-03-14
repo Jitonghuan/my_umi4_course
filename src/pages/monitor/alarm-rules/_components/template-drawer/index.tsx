@@ -110,7 +110,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     await getRequest(getEnvCodeList, {
       data: { envTypeCode },
     }).then((resp) => {
-      if (resp.success) {
+      if (resp?.success) {
         let data = resp?.data;
         data?.map((item: any) => {
           envOptions.push({
@@ -132,7 +132,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     api: queryRuleTemplatesList,
     method: 'GET',
     onSuccess: (data) => {
-      console.log('data', data);
       setRuleTemplatesList(
         data?.dataSource.map((v: any) => {
           return {
@@ -177,11 +176,16 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     let silenceTime: Moment[] = [];
     let silenceStart: any;
     let silenceEnd: any;
-
+    let currentReceiver: any = [];
+    if (!record?.receiver) {
+      currentReceiver = [];
+    } else {
+      currentReceiver = record?.receiver?.split(',');
+    }
     //回显数据
     const setValues = {
       ...record,
-      receiver: record?.receiver?.split(',') || [],
+      receiver: currentReceiver,
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
@@ -334,6 +338,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           <Select
             style={{ width: '400px' }}
             allowClear
+            showSearch
             options={ruleTemplatesList as OptionProps[]}
             onChange={(e: string) => {
               setRuleTemplate(e);

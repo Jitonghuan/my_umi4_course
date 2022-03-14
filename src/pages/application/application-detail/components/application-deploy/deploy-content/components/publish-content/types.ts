@@ -8,6 +8,8 @@ export interface IProps {
   deployedList: any[];
   appStatusInfo: IStatusInfoProps[];
   onOperate: (type: OperateType) => void;
+  onSpin: any;
+  stopSpin: any;
 }
 
 // 执行步骤组合
@@ -16,6 +18,11 @@ export interface StepsProps {
   appData?: AppItemVO;
   onOperate: (type: OperateType) => void;
   isFrontend?: boolean;
+  onSpin: any;
+  stopSpin: any;
+  deployedList: any;
+  onCancelDeploy?: (envCode: string) => void;
+  getItemByKey: (listStr: string, envCode: string) => any;
 }
 
 // 执行步骤组件
@@ -51,4 +58,7 @@ export type OperateType =
   | 'fePublishVerifyStart'
   | 'fePublishVerifyEnd'
   | 'rollbackFeAppStart'
-  | 'rollbackFeAppEnd';
+  | 'rollbackFeAppEnd'
+  // 解决冲突相关
+  | 'mergeStart'
+  | 'mergeEnd';

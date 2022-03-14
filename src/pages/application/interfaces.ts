@@ -101,4 +101,5 @@ export interface EnvDataVO extends Record<string, any> {
   envName: string;
   envTypeCode: string;
   categoryCode: string;
+  proEnvType: string;
 }

@@ -375,7 +375,9 @@ const Coms = (props: any) => {
   }, []);
   const [searchKeyWords, setSearchKeyWords] = useState<any>();
   const handleSearchRes = () => {
-    setSearchParams(searchField.getFieldsValue());
+    let param = searchField.getFieldsValue();
+    // setSearchParams(searchField.getFieldsValue());
+    queryNodeList({ clusterId: currentCluster, keysword: param.keyword, pageIndex: pageIndex, pageSize: pageIndex });
   };
   const handleSearchPod = () => {
     let param = searchPodField.getFieldsValue();

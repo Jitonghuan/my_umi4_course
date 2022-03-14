@@ -9,6 +9,20 @@ import { baseRoutePath } from './routes.config';
 /** 是否是本地开发环境 */
 const IS_LOCAL = process.env.NODE_ENV === 'development';
 
+// @ts-ignore
+const BUILD_ENV = window.BUILD_ENV || 'dev';
+
+let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
+envType = window.location.href.includes('fygs') ? 'fygs' : envType;
+envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
+
+const domainName: any = {
+  zslnyy: 'http://c2f.apex-zslnyy.cfuture.shop',
+  fygs: 'http://c2f.apex-fygs.seenew.info:180',
+  prod: 'http://c2f.apex.cfuture.shop',
+  dev: 'http://c2f.apex-dev.cfuture.shop',
+};
+
 export default {
   /** 站点图标 */
   favicon,
@@ -36,5 +50,13 @@ export default {
 
   isLocal: IS_LOCAL,
   // 当前环境
-  BUILD_ENV: window.BUILD_ENV || 'dev',
+  BUILD_ENV,
+  // apex 地址
+  apexDomainName: domainName[envType],
+  // webSocket 地址
+  wsPrefix: window.location.href.includes('fygs')
+    ? 'ws://matrix-fygs.seenew.info:180'
+    : window.location.href.includes('zslnyy')
+    ? 'ws://matrix-zslnyy.cfuture.shop'
+    : 'ws://matrix-api.cfuture.shop',
 };

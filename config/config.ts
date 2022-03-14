@@ -4,6 +4,7 @@
 
 import { defineConfig } from 'umi';
 import routes, { baseRoutePath } from '../src/routes.config';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 
 // 资源引用的根路径，此变量与项目在 nginx 中匹配前缀相关，如果
 const sourceRoot = '/';
@@ -18,7 +19,9 @@ export default defineConfig({
 
   // 文件依赖路径别名，默认支持 @/ 指向 src/
   alias: {},
-
+  chainWebpack(config, { webpack }) {
+    config.plugin('monaco-editor').use(MonacoWebpackPlugin);
+  },
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
@@ -26,17 +29,20 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      target: 'http://matrix.cfuture.shop/',
+      target: 'http://matrix-zslnyy.cfuture.shop/',
+      // target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix-fygs.seenew.info:180/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
-      // target: 'http://10.10.128.239:8080/',//青枫本地
+      // target: 'http://10.10.129.8:8080/',//青枫本地
       // target: 'http://10.10.128.182:8081/', // 羁绊本地
       // target: 'http://10.10.130.108:8000', // 可乐本地
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
       // target: 'https://release.zy91.com:4443/futuredog',
-      // target: 'http://10.10.128.157:8080',//木南本地
-      // target: 'http://10.10.129.203:8080',//时雨本地
+      // target: 'http://10.10.129.152:8080',//木南本地
+      // target: 'http://10.10.129.43:8080',//时雨本地
       // target: 'http://10.10.128.214:8080',//习习本地
+      // target: 'http://10.10.129.116:8080',//不辣本地
 
 
       changeOrigin: true,

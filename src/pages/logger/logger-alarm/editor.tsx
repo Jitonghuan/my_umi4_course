@@ -23,8 +23,8 @@ const { Item: FormItem } = Form;
 export interface AlarmEditorProps {
   mode: EditorMode;
   initData?: Record<string, any>;
-  onClose?: () => any;
-  onSave?: () => any;
+  onClose: () => any;
+  onSave: () => any;
 }
 
 export default function AlarmEditor(props: AlarmEditorProps) {

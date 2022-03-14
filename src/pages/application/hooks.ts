@@ -96,7 +96,7 @@ export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | und
         pageIndex: 1,
         pageSize: 10,
       });
-      appList.map((item: any) => {
+      appList?.map((item: any) => {
         if (appCode) {
           if (item?.appCode === appCode) {
             setData(item);
@@ -146,7 +146,7 @@ export function useAppEnvCodeData(appCode?: string): [Record<string, EnvDataVO[]
           pageSize: -1,
         },
       });
-      const next: EnvDataVO[] = result.data?.dataSource || [];
+      const next: EnvDataVO[] = result.data || [];
       // 根据 envTypeCode 分成多组
       const map: Record<string, EnvDataVO[]> = {};
       next.forEach((n) => {

@@ -5,18 +5,16 @@
  * @create 2021-11-11 14:15
  */
 
-import React, { useState, useContext, useCallback, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
-import { ContentCard } from '@/components/vc-page-content';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { IProps } from '../../application-deploy/deploy-content/components/publish-content/types';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
-import { postRequest, delRequest } from '@/utils/request';
+import { postRequest } from '@/utils/request';
 import { restartApp, rollbackApplication, restartApplication, queryAppOperate } from '@/pages/application/service';
-import { listContainer, fileDownload } from './service';
+import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeployInfoData, useInstanceList, useDownloadLog, useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
@@ -24,7 +22,6 @@ import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
 import './index.less';
-import OldAppDeployInfo from './old-deployInfo-page';
 const rootCls = 'deploy-content-compo';
 export interface DeployContentProps {
   /** 当前页面是否激活 */
@@ -36,6 +33,10 @@ export interface DeployContentProps {
   onDeployNextEnvSuccess: () => void;
   intervalStop: () => void;
   intervalStart: () => void;
+  viewLogEnv: string;
+  type: string;
+  viewLogEnvType: string;
+  // viewLogEnvType:string
 }
 export interface insStatusInfo {
   insName?: string;
@@ -54,6 +55,7 @@ const STATUS_TYPE: Record<number, statusTypeItem> = {
 };
 
 export default function DeployContent(props: DeployContentProps) {
+  const { viewLogEnv, type, viewLogEnvType } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
   const [formInstance] = Form.useForm();
@@ -62,12 +64,15 @@ export default function DeployContent(props: DeployContentProps) {
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
+  const [listEnvClusterData, setListEnvClusterData] = useState<any>();
+  // const [isSucess, setIsSucess] = useState<boolean>(false);
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
   const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
+
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
@@ -90,21 +95,17 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode) return;
   }, [appCode]);
   const initEnvCode = useRef<string>('');
-  let operateType = false;
-  const [listEnvClusterData, loadInfoData, setListEnvClusterData] = useDeployInfoData(initEnvCode.current);
   const [deleteInstance] = useDeleteInstance();
   const [downloadLog] = useDownloadLog();
-  const [instanceTableData, instanceloading, queryInstanceList, setInstanceTableData] = useInstanceList(
-    appData?.appCode,
-    currentEnvData,
-  );
+  const [instanceTableData, instanceloading, queryInstanceList, setInstanceTableData, setInstanceLoading] =
+    useInstanceList(appData?.appCode, currentEnvData);
 
   const envClusterData = useRef();
   envClusterData.current = listEnvClusterData;
 
   //定义定时器方法
   const intervalFunc = () => {
-    loadInfoData(initEnvCode.current, operateType)
+    loadInfoData(initEnvCode.current)
       .then(() => {
         queryInstanceList(appData?.appCode, initEnvCode.current);
       })
@@ -120,38 +121,120 @@ export default function DeployContent(props: DeployContentProps) {
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
+    let operateType = false;
     try {
-      selectAppEnv().then((result: any) => {
-        const dataSources = result.data?.map((n: any) => ({
-          value: n?.envCode,
-          label: n?.envName,
-          data: n,
-        }));
+      if (type === 'viewLog_goBack' && viewLogEnvType == envTypeCode) {
+        selectAppEnv().then((result: any) => {
+          const dataSources = result.data?.map((n: any) => ({
+            value: n?.envCode,
+            label: n?.envName,
+            data: n,
+          }));
+          setEnvDatas(dataSources);
+        });
 
-        setEnvDatas(dataSources);
+        formInstance.setFieldsValue({ envCode: viewLogEnv });
+        initEnvCode.current = viewLogEnv;
+        setCurrentEnvData(viewLogEnv);
+        if (viewLogEnv !== '') {
+          loadInfoData(viewLogEnv).then(() => {
+            queryAppOperateLog(viewLogEnv);
+            getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: initEnvCode.current } })
+              .then((result) => {
+                if (result.success) {
+                  setInstanceLoading(true);
+                  let data = result.data;
+                  setInstanceTableData(data);
+                  if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                    timerHandler('do', true);
+                  } else {
+                    timerHandler('stop');
+                  }
+                  //  if (initEnvCode.current !== '') {
+                  //    queryAppOperateLog(initEnvCode.current);
+                  //  }
+                }
+              })
+              .finally(() => {
+                setInstanceLoading(false);
+              });
+            //  queryInstanceList(appData?.appCode, viewLogEnv).then((res: any) => {
 
-        initEnvCode.current = dataSources[0]?.value;
-
-        setCurrentEnvData(dataSources[0]?.value);
-        formInstance.setFieldsValue({ envCode: initEnvCode.current });
-
-        if (initEnvCode.current !== '') {
-          loadInfoData(initEnvCode.current).then(() => {
-            queryAppOperateLog(initEnvCode.current);
-            queryInstanceList(appData?.appCode, initEnvCode.current).then((res: any) => {
-              operateType = true;
-            });
+            //    operateType = true;
+            //  });
           });
         }
+        //  setTimeout(() => {
 
-        setTimeout(() => {
-          if (operateType && initEnvCode.current && instanceTableData) {
-            timerHandler('do', true);
-          } else {
-            timerHandler('stop');
+        //    if (operateType && viewLogEnv) {
+        //      timerHandler('do', true);
+        //    } else {
+        //      timerHandler('stop');
+        //    }
+        //  }, 100);
+      } else {
+        selectAppEnv().then((result: any) => {
+          const dataSources = result.data?.map((n: any) => ({
+            value: n?.envCode,
+            label: n?.envName,
+            data: n,
+          }));
+          setEnvDatas(dataSources);
+          initEnvCode.current = dataSources[0]?.value;
+          setCurrentEnvData(dataSources[0]?.value);
+          formInstance.setFieldsValue({ envCode: initEnvCode.current });
+          if (initEnvCode.current !== '') {
+            let initLoadInfoData: any = [];
+            getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
+              .then((result) => {
+                if (result.success) {
+                  initLoadInfoData = result.data;
+                  setListEnvClusterData(initLoadInfoData);
+                  console.log('initLoadInfoData', initLoadInfoData);
+                }
+              })
+              .then(() => {
+                if (initLoadInfoData.length !== 0) {
+                  queryAppOperateLog(initEnvCode.current);
+                  getRequest(queryInstanceListApi, {
+                    data: { appCode: appData?.appCode, envCode: initEnvCode.current },
+                  })
+                    .then((result) => {
+                      if (result.success) {
+                        setInstanceLoading(true);
+                        let data = result.data;
+                        setInstanceTableData(data);
+
+                        if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                          timerHandler('do', true);
+                        } else {
+                          timerHandler('stop');
+                        }
+                        //  if (initEnvCode.current !== '') {
+                        //    queryAppOperateLog(initEnvCode.current);
+                        //  }
+                      }
+                    })
+                    .finally(() => {
+                      setInstanceLoading(false);
+                    });
+                  //  queryInstanceList(appData?.appCode, initEnvCode.current).then((res: any) => {
+                  //    operateType = true;
+                  //  });
+                } else {
+                  timerHandler('stop');
+                }
+              });
           }
-        }, 100);
-      });
+          //  setTimeout(() => {
+          //    if (operateType && initEnvCode.current) {
+          //      timerHandler('do', true);
+          //    } else {
+          //      timerHandler('stop');
+          //    }
+          //  }, 100);
+        });
+      }
     } catch (error) {
       message.warning(error);
     }
@@ -159,7 +242,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
-    return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode } });
+    return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark' } });
   };
 
   useEffect(() => {
@@ -193,32 +276,59 @@ export default function DeployContent(props: DeployContentProps) {
     });
   };
 
+  const loadInfoData = async (envCode: any, operateType?: boolean) => {
+    await getRequest(listEnvCluster, { data: { envCode: envCode } }).then((result) => {
+      if (result.success) {
+        let data = result.data;
+        setListEnvClusterData(data);
+      }
+    });
+  };
   //改变环境下拉选择后查询结果
-  const changeEnvCode = (envCode: string) => {
+  let clusterInfoData: any;
+  const changeEnvCode = async (envCode: string) => {
     timerHandler('stop');
     setCurrentEnvData(envCode);
     initEnvCode.current = envCode;
-    loadInfoData(envCode)
+    setListEnvClusterData({});
+    await getRequest(listEnvCluster, { data: { envCode: envCode } })
+      .then((result) => {
+        if (result.success) {
+          clusterInfoData = result.data;
+          setListEnvClusterData(clusterInfoData);
+        }
+      })
       .then(() => {
-        queryInstanceList(appData?.appCode, envCode)
-          .then((result2: any) => {
-            if (instanceTableData !== undefined && instanceTableData.length !== 0) {
-              timerHandler('do', true);
-            }
-            if (initEnvCode.current !== '') {
-              queryAppOperateLog(initEnvCode.current);
-            }
-          })
-          .catch(() => {
-            // setListEnvClusterData([]);
-            setInstanceTableData([]);
-          });
+        setInstanceTableData([]); //重置实例列表数据
+        if (clusterInfoData) {
+          getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: envCode } })
+            .then((result) => {
+              if (result.success) {
+                setInstanceLoading(true);
+                let data = result.data;
+                setInstanceTableData(data);
+                if (result.data !== undefined && result.data.length !== 0) {
+                  timerHandler('do', true);
+                } else {
+                  timerHandler('stop');
+                }
+                if (initEnvCode.current !== '') {
+                  queryAppOperateLog(initEnvCode.current);
+                }
+              }
+            })
+            .finally(() => {
+              setInstanceLoading(false);
+            })
+            .catch(() => {
+              setInstanceTableData([]);
+            });
+        }
       })
       .catch(() => {
         setListEnvClusterData([]);
         setInstanceTableData([]);
       });
-    // }
   };
   //加载容器信息
   const [currentContainerName, setCurrentContainerName] = useState<string>('');
@@ -268,6 +378,8 @@ export default function DeployContent(props: DeployContentProps) {
         queryAppOperateLog(currentEnvData);
         timerHandler('do', true);
       });
+    } else {
+      message.info('不存在集群类型！');
     }
   };
 
@@ -311,10 +423,10 @@ export default function DeployContent(props: DeployContentProps) {
                 <h3>实例列表：</h3>
               </div>
               {/* <Popconfirm title={`确定重启 ${record.ip} 吗？`} onConfirm={() => handleRestartItem(record)}>
-                        <Button size="small" type="primary" ghost loading={record.taskState === 1}>
-                          重启
-                        </Button>
-                      </Popconfirm> */}
+                         <Button size="small" type="primary" ghost loading={record.taskState === 1}>
+                           重启
+                         </Button>
+                       </Popconfirm> */}
               <div className="caption-right">
                 <Popconfirm title={`确定重启 ${appData?.appName}吗？`} onConfirm={restartEnsure}>
                   <Button type="primary" ghost>
@@ -427,7 +539,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() =>
                           history.push(
-                            `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                            `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}`,
                           )
                         }
                       >
@@ -495,9 +607,9 @@ export default function DeployContent(props: DeployContentProps) {
                     <b>{item.operator}</b>
                   </p>
                   {/* <p>
-                    <span>操作类型：</span>
-                    <b>{item.operateType}</b>
-                  </p> */}
+                     <span>操作类型：</span>
+                     <b>{item.operateType}</b>
+                   </p> */}
 
                   <p>
                     <span>操作事件：</span>

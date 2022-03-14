@@ -108,8 +108,14 @@ export const configUploadUrl = `${appConfig.apiPrefix}/appManage/config/upload`;
 
 /** GET 下载镜像 */
 export const downloadImage = `${appConfig.apiPrefix}/releaseManage/deploy/downloadImage`;
+/** GET 下载资源包 */
+export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/downloadFeResource`;
+
 /** Post 上传镜像*/
 export const offlineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDeploy`;
+
+// 前端离线部署上传资源
+export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/feOfflineDeploy`;
 
 /** POST 重启应用 */
 export const restartAppUrl = `${appConfig.apiPrefix}/appManage/restart`;
@@ -150,7 +156,7 @@ export const queryFeVersions = `${appConfig.apiPrefix}/appManage/feVersion/list`
 export const queryDeployListUrl = `${appConfig.apiPrefix}/releaseManage/deploy/list`;
 
 /** 获取应用大类的环境列表 */
-export const queryAppEnvs = `${appConfig.apiPrefix}/monitorManage/app/env`;
+export const queryAppEnvs = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 
 /** GET 获取应用变更记录列表 */
 export const queryRecentChangeOrder = `${appConfig.apiPrefix}/releaseManage/queryRecentChangeOrder`;
@@ -167,6 +173,9 @@ export const rollbackApplication = `${appConfig.apiPrefix}/releaseManage/rollbac
 
 /** POST 应用重启 */
 export const restartApplication = `${appConfig.apiPrefix}/releaseManage/restartApplication`;
+
+/** GET 查询项目环境 */
+export const queryProjectEnvList = `${appConfig.apiPrefix}/appManage/projectEnv/list`;
 
 /** GET 查询卡点任务结果 */
 export const qualityGuardInfo = `${appConfig.apiPrefix}/qc/qualitycontrol/qualityGuardInfo`;
@@ -211,7 +220,7 @@ export const queryApps = async (
 ) => {
   const { requestType, ...data } = params;
   const result = await getRequest(requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl, { data });
-  return (result.data?.dataSource || []) as AppItemVO[];
+  return (result?.data?.dataSource || []) as AppItemVO[];
 };
 
 /** 删除应用 */
@@ -449,6 +458,7 @@ export const retryMerge = (params: {
 export const retryBuild = (params: {
   /** 部署的数据库自增ID */
   id: number;
+  envCode: string;
 }) =>
   postRequest(retryBuildUrl, {
     data: params,
@@ -458,6 +468,7 @@ export const retryBuild = (params: {
 export const retryDeploy = (params: {
   /** 部署的数据库自增ID */
   id: number;
+  envCode: string;
 }) =>
   postRequest(retryDeployUrl, {
     data: params,
@@ -507,6 +518,7 @@ export const venusAnalyze = (params: { appCode: any; gitUrl: any }) =>
 export const cancelDeploy = (params: {
   /** 部署的数据库自增ID */
   id: number;
+  envCode?: string;
 }) =>
   postRequest(cancelDeployUrl, {
     data: params,
@@ -518,6 +530,7 @@ export const deployReuse = (params: {
   id: number;
   /** poc环境复用到生产环境需要 */
   envs?: string[];
+  envCode?: string;
 }) =>
   postRequest(deployReuseUrl, {
     data: params,
@@ -528,7 +541,7 @@ export const deployMaster = (params: {
   /** 应用code */
   appCode?: string;
   envTypeCode?: string;
-  envCodes?: string[];
+  envCodes?: any;
   isClient?: boolean;
 }) =>
   postRequest(deployMasterUrl, {
@@ -588,3 +601,11 @@ export const rollbackFeApp = async (data: any) => postRequest(rollbackFeAppUrl, 
 
 /** POST 获取分支review状态 */
 // export const getReviewStatus = async (data: any) => postRequest(getReviewStatusUrl, { data });
+
+/** GET 解决冲突-获取冲突信息 */
+export const getMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/getChanges`;
+export const getMergeMessage = async (params: any) => await getRequest(getMergeMessageUrl, { data: params });
+
+/** POST 解决冲突-提交冲突 */
+export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/commit`;
+export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });

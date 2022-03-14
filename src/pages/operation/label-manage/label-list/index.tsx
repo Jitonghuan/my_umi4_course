@@ -3,12 +3,13 @@
 // @create 2021/12/03 14:20
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
+import { PlusOutlined } from '@ant-design/icons';
 import LabelEditDrawer from '../label-add';
 import { useDeleteLabel } from '../hook';
-import { getRequest, delRequest } from '@/utils/request';
+import { getRequest } from '@/utils/request';
 import { getTagList } from '../service';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 
@@ -123,7 +124,14 @@ export default function LanbelList() {
               重置
             </Button>
           </Form.Item>
-          <div style={{ float: 'right', display: 'flex', marginLeft: '12px' }}>
+        </Form>
+      </FilterCard>
+      <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>标签列表</h3>
+          </div>
+          <div className="caption-right">
             <Button
               type="primary"
               onClick={() => {
@@ -131,17 +139,15 @@ export default function LanbelList() {
                 // setIsDisable(false);
               }}
             >
+              <PlusOutlined />
               新增标签
             </Button>
           </div>
-        </Form>
-      </FilterCard>
-      <ContentCard>
+        </div>
         <div>
           <Table
             rowKey="id"
             dataSource={labelListSource}
-            bordered
             loading={loading}
             pagination={{
               total: pageTotal,
