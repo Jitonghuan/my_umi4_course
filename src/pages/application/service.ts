@@ -105,8 +105,14 @@ export const configUploadUrl = `${appConfig.apiPrefix}/appManage/config/upload`;
 
 /** GET 下载镜像 */
 export const downloadImage = `${appConfig.apiPrefix}/releaseManage/deploy/downloadImage`;
+/** GET 下载资源包 */
+export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/downloadFeResource`;
+
 /** Post 上传镜像*/
 export const offlineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDeploy`;
+
+// 前端离线部署上传资源
+export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/feOfflineDeploy`;
 
 /** POST 重启应用 */
 export const restartAppUrl = `${appConfig.apiPrefix}/appManage/restart`;

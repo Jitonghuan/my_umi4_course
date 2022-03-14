@@ -15,7 +15,7 @@ import PushVersionStep from '../step-items/push-version';
 import DeleteFeatureStep from '../step-items/delete-feature';
 import FinishedStep from '../step-items/finished';
 
-const deployStatusMapping: Record<string, number> = {
+export const deployStatusMapping: Record<string, number> = {
   // 合并release
   merging: 1.1,
   mergeErr: 1.2,
