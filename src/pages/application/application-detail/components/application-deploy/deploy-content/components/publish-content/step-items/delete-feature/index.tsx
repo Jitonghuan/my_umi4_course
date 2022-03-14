@@ -10,7 +10,7 @@ import { StepItemProps } from '../../types';
 
 /** 删除feature */
 export default function DeleteFeatureStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, appData, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, appData, steps, ...others } = props;
   const [venusLoading, setVenusLoading] = useState<boolean>(false);
 
   const isLoading = deployStatus === 'deletingFeature';
@@ -34,7 +34,7 @@ export default function DeleteFeatureStep(props: StepItemProps) {
   }
 
   useEffect(() => {
-    if (deployStatus === 'deployFinish' && isFrontend && !venusLoading) {
+    if (steps && steps >= 7 && isFrontend && !venusLoading) {
       console.log('调用Venus分析');
       void analyze();
     }
