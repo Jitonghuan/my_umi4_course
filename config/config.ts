@@ -29,8 +29,8 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      target: 'http://matrix-zslnyy.cfuture.shop/',
-      // target: 'http://matrix-test.cfuture.shop/',
+      target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix-zslnyy.cfuture.shop/',
       // target: 'http://matrix-fygs.seenew.info:180/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',

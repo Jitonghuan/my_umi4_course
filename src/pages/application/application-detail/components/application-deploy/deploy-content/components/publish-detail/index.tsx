@@ -5,7 +5,7 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { getRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
@@ -47,6 +47,8 @@ export default function PublishDetail(props: IProps) {
   const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [fileList, setFileList] = useState<any[]>([]);
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode || !appData) return;
@@ -187,6 +189,9 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   // 离线部署
+  const handleUpload = () => {
+    setUploading(true);
+  };
   const uploadImages = () => {
     return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
   };
@@ -203,6 +208,20 @@ export default function PublishDetail(props: IProps) {
       strokeWidth: 3,
       format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
     },
+    // beforeUpload: (file:any,fileList:any) => {
+    //   // const isPNG = file.type === 'image/png';
+    //   // if (!isPNG) {
+    //   //   message.error(`${file.name} is not a png file`);
+    //   // }
+    //   return (
+    //     Modal.confirm({
+    //       title: '操作提示',
+    //       content: `确定要上传文件：${file.name}进行离线部署吗？`,
+    //       onOk: () => {
+
+    //       },
+    //     }))
+    // },
     onChange: (info: any) => {
       if (info.file.status === 'uploading') {
         return;
@@ -211,7 +230,7 @@ export default function PublishDetail(props: IProps) {
         message.success(`${info.file.name} 上传成功`);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败`);
-      } else if (info.file?.response.success == 'false') {
+      } else if (info.file?.response?.success == 'false') {
         message.error(info.file.response.errorMsg || '');
       }
       setDeployVisible(false);
@@ -517,9 +536,20 @@ export default function PublishDetail(props: IProps) {
           <span>配置文件：</span>
           <Upload {...uploadProps} accept=".tgz">
             <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
-              离线部署
+              上传离线部署文件
             </Button>
           </Upload>
+        </div>
+        <div>
+          <Button
+            type="primary"
+            onClick={handleUpload}
+            disabled={fileList.length === 0}
+            loading={uploading}
+            style={{ marginTop: 16 }}
+          >
+            {uploading ? '上传中' : '确认部署'}
+          </Button>
         </div>
       </Modal>
 
