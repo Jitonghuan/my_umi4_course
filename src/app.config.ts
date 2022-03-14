@@ -22,8 +22,10 @@ const BUILD_ENV = window.BUILD_ENV || 'dev';
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
+envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
 
 const domainName: any = {
+  zslnyy: 'http://c2f.apex-zslnyy.cfuture.shop',
   fygs: 'http://c2f.apex-fygs.seenew.info:180',
   prod: 'http://c2f.apex.cfuture.shop',
   dev: 'http://c2f.apex-dev.cfuture.shop',
@@ -60,5 +62,9 @@ export default {
   // apex 地址
   apexDomainName: domainName[envType],
   // webSocket 地址
-  wsPrefix: window.location.href.includes('fygs') ? 'ws://matrix-fygs.seenew.info:180' : 'ws://matrix-api.cfuture.shop',
+  wsPrefix: window.location.href.includes('fygs')
+    ? 'ws://matrix-fygs.seenew.info:180'
+    : window.location.href.includes('zslnyy')
+    ? 'ws://matrix-zslnyy.cfuture.shop'
+    : 'ws://matrix-api.cfuture.shop',
 };
