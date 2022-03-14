@@ -20,28 +20,25 @@ export default function AppDeployInfo(props: any) {
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
-  // const [searchParams, setSearchParams] = useState<any>(
-  //   localStorage.ALL_APPLICATIO_SEARCH ? JSON.parse(localStorage.ALL_APPLICATIO_SEARCH) : {},
-  // );
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
-  // localStorage.removeItem('__init_env_tab__');
+  let env = window.location.href.includes('zslnyy') || window.location.href.includes('fygs') ? 'prod' : 'dev';
   try {
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'dev';
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
   } catch (error) {
-    localStorage.setItem('__init_env_tab__', 'dev');
+    localStorage.setItem('__init_env_tab__', env);
   }
   const [tabActive, setTabActive] = useState<any>(
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'dev',
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env,
   );
 
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currEnvCode,
     appData?.deploymentName,
   );
-  const intervalRef = useRef<any>();
+
   const changeTab = (value: any) => {
     setTabActive(value);
-    localStorage.setItem('__init_env_tab__', value || 'dev');
+    localStorage.setItem('__init_env_tab__', value || env);
   };
 
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
