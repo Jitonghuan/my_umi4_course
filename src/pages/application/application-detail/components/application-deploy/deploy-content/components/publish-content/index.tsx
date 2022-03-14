@@ -264,8 +264,6 @@ export default function PublishContent(props: IProps) {
         <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
-          isFrontend={isFrontend}
-          appData={appData}
           onCancelDeploy={onCancelDeploy}
           stopSpin={stopSpin}
           onSpin={onSpin}
