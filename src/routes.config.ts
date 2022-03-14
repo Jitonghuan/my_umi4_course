@@ -1218,6 +1218,18 @@ export default [
     ],
   },
   {
+    path: 'fe-monitor',
+    name: '前端监控',
+    icon: 'icon-poc_index',
+    routes: [
+      {
+        path: 'basic',
+        name: '基础监控',
+        component: '@/pages/fe-monitor/basic/index',
+      },
+    ],
+  },
+  {
     path: '*',
     name: 'NOT FOUND',
     hideInMenu: true,
