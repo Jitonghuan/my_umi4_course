@@ -114,7 +114,6 @@ export function FilterCard(props: React.PropsWithChildren<ICardProps>) {
 // content card
 export function ContentCard(props: React.PropsWithChildren<ICardProps>) {
   const { children, noPadding, className, ...rest } = props;
-
   const clazz = classnames('vc-page-content-body', className, {
     'no-padding': noPadding,
   });
