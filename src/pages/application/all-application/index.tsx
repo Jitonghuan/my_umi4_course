@@ -63,7 +63,7 @@ export default function AllApplication() {
             {!isLoading && !appListData.length && (
               <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
-            <ApplicationCardList key={type} type={type} dataSource={appListData} />
+            <ApplicationCardList key={type} type={type} dataSource={appListData} loadAppListData={loadAppListData} />
             {total > 10 && (
               <div className={`${rootCls}-pagination-wrap`}>
                 <Pagination

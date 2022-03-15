@@ -2,19 +2,21 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/14 10:20
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Divider } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { PlusOutlined, StarFilled, StarTwoTone } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { queryProjectEnvList, queryCollectProjectEnvList } from './service';
+import { queryProjectEnvList } from './service';
+import { queryMyCollectUrl } from '../service';
 import { useDeleteProjectEnv, useQueryCategory, useEnvList, useUpdateProjectEnv } from './hook';
 import EnvironmentEditDraw from './add-environment';
 import './index.less';
 import { Radio } from '@cffe/h2o-design';
 import DetailList from './environment-detail/detail-list';
+import { collectRequst } from '../common';
 /** 环境大类 */
 const envTypeData = [
   {
@@ -60,23 +62,28 @@ export default function EnvironmentList() {
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [type, setType] = useState<'collect' | 'all'>('collect');
   const [rowData, setRowData] = useState<any>({}); //选中一行后
+  const typeRef = useRef('collect');
   const queryProjectEnv = async (queryParamsObj: any) => {
-    const url = type === 'collect' ? queryCollectProjectEnvList : queryProjectEnvList;
+    const url = typeRef.current === 'collect' ? queryMyCollectUrl : queryProjectEnvList;
     setListLoading(true);
+    if (typeRef.current === 'collect') {
+      Object.assign(queryParamsObj, { collectionType: 'projectEnv' });
+    }
     await getRequest(url, { data: queryParamsObj })
       .then((res) => {
         if (res?.success) {
-          // let data = res.data.dataSource;
-          let data = [
-            { ...res?.data?.dataSource[0], star: 0 },
-            { ...res?.data?.dataSource[0], id: 200, star: 1 },
-          ];
+          let data = res.data.dataSource;
+          // let data = [{ ...res?.data?.dataSource[0] }, { ...res?.data?.dataSource[0], id: 200, isCollection: false }];
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
           setPageIndex(pageIndex);
           setDataSource(data);
           setPageTotal(pageTotal);
         }
+      })
+      .catch(() => {
+        setDataSource([]);
+        setPageTotal(0);
       })
       .finally(() => {
         setListLoading(false);
@@ -115,6 +122,7 @@ export default function EnvironmentList() {
   const handleTypeChange = useCallback(
     (e: any) => {
       const next = e.target.value;
+      typeRef.current = next;
       setType(next);
       loadListData({ pageIndex, pageSize });
     },
@@ -144,19 +152,13 @@ export default function EnvironmentList() {
     loadListData({ pageIndex: 1, pageSize: 20 });
   };
   // 点击收藏图标
-  const switchStar = (record: any, e: any) => {
+  const switchStar = async (record: any, e: any) => {
     e.stopPropagation();
-    let editParamsObj = {
-      projectEnvCode: record.envCode || '',
-      mark: record.mark || '',
-      relationApps: record || [],
-      projectEnvName: record.envName || '',
-      star: record.star === 0 ? '1' : '0',
-    };
-    Object.assign(record, { record: record.star === 0 ? '1' : '0' });
-    // updateProjectEnv(editParamsObj).then(() => {
-    //   loadListData({ pageIndex, pageSize });
-    // });
+    const envCode = record.envCode;
+    const result = await collectRequst('projectEnv', record.isCollection ? 'cancel' : 'add', envCode);
+    if (result) {
+      loadListData({ pageIndex, pageSize });
+    }
   };
   return (
     <PageContainer className="project-env-list">
@@ -277,14 +279,22 @@ export default function EnvironmentList() {
               title="环境名"
               render={(_, record: EnvironmentEdit) => (
                 <>
-                  <span
-                    style={{
-                      color: '#ff8419',
-                      marginRight: '5px',
-                    }}
-                    onClick={(e) => switchStar(record, e)}
-                  >
-                    {record.star ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+                  <span onClick={(e) => e.stopPropagation()}>
+                    <Popconfirm
+                      title={`确定${record.isCollection ? '取消该收藏' : '收藏该应用'}吗？`}
+                      onConfirm={(e) => switchStar(record, e)}
+                      okText="确定"
+                      cancelText="取消"
+                    >
+                      <span
+                        style={{
+                          padding: '5px',
+                          color: '#ff8419',
+                        }}
+                      >
+                        {record.isCollection ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+                      </span>
+                    </Popconfirm>
                   </span>
                   {record.envName}
                 </>

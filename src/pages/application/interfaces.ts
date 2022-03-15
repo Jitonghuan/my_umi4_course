@@ -45,7 +45,7 @@ export interface AppItemVO {
   /** 是否是二方包应用 (后端) */
   isClient?: number;
   /** 是否被用户收藏 (后端) */
-  isStar?: number;
+  isCollection?: number;
   /** 描述 */
   desc?: string;
   /**是否启用Nacos */
