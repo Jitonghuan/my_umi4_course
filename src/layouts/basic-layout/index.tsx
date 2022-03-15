@@ -6,6 +6,7 @@ import { BasicLayout } from '@cffe/layout';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
+import { WaterMark } from '@ant-design/pro-layout';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
 import { IconMap } from '@/components/vc-icons';
@@ -83,9 +84,14 @@ export default function Layout(props: any) {
   }
 
   let LogoName = window.location.href.includes('fygs')
-    ? '--富阳骨伤'
+    ? '——富阳骨伤'
     : window.location.href.includes('zslnyy')
-    ? '--中山老年医院'
+    ? '——中山老年医院'
+    : '';
+  let waterMarkName = window.location.href.includes('fygs')
+    ? 'Matrix-富阳骨伤'
+    : window.location.href.includes('zslnyy')
+    ? 'Matrix-中山老年医院'
     : '';
 
   //切换部门确认
@@ -117,54 +123,55 @@ export default function Layout(props: any) {
         onSubmit={onPositionSubmit}
         onCancel={() => setPosVisible(false)}
       />
-
-      <FeContext.Provider
-        value={{
-          breadcrumbMap,
-          isOpenPermission: appConfig.isOpenPermission,
-          permissionData,
-          businessData,
-          categoryData,
-        }}
-      >
-        <ChartsContext.Provider value={{ effectResize }}>
-          <BasicLayout
-            {...(props as any)}
-            isOpenLogin={true}
-            pagePrefix={appConfig.pagePrefix}
-            siderMenuProps={{
-              isOpenPermission: appConfig.isOpenPermission,
-              permissionData,
-              IconMap,
-            }}
-            showHeader={!fromThird}
-            showSiderMenu={!fromThird}
-            headerProps={{
-              env: getEnv(),
-              onClickPosition: () => {
-                setPosVisible(true);
-                loadStaffOrgData();
-                setUserPosition({
-                  orgId: userInfo?.orgId,
-                  // campusId: 2000001,
-                  deptId: userInfo.deptInfo.deptId,
-                });
-              },
-              title: (
-                <div>
-                  <img src={appConfig.logo} style={{ marginRight: '5px' }} />
-                  {appConfig.title + LogoName}
-                </div>
-              ),
-              positionText: '部门',
-              isShowGlobalMenu: false,
-              onBrandClick: () => {
-                props.history.push('/matrix/index');
-              },
-            }}
-          />
-        </ChartsContext.Provider>
-      </FeContext.Provider>
+      <WaterMark content={waterMarkName} zIndex={0} fontSize={24} fontColor="#d7e1f580">
+        <FeContext.Provider
+          value={{
+            breadcrumbMap,
+            isOpenPermission: appConfig.isOpenPermission,
+            permissionData,
+            businessData,
+            categoryData,
+          }}
+        >
+          <ChartsContext.Provider value={{ effectResize }}>
+            <BasicLayout
+              {...(props as any)}
+              isOpenLogin={true}
+              pagePrefix={appConfig.pagePrefix}
+              siderMenuProps={{
+                isOpenPermission: appConfig.isOpenPermission,
+                permissionData,
+                IconMap,
+              }}
+              showHeader={!fromThird}
+              showSiderMenu={!fromThird}
+              headerProps={{
+                env: getEnv(),
+                onClickPosition: () => {
+                  setPosVisible(true);
+                  loadStaffOrgData();
+                  setUserPosition({
+                    orgId: userInfo?.orgId,
+                    // campusId: 2000001,
+                    deptId: userInfo.deptInfo.deptId,
+                  });
+                },
+                title: (
+                  <div>
+                    <img src={appConfig.logo} style={{ marginRight: '5px' }} />
+                    {appConfig.title + LogoName}
+                  </div>
+                ),
+                positionText: '部门',
+                isShowGlobalMenu: false,
+                onBrandClick: () => {
+                  props.history.push('/matrix/index');
+                },
+              }}
+            />
+          </ChartsContext.Provider>
+        </FeContext.Provider>
+      </WaterMark>
     </ConfigProvider>
   );
 }
