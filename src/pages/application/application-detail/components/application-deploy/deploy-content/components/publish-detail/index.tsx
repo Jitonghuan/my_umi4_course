@@ -206,6 +206,7 @@ export default function PublishDetail(props: IProps) {
       },
       strokeWidth: 3,
       format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
+      showInfo: '上传中请不要关闭弹窗',
     },
 
     beforeUpload: (file: any, fileList: any) => {
@@ -214,40 +215,29 @@ export default function PublishDetail(props: IProps) {
           title: '操作提示',
           content: `确定要上传文件：${file.name}进行离线部署吗？`,
           onOk: () => {
-            // return resolve(file);
-            // fileList[0].percent = 0;
-            setfileList([...fileList]);
-            // setfileList([fileList]);
-
-            return resolve(fileList);
-            // return  reject(false);
+            return resolve(file);
           },
           onCancel: () => {
-            //  return reject(file);
             return reject(false);
           },
         });
       });
     },
-
-    customRequest: (option: any) => {
-      console.log(option);
-      const formData = new FormData();
-      formData.append('image', option.file);
-      const fileUrl = uploadImages();
-      axios.request({
-        url: fileUrl,
-        method: 'post',
-        data: formData,
-        onUploadProgress: (progressEvent) => {
-          const complete = ((progressEvent.loaded / progressEvent.total) * 100) | 0;
-          // filelist[0].percent = complete
-          setfileList([filelist]);
-        },
-      });
-      // postRequest(fileUrl,{data:formData}).then(res=>{
-      //   debugger
-      // })
+    onChange: (info: any) => {
+      if (info.file.status === 'uploading') {
+      }
+      if (info.file.status === 'done' && info.file?.response.success) {
+        message.success(`${info.file.name} 上传成功`);
+        setDeployVisible(false);
+        setDeployEnv([]);
+        onOperate('uploadImageEnd');
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} 上传失败`);
+      } else if (info.file?.response?.success === false) {
+        message.error(info.file.response?.errorMsg);
+      } else if (info.file.status === 'removed') {
+        message.warning('上传取消！');
+      }
     },
   };
 
@@ -554,11 +544,10 @@ export default function PublishDetail(props: IProps) {
 
         <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
           <span>配置文件：</span>
-          <Upload accept=".tgz" maxCount={1} {...uploadProps} fileList={filelist}>
+          <Upload accept=".tgz" maxCount={1} {...uploadProps}>
             <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
               离线部署
             </Button>
-            <p style={{ paddingTop: 8, color: 'gray' }}>{uploading && '正在上传中请勿关闭弹窗...'}</p>
           </Upload>
         </div>
       </Modal>
