@@ -235,7 +235,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               {
                 required: true,
                 message: '输入的项目环境CODE里请不要包含“dev,test,pre,prod”字符',
-                pattern: /^[/(?!dev)|(?!test)|(?!prod)|(?!pre)/]*$/,
+                pattern: /^(?!.*dev|.*test|.*prod|.*pre)/,
               },
             ]}
           >
