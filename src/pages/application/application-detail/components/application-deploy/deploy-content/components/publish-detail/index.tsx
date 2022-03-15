@@ -3,10 +3,13 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Popconfirm } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
+
+import axios from 'axios';
+
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
 import {
@@ -48,7 +51,7 @@ export default function PublishDetail(props: IProps) {
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
   const [uploading, setUploading] = useState<boolean>(false);
-  const [fileList, setFileList] = useState<any[]>([]);
+  const [filelist, setfileList] = useState<any[]>([]);
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode || !appData) return;
@@ -188,10 +191,6 @@ export default function PublishDetail(props: IProps) {
       .join(',');
   }, [envDataList, deployInfo]);
 
-  // 离线部署
-  const handleUpload = () => {
-    setUploading(true);
-  };
   const uploadImages = () => {
     return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
   };
@@ -208,34 +207,47 @@ export default function PublishDetail(props: IProps) {
       strokeWidth: 3,
       format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
     },
-    // beforeUpload: (file:any,fileList:any) => {
-    //   // const isPNG = file.type === 'image/png';
-    //   // if (!isPNG) {
-    //   //   message.error(`${file.name} is not a png file`);
-    //   // }
-    //   return (
-    //     Modal.confirm({
-    //       title: '操作提示',
-    //       content: `确定要上传文件：${file.name}进行离线部署吗？`,
-    //       onOk: () => {
 
-    //       },
-    //     }))
-    // },
+    beforeUpload: (file: any, fileList: any) => {
+      return new Promise((resolve, reject) => {
+        Modal.confirm({
+          title: '操作提示',
+          content: `确定要上传文件：${file.name}进行离线部署吗？`,
+          onOk: () => {
+            return resolve(file);
+            // fileList[0].percent = 0;
+            // setfileList([...fileList]);
+            // return resolve(fileList);
+            // return  reject(false);
+          },
+          onCancel: () => {
+            //  return reject(file);
+            return reject(false);
+          },
+        });
+      });
+    },
     onChange: (info: any) => {
       if (info.file.status === 'uploading') {
-        return;
+        console.log('99999');
+        setUploading(true);
+        // return;
       }
-      if (info.file.status === 'done' && info.file?.response.success == 'true') {
+      if (info.file.status === 'done' && info.file?.response.success) {
         message.success(`${info.file.name} 上传成功`);
+        setDeployVisible(false);
+        setUploading(false);
+        setDeployEnv([]);
+        onOperate('uploadImageEnd');
+        // setUploading(false);
       } else if (info.file.status === 'error') {
+        setUploading(false);
         message.error(`${info.file.name} 上传失败`);
-      } else if (info.file?.response?.success == 'false') {
-        message.error(info.file.response.errorMsg || '');
+      } else if (info.file?.response?.success === false) {
+        message.error(info.file.response?.errorMsg);
+        setUploading(false);
       }
-      setDeployVisible(false);
-      setDeployEnv([]);
-      onOperate('uploadImageEnd');
+      // setfileList([...info.fileList]);
     },
   };
 
@@ -367,7 +379,15 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )} */}
         {envTypeCode === 'prod' && (
-          <Button type="primary" onClick={() => setDeployVisible(true)} icon={<UploadOutlined />}>
+          <Button
+            type="primary"
+            onClick={() => {
+              setDeployVisible(true);
+              setUploading(false);
+              setDeployEnv([]);
+            }}
+            icon={<UploadOutlined />}
+          >
             离线部署
           </Button>
         )}
@@ -534,22 +554,12 @@ export default function PublishDetail(props: IProps) {
 
         <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
           <span>配置文件：</span>
-          <Upload {...uploadProps} accept=".tgz">
+          <Upload accept=".tgz" maxCount={1} {...uploadProps}>
             <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
-              上传离线部署文件
+              离线部署
             </Button>
+            <p style={{ paddingTop: 8, color: 'gray' }}>{uploading && '正在上传中请勿关闭弹窗...'}</p>
           </Upload>
-        </div>
-        <div>
-          <Button
-            type="primary"
-            onClick={handleUpload}
-            disabled={fileList.length === 0}
-            loading={uploading}
-            style={{ marginTop: 16 }}
-          >
-            {uploading ? '上传中' : '确认部署'}
-          </Button>
         </div>
       </Modal>
 
