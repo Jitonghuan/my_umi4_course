@@ -82,6 +82,12 @@ export default function Layout(props: any) {
     return appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
   }
 
+  let LogoName = window.location.href.includes('fygs')
+    ? '--富阳骨伤'
+    : window.location.href.includes('zslnyy')
+    ? '--中山老年医院'
+    : '';
+
   //切换部门确认
   const onPositionSubmit = (data: UserPositionProps) => {
     chooseDept(data.deptId);
