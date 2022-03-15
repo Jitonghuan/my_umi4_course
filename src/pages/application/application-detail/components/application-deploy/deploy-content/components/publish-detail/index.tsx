@@ -210,7 +210,7 @@ export default function PublishDetail(props: IProps) {
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
   const uploadProps = {
-    name: appData?.appType === 'frontend' ? 'file' : 'name',
+    name: appData?.appType === 'frontend' ? 'file' : 'image',
     action: uploadImages,
     progress: {
       strokeColor: {
