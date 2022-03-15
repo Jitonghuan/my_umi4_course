@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Popconfirm } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
@@ -17,6 +17,7 @@ import {
   deployReuse,
   deployMaster,
   offlineDeploy,
+  feOfflineDeploy,
   restartApp,
   queryProjectEnvList,
 } from '@/pages/application/service';
@@ -27,7 +28,7 @@ import ServerStatus from '../server-status';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
-
+const { Paragraph } = Typography;
 export default function PublishDetail(props: IProps) {
   const [envProjectForm] = Form.useForm();
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
@@ -41,7 +42,7 @@ export default function PublishDetail(props: IProps) {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [projectEnvCodeOptions, setProjectEnvCodeOptions] = useState<any>([]);
   const [projectEnvName, setProjectEnvName] = useState<string>('');
-  // const [envDataList, setEnvDataList] = useState([]);
+  const [offlineEnvData, setOffLineEnvData] = useState([]); //支持离线部署的环境
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
   const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
@@ -55,22 +56,14 @@ export default function PublishDetail(props: IProps) {
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode || !appData) return;
-
-    // 当前部署环境
-    getRequest(listAppEnv, {
-      data: {
-        envTypeCode: envTypeCode,
-        appCode: appData?.appCode,
-      },
-    }).then((result) => {
-      let envSelect: any = [];
-      if (result?.success) {
-        result?.data?.map((item: any) => {
-          envSelect.push({ label: item.envName, value: item.envCode });
-        });
-        setEnvDataList(envSelect);
-      }
-      // setEnvDataList(data.list);
+    // 所有环境
+    getEnvList({ envTypeCode: envTypeCode, appCode: appData?.appCode });
+    // 支持离线部署的环境
+    getEnvList({
+      envTypeCode: envTypeCode,
+      appCode: appData?.appCode,
+      proEnvType: 'benchmark',
+      clusterName: 'private-cluster',
     });
 
     if (deployInfo.id !== undefined) {
@@ -94,6 +87,26 @@ export default function PublishDetail(props: IProps) {
       });
     }
   }, [appCategoryCode, envTypeCode, deployInfo.id]);
+  // 获取环境列表
+  const getEnvList = (params: any) => {
+    getRequest(listAppEnv, {
+      data: {
+        ...params,
+      },
+    }).then((result) => {
+      let envs: any = [];
+      if (result?.success) {
+        result?.data?.map((item: any) => {
+          envs.push({ label: item.envName, value: item.envCode });
+        });
+        if (params.clusterName) {
+          setOffLineEnvData(envs);
+        } else {
+          setEnvDataList(envs);
+        }
+      }
+    });
+  };
   // 下一个部署环境
   const getNextEnv = (envTypeCode: string) => {
     return getRequest(listAppEnv, {
@@ -192,12 +205,16 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
-    return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
+    if (appData?.appType === 'frontend') {
+      return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
+    } else {
+      return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
+    }
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
   const uploadProps = {
-    name: 'image',
+    name: appData?.appType === 'frontend' ? 'file' : 'image',
     action: uploadImages,
     progress: {
       strokeColor: {
@@ -427,11 +444,13 @@ export default function PublishDetail(props: IProps) {
           {deployInfo?.id || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
-          {deployInfo?.releaseBranch || '--'}
+          {deployInfo?.releaseBranch ? <Paragraph copyable>{deployInfo?.releaseBranch}</Paragraph> : '---'}
+          {/* <Paragraph copyable>{deployInfo?.releaseBranch || '--'}</Paragraph> */}
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {deployInfo?.version || '--'}
+            {deployInfo?.version ? <Paragraph copyable>{deployInfo?.version}</Paragraph> : '---'}
+            {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
@@ -532,19 +551,27 @@ export default function PublishDetail(props: IProps) {
       >
         <div>
           <span>发布环境：</span>
-          <Checkbox.Group
+          <Radio.Group
+            onChange={(e: any) => {
+              onOperate('uploadImageStart');
+              setDeployEnv(e.target.value);
+            }}
+            value={deployEnv}
+            options={offlineEnvData || []}
+          ></Radio.Group>
+          {/* <Checkbox.Group
             value={deployEnv}
             onChange={(v: any) => {
               onOperate('uploadImageStart');
               setDeployEnv(v);
             }}
             options={envDataList || []}
-          />
+          /> */}
         </div>
 
         <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
           <span>配置文件：</span>
-          <Upload accept=".tgz" maxCount={1} {...uploadProps}>
+          <Upload {...uploadProps} accept=".tgz,.gz">
             <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
               离线部署
             </Button>

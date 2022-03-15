@@ -87,6 +87,7 @@ export default function Layout(props: any) {
     : window.location.href.includes('zslnyy')
     ? '--中山老年医院'
     : '';
+
   //切换部门确认
   const onPositionSubmit = (data: UserPositionProps) => {
     chooseDept(data.deptId);
