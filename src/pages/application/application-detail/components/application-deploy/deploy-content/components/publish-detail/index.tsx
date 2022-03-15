@@ -216,7 +216,9 @@ export default function PublishDetail(props: IProps) {
           onOk: () => {
             // return resolve(file);
             // fileList[0].percent = 0;
-            // setfileList([...fileList]);
+            setfileList([...fileList]);
+            // setfileList([fileList]);
+
             return resolve(fileList);
             // return  reject(false);
           },
