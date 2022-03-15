@@ -209,42 +209,46 @@ export default function PublishDetail(props: IProps) {
     },
 
     beforeUpload: (file: any, fileList: any) => {
-      return new Promise((resolve, reject) => {
-        Modal.confirm({
-          title: '操作提示',
-          content: `确定要上传文件：${file.name}进行离线部署吗？`,
-          onOk: () => {
-            // return resolve(file);
-            // fileList[0].percent = 0;
-            setfileList([...fileList]);
-            return resolve(fileList);
-            // return  reject(false);
-          },
-          onCancel: () => {
-            //  return reject(file);
-            return reject(false);
-          },
-        });
-      });
+      return true;
+      // return new Promise((resolve, reject) => {
+      //   Modal.confirm({
+      //     title: '操作提示',
+      //     content: `确定要上传文件：${file.name}进行离线部署吗？`,
+      //     onOk: () => {
+      //       resolve(file);
+      //       // fileList[0].percent = 0;
+      //       // setfileList([...fileList]);
+      //       // return resolve(fileList);
+      //       // return  reject(false);
+      //     },
+      //     onCancel: () => {
+      //       //  return reject(file);
+      //       reject(false);
+      //     },
+      //   });
+      // });
     },
-    customRequest: (option: any) => {
-      console.log(option);
-      const formData = new FormData();
-      formData.append('image', option.file);
-      const fileUrl = uploadImages();
-      axios.request({
-        url: fileUrl,
-        method: 'post',
-        data: formData,
-        onUploadProgress: (progressEvent) => {
-          const complete = ((progressEvent.loaded / progressEvent.total) * 100) | 0;
-          // filelist[0].percent = complete
-          setfileList([filelist]);
-        },
-      });
-      // postRequest(fileUrl,{data:formData}).then(res=>{
-      //   debugger
-      // })
+    onChange: (info: any) => {
+      if (info.file.status === 'uploading') {
+        console.log('99999');
+        setUploading(true);
+        // return;
+      }
+      if (info.file.status === 'done' && info.file?.response.success) {
+        message.success(`${info.file.name} 上传成功`);
+        setDeployVisible(false);
+        setUploading(false);
+        setDeployEnv([]);
+        onOperate('uploadImageEnd');
+        // setUploading(false);
+      } else if (info.file.status === 'error') {
+        setUploading(false);
+        message.error(`${info.file.name} 上传失败`);
+      } else if (info.file?.response?.success === false) {
+        message.error(info.file.response?.errorMsg);
+        setUploading(false);
+      }
+      // setfileList([...info.fileList]);
     },
   };
 
@@ -551,7 +555,7 @@ export default function PublishDetail(props: IProps) {
 
         <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
           <span>配置文件：</span>
-          <Upload accept=".tgz" maxCount={1} {...uploadProps} fileList={filelist}>
+          <Upload accept=".tgz" maxCount={1} {...uploadProps}>
             <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
               离线部署
             </Button>
