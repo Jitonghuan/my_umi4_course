@@ -3,9 +3,17 @@
 // @create 2021/08/24 09:21
 
 import { useState, useEffect, useCallback } from 'react';
-import { getRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import { queryBizData } from '@/common/apis';
-import { queryApps, queryAppEnvs, queryAppsUrl, queryMyAppsUrl, queryMyCollectUrl } from './service';
+import {
+  queryApps,
+  queryAppEnvs,
+  queryAppsUrl,
+  queryMyAppsUrl,
+  queryMyCollectUrl,
+  cancelCollection,
+  addCollection,
+} from './service';
 import { AppItemVO, EnvDataVO } from './interfaces';
 
 // 获取应用分组选项
@@ -57,21 +65,21 @@ export function useAppListData(
   const loadData = useCallback(
     async (extra?: any) => {
       const { requestType, ...others } = params || {};
-      const url = typeObj[requestType];
+      const requestData = { ...others, ...extra, pageIndex, pageSize };
+      if (requestType === 'collect') {
+        Object.assign(requestData, { collectionType: 'application' });
+      }
+      const url = typeObj[requestType] || queryAppsUrl;
       try {
         setLoading(true);
         const result = await getRequest(url, {
-          data: {
-            ...others,
-            ...extra,
-            pageIndex,
-            pageSize,
-          },
+          data: { ...requestData },
         });
         const { dataSource, pageInfo } = result.data || {};
         setData(dataSource || []);
         setTotal(pageInfo?.total || 0);
       } catch (ex) {
+        setTotal(0);
         setData([]);
       } finally {
         setLoading(false);
@@ -169,4 +177,62 @@ export function useAppEnvCodeData(appCode?: string): [Record<string, EnvDataVO[]
   }, [appCode]);
 
   return [data, loading];
+}
+export function useStar(def: boolean) {
+  const [isStar, setStar] = useState(def);
+  return [
+    isStar,
+    ({ type, code, isStar }: any) => {
+      postRequest(isStar ? cancelCollection : addCollection, {
+        data: { collectionType: type, collectionObj: code },
+      }).then((res) => {
+        console.log(res);
+
+        setStar(isStar);
+      });
+    },
+  ];
+}
+
+// 新增或者取消收藏
+export function useCollect(collectionType: string, params: any) {
+  const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const loadData = useCallback(() => {
+    setLoading(true);
+    const { addOrCancel, appCode } = params;
+    const data = { collectionType: collectionType, collectionObj: appCode };
+    const url = addOrCancel === 'add' ? addCollection : cancelCollection;
+    try {
+      postRequest(url, { data: { ...data } }).then((res) => {
+        setIsSuccess(res?.data?.success);
+      });
+    } catch {
+      setIsSuccess(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [collectionType, params]);
+
+  useEffect(() => {
+    loadData();
+  }, [collectionType, params]);
+  return [isSuccess, loading];
+}
+
+// 取消收藏
+export function useCancelCollect(appCode: string) {
+  const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const params = { collectionType: 'application', collectionObj: appCode };
+  try {
+    postRequest(addCollection, { data: { data: { ...params } } }).then((res) => {
+      setIsSuccess(res.data.success);
+    });
+  } catch {
+    setIsSuccess(false);
+  } finally {
+    setLoading(false);
+  }
+  return [isSuccess, loading];
 }

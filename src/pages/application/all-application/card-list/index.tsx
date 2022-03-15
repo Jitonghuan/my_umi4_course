@@ -5,10 +5,11 @@
  * @create 2021-04-08 16:09
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
-import { Tag, Tooltip } from 'antd';
+import { Tag, Tooltip, Popconfirm } from 'antd';
 import { StarFilled, StarTwoTone, Html5Outlined, CodeOutlined, UserOutlined } from '@ant-design/icons';
+import { useCollect, useCancelCollect, useStar } from '../../hooks';
 import CardLayout from '@cffe/vc-b-card-layout';
 import { AppItemVO } from '../../interfaces';
 import './index.less';
@@ -34,11 +35,16 @@ export interface IProps {
 }
 export function AppCard(props: any) {
   const { item, type } = props;
-  const [star, setStar] = useState(item.isStar);
+  const [star, setStar] = useStar(item.isStar) as any;
+  const [params, setParams] = useState({});
   const switchStar = (a: AppItemVO, evt: any) => {
-    setStar(star ? 0 : 1);
-    evt.stopPropagation();
+    const appCode = a.appCode;
+    setStar({ isStar: star ? 0 : 1, type: 'application', code: appCode });
+    // evt.stopPropagation();
   };
+  useEffect(() => {
+    console.log('set to ' + star);
+  }, [star]);
 
   return (
     <div
@@ -56,7 +62,27 @@ export function AppCard(props: any) {
     >
       <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
         {item.appName}
-        <span
+        <span onClick={(e) => e.stopPropagation()}>
+          <Popconfirm
+            title={`你确定${item.star === 0 ? '收藏该应用' : '取消该收藏'}吗？`}
+            onConfirm={(e) => switchStar(item, e)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <span
+              style={{
+                top: 0,
+                right: 0,
+                position: 'absolute',
+                color: '#ff8419',
+              }}
+              // onClick={(e) => switchStar(item, e)}
+            >
+              {star ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+            </span>
+          </Popconfirm>
+        </span>
+        {/* <span
           style={{
             top: 0,
             right: 0,
@@ -66,7 +92,7 @@ export function AppCard(props: any) {
           onClick={(e) => switchStar(item, e)}
         >
           {star ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
-        </span>
+        </span> */}
       </div>
       {item.appType === 'frontend' && type === 'mine' ? (
         <>
