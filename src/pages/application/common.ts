@@ -1,7 +1,7 @@
 import { cancelCollection, addCollection } from './service';
 import { postRequest } from '@/utils/request';
 
-export function collectRequst(collectionType: string, addOrCancel: string, params: any) {
+export function collectRequst(collectionType: string, addOrCancel: string, params: any): any {
   const url = addOrCancel === 'add' ? addCollection : cancelCollection;
   postRequest(url, { data: { ...params } }).then((res) => {
     if (res) {

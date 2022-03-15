@@ -9,7 +9,8 @@ import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Tag, Tooltip, Popconfirm } from 'antd';
 import { StarFilled, StarTwoTone, Html5Outlined, CodeOutlined, UserOutlined } from '@ant-design/icons';
-import { useCollect, useCancelCollect, useStar } from '../../hooks';
+// import { useCollect, useCancelCollect, useStar } from '../../hooks';
+import { collectRequst } from '../../common';
 import CardLayout from '@cffe/vc-b-card-layout';
 import { AppItemVO } from '../../interfaces';
 import './index.less';
@@ -35,16 +36,20 @@ export interface IProps {
 }
 export function AppCard(props: any) {
   const { item, type } = props;
-  const [star, setStar] = useStar(item.isStar) as any;
-  const [params, setParams] = useState({});
+  // const [star, setStar] = useStar(item.isStar) as any;
+  // const [params, setParams] = useState({});
   const switchStar = (a: AppItemVO, evt: any) => {
     const appCode = a.appCode;
-    setStar({ isStar: star ? 0 : 1, type: 'application', code: appCode });
+    const result = collectRequst('application', 'add', appCode);
+    if (result) {
+      console.log(111);
+    }
+    // setStar({ isStar: star ? 0 : 1, type: 'application', code: appCode });
     // evt.stopPropagation();
   };
-  useEffect(() => {
-    console.log('set to ' + star);
-  }, [star]);
+  // useEffect(() => {
+  //   console.log('set to ' + star);
+  // }, [star]);
 
   return (
     <div
@@ -78,7 +83,7 @@ export function AppCard(props: any) {
               }}
               // onClick={(e) => switchStar(item, e)}
             >
-              {star ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+              {item.star ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
             </span>
           </Popconfirm>
         </span>
