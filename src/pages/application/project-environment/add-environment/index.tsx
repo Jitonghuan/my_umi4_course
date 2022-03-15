@@ -227,7 +227,18 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           <Form.Item label="项目环境名" name="envName" rules={[{ required: true, message: '请输入环境名!' }]}>
             <Input style={{ width: 300 }} placeholder="单行输入"></Input>
           </Form.Item>
-          <Form.Item label="项目环境CODE" name="envCode" rules={[{ required: true, message: '请输入项目环境CODE!' }]}>
+          <Form.Item
+            label="项目环境CODE"
+            name="envCode"
+            //  rules={[{ required: true, message: '请输入项目环境CODE!' }]}
+            rules={[
+              {
+                required: true,
+                message: '输入的项目环境CODE里请不要包含“dev,test,pre,prod”字符',
+                pattern: /^[/(?!dev)|(?!test)|(?!prod)|(?!pre)/]*$/,
+              },
+            ]}
+          >
             <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
           </Form.Item>
           <Form.Item
