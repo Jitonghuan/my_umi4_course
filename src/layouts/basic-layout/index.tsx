@@ -153,7 +153,7 @@ export default function Layout(props: any) {
               title: (
                 <div>
                   <img src={appConfig.logo} style={{ marginRight: '5px' }} />
-                  {appConfig.title}
+                  {appConfig.title + LogoName}
                 </div>
               ),
               positionText: '部门',
