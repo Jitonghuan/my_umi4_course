@@ -40,6 +40,7 @@ export default function DetailList(props: any) {
   const [selectedRows, setSelectedRows] = useState<DataType[]>([]);
   const [delLoading, setDelLoading] = useState<boolean>(false);
   const hasSelected = selectedRowKeys?.length > 0;
+  const [display, setDisplay] = useState<boolean>(false);
 
   const queryCommonParamsRef = useRef<{ benchmarkEnvCode: string; projectEnvCode: string; whichApps: String }>({
     benchmarkEnvCode: projectEnvInfo?.benchmarkEnvCode,
@@ -70,6 +71,7 @@ export default function DetailList(props: any) {
       .then((res) => {
         if (res?.success) {
           let data = res?.data;
+          console.log(data, 'data');
           data.canAddApps?.map((item: any, index: number) => {
             canAddAppsData.push({
               value: item.appCode,
@@ -101,19 +103,26 @@ export default function DetailList(props: any) {
   // 如果存在props中传过来的数据 说明是外层的 而不是路由跳转过来的
   useEffect(() => {
     if (dataInfo?.id || dataInfo?.id === '') {
-      setProjectEnvInfo(dataInfo);
-      queryCommonParamsRef.current = {
-        benchmarkEnvCode: dataInfo?.benchmarkEnvCode,
-        projectEnvCode: dataInfo?.envCode,
-        whichApps: 'alreadyAdd',
-      };
-      queryProjectEnv(dataInfo?.benchmarkEnvCode, dataInfo?.envCode);
+      if (dataInfo.id === '') {
+        setDataSource([]);
+      } else {
+        queryProjectEnv(dataInfo?.benchmarkEnvCode, dataInfo?.envCode);
+        setProjectEnvInfo(dataInfo);
+        queryCommonParamsRef.current = {
+          benchmarkEnvCode: dataInfo?.benchmarkEnvCode,
+          projectEnvCode: dataInfo?.envCode,
+          whichApps: 'alreadyAdd',
+        };
+        setDisplay(true);
+      }
     }
   }, [dataInfo]);
 
   useEffect(() => {
     const data: any = history.location.state;
-    queryProjectEnv(data?.benchmarkEnvCode, data?.envCode);
+    if (data) {
+      queryProjectEnv(data?.benchmarkEnvCode, data?.envCode);
+    }
   }, [history.location.state]);
 
   useEffect(() => {
@@ -168,9 +177,10 @@ export default function DetailList(props: any) {
   return (
     <div>
       <Divider />
-      <div className="table-caption">
+      <div className="table-caption ">
         <div className="caption-left">
-          <h3>项目环境已添加应用列表</h3>
+          <h3 style={{ marginRight: '10px' }}>项目环境已添加应用列表</h3>
+          {display && dataInfo.envName && <Tag color="blue">{dataInfo.envName}</Tag>}
         </div>
         <div className="caption-right">
           <Button

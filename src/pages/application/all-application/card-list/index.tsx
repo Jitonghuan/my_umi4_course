@@ -37,13 +37,7 @@ export interface IProps {
 
 export default function ApplicationCardList(props: IProps) {
   const { dataSource, type, loadAppListData } = props;
-  useEffect(() => {
-    if (dataSource) {
-      dataSource.forEach((item) => {
-        Object.assign(item, { isCollection: 0 });
-      });
-    }
-  }, []);
+
   const switchStar = async (a: AppItemVO, evt: any) => {
     const appCode = a.appCode;
     const result = await collectRequst('application', a.isCollection ? 'cancel' : 'add', appCode);
@@ -70,25 +64,27 @@ export default function ApplicationCardList(props: IProps) {
         >
           <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
             {item.appName}
-            <span onClick={(e) => e.stopPropagation()}>
-              <Popconfirm
-                title={`确定${item.isCollection ? '取消该收藏' : '收藏该应用'}吗？`}
-                onConfirm={(e) => switchStar(item, e)}
-                okText="确定"
-                cancelText="取消"
-              >
-                <span
-                  style={{
-                    top: 0,
-                    right: 0,
-                    position: 'absolute',
-                    color: '#ff8419',
-                  }}
+            {type !== 'mine' && (
+              <span onClick={(e) => e.stopPropagation()}>
+                <Popconfirm
+                  title={`确定${item.isCollection ? '取消该收藏' : '收藏该应用'}吗？`}
+                  onConfirm={(e) => switchStar(item, e)}
+                  okText="确定"
+                  cancelText="取消"
                 >
-                  {item.isCollection ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
-                </span>
-              </Popconfirm>
-            </span>
+                  <span
+                    style={{
+                      top: 0,
+                      right: 0,
+                      position: 'absolute',
+                      color: '#ff8419',
+                    }}
+                  >
+                    {item.isCollection ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+                  </span>
+                </Popconfirm>
+              </span>
+            )}
           </div>
           {item.appType === 'frontend' && type === 'mine' ? (
             <>

@@ -57,7 +57,7 @@ export default function appEnvPageList() {
   // 加载应用分类下拉选择
   const selectCategory = () => {
     getRequest(appTypeList).then((result) => {
-      const list = (result.data.dataSource || []).map((n: any) => ({
+      const list = (result?.data?.dataSource || []).map((n: any) => ({
         label: n.categoryName,
         value: n.categoryCode,
         data: n,

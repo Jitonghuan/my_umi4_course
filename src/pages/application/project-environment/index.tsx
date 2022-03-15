@@ -73,12 +73,15 @@ export default function EnvironmentList() {
       .then((res) => {
         if (res?.success) {
           let data = res.data.dataSource;
-          // let data = [{ ...res?.data?.dataSource[0] }, { ...res?.data?.dataSource[0], id: 200, isCollection: false }];
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
           setPageIndex(pageIndex);
           setDataSource(data);
           setPageTotal(pageTotal);
+        } else if (!res) {
+          // 防止接口出现404两个tab页面数据出现混乱的情况
+          setDataSource([]);
+          setPageTotal(0);
         }
       })
       .catch(() => {
@@ -95,28 +98,30 @@ export default function EnvironmentList() {
   }, []);
 
   useEffect(() => {
-    if (dataSource.length !== 0 && type === 'collect') {
-      // 如果用户没选中任一行或者选中了一行之后但是该行之后被删除了 都要默认选中第一行
-      const idList = dataSource.map((item: any) => item.id);
-      if (!idList.includes(rowData.id) || !rowData.id) {
-        let { id, envCode, relEnvs } = dataSource[0];
-        setRowData({
-          id,
-          envCode,
-          benchmarkEnvCode: relEnvs,
-          type: 'projectEnvironment',
-        });
-      }
-    }
     if (dataSource.length === 0 && type === 'collect') {
       setRowData({
         id: '',
         envCode: '',
         benchmarkEnvCode: '',
         type: 'projectEnvironment',
+        envName: '',
       });
     }
-  }, [dataSource, type]);
+    if (dataSource.length !== 0 && type === 'collect') {
+      // 如果用户没选中任一行或者选中了一行之后但是该行之后被删除了 都要默认选中第一行
+      const idList = dataSource.map((item: any) => item.id);
+      if (!idList.includes(rowData.id) || !rowData.id) {
+        let { id, envCode, relEnvs, envName } = dataSource[0];
+        setRowData({
+          id,
+          envCode,
+          envName,
+          benchmarkEnvCode: relEnvs,
+          type: 'projectEnvironment',
+        });
+      }
+    }
+  }, [dataSource]);
 
   // tab切换
   const handleTypeChange = useCallback(
@@ -161,7 +166,7 @@ export default function EnvironmentList() {
     }
   };
   return (
-    <PageContainer className="project-env-list">
+    <PageContainer className="project-env-list project-env-detail">
       <EnvironmentEditDraw
         mode={enviroEditMode}
         initData={enviroInitData}
@@ -255,6 +260,7 @@ export default function EnvironmentList() {
                     envCode: record.envCode,
                     benchmarkEnvCode: record.relEnvs,
                     type: 'projectEnvironment',
+                    envName: record.envName,
                   });
                 }, // 点击行
               };
@@ -281,7 +287,7 @@ export default function EnvironmentList() {
                 <>
                   <span onClick={(e) => e.stopPropagation()}>
                     <Popconfirm
-                      title={`确定${record.isCollection ? '取消该收藏' : '收藏该应用'}吗？`}
+                      title={`确定${record.isCollection ? '取消该收藏' : '收藏该环境'}吗？`}
                       onConfirm={(e) => switchStar(record, e)}
                       okText="确定"
                       cancelText="取消"
