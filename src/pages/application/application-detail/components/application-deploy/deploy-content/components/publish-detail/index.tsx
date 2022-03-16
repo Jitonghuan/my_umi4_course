@@ -5,8 +5,11 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { getRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import { history } from 'umi';
+
+import axios from 'axios';
+
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
 import {
@@ -48,6 +51,8 @@ export default function PublishDetail(props: IProps) {
   const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [filelist, setfileList] = useState<any[]>([]);
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode || !appData) return;
@@ -199,7 +204,6 @@ export default function PublishDetail(props: IProps) {
       .join(',');
   }, [envDataList, deployInfo]);
 
-  // 离线部署
   const uploadImages = () => {
     if (appData?.appType === 'frontend') {
       return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
@@ -219,21 +223,38 @@ export default function PublishDetail(props: IProps) {
       },
       strokeWidth: 3,
       format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
+      showInfo: '上传中请不要关闭弹窗',
+    },
+
+    beforeUpload: (file: any, fileList: any) => {
+      return new Promise((resolve, reject) => {
+        Modal.confirm({
+          title: '操作提示',
+          content: `确定要上传文件：${file.name}进行离线部署吗？`,
+          onOk: () => {
+            return resolve(file);
+          },
+          onCancel: () => {
+            return reject(false);
+          },
+        });
+      });
     },
     onChange: (info: any) => {
       if (info.file.status === 'uploading') {
-        return;
       }
-      if (info.file.status === 'done' && info.file?.response.success == 'true') {
+      if (info.file.status === 'done' && info.file?.response.success) {
         message.success(`${info.file.name} 上传成功`);
+        setDeployVisible(false);
+        setDeployEnv([]);
+        onOperate('uploadImageEnd');
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败`);
-      } else if (info.file?.response.success === false) {
-        message.error(info.file.response.errorMsg);
+      } else if (info.file?.response?.success === false) {
+        message.error(info.file.response?.errorMsg);
+      } else if (info.file.status === 'removed') {
+        message.warning('上传取消！');
       }
-      setDeployVisible(false);
-      setDeployEnv([]);
-      onOperate('uploadImageEnd');
     },
   };
 
@@ -365,7 +386,15 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )} */}
         {envTypeCode === 'prod' && (
-          <Button type="primary" onClick={() => setDeployVisible(true)} icon={<UploadOutlined />}>
+          <Button
+            type="primary"
+            onClick={() => {
+              setDeployVisible(true);
+              setUploading(false);
+              setDeployEnv([]);
+            }}
+            icon={<UploadOutlined />}
+          >
             离线部署
           </Button>
         )}
