@@ -26,7 +26,7 @@ envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
 envType = window.location.href.includes('base-poc') ? 'base-poc' : envType;
 
 const domainName: any = {
-  'base-poc': 'http://c2f.apex-base-poc.cfuture.shop',
+  'base-poc': 'http://apex-base-poc.cfuture.shop',
   zslnyy: 'http://c2f.apex-zslnyy.cfuture.shop',
   fygs: 'http://c2f.apex-fygs.seenew.info:180',
   prod: 'http://c2f.apex.cfuture.shop',
