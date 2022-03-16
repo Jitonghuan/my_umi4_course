@@ -558,7 +558,7 @@ export default function Push(props: any) {
             onOk={handleOk}
             onCancel={handleCancel}
             width={750}
-            bodyStyle={{ height: '300px' }}
+            // bodyStyle={{ height: '300px' }}
           >
             <Form layout="inline" form={tmplDetailForm} labelCol={{ flex: '150px' }}>
               <div style={{ width: '100%' }}>
@@ -626,7 +626,7 @@ export default function Push(props: any) {
               </Form.Item>
               {value === 'time' && (
                 <Form.Item
-                  label="请选择生效时间："
+                  label="生效时间："
                   name="effectTime"
                   style={{ width: '100%', marginTop: '15px' }}
                   rules={[{ required: true, message: '这是必选项' }]}
@@ -636,7 +636,7 @@ export default function Push(props: any) {
               )}
               {(value === 'time' || value === 'rightEffect') && (
                 <Form.Item
-                  label="请选择并发数量："
+                  label="并发数量："
                   name="timeRange"
                   style={{ width: '100%', marginTop: '15px' }}
                   rules={[{ required: true, message: '这是必选项' }]}
