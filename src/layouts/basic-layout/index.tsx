@@ -85,19 +85,21 @@ export default function Layout(props: any) {
     }
     return appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
   }
-
-  let LogoName = window.location.href.includes('fygs')
-    ? '——富阳骨伤'
-    : window.location.href.includes('zslnyy')
-    ? '——中山老年医院'
-    : window.location.href.includes('base-poc')
-    ? '——技术中台演示环境'
-    : '';
-  let waterMarkName = window.location.href.includes('fygs')
-    ? 'Matrix-富阳骨伤'
-    : window.location.href.includes('zslnyy')
-    ? 'Matrix-中山老年医院'
-    : '';
+  const envPublishType = getEnv();
+  const LogoName: any = {
+    'base-poc': '——技术中台演示环境',
+    fygs: '——富阳骨伤',
+    zslnyy: '——中山老年医院',
+    prod: '',
+    dev: '',
+  };
+  const waterMarkName = {
+    fygs: 'Matrix-富阳骨伤',
+    zslnyy: 'Matrix-中山老年医院',
+    'base-poc': '',
+    prod: '',
+    dev: '',
+  };
 
   //切换部门确认
   const onPositionSubmit = (data: UserPositionProps) => {
@@ -128,7 +130,7 @@ export default function Layout(props: any) {
         onSubmit={onPositionSubmit}
         onCancel={() => setPosVisible(false)}
       />
-      <WaterMark content={waterMarkName} zIndex={0} fontSize={24} fontColor="#d7e1f580">
+      <WaterMark content={waterMarkName[envPublishType]} zIndex={0} fontSize={24} fontColor="#d7e1f580">
         <FeContext.Provider
           value={{
             breadcrumbMap,
@@ -164,7 +166,7 @@ export default function Layout(props: any) {
                 title: (
                   <div>
                     <img src={appConfig.logo} style={{ marginRight: '5px' }} />
-                    {appConfig.title + LogoName}
+                    {appConfig.title + LogoName[envPublishType]}
                   </div>
                 ),
                 positionText: '部门',

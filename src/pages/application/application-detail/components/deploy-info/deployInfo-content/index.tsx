@@ -8,6 +8,7 @@
 import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
+import appConfig from '@/app.config';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -65,14 +66,12 @@ export default function DeployContent(props: DeployContentProps) {
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
-  // const [isSucess, setIsSucess] = useState<boolean>(false);
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
   const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
-
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
@@ -119,9 +118,20 @@ export default function DeployContent(props: DeployContentProps) {
     immediate: false,
   });
 
+  function getEnv() {
+    if (
+      window.location.href.includes('matrix-local') ||
+      window.location.href.includes('matrix-test') ||
+      window.location.href.includes('matrix.cfuture')
+    ) {
+      return 'isMatrix';
+    } else {
+      return 'notMatrix';
+    }
+  }
+  let envPublishType = getEnv();
   // 进入页面加载环境和版本信息
   useEffect(() => {
-    let operateType = false;
     try {
       if (type === 'viewLog_goBack' && viewLogEnvType == envTypeCode) {
         selectAppEnv().then((result: any) => {
@@ -150,28 +160,13 @@ export default function DeployContent(props: DeployContentProps) {
                   } else {
                     timerHandler('stop');
                   }
-                  //  if (initEnvCode.current !== '') {
-                  //    queryAppOperateLog(initEnvCode.current);
-                  //  }
                 }
               })
               .finally(() => {
                 setInstanceLoading(false);
               });
-            //  queryInstanceList(appData?.appCode, viewLogEnv).then((res: any) => {
-
-            //    operateType = true;
-            //  });
           });
         }
-        //  setTimeout(() => {
-
-        //    if (operateType && viewLogEnv) {
-        //      timerHandler('do', true);
-        //    } else {
-        //      timerHandler('stop');
-        //    }
-        //  }, 100);
       } else {
         selectAppEnv().then((result: any) => {
           const dataSources = result.data?.map((n: any) => ({
@@ -210,29 +205,16 @@ export default function DeployContent(props: DeployContentProps) {
                         } else {
                           timerHandler('stop');
                         }
-                        //  if (initEnvCode.current !== '') {
-                        //    queryAppOperateLog(initEnvCode.current);
-                        //  }
                       }
                     })
                     .finally(() => {
                       setInstanceLoading(false);
                     });
-                  //  queryInstanceList(appData?.appCode, initEnvCode.current).then((res: any) => {
-                  //    operateType = true;
-                  //  });
                 } else {
                   timerHandler('stop');
                 }
               });
           }
-          //  setTimeout(() => {
-          //    if (operateType && initEnvCode.current) {
-          //      timerHandler('do', true);
-          //    } else {
-          //      timerHandler('stop');
-          //    }
-          //  }, 100);
         });
       }
     } catch (error) {
@@ -242,7 +224,15 @@ export default function DeployContent(props: DeployContentProps) {
 
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
-    return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark' } });
+    if (envPublishType === 'isMatrix') {
+      return getRequest(listAppEnv, {
+        data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
+      });
+    } else {
+      return getRequest(listAppEnv, {
+        data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
+      });
+    }
   };
 
   useEffect(() => {

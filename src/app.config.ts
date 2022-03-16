@@ -24,6 +24,13 @@ const domainName: any = {
   prod: 'http://c2f.apex.cfuture.shop',
   dev: 'http://c2f.apex-dev.cfuture.shop',
 };
+const wsPrefixName: any = {
+  'base-poc': 'ws://matrix-base-poc.cfuture.shop',
+  fygs: 'ws://matrix-fygs.seenew.info:180',
+  zslnyy: 'ws://matrix-zslnyy.cfuture.shop',
+  prod: 'ws://matrix-api.cfuture.shop',
+  dev: 'ws://matrix-api-test.cfuture.shop',
+};
 
 export default {
   /** 站点图标 */
@@ -56,11 +63,5 @@ export default {
   // apex 地址
   apexDomainName: domainName[envType],
   // webSocket 地址
-  wsPrefix: window.location.href.includes('fygs')
-    ? 'ws://matrix-fygs.seenew.info:180'
-    : window.location.href.includes('zslnyy')
-    ? 'ws://matrix-zslnyy.cfuture.shop'
-    : window.location.href.includes('base-poc')
-    ? 'ws://matrix-base-poc.cfuture.shop'
-    : 'ws://matrix-api.cfuture.shop',
+  wsPrefix: wsPrefixName[envType],
 };
