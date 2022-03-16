@@ -117,13 +117,9 @@ export default function DeployContent(props: DeployContentProps) {
   const { getStatus: getTimerStatus, handle: timerHandler } = useInterval(intervalFunc, 3000, {
     immediate: false,
   });
-
+  let href = window.location.href;
   function getEnv() {
-    if (
-      window.location.href.includes('matrix-local') ||
-      window.location.href.includes('matrix-test') ||
-      window.location.href.includes('matrix.cfuture')
-    ) {
+    if (href.includes('matrix-local') || href.includes('matrix-test') || href.includes('matrix.cfuture')) {
       return 'isMatrix';
     } else {
       return 'notMatrix';
