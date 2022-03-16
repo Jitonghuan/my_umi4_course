@@ -71,7 +71,6 @@ export default function DetailList(props: any) {
       .then((res) => {
         if (res?.success) {
           let data = res?.data;
-          console.log(data, 'data');
           data.canAddApps?.map((item: any, index: number) => {
             canAddAppsData.push({
               value: item.appCode,
@@ -84,6 +83,9 @@ export default function DetailList(props: any) {
           } else {
             setDataSource([]);
           }
+        }
+        if (!res?.success) {
+          setDataSource([]);
         }
       })
       .finally(() => {
