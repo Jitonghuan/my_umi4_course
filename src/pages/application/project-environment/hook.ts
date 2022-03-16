@@ -13,15 +13,13 @@ export function useCreateProjectEnv() {
         .then((res) => {
           if (res.success) {
             message.success('新增项目环境成功！');
-          } else {
-            message.error('新增项目环境失败！');
           }
         })
         .finally(() => {
           setEnsureLoading(false);
         });
     } catch (error) {
-      message.error(error);
+      message.error(`新增项目环境失败！${error}`);
     }
   };
   return [ensureLoading, createProjectEnv];
@@ -33,12 +31,13 @@ export function useUpdateProjectEnv() {
       await putRequest(APIS.updateProjectEnv, { data: updateParamsObj }).then((res) => {
         if (res.success) {
           message.success('编辑项目环境成功！');
-        } else {
-          message.error('编辑项目环境失败！');
         }
+        //  else {
+        //   message.error('编辑项目环境失败！');
+        // }
       });
     } catch (error) {
-      message.error(error);
+      message.error(`编辑项目环境失败！${error}`);
     }
   };
   return [updateProjectEnv];
