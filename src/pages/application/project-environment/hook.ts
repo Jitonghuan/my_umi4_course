@@ -14,9 +14,6 @@ export function useCreateProjectEnv() {
           if (res.success) {
             message.success('新增项目环境成功！');
           }
-          // else {
-          //   message.error('新增项目环境失败！');
-          // }
         })
         .finally(() => {
           setEnsureLoading(false);
