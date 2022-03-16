@@ -21,7 +21,12 @@ export default function AppDeployInfo(props: any) {
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
-  let env = window.location.href.includes('zslnyy') || window.location.href.includes('fygs') ? 'prod' : 'dev';
+  let env =
+    window.location.href.includes('zslnyy') || window.location.href.includes('fygs')
+      ? 'prod'
+      : window.location.href.includes('base-poc')
+      ? 'prod'
+      : 'dev';
   try {
     localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
   } catch (error) {
