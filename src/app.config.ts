@@ -15,8 +15,10 @@ const BUILD_ENV = window.BUILD_ENV || 'dev';
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
 envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
+envType = window.location.href.includes('base-poc') ? 'base-poc' : envType;
 
 const domainName: any = {
+  'base-poc': 'http://c2f.apex-base-poc.cfuture.shop',
   zslnyy: 'http://c2f.apex-zslnyy.cfuture.shop',
   fygs: 'http://c2f.apex-fygs.seenew.info:180',
   prod: 'http://c2f.apex.cfuture.shop',
@@ -58,5 +60,7 @@ export default {
     ? 'ws://matrix-fygs.seenew.info:180'
     : window.location.href.includes('zslnyy')
     ? 'ws://matrix-zslnyy.cfuture.shop'
+    : window.location.href.includes('base-poc')
+    ? 'ws://matrix-base-poc.cfuture.shop'
     : 'ws://matrix-api.cfuture.shop',
 };

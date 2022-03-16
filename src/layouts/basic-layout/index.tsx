@@ -80,6 +80,9 @@ export default function Layout(props: any) {
     if (window.location.href.includes('zslnyy')) {
       return 'zslnyy';
     }
+    if (window.location.href.includes('base-poc')) {
+      return 'base-poc';
+    }
     return appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
   }
 
@@ -87,6 +90,8 @@ export default function Layout(props: any) {
     ? '——富阳骨伤'
     : window.location.href.includes('zslnyy')
     ? '——中山老年医院'
+    : window.location.href.includes('base-poc')
+    ? '——技术中台演示环境'
     : '';
   let waterMarkName = window.location.href.includes('fygs')
     ? 'Matrix-富阳骨伤'
