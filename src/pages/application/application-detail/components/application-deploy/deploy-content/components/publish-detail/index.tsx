@@ -376,6 +376,15 @@ export default function PublishDetail(props: IProps) {
       window.open(data.subJenkinsUrl, '_blank');
     }
   }
+  let href = window.location.href;
+  function getEnv() {
+    if (href.includes('matrix-local') || href.includes('matrix-test') || href.includes('matrix.cfuture')) {
+      return 'isMatrix';
+    } else {
+      return 'notMatrix';
+    }
+  }
+  let envPublishType = getEnv();
 
   return (
     <div className={rootCls}>

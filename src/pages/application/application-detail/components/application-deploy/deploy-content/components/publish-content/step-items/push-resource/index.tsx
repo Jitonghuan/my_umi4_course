@@ -53,6 +53,15 @@ export default function PushResourceStep(props: StepItemProps) {
       onOperate('rePushFeResourceEnd');
     }
   };
+  let href = window.location.href;
+  function getEnv() {
+    if (href.includes('matrix-local') || href.includes('matrix-test') || href.includes('matrix.cfuture')) {
+      return 'isMatrix';
+    } else {
+      return 'notMatrix';
+    }
+  }
+  let envPublishType = getEnv();
 
   return (
     <Steps.Step
@@ -67,7 +76,7 @@ export default function PushResourceStep(props: StepItemProps) {
               重试
             </Button>
           )}
-          {supportEnv.includes(envCode) && canDownload && (
+          {envPublishType === 'isMatrix' && supportEnv.includes(envCode) && canDownload && (
             <Button
               style={{ marginTop: 4 }}
               target="_blank"

@@ -12,6 +12,7 @@ const IS_LOCAL = process.env.NODE_ENV === 'development';
 
 // @ts-ignore
 const BUILD_ENV = window.BUILD_ENV || 'dev';
+const PRIVATE_METHODS = window.PRIVATE_METHODS || 'isMatrix';
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
