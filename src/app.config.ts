@@ -13,6 +13,7 @@
 import logo from '@/assets/imgs/logo.svg';
 import favicon from '@/assets/imgs/favicon.png';
 import { baseRoutePath } from './routes.config';
+import { domainName, wsPrefixName, LogoName, waterMarkName } from './envType.config';
 
 /** 是否是本地开发环境 */
 const IS_LOCAL = process.env.NODE_ENV === 'development';
@@ -24,21 +25,6 @@ let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
 envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
 envType = window.location.href.includes('base-poc') ? 'base-poc' : envType;
-
-const domainName: any = {
-  'base-poc': 'http://apex-base-poc.cfuture.shop',
-  zslnyy: 'http://c2f.apex-zslnyy.cfuture.shop',
-  fygs: 'http://c2f.apex-fygs.seenew.info:180',
-  prod: 'http://c2f.apex.cfuture.shop',
-  dev: 'http://c2f.apex-dev.cfuture.shop',
-};
-const wsPrefixName: any = {
-  'base-poc': 'ws://matrix-base-poc.cfuture.shop',
-  fygs: 'ws://matrix-fygs.seenew.info:180',
-  zslnyy: 'ws://matrix-zslnyy.cfuture.shop',
-  prod: 'ws://matrix-api.cfuture.shop',
-  dev: 'ws://matrix-api-test.cfuture.shop',
-};
 
 export default {
   /** 站点图标 */
@@ -72,4 +58,8 @@ export default {
   apexDomainName: domainName[envType],
   // webSocket 地址
   wsPrefix: wsPrefixName[envType],
+  // logo 名字
+  logoName: LogoName[envType] || '',
+  // 水印
+  waterMarkName: waterMarkName[envType] || '',
 };
