@@ -119,7 +119,12 @@ export default function DeployContent(props: DeployContentProps) {
   });
   let href = window.location.href;
   function getEnv() {
-    if (href.includes('matrix-local') || href.includes('matrix-test') || href.includes('matrix.cfuture')) {
+    if (
+      href.includes('matrix-local') ||
+      href.includes('matrix-test') ||
+      href.includes('matrix.cfuture') ||
+      href.includes('base-poc')
+    ) {
       return 'isMatrix';
     } else {
       return 'notMatrix';
