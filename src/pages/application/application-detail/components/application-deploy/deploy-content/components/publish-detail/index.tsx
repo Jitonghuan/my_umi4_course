@@ -5,11 +5,9 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { getRequest, postRequest } from '@/utils/request';
+import { getRequest } from '@/utils/request';
 import { history } from 'umi';
-
-import axios from 'axios';
-
+import appConfig from '@/app.config';
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
 import {
@@ -51,8 +49,7 @@ export default function PublishDetail(props: IProps) {
   const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [filelist, setfileList] = useState<any[]>([]);
+
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode || !appData) return;
@@ -376,15 +373,6 @@ export default function PublishDetail(props: IProps) {
       window.open(data.subJenkinsUrl, '_blank');
     }
   }
-  let href = window.location.href;
-  function getEnv() {
-    if (href.includes('matrix-local') || href.includes('matrix-test') || href.includes('matrix.cfuture')) {
-      return 'isMatrix';
-    } else {
-      return 'notMatrix';
-    }
-  }
-  let envPublishType = getEnv();
 
   return (
     <div className={rootCls}>
@@ -394,12 +382,11 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {envTypeCode === 'prod' && (
+        {envTypeCode === 'prod' && appConfig.PRIVATE_METHODS === 'private' && (
           <Button
             type="primary"
             onClick={() => {
               setDeployVisible(true);
-              setUploading(false);
               setDeployEnv([]);
             }}
             icon={<UploadOutlined />}
