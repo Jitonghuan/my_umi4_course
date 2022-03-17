@@ -25,6 +25,15 @@ export const queryAppsUrl = `${appConfig.apiPrefix}/appManage/list`;
 /** GET 查询我的应用列表 */
 export const queryMyAppsUrl = `${appConfig.apiPrefix}/appManage/listMyApp`;
 
+/** GET 查询我的收藏应用列表 */
+export const queryMyCollectUrl = `${appConfig.apiPrefix}/userManage/userCollection/listMyCollection`;
+
+/** GET 新增收藏 */
+export const addCollection = `${appConfig.apiPrefix}/userManage/userCollection/add`;
+
+/** GET 取消收藏 */
+export const cancelCollection = `${appConfig.apiPrefix}/userManage/userCollection/cancel`;
+
 /** GET 获取分支列表 */
 export const queryBranchListUrl = `${appConfig.apiPrefix}/releaseManage/branch/list`;
 

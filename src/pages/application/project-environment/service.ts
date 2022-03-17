@@ -12,6 +12,9 @@ export const deleteProjectEnv = `${appConfig.apiPrefix}/appManage/projectEnv/del
 /** GET 查询项目环境 */
 export const queryProjectEnvList = `${appConfig.apiPrefix}/appManage/projectEnv/list`;
 
+/** GET 查询收藏的项目环境 */
+export const queryCollectProjectEnvList = `${appConfig.apiPrefix}/appManage/projectEnv/list`;
+
 /** GET 查询应用 */
 export const queryAppsList = `${appConfig.apiPrefix}/appManage/projectEnv/apps/list`;
 
