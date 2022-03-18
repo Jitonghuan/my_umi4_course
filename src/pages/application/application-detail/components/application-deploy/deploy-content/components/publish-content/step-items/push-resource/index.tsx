@@ -11,6 +11,7 @@ import DetailContext from '@/pages/application/application-detail/context';
 import { downloadResource, listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { deployStatusMapping } from '../../frontend-steps/prod';
+import appConfig from '@/app.config';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
@@ -67,7 +68,7 @@ export default function PushResourceStep(props: StepItemProps) {
               重试
             </Button>
           )}
-          {supportEnv.includes(envCode) && canDownload && (
+          {appConfig.PRIVATE_METHODS === 'public' && supportEnv.includes(envCode) && canDownload && (
             <Button
               style={{ marginTop: 4 }}
               target="_blank"

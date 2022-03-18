@@ -9,7 +9,7 @@ import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 // 资源引用的根路径，此变量与项目在 nginx 中匹配前缀相关，如果
 const sourceRoot = '/';
 
-const { VERSION, NODE_ENV, BUILD_ENV } = process.env;
+const { VERSION, NODE_ENV, BUILD_ENV} = process.env;
 const publicPathPrefix = NODE_ENV === 'development' ? '/' : !VERSION ? `${sourceRoot}` : `${sourceRoot}${VERSION}/`;
 
 // 更多配置查看: https://umijs.org/zh-CN/config
