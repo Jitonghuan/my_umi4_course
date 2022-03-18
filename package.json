@@ -37,7 +37,7 @@
     "@cffe/fe-tpl": "1.0.0",
     "@cffe/h2o-design": "^1.0.51",
     "@cffe/internal-icon": "^1.0.1",
-    "@cffe/layout": "^0.1.19",
+    "@cffe/layout": "^0.1.21",
     "@cffe/pc-editor-table": "~1.0.10",
     "@cffe/sona": "^0.6.10",
     "@cffe/sona-editor": "^1.15.0",

@@ -117,20 +117,7 @@ export default function DeployContent(props: DeployContentProps) {
   const { getStatus: getTimerStatus, handle: timerHandler } = useInterval(intervalFunc, 3000, {
     immediate: false,
   });
-  let href = window.location.href;
-  function getEnv() {
-    if (
-      href.includes('matrix-local') ||
-      href.includes('matrix-test') ||
-      href.includes('matrix.cfuture') ||
-      href.includes('base-poc')
-    ) {
-      return 'isMatrix';
-    } else {
-      return 'notMatrix';
-    }
-  }
-  let envPublishType = getEnv();
+
   // 进入页面加载环境和版本信息
   useEffect(() => {
     try {
@@ -225,7 +212,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
-    if (envPublishType === 'isMatrix') {
+    if (appConfig.PRIVATE_METHODS === 'public') {
       return getRequest(listAppEnv, {
         data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
       });
