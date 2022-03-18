@@ -48,14 +48,14 @@ export default function Push(props: any) {
   const [selectList, setSelectList] = useState<any[]>([]);
   const [pageTotal, setPageTotal] = useState<number>();
   const [currentData, setCurrentData] = useState<any[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(true); //是否显示弹窗
+  const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
   const [pushItemVisible, setPushItemVisible] = useState(false); //是否显示推送项弹窗
   const [tmplDetailOptions, setTmplDetailOptions] = useState<any[]>([]);
   const [selectTmplOption, setSelectTmplOption] = useState<any>(); //获取当前选中值显示在推送项弹窗
   const [labelListSource, setLabelListSource] = useState<any>();
   const [labelLoading, setLabelLoading] = useState<boolean>(false);
   const [businessData, setBusinessData] = useState<any[]>([]);
-  const [value, setValue] = useState<string>(''); //弹窗radio的值
+  const [value, setValue] = useState<number>(0); //弹窗radio的值
 
   const getLabelList = () => {
     setLabelLoading(true);
@@ -217,64 +217,74 @@ export default function Push(props: any) {
   });
   let getEnvCodes = [...envCodes];
   let pushItemArry: any = [];
+
   const handleOk = () => {
     const values = tmplDetailForm.getFieldsValue();
-    Object.assign(values, { effectTime: moment(values.effectTime).format('YYYY-MM-DD HH:mm:ss') });
-    console.log('values', values);
+    console.log(moment(undefined).format('YYYY-MM-DD HH:mm:ss'), 999);
+    Object.assign(values, { TakeEffectTime: moment(values.TakeEffectTime).format('YYYY-MM-DD HH:mm:ss') });
+    // 如果选择all时走原来的推送接口
+    // if (values?.pushItem === 'all') {
+    //   if (appCategoryCode && envCodes) {
+    //     postRequest(APIS.pushTmpl, {
+    //       data: {
+    //         appCategoryCode: appCategoryCode,
+    //         templateCode,
+    //         appCodes,
+    //         envCodes: getEnvCodes,
+    //         ConcurrentNumber:values?.ConcurrentNumber,
+    //         TakeEffectTime:values?.TakeEffectTime,
+    //         RestartPolicy:values?.RestartPolicy
+    //        },
+    //     }).then((resp: any) => {
+    //       if (resp.success) {
+    //         message.success('推送成功！');
+    //         setIsModalVisible(false);
+    //         // window.location.reload();
+    //         loadListData({ pageIndex: 1, pageSize: 20 });
+    //         setTimeout(() => {
+    //           setSelectedRowKeys(['undefined']);
+    //         }, 200);
+    //       }
+    //     });
+    //   } else {
+    //     message.error('请选择要推送的应用分类');
+    //   }
+    // } else {
+    //   //如果不是选择all 就把所有选择放入pushItemArry数组中
+    //   values?.pushItem?.map((el: any) => {
+    //     pushItemArry.push(el);
+    //   });
+    // }
+    // //当不选择all且选择其他时则为长度>0，走新的接口
+    // if (pushItemArry.length > 0) {
+    //   if (appCategoryCode && envCodes) {
+    //     postRequest(APIS.customPush, {
+    //       data: {
+    //         appCategoryCode: appCategoryCode,
+    //         templateCode,
+    //         appCodes,
+    //         envCodes: getEnvCodes,
+    //         customItems: pushItemArry,
+    //         ConcurrentNumber:values?.ConcurrentNumber,
+    //         TakeEffectTime:values?.TakeEffectTime,
+    //         RestartPolicy:values?.RestartPolicy
+    //       },
+    //     }).then((resp: any) => {
+    //       if (resp.success) {
+    //         message.success('推送成功！');
+    //         // window.location.reload();
+    //         setIsModalVisible(false);
+    //         loadListData({ pageIndex: 1, pageSize: 20 });
+    //         setTimeout(() => {
+    //           setSelectedRowKeys(['undefined']);
+    //         }, 200);
+    //       }
+    //     });
+    //   } else {
+    //     message.error('请选择要推送的应用分类');
+    //   }
+    // }
   };
-  // const handleOk = () => {
-  //   setIsModalVisible(false);
-  //   const values = tmplDetailForm.getFieldsValue();
-  //   // 如果选择all时走原来的推送接口
-  //   if (values?.pushItem === 'all') {
-  //     if (appCategoryCode && envCodes) {
-  //       postRequest(APIS.pushTmpl, {
-  //         data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes },
-  //       }).then((resp: any) => {
-  //         if (resp.success) {
-  //           message.success('推送成功！');
-  //           // window.location.reload();
-  //           loadListData({ pageIndex: 1, pageSize: 20 });
-  //           setTimeout(() => {
-  //             setSelectedRowKeys(['undefined']);
-  //           }, 200);
-  //         }
-  //       });
-  //     } else {
-  //       message.error('请选择要推送的应用分类');
-  //     }
-  //   } else {
-  //     //如果不是选择all 就把所有选择放入pushItemArry数组中
-  //     values?.pushItem?.map((el: any) => {
-  //       pushItemArry.push(el);
-  //     });
-  //   }
-  //   //当不选择all且选择其他时则为长度>0，走新的接口
-  //   if (pushItemArry.length > 0) {
-  //     if (appCategoryCode && envCodes) {
-  //       postRequest(APIS.customPush, {
-  //         data: {
-  //           appCategoryCode: appCategoryCode,
-  //           templateCode,
-  //           appCodes,
-  //           envCodes: getEnvCodes,
-  //           customItems: pushItemArry,
-  //         },
-  //       }).then((resp: any) => {
-  //         if (resp.success) {
-  //           message.success('推送成功！');
-  //           // window.location.reload();
-  //           loadListData({ pageIndex: 1, pageSize: 20 });
-  //           setTimeout(() => {
-  //             setSelectedRowKeys(['undefined']);
-  //           }, 200);
-  //         }
-  //       });
-  //     } else {
-  //       message.error('请选择要推送的应用分类');
-  //     }
-  //   }
-  // };
 
   //点击查询
   const getApplication = (value: any) => {
@@ -609,7 +619,7 @@ export default function Push(props: any) {
               <Divider />
               <Form.Item
                 label="重启策略："
-                name="restarType"
+                name="RestartPolicy"
                 style={{ width: '100%' }}
                 rules={[{ required: true, message: '这是必选项' }]}
               >
@@ -619,32 +629,32 @@ export default function Push(props: any) {
                   }}
                   value={value}
                 >
-                  <Radio value="time">定时生效</Radio>
-                  <Radio value="notEffect">不生效</Radio>
-                  <Radio value="rightEffect">立即生效</Radio>
+                  <Radio value={3}>定时生效</Radio>
+                  <Radio value={1}>不生效</Radio>
+                  <Radio value={2}>立即生效</Radio>
                 </Radio.Group>
               </Form.Item>
-              {value === 'time' && (
+              {value === 3 && (
                 <Form.Item
                   label="生效时间："
-                  name="effectTime"
+                  name="TakeEffectTime"
                   style={{ width: '100%', marginTop: '15px' }}
                   rules={[{ required: true, message: '这是必选项' }]}
                 >
                   <DatePicker showTime allowClear />
                 </Form.Item>
               )}
-              {(value === 'time' || value === 'rightEffect') && (
+              {(value === 3 || value === 2) && tmplDetailData?.templateType === 'deployment' && (
                 <Form.Item
                   label="并发数量："
-                  name="timeRange"
+                  name="ConcurrentNumber"
                   style={{ width: '100%', marginTop: '15px' }}
                   rules={[{ required: true, message: '这是必选项' }]}
                 >
                   <Select style={{ width: 160 }}>
-                    <Select.Option value="5">5</Select.Option>
-                    <Select.Option value="10">10</Select.Option>
-                    <Select.Option value="15">15</Select.Option>
+                    <Select.Option value={5}>5</Select.Option>
+                    <Select.Option value={10}>10</Select.Option>
+                    <Select.Option value={15}>15</Select.Option>
                   </Select>
                 </Form.Item>
               )}

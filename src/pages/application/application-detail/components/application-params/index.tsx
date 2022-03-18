@@ -3,7 +3,7 @@
 // @create 2021/07/23 17:20
 
 import React, { useContext, useRef } from 'react';
-import { Button, Row, Col, Form, Select, Space, message, Spin } from 'antd';
+import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio, DatePicker } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
@@ -12,10 +12,13 @@ import DetailContext from '@/pages/application/application-detail/context';
 import EditorTable from '@cffe/pc-editor-table';
 import * as APIS from '@/pages/application/service';
 import './index.less';
+import moment from 'moment';
+const { RangePicker } = DatePicker;
 
 export default function ApplicationParams(props: any) {
   const { appData } = useContext(DetailContext);
   const [applicationForm] = Form.useForm();
+  const [restarForm] = Form.useForm();
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [selectEnvData, setSelectEnvData] = useState<string>(''); //下拉选择应用环境
@@ -26,6 +29,9 @@ export default function ApplicationParams(props: any) {
   const [isDeployment, setIsDeployment] = useState<string>();
   const [ensureDisable, setEnsureDisable] = useState<boolean>(false);
   const [infoLoading, setInfoloading] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [value, setValue] = useState<number>(0);
+
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
   const { templateType, envCode } = props?.history.location?.query || {};
@@ -239,32 +245,65 @@ export default function ApplicationParams(props: any) {
         setInfoloading(false);
       });
   };
+  // 禁止选用今日之前的日期
+  const disabledDate = (current: any) => {
+    return current && current < moment().subtract(1, 'day');
+  };
+
+  function range(start: any, end: any) {
+    const result = [];
+    for (let i = start; i < end; i++) {
+      result.push(i);
+    }
+    return result;
+  }
+
+  const disabledDateTime = () => {
+    // console.log(dates,type,888)
+    let hours = moment().hours();
+    let minutes = moment().minutes();
+    let seconds = moment().seconds();
+    console.log(hours, minutes, seconds, 88);
+    // if(dates&&moment(dates[1]).date()===moment().date()&&moment().date()&&type=='end'){
+    return {
+      disabledHours: () => range(0, hours),
+      disabledMinutes: () => range(1, minutes),
+      disabledSeconds: () => range(0, seconds),
+    };
+    // }
+  };
   //编辑应用模版
   const setApplication = (values: any) => {
-    const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
-      prev[el.key] = el.value;
-      return prev;
-    }, {} as any);
-    const value = values.value;
-    putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
-      if (result.success) {
-        message.success('提交成功！');
-        // window.location.reload();
-        applicationForm.setFieldsValue({
-          tmplConfigurableItem: [],
-          jvm: '',
-          value: '',
-        });
-        setTimeout(() => {
-          showAppList(selectEnvData, selectTmpl);
-        }, 200);
-      }
-    });
+    console.log(1111);
+    // const tmplConfigurableItem = values.tmplConfigurableItem.reduce((prev: any, el: any) => {
+    //   prev[el.key] = el.value;
+    //   return prev;
+    // }, {} as any);
+    // const value = values.value;
+    // putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem } }).then((result) => {
+    //   if (result.success) {
+    //     message.success('提交成功！');
+    //     // window.location.reload();
+    //     applicationForm.setFieldsValue({
+    //       tmplConfigurableItem: [],
+    //       jvm: '',
+    //       value: '',
+    //     });
+    //     setTimeout(() => {
+    //       showAppList(selectEnvData, selectTmpl);
+    //     }, 200);
+    //   }
+    // });
   };
 
   return (
     <ContentCard>
-      <Form form={applicationForm} onFinish={setApplication}>
+      <Form
+        form={applicationForm}
+        onFinish={() => {
+          setModalVisible(true);
+        }}
+      >
         <Row>
           <div>
             <Form.Item label=" 应用环境：" name="appEnvCode">
@@ -334,6 +373,47 @@ export default function ApplicationParams(props: any) {
           </Space>
         </Form.Item>
       </Form>
+
+      <Modal
+        title="请选择重启策略"
+        visible={modalVisible}
+        onOk={setApplication}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        width={550}
+        bodyStyle={{ minHeight: '150px' }}
+      >
+        <Form layout="inline" form={restarForm} labelCol={{ flex: '150px' }}>
+          <Form.Item
+            label="重启策略："
+            name="RestartPolicy"
+            style={{ width: '100%' }}
+            rules={[{ required: true, message: '这是必选项' }]}
+          >
+            <Radio.Group
+              onChange={(e) => {
+                setValue(e.target.value);
+              }}
+              value={value}
+            >
+              <Radio value={3}>定时生效</Radio>
+              <Radio value={1}>不生效</Radio>
+              <Radio value={2}>立即生效</Radio>
+            </Radio.Group>
+          </Form.Item>
+          {value === 3 && (
+            <Form.Item
+              label="生效时间："
+              name="TakeEffectTime"
+              style={{ width: '100%', marginTop: '15px' }}
+              rules={[{ required: true, message: '这是必选项' }]}
+            >
+              <DatePicker showTime allowClear disabledDate={disabledDate} />
+            </Form.Item>
+          )}
+        </Form>
+      </Modal>
     </ContentCard>
   );
 }
