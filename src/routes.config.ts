@@ -1019,6 +1019,7 @@ export default [
         name: '浙一双集群管理',
         key: 'cluster-cluster-zy',
         component: '@/pages/cluster/cluster-zy',
+        // hideInMenu: process.env.BUILD_ENV !== 'prod'&&process.env.BUILD_ENV !== 'dev',
         routes: [
           {
             path: 'dashboards',
@@ -1069,6 +1070,7 @@ export default [
         name: '天台双集群管理',
         key: 'cluster-clusterTt',
         component: '@/pages/cluster/cluster-tt',
+        hideInMenu: process.env.BUILD_ENV !== 'prod' && process.env.BUILD_ENV !== 'dev',
         routes: [
           {
             path: 'dashboards',
@@ -1116,24 +1118,31 @@ export default [
       },
       {
         path: 'cluster-zs',
-        name: '中山双集群管理',
+        name: '流量调度',
         key: 'cluster-clusterZs',
         component: '@/pages/cluster/cluster-zs',
         routes: [
           {
-            path: 'operator-scheduling',
-            name: '集群调度',
-            key: 'cluster-clusterZs',
-            component: '@/pages/cluster/cluster-zs/operator-scheduling',
-            hideInMenu: true,
-          },
-          {
-            path: 'scheduling',
+            path: 'scheduling-mode',
             name: '流量调度',
             key: 'cluster-clusterZs',
-            component: '@/pages/cluster/cluster-zs/scheduling',
+            component: '@/pages/cluster/cluster-zs/scheduling-mode',
             hideInMenu: true,
           },
+          // {
+          //   path: 'operator-scheduling',
+          //   name: '集群调度',
+          //   key: 'cluster-clusterZs',
+          //   component: '@/pages/cluster/cluster-zs/operator-scheduling',
+          //   hideInMenu: true,
+          // },
+          // {
+          //   path: 'scheduling',
+          //   name: '流量调度',
+          //   key: 'cluster-clusterZs',
+          //   component: '@/pages/cluster/cluster-zs/scheduling',
+          //   hideInMenu: true,
+          // },
           {
             path: 'cluster-sync',
             name: '集群同步',

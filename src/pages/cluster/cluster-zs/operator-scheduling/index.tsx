@@ -280,118 +280,118 @@ export default function OperatorScheduling() {
   };
 
   return (
-    <ContentCard className="page-scheduling">
-      <div className="site-card-border-less-wrapper">
-        <div className="content-Card">
-          <div className="leftCard">
-            <Card title="操作" bordered={false} style={{ width: 360, height: 400, marginTop: 80 }}>
-              <Form form={form} labelCol={{ flex: '100px' }} onFinish={addUser}>
-                <Form.Item label="集群选择" name="userCluster">
-                  <Select style={{ width: 180 }}>
-                    <Select.Option key="cluster_a" value="cluster_a">
-                      {' '}
-                      A集群
-                    </Select.Option>
-                    <Select.Option key="cluster_b" value="cluster_b">
-                      {' '}
-                      B集群
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
+    // <ContentCard className="page-scheduling" >
+    <div className="site-card-border-less-wrapper">
+      <div className="content-Card">
+        <div className="leftCard">
+          <Card title="操作" bordered={false} style={{ width: '24vw', height: 300, marginTop: 80 }}>
+            <Form form={form} labelCol={{ flex: '100px' }} onFinish={addUser}>
+              <Form.Item label="集群选择" name="userCluster">
+                <Select style={{ width: 180 }}>
+                  <Select.Option key="cluster_a" value="cluster_a">
+                    {' '}
+                    A集群
+                  </Select.Option>
+                  <Select.Option key="cluster_b" value="cluster_b">
+                    {' '}
+                    B集群
+                  </Select.Option>
+                </Select>
+              </Form.Item>
 
-                <Form.Item label="人员选择" name="userType" style={{ marginTop: 30 }}>
-                  <Select style={{ width: 180 }}>
-                    <Select.Option key="patient" value="patient">
-                      {' '}
-                      患者
-                    </Select.Option>
-                    <Select.Option key="operator" value="operator">
-                      {' '}
-                      操作员
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
+              <Form.Item label="人员选择" name="userType" style={{ marginTop: 30 }}>
+                <Select style={{ width: 180 }}>
+                  <Select.Option key="patient" value="patient">
+                    {' '}
+                    患者
+                  </Select.Option>
+                  <Select.Option key="operator" value="operator">
+                    {' '}
+                    操作员
+                  </Select.Option>
+                </Select>
+              </Form.Item>
 
-                <Form.Item label="ID" name="userId" style={{ marginTop: 30 }}>
-                  <Input style={{ width: 180 }}></Input>
-                </Form.Item>
+              <Form.Item label="ID" name="userId" style={{ marginTop: 30 }}>
+                <Input style={{ width: 180 }}></Input>
+              </Form.Item>
 
-                <Form.Item style={{ marginTop: 30 }}>
-                  <Button type="primary" htmlType="submit" style={{ float: 'right' }}>
-                    添加
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Card>
-          </div>
-          <div className="RightCard" style={{ marginTop: 6 }}>
-            <Card title="A集群" bordered={false}>
-              <div className="clusterAFlex">
-                <div style={{ height: '100%', overflow: 'auto' }}>
-                  {' '}
-                  <Table
-                    columns={clusterA_patientColumns}
-                    dataSource={clusterA_patientData}
-                    pagination={false}
-                    style={{ width: 300, height: 178 }}
-                    bordered
-                    scroll={{ y: window.innerHeight - 560 }}
-                  />
-                </div>
-
-                <div style={{ marginLeft: 10, height: '100%', overflow: 'auto' }}>
-                  <Table
-                    columns={clusterA_operatorColumns}
-                    dataSource={clusterA_operatorData}
-                    pagination={false}
-                    style={{ width: 300, height: 178 }}
-                    bordered
-                    scroll={{ y: window.innerHeight - 560 }}
-                  />
-                </div>
+              <Form.Item style={{ marginTop: 30 }}>
+                <Button type="primary" htmlType="submit" style={{ float: 'right' }}>
+                  添加
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        </div>
+        <div className="RightCard" style={{ marginTop: 6 }}>
+          <Card title="A集群" bordered={false}>
+            <div className="clusterAFlex">
+              <div style={{ height: '100%', overflow: 'auto' }}>
+                {' '}
+                <Table
+                  columns={clusterA_patientColumns}
+                  dataSource={clusterA_patientData}
+                  pagination={false}
+                  style={{ width: 300, height: 178 }}
+                  bordered
+                  scroll={{ y: window.innerHeight - 560 }}
+                />
               </div>
-            </Card>
-            <Divider style={{ height: 10, marginTop: 0, marginBottom: 0 }} />
-            <Card title="B集群" bordered={false}>
-              <div className="clusterBFlex">
-                <div style={{ height: '100%', overflow: 'auto' }}>
-                  <Table
-                    columns={clusterB_patientColumns}
-                    dataSource={clusterB_patientData}
-                    pagination={false}
-                    style={{
-                      width: 300,
-                      height: 178,
-                      // height:window.innerHeight - 1050
-                    }}
-                    scroll={{ y: window.innerHeight - 560 }}
-                    bordered
-                  />
-                </div>
-                <div style={{ marginLeft: 10, height: '100%', overflow: 'auto' }}>
-                  <Table
-                    columns={clusterB_operatorColumns}
-                    dataSource={clusterB_operatorData}
-                    pagination={false}
-                    style={{
-                      width: 300,
-                      height: 178,
-                      // height:window.innerHeight - 1050
-                    }}
-                    scroll={{ y: window.innerHeight - 560 }}
-                    bordered
-                  />
-                </div>
+
+              <div style={{ height: '100%', overflow: 'auto' }}>
+                <Table
+                  columns={clusterA_operatorColumns}
+                  dataSource={clusterA_operatorData}
+                  pagination={false}
+                  style={{ width: 300, height: 178 }}
+                  bordered
+                  scroll={{ y: window.innerHeight - 560 }}
+                />
               </div>
-            </Card>
-            <div style={{ float: 'right', marginTop: 8 }}>
-              <Button type="primary" onClick={addMultipleCluster}>
-                提交
-              </Button>
             </div>
+          </Card>
+          <Divider style={{ height: 10, marginTop: 0, marginBottom: 0 }} />
+          <Card title="B集群" bordered={false}>
+            <div className="clusterBFlex">
+              <div style={{ height: '100%', overflow: 'auto' }}>
+                <Table
+                  columns={clusterB_patientColumns}
+                  dataSource={clusterB_patientData}
+                  pagination={false}
+                  style={{
+                    width: 300,
+                    height: 178,
+                    // height:window.innerHeight - 1050
+                  }}
+                  scroll={{ y: window.innerHeight - 560 }}
+                  bordered
+                />
+              </div>
+              <div style={{ height: '100%', overflow: 'auto' }}>
+                <Table
+                  columns={clusterB_operatorColumns}
+                  dataSource={clusterB_operatorData}
+                  pagination={false}
+                  style={{
+                    width: 300,
+                    height: 178,
+                    // height:window.innerHeight - 1050
+                  }}
+                  scroll={{ y: window.innerHeight - 560 }}
+                  bordered
+                />
+              </div>
+            </div>
+          </Card>
+          <div style={{ float: 'right', marginTop: 8 }}>
+            <Button type="primary" onClick={addMultipleCluster}>
+              提交
+            </Button>
           </div>
         </div>
       </div>
-    </ContentCard>
+    </div>
+    // </ContentCard>
   );
 }
