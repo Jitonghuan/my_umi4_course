@@ -49,7 +49,6 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
         let appName = appDiffInfo[0];
         return { appName, ...item[appName] };
       });
-      console.log('next', next);
       sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
       setFromCache('');
       setData(next);
