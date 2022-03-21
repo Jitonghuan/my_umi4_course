@@ -79,7 +79,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/cluster/cluster-zs`,
-    redirect: `${baseRoutePath}/cluster/cluster-zs/operator-scheduling`,
+    redirect: `${baseRoutePath}/cluster/cluster-zs/dashboards`,
   },
   {
     path: `${baseRoutePath}/operation/app-tmpl`,
@@ -1070,7 +1070,6 @@ export default [
         name: '天台双集群管理',
         key: 'cluster-clusterTt',
         component: '@/pages/cluster/cluster-tt',
-        hideInMenu: process.env.BUILD_ENV !== 'prod' && process.env.BUILD_ENV !== 'dev',
         routes: [
           {
             path: 'dashboards',
@@ -1123,26 +1122,19 @@ export default [
         component: '@/pages/cluster/cluster-zs',
         routes: [
           {
+            path: 'dashboards',
+            name: '集群看板',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/dashboards',
+            hideInMenu: true,
+          },
+          {
             path: 'scheduling-mode',
             name: '流量调度',
             key: 'cluster-clusterZs',
             component: '@/pages/cluster/cluster-zs/scheduling-mode',
             hideInMenu: true,
           },
-          // {
-          //   path: 'operator-scheduling',
-          //   name: '集群调度',
-          //   key: 'cluster-clusterZs',
-          //   component: '@/pages/cluster/cluster-zs/operator-scheduling',
-          //   hideInMenu: true,
-          // },
-          // {
-          //   path: 'scheduling',
-          //   name: '流量调度',
-          //   key: 'cluster-clusterZs',
-          //   component: '@/pages/cluster/cluster-zs/scheduling',
-          //   hideInMenu: true,
-          // },
           {
             path: 'cluster-sync',
             name: '集群同步',
