@@ -86,7 +86,8 @@
     "@hbos/umi-loaders": "^1.0.0",
     "@hbos/umi-plugin-theme-hbos": "^1.0.1",
     "@types/react-copy-to-clipboard": "^5.0.2",
-    "@umijs/preset-react": "~1.8.23"
+    "@umijs/preset-react": "~1.8.23",
+    "prettier": "2.6.0"
   },
   "__npminstall_done": false
 }

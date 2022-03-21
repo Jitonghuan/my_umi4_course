@@ -2,10 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, {
-  useState,
-  useEffect,
-} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Form,
   Input,
@@ -26,14 +23,8 @@ import {
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';
-import {
-  postRequest,
-  getRequest,
-} from '@/utils/request';
-import {
-  ContentCard,
-  FilterCard,
-} from '@/components/vc-page-content';
+import { postRequest, getRequest } from '@/utils/request';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import './index.less';
@@ -43,49 +34,27 @@ import moment from 'moment';
 export default function Push(props: any) {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] =
-    useState<React.Key[]>([]);
-  const [categoryData, setCategoryData] =
-    useState<any[]>([]); //应用分类
-  const [envDatas, setEnvDatas] = useState<any[]>(
-    [],
-  ); //环境
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
+  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [appCategoryCode, setAppCategoryCode] =
-    useState<string>(''); //应用分类获取到的值
-  const [appGroupCode, setAppGroupCode] =
-    useState<string>(''); //应用分类获取到的值
-  const [envCodes, setEnvCodes] = useState<
-    string[]
-  >([]); //环境CODE获取到的值
+  const [appCategoryCode, setAppCategoryCode] = useState<string>(''); //应用分类获取到的值
+  const [appGroupCode, setAppGroupCode] = useState<string>(''); //应用分类获取到的值
+  const [envCodes, setEnvCodes] = useState<string[]>([]); //环境CODE获取到的值
   const [formTmpl] = Form.useForm();
   const [formTmplQuery] = Form.useForm();
   const [tmplDetailForm] = Form.useForm();
-  const [selectList, setSelectList] = useState<
-    any[]
-  >([]);
-  const [pageTotal, setPageTotal] =
-    useState<number>();
-  const [currentData, setCurrentData] = useState<
-    any[]
-  >([]);
-  const [isModalVisible, setIsModalVisible] =
-    useState(false); //是否显示弹窗
-  const [pushItemVisible, setPushItemVisible] =
-    useState(false); //是否显示推送项弹窗
-  const [
-    tmplDetailOptions,
-    setTmplDetailOptions,
-  ] = useState<any[]>([]);
-  const [selectTmplOption, setSelectTmplOption] =
-    useState<any>(); //获取当前选中值显示在推送项弹窗
-  const [labelListSource, setLabelListSource] =
-    useState<any>();
-  const [labelLoading, setLabelLoading] =
-    useState<boolean>(false);
-  const [businessData, setBusinessData] =
-    useState<any[]>([]);
+  const [selectList, setSelectList] = useState<any[]>([]);
+  const [pageTotal, setPageTotal] = useState<number>();
+  const [currentData, setCurrentData] = useState<any[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
+  const [pushItemVisible, setPushItemVisible] = useState(false); //是否显示推送项弹窗
+  const [tmplDetailOptions, setTmplDetailOptions] = useState<any[]>([]);
+  const [selectTmplOption, setSelectTmplOption] = useState<any>(); //获取当前选中值显示在推送项弹窗
+  const [labelListSource, setLabelListSource] = useState<any>();
+  const [labelLoading, setLabelLoading] = useState<boolean>(false);
+  const [businessData, setBusinessData] = useState<any[]>([]);
   const [value, setValue] = useState<number>(0); //弹窗radio的值
 
   const getLabelList = () => {
@@ -109,10 +78,7 @@ export default function Push(props: any) {
       });
   };
   //通过session缓存信息
-  let tmplDetailData = JSON.parse(
-    sessionStorage.getItem('tmplDetailData') ||
-      '',
-  );
+  let tmplDetailData = JSON.parse(sessionStorage.getItem('tmplDetailData') || '');
   // const [tmplName,setTmplName]=useState<string>(tmplDetailData?.templateName)
   let tmplName = tmplDetailData?.templateName;
 
@@ -121,23 +87,14 @@ export default function Push(props: any) {
   let jvm = '';
   let tmplItemString = '';
 
-  if (
-    tmplDetailData?.templateType === 'deployment'
-  ) {
+  if (tmplDetailData?.templateType === 'deployment') {
     for (const key in tmplDetailData?.tmplConfigurableItem) {
       if (key === 'jvm') {
-        jvm =
-          'jvm：' +
-          tmplDetailData?.tmplConfigurableItem[
-            key
-          ];
+        jvm = 'jvm：' + tmplDetailData?.tmplConfigurableItem[key];
       } else {
         tmplItemarry.push({
           key: key,
-          value:
-            tmplDetailData?.tmplConfigurableItem[
-              key
-            ],
+          value: tmplDetailData?.tmplConfigurableItem[key],
         });
       }
     }
@@ -145,24 +102,17 @@ export default function Push(props: any) {
     for (const key in tmplDetailData?.tmplConfigurableItem) {
       tmplItemarry.push({
         key: key,
-        value:
-          tmplDetailData?.tmplConfigurableItem[
-            key
-          ],
+        value: tmplDetailData?.tmplConfigurableItem[key],
       });
     }
   }
 
   tmplItemarry.map((item: any) => {
-    tmplItemString +=
-      '可配置项：' + item.key + ':' + item.value;
+    tmplItemString += '可配置项：' + item.key + ':' + item.value;
   });
 
   const rowSelection = {
-    onChange: (
-      selectedRowKeys: React.Key[],
-      selectedRows: any,
-    ) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
       setSelectedRowKeys(selectedRowKeys);
       setCurrentData(selectedRows);
     },
@@ -189,10 +139,7 @@ export default function Push(props: any) {
       { label: '可配置项', value: 'item' },
       { label: '全部推送', value: 'all' },
     ];
-    if (
-      tmplDetailData?.templateType ===
-      'deployment'
-    ) {
+    if (tmplDetailData?.templateType === 'deployment') {
       tmplListdata.unshift({
         label: 'jvm参数',
         value: 'jvm',
@@ -209,20 +156,12 @@ export default function Push(props: any) {
       envCodes: undefined,
     });
   };
-  const [dataSource, setDataSource] = useState<
-    any[]
-  >([]);
+  const [dataSource, setDataSource] = useState<any[]>([]);
   useEffect(() => {
     selectCategory();
     getLabelList();
-    let param = localStorage.getItem(
-      'TEMPLATE_PUSH_SEARCH',
-    )
-      ? JSON.parse(
-          localStorage.getItem(
-            'TEMPLATE_PUSH_SEARCH',
-          ),
-        )
+    let param = localStorage.getItem('TEMPLATE_PUSH_SEARCH')
+      ? JSON.parse(localStorage.getItem('TEMPLATE_PUSH_SEARCH'))
       : '';
     formTmplQuery.setFieldsValue({
       appCategoryCode: param.appCategoryCode,
@@ -265,24 +204,20 @@ export default function Push(props: any) {
     }).then((resp: any) => {
       if (resp.success) {
         const datas =
-          resp?.data?.dataSource?.map(
-            (el: any) => {
-              return {
-                ...el,
-                value: el?.envCode,
-                label: el?.envName,
-              };
-            },
-          ) || [];
+          resp?.data?.dataSource?.map((el: any) => {
+            return {
+              ...el,
+              value: el?.envCode,
+              label: el?.envName,
+            };
+          }) || [];
         setEnvDatas(datas);
       }
     });
   };
 
   //选择应用组
-  const selectAppGroup = (
-    appGroupCode: string,
-  ) => {
+  const selectAppGroup = (appGroupCode: string) => {
     setAppGroupCode(appGroupCode);
   };
   useEffect(() => {
@@ -300,89 +235,80 @@ export default function Push(props: any) {
     setEnvCodes(value);
   };
   //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
-  const templateCode =
-    props.history.location.query.templateCode;
-  const languageCode =
-    props.history.location.query.languageCode;
-  const appCodes = currentData.map(
-    (item, index) => {
-      return Object.assign(item.appCode);
-    },
-  );
+  const templateCode = props.history.location.query.templateCode;
+  const languageCode = props.history.location.query.languageCode;
+  const appCodes = currentData.map((item, index) => {
+    return Object.assign(item.appCode);
+  });
   let getEnvCodes = [...envCodes];
   let pushItemArry: any = [];
 
   const handleOk = async () => {
-    // const values = tmplDetailForm.getFieldsValue();
-    const values =
-      await tmplDetailForm.validateFields();
-    Object.assign(values, {
-      TakeEffectTime: moment(
-        values.TakeEffectTime,
-      ).format('YYYY-MM-DD HH:mm:ss'),
-    });
+    const values = await tmplDetailForm.validateFields();
+    console.log(values, 111);
+    // Object.assign(values, {
+    //   TakeEffectTime: moment(values.TakeEffectTime).format('YYYY-MM-DD HH:mm:ss'),
+    // });
     // 如果选择all时走原来的推送接口
-    // if (values?.pushItem === 'all') {
-    //   if (appCategoryCode && envCodes) {
-    //     postRequest(APIS.pushTmpl, {
-    //       data: {
-    //         appCategoryCode: appCategoryCode,
-    //         templateCode,
-    //         appCodes,
-    //         envCodes: getEnvCodes,
-    //         ConcurrentNumber:values?.ConcurrentNumber,
-    //         TakeEffectTime:values?.TakeEffectTime,
-    //         RestartPolicy:values?.RestartPolicy
-    //        },
-    //     }).then((resp: any) => {
-    //       if (resp.success) {
-    //         message.success('推送成功！');
-    //         setIsModalVisible(false);
-    //         // window.location.reload();
-    //         loadListData({ pageIndex: 1, pageSize: 20 });
-    //         setTimeout(() => {
-    //           setSelectedRowKeys(['undefined']);
-    //         }, 200);
-    //       }
-    //     });
-    //   } else {
-    //     message.error('请选择要推送的应用分类');
-    //   }
-    // } else {
-    //   //如果不是选择all 就把所有选择放入pushItemArry数组中
-    //   values?.pushItem?.map((el: any) => {
-    //     pushItemArry.push(el);
-    //   });
-    // }
-    // //当不选择all且选择其他时则为长度>0，走新的接口
-    // if (pushItemArry.length > 0) {
-    //   if (appCategoryCode && envCodes) {
-    //     postRequest(APIS.customPush, {
-    //       data: {
-    //         appCategoryCode: appCategoryCode,
-    //         templateCode,
-    //         appCodes,
-    //         envCodes: getEnvCodes,
-    //         customItems: pushItemArry,
-    //         ConcurrentNumber:values?.ConcurrentNumber,
-    //         TakeEffectTime:values?.TakeEffectTime,
-    //         RestartPolicy:values?.RestartPolicy
-    //       },
-    //     }).then((resp: any) => {
-    //       if (resp.success) {
-    //         message.success('推送成功！');
-    //         // window.location.reload();
-    //         setIsModalVisible(false);
-    //         loadListData({ pageIndex: 1, pageSize: 20 });
-    //         setTimeout(() => {
-    //           setSelectedRowKeys(['undefined']);
-    //         }, 200);
-    //       }
-    //     });
-    //   } else {
-    //     message.error('请选择要推送的应用分类');
-    //   }
-    // }
+    if (values?.pushItem === 'all') {
+      if (appCategoryCode && envCodes) {
+        postRequest(APIS.pushTmpl, {
+          data: {
+            appCategoryCode: appCategoryCode,
+            templateCode,
+            appCodes,
+            envCodes: getEnvCodes,
+            ConcurrentNumber: values?.ConcurrentNumber,
+            RestartPolicy: values?.RestartPolicy,
+          },
+        }).then((resp: any) => {
+          if (resp.success) {
+            message.success('推送成功！');
+            setIsModalVisible(false);
+            // window.location.reload();
+            loadListData({ pageIndex: 1, pageSize: 20 });
+            setTimeout(() => {
+              setSelectedRowKeys(['undefined']);
+            }, 200);
+          }
+        });
+      } else {
+        message.error('请选择要推送的应用分类');
+      }
+    } else {
+      //如果不是选择all 就把所有选择放入pushItemArry数组中
+      values?.pushItem?.map((el: any) => {
+        pushItemArry.push(el);
+      });
+    }
+    //当不选择all且选择其他时则为长度>0，走新的接口
+    if (pushItemArry.length > 0) {
+      if (appCategoryCode && envCodes) {
+        postRequest(APIS.customPush, {
+          data: {
+            appCategoryCode: appCategoryCode,
+            templateCode,
+            appCodes,
+            envCodes: getEnvCodes,
+            customItems: pushItemArry,
+            ConcurrentNumber: values?.ConcurrentNumber,
+            RestartPolicy: values?.RestartPolicy,
+          },
+        }).then((resp: any) => {
+          if (resp.success) {
+            message.success('推送成功！');
+            // window.location.reload();
+            setIsModalVisible(false);
+            loadListData({ pageIndex: 1, pageSize: 20 });
+            setTimeout(() => {
+              setSelectedRowKeys(['undefined']);
+            }, 200);
+          }
+        });
+      } else {
+        message.error('请选择要推送的应用分类');
+      }
+    }
   };
 
   //点击查询
@@ -400,7 +326,6 @@ export default function Push(props: any) {
         // isClient: 0,
         pageSize: value.pageSize,
         pageIndex: value.pageIndex,
-
         // pageSize: value.pageSize,
       },
     })
@@ -408,8 +333,7 @@ export default function Push(props: any) {
         if (res.success) {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
-          let pageIndex =
-            res.data.pageInfo.pageIndex;
+          let pageIndex = res.data.pageInfo.pageIndex;
           setPageTotal(pageTotal);
           setDataSource(dataSource);
           setPageIndex(pageIndex);
@@ -421,10 +345,7 @@ export default function Push(props: any) {
   };
   //触发分页
 
-  const pageSizeClick = (
-    pagination: any,
-    currentDataSource: any,
-  ) => {
+  const pageSizeClick = (pagination: any, currentDataSource: any) => {
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -443,18 +364,14 @@ export default function Push(props: any) {
 
   //加载应用分类
   const selectCategory = () => {
-    getRequest(APIS.appTypeList).then(
-      (result) => {
-        const list = (
-          result.data.dataSource || []
-        ).map((n: any) => ({
-          label: n.categoryName,
-          value: n.categoryCode,
-          data: n,
-        }));
-        setCategoryData(list);
-      },
-    );
+    getRequest(APIS.appTypeList).then((result) => {
+      const list = (result.data.dataSource || []).map((n: any) => ({
+        label: n.categoryName,
+        value: n.categoryCode,
+        data: n,
+      }));
+      setCategoryData(list);
+    });
   };
 
   //选择推送项
@@ -479,10 +396,7 @@ export default function Push(props: any) {
             },
             { label: '全部推送', value: 'all' },
           ];
-          if (
-            tmplDetailData?.templateType ===
-            'deployment'
-          ) {
+          if (tmplDetailData?.templateType === 'deployment') {
             tmplDetailQuery.unshift({
               label: 'jvm参数',
               value: 'jvm',
@@ -505,10 +419,7 @@ export default function Push(props: any) {
             },
             { label: '全部推送', value: 'all' },
           ];
-          if (
-            tmplDetailData?.templateType ===
-            'deployment'
-          ) {
+          if (tmplDetailData?.templateType === 'deployment') {
             tmplDetailQuery.unshift({
               label: 'jvm参数',
               value: 'jvm',
@@ -533,10 +444,7 @@ export default function Push(props: any) {
         // { label: 'jvm参数', value: 'jvm参数', disabled: false },
         { label: '全部推送', value: 'all' },
       ];
-      if (
-        tmplDetailData?.templateType ===
-        'deployment'
-      ) {
+      if (tmplDetailData?.templateType === 'deployment') {
         tmplDetailQuery.unshift({
           label: 'jvm参数',
           value: 'jvm',
@@ -553,26 +461,16 @@ export default function Push(props: any) {
   let selectTmplcontent: any = [];
   selectTmplOption?.map((item: any) => {
     if (item == 'all') {
-      selectTmplcontent = [
-        jvm,
-        tmplItemString,
-        '模版详情：' +
-          tmplDetailData?.templateValue,
-      ];
+      selectTmplcontent = [jvm, tmplItemString, '模版详情：' + tmplDetailData?.templateValue];
     }
     if (item == 'item') {
-      selectTmplcontent.push(
-        tmplItemString || '',
-      );
+      selectTmplcontent.push(tmplItemString || '');
     }
     if (item == 'jvm') {
       selectTmplcontent.push(jvm);
     }
     if (item == 'templateValue') {
-      selectTmplcontent.push(
-        '模版详情：' +
-          tmplDetailData?.templateValue,
-      );
+      selectTmplcontent.push('模版详情：' + tmplDetailData?.templateValue);
     }
   });
 
@@ -588,10 +486,7 @@ export default function Push(props: any) {
           layout="inline"
           form={formTmplQuery}
           onFinish={(values) => {
-            localStorage.setItem(
-              'TEMPLATE_PUSH_SEARCH',
-              JSON.stringify(values),
-            );
+            localStorage.setItem('TEMPLATE_PUSH_SEARCH', JSON.stringify(values));
             getApplication({
               ...values,
               pageIndex: pageIndex,
@@ -605,22 +500,10 @@ export default function Push(props: any) {
             });
           }}
         >
-          <Form.Item
-            label="应用分类："
-            name="appCategoryCode"
-          >
-            <Select
-              showSearch
-              allowClear
-              style={{ width: 140 }}
-              options={categoryData}
-              onChange={changeAppCategory}
-            />
+          <Form.Item label="应用分类：" name="appCategoryCode">
+            <Select showSearch allowClear style={{ width: 140 }} options={categoryData} onChange={changeAppCategory} />
           </Form.Item>
-          <Form.Item
-            label="应用标签："
-            name="tagNames"
-          >
+          <Form.Item label="应用标签：" name="tagNames">
             <Select
               mode="multiple"
               allowClear
@@ -631,10 +514,7 @@ export default function Push(props: any) {
               loading={labelLoading}
             ></Select>
           </Form.Item>
-          <Form.Item
-            label="应用组："
-            name="appGroupCode"
-          >
+          <Form.Item label="应用组：" name="appGroupCode">
             <Select
               allowClear
               showSearch
@@ -644,29 +524,16 @@ export default function Push(props: any) {
               onChange={selectAppGroup}
             ></Select>
           </Form.Item>
-          <Form.Item
-            label="应用CODE："
-            name="appCode"
-          >
-            <Input
-              placeholder="请输入应用CODE"
-              style={{ width: 180 }}
-            ></Input>
+          <Form.Item label="应用CODE：" name="appCode">
+            <Input placeholder="请输入应用CODE" style={{ width: 180 }}></Input>
           </Form.Item>
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button
-              type="ghost"
-              htmlType="reset"
-              danger
-            >
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>
@@ -678,10 +545,7 @@ export default function Push(props: any) {
       </FilterCard>
       <ContentCard>
         <div>
-          <Form
-            onFinish={pushTmpls}
-            form={formTmpl}
-          >
+          <Form onFinish={pushTmpls} form={formTmpl}>
             <Form.Item name="tableData">
               <Table
                 bordered
@@ -698,53 +562,32 @@ export default function Push(props: any) {
                     setPageSize(size);
                     setPageIndex(1);
                   },
-                  showTotal: () =>
-                    `总共 ${pageTotal} 条数据`,
+                  showTotal: () => `总共 ${pageTotal} 条数据`,
                 }}
                 onChange={pageSizeClick}
               >
-                <Table.Column
-                  title="ID"
-                  dataIndex="id"
-                  width="4%"
-                />
-                <Table.Column
-                  title="应用名"
-                  dataIndex="appName"
-                  width="18%"
-                />
-                <Table.Column
-                  title="应用CODE"
-                  dataIndex="appCode"
-                  width="18%"
-                />
-                <Table.Column
-                  title="应用分类"
-                  dataIndex="appCategoryCode"
-                  width="14%"
-                />
+                <Table.Column title="ID" dataIndex="id" width="4%" />
+                <Table.Column title="应用名" dataIndex="appName" width="18%" />
+                <Table.Column title="应用CODE" dataIndex="appCode" width="18%" />
+                <Table.Column title="应用分类" dataIndex="appCategoryCode" width="14%" />
                 <Table.Column
                   title="应用标签"
                   dataIndex="bindTagNames"
                   width="32%"
                   render={(current) => (
                     <span>
-                      {current?.map(
-                        (tag: any) => {
-                          let color = 'green';
-                          return (
-                            <span
-                              style={{
-                                marginTop: 2,
-                              }}
-                            >
-                              <Tag color={color}>
-                                {tag}
-                              </Tag>
-                            </span>
-                          );
-                        },
-                      )}
+                      {current?.map((tag: any) => {
+                        let color = 'green';
+                        return (
+                          <span
+                            style={{
+                              marginTop: 2,
+                            }}
+                          >
+                            <Tag color={color}>{tag}</Tag>
+                          </span>
+                        );
+                      })}
                     </span>
                   )}
                 />
@@ -759,18 +602,11 @@ export default function Push(props: any) {
                         onClick={() => {
                           const query = {
                             id: record.id,
-                            appCode:
-                              record.appCode,
-                            templateType:
-                              record.templateType,
-                            envCode:
-                              record.envCode,
+                            appCode: record.appCode,
+                            templateType: record.templateType,
+                            envCode: record.envCode,
                           };
-                          history.push(
-                            `/matrix/application/detail/AppParameters?${stringify(
-                              query,
-                            )}`,
-                          );
+                          history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
                         }}
                       >
                         当前应用参数
@@ -780,24 +616,14 @@ export default function Push(props: any) {
                 />
               </Table>
             </Form.Item>
-            <Space
-              size="middle"
-              style={{ float: 'right' }}
-            >
+            <Space size="middle" style={{ float: 'right' }}>
               <Form.Item>
-                <Button
-                  type="ghost"
-                  htmlType="reset"
-                >
+                <Button type="ghost" htmlType="reset">
                   清空
                 </Button>
               </Form.Item>
               <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  onClick={showModal}
-                >
+                <Button type="primary" htmlType="submit" onClick={showModal}>
                   推送
                 </Button>
               </Form.Item>
@@ -812,11 +638,7 @@ export default function Push(props: any) {
             width={750}
             // bodyStyle={{ height: '300px' }}
           >
-            <Form
-              layout="inline"
-              form={tmplDetailForm}
-              labelCol={{ flex: '150px' }}
-            >
+            <Form layout="inline" form={tmplDetailForm} labelCol={{ flex: '150px' }}>
               {/* <div style={{ width: '100%' }}> */}
               <Row style={{ width: '100%' }}>
                 <Col span={12}>
@@ -909,53 +731,41 @@ export default function Push(props: any) {
                 >
                   {/* <Radio value={3}>定时生效</Radio> */}
                   <Radio value={1}>不生效</Radio>
-                  <Radio value={2}>
-                    立即生效
-                  </Radio>
+                  <Radio value={2}>立即生效</Radio>
                 </Radio.Group>
               </Form.Item>
               {/* {value === 3 && (
-                <Form.Item
-                  label="生效时间："
-                  name="TakeEffectTime"
-                  style={{ width: '100%', marginTop: '15px' }}
-                  rules={[{ required: true, message: '这是必选项' }]}
-                >
-                  <DatePicker showTime allowClear />
-                </Form.Item>
-              )} */}
-              {(value === 3 || value === 2) &&
-                tmplDetailData?.templateType ===
-                  'deployment' && (
                   <Form.Item
-                    label="并发数量："
-                    name="ConcurrentNumber"
-                    style={{
-                      width: '100%',
-                      marginTop: '15px',
-                    }}
-                    rules={[
-                      {
-                        required: true,
-                        message: '这是必选项',
-                      },
-                    ]}
+                    label="生效时间："
+                    name="TakeEffectTime"
+                    style={{ width: '100%', marginTop: '15px' }}
+                    rules={[{ required: true, message: '这是必选项' }]}
                   >
-                    <Select
-                      style={{ width: 160 }}
-                    >
-                      <Select.Option value={5}>
-                        5
-                      </Select.Option>
-                      <Select.Option value={10}>
-                        10
-                      </Select.Option>
-                      <Select.Option value={15}>
-                        15
-                      </Select.Option>
-                    </Select>
+                    <DatePicker showTime allowClear />
                   </Form.Item>
-                )}
+                )} */}
+              {(value === 3 || value === 2) && tmplDetailData?.templateType === 'deployment' && (
+                <Form.Item
+                  label="并发数量："
+                  name="ConcurrentNumber"
+                  style={{
+                    width: '100%',
+                    marginTop: '15px',
+                  }}
+                  rules={[
+                    {
+                      required: true,
+                      message: '这是必选项',
+                    },
+                  ]}
+                >
+                  <Select style={{ width: 160 }}>
+                    <Select.Option value={5}>5</Select.Option>
+                    <Select.Option value={10}>10</Select.Option>
+                    <Select.Option value={15}>15</Select.Option>
+                  </Select>
+                </Form.Item>
+              )}
             </Form>
           </Modal>
 
@@ -968,37 +778,16 @@ export default function Push(props: any) {
             onVisibleChange={handleVisibleChange}
             content={
               <div>
-                {selectTmplcontent.length >=
-                  1 && (
-                  <AceEditor
-                    mode="yaml"
-                    height={150}
-                    value={
-                      selectTmplcontent[0] || ''
-                    }
-                  />
+                {selectTmplcontent.length >= 1 && (
+                  <AceEditor mode="yaml" height={150} value={selectTmplcontent[0] || ''} />
                 )}
                 <br />
-                {selectTmplcontent.length >=
-                  2 && (
-                  <AceEditor
-                    mode="yaml"
-                    height={150}
-                    value={
-                      selectTmplcontent[1] || ''
-                    }
-                  />
+                {selectTmplcontent.length >= 2 && (
+                  <AceEditor mode="yaml" height={150} value={selectTmplcontent[1] || ''} />
                 )}
                 <br />
-                {selectTmplcontent.length >=
-                  3 && (
-                  <AceEditor
-                    mode="yaml"
-                    height={150}
-                    value={
-                      selectTmplcontent[2] || ''
-                    }
-                  />
+                {selectTmplcontent.length >= 3 && (
+                  <AceEditor mode="yaml" height={150} value={selectTmplcontent[2] || ''} />
                 )}
                 <br />
                 <Button
