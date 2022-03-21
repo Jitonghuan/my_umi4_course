@@ -12,9 +12,7 @@ export function useCommonEnvCode() {
     if (appConfig.PRIVATE_METHODS === 'public') {
       setSource('hbos-test');
     } else {
-      getRequest(getCommonEnvCode, {
-        data: { pageSize: -1 },
-      }).then((result) => {
+      getRequest(getCommonEnvCode).then((result) => {
         if (result?.success) {
           setSource(result.data);
         }

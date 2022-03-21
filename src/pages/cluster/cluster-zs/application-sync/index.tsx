@@ -49,7 +49,7 @@ export default function Application() {
     } finally {
       setLoading(false);
     }
-  }, [appCode]);
+  }, [appCode, commonEnvCode]);
 
   useEffect(() => {
     if (!appOptions?.length) return;

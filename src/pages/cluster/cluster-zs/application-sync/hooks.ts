@@ -22,5 +22,5 @@ export function useAppOptions() {
     }
   }, []);
 
-  return [data];
+  return [data, commonEnvCode];
 }

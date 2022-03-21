@@ -10,9 +10,11 @@ import { ArrowRightOutlined, DeleteOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from './service';
 import { postRequest, getRequest } from '@/utils/request';
+import { useCommonEnvCode } from '../../hook';
 import './index.less';
 
 export default function OperatorScheduling() {
+  const [commonEnvCode] = useCommonEnvCode();
   const [clusterA_patientData, setClusterA_patientData] = useState<any[]>(
     localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : [],
   ); //A集群患者信息
@@ -190,7 +192,7 @@ export default function OperatorScheduling() {
   let arryBp: any = [];
   let arryBO: any = [];
   useEffect(() => {
-    getRequest(APIS.listClusterUser, { data: { envCode: 'hbos-test' } }).then((resp) => {
+    getRequest(APIS.listClusterUser, { data: { envCode: commonEnvCode } }).then((resp) => {
       if (resp?.success) {
         let dataSource = resp?.data;
 
@@ -251,28 +253,28 @@ export default function OperatorScheduling() {
   let clusterAO: any = [];
   let clusterBO: any = [];
   clusterA_patientData.map((element: any) => {
-    element['envCode'] = 'hbos-test';
+    element['envCode'] = commonEnvCode;
     clusterAP.push(element);
     return clusterAP;
   });
   clusterB_patientData.map((element: any) => {
-    element['envCode'] = 'hbos-test';
+    element['envCode'] = commonEnvCode;
     clusterBP.push(element);
     return clusterBP;
   });
   clusterA_operatorData.map((element: any) => {
-    element['envCode'] = 'hbos-test';
+    element['envCode'] = commonEnvCode;
     clusterAO.push(element);
     return clusterAO;
   });
   clusterB_operatorData.map((element: any) => {
-    element['envCode'] = 'hbos-test';
+    element['envCode'] = commonEnvCode;
     clusterBO.push(element);
     return clusterBO;
   });
   let arryParams = clusterAP.concat(clusterBP, clusterAO, clusterBO);
   const addMultipleCluster = () => {
-    postRequest(`${APIS.addMultipleClusterUser}?envCode=hbos-test`, { data: [...arryParams] }).then((res) => {
+    postRequest(`${APIS.addMultipleClusterUser}?envCode=${commonEnvCode}`, { data: [...arryParams] }).then((res) => {
       if (res.success) {
         message.success('提交成功！');
       }
