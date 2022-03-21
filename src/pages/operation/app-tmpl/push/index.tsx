@@ -245,7 +245,6 @@ export default function Push(props: any) {
 
   const handleOk = async () => {
     const values = await tmplDetailForm.validateFields();
-    console.log(values, 111);
     // Object.assign(values, {
     //   TakeEffectTime: moment(values.TakeEffectTime).format('YYYY-MM-DD HH:mm:ss'),
     // });

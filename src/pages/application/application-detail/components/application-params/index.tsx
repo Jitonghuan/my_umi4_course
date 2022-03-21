@@ -317,21 +317,22 @@ export default function ApplicationParams(props: any) {
       return prev;
     }, {} as any);
     const value = values.value;
-    // putRequest(APIS.editParams, { data: { id, value, jvm: values?.jvm, tmplConfigurableItem,RestartPolicy:params?.RestartPolicy } }).then((result) => {
-    //   if (result.success) {
-    //     message.success('提交成功！');
-    //     // window.location.reload();
-    //     applicationForm.setFieldsValue({
-    //       tmplConfigurableItem: [],
-    //       jvm: '',
-    //       value: '',
-    //     });
-    //     setTimeout(() => {
-    //       showAppList(selectEnvData, selectTmpl);
-    //     }, 200);
-    //   }
-    // });
-    //
+    putRequest(APIS.editParams, {
+      data: { id, value, jvm: values?.jvm, tmplConfigurableItem, RestartPolicy: params?.RestartPolicy },
+    }).then((result) => {
+      if (result.success) {
+        message.success('提交成功！');
+        // window.location.reload();
+        applicationForm.setFieldsValue({
+          tmplConfigurableItem: [],
+          jvm: '',
+          value: '',
+        });
+        setTimeout(() => {
+          showAppList(selectEnvData, selectTmpl);
+        }, 200);
+      }
+    });
   };
 
   return (
