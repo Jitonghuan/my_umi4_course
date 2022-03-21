@@ -34,6 +34,7 @@ let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
 envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
 envType = window.location.href.includes('base-poc') ? 'base-poc' : envType;
+envType = window.location.href.includes('zsdata') ? 'zsdata' : envType;
 
 export default {
   /** 站点图标 */
