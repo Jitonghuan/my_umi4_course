@@ -102,7 +102,7 @@ export default function Layout(props: any) {
         onSubmit={onPositionSubmit}
         onCancel={() => setPosVisible(false)}
       />
-      <WaterMark content={appConfig.waterMarkName} zIndex={0} fontSize={24} fontColor="#d7e1f580">
+      <WaterMark content={appConfig.waterMarkName} zIndex={0} fontSize={22} fontColor="#B0C4DE2B">
         <FeContext.Provider
           value={{
             breadcrumbMap,
