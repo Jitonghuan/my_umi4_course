@@ -17,61 +17,23 @@ export default function ClusterTable(props: ChartCaseListProps) {
   const columns = [
     {
       title: '院区',
-      dataIndex: 'name',
+      dataIndex: 'hospitalDistrictName',
     },
     {
       title: 'A集群',
-      dataIndex: 'clusterA',
+      dataIndex: 'clusterACount',
       sorter: {
-        compare: (a: any, b: any) => a.clusterA - b.clusterA,
+        compare: (a: any, b: any) => a.clusterACount - b.clusterACount,
         // multiple: 1,
       },
     },
     {
       title: 'B集群',
-      dataIndex: 'clusterB',
+      dataIndex: 'clusterBCount',
       sorter: {
-        compare: (a: any, b: any) => a.clusterB - b.clusterB,
+        compare: (a: any, b: any) => a.clusterBCount - b.clusterBCount,
         // multiple: 2,
       },
-    },
-  ];
-  const countList = [
-    {
-      key: 1,
-      name: '之江',
-      clusterA: clusterTableData.zj_a,
-      clusterB: clusterTableData.zj_b,
-    },
-    {
-      key: 2,
-      name: '之江无线',
-      clusterA: clusterTableData.zjwx_a,
-      clusterB: clusterTableData.zjwx_b,
-    },
-    {
-      key: 3,
-      name: '余杭',
-      clusterA: clusterTableData.yh_a,
-      clusterB: clusterTableData.yh_b,
-    },
-    {
-      key: 4,
-      name: '余杭无线',
-      clusterA: clusterTableData.yhwx_a,
-      clusterB: clusterTableData.yhwx_b,
-    },
-    {
-      key: 5,
-      name: '城站庆春',
-      clusterA: clusterTableData.czqc_a,
-      clusterB: clusterTableData.czqc_b,
-    },
-    {
-      key: 6,
-      name: '城站庆春无线',
-      clusterA: clusterTableData.czqcwx_a,
-      clusterB: clusterTableData.czqcwx_b,
     },
   ];
 
@@ -89,7 +51,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
           rowKey="id"
           bordered
           columns={columns}
-          dataSource={countList}
+          dataSource={clusterTableData}
           pagination={false}
           scroll={{ y: tableHeight }}
         />

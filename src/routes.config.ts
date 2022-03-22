@@ -1,3 +1,4 @@
+import appConfig from '@/app.config';
 type IRouteItem = {
   path: string;
   name?: string;
@@ -1019,7 +1020,7 @@ export default [
         name: '浙一双集群管理',
         key: 'cluster-cluster-zy',
         component: '@/pages/cluster/cluster-zy',
-        // hideInMenu: process.env.BUILD_ENV !== 'prod'&&process.env.BUILD_ENV !== 'dev',
+        hideInMenu: appConfig.IS_Matrix === 'private',
         routes: [
           {
             path: 'dashboards',
@@ -1070,6 +1071,7 @@ export default [
         name: '天台双集群管理',
         key: 'cluster-clusterTt',
         component: '@/pages/cluster/cluster-tt',
+        hideInMenu: appConfig.IS_Matrix === 'private',
         routes: [
           {
             path: 'dashboards',
@@ -1120,6 +1122,7 @@ export default [
         name: '流量调度',
         key: 'cluster-clusterZs',
         component: '@/pages/cluster/cluster-zs',
+        hideInMenu: appConfig.IS_Matrix === 'public',
         routes: [
           {
             path: 'dashboards',
@@ -1164,7 +1167,6 @@ export default [
             hideInMenu: true,
           },
         ],
-        hideInMenu: process.env.BUILD_ENV === 'prod',
       },
     ],
   },

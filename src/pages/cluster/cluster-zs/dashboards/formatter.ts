@@ -4,15 +4,25 @@
 
 // A集群各院区流量
 export function clusterALineChart(clusterAData: Record<string, any>) {
-  const countList: number[] = [];
-  const categoryList: string[] = [];
+  let categoryList: string[] = [];
+  const dataSource = clusterAData.clusterADataSource.map((item: any) => {
+    categoryList.push(item.hospitalDistrictName);
+    return {
+      name: item.hospitalDistrictName,
+      type: 'line',
+      // stack: '访问量',
+      // color: '#BC8F8F',
+      showSymbol: false,
+      data: item.count || [],
+    };
+  });
 
   return {
     tooltip: {
       trigger: 'axis',
     },
     legend: {
-      data: ['之江', '之江无线', '余杭', '余杭无线', '庆春城站', '庆春城站无线'],
+      data: categoryList,
       // orient: 'line',
       top: 0,
       right: '5%',
@@ -29,74 +39,36 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: clusterAData[6],
+      data: clusterAData.clusterATimeStamp,
     },
     yAxis: {
       type: 'value',
     },
-
-    series: [
-      {
-        name: '之江',
-        type: 'line',
-        // stack: '访问量',
-        color: '#BC8F8F',
-        showSymbol: false,
-        data: clusterAData[0],
-      },
-      {
-        name: '之江无线',
-        type: 'line',
-        color: '#EE6363',
-        // stack: '访问量',
-        showSymbol: false,
-        data: clusterAData[1],
-      },
-      {
-        name: '余杭',
-        type: 'line',
-        // stack: '访问量',
-        color: '#DDA0DD',
-        showSymbol: false,
-        data: clusterAData[2],
-      },
-      {
-        name: '余杭无线',
-        type: 'line',
-        // stack: '访问量',
-        color: '#FF8247',
-        showSymbol: false,
-        data: clusterAData[3],
-      },
-      {
-        name: '庆春城站',
-        type: 'line',
-        // stack: '访问量',
-        color: '#FF69B4',
-        showSymbol: false,
-        data: clusterAData[4],
-      },
-      {
-        name: '庆春城站无线',
-        type: 'line',
-        color: '#9370DB',
-        showSymbol: false,
-        // stack: '访问量',
-        data: clusterAData[5],
-      },
-    ],
+    series: dataSource,
   } as any;
 }
 
 // B集群各院区流量
 export function clusterBLineChart(clusterBData: Record<string, any>) {
+  let categoryList: string[] = [];
+  const dataSource = clusterBData.clusterBDataSource.map((item: any) => {
+    categoryList.push(item.hospitalDistrictName);
+    return {
+      name: item.hospitalDistrictName,
+      type: 'line',
+      // stack: '访问量',
+      // color: '#BC8F8F',
+      showSymbol: false,
+      data: item.count || [],
+    };
+  });
   return {
     tooltip: {
       trigger: 'axis',
     },
     //图例组件
     legend: {
-      data: ['之江', '之江无线', '余杭', '余杭无线', '庆春城站', '庆春城站无线'],
+      data: categoryList,
       // orient: 'vertical',
       top: 0,
       right: 0,
@@ -116,56 +88,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
     yAxis: {
       type: 'value',
     },
-    series: [
-      {
-        name: '庆春城站',
-        type: 'line',
-        // stack: '访问量',
-        color: '#191970',
-        showSymbol: false,
-        data: clusterBData[0],
-      },
-      {
-        name: '之江',
-        type: 'line',
-        color: '#2E8B57',
-        showSymbol: false,
-        // stack: '访问量',
-        data: clusterBData[1],
-      },
-      {
-        name: '余杭',
-        type: 'line',
-        // stack: '访问量',
-        color: '#8B864E',
-        showSymbol: false,
-        data: clusterBData[2],
-      },
-      {
-        name: '余杭无线',
-        type: 'line',
-        // stack: '访问量',
-        color: '#3A5FCD',
-        showSymbol: false,
-        data: clusterBData[3],
-      },
-      {
-        name: '庆春城站无线',
-        type: 'line',
-        // stack: '访问量',
-        color: '#8C8898',
-        showSymbol: false,
-        data: clusterBData[4],
-      },
-      {
-        name: '之江无线',
-        type: 'line',
-        color: '#4682B4',
-        showSymbol: false,
-        // stack: '访问量',
-        data: clusterBData[5],
-      },
-    ],
+    series: dataSource,
   } as any;
 }
 
@@ -173,12 +96,23 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
 
 export function ABClusterHistogram(histogramData: Record<string, any>) {
   const countList: any[] = [];
-  const categoryList: string[] = [];
+  let categoryList: any[] = [];
+  let countListA: any = [];
+  let countListB: any = [];
+  let seriesArry: any = [];
 
-  for (var i in histogramData) {
-    countList.push(histogramData[i]);
-    categoryList.push(i);
-  }
+  histogramData?.map((item: any, index: number) => {
+    countListA.push(item.clusterACount);
+    countListB.push(item.clusterBCount);
+    categoryList[index] = 'A-' + item.hospitalDistrictName;
+    categoryList[histogramData.length - 1 + index] = 'B-' + item.hospitalDistrictName;
+    seriesArry.push({
+      type: 'bar',
+    });
+  });
+
+  let total = countListA.concat(countListB);
+
   return {
     //图例组件
     legend: {
@@ -211,23 +145,8 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
 
     dataset: {
       source: [
-        [
-          'product',
-          // 'product',...categoryList,
-          'A-之江',
-          'A-之江无线',
-          'A-余杭',
-          'A-余杭无线',
-          'A-城站庆春',
-          'A-城站庆春无线',
-          'B-之江',
-          'B-之江无线',
-          'B-余杭',
-          'B-余杭无线',
-          'B-城站庆春',
-          'B-城站庆春无线',
-        ],
-        ['访问量', ...countList],
+        ['product', ...categoryList],
+        ['访问量', ...total],
       ],
     },
     //布局
@@ -241,19 +160,6 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     xAxis: { type: 'category' },
     //配置要在Y轴显示的项
     yAxis: { type: 'value' },
-    series: [
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-      { type: 'bar' },
-    ],
+    series: seriesArry,
   } as any;
 }
