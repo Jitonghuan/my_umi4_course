@@ -257,8 +257,8 @@ export default function Push(props: any) {
             templateCode,
             appCodes,
             envCodes: getEnvCodes,
-            ConcurrentNumber: values?.ConcurrentNumber,
-            RestartPolicy: values?.RestartPolicy,
+            concurrentNumber: values?.concurrentNumber,
+            restartPolicy: values?.restartPolicy,
           },
         }).then((resp: any) => {
           if (resp.success) {
@@ -290,8 +290,8 @@ export default function Push(props: any) {
             appCodes,
             envCodes: getEnvCodes,
             customItems: pushItemArry,
-            ConcurrentNumber: values?.ConcurrentNumber,
-            RestartPolicy: values?.RestartPolicy,
+            concurrentNumber: values?.concurrentNumber,
+            restartPolicy: values?.restartPolicy,
           },
         }).then((resp: any) => {
           if (resp.success) {
@@ -713,7 +713,7 @@ export default function Push(props: any) {
               <Divider />
               <Form.Item
                 label="重启策略："
-                name="RestartPolicy"
+                name="restartPolicy"
                 style={{ width: '100%' }}
                 rules={[
                   {
@@ -746,7 +746,7 @@ export default function Push(props: any) {
               {(value === 3 || value === 2) && tmplDetailData?.templateType === 'deployment' && (
                 <Form.Item
                   label="并发数量："
-                  name="ConcurrentNumber"
+                  name="concurrentNumber"
                   style={{
                     width: '100%',
                     marginTop: '15px',

@@ -294,7 +294,6 @@ export default function ApplicationParams(props: any) {
     let hours = moment().hours();
     let minutes = moment().minutes();
     let seconds = moment().seconds();
-    console.log(moment(date).date(), moment().date(), 11);
     if (date && moment(date).date() === moment().date()) {
       return {
         disabledHours: () => range(0, 24).splice(0, hours),
@@ -318,10 +317,11 @@ export default function ApplicationParams(props: any) {
     }, {} as any);
     const value = values.value;
     putRequest(APIS.editParams, {
-      data: { id, value, jvm: values?.jvm, tmplConfigurableItem, RestartPolicy: params?.RestartPolicy },
+      data: { id, value, jvm: values?.jvm, tmplConfigurableItem, restartPolicy: params?.restartPolicy },
     }).then((result) => {
       if (result.success) {
         message.success('提交成功！');
+        setModalVisible(false);
         // window.location.reload();
         applicationForm.setFieldsValue({
           tmplConfigurableItem: [],
@@ -447,7 +447,7 @@ export default function ApplicationParams(props: any) {
         <Form layout="inline" form={restarForm} labelCol={{ flex: '150px' }}>
           <Form.Item
             label="重启策略："
-            name="RestartPolicy"
+            name="restartPolicy"
             style={{ width: '100%' }}
             rules={[
               {
