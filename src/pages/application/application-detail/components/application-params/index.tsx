@@ -31,7 +31,7 @@ export default function ApplicationParams(props: any) {
   const [infoLoading, setInfoloading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [value, setValue] = useState<number>(0);
-
+  const [limit, setLimit] = useState<number>(0);
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
   const { templateType, envCode } = props?.history.location?.query || {};
@@ -138,6 +138,7 @@ export default function ApplicationParams(props: any) {
         tmplConfigurableItem: [],
         jvm: '',
       });
+      setLimit(0);
     }
     for (const key in inintDatas.tmplConfigurableItem) {
       if (key === 'jvm') {
@@ -155,6 +156,7 @@ export default function ApplicationParams(props: any) {
         tmplConfigurableItem: arr1,
         jvm: jvm,
       });
+      setLimit(arr1.length);
       setIsDeployment(inintDatas.templateType);
     }
   };
@@ -194,6 +196,7 @@ export default function ApplicationParams(props: any) {
           // changeEnvCode(applicationlist.envCode);
           // changeTmplType(applicationlist.templateType);
           setIsDeployment(applicationlist.templateType);
+          setLimit(arr1.length);
         } else {
           message.info(`${envCode}的${templateType}类型模版为空`);
         }
@@ -262,6 +265,7 @@ export default function ApplicationParams(props: any) {
             value: applicationlist.value,
             jvm: jvm,
           });
+          setLimit(arr.length);
         } else {
           applicationForm.setFieldsValue({
             tmplConfigurableItem: [],
@@ -269,6 +273,7 @@ export default function ApplicationParams(props: any) {
             value: '',
           });
           setEnsureDisable(true);
+          setLimit(0);
           message.error(`${envCodeCurrent}环境的${templateTypeCurrent}类型模版不存在,请先推送模板！`);
         }
       })
@@ -393,6 +398,7 @@ export default function ApplicationParams(props: any) {
               <Form.Item name="tmplConfigurableItem">
                 <EditorTable
                   readOnly
+                  limit={limit}
                   columns={[
                     {
                       title: 'Key',

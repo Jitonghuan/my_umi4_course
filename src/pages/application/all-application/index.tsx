@@ -16,9 +16,8 @@ import './index.less';
 const rootCls = 'all-application-page';
 
 export default function AllApplication() {
-  const [type, setType] = useState<'all' | 'mine'>(
-    localStorage.getItem('__last_application_type') === 'all' ? 'all' : 'mine',
-  );
+  const currentType: any = localStorage.getItem('__last_application_type');
+  const [type, setType] = useState<'all' | 'mine' | 'collect'>(currentType || 'collect');
   const [createAppVisible, setCreateAppVisible] = useState(false);
 
   const [pageIndex, setPageIndex] = useState(1);
@@ -48,6 +47,7 @@ export default function AllApplication() {
       <ContentCard>
         <div className="table-caption">
           <Radio.Group value={type} onChange={handleTypeChange}>
+            <Radio.Button value="collect">我的收藏</Radio.Button>
             <Radio.Button value="mine">我的应用</Radio.Button>
             <Radio.Button value="all">全部应用</Radio.Button>
           </Radio.Group>
@@ -63,7 +63,7 @@ export default function AllApplication() {
             {!isLoading && !appListData.length && (
               <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
-            <ApplicationCardList key={type} type={type} dataSource={appListData} />
+            <ApplicationCardList key={type} type={type} dataSource={appListData} loadAppListData={loadAppListData} />
             {total > 10 && (
               <div className={`${rootCls}-pagination-wrap`}>
                 <Pagination

@@ -73,27 +73,6 @@ export default function Layout(props: any) {
     loadStaffDepData(orgId);
   };
 
-  function getEnv() {
-    if (window.location.href.includes('fygs')) {
-      return 'fygs';
-    }
-    if (window.location.href.includes('zslnyy')) {
-      return 'zslnyy';
-    }
-    return appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
-  }
-
-  let LogoName = window.location.href.includes('fygs')
-    ? '——富阳骨伤'
-    : window.location.href.includes('zslnyy')
-    ? '——中山老年医院'
-    : '';
-  let waterMarkName = window.location.href.includes('fygs')
-    ? 'Matrix-富阳骨伤'
-    : window.location.href.includes('zslnyy')
-    ? 'Matrix-中山老年医院'
-    : '';
-
   //切换部门确认
   const onPositionSubmit = (data: UserPositionProps) => {
     chooseDept(data.deptId);
@@ -123,7 +102,7 @@ export default function Layout(props: any) {
         onSubmit={onPositionSubmit}
         onCancel={() => setPosVisible(false)}
       />
-      <WaterMark content={waterMarkName} zIndex={0} fontSize={24} fontColor="#d7e1f580">
+      <WaterMark content={appConfig.waterMarkName} zIndex={0} fontSize={22} fontColor="#B0C4DE2B">
         <FeContext.Provider
           value={{
             breadcrumbMap,
@@ -146,7 +125,10 @@ export default function Layout(props: any) {
               showHeader={!fromThird}
               showSiderMenu={!fromThird}
               headerProps={{
-                env: getEnv(),
+                // env: getEnv(),
+                userApi: `${appConfig.apexDomainName}/kapi/apex-sso/getLoginUserInfo`,
+                logoutApi: `${appConfig.apexDomainName}/kapi/apex-sso/logout`,
+                loginUrl: `${appConfig.apexDomainName}/login`,
                 onClickPosition: () => {
                   setPosVisible(true);
                   loadStaffOrgData();
@@ -159,7 +141,7 @@ export default function Layout(props: any) {
                 title: (
                   <div>
                     <img src={appConfig.logo} style={{ marginRight: '5px' }} />
-                    {appConfig.title + LogoName}
+                    {appConfig.title + appConfig.logoName}
                   </div>
                 ),
                 positionText: '部门',

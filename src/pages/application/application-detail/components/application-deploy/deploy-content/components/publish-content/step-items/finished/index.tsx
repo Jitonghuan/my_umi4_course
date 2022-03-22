@@ -8,6 +8,7 @@ import { StepItemProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
 import { downloadImage, listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
+import appConfig from '@/app.config';
 
 /** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
@@ -46,6 +47,7 @@ export default function FinishedStep(props: StepItemProps) {
       description={
         (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
         downLoadSupportEnv.current?.filter((item) => deployInfo.envs?.indexOf(item) > -1).length > 0 &&
+        appConfig.PRIVATE_METHODS === 'public' &&
         isNotFrontend && (
           <Button
             download

@@ -5,6 +5,7 @@
 import logo from '@/assets/imgs/logo.svg';
 import favicon from '@/assets/imgs/favicon.png';
 import { baseRoutePath } from './routes.config';
+import { domainName, wsPrefixName, LogoName, waterMarkName } from './envType.config';
 
 /** 是否是本地开发环境 */
 const IS_LOCAL = process.env.NODE_ENV === 'development';
@@ -12,16 +13,28 @@ const IS_LOCAL = process.env.NODE_ENV === 'development';
 // @ts-ignore
 const BUILD_ENV = window.BUILD_ENV || 'dev';
 
+//判断是否为司内Matrix环境
+let href = window.location.href;
+function getPrivateMethods() {
+  if (
+    href.includes('matrix-local') ||
+    href.includes('matrix-test') ||
+    href.includes('matrix.cfuture') ||
+    href.includes('base-poc')
+  ) {
+    return 'public';
+  } else {
+    return 'private';
+  }
+}
+
+const PRIVATE_METHODS = getPrivateMethods();
+
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
 envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
-
-const domainName: any = {
-  zslnyy: 'http://c2f.apex-zslnyy.cfuture.shop',
-  fygs: 'http://c2f.apex-fygs.seenew.info:180',
-  prod: 'http://c2f.apex.cfuture.shop',
-  dev: 'http://c2f.apex-dev.cfuture.shop',
-};
+envType = window.location.href.includes('base-poc') ? 'base-poc' : envType;
+envType = window.location.href.includes('zsdata') ? 'zsdata' : envType;
 
 export default {
   /** 站点图标 */
@@ -54,9 +67,11 @@ export default {
   // apex 地址
   apexDomainName: domainName[envType],
   // webSocket 地址
-  wsPrefix: window.location.href.includes('fygs')
-    ? 'ws://matrix-fygs.seenew.info:180'
-    : window.location.href.includes('zslnyy')
-    ? 'ws://matrix-zslnyy.cfuture.shop'
-    : 'ws://matrix-api.cfuture.shop',
+  wsPrefix: wsPrefixName[envType],
+  // logo 名字
+  logoName: LogoName[envType] || '',
+  // 水印
+  waterMarkName: waterMarkName[envType] || '',
+  //是否为司内Matrix环境
+  PRIVATE_METHODS: PRIVATE_METHODS,
 };

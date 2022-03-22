@@ -3,9 +3,17 @@
 // @create 2021/08/24 09:21
 
 import { useState, useEffect, useCallback } from 'react';
-import { getRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import { queryBizData } from '@/common/apis';
-import { queryApps, queryAppEnvs, queryAppsUrl, queryMyAppsUrl } from './service';
+import {
+  queryApps,
+  queryAppEnvs,
+  queryAppsUrl,
+  queryMyAppsUrl,
+  queryMyCollectUrl,
+  cancelCollection,
+  addCollection,
+} from './service';
 import { AppItemVO, EnvDataVO } from './interfaces';
 
 // 获取应用分组选项
@@ -48,25 +56,30 @@ export function useAppListData(
   const [data, setData] = useState<AppItemVO[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const typeObj: any = {
+    collect: queryMyCollectUrl,
+    mine: queryMyAppsUrl,
+    all: queryAppsUrl,
+  };
 
   const loadData = useCallback(
     async (extra?: any) => {
       const { requestType, ...others } = params || {};
-      const url = requestType === 'mine' ? queryMyAppsUrl : queryAppsUrl;
+      const requestData = { ...others, ...extra, pageIndex, pageSize };
+      if (requestType === 'collect') {
+        Object.assign(requestData, { collectionType: 'application' });
+      }
+      const url = typeObj[requestType] || queryAppsUrl;
       try {
         setLoading(true);
         const result = await getRequest(url, {
-          data: {
-            ...others,
-            ...extra,
-            pageIndex,
-            pageSize,
-          },
+          data: { ...requestData },
         });
         const { dataSource, pageInfo } = result.data || {};
         setData(dataSource || []);
         setTotal(pageInfo?.total || 0);
       } catch (ex) {
+        setTotal(0);
         setData([]);
       } finally {
         setLoading(false);
