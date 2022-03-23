@@ -120,12 +120,11 @@ export default function Push(props: any) {
 
   const showModal = () => {
     if (selectedRowKeys.length > 0) {
-      tmplDetailForm.setFieldsValue({
-        pushItem: undefined,
-        envCodes: undefined,
-        appCategoryCode: undefined,
-        restartPolicy: 1,
-      });
+      // tmplDetailForm.setFieldsValue({
+      //   pushItem: undefined,
+      //   envCodes: undefined,
+      //   appCategoryCode: undefined,
+      // });
       setIsModalVisible(true);
     } else {
       message.warning('请先勾选应用！');
@@ -152,10 +151,10 @@ export default function Push(props: any) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    tmplDetailForm.setFieldsValue({
-      pushItem: undefined,
-      envCodes: undefined,
-    });
+    // tmplDetailForm.setFieldsValue({
+    //   pushItem: undefined,
+    //   envCodes: undefined,
+    // });
   };
   const [dataSource, setDataSource] = useState<any[]>([]);
   useEffect(() => {
@@ -179,9 +178,12 @@ export default function Push(props: any) {
     // getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
 
-  // useEffect(() => {
-  //   tmplDetailForm.resetFields();
-  // }, [isModalVisible]);
+  useEffect(() => {
+    tmplDetailForm.resetFields();
+    tmplDetailForm.setFieldsValue({
+      restartPolicy: 1,
+    });
+  }, [isModalVisible]);
 
   // 页面销毁时清空缓存
   // useEffect(() => () => sessionStorage.removeItem('tmplDetailData'), []);
