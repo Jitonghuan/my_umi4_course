@@ -3,7 +3,23 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, message, Modal, Popover, Row, Col, Tag } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Table,
+  Space,
+  message,
+  Modal,
+  Popover,
+  Row,
+  Col,
+  Tag,
+  Divider,
+  Radio,
+  DatePicker,
+} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';
@@ -13,6 +29,7 @@ import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import './index.less';
 import { queryAppGroupReq } from './service';
+import moment from 'moment';
 
 export default function Push(props: any) {
   const { Option } = Select;
@@ -38,6 +55,7 @@ export default function Push(props: any) {
   const [labelListSource, setLabelListSource] = useState<any>();
   const [labelLoading, setLabelLoading] = useState<boolean>(false);
   const [businessData, setBusinessData] = useState<any[]>([]);
+  const [value, setValue] = useState<number>(0); //弹窗radio的值
 
   const getLabelList = () => {
     setLabelLoading(true);
@@ -48,7 +66,10 @@ export default function Push(props: any) {
       .then((result) => {
         const { dataSource } = result.data || [];
         dataSource.map((el: any) => {
-          arry.push({ label: el.tagName, value: el.tagName });
+          arry.push({
+            label: el.tagName,
+            value: el.tagName,
+          });
         });
         setLabelListSource(arry);
       })
@@ -111,12 +132,18 @@ export default function Push(props: any) {
 
     //加载默认的下拉选择框，当模版为deployment时，可配置项才可以显示jvm
     let tmplListdata = [
-      { label: '模版详情', value: 'templateValue' },
+      {
+        label: '模版详情',
+        value: 'templateValue',
+      },
       { label: '可配置项', value: 'item' },
       { label: '全部推送', value: 'all' },
     ];
     if (tmplDetailData?.templateType === 'deployment') {
-      tmplListdata.unshift({ label: 'jvm参数', value: 'jvm' });
+      tmplListdata.unshift({
+        label: 'jvm参数',
+        value: 'jvm',
+      });
     }
 
     setTmplDetailOptions(tmplListdata);
@@ -143,9 +170,17 @@ export default function Push(props: any) {
       appGroupCode: param.appGroupCode,
     });
 
-    loadListData({ ...param, pageIndex: 1, pageSize: 20 });
+    loadListData({
+      ...param,
+      pageIndex: 1,
+      pageSize: 20,
+    });
     // getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
+
+  useEffect(() => {
+    tmplDetailForm.resetFields();
+  }, [isModalVisible]);
 
   // 页面销毁时清空缓存
   // useEffect(() => () => sessionStorage.removeItem('tmplDetailData'), []);
@@ -153,14 +188,20 @@ export default function Push(props: any) {
   const changeAppCategory = (value: any) => {
     setEnvDatas([{ value: '', label: '' }]);
     setEnvCodes(['']);
-    formTmplQuery.setFieldsValue({ appGroupCode: '' });
+    formTmplQuery.setFieldsValue({
+      appGroupCode: '',
+    });
     const appCategoryCode = value;
     setAppCategoryCode(appCategoryCode);
-    queryAppGroupReq({ categoryCode: value }).then((datas) => {
+    queryAppGroupReq({
+      categoryCode: value,
+    }).then((datas) => {
       setBusinessData(datas.list);
     });
 
-    getRequest(APIS.envList, { data: { categoryCode: appCategoryCode } }).then((resp: any) => {
+    getRequest(APIS.envList, {
+      data: { categoryCode: appCategoryCode },
+    }).then((resp: any) => {
       if (resp.success) {
         const datas =
           resp?.data?.dataSource?.map((el: any) => {
@@ -182,7 +223,9 @@ export default function Push(props: any) {
   useEffect(() => {
     let values = formTmplQuery.getFieldsValue();
     if (values.appCategoryCode) {
-      queryAppGroupReq({ categoryCode: values.appCategoryCode }).then((datas) => {
+      queryAppGroupReq({
+        categoryCode: values.appCategoryCode,
+      }).then((datas) => {
         setBusinessData(datas.list);
       });
     }
@@ -199,17 +242,28 @@ export default function Push(props: any) {
   });
   let getEnvCodes = [...envCodes];
   let pushItemArry: any = [];
-  const handleOk = () => {
-    setIsModalVisible(false);
-    const values = tmplDetailForm.getFieldsValue();
+
+  const handleOk = async () => {
+    const values = await tmplDetailForm.validateFields();
+    // Object.assign(values, {
+    //   TakeEffectTime: moment(values.TakeEffectTime).format('YYYY-MM-DD HH:mm:ss'),
+    // });
     // 如果选择all时走原来的推送接口
     if (values?.pushItem === 'all') {
       if (appCategoryCode && envCodes) {
         postRequest(APIS.pushTmpl, {
-          data: { appCategoryCode: appCategoryCode, templateCode, appCodes, envCodes: getEnvCodes },
+          data: {
+            appCategoryCode: appCategoryCode,
+            templateCode,
+            appCodes,
+            envCodes: getEnvCodes,
+            concurrentNumber: values?.concurrentNumber,
+            restartPolicy: values?.restartPolicy,
+          },
         }).then((resp: any) => {
           if (resp.success) {
             message.success('推送成功！');
+            setIsModalVisible(false);
             // window.location.reload();
             loadListData({ pageIndex: 1, pageSize: 20 });
             setTimeout(() => {
@@ -236,11 +290,14 @@ export default function Push(props: any) {
             appCodes,
             envCodes: getEnvCodes,
             customItems: pushItemArry,
+            concurrentNumber: values?.concurrentNumber,
+            restartPolicy: values?.restartPolicy,
           },
         }).then((resp: any) => {
           if (resp.success) {
             message.success('推送成功！');
             // window.location.reload();
+            setIsModalVisible(false);
             loadListData({ pageIndex: 1, pageSize: 20 });
             setTimeout(() => {
               setSelectedRowKeys(['undefined']);
@@ -268,7 +325,6 @@ export default function Push(props: any) {
         // isClient: 0,
         pageSize: value.pageSize,
         pageIndex: value.pageIndex,
-
         // pageSize: value.pageSize,
       },
     })
@@ -323,38 +379,76 @@ export default function Push(props: any) {
       values.map((item: any) => {
         //全选时置灰其他单项选择
         if (item === 'all') {
-          tmplDetailForm.setFieldsValue({ pushItem: 'all' });
+          tmplDetailForm.setFieldsValue({
+            pushItem: 'all',
+          });
           let tmplDetailQuery = [
-            { label: '模版详情', value: 'templateValue', disabled: true },
-            { label: '可配置项', value: 'item', disabled: true },
+            {
+              label: '模版详情',
+              value: 'templateValue',
+              disabled: true,
+            },
+            {
+              label: '可配置项',
+              value: 'item',
+              disabled: true,
+            },
             { label: '全部推送', value: 'all' },
           ];
           if (tmplDetailData?.templateType === 'deployment') {
-            tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: true });
+            tmplDetailQuery.unshift({
+              label: 'jvm参数',
+              value: 'jvm',
+              disabled: true,
+            });
           }
           setTmplDetailOptions(tmplDetailQuery);
         } else {
           //不选全选时其他项都可以选
           let tmplDetailQuery = [
-            { label: '模版详情', value: 'templateValue', disabled: false },
-            { label: '可配置项', value: 'item', disabled: false },
+            {
+              label: '模版详情',
+              value: 'templateValue',
+              disabled: false,
+            },
+            {
+              label: '可配置项',
+              value: 'item',
+              disabled: false,
+            },
             { label: '全部推送', value: 'all' },
           ];
           if (tmplDetailData?.templateType === 'deployment') {
-            tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: false });
+            tmplDetailQuery.unshift({
+              label: 'jvm参数',
+              value: 'jvm',
+              disabled: false,
+            });
           }
           setTmplDetailOptions(tmplDetailQuery);
         }
       });
     } else {
       let tmplDetailQuery = [
-        { label: '模版详情', value: 'templateValue', disabled: false },
-        { label: '可配置项', value: 'item', disabled: false },
+        {
+          label: '模版详情',
+          value: 'templateValue',
+          disabled: false,
+        },
+        {
+          label: '可配置项',
+          value: 'item',
+          disabled: false,
+        },
         // { label: 'jvm参数', value: 'jvm参数', disabled: false },
         { label: '全部推送', value: 'all' },
       ];
       if (tmplDetailData?.templateType === 'deployment') {
-        tmplDetailQuery.unshift({ label: 'jvm参数', value: 'jvm', disabled: false });
+        tmplDetailQuery.unshift({
+          label: 'jvm参数',
+          value: 'jvm',
+          disabled: false,
+        });
       }
       setTmplDetailOptions(tmplDetailQuery);
     }
@@ -443,7 +537,8 @@ export default function Push(props: any) {
             </Button>
           </Form.Item>
           <span>
-            当前模版：<Tag color="blue">{tmplName}</Tag>
+            当前模版：
+            <Tag color="blue">{tmplName}</Tag>
           </span>
         </Form>
       </FilterCard>
@@ -483,7 +578,11 @@ export default function Push(props: any) {
                       {current?.map((tag: any) => {
                         let color = 'green';
                         return (
-                          <span style={{ marginTop: 2 }}>
+                          <span
+                            style={{
+                              marginTop: 2,
+                            }}
+                          >
                             <Tag color={color}>{tag}</Tag>
                           </span>
                         );
@@ -534,55 +633,138 @@ export default function Push(props: any) {
             visible={isModalVisible}
             onOk={handleOk}
             onCancel={handleCancel}
+            className="push-form"
             width={750}
-            bodyStyle={{ height: '300px' }}
+            // bodyStyle={{ height: '300px' }}
           >
             <Form layout="inline" form={tmplDetailForm} labelCol={{ flex: '150px' }}>
-              <div style={{ width: '100%' }}>
-                <Row>
-                  <Col span={12}>
-                    <Form.Item
-                      label="部署环境的应用分类："
-                      name="appCategoryCode"
-                      rules={[{ required: true, message: '这是必选项' }]}
-                    >
-                      <Select
-                        showSearch
-                        allowClear
-                        style={{ width: 160 }}
-                        options={categoryData}
-                        onChange={changeAppCategory}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="部署环境：" name="envCodes" rules={[{ required: true, message: '这是必选项' }]}>
-                      <Select
-                        showSearch
-                        allowClear
-                        style={{ width: 160 }}
-                        mode="multiple"
-                        placeholder="请选择"
-                        onChange={changeEnvCode}
-                        options={envDatas}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
-              <div style={{ width: '100%', marginTop: 18 }}>
-                <Form.Item label="推送项：" name="pushItem" rules={[{ required: true, message: '这是必选项' }]}>
-                  <Select
-                    allowClear
-                    mode="multiple"
-                    style={{ width: 160 }}
-                    placeholder="请选择"
-                    onChange={selectTmplItem}
-                    options={tmplDetailOptions}
-                  />
+              {/* <div style={{ width: '100%' }}> */}
+              <Row style={{ width: '100%' }}>
+                <Col span={12}>
+                  <Form.Item
+                    label="部署环境的应用分类："
+                    name="appCategoryCode"
+                    rules={[
+                      {
+                        required: true,
+                        message: '这是必选项',
+                      },
+                    ]}
+                  >
+                    <Select
+                      showSearch
+                      allowClear
+                      style={{ width: 160 }}
+                      options={categoryData}
+                      onChange={changeAppCategory}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="部署环境："
+                    name="envCodes"
+                    rules={[
+                      {
+                        required: true,
+                        message: '这是必选项',
+                      },
+                    ]}
+                  >
+                    <Select
+                      showSearch
+                      allowClear
+                      style={{ width: 160 }}
+                      mode="multiple"
+                      placeholder="请选择"
+                      onChange={changeEnvCode}
+                      options={envDatas}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              {/* </div> */}
+              {/* <div style={{ width: '100%', marginTop: 18 }}> */}
+              <Form.Item
+                label="推送项："
+                name="pushItem"
+                rules={[
+                  {
+                    required: true,
+                    message: '这是必选项',
+                  },
+                ]}
+                style={{
+                  width: '100%',
+                  marginTop: '10px',
+                }}
+              >
+                <Select
+                  allowClear
+                  mode="multiple"
+                  style={{ width: 160 }}
+                  placeholder="请选择"
+                  onChange={selectTmplItem}
+                  options={tmplDetailOptions}
+                />
+              </Form.Item>
+              {/* </div> */}
+              {/* <div style={{ width: '100%', marginTop: 16 }}></div> */}
+              <Divider />
+              <Form.Item
+                label="重启策略："
+                name="restartPolicy"
+                style={{ width: '100%' }}
+                rules={[
+                  {
+                    required: true,
+                    message: '这是必选项',
+                  },
+                ]}
+              >
+                <Radio.Group
+                  onChange={(e) => {
+                    setValue(e.target.value);
+                  }}
+                  value={value}
+                >
+                  {/* <Radio value={3}>定时生效</Radio> */}
+                  <Radio value={1}>不生效</Radio>
+                  <Radio value={2}>立即生效</Radio>
+                </Radio.Group>
+              </Form.Item>
+              {/* {value === 3 && (
+                  <Form.Item
+                    label="生效时间："
+                    name="TakeEffectTime"
+                    style={{ width: '100%', marginTop: '15px' }}
+                    rules={[{ required: true, message: '这是必选项' }]}
+                  >
+                    <DatePicker showTime allowClear />
+                  </Form.Item>
+                )} */}
+              {(value === 3 || value === 2) && tmplDetailData?.templateType === 'deployment' && (
+                <Form.Item
+                  label="并发数量："
+                  name="concurrentNumber"
+                  style={{
+                    width: '100%',
+                    marginTop: '15px',
+                  }}
+                  rules={[
+                    {
+                      required: true,
+                      message: '这是必选项',
+                    },
+                  ]}
+                >
+                  <Select style={{ width: 160 }}>
+                    <Select.Option value={5}>5</Select.Option>
+                    <Select.Option value={10}>10</Select.Option>
+                    <Select.Option value={15}>15</Select.Option>
+                  </Select>
                 </Form.Item>
-              </div>
-              <div style={{ width: '100%', marginTop: 16 }}></div>
+              )}
             </Form>
           </Modal>
 
@@ -611,7 +793,11 @@ export default function Push(props: any) {
                   onClick={() => {
                     setPushItemVisible(false);
                   }}
-                  style={{ position: 'absolute', bottom: 10, right: 0 }}
+                  style={{
+                    position: 'absolute',
+                    bottom: 10,
+                    right: 0,
+                  }}
                 >
                   关闭
                 </Button>
