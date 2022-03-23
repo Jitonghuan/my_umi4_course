@@ -30,7 +30,7 @@ export default function ApplicationParams(props: any) {
   const [ensureDisable, setEnsureDisable] = useState<boolean>(false);
   const [infoLoading, setInfoloading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number>(1);
   const [limit, setLimit] = useState<number>(0);
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
@@ -89,7 +89,9 @@ export default function ApplicationParams(props: any) {
 
   useEffect(() => {
     if (modalVisible) {
-      restarForm.resetFields();
+      restarForm.setFieldsValue({
+        restartPolicy: 1,
+      });
     }
   }, [modalVisible]);
 
