@@ -1118,7 +1118,6 @@ export default [
         name: '流量调度',
         key: 'cluster-clusterZs',
         component: '@/pages/cluster/cluster-zs',
-        hideInMenu: process.env.NODE_ENV !== 'development',
         routes: [
           {
             path: 'dashboards',
