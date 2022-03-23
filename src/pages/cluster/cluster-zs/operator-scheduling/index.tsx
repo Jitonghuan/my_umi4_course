@@ -4,17 +4,18 @@
  * @time {2021/11/30 10:47}
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { Form, Radio, Button, Modal, Card, Select, Input, Table, message, Divider } from 'antd';
-import { ArrowRightOutlined, DeleteOutlined } from '@ant-design/icons';
-import { ContentCard } from '@/components/vc-page-content';
+import React, { useEffect, useState } from 'react';
+import { Form, Button, Card, Select, Input, Table, message, Divider } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import * as APIS from './service';
+import appConfig from '@/app.config';
 import { postRequest, getRequest } from '@/utils/request';
-import { useCommonEnvCode } from '../../hook';
+import { getCommonEnvCode } from '../../hook';
 import './index.less';
 
-export default function OperatorScheduling() {
-  const [commonEnvCode] = useCommonEnvCode();
+export default function OperatorScheduling(props: any) {
+  const { visable } = props;
+  const [commonEnvCode, setCommonEnvCode] = useState<string>('');
   const [clusterA_patientData, setClusterA_patientData] = useState<any[]>(
     localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : [],
   ); //A集群患者信息
@@ -191,53 +192,62 @@ export default function OperatorScheduling() {
   let arryAO: any = [];
   let arryBp: any = [];
   let arryBO: any = [];
+
   useEffect(() => {
-    getRequest(APIS.listClusterUser, { data: { envCode: commonEnvCode } }).then((resp) => {
-      if (resp?.success) {
-        let dataSource = resp?.data;
+    if (appConfig.IS_Matrix !== 'public') {
+      getRequest(getCommonEnvCode).then((result) => {
+        if (result?.success) {
+          setCommonEnvCode(result.data);
+          let currentEnvCode = result.data;
+          getRequest(APIS.listClusterUser, { data: { envCode: currentEnvCode } }).then((resp) => {
+            if (resp?.success) {
+              let dataSource = resp?.data;
+              dataSource.map((ele: any) => {
+                if (ele?.userCluster === 'cluster_a' && ele?.userType === 'patient') {
+                  let userType = ele?.userType;
+                  let userCluster = ele?.userCluster;
+                  let userId = ele?.userId;
+                  arryAp.push({ userType, userCluster, userId });
 
-        dataSource.map((ele: any) => {
-          if (ele?.userCluster === 'cluster_a' && ele?.userType === 'patient') {
-            let userType = ele?.userType;
-            let userCluster = ele?.userCluster;
-            let userId = ele?.userId;
-            arryAp.push({ userType, userCluster, userId });
+                  localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(arryAp);
+                }
+                if (ele?.userCluster === 'cluster_b' && ele?.userType === 'patient') {
+                  let userType = ele?.userType;
+                  let userCluster = ele?.userCluster;
+                  let userId = ele?.userId;
+                  arryBp.push({ userType, userCluster, userId });
+                  // clusterB_patientData.push({type,cluster,id})
+                  localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(arryBp);
+                }
+                if (ele?.userCluster === 'cluster_a' && ele?.userType === 'operator') {
+                  let userType = ele?.userType;
+                  let userCluster = ele?.userCluster;
+                  let userId = ele?.userId;
+                  arryAO.push({ userType, userCluster, userId });
+                  // clusterA_operatorData.push({type,cluster,id})
+                  localStorage.CLUSTERA_OPERATOR_DATA = JSON.stringify(arryAO);
+                }
+                if (ele?.userCluster === 'cluster_b' && ele?.userType === 'operator') {
+                  let userType = ele?.userType;
+                  let userCluster = ele?.userCluster;
+                  let userId = ele?.userId;
+                  arryBO.push({ userType, userCluster, userId });
+                  // clusterB_operatorData.push({type,cluster,id})
 
-            localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(arryAp);
-          }
-          if (ele?.userCluster === 'cluster_b' && ele?.userType === 'patient') {
-            let userType = ele?.userType;
-            let userCluster = ele?.userCluster;
-            let userId = ele?.userId;
-            arryBp.push({ userType, userCluster, userId });
-            // clusterB_patientData.push({type,cluster,id})
-            localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(arryBp);
-          }
-          if (ele?.userCluster === 'cluster_a' && ele?.userType === 'operator') {
-            let userType = ele?.userType;
-            let userCluster = ele?.userCluster;
-            let userId = ele?.userId;
-            arryAO.push({ userType, userCluster, userId });
-            // clusterA_operatorData.push({type,cluster,id})
-            localStorage.CLUSTERA_OPERATOR_DATA = JSON.stringify(arryAO);
-          }
-          if (ele?.userCluster === 'cluster_b' && ele?.userType === 'operator') {
-            let userType = ele?.userType;
-            let userCluster = ele?.userCluster;
-            let userId = ele?.userId;
-            arryBO.push({ userType, userCluster, userId });
-            // clusterB_operatorData.push({type,cluster,id})
+                  localStorage.CLUSTERB_OPERATOR_DATA = JSON.stringify(arryBO);
+                }
+              });
+              setClusterA_patientData(arryAp);
+              setClusterB_patientData(arryBp);
+              setClusterA_operatorData(arryAO);
+              setClusterB_operatorData(arryBO);
+            }
+          });
+        }
+      });
+    }
+  }, [visable]);
 
-            localStorage.CLUSTERB_OPERATOR_DATA = JSON.stringify(arryBO);
-          }
-        });
-        setClusterA_patientData(arryAp);
-        setClusterB_patientData(arryBp);
-        setClusterA_operatorData(arryAO);
-        setClusterB_operatorData(arryBO);
-      }
-    });
-  }, []);
   useEffect(() => {
     return () => {
       localStorage.removeItem('CLUSTERB_OPERATOR_DATA');
@@ -245,7 +255,7 @@ export default function OperatorScheduling() {
       localStorage.removeItem('CLUSTERB_PATIENT_DATA');
       localStorage.removeItem('CLUSTERA_PATIENT_DATA');
     };
-  }, []);
+  }, [visable]);
 
   //患者或操作员提交按钮
   let clusterAP: any = [];
