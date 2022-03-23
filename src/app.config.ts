@@ -15,29 +15,20 @@ const BUILD_ENV = window.BUILD_ENV || 'dev';
 
 //判断是否为司内Matrix环境
 let href = window.location.href;
-function getPrivateMethods(type?: boolean) {
-  if (type) {
-    if (href.includes('matrix-local') || href.includes('matrix-test') || href.includes('matrix.cfuture')) {
-      return 'public';
-    } else {
-      return 'private';
-    }
+function getPrivateMethods() {
+  if (
+    href.includes('matrix-local') ||
+    href.includes('matrix-test') ||
+    href.includes('matrix.cfuture') ||
+    href.includes('base-poc')
+  ) {
+    return 'public';
   } else {
-    if (
-      href.includes('matrix-local') ||
-      href.includes('matrix-test') ||
-      href.includes('matrix.cfuture') ||
-      href.includes('base-poc')
-    ) {
-      return 'public';
-    } else {
-      return 'private';
-    }
+    return 'private';
   }
 }
 
-const PRIVATE_METHODS = getPrivateMethods(false);
-const IS_Matrix = getPrivateMethods(true);
+const PRIVATE_METHODS = getPrivateMethods();
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
@@ -83,5 +74,4 @@ export default {
   waterMarkName: waterMarkName[envType] || '',
   //是否为司内Matrix环境
   PRIVATE_METHODS: PRIVATE_METHODS,
-  IS_Matrix: IS_Matrix,
 };
