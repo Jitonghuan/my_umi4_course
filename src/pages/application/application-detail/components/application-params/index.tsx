@@ -7,6 +7,7 @@ import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio, Dat
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
+import appConfig from '@/app.config';
 import AceEditor from '@/components/ace-editor';
 import DetailContext from '@/pages/application/application-detail/context';
 import EditorTable from '@cffe/pc-editor-table';
@@ -97,9 +98,15 @@ export default function ApplicationParams(props: any) {
 
   //通过appCategoryCode查询环境信息
   const selectAppEnv = () => {
-    return getRequest(APIS.listAppEnv, {
-      data: { appCode },
-    });
+    if (appConfig.PRIVATE_METHODS === 'public') {
+      return getRequest(APIS.listAppEnv, {
+        data: { appCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
+      });
+    } else {
+      return getRequest(APIS.listAppEnv, {
+        data: { appCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
+      });
+    }
   };
 
   //查询当前模版信息  一进入页面加载
