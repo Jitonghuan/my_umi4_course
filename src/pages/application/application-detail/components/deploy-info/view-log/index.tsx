@@ -3,7 +3,7 @@
 // @create 2021/11/12 17:35
 
 import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffect } from 'react';
-import { Select, Card, message, Form, Divider, Button } from 'antd';
+import { Select, message, Form, Tag, Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
 import appConfig from '@/app.config';
@@ -160,14 +160,23 @@ export default function ViewLog(props: any) {
     <ContentCard noPadding className="viewLog">
       <div className="loginShellContent" style={{ height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 6 }}>
         {/* <pre>查看日志{'>>>>'}</pre> */}
+        <div className="log-caption">
+          <div className="caption-left">
+            <Form form={viewLogform} layout="inline">
+              <pre>选择容器： </pre>
+              <Form.Item name="containerName">
+                <Select style={{ width: 120 }} options={queryListContainer} onChange={selectListContainer}></Select>
+              </Form.Item>
 
-        <Form form={viewLogform} layout="inline">
-          <pre>选择容器： </pre>
-          <Form.Item name="containerName">
-            <Select style={{ width: 120 }} options={queryListContainer} onChange={selectListContainer}></Select>
-          </Form.Item>
-          {/* <span style={{paddingRight:3}}><h3>{appData?.appCode},{appData?.appName}</h3> </span> */}
-        </Form>
+              {/* <span style={{paddingRight:3}}><h3>{appData?.appCode},{appData?.appName}</h3> </span> */}
+            </Form>
+          </div>
+          <div className="caption-right">
+            <span>
+              当前环境：<Tag color="geekblue">{envCode}</Tag>
+            </span>
+          </div>
+        </div>
         <div
           id="result-log"
           className="result-log"
