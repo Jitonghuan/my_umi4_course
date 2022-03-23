@@ -9,6 +9,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import type { IResponse } from '@cffe/vc-request/es/base-request/type';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
+import { useCommonEnvCode } from '../../hook';
 import './index.less';
 
 type ResPromise = Promise<IResponse<any>>;
@@ -59,6 +60,7 @@ export default function ClusterSyncDetail(props: any) {
   const [resultLog, setResultLog] = useState<string>('');
   const [currState, setCurrState] = useState<ICategory>();
   const resultRef = useRef<HTMLPreElement>(null);
+  const [commonEnvCode] = useCommonEnvCode();
 
   const [nextDeployApp, setNextDeployApp] = useState<string>();
 
@@ -71,7 +73,7 @@ export default function ClusterSyncDetail(props: any) {
   const queryCurrStatus = useCallback(async () => {
     setPending(true);
     try {
-      const result = await getRequest(APIS.querySyncState, { data: { envCode: 'hbos-test' } });
+      const result = await getRequest(APIS.querySyncState, { data: { envCode: commonEnvCode } });
       const initState = result.data.category;
 
       if (initState === 'SyncClusterApp') {
@@ -92,7 +94,7 @@ export default function ClusterSyncDetail(props: any) {
     } finally {
       setPending(false);
     }
-  }, []);
+  }, [commonEnvCode]);
   const doAction = useCallback(async (promise: ResPromise) => {
     try {
       setPending(true);
@@ -140,28 +142,28 @@ export default function ClusterSyncDetail(props: any) {
 
   // 1. get nacos 配置比对
   const configDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.configDiff, { data: { envCode: 'hbos-test' } }));
+    await doAction(getRequest(APIS.configDiff, { data: { envCode: commonEnvCode } }));
     setCurrState('GetDiffClusterConfig');
   }, []);
   // 2. Nacos同步
   const syncConfig = useCallback(async () => {
-    await doAction(postRequest(APIS.syncConfig, { data: { envCode: 'hbos-test' } }));
+    await doAction(postRequest(APIS.syncConfig, { data: { envCode: commonEnvCode } }));
     setCurrState('syncClusterConfig');
   }, []);
   // 3. XXL-Job比对
   const xxlJobDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.xxlJobDiff, { data: { envCode: 'hbos-test' } }));
+    await doAction(getRequest(APIS.xxlJobDiff, { data: { envCode: commonEnvCode } }));
     setCurrState('GetDiffXxlJob');
   }, []);
   // 4. XXL-Job同步
   const syncXxlJob = useCallback(async () => {
-    await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: 'hbos-test' } }));
+    await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: commonEnvCode } }));
     setCurrState('syncXxlJob');
   }, []);
   let nextDeploymentName = '';
   // 5. get cluster app
   const getClusterApp = useCallback(async () => {
-    const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: 'hbos-test' } }));
+    const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: commonEnvCode } }));
     if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
       setCurrState('GetDiffClusterApp');
       setNextDeployApp(nextApp?.deploymentName);
@@ -174,7 +176,7 @@ export default function ClusterSyncDetail(props: any) {
   const deployApp = useCallback(async () => {
     await doAction(
       postRequest(APIS.syncClusterApp, {
-        data: { deploymentName: nextDeployApp || nextDeploymentName, envCode: 'hbos-test' },
+        data: { deploymentName: nextDeployApp || nextDeploymentName, envCode: commonEnvCode },
       }),
     );
     // 成功后再调一次 queryClusterApp 接口
@@ -182,12 +184,12 @@ export default function ClusterSyncDetail(props: any) {
   }, [nextDeploymentName]);
   // 7. 前端资源同步
   const syncFrontendSource = useCallback(async () => {
-    await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: 'hbos-test' } }));
+    await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: commonEnvCode } }));
     setCurrState('SyncClusterWebSource');
   }, []);
   // 8. finish
   const syncClusterOver = useCallback(async () => {
-    await doAction(getRequest(APIS.syncClusterOver, { data: { envCode: 'hbos-test' } }));
+    await doAction(getRequest(APIS.syncClusterOver, { data: { envCode: commonEnvCode } }));
     setCurrState('ClusterSyncOver');
   }, []);
 

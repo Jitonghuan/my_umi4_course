@@ -8,6 +8,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { useAppOptions } from './hooks';
 import { postRequest, getRequest } from '@/utils/request';
 import * as APIS from '../service';
+import { useCommonEnvCode } from '../../hook';
 import DetailModal from '@/components/detail-modal';
 
 export default function Application() {
@@ -18,6 +19,7 @@ export default function Application() {
   const [pending, setPending] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [jvmConfigInfo, setJvmConfigInfo] = useState();
+  const [commonEnvCode] = useCommonEnvCode();
   const [jvmVisiable, setJvmVisiable] = useState<boolean>(false);
   const showModal = (current: any) => {
     setJvmConfigInfo(current);
@@ -29,24 +31,25 @@ export default function Application() {
     setClusterData([]);
 
     try {
-      const result = await getRequest(APIS.singleDiffApp, {
-        data: { appCode, envCode: 'hbos-test' },
-      });
-
-      const source = result.data || {};
-      if (typeof source === 'object') {
-        const next = Object.keys(source).map((appName) => {
-          return { appName, ...source[appName] };
+      if (commonEnvCode) {
+        const result = await getRequest(APIS.singleDiffApp, {
+          data: { appCode, envCode: commonEnvCode },
         });
-        setClusterData(next);
-        setCompleted(true);
-      } else if (typeof source === 'string') {
-        message.info(source);
+        const source = result.data || {};
+        if (typeof source === 'object') {
+          const next = Object.keys(source).map((appName) => {
+            return { appName, ...source[appName] };
+          });
+          setClusterData(next);
+          setCompleted(true);
+        } else if (typeof source === 'string') {
+          message.info(source);
+        }
       }
     } finally {
       setLoading(false);
     }
-  }, [appCode]);
+  }, [appCode, commonEnvCode]);
 
   useEffect(() => {
     if (!appOptions?.length) return;
@@ -70,7 +73,7 @@ export default function Application() {
         try {
           setPending(true);
           const res = await postRequest(APIS.syncSingleApp, {
-            data: { appCode, envCode: 'hbos-test' },
+            data: { appCode, envCode: commonEnvCode },
           });
           const sourceInfo = res?.data || '';
           if (res.success) {

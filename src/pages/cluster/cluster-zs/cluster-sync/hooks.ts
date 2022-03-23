@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
+import { useCommonEnvCode } from '../../hook';
 
 function getCacheData(key: string, limit = 6e5): { timestamp: number; data: any } {
   const cacheStr = sessionStorage.getItem(key);
@@ -25,39 +26,42 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
   const [fromCache, setFromCache] = useState<string>('');
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [commonEnvCode] = useCommonEnvCode();
 
-  const loadData = useCallback(async (fromCache = false) => {
-    if (fromCache) {
-      const cache = getCacheData('DIFF_CLUSTER_APP', 20 * 60 * 1000);
-      if (cache) {
-        setData(cache.data);
-        setFromCache(moment(cache.timestamp).format('HH:mm:ss'));
-        setCompleted(true);
-      } else {
-        setData([]);
+  const loadData = useCallback(
+    async (fromCache = false) => {
+      if (fromCache) {
+        const cache = getCacheData('DIFF_CLUSTER_APP', 20 * 60 * 1000);
+        if (cache) {
+          setData(cache.data);
+          setFromCache(moment(cache.timestamp).format('HH:mm:ss'));
+          setCompleted(true);
+        } else {
+          setData([]);
+        }
+        return;
       }
-      return;
-    }
 
-    setLoading(true);
-    try {
-      //集群应用比对
-      const result = await getRequest(APIS.diffClusterApp, { data: { envCode: 'hbos-test' } });
-      const resultData = result?.data || [];
-      const next = resultData?.map((item: any, index: number) => {
-        const appDiffInfo = Object.keys(item);
-        let appName = appDiffInfo[0];
-        return { appName, ...item[appName] };
-      });
-      console.log('next', next);
-      sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
-      setFromCache('');
-      setData(next);
-    } finally {
-      setLoading(false);
-      setCompleted(true);
-    }
-  }, []);
+      setLoading(true);
+      try {
+        //集群应用比对
+        const result = await getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } });
+        const resultData = result?.data || [];
+        const next = resultData?.map((item: any, index: number) => {
+          const appDiffInfo = Object.keys(item);
+          let appName = appDiffInfo[0];
+          return { appName, ...item[appName] };
+        });
+        sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
+        setFromCache('');
+        setData(next);
+      } finally {
+        setLoading(false);
+        setCompleted(true);
+      }
+    },
+    [commonEnvCode],
+  );
 
   useEffect(() => {
     loadData(true);

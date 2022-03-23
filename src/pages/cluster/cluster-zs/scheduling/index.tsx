@@ -16,13 +16,14 @@ import { useInitClusterData, useClusterSource } from './hooks';
 import * as APIS from '../service';
 import { postRequest } from '@/utils/request';
 import './index.less';
-
+import { useCommonEnvCode } from '../../hook';
 export default function TrafficScheduling() {
   const [editField] = Form.useForm();
   const [sourceData] = useClusterSource();
   const [initData] = useInitClusterData();
   const [logger, setLogger] = useState<string>();
   const [pending, setPending] = useState(false);
+  const [commonEnvCode] = useCommonEnvCode();
 
   // 回填初始化数据到表单
   useEffect(() => {
@@ -71,10 +72,10 @@ export default function TrafficScheduling() {
         // delRequest(`${APIS.deleteTmpl}/${id}`)
 
         try {
-          const result = await postRequest(`${APIS.switchCluster}?envCode=hbos-test`, {
+          const result = await postRequest(`${APIS.switchCluster}?envCode=${commonEnvCode}`, {
             data: [
               {
-                envCode: 'hbos-test',
+                envCode: commonEnvCode,
                 cluster: values?.zslnyy,
                 hospitalDistrictCode: Object.keys(values)[0],
                 hospitalDistrictName: item[0]?.title,

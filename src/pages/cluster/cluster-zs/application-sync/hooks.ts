@@ -5,18 +5,22 @@
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
+import { useCommonEnvCode } from '../../hook';
 
 export function useAppOptions() {
   const [data, setData] = useState<any[]>([]);
+  const [commonEnvCode] = useCommonEnvCode();
 
   useEffect(() => {
-    getRequest(APIS.queryAppList, { data: { envCode: 'hbos-test' } }).then((result) => {
-      const next = (result.data || []).map((item: any) => {
-        return { label: item.appCode, value: item.appCode };
+    if (commonEnvCode) {
+      getRequest(APIS.queryAppList, { data: { envCode: commonEnvCode } }).then((result) => {
+        const next = (result.data || []).map((item: any) => {
+          return { label: item.appCode, value: item.appCode };
+        });
+        setData(next);
       });
-      setData(next);
-    });
+    }
   }, []);
 
-  return [data];
+  return [data, commonEnvCode];
 }

@@ -8,7 +8,6 @@ type IRouteItem = {
 
 /** 基础路由前缀 */
 export const baseRoutePath = '/matrix';
-
 export default [
   {
     path: baseRoutePath,
@@ -79,7 +78,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/cluster/cluster-zs`,
-    redirect: `${baseRoutePath}/cluster/cluster-zs/operator-scheduling`,
+    redirect: `${baseRoutePath}/cluster/cluster-zs/dashboards`,
   },
   {
     path: `${baseRoutePath}/operation/app-tmpl`,
@@ -1116,22 +1115,22 @@ export default [
       },
       {
         path: 'cluster-zs',
-        name: '中山双集群管理',
+        name: '流量调度',
         key: 'cluster-clusterZs',
         component: '@/pages/cluster/cluster-zs',
         routes: [
           {
-            path: 'operator-scheduling',
-            name: '集群调度',
+            path: 'dashboards',
+            name: '集群看板',
             key: 'cluster-clusterZs',
-            component: '@/pages/cluster/cluster-zs/operator-scheduling',
+            component: '@/pages/cluster/cluster-zs/dashboards',
             hideInMenu: true,
           },
           {
-            path: 'scheduling',
+            path: 'scheduling-mode',
             name: '流量调度',
             key: 'cluster-clusterZs',
-            component: '@/pages/cluster/cluster-zs/scheduling',
+            component: '@/pages/cluster/cluster-zs/scheduling-mode',
             hideInMenu: true,
           },
           {
@@ -1163,7 +1162,6 @@ export default [
             hideInMenu: true,
           },
         ],
-        hideInMenu: process.env.BUILD_ENV === 'prod',
       },
     ],
   },
