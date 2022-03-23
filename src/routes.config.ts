@@ -1,4 +1,3 @@
-import appConfig from '@/app.config';
 type IRouteItem = {
   path: string;
   name?: string;
@@ -9,7 +8,6 @@ type IRouteItem = {
 
 /** 基础路由前缀 */
 export const baseRoutePath = '/matrix';
-
 export default [
   {
     path: baseRoutePath,
@@ -1020,7 +1018,6 @@ export default [
         name: '浙一双集群管理',
         key: 'cluster-cluster-zy',
         component: '@/pages/cluster/cluster-zy',
-        hideInMenu: appConfig.IS_Matrix === 'private',
         routes: [
           {
             path: 'dashboards',
@@ -1071,7 +1068,6 @@ export default [
         name: '天台双集群管理',
         key: 'cluster-clusterTt',
         component: '@/pages/cluster/cluster-tt',
-        hideInMenu: appConfig.IS_Matrix === 'private',
         routes: [
           {
             path: 'dashboards',
@@ -1122,7 +1118,6 @@ export default [
         name: '流量调度',
         key: 'cluster-clusterZs',
         component: '@/pages/cluster/cluster-zs',
-        hideInMenu: appConfig.IS_Matrix === 'public',
         routes: [
           {
             path: 'dashboards',
