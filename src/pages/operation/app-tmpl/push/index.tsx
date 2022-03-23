@@ -55,7 +55,7 @@ export default function Push(props: any) {
   const [labelListSource, setLabelListSource] = useState<any>();
   const [labelLoading, setLabelLoading] = useState<boolean>(false);
   const [businessData, setBusinessData] = useState<any[]>([]);
-  const [value, setValue] = useState<number>(0); //弹窗radio的值
+  const [value, setValue] = useState<number>(1); //弹窗radio的值
 
   const getLabelList = () => {
     setLabelLoading(true);
@@ -124,6 +124,7 @@ export default function Push(props: any) {
         pushItem: undefined,
         envCodes: undefined,
         appCategoryCode: undefined,
+        restartPolicy: 1,
       });
       setIsModalVisible(true);
     } else {
@@ -178,9 +179,9 @@ export default function Push(props: any) {
     // getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
 
-  useEffect(() => {
-    tmplDetailForm.resetFields();
-  }, [isModalVisible]);
+  // useEffect(() => {
+  //   tmplDetailForm.resetFields();
+  // }, [isModalVisible]);
 
   // 页面销毁时清空缓存
   // useEffect(() => () => sessionStorage.removeItem('tmplDetailData'), []);
