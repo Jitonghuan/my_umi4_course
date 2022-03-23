@@ -64,7 +64,6 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
   if (!clusterBData) {
     return;
   }
-  console.log('clusterBData', clusterBData);
 
   (clusterBData.clusterBTimeStamp || [])?.map((el: any, index: number) => {
     dataCountArry[index] = 0;
@@ -114,7 +113,6 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
 // A/B集群柱状图
 
 export function ABClusterHistogram(histogramData: Record<string, any>) {
-  const countList: any[] = [];
   let categoryList: any[] = [];
   let countListA: any = [];
   let countListB: any = [];
@@ -127,14 +125,20 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       countListA.push(item.clusterACount);
       countListB.push(item.clusterBCount);
       categoryList[index] = 'A-' + item.hospitalDistrictName;
-      categoryList[histogramData.length - 1 + index] = 'B-' + item.hospitalDistrictName;
-      seriesArry.push({
-        type: 'bar',
-      });
+      categoryList[histogramData.length + index] = 'B-' + item.hospitalDistrictName;
+      seriesArry.push(
+        {
+          type: 'bar',
+        },
+        {
+          type: 'bar',
+        },
+      );
     });
   } catch (error) {
     console.log(error);
   }
+
   let total = countListA.concat(countListB);
   return {
     //图例组件
