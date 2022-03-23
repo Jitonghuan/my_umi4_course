@@ -51,7 +51,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
           rowKey="id"
           bordered
           columns={columns}
-          dataSource={clusterTableData}
+          dataSource={clusterTableData || []}
           pagination={false}
           scroll={{ y: tableHeight }}
         />

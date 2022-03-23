@@ -35,12 +35,12 @@ export default function Dashboards() {
         </Button>
       </div>
       <div className="section-group">
-        <ABHistorgram data={histogramData} loading={loading} />
-        <ClusterTable tableData={histogramData} loading={loading} />
+        <ABHistorgram data={histogramData || []} loading={loading} />
+        <ClusterTable tableData={histogramData || []} loading={loading} />
       </div>
       <div className="section-group">
-        <ClusterAChart data={clusterAData} loading={lineloading} />
-        <ClusterBChart data={clusterBData} loading={lineloading} />
+        <ClusterAChart data={clusterAData || []} loading={lineloading} />
+        <ClusterBChart data={clusterBData || []} loading={lineloading} />
       </div>
     </ContentCard>
   );
