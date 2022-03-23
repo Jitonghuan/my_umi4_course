@@ -5,22 +5,30 @@
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
-import { useCommonEnvCode } from '../../hook';
+import { getCommonEnvCode } from '../../hook';
+import appConfig from '@/app.config';
 
 export function useAppOptions() {
   const [data, setData] = useState<any[]>([]);
-  const [commonEnvCode] = useCommonEnvCode();
-
   useEffect(() => {
-    if (commonEnvCode) {
-      getRequest(APIS.queryAppList, { data: { envCode: commonEnvCode } }).then((result) => {
-        const next = (result.data || []).map((item: any) => {
-          return { label: item.appCode, value: item.appCode };
+    let commonEnvCode = '';
+    if (appConfig.IS_Matrix !== 'public') {
+      getRequest(getCommonEnvCode)
+        .then((result) => {
+          if (result?.success) {
+            commonEnvCode = result.data;
+          }
+        })
+        .then(() => {
+          getRequest(APIS.queryAppList, { data: { envCode: commonEnvCode } }).then((result) => {
+            const next = (result.data || []).map((item: any) => {
+              return { label: item.appCode, value: item.appCode };
+            });
+            setData(next);
+          });
         });
-        setData(next);
-      });
     }
   }, []);
 
-  return [data, commonEnvCode];
+  return [data];
 }
