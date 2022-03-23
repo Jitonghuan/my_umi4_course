@@ -13,30 +13,40 @@ import { Form, Radio, Button, Modal } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { useInitClusterData, useClusterSource } from './hooks';
+import appConfig from '@/app.config';
 import * as APIS from '../service';
-import { postRequest } from '@/utils/request';
+import { postRequest, getRequest } from '@/utils/request';
 import './index.less';
-import { useCommonEnvCode } from '../../hook';
-export default function TrafficScheduling() {
+import { getCommonEnvCode } from '../../hook';
+export default function TrafficScheduling(props: any) {
+  const { visable } = props;
   const [editField] = Form.useForm();
   const [sourceData] = useClusterSource();
   const [initData] = useInitClusterData();
   const [logger, setLogger] = useState<string>();
   const [pending, setPending] = useState(false);
-  const [commonEnvCode] = useCommonEnvCode();
+  const [commonEnvCode, setCommonEnvCode] = useState<string>('');
 
   // 回填初始化数据到表单
   useEffect(() => {
     if (!initData) return;
-
     editField.setFieldsValue(initData);
-  }, [initData]);
+  }, [initData, visable]);
 
   // useEffect(() => {
   //   getRequest(APIS.trafficMap).then(result => {
   //     console.log('>>> trafficMap', result.data);
   //   });
   // }, []);
+  useEffect(() => {
+    if (appConfig.IS_Matrix !== 'public') {
+      getRequest(getCommonEnvCode).then((result) => {
+        if (result?.success) {
+          setCommonEnvCode(result.data);
+        }
+      });
+    }
+  }, [visable]);
 
   const handleSubmit = useCallback(async () => {
     const values = await editField.validateFields();

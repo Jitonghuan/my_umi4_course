@@ -1,10 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import { Form, Radio, Button, Modal, Card, Select, Input, Table, message, Divider } from 'antd';
+import { Select } from 'antd';
 import OperatorScheduling from '../operator-scheduling';
 import Scheduling from '../scheduling';
 export default function SchedulingMode() {
   const [scheduleMode, setScheduleMode] = useState<string>('cluster');
+  const [operatorVisable, setOperatorVisable] = useState<boolean>(false);
+  const [schedulingVisable, setSchedulingVisable] = useState<boolean>(false);
   const schedulingOptions = [
     {
       label: '集群维度',
@@ -17,6 +19,12 @@ export default function SchedulingMode() {
   ];
   const getSchedulingMode = (value: string) => {
     setScheduleMode(value);
+    if (value === 'cluster') {
+      setSchedulingVisable(true);
+    }
+    if (value === 'operator') {
+      setOperatorVisable(true);
+    }
   };
   return (
     <ContentCard>
@@ -31,8 +39,8 @@ export default function SchedulingMode() {
       </div>
       {/* <OperatorScheduling/> */}
 
-      {scheduleMode === 'cluster' && <Scheduling />}
-      {scheduleMode === 'operator' && <OperatorScheduling />}
+      {scheduleMode === 'cluster' && <Scheduling visable={schedulingVisable} />}
+      {scheduleMode === 'operator' && <OperatorScheduling visable={operatorVisable} />}
     </ContentCard>
   );
 }
