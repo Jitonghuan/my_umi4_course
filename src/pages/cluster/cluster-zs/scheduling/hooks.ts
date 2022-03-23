@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { getRequest } from '@/utils/request';
 import * as APIS from '../service';
-
+import { useCommonEnvCode } from '../../hook';
 export function useInitClusterData() {
   const [data, setData] = useState<Record<string, any>>();
 
@@ -24,10 +24,11 @@ export function useInitClusterData() {
 
 export function useClusterSource() {
   const [data, setData] = useState<any[]>([]);
+  const [commonEnvCode] = useCommonEnvCode();
 
   // 暂时写死数据
   useEffect(() => {
-    getRequest(APIS.getHospitalDistrictInfo, { data: { envCode: 'hbos-test' } }).then((resp) => {
+    getRequest(APIS.getHospitalDistrictInfo, { data: { envCode: commonEnvCode } }).then((resp) => {
       if (resp?.success) {
         setData([
           {

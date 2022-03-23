@@ -5,18 +5,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
+import { useCommonEnvCode } from '../../hook';
 
 export function useLogSource(pageIndex: number, pageSize: number): [any[], number, boolean] {
   const [data, setData] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [commonEnvCode] = useCommonEnvCode();
 
   const loadData = useCallback(async () => {
     setLoading(true);
 
     try {
       const result = await getRequest(APIS.queryOperateLog, {
-        data: { envCode: 'hbos-test', pageIndex, pageSize },
+        data: { envCode: commonEnvCode, pageIndex, pageSize },
       });
 
       let resultData = result.data || {};
@@ -30,7 +32,7 @@ export function useLogSource(pageIndex: number, pageSize: number): [any[], numbe
     } finally {
       setLoading(false);
     }
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, commonEnvCode]);
 
   useEffect(() => {
     loadData();
