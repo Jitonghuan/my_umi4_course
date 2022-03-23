@@ -4,12 +4,12 @@ import { getRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 
 export function useCommonEnvCode() {
-  const [source, setSource] = useState<string>('hbos-test');
+  const [source, setSource] = useState<string>('');
   /** GET 获取envCode */
   const getCommonEnvCode = addAPIPrefix('/opsManage/multiple/common/getEnvCode');
 
   useEffect(() => {
-    if (appConfig.PRIVATE_METHODS === 'public') {
+    if (appConfig.IS_Matrix === 'public') {
       setSource('hbos-test');
     } else {
       getRequest(getCommonEnvCode).then((result) => {
