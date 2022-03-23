@@ -109,18 +109,20 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
   if (!histogramData) {
     return;
   }
-  (histogramData || [])?.map((item: any, index: number) => {
-    countListA.push(item.clusterACount);
-    countListB.push(item.clusterBCount);
-    categoryList[index] = 'A-' + item.hospitalDistrictName;
-    categoryList[histogramData.length - 1 + index] = 'B-' + item.hospitalDistrictName;
-    seriesArry.push({
-      type: 'bar',
+  try {
+    (histogramData || [])?.map((item: any, index: number) => {
+      countListA.push(item.clusterACount);
+      countListB.push(item.clusterBCount);
+      categoryList[index] = 'A-' + item.hospitalDistrictName;
+      categoryList[histogramData.length - 1 + index] = 'B-' + item.hospitalDistrictName;
+      seriesArry.push({
+        type: 'bar',
+      });
     });
-  });
-
+  } catch (error) {
+    console.log(error);
+  }
   let total = countListA.concat(countListB);
-
   return {
     //图例组件
     legend: {
