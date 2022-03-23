@@ -5,7 +5,10 @@
 // A集群各院区流量
 export function clusterALineChart(clusterAData: Record<string, any>) {
   let categoryList: string[] = [];
-  const dataSource = clusterAData.clusterADataSource.map((item: any) => {
+  if (!clusterAData) {
+    return;
+  }
+  const dataSource = (clusterAData.clusterADataSource || [])?.map((item: any) => {
     categoryList.push(item.hospitalDistrictName);
     return {
       name: item.hospitalDistrictName,
@@ -51,7 +54,10 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
 // B集群各院区流量
 export function clusterBLineChart(clusterBData: Record<string, any>) {
   let categoryList: string[] = [];
-  const dataSource = clusterBData.clusterBDataSource.map((item: any) => {
+  if (!clusterBData) {
+    return;
+  }
+  const dataSource = (clusterBData.clusterBDataSource || [])?.map((item: any) => {
     categoryList.push(item.hospitalDistrictName);
     return {
       name: item.hospitalDistrictName,
@@ -100,8 +106,10 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
   let countListA: any = [];
   let countListB: any = [];
   let seriesArry: any = [];
-
-  histogramData?.map((item: any, index: number) => {
+  if (!histogramData) {
+    return;
+  }
+  (histogramData || [])?.map((item: any, index: number) => {
     countListA.push(item.clusterACount);
     countListB.push(item.clusterBCount);
     categoryList[index] = 'A-' + item.hospitalDistrictName;
