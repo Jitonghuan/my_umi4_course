@@ -8,7 +8,8 @@ import { ContentCard } from '@/components/vc-page-content';
 import { useAppOptions } from './hooks';
 import { postRequest, getRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { useCommonEnvCode } from '../../hook';
+import { getCommonEnvCode } from '../../hook';
+import appConfig from '@/app.config';
 import DetailModal from '@/components/detail-modal';
 
 export default function Application() {
@@ -19,8 +20,9 @@ export default function Application() {
   const [pending, setPending] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [jvmConfigInfo, setJvmConfigInfo] = useState();
-  const [commonEnvCode] = useCommonEnvCode();
   const [jvmVisiable, setJvmVisiable] = useState<boolean>(false);
+  const [commonEnvCode, setCommonEnvCode] = useState<string>('');
+
   const showModal = (current: any) => {
     setJvmConfigInfo(current);
     setJvmVisiable(true);
@@ -29,27 +31,33 @@ export default function Application() {
   const loadAppList = useCallback(async () => {
     setLoading(true);
     setClusterData([]);
-
     try {
-      if (commonEnvCode) {
-        const result = await getRequest(APIS.singleDiffApp, {
-          data: { appCode, envCode: commonEnvCode },
+      let currentEnvCode = '';
+      if (appConfig.IS_Matrix !== 'public') {
+        getRequest(getCommonEnvCode).then((result) => {
+          if (result?.success) {
+            currentEnvCode = result.data;
+            setCommonEnvCode(currentEnvCode);
+          }
         });
-        const source = result.data || {};
-        if (typeof source === 'object') {
-          const next = Object.keys(source).map((appName) => {
-            return { appName, ...source[appName] };
-          });
-          setClusterData(next);
-          setCompleted(true);
-        } else if (typeof source === 'string') {
-          message.info(source);
-        }
+      }
+      const result = await getRequest(APIS.singleDiffApp, {
+        data: { appCode, envCode: currentEnvCode },
+      });
+      const source = result.data || {};
+      if (typeof source === 'object') {
+        const next = Object.keys(source).map((appName) => {
+          return { appName, ...source[appName] };
+        });
+        setClusterData(next);
+        setCompleted(true);
+      } else if (typeof source === 'string') {
+        message.info(source);
       }
     } finally {
       setLoading(false);
     }
-  }, [appCode, commonEnvCode]);
+  }, [appCode]);
 
   useEffect(() => {
     if (!appOptions?.length) return;
