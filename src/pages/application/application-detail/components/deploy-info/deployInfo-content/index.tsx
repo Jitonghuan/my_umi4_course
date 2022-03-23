@@ -173,7 +173,6 @@ export default function DeployContent(props: DeployContentProps) {
                 if (result.success) {
                   initLoadInfoData = result.data;
                   setListEnvClusterData(initLoadInfoData);
-                  console.log('initLoadInfoData', initLoadInfoData);
                 }
               })
               .then(() => {
