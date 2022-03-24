@@ -44,7 +44,7 @@ export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) =
 
   useEffect(() => {
     let commonEnvCode = '';
-    if (appConfig.IS_Matrix === 'public') {
+    if (appConfig.IS_Matrix !== 'public') {
       getRequest(getCommonEnvCode).then((result) => {
         if (result?.success) {
           commonEnvCode = result.data;
@@ -112,7 +112,7 @@ export function useClusterLineData(): [any, any, boolean, (showLoading?: boolean
 
   useEffect(() => {
     let commonEnvCode = '';
-    if (appConfig.IS_Matrix === 'public') {
+    if (appConfig.IS_Matrix !== 'public') {
       getRequest(getCommonEnvCode).then((result) => {
         if (result?.success) {
           commonEnvCode = result.data;
