@@ -26,9 +26,9 @@ export function useInitClusterData() {
 export function useClusterSource() {
   const [data, setData] = useState<any[]>([]);
 
-  // 暂时写死数据
   useEffect(() => {
     let commonEnvCode = '';
+    let dataArry: any = [];
     if (appConfig.IS_Matrix !== 'public') {
       getRequest(getCommonEnvCode)
         .then((result) => {
@@ -39,17 +39,20 @@ export function useClusterSource() {
         .then(() => {
           getRequest(APIS.getHospitalDistrictInfo, { data: { envCode: commonEnvCode } }).then((resp) => {
             if (resp?.success) {
-              setData([
-                {
-                  title: resp?.data[0].hospitalDistrictName,
-                  name: resp?.data[0].hospitalDistrictCode,
+              resp.data?.map((ele: any) => {
+                dataArry.push({
+                  title: ele.hospitalDistrictName,
+                  name: ele.hospitalDistrictCode,
 
                   options: [
-                    { label: 'A集群', value: 'cluster_a', ip: resp?.data[0].HospitalDistrictIp },
-                    { label: 'B集群', value: 'cluster_b', ip: resp?.data[0].HospitalDistrictIp },
+                    { label: 'A集群', value: 'cluster_a', ip: ele.HospitalDistrictIp },
+                    { label: 'B集群', value: 'cluster_b', ip: ele.HospitalDistrictIp },
                   ],
-                },
-              ]);
+                });
+              });
+              setData(dataArry);
+            } else {
+              return;
             }
           });
         });
