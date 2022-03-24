@@ -68,7 +68,6 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
             });
           });
       }
-      console.log('result');
     } finally {
       setLoading(false);
       setCompleted(true);

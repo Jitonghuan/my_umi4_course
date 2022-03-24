@@ -2,20 +2,37 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/11/9 10:05
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, Table, Alert, Modal } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useTableData } from './hooks';
+import appConfig from '@/app.config';
+import { history } from 'umi';
+import { getRequest } from '@/utils/request';
+import { getCommonEnvCode } from '../../hook';
 import DetailModal from '@/components/detail-modal';
 
 export default function ClusterPage(props: any) {
   const [tableData, fromCache, loading, completed, reloadData] = useTableData();
   const [jvmConfigInfo, setJvmConfigInfo] = useState<any>('');
   const [jvmVisiable, setJvmVisiable] = useState<boolean>(false);
+  const [commonEnvCode, setCommonEnvCode] = useState<string>('');
   const showModal = (current: any) => {
     setJvmConfigInfo(current);
     setJvmVisiable(true);
   };
+
+  useEffect(() => {
+    let currentEnvCode = '';
+    if (appConfig.IS_Matrix !== 'public') {
+      getRequest(getCommonEnvCode).then((result) => {
+        if (result?.success) {
+          currentEnvCode = result.data;
+          setCommonEnvCode(currentEnvCode);
+        }
+      });
+    }
+  }, []);
 
   return (
     <ContentCard>
@@ -38,7 +55,12 @@ export default function ClusterPage(props: any) {
           <Button
             type="primary"
             disabled={loading || !tableData?.length}
-            onClick={() => props.history.push('./cluster-sync-detail')}
+            onClick={() =>
+              history.push({
+                pathname: './cluster-sync-detail',
+                state: commonEnvCode,
+              })
+            }
           >
             开始集群同步
           </Button>
