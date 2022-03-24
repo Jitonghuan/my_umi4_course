@@ -45,7 +45,6 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
     try {
       //集群应用比对
       let commonEnvCode = '';
-      let result: any;
       if (appConfig.IS_Matrix !== 'public') {
         getRequest(getCommonEnvCode)
           .then((result) => {
@@ -54,18 +53,22 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
             }
           })
           .then(() => {
-            result = getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } });
+            getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } }).then((res) => {
+              if (res?.success) {
+                const resultData = res?.data || [];
+                const next = resultData?.map((item: any, index: number) => {
+                  const appDiffInfo = Object.keys(item);
+                  let appName = appDiffInfo[0];
+                  return { appName, ...item[appName] };
+                });
+                sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
+                setFromCache('');
+                setData(next);
+              }
+            });
           });
       }
-      const resultData = result?.data || [];
-      const next = resultData?.map((item: any, index: number) => {
-        const appDiffInfo = Object.keys(item);
-        let appName = appDiffInfo[0];
-        return { appName, ...item[appName] };
-      });
-      sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
-      setFromCache('');
-      setData(next);
+      console.log('result');
     } finally {
       setLoading(false);
       setCompleted(true);
