@@ -70,6 +70,7 @@ export default function LogMonitor(props: any) {
   const [indexModeFieldsOption, getIndexModeFields] = useIndexModeFieldsOptions();
   const [editDisable, setEditDisable] = useState<boolean>(false);
   const [selectNum, setSelectNum] = useState<string>('');
+  const [initLength, setInitLength] = useState<number>(0);
   // const [, updateState] = React.useState();
   // const forceUpdate = React.useCallback(() => updateState({} as any), []);
 
@@ -82,7 +83,6 @@ export default function LogMonitor(props: any) {
   };
   const selectTarget = (value: any) => {
     setCurrentTarget(value);
-    console.log(222);
 
     // forceUpdate();
   };
@@ -211,7 +211,9 @@ export default function LogMonitor(props: any) {
             });
         }
         if (type === 'edit') {
-          putRequest(updateMonitor, { data: { ...logparams, envCode: currentEnvCode, metrics: continueMetricList } })
+          putRequest(updateMonitor, {
+            data: { ...logparams, envCode: currentEnvCode, metrics: continueMetricList, id: recordData.id },
+          })
             .then((resp) => {
               if (resp?.success) {
                 message.info('编辑成功！');
@@ -232,9 +234,12 @@ export default function LogMonitor(props: any) {
       tagrgetForm.setFieldsValue({
         metrics: [{}],
       });
+      setEditDisable(false);
       return;
     }
-
+    if (type === 'edit') {
+      setEditDisable(true);
+    }
     logForm.setFieldsValue({
       monitorName: recordData?.monitorName,
       appCode: recordData?.appCode,
@@ -277,6 +282,8 @@ export default function LogMonitor(props: any) {
       });
     });
 
+    setInitLength(recordData?.MonitorBizMetric.length);
+
     tagrgetForm.setFieldsValue({
       metrics: metricsArry || [{}],
     });
@@ -296,11 +303,10 @@ export default function LogMonitor(props: any) {
                       name="monitorName"
                       rules={[{ required: true, message: '请输入监控名称!' }]}
                     >
-                      <Input style={{ width: '362px' }} disabled={editDisable}></Input>
+                      <Input style={{ width: '362px' }}></Input>
                     </Form.Item>
                     <Form.Item label="选择环境" name="envCode" required={true}>
                       <Select
-                        disabled={editDisable}
                         style={{ width: '140px' }}
                         options={envTypeData}
                         value={currentEnvType}
@@ -309,7 +315,6 @@ export default function LogMonitor(props: any) {
                       ></Select>
                       <Select
                         style={{ width: '220px' }}
-                        disabled={editDisable}
                         options={envCodeOption}
                         onChange={selectEnvCode}
                         value={currentEnvCode}
@@ -323,7 +328,6 @@ export default function LogMonitor(props: any) {
                     >
                       <Select
                         style={{ width: '362px' }}
-                        disabled={editDisable}
                         options={logStoreOptions}
                         onChange={selectIndex}
                         showSearch
@@ -334,7 +338,6 @@ export default function LogMonitor(props: any) {
                       <Select
                         style={{ width: '362px' }}
                         options={appOptions}
-                        disabled={editDisable}
                         onChange={selectAppCode}
                         showSearch
                         allowClear
@@ -397,7 +400,7 @@ export default function LogMonitor(props: any) {
                                 >
                                   <Input
                                     style={{ width: '352px' }}
-                                    disabled={editDisable}
+                                    disabled={key <= initLength - 1}
                                     placeholder="指标名称仅支持数字、字母、下划线"
                                   ></Input>
                                 </Form.Item>
@@ -411,7 +414,6 @@ export default function LogMonitor(props: any) {
                                   <Select
                                     style={{ width: '352px' }}
                                     options={targetOptions}
-                                    disabled={editDisable}
                                     // value={currentTarget}
                                     // name={[name,'currentTarget']}
                                     onChange={selectTarget}
@@ -433,7 +435,6 @@ export default function LogMonitor(props: any) {
                                           <Input
                                             style={{ width: 352 }}
                                             placeholder="格式: 0.001;0.05;0.1   	冒号分割"
-                                            disabled={editDisable}
                                           ></Input>
                                         </Form.Item>
                                       );
@@ -451,7 +452,6 @@ export default function LogMonitor(props: any) {
                                             <Input
                                               style={{ width: 352 }}
                                               placeholder="格式: 0.5: 0.05;0.1:0.01 冒号分割"
-                                              disabled={editDisable}
                                             ></Input>
                                           </Form.Item>
                                           <Form.Item
@@ -459,22 +459,14 @@ export default function LogMonitor(props: any) {
                                             label="MaxAge"
                                             name={[name, 'MaxAge']}
                                           >
-                                            <Input
-                                              style={{ width: 352 }}
-                                              placeholder="MaxAge"
-                                              disabled={editDisable}
-                                            ></Input>
+                                            <Input style={{ width: 352 }} placeholder="MaxAge"></Input>
                                           </Form.Item>
                                           <Form.Item
                                             dependencies={[name, 'metricType', 'second']}
                                             label="AgeBuckets"
                                             name={[name, 'AgeBuckets']}
                                           >
-                                            <Input
-                                              style={{ width: 352 }}
-                                              placeholder="AgeBuckets"
-                                              disabled={editDisable}
-                                            ></Input>
+                                            <Input style={{ width: 352 }} placeholder="AgeBuckets"></Input>
                                           </Form.Item>
                                         </div>
                                       );
@@ -490,11 +482,7 @@ export default function LogMonitor(props: any) {
                                           rules={[{ required: true, message: '选择指标值字段' }]}
                                           dependencies={[name, 'metricType', 'second']}
                                         >
-                                          <Select
-                                            style={{ width: '352px' }}
-                                            options={indexModeFieldsOption}
-                                            disabled={editDisable}
-                                          ></Select>
+                                          <Select style={{ width: '352px' }} options={indexModeFieldsOption}></Select>
                                         </Form.Item>
                                       );
                                     }
@@ -508,7 +496,7 @@ export default function LogMonitor(props: any) {
                                 name={[name, 'metricDesc', 'forth']}
                                 {...restField}
                               >
-                                <Input style={{ width: 352 }} disabled={editDisable}></Input>
+                                <Input style={{ width: 352 }}></Input>
                               </Form.Item>
                               <Form.List name={[name, 'filters']}>
                                 {(field, { add, remove }) => (
@@ -523,7 +511,7 @@ export default function LogMonitor(props: any) {
                                       <Button
                                         type="dashed"
                                         onClick={() => add()}
-                                        disabled={editDisable}
+                                        // disabled={editDisable}
                                         block
                                         icon={<PlusOutlined />}
                                         style={{ width: 414, marginLeft: 40 }}
@@ -542,7 +530,7 @@ export default function LogMonitor(props: any) {
                                             style={{ width: 140, marginLeft: 40 }}
                                             options={indexModeFieldsOption}
                                             placeholder="选择过滤字段"
-                                            disabled={editDisable}
+                                            // disabled={editDisable}
                                             onChange={changeIndexModeField}
                                             value={currentIndexModeField}
                                           ></Select>
@@ -555,7 +543,7 @@ export default function LogMonitor(props: any) {
                                           <Select
                                             style={{ width: 80, paddingLeft: 5 }}
                                             options={operatorOption}
-                                            disabled={editDisable}
+                                            // disabled={editDisable}
                                           ></Select>
                                         </Form.Item>
                                         <Form.Item
@@ -566,7 +554,7 @@ export default function LogMonitor(props: any) {
                                           <Input
                                             style={{ width: 180, marginLeft: 5 }}
                                             placeholder="输入字段值"
-                                            disabled={editDisable}
+                                            // disabled={editDisable}
                                           ></Input>
                                         </Form.Item>
                                         <MinusCircleOutlined onClick={() => remove(name)} />
@@ -585,7 +573,7 @@ export default function LogMonitor(props: any) {
                               style={{ width: 414, marginLeft: 40 }}
                               onClick={() => add()}
                               block
-                              disabled={editDisable}
+                              // disabled={editDisable}
                               icon={<PlusOutlined />}
                             >
                               继续新增指标
@@ -596,7 +584,7 @@ export default function LogMonitor(props: any) {
                     </Form.List>
 
                     <Form.Item>
-                      <Button type="primary" onClick={submitMintorConfig} disabled={editDisable}>
+                      <Button type="primary" onClick={submitMintorConfig}>
                         保存监控配置
                       </Button>
                     </Form.Item>

@@ -8,7 +8,6 @@ type IRouteItem = {
 
 /** 基础路由前缀 */
 export const baseRoutePath = '/matrix';
-
 export default [
   {
     path: baseRoutePath,
@@ -79,7 +78,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/cluster/cluster-zs`,
-    redirect: `${baseRoutePath}/cluster/cluster-zs/operator-scheduling`,
+    redirect: `${baseRoutePath}/cluster/cluster-zs/dashboards`,
   },
   {
     path: `${baseRoutePath}/operation/app-tmpl`,
@@ -88,6 +87,10 @@ export default [
   {
     path: `${baseRoutePath}/operation/env-manage`,
     redirect: `${baseRoutePath}/operation/env-manage/env-list`,
+  },
+  {
+    path: `${baseRoutePath}/operation/ng-manage`,
+    redirect: `${baseRoutePath}/operation/ng-manage/ng-list`,
   },
   {
     path: `${baseRoutePath}/operation/label-manage`,
@@ -291,6 +294,99 @@ export default [
             path: 'changeDetails',
             name: '路由配置',
             key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/change-details',
+          },
+        ],
+      },
+      {
+        path: 'project-environment',
+        name: '项目环境',
+        key: 'project-environment',
+        component: '@/pages/application/project-environment',
+      },
+      {
+        path: 'environment-detail',
+        name: '项目环境详情',
+        key: 'project-environment',
+        component: '@/pages/application/project-environment/environment-detail',
+        hideInMenu: true,
+      },
+      {
+        path: 'environment-deploy',
+        name: '项目环境部署',
+        key: 'project-environment',
+        component: '@/pages/application/project-environment/environment-deploy',
+        hideInMenu: true,
+        routes: [
+          {
+            path: 'overview',
+            name: '概述',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/project-environment/environment-deploy/components/application-overview',
+          },
+          {
+            path: 'appDeploy',
+            name: '项目环境部署',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/project-environment/environment-deploy/components/application-deploy',
+          },
+          {
+            path: 'deployInfo',
+            name: '部署信息',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/project-environment/environment-deploy/components/deploy-info',
+          },
+          {
+            path: 'loginShell',
+            name: '登陆shell',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/project-environment/environment-deploy/components/deploy-info/login-shell',
+          },
+          {
+            path: 'viewLog',
+            name: '查看日志',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/project-environment/environment-deploy/components/deploy-info/view-log',
+          },
+          {
+            path: 'branch',
+            name: '分支',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/project-environment/environment-deploy/components/branch-manage',
+          },
+          {
+            path: 'AppParameters',
+            name: '应用模板',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/project-environment/environment-deploy/components/application-params',
+          },
+
+          {
+            path: 'feVersion',
+            name: '版本管理',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/project-environment/environment-deploy/components/fe-versions',
+          },
+          {
+            path: 'routeConfig',
+            name: '路由配置',
+            key: 'project-environment',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/route-config',
+          },
+          {
+            path: 'changeDetails',
+            name: '路由配置',
+            key: 'project-environment',
             hideInMenu: true,
             component: '@/pages/application/application-detail/components/change-details',
           },
@@ -689,7 +785,7 @@ export default [
       {
         path: 'logger-alarm',
         name: '日志告警',
-        key: 'business-monitor',
+        key: 'logger-alarm',
         component: '@/pages/logger/logger-alarm',
       },
     ],
@@ -810,6 +906,20 @@ export default [
             name: '推送环境',
             key: 'env-manage',
             component: '@/pages/operation/env-manage/push-env',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: 'ng-manage',
+        name: 'NG配置管理',
+        key: 'ng-manage',
+        routes: [
+          {
+            path: 'ng-list',
+            name: 'NG配置列表',
+            key: 'ng-manage',
+            component: '@/pages/operation/ng-manage/ng-list',
             hideInMenu: true,
           },
         ],
@@ -1012,22 +1122,22 @@ export default [
       },
       {
         path: 'cluster-zs',
-        name: '中山双集群管理',
+        name: '流量调度',
         key: 'cluster-clusterZs',
         component: '@/pages/cluster/cluster-zs',
         routes: [
           {
-            path: 'operator-scheduling',
-            name: '集群调度',
+            path: 'dashboards',
+            name: '集群看板',
             key: 'cluster-clusterZs',
-            component: '@/pages/cluster/cluster-zs/operator-scheduling',
+            component: '@/pages/cluster/cluster-zs/dashboards',
             hideInMenu: true,
           },
           {
-            path: 'scheduling',
+            path: 'scheduling-mode',
             name: '流量调度',
             key: 'cluster-clusterZs',
-            component: '@/pages/cluster/cluster-zs/scheduling',
+            component: '@/pages/cluster/cluster-zs/scheduling-mode',
             hideInMenu: true,
           },
           {
@@ -1059,7 +1169,6 @@ export default [
             hideInMenu: true,
           },
         ],
-        hideInMenu: process.env.BUILD_ENV === 'prod',
       },
     ],
   },

@@ -3,10 +3,11 @@
 // @create 2021/11/12	17:04
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Select, Form, Button, message, Space } from 'antd';
+import { Select, Form, Button, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '../deployInfo-content/service';
+import appConfig from '@/app.config';
 import { history } from 'umi';
 import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
@@ -46,8 +47,7 @@ export default function AppDeployInfo(props: any) {
   const initWS = () => {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
-      // http://matrix-test.cfuture.shop/
-      `ws://matrix-api.cfuture.shop/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
     ); //建立通道
 
     //初始化terminal
@@ -138,17 +138,27 @@ export default function AppDeployInfo(props: any) {
     <ContentCard noPadding className="viewLog">
       <div className="loginShell">
         <div style={{ paddingBottom: '6px', paddingTop: '6px', display: 'flex' }}>
-          <Form form={viewLogform} layout="inline">
-            <span style={{ paddingLeft: '10px' }}>选择容器： </span>
-            <Form.Item name="containerName">
-              <Select
-                style={{ width: 120 }}
-                options={queryListContainer}
-                onChange={selectListContainer}
-                defaultValue={currentContainerName}
-              ></Select>
-            </Form.Item>
-          </Form>
+          <div className="shell-caption">
+            <div className="caption-left">
+              <Form form={viewLogform} layout="inline">
+                <span style={{ paddingLeft: '10px' }}>选择容器： </span>
+                <Form.Item name="containerName">
+                  <Select
+                    style={{ width: 120 }}
+                    options={queryListContainer}
+                    onChange={selectListContainer}
+                    defaultValue={currentContainerName}
+                  ></Select>
+                </Form.Item>
+              </Form>
+            </div>
+            <div className="caption-right">
+              <span style={{ paddingLeft: 10 }}>
+                {' '}
+                当前环境：<Tag color="geekblue">{envCode}</Tag>
+              </span>
+            </div>
+          </div>
         </div>
         <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
         <div style={{ height: 28, width: '100%', textAlign: 'center', position: 'absolute', marginTop: 4 }}>

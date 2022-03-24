@@ -44,6 +44,8 @@ export interface AppItemVO {
   isContainClient?: number;
   /** 是否是二方包应用 (后端) */
   isClient?: number;
+  /** 是否被用户收藏 (后端) */
+  isCollection?: number;
   /** 描述 */
   desc?: string;
   /**是否启用Nacos */
@@ -101,4 +103,8 @@ export interface EnvDataVO extends Record<string, any> {
   envName: string;
   envTypeCode: string;
   categoryCode: string;
+  proEnvType: string;
 }
+
+// 应用tab页面
+export type radioType = 'collect' | 'mine' | 'all';

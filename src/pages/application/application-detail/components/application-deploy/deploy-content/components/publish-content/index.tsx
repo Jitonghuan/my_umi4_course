@@ -153,6 +153,8 @@ export default function PublishContent(props: IProps) {
       <CurrSteps
         deployInfo={deployInfo}
         onOperate={onOperate}
+        isFrontend={isFrontend}
+        appData={appData}
         onCancelDeploy={onCancelDeploy}
         stopSpin={stopSpin}
         onSpin={onSpin}
@@ -228,7 +230,9 @@ export default function PublishContent(props: IProps) {
           width={120}
           align="center"
           title="分支review状态"
-          render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
+          render={(text: number) => (
+            <Tag color={STATUS_TYPE[text]?.color || 'red'}>{STATUS_TYPE[text]?.text || '---'}</Tag>
+          )}
         />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={100} />
@@ -260,8 +264,11 @@ export default function PublishContent(props: IProps) {
         <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
-          getItemByKey={getItemByKey}
           onCancelDeploy={onCancelDeploy}
+          stopSpin={stopSpin}
+          onSpin={onSpin}
+          deployedList={deployedList}
+          getItemByKey={getItemByKey}
         />
       </Modal>
     </div>

@@ -1,0 +1,89 @@
+// page-fe-version style
+// @author CAIHUAZHI <moyan@come-future.com>
+// @create 2021/09/04 21:00
+
+.page-fe-version {
+  background-color: #f7f8fa;
+
+  section {
+    margin-bottom: 24px;
+    background-color: #fff;
+    border-radius: 3px;
+
+    > header {
+      display: flex;
+      align-items: center;
+      height: 32px;
+      padding: 4px 12px;
+      background-color: #eee;
+    }
+
+    .block-loading {
+      padding: 74px 0;
+    }
+  }
+
+  .version-card-list {
+    padding: 16px;
+  }
+
+  .version-card-item {
+    display: flex;
+    flex-direction: column;
+    float: left;
+    width: 300px;
+    padding: 12px;
+    border-radius: 3px;
+    margin-right: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+
+    // &:hover .card-item-actions > button {
+    //   opacity: 1;
+    // }
+
+    .card-item-header {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      > h4 {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      > small {
+        font-size: 14px;
+        color: #777;
+      }
+    }
+
+    .card-item-body {
+      flex: 0 0 auto;
+      padding: 12px 0;
+
+      > p {
+        line-height: 20px;
+        margin-bottom: 8px;
+      }
+    }
+
+    .card-item-actions {
+      flex: 0 0 auto;
+      text-align: right;
+    }
+  }
+}
+
+.rollback-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+}
+
+.table-color-rollback {
+  background-color: lightskyblue;
+}

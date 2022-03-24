@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Select, Switch, message } from 'antd';
+import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -12,6 +12,7 @@ import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddEnvDraw from '../addEnv';
 import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
 import appConfig from '@/app.config';
+import NGDetailModal from './ng-detail';
 import './index.less';
 
 /** 编辑页回显数据 */
@@ -27,6 +28,8 @@ export interface EnvEditData extends Record<string, any> {
   clusterName: string;
   clusterType: string;
   clusterNetType: string;
+  ngInstCode: string;
+  proEnvType: string;
 }
 
 export default function envManageList(props: any) {
@@ -39,6 +42,8 @@ export default function envManageList(props: any) {
   const [addEnvMode, setAddEnvMode] = useState<EditorMode>('HIDE');
   const [EnvForm] = Form.useForm();
   const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
+  const [ngModalVisiable, setNgModalVisiable] = useState<boolean>(false);
+  const [currentNgCode, setCurrentNgCode] = useState<string>('');
   const envTypeData = [
     {
       label: 'DEV',
@@ -57,7 +62,16 @@ export default function envManageList(props: any) {
       value: 'prod',
     },
   ]; //环境大类
-
+  const proEnvTypeData = [
+    {
+      label: '项目环境',
+      value: 'project',
+    },
+    {
+      label: '基准环境',
+      value: 'benchmark',
+    },
+  ]; //项目环境分类选择
   useEffect(() => {
     selectCategory();
   }, []);
@@ -102,6 +116,7 @@ export default function envManageList(props: any) {
         categoryCode: value?.categoryCode,
         pageIndex: value?.pageIndex,
         pageSize: value?.pageSize,
+        proEnvType: value?.proEnvType,
       },
     })
       .then((result) => {
@@ -128,8 +143,6 @@ export default function envManageList(props: any) {
       pageSize: pagination.pageSize,
     };
     loadListData(obj);
-
-    // console.log('pageIndexInfo',pageIndexInfo);
   };
 
   const loadListData = (params: any) => {
@@ -144,12 +157,14 @@ export default function envManageList(props: any) {
   //删除数据
   const handleDelEnv = (record: any) => {
     let id = record.id;
-    delRequest(`${appConfig.apiPrefix}/appManage/env/delete/${record.envCode}`);
-    // message.success('删除成功！');
-    loadListData({
-      pageIndex: 1,
-      pageSize: 20,
+    delRequest(`${appConfig.apiPrefix}/appManage/env/delete/${record.envCode}`).then(() => {
+      message.success('删除成功！');
+      loadListData({
+        pageIndex: 1,
+        pageSize: 20,
+      });
     });
+    // message.success('删除成功！');
   };
 
   let useNacosData: number;
@@ -241,7 +256,14 @@ export default function envManageList(props: any) {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="env-list-content">
+      <NGDetailModal
+        visible={ngModalVisiable}
+        onClose={() => {
+          setNgModalVisiable(false);
+        }}
+        ngCode={currentNgCode}
+      />
       <FilterCard>
         <div>
           <Form
@@ -284,19 +306,6 @@ export default function envManageList(props: any) {
                 重置
               </Button>
             </Form.Item>
-            <div style={{ marginLeft: '32px' }}>
-              {/* onClick={() => handleAddEnv()} */}
-              <Button
-                type="primary"
-                onClick={() => {
-                  setInitEnvData(undefined);
-                  setAddEnvMode('ADD');
-                }}
-              >
-                <PlusOutlined />
-                新增环境
-              </Button>
-            </div>
           </Form>
         </div>
       </FilterCard>
@@ -312,6 +321,23 @@ export default function envManageList(props: any) {
           }}
           onClose={() => setAddEnvMode('HIDE')}
         />
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>环境列表</h3>
+          </div>
+          <div className="caption-right">
+            <Button
+              type="primary"
+              onClick={() => {
+                setInitEnvData(undefined);
+                setAddEnvMode('ADD');
+              }}
+            >
+              <PlusOutlined />
+              新增环境
+            </Button>
+          </div>
+        </div>
 
         <div style={{ marginTop: '15px' }}>
           <Table
@@ -373,6 +399,25 @@ export default function envManageList(props: any) {
                   checked={value === 1 ? true : false}
                 />
               )}
+            />
+            <Table.Column
+              title="NG配置"
+              dataIndex="ngInstCode"
+              width={140}
+              render={(value: string, record: EnvEditData, index) =>
+                value ? (
+                  <a
+                    onClick={() => {
+                      setNgModalVisiable(true);
+                      setCurrentNgCode(value);
+                    }}
+                  >
+                    {value}
+                  </a>
+                ) : (
+                  '---'
+                )
+              }
             />
             <Table.Column
               title="操作"

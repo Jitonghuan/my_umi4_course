@@ -15,7 +15,8 @@ export const getAppList = addAPIPrefix('/appManage/list');
 
 export const ruleGroupOptions = addAPIPrefix('/logManage/alertrule/group/list');
 
-export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');
+// export const ruleIndexOptions = addAPIPrefix('/logManage/alertrule/index/list');
+export const ruleIndexOptions = addAPIPrefix('/logManage/logSearch/indexModeList');
 
 export const createRule = addAPIPrefix('/logManage/alertrule/create');
 

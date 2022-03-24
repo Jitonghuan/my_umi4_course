@@ -6,6 +6,8 @@ import { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
 import * as APIS from '../service';
 import { getRequest } from '@/utils/request';
+import { getCommonEnvCode } from '../../hook';
+import appConfig from '@/app.config';
 
 function getCacheData(key: string, limit = 6e5): { timestamp: number; data: any } {
   const cacheStr = sessionStorage.getItem(key);
@@ -42,14 +44,21 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
     setLoading(true);
     try {
       //集群应用比对
-      const result = await getRequest(APIS.diffClusterApp, { data: { envCode: 'hbos-test' } });
+      let commonEnvCode = '';
+      if (appConfig.IS_Matrix !== 'public') {
+        getRequest(getCommonEnvCode).then((result) => {
+          if (result?.success) {
+            commonEnvCode = result.data;
+          }
+        });
+      }
+      const result = await getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } });
       const resultData = result?.data || [];
       const next = resultData?.map((item: any, index: number) => {
         const appDiffInfo = Object.keys(item);
         let appName = appDiffInfo[0];
         return { appName, ...item[appName] };
       });
-      console.log('next', next);
       sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
       setFromCache('');
       setData(next);

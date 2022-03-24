@@ -1,4 +1,5 @@
 import { DeployInfoVO, IStatusInfoProps, DeployStatusType } from '@/pages/application/application-detail/types';
+import { AppItemVO } from '@/pages/application/interfaces';
 
 export interface IProps {
   appCode: string;
@@ -14,7 +15,9 @@ export interface IProps {
 // 执行步骤组合
 export interface StepsProps {
   deployInfo: DeployInfoVO;
+  appData?: AppItemVO;
   onOperate: (type: OperateType) => void;
+  isFrontend?: boolean;
   onSpin: any;
   stopSpin: any;
   deployedList: any;

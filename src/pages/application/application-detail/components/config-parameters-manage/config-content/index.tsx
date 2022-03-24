@@ -38,7 +38,7 @@ export default function ConfigContent({ env, configType }: IProps) {
   // 进入页面加载环境和版本信息
   useEffect(() => {
     try {
-      selectAppEnv(appCategoryCode).then((result: any) => {
+      selectAppEnv().then((result: any) => {
         const dataSources = result.data?.map((n: any) => ({
           value: n?.envCode,
           label: n?.envName,
@@ -71,8 +71,8 @@ export default function ConfigContent({ env, configType }: IProps) {
   }, [env]);
 
   //通过appCode,appCategoryCode和env查询环境信息
-  const selectAppEnv = (categoryCode: any) => {
-    return getRequest(listAppEnv, { data: { appCode, envTypeCode: env } });
+  const selectAppEnv = () => {
+    return getRequest(listAppEnv, { data: { appCode, envTypeCode: env, proEnvType: 'benchmark' } });
   };
 
   //改变环境下拉选择后查询结果
