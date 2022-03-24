@@ -45,14 +45,18 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
     try {
       //集群应用比对
       let commonEnvCode = '';
+      let result: any;
       if (appConfig.IS_Matrix !== 'public') {
-        getRequest(getCommonEnvCode).then((result) => {
-          if (result?.success) {
-            commonEnvCode = result.data;
-          }
-        });
+        getRequest(getCommonEnvCode)
+          .then((result) => {
+            if (result?.success) {
+              commonEnvCode = result.data;
+            }
+          })
+          .then(() => {
+            result = getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } });
+          });
       }
-      const result = await getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } });
       const resultData = result?.data || [];
       const next = resultData?.map((item: any, index: number) => {
         const appDiffInfo = Object.keys(item);

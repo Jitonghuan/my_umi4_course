@@ -151,8 +151,8 @@ export default function ClusterSyncDetail(props: any) {
   }, [resultLog]);
 
   // 1. get nacos 配置比对
-  const configDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.configDiff, { data: { envCode: commonEnvCode } }));
+  const configDiff = useCallback(async (currentEnvCode: string) => {
+    await doAction(getRequest(APIS.configDiff, { data: { envCode: commonEnvCode || currentEnvCode } }));
     setCurrState('GetDiffClusterConfig');
   }, []);
   // 2. Nacos同步
@@ -211,7 +211,19 @@ export default function ClusterSyncDetail(props: any) {
 
     // 如果是 pass 状态，自动进行第一步
     if (currState === 'Pass') {
-      setTimeout(() => configDiff());
+      let currentEnvCode = '';
+      if (appConfig.IS_Matrix !== 'public') {
+        getRequest(getCommonEnvCode)
+          .then((result) => {
+            if (result?.success) {
+              currentEnvCode = result.data;
+              setCommonEnvCode(currentEnvCode);
+            }
+          })
+          .then(() => {
+            setTimeout(() => configDiff(currentEnvCode));
+          });
+      }
     }
   }, [currState]);
 
