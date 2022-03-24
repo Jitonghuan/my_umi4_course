@@ -10,10 +10,10 @@ import { StepItemProps } from '../../types';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, jenkinsUrl, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, jenkinsUrl, envCode, status, ...others } = props;
 
   const isLoading = deployStatus === 'building';
-  const isError = deployStatus === 'buildErr' || deployStatus === 'buildAborted';
+  const isError = status === 'error';
 
   const handleRebuildClick = () => {
     onOperate('retryDeployStart');
@@ -35,8 +35,8 @@ export default function BuildingStep(props: StepItemProps) {
     <Steps.Step
       {...others}
       title="构建"
-      icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      // icon={isLoading && <LoadingOutlined />}
+      status={status}
       description={
         // isLoading && (
         <>

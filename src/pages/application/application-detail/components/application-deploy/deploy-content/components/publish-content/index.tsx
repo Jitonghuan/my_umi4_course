@@ -19,9 +19,30 @@ import FrontendDevEnvSteps from './frontend-steps/dev';
 import FrontendTestEnvSteps from './frontend-steps/test';
 import FrontendPreEnvSteps from './frontend-steps/pre';
 import FrontendProdEnvSteps from './frontend-steps/prod';
+import DeploySteps from './steps';
 import './index.less';
+import { mockData } from '../../../../second-party-pkg/deploy-content/components/publish-record/mock';
 
 const rootCls = 'publish-content-compo';
+
+const mock = [
+  { nodeType: 'single', title: '创建任务', nodeStatus: 'finish' },
+  { nodeType: 'single', title: '合并realease', nodeStatus: 'finish' },
+  {
+    nodeType: 'subject',
+    env: ['base', 'dev'],
+    base: [
+      { title: '构建', nodeStatus: 'finish', nodeType: 'single' },
+      { title: '部署', nodeStatus: 'error', nodeType: 'single' },
+      { title: '完成', nodeStatus: 'wait', nodeType: 'single' },
+    ],
+    dev: [
+      { title: '构建', nodeStatus: 'error', nodeType: 'single' },
+      { title: '合并realease', nodeStatus: 'wait', nodeType: 'single' },
+      { title: '合并realease', nodeStatus: 'wait', nodeType: 'single' },
+    ],
+  },
+];
 
 const backendStepsMapping: Record<string, typeof BackendDevEnvSteps> = {
   dev: BackendDevEnvSteps,
@@ -150,7 +171,19 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      <CurrSteps
+      {/* <CurrSteps
+        deployInfo={deployInfo}
+        onOperate={onOperate}
+        isFrontend={isFrontend}
+        appData={appData}
+        onCancelDeploy={onCancelDeploy}
+        stopSpin={stopSpin}
+        onSpin={onSpin}
+        deployedList={deployedList}
+        getItemByKey={getItemByKey}
+      /> */}
+      <DeploySteps
+        stepData={mock}
         deployInfo={deployInfo}
         onOperate={onOperate}
         isFrontend={isFrontend}

@@ -10,7 +10,7 @@ import { StepItemProps } from '../../types';
 
 /** 合并master */
 export default function MergeMasterStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
 
   const isLoading = deployStatus === 'mergingMaster';
   const isError = deployStatus === 'mergeMasterErr';
@@ -28,7 +28,8 @@ export default function MergeMasterStep(props: StepItemProps) {
       {...others}
       title="合并master"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      // status={isError ? 'error' : others.status}
+      status={status}
       description={
         isError && (
           <>

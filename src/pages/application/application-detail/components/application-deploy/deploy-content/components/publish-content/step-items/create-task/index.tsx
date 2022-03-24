@@ -7,12 +7,13 @@ import { Steps } from 'antd';
 import { StepItemProps } from '../../types';
 /** 创建任务 */
 export default function CreateTaskStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
 
   return (
     <Steps.Step
       {...others}
       title="创建任务"
+      status={status}
       //  status={isError ? 'error' : others.status}
     />
   );

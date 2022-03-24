@@ -15,7 +15,7 @@ import appConfig from '@/app.config';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
   const { appData } = useContext(DetailContext);
   const [supportEnv, setSupportEnv] = useState<string[]>(['']); //支持离线部署的环境
   const isLoading = deployStatus === 'pushFeResource';
@@ -60,7 +60,8 @@ export default function PushResourceStep(props: StepItemProps) {
       {...others}
       title="推送资源"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      // status={isError ? 'error' : others.status}
+      status={status}
       description={
         <>
           {isError && (

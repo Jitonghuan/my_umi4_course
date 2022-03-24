@@ -11,13 +11,12 @@ import DeployModal from './deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
   const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
 
   const isLoading =
     deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
   const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
-  // || deployStatus === 'deployAborted';
 
   const [deployVisible, setDeployVisible] = useState(false);
 
@@ -50,9 +49,10 @@ export default function DeployingStep(props: StepItemProps) {
         {...others}
         title="部署"
         icon={isLoading && <LoadingOutlined />}
-        status={isError ? 'error' : others.status}
+        // status={isError ? 'error' : others.status}
+        status={status}
         description={
-          (isError || isLoading) && (
+          (status === 'error' || status === 'process') && (
             <>
               {/* dev,test, pre,prod 在部署过程中出现错误时  显示错误详情 */}
               {/* {isError && deployInfo.deployErrInfo && (
@@ -85,7 +85,7 @@ export default function DeployingStep(props: StepItemProps) {
                   </a>
                 </div>
               )} */}
-              {isError && (
+              {status === 'error' && (
                 <Button style={{ marginTop: 4 }} onClick={handleReDeployClick}>
                   重新部署
                 </Button>

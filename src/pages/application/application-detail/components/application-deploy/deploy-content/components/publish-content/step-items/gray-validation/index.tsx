@@ -11,7 +11,7 @@ import { StepItemProps } from '../../types';
 
 /** 灰度验证 */
 export default function GrayValidationStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
 
   const isLoading = deployStatus === 'verifyWait';
   const isError = deployStatus === 'verifyFailed';
@@ -41,7 +41,8 @@ export default function GrayValidationStep(props: StepItemProps) {
       {...others}
       title="灰度验证"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      // status={isError ? 'error' : others.status}
+      status={status}
       description={
         isLoading && (
           <div>

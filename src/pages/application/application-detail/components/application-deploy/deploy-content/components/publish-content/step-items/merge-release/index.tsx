@@ -13,7 +13,7 @@ import { conflictItem } from '../../../merge-conflict/types';
 
 /** 合并release */
 export default function MergeReleaseStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, onSpin, stopSpin, deployedList, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, onSpin, stopSpin, deployedList, status, ...others } = props;
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [visible, setVisible] = useState(false); //无冲突
   const [mergeMessage, setMergeMessage] = useState<any>([]);
@@ -77,7 +77,8 @@ export default function MergeReleaseStep(props: StepItemProps) {
         {...others}
         title="合并release"
         icon={isLoading && <LoadingOutlined />}
-        status={isError ? 'error' : others.status}
+        // status={isError ? 'error' : others.status}
+        status={status}
         description={
           isError && (
             <>
