@@ -1,5 +1,6 @@
 //制品管理
 import React, { useState } from 'react';
+import { history } from 'umi';
 import PageContainer from '@/components/page-container';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
 import CreateProductModal from './create-product';
@@ -64,7 +65,15 @@ export default function ProductList() {
               key="action"
               render={(_, record: any, index) => (
                 <Space size="small">
-                  <a onClick={() => {}}>管理</a>
+                  <a
+                    onClick={() => {
+                      history.push({
+                        pathname: '/matrix/delivery/product-config',
+                      });
+                    }}
+                  >
+                    管理
+                  </a>
 
                   <Popconfirm title="确定要删除该信息吗？" onConfirm={() => {}}>
                     <a style={{ color: 'red' }}>删除</a>

@@ -9,7 +9,6 @@ import { history } from 'umi';
 import { addAPIPrefix } from '@/utils';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import versionManageList from 'mock/versionManageList';
 
 export interface Item {
   id: string;
