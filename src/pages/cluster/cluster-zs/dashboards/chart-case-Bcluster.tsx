@@ -10,10 +10,10 @@ export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
 }
+
 const { ColorContainer } = colorUtil.context;
 export default function ClusterBChart(props: ChartCaseListProps) {
   const { data, loading } = props;
-
   const clusterBchartOptions = useMemo(() => {
     return clusterBLineChart(data);
   }, [data]);

@@ -13,7 +13,6 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function ClusterAChart(props: ChartCaseListProps) {
   const { data, loading } = props;
-
   const clusterAchartOptions = useMemo(() => {
     return clusterALineChart(data);
   }, [data]);
