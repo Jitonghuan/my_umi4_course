@@ -44,7 +44,7 @@ export default function TrafficScheduling(props: any) {
     const values = await editField.validateFields();
     let ip = '';
     let paramArry: any = [];
-    console.log('> handleSubmit', values, Object.keys(values)[0], Object.keys(values));
+
     // let item = sourceData.map((item: any, index) => {
     //   return item;
     // });
@@ -59,28 +59,33 @@ export default function TrafficScheduling(props: any) {
         })
         .then(() => {
           sourceData.map((item: any, index) => {
-            if (values[Object.keys(values)[index]] === 'cluster_a' && Object.keys(values)[0] === item.name) {
-              ip = item?.options[0].ip;
-              paramArry.push({
-                envCode: commonEnvCode,
-                cluster: 'cluster_a',
-                hospitalDistrictCode: item.name,
-                hospitalDistrictName: item?.title,
-                ip: ip,
-              });
-            }
-            if (values[Object.keys(values)[index]] === 'cluster_b' && Object.keys(values)[1] === item.name) {
-              ip = item?.options[1].ip;
-              paramArry.push({
-                envCode: commonEnvCode,
-                cluster: 'cluster_b',
-                hospitalDistrictCode: item.name,
-                hospitalDistrictName: item?.title,
-                ip: ip,
-              });
+            console.log('> item', item);
+
+            for (const key in values) {
+              const element = values[key];
+              if (element === 'cluster_a' && key === item.name) {
+                ip = item?.options[0].ip;
+                paramArry.push({
+                  envCode: commonEnvCode,
+                  cluster: 'cluster_a',
+                  hospitalDistrictCode: item.name,
+                  hospitalDistrictName: item?.title,
+                  ip: ip,
+                });
+              }
+
+              if (element === 'cluster_b' && key === item.name) {
+                ip = item?.options[1].ip;
+                paramArry.push({
+                  envCode: commonEnvCode,
+                  cluster: 'cluster_b',
+                  hospitalDistrictCode: item.name,
+                  hospitalDistrictName: item?.title,
+                  ip: ip,
+                });
+              }
             }
           });
-          console.log('paramArry', paramArry);
         });
     }
 
