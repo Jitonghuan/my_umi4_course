@@ -33,17 +33,21 @@ export default function Application() {
     setClusterData([]);
     try {
       let currentEnvCode = '';
+      let result: any;
       if (appConfig.IS_Matrix !== 'public') {
-        getRequest(getCommonEnvCode).then((result) => {
-          if (result?.success) {
-            currentEnvCode = result.data;
-            setCommonEnvCode(currentEnvCode);
-          }
-        });
+        getRequest(getCommonEnvCode)
+          .then((result) => {
+            if (result?.success) {
+              currentEnvCode = result.data;
+              setCommonEnvCode(currentEnvCode);
+            }
+          })
+          .then(() => {
+            getRequest(APIS.singleDiffApp, {
+              data: { appCode, envCode: currentEnvCode },
+            });
+          });
       }
-      const result = await getRequest(APIS.singleDiffApp, {
-        data: { appCode, envCode: currentEnvCode },
-      });
       const source = result.data || {};
       if (typeof source === 'object') {
         const next = Object.keys(source).map((appName) => {
