@@ -34,14 +34,31 @@ const mock = [
     base: [
       { title: '构建', nodeStatus: 'finish', nodeType: 'single' },
       { title: '部署', nodeStatus: 'error', nodeType: 'single' },
-      { title: '完成', nodeStatus: 'wait', nodeType: 'single' },
+      { title: '推送', nodeStatus: 'wait', nodeType: 'single' },
     ],
     dev: [
       { title: '构建', nodeStatus: 'error', nodeType: 'single' },
-      { title: '合并realease', nodeStatus: 'wait', nodeType: 'single' },
-      { title: '合并realease', nodeStatus: 'wait', nodeType: 'single' },
+      { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
+      { title: '推送', nodeStatus: 'wait', nodeType: 'single' },
     ],
   },
+  { nodeType: 'single', title: '创建任务', nodeStatus: 'finish' },
+  { nodeType: 'single', title: '合并realease', nodeStatus: 'finish' },
+  {
+    nodeType: 'subject',
+    env: ['base', 'dev'],
+    base: [
+      { title: '构建', nodeStatus: 'finish', nodeType: 'single' },
+      { title: '部署', nodeStatus: 'error', nodeType: 'single' },
+      { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
+    ],
+    dev: [
+      { title: '构建', nodeStatus: 'error', nodeType: 'single' },
+      { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
+      { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
+    ],
+  },
+  { nodeType: 'single', title: '完成', nodeStatus: 'await' },
 ];
 
 const backendStepsMapping: Record<string, typeof BackendDevEnvSteps> = {
