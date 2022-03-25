@@ -38,7 +38,7 @@ export default function deliveryList() {
   }, []);
 
   const versionList = () => {
-    getRequest(addAPIPrefix('/deliverManage/deliverDeploy/list')).then((result) => {
+    getRequest(addAPIPrefix('/deliverManage/deliverDeploy/list')).then((result: any) => {
       const source = result?.data?.dataSource;
       setVersionListData(source);
     });

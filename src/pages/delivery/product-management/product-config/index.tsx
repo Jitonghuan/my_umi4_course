@@ -3,7 +3,20 @@ import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import AceEditor from '@/components/ace-editor';
-import { Form, Tabs, Input, Select, Button, Descriptions, Typography, Table, message, Popconfirm, Divider } from 'antd';
+import {
+  Form,
+  Tabs,
+  Input,
+  Select,
+  Button,
+  Descriptions,
+  Typography,
+  Table,
+  message,
+  Popconfirm,
+  Divider,
+  Tag,
+} from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { compontentsColums, configDeliverycolums } from './columns';
 export default function ComponentDetail() {
@@ -48,10 +61,19 @@ export default function ComponentDetail() {
             </Tabs>
           </TabPane>
           <TabPane tab="出包和部署" key="2">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 2 }}>
+            <div>
               <p>
-                <Button type="primary">编辑</Button>
+                产品部署包：<Tag>暂未出包</Tag>
+                <Button>出部署包</Button>
               </p>
+              <p>
+                产品部署包：<Tag>已出包</Tag>
+                <Button>下载部署包</Button>
+                <Button>重新出包</Button>
+              </p>
+            </div>
+            <div>
+              安装配置文件：<Button type="primary"> 复制</Button>（请将文件中的内容复制到安装包所在目录下的global.yaml）
             </div>
             <div>
               <AceEditor mode="yaml" height={450} />
