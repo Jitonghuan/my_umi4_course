@@ -138,18 +138,22 @@ export function useAddAPPS() {
   return [addApps];
 }
 
-export function useRemoveApps() {
+export function useRemoveApps(onSpin: any, stopSpin: any) {
   const removeApps = async (removeAppsParamsObj: any) => {
     try {
+      onSpin();
       await postRequest(APIS.removeApps, { data: removeAppsParamsObj }).then((res) => {
         if (res.success) {
           message.success('移除应用成功！');
+          stopSpin();
         } else {
-          message.error('移除应用失败！');
+          stopSpin();
+          // message.error('移除应用失败！');
         }
       });
     } catch (error) {
       message.error(error);
+      stopSpin();
     }
   };
   return [removeApps];
