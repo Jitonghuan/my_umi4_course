@@ -536,7 +536,9 @@ export default function LoggerSearch(props: any) {
                                           ></span>
                                           <span
                                             className="tab-right"
-                                            dangerouslySetInnerHTML={{ __html: JSON.stringify(item?.[key]) }}
+                                            dangerouslySetInnerHTML={{
+                                              __html: item?.[key],
+                                            }}
                                           ></span>
                                         </p>
                                       );
