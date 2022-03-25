@@ -16,7 +16,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
   }, [tableData]);
   const columns = [
     {
-      title: '院区',
+      title: '机构',
       dataIndex: 'hospitalDistrictName',
     },
     {
