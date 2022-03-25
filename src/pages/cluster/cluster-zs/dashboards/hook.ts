@@ -18,28 +18,33 @@ export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) =
   const loadHistogram = useCallback((showLoading = true, commonEnvCode?: string) => {
     showLoading && setLoading(true);
     let envCode: any;
-    getRequest(getCommonEnvCode)
-      .then((result) => {
-        if (result?.success) {
-          envCode = result.data;
-        }
-      })
-      .then(() => {
-        getRequest(APIS.getClustersEsData, { data: { envCode: commonEnvCode || envCode } })
-          .then((result) => {
-            setHistogramData(result?.data || {});
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      });
+    try {
+      getRequest(getCommonEnvCode)
+        .then((result) => {
+          if (result?.success) {
+            envCode = result.data;
+          }
+        })
+        .then(() => {
+          getRequest(APIS.getClustersEsData, { data: { envCode: commonEnvCode || envCode } })
+            .then((result) => {
+              if (!result.success) {
+                return;
+              }
+              setHistogramData(result?.data || {});
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   useEffect(() => {
     let commonEnvCode = '';
-    if (appConfig.IS_Matrix === 'public') {
-      commonEnvCode = 'hbos-test';
-    } else {
+    if (appConfig.IS_Matrix !== 'public') {
       getRequest(getCommonEnvCode).then((result) => {
         if (result?.success) {
           commonEnvCode = result.data;
@@ -59,53 +64,55 @@ export function useClusterLineData(): [any, any, boolean, (showLoading?: boolean
   const loadCluster = (showLoading = true, commonEnvCode?: string) => {
     showLoading && setLoading(true);
     let envCode: any;
-    getRequest(getCommonEnvCode)
-      .then((result) => {
-        if (result?.success) {
-          envCode = result.data;
-        }
-      })
-      .then(() => {
-        getRequest(APIS.getClusterEsData, { data: { envCode: commonEnvCode || envCode } })
-          .then((result) => {
-            let dataSource = result?.data;
-            let clusterALineData = dataSource?.clusterA?.dataList;
-            let clusterBLineData = dataSource?.clusterB?.dataList;
-            let clusterATimeStampList: any = [];
-            let clusterBTimeStampList: any = [];
-            (dataSource?.clusterA?.timeList || [])?.map((el: any) => {
-              let time = moment(parseInt(el)).format('HH:mm:ss');
-              clusterATimeStampList.push(time);
+    try {
+      getRequest(getCommonEnvCode)
+        .then((result) => {
+          if (result?.success) {
+            envCode = result.data;
+          }
+        })
+        .then(() => {
+          getRequest(APIS.getClusterEsData, { data: { envCode: commonEnvCode || envCode } })
+            .then((result) => {
+              if (!result.success) {
+                return;
+              }
+              let dataSource = result?.data;
+              let clusterALineData = dataSource?.clusterA?.dataList;
+              let clusterBLineData = dataSource?.clusterB?.dataList;
+              let clusterATimeStampList: any = [];
+              let clusterBTimeStampList: any = [];
+              (dataSource?.clusterA?.timeList || [])?.map((el: any) => {
+                let time = moment(parseInt(el)).format('HH:mm:ss');
+                clusterATimeStampList.push(time);
+              });
+              (dataSource?.clusterB?.timeList || [])?.map((el: any) => {
+                let time = moment(parseInt(el)).format('HH:mm:ss');
+                clusterBTimeStampList.push(time);
+              });
+              let clusterATotalDataSource = {
+                clusterADataSource: clusterALineData,
+                clusterATimeStamp: clusterATimeStampList,
+              };
+              let clusterBTotalDataSource = {
+                clusterBDataSource: clusterBLineData,
+                clusterBTimeStamp: clusterBTimeStampList,
+              };
+              setClusterAData(clusterATotalDataSource);
+              setClusterBData(clusterBTotalDataSource);
+            })
+            .finally(() => {
+              setLoading(false);
             });
-            (dataSource?.clusterB?.timeList || [])?.map((el: any) => {
-              let time = moment(parseInt(el)).format('HH:mm:ss');
-              clusterBTimeStampList.push(time);
-            });
-            let clusterATotalDataSource = {
-              clusterADataSource: clusterALineData,
-              clusterATimeStamp: clusterATimeStampList,
-            };
-            let clusterBTotalDataSource = {
-              clusterBDataSource: clusterBLineData,
-              clusterBTimeStamp: clusterBTimeStampList,
-            };
-            setClusterAData(clusterATotalDataSource);
-            setClusterBData(clusterBTotalDataSource);
-          })
-          .finally(() => {
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error('error', error);
-          });
-      });
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
     let commonEnvCode = '';
-    if (appConfig.IS_Matrix === 'public') {
-      commonEnvCode = 'hbos-test';
-    } else {
+    if (appConfig.IS_Matrix !== 'public') {
       getRequest(getCommonEnvCode).then((result) => {
         if (result?.success) {
           commonEnvCode = result.data;

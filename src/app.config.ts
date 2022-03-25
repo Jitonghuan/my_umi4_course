@@ -40,6 +40,7 @@ const PRIVATE_METHODS = getPrivateMethods(false);
 const IS_Matrix = getPrivateMethods(true);
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
+envType = window.location.href.includes('bf-daily') ? 'bf-daily' : envType;
 envType = window.location.href.includes('fygs') ? 'fygs' : envType;
 envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
 envType = window.location.href.includes('base-poc') ? 'base-poc' : envType;

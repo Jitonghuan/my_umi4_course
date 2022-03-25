@@ -30,7 +30,6 @@ export default defineConfig({
     },
     '/v1': {
       target: 'http://matrix-test.cfuture.shop/',
-      // target: 'http://matrix-base-poc.cfuture.shop/',
       // target: 'http://matrix-zslnyy.cfuture.shop/',
       // target: 'http://matrix-fygs.seenew.info:180/',
       // target: 'http://matrix.cfuture.shop/',

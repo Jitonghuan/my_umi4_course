@@ -46,22 +46,28 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
       //集群应用比对
       let commonEnvCode = '';
       if (appConfig.IS_Matrix !== 'public') {
-        getRequest(getCommonEnvCode).then((result) => {
-          if (result?.success) {
-            commonEnvCode = result.data;
-          }
-        });
+        getRequest(getCommonEnvCode)
+          .then((result) => {
+            if (result?.success) {
+              commonEnvCode = result.data;
+            }
+          })
+          .then(() => {
+            getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } }).then((res) => {
+              if (res?.success) {
+                const resultData = res?.data || [];
+                const next = resultData?.map((item: any, index: number) => {
+                  const appDiffInfo = Object.keys(item);
+                  let appName = appDiffInfo[0];
+                  return { appName, ...item[appName] };
+                });
+                sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
+                setFromCache('');
+                setData(next);
+              }
+            });
+          });
       }
-      const result = await getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } });
-      const resultData = result?.data || [];
-      const next = resultData?.map((item: any, index: number) => {
-        const appDiffInfo = Object.keys(item);
-        let appName = appDiffInfo[0];
-        return { appName, ...item[appName] };
-      });
-      sessionStorage.setItem('DIFF_CLUSTER_APP', JSON.stringify({ timestamp: Date.now(), data: next }));
-      setFromCache('');
-      setData(next);
     } finally {
       setLoading(false);
       setCompleted(true);

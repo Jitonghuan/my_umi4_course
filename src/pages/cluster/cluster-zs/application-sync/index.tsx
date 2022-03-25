@@ -34,25 +34,31 @@ export default function Application() {
     try {
       let currentEnvCode = '';
       if (appConfig.IS_Matrix !== 'public') {
-        getRequest(getCommonEnvCode).then((result) => {
-          if (result?.success) {
-            currentEnvCode = result.data;
-            setCommonEnvCode(currentEnvCode);
-          }
-        });
-      }
-      const result = await getRequest(APIS.singleDiffApp, {
-        data: { appCode, envCode: currentEnvCode },
-      });
-      const source = result.data || {};
-      if (typeof source === 'object') {
-        const next = Object.keys(source).map((appName) => {
-          return { appName, ...source[appName] };
-        });
-        setClusterData(next);
-        setCompleted(true);
-      } else if (typeof source === 'string') {
-        message.info(source);
+        getRequest(getCommonEnvCode)
+          .then((result) => {
+            if (result?.success) {
+              currentEnvCode = result.data;
+              setCommonEnvCode(currentEnvCode);
+            }
+          })
+          .then(() => {
+            getRequest(APIS.singleDiffApp, {
+              data: { appCode, envCode: currentEnvCode },
+            }).then((result) => {
+              if (result.success) {
+                const source = result.data || {};
+                if (typeof source === 'object') {
+                  const next = Object.keys(source).map((appName) => {
+                    return { appName, ...source[appName] };
+                  });
+                  setClusterData(next);
+                  setCompleted(true);
+                } else if (typeof source === 'string') {
+                  message.info(source);
+                }
+              }
+            });
+          });
       }
     } finally {
       setLoading(false);
@@ -73,27 +79,52 @@ export default function Application() {
     setCompleted(false);
   }, []);
 
-  const handleSyncClick = useCallback(() => {
-    Modal.confirm({
-      title: '确认同步？',
-      content: '请确认同步应用配置已是最新',
-      onOk: async () => {
-        try {
-          setPending(true);
-          const res = await postRequest(APIS.syncSingleApp, {
-            data: { appCode, envCode: commonEnvCode },
-          });
-          const sourceInfo = res?.data || '';
-          if (res.success) {
-            message.info(sourceInfo);
+  const handleSyncClick = useCallback(
+    (commonEnvCode: string) => {
+      console.log('commonEnvCode', commonEnvCode);
+      Modal.confirm({
+        title: '确认同步？',
+        content: '请确认同步应用配置已是最新',
+        onOk: async () => {
+          try {
+            setPending(true);
+            let currentEnvCode = '';
+            if (appConfig.IS_Matrix !== 'public') {
+              getRequest(getCommonEnvCode)
+                .then((result) => {
+                  if (result?.success) {
+                    currentEnvCode = result.data;
+                  }
+                })
+                .then(() => {
+                  postRequest(APIS.syncSingleApp, {
+                    data: { appCode, envCode: currentEnvCode },
+                  }).then((res) => {
+                    if (res.success) {
+                      const sourceInfo = res?.data || '';
+                      message.info(sourceInfo);
+                    }
+                  });
+                });
+            }
+            // const res = await postRequest(APIS.syncSingleApp, {
+
+            //   data: { appCode, envCode: commonEnvCode },
+            // });
+            // console.log('commonEnvCode111',commonEnvCode)
+
+            // if (res.success) {
+
+            // }
+            // message.success('应用同步成功！');
+          } finally {
+            setPending(false);
           }
-          // message.success('应用同步成功！');
-        } finally {
-          setPending(false);
-        }
-      },
-    });
-  }, [appCode]);
+        },
+      });
+    },
+    [appCode],
+  );
 
   return (
     <ContentCard>
@@ -117,7 +148,7 @@ export default function Application() {
           <Button
             type="primary"
             disabled={!(appCode && clusterData.length) || loading || pending}
-            onClick={handleSyncClick}
+            onClick={() => handleSyncClick(commonEnvCode)}
           >
             开始同步
           </Button>

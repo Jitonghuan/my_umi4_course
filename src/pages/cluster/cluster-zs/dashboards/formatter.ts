@@ -129,9 +129,11 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       seriesArry.push(
         {
           type: 'bar',
+          barMaxWidth: '10%',
         },
         {
           type: 'bar',
+          barMaxWidth: '10%',
         },
       );
     });
@@ -184,7 +186,9 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       containLabel: true,
     },
     //配置要在X轴显示的项
-    xAxis: { type: 'category' },
+    xAxis: {
+      type: 'category',
+    },
     //配置要在Y轴显示的项
     yAxis: { type: 'value' },
     series: seriesArry,
