@@ -3,8 +3,16 @@ import { Steps } from 'antd';
 import StepItem from './step-item';
 import { initial } from 'lodash';
 
+// 判断多环境前面的线条以及环境名是否要变蓝
 const changeColor = (data: any, env?: any) => {
   let flag = false;
+  if (Array.isArray(env)) {
+    for (let item of env) {
+      if (data[item] && data[item][0] && data[item][0].nodeStatus !== 'wait') {
+        return true;
+      }
+    }
+  }
   if (env && data[env]) {
     let res = data[env];
     return res[0].nodeStatus !== 'wait';
@@ -29,11 +37,11 @@ const SingelEnvSteps = (props: any) => (
 
 // 多环境
 const MultiEnvSteps = (props: any) => {
-  const { nodeStatus, initial, env, ...other } = props;
+  const { initial, env, ...other } = props;
 
   return (
     <div style={{ margin: '0 15px' }}>
-      <div className={`sub_process-wrapper ${nodeStatus === 'finish' ? 'sub_process-wrapper-active' : ''}`}>
+      <div className={`sub_process-wrapper ${changeColor(props, env) ? 'sub_process-wrapper-active' : ''}`}>
         {env.map((envKey: any, index: number) => (
           <div
             key={envKey}

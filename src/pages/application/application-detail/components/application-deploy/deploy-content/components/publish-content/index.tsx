@@ -46,13 +46,13 @@ const mock = [
   { nodeType: 'single', title: '合并realease', nodeStatus: 'wait' },
   {
     nodeType: 'subject',
-    env: ['base', 'dev'],
-    base: [
+    env: ['base1', 'dev1'],
+    base1: [
       { title: '构建', nodeStatus: 'wait', nodeType: 'single' },
       { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
       { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
     ],
-    dev: [
+    dev1: [
       { title: '构建', nodeStatus: 'wait', nodeType: 'single' },
       { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
       { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
