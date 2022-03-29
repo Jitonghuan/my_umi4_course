@@ -81,14 +81,14 @@ export default function MergeReleaseStep(props: StepItemProps) {
         description={
           isError && (
             <>
-              {deployInfo.mergeWebUrl && (
+              {deployInfo.conflictFeature && (
                 <div style={{ marginTop: 2 }}>
                   <Button onClick={openMergeConflict} disabled={deployedList.length === 0}>
                     解决冲突
                   </Button>
                 </div>
               )}
-              {deployStatus === 'mergeErr' && !deployInfo.mergeWebUrl && (
+              {deployStatus === 'mergeErr' && !deployInfo.conflictFeature && (
                 <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
                   重试
                 </Button>
