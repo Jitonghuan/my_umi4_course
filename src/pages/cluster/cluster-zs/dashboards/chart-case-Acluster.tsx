@@ -20,7 +20,7 @@ export default function ClusterAChart(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>A集群各院区流量</h3>
+        <h3>A集群各机构流量</h3>
       </header>
       <div>
         <ColorContainer roleKeys={['color']}>

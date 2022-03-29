@@ -21,7 +21,7 @@ export default function ClusterBChart(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>B集群各院区流量</h3>
+        <h3>B集群各机构流量</h3>
       </header>
       <div>
         <ColorContainer roleKeys={['color']}>
