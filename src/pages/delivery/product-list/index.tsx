@@ -9,6 +9,8 @@ import { history } from 'umi';
 import { addAPIPrefix } from '@/utils';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { useCreateProduct, useDeleteProduct, useQueryProductList } from './hooks';
+import './index.less';
 
 export interface Item {
   id: string;
@@ -21,7 +23,10 @@ export interface Item {
 }
 export default function deliveryList() {
   const { Option } = Select;
-  const [loading, setLoading] = useState(false);
+  const [creatForm] = Form.useForm();
+  const [creatLoading, createProduct] = useCreateProduct();
+  const [delLoading, deleteProduct] = useDeleteProduct();
+  const [tableLoading, dataSource, queryProductList] = useQueryProductList();
   const [versionListData, setVersionListData] = useState<any[]>([
     {
       key: '1',
@@ -57,18 +62,18 @@ export default function deliveryList() {
   const columns = [
     {
       title: '产品名称',
-      dataIndex: 'id',
+      dataIndex: 'productName',
       width: '30%',
     },
     {
       title: '产品描述',
-      dataIndex: 'templateName',
+      dataIndex: 'productDescription',
       width: '30%',
       ellipsis: true,
     },
     {
       title: '创建时间',
-      dataIndex: 'time',
+      dataIndex: 'gmtCreate',
       width: '30%',
     },
     {
@@ -92,31 +97,35 @@ export default function deliveryList() {
     },
   ];
   const handleSubmit = () => {
-    setCreateProductVisible(false);
+    let params = creatForm.getFieldsValue();
+    createProduct(params.product_name, params.product_description).then(() => {
+      setCreateProductVisible(false);
+      queryProductList();
+    });
   };
   return (
     <PageContainer>
       <FilterCard>
-        <div className="table-caption">
-          <div className="caption-left">
+        <div className="deliveryList-table-caption">
+          <div className="deliveryList-caption-left">
             <Form layout="inline" form={formTmpl}>
               <Form.Item label="产品名称：" name="appCategoryCode">
                 <Input placeholder="单行输入"></Input>
               </Form.Item>
-              {/*       
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              搜索
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button type="ghost" htmlType="reset">
-              重置
-            </Button>
-          </Form.Item> */}
+
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  搜索
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <Button type="ghost" htmlType="reset">
+                  重置
+                </Button>
+              </Form.Item>
             </Form>
           </div>
-          <div className="caption-right">
+          <div className="deliveryList-caption-right">
             <Button
               type="primary"
               onClick={() => {
@@ -132,10 +141,10 @@ export default function deliveryList() {
         <div>
           <Table
             rowKey="id"
-            dataSource={versionListData}
+            dataSource={dataSource}
             bordered
             columns={columns}
-            loading={loading}
+            loading={tableLoading}
             pagination={{
               total: pageTotal,
               pageSize,
@@ -154,20 +163,30 @@ export default function deliveryList() {
         <Modal
           title="创建产品"
           visible={createProductVisible}
+          onCancel={() => {
+            setCreateProductVisible(false);
+          }}
           footer={
             <div className="drawer-footer">
-              <Button type="primary" loading={loading} onClick={handleSubmit}>
+              <Button type="primary" loading={creatLoading} onClick={handleSubmit}>
                 确定
               </Button>
-              <Button type="default">取消</Button>
+              <Button
+                type="default"
+                onClick={() => {
+                  setCreateProductVisible(false);
+                }}
+              >
+                取消
+              </Button>
             </div>
           }
         >
-          <Form layout="vertical">
-            <Form.Item label="产品名称:">
+          <Form layout="vertical" form={creatForm}>
+            <Form.Item label="产品名称:" name="product_name">
               <Input style={{ width: 470 }}></Input>
             </Form.Item>
-            <Form.Item label="产品描述:">
+            <Form.Item label="产品描述:" name="product_description">
               <Input style={{ width: 470 }}></Input>
             </Form.Item>
           </Form>
