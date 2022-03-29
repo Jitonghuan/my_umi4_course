@@ -117,7 +117,7 @@ type IMarket = {
  */
 const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
-  const [currentTab, setCurrentTab] = useState<string>('dev');
+
   let href = window.location.href.includes('fygs');
   const tabList = [
     { label: 'DEV', value: 'dev' },
@@ -125,6 +125,7 @@ const Coms = (props: any) => {
     { label: 'PRE', value: 'pre' },
     { label: 'PROD', value: 'prod' },
   ];
+  const [currentTab, setCurrentTab] = useState<string>(href ? 'prod' : 'dev');
   const tabListFygs = [{ label: 'PROD', value: 'prod' }];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
   const [useMarket, setUseMarket] = useState<IMarket[]>([]);
