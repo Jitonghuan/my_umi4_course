@@ -3,12 +3,13 @@
 // @create 2022/02/21 17:10
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Modal, Descriptions } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, Typography, Tag, Modal, Descriptions } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { addAPIPrefix } from '@/utils';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { useEditProductDescription, useCreateProductVersion } from './hooks';
 import versionManageList from 'mock/versionManageList';
 
 export interface Item {
@@ -21,7 +22,11 @@ export interface Item {
   status?: number;
 }
 export default function deliveryDescription() {
+  const { Paragraph } = Typography;
   const descriptionInfoData: any = history.location.state;
+  const [editableStr, setEditableStr] = useState('');
+  const [editLoading, editProductDescription] = useEditProductDescription();
+  const [creatLoading, createProductVersion] = useCreateProductVersion();
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
   const [creatVersionVisiable, setCreatVersionVisiable] = useState<boolean>(false);
@@ -131,7 +136,12 @@ export default function deliveryDescription() {
         <div>
           <Descriptions title="基本信息" column={2} extra={<Button type="primary">编辑</Button>}>
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
-            <Descriptions.Item label="产品描述">{descriptionInfoData.productDescription}</Descriptions.Item>
+            <Descriptions.Item label="产品描述">
+              <Paragraph editable={{ onChange: () => editProductDescription }}>
+                {' '}
+                {descriptionInfoData.productDescription}
+              </Paragraph>
+            </Descriptions.Item>
             <Descriptions.Item label="创建时间" span={2}>
               {descriptionInfoData.gmtCreate}
             </Descriptions.Item>
