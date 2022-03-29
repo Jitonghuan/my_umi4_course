@@ -3,7 +3,7 @@
 // @create 2022/02/21 17:10
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Modal } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, Tag, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { addAPIPrefix } from '@/utils';
@@ -13,13 +13,10 @@ import { useCreateProduct, useDeleteProduct, useQueryProductList } from './hooks
 import './index.less';
 
 export interface Item {
-  id: string;
-  templateName: string;
-  templateCode: string;
-  appCode: string;
-  appVsersion: string;
-  envCode: string;
-  status?: number;
+  id: number;
+  productName: string;
+  productDescription: string;
+  gmtCreate: string;
 }
 export default function deliveryList() {
   const { Option } = Select;
@@ -27,21 +24,16 @@ export default function deliveryList() {
   const [creatLoading, createProduct] = useCreateProduct();
   const [delLoading, deleteProduct] = useDeleteProduct();
   const [tableLoading, dataSource, pageInfo, setPageInfo, queryProductList] = useQueryProductList();
-  const [versionListData, setVersionListData] = useState<any[]>([
-    {
-      id: '1',
-      productName: '8888',
-      productDescription: '应用模版',
-      gmtCreate: 'xuxu',
-    },
-  ]);
-
   const [formTmpl] = Form.useForm();
   const [createProductVisible, setCreateProductVisible] = useState<boolean>(false); //是否展示抽屉
-  const pageSizeClick = () => {};
-  //删除数据
-  const handleDelItem = (record: any) => {
-    let id = record.id;
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    setPageInfo({ pageIndex: pagination.current });
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    queryProductList(obj);
   };
 
   const columns = [
@@ -54,7 +46,6 @@ export default function deliveryList() {
       title: '产品描述',
       dataIndex: 'productDescription',
       width: '30%',
-      ellipsis: true,
     },
     {
       title: '创建时间',
@@ -67,15 +58,29 @@ export default function deliveryList() {
       width: 150,
       render: (_: string, record: Item) => (
         <Space>
-          <a>管理</a>
+          <a
+            onClick={() => {
+              history.push({
+                pathname: '/matrix/delivery/product-description',
+                state: record,
+              });
+            }}
+          >
+            管理
+          </a>
           <Popconfirm
             title="确认删除？"
-            onConfirm={() => {}}
-            // onCancel={cancel}
+            onConfirm={() => {
+              deleteProduct(record.id).then(() => {
+                queryProductList();
+              });
+            }}
             okText="是"
             cancelText="否"
           >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <Spin spinning={delLoading}>
+              <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            </Spin>
           </Popconfirm>
         </Space>
       ),

@@ -20,7 +20,8 @@ export interface Item {
   envCode: string;
   status?: number;
 }
-export default function deliveryList() {
+export default function deliveryDescription() {
+  const descriptionInfoData: any = history.location.state;
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
   const [creatVersionVisiable, setCreatVersionVisiable] = useState<boolean>(false);
@@ -129,10 +130,10 @@ export default function deliveryList() {
       <ContentCard>
         <div>
           <Descriptions title="基本信息" column={2} extra={<Button type="primary">编辑</Button>}>
-            <Descriptions.Item label="产品名称">Zhou Maomao</Descriptions.Item>
-            <Descriptions.Item label="产品描述">1810000000</Descriptions.Item>
+            <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
+            <Descriptions.Item label="产品描述">{descriptionInfoData.productDescription}</Descriptions.Item>
             <Descriptions.Item label="创建时间" span={2}>
-              empty
+              {descriptionInfoData.gmtCreate}
             </Descriptions.Item>
           </Descriptions>
         </div>
@@ -172,7 +173,7 @@ export default function deliveryList() {
         </div>
 
         <Modal
-          title="创建产品"
+          title="创建版本"
           visible={createProductVisible}
           footer={
             <div className="drawer-footer">
@@ -184,10 +185,10 @@ export default function deliveryList() {
           }
         >
           <Form layout="vertical">
-            <Form.Item label="产品名称:">
+            <Form.Item label="版本号:">
               <Input style={{ width: 470 }}></Input>
             </Form.Item>
-            <Form.Item label="产品描述:">
+            <Form.Item label="版本描述:">
               <Input style={{ width: 470 }}></Input>
             </Form.Item>
           </Form>

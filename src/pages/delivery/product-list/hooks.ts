@@ -39,6 +39,7 @@ export function useDeleteProduct(): [boolean, (id: number) => Promise<void>] {
           if (res.success) {
             message.success(res.data);
           } else {
+            message.error('删除失败！');
             return;
           }
         })
@@ -58,7 +59,7 @@ export function useQueryProductList(): [
   any[],
   any,
   any,
-  (pageIndex?: number, pageSize?: number, product_name?: string) => Promise<void>,
+  (pageIndex?: any, pageSize?: any, product_name?: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);

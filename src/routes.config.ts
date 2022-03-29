@@ -971,13 +971,13 @@ export default [
         key: 'product-list',
         component: '@/pages/delivery/product-list',
       },
-      // {
-      //   path: 'product-description',
-      //   name: '产品描述',
-      //   key: 'product-description',
-      //   component: '@/pages/delivery/product-description',
-      //   hideInMenu: true,
-      // },
+      {
+        path: 'product-description',
+        name: '产品描述',
+        key: 'product-list',
+        component: '@/pages/delivery/product-list/product-description',
+        hideInMenu: true,
+      },
       {
         path: 'version-detail',
         name: '版本详情',
