@@ -25,11 +25,11 @@ export const appTypeOptions = [
   },
 ];
 export default function DetailList(props: any) {
-  const { dataInfo } = props;
+  const { dataInfo, onSpin, stopSpin } = props;
   const [projectEnvInfo, setProjectEnvInfo] = useState<any>(history.location.state);
   const [formList] = Form.useForm();
   const [addAppForm] = Form.useForm();
-  const [removeApps] = useRemoveApps();
+  const [removeApps] = useRemoveApps(onSpin, stopSpin);
   const [addApps] = useAddAPPS();
   const [appsListData, setAppsListData] = useState<any>([]);
   const [projectEnvData, setProjectEnvData] = useState<any>([]);
@@ -56,7 +56,8 @@ export default function DetailList(props: any) {
     });
   };
   const queryAppsListData = async (paramObj: any) => {
-    setLoading(true);
+    // setLoading(true);
+    onSpin();
     let canAddAppsData: any = []; //可选数据数组
     await getRequest(queryAppsList, {
       data: {
@@ -89,7 +90,8 @@ export default function DetailList(props: any) {
         }
       })
       .finally(() => {
-        setLoading(false);
+        // setLoading(false);
+        stopSpin();
       });
   };
   const selectAppType = (appTypeValue: string) => {
@@ -158,7 +160,8 @@ export default function DetailList(props: any) {
     onChange: onSelectChange,
   };
   const start = () => {
-    setDelLoading(true);
+    // setDelLoading(true);
+    // onSpin();
     let appCodeArry: any = [];
     selectedRows.map((item: any) => {
       appCodeArry.push(item.appCode);
@@ -172,7 +175,8 @@ export default function DetailList(props: any) {
         queryAppsListData(queryCommonParamsRef.current);
       })
       .finally(() => {
-        setDelLoading(false);
+        // setDelLoading(false);
+        stopSpin();
         setSelectedRowKeys(undefined);
       });
   };
