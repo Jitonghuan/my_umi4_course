@@ -31,9 +31,9 @@ export default defineConfig({
     '/v1': {
       // target: 'http://matrix-bf-daily.cfuture.shop/',
       // target: 'http://matrix-base-poc.cfuture.shop/',
-      target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix-zslnyy.cfuture.shop/',
-      // target: 'http://matrix-fygs.seenew.info:180/',
+      target: 'http://matrix-fygs.seenew.info:180/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.129.47:8080/',//青枫本地
