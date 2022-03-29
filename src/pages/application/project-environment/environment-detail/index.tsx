@@ -3,7 +3,7 @@
 // @create 2022/02/14 10:20
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, Modal, Descriptions, Divider, Tag } from 'antd';
+import { Form, Input, Select, Button, Table, Spin, Popconfirm, Modal, Descriptions, Divider, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { PlusOutlined, DiffOutlined } from '@ant-design/icons';
@@ -45,6 +45,7 @@ export default function EnvironmentList() {
   const [dataSource, setDataSource] = useState<any>([]);
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
   const queryProjectEnv = async (benchmarkEnvCode: string, envCode: string) => {
     setListLoading(true);
@@ -105,6 +106,14 @@ export default function EnvironmentList() {
     // queryAppsListData(queryCommonParamsRef.current);
   }, []);
 
+  const onSpin = () => {
+    setIsSpinning(true);
+  };
+
+  const stopSpin = () => {
+    setIsSpinning(false);
+  };
+
   return (
     <PageContainer className="project-env-detail">
       <EnvironmentEditDraw
@@ -118,41 +127,42 @@ export default function EnvironmentList() {
           queryAppsListData(queryCommonParamsRef.current);
         }}
       />
-
-      <ContentCard>
-        <div className="table-caption">
-          <div className="caption-left">
-            <h3>项目详情</h3>
+      <Spin spinning={isSpinning}>
+        <ContentCard>
+          <div className="table-caption">
+            <div className="caption-left">
+              <h3>项目详情</h3>
+            </div>
+            <div className="caption-right">
+              <Button
+                type="primary"
+                onClick={() => {
+                  setEnviroEditMode('EDIT');
+                }}
+              >
+                <DiffOutlined />
+                编辑
+              </Button>
+            </div>
           </div>
-          <div className="caption-right">
-            <Button
-              type="primary"
-              onClick={() => {
-                setEnviroEditMode('EDIT');
-              }}
+          <div>
+            <Descriptions
+              bordered
+              column={2}
+              labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap', width: 175 }}
             >
-              <DiffOutlined />
-              编辑
-            </Button>
+              <Descriptions.Item label="项目环境名">{projectEnvData?.envName || '--'}</Descriptions.Item>
+              <Descriptions.Item label="项目环境CODE">{projectEnvData?.envCode || '--'}</Descriptions.Item>
+              <Descriptions.Item label="基准环境CODE">{projectEnvData?.relEnvs || '--'}</Descriptions.Item>
+              <Descriptions.Item label="环境大类">{projectEnvData?.envTypeCode || '--'}</Descriptions.Item>
+              <Descriptions.Item label="备注" span={3}>
+                {projectEnvData?.mark || '--'}
+              </Descriptions.Item>
+            </Descriptions>
           </div>
-        </div>
-        <div>
-          <Descriptions
-            bordered
-            column={2}
-            labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap', width: 175 }}
-          >
-            <Descriptions.Item label="项目环境名">{projectEnvData?.envName || '--'}</Descriptions.Item>
-            <Descriptions.Item label="项目环境CODE">{projectEnvData?.envCode || '--'}</Descriptions.Item>
-            <Descriptions.Item label="基准环境CODE">{projectEnvData?.relEnvs || '--'}</Descriptions.Item>
-            <Descriptions.Item label="环境大类">{projectEnvData?.envTypeCode || '--'}</Descriptions.Item>
-            <Descriptions.Item label="备注" span={3}>
-              {projectEnvData?.mark || '--'}
-            </Descriptions.Item>
-          </Descriptions>
-        </div>
-        <DetailList></DetailList>
-      </ContentCard>
+          <DetailList onSpin={onSpin} stopSpin={stopSpin}></DetailList>
+        </ContentCard>
+      </Spin>
     </PageContainer>
   );
 }
