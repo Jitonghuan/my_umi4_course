@@ -56,22 +56,35 @@ export function useDeleteProduct(): [boolean, (id: number) => Promise<void>] {
 export function useQueryProductList(): [
   boolean,
   any[],
-  (product_name?: string, pageIndex?: number, pageSize?: number) => Promise<void>,
+  any,
+  any,
+  (pageIndex?: number, pageSize?: number, product_name?: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
   useEffect(() => {
     queryProductList();
   }, []);
-  const queryProductList = async (product_name?: string, pageIndex?: number, pageSize?: number) => {
+  const queryProductList = async (pageIndex?: number, pageSize?: number, product_name?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryProductList, {
-        data: { product_name, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, product_name },
       })
         .then((res) => {
           if (res.success) {
             setDataSource(res.data.dataSource);
+            let pageInfoData = res.data.pageInfo;
+            setPageInfo({
+              pageIndex: pageInfoData.pageIndex,
+              pageSize: pageInfoData.pageSize,
+              total: pageInfoData.total,
+            });
           } else {
             return [];
           }
@@ -83,5 +96,5 @@ export function useQueryProductList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, queryProductList];
+  return [loading, dataSource, pageInfo, setPageInfo, queryProductList];
 }

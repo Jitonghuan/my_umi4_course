@@ -26,32 +26,17 @@ export default function deliveryList() {
   const [creatForm] = Form.useForm();
   const [creatLoading, createProduct] = useCreateProduct();
   const [delLoading, deleteProduct] = useDeleteProduct();
-  const [tableLoading, dataSource, queryProductList] = useQueryProductList();
+  const [tableLoading, dataSource, pageInfo, setPageInfo, queryProductList] = useQueryProductList();
   const [versionListData, setVersionListData] = useState<any[]>([
     {
-      key: '1',
-      templateName: '8888',
-      appName: '应用模版',
-      templateCode: 'xuxu',
-      appCategoryCode: 'xiniuyiliao',
-      envCode: '天台',
       id: '1',
+      productName: '8888',
+      productDescription: '应用模版',
+      gmtCreate: 'xuxu',
     },
   ]);
-  useEffect(() => {
-    versionList();
-  }, []);
 
-  const versionList = () => {
-    getRequest(addAPIPrefix('/deliverManage/deliverDeploy/list')).then((result: any) => {
-      const source = result?.data?.dataSource;
-      setVersionListData(source);
-    });
-  };
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
-  const [pageTotal, setPageTotal] = useState<number>();
   const [createProductVisible, setCreateProductVisible] = useState<boolean>(false); //是否展示抽屉
   const pageSizeClick = () => {};
   //删除数据
@@ -146,15 +131,17 @@ export default function deliveryList() {
             columns={columns}
             loading={tableLoading}
             pagination={{
-              total: pageTotal,
-              pageSize,
-              current: pageIndex,
+              total: pageInfo.total,
+              pageSize: pageInfo.pageSize,
+              current: pageInfo.pageIndex,
               showSizeChanger: true,
               onShowSizeChange: (_, size) => {
-                setPageSize(size);
-                setPageIndex(1);
+                setPageInfo({
+                  pageIndex: 1,
+                  pageSize: size,
+                });
               },
-              showTotal: () => `总共 ${pageTotal} 条数据`,
+              showTotal: () => `总共 ${pageInfo.total} 条数据`,
             }}
             // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
             onChange={pageSizeClick}
