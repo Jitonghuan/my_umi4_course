@@ -30,33 +30,35 @@ const mock = [
   { nodeType: 'single', title: '合并realease', nodeStatus: 'finish' },
   {
     nodeType: 'subject',
-    env: ['base', 'dev'],
-    base: [
-      { title: '构建', nodeStatus: 'finish', nodeType: 'single' },
-      { title: '部署', nodeStatus: 'error', nodeType: 'single' },
-      { title: '推送', nodeStatus: 'wait', nodeType: 'single' },
-    ],
-    dev: [
-      { title: '构建', nodeStatus: 'error', nodeType: 'single' },
-      { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
-      { title: '推送', nodeStatus: 'wait', nodeType: 'single' },
-    ],
+    nodes: {
+      base: [
+        { title: '构建', nodeStatus: 'finish', nodeType: 'single' },
+        { title: '部署', nodeStatus: 'error', nodeType: 'single' },
+        { title: '推送', nodeStatus: 'wait', nodeType: 'single' },
+      ],
+      dev: [
+        { title: '构建', nodeStatus: 'error', nodeType: 'single' },
+        { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
+        { title: '推送', nodeStatus: 'wait', nodeType: 'single' },
+      ],
+    },
   },
   { nodeType: 'single', title: '创建任务', nodeStatus: 'wait' },
   { nodeType: 'single', title: '合并realease', nodeStatus: 'wait' },
   {
     nodeType: 'subject',
-    env: ['base1', 'dev1'],
-    base1: [
-      { title: '构建', nodeStatus: 'wait', nodeType: 'single' },
-      { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
-      { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
-    ],
-    dev1: [
-      { title: '构建', nodeStatus: 'wait', nodeType: 'single' },
-      { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
-      { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
-    ],
+    nodes: {
+      base1: [
+        { title: '构建', nodeStatus: 'wait', nodeType: 'single' },
+        { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
+        { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
+      ],
+      dev1: [
+        { title: '构建', nodeStatus: 'wait', nodeType: 'single' },
+        { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
+        { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
+      ],
+    },
   },
   { nodeType: 'single', title: '完成', nodeStatus: 'wait' },
 ];
@@ -311,9 +313,21 @@ export default function PublishContent(props: IProps) {
         visible={fullScreeVisible}
         onCancel={() => setFullScreeVisible(false)}
       >
-        <CurrSteps
+        {/* <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
+          onCancelDeploy={onCancelDeploy}
+          stopSpin={stopSpin}
+          onSpin={onSpin}
+          deployedList={deployedList}
+          getItemByKey={getItemByKey}
+        /> */}
+        <DeploySteps
+          stepData={mock}
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          isFrontend={isFrontend}
+          appData={appData}
           onCancelDeploy={onCancelDeploy}
           stopSpin={stopSpin}
           onSpin={onSpin}

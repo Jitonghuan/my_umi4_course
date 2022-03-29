@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Steps } from 'antd';
+import { Steps, Empty } from 'antd';
 import StepItem from './step-item';
 import { initial } from 'lodash';
 
@@ -7,13 +7,13 @@ import { initial } from 'lodash';
 const changeColor = (data: any, env?: any) => {
   let flag = false;
   if (Array.isArray(env)) {
-    for (let item of env) {
-      if (data[item] && data[item][0] && data[item][0].nodeStatus !== 'wait') {
+    for (let i of env) {
+      if (data.nodes && data.nodes[i] && data.nodes[i][0].nodeStatus !== 'wait') {
         return true;
       }
     }
   }
-  if (env && data[env]) {
+  if (!Array.isArray(env) && data[env]) {
     let res = data[env];
     return res[0].nodeStatus !== 'wait';
   }
@@ -37,18 +37,20 @@ const SingelEnvSteps = (props: any) => (
 
 // 多环境
 const MultiEnvSteps = (props: any) => {
-  const { initial, env, ...other } = props;
-
+  const { initial, item, ...other } = props;
+  let envList = item.nodes ? Object.keys(item.nodes) : [];
   return (
     <div style={{ margin: '0 15px' }}>
-      <div className={`sub_process-wrapper ${changeColor(props, env) ? 'sub_process-wrapper-active' : ''}`}>
-        {env.map((envKey: any, index: number) => (
+      <div className={`sub_process-wrapper ${changeColor(item, envList) ? 'sub_process-wrapper-active' : ''}`}>
+        {envList.map((envKey: any, index: number) => (
           <div
             key={envKey}
-            className={`sub_process sub_process-${index} ${changeColor(props, envKey) ? 'sub_process-active' : ''}`}
+            className={`sub_process sub_process-${index} ${
+              changeColor(item.nodes, envKey) ? 'sub_process-active' : ''
+            }`}
           >
             <span className="sub_process-title">{envKey}</span>
-            <StepsComp {...other} initial={initial} items={props[envKey]} />
+            <StepsComp {...other} initial={initial} items={item.nodes[envKey]} />
           </div>
         ))}
       </div>
@@ -96,7 +98,8 @@ export default function DeploySteps(props: any) {
       if (Array.isArray(element)) {
         init = init + element.length;
       } else {
-        init = init + element[element.env[0]].length;
+        const envList = Object.keys(element.nodes);
+        init = init + element.nodes[envList[0]].length;
       }
     }
     return init;
@@ -104,12 +107,16 @@ export default function DeploySteps(props: any) {
 
   return (
     <div className="publish-content-compo-wrapper" style={{ display: 'flex' }}>
-      {data.map((item: any, index: number) =>
-        !Array.isArray(item) ? (
-          <MultiEnvSteps {...item} {...props} initial={getInitValue(index)} />
-        ) : (
-          <SingelEnvSteps items={item} {...props} initial={getInitValue(index)} />
-        ),
+      {data.length !== 0 ? (
+        data.map((item: any, index: number) =>
+          !Array.isArray(item) ? (
+            <MultiEnvSteps item={item} {...props} initial={getInitValue(index)} />
+          ) : (
+            <SingelEnvSteps items={item} {...props} initial={getInitValue(index)} />
+          ),
+        )
+      ) : (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%' }} />
       )}
     </div>
   );
