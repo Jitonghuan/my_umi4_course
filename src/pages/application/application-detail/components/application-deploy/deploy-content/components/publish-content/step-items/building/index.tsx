@@ -10,9 +10,10 @@ import { StepItemProps } from '../../types';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, jenkinsUrl, envCode, status, ...others } = props;
+  const { deployInfo, onOperate, envTypeCode, envCode, status, ...others } = props;
+  const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
 
-  const isLoading = deployStatus === 'building';
+  // const isLoading = deployStatus === 'building';
   const isError = status === 'error';
 
   const handleRebuildClick = () => {
@@ -48,13 +49,6 @@ export default function BuildingStep(props: StepItemProps) {
               </a>
             </div>
           ) : null}
-          {/* {deployInfo.jenkinsUrl && (
-              <div style={{ marginTop: 2 }}>
-                <a target="_blank" href={deployInfo.jenkinsUrl}>
-                  查看Jenkins详情
-                </a>
-              </div>
-            )} */}
           {isError && (
             <Button style={{ marginTop: 4, paddingLeft: 4, paddingRight: 4 }} onClick={handleRebuildClick}>
               重新构建

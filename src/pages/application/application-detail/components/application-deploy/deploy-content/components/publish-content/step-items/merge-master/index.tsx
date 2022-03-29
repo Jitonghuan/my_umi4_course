@@ -12,8 +12,10 @@ import { StepItemProps } from '../../types';
 export default function MergeMasterStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
 
-  const isLoading = deployStatus === 'mergingMaster';
-  const isError = deployStatus === 'mergeMasterErr';
+  // const isLoading = deployStatus === 'mergingMaster';
+  // const isError = deployStatus === 'mergeMasterErr';
+  const isLoading = status === 'process';
+  const isError = status === 'error';
 
   const retryMergeMasterClick = async () => {
     try {

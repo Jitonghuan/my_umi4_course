@@ -13,8 +13,10 @@ import { StepItemProps } from '../../types';
 export default function GrayValidationStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
 
-  const isLoading = deployStatus === 'verifyWait';
-  const isError = deployStatus === 'verifyFailed';
+  // const isLoading = deployStatus === 'verifyWait';
+  // const isError = deployStatus === 'verifyFailed';
+  const isLoading = status === 'process';
+  const isError = status === 'error';
 
   const handleVarifyClick = (result: string) => {
     onOperate('fePublishVerifyStart');

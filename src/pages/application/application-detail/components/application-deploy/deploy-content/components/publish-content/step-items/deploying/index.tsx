@@ -13,10 +13,10 @@ import DeployModal from './deploy-modal';
 export default function DeployingStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
   const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
-
-  const isLoading =
-    deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
-  const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
+  const isLoading = status === 'process';
+  // const isLoading =
+  //   deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
+  // const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
 
   const [deployVisible, setDeployVisible] = useState(false);
 

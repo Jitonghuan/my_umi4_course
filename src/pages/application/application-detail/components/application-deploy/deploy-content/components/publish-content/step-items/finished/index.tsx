@@ -46,7 +46,7 @@ export default function FinishedStep(props: StepItemProps) {
       title="完成"
       status={status}
       description={
-        (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
+        status === 'finish' &&
         downLoadSupportEnv.current?.filter((item) => deployInfo.envs?.indexOf(item) > -1).length > 0 &&
         appConfig.PRIVATE_METHODS === 'public' &&
         isNotFrontend && (
