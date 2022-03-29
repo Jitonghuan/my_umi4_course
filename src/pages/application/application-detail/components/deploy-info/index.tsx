@@ -5,6 +5,7 @@
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Tabs } from 'antd';
+import appConfig from '@/app.config';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from './hooks';
@@ -21,12 +22,7 @@ export default function AppDeployInfo(props: any) {
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
-  let env =
-    window.location.href.includes('zslnyy') || window.location.href.includes('fygs')
-      ? 'prod'
-      : window.location.href.includes('base-poc')
-      ? 'prod'
-      : 'dev';
+  let env = appConfig.IS_Matrix === 'public' ? 'dev' : 'prod';
   try {
     localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
   } catch (error) {

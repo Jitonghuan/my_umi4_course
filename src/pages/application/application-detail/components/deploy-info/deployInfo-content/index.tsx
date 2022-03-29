@@ -104,13 +104,15 @@ export default function DeployContent(props: DeployContentProps) {
 
   //定义定时器方法
   const intervalFunc = () => {
-    loadInfoData(initEnvCode.current)
-      .then(() => {
-        queryInstanceList(appData?.appCode, initEnvCode.current);
-      })
-      .catch((e: any) => {
-        console.log('error happend in intervalFunc:', e);
-      });
+    if (initEnvCode.current) {
+      loadInfoData(initEnvCode.current)
+        .then(() => {
+          queryInstanceList(appData?.appCode, initEnvCode.current);
+        })
+        .catch((e: any) => {
+          console.log('error happend in intervalFunc:', e);
+        });
+    }
   };
 
   //引用定时器
@@ -123,84 +125,99 @@ export default function DeployContent(props: DeployContentProps) {
     try {
       if (type === 'viewLog_goBack' && viewLogEnvType == envTypeCode) {
         selectAppEnv().then((result: any) => {
-          const dataSources = result.data?.map((n: any) => ({
-            value: n?.envCode,
-            label: n?.envName,
-            data: n,
-          }));
-          setEnvDatas(dataSources);
+          if (result.success) {
+            if (result.data.length === 0) {
+              return;
+            }
+            const dataSources = result.data?.map((n: any) => ({
+              value: n?.envCode,
+              label: n?.envName,
+              data: n,
+            }));
+            setEnvDatas(dataSources);
+            formInstance.setFieldsValue({ envCode: viewLogEnv });
+            initEnvCode.current = viewLogEnv;
+            setCurrentEnvData(viewLogEnv);
+            if (viewLogEnv !== '') {
+              loadInfoData(viewLogEnv).then(() => {
+                queryAppOperateLog(viewLogEnv);
+                getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: initEnvCode.current } })
+                  .then((result) => {
+                    if (result.success) {
+                      setInstanceLoading(true);
+                      let data = result.data;
+                      setInstanceTableData(data);
+                      if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                        timerHandler('do', true);
+                      } else {
+                        timerHandler('stop');
+                      }
+                    }
+                  })
+                  .finally(() => {
+                    setInstanceLoading(false);
+                  });
+              });
+            }
+          } else {
+            message.warning('环境获取失败！');
+            return;
+          }
         });
+      } else {
+        selectAppEnv().then((result: any) => {
+          if (result.success) {
+            if (result.data.length === 0) {
+              return;
+            }
+            const dataSources = result.data?.map((n: any) => ({
+              value: n?.envCode,
+              label: n?.envName,
+              data: n,
+            }));
+            setEnvDatas(dataSources);
+            initEnvCode.current = dataSources[0]?.value;
+            setCurrentEnvData(dataSources[0]?.value);
+            formInstance.setFieldsValue({ envCode: initEnvCode.current });
+            if (initEnvCode.current !== '') {
+              let initLoadInfoData: any = [];
+              getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
+                .then((result) => {
+                  if (result.success) {
+                    initLoadInfoData = result.data;
+                    setListEnvClusterData(initLoadInfoData);
+                  }
+                })
+                .then(() => {
+                  if (initLoadInfoData.length !== 0) {
+                    queryAppOperateLog(initEnvCode.current);
+                    getRequest(queryInstanceListApi, {
+                      data: { appCode: appData?.appCode, envCode: initEnvCode.current },
+                    })
+                      .then((result) => {
+                        if (result.success) {
+                          setInstanceLoading(true);
+                          let data = result.data;
+                          setInstanceTableData(data);
 
-        formInstance.setFieldsValue({ envCode: viewLogEnv });
-        initEnvCode.current = viewLogEnv;
-        setCurrentEnvData(viewLogEnv);
-        if (viewLogEnv !== '') {
-          loadInfoData(viewLogEnv).then(() => {
-            queryAppOperateLog(viewLogEnv);
-            getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: initEnvCode.current } })
-              .then((result) => {
-                if (result.success) {
-                  setInstanceLoading(true);
-                  let data = result.data;
-                  setInstanceTableData(data);
-                  if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
-                    timerHandler('do', true);
+                          if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                            timerHandler('do', true);
+                          } else {
+                            timerHandler('stop');
+                          }
+                        }
+                      })
+                      .finally(() => {
+                        setInstanceLoading(false);
+                      });
                   } else {
                     timerHandler('stop');
                   }
-                }
-              })
-              .finally(() => {
-                setInstanceLoading(false);
-              });
-          });
-        }
-      } else {
-        selectAppEnv().then((result: any) => {
-          const dataSources = result.data?.map((n: any) => ({
-            value: n?.envCode,
-            label: n?.envName,
-            data: n,
-          }));
-          setEnvDatas(dataSources);
-          initEnvCode.current = dataSources[0]?.value;
-          setCurrentEnvData(dataSources[0]?.value);
-          formInstance.setFieldsValue({ envCode: initEnvCode.current });
-          if (initEnvCode.current !== '') {
-            let initLoadInfoData: any = [];
-            getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
-              .then((result) => {
-                if (result.success) {
-                  initLoadInfoData = result.data;
-                  setListEnvClusterData(initLoadInfoData);
-                }
-              })
-              .then(() => {
-                if (initLoadInfoData.length !== 0) {
-                  queryAppOperateLog(initEnvCode.current);
-                  getRequest(queryInstanceListApi, {
-                    data: { appCode: appData?.appCode, envCode: initEnvCode.current },
-                  })
-                    .then((result) => {
-                      if (result.success) {
-                        setInstanceLoading(true);
-                        let data = result.data;
-                        setInstanceTableData(data);
-
-                        if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
-                          timerHandler('do', true);
-                        } else {
-                          timerHandler('stop');
-                        }
-                      }
-                    })
-                    .finally(() => {
-                      setInstanceLoading(false);
-                    });
-                } else {
-                  timerHandler('stop');
-                }
-              });
+                });
+            }
+          } else {
+            message.warning('环境获取失败！');
+            return;
           }
         });
       }
