@@ -10,14 +10,13 @@ import { history } from 'umi';
 import moment from 'moment';
 import appConfig from '@/app.config';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
+import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
-import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest } from '@/utils/request';
-import { restartApp, rollbackApplication, restartApplication, queryAppOperate } from '@/pages/application/service';
+import { restartApp, restartApplication, queryAppOperate } from '@/pages/application/service';
 import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
-import { useDeployInfoData, useInstanceList, useDownloadLog, useDeleteInstance } from './hook';
+import { useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
@@ -69,15 +68,10 @@ export default function DeployContent(props: DeployContentProps) {
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
   const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
-  const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
-  const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
-    currentEnvData,
-    appData?.deploymentName,
-  );
   const queryAppOperateLog = (envCodeParam: any) => {
     getRequest(queryAppOperate, { data: { appCode, envCode: envCodeParam } })
       .then((resp) => {
@@ -95,13 +89,28 @@ export default function DeployContent(props: DeployContentProps) {
   }, [appCode]);
   const initEnvCode = useRef<string>('');
   const [deleteInstance] = useDeleteInstance();
-  const [downloadLog] = useDownloadLog();
-  const [instanceTableData, instanceloading, queryInstanceList, setInstanceTableData, setInstanceLoading] =
-    useInstanceList(appData?.appCode, currentEnvData);
+  const [instanceTableData, setInstanceTableData] = useState<any>();
+  const [instanceloading, setInstanceLoading] = useState<boolean>(false);
 
   const envClusterData = useRef();
   envClusterData.current = listEnvClusterData;
 
+  const queryInstanceList = async (appCode: any, envCode: any) => {
+    getRequest(queryInstanceListApi, { data: { appCode, envCode } })
+      .then((result) => {
+        if (result.success) {
+          setInstanceLoading(true);
+          let data = result.data;
+          setInstanceTableData(data);
+        } else {
+          timerHandler('stop');
+          return;
+        }
+      })
+      .finally(() => {
+        setInstanceLoading(false);
+      });
+  };
   //定义定时器方法
   const intervalFunc = () => {
     if (initEnvCode.current) {
@@ -152,6 +161,9 @@ export default function DeployContent(props: DeployContentProps) {
                       } else {
                         timerHandler('stop');
                       }
+                    } else {
+                      timerHandler('stop');
+                      return;
                     }
                   })
                   .finally(() => {
@@ -181,6 +193,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: initEnvCode.current });
             if (initEnvCode.current !== '') {
               let initLoadInfoData: any = [];
+
               getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
                 .then((result) => {
                   if (result.success) {
@@ -205,6 +218,9 @@ export default function DeployContent(props: DeployContentProps) {
                           } else {
                             timerHandler('stop');
                           }
+                        } else {
+                          timerHandler('stop');
+                          return;
                         }
                       })
                       .finally(() => {
@@ -275,6 +291,11 @@ export default function DeployContent(props: DeployContentProps) {
       if (result.success) {
         let data = result.data;
         setListEnvClusterData(data);
+        if (!data.clusterType || !data.clusterName) {
+          return;
+        }
+      } else {
+        return;
       }
     });
   };
@@ -309,6 +330,9 @@ export default function DeployContent(props: DeployContentProps) {
                 if (initEnvCode.current !== '') {
                   queryAppOperateLog(initEnvCode.current);
                 }
+              } else {
+                timerHandler('stop');
+                return;
               }
             })
             .finally(() => {

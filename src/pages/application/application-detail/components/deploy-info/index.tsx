@@ -29,7 +29,9 @@ export default function AppDeployInfo(props: any) {
     localStorage.setItem('__init_env_tab__', env);
   }
   const [tabActive, setTabActive] = useState<any>(
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env,
+    localStorage.__init_env_tab__ && envTypeData.some((item) => item.value === localStorage.__init_env_tab__)
+      ? localStorage.getItem('__init_env_tab__')
+      : env,
   );
 
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
