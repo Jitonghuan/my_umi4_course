@@ -20,9 +20,9 @@ export default function Dashboard(props: any) {
     <PageContainer>
       <FilterCard className="layout-compact">
         <Tabs activeKey={activeKey} onChange={(next) => props.history.push(`/matrix/cluster/cluster-zs/${next}`)}>
-          {/* <Tabs.TabPane tab="集群看板" key="dashboard" /> */}
-          <Tabs.TabPane tab="流量调度" key="operator-scheduling" />
-          <Tabs.TabPane tab="集群调度" key="scheduling" />
+          <Tabs.TabPane tab="集群看板" key="dashboards" />
+          <Tabs.TabPane tab="流量调度" key="scheduling-mode" />
+          {/* <Tabs.TabPane tab="集群调度" key="scheduling" /> */}
           <Tabs.TabPane tab="集群同步" key="cluster-sync" />
           <Tabs.TabPane tab="应用同步" key="application-sync" />
           <Tabs.TabPane tab="操作记录" key="operation-log" />

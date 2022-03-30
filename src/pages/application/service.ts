@@ -25,6 +25,15 @@ export const queryAppsUrl = `${appConfig.apiPrefix}/appManage/list`;
 /** GET 查询我的应用列表 */
 export const queryMyAppsUrl = `${appConfig.apiPrefix}/appManage/listMyApp`;
 
+/** GET 查询我的收藏应用列表 */
+export const queryMyCollectUrl = `${appConfig.apiPrefix}/userManage/userCollection/listMyCollection`;
+
+/** GET 新增收藏 */
+export const addCollection = `${appConfig.apiPrefix}/userManage/userCollection/add`;
+
+/** GET 取消收藏 */
+export const cancelCollection = `${appConfig.apiPrefix}/userManage/userCollection/cancel`;
+
 /** GET 获取分支列表 */
 export const queryBranchListUrl = `${appConfig.apiPrefix}/releaseManage/branch/list`;
 
@@ -70,6 +79,9 @@ export const retryDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reDep
 /** POST 生产环境确认部署和继续部署 */
 export const confirmProdDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmProd`;
 
+/** POST Venus分析 */
+export const venusAnalyzeUrl = 'http://venus.cfuture.shop/venus-api/v1/app/analysis';
+
 /** POST 重试生产环境合并master */
 export const reMergeMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reMergeMaster`;
 
@@ -105,8 +117,14 @@ export const configUploadUrl = `${appConfig.apiPrefix}/appManage/config/upload`;
 
 /** GET 下载镜像 */
 export const downloadImage = `${appConfig.apiPrefix}/releaseManage/deploy/downloadImage`;
+/** GET 下载资源包 */
+export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/downloadFeResource`;
+
 /** Post 上传镜像*/
 export const offlineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDeploy`;
+
+// 前端离线部署上传资源
+export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/feOfflineDeploy`;
 
 /** POST 重启应用 */
 export const restartAppUrl = `${appConfig.apiPrefix}/appManage/restart`;
@@ -496,6 +514,13 @@ export const retryDelFeature = (params: {
 }) =>
   postRequest(retryDelFeatureUrl, {
     data: params,
+  });
+
+/** Venus分析 */
+export const venusAnalyze = (params: { appCode: any; gitUrl: any }) =>
+  postRequest(venusAnalyzeUrl, {
+    data: params,
+    hideToast: true,
   });
 
 /** 取消部署 */

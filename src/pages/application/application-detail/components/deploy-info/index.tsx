@@ -5,6 +5,7 @@
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Tabs } from 'antd';
+import appConfig from '@/app.config';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from './hooks';
@@ -20,39 +21,38 @@ export default function AppDeployInfo(props: any) {
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
-  // const [searchParams, setSearchParams] = useState<any>(
-  //   localStorage.ALL_APPLICATIO_SEARCH ? JSON.parse(localStorage.ALL_APPLICATIO_SEARCH) : {},
-  // );
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
-  // localStorage.removeItem('__init_env_tab__');
+  let env = appConfig.IS_Matrix === 'public' ? 'dev' : 'prod';
   try {
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'dev';
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
   } catch (error) {
-    localStorage.setItem('__init_env_tab__', 'dev');
+    localStorage.setItem('__init_env_tab__', env);
   }
   const [tabActive, setTabActive] = useState<any>(
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : 'dev',
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env,
   );
 
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currEnvCode,
     appData?.deploymentName,
   );
-  const intervalRef = useRef<any>();
+
   const changeTab = (value: any) => {
     setTabActive(value);
-    localStorage.setItem('__init_env_tab__', value || 'dev');
+    localStorage.setItem('__init_env_tab__', value || env);
   };
 
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   useEffect(() => {
     queryData();
   }, []);
-  const queryData = () => {
-    getRequest(listAppEnvType, {
+  const queryData = async () => {
+    let envTypeDataSource: any = [];
+    await getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
       const { data } = result || [];
+      envTypeDataSource = result.data;
       let next: any = [];
       (data || []).map((el: any) => {
         if (el?.typeCode === 'dev') {
@@ -73,6 +73,13 @@ export default function AppDeployInfo(props: any) {
       }); //升序
       setEnvTypeData(next);
     });
+
+    let currentTabActive =
+      localStorage.__init_env_tab__ &&
+      envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
+        ? localStorage.getItem('__init_env_tab__')
+        : env;
+    setTabActive(currentTabActive);
   };
 
   useEffect(() => {

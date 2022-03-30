@@ -13,15 +13,13 @@ export function useCreateProjectEnv() {
         .then((res) => {
           if (res.success) {
             message.success('新增项目环境成功！');
-          } else {
-            message.error('新增项目环境失败！');
           }
         })
         .finally(() => {
           setEnsureLoading(false);
         });
     } catch (error) {
-      message.error(error);
+      message.error(`新增项目环境失败！${error}`);
     }
   };
   return [ensureLoading, createProjectEnv];
@@ -33,12 +31,13 @@ export function useUpdateProjectEnv() {
       await putRequest(APIS.updateProjectEnv, { data: updateParamsObj }).then((res) => {
         if (res.success) {
           message.success('编辑项目环境成功！');
-        } else {
-          message.error('编辑项目环境失败！');
         }
+        //  else {
+        //   message.error('编辑项目环境失败！');
+        // }
       });
     } catch (error) {
-      message.error(error);
+      message.error(`编辑项目环境失败！${error}`);
     }
   };
   return [updateProjectEnv];
@@ -76,7 +75,7 @@ export function useQueryCategory() {
   // 加载应用分类下拉选择
   const selectCategory = () => {
     getRequest(APIS.appTypeList).then((result) => {
-      const list = (result.data.dataSource || []).map((n: any) => ({
+      const list = (result?.data?.dataSource || []).map((n: any) => ({
         label: n.categoryName,
         value: n.categoryCode,
         data: n,
@@ -139,18 +138,22 @@ export function useAddAPPS() {
   return [addApps];
 }
 
-export function useRemoveApps() {
+export function useRemoveApps(onSpin: any, stopSpin: any) {
   const removeApps = async (removeAppsParamsObj: any) => {
     try {
+      onSpin();
       await postRequest(APIS.removeApps, { data: removeAppsParamsObj }).then((res) => {
         if (res.success) {
           message.success('移除应用成功！');
+          stopSpin();
         } else {
-          message.error('移除应用失败！');
+          stopSpin();
+          // message.error('移除应用失败！');
         }
       });
     } catch (error) {
       message.error(error);
+      stopSpin();
     }
   };
   return [removeApps];

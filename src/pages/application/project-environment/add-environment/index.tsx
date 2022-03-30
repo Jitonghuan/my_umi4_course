@@ -208,7 +208,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       title={mode === 'EDIT' ? '编辑项目环境' : mode === 'ADD' ? '新增项目环境' : '查看环境'}
       maskClosable={false}
       onClose={() => onClose()}
-      width={'40%'}
+      width={'50%'}
       footer={
         <div className="drawer-environ-footer">
           <Space>
@@ -227,7 +227,18 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           <Form.Item label="项目环境名" name="envName" rules={[{ required: true, message: '请输入环境名!' }]}>
             <Input style={{ width: 300 }} placeholder="单行输入"></Input>
           </Form.Item>
-          <Form.Item label="项目环境CODE" name="envCode" rules={[{ required: true, message: '请输入项目环境CODE!' }]}>
+          <Form.Item
+            label="项目环境CODE"
+            name="envCode"
+            //  rules={[{ required: true, message: '请输入项目环境CODE!' }]}
+            rules={[
+              {
+                required: true,
+                message: '输入的项目环境CODE里请不要包含“dev,test,pre,prod”字符',
+                pattern: /^(?!.*dev|.*test|.*prod|.*pre)/,
+              },
+            ]}
+          >
             <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
           </Form.Item>
           <Form.Item
@@ -273,14 +284,18 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               disabled={ensureDisabled}
               onSearch={handleSearch}
               render={(item) => (
-                <div>
+                <div className="transfer-text">
                   {item.appType === 'backend' ? (
                     <Badge.Ribbon placement="end" text="后端">
-                      {item.title || ''}
+                      <span className="transfer-text-backend" title={item.title}>
+                        {item.title || ''}
+                      </span>
                     </Badge.Ribbon>
                   ) : (
                     <Badge.Ribbon text="前端" color="cyan">
-                      {item.title || ''}
+                      <span className="transfer-text-fronted" title={item.title}>
+                        {item.title || ''}
+                      </span>
                     </Badge.Ribbon>
                   )}
                 </div>

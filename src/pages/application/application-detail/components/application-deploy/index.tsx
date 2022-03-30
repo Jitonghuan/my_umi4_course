@@ -18,7 +18,14 @@ export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
-  const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
+  let env = window.location.href.includes('zslnyy')
+    ? 'prod'
+    : window.location.href.includes('fygs')
+    ? 'prod'
+    : window.location.href.includes('base-poc')
+    ? 'prod'
+    : 'dev';
+  const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || env);
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);

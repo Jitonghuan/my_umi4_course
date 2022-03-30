@@ -8,12 +8,14 @@ import { StepItemProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
 import { downloadImage, listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
+import appConfig from '@/app.config';
 
 /** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
   const { appData } = useContext(DetailContext);
   const downLoadSupportEnv = useRef<string[]>(['']);
+  const isNotFrontend = appData?.appType !== 'frontend';
 
   useEffect(() => {
     if (!appData?.appCode) return;
@@ -44,7 +46,9 @@ export default function FinishedStep(props: StepItemProps) {
       title="完成"
       description={
         (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
-        downLoadSupportEnv.current?.filter((item) => deployInfo.envs?.indexOf(item) > -1).length > 0 && (
+        downLoadSupportEnv.current?.filter((item) => deployInfo.envs?.indexOf(item) > -1).length > 0 &&
+        appConfig.PRIVATE_METHODS === 'public' &&
+        isNotFrontend && (
           <Button
             download
             style={{ marginTop: 4 }}

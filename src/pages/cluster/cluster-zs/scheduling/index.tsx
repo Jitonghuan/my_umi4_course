@@ -1,9 +1,3 @@
-/**
- * @description:
- * @param {*}
- * @return {*}
- */
-
 // 流量调度
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/27 14:36
@@ -13,42 +7,86 @@ import { Form, Radio, Button, Modal } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { useInitClusterData, useClusterSource } from './hooks';
+import appConfig from '@/app.config';
 import * as APIS from '../service';
-import { postRequest } from '@/utils/request';
+import { postRequest, getRequest } from '@/utils/request';
 import './index.less';
-
-export default function TrafficScheduling() {
+import { getCommonEnvCode } from '../../hook';
+export default function TrafficScheduling(props: any) {
+  const { visable } = props;
   const [editField] = Form.useForm();
   const [sourceData] = useClusterSource();
   const [initData] = useInitClusterData();
   const [logger, setLogger] = useState<string>();
   const [pending, setPending] = useState(false);
-
   // 回填初始化数据到表单
   useEffect(() => {
     if (!initData) return;
-
     editField.setFieldsValue(initData);
-  }, [initData]);
+  }, [initData, visable]);
 
   // useEffect(() => {
   //   getRequest(APIS.trafficMap).then(result => {
   //     console.log('>>> trafficMap', result.data);
   //   });
   // }, []);
+  // useEffect(() => {
+  //   if (appConfig.IS_Matrix !== 'public') {
+  //     getRequest(getCommonEnvCode).then((result) => {
+  //       if (result?.success) {
+  //         setCommonEnvCode(result.data);
+  //       }
+  //     });
+  //   }
+  // }, [visable]);
 
   const handleSubmit = useCallback(async () => {
     const values = await editField.validateFields();
-    // console.log('> handleSubmit', values,values?.zslnyy,Object.keys(values)[0]);
-    let item = sourceData.map((item: any, index) => {
-      return item;
-    });
     let ip = '';
-    if (values?.zslnyy === 'cluster_a') {
-      ip = item[0]?.options[0].ip;
-    }
-    if (values?.zslnyy === 'cluster_b') {
-      ip = item[0]?.options[1].ip;
+    let paramArry: any = [];
+
+    // let item = sourceData.map((item: any, index) => {
+    //   return item;
+    // });
+    let commonEnvCode = '';
+    if (appConfig.IS_Matrix !== 'public') {
+      getRequest(getCommonEnvCode)
+        .then((result) => {
+          if (result?.success) {
+            // setCommonEnvCode(result.data);
+            commonEnvCode = result.data;
+          }
+        })
+        .then(() => {
+          sourceData.map((item: any, index) => {
+            console.log('> item', item);
+
+            for (const key in values) {
+              const element = values[key];
+              if (element === 'cluster_a' && key === item.name) {
+                ip = item?.options[0].ip;
+                paramArry.push({
+                  envCode: commonEnvCode,
+                  cluster: 'cluster_a',
+                  hospitalDistrictCode: item.name,
+                  hospitalDistrictName: item?.title,
+                  ip: ip,
+                });
+              }
+
+              if (element === 'cluster_b' && key === item.name) {
+                ip = item?.options[1].ip;
+                paramArry.push({
+                  envCode: commonEnvCode,
+                  cluster: 'cluster_b',
+                  hospitalDistrictCode: item.name,
+                  hospitalDistrictName: item?.title,
+                  ip: ip,
+                });
+              }
+            }
+          });
+        });
     }
 
     Modal.confirm({
@@ -69,18 +107,9 @@ export default function TrafficScheduling() {
       onOk: async () => {
         setPending(true);
         // delRequest(`${APIS.deleteTmpl}/${id}`)
-
         try {
-          const result = await postRequest(`${APIS.switchCluster}?envCode=hbos-test`, {
-            data: [
-              {
-                envCode: 'hbos-test',
-                cluster: values?.zslnyy,
-                hospitalDistrictCode: Object.keys(values)[0],
-                hospitalDistrictName: item[0]?.title,
-                ip: ip,
-              },
-            ],
+          const result = await postRequest(`${APIS.switchCluster}?envCode=${commonEnvCode}`, {
+            data: paramArry,
           });
           setLogger(result.data || '');
         } finally {

@@ -117,13 +117,16 @@ type IMarket = {
  */
 const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
-  const [currentTab, setCurrentTab] = useState<string>('dev');
+
+  let href = window.location.href.includes('fygs');
   const tabList = [
     { label: 'DEV', value: 'dev' },
     { label: 'TEST', value: 'test' },
     { label: 'PRE', value: 'pre' },
     { label: 'PROD', value: 'prod' },
   ];
+  const [currentTab, setCurrentTab] = useState<string>(href ? 'prod' : 'dev');
+  const tabListFygs = [{ label: 'PROD', value: 'prod' }];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
   const [useMarket, setUseMarket] = useState<IMarket[]>([]);
   const [searchParams, setSearchParams] = useState<any>();
@@ -462,11 +465,20 @@ const Coms = (props: any) => {
           }
           queryCount={queryCount}
         />
-        <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
-          {tabList?.map((el) => (
-            <Tabs.TabPane key={el.value} tab={el.label} />
-          ))}
-        </Tabs>
+        {href ? (
+          <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
+            {tabListFygs?.map((el) => (
+              <Tabs.TabPane key={el.value} tab={el.label} />
+            ))}
+          </Tabs>
+        ) : (
+          <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
+            {tabList?.map((el) => (
+              <Tabs.TabPane key={el.value} tab={el.label} />
+            ))}
+          </Tabs>
+        )}
+
         <div style={{ marginLeft: 28, fontSize: 16, marginTop: 14 }}>
           <span>选择集群:</span>
           <Select style={{ width: 140 }} options={clusterList} onChange={selectCluster} value={currentCluster}></Select>

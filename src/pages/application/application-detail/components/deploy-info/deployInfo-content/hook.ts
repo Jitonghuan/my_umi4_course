@@ -25,24 +25,6 @@ export function useDeployInfoData(envCode: any) {
   return [listEnvClusterData, loadInfoData, setListEnvClusterData, isSucess];
 }
 
-export function useInstanceList(appCode: any, envCode: any) {
-  const [instanceListData, setInstanceListData] = useState<any>();
-  const [instanceLoading, setInstanceLoading] = useState<boolean>(false);
-
-  const queryInstanceList = async (appCode: any, envCode: any) => {
-    getRequest(APIS.queryInstanceListApi, { data: { appCode, envCode } })
-      .then((result) => {
-        setInstanceLoading(true);
-        let data = result.data;
-        setInstanceListData(data);
-      })
-      .finally(() => {
-        setInstanceLoading(false);
-      });
-  };
-  return [instanceListData, instanceLoading, queryInstanceList, setInstanceListData, setInstanceLoading];
-}
-
 //还有一个参数需要传过来>>instName
 export function useListContainer() {
   const [queryContainerData, setQueryContainerData] = useState<any[]>([]);

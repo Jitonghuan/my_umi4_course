@@ -8,15 +8,15 @@
 import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
+import appConfig from '@/app.config';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
+import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
-import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest } from '@/utils/request';
-import { restartApp, rollbackApplication, restartApplication, queryAppOperate } from '@/pages/application/service';
+import { restartApp, restartApplication, queryAppOperate } from '@/pages/application/service';
 import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
-import { useDeployInfoData, useInstanceList, useDownloadLog, useDeleteInstance } from './hook';
+import { useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
@@ -65,20 +65,13 @@ export default function DeployContent(props: DeployContentProps) {
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
-  // const [isSucess, setIsSucess] = useState<boolean>(false);
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
   const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
-  const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
   const { appCode } = appData || {};
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
-
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
-  const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
-    currentEnvData,
-    appData?.deploymentName,
-  );
   const queryAppOperateLog = (envCodeParam: any) => {
     getRequest(queryAppOperate, { data: { appCode, envCode: envCodeParam } })
       .then((resp) => {
@@ -96,22 +89,39 @@ export default function DeployContent(props: DeployContentProps) {
   }, [appCode]);
   const initEnvCode = useRef<string>('');
   const [deleteInstance] = useDeleteInstance();
-  const [downloadLog] = useDownloadLog();
-  const [instanceTableData, instanceloading, queryInstanceList, setInstanceTableData, setInstanceLoading] =
-    useInstanceList(appData?.appCode, currentEnvData);
+  const [instanceTableData, setInstanceTableData] = useState<any>();
+  const [instanceloading, setInstanceLoading] = useState<boolean>(false);
 
   const envClusterData = useRef();
   envClusterData.current = listEnvClusterData;
 
+  const queryInstanceList = async (appCode: any, envCode: any) => {
+    getRequest(queryInstanceListApi, { data: { appCode, envCode } })
+      .then((result) => {
+        if (result.success) {
+          setInstanceLoading(true);
+          let data = result.data;
+          setInstanceTableData(data);
+        } else {
+          timerHandler('stop');
+          return;
+        }
+      })
+      .finally(() => {
+        setInstanceLoading(false);
+      });
+  };
   //定义定时器方法
   const intervalFunc = () => {
-    loadInfoData(initEnvCode.current)
-      .then(() => {
-        queryInstanceList(appData?.appCode, initEnvCode.current);
-      })
-      .catch((e: any) => {
-        console.log('error happend in intervalFunc:', e);
-      });
+    if (initEnvCode.current) {
+      loadInfoData(initEnvCode.current)
+        .then(() => {
+          queryInstanceList(appData?.appCode, initEnvCode.current);
+        })
+        .catch((e: any) => {
+          console.log('error happend in intervalFunc:', e);
+        });
+    }
   };
 
   //引用定时器
@@ -121,118 +131,110 @@ export default function DeployContent(props: DeployContentProps) {
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
-    let operateType = false;
     try {
       if (type === 'viewLog_goBack' && viewLogEnvType == envTypeCode) {
         selectAppEnv().then((result: any) => {
-          const dataSources = result.data?.map((n: any) => ({
-            value: n?.envCode,
-            label: n?.envName,
-            data: n,
-          }));
-          setEnvDatas(dataSources);
+          if (result.success) {
+            if (result.data.length === 0) {
+              return;
+            }
+            const dataSources = result.data?.map((n: any) => ({
+              value: n?.envCode,
+              label: n?.envName,
+              data: n,
+            }));
+            setEnvDatas(dataSources);
+            formInstance.setFieldsValue({ envCode: viewLogEnv });
+            initEnvCode.current = viewLogEnv;
+            setCurrentEnvData(viewLogEnv);
+            if (viewLogEnv !== '') {
+              loadInfoData(viewLogEnv).then(() => {
+                queryAppOperateLog(viewLogEnv);
+                getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: initEnvCode.current } })
+                  .then((result) => {
+                    if (result.success) {
+                      setInstanceLoading(true);
+                      let data = result.data;
+                      setInstanceTableData(data);
+                      if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                        timerHandler('do', true);
+                      } else {
+                        timerHandler('stop');
+                      }
+                    } else {
+                      timerHandler('stop');
+                      return;
+                    }
+                  })
+                  .finally(() => {
+                    setInstanceLoading(false);
+                  });
+              });
+            }
+          } else {
+            message.warning('环境获取失败！');
+            return;
+          }
         });
+      } else {
+        selectAppEnv().then((result: any) => {
+          if (result.success) {
+            if (result.data.length === 0) {
+              return;
+            }
+            const dataSources = result.data?.map((n: any) => ({
+              value: n?.envCode,
+              label: n?.envName,
+              data: n,
+            }));
+            setEnvDatas(dataSources);
+            initEnvCode.current = dataSources[0]?.value;
+            setCurrentEnvData(dataSources[0]?.value);
+            formInstance.setFieldsValue({ envCode: initEnvCode.current });
+            if (initEnvCode.current !== '') {
+              let initLoadInfoData: any = [];
 
-        formInstance.setFieldsValue({ envCode: viewLogEnv });
-        initEnvCode.current = viewLogEnv;
-        setCurrentEnvData(viewLogEnv);
-        if (viewLogEnv !== '') {
-          loadInfoData(viewLogEnv).then(() => {
-            queryAppOperateLog(viewLogEnv);
-            getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: initEnvCode.current } })
-              .then((result) => {
-                if (result.success) {
-                  setInstanceLoading(true);
-                  let data = result.data;
-                  setInstanceTableData(data);
-                  if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
-                    timerHandler('do', true);
+              getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
+                .then((result) => {
+                  if (result.success) {
+                    initLoadInfoData = result.data;
+                    setListEnvClusterData(initLoadInfoData);
+                  }
+                })
+                .then(() => {
+                  if (initLoadInfoData.length !== 0) {
+                    queryAppOperateLog(initEnvCode.current);
+                    getRequest(queryInstanceListApi, {
+                      data: { appCode: appData?.appCode, envCode: initEnvCode.current },
+                    })
+                      .then((result) => {
+                        if (result.success) {
+                          setInstanceLoading(true);
+                          let data = result.data;
+                          setInstanceTableData(data);
+
+                          if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                            timerHandler('do', true);
+                          } else {
+                            timerHandler('stop');
+                          }
+                        } else {
+                          timerHandler('stop');
+                          return;
+                        }
+                      })
+                      .finally(() => {
+                        setInstanceLoading(false);
+                      });
                   } else {
                     timerHandler('stop');
                   }
-                  //  if (initEnvCode.current !== '') {
-                  //    queryAppOperateLog(initEnvCode.current);
-                  //  }
-                }
-              })
-              .finally(() => {
-                setInstanceLoading(false);
-              });
-            //  queryInstanceList(appData?.appCode, viewLogEnv).then((res: any) => {
-
-            //    operateType = true;
-            //  });
-          });
-        }
-        //  setTimeout(() => {
-
-        //    if (operateType && viewLogEnv) {
-        //      timerHandler('do', true);
-        //    } else {
-        //      timerHandler('stop');
-        //    }
-        //  }, 100);
-      } else {
-        selectAppEnv().then((result: any) => {
-          const dataSources = result.data?.map((n: any) => ({
-            value: n?.envCode,
-            label: n?.envName,
-            data: n,
-          }));
-          setEnvDatas(dataSources);
-          initEnvCode.current = dataSources[0]?.value;
-          setCurrentEnvData(dataSources[0]?.value);
-          formInstance.setFieldsValue({ envCode: initEnvCode.current });
-          if (initEnvCode.current !== '') {
-            let initLoadInfoData: any = [];
-            getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
-              .then((result) => {
-                if (result.success) {
-                  initLoadInfoData = result.data;
-                  setListEnvClusterData(initLoadInfoData);
-                  console.log('initLoadInfoData', initLoadInfoData);
-                }
-              })
-              .then(() => {
-                if (initLoadInfoData.length !== 0) {
-                  queryAppOperateLog(initEnvCode.current);
-                  getRequest(queryInstanceListApi, {
-                    data: { appCode: appData?.appCode, envCode: initEnvCode.current },
-                  })
-                    .then((result) => {
-                      if (result.success) {
-                        setInstanceLoading(true);
-                        let data = result.data;
-                        setInstanceTableData(data);
-
-                        if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
-                          timerHandler('do', true);
-                        } else {
-                          timerHandler('stop');
-                        }
-                        //  if (initEnvCode.current !== '') {
-                        //    queryAppOperateLog(initEnvCode.current);
-                        //  }
-                      }
-                    })
-                    .finally(() => {
-                      setInstanceLoading(false);
-                    });
-                  //  queryInstanceList(appData?.appCode, initEnvCode.current).then((res: any) => {
-                  //    operateType = true;
-                  //  });
-                } else {
-                  timerHandler('stop');
-                }
-              });
+                });
+            }
+          } else {
+            message.warning('环境获取失败！');
+            return;
           }
-          //  setTimeout(() => {
-          //    if (operateType && initEnvCode.current) {
-          //      timerHandler('do', true);
-          //    } else {
-          //      timerHandler('stop');
-          //    }
-          //  }, 100);
         });
       }
     } catch (error) {
@@ -242,7 +244,15 @@ export default function DeployContent(props: DeployContentProps) {
 
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
-    return getRequest(listAppEnv, { data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark' } });
+    if (appConfig.PRIVATE_METHODS === 'public') {
+      return getRequest(listAppEnv, {
+        data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
+      });
+    } else {
+      return getRequest(listAppEnv, {
+        data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
+      });
+    }
   };
 
   useEffect(() => {
@@ -281,6 +291,11 @@ export default function DeployContent(props: DeployContentProps) {
       if (result.success) {
         let data = result.data;
         setListEnvClusterData(data);
+        if (!data.clusterType || !data.clusterName) {
+          return;
+        }
+      } else {
+        return;
       }
     });
   };
@@ -315,6 +330,9 @@ export default function DeployContent(props: DeployContentProps) {
                 if (initEnvCode.current !== '') {
                   queryAppOperateLog(initEnvCode.current);
                 }
+              } else {
+                timerHandler('stop');
+                return;
               }
             })
             .finally(() => {

@@ -1,3 +1,4 @@
+@import '../../../assets/styles/mixins.less';
 .page-logger-search-content {
   position: relative;
 
@@ -73,8 +74,14 @@
   .tab-right {
     color: black;
     display: inline-block;
+    white-space: 'pre-wrap';
+    word-break: 'break-word';
     text-align: left;
-    width: 850px;
+    .convertBoxWidth(width,990);
+
+    // line-height: 2px;
+    // font-size: 14px;
+
     // justify-content: flex-end;
   }
 }

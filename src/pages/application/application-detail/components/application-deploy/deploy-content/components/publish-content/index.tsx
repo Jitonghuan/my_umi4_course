@@ -153,6 +153,8 @@ export default function PublishContent(props: IProps) {
       <CurrSteps
         deployInfo={deployInfo}
         onOperate={onOperate}
+        isFrontend={isFrontend}
+        appData={appData}
         onCancelDeploy={onCancelDeploy}
         stopSpin={stopSpin}
         onSpin={onSpin}
@@ -262,8 +264,11 @@ export default function PublishContent(props: IProps) {
         <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
-          getItemByKey={getItemByKey}
           onCancelDeploy={onCancelDeploy}
+          stopSpin={stopSpin}
+          onSpin={onSpin}
+          deployedList={deployedList}
+          getItemByKey={getItemByKey}
         />
       </Modal>
     </div>

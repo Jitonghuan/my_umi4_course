@@ -51,10 +51,10 @@ export default function ConfigT(props: ConfigProp) {
       visible={visible}
       onOk={handleOk}
       onCancel={handleCancel}
-      width={800}
+      width={'60%'}
       footer={[
         <Button type="primary" danger={!readOnly} style={{ position: 'absolute', left: '20px' }} onClick={handleEdit}>
-          {readOnly ? '编辑' : '取消编辑'}
+          {readOnly ? '编辑' : '保存编辑'}
         </Button>,
         <Button key="submit" type="primary" onClick={handleCancel}>
           取消
@@ -70,7 +70,7 @@ export default function ConfigT(props: ConfigProp) {
       <div>
         <Form form={form}>
           <Form.Item name="value">
-            <AceEditor mode="yaml" height={500} readOnly={readOnly} />
+            <AceEditor mode="yaml" readOnly={readOnly} height={'65vh'} />
           </Form.Item>
         </Form>
       </div>

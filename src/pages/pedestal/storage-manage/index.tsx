@@ -35,7 +35,6 @@ export default function ApplicationDetail(props: any) {
   }, [location.pathname]);
   // 页面销毁时清空缓存
   const volumeManage = props.location.query.info;
-  console.log('volumeManage', location.pathname);
 
   useEffect(() => {}, []);
 
@@ -77,7 +76,7 @@ export default function ApplicationDetail(props: any) {
       });
     }
   }, []);
-
+  let href = window.location.href.includes('base-poc');
   return (
     <PageContainer className="application-detail-page">
       <FilterCard className="layout-compact">
@@ -92,8 +91,8 @@ export default function ApplicationDetail(props: any) {
           }}
         >
           <TabPane tab="存储大盘" key="storage-dashboard"></TabPane>
-          <TabPane tab="节点管理" key="node-manage"></TabPane>
-          <TabPane tab="卷管理" key="volume-manage"></TabPane>
+          {!href && <TabPane tab="节点管理" key="node-manage"></TabPane>}
+          {!href && <TabPane tab="卷管理" key="volume-manage"></TabPane>}
         </Tabs>
       </FilterCard>
 
