@@ -29,9 +29,7 @@ export default function AppDeployInfo(props: any) {
     localStorage.setItem('__init_env_tab__', env);
   }
   const [tabActive, setTabActive] = useState<any>(
-    localStorage.__init_env_tab__ && envTypeData.some((item) => item.value === localStorage.__init_env_tab__)
-      ? localStorage.getItem('__init_env_tab__')
-      : env,
+    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env,
   );
 
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
@@ -48,11 +46,13 @@ export default function AppDeployInfo(props: any) {
   useEffect(() => {
     queryData();
   }, []);
-  const queryData = () => {
-    getRequest(listAppEnvType, {
+  const queryData = async () => {
+    let envTypeDataSource: any = [];
+    await getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
       const { data } = result || [];
+      envTypeDataSource = result.data;
       let next: any = [];
       (data || []).map((el: any) => {
         if (el?.typeCode === 'dev') {
@@ -73,6 +73,13 @@ export default function AppDeployInfo(props: any) {
       }); //升序
       setEnvTypeData(next);
     });
+
+    let currentTabActive =
+      localStorage.__init_env_tab__ &&
+      envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
+        ? localStorage.getItem('__init_env_tab__')
+        : env;
+    setTabActive(currentTabActive);
   };
 
   useEffect(() => {
