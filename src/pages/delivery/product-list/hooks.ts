@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
 import { message } from 'antd';
-import { getRequest, postRequest } from '@/utils/request';
+import { getRequest, postRequest, delRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
 // 创建产品
-export function useCreateProduct(): [boolean, (product_name: string, product_description: string) => Promise<void>] {
+export function useCreateProduct(): [boolean, (productName: string, productDescription: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const createProduct = async (product_name: string, product_description: string) => {
+  const createProduct = async (productName: string, productDescription: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.createProduct, { data: { product_name, product_description } })
+      await postRequest(APIS.createProduct, { data: { productName, productDescription } })
         .then((res) => {
           if (res.success) {
             message.success('创建产品成功!');
@@ -34,7 +34,7 @@ export function useDeleteProduct(): [boolean, (id: number) => Promise<void>] {
   const deleteProduct = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(APIS.deleteProduct, { data: { id } })
+      await delRequest(`${APIS.deleteProduct}/${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);
@@ -59,7 +59,7 @@ export function useQueryProductList(): [
   any[],
   any,
   any,
-  (pageIndex?: any, pageSize?: any, product_name?: string) => Promise<void>,
+  (pageIndex?: any, pageSize?: any, productName?: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -71,11 +71,11 @@ export function useQueryProductList(): [
   useEffect(() => {
     queryProductList();
   }, []);
-  const queryProductList = async (pageIndex?: number, pageSize?: number, product_name?: string) => {
+  const queryProductList = async (pageIndex?: number, pageSize?: number, productName?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryProductList, {
-        data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, product_name },
+        data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, productName },
       })
         .then((res) => {
           if (res.success) {

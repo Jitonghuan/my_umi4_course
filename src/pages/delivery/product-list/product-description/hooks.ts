@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
-import { getRequest, postRequest } from '@/utils/request';
+import { getRequest, postRequest, delRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
 //编辑产品描述
-export function useEditProductDescription(): [boolean, (id: number, product_description: string) => Promise<void>] {
+export function useEditProductDescription(): [boolean, (id: number, productDescription: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const editProductDescription = async (id: number, product_description: string) => {
+  const editProductDescription = async (id: number, productDescription: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.editProductDescription, { data: { id, product_description } })
+      await postRequest(APIS.editProductDescription, { data: { id, productDescription } })
         .then((res) => {
           if (res.success) {
             message.success(res.data);
@@ -31,13 +31,13 @@ export function useEditProductDescription(): [boolean, (id: number, product_desc
 // 创建产品版本
 export function useCreateProductVersion(): [
   boolean,
-  (product_id: number, version_name: string, version_description: string) => Promise<void>,
+  (productId: number, versionName: string, versionDescription: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
-  const createProductVersion = async (product_id: number, version_name: string, version_description: string) => {
+  const createProductVersion = async (productId: number, versionName: string, versionDescription: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.createProductVersion, { data: { product_id, version_name, version_description } })
+      await postRequest(APIS.createProductVersion, { data: { productId, versionName, versionDescription } })
         .then((res) => {
           if (res.success) {
             message.success('创建产品版本成功!');
@@ -56,13 +56,13 @@ export function useCreateProductVersion(): [
   return [loading, createProductVersion];
 }
 
-// 删除产品
-export function useDeleteProduct(): [boolean, (id: number) => Promise<void>] {
+// 删除产品版本
+export function useDeleteProductVersion(): [boolean, (id: number) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const deleteProduct = async (id: number) => {
+  const deleteProductVersion = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(APIS.deleteProduct, { data: { id } })
+      await delRequest(`${APIS.deleteVersion}/${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);
@@ -78,16 +78,16 @@ export function useDeleteProduct(): [boolean, (id: number) => Promise<void>] {
       console.log(error);
     }
   };
-  return [loading, deleteProduct];
+  return [loading, deleteProductVersion];
 }
 
-// 查询产品列表
+// 查询产品版本
 export function useQueryProductList(): [
   boolean,
   any[],
   any,
   any,
-  (pageIndex?: any, pageSize?: any, product_name?: string) => Promise<void>,
+  (product_id: number, pageIndex?: any, pageSize?: any) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -96,14 +96,11 @@ export function useQueryProductList(): [
     pageSize: 20,
     total: 0,
   });
-  useEffect(() => {
-    queryProductList();
-  }, []);
-  const queryProductList = async (pageIndex?: number, pageSize?: number, product_name?: string) => {
+  const queryProductVersionList = async (product_id: number, pageIndex?: number, pageSize?: number) => {
     setLoading(true);
     try {
-      await getRequest(APIS.queryProductList, {
-        data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, product_name },
+      await getRequest(APIS.queryVersionList, {
+        data: { product_id, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
       })
         .then((res) => {
           if (res.success) {
@@ -125,5 +122,30 @@ export function useQueryProductList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, pageInfo, setPageInfo, queryProductList];
+  return [loading, dataSource, pageInfo, setPageInfo, queryProductVersionList];
+}
+
+// 发布产品版本
+export function usePublishProductVersion(): [boolean, (id: number) => Promise<void>] {
+  const [loading, setLoading] = useState(false);
+  const publishProductVersion = async (id: number) => {
+    setLoading(true);
+    try {
+      await postRequest(`${APIS.releaseVersion}/${id}`)
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            message.error('发布版本失败！');
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, publishProductVersion];
 }

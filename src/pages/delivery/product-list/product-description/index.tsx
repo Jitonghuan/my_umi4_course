@@ -6,144 +6,172 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, Typography, Tag, Modal, Descriptions } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { addAPIPrefix } from '@/utils';
-import { getRequest, delRequest } from '@/utils/request';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { useEditProductDescription, useCreateProductVersion } from './hooks';
+import moment from 'moment';
+import { ContentCard } from '@/components/vc-page-content';
+import {
+  useEditProductDescription,
+  useCreateProductVersion,
+  useDeleteProductVersion,
+  useQueryProductList,
+  usePublishProductVersion,
+} from './hooks';
 import versionManageList from 'mock/versionManageList';
 
 export interface Item {
-  id: string;
-  templateName: string;
-  templateCode: string;
-  appCode: string;
-  appVsersion: string;
-  envCode: string;
-  status?: number;
+  id: number;
+  versionName: string;
+  versionDescription: string;
+  gmtCreate: any;
+  releaseStatus: number;
 }
+type releaseStatus = {
+  text: string;
+  type: any;
+  disabled: boolean;
+};
+export const STATUS_TYPE: Record<number, releaseStatus> = {
+  0: { text: '未发布', type: 'primary', disabled: false },
+  1: { text: '已发布', type: 'default', disabled: true },
+};
+
 export default function deliveryDescription() {
   const { Paragraph } = Typography;
+  const [createVersionForm] = Form.useForm();
+  const { Option } = Select;
   const descriptionInfoData: any = history.location.state;
-  const [editableStr, setEditableStr] = useState('');
+  const [editableStr, setEditableStr] = useState(descriptionInfoData.productDescription);
   const [editLoading, editProductDescription] = useEditProductDescription();
   const [creatLoading, createProductVersion] = useCreateProductVersion();
-  const { Option } = Select;
-  const [loading, setLoading] = useState(false);
+  const [delLoading, deleteProductVersion] = useDeleteProductVersion();
+  const [publishLoading, publishProductVersion] = usePublishProductVersion();
+  const [tableLoading, dataSource, pageInfo, setPageInfo, queryProductVersionList] = useQueryProductList();
   const [creatVersionVisiable, setCreatVersionVisiable] = useState<boolean>(false);
-  const [versionListData, setVersionListData] = useState<any[]>([
-    {
-      key: '1',
-      templateName: '8888',
-      appName: '应用模版',
-      templateCode: 'xuxu',
-      appCategoryCode: 'xiniuyiliao',
-      envCode: '天台',
-      id: '1',
-    },
-  ]);
+  const [editable, setEditable] = useState<boolean>(false);
+
   useEffect(() => {
-    versionList();
+    if (!descriptionInfoData.id) {
+      return;
+    }
+    queryProductVersionList(descriptionInfoData.id);
   }, []);
 
-  const versionList = () => {
-    getRequest(addAPIPrefix('/deliverManage/deliverDeploy/list')).then((result) => {
-      const source = result?.data?.dataSource;
-      setVersionListData(source);
-    });
-  };
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [formTmpl] = Form.useForm();
-  const [pageTotal, setPageTotal] = useState<number>();
-  const [createProductVisible, setCreateProductVisible] = useState<boolean>(false); //是否展示抽屉
-  const pageSizeClick = () => {};
-  //删除数据
-  const handleDelItem = (record: any) => {
-    let id = record.id;
+  const pageSizeClick = (pagination: any) => {
+    setPageInfo({ pageIndex: pagination.current });
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    queryProductVersionList(descriptionInfoData.id, obj.pageIndex, obj.pageSize);
   };
 
   const columns = [
     {
       title: '版本',
-      dataIndex: 'id',
+      dataIndex: 'versionName',
       width: '30%',
     },
     {
       title: '版本描述',
-      dataIndex: 'templateName',
+      dataIndex: 'versionDescription',
       width: '30%',
       ellipsis: true,
     },
     {
       title: '发布时间',
-      dataIndex: 'time',
+      dataIndex: 'gmtCreate',
       width: '30%',
+      render: (value: any, record: Item) => <span>{moment(value).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       title: '操作',
       dataIndex: 'option',
-      width: 150,
+      width: 240,
       render: (_: string, record: Item) => (
         <Space>
-          <a>管理</a>
+          <Button
+            type="primary"
+            onClick={() => {
+              history.push({
+                pathname: '/matrix/delivery/version-detail',
+                state: {
+                  productId: descriptionInfoData.id,
+                  versionId: record.id,
+                  productName: descriptionInfoData.productName,
+                  productDescription: descriptionInfoData.productDescription,
+                  productGmtCreate: descriptionInfoData.gmtCreate,
+                },
+              });
+            }}
+          >
+            管理
+          </Button>
           <Popconfirm
+            disabled={STATUS_TYPE[record.releaseStatus].disabled}
             title="发布后编排不可修改，是否确认发布？"
-            onConfirm={() => {}}
+            onConfirm={() => {
+              publishProductVersion(record.id).then(() => {
+                setEditable(true);
+                queryProductVersionList(descriptionInfoData.id);
+              });
+            }}
             // onCancel={cancel}
             okText="确认"
             cancelText="取消"
           >
-            <a>发布</a>
+            <Button
+              type={STATUS_TYPE[record.releaseStatus].type || 'default'}
+              disabled={STATUS_TYPE[record.releaseStatus].disabled}
+              loading={publishLoading}
+            >
+              {STATUS_TYPE[record.releaseStatus].text}
+            </Button>
           </Popconfirm>
           <Popconfirm
             title="确认删除？"
-            onConfirm={() => {}}
+            onConfirm={() => {
+              deleteProductVersion(record.id).then(() => {
+                queryProductVersionList(descriptionInfoData.id);
+              });
+            }}
             // onCancel={cancel}
             okText="是"
             cancelText="否"
           >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <Button danger loading={delLoading}>
+              删除
+            </Button>
           </Popconfirm>
         </Space>
       ),
     },
   ];
   const handleSubmit = () => {
-    setCreateProductVisible(false);
+    let params = createVersionForm.getFieldsValue();
+    createProductVersion(descriptionInfoData.id, params.version_name, params.version_description).then(() => {
+      setCreatVersionVisiable(false);
+      queryProductVersionList(descriptionInfoData.id);
+    });
   };
   return (
     <PageContainer>
-      <Modal
-        title="创建版本"
-        visible={creatVersionVisiable}
-        onCancel={() => {
-          setCreatVersionVisiable(false);
-        }}
-        onOk={() => {
-          setCreatVersionVisiable(false);
-        }}
-      >
-        <Form layout="vertical" style={{ paddingLeft: 30 }}>
-          <Form.Item label="版本号:">
-            <Input style={{ width: 420 }} placeholder="请输入版本号"></Input>
-          </Form.Item>
-          <Form.Item label="版本描述:">
-            <Input style={{ width: 420 }} placeholder="请输入版本描述"></Input>
-          </Form.Item>
-        </Form>
-      </Modal>
       <ContentCard>
         <div>
-          <Descriptions title="基本信息" column={2} extra={<Button type="primary">编辑</Button>}>
+          <Descriptions title="基本信息" column={2}>
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
-              <Paragraph editable={{ onChange: () => editProductDescription }}>
-                {' '}
-                {descriptionInfoData.productDescription}
+              <Paragraph
+                editable={{
+                  onChange: (productDescription: string) => {
+                    editProductDescription(descriptionInfoData.id, productDescription);
+                    setEditableStr(productDescription);
+                  },
+                }}
+              >
+                {editableStr}
               </Paragraph>
             </Descriptions.Item>
             <Descriptions.Item label="创建时间" span={2}>
-              {descriptionInfoData.gmtCreate}
+              {moment(descriptionInfoData.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}
             </Descriptions.Item>
           </Descriptions>
         </div>
@@ -153,7 +181,13 @@ export default function deliveryDescription() {
               <h3>版本管理</h3>
             </div>
             <div className="caption-right">
-              <Button type="primary" onClick={() => setCreatVersionVisiable(true)}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  setCreatVersionVisiable(true);
+                  createVersionForm.resetFields();
+                }}
+              >
                 创建版本
               </Button>
             </div>
@@ -161,20 +195,22 @@ export default function deliveryDescription() {
           <div>
             <Table
               rowKey="id"
-              dataSource={versionListData}
+              dataSource={dataSource}
               bordered
               columns={columns}
-              loading={loading}
+              loading={tableLoading}
               pagination={{
-                total: pageTotal,
-                pageSize,
-                current: pageIndex,
+                total: pageInfo.total,
+                pageSize: pageInfo.pageSize,
+                current: pageInfo.pageIndex,
                 showSizeChanger: true,
                 onShowSizeChange: (_, size) => {
-                  setPageSize(size);
-                  setPageIndex(1);
+                  setPageInfo({
+                    pageIndex: 1,
+                    pageSize: size,
+                  });
                 },
-                showTotal: () => `总共 ${pageTotal} 条数据`,
+                showTotal: () => `总共 ${pageInfo.total} 条数据`,
               }}
               // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
               onChange={pageSizeClick}
@@ -184,22 +220,32 @@ export default function deliveryDescription() {
 
         <Modal
           title="创建版本"
-          visible={createProductVisible}
+          visible={creatVersionVisiable}
+          onCancel={() => {
+            setCreatVersionVisiable(false);
+          }}
           footer={
             <div className="drawer-footer">
-              <Button type="primary" loading={loading} onClick={handleSubmit}>
+              <Button type="primary" loading={creatLoading} onClick={handleSubmit}>
                 确定
               </Button>
-              <Button type="default">取消</Button>
+              <Button
+                type="default"
+                onClick={() => {
+                  setCreatVersionVisiable(false);
+                }}
+              >
+                取消
+              </Button>
             </div>
           }
         >
-          <Form layout="vertical">
-            <Form.Item label="版本号:">
-              <Input style={{ width: 470 }}></Input>
+          <Form layout="vertical" form={createVersionForm} style={{ paddingLeft: 30 }}>
+            <Form.Item label="版本名称:" name="version_name">
+              <Input style={{ width: 470 }} placeholder="请输入版本号"></Input>
             </Form.Item>
-            <Form.Item label="版本描述:">
-              <Input style={{ width: 470 }}></Input>
+            <Form.Item label="版本描述:" name="version_description">
+              <Input style={{ width: 470 }} placeholder="请输入版本描述"></Input>
             </Form.Item>
           </Form>
         </Modal>

@@ -6,6 +6,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, Tag, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
+import moment from 'moment';
 import { addAPIPrefix } from '@/utils';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -24,7 +25,7 @@ export default function deliveryList() {
   const [creatLoading, createProduct] = useCreateProduct();
   const [delLoading, deleteProduct] = useDeleteProduct();
   const [tableLoading, dataSource, pageInfo, setPageInfo, queryProductList] = useQueryProductList();
-  const [formTmpl] = Form.useForm();
+  const [searchform] = Form.useForm();
   const [createProductVisible, setCreateProductVisible] = useState<boolean>(false); //是否展示抽屉
   //触发分页
   const pageSizeClick = (pagination: any) => {
@@ -51,6 +52,7 @@ export default function deliveryList() {
       title: '创建时间',
       dataIndex: 'gmtCreate',
       width: '30%',
+      render: (value: any, record: Item) => <span>{moment(value).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       title: '操作',
@@ -93,13 +95,24 @@ export default function deliveryList() {
       queryProductList();
     });
   };
+  const searchList = (values: string) => {
+    queryProductList(pageInfo.pageIndex, pageInfo.pageSize, values);
+  };
   return (
     <PageContainer>
       <FilterCard>
         <div className="deliveryList-table-caption">
           <div className="deliveryList-caption-left">
-            <Form layout="inline" form={formTmpl}>
-              <Form.Item label="产品名称：" name="appCategoryCode">
+            <Form
+              layout="inline"
+              form={searchform}
+              onFinish={searchList}
+              onReset={() => {
+                searchform.resetFields();
+                queryProductList(1, 20);
+              }}
+            >
+              <Form.Item label="产品名称：" name="productName">
                 <Input placeholder="单行输入"></Input>
               </Form.Item>
 

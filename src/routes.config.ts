@@ -981,8 +981,9 @@ export default [
       {
         path: 'version-detail',
         name: '版本详情',
-        key: 'version-detail',
+        key: 'product-list',
         component: '@/pages/delivery/version-detail',
+        hideInMenu: true,
       },
       {
         path: 'component-center',
