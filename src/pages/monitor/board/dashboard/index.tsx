@@ -90,18 +90,76 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
+  // useEffect(() => {
+  //   if (initData) {
+  //     setNodeCpuData(initData?.nodeCpu);
+  //     setNodeMemData(initData?.nodeMem);
+  //     setNodeDiskData(initData?.nodeDisk);
+  //     setNodeLoadData(initData?.nodeLoad);
+  //     setNodeIOData(initData?.nodeIO);
+  //     setNodeFileData(initData?.nodeFile);
+  //     setNodeNetWorkData(initData?.nodeNetWork);
+  //     setNodeSocketData(initData?.nodeSocket);
+  //   }
+
+  //   // if(ipDetailVisiable){
+  //   //   setStartTime(30 * 60 * 1000);
+  //   //   console.log('进入页面重置时间')
+
+  //   // }
+  // }, [initData]);
   useEffect(() => {
-    if (initData) {
+    if (initData?.nodeCpu) {
       setNodeCpuData(initData?.nodeCpu);
+    }
+  }, [initData?.nodeCpu]);
+  useEffect(() => {
+    if (initData?.nodeMem) {
       setNodeMemData(initData?.nodeMem);
+    }
+  }, [initData?.nodeMem]);
+  useEffect(() => {
+    if (initData?.nodeDisk) {
       setNodeDiskData(initData?.nodeDisk);
+    }
+  }, [initData?.nodeDisk]);
+  useEffect(() => {
+    if (initData?.nodeLoad) {
       setNodeLoadData(initData?.nodeLoad);
+    }
+  }, [initData?.nodeLoad]);
+  useEffect(() => {
+    if (initData?.nodeMem) {
+      setNodeDiskData(initData?.nodeDisk);
+    }
+  }, [initData?.nodeMem]);
+  useEffect(() => {
+    if (initData?.nodeIO) {
       setNodeIOData(initData?.nodeIO);
+    }
+  }, [initData?.nodeIO]);
+  useEffect(() => {
+    if (initData?.nodeFile) {
       setNodeFileData(initData?.nodeFile);
+    }
+  }, [initData?.nodeFile]);
+  useEffect(() => {
+    if (initData?.nodeNetWork) {
       setNodeNetWorkData(initData?.nodeNetWork);
+      // console.log('99999')
+    }
+  }, [initData?.nodeNetWork]);
+  useEffect(() => {
+    if (initData?.nodeSocket) {
       setNodeSocketData(initData?.nodeSocket);
     }
-  }, [initData]);
+  }, [initData?.nodeSocket]);
+  useEffect(() => {
+    if (ipDetailVisiable) {
+      setStartTime(30 * 60 * 1000);
+      // console.log('进入页面重置时间')
+    }
+  }, [ipDetailVisiable]);
 
   // 选择就近时间触发的事件
   const selectRelativeTime = (value: any) => {
@@ -138,29 +196,45 @@ export default function DashboardsModal(props: minitorDashboardProps) {
       </div>
       <div className="blockDiv">
         <div className="block">
-          <CpuUtilization data={nodeCpuData} loading={loadings?.nodeCpu} />
+          <section data-loading={loadings.nodeCpu}>
+            <CpuUtilization data={nodeCpuData} loading={loadings?.nodeCpu} />
+          </section>
         </div>
         <div className="block">
-          <MemroyUtilization data={nodeMemData} loading={loadings?.nodeMem} />
+          <section data-loading={loadings.nodeMem}>
+            <MemroyUtilization data={nodeMemData} loading={loadings?.nodeMem} />
+          </section>
         </div>
         <div className="block">
-          <LoadUtilization data={nodeLoadData} loading={loadings?.nodeLoad} />
+          <section data-loading={loadings.nodeDisk}>
+            <LoadUtilization data={nodeLoadData} loading={loadings?.nodeLoad} />
+          </section>
         </div>
 
         <div className="block">
-          <DiskUtilization data={nodeDiskData} loading={loadings?.nodeDisk} />
+          <section data-loading={loadings.nodeLoad}>
+            <DiskUtilization data={nodeDiskData} loading={loadings?.nodeDisk} />
+          </section>
         </div>
         <div className="block">
-          <DiskIOChart data={nodeIOData} loading={loadings?.nodeIO} />
+          <section data-loading={loadings.nodeIO}>
+            <DiskIOChart data={nodeIOData} loading={loadings?.nodeIO} />
+          </section>
         </div>
         <div className="block">
-          <NetWorkChart data={nodeNetWorkData} loading={loadings?.nodeNetWork} />
+          <section data-loading={loadings.nodeFile}>
+            <NetWorkChart data={nodeNetWorkData} loading={loadings?.nodeNetWork} />
+          </section>
         </div>
         <div className="blockLeft">
-          <SocketCharts data={nodeSocketData} loading={loadings?.nodeSocket} />
+          <section data-loading={loadings.nodeSocket}>
+            <SocketCharts data={nodeSocketData} loading={loadings?.nodeSocket} />
+          </section>
         </div>
         <div className="blockRight">
-          <FileOpen data={nodeFileData} loading={loadings?.nodeFile} />
+          <section data-loading={loadings.nodeNetWork}>
+            <FileOpen data={nodeFileData} loading={loadings?.nodeFile} />
+          </section>
         </div>
       </div>
     </Modal>
