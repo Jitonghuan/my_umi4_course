@@ -139,7 +139,7 @@ export default function ComponentTmpl() {
     <PageContainer>
       <TmplEditDraw
         mode={tmplEditMode}
-        initData={tmplateData}
+        // initData={tmplateData}
         onClose={() => setTmplEditMode('HIDE')}
         onSave={saveEditData}
       />
@@ -163,7 +163,7 @@ export default function ComponentTmpl() {
           }}
         >
           <Form.Item label="产品线：" name="appCategoryCode">
-            <Select showSearch style={{ width: 110 }} options={categoryData} />
+            <Select showSearch style={{ width: 180 }} options={categoryData} />
           </Form.Item>
           <Form.Item label="环境：" name="envCode">
             <Select
@@ -173,14 +173,14 @@ export default function ComponentTmpl() {
                 setenvCode(n);
               }}
               showSearch
-              style={{ width: 120 }}
+              style={{ width: 180 }}
             />
           </Form.Item>
           <Form.Item label="类型：" name="templateType">
             <Select
               showSearch
               allowClear
-              style={{ width: 120 }}
+              style={{ width: 180 }}
               options={templateTypes}
               onChange={(n) => {
                 setTemplateType(n);

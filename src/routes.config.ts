@@ -1012,6 +1012,12 @@ export default [
         component: '@/pages/delivery/product-management/product-config',
         hideInMenu: true,
       },
+      {
+        path: 'component-tmpl',
+        name: '组件模版',
+        key: 'component-tmpl',
+        component: '@/pages/delivery/component-tmpl',
+      },
     ],
     //测试环境和正式环境暂不展示
     hideInMenu: process.env.BUILD_ENV === 'prod',
