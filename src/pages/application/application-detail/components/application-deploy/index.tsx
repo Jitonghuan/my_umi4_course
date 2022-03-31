@@ -21,7 +21,6 @@ export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
-  const [valueObj, setValueObj] = useState<any>({});
   const [currentValue, setCurrentValue] = useState('');
 
   let env = window.location.href.includes('zslnyy')

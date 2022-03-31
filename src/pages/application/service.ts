@@ -37,6 +37,9 @@ export const cancelCollection = `${appConfig.apiPrefix}/userManage/userCollectio
 /** GET 获取分支列表 */
 export const queryBranchListUrl = `${appConfig.apiPrefix}/releaseManage/branch/list`;
 
+/** GET 获取主分支列表 */
+export const queryMasterBranchListUrl = `${appConfig.apiPrefix}/releaseManage/master/branch/list`;
+
 /** POST 新增 feature 分支 */
 export const createFeatureBranchUrl = `${appConfig.apiPrefix}/releaseManage/branch/createFeature`;
 
@@ -212,6 +215,8 @@ let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 export const queryPortalList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/list`;
 
 export const getDemandByProjectList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/getDemandByProject`;
+// post 新建分支-获取主干分支下拉框数据
+export const getMasterBranch = '';
 
 /** GET 当前应用下已通过且存在未上线发布计划的发布申请列表 */
 export const applyHaveNoUpPlanList = `${appConfig.apiPrefix}/publishManage/applyHaveNoUpPlan/list`;

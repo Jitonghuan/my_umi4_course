@@ -4,7 +4,12 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { Modal, Input, Form, message, Select, Cascader } from 'antd';
-import { createFeatureBranch, queryPortalList, getDemandByProjectList } from '@/pages/application/service';
+import {
+  createFeatureBranch,
+  queryPortalList,
+  getDemandByProjectList,
+  getMasterBranch,
+} from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
 
 export interface IProps {
@@ -20,6 +25,7 @@ export default function BranchEditor(props: IProps) {
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
   const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [projectId, setProjectId] = useState<string>('');
   const [demandId, setDemandId] = useState<any>([]);
 
@@ -60,6 +66,7 @@ export default function BranchEditor(props: IProps) {
     setProjectId(value);
     queryDemand(value);
   };
+  const handleChange = () => {};
   const queryDemand = async (param: string, searchTextParams?: string) => {
     try {
       await postRequest(getDemandByProjectList, {
@@ -87,6 +94,23 @@ export default function BranchEditor(props: IProps) {
   const onSearch = (val: any) => {
     queryDemand(projectId, val);
   };
+  // 获取主干分支下拉框数据
+  const getMasterBranchOption = () => {
+    try {
+      postRequest(getMasterBranch).then((result) => {
+        if (result.success) {
+          let dataSource = result.data;
+          let dataArry: any = [];
+          // dataSource?.map((item: any) => {
+          //   dataArry.push({ label: item?.projectName, value: item?.projectId });
+          // });
+          setMasterBranchOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -97,7 +121,7 @@ export default function BranchEditor(props: IProps) {
   return (
     <Modal
       destroyOnClose
-      width={600}
+      width={700}
       title={mode === 'ADD' ? '新建分支' : '编辑分支'}
       visible={props.mode !== 'HIDE'}
       onOk={handleSubmit}
@@ -105,7 +129,10 @@ export default function BranchEditor(props: IProps) {
       confirmLoading={loading}
       maskClosable={false}
     >
-      <Form form={form} labelCol={{ flex: '100px' }}>
+      <Form form={form} labelCol={{ flex: '110px' }}>
+        <Form.Item label="选择主干分支" name="masterBranch" rules={[{ required: true, message: '请选择主干分支' }]}>
+          <Select options={masterBranchOptions}></Select>
+        </Form.Item>
         <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
           <Input addonBefore="feature_" autoFocus />
         </Form.Item>

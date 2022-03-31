@@ -4,7 +4,12 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { Modal, Input, Form, message, Select, Cascader } from 'antd';
-import { createFeatureBranch, queryPortalList, getDemandByProjectList } from '@/pages/application/service';
+import {
+  createFeatureBranch,
+  queryPortalList,
+  getDemandByProjectList,
+  getMasterBranch,
+} from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
 
 export interface IProps {
@@ -22,6 +27,7 @@ export default function BranchEditor(props: IProps) {
   const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
   const [projectId, setProjectId] = useState<string>('');
   const [demandId, setDemandId] = useState<any>([]);
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
@@ -88,6 +94,23 @@ export default function BranchEditor(props: IProps) {
     queryDemand(projectId, val);
   };
 
+  // 获取主干分支下拉框数据
+  const getMasterBranchOption = () => {
+    try {
+      postRequest(getMasterBranch).then((result) => {
+        if (result.success) {
+          let dataSource = result.data;
+          let dataArry: any = [];
+          // dataSource?.map((item: any) => {
+          //   dataArry.push({ label: item?.projectName, value: item?.projectId });
+          // });
+          setMasterBranchOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
   useEffect(() => {
     if (mode === 'HIDE') return;
     form.resetFields();
@@ -105,11 +128,14 @@ export default function BranchEditor(props: IProps) {
       confirmLoading={loading}
       maskClosable={false}
     >
-      <Form form={form} labelCol={{ flex: '100px' }}>
+      <Form form={form} labelCol={{ flex: '110px' }}>
+        <Form.Item label="选择主干分支" name="masterBranch" rules={[{ required: true, message: '请选择主干分支' }]}>
+          <Select options={masterBranchOptions}></Select>
+        </Form.Item>
         <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
           <Input addonBefore="feature_" autoFocus />
         </Form.Item>
-        <Form.Item label="项目列表">
+        <Form.Item label="项目列表" rules={[{ required: true, message: '请输入分支名' }]}>
           <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
         </Form.Item>
         <Form.Item label="需求列表" name="demandId">

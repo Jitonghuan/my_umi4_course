@@ -133,6 +133,8 @@ export default function BranchManage() {
             </Tooltip>
           )}
         />
+        <Table.Column title="主干分支" dataIndex="masterBranch" width={200} />
+        <Table.Column title="关联流水线" dataIndex="relationPipeline" width={200} />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
         <Table.Column title="创建时间" dataIndex="gmtCreate" width={160} render={datetimeCellRender} />
         <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
