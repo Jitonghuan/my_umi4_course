@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-07 01:01:37
- * @LastEditTime: 2022-03-07 14:11:26
+ * @LastEditTime: 2022-03-31 11:39:49
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
@@ -10,11 +10,12 @@ import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { Tabs, Radio, Space, Descriptions, Button, Input, Form, Typography } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import EditorTablePro from './Editor-Table-Pro';
 import { history } from 'umi';
 import moment from 'moment';
-import EditorTableProTwo from './Editor-Table-Pro-two';
-import { productionTabsConfig, deliveryTabsConfig } from './tab-config';
+import EditorTablePro from './Editor-Table-Pro';
+import GlobalParamsEditorTable from './GlobalParamsEditorTable';
+import ComponentParamsEditorTable from './ComponentParamsEditorTable';
+import { productionTabsConfig, deliveryTabsConfig, productionPageTypes } from './tab-config';
 import { useVersionDescriptionInfo, useEditProductVersionDescription } from './hooks';
 import './index.less';
 const { TabPane } = Tabs;
@@ -22,7 +23,7 @@ const { Paragraph } = Typography;
 export default function VersionDetail() {
   const descriptionInfoData: any = history.location.state;
   const [matchlabels, setMatchlabels] = useState<any[]>([]);
-  const [editableStr, setEditableStr] = useState('This is an editable text.');
+  const [editableStr, setEditableStr] = useState(descriptionInfoData.versionDescription);
   const [infoLoading, versionDescriptionInfo, getVersionDescriptionInfo] = useVersionDescriptionInfo();
   const [editLoading, editProductVersionDescription] = useEditProductVersionDescription();
   useEffect(() => {
@@ -59,19 +60,23 @@ export default function VersionDetail() {
               <div>
                 <Descriptions title="基本信息" column={2}>
                   <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
-                  <Descriptions.Item label="产品版本">{versionDescriptionInfo.versionName}</Descriptions.Item>
+                  <Descriptions.Item label="产品版本">{descriptionInfoData.versionName}</Descriptions.Item>
                   <Descriptions.Item label="版本描述">
                     <Paragraph
                       editable={{
                         onChange: (productVersionDescription: string) =>
-                          editProductVersionDescription(descriptionInfoData.id, productVersionDescription),
+                          editProductVersionDescription(descriptionInfoData.versionId, productVersionDescription).then(
+                            () => {
+                              setEditableStr(productVersionDescription);
+                            },
+                          ),
                       }}
                     >
-                      {versionDescriptionInfo.versionDescription}
+                      {editableStr}
                     </Paragraph>
                   </Descriptions.Item>
                   <Descriptions.Item label="创建时间">
-                    {moment(versionDescriptionInfo.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}
+                    {moment(descriptionInfoData.versionGmtCreate).format('YYYY-MM-DD HH:mm:ss')}
                   </Descriptions.Item>
                 </Descriptions>
               </div>
@@ -81,7 +86,7 @@ export default function VersionDetail() {
                 {productionTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>
                     <div>
-                      <EditorTableProTwo />
+                      <EditorTablePro currentTab={item.value} />
                     </div>
                   </TabPane>
                 ))}
@@ -91,9 +96,16 @@ export default function VersionDetail() {
               <Tabs type="card">
                 {deliveryTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>
-                    <div>
-                      <EditorTableProTwo />
-                    </div>
+                    {item.value === 'globalParameters' && (
+                      <div>
+                        <GlobalParamsEditorTable currentTab={item.value} />
+                      </div>
+                    )}
+                    {item.value === 'componentParameters' && (
+                      <div>
+                        <ComponentParamsEditorTable currentTab={item.value} />
+                      </div>
+                    )}
                   </TabPane>
                 ))}
               </Tabs>

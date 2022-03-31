@@ -31,18 +31,17 @@ export function useVersionDescriptionInfo(): [boolean, any, (id: number) => Prom
 //编辑产品版本描述
 export function useEditProductVersionDescription(): [
   boolean,
-  (id: number, version_description: string) => Promise<void>,
+  (id: number, versionDescription: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const editProductVersionDescription = async (id: number, version_description: string) => {
+  const editProductVersionDescription = async (id: number, versionDescription: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.editVersionDescription, { data: { id, version_description } })
+      await postRequest(APIS.editVersionDescription, { data: { id, versionDescription } })
         .then((res) => {
           if (res.success) {
             message.success(res.data);
           } else {
-            message.error('编辑产品版本描述失败！');
             return;
           }
         })
@@ -54,4 +53,93 @@ export function useEditProductVersionDescription(): [
     }
   };
   return [loading, editProductVersionDescription];
+}
+
+//组件查询
+
+export function useQueryProductList(): [
+  boolean,
+  any[],
+  any,
+  any,
+  (product_id: number, pageIndex?: any, pageSize?: any) => Promise<void>,
+] {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
+  const queryProductVersionList = async (product_id: number, pageIndex?: number, pageSize?: number) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryVersionList, {
+        data: { product_id, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+      })
+        .then((res) => {
+          if (res.success) {
+            setDataSource(res.data.dataSource);
+            let pageInfoData = res.data.pageInfo;
+            setPageInfo({
+              pageIndex: pageInfoData.pageIndex,
+              pageSize: pageInfoData.pageSize,
+              total: pageInfoData.total,
+            });
+          } else {
+            return [];
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, pageInfo, setPageInfo, queryProductVersionList];
+}
+
+//组件版本查询
+export function useQueryComponentVersionList(): [
+  boolean,
+  any[],
+  any,
+  any,
+  (componentType: string, componentName: string, pageIndex?: any, pageSize?: any) => Promise<void>,
+] {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
+  const queryProductVersionList = async (product_id: number, pageIndex?: number, pageSize?: number) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryVersionList, {
+        data: { product_id, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+      })
+        .then((res) => {
+          if (res.success) {
+            setDataSource(res.data.dataSource);
+            let pageInfoData = res.data.pageInfo;
+            setPageInfo({
+              pageIndex: pageInfoData.pageIndex,
+              pageSize: pageInfoData.pageSize,
+              total: pageInfoData.total,
+            });
+          } else {
+            return [];
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // return [loading, dataSource, pageInfo, setPageInfo];
 }

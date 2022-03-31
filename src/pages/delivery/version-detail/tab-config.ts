@@ -23,3 +23,9 @@ export const deliveryTabsConfig: any = [
     value: 'componentParameters',
   },
 ];
+
+export const productionPageTypes: any = {
+  application: { text: '添加应用' },
+  middleware: { text: '添加中间件' },
+  basicData: { text: '添加基础数据' },
+};

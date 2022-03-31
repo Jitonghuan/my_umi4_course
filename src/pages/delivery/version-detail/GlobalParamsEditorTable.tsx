@@ -3,7 +3,6 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Space, Tag, Form } from 'antd';
-import { productionPageTypes } from './tab-config';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProFormField } from '@ant-design/pro-form';
 
@@ -111,7 +110,7 @@ export default (props: VersionDetailProps) => {
   const [form] = Form.useForm();
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: '组件名称',
+      title: '参数来源组件',
       key: 'name',
       dataIndex: 'name',
       valueType: 'select',
@@ -136,7 +135,7 @@ export default (props: VersionDetailProps) => {
       },
     },
     {
-      title: '组件版本',
+      title: '参数值',
       key: 'version',
       dataIndex: 'version',
       valueType: 'select',
@@ -161,7 +160,7 @@ export default (props: VersionDetailProps) => {
       },
     },
     {
-      title: '组件描述',
+      title: '参数说明',
       dataIndex: 'decs',
       fieldProps: (from, { rowKey, rowIndex }) => {
         if (from.getFieldValue([rowKey || '', 'title']) === '不好玩') {
@@ -233,7 +232,7 @@ export default (props: VersionDetailProps) => {
             }}
             icon={<PlusOutlined />}
           >
-            {productionPageTypes[currentTab].text}
+            添加全局参数
           </Button>
         </div>
       </div>

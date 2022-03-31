@@ -96,6 +96,9 @@ export default function deliveryDescription() {
                 state: {
                   productId: descriptionInfoData.id,
                   versionId: record.id,
+                  versionName: record.versionName,
+                  versionDescription: record.versionDescription,
+                  versionGmtCreate: record.gmtCreate,
                   productName: descriptionInfoData.productName,
                   productDescription: descriptionInfoData.productDescription,
                   productGmtCreate: descriptionInfoData.gmtCreate,
@@ -162,8 +165,9 @@ export default function deliveryDescription() {
               <Paragraph
                 editable={{
                   onChange: (productDescription: string) => {
-                    editProductDescription(descriptionInfoData.id, productDescription);
-                    setEditableStr(productDescription);
+                    editProductDescription(descriptionInfoData.id, productDescription).then(() => {
+                      setEditableStr(productDescription);
+                    });
                   },
                 }}
               >

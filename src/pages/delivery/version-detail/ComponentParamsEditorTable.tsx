@@ -26,7 +26,7 @@ const TagList: React.FC<{
     }[],
   ) => void;
 }> = ({ value, onChange }) => {
-  const ref = useRef<Input | null>(null);
+  const ref = useRef<any>(null);
   const [newTags, setNewTags] = useState<
     {
       key: string;
@@ -97,14 +97,20 @@ const defaultData: DataSourceType[] = [
   },
 ];
 
-export default () => {
+export interface VersionDetailProps {
+  currentTab: string;
+  initDataSource?: any;
+}
+
+export default (props: VersionDetailProps) => {
+  const { currentTab, initDataSource } = props;
   const actionRef = useRef<ActionType>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: '组件名称',
+      title: '参数来源组件',
       key: 'name',
       dataIndex: 'name',
       valueType: 'select',
@@ -129,7 +135,7 @@ export default () => {
       },
     },
     {
-      title: '组件版本',
+      title: '选择参数',
       key: 'version',
       dataIndex: 'version',
       valueType: 'select',
@@ -154,7 +160,32 @@ export default () => {
       },
     },
     {
-      title: '组件描述',
+      title: '参数值',
+      key: 'version',
+      dataIndex: 'version',
+      valueType: 'select',
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '此项为必填项',
+          },
+        ],
+      },
+      valueEnum: {
+        all: { text: '全部', status: 'Default' },
+        open: {
+          text: '未解决',
+          status: 'Error',
+        },
+        closed: {
+          text: '已解决',
+          status: 'Success',
+        },
+      },
+    },
+    {
+      title: '参数说明',
       dataIndex: 'decs',
       fieldProps: (from, { rowKey, rowIndex }) => {
         if (from.getFieldValue([rowKey || '', 'title']) === '不好玩') {
@@ -226,7 +257,7 @@ export default () => {
             }}
             icon={<PlusOutlined />}
           >
-            添加中间件
+            添加组件参数
           </Button>
         </div>
       </div>
