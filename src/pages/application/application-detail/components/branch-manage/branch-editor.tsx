@@ -10,12 +10,13 @@ import { getRequest, postRequest } from '@/utils/request';
 export interface IProps {
   mode?: EditorMode;
   appCode: string;
+  appCategoryCode: string;
   onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function BranchEditor(props: IProps) {
-  const { mode, appCode, onClose, onSubmit } = props;
+  const { mode, appCode, onClose, onSubmit, appCategoryCode } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
@@ -25,16 +26,18 @@ export default function BranchEditor(props: IProps) {
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
-
     setLoading(true);
     try {
-      await createFeatureBranch({
+      const res = await createFeatureBranch({
         appCode,
-        demandId: demandId,
-        ...values,
+        demandId: values?.demandId,
+        branchName: values?.branchName,
+        desc: values?.desc,
       });
-      message.success('操作成功！');
-      onSubmit?.();
+      if (res.success) {
+        message.success('操作成功！');
+        onSubmit?.();
+      }
     } finally {
       setLoading(false);
     }
@@ -109,10 +112,18 @@ export default function BranchEditor(props: IProps) {
         <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
           <Input addonBefore="feature_" autoFocus />
         </Form.Item>
-        <Form.Item label="项目列表">
+        <Form.Item
+          label="项目列表"
+          name="projectId"
+          rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择项目' }]}
+        >
           <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
         </Form.Item>
-        <Form.Item label="需求列表" name="demandId">
+        <Form.Item
+          label="需求列表"
+          name="demandId"
+          rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择需求' }]}
+        >
           <Select
             mode="multiple"
             options={queryDemandOptions}

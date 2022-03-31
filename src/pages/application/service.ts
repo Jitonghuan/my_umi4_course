@@ -257,6 +257,8 @@ export const createFeatureBranch = (params: {
   branchName: string;
   /** 描述 */
   desc: string;
+  // 需求列表
+  demandId: any;
 }) =>
   postRequest(createFeatureBranchUrl, {
     data: params,
