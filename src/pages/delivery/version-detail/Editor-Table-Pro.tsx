@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form } from 'antd';
+import { Button, Input, Space, Select, Form } from 'antd';
 import { productionPageTypes } from './tab-config';
 import { PlusOutlined } from '@ant-design/icons';
+import { useQueryComponentOptions, useQueryComponentVersionOptions } from './hooks';
 import { ProFormField } from '@ant-design/pro-form';
 
 const waitTime = (time: number = 100) => {
@@ -15,55 +16,44 @@ const waitTime = (time: number = 100) => {
   });
 };
 
-const TagList: React.FC<{
+const OptionList: React.FC<{
   value?: {
-    key: string;
     label: string;
+    value: string;
   }[];
   onChange?: (
     value: {
-      key: string;
       label: string;
+      value: string;
     }[],
   ) => void;
 }> = ({ value, onChange }) => {
   const ref = useRef<any>(null);
   const [newTags, setNewTags] = useState<
     {
-      key: string;
       label: string;
+      value: string;
     }[]
   >([]);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [selectValue, setSelectValue] = useState<string>('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleInputConfirm = () => {
-    let tempsTags = [...(value || [])];
-    if (inputValue && tempsTags.filter((tag) => tag.label === inputValue).length === 0) {
-      tempsTags = [...tempsTags, { key: `new-${tempsTags.length}`, label: inputValue }];
-    }
-    onChange?.(tempsTags);
-    setNewTags([]);
-    setInputValue('');
+  const handleSelectChange = (e: React.ChangeEvent<HTMLOptionElement>) => {
+    console.log('e.target.value', e.target.value);
+    setSelectValue(e.target.value);
   };
 
   return (
     <Space>
       {(value || []).concat(newTags).map((item) => (
-        <Tag key={item.key}>{item.label}</Tag>
+        <Select key={item.value}>{item.label}</Select>
       ))}
       <Input
         ref={ref}
         type="text"
         size="small"
         style={{ width: 78 }}
-        value={inputValue}
-        onChange={handleInputChange}
-        onBlur={handleInputConfirm}
-        onPressEnter={handleInputConfirm}
+        value={selectValue}
+        // onChange={handleSelectChange}
       />
     </Space>
   );
@@ -105,15 +95,21 @@ export interface VersionDetailProps {
 
 export default (props: VersionDetailProps) => {
   const { currentTab, initDataSource } = props;
+  const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
+  const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
   const actionRef = useRef<ActionType>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
+  useEffect(() => {
+    queryComponentOptions(currentTab);
+    queryProductVersionOptions(currentTab);
+  }, [currentTab]);
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '组件名称',
-      key: 'name',
-      dataIndex: 'name',
+      key: 'componentName',
+      dataIndex: 'componentName',
       valueType: 'select',
       formItemProps: {
         rules: [
@@ -123,17 +119,8 @@ export default (props: VersionDetailProps) => {
           },
         ],
       },
-      valueEnum: {
-        all: { text: '全部', status: 'Default' },
-        open: {
-          text: '未解决',
-          status: 'Error',
-        },
-        closed: {
-          text: '已解决',
-          status: 'Success',
-        },
-      },
+      // renderFormItem:()=><TagList />
+      // valueEnum: componentOptions,
     },
     {
       title: '组件版本',

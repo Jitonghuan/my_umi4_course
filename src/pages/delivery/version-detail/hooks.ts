@@ -56,36 +56,26 @@ export function useEditProductVersionDescription(): [
 }
 
 //组件查询
-
-export function useQueryProductList(): [
-  boolean,
-  any[],
-  any,
-  any,
-  (product_id: number, pageIndex?: any, pageSize?: any) => Promise<void>,
-] {
+export function useQueryComponentOptions(): [boolean, any[], (componentType: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const [pageInfo, setPageInfo] = useState({
-    pageIndex: 1,
-    pageSize: 20,
-    total: 0,
-  });
-  const queryProductVersionList = async (product_id: number, pageIndex?: number, pageSize?: number) => {
+
+  const queryComponentOptions = async (componentType: string) => {
     setLoading(true);
     try {
-      await getRequest(APIS.queryVersionList, {
-        data: { product_id, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+      await getRequest(APIS.queryComponentList, {
+        data: { componentType, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
-            setDataSource(res.data.dataSource);
-            let pageInfoData = res.data.pageInfo;
-            setPageInfo({
-              pageIndex: pageInfoData.pageIndex,
-              pageSize: pageInfoData.pageSize,
-              total: pageInfoData.total,
-            });
+            let dataSource = res.data.dataSource;
+            const options =
+              dataSource ||
+              [].map((item: any) => ({
+                label: item.id,
+                value: item.componentName,
+              }));
+            setDataSource(options);
           } else {
             return [];
           }
@@ -97,39 +87,30 @@ export function useQueryProductList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, pageInfo, setPageInfo, queryProductVersionList];
+  return [loading, dataSource, queryComponentOptions];
 }
 
 //组件版本查询
-export function useQueryComponentVersionList(): [
-  boolean,
-  any[],
-  any,
-  any,
-  (componentType: string, componentName: string, pageIndex?: any, pageSize?: any) => Promise<void>,
-] {
+export function useQueryComponentVersionOptions(): [boolean, any[], (componentName: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const [pageInfo, setPageInfo] = useState({
-    pageIndex: 1,
-    pageSize: 20,
-    total: 0,
-  });
-  const queryProductVersionList = async (product_id: number, pageIndex?: number, pageSize?: number) => {
+
+  const queryProductVersionOptions = async (componentName: string) => {
     setLoading(true);
     try {
-      await getRequest(APIS.queryVersionList, {
-        data: { product_id, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+      await getRequest(APIS.queryComponentVersionList, {
+        data: { componentName, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
-            setDataSource(res.data.dataSource);
-            let pageInfoData = res.data.pageInfo;
-            setPageInfo({
-              pageIndex: pageInfoData.pageIndex,
-              pageSize: pageInfoData.pageSize,
-              total: pageInfoData.total,
-            });
+            let dataSource = res.data.dataSource;
+            const options =
+              dataSource ||
+              [].map((item: any) => ({
+                label: item.component_version,
+                value: item.component_version,
+              }));
+            setDataSource(options);
           } else {
             return [];
           }
@@ -141,5 +122,5 @@ export function useQueryComponentVersionList(): [
       console.log(error);
     }
   };
-  // return [loading, dataSource, pageInfo, setPageInfo];
+  return [loading, dataSource, queryProductVersionOptions];
 }
