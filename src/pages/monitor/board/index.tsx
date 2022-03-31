@@ -433,6 +433,8 @@ const Coms = (props: any) => {
   return (
     <PageContainer className="monitor-board">
       <Card className="monitor-board-content">
+        {/* {
+          ipDetailShow && ( */}
         <DashboardsModal
           ipDetailVisiable={ipDetailShow}
           onOk={handleOk}
@@ -465,6 +467,8 @@ const Coms = (props: any) => {
           }
           queryCount={queryCount}
         />
+        {/* )
+        } */}
         {href ? (
           <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
             {tabListFygs?.map((el) => (
