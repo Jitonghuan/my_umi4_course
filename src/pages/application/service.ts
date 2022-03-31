@@ -218,6 +218,9 @@ export const getDemandByProjectList = `http://kapi-base-${env}.cfuture.shop/eip-
 // post 新建分支-获取主干分支下拉框数据
 export const getMasterBranch = '';
 
+// post 主干分支-新建分支-获取来源分支下拉框数据
+export const getOriginBranch = '';
+
 /** GET 当前应用下已通过且存在未上线发布计划的发布申请列表 */
 export const applyHaveNoUpPlanList = `${appConfig.apiPrefix}/publishManage/applyHaveNoUpPlan/list`;
 

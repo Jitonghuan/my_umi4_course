@@ -9,18 +9,20 @@ import {
   queryPortalList,
   getDemandByProjectList,
   getMasterBranch,
+  getOriginBranch,
 } from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
 
 export interface IProps {
   mode?: EditorMode;
   appCode: string;
+  type: string;
   onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function BranchEditor(props: IProps) {
-  const { mode, appCode, onClose, onSubmit } = props;
+  const { mode, appCode, onClose, onSubmit, type } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
@@ -28,10 +30,25 @@ export default function BranchEditor(props: IProps) {
   const [projectId, setProjectId] = useState<string>('');
   const [demandId, setDemandId] = useState<any>([]);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [originBranchOptions, setOriginBranchOptions] = useState<any>([]);
 
+  useEffect(() => {
+    if (mode === 'HIDE') return;
+    form.resetFields();
+  }, [mode]);
+
+  useEffect(() => {
+    if (type === 'master') {
+      getOriginBranchOption();
+    } else {
+      getMasterBranchOption();
+      queryPortal();
+    }
+  }, [type]);
+
+  // 提交
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
-
     setLoading(true);
     try {
       await createFeatureBranch({
@@ -87,7 +104,6 @@ export default function BranchEditor(props: IProps) {
 
   const onChangeDemand = (data: any) => {
     setDemandId(data);
-    // handleSubmit(data);
   };
 
   const onSearch = (val: any) => {
@@ -111,11 +127,24 @@ export default function BranchEditor(props: IProps) {
       console.log('error', error);
     }
   };
-  useEffect(() => {
-    if (mode === 'HIDE') return;
-    form.resetFields();
-    queryPortal();
-  }, [mode]);
+
+  // 主干分支弹窗-获取来源分支下拉框数据
+  const getOriginBranchOption = () => {
+    try {
+      postRequest(getOriginBranch).then((result) => {
+        if (result.success) {
+          let dataSource = result.data;
+          let dataArry: any = [];
+          // dataSource?.map((item: any) => {
+          //   dataArry.push({ label: item?.projectName, value: item?.projectId });
+          // });
+          setOriginBranchOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   return (
     <Modal
@@ -129,29 +158,38 @@ export default function BranchEditor(props: IProps) {
       maskClosable={false}
     >
       <Form form={form} labelCol={{ flex: '110px' }}>
-        <Form.Item label="选择主干分支" name="masterBranch" rules={[{ required: true, message: '请选择主干分支' }]}>
-          <Select options={masterBranchOptions}></Select>
-        </Form.Item>
         <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
-          <Input addonBefore="feature_" autoFocus />
+          <Input addonBefore={type === 'master' ? 'master_part_' : 'feature_'} autoFocus />
         </Form.Item>
-        <Form.Item label="项目列表" rules={[{ required: true, message: '请输入分支名' }]}>
-          <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
-        </Form.Item>
-        <Form.Item label="需求列表" name="demandId">
-          <Select
-            mode="multiple"
-            options={queryDemandOptions}
-            onChange={onChangeDemand}
-            showSearch
-            allowClear
-            onSearch={onSearch}
-            optionFilterProp="label"
-            // filterOption={(input, option) =>
-            //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            // }
-          ></Select>
-        </Form.Item>
+        {type !== 'master' && (
+          <div>
+            <Form.Item label="选择主干分支" name="masterBranch" rules={[{ required: true, message: '请选择主干分支' }]}>
+              <Select options={masterBranchOptions}></Select>
+            </Form.Item>
+            <Form.Item label="项目列表" rules={[{ required: true, message: '请输入分支名' }]}>
+              <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
+            </Form.Item>
+            <Form.Item label="需求列表" name="demandId">
+              <Select
+                mode="multiple"
+                options={queryDemandOptions}
+                onChange={onChangeDemand}
+                showSearch
+                allowClear
+                onSearch={onSearch}
+                optionFilterProp="label"
+                // filterOption={(input, option) =>
+                //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                // }
+              ></Select>
+            </Form.Item>
+          </div>
+        )}
+        {type === 'master' && (
+          <Form.Item label="来源分支" name="fromBranch" rules={[{ required: true, message: '请选择来源分支' }]}>
+            <Select options={originBranchOptions}></Select>
+          </Form.Item>
+        )}
         <Form.Item label="描述" name="desc">
           <Input.TextArea placeholder="请输入描述" rows={3} />
         </Form.Item>

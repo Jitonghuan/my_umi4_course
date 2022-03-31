@@ -4,7 +4,7 @@
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import moment from 'moment';
-import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Divider } from 'antd';
+import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Divider, Tag } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -29,56 +29,61 @@ export default function BranchManage() {
   const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
   const [pending, setPending] = useState(false);
   const [reviewId, setReviewId] = useState<string>('');
-  // 查询主分支数据
-  const { run: queryMasterBranchList, tableProps: tableProps1 } = usePaginated({
-    requestUrl: queryBranchListUrl,
-    requestMethod: 'GET',
-    showRequestError: true,
-    pagination: {
-      showSizeChanger: true,
-      showTotal: (total: any) => `总共 ${total} 条数据`,
-    },
-  });
-  // 查询子分支数据
-  const { run: queryBranchList, tableProps } = usePaginated({
-    requestUrl: queryBranchListUrl,
-    requestMethod: 'GET',
-    showRequestError: true,
-    pagination: {
-      showSizeChanger: true,
-      showTotal: (total: any) => `总共 ${total} 条数据`,
-    },
-  });
+  const [rowData, setRowData] = useState<any>({});
+  const [type, setType] = useState<'master' | 'other'>('master');
 
   useEffect(() => {
     if (!appCode) return;
-    queryBranchList({ appCode, env: 'feature' });
+    queryMaterBranch({ appCode, env: 'feature' });
   }, [appCode]);
+
+  useEffect(() => {
+    if (masterTableData.length !== 0) {
+      // 如果用户没选中任一行或者选中了一行之后但是该行之后被删除了 都要默认选中第一行
+      const idList = masterTableData.map((item: any) => item.id);
+      if (!idList.includes(rowData.id) || !rowData.id) {
+        let data: any = masterTableData[0];
+        setRowData({ id: data.id, branchName: data.branchName });
+      }
+    }
+  }, [masterTableData]);
+
+  useEffect(() => {
+    if (rowData?.id) {
+      queryBranch();
+    }
+  }, [rowData]);
 
   // 搜索
   const handleSearch = useCallback(() => {
-    const values = searchForm.getFieldsValue();
-    queryBranchList({
-      pageIndex: 1,
-      ...values,
-    });
+    // const values = searchForm.getFieldsValue();
+    // queryBranchList({
+    //   pageIndex: 1,
+    //   ...values,
+    // });
   }, [searchForm]);
 
   // 获取主干分支列表
-  const queryMaterBranch = () => {
-    getRequest(queryMasterBranchListUrl, { data: { appCode } }).then((res) => {
-      if (res.success) {
-        let data = res?.data.dataSource[0];
-        setMasterTableData(data);
-      }
-    });
+  const queryMaterBranch = (params: any) => {
+    const temp: any = [
+      { id: 1, branchName: 'hahah' },
+      { id: 2, branchName: 'haahhahah2' },
+    ];
+    setMasterTableData(temp);
+    // getRequest(queryMasterBranchListUrl, { data: { ...params } }).then((res) => {
+    //   if (res.success) {
+    //     let data = res?.data.dataSource[0];
+    //     setMasterTableData(data);
+    //   }
+    // });
   };
   // 获取子分支
   const queryBranch = () => {
     getRequest(queryBranchListUrl, { data: { appCode } }).then((res) => {
       if (res.success) {
-        let data = res?.data.dataSource[0];
+        let data = res?.data.dataSource;
         setTableData(data);
+        setPage(res.data.pageInfo);
       }
     });
   };
@@ -89,7 +94,7 @@ export default function BranchManage() {
       setPending(true);
       await deleteBranch({ id: record.id });
       message.success('操作成功！');
-      queryBranchList();
+      // queryBranchList();
     } finally {
       setPending(false);
     }
@@ -99,10 +104,10 @@ export default function BranchManage() {
     await postRequest(createReview, { data: { appCode: record.appCode, branch: record.branchName } }).then((reslut) => {
       if (reslut.success) {
         message.success('创建Review成功！');
-        queryBranchList();
+        // queryBranchList();
       } else {
         message.error(reslut.errorMsg);
-        queryBranchList();
+        // queryBranchList();
       }
     });
   };
@@ -137,12 +142,14 @@ export default function BranchManage() {
       title: '分支名',
       dataIndex: 'branchName',
       key: 'branchName',
+      ellipsis: true,
       width: 400,
     },
     {
       title: '描述',
       dataIndex: 'desc',
       key: 'desc',
+      ellipsis: true,
       render: (value: any) => (
         <Tooltip placement="topLeft" title={value}>
           {value}
@@ -154,12 +161,14 @@ export default function BranchManage() {
       dataIndex: 'reviewId',
       key: 'reviewId',
       width: 100,
+      ellipsis: true,
     },
     {
       title: '主干分支',
       dataIndex: 'masterBranch',
       key: 'masterBranch',
       width: 100,
+      ellipsis: true,
     },
     {
       title: '关联流水线',
@@ -178,6 +187,12 @@ export default function BranchManage() {
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
       width: 160,
+      ellipsis: true,
+      render: (value: any) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       title: '创建人',
@@ -208,14 +223,19 @@ export default function BranchManage() {
   return (
     <ContentCard className="branch-manage-page" style={{ height: '100%' }}>
       <div className="branch-section">
-        <div className={`branch-section_title`}>主干分支</div>
+        <div className={`branch-section_title`}>主干分支列表</div>
         <div className="table-caption">
           <Form layout="inline" form={searchForm}>
-            <Form.Item label="分支名" name="branchName">
+            <Form.Item label="主干分支名称" name="branchName">
               <Input.Search placeholder="搜索主干分支名" enterButton onSearch={handleSearch} style={{ width: 320 }} />
             </Form.Item>
           </Form>
-          <Button type="primary" onClick={() => setBranchEditMode('ADD')}>
+          <Button
+            type="primary"
+            onClick={() => {
+              setBranchEditMode('ADD'), setType('master');
+            }}
+          >
             <PlusOutlined />
             新建主干分支
           </Button>
@@ -223,9 +243,21 @@ export default function BranchManage() {
         <Table
           rowKey="id"
           bordered
-          dataSource={tableProps.dataSource}
+          dataSource={masterTableData}
           columns={columns}
-          // pagination={tableProps.pagination}
+          rowClassName={(record, index) => {
+            return `${rowData.id == record.id ? 'selected' : ''}`;
+          }}
+          onRow={(record: any, index: any) => {
+            return {
+              onClick: (event) => {
+                setRowData({
+                  id: record.id,
+                  branchName: record.branchName,
+                });
+              }, // 点击行
+            };
+          }}
           pagination={{
             total: masterPage.total,
             pageSize: masterPage.pageSize,
@@ -238,7 +270,6 @@ export default function BranchManage() {
             showTotal: () => `总共 ${masterPage.total} 条数据`,
           }}
           onChange={masterPageSizeClick}
-          loading={tableProps.loading || pending}
           scroll={{ y: window.innerHeight - 330, x: '100%' }}
         ></Table>
       </div>
@@ -246,34 +277,41 @@ export default function BranchManage() {
       <Divider />
 
       <div className="branch-section">
-        <div className={`branch-section_title`}>子分支</div>
+        <div className={`branch-section_title`}>
+          主干分支已关联开发分支列表{' '}
+          <Tag color="blue" style={{ marginLeft: '10px' }}>
+            {rowData.branchName}
+          </Tag>
+        </div>
         <div className="table-caption">
           <Form layout="inline" form={searchForm}>
             <Form.Item label="分支名" name="branchName">
               <Input.Search placeholder="搜索分支名" enterButton onSearch={handleSearch} style={{ width: 320 }} />
             </Form.Item>
           </Form>
-          <Button type="primary" onClick={() => setBranchEditMode('ADD')}>
+          <Button
+            type="primary"
+            onClick={() => {
+              setBranchEditMode('ADD'), setType('other');
+            }}
+          >
             <PlusOutlined />
-            新建分支
+            新建开发分支
           </Button>
         </div>
         <Table
           rowKey="id"
           bordered
-          dataSource={tableProps.dataSource}
+          dataSource={tableData}
           columns={columns}
-          // pagination={tableProps.pagination}
-          loading={tableProps.loading || pending}
           pagination={{
             total: page.total,
             pageSize: page.pageSize,
             current: page.pageCurrent,
-            // showSizeChanger: true,
-            // onShowSizeChange: (_, size) => {
-            //   setPageSize(size);
-            //   setPageIndex(1);
-            // },
+            showSizeChanger: true,
+            onShowSizeChange: (_, size) => {
+              setPage((value: any) => Object.assign(value, { pageSize: size, pageIndex: 1 }));
+            },
             showTotal: () => `总共 ${page.total} 条数据`,
           }}
           onChange={pageClick}
@@ -282,11 +320,12 @@ export default function BranchManage() {
       </div>
 
       <BranchEditor
+        type={type}
         appCode={appCode!}
         mode={branchEditMode}
         onSubmit={() => {
           setBranchEditMode('HIDE');
-          queryBranchList({
+          queryMaterBranch({
             pageIndex: 1,
           });
         }}
