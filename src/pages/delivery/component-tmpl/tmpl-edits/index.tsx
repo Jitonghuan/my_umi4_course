@@ -7,22 +7,22 @@ import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
-
+import { TmplEdit } from '../index';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
 
 export interface TmplListProps {
   mode?: EditorMode;
-  // initData?: TmplEdit;
+  initData?: TmplEdit;
   onClose?: () => any;
   onSave?: () => any;
 }
 
-export default function TaskEditor(props: TmplListProps) {
+export default function TmplEditor(props: TmplListProps) {
   const [createTmplForm] = Form.useForm();
   const children: any = [];
-  // const { mode, initData, onClose, onSave } = props;
+  const { mode, initData, onClose, onSave } = props;
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -36,14 +36,15 @@ export default function TaskEditor(props: TmplListProps) {
 
   const clickChange = () => {};
 
-  // useEffect(() => {
-  //   // if (mode === 'HIDE') return;
-  //   createTmplForm.resetFields();
+  useEffect(() => {
+    if (mode === 'HIDE') return;
+    createTmplForm.resetFields();
+  }, []);
 
   return (
     <Drawer
-      // visible={mode !== 'HIDE'}
-      // title={mode === 'EDIT' ? '编辑模版' : ''}
+      visible={mode !== 'HIDE'}
+      title={mode === 'EDIT' ? '编辑组件模版' : mode === 'ADD' ? '新增组件模版' : ''}
       // maskClosable={false}
       // onClose={onClose}
       width={'70%'}

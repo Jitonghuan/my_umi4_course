@@ -10,55 +10,28 @@ import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from './tmpl-edits';
-/** 应用开发语言(后端) */
-export type AppDevelopLanguage = 'java' | 'golang' | 'python';
-export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
-  { label: 'GOLANG', value: 'golang' },
-  { label: 'JAVA', value: 'java' },
-  { label: 'PYTHON', value: 'python' },
-];
+import { useQueryTemplateList } from './hooks';
+
 /** 编辑页回显数据 */
 export interface TmplEdit extends Record<string, any> {
-  templateCode: string;
-  templateType: string;
-  templateName: string;
-  tmplConfigurableItem: object;
-  appCategoryCode: any;
-  envCodes: string;
-  templateValue: string;
-  languageCode: string;
-  remark: string;
+  productLine: string;
+  tempType: string;
+  tempName: string;
+  tempConfiguration: string;
 }
 export default function ComponentTmpl() {
   const { Option } = Select;
-  const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState<any[]>([]);
-  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
-  const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
-  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
-  const [envCode, setenvCode] = useState<any>(); //环境的值
-  const [templateType, setTemplateType] = useState<any>(); //模版类型
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryTemplateList] = useQueryTemplateList();
   const [formTmpl] = Form.useForm();
-  const [pageTotal, setPageTotal] = useState<number>();
-  const [tmplDetailData, setTmplDetailData] = useState<any>(' ');
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
   const handleEditTask = useCallback(
     (record: TmplEdit, index: number) => {
       setTmplateData(record);
       setTmplEditMode('EDIT');
-      setDataSource(dataSource);
     },
-    [dataSource],
+    [tableDataSource],
   );
-
-  //查询编辑参数
-  useEffect(() => {
-    loadListData({ pageIndex: 1, pageSize: 20 });
-  }, []);
 
   //触发分页
 
@@ -67,8 +40,14 @@ export default function ComponentTmpl() {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    loadListData(obj);
-    setPageIndex(pagination.current);
+    queryTemplateList(obj.pageIndex, obj.pageSize);
+    setPageInfo({
+      pageIndex: pagination.current.pageIndex,
+    });
+    setPageInfo({
+      pageIndex: pagination.current.pageIndex,
+      pageSize: pagination.current.pageIndex,
+    });
   };
 
   const loadListData = (params: any) => {
@@ -163,15 +142,15 @@ export default function ComponentTmpl() {
           }}
         >
           <Form.Item label="产品线：" name="appCategoryCode">
-            <Select showSearch style={{ width: 180 }} options={categoryData} />
+            <Select showSearch style={{ width: 180 }} />
           </Form.Item>
           <Form.Item label="环境：" name="envCode">
             <Select
-              options={envDatas}
+              // options={envDatas}
               allowClear
-              onChange={(n) => {
-                setenvCode(n);
-              }}
+              // onChange={(n) => {
+              //   setenvCode(n);
+              // }}
               showSearch
               style={{ width: 180 }}
             />
@@ -181,10 +160,10 @@ export default function ComponentTmpl() {
               showSearch
               allowClear
               style={{ width: 180 }}
-              options={templateTypes}
-              onChange={(n) => {
-                setTemplateType(n);
-              }}
+              // options={templateTypes}
+              // onChange={(n) => {
+              //   setTemplateType(n);
+              // }}
             />
           </Form.Item>
 
@@ -221,19 +200,21 @@ export default function ComponentTmpl() {
         <div>
           <Table
             rowKey="id"
-            dataSource={dataSource}
+            dataSource={tableDataSource}
             bordered
-            loading={loading}
+            loading={tableLoading}
             pagination={{
-              total: pageTotal,
-              pageSize,
-              current: pageIndex,
+              total: pageInfo.pageTotal,
+              pageSize: pageInfo.pageSize,
+              current: pageInfo.pageIndex,
               showSizeChanger: true,
               onShowSizeChange: (_, size) => {
-                setPageSize(size);
-                setPageIndex(1);
+                setPageInfo({
+                  pageSize: size,
+                  pageIndex: 1,
+                });
               },
-              showTotal: () => `总共 ${pageTotal} 条数据`,
+              showTotal: () => `总共 ${pageInfo.pageTotal} 条数据`,
             }}
             // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
             onChange={pageSizeClick}

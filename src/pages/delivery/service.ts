@@ -79,6 +79,26 @@ export const queryComponentVersionList = addAPIPrefix('/deliveryManage/component
 
 export const deleteComponent = addAPIPrefix('/deliveryManage/component/delete');
 
+/* POST 应用查询 */
+
+export const queryApplist = addAPIPrefix('/deliveryManage/component/applist');
+
+/* GET 应用Chart模板查询 */
+
+export const queryComponentTmpl = addAPIPrefix('/deliveryManage/component/template/list');
+
+/* POST  创建应用Chart模板 */
+export const createComponentTmpl = addAPIPrefix('/deliveryManage/component/create');
+
+/* PUT 更新应用Chart模板 */
+export const updateComponentTmpl = addAPIPrefix('/deliveryManage/component/update');
+
+/* DELETE 删除应用Chart模板 */
+export const deleteComponentTmpl = addAPIPrefix('/deliveryManage/component/delete');
+
+/* GET 应用Chart模板分类 */
+export const queryTypeList = addAPIPrefix('/deliveryManage/component/template/typelist');
+
 /* 三、制品交付 */
 
 /*POST  创建制品 */

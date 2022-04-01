@@ -39,7 +39,7 @@ export default defineConfig({
       // target: 'https://release.zy91.com:4443/futuredog',
       // target: 'http://10.10.129.190:8080',//木南本地
       // target: 'http://10.10.129.43:8080',//时雨本地
-      target: 'http://10.10.129.80:8080',//习习本地
+      target: 'http://10.10.129.51:8080',//习习本地
       // target: 'http://10.10.129.116:8080',//不辣本地
 
 
