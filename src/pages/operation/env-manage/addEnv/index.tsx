@@ -13,13 +13,13 @@ import './index.less';
 export interface EnvEditorProps {
   mode?: EditorMode;
   initData?: EnvEditData;
-  onClose: () => any;
   onSave: () => any;
+  onClose: () => any;
 }
 
 export default function addEnvData(props: EnvEditorProps) {
   const [createEnvForm] = Form.useForm();
-  const { mode, onClose, onSave, initData } = props;
+  const { mode, initData, onSave, onClose } = props;
   const [checkedOption, setCheckedOption] = useState<number>(0); //是否启用nacos
   const [nacosChecked, setNacosChecked] = useState<boolean>(false);
   const [needApplyOption, setNeedApplyOption] = useState<number>(1); //是否启用发布审批
@@ -82,12 +82,16 @@ export default function addEnvData(props: EnvEditorProps) {
   // 加载应用分类下拉选择
   const selectCategory = () => {
     getRequest(appTypeList).then((result) => {
-      const list = (result.data.dataSource || []).map((n: any) => ({
-        label: n.categoryName,
-        value: n.categoryCode,
-        data: n,
-      }));
-      setCategoryData(list);
+      if (result?.success) {
+        const list = (result?.data?.dataSource || [])?.map((n: any) => ({
+          label: n.categoryName,
+          value: n.categoryCode,
+          data: n,
+        }));
+        setCategoryData(list);
+      } else {
+        return;
+      }
     });
   };
   // 启用发布审批为0，不启用为1

@@ -953,6 +953,12 @@ export default [
         ],
       },
       {
+        path: 'DNS-manage',
+        name: 'DNS管理',
+        key: 'DNS-manage',
+        component: '@/pages/operation/DNS-manage',
+      },
+      {
         path: 'tmpl-log',
         name: '操作日志',
         key: 'tmpl-log',
