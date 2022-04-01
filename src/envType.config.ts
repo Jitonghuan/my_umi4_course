@@ -12,7 +12,7 @@ export const domainName: any = {
 // websocket 配置
 export const wsPrefixName: any = {
   'bf-daily': 'ws://matrix-bf-daily.cfuture.shop',
-  zsdata: 'ws://matrix-api.cfuture.shop',
+  zsdata: 'ws://matrix-zsdata.cfuture.shop',
   'base-poc': 'ws://matrix-base-poc.cfuture.shop',
   fygs: 'ws://matrix-fygs.seenew.info:180',
   zslnyy: 'ws://matrix-zslnyy.cfuture.shop',
@@ -22,8 +22,8 @@ export const wsPrefixName: any = {
 
 // logo 名字
 export const LogoName: any = {
-  'bf-daily': '宝丰测试',
-  zsdata: '中山数据中台',
+  'bf-daily': '——宝丰测试',
+  zsdata: '——中山数据中台',
   'base-poc': '——技术中台演示环境',
   fygs: '——富阳骨伤',
   zslnyy: '——中山老年医院',
