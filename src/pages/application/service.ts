@@ -626,3 +626,12 @@ export const getMergeMessage = async (params: any) => await getRequest(getMergeM
 /** POST 解决冲突-提交冲突 */
 export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/commit`;
 export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });
+
+/** GET 应用部署-获取流水线 */
+export const getPipelineUrl = `${appConfig.apiPrefix}/releaseManage/`;
+
+/** POST 应用部署-删除流水线 */
+export const delPipelineUrl = `${appConfig.apiPrefix}/releaseManage/`;
+
+/** POST 应用部署-新增流水线 */
+export const addPipelineUrl = `${appConfig.apiPrefix}/releaseManage/`;

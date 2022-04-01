@@ -35,16 +35,14 @@ export default function BranchEditor(props: IProps) {
   useEffect(() => {
     if (mode === 'HIDE') return;
     form.resetFields();
-  }, [mode]);
-
-  useEffect(() => {
     if (type === 'master') {
       getOriginBranchOption();
-    } else {
+    }
+    if (type !== 'master') {
       getMasterBranchOption();
       queryPortal();
     }
-  }, [type]);
+  }, [mode, type]);
 
   // 提交
   const handleSubmit = useCallback(async () => {
@@ -150,7 +148,7 @@ export default function BranchEditor(props: IProps) {
     <Modal
       destroyOnClose
       width={600}
-      title={mode === 'ADD' ? '新建分支' : '编辑分支'}
+      title={type === 'master' ? '新建主干分支' : '新建开发分支'}
       visible={props.mode !== 'HIDE'}
       onOk={handleSubmit}
       onCancel={onClose}

@@ -16,16 +16,16 @@ import { createReview } from '@/pages/application/service';
 import { postRequest, getRequest } from '@/utils/request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import './index.less';
-import { values } from 'lodash';
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
-  const [searchForm] = Form.useForm();
+  const [mainForm] = Form.useForm();
+  const [form] = Form.useForm();
   const [masterTableData, setMasterTableData] = useState([]); //主干分支表格数据源
   const [tableData, setTableData] = useState([]); //子分支表格数据
-  const [masterPage, setMasterPage] = useState<any>({ total: 0, size: 20, pageIndex: 1, currentPage: 1 }); //主干分页信息
-  const [page, setPage] = useState<any>({ total: 0, size: 20, pageIndex: 1, currentPage: 1 });
+  const [masterPage, setMasterPage] = useState<any>({ total: 0, size: 10, pageIndex: 1 }); //主干分页信息
+  const [page, setPage] = useState<any>({ total: 0, size: 10, pageIndex: 1 }); //开发分支分页信息
   const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
   const [pending, setPending] = useState(false);
   const [reviewId, setReviewId] = useState<string>('');
@@ -55,21 +55,28 @@ export default function BranchManage() {
   }, [rowData]);
 
   // 搜索
-  const handleSearch = useCallback(() => {
-    // const values = searchForm.getFieldsValue();
-    // queryBranchList({
-    //   pageIndex: 1,
-    //   ...values,
-    // });
-  }, [searchForm]);
+  const handleSearch = useCallback(
+    (type) => {
+      if (type === 'main') {
+        const values = mainForm.getFieldsValue();
+        queryMaterBranch({ pageIndex: 1, ...values });
+      } else {
+        const values = form.getFieldsValue();
+        queryMaterBranch({ pageIndex: 1, ...values });
+      }
+    },
+    [mainForm, form],
+  );
 
   // 获取主干分支列表
   const queryMaterBranch = (params: any) => {
     const temp: any = [
       { id: 1, branchName: 'hahah' },
       { id: 2, branchName: 'haahhahah2' },
+      { id: 3, branchName: 'haahhahah3' },
     ];
     setMasterTableData(temp);
+    setMasterPage({ total: temp.length, size: 10, pageIndex: 1 });
     // getRequest(queryMasterBranchListUrl, { data: { ...params } }).then((res) => {
     //   if (res.success) {
     //     let data = res?.data.dataSource[0];
@@ -78,8 +85,8 @@ export default function BranchManage() {
     // });
   };
   // 获取子分支
-  const queryBranch = () => {
-    getRequest(queryBranchListUrl, { data: { appCode } }).then((res) => {
+  const queryBranch = (params?: any) => {
+    getRequest(queryBranchListUrl, { data: { appCode, ...params } }).then((res) => {
       if (res.success) {
         let data = res?.data.dataSource;
         setTableData(data);
@@ -99,6 +106,7 @@ export default function BranchManage() {
       setPending(false);
     }
   }, []);
+
   //创建Review
   const creatReviewUrl = async (record: any) => {
     await postRequest(createReview, { data: { appCode: record.appCode, branch: record.branchName } }).then((reslut) => {
@@ -119,115 +127,127 @@ export default function BranchManage() {
       </a>
     );
   };
-  // 点击主干分支列表分页
-  const masterPageSizeClick = (pagination: any) => {
-    setMasterPage((value: any) => ({ ...value, currentPage: pagination.current }));
-    let obj = {
-      pageIndex: pagination.current,
-      pageSize: pagination.pageSize,
-    };
-    // loadMasterList(obj);
+
+  // 分页
+  const pageChange = (pagination: any, type: string) => {
+    let { current, pageSize } = pagination;
+    let obj = { pageIndex: current, pageSize: pageSize };
+    if (type === 'main') {
+      setMasterPage((value: any) => ({ ...value, pageIndex: current, size: pageSize }));
+    } else {
+      setPage((value: any) => ({ ...value, pageIndex: current, size: pageSize }));
+      // queryBranch(obj)
+    }
   };
 
-  const pageClick = () => {};
-
-  const columns: any = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'name',
-      width: 80,
-    },
-    {
-      title: '分支名',
-      dataIndex: 'branchName',
-      key: 'branchName',
-      ellipsis: true,
-      width: 400,
-    },
-    {
-      title: '描述',
-      dataIndex: 'desc',
-      key: 'desc',
-      ellipsis: true,
-      render: (value: any) => (
-        <Tooltip placement="topLeft" title={value}>
-          {value}
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'reviewID',
-      dataIndex: 'reviewId',
-      key: 'reviewId',
-      width: 100,
-      ellipsis: true,
-    },
-    {
-      title: '主干分支',
-      dataIndex: 'masterBranch',
-      key: 'masterBranch',
-      width: 100,
-      ellipsis: true,
-    },
-    {
-      title: '关联流水线',
-      dataIndex: 'relationPipeline',
-      key: 'relationPipeline',
-      width: 100,
-    },
-    {
-      title: '已部署环境',
-      dataIndex: 'deployedEnv',
-      key: 'deployedEnv',
-      width: 120,
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'gmtCreate',
-      key: 'gmtCreate',
-      width: 160,
-      ellipsis: true,
-      render: (value: any) => (
-        <Tooltip placement="topLeft" title={value}>
-          {value}
-        </Tooltip>
-      ),
-    },
-    {
-      title: '创建人',
-      dataIndex: 'createUser',
-      key: 'createUser',
-      width: 100,
-    },
-    {
-      title: '操作',
-      dataIndex: 'desc',
-      key: 'desc',
-      fixed: 'right',
-      width: 200,
-      render: (_: any, record: any) => (
-        <div className="action-cell">
-          <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
-            创建Review
-          </Button>
-          <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
-            <Button type="primary" danger size="small">
-              作废
-            </Button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
+  const columns: any = (type: any) =>
+    [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'name',
+        width: 80,
+      },
+      {
+        title: '分支名',
+        dataIndex: 'branchName',
+        key: 'branchName',
+        ellipsis: true,
+        width: 400,
+      },
+      {
+        title: '描述',
+        dataIndex: 'desc',
+        key: 'desc',
+        ellipsis: true,
+        render: (value: any) => (
+          <Tooltip placement="topLeft" title={value}>
+            {value}
+          </Tooltip>
+        ),
+      },
+      {
+        title: 'reviewID',
+        dataIndex: 'reviewId',
+        key: 'reviewId',
+        width: 100,
+        ellipsis: true,
+      },
+      {
+        title: '主干分支',
+        dataIndex: 'masterBranch',
+        key: 'masterBranch',
+        width: 100,
+        ellipsis: true,
+      },
+      {
+        title: '关联流水线',
+        dataIndex: 'relationPipeline',
+        key: 'relationPipeline',
+        width: 100,
+      },
+      {
+        title: '已部署环境',
+        dataIndex: 'deployedEnv',
+        key: 'deployedEnv',
+        width: 120,
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'gmtCreate',
+        key: 'gmtCreate',
+        width: 160,
+        ellipsis: true,
+        render: (value: any) => (
+          <Tooltip placement="topLeft" title={value}>
+            {value}
+          </Tooltip>
+        ),
+      },
+      {
+        title: '创建人',
+        dataIndex: 'createUser',
+        key: 'createUser',
+        width: 100,
+      },
+      {
+        title: '操作',
+        dataIndex: 'desc',
+        key: 'desc',
+        fixed: 'right',
+        width: type !== 'master' ? 200 : 100,
+        render: (_: any, record: any) => (
+          <div className="action-cell">
+            {type !== 'master' && (
+              <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
+                创建Review
+              </Button>
+            )}
+            <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
+              <Button type="primary" danger size="small">
+                作废
+              </Button>
+            </Popconfirm>
+          </div>
+        ),
+      },
+    ].filter((e) => type !== 'master' || e.key !== 'masterBranch');
   return (
     <ContentCard className="branch-manage-page" style={{ height: '100%' }}>
+      {/* 主干分支列表部分 */}
       <div className="branch-section">
         <div className={`branch-section_title`}>主干分支列表</div>
         <div className="table-caption">
-          <Form layout="inline" form={searchForm}>
+          <Form layout="inline" form={mainForm}>
             <Form.Item label="主干分支名称" name="branchName">
-              <Input.Search placeholder="搜索主干分支名" enterButton onSearch={handleSearch} style={{ width: 320 }} />
+              <Input.Search
+                placeholder="搜索主干分支名"
+                enterButton
+                onSearch={() => {
+                  handleSearch('main');
+                }}
+                style={{ width: 320 }}
+              />
             </Form.Item>
           </Form>
           <Button
@@ -244,7 +264,7 @@ export default function BranchManage() {
           rowKey="id"
           bordered
           dataSource={masterTableData}
-          columns={columns}
+          columns={columns('master')}
           rowClassName={(record, index) => {
             return `${rowData.id == record.id ? 'selected' : ''}`;
           }}
@@ -261,32 +281,41 @@ export default function BranchManage() {
           pagination={{
             total: masterPage.total,
             pageSize: masterPage.pageSize,
-            current: masterPage.pageCurrent,
-            // showSizeChanger: true,
-            // onShowSizeChange: (_, size) => {
-            //   setPageSize(size);
-            //   setPageIndex(1);
-            // },
+            current: masterPage.pageIndex,
+            showSizeChanger: true,
+            onShowSizeChange: (_, size) => {
+              setMasterPage((value: any) => ({ total: value.total, size: size, pageIndex: 1 }));
+            },
             showTotal: () => `总共 ${masterPage.total} 条数据`,
           }}
-          onChange={masterPageSizeClick}
+          onChange={(value) => {
+            pageChange(value, 'main');
+          }}
           scroll={{ y: window.innerHeight - 330, x: '100%' }}
         ></Table>
       </div>
 
       <Divider />
 
+      {/* 主干分支关联开发列表部分 */}
       <div className="branch-section">
         <div className={`branch-section_title`}>
-          主干分支已关联开发分支列表{' '}
+          主干分支已关联开发分支列表
           <Tag color="blue" style={{ marginLeft: '10px' }}>
             {rowData.branchName}
           </Tag>
         </div>
         <div className="table-caption">
-          <Form layout="inline" form={searchForm}>
+          <Form layout="inline" form={form}>
             <Form.Item label="分支名" name="branchName">
-              <Input.Search placeholder="搜索分支名" enterButton onSearch={handleSearch} style={{ width: 320 }} />
+              <Input.Search
+                placeholder="搜索分支名"
+                enterButton
+                onSearch={() => {
+                  handleSearch('other');
+                }}
+                style={{ width: 320 }}
+              />
             </Form.Item>
           </Form>
           <Button
@@ -303,18 +332,20 @@ export default function BranchManage() {
           rowKey="id"
           bordered
           dataSource={tableData}
-          columns={columns}
+          columns={columns('dev')}
           pagination={{
             total: page.total,
             pageSize: page.pageSize,
-            current: page.pageCurrent,
+            current: page.pageIndex,
             showSizeChanger: true,
             onShowSizeChange: (_, size) => {
-              setPage((value: any) => Object.assign(value, { pageSize: size, pageIndex: 1 }));
+              setPage((value: any) => ({ total: value.total, size: size, pageIndex: 1 }));
             },
             showTotal: () => `总共 ${page.total} 条数据`,
           }}
-          onChange={pageClick}
+          onChange={(value) => {
+            pageChange(value, 'other');
+          }}
           scroll={{ y: window.innerHeight - 330, x: '100%' }}
         ></Table>
       </div>

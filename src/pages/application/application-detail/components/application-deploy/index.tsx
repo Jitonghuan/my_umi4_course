@@ -4,6 +4,7 @@
 
 import React, { useContext, useState, useLayoutEffect, useEffect } from 'react';
 import { Tabs, Select, Tag } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
@@ -14,6 +15,8 @@ import { listAppEnvType } from '@/common/apis';
 import './index.less';
 import { values } from 'lodash';
 import StepItem from './deploy-content/components/publish-content/steps/step-item';
+import PipeLineManage from './pipelineManage';
+import { getPipelineUrl } from '@/pages/application/service';
 
 const { TabPane } = Tabs;
 
@@ -22,6 +25,12 @@ export default function ApplicationDeploy(props: any) {
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [currentValue, setCurrentValue] = useState('');
+  const [visible, setVisible] = useState<boolean>(false); //流水线管理
+  const [pipeline, setPipeline] = useState<any>([]); //流水线
+  const dataSource: any = [
+    { id: 1, pipeLine: '流水线1' },
+    { id: 2, pipeLine: '流水线2' },
+  ];
 
   let env = window.location.href.includes('zslnyy')
     ? 'prod'
@@ -114,8 +123,28 @@ export default function ApplicationDeploy(props: any) {
     return res;
   };
 
+  // 获取流水线
+  const getPipeline = () => {
+    getRequest(getPipelineUrl, {
+      data: { appCode: appData?.appCode },
+    }).then((res) => {
+      if (res.success) {
+        setPipeline(res?.data?.dataSource);
+      }
+    });
+  };
+
   return (
     <ContentCard noPadding>
+      <PipeLineManage
+        visible={visible}
+        handleCancel={() => {
+          setVisible(false);
+        }}
+        dataSource={dataSource}
+        onSave={getPipeline}
+      />
+
       <Tabs
         onChange={(v) => {
           handleTabChange(v);
@@ -132,6 +161,12 @@ export default function ApplicationDeploy(props: any) {
               onChange={handleChange}
               options={temp[tabActive]}
             ></Select>
+            <SettingOutlined
+              style={{ marginLeft: '10px' }}
+              onClick={() => {
+                setVisible(true);
+              }}
+            />
           </span>
         }
       >
