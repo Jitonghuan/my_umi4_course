@@ -18,7 +18,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
-  const { appCode } = appData || {};
+  const { appCode, appCategoryCode } = appData || {};
   const [searchForm] = Form.useForm();
   const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
   const [pending, setPending] = useState(false);
@@ -53,9 +53,11 @@ export default function BranchManage() {
   const handleDelBranch = useCallback(async (record: any) => {
     try {
       setPending(true);
-      await deleteBranch({ id: record.id });
-      message.success('操作成功！');
-      queryBranchList();
+      const res = await deleteBranch({ id: record.id });
+      if (res.success) {
+        message.success('操作成功！');
+        queryBranchList();
+      }
     } finally {
       setPending(false);
     }
@@ -159,6 +161,7 @@ export default function BranchManage() {
 
       <BranchEditor
         appCode={appCode!}
+        appCategoryCode={appCategoryCode || ''}
         mode={branchEditMode}
         onSubmit={() => {
           setBranchEditMode('HIDE');
