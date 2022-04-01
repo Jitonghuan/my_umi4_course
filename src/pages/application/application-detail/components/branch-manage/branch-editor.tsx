@@ -6,6 +6,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Modal, Input, Form, message, Select, Cascader } from 'antd';
 import { createFeatureBranch, queryPortalList, getDemandByProjectList } from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
+import { debounce } from 'lodash';
 
 export interface IProps {
   mode?: EditorMode;
@@ -87,9 +88,9 @@ export default function BranchEditor(props: IProps) {
     // handleSubmit(data);
   };
 
-  const onSearch = (val: any) => {
+  const onSearch = debounce((val: any) => {
     queryDemand(projectId, val);
-  };
+  }, 300);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
