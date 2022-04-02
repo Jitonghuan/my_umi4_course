@@ -18,11 +18,11 @@ export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
-  let env = window.location.href.includes('zslnyy')
+  let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
-    : window.location.href.includes('fygs')
+    : window.location.href.includes('matrix-fygs')
     ? 'prod'
-    : window.location.href.includes('base-poc')
+    : window.location.href.includes('matrix-base-poc')
     ? 'prod'
     : 'dev';
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || env);

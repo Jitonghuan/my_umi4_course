@@ -76,7 +76,7 @@ export default function ApplicationDetail(props: any) {
       });
     }
   }, []);
-  let href = window.location.href.includes('base-poc');
+  let href = window.location.href.includes('matrix-base-poc');
   return (
     <PageContainer className="application-detail-page">
       <FilterCard className="layout-compact">

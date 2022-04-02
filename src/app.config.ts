@@ -27,7 +27,7 @@ function getPrivateMethods(type: boolean) {
       href.includes('matrix-local') ||
       href.includes('matrix-test') ||
       href.includes('matrix.cfuture') ||
-      href.includes('base-poc')
+      href.includes('matrix-base-poc')
     ) {
       return 'public';
     } else {
@@ -40,11 +40,11 @@ const PRIVATE_METHODS = getPrivateMethods(false);
 const IS_Matrix = getPrivateMethods(true);
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
-envType = window.location.href.includes('bf-daily') ? 'bf-daily' : envType;
-envType = window.location.href.includes('fygs') ? 'fygs' : envType;
-envType = window.location.href.includes('zslnyy') ? 'zslnyy' : envType;
-envType = window.location.href.includes('base-poc') ? 'base-poc' : envType;
-envType = window.location.href.includes('zsdata') ? 'zsdata' : envType;
+envType = window.location.href.includes('matrix-bf-daily') ? 'bf-daily' : envType;
+envType = window.location.href.includes('matrix-fygs') ? 'fygs' : envType;
+envType = window.location.href.includes('matrix-zslnyy') ? 'zslnyy' : envType;
+envType = window.location.href.includes('matrix-base-poc') ? 'base-poc' : envType;
+envType = window.location.href.includes('matrix-zsdata') ? 'zsdata' : envType;
 
 export default {
   /** 站点图标 */
