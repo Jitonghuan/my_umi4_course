@@ -20,6 +20,22 @@ import { getPipelineUrl } from '@/pages/application/service';
 
 const { TabPane } = Tabs;
 
+const temp: any = {
+  dev: [
+    { value: '流水线1', label: '流水线1' },
+    { value: '流水线2', label: '流水线2' },
+  ],
+  test: [
+    { value: '流水线3', label: '流水线3' },
+    { value: '流水线4', label: '流水线5' },
+  ],
+  pre: [
+    { value: '流水线5', label: '流水线5' },
+    { value: '流水线6', label: '流水线6' },
+  ],
+  prod: [{ value: '流水线1', label: '流水线1' }],
+};
+
 export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
@@ -40,21 +56,6 @@ export default function ApplicationDeploy(props: any) {
     ? 'prod'
     : 'dev';
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || env);
-  const temp: any = {
-    dev: [
-      { value: '流水线1', key: '流水线1' },
-      { value: '流水线2', key: '流水线2' },
-    ],
-    test: [
-      { value: '流水线3', key: '流水线3' },
-      { value: '流水线4', key: '流水线5' },
-    ],
-    pre: [
-      { value: '流水线5', key: '流水线5' },
-      { value: '流水线6', key: '流水线6' },
-    ],
-    prod: [{ value: '流水线1', key: '流水线1' }],
-  };
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
@@ -65,6 +66,7 @@ export default function ApplicationDeploy(props: any) {
     return <SecondPartyPkg {...props} />;
   }
   useEffect(() => {
+    getPipeline();
     queryData();
   }, []);
   const queryData = () => {
@@ -90,16 +92,7 @@ export default function ApplicationDeploy(props: any) {
       next.sort((a: any, b: any) => {
         return a.sortType - b.sortType;
       }); //升序
-      let tempObj: any = {};
-      next.forEach((i: any) => {
-        let envCode = i.typeCode;
-        Object.assign(tempObj, {
-          [envCode]: temp[envCode][0]['value'] || '',
-        });
-      });
-      sessionStorage.setItem('env_temp_obj', JSON.stringify(tempObj));
       setEnvTypeData(next);
-      setCurrentValue(tempObj[tabActive]);
     });
   };
 
@@ -108,30 +101,46 @@ export default function ApplicationDeploy(props: any) {
     setCurrentValue(getCurrentValue(v));
   };
 
-  const handleChange = (value: string) => {
-    setCurrentValue(value);
-    let data: any = JSON.parse(sessionStorage.getItem('env_temp_obj') || '');
-    sessionStorage.setItem('env_temp_obj', JSON.stringify({ ...data, [tabActive]: value }));
-  };
-
   const getCurrentValue = (env: string) => {
     let res = '';
-    let data: any = JSON.parse(sessionStorage.getItem('env_temp_obj') || '');
+    let data: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
     if (data[env]) {
       res = data[env];
     }
     return res;
   };
 
+  // 流水线下拉框发生改变
+  const handleChange = (value: string) => {
+    setCurrentValue(value);
+    let data: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
+    sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...data, [tabActive]: value }));
+  };
+
   // 获取流水线
   const getPipeline = () => {
-    getRequest(getPipelineUrl, {
-      data: { appCode: appData?.appCode },
-    }).then((res) => {
-      if (res.success) {
-        setPipeline(res?.data?.dataSource);
-      }
+    // getRequest(getPipelineUrl, {
+    //   data: { appCode: appData?.appCode, env: tabActive },
+    // }).then((res) => {
+    //   if (res?.success) {
+    //     setPipeline(res.data.dataSource);
+    //   }
+    // });
+    setPipeline(temp);
+    handleData(temp);
+  };
+
+  // 处理数据
+  const handleData = (data: any) => {
+    let pipelineObj: any = {};
+    const envList = Object.keys(data);
+    envList.forEach((env: any) => {
+      Object.assign(pipelineObj, {
+        [env]: temp[env][0]['value'] || '',
+      });
     });
+    sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
+    setCurrentValue(pipelineObj[tabActive]);
   };
 
   return (
@@ -159,7 +168,7 @@ export default function ApplicationDeploy(props: any) {
               style={{ width: 120 }}
               size="small"
               onChange={handleChange}
-              options={temp[tabActive]}
+              options={pipeline[tabActive]}
             ></Select>
             <SettingOutlined
               style={{ marginLeft: '10px' }}

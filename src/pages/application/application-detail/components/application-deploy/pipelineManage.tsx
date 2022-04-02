@@ -15,7 +15,7 @@ export default function PipeLineManage(props: any) {
     getRequest(addPipelineUrl, {
       data: { appCode: appData?.appCode },
     }).then((res) => {
-      if (res.success) {
+      if (res?.success) {
         message.success('新增成功！');
         onSave?.();
       }
@@ -26,7 +26,7 @@ export default function PipeLineManage(props: any) {
     getRequest(delPipelineUrl, {
       data: { appCode: appData?.appCode },
     }).then((res) => {
-      if (res.success) {
+      if (res?.success) {
         message.success('删除成功！');
         onSave?.();
       }
@@ -61,7 +61,7 @@ export default function PipeLineManage(props: any) {
     },
   ];
   return (
-    <Modal width={700} title="流水线管理" visible={visible} footer={false} onCancel={handleCancel}>
+    <Modal width={600} title="流水线管理" visible={visible} footer={false} onCancel={handleCancel}>
       <Input
         placeholder="请输入流水线名称"
         style={{ width: '250px', marginRight: '10px' }}

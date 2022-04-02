@@ -222,12 +222,12 @@ export default function PublishContent(props: IProps) {
         <div className="caption-right">
           {!isProd && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-              重新部署
+              重新提交
             </Button>
           )}
           {!isProd || isFrontend ? (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-              批量退出
+              退出分支
             </Button>
           ) : null}
           {/* {!isFrontend && !isProd && (

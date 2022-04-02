@@ -41,6 +41,8 @@ export default function BranchEditor(props: IProps) {
     if (type !== 'master') {
       getMasterBranchOption();
       queryPortal();
+      // 设置主干分支初始值
+      // form.setFieldsValue({})
     }
   }, [mode, type]);
 
