@@ -56,9 +56,9 @@ export function useEditProductVersionDescription(): [
 }
 
 //组件查询
-export function useQueryComponentOptions(): [boolean, any[], (componentType: string) => Promise<void>] {
+export function useQueryComponentOptions(): [boolean, any, (componentType: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState([]);
+  const [dataSource, setDataSource] = useState({});
 
   const queryComponentOptions = async (componentType: string) => {
     setLoading(true);
@@ -69,15 +69,16 @@ export function useQueryComponentOptions(): [boolean, any[], (componentType: str
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
-            const options =
-              dataSource ||
-              [].map((item: any) => ({
-                label: item.id,
-                value: item.componentName,
-              }));
+            let options: any = {};
+            dataSource ||
+              [].map((item: any, index: number) => {
+                options[item.id] = {
+                  text: item.componentName,
+                };
+              });
             setDataSource(options);
           } else {
-            return [];
+            return {};
           }
         })
         .finally(() => {
@@ -91,9 +92,9 @@ export function useQueryComponentOptions(): [boolean, any[], (componentType: str
 }
 
 //组件版本查询
-export function useQueryComponentVersionOptions(): [boolean, any[], (componentName: string) => Promise<void>] {
+export function useQueryComponentVersionOptions(): [boolean, any, (componentName: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState([]);
+  const [dataSource, setDataSource] = useState({});
 
   const queryProductVersionOptions = async (componentName: string) => {
     setLoading(true);
@@ -104,15 +105,16 @@ export function useQueryComponentVersionOptions(): [boolean, any[], (componentNa
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
-            const options =
-              dataSource ||
-              [].map((item: any) => ({
-                label: item.component_version,
-                value: item.component_version,
-              }));
+            let options: any = {};
+            dataSource ||
+              [].map((item: any) => {
+                options[item.component_version] = {
+                  text: item.component_version,
+                };
+              });
             setDataSource(options);
           } else {
-            return [];
+            return {};
           }
         })
         .finally(() => {
@@ -124,3 +126,166 @@ export function useQueryComponentVersionOptions(): [boolean, any[], (componentNa
   };
   return [loading, dataSource, queryProductVersionOptions];
 }
+
+//产品版本添加组件
+export function useAddCompontent(): [
+  boolean,
+  (
+    versionId: number,
+    componentType: string,
+    componentName: string,
+    componentVersion: string,
+    componentDescription: string,
+    versionDescription: string,
+  ) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const addComponent = async (
+    versionId: number,
+    componentType: string,
+    componentName: string,
+    componentVersion: string,
+    componentDescription: string,
+    versionDescription: string,
+  ) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.addComponent, {
+        data: { versionId, componentType, componentName, componentVersion, componentDescription, versionDescription },
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, addComponent];
+}
+
+// 产品版本组件查询
+export function useQueryVersionComponentList(): [
+  boolean,
+  any,
+  any,
+  any,
+  (
+    versionId: number,
+    componentType: string,
+    componentName?: string,
+    pageIndex?: number,
+    pageInfo?: number,
+  ) => Promise<void>,
+] {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
+  const queryVersionComponentList = async (
+    versionId: number,
+    componentType: string,
+    componentName?: string,
+    pageIndex?: number,
+    pageSize?: number,
+  ) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryVersionComponentList, {
+        data: { versionId, componentType, componentName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+      })
+        .then((res) => {
+          if (res.success) {
+            let dataSource = res.data.dataSource;
+            let pageInfo = res.data.pageInfo;
+            setDataSource(dataSource);
+            setPageInfo({
+              pageIndex: pageInfo.pageIndex,
+              pageSize: pageInfo.pageSize,
+              total: pageInfo.total,
+            });
+          } else {
+            return {};
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, pageInfo, setPageInfo, queryVersionComponentList];
+}
+
+//产品版本删除组件
+export function useDeleteVersionComponent(): [boolean, (id: number) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const deleteVersionComponent = async (id: number) => {
+    setLoading(true);
+    try {
+      await postRequest(`${APIS.deleteVersionComponent}/${id}`)
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, deleteVersionComponent];
+}
+
+//编辑组件配置
+
+export function useEditComponent(): [boolean, (id: number) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const editComponent = async (id: number) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.editComponent, {
+        data: {
+          id,
+        },
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, editComponent];
+}
+
+// 获取参数来源组件
+
+//获取组件参数及参数值
+
+//保存交付配置参数
+
+//查询交付配置参数
+
+//删除交付配置参数

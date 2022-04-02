@@ -86,7 +86,7 @@ export default function VersionDetail() {
                 {productionTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>
                     <div>
-                      <EditorTablePro currentTab={item.value} />
+                      <EditorTablePro currentTab={item.value} versionId={descriptionInfoData.versionId} />
                     </div>
                   </TabPane>
                 ))}

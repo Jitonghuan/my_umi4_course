@@ -5,7 +5,7 @@ import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Space, Select, Form } from 'antd';
 import { productionPageTypes } from './tab-config';
 import { PlusOutlined } from '@ant-design/icons';
-import { useQueryComponentOptions, useQueryComponentVersionOptions } from './hooks';
+import { useQueryComponentOptions, useQueryComponentVersionOptions, useQueryVersionComponentList } from './hooks';
 import { ProFormField } from '@ant-design/pro-form';
 
 const waitTime = (time: number = 100) => {
@@ -90,13 +90,15 @@ const defaultData: DataSourceType[] = [
 
 export interface VersionDetailProps {
   currentTab: string;
+  versionId: number;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, initDataSource } = props;
+  const { currentTab, versionId, initDataSource } = props;
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
+  const [loading, tableDataSource, pageInfo, setPageInfo, queryVersionComponentList] = useQueryVersionComponentList();
   const actionRef = useRef<ActionType>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
@@ -104,6 +106,7 @@ export default (props: VersionDetailProps) => {
   useEffect(() => {
     queryComponentOptions(currentTab);
     queryProductVersionOptions(currentTab);
+    queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
   const columns: ProColumns<DataSourceType>[] = [
     {
@@ -124,8 +127,8 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '组件版本',
-      key: 'version',
-      dataIndex: 'version',
+      key: 'componentVersion',
+      dataIndex: 'componentVersion',
       valueType: 'select',
       formItemProps: {
         rules: [
@@ -136,33 +139,18 @@ export default (props: VersionDetailProps) => {
         ],
       },
       valueEnum: {
-        all: { text: '全部', status: 'Default' },
+        all: { text: '全部' },
         open: {
           text: '未解决',
-          status: 'Error',
         },
         closed: {
           text: '已解决',
-          status: 'Success',
         },
       },
     },
     {
       title: '组件描述',
-      dataIndex: 'decs',
-      fieldProps: (from, { rowKey, rowIndex }) => {
-        if (from.getFieldValue([rowKey || '', 'title']) === '不好玩') {
-          return {
-            disabled: true,
-          };
-        }
-        if (rowIndex > 9) {
-          return {
-            disabled: true,
-          };
-        }
-        return {};
-      },
+      dataIndex: 'componentDescription',
     },
 
     {
@@ -251,6 +239,19 @@ export default (props: VersionDetailProps) => {
         })}
         value={dataSource}
         onChange={setDataSource}
+        pagination={{
+          total: pageInfo.total,
+          pageSize: pageInfo.pageSize,
+          current: pageInfo.pageIndex,
+          showSizeChanger: true,
+          onShowSizeChange: (_, size) => {
+            setPageInfo({
+              pageIndex: 1,
+              pageSize: size,
+            });
+          },
+          showTotal: () => `总共 ${pageInfo.total} 条数据`,
+        }}
         editable={{
           form,
           editableKeys,
