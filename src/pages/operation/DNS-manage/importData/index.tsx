@@ -7,6 +7,7 @@ import { history } from 'umi';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
+import { uploadDnsManage, downloadDnsManage } from '../service';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag, Modal, Upload } from 'antd';
 import './index.less';
 
@@ -93,19 +94,32 @@ export default function addEnvData(props: EnvEditorProps) {
   //       setCategoryData(list);
   //     });
   //   };
+
+  const uploadApi = () => {
+    return `${uploadDnsManage}?uploadFile=${''}`;
+  };
   const UploadProps = {
     name: 'file',
     multiple: true,
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    action: uploadApi,
+    progress: {
+      strokeColor: {
+        '0%': '#108ee9',
+        '100%': '#87d068',
+      },
+      strokeWidth: 3,
+      format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
+      showInfo: '上传中请不要关闭弹窗',
+    },
     onChange(info: any) {
       const { status } = info.file;
       if (status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
       if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
+        message.success(`${info.file.name} 上传成功.`);
       } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        message.error(`${info.file.name} 上传失败.`);
       }
     },
     onDrop(e: any) {
@@ -133,7 +147,17 @@ export default function addEnvData(props: EnvEditorProps) {
       </Dragger>
       <div className="export-data-info">导出数据:</div>
       <div className="export-button">
-        <Button type="primary">导出下载</Button>
+        <Button
+          type="primary"
+          target="_blank"
+          href={`${downloadDnsManage}`}
+          // disabled={downLoadStatus}
+          onClick={() => {
+            message.info('开始导出...');
+          }}
+        >
+          导出下载
+        </Button>
       </div>
     </Modal>
   );

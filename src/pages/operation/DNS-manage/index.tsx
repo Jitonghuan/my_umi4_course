@@ -1,17 +1,17 @@
-// 环境管理
+// DNS管理
 // @author JITONGHUAN <muxi.jth@come-future.com>
-// @create 2021/10/25 11:14
+// @create 2022/04/1 14:15
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
 import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Modal, Divider, Tag } from 'antd';
 import { LoginOutlined, HighlightOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddRecordModal from './addRecordEnv';
 import ImportDataModal from './importData';
-// import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
+import { useDnsManageList, useDeleteDnsManage, useUpdateDnsManageStatus } from './hooks';
 import appConfig from '@/app.config';
 
 import './index.less';
@@ -34,6 +34,7 @@ export interface EnvEditData extends Record<string, any> {
 }
 
 export default function envManageList(props: any) {
+  const [tableLoading, pageInfo, dataSource, setPageInfo, getDnsManageList] = useDnsManageList();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -100,18 +101,19 @@ export default function envManageList(props: any) {
   //触发分页
   const pageSizeClick = (pagination: any) => {
     //  setPageIndexInfo(pagination.current);
-    setPageCurrentIndex(pagination.current);
+    setPageInfo({
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    });
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    loadListData(obj);
+    // loadListData(obj);
   };
 
   const loadListData = (params: any) => {
     const values = EnvForm.getFieldsValue();
-
-    // setPageCurrentIndex(pageIndex);
   };
 
   //删除数据
@@ -188,20 +190,22 @@ export default function envManageList(props: any) {
         <div style={{ marginTop: '15px' }}>
           <Table
             rowSelection={{ ...rowSelection }}
-            dataSource={envDataSource}
-            loading={loading}
+            dataSource={dataSource}
+            loading={tableLoading}
             rowKey="id"
             pagination={{
-              current: pageIndex,
-              total,
-              pageSize,
+              current: pageInfo.pageIndex,
+              total: pageInfo.total,
+              pageSize: pageInfo.pageSize,
               showSizeChanger: true,
               // onChange: (next) => setPageIndex(next),
               onShowSizeChange: (_, size) => {
-                setPageSize(size);
-                setPageCurrentIndex(1); //
+                setPageInfo({
+                  pageIndex: 1,
+                  pageSize: size,
+                });
               },
-              showTotal: () => `总共 ${total} 条数据`,
+              showTotal: () => `总共 ${pageInfo.total} 条数据`,
             }}
             onChange={pageSizeClick}
           >
