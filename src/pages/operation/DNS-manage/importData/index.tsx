@@ -2,98 +2,24 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/10/25 18:30
 
-import React from 'react';
-import { history } from 'umi';
-import { getRequest, postRequest, putRequest } from '@/utils/request';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
 import { uploadDnsManage, downloadDnsManage } from '../service';
-import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag, Modal, Upload } from 'antd';
+import { Button, message, Modal, Upload } from 'antd';
 import './index.less';
 
-// import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 const { Dragger } = Upload;
-export interface EnvEditorProps {
+export interface importDataProps {
   mode?: EditorMode;
-  //   initData?: EnvEditData;
   onClose: () => any;
-  //   onSave: () => any;
 }
 
-export default function addEnvData(props: EnvEditorProps) {
-  const [createEnvForm] = Form.useForm();
+export default function addEnvData(props: importDataProps) {
   const { mode, onClose } = props;
-  //   const { mode, onClose, onSave, initData } = props;
-  const [checkedOption, setCheckedOption] = useState<number>(0); //是否启用nacos
-  const [nacosChecked, setNacosChecked] = useState<boolean>(false);
-  const [needApplyOption, setNeedApplyOption] = useState<number>(1); //是否启用发布审批
-  const [needApplyChecked, setNeedApplyChecked] = useState<boolean>(false);
-  //ngInstCode
-  const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>(0); //是否封网
-  const [isBlockChecked, setIsBlockChecked] = useState<boolean>(false);
-  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [editEnvCode, setEditEnvCode] = useState<boolean>(false);
 
-  //   useEffect(() => {
-  //     // selectCategory();
-  //   }, [mode]);
-
-  //   useEffect(() => {
-  //     if (mode === 'HIDE') return;
-  //     queryNGlist();
-  //     createEnvForm.resetFields();
-  //     if (mode === 'VIEW') {
-  //       setIsDisabled(true);
-  //     } else {
-  //       setIsDisabled(false);
-  //     }
-  //     if (mode === 'EDIT') {
-  //       setEditEnvCode(true);
-  //     }
-  //     if (initData) {
-  //       if (initData?.isBlock === 1) {
-  //         setIsBlockChecked(true);
-  //         setIsBlockChangeOption(1);
-  //       } else {
-  //         setIsBlockChecked(false);
-  //         setIsBlockChangeOption(0);
-  //       }
-
-  //       if (initData?.useNacos === 1) {
-  //         setNacosChecked(true);
-  //         setCheckedOption(1);
-  //       } else {
-  //         setNacosChecked(false);
-  //         setCheckedOption(0);
-  //       }
-  //       if (initData?.needApply === 0) {
-  //         setNeedApplyChecked(true);
-  //         setNeedApplyOption(0);
-  //       } else {
-  //         setNeedApplyChecked(false);
-  //         setNeedApplyOption(1);
-  //       }
-
-  //       createEnvForm.setFieldsValue({
-  //         ...initData,
-  //         isBlock: isBlockChecked,
-  //         useNacos: nacosChecked,
-  //         needApply: needApplyChecked,
-  //       });
-  //     }
-  //   }, [mode]);
-  // 加载应用分类下拉选择
-  //   const selectCategory = () => {
-  //     getRequest(appTypeList).then((result) => {
-  //       const list = (result.data.dataSource || []).map((n: any) => ({
-  //         label: n.categoryName,
-  //         value: n.categoryCode,
-  //         data: n,
-  //       }));
-  //       setCategoryData(list);
-  //     });
-  //   };
+  useEffect(() => {
+    if (mode === 'HIDE') return;
+  }, [mode]);
 
   const uploadApi = () => {
     return `${uploadDnsManage}?uploadFile=${''}`;
@@ -128,14 +54,7 @@ export default function addEnvData(props: EnvEditorProps) {
   };
 
   return (
-    <Modal
-      visible={mode !== 'HIDE'}
-      title={mode === 'ADD' ? '导入数据' : ''}
-      //   // maskClosable={false}
-      //   initData={initData}
-      onCancel={() => onClose()}
-      width={'40%'}
-    >
+    <Modal visible={mode !== 'HIDE'} title={mode === 'ADD' ? '导入数据' : ''} onCancel={() => onClose()} width={'40%'}>
       <div className="import-data-info">导入数据</div>
 
       <Dragger {...UploadProps}>
@@ -150,6 +69,7 @@ export default function addEnvData(props: EnvEditorProps) {
         <Button
           type="primary"
           target="_blank"
+          className="downloadButton"
           href={`${downloadDnsManage}`}
           // disabled={downLoadStatus}
           onClick={() => {

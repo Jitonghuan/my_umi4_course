@@ -4,103 +4,74 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Modal, Divider, Tag } from 'antd';
+import { Input, Table, Popconfirm, Form, Button, Spin, Divider, Tag } from 'antd';
 import { LoginOutlined, HighlightOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddRecordModal from './addRecordEnv';
 import ImportDataModal from './importData';
-import { useDnsManageList, useDeleteDnsManage, useUpdateDnsManageStatus } from './hooks';
-import appConfig from '@/app.config';
+import {
+  useDnsManageList,
+  useDeleteDnsManage,
+  useUpdateDnsManageStatus,
+  useEnvCode,
+  useDnsManageHostList,
+} from './hooks';
 
 import './index.less';
 
 /** 编辑页回显数据 */
-export interface EnvEditData extends Record<string, any> {
-  envTypeCode: string;
-  envName: string;
+export interface recordEditData extends Record<string, any> {
+  id: number;
+  hostRecord: string;
+  recordType: string;
+  recordValue: string;
+  status: number;
+  remark: any;
   envCode: string;
-  categoryCode: string;
-  mark: any;
-  isBlock: number;
-  useNacos: number;
-  nacosAddress: string;
-  clusterName: string;
-  clusterType: string;
-  clusterNetType: string;
-  ngInstCode: string;
-  proEnvType: string;
 }
 
-export default function envManageList(props: any) {
-  const [tableLoading, pageInfo, dataSource, setPageInfo, getDnsManageList] = useDnsManageList();
+export default function DNSManageList(props: any) {
+  const [tableLoading, pageInfo, dataSource, setRecordDataSource, setPageInfo, getDnsManageList] = useDnsManageList();
+  const [envCode, getDnsManageEnvCodeList] = useEnvCode();
+  const [listLoading, hostSource, getDnsManageHostList] = useDnsManageHostList();
+  const [statusLoading, updateDnsManage] = useUpdateDnsManageStatus();
+  const [delLoading, deleteDnsManage] = useDeleteDnsManage();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [pageIndex, setPageCurrentIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(20);
-  const [envDataSource, setEnvDataSource] = useState<Record<string, any>[]>([
-    {
-      envName: 'his.seenew.com',
-      envCode: 'CNAME',
-      envTypeCode: '192.168.0.1',
-      categoryCode: '正常',
-    },
-  ]);
-  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
-  const [total, setTotal] = useState<number>(0);
-  const [addEnvMode, setAddEnvMode] = useState<EditorMode>('HIDE');
+  const [addRecordMode, setAddRecordMode] = useState<EditorMode>('HIDE');
   const [importDataMode, setImportDataMode] = useState<EditorMode>('HIDE');
-  const [EnvForm] = Form.useForm();
+  const [RecordForm] = Form.useForm();
   const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
-  const [ngModalVisiable, setNgModalVisiable] = useState<boolean>(false);
-  const [currentNgCode, setCurrentNgCode] = useState<string>('');
-  const envTypeData = [
-    {
-      label: 'DEV',
-      value: 'dev',
-    },
-    {
-      label: 'TEST',
-      value: 'test',
-    },
-    {
-      label: 'PRE',
-      value: 'pre',
-    },
-    {
-      label: 'PROD',
-      value: 'prod',
-    },
-  ]; //环境大类
-  const proEnvTypeData = [
-    {
-      label: '项目环境',
-      value: 'project',
-    },
-    {
-      label: '基准环境',
-      value: 'benchmark',
-    },
-  ]; //项目环境分类选择
 
-  const handleAddEnv = () => {
-    setAddEnvMode('ADD');
-  };
+  useEffect(() => {
+    getDnsManageEnvCodeList();
+    getDnsManageHostList();
+  }, []);
 
   const handleEditEnv = useCallback(
-    (record: EnvEditData, index: number, type) => {
+    (record: recordEditData, index: number, type) => {
       setInitEnvData(record);
-      setAddEnvMode(type);
-      setEnvDataSource(envDataSource);
+      setAddRecordMode(type);
+      setRecordDataSource(dataSource);
     },
-    [envDataSource],
+    [dataSource],
+  );
+  const handleUpdateStatus = useCallback(
+    (record: any) => {
+      let paramObj = {
+        envCode: envCode,
+        id: record.id,
+        status: record.status,
+      };
+      updateDnsManage(paramObj);
+      setRecordDataSource(dataSource);
+    },
+    [dataSource],
   );
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    //  setPageIndexInfo(pagination.current);
     setPageInfo({
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -109,24 +80,18 @@ export default function envManageList(props: any) {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    // loadListData(obj);
+    loadListData(obj);
   };
 
   const loadListData = (params: any) => {
-    const values = EnvForm.getFieldsValue();
+    const values = RecordForm.getFieldsValue();
+    getDnsManageList(...params, ...values);
   };
 
   //删除数据
-  const handleDelEnv = (record: any) => {
+  const handleDelRecord = (record: any) => {
     let id = record.id;
-    delRequest(`${appConfig.apiPrefix}/appManage/env/delete/${record.envCode}`).then(() => {
-      message.success('删除成功！');
-      loadListData({
-        pageIndex: 1,
-        pageSize: 20,
-      });
-    });
-    // message.success('删除成功！');
+    deleteDnsManage({ envCode, id });
   };
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
@@ -138,24 +103,33 @@ export default function envManageList(props: any) {
   return (
     <PageContainer className="DNS-list-content">
       <AddRecordModal
-        mode={addEnvMode}
-        //   initData={initEnvData}
-        //   onSave={() => {
-        //     setAddEnvMode('HIDE');
-        //     setTimeout(() => {
-        //       queryEnvData({ pageIndex: 1, pageSize: 20 });
-        //     }, 100);
-        //   }}
-        onClose={() => setAddEnvMode('HIDE')}
+        mode={addRecordMode}
+        initData={initEnvData}
+        onSave={() => {
+          setAddRecordMode('HIDE');
+          setTimeout(() => {
+            getDnsManageList();
+          }, 100);
+        }}
+        onClose={() => setAddRecordMode('HIDE')}
       />
       <ImportDataModal mode={importDataMode} onClose={() => setImportDataMode('HIDE')} />
       <ContentCard>
-        <div className="dns-server">当前的DNS服务器是：192.9.213.13， 192.9.213.14</div>
+        <div className="dns-server">
+          当前的DNS服务器是：
+          {hostSource?.map((item: any) => {
+            return (
+              <Spin spinning={listLoading}>
+                <span>{item},</span>
+              </Spin>
+            );
+          })}
+        </div>
         <Divider />
         <div className="table-caption">
           <div className="caption-left">
-            <Form layout="inline">
-              <Form.Item>
+            <Form layout="inline" form={RecordForm}>
+              <Form.Item name="hostRecord">
                 <Input style={{ width: 220 }} placeholder="请输入关键字"></Input>
               </Form.Item>
               <Form.Item>
@@ -167,7 +141,6 @@ export default function envManageList(props: any) {
             <Button
               type="primary"
               onClick={() => {
-                setInitEnvData(undefined);
                 setImportDataMode('ADD');
               }}
             >
@@ -178,7 +151,7 @@ export default function envManageList(props: any) {
               type="primary"
               onClick={() => {
                 setInitEnvData(undefined);
-                setAddEnvMode('ADD');
+                setAddRecordMode('ADD');
               }}
             >
               <HighlightOutlined />
@@ -209,12 +182,12 @@ export default function envManageList(props: any) {
             }}
             onChange={pageSizeClick}
           >
-            <Table.Column title="主机记录" dataIndex="envName" width={150} />
-            <Table.Column title="记录类型" dataIndex="envCode" width={130} />
-            <Table.Column title="记录值" dataIndex="envTypeCode" width={90} />
+            <Table.Column title="主机记录" dataIndex="hostRecord" width={150} />
+            <Table.Column title="记录类型" dataIndex="recordType" width={130} />
+            <Table.Column title="记录值" dataIndex="recordValue" width={90} />
             <Table.Column
               title="状态"
-              dataIndex="categoryCode"
+              dataIndex="status"
               width={130}
               render={(value: string, record: any) => (
                 <span>
@@ -222,20 +195,22 @@ export default function envManageList(props: any) {
                 </span>
               )}
             />
-            <Table.Column title="备注" dataIndex="mark" width={200} />
+            <Table.Column title="备注" dataIndex="remark" width={200} />
             <Table.Column
               title="操作"
               width={180}
-              render={(_, record: EnvEditData, index) => (
+              render={(_, record: recordEditData, index) => (
                 <div className="action-cell">
                   <Button size="small" type="primary" onClick={() => handleEditEnv(record, index, 'EDIT')}>
                     修改
                   </Button>
-                  <Button size="small" type="primary" onClick={() => handleEditEnv(record, index, 'EDIT')}>
-                    暂停
-                  </Button>
-                  <Popconfirm title="确定要删除吗？" onConfirm={() => handleDelEnv(record)}>
-                    <Button size="small" style={{ color: 'red' }}>
+                  <Popconfirm title="确定要暂停吗？" onConfirm={() => handleUpdateStatus(record)}>
+                    <Button size="small" type="primary" loading={statusLoading}>
+                      暂停
+                    </Button>
+                  </Popconfirm>
+                  <Popconfirm title="确定要删除吗？" onConfirm={() => handleDelRecord(record)}>
+                    <Button size="small" style={{ color: 'red' }} loading={delLoading}>
                       删除
                     </Button>
                   </Popconfirm>

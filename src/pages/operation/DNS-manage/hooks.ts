@@ -16,9 +16,17 @@ export function useDnsManageList() {
   useEffect(() => {
     getDnsManageList();
   }, []);
-  const getDnsManageList = async (pageIndex?: number, pageSize?: number) => {
+  const getDnsManageList = async (
+    pageIndex?: number,
+    pageSize?: number,
+    hostRecord?: string,
+    recordType?: string,
+    recordValue?: string,
+  ) => {
     setLoading(true);
-    await getRequest(APIS.getDnsManageList, { data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20 } })
+    await getRequest(APIS.getDnsManageList, {
+      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, hostRecord, recordType, recordValue },
+    })
       .then((result) => {
         if (result?.success) {
           const dataSource = result.data.dataSource || [];
@@ -36,11 +44,21 @@ export function useDnsManageList() {
       });
   };
 
-  return [loading, pageInfo, source, setPageInfo, getDnsManageList];
+  return [loading, pageInfo, source, setSource, setPageInfo, getDnsManageList];
 }
 
 //dns记录添加
-export function useAddDnsManage() {
+export function useAddDnsManage(): [
+  boolean,
+  (paramsObj: {
+    envCode: string;
+    hostRecord: string;
+    recordType: string;
+    recordValue: string;
+    status?: string;
+    remark?: string;
+  }) => Promise<void>,
+] {
   const [loading, setLoading] = useState<boolean>(false);
   const addDnsManage = async (paramsObj: {
     envCode: string;
@@ -68,7 +86,17 @@ export function useAddDnsManage() {
 }
 
 //dns记录修改
-export function useUpdateDnsManage() {
+export function useUpdateDnsManage(): [
+  boolean,
+  (paramsObj: {
+    envCode: string;
+    id: number;
+    hostRecord: string;
+    recordType: string;
+    recordValue: string;
+    remark?: string;
+  }) => Promise<void>,
+] {
   const [loading, setLoading] = useState<boolean>(false);
   const updateDnsManage = async (paramsObj: {
     envCode: string;
@@ -96,7 +124,7 @@ export function useUpdateDnsManage() {
 }
 
 //dns记录删除
-export function useDeleteDnsManage() {
+export function useDeleteDnsManage(): [boolean, (paramsObj: { envCode: string; id: number }) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const deleteDnsManage = async (paramsObj: { envCode: string; id: number }) => {
     setLoading(true);
@@ -117,7 +145,10 @@ export function useDeleteDnsManage() {
 }
 
 //dns记录状态变更
-export function useUpdateDnsManageStatus() {
+export function useUpdateDnsManageStatus(): [
+  boolean,
+  (paramsObj: { envCode: string; id: number; status: string }) => Promise<void>,
+] {
   const [loading, setLoading] = useState<boolean>(false);
   const updateDnsManage = async (paramsObj: { envCode: string; id: number; status: string }) => {
     setLoading(true);
@@ -138,7 +169,7 @@ export function useUpdateDnsManageStatus() {
 }
 
 //dns服务器查询
-export function useDnsManageHostList() {
+export function useDnsManageHostList(): [boolean, any, () => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any[]>([]);
 
@@ -162,24 +193,18 @@ export function useDnsManageHostList() {
 }
 
 //dns服务环境查询
-export function useEnvOptions() {
-  const [loading, setLoading] = useState<boolean>(false);
+export function useEnvCode() {
   const [source, setSource] = useState<any>({});
 
   const getDnsManageEnvCodeList = async () => {
-    setLoading(true);
-    await getRequest(APIS.getDnsManageEnvCodeList)
-      .then((result) => {
-        if (result) {
-          const envCode = result.data || [];
-          setSource({ envCode: envCode });
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    await getRequest(APIS.getDnsManageEnvCodeList).then((result) => {
+      if (result) {
+        const envCode = result.data || [];
+        setSource({ envCode: envCode });
+      } else {
+        return;
+      }
+    });
   };
-  return [loading, source, getDnsManageEnvCodeList];
+  return [source, getDnsManageEnvCodeList];
 }

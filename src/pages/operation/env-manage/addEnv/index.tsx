@@ -208,7 +208,7 @@ export default function addEnvData(props: EnvEditorProps) {
       visible={mode !== 'HIDE'}
       title={mode === 'EDIT' ? '编辑环境' : mode === 'VIEW' ? '查看环境' : '新增环境'}
       // maskClosable={false}
-      initData={initData}
+      // initData={initData}
       onClose={onClose}
       width={'40%'}
     >
