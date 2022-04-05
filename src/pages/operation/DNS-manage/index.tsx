@@ -116,14 +116,14 @@ export default function DNSManageList(props: any) {
       <ImportDataModal mode={importDataMode} onClose={() => setImportDataMode('HIDE')} />
       <ContentCard>
         <div className="dns-server">
-          当前的DNS服务器是：
-          {hostSource?.map((item: any) => {
+          当前的DNS服务器是：192.9.213.13,192.9.213.14
+          {/* {hostSource?.map((item: any) => {
             return (
               <Spin spinning={listLoading}>
                 <span>{item},</span>
               </Spin>
             );
-          })}
+          })} */}
         </div>
         <Divider />
         <div className="table-caption">

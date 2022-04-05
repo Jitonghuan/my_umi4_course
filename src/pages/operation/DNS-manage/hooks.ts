@@ -177,10 +177,13 @@ export function useDnsManageHostList(): [boolean, any, () => Promise<void>] {
     setLoading(true);
     await getRequest(APIS.getDnsManageHostList)
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           const dataSource = result.data || [];
           setSource(dataSource);
         } else {
+          return;
+        }
+        if (!result?.success) {
           return;
         }
       })
