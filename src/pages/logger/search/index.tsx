@@ -20,7 +20,7 @@ import ReactJson from 'react-json-view';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
 import { postRequest } from '@/utils/request';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { useEnvOptions, useLogStoreOptions, useFrameUrl, useIndexModeList } from './hooks';
@@ -80,6 +80,7 @@ export default function LoggerSearch(props: any) {
   //默认传最近30分钟，处理为秒级的时间戳
   let start = Number((now - startTime) / 1000).toString();
   let end = Number(now / 1000).toString();
+  const [stowCondition, setStowCondition] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
   const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>(); //手风琴下拉框数据 hits
   const [viewLogSearchTabInfo, setViewlogSeaechTabInfo] = useState<any>(); //手风琴展示数据
@@ -380,7 +381,7 @@ export default function LoggerSearch(props: any) {
         {!envCode && !logStore ? <div className="empty-holder">请选择环境和日志库</div> : null}
         {envCode && logStore ? (
           <div>
-            <div style={{ marginBottom: 18, width: '100%' }}>
+            <div style={{ marginBottom: 10, width: '100%' }}>
               <div>
                 <Form form={subInfoForm} layout="inline" labelCol={{ flex: 4 }}>
                   <Form.Item label="appCode" name="appCode">
@@ -454,12 +455,29 @@ export default function LoggerSearch(props: any) {
                 ) : null}
               </div>
             </div>
-            <Divider style={{ height: 10, marginTop: 0, marginBottom: 0 }} />
-            <Spin size="large" spinning={infoLoading}>
-              <div style={{ marginBottom: 4 }}>
-                <ChartCaseList data={logHistormData} loading={infoLoading} hitsData={hitInfo} />
-              </div>
-            </Spin>
+            <div className="close-button">
+              <a
+                onClick={() => {
+                  if (stowCondition) {
+                    setStowCondition(false);
+                  } else {
+                    setStowCondition(true);
+                  }
+                }}
+              >
+                {stowCondition ? '收起命中图表' : '展开命中图表'}
+                {stowCondition ? <UpOutlined /> : <DownOutlined />}
+              </a>
+            </div>
+            <Divider style={{ height: 6, marginTop: 0, marginBottom: 0 }} />
+            {stowCondition && (
+              <Spin size="large" spinning={infoLoading}>
+                <div style={{ marginBottom: 4 }}>
+                  <ChartCaseList data={logHistormData} loading={infoLoading} hitsData={hitInfo} />
+                </div>
+              </Spin>
+            )}
+
             <div>
               <div
                 id="scrollableDiv"
