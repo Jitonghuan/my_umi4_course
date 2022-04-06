@@ -81,6 +81,7 @@ export default function LoggerSearch(props: any) {
   let start = Number((now - startTime) / 1000).toString();
   let end = Number(now / 1000).toString();
   const [stowCondition, setStowCondition] = useState<boolean>(false);
+  const [showMore, setShowMore] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
   const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>(); //手风琴下拉框数据 hits
   const [viewLogSearchTabInfo, setViewlogSeaechTabInfo] = useState<any>(); //手风琴展示数据
@@ -102,8 +103,6 @@ export default function LoggerSearch(props: any) {
   const [envOptions] = useEnvOptions(); //环境下拉框选项数据
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
-  const timmerRef = useRef<any>();
-  const frameRef = useRef<any>();
   var iframe = document.createElement('iframe');
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
@@ -210,6 +209,12 @@ export default function LoggerSearch(props: any) {
     }
     if (podNameInfo) {
       appCodeArry.push('podName:' + podNameInfo);
+    }
+    if (params?.traceId) {
+      appCodeArry.push('traceId:' + params?.traceId);
+    }
+    if (params?.level) {
+      appCodeArry.push('level:' + params?.level);
     }
     appCodeArry.push('envCode:' + envCode);
     setAppCodeValue(appCodeArry);
@@ -353,7 +358,7 @@ export default function LoggerSearch(props: any) {
                   <Form.Item name="rangeDate" noStyle>
                     <RangePicker
                       allowClear
-                      style={{ width: 200 }}
+                      style={{ width: 360 }}
                       onChange={(v: any, b: any) => selectTime(v, b)}
                       // onChange={()=>selectTime}
                       showTime={{
@@ -393,6 +398,16 @@ export default function LoggerSearch(props: any) {
                   <Form.Item label="message" name="message">
                     <Input style={{ width: 300 }} placeholder="单行输入" disabled={editConditionType}></Input>
                   </Form.Item>
+                  {showMore && (
+                    <>
+                      <Form.Item label="level" name="level">
+                        <Input style={{ width: 140 }} disabled={editConditionType}></Input>
+                      </Form.Item>
+                      <Form.Item label="traceId" name="traceId">
+                        <Input style={{ width: 400 }} disabled={editConditionType}></Input>
+                      </Form.Item>
+                    </>
+                  )}
 
                   <Form.Item>
                     <Button htmlType="submit" type="primary" onClick={submitEditScreen}>
@@ -402,10 +417,23 @@ export default function LoggerSearch(props: any) {
                   <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo}>
                     重置
                   </Button>
+                  <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>
+                    <a
+                      onClick={() => {
+                        if (showMore) {
+                          setShowMore(false);
+                        } else {
+                          setShowMore(true);
+                        }
+                      }}
+                    >
+                      {showMore ? '收起更多条件' : '更多查询条件...'}
+                    </a>
+                  </span>
 
                   <Button
                     type="primary"
-                    style={{ marginLeft: '8vw' }}
+                    style={{ marginLeft: '2vw' }}
                     onClick={() => {
                       subInfoForm.resetFields();
                       // setTurnOnButton(true)
