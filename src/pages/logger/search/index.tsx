@@ -391,20 +391,20 @@ export default function LoggerSearch(props: any) {
               <div>
                 <Form form={subInfoForm} layout="inline" labelCol={{ flex: 4 }}>
                   <Form.Item label="appCode" name="appCode">
-                    <Input style={{ width: 120 }} disabled={editConditionType}></Input>
+                    <Input style={{ width: 120 }}></Input>
                   </Form.Item>
                   <Form.Item label="podName" name="podName">
-                    <Input style={{ width: 140 }} disabled={editConditionType}></Input>
+                    <Input style={{ width: 140 }}></Input>
                   </Form.Item>
 
                   <Form.Item label="level" name="level">
-                    <Input style={{ width: 140 }} disabled={editConditionType}></Input>
+                    <Input style={{ width: 140 }}></Input>
                   </Form.Item>
                   <Form.Item label="traceId" name="traceId">
-                    <Input style={{ width: 400 }} placeholder="单行输入" disabled={editConditionType}></Input>
+                    <Input style={{ width: 400 }} placeholder="单行输入"></Input>
                   </Form.Item>
                   <Form.Item label="message" name="message">
-                    <Input style={{ width: 300 }} placeholder="单行输入" disabled={editConditionType}></Input>
+                    <Input style={{ width: 300 }} placeholder="单行输入"></Input>
                   </Form.Item>
 
                   <Form.Item>
@@ -433,20 +433,20 @@ export default function LoggerSearch(props: any) {
                     type="primary"
                     style={{ marginLeft: '2vw' }}
                     onClick={() => {
-                      subInfoForm.resetFields();
+                      // subInfoForm.resetFields();
                       // setTurnOnButton(true)
                       if (!editScreenVisible) {
                         setEditScreenVisible(true);
-                        setEditConditionType(true);
+                        // setEditConditionType(true);
                       } else {
                         setEditScreenVisible(false);
-                        setEditConditionType(false);
+                        // setEditConditionType(false);
                       }
 
-                      setQuerySql('');
-                      setMessageValue('');
-                      setPodName('');
-                      setAppCodeValue([]);
+                      // setQuerySql('');
+                      // setMessageValue('');
+                      // setPodName('');
+                      // setAppCodeValue([]);
                     }}
                   >
                     高级搜索
