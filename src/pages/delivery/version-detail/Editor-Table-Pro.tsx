@@ -1,11 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { history } from 'umi';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Select, Form } from 'antd';
+import { Button, Input, Space, Select, Form, Popconfirm } from 'antd';
 import { productionPageTypes } from './tab-config';
 import { PlusOutlined } from '@ant-design/icons';
-import { useQueryComponentOptions, useQueryComponentVersionOptions, useQueryVersionComponentList } from './hooks';
+import {
+  useQueryComponentOptions,
+  useQueryComponentVersionOptions,
+  useQueryVersionComponentList,
+  useDeleteVersionComponent,
+} from './hooks';
 import { ProFormField } from '@ant-design/pro-form';
 
 const waitTime = (time: number = 100) => {
@@ -60,7 +66,7 @@ const OptionList: React.FC<{
 };
 
 type DataSourceType = {
-  id: React.Key;
+  id: any;
   title?: string;
   labels?: {
     key: string;
@@ -99,6 +105,7 @@ export default (props: VersionDetailProps) => {
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
   const [loading, tableDataSource, pageInfo, setPageInfo, queryVersionComponentList] = useQueryVersionComponentList();
+  const [delLoading, deleteVersionComponent] = useDeleteVersionComponent();
   const actionRef = useRef<ActionType>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
@@ -169,19 +176,26 @@ export default (props: VersionDetailProps) => {
         <a
           //  key="editable"
           onClick={() => {
-            action?.startEditable?.(record.id);
+            history.push({
+              pathname: 'matrix/delivery/component-detail',
+              state: {
+                activeKey: 'component-config',
+              },
+            });
           }}
         >
           配置
         </a>,
-        <a
-          key="delete"
-          onClick={() => {
-            setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+        <Popconfirm
+          title="确定要删除吗？"
+          onConfirm={() => {
+            deleteVersionComponent(record.id).then(() => {
+              setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+            });
           }}
         >
-          删除
-        </a>,
+          <a key="delete">删除</a>
+        </Popconfirm>,
       ],
     },
   ];

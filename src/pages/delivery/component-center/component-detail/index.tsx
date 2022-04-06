@@ -32,7 +32,7 @@ export default function ComponentDetail() {
           </div>
         </div>
         <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
-          <TabPane tab="组件信息" key="1">
+          <TabPane tab="组件信息" key="component-info">
             <div>
               <Descriptions title="基本信息" column={2} extra={<Button type="primary">编辑</Button>}>
                 <Descriptions.Item label="组件名称">Zhou Maomao</Descriptions.Item>
@@ -51,7 +51,7 @@ export default function ComponentDetail() {
               </div>
             </div>
           </TabPane>
-          <TabPane tab="组件配置" key="2">
+          <TabPane tab="组件配置" key="component-config">
             <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 2 }}>
               <p>
                 <Button type="primary">编辑</Button>
