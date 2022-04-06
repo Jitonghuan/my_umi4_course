@@ -9,14 +9,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';
 import { listAppEnv } from '@/pages/application/service';
-import { getRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
+import { getMasterBranch } from '@/pages/application/service';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
@@ -50,6 +51,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
 
   type reviewStatusTypeItem = {
     color: string;
@@ -122,6 +124,28 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     });
   }, [appCategoryCode, env]);
 
+  useEffect(() => {
+    getMasterBranchOption();
+  }, []);
+
+  // 获取主干分支下拉框数据
+  const getMasterBranchOption = () => {
+    try {
+      postRequest(getMasterBranch).then((result) => {
+        if (result.success) {
+          let dataSource = result.data;
+          let dataArry: any = [];
+          // dataSource?.map((item: any) => {
+          //   dataArry.push({ label: item?.projectName, value: item?.projectId });
+          // });
+          setMasterBranchOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   const branchNameRender = (branchName: string, record: any) => {
     return (
       <div>
@@ -137,6 +161,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       <div className="table-caption">
         <div className="caption-left">
           <h4>分支列表&nbsp;&nbsp;</h4>
+          <Select options={masterBranchOptions}></Select>
           <Input.Search
             placeholder="搜索分支"
             value={searchText}

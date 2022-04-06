@@ -140,98 +140,101 @@ export default function BranchManage() {
     }
   };
 
-  const columns: any = (type: any) =>
-    [
-      {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'name',
-        width: 80,
-      },
-      {
-        title: '分支名',
-        dataIndex: 'branchName',
-        key: 'branchName',
-        ellipsis: true,
-        width: 400,
-      },
-      {
-        title: '描述',
-        dataIndex: 'desc',
-        key: 'desc',
-        ellipsis: true,
-        render: (value: any) => (
-          <Tooltip placement="topLeft" title={value}>
-            {value}
-          </Tooltip>
-        ),
-      },
-      {
-        title: 'reviewID',
-        dataIndex: 'reviewId',
-        key: 'reviewId',
-        width: 100,
-        ellipsis: true,
-      },
-      {
-        title: '主干分支',
-        dataIndex: 'masterBranch',
-        key: 'masterBranch',
-        width: 100,
-        ellipsis: true,
-      },
-      {
-        title: '关联流水线',
-        dataIndex: 'relationPipeline',
-        key: 'relationPipeline',
-        width: 100,
-      },
-      {
-        title: '已部署环境',
-        dataIndex: 'deployedEnv',
-        key: 'deployedEnv',
-        width: 120,
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'gmtCreate',
-        key: 'gmtCreate',
-        width: 160,
-        ellipsis: true,
-        render: (value: any) => (
-          <Tooltip placement="topLeft" title={value}>
-            {value}
-          </Tooltip>
-        ),
-      },
-      {
-        title: '创建人',
-        dataIndex: 'createUser',
-        key: 'createUser',
-        width: 100,
-      },
-      {
-        title: '操作',
-        dataIndex: 'desc',
-        key: 'desc',
-        fixed: 'right',
-        width: type !== 'master' ? 200 : 100,
-        render: (_: any, record: any) => (
-          <div className="action-cell">
-            {type !== 'master' && (
-              <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
-                创建Review
-              </Button>
-            )}
-            <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
-              <Button type="primary" danger size="small">
-                作废
-              </Button>
-            </Popconfirm>
-          </div>
-        ),
-      },
-    ].filter((e) => type !== 'master' || e.key !== 'masterBranch');
+  const columns: any = (type: any) => [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'name',
+      width: 80,
+    },
+    {
+      title: '分支名',
+      dataIndex: 'branchName',
+      key: 'branchName',
+      ellipsis: true,
+      width: 400,
+    },
+    {
+      title: '描述',
+      dataIndex: 'desc',
+      key: 'desc',
+      ellipsis: true,
+      render: (value: any) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'reviewID',
+      dataIndex: 'reviewId',
+      key: 'reviewId',
+      width: 100,
+      ellipsis: true,
+    },
+    ...(type !== 'master'
+      ? [
+          {
+            title: '主干分支',
+            dataIndex: 'masterBranch',
+            key: 'masterBranch',
+            width: 100,
+            ellipsis: true,
+          },
+        ]
+      : []),
+    {
+      title: '关联流水线',
+      dataIndex: 'relationPipeline',
+      key: 'relationPipeline',
+      width: 100,
+    },
+    {
+      title: '已部署环境',
+      dataIndex: 'deployedEnv',
+      key: 'deployedEnv',
+      width: 120,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'gmtCreate',
+      key: 'gmtCreate',
+      width: 160,
+      ellipsis: true,
+      render: (value: any) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '创建人',
+      dataIndex: 'createUser',
+      key: 'createUser',
+      width: 100,
+    },
+    {
+      title: '操作',
+      dataIndex: 'desc',
+      key: 'desc',
+      fixed: 'right',
+      width: type !== 'master' ? 200 : 100,
+      render: (_: any, record: any) => (
+        <div className="action-cell">
+          {type !== 'master' && (
+            <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
+              创建Review
+            </Button>
+          )}
+          <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
+            <Button type="primary" danger size="small">
+              作废
+            </Button>
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ];
   return (
     <ContentCard className="branch-manage-page" style={{ height: '100%' }}>
       {/* 主干分支列表部分 */}

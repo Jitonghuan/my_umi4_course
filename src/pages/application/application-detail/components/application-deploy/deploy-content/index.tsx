@@ -25,12 +25,14 @@ export interface DeployContentProps {
   isActive?: boolean;
   /** 环境参数 */
   envTypeCode: string;
+  /** 流水线 */
+  pipeLine: string;
   /** 部署下个环境成功回调 */
   onDeployNextEnvSuccess: () => void;
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, isActive, onDeployNextEnvSuccess } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipeLine } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -117,9 +119,8 @@ export default function DeployContent(props: DeployContentProps) {
   // appCode变化时
   useEffect(() => {
     if (!appCode || !isActive) return;
-
     timerHandle('do', true);
-  }, [appCode, isActive]);
+  }, [appCode, isActive, pipeLine]);
 
   const onSpin = () => {
     setLoading(true);

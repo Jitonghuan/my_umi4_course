@@ -42,11 +42,13 @@ export default function ApplicationDeploy(props: any) {
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [currentValue, setCurrentValue] = useState('');
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
-  const [pipeline, setPipeline] = useState<any>([]); //流水线
-  const dataSource: any = [
+  const [datasource, setDatasource] = useState<any>([]); //流水线
+  const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
+  const dataSourceTemp: any = [
     { id: 1, pipeLine: '流水线1' },
     { id: 2, pipeLine: '流水线2' },
   ];
+  // setDatasource(dataSourceTemp)
 
   let env = window.location.href.includes('zslnyy')
     ? 'prod'
@@ -66,7 +68,7 @@ export default function ApplicationDeploy(props: any) {
     return <SecondPartyPkg {...props} />;
   }
   useEffect(() => {
-    getPipeline();
+    getPipeline(tabActive);
     queryData();
   }, []);
   const queryData = () => {
@@ -92,22 +94,15 @@ export default function ApplicationDeploy(props: any) {
       next.sort((a: any, b: any) => {
         return a.sortType - b.sortType;
       }); //升序
+      let pipelineObj: any = {};
+      next.forEach((e: any) => {
+        if (e.typeCode) {
+          pipelineObj[e.typeCode] = '';
+        }
+      });
+      sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
       setEnvTypeData(next);
     });
-  };
-
-  const handleTabChange = (v: string) => {
-    setTabActive(v);
-    setCurrentValue(getCurrentValue(v));
-  };
-
-  const getCurrentValue = (env: string) => {
-    let res = '';
-    let data: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
-    if (data[env]) {
-      res = data[env];
-    }
-    return res;
   };
 
   // 流水线下拉框发生改变
@@ -117,30 +112,38 @@ export default function ApplicationDeploy(props: any) {
     sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...data, [tabActive]: value }));
   };
 
+  // tab页切换
+  const handleTabChange = (v: string) => {
+    setTabActive(v);
+    getPipeline(v);
+  };
+
   // 获取流水线
-  const getPipeline = () => {
+  const getPipeline = (v: string) => {
     // getRequest(getPipelineUrl, {
-    //   data: { appCode: appData?.appCode, env: tabActive },
+    //   data: { appCode: appData?.appCode, env: v },
     // }).then((res) => {
     //   if (res?.success) {
-    //     setPipeline(res.data.dataSource);
+    //     let data = res.data.dataSource;
+    //     setDatasource(data);
+    //     const pipelineSelectData=data.map(()=>{})
     //   }
     // });
-    setPipeline(temp);
-    handleData(temp);
+    setPipelineOption(temp[v]);
+    handleData(temp[v], v);
   };
 
   // 处理数据
-  const handleData = (data: any) => {
-    let pipelineObj: any = {};
-    const envList = Object.keys(data);
-    envList.forEach((env: any) => {
-      Object.assign(pipelineObj, {
-        [env]: temp[env][0]['value'] || '',
-      });
-    });
-    sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
-    setCurrentValue(pipelineObj[tabActive]);
+  const handleData = (data: any, v: string) => {
+    let storageData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
+    // 需要考虑到选择的流水线被删除了的情况
+    if (storageData[v]) {
+      setCurrentValue(storageData[v]);
+    } else {
+      setCurrentValue(data[0]);
+      let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
+      sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [v]: data[0].value }));
+    }
   };
 
   return (
@@ -150,7 +153,7 @@ export default function ApplicationDeploy(props: any) {
         handleCancel={() => {
           setVisible(false);
         }}
-        dataSource={dataSource}
+        dataSource={dataSourceTemp}
         onSave={getPipeline}
       />
 
@@ -168,7 +171,7 @@ export default function ApplicationDeploy(props: any) {
               style={{ width: 120 }}
               size="small"
               onChange={handleChange}
-              options={pipeline[tabActive]}
+              options={pipelineOption}
             ></Select>
             <SettingOutlined
               style={{ marginLeft: '10px' }}
@@ -184,6 +187,7 @@ export default function ApplicationDeploy(props: any) {
             <DeployContent
               isActive={item.value === tabActive}
               envTypeCode={item.value}
+              pipeLine={currentValue}
               onDeployNextEnvSuccess={() => {
                 const i = envTypeData.findIndex((item) => item.value === tabActive);
                 setTabActive(envTypeData[i + 1]?.value);
