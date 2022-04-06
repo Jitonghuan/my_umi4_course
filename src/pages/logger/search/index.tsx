@@ -14,6 +14,7 @@ import {
   Skeleton,
   Divider,
   Tabs,
+  Row,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
@@ -81,7 +82,7 @@ export default function LoggerSearch(props: any) {
   let start = Number((now - startTime) / 1000).toString();
   let end = Number(now / 1000).toString();
   const [stowCondition, setStowCondition] = useState<boolean>(false);
-  const [showMore, setShowMore] = useState<boolean>(false);
+  // const [showMore, setShowMore] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
   const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>(); //手风琴下拉框数据 hits
   const [viewLogSearchTabInfo, setViewlogSeaechTabInfo] = useState<any>(); //手风琴展示数据
@@ -395,19 +396,16 @@ export default function LoggerSearch(props: any) {
                   <Form.Item label="podName" name="podName">
                     <Input style={{ width: 140 }} disabled={editConditionType}></Input>
                   </Form.Item>
+
+                  <Form.Item label="level" name="level">
+                    <Input style={{ width: 140 }} disabled={editConditionType}></Input>
+                  </Form.Item>
+                  <Form.Item label="traceId" name="traceId">
+                    <Input style={{ width: 400 }} placeholder="单行输入" disabled={editConditionType}></Input>
+                  </Form.Item>
                   <Form.Item label="message" name="message">
                     <Input style={{ width: 300 }} placeholder="单行输入" disabled={editConditionType}></Input>
                   </Form.Item>
-                  {showMore && (
-                    <>
-                      <Form.Item label="level" name="level">
-                        <Input style={{ width: 140 }} disabled={editConditionType}></Input>
-                      </Form.Item>
-                      <Form.Item label="traceId" name="traceId">
-                        <Input style={{ width: 400 }} disabled={editConditionType}></Input>
-                      </Form.Item>
-                    </>
-                  )}
 
                   <Form.Item>
                     <Button htmlType="submit" type="primary" onClick={submitEditScreen}>
@@ -417,7 +415,7 @@ export default function LoggerSearch(props: any) {
                   <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo}>
                     重置
                   </Button>
-                  <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>
+                  {/* <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>
                     <a
                       onClick={() => {
                         if (showMore) {
@@ -429,7 +427,7 @@ export default function LoggerSearch(props: any) {
                     >
                       {showMore ? '收起更多条件' : '更多查询条件...'}
                     </a>
-                  </span>
+                  </span> */}
 
                   <Button
                     type="primary"
