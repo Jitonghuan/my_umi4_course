@@ -434,7 +434,6 @@ export default function LoggerSearch(props: any) {
                     style={{ marginLeft: '2vw' }}
                     onClick={() => {
                       // subInfoForm.resetFields();
-                      // setTurnOnButton(true)
                       if (!editScreenVisible) {
                         setEditScreenVisible(true);
                         // setEditConditionType(true);
