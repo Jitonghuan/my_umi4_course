@@ -509,12 +509,12 @@ export default function LoggerSearch(props: any) {
                                 style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
                                 header={
                                   <div style={{ display: 'flex', maxHeight: 138, overflow: 'hidden' }}>
-                                    <div style={{ width: '20%', color: '#6495ED' }}>
+                                    <div style={{ width: '14%', color: '#6495ED' }}>
                                       {moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss')}
                                     </div>
                                     {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
                                     <div
-                                      style={{ width: '80%' }}
+                                      style={{ width: '86%', fontSize: 10 }}
                                       dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
                                     >
                                       {/* {ansi_up.ansi_to_html(JSON.stringify(item?._source))} */}
