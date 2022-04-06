@@ -34,7 +34,7 @@ export default function VersionDetail() {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="version-detail">
       <ContentCard>
         <div className="version-detail-back">
           <Button
@@ -58,7 +58,7 @@ export default function VersionDetail() {
           <Tabs tabPosition="left">
             <TabPane tab="基本信息" key="1">
               <div>
-                <Descriptions title="基本信息" column={2}>
+                <Descriptions title="基本信息" column={2} className="basic-info-description">
                   <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
                   <Descriptions.Item label="产品版本">{descriptionInfoData.versionName}</Descriptions.Item>
                   <Descriptions.Item label="版本描述">

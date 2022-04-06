@@ -15,7 +15,7 @@ import {
   useQueryProductList,
   usePublishProductVersion,
 } from './hooks';
-import versionManageList from 'mock/versionManageList';
+import './index.less';
 
 export interface Item {
   id: number;
@@ -159,7 +159,7 @@ export default function deliveryDescription() {
     <PageContainer>
       <ContentCard>
         <div>
-          <Descriptions title="基本信息" column={2}>
+          <Descriptions title="基本信息" column={2} className="basic-info-description">
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
               <Paragraph
