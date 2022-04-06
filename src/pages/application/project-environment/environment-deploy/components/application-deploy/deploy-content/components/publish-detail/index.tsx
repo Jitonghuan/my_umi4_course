@@ -252,7 +252,7 @@ export default function PublishDetail(props: IProps) {
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {deployInfo?.releaseBranch ? <Paragraph copyable>{deployInfo?.releaseBranch}</Paragraph> : '---'}
+            {deployInfo?.version ? <Paragraph copyable>{deployInfo?.version}</Paragraph> : '---'}
             {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
