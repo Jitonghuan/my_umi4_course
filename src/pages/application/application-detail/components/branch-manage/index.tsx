@@ -283,7 +283,7 @@ export default function BranchManage() {
           }}
           pagination={{
             total: masterPage.total,
-            pageSize: masterPage.pageSize,
+            pageSize: masterPage.size,
             current: masterPage.pageIndex,
             showSizeChanger: true,
             onShowSizeChange: (_, size) => {
@@ -338,7 +338,7 @@ export default function BranchManage() {
           columns={columns('dev')}
           pagination={{
             total: page.total,
-            pageSize: page.pageSize,
+            pageSize: page.size,
             current: page.pageIndex,
             showSizeChanger: true,
             onShowSizeChange: (_, size) => {
