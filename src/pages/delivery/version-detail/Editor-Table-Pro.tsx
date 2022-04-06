@@ -139,7 +139,7 @@ export default (props: VersionDetailProps) => {
         ],
       },
       valueEnum: {
-        all: { text: '全部' },
+        1.0: { text: '版本1.0' },
         open: {
           text: '未解决',
         },
