@@ -420,7 +420,7 @@ export default function LoggerSearch(props: any) {
 
                   <p>
                     <Form.Item label="message" name="message">
-                      <Input style={{ width: '26vw' }} placeholder="单行输入"></Input>
+                      <Input style={{ width: '26vw' }} placeholder="仅支持精准匹配"></Input>
                     </Form.Item>
                   </p>
 
