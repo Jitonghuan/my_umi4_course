@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
@@ -100,17 +100,23 @@ const defaultData: DataSourceType[] = [
 
 export interface VersionDetailProps {
   currentTab: string;
+  versionId: any;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, initDataSource } = props;
+  const { currentTab, versionId, initDataSource } = props;
   const actionRef = useRef<ActionType>();
-  const [] = useQueryOriginList();
+  const [loading, originOptions, queryOriginList] = useQueryOriginList();
+  const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryDeliveryParamList] = useQueryDeliveryParamList();
   const [] = useDeleteDeliveryParam();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
+  useEffect(() => {
+    queryOriginList(versionId);
+  }, []);
+  useEffect(() => {}, []);
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '参数来源组件',

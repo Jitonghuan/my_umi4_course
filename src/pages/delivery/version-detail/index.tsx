@@ -90,7 +90,7 @@ export default function VersionDetail() {
                   <TabPane tab={item.label} key={index}>
                     {item.value === 'globalParameters' && (
                       <div>
-                        <GlobalParamsEditorTable currentTab={item.value} />
+                        <GlobalParamsEditorTable currentTab={item.value} versionId={descriptionInfoData.versionId} />
                       </div>
                     )}
                     {item.value === 'componentParameters' && (
