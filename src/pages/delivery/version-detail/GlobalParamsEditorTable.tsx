@@ -5,6 +5,7 @@ import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Space, Tag, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProFormField } from '@ant-design/pro-form';
+import { useQueryOriginList, useQueryDeliveryParamList, useSaveParam, useDeleteDeliveryParam } from './hooks';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -105,6 +106,8 @@ export interface VersionDetailProps {
 export default (props: VersionDetailProps) => {
   const { currentTab, initDataSource } = props;
   const actionRef = useRef<ActionType>();
+  const [] = useQueryOriginList();
+  const [] = useDeleteDeliveryParam();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
