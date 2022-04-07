@@ -30,6 +30,18 @@ import './index.less';
 // 时间枚举
 export const START_TIME_ENUMS = [
   {
+    label: 'Last 1 minutes',
+    value: 1 * 60 * 1000,
+  },
+  {
+    label: 'Last 5 minutes',
+    value: 5 * 60 * 1000,
+  },
+  {
+    label: 'Last 10 minutes',
+    value: 10 * 60 * 1000,
+  },
+  {
     label: 'Last 15 minutes',
     value: 15 * 60 * 1000,
   },
@@ -76,7 +88,7 @@ export default function LoggerSearch(props: any) {
   const [subInfoForm] = Form.useForm();
   const [rangePickerForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(15 * 60 * 1000);
+  const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const now = new Date().getTime();
   //默认传最近30分钟，处理为秒级的时间戳
   let start = Number((now - startTime) / 1000).toString();
@@ -390,22 +402,27 @@ export default function LoggerSearch(props: any) {
             <div style={{ marginBottom: 10, width: '100%' }}>
               <div>
                 <Form form={subInfoForm} layout="inline" labelCol={{ flex: 4 }}>
-                  <Form.Item label="appCode" name="appCode">
-                    <Input style={{ width: 120 }}></Input>
-                  </Form.Item>
-                  <Form.Item label="podName" name="podName">
-                    <Input style={{ width: 140 }}></Input>
-                  </Form.Item>
+                  <p style={{ display: 'flex', width: '100%', marginBottom: 0 }}>
+                    <Form.Item label="appCode" name="appCode">
+                      <Input style={{ width: '11vw' }}></Input>
+                    </Form.Item>
+                    <Form.Item label="podName" name="podName">
+                      <Input style={{ width: '14vw' }}></Input>
+                    </Form.Item>
 
-                  <Form.Item label="level" name="level">
-                    <Input style={{ width: 140 }}></Input>
-                  </Form.Item>
-                  <Form.Item label="traceId" name="traceId">
-                    <Input style={{ width: 400 }} placeholder="单行输入"></Input>
-                  </Form.Item>
-                  <Form.Item label="message" name="message">
-                    <Input style={{ width: 300 }} placeholder="单行输入"></Input>
-                  </Form.Item>
+                    {/* <Form.Item label="level" name="level">
+                    <Input style={{ width: '11vw' }}></Input>
+                  </Form.Item> */}
+                    <Form.Item label="traceId" name="traceId">
+                      <Input style={{ width: '36vw' }} placeholder="单行输入"></Input>
+                    </Form.Item>
+                  </p>
+
+                  <p>
+                    <Form.Item label="message" name="message">
+                      <Input style={{ width: '26vw' }} placeholder="单行输入"></Input>
+                    </Form.Item>
+                  </p>
 
                   <Form.Item>
                     <Button htmlType="submit" type="primary" onClick={submitEditScreen}>
@@ -539,10 +556,13 @@ export default function LoggerSearch(props: any) {
                                     </div>
                                     {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
                                     <div
-                                      style={{ width: '86%', fontSize: 10 }}
-                                      dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+                                      style={{ width: '86%', fontSize: 10, whiteSpace: 'pre-line' }}
+                                      dangerouslySetInnerHTML={{ __html: `<code>${JSON.stringify(item)}</code>` }}
+                                      className="detailInfo"
                                     >
                                       {/* {ansi_up.ansi_to_html(JSON.stringify(item?._source))} */}
+                                      {/*                                       
+                                        <code>{JSON.stringify(item)}</code> */}
                                     </div>
                                   </div>
                                 }
