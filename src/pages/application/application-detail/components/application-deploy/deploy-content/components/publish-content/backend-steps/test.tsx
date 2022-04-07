@@ -42,6 +42,7 @@ export default function TestEnvSteps({
   onSpin,
   stopSpin,
   deployedList,
+  isFrontend,
 }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
 
@@ -53,6 +54,7 @@ export default function TestEnvSteps({
     onSpin,
     stopSpin,
     deployedList,
+    isFrontend,
   };
   const envList = envs ? envs.split(',') : [];
 

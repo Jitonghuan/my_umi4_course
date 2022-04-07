@@ -37,6 +37,7 @@ export default function DevEnvSteps({
   getItemByKey,
   onSpin,
   deployedList,
+  isFrontend,
   stopSpin,
 }: StepsProps) {
   const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
@@ -48,6 +49,7 @@ export default function DevEnvSteps({
     envTypeCode: 'dev',
     onSpin,
     stopSpin,
+    isFrontend,
     deployedList,
   };
   const envList = envs ? envs.split(',') : [];

@@ -8,17 +8,17 @@ import { Steps, Button, Modal } from 'antd';
 import { retryDeploy } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import DeployModal from './deploy-modal';
+import { history, Link } from 'umi';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, isFrontend, ...others } = props;
   const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
-
+  const { id, appCode } = history.location.query || {};
   const isLoading =
     deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
   const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
   // || deployStatus === 'deployAborted';
-
   const [deployVisible, setDeployVisible] = useState(false);
 
   const handleShowErrorDetail = () => {
@@ -74,6 +74,29 @@ export default function DeployingStep(props: StepItemProps) {
                   <a target="_blank" href={jenkinsUrl}>
                     部署详情
                   </a>
+                </div>
+              )}
+              {isLoading && envCode && envTypeCode !== 'prod' && !isFrontend && (
+                <div style={{ marginTop: 2 }}>
+                  <Button
+                    size="small"
+                    type="link"
+                    onClick={() => {
+                      localStorage.setItem('__init_env_tab__', envTypeCode);
+                      history.replace({
+                        pathname: `deployInfo`,
+                        query: {
+                          viewLogEnv: envCode || '',
+                          viewLogEnvType: envTypeCode,
+                          type: 'viewLog_goBack',
+                          id: `${id}`,
+                          appCode: appCode,
+                        },
+                      });
+                    }}
+                  >
+                    查看部署信息
+                  </Button>
                 </div>
               )}
 
