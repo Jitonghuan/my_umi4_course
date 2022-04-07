@@ -161,7 +161,7 @@ export default function Push(props: any) {
     selectCategory();
     getLabelList();
     let param = localStorage.getItem('TEMPLATE_PUSH_SEARCH')
-      ? JSON.parse(localStorage.getItem('TEMPLATE_PUSH_SEARCH'))
+      ? JSON.parse(localStorage.getItem('TEMPLATE_PUSH_SEARCH') || '')
       : '';
     formTmplQuery.setFieldsValue({
       appCategoryCode: param.appCategoryCode,
@@ -203,7 +203,7 @@ export default function Push(props: any) {
     });
 
     getRequest(APIS.envList, {
-      data: { categoryCode: appCategoryCode },
+      data: { categoryCode: appCategoryCode, pageIndex: -1, pageSize: -1 },
     }).then((resp: any) => {
       if (resp.success) {
         const datas =
