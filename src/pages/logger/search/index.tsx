@@ -539,10 +539,13 @@ export default function LoggerSearch(props: any) {
                                     </div>
                                     {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
                                     <div
-                                      style={{ width: '86%', fontSize: 10 }}
-                                      dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+                                      style={{ width: '86%', fontSize: 10, whiteSpace: 'pre-line' }}
+                                      dangerouslySetInnerHTML={{ __html: `<code>${JSON.stringify(item)}</code>` }}
+                                      className="detailInfo"
                                     >
                                       {/* {ansi_up.ansi_to_html(JSON.stringify(item?._source))} */}
+                                      {/*                                       
+                                        <code>{JSON.stringify(item)}</code> */}
                                     </div>
                                   </div>
                                 }
