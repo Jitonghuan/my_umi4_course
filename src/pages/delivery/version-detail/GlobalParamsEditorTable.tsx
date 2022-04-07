@@ -182,14 +182,14 @@ export default (props: VersionDetailProps) => {
       valueType: 'option',
       width: 250,
       render: (text, record, _, action) => [
-        <a
-          key="editable"
-          onClick={() => {
-            action?.startEditable?.(record.id);
-          }}
-        >
-          编辑
-        </a>,
+        // <a
+        //   key="editable"
+        //   onClick={() => {
+        //     action?.startEditable?.(record.id);
+        //   }}
+        // >
+        //   编辑
+        // </a>,
         <a
           //  key="editable"
           onClick={() => {

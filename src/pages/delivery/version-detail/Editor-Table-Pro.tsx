@@ -11,6 +11,7 @@ import {
   useQueryComponentVersionOptions,
   useQueryVersionComponentList,
   useDeleteVersionComponent,
+  useAddCompontent,
 } from './hooks';
 import { ProFormField } from '@ant-design/pro-form';
 
@@ -102,6 +103,8 @@ export interface VersionDetailProps {
 
 export default (props: VersionDetailProps) => {
   const { currentTab, versionId, initDataSource } = props;
+  const [searchForm] = Form.useForm();
+  const [addLoading, addComponent] = useAddCompontent();
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
   const [loading, tableDataSource, pageInfo, setPageInfo, queryVersionComponentList] = useQueryVersionComponentList();
@@ -165,21 +168,22 @@ export default (props: VersionDetailProps) => {
       valueType: 'option',
       width: 250,
       render: (text, record, _, action) => [
-        <a
-          key="editable"
-          onClick={() => {
-            action?.startEditable?.(record.id);
-          }}
-        >
-          编辑
-        </a>,
+        // <a
+        //   key="editable"
+        //   onClick={() => {
+        //     action?.startEditable?.(record.id);
+        //   }}
+        // >
+        //   编辑
+        // </a>,
         <a
           //  key="editable"
           onClick={() => {
             history.push({
-              pathname: 'matrix/delivery/component-detail',
+              pathname: '/matrix/delivery/component-detail',
               state: {
                 activeKey: 'component-config',
+                componentId: record.id,
               },
             });
           }}
@@ -199,16 +203,23 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
+  const search = () => {};
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
-          <Form layout="inline">
-            <Form.Item>
+          <Form layout="inline" form={searchForm}>
+            <Form.Item name="componentName">
               <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
             </Form.Item>
             <Form.Item>
-              <Button>搜索</Button>
+              <Button
+                onClick={() => {
+                  search();
+                }}
+              >
+                搜索
+              </Button>
             </Form.Item>
           </Form>
         </div>
@@ -270,6 +281,7 @@ export default (props: VersionDetailProps) => {
           form,
           editableKeys,
           onSave: async () => {
+            // addComponent(versionId,initDataSource,)
             await waitTime(800);
           },
           onChange: setEditableRowKeys,
