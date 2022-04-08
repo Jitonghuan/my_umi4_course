@@ -96,12 +96,15 @@ export default function Launch() {
       if (resp.success) {
         const datas =
           resp?.data?.dataSource?.map((el: any) => {
-            return {
-              ...el,
-              value: el?.envCode,
-              label: el?.envName,
-            };
+            if (el.clusterName !== 'fe') {
+              return {
+                ...el,
+                value: el?.envCode,
+                label: el?.envName,
+              };
+            }
           }) || [];
+        // console.log('datas',datas)
         setEnvDatas(datas);
       }
     });
