@@ -281,9 +281,9 @@ export default function ConfigContent({ env, configType }: IProps) {
         }}
         onFinish={editVersion}
       >
-        <div style={{ width: '96%' }}>
+        <div className="content-ace-editor">
           <Form.Item name="configYaml" rules={[{ required: true, message: '这是必填项' }]}>
-            <AceEditor mode="yaml" height={400} />
+            <AceEditor mode="yaml" height={'100%'} />
           </Form.Item>
         </div>
         <div style={{ marginTop: '14px', marginRight: '4%', float: 'right' }}>
