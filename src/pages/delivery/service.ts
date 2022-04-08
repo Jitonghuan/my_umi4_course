@@ -59,6 +59,9 @@ export const addMiddleware = addAPIPrefix('/deliveryManage/component/middleware/
 
 /*POST 基础数据接入 */
 export const addBasicdata = addAPIPrefix('/deliveryManage/component/basicdata/add');
+/* POST 上传平台组件chart包 */
+
+export const uploadChart = addAPIPrefix('/deliveryManage/component/chart/upload');
 
 /* POST 上传基础数据sql文件 */
 

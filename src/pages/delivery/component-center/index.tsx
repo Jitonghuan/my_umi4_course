@@ -44,8 +44,18 @@ export default function VersionDetail() {
             setUserModalVisiable(false);
           }}
         />
-        <BasicDataModal visable={basicDataModalVisiable} />
-        <MiddlewareModal visable={middlewareModalVisibale} />
+        <BasicDataModal
+          visable={basicDataModalVisiable}
+          onClose={() => {
+            setBasicDataModalVisiable(false);
+          }}
+        />
+        <MiddlewareModal
+          visable={middlewareModalVisibale}
+          onClose={() => {
+            setMiddlewareModalVisibale(false);
+          }}
+        />
 
         <>
           <FilterCard className="layout-compact">

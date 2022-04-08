@@ -1,15 +1,17 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useAddBasicdata } from '../hook';
 export interface DetailProps {
   visable?: boolean;
   initData?: any;
-  onClose?: () => any;
+  onClose: () => any;
   onSave?: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
   const { visable, initData, onClose, onSave } = props;
+  const [loading, addBasicdata] = useAddBasicdata();
 
   const [form] = Form.useForm();
   const normFile = (e: any) => {
@@ -44,14 +46,32 @@ export default function BasicModal(props: DetailProps) {
       format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
     },
   };
+  const handleSubmit = () => {
+    const params = form.getFieldsValue();
+    addBasicdata({ ...params });
+  };
+
   return (
     <Modal
       title="平台组件接入"
       visible={visable}
-      // onCancel={handleCancel}
+      onCancel={() => {
+        onClose();
+      }}
       // closable={!loading}
       width={580}
-      footer={[<Button type="primary">确认</Button>, <Button>取消</Button>]}
+      footer={[
+        <Button type="primary" onClick={handleSubmit}>
+          确认
+        </Button>,
+        <Button
+          onClick={() => {
+            onClose();
+          }}
+        >
+          取消
+        </Button>,
+      ]}
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
         <Form.Item label="名称" name="envCode" rules={[{ required: true, message: '请选择应用类型' }]}>
