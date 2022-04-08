@@ -119,18 +119,20 @@ export default (props: VersionDetailProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
+  console.log('originOptions', originOptions);
   useEffect(() => {
     //获取参数来源组件
     queryOriginList(versionId);
   }, []);
   useEffect(() => {
     //查询交付配置参数
-    queryDeliveryParamList(versionId, 'nacos');
-  }, [currentTab]);
+    queryDeliveryParamList(versionId);
+  }, []);
   useEffect(() => {
     //获取组件参数及参数值
     queryParamList(versionId); //componentName
-  }, []);
+  }, [currentTab]);
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '参数来源组件',
@@ -214,18 +216,22 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
+  const handleSearch = () => {
+    const param = searchForm.getFieldsValue();
+    queryDeliveryParamList(versionId, 'global', param);
+  };
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
-          {/* <Form layout="inline">
+          <Form layout="inline" form={searchForm}>
             <Form.Item>
               <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
             </Form.Item>
             <Form.Item>
-              <Button>搜索</Button>
+              <Button onClick={handleSearch}>搜索</Button>
             </Form.Item>
-          </Form> */}
+          </Form>
         </div>
         <div className="caption-right">
           <Button

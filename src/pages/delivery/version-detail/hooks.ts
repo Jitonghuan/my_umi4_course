@@ -284,7 +284,7 @@ export function useEditComponent(): [boolean, (id: number) => Promise<void>] {
 // 获取参数来源组件
 export function useQueryOriginList() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [dataSource, setDataSource] = useState<any>([]);
+  const [dataSource, setDataSource] = useState<any>({});
   const queryOriginList = async (versionId: number) => {
     setLoading(true);
     await getRequest(APIS.queryOriginList, { data: { versionId } })
@@ -294,11 +294,12 @@ export function useQueryOriginList() {
           let options: any = {};
           dataSource ||
             [].map((item: any) => {
-              options[item.component_version] = {
-                text: item.component_version,
+              options[item.componentName] = {
+                text: item.componentName,
               };
             });
           setDataSource(options);
+          console.log('options', options, dataSource);
         } else {
           return;
         }
@@ -335,6 +336,7 @@ export function useQueryParamList() {
 //查询交付配置参数
 export function useQueryDeliveryParamList(): [
   boolean,
+  any,
   any,
   any,
   any,
@@ -379,7 +381,57 @@ export function useQueryDeliveryParamList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, pageInfo, setPageInfo, queryDeliveryParamList];
+  return [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList];
+}
+//查询交付配置参数
+export function useQueryDeliveryGloableParamList(): [
+  boolean,
+  any,
+  any,
+  any,
+  any,
+  (versionId: number, configParamComponent?: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
+] {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
+  const queryDeliveryParamList = async (
+    versionId: number,
+    configParamComponent?: string,
+    pageIndex?: number,
+    pageSize?: number,
+  ) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryDeliveryParamList, {
+        data: { versionId, configParamComponent, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+      })
+        .then((res) => {
+          if (res.success) {
+            let dataSource = res.data.dataSource;
+            let pageInfo = res.data.pageInfo;
+            setDataSource(dataSource);
+            setPageInfo({
+              pageIndex: pageInfo.pageIndex,
+              pageSize: pageInfo.pageSize,
+              total: pageInfo.total,
+            });
+          } else {
+            return {};
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList];
 }
 
 //保存交付配置参数

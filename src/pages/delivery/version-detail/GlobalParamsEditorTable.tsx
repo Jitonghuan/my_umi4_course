@@ -107,11 +107,13 @@ export interface VersionDetailProps {
 export default (props: VersionDetailProps) => {
   const { currentTab, versionId, initDataSource } = props;
   const actionRef = useRef<ActionType>();
-  const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryDeliveryParamList] = useQueryDeliveryParamList();
-  const [] = useDeleteDeliveryParam();
+  const [tableLoading, tableDataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList] =
+    useQueryDeliveryParamList();
+  const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-  const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+  // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
   useEffect(() => {
     //查询交付配置参数
     queryDeliveryParamList(versionId);
@@ -175,7 +177,7 @@ export default (props: VersionDetailProps) => {
         <a
           key="delete"
           onClick={() => {
-            setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+            setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
           }}
         >
           删除
@@ -183,18 +185,22 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
+  const handleSearch = () => {
+    const param = searchForm.getFieldsValue();
+    queryDeliveryParamList(versionId, 'global', param);
+  };
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
-          {/* <Form layout="inline">
-            <Form.Item>
+          <Form layout="inline" form={searchForm}>
+            <Form.Item name="configParamName">
               <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
             </Form.Item>
             <Form.Item>
-              <Button>搜索</Button>
+              <Button onClick={handleSearch}>搜索</Button>
             </Form.Item>
-          </Form> */}
+          </Form>
         </div>
         <div className="caption-right">
           <Button
@@ -230,17 +236,19 @@ export default (props: VersionDetailProps) => {
         // 关闭默认的新建按钮
         recordCreatorProps={false}
         columns={columns}
-        request={async () => ({
-          data: defaultData,
-          total: 3,
-          success: true,
-        })}
+        // request={async () => ({
+        //   data: defaultData,
+        //   total: 3,
+        //   success: true,
+        // })}
         value={tableDataSource}
         onChange={setDataSource}
         editable={{
           form,
           editableKeys,
           onSave: async () => {
+            let value = form.getFieldsValue();
+            console.log('value', value);
             await waitTime(800);
           },
           onChange: setEditableRowKeys,

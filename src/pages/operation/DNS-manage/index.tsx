@@ -99,12 +99,17 @@ export default function DNSManageList(props: any) {
       setSelectedRows(selectedRows);
     },
   };
+  const handleSearch = () => {
+    let param = RecordForm.getFieldsValue();
+    getDnsManageList(1, 20, param);
+  };
 
   return (
     <PageContainer className="DNS-list-content">
       <AddRecordModal
         mode={addRecordMode}
         initData={initEnvData}
+        envCode={envCode}
         onSave={() => {
           setAddRecordMode('HIDE');
           setTimeout(() => {
@@ -116,14 +121,8 @@ export default function DNSManageList(props: any) {
       <ImportDataModal mode={importDataMode} onClose={() => setImportDataMode('HIDE')} />
       <ContentCard>
         <div className="dns-server">
-          当前的DNS服务器是：192.9.213.13,192.9.213.14
-          {/* {hostSource?.map((item: any) => {
-            return (
-              <Spin spinning={listLoading}>
-                <span>{item},</span>
-              </Spin>
-            );
-          })} */}
+          当前的DNS服务器是：
+          {hostSource}
         </div>
         <Divider />
         <div className="table-caption">
@@ -133,7 +132,9 @@ export default function DNSManageList(props: any) {
                 <Input style={{ width: 220 }} placeholder="请输入关键字"></Input>
               </Form.Item>
               <Form.Item>
-                <Button type="primary">搜索</Button>
+                <Button type="primary" onClick={handleSearch}>
+                  搜索
+                </Button>
               </Form.Item>
             </Form>
           </div>
@@ -159,7 +160,7 @@ export default function DNSManageList(props: any) {
             </Button>
           </div>
         </div>
-
+        {console.log('pageInfo.total', pageInfo.total)}
         <div style={{ marginTop: '15px' }}>
           <Table
             rowSelection={{ ...rowSelection }}

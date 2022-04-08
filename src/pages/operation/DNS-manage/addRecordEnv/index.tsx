@@ -13,13 +13,49 @@ import { recordEditData } from '../index';
 export interface RecordEditDataProps {
   mode: EditorMode;
   initData?: recordEditData;
+  envCode: any;
   onClose: () => any;
   onSave: () => any;
 }
 
+export const options = [
+  {
+    label: 'A-将域名指向IPV4地址',
+    value: 'A',
+  },
+  {
+    label: 'CNAME-将域名指向另外一个域名',
+    value: 'CNAME',
+  },
+  {
+    label: 'AAAA-将域名指向一个IPV6地址',
+    value: 'AAAA',
+  },
+  {
+    label: 'NS-将子域名指定其他DNS服务器解析',
+    value: 'NS',
+  },
+  {
+    label: 'MX-将域名指向邮件服务器地址',
+    value: 'MX',
+  },
+  {
+    label: 'SRV-记录提供特定的服务的服务器',
+    value: 'SRV',
+  },
+  {
+    label: 'TXT-文本长度限制512，通常做SPF记录（反垃圾邮件）',
+    value: 'TXT',
+  },
+  {
+    label: 'CAA-CA证书颁发机构授权校验',
+    value: 'CAA',
+  },
+];
+
 export default function addEnvData(props: RecordEditDataProps) {
   const [createRecordForm] = Form.useForm();
-  const { mode, onClose, onSave, initData } = props;
+  const { mode, onClose, onSave, initData, envCode } = props;
   const [addLoading, addDnsManage] = useAddDnsManage();
   const [updateLoading, updateDnsManage] = useUpdateDnsManage();
 
@@ -36,12 +72,12 @@ export default function addEnvData(props: RecordEditDataProps) {
     let param = createRecordForm.getFieldsValue();
     console.log('param', param);
     if (mode === 'ADD') {
-      let paramObj = { envCode: initData?.envCode, status: 0, ...param };
+      let paramObj = { envCode: envCode.envCode, status: 0, ...param };
       addDnsManage(paramObj).then(() => {
         onSave();
       });
     } else if (mode === 'EDIT') {
-      let paramObj = { envCode: initData?.envCode, id: initData?.id, ...param };
+      let paramObj = { envCode: envCode.envCode, id: initData?.id, ...param };
       updateDnsManage(paramObj).then(() => {
         onSave();
       });
@@ -67,7 +103,7 @@ export default function addEnvData(props: RecordEditDataProps) {
             }}
           >
             <Form.Item label="记录类型：" name="recordType" rules={[{ required: true, message: '这是必填项' }]}>
-              <Select style={{ width: '24vw' }}></Select>
+              <Select style={{ width: '24vw' }} options={options}></Select>
             </Form.Item>
             <Form.Item label="主机记录：" name="hostRecord" rules={[{ required: true, message: '这是必填项' }]}>
               <Input style={{ width: '24vw' }} placeholder="请输入环境名"></Input>

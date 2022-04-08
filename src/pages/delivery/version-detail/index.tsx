@@ -10,11 +10,27 @@ import ComponentParamsEditorTable from './ComponentParamsEditorTable';
 import { productionTabsConfig, deliveryTabsConfig, productionPageTypes } from './tab-config';
 import { useVersionDescriptionInfo, useEditProductVersionDescription } from './hooks';
 import './index.less';
+import {
+  useQueryParamList,
+  useQueryDeliveryParamList,
+  useQueryDeliveryGloableParamList,
+  useSaveParam,
+  useDeleteDeliveryParam,
+  useQueryOriginList,
+} from './hooks';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 export default function VersionDetail() {
   const descriptionInfoData: any = history.location.state;
   const [matchlabels, setMatchlabels] = useState<any[]>([]);
+  const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryDeliveryParamList] = useQueryDeliveryParamList();
+  const [
+    gloableTableLoading,
+    gloableTableDataSource,
+    gloablePageInfo,
+    setgloablePageInfo,
+    queryDeliveryGloableParamList,
+  ] = useQueryDeliveryGloableParamList();
   const [editableStr, setEditableStr] = useState(descriptionInfoData.versionDescription);
   const [infoLoading, versionDescriptionInfo, getVersionDescriptionInfo] = useVersionDescriptionInfo();
   const [editLoading, editProductVersionDescription] = useEditProductVersionDescription();
@@ -24,7 +40,12 @@ export default function VersionDetail() {
   const matchlabelsFun = (value: any[]) => {
     setMatchlabels(value);
   };
-
+  useEffect(() => {
+    //全局参数查询交付配置参数
+    queryDeliveryGloableParamList(descriptionInfoData.versionId, 'global');
+    //组件参数
+    queryDeliveryParamList(descriptionInfoData.versionId);
+  }, []);
   return (
     <PageContainer className="version-detail">
       <ContentCard>
@@ -90,12 +111,20 @@ export default function VersionDetail() {
                   <TabPane tab={item.label} key={index}>
                     {item.value === 'globalParameters' && (
                       <div>
-                        <GlobalParamsEditorTable currentTab={item.value} versionId={descriptionInfoData.versionId} />
+                        <GlobalParamsEditorTable
+                          currentTab={item.value}
+                          versionId={descriptionInfoData.versionId}
+                          initDataSource={tableDataSource}
+                        />
                       </div>
                     )}
                     {item.value === 'componentParameters' && (
                       <div>
-                        <ComponentParamsEditorTable currentTab={item.value} versionId={descriptionInfoData.versionId} />
+                        <ComponentParamsEditorTable
+                          currentTab={item.value}
+                          versionId={descriptionInfoData.versionId}
+                          initDataSource={gloableTableDataSource}
+                        />
                       </div>
                     )}
                   </TabPane>
