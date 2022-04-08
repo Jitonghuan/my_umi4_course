@@ -1,20 +1,28 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Select, message, Popconfirm, Input } from 'antd';
-import { useAddApplication } from '../hook';
+import { useAddApplication, useQueryComponentList } from '../hook';
 export interface DetailProps {
   visable?: boolean;
+  tabActiveKey: string;
+  queryComponentList: (tabActiveKey: any) => any;
   onClose: () => any;
   initData?: any;
   onSave?: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, initData, onClose, onSave } = props;
+  const { visable, initData, onClose, queryComponentList, onSave, tabActiveKey } = props;
   const [loading, addApplication] = useAddApplication();
+  // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [form] = Form.useForm();
   const handleSubmit = () => {
     const params = form.getFieldsValue();
-    addApplication({ ...params });
+    addApplication({ ...params }).then(() => {
+      queryComponentList(tabActiveKey);
+      setTimeout(() => {
+        onClose();
+      }, 200);
+    });
   };
 
   return (

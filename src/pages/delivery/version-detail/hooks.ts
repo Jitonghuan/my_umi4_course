@@ -292,14 +292,19 @@ export function useQueryOriginList() {
         if (res?.success) {
           let dataSource = res.data.dataSource;
           let options: any = {};
+          let optionsNew: any = {};
           dataSource ||
-            [].map((item: any) => {
+            [].map((item: any, index) => {
               options[item.componentName] = {
                 text: item.componentName,
               };
+
+              optionsNew = Object.assign(options, { text: item.componentName });
+              console.log('item', item, optionsNew);
             });
+
           setDataSource(options);
-          console.log('options', options, dataSource);
+          console.log('options', options, dataSource, optionsNew);
         } else {
           return;
         }

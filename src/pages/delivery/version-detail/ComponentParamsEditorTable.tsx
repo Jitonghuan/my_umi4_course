@@ -3,6 +3,7 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Space, Tag, Form } from 'antd';
+import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   useQueryParamList,
@@ -200,7 +201,13 @@ export default (props: VersionDetailProps) => {
         <a
           //  key="editable"
           onClick={() => {
-            action?.startEditable?.(record.id);
+            history.push({
+              pathname: '/matrix/delivery/component-detail',
+              state: {
+                activeKey: 'component-config',
+                componentId: record.id,
+              },
+            });
           }}
         >
           配置
@@ -218,15 +225,15 @@ export default (props: VersionDetailProps) => {
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryParamList(versionId, 'global', param);
+    queryDeliveryParamList(versionId, param);
   };
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item>
-              <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
+            <Form.Item name="configParamComponent">
+              <Input style={{ width: 220 }} placeholder="请输入组件参数"></Input>
             </Form.Item>
             <Form.Item>
               <Button onClick={handleSearch}>搜索</Button>

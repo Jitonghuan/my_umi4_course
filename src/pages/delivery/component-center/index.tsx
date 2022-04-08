@@ -15,6 +15,7 @@ import InfoTable from './readOnlyTable';
 import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
 import MiddlewareModal from './components/middlewareModal';
+import { useQueryComponentList } from './hook';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 
@@ -22,6 +23,7 @@ export default function VersionDetail() {
   const [matchlabels, setMatchlabels] = useState<any[]>([]);
   const [editableStr, setEditableStr] = useState('This is an editable text.');
   const [tabActiveKey, setTabActiveKey] = useState<string>('user');
+  const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
@@ -40,18 +42,24 @@ export default function VersionDetail() {
       <ContentCard>
         <UserModal
           visable={userModalVisiable}
+          tabActiveKey={tabActiveKey}
+          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
             setUserModalVisiable(false);
           }}
         />
         <BasicDataModal
           visable={basicDataModalVisiable}
+          tabActiveKey={tabActiveKey}
+          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
             setBasicDataModalVisiable(false);
           }}
         />
         <MiddlewareModal
           visable={middlewareModalVisibale}
+          tabActiveKey={tabActiveKey}
+          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
             setMiddlewareModalVisibale(false);
           }}

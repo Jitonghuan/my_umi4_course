@@ -18,9 +18,9 @@ export function useQueryTemplateList(): [
     pageSize: 20,
     total: 0,
   });
-  useEffect(() => {
-    queryTemplateList();
-  }, []);
+  // useEffect(() => {
+  //   queryTemplateList();
+  // }, []);
   const queryTemplateList = async (pageIndex?: any, pageSize?: any, productLine?: string, tempType?: string) => {
     setLoading(true);
     try {
@@ -60,10 +60,10 @@ export function useQueryTemplateList(): [
 export function useGetApplicationOption(): [boolean, any, (component_source_env: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<any>([]);
-  const getApplicationOption = async (component_source_env: string) => {
+  const getApplicationOption = async (componentSourceEnv: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.queryApplist, { data: { component_source_env } })
+      await postRequest(APIS.queryApplist, { data: { componentSourceEnv } })
         .then((res) => {
           if (res.success) {
             let data = res.data;
@@ -90,9 +90,9 @@ export function useGetApplicationOption(): [boolean, any, (component_source_env:
 export function useGetTypeListOption(): [boolean, any, () => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<any>([]);
-  useEffect(() => {
-    getTypeListOption();
-  }, []);
+  // useEffect(() => {
+  //   getTypeListOption();
+  // }, []);
   const getTypeListOption = async () => {
     setLoading(true);
     try {
@@ -117,4 +117,29 @@ export function useGetTypeListOption(): [boolean, any, () => Promise<void>] {
     }
   };
   return [loading, dataSource, getTypeListOption];
+}
+
+//删除应用Chart模板
+
+export function useDeleteComponentTmpl(): [boolean, (id: number) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const deleteComponentTmpl = async (id: number) => {
+    setLoading(true);
+    try {
+      await postRequest(`${APIS.deleteComponentTmpl}/${id}`)
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, deleteComponentTmpl];
 }

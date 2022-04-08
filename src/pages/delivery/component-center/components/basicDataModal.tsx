@@ -1,17 +1,20 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { useAddBasicdata } from '../hook';
+import { useAddBasicdata, useQueryComponentList } from '../hook';
 export interface DetailProps {
   visable?: boolean;
+  tabActiveKey: string;
+  queryComponentList: (tabActiveKey: any) => any;
   initData?: any;
   onClose: () => any;
   onSave?: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, initData, onClose, onSave } = props;
+  const { visable, initData, tabActiveKey, onClose, onSave, queryComponentList } = props;
   const [loading, addBasicdata] = useAddBasicdata();
+  // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
 
   const [form] = Form.useForm();
   const normFile = (e: any) => {
@@ -48,7 +51,12 @@ export default function BasicModal(props: DetailProps) {
   };
   const handleSubmit = () => {
     const params = form.getFieldsValue();
-    addBasicdata({ ...params });
+    addBasicdata({ ...params }).then(() => {
+      queryComponentList(tabActiveKey);
+      setTimeout(() => {
+        onClose();
+      }, 200);
+    });
   };
 
   return (
@@ -74,10 +82,10 @@ export default function BasicModal(props: DetailProps) {
       ]}
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
-        <Form.Item label="名称" name="envCode" rules={[{ required: true, message: '请选择应用类型' }]}>
+        <Form.Item label="名称" name="componentName" rules={[{ required: true, message: '请选择应用类型' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
-        <Form.Item label="基础数据版本" name="comPonentName" rules={[{ required: true, message: '请选择应用类型' }]}>
+        <Form.Item label="基础数据版本" name="componentVersion" rules={[{ required: true, message: '请选择应用类型' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
 
@@ -86,14 +94,18 @@ export default function BasicModal(props: DetailProps) {
           name="upload"
           valuePropName="fileList"
           getValueFromEvent={normFile}
-          extra="longgggggggggggggggggggggggggggggggggg"
-          rules={[{ required: true, message: '请选择应用类型' }]}
+          // extra="longgggggggggggggggggggggggggggggggggg"
+          rules={[{ required: true, message: '请上传基础数据！' }]}
         >
           <Upload name="logo" action="/upload.do" listType="picture" {...Uploadprops}>
             <Button icon={<UploadOutlined />}>选择文件</Button>
           </Upload>
         </Form.Item>
-        <Form.Item label="基础数据描述" name="envCode" rules={[{ required: true, message: '请选择应用类型' }]}>
+        <Form.Item
+          label="基础数据描述"
+          name="componentDescription"
+          rules={[{ required: true, message: '请选择应用类型' }]}
+        >
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>
         </Form.Item>
       </Form>

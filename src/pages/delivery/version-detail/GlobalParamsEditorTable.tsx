@@ -1,11 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
+import { history } from 'umi';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Space, Tag, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProFormField } from '@ant-design/pro-form';
-import { useQueryOriginList, useQueryDeliveryParamList, useSaveParam, useDeleteDeliveryParam } from './hooks';
+import {
+  useQueryOriginList,
+  useQueryDeliveryParamList,
+  useSaveParam,
+  useQueryDeliveryGloableParamList,
+  useDeleteDeliveryParam,
+} from './hooks';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -107,6 +114,14 @@ export interface VersionDetailProps {
 export default (props: VersionDetailProps) => {
   const { currentTab, versionId, initDataSource } = props;
   const actionRef = useRef<ActionType>();
+  const [
+    gloableTableLoading,
+    gloableTableDataSource,
+    gloablePageInfo,
+    setGloablePageInfo,
+    setGloableDataSource,
+    queryDeliveryGloableParamList,
+  ] = useQueryDeliveryGloableParamList();
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList] =
     useQueryDeliveryParamList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
@@ -116,7 +131,8 @@ export default (props: VersionDetailProps) => {
   const [searchForm] = Form.useForm();
   useEffect(() => {
     //查询交付配置参数
-    queryDeliveryParamList(versionId, 'gloa');
+    queryDeliveryGloableParamList(versionId, 'gloable');
+    queryDeliveryParamList(versionId);
   }, []);
 
   const columns: ProColumns<DataSourceType>[] = [
@@ -168,8 +184,17 @@ export default (props: VersionDetailProps) => {
         // </a>,
         <a
           //  key="editable"
+          // onClick={() => {
+          //   action?.startEditable?.(record.id);
+          // }}
           onClick={() => {
-            action?.startEditable?.(record.id);
+            history.push({
+              pathname: '/matrix/delivery/component-detail',
+              state: {
+                activeKey: 'component-config',
+                componentId: record.id,
+              },
+            });
           }}
         >
           配置
@@ -177,7 +202,7 @@ export default (props: VersionDetailProps) => {
         <a
           key="delete"
           onClick={() => {
-            setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+            setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
           }}
         >
           删除
@@ -187,15 +212,15 @@ export default (props: VersionDetailProps) => {
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryParamList(versionId, 'global', param);
+    queryDeliveryGloableParamList(versionId, 'global', param);
   };
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="configParamName">
-              <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
+            <Form.Item name="configParamComponent">
+              <Input style={{ width: 220 }} placeholder="请输入组件参数"></Input>
             </Form.Item>
             <Form.Item>
               <Button onClick={handleSearch}>搜索</Button>
@@ -241,8 +266,8 @@ export default (props: VersionDetailProps) => {
         //   total: 3,
         //   success: true,
         // })}
-        value={tableDataSource}
-        onChange={setDataSource}
+        value={gloableTableDataSource}
+        onChange={setGloableDataSource}
         editable={{
           form,
           editableKeys,

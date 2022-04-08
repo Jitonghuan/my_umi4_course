@@ -10,7 +10,7 @@ export function useQueryComponentList(): [
   any,
   any,
   any,
-  (componentType: string, componentName?: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
+  (componentType: string, componentName?: string, pageIndex?: number, pageSize?: number) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -41,7 +41,7 @@ export function useQueryComponentList(): [
               total: pageInfo.total,
             });
           } else {
-            return {};
+            return [];
           }
         })
         .finally(() => {
@@ -193,4 +193,29 @@ export function useAddBasicdata(): [
     }
   };
   return [loading, addBasicdata];
+}
+
+//删除交付配置参数
+
+export function useDeleteComponent(): [boolean, (id: number) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const deleteComponent = async (id: number) => {
+    setLoading(true);
+    try {
+      await postRequest(`${APIS.deleteComponent}/${id}`)
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, deleteComponent];
 }

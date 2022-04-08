@@ -2,18 +2,21 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { getRequest, postRequest } from '@/utils/request';
-import { useAddMiddleware } from '../hook';
+import { useAddMiddleware, useQueryComponentList } from '../hook';
 import { uploadChart } from '../../service';
 export interface DetailProps {
   visable?: boolean;
+  tabActiveKey: string;
+  queryComponentList: (tabActiveKey: any) => any;
   initData?: any;
   onClose: () => any;
   onSave?: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, initData, onClose, onSave } = props;
-  const [oading, addMiddleware] = useAddMiddleware();
+  const { visable, tabActiveKey, initData, queryComponentList, onClose, onSave } = props;
+  const [addLoading, addMiddleware] = useAddMiddleware();
+  // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [form] = Form.useForm();
   const normFile = (e: any) => {
     console.log('Upload event:', e);
@@ -52,7 +55,12 @@ export default function BasicModal(props: DetailProps) {
   };
   const handleSubmit = () => {
     const params = form.getFieldsValue();
-    addMiddleware({ ...params });
+    addMiddleware({ ...params }).then(() => {
+      queryComponentList(tabActiveKey);
+      setTimeout(() => {
+        onClose();
+      }, 200);
+    });
   };
 
   return (

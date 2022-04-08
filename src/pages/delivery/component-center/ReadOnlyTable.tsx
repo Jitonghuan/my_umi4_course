@@ -8,14 +8,15 @@
  */
 import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
-import { Table, Tag, Space } from 'antd';
-import { useQueryComponentList } from './hook';
+import { Table, Tag, Space, Popconfirm } from 'antd';
+import { useQueryComponentList, useDeleteComponent } from './hook';
 export interface DetailProps {
   currentTab: string;
 }
 export default function VersionDetail(props: DetailProps) {
   const { currentTab } = props;
   const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
+  const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
     if (!currentTab) {
       return;
@@ -25,13 +26,13 @@ export default function VersionDetail(props: DetailProps) {
   const columns = [
     {
       title: '组件名称',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'componentName',
+      key: 'componentName',
     },
     {
       title: '组件描述',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'componentDescription',
+      key: 'componentDescription',
     },
     {
       title: '更新时间',
@@ -53,12 +54,25 @@ export default function VersionDetail(props: DetailProps) {
             onClick={() => {
               history.push({
                 pathname: '/matrix/delivery/component-detail',
+                state: {
+                  componentName: record.componentName,
+                  componentId: record.id,
+                },
               });
             }}
           >
             详情
           </a>
-          <a>删除</a>
+          <Popconfirm
+            title="确定要删除吗？"
+            onConfirm={() => {
+              deleteComponent(record.id).then(() => {
+                queryComponentList(currentTab);
+              });
+            }}
+          >
+            <a>删除</a>
+          </Popconfirm>
         </Space>
       ),
     },

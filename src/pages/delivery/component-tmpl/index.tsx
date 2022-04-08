@@ -10,7 +10,7 @@ import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from './tmpl-edits';
-import { useQueryTemplateList } from './hooks';
+import { useQueryTemplateList, useDeleteComponentTmpl } from './hooks';
 
 /** 编辑页回显数据 */
 export interface TmplEdit extends Record<string, any> {
@@ -23,6 +23,7 @@ export default function ComponentTmpl() {
   const { Option } = Select;
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryTemplateList] = useQueryTemplateList();
   const [formTmpl] = Form.useForm();
+  const [delLoading, deleteComponentTmpl] = useDeleteComponentTmpl();
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
   const handleEditTask = useCallback(
@@ -110,7 +111,8 @@ export default function ComponentTmpl() {
   const saveEditData = () => {
     setTmplEditMode('HIDE');
     setTimeout(() => {
-      loadListData({ pageIndex: 1, pageSize: 20 });
+      queryTemplateList();
+      // loadListData({ pageIndex: 1, pageSize: 20 });
     }, 100);
     // window.location.reload();
   };
@@ -141,19 +143,8 @@ export default function ComponentTmpl() {
             // });
           }}
         >
-          <Form.Item label="产品线：" name="appCategoryCode">
+          <Form.Item label="产品线：" name="productLine">
             <Select showSearch style={{ width: 180 }} />
-          </Form.Item>
-          <Form.Item label="环境：" name="envCode">
-            <Select
-              // options={envDatas}
-              allowClear
-              // onChange={(n) => {
-              //   setenvCode(n);
-              // }}
-              showSearch
-              style={{ width: 180 }}
-            />
           </Form.Item>
           <Form.Item label="类型：" name="templateType">
             <Select
@@ -185,14 +176,7 @@ export default function ComponentTmpl() {
             <h3>组件模版列表</h3>
           </div>
           <div className="caption-right">
-            <Button
-              type="primary"
-              onClick={() =>
-                history.push({
-                  pathname: 'tmpl-add',
-                })
-              }
-            >
+            <Button type="primary" onClick={() => setTmplEditMode('ADD')}>
               新增组件模版
             </Button>
           </div>
@@ -230,24 +214,16 @@ export default function ComponentTmpl() {
               key="action"
               render={(_, record: TmplEdit, index) => (
                 <Space size="small">
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-detail',
-                        query: {
-                          type: 'info',
-                          templateCode: record.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      })
-                    }
-                  >
-                    详情 {record.lastName}
-                  </a>
+                  <a onClick={() => setTmplEditMode('VIEW')}>详情 {record.lastName}</a>
 
                   <a onClick={() => handleEditTask(record, index)}>编辑</a>
 
-                  <Popconfirm title="确定要删除该信息吗？">
+                  <Popconfirm
+                    title="确定要删除该信息吗？"
+                    onConfirm={() => {
+                      deleteComponentTmpl(record.id);
+                    }}
+                  >
                     <a style={{ color: 'red' }}>删除</a>
                   </Popconfirm>
                 </Space>

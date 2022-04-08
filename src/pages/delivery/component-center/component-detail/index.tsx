@@ -5,19 +5,27 @@ import { history } from 'umi';
 import AceEditor from '@/components/ace-editor';
 import { Form, Tabs, Input, Select, Button, Descriptions, Typography, Card, message, Popconfirm, Divider } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
+import { useQueryComponentList, useQueryComponentInfo } from './hooks';
 import './index.less';
 export default function ComponentDetail() {
+  const { componentName, componentId }: any = history.location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
   const { Paragraph } = Typography;
   const [editableStr, setEditableStr] = useState('This is an editable text.');
+  const [loading, versionOptions, queryComponentVersionList] = useQueryComponentList();
+  const [infoLoading, dataSource, queryComponentInfo] = useQueryComponentInfo();
+  useEffect(() => {
+    queryComponentVersionList(componentName);
+    queryComponentInfo(componentId);
+  }, [componentName]);
   return (
     <PageContainer>
       <ContentCard>
         <div className="table-caption">
           <div className="caption-left">
             <h3>组件名称：Metrics-server</h3>
-            <Select style={{ width: 220, paddingLeft: 20 }}></Select>
+            <Select style={{ width: 220, paddingLeft: 20 }} options={versionOptions}></Select>
           </div>
           <div className="caption-right">
             <Button
