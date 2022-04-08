@@ -96,7 +96,7 @@ export default function Launch() {
       if (resp.success) {
         let dataArry: any = [];
         resp.data?.dataSource?.map((n: any) => {
-          if (n.proEnvType === 'benchmark' && n.clusterName !== 'fe') {
+          if (n.clusterName !== 'fe') {
             dataArry.push({
               value: n?.envCode,
               label: n?.envName,
@@ -106,20 +106,6 @@ export default function Launch() {
         });
         setEnvDatas(dataArry);
       }
-
-      // const datas =
-      //   resp?.data?.dataSource?.map((el: any) => {
-      //     if (el.clusterName !== 'fe') {
-      //       return {
-      //         ...el,
-      //         value: el?.envCode,
-      //         label: el?.envName,
-      //       };
-      //     }
-      //   }) || [];
-      // console.log('datas',datas)
-
-      // }
     });
   };
 
