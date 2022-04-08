@@ -74,7 +74,7 @@ export default function DemoPageList() {
         onClose={() => {
           setAddMode('HIDE');
         }}
-        width={400}
+        width={640}
         footer={
           <div className="drawer-custom-footer">
             <Button type="primary" onClick={handleSubmit}>
@@ -93,13 +93,13 @@ export default function DemoPageList() {
       >
         <Form form={addIndexForm} labelCol={{ flex: '120px' }}>
           <Form.Item label="环境Code" name="envCode" rules={[{ required: true, message: '请输入环境Code' }]}>
-            <Select options={envOptions} style={{ width: 140 }} placeholder="请选择" />
+            <Select options={envOptions} style={{ width: 440 }} placeholder="请选择" />
           </Form.Item>
           <Form.Item label="日志库(索引模式)" name="indexMode">
-            <Input placeholder="请输入" style={{ width: 140 }} />
+            <Input placeholder="请输入" style={{ width: 440 }} />
           </Form.Item>
           <Form.Item label="字段" name="fields" rules={[{ required: true }]}>
-            <Input style={{ width: 140 }} />
+            <Input style={{ width: 440 }} />
           </Form.Item>
         </Form>
       </Drawer>
