@@ -94,28 +94,30 @@ export function useEnvList() {
   }, []);
   const queryEnvData = () => {
     setLoading(true);
-    getRequest(APIS.queryEnvList, {
-      data: {
-        pageSize: -1,
-        envTypeCode: 'notProd',
-      },
-    })
-      .then((result) => {
-        if (result?.success) {
-          let data = result?.data?.dataSource;
-          let dataArry: any = [];
-          data?.map((item: any) => {
-            dataArry.push({
-              label: item?.envName,
-              value: item?.envCode,
-            });
-          });
-          setEnvDataSource(dataArry);
-        }
+    if (appConfig.PRIVATE_METHODS === 'public') {
+      getRequest(APIS.queryEnvList, {
+        data: {
+          pageSize: -1,
+          envTypeCode: 'notProd',
+        },
       })
-      .finally(() => {
-        setLoading(false);
-      });
+        .then((result) => {
+          if (result?.success) {
+            let data = result?.data?.dataSource;
+            let dataArry: any = [];
+            data?.map((item: any) => {
+              dataArry.push({
+                label: item?.envName,
+                value: item?.envCode,
+              });
+            });
+            setEnvDataSource(dataArry);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   return [loading, envDataSource];

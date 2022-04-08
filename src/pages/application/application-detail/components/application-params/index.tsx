@@ -43,13 +43,13 @@ export default function ApplicationParams(props: any) {
       let dataArry: any = [];
       if (result.success) {
         result.data?.map((n: any) => {
-          if (n.proEnvType === 'benchmark') {
-            dataArry.push({
-              value: n?.envCode,
-              label: n?.envName,
-              data: n,
-            });
-          }
+          // if (n.proEnvType === 'benchmark'&& n.clusterName!=='fe') {
+          //   dataArry.push({
+          //     value: n?.envCode,
+          //     label: n?.envName,
+          //     data: n,
+          //   });
+          // }
         });
       }
       setEnvDatas(dataArry);
