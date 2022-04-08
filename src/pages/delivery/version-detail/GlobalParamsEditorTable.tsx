@@ -116,7 +116,7 @@ export default (props: VersionDetailProps) => {
   const [searchForm] = Form.useForm();
   useEffect(() => {
     //查询交付配置参数
-    queryDeliveryParamList(versionId);
+    queryDeliveryParamList(versionId, 'gloa');
   }, []);
 
   const columns: ProColumns<DataSourceType>[] = [
