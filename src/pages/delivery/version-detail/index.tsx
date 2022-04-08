@@ -95,7 +95,7 @@ export default function VersionDetail() {
                     )}
                     {item.value === 'componentParameters' && (
                       <div>
-                        <ComponentParamsEditorTable currentTab={item.value} />
+                        <ComponentParamsEditorTable currentTab={item.value} versionId={descriptionInfoData.versionId} />
                       </div>
                     )}
                   </TabPane>

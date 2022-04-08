@@ -107,22 +107,22 @@ export interface VersionDetailProps {
 export default (props: VersionDetailProps) => {
   const { currentTab, versionId, initDataSource } = props;
   const actionRef = useRef<ActionType>();
-  const [loading, originOptions, queryOriginList] = useQueryOriginList();
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryDeliveryParamList] = useQueryDeliveryParamList();
   const [] = useDeleteDeliveryParam();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    queryOriginList(versionId);
+    //查询交付配置参数
+    queryDeliveryParamList(versionId);
   }, []);
-  useEffect(() => {}, []);
+
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '参数来源组件',
-      key: 'name',
-      dataIndex: 'name',
-      valueType: 'select',
+      key: 'configParamName',
+      dataIndex: 'configParamName',
+      // valueType: 'input',
       formItemProps: {
         rules: [
           {
@@ -130,24 +130,13 @@ export default (props: VersionDetailProps) => {
             message: '此项为必填项',
           },
         ],
-      },
-      valueEnum: {
-        all: { text: '全部', status: 'Default' },
-        open: {
-          text: '未解决',
-          status: 'Error',
-        },
-        closed: {
-          text: '已解决',
-          status: 'Success',
-        },
       },
     },
     {
       title: '参数值',
-      key: 'version',
-      dataIndex: 'version',
-      valueType: 'select',
+      key: 'configParamValue',
+      dataIndex: 'configParamValue',
+      // valueType: 'select',
       formItemProps: {
         rules: [
           {
@@ -156,34 +145,10 @@ export default (props: VersionDetailProps) => {
           },
         ],
       },
-      valueEnum: {
-        all: { text: '全部', status: 'Default' },
-        open: {
-          text: '未解决',
-          status: 'Error',
-        },
-        closed: {
-          text: '已解决',
-          status: 'Success',
-        },
-      },
     },
     {
       title: '参数说明',
-      dataIndex: 'decs',
-      fieldProps: (from, { rowKey, rowIndex }) => {
-        if (from.getFieldValue([rowKey || '', 'title']) === '不好玩') {
-          return {
-            disabled: true,
-          };
-        }
-        if (rowIndex > 9) {
-          return {
-            disabled: true,
-          };
-        }
-        return {};
-      },
+      dataIndex: 'configParamDescription',
     },
 
     {
@@ -222,14 +187,14 @@ export default (props: VersionDetailProps) => {
     <>
       <div className="table-caption-application">
         <div className="caption-left">
-          <Form layout="inline">
+          {/* <Form layout="inline">
             <Form.Item>
               <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
             </Form.Item>
             <Form.Item>
               <Button>搜索</Button>
             </Form.Item>
-          </Form>
+          </Form> */}
         </div>
         <div className="caption-right">
           <Button
@@ -270,7 +235,7 @@ export default (props: VersionDetailProps) => {
           total: 3,
           success: true,
         })}
-        value={dataSource}
+        value={tableDataSource}
         onChange={setDataSource}
         editable={{
           form,

@@ -6,11 +6,22 @@
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Table, Tag, Space } from 'antd';
-
-export default function VersionDetail() {
+import { useQueryComponentList } from './hook';
+export interface DetailProps {
+  currentTab: string;
+}
+export default function VersionDetail(props: DetailProps) {
+  const { currentTab } = props;
+  const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
+  useEffect(() => {
+    if (!currentTab) {
+      return;
+    }
+    queryComponentList(currentTab);
+  }, []);
   const columns = [
     {
       title: '组件名称',
@@ -34,7 +45,7 @@ export default function VersionDetail() {
     },
 
     {
-      title: 'Action',
+      title: '操作',
       key: 'action',
       render: (text: string, record: any) => (
         <Space size="middle">
@@ -78,7 +89,7 @@ export default function VersionDetail() {
 
   return (
     <>
-      <Table columns={columns} showHeader={true} dataSource={data} />
+      <Table columns={columns} showHeader={true} dataSource={dataSource} loading={loading} />
     </>
   );
 }

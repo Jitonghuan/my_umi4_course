@@ -17,6 +17,7 @@ import BasicDataModal from './components/basicDataModal';
 import MiddlewareModal from './components/middlewareModal';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
+
 export default function VersionDetail() {
   const [matchlabels, setMatchlabels] = useState<any[]>([]);
   const [editableStr, setEditableStr] = useState('This is an editable text.');
@@ -37,7 +38,12 @@ export default function VersionDetail() {
   return (
     <PageContainer>
       <ContentCard>
-        <UserModal visable={userModalVisiable} />
+        <UserModal
+          visable={userModalVisiable}
+          onClose={() => {
+            setUserModalVisiable(false);
+          }}
+        />
         <BasicDataModal visable={basicDataModalVisiable} />
         <MiddlewareModal visable={middlewareModalVisibale} />
 
@@ -77,7 +83,7 @@ export default function VersionDetail() {
             </Tabs>
           </FilterCard>
           <div>
-            <InfoTable />
+            <InfoTable currentTab={tabActiveKey} />
           </div>
         </>
       </ContentCard>

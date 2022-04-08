@@ -1,9 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Space, Tag, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import {
+  useQueryParamList,
+  useQueryDeliveryParamList,
+  useSaveParam,
+  useDeleteDeliveryParam,
+  useQueryOriginList,
+} from './hooks';
 import { ProFormField } from '@ant-design/pro-form';
 
 const waitTime = (time: number = 100) => {
@@ -99,20 +106,36 @@ const defaultData: DataSourceType[] = [
 
 export interface VersionDetailProps {
   currentTab: string;
+  versionId: any;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, initDataSource } = props;
+  const { currentTab, versionId, initDataSource } = props;
   const actionRef = useRef<ActionType>();
+  const [originloading, originOptions, queryOriginList] = useQueryOriginList();
+  const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryDeliveryParamList] = useQueryDeliveryParamList();
+  const [loading, options, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
+  useEffect(() => {
+    //获取参数来源组件
+    queryOriginList(versionId);
+  }, []);
+  useEffect(() => {
+    //查询交付配置参数
+    queryDeliveryParamList(versionId, 'nacos');
+  }, [currentTab]);
+  useEffect(() => {
+    //获取组件参数及参数值
+    queryParamList(versionId); //componentName
+  }, []);
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '参数来源组件',
-      key: 'name',
-      dataIndex: 'name',
+      key: 'configParamName',
+      dataIndex: 'configParamName',
       valueType: 'select',
       formItemProps: {
         rules: [
@@ -122,17 +145,7 @@ export default (props: VersionDetailProps) => {
           },
         ],
       },
-      valueEnum: {
-        all: { text: '全部', status: 'Default' },
-        open: {
-          text: '未解决',
-          status: 'Error',
-        },
-        closed: {
-          text: '已解决',
-          status: 'Success',
-        },
-      },
+      valueEnum: originOptions,
     },
     {
       title: '选择参数',
@@ -161,45 +174,12 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '参数值',
-      key: 'version',
-      dataIndex: 'version',
-      valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
-      valueEnum: {
-        all: { text: '全部', status: 'Default' },
-        open: {
-          text: '未解决',
-          status: 'Error',
-        },
-        closed: {
-          text: '已解决',
-          status: 'Success',
-        },
-      },
+      key: 'configParamValue',
+      dataIndex: 'configParamValue',
     },
     {
       title: '参数说明',
-      dataIndex: 'decs',
-      fieldProps: (from, { rowKey, rowIndex }) => {
-        if (from.getFieldValue([rowKey || '', 'title']) === '不好玩') {
-          return {
-            disabled: true,
-          };
-        }
-        if (rowIndex > 9) {
-          return {
-            disabled: true,
-          };
-        }
-        return {};
-      },
+      dataIndex: 'configParamDescription',
     },
 
     {
@@ -238,14 +218,14 @@ export default (props: VersionDetailProps) => {
     <>
       <div className="table-caption-application">
         <div className="caption-left">
-          <Form layout="inline">
+          {/* <Form layout="inline">
             <Form.Item>
               <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
             </Form.Item>
             <Form.Item>
               <Button>搜索</Button>
             </Form.Item>
-          </Form>
+          </Form> */}
         </div>
         <div className="caption-right">
           <Button

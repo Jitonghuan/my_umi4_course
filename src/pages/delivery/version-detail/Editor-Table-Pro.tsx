@@ -203,7 +203,10 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
-  const search = () => {};
+  const search = () => {
+    const componentName = searchForm.getFieldsValue();
+    queryVersionComponentList(versionId, currentTab, componentName);
+  };
   return (
     <>
       <div className="table-caption-application">
@@ -262,7 +265,7 @@ export default (props: VersionDetailProps) => {
           total: 3,
           success: true,
         })}
-        value={dataSource}
+        value={tableDataSource}
         onChange={setDataSource}
         pagination={{
           total: pageInfo.total,

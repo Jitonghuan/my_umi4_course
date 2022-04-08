@@ -290,7 +290,15 @@ export function useQueryOriginList() {
     await getRequest(APIS.queryOriginList, { data: { versionId } })
       .then((res) => {
         if (res?.success) {
-          setDataSource(res?.data || []);
+          let dataSource = res.data.dataSource;
+          let options: any = {};
+          dataSource ||
+            [].map((item: any) => {
+              options[item.component_version] = {
+                text: item.component_version,
+              };
+            });
+          setDataSource(options);
         } else {
           return;
         }
@@ -330,7 +338,7 @@ export function useQueryDeliveryParamList(): [
   any,
   any,
   any,
-  (versionId: number, configParamComponent: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
+  (versionId: number, configParamComponent?: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -341,7 +349,7 @@ export function useQueryDeliveryParamList(): [
   });
   const queryDeliveryParamList = async (
     versionId: number,
-    configParamComponent: string,
+    configParamComponent?: string,
     pageIndex?: number,
     pageSize?: number,
   ) => {
