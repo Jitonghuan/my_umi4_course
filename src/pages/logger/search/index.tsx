@@ -136,7 +136,27 @@ export default function LoggerSearch(props: any) {
 
   //使用lucene语法搜索时的事件
   const onSearch = (values: any) => {
-    subInfoForm.resetFields();
+    // subInfoForm.resetFields();
+    let params = subInfoForm.getFieldsValue();
+    let podNameInfo = params?.podName;
+    // let querySqlInfo = params?.message;
+    let messageInfo = params?.message;
+    let appCodeValue = params?.appCode;
+    let appCodeArry = [];
+    if (appCodeValue) {
+      appCodeArry.push('appCode:' + appCodeValue);
+    }
+    if (podNameInfo) {
+      appCodeArry.push('podName:' + podNameInfo);
+    }
+    if (params?.traceId) {
+      appCodeArry.push('traceId:' + params?.traceId);
+    }
+    if (params?.level) {
+      appCodeArry.push('level:' + params?.level);
+    }
+    appCodeArry.push('envCode:' + envCode);
+
     setQuerySql(values);
     const now = new Date().getTime();
     //默认传最近30分钟，处理为秒级的时间戳
@@ -146,9 +166,9 @@ export default function LoggerSearch(props: any) {
       setStartTimestamp(start);
       setEndTimestamp(end);
 
-      loadMoreData(logStore, start, end, values, messageValue, appCodeValue);
+      loadMoreData(logStore, start, end, values, messageInfo, appCodeArry);
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, values, messageValue, appCodeValue);
+      loadMoreData(logStore, startTimestamp, endTimestamp, values, messageInfo, appCodeArry);
     }
   };
 
@@ -309,6 +329,8 @@ export default function LoggerSearch(props: any) {
   //重置筛选信息
   const resetQueryInfo = () => {
     subInfoForm.resetFields();
+    setQuerySql('');
+    setEditScreenVisible(false);
     setAppCodeValue([]);
     // setQuerySql('');
     setMessageValue('');
@@ -320,9 +342,9 @@ export default function LoggerSearch(props: any) {
     if (startTimestamp !== start) {
       setStartTimestamp(start);
       setEndTimestamp(end);
-      loadMoreData(logStore, start, end, querySql, '');
+      loadMoreData(logStore, start, end, '', '');
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, '');
+      loadMoreData(logStore, startTimestamp, endTimestamp, '', '');
     }
   };
   // 无限滚动下拉事件
@@ -456,10 +478,10 @@ export default function LoggerSearch(props: any) {
                         // setEditConditionType(true);
                       } else {
                         setEditScreenVisible(false);
+                        setQuerySql('');
                         // setEditConditionType(false);
                       }
 
-                      // setQuerySql('');
                       // setMessageValue('');
                       // setPodName('');
                       // setAppCodeValue([]);
