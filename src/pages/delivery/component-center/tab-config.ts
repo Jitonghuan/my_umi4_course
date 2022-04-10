@@ -1,18 +1,32 @@
 export const productionTabsConfig: any = [
   {
-    label: '用户组件',
-    value: 'user-component',
-    type: 'user',
+    label: '应用组件',
+    value: 'app',
+    type: 'app',
   },
-  {
-    label: '平台组件',
-    value: 'middleware-component',
-    type: 'middleware',
-  },
+  // {
+  //   label: '平台组件',
+  //   value: 'middleware',
+  //   type: 'middleware',
+  // },
   {
     label: '基础数据',
-    value: 'basicData-component',
-    type: 'basicData',
+    value: 'sql',
+    type: 'sql',
+  },
+];
+export const componentTypeOptions = [
+  {
+    label: '应用类型',
+    value: 'app',
+  },
+  {
+    label: '中间件',
+    value: 'middleware',
+  },
+  {
+    label: 'Sql',
+    value: 'sql',
   },
 ];
 

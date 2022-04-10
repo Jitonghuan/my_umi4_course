@@ -8,13 +8,13 @@ import { ContentCard } from '@/components/vc-page-content';
 import { useQueryComponentList, useQueryComponentInfo } from './hooks';
 import './index.less';
 export default function ComponentDetail() {
-  const { componentName, componentId }: any = history.location.state;
+  const { initRecord, componentName, componentId, componentDescription }: any = history.location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
   const { Paragraph } = Typography;
-  const [editableStr, setEditableStr] = useState('This is an editable text.');
+  const [editableStr, setEditableStr] = useState(initRecord.componentDescription);
   const [loading, versionOptions, queryComponentVersionList] = useQueryComponentList();
-  const [infoLoading, dataSource, queryComponentInfo] = useQueryComponentInfo();
+  const [infoLoading, componentInfo, queryComponentInfo] = useQueryComponentInfo();
   useEffect(() => {
     queryComponentVersionList(componentName);
     queryComponentInfo(componentId);
@@ -24,7 +24,7 @@ export default function ComponentDetail() {
       <ContentCard>
         <div className="table-caption">
           <div className="caption-left">
-            <h3>组件名称：Metrics-server</h3>
+            <h3>组件名称：{initRecord.componentName}</h3>
             <Select style={{ width: 220, paddingLeft: 20 }} options={versionOptions}></Select>
           </div>
           <div className="caption-right">
@@ -42,20 +42,20 @@ export default function ComponentDetail() {
         <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
           <TabPane tab="组件信息" key="component-info">
             <div>
-              <Descriptions title="基本信息" column={2} extra={<Button type="primary">编辑</Button>}>
-                <Descriptions.Item label="组件名称">Zhou Maomao</Descriptions.Item>
+              <Descriptions title="基本信息" column={2}>
+                <Descriptions.Item label="组件名称">{initRecord.componentName}</Descriptions.Item>
                 <Descriptions.Item label="组件描述">
                   <Paragraph editable={{ onChange: setEditableStr }}>{editableStr}</Paragraph>
                 </Descriptions.Item>
-                <Descriptions.Item label="组件类型">Zhou Maomao</Descriptions.Item>
-                <Descriptions.Item label="创建时间">1810000000</Descriptions.Item>
+                <Descriptions.Item label="组件类型">{initRecord.componentType}</Descriptions.Item>
+                <Descriptions.Item label="创建时间">{initRecord.gmtCreate}</Descriptions.Item>
                 <Descriptions.Item label="组件地址" span={2}>
-                  empty
+                  {initRecord.componentUrl}
                 </Descriptions.Item>
               </Descriptions>
               <Divider />
               <div>
-                <div className="instruction">组件说明:</div>
+                <div className="instruction">组件说明:{initRecord.componentExplanation}</div>
               </div>
             </div>
           </TabPane>
@@ -66,7 +66,7 @@ export default function ComponentDetail() {
               </p>
             </div>
             <div>
-              <AceEditor mode="yaml" height={450} />
+              <AceEditor mode="yaml" height={450} defaultValue={initRecord.componentConfiguration} />
             </div>
           </TabPane>
         </Tabs>

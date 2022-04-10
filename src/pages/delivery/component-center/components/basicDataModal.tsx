@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useAddBasicdata, useQueryComponentList } from '../hook';
+import { uploadSqlfile } from '../../service';
 export interface DetailProps {
   visable?: boolean;
   tabActiveKey: string;
@@ -14,6 +15,7 @@ export interface DetailProps {
 export default function BasicModal(props: DetailProps) {
   const { visable, initData, tabActiveKey, onClose, onSave, queryComponentList } = props;
   const [loading, addBasicdata] = useAddBasicdata();
+  const [filePath, setFilePath] = useState<string>('');
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
 
   const [form] = Form.useForm();
@@ -25,14 +27,17 @@ export default function BasicModal(props: DetailProps) {
     return e && e.fileList;
   };
   const Uploadprops: any = {
-    name: 'file',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    headers: {
-      authorization: 'authorization-text',
-    },
+    name: 'uploadFile',
+    action: uploadSqlfile,
+    // headers: {
+    //   authorization: 'authorization-text',
+    // },
     onChange(info: any) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
+        let path = info.file.response.data;
+        console.log('path', path);
+        setFilePath(path);
       }
       if (info.file.status === 'done') {
         message.success(`${info.file.name} file uploaded successfully`);
@@ -51,7 +56,7 @@ export default function BasicModal(props: DetailProps) {
   };
   const handleSubmit = () => {
     const params = form.getFieldsValue();
-    addBasicdata({ ...params }).then(() => {
+    addBasicdata({ ...params, componentType: tabActiveKey, filePath }).then(() => {
       queryComponentList(tabActiveKey);
       setTimeout(() => {
         onClose();
@@ -97,7 +102,7 @@ export default function BasicModal(props: DetailProps) {
           // extra="longgggggggggggggggggggggggggggggggggg"
           rules={[{ required: true, message: '请上传基础数据！' }]}
         >
-          <Upload name="logo" action="/upload.do" listType="picture" {...Uploadprops}>
+          <Upload name="logo" action="/upload.do" {...Uploadprops}>
             <Button icon={<UploadOutlined />}>选择文件</Button>
           </Upload>
         </Form.Item>

@@ -3,6 +3,62 @@ import * as APIS from '../service';
 import { message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
+// 查询应用环境数据
+export function useQueryEnvList() {
+  const [loading, setLoading] = useState(false);
+  const [envDataSource, setEnvDataSource] = useState<any>([]);
+  const queryEnvData = () => {
+    setLoading(true);
+    getRequest(APIS.envList, { data: { pageIndex: -1, pageSize: -1 } })
+      .then((result) => {
+        if (result?.success) {
+          let dataSource = result?.data?.dataSource;
+          const options = dataSource?.map((item: any) => ({
+            label: item.envName,
+            value: item.envCode,
+          }));
+          setEnvDataSource(options);
+        } else {
+          return [];
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, envDataSource, queryEnvData];
+}
+
+// 应用查询
+export function useGetApplicationOption(): [boolean, any, (componentSourceEnv: string) => Promise<void>] {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const getApplicationOption = async (componentSourceEnv: string) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryApplist, { data: { componentSourceEnv } })
+        .then((res) => {
+          if (res.success) {
+            let data = res.data.dataSource;
+            const option = data?.map((item: any) => ({
+              label: item,
+              value: item,
+            }));
+            setDataSource(option);
+          } else {
+            return [];
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, getApplicationOption];
+}
 
 //组件查询
 export function useQueryComponentList(): [
@@ -62,7 +118,7 @@ export function useAddApplication(): [
     componentVersion: string;
     componentType: string;
     componentDescription: string;
-    componentSource_env: string;
+    componentSourceEnv: string;
     productLine: string;
     componentUrl?: string;
     componentExplanation?: string;
@@ -75,7 +131,7 @@ export function useAddApplication(): [
     componentVersion: string;
     componentType: string;
     componentDescription: string;
-    componentSource_env: string;
+    componentSourceEnv: string;
     productLine: string;
     componentUrl?: string;
     componentExplanation?: string;
@@ -83,7 +139,15 @@ export function useAddApplication(): [
   }) => {
     setLoading(true);
     try {
-      await postRequest(APIS.addApplication, { data: paramsObj })
+      await postRequest(`${APIS.addApplication}?productLine=${paramsObj.productLine}`, {
+        data: {
+          componentName: paramsObj.componentName,
+          componentVersion: paramsObj.componentVersion,
+          componentType: paramsObj.componentType,
+          componentDescription: paramsObj.componentDescription,
+          componentSourceEnv: paramsObj.componentSourceEnv,
+        },
+      })
         .then((res) => {
           if (res.success) {
             message.success(res.data);
@@ -152,6 +216,7 @@ export function useAddMiddleware(): [
 export function useAddBasicdata(): [
   boolean,
   (paramsObj: {
+    filePath: string;
     componentName: string;
     componentVersion: string;
     componentType: string;
@@ -165,6 +230,7 @@ export function useAddBasicdata(): [
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const addBasicdata = async (paramsObj: {
+    filePath: string;
     componentName: string;
     componentVersion: string;
     componentType: string;
@@ -177,10 +243,10 @@ export function useAddBasicdata(): [
   }) => {
     setLoading(true);
     try {
-      await postRequest(APIS.addBasicdata, { data: paramsObj })
+      await postRequest(`${APIS.addBasicdata}?filePath=${paramsObj.filePath}`, { data: paramsObj })
         .then((res) => {
           if (res.success) {
-            message.success(res.data);
+            message.success('新增成功！');
           } else {
             return;
           }

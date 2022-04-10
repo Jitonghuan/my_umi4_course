@@ -12,10 +12,11 @@ const { Dragger } = Upload;
 export interface importDataProps {
   mode?: EditorMode;
   onClose: () => any;
+  selectedRowKeys: any;
 }
 
 export default function addEnvData(props: importDataProps) {
-  const { mode, onClose } = props;
+  const { mode, onClose, selectedRowKeys } = props;
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -36,6 +37,21 @@ export default function addEnvData(props: importDataProps) {
       strokeWidth: 3,
       format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
       showInfo: '上传中请不要关闭弹窗',
+    },
+    beforeUpload: (file: any, fileList: any) => {
+      return new Promise((resolve, reject) => {
+        console.log('fileList', fileList);
+        Modal.confirm({
+          title: '操作提示',
+          content: `确定要上传文件：${file.name}进行离线部署吗？`,
+          onOk: () => {
+            return resolve(file);
+          },
+          onCancel: () => {
+            return reject(false);
+          },
+        });
+      });
     },
     onChange(info: any) {
       const { status } = info.file;
@@ -70,7 +86,7 @@ export default function addEnvData(props: importDataProps) {
           type="primary"
           target="_blank"
           className="downloadButton"
-          href={`${downloadDnsManage}`}
+          href={`${downloadDnsManage}?ids=${selectedRowKeys}`}
           // disabled={downLoadStatus}
           onClick={() => {
             message.info('开始导出...');

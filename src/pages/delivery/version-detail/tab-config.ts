@@ -2,14 +2,17 @@ export const productionTabsConfig: any = [
   {
     label: '应用',
     value: '0',
+    type: 'app',
   },
   {
     label: '中间件',
     value: '1',
+    type: 'middleware',
   },
   {
     label: '基础数据',
     value: '2',
+    type: 'sql',
   },
 ];
 

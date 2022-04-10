@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
-import { getRequest, postRequest, delRequest } from '@/utils/request';
+import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 
 //创建应用Chart模板
 
@@ -18,10 +18,10 @@ export function useCreateComponentTmpl(): [
   }) => {
     setLoading(true);
     try {
-      await postRequest(APIS.createComponentTmpl, { data: { params } })
+      await postRequest(APIS.createComponentTmpl, { data: params })
         .then((res) => {
           if (res.success) {
-            message.success(res.data);
+            message.success('新建组件模板成功！');
           } else {
             return;
           }
@@ -40,10 +40,17 @@ export function useCreateComponentTmpl(): [
 
 export function useUpdateComponentTmpl(): [
   boolean,
-  (params: { tempName: string; productLine: string; tempType: string; tempConfiguration: string }) => Promise<void>,
+  (params: {
+    id: number;
+    tempName: string;
+    productLine: string;
+    tempType: string;
+    tempConfiguration: string;
+  }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const updateComponentTmpl = async (params: {
+    id: number;
     tempName: string;
     productLine: string;
     tempType: string;
@@ -51,7 +58,7 @@ export function useUpdateComponentTmpl(): [
   }) => {
     setLoading(true);
     try {
-      await postRequest(APIS.updateComponentTmpl, { data: { params } })
+      await putRequest(APIS.updateComponentTmpl, { data: params })
         .then((res) => {
           if (res.success) {
             message.success(res.data);

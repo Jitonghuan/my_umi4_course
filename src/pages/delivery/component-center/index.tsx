@@ -18,11 +18,21 @@ import MiddlewareModal from './components/middlewareModal';
 import { useQueryComponentList } from './hook';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
+export const productLineOptions = [
+  {
+    label: 'hbos',
+    value: 'hbos',
+  },
+  {
+    label: 'gmc',
+    value: 'gmc',
+  },
+];
 
 export default function VersionDetail() {
   const [matchlabels, setMatchlabels] = useState<any[]>([]);
   const [editableStr, setEditableStr] = useState('This is an editable text.');
-  const [tabActiveKey, setTabActiveKey] = useState<string>('user');
+  const [tabActiveKey, setTabActiveKey] = useState<string>('app');
   const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
@@ -32,9 +42,9 @@ export default function VersionDetail() {
     setMatchlabels(value);
   };
   const pageTypes: any = {
-    user: { text: '用户组件接入' },
+    app: { text: '应用组件接入' },
     middleware: { text: '平台组件接入' },
-    basicData: { text: '基础数据接入' },
+    sql: { text: '基础数据接入' },
   };
 
   return (
@@ -42,6 +52,7 @@ export default function VersionDetail() {
       <ContentCard>
         <UserModal
           visable={userModalVisiable}
+          productLineOptions={productLineOptions}
           tabActiveKey={tabActiveKey}
           queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
@@ -56,14 +67,15 @@ export default function VersionDetail() {
             setBasicDataModalVisiable(false);
           }}
         />
-        <MiddlewareModal
+        {/* <MiddlewareModal
           visable={middlewareModalVisibale}
+         
           tabActiveKey={tabActiveKey}
           queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
             setMiddlewareModalVisibale(false);
           }}
-        />
+        /> */}
 
         <>
           <FilterCard className="layout-compact">
@@ -78,13 +90,13 @@ export default function VersionDetail() {
                     <Button
                       type="primary"
                       onClick={() => {
-                        if (tabActiveKey === 'user') {
+                        if (tabActiveKey === 'app') {
                           setUserModalVisiable(true);
                         }
                         if (tabActiveKey === 'middleware') {
                           setMiddlewareModalVisibale(true);
                         }
-                        if (tabActiveKey === 'basicData') {
+                        if (tabActiveKey === 'sql') {
                           setBasicDataModalVisiable(true);
                         }
                       }}

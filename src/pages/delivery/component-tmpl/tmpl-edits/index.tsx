@@ -12,10 +12,11 @@ import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
 import { useCreateComponentTmpl, useUpdateComponentTmpl } from './hooks';
-
+import { useGetTypeListOption } from '../hooks';
+import { productLineOptions } from '../config';
 export interface TmplListProps {
   mode?: EditorMode;
-  initData?: TmplEdit;
+  initData: TmplEdit;
   onClose?: () => any;
   onSave: () => any;
 }
@@ -24,25 +25,25 @@ export default function TmplEditor(props: TmplListProps) {
   const [createTmplForm] = Form.useForm();
   const [createLoading, createComponentTmpl] = useCreateComponentTmpl();
   const [updateLoading, updateComponentTmpl] = useUpdateComponentTmpl();
+  const [optionLoading, typeOption] = useGetTypeListOption();
   const { mode, initData, onClose, onSave } = props;
-  const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
-  const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
-  const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [source, setSource] = useState<any[]>([]);
-  const [isDisabled, setIsdisabled] = useState<any>();
-  const [isDeployment, setIsDeployment] = useState<string>();
-
-  // const templateCode = initData?.templateCode;
-  const handleChange = (next: any[]) => {
-    setSource(next);
-  };
-
-  const clickChange = () => {};
+  const [isDisabled, setIsdisabled] = useState<boolean>(false);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
-    // createTmplForm.resetFields();
-  }, []);
+    if (mode === 'EDIT' || mode === 'VIEW') {
+      createTmplForm.setFieldsValue({ ...initData });
+    }
+    if (mode === 'VIEW') {
+      setIsdisabled(true);
+    }
+    if (mode === 'ADD') {
+      createTmplForm.resetFields();
+    }
+    return () => {
+      setIsdisabled(false);
+    };
+  }, [mode]);
   const handleSubmit = () => {
     const param = createTmplForm.getFieldsValue();
     if (mode === 'ADD') {
@@ -50,7 +51,7 @@ export default function TmplEditor(props: TmplListProps) {
         onSave();
       });
     } else {
-      updateComponentTmpl({ ...param }).then(() => {
+      updateComponentTmpl({ ...param, id: initData.id }).then(() => {
         onSave();
       });
     }
@@ -59,14 +60,13 @@ export default function TmplEditor(props: TmplListProps) {
   return (
     <Drawer
       visible={mode !== 'HIDE'}
-      title={mode === 'EDIT' ? '编辑组件模版' : mode === 'ADD' ? '新增组件模版' : ''}
+      title={mode === 'EDIT' ? '编辑组件模版' : mode === 'ADD' ? '新增组件模版' : mode === 'VIEW' ? '查看组件模版' : ''}
       // maskClosable={false}
-      // onClose={onClose}
-
+      onClose={onClose}
       width={'70%'}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" loading={createLoading || updateLoading} onClick={handleSubmit}>
+          <Button type="primary" disabled={isDisabled} loading={createLoading || updateLoading} onClick={handleSubmit}>
             保存
           </Button>
           <Button type="default" onClick={onClose}>
@@ -77,18 +77,25 @@ export default function TmplEditor(props: TmplListProps) {
     >
       <ContentCard className="tmpl-edits">
         <Form layout="inline" form={createTmplForm}>
-          <Form.Item label="产品线" name="productLine">
-            <Select />
-          </Form.Item>
-          <Form.Item label="模板类型" name="tempType">
-            <Select />
-          </Form.Item>
-          <Form.Item label="模板名称" name="tempName">
-            <Input />
-          </Form.Item>
-          <p>
-            <Form.Item label="模板配置" name="tempConfiguration">
-              <AceEditor height={450} />
+          <p style={{ width: '100%', display: 'flex', marginLeft: 16 }}>
+            <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
+              <Select style={{ width: 180 }} options={productLineOptions} />
+            </Form.Item>
+            <Form.Item label="模板类型" name="tempType" rules={[{ required: true, message: '请选择模版类型' }]}>
+              <Select style={{ width: 180 }} options={typeOption} />
+            </Form.Item>
+            <Form.Item label="模板名称" name="tempName" rules={[{ required: true, message: '请输入模板名称' }]}>
+              <Input style={{ width: 180 }} />
+            </Form.Item>
+          </p>
+
+          <p style={{ width: '100%' }}>
+            <Form.Item
+              label="模板配置"
+              name="tempConfiguration"
+              rules={[{ required: true, message: '请输入模版配置' }]}
+            >
+              <AceEditor height={450} mode="yaml" />
             </Form.Item>
           </p>
         </Form>

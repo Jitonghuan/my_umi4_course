@@ -1,5 +1,5 @@
 import { useEffect, useState, useLayoutEffect } from 'react';
-import { getRequest, postRequest, delRequest } from '@/utils/request';
+import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from './service';
 import { message } from 'antd';
 
@@ -13,20 +13,23 @@ export function useDnsManageList() {
     total: 0,
   });
 
-  useEffect(() => {
-    getDnsManageList();
-  }, []);
-  const getDnsManageList = async (
-    pageIndex?: number,
-    pageSize?: number,
-    hostRecord?: string,
-    recordType?: string,
-    recordValue?: string,
-  ) => {
+  const getDnsManageList = async (paramObj: {
+    currentEnvCode: any;
+    hostRecord?: string;
+    recordType?: string;
+    recordValue?: string;
+    status?: string;
+    pageIndex?: number;
+    pageSize?: number;
+  }) => {
     setLoading(true);
-    await getRequest(APIS.getDnsManageList, {
-      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 20, hostRecord, recordType, recordValue },
-    })
+    await getRequest(
+      `${APIS.getDnsManageList}?envCode=${paramObj.currentEnvCode.envCode}&hostRecord=${
+        paramObj?.hostRecord || ''
+      }&recordType=${paramObj?.recordType || ''}&recordValue=${paramObj?.recordValue || ''}&status=${
+        paramObj?.status || ''
+      }&pageIndex=${paramObj?.pageIndex || 1}&pageSize=${paramObj?.pageSize || 20}`,
+    )
       .then((result) => {
         if (result?.success) {
           const dataSource = result.data.dataSource || [];
@@ -69,10 +72,10 @@ export function useAddDnsManage(): [
     remark?: string;
   }) => {
     setLoading(true);
-    await postRequest(APIS.addDnsManage, { data: paramsObj })
+    await postRequest(`${APIS.addDnsManage}?envCode=${paramsObj.envCode}`, { data: paramsObj })
       .then((result) => {
         if (result.success) {
-          message.success(result.data);
+          message.success('新增记录成功！');
         } else {
           return;
         }
@@ -107,9 +110,9 @@ export function useUpdateDnsManage(): [
     remark?: string;
   }) => {
     setLoading(true);
-    await postRequest(APIS.updateDnsManage, { data: paramsObj })
+    await putRequest(`${APIS.updateDnsManage}?envCode=${paramsObj.envCode}&id=${paramsObj.id}`, { data: paramsObj })
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           message.success(result.data);
         } else {
           return;
@@ -128,7 +131,7 @@ export function useDeleteDnsManage(): [boolean, (paramsObj: { envCode: string; i
   const [loading, setLoading] = useState<boolean>(false);
   const deleteDnsManage = async (paramsObj: { envCode: string; id: number }) => {
     setLoading(true);
-    await delRequest(APIS.deleteDnsManage, { data: paramsObj })
+    await delRequest(`${APIS.deleteDnsManage}?envCode=${paramsObj.envCode}&id=${paramsObj.id}`)
       .then((result) => {
         if (result.success) {
           message.success(result.data);
@@ -152,7 +155,9 @@ export function useUpdateDnsManageStatus(): [
   const [loading, setLoading] = useState<boolean>(false);
   const updateDnsManage = async (paramsObj: { envCode: string; id: number; status: string }) => {
     setLoading(true);
-    await postRequest(APIS.updateDnsManageStatus, { data: paramsObj })
+    await postRequest(`${APIS.updateDnsManageStatus}?envCode=${paramsObj.envCode}&id=${paramsObj.id}`, {
+      data: paramsObj,
+    })
       .then((result) => {
         if (result.success) {
           message.success(result.data);

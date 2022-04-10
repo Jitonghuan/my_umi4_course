@@ -9,7 +9,7 @@ export function useQueryTemplateList(): [
   any[],
   any,
   any,
-  (pageIndex?: any, pageSize?: any, productLine?: string, tempType?: string) => Promise<void>,
+  (paramObj: { pageIndex?: any; pageSize?: any; productLine?: string; tempType?: string }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -18,19 +18,19 @@ export function useQueryTemplateList(): [
     pageSize: 20,
     total: 0,
   });
-  // useEffect(() => {
-  //   queryTemplateList();
-  // }, []);
-  const queryTemplateList = async (pageIndex?: any, pageSize?: any, productLine?: string, tempType?: string) => {
+  useEffect(() => {
+    queryTemplateList({ pageIndex: 1, pageSize: 20 });
+  }, []);
+  const queryTemplateList = async (paramObj: {
+    pageIndex?: any;
+    pageSize?: any;
+    productLine?: string;
+    tempType?: string;
+  }) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentTmpl, {
-        data: {
-          pageIndex: pageIndex || 1,
-          pageSize: pageSize || 20,
-          productLine: productLine || '',
-          tempType: tempType || '',
-        },
+        data: paramObj,
       })
         .then((res) => {
           if (res.success) {
@@ -56,43 +56,13 @@ export function useQueryTemplateList(): [
   return [loading, dataSource, pageInfo, setPageInfo, queryTemplateList];
 }
 
-// 应用查询
-export function useGetApplicationOption(): [boolean, any, (component_source_env: string) => Promise<void>] {
-  const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState<any>([]);
-  const getApplicationOption = async (componentSourceEnv: string) => {
-    setLoading(true);
-    try {
-      await postRequest(APIS.queryApplist, { data: { componentSourceEnv } })
-        .then((res) => {
-          if (res.success) {
-            let data = res.data;
-            const option = data?.map((item: any) => ({
-              label: item,
-              value: item,
-            }));
-            setDataSource(option);
-          } else {
-            return [];
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  return [loading, dataSource, getApplicationOption];
-}
-
 // 应用Chart模板分类
 export function useGetTypeListOption(): [boolean, any, () => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<any>([]);
-  // useEffect(() => {
-  //   getTypeListOption();
-  // }, []);
+  useEffect(() => {
+    getTypeListOption();
+  }, []);
   const getTypeListOption = async () => {
     setLoading(true);
     try {
@@ -126,10 +96,10 @@ export function useDeleteComponentTmpl(): [boolean, (id: number) => Promise<void
   const deleteComponentTmpl = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.deleteComponentTmpl}/${id}`)
+      await delRequest(`${APIS.deleteComponentTmpl}?id=${id}`)
         .then((res) => {
           if (res.success) {
-            message.success(res.data);
+            message.success('删除组件模板成功！');
           } else {
             return;
           }

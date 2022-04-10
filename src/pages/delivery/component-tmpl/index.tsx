@@ -10,10 +10,12 @@ import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from './tmpl-edits';
-import { useQueryTemplateList, useDeleteComponentTmpl } from './hooks';
+import { useQueryTemplateList, useDeleteComponentTmpl, useGetTypeListOption } from './hooks';
+import { productLineOptions } from './config';
 
 /** 编辑页回显数据 */
 export interface TmplEdit extends Record<string, any> {
+  id: number;
   productLine: string;
   tempType: string;
   tempName: string;
@@ -24,16 +26,14 @@ export default function ComponentTmpl() {
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryTemplateList] = useQueryTemplateList();
   const [formTmpl] = Form.useForm();
   const [delLoading, deleteComponentTmpl] = useDeleteComponentTmpl();
+  const [optionLoading, typeOption] = useGetTypeListOption();
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
-  const handleEditTask = useCallback(
-    (record: TmplEdit, index: number) => {
-      setTmplateData(record);
-      setTmplEditMode('EDIT');
-    },
-    [tableDataSource],
-  );
-
+  const handleEditTask = useCallback((record: TmplEdit, index: number, type) => {
+    setTmplateData(record);
+    setTmplEditMode(type);
+  }, []);
+  console.log('tmplateData', tmplateData);
   //触发分页
 
   const pageSizeClick = (pagination: any) => {
@@ -41,7 +41,7 @@ export default function ComponentTmpl() {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    queryTemplateList(obj.pageIndex, obj.pageSize);
+    queryTemplateList(obj);
     setPageInfo({
       pageIndex: pagination.current.pageIndex,
     });
@@ -111,16 +111,16 @@ export default function ComponentTmpl() {
   const saveEditData = () => {
     setTmplEditMode('HIDE');
     setTimeout(() => {
-      queryTemplateList();
+      queryTemplateList({ pageIndex: 1, pageSize: 20 });
       // loadListData({ pageIndex: 1, pageSize: 20 });
-    }, 100);
+    }, 200);
     // window.location.reload();
   };
   return (
     <PageContainer>
       <TmplEditDraw
         mode={tmplEditMode}
-        // initData={tmplateData}
+        initData={tmplateData}
         onClose={() => setTmplEditMode('HIDE')}
         onSave={saveEditData}
       />
@@ -129,33 +129,21 @@ export default function ComponentTmpl() {
           layout="inline"
           form={formTmpl}
           onFinish={(values: any) => {
-            // queryList({
-            //   ...values,
-            //   pageIndex: 1,
-            //   pageSize: 20,
-            // });
+            queryTemplateList({ pageIndex: 1, pageSize: 20, ...values });
           }}
           onReset={() => {
             formTmpl.resetFields();
-            // queryList({
-            //   pageIndex: 1,
-            //   // pageSize: pageSize,
-            // });
+            queryTemplateList({
+              pageIndex: 1,
+              pageSize: 20,
+            });
           }}
         >
           <Form.Item label="产品线：" name="productLine">
-            <Select showSearch style={{ width: 180 }} />
+            <Select showSearch allowClear style={{ width: 180 }} options={productLineOptions} />
           </Form.Item>
-          <Form.Item label="类型：" name="templateType">
-            <Select
-              showSearch
-              allowClear
-              style={{ width: 180 }}
-              // options={templateTypes}
-              // onChange={(n) => {
-              //   setTemplateType(n);
-              // }}
-            />
+          <Form.Item label="类型：" name="tempType">
+            <Select showSearch allowClear style={{ width: 180 }} options={typeOption} />
           </Form.Item>
 
           <Form.Item>
@@ -188,7 +176,7 @@ export default function ComponentTmpl() {
             bordered
             loading={tableLoading}
             pagination={{
-              total: pageInfo.pageTotal,
+              total: pageInfo.total,
               pageSize: pageInfo.pageSize,
               current: pageInfo.pageIndex,
               showSizeChanger: true,
@@ -198,7 +186,7 @@ export default function ComponentTmpl() {
                   pageIndex: 1,
                 });
               },
-              showTotal: () => `总共 ${pageInfo.pageTotal} 条数据`,
+              showTotal: () => `总共 ${pageInfo.total} 条数据`,
             }}
             // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
             onChange={pageSizeClick}
@@ -206,7 +194,7 @@ export default function ComponentTmpl() {
             <Table.Column title="ID" dataIndex="id" width="4%" />
             <Table.Column title="模版名称" dataIndex="tempName" width="20%" ellipsis />
             <Table.Column title="产品线" dataIndex="productLine" width="8%" ellipsis />
-            <Table.Column title="类型" dataIndex="templateType" width="8%" ellipsis />
+            <Table.Column title="类型" dataIndex="tempType" width="8%" ellipsis />
             <Table.Column
               title="操作"
               dataIndex="gmtModify"
@@ -214,14 +202,16 @@ export default function ComponentTmpl() {
               key="action"
               render={(_, record: TmplEdit, index) => (
                 <Space size="small">
-                  <a onClick={() => setTmplEditMode('VIEW')}>详情 {record.lastName}</a>
+                  <a onClick={() => handleEditTask(record, index, 'VIEW')}>详情</a>
 
-                  <a onClick={() => handleEditTask(record, index)}>编辑</a>
+                  <a onClick={() => handleEditTask(record, index, 'EDIT')}>编辑</a>
 
                   <Popconfirm
                     title="确定要删除该信息吗？"
                     onConfirm={() => {
-                      deleteComponentTmpl(record.id);
+                      deleteComponentTmpl(record.id).then(() => {
+                        queryTemplateList({ pageIndex: 1, pageSize: 20 });
+                      });
                     }}
                   >
                     <a style={{ color: 'red' }}>删除</a>

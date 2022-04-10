@@ -50,7 +50,7 @@ export default function ComponentDetail() {
         </div>
         <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
           <TabPane tab="配置交付参数" key="1">
-            <div style={{ paddingLeft: 12 }}>配置参数</div>
+            {/* <div style={{ paddingLeft: 12 }}>配置参数</div> */}
             <Tabs defaultActiveKey="1" onChange={tabOnclick}>
               <TabPane tab="全局参数" key="1">
                 <Table columns={configDeliverycolums as any[]}></Table>
@@ -66,13 +66,13 @@ export default function ComponentDetail() {
                 产品部署包：<Tag>暂未出包</Tag>
                 <Button>出部署包</Button>
               </p>
-              <p>
+              {/* <p>
                 产品部署包：<Tag>已出包</Tag>
                 <Button>下载部署包</Button>
                 <Button>重新出包</Button>
-              </p>
+              </p> */}
             </div>
-            <div>
+            <div style={{ marginBottom: 10 }}>
               安装配置文件：<Button type="primary"> 复制</Button>（请将文件中的内容复制到安装包所在目录下的global.yaml）
             </div>
             <div>

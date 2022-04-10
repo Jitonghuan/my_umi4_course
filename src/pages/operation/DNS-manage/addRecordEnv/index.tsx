@@ -61,10 +61,14 @@ export default function addEnvData(props: RecordEditDataProps) {
 
   useEffect(() => {
     if (mode === 'HIDE') return;
-    if (initData) {
+
+    if (initData && mode === 'EDIT') {
       createRecordForm.setFieldsValue({
         ...initData,
       });
+    }
+    if (mode === 'ADD') {
+      createRecordForm.resetFields();
     }
   }, [mode]);
 
@@ -105,7 +109,17 @@ export default function addEnvData(props: RecordEditDataProps) {
             <Form.Item label="记录类型：" name="recordType" rules={[{ required: true, message: '这是必填项' }]}>
               <Select style={{ width: '24vw' }} options={options}></Select>
             </Form.Item>
-            <Form.Item label="主机记录：" name="hostRecord" rules={[{ required: true, message: '这是必填项' }]}>
+            <Form.Item
+              label="主机记录："
+              name="hostRecord"
+              rules={[
+                {
+                  required: true,
+                  message: '请输入正确格式的IP!',
+                  // pattern: /(2(5[0-5]{1}|[0-4]\d{1})|[0-1]?\d{1,2})(\.(2(5[0-5]{1}|[0-4]\d{1})|[0-1]?\d{1,2})){3}/g
+                },
+              ]}
+            >
               <Input style={{ width: '24vw' }} placeholder="请输入环境名"></Input>
             </Form.Item>
             <Form.Item name="recordValue" label="记录值" rules={[{ required: true, message: '这是必填项' }]}>

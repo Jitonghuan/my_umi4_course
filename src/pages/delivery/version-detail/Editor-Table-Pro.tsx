@@ -97,12 +97,13 @@ const defaultData: DataSourceType[] = [
 
 export interface VersionDetailProps {
   currentTab: string;
+  currentTabType: string;
   versionId: number;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, versionId, initDataSource } = props;
+  const { currentTab, versionId, currentTabType, initDataSource } = props;
   const [searchForm] = Form.useForm();
   const [addLoading, addComponent] = useAddCompontent();
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
@@ -114,8 +115,8 @@ export default (props: VersionDetailProps) => {
   const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    queryComponentOptions(currentTab);
-    queryProductVersionOptions(currentTab);
+    queryComponentOptions(currentTabType); //组件查询
+    queryProductVersionOptions(currentTabType); //组件版本查询
     queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
   const columns: ProColumns<DataSourceType>[] = [

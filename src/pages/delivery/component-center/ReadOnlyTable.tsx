@@ -22,7 +22,7 @@ export default function VersionDetail(props: DetailProps) {
       return;
     }
     queryComponentList(currentTab);
-  }, []);
+  }, [currentTab]);
   const columns = [
     {
       title: '组件名称',
@@ -36,13 +36,13 @@ export default function VersionDetail(props: DetailProps) {
     },
     {
       title: '更新时间',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'gmtModify',
+      key: 'gmtModify',
     },
     {
       title: '创建时间',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'gmtCreate',
+      key: 'gmtCreate',
     },
 
     {
@@ -55,8 +55,10 @@ export default function VersionDetail(props: DetailProps) {
               history.push({
                 pathname: '/matrix/delivery/component-detail',
                 state: {
-                  componentName: record.componentName,
-                  componentId: record.id,
+                  initRecord: record,
+                  // componentName: record.componentName,
+                  // componentId: record.id,
+                  // componentDescription:record.componentDescription
                 },
               });
             }}
@@ -79,21 +81,22 @@ export default function VersionDetail(props: DetailProps) {
   ];
   const data = [
     {
-      key: '1',
-      name: 'John B',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
+      id: 1,
+      componentName: '名字',
+      componentDescription: 'John B',
+      updateTime: 32,
+      creatTime: 'New York No. 1 Lake Park',
       tags: ['nice', 'developer'],
     },
     {
-      key: '2',
+      id: '2',
       name: 'Jim Green',
       age: 42,
       address: 'London No. 1 Lake Park',
       tags: ['loser'],
     },
     {
-      key: '3',
+      id: '3',
       name: 'Joe Black',
       age: 32,
       address: 'Sidney No. 1 Lake Park',
