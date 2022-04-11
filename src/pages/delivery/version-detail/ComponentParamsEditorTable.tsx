@@ -77,7 +77,7 @@ const TagList: React.FC<{
 };
 
 type DataSourceType = {
-  id: React.Key;
+  id: any;
   title?: string;
   labels?: {
     key: string;
@@ -98,14 +98,14 @@ export default (props: VersionDetailProps) => {
   const { currentTab, versionId, initDataSource } = props;
   const actionRef = useRef<ActionType>();
   const [originloading, originOptions, queryOriginList] = useQueryOriginList();
+  const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList] =
     useQueryDeliveryParamList();
-  const [loading, options, queryParamList] = useQueryParamList();
+  const [loading, paramOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
-  console.log('originOptions', originOptions);
   useEffect(() => {
     //获取参数来源组件
     queryOriginList(versionId);
@@ -147,17 +147,7 @@ export default (props: VersionDetailProps) => {
           },
         ],
       },
-      valueEnum: {
-        all: { text: '全部', status: 'Default' },
-        open: {
-          text: '未解决',
-          status: 'Error',
-        },
-        closed: {
-          text: '已解决',
-          status: 'Success',
-        },
-      },
+      valueEnum: paramOptions,
     },
     {
       title: '参数值',
@@ -200,7 +190,9 @@ export default (props: VersionDetailProps) => {
         <a
           key="delete"
           onClick={() => {
-            setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+            deleteDeliveryParam(record.id).then(() => {
+              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+            });
           }}
         >
           删除
@@ -211,6 +203,10 @@ export default (props: VersionDetailProps) => {
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
     queryDeliveryParamList(versionId, param);
+  };
+  const tableChange = (values: any) => {
+    setDataSource;
+    console.log('values', values);
   };
   return (
     <>
@@ -265,11 +261,14 @@ export default (props: VersionDetailProps) => {
         //   success: true,
         // })}
         value={tableDataSource}
-        onChange={setDataSource}
+        onChange={(values) => {
+          tableChange(values);
+        }}
         editable={{
           form,
           editableKeys,
-          onSave: async () => {
+          onSave: async (values) => {
+            console.log('saveValues', values);
             await waitTime(800);
           },
           onChange: setEditableRowKeys,

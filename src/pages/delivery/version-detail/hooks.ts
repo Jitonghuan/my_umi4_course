@@ -324,7 +324,16 @@ export function useQueryParamList() {
     await getRequest(APIS.queryParamList, { data: { versionId, componentName: 'nacos' } })
       .then((res) => {
         if (res?.success) {
-          setDataSource(res?.data || []);
+          let dataSource = res.data;
+          let options: any = {};
+          for (const key in dataSource) {
+            options[key] = {
+              text: key,
+              configParamValue: JSON.stringify(dataSource[key]),
+            };
+          }
+
+          setDataSource(options);
         } else {
           return;
         }
