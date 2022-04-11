@@ -43,7 +43,7 @@ export function useClusterSource() {
                 dataArry.push({
                   title: ele.hospitalDistrictName,
                   name: ele.hospitalDistrictCode,
-
+                  nowDisPatchCluster: ele?.nowDisPatchCluster,
                   options: [
                     { label: 'A集群', value: 'cluster_a', ip: ele.HospitalDistrictIp },
                     { label: 'B集群', value: 'cluster_b', ip: ele.HospitalDistrictIp },
