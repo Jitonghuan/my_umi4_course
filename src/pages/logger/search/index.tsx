@@ -321,7 +321,7 @@ export default function LoggerSearch(props: any) {
         // podName: podNameParam || '',
         message: messageParam || '',
         filterIs: appCodeParam || fiterArry || [],
-        envCode: envCode,
+        envCode: envCode || receiveInfo.envCode,
       },
     })
       .then((resp) => {
