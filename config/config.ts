@@ -29,6 +29,7 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
+      // target:'http://matrix-bf-daily.cfuture.shop',
       target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',

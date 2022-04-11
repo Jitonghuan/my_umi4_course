@@ -94,15 +94,17 @@ export default function Launch() {
     setAppCategoryCode(categoryCode);
     getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
       if (resp.success) {
-        const datas =
-          resp?.data?.dataSource?.map((el: any) => {
-            return {
-              ...el,
-              value: el?.envCode,
-              label: el?.envName,
-            };
-          }) || [];
-        setEnvDatas(datas);
+        let dataArry: any = [];
+        resp.data?.dataSource?.map((n: any) => {
+          if (n.clusterName !== 'fe') {
+            dataArry.push({
+              value: n?.envCode,
+              label: n?.envName,
+              data: n,
+            });
+          }
+        });
+        setEnvDatas(dataArry);
       }
     });
   };

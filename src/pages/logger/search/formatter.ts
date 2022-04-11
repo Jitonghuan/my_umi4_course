@@ -26,7 +26,7 @@ export function loggerChart(data: any) {
     },
     grid: {
       top: '2%',
-      bottom: '10%',
+      bottom: '22%',
       // containLabel: true,
     },
     xAxis: {
@@ -44,6 +44,8 @@ export function loggerChart(data: any) {
         // data: [120, 200, 150, 80, 70, 110, 130],
         data: countList,
         type: 'bar',
+        // barWidth:18,
+        // barGap:2,
         showBackground: true,
         backgroundStyle: {
           color: 'rgba(180, 180, 180, 0.2)',
