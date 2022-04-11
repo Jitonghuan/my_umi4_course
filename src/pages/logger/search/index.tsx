@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   Form,
   Select,
@@ -80,6 +80,8 @@ export const START_TIME_ENUMS = [
 ];
 
 export default function LoggerSearch(props: any) {
+  console.log('props', props);
+  const receiveInfo = props.location.query;
   const { TabPane } = Tabs;
   const { Search } = Input;
   const { Panel } = Collapse;
@@ -118,10 +120,41 @@ export default function LoggerSearch(props: any) {
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   var iframe = document.createElement('iframe');
   useLayoutEffect(() => {
+    // receiveInfo
+    if (receiveInfo) {
+      setStartTime(30 * 60 * 1000);
+      const now = new Date().getTime();
+      let defaultInterval = 30 * 60 * 1000;
+      let start = Number((now - defaultInterval) / 1000).toString();
+      let end = Number(now / 1000).toString();
+      setEnvCode(receiveInfo.envCode);
+      setLogStore(receiveInfo.indexMode);
+      let appCodeArry = [];
+      if (receiveInfo.appCode) {
+        appCodeArry.push('appCode:' + receiveInfo.appCode);
+      }
+      appCodeArry.push('envCode:' + receiveInfo.envCode);
+      setAppCodeValue(appCodeArry);
+      setMessageValue(receiveInfo.message);
+      subInfoForm.setFieldsValue({
+        appCode: receiveInfo.appCode,
+        message: receiveInfo.message,
+      });
+      loadMoreData(receiveInfo.indexMode, start, end, querySql, receiveInfo.message, appCodeArry);
+    }
+    // if(receiveInfo.type==='logSearchInfo'){
+
+    // }
+  }, []);
+  useLayoutEffect(() => {
     if (!envCode || !logStore) {
       return;
     }
-    message.info('请输入筛选条件进行查询哦～');
+    let info = subInfoForm.getFieldsValue();
+    if (!info) {
+      message.info('请输入筛选条件进行查询哦～');
+    }
+
     // queryIndexModeList(envCode, logStore)
     //   .then(() => {
     //     message.info('请输入筛选条件进行查询哦～');
@@ -288,7 +321,7 @@ export default function LoggerSearch(props: any) {
         // podName: podNameParam || '',
         message: messageParam || '',
         filterIs: appCodeParam || fiterArry || [],
-        envCode: envCode,
+        envCode: envCode || receiveInfo.envCode,
       },
     })
       .then((resp) => {
