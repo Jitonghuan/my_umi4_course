@@ -169,6 +169,12 @@ export default function DNSManageList(props: any) {
       <ImportDataModal
         mode={importDataMode}
         onClose={() => setImportDataMode('HIDE')}
+        onSave={() => {
+          setAddRecordMode('HIDE');
+          setTimeout(() => {
+            getDnsManageList({ currentEnvCode });
+          }, 100);
+        }}
         selectedRowKeys={selectedRowKeys}
         envCode={currentEnvCode.envCode}
       />

@@ -120,7 +120,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                 },
               ]}
             >
-              <Input style={{ width: '24vw' }} placeholder="请输入环境名"></Input>
+              <Input style={{ width: '24vw' }} placeholder="请输入主机Ip"></Input>
             </Form.Item>
             <Form.Item name="recordValue" label="记录值" rules={[{ required: true, message: '这是必填项' }]}>
               <Input placeholder="请输入记录值" style={{ width: '24vw' }}></Input>

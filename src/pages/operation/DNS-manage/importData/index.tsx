@@ -12,12 +12,13 @@ const { Dragger } = Upload;
 export interface importDataProps {
   mode?: EditorMode;
   onClose: () => any;
+  onSave: () => any;
   selectedRowKeys: any;
   envCode: string;
 }
 
 export default function addEnvData(props: importDataProps) {
-  const { mode, onClose, selectedRowKeys, envCode } = props;
+  const { mode, onClose, onSave, selectedRowKeys, envCode } = props;
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -76,7 +77,13 @@ export default function addEnvData(props: importDataProps) {
   };
 
   return (
-    <Modal visible={mode !== 'HIDE'} title={mode === 'ADD' ? '导入数据' : ''} onCancel={() => onClose()} width={'40%'}>
+    <Modal
+      visible={mode !== 'HIDE'}
+      title={mode === 'ADD' ? '导入数据' : ''}
+      onCancel={() => onClose()}
+      onOk={() => onSave()}
+      width={'40%'}
+    >
       <div className="import-data-info">导入数据</div>
 
       <Dragger {...UploadProps}>
