@@ -132,7 +132,7 @@ export default function TrafficScheduling(props: any) {
             <div className="zone-card" key={index}>
               <h4>{group.title}</h4>
               <Form.Item name={group.name} rules={[{ required: true, message: '请选择集群' }]}>
-                <Radio.Group options={group.options} size="large" />
+                <Radio.Group options={group.options} size="large" defaultValue={group.nowDisPatchCluster} />
               </Form.Item>
             </div>
           ))}
