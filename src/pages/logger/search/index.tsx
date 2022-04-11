@@ -124,19 +124,28 @@ export default function LoggerSearch(props: any) {
     if (receiveInfo) {
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
-      setAppCodeValue(receiveInfo.appCode);
       let appCodeArry = [];
-      if (appCodeValue) {
-        appCodeArry.push('appCode:' + appCodeValue);
+      if (receiveInfo.appCode) {
+        appCodeArry.push('appCode:' + receiveInfo.appCode);
       }
-      appCodeArry.push('envCode:' + envCode);
+      appCodeArry.push('envCode:' + receiveInfo.envCode);
+      setAppCodeValue(appCodeArry);
+      setMessageValue(receiveInfo.message);
+      subInfoForm.setFieldsValue({
+        appCode: receiveInfo.appCode,
+        message: receiveInfo.message,
+      });
     }
   }, []);
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
       return;
     }
-    message.info('请输入筛选条件进行查询哦～');
+    let info = subInfoForm.getFieldsValue();
+    if (!info) {
+      message.info('请输入筛选条件进行查询哦～');
+    }
+
     // queryIndexModeList(envCode, logStore)
     //   .then(() => {
     //     message.info('请输入筛选条件进行查询哦～');
