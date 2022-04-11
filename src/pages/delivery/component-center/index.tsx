@@ -11,7 +11,7 @@ import PageContainer from '@/components/page-container';
 import { Tabs, Radio, Space, Descriptions, Button, Input, Form, Typography } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { productionTabsConfig } from './tab-config';
-import InfoTable from './readOnlyTable';
+import InfoTable from './ReadOnlyTable';
 import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
 import MiddlewareModal from './components/middlewareModal';
