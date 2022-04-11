@@ -122,6 +122,11 @@ export default function LoggerSearch(props: any) {
   useLayoutEffect(() => {
     // receiveInfo
     if (receiveInfo) {
+      setStartTime(30 * 60 * 1000);
+      const now = new Date().getTime();
+      let defaultInterval = 30 * 60 * 1000;
+      let start = Number((now - defaultInterval) / 1000).toString();
+      let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
       let appCodeArry = [];
@@ -135,7 +140,11 @@ export default function LoggerSearch(props: any) {
         appCode: receiveInfo.appCode,
         message: receiveInfo.message,
       });
+      loadMoreData(receiveInfo.indexMode, start, end, querySql, receiveInfo.message, appCodeArry);
     }
+    // if(receiveInfo.type==='logSearchInfo'){
+
+    // }
   }, []);
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
