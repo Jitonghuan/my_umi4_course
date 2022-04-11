@@ -131,7 +131,7 @@ export default (props: VersionDetailProps) => {
   const [searchForm] = Form.useForm();
   useEffect(() => {
     //查询交付配置参数
-    queryDeliveryGloableParamList(versionId, 'gloable');
+    queryDeliveryGloableParamList(versionId, 'global');
     queryDeliveryParamList(versionId);
   }, []);
 
@@ -193,6 +193,7 @@ export default (props: VersionDetailProps) => {
               state: {
                 activeKey: 'component-config',
                 componentId: record.id,
+                type: 'globalParams',
               },
             });
           }}

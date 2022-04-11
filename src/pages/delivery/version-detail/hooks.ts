@@ -297,19 +297,12 @@ export function useQueryOriginList() {
         if (res?.success) {
           let dataSource = res.data.dataSource;
           let options: any = {};
-          let optionsNew: any = {};
-          dataSource ||
-            [].map((item: any, index) => {
-              options[item.componentName] = {
-                text: item.componentName,
-              };
-
-              optionsNew = Object.assign(options, { text: item.componentName });
-              console.log('item', item, optionsNew);
-            });
-
+          dataSource?.map((item: any) => {
+            options[item.componentName] = {
+              text: item.componentName,
+            };
+          });
           setDataSource(options);
-          console.log('options', options, dataSource, optionsNew);
         } else {
           return;
         }
@@ -328,7 +321,7 @@ export function useQueryParamList() {
   const [dataSource, setDataSource] = useState<any>([]);
   const queryParamList = async (versionId: number, componentName: string) => {
     setLoading(true);
-    await getRequest(APIS.queryParamList, { data: { versionId, componentName } })
+    await getRequest(APIS.queryParamList, { data: { versionId, componentName: 'nacos' } })
       .then((res) => {
         if (res?.success) {
           setDataSource(res?.data || []);

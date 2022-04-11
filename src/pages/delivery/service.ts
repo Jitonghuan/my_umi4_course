@@ -46,7 +46,7 @@ export const editComponent = addAPIPrefix('/deliveryManage/product/version/compo
 /* GET 获取参数来源组件 */
 export const queryOriginList = addAPIPrefix('/deliveryManage/product/version/component/origin/list');
 /* GET 获取组件参数及参数值 */
-export const queryParamList = addAPIPrefix('/deliveryManage/component/param/list');
+export const queryParamList = addAPIPrefix('/deliveryManage/product/version/component/param/list');
 /* POST 保存交付配置参数 */
 export const saveParam = addAPIPrefix('/deliveryManage/product/version/param/save');
 /* GET  查询交付配置参数 */

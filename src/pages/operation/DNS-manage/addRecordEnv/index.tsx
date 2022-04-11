@@ -76,12 +76,12 @@ export default function addEnvData(props: RecordEditDataProps) {
     let param = createRecordForm.getFieldsValue();
     console.log('param', param);
     if (mode === 'ADD') {
-      let paramObj = { envCode: envCode.envCode, status: 0, ...param };
+      let paramObj = { envCode: envCode.envCode, status: '0', ...param };
       addDnsManage(paramObj).then(() => {
         onSave();
       });
     } else if (mode === 'EDIT') {
-      let paramObj = { envCode: envCode.envCode, id: initData?.id, ...param };
+      let paramObj = { envCode: envCode.envCode, id: initData?.id, status: initData?.status, ...param };
       updateDnsManage(paramObj).then(() => {
         onSave();
       });

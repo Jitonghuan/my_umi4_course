@@ -88,23 +88,6 @@ type DataSourceType = {
   children?: DataSourceType[];
 };
 
-const defaultData: DataSourceType[] = [
-  {
-    id: 624748504,
-    title: '活动名称一',
-    labels: [{ key: 'woman', label: '川妹子' }],
-    state: 'open',
-    created_at: '2020-05-26T09:42:56Z',
-  },
-  {
-    id: 624691229,
-    title: '活动名称二',
-    labels: [{ key: 'man', label: '西北汉子' }],
-    state: 'closed',
-    created_at: '2020-05-26T08:19:22Z',
-  },
-];
-
 export interface VersionDetailProps {
   currentTab: string;
   versionId: any;
@@ -115,10 +98,11 @@ export default (props: VersionDetailProps) => {
   const { currentTab, versionId, initDataSource } = props;
   const actionRef = useRef<ActionType>();
   const [originloading, originOptions, queryOriginList] = useQueryOriginList();
-  const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryDeliveryParamList] = useQueryDeliveryParamList();
+  const [tableLoading, tableDataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList] =
+    useQueryDeliveryParamList();
   const [loading, options, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-  const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+  // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
   console.log('originOptions', originOptions);
@@ -137,8 +121,8 @@ export default (props: VersionDetailProps) => {
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '参数来源组件',
-      key: 'configParamName',
-      dataIndex: 'configParamName',
+      key: 'configParamComponent',
+      dataIndex: 'configParamComponent',
       valueType: 'select',
       formItemProps: {
         rules: [
@@ -152,8 +136,8 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '选择参数',
-      key: 'version',
-      dataIndex: 'version',
+      key: 'configParamName',
+      dataIndex: 'configParamName',
       valueType: 'select',
       formItemProps: {
         rules: [
@@ -206,6 +190,7 @@ export default (props: VersionDetailProps) => {
               state: {
                 activeKey: 'component-config',
                 componentId: record.id,
+                type: 'componentParams',
               },
             });
           }}
@@ -215,7 +200,7 @@ export default (props: VersionDetailProps) => {
         <a
           key="delete"
           onClick={() => {
-            setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+            setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
           }}
         >
           删除
@@ -274,12 +259,12 @@ export default (props: VersionDetailProps) => {
         // 关闭默认的新建按钮
         recordCreatorProps={false}
         columns={columns}
-        request={async () => ({
-          data: defaultData,
-          total: 3,
-          success: true,
-        })}
-        value={dataSource}
+        // request={async () => ({
+        //   // data: defaultData,
+        //   total: 3,
+        //   success: true,
+        // })}
+        value={tableDataSource}
         onChange={setDataSource}
         editable={{
           form,
