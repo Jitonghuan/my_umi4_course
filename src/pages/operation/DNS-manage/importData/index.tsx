@@ -13,20 +13,22 @@ export interface importDataProps {
   mode?: EditorMode;
   onClose: () => any;
   selectedRowKeys: any;
+  envCode: string;
 }
 
 export default function addEnvData(props: importDataProps) {
-  const { mode, onClose, selectedRowKeys } = props;
+  const { mode, onClose, selectedRowKeys, envCode } = props;
 
   useEffect(() => {
     if (mode === 'HIDE') return;
   }, [mode]);
 
   const uploadApi = () => {
-    return `${uploadDnsManage}?uploadFile=${''}`;
+    return `${uploadDnsManage}?envCode=${envCode}`;
   };
+
   const UploadProps = {
-    name: 'file',
+    name: 'uploadFile',
     multiple: true,
     action: uploadApi,
     progress: {
@@ -40,10 +42,9 @@ export default function addEnvData(props: importDataProps) {
     },
     beforeUpload: (file: any, fileList: any) => {
       return new Promise((resolve, reject) => {
-        console.log('fileList', fileList);
         Modal.confirm({
           title: '操作提示',
-          content: `确定要上传文件：${file.name}进行离线部署吗？`,
+          content: `确定要上传文件：${file.name}吗？`,
           onOk: () => {
             return resolve(file);
           },
@@ -55,13 +56,18 @@ export default function addEnvData(props: importDataProps) {
     },
     onChange(info: any) {
       const { status } = info.file;
+      console.log('status', status, '---', info.file);
       if (status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
-      if (status === 'done') {
+      if (status === 'done' && info.file?.response.success) {
         message.success(`${info.file.name} 上传成功.`);
-      } else if (status === 'error') {
+      } else if (status === 'error' || info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败.`);
+      } else if (info.file?.response?.success === false) {
+        message.error('上传失败！请检查');
+      } else if (info.file.status === 'removed') {
+        message.warning('上传取消！');
       }
     },
     onDrop(e: any) {
@@ -86,7 +92,7 @@ export default function addEnvData(props: importDataProps) {
           type="primary"
           target="_blank"
           className="downloadButton"
-          href={`${downloadDnsManage}?ids=${selectedRowKeys}`}
+          href={`${downloadDnsManage}?ids=${JSON.stringify(selectedRowKeys)}`}
           // disabled={downLoadStatus}
           onClick={() => {
             message.info('开始导出...');

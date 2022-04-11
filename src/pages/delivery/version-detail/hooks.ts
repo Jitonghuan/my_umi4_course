@@ -72,10 +72,14 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
             let options: any = {};
             dataSource ||
               [].map((item: any, index: number) => {
-                options[item.id] = {
-                  text: item.componentName,
+                // options[item.id] = {
+                //   text: item.componentName,
+                // };
+                options = {
+                  [item.id]: { text: item.componentName },
                 };
               });
+            console.log('options11111', options);
             setDataSource(options);
           } else {
             return {};
@@ -108,11 +112,12 @@ export function useQueryComponentVersionOptions(): [boolean, any, (componentName
             let options: any = {};
             dataSource ||
               [].map((item: any) => {
-                options[item.component_version] = {
-                  text: item.component_version,
+                options = {
+                  [item.component_version]: { text: item.component_version },
                 };
               });
             setDataSource(options);
+            console.log('option222', options);
           } else {
             return {};
           }

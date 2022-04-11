@@ -137,7 +137,6 @@ export default function DNSManageList(props: any) {
       setSelectedRows(selectedRows);
     },
   };
-  console.log('selectedRowKeys', selectedRowKeys);
   const handleSearch = () => {
     let value = RecordForm.getFieldsValue();
     let paramObj = {
@@ -171,6 +170,7 @@ export default function DNSManageList(props: any) {
         mode={importDataMode}
         onClose={() => setImportDataMode('HIDE')}
         selectedRowKeys={selectedRowKeys}
+        envCode={currentEnvCode.envCode}
       />
       <ContentCard>
         <div className="dns-server">
