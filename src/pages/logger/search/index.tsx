@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   Form,
   Select,
@@ -80,6 +80,8 @@ export const START_TIME_ENUMS = [
 ];
 
 export default function LoggerSearch(props: any) {
+  console.log('props', props);
+  const receiveInfo = props.location.query;
   const { TabPane } = Tabs;
   const { Search } = Input;
   const { Panel } = Collapse;
@@ -117,6 +119,19 @@ export default function LoggerSearch(props: any) {
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   var iframe = document.createElement('iframe');
+  useLayoutEffect(() => {
+    // receiveInfo
+    if (receiveInfo) {
+      setEnvCode(receiveInfo.envCode);
+      setLogStore(receiveInfo.indexMode);
+      setAppCodeValue(receiveInfo.appCode);
+      let appCodeArry = [];
+      if (appCodeValue) {
+        appCodeArry.push('appCode:' + appCodeValue);
+      }
+      appCodeArry.push('envCode:' + envCode);
+    }
+  }, []);
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
       return;
