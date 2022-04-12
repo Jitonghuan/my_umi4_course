@@ -90,6 +90,7 @@ export function usequeryPodMem() {
                   category: key,
                 });
               });
+              console.log('podMemDataArry', podMemDataArry);
             }
             if (key === 'rssInfo') {
               dataSource['rssInfo']?.map((item: any) => {
