@@ -1227,12 +1227,6 @@ export default [
         component: '@/pages/pedestal/storage-manage/volume-detail',
         hideInMenu: true,
       },
-      {
-        path: 'visual-screen',
-        name: '大屏配置',
-        key: 'visual-screen',
-        component: '@/pages/pedestal/visual-screen',
-      },
     ],
   },
   {
