@@ -130,10 +130,8 @@ export default function LoggerSearch(props: any) {
       let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
-      let messageDecodedData = decodeURIComponent(escape(window.atob(receiveInfo.message)));
+      let messageDecodedData = decodeURIComponent(escape(window.atob(JSON.stringify(receiveInfo.message))));
       // window.atob(receiveInfo.message);
-      if (messageDecodedData) {
-      }
       let appCodeArry = [];
       if (receiveInfo.appCode) {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
