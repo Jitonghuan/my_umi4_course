@@ -121,7 +121,7 @@ export default function LoggerSearch(props: any) {
   var iframe = document.createElement('iframe');
   useLayoutEffect(() => {
     // receiveInfo
-    if (receiveInfo) {
+    if (Object.keys(receiveInfo).length !== 0) {
       setStartTime(30 * 60 * 1000);
       const now = new Date().getTime();
       let defaultInterval = 30 * 60 * 1000;
