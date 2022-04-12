@@ -139,7 +139,7 @@ export default function LoggerSearch(props: any) {
       // setMessageValue(receiveInfo.message);
       subInfoForm.setFieldsValue({
         appCode: receiveInfo.appCode,
-        message: receiveInfo.message,
+        // message: receiveInfo.message,
       });
       setEditScreenVisible(true);
       loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
