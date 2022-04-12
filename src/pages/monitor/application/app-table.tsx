@@ -182,9 +182,11 @@ const Coms = (props: IProps) => {
     queryEnvList({
       appCode: prevFilter.current?.appCode as string,
     }).then((resp) => {
-      setEnvData(resp);
+      let newResp: any = [...new Set(resp)];
+      setEnvData(newResp);
       let reg = /prd$/gi;
       // let reg =/.*(?=prd)prd/
+      console.log('newResp', newResp);
       resp.some((item: any) => {
         if (reg.test(item.envCode)) {
           prevFilter.current = {
