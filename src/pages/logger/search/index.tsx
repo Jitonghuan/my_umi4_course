@@ -14,7 +14,6 @@ import {
   Skeleton,
   Divider,
   Tabs,
-  Row,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
@@ -129,18 +128,21 @@ export default function LoggerSearch(props: any) {
       let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
+      let messageDecodedData = window.atob(receiveInfo.message);
       let appCodeArry = [];
       if (receiveInfo.appCode) {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
       }
       appCodeArry.push('envCode:' + receiveInfo.envCode);
       setAppCodeValue(appCodeArry);
-      setMessageValue(receiveInfo.message);
+      setQuerySql(messageDecodedData);
+      // setMessageValue(receiveInfo.message);
       subInfoForm.setFieldsValue({
         appCode: receiveInfo.appCode,
         message: receiveInfo.message,
       });
-      loadMoreData(receiveInfo.indexMode, start, end, querySql, receiveInfo.message, appCodeArry);
+      setEditScreenVisible(true);
+      loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
     }
     // if(receiveInfo.type==='logSearchInfo'){
 
@@ -365,7 +367,6 @@ export default function LoggerSearch(props: any) {
     setQuerySql('');
     setEditScreenVisible(false);
     setAppCodeValue([]);
-    // setQuerySql('');
     setMessageValue('');
     setPodName('');
     const now = new Date().getTime();
@@ -508,21 +509,14 @@ export default function LoggerSearch(props: any) {
                       // subInfoForm.resetFields();
                       if (!editScreenVisible) {
                         setEditScreenVisible(true);
-                        // setEditConditionType(true);
                       } else {
                         setEditScreenVisible(false);
                         setQuerySql('');
-                        // setEditConditionType(false);
                       }
-
-                      // setMessageValue('');
-                      // setPodName('');
-                      // setAppCodeValue([]);
                     }}
                   >
                     高级搜索
                   </Button>
-                  {/* <span style={{color: '#708090' }}>双击关闭</span> */}
                 </Form>
               </div>
 
@@ -547,7 +541,7 @@ export default function LoggerSearch(props: any) {
                         <QuestionCircleOutlined />
                       </Button>
                     </Popover>
-                    <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} />
+                    <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} value={querySql} />
                   </div>
                 ) : null}
               </div>
