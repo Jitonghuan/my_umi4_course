@@ -96,7 +96,7 @@ export default function Launch() {
       if (resp.success) {
         let dataArry: any = [];
         resp.data?.dataSource?.map((n: any) => {
-          if (n.clusterName !== 'fe') {
+          if (n.envName.search('前端') === -1) {
             dataArry.push({
               value: n?.envCode,
               label: n?.envName,

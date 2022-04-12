@@ -43,7 +43,7 @@ export default function ApplicationParams(props: any) {
       let dataArry: any = [];
       if (result.success) {
         result.data?.map((n: any) => {
-          if (n.proEnvType === 'benchmark' && n.clusterName !== 'fe') {
+          if (n.proEnvType === 'benchmark' && n.envName.search('前端') === -1) {
             dataArry.push({
               value: n?.envCode,
               label: n?.envName,

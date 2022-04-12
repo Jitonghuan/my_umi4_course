@@ -35,13 +35,22 @@ export const queryEnvList = (params: { appCode: string }) =>
   getRequest(queryEnvListApi, { data: params }).then((res: any) => {
     if (res?.success) {
       const { dataSource = [] } = res?.data;
+      let envObj: any = {};
       return (
         dataSource?.map((env: any) => {
-          return {
-            ...env,
-            value: env.envCode,
-            label: env.envCode,
-          };
+          if (env.envName.search('前端') === -1) {
+            envObj = {
+              ...env,
+              value: env.envCode,
+              label: env.envCode,
+            };
+          }
+          return envObj;
+          // return {
+          //   ...env,
+          //   value: env.envCode,
+          //   label: env.envCode,
+          // };
         }) || []
       );
     }
