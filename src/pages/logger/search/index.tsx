@@ -79,8 +79,23 @@ export const START_TIME_ENUMS = [
 ];
 
 export default function LoggerSearch(props: any) {
-  // console.log('props', props);
+  console.log('props', props);
   const receiveInfo = props.location.query;
+  const showWindowHref = () => {
+    var sHref = window.location.href;
+    var args = sHref.split('?');
+    if (args[0] == sHref) {
+      return '';
+    }
+    var arr = args[1].split('&');
+    var obj: any = {};
+    for (var i = 0; i < arr.length; i++) {
+      var arg = arr[i].split('=');
+      obj[arg[0]] = arg[1];
+    }
+    return obj;
+  };
+  const messageInfo = showWindowHref();
   const { TabPane } = Tabs;
   const { Search } = Input;
   const { Panel } = Collapse;
@@ -119,7 +134,6 @@ export default function LoggerSearch(props: any) {
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   var iframe = document.createElement('iframe');
-
   useLayoutEffect(() => {
     // receiveInfo
     if (Object.keys(receiveInfo).length !== 0) {
@@ -130,10 +144,9 @@ export default function LoggerSearch(props: any) {
       let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
-      let messageDecodedData = decodeURIComponent(escape(window.atob(receiveInfo.message)));
+      console.log('message', receiveInfo.message, receiveInfo, messageInfo['message']);
+      let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
       // window.atob(receiveInfo.message);
-      if (messageDecodedData) {
-      }
       let appCodeArry = [];
       if (receiveInfo.appCode) {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
