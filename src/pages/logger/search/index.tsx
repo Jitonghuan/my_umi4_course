@@ -136,10 +136,8 @@ export default function LoggerSearch(props: any) {
       appCodeArry.push('envCode:' + receiveInfo.envCode);
       setAppCodeValue(appCodeArry);
       setQuerySql(messageDecodedData);
-      // setMessageValue(receiveInfo.message);
       subInfoForm.setFieldsValue({
         appCode: receiveInfo.appCode,
-        // message: receiveInfo.message,
       });
       setEditScreenVisible(true);
       loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
