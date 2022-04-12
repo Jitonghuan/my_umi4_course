@@ -119,7 +119,6 @@ export default function LoggerSearch(props: any) {
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   var iframe = document.createElement('iframe');
-
   useLayoutEffect(() => {
     // receiveInfo
     if (Object.keys(receiveInfo).length !== 0) {
@@ -130,7 +129,7 @@ export default function LoggerSearch(props: any) {
       let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
-      let messageDecodedData = decodeURIComponent(escape(window.atob(JSON.stringify(receiveInfo.message))));
+      let messageDecodedData = decodeURIComponent(escape(window.atob(receiveInfo.message)));
       // window.atob(receiveInfo.message);
       let appCodeArry = [];
       if (receiveInfo.appCode) {
