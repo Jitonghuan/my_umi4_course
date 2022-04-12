@@ -183,10 +183,23 @@ const Coms = (props: IProps) => {
       appCode: prevFilter.current?.appCode as string,
     }).then((resp) => {
       setEnvData(resp);
-      prevFilter.current = {
-        ...prevFilter.current,
-        envCode: resp.length ? resp[0].value : undefined,
-      };
+      let reg = /prd$/gi;
+      // let reg =/.*(?=prd)prd/
+      resp.map((item: any) => {
+        if (reg.test(item.envCode)) {
+          prevFilter.current = {
+            ...prevFilter.current,
+            envCode: item.value,
+          };
+          return;
+        } else {
+          prevFilter.current = {
+            ...prevFilter.current,
+            envCode: resp.length ? resp[0].value : undefined,
+          };
+        }
+      });
+
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
     });
