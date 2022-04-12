@@ -99,7 +99,7 @@ export default function DNSManageList(props: any) {
         status: newStatus,
       };
       updateDnsManage(paramObj).then(() => {
-        getDnsManageList({ currentEnvCode });
+        loadListData({ pageIndex: pageInfo.pageIndex, pageSize: pageInfo.pageSize });
       });
       setRecordDataSource(dataSource);
     },
@@ -108,27 +108,39 @@ export default function DNSManageList(props: any) {
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
+    debugger;
+    console.log('pagination', pagination);
     setPageInfo({
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
+      total: pagination.total,
     });
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
+
     loadListData(obj);
   };
 
   const loadListData = (params: any) => {
-    const values = RecordForm.getFieldsValue();
-    getDnsManageList({ currentEnvCode, ...params, ...values });
+    let value = RecordForm.getFieldsValue();
+    let paramObj = {
+      [selectCascaderValue]: value.keyword,
+    };
+    if (selectCascaderValue) {
+      getDnsManageList({ currentEnvCode, ...paramObj, ...params });
+    } else {
+      getDnsManageList({ currentEnvCode, ...params });
+    }
   };
 
   //删除数据
   const handleDelRecord = (record: any) => {
     let id = record.id;
     deleteDnsManage({ envCode: currentEnvCode.envCode, id }).then(() => {
-      getDnsManageList({ currentEnvCode });
+      loadListData({ pageIndex: pageInfo.pageIndex, pageSize: pageInfo.pageSize });
+      // getDnsManageList({ currentEnvCode });
     });
   };
   const rowSelection = {
@@ -170,7 +182,7 @@ export default function DNSManageList(props: any) {
         mode={importDataMode}
         onClose={() => setImportDataMode('HIDE')}
         onSave={() => {
-          setAddRecordMode('HIDE');
+          setImportDataMode('HIDE');
           setTimeout(() => {
             getDnsManageList({ currentEnvCode });
           }, 100);
@@ -252,12 +264,13 @@ export default function DNSManageList(props: any) {
               pageSize: pageInfo.pageSize,
               showSizeChanger: true,
               // onChange: (next) => setPageIndex(next),
-              onShowSizeChange: (_, size) => {
-                setPageInfo({
-                  pageIndex: 1,
-                  pageSize: size,
-                });
-              },
+              // onShowSizeChange: (_, size) => {
+              //   debugger
+              //   setPageInfo({
+              //     pageIndex: 1,
+              //     pageSize: size,
+              //   });
+              // },
               showTotal: () => `总共 ${pageInfo.total} 条数据`,
             }}
             onChange={pageSizeClick}

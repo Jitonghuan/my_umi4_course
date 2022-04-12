@@ -19,7 +19,6 @@ export interface importDataProps {
 
 export default function addEnvData(props: importDataProps) {
   const { mode, onClose, onSave, selectedRowKeys, envCode } = props;
-
   useEffect(() => {
     if (mode === 'HIDE') return;
   }, [mode]);
@@ -57,7 +56,6 @@ export default function addEnvData(props: importDataProps) {
     },
     onChange(info: any) {
       const { status } = info.file;
-      console.log('status', status, '---', info.file);
       if (status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
@@ -85,14 +83,15 @@ export default function addEnvData(props: importDataProps) {
       width={'40%'}
     >
       <div className="import-data-info">导入数据</div>
-
-      <Dragger {...UploadProps}>
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">点击或者拖拽文件到此区域进行导入</p>
-        <p className="ant-upload-hint">请确保上传的文件是根据模版下载的Excel格式，否则会导致导入失败！</p>
-      </Dragger>
+      <div key={Math.random()}>
+        <Dragger {...UploadProps}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">点击或者拖拽文件到此区域进行导入</p>
+          <p className="ant-upload-hint">请确保上传的文件是根据模版下载的Excel格式，否则会导致导入失败！</p>
+        </Dragger>
+      </div>
       <div className="export-data-info">导出数据:</div>
       <div className="export-button">
         <Button
