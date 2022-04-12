@@ -87,6 +87,7 @@ export default function LoggerSearch(props: any) {
   const { Option } = Select;
   const { RangePicker } = DatePicker;
   const [subInfoForm] = Form.useForm();
+  const [sqlForm] = Form.useForm();
   const [rangePickerForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
@@ -138,6 +139,9 @@ export default function LoggerSearch(props: any) {
       setQuerySql(messageDecodedData);
       subInfoForm.setFieldsValue({
         appCode: receiveInfo.appCode,
+      });
+      sqlForm.setFieldsValue({
+        querySql: messageDecodedData,
       });
       setEditScreenVisible(true);
       loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
@@ -522,24 +526,29 @@ export default function LoggerSearch(props: any) {
                 {editScreenVisible === true ? (
                   <div style={{ marginTop: 4 }}>
                     <Divider />
-                    <Popover
-                      title="查看lucene语法"
-                      placement="topLeft"
-                      content={
-                        <a
-                          target="_blank"
-                          href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
-                        >
-                          lucene语法网址
-                        </a>
-                      }
-                    >
-                      <Button>
-                        lucene
-                        <QuestionCircleOutlined />
-                      </Button>
-                    </Popover>
-                    <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} value={querySql} />
+
+                    <Form form={sqlForm} layout="inline">
+                      <Popover
+                        title="查看lucene语法"
+                        placement="topLeft"
+                        content={
+                          <a
+                            target="_blank"
+                            href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
+                          >
+                            lucene语法网址
+                          </a>
+                        }
+                      >
+                        <Button>
+                          lucene
+                          <QuestionCircleOutlined />
+                        </Button>
+                      </Popover>
+                      <Form.Item name="querySql">
+                        <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} />
+                      </Form.Item>
+                    </Form>
                   </div>
                 ) : null}
               </div>
