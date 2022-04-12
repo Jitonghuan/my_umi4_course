@@ -129,6 +129,7 @@ export default function LoggerSearch(props: any) {
       let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
+      console.log('message', receiveInfo.message);
       let messageDecodedData = decodeURIComponent(escape(window.atob(receiveInfo.message)));
       // window.atob(receiveInfo.message);
       let appCodeArry = [];
