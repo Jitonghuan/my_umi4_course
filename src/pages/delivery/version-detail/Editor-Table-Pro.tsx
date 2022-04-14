@@ -78,23 +78,6 @@ type DataSourceType = {
   children?: DataSourceType[];
 };
 
-const defaultData: DataSourceType[] = [
-  {
-    id: 624748504,
-    title: '活动名称一',
-    labels: [{ key: 'woman', label: '川妹子' }],
-    state: 'open',
-    created_at: '2020-05-26T09:42:56Z',
-  },
-  {
-    id: 624691229,
-    title: '活动名称二',
-    labels: [{ key: 'man', label: '西北汉子' }],
-    state: 'closed',
-    created_at: '2020-05-26T08:19:22Z',
-  },
-];
-
 export interface VersionDetailProps {
   currentTab: string;
   currentTabType: string;
@@ -108,11 +91,12 @@ export default (props: VersionDetailProps) => {
   const [addLoading, addComponent] = useAddCompontent();
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
-  const [loading, tableDataSource, pageInfo, setPageInfo, queryVersionComponentList] = useQueryVersionComponentList();
+  const [loading, tableDataSource, setDataSource, pageInfo, setPageInfo, queryVersionComponentList] =
+    useQueryVersionComponentList();
   const [delLoading, deleteVersionComponent] = useDeleteVersionComponent();
   const actionRef = useRef<ActionType>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-  const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+  // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   useEffect(() => {
     queryComponentOptions(currentTabType); //组件查询
@@ -134,7 +118,7 @@ export default (props: VersionDetailProps) => {
         ],
       },
       // renderFormItem:()=><TagList />
-      // valueEnum: componentOptions,
+      valueEnum: componentOptions,
     },
     {
       title: '组件版本',
@@ -149,15 +133,7 @@ export default (props: VersionDetailProps) => {
           },
         ],
       },
-      valueEnum: {
-        1.0: { text: '版本1.0' },
-        open: {
-          text: '未解决',
-        },
-        closed: {
-          text: '已解决',
-        },
-      },
+      valueEnum: componentVersionOptions,
     },
     {
       title: '组件描述',
@@ -168,23 +144,19 @@ export default (props: VersionDetailProps) => {
       title: '操作',
       valueType: 'option',
       width: 250,
-      render: (text, record, _, action) => [
-        // <a
-        //   key="editable"
-        //   onClick={() => {
-        //     action?.startEditable?.(record.id);
-        //   }}
-        // >
-        //   编辑
-        // </a>,
+      render: (text, record: any, _, action) => [
         <a
           //  key="editable"
           onClick={() => {
             history.push({
               pathname: '/matrix/delivery/component-detail',
               state: {
-                activeKey: 'component-config',
+                // activeKey: 'component-config',
+                initRecord: record,
+                componentName: record.componentName,
+                componentVersion: record.componentVersion,
                 componentId: record.id,
+                componentType: currentTab,
               },
             });
           }}
@@ -195,7 +167,8 @@ export default (props: VersionDetailProps) => {
           title="确定要删除吗？"
           onConfirm={() => {
             deleteVersionComponent(record.id).then(() => {
-              setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+              // setDataSource(dataSource.filter((item: any) => item.id !== record.id));
             });
           }}
         >
@@ -261,11 +234,11 @@ export default (props: VersionDetailProps) => {
         // 关闭默认的新建按钮
         recordCreatorProps={false}
         columns={columns}
-        request={async () => ({
-          data: defaultData,
-          total: 3,
-          success: true,
-        })}
+        // request={async () => ({
+        //   data: defaultData,
+        //   total: 3,
+        //   success: true,
+        // })}
         value={tableDataSource}
         onChange={setDataSource}
         pagination={{
@@ -285,8 +258,13 @@ export default (props: VersionDetailProps) => {
           form,
           editableKeys,
           onSave: async () => {
+            let value = form.getFieldsValue();
+            let objKey = Object.keys(value);
+            let params = value[objKey[0]];
             // addComponent(versionId,initDataSource,)
-            await waitTime(800);
+            await addComponent({ versionId, ...params, componentType: currentTab }).then(() => {
+              queryVersionComponentList(versionId, currentTab);
+            });
           },
           onChange: setEditableRowKeys,
           actionRender: (row, config, dom) => [dom.save, dom.cancel],

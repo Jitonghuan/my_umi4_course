@@ -69,7 +69,7 @@ export default function BasicModal(props: DetailProps) {
         <Form.Item label="组件版本" name="componentVersion" rules={[{ required: true, message: '请输入组件版本' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
-        <Form.Item label="组件描述" name="componentDescription" rules={[{ required: true, message: '请输入组件描述' }]}>
+        <Form.Item label="组件描述" name="componentDescription">
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>
         </Form.Item>
       </Form>

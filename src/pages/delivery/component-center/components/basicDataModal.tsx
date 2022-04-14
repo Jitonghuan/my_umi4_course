@@ -99,18 +99,13 @@ export default function BasicModal(props: DetailProps) {
           name="upload"
           valuePropName="fileList"
           getValueFromEvent={normFile}
-          // extra="longgggggggggggggggggggggggggggggggggg"
           rules={[{ required: true, message: '请上传基础数据！' }]}
         >
           <Upload name="logo" action="/upload.do" {...Uploadprops}>
             <Button icon={<UploadOutlined />}>选择文件</Button>
           </Upload>
         </Form.Item>
-        <Form.Item
-          label="基础数据描述"
-          name="componentDescription"
-          rules={[{ required: true, message: '请选择应用类型' }]}
-        >
+        <Form.Item label="基础数据描述" name="componentDescription">
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>
         </Form.Item>
       </Form>

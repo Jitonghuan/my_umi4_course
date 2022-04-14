@@ -53,7 +53,8 @@ export const saveParam = addAPIPrefix('/deliveryManage/product/version/param/sav
 export const queryDeliveryParamList = addAPIPrefix('/deliveryManage/product/version/param/list');
 /* POST 删除交付配置参数 */
 export const deleteDeliveryParam = addAPIPrefix('/deliveryManage/product/version/param/delete');
-
+/* POST  修改交付配置参数 */
+export const editVersionParam = addAPIPrefix('/deliveryManage/product/version/param/edit');
 /* 二、组件中心 */
 /* POST 用户组件接入 */
 export const addApplication = addAPIPrefix('/deliveryManage/component/application/add');
@@ -81,6 +82,8 @@ export const queryComponentInfo = addAPIPrefix('/deliveryManage/component/info')
 /* GET 组件版本查询 */
 
 export const queryComponentVersionList = addAPIPrefix('/deliveryManage/component/version/list');
+/* GET 组件描述更新 */
+export const updateComponent = addAPIPrefix('/deliveryManage/component/update');
 
 /* POST 组件删除 */
 

@@ -35,11 +35,6 @@ export default function VersionDetail(props: DetailProps) {
       key: 'componentDescription',
     },
     {
-      title: '更新时间',
-      dataIndex: 'gmtModify',
-      key: 'gmtModify',
-    },
-    {
       title: '创建时间',
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
@@ -56,7 +51,10 @@ export default function VersionDetail(props: DetailProps) {
                 pathname: '/matrix/delivery/component-detail',
                 state: {
                   initRecord: record,
-                  // componentName: record.componentName,
+                  type: 'componentCenter',
+                  componentName: record.componentName,
+                  componentVersion: record.componentVersion,
+                  componentType: currentTab,
                   // componentId: record.id,
                   // componentDescription:record.componentDescription
                 },
@@ -77,30 +75,6 @@ export default function VersionDetail(props: DetailProps) {
           </Popconfirm>
         </Space>
       ),
-    },
-  ];
-  const data = [
-    {
-      id: 1,
-      componentName: '名字',
-      componentDescription: 'John B',
-      updateTime: 32,
-      creatTime: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
-    },
-    {
-      id: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      id: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
     },
   ];
 
