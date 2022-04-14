@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Modal } from 'antd';
+import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Modal, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -13,6 +13,7 @@ import AddEnvDraw from '../addEnv';
 import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
 import appConfig from '@/app.config';
 import NGDetailModal from './ng-detail';
+import BlockModal from './block-modal';
 import './index.less';
 
 /** 编辑页回显数据 */
@@ -43,6 +44,9 @@ export default function envManageList(props: any) {
   const [EnvForm] = Form.useForm();
   const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
   const [ngModalVisiable, setNgModalVisiable] = useState<boolean>(false);
+  const [blockModalVisiable, setBlockModalVisiable] = useState<boolean>(false);
+  const [initBlockData, setInitBlockData] = useState<any>({});
+
   const [currentNgCode, setCurrentNgCode] = useState<string>('');
   const envTypeData = [
     {
@@ -257,6 +261,13 @@ export default function envManageList(props: any) {
 
   return (
     <PageContainer className="env-list-content">
+      <BlockModal
+        visible={blockModalVisiable}
+        onClose={() => {
+          setBlockModalVisiable(false);
+        }}
+        initData={initBlockData}
+      />
       <NGDetailModal
         visible={ngModalVisiable}
         onClose={() => {
@@ -389,15 +400,30 @@ export default function envManageList(props: any) {
               )}
             />
             <Table.Column
-              title="封网"
+              title="封网操作"
               dataIndex="isBlock"
               width={80}
               render={(value, record, index) => (
-                <Switch
-                  className="isBlock"
-                  onChange={() => isBlockChange(value, record)}
-                  checked={value === 1 ? true : false}
-                />
+                // <Tag color="#108ee9"
+                // onClick={()=>{
+                //   setBlockModalVisiable(true);
+                //   setInitBlockData(record)
+                // }} shape="round"
+                // >封网</Tag>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setBlockModalVisiable(true);
+                    setInitBlockData(record);
+                  }}
+                >
+                  封网
+                </Button>
+                // <Switch
+                //   className="isBlock"
+                //   onChange={() => isBlockChange(value, record)}
+                //   checked={value === 1 ? true : false}
+                // />
               )}
             />
             <Table.Column
