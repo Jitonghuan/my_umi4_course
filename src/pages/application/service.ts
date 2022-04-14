@@ -37,11 +37,11 @@ export const cancelCollection = `${appConfig.apiPrefix}/userManage/userCollectio
 /** GET 获取分支列表 */
 export const queryBranchListUrl = `${appConfig.apiPrefix}/releaseManage/branch/list`;
 
-/** GET 获取主分支列表 */
-export const queryMasterBranchListUrl = `${appConfig.apiPrefix}/releaseManage/master/branch/list`;
-
 /** POST 新增 feature 分支 */
 export const createFeatureBranchUrl = `${appConfig.apiPrefix}/releaseManage/branch/createFeature`;
+
+/** POST 新增 主干 分支 */
+export const createMasterBranchUrl = `${appConfig.apiPrefix}/releaseManage/branch/createMainBranch`;
 
 /** GET 查询应用成员 */
 export const queryAppMemberUrl = `${appConfig.apiPrefix}/appManage/member/list`;
@@ -270,6 +270,9 @@ export const createFeatureBranch = (params: {
     data: params,
   });
 
+// 新建主干分支
+export const createMasterBranch = (params: any) => postRequest(createMasterBranchUrl, { data: params });
+
 /** 查询应用成员 */
 export const queryAppMember = (params: { appCode?: string }) => getRequest(queryAppMemberUrl, { data: params });
 
@@ -414,6 +417,14 @@ export const queryDeployList = async (params: {
   pageSize: number;
 }) => {
   return getRequest(queryDeployListUrl, {
+    data: params,
+  });
+};
+
+export const queryDeployInfoUrl = `${appConfig.apiPrefix}/releaseManage/deploy/getActiveDeployInfo`;
+
+export const queryActiveDeployInfo = async (params: any) => {
+  return getRequest(queryDeployInfoUrl, {
     data: params,
   });
 };
@@ -628,10 +639,14 @@ export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRe
 export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });
 
 /** GET 应用部署-获取流水线 */
-export const getPipelineUrl = `${appConfig.apiPrefix}/releaseManage/`;
+// export const getPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/list`;
+export const getPipelineUrl = `http://127.0.0.1:4523/mock/837336/v1/appManage/appPipeline/list`;
 
 /** POST 应用部署-删除流水线 */
-export const delPipelineUrl = `${appConfig.apiPrefix}/releaseManage/`;
+export const delPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/delete`;
 
 /** POST 应用部署-新增流水线 */
-export const addPipelineUrl = `${appConfig.apiPrefix}/releaseManage/`;
+export const addPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/add`;
+
+/** POST 应用部署-编辑流水线 */
+export const updatePipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/update`;

@@ -12,9 +12,7 @@ import { StepItemProps } from '../../types';
 /** 灰度验证 */
 export default function GrayValidationStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
-
-  // const isLoading = deployStatus === 'verifyWait';
-  // const isError = deployStatus === 'verifyFailed';
+  const { metadata } = deployInfo || {};
   const isLoading = status === 'process';
   const isError = status === 'error';
 
@@ -26,7 +24,7 @@ export default function GrayValidationStep(props: StepItemProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         await fePublishVerify({
-          id: deployInfo.id,
+          id: metadata.id,
           envCode,
           result,
         });
@@ -43,7 +41,6 @@ export default function GrayValidationStep(props: StepItemProps) {
       {...others}
       title="灰度验证"
       icon={isLoading && <LoadingOutlined />}
-      // status={isError ? 'error' : others.status}
       status={status}
       description={
         isLoading && (

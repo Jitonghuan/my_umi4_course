@@ -13,10 +13,9 @@ import DeployModal from './deploy-modal';
 export default function DeployingStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
   const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
+  const { buildUrl } = buildInfo;
   const isLoading = status === 'process';
-  // const isLoading =
-  //   deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
-  // const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
 
   const [deployVisible, setDeployVisible] = useState(false);
 
@@ -49,7 +48,6 @@ export default function DeployingStep(props: StepItemProps) {
         {...others}
         title="部署"
         icon={isLoading && <LoadingOutlined />}
-        // status={isError ? 'error' : others.status}
         status={status}
         description={
           (status === 'error' || status === 'process') && (
@@ -61,15 +59,15 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )} */}
               {/* 浙一日常环境下的部署步骤显示jenkins链接 */}
-              {envTypeCode === 'pre' && jenkinsUrl && deployInfo.envs?.includes('zy-daily') && (
+              {envTypeCode === 'pre' && buildUrl && envInfo.deployEnvs?.includes('zy-daily') && (
                 <div style={{ marginTop: 2 }}>
-                  <a target="_blank" href={jenkinsUrl}>
+                  <a target="_blank" href={buildUrl}>
                     部署详情
                   </a>
                 </div>
               )}
               {/* prod环境 在部署过程中出现错误时 判断如果是在构建显示查看Jenkins详情，如果是部署出现错误显示部署错误详情*/}
-              {envTypeCode === 'prod' && jenkinsUrl && (
+              {envTypeCode === 'prod' && buildUrl && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={jenkinsUrl}>
                     部署详情

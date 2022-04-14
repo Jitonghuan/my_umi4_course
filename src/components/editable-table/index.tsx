@@ -1,0 +1,87 @@
+import React, { useState, useRef } from 'react';
+import { EditableProTable } from '@ant-design/pro-table';
+import { Popconfirm, message } from 'antd';
+import type { ProFormInstance } from '@ant-design/pro-form';
+import ProForm from '@ant-design/pro-form';
+
+export default (props: any) => {
+  const {
+    dataSource,
+    columns,
+    setDataSource,
+    onChange,
+    addBottonText,
+    deleteText,
+    handleDelete,
+    handleSave,
+    ...others
+  } = props;
+  const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+  const formRef = useRef<ProFormInstance<any>>();
+
+  const actionRef = useRef(null) as any;
+  const __columns: any = columns.concat({
+    fixed: 'right',
+    title: '操作',
+    valueType: 'option',
+    width: 100,
+    render: (text: any, record: any, _: any, action: any) => (
+      <div>
+        <a
+          onClick={() => {
+            action?.startEditable?.(record.id);
+            console.log(record, 'record');
+          }}
+        >
+          编辑
+        </a>
+        <Popconfirm
+          title={deleteText}
+          onConfirm={() => {
+            handleDelete(record);
+          }}
+          okText="确定"
+          cancelText="取消"
+        >
+          <a style={{ marginLeft: '10px' }}>删除</a>
+        </Popconfirm>
+      </div>
+    ),
+  });
+
+  return (
+    <>
+      <ProForm
+        formRef={formRef}
+        initialValues={{
+          table: dataSource,
+        }}
+        submitter={false}
+        validateTrigger="onBlur"
+      >
+        <EditableProTable
+          rowKey="id"
+          actionRef={actionRef}
+          loading={false}
+          columns={__columns}
+          value={dataSource}
+          onChange={onChange}
+          {...others}
+          recordCreatorProps={{
+            record: () => ({ id: -1 }),
+            creatorButtonText: addBottonText ? addBottonText : '新增一行',
+          }}
+          editable={{
+            editableKeys,
+            onSave: async (rowKey, data, row) => {
+              handleSave(rowKey, data);
+            },
+            onChange: (keys, cols) => {
+              setEditableRowKeys(keys);
+            },
+          }}
+        />
+      </ProForm>
+    </>
+  );
+};

@@ -11,9 +11,9 @@ import { StepItemProps } from '../../types';
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
   const { deployInfo, onOperate, envTypeCode, envCode, status, ...others } = props;
-  const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
-
-  // const isLoading = deployStatus === 'building';
+  // const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
+  const { buildUrl } = buildInfo;
   const isError = status === 'error';
 
   const handleRebuildClick = () => {
@@ -36,15 +36,14 @@ export default function BuildingStep(props: StepItemProps) {
     <Steps.Step
       {...others}
       title="构建"
-      // icon={isLoading && <LoadingOutlined />}
       status={status}
       description={
         // isLoading && (
         <>
           {/* 浙一日常环境下的部署步骤显示jenkins链接,构建步骤下不显示。其他环境都是构建步骤下显示Jenkins详情 */}
-          {jenkinsUrl && !deployInfo.envs?.includes('zy-daily') ? (
+          {buildUrl && !envInfo.deployEnvs?.includes('zy-daily') ? (
             <div style={{ marginTop: 2 }}>
-              <a target="_blank" href={jenkinsUrl}>
+              <a target="_blank" href={buildUrl}>
                 构建详情
               </a>
             </div>

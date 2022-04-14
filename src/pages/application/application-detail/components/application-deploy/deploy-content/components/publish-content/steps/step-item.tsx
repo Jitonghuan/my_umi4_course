@@ -1,6 +1,6 @@
 import React from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Steps } from 'antd';
+import { Steps, Button } from 'antd';
 import CreateTaskStep from '../step-items/create-task';
 import MergeReleaseStep from '../step-items/merge-release';
 import MergeMasterStep from '../step-items/merge-master';
@@ -16,7 +16,7 @@ import QualityCheckStep from '../step-items/quality-check';
 // title和旧的步骤组件的映射关系 如果返回的title在这个对象中能找到 就用之前旧的组件 否则用默认的
 const stepMap: any = {
   构建: BuildingStep,
-  创建任务: CreateTaskStep,
+  // 创建任务: CreateTaskStep,
   删除feature: DeleteFeatureStep,
   部署: DeployingStep,
   完成: FinishedStep,
@@ -30,7 +30,17 @@ const stepMap: any = {
 
 export default function StepItem(props: any) {
   const { title, status, ...other } = props;
-  let Comp = (props: any) => <Steps.Step {...props} />;
+  let Comp = (props: any) => (
+    <Steps.Step
+      {...props}
+      // description={confirm.waitConfirm && (
+      //   <Button >
+      //     {confirm.label}
+      //   </Button>
+      // )
+      // }
+    />
+  );
   if (stepMap[title]) {
     Comp = stepMap[title];
   }

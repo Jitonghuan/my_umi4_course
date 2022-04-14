@@ -11,15 +11,13 @@ import { StepItemProps } from '../../types';
 /** 合并master */
 export default function MergeMasterStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
-
-  // const isLoading = deployStatus === 'mergingMaster';
-  // const isError = deployStatus === 'mergeMasterErr';
+  const { metadata } = deployInfo || {};
   const isLoading = status === 'process';
   const isError = status === 'error';
 
   const retryMergeMasterClick = async () => {
     try {
-      await reMergeMaster({ id: deployInfo.id });
+      await reMergeMaster({ id: metadata.id });
     } finally {
       onOperate('mergeMasterRetryEnd');
     }
@@ -30,18 +28,17 @@ export default function MergeMasterStep(props: StepItemProps) {
       {...others}
       title="合并master"
       icon={isLoading && <LoadingOutlined />}
-      // status={isError ? 'error' : others.status}
       status={status}
       description={
         isError && (
           <>
-            {deployInfo.mergeWebUrl && (
+            {/* {deployInfo.mergeWebUrl && (
               <div style={{ marginTop: 2 }}>
                 <a target="_blank" href={deployInfo.mergeWebUrl}>
                   查看合并详情
                 </a>
               </div>
-            )}
+            )} */}
             <Button style={{ marginTop: 4 }} onClick={retryMergeMasterClick}>
               重试
             </Button>

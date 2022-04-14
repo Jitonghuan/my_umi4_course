@@ -13,6 +13,7 @@ import appConfig from '@/app.config';
 /** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const downLoadSupportEnv = useRef<string[]>(['']);
   const isNotFrontend = appData?.appType !== 'frontend';
@@ -47,14 +48,14 @@ export default function FinishedStep(props: StepItemProps) {
       status={status}
       description={
         status === 'finish' &&
-        downLoadSupportEnv.current?.filter((item) => deployInfo.envs?.indexOf(item) > -1).length > 0 &&
+        downLoadSupportEnv.current?.filter((item) => envInfo.deployEnvs?.indexOf(item) > -1).length > 0 &&
         appConfig.PRIVATE_METHODS === 'public' &&
         isNotFrontend && (
           <Button
             download
             style={{ marginTop: 4 }}
             target="_blank"
-            href={`${downloadImage}?id=${deployInfo.id}`}
+            href={`${downloadImage}?id=${metadata.id}`}
             // disabled={downLoadStatus}
             onClick={() => {
               message.info('镜像开始下载');

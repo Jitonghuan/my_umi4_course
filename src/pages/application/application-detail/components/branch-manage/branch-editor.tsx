@@ -10,19 +10,22 @@ import {
   getDemandByProjectList,
   getMasterBranch,
   getOriginBranch,
+  createMasterBranch,
 } from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
+import { useMasterBranchList } from './hook';
 
 export interface IProps {
   mode?: EditorMode;
   appCode: string;
   type: string;
+  masterTableData: any;
   onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function BranchEditor(props: IProps) {
-  const { mode, appCode, onClose, onSubmit, type } = props;
+  const { mode, appCode, onClose, onSubmit, type, masterTableData } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
@@ -39,25 +42,39 @@ export default function BranchEditor(props: IProps) {
       getOriginBranchOption();
     }
     if (type !== 'master') {
-      getMasterBranchOption();
       queryPortal();
       // 设置主干分支初始值
-      // form.setFieldsValue({})
+      form.setFieldsValue({ masterBranch: 'master' });
     }
   }, [mode, type]);
+
+  useEffect(() => {
+    const options = masterTableData.map((item: any) => ({ label: item.branchName, value: item.id }));
+    setMasterBranchOptions(options);
+  }, [masterTableData]);
 
   // 提交
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
     setLoading(true);
     try {
-      await createFeatureBranch({
-        appCode,
-        demandId: demandId,
-        ...values,
-      });
+      if (type === 'master') {
+        await createMasterBranch({
+          appCode,
+          masterBranch: values?.masterBranch,
+          branchName: values?.branchName,
+          desc: values?.desc,
+        });
+      } else {
+        await createFeatureBranch({
+          appCode,
+          demandId: demandId,
+          ...values,
+        });
+      }
       message.success('操作成功！');
       onSubmit?.();
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -108,24 +125,6 @@ export default function BranchEditor(props: IProps) {
 
   const onSearch = (val: any) => {
     queryDemand(projectId, val);
-  };
-
-  // 获取主干分支下拉框数据
-  const getMasterBranchOption = () => {
-    try {
-      postRequest(getMasterBranch).then((result) => {
-        if (result.success) {
-          let dataSource = result.data;
-          let dataArry: any = [];
-          // dataSource?.map((item: any) => {
-          //   dataArry.push({ label: item?.projectName, value: item?.projectId });
-          // });
-          setMasterBranchOptions(dataArry);
-        }
-      });
-    } catch (error) {
-      console.log('error', error);
-    }
   };
 
   // 主干分支弹窗-获取来源分支下拉框数据
@@ -186,8 +185,9 @@ export default function BranchEditor(props: IProps) {
           </div>
         )}
         {type === 'master' && (
-          <Form.Item label="来源分支" name="fromBranch" rules={[{ required: true, message: '请选择来源分支' }]}>
-            <Select options={originBranchOptions}></Select>
+          <Form.Item label="来源分支" name="masterBranch" rules={[{ required: true, message: '请选择来源分支' }]}>
+            {/* <Select options={originBranchOptions}></Select> */}
+            <Input placeholder="请输入来源分支" />
           </Form.Item>
         )}
         <Form.Item label="描述" name="desc">

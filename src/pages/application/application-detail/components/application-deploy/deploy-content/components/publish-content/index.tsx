@@ -21,7 +21,6 @@ import FrontendPreEnvSteps from './frontend-steps/pre';
 import FrontendProdEnvSteps from './frontend-steps/prod';
 import DeploySteps from './steps';
 import './index.less';
-import { mockData } from '../../../../second-party-pkg/deploy-content/components/publish-record/mock';
 
 const rootCls = 'publish-content-compo';
 
@@ -45,21 +44,6 @@ const mock = [
   },
   { nodeType: 'single', title: '创建任务', nodeStatus: 'wait' },
   { nodeType: 'single', title: '合并realease', nodeStatus: 'wait' },
-  {
-    nodeType: 'subject',
-    nodes: {
-      base1: [
-        { title: '构建', nodeStatus: 'wait', nodeType: 'single' },
-        { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
-        { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
-      ],
-      dev1: [
-        { title: '构建', nodeStatus: 'wait', nodeType: 'single' },
-        { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
-        { title: '推送资源', nodeStatus: 'wait', nodeType: 'single' },
-      ],
-    },
-  },
   { nodeType: 'single', title: '完成', nodeStatus: 'wait' },
 ];
 
@@ -78,6 +62,8 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin } = props;
+  let { metadata, status } = deployInfo;
+  const { deployNodes } = status || {}; //步骤条数据
   const { appData } = useContext(DetailContext);
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -109,7 +95,7 @@ export default function PublishContent(props: IProps) {
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
 
         return updateFeatures({
-          id: deployInfo.id,
+          id: metadata.id,
           features,
         }).then(() => {
           onOperate('retryDeployEnd');
@@ -202,7 +188,8 @@ export default function PublishContent(props: IProps) {
         getItemByKey={getItemByKey}
       /> */}
       <DeploySteps
-        stepData={mock}
+        // stepData={mock}
+        stepData={deployNodes}
         deployInfo={deployInfo}
         onOperate={onOperate}
         isFrontend={isFrontend}

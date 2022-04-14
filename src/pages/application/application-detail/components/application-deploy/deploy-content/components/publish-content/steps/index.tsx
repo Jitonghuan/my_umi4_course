@@ -24,7 +24,7 @@ const changeColor = (data: any, env?: any) => {
 //连续的单环境是一个单独的stepsComp 遇到多环境节点 有几个环境就有几个stepComb
 const StepsComp = ({ items, current, initial, ...other }: any) => (
   <Steps initial={initial} className="publish-content-compo__steps">
-    {items && items.map((item: any) => <StepItem title={item.title} status={item.nodeStatus} {...other} />)}
+    {items && items.map((item: any) => <StepItem title={item.nodeName} status={item.nodeStatus} {...other} />)}
   </Steps>
 );
 
@@ -59,9 +59,10 @@ const MultiEnvSteps = (props: any) => {
 };
 export default function DeploySteps(props: any) {
   const { stepData, deployInfo, onSpin, stopSpin, ...other } = props;
+  let { metadata, branchInfo, envInfo, buildInfo } = deployInfo;
   const [data, setData] = useState<any>([]);
   useEffect(() => {
-    if (stepData.length !== 0) {
+    if (stepData && stepData.length !== 0) {
       const data = handleData(stepData);
       setData(data);
     }

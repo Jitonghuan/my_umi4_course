@@ -14,6 +14,7 @@ import { conflictItem } from '../../../merge-conflict/types';
 /** 合并release */
 export default function MergeReleaseStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, onSpin, stopSpin, deployedList, status, ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [visible, setVisible] = useState(false); //无冲突
   const [mergeMessage, setMergeMessage] = useState<any>([]);
@@ -22,7 +23,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const retryMergeClick = async () => {
     try {
-      await retryMerge({ id: deployInfo.id });
+      await retryMerge({ id: metadata.id });
     } finally {
       onOperate('mergeReleaseRetryEnd');
     }
@@ -30,7 +31,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const openMergeConflict = () => {
     onSpin();
-    getMergeMessage({ releaseBranch: deployInfo.releaseBranch })
+    getMergeMessage({ releaseBranch: branchInfo.releaseBranch })
       .then((res) => {
         if (!res.success) {
           return;
@@ -69,7 +70,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
         visible={mergeVisible}
         handleCancel={handleCancelMerge}
         mergeMessage={mergeMessage}
-        releaseBranch={deployInfo.releaseBranch}
+        releaseBranch={branchInfo.releaseBranch}
         retryMergeClick={retryMergeClick}
       ></MergeConflict>
       <NoConflict visible={visible} handleCancel={handleCancel} retryMergeClick={retryMergeClick}></NoConflict>
@@ -77,26 +78,22 @@ export default function MergeReleaseStep(props: StepItemProps) {
         {...others}
         title="合并release"
         icon={isLoading && <LoadingOutlined />}
-        // status={isError ? 'error' : others.status}
         status={status}
         description={
           isError && (
             <>
-              {deployInfo.mergeWebUrl && (
+              {branchInfo.conflictFeature && (
                 <div style={{ marginTop: 2 }}>
                   <Button onClick={openMergeConflict} disabled={deployedList.length === 0}>
                     解决冲突
                   </Button>
                 </div>
               )}
-              {deployStatus === 'mergeErr' && !deployInfo.mergeWebUrl && (
+              {!branchInfo.conflictFeature && (
                 <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
                   重试
                 </Button>
               )}
-              {/* <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
-                重试
-              </Button> */}
             </>
           )
         }

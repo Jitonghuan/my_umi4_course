@@ -18,6 +18,7 @@ import { datetimeCellRender } from '@/utils';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
 import { getMasterBranch } from '@/pages/application/service';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
@@ -29,6 +30,8 @@ export interface PublishBranchProps {
   deployInfo: DeployInfoVO;
   env: string;
   onSearch: (name?: string) => any;
+  masterBranch: string;
+  masterBranchChange: any;
   dataSource: {
     id: string | number;
     branchName: string;
@@ -42,7 +45,8 @@ export interface PublishBranchProps {
 }
 
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch } = publishBranchProps;
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch, masterBranch, masterBranchChange } =
+    publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
@@ -52,6 +56,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [masterListData] = useMasterBranchList({ branch_type: 'master' });
 
   type reviewStatusTypeItem = {
     color: string;
@@ -83,6 +89,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       features: filter,
       envCodes: deployEnv,
       isClient: +appData?.isClient! === 1,
+      masterBranch: selectMaster, //来源分支
     });
   };
 
@@ -105,6 +112,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   };
 
   useEffect(() => {
+    if (masterListData.length !== 0) {
+      const option = masterListData.map((item: any) => ({ value: item.id, label: item.branchName }));
+      setMasterBranchOptions(option);
+    }
+  }, [masterListData]);
+
+  useEffect(() => {
     if (!appCategoryCode) return;
     getRequest(listAppEnv, {
       data: {
@@ -124,26 +138,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     });
   }, [appCategoryCode, env]);
 
-  useEffect(() => {
-    getMasterBranchOption();
-  }, []);
-
-  // 获取主干分支下拉框数据
-  const getMasterBranchOption = () => {
-    try {
-      postRequest(getMasterBranch).then((result) => {
-        if (result.success) {
-          let dataSource = result.data;
-          let dataArry: any = [];
-          // dataSource?.map((item: any) => {
-          //   dataArry.push({ label: item?.projectName, value: item?.projectId });
-          // });
-          setMasterBranchOptions(dataArry);
-        }
-      });
-    } catch (error) {
-      console.log('error', error);
-    }
+  const handleChange = (v: string) => {
+    setSelectMaster(v);
+    masterBranchChange();
   };
 
   const branchNameRender = (branchName: string, record: any) => {
@@ -160,8 +157,15 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
       <div className="table-caption">
         <div className="caption-left">
-          <h4>分支列表&nbsp;&nbsp;</h4>
-          <Select options={masterBranchOptions}></Select>
+          <h4>主干分支：</h4>
+          <Select
+            options={masterBranchOptions}
+            value={selectMaster}
+            style={{ width: '240px', marginRight: '20px' }}
+            defaultValue={'master'}
+            onChange={handleChange}
+          ></Select>
+          <h4>开发分支名称：</h4>
           <Input.Search
             placeholder="搜索分支"
             value={searchText}

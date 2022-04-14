@@ -11,10 +11,10 @@ import { usePaginated } from '@cffe/vc-hulk-table';
 import { datetimeCellRender } from '@/utils';
 import BranchEditor from './branch-editor';
 import DetailContext from '../../context';
-import { queryBranchListUrl, queryMasterBranchListUrl, deleteBranch } from '@/pages/application/service';
+import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
 import { createReview } from '@/pages/application/service';
 import { postRequest, getRequest } from '@/utils/request';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useBranchList, useMasterBranchList } from './hook';
 import './index.less';
 
 export default function BranchManage() {
@@ -34,7 +34,7 @@ export default function BranchManage() {
 
   useEffect(() => {
     if (!appCode) return;
-    queryMaterBranch({ appCode, env: 'feature' });
+    getBranchList({ branch_type: 'master', appCode });
   }, [appCode]);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function BranchManage() {
 
   useEffect(() => {
     if (rowData?.id) {
-      queryBranch();
+      getBranchList({ branch_type: 'feature', appCode });
     }
   }, [rowData]);
 
@@ -59,49 +59,44 @@ export default function BranchManage() {
     (type) => {
       if (type === 'main') {
         const values = mainForm.getFieldsValue();
-        queryMaterBranch({ pageIndex: 1, ...values });
+        getBranchList({ branch_type: 'master', appCode, ...values, pageIndex: 1 });
       } else {
         const values = form.getFieldsValue();
-        queryMaterBranch({ pageIndex: 1, ...values });
+        getBranchList({ branch_type: 'feature', appCode, ...values, pageIndex: 1 });
       }
     },
     [mainForm, form],
   );
 
-  // 获取主干分支列表
-  const queryMaterBranch = (params: any) => {
-    const temp: any = [
-      { id: 1, branchName: 'hahah' },
-      { id: 2, branchName: 'haahhahah2' },
-      { id: 3, branchName: 'haahhahah3' },
-    ];
-    setMasterTableData(temp);
-    setMasterPage({ total: temp.length, size: 10, pageIndex: 1 });
-    // getRequest(queryMasterBranchListUrl, { data: { ...params } }).then((res) => {
-    //   if (res.success) {
-    //     let data = res?.data.dataSource[0];
-    //     setMasterTableData(data);
-    //   }
-    // });
-  };
-  // 获取子分支
-  const queryBranch = (params?: any) => {
-    getRequest(queryBranchListUrl, { data: { appCode, ...params } }).then((res) => {
+  // 获取分支列表
+  const getBranchList = (params: any) => {
+    const { branch_type } = params;
+    getRequest(queryBranchListUrl, { data: { ...params } }).then((res) => {
       if (res.success) {
-        let data = res?.data.dataSource;
-        setTableData(data);
-        setPage(res.data.pageInfo);
+        let { dataSource, pageInfo } = res?.data;
+        if (branch_type === 'master') {
+          setMasterTableData(dataSource);
+          setMasterPage(pageInfo);
+        } else {
+          setTableData(dataSource);
+          setPage(pageInfo);
+        }
       }
     });
   };
 
   // 删除分支
-  const handleDelBranch = useCallback(async (record: any) => {
+  const handleDelBranch = useCallback(async (record: any, type: string) => {
+    console.log(type, 'type');
     try {
       setPending(true);
       await deleteBranch({ id: record.id });
       message.success('操作成功！');
-      // queryBranchList();
+      if (type === 'master') {
+        getBranchList({ branch_type: 'master' });
+      } else {
+        getBranchList({ branch_type: 'feature' });
+      }
     } finally {
       setPending(false);
     }
@@ -153,6 +148,11 @@ export default function BranchManage() {
       key: 'branchName',
       ellipsis: true,
       width: 400,
+      render: (value: any) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       title: '描述',
@@ -172,17 +172,24 @@ export default function BranchManage() {
       width: 100,
       ellipsis: true,
     },
-    ...(type !== 'master'
-      ? [
-          {
-            title: '主干分支',
-            dataIndex: 'masterBranch',
-            key: 'masterBranch',
-            width: 100,
-            ellipsis: true,
-          },
-        ]
-      : []),
+    {
+      title: '来源主干分支',
+      dataIndex: 'masterBranch',
+      key: 'masterBranch',
+      width: 100,
+      ellipsis: true,
+    },
+    // ...(type !== 'master'
+    //   ? [
+    //       {
+    //         title: '主干分支',
+    //         dataIndex: 'masterBranch',
+    //         key: 'masterBranch',
+    //         width: 100,
+    //         ellipsis: true,
+    //       },
+    //     ]
+    //   : []),
     {
       title: '关联流水线',
       dataIndex: 'relationPipeline',
@@ -226,7 +233,7 @@ export default function BranchManage() {
               创建Review
             </Button>
           )}
-          <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
+          <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record, type)}>
             <Button type="primary" danger size="small">
               作废
             </Button>
@@ -359,11 +366,10 @@ export default function BranchManage() {
         mode={branchEditMode}
         onSubmit={() => {
           setBranchEditMode('HIDE');
-          queryMaterBranch({
-            pageIndex: 1,
-          });
+          getBranchList({ branch_type: 'master', appCode, pageIndex: 1 });
         }}
         onClose={() => setBranchEditMode('HIDE')}
+        masterTableData={masterTableData}
       />
     </ContentCard>
   );

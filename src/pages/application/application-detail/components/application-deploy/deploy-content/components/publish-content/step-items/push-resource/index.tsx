@@ -16,14 +16,15 @@ import appConfig from '@/app.config';
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const [supportEnv, setSupportEnv] = useState<string[]>(['']); //支持离线部署的环境
-  const isLoading = deployStatus === 'pushFeResource';
-  const isError = deployStatus === 'pushFeResourceErr';
+  const isLoading = status === 'process';
+  const isError = status === 'error';
   const isFrontend = appData?.appType === 'frontend';
 
   // 用于前端离线部署
-  const canDownload = envTypeCode === 'prod' && isFrontend && Math.floor(deployStatusMapping[deployStatus]) >= 4;
+  const canDownload = envTypeCode === 'prod' && isFrontend && status === 'finish';
 
   useEffect(() => {
     if (!appData?.appCode) return;
@@ -49,7 +50,7 @@ export default function PushResourceStep(props: StepItemProps) {
   };
   const handleRetryClick = async () => {
     try {
-      await rePushFeResource({ id: deployInfo.id, envCode });
+      await rePushFeResource({ id: metadata.id, envCode });
     } finally {
       onOperate('rePushFeResourceEnd');
     }
@@ -60,7 +61,6 @@ export default function PushResourceStep(props: StepItemProps) {
       {...others}
       title="推送资源"
       icon={isLoading && <LoadingOutlined />}
-      // status={isError ? 'error' : others.status}
       status={status}
       description={
         <>
@@ -73,7 +73,7 @@ export default function PushResourceStep(props: StepItemProps) {
             <Button
               style={{ marginTop: 4 }}
               target="_blank"
-              href={`${downloadResource}?deployId=${deployInfo.id}`}
+              href={`${downloadResource}?deployId=${metadata.id}`}
               onClick={() => {
                 message.info('资源开始下载');
               }}

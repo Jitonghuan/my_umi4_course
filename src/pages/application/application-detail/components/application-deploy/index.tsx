@@ -20,22 +20,6 @@ import { getPipelineUrl } from '@/pages/application/service';
 
 const { TabPane } = Tabs;
 
-const temp: any = {
-  dev: [
-    { value: '流水线1', label: '流水线1' },
-    { value: '流水线2', label: '流水线2' },
-  ],
-  test: [
-    { value: '流水线3', label: '流水线3' },
-    { value: '流水线4', label: '流水线5' },
-  ],
-  pre: [
-    { value: '流水线5', label: '流水线5' },
-    { value: '流水线6', label: '流水线6' },
-  ],
-  prod: [{ value: '流水线1', label: '流水线1' }],
-};
-
 export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
@@ -44,11 +28,6 @@ export default function ApplicationDeploy(props: any) {
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
-  const dataSourceTemp: any = [
-    { id: 1, pipeLine: '流水线1' },
-    { id: 2, pipeLine: '流水线2' },
-  ];
-  // setDatasource(dataSourceTemp)
 
   let env = window.location.href.includes('zslnyy')
     ? 'prod'
@@ -68,8 +47,8 @@ export default function ApplicationDeploy(props: any) {
     return <SecondPartyPkg {...props} />;
   }
   useEffect(() => {
-    getPipeline(tabActive);
     queryData();
+    getPipeline(tabActive);
   }, []);
   const queryData = () => {
     getRequest(listAppEnvType, {
@@ -119,30 +98,35 @@ export default function ApplicationDeploy(props: any) {
   };
 
   // 获取流水线
-  const getPipeline = (v: string) => {
-    // getRequest(getPipelineUrl, {
-    //   data: { appCode: appData?.appCode, env: v },
-    // }).then((res) => {
-    //   if (res?.success) {
-    //     let data = res.data.dataSource;
-    //     setDatasource(data);
-    //     const pipelineSelectData=data.map(()=>{})
-    //   }
-    // });
-    setPipelineOption(temp[v]);
-    handleData(temp[v], v);
+  const getPipeline = (v?: string) => {
+    const tab = v ? v : tabActive;
+    getRequest(getPipelineUrl, {
+      data: { appCode: appData?.appCode, env: tab, pageIndex: -1, size: -1 },
+    }).then((res) => {
+      if (res?.success) {
+        let data = res.data.dataSource;
+        setDatasource(data);
+        const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
+        setPipelineOption(pipelineOptionData);
+        handleData(pipelineOptionData, tab);
+      }
+    });
   };
 
   // 处理数据
-  const handleData = (data: any, v: string) => {
+  const handleData = (data: any, tab: string) => {
     let storageData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
-    // 需要考虑到选择的流水线被删除了的情况
-    if (storageData[v]) {
-      setCurrentValue(storageData[v]);
-    } else {
+    let currentTabValue = storageData[tab];
+    const pipelineCodeList = data.map((item: any) => item.pipelineCode);
+    // 选择的流水线被删除了或者第一次进入页面
+    if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
       setCurrentValue(data[0]);
       let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
-      sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [v]: data[0].value }));
+      sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [tab]: data[0].value }));
+    }
+    // 设置过流水线且没被删除
+    if (pipelineCodeList.includes(currentTabValue)) {
+      setCurrentValue(storageData[tab]);
     }
   };
 
@@ -153,8 +137,10 @@ export default function ApplicationDeploy(props: any) {
         handleCancel={() => {
           setVisible(false);
         }}
-        dataSource={dataSourceTemp}
+        dataSource={datasource}
+        setDatasource={setDatasource}
         onSave={getPipeline}
+        appData={appData}
       />
 
       <Tabs
@@ -187,7 +173,7 @@ export default function ApplicationDeploy(props: any) {
             <DeployContent
               isActive={item.value === tabActive}
               envTypeCode={item.value}
-              pipeLine={currentValue}
+              pipelineCode={currentValue}
               onDeployNextEnvSuccess={() => {
                 const i = envTypeData.findIndex((item) => item.value === tabActive);
                 setTabActive(envTypeData[i + 1]?.value);

@@ -12,8 +12,6 @@ import { StepItemProps } from '../../types';
 export default function DeleteFeatureStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, appData, steps, status, ...others } = props;
   const [venusLoading, setVenusLoading] = useState<boolean>(false);
-
-  // const isLoading = deployStatus === 'deletingFeature';
   const isError = status === 'error';
 
   const handleRetryDelClick = async () => {
@@ -48,8 +46,6 @@ export default function DeleteFeatureStep(props: StepItemProps) {
     <Steps.Step
       {...others}
       title="删除feature"
-      // icon={isLoading && <LoadingOutlined />}
-      // status={isError ? 'error' : others.status}
       status={status}
       description={
         isError && (
