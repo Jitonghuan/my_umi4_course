@@ -50,7 +50,7 @@ export default function NGModalDetail(props: NGInfo) {
       setTargetKeys([]);
       setSelectedKeys(undefined);
     };
-  }, [initData.envCode]);
+  }, [visible]);
 
   const queryAppsListData = async (envCode: string) => {
     let canAddAppsData: any = []; //可选数据数组

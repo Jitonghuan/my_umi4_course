@@ -411,7 +411,10 @@ export default function envManageList(props: any) {
                 // }} shape="round"
                 // >封网</Tag>
                 <Button
+                  size="small"
                   type="primary"
+                  shape="round"
+                  danger
                   onClick={() => {
                     setBlockModalVisiable(true);
                     setInitBlockData(record);
