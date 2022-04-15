@@ -4,7 +4,7 @@ import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import appConfig from '@/app.config';
 
-export function useCreateProjectEnv() {
+export function useCreateProjectEnv(): [boolean, (creatParamsObj: any) => Promise<void>] {
   const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
   const createProjectEnv = async (creatParamsObj: any) => {
     setEnsureLoading(true);
