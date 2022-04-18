@@ -5,13 +5,18 @@ import moment from 'moment';
 import { queryOverview } from '../server';
 import './index.less';
 
+interface IProps {
+  appGroup: string;
+}
+
 const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
 
-const BasicOverview = () => {
+const BasicOverview = ({ appGroup }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
 
   async function onSearch() {
     const res = await queryOverview({
+      appGroup,
       startTime: timeList[0] ? moment(timeList[0]).format('YYYY-MM-DD HH:mm:ss') : null,
       endTime: timeList[1] ? moment(timeList[1]).format('YYYY-MM-DD HH:mm:ss') : null,
     });
@@ -19,7 +24,7 @@ const BasicOverview = () => {
 
   useEffect(() => {
     void onSearch();
-  }, [timeList]);
+  }, [timeList, appGroup]);
 
   useEffect(() => {
     const chart = new Line({

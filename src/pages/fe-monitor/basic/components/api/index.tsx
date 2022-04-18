@@ -8,7 +8,11 @@ import { queryOverview } from '../server';
 const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
 const { TabPane } = Tabs;
 
-const BasicApi = () => {
+interface IProps {
+  appGroup: string;
+}
+
+const BasicApi = ({ appGroup }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
   const [active, setActive] = useState('1');
 
@@ -26,6 +30,7 @@ const BasicApi = () => {
 
   async function onSearchError(page?: number, size?: number) {
     const res = await queryOverview({
+      appGroup,
       startTime: timeList[0] ? moment(timeList[0]).format('YYYY-MM-DD HH:mm:ss') : null,
       endTime: timeList[1] ? moment(timeList[1]).format('YYYY-MM-DD HH:mm:ss') : null,
       pageIndex: errorIndex,
@@ -35,6 +40,7 @@ const BasicApi = () => {
 
   async function onSearchTimeOut(page?: number, size?: number) {
     const res = await queryOverview({
+      appGroup,
       startTime: timeList[0] ? moment(timeList[0]).format('YYYY-MM-DD HH:mm:ss') : null,
       endTime: timeList[1] ? moment(timeList[1]).format('YYYY-MM-DD HH:mm:ss') : null,
       pageIndex: timeOutIndex,
@@ -48,7 +54,7 @@ const BasicApi = () => {
     } else {
       void onSearchTimeOut();
     }
-  }, [timeList]);
+  }, [timeList, appGroup]);
 
   return (
     <div className="basic-api-wrapper">

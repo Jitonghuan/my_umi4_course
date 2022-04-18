@@ -7,6 +7,10 @@ import { CloseOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import './index.less';
 
+interface IProps {
+  appGroup: string;
+}
+
 const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
 
 interface DataSourceItem {
@@ -57,7 +61,7 @@ const defaultData = [
   },
 ];
 
-const BasicError = () => {
+const BasicError = ({ appGroup }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
   const [total, setTotal] = useState<number>(0);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -73,6 +77,7 @@ const BasicError = () => {
 
   async function onSearch(page?: number, size?: number) {
     const res = await queryErrorList({
+      appGroup,
       pageSize: size || pageSize,
       pageNum: page || pageIndex,
     });
@@ -80,7 +85,7 @@ const BasicError = () => {
 
   useEffect(() => {
     void onSearch();
-  }, [timeList]);
+  }, [timeList, appGroup]);
 
   useEffect(() => {
     const chart = new LineColumn({

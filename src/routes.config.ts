@@ -765,6 +765,11 @@ export default [
         name: '报警历史',
         component: '@/pages/monitor/history',
       },
+      {
+        path: 'fe-monitor',
+        name: '前端监控',
+        component: '@/pages/fe-monitor/basic/index',
+      },
     ],
   },
   {
@@ -1212,18 +1217,6 @@ export default [
         name: '大屏配置',
         key: 'visual-screen',
         component: '@/pages/pedestal/visual-screen',
-      },
-    ],
-  },
-  {
-    path: 'fe-monitor',
-    name: '医生端监控',
-    icon: 'icon-poc_index',
-    routes: [
-      {
-        path: 'basic',
-        name: '基础监控',
-        component: '@/pages/fe-monitor/basic/index',
       },
     ],
   },

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Radio, Table, Tabs } from 'antd';
+import { Radio, Table } from 'antd';
 import Header from '../header';
 import PerformanceMarket from '../performance-market';
 import { Line } from '@cffe/hulk-wave-chart';
@@ -7,7 +7,9 @@ import moment from 'moment';
 import './index.less';
 import { queryOverview } from '../server';
 
-const { TabPane } = Tabs;
+interface IProps {
+  appGroup: string;
+}
 
 const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
 const performanceItem = ['tti', 'ttfb', 'lcp', 'fcp', 'fid', 'root-paint']; // 性能项
@@ -47,17 +49,17 @@ const groupItem = [
   },
 ];
 
-const BasicPerformance = () => {
+const BasicPerformance = ({ appGroup }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
   const [activeTab, setActiveTab] = useState<string>('tti');
-  const [pageTab, setPageTab] = useState<number>(0);
-  const [groupTab, setGroupTab] = useState<number>(0);
+  const [pageGroupTab, setPageGroupTab] = useState<number>(0);
+  const [timeGroupTab, setTimeGroupTab] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]); // 展开行key
-  const [groupExpandedRowKeys, setGroupExpandedRowKeys] = useState<any[]>([]); // 展开行key
+  const [timeGroupRowKeys, setTimeGroupRowKeys] = useState<any[]>([]); // 展开行key
   const [dataSource, setDataSource] = useState<any[]>([
     {
       url: 'www.baidu.com',
@@ -75,6 +77,7 @@ const BasicPerformance = () => {
 
   async function onSearch(page?: number, size?: number) {
     const res = await queryOverview({
+      appGroup,
       startTime: timeList[0] ? moment(timeList[0]).format('YYYY-MM-DD HH:mm:ss') : null,
       endTime: timeList[1] ? moment(timeList[1]).format('YYYY-MM-DD HH:mm:ss') : null,
       pageIndex,
@@ -85,7 +88,7 @@ const BasicPerformance = () => {
 
   useEffect(() => {
     void onSearch();
-  }, [timeList]);
+  }, [timeList, appGroup]);
 
   useEffect(() => {
     const chart = new Line({
@@ -123,6 +126,7 @@ const BasicPerformance = () => {
     chart.draw();
   }, []);
 
+  // @ts-ignore
   return (
     <div className="basic-performance-wrapper">
       <Header onChange={setTimeList} defaultTime={timeList} />
@@ -138,7 +142,7 @@ const BasicPerformance = () => {
           <div className="line-chart"></div>
         </div>
         <div className="group-performance">
-          <Radio.Group value={pageTab} onChange={(e) => setPageTab(e.target.value)}>
+          <Radio.Group value={pageGroupTab} onChange={(e) => setPageGroupTab(e.target.value)}>
             {pageItem.map((item, i) => (
               <Radio.Button key={i} value={i}>
                 {item.name}
@@ -190,7 +194,7 @@ const BasicPerformance = () => {
           />
         </div>
         <div className="group-performance">
-          <Radio.Group value={groupTab} onChange={(e) => setGroupTab(e.target.value)}>
+          <Radio.Group value={timeGroupTab} onChange={(e) => setTimeGroupTab(e.target.value)}>
             {groupItem.map((item, i) => (
               <Radio.Button key={i} value={i}>
                 {item.desc}
@@ -228,13 +232,13 @@ const BasicPerformance = () => {
             dataSource={dataSource}
             expandable={{
               expandRowByClick: true,
-              groupExpandedRowKeys,
+              timeGroupRowKeys,
               onExpand: (expanded, record) => {
                 setGroupExpanded(expanded);
                 if (expanded) {
-                  setGroupExpandedRowKeys([record?.url]);
+                  setTimeGroupRowKeys([record?.url]);
                 } else {
-                  setGroupExpandedRowKeys([]);
+                  setTimeGroupRowKeys([]);
                 }
               },
               expandedRowRender: () => (groupExpanded ? <PerformanceMarket /> : null),

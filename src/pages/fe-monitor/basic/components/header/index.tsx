@@ -6,12 +6,12 @@ const { RangePicker } = DatePicker;
 
 const ranges = [
   {
-    value: [moment().subtract(7, 'days'), moment()],
-    label: '最近7天',
+    value: [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()],
+    label: '今日',
   },
   {
-    value: [moment().subtract(30, 'days'), moment()],
-    label: '最近30天',
+    value: [moment().subtract(7, 'days'), moment()],
+    label: '最近7天',
   },
 ];
 
@@ -31,7 +31,7 @@ const Header = ({ onChange, defaultTime }: IProps) => {
   return (
     <div className="basic-header flex-row-center">
       <div className="flex-row-center">
-        <Radio.Group style={{ marginRight: 16 }}>
+        <Radio.Group style={{ marginRight: 16 }} defaultValue={ranges[0].value}>
           {ranges.map((item, i) => (
             <Radio.Button onClick={() => onTimeChange(item.value)} key={i} value={item.value}>
               {item.label}
