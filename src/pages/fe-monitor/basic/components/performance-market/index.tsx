@@ -8,31 +8,31 @@ const PerformanceMarket = () => {
   const [trendChart, setTrendChart] = useState<any>(null);
   const [distributedChart, setDistributedChart] = useState<any>(null);
   const [indicatorChart, setIndicatorChart] = useState<any>(null);
+  const [waterfallChart, setWaterfallChart] = useState<any>(null);
 
   function renderTrendChart() {
     trendChart?.data([
       ['日期', '平均载入时长（s）', '最小载入时长（s）', '最大载入时长（s）'],
-      ['北京', '100', '200'],
-      ['北京1', '200', '300'],
-      ['北京2', '800', '400'],
-      ['北京3', '500', '500'],
-      ['北京4', '700', '600'],
-      ['北京5', '400', '800'],
-      ['北京6', '300', '200'],
+      ['日期', '100', '200'],
+      ['日期1', '200', '300'],
+      ['日期2', '800', '400'],
+      ['日期3', '500', '500'],
+      ['日期4', '700', '600'],
+      ['日期5', '400', '800'],
+      ['日期6', '300', '200'],
     ]);
     trendChart?.draw();
   }
 
   function renderDistributedChart() {
     distributedChart?.data([
-      ['日期', '1s≥载入时长', '2s≥载入时长>1s', '5s≥载入时长>2s', '10s≥载入时长>5s', '20s≥载入时长>10s'],
-      ['北京', '100', '200', '100', '200', '100'],
-      ['北京1', '200', '300', '100', '200', '200'],
-      ['北京2', '800', '400'],
-      ['北京3', '500', '500'],
-      ['北京4', '700', '600'],
-      ['北京5', '400', '800'],
-      ['北京6', '300', '200'],
+      ['100', '1s≥载入时长', '100'],
+      ['100', '1s≥载入时长', '100'],
+      ['200', '2s≥载入时长>1s', '200'],
+      ['300', '5s≥载入时长>2s', '200'],
+      ['400', '10s≥载入时长>5s', '200'],
+      ['500', '20s≥载入时长>10s', '200'],
+      ['500', '载入时长>20s', '200'],
     ]);
     distributedChart?.draw();
   }
@@ -40,15 +40,28 @@ const PerformanceMarket = () => {
   function renderIndicatorChart() {
     indicatorChart?.data([
       ['日期'].concat(performanceItem),
-      ['北京', '100', '200'],
-      ['北京1', '200', '300'],
-      ['北京2', '800', '400'],
-      ['北京3', '500', '500'],
-      ['北京4', '700', '600'],
-      ['北京5', '400', '800'],
-      ['北京6', '300', '200'],
+      ['日期', '100', '200'],
+      ['日期1', '200', '300'],
+      ['日期2', '800', '400'],
+      ['日期3', '500', '500'],
+      ['日期4', '700', '600'],
+      ['日期5', '400', '800'],
+      ['日期6', '300', '200'],
     ]);
     indicatorChart?.draw();
+  }
+
+  function renderWaterfallChart() {
+    waterfallChart?.data([
+      ['100', 'tti', '100'],
+      ['100', 'tti', '100'],
+      ['200', 'ttfb', '200'],
+      ['300', 'lcp', '200'],
+      ['400', 'fcp', '200'],
+      ['500', 'fid', '200'],
+      ['700', 'root-paint', '200'],
+    ]);
+    waterfallChart?.draw();
   }
 
   useEffect(() => {
@@ -82,11 +95,11 @@ const PerformanceMarket = () => {
       new Bar({
         dom: document.querySelector('.distributed-chart'),
         fieldMap: {
-          x: ['日期'],
-          y: ['1s≥载入时长', '2s≥载入时长>1s', '5s≥载入时长>2s', '10s≥载入时长>5s', '20s≥载入时长>10s'],
+          x: ['耗时'],
+          y: ['1s≥载入时长', '2s≥载入时长>1s', '5s≥载入时长>2s', '10s≥载入时长>5s', '20s≥载入时长>10s', '载入时长>20s'],
         },
         layout: {
-          padding: [80, 40, 40, 40],
+          padding: [80, 40, 40, 120],
         },
         title: {
           isShow: false,
@@ -96,6 +109,9 @@ const PerformanceMarket = () => {
         },
         yAxis: {
           name: '',
+        },
+        xAxis: {
+          name: '毫秒',
         },
         tooltip: {
           isShow: true,
@@ -128,6 +144,33 @@ const PerformanceMarket = () => {
         },
       }),
     );
+    setWaterfallChart(
+      new Bar({
+        dom: document.querySelector('.waterfall-chart'),
+        fieldMap: {
+          x: ['耗时'],
+          y: performanceItem,
+        },
+        layout: {
+          padding: [80, 40, 40, 120],
+        },
+        title: {
+          isShow: false,
+        },
+        secondTitle: {
+          isShow: false,
+        },
+        yAxis: {
+          name: '',
+        },
+        xAxis: {
+          name: '毫秒',
+        },
+        tooltip: {
+          isShow: true,
+        },
+      }),
+    );
   }, []);
 
   useEffect(() => {
@@ -141,6 +184,10 @@ const PerformanceMarket = () => {
   useEffect(() => {
     renderIndicatorChart();
   }, [indicatorChart]);
+
+  useEffect(() => {
+    renderWaterfallChart();
+  }, [waterfallChart]);
 
   return (
     <div className="performance-market-wrapper">

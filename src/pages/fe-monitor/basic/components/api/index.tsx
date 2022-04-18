@@ -85,10 +85,6 @@ const BasicApi = () => {
                 dataIndex: 'd5',
               },
               {
-                title: '状态码',
-                dataIndex: 'd2',
-              },
-              {
                 title: '出参',
                 dataIndex: 'd4',
               },
@@ -134,10 +130,6 @@ const BasicApi = () => {
               {
                 title: '上报时间',
                 dataIndex: 'time',
-              },
-              {
-                title: 'http状态码',
-                dataIndex: 'd2',
               },
             ]}
             pagination={{

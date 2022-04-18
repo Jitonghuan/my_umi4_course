@@ -1217,7 +1217,7 @@ export default [
   },
   {
     path: 'fe-monitor',
-    name: '前端监控',
+    name: '医生端监控',
     icon: 'icon-poc_index',
     routes: [
       {

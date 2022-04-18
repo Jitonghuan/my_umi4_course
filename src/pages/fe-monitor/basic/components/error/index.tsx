@@ -198,9 +198,6 @@ const BasicError = () => {
                   <Descriptions.Item label="类型">{activeRecord.t3}</Descriptions.Item>
                   <Descriptions.Item label="错误信息">{activeRecord.d1}</Descriptions.Item>
                   <Descriptions.Item label="行列号">{activeRecord.d3}</Descriptions.Item>
-                  <Descriptions.Item label="最后操作的dom节点路径" span={2}>
-                    {activeRecord.d5}
-                  </Descriptions.Item>
                   <Descriptions.Item label="UA信息" span={2}>
                     {activeRecord.ua}
                   </Descriptions.Item>
