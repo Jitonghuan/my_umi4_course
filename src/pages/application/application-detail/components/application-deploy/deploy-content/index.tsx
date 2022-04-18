@@ -22,7 +22,6 @@ import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
 import { Spin } from 'antd';
 import './index.less';
-import { dataTool } from 'echarts';
 const masterBranch = 'aas';
 
 const rootCls = 'deploy-content-compo';
@@ -38,38 +37,41 @@ const tempData = {
   branchInfo: {
     masterBranch: 'master-1',
     releaseBranch: 'release_dev_20220411162402',
-    features: 'feature_ccd_20220406160947, feature_test_20220330202635',
+    features: ['feature_ccd_20220406160947', 'feature_test_20220330202635'],
     conflictFeature: '',
     // "tagName": "tag-1"
   },
   envInfo: {
-    deployEnvs: 'base-dev',
+    deployEnvs: ['base', 'dev'],
   },
   buildInfo: {
-    buildUrl: ['http://jenkins-dev.cfuture.shop/job/dubbo-consumer'],
+    buildUrl:
+      '[{"envCode":"base","subJenkinsUrl":"http://jenkins-dev.cfuture.shop/job/dubbo-consumer/25/console"},{"envCode":"dev","subJenkinsUrl":"http://jenkins-dev.cfuture.shop/job/dubbo-consumer/26/console"}]',
     buildType: 'beClientBuild',
   },
   status: {
+    deployErrInfo: '[{"envCode":"base","subErrInfo":""},{"envCode":"dev","subErrInfo":"推送资源出错"}]',
     deployNodes: [
       { nodeType: 'single', nodeName: '创建任务', nodeStatus: 'finish' },
       { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'finish' },
+      { nodeName: '构建', nodeStatus: 'finish', nodeType: 'single' },
       {
         nodeType: 'subject',
         nodes: {
           base: [
-            { nodeName: '构建', nodeStatus: 'finish', nodeType: 'single' },
-            { nodeName: '部署', nodeStatus: 'error', nodeType: 'single' },
-            { nodeName: '推送', nodeStatus: 'wait', nodeType: 'single' },
+            { nodeName: '推送资源', nodeStatus: 'finish', nodeType: 'single' },
+            { nodeName: '灰度验证', nodeStatus: 'process', nodeType: 'single' },
+            { nodeName: '推送版本', nodeStatus: 'wait', nodeType: 'single' },
           ],
           dev: [
-            { nodeName: '构建', nodeStatus: 'error', nodeType: 'single' },
-            { nodeName: '部署', nodeStatus: 'wait', nodeType: 'single' },
-            { nodeName: '推送', nodeStatus: 'wait', nodeType: 'single' },
+            { nodeName: '推送资源', nodeStatus: 'finish', nodeType: 'single' },
+            { nodeName: '灰度验证', nodeStatus: 'process', nodeType: 'single' },
+            { nodeName: '推送版本', nodeStatus: 'wait', nodeType: 'single' },
           ],
         },
       },
-      { nodeType: 'single', nodeName: '创建任务', nodeStatus: 'wait' },
       { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'wait' },
+      { nodeType: 'single', nodeName: '删除feature', nodeStatus: 'wait' },
       { nodeType: 'single', nodeName: '完成', nodeStatus: 'wait' },
       // nodes: []
     ],

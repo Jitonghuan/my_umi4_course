@@ -9,38 +9,71 @@ import {
   queryPortalList,
   getDemandByProjectList,
   getMasterBranch,
+  getOriginBranch,
+  createMasterBranch,
 } from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
 
 export interface IProps {
   mode?: EditorMode;
   appCode: string;
+  type: string;
+  masterTableData: any;
   onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function BranchEditor(props: IProps) {
-  const { mode, appCode, onClose, onSubmit } = props;
+  const { mode, appCode, onClose, onSubmit, type, masterTableData } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
   const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
-  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [projectId, setProjectId] = useState<string>('');
   const [demandId, setDemandId] = useState<any>([]);
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [originBranchOptions, setOriginBranchOptions] = useState<any>([]);
 
+  useEffect(() => {
+    if (mode === 'HIDE') return;
+    form.resetFields();
+    if (type === 'master') {
+      getOriginBranchOption();
+    }
+    if (type !== 'master') {
+      queryPortal();
+      // 设置主干分支初始值
+      form.setFieldsValue({ masterBranch: 'master' });
+    }
+  }, [mode, type]);
+
+  useEffect(() => {
+    const options = masterTableData.map((item: any) => ({ label: item.branchName, value: item.id }));
+    setMasterBranchOptions(options);
+  }, [masterTableData]);
+
+  // 提交
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
-
     setLoading(true);
     try {
-      await createFeatureBranch({
-        appCode,
-        demandId: demandId,
-        ...values,
-      });
+      if (type === 'master') {
+        await createMasterBranch({
+          appCode,
+          masterBranch: values?.masterBranch,
+          branchName: values?.branchName,
+          desc: values?.desc,
+        });
+      } else {
+        await createFeatureBranch({
+          appCode,
+          demandId: demandId,
+          ...values,
+        });
+      }
       message.success('操作成功！');
       onSubmit?.();
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -66,7 +99,6 @@ export default function BranchEditor(props: IProps) {
     setProjectId(value);
     queryDemand(value);
   };
-  const handleChange = () => {};
   const queryDemand = async (param: string, searchTextParams?: string) => {
     try {
       await postRequest(getDemandByProjectList, {
@@ -88,23 +120,23 @@ export default function BranchEditor(props: IProps) {
 
   const onChangeDemand = (data: any) => {
     setDemandId(data);
-    // handleSubmit(data);
   };
 
   const onSearch = (val: any) => {
     queryDemand(projectId, val);
   };
-  // 获取主干分支下拉框数据
-  const getMasterBranchOption = () => {
+
+  // 主干分支弹窗-获取来源分支下拉框数据
+  const getOriginBranchOption = () => {
     try {
-      postRequest(getMasterBranch).then((result) => {
+      postRequest(getOriginBranch).then((result) => {
         if (result.success) {
           let dataSource = result.data;
           let dataArry: any = [];
           // dataSource?.map((item: any) => {
           //   dataArry.push({ label: item?.projectName, value: item?.projectId });
           // });
-          setMasterBranchOptions(dataArry);
+          setOriginBranchOptions(dataArry);
         }
       });
     } catch (error) {
@@ -112,17 +144,11 @@ export default function BranchEditor(props: IProps) {
     }
   };
 
-  useEffect(() => {
-    if (mode === 'HIDE') return;
-    form.resetFields();
-    queryPortal();
-  }, [mode]);
-
   return (
     <Modal
       destroyOnClose
-      width={700}
-      title={mode === 'ADD' ? '新建分支' : '编辑分支'}
+      width={600}
+      title={type === 'master' ? '新建主干分支' : '新建开发分支'}
       visible={props.mode !== 'HIDE'}
       onOk={handleSubmit}
       onCancel={onClose}
@@ -130,29 +156,39 @@ export default function BranchEditor(props: IProps) {
       maskClosable={false}
     >
       <Form form={form} labelCol={{ flex: '110px' }}>
-        <Form.Item label="选择主干分支" name="masterBranch" rules={[{ required: true, message: '请选择主干分支' }]}>
-          <Select options={masterBranchOptions}></Select>
-        </Form.Item>
         <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
-          <Input addonBefore="feature_" autoFocus />
+          <Input addonBefore={type === 'master' ? 'master_part_' : 'feature_'} autoFocus />
         </Form.Item>
-        <Form.Item label="项目列表">
-          <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
-        </Form.Item>
-        <Form.Item label="需求列表" name="demandId">
-          <Select
-            mode="multiple"
-            options={queryDemandOptions}
-            onChange={onChangeDemand}
-            showSearch
-            allowClear
-            onSearch={onSearch}
-            optionFilterProp="label"
-            // filterOption={(input, option) =>
-            //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            // }
-          ></Select>
-        </Form.Item>
+        {type !== 'master' && (
+          <div>
+            <Form.Item label="选择主干分支" name="masterBranch" rules={[{ required: true, message: '请选择主干分支' }]}>
+              <Select options={masterBranchOptions}></Select>
+            </Form.Item>
+            <Form.Item label="项目列表" rules={[{ required: true, message: '请输入分支名' }]}>
+              <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
+            </Form.Item>
+            <Form.Item label="需求列表" name="demandId">
+              <Select
+                mode="multiple"
+                options={queryDemandOptions}
+                onChange={onChangeDemand}
+                showSearch
+                allowClear
+                onSearch={onSearch}
+                optionFilterProp="label"
+                // filterOption={(input, option) =>
+                //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                // }
+              ></Select>
+            </Form.Item>
+          </div>
+        )}
+        {type === 'master' && (
+          <Form.Item label="来源分支" name="masterBranch" rules={[{ required: true, message: '请选择来源分支' }]}>
+            {/* <Select options={originBranchOptions}></Select> */}
+            <Input placeholder="请输入来源分支" />
+          </Form.Item>
+        )}
         <Form.Item label="描述" name="desc">
           <Input.TextArea placeholder="请输入描述" rows={3} />
         </Form.Item>

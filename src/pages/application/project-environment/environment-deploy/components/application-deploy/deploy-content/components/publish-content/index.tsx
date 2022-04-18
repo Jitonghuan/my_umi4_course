@@ -13,6 +13,7 @@ import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import FrontendDevEnvSteps from './frontend-steps/dev';
+import DeploySteps from './steps';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -26,6 +27,8 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin } = props;
+  let { metadata, status } = deployInfo;
+  const { deployNodes } = status || {}; //步骤条数据
   const { appData, projectEnvCode } = useContext(DetailContext);
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -57,7 +60,7 @@ export default function PublishContent(props: IProps) {
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
 
         return updateFeatures({
-          id: deployInfo.id,
+          id: metadata.id,
           features,
         }).then(() => {
           onOperate('retryDeployEnd');
@@ -116,7 +119,7 @@ export default function PublishContent(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         return cancelDeploy({
-          id: deployInfo.id,
+          id: metadata?.id,
           envCode: envTypeCode,
         }).then(() => {});
       },
@@ -141,10 +144,23 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      <CurrSteps
+      {/* <CurrSteps
         deployInfo={deployInfo}
         onOperate={onOperate}
         onCancelDeploy={onCancelDeploy}
+        stopSpin={stopSpin}
+        onSpin={onSpin}
+        deployedList={deployedList}
+        getItemByKey={getItemByKey}
+        projectEnvCode={projectEnvCode}
+      /> */}
+      <DeploySteps
+        stepData={deployNodes}
+        deployInfo={deployInfo}
+        onOperate={onOperate}
+        onCancelDeploy={onCancelDeploy}
+        isFrontend={isFrontend}
+        envTypeCode={envTypeCode}
         stopSpin={stopSpin}
         onSpin={onSpin}
         deployedList={deployedList}
@@ -249,9 +265,15 @@ export default function PublishContent(props: IProps) {
         visible={fullScreeVisible}
         onCancel={() => setFullScreeVisible(false)}
       >
-        <CurrSteps
+        {/* <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
+          getItemByKey={getItemByKey}
+          onCancelDeploy={onCancelDeploy}
+        /> */}
+        <DeploySteps
+          stepData={deployNodes}
+          deployInfo={deployInfo}
           getItemByKey={getItemByKey}
           onCancelDeploy={onCancelDeploy}
         />

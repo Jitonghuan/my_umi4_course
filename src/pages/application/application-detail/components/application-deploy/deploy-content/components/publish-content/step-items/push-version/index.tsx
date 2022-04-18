@@ -10,18 +10,18 @@ import { StepItemProps } from '../../types';
 
 /** 发布HTML */
 export default function PushVersionStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
-
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env, status, ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   // const isLoading = deployStatus === 'pushVersion';
   // const isWait = deployStatus === 'deployWait' || deployStatus == 'verifySuccess';
   // const isError = deployStatus === 'pushVersionErr';
   const isLoading = status === 'process';
-  const isWait = status === 'await';
+  const isWait = status === 'wait';
   const isError = status === 'error';
 
   const handleRetryClick = async () => {
     try {
-      await rePushFeVersion({ id: deployInfo.id, envCode });
+      await rePushFeVersion({ id: metadata.id, envCode: env });
     } finally {
       onOperate('rePushFeVersionEnd');
     }

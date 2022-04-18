@@ -14,7 +14,7 @@ import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
 import { createReview } from '@/pages/application/service';
 import { postRequest, getRequest } from '@/utils/request';
-import { useBranchList, useMasterBranchList } from './hook';
+import { useMasterBranchList } from './hook';
 import './index.less';
 
 export default function BranchManage() {

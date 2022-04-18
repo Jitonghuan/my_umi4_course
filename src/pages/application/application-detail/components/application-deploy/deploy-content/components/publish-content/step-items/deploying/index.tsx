@@ -11,10 +11,10 @@ import DeployModal from './deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
-  const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
+  const { deployInfo, deployStatus, onOperate, envTypeCode, getItemByKey, env, status, ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { buildUrl } = buildInfo;
+  const jenkinsUrl = getItemByKey(buildUrl, env).subJenkinsUrl || '';
   const isLoading = status === 'process';
 
   const [deployVisible, setDeployVisible] = useState(false);
@@ -33,7 +33,7 @@ export default function DeployingStep(props: StepItemProps) {
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryDeploy({ id: deployInfo.id, envCode });
+        await retryDeploy({ id: deployInfo.id, envCode: env });
         onOperate('retryDeployEnd');
       },
       onCancel() {
@@ -59,7 +59,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )} */}
               {/* 浙一日常环境下的部署步骤显示jenkins链接 */}
-              {envTypeCode === 'pre' && buildUrl && envInfo.deployEnvs?.includes('zy-daily') && (
+              {envTypeCode === 'pre' && jenkinsUrl && envInfo.deployEnvs?.includes('zy-daily') && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={buildUrl}>
                     部署详情
@@ -67,7 +67,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </div>
               )}
               {/* prod环境 在部署过程中出现错误时 判断如果是在构建显示查看Jenkins详情，如果是部署出现错误显示部署错误详情*/}
-              {envTypeCode === 'prod' && buildUrl && (
+              {envTypeCode === 'prod' && jenkinsUrl && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={jenkinsUrl}>
                     部署详情

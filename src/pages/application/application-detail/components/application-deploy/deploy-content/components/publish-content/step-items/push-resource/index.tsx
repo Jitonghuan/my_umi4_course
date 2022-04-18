@@ -15,7 +15,7 @@ import appConfig from '@/app.config';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env, status, ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const [supportEnv, setSupportEnv] = useState<string[]>(['']); //支持离线部署的环境
@@ -50,7 +50,7 @@ export default function PushResourceStep(props: StepItemProps) {
   };
   const handleRetryClick = async () => {
     try {
-      await rePushFeResource({ id: metadata.id, envCode });
+      await rePushFeResource({ id: metadata.id, envCode: env });
     } finally {
       onOperate('rePushFeResourceEnd');
     }
@@ -69,7 +69,7 @@ export default function PushResourceStep(props: StepItemProps) {
               重试
             </Button>
           )}
-          {appConfig.PRIVATE_METHODS === 'public' && supportEnv.includes(envCode) && canDownload && (
+          {appConfig.PRIVATE_METHODS === 'public' && supportEnv.includes(env) && canDownload && (
             <Button
               style={{ marginTop: 4 }}
               target="_blank"

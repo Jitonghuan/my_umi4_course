@@ -31,6 +31,7 @@ export interface StepItemProps extends Record<string, any> {
   onOperate: (type: OperateType) => void;
   deployStatus: DeployStatusType;
   envTypeCode: string;
+  isFrontend?: boolean;
 }
 
 export type OperateType =

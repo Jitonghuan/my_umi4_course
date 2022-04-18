@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Steps, Empty, Button } from 'antd';
 import StepItem from './step-item';
+import { initial } from 'lodash';
 
 // 判断多环境前面的线条以及环境名是否要变蓝
 const changeColor = (data: any, env?: any) => {
@@ -73,7 +74,7 @@ const MultiEnvSteps = (props: any) => {
   );
 };
 export default function DeploySteps(props: any) {
-  const { stepData, deployInfo, onSpin, stopSpin, onCancelDeploy, envTypeCode, isFrontend, ...other } = props;
+  const { stepData, deployInfo, onSpin, stopSpin, onCancelDeploy, ...other } = props;
   let { metadata, branchInfo, envInfo, buildInfo } = deployInfo;
   const [data, setData] = useState<any>([]);
   useEffect(() => {

@@ -14,11 +14,11 @@ const prevDeployStatus = ['merging', 'mergeErr', 'conflict', 'qualityChecking'];
 
 /** 质量卡点 */
 export default function QualityCheckStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, status, ...others } = props;
 
   // const isLoading = deployStatus === 'qualityChecking';
   // const isError = deployStatus === 'qualityFailed';
-  const isFinishCheck = deployStatus && !prevDeployStatus.includes(deployStatus);
+  const isFinishCheck = status === 'finish' && envTypeCode === 'test' && !isFrontend;
   const isLoading = status === 'process';
   const isError = status === 'error';
 

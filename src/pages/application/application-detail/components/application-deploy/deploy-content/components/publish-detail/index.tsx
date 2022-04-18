@@ -24,13 +24,14 @@ import { IProps } from './types';
 import { useEnvList } from '@/pages/application/project-environment/hook';
 import ServerStatus from '../server-status';
 import './index.less';
+import deploy from 'mock/deploy';
 
 const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 export default function PublishDetail(props: IProps) {
   const [envProjectForm] = Form.useForm();
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
-  let { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
+  let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [loading, envDataSource] = useEnvList();
@@ -344,12 +345,12 @@ export default function PublishDetail(props: IProps) {
 
   let deployErrInfo: any[] = [];
   try {
-    deployErrInfo = deployInfo.deployErrInfo ? JSON.parse(deployInfo.deployErrInfo) : [];
+    deployErrInfo = status.deployErrInfo ? JSON.parse(status.deployErrInfo) : [];
   } catch (e) {
-    if (deployInfo.deployErrInfo) {
+    if (status && status.deployErrInfo) {
       deployErrInfo = [
         {
-          subErrInfo: deployInfo.deployErrInfo,
+          subErrInfo: status.deployErrInfo,
           envCode: envInfo.deployEnvs,
         },
       ];
@@ -366,7 +367,7 @@ export default function PublishDetail(props: IProps) {
         jenkinsUrl = [
           {
             subJenkinsUrl: buildInfo.buildUrl,
-            envCode: deployInfo.envs,
+            envCode: envInfo.deployEnvs,
           },
         ];
       }
@@ -458,9 +459,9 @@ export default function PublishDetail(props: IProps) {
           {branchInfo?.conflictFeature || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="合并分支" span={4}>
-          {branchInfo?.features || '--'}
+          {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
-        {deployInfo?.deployErrInfo && deployErrInfo.length && (
+        {status?.deployErrInfo && deployErrInfo.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>
               {deployErrInfo.map((errInfo) => (

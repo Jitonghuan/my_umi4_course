@@ -14,7 +14,7 @@
 
   .publish-content-compo-wrapper {
     padding: 20px;
-    width: 100%;
+    // width: 100%;
     max-height: 360px;
     overflow: auto;
     margin-top: 16px;
@@ -31,9 +31,19 @@
     height: 120px;
 
     .ant-steps-item {
-      flex: 1;
+      // flex: 1;
+      flex: unset;
       min-width: 150px;
       position: relative;
+      &:last-child {
+        min-width: max-content;
+      }
+      .ant-steps-item-title {
+        padding-right: 30px;
+        &::after {
+          left: calc(100% - 20px);
+        }
+      }
     }
   }
 
@@ -109,10 +119,14 @@
     box-sizing: border-box;
   }
 
-  .ant-steps-item {
-    min-width: 150px;
-    position: relative;
-  }
+  // .ant-steps-item {
+  //   flex: 1;
+  //   min-width: 150px;
+  //   position: relative;
+  //   &:last-child {
+  //     min-width: max-content;
+  //   }
+  // }
   .ant-steps-item:last-child {
     box-sizing: border-box;
     padding-right: 50px;

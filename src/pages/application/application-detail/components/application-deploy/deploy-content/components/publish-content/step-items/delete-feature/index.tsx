@@ -11,12 +11,14 @@ import { StepItemProps } from '../../types';
 /** 删除feature */
 export default function DeleteFeatureStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, appData, steps, status, ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const [venusLoading, setVenusLoading] = useState<boolean>(false);
   const isError = status === 'error';
+  const isLoading = status === 'process';
 
   const handleRetryDelClick = async () => {
     try {
-      await retryDelFeature({ id: deployInfo.id });
+      await retryDelFeature({ id: metadata.id });
     } finally {
       onOperate('deleteFeatureRetryEnd');
     }
@@ -47,6 +49,7 @@ export default function DeleteFeatureStep(props: StepItemProps) {
       {...others}
       title="删除feature"
       status={status}
+      icon={isLoading && <LoadingOutlined />}
       description={
         isError && (
           <>

@@ -24,29 +24,6 @@ import './index.less';
 
 const rootCls = 'publish-content-compo';
 
-const mock = [
-  { nodeType: 'single', title: '创建任务', nodeStatus: 'finish' },
-  { nodeType: 'single', title: '合并realease', nodeStatus: 'finish' },
-  {
-    nodeType: 'subject',
-    nodes: {
-      base: [
-        { title: '构建', nodeStatus: 'finish', nodeType: 'single' },
-        { title: '部署', nodeStatus: 'error', nodeType: 'single' },
-        { title: '推送', nodeStatus: 'wait', nodeType: 'single' },
-      ],
-      dev: [
-        { title: '构建', nodeStatus: 'error', nodeType: 'single' },
-        { title: '部署', nodeStatus: 'wait', nodeType: 'single' },
-        { title: '推送', nodeStatus: 'wait', nodeType: 'single' },
-      ],
-    },
-  },
-  { nodeType: 'single', title: '创建任务', nodeStatus: 'wait' },
-  { nodeType: 'single', title: '合并realease', nodeStatus: 'wait' },
-  { nodeType: 'single', title: '完成', nodeStatus: 'wait' },
-];
-
 const backendStepsMapping: Record<string, typeof BackendDevEnvSteps> = {
   dev: BackendDevEnvSteps,
   test: BackendTestEnvSteps,
@@ -151,7 +128,7 @@ export default function PublishContent(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         return cancelDeploy({
-          id: deployInfo.id,
+          id: metadata?.id,
           envCode,
         }).then(() => {});
       },
@@ -188,11 +165,11 @@ export default function PublishContent(props: IProps) {
         getItemByKey={getItemByKey}
       /> */}
       <DeploySteps
-        // stepData={mock}
         stepData={deployNodes}
         deployInfo={deployInfo}
         onOperate={onOperate}
         isFrontend={isFrontend}
+        envTypeCode={envTypeCode}
         appData={appData}
         onCancelDeploy={onCancelDeploy}
         stopSpin={stopSpin}
@@ -310,7 +287,6 @@ export default function PublishContent(props: IProps) {
           getItemByKey={getItemByKey}
         /> */}
         <DeploySteps
-          stepData={mock}
           deployInfo={deployInfo}
           onOperate={onOperate}
           isFrontend={isFrontend}

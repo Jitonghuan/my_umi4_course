@@ -18,8 +18,8 @@ export default function MergeReleaseStep(props: StepItemProps) {
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [visible, setVisible] = useState(false); //无冲突
   const [mergeMessage, setMergeMessage] = useState<any>([]);
-  const isLoading = deployStatus === 'merging';
-  const isError = deployStatus === 'mergeErr' || deployStatus === 'conflict';
+  const isLoading = status === 'process';
+  const isError = status === 'error';
 
   const retryMergeClick = async () => {
     try {
