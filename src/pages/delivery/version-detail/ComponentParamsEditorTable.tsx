@@ -164,17 +164,21 @@ export default (props: VersionDetailProps) => {
         ],
       },
       valueEnum: paramOptions,
+      // renderFormItem:(_, config: any, data)=>{
+
+      // }
     },
     {
       title: '参数值',
       key: 'configParamValue',
       dataIndex: 'configParamValue',
       renderFormItem: (_, config: any, data) => {
-        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会在包一层
+        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
         // console.log(_, config, data,'---',paramOptions[config.record?.configParamName])
-        console.log(config, '0009999');
         let currentValue = paramOptions[config.record?.configParamName];
         if (currentValue) {
+          // data.setFieldsValue([{'configParamValue':''}]);
+          // data.resetFields(['configParamValue'])
           // form.setFieldsValue({configParamValue:paramOptions[config.record?.configParamName].configParamValue})
           // setDataSource([config.record,...tableDataSource])
           // return  <span >{paramOptions[config.record?.configParamName].configParamValue}</span>
@@ -227,7 +231,6 @@ export default (props: VersionDetailProps) => {
           key="delete"
           onClick={() => {
             deleteDeliveryParam(record.id).then(() => {
-              console.log('record', record);
               setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
             });
           }}
@@ -237,18 +240,15 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
-  const cellChange = (values: any) => {
-    console.log('values', values);
-  };
+  const cellChange = (values: any) => {};
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
     queryDeliveryParamList(versionId, param);
   };
   const tableChange = (values: any) => {
     setDataSource;
-    console.log('values', values);
   };
-  console.log('editableKeys', editableKeys);
+
   return (
     <>
       <div className="table-caption-application">
@@ -320,7 +320,6 @@ export default (props: VersionDetailProps) => {
         value={tableDataSource}
         onChange={(values) => {
           tableChange(values);
-          console.log('values000000', values);
           // setPageInfo({
           //   pageIndex: pagination.current,
           //   pageSize: pagination.pageSize,
@@ -340,7 +339,6 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
-            console.log('oooovalue', value);
             if (type === 'add') {
               await saveParam({ ...params, versionId: versionId }).then(() => {
                 queryDeliveryParamList(versionId);
