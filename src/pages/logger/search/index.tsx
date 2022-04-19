@@ -14,7 +14,6 @@ import {
   Skeleton,
   Divider,
   Tabs,
-  Row,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
@@ -82,12 +81,28 @@ export const START_TIME_ENUMS = [
 export default function LoggerSearch(props: any) {
   console.log('props', props);
   const receiveInfo = props.location.query;
+  const showWindowHref = () => {
+    var sHref = window.location.href;
+    var args = sHref.split('?');
+    if (args[0] == sHref) {
+      return '';
+    }
+    var arr = args[1].split('&');
+    var obj: any = {};
+    for (var i = 0; i < arr.length; i++) {
+      var arg = arr[i].split('=');
+      obj[arg[0]] = arg[1];
+    }
+    return obj;
+  };
+  const messageInfo = showWindowHref();
   const { TabPane } = Tabs;
   const { Search } = Input;
   const { Panel } = Collapse;
   const { Option } = Select;
   const { RangePicker } = DatePicker;
   const [subInfoForm] = Form.useForm();
+  const [sqlForm] = Form.useForm();
   const [rangePickerForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
@@ -129,18 +144,24 @@ export default function LoggerSearch(props: any) {
       let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
+      console.log('message', receiveInfo.message, receiveInfo, messageInfo['message']);
+      let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
+      // window.atob(receiveInfo.message);
       let appCodeArry = [];
       if (receiveInfo.appCode) {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
       }
       appCodeArry.push('envCode:' + receiveInfo.envCode);
       setAppCodeValue(appCodeArry);
-      setMessageValue(receiveInfo.message);
+      setQuerySql(messageDecodedData);
       subInfoForm.setFieldsValue({
         appCode: receiveInfo.appCode,
-        message: receiveInfo.message,
       });
-      loadMoreData(receiveInfo.indexMode, start, end, querySql, receiveInfo.message, appCodeArry);
+      sqlForm.setFieldsValue({
+        querySql: messageDecodedData,
+      });
+      setEditScreenVisible(true);
+      loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
     }
     // if(receiveInfo.type==='logSearchInfo'){
 
@@ -365,7 +386,6 @@ export default function LoggerSearch(props: any) {
     setQuerySql('');
     setEditScreenVisible(false);
     setAppCodeValue([]);
-    // setQuerySql('');
     setMessageValue('');
     setPodName('');
     const now = new Date().getTime();
@@ -508,21 +528,14 @@ export default function LoggerSearch(props: any) {
                       // subInfoForm.resetFields();
                       if (!editScreenVisible) {
                         setEditScreenVisible(true);
-                        // setEditConditionType(true);
                       } else {
                         setEditScreenVisible(false);
                         setQuerySql('');
-                        // setEditConditionType(false);
                       }
-
-                      // setMessageValue('');
-                      // setPodName('');
-                      // setAppCodeValue([]);
                     }}
                   >
                     高级搜索
                   </Button>
-                  {/* <span style={{color: '#708090' }}>双击关闭</span> */}
                 </Form>
               </div>
 
@@ -530,24 +543,29 @@ export default function LoggerSearch(props: any) {
                 {editScreenVisible === true ? (
                   <div style={{ marginTop: 4 }}>
                     <Divider />
-                    <Popover
-                      title="查看lucene语法"
-                      placement="topLeft"
-                      content={
-                        <a
-                          target="_blank"
-                          href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
-                        >
-                          lucene语法网址
-                        </a>
-                      }
-                    >
-                      <Button>
-                        lucene
-                        <QuestionCircleOutlined />
-                      </Button>
-                    </Popover>
-                    <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} />
+
+                    <Form form={sqlForm} layout="inline">
+                      <Popover
+                        title="查看lucene语法"
+                        placement="topLeft"
+                        content={
+                          <a
+                            target="_blank"
+                            href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
+                          >
+                            lucene语法网址
+                          </a>
+                        }
+                      >
+                        <Button>
+                          lucene
+                          <QuestionCircleOutlined />
+                        </Button>
+                      </Popover>
+                      <Form.Item name="querySql">
+                        <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} />
+                      </Form.Item>
+                    </Form>
                   </div>
                 ) : null}
               </div>

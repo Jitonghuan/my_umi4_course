@@ -192,7 +192,7 @@ export default function DNSManageList(props: any) {
       <ContentCard>
         <div className="dns-server">
           当前的DNS服务器是：
-          {hostSource}
+          {hostSource.toString().replace(/\"/g, '')}
         </div>
         <Divider />
         <div className="table-caption">

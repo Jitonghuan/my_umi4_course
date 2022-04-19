@@ -182,16 +182,18 @@ const Coms = (props: IProps) => {
     queryEnvList({
       appCode: prevFilter.current?.appCode as string,
     }).then((resp) => {
-      setEnvData(resp);
+      let newResp: any = [...new Set(resp)];
+      setEnvData(newResp);
       let reg = /prd$/gi;
       // let reg =/.*(?=prd)prd/
-      resp.map((item: any) => {
+      console.log('newResp', newResp);
+      resp.some((item: any) => {
         if (reg.test(item.envCode)) {
           prevFilter.current = {
             ...prevFilter.current,
             envCode: item.value,
           };
-          return;
+          return true;
         } else {
           prevFilter.current = {
             ...prevFilter.current,
@@ -199,7 +201,6 @@ const Coms = (props: IProps) => {
           };
         }
       });
-
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
     });

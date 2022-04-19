@@ -3,10 +3,10 @@
 // @create 2022/02/14 10:20
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, Tag, Divider } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, message, Divider, Tooltip } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { PlusOutlined, StarFilled, StarTwoTone } from '@ant-design/icons';
+import { PlusOutlined, StarFilled, StarTwoTone, CopyOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { queryProjectEnvList } from './service';
@@ -17,6 +17,8 @@ import './index.less';
 import { Radio } from '@cffe/h2o-design';
 import DetailList from './environment-detail/detail-list';
 import { collectRequst } from '../common';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 /** 环境大类 */
 const envTypeData = [
   {
@@ -79,7 +81,7 @@ export default function EnvironmentList() {
           setPageIndex(pageIndex);
           setDataSource(data);
           setPageTotal(pageTotal);
-        } else if (!res) {
+        } else if (!res || !res.success) {
           // 防止接口出现404两个tab页面数据出现混乱的情况
           setDataSource([]);
           setPageTotal(0);
@@ -315,10 +317,25 @@ export default function EnvironmentList() {
                   </>
                 )}
               />
-              <Table.Column title="环境CODE" dataIndex="envCode" width="8%" ellipsis />
+              <Table.Column
+                title="环境CODE"
+                dataIndex="envCode"
+                width="20%"
+                ellipsis
+                render={(value) => (
+                  <div>
+                    <span>{value}</span>
+                    <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
+                      <span style={{ marginLeft: 8, color: 'royalblue' }}>
+                        <CopyOutlined />
+                      </span>
+                    </CopyToClipboard>
+                  </div>
+                )}
+              />
               <Table.Column title="基准环境" dataIndex="relEnvs" width="8%" ellipsis />
               <Table.Column title="默认分类" dataIndex="categoryCode" width="8%" ellipsis />
-              <Table.Column title="环境大类" dataIndex="envTypeCode" width="16%" />
+              <Table.Column title="环境大类" dataIndex="envTypeCode" width="6%" />
               <Table.Column title="备注" dataIndex="mark" width="18%" ellipsis />
               <Table.Column
                 title="操作"
@@ -351,9 +368,11 @@ export default function EnvironmentList() {
                     <Popconfirm
                       title="确定要删除该信息吗？"
                       onConfirm={() => {
+                        let params = formList.getFieldsValue();
                         deleteProjectEnv(record?.envCode).then(() => {
                           queryProjectEnv({
                             pageIndex: 1,
+                            ...params,
                             // pageSize: pageSize,
                           });
                         });
