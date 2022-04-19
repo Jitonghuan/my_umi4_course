@@ -293,12 +293,13 @@ export default function DetailList(props: any) {
                 <Popconfirm
                   title="确定要删除该应用吗？"
                   onConfirm={() => {
+                    let params = formList.getFieldsValue();
                     let removeParams = {
                       projectEnvCode: projectEnvData.envCode,
                       appCodes: [record.appCode],
                     };
                     removeApps(removeParams).then(() => {
-                      queryAppsListData(queryCommonParamsRef.current);
+                      queryAppsListData({ ...queryCommonParamsRef.current, ...params });
                     });
                   }}
                 >
