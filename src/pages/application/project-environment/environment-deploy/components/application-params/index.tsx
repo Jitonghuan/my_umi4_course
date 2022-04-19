@@ -9,7 +9,7 @@ import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import appConfig from '@/app.config';
 import AceEditor from '@/components/ace-editor';
-import DetailContext from '@/pages/application/application-detail/context';
+import DetailContext from '../../context';
 import EditorTable from '@cffe/pc-editor-table';
 import * as APIS from '@/pages/application/service';
 import './index.less';
