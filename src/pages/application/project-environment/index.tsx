@@ -351,9 +351,11 @@ export default function EnvironmentList() {
                     <Popconfirm
                       title="确定要删除该信息吗？"
                       onConfirm={() => {
+                        let params = formList.getFieldsValue();
                         deleteProjectEnv(record?.envCode).then(() => {
                           queryProjectEnv({
                             pageIndex: 1,
+                            ...params,
                             // pageSize: pageSize,
                           });
                         });

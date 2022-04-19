@@ -107,7 +107,7 @@ export default function addEnvData(props: RecordEditDataProps) {
             }}
           >
             <Form.Item label="记录类型：" name="recordType" rules={[{ required: true, message: '这是必填项' }]}>
-              <Select style={{ width: '24vw' }} options={options}></Select>
+              <Select style={{ width: '24vw' }} options={options} placeholder="A- 将域名指向一个IPV4地址"></Select>
             </Form.Item>
             <Form.Item
               label="主机记录："
@@ -115,18 +115,18 @@ export default function addEnvData(props: RecordEditDataProps) {
               rules={[
                 {
                   required: true,
-                  message: '请输入正确格式的IP!',
+                  message: '请输入正确的主机记录!',
                   // pattern: /(2(5[0-5]{1}|[0-4]\d{1})|[0-1]?\d{1,2})(\.(2(5[0-5]{1}|[0-4]\d{1})|[0-1]?\d{1,2})){3}/g
                 },
               ]}
             >
-              <Input style={{ width: '24vw' }} placeholder="请输入主机Ip"></Input>
+              <Input style={{ width: '24vw' }} placeholder="请输入主机记录"></Input>
             </Form.Item>
             <Form.Item name="recordValue" label="记录值" rules={[{ required: true, message: '这是必填项' }]}>
               <Input placeholder="请输入记录值" style={{ width: '24vw' }}></Input>
             </Form.Item>
             <Form.Item name="remark" label="备注：">
-              <Input.TextArea placeholder="请输入" style={{ width: '24vw', height: 80 }}></Input.TextArea>
+              <Input.TextArea placeholder="请输入备注" style={{ width: '24vw', height: 80 }}></Input.TextArea>
             </Form.Item>
           </Form>
         </div>
