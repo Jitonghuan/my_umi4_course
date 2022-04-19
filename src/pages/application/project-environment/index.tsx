@@ -81,7 +81,7 @@ export default function EnvironmentList() {
           setPageIndex(pageIndex);
           setDataSource(data);
           setPageTotal(pageTotal);
-        } else if (!res) {
+        } else if (!res || !res.success) {
           // 防止接口出现404两个tab页面数据出现混乱的情况
           setDataSource([]);
           setPageTotal(0);
