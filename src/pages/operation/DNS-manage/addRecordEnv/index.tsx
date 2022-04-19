@@ -6,7 +6,7 @@ import React from 'react';
 import { history } from 'umi';
 import { useEffect } from 'react';
 import { useAddDnsManage, useUpdateDnsManage } from '../hooks';
-import { Input, Form, Select, Spin, Modal } from 'antd';
+import { Input, Form, Select, Spin, Modal, Button } from 'antd';
 import { recordEditData } from '../index';
 // import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 
@@ -74,7 +74,6 @@ export default function addEnvData(props: RecordEditDataProps) {
 
   const handleSubmit = () => {
     let param = createRecordForm.getFieldsValue();
-    console.log('param', param);
     if (mode === 'ADD') {
       let paramObj = { envCode: envCode.envCode, status: '0', ...param };
       addDnsManage(paramObj).then(() => {
@@ -95,6 +94,19 @@ export default function addEnvData(props: RecordEditDataProps) {
       onCancel={() => onClose()}
       onOk={handleSubmit}
       width={'30%'}
+      footer={[
+        <Button type="primary" onClick={() => onClose()} loading={mode === 'EDIT' ? updateLoading : addLoading}>
+          取消
+        </Button>,
+        <Button
+          type="primary"
+          key="submit"
+          onClick={handleSubmit}
+          loading={mode === 'EDIT' ? updateLoading : addLoading}
+        >
+          确定
+        </Button>,
+      ]}
     >
       <Spin spinning={mode === 'EDIT' ? updateLoading : addLoading}>
         <div className="recordAdd">

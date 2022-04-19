@@ -49,20 +49,39 @@ export default function PublishRecord(props: IProps) {
     });
   }, []);
   useEffect(() => {
-    let intervalId = setInterval(() => {
-      if (appCode && env) {
-        queryDataSource({
-          appCode,
-          envTypeCode: env,
-          pageIndex: 1,
-        });
-      }
-    }, 8000);
+    // let intervalId = setInterval(() => {
+    //   if (appCode && env) {
+    //     queryDataSource({
+    //       appCode,
+    //       envTypeCode: env,
+    //       pageIndex: 1,
+    //     });
+    //   }
+    // }, 8000);
+    timerHandle('do', true);
 
+    // return () => {
+    //   clearInterval(intervalId);
+    // };
+  }, []);
+  useEffect(() => {
+    window.addEventListener('scroll', getScroll);
     return () => {
-      clearInterval(intervalId);
+      window.removeEventListener('scroll', getScroll);
     };
   }, []);
+  //定义定时器方法
+  const intervalFunc = () => {
+    if (appCode && env) {
+      queryDataSource({
+        appCode,
+        envTypeCode: env,
+        pageIndex: 1,
+      });
+    }
+  };
+  // 定时请求发布内容
+  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -104,17 +123,40 @@ export default function PublishRecord(props: IProps) {
 
   const renderLoadMore = () => {
     const { pageSize = 0, total = 0, current = 0 } = tableProps?.pagination || {};
-
     return (
       total > 0 &&
       total > pageSize && (
         <div className={`${rootCls}-btns`}>
-          <Button ghost type="primary" onClick={loadMore}>
+          <Button
+            ghost
+            type="primary"
+            onClick={() => {
+              loadMore;
+              timerHandle('stop');
+            }}
+          >
             加载更多
           </Button>
         </div>
       )
     );
+  };
+  const getScroll = () => {
+    let dom: any = document?.getElementById('load-more-list');
+    console.log('dom.scrollTop', dom?.scrollTop, dom?.clientHeight, dom?.scrollHeight);
+    if (dom) {
+      let scrollTop = dom?.scrollTop; // 滚动条距离顶部的距离
+      let windowHeight = dom?.clientHeight; // 可视区的高度
+      let scrollHeight = dom?.scrollHeight; //dom元素的高度，包含溢出不可见的内容
+      if (scrollHeight >= scrollTop + windowHeight) {
+        console.log('到达底部！');
+        timerHandle('stop');
+      }
+      if (scrollTop <= 20) {
+        timerHandle('do', true);
+        console.log('到达顶部！');
+      }
+    }
   };
 
   // 显示详情
@@ -130,6 +172,7 @@ export default function PublishRecord(props: IProps) {
         <div>
           <List
             className="demo-loadmore-list"
+            id="load-more-list"
             // loading={tableProps.loading}
             itemLayout="vertical"
             loadMore={renderLoadMore()}
