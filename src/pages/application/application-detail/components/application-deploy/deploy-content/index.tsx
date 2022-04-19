@@ -60,17 +60,17 @@ const tempData = {
         nodes: {
           base: [
             { nodeName: '推送资源', nodeStatus: 'finish', nodeType: 'single' },
-            { nodeName: '灰度验证', nodeStatus: 'process', nodeType: 'single' },
-            { nodeName: '推送版本', nodeStatus: 'wait', nodeType: 'single' },
+            { nodeName: '灰度验证', nodeStatus: 'finish', nodeType: 'single' },
+            { nodeName: '推送版本', nodeStatus: 'finish', nodeType: 'single' },
           ],
           dev: [
             { nodeName: '推送资源', nodeStatus: 'finish', nodeType: 'single' },
-            { nodeName: '灰度验证', nodeStatus: 'process', nodeType: 'single' },
-            { nodeName: '推送版本', nodeStatus: 'wait', nodeType: 'single' },
+            { nodeName: '灰度验证', nodeStatus: 'finish', nodeType: 'single' },
+            { nodeName: '推送版本', nodeStatus: 'finish', nodeType: 'single' },
           ],
         },
       },
-      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'wait' },
+      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'finish' },
       { nodeType: 'single', nodeName: '删除feature', nodeStatus: 'wait' },
       { nodeType: 'single', nodeName: '完成', nodeStatus: 'wait' },
       // nodes: []
@@ -219,6 +219,7 @@ export default function DeployContent(props: DeployContentProps) {
             appCode={appCode!}
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
+            pipelineCode={pipelineCode}
             deployedList={branchInfo.deployed}
             appStatusInfo={appStatusInfo}
             onOperate={onOperate}

@@ -13,7 +13,18 @@ import { conflictItem } from '../../../merge-conflict/types';
 
 /** 合并release */
 export default function MergeReleaseStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, onSpin, stopSpin, deployedList, status, ...others } = props;
+  const {
+    deployInfo,
+    deployStatus,
+    onOperate,
+    envTypeCode,
+    onSpin,
+    stopSpin,
+    deployedList,
+    status,
+    pipelineCode,
+    ...others
+  } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [visible, setVisible] = useState(false); //无冲突
@@ -31,7 +42,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const openMergeConflict = () => {
     onSpin();
-    getMergeMessage({ releaseBranch: branchInfo.releaseBranch })
+    getMergeMessage({ releaseBranch: branchInfo.releaseBranch, pipelineCode })
       .then((res) => {
         if (!res.success) {
           return;

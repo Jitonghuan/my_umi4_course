@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { EditableProTable } from '@ant-design/pro-table';
 import { Popconfirm, message } from 'antd';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm from '@ant-design/pro-form';
 
-export default (props: any) => {
+const ETable = React.forwardRef((props: any, ref) => {
   const {
     dataSource,
     columns,
@@ -18,8 +18,17 @@ export default (props: any) => {
   } = props;
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const formRef = useRef<ProFormInstance<any>>();
-
   const actionRef = useRef(null) as any;
+  useImperativeHandle(
+    ref,
+    () => ({
+      reset: () => {
+        // function name
+        editableKeys.forEach((k) => actionRef.current.cancelEditable(k));
+      },
+    }),
+    [editableKeys],
+  );
   const __columns: any = columns.concat({
     fixed: 'right',
     title: '操作',
@@ -30,7 +39,6 @@ export default (props: any) => {
         <a
           onClick={() => {
             action?.startEditable?.(record.id);
-            console.log(record, 'record');
           }}
         >
           编辑
@@ -79,9 +87,13 @@ export default (props: any) => {
             onChange: (keys, cols) => {
               setEditableRowKeys(keys);
             },
+            actionRender: (row, config, defaultDom) => {
+              return [defaultDom.save, defaultDom.delete, defaultDom.cancel];
+            },
           }}
         />
       </ProForm>
     </>
   );
-};
+});
+export default ETable;

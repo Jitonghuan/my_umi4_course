@@ -19,12 +19,17 @@ const changeColor = (data: any, env?: any) => {
   return flag;
 };
 
-// 判断多环境的取消发布按钮是否要出现----前一个节点状态不为wait时
-const isCancel = (data: any, index: number) => {
+// 判断多环境的取消发布按钮是否要出现以及结尾是否要变蓝----前（后）一个节点状态不为wait时
+const judgeColor = (data: any, index: number, type: string) => {
   let flag = false;
-  const nodes = data[index - 1];
+  let nodes = [];
+  if (type === 'cancel') {
+    nodes = data[index - 1];
+  } else {
+    nodes = data[index + 1] || [];
+  }
   if (nodes && Array.isArray(nodes)) {
-    const status = nodes[nodes.length - 1].nodeStatus;
+    let status = type === 'cancel' ? nodes[nodes.length - 1].nodeStatus : nodes[0].nodeStatus;
     if (status && status !== 'wait') {
       return true;
     }
@@ -52,7 +57,7 @@ const MultiEnvSteps = (props: any) => {
   const { initial, item, onCancelDeploy, index, data, ...other } = props;
   let envList = item.nodes ? Object.keys(item.nodes) : [];
   return (
-    <div style={{ margin: '0 15px' }}>
+    <div style={{ margin: '0 15px' }} className={`${judgeColor(data, index, 'finish') ? 'suject-finish' : ''}`}>
       <div className={`sub_process-wrapper ${changeColor(item, envList) ? 'sub_process-wrapper-active' : ''}`}>
         {envList.map((envKey: any, i: number) => (
           <div
@@ -60,7 +65,7 @@ const MultiEnvSteps = (props: any) => {
             className={`sub_process sub_process-${i} ${changeColor(item.nodes, envKey) ? 'sub_process-active' : ''}`}
           >
             <span className="sub_process-title">{envKey}</span>
-            {isCancel(data, index) && (
+            {judgeColor(data, index, 'cancel') && (
               <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envKey)}>
                 取消发布
               </Button>

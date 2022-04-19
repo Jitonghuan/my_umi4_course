@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal, message, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { delPipelineUrl, addPipelineUrl, updatePipelineUrl } from '@/pages/application/service';
@@ -10,6 +10,13 @@ export default function PipeLineManage(props: any) {
   const { appCode } = appData || {};
   const addBottonText = '新增流水线';
   const deleteText = '确定删除该条流水线吗？';
+  const tableRef = useRef<any>();
+
+  useEffect(() => {
+    if (!visible && tableRef.current) {
+      tableRef.current.reset();
+    }
+  }, [visible]);
 
   // 删除流水线
   const handleDel = (record: any) => {
@@ -111,6 +118,7 @@ export default function PipeLineManage(props: any) {
       </Button> */}
       <div style={{ marginTop: '20px' }}>
         <ETable
+          ref={tableRef}
           dataSource={dataSource}
           // onChange={handleChange}
           columns={columns}

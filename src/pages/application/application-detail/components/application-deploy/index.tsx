@@ -120,7 +120,7 @@ export default function ApplicationDeploy(props: any) {
     const pipelineCodeList = data.map((item: any) => item.pipelineCode);
     // 选择的流水线被删除了或者第一次进入页面
     if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
-      setCurrentValue(data[0]);
+      setCurrentValue(data[0].value);
       let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
       sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [tab]: data[0].value }));
     }

@@ -10,6 +10,7 @@ export interface IProps {
   onOperate: (type: OperateType) => void;
   onSpin: any;
   stopSpin: any;
+  pipelineCode: string;
 }
 
 // 执行步骤组合
@@ -32,6 +33,7 @@ export interface StepItemProps extends Record<string, any> {
   deployStatus: DeployStatusType;
   envTypeCode: string;
   isFrontend?: boolean;
+  pipelineCode: string;
 }
 
 export type OperateType =

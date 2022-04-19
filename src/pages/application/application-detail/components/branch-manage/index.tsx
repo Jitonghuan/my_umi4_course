@@ -3,12 +3,10 @@
 // @create 2021/08/27 12:41
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import moment from 'moment';
 import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Divider, Tag } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
-import { datetimeCellRender } from '@/utils';
 import BranchEditor from './branch-editor';
 import DetailContext from '../../context';
 import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
@@ -30,7 +28,7 @@ export default function BranchManage() {
   const [pending, setPending] = useState(false);
   const [reviewId, setReviewId] = useState<string>('');
   const [rowData, setRowData] = useState<any>({});
-  const [type, setType] = useState<'master' | 'other'>('master');
+  const [type, setType] = useState<'master' | 'feature'>('master');
 
   useEffect(() => {
     if (!appCode) return;
@@ -57,7 +55,7 @@ export default function BranchManage() {
   // 搜索
   const handleSearch = useCallback(
     (type) => {
-      if (type === 'main') {
+      if (type === 'master') {
         const values = mainForm.getFieldsValue();
         getBranchList({ branch_type: 'master', appCode, ...values, pageIndex: 1 });
       } else {
@@ -127,7 +125,7 @@ export default function BranchManage() {
   const pageChange = (pagination: any, type: string) => {
     let { current, pageSize } = pagination;
     let obj = { pageIndex: current, pageSize: pageSize };
-    if (type === 'main') {
+    if (type === 'master') {
       setMasterPage((value: any) => ({ ...value, pageIndex: current, size: pageSize }));
     } else {
       setPage((value: any) => ({ ...value, pageIndex: current, size: pageSize }));
@@ -254,7 +252,7 @@ export default function BranchManage() {
                 placeholder="搜索主干分支名"
                 enterButton
                 onSearch={() => {
-                  handleSearch('main');
+                  handleSearch('master');
                 }}
                 style={{ width: 320 }}
               />
@@ -299,7 +297,7 @@ export default function BranchManage() {
             showTotal: () => `总共 ${masterPage.total} 条数据`,
           }}
           onChange={(value) => {
-            pageChange(value, 'main');
+            pageChange(value, 'master');
           }}
           scroll={{ y: window.innerHeight - 330, x: '100%' }}
         ></Table>
@@ -322,7 +320,7 @@ export default function BranchManage() {
                 placeholder="搜索分支名"
                 enterButton
                 onSearch={() => {
-                  handleSearch('other');
+                  handleSearch('feature');
                 }}
                 style={{ width: 320 }}
               />
@@ -331,7 +329,7 @@ export default function BranchManage() {
           <Button
             type="primary"
             onClick={() => {
-              setBranchEditMode('ADD'), setType('other');
+              setBranchEditMode('ADD'), setType('feature');
             }}
           >
             <PlusOutlined />
@@ -342,7 +340,7 @@ export default function BranchManage() {
           rowKey="id"
           bordered
           dataSource={tableData}
-          columns={columns('dev')}
+          columns={columns('feature')}
           pagination={{
             total: page.total,
             pageSize: page.size,
@@ -354,7 +352,7 @@ export default function BranchManage() {
             showTotal: () => `总共 ${page.total} 条数据`,
           }}
           onChange={(value) => {
-            pageChange(value, 'other');
+            pageChange(value, 'feature');
           }}
           scroll={{ y: window.innerHeight - 330, x: '100%' }}
         ></Table>
