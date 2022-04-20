@@ -37,12 +37,13 @@ export const queryAppGroupReq = (params: {
 const queryEnvsUrl = `${appConfig.apiPrefix}/appManage/env/list`;
 export const queryEnvsReq = (params: {
   //所属的应⽤分类CODE
-  categoryCode: string;
+  // categoryCode: string;
   envTypeCode?: string;
 }) =>
   getRequest(queryEnvsUrl, {
     data: {
-      ...params,
+      // ...params,
+      envTypeCode: params.envTypeCode,
       pageIndex: 1,
       pageSize: 100,
     },
@@ -66,6 +67,7 @@ export const queryEnvsReq = (params: {
 
 /** 根据应用分类code查询发布环境列表 */
 export const queryJiraUrl = `${appConfig.apiPrefix}/publishManage/issue/list`;
+export const eipDemandUrl = `${appConfig.apiPrefix}/publishManage/issue/eipDemand/list`;
 /** 通用接口结束 */
 
 /** 发布功能相关 */
