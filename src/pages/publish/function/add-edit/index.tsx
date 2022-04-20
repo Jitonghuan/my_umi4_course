@@ -124,7 +124,6 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     didMounted: false,
     pagination: false,
     formatResult: (resp) => {
-      console.log('resp.sucess', resp);
       setJiraData(resp.data || []);
       return {
         dataSource: resp.data || [],
@@ -587,7 +586,6 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                   newData.push(obj);
                   newEditingKey.push(`${start + index}`);
                 });
-                console.log('newEditingKey', newEditingKey);
                 setEditingKey(newEditingKey);
                 setData(newData);
                 setTimeout(() => {
