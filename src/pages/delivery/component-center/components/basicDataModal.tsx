@@ -9,11 +9,10 @@ export interface DetailProps {
   queryComponentList: (tabActiveKey: any) => any;
   initData?: any;
   onClose: () => any;
-  onSave?: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, initData, tabActiveKey, onClose, onSave, queryComponentList } = props;
+  const { visable, tabActiveKey, onClose, queryComponentList } = props;
   const [loading, addBasicdata] = useAddBasicdata();
   const [filePath, setFilePath] = useState<string>('');
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
@@ -34,9 +33,7 @@ export default function BasicModal(props: DetailProps) {
     // },
     onChange(info: any) {
       if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
         let path = info.file.response.data;
-        console.log('path', path);
         setFilePath(path);
       }
       if (info.file.status === 'done') {
@@ -55,12 +52,14 @@ export default function BasicModal(props: DetailProps) {
     },
   };
   const handleSubmit = () => {
-    const params = form.getFieldsValue();
-    addBasicdata({ ...params, componentType: tabActiveKey, filePath }).then(() => {
-      queryComponentList(tabActiveKey);
-      setTimeout(() => {
-        onClose();
-      }, 200);
+    form.validateFields().then((params) => {
+      addBasicdata({ ...params, componentType: tabActiveKey, filePath })
+        .then(() => {
+          queryComponentList(tabActiveKey);
+        })
+        .then(() => {
+          onClose();
+        });
     });
   };
 
@@ -74,7 +73,7 @@ export default function BasicModal(props: DetailProps) {
       // closable={!loading}
       width={580}
       footer={[
-        <Button type="primary" onClick={handleSubmit}>
+        <Button type="primary" onClick={handleSubmit} loading={loading}>
           确认
         </Button>,
         <Button
@@ -87,10 +86,14 @@ export default function BasicModal(props: DetailProps) {
       ]}
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
-        <Form.Item label="名称" name="componentName" rules={[{ required: true, message: '请选择应用类型' }]}>
+        <Form.Item label="名称" name="componentName" rules={[{ required: true, message: '请填写名称' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
-        <Form.Item label="基础数据版本" name="componentVersion" rules={[{ required: true, message: '请选择应用类型' }]}>
+        <Form.Item
+          label="基础数据版本"
+          name="componentVersion"
+          rules={[{ required: true, message: '请填写基础数据版本！' }]}
+        >
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
 

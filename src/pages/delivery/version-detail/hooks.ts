@@ -58,7 +58,7 @@ export function useEditProductVersionDescription(): [
 //组件查询
 export function useQueryComponentOptions(): [boolean, any, (componentType: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState({});
+  const [dataSource, setDataSource] = useState([]);
 
   const queryComponentOptions = async (componentType: string) => {
     setLoading(true);
@@ -69,11 +69,16 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
-            let options: any = {};
+            // let options: any = {};
+            let options: any = [];
             dataSource?.map((item: any) => {
-              options[item.componentName] = {
-                text: item.componentName,
-              };
+              // options[item.componentName] = {
+              //   text: item.componentName,
+              // };
+              options.push({
+                label: item.componentName,
+                value: item.componentName,
+              });
             });
             setDataSource(options);
             // dataSource?.map((item: any, index: number) => {
@@ -84,7 +89,7 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
             // console.log('options11111', options);
             // setDataSource(options);
           } else {
-            return {};
+            return [];
           }
         })
         .finally(() => {
@@ -98,24 +103,33 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
 }
 
 //组件版本查询
-export function useQueryComponentVersionOptions(): [boolean, any, (componentName: string) => Promise<void>] {
+export function useQueryComponentVersionOptions(): [
+  boolean,
+  any,
+  (componentType: string, componentName?: string) => Promise<void>,
+] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState({});
 
-  const queryProductVersionOptions = async (componentName: string) => {
+  const queryProductVersionOptions = async (componentType: string, componentName?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentVersionList, {
-        data: { componentName, pageSize: -1 },
+        data: { componentType, componentName, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
             let options: any = {};
+            // let options:any=[]
             dataSource?.map((item: any) => {
               options[item.componentVersion] = {
                 text: item.componentVersion,
               };
+              // options.push({
+              //   label:item.componentVersion,
+              //   value:item.componentVersion
+              // })
             });
             setDataSource(options);
             console.log('option222', options);

@@ -123,3 +123,53 @@ export function useUpdateComponent(): [
   };
   return [loading, updateComponent];
 }
+
+//组件描述更新
+
+export function useUpdateDescription(): [boolean, (componentDescription: string) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const updateDescription = async (componentDescription: string) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.updateDescription, { data: { componentDescription } })
+        .then((res) => {
+          if (res.success) {
+            message.success('编辑成功！');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, updateDescription];
+}
+
+//组件配置更新
+
+export function useUpdateConfiguration(): [boolean, (componentConfiguration: string) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const updateConfiguration = async (componentConfiguration: string) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.updateConfiguration, { data: { componentConfiguration } })
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, updateConfiguration];
+}

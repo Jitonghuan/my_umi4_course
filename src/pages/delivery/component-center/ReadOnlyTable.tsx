@@ -12,10 +12,13 @@ import { Table, Tag, Space, Popconfirm } from 'antd';
 import { useQueryComponentList, useDeleteComponent } from './hook';
 export interface DetailProps {
   currentTab: string;
+  dataSource: any;
+  queryComponentList: (tabActiveKey: any) => any;
+  tableLoading: boolean;
 }
 export default function VersionDetail(props: DetailProps) {
-  const { currentTab } = props;
-  const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
+  const { currentTab, dataSource, queryComponentList, tableLoading } = props;
+  // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
     if (!currentTab) {
@@ -80,7 +83,7 @@ export default function VersionDetail(props: DetailProps) {
 
   return (
     <>
-      <Table columns={columns} showHeader={true} dataSource={dataSource} loading={loading} />
+      <Table columns={columns} showHeader={true} dataSource={dataSource} loading={tableLoading} />
     </>
   );
 }

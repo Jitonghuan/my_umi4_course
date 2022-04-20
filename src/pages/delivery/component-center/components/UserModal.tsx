@@ -7,24 +7,25 @@ export interface DetailProps {
   tabActiveKey: string;
   queryComponentList: (tabActiveKey: any) => any;
   onClose: () => any;
-  initData?: any;
-  onSave?: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, productLineOptions, initData, onClose, queryComponentList, onSave, tabActiveKey } = props;
+  const { visable, productLineOptions, onClose, queryComponentList, tabActiveKey } = props;
   const [loading, addApplication] = useAddApplication();
   const [appLoading, applicationOptions, getApplicationOption] = useGetApplicationOption();
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [form] = Form.useForm();
   const handleSubmit = () => {
-    const params = form.getFieldsValue();
-    addApplication({ ...params, componentType: tabActiveKey }).then(() => {
-      queryComponentList(tabActiveKey);
-      setTimeout(() => {
-        onClose();
-      }, 200);
+    // const params = form.getFieldsValue();
+    form.validateFields().then((params) => {
+      addApplication({ ...params, componentType: tabActiveKey })
+        .then(() => {
+          queryComponentList(tabActiveKey);
+        })
+        .then(() => {
+          onClose();
+        });
     });
   };
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function BasicModal(props: DetailProps) {
       // closable={!loading}
       width={580}
       footer={[
-        <Button type="primary" onClick={handleSubmit}>
+        <Button type="primary" onClick={handleSubmit} loading={loading}>
           确认
         </Button>,
         <Button

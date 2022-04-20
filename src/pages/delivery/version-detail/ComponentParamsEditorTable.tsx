@@ -164,14 +164,14 @@ export default (props: VersionDetailProps) => {
         ],
       },
       valueEnum: paramOptions,
-      // renderFormItem:(_, config: any, data)=>{
 
-      // }
+      // }使用useRef 在上个值选择时候赋值 然后给到参数值默认值，结合defaultValue
     },
     {
       title: '参数值',
       key: 'configParamValue',
       dataIndex: 'configParamValue',
+      // initialValue:{currentValue.configParamValue}
       renderFormItem: (_, config: any, data) => {
         // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
         // console.log(_, config, data,'---',paramOptions[config.record?.configParamName])
@@ -183,7 +183,7 @@ export default (props: VersionDetailProps) => {
           // setDataSource([config.record,...tableDataSource])
           // return  <span >{paramOptions[config.record?.configParamName].configParamValue}</span>
           return (
-            <Select>
+            <Select defaultValue={currentValue.configParamValue}>
               <Select.Option value={currentValue.configParamValue}>{currentValue.configParamValue}</Select.Option>
             </Select>
           );

@@ -1,4 +1,4 @@
-// 上下布局页面 应用模版页
+//组件模版
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
@@ -60,53 +60,6 @@ export default function ComponentTmpl() {
     // });
   };
 
-  // 查询数据
-  // const queryList = (value: any) => {
-  //   // setDataSource(dataSource);
-  //   setLoading(true);
-
-  //   getRequest(APIS.tmplList, {
-  //     data: {
-  //       appCategoryCode: value.appCategoryCode,
-  //       envCode: value.envCode,
-  //       templateType: value.templateType,
-  //       templateName: value.templateName,
-  //       languageCode: value.languageCode,
-  //       pageIndex: value.pageIndex,
-  //       pageSize: value.pageSize,
-  //     },
-  //   })
-  //     .then((res: any) => {
-  //       if (res.success) {
-  //         const dataSource = res.data.dataSource;
-  //         let pageTotal = res.data.pageInfo.total;
-  //         let pageIndex = res.data.pageInfo.pageIndex;
-  //         value.appCategoryCode = appCategoryCode;
-  //         value.envCode = envCode;
-  //         value.templateType = templateType;
-  //         setPageTotal(pageTotal);
-  //         setDataSource(dataSource);
-  //         setPageIndex(pageIndex);
-  //       }
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // };
-
-  //删除数据
-  // const handleDelItem = (record: any) => {
-  //   let id = record.id;
-  //   delRequest(`${APIS.deleteTmpl}/${id}`).then((res: any) => {
-  //     if (res.success) {
-  //       message.success('删除成功！');
-  //       loadListData({
-  //         pageIndex: 1,
-  //         pageSize: 20,
-  //       });
-  //     }
-  //   });
-  // };
   //抽屉保存
   const saveEditData = () => {
     setTmplEditMode('HIDE');
@@ -210,7 +163,8 @@ export default function ComponentTmpl() {
                     title="确定要删除该信息吗？"
                     onConfirm={() => {
                       deleteComponentTmpl(record.id).then(() => {
-                        queryTemplateList({ pageIndex: 1, pageSize: 20 });
+                        const values = formTmpl.getFieldsValue();
+                        queryTemplateList({ pageIndex: 1, pageSize: 20, ...values });
                       });
                     }}
                   >

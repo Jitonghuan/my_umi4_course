@@ -3,22 +3,31 @@ import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import AceEditor from '@/components/ace-editor';
-import { Form, Tabs, Input, Select, Button, Descriptions, Typography, Card, message, Popconfirm, Divider } from 'antd';
+import { Form, Tabs, Input, Select, Button, Descriptions, Typography, Divider } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import { useQueryComponentList, useQueryComponentInfo, useUpdateComponent } from './hooks';
+import {
+  useQueryComponentList,
+  useQueryComponentInfo,
+  useUpdateComponent,
+  useUpdateDescription,
+  useUpdateConfiguration,
+} from './hooks';
 import './index.less';
 export default function ComponentDetail() {
   const { initRecord, componentName, componentVersion, componentDescription, componentType, activeTab }: any =
     history.location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
+  const [configForm] = Form.useForm();
   const { Paragraph } = Typography;
   const [readOnly, setReadOnly] = useState<boolean>(true);
   const [buttonText, setButtonText] = useState<string>('编辑');
   const [editableStr, setEditableStr] = useState(initRecord?.componentDescription);
+  const [editLoading, updateDescription] = useUpdateDescription();
+  const [updateLoading, updateConfiguration] = useUpdateConfiguration();
   const [loading, versionOptions, queryComponentVersionList] = useQueryComponentList();
   const [infoLoading, componentInfo, queryComponentInfo] = useQueryComponentInfo();
-  const [updateLoading, updateComponent] = useUpdateComponent();
+  // const [updateLoading, updateComponent] = useUpdateComponent();
   useEffect(() => {
     if (componentVersion && componentName) {
       queryComponentVersionList(componentName, componentType);
@@ -27,7 +36,13 @@ export default function ComponentDetail() {
       return;
     }
   }, [componentName]);
-  const changeVersion = () => {};
+  const changeVersion = (value: string) => {
+    queryComponentInfo(componentName, value, componentType);
+  };
+  const saveConfig = () => {
+    const configuration = configForm.getFieldsValue();
+    updateConfiguration(configuration.config);
+  };
   return (
     <PageContainer>
       <ContentCard>
@@ -64,7 +79,7 @@ export default function ComponentDetail() {
                   <Paragraph
                     editable={{
                       onChange: (componentDescription: string) => {
-                        updateComponent({ componentDescription, ...componentInfo }).then(() => {
+                        updateDescription(componentDescription).then(() => {
                           setEditableStr(componentDescription);
                         });
                       },
@@ -106,8 +121,8 @@ export default function ComponentDetail() {
               </p>
             </div>
             <div>
-              <Form>
-                <Form.Item>
+              <Form form={configForm}>
+                <Form.Item name="config">
                   <AceEditor
                     mode="yaml"
                     height={'52vh'}
@@ -117,7 +132,9 @@ export default function ComponentDetail() {
                 </Form.Item>
                 <Form.Item>
                   <span style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button type="primary">保存配置</Button>
+                    <Button type="primary" onClick={saveConfig} loading={updateLoading}>
+                      保存配置
+                    </Button>
                   </span>
                 </Form.Item>
               </Form>

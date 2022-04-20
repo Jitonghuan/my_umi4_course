@@ -138,3 +138,7 @@ export const createPackageInde = addAPIPrefix('/deliveryManage/indent/package/cr
 /* POST 下载部署包 */
 
 export const downloadPackage = addAPIPrefix('/deliveryManage/indent/package/download');
+/* POST 组件描述更新 */
+export const updateDescription = addAPIPrefix('deliveryManage/component/description/update');
+/* POST  组件配置更新 */
+export const updateConfiguration = addAPIPrefix('deliveryManage/component/configuration/update');
