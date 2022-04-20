@@ -134,6 +134,18 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
         },
       };
     },
+    successFunc: (response: any) => {
+      if (!response.success) {
+        setJiraData([]);
+        // return {
+        //   dataSource: [],
+        //   pageInfo: {
+        //     pageIndex: 1,
+        //     pageSize: 1000,
+        //   },
+        // }
+      }
+    },
   });
 
   const queryDemandList = (paramObj: { appCategoryCode: string; appGroupCode: string }) => {
@@ -349,6 +361,9 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
   //     num.current = 0
   //   };
   // })
+  useEffect(() => {
+    reset();
+  }, [modalVisible]);
 
   const formLists: FormProps[] = [
     {
@@ -457,6 +472,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
               </Button>
             )}
           </Form>
+
           {!isCheck && (
             <div className="page-bottom">
               <Space>
