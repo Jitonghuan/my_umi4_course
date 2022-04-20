@@ -113,39 +113,37 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     });
   };
 
-  const {
-    run: queryNodeList,
-    reset,
-    tableProps,
-  } = usePaginated({
-    requestUrl: queryJiraUrl,
-    requestMethod: 'GET',
-    showRequestError: true,
-    didMounted: false,
-    pagination: false,
-    formatResult: (resp) => {
-      setJiraData(resp.data || []);
-      return {
-        dataSource: resp.data || [],
-        pageInfo: {
-          pageIndex: 1,
-          pageSize: 1000,
-        },
-      };
-    },
-    successFunc: (response: any) => {
-      if (!response.success) {
-        setJiraData([]);
-        // return {
-        //   dataSource: [],
-        //   pageInfo: {
-        //     pageIndex: 1,
-        //     pageSize: 1000,
-        //   },
-        // }
-      }
-    },
-  });
+  // const {
+  //   run: queryNodeList,
+  //   reset,
+  //   tableProps,
+  // } = usePaginated({
+  //   requestUrl: queryJiraUrl,
+  //   requestMethod: 'GET',
+  //   showRequestError: false,
+  //   didMounted: false,
+  //   pagination: false,
+  //   formatResult: (resp) => {
+  //     setJiraData(resp.data || []);
+  //     return {
+  //       dataSource: resp.data || [],
+  //       pageInfo: {
+  //         pageIndex: 1,
+  //         pageSize: 1000,
+  //       },
+  //     };
+  //   },
+  //   successFunc: (response: any) => {
+  //     if (!response.success) {
+
+  //       reset()
+  //       setJiraData([]);
+  //       tableProps.dataSource=[]
+  //       return false
+
+  //     }
+  //   },
+  // });
 
   const queryDemandList = (paramObj: { appCategoryCode: string; appGroupCode: string }) => {
     setDemandLoading(true);
@@ -160,6 +158,22 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       })
       .finally(() => {
         setDemandLoading(false);
+      });
+  };
+
+  const queryNodeList = (paramObj: { appCategoryCode: string; appGroupCode: string }) => {
+    // setDemandLoading(true);
+    getRequest(queryJiraUrl, { data: { ...paramObj, pageSize: -1 } })
+      .then((res) => {
+        if (res.success) {
+          setJiraData(res.data || []);
+        } else {
+          setJiraData([]);
+          return;
+        }
+      })
+      .finally(() => {
+        // setDemandLoading(false);
       });
   };
 
@@ -360,9 +374,6 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
   //     num.current = 0
   //   };
   // })
-  useEffect(() => {
-    reset();
-  }, [modalVisible]);
 
   const formLists: FormProps[] = [
     {
@@ -412,7 +423,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                   <Button
                     type="primary"
                     onClick={() => {
-                      reset();
+                      // reset();
                       setModalVisible(true);
                       if (currentAppGroupCode) {
                         queryNodeList({
@@ -536,13 +547,13 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       >
         <Table
           rowKey="key"
-          // key={Math.random()}
+          key={Math.random()}
           columns={JiraColumns}
-          // dataSource={jiraData}
-          {...tableProps}
-          pagination={{
-            ...tableProps.pagination,
-          }}
+          dataSource={jiraData}
+          // {...tableProps}
+          // pagination={{
+          //   ...tableProps.pagination,
+          // }}
           rowSelection={
             !isCheck
               ? {
