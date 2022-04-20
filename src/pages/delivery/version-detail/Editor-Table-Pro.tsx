@@ -98,7 +98,6 @@ export default (props: VersionDetailProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
-  const list = '99999';
   useEffect(() => {
     queryComponentOptions(currentTabType); //组件查询
     // queryProductVersionOptions(currentTabType); //组件版本查询
@@ -110,22 +109,22 @@ export default (props: VersionDetailProps) => {
       key: 'componentName',
       dataIndex: 'componentName',
       valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
-      // renderFormItem:()=><TagList />
-      // valueEnum: componentOptions,
       renderFormItem: (_, config: any, data) => {
         // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
         let currentValue = componentOptions[config.record?.componentName];
         // queryProductVersionOptions(currentTabType,currentValue)
         console.log('000000', config.record);
-
         return (
           <Select
             options={componentOptions}
@@ -142,13 +141,16 @@ export default (props: VersionDetailProps) => {
       dataIndex: 'componentVersion',
       // valueType: 'select',
       // initialValue:list,
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
       valueEnum: componentVersionOptions,
     },
@@ -160,7 +162,8 @@ export default (props: VersionDetailProps) => {
         // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
         let currentValue = componentVersionOptions[config.record?.componentVersion];
         if (currentValue) {
-          return <Input>{currentValue.componentDescription}</Input>;
+          return <span>{currentValue.componentDescription}</span>;
+          // <Input value={currentValue.componentDescription}></Input>;
         }
       },
     },
@@ -182,6 +185,7 @@ export default (props: VersionDetailProps) => {
                 componentVersion: record.componentVersion,
                 componentId: record.id,
                 componentType: currentTab,
+                componentDescription: record.componentDescription,
               },
             });
           }}

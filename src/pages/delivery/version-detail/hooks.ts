@@ -119,17 +119,15 @@ export function useQueryComponentVersionOptions(): [
       })
         .then((res) => {
           if (res.success) {
-            let dataSource = res.data.dataSource;
+            let dataSource = res.data;
             let options: any = {};
             // let options:any=[]
             dataSource?.map((item: any) => {
               options[item.componentVersion] = {
                 text: item.componentVersion,
+                componentDescription: item.componentDescription,
               };
-              // options.push({
-              //   label:item.componentVersion,
-              //   value:item.componentVersion
-              // })
+              console.log('item.componentVersion', item.componentVersion);
             });
             setDataSource(options);
             console.log('option222', options);

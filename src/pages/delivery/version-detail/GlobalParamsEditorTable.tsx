@@ -143,13 +143,16 @@ export default (props: VersionDetailProps) => {
         // return (type==='edit'||(type==='add'&& !text))?false :true
       },
 
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
     },
     {
@@ -157,13 +160,16 @@ export default (props: VersionDetailProps) => {
       key: 'configParamValue',
       dataIndex: 'configParamValue',
       // valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
     },
     {

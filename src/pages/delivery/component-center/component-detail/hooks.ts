@@ -21,8 +21,8 @@ export function useQueryComponentList(): [
           if (res.success) {
             let dataSource = res.data;
             const option = dataSource?.map((item: any) => ({
-              label: item,
-              value: item,
+              label: item.componentVersion,
+              value: item.componentVersion,
             }));
             setDataSource(option);
           } else {

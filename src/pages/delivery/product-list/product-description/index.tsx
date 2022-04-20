@@ -246,10 +246,10 @@ export default function deliveryDescription() {
         >
           <Form layout="vertical" form={createVersionForm} style={{ paddingLeft: 30 }}>
             <Form.Item label="版本名称:" name="version_name">
-              <Input style={{ width: 470 }} placeholder="请输入版本号"></Input>
+              <Input style={{ width: 400 }} placeholder="请输入版本号"></Input>
             </Form.Item>
             <Form.Item label="版本描述:" name="version_description">
-              <Input style={{ width: 470 }} placeholder="请输入版本描述"></Input>
+              <Input style={{ width: 400 }} placeholder="请输入版本描述"></Input>
             </Form.Item>
           </Form>
         </Modal>

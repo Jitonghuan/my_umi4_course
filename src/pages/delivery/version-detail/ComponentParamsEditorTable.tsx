@@ -128,13 +128,16 @@ export default (props: VersionDetailProps) => {
       key: 'configParamComponent',
       dataIndex: 'configParamComponent',
       valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
       valueEnum: originOptions,
       editable: (text, record, index) => {
@@ -155,17 +158,19 @@ export default (props: VersionDetailProps) => {
       key: 'configParamName',
       dataIndex: 'configParamName',
       valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
-      valueEnum: paramOptions,
 
-      // }使用useRef 在上个值选择时候赋值 然后给到参数值默认值，结合defaultValue
+      valueEnum: paramOptions,
     },
     {
       title: '参数值',
