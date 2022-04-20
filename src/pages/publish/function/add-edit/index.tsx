@@ -3,6 +3,7 @@ import { Space, Form, Input, Popconfirm, Typography, Button, Table, Select, Date
 import { PlusOutlined } from '@ant-design/icons';
 import moment, { Moment } from 'moment';
 import { datetimeCellRender } from '@/utils';
+import { getRequest } from '@/utils/request';
 import { history } from 'umi';
 import { FeContext } from '@/common/hooks';
 import PageContainer from '@/components/page-container';
@@ -17,8 +18,14 @@ import { usePaginated } from '@cffe/vc-hulk-table';
 import '../index.less';
 
 import { OptionProps } from '@/components/table-search/typing';
-import { queryEnvsReq, addFuncMultiReq, updateFuncReq, queryAppGroupReq, queryJiraUrl } from '../../service';
-
+import {
+  queryEnvsReq,
+  addFuncMultiReq,
+  updateFuncReq,
+  queryAppGroupReq,
+  queryJiraUrl,
+  eipDemandUrl,
+} from '../../service';
 export interface DefaultValueObjProps {
   appCategoryCode: string;
   appGroupCode: string;
@@ -63,8 +70,15 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
 
   const [jiraData, setJiraData] = useState<JiraItem[]>([]);
+  const [demandData, setDemandData] = useState<any[]>([]);
+  const [demandLoading, setDemandLoading] = useState<boolean>(false);
   const [envsOptions, setEnvsOptions] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [demandModalVisible, setDemandModalVisible] = useState<boolean>(false);
+  const [currentAppCategoryCode, setCurrentAppCategoryCode] = useState<string>('');
+  const [currentAppGroupCode, setCurrentAppGroupCode] = useState<string>('');
+  const [optType, setOptType] = useState<string>('');
+
   let num = useRef(0);
 
   const isCheck = type === 'check';
@@ -74,7 +88,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
   const queryEnvs = (categoryCode: string) => {
     setEnvsOptions([]);
     queryEnvsReq({
-      categoryCode,
+      // categoryCode,
       envTypeCode: 'prod',
     }).then((resp) => {
       setEnvsOptions(resp.list);
@@ -119,7 +133,36 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
         },
       };
     },
+    successFunc: (response: any) => {
+      if (!response.success) {
+        setJiraData([]);
+        // return {
+        //   dataSource: [],
+        //   pageInfo: {
+        //     pageIndex: 1,
+        //     pageSize: 1000,
+        //   },
+        // }
+      }
+    },
   });
+
+  const queryDemandList = (paramObj: { appCategoryCode: string; appGroupCode: string }) => {
+    setDemandLoading(true);
+    getRequest(eipDemandUrl, { data: { ...paramObj, pageSize: -1 } })
+      .then((res) => {
+        if (res.success) {
+          setDemandData(res.data || []);
+        } else {
+          setDemandData([]);
+          return;
+        }
+      })
+      .finally(() => {
+        setDemandLoading(false);
+      });
+  };
+
   // const queryJiraData = (groupCode: string) => {};
 
   const {
@@ -317,6 +360,9 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
   //     num.current = 0
   //   };
   // })
+  useEffect(() => {
+    reset();
+  }, [modalVisible]);
 
   const formLists: FormProps[] = [
     {
@@ -333,6 +379,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
         form.setFieldsValue({
           appGroupCode: undefined,
         });
+        setCurrentAppCategoryCode(value);
         queryGroups(value);
         queryEnvs(value);
       },
@@ -348,10 +395,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       option: groupData,
       disable: isNotAdd,
       onChange: (value: string) => {
-        queryNodeList({
-          appCategoryCode: form.getFieldValue('appCategoryCode'),
-          appGroupCode: value,
-        });
+        setCurrentAppGroupCode(value);
       },
     },
   ];
@@ -363,11 +407,47 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
           <Form form={form} component={false} initialValues={defaultValueObj}>
             <div className="page-top-form">
               <Space size={16}>{renderForm(formLists)}</Space>
-              {type === 'add' && (
-                <Button type="primary" onClick={() => setModalVisible(true)}>
-                  关联Jira需求单
-                </Button>
-              )}
+              <div>
+                {type === 'add' && (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      reset();
+                      setModalVisible(true);
+                      if (currentAppGroupCode) {
+                        queryNodeList({
+                          appCategoryCode: form.getFieldValue('appCategoryCode'),
+                          appGroupCode: currentAppGroupCode,
+                        });
+                      } else {
+                        message.info('请先选择应用分类和应用组！');
+                      }
+                    }}
+                  >
+                    关联Jira需求单
+                  </Button>
+                )}
+                {type === 'add' && currentAppCategoryCode === 'hbos' && (
+                  <Button
+                    type="primary"
+                    style={{ marginLeft: 6 }}
+                    onClick={() => {
+                      setDemandModalVisible(true);
+                      setOptType('demand');
+                      if (currentAppGroupCode) {
+                        queryDemandList({
+                          appCategoryCode: form.getFieldValue('appCategoryCode'),
+                          appGroupCode: currentAppGroupCode,
+                        });
+                      } else {
+                        message.info('请先选择应用分类和应用组！');
+                      }
+                    }}
+                  >
+                    关联需求管理平台
+                  </Button>
+                )}
+              </div>
             </div>
             <Table
               columns={mergedColumns}
@@ -391,6 +471,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
               </Button>
             )}
           </Form>
+
           {!isCheck && (
             <div className="page-bottom">
               <Space>
@@ -422,6 +503,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                 const newData = [...data];
                 const newEditingKey = [...editingKey];
                 const selectRows = jiraData.filter((jira) => selectedRowKeys.includes(jira?.key!));
+
                 const start = newData.length ? Number(newData[newData.length - 1].key) + 1 : 1;
                 selectRows.map((jira, index) => {
                   let obj = {
@@ -454,12 +536,80 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       >
         <Table
           rowKey="key"
+          // key={Math.random()}
           columns={JiraColumns}
           // dataSource={jiraData}
           {...tableProps}
           pagination={{
             ...tableProps.pagination,
           }}
+          rowSelection={
+            !isCheck
+              ? {
+                  selectedRowKeys,
+                  onChange: onSelectChange,
+                }
+              : undefined
+          }
+        />
+      </Modal>
+
+      <Modal
+        title="关联需求管理平台"
+        visible={demandModalVisible}
+        width="100%"
+        onCancel={() => setDemandModalVisible(false)}
+        footer={
+          <Space>
+            <Button onClick={() => setDemandModalVisible(false)}>取消</Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                if (!selectedRowKeys.length) {
+                  message.warn('请至少选择一条需求单');
+                  return;
+                }
+                const newData = [...data];
+                const newEditingKey = [...editingKey];
+                const selectRows = demandData.filter((jira) => selectedRowKeys.includes(jira?.key!));
+                const start = newData.length ? Number(newData[newData.length - 1].key) + 1 : 1;
+                selectRows.map((jira, index) => {
+                  let obj = {
+                    key: `${start + index}`,
+                    [`funcName-${start + index}`]: jira.summary,
+                    [`preDeployTime-${start + index}`]: jira.preDeployTime ? moment(jira.preDeployTime) : '',
+                    [`demandId-${start + index}`]: jira.key,
+                    [`envs-${start + index}`]: [],
+                  };
+                  // [`coverageRange-${index + 1}`]: data.coverageRange,
+                  // [`resolveNeeds-${index + 1}`]: data.resolveNeeds,
+                  newData.push(obj);
+                  newEditingKey.push(`${start + index}`);
+                });
+                setEditingKey(newEditingKey);
+                setData(newData);
+                setTimeout(() => {
+                  for (let i = start - 1; i < start - 1 + selectRows.length; i++) {
+                    // edit(newData[i] as Partial<IFuncItem> & { key: React.Key; })
+                    form.setFieldsValue({ ...newData[i] });
+                  }
+                }, 100);
+                setDemandModalVisible(false);
+              }}
+            >
+              确认
+            </Button>
+          </Space>
+        }
+      >
+        <Table
+          rowKey="key"
+          columns={JiraColumns}
+          dataSource={demandData}
+          loading={demandLoading}
+          // pagination={{
+          //   ...tableProps.pagination,
+          // }}
           rowSelection={
             !isCheck
               ? {
