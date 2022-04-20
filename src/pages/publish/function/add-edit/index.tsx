@@ -124,13 +124,8 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     didMounted: false,
     pagination: false,
     formatResult: (resp) => {
-      if (resp.sucess) {
-        console.log('resp.sucess', resp);
-        setJiraData(resp.data || []);
-      } else {
-        setJiraData([]);
-      }
-
+      console.log('resp.sucess', resp);
+      setJiraData(resp.data || []);
       return {
         dataSource: resp.data || [],
         pageInfo: {
@@ -404,9 +399,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                     type="primary"
                     onClick={() => {
                       reset();
-                      setTimeout(() => {
-                        setModalVisible(true);
-                      }, 200);
+                      setModalVisible(true);
                       if (currentAppGroupCode) {
                         queryNodeList({
                           appCategoryCode: form.getFieldValue('appCategoryCode'),
@@ -495,6 +488,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                 const newData = [...data];
                 const newEditingKey = [...editingKey];
                 const selectRows = jiraData.filter((jira) => selectedRowKeys.includes(jira?.key!));
+
                 const start = newData.length ? Number(newData[newData.length - 1].key) + 1 : 1;
                 selectRows.map((jira, index) => {
                   let obj = {
@@ -562,7 +556,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                 }
                 const newData = [...data];
                 const newEditingKey = [...editingKey];
-                const selectRows = jiraData.filter((jira) => selectedRowKeys.includes(jira?.key!));
+                const selectRows = demandData.filter((jira) => selectedRowKeys.includes(jira?.key!));
                 const start = newData.length ? Number(newData[newData.length - 1].key) + 1 : 1;
                 selectRows.map((jira, index) => {
                   let obj = {
@@ -577,6 +571,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                   newData.push(obj);
                   newEditingKey.push(`${start + index}`);
                 });
+                console.log('newEditingKey', newEditingKey);
                 setEditingKey(newEditingKey);
                 setData(newData);
                 setTimeout(() => {
