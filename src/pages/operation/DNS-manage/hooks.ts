@@ -15,19 +15,18 @@ export function useDnsManageList() {
 
   const getDnsManageList = async (paramObj: {
     currentEnvCode: any;
-    hostRecord?: string;
-    recordType?: string;
-    recordValue?: string;
-    status?: string;
+    // hostRecord?: string;
+    // recordType?: string;
+    // recordValue?: string;
+    // status?: string;
+    keyWord?: string;
     pageIndex?: number;
     pageSize?: number;
   }) => {
     setLoading(true);
     await getRequest(
-      `${APIS.getDnsManageList}?envCode=${paramObj.currentEnvCode.envCode}&hostRecord=${
-        paramObj?.hostRecord || ''
-      }&recordType=${paramObj?.recordType || ''}&recordValue=${paramObj?.recordValue || ''}&status=${
-        paramObj?.status || ''
+      `${APIS.getDnsManageList}?envCode=${paramObj.currentEnvCode.envCode}&keyWord=${
+        paramObj?.keyWord || ''
       }&pageIndex=${paramObj?.pageIndex || 1}&pageSize=${paramObj?.pageSize || 20}`,
     )
       .then((result) => {
