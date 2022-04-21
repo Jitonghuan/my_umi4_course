@@ -33,7 +33,6 @@ export default function ComponentTmpl() {
     setTmplateData(record);
     setTmplEditMode(type);
   }, []);
-  console.log('tmplateData', tmplateData);
   //触发分页
 
   const pageSizeClick = (pagination: any) => {
