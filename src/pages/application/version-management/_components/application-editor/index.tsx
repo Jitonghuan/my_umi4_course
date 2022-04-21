@@ -122,7 +122,10 @@ export default function ApplicationEditor(props: IProps) {
             rowSelection={rowSelection}
             columns={colunms}
             dataSource={dataSource}
-            scroll={{ x: '100%' }}
+            style={{ height: 200 }}
+            // scroll={{ x: '100%' }}
+            pagination={false}
+            scroll={{ y: window.innerHeight - 520, x: '100%' }}
           />
         </FormItem>
       </Form>
