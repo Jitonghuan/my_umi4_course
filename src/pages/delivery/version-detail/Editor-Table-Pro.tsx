@@ -154,7 +154,21 @@ export default (props: VersionDetailProps) => {
           errorType: 'default',
         };
       },
-      valueEnum: componentVersionOptions,
+      // valueEnum: componentVersionOptions,
+      renderFormItem: (_, config: any, data) => {
+        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
+        let currentValue = componentOptions[config.record?.componentName];
+        // queryProductVersionOptions(currentTabType,currentValue)
+
+        return (
+          <Select
+            options={componentVersionOptions}
+            onChange={(value: any) => {
+              queryProductVersionOptions(currentTabType, value);
+            }}
+          ></Select>
+        );
+      },
     },
     {
       title: '组件描述',
