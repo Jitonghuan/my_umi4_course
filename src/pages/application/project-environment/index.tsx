@@ -186,75 +186,76 @@ export default function EnvironmentList() {
         }}
         onSave={saveEditData}
       />
-      <Spin spinning={isSpinning}>
-        <FilterCard>
-          <Form
-            layout="inline"
-            form={formList}
-            onFinish={(values: any) => {
-              queryProjectEnv({
-                ...values,
-                pageIndex: 1,
-                pageSize: 20,
-              });
-            }}
-            onReset={() => {
-              formList.resetFields();
-              queryProjectEnv({
-                pageIndex: 1,
-                // pageSize: pageSize,
-              });
-            }}
-          >
-            <Form.Item label="默认分类：" name="categoryCode">
-              <Select showSearch style={{ width: 150 }} options={categoryData} />
-            </Form.Item>
-            <Form.Item label="环境大类：" name="envTypeCode">
-              <Select allowClear showSearch style={{ width: 120 }} options={envTypeData} />
-            </Form.Item>
-            <Form.Item label="基准环境：" name="benchmarkEnvCode">
-              <Select showSearch allowClear style={{ width: 150 }} options={envDataSource} loading={loading} />
-            </Form.Item>
-            <Form.Item label="环境名：" name="envName">
-              <Input style={{ width: 150 }} />
-            </Form.Item>
-            <Form.Item label=" 环境CODE" name="envCode">
-              <Input placeholder="请输入环境CODE"></Input>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button type="ghost" htmlType="reset">
-                重置
-              </Button>
-            </Form.Item>
-          </Form>
-        </FilterCard>
-        <ContentCard>
-          <div className="table-caption">
-            <Radio.Group value={type} onChange={handleTypeChange}>
-              <Radio.Button value="collect">我的收藏</Radio.Button>
-              <Radio.Button value="all">全部项目环境</Radio.Button>
-            </Radio.Group>
-            {/* <div className="caption-left">
+      {/* <Spin spinning={isSpinning}> */}
+      <FilterCard>
+        <Form
+          layout="inline"
+          form={formList}
+          onFinish={(values: any) => {
+            queryProjectEnv({
+              ...values,
+              pageIndex: 1,
+              pageSize: 20,
+            });
+          }}
+          onReset={() => {
+            formList.resetFields();
+            queryProjectEnv({
+              pageIndex: 1,
+              // pageSize: pageSize,
+            });
+          }}
+        >
+          <Form.Item label="默认分类：" name="categoryCode">
+            <Select showSearch style={{ width: 150 }} options={categoryData} />
+          </Form.Item>
+          <Form.Item label="环境大类：" name="envTypeCode">
+            <Select allowClear showSearch style={{ width: 120 }} options={envTypeData} />
+          </Form.Item>
+          <Form.Item label="基准环境：" name="benchmarkEnvCode">
+            <Select showSearch allowClear style={{ width: 150 }} options={envDataSource} loading={loading} />
+          </Form.Item>
+          <Form.Item label="环境名：" name="envName">
+            <Input style={{ width: 150 }} />
+          </Form.Item>
+          <Form.Item label=" 环境CODE" name="envCode">
+            <Input placeholder="请输入环境CODE"></Input>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="ghost" htmlType="reset">
+              重置
+            </Button>
+          </Form.Item>
+        </Form>
+      </FilterCard>
+      <ContentCard>
+        <div className="table-caption">
+          <Radio.Group value={type} onChange={handleTypeChange}>
+            <Radio.Button value="collect">我的收藏</Radio.Button>
+            <Radio.Button value="all">全部项目环境</Radio.Button>
+          </Radio.Group>
+          {/* <div className="caption-left">
             <h3>项目环境列表</h3>
           </div> */}
-            {type === 'all' && (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setEnviroEditMode('ADD');
-                }}
-              >
-                <PlusOutlined />
-                新增项目环境
-              </Button>
-            )}
-          </div>
-          <div>
+          {type === 'all' && (
+            <Button
+              type="primary"
+              onClick={() => {
+                setEnviroEditMode('ADD');
+              }}
+            >
+              <PlusOutlined />
+              新增项目环境
+            </Button>
+          )}
+        </div>
+        <div>
+          <Spin spinning={isSpinning}>
             <Table
               rowKey="id"
               bordered
@@ -384,10 +385,11 @@ export default function EnvironmentList() {
                 )}
               />
             </Table>
-          </div>
-          {type === 'collect' && <DetailList dataInfo={rowData} onSpin={onSpin} stopSpin={stopSpin}></DetailList>}
-        </ContentCard>
-      </Spin>
+          </Spin>
+        </div>
+        {type === 'collect' && <DetailList dataInfo={rowData} onSpin={onSpin} stopSpin={stopSpin}></DetailList>}
+      </ContentCard>
+      {/* </Spin> */}
     </PageContainer>
   );
 }
