@@ -6,6 +6,7 @@ import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Space, Select, Form, Popconfirm } from 'antd';
 import { productionPageTypes } from './tab-config';
 import { PlusOutlined } from '@ant-design/icons';
+import type { ProFormInstance } from '@ant-design/pro-form';
 import {
   useQueryComponentOptions,
   useQueryComponentVersionOptions,
@@ -95,6 +96,7 @@ export default (props: VersionDetailProps) => {
     useQueryVersionComponentList();
   const [delLoading, deleteVersionComponent] = useDeleteVersionComponent();
   const actionRef = useRef<ActionType>();
+  const ref = useRef<ProFormInstance>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
@@ -124,7 +126,7 @@ export default (props: VersionDetailProps) => {
         // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
         let currentValue = componentOptions[config.record?.componentName];
         // queryProductVersionOptions(currentTabType,currentValue)
-        console.log('000000', config.record);
+
         return (
           <Select
             options={componentOptions}
@@ -159,11 +161,16 @@ export default (props: VersionDetailProps) => {
       dataIndex: 'componentDescription',
 
       renderFormItem: (_, config: any, data) => {
-        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
         let currentValue = componentVersionOptions[config.record?.componentVersion];
+
         if (currentValue) {
-          return <span>{currentValue.componentDescription}</span>;
-          // <Input value={currentValue.componentDescription}></Input>;
+          // data.setFieldsValue({
+          //   componentDescription:currentValue?.componentDescription
+          // })
+
+          return (
+            <Input value={currentValue.componentDescription} defaultValue={currentValue.componentDescription}></Input>
+          );
         }
       },
     },
@@ -258,6 +265,7 @@ export default (props: VersionDetailProps) => {
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
+        formRef={ref}
         headerTitle="可编辑表格"
         // maxLength={5}
         // 关闭默认的新建按钮

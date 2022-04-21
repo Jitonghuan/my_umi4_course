@@ -156,10 +156,10 @@ export default function deliveryDescription() {
     });
   };
   return (
-    <PageContainer>
+    <PageContainer className="product-description">
       <ContentCard>
         <div>
-          <Descriptions title="基本信息" column={2} className="basic-info-description">
+          <Descriptions title="基本信息" column={2} className="basic-info-description" bordered={true}>
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
               <Paragraph

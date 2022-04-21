@@ -14,7 +14,7 @@ import {
 } from './hooks';
 import './index.less';
 export default function ComponentDetail() {
-  const { initRecord, componentName, componentVersion, componentDescription, componentType, activeTab }: any =
+  const { initRecord, componentName, componentVersion, componentDescription, componentType, activeTab, type }: any =
     history.location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
@@ -27,6 +27,7 @@ export default function ComponentDetail() {
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
   const [loading, versionOptions, queryComponentVersionList] = useQueryComponentList();
   const [infoLoading, componentInfo, queryComponentInfo] = useQueryComponentInfo();
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
   // const [updateLoading, updateComponent] = useUpdateComponent();
   useEffect(() => {
     if (componentVersion && componentName) {
@@ -35,7 +36,14 @@ export default function ComponentDetail() {
     } else {
       return;
     }
+    if (type === 'componentCenter') {
+      setButtonDisabled(true);
+    }
+    return () => {
+      setButtonDisabled(false);
+    };
   }, [componentName]);
+
   const changeVersion = (value: string) => {
     queryComponentInfo(componentName, value, componentType);
   };
@@ -45,7 +53,7 @@ export default function ComponentDetail() {
   };
   return (
     <PageContainer>
-      <ContentCard>
+      <ContentCard className="component-detail">
         <div className="table-caption">
           <div className="caption-left">
             <h3>组件名称：{componentName}</h3>
@@ -73,7 +81,7 @@ export default function ComponentDetail() {
         <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
           <TabPane tab="组件信息" key="component-info">
             <div>
-              <Descriptions title="基本信息" column={2}>
+              <Descriptions title="基本信息" column={2} bordered={true}>
                 <Descriptions.Item label="组件名称">{componentInfo?.componentName}</Descriptions.Item>
                 <Descriptions.Item label="组件描述">
                   <Paragraph
@@ -105,6 +113,7 @@ export default function ComponentDetail() {
             <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 2 }}>
               <p>
                 <Button
+                  disabled={buttonDisabled}
                   type={buttonText === '编辑' ? 'primary' : 'default'}
                   onClick={() => {
                     if (readOnly) {

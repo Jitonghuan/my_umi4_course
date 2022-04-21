@@ -123,7 +123,8 @@ export function useQueryComponentVersionOptions(): [
             let options: any = {};
             // let options:any=[]
             dataSource?.map((item: any) => {
-              options[item.componentVersion] = {
+              // componentDescription
+              options[item.componentDescription] = {
                 text: item.componentVersion,
                 componentDescription: item.componentDescription,
               };

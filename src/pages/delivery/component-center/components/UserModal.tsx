@@ -61,7 +61,7 @@ export default function BasicModal(props: DetailProps) {
         <Form.Item label="环境" name="componentSourceEnv" rules={[{ required: true, message: '请选择环境' }]}>
           <Select style={{ width: 320 }} options={envDataSource} onChange={getEnvCode}></Select>
         </Form.Item>
-        <Form.Item label="生产线" name="productLine" rules={[{ required: true, message: '请选择生产线' }]}>
+        <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
           <Select style={{ width: 320 }} options={productLineOptions}></Select>
         </Form.Item>
         <Form.Item label="组件名称" name="componentName" rules={[{ required: true, message: '请选择组件名称' }]}>
