@@ -12,12 +12,13 @@ export interface IProps {
   mode?: EditorMode;
   appCode: string;
   appCategoryCode: string;
+  masterBranchOptions: any;
   onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function BranchEditor(props: IProps) {
-  const { mode, appCode, onClose, onSubmit, appCategoryCode } = props;
+  const { mode, appCode, onClose, onSubmit, appCategoryCode, masterBranchOptions } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
@@ -110,6 +111,9 @@ export default function BranchEditor(props: IProps) {
       maskClosable={false}
     >
       <Form form={form} labelCol={{ flex: '100px' }}>
+        <Form.Item label="主干分支" name="masterBranch" rules={[{ required: true, message: '请选择主干分支' }]}>
+          <Select options={masterBranchOptions}></Select>
+        </Form.Item>
         <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
           <Input addonBefore="feature_" autoFocus />
         </Form.Item>

@@ -639,8 +639,8 @@ export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRe
 export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });
 
 /** GET 应用部署-获取流水线 */
-// export const getPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/list`;
-export const getPipelineUrl = `http://127.0.0.1:4523/mock/837336/v1/appManage/appPipeline/list`;
+export const getPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/list`;
+// export const getPipelineUrl = `http://127.0.0.1:4523/mock/837336/v1/appManage/appPipeline/list`;
 
 /** POST 应用部署-删除流水线 */
 export const delPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/delete`;

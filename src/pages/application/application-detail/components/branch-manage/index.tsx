@@ -208,6 +208,7 @@ export default function BranchManage() {
           });
         }}
         onClose={() => setBranchEditMode('HIDE')}
+        masterBranchOptions={masterBranchOptions}
       />
     </ContentCard>
   );
