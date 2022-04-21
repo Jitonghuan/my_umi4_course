@@ -48,6 +48,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch, masterBranch, masterBranchChange } =
     publishBranchProps;
   const { appData } = useContext(DetailContext);
+  const { metadata } = deployInfo || {};
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
@@ -78,7 +79,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
       return await updateFeatures({
-        id: deployInfo.id,
+        id: metadata?.id,
         features: filter,
       });
     }
@@ -138,9 +139,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     });
   }, [appCategoryCode, env]);
 
+  useEffect(() => {
+    setSelectMaster(1960);
+  }, []);
+
   const handleChange = (v: string) => {
     setSelectMaster(v);
-    masterBranchChange();
+    masterBranchChange(v);
   };
 
   const branchNameRender = (branchName: string, record: any) => {
@@ -162,7 +167,6 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             options={masterBranchOptions}
             value={selectMaster}
             style={{ width: '240px', marginRight: '20px' }}
-            defaultValue={'master'}
             onChange={handleChange}
           ></Select>
           <h4>开发分支名称：</h4>

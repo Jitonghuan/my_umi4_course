@@ -8,28 +8,30 @@ import {
   createFeatureBranch,
   queryPortalList,
   getDemandByProjectList,
-  getMasterBranch,
   getOriginBranch,
   createMasterBranch,
 } from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
+import { debounce } from 'lodash';
 
 export interface IProps {
   mode?: EditorMode;
   appCode: string;
   type: string;
+  appCategoryCode: string;
   masterTableData: any;
   onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function BranchEditor(props: IProps) {
-  const { mode, appCode, onClose, onSubmit, type, masterTableData } = props;
+  const { mode, appCode, onClose, onSubmit, type, masterTableData, appCategoryCode } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
   const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
   const [projectId, setProjectId] = useState<string>('');
+  const [value, setValue] = useState<any>();
   const [demandId, setDemandId] = useState<any>([]);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [originBranchOptions, setOriginBranchOptions] = useState<any>([]);
@@ -38,19 +40,15 @@ export default function BranchEditor(props: IProps) {
     if (mode === 'HIDE') return;
     form.resetFields();
     if (type === 'master') {
-      getOriginBranchOption();
+      // getOriginBranchOption();
     }
     if (type !== 'master') {
       queryPortal();
-      // 设置主干分支初始值
+      const options = masterTableData.map((item: any) => ({ label: item.branchName, value: item.id }));
+      setMasterBranchOptions(options);
       form.setFieldsValue({ masterBranch: 'master' });
     }
-  }, [mode, type]);
-
-  useEffect(() => {
-    const options = masterTableData.map((item: any) => ({ label: item.branchName, value: item.id }));
-    setMasterBranchOptions(options);
-  }, [masterTableData]);
+  }, [mode, type, masterTableData]);
 
   // 提交
   const handleSubmit = useCallback(async () => {
@@ -67,7 +65,7 @@ export default function BranchEditor(props: IProps) {
       } else {
         await createFeatureBranch({
           appCode,
-          demandId: demandId,
+          // demandId: demandId,
           ...values,
         });
       }
@@ -122,9 +120,9 @@ export default function BranchEditor(props: IProps) {
     setDemandId(data);
   };
 
-  const onSearch = (val: any) => {
+  const onSearch = debounce((val: any) => {
     queryDemand(projectId, val);
-  };
+  }, 300);
 
   // 主干分支弹窗-获取来源分支下拉框数据
   const getOriginBranchOption = () => {
@@ -164,10 +162,17 @@ export default function BranchEditor(props: IProps) {
             <Form.Item label="选择主干分支" name="masterBranch" rules={[{ required: true, message: '请选择主干分支' }]}>
               <Select options={masterBranchOptions}></Select>
             </Form.Item>
-            <Form.Item label="项目列表" rules={[{ required: true, message: '请输入分支名' }]}>
+            <Form.Item
+              label="项目列表"
+              rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择项目' }]}
+            >
               <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
             </Form.Item>
-            <Form.Item label="需求列表" name="demandId">
+            <Form.Item
+              label="需求列表"
+              name="demandId"
+              rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择需求' }]}
+            >
               <Select
                 mode="multiple"
                 options={queryDemandOptions}

@@ -76,16 +76,16 @@ const ETable = React.forwardRef((props: any, ref) => {
           onChange={onChange}
           {...others}
           recordCreatorProps={{
-            record: () => ({ id: -1 }),
+            record: () => ({ add: true, id: (Math.random() * 1000000).toFixed(0) }),
             creatorButtonText: addBottonText ? addBottonText : '新增一行',
           }}
           editable={{
-            editableKeys,
+            // editableKeys,
             onSave: async (rowKey, data, row) => {
               handleSave(rowKey, data);
             },
-            onChange: (keys, cols) => {
-              setEditableRowKeys(keys);
+            onChange: (key) => {
+              setEditableRowKeys(key);
             },
             actionRender: (row, config, defaultDom) => {
               return [defaultDom.save, defaultDom.delete, defaultDom.cancel];

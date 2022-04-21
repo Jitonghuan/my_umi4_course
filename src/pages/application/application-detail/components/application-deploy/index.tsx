@@ -138,7 +138,6 @@ export default function ApplicationDeploy(props: any) {
           setVisible(false);
         }}
         dataSource={datasource}
-        setDatasource={setDatasource}
         onSave={getPipeline}
         appData={appData}
       />

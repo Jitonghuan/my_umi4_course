@@ -9,7 +9,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '../../../../../context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
@@ -17,6 +17,7 @@ import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
@@ -36,12 +37,14 @@ export interface PublishBranchProps {
     gmtCreate: string;
     status: string | number;
   }[];
+  masterBranchChange: any;
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
 }
 
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch } = publishBranchProps;
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch, masterBranchChange } =
+    publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
@@ -51,6 +54,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
+  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [masterListData] = useMasterBranchList({ branch_type: 'master' });
 
   type reviewStatusTypeItem = {
     color: string;
@@ -143,6 +149,20 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       </div>
     );
   };
+  useEffect(() => {
+    if (masterListData.length !== 0) {
+      const option = masterListData.map((item: any) => ({ value: item.id, label: item.branchName }));
+      setMasterBranchOptions(option);
+    }
+  }, [masterListData]);
+
+  useEffect(() => {
+    setSelectMaster(1960);
+  }, []);
+  const handleChange = (v: string) => {
+    setSelectMaster(v);
+    masterBranchChange(v);
+  };
 
   return (
     <div className={rootCls}>
@@ -150,7 +170,14 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
       <div className="table-caption">
         <div className="caption-left">
-          <h4>分支列表&nbsp;&nbsp;</h4>
+          <h4>主干分支：</h4>
+          <Select
+            options={masterBranchOptions}
+            value={selectMaster}
+            style={{ width: '240px', marginRight: '20px' }}
+            onChange={handleChange}
+          ></Select>
+          <h4>开发分支名称：</h4>
           <Input.Search
             placeholder="搜索分支"
             value={searchText}

@@ -79,6 +79,7 @@ export default function DeployContent(props: DeployContentProps) {
   const { appCode } = appData || {};
   const cachebranchName = useRef<string>();
   const [updating, setUpdating] = useState(false);
+  const masterBranchName = useRef<string>('master');
   // const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
   const [deployInfo, setDeployInfo] = useState<any>({});
 
@@ -114,6 +115,7 @@ export default function DeployContent(props: DeployContentProps) {
       envTypeCode: projectEnvCode,
       isDeployed: 0,
       branchName: cachebranchName.current,
+      masterBranch: masterBranchName.current,
     });
 
     // if (resp?.data) {
@@ -218,6 +220,10 @@ export default function DeployContent(props: DeployContentProps) {
             onSearch={searchUndeployedBranch}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
+            }}
+            masterBranchChange={(masterBranch: string) => {
+              masterBranchName.current = masterBranch;
+              timerHandle('do', true);
             }}
           />
         </Spin>
