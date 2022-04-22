@@ -169,7 +169,6 @@ export default function EnvironmentList() {
               queryAppsListData(paramObj);
             }}
             dataSource={dataSource}
-            setDataSource={setDataSource}
             appsListData={appsListData}
           ></DetailList>
         </Spin>
