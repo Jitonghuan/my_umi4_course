@@ -217,7 +217,7 @@ const Coms = (props: any) => {
           data = [];
         } else {
           const { dataSource = [] } = result.data;
-          data = dataSource.map((item: Record<string, object>) => {
+          data = (dataSource || [])?.map((item: Record<string, object>) => {
             const key = Object.keys(item)[0];
             return {
               ip: key,
@@ -225,12 +225,6 @@ const Coms = (props: any) => {
             };
           });
         }
-        // const resultDataSouce = result?.dataSource?.map((item: Record<string, object>) => {
-        //   const key = Object.keys(item)[0];
-        //   return {
-        //     ...item[key],
-        //   };
-        // });
         setNodeDataSource(data);
         let pageInfo = result.data?.pageInfo;
         setNodePageIndex(pageInfo?.pageIndex || 1);
@@ -241,59 +235,6 @@ const Coms = (props: any) => {
         setNodeLoading(false);
       });
   };
-  // const {
-  //   run: queryNodeList,
-  //   reset,
-  //   tableProps,
-  // } = usePaginated({
-  //   requestUrl: queryNodeUseDataApi,
-  //   requestMethod: 'GET',
-  //   effectParams: searchParams,
-  //   showRequestError: true,
-  //   initPageInfo: {
-  //     total: 0,
-  //     pageSize: 20,
-  //   },
-  //   pagination: {
-  //     showSizeChanger: true,
-  //     pageSizeOptions: ['20', '50', '100', '1000'],
-  //   },
-
-  //   formatRequestParams: (params) => {
-  //     if (!params) {
-  //       return [];
-  //     } else {
-  //       return {
-  //         ...params,
-  //         clusterId: params?.clusterId,
-  //       };
-  //     }
-  //   },
-  //   formatResult: (resp) => {
-  //     let result: any = [];
-  //     if (resp.data === null) {
-  //       result = [];
-  //       let pageInfo: any = {};
-  //       return {
-  //         dataSource: result,
-  //         pageInfo,
-  //       };
-  //     } else {
-  //       const { dataSource = [], pageInfo = {} } = resp.data;
-  //       result = dataSource.map((item: Record<string, object>) => {
-  //         const key = Object.keys(item)[0];
-  //         return {
-  //           ip: key,
-  //           ...item[key],
-  //         };
-  //       });
-  //       return {
-  //         dataSource: result,
-  //         pageInfo,
-  //       };
-  //     }
-  //   },
-  // });
 
   // 查询已安装大盘
   const queryUseMarket = (value: any) => {
@@ -415,9 +356,11 @@ const Coms = (props: any) => {
 
     return options;
   }, []);
-  const [searchKeyWords, setSearchKeyWords] = useState<any>();
+  const [searchKeyWords, setSearchKeyWords] = useState<any>('');
+  const [nodeKeyWords, setNodeKeyWords] = useState<any>('');
   const handleSearchRes = () => {
     let param = searchField.getFieldsValue();
+    setNodeKeyWords(param);
     // setSearchParams(searchField.getFieldsValue());
     queryNodeList({ clusterId: currentCluster, keyword: param.keyword, pageIndex: pageIndex, pageSize: pageSize });
   };
@@ -559,8 +502,33 @@ const Coms = (props: any) => {
               rowKey="id"
               size="small"
               dataSource={nodeDataSource}
+              loading={nodeLoading}
               columns={resUseTableSchema as any}
               scroll={{ y: 313 }}
+              pagination={{
+                pageSize: nodePageSize,
+                total: nodeTotal,
+                current: nodePageIndex,
+                showSizeChanger: true,
+                onShowSizeChange: (_, next) => {
+                  setNodePageIndex(1);
+                  setNodePageSize(next);
+                  // queryPodData(currentCluster, 1, next, searchKeyWords?.keyword);
+                },
+                showTotal: () => `总共 ${nodeTotal} 条数据`,
+
+                // showTotal: () => `总共 ${total} 条数据`,
+                onChange: (next, size: any) => {
+                  setNodePageSize(size);
+                  setNodePageIndex(next),
+                    queryNodeList({
+                      clusterId: currentCluster,
+                      pageIndex: next,
+                      pageSize: size,
+                      keyword: nodeKeyWords?.keyword,
+                    });
+                },
+              }}
               // {...tableProps}
               customColumnMap={{
                 ip: (value, record) => {
