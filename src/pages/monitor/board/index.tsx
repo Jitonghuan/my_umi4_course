@@ -118,7 +118,7 @@ type IMarket = {
 const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
 
-  let href = window.location.href.includes('matrix-fygs');
+  let href = window.location.href.includes('matrix-fygs') || window.location.href.includes('matrix-zslnyy');
   const tabList = [
     { label: 'DEV', value: 'dev' },
     { label: 'TEST', value: 'test' },
