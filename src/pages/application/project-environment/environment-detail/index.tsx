@@ -129,7 +129,7 @@ export default function EnvironmentList() {
         onSave={() => {
           setEnviroEditMode('HIDE');
           setIsUpdata(true);
-          queryAppsListData(queryCommonParamsRef.current);
+          // queryAppsListData(queryCommonParamsRef.current);
         }}
       />
 
