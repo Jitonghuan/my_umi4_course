@@ -46,8 +46,8 @@ export default function BranchManage() {
       const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
       const initValue = option.find((item: any) => item.label === 'master');
-      searchForm.setFieldsValue({ masterName: initValue.value });
-      setSelectMaster(initValue.value);
+      searchForm.setFieldsValue({ masterName: initValue?.value || '' });
+      setSelectMaster(initValue?.value || '');
     }
   }, [masterListData]);
 
