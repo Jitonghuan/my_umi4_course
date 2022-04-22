@@ -38,6 +38,7 @@ export const appTypeOptions = [
 ];
 export default function EnvironmentList() {
   const projectEnvInfo: any = history.location.state;
+  const [isUpdata, setIsUpdata] = useState<boolean>(false);
   const [enviroInitData, setEnviroInitData] = useState<EnvironmentEdit>();
   const [enviroEditMode, setEnviroEditMode] = useState<EditorMode>('HIDE');
   const [appsListData, setAppsListData] = useState<any>([]);
@@ -113,6 +114,10 @@ export default function EnvironmentList() {
     setIsSpinning(false);
   };
 
+  const cancelUpdate = () => {
+    setIsUpdata(false);
+  };
+
   return (
     <PageContainer className="project-env-detail">
       <EnvironmentEditDraw
@@ -123,6 +128,7 @@ export default function EnvironmentList() {
         }}
         onSave={() => {
           setEnviroEditMode('HIDE');
+          setIsUpdata(true);
           queryAppsListData(queryCommonParamsRef.current);
         }}
       />
@@ -162,15 +168,7 @@ export default function EnvironmentList() {
           </Spin>
         </div>
         <Spin spinning={isSpinning || loading}>
-          <DetailList
-            onSpin={onSpin}
-            stopSpin={stopSpin}
-            getDataSource={(paramObj: any) => {
-              queryAppsListData(paramObj);
-            }}
-            dataSource={dataSource}
-            appsListData={appsListData}
-          ></DetailList>
+          <DetailList onSpin={onSpin} stopSpin={stopSpin} isUpdata={isUpdata} cancelUpdate={cancelUpdate}></DetailList>
         </Spin>
       </ContentCard>
     </PageContainer>
