@@ -7,18 +7,20 @@ import { Modal, Input, Form, message, Select, Cascader } from 'antd';
 import { createFeatureBranch, queryPortalList, getDemandByProjectList } from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
 import { debounce } from 'lodash';
+import { copyScene } from '@/pages/test/autotest/service';
 
 export interface IProps {
   mode?: EditorMode;
   appCode: string;
   appCategoryCode: string;
   masterBranchOptions: any;
+  selectMaster: any;
   onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function BranchEditor(props: IProps) {
-  const { mode, appCode, onClose, onSubmit, appCategoryCode, masterBranchOptions } = props;
+  const { mode, appCode, onClose, onSubmit, appCategoryCode, masterBranchOptions, selectMaster } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
@@ -35,6 +37,7 @@ export default function BranchEditor(props: IProps) {
         demandId: values?.demandId,
         branchName: values?.branchName,
         desc: values?.desc,
+        masterBranch: values?.masterBranch,
       });
       if (res.success) {
         message.success('操作成功！');
@@ -96,6 +99,8 @@ export default function BranchEditor(props: IProps) {
   useEffect(() => {
     if (mode === 'HIDE') return;
     form.resetFields();
+    console.log(selectMaster, 'selectMaster');
+    form.setFieldsValue({ masterBranch: selectMaster });
     queryPortal();
   }, [mode]);
 

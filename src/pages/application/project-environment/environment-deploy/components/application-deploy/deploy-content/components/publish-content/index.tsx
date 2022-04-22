@@ -13,7 +13,8 @@ import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import FrontendDevEnvSteps from './frontend-steps/dev';
-import DeploySteps from './steps';
+// import DeploySteps from './steps';
+import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -176,6 +177,7 @@ export default function PublishContent(props: IProps) {
         envTypeCode={envTypeCode}
         stopSpin={stopSpin}
         onSpin={onSpin}
+        isEnvProject={true}
         deployedList={deployedList}
         getItemByKey={getItemByKey}
         projectEnvCode={projectEnvCode}

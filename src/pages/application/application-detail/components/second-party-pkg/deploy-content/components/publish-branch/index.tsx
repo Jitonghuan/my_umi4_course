@@ -6,20 +6,22 @@
  */
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Steps, Button, message, Modal, Checkbox, Form, Select } from 'antd';
+import { Steps, Button, message, Modal, Checkbox, Input, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import { createTableSchema } from './schema';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { IProps } from './types';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
 export default function PublishBranch(props: IProps) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env } = props;
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, pipelineCode, onSearch } = props;
+  const { metadata } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
 
@@ -28,13 +30,26 @@ export default function PublishBranch(props: IProps) {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [searchText, setSearchText] = useState<string>('');
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+
+  useEffect(() => {
+    if (masterListData.length !== 0) {
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
+      setMasterBranchOptions(option);
+      const initValue = option.find((item: any) => item.label === 'master');
+      setSelectMaster(initValue.value);
+    }
+  }, [masterListData]);
 
   const submit = () => {
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
       return updateFeatures({
-        id: deployInfo.id,
+        id: metadata.id,
         features: filter,
       }).then((res: any) => {
         if (!res.success) {
@@ -50,6 +65,8 @@ export default function PublishBranch(props: IProps) {
       features: filter,
       envCodes: deployEnv,
       isClient: true,
+      pipelineCode,
+      buildType: 'beClientBuild',
     }).then((res: any) => {
       if (!res.success) {
         message.error(res.errorMsg);
@@ -88,14 +105,39 @@ export default function PublishBranch(props: IProps) {
     });
   }, [appCategoryCode, env]);
 
+  const handleChange = (v: string) => {
+    setSelectMaster(v);
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>待发布的分支</div>
-      <div className={`${rootCls}__list-wrap`}>
-        <div className={`${rootCls}__list-header`}>
-          <span className={`${rootCls}__list-header-text`}>分支列表</span>
+      <div className="second-table-caption">
+        <div className="caption-left">
+          {/* <span className={`${rootCls}__list-header-text`}>分支列表</span> */}
+          <h4>主干分支：</h4>
+          <Select
+            options={masterBranchOptions}
+            value={selectMaster}
+            style={{ width: '200px', marginRight: '20px' }}
+            onChange={handleChange}
+            showSearch
+            optionFilterProp="label"
+            labelInValue
+            filterOption={(input, option) => {
+              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+            }}
+          ></Select>
+          <h4>开发分支名称：</h4>
+          <Input.Search
+            placeholder="搜索分支"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onPressEnter={() => onSearch?.(searchText)}
+            onSearch={() => onSearch?.(searchText)}
+          />
 
-          <div className={`${rootCls}__list-header-btns`}>
+          <div className="caption-right">
             <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
               提交分支
             </Button>

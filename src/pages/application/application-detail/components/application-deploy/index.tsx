@@ -50,6 +50,7 @@ export default function ApplicationDeploy(props: any) {
     queryData();
     getPipeline(tabActive);
   }, []);
+
   const queryData = () => {
     getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
@@ -101,14 +102,16 @@ export default function ApplicationDeploy(props: any) {
   const getPipeline = (v?: string) => {
     const tab = v ? v : tabActive;
     getRequest(getPipelineUrl, {
-      data: { appCode: appData?.appCode, env: tab, pageIndex: -1, size: -1 },
+      data: { appCode: appData?.appCode, envTypeCode: tab, pageIndex: -1, size: -1 },
     }).then((res) => {
       if (res?.success) {
         let data = res.data.dataSource;
         setDatasource(data);
         const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
         setPipelineOption(pipelineOptionData);
-        handleData(pipelineOptionData, tab);
+        if (pipelineOptionData.length !== 0) {
+          handleData(pipelineOptionData, tab);
+        }
       }
     });
   };
@@ -117,7 +120,7 @@ export default function ApplicationDeploy(props: any) {
   const handleData = (data: any, tab: string) => {
     let storageData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
     let currentTabValue = storageData[tab];
-    const pipelineCodeList = data.map((item: any) => item.pipelineCode);
+    const pipelineCodeList = data.map((item: any) => item.value);
     // 选择的流水线被删除了或者第一次进入页面
     if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
       setCurrentValue(data[0].value);
@@ -140,6 +143,7 @@ export default function ApplicationDeploy(props: any) {
         dataSource={datasource}
         onSave={getPipeline}
         appData={appData}
+        envTypeCode={tabActive}
       />
 
       <Tabs
@@ -153,7 +157,7 @@ export default function ApplicationDeploy(props: any) {
             请选择：
             <Select
               value={currentValue}
-              style={{ width: 120 }}
+              style={{ width: 180 }}
               size="small"
               onChange={handleChange}
               options={pipelineOption}
@@ -173,6 +177,7 @@ export default function ApplicationDeploy(props: any) {
               isActive={item.value === tabActive}
               envTypeCode={item.value}
               pipelineCode={currentValue}
+              visible={visible}
               onDeployNextEnvSuccess={() => {
                 const i = envTypeData.findIndex((item) => item.value === tabActive);
                 setTabActive(envTypeData[i + 1]?.value);

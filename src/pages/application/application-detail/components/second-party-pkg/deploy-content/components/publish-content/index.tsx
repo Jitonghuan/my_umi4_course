@@ -14,6 +14,7 @@ import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
 import { createDeploy, updateFeatures } from '@/pages/application/service';
 import { IProps } from './types';
+import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -21,18 +22,46 @@ const { confirm } = Modal;
 
 const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOperate }: IProps) => {
   const isProd = envTypeCode === 'cProd';
+  let { metadata, status, envInfo } = deployInfo || {};
+  const { deployNodes } = status || {};
+  console.log(deployNodes, 'deployNodes');
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+
+  function getItemByKey(listStr: string, envCode: string) {
+    try {
+      const list = listStr ? JSON.parse(listStr) : [];
+      const item = list.find((val: any) => val.envCode === envCode);
+      return item || {};
+    } catch (e) {
+      return listStr
+        ? {
+            subJenkinsUrl: listStr,
+          }
+        : {};
+    }
+  }
 
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
 
-      {isProd ? (
+      {/* {isProd ? (
         <ProdSteps appCode={appCode} deployInfo={deployInfo} onOperate={onOperate} />
       ) : (
         <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} />
-      )}
+      )} */}
+      <DeploySteps
+        stepData={deployNodes}
+        deployInfo={deployInfo}
+        appCode={appCode}
+        onOperate={onOperate}
+        isFrontend={false}
+        envTypeCode={envTypeCode}
+        deployedList={deployedList}
+        getItemByKey={getItemByKey}
+        isSecondPage={true}
+      />
 
       <div className={`${rootCls}__list-wrap`}>
         <div className={`${rootCls}__list-header`}>

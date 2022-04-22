@@ -43,7 +43,7 @@ export default function BuildingStep(props: StepItemProps) {
         // isLoading && (
         <>
           {/* 浙一日常环境下的部署步骤显示jenkins链接,构建步骤下不显示。其他环境都是构建步骤下显示Jenkins详情 */}
-          {url && !envInfo.deployEnvs?.includes('zy-daily') ? (
+          {url && !envInfo?.deployEnvs?.includes('zy-daily') ? (
             <div style={{ marginTop: 2 }}>
               <a target="_blank" href={url}>
                 构建详情

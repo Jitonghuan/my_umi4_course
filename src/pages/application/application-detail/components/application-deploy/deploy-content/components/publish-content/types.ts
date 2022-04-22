@@ -11,6 +11,7 @@ export interface IProps {
   onSpin: any;
   stopSpin: any;
   pipelineCode: string;
+  masterBranch: string;
 }
 
 // 执行步骤组合
@@ -34,6 +35,7 @@ export interface StepItemProps extends Record<string, any> {
   envTypeCode: string;
   isFrontend?: boolean;
   pipelineCode: string;
+  isEnvProject: boolean; //是否是项目环境中的步骤条
 }
 
 export type OperateType =

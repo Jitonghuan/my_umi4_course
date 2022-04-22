@@ -23,7 +23,7 @@ export default function BranchManage() {
   const [masterOption, setMasterOption] = useState<any>([]);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('');
-  const [masterListData] = useMasterBranchList({ branch_type: 'master' });
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -38,13 +38,16 @@ export default function BranchManage() {
 
   useEffect(() => {
     if (!appCode) return;
-    queryBranchList({ appCode, env: 'feature' });
+    queryBranchList({ appCode, branchType: 'feature' });
   }, [appCode]);
 
   useEffect(() => {
     if (masterListData.length !== 0) {
-      const option = masterListData.map((item: any) => ({ value: item.id, label: item.branchName }));
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
+      const initValue = option.find((item: any) => item.label === 'master');
+      searchForm.setFieldsValue({ masterName: initValue.value });
+      setSelectMaster(initValue.value);
     }
   }, [masterListData]);
 
@@ -92,8 +95,9 @@ export default function BranchManage() {
   };
 
   const handleChange = (v: string) => {
+    console.log(v, 'v');
     setSelectMaster(v);
-    queryBranchList({ appCode, env: 'feature', masterBranch: v });
+    queryBranchList({ appCode, masterBranch: v });
   };
 
   return (
@@ -104,10 +108,11 @@ export default function BranchManage() {
             <Select
               options={masterBranchOptions}
               value={selectMaster}
-              style={{ width: '240px', marginRight: '20px' }}
+              style={{ width: '200px', marginRight: '20px' }}
               onChange={handleChange}
               showSearch
               optionFilterProp="label"
+              labelInValue
               filterOption={(input, option) => {
                 return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
               }}
@@ -209,6 +214,7 @@ export default function BranchManage() {
         }}
         onClose={() => setBranchEditMode('HIDE')}
         masterBranchOptions={masterBranchOptions}
+        selectMaster={selectMaster}
       />
     </ContentCard>
   );

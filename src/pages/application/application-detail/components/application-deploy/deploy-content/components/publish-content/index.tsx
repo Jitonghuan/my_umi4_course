@@ -38,7 +38,8 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, masterBranch } =
+    props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
   const { deployEnvs } = envInfo || [];
@@ -93,6 +94,7 @@ export default function PublishContent(props: IProps) {
       title: '确定要批量退出吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
+        console.log(deployedList, 'deployedList');
         const features = deployedList
           .filter((item) => !selectedRowKeys.includes(item.id))
           .map((item) => item.branchName);
@@ -102,6 +104,8 @@ export default function PublishContent(props: IProps) {
           envTypeCode,
           features,
           isClient: false,
+          pipelineCode,
+          masterBranch,
         }).then(() => {
           onOperate('batchExitEnd');
         });

@@ -439,6 +439,8 @@ export const queryFeatureDeployed = async (params: {
   isDeployed?: 0 | 1;
   /** 分支名 */
   branchName?: string;
+  pipelineCode: string;
+  masterBranch?: string;
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
     data: params,
@@ -455,8 +457,11 @@ export const createDeploy = (params: {
   features: string[];
   /** 发布环境code */
   envCodes?: string[];
+  pipelineCode?: string;
   /** 是否是二方包*/
   isClient: boolean;
+  masterBranch?: string;
+  buildType?: string;
 }) =>
   postRequest(createDeployUrl, {
     data: params,
@@ -592,7 +597,7 @@ export const queryEnvsReq = (params: {
       pageSize: 100,
     },
   }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       return {
         list:
           res.data?.map((el: any) => {
@@ -642,11 +647,14 @@ export const pushMergeMessage = async (params: any) => await postRequest(pushMer
 export const getPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/list`;
 // export const getPipelineUrl = `http://127.0.0.1:4523/mock/837336/v1/appManage/appPipeline/list`;
 
-/** POST 应用部署-删除流水线 */
-export const delPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/delete`;
-
 /** POST 应用部署-新增流水线 */
-export const addPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/add`;
+export const addPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/create`;
 
 /** POST 应用部署-编辑流水线 */
 export const updatePipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/update`;
+
+/** 删除流水线 */
+export const deletePipeline = (params: { pipelineCode: string }) =>
+  delRequest(`${appConfig.apiPrefix}/releaseManageappManage/appPipeline/delete/${params.pipelineCode}`, {
+    data: params,
+  });

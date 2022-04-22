@@ -14,6 +14,7 @@ const ETable = React.forwardRef((props: any, ref) => {
     deleteText,
     handleDelete,
     handleSave,
+    loading,
     ...others
   } = props;
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
@@ -70,9 +71,9 @@ const ETable = React.forwardRef((props: any, ref) => {
         <EditableProTable
           rowKey="id"
           actionRef={actionRef}
-          loading={false}
           columns={__columns}
           value={dataSource}
+          loading={loading}
           onChange={onChange}
           {...others}
           recordCreatorProps={{

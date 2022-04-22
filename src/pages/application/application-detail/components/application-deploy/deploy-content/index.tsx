@@ -22,7 +22,6 @@ import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
 import { Spin } from 'antd';
 import './index.less';
-const masterBranch = 'aas';
 
 const rootCls = 'deploy-content-compo';
 const tempData = {
@@ -85,12 +84,14 @@ export interface DeployContentProps {
   envTypeCode: string;
   /** 流水线 */
   pipelineCode: string;
+  visible: boolean;
   /** 部署下个环境成功回调 */
   onDeployNextEnvSuccess: () => void;
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible } = props;
+  console.log(pipelineCode, 'pipelineCode');
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -108,7 +109,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [loading, setLoading] = useState(false);
 
   const requestData = async () => {
-    if (!appCode || !isActive) return;
+    if (!appCode || !isActive || !pipelineCode) return;
 
     setUpdating(true);
 
@@ -125,26 +126,29 @@ export default function DeployContent(props: DeployContentProps) {
     const resp2 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode,
+      pipelineCode,
       isDeployed: 1,
+      masterBranch: masterBranchName.current,
     });
     const resp3 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode,
       isDeployed: 0,
+      pipelineCode,
       branchName: cachebranchName.current,
       masterBranch: masterBranchName.current,
     });
-    // if (resp?.data) {
-    //   const { data } = resp;
-    //   // setDeployInfo(data)
-    // }
+    if (resp?.data) {
+      const { data } = resp;
+      setDeployInfo(data);
+    }
 
     // if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
     // const nextInfo = resp1?.data?.dataSource[0];
     // setDeployInfo(nextInfo);
-    if (tempData) {
-      setDeployInfo(tempData);
-    }
+    // if (tempData) {
+    //   setDeployInfo(tempData);
+    // }
 
     // 如果有部署信息，且为线上，则更新应用状态
     if (envTypeCode === 'prod' && appData) {
@@ -157,7 +161,7 @@ export default function DeployContent(props: DeployContentProps) {
         return { data: null };
       });
 
-      const { Status: nextAppStatus } = resp4.data || {};
+      const { Status: nextAppStatus } = resp4?.data || {};
       setAppStatusInfo(nextAppStatus);
     }
     // }
@@ -191,6 +195,12 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode || !isActive) return;
     timerHandle('do', true);
   }, [appCode, isActive, pipelineCode]);
+
+  useEffect(() => {
+    if (visible) {
+      timerHandle('stop');
+    }
+  }, [visible]);
 
   const onSpin = () => {
     setLoading(true);
@@ -227,14 +237,16 @@ export default function DeployContent(props: DeployContentProps) {
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
+            masterBranch={masterBranchName.current}
           />
           <PublishBranch
             deployInfo={deployInfo}
-            masterBranch={masterBranch}
+            masterBranch={masterBranchName.current}
             hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
             dataSource={branchInfo.unDeployed}
             env={envTypeCode}
             onSearch={searchUndeployedBranch}
+            pipelineCode={pipelineCode}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
             }}

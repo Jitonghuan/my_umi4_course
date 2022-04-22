@@ -18,6 +18,7 @@ const { confirm } = Modal;
 
 const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   const { appData } = useContext(DetailContext);
+  let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { appCategoryCode } = appData || {};
 
   const [deployVisible, setDeployVisible] = useState(false);
@@ -40,13 +41,12 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   }, [appCategoryCode, env]);
 
   const envNames = useMemo(() => {
-    const { envs } = deployInfo;
+    const { deployEnvs } = envInfo || {};
 
     const namesArr: any[] = [];
-    if (envs?.indexOf(',') > -1) {
-      const list = envs?.split(',') || [];
+    if (deployEnvs?.length !== 0) {
       envDataList?.forEach((item: any) => {
-        list?.forEach((v: any) => {
+        deployEnvs?.forEach((v: any) => {
           if (item?.envCode === v) {
             namesArr.push(item.envName);
           }
@@ -54,7 +54,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
       });
       return namesArr.join(',');
     }
-    return (envDataList as any).find((v: any) => v.envCode === envs)?.envName;
+    return (envDataList as any).find((v: any) => v.envCode === deployEnvs[0])?.envName;
   }, [envDataList, deployInfo]);
 
   return (
@@ -69,7 +69,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
                 title: '确定要把当前部署分支发布到下一个环境中？',
                 icon: <ExclamationCircleOutlined />,
                 onOk: () => {
-                  return deployReuse({ id: deployInfo.id }).then((res) => {
+                  return deployReuse({ id: metadata.id }).then((res) => {
                     if (res.success) {
                       message.success('操作成功，正在部署中...');
                       onOperate('deployNextEnvSuccess');
@@ -98,7 +98,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
               icon: <ExclamationCircleOutlined />,
               onOk() {
                 return cancelDeploy({
-                  id: deployInfo.id,
+                  id: metadata.id,
                   envCode: '',
                 }).then(() => {
                   onOperate('cancelDeployEnd');
@@ -118,15 +118,16 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
         title="发布详情"
         labelStyle={{ color: '#5F677A', textAlign: 'right' }}
         contentStyle={{ color: '#000' }}
+        bordered
       >
-        <Descriptions.Item label="CRID">{deployInfo?.id}</Descriptions.Item>
-        <Descriptions.Item label="部署分支">{deployInfo?.releaseBranch}</Descriptions.Item>
-        <Descriptions.Item label="发布环境">{envNames}</Descriptions.Item>
+        <Descriptions.Item label="CRID">{metadata?.id || '--'}</Descriptions.Item>
+        <Descriptions.Item label="部署分支">{branchInfo?.releaseBranch || '--'}</Descriptions.Item>
+        <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={3}>
-          {deployInfo?.conflictFeature}
+          {branchInfo?.conflictFeature || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="合并分支" span={3}>
-          {deployInfo?.features}
+          {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
       </Descriptions>
 
@@ -137,7 +138,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
         onOk={() => {
           setConfirmLoading(true);
 
-          return deployReuse({ id: deployInfo.id })
+          return deployReuse({ id: metadata.id })
             .then((res) => {
               if (res.success) {
                 message.success('操作成功，正在部署中...');
