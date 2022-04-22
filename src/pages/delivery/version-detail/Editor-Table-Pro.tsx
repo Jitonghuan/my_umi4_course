@@ -141,7 +141,7 @@ export default (props: VersionDetailProps) => {
       title: '组件版本',
       key: 'componentVersion',
       dataIndex: 'componentVersion',
-      // valueType: 'select',
+      valueType: 'select',
       // initialValue:list,
       formItemProps: () => {
         return {
@@ -156,15 +156,19 @@ export default (props: VersionDetailProps) => {
       },
       // valueEnum: componentVersionOptions,
       renderFormItem: (_, config: any, data) => {
-        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
-        let currentValue = componentOptions[config.record?.componentName];
-        // queryProductVersionOptions(currentTabType,currentValue)
-
+        console.log('config.record?', config.record);
+        let description = '';
+        componentVersionOptions.filter((item: any) => {
+          if (item.value === config.record?.componentVersion) {
+            description = item.componentDescription;
+          }
+        });
         return (
+          //  <span></span>
           <Select
             options={componentVersionOptions}
             onChange={(value: any) => {
-              queryProductVersionOptions(currentTabType, value);
+              setDataSource([...tableDataSource, { ...config.record, componentDescription: description }]);
             }}
           ></Select>
         );
@@ -175,16 +179,19 @@ export default (props: VersionDetailProps) => {
       dataIndex: 'componentDescription',
 
       renderFormItem: (_, config: any, data) => {
-        let currentValue = componentVersionOptions[config.record?.componentVersion];
-
-        if (currentValue) {
+        let description = '';
+        componentVersionOptions.filter((item: any) => {
+          if (item.value === config.record?.componentVersion) {
+            description = item.componentDescription;
+          }
+        });
+        console.log('description', description);
+        if (description) {
           // data.setFieldsValue({
           //   componentDescription:currentValue?.componentDescription
           // })
 
-          return (
-            <Input value={currentValue.componentDescription} defaultValue={currentValue.componentDescription}></Input>
-          );
+          return <Input value={description} defaultValue={description}></Input>;
         }
       },
     },
@@ -227,6 +234,7 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
+  console.log('componentOptions', componentOptions, componentVersionOptions);
   const search = () => {
     const componentName = searchForm.getFieldsValue();
     queryVersionComponentList(versionId, currentTab, componentName);

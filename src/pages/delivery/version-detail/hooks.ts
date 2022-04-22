@@ -109,7 +109,7 @@ export function useQueryComponentVersionOptions(): [
   (componentType: string, componentName?: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState({});
+  const [dataSource, setDataSource] = useState([]);
 
   const queryProductVersionOptions = async (componentType: string, componentName?: string) => {
     setLoading(true);
@@ -120,20 +120,24 @@ export function useQueryComponentVersionOptions(): [
         .then((res) => {
           if (res.success) {
             let dataSource = res.data;
-            let options: any = {};
-            // let options:any=[]
+            // let options: any = {};
+            let options: any = [];
             dataSource?.map((item: any) => {
               // componentDescription
-              options[item.componentDescription] = {
-                text: item.componentVersion,
+              // options[item.componentDescription] = {
+              //   text: item.componentVersion,
+              //   componentDescription: item.componentDescription,
+              // };
+              options.push({
+                label: item.componentVersion,
+                value: item.componentVersion,
                 componentDescription: item.componentDescription,
-              };
-              console.log('item.componentVersion', item.componentVersion);
+              });
             });
             setDataSource(options);
-            console.log('option222', options);
+            console.log('options000', options);
           } else {
-            return {};
+            return [];
           }
         })
         .finally(() => {
