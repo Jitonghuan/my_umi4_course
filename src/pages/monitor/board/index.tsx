@@ -4,6 +4,7 @@ import { RedoOutlined } from '@ant-design/icons';
 import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';
 import VCCardLayout from '@cffe/vc-b-card-layout';
+import { getRequest } from '@/utils/request';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import {
@@ -202,59 +203,84 @@ const Coms = (props: any) => {
       });
   };
   // 查询节点使用率
-  const {
-    run: queryNodeList,
-    reset,
-    tableProps,
-  } = usePaginated({
-    requestUrl: queryNodeUseDataApi,
-    requestMethod: 'GET',
-    effectParams: searchParams,
-    showRequestError: true,
-    initPageInfo: {
-      total: 0,
-      pageSize: 20,
-    },
-    pagination: {
-      showSizeChanger: true,
-      pageSizeOptions: ['20', '50', '100', '1000'],
-    },
-
-    formatRequestParams: (params) => {
-      if (!params) {
-        return [];
-      } else {
-        return {
-          ...params,
-          clusterId: params?.clusterId,
-        };
-      }
-    },
-    formatResult: (resp) => {
-      let result: any = [];
-      if (resp.data === null) {
-        result = [];
-        let pageInfo: any = {};
-        return {
-          dataSource: result,
-          pageInfo,
-        };
-      } else {
-        const { dataSource = [], pageInfo = {} } = resp.data;
-        result = dataSource.map((item: Record<string, object>) => {
+  const queryNodeList = (params: {
+    value: any;
+    pageIndexParam?: number;
+    pageSizeParam?: number;
+    keyWordParams?: any;
+  }) => {
+    setPodLoading(true);
+    getRequest(queryNodeUseDataApi, { data: params })
+      .then((result: any) => {
+        const resultDataSouce = result?.dataSource?.map((item: Record<string, object>) => {
           const key = Object.keys(item)[0];
           return {
-            ip: key,
             ...item[key],
           };
         });
-        return {
-          dataSource: result,
-          pageInfo,
-        };
-      }
-    },
-  });
+        setPodDataSource(resultDataSouce);
+        let pageInfo = result?.pageInfo;
+        setPageIndex(pageInfo?.pageIndex);
+        setPageSize(pageInfo?.pageSize);
+        setTotal(pageInfo?.total);
+      })
+      .finally(() => {
+        setPodLoading(false);
+      });
+  };
+  // const {
+  //   run: queryNodeList,
+  //   reset,
+  //   tableProps,
+  // } = usePaginated({
+  //   requestUrl: queryNodeUseDataApi,
+  //   requestMethod: 'GET',
+  //   effectParams: searchParams,
+  //   showRequestError: true,
+  //   initPageInfo: {
+  //     total: 0,
+  //     pageSize: 20,
+  //   },
+  //   pagination: {
+  //     showSizeChanger: true,
+  //     pageSizeOptions: ['20', '50', '100', '1000'],
+  //   },
+
+  //   formatRequestParams: (params) => {
+  //     if (!params) {
+  //       return [];
+  //     } else {
+  //       return {
+  //         ...params,
+  //         clusterId: params?.clusterId,
+  //       };
+  //     }
+  //   },
+  //   formatResult: (resp) => {
+  //     let result: any = [];
+  //     if (resp.data === null) {
+  //       result = [];
+  //       let pageInfo: any = {};
+  //       return {
+  //         dataSource: result,
+  //         pageInfo,
+  //       };
+  //     } else {
+  //       const { dataSource = [], pageInfo = {} } = resp.data;
+  //       result = dataSource.map((item: Record<string, object>) => {
+  //         const key = Object.keys(item)[0];
+  //         return {
+  //           ip: key,
+  //           ...item[key],
+  //         };
+  //       });
+  //       return {
+  //         dataSource: result,
+  //         pageInfo,
+  //       };
+  //     }
+  //   },
+  // });
 
   // 查询已安装大盘
   const queryUseMarket = (value: any) => {
