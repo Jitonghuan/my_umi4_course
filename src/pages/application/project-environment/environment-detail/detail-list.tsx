@@ -25,16 +25,20 @@ export const appTypeOptions = [
   },
 ];
 export default function DetailList(props: any) {
-  const { dataInfo, onSpin, stopSpin, getDataSource, dataSource, appsListData } = props;
+  const { dataInfo, onSpin, stopSpin, isUpdata = false, cancelUpdate = () => {} } = props;
   const [projectEnvInfo, setProjectEnvInfo] = useState<any>(history.location.state);
   const [formList] = Form.useForm();
   const [addAppForm] = Form.useForm();
   const [removeApps] = useRemoveApps(onSpin, stopSpin);
   const [addApps] = useAddAPPS();
+  const [appsListData, setAppsListData] = useState<any>([]);
   const [projectEnvData, setProjectEnvData] = useState<any>([]);
+  const [dataSource, setDataSource] = useState<any>([]);
   const [addAppsvisible, setAddAppsvisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any>(0);
   const [selectedRows, setSelectedRows] = useState<DataType[]>([]);
+  const [delLoading, setDelLoading] = useState<boolean>(false);
   const hasSelected = selectedRowKeys?.length > 0;
   const [display, setDisplay] = useState<boolean>(false);
 
@@ -51,7 +55,46 @@ export default function DetailList(props: any) {
       }
     });
   };
-
+  const queryAppsListData = async (paramObj: any) => {
+    // setLoading(true);
+    onSpin();
+    let canAddAppsData: any = []; //可选数据数组
+    await getRequest(queryAppsList, {
+      data: {
+        benchmarkEnvCode: paramObj.benchmarkEnvCode,
+        projectEnvCode: paramObj.projectEnvCode,
+        appName: paramObj?.appName,
+        appCode: paramObj?.appCode,
+        appType: paramObj?.appType,
+        whichApps: paramObj?.whichApps,
+      },
+    })
+      .then((res) => {
+        if (res?.success) {
+          let data = res?.data;
+          data.canAddApps?.map((item: any, index: number) => {
+            canAddAppsData.push({
+              value: item.appCode,
+              label: item.appName,
+            });
+          });
+          setAppsListData(canAddAppsData);
+          if (data.alreadyAddApps) {
+            setDataSource(data.alreadyAddApps);
+          } else {
+            setDataSource([]);
+          }
+        }
+        if (!res?.success) {
+          setDataSource([]);
+        }
+      })
+      .finally(() => {
+        // setLoading(false);
+        cancelUpdate();
+        stopSpin();
+      });
+  };
   const selectAppType = (appTypeValue: string) => {
     let queryObj = {
       benchmarkEnvCode: projectEnvInfo?.benchmarkEnvCode,
@@ -59,13 +102,14 @@ export default function DetailList(props: any) {
       appType: appTypeValue,
       whichApps: 'canAdd',
     };
-    getDataSource(queryObj);
+    queryAppsListData(queryObj);
   };
+
   // 如果存在props中传过来的数据 说明是外层的 而不是路由跳转过来的
   useEffect(() => {
     if (dataInfo?.id || dataInfo?.id === '') {
       if (dataInfo.id === '') {
-        return;
+        setDataSource([]);
       } else {
         queryProjectEnv(dataInfo?.benchmarkEnvCode, dataInfo?.envCode);
         setProjectEnvInfo(dataInfo);
@@ -88,9 +132,15 @@ export default function DetailList(props: any) {
 
   useEffect(() => {
     if (projectEnvInfo) {
-      getDataSource(queryCommonParamsRef.current);
+      queryAppsListData(queryCommonParamsRef.current);
     }
   }, [projectEnvInfo]);
+
+  useEffect(() => {
+    if (isUpdata) {
+      queryAppsListData(queryCommonParamsRef.current);
+    }
+  }, [isUpdata]);
 
   const ensureAdd = () => {
     addAppForm.validateFields().then((params) => {
@@ -103,7 +153,7 @@ export default function DetailList(props: any) {
           setAddAppsvisible(false);
         })
         .then(() => {
-          getDataSource(queryCommonParamsRef.current);
+          queryAppsListData(queryCommonParamsRef.current);
         });
     });
   };
@@ -129,7 +179,7 @@ export default function DetailList(props: any) {
     };
     removeApps(removeParams)
       .then(() => {
-        getDataSource(queryCommonParamsRef.current);
+        queryAppsListData(queryCommonParamsRef.current);
       })
       .finally(() => {
         // setDelLoading(false);
@@ -171,12 +221,12 @@ export default function DetailList(props: any) {
               appType: values.appType,
               whichApps: 'alreadyAdd',
             };
-            getDataSource(queryObj);
+            queryAppsListData(queryObj);
           }}
           onReset={() => {
             formList.resetFields();
 
-            getDataSource(queryCommonParamsRef.current);
+            queryAppsListData(queryCommonParamsRef.current);
           }}
         >
           <Form.Item label="应用名:" name="appName">
@@ -202,12 +252,12 @@ export default function DetailList(props: any) {
       </div>
       <div>
         <div style={{ marginBottom: 8 }}>
-          <Button type="primary" onClick={start} disabled={!hasSelected}>
+          <Button type="primary" onClick={start} disabled={!hasSelected} loading={delLoading}>
             批量删除应用
           </Button>
           <span style={{ marginLeft: 8 }}>{hasSelected ? `选中 ${selectedRowKeys.length} 个应用` : ''}</span>
         </div>
-        <Table rowKey="id" bordered dataSource={dataSource} rowSelection={rowSelection}>
+        <Table rowKey="id" bordered dataSource={dataSource} loading={loading} rowSelection={rowSelection}>
           <Table.Column title="ID" dataIndex="id" width="4%" />
           <Table.Column title="应用名" dataIndex="appName" width="30%" />
           <Table.Column title="应用CODE" dataIndex="appCode" width="30%" />
@@ -250,13 +300,12 @@ export default function DetailList(props: any) {
                 <Popconfirm
                   title="确定要删除该应用吗？"
                   onConfirm={() => {
-                    let params = formList.getFieldsValue();
                     let removeParams = {
                       projectEnvCode: projectEnvData.envCode,
                       appCodes: [record.appCode],
                     };
                     removeApps(removeParams).then(() => {
-                      getDataSource({ ...queryCommonParamsRef.current, ...params });
+                      queryAppsListData(queryCommonParamsRef.current);
                     });
                   }}
                 >

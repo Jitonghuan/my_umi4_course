@@ -456,7 +456,7 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="合并分支" span={4}>
           {deployInfo?.features || '--'}
         </Descriptions.Item>
-        {deployInfo?.deployErrInfo && deployErrInfo.length && (
+        {deployInfo?.deployErrInfo && deployErrInfo?.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>
               {deployErrInfo.map((errInfo) => (
