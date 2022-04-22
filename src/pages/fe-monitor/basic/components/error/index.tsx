@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
 import Header from '../header';
+import { now } from '../../const';
 import { LineColumn } from '@cffe/hulk-wave-chart';
 import { queryErrorList } from '../server';
 import { CloseOutlined } from '@ant-design/icons';
-import moment from 'moment';
 import './index.less';
 
 interface IProps {
   appGroup: string;
 }
-
-const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
 
 interface DataSourceItem {
   url: string;

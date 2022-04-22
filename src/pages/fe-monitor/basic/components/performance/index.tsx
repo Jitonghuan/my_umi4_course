@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Radio, Table } from 'antd';
+import { Radio, Table, Tooltip } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import Header from '../header';
 import PerformanceMarket from '../performance-market';
+import { now, groupItem, performanceItem } from '../../const';
 import { Line } from '@cffe/hulk-wave-chart';
 import moment from 'moment';
 import './index.less';
@@ -11,41 +13,12 @@ interface IProps {
   appGroup: string;
 }
 
-const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
-const performanceItem = ['tti', 'ttfb', 'lcp', 'fcp', 'fid', 'root-paint']; // 性能项
 const pageItem = [
   {
     name: '高频页面',
   },
   {
     name: '访问速度排行',
-  },
-];
-
-const groupItem = [
-  {
-    name: '页面异常（5）',
-    desc: '载入时长>20s (5)',
-  },
-  {
-    name: '非常慢（12）',
-    desc: '20s≥载入时长>10s (5)',
-  },
-  {
-    name: '较慢（12）',
-    desc: '10s≥载入时长>5s (5)',
-  },
-  {
-    name: '正常（12）',
-    desc: '5s≥载入时长>2s (5)',
-  },
-  {
-    name: '较快（12）',
-    desc: '2s≥载入时长>1s (5)',
-  },
-  {
-    name: '快如闪电（12）',
-    desc: '1s≥载入时长 (10)',
   },
 ];
 
@@ -134,8 +107,11 @@ const BasicPerformance = ({ appGroup }: IProps) => {
         <div className="group-performance">
           <Radio.Group value={activeTab} onChange={(e) => setActiveTab(e.target.value)}>
             {performanceItem.map((item) => (
-              <Radio.Button key={item} value={item}>
-                {item}
+              <Radio.Button key={item.name} value={item.name}>
+                <Tooltip placement="topLeft" title={item.desc}>
+                  {item.name}
+                  <QuestionCircleOutlined style={{ marginLeft: '4px', fontSize: '14px' }} />
+                </Tooltip>
               </Radio.Button>
             ))}
           </Radio.Group>
@@ -197,7 +173,7 @@ const BasicPerformance = ({ appGroup }: IProps) => {
           <Radio.Group value={timeGroupTab} onChange={(e) => setTimeGroupTab(e.target.value)}>
             {groupItem.map((item, i) => (
               <Radio.Button key={i} value={i}>
-                {item.desc}
+                {item.name}
               </Radio.Button>
             ))}
           </Radio.Group>
@@ -231,8 +207,8 @@ const BasicPerformance = ({ appGroup }: IProps) => {
             }}
             dataSource={dataSource}
             expandable={{
-              expandRowByClick: true,
               timeGroupRowKeys,
+              expandRowByClick: true,
               onExpand: (expanded, record) => {
                 setGroupExpanded(expanded);
                 if (expanded) {

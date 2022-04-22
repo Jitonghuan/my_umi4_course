@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, Table } from 'antd';
 import Header from '../header';
+import { now } from '../../const';
 import moment from 'moment';
 import './index.less';
 import { queryOverview } from '../server';
 
-const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
 const { TabPane } = Tabs;
 
 interface IProps {

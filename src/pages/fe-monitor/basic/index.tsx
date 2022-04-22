@@ -1,36 +1,29 @@
 import React, { useState } from 'react';
-import { Tabs } from 'antd';
+import { Select, Tabs } from 'antd';
 import { history } from 'umi';
 import BasicOverview from './components/overview';
 import BasicError from './components/error';
 import BasicPerformance from './components/performance';
 import BasicApi from './components/api';
+import { menuList } from './const';
 import './index.less';
 
 const { TabPane } = Tabs;
-const menuList = [
-  {
-    name: '总览',
-    key: '',
-  },
-  {
-    name: '医生端',
-    key: 'doctor',
-  },
-  {
-    name: '收费端',
-    key: 'charge',
-  },
-];
+
 const BasicFeMonitor = () => {
   const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '');
 
   return (
     <div className="basic-fe-monitor-wrapper">
       <div className="app-group-tab-wrapper">
-        <Tabs
-          tabPosition="left"
-          activeKey={activeKey}
+        <Select
+          value={activeKey}
+          showSearch
+          filterOption={(input, option) => {
+            // @ts-ignore
+            return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+          }}
+          style={{ width: '200px' }}
           onChange={(val) => {
             setActiveKey(val);
             history.replace({
@@ -42,14 +35,14 @@ const BasicFeMonitor = () => {
           }}
         >
           {menuList.map((item) => (
-            <TabPane tab={item.name} key={item.key}>
-              {' '}
-            </TabPane>
+            <Select.Option value={item.key} key={item.key}>
+              {item.name}
+            </Select.Option>
           ))}
-        </Tabs>
+        </Select>
       </div>
       <div className="app-group-content-wrapper">
-        <Tabs defaultActiveKey="3">
+        <Tabs defaultActiveKey="1">
           <TabPane tab="数据总览" key="1">
             <BasicOverview appGroup={activeKey} />
           </TabPane>

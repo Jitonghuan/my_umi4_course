@@ -2,23 +2,24 @@
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   background: #d2d8e6;
+  position: relative;
 
   .app-group-tab-wrapper {
-    height: 100%;
     background: #fff;
-    margin-right: 10px;
-    .tablist {
-      height: 100%;
-    }
-    .ant-tabs-content-holder {
-      display: none;
-    }
+    height: 38px;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    z-index: 10;
   }
 
   .app-group-content-wrapper {
     flex: 1;
-    height: 100%;
+    width: 100%;
+    overflow: hidden;
 
     .ant-tabs {
       width: 100%;
@@ -60,7 +61,7 @@
     height: 48px;
     border-radius: 2px 2px 0 0;
     box-sizing: border-box;
-    padding: 0 16px;
+    padding: 10px 16px;
 
     .basic-header-title {
       font-weight: 500;

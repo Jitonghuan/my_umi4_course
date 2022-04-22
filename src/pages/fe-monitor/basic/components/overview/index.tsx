@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../header';
 import { Line } from '@cffe/hulk-wave-chart';
+import { now } from '../../const';
 import moment from 'moment';
 import { queryOverview } from '../server';
 import './index.less';
@@ -8,8 +9,6 @@ import './index.less';
 interface IProps {
   appGroup: string;
 }
-
-const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
 
 const BasicOverview = ({ appGroup }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
