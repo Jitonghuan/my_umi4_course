@@ -34,6 +34,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
   const [appsListData, setAppsListData] = useState<any>([]);
   const [targetKeys, setTargetKeys] = useState([]); //目标选择的key值
   const [selectedKeys, setSelectedKeys] = useState<any>([]); //已经选择的key值
+  const [alreadyAddApps, setAlreadyAddApps] = useState<any>([]); //已选择数据
   let categoryCurrent: any = [];
   const onChange = (nextTargetKeys: any, direction: any, moveKeys: any) => {
     setTargetKeys(nextTargetKeys);
@@ -48,18 +49,24 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
 
   const handleOk = () => {
     let selectedAppCode: any = [];
+
     addEnvironmentForm.validateFields().then((params) => {
+      console.log('params', params);
       if (params.categoryCode) {
         appsListData.filter((item: any, index: number) => {
           if (params.categoryCode?.includes(item.key)) {
             selectedAppCode.push(item.title);
           }
         });
+        if (categoryCurrent) {
+          selectedAppCode.concat(categoryCurrent);
+        }
+      } else {
+        console.log('alreadyAddApps', alreadyAddApps);
+        alreadyAddApps?.map((item: any) => {
+          selectedAppCode.push(item.title);
+        });
       }
-      if (categoryCurrent) {
-        selectedAppCode.concat(categoryCurrent);
-      }
-
       if (mode === 'ADD') {
         let addParamsObj = {
           benchmarkEnvCode: params.benchmarkEnvCode || '',
@@ -88,7 +95,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
 
   const queryAppsListData = async (benchmarkEnvCode: string, projectEnvCode?: string) => {
     let canAddAppsData: any = []; //可选数据数组
-    let alreadyAddAppsData: any = [];
+    let alreadyAddAppsData: any = []; //一进入页面已选数据
     await getRequest(queryAppsList, { data: { benchmarkEnvCode, projectEnvCode } }).then((res) => {
       if (res?.success) {
         let data = res?.data;
@@ -125,9 +132,16 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               title: item.appCode,
               appType: item.appType,
             });
+
+            alreadyAddAppsData.push({
+              key: index.toString(),
+              title: item.appCode,
+              appType: item.appType,
+            });
           }); //存放整体的数组arry中继续放入已选数据，此时已选数据的key必须唯一且延续上面的可选数据的key值往下
           let arryData = arry;
           setAppsListData(arryData); //将拿到的整体全部数据放入穿梭框的dataSource源
+          setAlreadyAddApps(alreadyAddAppsData);
           let keyArry: any = [];
           canAddAppsData.map((item: any) => {
             keyArry.push(item.key);

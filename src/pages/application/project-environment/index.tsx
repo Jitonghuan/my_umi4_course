@@ -101,7 +101,7 @@ export default function EnvironmentList() {
   }, []);
 
   useEffect(() => {
-    if (dataSource.length === 0 && type === 'collect') {
+    if (dataSource?.length === 0 && type === 'collect') {
       setRowData({
         id: '',
         envCode: '',
