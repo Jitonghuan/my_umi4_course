@@ -18,8 +18,10 @@ import {
   Tag,
 } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
+import './index.less';
 import { compontentsColums, configDeliverycolums } from './columns';
 export default function ComponentDetail() {
+  const configInfoData: any = history.location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
   const { Paragraph } = Typography;
@@ -28,7 +30,22 @@ export default function ComponentDetail() {
     <PageContainer>
       <ContentCard>
         <div>
-          <Descriptions title="局点管理" column={2} extra={<Button type="primary">返回</Button>}>
+          <Descriptions
+            title="局点管理"
+            column={2}
+            bordered
+            className="local-management-info-description"
+            extra={
+              <Button
+                type="primary"
+                onClick={() => {
+                  history.push('/matrix/delivery/product-management');
+                }}
+              >
+                返回
+              </Button>
+            }
+          >
             <Descriptions.Item label="局点名称">Zhou Maomao</Descriptions.Item>
             <Descriptions.Item label="局点描述">
               <Paragraph editable={{ onChange: setEditableStr }}>{editableStr}</Paragraph>
@@ -43,7 +60,7 @@ export default function ComponentDetail() {
           </Descriptions>
           <Divider />
           <div>
-            <div className="instruction">
+            <div className="Delivery-management-instruction">
               <h3>交付管理</h3>
             </div>
           </div>
