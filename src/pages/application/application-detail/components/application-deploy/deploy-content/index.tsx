@@ -54,16 +54,31 @@ const tempData = {
       { nodeType: 'single', nodeName: '创建任务', nodeStatus: 'finish' },
       { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'finish' },
       { nodeName: '构建', nodeStatus: 'finish', nodeType: 'single' },
+
       {
         nodeType: 'subject',
         nodes: {
-          base: [
-            { nodeName: '推送资源', nodeStatus: 'finish', nodeType: 'single' },
+          'base-dev': [
+            {
+              nodeName: '部署',
+              nodeStatus: 'process',
+              nodeType: 'single',
+              confirm: { waitConfirm: true, label: '' },
+              deployingBatch: 2,
+            },
             { nodeName: '灰度验证', nodeStatus: 'finish', nodeType: 'single' },
             { nodeName: '推送版本', nodeStatus: 'finish', nodeType: 'single' },
           ],
           dev: [
-            { nodeName: '推送资源', nodeStatus: 'finish', nodeType: 'single' },
+            {
+              nodeName: '部署',
+              nodeStatus: 'process',
+              nodeType: 'single',
+              confirm: {
+                waitConfirm: true,
+                label: '',
+              },
+            },
             { nodeName: '灰度验证', nodeStatus: 'finish', nodeType: 'single' },
             { nodeName: '推送版本', nodeStatus: 'finish', nodeType: 'single' },
           ],
@@ -99,7 +114,7 @@ export default function DeployContent(props: DeployContentProps) {
   const masterBranchName = useRef<string>('master');
   const [updating, setUpdating] = useState(false);
   // const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
-  const [deployInfo, setDeployInfo] = useState<any>({});
+  const [deployInfo, setDeployInfo] = useState<any>(tempData);
   const [branchInfo, setBranchInfo] = useState<{
     deployed: any[];
     unDeployed: any[];
@@ -107,6 +122,8 @@ export default function DeployContent(props: DeployContentProps) {
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // setDeployInfo(tempData)
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
@@ -192,7 +209,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode || !isActive) return;
+    if (!appCode || !isActive || !pipelineCode) return;
     timerHandle('do', true);
   }, [appCode, isActive, pipelineCode]);
 

@@ -94,7 +94,6 @@ export default function PublishContent(props: IProps) {
       title: '确定要批量退出吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        console.log(deployedList, 'deployedList');
         const features = deployedList
           .filter((item) => !selectedRowKeys.includes(item.id))
           .map((item) => item.branchName);

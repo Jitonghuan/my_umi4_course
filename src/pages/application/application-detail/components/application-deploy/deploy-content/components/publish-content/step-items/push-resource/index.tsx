@@ -16,7 +16,6 @@ import appConfig from '@/app.config';
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, env, status, ...others } = props;
-  console.log(props.pipelineCode, 'pipelinecode');
 
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);

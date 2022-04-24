@@ -507,16 +507,19 @@ export const retryDeploy = (params: {
     data: params,
   });
 
+export const confirmDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmDeploy`;
+
 /** 生产环境确认部署和继续部署 */
-export const confirmProdDeploy = (params: {
+export const confirmDeploy = (params: {
   /** 部署的数据库自增ID */
   id: number;
   /** 发布机构: tian/weishan */
-  hospital: string;
+  // hospital: string;
   /** 发布批次，0不分批，1发布第一批，2发布第二批 */
-  // batch: 0 | 1 | 2;
-  batch: number;
+  // deployingBatch: 0 | 1 | 2;
+  deployingBatch: number;
   applyIds: any;
+  envCode: string;
 }) =>
   postRequest(confirmProdDeployUrl, {
     data: params,

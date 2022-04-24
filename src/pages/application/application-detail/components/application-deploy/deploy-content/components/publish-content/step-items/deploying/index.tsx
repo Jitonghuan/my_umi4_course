@@ -8,6 +8,7 @@ import { Steps, Button, Modal } from 'antd';
 import { retryDeploy } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import DeployModal from './deploy-modal';
+import DeployModalTemp from './deploy-modal-temp';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
@@ -20,9 +21,13 @@ export default function DeployingStep(props: StepItemProps) {
     getItemByKey,
     env,
     status,
+    item,
+    waitConfirm,
     ...others
   } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
+  const { deployingBatch, confirm } = item;
+  console.log(item);
   const { buildUrl } = buildInfo;
   const jenkinsUrl = getItemByKey(buildUrl, env).subJenkinsUrl || '';
   const isLoading = status === 'process';
@@ -99,7 +104,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )}
               {/* prod 需要确认部署 */}
-              {!isEnvProject && envTypeCode === 'prod' && isLoading && (
+              {confirm && confirm.waitConfirm && (
                 <a
                   style={{ marginTop: 4 }}
                   onClick={() => {
@@ -114,12 +119,24 @@ export default function DeployingStep(props: StepItemProps) {
         }
       />
 
-      <DeployModal
-        visible={deployVisible}
+      {/* <DeployModal
+        // visible={deployVisible}
         deployInfo={deployInfo}
         onCancel={() => setDeployVisible(false)}
         onOperate={onOperate}
         envTypeCode="prod"
+      /> */}
+      <DeployModalTemp
+        visible={deployVisible}
+        deployInfo={deployInfo}
+        onCancel={() => setDeployVisible(false)}
+        onOperate={onOperate}
+        envTypeCode={envTypeCode}
+        env={env}
+        envs={deployInfo?.envInfo?.deployEnvs || []}
+        status={status}
+        deployingBatch={deployingBatch}
+        id={metadata?.id}
       />
     </>
   );
