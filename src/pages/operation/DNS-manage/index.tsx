@@ -125,11 +125,12 @@ export default function DNSManageList(props: any) {
 
   const loadListData = (params: any) => {
     let value = RecordForm.getFieldsValue();
-    let paramObj = {
-      [selectCascaderValue]: value.keyword,
-    };
-    if (selectCascaderValue) {
-      getDnsManageList({ currentEnvCode, ...paramObj, ...params });
+    // let paramObj = {
+    //   [selectCascaderValue]: value.keyword,
+    // };
+    // getDnsManageList({ currentEnvCode, ...params,...value });
+    if (value) {
+      getDnsManageList({ currentEnvCode, ...value, ...params });
     } else {
       getDnsManageList({ currentEnvCode, ...params });
     }
@@ -151,14 +152,15 @@ export default function DNSManageList(props: any) {
   };
   const handleSearch = () => {
     let value = RecordForm.getFieldsValue();
-    let paramObj = {
-      [selectCascaderValue]: value.keyword,
-    };
-    if (selectCascaderValue) {
-      getDnsManageList({ currentEnvCode, ...paramObj });
-    } else {
-      message.warning('请先选择查询类型');
-    }
+    // let paramObj = {
+    //   [selectCascaderValue]: value.keyword,
+    // };
+    getDnsManageList({ currentEnvCode, ...value });
+    // if (selectCascaderValue) {
+    //   getDnsManageList({ currentEnvCode, ...paramObj });
+    // } else {
+    //   message.warning('请先选择查询类型');
+    // }
   };
   const selectCascader = (values: any) => {
     setSelectCascaderValue(values[0]);
@@ -199,16 +201,16 @@ export default function DNSManageList(props: any) {
         <div className="table-caption">
           <div className="caption-left">
             <Form layout="inline" form={RecordForm}>
-              <Form.Item name="keyword">
+              <Form.Item name="keyWord">
                 <Input
-                  addonBefore={
-                    <Cascader
-                      placeholder="选择查询项"
-                      style={{ width: 130 }}
-                      options={CascaderOptions}
-                      onChange={selectCascader}
-                    />
-                  }
+                  // addonBefore={
+                  //   <Cascader
+                  //     placeholder="选择查询项"
+                  //     style={{ width: 130 }}
+                  //     options={CascaderOptions}
+                  //     onChange={selectCascader}
+                  //   />
+                  // }
                   style={{ width: 500 }}
                   placeholder="请输入关键字"
                 ></Input>
@@ -299,7 +301,7 @@ export default function DNSManageList(props: any) {
                   </Button>
                   <Popconfirm title="确定要暂停吗？" onConfirm={() => handleUpdateStatus(record)}>
                     <Button key={index} size="small" type={record.status === '0' ? 'default' : 'primary'}>
-                      {record.status === '0' ? '暂停' : '启用'}
+                      {record.status === '0' ? '停用' : '启用'}
                     </Button>
                   </Popconfirm>
                   <Popconfirm title="确定要删除吗？" onConfirm={() => handleDelRecord(record)}>
