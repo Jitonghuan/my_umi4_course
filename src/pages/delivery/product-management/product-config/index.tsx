@@ -60,7 +60,7 @@ export default function ComponentDetail() {
           </Descriptions>
           <Divider />
           <div>
-            <div className="Delivery-management-instruction">
+            <div className="delivery-management-instruction">
               <h3>交付管理</h3>
             </div>
           </div>
