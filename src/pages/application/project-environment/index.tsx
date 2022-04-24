@@ -210,7 +210,7 @@ export default function EnvironmentList() {
             <Select showSearch style={{ width: 150 }} options={categoryData} />
           </Form.Item>
           <Form.Item label="环境大类：" name="envTypeCode">
-            <Select allowClear showSearch style={{ width: 120 }} options={envTypeData} />
+            <Select allowClear showSearch style={{ width: 140 }} options={envTypeData} />
           </Form.Item>
           <Form.Item label="基准环境：" name="benchmarkEnvCode">
             <Select showSearch allowClear style={{ width: 150 }} options={envDataSource} loading={loading} />
@@ -295,6 +295,7 @@ export default function EnvironmentList() {
                */}
               <Table.Column
                 title="环境名"
+                width="12%"
                 render={(_, record: EnvironmentEdit) => (
                   <>
                     <span onClick={(e) => e.stopPropagation()}>
@@ -334,9 +335,9 @@ export default function EnvironmentList() {
                   </div>
                 )}
               />
-              <Table.Column title="基准环境" dataIndex="relEnvs" width="8%" ellipsis />
-              <Table.Column title="默认分类" dataIndex="categoryCode" width="8%" ellipsis />
-              <Table.Column title="环境大类" dataIndex="envTypeCode" width="6%" />
+              <Table.Column title="基准环境" dataIndex="relEnvs" width="10%" ellipsis />
+              <Table.Column title="默认分类" dataIndex="categoryCode" width="10%" ellipsis />
+              <Table.Column title="环境大类" dataIndex="envTypeCode" width="8%" />
               <Table.Column title="备注" dataIndex="mark" width="18%" ellipsis />
               <Table.Column
                 title="操作"

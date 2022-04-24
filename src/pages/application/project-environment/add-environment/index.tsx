@@ -51,7 +51,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     let selectedAppCode: any = [];
 
     addEnvironmentForm.validateFields().then((params) => {
-      console.log('params', params);
       if (params.categoryCode) {
         appsListData.filter((item: any, index: number) => {
           if (params.categoryCode?.includes(item.key)) {
@@ -62,7 +61,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
           selectedAppCode.concat(categoryCurrent);
         }
       } else {
-        console.log('alreadyAddApps', alreadyAddApps);
         alreadyAddApps?.map((item: any) => {
           selectedAppCode.push(item.title);
         });
