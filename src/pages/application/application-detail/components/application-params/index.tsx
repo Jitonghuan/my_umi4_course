@@ -450,7 +450,7 @@ export default function ApplicationParams(props: any) {
       </Form>
 
       <Modal
-        title="请选择重启策略"
+        title="请选择生效策略"
         visible={modalVisible}
         onOk={setApplication}
         onCancel={() => {
@@ -461,7 +461,7 @@ export default function ApplicationParams(props: any) {
       >
         <Form layout="inline" form={restarForm} labelCol={{ flex: '150px' }}>
           <Form.Item
-            label="重启策略："
+            label="生效策略："
             name="restartPolicy"
             style={{ width: '100%' }}
             rules={[
