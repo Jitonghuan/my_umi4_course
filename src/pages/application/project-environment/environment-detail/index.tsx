@@ -129,6 +129,7 @@ export default function EnvironmentList() {
         onSave={() => {
           setEnviroEditMode('HIDE');
           setIsUpdata(true);
+          queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
           // queryAppsListData(queryCommonParamsRef.current);
         }}
       />
