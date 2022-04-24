@@ -224,7 +224,11 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     >
       <ContentCard className="tmpl-edits">
         <Form labelCol={{ flex: '120px' }} form={addEnvironmentForm}>
-          <Form.Item label="项目环境名" name="envName" rules={[{ required: true, message: '请输入环境名!' }]}>
+          <Form.Item
+            label="项目环境名"
+            name="envName"
+            rules={[{ required: true, message: '环境名必填且不能包含下划线!', pattern: /^((?!\_).)+$/ }]}
+          >
             <Input style={{ width: 300 }} placeholder="单行输入"></Input>
           </Form.Item>
           <Form.Item
