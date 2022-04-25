@@ -17,8 +17,8 @@ export default function BuildingStep(props: StepItemProps) {
   // const url = getItemByKey(buildUrl, env) ? getItemByKey(buildUrl, env) : '';
   const url = getItemByKey(buildUrl, 'singleBuild')
     ? getItemByKey(buildUrl, 'singleBuild')
-    : getItemByKey(buildUrl, 'env')
-    ? getItemByKey(buildUrl, 'env')
+    : getItemByKey(buildUrl, env)
+    ? getItemByKey(buildUrl, env)
     : '';
   const isError = status === 'error';
   const isLoading = status === 'process';
