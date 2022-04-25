@@ -92,7 +92,8 @@ export default function ProductList() {
                       history.push({
                         pathname: '/matrix/delivery/product-config',
                         state: {
-                          initData: record,
+                          id: record.id,
+                          indentDescription: record.indentDescription,
                         },
                       });
                     }}
