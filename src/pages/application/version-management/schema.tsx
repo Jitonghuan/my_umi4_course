@@ -1,6 +1,5 @@
-import React from 'react';
 import { history } from 'umi';
-import { Popconfirm, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
@@ -19,44 +18,27 @@ const APP_TYPE_ICON = {
 // 表格 schema
 export const createTableSchema = ({
   onEditClick,
-  onDelClick,
-  categoryData,
-  businessDataList,
+  onVeiwClick,
+  onBindClick,
 }: {
   onEditClick: (record: any, index: number) => void;
-  onDelClick: (record: any, index: number) => void;
-  categoryData: any[];
-  businessDataList: any[];
+  onVeiwClick: (record: any, index: number) => void;
+  onBindClick: (record: any, index: number) => void;
 }) =>
   [
     {
       title: '版本ID',
       dataIndex: 'id',
-      width: 50,
+      width: 40,
     },
     {
       title: '版本名称',
-      dataIndex: 'appName',
+      dataIndex: 'versionName',
       width: 230,
-      render: (text, record) => (
-        <a
-          onClick={() =>
-            history.push({
-              pathname: 'detail',
-              query: {
-                id: record.id,
-                appCode: record.appCode,
-              },
-            })
-          }
-        >
-          {text}
-        </a>
-      ),
     },
     {
       title: '版本CODE',
-      dataIndex: 'appCode',
+      dataIndex: 'versionCode',
       width: 180,
       ellipsis: {
         showTitle: false,
@@ -67,18 +49,6 @@ export const createTableSchema = ({
         </Tooltip>
       ),
     },
-    // {
-    //   title: 'git仓库名',
-    //   width: 320,
-    //   ellipsis: true,
-    //   dataIndex: 'gitAddress',
-    //   render: (value: string) =>
-    //     value && (
-    //       <a href={value} target="_blank">
-    //         {value}
-    //       </a>
-    //     ),
-    // },
     {
       title: '版本描述',
       dataIndex: 'desc',
@@ -86,44 +56,35 @@ export const createTableSchema = ({
       ellipsis: {
         showTitle: false,
       },
-      //   render: (value) => (
-      //     <Tooltip placement="topLeft" title={value}>
-      //       {value}
-      //     </Tooltip>
-      //   ),
     },
     {
-      width: 140,
+      width: 120,
       title: '操作',
       fixed: 'right',
       dataIndex: 'operate',
       align: 'center',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
+          <a onClick={() => onVeiwClick(record, index)}>查看</a>
           <a onClick={() => onEditClick(record, index)}>编辑</a>
-          <a
-          // onClick={() => {
-          //   history.push({
-          //     pathname: 'detail',
-          //     query: {
-          //       id: record.id,
-          //       appCode: record.appCode,
-          //     },
-          //   });
-          // }}
-          >
-            查看
-          </a>
-          <Popconfirm
-            title="确定要删除该版本吗？"
-            onConfirm={() => onDelClick(record, index)}
-            okText="确定"
-            cancelText="取消"
-            placement="topLeft"
-          >
-            <a>删除</a>
-          </Popconfirm>
+          <a onClick={() => onBindClick(record, index)}>绑定应用</a>
         </div>
       ),
     },
   ] as ColumnProps[];
+
+/** 应用数据模型 */
+export interface VersionRecordItem {
+  /** 数据库自增ID */
+  id?: number;
+  /** 版本code */
+  versionCode: string;
+  /** 版本名称 */
+  versionName: string;
+  /** 应用分类 */
+  appCategoryCode: AppType;
+  /** 备注 */
+  desc: string;
+  /** 应用CODE  数组*/
+  appCodes: any;
+}

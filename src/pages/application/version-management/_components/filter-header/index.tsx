@@ -13,12 +13,10 @@ const { Item: FormItem } = Form;
 export interface FilterHeaderProps {
   onSearch?: (values: any) => any;
   trggerSearchOnInit?: boolean;
-  searchParams?: any;
 }
 
 export default function FilterHeader(props: FilterHeaderProps) {
-  const { onSearch, trggerSearchOnInit = false, searchParams = {} } = props;
-
+  const { onSearch, trggerSearchOnInit = false } = props;
   const [searchField] = Form.useForm();
   const { categoryData } = useContext(FeContext);
   const [categoryCode, setCategoryCode] = useState<string>();
@@ -57,23 +55,19 @@ export default function FilterHeader(props: FilterHeaderProps) {
     }
   }, []);
 
-  const appTypeOptions = useMemo(
-    () => [
-      { value: 'backend', label: '后端' },
-      { value: 'frontend', label: '前端' },
-    ],
-    [],
-  );
-
   return (
     <FilterCard>
-      <Form
-        layout="inline"
-        initialValues={searchParams}
-        form={searchField}
-        onFinish={handleSearch}
-        onReset={handleReset}
-      >
+      <Form layout="inline" form={searchField} onFinish={handleSearch} onReset={handleReset}>
+        <FormItem label="应用分类" name="appCategoryCode">
+          <Select
+            // options={appGroupOptions}
+            // loading={appGroupLoading}
+            placeholder="请选择"
+            style={{ width: 140 }}
+            allowClear
+            onChange={handleSearch}
+          />
+        </FormItem>
         <FormItem label="版本名称" name="appType">
           <Select
             // options={appTypeOptions}
@@ -92,22 +86,6 @@ export default function FilterHeader(props: FilterHeaderProps) {
             onChange={handleAppCategoryChange}
           />
         </FormItem>
-        {/* <FormItem label="版本描述" name="appGroupCode">
-          <Select
-            // options={appGroupOptions}
-            // loading={appGroupLoading}
-            placeholder="请选择"
-            style={{ width: 140 }}
-            allowClear
-            onChange={handleSearch}
-          />
-        </FormItem> */}
-        {/* <FormItem label="版本描述" name="appName">
-          <Input placeholder="请输入" style={{ width: 200 }} />
-        </FormItem> */}
-        {/* <FormItem label="应用Code" name="appCode">
-          <Input placeholder="请输入" style={{ width: 140 }} />
-        </FormItem> */}
         <FormItem>
           <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
             查询
