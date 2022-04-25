@@ -3,7 +3,7 @@
 // @create 2021/08/25 09:23
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Select, Descriptions, Divider, Form, Modal, Table } from 'antd';
+import { Button, Select, Descriptions, Divider, Form, Modal, Table, Popconfirm } from 'antd';
 import { colunms } from '../version-editor/schema';
 import { useVersionAppList, useBoundApp, useQueryCategory } from '../../hooks';
 import './index.less';
@@ -25,7 +25,7 @@ export default function BindAppEditor(props: IProps) {
   const [bundLoading, handleBoundApp] = useBoundApp();
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [categoryLoading, categoryData] = useQueryCategory();
-  const { initData, visible } = props;
+  const { initData, visible, onClose } = props;
   const isEdit = !!initData?.id;
   useEffect(() => {
     if (initData?.versionCode) {
@@ -39,7 +39,9 @@ export default function BindAppEditor(props: IProps) {
   }, []);
 
   const handleSubmit = () => {
-    handleBoundApp({ versionCode: initData?.versionCode, apps: currentData });
+    handleBoundApp({ versionCode: initData?.versionCode, apps: currentData }).then(() => {
+      onClose();
+    });
   };
 
   const rowSelection = {
@@ -59,9 +61,12 @@ export default function BindAppEditor(props: IProps) {
       maskClosable={false}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" loading={bundLoading} onClick={handleSubmit}>
-            绑定
-          </Button>
+          <Popconfirm title="确定绑定这些应用吗？" onConfirm={handleSubmit} okText="确定" cancelText="取消">
+            <Button type="primary" loading={bundLoading}>
+              绑定
+            </Button>
+          </Popconfirm>
+
           <Button type="default" onClick={props.onClose}>
             取消
           </Button>
@@ -84,6 +89,8 @@ export default function BindAppEditor(props: IProps) {
             style={{ width: 380 }}
             options={categoryData}
             placeholder="应用分类"
+            showSearch
+            allowClear
             onChange={selectAppCategoryCode}
             loading={categoryLoading}
           ></Select>
@@ -103,7 +110,7 @@ export default function BindAppEditor(props: IProps) {
             style={{ height: 200 }}
             // scroll={{ x: '100%' }}
             pagination={false}
-            scroll={{ y: window.innerHeight - 520, x: '100%' }}
+            scroll={{ y: window.innerHeight - 720, x: '100%' }}
           />
         </FormItem>
       </Form>

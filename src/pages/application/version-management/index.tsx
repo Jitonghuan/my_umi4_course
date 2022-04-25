@@ -20,40 +20,15 @@ export default function ApplicationList() {
   const [bindAppVisiable, setBindAppVisiable] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<VersionRecordItem>();
   const [type, setType] = useState<string>('');
-  const currentDataSource = [
-    {
-      id: 1,
-
-      versionCode: 'testCode',
-
-      versionName: '测试版本',
-
-      appCategoryCode: 'hbos',
-
-      desc: '无',
-
-      appCodes: [],
+  const handleFilterSearch = useCallback(
+    (paramsObj: { versionCode?: string; versionName?: string; appCategoryCode?: string }) => {
+      loadVersionListData(paramsObj);
+      setPageInfo({
+        pageIndex: 1,
+      });
     },
-    {
-      id: 2,
-
-      versionCode: 'testCode02',
-
-      versionName: '测试版本02',
-
-      appCategoryCode: 'hbos',
-
-      desc: '无',
-
-      appCodes: [],
-    },
-  ];
-
-  const handleFilterSearch = useCallback((next: any) => {
-    setPageInfo({
-      pageIndex: 1,
-    });
-  }, []);
+    [],
+  );
 
   // 表格列配置
   const tableColumns = useMemo(() => {
@@ -96,9 +71,8 @@ export default function ApplicationList() {
           </Button>
         </div>
         <Table
-          dataSource={currentDataSource}
+          dataSource={dataSource}
           loading={listLoading}
-          scroll={{ x: '100%' }}
           bordered
           rowKey="id"
           pagination={{

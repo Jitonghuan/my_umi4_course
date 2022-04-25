@@ -89,11 +89,7 @@ export default function VersionEditor(props: IProps) {
       queryAppsList(categoryCode || '', appGroupCode);
     }
   }, []);
-  // useEffect(()=>{
-  //   if(type!=='add' && initData?.versionCode){
-  //     queryVersionAppList({versionCode:initData?.versionCode,appCategoryCode:categoryCode||'',isBoundVersion:true})
-  //   }
-  // },[type,initData?.versionCode])
+
   return (
     <Modal
       width={860}
@@ -136,6 +132,8 @@ export default function VersionEditor(props: IProps) {
             options={categoryData}
             placeholder="应用分类"
             disabled={isEdit}
+            showSearch
+            allowClear
             onChange={selectAppCategoryCode}
             loading={loading}
           ></Select>
@@ -146,6 +144,8 @@ export default function VersionEditor(props: IProps) {
             placeholder="通过应用组筛选应用"
             disabled={isEdit}
             options={appGroupOptions}
+            showSearch
+            allowClear
             onChange={selectAppGroupCode}
             loading={appGroupLoading}
           ></Select>
@@ -161,7 +161,7 @@ export default function VersionEditor(props: IProps) {
               dataSource={alreadyAppDataSource}
               style={{ height: 200 }}
               pagination={false}
-              scroll={{ y: window.innerHeight - 852, x: '100%' }}
+              scroll={{ y: window.innerHeight - 800, x: '100%' }}
             />
           ) : (
             <Table
@@ -173,7 +173,7 @@ export default function VersionEditor(props: IProps) {
               dataSource={allAppListDataSource}
               style={{ height: 200 }}
               pagination={false}
-              scroll={{ y: window.innerHeight - 852, x: '100%' }}
+              scroll={{ y: window.innerHeight - 800, x: '100%' }}
             />
           )}
         </FormItem>
