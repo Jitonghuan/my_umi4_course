@@ -1,7 +1,8 @@
 //Jira需求Id	发布功能	预计发布时间	当前状态	创建人	验收人
+
 export const JiraColumns = [
   {
-    title: 'Jira需求Id',
+    title: '需求Id',
     dataIndex: 'key',
     key: 'key',
   },

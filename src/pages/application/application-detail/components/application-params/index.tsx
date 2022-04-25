@@ -7,6 +7,7 @@ import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio, Dat
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
+import appConfig from '@/app.config';
 import AceEditor from '@/components/ace-editor';
 import DetailContext from '@/pages/application/application-detail/context';
 import EditorTable from '@cffe/pc-editor-table';
@@ -30,7 +31,7 @@ export default function ApplicationParams(props: any) {
   const [ensureDisable, setEnsureDisable] = useState<boolean>(false);
   const [infoLoading, setInfoloading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number>(1);
   const [limit, setLimit] = useState<number>(0);
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
@@ -42,7 +43,7 @@ export default function ApplicationParams(props: any) {
       let dataArry: any = [];
       if (result.success) {
         result.data?.map((n: any) => {
-          if (n.proEnvType === 'benchmark') {
+          if (n.proEnvType === 'benchmark' && n.envName.search('前端') === -1) {
             dataArry.push({
               value: n?.envCode,
               label: n?.envName,
@@ -89,15 +90,23 @@ export default function ApplicationParams(props: any) {
 
   useEffect(() => {
     if (modalVisible) {
-      restarForm.resetFields();
+      restarForm.setFieldsValue({
+        restartPolicy: 1,
+      });
     }
   }, [modalVisible]);
 
   //通过appCategoryCode查询环境信息
   const selectAppEnv = () => {
-    return getRequest(APIS.listAppEnv, {
-      data: { appCode },
-    });
+    if (appConfig.PRIVATE_METHODS === 'public') {
+      return getRequest(APIS.listAppEnv, {
+        data: { appCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
+      });
+    } else {
+      return getRequest(APIS.listAppEnv, {
+        data: { appCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
+      });
+    }
   };
 
   //查询当前模版信息  一进入页面加载

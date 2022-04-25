@@ -267,6 +267,9 @@ export default function AlarmEditor(props: AlarmEditorProps) {
             ) : null
           }
         </FormItem>
+        <FormItem label="DingToken" name="dingToken" required={false}>
+          <Input />
+        </FormItem>
       </Form>
     </Drawer>
   );

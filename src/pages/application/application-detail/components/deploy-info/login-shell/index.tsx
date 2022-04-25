@@ -141,7 +141,7 @@ export default function AppDeployInfo(props: any) {
           <div className="shell-caption">
             <div className="caption-left">
               <Form form={viewLogform} layout="inline">
-                <span style={{ paddingLeft: '10px' }}>选择容器： </span>
+                <span style={{ paddingLeft: 12 }}>选择容器： </span>
                 <Form.Item name="containerName">
                   <Select
                     style={{ width: 120 }}
@@ -153,7 +153,7 @@ export default function AppDeployInfo(props: any) {
               </Form>
             </div>
             <div className="caption-right">
-              <span style={{ paddingLeft: 10 }}>
+              <span>
                 {' '}
                 当前环境：<Tag color="geekblue">{envCode}</Tag>
               </span>

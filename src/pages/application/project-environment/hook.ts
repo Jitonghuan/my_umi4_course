@@ -4,7 +4,7 @@ import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import appConfig from '@/app.config';
 
-export function useCreateProjectEnv() {
+export function useCreateProjectEnv(): [boolean, (creatParamsObj: any) => Promise<void>] {
   const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
   const createProjectEnv = async (creatParamsObj: any) => {
     setEnsureLoading(true);
@@ -94,28 +94,30 @@ export function useEnvList() {
   }, []);
   const queryEnvData = () => {
     setLoading(true);
-    getRequest(APIS.queryEnvList, {
-      data: {
-        pageSize: -1,
-        envTypeCode: 'notProd',
-      },
-    })
-      .then((result) => {
-        if (result?.success) {
-          let data = result?.data?.dataSource;
-          let dataArry: any = [];
-          data?.map((item: any) => {
-            dataArry.push({
-              label: item?.envName,
-              value: item?.envCode,
-            });
-          });
-          setEnvDataSource(dataArry);
-        }
+    if (appConfig.PRIVATE_METHODS === 'public') {
+      getRequest(APIS.queryEnvList, {
+        data: {
+          pageSize: -1,
+          envTypeCode: 'notProd',
+        },
       })
-      .finally(() => {
-        setLoading(false);
-      });
+        .then((result) => {
+          if (result?.success) {
+            let data = result?.data?.dataSource;
+            let dataArry: any = [];
+            data?.map((item: any) => {
+              dataArry.push({
+                label: item?.envName,
+                value: item?.envCode,
+              });
+            });
+            setEnvDataSource(dataArry);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   return [loading, envDataSource];
@@ -138,18 +140,22 @@ export function useAddAPPS() {
   return [addApps];
 }
 
-export function useRemoveApps() {
+export function useRemoveApps(onSpin: any, stopSpin: any) {
   const removeApps = async (removeAppsParamsObj: any) => {
     try {
+      onSpin();
       await postRequest(APIS.removeApps, { data: removeAppsParamsObj }).then((res) => {
         if (res.success) {
           message.success('移除应用成功！');
+          stopSpin();
         } else {
-          message.error('移除应用失败！');
+          stopSpin();
+          // message.error('移除应用失败！');
         }
       });
     } catch (error) {
       message.error(error);
+      stopSpin();
     }
   };
   return [removeApps];

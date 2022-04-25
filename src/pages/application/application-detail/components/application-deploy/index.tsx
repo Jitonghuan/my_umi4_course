@@ -30,11 +30,12 @@ export default function ApplicationDeploy(props: any) {
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
   const deloyContentRef = useRef<any>();
 
-  let env = window.location.href.includes('zslnyy')
+  // let env = window.location.href.includes('zslnyy')
+  let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
-    : window.location.href.includes('fygs')
+    : window.location.href.includes('matrix-fygs')
     ? 'prod'
-    : window.location.href.includes('base-poc')
+    : window.location.href.includes('matrix-base-poc')
     ? 'prod'
     : 'dev';
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || env);

@@ -5,11 +5,13 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Button, Steps, Spin, Result, message } from 'antd';
 import moment from 'moment';
+import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
 import type { IResponse } from '@cffe/vc-request/es/base-request/type';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { useCommonEnvCode } from '../../hook';
+import appConfig from '@/app.config';
+import { getCommonEnvCode } from '../../hook';
 import './index.less';
 
 type ResPromise = Promise<IResponse<any>>;
@@ -55,12 +57,15 @@ const sleep = (s: number) => new Promise((resolve) => setTimeout(resolve, s));
 let resultLogCache = '';
 
 export default function ClusterSyncDetail(props: any) {
+  if (!history.location.state) {
+    return null;
+  }
+  const commonEnvCode = history.location.state;
   const [pending, setPending] = useState(true);
   const [currStep, setCurrStep] = useState<number>(-1);
   const [resultLog, setResultLog] = useState<string>('');
   const [currState, setCurrState] = useState<ICategory>();
   const resultRef = useRef<HTMLPreElement>(null);
-  const [commonEnvCode] = useCommonEnvCode();
 
   const [nextDeployApp, setNextDeployApp] = useState<string>();
 
@@ -70,10 +75,10 @@ export default function ClusterSyncDetail(props: any) {
   }, []);
 
   // 查询当前状态
-  const queryCurrStatus = useCallback(async () => {
+  const queryCurrStatus = useCallback(async (currentEnvCode: string) => {
     setPending(true);
     try {
-      const result = await getRequest(APIS.querySyncState, { data: { envCode: commonEnvCode } });
+      const result = await getRequest(APIS.querySyncState, { data: { envCode: currentEnvCode } });
       const initState = result.data.category;
 
       if (initState === 'SyncClusterApp') {
@@ -94,7 +99,7 @@ export default function ClusterSyncDetail(props: any) {
     } finally {
       setPending(false);
     }
-  }, [commonEnvCode]);
+  }, []);
   const doAction = useCallback(async (promise: ResPromise) => {
     try {
       setPending(true);
@@ -126,9 +131,20 @@ export default function ClusterSyncDetail(props: any) {
   }, []);
 
   useEffect(() => {
-    // 初始化后查询一次状态
-    queryCurrStatus();
-
+    let currentEnvCode = '';
+    if (appConfig.IS_Matrix !== 'public') {
+      getRequest(getCommonEnvCode)
+        .then((result) => {
+          if (result?.success) {
+            currentEnvCode = result.data;
+            // setCommonEnvCode(currentEnvCode);
+          }
+        })
+        .then(() => {
+          // 初始化后查询一次状态
+          queryCurrStatus(currentEnvCode);
+        });
+    }
     // 离开时清空缓存
     return () => {
       resultLogCache = '';
@@ -262,7 +278,7 @@ export default function ClusterSyncDetail(props: any) {
                 完成集群同步
               </Button>
             ) : null}
-            <Button type="default" onClick={() => props.history.push('./cluster-sync')}>
+            <Button type="default" onClick={() => history.push('./cluster-sync')}>
               返回
             </Button>
           </div>
@@ -273,7 +289,7 @@ export default function ClusterSyncDetail(props: any) {
           status="success"
           title="同步成功"
           extra={[
-            <Button key="showlist" type="default" onClick={() => props.history.push('./dashboards')}>
+            <Button key="showlist" type="default" onClick={() => history.push('./dashboards')}>
               查看集群看板
             </Button>,
           ]}

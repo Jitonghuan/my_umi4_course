@@ -5,10 +5,16 @@
 // A集群各院区流量
 export function clusterALineChart(clusterAData: Record<string, any>) {
   let categoryList: string[] = [];
+  let dataCountArry: any = [];
   if (!clusterAData) {
     return;
   }
-  const dataSource = (clusterAData.clusterADataSource || [])?.map((item: any) => {
+
+  (clusterAData.clusterATimeStamp || [])?.map((el: any, index: number) => {
+    dataCountArry[index] = 0;
+  });
+  // let countNumber:any=[];
+  const dataSource = (clusterAData.clusterADataSource || [])?.map((item: any, index: number) => {
     categoryList.push(item.hospitalDistrictName);
     return {
       name: item.hospitalDistrictName,
@@ -16,7 +22,7 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
       // stack: '访问量',
       // color: '#BC8F8F',
       showSymbol: false,
-      data: item.count || [],
+      data: item.count ? item.count : dataCountArry,
     };
   });
 
@@ -54,9 +60,15 @@ export function clusterALineChart(clusterAData: Record<string, any>) {
 // B集群各院区流量
 export function clusterBLineChart(clusterBData: Record<string, any>) {
   let categoryList: string[] = [];
+  let dataCountArry: any = [];
   if (!clusterBData) {
     return;
   }
+
+  (clusterBData.clusterBTimeStamp || [])?.map((el: any, index: number) => {
+    dataCountArry[index] = 0;
+  });
+
   const dataSource = (clusterBData.clusterBDataSource || [])?.map((item: any) => {
     categoryList.push(item.hospitalDistrictName);
     return {
@@ -65,7 +77,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
       // stack: '访问量',
       // color: '#BC8F8F',
       showSymbol: false,
-      data: item.count || [],
+      data: item.count ? item.count : dataCountArry,
     };
   });
   return {
@@ -89,7 +101,7 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: clusterBData[6],
+      data: clusterBData.clusterBTimeStamp,
     },
     yAxis: {
       type: 'value',
@@ -101,7 +113,6 @@ export function clusterBLineChart(clusterBData: Record<string, any>) {
 // A/B集群柱状图
 
 export function ABClusterHistogram(histogramData: Record<string, any>) {
-  const countList: any[] = [];
   let categoryList: any[] = [];
   let countListA: any = [];
   let countListB: any = [];
@@ -109,18 +120,28 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
   if (!histogramData) {
     return;
   }
-  (histogramData || [])?.map((item: any, index: number) => {
-    countListA.push(item.clusterACount);
-    countListB.push(item.clusterBCount);
-    categoryList[index] = 'A-' + item.hospitalDistrictName;
-    categoryList[histogramData.length - 1 + index] = 'B-' + item.hospitalDistrictName;
-    seriesArry.push({
-      type: 'bar',
+  try {
+    (histogramData || [])?.map((item: any, index: number) => {
+      countListA.push(item.clusterACount);
+      countListB.push(item.clusterBCount);
+      categoryList[index] = 'A-' + item.hospitalDistrictName;
+      categoryList[histogramData.length + index] = 'B-' + item.hospitalDistrictName;
+      seriesArry.push(
+        {
+          type: 'bar',
+          barMaxWidth: '10%',
+        },
+        {
+          type: 'bar',
+          barMaxWidth: '10%',
+        },
+      );
     });
-  });
+  } catch (error) {
+    console.log(error);
+  }
 
   let total = countListA.concat(countListB);
-
   return {
     //图例组件
     legend: {
@@ -165,7 +186,9 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       containLabel: true,
     },
     //配置要在X轴显示的项
-    xAxis: { type: 'category' },
+    xAxis: {
+      type: 'category',
+    },
     //配置要在Y轴显示的项
     yAxis: { type: 'value' },
     series: seriesArry,

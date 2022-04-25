@@ -55,7 +55,7 @@ export default function Push(props: any) {
   const [labelListSource, setLabelListSource] = useState<any>();
   const [labelLoading, setLabelLoading] = useState<boolean>(false);
   const [businessData, setBusinessData] = useState<any[]>([]);
-  const [value, setValue] = useState<number>(0); //弹窗radio的值
+  const [value, setValue] = useState<number>(1); //弹窗radio的值
 
   const getLabelList = () => {
     setLabelLoading(true);
@@ -120,11 +120,11 @@ export default function Push(props: any) {
 
   const showModal = () => {
     if (selectedRowKeys.length > 0) {
-      tmplDetailForm.setFieldsValue({
-        pushItem: undefined,
-        envCodes: undefined,
-        appCategoryCode: undefined,
-      });
+      // tmplDetailForm.setFieldsValue({
+      //   pushItem: undefined,
+      //   envCodes: undefined,
+      //   appCategoryCode: undefined,
+      // });
       setIsModalVisible(true);
     } else {
       message.warning('请先勾选应用！');
@@ -151,17 +151,17 @@ export default function Push(props: any) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    tmplDetailForm.setFieldsValue({
-      pushItem: undefined,
-      envCodes: undefined,
-    });
+    // tmplDetailForm.setFieldsValue({
+    //   pushItem: undefined,
+    //   envCodes: undefined,
+    // });
   };
   const [dataSource, setDataSource] = useState<any[]>([]);
   useEffect(() => {
     selectCategory();
     getLabelList();
     let param = localStorage.getItem('TEMPLATE_PUSH_SEARCH')
-      ? JSON.parse(localStorage.getItem('TEMPLATE_PUSH_SEARCH'))
+      ? JSON.parse(localStorage.getItem('TEMPLATE_PUSH_SEARCH') || '')
       : '';
     formTmplQuery.setFieldsValue({
       appCategoryCode: param.appCategoryCode,
@@ -180,6 +180,9 @@ export default function Push(props: any) {
 
   useEffect(() => {
     tmplDetailForm.resetFields();
+    tmplDetailForm.setFieldsValue({
+      restartPolicy: 1,
+    });
   }, [isModalVisible]);
 
   // 页面销毁时清空缓存
@@ -200,7 +203,7 @@ export default function Push(props: any) {
     });
 
     getRequest(APIS.envList, {
-      data: { categoryCode: appCategoryCode },
+      data: { categoryCode: appCategoryCode, pageIndex: -1, pageSize: -1 },
     }).then((resp: any) => {
       if (resp.success) {
         const datas =

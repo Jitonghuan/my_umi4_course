@@ -5,7 +5,8 @@
 import { useState, useEffect } from 'react';
 import { getRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { useCommonEnvCode } from '../../hook';
+import appConfig from '@/app.config';
+import { getCommonEnvCode } from '../../hook';
 export function useInitClusterData() {
   const [data, setData] = useState<Record<string, any>>();
 
@@ -24,25 +25,38 @@ export function useInitClusterData() {
 
 export function useClusterSource() {
   const [data, setData] = useState<any[]>([]);
-  const [commonEnvCode] = useCommonEnvCode();
 
-  // 暂时写死数据
   useEffect(() => {
-    getRequest(APIS.getHospitalDistrictInfo, { data: { envCode: commonEnvCode } }).then((resp) => {
-      if (resp?.success) {
-        setData([
-          {
-            title: resp?.data[0].hospitalDistrictName,
-            name: resp?.data[0].hospitalDistrictCode,
-
-            options: [
-              { label: 'A集群', value: 'cluster_a', ip: resp?.data[0].HospitalDistrictIp },
-              { label: 'B集群', value: 'cluster_b', ip: resp?.data[0].HospitalDistrictIp },
-            ],
-          },
-        ]);
-      }
-    });
+    let commonEnvCode = '';
+    let dataArry: any = [];
+    if (appConfig.IS_Matrix !== 'public') {
+      getRequest(getCommonEnvCode)
+        .then((result) => {
+          if (result?.success) {
+            commonEnvCode = result.data;
+          }
+        })
+        .then(() => {
+          getRequest(APIS.getHospitalDistrictInfo, { data: { envCode: commonEnvCode } }).then((resp) => {
+            if (resp?.success) {
+              resp.data?.map((ele: any) => {
+                dataArry.push({
+                  title: ele.hospitalDistrictName,
+                  name: ele.hospitalDistrictCode,
+                  nowDisPatchCluster: ele?.nowDisPatchCluster,
+                  options: [
+                    { label: 'A集群', value: 'cluster_a', ip: ele.hospitalDistrictIp },
+                    { label: 'B集群', value: 'cluster_b', ip: ele.hospitalDistrictIp },
+                  ],
+                });
+              });
+              setData(dataArry);
+            } else {
+              return;
+            }
+          });
+        });
+    }
   }, []);
 
   return [data];

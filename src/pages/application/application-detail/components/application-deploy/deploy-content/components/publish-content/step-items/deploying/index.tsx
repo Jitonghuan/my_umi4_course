@@ -91,6 +91,29 @@ export default function DeployingStep(props: StepItemProps) {
                   </a>
                 </div>
               )}
+              {/* {isLoading && envCode && envTypeCode !== 'prod' && !isFrontend && (
+                <div style={{ marginTop: 2 }}>
+                  <Button
+                    size="small"
+                    type="link"
+                    onClick={() => {
+                      localStorage.setItem('__init_env_tab__', envTypeCode);
+                      history.replace({
+                        pathname: `deployInfo`,
+                        query: {
+                          viewLogEnv: envCode || '',
+                          viewLogEnvType: envTypeCode,
+                          type: 'viewLog_goBack',
+                          id: `${id}`,
+                          appCode: appCode,
+                        },
+                      });
+                    }}
+                  >
+                    查看部署信息
+                  </Button>
+                </div>
+              )} */}
 
               {/* test, pre, prod 显示 jenkins 详情 */}
               {/* {envTypeCode !== 'dev' && deployInfo.jenkinsUrl && (

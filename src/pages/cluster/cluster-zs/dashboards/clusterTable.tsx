@@ -16,7 +16,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
   }, [tableData]);
   const columns = [
     {
-      title: '院区',
+      title: '机构',
       dataIndex: 'hospitalDistrictName',
     },
     {
@@ -51,7 +51,7 @@ export default function ClusterTable(props: ChartCaseListProps) {
           rowKey="id"
           bordered
           columns={columns}
-          dataSource={clusterTableData}
+          dataSource={clusterTableData || []}
           pagination={false}
           scroll={{ y: tableHeight }}
         />

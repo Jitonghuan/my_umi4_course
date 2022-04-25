@@ -3,10 +3,10 @@
 // @create 2022/02/14 10:20
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Divider } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, message, Divider, Tooltip } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { PlusOutlined, StarFilled, StarTwoTone } from '@ant-design/icons';
+import { PlusOutlined, StarFilled, StarTwoTone, CopyOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { queryProjectEnvList } from './service';
@@ -17,6 +17,8 @@ import './index.less';
 import { Radio } from '@cffe/h2o-design';
 import DetailList from './environment-detail/detail-list';
 import { collectRequst } from '../common';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 /** 环境大类 */
 const envTypeData = [
   {
@@ -62,6 +64,7 @@ export default function EnvironmentList() {
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [type, setType] = useState<'collect' | 'all'>('collect');
   const [rowData, setRowData] = useState<any>({}); //选中一行后
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const typeRef = useRef('collect');
   const queryProjectEnv = async (queryParamsObj: any) => {
     const url = typeRef.current === 'collect' ? queryMyCollectUrl : queryProjectEnvList;
@@ -78,7 +81,7 @@ export default function EnvironmentList() {
           setPageIndex(pageIndex);
           setDataSource(data);
           setPageTotal(pageTotal);
-        } else if (!res) {
+        } else if (!res || !res.success) {
           // 防止接口出现404两个tab页面数据出现混乱的情况
           setDataSource([]);
           setPageTotal(0);
@@ -165,6 +168,13 @@ export default function EnvironmentList() {
       loadListData({ pageIndex, pageSize });
     }
   };
+  const onSpin = () => {
+    setIsSpinning(true);
+  };
+
+  const stopSpin = () => {
+    setIsSpinning(false);
+  };
   return (
     <PageContainer className="project-env-list project-env-detail">
       <EnvironmentEditDraw
@@ -176,6 +186,7 @@ export default function EnvironmentList() {
         }}
         onSave={saveEditData}
       />
+      {/* <Spin spinning={isSpinning}> */}
       <FilterCard>
         <Form
           layout="inline"
@@ -244,121 +255,141 @@ export default function EnvironmentList() {
           )}
         </div>
         <div>
-          <Table
-            rowKey="id"
-            bordered
-            rowClassName={(record, index) => {
-              return `${type === 'collect' && rowData.id == record.id ? 'selected' : ''}`;
-            }}
-            dataSource={dataSource}
-            loading={listLoading}
-            onRow={(record: any, index: any) => {
-              return {
-                onClick: (event) => {
-                  setRowData({
-                    id: record.id,
-                    envCode: record.envCode,
-                    benchmarkEnvCode: record.relEnvs,
-                    type: 'projectEnvironment',
-                    envName: record.envName,
-                  });
-                }, // 点击行
-              };
-            }}
-            pagination={{
-              current: pageIndex,
-              total: pageTotal,
-              pageSize,
-              showSizeChanger: true,
-              onShowSizeChange: (_, size) => {
-                setPageSize(size);
-                setPageIndex(1);
-              },
-              showTotal: () => `总共 ${pageTotal} 条数据`,
-            }}
-            onChange={pageSizeClick}
-          >
-            <Table.Column title="ID" dataIndex="id" width="4%" />
-            {/* <Table.Column title="环境名" dataIndex="envName" width="20%" ellipsis />
-             */}
-            <Table.Column
-              title="环境名"
-              render={(_, record: EnvironmentEdit) => (
-                <>
-                  <span onClick={(e) => e.stopPropagation()}>
-                    <Popconfirm
-                      title={`确定${record.isCollection ? '取消该收藏' : '收藏该环境'}吗？`}
-                      onConfirm={(e) => switchStar(record, e)}
-                      okText="确定"
-                      cancelText="取消"
-                    >
-                      <span
-                        style={{
-                          padding: '5px',
-                          color: '#ff8419',
-                        }}
+          <Spin spinning={isSpinning}>
+            <Table
+              rowKey="id"
+              bordered
+              rowClassName={(record, index) => {
+                return `${type === 'collect' && rowData.id == record.id ? 'selected' : ''}`;
+              }}
+              dataSource={dataSource}
+              loading={listLoading}
+              onRow={(record: any, index: any) => {
+                return {
+                  onClick: (event) => {
+                    setRowData({
+                      id: record.id,
+                      envCode: record.envCode,
+                      benchmarkEnvCode: record.relEnvs,
+                      type: 'projectEnvironment',
+                      envName: record.envName,
+                    });
+                  }, // 点击行
+                };
+              }}
+              pagination={{
+                current: pageIndex,
+                total: pageTotal,
+                pageSize,
+                showSizeChanger: true,
+                onShowSizeChange: (_, size) => {
+                  setPageSize(size);
+                  setPageIndex(1);
+                },
+                showTotal: () => `总共 ${pageTotal} 条数据`,
+              }}
+              onChange={pageSizeClick}
+            >
+              <Table.Column title="ID" dataIndex="id" width="4%" />
+              {/* <Table.Column title="环境名" dataIndex="envName" width="20%" ellipsis />
+               */}
+              <Table.Column
+                title="环境名"
+                render={(_, record: EnvironmentEdit) => (
+                  <>
+                    <span onClick={(e) => e.stopPropagation()}>
+                      <Popconfirm
+                        title={`确定${record.isCollection ? '取消该收藏' : '收藏该环境'}吗？`}
+                        onConfirm={(e) => switchStar(record, e)}
+                        okText="确定"
+                        cancelText="取消"
                       >
-                        {record.isCollection ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+                        <span
+                          style={{
+                            padding: '5px',
+                            color: '#ff8419',
+                          }}
+                        >
+                          {record.isCollection ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+                        </span>
+                      </Popconfirm>
+                    </span>
+                    {record.envName}
+                  </>
+                )}
+              />
+              <Table.Column
+                title="环境CODE"
+                dataIndex="envCode"
+                width="20%"
+                ellipsis
+                render={(value) => (
+                  <div>
+                    <span>{value}</span>
+                    <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
+                      <span style={{ marginLeft: 8, color: 'royalblue' }}>
+                        <CopyOutlined />
                       </span>
-                    </Popconfirm>
-                  </span>
-                  {record.envName}
-                </>
-              )}
-            />
-            <Table.Column title="环境CODE" dataIndex="envCode" width="8%" ellipsis />
-            <Table.Column title="基准环境" dataIndex="relEnvs" width="8%" ellipsis />
-            <Table.Column title="默认分类" dataIndex="categoryCode" width="8%" ellipsis />
-            <Table.Column title="环境大类" dataIndex="envTypeCode" width="16%" />
-            <Table.Column title="备注" dataIndex="mark" width="18%" ellipsis />
-            <Table.Column
-              title="操作"
-              width="18%"
-              key="action"
-              render={(_, record: EnvironmentEdit, index) => (
-                <Space size="small">
-                  <a
-                    onClick={() => {
-                      history.push({
-                        pathname: 'environment-detail',
-                        state: {
-                          envCode: record.envCode,
-                          benchmarkEnvCode: record.relEnvs,
-                          type: 'projectEnvironment',
-                        },
-                      });
-                    }}
-                  >
-                    查看
-                  </a>
-                  <a
-                    onClick={() => {
-                      setEnviroEditMode('EDIT');
-                      setEnviroInitData(record);
-                    }}
-                  >
-                    编辑
-                  </a>
-                  <Popconfirm
-                    title="确定要删除该信息吗？"
-                    onConfirm={() => {
-                      deleteProjectEnv(record?.envCode).then(() => {
-                        queryProjectEnv({
-                          pageIndex: 1,
-                          // pageSize: pageSize,
+                    </CopyToClipboard>
+                  </div>
+                )}
+              />
+              <Table.Column title="基准环境" dataIndex="relEnvs" width="8%" ellipsis />
+              <Table.Column title="默认分类" dataIndex="categoryCode" width="8%" ellipsis />
+              <Table.Column title="环境大类" dataIndex="envTypeCode" width="6%" />
+              <Table.Column title="备注" dataIndex="mark" width="18%" ellipsis />
+              <Table.Column
+                title="操作"
+                width="18%"
+                key="action"
+                render={(_, record: EnvironmentEdit, index) => (
+                  <Space size="small">
+                    <a
+                      onClick={() => {
+                        history.push({
+                          pathname: 'environment-detail',
+                          state: {
+                            envCode: record.envCode,
+                            benchmarkEnvCode: record.relEnvs,
+                            type: 'projectEnvironment',
+                          },
                         });
-                      });
-                    }}
-                  >
-                    <a style={{ color: 'red' }}>删除</a>
-                  </Popconfirm>
-                </Space>
-              )}
-            />
-          </Table>
+                      }}
+                    >
+                      查看
+                    </a>
+                    <a
+                      onClick={() => {
+                        setEnviroEditMode('EDIT');
+                        setEnviroInitData(record);
+                      }}
+                    >
+                      编辑
+                    </a>
+                    <Popconfirm
+                      title="确定要删除该信息吗？"
+                      onConfirm={() => {
+                        let params = formList.getFieldsValue();
+                        deleteProjectEnv(record?.envCode).then(() => {
+                          queryProjectEnv({
+                            pageIndex: 1,
+                            ...params,
+                            // pageSize: pageSize,
+                          });
+                        });
+                      }}
+                    >
+                      <a style={{ color: 'red' }}>删除</a>
+                    </Popconfirm>
+                  </Space>
+                )}
+              />
+            </Table>
+          </Spin>
         </div>
-        {type === 'collect' && <DetailList dataInfo={rowData}></DetailList>}
+        {type === 'collect' && <DetailList dataInfo={rowData} onSpin={onSpin} stopSpin={stopSpin}></DetailList>}
       </ContentCard>
+      {/* </Spin> */}
     </PageContainer>
   );
 }

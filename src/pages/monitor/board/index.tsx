@@ -117,13 +117,16 @@ type IMarket = {
  */
 const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
-  const [currentTab, setCurrentTab] = useState<string>('dev');
+
+  let href = window.location.href.includes('matrix-fygs');
   const tabList = [
     { label: 'DEV', value: 'dev' },
     { label: 'TEST', value: 'test' },
     { label: 'PRE', value: 'pre' },
     { label: 'PROD', value: 'prod' },
   ];
+  const [currentTab, setCurrentTab] = useState<string>(href ? 'prod' : 'dev');
+  const tabListFygs = [{ label: 'PROD', value: 'prod' }];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
   const [useMarket, setUseMarket] = useState<IMarket[]>([]);
   const [searchParams, setSearchParams] = useState<any>();
@@ -180,7 +183,7 @@ const Coms = (props: any) => {
   //查询pod列表数据
   const queryPodData = (value: any, pageIndexParam?: number, pageSizeParam?: number, keyWordParams?: any) => {
     setPodLoading(true);
-    queryPodUseData(value, pageIndexParam, pageSizeParam, keyWordParams)
+    queryPodUseData(value, pageIndexParam || 1, pageSizeParam || 20, keyWordParams)
       .then((result) => {
         const resultDataSouce = result?.dataSource?.map((item: Record<string, object>) => {
           const key = Object.keys(item)[0];
@@ -377,12 +380,12 @@ const Coms = (props: any) => {
   const handleSearchRes = () => {
     let param = searchField.getFieldsValue();
     // setSearchParams(searchField.getFieldsValue());
-    queryNodeList({ clusterId: currentCluster, keysword: param.keyword, pageIndex: pageIndex, pageSize: pageIndex });
+    queryNodeList({ clusterId: currentCluster, keyword: param.keyword, pageIndex: pageIndex, pageSize: pageSize });
   };
   const handleSearchPod = () => {
     let param = searchPodField.getFieldsValue();
     setSearchKeyWords(param);
-    queryPodData(currentCluster, pageIndex, pageSize, param.keysword);
+    queryPodData(currentCluster, pageIndex, pageSize, param.keyword);
   };
 
   const handleOk = () => {
@@ -430,6 +433,8 @@ const Coms = (props: any) => {
   return (
     <PageContainer className="monitor-board">
       <Card className="monitor-board-content">
+        {/* {
+          ipDetailShow && ( */}
         <DashboardsModal
           ipDetailVisiable={ipDetailShow}
           onOk={handleOk}
@@ -462,11 +467,22 @@ const Coms = (props: any) => {
           }
           queryCount={queryCount}
         />
-        <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
-          {tabList?.map((el) => (
-            <Tabs.TabPane key={el.value} tab={el.label} />
-          ))}
-        </Tabs>
+        {/* )
+        } */}
+        {href ? (
+          <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
+            {tabListFygs?.map((el) => (
+              <Tabs.TabPane key={el.value} tab={el.label} />
+            ))}
+          </Tabs>
+        ) : (
+          <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
+            {tabList?.map((el) => (
+              <Tabs.TabPane key={el.value} tab={el.label} />
+            ))}
+          </Tabs>
+        )}
+
         <div style={{ marginLeft: 28, fontSize: 16, marginTop: 14 }}>
           <span>选择集群:</span>
           <Select style={{ width: 140 }} options={clusterList} onChange={selectCluster} value={currentCluster}></Select>
@@ -544,7 +560,7 @@ const Coms = (props: any) => {
               Pod资源明细
             </h3>
             <Form form={searchPodField} layout="inline">
-              <Form.Item name="keysword">
+              <Form.Item name="keyword">
                 <Input.Search placeholder="搜索主机名、IP" style={{ width: 320 }} onSearch={handleSearchPod} />
               </Form.Item>
             </Form>
@@ -566,7 +582,7 @@ const Coms = (props: any) => {
                   // debugger
                   setPageIndex(1);
                   setPageSize(next);
-                  // queryPodData(currentCluster, 1, next, searchKeyWords?.keysword);
+                  // queryPodData(currentCluster, 1, next, searchKeyWords?.keyword);
                 },
                 showTotal: () => `总共 ${total} 条数据`,
 
@@ -574,7 +590,7 @@ const Coms = (props: any) => {
                 onChange: (next, size: any) => {
                   console.log('next', next, size);
                   setPageSize(size);
-                  setPageIndex(next), queryPodData(currentCluster, next, size, searchKeyWords?.keysword);
+                  setPageIndex(next), queryPodData(currentCluster, next, size, searchKeyWords?.keyword);
                 },
               }}
               customColumnMap={{
