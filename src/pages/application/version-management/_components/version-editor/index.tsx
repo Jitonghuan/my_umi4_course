@@ -39,21 +39,36 @@ export default function VersionEditor(props: IProps) {
 
   console.log('type', type);
   // 提交数据
-  const handleSubmit = useCallback(async () => {
-    const values = await form.validateFields();
-    if (type === 'edit') {
-      let editParams = { ...values, apps: currentData };
-      editVersion(editParams).then(() => {
-        onSubmit();
-      });
-    }
-    if (type === 'add') {
-      let editParams = { ...values, apps: currentData };
-      addVersion(editParams).then(() => {
-        onSubmit();
-      });
-    }
-  }, [isEdit, form]);
+  // const handleSubmit = useCallback(async () => {
+  //   const values = await form.validateFields();
+  //   if (type === 'edit') {
+  //     let editParams = { ...values, apps: currentData };
+  //     editVersion(editParams).then(() => {
+  //       onSubmit();
+  //     });
+  //   }
+  //   if (type === 'add') {
+  //     let editParams = { ...values, apps: currentData };
+  //     addVersion(editParams).then(() => {
+  //       onSubmit();
+  //     });
+  //   }
+  // }, [isEdit, form]);
+  const handleSubmit = () => {
+    form.validateFields().then((values) => {
+      if (!isEdit) {
+        let editParams = { ...values, apps: currentData };
+        editVersion(editParams).then(() => {
+          onSubmit();
+        });
+      } else {
+        let editParams = { ...values, apps: currentData };
+        addVersion(editParams).then(() => {
+          onSubmit();
+        });
+      }
+    });
+  };
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
@@ -61,6 +76,7 @@ export default function VersionEditor(props: IProps) {
       setCurrentData(selectedRows);
     },
   };
+  console.log('selectedRows', currentData);
   const hasSelected = selectedRowKeys.length > 0;
   useEffect(() => {
     if (initData) {
@@ -79,16 +95,19 @@ export default function VersionEditor(props: IProps) {
     setCategoryCode(next);
     form.resetFields(['appGroupCode']);
     if (!isEdit) {
+      debugger;
       queryAppsList(next);
-    } else if (isEdit) {
+    } else {
       queryVersionAppList({ versionCode: initData?.versionCode, appCategoryCode: next, isBoundVersion: true });
     }
   }, []);
   const selectAppGroupCode = useCallback((appGroupCode: string) => {
-    if (type === 'add') {
+    if (!isEdit) {
+      console.log('选择应用组', type);
       queryAppsList(categoryCode || '', appGroupCode);
     }
   }, []);
+  console.log('allAppListDataSource', allAppListDataSource);
 
   return (
     <Modal
@@ -152,20 +171,23 @@ export default function VersionEditor(props: IProps) {
         </FormItem>
         <FormItem>
           <div style={{ marginLeft: 8 }}>{hasSelected ? `共选择 ${selectedRowKeys.length} 个应用` : ''}</div>
-          {isEdit ? (
+
+          <Table
+            key="addTable"
+            size="middle"
+            bordered
+            rowSelection={rowSelection}
+            loading={alreadyLoading}
+            columns={colunms}
+            dataSource={allAppListDataSource || alreadyAppDataSource}
+            style={{ height: 200 }}
+            pagination={false}
+            scroll={{ y: window.innerHeight - 800, x: '100%' }}
+          />
+          {/* ) : (
             <Table
               size="middle"
-              bordered
-              loading={alreadyLoading}
-              columns={colunms}
-              dataSource={alreadyAppDataSource}
-              style={{ height: 200 }}
-              pagination={false}
-              scroll={{ y: window.innerHeight - 800, x: '100%' }}
-            />
-          ) : (
-            <Table
-              size="middle"
+              key='editTable'
               bordered
               loading={tableLoading}
               rowSelection={rowSelection}
@@ -175,7 +197,7 @@ export default function VersionEditor(props: IProps) {
               pagination={false}
               scroll={{ y: window.innerHeight - 800, x: '100%' }}
             />
-          )}
+          )} */}
         </FormItem>
       </Form>
     </Modal>
