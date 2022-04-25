@@ -23,7 +23,7 @@ export default function BranchManage() {
   const [masterOption, setMasterOption] = useState<any>([]);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('');
-  const [masterListData] = useMasterBranchList({ branch_type: 'master' });
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -43,8 +43,11 @@ export default function BranchManage() {
 
   useEffect(() => {
     if (masterListData.length !== 0) {
-      const option = masterListData.map((item: any) => ({ value: item.id, label: item.branchName }));
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
+      const initValue = option.find((item: any) => item.label === 'master');
+      searchForm.setFieldsValue({ masterName: initValue?.value || '' });
+      setSelectMaster(initValue?.value || '');
     }
   }, [masterListData]);
 
@@ -163,7 +166,7 @@ export default function BranchManage() {
           )}
         />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
-        <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
+        <Table.Column title="已部署流水线" dataIndex="deployedEnv" width={120} />
         <Table.Column
           title="创建时间"
           dataIndex="gmtCreate"
@@ -208,6 +211,8 @@ export default function BranchManage() {
           });
         }}
         onClose={() => setBranchEditMode('HIDE')}
+        masterBranchOptions={masterBranchOptions}
+        selectMaster={selectMaster}
       />
     </ContentCard>
   );

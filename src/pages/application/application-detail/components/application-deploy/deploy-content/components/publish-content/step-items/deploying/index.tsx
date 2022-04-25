@@ -5,31 +5,29 @@
 import React, { useState } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Steps, Button, Modal } from 'antd';
-import { retryDeploy } from '@/pages/application/service';
+import { retryDeploy, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
-import DeployModal from './deploy-modal';
-import DeployModalTemp from './deploy-modal-temp';
+// import DeployModal from './deploy-modal';
+import BatchDeployModal from './batch-deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
   const {
     deployInfo,
     deployStatus,
-    isEnvProject = false,
     onOperate,
     envTypeCode,
     getItemByKey,
-    env,
+    env = '',
     status,
     item,
     waitConfirm,
     ...others
   } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
-  const { deployingBatch, confirm } = item;
-  console.log(item);
-  const { buildUrl } = buildInfo;
-  const jenkinsUrl = getItemByKey(buildUrl, env).subJenkinsUrl || '';
+  const { deployingBatch, confirm } = item || {};
+  const { buildUrl } = buildInfo || {};
+  const jenkinsUrl = getItemByKey(buildUrl, env) || '';
   const isLoading = status === 'process';
 
   const [deployVisible, setDeployVisible] = useState(false);
@@ -48,7 +46,11 @@ export default function DeployingStep(props: StepItemProps) {
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryDeploy({ id: metadata.id, envCode: env });
+        const params = { id: metadata?.id };
+        if (env) {
+          Object.assign(params, { envCode: env });
+        }
+        await retry({ ...params });
         onOperate('retryDeployEnd');
       },
       onCancel() {
@@ -74,7 +76,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )} */}
               {/* 浙一日常环境下的部署步骤显示jenkins链接 */}
-              {!isEnvProject && envTypeCode === 'pre' && jenkinsUrl && envInfo.deployEnvs?.includes('zy-daily') && (
+              {envTypeCode === 'pre' && jenkinsUrl && envInfo.deployEnvs?.includes('zy-daily') && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={buildUrl}>
                     部署详情
@@ -82,7 +84,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </div>
               )}
               {/* prod环境 在部署过程中出现错误时 判断如果是在构建显示查看Jenkins详情，如果是部署出现错误显示部署错误详情*/}
-              {!isEnvProject && envTypeCode === 'prod' && jenkinsUrl && (
+              {envTypeCode === 'prod' && jenkinsUrl && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={jenkinsUrl}>
                     部署详情
@@ -99,7 +101,11 @@ export default function DeployingStep(props: StepItemProps) {
                 </div>
               )} */}
               {status === 'error' && (
-                <Button style={{ marginTop: 4 }} onClick={handleReDeployClick}>
+                <Button
+                  style={{ marginTop: 4, marginLeft: '-22px', color: '#d48806' }}
+                  type="link"
+                  onClick={handleReDeployClick}
+                >
                   重新部署
                 </Button>
               )}
@@ -126,7 +132,7 @@ export default function DeployingStep(props: StepItemProps) {
         onOperate={onOperate}
         envTypeCode="prod"
       /> */}
-      <DeployModalTemp
+      <BatchDeployModal
         visible={deployVisible}
         deployInfo={deployInfo}
         onCancel={() => setDeployVisible(false)}
@@ -137,6 +143,7 @@ export default function DeployingStep(props: StepItemProps) {
         status={status}
         deployingBatch={deployingBatch}
         id={metadata?.id}
+        jenkinsUrl={jenkinsUrl}
       />
     </>
   );

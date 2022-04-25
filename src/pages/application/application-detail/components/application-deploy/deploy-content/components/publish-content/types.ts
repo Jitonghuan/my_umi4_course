@@ -66,4 +66,7 @@ export type OperateType =
   | 'rollbackFeAppEnd'
   // 解决冲突相关
   | 'mergeStart'
-  | 'mergeEnd';
+  | 'mergeEnd'
+  // 流水线弹窗
+  | 'pipelineEnd'
+  | 'pipelineStart';

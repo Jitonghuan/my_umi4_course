@@ -5,8 +5,8 @@
  * @create 2021-04-15 09:33
  */
 
-import React, { useLayoutEffect, useEffect, useState, useContext } from 'react';
-import { Tabs, Select } from 'antd';
+import React, { useLayoutEffect, useEffect, useState, useContext, useMemo } from 'react';
+import { Tabs, Select, Tag } from 'antd';
 import { queryEnvTypeData } from '@/common/apis';
 import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';
@@ -58,7 +58,20 @@ export default function TowPartyPkg(props: any) {
 
   useEffect(() => {
     queryData();
+    getPipeline();
   }, []);
+
+  const pipelineName = useMemo(() => {
+    if (pipelineOption.length !== 0) {
+      const pipeline = pipelineOption.find((item: any) => item.value === currentValue);
+      if (pipeline) {
+        return pipeline.label;
+      } else {
+        return '---';
+      }
+    }
+  }, [currentValue, pipelineOption]);
+
   const queryData = () => {
     getRequest(listAppEnvType, {
       data: { isClient: true },
@@ -120,16 +133,21 @@ export default function TowPartyPkg(props: any) {
         activeKey={tabActive}
         type="card"
         tabBarExtraContent={
-          <span className="tabs-extra">
-            请选择：
-            <Select
-              value={currentValue}
-              style={{ width: 180 }}
-              size="small"
-              onChange={handleChange}
-              options={pipelineOption}
-            ></Select>
-          </span>
+          <div className="tabs-extra">
+            <span>
+              当前流水线：<Tag color="blue">{pipelineName}</Tag>
+            </span>
+            <span className="tabs-extra">
+              请选择：
+              <Select
+                value={currentValue}
+                style={{ width: 220 }}
+                size="small"
+                onChange={handleChange}
+                options={pipelineOption}
+              ></Select>
+            </span>
+          </div>
         }
       >
         {envTypeData?.map((item) => (

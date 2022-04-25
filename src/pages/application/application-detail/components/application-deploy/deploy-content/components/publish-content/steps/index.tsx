@@ -89,6 +89,9 @@ export default function DeploySteps(props: any) {
       const data = handleData(stepData);
       setData(data);
     }
+    if (!stepData) {
+      setData([]);
+    }
   }, [stepData]);
 
   // 处理数据 将拿到的一维数组处理成二维数组 连续单个节点的合成一个二维数组 多环境的直接是对象
@@ -136,7 +139,7 @@ export default function DeploySteps(props: any) {
           !Array.isArray(item) ? (
             <MultiEnvSteps item={item} data={data} index={index} {...props} initial={getInitValue(index)} />
           ) : (
-            <SingelEnvSteps items={item} {...props} initial={getInitValue(index)} env={envInfo?.deployEnvs[0]} />
+            <SingelEnvSteps items={item} {...props} initial={getInitValue(index)} />
           ),
         )
       ) : (

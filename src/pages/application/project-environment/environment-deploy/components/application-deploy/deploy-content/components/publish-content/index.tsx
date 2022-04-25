@@ -13,8 +13,7 @@ import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import FrontendDevEnvSteps from './frontend-steps/dev';
-// import DeploySteps from './steps';
-import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
+import DeploySteps from './steps';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -83,7 +82,7 @@ export default function PublishContent(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         const features = deployedList
-          .filter((item) => !selectedRowKeys.includes(item.id))
+          .filter((item) => selectedRowKeys.includes(item.id))
           .map((item) => item.branchName);
 
         return createDeploy({
@@ -128,17 +127,28 @@ export default function PublishContent(props: IProps) {
     });
   }
 
-  function getItemByKey(listStr: string, envCode: string) {
-    try {
-      const list = listStr ? JSON.parse(listStr) : [];
-      const item = list.find((val: any) => val.envCode === envCode);
-      return item || {};
-    } catch (e) {
-      return listStr
-        ? {
-            subJenkinsUrl: listStr,
-          }
-        : {};
+  // function getItemByKey(listStr: string, envCode: string) {
+  //   try {
+  //     const list = listStr ? JSON.parse(listStr) : [];
+  //     const item = list.find((val: any) => val.envCode === envCode);
+  //     return item || {};
+  //   } catch (e) {
+  //     return listStr
+  //       ? {
+  //         subJenkinsUrl: listStr,
+  //       }
+  //       : {};
+  //   }
+  // }
+
+  function getItemByKey(obj: any, envCode: string) {
+    if (obj) {
+      const keyList = Object.keys(obj) || [];
+      if (keyList.length !== 0 && envCode) {
+        return obj[envCode];
+      } else {
+        return '';
+      }
     }
   }
 
@@ -177,7 +187,6 @@ export default function PublishContent(props: IProps) {
         envTypeCode={envTypeCode}
         stopSpin={stopSpin}
         onSpin={onSpin}
-        isEnvProject={true}
         deployedList={deployedList}
         getItemByKey={getItemByKey}
         projectEnvCode={projectEnvCode}
@@ -191,12 +200,12 @@ export default function PublishContent(props: IProps) {
         <div className="caption-right">
           {!isProd && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-              重新部署
+              提交分支
             </Button>
           )}
           {!isProd || isFrontend ? (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-              批量退出
+              退出分支
             </Button>
           ) : null}
           {/* {!isFrontend && !isProd && (

@@ -5,7 +5,7 @@
  * @create 2021-04-15 10:04
  */
 
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
 import {
@@ -26,69 +26,134 @@ import './index.less';
 const rootCls = 'deploy-content-compo';
 const tempData = {
   metadata: {
-    id: 1564,
+    id: 1650,
     appCode: 'dubbo-consumer',
-    pipelineCode: 'pipeline-1',
+    pipelineCode: 'test-pipeline3',
     envTypeCode: 'dev',
     isActive: 1,
-    version: '1.0',
+    curUser: '王安楠',
   },
   branchInfo: {
-    masterBranch: 'master-1',
-    releaseBranch: 'release_dev_20220411162402',
-    features: ['feature_ccd_20220406160947', 'feature_test_20220330202635'],
+    masterBranch: 'master',
+    releaseBranch: 'release_test-pipeline3_20220425162817',
+    features: ['feature_ccd_20220406160947'],
+    unMergedFeatures: [],
     conflictFeature: '',
-    // "tagName": "tag-1"
+    tagName: '',
   },
   envInfo: {
-    deployEnvs: ['base', 'dev'],
+    deployEnvs: ['test-proe-bm', 'base-dev'],
   },
   buildInfo: {
-    buildUrl:
-      '[{"envCode":"base","subJenkinsUrl":"http://jenkins-dev.cfuture.shop/job/dubbo-consumer/25/console"},{"envCode":"dev","subJenkinsUrl":"http://jenkins-dev.cfuture.shop/job/dubbo-consumer/26/console"}]',
-    buildType: 'beClientBuild',
+    buildUrl: {
+      'base-dev': 'http://jenkins-dev.cfuture.shop/job/dubbo-consumer/38/console',
+      'test-proe-bm': 'http://jenkins-dev.cfuture.shop/job/dubbo-consumer/39/console',
+    },
+    buildType: 'beServerBuild',
+    buildResultInfo: {
+      artifactId: 'dubbo-consumer',
+      filePath: '',
+      groupID: 'com.alibaba.edas',
+      image:
+        '[{"envCode":"base-dev","image":"cfuture-harbor-registry-vpc.cn-hangzhou.cr.aliyuncs.com/c2f/test-dubbo-consumer:20220425162834","deployTime":"2022-04-25 16:28:34"},{"envCode":"test-proe-bm","image":"cfuture-harbor-registry-vpc.cn-hangzhou.cr.aliyuncs.com/c2f/test-dubbo-consumer:20220425162834","deployTime":"2022-04-25 16:28:34"}]',
+      jarPath: 'test-dubbo-consumer.jar',
+      version: '1.0',
+    },
   },
   status: {
-    deployErrInfo: '[{"envCode":"base","subErrInfo":""},{"envCode":"dev","subErrInfo":"推送资源出错"}]',
+    deployStatus: 'process',
     deployNodes: [
-      { nodeType: 'single', nodeName: '创建任务', nodeStatus: 'finish' },
-      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'finish' },
-      { nodeName: '构建', nodeStatus: 'finish', nodeType: 'single' },
-
       {
+        nodeName: '开始任务',
+        nodeCode: 'start',
+        nodeType: 'single',
+        nodeStatus: 'finish',
+        confirm: null,
+      },
+      {
+        nodeName: '合并分支',
+        nodeCode: 'merge',
+        nodeType: 'single',
+        nodeStatus: 'finish',
+        confirm: {
+          waitConfirm: false,
+          label: '确认合并',
+        },
+      },
+      {
+        nodeName: '并发节点',
+        nodeCode: 'concurrency',
         nodeType: 'subject',
+        nodeStatus: 'error',
+        confirm: null,
         nodes: {
           'base-dev': [
             {
-              nodeName: '部署',
-              nodeStatus: 'process',
+              nodeName: '构建',
+              nodeCode: 'build',
               nodeType: 'single',
-              confirm: { waitConfirm: true, label: '' },
-              deployingBatch: 2,
+              nodeStatus: 'finish',
+              confirm: {
+                waitConfirm: false,
+                label: '确认构建',
+              },
+              EnvCode: 'base-dev',
             },
-            { nodeName: '灰度验证', nodeStatus: 'finish', nodeType: 'single' },
-            { nodeName: '推送版本', nodeStatus: 'finish', nodeType: 'single' },
-          ],
-          dev: [
             {
               nodeName: '部署',
-              nodeStatus: 'process',
+              nodeCode: 'deploy',
               nodeType: 'single',
+              nodeStatus: 'finish',
               confirm: {
-                waitConfirm: true,
-                label: '',
+                waitConfirm: false,
+                label: '确认部署',
               },
+              EnvCode: 'base-dev',
+              DeployingBatch: 0,
             },
-            { nodeName: '灰度验证', nodeStatus: 'finish', nodeType: 'single' },
-            { nodeName: '推送版本', nodeStatus: 'finish', nodeType: 'single' },
+          ],
+          'test-proe-bm': [
+            {
+              nodeName: '构建',
+              nodeCode: 'build',
+              nodeType: 'single',
+              nodeStatus: 'finish',
+              confirm: {
+                waitConfirm: false,
+                label: '确认构建',
+              },
+              EnvCode: 'test-proe-bm',
+            },
+            {
+              nodeName: '部署',
+              nodeCode: 'deploy',
+              nodeType: 'single',
+              nodeStatus: 'error',
+              confirm: {
+                waitConfirm: false,
+                label: '确认部署',
+              },
+              EnvCode: 'test-proe-bm',
+              DeployingBatch: 0,
+            },
           ],
         },
       },
-      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'finish' },
-      { nodeType: 'single', nodeName: '删除feature', nodeStatus: 'wait' },
-      { nodeType: 'single', nodeName: '完成', nodeStatus: 'wait' },
-      // nodes: []
+      {
+        nodeName: '完成',
+        nodeCode: 'end',
+        nodeType: 'single',
+        nodeStatus: 'wait',
+        confirm: null,
+      },
     ],
+    CurDeployNodesID: 3,
+    deployErrInfo: {
+      'base-dev': '',
+      concurrency: '参数异常',
+      'test-proe-bm': '',
+    },
+    lockID: 0,
   },
 };
 
@@ -104,9 +169,13 @@ export interface DeployContentProps {
   onDeployNextEnvSuccess: () => void;
 }
 
-export default function DeployContent(props: DeployContentProps) {
+const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
+  //传给父组件 关闭/开启 定时器的方法
+  useImperativeHandle(ref, () => ({
+    onOperate,
+  }));
+
   const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible } = props;
-  console.log(pipelineCode, 'pipelineCode');
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -114,7 +183,7 @@ export default function DeployContent(props: DeployContentProps) {
   const masterBranchName = useRef<string>('master');
   const [updating, setUpdating] = useState(false);
   // const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
-  const [deployInfo, setDeployInfo] = useState<any>(tempData);
+  const [deployInfo, setDeployInfo] = useState<any>({});
   const [branchInfo, setBranchInfo] = useState<{
     deployed: any[];
     unDeployed: any[];
@@ -155,9 +224,16 @@ export default function DeployContent(props: DeployContentProps) {
       branchName: cachebranchName.current,
       masterBranch: masterBranchName.current,
     });
-    if (resp?.data) {
-      const { data } = resp;
-      setDeployInfo(data);
+
+    if (resp && resp.success) {
+      if (resp?.data) {
+        setDeployInfo(resp.data);
+      }
+      if (!resp.data) {
+        setDeployInfo({});
+      }
+    } else {
+      setDeployInfo({});
     }
 
     // if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
@@ -279,4 +355,10 @@ export default function DeployContent(props: DeployContentProps) {
       </div>
     </div>
   );
-}
+});
+
+export default DeployContent;
+
+// export default function DeployContent(props: DeployContentProps) {
+
+// }

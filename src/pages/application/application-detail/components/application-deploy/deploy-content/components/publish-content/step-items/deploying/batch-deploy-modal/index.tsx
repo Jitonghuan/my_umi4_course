@@ -12,7 +12,7 @@ import { confirmDeploy, queryEnvsReq, applyHaveNoUpPlanList } from '@/pages/appl
 // import { IProps } from './types';
 import { getRequest, postRequest } from '@/utils/request';
 
-export default function DeployModal({
+export default function BatchDeployModal({
   envTypeCode,
   env,
   envs,
@@ -23,6 +23,7 @@ export default function DeployModal({
   onOperate,
   deployingBatch,
   id,
+  jenkinUrl,
 }: any) {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
@@ -74,7 +75,6 @@ export default function DeployModal({
         dataSource?.map((item: any) => {
           dataArry.push({ label: item?.ApplyTitle, value: item?.ApplyId });
         });
-        console.log(dataArry, 'dataArray');
         setDeployApplyOptions(dataArry);
         if (res.data === null) {
           setDeployApplyOptions(null);
@@ -121,13 +121,13 @@ export default function DeployModal({
           {text1}
           {text2}
         </div>
-        {/* {jenkinsUrl && (
+        {jenkinUrl && (
           <div>
-            <a target="_blank" href={jenkinsUrl}>
+            <a target="_blank" href={jenkinUrl}>
               查看构建详情
             </a>
           </div>
-        )} */}
+        )}
       </>
     );
   }, [deployInfo, deployingBatch]);
@@ -140,19 +140,24 @@ export default function DeployModal({
 
   const handleOk = () => {
     const currentDeployBatch = deployingBatch && deployingBatch === 2 ? 2 : deployBatch;
-    confirmDeploy({ deployingBatch: currentDeployBatch, applyIds: currentAppIds, envCode: env, id });
-    if (currentDeployBatch === 2) {
-      onCancel();
-      onOperate('deployEnd');
-      message.success('第二批正在部署中......');
-    }
+    confirmDeploy({ deployingBatch: currentDeployBatch, applyIds: currentAppIds, envCode: env, id }).then((res) => {
+      if (res && res.success) {
+        if (currentDeployBatch === 2 || deployBatch === 0) {
+          onCancel();
+          onOperate('deployEnd');
+          if (currentDeployBatch === 2) {
+            message.success('操作成功，正在部署中...');
+          }
+        }
+      }
+    });
   };
 
   return (
     <Modal
       title="批量部署"
       visible={visible}
-      // confirmLoading={}
+      confirmLoading={deployingBatch === 1}
       okText={deployingBatch && deployingBatch === 2 ? '继续' : '确认'}
       onOk={handleOk}
       onCancel={onCancel}
@@ -165,7 +170,7 @@ export default function DeployModal({
       <div style={{ marginTop: 8 }}>
         <span>发布批次：</span>
         <Radio.Group
-          disabled={deployingBatch === 1}
+          disabled={[1, 2].includes(deployingBatch)}
           value={deployBatch}
           onChange={(v) => {
             setDeployBatch(v.target.value);
@@ -192,7 +197,8 @@ export default function DeployModal({
       )}
 
       <h3 style={{ marginTop: 20 }}>发布详情</h3>
-      {detail}
+      {deployingBatch && [1, 2].includes(deployingBatch) && detail}
+      {/* {detail} */}
     </Modal>
   );
 }

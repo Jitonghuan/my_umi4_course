@@ -12,7 +12,7 @@ import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { createDeploy, updateFeatures } from '@/pages/application/service';
+import { createDeploy, updateFeatures, withdrawFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
 import './index.less';
@@ -24,21 +24,16 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
   const isProd = envTypeCode === 'cProd';
   let { metadata, status, envInfo } = deployInfo || {};
   const { deployNodes } = status || {};
-  console.log(deployNodes, 'deployNodes');
-
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
-  function getItemByKey(listStr: string, envCode: string) {
-    try {
-      const list = listStr ? JSON.parse(listStr) : [];
-      const item = list.find((val: any) => val.envCode === envCode);
-      return item || {};
-    } catch (e) {
-      return listStr
-        ? {
-            subJenkinsUrl: listStr,
-          }
-        : {};
+  function getItemByKey(obj: any, envCode: string) {
+    if (obj) {
+      const keyList = Object.keys(obj) || [];
+      if (keyList.length !== 0 && envCode) {
+        return obj[envCode];
+      } else {
+        return '';
+      }
     }
   }
 
@@ -76,14 +71,14 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                   onOperate('retryDeployStart');
 
                   confirm({
-                    title: '确定要重新部署吗?',
+                    title: '确定要重新提交吗?',
                     icon: <ExclamationCircleOutlined />,
                     onOk() {
                       const filter = deployedList
                         .filter((el) => selectedRowKeys.includes(el.id))
                         .map((el) => el.branchName);
                       return updateFeatures({
-                        id: deployInfo.id,
+                        id: metadata.id,
                         features: filter,
                       }).then(() => {
                         onOperate('retryDeployEnd');
@@ -95,7 +90,7 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                   });
                 }}
               >
-                重新部署
+                重新提交
               </Button>
               <Button
                 type="primary"
@@ -107,13 +102,14 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                     title: '确定要批量退出吗?',
                     icon: <ExclamationCircleOutlined />,
                     onOk() {
-                      return createDeploy({
-                        appCode,
-                        envTypeCode,
+                      return withdrawFeatures({
+                        // appCode,
+                        // envTypeCode,
                         features: deployedList
-                          .filter((item) => !selectedRowKeys.includes(item.id))
+                          .filter((item) => selectedRowKeys.includes(item.id))
                           .map((item) => item.branchName),
-                        isClient: true,
+                        // isClient: true,
+                        id: metadata.id,
                       }).then(() => {
                         onOperate('batchExitEnd');
                       });
@@ -124,7 +120,7 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                   });
                 }}
               >
-                批量退出
+                退出分支
               </Button>
             </div>
           )}

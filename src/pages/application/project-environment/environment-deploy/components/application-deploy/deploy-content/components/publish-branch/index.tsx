@@ -38,14 +38,16 @@ export interface PublishBranchProps {
     status: string | number;
   }[];
   masterBranchChange: any;
+  pipelineCode: string;
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
 }
 
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch, masterBranchChange } =
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch, masterBranchChange, pipelineCode } =
     publishBranchProps;
   const { appData } = useContext(DetailContext);
+  const { metadata } = deployInfo || {};
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
 
@@ -56,7 +58,16 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
-  const [masterListData] = useMasterBranchList({ branch_type: 'master' });
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+
+  const getBuildType = () => {
+    let { appType, isClient } = appData || {};
+    if (appType === 'frontend') {
+      return 'feMultiBuild';
+    } else {
+      return isClient ? 'beClientBuild' : 'beServerBuild';
+    }
+  };
 
   type reviewStatusTypeItem = {
     color: string;
@@ -77,7 +88,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
       return await updateFeatures({
-        id: deployInfo.id,
+        id: metadata?.id,
         features: filter,
       });
     }
@@ -87,7 +98,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       envTypeCode: env,
       features: filter,
       envCodes: [env],
+      pipelineCode,
       isClient: +appData?.isClient! === 1,
+      masterBranch: selectMaster, //主干分支
+      buildType: getBuildType(),
     });
   };
 
@@ -151,14 +165,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   };
   useEffect(() => {
     if (masterListData.length !== 0) {
-      const option = masterListData.map((item: any) => ({ value: item.id, label: item.branchName }));
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
+      const initValue = option.find((item: any) => item.label === 'master');
+      setSelectMaster(initValue?.value || '');
     }
   }, [masterListData]);
 
-  useEffect(() => {
-    setSelectMaster(1960);
-  }, []);
   const handleChange = (v: string) => {
     setSelectMaster(v);
     masterBranchChange(v);
@@ -176,6 +189,12 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             value={selectMaster}
             style={{ width: '240px', marginRight: '20px' }}
             onChange={handleChange}
+            showSearch
+            optionFilterProp="label"
+            labelInValue
+            filterOption={(input, option) => {
+              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+            }}
           ></Select>
           <h4>开发分支名称：</h4>
           <Input.Search

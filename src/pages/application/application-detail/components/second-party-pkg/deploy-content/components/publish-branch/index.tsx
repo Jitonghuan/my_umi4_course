@@ -67,6 +67,7 @@ export default function PublishBranch(props: IProps) {
       isClient: true,
       pipelineCode,
       buildType: 'beClientBuild',
+      masterBranch: selectMaster, //主干分支
     }).then((res: any) => {
       if (!res.success) {
         message.error(res.errorMsg);
@@ -138,7 +139,12 @@ export default function PublishBranch(props: IProps) {
           />
 
           <div className="caption-right">
-            <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
+            <Button
+              type="primary"
+              disabled={!selectedRowKeys?.length}
+              onClick={submitClick}
+              style={{ marginLeft: '20px' }}
+            >
               提交分支
             </Button>
           </div>

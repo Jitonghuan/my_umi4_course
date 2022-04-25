@@ -5,12 +5,12 @@
 import React from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
-import { rePushFeResource } from '@/pages/application/service';
+import { rePushFeResource, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, env, status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env = '', status, ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   // const isLoading = deployStatus === 'pushFeResource';
   // const isError = deployStatus === 'pushFeResourceErr';
@@ -19,7 +19,11 @@ export default function PushResourceStep(props: StepItemProps) {
 
   const handleRetryClick = async () => {
     try {
-      await rePushFeResource({ id: metadata.id, envCode: env });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('rePushFeResourceEnd');
     }

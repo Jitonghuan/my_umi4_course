@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/25 16:21
 
-import React, { useContext, useState, useLayoutEffect, useEffect } from 'react';
+import React, { useContext, useState, useLayoutEffect, useEffect, useRef, useMemo } from 'react';
 import { Tabs, Select, Tag } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
@@ -28,6 +28,7 @@ export default function ApplicationDeploy(props: any) {
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
+  const deloyContentRef = useRef<any>();
 
   let env = window.location.href.includes('zslnyy')
     ? 'prod'
@@ -50,6 +51,27 @@ export default function ApplicationDeploy(props: any) {
     queryData();
     getPipeline(tabActive);
   }, []);
+
+  useEffect(() => {
+    if (deloyContentRef.current) {
+      if (visible) {
+        deloyContentRef.current.onOperate('pipelineStart');
+      } else {
+        deloyContentRef.current.onOperate('pipelineEnd');
+      }
+    }
+  }, [visible]);
+
+  const pipelineName = useMemo(() => {
+    if (pipelineOption.length !== 0) {
+      const pipeline = pipelineOption.find((item: any) => item.value === currentValue);
+      if (pipeline) {
+        return pipeline.label;
+      } else {
+        return '---';
+      }
+    }
+  }, [currentValue, pipelineOption]);
 
   const queryData = () => {
     getRequest(listAppEnvType, {
@@ -153,27 +175,33 @@ export default function ApplicationDeploy(props: any) {
         activeKey={tabActive}
         type="card"
         tabBarExtraContent={
-          <span className="tabs-extra">
-            请选择：
-            <Select
-              value={currentValue}
-              style={{ width: 180 }}
-              size="small"
-              onChange={handleChange}
-              options={pipelineOption}
-            ></Select>
-            <SettingOutlined
-              style={{ marginLeft: '10px' }}
-              onClick={() => {
-                setVisible(true);
-              }}
-            />
-          </span>
+          <div className="tabs-extra">
+            <span>
+              当前流水线：<Tag color="blue">{pipelineName}</Tag>
+            </span>
+            <span className="tabs-extra-select">
+              请选择：
+              <Select
+                value={currentValue}
+                style={{ width: 220 }}
+                size="small"
+                onChange={handleChange}
+                options={pipelineOption}
+              ></Select>
+              <SettingOutlined
+                style={{ marginLeft: '10px' }}
+                onClick={() => {
+                  setVisible(true);
+                }}
+              />
+            </span>
+          </div>
         }
       >
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
+              ref={deloyContentRef}
               isActive={item.value === tabActive}
               envTypeCode={item.value}
               pipelineCode={currentValue}

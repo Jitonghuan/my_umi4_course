@@ -74,8 +74,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
   }>({ deployed: [], unDeployed: [] });
 
   const requestData = async () => {
-    if (!appCode) return;
-    // console.log(tempData,2)
+    if (!appCode || !pipelineCode) return;
 
     setUpdating(true);
     const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
@@ -106,12 +105,15 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
     //   setDeployInfo(resp1?.data?.dataSource[0]);
     // }
 
-    // if (resp?.data) {
-    //   const { data } = resp;
-    //   setDeployInfo(data)
-    // }
-    if (tempData) {
-      setDeployInfo(tempData);
+    if (resp && resp.success) {
+      if (resp?.data) {
+        setDeployInfo(resp.data);
+      }
+      if (!resp.data) {
+        setDeployInfo({});
+      }
+    } else {
+      setDeployInfo({});
     }
 
     setBranchInfo({
@@ -135,10 +137,10 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode) return;
+    if (!appCode || !pipelineCode) return;
 
     timerHandle('do', true);
-  }, [appCode]);
+  }, [appCode, pipelineCode]);
 
   const searchUndeployedBranch = (branchName?: string) => {
     cachebranchName.current = branchName;

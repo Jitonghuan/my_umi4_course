@@ -67,8 +67,11 @@ export const queryFeatureDeployedUrl = `${appConfig.apiPrefix}/releaseManage/bra
 /** POST 创建部署 */
 export const createDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create`;
 
-/** POST 追加发布的feature列表 */
-export const updateFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/updateFeatures`;
+/** POST 退出 */
+export const withdrawFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/withdrawFeatures`;
+
+/** POST 重新提交分支 */
+export const reCommitUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reCommit`;
 
 /** POST 重试合并 */
 export const retryMergeUrl = `${appConfig.apiPrefix}/releaseManage/merge/retry`;
@@ -80,7 +83,7 @@ export const retryBuildUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reBuil
 export const retryDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reDeploy`;
 
 /** POST 生产环境确认部署和继续部署 */
-export const confirmProdDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmProd`;
+export const confirmProdDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmDeploy`;
 
 /** POST Venus分析 */
 export const venusAnalyzeUrl = 'http://venus.cfuture.shop/venus-api/v1/app/analysis';
@@ -265,6 +268,8 @@ export const createFeatureBranch = (params: {
   branchName: string;
   /** 描述 */
   desc: string;
+  demandId: any;
+  masterBranch: string;
 }) =>
   postRequest(createFeatureBranchUrl, {
     data: params,
@@ -439,7 +444,7 @@ export const queryFeatureDeployed = async (params: {
   isDeployed?: 0 | 1;
   /** 分支名 */
   branchName?: string;
-  pipelineCode: string;
+  pipelineCode?: string;
   masterBranch?: string;
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
@@ -474,7 +479,7 @@ export const updateFeatures = (params: {
   /** 选择的feature分支 */
   features: string[];
 }) =>
-  postRequest(updateFeaturesUrl, {
+  postRequest(reCommitUrl, {
     data: params,
   });
 
@@ -484,6 +489,12 @@ export const retryMerge = (params: {
   id: number;
 }) =>
   postRequest(retryMergeUrl, {
+    data: params,
+  });
+
+// 退出分支
+export const withdrawFeatures = (params: { id: number; features: any }) =>
+  postRequest(withdrawFeaturesUrl, {
     data: params,
   });
 
@@ -504,6 +515,18 @@ export const retryDeploy = (params: {
   envCode: string;
 }) =>
   postRequest(retryDeployUrl, {
+    data: params,
+  });
+
+export const retryUrl = `${appConfig.apiPrefix}/releaseManage/deploy/retry`;
+
+/** 重试 */
+export const retry = (params: {
+  /** 部署的数据库自增ID */
+  id: number;
+  envCode?: string;
+}) =>
+  postRequest(retryUrl, {
     data: params,
   });
 

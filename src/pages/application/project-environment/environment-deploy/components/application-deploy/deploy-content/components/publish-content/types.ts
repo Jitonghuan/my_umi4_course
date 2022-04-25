@@ -19,7 +19,7 @@ export interface StepsProps {
   stopSpin: any;
   deployedList: any;
   onCancelDeploy?: (envCode: string) => void;
-  getItemByKey: (listStr: string, envCode: string) => any;
+  getItemByKey: (obj: any, envCode: string) => any;
   projectEnvCode: any;
 }
 

@@ -4,8 +4,6 @@ import { queryBranchListUrl } from '@/pages/application/service';
 
 // 获取主干分支列表
 export function useMasterBranchList(props: any) {
-  // const { params } = props;
-  // console.log(props, 'params')
   const [data, setData] = useState<any>([]);
   const loadData = useCallback(
     async (extra?: any) => {
@@ -15,6 +13,7 @@ export function useMasterBranchList(props: any) {
         });
         const { dataSource, pageInfo } = result.data || {};
         setData(dataSource || []);
+        console.log(dataSource, 'dataSource');
       } catch (ex) {
         setData([]);
       } finally {

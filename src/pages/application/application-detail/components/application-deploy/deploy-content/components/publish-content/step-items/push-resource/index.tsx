@@ -5,7 +5,7 @@
 import React, { useRef, useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button, message } from 'antd';
-import { rePushFeResource } from '@/pages/application/service';
+import { rePushFeResource, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
 import { downloadResource, listAppEnv } from '@/pages/application/service';
@@ -15,11 +15,12 @@ import appConfig from '@/app.config';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, env, status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env = '', status, ...others } = props;
 
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const [supportEnv, setSupportEnv] = useState<string[]>(['']); //支持离线部署的环境
+  const [disabled, setDisabled] = useState<boolean>(false);
   const isLoading = status === 'process';
   const isError = status === 'error';
   const isFrontend = appData?.appType === 'frontend';
@@ -51,7 +52,11 @@ export default function PushResourceStep(props: StepItemProps) {
   };
   const handleRetryClick = async () => {
     try {
-      await rePushFeResource({ id: metadata.id, envCode: env });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('rePushFeResourceEnd');
     }
@@ -74,8 +79,13 @@ export default function PushResourceStep(props: StepItemProps) {
             <Button
               style={{ marginTop: 4 }}
               target="_blank"
+              disabled={disabled}
               href={`${downloadResource}?deployId=${metadata.id}`}
               onClick={() => {
+                setDisabled(true);
+                setTimeout(() => {
+                  setDisabled(false);
+                }, 5000);
                 message.info('资源开始下载');
               }}
             >

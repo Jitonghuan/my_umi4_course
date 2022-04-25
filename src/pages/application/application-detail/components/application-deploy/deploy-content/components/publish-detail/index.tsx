@@ -32,6 +32,7 @@ export default function PublishDetail(props: IProps) {
   const [envProjectForm] = Form.useForm();
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
+  const { buildUrl } = buildInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [loading, envDataSource] = useEnvList();
@@ -343,39 +344,57 @@ export default function PublishDetail(props: IProps) {
     }
   });
 
-  let deployErrInfo: any[] = [];
-  try {
-    deployErrInfo = status.deployErrInfo ? JSON.parse(status.deployErrInfo) : [];
-  } catch (e) {
-    if (status && status.deployErrInfo) {
-      deployErrInfo = [
-        {
-          subErrInfo: status.deployErrInfo,
-          envCode: envInfo.deployEnvs,
-        },
-      ];
-    }
+  // let deployErrInfo: any[] = [];
+  // try {
+  //   if (status && status.deployErrInfo) {
+  //     Object.keys(status.deployErrInfo).forEach((item) => {
+  //       deployErrInfo.push({ item: status.deployErrorInfo[item] })
+  //     })
+  //   }
+  // } catch (e) {
+  //   if (status && status.deployErrInfo) {
+  //     const data = Object.keys(deployErrInfo)
+  //     deployErrInfo = [
+  //       {
+  //         subErrInfo: status.deployErrInfo,
+  //         envCode: envInfo.deployEnvs,
+  //       },
+  //     ];
+  //   }
+  // }
+
+  let errorInfo: any[] = [];
+  if (status && status.deployErrInfo) {
+    Object.keys(status.deployErrInfo).forEach((item) => {
+      errorInfo.push({ key: item, errorMessage: status.deployErrInfo[item] });
+    });
   }
 
   function goToJenkins(item: any) {
     let jenkinsUrl: any[] = [];
-    try {
-      // jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
-      jenkinsUrl = buildInfo.buildUrl ? JSON.parse(buildInfo.buildUrl) : [];
-    } catch (e) {
-      if (buildInfo.buildUrl) {
-        jenkinsUrl = [
-          {
-            subJenkinsUrl: buildInfo.buildUrl,
-            envCode: envInfo.deployEnvs,
-          },
-        ];
+    if (buildUrl && item?.key) {
+      const data = buildUrl[item?.key] || '';
+      if (data) {
+        window.open(data, '_blank');
       }
     }
-    const data = jenkinsUrl.find((val) => val.envCode === item.envCode);
-    if (data && data.subJenkinsUrl) {
-      window.open(data.subJenkinsUrl, '_blank');
-    }
+    // try {
+    //   // jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
+    //   jenkinsUrl = buildInfo.buildUrl ? JSON.parse(buildInfo.buildUrl) : [];
+    // } catch (e) {
+    //   if (buildInfo.buildUrl) {
+    //     jenkinsUrl = [
+    //       {
+    //         subJenkinsUrl: buildInfo.buildUrl,
+    //         envCode: envInfo.deployEnvs,
+    //       },
+    //     ];
+    //   }
+    // }
+    // const data = jenkinsUrl.find((val) => val.envCode === item.key);
+    // if (data && data.subJenkinsUrl) {
+    //   window.open(data.subJenkinsUrl, '_blank');
+    // }
   }
 
   return (
@@ -450,7 +469,11 @@ export default function PublishDetail(props: IProps) {
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {metadata?.version ? <Paragraph copyable>{metadata?.version}</Paragraph> : '---'}
+            {buildInfo?.buildResultInfo?.version ? (
+              <Paragraph copyable>{buildInfo?.buildResultInfo?.version}</Paragraph>
+            ) : (
+              '---'
+            )}
             {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
@@ -461,19 +484,19 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="合并分支" span={4}>
           {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
-        {status?.deployErrInfo && deployErrInfo.length && (
+        {status?.deployErrInfo && errorInfo.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>
-              {deployErrInfo.map((errInfo) => (
+              {errorInfo.map((err) => (
                 <div>
-                  <span style={{ color: 'black' }}> {errInfo?.subErrInfo ? `${errInfo?.envCode}：` : ''}</span>
+                  <span style={{ color: 'black' }}> {err?.errorMessage ? `${err?.key}：` : ''}</span>
                   <a
                     style={{ color: 'red', textDecoration: 'underline' }}
                     onClick={() => {
-                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') !== -1) {
-                        goToJenkins(errInfo);
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1) {
+                        goToJenkins(err);
                       }
-                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
                         localStorage.setItem('__init_env_tab__', metadata?.envTypeCode);
                         history.push(
                           `/matrix/application/detail/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}`,
@@ -481,10 +504,10 @@ export default function PublishDetail(props: IProps) {
                       }
                     }}
                   >
-                    {errInfo?.subErrInfo}
+                    {err?.errorMessage}
                   </a>
-                  {appData?.appType !== 'frontend' && (
-                    <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                  {appData?.appType !== 'frontend' && envInfo?.depoloyEnvs?.includes(err.key) && (
+                    <span style={{ color: 'gray' }}> {err?.errorMessage ? '（点击跳转）' : ''}</span>
                   )}
                 </div>
               ))}

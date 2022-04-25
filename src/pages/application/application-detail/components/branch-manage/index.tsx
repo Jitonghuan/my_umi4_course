@@ -168,7 +168,7 @@ export default function BranchManage() {
           )}
         />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
-        <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
+        <Table.Column title="已部署流水线" dataIndex="deployedEnv" width={120} />
         <Table.Column
           title="创建时间"
           dataIndex="gmtCreate"

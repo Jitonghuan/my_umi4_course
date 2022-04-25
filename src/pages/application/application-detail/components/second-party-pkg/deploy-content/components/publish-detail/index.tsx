@@ -19,8 +19,8 @@ const { confirm } = Modal;
 const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   const { appData } = useContext(DetailContext);
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
+  const { buildUrl } = buildInfo || {};
   const { appCategoryCode } = appData || {};
-
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
@@ -44,17 +44,13 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
     const { deployEnvs } = envInfo || {};
 
     const namesArr: any[] = [];
-    if (deployEnvs?.length !== 0) {
-      envDataList?.forEach((item: any) => {
-        deployEnvs?.forEach((v: any) => {
-          if (item?.envCode === v) {
-            namesArr.push(item.envName);
-          }
-        });
-      });
-      return namesArr.join(',');
-    }
-    return (envDataList as any).find((v: any) => v.envCode === deployEnvs[0])?.envName;
+    return envDataList
+      .filter((envItem: any) => {
+        return (deployEnvs || []).includes(envItem.value);
+      })
+      .map((envItem: any) => `${envItem.label}(${envItem.value})`)
+      .join(',');
+    // return (envDataList as any).find((v: any) => v.envCode === deployEnvs[0])?.envName;
   }, [envDataList, deployInfo]);
 
   return (

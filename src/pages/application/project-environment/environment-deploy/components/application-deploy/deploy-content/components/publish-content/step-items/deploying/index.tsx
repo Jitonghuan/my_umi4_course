@@ -5,17 +5,27 @@
 import React, { useState } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Steps, Button, Modal } from 'antd';
-import { retryDeploy } from '@/pages/application/service';
+import { retryDeploy, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
-import DeployModal from './deploy-modal';
+// import DeployModal from './deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, status, getItemByKey, env, ...others } = props;
+  const {
+    deployInfo,
+    deployStatus,
+    onOperate,
+    envTypeCode,
+    envCode,
+    status,
+    getItemByKey,
+    env = '',
+    ...others
+  } = props;
   // const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
-  const { buildUrl } = buildInfo;
-  const jenkinsUrl = getItemByKey(buildUrl, env).subJenkinsUrl || '';
+  const { buildUrl } = buildInfo || {};
+  const jenkinsUrl = getItemByKey(buildUrl, env) || '';
   const isLoading = status === 'process';
 
   const [deployVisible, setDeployVisible] = useState(false);
@@ -34,7 +44,11 @@ export default function DeployingStep(props: StepItemProps) {
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryDeploy({ id: deployInfo.id, envCode: env });
+        const params = { id: metadata?.id };
+        if (env) {
+          Object.assign(params, { envCode: env });
+        }
+        await retry({ ...params });
         onOperate('retryDeployEnd');
       },
       onCancel() {
@@ -105,13 +119,13 @@ export default function DeployingStep(props: StepItemProps) {
         }
       />
 
-      <DeployModal
+      {/* <DeployModal
         visible={deployVisible}
         deployInfo={deployInfo}
         onCancel={() => setDeployVisible(false)}
         onOperate={onOperate}
         envTypeCode="prod"
-      />
+      /> */}
     </>
   );
 }

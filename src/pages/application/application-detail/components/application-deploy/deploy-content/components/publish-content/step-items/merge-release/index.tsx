@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button, message, Spin } from 'antd';
-import { retryMerge, getMergeMessage } from '@/pages/application/service';
+import { retryMerge, getMergeMessage, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import MergeConflict from '../../../merge-conflict';
 import NoConflict from '../../../merge-conflict/NoConflict';
@@ -22,6 +22,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
     stopSpin,
     deployedList,
     status,
+    env = '',
     pipelineCode,
     ...others
   } = props;
@@ -34,7 +35,11 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const retryMergeClick = async () => {
     try {
-      await retryMerge({ id: metadata.id });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('mergeReleaseRetryEnd');
     }

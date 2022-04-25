@@ -5,12 +5,23 @@
 import React, { useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
-import { retryDelFeature, venusAnalyze } from '@/pages/application/service';
+import { retryDelFeature, venusAnalyze, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 删除feature */
 export default function DeleteFeatureStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, appData, steps, status, ...others } = props;
+  const {
+    deployInfo,
+    deployStatus,
+    onOperate,
+    envTypeCode,
+    env = '',
+    isFrontend,
+    appData,
+    steps,
+    status,
+    ...others
+  } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const [venusLoading, setVenusLoading] = useState<boolean>(false);
   const isError = status === 'error';
@@ -18,7 +29,11 @@ export default function DeleteFeatureStep(props: StepItemProps) {
 
   const handleRetryDelClick = async () => {
     try {
-      await retryDelFeature({ id: metadata.id });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('deleteFeatureRetryEnd');
     }

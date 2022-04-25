@@ -5,19 +5,23 @@
 import React from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
-import { reMergeMaster } from '@/pages/application/service';
+import { retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 合并master */
 export default function MergeMasterStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
+  const { deployInfo, onOperate, envTypeCode, status, env = '', ...others } = props;
   const { metadata } = deployInfo || {};
   const isLoading = status === 'process';
   const isError = status === 'error';
 
   const retryMergeMasterClick = async () => {
     try {
-      await reMergeMaster({ id: metadata.id });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('mergeMasterRetryEnd');
     }

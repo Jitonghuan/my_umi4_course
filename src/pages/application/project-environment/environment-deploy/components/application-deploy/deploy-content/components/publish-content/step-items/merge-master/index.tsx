@@ -5,7 +5,7 @@
 import React from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
-import { reMergeMaster } from '@/pages/application/service';
+import { reMergeMaster, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 合并master */
@@ -19,7 +19,7 @@ export default function MergeMasterStep(props: StepItemProps) {
 
   const retryMergeMasterClick = async () => {
     try {
-      await reMergeMaster({ id: metadata.id });
+      await retry({ id: metadata.id });
     } finally {
       onOperate('mergeMasterRetryEnd');
     }
