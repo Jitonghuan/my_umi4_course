@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
+import moment from 'moment';
 import AceEditor from '@/components/ace-editor';
 import {
   Form,
@@ -25,7 +26,7 @@ export default function ComponentDetail() {
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
   const { Paragraph } = Typography;
-  const [editableStr, setEditableStr] = useState('This is an editable text.');
+  const [editableStr, setEditableStr] = useState(configInfoData.indentDescription);
   return (
     <PageContainer>
       <ContentCard>
@@ -46,14 +47,16 @@ export default function ComponentDetail() {
               </Button>
             }
           >
-            <Descriptions.Item label="局点名称">Zhou Maomao</Descriptions.Item>
+            <Descriptions.Item label="局点名称">{configInfoData.indentName}</Descriptions.Item>
             <Descriptions.Item label="局点描述">
               <Paragraph editable={{ onChange: setEditableStr }}>{editableStr}</Paragraph>
             </Descriptions.Item>
-            <Descriptions.Item label="交付产品">Zhou Maomao</Descriptions.Item>
-            <Descriptions.Item label="交付版本">1810000000</Descriptions.Item>
-            <Descriptions.Item label="交付项目">Zhou Maomao</Descriptions.Item>
-            <Descriptions.Item label="创建时间">1810000000</Descriptions.Item>
+            <Descriptions.Item label="交付产品">{configInfoData.productName}</Descriptions.Item>
+            <Descriptions.Item label="交付版本">{configInfoData.productVersion}</Descriptions.Item>
+            <Descriptions.Item label="交付项目">{configInfoData.deliveryProject}</Descriptions.Item>
+            <Descriptions.Item label="创建时间">
+              {moment(configInfoData.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}
+            </Descriptions.Item>
             {/* <Descriptions.Item label="创建时间" span={2}>
                   empty
                 </Descriptions.Item> */}

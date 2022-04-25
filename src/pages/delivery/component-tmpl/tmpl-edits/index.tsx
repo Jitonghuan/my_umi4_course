@@ -68,7 +68,7 @@ export default function TmplEditor(props: TmplListProps) {
       title={mode === 'EDIT' ? '编辑组件模版' : mode === 'ADD' ? '新增组件模版' : mode === 'VIEW' ? '查看组件模版' : ''}
       // maskClosable={false}
       onClose={onClose}
-      width={'70%'}
+      width={'60%'}
       footer={
         <div className="drawer-footer">
           <Button type="primary" disabled={isDisabled} loading={createLoading || updateLoading} onClick={handleSubmit}>
@@ -94,15 +94,14 @@ export default function TmplEditor(props: TmplListProps) {
             </Form.Item>
           </p>
 
-          <div style={{ width: 500 }}>
-            <Form.Item
-              label="模板配置"
-              name="tempConfiguration"
-              rules={[{ required: true, message: '请输入模版配置' }]}
-            >
-              <AceEditor mode="yaml" height={450} />
-            </Form.Item>
-          </div>
+          <Form.Item
+            label="模板配置"
+            name="tempConfiguration"
+            rules={[{ required: true, message: '请输入模版配置' }]}
+            style={{ width: 800 }}
+          >
+            <AceEditor mode="yaml" height={650} />
+          </Form.Item>
         </Form>
       </ContentCard>
     </Drawer>
