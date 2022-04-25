@@ -715,7 +715,7 @@ export default function Push(props: any) {
               {/* <div style={{ width: '100%', marginTop: 16 }}></div> */}
               <Divider />
               <Form.Item
-                label="重启策略："
+                label="生效策略："
                 name="restartPolicy"
                 style={{ width: '100%' }}
                 rules={[

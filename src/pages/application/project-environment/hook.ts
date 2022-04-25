@@ -19,6 +19,7 @@ export function useCreateProjectEnv(): [boolean, (creatParamsObj: any) => Promis
           setEnsureLoading(false);
         });
     } catch (error) {
+      // console.log(`新增项目环境失败！${error}`)
       message.error(`新增项目环境失败！${error}`);
     }
   };
@@ -32,11 +33,9 @@ export function useUpdateProjectEnv() {
         if (res.success) {
           message.success('编辑项目环境成功！');
         }
-        //  else {
-        //   message.error('编辑项目环境失败！');
-        // }
       });
     } catch (error) {
+      // console.log(`编辑项目环境失败！${error}`)
       message.error(`编辑项目环境失败！${error}`);
     }
   };
@@ -129,8 +128,6 @@ export function useAddAPPS() {
       await postRequest(APIS.addApps, { data: addAppsParamsObj }).then((res) => {
         if (res.success) {
           message.success('添加应用成功！');
-        } else {
-          message.error('添加应用失败！');
         }
       });
     } catch (error) {
