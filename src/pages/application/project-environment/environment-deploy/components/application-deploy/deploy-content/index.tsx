@@ -97,13 +97,13 @@ export default function DeployContent(props: DeployContentProps) {
 
     const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
 
-    const resp1 = await queryDeployList({
-      appCode: appCode!,
-      envTypeCode: projectEnvCode,
-      isActive: 1,
-      pageIndex: 1,
-      pageSize: 10,
-    });
+    // const resp1 = await queryDeployList({
+    //   appCode: appCode!,
+    //   envTypeCode: projectEnvCode,
+    //   isActive: 1,
+    //   pageIndex: 1,
+    //   pageSize: 10,
+    // });
 
     const resp2 = await queryFeatureDeployed({
       appCode: appCode!,
@@ -131,23 +131,23 @@ export default function DeployContent(props: DeployContentProps) {
       setDeployInfo({});
     }
 
-    if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-      // const nextInfo = resp1?.data?.dataSource[0];
-      // setDeployInfo(nextInfo);
-      // 如果有部署信息，且为线上，则更新应用状态
-      // if (envTypeCode === 'prod' && appData) {
-      //   const resp4 = await getRequest(queryApplicationStatus, {
-      //     data: {
-      //       deploymentName: appData?.deploymentName,
-      //       envCode: nextInfo.deployedEnvs,
-      //     },
-      //   }).catch(() => {
-      //     return { data: null };
-      //   });
-      //   const { Status: nextAppStatus } = resp4.data || {};
-      //   setAppStatusInfo(nextAppStatus);
-      // }
-    }
+    // if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
+    // const nextInfo = resp1?.data?.dataSource[0];
+    // setDeployInfo(nextInfo);
+    // 如果有部署信息，且为线上，则更新应用状态
+    // if (envTypeCode === 'prod' && appData) {
+    //   const resp4 = await getRequest(queryApplicationStatus, {
+    //     data: {
+    //       deploymentName: appData?.deploymentName,
+    //       envCode: nextInfo.deployedEnvs,
+    //     },
+    //   }).catch(() => {
+    //     return { data: null };
+    //   });
+    //   const { Status: nextAppStatus } = resp4.data || {};
+    //   setAppStatusInfo(nextAppStatus);
+    // }
+    // }
 
     setBranchInfo({
       deployed: resp2?.data || [],
