@@ -12,7 +12,7 @@ import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { createDeploy, updateFeatures, withdrawFeatures } from '@/pages/application/service';
+import { reCommit, withdrawFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
 import './index.less';
@@ -27,13 +27,17 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
   function getItemByKey(obj: any, envCode: string) {
-    if (obj) {
-      const keyList = Object.keys(obj) || [];
-      if (keyList.length !== 0 && envCode) {
-        return obj[envCode];
-      } else {
-        return '';
+    try {
+      if (obj) {
+        const keyList = Object.keys(obj) || [];
+        if (keyList.length !== 0 && envCode) {
+          return obj[envCode];
+        } else {
+          return '';
+        }
       }
+    } catch {
+      return '';
     }
   }
 
@@ -77,7 +81,7 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                       const filter = deployedList
                         .filter((el) => selectedRowKeys.includes(el.id))
                         .map((el) => el.branchName);
-                      return updateFeatures({
+                      return reCommit({
                         id: metadata.id,
                         features: filter,
                       }).then(() => {
@@ -109,7 +113,7 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                           .filter((item) => selectedRowKeys.includes(item.id))
                           .map((item) => item.branchName),
                         // isClient: true,
-                        id: metadata.id,
+                        id: metadata?.id,
                       }).then(() => {
                         onOperate('batchExitEnd');
                       });

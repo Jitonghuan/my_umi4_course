@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
-import { cancelDeploy, createDeploy, updateFeatures, withdrawFeatures } from '@/pages/application/service';
+import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import BackendTestEnvSteps from './backend-steps/test';
@@ -63,7 +63,7 @@ export default function PublishContent(props: IProps) {
     6: { text: '已通过', color: 'green' },
   };
 
-  // 重新部署
+  // 重新提交分支
   const handleReDeploy = () => {
     onOperate('retryDeployStart');
 
@@ -73,7 +73,7 @@ export default function PublishContent(props: IProps) {
       onOk: async () => {
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
 
-        return updateFeatures({
+        return reCommit({
           id: metadata.id,
           features,
         }).then(() => {
@@ -86,7 +86,7 @@ export default function PublishContent(props: IProps) {
     });
   };
 
-  // 批量退出
+  // 批量退出分支
   const handleBatchExit = () => {
     onOperate('batchExitStart');
 
@@ -141,13 +141,17 @@ export default function PublishContent(props: IProps) {
   }
 
   function getItemByKey(obj: any, envCode: string) {
-    if (obj) {
-      const keyList = Object.keys(obj) || [];
-      if (keyList.length !== 0 && envCode) {
-        return obj[envCode];
-      } else {
-        return '';
+    try {
+      if (obj) {
+        const keyList = Object.keys(obj) || [];
+        if (keyList.length !== 0 && envCode) {
+          return obj[envCode];
+        } else {
+          return '';
+        }
       }
+    } catch {
+      return '';
     }
   }
 

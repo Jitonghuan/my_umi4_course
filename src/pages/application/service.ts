@@ -73,6 +73,9 @@ export const withdrawFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/
 /** POST 重新提交分支 */
 export const reCommitUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reCommit`;
 
+/** POST 追加分支 */
+export const updateFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/updateFeatures`;
+
 /** POST 重试合并 */
 export const retryMergeUrl = `${appConfig.apiPrefix}/releaseManage/merge/retry`;
 
@@ -475,6 +478,17 @@ export const createDeploy = (params: {
 
 /** 追加发布的feature列表 */
 export const updateFeatures = (params: {
+  /** 部署的数据库自增ID */
+  id: number;
+  /** 选择的feature分支 */
+  features: string[];
+}) =>
+  postRequest(updateFeaturesUrl, {
+    data: params,
+  });
+
+/** 重新提交 */
+export const reCommit = (params: {
   /** 部署的数据库自增ID */
   id: number;
   /** 选择的feature分支 */

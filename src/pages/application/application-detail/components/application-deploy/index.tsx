@@ -16,7 +16,7 @@ import './index.less';
 import { values } from 'lodash';
 import StepItem from './deploy-content/components/publish-content/steps/step-item';
 import PipeLineManage from './pipelineManage';
-import { getPipelineUrl } from '@/pages/application/service';
+import { getPipelineUrl, retry } from '@/pages/application/service';
 
 const { TabPane } = Tabs;
 
@@ -124,19 +124,24 @@ export default function ApplicationDeploy(props: any) {
   // 获取流水线
   const getPipeline = (v?: string) => {
     const tab = v ? v : tabActive;
+    deloyContentRef?.current?.onSpin();
     getRequest(getPipelineUrl, {
       data: { appCode: appData?.appCode, envTypeCode: tab, pageIndex: -1, size: -1 },
-    }).then((res) => {
-      if (res?.success) {
-        let data = res.data.dataSource;
-        setDatasource(data);
-        const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
-        setPipelineOption(pipelineOptionData);
-        if (pipelineOptionData.length !== 0) {
-          handleData(pipelineOptionData, tab);
+    })
+      .then((res) => {
+        if (res?.success) {
+          let data = res?.data?.dataSource;
+          setDatasource(data);
+          const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
+          setPipelineOption(pipelineOptionData);
+          if (pipelineOptionData.length !== 0) {
+            handleData(pipelineOptionData, tab);
+          }
         }
-      }
-    });
+      })
+      .finally(() => {
+        deloyContentRef?.current?.stopSpin();
+      });
   };
 
   // 处理数据

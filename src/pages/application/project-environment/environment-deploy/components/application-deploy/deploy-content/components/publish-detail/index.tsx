@@ -179,7 +179,9 @@ export default function PublishDetail(props: IProps) {
   let errorInfo: any[] = [];
   if (status && status.deployErrInfo) {
     Object.keys(status.deployErrInfo).forEach((item) => {
-      errorInfo.push({ key: item, errorMessage: status.deployErrInfo[item] });
+      if (status.deployErrInfo[item]) {
+        errorInfo.push({ key: item, errorMessage: status.deployErrInfo[item] });
+      }
     });
   }
 

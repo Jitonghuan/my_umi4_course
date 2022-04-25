@@ -173,6 +173,8 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
   //传给父组件 关闭/开启 定时器的方法
   useImperativeHandle(ref, () => ({
     onOperate,
+    onSpin,
+    stopSpin,
   }));
 
   const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible } = props;

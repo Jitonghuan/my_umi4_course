@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import DetailContext from '../../../../../context';
 import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
-import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/service';
+import { cancelDeploy, withdrawFeatures, reCommit } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import FrontendDevEnvSteps from './frontend-steps/dev';
@@ -50,17 +50,17 @@ export default function PublishContent(props: IProps) {
     6: { text: '已通过', color: 'green' },
   };
 
-  // 重新部署
+  // 重新提交
   const handleReDeploy = () => {
     onOperate('retryDeployStart');
 
     Modal.confirm({
-      title: '确定要重新部署吗?',
+      title: '确定要重新提交吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
 
-        return updateFeatures({
+        return reCommit({
           id: metadata.id,
           features,
         }).then(() => {
@@ -85,12 +85,13 @@ export default function PublishContent(props: IProps) {
           .filter((item) => selectedRowKeys.includes(item.id))
           .map((item) => item.branchName);
 
-        return createDeploy({
-          appCode,
-          envTypeCode,
+        return withdrawFeatures({
+          // appCode,
+          // envTypeCode,
           // envCodes:[envTypeCode],
           features,
-          isClient: false,
+          id: metadata?.id,
+          // isClient: false,
         }).then(() => {
           onOperate('batchExitEnd');
         });
@@ -142,13 +143,17 @@ export default function PublishContent(props: IProps) {
   // }
 
   function getItemByKey(obj: any, envCode: string) {
-    if (obj) {
-      const keyList = Object.keys(obj) || [];
-      if (keyList.length !== 0 && envCode) {
-        return obj[envCode];
-      } else {
-        return '';
+    try {
+      if (obj) {
+        const keyList = Object.keys(obj) || [];
+        if (keyList.length !== 0 && envCode) {
+          return obj[envCode];
+        } else {
+          return '';
+        }
       }
+    } catch {
+      return '';
     }
   }
 
@@ -200,7 +205,7 @@ export default function PublishContent(props: IProps) {
         <div className="caption-right">
           {!isProd && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-              提交分支
+              重新提交
             </Button>
           )}
           {!isProd || isFrontend ? (
