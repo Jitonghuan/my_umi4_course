@@ -47,7 +47,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const openMergeConflict = () => {
     onSpin();
-    getMergeMessage({ releaseBranch: branchInfo.releaseBranch, pipelineCode })
+    getMergeMessage({ releaseBranch: branchInfo?.releaseBranch, pipelineCode })
       .then((res) => {
         if (!res.success) {
           return;
@@ -86,7 +86,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
         visible={mergeVisible}
         handleCancel={handleCancelMerge}
         mergeMessage={mergeMessage}
-        releaseBranch={branchInfo.releaseBranch}
+        releaseBranch={branchInfo?.releaseBranch}
         retryMergeClick={retryMergeClick}
       ></MergeConflict>
       <NoConflict visible={visible} handleCancel={handleCancel} retryMergeClick={retryMergeClick}></NoConflict>
@@ -98,14 +98,14 @@ export default function MergeReleaseStep(props: StepItemProps) {
         description={
           isError && (
             <>
-              {branchInfo.conflictFeature && (
+              {branchInfo?.conflictFeature && (
                 <div style={{ marginTop: 2 }}>
                   <Button onClick={openMergeConflict} disabled={deployedList.length === 0}>
                     解决冲突
                   </Button>
                 </div>
               )}
-              {!branchInfo.conflictFeature && (
+              {!branchInfo?.conflictFeature && (
                 <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
                   重试
                 </Button>

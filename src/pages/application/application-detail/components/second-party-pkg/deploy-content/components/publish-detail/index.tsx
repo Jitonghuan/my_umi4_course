@@ -7,16 +7,19 @@
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
+import { getRequest } from '@/utils/request';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { cancelDeploy, deployReuse, queryEnvsReq } from '@/pages/application/service';
 import { IProps } from './types';
+import { getPipelineUrl } from '@/pages/application/service';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
 
-const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
+const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => {
+  console.log(pipelineCode, 'pipelineCode');
   const { appData } = useContext(DetailContext);
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
@@ -25,6 +28,8 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [envDataList, setEnvDataList] = useState<any>([]);
+  const [nextPipeline, setNextPipeline] = useState<string>('');
+
   useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
@@ -53,6 +58,19 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
     // return (envDataList as any).find((v: any) => v.envCode === deployEnvs[0])?.envName;
   }, [envDataList, deployInfo]);
 
+  useEffect(() => {
+    getRequest(getPipelineUrl, {
+      data: { appCode: appData?.appCode, envTypeCode: 'cProd', pageIndex: -1, size: -1 },
+    }).then((res: any) => {
+      if (res?.success) {
+        let data = res?.data?.dataSource;
+        setNextPipeline(data[0]?.pipelineCode);
+      } else {
+        setNextPipeline('');
+      }
+    });
+  }, []);
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
@@ -65,13 +83,15 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
                 title: '确定要把当前部署分支发布到下一个环境中？',
                 icon: <ExclamationCircleOutlined />,
                 onOk: () => {
-                  return deployReuse({ id: metadata.id }).then((res) => {
-                    if (res.success) {
-                      message.success('操作成功，正在部署中...');
-                      onOperate('deployNextEnvSuccess');
-                      return;
-                    }
-                  });
+                  return deployReuse({ id: metadata?.id, pipelineCode, reusePipelineCode: nextPipeline }).then(
+                    (res) => {
+                      if (res.success) {
+                        message.success('操作成功，正在部署中...');
+                        onOperate('deployNextEnvSuccess');
+                        return;
+                      }
+                    },
+                  );
                 },
                 onCancel() {
                   onOperate('deployNextEnvEnd');

@@ -167,6 +167,8 @@ export interface DeployContentProps {
   visible: boolean;
   /** 部署下个环境成功回调 */
   onDeployNextEnvSuccess: () => void;
+  // 下一个tab
+  nextTab: string;
 }
 
 const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
@@ -177,7 +179,8 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
     stopSpin,
   }));
 
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab } = props;
+  console.log(pipelineCode, 'pipelineCode');
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -298,11 +301,14 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
   }, [visible]);
 
   const onSpin = () => {
+    debugger;
     setLoading(true);
+    console.log('jiazai');
   };
 
   const stopSpin = () => {
     setLoading(false);
+    console.log('stop jiazai');
   };
 
   return (
@@ -313,6 +319,8 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
             appStatusInfo={appStatusInfo}
+            pipelineCode={pipelineCode}
+            nextTab={nextTab}
             onOperate={(type) => {
               if (type === 'deployNextEnvSuccess') {
                 onDeployNextEnvSuccess();

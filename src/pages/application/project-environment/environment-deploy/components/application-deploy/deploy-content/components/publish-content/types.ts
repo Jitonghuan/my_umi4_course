@@ -9,6 +9,7 @@ export interface IProps {
   onOperate: (type: OperateType) => void;
   onSpin: any;
   stopSpin: any;
+  pipelineCode: string;
 }
 
 // 执行步骤组合

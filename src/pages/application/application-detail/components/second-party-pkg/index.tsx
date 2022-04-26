@@ -14,6 +14,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { listAppEnvType } from '@/common/apis';
 import DetailContext from '../../context';
 import { getPipelineUrl } from '@/pages/application/service';
+import './index.less';
 
 const { TabPane } = Tabs;
 
@@ -22,7 +23,6 @@ export default function TowPartyPkg(props: any) {
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_secondpartypkg_env_tab__') || 'cDev');
   // 环境
   const [envTypeData, setEnvTypeData] = useState<any[]>([]);
-  const [datasource, setDatasource] = useState<any>([]); //流水线
   const [currentValue, setCurrentValue] = useState('');
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
 
@@ -61,17 +61,6 @@ export default function TowPartyPkg(props: any) {
     getPipeline();
   }, []);
 
-  const pipelineName = useMemo(() => {
-    if (pipelineOption.length !== 0) {
-      const pipeline = pipelineOption.find((item: any) => item.value === currentValue);
-      if (pipeline) {
-        return pipeline.label;
-      } else {
-        return '---';
-      }
-    }
-  }, [currentValue, pipelineOption]);
-
   const queryData = () => {
     getRequest(listAppEnvType, {
       data: { isClient: true },
@@ -87,8 +76,8 @@ export default function TowPartyPkg(props: any) {
   };
 
   // 获取流水线
-  const getPipeline = () => {
-    const tab = sessionStorage.getItem('__init_secondpartypkg_env_tab__');
+  const getPipeline = (v?: string) => {
+    const tab = v ? v : sessionStorage.getItem('__init_secondpartypkg_env_tab__');
     getRequest(getPipelineUrl, {
       data: { appCode: appData?.appCode, envTypeCode: tab, pageIndex: -1, size: -1 },
     }).then((res) => {
@@ -97,45 +86,28 @@ export default function TowPartyPkg(props: any) {
         const options = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
         setPipelineOption(options);
         if (options.length !== 0) {
-          handleData(options, tabActive);
+          setCurrentValue(options[0].value);
+        } else {
+          setCurrentValue('');
         }
       }
     });
   };
 
-  // 处理数据
-  const handleData = (data: any, tab: string) => {
-    let storageData = JSON.parse(sessionStorage.getItem('secondpartypkg_pipeline_obj') || '');
-    let currentTabValue = storageData[tab];
-    const pipelineCodeList = data.map((item: any) => item.value);
-    // 选择的流水线被删除了或者第一次进入页面
-    if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
-      setCurrentValue(data[0].value);
-      let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
-      sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [tab]: data[0].value }));
-    }
-    // 设置过流水线且没被删除
-    if (pipelineCodeList.includes(currentTabValue)) {
-      setCurrentValue(storageData[tab]);
-    }
-  };
-
-  const handleChange = (val: string) => {
-    console.log(val);
-  };
+  const handleChange = (val: string) => {};
 
   return (
     <ContentCard noPadding>
       <Tabs
         onChange={(v) => {
-          setTabActive(v), getPipeline();
+          setCurrentValue(''), setTabActive(v), getPipeline(v);
         }}
         activeKey={tabActive}
         type="card"
         tabBarExtraContent={
-          <div className="tabs-extra">
+          <div className="second-tabs-extra">
             <span>
-              当前流水线：<Tag color="blue">{pipelineName}</Tag>
+              当前流水线：<Tag color="blue">{currentValue || '---'}</Tag>
             </span>
             <span className="tabs-extra">
               请选择：

@@ -21,7 +21,6 @@ export default function BuildingStep(props: StepItemProps) {
     : getItemByKey(buildUrl, env)
     ? getItemByKey(buildUrl, env)
     : '';
-  console.log(url, 'url');
   const isError = status === 'error';
   const isLoading = status === 'process';
   const [deployVisible, setDeployVisible] = useState(false);

@@ -605,6 +605,8 @@ export const deployReuse = (params: {
   /** poc环境复用到生产环境需要 */
   envs?: string[];
   envCode?: string;
+  pipelineCode?: string;
+  reusePipelineCode?: string;
 }) =>
   postRequest(deployReuseUrl, {
     data: params,
@@ -617,6 +619,8 @@ export const deployMaster = (params: {
   envTypeCode?: string;
   envCodes?: any;
   isClient?: boolean;
+  buildType?: string;
+  masterBranch?: string; //主干分支
 }) =>
   postRequest(deployMasterUrl, {
     data: params,

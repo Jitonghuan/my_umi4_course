@@ -3,7 +3,7 @@
 // @create 2021/08/25 16:21
 
 import React, { useContext, useState, useLayoutEffect, useEffect, useRef, useMemo } from 'react';
-import { Tabs, Select, Tag } from 'antd';
+import { Tabs, Select, Tag, Spin } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
@@ -28,6 +28,7 @@ export default function ApplicationDeploy(props: any) {
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
+  const [isSpin, setIsSpin] = useState<boolean>(false);
   const deloyContentRef = useRef<any>();
 
   // let env = window.location.href.includes('zslnyy')
@@ -39,6 +40,7 @@ export default function ApplicationDeploy(props: any) {
     ? 'prod'
     : 'dev';
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || env);
+  // const [nextTab, setNextTab] = useState<string>('')
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
@@ -63,16 +65,14 @@ export default function ApplicationDeploy(props: any) {
     }
   }, [visible]);
 
-  const pipelineName = useMemo(() => {
-    if (pipelineOption.length !== 0) {
-      const pipeline = pipelineOption.find((item: any) => item.value === currentValue);
-      if (pipeline) {
-        return pipeline.label;
-      } else {
-        return '---';
-      }
+  const nextTab = useMemo(() => {
+    let data = '';
+    if (envTypeData && tabActive) {
+      const i = envTypeData.findIndex((item: any) => item.value === tabActive);
+      data = envTypeData[i + 1]?.value || '';
     }
-  }, [currentValue, pipelineOption]);
+    return data;
+  }, [tabActive, envTypeData]);
 
   const queryData = () => {
     getRequest(listAppEnvType, {
@@ -103,6 +103,7 @@ export default function ApplicationDeploy(props: any) {
           pipelineObj[e.typeCode] = '';
         }
       });
+      console.log(next, 'next');
       sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
       setEnvTypeData(next);
     });
@@ -117,6 +118,7 @@ export default function ApplicationDeploy(props: any) {
 
   // tab页切换
   const handleTabChange = (v: string) => {
+    setCurrentValue('');
     setTabActive(v);
     getPipeline(v);
   };
@@ -124,24 +126,19 @@ export default function ApplicationDeploy(props: any) {
   // 获取流水线
   const getPipeline = (v?: string) => {
     const tab = v ? v : tabActive;
-    deloyContentRef?.current?.onSpin();
     getRequest(getPipelineUrl, {
       data: { appCode: appData?.appCode, envTypeCode: tab, pageIndex: -1, size: -1 },
-    })
-      .then((res) => {
-        if (res?.success) {
-          let data = res?.data?.dataSource;
-          setDatasource(data);
-          const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
-          setPipelineOption(pipelineOptionData);
-          if (pipelineOptionData.length !== 0) {
-            handleData(pipelineOptionData, tab);
-          }
+    }).then((res) => {
+      if (res?.success) {
+        let data = res?.data?.dataSource;
+        setDatasource(data);
+        const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
+        setPipelineOption(pipelineOptionData);
+        if (pipelineOptionData.length !== 0) {
+          handleData(pipelineOptionData, tab);
         }
-      })
-      .finally(() => {
-        deloyContentRef?.current?.stopSpin();
-      });
+      }
+    });
   };
 
   // 处理数据
@@ -183,7 +180,7 @@ export default function ApplicationDeploy(props: any) {
         tabBarExtraContent={
           <div className="tabs-extra">
             <span>
-              当前流水线：<Tag color="blue">{pipelineName}</Tag>
+              当前流水线：<Tag color="blue">{currentValue}</Tag>
             </span>
             <span className="tabs-extra-select">
               请选择：
@@ -206,6 +203,7 @@ export default function ApplicationDeploy(props: any) {
       >
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
+            {/* <Spin spinning={isSpin}> */}
             <DeployContent
               ref={deloyContentRef}
               isActive={item.value === tabActive}
@@ -216,7 +214,9 @@ export default function ApplicationDeploy(props: any) {
                 const i = envTypeData.findIndex((item) => item.value === tabActive);
                 setTabActive(envTypeData[i + 1]?.value);
               }}
+              nextTab={nextTab}
             />
+            {/* </Spin> */}
           </TabPane>
         ))}
       </Tabs>

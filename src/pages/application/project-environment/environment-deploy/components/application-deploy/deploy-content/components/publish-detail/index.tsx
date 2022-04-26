@@ -3,19 +3,20 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Typography, Popconfirm } from 'antd';
+import { Descriptions, Button, Modal, message, Typography, Popconfirm, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { history } from 'umi';
 import DetailContext from '../../../../../context';
 import { cancelDeploy, deployMaster, offlineDeploy, restartApp } from '@/pages/application/service';
 import { IProps } from './types';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 
 export default function PublishDetail(props: IProps) {
-  let { deployInfo, envTypeCode, onOperate } = props;
+  let { deployInfo, envTypeCode, onOperate, pipelineCode } = props;
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
@@ -27,6 +28,11 @@ export default function PublishDetail(props: IProps) {
   const [envDataList, setEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
+  const [deployMasterVisible, setDeployMasterVisible] = useState(false);
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [selectMaster, setSelectMaster] = useState<string>('');
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
+
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -57,12 +63,21 @@ export default function PublishDetail(props: IProps) {
   // 部署 master
   const deployToMaster = () => {
     onOperate('deployMasterStart');
-    confirmPublishToMaster();
+    setDeployMasterVisible(true);
   };
   // 放弃部署 master
   const cancelDeployToMaster = () => {
     onOperate('deployMasterEnd');
+    setDeployMasterVisible(false);
     setConfirmLoading(false);
+  };
+  const getBuildType = () => {
+    let { appType, isClient } = appData || {};
+    if (appType === 'frontend') {
+      return 'feMultiBuild';
+    } else {
+      return isClient ? 'beClientBuild' : 'beServerBuild';
+    }
   };
   // 确认发布操master作
   const confirmPublishToMaster = async () => {
@@ -72,9 +87,12 @@ export default function PublishDetail(props: IProps) {
         appCode: appData?.appCode,
         envTypeCode: envTypeCode,
         envCodes: [envTypeCode],
-        isClient: appData?.isClient === 1,
+        buildType: getBuildType(),
+        // isClient: appData?.isClient === 1,
+        masterBranch: selectMaster, //主干分支
       });
       message.success('操作成功，正在部署中...');
+      setDeployMasterVisible(false);
       onOperate('deployMasterEnd');
     } finally {
       setConfirmLoading(false);
@@ -195,6 +213,10 @@ export default function PublishDetail(props: IProps) {
     }
   }
 
+  const handleChange = (v: string) => {
+    setSelectMaster(v);
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__right-top-btns`}>
@@ -204,19 +226,9 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )} */}
         {appData?.appType === 'backend' && (
-          <Popconfirm
-            title="确定要部署Master吗？"
-            onConfirm={() => {
-              deployToMaster();
-            }}
-            onCancel={() => {
-              cancelDeployToMaster();
-            }}
-          >
-            <Button type="primary" loading={confirmLoading}>
-              部署Master
-            </Button>
-          </Popconfirm>
+          <Button type="primary" onClick={deployToMaster}>
+            部署主干分支
+          </Button>
         )}
         {/* {appData?.appType === 'backend' && (
           <Button type="primary" danger onClick={handleCancelPublish}>
@@ -287,29 +299,35 @@ export default function PublishDetail(props: IProps) {
       </Descriptions>
 
       {/* --------------------- modals --------------------- */}
-      {/* 重启按钮 */}
-      {/* <Modal
-        key="deployRestart"
-        title="选择重启环境"
-        visible={restartVisible}
-        onCancel={() => {
-          setRestartVisible(false);
-          setRestartEnv([]);
-        }}
-        onOk={ensureRestart}
+      {/* 部署到 master */}
+      <Modal
+        key="deployMaster"
+        title="选择发布环境"
+        visible={deployMasterVisible}
+        confirmLoading={confirmLoading}
+        onOk={confirmPublishToMaster}
         maskClosable={false}
+        onCancel={cancelDeployToMaster}
       >
         <div>
-          <span>发布环境：</span>
-          {envDataOption.length > 0 && (
-            <Radio.Group
-              value={restartEnv}
-              onChange={(v: any) => setRestartEnv(v.target.value)}
-              options={envDataOption}
-            ></Radio.Group>
-          )}
+          <div style={{ marginBottom: '10px' }}>
+            <span>主干分支：</span>
+            <Select
+              options={masterBranchOptions}
+              value={selectMaster}
+              style={{ width: '200px', marginRight: '20px' }}
+              onChange={handleChange}
+              showSearch
+              size="small"
+              optionFilterProp="label"
+              labelInValue
+              filterOption={(input, option) => {
+                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }}
+            ></Select>
+          </div>
         </div>
-      </Modal> */}
+      </Modal>
     </div>
   );
 }

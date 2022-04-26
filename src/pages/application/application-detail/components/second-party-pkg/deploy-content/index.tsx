@@ -153,6 +153,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
         <PublishDetail
           env={env}
           deployInfo={deployInfo}
+          pipelineCode={pipelineCode}
           onOperate={(type) => {
             if (type === 'deployNextEnvSuccess') {
               onDeployNextEnvSuccess();

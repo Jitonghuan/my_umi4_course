@@ -196,6 +196,7 @@ export default function DeployContent(props: DeployContentProps) {
           <PublishDetail
             envTypeCode={projectEnvCode}
             deployInfo={deployInfo}
+            pipelineCode={pipelineCode}
             // appStatusInfo={appStatusInfo}
             onOperate={(type: any) => {
               // if (type === 'deployNextEnvSuccess') {
@@ -215,6 +216,7 @@ export default function DeployContent(props: DeployContentProps) {
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
+            pipelineCode={pipelineCode}
           />
           <PublishBranch
             deployInfo={deployInfo}

@@ -69,6 +69,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
@@ -162,9 +163,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     });
   }, [appCategoryCode, env]);
 
-  const handleChange = (v: string) => {
-    setSelectMaster(v);
-    masterBranchChange(v);
+  const handleChange = (v: any) => {
+    setSelectMaster(v.value);
+    masterBranchChange(v.value);
   };
 
   const branchNameRender = (branchName: string, record: any) => {
@@ -213,6 +214,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         rowKey="id"
         bordered
         dataSource={dataSource}
+        loading={loading}
         pagination={false}
         scroll={{ x: '100%' }}
         rowSelection={{
