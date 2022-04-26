@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form } from 'antd';
+import { Button, Input, Space, Tag, Form, Select } from 'antd';
 import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
 import {
@@ -11,6 +11,7 @@ import {
   useSaveParam,
   useDeleteDeliveryParam,
   useQueryOriginList,
+  useEditVersionParam,
 } from './hooks';
 import { ProFormField } from '@ant-design/pro-form';
 
@@ -97,12 +98,15 @@ export interface VersionDetailProps {
 export default (props: VersionDetailProps) => {
   const { currentTab, versionId, initDataSource } = props;
   const actionRef = useRef<ActionType>();
+  const [saveLoading, saveParam] = useSaveParam();
+  const [editLoading, editVersionParam] = useEditVersionParam();
   const [originloading, originOptions, queryOriginList] = useQueryOriginList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList] =
     useQueryDeliveryParamList();
-  const [loading, paramOptions, queryParamList] = useQueryParamList();
+  const [loading, paramOptions, valueOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+  const [type, setType] = useState<string>('');
   // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
@@ -124,35 +128,72 @@ export default (props: VersionDetailProps) => {
       key: 'configParamComponent',
       dataIndex: 'configParamComponent',
       valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
       valueEnum: originOptions,
+      editable: (text, record, index) => {
+        if (type === 'edit' && text) {
+          return false;
+        } else if (type === 'add' && !text) {
+          return true;
+        } else if (type === 'add' && text) {
+          return false;
+        } else {
+          return true;
+        }
+      },
     },
+
     {
       title: '选择参数',
       key: 'configParamName',
       dataIndex: 'configParamName',
       valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
+
       valueEnum: paramOptions,
     },
     {
       title: '参数值',
       key: 'configParamValue',
       dataIndex: 'configParamValue',
+      // initialValue:{currentValue.configParamValue}
+      renderFormItem: (_, config: any, data) => {
+        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
+        // console.log(_, config, data,'---',paramOptions[config.record?.configParamName])
+        let currentValue = paramOptions[config.record?.configParamName];
+        if (currentValue) {
+          // data.setFieldsValue([{'configParamValue':''}]);
+          // data.resetFields(['configParamValue'])
+          // form.setFieldsValue({configParamValue:paramOptions[config.record?.configParamName].configParamValue})
+          // setDataSource([config.record,...tableDataSource])
+          // return  <span >{paramOptions[config.record?.configParamName].configParamValue}</span>
+          return (
+            <Select defaultValue={currentValue.configParamValue}>
+              <Select.Option value={currentValue.configParamValue}>{currentValue.configParamValue}</Select.Option>
+            </Select>
+          );
+        }
+      },
     },
     {
       title: '参数说明',
@@ -164,29 +205,33 @@ export default (props: VersionDetailProps) => {
       valueType: 'option',
       width: 250,
       render: (text, record, _, action) => [
-        // <a
-        //   key="editable"
-        //   onClick={() => {
-        //     action?.startEditable?.(record.id);
-        //   }}
-        // >
-        //   编辑
-        // </a>,
         <a
-          //  key="editable"
+          key="editable"
           onClick={() => {
-            history.push({
-              pathname: '/matrix/delivery/component-detail',
-              state: {
-                activeKey: 'component-config',
-                componentId: record.id,
-                type: 'componentParams',
-              },
-            });
+            action?.startEditable?.(record.id);
+            setType('edit');
           }}
         >
-          配置
+          编辑
         </a>,
+        // <a
+        //   //  key="editable"
+        //   onClick={() => {
+        //     history.push({
+        //       pathname: '/matrix/delivery/component-detail',
+        //       state: {
+        //         activeKey: 'component-config',
+        //         componentId: record.id,
+        //         type: 'componentParams',
+        //         // componentName: record.componentName,
+        //         // componentVersion: record.componentVersion,
+        //         // componentType:currentTab
+        //       },
+        //     });
+        //   }}
+        // >
+        //   配置
+        // </a>,
         <a
           key="delete"
           onClick={() => {
@@ -200,14 +245,15 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
+  const cellChange = (values: any) => {};
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
     queryDeliveryParamList(versionId, param);
   };
   const tableChange = (values: any) => {
     setDataSource;
-    console.log('values', values);
   };
+
   return (
     <>
       <div className="table-caption-application">
@@ -228,6 +274,7 @@ export default (props: VersionDetailProps) => {
               actionRef.current?.addEditRecord?.({
                 id: (Math.random() * 1000000).toFixed(0),
               });
+              setType('add');
             }}
             icon={<PlusOutlined />}
           >
@@ -250,6 +297,20 @@ export default (props: VersionDetailProps) => {
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
+        loading={tableLoading}
+        pagination={{
+          total: pageInfo.total,
+          pageSize: pageInfo.pageSize,
+          current: pageInfo.pageIndex,
+          showSizeChanger: true,
+          // onShowSizeChange: (_, size) => {
+          //   setPageInfo({
+          //     pageIndex: 1,
+          //     pageSize: size,
+          //   });
+          // },
+          showTotal: () => `总共 ${pageInfo.total} 条数据`,
+        }}
         headerTitle="可编辑表格"
         // maxLength={5}
         // 关闭默认的新建按钮
@@ -260,18 +321,42 @@ export default (props: VersionDetailProps) => {
         //   total: 3,
         //   success: true,
         // })}
+
         value={tableDataSource}
         onChange={(values) => {
           tableChange(values);
+          // setPageInfo({
+          //   pageIndex: pagination.current,
+          //   pageSize: pagination.pageSize,
+          //   total: pagination.total,
+          // });
+          // let obj = {
+          //   pageIndex: pagination.current,
+          //   pageSize: pagination.pageSize,
+          // };
+
+          // loadListData(obj);
         }}
         editable={{
           form,
           editableKeys,
           onSave: async (values) => {
-            console.log('saveValues', values);
-            await waitTime(800);
+            let value = form.getFieldsValue();
+            let objKey = Object.keys(value);
+            let params = value[objKey[0]];
+            if (type === 'add') {
+              await saveParam({ ...params, versionId: versionId }).then(() => {
+                queryDeliveryParamList(versionId);
+              });
+            } else if (type === 'edit') {
+              editVersionParam({ ...params, versionId: versionId }).then(() => {
+                queryDeliveryParamList(versionId);
+              });
+            }
           },
           onChange: setEditableRowKeys,
+          //  console.log('value',value)
+
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
         }}
       />

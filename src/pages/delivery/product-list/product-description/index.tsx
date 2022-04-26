@@ -156,10 +156,10 @@ export default function deliveryDescription() {
     });
   };
   return (
-    <PageContainer>
+    <PageContainer className="product-description">
       <ContentCard>
         <div>
-          <Descriptions title="基本信息" column={2} className="basic-info-description">
+          <Descriptions title="基本信息" column={2} className="basic-info-description" bordered={true}>
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
               <Paragraph
@@ -246,10 +246,10 @@ export default function deliveryDescription() {
         >
           <Form layout="vertical" form={createVersionForm} style={{ paddingLeft: 30 }}>
             <Form.Item label="版本名称:" name="version_name">
-              <Input style={{ width: 470 }} placeholder="请输入版本号"></Input>
+              <Input style={{ width: 400 }} placeholder="请输入版本号"></Input>
             </Form.Item>
             <Form.Item label="版本描述:" name="version_description">
-              <Input style={{ width: 470 }} placeholder="请输入版本描述"></Input>
+              <Input style={{ width: 400 }} placeholder="请输入版本描述"></Input>
             </Form.Item>
           </Form>
         </Modal>

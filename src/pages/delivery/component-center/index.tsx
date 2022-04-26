@@ -14,7 +14,6 @@ import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';
 import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
-import MiddlewareModal from './components/middlewareModal';
 import { useQueryComponentList } from './hook';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
@@ -33,7 +32,7 @@ export default function VersionDetail() {
   const [matchlabels, setMatchlabels] = useState<any[]>([]);
   const [editableStr, setEditableStr] = useState('This is an editable text.');
   const [tabActiveKey, setTabActiveKey] = useState<string>('app');
-  const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
+  const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
@@ -113,7 +112,12 @@ export default function VersionDetail() {
             </Tabs>
           </FilterCard>
           <div>
-            <InfoTable currentTab={tabActiveKey} />
+            <InfoTable
+              currentTab={tabActiveKey}
+              dataSource={dataSource}
+              queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+              tableLoading={loading}
+            />
           </div>
         </>
       </ContentCard>

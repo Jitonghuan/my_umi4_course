@@ -21,7 +21,8 @@ export default function FinishedStep(props: StepItemProps) {
         status === 'finish' &&
         (projectEnvCode?.includes('zs-prd') ||
           projectEnvCode?.includes('zs-pre') ||
-          projectEnvCode?.includes('xiehe')) && (
+          projectEnvCode?.includes('xiehe') ||
+          projectEnvCode?.includes('bf-daily')) && (
           <Button
             download
             style={{ marginTop: 4 }}

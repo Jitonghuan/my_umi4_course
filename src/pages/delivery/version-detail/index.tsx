@@ -31,7 +31,7 @@ export default function VersionDetail() {
     setgloablePageInfo,
     queryDeliveryGloableParamList,
   ] = useQueryDeliveryGloableParamList();
-  const [editableStr, setEditableStr] = useState(descriptionInfoData.versionDescription);
+  const [editableStr, setEditableStr] = useState(descriptionInfoData?.versionDescription);
   const [infoLoading, versionDescriptionInfo, getVersionDescriptionInfo] = useVersionDescriptionInfo();
   const [editLoading, editProductVersionDescription] = useEditProductVersionDescription();
   useEffect(() => {
@@ -40,6 +40,7 @@ export default function VersionDetail() {
   const matchlabelsFun = (value: any[]) => {
     setMatchlabels(value);
   };
+
   useEffect(() => {
     //全局参数查询交付配置参数
     queryDeliveryGloableParamList(descriptionInfoData.versionId, 'global');
@@ -48,7 +49,7 @@ export default function VersionDetail() {
   }, []);
   return (
     <PageContainer className="version-detail">
-      <ContentCard>
+      <ContentCard className="version-detail-info">
         <div className="version-detail-back">
           <Button
             type="primary"
@@ -71,9 +72,9 @@ export default function VersionDetail() {
           <Tabs tabPosition="left">
             <TabPane tab="基本信息" key="1">
               <div>
-                <Descriptions title="基本信息" column={2} className="basic-info-description">
-                  <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
-                  <Descriptions.Item label="产品版本">{descriptionInfoData.versionName}</Descriptions.Item>
+                <Descriptions title="基本信息" column={2} className="basic-info-description" bordered={true}>
+                  <Descriptions.Item label="产品名称">{descriptionInfoData?.productName}</Descriptions.Item>
+                  <Descriptions.Item label="产品版本">{descriptionInfoData?.versionName}</Descriptions.Item>
                   <Descriptions.Item label="版本描述">
                     <Paragraph
                       editable={{
@@ -89,7 +90,7 @@ export default function VersionDetail() {
                     </Paragraph>
                   </Descriptions.Item>
                   <Descriptions.Item label="创建时间">
-                    {moment(descriptionInfoData.versionGmtCreate).format('YYYY-MM-DD HH:mm:ss')}
+                    {moment(descriptionInfoData?.versionGmtCreate).format('YYYY-MM-DD HH:mm:ss')}
                   </Descriptions.Item>
                 </Descriptions>
               </div>

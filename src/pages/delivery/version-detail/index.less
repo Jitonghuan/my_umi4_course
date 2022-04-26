@@ -1,6 +1,7 @@
 .table-caption-application {
   display: flex;
   justify-content: space-between;
+  padding-bottom: 12px;
 }
 .version-detail-back {
   display: flex;
@@ -8,8 +9,30 @@
   padding-bottom: 10px;
 }
 .version-detail {
-  .basic-info-description {
+  // .ant-tabs-nav-list {
+  //   border: 1px solid rgb(192, 189, 189);
+  // }
+  // .basic-info-description {
+
+  //   padding: 8px;
+  // }
+  .version-detail-info {
     background-color: rgb(243, 243, 245);
-    padding: 8px;
+  }
+  .ant-descriptions-title {
+    display: flex;
+    // background-color: #f7f8fa;
+    height: 24px;
+    align-items: center;
+    margin-top: 12px;
+
+    &::before {
+      display: inline-block;
+      content: '';
+      margin-right: 8px;
+      width: 4px;
+      height: 18px;
+      background: #1973cc;
+    }
   }
 }

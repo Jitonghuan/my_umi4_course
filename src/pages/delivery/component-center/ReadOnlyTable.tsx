@@ -12,10 +12,13 @@ import { Table, Tag, Space, Popconfirm } from 'antd';
 import { useQueryComponentList, useDeleteComponent } from './hook';
 export interface DetailProps {
   currentTab: string;
+  dataSource: any;
+  queryComponentList: (tabActiveKey: any) => any;
+  tableLoading: boolean;
 }
 export default function VersionDetail(props: DetailProps) {
-  const { currentTab } = props;
-  const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
+  const { currentTab, dataSource, queryComponentList, tableLoading } = props;
+  // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
     if (!currentTab) {
@@ -35,11 +38,6 @@ export default function VersionDetail(props: DetailProps) {
       key: 'componentDescription',
     },
     {
-      title: '更新时间',
-      dataIndex: 'gmtModify',
-      key: 'gmtModify',
-    },
-    {
       title: '创建时间',
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
@@ -56,7 +54,10 @@ export default function VersionDetail(props: DetailProps) {
                 pathname: '/matrix/delivery/component-detail',
                 state: {
                   initRecord: record,
-                  // componentName: record.componentName,
+                  type: 'componentCenter',
+                  componentName: record.componentName,
+                  componentVersion: record.componentVersion,
+                  componentType: currentTab,
                   // componentId: record.id,
                   // componentDescription:record.componentDescription
                 },
@@ -79,34 +80,10 @@ export default function VersionDetail(props: DetailProps) {
       ),
     },
   ];
-  const data = [
-    {
-      id: 1,
-      componentName: '名字',
-      componentDescription: 'John B',
-      updateTime: 32,
-      creatTime: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
-    },
-    {
-      id: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      id: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-  ];
 
   return (
     <>
-      <Table columns={columns} showHeader={true} dataSource={dataSource} loading={loading} />
+      <Table columns={columns} showHeader={true} dataSource={dataSource} loading={tableLoading} />
     </>
   );
 }

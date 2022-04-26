@@ -28,6 +28,7 @@ export default function TmplEditor(props: TmplListProps) {
   const [optionLoading, typeOption] = useGetTypeListOption();
   const { mode, initData, onClose, onSave } = props;
   const [isDisabled, setIsdisabled] = useState<boolean>(false);
+  const [editDisabled, setEditDisabled] = useState<boolean>(false);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -37,11 +38,15 @@ export default function TmplEditor(props: TmplListProps) {
     if (mode === 'VIEW') {
       setIsdisabled(true);
     }
+    if (mode === 'EDIT') {
+      setEditDisabled(true);
+    }
     if (mode === 'ADD') {
       createTmplForm.resetFields();
     }
     return () => {
       setIsdisabled(false);
+      setEditDisabled(false);
     };
   }, [mode]);
   const handleSubmit = () => {
@@ -63,7 +68,7 @@ export default function TmplEditor(props: TmplListProps) {
       title={mode === 'EDIT' ? '编辑组件模版' : mode === 'ADD' ? '新增组件模版' : mode === 'VIEW' ? '查看组件模版' : ''}
       // maskClosable={false}
       onClose={onClose}
-      width={'70%'}
+      width={'60%'}
       footer={
         <div className="drawer-footer">
           <Button type="primary" disabled={isDisabled} loading={createLoading || updateLoading} onClick={handleSubmit}>
@@ -79,25 +84,24 @@ export default function TmplEditor(props: TmplListProps) {
         <Form layout="inline" form={createTmplForm}>
           <p style={{ width: '100%', display: 'flex', marginLeft: 16 }}>
             <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
-              <Select style={{ width: 180 }} options={productLineOptions} />
+              <Select style={{ width: 180 }} options={productLineOptions} disabled={editDisabled} />
             </Form.Item>
             <Form.Item label="模板类型" name="tempType" rules={[{ required: true, message: '请选择模版类型' }]}>
-              <Select style={{ width: 180 }} options={typeOption} />
+              <Select style={{ width: 180 }} options={typeOption} disabled={editDisabled} />
             </Form.Item>
             <Form.Item label="模板名称" name="tempName" rules={[{ required: true, message: '请输入模板名称' }]}>
               <Input style={{ width: 180 }} />
             </Form.Item>
           </p>
 
-          <p style={{ width: '100%' }}>
-            <Form.Item
-              label="模板配置"
-              name="tempConfiguration"
-              rules={[{ required: true, message: '请输入模版配置' }]}
-            >
-              <AceEditor height={450} mode="yaml" />
-            </Form.Item>
-          </p>
+          <Form.Item
+            label="模板配置"
+            name="tempConfiguration"
+            rules={[{ required: true, message: '请输入模版配置' }]}
+            style={{ width: 800 }}
+          >
+            <AceEditor mode="yaml" height={650} />
+          </Form.Item>
         </Form>
       </ContentCard>
     </Drawer>
