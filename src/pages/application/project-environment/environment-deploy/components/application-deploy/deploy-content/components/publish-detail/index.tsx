@@ -7,7 +7,7 @@ import { Descriptions, Button, Modal, message, Typography, Popconfirm, Select } 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { history } from 'umi';
 import DetailContext from '../../../../../context';
-import { cancelDeploy, deployMaster, offlineDeploy, restartApp } from '@/pages/application/service';
+import { cancelDeploy, deployMaster, feOfflineDeploy, restartApp } from '@/pages/application/service';
 import { IProps } from './types';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
@@ -16,7 +16,7 @@ const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 
 export default function PublishDetail(props: IProps) {
-  let { deployInfo, envTypeCode, onOperate, pipelineCode } = props;
+  let { deployInfo, envTypeCode, onOperate, pipelineCode, envCode } = props;
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
@@ -84,11 +84,9 @@ export default function PublishDetail(props: IProps) {
     setConfirmLoading(true);
     try {
       await deployMaster({
-        appCode: appData?.appCode,
-        envTypeCode: envTypeCode,
-        envCodes: [envTypeCode],
+        pipelineCode,
+        envCodes: envCode,
         buildType: getBuildType(),
-        // isClient: appData?.isClient === 1,
         masterBranch: selectMaster?.value, //主干分支
       });
       message.success('操作成功，正在部署中...');
@@ -114,14 +112,14 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   // 离线部署
-  const uploadImages = () => {
-    return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
+  const uploadFile = () => {
+    return `${feOfflineDeploy}?&envCodes=${deployEnv}&pipelineCode=${pipelineCode}`;
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
   const uploadProps = {
     name: 'image',
-    action: uploadImages,
+    action: uploadFile,
     progress: {
       strokeColor: {
         '0%': '#108ee9',
@@ -263,6 +261,9 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="发布环境">{envTypeCode || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
           {branchInfo?.conflictFeature || '--'}
+        </Descriptions.Item>
+        <Descriptions.Item label="主干分支" span={4}>
+          {branchInfo?.masterBranch || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="合并分支" span={4}>
           {branchInfo?.features.join(',') || '--'}

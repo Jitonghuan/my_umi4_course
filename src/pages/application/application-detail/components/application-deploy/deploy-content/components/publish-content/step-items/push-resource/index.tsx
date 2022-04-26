@@ -8,7 +8,7 @@ import { Steps, Button, message } from 'antd';
 import { rePushFeResource, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
-import { downloadResource, listAppEnv } from '@/pages/application/service';
+import { downloadSource, listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { deployStatusMapping } from '../../frontend-steps/prod';
 import appConfig from '@/app.config';
@@ -80,7 +80,7 @@ export default function PushResourceStep(props: StepItemProps) {
               style={{ marginTop: 4 }}
               target="_blank"
               disabled={disabled}
-              href={`${downloadResource}?deployId=${metadata.id}`}
+              href={`${downloadSource}?id=${metadata?.id}&envCode=${env}`}
               onClick={() => {
                 setDisabled(true);
                 setTimeout(() => {

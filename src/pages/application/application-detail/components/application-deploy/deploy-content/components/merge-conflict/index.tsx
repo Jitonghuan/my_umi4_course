@@ -44,10 +44,9 @@ export default function MergeConflict(prop: MergeProp) {
     const params = allFile.map((item: conflictItem) => ({
       filePath: item.filePath,
       content: item.content,
-      id,
     }));
     setLoading(true);
-    pushMergeMessage({ releaseBranch: releaseBranch, messages: params })
+    pushMergeMessage({ messages: params, id })
       .then((res) => {
         if (res.success) {
           // setLoading(false);

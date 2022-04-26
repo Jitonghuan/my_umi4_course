@@ -100,11 +100,11 @@ export const retryDelFeatureUrl = `${appConfig.apiPrefix}/releaseManage/deploy/r
 /** POST 取消部署 */
 export const cancelDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/cancel`;
 
-/** POST 复用release分支 */
-export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reuse`;
+/** POST 部署到下一个环境 */
+export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/reuse`;
 
-/** POST 部署master*/
-export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/deployMaster`;
+/** POST 部署主干分支*/
+export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/master`;
 
 /** GET 根据应用分类code查询发布环境列表 */
 export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
@@ -124,16 +124,16 @@ export const queryConfigListUrl = `${appConfig.apiPrefix}/appManage/config/versi
 /** POST 导入配置 */
 export const configUploadUrl = `${appConfig.apiPrefix}/appManage/config/upload`;
 
-/** GET 下载镜像 */
-export const downloadImage = `${appConfig.apiPrefix}/releaseManage/deploy/downloadImage`;
+/** GET 下载镜像或资源 */
+export const downloadSource = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDownload`;
 /** GET 下载资源包 */
-export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/downloadFeResource`;
+// export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/downloadFeResource`;
 
 /** Post 上传镜像*/
-export const offlineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDeploy`;
+// export const offlineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDeploy`;
 
-// 前端离线部署上传资源
-export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/feOfflineDeploy`;
+// 离线部署上传资源或镜像
+export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineUpload`;
 
 /** POST 重启应用 */
 export const restartAppUrl = `${appConfig.apiPrefix}/appManage/restart`;
@@ -598,13 +598,13 @@ export const cancelDeploy = (params: {
     data: params,
   });
 
-/** 复用release分支 */
+/** 部署到下个环境 */
 export const deployReuse = (params: {
   /** 部署的数据库自增ID */
   id?: number;
   /** poc环境复用到生产环境需要 */
   envs?: string[];
-  envCodes?: string;
+  envCodes?: any;
   pipelineCode?: string;
   reusePipelineCode?: string;
 }) =>
@@ -617,8 +617,8 @@ export const deployMaster = (params: {
   /** 应用code */
   appCode?: string;
   envTypeCode?: string;
+  pipelineCode: string;
   envCodes?: any;
-  isClient?: boolean;
   buildType?: string;
   masterBranch?: string; //主干分支
 }) =>

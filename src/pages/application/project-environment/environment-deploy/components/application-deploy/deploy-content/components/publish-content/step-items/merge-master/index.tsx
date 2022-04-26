@@ -10,7 +10,7 @@ import { StepItemProps } from '../../types';
 
 /** 合并master */
 export default function MergeMasterStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, status, env = '', ...others } = props;
   const { metadata } = deployInfo || {};
   const isLoading = status === 'process';
   const isError = status === 'error';
@@ -19,7 +19,11 @@ export default function MergeMasterStep(props: StepItemProps) {
 
   const retryMergeMasterClick = async () => {
     try {
-      await retry({ id: metadata.id });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('mergeMasterRetryEnd');
     }

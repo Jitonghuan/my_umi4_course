@@ -6,13 +6,13 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Steps, Button, message } from 'antd';
 import { StepItemProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
-import { downloadImage, listAppEnv } from '@/pages/application/service';
+import { downloadSource, listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 
 /** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, status, env = '', ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const downLoadSupportEnv = useRef<string[]>(['']);
@@ -58,7 +58,7 @@ export default function FinishedStep(props: StepItemProps) {
             style={{ marginTop: 4 }}
             target="_blank"
             disabled={disabled}
-            href={`${downloadImage}?id=${metadata.id}`}
+            href={`${downloadSource}?id=${metadata.id}&envCode=${env}`}
             // disabled={downLoadStatus}
             onClick={() => {
               setDisabled(true);

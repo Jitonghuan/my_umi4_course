@@ -5,11 +5,11 @@
 import React, { useState } from 'react';
 import { Steps, Button, message } from 'antd';
 import { StepItemProps } from '../../types';
-import { downloadImage } from '@/pages/application/service';
+import { downloadSource } from '@/pages/application/service';
 
 /** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, projectEnvCode, status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, projectEnvCode, status, env = '', ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   // const [downLoadStatus, setDownLoadStatus] = useState(false);
   return (
@@ -27,7 +27,7 @@ export default function FinishedStep(props: StepItemProps) {
             download
             style={{ marginTop: 4 }}
             target="_blank"
-            href={`${downloadImage}?id=${metadata.id}`}
+            href={`${downloadSource}?id=${metadata.id}&envCode=${env}`}
             // disabled={downLoadStatus}
             onClick={() => {
               message.info('镜像开始下载');

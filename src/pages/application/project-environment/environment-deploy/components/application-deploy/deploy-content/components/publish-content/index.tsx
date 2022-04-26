@@ -197,9 +197,9 @@ export default function PublishContent(props: IProps) {
         projectEnvCode={projectEnvCode}
         pipelineCode={pipelineCode}
       />
-      <div className="full-scree-icon">
+      {/* <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />
-      </div>
+      </div> */}
 
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>

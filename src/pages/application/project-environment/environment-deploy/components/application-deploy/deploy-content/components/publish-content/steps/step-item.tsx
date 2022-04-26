@@ -21,7 +21,7 @@ const stepMap: any = {
   部署: DeployingStep,
   完成: FinishedStep,
   灰度验证: GrayValidationStep,
-  合并master: MergeMasterStep,
+  合并主干: MergeMasterStep,
   合并release: MergeReleaseStep,
   推送资源: PushResourceStep,
   推送版本: PushVersionStep,
