@@ -12,13 +12,12 @@ import { history, Link } from 'umi';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, isFrontend, ...others } = props;
-  const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
-  const { id, appCode } = history.location.query || {};
-  const isLoading =
-    deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
-  const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
-  // || deployStatus === 'deployAborted';
+  const { deployInfo, deployStatus, onOperate, envTypeCode, getItemByKey, env, status, ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
+  const { buildUrl } = buildInfo;
+  const jenkinsUrl = getItemByKey(buildUrl, env).subJenkinsUrl || '';
+  const isLoading = status === 'process';
+
   const [deployVisible, setDeployVisible] = useState(false);
 
   const handleShowErrorDetail = () => {
@@ -35,7 +34,7 @@ export default function DeployingStep(props: StepItemProps) {
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryDeploy({ id: deployInfo.id, envCode });
+        await retryDeploy({ id: deployInfo.id, envCode: env });
         onOperate('retryDeployEnd');
       },
       onCancel() {
@@ -50,9 +49,9 @@ export default function DeployingStep(props: StepItemProps) {
         {...others}
         title="部署"
         icon={isLoading && <LoadingOutlined />}
-        status={isError ? 'error' : others.status}
+        status={status}
         description={
-          (isError || isLoading) && (
+          (status === 'error' || status === 'process') && (
             <>
               {/* dev,test, pre,prod 在部署过程中出现错误时  显示错误详情 */}
               {/* {isError && deployInfo.deployErrInfo && (
@@ -61,9 +60,9 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )} */}
               {/* 浙一日常环境下的部署步骤显示jenkins链接 */}
-              {envTypeCode === 'pre' && jenkinsUrl && deployInfo.envs?.includes('zy-daily') && (
+              {envTypeCode === 'pre' && jenkinsUrl && envInfo.deployEnvs?.includes('zy-daily') && (
                 <div style={{ marginTop: 2 }}>
-                  <a target="_blank" href={jenkinsUrl}>
+                  <a target="_blank" href={buildUrl}>
                     部署详情
                   </a>
                 </div>
@@ -76,7 +75,7 @@ export default function DeployingStep(props: StepItemProps) {
                   </a>
                 </div>
               )}
-              {isLoading && envCode && envTypeCode !== 'prod' && !isFrontend && (
+              {/* {isLoading && envCode && envTypeCode !== 'prod' && !isFrontend && (
                 <div style={{ marginTop: 2 }}>
                   <Button
                     size="small"
@@ -98,7 +97,7 @@ export default function DeployingStep(props: StepItemProps) {
                     查看部署信息
                   </Button>
                 </div>
-              )}
+              )} */}
 
               {/* test, pre, prod 显示 jenkins 详情 */}
               {/* {envTypeCode !== 'dev' && deployInfo.jenkinsUrl && (
@@ -108,7 +107,7 @@ export default function DeployingStep(props: StepItemProps) {
                   </a>
                 </div>
               )} */}
-              {isError && (
+              {status === 'error' && (
                 <Button style={{ marginTop: 4 }} onClick={handleReDeployClick}>
                   重新部署
                 </Button>

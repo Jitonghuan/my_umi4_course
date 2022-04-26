@@ -10,14 +10,16 @@ import { StepItemProps } from '../../types';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
-
-  const isLoading = deployStatus === 'pushFeResource';
-  const isError = deployStatus === 'pushFeResourceErr';
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env, status, ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
+  // const isLoading = deployStatus === 'pushFeResource';
+  // const isError = deployStatus === 'pushFeResourceErr';
+  const isLoading = status === 'process';
+  const isError = status === 'error';
 
   const handleRetryClick = async () => {
     try {
-      await rePushFeResource({ id: deployInfo.id, envCode });
+      await rePushFeResource({ id: metadata.id, envCode: env });
     } finally {
       onOperate('rePushFeResourceEnd');
     }
@@ -28,7 +30,7 @@ export default function PushResourceStep(props: StepItemProps) {
       {...others}
       title="推送资源"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      status={status}
       description={
         isError && (
           <Button type="primary" style={{ marginTop: 4 }} ghost onClick={handleRetryClick}>

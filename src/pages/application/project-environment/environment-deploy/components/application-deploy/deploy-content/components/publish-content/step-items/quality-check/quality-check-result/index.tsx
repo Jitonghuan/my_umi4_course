@@ -42,6 +42,7 @@ const resultColor: any = {
 
 export default function QualityCheckResult(props: QualityCheckResultProps) {
   const { visible, deployInfo } = props;
+  const { metadata, branchInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<any>();
@@ -56,7 +57,7 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
           data: {
             categoryCode: appData?.appCategoryCode,
             appCode: appData?.appCode,
-            branchName: deployInfo.releaseBranch,
+            branchName: branchInfo?.releaseBranch,
           },
         });
 

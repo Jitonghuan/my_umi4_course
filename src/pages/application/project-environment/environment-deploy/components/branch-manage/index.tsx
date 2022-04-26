@@ -1,10 +1,6 @@
-// 分支管理
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/08/27 12:41
-
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import moment from 'moment';
-import { Button, message, Form, Input, Table, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -15,6 +11,7 @@ import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
 import { createReview } from '@/pages/application/service';
 import { postRequest } from '@/utils/request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
@@ -23,6 +20,10 @@ export default function BranchManage() {
   const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
   const [pending, setPending] = useState(false);
   const [reviewId, setReviewId] = useState<string>('');
+  const [masterOption, setMasterOption] = useState<any>([]);
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [masterListData] = useMasterBranchList({ branch_type: 'master' });
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -40,6 +41,13 @@ export default function BranchManage() {
     queryBranchList({ appCode, env: 'feature' });
   }, [appCode]);
 
+  useEffect(() => {
+    if (masterListData.length !== 0) {
+      const option = masterListData.map((item: any) => ({ value: item.id, label: item.branchName }));
+      setMasterBranchOptions(option);
+    }
+  }, [masterListData]);
+
   // 搜索
   const handleSearch = useCallback(() => {
     const values = searchForm.getFieldsValue();
@@ -53,9 +61,11 @@ export default function BranchManage() {
   const handleDelBranch = useCallback(async (record: any) => {
     try {
       setPending(true);
-      await deleteBranch({ id: record.id });
-      message.success('操作成功！');
-      queryBranchList();
+      const res = await deleteBranch({ id: record.id });
+      if (res.success) {
+        message.success('操作成功！');
+        queryBranchList();
+      }
     } finally {
       setPending(false);
     }
@@ -80,10 +90,29 @@ export default function BranchManage() {
       </a>
     );
   };
+
+  const handleChange = (v: string) => {
+    setSelectMaster(v);
+    queryBranchList({ appCode, env: 'feature', masterBranch: v });
+  };
+
   return (
     <ContentCard>
       <div className="table-caption">
         <Form layout="inline" form={searchForm}>
+          <Form.Item label="主干分支" name="masterName">
+            <Select
+              options={masterBranchOptions}
+              value={selectMaster}
+              style={{ width: '240px', marginRight: '20px' }}
+              onChange={handleChange}
+              showSearch
+              optionFilterProp="label"
+              filterOption={(input, option) => {
+                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }}
+            />
+          </Form.Item>
           <Form.Item label="分支名" name="branchName">
             <Input.Search placeholder="搜索分支名" enterButton onSearch={handleSearch} style={{ width: 320 }} />
           </Form.Item>
@@ -102,7 +131,7 @@ export default function BranchManage() {
         scroll={{ y: window.innerHeight - 330, x: '100%' }}
       >
         <Table.Column title="ID" dataIndex="id" width={80} />
-        <Table.Column title="应用code" dataIndex="appCode" width={300} />
+        {/* <Table.Column title="应用code" dataIndex="appCode" width={300} /> */}
         <Table.Column
           title="分支名"
           dataIndex="branchName"
@@ -134,8 +163,19 @@ export default function BranchManage() {
           )}
         />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
-        <Table.Column title="创建时间" dataIndex="gmtCreate" width={160} render={datetimeCellRender} />
         <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
+        <Table.Column
+          title="创建时间"
+          dataIndex="gmtCreate"
+          width={160}
+          ellipsis
+          render={(value) => (
+            <Tooltip placement="topLeft" title={datetimeCellRender(value)}>
+              {datetimeCellRender(value)}
+            </Tooltip>
+            // datetimeCellRender(value)
+          )}
+        />
         <Table.Column title="创建人" dataIndex="createUser" width={100} />
         <Table.Column
           title="操作"

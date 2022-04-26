@@ -19,6 +19,7 @@ import FrontendDevEnvSteps from './frontend-steps/dev';
 import FrontendTestEnvSteps from './frontend-steps/test';
 import FrontendPreEnvSteps from './frontend-steps/pre';
 import FrontendProdEnvSteps from './frontend-steps/prod';
+import DeploySteps from './steps';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -37,7 +38,10 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode } = props;
+  let { metadata, status, envInfo } = deployInfo;
+  const { deployNodes } = status || {}; //步骤条数据
+  const { deployEnvs } = envInfo || [];
   const { appData } = useContext(DetailContext);
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -69,7 +73,7 @@ export default function PublishContent(props: IProps) {
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
 
         return updateFeatures({
-          id: deployInfo.id,
+          id: metadata.id,
           features,
         }).then(() => {
           onOperate('retryDeployEnd');
@@ -125,7 +129,7 @@ export default function PublishContent(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         return cancelDeploy({
-          id: deployInfo.id,
+          id: metadata?.id,
           envCode,
         }).then(() => {});
       },
@@ -149,8 +153,20 @@ export default function PublishContent(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
+      <div className={`${rootCls}__right-top-btns`}>
+        {deployEnvs && deployEnvs.length === 1 && deployNodes.length !== 0 && (
+          <Button
+            danger
+            onClick={() => {
+              onCancelDeploy(deployEnvs[0]);
+            }}
+          >
+            取消发布
+          </Button>
+        )}
+      </div>
 
-      <CurrSteps
+      {/* <CurrSteps
         deployInfo={deployInfo}
         onOperate={onOperate}
         isFrontend={isFrontend}
@@ -160,6 +176,20 @@ export default function PublishContent(props: IProps) {
         onSpin={onSpin}
         deployedList={deployedList}
         getItemByKey={getItemByKey}
+      /> */}
+      <DeploySteps
+        stepData={deployNodes}
+        deployInfo={deployInfo}
+        onOperate={onOperate}
+        isFrontend={isFrontend}
+        envTypeCode={envTypeCode}
+        appData={appData}
+        onCancelDeploy={onCancelDeploy}
+        stopSpin={stopSpin}
+        onSpin={onSpin}
+        deployedList={deployedList}
+        getItemByKey={getItemByKey}
+        pipelineCode={pipelineCode}
       />
       <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />
@@ -170,12 +200,12 @@ export default function PublishContent(props: IProps) {
         <div className="caption-right">
           {!isProd && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-              重新部署
+              重新提交
             </Button>
           )}
           {!isProd || isFrontend ? (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-              批量退出
+              退出分支
             </Button>
           ) : null}
           {/* {!isFrontend && !isProd && (
@@ -261,9 +291,20 @@ export default function PublishContent(props: IProps) {
         visible={fullScreeVisible}
         onCancel={() => setFullScreeVisible(false)}
       >
-        <CurrSteps
+        {/* <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
+          onCancelDeploy={onCancelDeploy}
+          stopSpin={stopSpin}
+          onSpin={onSpin}
+          deployedList={deployedList}
+          getItemByKey={getItemByKey}
+        /> */}
+        <DeploySteps
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          isFrontend={isFrontend}
+          appData={appData}
           onCancelDeploy={onCancelDeploy}
           stopSpin={stopSpin}
           onSpin={onSpin}
