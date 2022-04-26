@@ -26,13 +26,13 @@ export interface IProps {
 export default function VersionEditor(props: IProps) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [currentData, setCurrentData] = useState<any[]>([]);
-  const [editLoading, editVersion] = useCreateVersion();
+  const [editLoading, editVersion] = useUpdateVersion();
   const [categoryCode, setCategoryCode] = useState<string>();
   const [loading, categoryData] = useQueryCategory();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
   const [tableLoading, allAppListDataSource, setSource, queryAppsList] = useAppList();
   const [alreadyLoading, alreadyAppDataSource, queryVersionAppList] = useVersionAppList();
-  const [addLoading, addVersion] = useUpdateVersion();
+  const [addLoading, addVersion] = useCreateVersion();
   const { initData, type, onSubmit } = props;
   const isEdit = !!initData?.id;
   const [form] = Form.useForm<any>();
@@ -57,13 +57,13 @@ export default function VersionEditor(props: IProps) {
   const handleSubmit = () => {
     form.validateFields().then((values) => {
       if (!isEdit) {
-        let editParams = { ...values, apps: currentData };
-        editVersion(editParams).then(() => {
+        let addParams = { ...values, apps: currentData };
+        addVersion(addParams).then(() => {
           onSubmit();
         });
       } else {
-        let editParams = { ...values, apps: currentData };
-        addVersion(editParams).then(() => {
+        let editParams = { id: initData.id, versionName: values.versionName, desc: values.desc };
+        editVersion(editParams).then(() => {
           onSubmit();
         });
       }
@@ -153,13 +153,6 @@ export default function VersionEditor(props: IProps) {
           <Input.TextArea placeholder="请输入版本描述" style={{ width: 380 }} />
         </FormItem>
         <Divider />
-        {/* <FormItem label="查询应用" name='selectApps' rules={[{ required: true, message: '请选择应用分类' }]} noStyle>
-          <div style={{ paddingBottom: 12 }}>
-            <span style={{ paddingRight: 12, color: '#777' }}>查询应用:</span>
-            <Select style={{ width: 140 }} options={appTypeOptions} placeholder="应用分类呢" disabled={isEdit} value={appCategoryCode}></Select>
-            <Select style={{ width: 282, marginLeft: 10 }} placeholder="应用组" disabled={isEdit}></Select>
-          </div>
-        </FormItem> */}
         <FormItem label="应用分类" name="appCategoryCode" rules={[{ required: true, message: '请选择应用分类' }]}>
           <Select
             style={{ width: 380 }}
@@ -194,7 +187,7 @@ export default function VersionEditor(props: IProps) {
               size="middle"
               bordered
               rowKey="id"
-              rowSelection={rowSelection}
+              // rowSelection={rowSelection}
               loading={alreadyLoading}
               columns={colunms}
               dataSource={alreadyAppDataSource}

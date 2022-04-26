@@ -55,7 +55,7 @@ export default function BindAppEditor(props: IProps) {
   return (
     <Modal
       width={860}
-      title="绑定应用"
+      title="关联应用"
       visible={props.visible}
       onCancel={props.onClose}
       maskClosable={false}
@@ -82,13 +82,13 @@ export default function BindAppEditor(props: IProps) {
       <Divider />
       <div className="bindApp-title">
         <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: '8px', height: 24, backgroundColor: '#eaf3fc' }}>
-          绑定应用
+          未关联应用
         </h3>
       </div>
       <Form form={form} labelCol={{ flex: '84px' }}>
         <FormItem label="应用分类" name="appCategoryCode">
           <Select
-            style={{ width: 380 }}
+            style={{ width: 200 }}
             options={categoryData}
             placeholder="应用分类"
             showSearch

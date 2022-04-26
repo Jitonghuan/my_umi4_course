@@ -4,17 +4,6 @@ import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
 export type AppType = 'frontend' | 'backend';
-
-const APP_TYPE_MAP = {
-  frontend: '前端',
-  backend: '后端',
-};
-
-const APP_TYPE_ICON = {
-  frontend: <Html5Outlined />,
-  backend: <CodeOutlined />,
-};
-
 // 表格 schema
 export const createTableSchema = ({
   onEditClick,
@@ -30,7 +19,7 @@ export const createTableSchema = ({
       title: '版本ID',
       dataIndex: 'id',
       align: 'center',
-      width: 40,
+      width: 50,
     },
     {
       title: '版本名称',
@@ -50,6 +39,7 @@ export const createTableSchema = ({
         </Tooltip>
       ),
     },
+
     {
       title: '版本描述',
       dataIndex: 'desc',
@@ -59,16 +49,24 @@ export const createTableSchema = ({
       },
     },
     {
+      title: '创建人',
+      dataIndex: 'createUser',
+      width: 80,
+      ellipsis: {
+        showTitle: false,
+      },
+    },
+    {
       width: 120,
       title: '操作',
       fixed: 'right',
       dataIndex: 'operate',
-      align: 'center',
+      // align: 'center',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
           <a onClick={() => onVeiwClick(record, index)}>查看</a>
           <a onClick={() => onEditClick(record, index)}>编辑</a>
-          <a onClick={() => onBindClick(record, index)}>绑定应用</a>
+          <a onClick={() => onBindClick(record, index)}>关联应用</a>
         </div>
       ),
     },
