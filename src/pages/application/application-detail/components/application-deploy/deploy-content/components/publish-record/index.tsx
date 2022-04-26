@@ -43,54 +43,70 @@ export default function PublishRecord(props: IProps) {
   });
 
   useEffect(() => {
-    queryDataSource({
-      appCode,
-      envTypeCode: env,
-      pageIndex: 1,
-    });
-  }, []);
-  useEffect(() => {
-    // let intervalId = setInterval(() => {
-    //   if (appCode && env) {
-    //     queryDataSource({
-    //       appCode,
-    //       envTypeCode: env,
-    //       pageIndex: 1,
-    //     });
-    //   }
-    // }, 8000);
-    timerHandle('do', true);
+    let intervalId = setInterval(() => {
+      if (appCode && env) {
+        queryDataSource({
+          appCode,
+          envTypeCode: env,
+          pageIndex: 1,
+        });
+      }
+    }, 8000);
 
-    // return () => {
-    //   clearInterval(intervalId);
-    // };
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
+  // useEffect(() => {
+  //   queryDataSource({
+  //     appCode,
+  //     envTypeCode: env,
+  //     pageIndex: 1,
+  //   });
+  // }, []);
+  console.log('tableProps.dataSource', tableProps.dataSource);
+  // useEffect(() => {
+  //   // let intervalId = setInterval(() => {
+  //   //   if (appCode && env) {
+  //   //     queryDataSource({
+  //   //       appCode,
+  //   //       envTypeCode: env,
+  //   //       pageIndex: 1,
+  //   //     });
+  //   //   }
+  //   // }, 8000);
+  //   timerHandle('do', true);
+
+  //   // return () => {
+  //   //   clearInterval(intervalId);
+  //   // };
+  // }, []);
 
   let dom: any = document?.getElementById('load-more-list');
   let scrollTop = useRef<any>(dom?.scrollTop);
   // let scrollTop = dom?.scrollTop; // 滚动条距离顶部的距离
-  useEffect(() => {
-    if (dom) {
-      console.log('00000');
-      dom.addEventListener('scroll', getScroll(), true);
-    }
+  // useEffect(() => {
+  //   if (dom) {
+  //     console.log('00000');
+  //     dom.addEventListener('scroll', getScroll(), true);
+  //   }
 
-    // return () => {
-    //    dom?.removeEventListener('scroll', getScroll(),true);
-    // };
-  }, [dom, scrollTop.current]);
+  //   // return () => {
+  //   //    dom?.removeEventListener('scroll', getScroll(),true);
+  //   // };
+  // }, [dom, scrollTop.current]);
   //定义定时器方法
-  const intervalFunc = () => {
-    if (appCode && env) {
-      queryDataSource({
-        appCode,
-        envTypeCode: env,
-        pageIndex: 1,
-      });
-    }
-  };
-  // 定时请求发布内容
-  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
+  // const intervalFunc = () => {
+  //   if (appCode && env) {
+  //     queryDataSource({
+  //       appCode,
+  //       envTypeCode: env,
+  //       pageIndex: 1,
+  //     });
+  //   }
+  // };
+  // // 定时请求发布内容
+  // const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -141,7 +157,7 @@ export default function PublishRecord(props: IProps) {
             type="primary"
             onClick={() => {
               loadMore;
-              timerHandle('stop');
+              // timerHandle('stop');
             }}
           >
             加载更多
@@ -162,10 +178,10 @@ export default function PublishRecord(props: IProps) {
       console.log('dom.scroll', dom?.scrollTop, scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
       if (scrollTop.current > 3) {
         console.log('到达底部开始滑动！');
-        timerHandle('stop');
+        // timerHandle('stop');
       }
       if (scrollTop.current <= 20) {
-        timerHandle('do', true);
+        // timerHandle('do', true);
         console.log('到达顶部！');
         console.log('dom.scroll', dom?.scrollTop, scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
       }
