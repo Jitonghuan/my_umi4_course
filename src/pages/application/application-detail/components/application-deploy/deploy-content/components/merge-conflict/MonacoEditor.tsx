@@ -6,7 +6,7 @@ import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
 import ReactDOM from 'react-dom';
 
 export default function MonacoEditor(prop: any) {
-  const { filePath, context, resolved, onchange } = prop;
+  const { filePath, content, resolved, onchange } = prop;
   const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
   const [decorations, setDecorations] = useState<string[]>([]);
   const [oldZones, setOldZones] = useState<string[]>([]);
@@ -44,7 +44,7 @@ export default function MonacoEditor(prop: any) {
   // 切换文件时触发
   useEffect(() => {
     if (instance) {
-      let modifiedModel = monaco.editor.createModel(context, undefined, monaco.Uri.file(filePath));
+      let modifiedModel = monaco.editor.createModel(content, undefined, monaco.Uri.file(filePath));
       instance.setModel(modifiedModel);
       renderMergeTools();
       return () => {
@@ -52,14 +52,14 @@ export default function MonacoEditor(prop: any) {
       };
     }
   }, [instance, filePath]);
-  // prop中context传入时触发
+  // prop中content传入时触发
   useEffect(() => {
     if (!instance) return;
-    if (instance.getModel()?.getValue() != context) {
-      instance.getModel()?.setValue(context);
+    if (instance.getModel()?.getValue() != content) {
+      instance.getModel()?.setValue(content);
       // renderMergeTools();
     }
-  }, [context]);
+  }, [content]);
 
   //计算冲突区域
   const diffAreas = () => {

@@ -24,12 +24,14 @@ import { IProps } from './types';
 import { useEnvList } from '@/pages/application/project-environment/hook';
 import ServerStatus from '../server-status';
 import './index.less';
+import deploy from 'mock/deploy';
 
 const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 export default function PublishDetail(props: IProps) {
   const [envProjectForm] = Form.useForm();
   let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
+  let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [loading, envDataSource] = useEnvList();
@@ -63,10 +65,10 @@ export default function PublishDetail(props: IProps) {
       clusterName: 'private-cluster',
     });
 
-    if (deployInfo.id !== undefined) {
+    if (metadata?.id !== undefined) {
       getRequest(checkNextEnv, {
         data: {
-          id: deployInfo.id,
+          id: metadata?.id,
         },
       }).then((response) => {
         if (response?.success) {
@@ -83,7 +85,7 @@ export default function PublishDetail(props: IProps) {
         }
       });
     }
-  }, [appCategoryCode, envTypeCode, deployInfo.id]);
+  }, [appCategoryCode, envTypeCode, metadata?.id]);
   // 获取环境列表
   const getEnvList = (params: any) => {
     getRequest(listAppEnv, {
@@ -122,7 +124,7 @@ export default function PublishDetail(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         return cancelDeploy({
-          id: deployInfo.id,
+          id: metadata?.id,
           envCode: '',
         }).then(() => {
           onOperate('cancelDeployEnd');
@@ -149,7 +151,7 @@ export default function PublishDetail(props: IProps) {
   const confirmPublishNext = async () => {
     setConfirmLoading(true);
     try {
-      await deployReuse({ id: deployInfo.id, envs: deployNextEnv });
+      await deployReuse({ id: metadata?.id, envs: deployNextEnv });
       message.success('操作成功，正在部署中...');
       setDeployNextEnvVisible(false);
       onOperate('deployNextEnvSuccess');
@@ -191,11 +193,12 @@ export default function PublishDetail(props: IProps) {
   // 发布环境
   let I = 0;
   const envNames = useMemo(() => {
-    const { envs } = deployInfo;
-    const envList = envs?.split(',') || [];
+    // const { envs } = deployInfo;
+    const { deployEnvs } = envInfo || {};
+    // const envList = deployEnvs?.split(',') || [];
     return envDataList
       .filter((envItem) => {
-        return envList.includes(envItem.value);
+        return (deployEnvs || []).includes(envItem.value);
       })
       .map((envItem) => `${envItem.label}(${envItem.value})`)
       .join(',');
@@ -342,13 +345,13 @@ export default function PublishDetail(props: IProps) {
 
   let deployErrInfo: any[] = [];
   try {
-    deployErrInfo = deployInfo.deployErrInfo ? JSON.parse(deployInfo.deployErrInfo) : [];
+    deployErrInfo = status.deployErrInfo ? JSON.parse(status.deployErrInfo) : [];
   } catch (e) {
-    if (deployInfo.deployErrInfo) {
+    if (status && status.deployErrInfo) {
       deployErrInfo = [
         {
-          subErrInfo: deployInfo.deployErrInfo,
-          envCode: deployInfo.envs,
+          subErrInfo: status.deployErrInfo,
+          envCode: envInfo.deployEnvs,
         },
       ];
     }
@@ -357,13 +360,14 @@ export default function PublishDetail(props: IProps) {
   function goToJenkins(item: any) {
     let jenkinsUrl: any[] = [];
     try {
-      jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
+      // jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
+      jenkinsUrl = buildInfo.buildUrl ? JSON.parse(buildInfo.buildUrl) : [];
     } catch (e) {
-      if (deployInfo.jenkinsUrl) {
+      if (buildInfo.buildUrl) {
         jenkinsUrl = [
           {
-            subJenkinsUrl: deployInfo.jenkinsUrl,
-            envCode: deployInfo.envs,
+            subJenkinsUrl: buildInfo.buildUrl,
+            envCode: envInfo.deployEnvs,
           },
         ];
       }
@@ -437,26 +441,27 @@ export default function PublishDetail(props: IProps) {
         bordered
       >
         <Descriptions.Item label="CRID" contentStyle={{ whiteSpace: 'nowrap' }}>
-          {deployInfo?.id || '--'}
+          {/* {deployInfo?.id || '--'} */}
+          {metadata?.id || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
-          {deployInfo?.releaseBranch ? <Paragraph copyable>{deployInfo?.releaseBranch}</Paragraph> : '---'}
+          {branchInfo?.releaseBranch ? <Paragraph copyable>{branchInfo?.releaseBranch}</Paragraph> : '---'}
           {/* <Paragraph copyable>{deployInfo?.releaseBranch || '--'}</Paragraph> */}
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {deployInfo?.version ? <Paragraph copyable>{deployInfo?.version}</Paragraph> : '---'}
+            {metadata?.version ? <Paragraph copyable>{metadata?.version}</Paragraph> : '---'}
             {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
-          {deployInfo?.conflictFeature || '--'}
+          {branchInfo?.conflictFeature || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="合并分支" span={4}>
-          {deployInfo?.features || '--'}
+          {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
-        {deployInfo?.deployErrInfo && deployErrInfo?.length && (
+        {status?.deployErrInfo && deployErrInfo.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>
               {deployErrInfo.map((errInfo) => (
@@ -469,9 +474,9 @@ export default function PublishDetail(props: IProps) {
                         goToJenkins(errInfo);
                       }
                       if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
-                        localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
+                        localStorage.setItem('__init_env_tab__', metadata?.envTypeCode);
                         history.push(
-                          `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
+                          `/matrix/application/detail/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}`,
                         );
                       }
                     }}

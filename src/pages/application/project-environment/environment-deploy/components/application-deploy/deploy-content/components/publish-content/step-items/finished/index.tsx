@@ -9,14 +9,16 @@ import { downloadImage } from '@/pages/application/service';
 
 /** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, projectEnvCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, projectEnvCode, status, ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   // const [downLoadStatus, setDownLoadStatus] = useState(false);
   return (
     <Steps.Step
       {...others}
       title="完成"
+      status={status}
       description={
-        (deployStatus === 'deployFinish' || deployStatus === 'deployed') &&
+        status === 'finish' &&
         (projectEnvCode?.includes('zs-prd') ||
           projectEnvCode?.includes('zs-pre') ||
           projectEnvCode?.includes('xiehe')) && (
@@ -24,7 +26,7 @@ export default function FinishedStep(props: StepItemProps) {
             download
             style={{ marginTop: 4 }}
             target="_blank"
-            href={`${downloadImage}?id=${deployInfo.id}`}
+            href={`${downloadImage}?id=${metadata.id}`}
             // disabled={downLoadStatus}
             onClick={() => {
               message.info('镜像开始下载');

@@ -40,6 +40,9 @@ export const queryBranchListUrl = `${appConfig.apiPrefix}/releaseManage/branch/l
 /** POST 新增 feature 分支 */
 export const createFeatureBranchUrl = `${appConfig.apiPrefix}/releaseManage/branch/createFeature`;
 
+/** POST 新增 主干 分支 */
+export const createMasterBranchUrl = `${appConfig.apiPrefix}/releaseManage/branch/createMainBranch`;
+
 /** GET 查询应用成员 */
 export const queryAppMemberUrl = `${appConfig.apiPrefix}/appManage/member/list`;
 
@@ -212,6 +215,11 @@ let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 export const queryPortalList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/list`;
 
 export const getDemandByProjectList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/getDemandByProject`;
+// post 新建分支-获取主干分支下拉框数据
+export const getMasterBranch = '';
+
+// post 主干分支-新建分支-获取来源分支下拉框数据
+export const getOriginBranch = '';
 
 /** GET 当前应用下已通过且存在未上线发布计划的发布申请列表 */
 export const applyHaveNoUpPlanList = `${appConfig.apiPrefix}/publishManage/applyHaveNoUpPlan/list`;
@@ -263,6 +271,9 @@ export const createFeatureBranch = (params: {
   postRequest(createFeatureBranchUrl, {
     data: params,
   });
+
+// 新建主干分支
+export const createMasterBranch = (params: any) => postRequest(createMasterBranchUrl, { data: params });
 
 /** 查询应用成员 */
 export const queryAppMember = (params: { appCode?: string }) => getRequest(queryAppMemberUrl, { data: params });
@@ -408,6 +419,14 @@ export const queryDeployList = async (params: {
   pageSize: number;
 }) => {
   return getRequest(queryDeployListUrl, {
+    data: params,
+  });
+};
+
+export const queryDeployInfoUrl = `${appConfig.apiPrefix}/releaseManage/deploy/getActiveDeployInfo`;
+
+export const queryActiveDeployInfo = async (params: any) => {
+  return getRequest(queryDeployInfoUrl, {
     data: params,
   });
 };
@@ -620,3 +639,16 @@ export const getMergeMessage = async (params: any) => await getRequest(getMergeM
 /** POST 解决冲突-提交冲突 */
 export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/commit`;
 export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });
+
+/** GET 应用部署-获取流水线 */
+// export const getPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/list`;
+export const getPipelineUrl = `http://127.0.0.1:4523/mock/837336/v1/appManage/appPipeline/list`;
+
+/** POST 应用部署-删除流水线 */
+export const delPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/delete`;
+
+/** POST 应用部署-新增流水线 */
+export const addPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/add`;
+
+/** POST 应用部署-编辑流水线 */
+export const updatePipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/update`;

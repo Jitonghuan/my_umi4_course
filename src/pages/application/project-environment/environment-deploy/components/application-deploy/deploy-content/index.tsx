@@ -8,7 +8,12 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import useInterval from './useInterval';
 import DetailContext from '../../../context';
-import { queryDeployList, queryFeatureDeployed, queryApplicationStatus } from '@/pages/application/service';
+import {
+  queryDeployList,
+  queryFeatureDeployed,
+  queryApplicationStatus,
+  queryActiveDeployInfo,
+} from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
 import PublishDetail from './components/publish-detail';
@@ -19,12 +24,47 @@ import { Spin } from 'antd';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';
+const tempData = {
+  metadata: {
+    id: 1564,
+    appCode: 'dubbo-consumer',
+    pipelineCode: 'pipeline-1',
+    envTypeCode: 'dev',
+    isActive: 1,
+    version: '1.0',
+  },
+  branchInfo: {
+    masterBranch: 'master-1',
+    releaseBranch: 'release_dev_20220411162402',
+    features: ['feature_ccd_20220406160947', 'feature_test_20220330202635'],
+    conflictFeature: '',
+    // "tagName": "tag-1"
+  },
+  envInfo: {
+    deployEnvs: ['base-dev'],
+  },
+  buildInfo: {
+    buildUrl: ['http://jenkins-dev.cfuture.shop/job/dubbo-consumer'],
+    buildType: 'beClientBuild',
+  },
+  status: {
+    deployNodes: [
+      { nodeType: 'single', nodeName: '创建任务', nodeStatus: 'finish' },
+      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'finish' },
+      { nodeName: '构建', nodeStatus: 'finish', nodeType: 'single' },
+      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'wait' },
+      { nodeType: 'single', nodeName: '删除feature', nodeStatus: 'wait' },
+      { nodeType: 'single', nodeName: '完成', nodeStatus: 'wait' },
+    ],
+  },
+};
 
 export interface DeployContentProps {
   /** 当前页面是否激活 */
   // isActive?: boolean;
   /** 环境参数 */
   envTypeCode: string;
+  pipelineCode: string;
   /** 部署下个环境成功回调 */
   // onDeployNextEnvSuccess: () => void;
 }
@@ -32,13 +72,17 @@ export interface DeployContentProps {
 export default function DeployContent(props: DeployContentProps) {
   const {
     envTypeCode,
+    pipelineCode,
     // isActive
   } = props;
   const { appData, projectEnvCode } = useContext(DetailContext);
   const { appCode } = appData || {};
   const cachebranchName = useRef<string>();
   const [updating, setUpdating] = useState(false);
-  const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
+  const masterBranchName = useRef<string>('master');
+  // const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
+  const [deployInfo, setDeployInfo] = useState<any>({});
+
   const [branchInfo, setBranchInfo] = useState<{
     deployed: any[];
     unDeployed: any[];
@@ -50,6 +94,8 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode || !projectEnvCode) return;
 
     setUpdating(true);
+
+    const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
 
     const resp1 = await queryDeployList({
       appCode: appCode!,
@@ -69,12 +115,21 @@ export default function DeployContent(props: DeployContentProps) {
       envTypeCode: projectEnvCode,
       isDeployed: 0,
       branchName: cachebranchName.current,
+      masterBranch: masterBranchName.current,
     });
 
-    if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-      const nextInfo = resp1?.data?.dataSource[0];
-      setDeployInfo(nextInfo);
+    // if (resp?.data) {
+    //   const { data } = resp;
+    //   // setDeployInfo(data)
+    // }
 
+    if (tempData) {
+      setDeployInfo(tempData);
+    }
+
+    if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
+      // const nextInfo = resp1?.data?.dataSource[0];
+      // setDeployInfo(nextInfo);
       // 如果有部署信息，且为线上，则更新应用状态
       // if (envTypeCode === 'prod' && appData) {
       //   const resp4 = await getRequest(queryApplicationStatus, {
@@ -85,7 +140,6 @@ export default function DeployContent(props: DeployContentProps) {
       //   }).catch(() => {
       //     return { data: null };
       //   });
-
       //   const { Status: nextAppStatus } = resp4.data || {};
       //   setAppStatusInfo(nextAppStatus);
       // }
@@ -121,7 +175,7 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode) return;
 
     timerHandle('do', true);
-  }, [appCode]);
+  }, [appCode, pipelineCode]);
 
   const onSpin = () => {
     setLoading(true);
@@ -166,6 +220,10 @@ export default function DeployContent(props: DeployContentProps) {
             onSearch={searchUndeployedBranch}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
+            }}
+            masterBranchChange={(masterBranch: string) => {
+              masterBranchName.current = masterBranch;
+              timerHandle('do', true);
             }}
           />
         </Spin>
