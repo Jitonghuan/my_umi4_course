@@ -70,13 +70,22 @@ export default function VersionEditor(props: IProps) {
     });
   };
 
-  const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
-      setSelectedRowKeys(selectedRowKeys);
-      setCurrentData(selectedRows);
-    },
-  };
-  console.log('selectedRows', currentData);
+  // const rowSelection = {
+  //   onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+  //     setSelectedRowKeys(selectedRowKeys);
+  //     setCurrentData(selectedRows);
+  //   },
+  // };
+  const rowSelection = useMemo(() => {
+    return {
+      selectedRowKeys: selectedRowKeys,
+      onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+        setCurrentData(selectedRows);
+        setSelectedRowKeys(selectedRowKeys);
+      },
+    };
+  }, [selectedRowKeys]);
+
   const hasSelected = selectedRowKeys.length > 0;
   useEffect(() => {
     if (initData) {
@@ -90,29 +99,31 @@ export default function VersionEditor(props: IProps) {
     };
   }, [props.visible]);
 
+  useEffect(() => {
+    if (isEdit && props.visible) {
+      queryVersionAppList({
+        versionCode: initData?.versionCode,
+        appCategoryCode: initData.appCategoryCode,
+        isBoundVersion: true,
+      });
+    }
+  }, [props.visible]);
+
   // 应用分类 - 应用组 联动
   const selectAppCategoryCode = useCallback((next: string) => {
     setCategoryCode(next);
     form.resetFields(['appGroupCode']);
-    if (!isEdit) {
-      debugger;
-      queryAppsList(next);
-    } else {
-      queryVersionAppList({ versionCode: initData?.versionCode, appCategoryCode: next, isBoundVersion: true });
-    }
+    queryAppsList(next);
   }, []);
   const selectAppGroupCode = useCallback((appGroupCode: string) => {
-    if (!isEdit) {
-      console.log('选择应用组', type);
-      queryAppsList(categoryCode || '', appGroupCode);
-    }
+    console.log('选择应用组', type);
+    queryAppsList(categoryCode || '', appGroupCode);
   }, []);
-  console.log('allAppListDataSource', allAppListDataSource);
 
   return (
     <Modal
       width={860}
-      title={isEdit ? '编辑版本' : '新增版本'}
+      title={type === 'view' ? '查看版本' : type === 'add' ? '新增版本' : '编辑版本'}
       visible={props.visible}
       onCancel={props.onClose}
       maskClosable={false}
@@ -157,37 +168,40 @@ export default function VersionEditor(props: IProps) {
             loading={loading}
           ></Select>
         </FormItem>
-        <FormItem label="应用组" name="appGroupCode">
-          <Select
-            style={{ width: 380 }}
-            placeholder="通过应用组筛选应用"
-            disabled={isEdit}
-            options={appGroupOptions}
-            showSearch
-            allowClear
-            onChange={selectAppGroupCode}
-            loading={appGroupLoading}
-          ></Select>
-        </FormItem>
+        {!isEdit && (
+          <FormItem label="应用组" name="appGroupCode">
+            <Select
+              style={{ width: 380 }}
+              placeholder="通过应用组筛选应用"
+              disabled={isEdit}
+              options={appGroupOptions}
+              showSearch
+              allowClear
+              onChange={selectAppGroupCode}
+              loading={appGroupLoading}
+            ></Select>
+          </FormItem>
+        )}
+
         <FormItem>
           <div style={{ marginLeft: 8 }}>{hasSelected ? `共选择 ${selectedRowKeys.length} 个应用` : ''}</div>
-
-          <Table
-            key="addTable"
-            size="middle"
-            bordered
-            rowSelection={rowSelection}
-            loading={alreadyLoading}
-            columns={colunms}
-            dataSource={allAppListDataSource || alreadyAppDataSource}
-            style={{ height: 200 }}
-            pagination={false}
-            scroll={{ y: window.innerHeight - 800, x: '100%' }}
-          />
-          {/* ) : (
+          {isEdit ? (
             <Table
               size="middle"
-              key='editTable'
+              bordered
+              rowKey="id"
+              rowSelection={rowSelection}
+              loading={alreadyLoading}
+              columns={colunms}
+              dataSource={alreadyAppDataSource}
+              style={{ height: 200 }}
+              pagination={false}
+              scroll={{ y: window.innerHeight - 600, x: '100%' }}
+            />
+          ) : (
+            <Table
+              size="middle"
+              rowKey="id"
               bordered
               loading={tableLoading}
               rowSelection={rowSelection}
@@ -195,9 +209,9 @@ export default function VersionEditor(props: IProps) {
               dataSource={allAppListDataSource}
               style={{ height: 200 }}
               pagination={false}
-              scroll={{ y: window.innerHeight - 800, x: '100%' }}
+              scroll={{ y: window.innerHeight - 600, x: '100%' }}
             />
-          )} */}
+          )}
         </FormItem>
       </Form>
     </Modal>

@@ -29,6 +29,13 @@ export default function ApplicationList() {
     },
     [],
   );
+  const data = [
+    {
+      versionCode: 'test',
+      versionName: '测试',
+      desc: '测试描述',
+    },
+  ];
 
   // 表格列配置
   const tableColumns = useMemo(() => {
@@ -71,7 +78,8 @@ export default function ApplicationList() {
           </Button>
         </div>
         <Table
-          dataSource={dataSource}
+          // dataSource={dataSource}
+          dataSource={data}
           loading={listLoading}
           bordered
           rowKey="id"

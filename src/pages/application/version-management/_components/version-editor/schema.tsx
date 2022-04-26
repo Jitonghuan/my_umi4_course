@@ -12,11 +12,6 @@ const APP_TYPE_ICON = {
 };
 
 export const colunms = [
-  //   {
-  //     title: 'ID',
-  //     dataIndex: 'id',
-  //     width: 50,
-  //   },
   {
     title: '应用名',
     dataIndex: 'appName',

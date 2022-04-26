@@ -28,15 +28,15 @@ export default function BindAppEditor(props: IProps) {
   const { initData, visible, onClose } = props;
   const isEdit = !!initData?.id;
   useEffect(() => {
-    if (initData?.versionCode) {
-    } else {
+    if (!initData?.versionCode) {
       return;
     }
   }, [visible]);
-  const selectAppCategoryCode = useCallback((next: string) => {
+  // console.log('initData?.versionCode111',initData?.versionCode)
+  const selectAppCategoryCode = (next: string) => {
     setCategoryCode(next);
     queryVersionAppList({ versionCode: initData?.versionCode, appCategoryCode: next, isBoundVersion: false });
-  }, []);
+  };
 
   const handleSubmit = () => {
     handleBoundApp({ versionCode: initData?.versionCode, apps: currentData }).then(() => {
@@ -45,7 +45,7 @@ export default function BindAppEditor(props: IProps) {
   };
 
   const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
       setSelectedRowKeys(selectedRowKeys);
       setCurrentData(selectedRows);
     },
@@ -83,7 +83,7 @@ export default function BindAppEditor(props: IProps) {
       <div className="bindApp-title">
         <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: '8px', height: 20 }}>绑定应用</h3>
       </div>
-      <Form form={form} labelCol={{ flex: '90px' }}>
+      <Form form={form} labelCol={{ flex: '84px' }}>
         <FormItem label="应用分类" name="appCategoryCode">
           <Select
             style={{ width: 380 }}
@@ -103,6 +103,7 @@ export default function BindAppEditor(props: IProps) {
           <Table
             size="middle"
             bordered
+            rowKey="id"
             rowSelection={rowSelection}
             columns={colunms}
             dataSource={unAddAppDataSource}
@@ -110,7 +111,7 @@ export default function BindAppEditor(props: IProps) {
             style={{ height: 200 }}
             // scroll={{ x: '100%' }}
             pagination={false}
-            scroll={{ y: window.innerHeight - 720, x: '100%' }}
+            scroll={{ y: window.innerHeight - 600, x: '100%' }}
           />
         </FormItem>
       </Form>

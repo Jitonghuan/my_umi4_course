@@ -21,13 +21,13 @@ export const getAppList = `${appConfig.apiPrefix}/appManage/list`;
 /** 获取应用组数据 */
 export const queryBizData = `${appConfig.apiPrefix}/appManage/group/list`;
 
-/*  GET 查询所有应用 */
-export const getVersionAppList = `${appConfig.apiPrefix}/appManage/version/listApp'`;
+/*  GET 查询已绑定或者未绑定应用 */
+export const getVersionAppList = `${appConfig.apiPrefix}/appManage/version/listApp`;
 
 /**  GET 查看应用分类接口 */
 export const appTypeList = `${appConfig.apiPrefix}/appManage/category/list`;
 
-/* POST 绑定应用  */
+/* POST 执行绑定应用  */
 export const boundApp = `${appConfig.apiPrefix}/appManage/version/boundApp`;
 
 /* 接口逻辑 */
