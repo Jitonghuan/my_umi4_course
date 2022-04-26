@@ -29,6 +29,7 @@ export const createTableSchema = ({
     {
       title: '版本ID',
       dataIndex: 'id',
+      align: 'center',
       width: 40,
     },
     {

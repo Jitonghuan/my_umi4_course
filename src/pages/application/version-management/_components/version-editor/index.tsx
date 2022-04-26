@@ -30,7 +30,7 @@ export default function VersionEditor(props: IProps) {
   const [categoryCode, setCategoryCode] = useState<string>();
   const [loading, categoryData] = useQueryCategory();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
-  const [tableLoading, allAppListDataSource, queryAppsList] = useAppList();
+  const [tableLoading, allAppListDataSource, setSource, queryAppsList] = useAppList();
   const [alreadyLoading, alreadyAppDataSource, queryVersionAppList] = useVersionAppList();
   const [addLoading, addVersion] = useUpdateVersion();
   const { initData, type, onSubmit } = props;
@@ -96,6 +96,9 @@ export default function VersionEditor(props: IProps) {
 
     return () => {
       form.resetFields();
+      setSelectedRowKeys([]);
+      setCurrentData([]);
+      setSource([]);
     };
   }, [props.visible]);
 
@@ -115,10 +118,11 @@ export default function VersionEditor(props: IProps) {
     form.resetFields(['appGroupCode']);
     queryAppsList(next);
   }, []);
-  const selectAppGroupCode = useCallback((appGroupCode: string) => {
-    console.log('选择应用组', type);
+  const selectAppGroupCode = (appGroupCode: string) => {
+    console.log('选择应用组', type, appGroupCode);
+
     queryAppsList(categoryCode || '', appGroupCode);
-  }, []);
+  };
 
   return (
     <Modal

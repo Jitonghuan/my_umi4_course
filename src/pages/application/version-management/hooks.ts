@@ -144,13 +144,13 @@ export function useUpdateVersion(): [
 }
 
 //创建版本时获取全部应用数据
-export function useAppList(): [boolean, any, (appCategoryCode: string, appGroupCode?: string) => Promise<void>] {
+export function useAppList(): [boolean, any, any, (appCategoryCode: string, appGroupCode?: string) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<IOption[]>([]);
-  const queryAppsList = async (appCategoryCode: string) => {
+  const queryAppsList = async (appCategoryCode: string, appGroupCode?: string) => {
     setLoading(true);
     getRequest(getAppList, {
-      data: { appCategoryCode, pageSize: -1 },
+      data: { appCategoryCode, appGroupCode, pageSize: -1 },
     })
       .then((result) => {
         if (result?.success) {
@@ -170,7 +170,7 @@ export function useAppList(): [boolean, any, (appCategoryCode: string, appGroupC
       });
   };
 
-  return [loading, source, queryAppsList];
+  return [loading, source, setSource, queryAppsList];
 }
 
 // 获取绑定/未绑定版本的应用

@@ -81,7 +81,9 @@ export default function BindAppEditor(props: IProps) {
       </Descriptions>
       <Divider />
       <div className="bindApp-title">
-        <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: '8px', height: 20 }}>绑定应用</h3>
+        <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: '8px', height: 24, backgroundColor: '#eaf3fc' }}>
+          绑定应用
+        </h3>
       </div>
       <Form form={form} labelCol={{ flex: '84px' }}>
         <FormItem label="应用分类" name="appCategoryCode">
