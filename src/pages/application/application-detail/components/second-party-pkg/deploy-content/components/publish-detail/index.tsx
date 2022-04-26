@@ -19,7 +19,6 @@ const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
 
 const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => {
-  console.log(pipelineCode, 'pipelineCode');
   const { appData } = useContext(DetailContext);
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};

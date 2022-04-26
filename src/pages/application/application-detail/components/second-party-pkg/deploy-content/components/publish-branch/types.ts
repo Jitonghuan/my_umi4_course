@@ -6,6 +6,7 @@ export interface IProps {
   deployInfo: Record<string, any>;
   env: string;
   onSearch: string;
+  masterBranchChange: any;
   dataSource: Array<{
     id: string | number;
     branchName: string;

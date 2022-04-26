@@ -20,7 +20,8 @@ const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
 export default function PublishBranch(props: IProps) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, pipelineCode, onSearch } = props;
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, pipelineCode, onSearch, masterBranchChange } =
+    props;
   const { metadata } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
@@ -106,8 +107,9 @@ export default function PublishBranch(props: IProps) {
     });
   }, [appCategoryCode, env]);
 
-  const handleChange = (v: string) => {
-    setSelectMaster(v);
+  const handleChange = (v: any) => {
+    setSelectMaster(v?.value);
+    masterBranchChange(v?.value);
   };
 
   return (
