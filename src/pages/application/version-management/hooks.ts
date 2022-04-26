@@ -177,6 +177,7 @@ export function useAppList(): [boolean, any, any, (appCategoryCode: string, appG
 export function useVersionAppList(): [
   boolean,
   any,
+  any,
   (paramsObj: { versionCode: string; appCategoryCode: string; isBoundVersion: boolean }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
@@ -203,7 +204,7 @@ export function useVersionAppList(): [
         setLoading(false);
       });
   };
-  return [loading, source, queryVersionAppList];
+  return [loading, source, setSource, queryVersionAppList];
 }
 
 // 获取应用分组选项

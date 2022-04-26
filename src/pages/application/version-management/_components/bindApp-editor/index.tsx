@@ -20,7 +20,7 @@ export interface IProps {
 export default function BindAppEditor(props: IProps) {
   const [form] = Form.useForm<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-  const [unAddLoading, unAddAppDataSource, queryVersionAppList] = useVersionAppList();
+  const [unAddLoading, unAddAppDataSource, setSource, queryVersionAppList] = useVersionAppList();
   const [categoryCode, setCategoryCode] = useState<string>();
   const [bundLoading, handleBoundApp] = useBoundApp();
   const [currentData, setCurrentData] = useState<any[]>([]);
@@ -31,6 +31,13 @@ export default function BindAppEditor(props: IProps) {
     if (!initData?.versionCode) {
       return;
     }
+
+    return () => {
+      form.resetFields();
+      setSelectedRowKeys([]);
+      setCurrentData([]);
+      setSource([]);
+    };
   }, [visible]);
   // console.log('initData?.versionCode111',initData?.versionCode)
   const selectAppCategoryCode = (next: string) => {
@@ -63,7 +70,7 @@ export default function BindAppEditor(props: IProps) {
         <div className="drawer-footer">
           <Popconfirm title="确定绑定这些应用吗？" onConfirm={handleSubmit} okText="确定" cancelText="取消">
             <Button type="primary" loading={bundLoading}>
-              绑定
+              关联
             </Button>
           </Popconfirm>
 
