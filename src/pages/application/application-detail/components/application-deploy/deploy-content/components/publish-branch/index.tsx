@@ -40,13 +40,23 @@ export interface PublishBranchProps {
     gmtCreate: string;
     status: string | number;
   }[];
+  pipelineCode: string;
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
 }
 
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch, masterBranch, masterBranchChange } =
-    publishBranchProps;
+  const {
+    hasPublishContent,
+    deployInfo,
+    dataSource,
+    onSubmitBranch,
+    env,
+    onSearch,
+    masterBranch,
+    masterBranchChange,
+    pipelineCode,
+  } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata } = deployInfo || {};
   const { appCategoryCode, appCode, id } = appData || {};
@@ -58,7 +68,17 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('');
-  const [masterListData] = useMasterBranchList({ branch_type: 'master' });
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getBuildType = () => {
+    let { appType, isClient } = appData || {};
+    if (appType === 'frontend') {
+      return 'feMultiBuild';
+    } else {
+      return isClient ? 'beClientBuild' : 'beServerBuild';
+    }
+  };
 
   type reviewStatusTypeItem = {
     color: string;
@@ -88,9 +108,11 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       appCode: appCode!,
       envTypeCode: env,
       features: filter,
+      pipelineCode,
       envCodes: deployEnv,
       isClient: +appData?.isClient! === 1,
-      masterBranch: selectMaster, //来源分支
+      masterBranch: selectMaster, //主干分支
+      buildType: getBuildType(),
     });
   };
 
@@ -114,8 +136,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
   useEffect(() => {
     if (masterListData.length !== 0) {
-      const option = masterListData.map((item: any) => ({ value: item.id, label: item.branchName }));
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
+      const initValue = option.find((item: any) => item.label === 'master');
+      setSelectMaster(initValue?.value);
     }
   }, [masterListData]);
 
@@ -139,13 +163,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     });
   }, [appCategoryCode, env]);
 
-  useEffect(() => {
-    setSelectMaster(1960);
-  }, []);
-
-  const handleChange = (v: string) => {
-    setSelectMaster(v);
-    masterBranchChange(v);
+  const handleChange = (v: any) => {
+    setSelectMaster(v.value);
+    masterBranchChange(v.value);
   };
 
   const branchNameRender = (branchName: string, record: any) => {
@@ -166,8 +186,14 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           <Select
             options={masterBranchOptions}
             value={selectMaster}
-            style={{ width: '240px', marginRight: '20px' }}
+            style={{ width: '200px', marginRight: '20px' }}
             onChange={handleChange}
+            showSearch
+            optionFilterProp="label"
+            labelInValue
+            filterOption={(input, option) => {
+              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+            }}
           ></Select>
           <h4>开发分支名称：</h4>
           <Input.Search
@@ -188,6 +214,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         rowKey="id"
         bordered
         dataSource={dataSource}
+        loading={loading}
         pagination={false}
         scroll={{ x: '100%' }}
         rowSelection={{

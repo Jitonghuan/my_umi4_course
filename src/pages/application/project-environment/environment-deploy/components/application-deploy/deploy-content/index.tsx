@@ -91,59 +91,63 @@ export default function DeployContent(props: DeployContentProps) {
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
   const requestData = async () => {
-    if (!appCode || !projectEnvCode) return;
+    if (!appCode || !projectEnvCode || !pipelineCode) return;
 
     setUpdating(true);
 
     const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
 
-    const resp1 = await queryDeployList({
-      appCode: appCode!,
-      envTypeCode: projectEnvCode,
-      isActive: 1,
-      pageIndex: 1,
-      pageSize: 10,
-    });
+    // const resp1 = await queryDeployList({
+    //   appCode: appCode!,
+    //   envTypeCode: projectEnvCode,
+    //   isActive: 1,
+    //   pageIndex: 1,
+    //   pageSize: 10,
+    // });
 
     const resp2 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode: projectEnvCode,
       isDeployed: 1,
+      pipelineCode,
     });
     const resp3 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode: projectEnvCode,
+      pipelineCode,
       isDeployed: 0,
       branchName: cachebranchName.current,
       masterBranch: masterBranchName.current,
     });
 
-    // if (resp?.data) {
-    //   const { data } = resp;
-    //   // setDeployInfo(data)
+    if (resp && resp.success) {
+      if (resp?.data) {
+        setDeployInfo(resp.data);
+      }
+      if (!resp.data) {
+        setDeployInfo({});
+      }
+    } else {
+      setDeployInfo({});
+    }
+
+    // if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
+    // const nextInfo = resp1?.data?.dataSource[0];
+    // setDeployInfo(nextInfo);
+    // 如果有部署信息，且为线上，则更新应用状态
+    // if (envTypeCode === 'prod' && appData) {
+    //   const resp4 = await getRequest(queryApplicationStatus, {
+    //     data: {
+    //       deploymentName: appData?.deploymentName,
+    //       envCode: nextInfo.deployedEnvs,
+    //     },
+    //   }).catch(() => {
+    //     return { data: null };
+    //   });
+    //   const { Status: nextAppStatus } = resp4.data || {};
+    //   setAppStatusInfo(nextAppStatus);
     // }
-
-    if (tempData) {
-      setDeployInfo(tempData);
-    }
-
-    if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-      // const nextInfo = resp1?.data?.dataSource[0];
-      // setDeployInfo(nextInfo);
-      // 如果有部署信息，且为线上，则更新应用状态
-      // if (envTypeCode === 'prod' && appData) {
-      //   const resp4 = await getRequest(queryApplicationStatus, {
-      //     data: {
-      //       deploymentName: appData?.deploymentName,
-      //       envCode: nextInfo.deployedEnvs,
-      //     },
-      //   }).catch(() => {
-      //     return { data: null };
-      //   });
-      //   const { Status: nextAppStatus } = resp4.data || {};
-      //   setAppStatusInfo(nextAppStatus);
-      // }
-    }
+    // }
 
     setBranchInfo({
       deployed: resp2?.data || [],
@@ -192,6 +196,7 @@ export default function DeployContent(props: DeployContentProps) {
           <PublishDetail
             envTypeCode={projectEnvCode}
             deployInfo={deployInfo}
+            pipelineCode={pipelineCode}
             // appStatusInfo={appStatusInfo}
             onOperate={(type: any) => {
               // if (type === 'deployNextEnvSuccess') {
@@ -211,12 +216,14 @@ export default function DeployContent(props: DeployContentProps) {
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
+            pipelineCode={pipelineCode}
           />
           <PublishBranch
             deployInfo={deployInfo}
             hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
             dataSource={branchInfo.unDeployed}
             env={projectEnvCode}
+            pipelineCode={pipelineCode}
             onSearch={searchUndeployedBranch}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);

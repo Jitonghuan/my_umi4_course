@@ -16,6 +16,8 @@ export default function FinishedStep(props: StepItemProps) {
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const downLoadSupportEnv = useRef<string[]>(['']);
+  const [disabled, setDisabled] = useState<boolean>(false);
+
   const isNotFrontend = appData?.appType !== 'frontend';
 
   useEffect(() => {
@@ -48,16 +50,21 @@ export default function FinishedStep(props: StepItemProps) {
       status={status}
       description={
         status === 'finish' &&
-        downLoadSupportEnv.current?.filter((item) => envInfo.deployEnvs?.indexOf(item) > -1).length > 0 &&
+        downLoadSupportEnv.current?.filter((item) => envInfo?.deployEnvs?.indexOf(item) > -1).length > 0 &&
         appConfig.PRIVATE_METHODS === 'public' &&
         isNotFrontend && (
           <Button
             download
             style={{ marginTop: 4 }}
             target="_blank"
+            disabled={disabled}
             href={`${downloadImage}?id=${metadata.id}`}
             // disabled={downLoadStatus}
             onClick={() => {
+              setDisabled(true);
+              setTimeout(() => {
+                setDisabled(false);
+              }, 5000);
               message.info('镜像开始下载');
             }}
           >

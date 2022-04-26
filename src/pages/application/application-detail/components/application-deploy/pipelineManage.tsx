@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Modal, message, Form } from 'antd';
 import { ConsoleSqlOutlined, PlusOutlined } from '@ant-design/icons';
-import { delPipelineUrl, addPipelineUrl, updatePipelineUrl } from '@/pages/application/service';
-import { getRequest, postRequest } from '@/utils/request';
+import { addPipelineUrl, updatePipelineUrl, deletePipeline } from '@/pages/application/service';
+import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import ETable from '@/components/editable-table';
+import appConfig from '@/app.config';
 
 export default function PipeLineManage(props: any) {
-  const { visible, handleCancel, dataSource, setDatasource, appData, onSave } = props;
+  const { visible, handleCancel, dataSource, setDatasource, envTypeCode, appData, onSave } = props;
+  const [loading, setLoading] = useState<boolean>(false);
   const { appCode } = appData || {};
   const addBottonText = '新增流水线';
   const deleteText = '确定删除该条流水线吗？';
@@ -19,32 +21,41 @@ export default function PipeLineManage(props: any) {
   }, [visible]);
 
   // 删除流水线
-  const handleDel = (record: any) => {
-    postRequest(delPipelineUrl, {
-      data: { appCode, ...record },
-    }).then((res) => {
+  const handleDel = async (record: any) => {
+    try {
+      setLoading(true);
+      const res = await delRequest(`${appConfig.apiPrefix}/appManage/appPipeline/delete/${record.pipelineCode}`);
       if (res?.success) {
         message.success('删除成功！');
         onSave?.();
+        setLoading(false);
       }
-    });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSave = async (rowKey: any, data: any) => {
+    const { pipelineName, pipelineCode } = data;
+    const url = data.add ? addPipelineUrl : updatePipelineUrl;
+    const successMessage = data.add ? '新增成功' : '编辑成功';
+    let params;
     if (data.add) {
-      // 新增
-      const res = await postRequest(addPipelineUrl, { data: { appCode, ...data } });
-      if (res?.success) {
-        message.success('新增成功');
-        onSave?.();
-      }
+      params = { appCode, pipelineName, pipelineCode, envTypeCode };
     } else {
-      // 编辑
-      const res = await postRequest(updatePipelineUrl, { data: { appCode, ...data } });
+      params = { pipelineName, pipelineCode };
+    }
+    try {
+      setLoading(true);
+      const res = await (data.add ? postRequest : putRequest)(url, { data: { ...params } });
       if (res?.success) {
-        message.success('编辑成功');
+        message.success(`${successMessage}`);
         onSave?.();
+        setLoading(false);
       }
+    } catch {
+    } finally {
+      setLoading(false);
     }
   };
   const columns: any = [
@@ -79,7 +90,7 @@ export default function PipeLineManage(props: any) {
       formItemProps: () => {
         return {
           errorType: 'default',
-          rules: [{ required: true, message: '此项为必填项' }],
+          rules: [{ required: true, message: '不能包含中文', pattern: /^[^\u4e00-\u9fa5]*$/ }],
         };
       },
       ellipsis: true,
@@ -97,6 +108,7 @@ export default function PipeLineManage(props: any) {
           deleteText={deleteText}
           handleDelete={handleDel}
           handleSave={handleSave}
+          loading={loading}
         ></ETable>
       </div>
     </Modal>

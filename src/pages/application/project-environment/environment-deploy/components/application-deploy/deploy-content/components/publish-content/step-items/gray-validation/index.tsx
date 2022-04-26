@@ -11,7 +11,7 @@ import { StepItemProps } from '../../types';
 
 /** 灰度验证 */
 export default function GrayValidationStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, env, status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env = '', status, ...others } = props;
 
   // const isLoading = deployStatus === 'verifyWait';
   // const isError = deployStatus === 'verifyFailed';

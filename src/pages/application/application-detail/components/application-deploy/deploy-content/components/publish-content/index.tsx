@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
-import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/service';
+import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import BackendTestEnvSteps from './backend-steps/test';
@@ -38,7 +38,8 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, masterBranch } =
+    props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
   const { deployEnvs } = envInfo || [];
@@ -62,17 +63,17 @@ export default function PublishContent(props: IProps) {
     6: { text: '已通过', color: 'green' },
   };
 
-  // 重新部署
+  // 重新提交分支
   const handleReDeploy = () => {
     onOperate('retryDeployStart');
 
     Modal.confirm({
-      title: '确定要重新部署吗?',
+      title: '确定要重新提交吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
 
-        return updateFeatures({
+        return reCommit({
           id: metadata.id,
           features,
         }).then(() => {
@@ -85,7 +86,7 @@ export default function PublishContent(props: IProps) {
     });
   };
 
-  // 批量退出
+  // 批量退出分支
   const handleBatchExit = () => {
     onOperate('batchExitStart');
 
@@ -94,14 +95,17 @@ export default function PublishContent(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         const features = deployedList
-          .filter((item) => !selectedRowKeys.includes(item.id))
+          .filter((item) => selectedRowKeys.includes(item.id))
           .map((item) => item.branchName);
 
-        return createDeploy({
-          appCode,
-          envTypeCode,
+        return withdrawFeatures({
+          // appCode,
+          // envTypeCode,
           features,
-          isClient: false,
+          id: metadata?.id,
+          // isClient: false,
+          // pipelineCode,
+          // masterBranch,
         }).then(() => {
           onOperate('batchExitEnd');
         });
@@ -136,17 +140,18 @@ export default function PublishContent(props: IProps) {
     });
   }
 
-  function getItemByKey(listStr: string, envCode: string) {
+  function getItemByKey(obj: any, envCode: string) {
     try {
-      const list = listStr ? JSON.parse(listStr) : [];
-      const item = list.find((val: any) => val.envCode === envCode);
-      return item || {};
-    } catch (e) {
-      return listStr
-        ? {
-            subJenkinsUrl: listStr,
-          }
-        : {};
+      if (obj) {
+        const keyList = Object.keys(obj) || [];
+        if (keyList.length !== 0 && envCode) {
+          return obj[envCode];
+        } else {
+          return '';
+        }
+      }
+    } catch {
+      return '';
     }
   }
 

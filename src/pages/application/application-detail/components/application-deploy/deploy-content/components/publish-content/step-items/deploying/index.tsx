@@ -5,17 +5,29 @@
 import React, { useState } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Steps, Button, Modal } from 'antd';
-import { retryDeploy } from '@/pages/application/service';
+import { retryDeploy, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
-import DeployModal from './deploy-modal';
-import { history, Link } from 'umi';
+// import DeployModal from './deploy-modal';
+import BatchDeployModal from './batch-deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, getItemByKey, env, status, ...others } = props;
+  const {
+    deployInfo,
+    deployStatus,
+    onOperate,
+    envTypeCode,
+    getItemByKey,
+    env = '',
+    status,
+    item,
+    waitConfirm,
+    ...others
+  } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
-  const { buildUrl } = buildInfo;
-  const jenkinsUrl = getItemByKey(buildUrl, env).subJenkinsUrl || '';
+  const { deployingBatch, confirm } = item || {};
+  const { buildUrl } = buildInfo || {};
+  const jenkinsUrl = getItemByKey(buildUrl, env) || '';
   const isLoading = status === 'process';
 
   const [deployVisible, setDeployVisible] = useState(false);
@@ -34,7 +46,11 @@ export default function DeployingStep(props: StepItemProps) {
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryDeploy({ id: deployInfo.id, envCode: env });
+        const params = { id: metadata?.id };
+        if (env) {
+          Object.assign(params, { envCode: env });
+        }
+        await retry({ ...params });
         onOperate('retryDeployEnd');
       },
       onCancel() {
@@ -108,12 +124,16 @@ export default function DeployingStep(props: StepItemProps) {
                 </div>
               )} */}
               {status === 'error' && (
-                <Button style={{ marginTop: 4 }} onClick={handleReDeployClick}>
+                <Button
+                  style={{ marginTop: 4, marginLeft: '-22px', color: '#d48806' }}
+                  type="link"
+                  onClick={handleReDeployClick}
+                >
                   重新部署
                 </Button>
               )}
               {/* prod 需要确认部署 */}
-              {envTypeCode === 'prod' && isLoading && (
+              {confirm && confirm.waitConfirm && (
                 <a
                   style={{ marginTop: 4 }}
                   onClick={() => {
@@ -128,12 +148,25 @@ export default function DeployingStep(props: StepItemProps) {
         }
       />
 
-      <DeployModal
-        visible={deployVisible}
+      {/* <DeployModal
+        // visible={deployVisible}
         deployInfo={deployInfo}
         onCancel={() => setDeployVisible(false)}
         onOperate={onOperate}
         envTypeCode="prod"
+      /> */}
+      <BatchDeployModal
+        visible={deployVisible}
+        deployInfo={deployInfo}
+        onCancel={() => setDeployVisible(false)}
+        onOperate={onOperate}
+        envTypeCode={envTypeCode}
+        env={env}
+        envs={deployInfo?.envInfo?.deployEnvs || []}
+        status={status}
+        deployingBatch={deployingBatch}
+        id={metadata?.id}
+        jenkinsUrl={jenkinsUrl}
       />
     </>
   );

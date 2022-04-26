@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button, message, Spin } from 'antd';
-import { retryMerge, getMergeMessage } from '@/pages/application/service';
+import { retryMerge, getMergeMessage, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import MergeConflict from '../../../merge-conflict';
 import NoConflict from '../../../merge-conflict/NoConflict';
@@ -22,6 +22,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
     stopSpin,
     deployedList,
     status,
+    env = '',
     pipelineCode,
     ...others
   } = props;
@@ -34,7 +35,11 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const retryMergeClick = async () => {
     try {
-      await retryMerge({ id: metadata.id });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('mergeReleaseRetryEnd');
     }
@@ -42,7 +47,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const openMergeConflict = () => {
     onSpin();
-    getMergeMessage({ releaseBranch: branchInfo.releaseBranch, pipelineCode })
+    getMergeMessage({ releaseBranch: branchInfo?.releaseBranch, pipelineCode })
       .then((res) => {
         if (!res.success) {
           return;
@@ -81,7 +86,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
         visible={mergeVisible}
         handleCancel={handleCancelMerge}
         mergeMessage={mergeMessage}
-        releaseBranch={branchInfo.releaseBranch}
+        releaseBranch={branchInfo?.releaseBranch}
         retryMergeClick={retryMergeClick}
       ></MergeConflict>
       <NoConflict visible={visible} handleCancel={handleCancel} retryMergeClick={retryMergeClick}></NoConflict>
@@ -93,14 +98,14 @@ export default function MergeReleaseStep(props: StepItemProps) {
         description={
           isError && (
             <>
-              {branchInfo.conflictFeature && (
+              {branchInfo?.conflictFeature && (
                 <div style={{ marginTop: 2 }}>
                   <Button onClick={openMergeConflict} disabled={deployedList.length === 0}>
                     解决冲突
                   </Button>
                 </div>
               )}
-              {!branchInfo.conflictFeature && (
+              {!branchInfo?.conflictFeature && (
                 <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
                   重试
                 </Button>

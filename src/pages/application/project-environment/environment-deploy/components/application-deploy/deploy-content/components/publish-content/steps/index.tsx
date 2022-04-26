@@ -41,16 +41,19 @@ const judgeColor = (data: any, index: number, type: string) => {
 //连续的单环境是一个单独的stepsComp 遇到多环境节点 有几个环境就有几个stepComb
 const StepsComp = ({ items, current, initial, ...other }: any) => (
   <Steps initial={initial} className="publish-content-compo__steps">
-    {items && items.map((item: any) => <StepItem title={item.nodeName} status={item.nodeStatus} {...other} />)}
+    {items &&
+      items.map((item: any) => <StepItem title={item.nodeName} status={item.nodeStatus} item={item} {...other} />)}
   </Steps>
 );
 
 // 单环境
-const SingelEnvSteps = (props: any) => (
-  <div>
-    <StepsComp {...props} />
-  </div>
-);
+const SingelEnvSteps = (props: any) => {
+  return (
+    <div>
+      <StepsComp {...props} />
+    </div>
+  );
+};
 
 // 多环境
 const MultiEnvSteps = (props: any) => {
@@ -85,6 +88,9 @@ export default function DeploySteps(props: any) {
     if (stepData && stepData.length !== 0) {
       const data = handleData(stepData);
       setData(data);
+    }
+    if (!stepData) {
+      setData([]);
     }
   }, [stepData]);
 
@@ -133,7 +139,7 @@ export default function DeploySteps(props: any) {
           !Array.isArray(item) ? (
             <MultiEnvSteps item={item} data={data} index={index} {...props} initial={getInitValue(index)} />
           ) : (
-            <SingelEnvSteps items={item} {...props} initial={getInitValue(index)} env={envInfo?.deployEnvs[0]} />
+            <SingelEnvSteps items={item} {...props} initial={getInitValue(index)} />
           ),
         )
       ) : (

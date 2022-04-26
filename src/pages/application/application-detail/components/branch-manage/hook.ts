@@ -4,27 +4,27 @@ import { queryBranchListUrl } from '@/pages/application/service';
 
 // 获取主干分支列表
 export function useMasterBranchList(props: any) {
-  const { params } = props;
   const [data, setData] = useState<any>([]);
   const loadData = useCallback(
     async (extra?: any) => {
       try {
         const result = await getRequest(queryBranchListUrl, {
-          data: { ...params },
+          data: { ...props },
         });
         const { dataSource, pageInfo } = result.data || {};
         setData(dataSource || []);
+        console.log(dataSource, 'dataSource');
       } catch (ex) {
         setData([]);
       } finally {
       }
     },
-    [params],
+    [props],
   );
 
   useEffect(() => {
     loadData({});
-  }, [params]);
+  }, []);
 
   return [data];
 }

@@ -10,7 +10,7 @@ export interface conflictItem {
   id?: any;
   resolved?: boolean;
   filePath: string;
-  context: string;
+  content: string;
 }
 
 export interface IProp {

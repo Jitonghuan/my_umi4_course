@@ -26,7 +26,7 @@ export function useAppDeployInfo(
             data: { deploymentName, envCode },
           });
 
-          const { Status: nextAppStatus } = result.data || {};
+          const { Status: nextAppStatus } = result?.data || {};
           setData(nextAppStatus || []);
         } finally {
           setLoading(false);
@@ -61,7 +61,7 @@ export function useAppChangeOrder(
           data: { deploymentName, envCode },
         });
 
-        const { changeOrder: nextAppStatus } = result.data || {};
+        const { changeOrder: nextAppStatus } = result?.data || {};
         setData(nextAppStatus || []);
       } finally {
         setLoading(false);

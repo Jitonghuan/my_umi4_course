@@ -43,7 +43,7 @@ export default function MergeConflict(prop: MergeProp) {
   const handleOk = () => {
     const params = allFile.map((item: conflictItem) => ({
       filePath: item.filePath,
-      context: item.context,
+      content: item.content,
     }));
     setLoading(true);
     pushMergeMessage({ releaseBranch: releaseBranch, messages: params })
@@ -71,7 +71,7 @@ export default function MergeConflict(prop: MergeProp) {
     let f: any;
     let newArr = allFile.map((item: conflictItem) => {
       if (item.id === chooseFile.id) {
-        item.context = value;
+        item.content = value;
         f = item;
       }
       return item;
@@ -83,7 +83,7 @@ export default function MergeConflict(prop: MergeProp) {
     // let f: any;
     // let newArr = allFile.map((item: conflictItem) => {
     //   if (item.id === chooseFile.id) {
-    //     item.releaseBranch.context = value;
+    //     item.releaseBranch.content = value;
     //     f = item;
     //   }
     //   return item;
@@ -155,14 +155,14 @@ export default function MergeConflict(prop: MergeProp) {
             </div>
             {/* <CodeMirrorEditor
               {...chooseFile}
-              value={chooseFile?.releaseBranch?.context}
-              orig={chooseFile?.featureBranch?.context}
+              value={chooseFile?.releaseBranch?.content}
+              orig={chooseFile?.featureBranch?.content}
               onchange={handleChange}
             /> */}
             {/* <MonacoEditorMerge
               {...chooseFile}
-              value={chooseFile?.releaseBranch?.context}
-              orig={chooseFile?.featureBranch?.context}
+              value={chooseFile?.releaseBranch?.content}
+              orig={chooseFile?.featureBranch?.content}
               onchange={handleChange}
             ></MonacoEditorMerge> */}
             <MonacoEditor onchange={handleChange} {...chooseFile}></MonacoEditor>

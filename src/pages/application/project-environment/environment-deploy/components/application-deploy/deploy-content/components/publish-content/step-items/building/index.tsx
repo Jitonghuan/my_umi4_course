@@ -5,16 +5,21 @@
 import React from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Steps, Button, Modal } from 'antd';
-import { retryBuild } from '@/pages/application/service';
+import { retryBuild, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
-  const { deployInfo, onOperate, envTypeCode, envCode, status, getItemByKey, env, ...others } = props;
+  const { deployInfo, onOperate, envTypeCode, envCode, status, getItemByKey, env = '', ...others } = props;
   // const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
-  const { buildUrl } = buildInfo;
-  const url = getItemByKey(buildUrl, env) ? getItemByKey(buildUrl, env).subJenkinsUrl : '';
+  const { buildUrl } = buildInfo || {};
+  // const url = getItemByKey(buildUrl, env) ? getItemByKey(buildUrl, env) : '';
+  const url = getItemByKey(buildUrl, 'singleBuild')
+    ? getItemByKey(buildUrl, 'singleBuild')
+    : getItemByKey(buildUrl, env)
+    ? getItemByKey(buildUrl, env)
+    : '';
   const isError = status === 'error';
   const isLoading = status === 'process';
 
@@ -25,7 +30,11 @@ export default function BuildingStep(props: StepItemProps) {
       title: '确定要重新构建吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryBuild({ id: metadata.id, envCode: env });
+        const params = { id: metadata?.id };
+        if (env) {
+          Object.assign(params, { envCode: env });
+        }
+        await retry({ ...params });
         onOperate('retryDeployEnd');
       },
       onCancel: () => {
