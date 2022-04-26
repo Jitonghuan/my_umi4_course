@@ -9,7 +9,7 @@ import { MergeProp, conflictItem } from './types';
 import { pushMergeMessage } from '@/pages/application/service';
 
 export default function MergeConflict(prop: MergeProp) {
-  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick } = prop;
+  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick, id } = prop;
   const [allFile, setAllFile] = useState<any>([]); //所有冲突的文件
   const [chooseFile, setChooseFile] = useState<any>([]); //当前选中的文件
   const [loading, setLoading] = useState(false);
@@ -44,6 +44,7 @@ export default function MergeConflict(prop: MergeProp) {
     const params = allFile.map((item: conflictItem) => ({
       filePath: item.filePath,
       content: item.content,
+      id,
     }));
     setLoading(true);
     pushMergeMessage({ releaseBranch: releaseBranch, messages: params })

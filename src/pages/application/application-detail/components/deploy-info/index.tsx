@@ -52,7 +52,7 @@ export default function AppDeployInfo(props: any) {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
       const { data } = result || [];
-      envTypeDataSource = result.data;
+      envTypeDataSource = result?.data;
       let next: any = [];
       (data || []).map((el: any) => {
         if (el?.typeCode === 'dev') {

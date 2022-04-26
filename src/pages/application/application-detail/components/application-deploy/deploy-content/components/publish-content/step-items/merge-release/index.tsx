@@ -85,6 +85,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
       <MergeConflict
         visible={mergeVisible}
         handleCancel={handleCancelMerge}
+        id={metadata?.id}
         mergeMessage={mergeMessage}
         releaseBranch={branchInfo?.releaseBranch}
         retryMergeClick={retryMergeClick}

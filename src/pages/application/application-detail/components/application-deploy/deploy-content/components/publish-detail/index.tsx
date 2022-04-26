@@ -55,8 +55,8 @@ export default function PublishDetail(props: IProps) {
   const [restartVisible, setRestartVisible] = useState(false);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [pipelineOptions, setPipelineOptions] = useState<any>([]);
-  const [selectPipeline, setSelectPipeline] = useState<string>('');
-  const [selectMaster, setSelectMaster] = useState<string>('');
+  const [selectPipeline, setSelectPipeline] = useState<any>('');
+  const [selectMaster, setSelectMaster] = useState<any>('');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
 
   let newNextEnvTypeCode = '';
@@ -188,7 +188,12 @@ export default function PublishDetail(props: IProps) {
     }
     setConfirmLoading(true);
     try {
-      await deployReuse({ id: metadata?.id, envs: deployNextEnv, pipelineCode, reusePipelineCode: selectPipeline });
+      await deployReuse({
+        id: metadata?.id,
+        envs: deployNextEnv,
+        pipelineCode,
+        reusePipelineCode: selectPipeline?.value,
+      });
       message.success('操作成功，正在部署中...');
       setDeployNextEnvVisible(false);
       onOperate('deployNextEnvSuccess');
@@ -226,7 +231,7 @@ export default function PublishDetail(props: IProps) {
         envTypeCode: envTypeCode,
         envCodes: deployMasterEnv,
         buildType: getBuildType(),
-        masterBranch: selectMaster, //主干分支
+        masterBranch: selectMaster?.value, //主干分支
       });
       message.success('操作成功，正在部署中...');
       setDeployMasterVisible(false);
