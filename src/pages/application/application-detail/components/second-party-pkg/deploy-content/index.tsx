@@ -72,6 +72,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
     deployed: any[];
     unDeployed: any[];
   }>({ deployed: [], unDeployed: [] });
+  const masterBranchName = useRef<string>('master');
 
   const requestData = async () => {
     if (!appCode || !pipelineCode) return;
@@ -179,6 +180,10 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
           onSearch={searchUndeployedBranch}
           onSubmitBranch={(status) => {
             timerHandle(status === 'start' ? 'stop' : 'do', true);
+          }}
+          masterBranchChange={(masterBranch: string) => {
+            masterBranchName.current = masterBranch;
+            timerHandle('do', true);
           }}
         />
       </div>

@@ -203,7 +203,6 @@ export default function ApplicationDeploy(props: any) {
       >
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
-            {/* <Spin spinning={isSpin}> */}
             <DeployContent
               ref={deloyContentRef}
               isActive={item.value === tabActive}
@@ -216,7 +215,6 @@ export default function ApplicationDeploy(props: any) {
               }}
               nextTab={nextTab}
             />
-            {/* </Spin> */}
           </TabPane>
         ))}
       </Tabs>

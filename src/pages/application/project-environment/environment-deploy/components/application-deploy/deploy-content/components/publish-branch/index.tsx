@@ -172,9 +172,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     }
   }, [masterListData]);
 
-  const handleChange = (v: string) => {
-    setSelectMaster(v);
-    masterBranchChange(v);
+  const handleChange = (v: any) => {
+    setSelectMaster(v?.value);
+    masterBranchChange(v?.value);
   };
 
   return (

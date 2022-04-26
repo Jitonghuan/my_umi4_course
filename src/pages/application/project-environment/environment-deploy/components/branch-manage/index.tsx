@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import moment from 'moment';
 import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
@@ -24,6 +24,7 @@ export default function BranchManage() {
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+  const currentMaster = useRef();
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -37,9 +38,9 @@ export default function BranchManage() {
   });
 
   useEffect(() => {
-    if (!appCode) return;
-    queryBranchList({ appCode, env: 'feature' });
-  }, [appCode]);
+    if (!appCode || !selectMaster) return;
+    queryBranchList({ appCode, branchType: 'feature', masterBranch: selectMaster });
+  }, [appCode, selectMaster]);
 
   useEffect(() => {
     if (masterListData.length !== 0) {
@@ -48,6 +49,7 @@ export default function BranchManage() {
       const initValue = option.find((item: any) => item.label === 'master');
       searchForm.setFieldsValue({ masterName: initValue?.value || '' });
       setSelectMaster(initValue?.value || '');
+      currentMaster.current = initValue?.value || '';
     }
   }, [masterListData]);
 
@@ -94,9 +96,9 @@ export default function BranchManage() {
     );
   };
 
-  const handleChange = (v: string) => {
-    setSelectMaster(v);
-    queryBranchList({ appCode, env: 'feature', masterBranch: v });
+  const handleChange = (v: any) => {
+    setSelectMaster(v?.label);
+    currentMaster.current = v?.label;
   };
 
   return (
@@ -208,6 +210,8 @@ export default function BranchManage() {
           setBranchEditMode('HIDE');
           queryBranchList({
             pageIndex: 1,
+            branchType: 'feature',
+            masterBranch: currentMaster.current,
           });
         }}
         onClose={() => setBranchEditMode('HIDE')}

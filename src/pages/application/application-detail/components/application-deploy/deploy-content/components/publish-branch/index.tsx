@@ -164,8 +164,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   }, [appCategoryCode, env]);
 
   const handleChange = (v: any) => {
-    setSelectMaster(v.value);
-    masterBranchChange(v.value);
+    setSelectMaster(v?.value);
+    masterBranchChange(v?.value);
   };
 
   const branchNameRender = (branchName: string, record: any) => {
