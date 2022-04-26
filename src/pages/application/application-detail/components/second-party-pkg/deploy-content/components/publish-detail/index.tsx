@@ -27,7 +27,7 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [envDataList, setEnvDataList] = useState<any>([]);
-  const [nextPipeline, setNextPipeline] = useState<string>('');
+  const [nextPipeline, setNextPipeline] = useState<any>('');
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -82,15 +82,13 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
                 title: '确定要把当前部署分支发布到下一个环境中？',
                 icon: <ExclamationCircleOutlined />,
                 onOk: () => {
-                  return deployReuse({ id: metadata?.id, pipelineCode, reusePipelineCode: nextPipeline }).then(
-                    (res) => {
-                      if (res.success) {
-                        message.success('操作成功，正在部署中...');
-                        onOperate('deployNextEnvSuccess');
-                        return;
-                      }
-                    },
-                  );
+                  return deployReuse({ envCodes: [], pipelineCode, reusePipelineCode: nextPipeline }).then((res) => {
+                    if (res.success) {
+                      message.success('操作成功，正在部署中...');
+                      onOperate('deployNextEnvSuccess');
+                      return;
+                    }
+                  });
                 },
                 onCancel() {
                   onOperate('deployNextEnvEnd');

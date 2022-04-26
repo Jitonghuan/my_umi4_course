@@ -30,7 +30,7 @@ export default function PublishDetail(props: IProps) {
   const [restartVisible, setRestartVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
-  const [selectMaster, setSelectMaster] = useState<string>('');
+  const [selectMaster, setSelectMaster] = useState<any>('');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
 
   let newNextEnvTypeCode = '';
@@ -89,7 +89,7 @@ export default function PublishDetail(props: IProps) {
         envCodes: [envTypeCode],
         buildType: getBuildType(),
         // isClient: appData?.isClient === 1,
-        masterBranch: selectMaster, //主干分支
+        masterBranch: selectMaster?.value, //主干分支
       });
       message.success('操作成功，正在部署中...');
       setDeployMasterVisible(false);

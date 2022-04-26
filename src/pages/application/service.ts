@@ -601,10 +601,10 @@ export const cancelDeploy = (params: {
 /** 复用release分支 */
 export const deployReuse = (params: {
   /** 部署的数据库自增ID */
-  id: number;
+  id?: number;
   /** poc环境复用到生产环境需要 */
   envs?: string[];
-  envCode?: string;
+  envCodes?: string;
   pipelineCode?: string;
   reusePipelineCode?: string;
 }) =>
