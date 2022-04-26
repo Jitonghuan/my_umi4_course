@@ -301,14 +301,11 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
   }, [visible]);
 
   const onSpin = () => {
-    debugger;
     setLoading(true);
-    console.log('jiazai');
   };
 
   const stopSpin = () => {
     setLoading(false);
-    console.log('stop jiazai');
   };
 
   return (

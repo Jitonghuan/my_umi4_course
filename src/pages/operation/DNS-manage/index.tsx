@@ -108,8 +108,6 @@ export default function DNSManageList(props: any) {
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    debugger;
-    console.log('pagination', pagination);
     setPageInfo({
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,

@@ -131,15 +131,18 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
         title="发布详情"
         labelStyle={{ color: '#5F677A', textAlign: 'right' }}
         contentStyle={{ color: '#000' }}
+        column={2}
         bordered
       >
         <Descriptions.Item label="CRID">{metadata?.id || '--'}</Descriptions.Item>
         <Descriptions.Item label="部署分支">{branchInfo?.releaseBranch || '--'}</Descriptions.Item>
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
-        <Descriptions.Item label="冲突分支" span={3}>
+        <Descriptions.Item label="主干分支">{branchInfo?.masterBranch || '--'}</Descriptions.Item>
+        <Descriptions.Item label="冲突分支" span={2}>
           {branchInfo?.conflictFeature || '--'}
         </Descriptions.Item>
-        <Descriptions.Item label="合并分支" span={3}>
+
+        <Descriptions.Item label="合并分支" span={2}>
           {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
       </Descriptions>

@@ -10,11 +10,13 @@ import { StepItemProps } from '../../types';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
-  const { deployInfo, onOperate, envTypeCode, envCode, status, getItemByKey, env = '', ...others } = props;
+  const { deployInfo, onOperate, envTypeCode, envCode, status, getItemByKey, env = '', item, ...others } = props;
   // const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
+  const { deployingBatch, confirm } = item || {};
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   // const url = getItemByKey(buildUrl, env) ? getItemByKey(buildUrl, env) : '';
+
   const url = getItemByKey(buildUrl, 'singleBuild')
     ? getItemByKey(buildUrl, 'singleBuild')
     : getItemByKey(buildUrl, env)

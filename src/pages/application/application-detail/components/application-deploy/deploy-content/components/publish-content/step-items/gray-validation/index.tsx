@@ -24,7 +24,7 @@ export default function GrayValidationStep(props: StepItemProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         await fePublishVerify({
-          id: metadata.id,
+          id: metadata?.id,
           envCode: env,
           result,
         });

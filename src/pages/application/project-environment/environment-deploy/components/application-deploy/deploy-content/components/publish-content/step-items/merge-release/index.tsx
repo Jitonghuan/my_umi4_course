@@ -24,6 +24,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
     projectEnvCode,
     status,
     pipelineCode,
+    env = '',
     ...others
   } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
@@ -37,7 +38,11 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const retryMergeClick = async () => {
     try {
-      await retry({ id: metadata.id });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('mergeReleaseRetryEnd');
     }

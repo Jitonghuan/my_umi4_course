@@ -14,7 +14,7 @@ import {
   cancelDeploy,
   deployReuse,
   deployMaster,
-  offlineDeploy,
+  // offlineDeploy,
   feOfflineDeploy,
   restartApp,
   queryProjectEnvList,
@@ -189,8 +189,7 @@ export default function PublishDetail(props: IProps) {
     setConfirmLoading(true);
     try {
       await deployReuse({
-        id: metadata?.id,
-        envs: deployNextEnv,
+        envCodes: deployNextEnv,
         pipelineCode,
         reusePipelineCode: selectPipeline?.value,
       });
@@ -227,8 +226,7 @@ export default function PublishDetail(props: IProps) {
     setConfirmLoading(true);
     try {
       await deployMaster({
-        appCode: appData?.appCode,
-        envTypeCode: envTypeCode,
+        pipelineCode,
         envCodes: deployMasterEnv,
         buildType: getBuildType(),
         masterBranch: selectMaster?.value, //主干分支
@@ -257,11 +255,7 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
-    if (appData?.appType === 'frontend') {
-      return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
-    } else {
-      return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
-    }
+    return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
@@ -541,6 +535,9 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
           {branchInfo?.conflictFeature || '--'}
+        </Descriptions.Item>
+        <Descriptions.Item label="主干分支" span={4}>
+          {branchInfo?.masterBranch || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="合并分支" span={4}>
           {branchInfo?.features.join(',') || '--'}

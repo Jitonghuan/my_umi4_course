@@ -95,7 +95,6 @@ export default function VersionEditor(props: IProps) {
     setCategoryCode(next);
     form.resetFields(['appGroupCode']);
     if (!isEdit) {
-      debugger;
       queryAppsList(next);
     } else {
       queryVersionAppList({ versionCode: initData?.versionCode, appCategoryCode: next, isBoundVersion: true });
