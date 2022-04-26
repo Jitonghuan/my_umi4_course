@@ -16,7 +16,7 @@ const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 
 export default function PublishDetail(props: IProps) {
-  let { deployInfo, envTypeCode, onOperate, pipelineCode } = props;
+  let { deployInfo, envTypeCode, onOperate, pipelineCode, envCode } = props;
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
@@ -85,7 +85,7 @@ export default function PublishDetail(props: IProps) {
     try {
       await deployMaster({
         pipelineCode,
-        envCodes: deployMasterEnv,
+        envCodes: envCode,
         buildType: getBuildType(),
         masterBranch: selectMaster?.value, //主干分支
       });

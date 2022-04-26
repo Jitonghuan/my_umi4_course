@@ -197,6 +197,7 @@ export default function DeployContent(props: DeployContentProps) {
             envTypeCode={projectEnvCode}
             deployInfo={deployInfo}
             pipelineCode={pipelineCode}
+            envCode={projectEnvCode}
             // appStatusInfo={appStatusInfo}
             onOperate={(type: any) => {
               // if (type === 'deployNextEnvSuccess') {
