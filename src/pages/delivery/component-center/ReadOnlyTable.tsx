@@ -8,6 +8,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
+import moment from 'moment';
 import { Table, Tag, Space, Popconfirm } from 'antd';
 import { useQueryComponentList, useDeleteComponent } from './hook';
 export interface DetailProps {

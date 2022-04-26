@@ -11,8 +11,8 @@ import {
   useQueryIndentInfo,
   useQueryIndentParamList,
   useQueryIndentConfigParamList,
-  useSaveIndentParam,
   useEditDescription,
+  useCreatePackageInde,
 } from '../hook';
 import { compontentsSchema, configDeliverySchema } from './schema';
 import './index.less';
@@ -23,9 +23,9 @@ export default function ProductConfig() {
   const { Paragraph } = Typography;
   const [infoLoading, configInfoData, queryIndentInfo] = useQueryIndentInfo();
   const [editableStr, setEditableStr] = useState(configInfo.indentDescription);
+  const [downloading, createPackageInde] = useCreatePackageInde();
   const [loading, dataSource, queryIndentParamList] = useQueryIndentParamList();
   const [configLoading, configDataSource, queryIndentConfigParamList] = useQueryIndentConfigParamList();
-  const [saveLoading, saveIndentParam] = useSaveIndentParam();
   const [editLoading, editDescription] = useEditDescription();
   const [editVisable, setEditVisable] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
@@ -58,15 +58,21 @@ export default function ProductConfig() {
       onEditClick: (record, index) => {
         setEditVisable(true);
         setCurRecord(record);
+        setType('compontent');
       },
     }) as any;
   }, []);
   const handleSubmit = () => {
     if (type === 'config') {
       queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+      setEditVisable(false);
     } else {
       queryIndentParamList({ id: configInfo.id, isGlobal: false });
+      setEditVisable(false);
     }
+  };
+  const downLoadIndent = () => {
+    createPackageInde(configInfo.id);
   };
 
   return (
@@ -99,7 +105,7 @@ export default function ProductConfig() {
                 </Button>
               }
             >
-              <Descriptions.Item label="局点名称">{configInfoData.indentName}</Descriptions.Item>
+              <Descriptions.Item label="局点名称">{configInfoData.indentName || '--'}</Descriptions.Item>
               <Descriptions.Item label="局点描述">
                 {/* <Spin spinning={saveLoading}> */}
                 <Paragraph
@@ -111,13 +117,13 @@ export default function ProductConfig() {
                     },
                   }}
                 >
-                  {editableStr}
+                  {editableStr || '--'}
                 </Paragraph>
                 {/* </Spin> */}
               </Descriptions.Item>
-              <Descriptions.Item label="交付产品">{configInfoData.productName}</Descriptions.Item>
-              <Descriptions.Item label="交付版本">{configInfoData.productVersion}</Descriptions.Item>
-              <Descriptions.Item label="交付项目">{configInfoData.deliveryProject}</Descriptions.Item>
+              <Descriptions.Item label="交付产品">{configInfoData.productName || '--'}</Descriptions.Item>
+              <Descriptions.Item label="交付版本">{configInfoData.productVersion || '--'}</Descriptions.Item>
+              <Descriptions.Item label="交付项目">{configInfoData.deliveryProject || '--'}</Descriptions.Item>
               <Descriptions.Item label="创建时间">
                 {moment(configInfoData.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}
               </Descriptions.Item>
@@ -147,18 +153,34 @@ export default function ProductConfig() {
             </TabPane>
             <TabPane tab="出包和部署" key="2">
               <div>
+                <p>产品部署包：{configInfoData?.indentPackageUrl || '---'}</p>
                 <p>
-                  产品部署包：<Tag>暂未出包</Tag>
-                  <Button type="primary">出部署包</Button>
+                  产品部署包：
+                  <Tag color={configInfoData?.indentPackageStatus === '已出包' ? 'success' : 'yellow'}>
+                    {configInfoData?.indentPackageStatus || '--'}
+                  </Tag>
+                  <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}>
+                    {configInfoData?.indentPackageStatus === '已出包' ? '下载部署包' : '出部署包'}
+                  </Button>
+                  {configInfoData?.indentPackageStatus === '已出包' && (
+                    <Button
+                      type="primary"
+                      size="small"
+                      style={{ marginLeft: 10 }}
+                      onClick={downLoadIndent}
+                      loading={downloading}
+                    >
+                      重新出包
+                    </Button>
+                  )}
                 </p>
-                {/* <p>
-                产品部署包：<Tag>已出包</Tag>
-                <Button>下载部署包</Button>
-                <Button>重新出包</Button>
-              </p> */}
               </div>
               <div style={{ marginBottom: 10 }}>
-                安装配置文件：<Button type="primary"> 复制</Button>
+                安装配置文件：
+                <Button type="primary" size="small">
+                  {' '}
+                  复制
+                </Button>
                 （请将文件中的内容复制到安装包所在目录下的global.yaml）
               </div>
               <div>

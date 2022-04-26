@@ -82,7 +82,7 @@ export default function ComponentDetail() {
           <TabPane tab="组件信息" key="component-info">
             <div>
               <Descriptions title="基本信息" column={2} bordered={true}>
-                <Descriptions.Item label="组件名称">{componentInfo?.componentName}</Descriptions.Item>
+                <Descriptions.Item label="组件名称">{componentInfo?.componentName || '--'}</Descriptions.Item>
                 <Descriptions.Item label="组件描述">
                   <Paragraph
                     editable={{
@@ -93,14 +93,14 @@ export default function ComponentDetail() {
                       },
                     }}
                   >
-                    {editableStr}
+                    {editableStr || '--'}
                   </Paragraph>
                 </Descriptions.Item>
-                <Descriptions.Item label="组件类型">{componentInfo?.componentType}</Descriptions.Item>
-                <Descriptions.Item label="创建时间">{componentInfo?.gmtCreate}</Descriptions.Item>
-                <Descriptions.Item label="更新时间">{componentInfo?.gmtModify}</Descriptions.Item>
+                <Descriptions.Item label="组件类型">{componentInfo?.componentType || '--'}</Descriptions.Item>
+                <Descriptions.Item label="创建时间">{componentInfo?.gmtCreate || '--'}</Descriptions.Item>
+                <Descriptions.Item label="更新时间">{componentInfo?.gmtModify || '--'}</Descriptions.Item>
                 <Descriptions.Item label="组件地址" span={2}>
-                  {componentInfo?.componentUrl}
+                  {componentInfo?.componentUrl || '--'}
                 </Descriptions.Item>
               </Descriptions>
               <Divider />

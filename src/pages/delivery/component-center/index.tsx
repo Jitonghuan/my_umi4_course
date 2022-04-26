@@ -14,6 +14,7 @@ import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';
 import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
+import MiddlewareModal from './components/middlewareModal';
 import { useQueryComponentList } from './hook';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
@@ -66,15 +67,14 @@ export default function VersionDetail() {
             setBasicDataModalVisiable(false);
           }}
         />
-        {/* <MiddlewareModal
+        <MiddlewareModal
           visable={middlewareModalVisibale}
-         
           tabActiveKey={tabActiveKey}
           queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
             setMiddlewareModalVisibale(false);
           }}
-        /> */}
+        />
 
         <>
           <FilterCard className="layout-compact">
@@ -93,7 +93,7 @@ export default function VersionDetail() {
                           setUserModalVisiable(true);
                         }
                         if (tabActiveKey === 'middleware') {
-                          setMiddlewareModalVisibale(true);
+                          // setMiddlewareModalVisibale(true);
                         }
                         if (tabActiveKey === 'sql') {
                           setBasicDataModalVisiable(true);
