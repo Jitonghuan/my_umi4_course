@@ -116,17 +116,7 @@ export default function VersionEditor(props: IProps) {
   const selectAppCategoryCode = useCallback((next: string) => {
     setCategoryCode(next);
     form.resetFields(['appGroupCode']);
-    if (!isEdit) {
-      queryAppsList(next);
-    } else {
-      queryVersionAppList({ versionCode: initData?.versionCode, appCategoryCode: next, isBoundVersion: true });
-    }
-  }, []);
-  const selectAppGroupCode = useCallback((appGroupCode: string) => {
-    if (!isEdit) {
-      console.log('选择应用组', type);
-      queryAppsList(categoryCode || '', appGroupCode);
-    }
+    queryAppsList(next);
   }, []);
   const selectAppGroupCode = (appGroupCode: string) => {
     console.log('选择应用组', type, appGroupCode);
