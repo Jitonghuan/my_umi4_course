@@ -277,3 +277,27 @@ export function useGenerateIndentConfig(): [boolean, any, (id: number) => Promis
   };
   return [loading, info, queryIndentConfigInfo];
 }
+
+// 编辑制品配置
+export function useEditIndentConfigYaml(): [boolean, (id: number, indentConfigYaml: string) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const editIndentConfigYaml = async (id: number, indentConfigYaml: string) => {
+    setLoading(true);
+    try {
+      await postRequest(`${APIS.editIndentConfig}?id=${id}&indentConfigYaml=${indentConfigYaml}`)
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, editIndentConfigYaml];
+}

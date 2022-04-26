@@ -14,6 +14,7 @@ import {
   useEditDescription,
   useCreatePackageInde,
   useGenerateIndentConfig,
+  useEditIndentConfigYaml,
 } from '../hook';
 import { compontentsSchema, configDeliverySchema } from './schema';
 import './index.less';
@@ -29,9 +30,12 @@ export default function ProductConfig() {
   const [loading, dataSource, queryIndentParamList] = useQueryIndentParamList();
   const [configLoading, configDataSource, queryIndentConfigParamList] = useQueryIndentConfigParamList();
   const [editLoading, editDescription] = useEditDescription();
+  const [buttonText, setButtonText] = useState<string>('编辑');
+  const [readOnly, setReadOnly] = useState<boolean>(true);
   const [editVisable, setEditVisable] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
   const [curRecord, setCurRecord] = useState<any>({});
+  const [editConfigLoading, editIndentConfigYaml] = useEditIndentConfigYaml();
   const [configInfoLoading, indentConfigInfo, queryIndentConfigInfo] = useGenerateIndentConfig();
   useEffect(() => {
     if (configInfo.id) {
@@ -68,9 +72,11 @@ export default function ProductConfig() {
   const handleSubmit = () => {
     if (type === 'config') {
       queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+      queryIndentInfo(configInfo.id);
       setEditVisable(false);
     } else {
       queryIndentParamList({ id: configInfo.id, isGlobal: false });
+      queryIndentInfo(configInfo.id);
       setEditVisable(false);
     }
   };
@@ -79,6 +85,13 @@ export default function ProductConfig() {
   };
   const getConfigInfo = () => {
     queryIndentConfigInfo(configInfo.id);
+  };
+  const saveConfig = () => {
+    const value = configForm.getFieldsValue();
+    editIndentConfigYaml(configInfo.id, value.configInfo).then(() => {
+      queryIndentInfo(configInfo.id);
+      queryIndentConfigInfo(configInfo.id);
+    });
   };
 
   return (
@@ -165,9 +178,24 @@ export default function ProductConfig() {
                   <Tag color={configInfoData?.indentPackageStatus === '已出包' ? 'success' : 'yellow'}>
                     {configInfoData?.indentPackageStatus || '--'}
                   </Tag>
-                  <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}>
-                    {configInfoData?.indentPackageStatus === '已出包' ? '下载部署包' : '出部署包'}
-                  </Button>
+                  {configInfoData?.indentPackageStatus === '已出包' && (
+                    <Button
+                      type="primary"
+                      size="small"
+                      onClick={() => {
+                        window.open(configInfoData?.indentPackageUrl, '_blank');
+                      }}
+                    >
+                      下载部署包
+                    </Button>
+                  )}
+                  {/* <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}> */}
+                  {configInfoData?.indentPackageStatus !== '已出包' && (
+                    <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}>
+                      出部署包
+                    </Button>
+                  )}
+                  {/* </Button> */}
                   {configInfoData?.indentPackageStatus === '已出包' && (
                     <Button
                       type="primary"
@@ -187,11 +215,36 @@ export default function ProductConfig() {
                   获取制品配置文件信息
                 </Button>
                 （请将文件中的内容复制到安装包所在目录下的config.yaml）
+                <Button
+                  type={buttonText === '编辑' ? 'primary' : 'default'}
+                  style={{ float: 'right' }}
+                  onClick={() => {
+                    if (readOnly) {
+                      setReadOnly(false);
+                      setButtonText('取消编辑');
+                    } else {
+                      setReadOnly(true);
+                      setButtonText('编辑');
+                    }
+                  }}
+                >
+                  {buttonText}
+                </Button>
               </div>
               <div>
                 <Form form={configForm}>
-                  <Form.Item name="configInfo" noStyle>
-                    <AceEditor mode="yaml" height={450} value={indentConfigInfo} />
+                  <Spin spinning={configInfoLoading}>
+                    <Form.Item name="configInfo" noStyle>
+                      <AceEditor mode="yaml" height={450} value={indentConfigInfo} readOnly={readOnly} />
+                    </Form.Item>
+                  </Spin>
+
+                  <Form.Item>
+                    <span style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+                      <Button type="primary" onClick={saveConfig} loading={editConfigLoading}>
+                        保存配置
+                      </Button>
+                    </span>
                   </Form.Item>
                 </Form>
               </div>
