@@ -4,7 +4,7 @@ import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
 import AceEditor from '@/components/ace-editor';
-import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag } from 'antd';
+import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import ParameterEditModal from './editModal';
 import {
@@ -13,6 +13,7 @@ import {
   useQueryIndentConfigParamList,
   useEditDescription,
   useCreatePackageInde,
+  useGenerateIndentConfig,
 } from '../hook';
 import { compontentsSchema, configDeliverySchema } from './schema';
 import './index.less';
@@ -21,6 +22,7 @@ export default function ProductConfig() {
   const configInfo: any = history.location.state;
   const { TabPane } = Tabs;
   const { Paragraph } = Typography;
+  const [configForm] = Form.useForm();
   const [infoLoading, configInfoData, queryIndentInfo] = useQueryIndentInfo();
   const [editableStr, setEditableStr] = useState(configInfo.indentDescription);
   const [downloading, createPackageInde] = useCreatePackageInde();
@@ -30,6 +32,7 @@ export default function ProductConfig() {
   const [editVisable, setEditVisable] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
   const [curRecord, setCurRecord] = useState<any>({});
+  const [configInfoLoading, indentConfigInfo, queryIndentConfigInfo] = useGenerateIndentConfig();
   useEffect(() => {
     if (configInfo.id) {
       queryIndentInfo(configInfo.id);
@@ -73,6 +76,9 @@ export default function ProductConfig() {
   };
   const downLoadIndent = () => {
     createPackageInde(configInfo.id);
+  };
+  const getConfigInfo = () => {
+    queryIndentConfigInfo(configInfo.id);
   };
 
   return (
@@ -153,7 +159,7 @@ export default function ProductConfig() {
             </TabPane>
             <TabPane tab="出包和部署" key="2">
               <div>
-                <p>产品部署包：{configInfoData?.indentPackageUrl || '---'}</p>
+                {/* <p>产品部署包：{configInfoData?.indentPackageUrl || '---'}</p> */}
                 <p>
                   产品部署包：
                   <Tag color={configInfoData?.indentPackageStatus === '已出包' ? 'success' : 'yellow'}>
@@ -177,14 +183,17 @@ export default function ProductConfig() {
               </div>
               <div style={{ marginBottom: 10 }}>
                 安装配置文件：
-                <Button type="primary" size="small">
-                  {' '}
-                  复制
+                <Button type="primary" size="small" onClick={getConfigInfo}>
+                  获取制品配置文件信息
                 </Button>
-                （请将文件中的内容复制到安装包所在目录下的global.yaml）
+                （请将文件中的内容复制到安装包所在目录下的config.yaml）
               </div>
               <div>
-                <AceEditor mode="yaml" height={450} />
+                <Form form={configForm}>
+                  <Form.Item name="configInfo" noStyle>
+                    <AceEditor mode="yaml" height={450} value={indentConfigInfo} />
+                  </Form.Item>
+                </Form>
               </div>
             </TabPane>
           </Tabs>

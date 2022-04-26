@@ -2,10 +2,8 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/04/26 14:12
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { Modal, Input, Form, message, Select, Cascader } from 'antd';
-import { createFeatureBranch, queryPortalList, getDemandByProjectList } from '@/pages/application/service';
-import { getRequest, postRequest } from '@/utils/request';
+import React, { useCallback, useEffect } from 'react';
+import { Modal, Input, Form } from 'antd';
 import { useSaveIndentParam } from '../hook';
 
 export interface IProps {
@@ -50,22 +48,18 @@ export default function BranchEditor(props: IProps) {
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
         {type !== 'config' && (
-          <Form.Item
-            label="参数来源组件"
-            name="configParamComponent"
-            rules={[{ required: true, message: '请输入分支名' }]}
-          >
-            <Input />
+          <Form.Item label="参数来源组件" name="configParamComponent">
+            <Input disabled={true} />
           </Form.Item>
         )}
-        <Form.Item label="参数名称" name="configParamName" rules={[{ required: true, message: '请填写参数名称' }]}>
-          <Input />
+        <Form.Item label="参数名称" name="configParamName">
+          <Input disabled={true} />
         </Form.Item>
         <Form.Item label="参数值" name="configParamValue" rules={[{ required: true, message: '请填写参数值' }]}>
           <Input />
         </Form.Item>
         <Form.Item label="填写说明" name="configParamDescription">
-          <Input.TextArea placeholder="填写说明" rows={3} />
+          <Input.TextArea placeholder="填写说明" rows={3} disabled={true} />
         </Form.Item>
       </Form>
     </Modal>

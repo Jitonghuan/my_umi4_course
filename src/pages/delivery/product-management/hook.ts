@@ -252,3 +252,28 @@ export function useCreatePackageInde(): [boolean, (id: number) => Promise<void>]
   };
   return [loading, createPackageInde];
 }
+
+// 获取制品配置
+export function useGenerateIndentConfig(): [boolean, any, (id: number) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [info, setInfo] = useState<any>({});
+  const queryIndentConfigInfo = async (id: number) => {
+    setLoading(true);
+    try {
+      await postRequest(`${APIS.generateIndentConfig}?id=${id}`)
+        .then((res) => {
+          if (res.success) {
+            setInfo(res.data || '');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, info, queryIndentConfigInfo];
+}

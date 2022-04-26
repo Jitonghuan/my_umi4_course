@@ -8,10 +8,6 @@ export const compontentsSchema = ({ onEditClick }: { onEditClick: (record: any, 
       key: 'configParamComponent',
     },
     {
-      title: '作用组件',
-      dataIndex: 'configParamComponent',
-    },
-    {
       title: '参数名称',
       dataIndex: 'configParamName',
     },
