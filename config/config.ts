@@ -29,7 +29,7 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      // target: 'http://matrix-test.cfuture.shop/',
+      target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix-zslnyy.cfuture.shop/',
       // target: 'http://matrix-fygs.seenew.info:180/',
       // target: 'http://matrix.cfuture.shop/',
@@ -39,7 +39,7 @@ export default defineConfig({
       // target: 'http://10.10.130.108:8000', // 可乐本地
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
       // target: 'https://release.zy91.com:4443/futuredog',
-      target: 'http://10.10.129.99:8080',//木南本地
+      // target: 'http://10.10.129.99:8080',//木南本地
       // target: 'http://10.10.129.43:8080',//时雨本地
       // target: 'http://10.10.128.214:8080',//习习本地
       // target: 'http://10.10.129.119:8080',//不辣本地f
