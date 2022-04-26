@@ -64,7 +64,7 @@ export default function PublishRecord(props: IProps) {
   //     pageIndex: 1,
   //   });
   // }, []);
-  console.log('tableProps.dataSource', tableProps.dataSource);
+  // console.log('tableProps.dataSource', tableProps.dataSource);
   // useEffect(() => {
   //   // let intervalId = setInterval(() => {
   //   //   if (appCode && env) {
