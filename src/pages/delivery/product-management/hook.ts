@@ -140,6 +140,38 @@ export function useEditDescription(): [boolean, (id: number, indentDescription: 
 }
 
 // 获取制品交付配置列表
+export function useQueryIndentConfigParamList(): [
+  boolean,
+  any[],
+  (paramsObj: { id: number; isGlobal?: boolean }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+
+  const queryIndentConfigParamList = async (paramsObj: { id: number; isGlobal?: boolean }) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryIndentParamList, {
+        data: paramsObj,
+      })
+        .then((res) => {
+          if (res.success) {
+            setDataSource(res.data);
+          } else {
+            return [];
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, queryIndentConfigParamList];
+}
+
+// 获取制品交付配置列表
 export function useQueryIndentParamList(): [
   boolean,
   any[],

@@ -1,67 +1,21 @@
 //制品管理-配置交付参数
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
 import AceEditor from '@/components/ace-editor';
-import type { ColumnsType } from 'antd/lib/table';
-import { Form, Tabs, Spin, Button, Descriptions, Typography, Table, Tag } from 'antd';
+import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import { useQueryIndentInfo, useQueryIndentParamList, useSaveIndentParam, useEditDescription } from '../hook';
+import ParameterEditModal from './editModal';
+import {
+  useQueryIndentInfo,
+  useQueryIndentParamList,
+  useQueryIndentConfigParamList,
+  useSaveIndentParam,
+  useEditDescription,
+} from '../hook';
+import { compontentsSchema, configDeliverySchema } from './schema';
 import './index.less';
-// import { compontentsColums, configDeliverycolums } from './columns';
-export const compontentsColums: ColumnsType<any> = [
-  {
-    title: '参数来源组件',
-    dataIndex: 'ranking',
-    key: 'ranking',
-  },
-  {
-    title: '作用组件',
-    dataIndex: 'calculateCycle',
-  },
-  {
-    title: '参数名称',
-    dataIndex: 'envCode',
-  },
-  {
-    title: '描述',
-    dataIndex: 'file',
-  },
-  {
-    title: '参数值',
-    dataIndex: 'file',
-  },
-  {
-    title: '操作',
-    dataIndex: 'operate',
-    render: (text: string, record: any) => <span>编辑</span>,
-  },
-];
-
-export const configDeliverycolums: ColumnsType<any> = [
-  {
-    title: '组件名称',
-    dataIndex: 'componentName',
-    key: 'componentName',
-  },
-  {
-    title: '组件描述',
-    dataIndex: 'componentDescription',
-    key: 'componentDescription',
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'gmtCreate',
-    key: 'gmtCreate',
-  },
-
-  {
-    title: '操作',
-    key: 'action',
-    render: (text: string, record: any) => <span>编辑</span>,
-  },
-];
 
 export default function ProductConfig() {
   const configInfo: any = history.location.state;
@@ -70,21 +24,62 @@ export default function ProductConfig() {
   const [infoLoading, configInfoData, queryIndentInfo] = useQueryIndentInfo();
   const [editableStr, setEditableStr] = useState(configInfo.indentDescription);
   const [loading, dataSource, queryIndentParamList] = useQueryIndentParamList();
+  const [configLoading, configDataSource, queryIndentConfigParamList] = useQueryIndentConfigParamList();
   const [saveLoading, saveIndentParam] = useSaveIndentParam();
   const [editLoading, editDescription] = useEditDescription();
+  const [editVisable, setEditVisable] = useState<boolean>(false);
+  const [type, setType] = useState<string>('');
+  const [curRecord, setCurRecord] = useState<any>({});
   useEffect(() => {
     if (configInfo.id) {
       queryIndentInfo(configInfo.id);
-      queryIndentParamList({ id: configInfo.id, isGlobal: true });
+      queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+      queryIndentParamList({ id: configInfo.id, isGlobal: false });
     } else {
       return;
     }
   }, [configInfo.id]);
-  const tabOnclick = (key: any) => {
-    console.log('key', key);
+  const tabOnclick = (key: any) => {};
+
+  //  全局参数表格列配置 configTableColumns
+  const configTableColumns = useMemo(() => {
+    return configDeliverySchema({
+      onEditClick: (record, index) => {
+        setEditVisable(true);
+        setType('config');
+        setCurRecord(record);
+      },
+    }) as any;
+  }, []);
+
+  //组件参数表格列配置
+  const componentTableColumns = useMemo(() => {
+    return compontentsSchema({
+      onEditClick: (record, index) => {
+        setEditVisable(true);
+        setCurRecord(record);
+      },
+    }) as any;
+  }, []);
+  const handleSubmit = () => {
+    if (type === 'config') {
+      queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+    } else {
+      queryIndentParamList({ id: configInfo.id, isGlobal: false });
+    }
   };
+
   return (
     <PageContainer>
+      <ParameterEditModal
+        visible={editVisable}
+        initData={curRecord}
+        type={type}
+        onClose={() => {
+          setEditVisable(false);
+        }}
+        onSubmit={handleSubmit}
+      />
       <ContentCard>
         <div>
           <Spin spinning={infoLoading}>
@@ -141,13 +136,12 @@ export default function ProductConfig() {
         <div style={{ paddingTop: 10 }}>
           <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
             <TabPane tab="配置交付参数" key="1">
-              {/* <div style={{ paddingLeft: 12 }}>配置参数</div> */}
               <Tabs defaultActiveKey="1" onChange={tabOnclick}>
                 <TabPane tab="全局参数" key="1">
-                  <Table columns={configDeliverycolums}></Table>
+                  <Table columns={configTableColumns} dataSource={configDataSource} loading={configLoading}></Table>
                 </TabPane>
                 <TabPane tab="组件参数" key="2">
-                  <Table columns={compontentsColums}></Table>
+                  <Table columns={componentTableColumns} dataSource={dataSource} loading={loading}></Table>
                 </TabPane>
               </Tabs>
             </TabPane>
