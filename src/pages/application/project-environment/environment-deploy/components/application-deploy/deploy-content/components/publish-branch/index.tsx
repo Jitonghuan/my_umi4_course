@@ -100,7 +100,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       features: filter,
       envCodes: [env],
       pipelineCode,
-      isClient: +appData?.isClient! === 1,
+      // isClient: +appData?.isClient! === 1,
       masterBranch: selectMaster, //主干分支
       buildType: getBuildType(),
     });

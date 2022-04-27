@@ -24,40 +24,6 @@ import { Spin } from 'antd';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';
-const tempData = {
-  metadata: {
-    id: 1564,
-    appCode: 'dubbo-consumer',
-    pipelineCode: 'pipeline-1',
-    envTypeCode: 'dev',
-    isActive: 1,
-    version: '1.0',
-  },
-  branchInfo: {
-    masterBranch: 'master-1',
-    releaseBranch: 'release_dev_20220411162402',
-    features: ['feature_ccd_20220406160947', 'feature_test_20220330202635'],
-    conflictFeature: '',
-    // "tagName": "tag-1"
-  },
-  envInfo: {
-    deployEnvs: ['base-dev'],
-  },
-  buildInfo: {
-    buildUrl: ['http://jenkins-dev.cfuture.shop/job/dubbo-consumer'],
-    buildType: 'beClientBuild',
-  },
-  status: {
-    deployNodes: [
-      { nodeType: 'single', nodeName: '创建任务', nodeStatus: 'finish' },
-      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'finish' },
-      { nodeName: '构建', nodeStatus: 'finish', nodeType: 'single' },
-      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'wait' },
-      { nodeType: 'single', nodeName: '删除feature', nodeStatus: 'wait' },
-      { nodeType: 'single', nodeName: '完成', nodeStatus: 'wait' },
-    ],
-  },
-};
 
 export interface DeployContentProps {
   /** 当前页面是否激活 */
@@ -90,6 +56,7 @@ export default function DeployContent(props: DeployContentProps) {
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
+  const publishContentRef = useRef<any>();
   const requestData = async () => {
     if (!appCode || !projectEnvCode || !pipelineCode) return;
 
@@ -209,6 +176,7 @@ export default function DeployContent(props: DeployContentProps) {
             }}
           />
           <PublishContent
+            ref={publishContentRef}
             appCode={appCode!}
             envTypeCode={projectEnvCode}
             deployInfo={deployInfo}
@@ -228,6 +196,7 @@ export default function DeployContent(props: DeployContentProps) {
             onSearch={searchUndeployedBranch}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
+              publishContentRef?.current?.showCancel();
             }}
             masterBranchChange={(masterBranch: string) => {
               masterBranchName.current = masterBranch;

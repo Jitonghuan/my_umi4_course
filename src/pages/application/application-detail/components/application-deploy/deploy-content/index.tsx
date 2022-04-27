@@ -24,138 +24,6 @@ import { Spin } from 'antd';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';
-const tempData = {
-  metadata: {
-    id: 1650,
-    appCode: 'dubbo-consumer',
-    pipelineCode: 'test-pipeline3',
-    envTypeCode: 'dev',
-    isActive: 1,
-    curUser: '王安楠',
-  },
-  branchInfo: {
-    masterBranch: 'master',
-    releaseBranch: 'release_test-pipeline3_20220425162817',
-    features: ['feature_ccd_20220406160947'],
-    unMergedFeatures: [],
-    conflictFeature: '',
-    tagName: '',
-  },
-  envInfo: {
-    deployEnvs: ['test-proe-bm', 'base-dev'],
-  },
-  buildInfo: {
-    buildUrl: {
-      'base-dev': 'http://jenkins-dev.cfuture.shop/job/dubbo-consumer/38/console',
-      'test-proe-bm': 'http://jenkins-dev.cfuture.shop/job/dubbo-consumer/39/console',
-    },
-    buildType: 'beServerBuild',
-    buildResultInfo: {
-      artifactId: 'dubbo-consumer',
-      filePath: '',
-      groupID: 'com.alibaba.edas',
-      image:
-        '[{"envCode":"base-dev","image":"cfuture-harbor-registry-vpc.cn-hangzhou.cr.aliyuncs.com/c2f/test-dubbo-consumer:20220425162834","deployTime":"2022-04-25 16:28:34"},{"envCode":"test-proe-bm","image":"cfuture-harbor-registry-vpc.cn-hangzhou.cr.aliyuncs.com/c2f/test-dubbo-consumer:20220425162834","deployTime":"2022-04-25 16:28:34"}]',
-      jarPath: 'test-dubbo-consumer.jar',
-      version: '1.0',
-    },
-  },
-  status: {
-    deployStatus: 'process',
-    deployNodes: [
-      {
-        nodeName: '开始任务',
-        nodeCode: 'start',
-        nodeType: 'single',
-        nodeStatus: 'finish',
-        confirm: null,
-      },
-      {
-        nodeName: '合并分支',
-        nodeCode: 'merge',
-        nodeType: 'single',
-        nodeStatus: 'finish',
-        confirm: {
-          waitConfirm: false,
-          label: '确认合并',
-        },
-      },
-      {
-        nodeName: '并发节点',
-        nodeCode: 'concurrency',
-        nodeType: 'subject',
-        nodeStatus: 'error',
-        confirm: null,
-        nodes: {
-          'base-dev': [
-            {
-              nodeName: '构建',
-              nodeCode: 'build',
-              nodeType: 'single',
-              nodeStatus: 'finish',
-              confirm: {
-                waitConfirm: false,
-                label: '确认构建',
-              },
-              EnvCode: 'base-dev',
-            },
-            {
-              nodeName: '部署',
-              nodeCode: 'deploy',
-              nodeType: 'single',
-              nodeStatus: 'finish',
-              confirm: {
-                waitConfirm: false,
-                label: '确认部署',
-              },
-              EnvCode: 'base-dev',
-              DeployingBatch: 0,
-            },
-          ],
-          'test-proe-bm': [
-            {
-              nodeName: '构建',
-              nodeCode: 'build',
-              nodeType: 'single',
-              nodeStatus: 'finish',
-              confirm: {
-                waitConfirm: false,
-                label: '确认构建',
-              },
-              EnvCode: 'test-proe-bm',
-            },
-            {
-              nodeName: '部署',
-              nodeCode: 'deploy',
-              nodeType: 'single',
-              nodeStatus: 'error',
-              confirm: {
-                waitConfirm: false,
-                label: '确认部署',
-              },
-              EnvCode: 'test-proe-bm',
-              DeployingBatch: 0,
-            },
-          ],
-        },
-      },
-      {
-        nodeName: '完成',
-        nodeCode: 'end',
-        nodeType: 'single',
-        nodeStatus: 'wait',
-        confirm: null,
-      },
-    ],
-    CurDeployNodesID: 3,
-    deployErrInfo: {
-      'base-dev': '',
-      concurrency: '参数异常',
-      'test-proe-bm': '',
-    },
-    lockID: 0,
-  },
-};
 
 export interface DeployContentProps {
   /** 当前页面是否激活 */
@@ -175,12 +43,11 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
   //传给父组件 关闭/开启 定时器的方法
   useImperativeHandle(ref, () => ({
     onOperate,
-    onSpin,
-    stopSpin,
+    // onSpin,
+    // stopSpin,
   }));
 
   const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab } = props;
-  console.log(pipelineCode, 'pipelineCode');
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 
@@ -196,8 +63,7 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // setDeployInfo(tempData)
+  const publishContentRef = useRef<any>();
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
@@ -241,19 +107,12 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
       setDeployInfo({});
     }
 
-    // if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-    // const nextInfo = resp1?.data?.dataSource[0];
-    // setDeployInfo(nextInfo);
-    // if (tempData) {
-    //   setDeployInfo(tempData);
-    // }
-
     // 如果有部署信息，且为线上，则更新应用状态
     if (envTypeCode === 'prod' && appData) {
       const resp4 = await getRequest(queryApplicationStatus, {
         data: {
           deploymentName: appData?.deploymentName,
-          envCode: tempData?.envInfo?.deployEnvs,
+          envCode: deployInfo?.envInfo?.deployEnvs,
         },
       }).catch(() => {
         return { data: null };
@@ -328,6 +187,7 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
             }}
           />
           <PublishContent
+            ref={publishContentRef}
             appCode={appCode!}
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
@@ -349,6 +209,7 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
             pipelineCode={pipelineCode}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
+              publishContentRef?.current?.showCancel();
             }}
             masterBranchChange={(masterBranch: string) => {
               masterBranchName.current = masterBranch;

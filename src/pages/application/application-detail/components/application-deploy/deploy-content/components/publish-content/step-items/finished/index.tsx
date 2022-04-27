@@ -50,7 +50,7 @@ export default function FinishedStep(props: StepItemProps) {
       status={status}
       description={
         status === 'finish' &&
-        downLoadSupportEnv.current?.filter((item) => envInfo?.deployEnvs?.indexOf(item) > -1).length > 0 &&
+        downLoadSupportEnv.current?.includes(env) &&
         appConfig.PRIVATE_METHODS === 'public' &&
         isNotFrontend && (
           <Button

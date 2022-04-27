@@ -504,11 +504,11 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        {envTypeCode === 'prod' && appData?.appType === 'backend' && (
+        {/* {envTypeCode === 'prod' && appData?.appType === 'backend' && (
           <Button type="primary" danger onClick={handleCancelPublish}>
             取消发布
           </Button>
-        )}
+        )} */}
       </div>
 
       <Descriptions

@@ -111,7 +111,6 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       features: filter,
       pipelineCode,
       envCodes: deployEnv,
-      isClient: +appData?.isClient! === 1,
       masterBranch: selectMaster, //主干分支
       buildType: getBuildType(),
     });

@@ -197,8 +197,7 @@ export default function BatchDeployModal({
       )}
 
       <h3 style={{ marginTop: 20 }}>发布详情</h3>
-      {deployingBatch && [1, 2].includes(deployingBatch) && detail}
-      {/* {detail} */}
+      {[1, 2].includes(deployingBatch) ? detail : ''}
     </Modal>
   );
 }

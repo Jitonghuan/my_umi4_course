@@ -468,7 +468,7 @@ export const createDeploy = (params: {
   envCodes?: string[];
   pipelineCode?: string;
   /** 是否是二方包*/
-  isClient: boolean;
+  // isClient: boolean;
   masterBranch?: string;
   buildType?: string;
 }) =>
