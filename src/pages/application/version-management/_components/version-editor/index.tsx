@@ -12,7 +12,7 @@ import {
   useAppList,
   useVersionAppList,
 } from '../../hooks';
-import { colunms } from './schema';
+import { columns } from './schema';
 const { Item: FormItem } = Form;
 
 export interface IProps {
@@ -31,29 +31,14 @@ export default function VersionEditor(props: IProps) {
   const [loading, categoryData] = useQueryCategory();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
   const [tableLoading, allAppListDataSource, setSource, queryAppsList] = useAppList();
-  const [alreadyLoading, alreadyAppDataSource, queryVersionAppList] = useVersionAppList();
+  const [alreadyLoading, alreadyAppDataSource, setAlreadySource, queryVersionAppList] = useVersionAppList();
   const [addLoading, addVersion] = useCreateVersion();
   const { initData, type, onSubmit } = props;
   const isEdit = !!initData?.id;
   const [form] = Form.useForm<any>();
 
   console.log('type', type);
-  // 提交数据
-  // const handleSubmit = useCallback(async () => {
-  //   const values = await form.validateFields();
-  //   if (type === 'edit') {
-  //     let editParams = { ...values, apps: currentData };
-  //     editVersion(editParams).then(() => {
-  //       onSubmit();
-  //     });
-  //   }
-  //   if (type === 'add') {
-  //     let editParams = { ...values, apps: currentData };
-  //     addVersion(editParams).then(() => {
-  //       onSubmit();
-  //     });
-  //   }
-  // }, [isEdit, form]);
+
   const handleSubmit = () => {
     form.validateFields().then((values) => {
       if (!isEdit) {
@@ -70,12 +55,6 @@ export default function VersionEditor(props: IProps) {
     });
   };
 
-  // const rowSelection = {
-  //   onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-  //     setSelectedRowKeys(selectedRowKeys);
-  //     setCurrentData(selectedRows);
-  //   },
-  // };
   const rowSelection = useMemo(() => {
     return {
       selectedRowKeys: selectedRowKeys,
@@ -99,6 +78,7 @@ export default function VersionEditor(props: IProps) {
       setSelectedRowKeys([]);
       setCurrentData([]);
       setSource([]);
+      setAlreadySource([]);
     };
   }, [props.visible]);
 
@@ -189,7 +169,7 @@ export default function VersionEditor(props: IProps) {
               rowKey="id"
               // rowSelection={rowSelection}
               loading={alreadyLoading}
-              columns={colunms}
+              columns={columns}
               dataSource={alreadyAppDataSource}
               style={{ height: 200 }}
               pagination={false}
@@ -202,7 +182,7 @@ export default function VersionEditor(props: IProps) {
               bordered
               loading={tableLoading}
               rowSelection={rowSelection}
-              columns={colunms}
+              columns={columns}
               dataSource={allAppListDataSource}
               style={{ height: 200 }}
               pagination={false}

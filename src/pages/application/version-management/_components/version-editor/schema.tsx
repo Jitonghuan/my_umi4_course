@@ -11,11 +11,11 @@ const APP_TYPE_ICON = {
   backend: <CodeOutlined />,
 };
 
-export const colunms = [
+export const columns = [
   {
     title: '应用名',
     dataIndex: 'appName',
-    width: 140,
+    width: 200,
   },
   {
     title: '应用code',
@@ -33,7 +33,7 @@ export const colunms = [
   {
     title: '应用类型',
     dataIndex: 'appType',
-    width: 100,
+    width: 80,
     render: (appType: AppType) => (
       <>
         {APP_TYPE_ICON[appType]}&nbsp;
