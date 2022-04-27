@@ -20,7 +20,7 @@ const changeColor = (data: any, env?: any) => {
 };
 
 // 判断多环境的取消发布按钮是否要出现以及结尾是否要变蓝----前（后）一个节点状态不为wait时
-const judgeColor = (data: any, index: number, type: string) => {
+const judgeColor = (data: any, index: number, type: string, notShowCancel?: any) => {
   let flag = false;
   let nodes = [];
   if (type === 'cancel') {
@@ -31,6 +31,9 @@ const judgeColor = (data: any, index: number, type: string) => {
   if (nodes && Array.isArray(nodes)) {
     let status = type === 'cancel' ? nodes[nodes.length - 1].nodeStatus : nodes[0].nodeStatus;
     if (status && status !== 'wait') {
+      if (notShowCancel) {
+        notShowCancel();
+      }
       return true;
     }
   }
@@ -59,7 +62,8 @@ const SingelEnvSteps = (props: any) => {
 
 // 多环境
 const MultiEnvSteps = (props: any) => {
-  const { initial, item, onCancelDeploy, index, data, ...other } = props;
+  const { initial, item, onCancelDeploy, index, data, notShowCancel, ...other } = props;
+
   let envList = item.nodes ? Object.keys(item.nodes) : [];
   return (
     <div style={{ margin: '0 15px' }} className={`${judgeColor(data, index, 'finish') ? 'suject-finish' : ''}`}>
@@ -70,7 +74,7 @@ const MultiEnvSteps = (props: any) => {
             className={`sub_process sub_process-${i} ${changeColor(item.nodes, envKey) ? 'sub_process-active' : ''}`}
           >
             <span className="sub_process-title">{envKey}</span>
-            {judgeColor(data, index, 'cancel') && (
+            {judgeColor(data, index, 'cancel', notShowCancel) && (
               <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envKey)}>
                 取消发布
               </Button>
@@ -83,7 +87,8 @@ const MultiEnvSteps = (props: any) => {
   );
 };
 export default function DeploySteps(props: any) {
-  const { stepData, deployInfo, onSpin, stopSpin, onCancelDeploy, envTypeCode, isFrontend, ...other } = props;
+  const { stepData, deployInfo, onSpin, stopSpin, onCancelDeploy, envTypeCode, notShowCancel, isFrontend, ...other } =
+    props;
   let { metadata, branchInfo, envInfo, buildInfo } = deployInfo;
   const [data, setData] = useState<any>([]);
   useEffect(() => {
@@ -139,7 +144,14 @@ export default function DeploySteps(props: any) {
       {data.length !== 0 ? (
         data.map((item: any, index: number) =>
           !Array.isArray(item) ? (
-            <MultiEnvSteps item={item} data={data} index={index} {...props} initial={getInitValue(index)} />
+            <MultiEnvSteps
+              item={item}
+              data={data}
+              index={index}
+              notShowCancel={notShowCancel}
+              {...props}
+              initial={getInitValue(index)}
+            />
           ) : (
             <SingelEnvSteps items={item} {...props} initial={getInitValue(index)} />
           ),

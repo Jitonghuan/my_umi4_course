@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 22:57
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useImperativeHandle } from 'react';
 import { Modal, Button, Table, Tag, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -25,7 +25,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
   dev: FrontendDevEnvSteps,
 };
 
-export default function PublishContent(props: IProps) {
+const PublishContent = React.forwardRef((props: IProps, ref) => {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode } = props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
@@ -35,6 +35,10 @@ export default function PublishContent(props: IProps) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
   const [fullScreeVisible, setFullScreeVisible] = useState(false);
+  const [isShow, setIsShow] = useState(true);
+  useImperativeHandle(ref, () => ({
+    showCancel,
+  }));
 
   type reviewStatusTypeItem = {
     color: string;
@@ -64,6 +68,7 @@ export default function PublishContent(props: IProps) {
           id: metadata.id,
           features,
         }).then(() => {
+          showCancel();
           onOperate('retryDeployEnd');
         });
       },
@@ -93,6 +98,7 @@ export default function PublishContent(props: IProps) {
           id: metadata?.id,
           // isClient: false,
         }).then(() => {
+          showCancel();
           onOperate('batchExitEnd');
         });
       },
@@ -157,15 +163,23 @@ export default function PublishContent(props: IProps) {
     }
   }
 
+  const showCancel = () => {
+    setIsShow(true);
+  };
+
+  const notShowCancel = () => {
+    setIsShow(false);
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
       <div className={`${rootCls}__right-top-btns`}>
-        {deployEnvs && deployEnvs.length === 1 && deployNodes.length !== 0 && (
+        {isShow && deployNodes?.length !== 0 && (
           <Button
             danger
             onClick={() => {
-              onCancelDeploy(deployEnvs[0]);
+              onCancelDeploy();
             }}
           >
             取消发布
@@ -193,6 +207,7 @@ export default function PublishContent(props: IProps) {
         stopSpin={stopSpin}
         onSpin={onSpin}
         deployedList={deployedList}
+        notShowCancel={notShowCancel}
         getItemByKey={getItemByKey}
         projectEnvCode={projectEnvCode}
         pipelineCode={pipelineCode}
@@ -310,4 +325,6 @@ export default function PublishContent(props: IProps) {
       </Modal>
     </div>
   );
-}
+});
+
+export default PublishContent;
