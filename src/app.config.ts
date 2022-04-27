@@ -45,6 +45,7 @@ envType = window.location.href.includes('matrix-fygs') ? 'fygs' : envType;
 envType = window.location.href.includes('matrix-zslnyy') ? 'zslnyy' : envType;
 envType = window.location.href.includes('matrix-base-poc') ? 'base-poc' : envType;
 envType = window.location.href.includes('matrix-zsdata') ? 'zsdata' : envType;
+envType = window.location.href.includes('matrix.gushangke') ? 'gushangke' : envType;
 
 export default {
   /** 站点图标 */
