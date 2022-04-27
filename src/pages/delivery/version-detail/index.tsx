@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
-import { Tabs, Radio, Space, Descriptions, Button, Input, Form, Typography } from 'antd';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { Tabs, Descriptions, Button, Typography, Divider } from 'antd';
+import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import moment from 'moment';
 import EditorTablePro from './Editor-Table-Pro';
@@ -68,14 +68,22 @@ export default function VersionDetail() {
             返回
           </Button>
         </div>
+        <Divider style={{ marginTop: 0, marginBottom: 4 }} />
         <>
           <Tabs tabPosition="left">
             <TabPane tab="基本信息" key="1">
               <div>
-                <Descriptions title="基本信息" column={2} className="basic-info-description" bordered={true}>
-                  <Descriptions.Item label="产品名称">{descriptionInfoData?.productName}</Descriptions.Item>
-                  <Descriptions.Item label="产品版本">{descriptionInfoData?.versionName}</Descriptions.Item>
-                  <Descriptions.Item label="版本描述">
+                <Descriptions
+                  title="基本信息"
+                  column={2}
+                  className="basic-info-description"
+                  // labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
+                  // contentStyle={{ color: '#000' }}
+                  bordered={true}
+                >
+                  <Descriptions.Item label="产品名称:">{descriptionInfoData?.productName || '--'}</Descriptions.Item>
+                  <Descriptions.Item label="产品版本:">{descriptionInfoData?.versionName || '--'}</Descriptions.Item>
+                  <Descriptions.Item label="版本描述:">
                     <Paragraph
                       editable={{
                         onChange: (productVersionDescription: string) =>
@@ -89,8 +97,8 @@ export default function VersionDetail() {
                       {editableStr}
                     </Paragraph>
                   </Descriptions.Item>
-                  <Descriptions.Item label="创建时间">
-                    {moment(descriptionInfoData?.versionGmtCreate).format('YYYY-MM-DD HH:mm:ss')}
+                  <Descriptions.Item label="创建时间:">
+                    {moment(descriptionInfoData?.versionGmtCreate).format('YYYY-MM-DD HH:mm:ss') || '--'}
                   </Descriptions.Item>
                 </Descriptions>
               </div>

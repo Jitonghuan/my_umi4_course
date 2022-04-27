@@ -90,6 +90,7 @@ export default function deliveryDescription() {
         <Space>
           <Button
             type="primary"
+            size="small"
             onClick={() => {
               history.push({
                 pathname: '/matrix/delivery/version-detail',
@@ -122,6 +123,7 @@ export default function deliveryDescription() {
             cancelText="取消"
           >
             <Button
+              size="small"
               type={STATUS_TYPE[record.releaseStatus].type || 'default'}
               disabled={STATUS_TYPE[record.releaseStatus].disabled}
               loading={publishLoading}
@@ -140,7 +142,7 @@ export default function deliveryDescription() {
             okText="是"
             cancelText="否"
           >
-            <Button danger loading={delLoading}>
+            <Button danger size="small" loading={delLoading}>
               删除
             </Button>
           </Popconfirm>
@@ -159,7 +161,14 @@ export default function deliveryDescription() {
     <PageContainer className="product-description">
       <ContentCard>
         <div>
-          <Descriptions title="基本信息" column={2} className="basic-info-description" bordered={true}>
+          <Descriptions
+            title="基本信息"
+            column={2}
+            className="basic-info-description"
+            //  labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
+            //  contentStyle={{ color: '#000' }}
+            bordered={true}
+          >
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
               <Paragraph

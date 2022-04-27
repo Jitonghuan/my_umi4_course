@@ -86,22 +86,24 @@ export default function VersionDetail() {
               tabBarExtraContent={
                 <div className="tab-right-extra">
                   <span>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        if (tabActiveKey === 'app') {
-                          setUserModalVisiable(true);
-                        }
-                        if (tabActiveKey === 'middleware') {
-                          // setMiddlewareModalVisibale(true);
-                        }
-                        if (tabActiveKey === 'sql') {
-                          setBasicDataModalVisiable(true);
-                        }
-                      }}
-                    >
-                      {pageTypes[tabActiveKey].text}
-                    </Button>
+                    {tabActiveKey !== 'middleware' && (
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          if (tabActiveKey === 'app') {
+                            setUserModalVisiable(true);
+                          }
+                          //  if (tabActiveKey === 'middleware') {
+                          //    // setMiddlewareModalVisibale(true);
+                          //  }
+                          if (tabActiveKey === 'sql') {
+                            setBasicDataModalVisiable(true);
+                          }
+                        }}
+                      >
+                        {pageTypes[tabActiveKey].text}
+                      </Button>
+                    )}
                   </span>
                 </div>
               }

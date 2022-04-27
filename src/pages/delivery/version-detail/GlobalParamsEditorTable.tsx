@@ -207,18 +207,20 @@ export default (props: VersionDetailProps) => {
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryGloableParamList(versionId, 'global', param);
+    queryDeliveryGloableParamList(versionId, 'global', param.configParamName);
   };
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="configParamComponent">
-              <Input style={{ width: 220 }} placeholder="请输入组件参数"></Input>
+            <Form.Item name="configParamName">
+              <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
             </Form.Item>
             <Form.Item>
-              <Button onClick={handleSearch}>搜索</Button>
+              <Button onClick={handleSearch} type="primary">
+                搜索
+              </Button>
             </Form.Item>
           </Form>
         </div>

@@ -81,7 +81,13 @@ export default function ComponentDetail() {
         <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
           <TabPane tab="组件信息" key="component-info">
             <div>
-              <Descriptions title="基本信息" column={2} bordered={true}>
+              <Descriptions
+                title="基本信息"
+                column={2}
+                bordered={true}
+                // labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
+                // contentStyle={{ color: '#000' }}
+              >
                 <Descriptions.Item label="组件名称">{componentInfo?.componentName || '--'}</Descriptions.Item>
                 <Descriptions.Item label="组件描述">
                   <Paragraph
