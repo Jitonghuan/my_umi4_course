@@ -5,7 +5,7 @@
  * @create 2021-04-15 10:22
  */
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Steps, Button, message, Modal, Checkbox, Input, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
@@ -35,6 +35,7 @@ export default function PublishBranch(props: IProps) {
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [searchText, setSearchText] = useState<string>('');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+  const selectRef = useRef(null) as any;
 
   useEffect(() => {
     if (masterListData.length !== 0) {
@@ -108,6 +109,7 @@ export default function PublishBranch(props: IProps) {
   }, [appCategoryCode, env]);
 
   const handleChange = (v: any) => {
+    selectRef?.current?.blur();
     setSelectMaster(v?.value);
     masterBranchChange(v?.value);
   };
@@ -120,6 +122,7 @@ export default function PublishBranch(props: IProps) {
           {/* <span className={`${rootCls}__list-header-text`}>分支列表</span> */}
           <h4>主干分支：</h4>
           <Select
+            ref={selectRef}
             options={masterBranchOptions}
             value={selectMaster}
             style={{ width: '200px', marginRight: '20px' }}

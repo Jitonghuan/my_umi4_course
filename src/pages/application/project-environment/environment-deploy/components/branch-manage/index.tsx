@@ -25,6 +25,7 @@ export default function BranchManage() {
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const currentMaster = useRef();
+  const selectRef = useRef(null) as any;
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -97,6 +98,7 @@ export default function BranchManage() {
   };
 
   const handleChange = (v: any) => {
+    selectRef?.current?.blur();
     setSelectMaster(v?.label);
     currentMaster.current = v?.label;
   };
@@ -107,6 +109,7 @@ export default function BranchManage() {
         <Form layout="inline" form={searchForm}>
           <Form.Item label="主干分支" name="masterName">
             <Select
+              ref={selectRef}
               options={masterBranchOptions}
               value={selectMaster}
               style={{ width: '240px', marginRight: '20px' }}

@@ -188,14 +188,16 @@ export default function PublishDetail(props: IProps) {
     }
     setConfirmLoading(true);
     try {
-      await deployReuse({
+      const res = await deployReuse({
         envCodes: deployNextEnv,
         pipelineCode,
-        reusePipelineCode: selectPipeline?.value,
+        reusePipelineCode: selectPipeline,
       });
-      message.success('操作成功，正在部署中...');
-      setDeployNextEnvVisible(false);
-      onOperate('deployNextEnvSuccess');
+      if (res?.success) {
+        message.success('操作成功，正在部署中...');
+        setDeployNextEnvVisible(false);
+        onOperate('deployNextEnvSuccess');
+      }
     } finally {
       setConfirmLoading(false);
     }
@@ -225,16 +227,18 @@ export default function PublishDetail(props: IProps) {
   const confirmPublishToMaster = async () => {
     setConfirmLoading(true);
     try {
-      await deployMaster({
+      const res = await deployMaster({
         pipelineCode,
         envCodes: deployMasterEnv,
         buildType: getBuildType(),
-        masterBranch: selectMaster?.value, //主干分支
+        masterBranch: selectMaster, //主干分支
       });
-      message.success('操作成功，正在部署中...');
-      setDeployMasterVisible(false);
-      setDeployMasterEnv([]);
-      onOperate('deployMasterEnd');
+      if (res?.success) {
+        message.success('操作成功，正在部署中...');
+        setDeployMasterVisible(false);
+        setDeployMasterEnv([]);
+        onOperate('deployMasterEnd');
+      }
     } finally {
       setConfirmLoading(false);
     }
@@ -488,7 +492,7 @@ export default function PublishDetail(props: IProps) {
             项目环境部署
           </Button>
         )}
-        {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
             部署主干分支
           </Button>
@@ -600,7 +604,7 @@ export default function PublishDetail(props: IProps) {
               showSearch
               size="small"
               optionFilterProp="label"
-              labelInValue
+              // labelInValue
               filterOption={(input, option) => {
                 return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
               }}
@@ -609,7 +613,7 @@ export default function PublishDetail(props: IProps) {
           <span>发布环境：</span>
           {/* <Radio.Group value={type} onChange={handleTypeChange}> */}
           {/* <Radio.Group  value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList}></Radio.Group> */}
-          <Checkbox.Group value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={envDataList} />
+          <Checkbox.Group value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList} />
         </div>
       </Modal>
 
@@ -634,7 +638,7 @@ export default function PublishDetail(props: IProps) {
               showSearch
               size="small"
               optionFilterProp="label"
-              labelInValue
+              // labelInValue
               filterOption={(input, option) => {
                 return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
               }}

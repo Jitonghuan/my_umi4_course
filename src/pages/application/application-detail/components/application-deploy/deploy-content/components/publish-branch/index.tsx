@@ -6,7 +6,7 @@
  * @modified 2021/08/30 moyan
  */
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select } from 'antd';
@@ -70,6 +70,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const [loading, setLoading] = useState<boolean>(false);
+  const selectRef = useRef(null) as any;
 
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
@@ -164,6 +165,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   }, [appCategoryCode, env]);
 
   const handleChange = (v: any) => {
+    selectRef?.current?.blur();
     setSelectMaster(v?.value);
     masterBranchChange(v?.value);
   };
@@ -184,6 +186,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         <div className="caption-left">
           <h4>主干分支：</h4>
           <Select
+            ref={selectRef}
             options={masterBranchOptions}
             value={selectMaster}
             style={{ width: '200px', marginRight: '20px' }}
