@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Select, Descriptions, Divider, Form, Modal, Table, Popconfirm } from 'antd';
-import { colunms } from '../version-editor/schema';
+import { columns } from '../version-editor/schema';
 import { useVersionAppList, useBoundApp, useQueryCategory } from '../../hooks';
 import './index.less';
 const { Item: FormItem } = Form;
@@ -114,7 +114,7 @@ export default function BindAppEditor(props: IProps) {
             bordered
             rowKey="id"
             rowSelection={rowSelection}
-            columns={colunms}
+            columns={columns}
             dataSource={unAddAppDataSource}
             loading={unAddLoading}
             style={{ height: 200 }}

@@ -149,7 +149,7 @@ export function useAppList(): [boolean, any, any, (appCategoryCode: string, appG
   const [source, setSource] = useState<IOption[]>([]);
   const queryAppsList = async (appCategoryCode: string, appGroupCode?: string) => {
     setLoading(true);
-    getRequest(getAppList, {
+    await getRequest(getAppList, {
       data: { appCategoryCode, appGroupCode, pageSize: -1 },
     })
       .then((result) => {
@@ -188,7 +188,7 @@ export function useVersionAppList(): [
     isBoundVersion: boolean;
   }) => {
     setLoading(true);
-    getRequest(getVersionAppList, {
+    await getRequest(getVersionAppList, {
       data: paramsObj,
     })
       .then((result) => {
