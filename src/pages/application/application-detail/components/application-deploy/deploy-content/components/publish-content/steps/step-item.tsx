@@ -13,23 +13,22 @@ import FinishedStep from '../step-items/finished';
 import DeployingStep from '../step-items/deploying';
 import QualityCheckStep from '../step-items/quality-check';
 
-// title和旧的步骤组件的映射关系 如果返回的title在这个对象中能找到 就用之前旧的组件 否则用默认的
+// nodeCode和旧的步骤组件的映射关系 如果返回的title在这个对象中能找到 就用之前旧的组件 否则用默认的
 const stepMap: any = {
-  构建: BuildingStep,
-  // 创建任务: CreateTaskStep,
-  删除feature: DeleteFeatureStep,
-  部署: DeployingStep,
-  完成: FinishedStep,
-  灰度验证: GrayValidationStep,
-  合并主干: MergeMasterStep,
-  合并release: MergeReleaseStep,
-  推送资源: PushResourceStep,
-  推送版本: PushVersionStep,
-  质量卡点: QualityCheckStep,
+  build: BuildingStep,
+  deleteFeature: DeleteFeatureStep,
+  deploy: DeployingStep,
+  finish: FinishedStep,
+  verify: GrayValidationStep,
+  mergeMaster: MergeMasterStep,
+  merge: MergeReleaseStep,
+  wait: PushResourceStep,
+  pushVersion: PushVersionStep,
+  qualityCheck: QualityCheckStep,
 };
 
 export default function StepItem(props: any) {
-  const { title, status, ...other } = props;
+  const { title, status, nodeCode, ...other } = props;
   let Comp = (props: any) => (
     <Steps.Step
       {...props}
@@ -41,8 +40,8 @@ export default function StepItem(props: any) {
       // }
     />
   );
-  if (stepMap[title]) {
-    Comp = stepMap[title];
+  if (stepMap[nodeCode]) {
+    Comp = stepMap[nodeCode];
   }
   return <Comp {...props} icon={status === 'process' && <LoadingOutlined />} />;
 }

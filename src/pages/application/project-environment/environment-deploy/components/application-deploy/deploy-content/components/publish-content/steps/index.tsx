@@ -42,7 +42,9 @@ const judgeColor = (data: any, index: number, type: string) => {
 const StepsComp = ({ items, current, initial, ...other }: any) => (
   <Steps initial={initial} className="publish-content-compo__steps">
     {items &&
-      items.map((item: any) => <StepItem title={item.nodeName} status={item.nodeStatus} item={item} {...other} />)}
+      items.map((item: any) => (
+        <StepItem title={item.nodeName} status={item.nodeStatus} nodeCode={item.nodeCode} item={item} {...other} />
+      ))}
   </Steps>
 );
 

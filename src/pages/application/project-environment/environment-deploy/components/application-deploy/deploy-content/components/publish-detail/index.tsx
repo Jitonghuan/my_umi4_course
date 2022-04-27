@@ -83,15 +83,17 @@ export default function PublishDetail(props: IProps) {
   const confirmPublishToMaster = async () => {
     setConfirmLoading(true);
     try {
-      await deployMaster({
+      const res = await deployMaster({
         pipelineCode,
         envCodes: envCode,
         buildType: getBuildType(),
-        masterBranch: selectMaster?.value, //主干分支
+        masterBranch: selectMaster, //主干分支
       });
-      message.success('操作成功，正在部署中...');
-      setDeployMasterVisible(false);
-      onOperate('deployMasterEnd');
+      if (res?.success) {
+        message.success('操作成功，正在部署中...');
+        setDeployMasterVisible(false);
+        onOperate('deployMasterEnd');
+      }
     } finally {
       setConfirmLoading(false);
     }
@@ -223,11 +225,11 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {appData?.appType === 'backend' && (
+        {
           <Button type="primary" onClick={deployToMaster}>
             部署主干分支
           </Button>
-        )}
+        }
         {/* {appData?.appType === 'backend' && (
           <Button type="primary" danger onClick={handleCancelPublish}>
             取消发布
@@ -321,7 +323,7 @@ export default function PublishDetail(props: IProps) {
               showSearch
               size="small"
               optionFilterProp="label"
-              labelInValue
+              // labelInValue
               filterOption={(input, option) => {
                 return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
               }}
