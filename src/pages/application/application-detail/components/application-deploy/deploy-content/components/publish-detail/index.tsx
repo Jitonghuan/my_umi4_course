@@ -190,8 +190,8 @@ export default function PublishDetail(props: IProps) {
     try {
       const res = await deployReuse({
         envCodes: deployNextEnv,
-        pipelineCode,
-        reusePipelineCode: selectPipeline,
+        pipelineCode: selectPipeline,
+        reusePipelineCode: pipelineCode,
       });
       if (res?.success) {
         message.success('操作成功，正在部署中...');
