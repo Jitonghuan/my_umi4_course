@@ -66,7 +66,7 @@ export default function PublishBranch(props: IProps) {
       envTypeCode: env,
       features: filter,
       envCodes: deployEnv,
-      isClient: true,
+      // isClient: true,
       pipelineCode,
       buildType: 'beClientBuild',
       masterBranch: selectMaster, //主干分支

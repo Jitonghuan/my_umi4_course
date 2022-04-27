@@ -209,7 +209,7 @@ export default function PublishContent(props: IProps) {
               重新提交
             </Button>
           )}
-          {!isProd || isFrontend ? (
+          {!isProd ? (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
               退出分支
             </Button>

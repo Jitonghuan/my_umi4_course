@@ -93,14 +93,16 @@ export default function DeployingStep(props: StepItemProps) {
                 </div>
               )} */}
             {confirm && confirm.waitConfirm && (
-              <a
-                style={{ marginTop: 4 }}
-                onClick={() => {
-                  setDeployVisible(true);
-                }}
-              >
-                确认部署
-              </a>
+              <div>
+                <a
+                  style={{ marginTop: 2, marginLeft: -9 }}
+                  onClick={() => {
+                    setDeployVisible(true);
+                  }}
+                >
+                  确认部署
+                </a>
+              </div>
             )}
             {status === 'loading' && env && envTypeCode !== 'prod' && !isFrontend && (
               <div style={{ marginTop: 2 }}>
@@ -136,11 +138,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </div>
               )} */}
             {status === 'error' && (
-              <Button
-                style={{ marginTop: 4, marginLeft: '-22px', color: '#d48806' }}
-                type="link"
-                onClick={handleReDeployClick}
-              >
+              <Button style={{ marginLeft: '-22px', color: '#d48806' }} type="link" onClick={handleReDeployClick}>
                 重新部署
               </Button>
             )}

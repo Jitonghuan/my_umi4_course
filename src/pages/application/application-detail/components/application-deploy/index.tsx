@@ -211,6 +211,7 @@ export default function ApplicationDeploy(props: any) {
               onDeployNextEnvSuccess={() => {
                 const i = envTypeData.findIndex((item) => item.value === tabActive);
                 setTabActive(envTypeData[i + 1]?.value);
+                getPipeline(envTypeData[i + 1]?.value);
               }}
               nextTab={nextTab}
             />

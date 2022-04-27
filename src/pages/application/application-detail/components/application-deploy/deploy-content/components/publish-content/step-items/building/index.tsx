@@ -69,14 +69,16 @@ export default function BuildingStep(props: StepItemProps) {
               </Button>
             )}
             {confirm && confirm.waitConfirm && (
-              <a
-                style={{ marginTop: 4 }}
-                onClick={() => {
-                  setDeployVisible(true);
-                }}
-              >
-                确认部署
-              </a>
+              <div>
+                <a
+                  style={{ marginTop: 4 }}
+                  onClick={() => {
+                    setDeployVisible(true);
+                  }}
+                >
+                  确认部署
+                </a>
+              </div>
             )}
           </>
           // )
