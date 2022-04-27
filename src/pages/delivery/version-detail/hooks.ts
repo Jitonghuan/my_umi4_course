@@ -428,7 +428,13 @@ export function useQueryDeliveryGloableParamList(): [
   any,
   any,
   any,
-  (versionId: number, configParamComponent?: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
+  (
+    versionId: number,
+    configParamComponent?: string,
+    configParamName?: string,
+    pageIndex?: number,
+    pageInfo?: number,
+  ) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -440,13 +446,14 @@ export function useQueryDeliveryGloableParamList(): [
   const queryDeliveryParamList = async (
     versionId: number,
     configParamComponent?: string,
+    configParamName?: string,
     pageIndex?: number,
     pageSize?: number,
   ) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
-        data: { versionId, configParamComponent, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { versionId, configParamComponent, configParamName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
       })
         .then((res) => {
           if (res.success) {

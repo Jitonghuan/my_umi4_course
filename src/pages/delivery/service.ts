@@ -133,12 +133,18 @@ export const queryIndentParamList = addAPIPrefix('/deliveryManage/indent/param/l
 export const saveIndentParam = addAPIPrefix('/deliveryManage/indent/param/save');
 
 /* POST 出部署包 */
-export const createPackageInde = addAPIPrefix('/deliveryManage/indent/package/create');
+export const createPackageInde = addAPIPrefix('/deliveryManage/indent/package/generate');
 
 /* POST 下载部署包 */
 
 export const downloadPackage = addAPIPrefix('/deliveryManage/indent/package/download');
 /* POST 组件描述更新 */
-export const updateDescription = addAPIPrefix('deliveryManage/component/description/update');
+export const updateDescription = addAPIPrefix('/deliveryManage/component/description/update');
 /* POST  组件配置更新 */
-export const updateConfiguration = addAPIPrefix('deliveryManage/component/configuration/update');
+export const updateConfiguration = addAPIPrefix('/deliveryManage/component/configuration/update');
+
+/* POST  获取制品配置 */
+export const generateIndentConfig = addAPIPrefix('/deliveryManage/indent/config/generate');
+
+/* POST  编辑制品配置 */
+export const editIndentConfig = addAPIPrefix('/deliveryManage/indent/config/edit');

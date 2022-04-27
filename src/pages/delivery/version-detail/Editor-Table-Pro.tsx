@@ -107,7 +107,12 @@ export default (props: VersionDetailProps) => {
   }, [currentTab]);
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: '组件名称',
+      title:
+        currentTabType === 'app'
+          ? '应用组件名称'
+          : currentTabType === 'middleware'
+          ? '中间件组件名称'
+          : '基础数据组件名称',
       key: 'componentName',
       dataIndex: 'componentName',
       valueType: 'select',
@@ -234,10 +239,9 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
-  console.log('componentOptions', componentOptions, componentVersionOptions);
   const search = () => {
-    const componentName = searchForm.getFieldsValue();
-    queryVersionComponentList(versionId, currentTab, componentName);
+    const value = searchForm.getFieldsValue();
+    queryVersionComponentList(versionId, currentTab, value.componentName);
   };
   return (
     <>
@@ -249,6 +253,7 @@ export default (props: VersionDetailProps) => {
             </Form.Item>
             <Form.Item>
               <Button
+                type="primary"
                 onClick={() => {
                   search();
                 }}
@@ -289,6 +294,7 @@ export default (props: VersionDetailProps) => {
         actionRef={actionRef}
         formRef={ref}
         headerTitle="可编辑表格"
+        loading={loading}
         // maxLength={5}
         // 关闭默认的新建按钮
         recordCreatorProps={false}

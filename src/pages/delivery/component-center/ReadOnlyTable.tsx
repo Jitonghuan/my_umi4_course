@@ -8,6 +8,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
+import moment from 'moment';
 import { Table, Tag, Space, Popconfirm } from 'antd';
 import { useQueryComponentList, useDeleteComponent } from './hook';
 export interface DetailProps {
@@ -28,7 +29,8 @@ export default function VersionDetail(props: DetailProps) {
   }, [currentTab]);
   const columns = [
     {
-      title: '组件名称',
+      title:
+        currentTab === 'app' ? '应用组件名称' : currentTab === 'middleware' ? '中间件组件名称' : '基础数据组件名称',
       dataIndex: 'componentName',
       key: 'componentName',
     },
