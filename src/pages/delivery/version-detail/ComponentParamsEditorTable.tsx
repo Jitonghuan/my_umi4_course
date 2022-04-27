@@ -259,8 +259,8 @@ export default (props: VersionDetailProps) => {
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="configParamName">
-              <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
+            <Form.Item name="configParamComponent">
+              <Input style={{ width: 220 }} placeholder="请输入参数来源组件"></Input>
             </Form.Item>
             <Form.Item>
               <Button onClick={handleSearch} type="primary">

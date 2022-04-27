@@ -136,7 +136,7 @@ export default function ProductConfig() {
                     },
                   }}
                 >
-                  {editableStr || '--'}
+                  {editableStr}
                 </Paragraph>
                 {/* </Spin> */}
               </Descriptions.Item>
