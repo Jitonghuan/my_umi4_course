@@ -57,32 +57,6 @@ const funcName = (props: any) => {
     process: { text: '正在发布', color: 'geekblue' },
     error: { text: '发布失败', color: 'red' },
     finish: { text: '发布完成', color: 'green' },
-    // merging: { text: '正在合并', color: 'blue' },
-    // mergeErr: { text: '合并错误', color: 'red' },
-    // conflict: { text: '合并冲突', color: 'red' },
-    // building: { text: '正在构建', color: 'blue' },
-    // buildErr: { text: '构建错误', color: 'red' },
-    // buildAborted: { text: '构建取消', color: 'orange' },
-    // multiEnvDeploying: { text: '正在部署', color: 'geekblue' },
-    // deployWait: { text: '等待部署', color: 'blue' },
-    // deploying: { text: '正在部署', color: 'geekblue' },
-    // deployWaitBatch2: { text: '等待第二批部署', color: 'green' },
-    // deployErr: { text: '部署错误', color: 'red' },
-    // deployAborted: { text: '部署取消', color: 'orange' },
-    // deployed: { text: '部署完成', color: 'green' },
-    // mergingMaster: { text: '正在合并Master', color: 'geekblue' },
-    // mergeMasterErr: { text: '合并Master错误', color: 'red' },
-    // deletingFeature: { text: '正在删除Feature', color: 'purple' },
-    // deleteFeatureErr: { text: '删除Feature错误', color: 'red' },
-    // deployFinish: { text: '发布完成', color: 'green' },
-    // qualityChecking: { text: '质量检测中', color: 'geekblue' },
-    // qualityFailed: { text: '质量检测失败', color: 'red' },
-    // pushFeResource: { text: '正在推送前端资源', color: 'geekblue' },
-    // pushFeResourceErr: { text: '推送前端资源错误', color: 'red' },
-    // pushVersion: { text: '正在推送前端版本', color: 'geekblue' },
-    // pushVersionErr: { text: '推送前端版本失败', color: 'red' },
-    // verifyWait: { text: '等待灰度验证', color: 'geekblue' },
-    // verifyFailed: { text: '灰度验证失败', color: 'red' },
   };
 
   const { dataSource = {}, ...rest } = props;
@@ -97,22 +71,24 @@ const funcName = (props: any) => {
 
   function getJenkins(url: string) {
     try {
-      return url ? JSON.parse(url) : [];
+      let JenkinsInfoArry = [];
+      let curUrl = url ? JSON.parse(url) : {};
+      for (const key in curUrl) {
+        if (Object.prototype.hasOwnProperty.call(curUrl, key)) {
+          const element = curUrl[key];
+          JenkinsInfoArry.push({ envCode: key, JenkinsUrl: element });
+        }
+      }
+      return JenkinsInfoArry || [];
     } catch (e) {
-      return url
-        ? [
-            {
-              subJenkinsUrl: url,
-            },
-          ]
-        : [];
+      return [];
     }
   }
 
   return (
     <Descriptions
       // {...rest}
-      labelStyle={{ width: 90, justifyContent: 'flex-end' }}
+      labelStyle={{ width: 100, justifyContent: 'flex-end' }}
       column={1}
     >
       <Descriptions.Item label="发布单Id">{dataSource?.deployId}</Descriptions.Item>
@@ -120,6 +96,7 @@ const funcName = (props: any) => {
       <Descriptions.Item label="发布时间">
         {moment(dataSource?.deployedTime).format('YYYY-MM-DD HH:mm:ss')}
       </Descriptions.Item>
+      <Descriptions.Item label="发布完成时间">{dataSource?.deployFinishTime}</Descriptions.Item>
       <Descriptions.Item label="发布环境">{dataSource?.envs}</Descriptions.Item>
       <Descriptions.Item label="发布状态">
         {/* {dataSource?.deployStatus} */}
@@ -132,11 +109,11 @@ const funcName = (props: any) => {
       <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
         {dataSource?.jenkinsUrl ? (
           <>
-            {getJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+            {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
-                  {jenkinsItem?.subJenkinsUrl}
+                {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.JenkinsUrl} target="_blank">
+                  {jenkinsItem?.JenkinsUrl}
                 </a>
               </div>
             ))}

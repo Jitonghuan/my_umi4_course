@@ -82,7 +82,11 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
                 title: '确定要把当前部署分支发布到下一个环境中？',
                 icon: <ExclamationCircleOutlined />,
                 onOk: () => {
-                  return deployReuse({ envCodes: [], pipelineCode, reusePipelineCode: nextPipeline }).then((res) => {
+                  return deployReuse({
+                    envCodes: [],
+                    pipelineCode: nextPipeline,
+                    reusePipelineCode: pipelineCode,
+                  }).then((res) => {
                     if (res.success) {
                       message.success('操作成功，正在部署中...');
                       onOperate('deployNextEnvSuccess');

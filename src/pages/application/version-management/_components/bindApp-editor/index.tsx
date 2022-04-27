@@ -39,7 +39,7 @@ export default function BindAppEditor(props: IProps) {
       setSource([]);
     };
   }, [visible]);
-  // console.log('initData?.versionCode111',initData?.versionCode)
+
   const selectAppCategoryCode = (next: string) => {
     setCategoryCode(next);
     queryVersionAppList({ versionCode: initData?.versionCode, appCategoryCode: next, isBoundVersion: false });

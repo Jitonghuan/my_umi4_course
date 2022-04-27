@@ -58,7 +58,6 @@ export default function BranchManage() {
   // 搜索
   const handleSearch = useCallback(() => {
     const values = searchForm.getFieldsValue();
-    console.log(values);
 
     queryBranchList({
       pageIndex: 1,

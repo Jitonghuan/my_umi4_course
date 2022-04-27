@@ -103,7 +103,6 @@ export default function ApplicationDeploy(props: any) {
           pipelineObj[e.typeCode] = '';
         }
       });
-      console.log(next, 'next');
       sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
       setEnvTypeData(next);
     });

@@ -41,6 +41,13 @@ export default function PublishRecord(props: IProps) {
     showRequestError: true,
     loadMore: true,
   });
+  useEffect(() => {
+    queryDataSource({
+      appCode,
+      envTypeCode: env,
+      pageIndex: 1,
+    });
+  }, [appCode]);
 
   useEffect(() => {
     let intervalId = setInterval(() => {
@@ -64,7 +71,6 @@ export default function PublishRecord(props: IProps) {
   //     pageIndex: 1,
   //   });
   // }, []);
-  // console.log('tableProps.dataSource', tableProps.dataSource);
   // useEffect(() => {
   //   // let intervalId = setInterval(() => {
   //   //   if (appCode && env) {
@@ -250,7 +256,7 @@ export default function PublishRecord(props: IProps) {
         </div>
       ) : null}
 
-      <Modal title="发布详情" width={600} visible={visible} footer={false} onCancel={() => setVisible(false)}>
+      <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
         <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
       </Modal>
     </div>
