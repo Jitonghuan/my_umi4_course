@@ -46,7 +46,6 @@ const OptionList: React.FC<{
   const [selectValue, setSelectValue] = useState<string>('');
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLOptionElement>) => {
-    console.log('e.target.value', e.target.value);
     setSelectValue(e.target.value);
   };
 
@@ -100,6 +99,10 @@ export default (props: VersionDetailProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
+
+  const updateRow = (rowKey: string, row: any) => {
+    form.setFieldsValue({ [rowKey]: row });
+  };
   useEffect(() => {
     queryComponentOptions(currentTabType); //组件查询
     // queryProductVersionOptions(currentTabType); //组件版本查询
@@ -156,7 +159,6 @@ export default (props: VersionDetailProps) => {
       },
       // valueEnum: componentVersionOptions,
       renderFormItem: (_, config: any, data) => {
-        console.log('config.record?', config.record);
         let description = '';
         componentVersionOptions.filter((item: any) => {
           if (item.value === config.record?.componentVersion) {
@@ -169,6 +171,14 @@ export default (props: VersionDetailProps) => {
             options={componentVersionOptions}
             onChange={(value: any) => {
               // setDataSource([...tableDataSource, { ...config.record, componentDescription: description }]);
+              componentVersionOptions.filter((item: any) => {
+                if (item.value === value) {
+                  updateRow(config.recordKey, {
+                    ...form.getFieldsValue(config.recordKey),
+                    componentDescription: item.componentDescription,
+                  });
+                }
+              });
             }}
           ></Select>
         );
@@ -190,20 +200,7 @@ export default (props: VersionDetailProps) => {
       },
 
       renderFormItem: (_, config: any, data) => {
-        let description = '';
-        componentVersionOptions.filter((item: any) => {
-          if (item.value === config.record?.componentVersion) {
-            description = item.componentDescription;
-          }
-        });
-        console.log('description', description);
-        if (description) {
-          // data.setFieldsValue({
-          //   componentDescription:currentValue?.componentDescription
-          // })
-
-          return <Input value={description} defaultValue={description}></Input>;
-        }
+        return <Input></Input>;
       },
     },
 
