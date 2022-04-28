@@ -32,7 +32,9 @@ export default function ComponentDetail() {
   useEffect(() => {
     if (componentVersion && componentName) {
       queryComponentVersionList(componentName, componentType);
-      queryComponentInfo(componentName, componentVersion, componentType);
+      queryComponentInfo(componentName, componentVersion, componentType).then((res) => {
+        console.log('res', res);
+      });
     } else {
       return;
     }
@@ -46,6 +48,7 @@ export default function ComponentDetail() {
 
   const changeVersion = (value: string) => {
     queryComponentInfo(componentName, value, componentType);
+    setEditableStr(componentInfo?.componentDescription);
   };
   const saveConfig = () => {
     const configuration = configForm.getFieldsValue();
@@ -58,7 +61,7 @@ export default function ComponentDetail() {
           <div className="caption-left">
             <h3>组件名称：{componentName}</h3>
             <Select
-              style={{ width: 220, paddingLeft: 20 }}
+              style={{ width: 220, marginLeft: 20 }}
               loading={loading}
               options={versionOptions}
               defaultValue={componentVersion}
@@ -85,6 +88,7 @@ export default function ComponentDetail() {
                 title="基本信息"
                 column={2}
                 bordered={true}
+                className="component-info-description"
                 // labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
                 // contentStyle={{ color: '#000' }}
               >
@@ -93,13 +97,13 @@ export default function ComponentDetail() {
                   <Paragraph
                     editable={{
                       onChange: (componentDescription: string) => {
-                        updateDescription(componentDescription).then(() => {
+                        updateDescription({ ...componentInfo, componentDescription }).then(() => {
                           setEditableStr(componentDescription);
                         });
                       },
                     }}
                   >
-                    {editableStr || '--'}
+                    {editableStr}
                   </Paragraph>
                 </Descriptions.Item>
                 <Descriptions.Item label="组件类型">{componentInfo?.componentType || '--'}</Descriptions.Item>
@@ -111,7 +115,10 @@ export default function ComponentDetail() {
               </Descriptions>
               <Divider />
               <div>
-                <div className="instruction">组件说明:{componentInfo?.componentExplanation}</div>
+                <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: 8, height: 20, fontSize: 16 }}>组件说明:</h3>
+                <div className="instruction">
+                  <div className="instruction-info">{componentInfo?.componentExplanation}</div>
+                </div>
               </div>
             </div>
           </TabPane>
@@ -142,7 +149,7 @@ export default function ComponentDetail() {
                     mode="yaml"
                     height={'52vh'}
                     readOnly={readOnly}
-                    defaultValue={componentInfo?.componentConfiguration}
+                    value={componentInfo?.componentConfiguration}
                   />
                 </Form.Item>
                 <Form.Item>

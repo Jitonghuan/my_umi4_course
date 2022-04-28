@@ -56,8 +56,8 @@ export function useQueryComponentInfo(): [
         .then((res) => {
           if (res.success) {
             let dataSource = res.data;
-
             setDataSource(dataSource);
+            return dataSource;
           } else {
             return {};
           }
@@ -126,12 +126,43 @@ export function useUpdateComponent(): [
 
 //组件描述更新
 
-export function useUpdateDescription(): [boolean, (componentDescription: string) => Promise<void>] {
+export function useUpdateDescription(): [
+  boolean,
+  (componentInfo: {
+    id: number;
+    componentName: string;
+    componentVersion: string;
+    componentType: string;
+    componentDescription: string;
+    componentUrl: string;
+    componentSourceEnv: string;
+    componentExplanation: string;
+    componentConfiguration: string;
+    createUser: string;
+    modifyUser: string;
+    gmtCreate: string;
+    gmtModify: string;
+  }) => Promise<void>,
+] {
   const [loading, setLoading] = useState<boolean>(false);
-  const updateDescription = async (componentDescription: string) => {
+  const updateDescription = async (componentInfo: {
+    id: number;
+    componentName: string;
+    componentVersion: string;
+    componentType: string;
+    componentDescription: string;
+    componentUrl: string;
+    componentSourceEnv: string;
+    componentExplanation: string;
+    componentConfiguration: string;
+    createUser: string;
+    modifyUser: string;
+    gmtCreate: string;
+    gmtModify: string;
+  }) => {
     setLoading(true);
     try {
-      await postRequest(APIS.updateDescription, { data: { componentDescription } })
+      await postRequest(APIS.updateDescription, { data: componentInfo })
         .then((res) => {
           if (res.success) {
             message.success('编辑成功！');

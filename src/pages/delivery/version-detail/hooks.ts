@@ -339,9 +339,9 @@ export function useQueryParamList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<any>({});
   const [valueOptions, setValueOptions] = useState<any>({});
-  const queryParamList = async (versionId: number, componentName: string) => {
+  const queryParamList = async (versionId: number) => {
     setLoading(true);
-    await getRequest(APIS.queryParamList, { data: { versionId, componentName: 'nacos' } })
+    await getRequest(APIS.queryParamList, { data: { versionId } })
       .then((res) => {
         if (res?.success) {
           let dataSource = res.data;

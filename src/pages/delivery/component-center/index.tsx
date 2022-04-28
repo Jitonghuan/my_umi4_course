@@ -43,7 +43,7 @@ export default function VersionDetail() {
   };
   const pageTypes: any = {
     app: { text: '应用组件接入' },
-    middleware: { text: '平台组件接入' },
+    middleware: { text: '中间件组件接入' },
     sql: { text: '基础数据接入' },
   };
 

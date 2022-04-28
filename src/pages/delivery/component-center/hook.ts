@@ -269,7 +269,7 @@ export function useDeleteComponent(): [boolean, (id: number) => Promise<void>] {
   const deleteComponent = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.deleteComponent}/${id}`)
+      await postRequest(`${APIS.deleteComponent}?id=${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);

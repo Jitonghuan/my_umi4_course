@@ -5,7 +5,7 @@ export const productionTabsConfig: any = [
     type: 'app',
   },
   {
-    label: '平台组件',
+    label: '中间件组件',
     value: 'middleware',
     type: 'middleware',
   },

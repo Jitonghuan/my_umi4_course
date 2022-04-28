@@ -65,7 +65,7 @@ export default function BasicModal(props: DetailProps) {
 
   return (
     <Modal
-      title="平台组件接入"
+      title="中间件组件接入"
       visible={visable}
       onCancel={() => {
         onClose();
