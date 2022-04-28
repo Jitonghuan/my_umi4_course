@@ -342,7 +342,7 @@ export function useQueryOriginList() {
 export function useQueryParamList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<any>({});
-  const [valueOptions, setValueOptions] = useState<any>({});
+  // const [valueOptions, setValueOptions] = useState<any>({});
   const queryParamList = async (versionId: number, componentName: string) => {
     setLoading(true);
     await getRequest(APIS.queryParamList, { data: { versionId, componentName } })
@@ -363,7 +363,7 @@ export function useQueryParamList() {
           }
 
           setDataSource(options);
-          setValueOptions(valueOptionsObj);
+          // setValueOptions(valueOptionsObj);
         } else {
           return;
         }
@@ -373,7 +373,7 @@ export function useQueryParamList() {
       });
   };
 
-  return [loading, dataSource, valueOptions, queryParamList];
+  return [loading, dataSource, queryParamList];
 }
 //查询交付配置参数
 export function useQueryDeliveryParamList(): [
@@ -527,11 +527,11 @@ export function useSaveParam(): [
 //编辑交付配置参数
 export function useEditVersionParam(): [
   boolean,
-  (paramsObj: { versionId: number; configParamValue: string; configParamDescription: string }) => Promise<void>,
+  (paramsObj: { id: number; configParamValue: string; configParamDescription: string }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const editVersionParam = async (paramsObj: {
-    versionId: number;
+    id: number;
     configParamValue: string;
     configParamDescription: string;
   }) => {
