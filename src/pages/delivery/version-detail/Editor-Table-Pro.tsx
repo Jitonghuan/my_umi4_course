@@ -107,12 +107,7 @@ export default (props: VersionDetailProps) => {
   }, [currentTab]);
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title:
-        currentTabType === 'app'
-          ? '应用组件名称'
-          : currentTabType === 'middleware'
-          ? '中间件组件名称'
-          : '基础数据组件名称',
+      title: currentTabType === 'app' ? '应用名称' : currentTabType === 'middleware' ? '中间件名称' : '基础数据名称',
       key: 'componentName',
       dataIndex: 'componentName',
       valueType: 'select',
@@ -143,7 +138,7 @@ export default (props: VersionDetailProps) => {
       },
     },
     {
-      title: '组件版本',
+      title: currentTabType === 'app' ? '应用版本' : currentTabType === 'middleware' ? '中间件版本' : '基础数据版本',
       key: 'componentVersion',
       dataIndex: 'componentVersion',
       valueType: 'select',
@@ -173,15 +168,26 @@ export default (props: VersionDetailProps) => {
           <Select
             options={componentVersionOptions}
             onChange={(value: any) => {
-              setDataSource([...tableDataSource, { ...config.record, componentDescription: description }]);
+              // setDataSource([...tableDataSource, { ...config.record, componentDescription: description }]);
             }}
           ></Select>
         );
       },
     },
     {
-      title: '组件描述',
+      title: currentTabType === 'app' ? '应用描述' : currentTabType === 'middleware' ? '中间件描述' : '基础数据描述',
       dataIndex: 'componentDescription',
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
+      },
 
       renderFormItem: (_, config: any, data) => {
         let description = '';
@@ -249,7 +255,16 @@ export default (props: VersionDetailProps) => {
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
             <Form.Item name="componentName">
-              <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
+              <Input
+                style={{ width: 220 }}
+                placeholder={
+                  currentTabType === 'app'
+                    ? '请输入应用名称'
+                    : currentTabType === 'middleware'
+                    ? '请输入中间件名称'
+                    : '请输入基础数据名称'
+                }
+              ></Input>
             </Form.Item>
             <Form.Item>
               <Button

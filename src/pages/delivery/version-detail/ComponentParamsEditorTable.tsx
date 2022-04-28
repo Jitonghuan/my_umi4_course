@@ -107,7 +107,6 @@ export default (props: VersionDetailProps) => {
   const [loading, paramOptions, valueOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
-  // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
   useEffect(() => {
@@ -118,10 +117,6 @@ export default (props: VersionDetailProps) => {
     //查询交付配置参数
     queryDeliveryParamList(versionId);
   }, []);
-  useEffect(() => {
-    //获取组件参数及参数值
-    queryParamList(versionId); //componentName
-  }, [currentTab]);
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '参数来源组件',
@@ -139,7 +134,7 @@ export default (props: VersionDetailProps) => {
           errorType: 'default',
         };
       },
-      valueEnum: originOptions,
+      // valueEnum: originOptions,
       editable: (text, record, index) => {
         if (type === 'edit' && text) {
           return false;
@@ -150,6 +145,21 @@ export default (props: VersionDetailProps) => {
         } else {
           return true;
         }
+      },
+      renderFormItem: (_, config: any, data) => {
+        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
+        // let currentValue = componentOptions[config.record?.componentName];
+        // queryProductVersionOptions(currentTabType,currentValue)
+
+        return (
+          <Select
+            options={originOptions}
+            onChange={(value: any) => {
+              console.log('value', value);
+              queryParamList(versionId, value);
+            }}
+          ></Select>
+        );
       },
     },
 
@@ -188,6 +198,7 @@ export default (props: VersionDetailProps) => {
           // setDataSource([config.record,...tableDataSource])
           // return  <span >{paramOptions[config.record?.configParamName].configParamValue}</span>
           return (
+            // <span>{currentValue.configParamValue}</span>
             <Select defaultValue={currentValue.configParamValue}>
               <Select.Option value={currentValue.configParamValue}>{currentValue.configParamValue}</Select.Option>
             </Select>
@@ -346,12 +357,13 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
+            console.log('params', params);
             if (type === 'add') {
-              await saveParam({ ...params, versionId: versionId }).then(() => {
+              await saveParam({ ...params }).then(() => {
                 queryDeliveryParamList(versionId);
               });
             } else if (type === 'edit') {
-              editVersionParam({ ...params, versionId: versionId }).then(() => {
+              editVersionParam({ ...params }).then(() => {
                 queryDeliveryParamList(versionId);
               });
             }

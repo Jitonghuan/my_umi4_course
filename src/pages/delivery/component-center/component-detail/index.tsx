@@ -67,6 +67,8 @@ export default function ComponentDetail() {
   const saveConfig = () => {
     const configuration = configForm.getFieldsValue();
     updateConfiguration(configuration.config);
+    setReadOnly(true);
+    setButtonText('编辑');
   };
   return (
     <PageContainer>

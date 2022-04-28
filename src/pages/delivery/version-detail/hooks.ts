@@ -315,11 +315,15 @@ export function useQueryOriginList() {
       .then((res) => {
         if (res?.success) {
           let dataSource = res.data.dataSource;
-          let options: any = {};
+          let options: any = [];
           dataSource?.map((item: any) => {
-            options[item.componentName] = {
-              text: item.componentName,
-            };
+            // options[item.componentName] = {
+            //   text: item.componentName,
+            // };
+            options.push({
+              label: item.componentName,
+              value: item.componentName,
+            });
           });
           setDataSource(options);
         } else {
@@ -339,9 +343,9 @@ export function useQueryParamList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<any>({});
   const [valueOptions, setValueOptions] = useState<any>({});
-  const queryParamList = async (versionId: number) => {
+  const queryParamList = async (versionId: number, componentName: string) => {
     setLoading(true);
-    await getRequest(APIS.queryParamList, { data: { versionId } })
+    await getRequest(APIS.queryParamList, { data: { versionId, componentName } })
       .then((res) => {
         if (res?.success) {
           let dataSource = res.data;

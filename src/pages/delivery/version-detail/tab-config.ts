@@ -1,17 +1,17 @@
 export const productionTabsConfig: any = [
   {
     label: '应用',
-    value: '0',
+    value: 'app',
     type: 'app',
   },
   {
     label: '中间件',
-    value: '1',
+    value: 'middleware',
     type: 'middleware',
   },
   {
     label: '基础数据',
-    value: '2',
+    value: 'sql',
     type: 'sql',
   },
 ];
@@ -28,7 +28,7 @@ export const deliveryTabsConfig: any = [
 ];
 
 export const productionPageTypes: any = {
-  0: { text: '添加应用' },
-  1: { text: '添加中间件' },
-  2: { text: '添加基础数据' },
+  app: { text: '添加应用' },
+  middleware: { text: '添加中间件' },
+  sql: { text: '添加基础数据' },
 };

@@ -124,7 +124,7 @@ export default (props: VersionDetailProps) => {
 
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: '参数名',
+      title: '参数名称',
       key: 'configParamName',
       dataIndex: 'configParamName',
       editable: (text, record, index) => {
@@ -211,7 +211,7 @@ export default (props: VersionDetailProps) => {
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
             <Form.Item name="configParamName">
-              <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
+              <Input style={{ width: 220 }} placeholder="请输入参数名称"></Input>
             </Form.Item>
             <Form.Item>
               <Button onClick={handleSearch} type="primary">
