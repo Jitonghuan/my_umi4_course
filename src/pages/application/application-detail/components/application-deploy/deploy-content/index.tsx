@@ -22,6 +22,7 @@ import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
 import { Spin } from 'antd';
 import './index.less';
+import { Iprops } from '_@cffe_fe-datav-components@0.1.8@@cffe/fe-datav-components/es/components/charts/chart-bar';
 
 const rootCls = 'deploy-content-compo';
 
@@ -39,18 +40,10 @@ export interface DeployContentProps {
   nextTab: string;
 }
 
-const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
-  //传给父组件 关闭/开启 定时器的方法
-  useImperativeHandle(ref, () => ({
-    onOperate,
-    // onSpin,
-    // stopSpin,
-  }));
-
+export default function DeployContent(props: DeployContentProps) {
   const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
-
   const cachebranchName = useRef<string>();
   const masterBranchName = useRef<string>('master');
   const [updating, setUpdating] = useState(false);
@@ -157,6 +150,9 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
     if (visible) {
       timerHandle('stop');
     }
+    if (!visible) {
+      timerHandle('do', true);
+    }
   }, [visible]);
 
   const onSpin = () => {
@@ -187,7 +183,6 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
             }}
           />
           <PublishContent
-            ref={publishContentRef}
             appCode={appCode!}
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
@@ -197,11 +192,9 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
-            masterBranch={masterBranchName.current}
           />
           <PublishBranch
             deployInfo={deployInfo}
-            masterBranch={masterBranchName.current}
             hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
             dataSource={branchInfo.unDeployed}
             env={envTypeCode}
@@ -209,11 +202,13 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
             pipelineCode={pipelineCode}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
-              publishContentRef?.current?.showCancel();
             }}
             masterBranchChange={(masterBranch: string) => {
               masterBranchName.current = masterBranch;
               timerHandle('do', true);
+            }}
+            changeBranchName={(branchName: string) => {
+              // cachebranchName.current = branchName;
             }}
           />
         </Spin>
@@ -223,10 +218,4 @@ const DeployContent = React.forwardRef((props: DeployContentProps, ref) => {
       </div>
     </div>
   );
-});
-
-export default DeployContent;
-
-// export default function DeployContent(props: DeployContentProps) {
-
-// }
+}

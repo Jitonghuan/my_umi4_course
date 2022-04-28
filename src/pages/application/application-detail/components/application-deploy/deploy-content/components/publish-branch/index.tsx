@@ -30,7 +30,6 @@ export interface PublishBranchProps {
   deployInfo: DeployInfoVO;
   env: string;
   onSearch: (name?: string) => any;
-  masterBranch: string;
   masterBranchChange: any;
   dataSource: {
     id: string | number;
@@ -43,6 +42,7 @@ export interface PublishBranchProps {
   pipelineCode: string;
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
+  changeBranchName: any;
 }
 
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
@@ -53,9 +53,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     onSubmitBranch,
     env,
     onSearch,
-    masterBranch,
     masterBranchChange,
     pipelineCode,
+    changeBranchName,
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata } = deployInfo || {};
@@ -67,7 +67,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
-  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const [loading, setLoading] = useState<boolean>(false);
   const selectRef = useRef(null) as any;
@@ -138,8 +138,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     if (masterListData.length !== 0) {
       const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
-      const initValue = option.find((item: any) => item.label === 'master');
-      setSelectMaster(initValue?.value);
+      // const initValue = option.find((item: any) => item.label === 'master');
+      // setSelectMaster(initValue?.value);
     }
   }, [masterListData]);
 
@@ -165,8 +165,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
   const handleChange = (v: any) => {
     selectRef?.current?.blur();
-    setSelectMaster(v?.value);
-    masterBranchChange(v?.value);
+    setSelectMaster(v);
+    masterBranchChange(v);
   };
 
   const branchNameRender = (branchName: string, record: any) => {
@@ -192,7 +192,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             onChange={handleChange}
             showSearch
             optionFilterProp="label"
-            labelInValue
+            // labelInValue
             filterOption={(input, option) => {
               return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
             }}
@@ -201,7 +201,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           <Input.Search
             placeholder="搜索分支"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => {
+              setSearchText(e.target.value), changeBranchName(e.target.value), console.log(e.target.value, 888);
+            }}
             onPressEnter={() => onSearch?.(searchText)}
             onSearch={() => onSearch?.(searchText)}
           />

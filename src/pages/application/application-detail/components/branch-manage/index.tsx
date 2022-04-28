@@ -21,9 +21,8 @@ export default function BranchManage() {
   const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
   const [pending, setPending] = useState(false);
   const [reviewId, setReviewId] = useState<string>('');
-  const [masterOption, setMasterOption] = useState<any>([]);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
-  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const currentMaster = useRef();
   const selectRef = useRef(null) as any;
@@ -50,7 +49,6 @@ export default function BranchManage() {
       setMasterBranchOptions(option);
       const initValue = option.find((item: any) => item.label === 'master');
       searchForm.setFieldsValue({ masterName: initValue?.value || '' });
-      setSelectMaster(initValue?.value || '');
       currentMaster.current = initValue?.value || '';
     }
   }, [masterListData]);
@@ -101,8 +99,8 @@ export default function BranchManage() {
 
   const handleChange = (v: any) => {
     selectRef?.current?.blur();
-    setSelectMaster(v?.label);
-    currentMaster.current = v?.label;
+    setSelectMaster(v);
+    currentMaster.current = v;
   };
 
   return (
@@ -118,7 +116,7 @@ export default function BranchManage() {
               onChange={handleChange}
               showSearch
               optionFilterProp="label"
-              labelInValue
+              // labelInValue
               filterOption={(input, option) => {
                 return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
               }}
@@ -184,7 +182,6 @@ export default function BranchManage() {
             <Tooltip placement="topLeft" title={datetimeCellRender(value)}>
               {datetimeCellRender(value)}
             </Tooltip>
-            // datetimeCellRender(value)
           )}
         />
         <Table.Column title="创建人" dataIndex="createUser" width={100} />

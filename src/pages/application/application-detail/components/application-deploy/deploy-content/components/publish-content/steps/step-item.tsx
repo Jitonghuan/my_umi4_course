@@ -18,7 +18,7 @@ const stepMap: any = {
   build: BuildingStep,
   deleteFeature: DeleteFeatureStep,
   deploy: DeployingStep,
-  finish: FinishedStep,
+  end: FinishedStep,
   verify: GrayValidationStep,
   mergeMaster: MergeMasterStep,
   merge: MergeReleaseStep,
@@ -29,17 +29,7 @@ const stepMap: any = {
 
 export default function StepItem(props: any) {
   const { title, status, nodeCode, ...other } = props;
-  let Comp = (props: any) => (
-    <Steps.Step
-      {...props}
-      // description={confirm.waitConfirm && (
-      //   <Button >
-      //     {confirm.label}
-      //   </Button>
-      // )
-      // }
-    />
-  );
+  let Comp = (props: any) => <Steps.Step {...props} />;
   if (stepMap[nodeCode]) {
     Comp = stepMap[nodeCode];
   }

@@ -104,7 +104,7 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
           </Button>
         )}
 
-        <Button
+        {/* <Button
           type="primary"
           danger
           onClick={() => {
@@ -128,7 +128,7 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
           }}
         >
           取消发布
-        </Button>
+        </Button> */}
       </div>
 
       <Descriptions

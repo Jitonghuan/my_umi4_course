@@ -25,42 +25,6 @@ export interface IProps {
   pipelineCode: string;
 }
 
-const tempData = {
-  metadata: {
-    id: 1564,
-    appCode: 'dubbo-consumer',
-    pipelineCode: 'pipeline-1',
-    envTypeCode: 'dev',
-    isActive: 1,
-    version: '1.0',
-  },
-  branchInfo: {
-    masterBranch: 'master-1',
-    releaseBranch: 'release_dev_20220411162402',
-    features: ['feature_ccd_20220406160947', 'feature_test_20220330202635'],
-    conflictFeature: '',
-    // "tagName": "tag-1"
-  },
-  envInfo: {
-    deployEnvs: ['base'],
-  },
-  buildInfo: {
-    buildUrl:
-      '[{"envCode":"base","subJenkinsUrl":"http://jenkins-dev.cfuture.shop/job/dubbo-consumer/25/console"},{"envCode":"dev","subJenkinsUrl":"http://jenkins-dev.cfuture.shop/job/dubbo-consumer/26/console"}]',
-    buildType: 'beClientBuild',
-  },
-  status: {
-    deployErrInfo: '[{"envCode":"base","subErrInfo":""},{"envCode":"dev","subErrInfo":"推送资源出错"}]',
-    deployNodes: [
-      { nodeType: 'single', nodeName: '创建任务', nodeStatus: 'finish' },
-      { nodeType: 'single', nodeName: '合并realease', nodeStatus: 'finish' },
-      { nodeType: 'single', nodeName: '部署', nodeStatus: 'wait' },
-      { nodeType: 'single', nodeName: '执行完成', nodeStatus: 'wait' },
-      // nodes: []
-    ],
-  },
-};
-
 export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCode }: IProps) {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
@@ -93,12 +57,14 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
       envTypeCode: env,
       isDeployed: 1,
       pipelineCode,
+      masterBranch: masterBranchName.current,
     });
     const resp3 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode: env,
       isDeployed: 0,
       branchName: cachebranchName.current,
+      masterBranch: masterBranchName.current,
       pipelineCode,
     });
 

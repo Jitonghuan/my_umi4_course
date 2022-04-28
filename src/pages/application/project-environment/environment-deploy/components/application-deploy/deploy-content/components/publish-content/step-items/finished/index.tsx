@@ -9,7 +9,7 @@ import { downloadSource } from '@/pages/application/service';
 
 /** 执行完成 */
 export default function FinishedStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, projectEnvCode, status, env = '', ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, status, env = '', ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   // const [downLoadStatus, setDownLoadStatus] = useState(false);
   return (
@@ -19,10 +19,10 @@ export default function FinishedStep(props: StepItemProps) {
       status={status}
       description={
         status === 'finish' &&
-        (projectEnvCode?.includes('zs-prd') ||
-          projectEnvCode?.includes('zs-pre') ||
-          projectEnvCode?.includes('xiehe') ||
-          projectEnvCode?.includes('bf-daily')) && (
+        (envTypeCode?.includes('zs-prd') ||
+          envTypeCode?.includes('zs-pre') ||
+          envTypeCode?.includes('xiehe') ||
+          envTypeCode?.includes('bf-daily')) && (
           <Button
             download
             style={{ marginTop: 4 }}

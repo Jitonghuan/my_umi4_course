@@ -36,9 +36,7 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
   const isProd = envTypeCode === 'prod';
   const [fullScreeVisible, setFullScreeVisible] = useState(false);
   const [isShow, setIsShow] = useState(true);
-  useImperativeHandle(ref, () => ({
-    showCancel,
-  }));
+  useImperativeHandle(ref, () => ({}));
 
   type reviewStatusTypeItem = {
     color: string;
@@ -68,7 +66,6 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
           id: metadata.id,
           features,
         }).then(() => {
-          showCancel();
           onOperate('retryDeployEnd');
         });
       },
@@ -98,7 +95,6 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
           id: metadata?.id,
           // isClient: false,
         }).then(() => {
-          showCancel();
           onOperate('batchExitEnd');
         });
       },
@@ -133,20 +129,6 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
       },
     });
   }
-
-  // function getItemByKey(listStr: string, envCode: string) {
-  //   try {
-  //     const list = listStr ? JSON.parse(listStr) : [];
-  //     const item = list.find((val: any) => val.envCode === envCode);
-  //     return item || {};
-  //   } catch (e) {
-  //     return listStr
-  //       ? {
-  //         subJenkinsUrl: listStr,
-  //       }
-  //       : {};
-  //   }
-  // }
 
   function getItemByKey(obj: any, envCode: string) {
     try {
@@ -208,6 +190,7 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
         onSpin={onSpin}
         deployedList={deployedList}
         notShowCancel={notShowCancel}
+        showCancel={showCancel}
         getItemByKey={getItemByKey}
         projectEnvCode={projectEnvCode}
         pipelineCode={pipelineCode}

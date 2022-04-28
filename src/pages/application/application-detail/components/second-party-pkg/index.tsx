@@ -77,6 +77,7 @@ export default function TowPartyPkg(props: any) {
 
   // 获取流水线
   const getPipeline = (v?: string) => {
+    setCurrentValue('');
     const tab = v ? v : sessionStorage.getItem('__init_secondpartypkg_env_tab__');
     getRequest(getPipelineUrl, {
       data: { appCode: appData?.appCode, envTypeCode: tab, pageIndex: -1, size: -1 },
@@ -100,7 +101,7 @@ export default function TowPartyPkg(props: any) {
     <ContentCard noPadding>
       <Tabs
         onChange={(v) => {
-          setCurrentValue(''), setTabActive(v), getPipeline(v);
+          setTabActive(v), getPipeline(v);
         }}
         activeKey={tabActive}
         type="card"
@@ -130,6 +131,7 @@ export default function TowPartyPkg(props: any) {
               onDeployNextEnvSuccess={() => {
                 const i = envTypeData.findIndex((item) => item.value === tabActive);
                 setTabActive(envTypeData[i + 1]?.value || 'cDev');
+                getPipeline(envTypeData[i + 1]?.value || 'cDev');
               }}
             />
           </TabPane>

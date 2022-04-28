@@ -21,7 +21,6 @@ export default function MergeReleaseStep(props: StepItemProps) {
     onSpin,
     stopSpin,
     deployedList,
-    projectEnvCode,
     status,
     pipelineCode,
     env = '',

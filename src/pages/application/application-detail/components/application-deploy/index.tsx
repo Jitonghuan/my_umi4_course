@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/25 16:21
 
-import React, { useContext, useState, useLayoutEffect, useEffect, useRef, useMemo } from 'react';
+import React, { useContext, useState, useLayoutEffect, useEffect, useMemo } from 'react';
 import { Tabs, Select, Tag, Spin } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
@@ -28,10 +28,7 @@ export default function ApplicationDeploy(props: any) {
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
-  const [isSpin, setIsSpin] = useState<boolean>(false);
-  const deloyContentRef = useRef<any>();
 
-  // let env = window.location.href.includes('zslnyy')
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
     : window.location.href.includes('matrix-fygs')
@@ -55,16 +52,6 @@ export default function ApplicationDeploy(props: any) {
     getPipeline(tabActive);
   }, []);
 
-  useEffect(() => {
-    if (deloyContentRef.current) {
-      if (visible) {
-        deloyContentRef.current.onOperate('pipelineStart');
-      } else {
-        deloyContentRef.current.onOperate('pipelineEnd');
-      }
-    }
-  }, [visible]);
-
   const nextTab = useMemo(() => {
     let data = '';
     if (envTypeData && tabActive) {
@@ -73,6 +60,17 @@ export default function ApplicationDeploy(props: any) {
     }
     return data;
   }, [tabActive, envTypeData]);
+
+  // const pipelineName=useMemo(()=>{
+  //   let result=''
+  //  if(pipelineOption&&currentValue){
+  //   const data=pipelineOption.find((item:any)=>item.value===currentValue)
+  //   if(data){
+  //    result=data.label
+  //   }
+  //  }
+  //  return result
+  // },[currentValue,pipelineOption])
 
   const queryData = () => {
     getRequest(listAppEnvType, {
@@ -179,7 +177,7 @@ export default function ApplicationDeploy(props: any) {
         tabBarExtraContent={
           <div className="tabs-extra">
             <span>
-              当前流水线：<Tag color="blue">{currentValue}</Tag>
+              当前流水线：<Tag color="blue">{currentValue || '---'}</Tag>
             </span>
             <span className="tabs-extra-select">
               请选择：
@@ -203,7 +201,6 @@ export default function ApplicationDeploy(props: any) {
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <DeployContent
-              ref={deloyContentRef}
               isActive={item.value === tabActive}
               envTypeCode={item.value}
               pipelineCode={currentValue}

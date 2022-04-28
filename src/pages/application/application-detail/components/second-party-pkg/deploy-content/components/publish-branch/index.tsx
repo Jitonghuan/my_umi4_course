@@ -120,7 +120,7 @@ export default function PublishBranch(props: IProps) {
       <div className="second-table-caption">
         <div className="caption-left">
           {/* <span className={`${rootCls}__list-header-text`}>分支列表</span> */}
-          <h4>主干分支：</h4>
+          <span>主干分支：</span>
           <Select
             ref={selectRef}
             options={masterBranchOptions}
@@ -134,7 +134,7 @@ export default function PublishBranch(props: IProps) {
               return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
             }}
           ></Select>
-          <h4>开发分支名称：</h4>
+          <span>开发分支名称：</span>
           <Input.Search
             placeholder="搜索分支"
             value={searchText}
