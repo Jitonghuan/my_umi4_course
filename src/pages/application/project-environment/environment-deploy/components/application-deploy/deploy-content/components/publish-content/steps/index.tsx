@@ -20,7 +20,7 @@ const changeColor = (data: any, env?: any) => {
 };
 
 // 判断多环境的取消发布按钮是否要出现以及结尾是否要变蓝----前（后）一个节点状态不为wait时
-const judgeColor = (data: any, index: number, type: string, notShowCancel?: any) => {
+const judgeColor = (data: any, index: number, type: string, notShowCancel?: any, showCancel?: any) => {
   let flag = false;
   let nodes = [];
   if (type === 'cancel') {
@@ -35,6 +35,9 @@ const judgeColor = (data: any, index: number, type: string, notShowCancel?: any)
         notShowCancel();
       }
       return true;
+    }
+    if (showCancel) {
+      showCancel();
     }
   }
   return flag;
@@ -62,7 +65,7 @@ const SingelEnvSteps = (props: any) => {
 
 // 多环境
 const MultiEnvSteps = (props: any) => {
-  const { initial, item, onCancelDeploy, index, data, notShowCancel, ...other } = props;
+  const { initial, item, onCancelDeploy, index, data, notShowCancel, showCancel, ...other } = props;
 
   let envList = item.nodes ? Object.keys(item.nodes) : [];
   return (
@@ -74,7 +77,7 @@ const MultiEnvSteps = (props: any) => {
             className={`sub_process sub_process-${i} ${changeColor(item.nodes, envKey) ? 'sub_process-active' : ''}`}
           >
             <span className="sub_process-title">{envKey}</span>
-            {judgeColor(data, index, 'cancel', notShowCancel) && (
+            {judgeColor(data, index, 'cancel', notShowCancel, showCancel) && (
               <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envKey)}>
                 取消发布
               </Button>
@@ -87,8 +90,18 @@ const MultiEnvSteps = (props: any) => {
   );
 };
 export default function DeploySteps(props: any) {
-  const { stepData, deployInfo, onSpin, stopSpin, onCancelDeploy, envTypeCode, notShowCancel, isFrontend, ...other } =
-    props;
+  const {
+    stepData,
+    deployInfo,
+    onSpin,
+    stopSpin,
+    onCancelDeploy,
+    envTypeCode,
+    notShowCancel = () => {},
+    showCancel = () => {},
+    isFrontend,
+    ...other
+  } = props;
   let { metadata, branchInfo, envInfo, buildInfo } = deployInfo;
   const [data, setData] = useState<any>([]);
   useEffect(() => {

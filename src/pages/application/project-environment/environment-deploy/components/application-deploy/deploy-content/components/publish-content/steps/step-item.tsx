@@ -18,7 +18,7 @@ const stepMap: any = {
   build: BuildingStep,
   deleteFeature: DeleteFeatureStep,
   deploy: DeployingStep,
-  finish: FinishedStep,
+  end: FinishedStep,
   verify: GrayValidationStep,
   mergeMaster: MergeMasterStep,
   merge: MergeReleaseStep,

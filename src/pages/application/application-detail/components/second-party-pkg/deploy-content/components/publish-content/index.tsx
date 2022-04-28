@@ -12,7 +12,7 @@ import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { reCommit, withdrawFeatures } from '@/pages/application/service';
+import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
 import './index.less';
@@ -41,9 +41,34 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
     }
   }
 
+  function onCancelDeploy(envCode?: string) {
+    Modal.confirm({
+      title: '确定要取消当前发布吗？',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        return cancelDeploy({
+          id: metadata?.id,
+          envCode: envTypeCode,
+        }).then(() => {});
+      },
+    });
+  }
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
+      <div className={`${rootCls}__right-top-btns`}>
+        {deployNodes?.length !== 0 && (
+          <Button
+            danger
+            onClick={() => {
+              onCancelDeploy();
+            }}
+          >
+            取消发布
+          </Button>
+        )}
+      </div>
 
       {/* {isProd ? (
         <ProdSteps appCode={appCode} deployInfo={deployInfo} onOperate={onOperate} />

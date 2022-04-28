@@ -11,7 +11,6 @@ export interface IProps {
   onSpin: any;
   stopSpin: any;
   pipelineCode: string;
-  masterBranch: string;
 }
 
 // 执行步骤组合

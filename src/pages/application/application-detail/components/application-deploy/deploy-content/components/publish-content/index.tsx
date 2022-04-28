@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 22:57
 
-import React, { useState, useContext, useImperativeHandle } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal, Button, Table, Tag, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -37,9 +37,8 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
   prod: FrontendProdEnvSteps,
 };
 
-const PublishContent = React.forwardRef((props: any, ref) => {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, masterBranch } =
-    props;
+export default function PublishContent(props: IProps) {
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode } = props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
   const { deployEnvs } = envInfo || [];
@@ -48,10 +47,7 @@ const PublishContent = React.forwardRef((props: any, ref) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
   const [fullScreeVisible, setFullScreeVisible] = useState(false);
-  const [isShow, setIsShow] = useState(true);
-  useImperativeHandle(ref, () => ({
-    showCancel,
-  }));
+  const [isShow, setIsShow] = useState(false);
 
   type reviewStatusTypeItem = {
     color: string;
@@ -80,7 +76,6 @@ const PublishContent = React.forwardRef((props: any, ref) => {
           id: metadata.id,
           features,
         }).then(() => {
-          showCancel();
           onOperate('retryDeployEnd');
         });
       },
@@ -109,9 +104,7 @@ const PublishContent = React.forwardRef((props: any, ref) => {
           id: metadata?.id,
           // isClient: false,
           // pipelineCode,
-          // masterBranch,
         }).then((res) => {
-          showCancel();
           onOperate('batchExitEnd');
         });
       },
@@ -205,6 +198,7 @@ const PublishContent = React.forwardRef((props: any, ref) => {
         onCancelDeploy={onCancelDeploy}
         stopSpin={stopSpin}
         notShowCancel={notShowCancel}
+        showCancel={showCancel}
         onSpin={onSpin}
         deployedList={deployedList}
         getItemByKey={getItemByKey}
@@ -333,6 +327,4 @@ const PublishContent = React.forwardRef((props: any, ref) => {
       </Modal>
     </div>
   );
-});
-
-export default PublishContent;
+}

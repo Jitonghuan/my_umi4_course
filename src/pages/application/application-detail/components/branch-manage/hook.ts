@@ -13,7 +13,6 @@ export function useMasterBranchList(props: any) {
         });
         const { dataSource, pageInfo } = result.data || {};
         setData(dataSource || []);
-        console.log(dataSource, 'dataSource');
       } catch (ex) {
         setData([]);
       } finally {

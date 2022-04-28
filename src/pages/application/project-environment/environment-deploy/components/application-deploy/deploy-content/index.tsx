@@ -56,7 +56,6 @@ export default function DeployContent(props: DeployContentProps) {
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
-  const publishContentRef = useRef<any>();
   const requestData = async () => {
     if (!appCode || !projectEnvCode || !pipelineCode) return;
 
@@ -98,24 +97,6 @@ export default function DeployContent(props: DeployContentProps) {
       setDeployInfo({});
     }
 
-    // if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-    // const nextInfo = resp1?.data?.dataSource[0];
-    // setDeployInfo(nextInfo);
-    // 如果有部署信息，且为线上，则更新应用状态
-    // if (envTypeCode === 'prod' && appData) {
-    //   const resp4 = await getRequest(queryApplicationStatus, {
-    //     data: {
-    //       deploymentName: appData?.deploymentName,
-    //       envCode: nextInfo.deployedEnvs,
-    //     },
-    //   }).catch(() => {
-    //     return { data: null };
-    //   });
-    //   const { Status: nextAppStatus } = resp4.data || {};
-    //   setAppStatusInfo(nextAppStatus);
-    // }
-    // }
-
     setBranchInfo({
       deployed: resp2?.data || [],
       unDeployed: resp3?.data || [],
@@ -143,8 +124,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode) return;
-
+    if (!appCode || !pipelineCode) return;
     timerHandle('do', true);
   }, [appCode, pipelineCode]);
 
@@ -176,7 +156,6 @@ export default function DeployContent(props: DeployContentProps) {
             }}
           />
           <PublishContent
-            ref={publishContentRef}
             appCode={appCode!}
             envTypeCode={projectEnvCode}
             deployInfo={deployInfo}
@@ -196,7 +175,6 @@ export default function DeployContent(props: DeployContentProps) {
             onSearch={searchUndeployedBranch}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
-              publishContentRef?.current?.showCancel();
             }}
             masterBranchChange={(masterBranch: string) => {
               masterBranchName.current = masterBranch;
