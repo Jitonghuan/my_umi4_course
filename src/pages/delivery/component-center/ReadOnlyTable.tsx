@@ -35,7 +35,9 @@ export default function VersionDetail(props: DetailProps) {
       key: 'componentName',
     },
     {
-      title: '组件描述',
+      title:
+        currentTab === 'app' ? '应用组件描述' : currentTab === 'middleware' ? '中间件组件描述' : '基础数据组件描述',
+
       dataIndex: 'componentDescription',
       key: 'componentDescription',
     },

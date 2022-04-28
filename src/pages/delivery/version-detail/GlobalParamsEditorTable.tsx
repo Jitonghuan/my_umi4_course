@@ -113,14 +113,13 @@ export default (props: VersionDetailProps) => {
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
-  // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
   useEffect(() => {
     //查询交付配置参数
     queryDeliveryGloableParamList(versionId, 'global');
     queryDeliveryParamList(versionId);
-  }, []);
+  }, [currentTab, versionId]);
 
   const columns: ProColumns<DataSourceType>[] = [
     {

@@ -104,7 +104,7 @@ export default (props: VersionDetailProps) => {
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList] =
     useQueryDeliveryParamList();
-  const [loading, paramOptions, valueOptions, queryParamList] = useQueryParamList();
+  const [loading, paramOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
   const [form] = Form.useForm();
@@ -117,7 +117,7 @@ export default (props: VersionDetailProps) => {
     //查询交付配置参数
     queryDeliveryParamList(versionId);
   }, []);
-  const columns: ProColumns<DataSourceType>[] = [
+  const columns: ProColumns<any>[] = [
     {
       title: '参数来源组件',
       key: 'configParamComponent',
@@ -147,10 +147,6 @@ export default (props: VersionDetailProps) => {
         }
       },
       renderFormItem: (_, config: any, data) => {
-        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
-        // let currentValue = componentOptions[config.record?.componentName];
-        // queryProductVersionOptions(currentTabType,currentValue)
-
         return (
           <Select
             options={originOptions}
@@ -186,9 +182,7 @@ export default (props: VersionDetailProps) => {
       title: '参数值',
       key: 'configParamValue',
       dataIndex: 'configParamValue',
-      // initialValue:{currentValue.configParamValue}
       renderFormItem: (_, config: any, data) => {
-        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
         // console.log(_, config, data,'---',paramOptions[config.record?.configParamName])
         let currentValue = paramOptions[config.record?.configParamName];
         if (currentValue) {
@@ -221,28 +215,11 @@ export default (props: VersionDetailProps) => {
           onClick={() => {
             action?.startEditable?.(record.id);
             setType('edit');
+            queryParamList(versionId, record.configParamComponent);
           }}
         >
           编辑
         </a>,
-        // <a
-        //   //  key="editable"
-        //   onClick={() => {
-        //     history.push({
-        //       pathname: '/matrix/delivery/component-detail',
-        //       state: {
-        //         activeKey: 'component-config',
-        //         componentId: record.id,
-        //         type: 'componentParams',
-        //         // componentName: record.componentName,
-        //         // componentVersion: record.componentVersion,
-        //         // componentType:currentTab
-        //       },
-        //     });
-        //   }}
-        // >
-        //   配置
-        // </a>,
         <a
           key="delete"
           onClick={() => {
@@ -256,7 +233,6 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
-  const cellChange = (values: any) => {};
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
     queryDeliveryParamList(versionId, param.configParamName);
@@ -357,13 +333,13 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
-            console.log('params', params);
+            console.log('params', params, 'ppppp', objKey[0]);
             if (type === 'add') {
-              await saveParam({ ...params }).then(() => {
+              await saveParam({ ...params, versionId }).then(() => {
                 queryDeliveryParamList(versionId);
               });
             } else if (type === 'edit') {
-              editVersionParam({ ...params }).then(() => {
+              editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
                 queryDeliveryParamList(versionId);
               });
             }
