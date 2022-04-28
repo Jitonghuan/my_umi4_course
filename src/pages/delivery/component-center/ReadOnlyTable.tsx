@@ -43,6 +43,7 @@ export default function VersionDetail(props: DetailProps) {
       title: '创建时间',
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
+      render: (value: any) => <span>{moment(value).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
 
     {

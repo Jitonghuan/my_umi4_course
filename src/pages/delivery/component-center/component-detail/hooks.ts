@@ -39,38 +39,38 @@ export function useQueryComponentList(): [
   return [loading, dataSource, queryComponentVersionList];
 }
 
-//组件详情
-export function useQueryComponentInfo(): [
-  boolean,
-  any,
-  (componentName: string, componentVersion: string, componentType: string) => Promise<void>,
-] {
-  const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState({});
-  const queryComponentInfo = async (componentName: string, componentVersion: string, componentType: string) => {
-    setLoading(true);
-    try {
-      await getRequest(APIS.queryComponentInfo, {
-        data: { componentName, componentVersion, componentType },
-      })
-        .then((res) => {
-          if (res.success) {
-            let dataSource = res.data;
-            setDataSource(dataSource);
-            return dataSource;
-          } else {
-            return {};
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  return [loading, dataSource, queryComponentInfo];
-}
+// //组件详情
+// export function useQueryComponentInfo(): [
+//   boolean,
+//   any,
+//   (componentName: string, componentVersion: string, componentType: string) => Promise<void>,
+// ] {
+//   const [loading, setLoading] = useState(false);
+//   const [dataSource, setDataSource] = useState({});
+//   const queryComponentInfo = async (componentName: string, componentVersion: string, componentType: string) => {
+//     setLoading(true);
+//     try {
+//       await getRequest(APIS.queryComponentInfo, {
+//         data: { componentName, componentVersion, componentType },
+//       })
+//         .then((res) => {
+//           if (res.success) {
+//             let dataSource = res.data;
+//             setDataSource(dataSource);
+//             return dataSource;
+//           } else {
+//             return {};
+//           }
+//         })
+//         .finally(() => {
+//           setLoading(false);
+//         });
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+//   return [loading, dataSource, queryComponentInfo];
+// }
 
 // updateComponent
 //基础数据接入

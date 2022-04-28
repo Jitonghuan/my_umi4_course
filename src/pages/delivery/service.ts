@@ -77,7 +77,7 @@ export const uploadSqlfile = addAPIPrefix('/deliveryManage/component/sqlfile/upl
 export const queryComponentList = addAPIPrefix('/deliveryManage/component/list');
 
 /*GET  组件详情 */
-export const queryComponentInfo = addAPIPrefix('/deliveryManage/component/info');
+export const queryComponentInfoApi = addAPIPrefix('/deliveryManage/component/info');
 
 /* GET 组件版本查询 */
 
@@ -118,7 +118,7 @@ export const createIndent = addAPIPrefix('/deliveryManage/indent/create');
 export const queryIndentList = addAPIPrefix('/deliveryManage/indent/list');
 
 /* GET 制品详情 */
-export const queryIndentInfo = addAPIPrefix('/deliveryManage/indent/info');
+export const queryIndentInfoApi = addAPIPrefix('/deliveryManage/indent/info');
 
 /*POST  删除制品 */
 export const deleteIndent = addAPIPrefix('/deliveryManage/indent/delete');

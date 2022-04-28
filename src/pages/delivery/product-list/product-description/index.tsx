@@ -3,7 +3,20 @@
 // @create 2022/02/21 17:10
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, Typography, Tag, Modal, Descriptions } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Table,
+  Space,
+  Popconfirm,
+  Typography,
+  Tag,
+  Modal,
+  Descriptions,
+  Tooltip,
+} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
@@ -21,6 +34,7 @@ export interface Item {
   id: number;
   versionName: string;
   versionDescription: string;
+  releaseTime: number;
   gmtCreate: any;
   releaseStatus: number;
 }
@@ -71,10 +85,24 @@ export default function deliveryDescription() {
       width: '30%',
     },
     {
+      title: '发布状态',
+      dataIndex: 'releaseStatus',
+      width: '10%',
+      render: (status: any, record: Item) => (
+        <span>
+          <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
+        </span>
+      ),
+    },
+    {
       title: '版本描述',
       dataIndex: 'versionDescription',
-      width: '30%',
-      ellipsis: true,
+      width: '20%',
+      render: (value: string) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       title: '发布时间',

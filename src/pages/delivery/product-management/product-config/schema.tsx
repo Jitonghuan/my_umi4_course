@@ -12,12 +12,12 @@ export const compontentsSchema = ({ onEditClick }: { onEditClick: (record: any, 
       dataIndex: 'configParamName',
     },
     {
-      title: '描述',
-      dataIndex: 'configParamDescription',
-    },
-    {
       title: '参数值',
       dataIndex: 'configParamValue',
+    },
+    {
+      title: '描述',
+      dataIndex: 'configParamDescription',
     },
     {
       title: '操作',
@@ -40,16 +40,16 @@ export const configDeliverySchema = ({ onEditClick }: { onEditClick: (record: an
       dataIndex: 'configParamName',
       key: 'configParamName',
     },
-    {
-      title: '描述',
-      dataIndex: 'configParamDescription',
-      key: 'configParamDescription',
-    },
 
     {
       title: '参数值',
       dataIndex: 'configParamValue',
       key: 'configParamValue',
+    },
+    {
+      title: '描述',
+      dataIndex: 'configParamDescription',
+      key: 'configParamDescription',
     },
     {
       title: '操作',

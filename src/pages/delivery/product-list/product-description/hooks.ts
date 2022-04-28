@@ -131,7 +131,7 @@ export function usePublishProductVersion(): [boolean, (id: number) => Promise<vo
   const publishProductVersion = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.releaseVersion}/${id}`)
+      await postRequest(`${APIS.releaseVersion}?id=${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);

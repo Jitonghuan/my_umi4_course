@@ -124,12 +124,10 @@ export default (props: VersionDetailProps) => {
 
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: '参数来源组件',
+      title: '参数名',
       key: 'configParamName',
       dataIndex: 'configParamName',
-      // valueType: 'input',
       editable: (text, record, index) => {
-        console.log('text', text, record);
         if (type === 'edit' && text) {
           return false;
         } else if (type === 'add' && !text) {
@@ -139,8 +137,6 @@ export default (props: VersionDetailProps) => {
         } else {
           return true;
         }
-
-        // return (type==='edit'||(type==='add'&& !text))?false :true
       },
 
       formItemProps: () => {

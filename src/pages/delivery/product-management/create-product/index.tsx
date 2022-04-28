@@ -15,17 +15,23 @@ export default function CreateProductModal(props: ProductListProps) {
   const [productVersionloading, ProductVersionOptions, queryProductVersionList] = useQueryProductVersionList();
   const [creatLoading, createIndent] = useCreateIndent();
   const [form] = Form.useForm();
-  const chooseProduct = (value: any) => {
-    queryProductVersionList(value);
+  const chooseProduct = (param: any) => {
+    queryProductVersionList(param.value);
   };
 
   const onCreatIndent = () => {
     form.validateFields().then((params) => {
-      createIndent(params).then(() => {
+      createIndent({ ...params, productName: params.productName.label }).then(() => {
         onSave();
       });
     });
   };
+
+  useEffect(() => {
+    return () => {
+      form.resetFields();
+    };
+  }, [visable]);
 
   return (
     <Modal
@@ -38,7 +44,7 @@ export default function CreateProductModal(props: ProductListProps) {
         <Button type="primary" loading={creatLoading} onClick={onCreatIndent}>
           确认
         </Button>,
-        <Button>取消</Button>,
+        <Button onClick={onClose}>取消</Button>,
       ]}
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
@@ -57,6 +63,7 @@ export default function CreateProductModal(props: ProductListProps) {
             style={{ width: 320 }}
             loading={productOptionsLoading}
             options={productOptions}
+            labelInValue
             onChange={chooseProduct}
           ></Select>
         </Form.Item>

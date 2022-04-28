@@ -29,7 +29,7 @@ export function useCreateIndent(): [
           if (res.success) {
             message.success('创建制品成功!');
           } else {
-            message.error('创建制品失败！');
+            // message.error('创建制品失败！');
             return;
           }
         })
@@ -90,7 +90,7 @@ export function useQueryProductVersionList(): [boolean, any[], (product_id: numb
     setLoading(true);
     try {
       await getRequest(APIS.queryVersionList, {
-        data: { productId, pageSize: -1 },
+        data: { productId, pageSize: -1, releaseStatus: 1 },
       })
         .then((res) => {
           if (res.success) {

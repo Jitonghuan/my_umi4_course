@@ -2,18 +2,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
+import { queryIndentInfoApi, generateIndentConfig } from '../../service';
 import moment from 'moment';
+import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
 import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import ParameterEditModal from './editModal';
 import {
-  useQueryIndentInfo,
   useQueryIndentParamList,
   useQueryIndentConfigParamList,
   useEditDescription,
   useCreatePackageInde,
-  useGenerateIndentConfig,
   useEditIndentConfigYaml,
 } from '../hook';
 import { compontentsSchema, configDeliverySchema } from './schema';
@@ -24,8 +24,9 @@ export default function ProductConfig() {
   const { TabPane } = Tabs;
   const { Paragraph } = Typography;
   const [configForm] = Form.useForm();
-  const [infoLoading, configInfoData, queryIndentInfo] = useQueryIndentInfo();
-  const [editableStr, setEditableStr] = useState(configInfo.indentDescription);
+  const [infoLoading, setInfoLoading] = useState<boolean>(false);
+  const [configInfoData, setConfigInfoData] = useState<any>({});
+  const [editableStr, setEditableStr] = useState('');
   const [downloading, createPackageInde] = useCreatePackageInde();
   const [loading, dataSource, queryIndentParamList] = useQueryIndentParamList();
   const [configLoading, configDataSource, queryIndentConfigParamList] = useQueryIndentConfigParamList();
@@ -36,7 +37,38 @@ export default function ProductConfig() {
   const [type, setType] = useState<string>('');
   const [curRecord, setCurRecord] = useState<any>({});
   const [editConfigLoading, editIndentConfigYaml] = useEditIndentConfigYaml();
-  const [configInfoLoading, indentConfigInfo, queryIndentConfigInfo] = useGenerateIndentConfig();
+  const [indentConfigInfo, setIndentConfigInfo] = useState<any>({});
+  const [configInfoLoading, setConfigInfoLoading] = useState<boolean>(false);
+  const queryIndentInfo = async (id: number) => {
+    setInfoLoading(true);
+    try {
+      await getRequest(`${queryIndentInfoApi}?id=${id}`)
+        .then((res) => {
+          if (res.success) {
+            setConfigInfoData(
+              res.data || {
+                indentName: '',
+                indentDescription: '',
+                productName: '',
+                productVersion: '',
+                deliveryProject: '',
+                indentPackageStatus: '',
+                indentPackageUrl: '',
+                gmtCreate: '',
+              },
+            );
+            setEditableStr(res.data.indentDescription || '');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setInfoLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     if (configInfo.id) {
       queryIndentInfo(configInfo.id);
@@ -83,14 +115,38 @@ export default function ProductConfig() {
   const downLoadIndent = () => {
     createPackageInde(configInfo.id);
   };
+  const queryIndentConfigInfo = async (id: number) => {
+    setConfigInfoLoading(true);
+    try {
+      await postRequest(`${generateIndentConfig}?id=${id}`)
+        .then((res) => {
+          if (res.success) {
+            setIndentConfigInfo(res.data || '');
+            configForm.setFieldsValue({
+              configInfo: res.data,
+            });
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setConfigInfoLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const getConfigInfo = () => {
     queryIndentConfigInfo(configInfo.id);
   };
   const saveConfig = () => {
     const value = configForm.getFieldsValue();
+    console.log('value', value);
     editIndentConfigYaml(configInfo.id, value.configInfo).then(() => {
       queryIndentInfo(configInfo.id);
       queryIndentConfigInfo(configInfo.id);
+      setReadOnly(true);
+      setButtonText('编辑');
     });
   };
 
@@ -109,7 +165,7 @@ export default function ProductConfig() {
         <div>
           <Spin spinning={infoLoading}>
             <Descriptions
-              title="局点管理"
+              title="制品管理"
               column={2}
               bordered
               className="local-management-info-description"
@@ -124,8 +180,8 @@ export default function ProductConfig() {
                 </Button>
               }
             >
-              <Descriptions.Item label="局点名称">{configInfoData.indentName || '--'}</Descriptions.Item>
-              <Descriptions.Item label="局点描述">
+              <Descriptions.Item label="制品名称">{configInfoData.indentName || '--'}</Descriptions.Item>
+              <Descriptions.Item label="制品描述">
                 {/* <Spin spinning={saveLoading}> */}
                 <Paragraph
                   editable={{
@@ -146,9 +202,6 @@ export default function ProductConfig() {
               <Descriptions.Item label="创建时间">
                 {moment(configInfoData.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}
               </Descriptions.Item>
-              {/* <Descriptions.Item label="创建时间" span={2}>
-                  empty
-                </Descriptions.Item> */}
             </Descriptions>
           </Spin>
           {/* <Divider /> */}
@@ -172,7 +225,6 @@ export default function ProductConfig() {
             </TabPane>
             <TabPane tab="出包和部署" key="2">
               <div>
-                {/* <p>产品部署包：{configInfoData?.indentPackageUrl || '---'}</p> */}
                 <p>
                   产品部署包：
                   <Tag color={configInfoData?.indentPackageStatus === '已出包' ? 'success' : 'yellow'}>
@@ -189,7 +241,6 @@ export default function ProductConfig() {
                       下载部署包
                     </Button>
                   )}
-                  {/* <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}> */}
                   {configInfoData?.indentPackageStatus !== '已出包' && (
                     <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}>
                       出部署包
@@ -211,7 +262,7 @@ export default function ProductConfig() {
               </div>
               <div style={{ marginBottom: 10 }}>
                 安装配置文件：
-                <Button type="primary" size="small" onClick={getConfigInfo}>
+                <Button type="primary" size="small" onClick={getConfigInfo} loading={configInfoLoading}>
                   获取制品配置文件信息
                 </Button>
                 （请将文件中的内容复制到安装包所在目录下的config.yaml）
