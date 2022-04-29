@@ -46,7 +46,7 @@ export default function BranchEditor(props: IProps) {
     } finally {
       setLoading(false);
     }
-  }, [form, appCode]);
+  }, [form, appCode, onSubmit]);
 
   const queryPortal = () => {
     try {

@@ -24,7 +24,7 @@ export default function BranchManage() {
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
-  const currentMaster = useRef();
+  // const currentMaster = useRef();
   const selectRef = useRef(null) as any;
 
   // 查询数据
@@ -49,7 +49,7 @@ export default function BranchManage() {
       setMasterBranchOptions(option);
       const initValue = option.find((item: any) => item.label === 'master');
       searchForm.setFieldsValue({ masterName: initValue?.value || '' });
-      currentMaster.current = initValue?.value || '';
+      // currentMaster.current = initValue?.value || '';
     }
   }, [masterListData]);
 
@@ -80,10 +80,10 @@ export default function BranchManage() {
     await postRequest(createReview, { data: { appCode: record.appCode, branch: record.branchName } }).then((reslut) => {
       if (reslut.success) {
         message.success('创建Review成功！');
-        queryBranchList();
+        queryBranchList({ branchType: 'feature', masterBranch: selectMaster });
       } else {
-        message.error(reslut.errorMsg);
-        queryBranchList();
+        // message.error(reslut.errorMsg);
+        // queryBranchList({ branchType: 'feature',masterBranch: selectMaster});
       }
     });
   };
@@ -99,7 +99,6 @@ export default function BranchManage() {
   const handleChange = (v: any) => {
     selectRef?.current?.blur();
     setSelectMaster(v);
-    currentMaster.current = v;
   };
 
   return (
@@ -213,7 +212,7 @@ export default function BranchManage() {
           queryBranchList({
             pageIndex: 1,
             branchType: 'feature',
-            masterBranch: currentMaster.current,
+            masterBranch: selectMaster,
           });
         }}
         onClose={() => setBranchEditMode('HIDE')}
