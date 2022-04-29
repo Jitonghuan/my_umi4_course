@@ -341,29 +341,28 @@ export function useQueryOriginList() {
 //获取组件参数及参数值
 export function useQueryParamList() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [dataSource, setDataSource] = useState<any>({});
-  // const [valueOptions, setValueOptions] = useState<any>({});
+  const [dataSource, setDataSource] = useState<any>([]);
   const queryParamList = async (versionId: number, componentName: string) => {
     setLoading(true);
     await getRequest(APIS.queryParamList, { data: { versionId, componentName } })
       .then((res) => {
         if (res?.success) {
           let dataSource = res.data;
-          let options: any = {};
-          let valueOptionsObj: any = {};
-
+          // let options: any = {};
+          let options: any = [];
           for (const key in dataSource) {
-            options[key] = {
-              text: key,
+            // options[key] = {
+            //   text: key,
+            //   configParamValue: JSON.stringify(dataSource[key]),
+            // };
+            options.push({
+              label: key,
+              value: key,
               configParamValue: JSON.stringify(dataSource[key]),
-            };
-            valueOptionsObj[key] = {
-              text: JSON.stringify(dataSource[key]),
-            };
+            });
           }
 
           setDataSource(options);
-          // setValueOptions(valueOptionsObj);
         } else {
           return;
         }

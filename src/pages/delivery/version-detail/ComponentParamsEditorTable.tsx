@@ -109,6 +109,10 @@ export default (props: VersionDetailProps) => {
   const [type, setType] = useState<string>('');
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
+
+  const updateRow = (rowKey: string, row: any) => {
+    form.setFieldsValue({ [rowKey]: row });
+  };
   useEffect(() => {
     //获取参数来源组件
     queryOriginList(versionId);
@@ -175,29 +179,37 @@ export default (props: VersionDetailProps) => {
           errorType: 'default',
         };
       },
-
-      valueEnum: paramOptions,
+      renderFormItem: (_, config: any, data) => {
+        let description = '';
+        paramOptions.filter((item: any) => {
+          if (item.value === config.record?.componentVersion) {
+            description = item.componentDescription;
+          }
+        });
+        return (
+          <Select
+            options={paramOptions}
+            onChange={(value: any) => {
+              // console.log('value', value);
+              paramOptions.filter((item: any) => {
+                if (item.value === value) {
+                  updateRow(config.recordKey, {
+                    ...form.getFieldsValue(config.recordKey),
+                    configParamValue: item.configParamValue,
+                  });
+                }
+              });
+            }}
+          ></Select>
+        );
+      },
     },
     {
       title: '参数值',
       key: 'configParamValue',
       dataIndex: 'configParamValue',
       renderFormItem: (_, config: any, data) => {
-        // console.log(_, config, data,'---',paramOptions[config.record?.configParamName])
-        let currentValue = paramOptions[config.record?.configParamName];
-        if (currentValue) {
-          // data.setFieldsValue([{'configParamValue':''}]);
-          // data.resetFields(['configParamValue'])
-          // form.setFieldsValue({configParamValue:paramOptions[config.record?.configParamName].configParamValue})
-          // setDataSource([config.record,...tableDataSource])
-          // return  <span >{paramOptions[config.record?.configParamName].configParamValue}</span>
-          return (
-            // <span>{currentValue.configParamValue}</span>
-            <Select defaultValue={currentValue.configParamValue}>
-              <Select.Option value={currentValue.configParamValue}>{currentValue.configParamValue}</Select.Option>
-            </Select>
-          );
-        }
+        return <Input disabled={true}></Input>;
       },
     },
     {
@@ -305,26 +317,9 @@ export default (props: VersionDetailProps) => {
         // 关闭默认的新建按钮
         recordCreatorProps={false}
         columns={columns}
-        // request={async () => ({
-        //   // data: defaultData,
-        //   total: 3,
-        //   success: true,
-        // })}
-
         value={tableDataSource}
         onChange={(values) => {
           tableChange(values);
-          // setPageInfo({
-          //   pageIndex: pagination.current,
-          //   pageSize: pagination.pageSize,
-          //   total: pagination.total,
-          // });
-          // let obj = {
-          //   pageIndex: pagination.current,
-          //   pageSize: pagination.pageSize,
-          // };
-
-          // loadListData(obj);
         }}
         editable={{
           form,

@@ -166,11 +166,9 @@ export default (props: VersionDetailProps) => {
           }
         });
         return (
-          //  <span></span>
           <Select
             options={componentVersionOptions}
             onChange={(value: any) => {
-              // setDataSource([...tableDataSource, { ...config.record, componentDescription: description }]);
               componentVersionOptions.filter((item: any) => {
                 if (item.value === value) {
                   updateRow(config.recordKey, {
@@ -233,7 +231,6 @@ export default (props: VersionDetailProps) => {
           onConfirm={() => {
             deleteVersionComponent(record.id).then(() => {
               setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
-              // setDataSource(dataSource.filter((item: any) => item.id !== record.id));
             });
           }}
         >
