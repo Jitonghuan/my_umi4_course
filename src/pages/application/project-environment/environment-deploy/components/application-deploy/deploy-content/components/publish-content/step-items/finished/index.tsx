@@ -12,31 +12,5 @@ export default function FinishedStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, status, env = '', ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   // const [downLoadStatus, setDownLoadStatus] = useState(false);
-  return (
-    <Steps.Step
-      {...others}
-      title="完成"
-      status={status}
-      description={
-        status === 'finish' &&
-        (envTypeCode?.includes('zs-prd') ||
-          envTypeCode?.includes('zs-pre') ||
-          envTypeCode?.includes('xiehe') ||
-          envTypeCode?.includes('bf-daily')) && (
-          <Button
-            download
-            style={{ marginTop: 4 }}
-            target="_blank"
-            href={`${downloadSource}?id=${metadata.id}&envCode=${env}`}
-            // disabled={downLoadStatus}
-            onClick={() => {
-              message.info('镜像开始下载');
-            }}
-          >
-            下载镜像
-          </Button>
-        )
-      }
-    />
-  );
+  return <Steps.Step {...others} title="完成" status={status} />;
 }

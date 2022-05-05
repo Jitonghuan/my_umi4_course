@@ -2,19 +2,28 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 21:12
 
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Steps, Button, Modal } from 'antd';
+import { Steps, Button, Modal, message } from 'antd';
 import { retryBuild, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
+import DetailContext from '@/pages/application/project-environment/environment-deploy/context';
+import { downloadSource, listAppEnv } from '@/pages/application/service';
+import { getRequest } from '@/utils/request';
+import appConfig from '@/app.config';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
   const { deployInfo, onOperate, envTypeCode, envCode, status, getItemByKey, env = '', item, ...others } = props;
   // const { deployStatus, envs, deploySubStates, jenkinsUrl } = deployInfo || {};
   const { deployingBatch, confirm } = item || {};
+  const { appData } = useContext(DetailContext);
+  const [supportEnv, setSupportEnv] = useState<any>([]);
+  const [disabled, setDisabled] = useState<boolean>(false);
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
+  const isNotFrontend = appData?.appType !== 'frontend';
+
   // const url = getItemByKey(buildUrl, env) ? getItemByKey(buildUrl, env) : '';
 
   const url = getItemByKey(buildUrl, 'singleBuild')
@@ -62,6 +71,25 @@ export default function BuildingStep(props: StepItemProps) {
               </a>
             </div>
           ) : null}
+          {status === 'finish' && supportEnv?.includes(env) && appConfig.PRIVATE_METHODS === 'public' && isNotFrontend && (
+            <Button
+              download
+              style={{ marginTop: 4 }}
+              target="_blank"
+              disabled={disabled}
+              href={`${downloadSource}?id=${metadata?.id}&envCode=${env}`}
+              // disabled={downLoadStatus}
+              onClick={() => {
+                setDisabled(true);
+                setTimeout(() => {
+                  setDisabled(false);
+                }, 5000);
+                message.info('镜像开始下载');
+              }}
+            >
+              下载镜像
+            </Button>
+          )}
           {isError && (
             <Button style={{ marginTop: 4, paddingLeft: 4, paddingRight: 4 }} onClick={handleRebuildClick}>
               重新构建

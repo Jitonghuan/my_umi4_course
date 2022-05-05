@@ -2,18 +2,25 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 21:12
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Steps, Button, Modal } from 'antd';
+import { Steps, Button, Modal, message } from 'antd';
 import { retryBuild, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import BatchDeployModal from '../deploying/batch-deploy-modal';
+import DetailContext from '@/pages/application/application-detail/context';
+import { downloadSource, listAppEnv } from '@/pages/application/service';
+import { getRequest } from '@/utils/request';
+import appConfig from '@/app.config';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
   const { deployInfo, onOperate, envTypeCode, env = '', status, getItemByKey, item, ...others } = props;
+  const { appData } = useContext(DetailContext);
+  const [supportEnv, setSupportEnv] = useState<any>([]);
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { deployingBatch, confirm } = item || {};
+  const [disabled, setDisabled] = useState<boolean>(false);
   const { buildUrl } = buildInfo || {};
   // const url = getItemByKey(buildUrl, env) ? getItemByKey(buildUrl, env) : '';
   const url = getItemByKey(buildUrl, 'singleBuild')
@@ -23,7 +30,33 @@ export default function BuildingStep(props: StepItemProps) {
     : '';
   const isError = status === 'error';
   const isLoading = status === 'process';
+  const isNotFrontend = appData?.appType !== 'frontend';
   const [deployVisible, setDeployVisible] = useState(false);
+
+  useEffect(() => {
+    if (!appData?.appCode) return;
+    queryDownloadImageEnv();
+  }, []);
+  const queryDownloadImageEnv = () => {
+    getRequest(listAppEnv, {
+      data: {
+        envTypeCode: envTypeCode,
+        appCode: appData?.appCode,
+        proEnvType: 'benchmark',
+        clusterName: 'private-cluster',
+      },
+    }).then((result) => {
+      let downloadImageEnv: any = [];
+      if (result?.success) {
+        result?.data?.map((item: any) => {
+          downloadImageEnv.push(item.envCode);
+        });
+        console.log(downloadImageEnv, '11');
+        setSupportEnv(downloadImageEnv);
+        // downLoadSupportEnv.current = downloadImageEnv;
+      }
+    });
+  };
 
   const handleRebuildClick = () => {
     onOperate('retryDeployStart');
@@ -68,6 +101,28 @@ export default function BuildingStep(props: StepItemProps) {
                 重新构建
               </Button>
             )}
+            {status === 'finish' &&
+              supportEnv?.includes(env) &&
+              appConfig.PRIVATE_METHODS === 'public' &&
+              isNotFrontend && (
+                <Button
+                  download
+                  style={{ marginTop: 4 }}
+                  target="_blank"
+                  disabled={disabled}
+                  href={`${downloadSource}?id=${metadata?.id}&envCode=${env}`}
+                  // disabled={downLoadStatus}
+                  onClick={() => {
+                    setDisabled(true);
+                    setTimeout(() => {
+                      setDisabled(false);
+                    }, 5000);
+                    message.info('镜像开始下载');
+                  }}
+                >
+                  下载镜像
+                </Button>
+              )}
             {confirm && confirm.waitConfirm && (
               <div>
                 <a
