@@ -44,7 +44,7 @@ type releaseStatus = {
   disabled: boolean;
 };
 export const STATUS_TYPE: Record<number, releaseStatus> = {
-  0: { text: '未发布', type: 'primary', disabled: false },
+  0: { text: '发布', type: 'primary', disabled: false },
   1: { text: '已发布', type: 'default', disabled: true },
 };
 

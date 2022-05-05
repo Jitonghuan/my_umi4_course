@@ -287,7 +287,7 @@ export default (props: VersionDetailProps) => {
                 queryDeliveryGloableParamList(versionId, 'global');
               });
             } else if (type === 'edit') {
-              editVersionParam({ ...params, versionId: versionId }).then(() => {
+              editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
                 queryDeliveryGloableParamList(versionId, 'global');
               });
             }
