@@ -69,7 +69,7 @@ export default function BatchDeployModal({
   // 发布申请数据
   const deployApply = async (env: any) => {
     await getRequest(applyHaveNoUpPlanList, { data: { appCode, envCode: env } }).then((res) => {
-      if (res.success) {
+      if (res?.success) {
         let dataArry: any = [];
         let dataSource = res.data || [];
         dataSource?.map((item: any) => {
