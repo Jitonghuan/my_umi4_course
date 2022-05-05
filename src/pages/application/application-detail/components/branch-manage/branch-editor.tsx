@@ -32,15 +32,20 @@ export default function BranchEditor(props: IProps) {
   const [platformValue, setPlatformValue] = useState<string>('');
   const [projectId, setProjectId] = useState<string>('');
   const [demandId, setDemandId] = useState<any>([]);
+  const [demandDescription, setDemandDescription] = useState<any>([]);
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
+    let demandArry: any = [];
+    values.demandId?.map((item: any) => {
+      demandArry.push(item.value + '');
+    });
     setLoading(true);
     try {
       const res = await createFeatureBranch({
         appCode,
         relatedPlat: values?.relatedPlat,
-        demandId: values?.demandId,
+        demandId: demandArry,
         branchName: values?.branchName,
         desc: values?.desc,
       });
@@ -54,6 +59,10 @@ export default function BranchEditor(props: IProps) {
   }, [form, appCode]);
   const selectplatform = (value: string) => {
     setPlatformValue(value);
+    form.setFieldsValue({
+      projectId: undefined,
+      demandId: undefined,
+    });
     if (value === 'demandPlat') {
       queryPortal();
     } else {
@@ -79,7 +88,7 @@ export default function BranchEditor(props: IProps) {
   };
   const queryRegulus = () => {
     try {
-      postRequest(getRegulusProjects).then((result) => {
+      getRequest(getRegulusProjects).then((result) => {
         if (result.success) {
           let dataSource = result.data.projects;
           let dataArry: any = [];
@@ -96,6 +105,9 @@ export default function BranchEditor(props: IProps) {
 
   const onChangeProtal = (value: any) => {
     setProjectId(value);
+    form.setFieldsValue({
+      demandId: undefined,
+    });
     if (platformValue === 'demandPlat') {
       queryDemand(value);
     } else {
@@ -122,7 +134,7 @@ export default function BranchEditor(props: IProps) {
   };
   const queryRegulusOnlineBugs = async (param: string, searchTextParams?: string) => {
     try {
-      await postRequest(getRegulusOnlineBugs, {
+      await getRequest(getRegulusOnlineBugs, {
         data: { projectId: param, keyword: searchTextParams, pageSize: -1 },
       }).then((result) => {
         if (result.success) {
@@ -141,6 +153,11 @@ export default function BranchEditor(props: IProps) {
 
   const onChangeDemand = (data: any) => {
     setDemandId(data);
+    let demandInfo: any = [];
+    data?.map((item: any) => {
+      demandInfo.push(item.label);
+    });
+    setDemandDescription(demandInfo);
     // handleSubmit(data);
   };
 
@@ -197,6 +214,7 @@ export default function BranchEditor(props: IProps) {
             onChange={onChangeDemand}
             showSearch
             allowClear
+            labelInValue
             onSearch={onSearch}
             optionFilterProp="label"
             // filterOption={(input, option) =>
@@ -205,7 +223,13 @@ export default function BranchEditor(props: IProps) {
           ></Select>
         </Form.Item>
         <Form.Item label="描述" name="desc">
-          <Input.TextArea placeholder="请输入描述" rows={3} />
+          <Input.TextArea
+            placeholder="请输入描述"
+            rows={3}
+            // defaultValue={
+            //   demandDescription?.map((item:any)=>(<span>{item}</span>))
+            // }
+          />
         </Form.Item>
       </Form>
     </Modal>

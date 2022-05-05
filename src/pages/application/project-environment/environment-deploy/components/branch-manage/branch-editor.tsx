@@ -64,7 +64,7 @@ export default function BranchEditor(props: IProps) {
   const queryPortal = () => {
     try {
       postRequest(queryPortalList).then((result) => {
-        if (result.success) {
+        if (result?.success) {
           let dataSource = result.data;
           let dataArry: any = [];
           dataSource?.map((item: any) => {
@@ -79,8 +79,8 @@ export default function BranchEditor(props: IProps) {
   };
   const queryRegulus = () => {
     try {
-      postRequest(getRegulusProjects).then((result) => {
-        if (result.success) {
+      getRequest(getRegulusProjects).then((result) => {
+        if (result?.success) {
           let dataSource = result.data.projects;
           let dataArry: any = [];
           dataSource?.map((item: any) => {
@@ -122,7 +122,7 @@ export default function BranchEditor(props: IProps) {
   };
   const queryRegulusOnlineBugs = async (param: string, searchTextParams?: string) => {
     try {
-      await postRequest(getRegulusOnlineBugs, {
+      await getRequest(getRegulusOnlineBugs, {
         data: { projectId: param, keyword: searchTextParams, pageSize: -1 },
       }).then((result) => {
         if (result.success) {
@@ -140,6 +140,7 @@ export default function BranchEditor(props: IProps) {
   };
 
   const onChangeDemand = (data: any) => {
+    console.log('data', data);
     setDemandId(data);
     // handleSubmit(data);
   };
@@ -198,14 +199,15 @@ export default function BranchEditor(props: IProps) {
             showSearch
             allowClear
             onSearch={onSearch}
+            labelInValue
             optionFilterProp="label"
             // filterOption={(input, option) =>
             //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             // }
           ></Select>
         </Form.Item>
-        <Form.Item label="描述" name="desc">
-          <Input.TextArea placeholder="请输入描述" rows={3} />
+        <Form.Item label="描述" name="desc" initialValue>
+          <Input.TextArea placeholder="请输入描述" rows={3} defaultValue={''} />
         </Form.Item>
       </Form>
     </Modal>
