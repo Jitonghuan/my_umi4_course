@@ -95,8 +95,8 @@ export default function deliveryList() {
       queryProductList();
     });
   };
-  const searchList = (values: string) => {
-    queryProductList(pageInfo.pageIndex, pageInfo.pageSize, values);
+  const searchList = (values: any) => {
+    queryProductList(pageInfo.pageIndex, pageInfo.pageSize, values.productName);
   };
   return (
     <PageContainer>

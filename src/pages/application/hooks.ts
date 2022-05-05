@@ -30,7 +30,7 @@ export function useAppGroupOptions(categoryCode?: string): [any[], boolean] {
       data: { categoryCode },
     })
       .then((result) => {
-        const { dataSource } = result.data || {};
+        const { dataSource } = result?.data || {};
         const next = (dataSource || []).map((item: any) => ({
           ...item,
           value: item.groupCode,
@@ -75,7 +75,7 @@ export function useAppListData(
         const result = await getRequest(url, {
           data: { ...requestData },
         });
-        const { dataSource, pageInfo } = result.data || {};
+        const { dataSource, pageInfo } = result?.data || {};
         setData(dataSource || []);
         setTotal(pageInfo?.total || 0);
       } catch (ex) {
@@ -159,7 +159,7 @@ export function useAppEnvCodeData(appCode?: string): [Record<string, EnvDataVO[]
           pageSize: -1,
         },
       });
-      const next: EnvDataVO[] = result.data || [];
+      const next: EnvDataVO[] = result?.data || [];
       // 根据 envTypeCode 分成多组
       const map: Record<string, EnvDataVO[]> = {};
       next.forEach((n) => {

@@ -6,17 +6,19 @@
  * @modified 2021/08/30 moyan
  */
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';
 import { listAppEnv } from '@/pages/application/service';
-import { getRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
+import { getMasterBranch } from '@/pages/application/service';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 
 const rootCls = 'publish-branch-compo';
@@ -28,6 +30,7 @@ export interface PublishBranchProps {
   deployInfo: DeployInfoVO;
   env: string;
   onSearch: (name?: string) => any;
+  masterBranchChange: any;
   dataSource: {
     id: string | number;
     branchName: string;
@@ -36,13 +39,26 @@ export interface PublishBranchProps {
     gmtCreate: string;
     status: string | number;
   }[];
+  pipelineCode: string;
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
+  changeBranchName: any;
 }
 
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch } = publishBranchProps;
+  const {
+    hasPublishContent,
+    deployInfo,
+    dataSource,
+    onSubmitBranch,
+    env,
+    onSearch,
+    masterBranchChange,
+    pipelineCode,
+    changeBranchName,
+  } = publishBranchProps;
   const { appData } = useContext(DetailContext);
+  const { metadata } = deployInfo || {};
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
@@ -50,6 +66,20 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [selectMaster, setSelectMaster] = useState<any>('master');
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+  const [loading, setLoading] = useState<boolean>(false);
+  const selectRef = useRef(null) as any;
+
+  const getBuildType = () => {
+    let { appType, isClient } = appData || {};
+    if (appType === 'frontend') {
+      return 'feMultiBuild';
+    } else {
+      return isClient ? 'beClientBuild' : 'beServerBuild';
+    }
+  };
 
   type reviewStatusTypeItem = {
     color: string;
@@ -70,7 +100,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
       return await updateFeatures({
-        id: deployInfo.id,
+        id: metadata?.id,
         features: filter,
       });
     }
@@ -79,8 +109,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       appCode: appCode!,
       envTypeCode: env,
       features: filter,
+      pipelineCode,
       envCodes: deployEnv,
-      isClient: +appData?.isClient! === 1,
+      masterBranch: selectMaster, //主干分支
+      buildType: getBuildType(),
     });
   };
 
@@ -103,6 +135,15 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   };
 
   useEffect(() => {
+    if (masterListData.length !== 0) {
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
+      setMasterBranchOptions(option);
+      // const initValue = option.find((item: any) => item.label === 'master');
+      // setSelectMaster(initValue?.value);
+    }
+  }, [masterListData]);
+
+  useEffect(() => {
     if (!appCategoryCode) return;
     getRequest(listAppEnv, {
       data: {
@@ -122,6 +163,12 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     });
   }, [appCategoryCode, env]);
 
+  const handleChange = (v: any) => {
+    selectRef?.current?.blur();
+    setSelectMaster(v);
+    masterBranchChange(v);
+  };
+
   const branchNameRender = (branchName: string, record: any) => {
     return (
       <div>
@@ -136,11 +183,27 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
       <div className="table-caption">
         <div className="caption-left">
-          <h4>分支列表&nbsp;&nbsp;</h4>
+          <h4>主干分支：</h4>
+          <Select
+            ref={selectRef}
+            options={masterBranchOptions}
+            value={selectMaster}
+            style={{ width: '200px', marginRight: '20px' }}
+            onChange={handleChange}
+            showSearch
+            optionFilterProp="label"
+            // labelInValue
+            filterOption={(input, option) => {
+              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+            }}
+          ></Select>
+          <h4>开发分支名称：</h4>
           <Input.Search
             placeholder="搜索分支"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => {
+              setSearchText(e.target.value), changeBranchName(e.target.value), console.log(e.target.value, 888);
+            }}
             onPressEnter={() => onSearch?.(searchText)}
             onSearch={() => onSearch?.(searchText)}
           />
@@ -155,6 +218,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         rowKey="id"
         bordered
         dataSource={dataSource}
+        loading={loading}
         pagination={false}
         scroll={{ x: '100%' }}
         rowSelection={{

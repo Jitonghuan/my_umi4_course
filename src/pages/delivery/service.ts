@@ -53,7 +53,8 @@ export const saveParam = addAPIPrefix('/deliveryManage/product/version/param/sav
 export const queryDeliveryParamList = addAPIPrefix('/deliveryManage/product/version/param/list');
 /* POST 删除交付配置参数 */
 export const deleteDeliveryParam = addAPIPrefix('/deliveryManage/product/version/param/delete');
-
+/* POST  修改交付配置参数 */
+export const editVersionParam = addAPIPrefix('/deliveryManage/product/version/param/edit');
 /* 二、组件中心 */
 /* POST 用户组件接入 */
 export const addApplication = addAPIPrefix('/deliveryManage/component/application/add');
@@ -76,11 +77,13 @@ export const uploadSqlfile = addAPIPrefix('/deliveryManage/component/sqlfile/upl
 export const queryComponentList = addAPIPrefix('/deliveryManage/component/list');
 
 /*GET  组件详情 */
-export const queryComponentInfo = addAPIPrefix('/deliveryManage/component/info');
+export const queryComponentInfoApi = addAPIPrefix('/deliveryManage/component/info');
 
 /* GET 组件版本查询 */
 
 export const queryComponentVersionList = addAPIPrefix('/deliveryManage/component/version/list');
+/* GET 组件描述更新 */
+export const updateComponent = addAPIPrefix('/deliveryManage/component/update');
 
 /* POST 组件删除 */
 
@@ -115,7 +118,7 @@ export const createIndent = addAPIPrefix('/deliveryManage/indent/create');
 export const queryIndentList = addAPIPrefix('/deliveryManage/indent/list');
 
 /* GET 制品详情 */
-export const queryIndentInfo = addAPIPrefix('/deliveryManage/indent/info');
+export const queryIndentInfoApi = addAPIPrefix('/deliveryManage/indent/info');
 
 /*POST  删除制品 */
 export const deleteIndent = addAPIPrefix('/deliveryManage/indent/delete');
@@ -130,8 +133,18 @@ export const queryIndentParamList = addAPIPrefix('/deliveryManage/indent/param/l
 export const saveIndentParam = addAPIPrefix('/deliveryManage/indent/param/save');
 
 /* POST 出部署包 */
-export const createPackageInde = addAPIPrefix('/deliveryManage/indent/package/create');
+export const createPackageInde = addAPIPrefix('/deliveryManage/indent/package/generate');
 
 /* POST 下载部署包 */
 
 export const downloadPackage = addAPIPrefix('/deliveryManage/indent/package/download');
+/* POST 组件描述更新 */
+export const updateDescription = addAPIPrefix('/deliveryManage/component/description/update');
+/* POST  组件配置更新 */
+export const updateConfiguration = addAPIPrefix('/deliveryManage/component/configuration/update');
+
+/* POST  获取制品配置 */
+export const generateIndentConfig = addAPIPrefix('/deliveryManage/indent/config/generate');
+
+/* POST  编辑制品配置 */
+export const editIndentConfig = addAPIPrefix('/deliveryManage/indent/config/edit');

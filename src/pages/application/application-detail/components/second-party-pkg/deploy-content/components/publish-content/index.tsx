@@ -12,8 +12,9 @@ import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';
 import OtherEnvSteps from './other-env-steps';
 import { createTableSchema } from './schema';
-import { createDeploy, updateFeatures } from '@/pages/application/service';
+import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/application/service';
 import { IProps } from './types';
+import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -21,25 +22,76 @@ const { confirm } = Modal;
 
 const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOperate }: IProps) => {
   const isProd = envTypeCode === 'cProd';
-
+  let { metadata, status, envInfo } = deployInfo || {};
+  const { deployNodes } = status || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+
+  function getItemByKey(obj: any, envCode: string) {
+    try {
+      if (obj) {
+        const keyList = Object.keys(obj) || [];
+        if (keyList.length !== 0 && envCode) {
+          return obj[envCode];
+        } else {
+          return '';
+        }
+      }
+    } catch {
+      return '';
+    }
+  }
+
+  function onCancelDeploy(envCode?: string) {
+    Modal.confirm({
+      title: '确定要取消当前发布吗？',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        return cancelDeploy({
+          id: metadata?.id,
+          envCode: envTypeCode,
+        }).then(() => {});
+      },
+    });
+  }
 
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
+      <div className={`${rootCls}__right-top-btns`}>
+        {deployNodes?.length !== 0 && (
+          <Button
+            danger
+            onClick={() => {
+              onCancelDeploy();
+            }}
+          >
+            取消发布
+          </Button>
+        )}
+      </div>
 
-      {isProd ? (
+      {/* {isProd ? (
         <ProdSteps appCode={appCode} deployInfo={deployInfo} onOperate={onOperate} />
       ) : (
         <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} />
-      )}
+      )} */}
+      <DeploySteps
+        stepData={deployNodes}
+        deployInfo={deployInfo}
+        appCode={appCode}
+        onOperate={onOperate}
+        // isFrontend={false}
+        envTypeCode={envTypeCode}
+        deployedList={deployedList}
+        getItemByKey={getItemByKey}
+        isSecondPage={true}
+      />
 
       <div className={`${rootCls}__list-wrap`}>
         <div className={`${rootCls}__list-header`}>
           <span className={`${rootCls}__list-header-text`}>内容列表</span>
-
-          {!isProd && (
-            <div className={`${rootCls}__list-header-btns`}>
+          <div className={`${rootCls}__list-header-btns`}>
+            {!isProd && (
               <Button
                 type="primary"
                 disabled={!selectedRowKeys.length}
@@ -47,14 +99,14 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                   onOperate('retryDeployStart');
 
                   confirm({
-                    title: '确定要重新部署吗?',
+                    title: '确定要重新提交吗?',
                     icon: <ExclamationCircleOutlined />,
                     onOk() {
                       const filter = deployedList
                         .filter((el) => selectedRowKeys.includes(el.id))
                         .map((el) => el.branchName);
-                      return updateFeatures({
-                        id: deployInfo.id,
+                      return reCommit({
+                        id: metadata.id,
                         features: filter,
                       }).then(() => {
                         onOperate('retryDeployEnd');
@@ -66,39 +118,40 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
                   });
                 }}
               >
-                重新部署
+                重新提交
               </Button>
-              <Button
-                type="primary"
-                disabled={!selectedRowKeys.length}
-                onClick={() => {
-                  onOperate('batchExitStart');
+            )}
+            <Button
+              type="primary"
+              disabled={!selectedRowKeys.length}
+              onClick={() => {
+                onOperate('batchExitStart');
 
-                  confirm({
-                    title: '确定要批量退出吗?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk() {
-                      return createDeploy({
-                        appCode,
-                        envTypeCode,
-                        features: deployedList
-                          .filter((item) => !selectedRowKeys.includes(item.id))
-                          .map((item) => item.branchName),
-                        isClient: true,
-                      }).then(() => {
-                        onOperate('batchExitEnd');
-                      });
-                    },
-                    onCancel() {
+                confirm({
+                  title: '确定要批量退出吗?',
+                  icon: <ExclamationCircleOutlined />,
+                  onOk() {
+                    return withdrawFeatures({
+                      // appCode,
+                      // envTypeCode,
+                      features: deployedList
+                        .filter((item) => selectedRowKeys.includes(item.id))
+                        .map((item) => item.branchName),
+                      // isClient: true,
+                      id: metadata?.id,
+                    }).then(() => {
                       onOperate('batchExitEnd');
-                    },
-                  });
-                }}
-              >
-                批量退出
-              </Button>
-            </div>
-          )}
+                    });
+                  },
+                  onCancel() {
+                    onOperate('batchExitEnd');
+                  },
+                });
+              }}
+            >
+              退出分支
+            </Button>
+          </div>
         </div>
 
         <HulkTable

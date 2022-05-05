@@ -10,6 +10,7 @@ export interface IProps {
   onOperate: (type: OperateType) => void;
   onSpin: any;
   stopSpin: any;
+  pipelineCode: string;
 }
 
 // 执行步骤组合
@@ -31,6 +32,9 @@ export interface StepItemProps extends Record<string, any> {
   onOperate: (type: OperateType) => void;
   deployStatus: DeployStatusType;
   envTypeCode: string;
+  isFrontend?: boolean;
+  pipelineCode: string;
+  isEnvProject: boolean; //是否是项目环境中的步骤条
 }
 
 export type OperateType =
@@ -61,4 +65,7 @@ export type OperateType =
   | 'rollbackFeAppEnd'
   // 解决冲突相关
   | 'mergeStart'
-  | 'mergeEnd';
+  | 'mergeEnd'
+  // 流水线弹窗
+  | 'pipelineEnd'
+  | 'pipelineStart';

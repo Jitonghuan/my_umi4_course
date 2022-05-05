@@ -5,19 +5,28 @@
 import React, { useState } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Steps, Button, Modal } from 'antd';
-import { retryDeploy } from '@/pages/application/service';
+import { retryDeploy, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
-import DeployModal from './deploy-modal';
+// import DeployModal from './deploy-modal';
 
 /** 部署 */
 export default function DeployingStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, projectEnvCode, ...others } = props;
-  const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
-
-  const isLoading =
-    deployStatus === 'deploying' || deployStatus === 'deployWait' || deployStatus === 'deployWaitBatch2';
-  const isError = deployStatus === 'deployErr' || deployStatus === 'deployAborted';
-  // || deployStatus === 'deployAborted';
+  const {
+    deployInfo,
+    deployStatus,
+    onOperate,
+    envTypeCode,
+    envCode,
+    status,
+    getItemByKey,
+    env = '',
+    ...others
+  } = props;
+  // const jenkinsUrl = props.jenkinsUrl || deployInfo.jenkinsUrl || '';
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
+  const { buildUrl } = buildInfo || {};
+  const jenkinsUrl = getItemByKey(buildUrl, env) || '';
+  const isLoading = status === 'process';
 
   const [deployVisible, setDeployVisible] = useState(false);
 
@@ -35,7 +44,11 @@ export default function DeployingStep(props: StepItemProps) {
       title: '确定要重新部署吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        await retryDeploy({ id: deployInfo.id, envCode });
+        const params = { id: metadata?.id };
+        if (env) {
+          Object.assign(params, { envCode: env });
+        }
+        await retry({ ...params });
         onOperate('retryDeployEnd');
       },
       onCancel() {
@@ -50,9 +63,9 @@ export default function DeployingStep(props: StepItemProps) {
         {...others}
         title="部署"
         icon={isLoading && <LoadingOutlined />}
-        status={isError ? 'error' : others.status}
+        status={status}
         description={
-          (isError || isLoading) && (
+          (status === 'error' || status === 'process') && (
             <>
               {/* dev,test, pre,prod 在部署过程中出现错误时  显示错误详情 */}
               {/* {isError && deployInfo.deployErrInfo && (
@@ -61,15 +74,15 @@ export default function DeployingStep(props: StepItemProps) {
                 </Button>
               )} */}
               {/* 浙一日常环境下的部署步骤显示jenkins链接 */}
-              {/* {envTypeCode === 'pre' && jenkinsUrl && deployInfo.envs?.includes('zy-daily') && (
+              {/* {envTypeCode === 'pre' && buildUrl && envInfo.deployEnvs?.includes('zy-daily') && (
                 <div style={{ marginTop: 2 }}>
-                  <a target="_blank" href={jenkinsUrl}>
+                  <a target="_blank" href={buildUrl}>
                     部署详情
                   </a>
                 </div>
               )} */}
               {/* prod环境 在部署过程中出现错误时 判断如果是在构建显示查看Jenkins详情，如果是部署出现错误显示部署错误详情*/}
-              {/* {envTypeCode === 'prod' && jenkinsUrl && (
+              {/* {envTypeCode === 'prod' && buildUrl && (
                 <div style={{ marginTop: 2 }}>
                   <a target="_blank" href={jenkinsUrl}>
                     部署详情
@@ -85,7 +98,7 @@ export default function DeployingStep(props: StepItemProps) {
                   </a>
                 </div>
               )} */}
-              {isError && (
+              {status === 'error' && (
                 <Button style={{ marginTop: 4 }} onClick={handleReDeployClick}>
                   重新部署
                 </Button>
@@ -106,13 +119,13 @@ export default function DeployingStep(props: StepItemProps) {
         }
       />
 
-      <DeployModal
+      {/* <DeployModal
         visible={deployVisible}
         deployInfo={deployInfo}
         onCancel={() => setDeployVisible(false)}
         onOperate={onOperate}
         envTypeCode="prod"
-      />
+      /> */}
     </>
   );
 }

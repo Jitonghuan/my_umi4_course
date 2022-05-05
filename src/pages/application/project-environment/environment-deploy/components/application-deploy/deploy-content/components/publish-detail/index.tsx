@@ -3,19 +3,22 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Typography, Popconfirm } from 'antd';
+import { Descriptions, Button, Modal, message, Typography, Popconfirm, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { history } from 'umi';
 import DetailContext from '../../../../../context';
-import { cancelDeploy, deployMaster, offlineDeploy, restartApp } from '@/pages/application/service';
+import { cancelDeploy, deployMaster, feOfflineDeploy, restartApp } from '@/pages/application/service';
 import { IProps } from './types';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 
 export default function PublishDetail(props: IProps) {
-  let { deployInfo, envTypeCode, onOperate } = props;
+  let { deployInfo, envTypeCode, onOperate, pipelineCode, envCode } = props;
+  let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
+  const { buildUrl } = buildInfo || {};
   const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -25,11 +28,16 @@ export default function PublishDetail(props: IProps) {
   const [envDataList, setEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
+  const [deployMasterVisible, setDeployMasterVisible] = useState(false);
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
+
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode) return;
     if (!envTypeCode) return;
-  }, [appCategoryCode, envTypeCode, deployInfo.id]);
+  }, [appCategoryCode, envTypeCode, metadata?.id]);
 
   // 取消发布
   const handleCancelPublish = () => {
@@ -40,7 +48,7 @@ export default function PublishDetail(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         return cancelDeploy({
-          id: deployInfo.id,
+          id: metadata?.id,
           envCode: '',
         }).then(() => {
           onOperate('cancelDeployEnd');
@@ -55,25 +63,37 @@ export default function PublishDetail(props: IProps) {
   // 部署 master
   const deployToMaster = () => {
     onOperate('deployMasterStart');
-    confirmPublishToMaster();
+    setDeployMasterVisible(true);
   };
   // 放弃部署 master
   const cancelDeployToMaster = () => {
     onOperate('deployMasterEnd');
+    setDeployMasterVisible(false);
     setConfirmLoading(false);
+  };
+  const getBuildType = () => {
+    let { appType, isClient } = appData || {};
+    if (appType === 'frontend') {
+      return 'feMultiBuild';
+    } else {
+      return isClient ? 'beClientBuild' : 'beServerBuild';
+    }
   };
   // 确认发布操master作
   const confirmPublishToMaster = async () => {
     setConfirmLoading(true);
     try {
-      await deployMaster({
-        appCode: appData?.appCode,
-        envTypeCode: envTypeCode,
-        envCodes: [envTypeCode],
-        isClient: appData?.isClient === 1,
+      const res = await deployMaster({
+        pipelineCode,
+        envCodes: envCode,
+        buildType: getBuildType(),
+        masterBranch: selectMaster, //主干分支
       });
-      message.success('操作成功，正在部署中...');
-      onOperate('deployMasterEnd');
+      if (res?.success) {
+        message.success('操作成功，正在部署中...');
+        setDeployMasterVisible(false);
+        onOperate('deployMasterEnd');
+      }
     } finally {
       setConfirmLoading(false);
     }
@@ -82,25 +102,26 @@ export default function PublishDetail(props: IProps) {
   // 发布环境
   let I = 0;
   const envNames = useMemo(() => {
-    const { envs } = deployInfo;
-    const envList = envs?.split(',') || [];
+    // const { envs } = deployInfo;
+    const { deployEnvs } = envInfo || {};
+    // const envList = deployEnvs?.split(',') || [];
     return envDataList
       .filter((envItem) => {
-        return envList.includes(envItem.value);
+        return (deployEnvs || []).includes(envItem.value);
       })
       .map((envItem) => `${envItem.label}(${envItem.value})`)
       .join(',');
   }, [envDataList, deployInfo]);
 
   // 离线部署
-  const uploadImages = () => {
-    return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
+  const uploadFile = () => {
+    return `${feOfflineDeploy}?&envCodes=${deployEnv}&pipelineCode=${pipelineCode}`;
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
   const uploadProps = {
     name: 'image',
-    action: uploadImages,
+    action: uploadFile,
     progress: {
       strokeColor: {
         '0%': '#108ee9',
@@ -173,39 +194,28 @@ export default function PublishDetail(props: IProps) {
     }
   });
 
-  let deployErrInfo: any[] = [];
-  try {
-    deployErrInfo = deployInfo.deployErrInfo ? JSON.parse(deployInfo.deployErrInfo) : [];
-  } catch (e) {
-    if (deployInfo.deployErrInfo) {
-      deployErrInfo = [
-        {
-          subErrInfo: deployInfo.deployErrInfo,
-          envCode: deployInfo.envs,
-        },
-      ];
-    }
+  let errorInfo: any[] = [];
+  if (status && status.deployErrInfo) {
+    Object.keys(status.deployErrInfo).forEach((item) => {
+      if (status.deployErrInfo[item]) {
+        errorInfo.push({ key: item, errorMessage: status.deployErrInfo[item] });
+      }
+    });
   }
 
   function goToJenkins(item: any) {
     let jenkinsUrl: any[] = [];
-    try {
-      jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
-    } catch (e) {
-      if (deployInfo.jenkinsUrl) {
-        jenkinsUrl = [
-          {
-            subJenkinsUrl: deployInfo.jenkinsUrl,
-            envCode: deployInfo.envs,
-          },
-        ];
+    if (buildUrl && item?.key) {
+      const data = buildUrl[item?.key] || '';
+      if (data) {
+        window.open(data, '_blank');
       }
     }
-    const data = jenkinsUrl.find((val) => val.envCode === item.envCode);
-    if (data && data.subJenkinsUrl) {
-      window.open(data.subJenkinsUrl, '_blank');
-    }
   }
+
+  const handleChange = (v: string) => {
+    setSelectMaster(v);
+  };
 
   return (
     <div className={rootCls}>
@@ -215,21 +225,11 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {appData?.appType === 'backend' && (
-          <Popconfirm
-            title="确定要部署Master吗？"
-            onConfirm={() => {
-              deployToMaster();
-            }}
-            onCancel={() => {
-              cancelDeployToMaster();
-            }}
-          >
-            <Button type="primary" loading={confirmLoading}>
-              部署Master
-            </Button>
-          </Popconfirm>
-        )}
+        {
+          <Button type="primary" onClick={deployToMaster}>
+            部署主干分支
+          </Button>
+        }
         {/* {appData?.appType === 'backend' && (
           <Button type="primary" danger onClick={handleCancelPublish}>
             取消发布
@@ -245,47 +245,54 @@ export default function PublishDetail(props: IProps) {
         bordered
       >
         <Descriptions.Item label="CRID" contentStyle={{ whiteSpace: 'nowrap' }}>
-          {deployInfo?.id || '--'}
+          {metadata?.id || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
-          {deployInfo?.releaseBranch ? <Paragraph copyable>{deployInfo?.releaseBranch}</Paragraph> : '---'}
+          {branchInfo?.releaseBranch ? <Paragraph copyable>{branchInfo?.releaseBranch}</Paragraph> : '---'}
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {deployInfo?.version ? <Paragraph copyable>{deployInfo?.version}</Paragraph> : '---'}
+            {buildInfo?.buildResultInfo?.version ? (
+              <Paragraph copyable>{buildInfo?.buildResultInfo?.version}</Paragraph>
+            ) : (
+              '---'
+            )}
             {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envTypeCode || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
-          {deployInfo?.conflictFeature || '--'}
+          {branchInfo?.conflictFeature || '--'}
+        </Descriptions.Item>
+        <Descriptions.Item label="主干分支" span={4}>
+          {branchInfo?.masterBranch || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="合并分支" span={4}>
-          {deployInfo?.features || '--'}
+          {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
-        {deployInfo?.deployErrInfo && deployErrInfo.length && (
+        {status?.deployErrInfo && errorInfo.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>
-              {deployErrInfo.map((errInfo) => (
+              {errorInfo.map((err) => (
                 <div>
-                  <span style={{ color: 'black' }}> {errInfo?.subErrInfo ? `${errInfo?.envCode}：` : ''}</span>
+                  <span style={{ color: 'black' }}> {err?.errorMessage ? `${err?.key}：` : ''}</span>
                   <a
                     style={{ color: 'red', textDecoration: 'underline' }}
                     onClick={() => {
-                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') !== -1) {
-                        goToJenkins(errInfo);
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1) {
+                        goToJenkins(err);
                       }
-                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1 && appData?.appType !== 'frontend') {
                         history.push(
-                          `/matrix/application/environment-deploy/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}`,
+                          `/matrix/application/environment-deploy/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}`,
                         );
                       }
                     }}
                   >
-                    {errInfo?.subErrInfo}
+                    {err?.errorMessage}
                   </a>
-                  {appData?.appType !== 'frontend' && (
-                    <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                  {appData?.appType !== 'frontend' && envInfo?.depoloyEnvs?.includes(err.key) && (
+                    <span style={{ color: 'gray' }}> {err?.errorMessage ? '（点击跳转）' : ''}</span>
                   )}
                 </div>
               ))}
@@ -295,29 +302,35 @@ export default function PublishDetail(props: IProps) {
       </Descriptions>
 
       {/* --------------------- modals --------------------- */}
-      {/* 重启按钮 */}
-      {/* <Modal
-        key="deployRestart"
-        title="选择重启环境"
-        visible={restartVisible}
-        onCancel={() => {
-          setRestartVisible(false);
-          setRestartEnv([]);
-        }}
-        onOk={ensureRestart}
+      {/* 部署到 master */}
+      <Modal
+        key="deployMaster"
+        title="选择发布环境"
+        visible={deployMasterVisible}
+        confirmLoading={confirmLoading}
+        onOk={confirmPublishToMaster}
         maskClosable={false}
+        onCancel={cancelDeployToMaster}
       >
         <div>
-          <span>发布环境：</span>
-          {envDataOption.length > 0 && (
-            <Radio.Group
-              value={restartEnv}
-              onChange={(v: any) => setRestartEnv(v.target.value)}
-              options={envDataOption}
-            ></Radio.Group>
-          )}
+          <div style={{ marginBottom: '10px' }}>
+            <span>主干分支：</span>
+            <Select
+              options={masterBranchOptions}
+              value={selectMaster}
+              style={{ width: '200px', marginRight: '20px' }}
+              onChange={handleChange}
+              showSearch
+              size="small"
+              optionFilterProp="label"
+              // labelInValue
+              filterOption={(input, option) => {
+                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }}
+            ></Select>
+          </div>
         </div>
-      </Modal> */}
+      </Modal>
     </div>
   );
 }

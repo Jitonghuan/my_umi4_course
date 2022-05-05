@@ -14,7 +14,7 @@ import {
   cancelDeploy,
   deployReuse,
   deployMaster,
-  offlineDeploy,
+  // offlineDeploy,
   feOfflineDeploy,
   restartApp,
   queryProjectEnvList,
@@ -23,13 +23,17 @@ import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
 import { useEnvList } from '@/pages/application/project-environment/hook';
 import ServerStatus from '../server-status';
+import { getPipelineUrl } from '@/pages/application/service';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 export default function PublishDetail(props: IProps) {
   const [envProjectForm] = Form.useForm();
-  let { deployInfo, envTypeCode, onOperate, appStatusInfo } = props;
+  let { deployInfo, envTypeCode, onOperate, appStatusInfo, nextTab, pipelineCode } = props;
+  let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
+  const { buildUrl } = buildInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [loading, envDataSource] = useEnvList();
@@ -49,12 +53,17 @@ export default function PublishDetail(props: IProps) {
   const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
   const [restartVisible, setRestartVisible] = useState(false);
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [pipelineOptions, setPipelineOptions] = useState<any>([]);
+  const [selectPipeline, setSelectPipeline] = useState<any>('');
+  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
 
   let newNextEnvTypeCode = '';
   useEffect(() => {
     if (!appCategoryCode || !appData) return;
     // 所有环境
-    getEnvList({ envTypeCode: envTypeCode, appCode: appData?.appCode });
+    getEnvList({ envTypeCode: envTypeCode, appCode: appData?.appCode, proEnvType: 'benchmark' });
     // 支持离线部署的环境
     getEnvList({
       envTypeCode: envTypeCode,
@@ -63,10 +72,10 @@ export default function PublishDetail(props: IProps) {
       clusterName: 'private-cluster',
     });
 
-    if (deployInfo.id !== undefined) {
+    if (metadata?.id !== undefined) {
       getRequest(checkNextEnv, {
         data: {
-          id: deployInfo.id,
+          id: metadata?.id,
         },
       }).then((response) => {
         if (response?.success) {
@@ -83,7 +92,33 @@ export default function PublishDetail(props: IProps) {
         }
       });
     }
-  }, [appCategoryCode, envTypeCode, deployInfo.id]);
+  }, [appCategoryCode, envTypeCode, metadata?.id]);
+
+  useEffect(() => {
+    if (masterListData.length !== 0) {
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
+      setMasterBranchOptions(option);
+      const initValue = option.find((item: any) => item.label === 'master');
+      setSelectMaster(initValue?.value);
+    }
+  }, [masterListData]);
+
+  useEffect(() => {
+    if (nextTab) {
+      getRequest(getPipelineUrl, {
+        data: { appCode: appData?.appCode, envTypeCode: nextTab, pageIndex: -1, size: -1 },
+      }).then((res) => {
+        if (res?.success) {
+          let data = res?.data?.dataSource;
+          const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
+          setPipelineOptions(pipelineOptionData);
+        } else {
+          setPipelineOptions([]);
+        }
+      });
+    }
+  }, [nextTab]);
+
   // 获取环境列表
   const getEnvList = (params: any) => {
     getRequest(listAppEnv, {
@@ -122,7 +157,7 @@ export default function PublishDetail(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         return cancelDeploy({
-          id: deployInfo.id,
+          id: metadata?.id,
           envCode: '',
         }).then(() => {
           onOperate('cancelDeployEnd');
@@ -147,12 +182,22 @@ export default function PublishDetail(props: IProps) {
   };
   // 确认发布操作
   const confirmPublishNext = async () => {
+    if (!selectPipeline) {
+      message.error('请选择要发布的流水线！');
+      return;
+    }
     setConfirmLoading(true);
     try {
-      await deployReuse({ id: deployInfo.id, envs: deployNextEnv });
-      message.success('操作成功，正在部署中...');
-      setDeployNextEnvVisible(false);
-      onOperate('deployNextEnvSuccess');
+      const res = await deployReuse({
+        envCodes: deployNextEnv,
+        pipelineCode: selectPipeline,
+        reusePipelineCode: pipelineCode,
+      });
+      if (res?.success) {
+        message.success('操作成功，正在部署中...');
+        setDeployNextEnvVisible(false);
+        onOperate('deployNextEnvSuccess');
+      }
     } finally {
       setConfirmLoading(false);
     }
@@ -169,20 +214,31 @@ export default function PublishDetail(props: IProps) {
     setDeployMasterVisible(false);
     setConfirmLoading(false);
   };
+  const getBuildType = () => {
+    let { appType, isClient } = appData || {};
+    if (appType === 'frontend') {
+      return 'feMultiBuild';
+    } else {
+      return isClient ? 'beClientBuild' : 'beServerBuild';
+    }
+  };
+
   // 确认发布操master作
   const confirmPublishToMaster = async () => {
     setConfirmLoading(true);
     try {
-      await deployMaster({
-        appCode: appData?.appCode,
-        envTypeCode: envTypeCode,
+      const res = await deployMaster({
+        pipelineCode,
         envCodes: deployMasterEnv,
-        isClient: appData?.isClient === 1,
+        buildType: getBuildType(),
+        masterBranch: selectMaster, //主干分支
       });
-      message.success('操作成功，正在部署中...');
-      setDeployMasterVisible(false);
-      setDeployMasterEnv([]);
-      onOperate('deployMasterEnd');
+      if (res?.success) {
+        message.success('操作成功，正在部署中...');
+        setDeployMasterVisible(false);
+        setDeployMasterEnv([]);
+        onOperate('deployMasterEnd');
+      }
     } finally {
       setConfirmLoading(false);
     }
@@ -191,22 +247,19 @@ export default function PublishDetail(props: IProps) {
   // 发布环境
   let I = 0;
   const envNames = useMemo(() => {
-    const { envs } = deployInfo;
-    const envList = envs?.split(',') || [];
+    // const { envs } = deployInfo;
+    const { deployEnvs } = envInfo || {};
+    // const envList = deployEnvs?.split(',') || [];
     return envDataList
       .filter((envItem) => {
-        return envList.includes(envItem.value);
+        return (deployEnvs || []).includes(envItem.value);
       })
       .map((envItem) => `${envItem.label}(${envItem.value})`)
       .join(',');
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
-    if (appData?.appType === 'frontend') {
-      return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
-    } else {
-      return `${offlineDeploy}?appCode=${appData?.appCode}&envTypeCode=${props.envTypeCode}&envs=${deployEnv}&isClient=${appData?.isClient}`;
-    }
+    return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
@@ -340,39 +393,68 @@ export default function PublishDetail(props: IProps) {
     }
   });
 
-  let deployErrInfo: any[] = [];
-  try {
-    deployErrInfo = deployInfo.deployErrInfo ? JSON.parse(deployInfo.deployErrInfo) : [];
-  } catch (e) {
-    if (deployInfo.deployErrInfo) {
-      deployErrInfo = [
-        {
-          subErrInfo: deployInfo.deployErrInfo,
-          envCode: deployInfo.envs,
-        },
-      ];
-    }
+  // let deployErrInfo: any[] = [];
+  // try {
+  //   if (status && status.deployErrInfo) {
+  //     Object.keys(status.deployErrInfo).forEach((item) => {
+  //       deployErrInfo.push({ item: status.deployErrorInfo[item] })
+  //     })
+  //   }
+  // } catch (e) {
+  //   if (status && status.deployErrInfo) {
+  //     const data = Object.keys(deployErrInfo)
+  //     deployErrInfo = [
+  //       {
+  //         subErrInfo: status.deployErrInfo,
+  //         envCode: envInfo.deployEnvs,
+  //       },
+  //     ];
+  //   }
+  // }
+
+  let errorInfo: any[] = [];
+  if (status && status.deployErrInfo) {
+    Object.keys(status.deployErrInfo).forEach((item) => {
+      if (status.deployErrInfo[item]) {
+        errorInfo.push({ key: item, errorMessage: status.deployErrInfo[item] });
+      }
+    });
   }
 
   function goToJenkins(item: any) {
     let jenkinsUrl: any[] = [];
-    try {
-      jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
-    } catch (e) {
-      if (deployInfo.jenkinsUrl) {
-        jenkinsUrl = [
-          {
-            subJenkinsUrl: deployInfo.jenkinsUrl,
-            envCode: deployInfo.envs,
-          },
-        ];
+    if (buildUrl && item?.key) {
+      const data = buildUrl[item?.key] || '';
+      if (data) {
+        window.open(data, '_blank');
       }
     }
-    const data = jenkinsUrl.find((val) => val.envCode === item.envCode);
-    if (data && data.subJenkinsUrl) {
-      window.open(data.subJenkinsUrl, '_blank');
-    }
+    // try {
+    //   // jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
+    //   jenkinsUrl = buildInfo.buildUrl ? JSON.parse(buildInfo.buildUrl) : [];
+    // } catch (e) {
+    //   if (buildInfo.buildUrl) {
+    //     jenkinsUrl = [
+    //       {
+    //         subJenkinsUrl: buildInfo.buildUrl,
+    //         envCode: envInfo.deployEnvs,
+    //       },
+    //     ];
+    //   }
+    // }
+    // const data = jenkinsUrl.find((val) => val.envCode === item.key);
+    // if (data && data.subJenkinsUrl) {
+    //   window.open(data.subJenkinsUrl, '_blank');
+    // }
   }
+
+  const handleChange = (v: string) => {
+    setSelectMaster(v);
+  };
+
+  const pipelineChange = (v: string) => {
+    setSelectPipeline(v);
+  };
 
   return (
     <div className={rootCls}>
@@ -410,9 +492,9 @@ export default function PublishDetail(props: IProps) {
             项目环境部署
           </Button>
         )}
-        {appData?.appType === 'backend' && envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && (
           <Button type="primary" onClick={deployToMaster}>
-            部署Master
+            部署主干分支
           </Button>
         )}
 
@@ -422,11 +504,11 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        {envTypeCode === 'prod' && appData?.appType === 'backend' && (
+        {/* {envTypeCode === 'prod' && appData?.appType === 'backend' && (
           <Button type="primary" danger onClick={handleCancelPublish}>
             取消发布
           </Button>
-        )}
+        )} */}
       </div>
 
       <Descriptions
@@ -437,49 +519,57 @@ export default function PublishDetail(props: IProps) {
         bordered
       >
         <Descriptions.Item label="CRID" contentStyle={{ whiteSpace: 'nowrap' }}>
-          {deployInfo?.id || '--'}
+          {/* {deployInfo?.id || '--'} */}
+          {metadata?.id || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
-          {deployInfo?.releaseBranch ? <Paragraph copyable>{deployInfo?.releaseBranch}</Paragraph> : '---'}
+          {branchInfo?.releaseBranch ? <Paragraph copyable>{branchInfo?.releaseBranch}</Paragraph> : '---'}
           {/* <Paragraph copyable>{deployInfo?.releaseBranch || '--'}</Paragraph> */}
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {deployInfo?.version ? <Paragraph copyable>{deployInfo?.version}</Paragraph> : '---'}
+            {buildInfo?.buildResultInfo?.version ? (
+              <Paragraph copyable>{buildInfo?.buildResultInfo?.version}</Paragraph>
+            ) : (
+              '---'
+            )}
             {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
-          {deployInfo?.conflictFeature || '--'}
+          {branchInfo?.conflictFeature || '--'}
+        </Descriptions.Item>
+        <Descriptions.Item label="主干分支" span={4}>
+          {branchInfo?.masterBranch || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="合并分支" span={4}>
-          {deployInfo?.features || '--'}
+          {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
-        {deployInfo?.deployErrInfo && deployErrInfo?.length && (
+        {status?.deployErrInfo && errorInfo.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>
-              {deployErrInfo.map((errInfo) => (
+              {errorInfo.map((err) => (
                 <div>
-                  <span style={{ color: 'black' }}> {errInfo?.subErrInfo ? `${errInfo?.envCode}：` : ''}</span>
+                  <span style={{ color: 'black' }}> {err?.errorMessage ? `${err?.key}：` : ''}</span>
                   <a
                     style={{ color: 'red', textDecoration: 'underline' }}
                     onClick={() => {
-                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') !== -1) {
-                        goToJenkins(errInfo);
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1) {
+                        goToJenkins(err);
                       }
-                      if (errInfo?.subErrInfo.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
-                        localStorage.setItem('__init_env_tab__', deployInfo?.envTypeCode);
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
+                        localStorage.setItem('__init_env_tab__', metadata?.envTypeCode);
                         history.push(
-                          `/matrix/application/detail/deployInfo?appCode=${deployInfo?.appCode}&id=${appData?.id}`,
+                          `/matrix/application/detail/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}`,
                         );
                       }
                     }}
                   >
-                    {errInfo?.subErrInfo}
+                    {err?.errorMessage}
                   </a>
-                  {appData?.appType !== 'frontend' && (
-                    <span style={{ color: 'gray' }}> {errInfo?.subErrInfo ? '（点击跳转）' : ''}</span>
+                  {appData?.appType !== 'frontend' && envInfo?.depoloyEnvs?.includes(err.key) && (
+                    <span style={{ color: 'gray' }}> {err?.errorMessage ? '（点击跳转）' : ''}</span>
                   )}
                 </div>
               ))}
@@ -504,23 +594,30 @@ export default function PublishDetail(props: IProps) {
         onCancel={cancelDeployNext}
       >
         <div>
+          <div style={{ marginBottom: '15px' }}>
+            <span>选择流水线：</span>
+            <Select
+              options={pipelineOptions}
+              value={selectPipeline}
+              style={{ width: '240px', marginRight: '20px' }}
+              onChange={pipelineChange}
+              showSearch
+              size="small"
+              optionFilterProp="label"
+              // labelInValue
+              filterOption={(input, option) => {
+                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }}
+            ></Select>
+          </div>
           <span>发布环境：</span>
           {/* <Radio.Group value={type} onChange={handleTypeChange}> */}
           {/* <Radio.Group  value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList}></Radio.Group> */}
           <Checkbox.Group value={deployNextEnv} onChange={(v: any) => setDeployNextEnv(v)} options={nextEnvDataList} />
-
-          {/* {nextEnvDataList.map((item,index)=>{
-            return(
-              <Radio.Group  onChange={(v: any) => setDeployNextEnv(v)}  value={deployNextEnv}>
-              <Radio key={index} value={item.value}  autoFocus >{item.label}</Radio>
-
-            </Radio.Group>
-            )
-          })} */}
         </div>
       </Modal>
 
-      {/* 部署到 master */}
+      {/* 部署到主干分支 */}
       <Modal
         key="deployMaster"
         title="选择发布环境"
@@ -531,6 +628,22 @@ export default function PublishDetail(props: IProps) {
         onCancel={cancelDeployToMaster}
       >
         <div>
+          <div style={{ marginBottom: '10px' }}>
+            <span>主干分支：</span>
+            <Select
+              options={masterBranchOptions}
+              value={selectMaster}
+              style={{ width: '200px', marginRight: '20px' }}
+              onChange={handleChange}
+              showSearch
+              size="small"
+              optionFilterProp="label"
+              // labelInValue
+              filterOption={(input, option) => {
+                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }}
+            ></Select>
+          </div>
           <span>发布环境：</span>
           <Checkbox.Group value={deployMasterEnv} onChange={(v: any) => setDeployMasterEnv(v)} options={envDataList} />
         </div>

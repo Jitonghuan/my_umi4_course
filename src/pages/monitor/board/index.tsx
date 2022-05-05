@@ -4,6 +4,7 @@ import { RedoOutlined } from '@ant-design/icons';
 import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';
 import VCCardLayout from '@cffe/vc-b-card-layout';
+import { getRequest } from '@/utils/request';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import {
@@ -134,7 +135,9 @@ const Coms = (props: any) => {
   // const prevNode = useRef<INode>()
   const [resLoading, setResLoading] = useState<boolean>(false);
   const [podLoading, setPodLoading] = useState<boolean>(false);
+  const [nodeLoading, setNodeLoading] = useState<boolean>(false);
   const [podDataSource, setPodDataSource] = useState<any>([]);
+  const [nodeDataSource, setNodeDataSource] = useState<any>([]);
   const [searchField] = Form.useForm();
   const [searchPodField] = Form.useForm();
   const [clusterList, setClusterList] = useState<any>([]);
@@ -150,6 +153,9 @@ const Coms = (props: any) => {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [total, setTotal] = useState(0);
+  const [nodePageIndex, setNodePageIndex] = useState(1);
+  const [nodePageSize, setNodePageSize] = useState<number>(20);
+  const [nodeTotal, setNodeTotal] = useState(0);
 
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
@@ -164,7 +170,7 @@ const Coms = (props: any) => {
     setCurrentCluster(param);
     queryResData(param);
     queryPodData(param);
-    reset();
+    // reset();
     queryNodeList({ clusterId: param });
     queryUseMarket(param);
   };
@@ -202,59 +208,33 @@ const Coms = (props: any) => {
       });
   };
   // 查询节点使用率
-  const {
-    run: queryNodeList,
-    reset,
-    tableProps,
-  } = usePaginated({
-    requestUrl: queryNodeUseDataApi,
-    requestMethod: 'GET',
-    effectParams: searchParams,
-    showRequestError: true,
-    initPageInfo: {
-      total: 0,
-      pageSize: 20,
-    },
-    pagination: {
-      showSizeChanger: true,
-      pageSizeOptions: ['20', '50', '100', '1000'],
-    },
-
-    formatRequestParams: (params) => {
-      if (!params) {
-        return [];
-      } else {
-        return {
-          ...params,
-          clusterId: params?.clusterId,
-        };
-      }
-    },
-    formatResult: (resp) => {
-      let result: any = [];
-      if (resp.data === null) {
-        result = [];
-        let pageInfo: any = {};
-        return {
-          dataSource: result,
-          pageInfo,
-        };
-      } else {
-        const { dataSource = [], pageInfo = {} } = resp.data;
-        result = dataSource.map((item: Record<string, object>) => {
-          const key = Object.keys(item)[0];
-          return {
-            ip: key,
-            ...item[key],
-          };
-        });
-        return {
-          dataSource: result,
-          pageInfo,
-        };
-      }
-    },
-  });
+  const queryNodeList = (params: { clusterId: any; pageIndex?: number; pageSize?: number; keyword?: any }) => {
+    setNodeLoading(true);
+    getRequest(queryNodeUseDataApi, { data: params })
+      .then((result: any) => {
+        let data: any = [];
+        if (result.data === null) {
+          data = [];
+        } else {
+          const { dataSource = [] } = result.data;
+          data = (dataSource || [])?.map((item: Record<string, object>) => {
+            const key = Object.keys(item)[0];
+            return {
+              ip: key,
+              ...item[key],
+            };
+          });
+        }
+        setNodeDataSource(data);
+        let pageInfo = result.data?.pageInfo;
+        setNodePageIndex(pageInfo?.pageIndex || 1);
+        setNodePageSize(pageInfo?.pageSize || 20);
+        setNodeTotal(pageInfo?.total || 0);
+      })
+      .finally(() => {
+        setNodeLoading(false);
+      });
+  };
 
   // 查询已安装大盘
   const queryUseMarket = (value: any) => {
@@ -277,7 +257,7 @@ const Coms = (props: any) => {
           // // queryNodeList(resp[0]?.value);
           queryUseMarket(resp[0]?.value);
         } else {
-          reset();
+          // reset();
           setUseMarket([]);
           setPodDataSource([]);
           queryNodeList({ clusterId: '' });
@@ -322,7 +302,7 @@ const Coms = (props: any) => {
   const handleRefresh = () => {
     queryResData(currentCluster);
     queryPodData(currentCluster);
-    reset();
+    // reset();
     queryNodeList({ clusterId: currentCluster });
 
     queryUseMarket(currentCluster);
@@ -376,9 +356,11 @@ const Coms = (props: any) => {
 
     return options;
   }, []);
-  const [searchKeyWords, setSearchKeyWords] = useState<any>();
+  const [searchKeyWords, setSearchKeyWords] = useState<any>('');
+  const [nodeKeyWords, setNodeKeyWords] = useState<any>('');
   const handleSearchRes = () => {
     let param = searchField.getFieldsValue();
+    setNodeKeyWords(param);
     // setSearchParams(searchField.getFieldsValue());
     queryNodeList({ clusterId: currentCluster, keyword: param.keyword, pageIndex: pageIndex, pageSize: pageSize });
   };
@@ -519,10 +501,35 @@ const Coms = (props: any) => {
             <HulkTable
               rowKey="id"
               size="small"
-              // dataSource={dataSource}
+              dataSource={nodeDataSource}
+              loading={nodeLoading}
               columns={resUseTableSchema as any}
               scroll={{ y: 313 }}
-              {...tableProps}
+              pagination={{
+                pageSize: nodePageSize,
+                total: nodeTotal,
+                current: nodePageIndex,
+                showSizeChanger: true,
+                onShowSizeChange: (_, next) => {
+                  setNodePageIndex(1);
+                  setNodePageSize(next);
+                  // queryPodData(currentCluster, 1, next, searchKeyWords?.keyword);
+                },
+                showTotal: () => `总共 ${nodeTotal} 条数据`,
+
+                // showTotal: () => `总共 ${total} 条数据`,
+                onChange: (next, size: any) => {
+                  setNodePageSize(size);
+                  setNodePageIndex(next),
+                    queryNodeList({
+                      clusterId: currentCluster,
+                      pageIndex: next,
+                      pageSize: size,
+                      keyword: nodeKeyWords?.keyword,
+                    });
+                },
+              }}
+              // {...tableProps}
               customColumnMap={{
                 ip: (value, record) => {
                   return (

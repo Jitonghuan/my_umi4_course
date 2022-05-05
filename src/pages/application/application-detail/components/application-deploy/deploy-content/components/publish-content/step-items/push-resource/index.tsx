@@ -5,25 +5,28 @@
 import React, { useRef, useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button, message } from 'antd';
-import { rePushFeResource } from '@/pages/application/service';
+import { rePushFeResource, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
-import { downloadResource, listAppEnv } from '@/pages/application/service';
+import { downloadSource, listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { deployStatusMapping } from '../../frontend-steps/prod';
 import appConfig from '@/app.config';
 
 /** 发布资源 */
 export default function PushResourceStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env = '', status, ...others } = props;
+
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const [supportEnv, setSupportEnv] = useState<string[]>(['']); //支持离线部署的环境
-  const isLoading = deployStatus === 'pushFeResource';
-  const isError = deployStatus === 'pushFeResourceErr';
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const isLoading = status === 'process';
+  const isError = status === 'error';
   const isFrontend = appData?.appType === 'frontend';
 
   // 用于前端离线部署
-  const canDownload = envTypeCode === 'prod' && isFrontend && Math.floor(deployStatusMapping[deployStatus]) >= 4;
+  const canDownload = envTypeCode === 'prod' && isFrontend && status === 'finish';
 
   useEffect(() => {
     if (!appData?.appCode) return;
@@ -49,7 +52,11 @@ export default function PushResourceStep(props: StepItemProps) {
   };
   const handleRetryClick = async () => {
     try {
-      await rePushFeResource({ id: deployInfo.id, envCode });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('rePushFeResourceEnd');
     }
@@ -60,7 +67,7 @@ export default function PushResourceStep(props: StepItemProps) {
       {...others}
       title="推送资源"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      status={status}
       description={
         <>
           {isError && (
@@ -68,12 +75,17 @@ export default function PushResourceStep(props: StepItemProps) {
               重试
             </Button>
           )}
-          {appConfig.PRIVATE_METHODS === 'public' && supportEnv.includes(envCode) && canDownload && (
+          {appConfig.PRIVATE_METHODS === 'public' && supportEnv.includes(env) && canDownload && (
             <Button
               style={{ marginTop: 4 }}
               target="_blank"
-              href={`${downloadResource}?deployId=${deployInfo.id}`}
+              disabled={disabled}
+              href={`${downloadSource}?id=${metadata?.id}&envCode=${env}`}
               onClick={() => {
+                setDisabled(true);
+                setTimeout(() => {
+                  setDisabled(false);
+                }, 5000);
                 message.info('资源开始下载');
               }}
             >

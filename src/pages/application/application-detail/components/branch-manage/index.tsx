@@ -1,10 +1,6 @@
-// 分支管理
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/08/27 12:41
-
-import React, { useState, useContext, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import moment from 'moment';
-import { Button, message, Form, Input, Table, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -15,6 +11,8 @@ import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
 import { createReview } from '@/pages/application/service';
 import { postRequest } from '@/utils/request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
+import { getListMonitor } from '@/pages/monitor/business/service';
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
@@ -23,6 +21,10 @@ export default function BranchManage() {
   const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
   const [pending, setPending] = useState(false);
   const [reviewId, setReviewId] = useState<string>('');
+  const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
+  const [selectMaster, setSelectMaster] = useState<any>('master');
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+  const selectRef = useRef(null) as any;
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -36,13 +38,23 @@ export default function BranchManage() {
   });
 
   useEffect(() => {
-    if (!appCode) return;
-    queryBranchList({ appCode, env: 'feature' });
-  }, [appCode]);
+    if (!appCode || !selectMaster) return;
+    queryBranchList({ appCode, branchType: 'feature', masterBranch: selectMaster });
+  }, [appCode, selectMaster]);
+
+  useEffect(() => {
+    if (masterListData.length !== 0) {
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
+      setMasterBranchOptions(option);
+      const initValue = option.find((item: any) => item.label === 'master');
+      searchForm.setFieldsValue({ masterName: initValue?.value || '' });
+    }
+  }, [masterListData]);
 
   // 搜索
   const handleSearch = useCallback(() => {
     const values = searchForm.getFieldsValue();
+
     queryBranchList({
       pageIndex: 1,
       ...values,
@@ -54,7 +66,7 @@ export default function BranchManage() {
     try {
       setPending(true);
       const res = await deleteBranch({ id: record.id });
-      if (res.success) {
+      if (res?.success) {
         message.success('操作成功！');
         queryBranchList();
       }
@@ -65,12 +77,12 @@ export default function BranchManage() {
   //创建Review
   const creatReviewUrl = async (record: any) => {
     await postRequest(createReview, { data: { appCode: record.appCode, branch: record.branchName } }).then((reslut) => {
-      if (reslut.success) {
+      if (reslut?.success) {
         message.success('创建Review成功！');
-        queryBranchList();
+        queryBranchList({ branchType: 'feature', masterBranch: selectMaster });
       } else {
-        message.error(reslut.errorMsg);
-        queryBranchList();
+        // message.error(reslut.errorMsg);
+        // queryBranchList({ branchType: 'feature',masterBranch: selectMaster});
       }
     });
   };
@@ -82,10 +94,31 @@ export default function BranchManage() {
       </a>
     );
   };
+
+  const handleChange = (v: any) => {
+    selectRef?.current?.blur();
+    setSelectMaster(v);
+  };
+
   return (
     <ContentCard>
       <div className="table-caption">
         <Form layout="inline" form={searchForm}>
+          <Form.Item label="主干分支" name="masterName">
+            <Select
+              ref={selectRef}
+              options={masterBranchOptions}
+              value={selectMaster}
+              style={{ width: '200px', marginRight: '20px' }}
+              onChange={handleChange}
+              showSearch
+              optionFilterProp="label"
+              // labelInValue
+              filterOption={(input, option) => {
+                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }}
+            />
+          </Form.Item>
           <Form.Item label="分支名" name="branchName">
             <Input.Search placeholder="搜索分支名" enterButton onSearch={handleSearch} style={{ width: 320 }} />
           </Form.Item>
@@ -136,8 +169,18 @@ export default function BranchManage() {
           )}
         />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
-        <Table.Column title="已部署环境" dataIndex="deployedEnv" width={120} />
-        <Table.Column title="创建时间" dataIndex="gmtCreate" width={160} render={datetimeCellRender} />
+        <Table.Column title="已部署流水线" dataIndex="deployedEnv" width={120} />
+        <Table.Column
+          title="创建时间"
+          dataIndex="gmtCreate"
+          width={160}
+          ellipsis
+          render={(value) => (
+            <Tooltip placement="topLeft" title={datetimeCellRender(value)}>
+              {datetimeCellRender(value)}
+            </Tooltip>
+          )}
+        />
         <Table.Column title="创建人" dataIndex="createUser" width={100} />
         <Table.Column
           title="操作"
@@ -167,9 +210,13 @@ export default function BranchManage() {
           setBranchEditMode('HIDE');
           queryBranchList({
             pageIndex: 1,
+            branchType: 'feature',
+            masterBranch: selectMaster,
           });
         }}
         onClose={() => setBranchEditMode('HIDE')}
+        masterBranchOptions={masterBranchOptions}
+        selectMaster={selectMaster}
       />
     </ContentCard>
   );

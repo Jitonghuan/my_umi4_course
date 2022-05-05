@@ -7,24 +7,25 @@ export interface DetailProps {
   tabActiveKey: string;
   queryComponentList: (tabActiveKey: any) => any;
   onClose: () => any;
-  initData?: any;
-  onSave?: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, productLineOptions, initData, onClose, queryComponentList, onSave, tabActiveKey } = props;
+  const { visable, productLineOptions, onClose, queryComponentList, tabActiveKey } = props;
   const [loading, addApplication] = useAddApplication();
   const [appLoading, applicationOptions, getApplicationOption] = useGetApplicationOption();
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [form] = Form.useForm();
   const handleSubmit = () => {
-    const params = form.getFieldsValue();
-    addApplication({ ...params, componentType: tabActiveKey }).then(() => {
-      queryComponentList(tabActiveKey);
-      setTimeout(() => {
-        onClose();
-      }, 200);
+    // const params = form.getFieldsValue();
+    form.validateFields().then((params) => {
+      addApplication({ ...params, componentType: tabActiveKey })
+        .then(() => {
+          queryComponentList(tabActiveKey);
+        })
+        .then(() => {
+          onClose();
+        });
     });
   };
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function BasicModal(props: DetailProps) {
       // closable={!loading}
       width={580}
       footer={[
-        <Button type="primary" onClick={handleSubmit}>
+        <Button type="primary" onClick={handleSubmit} loading={loading}>
           确认
         </Button>,
         <Button
@@ -60,7 +61,7 @@ export default function BasicModal(props: DetailProps) {
         <Form.Item label="环境" name="componentSourceEnv" rules={[{ required: true, message: '请选择环境' }]}>
           <Select style={{ width: 320 }} options={envDataSource} onChange={getEnvCode}></Select>
         </Form.Item>
-        <Form.Item label="生产线" name="productLine" rules={[{ required: true, message: '请选择生产线' }]}>
+        <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
           <Select style={{ width: 320 }} options={productLineOptions}></Select>
         </Form.Item>
         <Form.Item label="组件名称" name="componentName" rules={[{ required: true, message: '请选择组件名称' }]}>
@@ -69,7 +70,7 @@ export default function BasicModal(props: DetailProps) {
         <Form.Item label="组件版本" name="componentVersion" rules={[{ required: true, message: '请输入组件版本' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
-        <Form.Item label="组件描述" name="componentDescription" rules={[{ required: true, message: '请输入组件描述' }]}>
+        <Form.Item label="组件描述" name="componentDescription">
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>
         </Form.Item>
       </Form>

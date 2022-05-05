@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
 import { message } from 'antd';
-import { getRequest, postRequest } from '@/utils/request';
+import { getRequest, postRequest, delRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
 
 //查询版本详情
@@ -58,7 +58,7 @@ export function useEditProductVersionDescription(): [
 //组件查询
 export function useQueryComponentOptions(): [boolean, any, (componentType: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState({});
+  const [dataSource, setDataSource] = useState([]);
 
   const queryComponentOptions = async (componentType: string) => {
     setLoading(true);
@@ -69,20 +69,27 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
-            let options: any = {};
-            dataSource ||
-              [].map((item: any, index: number) => {
-                // options[item.id] = {
-                //   text: item.componentName,
-                // };
-                options = {
-                  [item.id]: { text: item.componentName },
-                };
+            // let options: any = {};
+            let options: any = [];
+            dataSource?.map((item: any) => {
+              // options[item.componentName] = {
+              //   text: item.componentName,
+              // };
+              options.push({
+                label: item.componentName,
+                value: item.componentName,
               });
-            console.log('options11111', options);
+            });
             setDataSource(options);
+            // dataSource?.map((item: any, index: number) => {
+            //     options[item.componentName] = {
+            //       text: item.componentName,
+            //     };
+            //   });
+            // console.log('options11111', options);
+            // setDataSource(options);
           } else {
-            return {};
+            return [];
           }
         })
         .finally(() => {
@@ -96,30 +103,41 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
 }
 
 //组件版本查询
-export function useQueryComponentVersionOptions(): [boolean, any, (componentName: string) => Promise<void>] {
+export function useQueryComponentVersionOptions(): [
+  boolean,
+  any,
+  (componentType: string, componentName?: string) => Promise<void>,
+] {
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState({});
+  const [dataSource, setDataSource] = useState([]);
 
-  const queryProductVersionOptions = async (componentName: string) => {
+  const queryProductVersionOptions = async (componentType: string, componentName?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentVersionList, {
-        data: { componentName, pageSize: -1 },
+        data: { componentType, componentName, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
-            let dataSource = res.data.dataSource;
-            let options: any = {};
-            dataSource ||
-              [].map((item: any) => {
-                options = {
-                  [item.component_version]: { text: item.component_version },
-                };
+            let dataSource = res.data;
+            // let options: any = {};
+            let options: any = [];
+            dataSource?.map((item: any) => {
+              // componentDescription
+              // options[item.componentDescription] = {
+              //   text: item.componentVersion,
+              //   componentDescription: item.componentDescription,
+              // };
+              options.push({
+                label: item.componentVersion,
+                value: item.componentVersion,
+                componentDescription: item.componentDescription,
               });
+            });
             setDataSource(options);
-            console.log('option222', options);
+            console.log('options000', options);
           } else {
-            return {};
+            return [];
           }
         })
         .finally(() => {
@@ -135,32 +153,32 @@ export function useQueryComponentVersionOptions(): [boolean, any, (componentName
 //产品版本添加组件
 export function useAddCompontent(): [
   boolean,
-  (
-    versionId: number,
-    componentType: string,
-    componentName: string,
-    componentVersion: string,
-    componentDescription: string,
-    versionDescription: string,
-  ) => Promise<void>,
+  (paramsObj: {
+    versionId: number;
+    componentType: string;
+    componentName: string;
+    componentVersion: string;
+    componentDescription?: string;
+    // versionDescription?: string,
+  }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const addComponent = async (
-    versionId: number,
-    componentType: string,
-    componentName: string,
-    componentVersion: string,
-    componentDescription: string,
-    versionDescription: string,
-  ) => {
+  const addComponent = async (paramsObj: {
+    versionId: number;
+    componentType: string;
+    componentName: string;
+    componentVersion: string;
+    componentDescription?: string;
+    // versionDescription?: string,
+  }) => {
     setLoading(true);
     try {
       await postRequest(APIS.addComponent, {
-        data: { versionId, componentType, componentName, componentVersion, componentDescription, versionDescription },
+        data: paramsObj,
       })
         .then((res) => {
           if (res.success) {
-            message.success(res.data);
+            message.success('添加成功！');
           } else {
             return;
           }
@@ -178,6 +196,7 @@ export function useAddCompontent(): [
 // 产品版本组件查询
 export function useQueryVersionComponentList(): [
   boolean,
+  any,
   any,
   any,
   any,
@@ -229,7 +248,7 @@ export function useQueryVersionComponentList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, pageInfo, setPageInfo, queryVersionComponentList];
+  return [loading, dataSource, setDataSource, pageInfo, setPageInfo, queryVersionComponentList];
 }
 
 //产品版本删除组件
@@ -238,7 +257,7 @@ export function useDeleteVersionComponent(): [boolean, (id: number) => Promise<v
   const deleteVersionComponent = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.deleteVersionComponent}/${id}`)
+      await delRequest(`${APIS.deleteVersionComponent}/${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);
@@ -296,11 +315,15 @@ export function useQueryOriginList() {
       .then((res) => {
         if (res?.success) {
           let dataSource = res.data.dataSource;
-          let options: any = {};
+          let options: any = [];
           dataSource?.map((item: any) => {
-            options[item.componentName] = {
-              text: item.componentName,
-            };
+            // options[item.componentName] = {
+            //   text: item.componentName,
+            // };
+            options.push({
+              label: item.componentName,
+              value: item.componentName,
+            });
           });
           setDataSource(options);
         } else {
@@ -321,16 +344,22 @@ export function useQueryParamList() {
   const [dataSource, setDataSource] = useState<any>([]);
   const queryParamList = async (versionId: number, componentName: string) => {
     setLoading(true);
-    await getRequest(APIS.queryParamList, { data: { versionId, componentName: 'nacos' } })
+    await getRequest(APIS.queryParamList, { data: { versionId, componentName } })
       .then((res) => {
         if (res?.success) {
           let dataSource = res.data;
-          let options: any = {};
+          // let options: any = {};
+          let options: any = [];
           for (const key in dataSource) {
-            options[key] = {
-              text: key,
+            // options[key] = {
+            //   text: key,
+            //   configParamValue: JSON.stringify(dataSource[key]),
+            // };
+            options.push({
+              label: key,
+              value: key,
               configParamValue: JSON.stringify(dataSource[key]),
-            };
+            });
           }
 
           setDataSource(options);
@@ -402,7 +431,13 @@ export function useQueryDeliveryGloableParamList(): [
   any,
   any,
   any,
-  (versionId: number, configParamComponent?: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
+  (
+    versionId: number,
+    configParamComponent?: string,
+    configParamName?: string,
+    pageIndex?: number,
+    pageInfo?: number,
+  ) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -414,13 +449,14 @@ export function useQueryDeliveryGloableParamList(): [
   const queryDeliveryParamList = async (
     versionId: number,
     configParamComponent?: string,
+    configParamName?: string,
     pageIndex?: number,
     pageSize?: number,
   ) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
-        data: { versionId, configParamComponent, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { versionId, configParamComponent, configParamName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
       })
         .then((res) => {
           if (res.success) {
@@ -449,30 +485,30 @@ export function useQueryDeliveryGloableParamList(): [
 //保存交付配置参数
 export function useSaveParam(): [
   boolean,
-  (
-    versionId: number,
-    configParamComponent: string,
-    configParamName: string,
-    configParamValue: string,
-    configParamDescription: string,
-  ) => Promise<void>,
+  (paramsObj: {
+    versionId: number;
+    configParamComponent: string;
+    configParamName: string;
+    configParamValue: string;
+    configParamDescription?: string;
+  }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const saveParam = async (
-    versionId: number,
-    configParamComponent: string,
-    configParamName: string,
-    configParamValue: string,
-    configParamDescription: string,
-  ) => {
+  const saveParam = async (paramsObj: {
+    versionId: number;
+    configParamComponent: string;
+    configParamName: string;
+    configParamValue: string;
+    configParamDescription?: string;
+  }) => {
     setLoading(true);
     try {
       await postRequest(APIS.saveParam, {
-        data: { versionId, configParamComponent, configParamName, configParamValue, configParamDescription },
+        data: paramsObj,
       })
         .then((res) => {
           if (res.success) {
-            message.success(res.data);
+            message.success('保存成功！');
           } else {
             return;
           }
@@ -487,6 +523,39 @@ export function useSaveParam(): [
   return [loading, saveParam];
 }
 
+//编辑交付配置参数
+export function useEditVersionParam(): [
+  boolean,
+  (paramsObj: { id: number; configParamValue: string; configParamDescription: string }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const editVersionParam = async (paramsObj: {
+    id: number;
+    configParamValue: string;
+    configParamDescription: string;
+  }) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.editVersionParam, {
+        data: paramsObj,
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success('修改成功！');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, editVersionParam];
+}
+
 //删除交付配置参数
 
 export function useDeleteDeliveryParam(): [boolean, (id: number) => Promise<void>] {
@@ -494,7 +563,7 @@ export function useDeleteDeliveryParam(): [boolean, (id: number) => Promise<void
   const deleteDeliveryParam = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.deleteDeliveryParam}/${id}`)
+      await delRequest(`${APIS.deleteDeliveryParam}/${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);

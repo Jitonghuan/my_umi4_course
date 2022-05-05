@@ -2,74 +2,73 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useQueryProductList, useQueryProductVersionList, useCreateIndent } from './hook';
 export interface ProductListProps {
   visable?: boolean;
-  initData?: any;
   onClose?: () => any;
-  onSave?: () => any;
+  onSave: () => any;
 }
 
 export default function CreateProductModal(props: ProductListProps) {
-  const { visable, initData, onClose, onSave } = props;
-
+  const { visable, onClose, onSave } = props;
+  const [productOptionsLoading, productOptions] = useQueryProductList();
+  const [productVersionloading, ProductVersionOptions, queryProductVersionList] = useQueryProductVersionList();
+  const [creatLoading, createIndent] = useCreateIndent();
   const [form] = Form.useForm();
-  const normFile = (e: any) => {
-    console.log('Upload event:', e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
+  const chooseProduct = (param: any) => {
+    queryProductVersionList(param.value);
   };
-  const Uploadprops: any = {
-    name: 'file',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    headers: {
-      authorization: 'authorization-text',
-    },
-    onChange(info: any) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-    progress: {
-      strokeColor: {
-        '0%': '#108ee9',
-        '100%': '#87d068',
-      },
-      strokeWidth: 3,
-      format: (percent: any) => `${parseFloat(percent.toFixed(2))}%`,
-    },
+
+  const onCreatIndent = () => {
+    form.validateFields().then((params) => {
+      createIndent({ ...params, productName: params.productName.label }).then(() => {
+        onSave();
+      });
+    });
   };
+
+  useEffect(() => {
+    return () => {
+      form.resetFields();
+    };
+  }, [visable]);
+
   return (
     <Modal
       title="创建制品"
       visible={visable}
-      // onCancel={handleCancel}
+      onCancel={onClose}
       // closable={!loading}
       width={580}
-      footer={[<Button type="primary">确认</Button>, <Button>取消</Button>]}
+      footer={[
+        <Button type="primary" loading={creatLoading} onClick={onCreatIndent}>
+          确认
+        </Button>,
+        <Button onClick={onClose}>取消</Button>,
+      ]}
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
-        <Form.Item label="制品名称" name="envCode" rules={[{ required: true, message: '请选择应用类型' }]}>
+        <Form.Item label="制品名称" name="indentName" rules={[{ required: true, message: '请填写制品名称' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
-        <Form.Item label="交付项目" name="comPonentName" rules={[{ required: true, message: '请选择应用类型' }]}>
+        <Form.Item label="交付项目" name="deliveryProject" rules={[{ required: true, message: '请填写交付项目' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
 
-        <Form.Item label="制品描述" name="envCode" rules={[{ required: true, message: '请选择应用类型' }]}>
+        <Form.Item label="制品描述" name="indentDescription" rules={[{ required: true, message: '请填写制品描述' }]}>
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>
         </Form.Item>
-        <Form.Item label="交付产品" name="envCode" rules={[{ required: true, message: '请选择应用类型' }]}>
-          <Select style={{ width: 320 }}></Select>
+        <Form.Item label="交付产品" name="productName" rules={[{ required: true, message: '请选择交付产品' }]}>
+          <Select
+            style={{ width: 320 }}
+            loading={productOptionsLoading}
+            options={productOptions}
+            labelInValue
+            onChange={chooseProduct}
+          ></Select>
         </Form.Item>
-        <Form.Item label="产品版本" name="envCode" rules={[{ required: true, message: '请选择应用类型' }]}>
-          <Select style={{ width: 320 }}></Select>
+        <Form.Item label="产品版本" name="productVersion" rules={[{ required: true, message: '请选择产品版本' }]}>
+          <Select style={{ width: 320 }} loading={productVersionloading} options={ProductVersionOptions}></Select>
         </Form.Item>
       </Form>
     </Modal>

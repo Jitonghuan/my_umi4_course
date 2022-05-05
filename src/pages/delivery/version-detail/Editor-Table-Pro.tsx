@@ -6,6 +6,7 @@ import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Space, Select, Form, Popconfirm } from 'antd';
 import { productionPageTypes } from './tab-config';
 import { PlusOutlined } from '@ant-design/icons';
+import type { ProFormInstance } from '@ant-design/pro-form';
 import {
   useQueryComponentOptions,
   useQueryComponentVersionOptions,
@@ -45,7 +46,6 @@ const OptionList: React.FC<{
   const [selectValue, setSelectValue] = useState<string>('');
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLOptionElement>) => {
-    console.log('e.target.value', e.target.value);
     setSelectValue(e.target.value);
   };
 
@@ -78,23 +78,6 @@ type DataSourceType = {
   children?: DataSourceType[];
 };
 
-const defaultData: DataSourceType[] = [
-  {
-    id: 624748504,
-    title: '活动名称一',
-    labels: [{ key: 'woman', label: '川妹子' }],
-    state: 'open',
-    created_at: '2020-05-26T09:42:56Z',
-  },
-  {
-    id: 624691229,
-    title: '活动名称二',
-    labels: [{ key: 'man', label: '西北汉子' }],
-    state: 'closed',
-    created_at: '2020-05-26T08:19:22Z',
-  },
-];
-
 export interface VersionDetailProps {
   currentTab: string;
   currentTabType: string;
@@ -108,83 +91,135 @@ export default (props: VersionDetailProps) => {
   const [addLoading, addComponent] = useAddCompontent();
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
-  const [loading, tableDataSource, pageInfo, setPageInfo, queryVersionComponentList] = useQueryVersionComponentList();
+  const [loading, tableDataSource, setDataSource, pageInfo, setPageInfo, queryVersionComponentList] =
+    useQueryVersionComponentList();
   const [delLoading, deleteVersionComponent] = useDeleteVersionComponent();
   const actionRef = useRef<ActionType>();
+  const ref = useRef<ProFormInstance>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-  const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+  // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
   const [form] = Form.useForm();
+
+  const updateRow = (rowKey: string, row: any) => {
+    form.setFieldsValue({ [rowKey]: row });
+  };
   useEffect(() => {
     queryComponentOptions(currentTabType); //组件查询
-    queryProductVersionOptions(currentTabType); //组件版本查询
+    // queryProductVersionOptions(currentTabType); //组件版本查询
     queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: '组件名称',
+      title: currentTabType === 'app' ? '应用名称' : currentTabType === 'middleware' ? '中间件名称' : '基础数据名称',
       key: 'componentName',
       dataIndex: 'componentName',
       valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
-      // renderFormItem:()=><TagList />
-      // valueEnum: componentOptions,
+      renderFormItem: (_, config: any, data) => {
+        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
+        let currentValue = componentOptions[config.record?.componentName];
+        // queryProductVersionOptions(currentTabType,currentValue)
+
+        return (
+          <Select
+            options={componentOptions}
+            onChange={(value: any) => {
+              queryProductVersionOptions(currentTabType, value);
+            }}
+          ></Select>
+        );
+      },
     },
     {
-      title: '组件版本',
+      title: currentTabType === 'app' ? '应用版本' : currentTabType === 'middleware' ? '中间件版本' : '基础数据版本',
       key: 'componentVersion',
       dataIndex: 'componentVersion',
       valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      // initialValue:list,
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
-      valueEnum: {
-        1.0: { text: '版本1.0' },
-        open: {
-          text: '未解决',
-        },
-        closed: {
-          text: '已解决',
-        },
+      // valueEnum: componentVersionOptions,
+      renderFormItem: (_, config: any, data) => {
+        let description = '';
+        componentVersionOptions.filter((item: any) => {
+          if (item.value === config.record?.componentVersion) {
+            description = item.componentDescription;
+          }
+        });
+        return (
+          <Select
+            options={componentVersionOptions}
+            onChange={(value: any) => {
+              componentVersionOptions.filter((item: any) => {
+                if (item.value === value) {
+                  updateRow(config.recordKey, {
+                    ...form.getFieldsValue(config.recordKey),
+                    componentDescription: item.componentDescription,
+                  });
+                }
+              });
+            }}
+          ></Select>
+        );
       },
     },
     {
-      title: '组件描述',
+      title: currentTabType === 'app' ? '应用描述' : currentTabType === 'middleware' ? '中间件描述' : '基础数据描述',
       dataIndex: 'componentDescription',
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
+      },
+
+      renderFormItem: (_, config: any, data) => {
+        return <Input></Input>;
+      },
     },
 
     {
       title: '操作',
       valueType: 'option',
       width: 250,
-      render: (text, record, _, action) => [
-        // <a
-        //   key="editable"
-        //   onClick={() => {
-        //     action?.startEditable?.(record.id);
-        //   }}
-        // >
-        //   编辑
-        // </a>,
+      render: (text, record: any, _, action) => [
         <a
           //  key="editable"
           onClick={() => {
             history.push({
               pathname: '/matrix/delivery/component-detail',
               state: {
-                activeKey: 'component-config',
+                // activeKey: 'component-config',
+                initRecord: record,
+                componentName: record.componentName,
+                componentVersion: record.componentVersion,
                 componentId: record.id,
+                componentType: currentTab,
+                componentDescription: record.componentDescription,
               },
             });
           }}
@@ -195,7 +230,7 @@ export default (props: VersionDetailProps) => {
           title="确定要删除吗？"
           onConfirm={() => {
             deleteVersionComponent(record.id).then(() => {
-              setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
             });
           }}
         >
@@ -205,8 +240,8 @@ export default (props: VersionDetailProps) => {
     },
   ];
   const search = () => {
-    const componentName = searchForm.getFieldsValue();
-    queryVersionComponentList(versionId, currentTab, componentName);
+    const value = searchForm.getFieldsValue();
+    queryVersionComponentList(versionId, currentTab, value.componentName);
   };
   return (
     <>
@@ -214,10 +249,20 @@ export default (props: VersionDetailProps) => {
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
             <Form.Item name="componentName">
-              <Input style={{ width: 220 }} placeholder="请输入组件名称"></Input>
+              <Input
+                style={{ width: 220 }}
+                placeholder={
+                  currentTabType === 'app'
+                    ? '请输入应用名称'
+                    : currentTabType === 'middleware'
+                    ? '请输入中间件名称'
+                    : '请输入基础数据名称'
+                }
+              ></Input>
             </Form.Item>
             <Form.Item>
               <Button
+                type="primary"
                 onClick={() => {
                   search();
                 }}
@@ -256,16 +301,18 @@ export default (props: VersionDetailProps) => {
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
+        formRef={ref}
         headerTitle="可编辑表格"
+        loading={loading}
         // maxLength={5}
         // 关闭默认的新建按钮
         recordCreatorProps={false}
         columns={columns}
-        request={async () => ({
-          data: defaultData,
-          total: 3,
-          success: true,
-        })}
+        // request={async () => ({
+        //   data: defaultData,
+        //   total: 3,
+        //   success: true,
+        // })}
         value={tableDataSource}
         onChange={setDataSource}
         pagination={{
@@ -285,8 +332,13 @@ export default (props: VersionDetailProps) => {
           form,
           editableKeys,
           onSave: async () => {
+            let value = form.getFieldsValue();
+            let objKey = Object.keys(value);
+            let params = value[objKey[0]];
             // addComponent(versionId,initDataSource,)
-            await waitTime(800);
+            await addComponent({ versionId, ...params, componentType: currentTab }).then(() => {
+              queryVersionComponentList(versionId, currentTab);
+            });
           },
           onChange: setEditableRowKeys,
           actionRender: (row, config, dom) => [dom.save, dom.cancel],

@@ -5,10 +5,11 @@
  * @create 2021-04-25 16:05
  */
 
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import { Modal, Button, List, Tag } from 'antd';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import VCDescription from '@/components/vc-description';
+import _ from 'lodash';
 import DetailContext from '@/pages/application/application-detail/context';
 import { recordFieldMap, recordFieldMapOut, recordDisplayMap } from './schema';
 import moment from 'moment';
@@ -40,14 +41,14 @@ export default function PublishRecord(props: IProps) {
     showRequestError: true,
     loadMore: true,
   });
-
   useEffect(() => {
     queryDataSource({
       appCode,
       envTypeCode: env,
       pageIndex: 1,
     });
-  }, []);
+  }, [appCode]);
+
   useEffect(() => {
     let intervalId = setInterval(() => {
       if (appCode && env) {
@@ -63,6 +64,55 @@ export default function PublishRecord(props: IProps) {
       clearInterval(intervalId);
     };
   }, []);
+  // useEffect(() => {
+  //   queryDataSource({
+  //     appCode,
+  //     envTypeCode: env,
+  //     pageIndex: 1,
+  //   });
+  // }, []);
+  // useEffect(() => {
+  //   // let intervalId = setInterval(() => {
+  //   //   if (appCode && env) {
+  //   //     queryDataSource({
+  //   //       appCode,
+  //   //       envTypeCode: env,
+  //   //       pageIndex: 1,
+  //   //     });
+  //   //   }
+  //   // }, 8000);
+  //   timerHandle('do', true);
+
+  //   // return () => {
+  //   //   clearInterval(intervalId);
+  //   // };
+  // }, []);
+
+  let dom: any = document?.getElementById('load-more-list');
+  let scrollTop = useRef<any>(dom?.scrollTop);
+  // let scrollTop = dom?.scrollTop; // 滚动条距离顶部的距离
+  // useEffect(() => {
+  //   if (dom) {
+  //     console.log('00000');
+  //     dom.addEventListener('scroll', getScroll(), true);
+  //   }
+
+  //   // return () => {
+  //   //    dom?.removeEventListener('scroll', getScroll(),true);
+  //   // };
+  // }, [dom, scrollTop.current]);
+  //定义定时器方法
+  // const intervalFunc = () => {
+  //   if (appCode && env) {
+  //     queryDataSource({
+  //       appCode,
+  //       envTypeCode: env,
+  //       pageIndex: 1,
+  //     });
+  //   }
+  // };
+  // // 定时请求发布内容
+  // const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -104,17 +154,44 @@ export default function PublishRecord(props: IProps) {
 
   const renderLoadMore = () => {
     const { pageSize = 0, total = 0, current = 0 } = tableProps?.pagination || {};
-
     return (
       total > 0 &&
       total > pageSize && (
         <div className={`${rootCls}-btns`}>
-          <Button ghost type="primary" onClick={loadMore}>
+          <Button
+            ghost
+            type="primary"
+            onClick={() => {
+              loadMore;
+              // timerHandle('stop');
+            }}
+          >
             加载更多
           </Button>
         </div>
       )
     );
+  };
+  const getScroll = () => {
+    // let dom: any = document?.getElementById('load-more-list');
+    console.log('dom.scrollTop', scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
+    if (dom) {
+      // dom?.scrollTo(0, 0);
+      scrollTop.current = dom?.scrollTop; // 滚动条距离顶部的距离
+      let windowHeight = dom?.clientHeight; // 可视区的高度
+      let scrollHeight = dom?.scrollHeight; //dom元素的高度，包含溢出不可见的内容
+      // const scroll =scrollHeight-scrollTop-windowHeight;
+      console.log('dom.scroll', dom?.scrollTop, scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
+      if (scrollTop.current > 3) {
+        console.log('到达底部开始滑动！');
+        // timerHandle('stop');
+      }
+      if (scrollTop.current <= 20) {
+        // timerHandle('do', true);
+        console.log('到达顶部！');
+        console.log('dom.scroll', dom?.scrollTop, scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
+      }
+    }
   };
 
   // 显示详情
@@ -130,6 +207,7 @@ export default function PublishRecord(props: IProps) {
         <div>
           <List
             className="demo-loadmore-list"
+            id="load-more-list"
             // loading={tableProps.loading}
             itemLayout="vertical"
             loadMore={renderLoadMore()}
@@ -178,7 +256,7 @@ export default function PublishRecord(props: IProps) {
         </div>
       ) : null}
 
-      <Modal title="发布详情" width={600} visible={visible} footer={false} onCancel={() => setVisible(false)}>
+      <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
         <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
       </Modal>
     </div>

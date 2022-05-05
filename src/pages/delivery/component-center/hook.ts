@@ -66,6 +66,7 @@ export function useQueryComponentList(): [
   any,
   any,
   any,
+  any,
   (componentType: string, componentName?: string, pageIndex?: number, pageSize?: number) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
@@ -107,7 +108,7 @@ export function useQueryComponentList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, pageInfo, setPageInfo, queryComponentList];
+  return [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList];
 }
 
 //用户组件接入
@@ -150,7 +151,7 @@ export function useAddApplication(): [
       })
         .then((res) => {
           if (res.success) {
-            message.success(res.data);
+            message.success('新增成功！');
           } else {
             return;
           }
@@ -268,7 +269,7 @@ export function useDeleteComponent(): [boolean, (id: number) => Promise<void>] {
   const deleteComponent = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.deleteComponent}/${id}`)
+      await postRequest(`${APIS.deleteComponent}?id=${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);

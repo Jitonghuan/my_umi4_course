@@ -5,6 +5,8 @@ export interface IProps {
   hasPublishContent: boolean;
   deployInfo: Record<string, any>;
   env: string;
+  onSearch: string;
+  masterBranchChange: any;
   dataSource: Array<{
     id: string | number;
     branchName: string;
@@ -14,4 +16,5 @@ export interface IProps {
   }>;
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
+  pipelineCode: string;
 }
