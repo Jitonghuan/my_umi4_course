@@ -98,6 +98,7 @@ const funcName = (props: any) => {
       </Descriptions.Item>
       <Descriptions.Item label="发布完成时间">{dataSource?.deployFinishTime}</Descriptions.Item>
       <Descriptions.Item label="发布环境">{dataSource?.envs}</Descriptions.Item>
+      <Descriptions.Item label="流水线Code">{dataSource?.pipelineCode}</Descriptions.Item>
       <Descriptions.Item label="发布状态">
         {/* {dataSource?.deployStatus} */}
         {
