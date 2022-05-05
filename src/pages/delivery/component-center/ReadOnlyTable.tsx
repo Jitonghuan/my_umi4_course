@@ -29,14 +29,14 @@ export default function VersionDetail(props: DetailProps) {
   }, [currentTab]);
   const columns = [
     {
-      title:
-        currentTab === 'app' ? '应用组件名称' : currentTab === 'middleware' ? '中间件组件名称' : '基础数据组件名称',
+      title: '名称',
+      // currentTab === 'app' ? '应用组件名称' : currentTab === 'middleware' ? '中间件组件名称' : '基础数据组件名称',
       dataIndex: 'componentName',
       key: 'componentName',
     },
     {
-      title:
-        currentTab === 'app' ? '应用组件描述' : currentTab === 'middleware' ? '中间件组件描述' : '基础数据组件描述',
+      title: '描述',
+      // currentTab === 'app' ? '应用组件描述' : currentTab === 'middleware' ? '中间件组件描述' : '基础数据组件描述',
 
       dataIndex: 'componentDescription',
       key: 'componentDescription',

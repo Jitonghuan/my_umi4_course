@@ -42,15 +42,20 @@ export default function ConfigContent({ env, configType }: IProps) {
 
   function fixString(envCode: string) {
     let appointString = 'clusterb';
-    envCode = envCode.toLowerCase(); //不区分大小写：全部转为小写后进行判断
-    let start = envCode.length - appointString.length;
-    var char = envCode.substr(start, appointString.length); //将相差长度作为开始下标，特定字符长度为截取长度
+    try {
+      envCode = envCode?.toLowerCase(); //不区分大小写：全部转为小写后进行判断
+      let start = envCode.length - appointString.length;
+      var char = envCode.substr(start, appointString.length); //将相差长度作为开始下标，特定字符长度为截取长度
 
-    if (char == appointString) {
-      //两者相同，则代表是以clusterb结尾，则需要禁用编辑功能；
-      return true;
+      if (char == appointString) {
+        //两者相同，则代表是以clusterb结尾，则需要禁用编辑功能；
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log('error', error);
     }
-    return false;
   }
   // 查询应用环境数据  获取到的该应用的环境信息用来判断useNacose的值
   // 进入页面加载环境和版本信息
