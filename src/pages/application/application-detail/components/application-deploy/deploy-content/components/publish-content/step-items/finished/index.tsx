@@ -17,6 +17,7 @@ export default function FinishedStep(props: StepItemProps) {
   const { appData } = useContext(DetailContext);
   const downLoadSupportEnv = useRef<string[]>(['']);
   const [disabled, setDisabled] = useState<boolean>(false);
+  const [supportEnv, setSupportEnv] = useState<any>([]);
 
   const isNotFrontend = appData?.appType !== 'frontend';
 
@@ -38,7 +39,9 @@ export default function FinishedStep(props: StepItemProps) {
         result?.data?.map((item: any) => {
           downloadImageEnv.push(item.envCode);
         });
-        downLoadSupportEnv.current = downloadImageEnv;
+        console.log(downloadImageEnv, '11');
+        setSupportEnv(downloadImageEnv);
+        // downLoadSupportEnv.current = downloadImageEnv;
       }
     });
   };
@@ -50,7 +53,7 @@ export default function FinishedStep(props: StepItemProps) {
       status={status}
       description={
         status === 'finish' &&
-        downLoadSupportEnv.current?.includes(env) &&
+        supportEnv?.includes(env) &&
         appConfig.PRIVATE_METHODS === 'public' &&
         isNotFrontend && (
           <Button

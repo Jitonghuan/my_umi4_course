@@ -30,7 +30,7 @@ const judgeColor = (data: any, index: number, type: string, notShowCancel?: any,
   }
   if (nodes && Array.isArray(nodes)) {
     let status = type === 'cancel' ? nodes[nodes.length - 1].nodeStatus : nodes[0].nodeStatus;
-    if (status && status !== 'wait') {
+    if (status && status === 'finish') {
       if (notShowCancel) {
         notShowCancel();
       }

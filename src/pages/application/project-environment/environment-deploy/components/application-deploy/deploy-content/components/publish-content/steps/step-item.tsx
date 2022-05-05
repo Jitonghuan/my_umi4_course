@@ -22,7 +22,7 @@ const stepMap: any = {
   verify: GrayValidationStep,
   mergeMaster: MergeMasterStep,
   merge: MergeReleaseStep,
-  wait: PushResourceStep,
+  pushResource: PushResourceStep,
   pushVersion: PushVersionStep,
   qualityCheck: QualityCheckStep,
 };
