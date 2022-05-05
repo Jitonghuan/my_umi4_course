@@ -69,7 +69,7 @@ const funcName = (props: any) => {
     if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
       const element = dataSource[key];
       console.log('element', element);
-      publishRecordData.push({ label: key, value: dataSource[key] });
+      publishRecordData.push({ label: key || '', value: dataSource[key] || '' });
     }
   }
 
@@ -125,7 +125,7 @@ const funcName = (props: any) => {
           </Tag>
         }
       </Descriptions.Item>
-      //43222
+
       <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
         {dataSource?.jenkinsUrl && (env === 'prod' ? dataSource?.deployId > 43222 : dataSource?.deployId > 1595) ? (
           <>
