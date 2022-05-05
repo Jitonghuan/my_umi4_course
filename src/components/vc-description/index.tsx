@@ -63,8 +63,10 @@ const funcName = (props: any) => {
 
   let publishRecordData: any = [];
   for (const key in dataSource) {
+    console.log('dataSource', dataSource);
     if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
       const element = dataSource[key];
+      console.log('element', element);
       publishRecordData.push({ label: key, value: dataSource[key] });
     }
   }

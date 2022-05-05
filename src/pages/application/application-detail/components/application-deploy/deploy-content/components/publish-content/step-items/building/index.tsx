@@ -22,6 +22,7 @@ export default function BuildingStep(props: StepItemProps) {
   const { deployingBatch, confirm } = item || {};
   const [disabled, setDisabled] = useState<boolean>(false);
   const { buildUrl } = buildInfo || {};
+
   // const url = getItemByKey(buildUrl, env) ? getItemByKey(buildUrl, env) : '';
   const url = getItemByKey(buildUrl, 'singleBuild')
     ? getItemByKey(buildUrl, 'singleBuild')
@@ -32,6 +33,11 @@ export default function BuildingStep(props: StepItemProps) {
   const isLoading = status === 'process';
   const isNotFrontend = appData?.appType !== 'frontend';
   const [deployVisible, setDeployVisible] = useState(false);
+  useEffect(() => {
+    if (status && status === 'finish') {
+      setDeployVisible(false);
+    }
+  }, [status]);
 
   useEffect(() => {
     if (!appData?.appCode) return;
