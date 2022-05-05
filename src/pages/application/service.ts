@@ -207,6 +207,13 @@ export const createReview = `${appConfig.apiPrefix}/releaseManage/branch/createR
 
 /** POST  获取分支review状态 */
 export const getReviewStatus = `${appConfig.apiPrefix}/releaseManage/branch/getReviewStatus`;
+
+/** GET 从regulus列出在线bug列表 */
+export const getRegulusOnlineBugs = `${appConfig.apiPrefix}/publishManage/third/regulus/onlineBugs`;
+
+/** GET 从regulus列出project信息 */
+export const getRegulusProjects = `${appConfig.apiPrefix}/publishManage/third/regulus/projects`;
+
 let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 /** POST 新建分支关联需求 */
 export const queryPortalList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/list`;

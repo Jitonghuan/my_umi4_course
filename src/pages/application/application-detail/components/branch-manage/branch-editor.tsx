@@ -17,6 +17,7 @@ export interface IProps {
 }
 
 export default function BranchEditor(props: IProps) {
+  const { Option } = Select;
   const { mode, appCode, onClose, onSubmit, appCategoryCode } = props;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -24,6 +25,12 @@ export default function BranchEditor(props: IProps) {
   const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
   const [projectId, setProjectId] = useState<string>('');
   const [demandId, setDemandId] = useState<any>([]);
+  const selectBefore = (
+    <Select defaultValue="http://" className="select-before">
+      <Option value="http://">http://</Option>
+      <Option value="https://">https://</Option>
+    </Select>
+  );
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
