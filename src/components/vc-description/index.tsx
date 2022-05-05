@@ -114,12 +114,22 @@ const funcName = (props: any) => {
               <div style={{ marginBottom: '5px' }}>
                 {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
                 <a href={jenkinsItem.JenkinsUrl} target="_blank">
-                  {jenkinsItem?.JenkinsUrl}
+                  {jenkinsItem?.JenkinsUrl || jenkinsItem?.subJenkinsUrl}
                 </a>
               </div>
             ))}
           </>
-        ) : null}
+        ) : // <>
+        // {getJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+        //   <div style={{ marginBottom: '5px' }}>
+        //     {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+        //     <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+        //       {jenkinsItem?.subJenkinsUrl}
+        //     </a>
+        //   </div>
+        // ))}
+        // </>
+        null}
       </Descriptions.Item>
 
       {dataSource?.tagName !== '' && <Descriptions.Item label="tag">{dataSource?.tagName}</Descriptions.Item>}
