@@ -207,11 +207,9 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
               重新提交
             </Button>
           )}
-          {!isProd ? (
-            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-              退出分支
-            </Button>
-          ) : null}
+          <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
+            退出分支
+          </Button>
           {/* {!isFrontend && !isProd && (
             <Popconfirm
               title="确定要重启应用吗？"

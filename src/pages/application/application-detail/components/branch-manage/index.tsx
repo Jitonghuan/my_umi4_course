@@ -66,7 +66,7 @@ export default function BranchManage() {
     try {
       setPending(true);
       const res = await deleteBranch({ id: record.id });
-      if (res.success) {
+      if (res?.success) {
         message.success('操作成功！');
         queryBranchList();
       }

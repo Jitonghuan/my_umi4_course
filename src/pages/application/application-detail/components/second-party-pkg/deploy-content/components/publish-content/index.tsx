@@ -90,9 +90,8 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
       <div className={`${rootCls}__list-wrap`}>
         <div className={`${rootCls}__list-header`}>
           <span className={`${rootCls}__list-header-text`}>内容列表</span>
-
-          {!isProd && (
-            <div className={`${rootCls}__list-header-btns`}>
+          <div className={`${rootCls}__list-header-btns`}>
+            {!isProd && (
               <Button
                 type="primary"
                 disabled={!selectedRowKeys.length}
@@ -121,38 +120,38 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
               >
                 重新提交
               </Button>
-              <Button
-                type="primary"
-                disabled={!selectedRowKeys.length}
-                onClick={() => {
-                  onOperate('batchExitStart');
+            )}
+            <Button
+              type="primary"
+              disabled={!selectedRowKeys.length}
+              onClick={() => {
+                onOperate('batchExitStart');
 
-                  confirm({
-                    title: '确定要批量退出吗?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk() {
-                      return withdrawFeatures({
-                        // appCode,
-                        // envTypeCode,
-                        features: deployedList
-                          .filter((item) => selectedRowKeys.includes(item.id))
-                          .map((item) => item.branchName),
-                        // isClient: true,
-                        id: metadata?.id,
-                      }).then(() => {
-                        onOperate('batchExitEnd');
-                      });
-                    },
-                    onCancel() {
+                confirm({
+                  title: '确定要批量退出吗?',
+                  icon: <ExclamationCircleOutlined />,
+                  onOk() {
+                    return withdrawFeatures({
+                      // appCode,
+                      // envTypeCode,
+                      features: deployedList
+                        .filter((item) => selectedRowKeys.includes(item.id))
+                        .map((item) => item.branchName),
+                      // isClient: true,
+                      id: metadata?.id,
+                    }).then(() => {
                       onOperate('batchExitEnd');
-                    },
-                  });
-                }}
-              >
-                退出分支
-              </Button>
-            </div>
-          )}
+                    });
+                  },
+                  onCancel() {
+                    onOperate('batchExitEnd');
+                  },
+                });
+              }}
+            >
+              退出分支
+            </Button>
+          </div>
         </div>
 
         <HulkTable
