@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 21:09
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Steps, Button, Modal } from 'antd';
 import { retryDeploy, retry } from '@/pages/application/service';
@@ -33,6 +33,12 @@ export default function DeployingStep(props: StepItemProps) {
   const jenkinsUrl = getItemByKey(buildUrl, env) || '';
   const isLoading = status === 'process';
   const [deployVisible, setDeployVisible] = useState(false);
+
+  useEffect(() => {
+    if (status && status === 'finish') {
+      setDeployVisible(false);
+    }
+  }, [status]);
 
   const handleShowErrorDetail = () => {
     Modal.info({
@@ -100,7 +106,7 @@ export default function DeployingStep(props: StepItemProps) {
                     setDeployVisible(true);
                   }}
                 >
-                  确认部署
+                  {confirm?.label}
                 </a>
               </div>
             )}

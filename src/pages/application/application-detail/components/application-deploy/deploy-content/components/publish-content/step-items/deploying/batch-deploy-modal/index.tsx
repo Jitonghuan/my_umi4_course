@@ -23,7 +23,7 @@ export default function BatchDeployModal({
   onOperate,
   deployingBatch,
   id,
-  jenkinUrl,
+  jenkinsUrl,
 }: any) {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
@@ -69,7 +69,7 @@ export default function BatchDeployModal({
   // 发布申请数据
   const deployApply = async (env: any) => {
     await getRequest(applyHaveNoUpPlanList, { data: { appCode, envCode: env } }).then((res) => {
-      if (res.success) {
+      if (res?.success) {
         let dataArry: any = [];
         let dataSource = res.data || [];
         dataSource?.map((item: any) => {
@@ -108,11 +108,13 @@ export default function BatchDeployModal({
       //   <span>{envName}正在部署中...</span>
       // );
       text2 = <span>第一批正在部署中,请等待.....</span>;
-    } else if (deployingBatch && deployingBatch === 2) {
+    } else if (deployingBatch && deployingBatch === 12) {
       // text1 = (
       //   <span>{envName}正在部署中...</span>
       // );
       text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
+    } else if (deployingBatch && deployingBatch === 2) {
+      text2 = <span>第二批正在部署中,请等待.....</span>;
     }
     return (
       <>
@@ -121,9 +123,9 @@ export default function BatchDeployModal({
           {text1}
           {text2}
         </div>
-        {jenkinUrl && (
+        {jenkinsUrl && (
           <div>
-            <a target="_blank" href={jenkinUrl}>
+            <a target="_blank" href={jenkinsUrl}>
               查看构建详情
             </a>
           </div>
@@ -139,15 +141,12 @@ export default function BatchDeployModal({
   };
 
   const handleOk = () => {
-    const currentDeployBatch = deployingBatch && deployingBatch === 2 ? 2 : deployBatch;
+    const currentDeployBatch = deployingBatch && deployingBatch === 12 ? 2 : deployBatch;
     confirmDeploy({ deployingBatch: currentDeployBatch, applyIds: currentAppIds, envCode: env, id }).then((res) => {
       if (res && res.success) {
-        if (currentDeployBatch === 2 || deployBatch === 0) {
+        if (currentDeployBatch === 0) {
           onCancel();
           onOperate('deployEnd');
-          if (currentDeployBatch === 2) {
-            message.success('操作成功，正在部署中...');
-          }
         }
       }
     });
@@ -157,8 +156,8 @@ export default function BatchDeployModal({
     <Modal
       title="批量部署"
       visible={visible}
-      confirmLoading={deployingBatch === 1}
-      okText={deployingBatch && deployingBatch === 2 ? '继续' : '确认'}
+      confirmLoading={deployingBatch === 1 || deployingBatch === 2}
+      okText={deployingBatch && deployingBatch === 12 ? '继续' : '确认'}
       onOk={handleOk}
       onCancel={onCancel}
     >
@@ -170,7 +169,7 @@ export default function BatchDeployModal({
       <div style={{ marginTop: 8 }}>
         <span>发布批次：</span>
         <Radio.Group
-          disabled={[1, 2].includes(deployingBatch)}
+          disabled={[1, 2, 12].includes(deployingBatch)}
           value={deployBatch}
           onChange={(v) => {
             setDeployBatch(v.target.value);
@@ -197,7 +196,7 @@ export default function BatchDeployModal({
       )}
 
       <h3 style={{ marginTop: 20 }}>发布详情</h3>
-      {[1, 2].includes(deployingBatch) ? detail : ''}
+      {[1, 2, 12].includes(deployingBatch) ? detail : ''}
     </Modal>
   );
 }

@@ -83,7 +83,7 @@ export default function BuildingStep(props: StepItemProps) {
                 setDisabled(true);
                 setTimeout(() => {
                   setDisabled(false);
-                }, 5000);
+                }, 10000);
                 message.info('镜像开始下载');
               }}
             >

@@ -211,16 +211,13 @@ export default function PublishContent(props: IProps) {
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>
         <div className="caption-right">
-          {!isProd && (
-            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-              重新提交
-            </Button>
-          )}
-          {!isProd ? (
-            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-              退出分支
-            </Button>
-          ) : null}
+          <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
+            重新提交
+          </Button>
+
+          <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
+            退出分支
+          </Button>
           {/* {!isFrontend && !isProd && (
             <Popconfirm
               title="确定要重启应用吗？"
