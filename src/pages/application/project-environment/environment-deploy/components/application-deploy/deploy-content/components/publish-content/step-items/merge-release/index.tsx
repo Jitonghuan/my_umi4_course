@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button, message, Spin } from 'antd';
-import { retryMerge, getMergeMessage } from '@/pages/application/service';
+import { retryMerge, getMergeMessage, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import MergeConflict from '../../../merge-conflict';
 import NoConflict from '../../../merge-conflict/NoConflict';
@@ -21,18 +21,27 @@ export default function MergeReleaseStep(props: StepItemProps) {
     onSpin,
     stopSpin,
     deployedList,
-    projectEnvCode,
+    status,
+    pipelineCode,
+    env = '',
     ...others
   } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [visible, setVisible] = useState(false); //无冲突
   const [mergeMessage, setMergeMessage] = useState<any>([]);
-  const isLoading = deployStatus === 'merging';
-  const isError = deployStatus === 'mergeErr' || deployStatus === 'conflict';
+  const isLoading = status === 'process';
+  const isError = status === 'error';
+  // const isLoading = deployStatus === 'merging';
+  // const isError = deployStatus === 'mergeErr' || deployStatus === 'conflict';
 
   const retryMergeClick = async () => {
     try {
-      await retryMerge({ id: deployInfo.id });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('mergeReleaseRetryEnd');
     }
@@ -40,7 +49,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
 
   const openMergeConflict = () => {
     onSpin();
-    getMergeMessage({ releaseBranch: deployInfo.releaseBranch })
+    getMergeMessage({ releaseBranch: branchInfo?.releaseBranch, pipelineCode })
       .then((res) => {
         if (!res.success) {
           return;
@@ -78,8 +87,9 @@ export default function MergeReleaseStep(props: StepItemProps) {
       <MergeConflict
         visible={mergeVisible}
         handleCancel={handleCancelMerge}
+        id={metadata?.id}
         mergeMessage={mergeMessage}
-        releaseBranch={deployInfo.releaseBranch}
+        releaseBranch={branchInfo?.releaseBranch}
         retryMergeClick={retryMergeClick}
       ></MergeConflict>
       <NoConflict visible={visible} handleCancel={handleCancel} retryMergeClick={retryMergeClick}></NoConflict>
@@ -87,25 +97,22 @@ export default function MergeReleaseStep(props: StepItemProps) {
         {...others}
         title="合并release"
         icon={isLoading && <LoadingOutlined />}
-        status={isError ? 'error' : others.status}
+        status={status}
         description={
           isError && (
             <>
-              {deployInfo.mergeWebUrl && (
+              {branchInfo?.conflictFeature && (
                 <div style={{ marginTop: 2 }}>
                   <Button onClick={openMergeConflict} disabled={deployedList.length === 0}>
                     解决冲突
                   </Button>
                 </div>
               )}
-              {deployStatus === 'mergeErr' && !deployInfo.mergeWebUrl && (
+              {!branchInfo?.conflictFeature && (
                 <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
                   重试
                 </Button>
               )}
-              {/* <Button style={{ marginTop: 4 }} onClick={retryMergeClick}>
-                重试
-              </Button> */}
             </>
           )
         }

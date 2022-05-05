@@ -392,6 +392,12 @@ export default [
           },
         ],
       },
+      {
+        path: 'version-management',
+        name: '版本管理',
+        key: 'version-management',
+        component: '@/pages/application/version-management',
+      },
     ],
   },
   {

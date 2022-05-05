@@ -3,7 +3,20 @@
 // @create 2022/02/21 17:10
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, Typography, Tag, Modal, Descriptions } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Table,
+  Space,
+  Popconfirm,
+  Typography,
+  Tag,
+  Modal,
+  Descriptions,
+  Tooltip,
+} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
@@ -21,6 +34,7 @@ export interface Item {
   id: number;
   versionName: string;
   versionDescription: string;
+  releaseTime: number;
   gmtCreate: any;
   releaseStatus: number;
 }
@@ -30,7 +44,7 @@ type releaseStatus = {
   disabled: boolean;
 };
 export const STATUS_TYPE: Record<number, releaseStatus> = {
-  0: { text: '未发布', type: 'primary', disabled: false },
+  0: { text: '发布', type: 'primary', disabled: false },
   1: { text: '已发布', type: 'default', disabled: true },
 };
 
@@ -71,10 +85,24 @@ export default function deliveryDescription() {
       width: '30%',
     },
     {
+      title: '发布状态',
+      dataIndex: 'releaseStatus',
+      width: '10%',
+      render: (status: any, record: Item) => (
+        <span>
+          <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
+        </span>
+      ),
+    },
+    {
       title: '版本描述',
       dataIndex: 'versionDescription',
-      width: '30%',
-      ellipsis: true,
+      width: '20%',
+      render: (value: string) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       title: '发布时间',
@@ -90,6 +118,7 @@ export default function deliveryDescription() {
         <Space>
           <Button
             type="primary"
+            size="small"
             onClick={() => {
               history.push({
                 pathname: '/matrix/delivery/version-detail',
@@ -122,6 +151,7 @@ export default function deliveryDescription() {
             cancelText="取消"
           >
             <Button
+              size="small"
               type={STATUS_TYPE[record.releaseStatus].type || 'default'}
               disabled={STATUS_TYPE[record.releaseStatus].disabled}
               loading={publishLoading}
@@ -140,7 +170,7 @@ export default function deliveryDescription() {
             okText="是"
             cancelText="否"
           >
-            <Button danger loading={delLoading}>
+            <Button danger size="small" loading={delLoading}>
               删除
             </Button>
           </Popconfirm>
@@ -156,10 +186,17 @@ export default function deliveryDescription() {
     });
   };
   return (
-    <PageContainer>
+    <PageContainer className="product-description">
       <ContentCard>
         <div>
-          <Descriptions title="基本信息" column={2} className="basic-info-description">
+          <Descriptions
+            title="基本信息"
+            column={2}
+            className="basic-info-description"
+            //  labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
+            //  contentStyle={{ color: '#000' }}
+            bordered={true}
+          >
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
               <Paragraph
@@ -246,10 +283,10 @@ export default function deliveryDescription() {
         >
           <Form layout="vertical" form={createVersionForm} style={{ paddingLeft: 30 }}>
             <Form.Item label="版本名称:" name="version_name">
-              <Input style={{ width: 470 }} placeholder="请输入版本号"></Input>
+              <Input style={{ width: 400 }} placeholder="请输入版本号"></Input>
             </Form.Item>
             <Form.Item label="版本描述:" name="version_description">
-              <Input style={{ width: 470 }} placeholder="请输入版本描述"></Input>
+              <Input style={{ width: 400 }} placeholder="请输入版本描述"></Input>
             </Form.Item>
           </Form>
         </Modal>

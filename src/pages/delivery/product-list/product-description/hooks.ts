@@ -87,7 +87,7 @@ export function useQueryProductList(): [
   any[],
   any,
   any,
-  (product_id: number, pageIndex?: any, pageSize?: any) => Promise<void>,
+  (productId: number, pageIndex?: any, pageSize?: any) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -96,11 +96,11 @@ export function useQueryProductList(): [
     pageSize: 20,
     total: 0,
   });
-  const queryProductVersionList = async (product_id: number, pageIndex?: number, pageSize?: number) => {
+  const queryProductVersionList = async (productId: number, pageIndex?: number, pageSize?: number) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryVersionList, {
-        data: { product_id, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { productId, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
       })
         .then((res) => {
           if (res.success) {
@@ -131,7 +131,7 @@ export function usePublishProductVersion(): [boolean, (id: number) => Promise<vo
   const publishProductVersion = async (id: number) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.releaseVersion}/${id}`)
+      await postRequest(`${APIS.releaseVersion}?id=${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);

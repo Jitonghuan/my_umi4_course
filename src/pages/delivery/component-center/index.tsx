@@ -33,7 +33,7 @@ export default function VersionDetail() {
   const [matchlabels, setMatchlabels] = useState<any[]>([]);
   const [editableStr, setEditableStr] = useState('This is an editable text.');
   const [tabActiveKey, setTabActiveKey] = useState<string>('app');
-  const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
+  const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
@@ -43,7 +43,7 @@ export default function VersionDetail() {
   };
   const pageTypes: any = {
     app: { text: '应用组件接入' },
-    middleware: { text: '平台组件接入' },
+    middleware: { text: '中间件组件接入' },
     sql: { text: '基础数据接入' },
   };
 
@@ -67,15 +67,14 @@ export default function VersionDetail() {
             setBasicDataModalVisiable(false);
           }}
         />
-        {/* <MiddlewareModal
+        <MiddlewareModal
           visable={middlewareModalVisibale}
-         
           tabActiveKey={tabActiveKey}
           queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
             setMiddlewareModalVisibale(false);
           }}
-        /> */}
+        />
 
         <>
           <FilterCard className="layout-compact">
@@ -87,22 +86,24 @@ export default function VersionDetail() {
               tabBarExtraContent={
                 <div className="tab-right-extra">
                   <span>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        if (tabActiveKey === 'app') {
-                          setUserModalVisiable(true);
-                        }
-                        if (tabActiveKey === 'middleware') {
-                          setMiddlewareModalVisibale(true);
-                        }
-                        if (tabActiveKey === 'sql') {
-                          setBasicDataModalVisiable(true);
-                        }
-                      }}
-                    >
-                      {pageTypes[tabActiveKey].text}
-                    </Button>
+                    {tabActiveKey !== 'middleware' && (
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          if (tabActiveKey === 'app') {
+                            setUserModalVisiable(true);
+                          }
+                          //  if (tabActiveKey === 'middleware') {
+                          //    // setMiddlewareModalVisibale(true);
+                          //  }
+                          if (tabActiveKey === 'sql') {
+                            setBasicDataModalVisiable(true);
+                          }
+                        }}
+                      >
+                        {pageTypes[tabActiveKey].text}
+                      </Button>
+                    )}
                   </span>
                 </div>
               }
@@ -113,7 +114,12 @@ export default function VersionDetail() {
             </Tabs>
           </FilterCard>
           <div>
-            <InfoTable currentTab={tabActiveKey} />
+            <InfoTable
+              currentTab={tabActiveKey}
+              dataSource={dataSource}
+              queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+              tableLoading={loading}
+            />
           </div>
         </>
       </ContentCard>

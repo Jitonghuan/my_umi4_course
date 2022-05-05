@@ -12,6 +12,7 @@ import {
   useSaveParam,
   useQueryDeliveryGloableParamList,
   useDeleteDeliveryParam,
+  useEditVersionParam,
 } from './hooks';
 
 const waitTime = (time: number = 100) => {
@@ -77,7 +78,7 @@ const TagList: React.FC<{
 };
 
 type DataSourceType = {
-  id: React.Key;
+  id: any;
   title?: string;
   labels?: {
     key: string;
@@ -88,23 +89,6 @@ type DataSourceType = {
   children?: DataSourceType[];
 };
 
-const defaultData: DataSourceType[] = [
-  {
-    id: 624748504,
-    title: '活动名称一',
-    labels: [{ key: 'woman', label: '川妹子' }],
-    state: 'open',
-    created_at: '2020-05-26T09:42:56Z',
-  },
-  {
-    id: 624691229,
-    title: '活动名称二',
-    labels: [{ key: 'man', label: '西北汉子' }],
-    state: 'closed',
-    created_at: '2020-05-26T08:19:22Z',
-  },
-];
-
 export interface VersionDetailProps {
   currentTab: string;
   versionId: any;
@@ -113,6 +97,8 @@ export interface VersionDetailProps {
 
 export default (props: VersionDetailProps) => {
   const { currentTab, versionId, initDataSource } = props;
+  const [saveLoading, saveParam] = useSaveParam();
+  const [editLoading, editVersionParam] = useEditVersionParam();
   const actionRef = useRef<ActionType>();
   const [
     gloableTableLoading,
@@ -126,28 +112,42 @@ export default (props: VersionDetailProps) => {
     useQueryDeliveryParamList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-  // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+  const [type, setType] = useState<string>('');
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
   useEffect(() => {
     //查询交付配置参数
     queryDeliveryGloableParamList(versionId, 'global');
     queryDeliveryParamList(versionId);
-  }, []);
+  }, [currentTab, versionId]);
 
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: '参数来源组件',
+      title: '参数名称',
       key: 'configParamName',
       dataIndex: 'configParamName',
-      // valueType: 'input',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      editable: (text, record, index) => {
+        if (type === 'edit' && text) {
+          return false;
+        } else if (type === 'add' && !text) {
+          return true;
+        } else if (type === 'add' && text) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
     },
     {
@@ -155,13 +155,16 @@ export default (props: VersionDetailProps) => {
       key: 'configParamValue',
       dataIndex: 'configParamValue',
       // valueType: 'select',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
       },
     },
     {
@@ -173,37 +176,23 @@ export default (props: VersionDetailProps) => {
       title: '操作',
       valueType: 'option',
       width: 250,
-      render: (text, record, _, action) => [
-        // <a
-        //   key="editable"
-        //   onClick={() => {
-        //     action?.startEditable?.(record.id);
-        //   }}
-        // >
-        //   编辑
-        // </a>,
+      render: (text, record: any, _, action) => [
         <a
-          //  key="editable"
-          // onClick={() => {
-          //   action?.startEditable?.(record.id);
-          // }}
+          key="editable"
           onClick={() => {
-            history.push({
-              pathname: '/matrix/delivery/component-detail',
-              state: {
-                activeKey: 'component-config',
-                componentId: record.id,
-                type: 'globalParams',
-              },
-            });
+            action?.startEditable?.(record.id);
+            setType('edit');
           }}
         >
-          配置
+          编辑
         </a>,
         <a
           key="delete"
           onClick={() => {
-            setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
+            console.log('record', record);
+            deleteDeliveryParam(record.id).then(() => {
+              setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
+            });
           }}
         >
           删除
@@ -213,18 +202,20 @@ export default (props: VersionDetailProps) => {
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryGloableParamList(versionId, 'global', param);
+    queryDeliveryGloableParamList(versionId, 'global', param.configParamName);
   };
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="configParamComponent">
-              <Input style={{ width: 220 }} placeholder="请输入组件参数"></Input>
+            <Form.Item name="configParamName">
+              <Input style={{ width: 220 }} placeholder="请输入参数名称"></Input>
             </Form.Item>
             <Form.Item>
-              <Button onClick={handleSearch}>搜索</Button>
+              <Button onClick={handleSearch} type="primary">
+                搜索
+              </Button>
             </Form.Item>
           </Form>
         </div>
@@ -232,6 +223,7 @@ export default (props: VersionDetailProps) => {
           <Button
             type="primary"
             onClick={() => {
+              setType('add');
               actionRef.current?.addEditRecord?.({
                 id: (Math.random() * 1000000).toFixed(0),
               });
@@ -267,6 +259,19 @@ export default (props: VersionDetailProps) => {
         //   total: 3,
         //   success: true,
         // })}
+        pagination={{
+          total: pageInfo.total,
+          pageSize: pageInfo.pageSize,
+          current: pageInfo.pageIndex,
+          showSizeChanger: true,
+          // onShowSizeChange: (_, size) => {
+          //   setPageInfo({
+          //     pageIndex: 1,
+          //     pageSize: size,
+          //   });
+          // },
+          showTotal: () => `总共 ${pageInfo.total} 条数据`,
+        }}
         value={gloableTableDataSource}
         onChange={setGloableDataSource}
         editable={{
@@ -274,8 +279,20 @@ export default (props: VersionDetailProps) => {
           editableKeys,
           onSave: async () => {
             let value = form.getFieldsValue();
-            console.log('value', value);
-            await waitTime(800);
+            let objKey = Object.keys(value);
+            console.log('value', value, objKey);
+            let params = value[objKey[0]];
+            if (type === 'add') {
+              await saveParam({ ...params, versionId: versionId, configParamComponent: 'global' }).then(() => {
+                queryDeliveryGloableParamList(versionId, 'global');
+              });
+            } else if (type === 'edit') {
+              editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
+                queryDeliveryGloableParamList(versionId, 'global');
+              });
+            }
+
+            // await waitTime(800);
           },
           onChange: setEditableRowKeys,
           actionRender: (row, config, dom) => [dom.save, dom.cancel],

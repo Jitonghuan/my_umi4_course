@@ -7,23 +7,28 @@
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
+import { getRequest } from '@/utils/request';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { cancelDeploy, deployReuse, queryEnvsReq } from '@/pages/application/service';
 import { IProps } from './types';
+import { getPipelineUrl } from '@/pages/application/service';
 import './index.less';
 
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
 
-const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
+const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => {
   const { appData } = useContext(DetailContext);
+  let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
+  const { buildUrl } = buildInfo || {};
   const { appCategoryCode } = appData || {};
-
   const [deployVisible, setDeployVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [envDataList, setEnvDataList] = useState<any>([]);
+  const [nextPipeline, setNextPipeline] = useState<any>('');
+
   useEffect(() => {
     if (!appCategoryCode) return;
     queryEnvsReq({
@@ -40,22 +45,30 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
   }, [appCategoryCode, env]);
 
   const envNames = useMemo(() => {
-    const { envs } = deployInfo;
+    const { deployEnvs } = envInfo || {};
 
     const namesArr: any[] = [];
-    if (envs?.indexOf(',') > -1) {
-      const list = envs?.split(',') || [];
-      envDataList?.forEach((item: any) => {
-        list?.forEach((v: any) => {
-          if (item?.envCode === v) {
-            namesArr.push(item.envName);
-          }
-        });
-      });
-      return namesArr.join(',');
-    }
-    return (envDataList as any).find((v: any) => v.envCode === envs)?.envName;
+    return envDataList
+      .filter((envItem: any) => {
+        return (deployEnvs || []).includes(envItem.value);
+      })
+      .map((envItem: any) => `${envItem.label}(${envItem.value})`)
+      .join(',');
+    // return (envDataList as any).find((v: any) => v.envCode === deployEnvs[0])?.envName;
   }, [envDataList, deployInfo]);
+
+  useEffect(() => {
+    getRequest(getPipelineUrl, {
+      data: { appCode: appData?.appCode, envTypeCode: 'cProd', pageIndex: -1, size: -1 },
+    }).then((res: any) => {
+      if (res?.success) {
+        let data = res?.data?.dataSource;
+        setNextPipeline(data[0]?.pipelineCode);
+      } else {
+        setNextPipeline('');
+      }
+    });
+  }, []);
 
   return (
     <div className={rootCls}>
@@ -69,7 +82,11 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
                 title: '确定要把当前部署分支发布到下一个环境中？',
                 icon: <ExclamationCircleOutlined />,
                 onOk: () => {
-                  return deployReuse({ id: deployInfo.id }).then((res) => {
+                  return deployReuse({
+                    envCodes: [],
+                    pipelineCode: nextPipeline,
+                    reusePipelineCode: pipelineCode,
+                  }).then((res) => {
                     if (res.success) {
                       message.success('操作成功，正在部署中...');
                       onOperate('deployNextEnvSuccess');
@@ -87,7 +104,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
           </Button>
         )}
 
-        <Button
+        {/* <Button
           type="primary"
           danger
           onClick={() => {
@@ -98,7 +115,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
               icon: <ExclamationCircleOutlined />,
               onOk() {
                 return cancelDeploy({
-                  id: deployInfo.id,
+                  id: metadata.id,
                   envCode: '',
                 }).then(() => {
                   onOperate('cancelDeployEnd');
@@ -111,22 +128,26 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
           }}
         >
           取消发布
-        </Button>
+        </Button> */}
       </div>
 
       <Descriptions
         title="发布详情"
         labelStyle={{ color: '#5F677A', textAlign: 'right' }}
         contentStyle={{ color: '#000' }}
+        column={2}
+        bordered
       >
-        <Descriptions.Item label="CRID">{deployInfo?.id}</Descriptions.Item>
-        <Descriptions.Item label="部署分支">{deployInfo?.releaseBranch}</Descriptions.Item>
-        <Descriptions.Item label="发布环境">{envNames}</Descriptions.Item>
-        <Descriptions.Item label="冲突分支" span={3}>
-          {deployInfo?.conflictFeature}
+        <Descriptions.Item label="CRID">{metadata?.id || '--'}</Descriptions.Item>
+        <Descriptions.Item label="部署分支">{branchInfo?.releaseBranch || '--'}</Descriptions.Item>
+        <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
+        <Descriptions.Item label="主干分支">{branchInfo?.masterBranch || '--'}</Descriptions.Item>
+        <Descriptions.Item label="冲突分支" span={2}>
+          {branchInfo?.conflictFeature || '--'}
         </Descriptions.Item>
-        <Descriptions.Item label="合并分支" span={3}>
-          {deployInfo?.features}
+
+        <Descriptions.Item label="合并分支" span={2}>
+          {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
       </Descriptions>
 
@@ -137,7 +158,7 @@ const PublishDetail = ({ deployInfo, env, onOperate }: IProps) => {
         onOk={() => {
           setConfirmLoading(true);
 
-          return deployReuse({ id: deployInfo.id })
+          return deployReuse({ id: metadata.id })
             .then((res) => {
               if (res.success) {
                 message.success('操作成功，正在部署中...');
