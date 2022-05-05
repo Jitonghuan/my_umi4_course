@@ -2,6 +2,7 @@ import React from 'react';
 import { Descriptions, Table, Tag } from 'antd';
 import moment from 'moment';
 import type { DescriptionsProps } from 'antd/lib/descriptions';
+import appConfig from '@/app.config';
 // 发布记录字段 map
 export const recordFieldMap: { [key: string]: any } = {
   deployId: '发布单Id',
@@ -60,6 +61,7 @@ const funcName = (props: any) => {
   };
 
   const { dataSource = {}, ...rest } = props;
+  let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 
   let publishRecordData: any = [];
   for (const key in dataSource) {
@@ -121,8 +123,9 @@ const funcName = (props: any) => {
           </Tag>
         }
       </Descriptions.Item>
+      //43222
       <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
-        {dataSource?.jenkinsUrl && dataSource?.deployId > 1595 ? (
+        {dataSource?.jenkinsUrl && (env === 'prod' ? dataSource?.deployId > 43222 : dataSource?.deployId > 1595) ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -134,7 +137,7 @@ const funcName = (props: any) => {
             ))}
           </>
         ) : null}
-        {dataSource?.jenkinsUrl && dataSource?.deployId < 1595 ? (
+        {dataSource?.jenkinsUrl && (env === 'prod' ? dataSource?.deployId < 43222 : dataSource?.deployId < 1595) ? (
           <>
             {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -147,7 +150,6 @@ const funcName = (props: any) => {
           </>
         ) : null}
       </Descriptions.Item>
-
       {dataSource?.tagName !== '' && <Descriptions.Item label="tag">{dataSource?.tagName}</Descriptions.Item>}
       <div style={{ borderTop: '1px solid #d3d7e0', height: '1px' }}></div>
       <div style={{ marginLeft: 24, display: 'block' }}>功能分支:</div>
