@@ -260,6 +260,8 @@ export const deleteBranch = (params: {
 export const createFeatureBranch = (params: {
   /** 应用CODE */
   appCode: string;
+  /** 选择平台 */
+  relatedPlat: string;
   /** 分支的自定义名称 固定前缀feature_ */
   branchName: string;
   /** 描述 */

@@ -3,8 +3,14 @@
 // @create 2021/08/27 10:58
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Modal, Input, Form, message, Select, Cascader } from 'antd';
-import { createFeatureBranch, queryPortalList, getDemandByProjectList } from '@/pages/application/service';
+import { Modal, Input, Form, message, Select } from 'antd';
+import {
+  createFeatureBranch,
+  queryPortalList,
+  getDemandByProjectList,
+  getRegulusProjects,
+  getRegulusOnlineBugs,
+} from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
 import { debounce } from 'lodash';
 
@@ -23,14 +29,9 @@ export default function BranchEditor(props: IProps) {
   const [form] = Form.useForm();
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
   const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
+  const [platformValue, setPlatformValue] = useState<string>('');
   const [projectId, setProjectId] = useState<string>('');
   const [demandId, setDemandId] = useState<any>([]);
-  const selectBefore = (
-    <Select defaultValue="http://" className="select-before">
-      <Option value="http://">http://</Option>
-      <Option value="https://">https://</Option>
-    </Select>
-  );
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
@@ -38,6 +39,7 @@ export default function BranchEditor(props: IProps) {
     try {
       const res = await createFeatureBranch({
         appCode,
+        relatedPlat: values?.relatedPlat,
         demandId: values?.demandId,
         branchName: values?.branchName,
         desc: values?.desc,
@@ -50,6 +52,14 @@ export default function BranchEditor(props: IProps) {
       setLoading(false);
     }
   }, [form, appCode]);
+  const selectplatform = (value: string) => {
+    setPlatformValue(value);
+    if (value === 'demandPlat') {
+      queryPortal();
+    } else {
+      queryRegulus();
+    }
+  };
 
   const queryPortal = () => {
     try {
@@ -67,9 +77,30 @@ export default function BranchEditor(props: IProps) {
       console.log('error', error);
     }
   };
+  const queryRegulus = () => {
+    try {
+      postRequest(getRegulusProjects).then((result) => {
+        if (result.success) {
+          let dataSource = result.data.projects;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({ label: item?.name, value: item?.id });
+          });
+          setQueryPortalOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   const onChangeProtal = (value: any) => {
     setProjectId(value);
-    queryDemand(value);
+    if (platformValue === 'demandPlat') {
+      queryDemand(value);
+    } else {
+      queryRegulusOnlineBugs(value);
+    }
   };
   const queryDemand = async (param: string, searchTextParams?: string) => {
     try {
@@ -81,6 +112,24 @@ export default function BranchEditor(props: IProps) {
           let dataArry: any = [];
           dataSource?.map((item: any) => {
             dataArry.push({ label: item?.title, value: item?.id });
+          });
+          setQueryDemandOptions(dataArry);
+        }
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+  const queryRegulusOnlineBugs = async (param: string, searchTextParams?: string) => {
+    try {
+      await postRequest(getRegulusOnlineBugs, {
+        data: { projectId: param, keyword: searchTextParams, pageSize: -1 },
+      }).then((result) => {
+        if (result.success) {
+          let dataSource = result.data.dataSource;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({ label: item?.name, value: item?.id });
           });
           setQueryDemandOptions(dataArry);
         }
@@ -102,7 +151,7 @@ export default function BranchEditor(props: IProps) {
   useEffect(() => {
     if (mode === 'HIDE') return;
     form.resetFields();
-    queryPortal();
+    // queryPortal();
   }, [mode]);
 
   return (
@@ -121,11 +170,21 @@ export default function BranchEditor(props: IProps) {
           <Input addonBefore="feature_" autoFocus />
         </Form.Item>
         <Form.Item
+          label="选择关联平台"
+          name="relatedPlat"
+          rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择需要关联的平台' }]}
+        >
+          <Select onChange={selectplatform}>
+            <Option value="demandPlat">需求管理平台</Option>
+            <Option value="regulus">regulus</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
           label="项目列表"
           name="projectId"
           rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择项目' }]}
         >
-          <Select options={queryPortalOptions} onChange={onChangeProtal}></Select>
+          <Select options={queryPortalOptions} onChange={onChangeProtal} showSearch allowClear></Select>
         </Form.Item>
         <Form.Item
           label="需求列表"
