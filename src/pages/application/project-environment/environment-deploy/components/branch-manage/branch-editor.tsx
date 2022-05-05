@@ -99,7 +99,6 @@ export default function BranchEditor(props: IProps) {
   useEffect(() => {
     if (mode === 'HIDE') return;
     form.resetFields();
-    console.log(selectMaster, 'selectMaster');
     form.setFieldsValue({ masterBranch: selectMaster });
     queryPortal();
   }, [mode]);

@@ -18,11 +18,11 @@ const stepMap: any = {
   build: BuildingStep,
   deleteFeature: DeleteFeatureStep,
   deploy: DeployingStep,
-  end: FinishedStep,
+  // end: FinishedStep,
   verify: GrayValidationStep,
   mergeMaster: MergeMasterStep,
   merge: MergeReleaseStep,
-  wait: PushResourceStep,
+  pushResource: PushResourceStep,
   pushVersion: PushVersionStep,
   qualityCheck: QualityCheckStep,
 };
