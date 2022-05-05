@@ -27,7 +27,7 @@ export default function ApplicationDeploy(props: any) {
   // 获取流水线
   const getPipeline = () => {
     getRequest(getPipelineUrl, {
-      data: { appCode: appData?.appCode, envTypeCode: tabActive, pageIndex: -1, size: -1 },
+      data: { appCode: appData?.appCode, envTypeCode: tabActive, proEnvCode: projectEnvCode, pageIndex: -1, size: -1 },
     }).then((res) => {
       if (res?.success) {
         let data = res?.data?.dataSource;
