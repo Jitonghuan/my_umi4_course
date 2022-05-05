@@ -24,6 +24,7 @@ export default function BatchDeployModal({
   deployingBatch,
   id,
   jenkinsUrl,
+  showBuildUrl = false,
 }: any) {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
@@ -123,7 +124,7 @@ export default function BatchDeployModal({
           {text1}
           {text2}
         </div>
-        {jenkinsUrl && (
+        {showBuildUrl && jenkinsUrl && (
           <div>
             <a target="_blank" href={jenkinsUrl}>
               查看构建详情
@@ -154,7 +155,7 @@ export default function BatchDeployModal({
 
   return (
     <Modal
-      title="批量部署"
+      title="分批部署"
       visible={visible}
       confirmLoading={deployingBatch === 1 || deployingBatch === 2}
       okText={deployingBatch && deployingBatch === 12 ? '继续' : '确认'}

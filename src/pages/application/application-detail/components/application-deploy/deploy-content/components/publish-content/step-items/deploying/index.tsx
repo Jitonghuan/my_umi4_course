@@ -172,6 +172,7 @@ export default function DeployingStep(props: StepItemProps) {
         deployingBatch={deployingBatch}
         id={metadata?.id}
         jenkinsUrl={jenkinsUrl}
+        showBuildUrl={false}
       />
     </>
   );
