@@ -69,6 +69,20 @@ const funcName = (props: any) => {
     }
   }
 
+  function getOldJenkins(url: string) {
+    try {
+      return url ? JSON.parse(url) : [];
+    } catch (e) {
+      return url
+        ? [
+            {
+              subJenkinsUrl: url,
+            },
+          ]
+        : [];
+    }
+  }
+
   function getJenkins(url: string) {
     try {
       let JenkinsInfoArry = [];
@@ -108,28 +122,30 @@ const funcName = (props: any) => {
         }
       </Descriptions.Item>
       <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
-        {dataSource?.jenkinsUrl ? (
+        {dataSource?.jenkinsUrl && dataSource?.deployId > 1595 ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
                 {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
                 <a href={jenkinsItem.JenkinsUrl} target="_blank">
-                  {jenkinsItem?.JenkinsUrl || jenkinsItem?.subJenkinsUrl}
+                  {jenkinsItem?.JenkinsUrl}
                 </a>
               </div>
             ))}
           </>
-        ) : // <>
-        // {getJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
-        //   <div style={{ marginBottom: '5px' }}>
-        //     {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-        //     <a href={jenkinsItem.subJenkinsUrl} target="_blank">
-        //       {jenkinsItem?.subJenkinsUrl}
-        //     </a>
-        //   </div>
-        // ))}
-        // </>
-        null}
+        ) : null}
+        {dataSource?.jenkinsUrl && dataSource?.deployId < 1595 ? (
+          <>
+            {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+              <div style={{ marginBottom: '5px' }}>
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                  {jenkinsItem?.subJenkinsUrl}
+                </a>
+              </div>
+            ))}
+          </>
+        ) : null}
       </Descriptions.Item>
 
       {dataSource?.tagName !== '' && <Descriptions.Item label="tag">{dataSource?.tagName}</Descriptions.Item>}
