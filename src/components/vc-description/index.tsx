@@ -98,6 +98,7 @@ const funcName = (props: any) => {
       </Descriptions.Item>
       <Descriptions.Item label="发布完成时间">{dataSource?.deployFinishTime}</Descriptions.Item>
       <Descriptions.Item label="发布环境">{dataSource?.envs}</Descriptions.Item>
+      <Descriptions.Item label="流水线Code">{dataSource?.pipelineCode}</Descriptions.Item>
       <Descriptions.Item label="发布状态">
         {/* {dataSource?.deployStatus} */}
         {
@@ -113,12 +114,22 @@ const funcName = (props: any) => {
               <div style={{ marginBottom: '5px' }}>
                 {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
                 <a href={jenkinsItem.JenkinsUrl} target="_blank">
-                  {jenkinsItem?.JenkinsUrl}
+                  {jenkinsItem?.JenkinsUrl || jenkinsItem?.subJenkinsUrl}
                 </a>
               </div>
             ))}
           </>
-        ) : null}
+        ) : // <>
+        // {getJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+        //   <div style={{ marginBottom: '5px' }}>
+        //     {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+        //     <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+        //       {jenkinsItem?.subJenkinsUrl}
+        //     </a>
+        //   </div>
+        // ))}
+        // </>
+        null}
       </Descriptions.Item>
 
       {dataSource?.tagName !== '' && <Descriptions.Item label="tag">{dataSource?.tagName}</Descriptions.Item>}
