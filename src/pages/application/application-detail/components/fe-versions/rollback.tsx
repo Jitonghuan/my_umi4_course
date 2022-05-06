@@ -8,6 +8,7 @@ import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
 import { datetimeCellRender } from '@/utils';
 import { rollbackFeApp } from '@/pages/application/service';
 import { FeVersionItemVO } from './types';
+import './index.less';
 
 export interface RollbackVersionProps {
   appData?: AppItemVO;
@@ -67,6 +68,19 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     >
       <Table
         dataSource={versionList || []}
+        rowClassName={(record) => {
+          if (record.isActive === 0) {
+            return 'table-color-rollback';
+          } else if (record.isActive === 2) {
+            return 'table-rollback-deployling';
+          } else {
+            return 'table-rollback';
+          }
+
+          // else  {
+          //   return 'table-rollback';
+          // }
+        }}
         rowSelection={{
           selectedRowKeys,
           type: 'radio',
