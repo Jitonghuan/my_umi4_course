@@ -110,7 +110,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </a>
               </div>
             )}
-            {status === 'process' && env && envTypeCode !== 'prod' && !isFrontend && (
+            {status === 'process' && env && !isFrontend && (
               <div style={{ marginTop: 2 }}>
                 <Button
                   size="small"
