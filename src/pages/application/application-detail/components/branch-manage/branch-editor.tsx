@@ -67,6 +67,7 @@ export default function BranchEditor(props: IProps) {
     form.setFieldsValue({
       projectId: undefined,
       demandId: undefined,
+      desc: '',
     });
     if (e.target.value === 'demandPlat') {
       queryPortal();
@@ -122,6 +123,7 @@ export default function BranchEditor(props: IProps) {
     setProjectId(value);
     form.setFieldsValue({
       demandId: undefined,
+      desc: '',
     });
     if (platformValue === 'demandPlat') {
       queryDemand(value);
