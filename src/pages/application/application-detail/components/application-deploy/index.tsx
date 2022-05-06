@@ -96,9 +96,10 @@ export default function ApplicationDeploy(props: any) {
         return a.sortType - b.sortType;
       }); //升序
       let pipelineObj: any = {};
+      const saveData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '{}');
       next.forEach((e: any) => {
         if (e.typeCode) {
-          pipelineObj[e.typeCode] = '';
+          pipelineObj[e.typeCode] = saveData && saveData[e.typeCode] ? saveData[e.typeCode] : '';
         }
       });
       sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
