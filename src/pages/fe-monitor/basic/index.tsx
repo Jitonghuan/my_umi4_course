@@ -12,6 +12,7 @@ const { TabPane } = Tabs;
 
 const BasicFeMonitor = () => {
   const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '');
+  const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || '1');
 
   return (
     <div className="basic-fe-monitor-wrapper">
@@ -30,6 +31,7 @@ const BasicFeMonitor = () => {
               pathname: '/matrix/monitor/fe-monitor',
               query: {
                 appGroup: val,
+                tab: tabKey,
               },
             });
           }}
@@ -42,7 +44,19 @@ const BasicFeMonitor = () => {
         </Select>
       </div>
       <div className="app-group-content-wrapper">
-        <Tabs defaultActiveKey="1">
+        <Tabs
+          activeKey={tabKey}
+          onChange={(val) => {
+            setTabKey(val);
+            history.replace({
+              pathname: '/matrix/monitor/fe-monitor',
+              query: {
+                appGroup: activeKey,
+                tab: val,
+              },
+            });
+          }}
+        >
           <TabPane tab="数据总览" key="1">
             <BasicOverview appGroup={activeKey} />
           </TabPane>

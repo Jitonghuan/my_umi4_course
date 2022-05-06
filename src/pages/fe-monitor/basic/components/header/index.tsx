@@ -38,7 +38,17 @@ const Header = ({ onChange, defaultTime }: IProps) => {
             </Radio.Button>
           ))}
         </Radio.Group>
-        <RangePicker value={timeList} showTime onChange={(val) => onTimeChange(val)} />
+        <RangePicker
+          clearIcon={false}
+          value={timeList}
+          showTime={{ format: 'HH:mm' }}
+          onChange={(val) => onTimeChange(val)}
+          ranges={{
+            最近15分钟: [moment().subtract(15, 'minute'), moment()],
+            最近30分钟: [moment().subtract(30, 'minute'), moment()],
+            最近1小时: [moment().subtract(60, 'minute'), moment()],
+          }}
+        />
       </div>
     </div>
   );
