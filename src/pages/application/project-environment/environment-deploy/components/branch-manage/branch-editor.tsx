@@ -258,7 +258,7 @@ export default function BranchEditor(props: IProps) {
             showSearch
             allowClear
             labelInValue
-            onSearch={onSearch}
+            // onSearch={onSearch}
             optionFilterProp="label"
             loading={demandLoading}
             // filterOption={(input, option) =>
