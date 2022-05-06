@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
 import Header from '../header';
 import { now } from '../../const';
-import { LineColumn } from '@cffe/hulk-wave-chart';
-import { queryErrorList } from '../server';
+import { Line } from '@cffe/hulk-wave-chart';
+import moment from 'moment';
+import { getErrorChart, getErrorList } from '../server';
 import { CloseOutlined } from '@ant-design/icons';
 import './index.less';
 
@@ -26,110 +27,92 @@ interface DataSourceItem {
   d5?: string;
 }
 
-const defaultData = [
-  {
-    url: 'www.baiddu',
-    errRate: '10%',
-    uvRate: '10%',
-  },
-  {
-    url: 'www.baiddu.com',
-    errRate: '10%',
-    uvRate: '10%',
-  },
-  {
-    url: 'www',
-    errRate: '10%',
-    uvRate: '10%',
-  },
-  {
-    url: 'baiddu.com',
-    errRate: '10%',
-    uvRate: '10%',
-  },
-  {
-    url: 'baiddu',
-    errRate: '10%',
-    uvRate: '10%',
-  },
-  {
-    url: 'www.com',
-    errRate: '10%',
-    uvRate: '10%',
-  },
-];
-
 const BasicError = ({ appGroup }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
+  const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
-  const [pageIndex, setPageIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(20);
-  const [dataSource, setDataSource] = useState<DataSourceItem[]>(defaultData);
+  const [dataSource, setDataSource] = useState<DataSourceItem[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(true);
-  const [activeRecord, setActiveRecord] = useState<DataSourceItem>({
-    url: 'www.baiddu.com',
-    errRate: '10%',
-    uvRate: '10%',
-  });
+  const [activeRecord, setActiveRecord] = useState<DataSourceItem>({});
 
-  async function onSearch(page?: number, size?: number) {
-    const res = await queryErrorList({
+  // 错误趋势图
+  async function onErrorChart() {
+    if (!chart) {
+      return;
+    }
+    const { data = {} } = await getErrorChart({
       appGroup,
-      pageSize: size || pageSize,
-      pageNum: page || pageIndex,
+      envCode: 'g3a-test',
+      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
+      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
     });
+
+    let newData = [];
+    if (data.jsErrorCount && data.userErrorCount) {
+      newData.push(['日期', '错误数', '影响用户数']);
+      let len = Math.max(data.jsErrorCount.length, data.userErrorCount.length) || 0;
+      for (let i = 0; i < len; i++) {
+        newData.push([
+          data.jsErrorCount[i][0] || data.userErrorCount[i][0],
+          data.jsErrorCount[i][1] || 0,
+          data.userErrorCount[i][1] || 0,
+        ]);
+      }
+    }
+    chart.data(newData);
+    chart.draw();
+  }
+
+  // 错误列表
+  async function onErrorList() {
+    const { data = [] } = await getErrorList({
+      appGroup,
+      envCode: 'g3a-test',
+      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
+      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
+    });
+    setDataSource(data);
+    setTotal(data.length);
   }
 
   useEffect(() => {
-    void onSearch();
+    void onErrorList();
+    void onErrorChart();
   }, [timeList, appGroup]);
 
   useEffect(() => {
-    const chart = new LineColumn({
-      dom: document.querySelector('.error-chart'),
-      fieldMap: { x: ['日期'], y: ['错误数', '影响用户数'], 'y-right': ['错误率', '影响用户率'] },
-      layout: {
-        padding: [80, 40, 40, 40],
-      },
-      title: {
-        isShow: false,
-      },
-      secondTitle: {
-        isShow: false,
-      },
-      yAxis: {
-        name: '个',
-      },
-      yAxisRight: {
-        name: '%',
-      },
-      line: {
-        isCustomColor: true,
-        isShowLable: false,
-        customColor: ['#4BA2FF', '#FFCB30'],
-      },
-      bar: {
-        isCustomColor: true,
-        isShowLable: false,
-        customColor: ['#54DA81', '#657CA6'],
-      },
-      tooltip: {
-        isShow: true,
-      },
-    });
-    chart.data([
-      ['日期', '错误数', '影响用户数', '错误率', '影响用户率'],
-      ['03/01', '100', '200', '10', '20'],
-      ['03/02', '200', '300', '20', '30'],
-      ['03/03', '800', '400', '30', '40'],
-      ['03/04', '500', '500', '40', '50'],
-      ['03/05', '700', '600', '50', '60'],
-      ['03/06', '400', '800', '60', '70'],
-      ['03/07', '300', '200', '70', '80'],
-    ]);
-    chart.draw();
+    setChart(
+      new Line({
+        dom: document.querySelector('.error-chart'),
+        fieldMap: { x: ['日期'], y: ['错误数', '影响用户数'] },
+        layout: {
+          padding: [80, 40, 40, 40],
+        },
+        title: {
+          isShow: false,
+        },
+        secondTitle: {
+          isShow: false,
+        },
+        yAxis: {
+          name: '个',
+        },
+        line: {
+          isCustomColor: true,
+          isShowLable: false,
+          customColor: ['#4BA2FF', '#FFCB30'],
+        },
+        tooltip: {
+          isShow: true,
+        },
+      }),
+    );
   }, []);
+
+  useEffect(() => {
+    void onErrorChart();
+  }, [chart]);
 
   return (
     <div className="basic-error-wrapper">
@@ -148,14 +131,7 @@ const BasicError = ({ appGroup }: IProps) => {
                 bordered
                 rowKey="url"
                 pagination={{
-                  pageSize,
-                  current: pageIndex,
                   total,
-                  onChange: (page, size) => {
-                    setPageIndex(page);
-                    setPageSize(size);
-                    void onSearch(page, size);
-                  },
                 }}
                 onRow={(record) => {
                   return {

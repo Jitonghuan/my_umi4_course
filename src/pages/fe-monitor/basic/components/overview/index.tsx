@@ -3,7 +3,7 @@ import Header from '../header';
 import { Line } from '@cffe/hulk-wave-chart';
 import { now } from '../../const';
 import moment from 'moment';
-import { queryOverview } from '../server';
+import { pvAndUvChart, queryOverview } from '../server';
 import './index.less';
 
 interface IProps {
@@ -12,55 +12,79 @@ interface IProps {
 
 const BasicOverview = ({ appGroup }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
+  const [overviewList, setOverviewList] = useState<any[]>([]);
+  const [chart, setChart] = useState<any>(null);
 
-  async function onSearch() {
+  // 汇总
+  async function onOverview() {
     const res = await queryOverview({
+      envCode: 'g3a-test',
       appGroup,
-      startTime: timeList[0] ? moment(timeList[0]).format('YYYY-MM-DD HH:mm:ss') : null,
-      endTime: timeList[1] ? moment(timeList[1]).format('YYYY-MM-DD HH:mm:ss') : null,
+      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
+      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
     });
+    setOverviewList(res?.data || []);
+  }
+
+  // pv uv趋势图
+  async function getPvUv() {
+    if (!chart) {
+      return;
+    }
+    const res = await pvAndUvChart({
+      envCode: 'g3a-test',
+      appGroup,
+      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
+      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
+    });
+    let data = [];
+    if (res.data) {
+      data.push(['日期', 'PV', 'UV']);
+      let len = Math.max(res.data.pv.length, res.data.uv.length) || 0;
+      for (let i = 0; i < len; i++) {
+        data.push([res.data.pv[i][0] || res.data.uv[i][0], res.data.pv[i][1] || 0, res.data.uv[i][1] || 0]);
+      }
+    }
+    chart.data(data);
+    chart.draw();
   }
 
   useEffect(() => {
-    void onSearch();
+    void onOverview();
+    void getPvUv();
   }, [timeList, appGroup]);
 
   useEffect(() => {
-    const chart = new Line({
-      dom: document.querySelector('.line-chart'),
-      fieldMap: { x: ['日期'], y: ['PV', 'UV'] },
-      layout: {
-        padding: [80, 40, 40, 40],
-      },
-      title: {
-        isShow: false,
-      },
-      secondTitle: {
-        isShow: false,
-      },
-      yAxis: {
-        name: '',
-      },
-      line: {
-        isCustomColor: true,
-        customColor: ['#4BA2FFFF', '#54DA81FF'],
-      },
-      tooltip: {
-        isShow: true,
-      },
-    });
-    chart.data([
-      ['日期', 'PV', 'UV'],
-      ['日期', '100', '200'],
-      ['日期1', '200', '300'],
-      ['日期2', '800', '400'],
-      ['日期3', '500', '500'],
-      ['日期4', '700', '600'],
-      ['日期5', '400', '800'],
-      ['日期6', '300', '200'],
-    ]);
-    chart.draw();
+    setChart(
+      new Line({
+        dom: document.querySelector('.line-chart'),
+        fieldMap: { x: ['日期'], y: ['PV', 'UV'] },
+        layout: {
+          padding: [80, 40, 40, 40],
+        },
+        title: {
+          isShow: false,
+        },
+        secondTitle: {
+          isShow: false,
+        },
+        yAxis: {
+          name: '',
+        },
+        line: {
+          isCustomColor: true,
+          customColor: ['#4BA2FFFF', '#54DA81FF'],
+        },
+        tooltip: {
+          isShow: true,
+        },
+      }),
+    );
   }, []);
+
+  useEffect(() => {
+    void getPvUv();
+  }, [chart]);
 
   return (
     <div className="basic-overview-wrapper">
@@ -68,24 +92,26 @@ const BasicOverview = ({ appGroup }: IProps) => {
       <div className="performance-wrapper">
         <div className="overview-wrapper">
           <div className="l">
-            <div>
-              <b>72</b>
-              <span>JS错误数</span>
-            </div>
-            <div className="dividing-line">
-              <b>72</b>
-              <span>资源错误数</span>
-            </div>
+            {overviewList.map(
+              (item, i) =>
+                i < 2 && (
+                  <div key={i}>
+                    <b>{item[1]}</b>
+                    <span>{item[0]}</span>
+                  </div>
+                ),
+            )}
           </div>
           <div className="l">
-            <div>
-              <b>356ms</b>
-              <span>首次可交互</span>
-            </div>
-            <div className="dividing-line">
-              <b>356ms</b>
-              <span>API错误数</span>
-            </div>
+            {overviewList.map(
+              (item, i) =>
+                i > 1 && (
+                  <div key={i}>
+                    <b>{item[1]}</b>
+                    <span>{item[0]}</span>
+                  </div>
+                ),
+            )}
           </div>
         </div>
         <div className="line-chart-wrapper">
