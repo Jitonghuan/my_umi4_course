@@ -21,6 +21,7 @@ import { getPipelineUrl, retry } from '@/pages/application/service';
 const { TabPane } = Tabs;
 
 export default function ApplicationDeploy(props: any) {
+  console.log(111);
   const { appData } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
@@ -101,6 +102,7 @@ export default function ApplicationDeploy(props: any) {
           pipelineObj[e.typeCode] = '';
         }
       });
+      console.log(sessionStorage.getItem('env_pipeline_obj'), 999);
       sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
       setEnvTypeData(next);
     });
