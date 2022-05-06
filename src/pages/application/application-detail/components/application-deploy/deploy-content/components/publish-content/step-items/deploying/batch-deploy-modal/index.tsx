@@ -32,6 +32,7 @@ export default function BatchDeployModal({
   const [deployBatch, setDeployBatch] = useState(1);
   const [deployApplyOptions, setDeployApplyOptions] = useState<any>();
   const [currentAppIds, setCurrentAppIds] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -142,22 +143,28 @@ export default function BatchDeployModal({
   };
 
   const handleOk = () => {
+    setLoading(true);
     const currentDeployBatch = deployingBatch && deployingBatch === 12 ? 2 : deployBatch;
-    confirmDeploy({ deployingBatch: currentDeployBatch, applyIds: currentAppIds, envCode: env, id }).then((res) => {
-      if (res && res.success) {
-        if (currentDeployBatch === 0) {
-          onCancel();
+    confirmDeploy({ deployingBatch: currentDeployBatch, applyIds: currentAppIds, envCode: env, id })
+      .then((res) => {
+        if (res && res.success) {
+          setLoading(false);
           onOperate('deployEnd');
+          if (currentDeployBatch === 0) {
+            onCancel();
+          }
         }
-      }
-    });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
     <Modal
       title="分批部署"
       visible={visible}
-      confirmLoading={deployingBatch === 1 || deployingBatch === 2}
+      confirmLoading={deployingBatch === 1 || deployingBatch === 2 || loading}
       okText={deployingBatch && deployingBatch === 12 ? '继续' : '确认'}
       onOk={handleOk}
       onCancel={onCancel}

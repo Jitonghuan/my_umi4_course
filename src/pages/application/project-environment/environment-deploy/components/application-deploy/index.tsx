@@ -10,6 +10,7 @@ import DeployContent from './deploy-content';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
 import { getPipelineUrl } from '@/pages/application/service';
+import './index.less';
 
 const { TabPane } = Tabs;
 
@@ -73,7 +74,7 @@ export default function ApplicationDeploy(props: any) {
   // };
 
   return (
-    <ContentCard>
+    <ContentCard className="content-card">
       <DeployContent
         // isActive={item.value === tabActive}
         envTypeCode={projectEnvCode || ''}
