@@ -3,7 +3,7 @@
 // @create 2021/08/27 10:58
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Modal, Input, Form, message, Select, Cascader } from 'antd';
+import { Modal, Input, Form, message, Select, Radio } from 'antd';
 import {
   createFeatureBranch,
   queryPortalList,
@@ -13,7 +13,6 @@ import {
 } from '@/pages/application/service';
 import { getRequest, postRequest } from '@/utils/request';
 import { debounce } from 'lodash';
-import { copyScene } from '@/pages/test/autotest/service';
 
 export interface IProps {
   mode?: EditorMode;
@@ -33,6 +32,8 @@ export default function BranchEditor(props: IProps) {
   const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
   const [queryDemandOptions, setQueryDemandOptions] = useState<any>([]);
   const [platformValue, setPlatformValue] = useState<string>('');
+  const [projectLoading, setProjectLoading] = useState(false);
+  const [demandLoading, setDemandLoading] = useState(false);
   const [projectId, setProjectId] = useState<string>('');
   const [demandId, setDemandId] = useState<any>([]);
   const [demandDescription, setDemandDescription] = useState<any>([]);
@@ -61,13 +62,14 @@ export default function BranchEditor(props: IProps) {
       setLoading(false);
     }
   }, [form, appCode]);
-  const selectplatform = (value: string) => {
-    setPlatformValue(value);
+  const selectplatform = (e: any) => {
+    setPlatformValue(e.target.value);
     form.setFieldsValue({
       projectId: undefined,
       demandId: undefined,
+      desc: '',
     });
-    if (value === 'demandPlat') {
+    if (e.target.value === 'demandPlat') {
       queryPortal();
     } else {
       queryRegulus();
@@ -75,33 +77,43 @@ export default function BranchEditor(props: IProps) {
   };
 
   const queryPortal = () => {
+    setProjectLoading(true);
     try {
-      postRequest(queryPortalList).then((result) => {
-        if (result.success) {
-          let dataSource = result.data;
-          let dataArry: any = [];
-          dataSource?.map((item: any) => {
-            dataArry.push({ label: item?.projectName, value: item?.projectId });
-          });
-          setQueryPortalOptions(dataArry);
-        }
-      });
+      postRequest(queryPortalList)
+        .then((result) => {
+          if (result.success) {
+            let dataSource = result.data;
+            let dataArry: any = [];
+            dataSource?.map((item: any) => {
+              dataArry.push({ label: item?.projectName, value: item?.projectId });
+            });
+            setQueryPortalOptions(dataArry);
+          }
+        })
+        .finally(() => {
+          setProjectLoading(false);
+        });
     } catch (error) {
       console.log('error', error);
     }
   };
   const queryRegulus = () => {
+    setProjectLoading(true);
     try {
-      getRequest(getRegulusProjects).then((result) => {
-        if (result.success) {
-          let dataSource = result.data.projects;
-          let dataArry: any = [];
-          dataSource?.map((item: any) => {
-            dataArry.push({ label: item?.name, value: item?.id });
-          });
-          setQueryPortalOptions(dataArry);
-        }
-      });
+      getRequest(getRegulusProjects)
+        .then((result) => {
+          if (result.success) {
+            let dataSource = result.data.projects;
+            let dataArry: any = [];
+            dataSource?.map((item: any) => {
+              dataArry.push({ label: item?.name, value: item?.id });
+            });
+            setQueryPortalOptions(dataArry);
+          }
+        })
+        .finally(() => {
+          setProjectLoading(false);
+        });
     } catch (error) {
       console.log('error', error);
     }
@@ -111,6 +123,7 @@ export default function BranchEditor(props: IProps) {
     setProjectId(value);
     form.setFieldsValue({
       demandId: undefined,
+      desc: '',
     });
     if (platformValue === 'demandPlat') {
       queryDemand(value);
@@ -119,37 +132,47 @@ export default function BranchEditor(props: IProps) {
     }
   };
   const queryDemand = async (param: string, searchTextParams?: string) => {
+    setDemandLoading(true);
     try {
       await postRequest(getDemandByProjectList, {
         data: { projectId: param, searchText: searchTextParams },
-      }).then((result) => {
-        if (result.success) {
-          let dataSource = result.data;
-          let dataArry: any = [];
-          dataSource?.map((item: any) => {
-            dataArry.push({ label: item?.title, value: item?.id });
-          });
-          setQueryDemandOptions(dataArry);
-        }
-      });
+      })
+        .then((result) => {
+          if (result.success) {
+            let dataSource = result.data;
+            let dataArry: any = [];
+            dataSource?.map((item: any) => {
+              dataArry.push({ label: item?.title, value: item?.id });
+            });
+            setQueryDemandOptions(dataArry);
+          }
+        })
+        .finally(() => {
+          setDemandLoading(false);
+        });
     } catch (error) {
       console.log('error', error);
     }
   };
   const queryRegulusOnlineBugs = async (param: string, searchTextParams?: string) => {
+    setDemandLoading(true);
     try {
       await getRequest(getRegulusOnlineBugs, {
         data: { projectId: param, keyword: searchTextParams, pageSize: -1 },
-      }).then((result) => {
-        if (result.success) {
-          let dataSource = result.data.dataSource;
-          let dataArry: any = [];
-          dataSource?.map((item: any) => {
-            dataArry.push({ label: item?.name, value: item?.id });
-          });
-          setQueryDemandOptions(dataArry);
-        }
-      });
+      })
+        .then((result) => {
+          if (result.success) {
+            let dataSource = result.data.dataSource;
+            let dataArry: any = [];
+            dataSource?.map((item: any) => {
+              dataArry.push({ label: item?.name, value: item?.id });
+            });
+            setQueryDemandOptions(dataArry);
+          }
+        })
+        .finally(() => {
+          setDemandLoading(false);
+        });
     } catch (error) {
       console.log('error', error);
     }
@@ -161,8 +184,11 @@ export default function BranchEditor(props: IProps) {
     data?.map((item: any) => {
       demandInfo.push(item.label);
     });
-    setDemandDescription(demandInfo);
-    // handleSubmit(data);
+
+    let info = demandInfo.toString();
+    form.setFieldsValue({
+      desc: info,
+    });
   };
 
   const onSearch = debounce((val: any) => {
@@ -172,7 +198,10 @@ export default function BranchEditor(props: IProps) {
   useEffect(() => {
     if (mode === 'HIDE') return;
     form.resetFields();
-    form.setFieldsValue({ masterBranch: selectMaster });
+    form.setFieldsValue({
+      masterBranch: selectMaster,
+      // relatedPlat:"demandPlat"
+    });
     // queryPortal();
   }, [mode]);
 
@@ -195,21 +224,27 @@ export default function BranchEditor(props: IProps) {
           <Input addonBefore="feature_" autoFocus />
         </Form.Item>
         <Form.Item
-          label="选择关联平台"
+          label="分支类型"
           name="relatedPlat"
           rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择需要关联的平台' }]}
         >
-          <Select onChange={selectplatform}>
-            <Option value="demandPlat">需求管理平台</Option>
-            <Option value="regulus">regulus</Option>
-          </Select>
+          <Radio.Group onChange={selectplatform} value={platformValue}>
+            <Radio value="demandPlat">需求</Radio>
+            <Radio value="regulus">bug</Radio>
+          </Radio.Group>
         </Form.Item>
         <Form.Item
           label="项目列表"
           name="projectId"
           rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择项目' }]}
         >
-          <Select options={queryPortalOptions} onChange={onChangeProtal} showSearch allowClear></Select>
+          <Select
+            options={queryPortalOptions}
+            onChange={onChangeProtal}
+            showSearch
+            allowClear
+            loading={projectLoading}
+          ></Select>
         </Form.Item>
         <Form.Item
           label="需求列表"
@@ -225,19 +260,14 @@ export default function BranchEditor(props: IProps) {
             labelInValue
             onSearch={onSearch}
             optionFilterProp="label"
+            loading={demandLoading}
             // filterOption={(input, option) =>
             //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             // }
           ></Select>
         </Form.Item>
         <Form.Item label="描述" name="desc">
-          <Input.TextArea
-            placeholder="请输入描述"
-            rows={3}
-            // defaultValue={
-            //   demandDescription?.map((item:any)=>(<span>{item}</span>))
-            // }
-          />
+          <Input.TextArea placeholder="请输入描述" rows={3} />
         </Form.Item>
       </Form>
     </Modal>
