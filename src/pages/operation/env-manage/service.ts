@@ -1,11 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2022-02-23 13:40:30
- * @LastEditTime: 2022-03-02 15:38:44
- * @LastEditors: your name
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /fe-matrix/src/pages/operation/env-manage/service.ts
- */
 // 应用模版相关接口
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/10/26 10:42
@@ -39,3 +31,9 @@ export const queryNGList = addAPIPrefix('/opsManage/ngInstanceNoBindEnv/list');
 
 /** 查看实例 */
 export const queryNgListDetail = addAPIPrefix('/opsManage/ngInstance/list');
+
+/** GET 获取当前环境已封网和未封网应用 */
+export const getAppEnvList = addAPIPrefix('/appManage/env/appList');
+
+/** POST 应用环境封网（应用粒度） */
+export const blockAppEnv = addAPIPrefix('/appManage/env/blockAppEnv');

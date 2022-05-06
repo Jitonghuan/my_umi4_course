@@ -25,7 +25,7 @@ export const appTypeOptions = [
   },
 ];
 export default function DetailList(props: any) {
-  const { dataInfo, onSpin, stopSpin } = props;
+  const { dataInfo, onSpin, stopSpin, isUpdata = false, cancelUpdate = () => {} } = props;
   const [projectEnvInfo, setProjectEnvInfo] = useState<any>(history.location.state);
   const [formList] = Form.useForm();
   const [addAppForm] = Form.useForm();
@@ -91,6 +91,7 @@ export default function DetailList(props: any) {
       })
       .finally(() => {
         // setLoading(false);
+        cancelUpdate();
         stopSpin();
       });
   };
@@ -134,6 +135,12 @@ export default function DetailList(props: any) {
       queryAppsListData(queryCommonParamsRef.current);
     }
   }, [projectEnvInfo]);
+
+  useEffect(() => {
+    if (isUpdata) {
+      queryAppsListData(queryCommonParamsRef.current);
+    }
+  }, [isUpdata]);
 
   const ensureAdd = () => {
     addAppForm.validateFields().then((params) => {

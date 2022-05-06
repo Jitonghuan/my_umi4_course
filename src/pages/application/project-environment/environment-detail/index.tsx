@@ -3,10 +3,10 @@
 // @create 2022/02/14 10:20
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Input, Select, Button, Table, Spin, Popconfirm, Modal, Descriptions, Divider, Tag } from 'antd';
+import { Button, Spin, Descriptions } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { PlusOutlined, DiffOutlined } from '@ant-design/icons';
+import { DiffOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { queryProjectEnvList, queryAppsList } from '../service';
 import { ContentCard } from '@/components/vc-page-content';
@@ -38,6 +38,7 @@ export const appTypeOptions = [
 ];
 export default function EnvironmentList() {
   const projectEnvInfo: any = history.location.state;
+  const [isUpdata, setIsUpdata] = useState<boolean>(false);
   const [enviroInitData, setEnviroInitData] = useState<EnvironmentEdit>();
   const [enviroEditMode, setEnviroEditMode] = useState<EditorMode>('HIDE');
   const [appsListData, setAppsListData] = useState<any>([]);
@@ -46,7 +47,6 @@ export default function EnvironmentList() {
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
-
   const queryProjectEnv = async (benchmarkEnvCode: string, envCode: string) => {
     setListLoading(true);
     await getRequest(queryProjectEnvList, { data: { benchmarkEnvCode, envCode } })
@@ -114,6 +114,10 @@ export default function EnvironmentList() {
     setIsSpinning(false);
   };
 
+  const cancelUpdate = () => {
+    setIsUpdata(false);
+  };
+
   return (
     <PageContainer className="project-env-detail">
       <EnvironmentEditDraw
@@ -124,28 +128,31 @@ export default function EnvironmentList() {
         }}
         onSave={() => {
           setEnviroEditMode('HIDE');
-          queryAppsListData(queryCommonParamsRef.current);
+          setIsUpdata(true);
+          queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+          // queryAppsListData(queryCommonParamsRef.current);
         }}
       />
-      <Spin spinning={isSpinning}>
-        <ContentCard>
-          <div className="table-caption">
-            <div className="caption-left">
-              <h3>项目详情</h3>
-            </div>
-            <div className="caption-right">
-              <Button
-                type="primary"
-                onClick={() => {
-                  setEnviroEditMode('EDIT');
-                }}
-              >
-                <DiffOutlined />
-                编辑
-              </Button>
-            </div>
+
+      <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>项目详情</h3>
           </div>
-          <div>
+          <div className="caption-right">
+            <Button
+              type="primary"
+              onClick={() => {
+                setEnviroEditMode('EDIT');
+              }}
+            >
+              <DiffOutlined />
+              编辑
+            </Button>
+          </div>
+        </div>
+        <div>
+          <Spin spinning={isSpinning || loading}>
             <Descriptions
               bordered
               column={2}
@@ -159,10 +166,12 @@ export default function EnvironmentList() {
                 {projectEnvData?.mark || '--'}
               </Descriptions.Item>
             </Descriptions>
-          </div>
-          <DetailList onSpin={onSpin} stopSpin={stopSpin}></DetailList>
-        </ContentCard>
-      </Spin>
+          </Spin>
+        </div>
+        <Spin spinning={isSpinning || loading}>
+          <DetailList onSpin={onSpin} stopSpin={stopSpin} isUpdata={isUpdata} cancelUpdate={cancelUpdate}></DetailList>
+        </Spin>
+      </ContentCard>
     </PageContainer>
   );
 }

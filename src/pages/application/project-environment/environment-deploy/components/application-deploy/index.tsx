@@ -9,6 +9,8 @@ import DetailContext from '../../context';
 import DeployContent from './deploy-content';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
+import { getPipelineUrl } from '@/pages/application/service';
+import './index.less';
 
 const { TabPane } = Tabs;
 
@@ -17,10 +19,29 @@ export default function ApplicationDeploy(props: any) {
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
+  const [pipelineCode, setPipelineCode] = useState('');
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
   }, [tabActive]);
+
+  // 获取流水线
+  const getPipeline = () => {
+    getRequest(getPipelineUrl, {
+      data: { appCode: appData?.appCode, envTypeCode: tabActive, proEnvCode: projectEnvCode, pageIndex: -1, size: -1 },
+    }).then((res) => {
+      if (res?.success) {
+        let data = res?.data?.dataSource;
+        if (data && data.length !== 0) {
+          setPipelineCode(data[0].pipelineCode);
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    getPipeline();
+  }, []);
 
   // useEffect(() => {
   //   queryData();
@@ -53,10 +74,11 @@ export default function ApplicationDeploy(props: any) {
   // };
 
   return (
-    <ContentCard>
+    <ContentCard className="content-card">
       <DeployContent
         // isActive={item.value === tabActive}
         envTypeCode={projectEnvCode || ''}
+        pipelineCode={pipelineCode}
       />
     </ContentCard>
   );

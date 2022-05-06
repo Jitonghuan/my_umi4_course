@@ -5,14 +5,14 @@
  * @create 2021-04-15 10:04
  */
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
 import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
-import { queryDeployList, queryFeatureDeployed } from '@/pages/application/service';
+import { queryDeployList, queryFeatureDeployed, queryActiveDeployInfo } from '@/pages/application/service';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';
@@ -22,11 +22,13 @@ export interface IProps {
   env: string;
   /** 部署下个环境成功回调 */
   onDeployNextEnvSuccess: () => void;
+  pipelineCode: string;
 }
 
-export default function DeployContent({ env, onDeployNextEnvSuccess }: IProps) {
+export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCode }: IProps) {
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
+  const cachebranchName = useRef<string>();
 
   const [updating, setUpdating] = useState(false);
   const [deployInfo, setDeployInfo] = useState({});
@@ -34,33 +36,51 @@ export default function DeployContent({ env, onDeployNextEnvSuccess }: IProps) {
     deployed: any[];
     unDeployed: any[];
   }>({ deployed: [], unDeployed: [] });
+  const masterBranchName = useRef<string>('master');
 
   const requestData = async () => {
-    if (!appCode) return;
+    if (!appCode || !pipelineCode) return;
 
     setUpdating(true);
+    const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
 
-    const resp1 = await queryDeployList({
-      appCode: appCode!,
-      envTypeCode: env,
-      isActive: 1,
-      pageIndex: 1,
-      pageSize: 10,
-    });
+    // const resp1 = await queryDeployList({
+    //   appCode: appCode!,
+    //   envTypeCode: env,
+    //   isActive: 1,
+    //   pageIndex: 1,
+    //   pageSize: 10,
+    // });
 
     const resp2 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode: env,
       isDeployed: 1,
+      pipelineCode,
+      masterBranch: masterBranchName.current,
     });
     const resp3 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode: env,
       isDeployed: 0,
+      branchName: cachebranchName.current,
+      masterBranch: masterBranchName.current,
+      pipelineCode,
     });
 
-    if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-      setDeployInfo(resp1?.data?.dataSource[0]);
+    // if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
+    //   setDeployInfo(resp1?.data?.dataSource[0]);
+    // }
+
+    if (resp && resp.success) {
+      if (resp?.data) {
+        setDeployInfo(resp.data);
+      }
+      if (!resp.data) {
+        setDeployInfo({});
+      }
+    } else {
+      setDeployInfo({});
     }
 
     setBranchInfo({
@@ -84,10 +104,15 @@ export default function DeployContent({ env, onDeployNextEnvSuccess }: IProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode) return;
+    if (!appCode || !pipelineCode) return;
 
     timerHandle('do', true);
-  }, [appCode]);
+  }, [appCode, pipelineCode]);
+
+  const searchUndeployedBranch = (branchName?: string) => {
+    cachebranchName.current = branchName;
+    timerHandle('do', true);
+  };
 
   return (
     <div className={rootCls}>
@@ -95,6 +120,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess }: IProps) {
         <PublishDetail
           env={env}
           deployInfo={deployInfo}
+          pipelineCode={pipelineCode}
           onOperate={(type) => {
             if (type === 'deployNextEnvSuccess') {
               onDeployNextEnvSuccess();
@@ -116,8 +142,14 @@ export default function DeployContent({ env, onDeployNextEnvSuccess }: IProps) {
           hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
           dataSource={branchInfo.unDeployed}
           env={env}
+          pipelineCode={pipelineCode}
+          onSearch={searchUndeployedBranch}
           onSubmitBranch={(status) => {
             timerHandle(status === 'start' ? 'stop' : 'do', true);
+          }}
+          masterBranchChange={(masterBranch: string) => {
+            masterBranchName.current = masterBranch;
+            timerHandle('do', true);
           }}
         />
       </div>

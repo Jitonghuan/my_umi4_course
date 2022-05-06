@@ -9,7 +9,7 @@ import { MergeProp, conflictItem } from './types';
 import { pushMergeMessage } from '@/pages/application/service';
 
 export default function MergeConflict(prop: MergeProp) {
-  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick } = prop;
+  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick, id } = prop;
   const [allFile, setAllFile] = useState<any>([]); //所有冲突的文件
   const [chooseFile, setChooseFile] = useState<any>([]); //当前选中的文件
   const [loading, setLoading] = useState(false);
@@ -43,10 +43,10 @@ export default function MergeConflict(prop: MergeProp) {
   const handleOk = () => {
     const params = allFile.map((item: conflictItem) => ({
       filePath: item.filePath,
-      context: item.context,
+      content: item.content,
     }));
     setLoading(true);
-    pushMergeMessage({ releaseBranch: releaseBranch, messages: params })
+    pushMergeMessage({ messages: params, id })
       .then((res) => {
         if (res.success) {
           // setLoading(false);
@@ -71,7 +71,7 @@ export default function MergeConflict(prop: MergeProp) {
     let f: any;
     let newArr = allFile.map((item: conflictItem) => {
       if (item.id === chooseFile.id) {
-        item.context = value;
+        item.content = value;
         f = item;
       }
       return item;
@@ -83,7 +83,7 @@ export default function MergeConflict(prop: MergeProp) {
     // let f: any;
     // let newArr = allFile.map((item: conflictItem) => {
     //   if (item.id === chooseFile.id) {
-    //     item.releaseBranch.context = value;
+    //     item.releaseBranch.content = value;
     //     f = item;
     //   }
     //   return item;
@@ -155,14 +155,14 @@ export default function MergeConflict(prop: MergeProp) {
             </div>
             {/* <CodeMirrorEditor
               {...chooseFile}
-              value={chooseFile?.releaseBranch?.context}
-              orig={chooseFile?.featureBranch?.context}
+              value={chooseFile?.releaseBranch?.content}
+              orig={chooseFile?.featureBranch?.content}
               onchange={handleChange}
             /> */}
             {/* <MonacoEditorMerge
               {...chooseFile}
-              value={chooseFile?.releaseBranch?.context}
-              orig={chooseFile?.featureBranch?.context}
+              value={chooseFile?.releaseBranch?.content}
+              orig={chooseFile?.featureBranch?.content}
               onchange={handleChange}
             ></MonacoEditorMerge> */}
             <MonacoEditor onchange={handleChange} {...chooseFile}></MonacoEditor>

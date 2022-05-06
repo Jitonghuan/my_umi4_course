@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   Form,
   Select,
@@ -20,7 +20,7 @@ import ReactJson from 'react-json-view';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
 import { postRequest } from '@/utils/request';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { useEnvOptions, useLogStoreOptions, useFrameUrl, useIndexModeList } from './hooks';
@@ -28,6 +28,18 @@ import moment from 'moment';
 import './index.less';
 // 时间枚举
 export const START_TIME_ENUMS = [
+  {
+    label: 'Last 1 minutes',
+    value: 1 * 60 * 1000,
+  },
+  {
+    label: 'Last 5 minutes',
+    value: 5 * 60 * 1000,
+  },
+  {
+    label: 'Last 10 minutes',
+    value: 10 * 60 * 1000,
+  },
   {
     label: 'Last 15 minutes',
     value: 15 * 60 * 1000,
@@ -67,19 +79,39 @@ export const START_TIME_ENUMS = [
 ];
 
 export default function LoggerSearch(props: any) {
+  console.log('props', props);
+  const receiveInfo = props.location.query;
+  const showWindowHref = () => {
+    var sHref = window.location.href;
+    var args = sHref.split('?');
+    if (args[0] == sHref) {
+      return '';
+    }
+    var arr = args[1].split('&');
+    var obj: any = {};
+    for (var i = 0; i < arr.length; i++) {
+      var arg = arr[i].split('=');
+      obj[arg[0]] = arg[1];
+    }
+    return obj;
+  };
+  const messageInfo = showWindowHref();
   const { TabPane } = Tabs;
   const { Search } = Input;
   const { Panel } = Collapse;
   const { Option } = Select;
   const { RangePicker } = DatePicker;
   const [subInfoForm] = Form.useForm();
+  const [sqlForm] = Form.useForm();
   const [rangePickerForm] = Form.useForm();
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(15 * 60 * 1000);
+  const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const now = new Date().getTime();
   //默认传最近30分钟，处理为秒级的时间戳
   let start = Number((now - startTime) / 1000).toString();
   let end = Number(now / 1000).toString();
+  const [stowCondition, setStowCondition] = useState<boolean>(false);
+  // const [showMore, setShowMore] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
   const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>(); //手风琴下拉框数据 hits
   const [viewLogSearchTabInfo, setViewlogSeaechTabInfo] = useState<any>(); //手风琴展示数据
@@ -101,14 +133,49 @@ export default function LoggerSearch(props: any) {
   const [envOptions] = useEnvOptions(); //环境下拉框选项数据
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
-  const timmerRef = useRef<any>();
-  const frameRef = useRef<any>();
   var iframe = document.createElement('iframe');
+  useLayoutEffect(() => {
+    // receiveInfo
+    if (Object.keys(receiveInfo).length !== 0) {
+      setStartTime(30 * 60 * 1000);
+      const now = new Date().getTime();
+      let defaultInterval = 30 * 60 * 1000;
+      let start = Number((now - defaultInterval) / 1000).toString();
+      let end = Number(now / 1000).toString();
+      setEnvCode(receiveInfo.envCode);
+      setLogStore(receiveInfo.indexMode);
+      console.log('message', receiveInfo.message, receiveInfo, messageInfo['message']);
+      let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
+      // window.atob(receiveInfo.message);
+      let appCodeArry = [];
+      if (receiveInfo.appCode) {
+        appCodeArry.push('appCode:' + receiveInfo.appCode);
+      }
+      appCodeArry.push('envCode:' + receiveInfo.envCode);
+      setAppCodeValue(appCodeArry);
+      setQuerySql(messageDecodedData);
+      subInfoForm.setFieldsValue({
+        appCode: receiveInfo.appCode,
+      });
+      sqlForm.setFieldsValue({
+        querySql: messageDecodedData,
+      });
+      setEditScreenVisible(true);
+      loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
+    }
+    // if(receiveInfo.type==='logSearchInfo'){
+
+    // }
+  }, []);
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
       return;
     }
-    message.info('请输入筛选条件进行查询哦～');
+    let info = subInfoForm.getFieldsValue();
+    if (!info) {
+      message.info('请输入筛选条件进行查询哦～');
+    }
+
     // queryIndexModeList(envCode, logStore)
     //   .then(() => {
     //     message.info('请输入筛选条件进行查询哦～');
@@ -123,7 +190,27 @@ export default function LoggerSearch(props: any) {
 
   //使用lucene语法搜索时的事件
   const onSearch = (values: any) => {
-    subInfoForm.resetFields();
+    // subInfoForm.resetFields();
+    let params = subInfoForm.getFieldsValue();
+    let podNameInfo = params?.podName;
+    // let querySqlInfo = params?.message;
+    let messageInfo = params?.message;
+    let appCodeValue = params?.appCode;
+    let appCodeArry = [];
+    if (appCodeValue) {
+      appCodeArry.push('appCode:' + appCodeValue);
+    }
+    if (podNameInfo) {
+      appCodeArry.push('podName:' + podNameInfo);
+    }
+    if (params?.traceId) {
+      appCodeArry.push('traceId:' + params?.traceId);
+    }
+    if (params?.level) {
+      appCodeArry.push('level:' + params?.level);
+    }
+    appCodeArry.push('envCode:' + envCode);
+
     setQuerySql(values);
     const now = new Date().getTime();
     //默认传最近30分钟，处理为秒级的时间戳
@@ -133,9 +220,9 @@ export default function LoggerSearch(props: any) {
       setStartTimestamp(start);
       setEndTimestamp(end);
 
-      loadMoreData(logStore, start, end, values, messageValue, appCodeValue);
+      loadMoreData(logStore, start, end, values, messageInfo, appCodeArry);
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, values, messageValue, appCodeValue);
+      loadMoreData(logStore, startTimestamp, endTimestamp, values, messageInfo, appCodeArry);
     }
   };
 
@@ -210,6 +297,12 @@ export default function LoggerSearch(props: any) {
     if (podNameInfo) {
       appCodeArry.push('podName:' + podNameInfo);
     }
+    if (params?.traceId) {
+      appCodeArry.push('traceId:' + params?.traceId);
+    }
+    if (params?.level) {
+      appCodeArry.push('level:' + params?.level);
+    }
     appCodeArry.push('envCode:' + envCode);
     setAppCodeValue(appCodeArry);
     const now = new Date().getTime();
@@ -249,7 +342,7 @@ export default function LoggerSearch(props: any) {
         // podName: podNameParam || '',
         message: messageParam || '',
         filterIs: appCodeParam || fiterArry || [],
-        envCode: envCode,
+        envCode: envCode || receiveInfo.envCode,
       },
     })
       .then((resp) => {
@@ -290,8 +383,9 @@ export default function LoggerSearch(props: any) {
   //重置筛选信息
   const resetQueryInfo = () => {
     subInfoForm.resetFields();
+    setQuerySql('');
+    setEditScreenVisible(false);
     setAppCodeValue([]);
-    // setQuerySql('');
     setMessageValue('');
     setPodName('');
     const now = new Date().getTime();
@@ -301,9 +395,9 @@ export default function LoggerSearch(props: any) {
     if (startTimestamp !== start) {
       setStartTimestamp(start);
       setEndTimestamp(end);
-      loadMoreData(logStore, start, end, querySql, '');
+      loadMoreData(logStore, start, end, '', '');
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, '');
+      loadMoreData(logStore, startTimestamp, endTimestamp, '', '');
     }
   };
   // 无限滚动下拉事件
@@ -352,7 +446,7 @@ export default function LoggerSearch(props: any) {
                   <Form.Item name="rangeDate" noStyle>
                     <RangePicker
                       allowClear
-                      style={{ width: 200 }}
+                      style={{ width: 360 }}
                       onChange={(v: any, b: any) => selectTime(v, b)}
                       // onChange={()=>selectTime}
                       showTime={{
@@ -380,18 +474,30 @@ export default function LoggerSearch(props: any) {
         {!envCode && !logStore ? <div className="empty-holder">请选择环境和日志库</div> : null}
         {envCode && logStore ? (
           <div>
-            <div style={{ marginBottom: 18, width: '100%' }}>
+            <div style={{ marginBottom: 10, width: '100%' }}>
               <div>
                 <Form form={subInfoForm} layout="inline" labelCol={{ flex: 4 }}>
-                  <Form.Item label="appCode" name="appCode">
-                    <Input style={{ width: 120 }} disabled={editConditionType}></Input>
-                  </Form.Item>
-                  <Form.Item label="podName" name="podName">
-                    <Input style={{ width: 140 }} disabled={editConditionType}></Input>
-                  </Form.Item>
-                  <Form.Item label="message" name="message">
-                    <Input style={{ width: 300 }} placeholder="单行输入" disabled={editConditionType}></Input>
-                  </Form.Item>
+                  <p style={{ display: 'flex', width: '100%', marginBottom: 0 }}>
+                    <Form.Item label="appCode" name="appCode">
+                      <Input style={{ width: '11vw' }}></Input>
+                    </Form.Item>
+                    <Form.Item label="podName" name="podName">
+                      <Input style={{ width: '14vw' }}></Input>
+                    </Form.Item>
+
+                    {/* <Form.Item label="level" name="level">
+                    <Input style={{ width: '11vw' }}></Input>
+                  </Form.Item> */}
+                    <Form.Item label="traceId" name="traceId">
+                      <Input style={{ width: '36vw' }} placeholder="单行输入"></Input>
+                    </Form.Item>
+                  </p>
+
+                  <p>
+                    <Form.Item label="message" name="message">
+                      <Input style={{ width: '26vw' }} placeholder="仅支持精准匹配"></Input>
+                    </Form.Item>
+                  </p>
 
                   <Form.Item>
                     <Button htmlType="submit" type="primary" onClick={submitEditScreen}>
@@ -401,30 +507,35 @@ export default function LoggerSearch(props: any) {
                   <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo}>
                     重置
                   </Button>
+                  {/* <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>
+                    <a
+                      onClick={() => {
+                        if (showMore) {
+                          setShowMore(false);
+                        } else {
+                          setShowMore(true);
+                        }
+                      }}
+                    >
+                      {showMore ? '收起更多条件' : '更多查询条件...'}
+                    </a>
+                  </span> */}
 
                   <Button
                     type="primary"
-                    style={{ marginLeft: '8vw' }}
+                    style={{ marginLeft: '2vw' }}
                     onClick={() => {
-                      subInfoForm.resetFields();
-                      // setTurnOnButton(true)
+                      // subInfoForm.resetFields();
                       if (!editScreenVisible) {
                         setEditScreenVisible(true);
-                        setEditConditionType(true);
                       } else {
                         setEditScreenVisible(false);
-                        setEditConditionType(false);
+                        setQuerySql('');
                       }
-
-                      setQuerySql('');
-                      setMessageValue('');
-                      setPodName('');
-                      setAppCodeValue([]);
                     }}
                   >
                     高级搜索
                   </Button>
-                  {/* <span style={{color: '#708090' }}>双击关闭</span> */}
                 </Form>
               </div>
 
@@ -432,34 +543,56 @@ export default function LoggerSearch(props: any) {
                 {editScreenVisible === true ? (
                   <div style={{ marginTop: 4 }}>
                     <Divider />
-                    <Popover
-                      title="查看lucene语法"
-                      placement="topLeft"
-                      content={
-                        <a
-                          target="_blank"
-                          href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
-                        >
-                          lucene语法网址
-                        </a>
-                      }
-                    >
-                      <Button>
-                        lucene
-                        <QuestionCircleOutlined />
-                      </Button>
-                    </Popover>
-                    <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} />
+
+                    <Form form={sqlForm} layout="inline">
+                      <Popover
+                        title="查看lucene语法"
+                        placement="topLeft"
+                        content={
+                          <a
+                            target="_blank"
+                            href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
+                          >
+                            lucene语法网址
+                          </a>
+                        }
+                      >
+                        <Button>
+                          lucene
+                          <QuestionCircleOutlined />
+                        </Button>
+                      </Popover>
+                      <Form.Item name="querySql">
+                        <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} />
+                      </Form.Item>
+                    </Form>
                   </div>
                 ) : null}
               </div>
             </div>
-            <Divider style={{ height: 10, marginTop: 0, marginBottom: 0 }} />
-            <Spin size="large" spinning={infoLoading}>
-              <div style={{ marginBottom: 4 }}>
-                <ChartCaseList data={logHistormData} loading={infoLoading} hitsData={hitInfo} />
-              </div>
-            </Spin>
+            <div className="close-button">
+              <a
+                onClick={() => {
+                  if (stowCondition) {
+                    setStowCondition(false);
+                  } else {
+                    setStowCondition(true);
+                  }
+                }}
+              >
+                {stowCondition ? '收起命中图表' : '展开命中图表'}
+                {stowCondition ? <UpOutlined /> : <DownOutlined />}
+              </a>
+            </div>
+            <Divider style={{ height: 6, marginTop: 0, marginBottom: 0 }} />
+            {stowCondition && (
+              <Spin size="large" spinning={infoLoading}>
+                <div style={{ marginBottom: 4 }}>
+                  <ChartCaseList data={logHistormData} loading={infoLoading} hitsData={hitInfo} />
+                </div>
+              </Spin>
+            )}
+
             <div>
               <div
                 id="scrollableDiv"
@@ -491,16 +624,15 @@ export default function LoggerSearch(props: any) {
                                 style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
                                 header={
                                   <div style={{ display: 'flex', maxHeight: 138, overflow: 'hidden' }}>
-                                    <div style={{ width: '20%', color: '#6495ED' }}>
+                                    <div style={{ width: '14%', color: '#6495ED' }}>
                                       {moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss')}
                                     </div>
                                     {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
                                     <div
-                                      style={{ width: '80%' }}
-                                      dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
-                                    >
-                                      {/* {ansi_up.ansi_to_html(JSON.stringify(item?._source))} */}
-                                    </div>
+                                      style={{ width: '86%', fontSize: 10 }}
+                                      dangerouslySetInnerHTML={{ __html: `${JSON.stringify(item)}` }}
+                                      className="detailInfo"
+                                    ></div>
                                   </div>
                                 }
                                 key={index}

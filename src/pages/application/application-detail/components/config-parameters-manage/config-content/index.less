@@ -1,4 +1,21 @@
 .config-content-compo {
+  height: 100%;
+  .ant-form {
+    height: calc(100% - 112px);
+    .content-ace-editor {
+      width: 96%;
+      height: 100%;
+      .ant-row,
+      .ant-col,
+      .ant-form-item-control-input-content,
+      .ant-form-item-control-input,
+      .ace-editor-wrapper {
+        height: 100%;
+      }
+    }
+  }
+}
+.config-content-compo {
   padding: 0 24px 18px;
 
   &__filter {

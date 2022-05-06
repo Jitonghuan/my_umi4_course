@@ -9,6 +9,7 @@ export interface IProps {
   onOperate: (type: OperateType) => void;
   onSpin: any;
   stopSpin: any;
+  pipelineCode: string;
 }
 
 // 执行步骤组合
@@ -19,7 +20,7 @@ export interface StepsProps {
   stopSpin: any;
   deployedList: any;
   onCancelDeploy?: (envCode: string) => void;
-  getItemByKey: (listStr: string, envCode: string) => any;
+  getItemByKey: (obj: any, envCode: string) => any;
   projectEnvCode: any;
 }
 

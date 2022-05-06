@@ -4,13 +4,14 @@ export interface MergeProp {
   retryMergeClick: any;
   mergeMessage: conflictItem[];
   releaseBranch: string;
+  id: any;
 }
 
 export interface conflictItem {
   id?: any;
   resolved?: boolean;
   filePath: string;
-  context: string;
+  content: string;
 }
 
 export interface IProp {

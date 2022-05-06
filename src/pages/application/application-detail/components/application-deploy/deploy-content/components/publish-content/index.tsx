@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
-import { cancelDeploy, createDeploy, updateFeatures } from '@/pages/application/service';
+import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/application/service';
 import { IProps } from './types';
 import BackendDevEnvSteps from './backend-steps/dev';
 import BackendTestEnvSteps from './backend-steps/test';
@@ -19,6 +19,7 @@ import FrontendDevEnvSteps from './frontend-steps/dev';
 import FrontendTestEnvSteps from './frontend-steps/test';
 import FrontendPreEnvSteps from './frontend-steps/pre';
 import FrontendProdEnvSteps from './frontend-steps/prod';
+import DeploySteps from './steps';
 import './index.less';
 
 const rootCls = 'publish-content-compo';
@@ -37,12 +38,16 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode } = props;
+  let { metadata, status, envInfo } = deployInfo;
+  const { deployNodes } = status || {}; //步骤条数据
+  const { deployEnvs } = envInfo || [];
   const { appData } = useContext(DetailContext);
   const { id } = appData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const isProd = envTypeCode === 'prod';
   const [fullScreeVisible, setFullScreeVisible] = useState(false);
+  const [isShow, setIsShow] = useState(false);
 
   type reviewStatusTypeItem = {
     color: string;
@@ -58,18 +63,17 @@ export default function PublishContent(props: IProps) {
     6: { text: '已通过', color: 'green' },
   };
 
-  // 重新部署
+  // 重新提交分支
   const handleReDeploy = () => {
     onOperate('retryDeployStart');
 
     Modal.confirm({
-      title: '确定要重新部署吗?',
+      title: '确定要重新提交吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
-
-        return updateFeatures({
-          id: deployInfo.id,
+        return reCommit({
+          id: metadata.id,
           features,
         }).then(() => {
           onOperate('retryDeployEnd');
@@ -81,7 +85,7 @@ export default function PublishContent(props: IProps) {
     });
   };
 
-  // 批量退出
+  // 批量退出分支
   const handleBatchExit = () => {
     onOperate('batchExitStart');
 
@@ -90,15 +94,17 @@ export default function PublishContent(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         const features = deployedList
-          .filter((item) => !selectedRowKeys.includes(item.id))
+          .filter((item) => selectedRowKeys.includes(item.id))
           .map((item) => item.branchName);
 
-        return createDeploy({
-          appCode,
-          envTypeCode,
+        return withdrawFeatures({
+          // appCode,
+          // envTypeCode,
           features,
-          isClient: false,
-        }).then(() => {
+          id: metadata?.id,
+          // isClient: false,
+          // pipelineCode,
+        }).then((res) => {
           onOperate('batchExitEnd');
         });
       },
@@ -125,32 +131,53 @@ export default function PublishContent(props: IProps) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         return cancelDeploy({
-          id: deployInfo.id,
+          id: metadata?.id,
           envCode,
         }).then(() => {});
       },
     });
   }
 
-  function getItemByKey(listStr: string, envCode: string) {
+  function getItemByKey(obj: any, envCode: string) {
     try {
-      const list = listStr ? JSON.parse(listStr) : [];
-      const item = list.find((val: any) => val.envCode === envCode);
-      return item || {};
-    } catch (e) {
-      return listStr
-        ? {
-            subJenkinsUrl: listStr,
-          }
-        : {};
+      if (obj) {
+        const keyList = Object.keys(obj) || [];
+        if (keyList.length !== 0 && envCode) {
+          return obj[envCode];
+        } else {
+          return '';
+        }
+      }
+    } catch {
+      return '';
     }
   }
+
+  const showCancel = () => {
+    setIsShow(true);
+  };
+
+  const notShowCancel = () => {
+    setIsShow(false);
+  };
 
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
+      <div className={`${rootCls}__right-top-btns`}>
+        {isShow && deployNodes?.length !== 0 && (
+          <Button
+            danger
+            onClick={() => {
+              onCancelDeploy();
+            }}
+          >
+            取消发布
+          </Button>
+        )}
+      </div>
 
-      <CurrSteps
+      {/* <CurrSteps
         deployInfo={deployInfo}
         onOperate={onOperate}
         isFrontend={isFrontend}
@@ -160,24 +187,39 @@ export default function PublishContent(props: IProps) {
         onSpin={onSpin}
         deployedList={deployedList}
         getItemByKey={getItemByKey}
+      /> */}
+      <DeploySteps
+        stepData={deployNodes}
+        deployInfo={deployInfo}
+        onOperate={onOperate}
+        isFrontend={isFrontend}
+        envTypeCode={envTypeCode}
+        appData={appData}
+        onCancelDeploy={onCancelDeploy}
+        stopSpin={stopSpin}
+        notShowCancel={notShowCancel}
+        showCancel={showCancel}
+        onSpin={onSpin}
+        deployedList={deployedList}
+        getItemByKey={getItemByKey}
+        pipelineCode={pipelineCode}
       />
-      <div className="full-scree-icon">
+      {/* <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />
-      </div>
+      </div> */}
 
       <div className="table-caption" style={{ marginTop: 16 }}>
         <h4>内容列表</h4>
         <div className="caption-right">
           {!isProd && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-              重新部署
+              重新提交
             </Button>
           )}
-          {!isProd || isFrontend ? (
-            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-              批量退出
-            </Button>
-          ) : null}
+
+          <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
+            退出分支
+          </Button>
           {/* {!isFrontend && !isProd && (
             <Popconfirm
               title="确定要重启应用吗？"
@@ -261,9 +303,20 @@ export default function PublishContent(props: IProps) {
         visible={fullScreeVisible}
         onCancel={() => setFullScreeVisible(false)}
       >
-        <CurrSteps
+        {/* <CurrSteps
           deployInfo={deployInfo}
           onOperate={onOperate}
+          onCancelDeploy={onCancelDeploy}
+          stopSpin={stopSpin}
+          onSpin={onSpin}
+          deployedList={deployedList}
+          getItemByKey={getItemByKey}
+        /> */}
+        <DeploySteps
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          isFrontend={isFrontend}
+          appData={appData}
           onCancelDeploy={onCancelDeploy}
           stopSpin={stopSpin}
           onSpin={onSpin}

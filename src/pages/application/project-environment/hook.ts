@@ -4,7 +4,7 @@ import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import appConfig from '@/app.config';
 
-export function useCreateProjectEnv() {
+export function useCreateProjectEnv(): [boolean, (creatParamsObj: any) => Promise<void>] {
   const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
   const createProjectEnv = async (creatParamsObj: any) => {
     setEnsureLoading(true);
@@ -19,6 +19,7 @@ export function useCreateProjectEnv() {
           setEnsureLoading(false);
         });
     } catch (error) {
+      // console.log(`新增项目环境失败！${error}`)
       message.error(`新增项目环境失败！${error}`);
     }
   };
@@ -32,11 +33,9 @@ export function useUpdateProjectEnv() {
         if (res.success) {
           message.success('编辑项目环境成功！');
         }
-        //  else {
-        //   message.error('编辑项目环境失败！');
-        // }
       });
     } catch (error) {
+      // console.log(`编辑项目环境失败！${error}`)
       message.error(`编辑项目环境失败！${error}`);
     }
   };
@@ -94,28 +93,30 @@ export function useEnvList() {
   }, []);
   const queryEnvData = () => {
     setLoading(true);
-    getRequest(APIS.queryEnvList, {
-      data: {
-        pageSize: -1,
-        envTypeCode: 'notProd',
-      },
-    })
-      .then((result) => {
-        if (result?.success) {
-          let data = result?.data?.dataSource;
-          let dataArry: any = [];
-          data?.map((item: any) => {
-            dataArry.push({
-              label: item?.envName,
-              value: item?.envCode,
-            });
-          });
-          setEnvDataSource(dataArry);
-        }
+    if (appConfig.PRIVATE_METHODS === 'public') {
+      getRequest(APIS.queryEnvList, {
+        data: {
+          pageSize: -1,
+          envTypeCode: 'notProd',
+        },
       })
-      .finally(() => {
-        setLoading(false);
-      });
+        .then((result) => {
+          if (result?.success) {
+            let data = result?.data?.dataSource;
+            let dataArry: any = [];
+            data?.map((item: any) => {
+              dataArry.push({
+                label: item?.envName,
+                value: item?.envCode,
+              });
+            });
+            setEnvDataSource(dataArry);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   return [loading, envDataSource];
@@ -127,8 +128,6 @@ export function useAddAPPS() {
       await postRequest(APIS.addApps, { data: addAppsParamsObj }).then((res) => {
         if (res.success) {
           message.success('添加应用成功！');
-        } else {
-          message.error('添加应用失败！');
         }
       });
     } catch (error) {

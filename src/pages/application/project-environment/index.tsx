@@ -3,10 +3,10 @@
 // @create 2022/02/14 10:20
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, Tag, Divider } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, message, Divider, Tooltip } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { PlusOutlined, StarFilled, StarTwoTone } from '@ant-design/icons';
+import { PlusOutlined, StarFilled, StarTwoTone, CopyOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { queryProjectEnvList } from './service';
@@ -17,6 +17,8 @@ import './index.less';
 import { Radio } from '@cffe/h2o-design';
 import DetailList from './environment-detail/detail-list';
 import { collectRequst } from '../common';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 /** 环境大类 */
 const envTypeData = [
   {
@@ -79,7 +81,7 @@ export default function EnvironmentList() {
           setPageIndex(pageIndex);
           setDataSource(data);
           setPageTotal(pageTotal);
-        } else if (!res) {
+        } else if (!res || !res.success) {
           // 防止接口出现404两个tab页面数据出现混乱的情况
           setDataSource([]);
           setPageTotal(0);
@@ -99,7 +101,7 @@ export default function EnvironmentList() {
   }, []);
 
   useEffect(() => {
-    if (dataSource.length === 0 && type === 'collect') {
+    if (dataSource?.length === 0 && type === 'collect') {
       setRowData({
         id: '',
         envCode: '',
@@ -184,75 +186,76 @@ export default function EnvironmentList() {
         }}
         onSave={saveEditData}
       />
-      <Spin spinning={isSpinning}>
-        <FilterCard>
-          <Form
-            layout="inline"
-            form={formList}
-            onFinish={(values: any) => {
-              queryProjectEnv({
-                ...values,
-                pageIndex: 1,
-                pageSize: 20,
-              });
-            }}
-            onReset={() => {
-              formList.resetFields();
-              queryProjectEnv({
-                pageIndex: 1,
-                // pageSize: pageSize,
-              });
-            }}
-          >
-            <Form.Item label="默认分类：" name="categoryCode">
-              <Select showSearch style={{ width: 150 }} options={categoryData} />
-            </Form.Item>
-            <Form.Item label="环境大类：" name="envTypeCode">
-              <Select allowClear showSearch style={{ width: 120 }} options={envTypeData} />
-            </Form.Item>
-            <Form.Item label="基准环境：" name="benchmarkEnvCode">
-              <Select showSearch allowClear style={{ width: 150 }} options={envDataSource} loading={loading} />
-            </Form.Item>
-            <Form.Item label="环境名：" name="envName">
-              <Input style={{ width: 150 }} />
-            </Form.Item>
-            <Form.Item label=" 环境CODE" name="envCode">
-              <Input placeholder="请输入环境CODE"></Input>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button type="ghost" htmlType="reset">
-                重置
-              </Button>
-            </Form.Item>
-          </Form>
-        </FilterCard>
-        <ContentCard>
-          <div className="table-caption">
-            <Radio.Group value={type} onChange={handleTypeChange}>
-              <Radio.Button value="collect">我的收藏</Radio.Button>
-              <Radio.Button value="all">全部项目环境</Radio.Button>
-            </Radio.Group>
-            {/* <div className="caption-left">
+      {/* <Spin spinning={isSpinning}> */}
+      <FilterCard>
+        <Form
+          layout="inline"
+          form={formList}
+          onFinish={(values: any) => {
+            queryProjectEnv({
+              ...values,
+              pageIndex: 1,
+              pageSize: 20,
+            });
+          }}
+          onReset={() => {
+            formList.resetFields();
+            queryProjectEnv({
+              pageIndex: 1,
+              // pageSize: pageSize,
+            });
+          }}
+        >
+          <Form.Item label="默认分类：" name="categoryCode">
+            <Select showSearch style={{ width: 150 }} options={categoryData} />
+          </Form.Item>
+          <Form.Item label="环境大类：" name="envTypeCode">
+            <Select allowClear showSearch style={{ width: 140 }} options={envTypeData} />
+          </Form.Item>
+          <Form.Item label="基准环境：" name="benchmarkEnvCode">
+            <Select showSearch allowClear style={{ width: 150 }} options={envDataSource} loading={loading} />
+          </Form.Item>
+          <Form.Item label="环境名：" name="envName">
+            <Input style={{ width: 150 }} />
+          </Form.Item>
+          <Form.Item label=" 环境CODE" name="envCode">
+            <Input placeholder="请输入环境CODE"></Input>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="ghost" htmlType="reset">
+              重置
+            </Button>
+          </Form.Item>
+        </Form>
+      </FilterCard>
+      <ContentCard>
+        <div className="table-caption">
+          <Radio.Group value={type} onChange={handleTypeChange}>
+            <Radio.Button value="collect">我的收藏</Radio.Button>
+            <Radio.Button value="all">全部项目环境</Radio.Button>
+          </Radio.Group>
+          {/* <div className="caption-left">
             <h3>项目环境列表</h3>
           </div> */}
-            {type === 'all' && (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setEnviroEditMode('ADD');
-                }}
-              >
-                <PlusOutlined />
-                新增项目环境
-              </Button>
-            )}
-          </div>
-          <div>
+          {type === 'all' && (
+            <Button
+              type="primary"
+              onClick={() => {
+                setEnviroEditMode('ADD');
+              }}
+            >
+              <PlusOutlined />
+              新增项目环境
+            </Button>
+          )}
+        </div>
+        <div>
+          <Spin spinning={isSpinning}>
             <Table
               rowKey="id"
               bordered
@@ -292,6 +295,7 @@ export default function EnvironmentList() {
                */}
               <Table.Column
                 title="环境名"
+                width="12%"
                 render={(_, record: EnvironmentEdit) => (
                   <>
                     <span onClick={(e) => e.stopPropagation()}>
@@ -315,10 +319,25 @@ export default function EnvironmentList() {
                   </>
                 )}
               />
-              <Table.Column title="环境CODE" dataIndex="envCode" width="8%" ellipsis />
-              <Table.Column title="基准环境" dataIndex="relEnvs" width="8%" ellipsis />
-              <Table.Column title="默认分类" dataIndex="categoryCode" width="8%" ellipsis />
-              <Table.Column title="环境大类" dataIndex="envTypeCode" width="16%" />
+              <Table.Column
+                title="环境CODE"
+                dataIndex="envCode"
+                width="20%"
+                ellipsis
+                render={(value) => (
+                  <div>
+                    <span>{value}</span>
+                    <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
+                      <span style={{ marginLeft: 8, color: 'royalblue' }}>
+                        <CopyOutlined />
+                      </span>
+                    </CopyToClipboard>
+                  </div>
+                )}
+              />
+              <Table.Column title="基准环境" dataIndex="relEnvs" width="10%" ellipsis />
+              <Table.Column title="默认分类" dataIndex="categoryCode" width="10%" ellipsis />
+              <Table.Column title="环境大类" dataIndex="envTypeCode" width="8%" />
               <Table.Column title="备注" dataIndex="mark" width="18%" ellipsis />
               <Table.Column
                 title="操作"
@@ -351,9 +370,11 @@ export default function EnvironmentList() {
                     <Popconfirm
                       title="确定要删除该信息吗？"
                       onConfirm={() => {
+                        let params = formList.getFieldsValue();
                         deleteProjectEnv(record?.envCode).then(() => {
                           queryProjectEnv({
                             pageIndex: 1,
+                            ...params,
                             // pageSize: pageSize,
                           });
                         });
@@ -365,10 +386,11 @@ export default function EnvironmentList() {
                 )}
               />
             </Table>
-          </div>
-          {type === 'collect' && <DetailList dataInfo={rowData} onSpin={onSpin} stopSpin={stopSpin}></DetailList>}
-        </ContentCard>
-      </Spin>
+          </Spin>
+        </div>
+        {type === 'collect' && <DetailList dataInfo={rowData} onSpin={onSpin} stopSpin={stopSpin}></DetailList>}
+      </ContentCard>
+      {/* </Spin> */}
     </PageContainer>
   );
 }

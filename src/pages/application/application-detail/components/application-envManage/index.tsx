@@ -23,6 +23,7 @@ export default function appEnvPageList() {
   const [selectedRows, setSelectedRows] = useState<any>();
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
   const [checkedOption, setCheckedOption] = useState<boolean>();
+  const [addLoading, setAddLoading] = useState<boolean>(false);
   const [EnvForm] = Form.useForm();
   const [appEnvForm] = Form.useForm();
   const { appCode } = appData || {};
@@ -73,6 +74,7 @@ export default function appEnvPageList() {
   //确认推送环境
 
   const handleOk = () => {
+    setAddLoading(true);
     let envCodes: any = [];
     selectedRows?.map((item: any) => {
       envCodes.push(item?.envCode);
@@ -81,12 +83,15 @@ export default function appEnvPageList() {
       .then((res: any) => {
         if (res.success) {
           message.success('绑定环境成功！');
+          setIsModalVisible(false);
         }
       })
-      .finally(() => {
+      .then(() => {
         queryAppEnvData(appCode);
+      })
+      .finally(() => {
+        setAddLoading(false);
       });
-    setIsModalVisible(false);
   };
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -181,6 +186,27 @@ export default function appEnvPageList() {
         onCancel={handleCancel}
         width={900}
         bodyStyle={{ height: '580px' }}
+        footer={
+          <div className="drawer-footer">
+            <Button
+              type="primary"
+              loading={addLoading}
+              onClick={() => {
+                handleOk();
+              }}
+            >
+              绑定
+            </Button>
+            <Button
+              type="default"
+              onClick={() => {
+                handleCancel();
+              }}
+            >
+              取消
+            </Button>
+          </div>
+        }
       >
         <Form
           layout="inline"

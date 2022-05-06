@@ -44,7 +44,6 @@ export default function TrafficScheduling(props: any) {
     const values = await editField.validateFields();
     let ip = '';
     let paramArry: any = [];
-
     // let item = sourceData.map((item: any, index) => {
     //   return item;
     // });
@@ -131,8 +130,12 @@ export default function TrafficScheduling(props: any) {
           {sourceData.map((group, index) => (
             <div className="zone-card" key={index}>
               <h4>{group.title}</h4>
-              <Form.Item name={group.name} rules={[{ required: true, message: '请选择集群' }]}>
-                <Radio.Group options={group.options} size="large" />
+              <Form.Item
+                name={group.name}
+                rules={[{ required: true, message: '请选择集群' }]}
+                initialValue={group.nowDisPatchCluster}
+              >
+                <Radio.Group options={group.options} size="large" defaultValue={group.nowDisPatchCluster} />
               </Form.Item>
             </div>
           ))}

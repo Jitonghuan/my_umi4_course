@@ -5,20 +5,28 @@
 import React from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
-import { rePushFeVersion } from '@/pages/application/service';
+import { rePushFeVersion, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 发布HTML */
 export default function PushVersionStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, envCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env = '', ...others } = props;
+  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
 
-  const isLoading = deployStatus === 'pushVersion';
-  const isWait = deployStatus === 'deployWait' || deployStatus == 'verifySuccess';
-  const isError = deployStatus === 'pushVersionErr';
+  // const isLoading = deployStatus === 'pushVersion';
+  // const isWait = deployStatus === 'deployWait' || deployStatus == 'verifySuccess';
+  // const isError = deployStatus === 'pushVersionErr';
+  const isLoading = status === 'process';
+  const isWait = status === 'await';
+  const isError = status === 'error';
 
   const handleRetryClick = async () => {
     try {
-      await rePushFeVersion({ id: deployInfo.id, envCode });
+      const params = { id: metadata?.id };
+      if (env) {
+        Object.assign(params, { envCode: env });
+      }
+      await retry({ ...params });
     } finally {
       onOperate('rePushFeVersionEnd');
     }

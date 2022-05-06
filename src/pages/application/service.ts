@@ -40,6 +40,9 @@ export const queryBranchListUrl = `${appConfig.apiPrefix}/releaseManage/branch/l
 /** POST 新增 feature 分支 */
 export const createFeatureBranchUrl = `${appConfig.apiPrefix}/releaseManage/branch/createFeature`;
 
+/** POST 新增 主干 分支 */
+export const createMasterBranchUrl = `${appConfig.apiPrefix}/releaseManage/branch/createMainBranch`;
+
 /** GET 查询应用成员 */
 export const queryAppMemberUrl = `${appConfig.apiPrefix}/appManage/member/list`;
 
@@ -64,7 +67,13 @@ export const queryFeatureDeployedUrl = `${appConfig.apiPrefix}/releaseManage/bra
 /** POST 创建部署 */
 export const createDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create`;
 
-/** POST 追加发布的feature列表 */
+/** POST 退出 */
+export const withdrawFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/withdrawFeatures`;
+
+/** POST 重新提交分支 */
+export const reCommitUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reCommit`;
+
+/** POST 追加分支 */
 export const updateFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/updateFeatures`;
 
 /** POST 重试合并 */
@@ -77,7 +86,7 @@ export const retryBuildUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reBuil
 export const retryDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reDeploy`;
 
 /** POST 生产环境确认部署和继续部署 */
-export const confirmProdDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmProd`;
+export const confirmProdDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmDeploy`;
 
 /** POST Venus分析 */
 export const venusAnalyzeUrl = 'http://venus.cfuture.shop/venus-api/v1/app/analysis';
@@ -91,11 +100,11 @@ export const retryDelFeatureUrl = `${appConfig.apiPrefix}/releaseManage/deploy/r
 /** POST 取消部署 */
 export const cancelDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/cancel`;
 
-/** POST 复用release分支 */
-export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reuse`;
+/** POST 部署到下一个环境 */
+export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/reuse`;
 
-/** POST 部署master*/
-export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/deployMaster`;
+/** POST 部署主干分支*/
+export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/master`;
 
 /** GET 根据应用分类code查询发布环境列表 */
 export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
@@ -115,16 +124,16 @@ export const queryConfigListUrl = `${appConfig.apiPrefix}/appManage/config/versi
 /** POST 导入配置 */
 export const configUploadUrl = `${appConfig.apiPrefix}/appManage/config/upload`;
 
-/** GET 下载镜像 */
-export const downloadImage = `${appConfig.apiPrefix}/releaseManage/deploy/downloadImage`;
+/** GET 下载镜像或资源 */
+export const downloadSource = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDownload`;
 /** GET 下载资源包 */
-export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/downloadFeResource`;
+// export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/downloadFeResource`;
 
 /** Post 上传镜像*/
-export const offlineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDeploy`;
+// export const offlineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDeploy`;
 
-// 前端离线部署上传资源
-export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/feOfflineDeploy`;
+// 离线部署上传资源或镜像
+export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineUpload`;
 
 /** POST 重启应用 */
 export const restartAppUrl = `${appConfig.apiPrefix}/appManage/restart`;
@@ -207,11 +216,23 @@ export const createReview = `${appConfig.apiPrefix}/releaseManage/branch/createR
 
 /** POST  获取分支review状态 */
 export const getReviewStatus = `${appConfig.apiPrefix}/releaseManage/branch/getReviewStatus`;
+
+/** GET 从regulus列出在线bug列表 */
+export const getRegulusOnlineBugs = `${appConfig.apiPrefix}/publishManage/third/regulus/onlineBugs`;
+
+/** GET 从regulus列出project信息 */
+export const getRegulusProjects = `${appConfig.apiPrefix}/publishManage/third/regulus/projects`;
+
 let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 /** POST 新建分支关联需求 */
 export const queryPortalList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/list`;
 
 export const getDemandByProjectList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/getDemandByProject`;
+// post 新建分支-获取主干分支下拉框数据
+export const getMasterBranch = '';
+
+// post 主干分支-新建分支-获取来源分支下拉框数据
+export const getOriginBranch = '';
 
 /** GET 当前应用下已通过且存在未上线发布计划的发布申请列表 */
 export const applyHaveNoUpPlanList = `${appConfig.apiPrefix}/publishManage/applyHaveNoUpPlan/list`;
@@ -253,16 +274,22 @@ export const deleteBranch = (params: {
 export const createFeatureBranch = (params: {
   /** 应用CODE */
   appCode: string;
+  /** 选择平台 */
+  relatedPlat: string;
   /** 分支的自定义名称 固定前缀feature_ */
   branchName: string;
   /** 描述 */
   desc: string;
+  demandId?: any;
+  masterBranch: string;
   // 需求列表
-  demandId: any;
 }) =>
   postRequest(createFeatureBranchUrl, {
     data: params,
   });
+
+// 新建主干分支
+export const createMasterBranch = (params: any) => postRequest(createMasterBranchUrl, { data: params });
 
 /** 查询应用成员 */
 export const queryAppMember = (params: { appCode?: string }) => getRequest(queryAppMemberUrl, { data: params });
@@ -412,6 +439,14 @@ export const queryDeployList = async (params: {
   });
 };
 
+export const queryDeployInfoUrl = `${appConfig.apiPrefix}/releaseManage/deploy/getActiveDeployInfo`;
+
+export const queryActiveDeployInfo = async (params: any) => {
+  return getRequest(queryDeployInfoUrl, {
+    data: params,
+  });
+};
+
 /** 查看feature部署情况 */
 export const queryFeatureDeployed = async (params: {
   /** 应用CODE */
@@ -422,6 +457,8 @@ export const queryFeatureDeployed = async (params: {
   isDeployed?: 0 | 1;
   /** 分支名 */
   branchName?: string;
+  pipelineCode?: string;
+  masterBranch?: string;
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
     data: params,
@@ -438,8 +475,11 @@ export const createDeploy = (params: {
   features: string[];
   /** 发布环境code */
   envCodes?: string[];
+  pipelineCode?: string;
   /** 是否是二方包*/
-  isClient: boolean;
+  // isClient: boolean;
+  masterBranch?: string;
+  buildType?: string;
 }) =>
   postRequest(createDeployUrl, {
     data: params,
@@ -456,12 +496,29 @@ export const updateFeatures = (params: {
     data: params,
   });
 
+/** 重新提交 */
+export const reCommit = (params: {
+  /** 部署的数据库自增ID */
+  id: number;
+  /** 选择的feature分支 */
+  features: string[];
+}) =>
+  postRequest(reCommitUrl, {
+    data: params,
+  });
+
 /** 重试合并 */
 export const retryMerge = (params: {
   /** 部署的数据库自增ID */
   id: number;
 }) =>
   postRequest(retryMergeUrl, {
+    data: params,
+  });
+
+// 退出分支
+export const withdrawFeatures = (params: { id: number; features: any }) =>
+  postRequest(withdrawFeaturesUrl, {
     data: params,
   });
 
@@ -485,16 +542,31 @@ export const retryDeploy = (params: {
     data: params,
   });
 
+export const retryUrl = `${appConfig.apiPrefix}/releaseManage/deploy/retry`;
+
+/** 重试 */
+export const retry = (params: {
+  /** 部署的数据库自增ID */
+  id: number;
+  envCode?: string;
+}) =>
+  postRequest(retryUrl, {
+    data: params,
+  });
+
+export const confirmDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmDeploy`;
+
 /** 生产环境确认部署和继续部署 */
-export const confirmProdDeploy = (params: {
+export const confirmDeploy = (params: {
   /** 部署的数据库自增ID */
   id: number;
   /** 发布机构: tian/weishan */
-  hospital: string;
+  // hospital: string;
   /** 发布批次，0不分批，1发布第一批，2发布第二批 */
-  // batch: 0 | 1 | 2;
-  batch: number;
+  // deployingBatch: 0 | 1 | 2;
+  deployingBatch: number;
   applyIds: any;
+  envCode: string;
 }) =>
   postRequest(confirmProdDeployUrl, {
     data: params,
@@ -535,13 +607,15 @@ export const cancelDeploy = (params: {
     data: params,
   });
 
-/** 复用release分支 */
+/** 部署到下个环境 */
 export const deployReuse = (params: {
   /** 部署的数据库自增ID */
-  id: number;
+  id?: number;
   /** poc环境复用到生产环境需要 */
   envs?: string[];
-  envCode?: string;
+  envCodes?: any;
+  pipelineCode?: string;
+  reusePipelineCode?: string;
 }) =>
   postRequest(deployReuseUrl, {
     data: params,
@@ -552,8 +626,10 @@ export const deployMaster = (params: {
   /** 应用code */
   appCode?: string;
   envTypeCode?: string;
+  pipelineCode: string;
   envCodes?: any;
-  isClient?: boolean;
+  buildType?: string;
+  masterBranch?: string; //主干分支
 }) =>
   postRequest(deployMasterUrl, {
     data: params,
@@ -575,7 +651,7 @@ export const queryEnvsReq = (params: {
       pageSize: 100,
     },
   }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       return {
         list:
           res.data?.map((el: any) => {
@@ -620,3 +696,19 @@ export const getMergeMessage = async (params: any) => await getRequest(getMergeM
 /** POST 解决冲突-提交冲突 */
 export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/commit`;
 export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });
+
+/** GET 应用部署-获取流水线 */
+export const getPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/list`;
+// export const getPipelineUrl = `http://127.0.0.1:4523/mock/837336/v1/appManage/appPipeline/list`;
+
+/** POST 应用部署-新增流水线 */
+export const addPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/create`;
+
+/** POST 应用部署-编辑流水线 */
+export const updatePipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/update`;
+
+/** 删除流水线 */
+export const deletePipeline = (params: { pipelineCode: string }) =>
+  delRequest(`${appConfig.apiPrefix}/releaseManageappManage/appPipeline/delete/${params.pipelineCode}`, {
+    data: params,
+  });

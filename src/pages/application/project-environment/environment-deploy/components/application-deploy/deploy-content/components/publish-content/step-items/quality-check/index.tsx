@@ -14,18 +14,21 @@ const prevDeployStatus = ['merging', 'mergeErr', 'conflict', 'qualityChecking'];
 
 /** 质量卡点 */
 export default function QualityCheckStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, status, ...others } = props;
 
-  const isLoading = deployStatus === 'qualityChecking';
-  const isError = deployStatus === 'qualityFailed';
-  const isFinishCheck = deployStatus && !prevDeployStatus.includes(deployStatus);
+  // const isLoading = deployStatus === 'qualityChecking';
+  // const isError = deployStatus === 'qualityFailed';
+  const isLoading = status === 'process';
+  const isError = status === 'error';
+
+  const isFinishCheck = status === 'finish' && envTypeCode === 'test' && !isFrontend;
 
   return (
     <Steps.Step
       {...others}
       title="质量卡点"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      status={status}
       description={<QualityCheckResult visible={isFinishCheck} deployInfo={deployInfo} />}
     />
   );

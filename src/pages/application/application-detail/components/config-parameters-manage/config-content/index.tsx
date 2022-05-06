@@ -30,10 +30,33 @@ export default function ConfigContent({ env, configType }: IProps) {
   const [currentVersion, setCurrentVersion] = useState<any>(0); //当前选中的Version
   const [latestVersion, setLatestVersion] = useState<any>(0); //最新的版本
   const [versionConfig, setversionConfig] = useState(''); //展示配置内容
+  const [editDisable, setEditDisable] = useState<boolean>(false);
   let currentEnvCode = '';
   useEffect(() => {
     if (!appCode) return;
-  }, [appCode]);
+
+    return () => {
+      setEditDisable(false);
+    };
+  }, []);
+
+  function fixString(envCode: string) {
+    let appointString = 'clusterb';
+    try {
+      envCode = envCode?.toLowerCase(); //不区分大小写：全部转为小写后进行判断
+      let start = envCode.length - appointString.length;
+      var char = envCode.substr(start, appointString.length); //将相差长度作为开始下标，特定字符长度为截取长度
+
+      if (char == appointString) {
+        //两者相同，则代表是以clusterb结尾，则需要禁用编辑功能；
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  }
   // 查询应用环境数据  获取到的该应用的环境信息用来判断useNacose的值
   // 进入页面加载环境和版本信息
   useEffect(() => {
@@ -53,6 +76,9 @@ export default function ConfigContent({ env, configType }: IProps) {
         });
         setEnvDatas(listEnv);
         currentEnvCode = listEnv[0]?.data?.envCode;
+        if (fixString(listEnv[0]?.data?.envCode)) {
+          setEditDisable(true);
+        }
         setCurrentEnvData(listEnv[0]?.data?.envCode);
 
         if (listEnv.length === 0) {
@@ -79,6 +105,10 @@ export default function ConfigContent({ env, configType }: IProps) {
   let getEnvCode: any;
   const changeEnvCode = (getEnvCodes: string) => {
     getEnvCode = getEnvCodes;
+    if (fixString(getEnvCodes)) {
+      setEditDisable(true);
+    }
+
     editVersionForm.setFieldsValue({
       configYaml: '',
     }); //清除上个环境配置信息
@@ -281,9 +311,9 @@ export default function ConfigContent({ env, configType }: IProps) {
         }}
         onFinish={editVersion}
       >
-        <div style={{ width: '96%' }}>
+        <div className="content-ace-editor">
           <Form.Item name="configYaml" rules={[{ required: true, message: '这是必填项' }]}>
-            <AceEditor mode="yaml" height={400} />
+            <AceEditor mode="yaml" height={'100%'} readOnly={editDisable} />
           </Form.Item>
         </div>
         <div style={{ marginTop: '14px', marginRight: '4%', float: 'right' }}>
