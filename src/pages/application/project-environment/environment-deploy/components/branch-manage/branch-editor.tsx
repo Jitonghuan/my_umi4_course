@@ -243,6 +243,7 @@ export default function BranchEditor(props: IProps) {
             onChange={onChangeProtal}
             showSearch
             allowClear
+            optionFilterProp="label"
             loading={projectLoading}
           ></Select>
         </Form.Item>
