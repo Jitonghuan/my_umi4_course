@@ -435,7 +435,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                       setModalVisible(true);
                       setOptType('jira');
                       setSelectedRowKeys([]);
-                      if (currentAppGroupCode) {
+                      if (currentAppCategoryCode && currentAppGroupCode) {
                         queryNodeList({
                           appCategoryCode: form.getFieldValue('appCategoryCode'),
                           appGroupCode: currentAppGroupCode,
@@ -457,7 +457,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                       setModalVisible(true);
                       setOptType('demand');
                       setSelectedRowKeys([]);
-                      if (currentAppGroupCode) {
+                      if (currentAppCategoryCode && currentAppGroupCode) {
                         queryDemandList({
                           appCategoryCode: form.getFieldValue('appCategoryCode'),
                           appGroupCode: currentAppGroupCode,
