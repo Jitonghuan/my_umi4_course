@@ -6,6 +6,9 @@ export interface IProps {
   envTypeCode: string;
   deployInfo: Record<string, any>;
   deployedList: any[];
+  pipelineCode: string;
+  onSpin: any;
+  stopSpin: any;
   onOperate: (type: OperateType) => void;
 }
 
