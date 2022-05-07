@@ -7,8 +7,8 @@ export interface FeVersionItemVO {
   appCode: string;
   envCode: string;
   version: string;
-  /** 是否活跃，1 不活跃，0 活跃 */
-  isActive: 0 | 1;
+  /** 是否活跃，1 不活跃，0 活跃  2部署中*/
+  isActive: 0 | 1 | 2;
   createUser: string;
   modifyUser: string;
   gmtCreate: string;
