@@ -16,11 +16,21 @@ import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/application/se
 import { IProps } from './types';
 import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
 import './index.less';
+import PipeLineManage from '../../../../application-deploy/pipelineManage';
 
 const rootCls = 'publish-content-compo';
 const { confirm } = Modal;
 
-const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOperate }: IProps) => {
+const PublishContent = ({
+  appCode,
+  envTypeCode,
+  deployedList,
+  deployInfo,
+  pipelineCode,
+  onSpin,
+  stopSpin,
+  onOperate,
+}: IProps) => {
   const isProd = envTypeCode === 'cProd';
   let { metadata, status, envInfo } = deployInfo || {};
   const { deployNodes } = status || {};
@@ -78,7 +88,10 @@ const PublishContent = ({ appCode, envTypeCode, deployedList, deployInfo, onOper
       <DeploySteps
         stepData={deployNodes}
         deployInfo={deployInfo}
+        pipelineCode={pipelineCode}
         appCode={appCode}
+        onSpin={onSpin}
+        stopSpin={stopSpin}
         onOperate={onOperate}
         // isFrontend={false}
         envTypeCode={envTypeCode}
