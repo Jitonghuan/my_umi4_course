@@ -134,6 +134,8 @@ export const downloadSource = `${appConfig.apiPrefix}/releaseManage/deploy/offli
 
 // 离线部署上传资源或镜像
 export const feOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/offlineUpload`;
+//离线部署封网检测
+export const checkOfflineDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/checkOfflineDeploy`;
 
 /** POST 重启应用 */
 export const restartAppUrl = `${appConfig.apiPrefix}/appManage/restart`;
