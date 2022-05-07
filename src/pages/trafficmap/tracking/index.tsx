@@ -4,13 +4,15 @@
  * @Description:
  */
 import React, { useEffect, useState } from 'react';
+import { history } from 'umi';
 import { Form, Select, Tag, Input, Table, Button, message } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import './index.less';
 
+const temp = [{ name: 1, address: '11' }];
 const tracking = () => {
-  const [trackList, setTrackList] = useState<any[]>([]);
+  const [trackList, setTrackList] = useState<any[]>(temp);
   const [paramOptions, setParamOptions] = useState([{ label: 'key1', value: 'key1' }]);
   const [selectParams, setSelectParams] = useState<any>({
     'key1-value1': { key1: 'value1' },
@@ -55,6 +57,26 @@ const tracking = () => {
       title: '客户端',
       dataIndex: 'description',
       key: 'description',
+    },
+    {
+      title: '操作',
+      dataIndex: '',
+      key: 'x',
+      render: () => (
+        <a
+          onClick={() => {
+            history.push({
+              pathname: 'tracking-detail',
+              // query: {
+              //   id: `${item.id}`,
+              //   appCode: item.appCode,
+              // },
+            });
+          }}
+        >
+          查看详情
+        </a>
+      ),
     },
   ];
 
