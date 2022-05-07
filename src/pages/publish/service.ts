@@ -68,6 +68,12 @@ export const queryEnvsReq = (params: {
 /** 根据应用分类code查询发布环境列表 */
 export const queryJiraUrl = `${appConfig.apiPrefix}/publishManage/issue/list`;
 export const eipDemandUrl = `${appConfig.apiPrefix}/publishManage/issue/eipDemand/list`;
+export const regulusUrl = `${appConfig.apiPrefix}/publishManage/issue/regulus/list`;
+/** GET 从regulus列出project信息 */
+export const getRegulusProjects = `${appConfig.apiPrefix}/publishManage/third/regulus/projects`;
+/** GET 从regulus列出在线bug列表 */
+export const getRegulusOnlineBugs = `${appConfig.apiPrefix}/publishManage/third/regulus/onlineBugs`;
+
 /** 通用接口结束 */
 
 /** 发布功能相关 */

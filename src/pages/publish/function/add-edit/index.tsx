@@ -14,7 +14,6 @@ import { JiraColumns } from '../constant';
 import EditableCell from './editTableCell';
 import { IFuncItem } from '../../typing';
 import useTableAction from './useTableAction';
-import { usePaginated } from '@cffe/vc-hulk-table';
 import '../index.less';
 
 import { OptionProps } from '@/components/table-search/typing';
@@ -25,6 +24,8 @@ import {
   queryAppGroupReq,
   queryJiraUrl,
   eipDemandUrl,
+  regulusUrl,
+  getRegulusProjects,
 } from '../../service';
 export interface DefaultValueObjProps {
   appCategoryCode: string;
@@ -67,14 +68,14 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       }) || []
     );
   }, [categoryData]);
+  const [projectForm] = Form.useForm();
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
-
-  const [jiraData, setJiraData] = useState<JiraItem[]>([]);
-  const [demandData, setDemandData] = useState<any[]>([]);
-  const [demandLoading, setDemandLoading] = useState<boolean>(false);
   const [envsOptions, setEnvsOptions] = useState<any[]>([]);
+  const [tableDataSource, setTableDataSource] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [demandModalVisible, setDemandModalVisible] = useState<boolean>(false);
+  const [projectLoading, setProjectLoading] = useState(false);
+  const [queryPortalOptions, setQueryPortalOptions] = useState<any>([]);
   const [currentAppCategoryCode, setCurrentAppCategoryCode] = useState<string>('');
   const [currentAppGroupCode, setCurrentAppGroupCode] = useState<string>('');
   const [optType, setOptType] = useState<string>('');
@@ -113,71 +114,37 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     });
   };
 
-  // const {
-  //   run: queryNodeList,
-  //   reset,
-  //   tableProps,
-  // } = usePaginated({
-  //   requestUrl: queryJiraUrl,
-  //   requestMethod: 'GET',
-  //   showRequestError: false,
-  //   didMounted: false,
-  //   pagination: false,
-  //   formatResult: (resp) => {
-  //     setJiraData(resp.data || []);
-  //     return {
-  //       dataSource: resp.data || [],
-  //       pageInfo: {
-  //         pageIndex: 1,
-  //         pageSize: 1000,
-  //       },
-  //     };
-  //   },
-  //   successFunc: (response: any) => {
-  //     if (!response.success) {
-
-  //       reset()
-  //       setJiraData([]);
-  //       tableProps.dataSource=[]
-  //       return false
-
-  //     }
-  //   },
-  // });
-
   const queryDemandList = (paramObj: { appCategoryCode: string; appGroupCode: string }) => {
-    setDemandLoading(true);
+    setLoading(true);
     getRequest(eipDemandUrl, { data: { ...paramObj, pageSize: -1 } })
       .then((res) => {
         if (res.success) {
-          setDemandData(res.data || []);
+          setTableDataSource(res.data || []);
         } else {
-          setDemandData([]);
+          setTableDataSource([]);
           return;
         }
       })
       .finally(() => {
-        setDemandLoading(false);
+        setLoading(false);
       });
   };
 
   const queryNodeList = (paramObj: { appCategoryCode: string; appGroupCode: string }) => {
-    // setDemandLoading(true);
+    setLoading(true);
     getRequest(queryJiraUrl, { data: { ...paramObj, pageSize: -1 } })
       .then((res) => {
         if (res.success) {
-          setJiraData(res.data || []);
+          setTableDataSource(res.data || []);
         } else {
-          setJiraData([]);
+          setTableDataSource([]);
           return;
         }
       })
       .finally(() => {
-        // setDemandLoading(false);
+        setLoading(false);
       });
   };
-
-  // const queryJiraData = (groupCode: string) => {};
 
   const {
     form,
@@ -186,6 +153,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     editingKey,
     setEditingKey,
     selectedRowKeys,
+    setSelectedRowKeys,
     edit,
     isEditing,
     addTableRow,
@@ -360,6 +328,51 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     });
     num.current = num.current + 1;
   }, [defaultValueObj]);
+  const onChangeProtal = (value: any) => {
+    queryRegulusOnlineBugs(value);
+  };
+  const queryRegulusOnlineBugs = async (param: string, searchTextParams?: string) => {
+    setLoading(true);
+    try {
+      await getRequest(regulusUrl, {
+        data: { projectId: param, keyword: searchTextParams, pageSize: -1 },
+      })
+        .then((result) => {
+          if (result.success) {
+            let dataSource = result.data.dataSource;
+
+            setTableDataSource(dataSource);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const queryRegulus = () => {
+    setProjectLoading(true);
+    try {
+      getRequest(getRegulusProjects)
+        .then((result) => {
+          if (result.success) {
+            let dataSource = result.data.projects;
+            let dataArry: any = [];
+            dataSource?.map((item: any) => {
+              dataArry.push({ label: item?.name, value: item?.id });
+            });
+            setQueryPortalOptions(dataArry);
+          }
+        })
+        .finally(() => {
+          setProjectLoading(false);
+        });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   //编辑
   useEffect(() => {
@@ -368,12 +381,6 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       queryGroups(form.getFieldValue('appCategoryCode'));
     }
   }, [type, form.getFieldValue('appCategoryCode')]);
-
-  // useEffect(()=>{
-  //   return () => {
-  //     num.current = 0
-  //   };
-  // })
 
   const formLists: FormProps[] = [
     {
@@ -424,8 +431,11 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                     type="primary"
                     onClick={() => {
                       // reset();
+                      setTableDataSource([]);
                       setModalVisible(true);
-                      if (currentAppGroupCode) {
+                      setOptType('jira');
+                      setSelectedRowKeys([]);
+                      if (currentAppCategoryCode && currentAppGroupCode) {
                         queryNodeList({
                           appCategoryCode: form.getFieldValue('appCategoryCode'),
                           appGroupCode: currentAppGroupCode,
@@ -438,14 +448,16 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                     关联Jira需求单
                   </Button>
                 )}
-                {type === 'add' && currentAppCategoryCode === 'hbos' && (
+                {type === 'add' && (
                   <Button
                     type="primary"
                     style={{ marginLeft: 6 }}
                     onClick={() => {
-                      setDemandModalVisible(true);
+                      setTableDataSource([]);
+                      setModalVisible(true);
                       setOptType('demand');
-                      if (currentAppGroupCode) {
+                      setSelectedRowKeys([]);
+                      if (currentAppCategoryCode && currentAppGroupCode) {
                         queryDemandList({
                           appCategoryCode: form.getFieldValue('appCategoryCode'),
                           appGroupCode: currentAppGroupCode,
@@ -456,6 +468,21 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                     }}
                   >
                     关联需求管理平台
+                  </Button>
+                )}
+                {type === 'add' && (
+                  <Button
+                    type="primary"
+                    style={{ marginLeft: 6 }}
+                    onClick={() => {
+                      setTableDataSource([]);
+                      setModalVisible(true);
+                      setOptType('reglus');
+                      projectForm.resetFields();
+                      queryRegulus();
+                    }}
+                  >
+                    关联Reglus
                   </Button>
                 )}
               </div>
@@ -497,7 +524,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       </div>
 
       <Modal
-        title="关联Jira需求单"
+        title={optType === 'jira' ? '关联Jira需求单' : optType === 'demand' ? '关联需求管理平台' : '关联Reglus'}
         visible={modalVisible}
         width="100%"
         onCancel={() => setModalVisible(false)}
@@ -513,8 +540,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                 }
                 const newData = [...data];
                 const newEditingKey = [...editingKey];
-                const selectRows = jiraData.filter((jira) => selectedRowKeys.includes(jira?.key!));
-
+                const selectRows = tableDataSource.filter((jira) => selectedRowKeys.includes(jira?.key!));
                 const start = newData.length ? Number(newData[newData.length - 1].key) + 1 : 1;
                 selectRows.map((jira, index) => {
                   let obj = {
@@ -545,79 +571,29 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
           </Space>
         }
       >
+        {optType === 'reglus' && (
+          <div style={{ marginBottom: 10 }}>
+            <Form form={projectForm} layout="inline">
+              <Form.Item name="projectSelect" label="项目列表">
+                <Select
+                  options={queryPortalOptions}
+                  onChange={onChangeProtal}
+                  showSearch
+                  allowClear
+                  loading={projectLoading}
+                  style={{ width: 220 }}
+                ></Select>
+              </Form.Item>
+            </Form>
+          </div>
+        )}
         <Table
           rowKey="key"
-          key={Math.random()}
           columns={JiraColumns}
-          dataSource={jiraData}
+          dataSource={tableDataSource}
+          loading={loading}
           // {...tableProps}
-          // pagination={{
-          //   ...tableProps.pagination,
-          // }}
-          rowSelection={
-            !isCheck
-              ? {
-                  selectedRowKeys,
-                  onChange: onSelectChange,
-                }
-              : undefined
-          }
-        />
-      </Modal>
 
-      <Modal
-        title="关联需求管理平台"
-        visible={demandModalVisible}
-        width="100%"
-        onCancel={() => setDemandModalVisible(false)}
-        footer={
-          <Space>
-            <Button onClick={() => setDemandModalVisible(false)}>取消</Button>
-            <Button
-              type="primary"
-              onClick={() => {
-                if (!selectedRowKeys.length) {
-                  message.warn('请至少选择一条需求单');
-                  return;
-                }
-                const newData = [...data];
-                const newEditingKey = [...editingKey];
-                const selectRows = demandData.filter((jira) => selectedRowKeys.includes(jira?.key!));
-                const start = newData.length ? Number(newData[newData.length - 1].key) + 1 : 1;
-                selectRows.map((jira, index) => {
-                  let obj = {
-                    key: `${start + index}`,
-                    [`funcName-${start + index}`]: jira.summary,
-                    [`preDeployTime-${start + index}`]: jira.preDeployTime ? moment(jira.preDeployTime) : '',
-                    [`demandId-${start + index}`]: jira.key,
-                    [`envs-${start + index}`]: [],
-                  };
-                  // [`coverageRange-${index + 1}`]: data.coverageRange,
-                  // [`resolveNeeds-${index + 1}`]: data.resolveNeeds,
-                  newData.push(obj);
-                  newEditingKey.push(`${start + index}`);
-                });
-                setEditingKey(newEditingKey);
-                setData(newData);
-                setTimeout(() => {
-                  for (let i = start - 1; i < start - 1 + selectRows.length; i++) {
-                    // edit(newData[i] as Partial<IFuncItem> & { key: React.Key; })
-                    form.setFieldsValue({ ...newData[i] });
-                  }
-                }, 100);
-                setDemandModalVisible(false);
-              }}
-            >
-              确认
-            </Button>
-          </Space>
-        }
-      >
-        <Table
-          rowKey="key"
-          columns={JiraColumns}
-          dataSource={demandData}
-          loading={demandLoading}
           // pagination={{
           //   ...tableProps.pagination,
           // }}
