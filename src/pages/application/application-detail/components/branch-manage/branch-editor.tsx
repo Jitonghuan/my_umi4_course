@@ -64,6 +64,7 @@ export default function BranchEditor(props: IProps) {
   }, [form, appCode]);
   const selectplatform = (e: any) => {
     setPlatformValue(e.target.value);
+    setQueryPortalOptions([]);
     form.setFieldsValue({
       projectId: undefined,
       demandId: undefined,
@@ -121,6 +122,7 @@ export default function BranchEditor(props: IProps) {
 
   const onChangeProtal = (value: any) => {
     setProjectId(value);
+    setQueryDemandOptions([]);
     form.setFieldsValue({
       demandId: undefined,
       desc: '',
