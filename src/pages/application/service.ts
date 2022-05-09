@@ -209,7 +209,7 @@ export const rePushFeVersionUrl = `${appConfig.apiPrefix}/releaseManage/deploy/r
 export const fePublishVerifyUrl = `${appConfig.apiPrefix}/releaseManage/deploy/fePublishVerify`;
 
 /** POST 前端版本回滚 */
-export const rollbackFeAppUrl = `${appConfig.apiPrefix}/appManage/rollbackFeApp`;
+export const rollbackFeAppUrl = `${appConfig.apiPrefix}/releaseManage/rollbackFeApp`;
 
 /** POST 创建review */
 export const createReview = `${appConfig.apiPrefix}/releaseManage/branch/createReview`;

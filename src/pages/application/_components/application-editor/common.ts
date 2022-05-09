@@ -30,6 +30,17 @@ export const appMicroFeTypeOptions: IOption<AppMicroFeType>[] = [
   { label: '子应用', value: 'subProject' },
 ];
 
+export const feTypeOptions: IOption<any>[] = [
+  { label: 'web', value: 'web' },
+  { label: '定制包', value: 'customPack' },
+  { label: '定制页面', value: 'customPage' },
+];
+export const singleFeTypeOptions: IOption<any>[] = [{ label: 'web', value: 'web' }];
+export const microFeTypeOptions: IOption<any>[] = [
+  { label: 'web', value: 'web' },
+  { label: '定制包', value: 'customPack' },
+  { label: '定制页面', value: 'customPage' },
+];
 // export const relationMainAppCodeOptions: IOption[] = [
 //   'g3a_future-his-portal-web',
 //   'gmc_future-his-portal-web',
