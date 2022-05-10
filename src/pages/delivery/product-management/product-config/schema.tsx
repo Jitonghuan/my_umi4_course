@@ -30,11 +30,11 @@ export const compontentsSchema = ({ onEditClick }: { onEditClick: (record: any, 
 
 export const configDeliverySchema = ({ onEditClick }: { onEditClick: (record: any, index: number) => void }) =>
   [
-    {
-      title: '作用组件',
-      dataIndex: 'configParamComponent',
-      key: 'configParamComponent',
-    },
+    // {
+    //   title: '作用组件',
+    //   dataIndex: 'configParamComponent',
+    //   key: 'configParamComponent',
+    // },
     {
       title: '参数名称',
       dataIndex: 'configParamName',

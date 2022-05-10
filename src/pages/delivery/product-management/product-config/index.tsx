@@ -144,10 +144,10 @@ export default function ProductConfig() {
   };
   const saveConfig = () => {
     const value = configForm.getFieldsValue();
-    console.log('value', value);
+    // console.log('value', value);
     editIndentConfigYaml(configInfo.id, value.configInfo).then(() => {
       queryIndentInfo(configInfo.id);
-      queryIndentConfigInfo(configInfo.id);
+      // queryIndentConfigInfo(configInfo.id);
       setReadOnly(true);
       setButtonText('编辑');
     });
