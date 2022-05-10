@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Select, Tabs } from 'antd';
 import { history } from 'umi';
 import BasicOverview from './components/overview';
 import BasicError from './components/error';
 import BasicPerformance from './components/performance';
 import BasicApi from './components/api';
+import { getCommonEnvCode } from './server';
 import { menuList } from './const';
 import './index.less';
+import appConfig from '@/app.config';
 
 const { TabPane } = Tabs;
+
+let defaultEnvCode = appConfig.BUILD_ENV === 'prod' ? 'hbos-test' : 'g3a-test';
+defaultEnvCode = appConfig.IS_Matrix === 'public' ? defaultEnvCode : '';
 
 const BasicFeMonitor = () => {
   const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '');
   const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || '1');
+  const [envCode, setEnvCode] = useState(defaultEnvCode);
+
+  useEffect(() => {
+    if (appConfig.IS_Matrix !== 'public') {
+      getCommonEnvCode({}).then((res) => {
+        if (res.success && res.data) {
+          setEnvCode(res.data);
+        }
+      });
+    }
+  }, []);
 
   return (
     <div className="basic-fe-monitor-wrapper">
@@ -58,16 +74,16 @@ const BasicFeMonitor = () => {
           }}
         >
           <TabPane tab="数据总览" key="1">
-            <BasicOverview appGroup={activeKey} />
+            {envCode && <BasicOverview appGroup={activeKey} envCode={envCode} />}
           </TabPane>
           <TabPane tab="错误分析" key="2">
-            <BasicError appGroup={activeKey} />
+            {envCode && <BasicError appGroup={activeKey} envCode={envCode} />}
           </TabPane>
           <TabPane tab="性能分析" key="3">
-            <BasicPerformance appGroup={activeKey} />
+            {envCode && <BasicPerformance appGroup={activeKey} envCode={envCode} />}
           </TabPane>
           <TabPane tab="API分析" key="4">
-            <BasicApi appGroup={activeKey} />
+            {envCode && <BasicApi appGroup={activeKey} envCode={envCode} />}
           </TabPane>
         </Tabs>
       </div>

@@ -3,26 +3,37 @@ import Header from '../header';
 import { Line } from '@cffe/hulk-wave-chart';
 import { now } from '../../const';
 import moment from 'moment';
-import { pvAndUvChart, queryOverview } from '../server';
+import { pvAndUvChart, queryOverview } from '../../server';
 import './index.less';
 
 interface IProps {
   appGroup: string;
+  envCode: string;
 }
 
-const BasicOverview = ({ appGroup }: IProps) => {
+const BasicOverview = ({ appGroup, envCode }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
   const [overviewList, setOverviewList] = useState<any[]>([]);
   const [chart, setChart] = useState<any>(null);
 
-  // 汇总
-  async function onOverview() {
-    const res = await queryOverview({
-      envCode: 'g3a-test',
-      appGroup,
+  function getParam() {
+    let param: any = {
+      envCode,
       startTime: timeList[0] ? moment(timeList[0]).unix() : null,
       endTime: timeList[1] ? moment(timeList[1]).unix() : null,
-    });
+    };
+    if (appGroup) {
+      param = {
+        ...param,
+        appGroup,
+      };
+    }
+    return param;
+  }
+
+  // 汇总
+  async function onOverview() {
+    const res = await queryOverview(getParam());
     setOverviewList(res?.data || []);
   }
 
@@ -31,14 +42,9 @@ const BasicOverview = ({ appGroup }: IProps) => {
     if (!chart) {
       return;
     }
-    const res = await pvAndUvChart({
-      envCode: 'g3a-test',
-      appGroup,
-      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
-      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
-    });
+    const res = await pvAndUvChart(getParam());
     let data = [];
-    if (res.data) {
+    if (res?.data) {
       data.push(['日期', 'PV', 'UV']);
       let len = Math.max(res.data.pv.length, res.data.uv.length) || 0;
       for (let i = 0; i < len; i++) {

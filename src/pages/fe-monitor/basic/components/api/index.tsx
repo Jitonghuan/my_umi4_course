@@ -1,51 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Table } from 'antd';
+import { Tabs, Table, Select } from 'antd';
+import appConfig from '@/app.config';
 import Header from '../header';
-import { now } from '../../const';
+import { envList, now } from '../../const';
 import moment from 'moment';
 import './index.less';
-import { queryOverview } from '../server';
+import { getErrorApiList, getSlowApiList } from '../../server';
 
 const { TabPane } = Tabs;
 
 interface IProps {
   appGroup: string;
+  envCode: string;
 }
 
-const BasicApi = ({ appGroup }: IProps) => {
+const BasicApi = ({ appGroup, envCode }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
+  const [feEnv, setFeEnv] = useState<string>('*');
   const [active, setActive] = useState('1');
 
   // 失败
   const [errorTotal, setErrorTotal] = useState<number>(0);
-  const [errorIndex, setErrorIndex] = useState<number>(1);
-  const [errorSize, setErrorSize] = useState<number>(20);
   const [errorData, setErrorData] = useState<any[]>([]);
+  const [errorLoading, setErrorLoading] = useState<boolean>(false);
 
   // 超时
   const [timeOutTotal, setTimeOutTotal] = useState<number>(0);
-  const [timeOutIndex, setTimeOutIndex] = useState<number>(1);
-  const [timeOutSize, setTimeOutSize] = useState<number>(20);
   const [timeOutData, setTimeOutData] = useState<any[]>([]);
+  const [timeOutLoading, setTimeOutLoading] = useState<boolean>(false);
 
-  async function onSearchError(page?: number, size?: number) {
-    const res = await queryOverview({
-      appGroup,
-      startTime: timeList[0] ? moment(timeList[0]).format('YYYY-MM-DD HH:mm:ss') : null,
-      endTime: timeList[1] ? moment(timeList[1]).format('YYYY-MM-DD HH:mm:ss') : null,
-      pageIndex: errorIndex,
-      pageSize: errorSize,
-    });
+  function getParam(extra = {}) {
+    let param: any = {
+      feEnv,
+      envCode,
+      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
+      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
+      ...extra,
+    };
+    if (appGroup) {
+      param = {
+        ...param,
+        appGroup,
+      };
+    }
+    return param;
   }
 
-  async function onSearchTimeOut(page?: number, size?: number) {
-    const res = await queryOverview({
-      appGroup,
-      startTime: timeList[0] ? moment(timeList[0]).format('YYYY-MM-DD HH:mm:ss') : null,
-      endTime: timeList[1] ? moment(timeList[1]).format('YYYY-MM-DD HH:mm:ss') : null,
-      pageIndex: timeOutIndex,
-      pageSize: timeOutSize,
-    });
+  async function onSearchError() {
+    setErrorLoading(true);
+    const res = await getErrorApiList(getParam());
+    setErrorData(res?.data || []);
+    setErrorTotal(res?.data?.length || 0);
+    setErrorLoading(false);
+  }
+
+  async function onSearchTimeOut() {
+    setTimeOutLoading(true);
+    const res = await getSlowApiList(getParam());
+    setTimeOutData(res?.data || []);
+    setTimeOutTotal(res?.data?.length || 0);
+    setTimeOutLoading(false);
   }
 
   useEffect(() => {
@@ -54,56 +68,102 @@ const BasicApi = ({ appGroup }: IProps) => {
     } else {
       void onSearchTimeOut();
     }
-  }, [timeList, appGroup]);
+  }, [timeList, appGroup, feEnv]);
 
   return (
     <div className="basic-api-wrapper">
+      {appConfig.IS_Matrix === 'public' && (
+        <div className="env-select-wrapper">
+          <span>环境：</span>
+          <Select
+            value={feEnv}
+            clearIcon={false}
+            style={{ width: '120px' }}
+            onChange={(val) => {
+              setFeEnv(val);
+            }}
+          >
+            {envList.map((item) => (
+              <Select.Option value={item.key} key={item.key}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+      )}
       <Header onChange={setTimeList} defaultTime={timeList} />
-      <Tabs activeKey={active} onChange={setActive}>
+      <Tabs
+        activeKey={active}
+        onChange={(val) => {
+          setActive(val);
+          if (val === '1') {
+            void onSearchError();
+          } else {
+            void onSearchTimeOut();
+          }
+        }}
+      >
         <TabPane tab="API失败接口" key="1">
           <Table
             dataSource={errorData}
             bordered
-            rowKey="url"
+            rowKey="ts"
+            scroll={{ x: '100%' }}
+            loading={errorLoading}
             columns={[
               {
                 title: 'API',
                 dataIndex: 'd1',
-              },
-              {
-                title: '页面名称',
-                dataIndex: 'url',
+                width: '300px',
+                ellipsis: {
+                  showTitle: true,
+                },
               },
               {
                 title: 'TraceId',
+                width: '250px',
                 render: (value, record) => <span>{record.d3?.split('-')[1] || '-'}</span>,
-              },
-              {
-                title: '耗时',
-                render: (value, record) => <span>{record.d3?.split('-')[0] || '-'}</span>,
-              },
-              {
-                title: '上报时间',
-                dataIndex: 'time',
               },
               {
                 title: '入参',
                 dataIndex: 'd5',
+                width: '400px',
+                ellipsis: {
+                  showTitle: true,
+                },
               },
               {
                 title: '出参',
                 dataIndex: 'd4',
+                width: '350px',
+                ellipsis: {
+                  showTitle: true,
+                },
+              },
+              {
+                title: '耗时-秒',
+                width: '100px',
+                align: 'right',
+                render: (value, record) => <span>{Math.floor(record.timing / 100) || 0}</span>,
+              },
+              {
+                title: '页面名称',
+                dataIndex: 'url',
+                width: '250px',
+                ellipsis: {
+                  showTitle: true,
+                },
+              },
+              {
+                title: '上报时间',
+                width: '180px',
+                render: (value, record) => (
+                  <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
+                ),
               },
             ]}
             pagination={{
-              pageSize: errorSize,
-              current: errorIndex,
               total: errorTotal,
-              onChange: (page, size) => {
-                setErrorIndex(page);
-                setErrorSize(size);
-                void onSearchError(page, size);
-              },
             }}
           />
         </TabPane>
@@ -111,42 +171,56 @@ const BasicApi = ({ appGroup }: IProps) => {
           <Table
             dataSource={timeOutData}
             bordered
-            rowKey="url"
+            scroll={{ x: '100%' }}
+            rowKey="ts"
+            loading={timeOutLoading}
             columns={[
               {
                 title: 'API',
                 dataIndex: 'd1',
+                width: '300px',
+                ellipsis: {
+                  showTitle: true,
+                },
               },
               {
-                title: '页面名称',
+                title: '页面',
                 dataIndex: 'url',
+                width: '250px',
+                ellipsis: {
+                  showTitle: true,
+                },
               },
               {
                 title: 'TraceId',
+                width: '250px',
                 render: (value, record) => <span>{record.d3?.split('-')[1] || '-'}</span>,
+              },
+              {
+                title: '耗时-秒',
+                width: '100px',
+                align: 'right',
+                dataIndex: 'timing',
+                render: (value, record) => <span>{Math.floor(record.timing / 100) || 0}</span>,
+              },
+              {
+                title: '上报时间',
+                width: '180px',
+                render: (value, record) => (
+                  <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
+                ),
               },
               {
                 title: '入参',
                 dataIndex: 'd5',
-              },
-              {
-                title: '耗时',
-                render: (value, record) => <span>{record.d3?.split('-')[0] || '-'}</span>,
-              },
-              {
-                title: '上报时间',
-                dataIndex: 'time',
+                width: '400px',
+                ellipsis: {
+                  showTitle: true,
+                },
               },
             ]}
             pagination={{
-              pageSize: timeOutSize,
-              current: timeOutIndex,
               total: timeOutTotal,
-              onChange: (page, size) => {
-                setTimeOutIndex(page);
-                setTimeOutSize(size);
-                void onSearchTimeOut(page, size);
-              },
             }}
           />
         </TabPane>

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Descriptions, Tooltip } from 'antd';
+import { Button, Table, Descriptions } from 'antd';
 import Header from '../header';
 import { now } from '../../const';
 import { Line } from '@cffe/hulk-wave-chart';
 import moment from 'moment';
-import { getErrorChart, getErrorList, getPageErrorInfo } from '../server';
+import { getErrorChart, getErrorList, getPageErrorInfo } from '../../server';
 import { CloseOutlined } from '@ant-design/icons';
 import './index.less';
 
 interface IProps {
   appGroup: string;
+  envCode: string;
 }
 
 interface DataSourceItem {
@@ -19,9 +20,11 @@ interface DataSourceItem {
   rowSpan?: number;
   d1?: string;
   count?: number;
+  len: number;
+  i: number;
 }
 
-const BasicError = ({ appGroup }: IProps) => {
+const BasicError = ({ appGroup, envCode }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
   const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
@@ -29,18 +32,30 @@ const BasicError = ({ appGroup }: IProps) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(false);
+
+  function getParam(extra = {}) {
+    let param: any = {
+      envCode,
+      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
+      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
+      ...extra,
+    };
+    if (appGroup) {
+      param = {
+        ...param,
+        appGroup,
+      };
+    }
+    return param;
+  }
 
   // 错误趋势图
   async function onErrorChart() {
     if (!chart) {
       return;
     }
-    const res = await getErrorChart({
-      appGroup,
-      envCode: 'g3a-test',
-      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
-      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
-    });
+    const res = await getErrorChart(getParam());
     const data = res?.data || [];
 
     let newData = [];
@@ -61,12 +76,8 @@ const BasicError = ({ appGroup }: IProps) => {
 
   // 错误列表
   async function onErrorList() {
-    const res = await getErrorList({
-      appGroup,
-      envCode: 'g3a-test',
-      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
-      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
-    });
+    setLoading(true);
+    const res = await getErrorList(getParam());
     const data = res?.data || [];
     const list: any = [];
     for (const item of data) {
@@ -76,6 +87,8 @@ const BasicError = ({ appGroup }: IProps) => {
           id: (Math.random() * 1000000).toFixed(0),
           url: item[0],
           colSpan: i === 0 ? 1 : 0,
+          i,
+          len: item[1].length,
           rowSpan: i === 0 ? item[1].length : 1,
           d1: suItem[0],
           count: suItem[1],
@@ -84,24 +97,24 @@ const BasicError = ({ appGroup }: IProps) => {
     }
     setDataSource(list);
     setTotal(data.length);
+    setLoading(false);
     if (list.length && showDetail) {
       setSelectedRowKeys([list[0].id]);
       void getDetail(list[0]);
     } else {
+      setShowDetail(false);
       setSelectedRowKeys([]);
       setDetail({});
     }
   }
 
   async function getDetail(record: any) {
-    const res = await getPageErrorInfo({
-      appGroup,
-      envCode: 'g3a-test',
-      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
-      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
-      d1: record.d1,
-      d2: record.url,
-    });
+    const res = await getPageErrorInfo(
+      getParam({
+        d1: record.d1,
+        d2: record.url,
+      }),
+    );
     const data = res?.data || [];
     setDetail(data[0]?._source || {});
   }
@@ -158,6 +171,7 @@ const BasicError = ({ appGroup }: IProps) => {
               <Table
                 dataSource={dataSource}
                 bordered
+                loading={loading}
                 rowKey="id"
                 pagination={{
                   total,
@@ -177,7 +191,10 @@ const BasicError = ({ appGroup }: IProps) => {
                     title: '错误文件',
                     dataIndex: 'url',
                     onCell: (record, index) => {
-                      return { rowSpan: record.rowSpan, colSpan: record.colSpan };
+                      return {
+                        rowSpan: index === 0 ? record.len - record.i : record.rowSpan,
+                        colSpan: index === 0 ? 1 : record.colSpan,
+                      };
                     },
                     ellipsis: {
                       showTitle: true,
@@ -200,7 +217,7 @@ const BasicError = ({ appGroup }: IProps) => {
                     title: '操作',
                     width: '90px',
                     align: 'center',
-                    render: (value, record) => <Button type="link">详情</Button>,
+                    render: () => <Button type="link">详情</Button>,
                   },
                 ]}
               />

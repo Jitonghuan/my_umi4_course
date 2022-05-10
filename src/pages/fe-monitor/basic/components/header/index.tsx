@@ -22,6 +22,7 @@ interface IProps {
 
 const Header = ({ onChange, defaultTime }: IProps) => {
   const [timeList, setTimeList] = useState<any>(defaultTime || []);
+  const [active, setActive] = useState<any>(ranges[0].value);
 
   const onTimeChange = (time: any) => {
     setTimeList(time);
@@ -31,9 +32,16 @@ const Header = ({ onChange, defaultTime }: IProps) => {
   return (
     <div className="basic-header flex-row-center">
       <div className="flex-row-center">
-        <Radio.Group style={{ marginRight: 16 }} defaultValue={ranges[0].value}>
+        <Radio.Group style={{ marginRight: 16 }} value={active}>
           {ranges.map((item, i) => (
-            <Radio.Button onClick={() => onTimeChange(item.value)} key={i} value={item.value}>
+            <Radio.Button
+              onClick={() => {
+                onTimeChange(item.value);
+                setActive(item.value);
+              }}
+              key={i}
+              value={item.value}
+            >
               {item.label}
             </Radio.Button>
           ))}
@@ -42,7 +50,10 @@ const Header = ({ onChange, defaultTime }: IProps) => {
           clearIcon={false}
           value={timeList}
           showTime={{ format: 'HH:mm' }}
-          onChange={(val) => onTimeChange(val)}
+          onChange={(val) => {
+            onTimeChange(val);
+            setActive(null);
+          }}
           ranges={{
             最近15分钟: [moment().subtract(15, 'minute'), moment()],
             最近30分钟: [moment().subtract(30, 'minute'), moment()],

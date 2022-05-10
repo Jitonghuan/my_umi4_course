@@ -1,111 +1,198 @@
 import React, { useEffect, useState } from 'react';
-import { Radio, Table, Tooltip } from 'antd';
+import { Radio, Select, Table, Tooltip } from 'antd';
+import appConfig from '@/app.config';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Line } from '@cffe/hulk-wave-chart';
 import Header from '../header';
 import PerformanceMarket from '../performance-market';
-import { now, groupItem, performanceItem } from '../../const';
-import { Line } from '@cffe/hulk-wave-chart';
+import { now, groupItem, performanceItem, envList } from '../../const';
+import { getPerformanceChart, getPageList } from '../../server';
 import moment from 'moment';
 import './index.less';
-import { queryOverview } from '../server';
 
 interface IProps {
   appGroup: string;
+  envCode: string;
 }
 
 const pageItem = [
   {
     name: '高频页面',
+    key: 'highFrequency',
   },
   {
     name: '访问速度排行',
+    key: 'visitSpeed',
   },
 ];
 
-const BasicPerformance = ({ appGroup }: IProps) => {
+const BasicPerformance = ({ appGroup, envCode }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
-  const [activeTab, setActiveTab] = useState<string>('tti');
-  const [pageGroupTab, setPageGroupTab] = useState<number>(0);
-  const [timeGroupTab, setTimeGroupTab] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [total, setTotal] = useState<number>(0);
-  const [pageIndex, setPageIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(20);
-  const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]); // 展开行key
-  const [timeGroupRowKeys, setTimeGroupRowKeys] = useState<any[]>([]); // 展开行key
-  const [dataSource, setDataSource] = useState<any[]>([
-    {
-      url: 'www.baidu.com',
-      tti: '10s',
-      pv: '4',
-    },
-    {
-      url: 'www.baidu',
-      tti: '10s',
-      pv: '4',
-    },
-  ]);
-  const [expanded, setExpanded] = useState<boolean>(false);
-  const [groupExpanded, setGroupExpanded] = useState<boolean>(false);
+  const [chart, setChart] = useState<any>(null);
+  const [feEnv, setFeEnv] = useState<string>('*');
+  const [activeTab, setActiveTab] = useState<string>('tti'); // 趋势图tab
+  const [pageGroupTab, setPageGroupTab] = useState<string>('highFrequency'); // 页面排行tab
+  const [timeGroupTab, setTimeGroupTab] = useState<string>('20'); // 加载时间区间tab
 
-  async function onSearch(page?: number, size?: number) {
-    const res = await queryOverview({
-      appGroup,
-      startTime: timeList[0] ? moment(timeList[0]).format('YYYY-MM-DD HH:mm:ss') : null,
-      endTime: timeList[1] ? moment(timeList[1]).format('YYYY-MM-DD HH:mm:ss') : null,
-      pageIndex,
-      pageSize,
-    });
-    // setTotal(res?.data.total);
+  // 页面排行
+  const [total, setTotal] = useState<number>(0);
+  const [dataSource, setDataSource] = useState<any[]>([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]); // 展开行key
+  const [expanded, setExpanded] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // 加载区间
+  const [groupTotal, setGroupTotal] = useState<number>(0);
+  const [groupData, setGroupData] = useState<any[]>([]);
+  const [groupRowKeys, setGroupRowKeys] = useState<any[]>([]); // 展开行key
+  const [groupExpanded, setGroupExpanded] = useState<boolean>(false);
+  const [groupLoading, setGroupLoading] = useState<boolean>(false);
+
+  function getParam(extra = {}) {
+    let param: any = {
+      envCode,
+      startTime: timeList[0] ? moment(timeList[0]).unix() : null,
+      endTime: timeList[1] ? moment(timeList[1]).unix() : null,
+      feEnv,
+      ...extra,
+    };
+    if (appGroup) {
+      param = {
+        ...param,
+        appGroup,
+      };
+    }
+    return param;
+  }
+
+  // 汇总性能趋势图
+  async function performanceChart(tab?: string) {
+    if (!chart) {
+      return;
+    }
+    const res = await getPerformanceChart(
+      getParam({
+        indicatorName: tab || activeTab,
+      }),
+    );
+
+    const data = res?.data || [];
+    if (data.length) {
+      for (const item of data) {
+        item[0] = moment(item[0]).format('YYYY-MM-DD HH:mm');
+        item[1] = Math.floor(item[1]);
+      }
+    }
+
+    chart.data(data);
+    chart.draw();
+  }
+
+  // 页面排行榜
+  async function pageList(tab?: string) {
+    setLoading(true);
+    const res = await getPageList(
+      getParam({
+        filterType: tab || pageGroupTab,
+      }),
+    );
+    setDataSource(res?.data || []);
+    setTotal(res?.data?.length || 0);
+    setLoading(false);
+  }
+
+  // 页面tti加载区间
+  async function timeGroupList(tab?: string) {
+    setGroupLoading(true);
+    const res = await getPageList(
+      getParam({
+        loadTimeRange: tab || timeGroupTab,
+        filterType: 'loadSpeed',
+      }),
+    );
+    setGroupData(res?.data || []);
+    setGroupTotal(res?.data?.length || 0);
+    setGroupLoading(false);
   }
 
   useEffect(() => {
-    void onSearch();
-  }, [timeList, appGroup]);
+    setExpanded(false);
+    setExpandedRowKeys([]);
+    setGroupExpanded(false);
+    setGroupRowKeys([]);
+    void performanceChart();
+    void pageList();
+    void timeGroupList();
+  }, [timeList, appGroup, feEnv]);
 
   useEffect(() => {
-    const chart = new Line({
-      dom: document.querySelector('.line-chart'),
-      fieldMap: { x: ['日期'], y: ['耗时'] },
-      layout: {
-        padding: [80, 40, 40, 40],
-      },
-      title: {
-        isShow: false,
-      },
-      secondTitle: {
-        isShow: false,
-      },
-      yAxis: {
-        name: '',
-      },
-      line: {
-        isCustomColor: true,
-        customColor: ['#4BA2FFFF', '#54DA81FF'],
-      },
-      tooltip: {
-        isShow: true,
-      },
-    });
-    chart.data([
-      ['日期', '耗时'],
-      ['日期1', '100'],
-      ['日期2', '200'],
-      ['日期3', '500'],
-      ['日期4', '700'],
-      ['日期5', '400'],
-      ['日期6', '300'],
-    ]);
-    chart.draw();
+    setChart(
+      new Line({
+        dom: document.querySelector('.performance-chart'),
+        fieldMap: { x: ['日期'], y: ['耗时'] },
+        layout: {
+          padding: [40, 40, 40, 40],
+        },
+        title: {
+          isShow: false,
+        },
+        secondTitle: {
+          isShow: false,
+        },
+        yAxis: {
+          name: '毫秒',
+        },
+        xAxis: {
+          labelInterval: 2,
+        },
+        line: {
+          isCustomColor: true,
+          customColor: ['#4BA2FFFF', '#54DA81FF'],
+        },
+        tooltip: {
+          isShow: true,
+        },
+      }),
+    );
   }, []);
 
-  // @ts-ignore
+  useEffect(() => {
+    void performanceChart();
+  }, [chart]);
+
   return (
     <div className="basic-performance-wrapper">
+      {appConfig.IS_Matrix === 'public' && (
+        <div className="env-select-wrapper">
+          <span>环境：</span>
+          <Select
+            value={feEnv}
+            clearIcon={false}
+            style={{ width: '120px' }}
+            onChange={(val) => {
+              setFeEnv(val);
+            }}
+          >
+            {envList.map((item) => (
+              <Select.Option value={item.key} key={item.key}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+      )}
       <Header onChange={setTimeList} defaultTime={timeList} />
+
+      {/*页面汇总趋势图*/}
       <div className="performance-wrapper">
         <div className="group-performance">
-          <Radio.Group value={activeTab} onChange={(e) => setActiveTab(e.target.value)}>
+          <Radio.Group
+            value={activeTab}
+            onChange={(e) => {
+              setActiveTab(e.target.value);
+              void performanceChart(e.target.value);
+            }}
+          >
             {performanceItem.map((item) => (
               <Radio.Button key={item.name} value={item.name}>
                 <Tooltip placement="topLeft" title={item.desc}>
@@ -115,12 +202,22 @@ const BasicPerformance = ({ appGroup }: IProps) => {
               </Radio.Button>
             ))}
           </Radio.Group>
-          <div className="line-chart"></div>
+          <div className="performance-chart"></div>
         </div>
+
+        {/*页面性能列表*/}
         <div className="group-performance">
-          <Radio.Group value={pageGroupTab} onChange={(e) => setPageGroupTab(e.target.value)}>
-            {pageItem.map((item, i) => (
-              <Radio.Button key={i} value={i}>
+          <Radio.Group
+            value={pageGroupTab}
+            onChange={(e) => {
+              setPageGroupTab(e.target.value);
+              setExpanded(false);
+              setExpandedRowKeys([]);
+              void pageList(e.target.value);
+            }}
+          >
+            {pageItem.map((item) => (
+              <Radio.Button key={item.key} value={item.key}>
                 {item.name}
               </Radio.Button>
             ))}
@@ -129,50 +226,55 @@ const BasicPerformance = ({ appGroup }: IProps) => {
         <div className="page-performance">
           <Table
             rowKey="url"
+            loading={loading}
             columns={[
               {
-                title: '页面名称',
+                title: '页面',
                 dataIndex: 'url',
               },
               {
-                title: '平均载入时长',
-                dataIndex: 'tti',
-              },
-              {
-                title: 'PV',
-                dataIndex: 'pv',
+                title: pageGroupTab === 'highFrequency' ? 'PV' : '平均载入时长-毫秒',
+                dataIndex: pageGroupTab === 'highFrequency' ? 'pv' : 'avgLoadTime',
               },
             ]}
             pagination={{
-              pageSize,
-              current: pageIndex,
               total,
-              onChange: (page, size) => {
-                setPageIndex(page);
-                setPageSize(size);
-                void onSearch(page, size);
-              },
             }}
             dataSource={dataSource}
             expandable={{
               expandRowByClick: true,
               expandedRowKeys,
               onExpand: (expanded, record) => {
-                setExpanded(expanded);
+                setGroupExpanded(false);
+                setGroupRowKeys([]);
                 if (expanded) {
                   setExpandedRowKeys([record?.url]);
                 } else {
                   setExpandedRowKeys([]);
                 }
+                setExpanded(expanded);
               },
-              expandedRowRender: () => (expanded ? <PerformanceMarket /> : null),
+              expandedRowRender: (record) =>
+                expanded && record.url === expandedRowKeys[0] ? (
+                  <PerformanceMarket url={expandedRowKeys[0]} param={getParam()} />
+                ) : null,
             }}
           />
         </div>
+
+        {/*页面加载区间分布*/}
         <div className="group-performance">
-          <Radio.Group value={timeGroupTab} onChange={(e) => setTimeGroupTab(e.target.value)}>
-            {groupItem.map((item, i) => (
-              <Radio.Button key={i} value={i}>
+          <Radio.Group
+            value={timeGroupTab}
+            onChange={(e) => {
+              setTimeGroupTab(e.target.value);
+              setGroupExpanded(false);
+              setGroupRowKeys([]);
+              void timeGroupList(e.target.value);
+            }}
+          >
+            {groupItem.map((item) => (
+              <Radio.Button key={item.key} value={item.key}>
                 {item.name}
               </Radio.Button>
             ))}
@@ -181,43 +283,38 @@ const BasicPerformance = ({ appGroup }: IProps) => {
         <div className="page-performance">
           <Table
             rowKey="url"
+            loading={groupLoading}
             columns={[
               {
                 title: '页面名称',
                 dataIndex: 'url',
               },
               {
-                title: '平均载入时长',
-                dataIndex: 'tti',
-              },
-              {
-                title: 'PV',
-                dataIndex: 'pv',
+                title: '平均载入时长-毫秒',
+                dataIndex: 'avgLoadTime',
               },
             ]}
             pagination={{
-              pageSize,
-              current: pageIndex,
-              total,
-              onChange: (page, size) => {
-                setPageIndex(page);
-                setPageSize(size);
-                void onSearch(page, size);
-              },
+              total: groupTotal,
             }}
-            dataSource={dataSource}
+            dataSource={groupData}
             expandable={{
-              timeGroupRowKeys,
               expandRowByClick: true,
+              expandedRowKeys: groupRowKeys,
               onExpand: (expanded, record) => {
                 setGroupExpanded(expanded);
+                setExpanded(false);
+                setExpandedRowKeys([]);
                 if (expanded) {
-                  setTimeGroupRowKeys([record?.url]);
+                  setGroupRowKeys([record?.url]);
                 } else {
-                  setTimeGroupRowKeys([]);
+                  setGroupRowKeys([]);
                 }
               },
-              expandedRowRender: () => (groupExpanded ? <PerformanceMarket /> : null),
+              expandedRowRender: (record) =>
+                groupExpanded && record.url === groupRowKeys[0] ? (
+                  <PerformanceMarket url={groupRowKeys[0]} param={getParam()} />
+                ) : null,
             }}
           />
         </div>

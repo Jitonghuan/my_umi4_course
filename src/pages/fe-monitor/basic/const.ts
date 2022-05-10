@@ -74,21 +74,27 @@ export const menuList = [
 export const groupItem = [
   {
     name: '载入时长>20s',
+    key: '20',
   },
   {
     name: '20s≥载入时长>10s',
+    key: '10,20',
   },
   {
     name: '10s≥载入时长>5s',
+    key: '5,10',
   },
   {
     name: '5s≥载入时长>2s',
+    key: '2,5',
   },
   {
     name: '2s≥载入时长>1s',
+    key: '1,2',
   },
   {
     name: '1s≥载入时长',
+    key: '1',
   },
 ];
 
@@ -120,3 +126,22 @@ export const performanceItem = [
 ];
 
 export const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
+
+export const envList = [
+  {
+    name: '所有',
+    key: '*',
+  },
+  {
+    name: 'HBOS开发',
+    key: 'hbos-dev.cfuture.shop',
+  },
+  {
+    name: 'HBOS测试',
+    key: 'hbos-test.cfuture.shop',
+  },
+  {
+    name: 'HBOS演示',
+    key: 'hbos-seenewhospital.cfuture.shop',
+  },
+];

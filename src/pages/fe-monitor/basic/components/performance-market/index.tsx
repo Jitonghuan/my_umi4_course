@@ -1,66 +1,127 @@
 import React, { useEffect, useState } from 'react';
+import { Spin } from 'antd';
 import { Line, Bar } from '@cffe/hulk-wave-chart';
+import { getPerformanceDetail } from '../../server';
+import moment from 'moment';
 import './index.less';
+
+interface IProps {
+  url: string;
+  param: any;
+}
 
 const performanceItem = ['tti', 'ttfb', 'lcp', 'fcp', 'fid', 'root-paint']; // 性能项
 
-const PerformanceMarket = () => {
+const PerformanceMarket = ({ url, param }: IProps) => {
+  const [activeTab, setActiveTab] = useState<string>('tti');
   const [trendChart, setTrendChart] = useState<any>(null);
   const [distributedChart, setDistributedChart] = useState<any>(null);
   const [indicatorChart, setIndicatorChart] = useState<any>(null);
   const [waterfallChart, setWaterfallChart] = useState<any>(null);
+  const [indicatorData, setIndicatorData] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
-  function renderTrendChart() {
-    trendChart?.data([
-      ['日期', '平均载入时长（s）', '最小载入时长（s）', '最大载入时长（s）'],
-      ['日期', '100', '200'],
-      ['日期1', '200', '300'],
-      ['日期2', '800', '400'],
-      ['日期3', '500', '500'],
-      ['日期4', '700', '600'],
-      ['日期5', '400', '800'],
-      ['日期6', '300', '200'],
-    ]);
+  // 载入时长趋势
+  async function renderTrendChart() {
+    if (!trendChart) {
+      return;
+    }
+    setLoading(true);
+    const res = await getPerformanceDetail({
+      url,
+      ...param,
+      chartType: 'loadTimeTrend',
+    });
+    setLoading(false);
+    const loadTimeTrend = res?.data?.loadTimeTrend;
+    const data = [];
+    if (loadTimeTrend?.avgTime?.length) {
+      data.unshift(['日期', '平均载入时长', '最小载入时长', '最大载入时长']);
+      for (let i = 0; i < loadTimeTrend.avgTime.length; i++) {
+        data.push([
+          moment(loadTimeTrend.avgTime[i][0]).format('YYYY-MM-DD HH:mm'),
+          Math.floor(loadTimeTrend.avgTime[i][1] / 100),
+          Math.floor(loadTimeTrend.minTime[i][1] / 100),
+          Math.floor(loadTimeTrend.maxTime[i][1] / 100),
+        ]);
+      }
+    }
+    trendChart.data(data);
     trendChart?.draw();
   }
 
-  function renderDistributedChart() {
-    distributedChart?.data([
-      ['100', '1s≥载入时长'],
-      ['100', '1s≥载入时长'],
-      ['200', '2s≥载入时长>1s'],
-      ['300', '5s≥载入时长>2s'],
-      ['400', '10s≥载入时长>5s'],
-      ['500', '20s≥载入时长>10s'],
-      ['500', '载入时长>20s'],
-    ]);
+  // 载入时长分布
+  async function renderDistributedChart() {
+    if (!distributedChart) {
+      return;
+    }
+    const res = await getPerformanceDetail({
+      url,
+      ...param,
+      chartType: 'loadTimeDistribution',
+    });
+    const data = res?.data?.loadTimeDistribution || [];
+    let list = [];
+    if (data.length) {
+      for (let i = 0; i < data.length; i++) {
+        for (const key in data[i]) {
+          list.push([data[i][key], key]);
+        }
+      }
+    }
+    distributedChart?.data(list);
     distributedChart?.draw();
   }
 
-  function renderIndicatorChart() {
-    indicatorChart?.data([
-      ['日期'].concat(performanceItem),
-      ['日期', '100', '200'],
-      ['日期1', '200', '300'],
-      ['日期2', '800', '400'],
-      ['日期3', '500', '500'],
-      ['日期4', '700', '600'],
-      ['日期5', '400', '800'],
-      ['日期6', '300', '200'],
-    ]);
+  // 关键性能指标
+  async function renderIndicatorChart() {
+    if (!indicatorChart) {
+      return;
+    }
+    const res = await getPerformanceDetail({
+      url,
+      ...param,
+      chartType: 'keyPerformanceIndicator',
+    });
+
+    const indicator = res?.data?.keyPerformanceIndicator || {};
+    setIndicatorData(indicator);
+    drawIndicatorChart(indicator);
+  }
+
+  function drawIndicatorChart(indicator?: any) {
+    const Obj = indicator || indicatorData;
+    const data = [];
+    if (Obj[activeTab]?.length) {
+      for (let i = 0; i < Obj[activeTab].length; i++) {
+        let item: any = Obj[activeTab][i];
+        data.push([moment(item[0]).format('YYYY-MM-DD HH:mm'), Math.floor(item[1])]);
+      }
+    }
+    indicatorChart?.data(data);
     indicatorChart?.draw();
   }
 
-  function renderWaterfallChart() {
-    waterfallChart?.data([
-      ['100', 'tti', '100'],
-      ['100', 'tti', '100'],
-      ['200', 'ttfb', '200'],
-      ['300', 'lcp', '200'],
-      ['400', 'fcp', '200'],
-      ['500', 'fid', '200'],
-      ['700', 'root-paint', '200'],
-    ]);
+  // 页面加载瀑布图
+  async function renderWaterfallChart() {
+    if (!waterfallChart) {
+      return;
+    }
+    const res = await getPerformanceDetail({
+      url,
+      ...param,
+      chartType: 'pageLoadWaterfallChart',
+    });
+    const data = res?.data?.pageLoadWaterfallChart || [];
+    const list = [];
+    if (data.length) {
+      for (let i = 0; i < data.length; i++) {
+        for (const key in data[i]) {
+          list.push([Math.floor(data[i][key] / 100), key]);
+        }
+      }
+    }
+    waterfallChart?.data(list);
     waterfallChart?.draw();
   }
 
@@ -68,9 +129,12 @@ const PerformanceMarket = () => {
     setTrendChart(
       new Line({
         dom: document.querySelector('.trend-chart'),
-        fieldMap: { x: ['日期'], y: ['平均载入时长（s）', '最小载入时长（s）', '最大载入时长（s）'] },
+        fieldMap: { x: ['日期'], y: ['平均载入时长', '最小载入时长', '最大载入时长'] },
         layout: {
-          padding: [80, 40, 40, 40],
+          padding: [50, 20, 40, 40],
+        },
+        xAxis: {
+          labelInterval: 2,
         },
         title: {
           isShow: false,
@@ -83,7 +147,7 @@ const PerformanceMarket = () => {
           customColor: ['#657CA6', '#4BA2FF', '#54DA81'],
         },
         yAxis: {
-          name: '',
+          name: '秒',
         },
         tooltip: {
           isShow: true,
@@ -96,10 +160,14 @@ const PerformanceMarket = () => {
         dom: document.querySelector('.distributed-chart'),
         fieldMap: {
           x: ['耗时'],
-          y: ['1s≥载入时长', '2s≥载入时长>1s', '5s≥载入时长>2s', '10s≥载入时长>5s', '20s≥载入时长>10s', '载入时长>20s'],
+          y: ['20', '10,20', '5,10', '2,5', '1,2', '1'],
         },
         layout: {
-          padding: [80, 40, 40, 120],
+          padding: [20, 40, 40, 80],
+        },
+        bar: {
+          isCustomColor: true,
+          customColor: ['#4BA2FF'],
         },
         title: {
           isShow: false,
@@ -107,11 +175,8 @@ const PerformanceMarket = () => {
         secondTitle: {
           isShow: false,
         },
-        yAxis: {
-          name: '',
-        },
         xAxis: {
-          name: '毫秒',
+          name: '次数',
         },
         tooltip: {
           isShow: true,
@@ -122,11 +187,14 @@ const PerformanceMarket = () => {
     setIndicatorChart(
       new Line({
         dom: document.querySelector('.indicator-chart'),
-        fieldMap: { x: ['日期'], y: performanceItem },
+        fieldMap: { x: ['日期'], y: ['时长'] },
         layout: {
-          padding: [80, 40, 40, 40],
+          padding: [40, 20, 40, 70],
         },
         title: {
+          isShow: false,
+        },
+        legend: {
           isShow: false,
         },
         secondTitle: {
@@ -134,10 +202,13 @@ const PerformanceMarket = () => {
         },
         line: {
           isCustomColor: true,
-          customColor: ['#657CA6', '#5C61F3', '#4BA2FF', '#54DA81', '#FFCB30'],
+          customColor: ['#4ba2ff'],
         },
         yAxis: {
-          name: '',
+          name: '毫秒',
+        },
+        xAxis: {
+          labelInterval: 2,
         },
         tooltip: {
           isShow: true,
@@ -151,8 +222,12 @@ const PerformanceMarket = () => {
           x: ['耗时'],
           y: performanceItem,
         },
+        bar: {
+          isCustomColor: true,
+          customColor: ['#4BA2FF'],
+        },
         layout: {
-          padding: [80, 40, 40, 120],
+          padding: [20, 40, 40, 80],
         },
         title: {
           isShow: false,
@@ -164,53 +239,79 @@ const PerformanceMarket = () => {
           name: '',
         },
         xAxis: {
-          name: '毫秒',
+          name: '秒',
         },
         tooltip: {
           isShow: true,
         },
       }),
     );
+
+    return () => {
+      trendChart?.destroy();
+      distributedChart?.destroy();
+      indicatorChart?.destroy();
+      waterfallChart?.destroy();
+    };
   }, []);
 
   useEffect(() => {
-    renderTrendChart();
+    void renderTrendChart();
   }, [trendChart]);
 
   useEffect(() => {
-    renderDistributedChart();
+    void renderDistributedChart();
   }, [distributedChart]);
 
   useEffect(() => {
-    renderIndicatorChart();
+    void renderIndicatorChart();
   }, [indicatorChart]);
 
   useEffect(() => {
-    renderWaterfallChart();
+    void renderWaterfallChart();
   }, [waterfallChart]);
+
+  useEffect(() => {
+    void drawIndicatorChart();
+  }, [activeTab]);
 
   return (
     <div className="performance-market-wrapper">
-      <div className="market-item">
-        <div>
-          <div className="chart-title">载入时长趋势</div>
-          <div className="trend-chart chart-item"></div>
+      <Spin spinning={loading}>
+        <div className="market-item">
+          <div>
+            <div className="chart-title">载入时长趋势</div>
+            <div className="trend-chart chart-item"></div>
+          </div>
+          <div>
+            <div className="chart-title">载入时长区间分布</div>
+            <div className="distributed-chart chart-item"></div>
+          </div>
         </div>
-        <div>
-          <div className="chart-title">载入时长分布</div>
-          <div className="distributed-chart chart-item"></div>
+        <div className="market-item mar-t-12">
+          <div>
+            <div className="chart-title">关键性能指标趋势</div>
+            <div className="chart-tab-wrapper">
+              {performanceItem.map((item) => (
+                <div
+                  key={item}
+                  onClick={() => {
+                    setActiveTab(item);
+                  }}
+                >
+                  <span style={{ backgroundColor: activeTab === item ? '#4ba2ff' : '#ccc' }}></span>
+                  {item}
+                </div>
+              ))}
+            </div>
+            <div className="indicator-chart chart-item"></div>
+          </div>
+          <div>
+            <div className="chart-title">关键性能指标平均时长</div>
+            <div className="waterfall-chart chart-item"></div>
+          </div>
         </div>
-      </div>
-      <div className="market-item mar-t-12">
-        <div>
-          <div className="chart-title">关键性能指标</div>
-          <div className="indicator-chart chart-item"></div>
-        </div>
-        <div>
-          <div className="chart-title">页面加载瀑布图</div>
-          <div className="waterfall-chart chart-item"></div>
-        </div>
-      </div>
+      </Spin>
     </div>
   );
 };

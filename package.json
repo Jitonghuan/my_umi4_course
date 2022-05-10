@@ -46,7 +46,6 @@
     "@cffe/vc-custom-icon": "1.0.6",
     "@cffe/vc-error-page": "1.0.2",
     "@cffe/vc-hulk-table": "1.0.14",
-    "@cffe/vc-layout": "1.0.53",
     "@cffe/vc-loading": "1.0.4",
     "@cffe/vc-request": "2.0.16",
     "@hbos/component-position-switcher": "^1.0.7",
