@@ -14,57 +14,7 @@ import {
   useDeleteVersionComponent,
   useAddCompontent,
 } from './hooks';
-import { ProFormField } from '@ant-design/pro-form';
-
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-const OptionList: React.FC<{
-  value?: {
-    label: string;
-    value: string;
-  }[];
-  onChange?: (
-    value: {
-      label: string;
-      value: string;
-    }[],
-  ) => void;
-}> = ({ value, onChange }) => {
-  const ref = useRef<any>(null);
-  const [newTags, setNewTags] = useState<
-    {
-      label: string;
-      value: string;
-    }[]
-  >([]);
-  const [selectValue, setSelectValue] = useState<string>('');
-
-  const handleSelectChange = (e: React.ChangeEvent<HTMLOptionElement>) => {
-    setSelectValue(e.target.value);
-  };
-
-  return (
-    <Space>
-      {(value || []).concat(newTags).map((item) => (
-        <Select key={item.value}>{item.label}</Select>
-      ))}
-      <Input
-        ref={ref}
-        type="text"
-        size="small"
-        style={{ width: 78 }}
-        value={selectValue}
-        // onChange={handleSelectChange}
-      />
-    </Space>
-  );
-};
+import BatchDraw from './BatchAddDraw';
 
 type DataSourceType = {
   id: any;
@@ -98,7 +48,7 @@ export default (props: VersionDetailProps) => {
   const actionRef = useRef<ActionType>();
   const ref = useRef<ProFormInstance>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-  // const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+  const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
   const [form] = Form.useForm();
 
   const updateRow = (rowKey: string, row: any) => {
@@ -186,18 +136,6 @@ export default (props: VersionDetailProps) => {
     {
       title: currentTabType === 'app' ? '应用描述' : currentTabType === 'middleware' ? '中间件描述' : '基础数据描述',
       dataIndex: 'componentDescription',
-      // formItemProps: () => {
-      //   return {
-      //     rules: [
-      //       {
-      //         required: true,
-      //         message: '此项为必填项',
-      //       },
-      //     ],
-      //     errorType: 'default',
-      //   };
-      // },
-
       renderFormItem: (_, config: any, data) => {
         return <Input></Input>;
       },
@@ -250,6 +188,13 @@ export default (props: VersionDetailProps) => {
   };
   return (
     <>
+      <BatchDraw
+        mode={batchAddMode}
+        onClose={() => setBatchAddMode('HIDE')}
+        onSave={() => {
+          setBatchAddMode('HIDE');
+        }}
+      />
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
@@ -278,6 +223,16 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
+          {currentTabType === 'app' && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              style={{ marginRight: 12 }}
+              onClick={() => setBatchAddMode('ADD')}
+            >
+              批量添加应用
+            </Button>
+          )}
           <Button
             type="primary"
             disabled={isEditable}
@@ -292,18 +247,6 @@ export default (props: VersionDetailProps) => {
           </Button>
         </div>
       </div>
-      {/* <Space>
-         
-            <Button
-             key="rest"
-             onClick={() => {
-             form.resetFields();
-          }}
-          >
-          重置表单
-          </Button>
-        </Space> */}
-
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}

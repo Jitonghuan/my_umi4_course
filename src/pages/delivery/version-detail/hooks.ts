@@ -580,3 +580,36 @@ export function useDeleteDeliveryParam(): [boolean, (id: number) => Promise<void
   };
   return [loading, deleteDeliveryParam];
 }
+
+// 获取参数来源组件
+// export function useQueryOriginList() {
+//   const [loading, setLoading] = useState<boolean>(false);
+//   const [dataSource, setDataSource] = useState<any>({});
+//   const queryOriginList = async (versionId: number) => {
+//     setLoading(true);
+//     await getRequest(APIS.queryOriginList, { data: { versionId } })
+//       .then((res) => {
+//         if (res?.success) {
+//           let dataSource = res.data.dataSource;
+//           let options: any = [];
+//           dataSource?.map((item: any) => {
+//             // options[item.componentName] = {
+//             //   text: item.componentName,
+//             // };
+//             options.push({
+//               label: item.componentName,
+//               value: item.componentName,
+//             });
+//           });
+//           setDataSource(options);
+//         } else {
+//           return;
+//         }
+//       })
+//       .finally(() => {
+//         setLoading(false);
+//       });
+//   };
+
+//   return [loading, dataSource, queryOriginList];
+// }

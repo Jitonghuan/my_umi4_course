@@ -10,7 +10,7 @@ import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from './tmpl-edits';
-import { useQueryTemplateList, useDeleteComponentTmpl, useGetTypeListOption } from './hooks';
+import { useQueryTemplateList, useDeleteComponentTmpl, useGetTypeListOption, useQueryProductlineList } from './hooks';
 import { productLineOptions } from './config';
 
 /** 编辑页回显数据 */
@@ -23,6 +23,7 @@ export interface TmplEdit extends Record<string, any> {
 }
 export default function ComponentTmpl() {
   const { Option } = Select;
+  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryTemplateList] = useQueryTemplateList();
   const [formTmpl] = Form.useForm();
   const [delLoading, deleteComponentTmpl] = useDeleteComponentTmpl();
@@ -32,6 +33,10 @@ export default function ComponentTmpl() {
   const handleEditTask = useCallback((record: TmplEdit, index: number, type) => {
     setTmplateData(record);
     setTmplEditMode(type);
+  }, []);
+
+  useEffect(() => {
+    getProductlineList();
   }, []);
   //触发分页
 

@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Select, message, Popconfirm, Input } from 'antd';
+import { getRequest, postRequest } from '@/utils/request';
+import { getVersionCheck } from '../../service';
 import { useAddApplication, useQueryComponentList, useGetApplicationOption, useQueryEnvList } from '../hook';
 export interface DetailProps {
   visable?: boolean;
@@ -12,9 +14,12 @@ export interface DetailProps {
 
 export default function BasicModal(props: DetailProps) {
   const { visable, productLineOptions, onClose, queryComponentList, tabActiveKey, curProductLine } = props;
-  const [loading, addApplication] = useAddApplication();
+  const [addLoading, addApplication] = useAddApplication();
   const [appLoading, applicationOptions, getApplicationOption] = useGetApplicationOption();
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [rightInfo, setRightInfo] = useState<boolean>(false);
+  const [type, setType] = useState<string>('');
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [form] = Form.useForm();
   const handleSubmit = () => {
@@ -28,6 +33,36 @@ export default function BasicModal(props: DetailProps) {
           onClose();
         });
     });
+  };
+  const getCheck = async (componentVersion: string, productLine: string) => {
+    setLoading(true);
+    setType('begin');
+    try {
+      await getRequest(`${getVersionCheck}?componentVersion=${componentVersion}&productLine=${productLine}`)
+        .then((res) => {
+          if (res.success) {
+            // message.success(res.data);
+            setRightInfo(true);
+            debugger;
+            setType('sucess');
+          } else {
+            setRightInfo(false);
+            setType('error');
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+          setType('end');
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const onVersionChange = (value: any) => {
+    let formData = form.getFieldsValue();
+    console.log('value', formData.componentVersion);
+    getCheck(formData.componentVersion, curProductLine);
   };
   useEffect(() => {
     queryEnvData();
@@ -46,7 +81,7 @@ export default function BasicModal(props: DetailProps) {
       // closable={!loading}
       width={580}
       footer={[
-        <Button type="primary" onClick={handleSubmit} loading={loading}>
+        <Button type="primary" onClick={handleSubmit} loading={addLoading}>
           确认
         </Button>,
         <Button
@@ -63,13 +98,17 @@ export default function BasicModal(props: DetailProps) {
           <Select style={{ width: 320 }} options={envDataSource} onChange={getEnvCode}></Select>
         </Form.Item>
         <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
-          <Select style={{ width: 320 }} options={productLineOptions}></Select>
+          <Select style={{ width: 320 }} options={productLineOptions || []}></Select>
         </Form.Item>
         <Form.Item label="组件名称" name="componentName" rules={[{ required: true, message: '请选择组件名称' }]}>
           <Select style={{ width: 320 }} mode="multiple" options={applicationOptions}></Select>
         </Form.Item>
         <Form.Item label="组件版本" name="componentVersion" rules={[{ required: true, message: '请输入组件版本' }]}>
-          <Input style={{ width: 320 }} placeholder="请按照 1.0.0的格式输入版本号！"></Input>
+          <Input
+            style={{ width: 320 }}
+            placeholder="请按照 1.0.0 的格式输入版本号！"
+            onChange={onVersionChange}
+          ></Input>
         </Form.Item>
         <Form.Item label="组件描述" name="componentDescription">
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>

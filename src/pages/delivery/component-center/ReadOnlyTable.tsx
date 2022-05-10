@@ -13,20 +13,21 @@ import { Table, Tag, Space, Popconfirm } from 'antd';
 import { useQueryComponentList, useDeleteComponent } from './hook';
 export interface DetailProps {
   currentTab: string;
+  curProductLine: string;
   dataSource: any;
-  queryComponentList: (tabActiveKey: any) => any;
+  queryComponentList: (tabActiveKey: any, curProductLine: string) => any;
   tableLoading: boolean;
 }
 export default function VersionDetail(props: DetailProps) {
-  const { currentTab, dataSource, queryComponentList, tableLoading } = props;
+  const { currentTab, curProductLine, dataSource, queryComponentList, tableLoading } = props;
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
-    if (!currentTab) {
+    if (!currentTab || !curProductLine) {
       return;
     }
-    queryComponentList(currentTab);
-  }, [currentTab]);
+    queryComponentList(currentTab, curProductLine);
+  }, [currentTab, curProductLine]);
   const columns = [
     {
       title: '名称',
@@ -81,7 +82,7 @@ export default function VersionDetail(props: DetailProps) {
             title="确定要删除吗？"
             onConfirm={() => {
               deleteComponent(record.id).then(() => {
-                queryComponentList(currentTab);
+                queryComponentList(currentTab, curProductLine);
               });
             }}
           >

@@ -113,3 +113,32 @@ export function useDeleteComponentTmpl(): [boolean, (id: number) => Promise<void
   };
   return [loading, deleteComponentTmpl];
 }
+
+export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const getProductlineList = async () => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryProductlineList)
+        .then((res) => {
+          if (res.success) {
+            let data = res.data;
+            const option = data?.map((item: any) => ({
+              label: item,
+              value: item,
+            }));
+            setDataSource(option);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, getProductlineList];
+}

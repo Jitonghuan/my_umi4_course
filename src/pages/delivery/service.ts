@@ -55,9 +55,14 @@ export const queryDeliveryParamList = addAPIPrefix('/deliveryManage/product/vers
 export const deleteDeliveryParam = addAPIPrefix('/deliveryManage/product/version/param/delete');
 /* POST  修改交付配置参数 */
 export const editVersionParam = addAPIPrefix('/deliveryManage/product/version/param/edit');
+/* GET 根据产品线和版本号查询应用列表 */
+export const getApplistVersion = addAPIPrefix('/deliveryManage/component/applist/version ');
+/* POST 产品版本批量添加应用 */
+export const bulkadd = addAPIPrefix('/deliveryManage/product/version/component/bulkadd');
 /* 二、组件中心 */
 /* GET 产品线分类 */
 export const queryProductlineList = addAPIPrefix('/deliveryManage/component/productline/list');
+
 /* GET 检查组件版本号 */
 export const getVersionCheck = addAPIPrefix('/deliveryManage/component/version/check');
 /* POST 用户组件接入 */

@@ -299,19 +299,21 @@ export function useDeleteComponent(): [boolean, (id: number) => Promise<void>] {
 export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<any>([]);
+
   const getProductlineList = async () => {
     setLoading(true);
     try {
       await getRequest(APIS.queryProductlineList)
         .then((res) => {
-          if (res.success) {
+          if (res?.success) {
             let data = res.data;
             const option = data?.map((item: any) => ({
-              label: item,
-              value: item,
+              label: item.categoryCode || '',
+              value: item.categoryCode || '',
             }));
             setDataSource(option);
           } else {
+            setDataSource([]);
             return;
           }
         })
@@ -319,7 +321,7 @@ export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
           setLoading(false);
         });
     } catch (error) {
-      console.log(error);
+      console.log(error, 2222);
     }
   };
   return [loading, dataSource, getProductlineList];

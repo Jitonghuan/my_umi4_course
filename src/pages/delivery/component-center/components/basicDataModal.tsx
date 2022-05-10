@@ -19,22 +19,28 @@ export default function BasicModal(props: DetailProps) {
   const [filePath, setFilePath] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [rightInfo, setRightInfo] = useState<boolean>(false);
+  const [type, setType] = useState<string>('');
   // const [checkLoading,rightInfo, getVersionCheck]=useGetVersionCheck();
   const getCheck = async (componentVersion: string, productLine: string) => {
     setLoading(true);
+    setType('begin');
     try {
       await getRequest(`${getVersionCheck}?componentVersion=${componentVersion}&productLine=${productLine}`)
         .then((res) => {
           if (res.success) {
             // message.success(res.data);
             setRightInfo(true);
+            debugger;
+            setType('sucess');
           } else {
             setRightInfo(false);
+            setType('error');
             return;
           }
         })
         .finally(() => {
           setLoading(false);
+          setType('end');
         });
     } catch (error) {
       console.log(error);
@@ -93,7 +99,7 @@ export default function BasicModal(props: DetailProps) {
   };
   return (
     <Modal
-      title="中间件组件接入"
+      title="基础数据组件接入"
       visible={visable}
       onCancel={() => {
         onClose();
@@ -121,8 +127,16 @@ export default function BasicModal(props: DetailProps) {
           label="基础数据版本"
           name="componentVersion"
           hasFeedback
-          validateStatus={rightInfo && !loading ? 'success' : !rightInfo && loading ? 'validating' : 'error'}
-          help="版本号检查不合格"
+          validateStatus={
+            rightInfo && !loading && type === 'sucess'
+              ? 'success'
+              : !rightInfo && !loading && type === 'begin'
+              ? 'validating'
+              : type === 'error'
+              ? 'error'
+              : 'warning'
+          }
+          help={type === 'sucess' ? '版本号检查通过' : type === 'error' ? '版本号检查不通过' : '等待检查版本号'}
           rules={[{ required: true, message: '请填写基础数据版本！' }]}
         >
           <Input
