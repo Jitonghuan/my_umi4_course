@@ -470,6 +470,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                       setModalVisible(true);
                       setOptType('demand');
                       setSelectedRowKeys([]);
+                      projectForm.resetFields();
                       if (currentAppCategoryCode && currentAppGroupCode) {
                         queryDemandList({
                           appCategoryCode: form.getFieldValue('appCategoryCode'),
@@ -537,7 +538,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       </div>
 
       <Modal
-        title={optType === 'jira' ? '关联Jira需求单' : optType === 'demand' ? '关联需求管理平台' : '关联Reglus'}
+        title={optType === 'jira' ? '关联Jira需求单' : optType === 'demand' ? '关联需求管理平台' : '关联Regulus'}
         visible={modalVisible}
         width="100%"
         onCancel={() => setModalVisible(false)}
