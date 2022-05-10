@@ -6,6 +6,7 @@ import moment from 'moment';
 import { queryComponentInfoApi } from '../../service';
 import { getRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
+import ReactMarkdown from 'react-markdown';
 import { Form, Tabs, Select, Button, Descriptions, Typography, Divider, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryComponentVersionList, useUpdateDescription, useUpdateConfiguration } from './hooks';
@@ -133,7 +134,14 @@ export default function ComponentDetail() {
                 <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: 8, height: 20, fontSize: 16 }}>组件说明:</h3>
                 <div className="instruction">
                   <div className="instruction-info">
-                    <Spin spinning={infoLoading}>{componentInfo?.componentExplanation}</Spin>
+                    <Spin spinning={infoLoading}>
+                      <ReactMarkdown
+                        children={componentInfo?.componentExplanation}
+                        className="markdown-html"
+                        // escapeHtml={false}  //不进行HTML标签的转化
+                      />
+                      {/* {componentInfo?.componentExplanation} */}
+                    </Spin>
                   </div>
                 </div>
               </div>

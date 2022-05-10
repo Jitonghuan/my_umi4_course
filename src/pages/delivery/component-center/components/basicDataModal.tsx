@@ -21,6 +21,11 @@ export default function BasicModal(props: DetailProps) {
   const [rightInfo, setRightInfo] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
   // const [checkLoading,rightInfo, getVersionCheck]=useGetVersionCheck();
+  useEffect(() => {
+    return () => {
+      setType('');
+    };
+  }, [visable]);
   const getCheck = async (componentVersion: string, productLine: string) => {
     setLoading(true);
     setType('begin');
@@ -30,7 +35,6 @@ export default function BasicModal(props: DetailProps) {
           if (res.success) {
             // message.success(res.data);
             setRightInfo(true);
-            debugger;
             setType('sucess');
           } else {
             setRightInfo(false);
@@ -40,7 +44,7 @@ export default function BasicModal(props: DetailProps) {
         })
         .finally(() => {
           setLoading(false);
-          setType('end');
+          // setType('end');
         });
     } catch (error) {
       console.log(error);
@@ -99,7 +103,7 @@ export default function BasicModal(props: DetailProps) {
   };
   return (
     <Modal
-      title="基础数据组件接入"
+      title="基础数据导入"
       visible={visable}
       onCancel={() => {
         onClose();
@@ -157,7 +161,11 @@ export default function BasicModal(props: DetailProps) {
             <Button icon={<UploadOutlined />}>选择文件</Button>
           </Upload>
         </Form.Item>
-        <Form.Item label="基础数据描述" name="componentDescription">
+        <Form.Item
+          label="基础数据描述"
+          name="componentDescription"
+          rules={[{ required: true, message: '请填写描述！' }]}
+        >
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>
         </Form.Item>
       </Form>

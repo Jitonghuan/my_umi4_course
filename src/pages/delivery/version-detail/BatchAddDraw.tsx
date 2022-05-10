@@ -9,6 +9,7 @@ import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
+import { useQueryProductlineList } from '../component-center/hook';
 import { Drawer, Input, Button, Form, Tree, Row, Col, Select, Space, message, Divider } from 'antd';
 export interface AppComponentProps {
   mode: EditorMode;
@@ -22,21 +23,11 @@ export default function TmplEditor(props: AppComponentProps) {
   const { mode, initData, onClose, onSave } = props;
   const [isDisabled, setIsdisabled] = useState<boolean>(false);
   const [editDisabled, setEditDisabled] = useState<boolean>(false);
+  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
 
   useEffect(() => {
     if (mode === 'HIDE') return;
-    if (mode === 'EDIT' || mode === 'VIEW') {
-      addForm.setFieldsValue({ ...initData });
-    }
-    if (mode === 'VIEW') {
-      setIsdisabled(true);
-    }
-    if (mode === 'EDIT') {
-      setEditDisabled(true);
-    }
-    if (mode === 'ADD') {
-      addForm.resetFields();
-    }
+    getProductlineList();
     return () => {
       setIsdisabled(false);
       setEditDisabled(false);
@@ -70,7 +61,7 @@ export default function TmplEditor(props: AppComponentProps) {
       title="批量添加应用"
       // maskClosable={false}
       onClose={onClose}
-      width={'40%'}
+      width={'50%'}
       footer={
         <div className="drawer-footer">
           <Button type="primary" disabled={isDisabled} onClick={handleSubmit}>
@@ -83,11 +74,11 @@ export default function TmplEditor(props: AppComponentProps) {
       }
     >
       {/* <ContentCard className="tmpl-edits"> */}
-      <Form layout="inline" form={addForm}>
-        <Form.Item label="产品线">
-          <Select style={{ width: 300 }}></Select>
+      <Form layout="horizontal" form={addForm} labelCol={{ flex: '100px' }}>
+        <Form.Item label="产品线" name="productionLine">
+          <Select style={{ width: 300 }} options={productLineOptions} loading={selectLoading}></Select>
         </Form.Item>
-        <Form.Item label="添加应用版本">
+        <Form.Item label="添加应用版本" name="addVersion">
           <Select style={{ width: 300 }}></Select>
         </Form.Item>
       </Form>

@@ -18,12 +18,12 @@ export default function BranchEditor(props: IProps) {
   const { visible, type, initData, onClose, onSubmit } = props;
   const [saveLoading, saveIndentParam] = useSaveIndentParam();
   const [form] = Form.useForm();
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = async () => {
     const values = await form.validateFields();
     saveIndentParam(initData.id, values.configParamValue).then(() => {
       onSubmit();
     });
-  }, [form]);
+  };
 
   useEffect(() => {
     if (!visible) return;

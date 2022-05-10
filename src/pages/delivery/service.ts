@@ -139,7 +139,7 @@ export const editDescription = addAPIPrefix('/deliveryManage/indent/description/
 export const queryIndentParamList = addAPIPrefix('/deliveryManage/indent/param/list');
 
 /* POST 编辑交付配置参数值 */
-export const saveIndentParam = addAPIPrefix('/deliveryManage/indent/param/save');
+export const saveIndentParam = addAPIPrefix('/deliveryManage/indent/param/edit');
 
 /* POST 出部署包 */
 export const createPackageInde = addAPIPrefix('/deliveryManage/indent/package/generate');

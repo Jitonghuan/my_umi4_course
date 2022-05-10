@@ -283,7 +283,7 @@ export default function deliveryDescription() {
           }
         >
           <Form layout="vertical" form={createVersionForm} style={{ paddingLeft: 30 }}>
-            <Form.Item label="版本名称:" name="version_name">
+            <Form.Item label="版本名称:" name="version_name" rules={[{ required: true, message: '请输入版本号' }]}>
               <Input style={{ width: 400 }} placeholder="请输入版本号"></Input>
             </Form.Item>
             <Form.Item label="版本描述:" name="version_description">

@@ -43,8 +43,7 @@ export default function BasicModal(props: DetailProps) {
           if (res.success) {
             // message.success(res.data);
             setRightInfo(true);
-            debugger;
-            setType('sucess');
+            setType('success');
           } else {
             setRightInfo(false);
             setType('error');
@@ -53,7 +52,7 @@ export default function BasicModal(props: DetailProps) {
         })
         .finally(() => {
           setLoading(false);
-          setType('end');
+          // setType('end');
         });
     } catch (error) {
       console.log(error);
@@ -66,6 +65,9 @@ export default function BasicModal(props: DetailProps) {
   };
   useEffect(() => {
     queryEnvData();
+    return () => {
+      setType('');
+    };
   }, [visable]);
   const getEnvCode = (value: string) => {
     getApplicationOption(value);
@@ -103,7 +105,25 @@ export default function BasicModal(props: DetailProps) {
         <Form.Item label="组件名称" name="componentName" rules={[{ required: true, message: '请选择组件名称' }]}>
           <Select style={{ width: 320 }} mode="multiple" options={applicationOptions}></Select>
         </Form.Item>
-        <Form.Item label="组件版本" name="componentVersion" rules={[{ required: true, message: '请输入组件版本' }]}>
+        <Form.Item
+          label="组件版本"
+          name="componentVersion"
+          hasFeedback
+          // validateStatus={
+          // rightInfo && !loading && type === 'success'
+          //   ? 'success'
+          //   : !rightInfo && !loading && type === 'begin'
+          //   ? 'validating'
+          //   : type === 'error'
+          //   ? 'error'
+          //   : 'warning'
+          // }
+          validateStatus={
+            type === 'success' ? 'success' : type === 'begin' ? 'validating' : type === 'error' ? 'error' : 'warning'
+          }
+          help={type === 'sucess' ? '版本号检查通过' : type === 'error' ? '版本号检查不通过' : '等待检查版本号'}
+          rules={[{ required: true, message: '请输入组件版本' }]}
+        >
           <Input
             style={{ width: 320 }}
             placeholder="请按照 1.0.0 的格式输入版本号！"
