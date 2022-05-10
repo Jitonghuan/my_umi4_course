@@ -12,7 +12,6 @@ const IS_LOCAL = process.env.NODE_ENV === 'development';
 
 // @ts-ignore
 const BUILD_ENV = window.BUILD_ENV || 'dev';
-console.log(' BUILD_ENV ', BUILD_ENV);
 
 //判断是否为司内Matrix环境
 let href = window.location.href;
