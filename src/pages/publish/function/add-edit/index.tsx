@@ -14,6 +14,7 @@ import { JiraColumns } from '../constant';
 import EditableCell from './editTableCell';
 import { IFuncItem } from '../../typing';
 import useTableAction from './useTableAction';
+
 import '../index.less';
 
 import { OptionProps } from '@/components/table-search/typing';
