@@ -1,0 +1,32 @@
+.list-item {
+  border-bottom: 1px solid #c6c3c3;
+  font-weight: 800;
+  line-height: 21px;
+  padding: 5px;
+
+  &-active {
+    background-color: #ededed;
+
+    .item-traceId {
+      color: #448dfe;
+    }
+  }
+
+  .item-traceId {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .item-message {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+}
+
+.list-page {
+  margin-top: 20px;
+  display: flex;
+  justify-content: end;
+}

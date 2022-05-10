@@ -1,157 +1,215 @@
-/*
- * @Author: shixia.ds
- * @Date: 2021-11-17 16:07:16
- * @Description:
- */
-import React, { useEffect, useState } from 'react';
-import { history } from 'umi';
-import { Form, Select, Tag, Input, Table, Button, message } from 'antd';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { useState, useEffect } from 'react';
+import moment from 'moment';
+import ResizablePro from '@/components/resiable-pro';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
+import LeftList from './components/left-list';
+import RrightTrace from './components/right-trace';
+import { Form, Select, Button, DatePicker, message, Switch, Divider, Input } from 'antd';
+import { getApplicationList, getInstance, getTrace } from '../service';
+const { RangePicker } = DatePicker;
+import { useEnvOptions } from '../hooks';
 import './index.less';
 
-const temp = [{ name: 1, address: '11' }];
-const tracking = () => {
-  const [trackList, setTrackList] = useState<any[]>(temp);
-  const [paramOptions, setParamOptions] = useState([{ label: 'key1', value: 'key1' }]);
-  const [selectParams, setSelectParams] = useState<any>({
-    'key1-value1': { key1: 'value1' },
-    'key2-value2': { key2: 'value2' },
-  });
+const mockData = [
+  {
+    traceID: 'hbos-dtc1/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 1,
+    duration: '91',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc2/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 2,
+    duration: '92',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc3/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 3,
+    duration: '95',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc4/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 4,
+    duration: '97',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc5/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 5,
+    duration: '98',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc6/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 6,
+    duration: '95',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc7/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 7,
+    duration: '95',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc8/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 8,
+    duration: '95',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc9/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 9,
+    duration: '95',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc10/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 10,
+    duration: '95',
+    time: '2022-05-09 15:28:23',
+  },
+  {
+    traceID: 'hbos-dtc11/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
+    id: 11,
+    duration: '95',
+    time: '2022-05-09 15:28:23',
+  },
+];
+export default function Tracking() {
+  // const [envOptions, setEnvOptions] = useState([]);
+  const [listData, setListData] = useState(mockData);
   const [form] = Form.useForm();
+  const [selectEnv, setSelectEnv] = useState('');
+  const [appID, setAppID] = useState('');
+  const [selectTime, setSelectTime] = useState(moment().subtract(2, 'minutes'));
+  const [applicationList, setApplicationList] = useState([]);
+  const [instanceList, setInstanceList] = useState([]);
+  const [envOptions]: any[][] = useEnvOptions();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setSelectEnv(envOptions[0]?.value);
+  }, [envOptions]);
 
-  const columns = [
-    {
-      title: 'trace ID',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '生产日期',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: '接口名称',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: '所属应用',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: '耗时',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: '服务端',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: '客户端',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: '操作',
-      dataIndex: '',
-      key: 'x',
-      render: () => (
-        <a
-          onClick={() => {
-            history.push({
-              pathname: 'tracking-detail',
-              // query: {
-              //   id: `${item.id}`,
-              //   appCode: item.appCode,
-              // },
-            });
-          }}
-        >
-          查看详情
-        </a>
-      ),
-    },
-  ];
-
-  const deleteParams = (e: React.MouseEvent<HTMLElement, MouseEvent>, key: string) => {
-    e.preventDefault();
-    const index = getSelectParams(key);
-    const newSelectParams = JSON.parse(JSON.stringify(selectParams));
-    if (index !== -1) {
-      delete newSelectParams[key];
+  useEffect(() => {
+    if (selectEnv) {
+      try {
+        getApplicationList({ envCode: selectEnv }).then((res) => {
+          if (res) {
+            const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
+            setApplicationList(data);
+          }
+        });
+      } catch (error) {
+        setApplicationList([]);
+      }
     }
-    setSelectParams(newSelectParams);
-  };
+  }, [selectEnv]);
 
-  const addParams = (values: any) => {
-    const { param, value } = values;
-    const key = `${param}-${value}`;
-    const index = getSelectParams(key);
-    const newSelectParams = JSON.parse(JSON.stringify(selectParams));
-    if (index !== -1) {
-      message.info('此参数和参数值已存在');
-    } else {
-      newSelectParams[key] = {};
-      newSelectParams[key][param] = value;
-      setSelectParams(newSelectParams);
+  useEffect(() => {
+    if (appID) {
+      try {
+        getInstance({ envCode: selectEnv, appID }).then((res) => {
+          if (res) {
+            const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
+            setInstanceList(data);
+          }
+        });
+      } catch (error) {
+        setInstanceList([]);
+      }
     }
-  };
+  }, [appID]);
 
-  const searchTracking = () => {};
-
-  const getSelectParams = (key: string) => {
-    return Object.keys(selectParams).findIndex((item) => item == key);
-  };
-
+  const timeChange = () => {};
   return (
-    <PageContainer className="tracking-page">
-      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
-        <Form form={form} layout="inline" onFinish={addParams}>
-          <Form.Item label="参数" name="param" rules={[{ required: true, message: '请选择参数' }]}>
-            <Select options={paramOptions} style={{ width: '300px' }} placeholder="选取参数" />
-          </Form.Item>
-          <Form.Item name="value" rules={[{ required: true, message: '请输入参数的值' }]}>
-            <Input style={{ width: '400px' }} allowClear placeholder="参数值" />
-          </Form.Item>
-          <Form.Item>
-            <Button htmlType="submit" type="primary" ghost>
-              添加查询参数
-            </Button>
-          </Form.Item>
-        </Form>
-      </FilterCard>
-      <div className="tag-card" style={{ backgroundColor: '#F7F8FA' }}>
-        {Object.keys(selectParams).length > 0
-          ? Object.keys(selectParams).map((key: any) => {
-              return (
-                <Tag
-                  closable
-                  onClose={(e) => {
-                    deleteParams(e, key);
-                  }}
-                  key={key}
-                >
-                  {JSON.stringify(selectParams[key])}
-                </Tag>
-              );
-            })
-          : null}
-      </div>
-      <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
-        <div className="tracking-table-header">
-          <h3>追踪列表</h3>
+    <PageContainer>
+      <ContentCard className="trace-detail-page" style={{ height: '100%' }}>
+        <div className="detail-top">
+          <div>
+            选择环境：
+            <Select
+              options={envOptions}
+              value={selectEnv}
+              onChange={(env, option: any) => {
+                setSelectEnv(env);
+              }}
+              showSearch
+              style={{ width: 140 }}
+            />
+          </div>
+          <div>
+            时间范围：
+            <RangePicker showTime onChange={(v) => {}} />
+          </div>
         </div>
-        <Table dataSource={trackList} columns={columns} />
+        <Divider />
+        <div style={{ marginBottom: '20px' }}>
+          <Form
+            layout="inline"
+            form={form}
+            onFinish={(values: any) => {}}
+            onReset={() => {
+              form.resetFields();
+              // queryNgData({
+              //   pageIndex: 1,
+              //   pageSize: 20,
+              // });
+            }}
+          >
+            <Form.Item label="应用" name="application">
+              <Select
+                value={appID}
+                options={applicationList}
+                onChange={(value) => {
+                  setAppID(value);
+                }}
+                showSearch
+                style={{ width: 160 }}
+              />
+            </Form.Item>
+            <Form.Item label="实例" name="ngInstName">
+              <Select
+                options={instanceList}
+                // onChange={(value) => {
+                //   console.log
+                //   // setInstanceList(value);
+                // }}
+                showSearch
+                style={{ width: 160 }}
+              />
+            </Form.Item>
+            <Form.Item label="端点：" name="">
+              <Input placeholder="请输入端点信息" style={{ width: 160 }}></Input>
+            </Form.Item>
+            <Form.Item label="traceID：" name="">
+              <Input placeholder="请输入traceID" style={{ width: 180 }}></Input>
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button type="ghost" htmlType="reset">
+                重置
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+
+        {/* 右边详情展示部分 */}
+        <div style={{ height: '100%' }} className="detail-main">
+          <ResizablePro
+            leftComp={<LeftList listData={listData}></LeftList>}
+            rightComp={<RrightTrace></RrightTrace>}
+            leftWidth={400}
+          ></ResizablePro>
+        </div>
       </ContentCard>
     </PageContainer>
   );
-};
-
-export default tracking;
+}

@@ -834,6 +834,28 @@ export default [
         key: 'trafficmap-domainconfig',
         component: '@/pages/trafficmap/domain-config',
       },
+      // {
+      //   path: 'domain',
+      //   name: '域and降噪',
+      //   key: 'domain-noise',
+      //   component: '@/pages/trafficmap/domain-config/component/domain-config',
+      //   hideInMenu: true,
+      //   routes:[
+      //     {
+      //       path: 'domain',
+      //       name: '域配置',
+      //       key: 'domain-noise',
+      //       hideInMenu: true,
+      //       component: '@/pages/trafficmap/domain-config/component/domain-config',
+      //     },{
+      //       path: 'noise',
+      //       name: '降噪处理',
+      //       key: 'domain-noise',
+      //       hideInMenu: true,
+      //       component: '@/pages/trafficmap/domain-config/component/noise-reduction',
+      //     }
+      //   ]
+      // }
     ],
   },
   {
