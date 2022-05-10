@@ -67,7 +67,13 @@ export function useQueryComponentList(): [
   any,
   any,
   any,
-  (componentType: string, componentName?: string, pageIndex?: number, pageSize?: number) => Promise<void>,
+  (
+    componentType: string,
+    productLine: string,
+    componentName?: string,
+    pageIndex?: number,
+    pageSize?: number,
+  ) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -78,6 +84,7 @@ export function useQueryComponentList(): [
   });
   const queryComponentList = async (
     componentType: string,
+    productLine: string,
     componentName?: string,
     pageIndex?: number,
     pageSize?: number,
@@ -85,7 +92,7 @@ export function useQueryComponentList(): [
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentList, {
-        data: { componentType, componentName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { componentType, productLine, componentName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
       })
         .then((res) => {
           if (res.success) {
@@ -285,4 +292,66 @@ export function useDeleteComponent(): [boolean, (id: number) => Promise<void>] {
     }
   };
   return [loading, deleteComponent];
+}
+
+//产品线分类
+
+export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const getProductlineList = async () => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryProductlineList)
+        .then((res) => {
+          if (res.success) {
+            let data = res.data;
+            const option = data?.map((item: any) => ({
+              label: item,
+              value: item,
+            }));
+            setDataSource(option);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, getProductlineList];
+}
+
+// 检查组件版本号
+export function useGetVersionCheck(): [
+  boolean,
+  boolean,
+  (componentVersion: string, productLine: string) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [rightInfo, setRightInfo] = useState<boolean>(false);
+  const getVersionCheck = async (componentVersion: string, productLine: string) => {
+    setLoading(true);
+    try {
+      await getRequest(`${APIS.getVersionCheck}?componentVersion=${componentVersion}&productLine=${productLine}`)
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+            setRightInfo(true);
+          } else {
+            setRightInfo(false);
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, rightInfo, getVersionCheck];
 }

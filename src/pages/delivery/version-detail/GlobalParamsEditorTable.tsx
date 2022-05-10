@@ -3,7 +3,7 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { history } from 'umi';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form } from 'antd';
+import { Button, Input, Space, Tag, Form, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProFormField } from '@ant-design/pro-form';
 import {
@@ -92,11 +92,12 @@ type DataSourceType = {
 export interface VersionDetailProps {
   currentTab: string;
   versionId: any;
+  isEditable: boolean;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, versionId, initDataSource } = props;
+  const { currentTab, versionId, isEditable, initDataSource } = props;
   const [saveLoading, saveParam] = useSaveParam();
   const [editLoading, editVersionParam] = useEditVersionParam();
   const actionRef = useRef<ActionType>();
@@ -180,8 +181,12 @@ export default (props: VersionDetailProps) => {
         <a
           key="editable"
           onClick={() => {
-            action?.startEditable?.(record.id);
-            setType('edit');
+            if (isEditable) {
+              message.info('已发布不可以编辑!');
+            } else {
+              action?.startEditable?.(record.id);
+              setType('edit');
+            }
           }}
         >
           编辑
@@ -189,10 +194,13 @@ export default (props: VersionDetailProps) => {
         <a
           key="delete"
           onClick={() => {
-            console.log('record', record);
-            deleteDeliveryParam(record.id).then(() => {
-              setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
-            });
+            if (isEditable) {
+              message.info('已发布不可以删除!');
+            } else {
+              deleteDeliveryParam(record.id).then(() => {
+                setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
+              });
+            }
           }}
         >
           删除
@@ -222,6 +230,7 @@ export default (props: VersionDetailProps) => {
         <div className="caption-right">
           <Button
             type="primary"
+            disabled={isEditable}
             onClick={() => {
               setType('add');
               actionRef.current?.addEditRecord?.({

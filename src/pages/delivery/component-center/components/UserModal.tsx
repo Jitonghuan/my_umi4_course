@@ -5,12 +5,13 @@ export interface DetailProps {
   visable?: boolean;
   productLineOptions: any;
   tabActiveKey: string;
+  curProductLine: string;
   queryComponentList: (tabActiveKey: any) => any;
   onClose: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, productLineOptions, onClose, queryComponentList, tabActiveKey } = props;
+  const { visable, productLineOptions, onClose, queryComponentList, tabActiveKey, curProductLine } = props;
   const [loading, addApplication] = useAddApplication();
   const [appLoading, applicationOptions, getApplicationOption] = useGetApplicationOption();
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
@@ -68,7 +69,7 @@ export default function BasicModal(props: DetailProps) {
           <Select style={{ width: 320 }} mode="multiple" options={applicationOptions}></Select>
         </Form.Item>
         <Form.Item label="组件版本" name="componentVersion" rules={[{ required: true, message: '请输入组件版本' }]}>
-          <Input style={{ width: 320 }}></Input>
+          <Input style={{ width: 320 }} placeholder="请按照 1.0.0的格式输入版本号！"></Input>
         </Form.Item>
         <Form.Item label="组件描述" name="componentDescription">
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>

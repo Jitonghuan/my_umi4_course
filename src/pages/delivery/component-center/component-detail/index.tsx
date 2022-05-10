@@ -8,7 +8,7 @@ import { getRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
 import { Form, Tabs, Select, Button, Descriptions, Typography, Divider, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import { useQueryComponentList, useUpdateDescription, useUpdateConfiguration } from './hooks';
+import { useQueryComponentVersionList, useUpdateDescription, useUpdateConfiguration } from './hooks';
 import './index.less';
 export default function ComponentDetail() {
   const { initRecord, componentName, componentVersion, componentDescription, componentType, activeTab, type }: any =
@@ -24,7 +24,7 @@ export default function ComponentDetail() {
   const [editableStr, setEditableStr] = useState('');
   const [editLoading, updateDescription] = useUpdateDescription();
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
-  const [loading, versionOptions, queryComponentVersionList] = useQueryComponentList();
+  const [loading, versionOptions, queryComponentVersionList] = useQueryComponentVersionList();
 
   //查询组件配置详情
   const queryComponentInfo = async (componentName: string, componentVersion: string, componentType: string) => {

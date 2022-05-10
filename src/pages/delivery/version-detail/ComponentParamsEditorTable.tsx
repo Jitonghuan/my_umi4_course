@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form, Select } from 'antd';
+import { Button, Input, Space, Tag, Form, Select, message } from 'antd';
 import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
 import {
@@ -92,11 +92,12 @@ type DataSourceType = {
 export interface VersionDetailProps {
   currentTab: string;
   versionId: any;
+  isEditable: boolean;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, versionId, initDataSource } = props;
+  const { currentTab, versionId, isEditable, initDataSource } = props;
   const actionRef = useRef<ActionType>();
   const [saveLoading, saveParam] = useSaveParam();
   const [editLoading, editVersionParam] = useEditVersionParam();
@@ -225,9 +226,13 @@ export default (props: VersionDetailProps) => {
         <a
           key="editable"
           onClick={() => {
-            action?.startEditable?.(record.id);
-            setType('edit');
-            queryParamList(versionId, record.configParamComponent);
+            if (isEditable) {
+              message.info('已发布不可以编辑!');
+            } else {
+              action?.startEditable?.(record.id);
+              setType('edit');
+              queryParamList(versionId, record.configParamComponent);
+            }
           }}
         >
           编辑
@@ -235,9 +240,13 @@ export default (props: VersionDetailProps) => {
         <a
           key="delete"
           onClick={() => {
-            deleteDeliveryParam(record.id).then(() => {
-              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
-            });
+            if (isEditable) {
+              message.info('已发布不可以删除!');
+            } else {
+              deleteDeliveryParam(record.id).then(() => {
+                setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+              });
+            }
           }}
         >
           删除
@@ -271,6 +280,7 @@ export default (props: VersionDetailProps) => {
         <div className="caption-right">
           <Button
             type="primary"
+            disabled={isEditable}
             onClick={() => {
               actionRef.current?.addEditRecord?.({
                 id: (Math.random() * 1000000).toFixed(0),

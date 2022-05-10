@@ -3,7 +3,7 @@ import { history } from 'umi';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Select, Form, Popconfirm } from 'antd';
+import { Button, Input, Space, Select, Form, Popconfirm, message } from 'antd';
 import { productionPageTypes } from './tab-config';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
@@ -82,11 +82,12 @@ export interface VersionDetailProps {
   currentTab: string;
   currentTabType: string;
   versionId: number;
+  isEditable: boolean;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, versionId, currentTabType, initDataSource } = props;
+  const { currentTab, versionId, currentTabType, isEditable, initDataSource } = props;
   const [searchForm] = Form.useForm();
   const [addLoading, addComponent] = useAddCompontent();
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
@@ -185,17 +186,17 @@ export default (props: VersionDetailProps) => {
     {
       title: currentTabType === 'app' ? '应用描述' : currentTabType === 'middleware' ? '中间件描述' : '基础数据描述',
       dataIndex: 'componentDescription',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
-      },
+      // formItemProps: () => {
+      //   return {
+      //     rules: [
+      //       {
+      //         required: true,
+      //         message: '此项为必填项',
+      //       },
+      //     ],
+      //     errorType: 'default',
+      //   };
+      // },
 
       renderFormItem: (_, config: any, data) => {
         return <Input></Input>;
@@ -229,9 +230,13 @@ export default (props: VersionDetailProps) => {
         <Popconfirm
           title="确定要删除吗？"
           onConfirm={() => {
-            deleteVersionComponent(record.id).then(() => {
-              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
-            });
+            if (isEditable) {
+              message.info('已发布不可以删除!');
+            } else {
+              deleteVersionComponent(record.id).then(() => {
+                setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+              });
+            }
           }}
         >
           <a key="delete">删除</a>
@@ -275,6 +280,7 @@ export default (props: VersionDetailProps) => {
         <div className="caption-right">
           <Button
             type="primary"
+            disabled={isEditable}
             onClick={() => {
               actionRef.current?.addEditRecord?.({
                 id: (Math.random() * 1000000).toFixed(0),

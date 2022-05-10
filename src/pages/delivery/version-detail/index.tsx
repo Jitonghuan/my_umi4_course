@@ -34,6 +34,7 @@ export default function VersionDetail() {
   const [editableStr, setEditableStr] = useState(descriptionInfoData?.versionDescription);
   const [infoLoading, versionDescriptionInfo, getVersionDescriptionInfo] = useVersionDescriptionInfo();
   const [editLoading, editProductVersionDescription] = useEditProductVersionDescription();
+  const [isEditable, setIsEditable] = useState<boolean>(false);
   useEffect(() => {
     getVersionDescriptionInfo(descriptionInfoData.versionId);
   }, []);
@@ -46,6 +47,15 @@ export default function VersionDetail() {
     queryDeliveryGloableParamList(descriptionInfoData.versionId, 'global');
     //组件参数
     queryDeliveryParamList(descriptionInfoData.versionId);
+    if (descriptionInfoData.releaseStatus === 1) {
+      setIsEditable(true);
+    } else {
+      setIsEditable(false);
+    }
+
+    return () => {
+      setIsEditable(false);
+    };
   }, []);
   return (
     <PageContainer className="version-detail">
@@ -84,18 +94,23 @@ export default function VersionDetail() {
                   <Descriptions.Item label="产品名称:">{descriptionInfoData?.productName || '--'}</Descriptions.Item>
                   <Descriptions.Item label="产品版本:">{descriptionInfoData?.versionName || '--'}</Descriptions.Item>
                   <Descriptions.Item label="版本描述:">
-                    <Paragraph
-                      editable={{
-                        onChange: (productVersionDescription: string) =>
-                          editProductVersionDescription(descriptionInfoData.versionId, productVersionDescription).then(
-                            () => {
+                    {isEditable ? (
+                      <span>{descriptionInfoData?.versionDescription}</span>
+                    ) : (
+                      <Paragraph
+                        editable={{
+                          onChange: (productVersionDescription: string) =>
+                            editProductVersionDescription(
+                              descriptionInfoData.versionId,
+                              productVersionDescription,
+                            ).then(() => {
                               setEditableStr(productVersionDescription);
-                            },
-                          ),
-                      }}
-                    >
-                      {editableStr}
-                    </Paragraph>
+                            }),
+                        }}
+                      >
+                        {editableStr}
+                      </Paragraph>
+                    )}
                   </Descriptions.Item>
                   <Descriptions.Item label="创建时间:">
                     {moment(descriptionInfoData?.versionGmtCreate).format('YYYY-MM-DD HH:mm:ss') || '--'}
@@ -112,6 +127,7 @@ export default function VersionDetail() {
                         currentTab={item.value}
                         currentTabType={item.type}
                         versionId={descriptionInfoData.versionId}
+                        isEditable={isEditable}
                       />
                     </div>
                   </TabPane>
@@ -128,6 +144,7 @@ export default function VersionDetail() {
                           currentTab={item.value}
                           versionId={descriptionInfoData.versionId}
                           initDataSource={tableDataSource}
+                          isEditable={isEditable}
                         />
                       </div>
                     )}
@@ -137,6 +154,7 @@ export default function VersionDetail() {
                           currentTab={item.value}
                           versionId={descriptionInfoData.versionId}
                           initDataSource={gloableTableDataSource}
+                          isEditable={isEditable}
                         />
                       </div>
                     )}

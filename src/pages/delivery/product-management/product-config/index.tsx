@@ -58,6 +58,9 @@ export default function ProductConfig() {
               },
             );
             setEditableStr(res.data.indentDescription || '');
+            configForm.setFieldsValue({
+              configInfo: res.data.indentConfigYaml,
+            });
           } else {
             return;
           }
@@ -263,9 +266,9 @@ export default function ProductConfig() {
               <div style={{ marginBottom: 10 }}>
                 安装配置文件：
                 <Button type="primary" size="small" onClick={getConfigInfo} loading={configInfoLoading}>
-                  获取制品配置文件信息
+                  重新生成制品配置
                 </Button>
-                （请将文件中的内容复制到安装包所在目录下的config.yaml）
+                （请将文件中的内容复制到制品包的config目录下）
                 <Button
                   type={buttonText === '编辑' ? 'primary' : 'default'}
                   style={{ float: 'right' }}

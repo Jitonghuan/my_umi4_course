@@ -131,6 +131,7 @@ export default function deliveryDescription() {
                   productName: descriptionInfoData.productName,
                   productDescription: descriptionInfoData.productDescription,
                   productGmtCreate: descriptionInfoData.gmtCreate,
+                  releaseStatus: record.releaseStatus,
                 },
               });
             }}

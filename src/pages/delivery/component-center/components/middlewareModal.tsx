@@ -7,6 +7,7 @@ import { uploadChart } from '../../service';
 export interface DetailProps {
   visable?: boolean;
   tabActiveKey: string;
+  curProductLine: string;
   queryComponentList: (tabActiveKey: any) => any;
   initData?: any;
   onClose: () => any;
@@ -14,7 +15,7 @@ export interface DetailProps {
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, tabActiveKey, initData, queryComponentList, onClose, onSave } = props;
+  const { visable, tabActiveKey, initData, queryComponentList, onClose, onSave, curProductLine } = props;
   const [addLoading, addMiddleware] = useAddMiddleware();
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [form] = Form.useForm();

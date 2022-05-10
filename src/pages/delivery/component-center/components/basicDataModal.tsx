@@ -1,22 +1,51 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { useAddBasicdata, useQueryComponentList } from '../hook';
-import { uploadSqlfile } from '../../service';
+import { useAddBasicdata, useGetVersionCheck } from '../hook';
+import { getRequest, postRequest } from '@/utils/request';
+import { uploadSqlfile, getVersionCheck } from '../../service';
 export interface DetailProps {
   visable?: boolean;
   tabActiveKey: string;
+  curProductLine: string;
   queryComponentList: (tabActiveKey: any) => any;
   initData?: any;
   onClose: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, tabActiveKey, onClose, queryComponentList } = props;
-  const [loading, addBasicdata] = useAddBasicdata();
+  const { visable, tabActiveKey, onClose, queryComponentList, curProductLine } = props;
+  const [addLoading, addBasicdata] = useAddBasicdata();
   const [filePath, setFilePath] = useState<string>('');
-  // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [rightInfo, setRightInfo] = useState<boolean>(false);
+  // const [checkLoading,rightInfo, getVersionCheck]=useGetVersionCheck();
+  const getCheck = async (componentVersion: string, productLine: string) => {
+    setLoading(true);
+    try {
+      await getRequest(`${getVersionCheck}?componentVersion=${componentVersion}&productLine=${productLine}`)
+        .then((res) => {
+          if (res.success) {
+            // message.success(res.data);
+            setRightInfo(true);
+          } else {
+            setRightInfo(false);
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const onVersionChange = (value: any) => {
+    let formData = form.getFieldsValue();
+    console.log('value', formData.componentVersion);
+    getCheck(formData.componentVersion, curProductLine);
+  };
   const [form] = Form.useForm();
   const normFile = (e: any) => {
     console.log('Upload event:', e);
@@ -37,9 +66,9 @@ export default function BasicModal(props: DetailProps) {
         setFilePath(path);
       }
       if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
+        message.success(`${info.file.name} 文件上传成功！`);
       } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        message.error(`${info.file.name} 文件上传失败！`);
       }
     },
     progress: {
@@ -62,7 +91,6 @@ export default function BasicModal(props: DetailProps) {
         });
     });
   };
-
   return (
     <Modal
       title="中间件组件接入"
@@ -73,7 +101,7 @@ export default function BasicModal(props: DetailProps) {
       // closable={!loading}
       width={580}
       footer={[
-        <Button type="primary" onClick={handleSubmit} loading={loading}>
+        <Button type="primary" onClick={handleSubmit} loading={addLoading}>
           确认
         </Button>,
         <Button
@@ -92,9 +120,16 @@ export default function BasicModal(props: DetailProps) {
         <Form.Item
           label="基础数据版本"
           name="componentVersion"
+          hasFeedback
+          validateStatus={rightInfo && !loading ? 'success' : !rightInfo && loading ? 'validating' : 'error'}
+          help="版本号检查不合格"
           rules={[{ required: true, message: '请填写基础数据版本！' }]}
         >
-          <Input style={{ width: 320 }}></Input>
+          <Input
+            style={{ width: 320 }}
+            placeholder="请按照 1.0.0 的格式输入版本号！"
+            onChange={onVersionChange}
+          ></Input>
         </Form.Item>
 
         <Form.Item

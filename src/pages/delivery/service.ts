@@ -56,6 +56,10 @@ export const deleteDeliveryParam = addAPIPrefix('/deliveryManage/product/version
 /* POST  修改交付配置参数 */
 export const editVersionParam = addAPIPrefix('/deliveryManage/product/version/param/edit');
 /* 二、组件中心 */
+/* GET 产品线分类 */
+export const queryProductlineList = addAPIPrefix('/deliveryManage/component/productline/list');
+/* GET 检查组件版本号 */
+export const getVersionCheck = addAPIPrefix('/deliveryManage/component/version/check');
 /* POST 用户组件接入 */
 export const addApplication = addAPIPrefix('/deliveryManage/component/application/add');
 

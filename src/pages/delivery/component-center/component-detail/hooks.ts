@@ -4,7 +4,7 @@ import { message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
 //组件版本查询
-export function useQueryComponentList(): [
+export function useQueryComponentVersionList(): [
   boolean,
   any,
   (componentName: string, componentType: string) => Promise<void>,

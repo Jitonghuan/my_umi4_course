@@ -35,6 +35,11 @@ export default function VersionDetail(props: DetailProps) {
       key: 'componentName',
     },
     {
+      title: '组件版本',
+      dataIndex: 'componentVersion',
+      width: 150,
+    },
+    {
       title: '描述',
       // currentTab === 'app' ? '应用组件描述' : currentTab === 'middleware' ? '中间件组件描述' : '基础数据组件描述',
 
@@ -51,6 +56,7 @@ export default function VersionDetail(props: DetailProps) {
     {
       title: '操作',
       key: 'action',
+      width: 160,
       render: (text: string, record: any) => (
         <Space size="middle">
           <a

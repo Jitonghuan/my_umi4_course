@@ -1,21 +1,18 @@
 /* 组件中心
- * @Author: your name
+ * @Author: muxi.jth
  * @Date: 2022-03-07 01:01:37
- * @LastEditTime: 2022-03-07 14:11:26
- * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
-import { Tabs, Radio, Space, Descriptions, Button, Input, Form, Typography } from 'antd';
+import { Tabs, Button, Typography, Select } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';
 import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
 import MiddlewareModal from './components/middlewareModal';
-import { useQueryComponentList } from './hook';
+import { useQueryComponentList, useQueryProductlineList } from './hook';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 export const productLineOptions = [
@@ -34,9 +31,11 @@ export default function VersionDetail() {
   const [editableStr, setEditableStr] = useState('This is an editable text.');
   const [tabActiveKey, setTabActiveKey] = useState<string>('app');
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
+  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
+  const [curProductLine, setCurProductLine] = useState<string>('');
 
   const matchlabelsFun = (value: any[]) => {
     setMatchlabels(value);
@@ -46,6 +45,10 @@ export default function VersionDetail() {
     middleware: { text: '中间件组件接入' },
     sql: { text: '基础数据接入' },
   };
+  const getCurProductLine = () => {};
+  useEffect(() => {
+    getProductlineList();
+  }, []);
 
   return (
     <PageContainer>
@@ -54,7 +57,8 @@ export default function VersionDetail() {
           visable={userModalVisiable}
           productLineOptions={productLineOptions}
           tabActiveKey={tabActiveKey}
-          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+          curProductLine={curProductLine}
+          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey, curProductLine)}
           onClose={() => {
             setUserModalVisiable(false);
           }}
@@ -62,7 +66,8 @@ export default function VersionDetail() {
         <BasicDataModal
           visable={basicDataModalVisiable}
           tabActiveKey={tabActiveKey}
-          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+          curProductLine={curProductLine}
+          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey, curProductLine)}
           onClose={() => {
             setBasicDataModalVisiable(false);
           }}
@@ -70,7 +75,8 @@ export default function VersionDetail() {
         <MiddlewareModal
           visable={middlewareModalVisibale}
           tabActiveKey={tabActiveKey}
-          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+          curProductLine={curProductLine}
+          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey, curProductLine)}
           onClose={() => {
             setMiddlewareModalVisibale(false);
           }}
@@ -85,6 +91,15 @@ export default function VersionDetail() {
               }}
               tabBarExtraContent={
                 <div className="tab-right-extra">
+                  <span style={{ marginRight: 12 }}>
+                    <span>切换产品线：</span>
+                    <Select
+                      style={{ width: 160 }}
+                      options={productLineOptions}
+                      onChange={getCurProductLine}
+                      loading={selectLoading}
+                    />
+                  </span>
                   <span>
                     {tabActiveKey !== 'middleware' && (
                       <Button
@@ -117,7 +132,7 @@ export default function VersionDetail() {
             <InfoTable
               currentTab={tabActiveKey}
               dataSource={dataSource}
-              queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+              queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey, curProductLine)}
               tableLoading={loading}
             />
           </div>
