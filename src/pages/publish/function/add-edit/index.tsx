@@ -14,6 +14,7 @@ import { JiraColumns } from '../constant';
 import EditableCell from './editTableCell';
 import { IFuncItem } from '../../typing';
 import useTableAction from './useTableAction';
+
 import '../index.less';
 
 import { OptionProps } from '@/components/table-search/typing';
@@ -114,7 +115,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     });
   };
 
-  const queryDemandList = (paramObj: { appCategoryCode: string; appGroupCode: string }) => {
+  const queryDemandList = (paramObj: { appCategoryCode: string; appGroupCode: string; title?: string }) => {
     setLoading(true);
     getRequest(eipDemandUrl, { data: { ...paramObj, pageSize: -1 } })
       .then((res) => {
@@ -331,7 +332,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
   const onChangeProtal = (value: any) => {
     queryRegulusOnlineBugs(value);
   };
-  const queryRegulusOnlineBugs = async (param: string, searchTextParams?: string) => {
+  const queryRegulusOnlineBugs = async (param: any, searchTextParams?: string) => {
     setLoading(true);
     try {
       await getRequest(regulusUrl, {
@@ -417,6 +418,19 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       },
     },
   ];
+  const onSearch = (value: string) => {
+    console.log(value);
+    const params = projectForm.getFieldsValue();
+    if (optType === 'reglus') {
+      queryRegulusOnlineBugs(params.projectSelect, value);
+    } else {
+      queryDemandList({
+        appCategoryCode: form.getFieldValue('appCategoryCode'),
+        appGroupCode: currentAppGroupCode,
+        title: value,
+      });
+    }
+  };
 
   return (
     <PageContainer className="page-content">
@@ -457,6 +471,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                       setModalVisible(true);
                       setOptType('demand');
                       setSelectedRowKeys([]);
+                      projectForm.resetFields();
                       if (currentAppCategoryCode && currentAppGroupCode) {
                         queryDemandList({
                           appCategoryCode: form.getFieldValue('appCategoryCode'),
@@ -482,7 +497,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                       queryRegulus();
                     }}
                   >
-                    关联Reglus
+                    关联Regulus
                   </Button>
                 )}
               </div>
@@ -524,7 +539,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       </div>
 
       <Modal
-        title={optType === 'jira' ? '关联Jira需求单' : optType === 'demand' ? '关联需求管理平台' : '关联Reglus'}
+        title={optType === 'jira' ? '关联Jira需求单' : optType === 'demand' ? '关联需求管理平台' : '关联Regulus'}
         visible={modalVisible}
         width="100%"
         onCancel={() => setModalVisible(false)}
@@ -571,22 +586,32 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
           </Space>
         }
       >
-        {optType === 'reglus' && (
+        {optType !== 'jira' && (
           <div style={{ marginBottom: 10 }}>
             <Form form={projectForm} layout="inline">
-              <Form.Item name="projectSelect" label="项目列表">
-                <Select
-                  options={queryPortalOptions}
-                  onChange={onChangeProtal}
-                  showSearch
-                  allowClear
-                  loading={projectLoading}
-                  style={{ width: 220 }}
-                ></Select>
+              {optType === 'reglus' && (
+                <Form.Item name="projectSelect" label="项目列表">
+                  <Select
+                    options={queryPortalOptions}
+                    onChange={onChangeProtal}
+                    showSearch
+                    allowClear
+                    loading={projectLoading}
+                    style={{ width: 220 }}
+                  ></Select>
+                </Form.Item>
+              )}
+              <Form.Item name="projectSearch">
+                <Input.Search
+                  placeholder="输入发布功能进行搜索"
+                  style={{ width: 400 }}
+                  onSearch={onSearch}
+                ></Input.Search>
               </Form.Item>
             </Form>
           </div>
         )}
+
         <Table
           rowKey="key"
           columns={JiraColumns}
