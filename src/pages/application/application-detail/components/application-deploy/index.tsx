@@ -21,7 +21,6 @@ import { getPipelineUrl, retry } from '@/pages/application/service';
 const { TabPane } = Tabs;
 
 export default function ApplicationDeploy(props: any) {
-  console.log(111);
   const { appData } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
@@ -97,12 +96,12 @@ export default function ApplicationDeploy(props: any) {
         return a.sortType - b.sortType;
       }); //升序
       let pipelineObj: any = {};
+      const saveData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '{}');
       next.forEach((e: any) => {
         if (e.typeCode) {
-          pipelineObj[e.typeCode] = '';
+          pipelineObj[e.typeCode] = saveData && saveData[e.typeCode] ? saveData[e.typeCode] : '';
         }
       });
-      console.log(sessionStorage.getItem('env_pipeline_obj'), 999);
       sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
       setEnvTypeData(next);
     });

@@ -169,7 +169,17 @@ export default function BranchManage() {
           )}
         />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
-        <Table.Column title="已部署流水线" dataIndex="deployedPipeline" width={120} />
+        <Table.Column
+          title="已部署流水线"
+          dataIndex="deployedPipeline"
+          width={200}
+          ellipsis
+          render={(value) => (
+            <Tooltip placement="topLeft" title={value}>
+              {value}
+            </Tooltip>
+          )}
+        />
         <Table.Column
           title="创建时间"
           dataIndex="gmtCreate"

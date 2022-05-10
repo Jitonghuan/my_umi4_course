@@ -110,7 +110,7 @@ export default function DeployingStep(props: StepItemProps) {
                 </a>
               </div>
             )}
-            {status === 'process' && env && envTypeCode !== 'prod' && !isFrontend && (
+            {status === 'process' && env && !isFrontend && (
               <div style={{ marginTop: 2 }}>
                 <Button
                   size="small"
@@ -144,7 +144,12 @@ export default function DeployingStep(props: StepItemProps) {
                 </div>
               )} */}
             {status === 'error' && (
-              <Button style={{ marginLeft: '-22px', color: '#d48806' }} type="link" onClick={handleReDeployClick}>
+              <Button
+                style={{ marginLeft: '-22px', color: '#d48806' }}
+                size="small"
+                type="link"
+                onClick={handleReDeployClick}
+              >
                 重新部署
               </Button>
             )}
