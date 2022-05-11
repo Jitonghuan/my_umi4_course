@@ -162,26 +162,7 @@ const BasicPerformance = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-performance-wrapper">
-      {appConfig.IS_Matrix === 'public' && (
-        <div className="env-select-wrapper">
-          <span>环境：</span>
-          <Select
-            value={feEnv}
-            clearIcon={false}
-            style={{ width: '120px' }}
-            onChange={(val) => {
-              setFeEnv(val);
-            }}
-          >
-            {envList.map((item) => (
-              <Select.Option value={item.key} key={item.key}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-      )}
-      <Header onChange={setTimeList} defaultTime={timeList} />
+      <Header onChange={setTimeList} defaultTime={timeList} envChange={setFeEnv} />
 
       {/*页面汇总趋势图*/}
       <div className="performance-wrapper">

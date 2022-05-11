@@ -26,6 +26,7 @@ interface DataSourceItem {
 
 const BasicError = ({ appGroup, envCode }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
+  const [feEnv, setFeEnv] = useState<string>('*');
   const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [dataSource, setDataSource] = useState<DataSourceItem[]>([]);
@@ -37,6 +38,7 @@ const BasicError = ({ appGroup, envCode }: IProps) => {
   function getParam(extra = {}) {
     let param: any = {
       envCode,
+      feEnv,
       startTime: timeList[0] ? moment(timeList[0]).unix() : null,
       endTime: timeList[1] ? moment(timeList[1]).unix() : null,
       ...extra,
@@ -122,7 +124,7 @@ const BasicError = ({ appGroup, envCode }: IProps) => {
   useEffect(() => {
     void onErrorList();
     void onErrorChart();
-  }, [timeList, appGroup]);
+  }, [timeList, appGroup, feEnv]);
 
   useEffect(() => {
     setChart(
@@ -158,7 +160,7 @@ const BasicError = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-error-wrapper">
-      <Header defaultTime={timeList} onChange={setTimeList} />
+      <Header defaultTime={timeList} onChange={setTimeList} envChange={setFeEnv} />
       <div className="performance-wrapper">
         <div className="list-title chart-title">错误情况</div>
         <div className="line-chart-wrapper">

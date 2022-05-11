@@ -13,12 +13,14 @@ interface IProps {
 
 const BasicOverview = ({ appGroup, envCode }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
+  const [feEnv, setFeEnv] = useState<string>('*');
   const [overviewList, setOverviewList] = useState<any[]>([]);
   const [chart, setChart] = useState<any>(null);
 
   function getParam() {
     let param: any = {
       envCode,
+      feEnv,
       startTime: timeList[0] ? moment(timeList[0]).unix() : null,
       endTime: timeList[1] ? moment(timeList[1]).unix() : null,
     };
@@ -58,7 +60,7 @@ const BasicOverview = ({ appGroup, envCode }: IProps) => {
   useEffect(() => {
     void onOverview();
     void getPvUv();
-  }, [timeList, appGroup]);
+  }, [timeList, appGroup, feEnv]);
 
   useEffect(() => {
     setChart(
@@ -94,7 +96,7 @@ const BasicOverview = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-overview-wrapper">
-      <Header defaultTime={timeList} onChange={setTimeList} />
+      <Header defaultTime={timeList} onChange={setTimeList} envChange={setFeEnv} />
       <div className="performance-wrapper">
         <div className="overview-wrapper">
           <div className="l">

@@ -3,6 +3,7 @@ import { Spin } from 'antd';
 import { Line, Bar } from '@cffe/hulk-wave-chart';
 import { getPerformanceDetail } from '../../server';
 import moment from 'moment';
+import { groupItem } from '../../const';
 import './index.less';
 
 interface IProps {
@@ -62,14 +63,21 @@ const PerformanceMarket = ({ url, param }: IProps) => {
     });
     const data = res?.data?.loadTimeDistribution || [];
     let list = [];
+    let arr = [];
     if (data.length) {
       for (let i = 0; i < data.length; i++) {
         for (const key in data[i]) {
           list.push([data[i][key], key]);
         }
       }
+      for (const item of groupItem) {
+        let val = list.find((val) => val[1] === item.key);
+        if (val) {
+          arr.push([val[0], item.name]);
+        }
+      }
     }
-    distributedChart?.data(list);
+    distributedChart?.data(arr);
     distributedChart?.draw();
   }
 
@@ -163,7 +171,7 @@ const PerformanceMarket = ({ url, param }: IProps) => {
           y: ['20', '10,20', '5,10', '2,5', '1,2', '1'],
         },
         layout: {
-          padding: [20, 40, 40, 80],
+          padding: [20, 40, 40, 120],
         },
         bar: {
           isCustomColor: true,

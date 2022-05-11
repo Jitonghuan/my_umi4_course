@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Table, Select } from 'antd';
-import appConfig from '@/app.config';
+import { Tabs, Table } from 'antd';
 import Header from '../header';
-import { envList, now } from '../../const';
+import { now } from '../../const';
 import moment from 'moment';
 import './index.less';
 import { getErrorApiList, getSlowApiList } from '../../server';
@@ -72,26 +71,7 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-api-wrapper">
-      {appConfig.IS_Matrix === 'public' && (
-        <div className="env-select-wrapper">
-          <span>环境：</span>
-          <Select
-            value={feEnv}
-            clearIcon={false}
-            style={{ width: '120px' }}
-            onChange={(val) => {
-              setFeEnv(val);
-            }}
-          >
-            {envList.map((item) => (
-              <Select.Option value={item.key} key={item.key}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-      )}
-      <Header onChange={setTimeList} defaultTime={timeList} />
+      <Header onChange={setTimeList} defaultTime={timeList} envChange={setFeEnv} />
       <Tabs
         activeKey={active}
         onChange={(val) => {
