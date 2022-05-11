@@ -3,14 +3,27 @@ import { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
-import { queryComponentInfoApi, queryComponentVersionList } from '../../service';
-import { getRequest } from '@/utils/request';
+import { queryComponentInfoApi, queryComponentVersionList, deletVersionApi } from '../../service';
+import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
 import ReactMarkdown from 'react-markdown';
 import UserModal from '../../component-center/components/UserModal';
 import BasicDataModal from '../../component-center/components/basicDataModal';
 import MiddlewareModal from '../../component-center/components/middlewareModal';
-import { Form, Tabs, Select, Button, Descriptions, Typography, Divider, Spin } from 'antd';
+import {
+  Form,
+  Tabs,
+  Select,
+  Button,
+  Descriptions,
+  Typography,
+  Divider,
+  Spin,
+  Modal,
+  Table,
+  Popconfirm,
+  message,
+} from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryComponentList, useQueryProductlineList } from '../../component-center/hook';
 import { useQueryComponentVersionList, useUpdateDescription, useUpdateConfiguration } from './hooks';
@@ -32,6 +45,7 @@ export default function ComponentDetail() {
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
   const [loading, setLoading] = useState(false);
   const [versionOptions, setVersionOptions] = useState<any>([]);
+  const [showVersionModal, setShowVersionModal] = useState<boolean>(false);
   const [curVersion, setCurVersion] = useState<string>('');
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
@@ -40,6 +54,17 @@ export default function ComponentDetail() {
   const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   // const [loading, versionOptions, queryComponentVersionList] = useQueryComponentVersionList();
 
+  const deletVersion = (id: number) => {
+    postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
+      if (res.success) {
+        message.success(res.data);
+        getComponentVersionList(initRecord.id);
+        queryComponentInfo(componentName, versionOptions[0]?.value, componentType);
+      } else {
+        return;
+      }
+    });
+  };
   const getComponentVersionList = async (componentId: string) => {
     setLoading(true);
     try {
@@ -52,6 +77,8 @@ export default function ComponentDetail() {
             const option = dataSource?.map((item: any) => ({
               label: item.componentVersion,
               value: item.componentVersion,
+              id: item.id,
+              createUser: item.createUser,
             }));
             setVersionOptions(option);
             setCurVersion(option[0]?.value);
@@ -96,6 +123,7 @@ export default function ComponentDetail() {
     if (componentVersion && componentName) {
       getComponentVersionList(initRecord.id);
       queryComponentInfo(componentName, componentVersion, componentType);
+
       setCurVersion(componentVersion);
     } else {
       getComponentVersionList(initRecord.id);
@@ -120,6 +148,36 @@ export default function ComponentDetail() {
   }, []);
   return (
     <PageContainer>
+      <Modal
+        title="版本详情"
+        visible={showVersionModal}
+        onCancel={() => {
+          setShowVersionModal(false);
+        }}
+        footer={false}
+      >
+        <Table dataSource={versionOptions}>
+          <Table.Column dataIndex="id" title="版本Id"></Table.Column>
+          <Table.Column dataIndex="value" title="版本号"></Table.Column>
+          <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
+          <Table.Column
+            fixed="right"
+            title="操作"
+            align="center"
+            width={110}
+            render={(item, record: any) => (
+              <Popconfirm
+                title="确定要删除该版本吗？"
+                onConfirm={() => {
+                  deletVersion(record.id);
+                }}
+              >
+                <a color="red">删除</a>
+              </Popconfirm>
+            )}
+          />
+        </Table>
+      </Modal>
       <UserModal
         visable={userModalVisiable}
         productLineOptions={productLineOptions || []}
@@ -173,7 +231,15 @@ export default function ComponentDetail() {
               >
                 添加版本
               </Button>
-              <Button style={{ marginLeft: 10 }}>删除版本</Button>
+              <Button
+                style={{ marginLeft: 10 }}
+                onClick={() => {
+                  setShowVersionModal(true);
+                }}
+                disabled={!versionOptions.length}
+              >
+                删除版本
+              </Button>
             </span>
           </div>
           <div className="caption-right">

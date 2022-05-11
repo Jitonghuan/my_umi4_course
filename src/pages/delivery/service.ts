@@ -60,6 +60,10 @@ export const getApplistVersion = addAPIPrefix('/deliveryManage/component/applist
 /* POST 产品版本批量添加应用 */
 export const bulkadd = addAPIPrefix('/deliveryManage/product/version/component/bulkadd');
 /* 二、组件中心 */
+
+/* 组件版本删除 */
+// deliveryManage/component/version/delete
+export const deletVersionApi = addAPIPrefix('/deliveryManage/component/version/delete');
 /* GET 产品线分类 */
 export const queryProductlineList = addAPIPrefix('/deliveryManage/component/productline/list');
 
