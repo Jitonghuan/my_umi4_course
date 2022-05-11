@@ -9,11 +9,11 @@ import './index.less';
 interface IProps {
   appGroup: string;
   envCode: string;
+  feEnv: string;
 }
 
-const BasicOverview = ({ appGroup, envCode }: IProps) => {
+const BasicOverview = ({ appGroup, envCode, feEnv }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
-  const [feEnv, setFeEnv] = useState<string>('*');
   const [overviewList, setOverviewList] = useState<any[]>([]);
   const [chart, setChart] = useState<any>(null);
 
@@ -96,7 +96,7 @@ const BasicOverview = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-overview-wrapper">
-      <Header defaultTime={timeList} onChange={setTimeList} envChange={setFeEnv} />
+      <Header defaultTime={timeList} onChange={setTimeList} />
       <div className="performance-wrapper">
         <div className="overview-wrapper">
           <div className="l">

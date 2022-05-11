@@ -11,11 +11,11 @@ const { TabPane } = Tabs;
 interface IProps {
   appGroup: string;
   envCode: string;
+  feEnv: string;
 }
 
-const BasicApi = ({ appGroup, envCode }: IProps) => {
+const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
-  const [feEnv, setFeEnv] = useState<string>('*');
   const [active, setActive] = useState('1');
 
   // 失败
@@ -71,7 +71,7 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-api-wrapper">
-      <Header onChange={setTimeList} defaultTime={timeList} envChange={setFeEnv} />
+      <Header onChange={setTimeList} defaultTime={timeList} />
       <Tabs
         activeKey={active}
         onChange={(val) => {

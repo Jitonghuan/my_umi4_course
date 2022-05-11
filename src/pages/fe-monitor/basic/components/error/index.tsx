@@ -11,6 +11,7 @@ import './index.less';
 interface IProps {
   appGroup: string;
   envCode: string;
+  feEnv: string;
 }
 
 interface DataSourceItem {
@@ -24,9 +25,8 @@ interface DataSourceItem {
   i: number;
 }
 
-const BasicError = ({ appGroup, envCode }: IProps) => {
+const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
-  const [feEnv, setFeEnv] = useState<string>('*');
   const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [dataSource, setDataSource] = useState<DataSourceItem[]>([]);
@@ -160,7 +160,7 @@ const BasicError = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-error-wrapper">
-      <Header defaultTime={timeList} onChange={setTimeList} envChange={setFeEnv} />
+      <Header defaultTime={timeList} onChange={setTimeList} />
       <div className="performance-wrapper">
         <div className="list-title chart-title">错误情况</div>
         <div className="line-chart-wrapper">

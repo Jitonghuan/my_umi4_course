@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Select, Tabs } from 'antd';
 import { history } from 'umi';
 import BasicOverview from './components/overview';
@@ -6,7 +6,7 @@ import BasicError from './components/error';
 import BasicPerformance from './components/performance';
 import BasicApi from './components/api';
 import { getCommonEnvCode } from './server';
-import { menuList } from './const';
+import { envList, menuList } from './const';
 import './index.less';
 import appConfig from '@/app.config';
 
@@ -16,7 +16,8 @@ let defaultEnvCode = appConfig.BUILD_ENV === 'prod' ? 'hbos-test' : 'g3a-test';
 defaultEnvCode = appConfig.IS_Matrix === 'public' ? defaultEnvCode : '';
 
 const BasicFeMonitor = () => {
-  const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '');
+  const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '1');
+  const [feEnv, setFeEnv] = useState<string>('*');
   const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || '1');
   const [envCode, setEnvCode] = useState(defaultEnvCode);
 
@@ -30,9 +31,42 @@ const BasicFeMonitor = () => {
     }
   }, []);
 
+  const renderActiveCon = useMemo(() => {
+    const param = {
+      feEnv,
+      envCode,
+      appGroup: activeKey,
+    };
+    if (!envCode) {
+      return;
+    }
+    switch (activeKey) {
+      case '1':
+        return <BasicOverview {...param} />;
+      case '2':
+        return <BasicError {...param} />;
+      case '3':
+        return <BasicPerformance {...param} />;
+      case '4':
+        return <BasicApi {...param} />;
+    }
+  }, [activeKey, envCode, feEnv]);
+
   return (
     <div className="basic-fe-monitor-wrapper">
       <div className="app-group-tab-wrapper">
+        {appConfig.IS_Matrix === 'public' && (
+          <div className="env-select-wrapper">
+            <span>域名：</span>
+            <Select value={feEnv} clearIcon={false} style={{ width: '120px' }} onChange={setFeEnv}>
+              {envList.map((item) => (
+                <Select.Option value={item.key} key={item.key}>
+                  {item.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+        )}
         <Select
           value={activeKey}
           showSearch
@@ -73,19 +107,12 @@ const BasicFeMonitor = () => {
             });
           }}
         >
-          <TabPane tab="数据总览" key="1">
-            {envCode && <BasicOverview appGroup={activeKey} envCode={envCode} />}
-          </TabPane>
-          <TabPane tab="错误分析" key="2">
-            {envCode && <BasicError appGroup={activeKey} envCode={envCode} />}
-          </TabPane>
-          <TabPane tab="性能分析" key="3">
-            {envCode && <BasicPerformance appGroup={activeKey} envCode={envCode} />}
-          </TabPane>
-          <TabPane tab="API分析" key="4">
-            {envCode && <BasicApi appGroup={activeKey} envCode={envCode} />}
-          </TabPane>
+          <TabPane tab="数据总览" key="1" />
+          <TabPane tab="错误分析" key="2" />
+          <TabPane tab="性能分析" key="3" />
+          <TabPane tab="API分析" key="4" />
         </Tabs>
+        <div className="app-group-content">{}</div>
       </div>
     </div>
   );

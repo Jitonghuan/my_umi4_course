@@ -13,6 +13,7 @@ import './index.less';
 interface IProps {
   appGroup: string;
   envCode: string;
+  feEnv: string;
 }
 
 const pageItem = [
@@ -26,10 +27,9 @@ const pageItem = [
   },
 ];
 
-const BasicPerformance = ({ appGroup, envCode }: IProps) => {
+const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
   const [chart, setChart] = useState<any>(null);
-  const [feEnv, setFeEnv] = useState<string>('*');
   const [activeTab, setActiveTab] = useState<string>('tti'); // 趋势图tab
   const [pageGroupTab, setPageGroupTab] = useState<string>('highFrequency'); // 页面排行tab
   const [timeGroupTab, setTimeGroupTab] = useState<string>('20'); // 加载时间区间tab
@@ -162,7 +162,7 @@ const BasicPerformance = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-performance-wrapper">
-      <Header onChange={setTimeList} defaultTime={timeList} envChange={setFeEnv} />
+      <Header onChange={setTimeList} defaultTime={timeList} />
 
       {/*页面汇总趋势图*/}
       <div className="performance-wrapper">
