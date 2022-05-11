@@ -125,7 +125,7 @@ export default function PublishBranch(props: IProps) {
             ref={selectRef}
             options={masterBranchOptions}
             value={selectMaster}
-            style={{ width: '200px', marginRight: '20px' }}
+            style={{ width: '300px', marginRight: '20px' }}
             onChange={handleChange}
             showSearch
             optionFilterProp="label"
