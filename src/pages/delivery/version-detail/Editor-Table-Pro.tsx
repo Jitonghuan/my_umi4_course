@@ -14,6 +14,7 @@ import {
   useDeleteVersionComponent,
   useAddCompontent,
 } from './hooks';
+import { useQueryProductlineList } from '../component-center/hook';
 import BatchDraw from './BatchAddDraw';
 
 type DataSourceType = {
@@ -138,6 +139,37 @@ export default (props: VersionDetailProps) => {
       dataIndex: 'componentDescription',
       renderFormItem: (_, config: any, data) => {
         return <Input></Input>;
+      },
+    },
+    {
+      title: '产品线',
+      key: 'productline',
+      dataIndex: 'productline',
+      valueType: 'select',
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
+      },
+      renderFormItem: (_, config: any, data) => {
+        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
+        let currentValue = componentOptions[config.record?.componentName];
+        // queryProductVersionOptions(currentTabType,currentValue)
+
+        return (
+          <Select
+            options={componentOptions}
+            onChange={(value: any) => {
+              queryProductVersionOptions(currentTabType, value);
+            }}
+          ></Select>
+        );
       },
     },
 

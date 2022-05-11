@@ -321,7 +321,7 @@ export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
           setLoading(false);
         });
     } catch (error) {
-      console.log(error, 2222);
+      console.log(error);
     }
   };
   return [loading, dataSource, getProductlineList];
