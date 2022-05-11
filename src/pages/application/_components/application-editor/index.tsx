@@ -4,7 +4,6 @@
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal } from 'antd';
-import FELayout from '@cffe/vc-layout';
 import { FeContext } from '@/common/hooks';
 import DebounceSelect from '@/components/debounce-select';
 import UserSelector, { stringToList } from '@/components/user-selector';
@@ -39,7 +38,6 @@ export interface IProps {
 }
 
 export default function ApplicationEditor(props: IProps) {
-  const userInfo = useContext(FELayout.SSOUserInfoContext);
   const { categoryData } = useContext(FeContext);
   const { visible } = props;
   const initData = props.initData ? JSON.parse(JSON.stringify(props.initData)) : {};

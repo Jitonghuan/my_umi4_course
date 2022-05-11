@@ -44,4 +44,5 @@ export const deployJobUrlOptions: IOption[] = [
   { label: '通用构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-single' },
   { label: 'HIS EMR', value: 'http://jenkins-fe.cfuture.shop/job/emr-loader' },
   { label: 'HIS ICU', value: 'http://jenkins-fe.cfuture.shop/job/future-his-icu' },
+  { label: '打印模版', value: 'http://jenkins-fe.cfuture.shop/job/fe-printer-main' },
 ];
