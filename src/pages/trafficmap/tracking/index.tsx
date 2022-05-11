@@ -91,11 +91,11 @@ export default function Tracking() {
   const [instanceList, setInstanceList] = useState([]);
   const [envOptions]: any[][] = useEnvOptions();
   const [loading, setLoading] = useState<boolean>(false);
-  const [expand, setIsExpand] = useState<boolean>(true);
+  const [expand, setIsExpand] = useState<boolean>(false);
 
   const btnMessageList = [
-    { expand: true, label: '收起', icon: <CaretUpOutlined /> },
-    { expand: false, label: '展开', icon: <CaretDownOutlined /> },
+    { expand: true, label: '收起更多', icon: <CaretUpOutlined /> },
+    { expand: false, label: '更多查询', icon: <CaretDownOutlined /> },
   ];
 
   const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);

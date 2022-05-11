@@ -567,11 +567,11 @@ export default [
         name: '报警历史',
         component: '@/pages/monitor/history',
       },
-      {
-        path: 'fe-monitor',
-        name: '前端监控',
-        component: '@/pages/fe-monitor/basic/index',
-      },
+      // {
+      //   path: 'fe-monitor',
+      //   name: '前端监控',
+      //   component: '@/pages/fe-monitor/basic/index',
+      // },
     ],
   },
   {

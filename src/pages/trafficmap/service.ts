@@ -121,3 +121,28 @@ export const getTraceInfo = (data: any) => {
   const url = addAPIPrefix('/trafficMap/tracing/info');
   return getRequest(url, { data: data });
 };
+
+// 降噪-新增降噪配置
+export const addNoise = (data: any) => {
+  const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/create');
+  return postRequest(url, { data: data });
+};
+
+// 降噪-获取降噪配置列表
+export const getNoiseList = (data: any) => {
+  const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/noiseReduction/list';
+  // const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/list');
+  return getRequest(url, { data: data });
+};
+
+// 降噪-更新降噪配置
+export const updataNoise = (data: any) => {
+  const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/update');
+  return putRequest(url, { data: data });
+};
+
+// 降噪-删除降噪配置
+export const deleteNoise = (data: any) => {
+  const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/update');
+  return putRequest(url, { data: data });
+};

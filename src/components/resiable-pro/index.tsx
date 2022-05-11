@@ -20,7 +20,7 @@ const ResizablePro = (props: Props) => {
 
   const onClose = (e: any) => {
     e.stopPropagation();
-    setResizeState({ width: close ? leftWidth || 500 : 100 });
+    setResizeState({ width: close ? leftWidth || 500 : 0 });
     setClose(!close);
   };
 

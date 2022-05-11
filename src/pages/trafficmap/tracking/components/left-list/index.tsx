@@ -1,11 +1,6 @@
-// import './index.less';
 import { useState } from 'react';
 import { Tag, Tooltip, Pagination, Empty } from 'antd';
 import './index.less';
-
-// (
-//   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%' }} />
-// )
 
 export default function LeftList(props: any) {
   const [activeItem, setActiveItem] = useState<any>();
@@ -34,6 +29,6 @@ export default function LeftList(props: any) {
       </div>
     </div>
   ) : (
-    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%' }} />
+    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%', overflow: 'hidden' }} />
   );
 }

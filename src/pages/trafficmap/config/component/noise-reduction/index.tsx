@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Select, Input, Button, Table, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import PageContainer from '@/components/page-container';
+import appConfig from '@/app.config';
+import { delRequest } from '@/utils/request';
 import './index.less';
-import { deleteRegion, getRegionList } from '../../../service';
+import AddNoise from './add-noise';
 
 export default function NoiseReduction() {
   const [noiseList, setNoiseList] = useState<any[]>([]);
@@ -12,6 +12,13 @@ export default function NoiseReduction() {
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [noiseDrawer, setNoiseDrawer] = useState<EditorMode>('HIDE');
+  const [initData, setInitData] = useState([])
+
+  // 启用-禁用
+  const handleOperate = (record: any) => {
+
+  }
   const columns = [
     {
       title: 'ID',
@@ -19,30 +26,19 @@ export default function NoiseReduction() {
       key: 'id',
     },
     {
-      title: '降噪CODE',
-      dataIndex: 'regionCode',
-      key: 'regionCode',
+      title: '配置名',
+      dataIndex: 'noiseReductionName',
+      key: 'noiseReductionName',
     },
     {
-      title: '环境CODE',
-      dataIndex: 'envCode',
-      key: 'envCode',
+      title: '降噪组件',
+      dataIndex: 'noiseReductionComponents',
+      key: 'noiseReductionComponents',
     },
     {
-      title: '创建人',
-      dataIndex: 'createUser',
-      key: 'createUser',
-    },
-    {
-      title: '修改人',
-      dataIndex: 'modifyUser',
-      key: 'modifyUser',
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      key: 'remark',
-      ellipsis: true,
+      title: '降噪措施',
+      dataIndex: 'noiseReductionComponents',
+      key: 'noiseReductionComponents',
     },
     {
       title: '操作',
@@ -51,8 +47,20 @@ export default function NoiseReduction() {
       render: (text: string, record: any) => {
         return (
           <>
-            <Button type="link" onClick={() => handleConfig(record)}>
-              启用
+            <Popconfirm
+              title={`确定${record.isEnable ? '禁用' : '启用'}吗？`}
+              okText="是"
+              cancelText="否"
+              onConfirm={() => {
+                handleDeleteNoise(record.id);
+              }}
+            >
+              <Button type="link" >
+                {record.isEnable ? '禁用' : '启用'}
+              </Button>
+            </Popconfirm>
+            <Button type="link">
+              编辑
             </Button>
             <Popconfirm
               title="确认删除"
@@ -69,19 +77,35 @@ export default function NoiseReduction() {
       },
     },
   ];
-  const onSearch = () => {};
+  const onSearch = () => { };
 
-  const handleDeleteNoise = (id: number) => {};
+  const handleDeleteNoise = async (id: number) => {
+    await delRequest(`${appConfig.apiPrefix}/trafficMap/tracing/noiseReduction/delete/${id}`);
+    // loadListData({
+    //   pageIndex: 1,
+    //   pageSize: 20,
+    // });
+  };
   //   启用禁用
-  const handleConfig = (data: any) => {};
+  const handleConfig = (data: any) => { };
   return (
     <div className="noise-reduciton">
+      <AddNoise
+        mode={noiseDrawer}
+        initData={initData}
+        onSave={() => {
+          setNoiseDrawer('HIDE');
+
+        }}
+        onClose={() => {
+          setNoiseDrawer('HIDE');
+        }}></AddNoise>
       <Form
         layout="inline"
         onFinish={onSearch}
-        // onReset={() => {
-        //   requestRegionList();
-        // }}
+      // onReset={() => {
+      //   requestRegionList();
+      // }}
       >
         <Form.Item label="降噪名称" name="regionName">
           <Input />
@@ -89,9 +113,6 @@ export default function NoiseReduction() {
         <Form.Item label="降噪code" name="regionCode">
           <Input />
         </Form.Item>
-        {/* <Form.Item label="环境code" name="envCode">
-            <Select options={envOptions} style={{ width: '200px' }} />
-          </Form.Item> */}
         <Form.Item>
           <Button type="primary" htmlType="submit">
             搜索
@@ -111,7 +132,7 @@ export default function NoiseReduction() {
           type="primary"
           ghost
           onClick={() => {
-            //   createRegionRef.current.showDrawer();
+            setNoiseDrawer('ADD')
           }}
         >
           <PlusOutlined />

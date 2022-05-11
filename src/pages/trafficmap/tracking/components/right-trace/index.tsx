@@ -1,12 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Form, Button, message } from 'antd';
 import { Tree, Switch } from 'antd';
-import { Tag, Divider, Progress, Select } from 'antd';
-import { UnorderedListOutlined, BranchesOutlined, CopyOutlined, TableOutlined } from '@ant-design/icons';
+import { Tag, Divider, Progress, Select, Table } from 'antd';
+import {
+  UnorderedListOutlined,
+  BranchesOutlined,
+  CopyOutlined,
+  TableOutlined,
+  DownOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // import TraceTable from './trace-table'
 import RightGraph from '../right-graph';
-import RightTable from '../right-table';
 import './index.less';
 // import * as d3 from 'd3';
 
@@ -261,6 +267,113 @@ const temp = [
   },
 ];
 
+const mockData = [
+  {
+    traceId: '11111111',
+    spanId: 1,
+    parentSpanId: 0,
+    endpointName: 'homepage-level1',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 2,
+    parentSpanId: 1,
+    endpointName: 'homepage-level2',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 3,
+    parentSpanId: 1,
+    endpointName: 'homepage-level2',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 4,
+    parentSpanId: 1,
+    endpointName: 'homepage-level2',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 5,
+    parentSpanId: 2,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 6,
+    parentSpanId: 2,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 7,
+    parentSpanId: 2,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 8,
+    parentSpanId: 3,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 9,
+    parentSpanId: 3,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 10,
+    parentSpanId: 4,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 11,
+    parentSpanId: 4,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 12,
+    parentSpanId: 4,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+  {
+    traceId: '11111111',
+    spanId: 13,
+    parentSpanId: 5,
+    endpointName: 'homepage-level4',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
+  },
+];
+
 export default function RrightTrace() {
   const [treeData, setTreeData] = useState<any>([]);
   const [activeBtn, setActiveBtn] = useState<string>('list');
@@ -271,11 +384,30 @@ export default function RrightTrace() {
     { key: 'table', label: '表格', icon: <TableOutlined /> },
     { key: 'tree', label: '树状', icon: <BranchesOutlined /> },
   ];
+  const column = [
+    {
+      title: 'traceId',
+      dataIndex: 'traceId',
+      key: 'traceId',
+    },
+    {
+      title: 'endpointName',
+      dataIndex: 'endpointName',
+      key: 'endpointName',
+    },
+  ];
   useEffect(() => {
     if (temp.length !== 0) {
       setTreeData(handleData(temp));
     }
   }, [temp]);
+
+  useEffect(() => {
+    if (mockData.length !== 0) {
+      const data = listToTree(mockData);
+      console.log(data, '11');
+    }
+  }, [mockData]);
 
   const switchChange = () => {};
 
@@ -289,6 +421,26 @@ export default function RrightTrace() {
       }
     });
     return data;
+  };
+  // 处理数据
+  const listToTree = (list: any) => {
+    let map: any = {},
+      node,
+      roots = [];
+    for (let i = 0; i < list.length; i++) {
+      map[list[i].spanId] = i; // 初始化map
+      list[i].children = []; // 初始化children
+    }
+    console.log(map, list, 'map');
+    for (let j = 0; j < list.length; j++) {
+      node = list[j];
+      if (node.parentSpanId !== '0') {
+        list[map[node.parentSpanId]]?.children.push(node);
+      } else {
+        roots.push(node);
+      }
+    }
+    return roots;
   };
   return (
     <div className="trace-wrapper">
@@ -384,8 +536,24 @@ export default function RrightTrace() {
             }}
           />
         )}
-        {activeBtn === 'table' && <RightTable />}
-        {activeBtn === 'tree' && <RightGraph treeData={treeData} />}
+        {activeBtn === 'table' && (
+          <Table
+            columns={column}
+            defaultExpandAllRows={true}
+            dataSource={listToTree(mockData)}
+            expandable={{
+              expandIcon: ({ expanded, onExpand, record }) =>
+                expanded ? (
+                  <DownOutlined style={{ fontSize: '9px' }} onClick={(e) => onExpand(record, e)} />
+                ) : (
+                  <RightOutlined style={{ fontSize: '9px' }} onClick={(e) => onExpand(record, e)} />
+                ),
+              defaultExpandAllRows: true,
+              indentSize: 20,
+            }}
+          />
+        )}
+        {activeBtn === 'tree' && <RightGraph />}
       </div>
     </div>
   );
