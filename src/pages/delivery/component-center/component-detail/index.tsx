@@ -3,13 +3,18 @@ import { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
-import { queryComponentInfoApi } from '../../service';
+import { queryComponentInfoApi, queryComponentVersionList } from '../../service';
 import { getRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
 import ReactMarkdown from 'react-markdown';
+import UserModal from '../../component-center/components/UserModal';
+import BasicDataModal from '../../component-center/components/basicDataModal';
+import MiddlewareModal from '../../component-center/components/middlewareModal';
 import { Form, Tabs, Select, Button, Descriptions, Typography, Divider, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
+import { useQueryComponentList, useQueryProductlineList } from '../../component-center/hook';
 import { useQueryComponentVersionList, useUpdateDescription, useUpdateConfiguration } from './hooks';
+
 import './index.less';
 export default function ComponentDetail() {
   const { initRecord, componentName, componentVersion, componentDescription, componentType, activeTab, type }: any =
@@ -25,8 +30,42 @@ export default function ComponentDetail() {
   const [editableStr, setEditableStr] = useState('');
   const [editLoading, updateDescription] = useUpdateDescription();
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
-  const [loading, versionOptions, queryComponentVersionList] = useQueryComponentVersionList();
+  const [loading, setLoading] = useState(false);
+  const [versionOptions, setVersionOptions] = useState<any>([]);
+  const [curVersion, setCurVersion] = useState<string>('');
+  const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
+  const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
+  const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
+  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
+  const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
+  // const [loading, versionOptions, queryComponentVersionList] = useQueryComponentVersionList();
 
+  const getComponentVersionList = async (componentId: string) => {
+    setLoading(true);
+    try {
+      await getRequest(queryComponentVersionList, {
+        data: { componentId, pageIndex: -1, pageSize: -1 },
+      })
+        .then((res) => {
+          if (res.success) {
+            let dataSource = res.data;
+            const option = dataSource?.map((item: any) => ({
+              label: item.componentVersion,
+              value: item.componentVersion,
+            }));
+            setVersionOptions(option);
+            setCurVersion(option[0]?.value);
+          } else {
+            return [];
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   //查询组件配置详情
   const queryComponentInfo = async (componentName: string, componentVersion: string, componentType: string) => {
     setInfoLoading(true);
@@ -55,14 +94,17 @@ export default function ComponentDetail() {
   };
   useEffect(() => {
     if (componentVersion && componentName) {
-      queryComponentVersionList(componentName, componentType);
+      getComponentVersionList(initRecord.id);
       queryComponentInfo(componentName, componentVersion, componentType);
+      setCurVersion(componentVersion);
     } else {
-      return;
+      getComponentVersionList(initRecord.id);
+      queryComponentInfo(componentName, versionOptions[0]?.value, componentType);
     }
   }, [componentName, componentVersion]);
 
   const changeVersion = (value: string) => {
+    setCurVersion(value);
     queryComponentInfo(componentName, value, componentType);
   };
   const saveConfig = () => {
@@ -71,8 +113,37 @@ export default function ComponentDetail() {
     setReadOnly(true);
     setButtonText('编辑');
   };
+  useEffect(() => {
+    if (componentType === 'app') {
+      getProductlineList();
+    }
+  }, []);
   return (
     <PageContainer>
+      <UserModal
+        visable={userModalVisiable}
+        productLineOptions={productLineOptions || []}
+        tabActiveKey={componentType}
+        curProductLine={initRecord.productLine}
+        curVersion={curVersion}
+        initData={initRecord || {}}
+        queryComponentList={({ componentType: componentType }) => queryComponentList({ componentType: componentType })}
+        onClose={() => {
+          setUserModalVisiable(false);
+        }}
+      />
+      <BasicDataModal
+        visable={basicDataModalVisiable}
+        tabActiveKey={componentType}
+        curProductLine={initRecord.productLine}
+        curVersion={curVersion}
+        initData={initRecord || {}}
+        queryComponentList={({ componentType: componentType }) => queryComponentList({ componentType: componentType })}
+        onClose={() => {
+          setBasicDataModalVisiable(false);
+        }}
+      />
+
       <ContentCard className="component-detail">
         <div className="table-caption">
           <div className="caption-left">
@@ -81,9 +152,29 @@ export default function ComponentDetail() {
               style={{ width: 220, marginLeft: 20 }}
               loading={loading}
               options={versionOptions}
-              defaultValue={componentVersion}
+              value={curVersion}
               onChange={changeVersion}
             ></Select>
+            <span>
+              <Button
+                type="primary"
+                style={{ marginLeft: 10 }}
+                onClick={() => {
+                  if (componentType === 'app') {
+                    setUserModalVisiable(true);
+                  }
+                  //  if (tabActiveKey === 'middleware') {
+                  //    // setMiddlewareModalVisibale(true);
+                  //  }
+                  if (componentType === 'sql') {
+                    setBasicDataModalVisiable(true);
+                  }
+                }}
+              >
+                添加版本
+              </Button>
+              <Button style={{ marginLeft: 10 }}>删除版本</Button>
+            </span>
           </div>
           <div className="caption-right">
             <Button

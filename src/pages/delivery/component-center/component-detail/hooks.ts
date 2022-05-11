@@ -4,18 +4,14 @@ import { message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
 //组件版本查询
-export function useQueryComponentVersionList(): [
-  boolean,
-  any,
-  (componentName: string, componentType: string) => Promise<void>,
-] {
+export function useQueryComponentVersionList(): [boolean, any, (componentId: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const queryComponentVersionList = async (componentName: string, componentType: string) => {
+  const queryComponentVersionList = async (componentId: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentVersionList, {
-        data: { componentName, componentType, pageIndex: -1, pageSize: -1 },
+        data: { componentId, pageIndex: -1, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {

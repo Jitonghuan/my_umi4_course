@@ -67,13 +67,13 @@ export function useQueryComponentList(): [
   any,
   any,
   any,
-  (
-    componentType: string,
-    productLine?: string,
-    componentName?: string,
-    pageIndex?: number,
-    pageSize?: number,
-  ) => Promise<void>,
+  (paramsObj: {
+    componentType: string;
+    productLine?: string;
+    componentName?: string;
+    pageIndex?: number;
+    pageSize?: number;
+  }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -82,17 +82,23 @@ export function useQueryComponentList(): [
     pageSize: 20,
     total: 0,
   });
-  const queryComponentList = async (
-    componentType: string,
-    productLine?: string,
-    componentName?: string,
-    pageIndex?: number,
-    pageSize?: number,
-  ) => {
+  const queryComponentList = async (paramsObj: {
+    componentType: string;
+    productLine?: string;
+    componentName?: string;
+    pageIndex?: number;
+    pageSize?: number;
+  }) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentList, {
-        data: { componentType, productLine, componentName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: {
+          componentType: paramsObj.componentType,
+          productLine: paramsObj.productLine,
+          componentName: paramsObj.componentName,
+          pageIndex: paramsObj.pageIndex || 1,
+          pageSize: paramsObj.pageSize || 20,
+        },
       })
         .then((res) => {
           if (res.success) {
@@ -125,7 +131,7 @@ export function useAddApplication(): [
     componentName: string;
     componentVersion: string;
     componentType: string;
-    componentDescription: string;
+    // componentDescription: string;
     componentSourceEnv: string;
     productLine: string;
     componentUrl?: string;
@@ -138,7 +144,7 @@ export function useAddApplication(): [
     componentName: string;
     componentVersion: string;
     componentType: string;
-    componentDescription: string;
+    // componentDescription: string;
     componentSourceEnv: string;
     productLine: string;
     componentUrl?: string;
@@ -152,7 +158,7 @@ export function useAddApplication(): [
           componentName: paramsObj.componentName,
           componentVersion: paramsObj.componentVersion,
           componentType: paramsObj.componentType,
-          componentDescription: paramsObj.componentDescription,
+          // componentDescription: paramsObj.componentDescription,
           componentSourceEnv: paramsObj.componentSourceEnv,
         },
       })

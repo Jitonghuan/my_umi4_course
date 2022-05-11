@@ -15,15 +15,11 @@ export default function VersionDetail(props: DetailProps) {
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
-    if (!currentTab || !curProductLine) {
+    if (!currentTab) {
       return;
     }
-    if (currentTab === 'app') {
-      queryComponentList(currentTab, curProductLine);
-    } else {
-      queryComponentList(currentTab);
-    }
-  }, [currentTab, curProductLine]);
+    queryComponentList({ componentType: currentTab });
+  }, [currentTab]);
   const columns = [
     {
       title: '名称',
@@ -31,9 +27,10 @@ export default function VersionDetail(props: DetailProps) {
       dataIndex: 'componentName',
       key: 'componentName',
     },
+
     {
-      title: '组件版本',
-      dataIndex: 'componentVersion',
+      title: '产品线',
+      dataIndex: 'productLine',
       width: 150,
     },
     {
@@ -78,7 +75,7 @@ export default function VersionDetail(props: DetailProps) {
             title="确定要删除吗？"
             onConfirm={() => {
               deleteComponent(record.id).then(() => {
-                queryComponentList(currentTab, curProductLine);
+                queryComponentList({ componentType: currentTab, productLine: curProductLine });
               });
             }}
           >

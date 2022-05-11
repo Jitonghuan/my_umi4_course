@@ -8,13 +8,14 @@ export interface DetailProps {
   visable?: boolean;
   tabActiveKey: string;
   curProductLine: string;
+  curVersion?: string;
   queryComponentList: (tabActiveKey: any) => any;
   initData?: any;
   onClose: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, tabActiveKey, onClose, queryComponentList, curProductLine } = props;
+  const { visable, tabActiveKey, onClose, queryComponentList, curProductLine, curVersion, initData } = props;
   const [addLoading, addBasicdata] = useAddBasicdata();
   const [filePath, setFilePath] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,6 +23,9 @@ export default function BasicModal(props: DetailProps) {
   const [type, setType] = useState<string>('');
   // const [checkLoading,rightInfo, getVersionCheck]=useGetVersionCheck();
   useEffect(() => {
+    if (Object.keys(initData || {})?.length !== 0) {
+      form.setFieldsValue({ ...initData, componentVersion: curVersion });
+    }
     return () => {
       setType('');
     };
@@ -73,6 +77,7 @@ export default function BasicModal(props: DetailProps) {
   const Uploadprops: any = {
     name: 'uploadFile',
     action: uploadSqlfile,
+    maxCount: 1,
     // headers: {
     //   authorization: 'authorization-text',
     // },
@@ -137,6 +142,7 @@ export default function BasicModal(props: DetailProps) {
           label="基础数据版本"
           name="componentVersion"
           hasFeedback
+          validateTrigger="onBlur"
           validateStatus={
             rightInfo && !loading && type === 'sucess'
               ? 'success'
@@ -149,11 +155,7 @@ export default function BasicModal(props: DetailProps) {
           help={type === 'sucess' ? '版本号检查通过' : type === 'error' ? '版本号检查不通过' : '等待检查版本号'}
           rules={[{ required: true, message: '请填写基础数据版本！' }]}
         >
-          <Input
-            style={{ width: 320 }}
-            placeholder="请按照 1.0.0 的格式输入版本号！"
-            onChange={onVersionChange}
-          ></Input>
+          <Input style={{ width: 320 }} placeholder="请按照 1.0.0 的格式输入版本号！" onBlur={onVersionChange}></Input>
         </Form.Item>
 
         <Form.Item

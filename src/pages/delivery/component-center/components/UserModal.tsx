@@ -8,12 +8,23 @@ export interface DetailProps {
   productLineOptions: any;
   tabActiveKey: string;
   curProductLine: string;
+  curVersion?: string;
+  initData?: any;
   queryComponentList: (tabActiveKey: any) => any;
   onClose: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, productLineOptions, onClose, queryComponentList, tabActiveKey, curProductLine } = props;
+  const {
+    visable,
+    productLineOptions,
+    onClose,
+    queryComponentList,
+    tabActiveKey,
+    curProductLine,
+    initData,
+    curVersion,
+  } = props;
   const [addLoading, addApplication] = useAddApplication();
   const [appLoading, applicationOptions, getApplicationOption] = useGetApplicationOption();
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
@@ -71,6 +82,10 @@ export default function BasicModal(props: DetailProps) {
     getCheck(formData.componentName, tabActiveKey, formData.componentVersion, curProductLine);
   };
   useEffect(() => {
+    console.log('initData', initData);
+    if (Object.keys(initData || {})?.length !== 0) {
+      form.setFieldsValue({ ...initData, componentVersion: curVersion });
+    }
     queryEnvData();
     return () => {
       setType('');
@@ -79,7 +94,14 @@ export default function BasicModal(props: DetailProps) {
   const getEnvCode = (value: string) => {
     getApplicationOption(value);
   };
+  // const checkMethod=(rule:any,value:any,callback:any)=>{
+  //   if(value&&value!=''){
+  //     let formData = form.getFieldsValue();
+  //     getCheck(formData.componentName, tabActiveKey, value, curProductLine);
 
+  //   }
+
+  // }
   return (
     <Modal
       title="应用组件接入"
@@ -116,30 +138,25 @@ export default function BasicModal(props: DetailProps) {
           label="组件版本"
           name="componentVersion"
           hasFeedback
-          // validateStatus={
-          // rightInfo && !loading && type === 'success'
-          //   ? 'success'
-          //   : !rightInfo && !loading && type === 'begin'
-          //   ? 'validating'
-          //   : type === 'error'
-          //   ? 'error'
-          //   : 'warning'
-          // }
+          rules={[
+            {
+              required: true,
+              message: '请输入组件版本',
+              validateTrigger: 'onBlur',
+              // validator:checkMethod
+            },
+          ]}
           validateStatus={
             type === 'success' ? 'success' : type === 'begin' ? 'validating' : type === 'error' ? 'error' : 'warning'
           }
           help={type === 'sucess' ? '版本号检查通过' : type === 'error' ? '版本号检查不通过' : '等待检查版本号'}
-          rules={[{ required: true, message: '请输入组件版本' }]}
+          // rules={[{ required: true, message: '请输入组件版本' }]}
         >
-          <Input
-            style={{ width: 320 }}
-            placeholder="请按照 1.0.0 的格式输入版本号！"
-            onChange={onVersionChange}
-          ></Input>
+          <Input style={{ width: 320 }} placeholder="请按照 1.0.0 的格式输入版本号！" onBlur={onVersionChange}></Input>
         </Form.Item>
-        <Form.Item label="组件描述" name="componentDescription">
+        {/* <Form.Item label="组件描述" name="componentDescription">
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Modal>
   );
