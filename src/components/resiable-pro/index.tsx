@@ -1,3 +1,4 @@
+import { LeftCircleFilled, RightCircleFilled } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { Resizable, ResizeCallbackData, ResizableProps } from 'react-resizable';
 import './styles.less';
@@ -15,6 +16,13 @@ const ResizablePro = (props: Props) => {
   const [resizeState, setResizeState] = useState<{ width: number }>({
     width: leftWidth || 500,
   });
+  const [close, setClose] = useState(false);
+
+  const onClose = (e: any) => {
+    e.stopPropagation();
+    setResizeState({ width: close ? leftWidth || 500 : 100 });
+    setClose(!close);
+  };
 
   const onResize = (event: React.SyntheticEvent<Element, Event>, { size }: ResizeCallbackData) => {
     setResizeState({ width: size.width });
@@ -26,12 +34,17 @@ const ResizablePro = (props: Props) => {
         onResize={onResize}
         width={resizeState.width}
         handle={
-          <span
-            className="react-resizable-handle resizable-handle"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          ></span>
+          <div className="react-resizable-handle resizable-handle" onClick={(e) => e.stopPropagation()}>
+            {/* <span
+              onClick={onClose}
+              className={`resizable-handle-triangle ${close ? 'close' : ''}`}
+            /> */}
+            {close ? (
+              <RightCircleFilled className="resizable-click " onClick={onClose} />
+            ) : (
+              <LeftCircleFilled className="resizable-click close" onClick={onClose} />
+            )}
+          </div>
         }
         height={0}
       >

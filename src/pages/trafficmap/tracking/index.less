@@ -17,6 +17,13 @@
   .ant-card-body {
     height: 100%;
     padding: 12px;
+    display: flex;
+    flex-direction: column;
+
+    .detail-main {
+      flex: 1;
+      overflow: auto;
+    }
   }
 
   .ant-divider-horizontal {
@@ -28,8 +35,14 @@
     height: 100%;
   }
 
+  .trace-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
   .trace-display {
-    height: calc(100% - 55px);
+    flex: 1;
+
     overflow: auto;
     padding-bottom: 20px;
   }

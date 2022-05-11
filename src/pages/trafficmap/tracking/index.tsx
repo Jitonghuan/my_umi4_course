@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import moment from 'moment';
 import ResizablePro from '@/components/resiable-pro';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -6,6 +6,7 @@ import PageContainer from '@/components/page-container';
 import LeftList from './components/left-list';
 import RrightTrace from './components/right-trace';
 import { Form, Select, Button, DatePicker, message, Switch, Divider, Input } from 'antd';
+import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { getApplicationList, getInstance, getTrace } from '../service';
 const { RangePicker } = DatePicker;
 import { useEnvOptions } from '../hooks';
@@ -81,7 +82,7 @@ const mockData = [
 ];
 export default function Tracking() {
   // const [envOptions, setEnvOptions] = useState([]);
-  const [listData, setListData] = useState(mockData);
+  const [listData, setListData] = useState([]);
   const [form] = Form.useForm();
   const [selectEnv, setSelectEnv] = useState('');
   const [appID, setAppID] = useState('');
@@ -89,6 +90,15 @@ export default function Tracking() {
   const [applicationList, setApplicationList] = useState([]);
   const [instanceList, setInstanceList] = useState([]);
   const [envOptions]: any[][] = useEnvOptions();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [expand, setIsExpand] = useState<boolean>(true);
+
+  const btnMessageList = [
+    { expand: true, label: '收起', icon: <CaretUpOutlined /> },
+    { expand: false, label: '展开', icon: <CaretDownOutlined /> },
+  ];
+
+  const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
 
   useEffect(() => {
     setSelectEnv(envOptions[0]?.value);
@@ -124,6 +134,15 @@ export default function Tracking() {
     }
   }, [appID]);
 
+  const queryTraceList = (params: any) => {
+    setLoading(true);
+    getTrace({ ...params }).then((res) => {
+      if (res) {
+        setListData(res?.data?.traces);
+      }
+    });
+  };
+
   const timeChange = () => {};
   return (
     <PageContainer>
@@ -151,7 +170,13 @@ export default function Tracking() {
           <Form
             layout="inline"
             form={form}
-            onFinish={(values: any) => {}}
+            onFinish={(values: any) => {
+              queryTraceList({
+                ...values,
+                pageIndex: 1,
+                pageSize: 20,
+              });
+            }}
             onReset={() => {
               form.resetFields();
               // queryNgData({
@@ -160,32 +185,38 @@ export default function Tracking() {
               // });
             }}
           >
-            <Form.Item label="应用" name="application">
-              <Select
-                value={appID}
-                options={applicationList}
-                onChange={(value) => {
-                  setAppID(value);
-                }}
-                showSearch
-                style={{ width: 160 }}
-              />
-            </Form.Item>
-            <Form.Item label="实例" name="ngInstName">
-              <Select
-                options={instanceList}
-                // onChange={(value) => {
-                //   console.log
-                //   // setInstanceList(value);
-                // }}
-                showSearch
-                style={{ width: 160 }}
-              />
-            </Form.Item>
-            <Form.Item label="端点：" name="">
-              <Input placeholder="请输入端点信息" style={{ width: 160 }}></Input>
-            </Form.Item>
-            <Form.Item label="traceID：" name="">
+            {expand && (
+              <Form.Item label="应用" name="application">
+                <Select
+                  value={appID}
+                  options={applicationList}
+                  onChange={(value) => {
+                    setAppID(value);
+                  }}
+                  showSearch
+                  style={{ width: 160 }}
+                />
+              </Form.Item>
+            )}
+            {expand && (
+              <Form.Item label="实例" name="instanceCode">
+                <Select
+                  options={instanceList}
+                  // onChange={(value) => {
+                  //   console.log
+                  //   // setInstanceList(value);
+                  // }}
+                  showSearch
+                  style={{ width: 160 }}
+                />
+              </Form.Item>
+            )}
+            {expand && (
+              <Form.Item label="端点：" name="endpoint">
+                <Input placeholder="请输入端点信息" style={{ width: 160 }}></Input>
+              </Form.Item>
+            )}
+            <Form.Item label="traceID：" name="traceID">
               <Input placeholder="请输入traceID" style={{ width: 180 }}></Input>
             </Form.Item>
             <Form.Item>
@@ -198,11 +229,20 @@ export default function Tracking() {
                 重置
               </Button>
             </Form.Item>
+            <Button
+              type="link"
+              onClick={() => {
+                setIsExpand(!expand);
+              }}
+            >
+              {btnMessage?.label}
+              <span style={{ marginLeft: '3px' }}>{btnMessage?.icon}</span>
+            </Button>
           </Form>
         </div>
 
         {/* 右边详情展示部分 */}
-        <div style={{ height: '100%' }} className="detail-main">
+        <div className="detail-main">
           <ResizablePro
             leftComp={<LeftList listData={listData}></LeftList>}
             rightComp={<RrightTrace></RrightTrace>}

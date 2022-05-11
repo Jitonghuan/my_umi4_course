@@ -821,13 +821,13 @@ export default [
         component: '@/pages/trafficmap/tracking',
         hideInMenu: process.env.BUILD_ENV === 'prod',
       },
-      {
-        path: 'tracking-detail',
-        name: '追踪详情',
-        key: 'trafficmap-detail',
-        component: '@/pages/trafficmap/tracking/trace-detail',
-        hideInMenu: true,
-      },
+      // {
+      //   path: 'tracking-detail',
+      //   name: '追踪详情',
+      //   key: 'trafficmap-detail',
+      //   component: '@/pages/trafficmap/tracking/trace-detail',
+      //   hideInMenu: true,
+      // },
       {
         path: 'domain-config',
         name: '配置域',
