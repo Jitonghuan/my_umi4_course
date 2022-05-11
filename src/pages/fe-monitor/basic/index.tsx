@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Select, Tabs } from 'antd';
 import { history } from 'umi';
 import BasicOverview from './components/overview';
@@ -14,6 +14,8 @@ const { TabPane } = Tabs;
 
 let defaultEnvCode = appConfig.BUILD_ENV === 'prod' ? 'hbos-test' : 'g3a-test';
 defaultEnvCode = appConfig.IS_Matrix === 'public' ? defaultEnvCode : '';
+
+const ENV_LIST = envList[appConfig.envType] || envList.default;
 
 const BasicFeMonitor = () => {
   const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '');
@@ -31,7 +33,7 @@ const BasicFeMonitor = () => {
     }
   }, []);
 
-  const renderActiveCon = useMemo(() => {
+  const renderActiveCon = () => {
     const param = {
       feEnv,
       envCode,
@@ -50,23 +52,23 @@ const BasicFeMonitor = () => {
       case '4':
         return <BasicApi {...param} />;
     }
-  }, [activeKey, envCode, feEnv]);
+  };
 
   return (
     <div className="basic-fe-monitor-wrapper">
       <div className="app-group-tab-wrapper">
-        {appConfig.IS_Matrix === 'public' && (
+        {appConfig.IS_Matrix === 'public' || appConfig.envType === 'fygs' ? (
           <div className="env-select-wrapper">
             <span>域名：</span>
             <Select value={feEnv} clearIcon={false} style={{ width: '120px' }} onChange={setFeEnv}>
-              {envList.map((item) => (
+              {ENV_LIST.map((item: any) => (
                 <Select.Option value={item.key} key={item.key}>
                   {item.name}
                 </Select.Option>
               ))}
             </Select>
           </div>
-        )}
+        ) : null}
         <Select
           value={activeKey}
           showSearch
@@ -112,7 +114,7 @@ const BasicFeMonitor = () => {
           <TabPane tab="性能分析" key="3" />
           <TabPane tab="API分析" key="4" />
         </Tabs>
-        <div className="app-group-content">{renderActiveCon}</div>
+        <div className="app-group-content">{renderActiveCon()}</div>
       </div>
     </div>
   );

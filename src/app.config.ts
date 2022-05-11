@@ -73,6 +73,7 @@ export default {
   menuIconUrl: '//at.alicdn.com/t/font_2040858_koauyaochzp.js',
 
   isLocal: IS_LOCAL,
+  envType,
   // 当前环境
   BUILD_ENV,
   // apex 地址

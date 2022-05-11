@@ -58,17 +58,32 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
       return;
     }
     const res = await getErrorChart(getParam());
-    const data = res?.data || [];
+    const data: any = res?.data || {};
 
     let newData = [];
     if (data.jsErrorCount && data.userErrorCount) {
       newData.push(['日期', '错误数', '影响用户数']);
-      let len = Math.max(data.jsErrorCount.length, data.userErrorCount.length) || 0;
-      for (let i = 0; i < len; i++) {
+
+      let arrTimes: any[] = [];
+      for (const item of data.jsErrorCount) {
+        if (!arrTimes.find((val) => val === item[0])) {
+          arrTimes.push(item[0]);
+        }
+      }
+
+      for (const item of data.userErrorCount) {
+        if (!arrTimes.find((val) => val === item[0])) {
+          arrTimes.push(item[0]);
+        }
+      }
+
+      for (let i = 0; i < arrTimes.length; i++) {
+        let jsError = data.jsErrorCount.find((val: any) => val[0] === arrTimes[i]);
+        let userError = data.userErrorCount.find((val: any) => val[0] === arrTimes[i]);
         newData.push([
-          data.jsErrorCount[i][0] || data.userErrorCount[i][0],
-          data.jsErrorCount[i][1] || 0,
-          data.userErrorCount[i][1] || 0,
+          moment(arrTimes[i]).format('YYYY-MM-DD HH:mm'),
+          jsError ? jsError[1] : 0,
+          userError ? userError[1] : 0,
         ]);
       }
     }
@@ -78,6 +93,9 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
 
   // 错误列表
   async function onErrorList() {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     const res = await getErrorList(getParam());
     const data = res?.data || [];
@@ -139,6 +157,9 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
         },
         secondTitle: {
           isShow: false,
+        },
+        xAxis: {
+          labelInterval: 2,
         },
         yAxis: {
           name: '个',

@@ -48,13 +48,24 @@ const BasicOverview = ({ appGroup, envCode, feEnv }: IProps) => {
     let data = [];
     if (res?.data) {
       data.push(['日期', 'PV', 'UV']);
-      let len = Math.max(res.data.pv.length, res.data.uv.length) || 0;
-      for (let i = 0; i < len; i++) {
-        data.push([
-          res.data.pv[i][0] || res.data.uv[i][0],
-          res.data.pv[i] ? res.data.pv[i][1] : 0,
-          res.data.uv[i] ? res.data.uv[i][1] : 0,
-        ]);
+
+      let arrTimes: any[] = [];
+      for (const item of res.data.pv) {
+        if (!arrTimes.find((val) => val === item[0])) {
+          arrTimes.push(item[0]);
+        }
+      }
+
+      for (const item of res.data.uv) {
+        if (!arrTimes.find((val) => val === item[0])) {
+          arrTimes.push(item[0]);
+        }
+      }
+
+      for (let i = 0; i < arrTimes.length; i++) {
+        let pv = res.data.pv.find((val: any) => val[0] === arrTimes[i]);
+        let uv = res.data.uv.find((val: any) => val[0] === arrTimes[i]);
+        data.push([moment(arrTimes[i]).format('YYYY-MM-DD HH:mm'), pv ? pv[1] : 0, uv ? uv[1] : 0]);
       }
     }
     chart.data(data);
@@ -82,6 +93,9 @@ const BasicOverview = ({ appGroup, envCode, feEnv }: IProps) => {
         },
         yAxis: {
           name: '',
+        },
+        xAxis: {
+          labelInterval: 2,
         },
         line: {
           isCustomColor: true,
