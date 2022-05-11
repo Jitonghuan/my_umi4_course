@@ -16,7 +16,7 @@ let defaultEnvCode = appConfig.BUILD_ENV === 'prod' ? 'hbos-test' : 'g3a-test';
 defaultEnvCode = appConfig.IS_Matrix === 'public' ? defaultEnvCode : '';
 
 const BasicFeMonitor = () => {
-  const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '1');
+  const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '');
   const [feEnv, setFeEnv] = useState<string>('*');
   const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || '1');
   const [envCode, setEnvCode] = useState(defaultEnvCode);
@@ -40,7 +40,7 @@ const BasicFeMonitor = () => {
     if (!envCode) {
       return;
     }
-    switch (activeKey) {
+    switch (tabKey) {
       case '1':
         return <BasicOverview {...param} />;
       case '2':
@@ -112,7 +112,7 @@ const BasicFeMonitor = () => {
           <TabPane tab="性能分析" key="3" />
           <TabPane tab="API分析" key="4" />
         </Tabs>
-        <div className="app-group-content">{}</div>
+        <div className="app-group-content">{renderActiveCon}</div>
       </div>
     </div>
   );
