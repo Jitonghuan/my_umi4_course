@@ -1,11 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2022-03-07 01:01:37
- * @LastEditTime: 2022-03-07 14:11:26
- * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
- */
 import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
@@ -15,7 +7,7 @@ export interface DetailProps {
   currentTab: string;
   curProductLine: string;
   dataSource: any;
-  queryComponentList: (tabActiveKey: any, curProductLine: string) => any;
+  queryComponentList: (tabActiveKey: any, curProductLine?: string) => any;
   tableLoading: boolean;
 }
 export default function VersionDetail(props: DetailProps) {
@@ -26,7 +18,11 @@ export default function VersionDetail(props: DetailProps) {
     if (!currentTab || !curProductLine) {
       return;
     }
-    queryComponentList(currentTab, curProductLine);
+    if (currentTab === 'app') {
+      queryComponentList(currentTab, curProductLine);
+    } else {
+      queryComponentList(currentTab);
+    }
   }, [currentTab, curProductLine]);
   const columns = [
     {

@@ -69,7 +69,7 @@ export function useQueryComponentList(): [
   any,
   (
     componentType: string,
-    productLine: string,
+    productLine?: string,
     componentName?: string,
     pageIndex?: number,
     pageSize?: number,
@@ -84,7 +84,7 @@ export function useQueryComponentList(): [
   });
   const queryComponentList = async (
     componentType: string,
-    productLine: string,
+    productLine?: string,
     componentName?: string,
     pageIndex?: number,
     pageSize?: number,

@@ -226,6 +226,7 @@ export default (props: VersionDetailProps) => {
           {currentTabType === 'app' && (
             <Button
               type="primary"
+              disabled={isEditable}
               icon={<PlusOutlined />}
               style={{ marginRight: 12 }}
               onClick={() => setBatchAddMode('ADD')}

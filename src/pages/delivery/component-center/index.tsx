@@ -73,7 +73,9 @@ export default function VersionDetail() {
     setCurProductLine(value);
   };
   useEffect(() => {
-    getProductlineList();
+    if (tabActiveKey === 'app') {
+      getProductlineList();
+    }
   }, []);
 
   return (
@@ -93,7 +95,7 @@ export default function VersionDetail() {
           visable={basicDataModalVisiable}
           tabActiveKey={tabActiveKey}
           curProductLine={curProductLine}
-          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey, curProductLine)}
+          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
             setBasicDataModalVisiable(false);
           }}
@@ -102,7 +104,7 @@ export default function VersionDetail() {
           visable={middlewareModalVisibale}
           tabActiveKey={tabActiveKey}
           curProductLine={curProductLine}
-          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey, curProductLine)}
+          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
           onClose={() => {
             setMiddlewareModalVisibale(false);
           }}
@@ -119,15 +121,18 @@ export default function VersionDetail() {
                 <div className="tab-right-extra" style={{ display: 'flex', alignItems: 'center' }}>
                   <span style={{ marginRight: 10 }}>
                     <Form form={productLineForm} layout="inline">
-                      <Form.Item name="productLine" label="切换产品线">
-                        <Select
-                          style={{ width: 160 }}
-                          defaultValue={curProductLine || ''}
-                          options={productLineOptions || []}
-                          onChange={getCurProductLine}
-                          loading={selectLoading}
-                        />
-                      </Form.Item>
+                      {tabActiveKey === 'app' && (
+                        <Form.Item name="productLine" label="切换产品线">
+                          <Select
+                            style={{ width: 160 }}
+                            defaultValue={curProductLine || ''}
+                            options={productLineOptions || []}
+                            onChange={getCurProductLine}
+                            loading={selectLoading}
+                          />
+                        </Form.Item>
+                      )}
+
                       <span>
                         {tabActiveKey !== 'middleware' && (
                           <Button

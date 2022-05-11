@@ -230,7 +230,7 @@ export default (props: VersionDetailProps) => {
         <div className="caption-right">
           <Button
             type="primary"
-            disabled={isEditable}
+            // disabled={isEditable}
             onClick={() => {
               setType('add');
               actionRef.current?.addEditRecord?.({
