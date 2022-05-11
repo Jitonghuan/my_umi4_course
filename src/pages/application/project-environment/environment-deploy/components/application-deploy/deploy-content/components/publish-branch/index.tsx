@@ -47,7 +47,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch, masterBranchChange, pipelineCode } =
     publishBranchProps;
   const { appData } = useContext(DetailContext);
-  const { metadata } = deployInfo || {};
+  const { metadata, branchInfo } = deployInfo || {};
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
 
@@ -56,7 +56,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
-  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const selectRef = useRef(null) as any;
@@ -168,10 +168,12 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     if (masterListData.length !== 0) {
       const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
-      const initValue = option.find((item: any) => item.label === 'master');
-      setSelectMaster(initValue?.value || '');
+      if (branchInfo?.masterBranch) {
+        const initValue = option.find((item: any) => item.label === branchInfo?.masterBranch);
+        setSelectMaster(initValue?.value);
+      }
     }
-  }, [masterListData]);
+  }, [masterListData, branchInfo?.masterBranch]);
 
   const handleChange = (v: any) => {
     selectRef?.current?.blur();
