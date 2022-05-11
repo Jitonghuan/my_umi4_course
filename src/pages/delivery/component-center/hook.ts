@@ -331,14 +331,21 @@ export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
 export function useGetVersionCheck(): [
   boolean,
   boolean,
-  (componentVersion: string, productLine: string) => Promise<void>,
+  (componentName: string, componentType: string, componentVersion: string, productLine: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const [rightInfo, setRightInfo] = useState<boolean>(false);
-  const getVersionCheck = async (componentVersion: string, productLine: string) => {
+  const getVersionCheck = async (
+    componentName: string,
+    componentType: string,
+    componentVersion: string,
+    productLine: string,
+  ) => {
     setLoading(true);
     try {
-      await getRequest(`${APIS.getVersionCheck}?componentVersion=${componentVersion}&productLine=${productLine}`)
+      await getRequest(
+        `${APIS.getVersionCheck}?componentName=${componentName}&componentType=${componentType}&componentVersion=${componentVersion}&productLine=${productLine}`,
+      )
         .then((res) => {
           if (res.success) {
             message.success(res.data);

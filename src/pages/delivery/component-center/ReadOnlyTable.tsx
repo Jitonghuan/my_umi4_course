@@ -72,7 +72,7 @@ export default function VersionDetail(props: DetailProps) {
               });
             }}
           >
-            详情
+            管理
           </a>
           <Popconfirm
             title="确定要删除吗？"

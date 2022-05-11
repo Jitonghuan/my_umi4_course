@@ -34,11 +34,18 @@ export default function BasicModal(props: DetailProps) {
         });
     });
   };
-  const getCheck = async (componentVersion: string, productLine: string) => {
+  const getCheck = async (
+    componentName: string,
+    componentType: string,
+    componentVersion: string,
+    productLine: string,
+  ) => {
     setLoading(true);
     setType('begin');
     try {
-      await getRequest(`${getVersionCheck}?componentVersion=${componentVersion}&productLine=${productLine}`)
+      await getRequest(
+        `${getVersionCheck}?componentName=${componentName}&componentType=${componentType}&componentVersion=${componentVersion}&productLine=${productLine}`,
+      )
         .then((res) => {
           if (res.success) {
             // message.success(res.data);
@@ -60,8 +67,8 @@ export default function BasicModal(props: DetailProps) {
   };
   const onVersionChange = (value: any) => {
     let formData = form.getFieldsValue();
-    console.log('value', formData.componentVersion);
-    getCheck(formData.componentVersion, curProductLine);
+    // console.log('value', formData.componentVersion);
+    getCheck(formData.componentName, tabActiveKey, formData.componentVersion, curProductLine);
   };
   useEffect(() => {
     queryEnvData();
