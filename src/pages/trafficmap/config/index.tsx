@@ -17,7 +17,7 @@ export default function DomainConfigs() {
   const [activeTab, setActiveTab] = useState<string>('domain');
   const tabConfig = [
     { label: '配置域', key: 'domain' },
-    { label: '降噪处理', key: 'noise' },
+    { label: '降噪配置', key: 'noise' },
   ];
 
   return (

@@ -503,210 +503,6 @@ export default [
       },
     ],
   },
-  {
-    path: 'test',
-    name: '测试管理',
-    icon: 'icon-poc_mining',
-    hideInMenu: true,
-    routes: [
-      {
-        path: 'data-factory',
-        name: '数据工厂',
-        key: 'data-factory',
-        component: '@/pages/test/data-factory/index',
-        routes: [
-          {
-            path: 'records',
-            name: '数据列表',
-            key: 'data-factory',
-            component: '@/pages/test/data-factory/data-list',
-            hideInMenu: true,
-          },
-          {
-            path: 'add',
-            name: '新增数据',
-            key: 'data-factory',
-            hideInMenu: true,
-            component: '@/pages/test/data-factory/create-data',
-          },
-          {
-            path: 'template',
-            name: '数据模板',
-            key: 'data-factory',
-            component: '@/pages/test/data-factory/template',
-            hideInMenu: true,
-          },
-        ],
-      },
-      {
-        path: 'qualityControl',
-        name: '质量控制',
-        key: 'qualityControl',
-        component: '@/pages/test/quality-control',
-        exact: true,
-      },
-      {
-        path: 'qualityControl/unitTest',
-        name: '单测覆盖检测',
-        key: 'qualityControl',
-        hideInMenu: true,
-        component: '@/pages/test/quality-control/unit-test',
-      },
-      {
-        path: 'qualityControl/codeQuality',
-        name: '代码质量检测',
-        key: 'qualityControl',
-        hideInMenu: true,
-        component: '@/pages/test/quality-control/code-quality',
-      },
-      {
-        path: 'environment',
-        name: '环境管理',
-        key: 'environment',
-        component: '@/pages/test/environment',
-        exact: true,
-      },
-      {
-        path: 'scripts',
-        name: '脚本管理',
-        key: 'scripts',
-        component: '@/pages/test/scripts/index',
-        routes: [
-          {
-            path: 'functions',
-            name: '函数管理',
-            key: 'scripts',
-            component: '@/pages/test/scripts/functions',
-          },
-          {
-            path: 'sqls',
-            name: 'SQL管理',
-            key: 'scripts',
-            component: '@/pages/test/scripts/sqls',
-          },
-        ],
-      },
-      {
-        path: 'autotest',
-        name: '自动化测试',
-        key: 'autotest',
-        component: '@/pages/test/autotest/index',
-        routes: [
-          {
-            path: 'dashboard',
-            name: '看板统计',
-            key: 'autotest',
-            component: '@/pages/test/autotest/dashboard',
-            hideInMenu: true,
-          },
-          {
-            path: 'test-cases',
-            name: '用例管理',
-            key: 'autotest',
-            component: '@/pages/test/autotest/test-cases',
-            hideInMenu: true,
-          },
-          {
-            path: 'scenes',
-            name: '场景管理',
-            key: 'autotest',
-            component: '@/pages/test/autotest/scene-manager',
-            hideInMenu: true,
-          },
-          {
-            path: 'tasks',
-            name: '任务管理',
-            key: 'autotest',
-            component: '@/pages/test/autotest/task-manager',
-            hideInMenu: true,
-          },
-        ],
-      },
-      {
-        path: 'workspace',
-        name: '测试工作台',
-        key: 'test-workspace',
-        routes: [
-          {
-            path: 'test-case-library',
-            name: '测试用例库',
-            key: 'test-workspace',
-            component: '@/pages/test/workspace/test-case-library',
-          },
-          {
-            path: 'test-case',
-            name: '测试用例库详情',
-            key: 'test-workspace',
-            component: '@/pages/test/workspace/test-case',
-            hideInMenu: true,
-          },
-          {
-            path: 'case-info',
-            name: '测试用例详情',
-            key: 'test-workspace',
-            component: '@/pages/test/workspace/case-info',
-            hideInMenu: true,
-          },
-          {
-            path: 'bug-manage',
-            name: 'Bug管理',
-            key: 'test-workspace',
-            component: '@/pages/test/workspace/bug-manage',
-          },
-          {
-            path: 'test-plan',
-            name: '测试计划',
-            key: 'test-workspace',
-            component: '@/pages/test/workspace/test-plan',
-          },
-          {
-            path: 'plan-info',
-            name: '计划详情',
-            key: 'test-workspace',
-            component: '@/pages/test/workspace/plan-info',
-            hideInMenu: true,
-          },
-        ],
-      },
-      {
-        path: 'quality-control-new',
-        name: '质量控制（新）',
-        key: 'quality-control-new',
-        routes: [
-          {
-            path: 'overview',
-            name: '质量看板',
-            key: 'quality-control-new',
-            component: '@/pages/test/quality-control-new/overview',
-          },
-          {
-            path: 'task-list',
-            name: '任务列表',
-            key: 'quality-control-new',
-            component: '@/pages/test/quality-control-new/task-list',
-          },
-          {
-            path: 'quality-scoring-rules',
-            name: '质量分规则',
-            key: 'quality-control-new',
-            component: '@/pages/test/quality-control-new/quality-scoring-rules',
-          },
-          {
-            path: 'global-control-point-rules',
-            name: '全局卡点规则',
-            key: 'quality-control-new',
-            component: '@/pages/test/quality-control-new/global-control-point-rules',
-          },
-          {
-            path: 'app-control-point-rules',
-            name: '应用卡点规则',
-            key: 'quality-control-new',
-            component: '@/pages/test/quality-control-new/app-control-point-rules',
-          },
-        ],
-      },
-    ],
-  },
 
   {
     path: 'monitor',
@@ -771,6 +567,11 @@ export default [
         name: '报警历史',
         component: '@/pages/monitor/history',
       },
+      {
+        path: 'fe-monitor',
+        name: '前端监控',
+        component: '@/pages/fe-monitor/basic/index',
+      },
     ],
   },
   {
@@ -821,41 +622,13 @@ export default [
         component: '@/pages/trafficmap/tracking',
         hideInMenu: process.env.BUILD_ENV === 'prod',
       },
-      // {
-      //   path: 'tracking-detail',
-      //   name: '追踪详情',
-      //   key: 'trafficmap-detail',
-      //   component: '@/pages/trafficmap/tracking/trace-detail',
-      //   hideInMenu: true,
-      // },
       {
-        path: 'domain-config',
-        name: '配置域',
+        // path: 'domain-config',
+        path: 'config',
+        name: '配置',
         key: 'trafficmap-domainconfig',
-        component: '@/pages/trafficmap/domain-config',
+        component: '@/pages/trafficmap/config',
       },
-      // {
-      //   path: 'domain',
-      //   name: '域and降噪',
-      //   key: 'domain-noise',
-      //   component: '@/pages/trafficmap/domain-config/component/domain-config',
-      //   hideInMenu: true,
-      //   routes:[
-      //     {
-      //       path: 'domain',
-      //       name: '域配置',
-      //       key: 'domain-noise',
-      //       hideInMenu: true,
-      //       component: '@/pages/trafficmap/domain-config/component/domain-config',
-      //     },{
-      //       path: 'noise',
-      //       name: '降噪处理',
-      //       key: 'domain-noise',
-      //       hideInMenu: true,
-      //       component: '@/pages/trafficmap/domain-config/component/noise-reduction',
-      //     }
-      //   ]
-      // }
     ],
   },
   {
