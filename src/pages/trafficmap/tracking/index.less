@@ -1,25 +1,49 @@
-.tracking-page {
-  background-color: #d2d8e6;
-  .tag-card {
-    width: 100%;
-    border: 1px solid #d2d8e6;
-    border-top: none;
-    background-color: #fff;
-    height: 40px;
-    padding: 10px 24px;
-    margin-top: -12px;
-    margin-bottom: 12px;
-  }
-  .tracking-table-header {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 16px;
+.trace-detail {
+  height: 100%;
+}
 
-    h3 {
+.trace-detail-page {
+  .detail-top {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .detail-main {
+    display: flex;
+    padding-top: 10px;
+    border-top: 1px solid #c6c3c3;
+  }
+
+  .ant-card-body {
+    height: 100%;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+
+    .detail-main {
       flex: 1;
-      line-height: 32px;
-      font-size: 16px;
-      margin-bottom: 0;
+      overflow: auto;
     }
+  }
+
+  .ant-divider-horizontal {
+    margin: 10px 0;
+  }
+
+  .page-resizable .resizable-right,
+  .trace-wrapper {
+    height: 100%;
+  }
+
+  .trace-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .trace-display {
+    flex: 1;
+
+    overflow: auto;
+    padding-bottom: 20px;
   }
 }

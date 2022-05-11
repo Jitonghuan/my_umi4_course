@@ -1,0 +1,100 @@
+// 左边的list样式
+//右边的追踪图样式
+.trace-wrapper {
+  &-title {
+    margin-right: 10px;
+    // width: 200px;
+    display: flex;
+
+    span {
+      margin-left: 15px;
+      background-color: #c5c0c0;
+      color: white;
+      padding: 5px;
+    }
+  }
+
+  .span-item {
+    display: inline-block;
+
+    &.leaf::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #3e8fe2;
+      margin: 0px 8px;
+      align-self: center;
+    }
+
+    .span-title {
+      margin-right: 10px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .span-detail {
+      // display: none;
+      color: #999;
+      white-space: nowrap;
+    }
+  }
+
+  .span-icon {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4e59d3;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .ant-tree .ant-tree-treenode {
+    // padding: 0 0 10px 0;
+  }
+
+  .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected,
+  .ant-tree .ant-tree-node-content-wrapper:hover {
+    background: initial;
+  }
+
+  .span-item {
+    width: 90%;
+    display: flex;
+  }
+
+  .ant-progress-outer {
+    float: right;
+    width: 50vw;
+  }
+
+  .ant-tree-list-holder-inner {
+    line-height: 33px;
+  }
+}
+
+.trace-wrapper-top {
+  line-height: 28px;
+
+  .top-select-btn {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .top-final {
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .top-trace-btn {
+    background-color: #137eec;
+    color: white;
+    padding: 0px 4px;
+    border-radius: 2px;
+    margin-right: 10px;
+  }
+}
