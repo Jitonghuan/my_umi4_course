@@ -50,7 +50,11 @@ const BasicOverview = ({ appGroup, envCode, feEnv }: IProps) => {
       data.push(['日期', 'PV', 'UV']);
       let len = Math.max(res.data.pv.length, res.data.uv.length) || 0;
       for (let i = 0; i < len; i++) {
-        data.push([res.data.pv[i][0] || res.data.uv[i][0], res.data.pv[i][1] || 0, res.data.uv[i][1] || 0]);
+        data.push([
+          res.data.pv[i][0] || res.data.uv[i][0],
+          res.data.pv[i] ? res.data.pv[i][1] : 0,
+          res.data.uv[i] ? res.data.uv[i][1] : 0,
+        ]);
       }
     }
     chart.data(data);

@@ -74,7 +74,7 @@ const BasicFeMonitor = () => {
             // @ts-ignore
             return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
           }}
-          style={{ width: '200px' }}
+          style={{ width: '200px', marginLeft: '10px' }}
           onChange={(val) => {
             setActiveKey(val);
             history.replace({
