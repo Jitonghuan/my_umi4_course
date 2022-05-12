@@ -49,7 +49,7 @@ export default function BasicModal(props: DetailProps) {
           if (res.success) {
             // message.success(res.data);
             setRightInfo(true);
-            setType('sucess');
+            setType('success');
           } else {
             setRightInfo(false);
             setType('error');
@@ -148,7 +148,7 @@ export default function BasicModal(props: DetailProps) {
           hasFeedback
           validateTrigger="onBlur"
           validateStatus={
-            rightInfo && !loading && type === 'sucess'
+            rightInfo && !loading && type === 'success'
               ? 'success'
               : !rightInfo && !loading && type === 'begin'
               ? 'validating'

@@ -153,13 +153,14 @@ export function useAddApplication(): [
   }) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.addApplication}?productLine=${paramsObj.productLine}`, {
+      await postRequest(`${APIS.addApplication}`, {
         data: {
           componentName: paramsObj.componentName,
           componentVersion: paramsObj.componentVersion,
           componentType: paramsObj.componentType,
           // componentDescription: paramsObj.componentDescription,
           componentSourceEnv: paramsObj.componentSourceEnv,
+          productLine: paramsObj.productLine,
         },
       })
         .then((res) => {
