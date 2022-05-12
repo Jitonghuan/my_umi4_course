@@ -17,6 +17,9 @@ import {
   appFeProjectTypeOptions,
   appMicroFeTypeOptions,
   deployJobUrlOptions,
+  feTypeOptions,
+  singleFeTypeOptions,
+  microFeTypeOptions,
 } from './common';
 import { AppItemVO } from '../../interfaces';
 import { useFeMicroMainProjectOptions } from './hooks';
@@ -331,7 +334,7 @@ export default function ApplicationEditor(props: IProps) {
                 </FormItem>
                 <FormItem noStyle shouldUpdate={shouldUpdate(['projectType', 'microFeType'])}>
                   {({ getFieldValue }) =>
-                    getFieldValue('projectType') === 'micro' && (
+                    getFieldValue('projectType') === 'micro' ? (
                       <>
                         <FormItem
                           label="微前端类型"
@@ -341,6 +344,25 @@ export default function ApplicationEditor(props: IProps) {
                         >
                           <Radio.Group options={appMicroFeTypeOptions} />
                         </FormItem>
+                        {getFieldValue('microFeType') === appMicroFeTypeOptions[0].value ? (
+                          <FormItem
+                            label="前端类型"
+                            name="feType"
+                            rules={[{ required: true, message: '请选择前端类型' }]}
+                            initialValue={singleFeTypeOptions[0].value}
+                          >
+                            <Radio.Group options={singleFeTypeOptions} />
+                          </FormItem>
+                        ) : (
+                          <FormItem
+                            label="前端类型"
+                            name="feType"
+                            rules={[{ required: true, message: '请选择前端类型' }]}
+                            initialValue={microFeTypeOptions[0].value}
+                          >
+                            <Radio.Group options={microFeTypeOptions} />
+                          </FormItem>
+                        )}
                         {getFieldValue('microFeType') === appMicroFeTypeOptions[0].value ? (
                           // 主应用
                           <FormItem
@@ -390,9 +412,19 @@ export default function ApplicationEditor(props: IProps) {
                           </FormItem>
                         )}
                       </>
+                    ) : (
+                      <FormItem
+                        label="前端类型"
+                        name="feType"
+                        rules={[{ required: true, message: '请选择前端类型' }]}
+                        initialValue={singleFeTypeOptions[0].value}
+                      >
+                        <Radio.Group options={singleFeTypeOptions} />
+                      </FormItem>
                     )
                   }
                 </FormItem>
+
                 <FormItem
                   label="构建任务类型"
                   name="deployJobUrl"
