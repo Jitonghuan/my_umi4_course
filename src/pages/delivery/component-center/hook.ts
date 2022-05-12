@@ -314,10 +314,17 @@ export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
         .then((res) => {
           if (res?.success) {
             let data = res.data;
-            const option = data?.map((item: any) => ({
-              label: item.categoryCode || '',
-              value: item.categoryCode || '',
-            }));
+            let option: any = [];
+            data?.map((item: any) => {
+              option.push({
+                label: item.categoryCode || '',
+                value: item.categoryCode || '',
+              });
+            });
+            //  data?.map((item: any) => ({
+            //     label: item.categoryCode || '',
+            //     value: item.categoryCode || '',
+            //   }));
             setDataSource(option);
           } else {
             setDataSource([]);

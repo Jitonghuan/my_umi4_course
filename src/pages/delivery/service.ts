@@ -9,6 +9,10 @@ import { addAPIPrefix } from '@/utils';
 export const envList = addAPIPrefix('/appManage/env/list');
 
 /* 一、产品 */
+/*  GET  根据产品线获取版本 */
+export const getProductlineVersion = addAPIPrefix('/deliveryManage/component/productline/version');
+/* GET 获取应用组件 */
+export const applist = addAPIPrefix('/deliveryManage/component/productline/version/applist');
 /* POST  创建产品 */
 export const createProduct = addAPIPrefix('/deliveryManage/product/create');
 /* POST  删除产品 */

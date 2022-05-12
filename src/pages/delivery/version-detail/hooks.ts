@@ -581,35 +581,104 @@ export function useDeleteDeliveryParam(): [boolean, (id: number) => Promise<void
   return [loading, deleteDeliveryParam];
 }
 
-// 获取参数来源组件
-// export function useQueryOriginList() {
-//   const [loading, setLoading] = useState<boolean>(false);
-//   const [dataSource, setDataSource] = useState<any>({});
-//   const queryOriginList = async (versionId: number) => {
-//     setLoading(true);
-//     await getRequest(APIS.queryOriginList, { data: { versionId } })
-//       .then((res) => {
-//         if (res?.success) {
-//           let dataSource = res.data.dataSource;
-//           let options: any = [];
-//           dataSource?.map((item: any) => {
-//             // options[item.componentName] = {
-//             //   text: item.componentName,
-//             // };
-//             options.push({
-//               label: item.componentName,
-//               value: item.componentName,
-//             });
-//           });
-//           setDataSource(options);
-//         } else {
-//           return;
-//         }
-//       })
-//       .finally(() => {
-//         setLoading(false);
-//       });
-//   };
+// 获取应用版本
+export function useGetProductlineVersion() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const getProductlineVersion = async (productLine: string) => {
+    setLoading(true);
+    await getRequest(APIS.getProductlineVersion, { data: { productLine } })
+      .then((res) => {
+        if (res?.success) {
+          let dataSource = res.data || [];
+          let options: any = [];
+          dataSource?.map((item: any) => {
+            options.push({
+              label: item,
+              value: item,
+            });
+          });
+          console.log('options', options);
+          setDataSource(options);
+        } else {
+          setDataSource([]);
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
-//   return [loading, dataSource, queryOriginList];
-// }
+  return [loading, dataSource, getProductlineVersion];
+}
+
+// 获取应用
+export function useGetAppList() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const queryAppList = async (param: { productLine: string; componentVersion: string }) => {
+    setLoading(true);
+    await getRequest(APIS.applist, { data: param })
+      .then((res) => {
+        if (res?.success) {
+          let dataSource = res.data || [];
+          let options: any = [];
+          dataSource?.map((item: any, index: number) => {
+            options.push({
+              title: item,
+              key: index,
+            });
+          });
+          setDataSource(options);
+        } else {
+          setDataSource([]);
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, dataSource, queryAppList];
+}
+
+//批量添加应用
+export function useBulkadd(): [
+  boolean,
+  (paramsObj: {
+    versionId: number;
+    componentName: string;
+    componentVersion: string;
+    productLine: string;
+  }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const saveBulkadd = async (paramsObj: {
+    versionId: number;
+    componentName: string;
+    componentVersion: string;
+    productLine: string;
+  }) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.bulkadd, {
+        data: paramsObj,
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success('保存成功！');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, saveBulkadd];
+}

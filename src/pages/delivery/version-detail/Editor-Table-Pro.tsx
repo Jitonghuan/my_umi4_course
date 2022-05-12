@@ -52,6 +52,7 @@ export default (props: VersionDetailProps) => {
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
   const [form] = Form.useForm();
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
+  const [curProductLine, setCurProductLine] = useState<string>('');
 
   const updateRow = (rowKey: string, row: any) => {
     form.setFieldsValue({ [rowKey]: row });
@@ -62,6 +63,7 @@ export default (props: VersionDetailProps) => {
     // queryProductVersionOptions(currentTabType); //组件版本查询
     queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
+
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: currentTabType === 'app' ? '应用名称' : currentTabType === 'middleware' ? '中间件名称' : '基础数据名称',
@@ -143,26 +145,6 @@ export default (props: VersionDetailProps) => {
         return <Input></Input>;
       },
     },
-    {
-      title: '产品线',
-      key: 'productline',
-      dataIndex: 'productline',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
-      },
-      renderFormItem: (_, config: any, data) => {
-        return <Select options={productLineOptions}></Select>;
-      },
-    },
 
     {
       title: '操作',
@@ -182,6 +164,7 @@ export default (props: VersionDetailProps) => {
                 componentId: record.id,
                 componentType: currentTab,
                 componentDescription: record.componentDescription,
+                optType: 'versionDetail',
               },
             });
           }}
@@ -205,6 +188,7 @@ export default (props: VersionDetailProps) => {
       ],
     },
   ];
+
   const search = () => {
     const value = searchForm.getFieldsValue();
     queryVersionComponentList(versionId, currentTab, value.componentName);
@@ -213,9 +197,12 @@ export default (props: VersionDetailProps) => {
     <>
       <BatchDraw
         mode={batchAddMode}
+        versionId={versionId}
         onClose={() => setBatchAddMode('HIDE')}
         onSave={() => {
+          queryVersionComponentList(versionId, currentTab);
           setBatchAddMode('HIDE');
+          searchForm.resetFields();
         }}
       />
       <div className="table-caption-application">
@@ -254,22 +241,24 @@ export default (props: VersionDetailProps) => {
               style={{ marginRight: 12 }}
               onClick={() => setBatchAddMode('ADD')}
             >
-              批量添加应用
+              添加应用
             </Button>
           )}
 
-          <Button
-            type="primary"
-            disabled={isEditable}
-            onClick={() => {
-              actionRef.current?.addEditRecord?.({
-                id: (Math.random() * 1000000).toFixed(0),
-              });
-            }}
-            icon={<PlusOutlined />}
-          >
-            {productionPageTypes[currentTab].text}
-          </Button>
+          {currentTabType !== 'app' && (
+            <Button
+              type="primary"
+              disabled={isEditable}
+              onClick={() => {
+                actionRef.current?.addEditRecord?.({
+                  id: (Math.random() * 1000000).toFixed(0),
+                });
+              }}
+              icon={<PlusOutlined />}
+            >
+              {productionPageTypes[currentTab].text}
+            </Button>
+          )}
         </div>
       </div>
       <EditableProTable<DataSourceType>

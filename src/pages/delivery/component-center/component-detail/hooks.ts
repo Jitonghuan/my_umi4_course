@@ -126,35 +126,35 @@ export function useUpdateDescription(): [
   boolean,
   (componentInfo: {
     id: number;
-    componentName: string;
-    componentVersion: string;
-    componentType: string;
+    // componentName: string;
+    // componentVersion: string;
+    // componentType: string;
     componentDescription: string;
-    componentUrl: string;
-    componentSourceEnv: string;
-    componentExplanation: string;
-    componentConfiguration: string;
-    createUser: string;
-    modifyUser: string;
-    gmtCreate: string;
-    gmtModify: string;
+    // componentUrl: string;
+    // componentSourceEnv: string;
+    // componentExplanation: string;
+    // componentConfiguration: string;
+    // createUser: string;
+    // modifyUser: string;
+    // gmtCreate: string;
+    // gmtModify: string;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const updateDescription = async (componentInfo: {
     id: number;
-    componentName: string;
-    componentVersion: string;
-    componentType: string;
+    // componentName: string;
+    // componentVersion: string;
+    // componentType: string;
     componentDescription: string;
-    componentUrl: string;
-    componentSourceEnv: string;
-    componentExplanation: string;
-    componentConfiguration: string;
-    createUser: string;
-    modifyUser: string;
-    gmtCreate: string;
-    gmtModify: string;
+    // componentUrl: string;
+    // componentSourceEnv: string;
+    // componentExplanation: string;
+    // componentConfiguration: string;
+    // createUser: string;
+    // modifyUser: string;
+    // gmtCreate: string;
+    // gmtModify: string;
   }) => {
     setLoading(true);
     try {
@@ -178,12 +178,12 @@ export function useUpdateDescription(): [
 
 //组件配置更新
 
-export function useUpdateConfiguration(): [boolean, (componentConfiguration: string) => Promise<void>] {
+export function useUpdateConfiguration(): [boolean, (id: number, componentConfiguration: string) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const updateConfiguration = async (componentConfiguration: string) => {
+  const updateConfiguration = async (id: number, componentConfiguration: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.updateConfiguration, { data: { componentConfiguration } })
+      await postRequest(APIS.updateConfiguration, { data: { id, componentConfiguration } })
         .then((res) => {
           if (res.success) {
             message.success(res.data);

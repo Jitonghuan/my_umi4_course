@@ -23,14 +23,17 @@ export default function BasicModal(props: DetailProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [rightInfo, setRightInfo] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
   // const [checkLoading,rightInfo, getVersionCheck]=useGetVersionCheck();
   useEffect(() => {
     if (Object.keys(initData || {})?.length !== 0) {
       form.setFieldsValue({ ...initData, componentVersion: curVersion });
+      setIsDisabled(true);
     }
     return () => {
       setType('');
       form.resetFields();
+      setIsDisabled(false);
     };
   }, [visable]);
   const getCheck = async (
@@ -106,15 +109,19 @@ export default function BasicModal(props: DetailProps) {
     },
   };
   const handleSubmit = () => {
-    form.validateFields().then((params) => {
-      addBasicdata({ ...params, componentType: tabActiveKey, filePath })
-        .then(() => {
-          queryComponentList({ componentType: tabActiveKey, ...queryParams });
-        })
-        .then(() => {
-          onClose();
-        });
-    });
+    if (type === 'success') {
+      form.validateFields().then((params) => {
+        addBasicdata({ ...params, componentType: tabActiveKey, filePath })
+          .then(() => {
+            queryComponentList({ componentType: tabActiveKey, ...queryParams });
+          })
+          .then(() => {
+            onClose();
+          });
+      });
+    } else {
+      message.warning('请通过版本号校验再提交！');
+    }
   };
   return (
     <Modal
@@ -140,7 +147,7 @@ export default function BasicModal(props: DetailProps) {
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
         <Form.Item label="名称" name="componentName" rules={[{ required: true, message: '请填写名称' }]}>
-          <Input style={{ width: 320 }}></Input>
+          <Input style={{ width: 320 }} disabled={isDisabled}></Input>
         </Form.Item>
         <Form.Item
           label="基础数据版本"
@@ -178,7 +185,7 @@ export default function BasicModal(props: DetailProps) {
           name="componentDescription"
           rules={[{ required: true, message: '请填写描述！' }]}
         >
-          <Input.TextArea style={{ width: 320 }}></Input.TextArea>
+          <Input.TextArea style={{ width: 320 }} disabled={isDisabled}></Input.TextArea>
         </Form.Item>
       </Form>
     </Modal>

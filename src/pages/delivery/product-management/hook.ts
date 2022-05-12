@@ -239,7 +239,7 @@ export function useCreatePackageInde(): [boolean, (id: number) => Promise<void>]
           if (res.success) {
             message.success(res.data);
           } else {
-            message.error('编辑失败！');
+            message.error('出包失败！');
             return;
           }
         })
@@ -284,7 +284,12 @@ export function useEditIndentConfigYaml(): [boolean, (id: number, indentConfigYa
   const editIndentConfigYaml = async (id: number, indentConfigYaml: string) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.editIndentConfig}?id=${id}&indentConfigYaml=${indentConfigYaml}`)
+      await postRequest(APIS.editIndentConfig, {
+        data: {
+          id,
+          indentConfigYaml,
+        },
+      })
         .then((res) => {
           if (res.success) {
             message.success(res.data);

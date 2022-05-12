@@ -32,20 +32,32 @@ export default function BasicModal(props: DetailProps) {
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
   const [loading, setLoading] = useState<boolean>(false);
   const [rightInfo, setRightInfo] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
   // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [form] = Form.useForm();
   const handleSubmit = () => {
     // const params = form.getFieldsValue();
-    form.validateFields().then((params) => {
-      addApplication({ ...params, componentType: tabActiveKey })
-        .then(() => {
-          queryComponentList({ componentType: tabActiveKey, ...queryParams });
-        })
-        .then(() => {
-          onClose();
-        });
-    });
+    if (type === 'success') {
+      form.validateFields().then((params) => {
+        console.log('params', params);
+        let componentName;
+        if (!Array.isArray(params.componentName)) {
+          componentName = [params.componentName];
+        } else {
+          componentName = params.componentName;
+        }
+        addApplication({ ...params, componentName, componentType: tabActiveKey })
+          .then(() => {
+            queryComponentList({ componentType: tabActiveKey, ...queryParams });
+          })
+          .then(() => {
+            onClose();
+          });
+      });
+    } else {
+      message.warning('请通过版本号校验再提交！');
+    }
   };
   const getCheck = async (
     componentName: string,
@@ -80,24 +92,27 @@ export default function BasicModal(props: DetailProps) {
   };
   const onVersionChange = (value: any) => {
     let formData = form.getFieldsValue();
-    console.log('valformDataue', formData);
-    console.log('value', value);
     getCheck(formData.componentName, tabActiveKey, formData.componentVersion, formData.productLine);
   };
   useEffect(() => {
     if (Object.keys(initData || {})?.length !== 0) {
       form.setFieldsValue({ ...initData, componentVersion: curVersion });
+      if (tabActiveKey === 'app') {
+        getApplicationOption(initData.componentSourceEnv);
+      }
+
+      setIsDisabled(true);
     }
     queryEnvData();
     return () => {
       form.resetFields();
       setType('');
+      setIsDisabled(false);
     };
   }, [visable]);
   const getEnvCode = (value: string) => {
     getApplicationOption(value);
   };
-  console.log('type', type);
 
   return (
     <Modal
@@ -123,13 +138,13 @@ export default function BasicModal(props: DetailProps) {
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
         <Form.Item label="环境" name="componentSourceEnv" rules={[{ required: true, message: '请选择环境' }]}>
-          <Select style={{ width: 320 }} options={envDataSource} onChange={getEnvCode}></Select>
+          <Select style={{ width: 320 }} options={envDataSource} onChange={getEnvCode} disabled={isDisabled}></Select>
         </Form.Item>
         <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
-          <Select style={{ width: 320 }} options={productLineOptions || []}></Select>
+          <Select style={{ width: 320 }} options={productLineOptions || []} disabled={isDisabled}></Select>
         </Form.Item>
         <Form.Item label="组件名称" name="componentName" rules={[{ required: true, message: '请选择组件名称' }]}>
-          <Select style={{ width: 320 }} mode="multiple" options={applicationOptions}></Select>
+          <Select style={{ width: 320 }} mode="multiple" options={applicationOptions} disabled={isDisabled}></Select>
         </Form.Item>
         <Form.Item
           label="组件版本"

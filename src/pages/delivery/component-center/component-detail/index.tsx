@@ -30,8 +30,16 @@ import { useQueryComponentVersionList, useUpdateDescription, useUpdateConfigurat
 
 import './index.less';
 export default function ComponentDetail() {
-  const { initRecord, componentName, componentVersion, componentDescription, componentType, activeTab, type }: any =
-    history.location.state;
+  const {
+    initRecord,
+    componentName,
+    componentVersion,
+    componentDescription,
+    componentType,
+    activeTab,
+    type,
+    optType,
+  }: any = history.location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
   const [configForm] = Form.useForm();
@@ -46,7 +54,7 @@ export default function ComponentDetail() {
   const [loading, setLoading] = useState(false);
   const [versionOptions, setVersionOptions] = useState<any>([]);
   const [showVersionModal, setShowVersionModal] = useState<boolean>(false);
-  const [curVersion, setCurVersion] = useState<string>('');
+  const [curVersion, setCurVersion] = useState<any>({});
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
@@ -59,7 +67,7 @@ export default function ComponentDetail() {
       if (res.success) {
         message.success(res.data);
         getComponentVersionList(initRecord.id);
-        queryComponentInfo(componentName, versionOptions[0]?.value, componentType);
+        queryComponentInfo(componentName, curVersion?.version, componentType, curVersion.componentId);
       } else {
         return;
       }
@@ -79,9 +87,16 @@ export default function ComponentDetail() {
               value: item.componentVersion,
               id: item.id,
               createUser: item.createUser,
+              componentId: item.componentId,
             }));
             setVersionOptions(option);
-            setCurVersion(option[0]?.value);
+            if (optType && optType !== 'versionDetail') {
+              queryComponentInfo(componentName, option[0]?.value, componentType, option[0]?.componentId);
+            }
+            setCurVersion({
+              version: option[0]?.value,
+              componentId: option[0]?.componentId,
+            });
           } else {
             return [];
           }
@@ -94,11 +109,16 @@ export default function ComponentDetail() {
     }
   };
   //查询组件配置详情
-  const queryComponentInfo = async (componentName: string, componentVersion: string, componentType: string) => {
+  const queryComponentInfo = async (
+    componentName: string,
+    componentVersion: string,
+    componentType: string,
+    componentId: number,
+  ) => {
     setInfoLoading(true);
     try {
       await getRequest(queryComponentInfoApi, {
-        data: { componentName, componentVersion, componentType },
+        data: { componentName, componentVersion, componentType, componentId },
       })
         .then((res) => {
           if (res.success) {
@@ -122,22 +142,27 @@ export default function ComponentDetail() {
   useEffect(() => {
     if (componentVersion && componentName) {
       getComponentVersionList(initRecord.id);
-      queryComponentInfo(componentName, componentVersion, componentType);
+      queryComponentInfo(componentName, componentVersion, componentType, initRecord.componentId);
 
-      setCurVersion(componentVersion);
+      setCurVersion({
+        version: componentVersion,
+        componentId: initRecord.componentId,
+      });
     } else {
       getComponentVersionList(initRecord.id);
-      queryComponentInfo(componentName, versionOptions[0]?.value, componentType);
     }
   }, [componentName, componentVersion]);
 
-  const changeVersion = (value: string) => {
-    setCurVersion(value);
-    queryComponentInfo(componentName, value, componentType);
+  const changeVersion = (versionInfo: any) => {
+    setCurVersion({
+      version: versionInfo.value,
+      componentId: versionInfo.componentId,
+    });
+    queryComponentInfo(componentName, versionInfo.value, componentType, versionInfo.componentId);
   };
   const saveConfig = () => {
     const configuration = configForm.getFieldsValue();
-    updateConfiguration(configuration.config);
+    updateConfiguration(componentInfo.id, configuration.config);
     setReadOnly(true);
     setButtonText('编辑');
   };
@@ -183,22 +208,24 @@ export default function ComponentDetail() {
         productLineOptions={productLineOptions || []}
         tabActiveKey={componentType}
         curProductLine={initRecord.productLine}
-        curVersion={curVersion}
+        curVersion={curVersion.version}
         initData={initRecord || {}}
         queryComponentList={({ componentType: componentType }) => queryComponentList({ componentType: componentType })}
         onClose={() => {
           setUserModalVisiable(false);
+          getComponentVersionList(initRecord.id);
         }}
       />
       <BasicDataModal
         visable={basicDataModalVisiable}
         tabActiveKey={componentType}
         curProductLine={initRecord.productLine}
-        curVersion={curVersion}
+        curVersion={curVersion.version}
         initData={initRecord || {}}
         queryComponentList={({ componentType: componentType }) => queryComponentList({ componentType: componentType })}
         onClose={() => {
           setBasicDataModalVisiable(false);
+          getComponentVersionList(initRecord.id);
         }}
       />
 
@@ -209,8 +236,9 @@ export default function ComponentDetail() {
             <Select
               style={{ width: 220, marginLeft: 20 }}
               loading={loading}
+              labelInValue
               options={versionOptions}
-              value={curVersion}
+              value={curVersion.version}
               onChange={changeVersion}
             ></Select>
             <span>
@@ -266,7 +294,7 @@ export default function ComponentDetail() {
                     <Paragraph
                       editable={{
                         onChange: (componentDescription: string) => {
-                          updateDescription({ ...componentInfo, componentDescription }).then(() => {
+                          updateDescription({ id: componentInfo.id, componentDescription }).then(() => {
                             setEditableStr(componentDescription);
                           });
                         },
@@ -308,22 +336,21 @@ export default function ComponentDetail() {
           <TabPane tab="组件配置" key="component-config">
             <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 2 }}>
               <p>
-                {type !== 'componentCenter' && (
-                  <Button
-                    type={buttonText === '编辑' ? 'primary' : 'default'}
-                    onClick={() => {
-                      if (readOnly) {
-                        setReadOnly(false);
-                        setButtonText('取消编辑');
-                      } else {
-                        setReadOnly(true);
-                        setButtonText('编辑');
-                      }
-                    }}
-                  >
-                    {buttonText}
-                  </Button>
-                )}
+                <Button
+                  type={buttonText === '编辑' ? 'primary' : 'default'}
+                  disabled={type === 'componentCenter'}
+                  onClick={() => {
+                    if (readOnly) {
+                      setReadOnly(false);
+                      setButtonText('取消编辑');
+                    } else {
+                      setReadOnly(true);
+                      setButtonText('编辑');
+                    }
+                  }}
+                >
+                  {buttonText}
+                </Button>
               </p>
             </div>
             <div>

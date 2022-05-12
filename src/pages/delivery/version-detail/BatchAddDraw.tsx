@@ -10,50 +10,73 @@ import { useState, useEffect } from 'react';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { useQueryProductlineList } from '../component-center/hook';
-import { Drawer, Input, Button, Form, Tree, Row, Col, Select, Space, message, Divider } from 'antd';
+import { Drawer, Input, Button, Form, Tree, Spin, Col, Select, Space, message, Divider } from 'antd';
+import { useGetProductlineVersion, useGetAppList, useBulkadd } from './hooks';
+import './index.less';
 export interface AppComponentProps {
   mode: EditorMode;
+  versionId: number;
   initData?: any;
   onClose?: () => any;
-  onSave?: () => any;
+  onSave: () => any;
 }
 
 export default function TmplEditor(props: AppComponentProps) {
   const [addForm] = Form.useForm();
-  const { mode, initData, onClose, onSave } = props;
+  const { mode, initData, onClose, onSave, versionId } = props;
   const [isDisabled, setIsdisabled] = useState<boolean>(false);
-  const [editDisabled, setEditDisabled] = useState<boolean>(false);
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
+  const [versionLoading, versionOptions, getProductlineVersion] = useGetProductlineVersion();
+  const [appListLoading, appOptions, queryAppList] = useGetAppList();
+  const [selectedKeys, setSelectedKeys] = useState<any>([]);
+  const [saveLoading, saveBulkadd] = useBulkadd();
+  const [curComponentName, setCurComponentName] = useState<any>([]);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
     getProductlineList();
     return () => {
       setIsdisabled(false);
-      setEditDisabled(false);
+      addForm.resetFields();
     };
   }, [mode]);
   const handleSubmit = () => {
-    const param = addForm.getFieldsValue();
+    const params = addForm.getFieldsValue();
+    saveBulkadd({ ...params, componentName: curComponentName, versionId }).then(() => {
+      onSave();
+    });
   };
-  const treeData = [
-    {
-      title: 'parent 1',
-      key: '0-0',
-    },
-    {
-      title: 'parent 2',
-      key: '0-1',
-    },
-    {
-      title: 'parent 3',
-      key: '0-2',
-    },
-    {
-      title: 'parent 4',
-      key: '0-3',
-    },
-  ];
+  const changeProductLine = (value: string) => {
+    getProductlineVersion(value);
+  };
+  const changeVersion = () => {
+    let params = addForm.getFieldsValue();
+    queryAppList({ ...params });
+  };
+
+  const onCheck = (checkedKeys: React.Key[], info: any) => {
+    let nameArry: any = [];
+
+    info.checkedNodes?.map((item: any) => {
+      nameArry.push(item.title);
+    });
+    setSelectedKeys(checkedKeys);
+    setCurComponentName(nameArry);
+  };
+  const allCheck = () => {
+    let arry: any = [];
+    let nameArry: any = [];
+    appOptions.map((item: any) => {
+      arry.push(item.key);
+      nameArry.push(item.title);
+    });
+    setCurComponentName(nameArry);
+    setSelectedKeys(arry);
+  };
+  const unAllCheck = () => {
+    setSelectedKeys([]);
+    setCurComponentName([]);
+  };
 
   return (
     <Drawer
@@ -64,7 +87,7 @@ export default function TmplEditor(props: AppComponentProps) {
       width={'50%'}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" disabled={isDisabled} onClick={handleSubmit}>
+          <Button type="primary" disabled={isDisabled} loading={saveLoading} onClick={handleSubmit}>
             保存
           </Button>
           <Button type="default" onClick={onClose}>
@@ -75,25 +98,52 @@ export default function TmplEditor(props: AppComponentProps) {
     >
       {/* <ContentCard className="tmpl-edits"> */}
       <Form layout="horizontal" form={addForm} labelCol={{ flex: '100px' }}>
-        <Form.Item label="产品线" name="productionLine">
-          <Select style={{ width: 300 }} options={productLineOptions} loading={selectLoading}></Select>
+        <Form.Item label="产品线" name="productLine">
+          <Select
+            style={{ width: 300 }}
+            options={productLineOptions || []}
+            loading={selectLoading}
+            onChange={changeProductLine}
+            allowClear
+            showSearch
+          ></Select>
         </Form.Item>
-        <Form.Item label="添加应用版本" name="addVersion">
-          <Select style={{ width: 300 }}></Select>
+        <Form.Item label="添加应用版本" name="componentVersion">
+          <Select
+            style={{ width: 300 }}
+            options={versionOptions || []}
+            loading={versionLoading}
+            allowClear
+            showSearch
+            onChange={changeVersion}
+          ></Select>
         </Form.Item>
       </Form>
       <Divider />
-      <p>应用列表</p>
-      <Tree
-        checkable
-        defaultExpandedKeys={['0-0-0', '0-0-1']}
-        defaultSelectedKeys={['0-0-0', '0-0-1']}
-        defaultCheckedKeys={['0-0-0', '0-0-1']}
-        //   onSelect={onSelect}
-        //   onCheck={onCheck}
-        treeData={treeData}
-      />
-      {/* </ContentCard> */}
+      <p>
+        应用列表
+        {appOptions.length > 0 && (
+          <Space style={{ marginLeft: 12 }}>
+            <Button size="small" type="primary" onClick={allCheck}>
+              全选
+            </Button>
+            <Button size="small" onClick={unAllCheck}>
+              全不选
+            </Button>
+          </Space>
+        )}
+      </p>
+
+      <Spin spinning={appListLoading}>
+        <Tree
+          checkable
+          rootClassName="app-list-tree"
+          checkedKeys={selectedKeys}
+          onCheck={onCheck}
+          height={500}
+          treeData={appOptions}
+        />
+      </Spin>
     </Drawer>
   );
 }
