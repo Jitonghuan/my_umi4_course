@@ -1,10 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tag, Tooltip, Pagination, Empty } from 'antd';
 import './index.less';
 
 export default function LeftList(props: any) {
   const [activeItem, setActiveItem] = useState<any>();
-  const { listData } = props;
+  const { listData, changeItem } = props;
+
+  useEffect(() => {
+    if (listData.lenght !== 0) {
+      setActiveItem(listData[0]);
+    }
+  }, [listData]);
+
+  useEffect(() => {
+    changeItem(activeItem);
+  }, [activeItem]);
+
   return listData.length !== 0 ? (
     <div className="left-list-wrapper">
       {listData?.map((item: any) => (

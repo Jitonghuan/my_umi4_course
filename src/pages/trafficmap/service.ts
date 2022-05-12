@@ -124,7 +124,8 @@ export const getTraceInfo = (data: any) => {
 
 // 降噪-新增降噪配置
 export const addNoise = (data: any) => {
-  const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/create');
+  const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/noiseReduction/create';
+  // const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/create');
   return postRequest(url, { data: data });
 };
 
@@ -137,7 +138,8 @@ export const getNoiseList = (data: any) => {
 
 // 降噪-更新降噪配置
 export const updataNoise = (data: any) => {
-  const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/update');
+  const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/noiseReduction/update';
+  // const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/update');
   return putRequest(url, { data: data });
 };
 

@@ -10,7 +10,6 @@ import { useEnvOptions } from '../../../hooks';
 
 export interface IProps {
     mode?: EditorMode;
-    // initData?: record;
     initData: any;
     onClose?: () => any;
     onSave?: () => any;
@@ -23,8 +22,10 @@ export default function addEnvData(props: IProps) {
     const [envOptions]: any[][] = useEnvOptions();
     useEffect(() => {
         if (mode === 'HIDE') return;
-        form.resetFields();
-        if (mode === 'VIEW') {
+        if (mode === 'ADD') {
+            form.resetFields();
+        }
+        if (mode === 'EDIT') {
             setIsDisabled(true);
         } else {
             setIsDisabled(false);
@@ -32,17 +33,17 @@ export default function addEnvData(props: IProps) {
         if (initData) {
             form.setFieldsValue({
                 ...initData,
-                value: initData.templateContext,
             });
         }
     }, [mode]);
 
     const handleSubmit = async () => {
-        if (mode === 'ADD') {
-
-        } else if (mode === 'EDIT') {
-
-        };
+        const values = await form.validateFields();
+        const res = await (mode === 'ADD' ? addNoise({ ...values }) : updataNoise({ ...values }));
+        if (res && res.success) {
+            message.success(`${mode === 'ADD' ? '新增' : '编辑'}成功`)
+            onSave?.();
+        }
     }
     return (
         <Drawer
@@ -52,7 +53,7 @@ export default function addEnvData(props: IProps) {
             onClose={onClose}
             width={'40%'}
             footer={
-                isDisabled !== true && (
+                (
                     <div className="drawer-footer">
                         <Button type="default" onClick={onClose}>取消</Button>
                         <Button type="primary" onClick={handleSubmit}>保存</Button>
@@ -65,31 +66,29 @@ export default function addEnvData(props: IProps) {
                     form={form}
                     labelCol={{ flex: '120px' }}
                     onFinish={handleSubmit}
-                    onReset={() => {
-                        form.resetFields();
-                    }}
                 >
                     <Form.Item label="所属环境：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
                         <Select
                             options={envOptions}
                             showSearch
-                            style={{ width: 140 }}
+                            style={{ width: 180 }}
+                            disabled={isDisabled}
                         />
                     </Form.Item>
 
                     <Form.Item label="降噪配置名称：" name="noiseReductionName" rules={[{ required: true, message: '这是必填项' }]}>
-                        <Input style={{ width: 230 }} placeholder="请输入降噪名称" disabled={isDisabled}></Input>
+                        <Input style={{ width: 230 }} placeholder="请输入降噪名称" ></Input>
                     </Form.Item>
 
                     <Form.Item label="降噪组件：" name="noiseReductionComponents" rules={[{ required: true, message: '这是必填项' }]}>
-                        <Input style={{ width: 230 }} placeholder="请输入降噪组件" disabled={isDisabled}></Input>
+                        <Input style={{ width: 230 }} placeholder="请输入降噪组件" ></Input>
                     </Form.Item>
 
                     <Form.Item label="降噪措施：" name="noiseReductionMeasure" rules={[{ required: true, message: '这是必填项' }]}>
-                        <Input style={{ width: 230 }} placeholder="请输入降噪措施" disabled={isDisabled}></Input>
+                        <Input style={{ width: 230 }} placeholder="请输入降噪措施"></Input>
                     </Form.Item>
 
-                    <Form.Item label="是否启用：" name="isEnable" >
+                    <Form.Item label="是否启用：" name="isEnable" rules={[{ required: true, message: '这是必选项' }]}>
                         <Radio.Group>
                             <Radio value={1}>启用</Radio>
                             <Radio value={0}>禁用</Radio>

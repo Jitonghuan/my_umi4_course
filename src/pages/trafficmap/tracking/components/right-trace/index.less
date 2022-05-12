@@ -15,7 +15,8 @@
   }
 
   .span-item {
-    display: inline-block;
+    display: flex;
+    justify-content: space-between;
 
     &.leaf::before {
       content: '';
@@ -64,11 +65,21 @@
   .span-item {
     width: 90%;
     display: flex;
+
+    &-wrapper {
+      width: 100%;
+      justify-content: space-between;
+      display: flex;
+    }
+  }
+
+  .ant-progress-line {
+    width: 30%;
   }
 
   .ant-progress-outer {
-    float: right;
-    width: 50vw;
+    // float: right;
+    width: 100%;
   }
 
   .ant-tree-list-holder-inner {

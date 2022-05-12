@@ -1,24 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Select, Input, Button, Table, Popconfirm } from 'antd';
+import { Form, Select, Input, Button, Table, Popconfirm, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import appConfig from '@/app.config';
 import { delRequest } from '@/utils/request';
 import './index.less';
 import AddNoise from './add-noise';
+import { getNoiseList } from '../../../service';
 
 export default function NoiseReduction() {
   const [noiseList, setNoiseList] = useState<any[]>([]);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageSize, setPageSize] = useState<number>(20);
+  const [form] = Form.useForm();
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [noiseDrawer, setNoiseDrawer] = useState<EditorMode>('HIDE');
-  const [initData, setInitData] = useState([])
+  const [initData, setInitData] = useState<any>({})
 
-  // 启用-禁用
-  const handleOperate = (record: any) => {
+  useEffect(() => {
+    queryNoiseList({ pageIndex, pageSize });
+  }, [])
 
-  }
   const columns = [
     {
       title: 'ID',
@@ -41,6 +43,14 @@ export default function NoiseReduction() {
       key: 'noiseReductionComponents',
     },
     {
+      title: '状态',
+      dataIndex: 'isEnable',
+      key: 'isEnable',
+      render: (text: string, record: any) => {
+        return record?.isEnable ? <Tag color="green">已启用</Tag> : <Tag color="red">已禁用</Tag>
+      }
+    },
+    {
       title: '操作',
       dataIndex: '',
       key: 'action',
@@ -59,7 +69,7 @@ export default function NoiseReduction() {
                 {record.isEnable ? '禁用' : '启用'}
               </Button>
             </Popconfirm>
-            <Button type="link">
+            <Button type="link" onClick={() => { setInitData(record); setNoiseDrawer('EDIT') }}>
               编辑
             </Button>
             <Popconfirm
@@ -77,17 +87,43 @@ export default function NoiseReduction() {
       },
     },
   ];
-  const onSearch = () => { };
+
+  // 获取列表数据
+  const queryNoiseList = (params: any) => {
+    const value = form.getFieldsValue();
+    setLoading(true)
+    try {
+      getNoiseList({ ...params, ...value }).then((res) => {
+        if (res) {
+          setNoiseList(res?.data?.dataSource)
+          setTotal(res?.data?.pageInfo?.total)
+        }
+      })
+    } catch (error) {
+      setNoiseList([])
+      setTotal(0)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const pageSizeClick = (pagination: any) => {
+    setPageIndex(pagination.current);
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    queryNoiseList(obj);
+  }
 
   const handleDeleteNoise = async (id: number) => {
-    await delRequest(`${appConfig.apiPrefix}/trafficMap/tracing/noiseReduction/delete/${id}`);
-    // loadListData({
-    //   pageIndex: 1,
-    //   pageSize: 20,
-    // });
+    const res = await delRequest(`${appConfig.apiPrefix}/trafficMap/tracing/noiseReduction/delete/${id}`);
+    if (res?.success) {
+      queryNoiseList({ pageIndex: 1, pageSize: 20 })
+    }
   };
   //   启用禁用
-  const handleConfig = (data: any) => { };
+  const handleOperate = (data: any) => { };
   return (
     <div className="noise-reduciton">
       <AddNoise
@@ -95,17 +131,19 @@ export default function NoiseReduction() {
         initData={initData}
         onSave={() => {
           setNoiseDrawer('HIDE');
-
+          queryNoiseList({ pageIndex, pageSize })
         }}
         onClose={() => {
           setNoiseDrawer('HIDE');
         }}></AddNoise>
       <Form
         layout="inline"
-        onFinish={onSearch}
-      // onReset={() => {
-      //   requestRegionList();
-      // }}
+        onFinish={() => { queryNoiseList({ pageIndex: 1, pageSize: 20 }) }}
+        form={form}
+        onReset={() => {
+          form.resetFields();
+          queryNoiseList({ pageIndex: 1, pageSize: 20 })
+        }}
       >
         <Form.Item label="降噪名称" name="regionName">
           <Input />
@@ -133,6 +171,7 @@ export default function NoiseReduction() {
           ghost
           onClick={() => {
             setNoiseDrawer('ADD')
+            setInitData(undefined);
           }}
         >
           <PlusOutlined />
@@ -155,9 +194,9 @@ export default function NoiseReduction() {
           },
           showTotal: () => `总共 ${total} 条数据`,
         }}
+        onChange={pageSizeClick}
       />
-      {/* </ContentCard> */}
-      {/* <CreateRegionDrawer ref={createRegionRef} requestRegionList={requestRegionList} envOptions={envOptions} /> */}
+
     </div>
   );
 }

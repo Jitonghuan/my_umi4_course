@@ -5,93 +5,133 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import LeftList from './components/left-list';
 import RrightTrace from './components/right-trace';
-import { Form, Select, Button, DatePicker, message, Switch, Divider, Input } from 'antd';
+import { Form, Select, Button, DatePicker, message, Switch, Divider, Input, Spin, Empty } from 'antd';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import { getApplicationList, getInstance, getTrace } from '../service';
+import { getApplicationList, getInstance, getTrace, getTraceInfo } from '../service';
 const { RangePicker } = DatePicker;
 import { useEnvOptions } from '../hooks';
 import './index.less';
 
 const mockData = [
   {
-    traceID: 'hbos-dtc1/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 1,
-    duration: '91',
-    time: '2022-05-09 15:28:23',
+    traceId: 'hahah',
+    spanId: 1,
+    parentSpanId: 0,
+    endpointName: 'homepage-level1',
+    startTime: '2022-5-12 23:12:12',
+    durations: '890',
   },
   {
-    traceID: 'hbos-dtc2/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 2,
-    duration: '92',
-    time: '2022-05-09 15:28:23',
+    traceId: 'lalla',
+    spanId: 2,
+    parentSpanId: 1,
+    endpointName: 'homepage-level2',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
   },
   {
-    traceID: 'hbos-dtc3/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 3,
-    duration: '95',
-    time: '2022-05-09 15:28:23',
+    traceId: 'xixix',
+    spanId: 3,
+    parentSpanId: 1,
+    endpointName: 'homepage-level2',
+    startTime: '2022-5-12 23:12:12',
+    durations: '200',
   },
   {
-    traceID: 'hbos-dtc4/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 4,
-    duration: '97',
-    time: '2022-05-09 15:28:23',
+    traceId: 'memme',
+    spanId: 4,
+    parentSpanId: 1,
+    endpointName: 'homepage-level2',
+    startTime: '2022-5-12 23:12:12',
+    durations: '300',
   },
   {
-    traceID: 'hbos-dtc5/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 5,
-    duration: '98',
-    time: '2022-05-09 15:28:23',
+    traceId: 'hhah',
+    spanId: 5,
+    parentSpanId: 2,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '400',
   },
   {
-    traceID: 'hbos-dtc6/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 6,
-    duration: '95',
-    time: '2022-05-09 15:28:23',
+    traceId: 'sopring',
+    spanId: 6,
+    parentSpanId: 2,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '500',
   },
   {
-    traceID: 'hbos-dtc7/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 7,
-    duration: '95',
-    time: '2022-05-09 15:28:23',
+    traceId: '1weljfdf',
+    spanId: 7,
+    parentSpanId: 2,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '234',
   },
   {
-    traceID: 'hbos-dtc8/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 8,
-    duration: '95',
-    time: '2022-05-09 15:28:23',
+    traceId: 'asfv',
+    spanId: 8,
+    parentSpanId: 3,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '23',
   },
   {
-    traceID: 'hbos-dtc9/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 9,
-    duration: '95',
-    time: '2022-05-09 15:28:23',
+    traceId: 'lgsd',
+    spanId: 9,
+    parentSpanId: 3,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '89',
   },
   {
-    traceID: 'hbos-dtc10/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 10,
-    duration: '95',
-    time: '2022-05-09 15:28:23',
+    traceId: 'glnb',
+    spanId: 10,
+    parentSpanId: 4,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '672',
   },
   {
-    traceID: 'hbos-dtc11/com.c2f.hbos.dtsfa.client.heacthoasdfjsdljfldsfldsjfld',
-    id: 11,
-    duration: '95',
-    time: '2022-05-09 15:28:23',
+    traceId: 'lfsd',
+    spanId: 11,
+    parentSpanId: 4,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '235',
+  },
+  {
+    traceId: '1sfsdf',
+    spanId: 12,
+    parentSpanId: 4,
+    endpointName: 'homepage-level3',
+    startTime: '2022-5-12 23:12:12',
+    durations: '234',
+  },
+  {
+    traceId: '1fasdf',
+    spanId: 13,
+    parentSpanId: 5,
+    endpointName: 'homepage-level4',
+    startTime: '2022-5-12 23:12:12',
+    durations: '672',
   },
 ];
 export default function Tracking() {
   // const [envOptions, setEnvOptions] = useState([]);
-  const [listData, setListData] = useState([]);
+  const [listData, setListData] = useState([]); //左侧list数据
+  const [rightData, setRightData] = useState<any>([]); //右侧渲染图的数据
   const [form] = Form.useForm();
   const [selectEnv, setSelectEnv] = useState('');
   const [appID, setAppID] = useState('');
-  const [selectTime, setSelectTime] = useState(moment().subtract(2, 'minutes'));
+  const [selectTime, setSelectTime] = useState<moment.Moment[]>();
   const [applicationList, setApplicationList] = useState([]);
   const [instanceList, setInstanceList] = useState([]);
   const [envOptions]: any[][] = useEnvOptions();
-  const [loading, setLoading] = useState<boolean>(false);
   const [expand, setIsExpand] = useState<boolean>(false);
+  const [currentItem, setCurrentItem] = useState<any>({});
+  const [spinning, setSpinning] = useState<boolean>(false);
 
   const btnMessageList = [
     { expand: true, label: '收起更多', icon: <CaretUpOutlined /> },
@@ -103,6 +143,16 @@ export default function Tracking() {
   useEffect(() => {
     setSelectEnv(envOptions[0]?.value);
   }, [envOptions]);
+
+  useEffect(() => {
+    queryTraceList({ pageIndex: 1, pageSize: 20 });
+  }, [selectTime, selectEnv]);
+
+  useEffect(() => {
+    // getTraceInfo({traceID:currentItem?.traceID}).then((res)=>{
+    // })
+    setRightData(listToTree(mockData));
+  }, [currentItem]);
 
   useEffect(() => {
     if (selectEnv) {
@@ -134,13 +184,44 @@ export default function Tracking() {
     }
   }, [appID]);
 
+  // 获取左侧list数据
   const queryTraceList = (params: any) => {
-    setLoading(true);
-    getTrace({ ...params }).then((res) => {
-      if (res) {
-        setListData(res?.data?.traces);
+    setSpinning(true);
+    const values = form.getFieldsValue();
+    getTrace({ ...params, ...values, envCode: selectEnv })
+      .then((res) => {
+        if (res) {
+          setListData(res?.data?.traces);
+        }
+      })
+      .finally(() => {
+        setSpinning(false);
+      });
+  };
+
+  const leftItemChange = (value: any) => {
+    setCurrentItem(value);
+  };
+
+  // 处理数据 将list转化成tree格式
+  const listToTree = (list: any) => {
+    let map: any = {},
+      node,
+      roots = [];
+    for (let i = 0; i < list.length; i++) {
+      map[list[i].spanId] = i; // 初始化map
+      list[i].children = []; // 初始化children
+      list[i].key = list[i].spanId;
+    }
+    for (let j = 0; j < list.length; j++) {
+      node = list[j];
+      if (node.parentSpanId !== 0) {
+        list[map[node.parentSpanId]]?.children.push(node);
+      } else {
+        roots.push(node);
       }
-    });
+    }
+    return roots;
   };
 
   const timeChange = () => {};
@@ -162,7 +243,13 @@ export default function Tracking() {
           </div>
           <div>
             时间范围：
-            <RangePicker showTime onChange={(v) => {}} />
+            <RangePicker
+              showTime
+              value={selectTime as any}
+              onChange={(v: any) => {
+                setSelectTime(v);
+              }}
+            />
           </div>
         </div>
         <Divider />
@@ -172,7 +259,6 @@ export default function Tracking() {
             form={form}
             onFinish={(values: any) => {
               queryTraceList({
-                ...values,
                 pageIndex: 1,
                 pageSize: 20,
               });
@@ -243,11 +329,20 @@ export default function Tracking() {
 
         {/* 右边详情展示部分 */}
         <div className="detail-main">
+          {/* <Spin spinning={spinning} > */}
+
           <ResizablePro
-            leftComp={<LeftList listData={listData}></LeftList>}
-            rightComp={<RrightTrace></RrightTrace>}
+            leftComp={<LeftList listData={listData} changeItem={leftItemChange} />}
+            rightComp={
+              listData.length !== 0 ? (
+                <RrightTrace item={currentItem} data={rightData} />
+              ) : (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%', overflow: 'hidden' }} />
+              )
+            }
             leftWidth={400}
           ></ResizablePro>
+          {/* </Spin> */}
         </div>
       </ContentCard>
     </PageContainer>
