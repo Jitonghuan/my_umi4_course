@@ -55,4 +55,6 @@ export const deployJobUrlOptions: IOption[] = [
   { label: '通用构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-single' },
   { label: 'HIS EMR', value: 'http://jenkins-fe.cfuture.shop/job/emr-loader' },
   { label: 'HIS ICU', value: 'http://jenkins-fe.cfuture.shop/job/future-his-icu' },
+  { label: '定制包 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extensions' },
+  { label: '定制页面 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extension-pages' },
 ];
