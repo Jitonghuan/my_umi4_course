@@ -62,10 +62,6 @@ export const menuList = [
     key: 'outpatient-assistant',
   },
   {
-    name: '门诊助理',
-    key: 'outpatient-assistant',
-  },
-  {
     name: '医务管理',
     key: 'medical',
   },
@@ -127,21 +123,37 @@ export const performanceItem = [
 
 export const now = [moment(moment().format('YYYY-MM-DD 00:00:00')), moment()];
 
-export const envList = [
-  {
-    name: '所有',
-    key: '*',
-  },
-  {
-    name: 'HBOS开发',
-    key: 'hbos-dev.cfuture.shop',
-  },
-  {
-    name: 'HBOS测试',
-    key: 'hbos-test.cfuture.shop',
-  },
-  {
-    name: 'HBOS演示',
-    key: 'hbos-seenewhospital.cfuture.shop',
-  },
-];
+export const envList: any = {
+  fygs: [
+    {
+      name: '所有',
+      key: '*',
+    },
+    {
+      name: '院区',
+      key: 'his.gushangke.com',
+    },
+    {
+      name: '司内测试',
+      key: 'fygs.seenew.info',
+    },
+  ],
+  default: [
+    {
+      name: '所有',
+      key: '*',
+    },
+    {
+      name: 'HBOS开发',
+      key: 'hbos-dev.cfuture.shop',
+    },
+    {
+      name: 'HBOS测试',
+      key: 'hbos-test.cfuture.shop',
+    },
+    {
+      name: 'HBOS演示',
+      key: 'hbos-seenewhospital.cfuture.shop',
+    },
+  ],
+};

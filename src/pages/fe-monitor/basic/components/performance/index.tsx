@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Radio, Select, Table, Tooltip } from 'antd';
-import appConfig from '@/app.config';
+import { Radio, Table, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Line } from '@cffe/hulk-wave-chart';
 import Header from '../header';
 import PerformanceMarket from '../performance-market';
-import { now, groupItem, performanceItem, envList } from '../../const';
+import { now, groupItem, performanceItem } from '../../const';
 import { getPerformanceChart, getPageList } from '../../server';
 import moment from 'moment';
 import './index.less';
@@ -13,6 +12,7 @@ import './index.less';
 interface IProps {
   appGroup: string;
   envCode: string;
+  feEnv: string;
 }
 
 const pageItem = [
@@ -21,15 +21,14 @@ const pageItem = [
     key: 'highFrequency',
   },
   {
-    name: '访问速度排行',
+    name: '访问速度',
     key: 'visitSpeed',
   },
 ];
 
-const BasicPerformance = ({ appGroup, envCode }: IProps) => {
+const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
   const [chart, setChart] = useState<any>(null);
-  const [feEnv, setFeEnv] = useState<string>('*');
   const [activeTab, setActiveTab] = useState<string>('tti'); // 趋势图tab
   const [pageGroupTab, setPageGroupTab] = useState<string>('highFrequency'); // 页面排行tab
   const [timeGroupTab, setTimeGroupTab] = useState<string>('20'); // 加载时间区间tab
@@ -90,6 +89,9 @@ const BasicPerformance = ({ appGroup, envCode }: IProps) => {
 
   // 页面排行榜
   async function pageList(tab?: string) {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     const res = await getPageList(
       getParam({
@@ -103,6 +105,9 @@ const BasicPerformance = ({ appGroup, envCode }: IProps) => {
 
   // 页面tti加载区间
   async function timeGroupList(tab?: string) {
+    if (groupLoading) {
+      return;
+    }
     setGroupLoading(true);
     const res = await getPageList(
       getParam({
@@ -162,7 +167,7 @@ const BasicPerformance = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-performance-wrapper">
-      <Header onChange={setTimeList} defaultTime={timeList} envChange={setFeEnv} />
+      <Header onChange={setTimeList} defaultTime={timeList} />
 
       {/*页面汇总趋势图*/}
       <div className="performance-wrapper">
@@ -214,8 +219,12 @@ const BasicPerformance = ({ appGroup, envCode }: IProps) => {
                 dataIndex: 'url',
               },
               {
-                title: pageGroupTab === 'highFrequency' ? 'PV' : '平均载入时长-毫秒',
-                dataIndex: pageGroupTab === 'highFrequency' ? 'pv' : 'avgLoadTime',
+                title: pageGroupTab === 'highFrequency' ? 'PV' : '平均载入时长-秒',
+                render: (value, record) => (
+                  <span>
+                    {pageGroupTab === 'highFrequency' ? record.pv : Math.floor(record.avgLoadTime / 100) || 0}
+                  </span>
+                ),
               },
             ]}
             pagination={{
@@ -271,8 +280,9 @@ const BasicPerformance = ({ appGroup, envCode }: IProps) => {
                 dataIndex: 'url',
               },
               {
-                title: '平均载入时长-毫秒',
+                title: '平均载入时长-秒',
                 dataIndex: 'avgLoadTime',
+                render: (value, record) => <span>{Math.floor(value / 100) || 0}</span>,
               },
             ]}
             pagination={{

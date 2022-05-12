@@ -11,6 +11,7 @@ import './index.less';
 interface IProps {
   appGroup: string;
   envCode: string;
+  feEnv: string;
 }
 
 interface DataSourceItem {
@@ -24,9 +25,8 @@ interface DataSourceItem {
   i: number;
 }
 
-const BasicError = ({ appGroup, envCode }: IProps) => {
+const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
-  const [feEnv, setFeEnv] = useState<string>('*');
   const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [dataSource, setDataSource] = useState<DataSourceItem[]>([]);
@@ -58,17 +58,32 @@ const BasicError = ({ appGroup, envCode }: IProps) => {
       return;
     }
     const res = await getErrorChart(getParam());
-    const data = res?.data || [];
+    const data: any = res?.data || {};
 
     let newData = [];
     if (data.jsErrorCount && data.userErrorCount) {
       newData.push(['日期', '错误数', '影响用户数']);
-      let len = Math.max(data.jsErrorCount.length, data.userErrorCount.length) || 0;
-      for (let i = 0; i < len; i++) {
+
+      let arrTimes: any[] = [];
+      for (const item of data.jsErrorCount) {
+        if (!arrTimes.find((val) => val === item[0])) {
+          arrTimes.push(item[0]);
+        }
+      }
+
+      for (const item of data.userErrorCount) {
+        if (!arrTimes.find((val) => val === item[0])) {
+          arrTimes.push(item[0]);
+        }
+      }
+
+      for (let i = 0; i < arrTimes.length; i++) {
+        let jsError = data.jsErrorCount.find((val: any) => val[0] === arrTimes[i]);
+        let userError = data.userErrorCount.find((val: any) => val[0] === arrTimes[i]);
         newData.push([
-          data.jsErrorCount[i][0] || data.userErrorCount[i][0],
-          data.jsErrorCount[i][1] || 0,
-          data.userErrorCount[i][1] || 0,
+          moment(arrTimes[i]).format('YYYY-MM-DD HH:mm'),
+          jsError ? jsError[1] : 0,
+          userError ? userError[1] : 0,
         ]);
       }
     }
@@ -78,6 +93,9 @@ const BasicError = ({ appGroup, envCode }: IProps) => {
 
   // 错误列表
   async function onErrorList() {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     const res = await getErrorList(getParam());
     const data = res?.data || [];
@@ -140,6 +158,9 @@ const BasicError = ({ appGroup, envCode }: IProps) => {
         secondTitle: {
           isShow: false,
         },
+        xAxis: {
+          labelInterval: 2,
+        },
         yAxis: {
           name: '个',
         },
@@ -160,7 +181,7 @@ const BasicError = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-error-wrapper">
-      <Header defaultTime={timeList} onChange={setTimeList} envChange={setFeEnv} />
+      <Header defaultTime={timeList} onChange={setTimeList} />
       <div className="performance-wrapper">
         <div className="list-title chart-title">错误情况</div>
         <div className="line-chart-wrapper">
