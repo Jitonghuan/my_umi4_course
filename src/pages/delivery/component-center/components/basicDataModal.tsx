@@ -9,13 +9,15 @@ export interface DetailProps {
   tabActiveKey: string;
   curProductLine: string;
   curVersion?: string;
-  queryComponentList: (tabActiveKey: any) => any;
+  queryParams?: any;
+  queryComponentList: (paramObj: { componentType: any }) => any;
   initData?: any;
   onClose: () => any;
 }
 
 export default function BasicModal(props: DetailProps) {
-  const { visable, tabActiveKey, onClose, queryComponentList, curProductLine, curVersion, initData } = props;
+  const { visable, tabActiveKey, onClose, queryComponentList, queryParams, curProductLine, curVersion, initData } =
+    props;
   const [addLoading, addBasicdata] = useAddBasicdata();
   const [filePath, setFilePath] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,13 +30,14 @@ export default function BasicModal(props: DetailProps) {
     }
     return () => {
       setType('');
+      form.resetFields();
     };
   }, [visable]);
   const getCheck = async (
     componentName: string,
     componentType: string,
     componentVersion: string,
-    productLine: string,
+    productLine?: string,
   ) => {
     setLoading(true);
     setType('begin');
@@ -64,7 +67,8 @@ export default function BasicModal(props: DetailProps) {
 
   const onVersionChange = (value: any) => {
     let formData = form.getFieldsValue();
-    getCheck(formData.componentName, tabActiveKey, formData.componentVersion, curProductLine);
+    console.log('value', value);
+    getCheck(formData.componentName, tabActiveKey, formData.componentVersion, '');
   };
   const [form] = Form.useForm();
   const normFile = (e: any) => {
@@ -105,7 +109,7 @@ export default function BasicModal(props: DetailProps) {
     form.validateFields().then((params) => {
       addBasicdata({ ...params, componentType: tabActiveKey, filePath })
         .then(() => {
-          queryComponentList(tabActiveKey);
+          queryComponentList({ componentType: tabActiveKey, ...queryParams });
         })
         .then(() => {
           onClose();
@@ -152,7 +156,7 @@ export default function BasicModal(props: DetailProps) {
               ? 'error'
               : 'warning'
           }
-          help={type === 'sucess' ? '版本号检查通过' : type === 'error' ? '版本号检查不通过' : '等待检查版本号'}
+          help={type === 'success' ? '版本号检查通过' : type === 'error' ? '版本号检查不通过' : '等待检查版本号'}
           rules={[{ required: true, message: '请填写基础数据版本！' }]}
         >
           <Input style={{ width: 320 }} placeholder="请按照 1.0.0 的格式输入版本号！" onBlur={onVersionChange}></Input>

@@ -27,6 +27,7 @@ export default function VersionDetail() {
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
   const [curProductLine, setCurProductLine] = useState<string>('');
+  const [queryParams, setQueryParams] = useState<any>({});
   const pageTypes: any = {
     app: { text: '应用组件接入' },
     middleware: { text: '中间件组件接入' },
@@ -36,6 +37,7 @@ export default function VersionDetail() {
     setCurProductLine(value);
     const param = productLineForm.getFieldsValue();
     queryComponentList({ componentType: tabActiveKey, ...param });
+    setQueryParams(param);
   };
   useEffect(() => {
     if (tabActiveKey === 'app') {
@@ -45,6 +47,7 @@ export default function VersionDetail() {
   const onSearch = () => {
     const param = productLineForm.getFieldsValue();
     queryComponentList({ componentType: tabActiveKey, ...param });
+    setQueryParams(param);
   };
 
   return (
@@ -55,6 +58,7 @@ export default function VersionDetail() {
           productLineOptions={productLineOptions || []}
           tabActiveKey={tabActiveKey}
           curProductLine={curProductLine}
+          queryParams={queryParams}
           queryComponentList={({ componentType: tabActiveKey }) => queryComponentList({ componentType: tabActiveKey })}
           onClose={() => {
             setUserModalVisiable(false);
@@ -64,6 +68,7 @@ export default function VersionDetail() {
           visable={basicDataModalVisiable}
           tabActiveKey={tabActiveKey}
           curProductLine={curProductLine}
+          queryParams={queryParams}
           queryComponentList={({ componentType: tabActiveKey }) => queryComponentList({ componentType: tabActiveKey })}
           onClose={() => {
             setBasicDataModalVisiable(false);
