@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Table } from 'antd';
+import { Tabs, Table, Tooltip } from 'antd';
 import Header from '../header';
 import { now } from '../../const';
 import moment from 'moment';
@@ -11,11 +11,11 @@ const { TabPane } = Tabs;
 interface IProps {
   appGroup: string;
   envCode: string;
+  feEnv: string;
 }
 
-const BasicApi = ({ appGroup, envCode }: IProps) => {
+const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
   const [timeList, setTimeList] = useState<any>(now);
-  const [feEnv, setFeEnv] = useState<string>('*');
   const [active, setActive] = useState('1');
 
   // 失败
@@ -46,6 +46,9 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
   }
 
   async function onSearchError() {
+    if (errorLoading) {
+      return;
+    }
     setErrorLoading(true);
     const res = await getErrorApiList(getParam());
     setErrorData(res?.data || []);
@@ -54,6 +57,9 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
   }
 
   async function onSearchTimeOut() {
+    if (timeOutLoading) {
+      return;
+    }
     setTimeOutLoading(true);
     const res = await getSlowApiList(getParam());
     setTimeOutData(res?.data || []);
@@ -71,7 +77,7 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
 
   return (
     <div className="basic-api-wrapper">
-      <Header onChange={setTimeList} defaultTime={timeList} envChange={setFeEnv} />
+      <Header onChange={setTimeList} defaultTime={timeList} />
       <Tabs
         activeKey={active}
         onChange={(val) => {
@@ -96,12 +102,17 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
                 dataIndex: 'd1',
                 width: '300px',
                 ellipsis: {
-                  showTitle: true,
+                  showTitle: false,
                 },
+                render: (text) => (
+                  <Tooltip placement="topLeft" title={text}>
+                    {text}
+                  </Tooltip>
+                ),
               },
               {
                 title: 'TraceId',
-                width: '250px',
+                width: '350px',
                 render: (value, record) => <span>{record.d3?.split('-')[1] || '-'}</span>,
               },
               {
@@ -109,16 +120,26 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
                 dataIndex: 'd5',
                 width: '400px',
                 ellipsis: {
-                  showTitle: true,
+                  showTitle: false,
                 },
+                render: (text) => (
+                  <Tooltip placement="topLeft" title={text}>
+                    {text}
+                  </Tooltip>
+                ),
               },
               {
                 title: '出参',
                 dataIndex: 'd4',
                 width: '350px',
                 ellipsis: {
-                  showTitle: true,
+                  showTitle: false,
                 },
+                render: (text) => (
+                  <Tooltip placement="topLeft" title={text}>
+                    {text}
+                  </Tooltip>
+                ),
               },
               {
                 title: '耗时-秒',
@@ -131,8 +152,13 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
                 dataIndex: 'url',
                 width: '250px',
                 ellipsis: {
-                  showTitle: true,
+                  showTitle: false,
                 },
+                render: (text) => (
+                  <Tooltip placement="topLeft" title={text}>
+                    {text}
+                  </Tooltip>
+                ),
               },
               {
                 title: '上报时间',
@@ -160,16 +186,26 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
                 dataIndex: 'd1',
                 width: '300px',
                 ellipsis: {
-                  showTitle: true,
+                  showTitle: false,
                 },
+                render: (text) => (
+                  <Tooltip placement="topLeft" title={text}>
+                    {text}
+                  </Tooltip>
+                ),
               },
               {
                 title: '页面',
                 dataIndex: 'url',
                 width: '250px',
                 ellipsis: {
-                  showTitle: true,
+                  showTitle: false,
                 },
+                render: (text) => (
+                  <Tooltip placement="topLeft" title={text}>
+                    {text}
+                  </Tooltip>
+                ),
               },
               {
                 title: 'TraceId',
@@ -195,8 +231,13 @@ const BasicApi = ({ appGroup, envCode }: IProps) => {
                 dataIndex: 'd5',
                 width: '400px',
                 ellipsis: {
-                  showTitle: true,
+                  showTitle: false,
                 },
+                render: (text) => (
+                  <Tooltip placement="topLeft" title={text}>
+                    {text}
+                  </Tooltip>
+                ),
               },
             ]}
             pagination={{
