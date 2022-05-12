@@ -95,14 +95,14 @@ export default function BuildingStep(props: StepItemProps) {
           <>
             {/* 浙一日常环境下的部署步骤显示jenkins链接,构建步骤下不显示。其他环境都是构建步骤下显示Jenkins详情 */}
             {url && (
-              <div>
+              <div style={{ marginTop: -5 }}>
                 <a target="_blank" href={url}>
                   构建详情
                 </a>
               </div>
             )}
             {confirm && confirm.waitConfirm && (
-              <div>
+              <div style={{ marginTop: -2 }}>
                 <a
                   style={{ marginTop: 2 }}
                   onClick={() => {
