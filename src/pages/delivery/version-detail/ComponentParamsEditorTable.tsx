@@ -2,8 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form, Select, message } from 'antd';
-import { history } from 'umi';
+import { Button, Input, Form, Select, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   useQueryParamList,
@@ -13,69 +12,6 @@ import {
   useQueryOriginList,
   useEditVersionParam,
 } from './hooks';
-import { ProFormField } from '@ant-design/pro-form';
-
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-const TagList: React.FC<{
-  value?: {
-    key: string;
-    label: string;
-  }[];
-  onChange?: (
-    value: {
-      key: string;
-      label: string;
-    }[],
-  ) => void;
-}> = ({ value, onChange }) => {
-  const ref = useRef<any>(null);
-  const [newTags, setNewTags] = useState<
-    {
-      key: string;
-      label: string;
-    }[]
-  >([]);
-  const [inputValue, setInputValue] = useState<string>('');
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleInputConfirm = () => {
-    let tempsTags = [...(value || [])];
-    if (inputValue && tempsTags.filter((tag) => tag.label === inputValue).length === 0) {
-      tempsTags = [...tempsTags, { key: `new-${tempsTags.length}`, label: inputValue }];
-    }
-    onChange?.(tempsTags);
-    setNewTags([]);
-    setInputValue('');
-  };
-
-  return (
-    <Space>
-      {(value || []).concat(newTags).map((item) => (
-        <Tag key={item.key}>{item.label}</Tag>
-      ))}
-      <Input
-        ref={ref}
-        type="text"
-        size="small"
-        style={{ width: 78 }}
-        value={inputValue}
-        onChange={handleInputChange}
-        onBlur={handleInputConfirm}
-        onPressEnter={handleInputConfirm}
-      />
-    </Space>
-  );
-};
 
 type DataSourceType = {
   id: any;
@@ -280,7 +216,6 @@ export default (props: VersionDetailProps) => {
         <div className="caption-right">
           <Button
             type="primary"
-            // disabled={isEditable}
             onClick={() => {
               actionRef.current?.addEditRecord?.({
                 id: (Math.random() * 1000000).toFixed(0),
@@ -293,18 +228,6 @@ export default (props: VersionDetailProps) => {
           </Button>
         </div>
       </div>
-      {/* <Space>
-         
-            <Button
-             key="rest"
-             onClick={() => {
-             form.resetFields();
-          }}
-          >
-          重置表单
-          </Button>
-        </Space> */}
-
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
@@ -349,8 +272,6 @@ export default (props: VersionDetailProps) => {
             }
           },
           onChange: setEditableRowKeys,
-          //  console.log('value',value)
-
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
         }}
       />

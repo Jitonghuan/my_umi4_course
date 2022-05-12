@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/04/26 14:12
 
-import React, { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Modal, Input, Form } from 'antd';
 import { useSaveIndentParam } from '../hook';
 
@@ -14,7 +14,7 @@ export interface IProps {
   onSubmit: () => void;
 }
 
-export default function BranchEditor(props: IProps) {
+export default function EditorModal(props: IProps) {
   const { visible, type, initData, onClose, onSubmit } = props;
   const [saveLoading, saveIndentParam] = useSaveIndentParam();
   const [form] = Form.useForm();

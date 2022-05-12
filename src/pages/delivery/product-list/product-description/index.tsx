@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/21 17:10
 
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Form,
   Input,
@@ -60,7 +60,6 @@ export default function deliveryDescription() {
   const [publishLoading, publishProductVersion] = usePublishProductVersion();
   const [tableLoading, dataSource, pageInfo, setPageInfo, queryProductVersionList] = useQueryProductList();
   const [creatVersionVisiable, setCreatVersionVisiable] = useState<boolean>(false);
-  const [editable, setEditable] = useState<boolean>(false);
 
   useEffect(() => {
     if (!descriptionInfoData.id) {
@@ -143,7 +142,6 @@ export default function deliveryDescription() {
             title="发布后编排不可修改，是否确认发布？"
             onConfirm={() => {
               publishProductVersion(record.id).then(() => {
-                setEditable(true);
                 queryProductVersionList(descriptionInfoData.id);
               });
             }}
@@ -190,14 +188,7 @@ export default function deliveryDescription() {
     <PageContainer className="product-description">
       <ContentCard>
         <div>
-          <Descriptions
-            title="基本信息"
-            column={2}
-            className="basic-info-description"
-            //  labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
-            //  contentStyle={{ color: '#000' }}
-            bordered={true}
-          >
+          <Descriptions title="基本信息" column={2} className="basic-info-description" bordered={true}>
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
               <Paragraph

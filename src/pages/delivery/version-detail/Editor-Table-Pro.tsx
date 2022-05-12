@@ -3,7 +3,7 @@ import { history } from 'umi';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Select, Form, Popconfirm, message } from 'antd';
+import { Button, Input, Select, Form, Popconfirm, message } from 'antd';
 import { productionPageTypes } from './tab-config';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
@@ -51,15 +51,12 @@ export default (props: VersionDetailProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
   const [form] = Form.useForm();
-  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
-  const [curProductLine, setCurProductLine] = useState<string>('');
-
   const updateRow = (rowKey: string, row: any) => {
     form.setFieldsValue({ [rowKey]: row });
   };
   useEffect(() => {
     queryComponentOptions(currentTabType); //组件查询
-    getProductlineList();
+    // getProductlineList();
     // queryProductVersionOptions(currentTabType); //组件版本查询
     queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
@@ -82,10 +79,6 @@ export default (props: VersionDetailProps) => {
         };
       },
       renderFormItem: (_, config: any, data) => {
-        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
-        let currentValue = componentOptions[config.record?.componentName];
-        // queryProductVersionOptions(currentTabType,currentValue)
-
         return (
           <Select
             options={componentOptions}
@@ -101,7 +94,6 @@ export default (props: VersionDetailProps) => {
       key: 'componentVersion',
       dataIndex: 'componentVersion',
       valueType: 'select',
-      // initialValue:list,
       formItemProps: () => {
         return {
           rules: [
@@ -113,7 +105,6 @@ export default (props: VersionDetailProps) => {
           errorType: 'default',
         };
       },
-      // valueEnum: componentVersionOptions,
       renderFormItem: (_, config: any, data) => {
         let description = '';
         componentVersionOptions.filter((item: any) => {
@@ -152,12 +143,10 @@ export default (props: VersionDetailProps) => {
       width: 250,
       render: (text, record: any, _, action) => [
         <a
-          //  key="editable"
           onClick={() => {
             history.push({
               pathname: '/matrix/delivery/component-detail',
               state: {
-                // activeKey: 'component-config',
                 initRecord: record,
                 componentName: record.componentName,
                 componentVersion: record.componentVersion,
@@ -298,7 +287,6 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
-            // addComponent(versionId,initDataSource,)
             await addComponent({ versionId, ...params, componentType: currentTab }).then(() => {
               queryVersionComponentList(versionId, currentTab);
             });

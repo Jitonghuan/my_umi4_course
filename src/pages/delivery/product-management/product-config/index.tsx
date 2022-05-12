@@ -5,7 +5,6 @@ import { history } from 'umi';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import { queryIndentInfoApi, generateIndentConfig } from '../../service';
 import moment from 'moment';
-import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
 import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form } from 'antd';
@@ -55,8 +54,6 @@ export default function ProductConfig() {
   const [curIndentPackageStatus, setCurIndentPackageStatus] = useState<string>('');
   const cacheRef = useRef<any>(null);
 
-  // 定时请求部署包出包状态
-
   const queryIndentInfo = async (id: number) => {
     setInfoLoading(true);
     try {
@@ -82,7 +79,6 @@ export default function ProductConfig() {
               (res.data.indentPackageStatus === '已出包' || res.data.indentPackageStatus === '出包异常')
             ) {
               clearInterval(cacheRef.current);
-              console.log(' cacheRef.current1111111', cacheRef.current);
             }
 
             configForm.setFieldsValue({
@@ -101,7 +97,6 @@ export default function ProductConfig() {
   };
   useEffect(() => {
     if (configInfo.id) {
-      // setCurIndentPackageStatus(configInfoData?.indentPackageStatus);
       queryIndentInfo(configInfo.id);
       queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
       queryIndentParamList({ id: configInfo.id, isGlobal: false });
@@ -145,14 +140,12 @@ export default function ProductConfig() {
       setEditVisable(false);
     }
   };
-  // window.clearInterval(cacheRef.current)
+
   const downLoadIndent = () => {
     createPackageInde(configInfo.id);
     cacheRef.current = setInterval(() => {
       queryIndentInfo(configInfo.id);
     }, 100);
-
-    // window.clearInterval(cacheRef.current)
   };
   const queryIndentConfigInfo = async (id: number) => {
     setConfigInfoLoading(true);
@@ -180,10 +173,8 @@ export default function ProductConfig() {
   };
   const saveConfig = () => {
     const value = configForm.getFieldsValue();
-    // console.log('value', value);
     editIndentConfigYaml(configInfo.id, value.configInfo).then(() => {
       queryIndentInfo(configInfo.id);
-      // queryIndentConfigInfo(configInfo.id);
       setReadOnly(true);
       setButtonText('编辑');
     });
@@ -221,7 +212,6 @@ export default function ProductConfig() {
             >
               <Descriptions.Item label="制品名称">{configInfoData.indentName || '--'}</Descriptions.Item>
               <Descriptions.Item label="制品描述">
-                {/* <Spin spinning={saveLoading}> */}
                 <Paragraph
                   editable={{
                     onChange: (description: string) => {
@@ -233,7 +223,6 @@ export default function ProductConfig() {
                 >
                   {editableStr}
                 </Paragraph>
-                {/* </Spin> */}
               </Descriptions.Item>
               <Descriptions.Item label="交付产品">{configInfoData.productName || '--'}</Descriptions.Item>
               <Descriptions.Item label="交付版本">{configInfoData.productVersion || '--'}</Descriptions.Item>
@@ -243,7 +232,7 @@ export default function ProductConfig() {
               </Descriptions.Item>
             </Descriptions>
           </Spin>
-          {/* <Divider /> */}
+
           <div>
             <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: 8, height: 20, fontSize: 16, marginTop: 16 }}>
               出包管理

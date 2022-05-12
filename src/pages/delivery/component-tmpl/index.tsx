@@ -3,15 +3,11 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
+import { Form, Select, Button, Table, Space, Popconfirm } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
-import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import * as APIS from '../service';
 import TmplEditDraw from './tmpl-edits';
 import { useQueryTemplateList, useDeleteComponentTmpl, useGetTypeListOption, useQueryProductlineList } from './hooks';
-import { productLineOptions } from './config';
 
 /** 编辑页回显数据 */
 export interface TmplEdit extends Record<string, any> {
@@ -55,23 +51,12 @@ export default function ComponentTmpl() {
     });
   };
 
-  const loadListData = (params: any) => {
-    const values = formTmpl.getFieldsValue();
-
-    // queryList({
-    //   ...values,
-    //   ...params,
-    // });
-  };
-
   //抽屉保存
   const saveEditData = () => {
     setTmplEditMode('HIDE');
     setTimeout(() => {
       queryTemplateList({ pageIndex: 1, pageSize: 20 });
-      // loadListData({ pageIndex: 1, pageSize: 20 });
     }, 200);
-    // window.location.reload();
   };
   return (
     <PageContainer>

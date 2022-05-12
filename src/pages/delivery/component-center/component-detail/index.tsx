@@ -9,7 +9,6 @@ import AceEditor from '@/components/ace-editor';
 import ReactMarkdown from 'react-markdown';
 import UserModal from '../../component-center/components/UserModal';
 import BasicDataModal from '../../component-center/components/basicDataModal';
-import MiddlewareModal from '../../component-center/components/middlewareModal';
 import {
   Form,
   Tabs,
@@ -26,7 +25,7 @@ import {
 } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryComponentList, useQueryProductlineList } from '../../component-center/hook';
-import { useQueryComponentVersionList, useUpdateDescription, useUpdateConfiguration } from './hooks';
+import { useUpdateDescription, useUpdateConfiguration } from './hooks';
 
 import './index.less';
 export default function ComponentDetail() {
@@ -57,10 +56,8 @@ export default function ComponentDetail() {
   const [curVersion, setCurVersion] = useState<any>({});
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
-  const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
-  // const [loading, versionOptions, queryComponentVersionList] = useQueryComponentVersionList();
 
   const deletVersion = (id: number) => {
     postRequest(`${deletVersionApi}?id=${id}`).then((res) => {

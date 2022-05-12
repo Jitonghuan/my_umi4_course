@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import { message } from 'antd';
-import { getRequest, postRequest, delRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 // 查询产品列表
 export function useQueryIndentList(): [
   boolean,

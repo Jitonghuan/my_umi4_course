@@ -9,159 +9,158 @@ import { addAPIPrefix } from '@/utils';
 export const envList = addAPIPrefix('/appManage/env/list');
 
 /* 一、产品 */
-/*  GET  根据产品线获取版本 */
+/*1、  GET  根据产品线获取版本 */
 export const getProductlineVersion = addAPIPrefix('/deliveryManage/component/productline/version');
-/* GET 获取应用组件 */
+/*2、 GET 获取应用组件 */
 export const applist = addAPIPrefix('/deliveryManage/component/productline/version/applist');
-/* POST  创建产品 */
+/*3、 POST  创建产品 */
 export const createProduct = addAPIPrefix('/deliveryManage/product/create');
-/* POST  删除产品 */
+/*4、 POST  删除产品 */
 export const deleteProduct = addAPIPrefix('/deliveryManage/product/delete');
-/* GET  查询产品列表 */
+/*5、 GET  查询产品列表 */
 export const queryProductList = addAPIPrefix('/deliveryManage/product/list');
-/* GET  查询产品详情 */
+/*6、 GET  查询产品详情 */
 export const queryProductInfo = addAPIPrefix('/deliveryManage/product/list');
-/* POST  编辑产品描述 */
+/*7、 POST  编辑产品描述 */
 export const editProductDescription = addAPIPrefix('/deliveryManage/product/description/edit');
-/* POST  创建产品版本 */
+/*8、 POST  创建产品版本 */
 export const createProductVersion = addAPIPrefix('/deliveryManage/product/version/create');
-/* GET  查询产品版本 */
+/*9、 GET  查询产品版本 */
 export const queryVersionList = addAPIPrefix('/deliveryManage/product/version/list');
-/* POST  删除产品版本 */
+/*10、 POST  删除产品版本 */
 export const deleteVersion = addAPIPrefix('/deliveryManage/product/version/delete');
-/* POST  发布产品版本 */
+/*11、 POST  发布产品版本 */
 export const releaseVersion = addAPIPrefix('/deliveryManage/product/version/release');
-/* GET  查询产品版本详情 */
+/*12、 GET  查询产品版本详情 */
 export const queryProductVersionInfo = addAPIPrefix('/deliveryManage/product/version/info');
-/* POST  编辑产品版本描述 */
+/*13、 POST  编辑产品版本描述 */
 export const editVersionDescription = addAPIPrefix('/deliveryManage/product/version/description/edit');
 
-/* POST  产品版本添加组件 */
+/*14、 POST  产品版本添加组件 */
 export const addComponent = addAPIPrefix('/deliveryManage/product/version/component/add');
 
-/* GET  产品版本组件查询 */
+/*15、 GET  产品版本组件查询 */
 export const queryVersionComponentList = addAPIPrefix('/deliveryManage/product/version/component/list');
 
-/* POST  产品版本删除组件 */
+/*16、 POST  产品版本删除组件 */
 export const deleteVersionComponent = addAPIPrefix('/deliveryManage/product/version/component/delete');
-/* POST  编辑组件配置 */
+/*17、 POST  编辑组件配置 */
 export const editComponent = addAPIPrefix('/deliveryManage/product/version/component/edit');
 
-/* GET 获取参数来源组件 */
+/*18、 GET 获取参数来源组件 */
 export const queryOriginList = addAPIPrefix('/deliveryManage/product/version/component/origin/list');
-/* GET 获取组件参数及参数值 */
+/*19、 GET 获取组件参数及参数值 */
 export const queryParamList = addAPIPrefix('/deliveryManage/product/version/component/param/list');
-/* POST 保存交付配置参数 */
+/*20、 POST 保存交付配置参数 */
 export const saveParam = addAPIPrefix('/deliveryManage/product/version/param/save');
-/* GET  查询交付配置参数 */
+/*21、 GET  查询交付配置参数 */
 export const queryDeliveryParamList = addAPIPrefix('/deliveryManage/product/version/param/list');
-/* POST 删除交付配置参数 */
+/*22、 POST 删除交付配置参数 */
 export const deleteDeliveryParam = addAPIPrefix('/deliveryManage/product/version/param/delete');
-/* POST  修改交付配置参数 */
+/*23、 POST  修改交付配置参数 */
 export const editVersionParam = addAPIPrefix('/deliveryManage/product/version/param/edit');
-/* GET 根据产品线和版本号查询应用列表 */
+/*24、 GET 根据产品线和版本号查询应用列表 */
 export const getApplistVersion = addAPIPrefix('/deliveryManage/component/applist/version ');
-/* POST 产品版本批量添加应用 */
+/*25、 POST 产品版本批量添加应用 */
 export const bulkadd = addAPIPrefix('/deliveryManage/product/version/component/bulkadd');
 /* 二、组件中心 */
 
-/* 组件版本删除 */
-// deliveryManage/component/version/delete
+/*26、 组件版本删除 */
 export const deletVersionApi = addAPIPrefix('/deliveryManage/component/version/delete');
-/* GET 产品线分类 */
+/*27、 GET 产品线分类 */
 export const queryProductlineList = addAPIPrefix('/deliveryManage/component/productline/list');
 
-/* GET 检查组件版本号 */
+/*28、 GET 检查组件版本号 */
 export const getVersionCheck = addAPIPrefix('/deliveryManage/component/version/check');
-/* POST 用户组件接入 */
+/*29、 POST 用户组件接入 */
 export const addApplication = addAPIPrefix('/deliveryManage/component/application/add');
 
-/* POST 平台组件接入 */
+/*30、 POST 平台组件接入 */
 export const addMiddleware = addAPIPrefix('/deliveryManage/component/middleware/add');
 
-/*POST 基础数据接入 */
+/*31、POST 基础数据接入 */
 export const addBasicdata = addAPIPrefix('/deliveryManage/component/basicdata/add');
-/* POST 上传平台组件chart包 */
+/*32、 POST 上传平台组件chart包 */
 
 export const uploadChart = addAPIPrefix('/deliveryManage/component/chart/upload');
 
-/* POST 上传基础数据sql文件 */
+/*33、 POST 上传基础数据sql文件 */
 
 export const uploadSqlfile = addAPIPrefix('/deliveryManage/component/sqlfile/upload');
 
-/* GET 组件查询 */
+/*34、 GET 组件查询 */
 
 export const queryComponentList = addAPIPrefix('/deliveryManage/component/list');
 
-/*GET  组件详情 */
+/*35、GET  组件详情 */
 export const queryComponentInfoApi = addAPIPrefix('/deliveryManage/component/info');
 
-/* GET 组件版本查询 */
+/*36、 GET 组件版本查询 */
 
 export const queryComponentVersionList = addAPIPrefix('/deliveryManage/component/version/list');
-/* GET 组件描述更新 */
+/*37、 GET 组件描述更新 */
 export const updateComponent = addAPIPrefix('/deliveryManage/component/update');
 
-/* POST 组件删除 */
+/*38、 POST 组件删除 */
 
 export const deleteComponent = addAPIPrefix('/deliveryManage/component/delete');
 
-/* POST 应用查询 */
+/*39、 POST 应用查询 */
 
 export const queryApplist = addAPIPrefix('/deliveryManage/component/applist');
 
-/* GET 应用Chart模板查询 */
+/*40、 GET 应用Chart模板查询 */
 
 export const queryComponentTmpl = addAPIPrefix('/deliveryManage/component/template/list');
 
-/* POST  创建应用Chart模板 */
+/*41、 POST  创建应用Chart模板 */
 export const createComponentTmpl = addAPIPrefix('/deliveryManage/component/template/create');
 
-/* PUT 更新应用Chart模板 */
+/*42、 PUT 更新应用Chart模板 */
 export const updateComponentTmpl = addAPIPrefix('/deliveryManage/component/template/update');
 
-/* DELETE 删除应用Chart模板 */
+/*43、 DELETE 删除应用Chart模板 */
 export const deleteComponentTmpl = addAPIPrefix('/deliveryManage/component/template/delete');
 
-/* GET 应用Chart模板分类 */
+/*44、 GET 应用Chart模板分类 */
 export const queryTypeList = addAPIPrefix('/deliveryManage/component/template/typelist');
 
 /* 三、制品交付 */
 
-/*POST  创建制品 */
+/*45、POST  创建制品 */
 export const createIndent = addAPIPrefix('/deliveryManage/indent/create');
 
-/*GET 查询制品 */
+/*46、GET 查询制品 */
 export const queryIndentList = addAPIPrefix('/deliveryManage/indent/list');
 
-/* GET 制品详情 */
+/*47、 GET 制品详情 */
 export const queryIndentInfoApi = addAPIPrefix('/deliveryManage/indent/info');
 
-/*POST  删除制品 */
+/*48、POST  删除制品 */
 export const deleteIndent = addAPIPrefix('/deliveryManage/indent/delete');
 
-/* POST 制品描述编辑 */
+/*49、 POST 制品描述编辑 */
 export const editDescription = addAPIPrefix('/deliveryManage/indent/description/edit');
 
-/* GET  获取制品交付配置 */
+/*50、 GET  获取制品交付配置 */
 export const queryIndentParamList = addAPIPrefix('/deliveryManage/indent/param/list');
 
-/* POST 编辑交付配置参数值 */
+/*51、 POST 编辑交付配置参数值 */
 export const saveIndentParam = addAPIPrefix('/deliveryManage/indent/param/edit');
 
-/* POST 出部署包 */
+/*52、 POST 出部署包 */
 export const createPackageInde = addAPIPrefix('/deliveryManage/indent/package/generate');
 
-/* POST 下载部署包 */
+/*53、 POST 下载部署包 */
 
 export const downloadPackage = addAPIPrefix('/deliveryManage/indent/package/download');
-/* POST 组件描述更新 */
+/*54、 POST 组件描述更新 */
 export const updateDescription = addAPIPrefix('/deliveryManage/component/description/update');
-/* POST  组件配置更新 */
+/*55、 POST  组件配置更新 */
 export const updateConfiguration = addAPIPrefix('/deliveryManage/component/configuration/update');
 
-/* POST  获取制品配置 */
+/*56、 POST  获取制品配置 */
 export const generateIndentConfig = addAPIPrefix('/deliveryManage/indent/config/generate');
 
-/* POST  编辑制品配置 */
+/*57、 POST  编辑制品配置 */
 export const editIndentConfig = addAPIPrefix('/deliveryManage/indent/config/edit');

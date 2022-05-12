@@ -1,16 +1,11 @@
-// 应用模版编辑页
 // @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/08/09 10:30
+// @create 2022/04/20 10:30
 
-import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
-import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { TmplEdit } from '../index';
-import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
+import { Drawer, Input, Button, Form, Select } from 'antd';
 import { useCreateComponentTmpl, useUpdateComponentTmpl } from './hooks';
 import { useGetTypeListOption } from '../hooks';
 import { productLineOptions } from '../config';
@@ -66,7 +61,6 @@ export default function TmplEditor(props: TmplListProps) {
     <Drawer
       visible={mode !== 'HIDE'}
       title={mode === 'EDIT' ? '编辑组件模版' : mode === 'ADD' ? '新增组件模版' : mode === 'VIEW' ? '查看组件模版' : ''}
-      // maskClosable={false}
       onClose={onClose}
       width={'60%'}
       footer={
@@ -87,7 +81,7 @@ export default function TmplEditor(props: TmplListProps) {
               <Select style={{ width: 180 }} options={productLineOptions} disabled={editDisabled} />
             </Form.Item>
             <Form.Item label="模板类型" name="tempType" rules={[{ required: true, message: '请选择模版类型' }]}>
-              <Select style={{ width: 180 }} options={typeOption} disabled={editDisabled} />
+              <Select style={{ width: 180 }} options={typeOption} disabled={editDisabled} loading={optionLoading} />
             </Form.Item>
             <Form.Item label="模板名称" name="tempName" rules={[{ required: true, message: '请输入模板名称' }]}>
               <Input style={{ width: 180 }} />

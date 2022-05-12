@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { Tabs, Descriptions, Button, Typography, Divider } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
@@ -10,19 +10,11 @@ import ComponentParamsEditorTable from './ComponentParamsEditorTable';
 import { productionTabsConfig, deliveryTabsConfig, productionPageTypes } from './tab-config';
 import { useVersionDescriptionInfo, useEditProductVersionDescription } from './hooks';
 import './index.less';
-import {
-  useQueryParamList,
-  useQueryDeliveryParamList,
-  useQueryDeliveryGloableParamList,
-  useSaveParam,
-  useDeleteDeliveryParam,
-  useQueryOriginList,
-} from './hooks';
+import { useQueryDeliveryParamList, useQueryDeliveryGloableParamList } from './hooks';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 export default function VersionDetail() {
   const descriptionInfoData: any = history.location.state;
-  const [matchlabels, setMatchlabels] = useState<any[]>([]);
   const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryDeliveryParamList] = useQueryDeliveryParamList();
   const [
     gloableTableLoading,
@@ -38,9 +30,6 @@ export default function VersionDetail() {
   useEffect(() => {
     getVersionDescriptionInfo(descriptionInfoData.versionId);
   }, []);
-  const matchlabelsFun = (value: any[]) => {
-    setMatchlabels(value);
-  };
 
   useEffect(() => {
     //全局参数查询交付配置参数

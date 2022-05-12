@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import * as APIS from '../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
@@ -641,7 +641,7 @@ export function useGetAppList() {
       });
   };
 
-  return [loading, dataSource, queryAppList];
+  return [loading, dataSource, setDataSource, queryAppList];
 }
 
 //批量添加应用

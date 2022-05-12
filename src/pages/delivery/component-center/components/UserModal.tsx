@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Select, message, Popconfirm, Input } from 'antd';
-import { getRequest, postRequest } from '@/utils/request';
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Form, Select, message, Input } from 'antd';
+import { getRequest } from '@/utils/request';
 import { getVersionCheck } from '../../service';
-import { useAddApplication, useQueryComponentList, useGetApplicationOption, useQueryEnvList } from '../hook';
+import { useAddApplication, useGetApplicationOption, useQueryEnvList } from '../hook';
 export interface DetailProps {
   visable?: boolean;
   productLineOptions: any;
@@ -34,13 +34,10 @@ export default function BasicModal(props: DetailProps) {
   const [rightInfo, setRightInfo] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
-  // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [form] = Form.useForm();
   const handleSubmit = () => {
-    // const params = form.getFieldsValue();
     if (type === 'success') {
       form.validateFields().then((params) => {
-        console.log('params', params);
         let componentName;
         if (!Array.isArray(params.componentName)) {
           componentName = [params.componentName];
@@ -73,7 +70,6 @@ export default function BasicModal(props: DetailProps) {
       )
         .then((res) => {
           if (res.success) {
-            // message.success(res.data);
             setRightInfo(true);
             setType('success');
           } else {
@@ -84,7 +80,6 @@ export default function BasicModal(props: DetailProps) {
         })
         .finally(() => {
           setLoading(false);
-          // setType('end');
         });
     } catch (error) {
       console.log(error);
@@ -155,16 +150,13 @@ export default function BasicModal(props: DetailProps) {
               required: true,
               message: '请输入组件版本',
               validateTrigger: 'onBlur',
-              // validator:checkMethod
             },
           ]}
           validateStatus={
             type === 'success' ? 'success' : type === 'begin' ? 'validating' : type === 'error' ? 'error' : 'warning'
           }
           help={type === 'success' ? '版本号检查通过' : type === 'error' ? '版本号检查不通过' : '等待检查版本号'}
-          // rules={[{ required: true, message: '请输入组件版本' }]}
         >
-          {/* {console.log('type9999',type)} */}
           <Input style={{ width: 320 }} placeholder="请按照 1.0.0 的格式输入版本号！" onBlur={onVersionChange}></Input>
         </Form.Item>
         {/* <Form.Item label="组件描述" name="componentDescription">

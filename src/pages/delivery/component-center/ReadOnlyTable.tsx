@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
-import { Table, Tag, Space, Popconfirm } from 'antd';
-import { useQueryComponentList, useDeleteComponent } from './hook';
+import { Table, Space, Popconfirm } from 'antd';
+import { useDeleteComponent } from './hook';
 export interface DetailProps {
   currentTab: string;
   curProductLine: string;
@@ -12,7 +12,6 @@ export interface DetailProps {
 }
 export default function VersionDetail(props: DetailProps) {
   const { currentTab, curProductLine, dataSource, queryComponentList, tableLoading } = props;
-  // const [loading, dataSource, pageInfo, setPageInfo, queryComponentList] = useQueryComponentList();
   const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
     if (!currentTab) {
@@ -22,23 +21,10 @@ export default function VersionDetail(props: DetailProps) {
     queryComponentList({ componentType: currentTab });
   }, [currentTab]);
 
-  //   const column=()=>[
-  //     {
-  //       title: '产品线',
-  //       dataIndex: 'productLine',
-  //       width: 150,
-  //       isShow:false
-  //     },
-  //     {
-  // isShow:true
-  //     }
-  //   ]
-
   const getColumns = (isShow: boolean) => {
     return [
       {
         title: '名称',
-        // currentTab === 'app' ? '应用组件名称' : currentTab === 'middleware' ? '中间件组件名称' : '基础数据组件名称',
         dataIndex: 'componentName',
         key: 'componentName',
         isShow: isShow,
@@ -52,8 +38,6 @@ export default function VersionDetail(props: DetailProps) {
       },
       {
         title: '描述',
-        // currentTab === 'app' ? '应用组件描述' : currentTab === 'middleware' ? '中间件组件描述' : '基础数据组件描述',
-
         dataIndex: 'componentDescription',
         key: 'componentDescription',
         isShow: isShow,
@@ -107,9 +91,6 @@ export default function VersionDetail(props: DetailProps) {
       },
     ];
   };
-  // const columns = [
-
-  // ];
 
   return (
     <>

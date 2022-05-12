@@ -11,9 +11,7 @@ import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';
 import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
-import MiddlewareModal from './components/middlewareModal';
 import { useQueryComponentList, useQueryProductlineList } from './hook';
-import { queryProductlineList } from '../service';
 import './index.less';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
@@ -25,7 +23,6 @@ export default function VersionDetail() {
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
-  const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
   const [curProductLine, setCurProductLine] = useState<string>('');
   const [queryParams, setQueryParams] = useState<any>({});
   const pageTypes: any = {
@@ -74,16 +71,6 @@ export default function VersionDetail() {
             setBasicDataModalVisiable(false);
           }}
         />
-        <MiddlewareModal
-          visable={middlewareModalVisibale}
-          tabActiveKey={tabActiveKey}
-          curProductLine={curProductLine}
-          queryComponentList={({ componentType: tabActiveKey }) => queryComponentList({ componentType: tabActiveKey })}
-          onClose={() => {
-            setMiddlewareModalVisibale(false);
-          }}
-        />
-
         <>
           <FilterCard className="layout-compact">
             <Tabs

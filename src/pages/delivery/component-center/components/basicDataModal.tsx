@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Form, message, Input, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { useAddBasicdata, useGetVersionCheck } from '../hook';
-import { getRequest, postRequest } from '@/utils/request';
+import { useAddBasicdata } from '../hook';
+import { getRequest } from '@/utils/request';
 import { uploadSqlfile, getVersionCheck } from '../../service';
 export interface DetailProps {
   visable?: boolean;
@@ -24,7 +24,6 @@ export default function BasicModal(props: DetailProps) {
   const [rightInfo, setRightInfo] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  // const [checkLoading,rightInfo, getVersionCheck]=useGetVersionCheck();
   useEffect(() => {
     if (Object.keys(initData || {})?.length !== 0) {
       form.setFieldsValue({ ...initData, componentVersion: curVersion });
@@ -50,7 +49,6 @@ export default function BasicModal(props: DetailProps) {
       )
         .then((res) => {
           if (res.success) {
-            // message.success(res.data);
             setRightInfo(true);
             setType('success');
           } else {
@@ -61,7 +59,6 @@ export default function BasicModal(props: DetailProps) {
         })
         .finally(() => {
           setLoading(false);
-          // setType('end');
         });
     } catch (error) {
       console.log(error);
@@ -70,12 +67,10 @@ export default function BasicModal(props: DetailProps) {
 
   const onVersionChange = (value: any) => {
     let formData = form.getFieldsValue();
-    console.log('value', value);
     getCheck(formData.componentName, tabActiveKey, formData.componentVersion, '');
   };
   const [form] = Form.useForm();
   const normFile = (e: any) => {
-    console.log('Upload event:', e);
     if (Array.isArray(e)) {
       return e;
     }
@@ -85,9 +80,6 @@ export default function BasicModal(props: DetailProps) {
     name: 'uploadFile',
     action: uploadSqlfile,
     maxCount: 1,
-    // headers: {
-    //   authorization: 'authorization-text',
-    // },
     onChange(info: any) {
       if (info.file.status !== 'uploading') {
         let path = info.file.response.data;
