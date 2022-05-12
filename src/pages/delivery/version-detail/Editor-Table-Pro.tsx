@@ -51,12 +51,14 @@ export default (props: VersionDetailProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
   const [form] = Form.useForm();
+  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
 
   const updateRow = (rowKey: string, row: any) => {
     form.setFieldsValue({ [rowKey]: row });
   };
   useEffect(() => {
     queryComponentOptions(currentTabType); //组件查询
+    getProductlineList();
     // queryProductVersionOptions(currentTabType); //组件版本查询
     queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
@@ -158,18 +160,7 @@ export default (props: VersionDetailProps) => {
         };
       },
       renderFormItem: (_, config: any, data) => {
-        // 这里返回的值与Protable的render返回的值差不多,能获取到index,row,data 只是这里是获取对象组,外面会再包一层
-        let currentValue = componentOptions[config.record?.componentName];
-        // queryProductVersionOptions(currentTabType,currentValue)
-
-        return (
-          <Select
-            options={componentOptions}
-            onChange={(value: any) => {
-              queryProductVersionOptions(currentTabType, value);
-            }}
-          ></Select>
-        );
+        return <Select options={productLineOptions}></Select>;
       },
     },
 
@@ -266,6 +257,7 @@ export default (props: VersionDetailProps) => {
               批量添加应用
             </Button>
           )}
+
           <Button
             type="primary"
             disabled={isEditable}

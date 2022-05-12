@@ -217,6 +217,7 @@ export default function ComponentDetail() {
               <Button
                 type="primary"
                 style={{ marginLeft: 10 }}
+                disabled={componentType === 'middleware'}
                 onClick={() => {
                   if (componentType === 'app') {
                     setUserModalVisiable(true);
