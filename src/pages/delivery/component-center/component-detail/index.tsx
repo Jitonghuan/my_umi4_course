@@ -292,7 +292,7 @@ export default function ComponentDetail() {
                     <Paragraph
                       editable={{
                         onChange: (componentDescription: string) => {
-                          updateDescription({ id: componentInfo.id, componentDescription }).then(() => {
+                          updateDescription({ id: initRecord.id, componentDescription }).then(() => {
                             setEditableStr(componentDescription);
                           });
                         },
