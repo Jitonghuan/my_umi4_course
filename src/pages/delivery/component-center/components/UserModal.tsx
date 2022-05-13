@@ -34,6 +34,7 @@ export default function BasicModal(props: DetailProps) {
   const [rightInfo, setRightInfo] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [form] = Form.useForm();
   const handleSubmit = () => {
     if (type === 'success') {
@@ -69,11 +70,12 @@ export default function BasicModal(props: DetailProps) {
         `${getVersionCheck}?componentName=${componentName}&componentType=${componentType}&componentVersion=${componentVersion}&productLine=${productLine}`,
       )
         .then((res) => {
-          if (res.success) {
+          if (res.success && res.data === 'success') {
             setRightInfo(true);
             setType('success');
-          } else {
+          } else if (res.success && res.data !== 'success') {
             setRightInfo(false);
+            setErrorMessage(res.data);
             setType('error');
             return;
           }
@@ -155,7 +157,7 @@ export default function BasicModal(props: DetailProps) {
           validateStatus={
             type === 'success' ? 'success' : type === 'begin' ? 'validating' : type === 'error' ? 'error' : 'warning'
           }
-          help={type === 'success' ? '版本号检查通过' : type === 'error' ? '版本号检查不通过' : '等待检查版本号'}
+          help={type === 'success' ? '版本号检查通过' : type === 'error' ? errorMessage : '等待检查版本号'}
         >
           <Input style={{ width: 320 }} placeholder="请按照 1.0.0 的格式输入版本号！" onBlur={onVersionChange}></Input>
         </Form.Item>
