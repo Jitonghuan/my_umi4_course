@@ -79,11 +79,26 @@ export default (props: VersionDetailProps) => {
         };
       },
       renderFormItem: (_, config: any, data) => {
+        let description = '';
+        componentOptions.filter((item: any) => {
+          if (item.label === config.record?.componentName) {
+            description = item.componentDescription;
+          }
+        });
         return (
           <Select
             options={componentOptions}
-            onChange={(value: any) => {
-              queryProductVersionOptions(currentTabType, value);
+            labelInValue
+            onChange={(param: any) => {
+              queryProductVersionOptions(param.value, currentTabType);
+              componentOptions.filter((item: any) => {
+                if (item.label === param.label) {
+                  updateRow(config.recordKey, {
+                    ...form.getFieldsValue(config.recordKey),
+                    componentDescription: item.componentDescription,
+                  });
+                }
+              });
             }}
           ></Select>
         );
@@ -106,25 +121,13 @@ export default (props: VersionDetailProps) => {
         };
       },
       renderFormItem: (_, config: any, data) => {
-        let description = '';
-        componentVersionOptions.filter((item: any) => {
-          if (item.value === config.record?.componentVersion) {
-            description = item.componentDescription;
-          }
-        });
+        //  ]
         return (
           <Select
             options={componentVersionOptions}
-            onChange={(value: any) => {
-              componentVersionOptions.filter((item: any) => {
-                if (item.value === value) {
-                  updateRow(config.recordKey, {
-                    ...form.getFieldsValue(config.recordKey),
-                    componentDescription: item.componentDescription,
-                  });
-                }
-              });
-            }}
+            // onChange={(value: any) => {
+
+            // }}
           ></Select>
         );
       },
@@ -287,7 +290,13 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
-            await addComponent({ versionId, ...params, componentType: currentTab }).then(() => {
+            // console.log('params',params)
+            await addComponent({
+              versionId,
+              ...params,
+              componentName: params.componentName.label,
+              componentType: currentTab,
+            }).then(() => {
               queryVersionComponentList(versionId, currentTab);
             });
           },

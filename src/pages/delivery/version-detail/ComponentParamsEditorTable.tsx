@@ -162,13 +162,13 @@ export default (props: VersionDetailProps) => {
         <a
           key="editable"
           onClick={() => {
-            if (isEditable) {
-              message.info('已发布不可以编辑!');
-            } else {
-              action?.startEditable?.(record.id);
-              setType('edit');
-              queryParamList(versionId, record.configParamComponent);
-            }
+            // if (isEditable) {
+            //   message.info('已发布不可以编辑!');
+            // } else {
+            action?.startEditable?.(record.id);
+            setType('edit');
+            queryParamList(versionId, record.configParamComponent);
+            // }
           }}
         >
           编辑
@@ -176,13 +176,13 @@ export default (props: VersionDetailProps) => {
         <a
           key="delete"
           onClick={() => {
-            if (isEditable) {
-              message.info('已发布不可以删除!');
-            } else {
-              deleteDeliveryParam(record.id).then(() => {
-                setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
-              });
-            }
+            // if (isEditable) {
+            //   message.info('已发布不可以删除!');
+            // } else {
+            deleteDeliveryParam(record.id).then(() => {
+              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+            });
+            // }
           }}
         >
           删除

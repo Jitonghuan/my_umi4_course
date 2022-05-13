@@ -77,7 +77,9 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
               // };
               options.push({
                 label: item.componentName,
-                value: item.componentName,
+                value: item.id,
+                componentId: item.id,
+                componentDescription: item.componentDescription,
               });
             });
             setDataSource(options);
@@ -106,16 +108,16 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
 export function useQueryComponentVersionOptions(): [
   boolean,
   any,
-  (componentType: string, componentName?: string) => Promise<void>,
+  (componentId: number, componentType: string, componentName?: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
 
-  const queryProductVersionOptions = async (componentType: string, componentName?: string) => {
+  const queryProductVersionOptions = async (componentId: number, componentType: string, componentName?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentVersionList, {
-        data: { componentType, componentName, pageSize: -1 },
+        data: { componentId, componentType, componentName, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {

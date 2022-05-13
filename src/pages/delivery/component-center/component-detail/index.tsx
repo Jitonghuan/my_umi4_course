@@ -153,9 +153,10 @@ export default function ComponentDetail() {
   const changeVersion = (versionInfo: any) => {
     setCurVersion({
       version: versionInfo.value,
-      componentId: versionInfo.componentId,
+      componentId: initRecord.id,
     });
-    queryComponentInfo(componentName, versionInfo.value, componentType, versionInfo.componentId);
+    console.log('versionInfo', versionInfo, '---', versionInfo.componentId);
+    queryComponentInfo(componentName, versionInfo.value, componentType, initRecord.id);
   };
   const saveConfig = () => {
     const configuration = configForm.getFieldsValue();
