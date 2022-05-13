@@ -76,7 +76,7 @@ export default function TmplEditor(props: TmplListProps) {
     >
       <ContentCard className="tmpl-edits">
         <Form layout="inline" form={createTmplForm}>
-          <p style={{ width: '100%', display: 'flex', marginLeft: 16 }}>
+          <p style={{ display: 'flex', marginLeft: 16 }}>
             <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
               <Select style={{ width: 180 }} options={productLineOptions} disabled={editDisabled} />
             </Form.Item>
@@ -84,7 +84,7 @@ export default function TmplEditor(props: TmplListProps) {
               <Select style={{ width: 180 }} options={typeOption} disabled={editDisabled} loading={optionLoading} />
             </Form.Item>
             <Form.Item label="模板名称" name="tempName" rules={[{ required: true, message: '请输入模板名称' }]}>
-              <Input style={{ width: 180 }} />
+              <Input style={{ width: 156 }} />
             </Form.Item>
           </p>
 

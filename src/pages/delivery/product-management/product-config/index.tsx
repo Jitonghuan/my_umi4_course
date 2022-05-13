@@ -98,8 +98,6 @@ export default function ProductConfig() {
   useEffect(() => {
     if (configInfo.id) {
       queryIndentInfo(configInfo.id);
-      queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
-      queryIndentParamList({ id: configInfo.id, isGlobal: false });
     } else {
       return;
     }
@@ -243,6 +241,8 @@ export default function ProductConfig() {
                 size="small"
                 onClick={() => {
                   if (!infoFoldOut) {
+                    queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+                    queryIndentParamList({ id: configInfo.id, isGlobal: false });
                     setInfoFoldOut(true);
                   } else {
                     setInfoFoldOut(false);

@@ -125,8 +125,8 @@ export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
           if (res.success) {
             let data = res.data;
             const option = data?.map((item: any) => ({
-              label: item,
-              value: item,
+              label: item.categoryCode,
+              value: item.categoryCode,
             }));
             setDataSource(option);
           } else {
