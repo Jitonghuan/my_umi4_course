@@ -4,7 +4,7 @@
 
 import React, { useState, useContext } from 'react';
 import { Modal, Button, Table, Tag, Tooltip } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { Fullscreen } from '@cffe/internal-icon';
@@ -214,11 +214,13 @@ export default function PublishContent(props: IProps) {
           {!isProd && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
               重新提交
+              <QuestionCircleOutlined />
             </Button>
           )}
 
           <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
             退出分支
+            <QuestionCircleOutlined />
           </Button>
           {/* {!isFrontend && !isProd && (
             <Popconfirm
