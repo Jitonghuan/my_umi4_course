@@ -464,7 +464,8 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {/* {envTypeCode === 'prod' && appConfig.PRIVATE_METHODS === 'private' && ( */}
+        {/* appConfig.PRIVATE_METHODS === 'private' */}
+        {/* {envTypeCode === 'prod'  && ( */}
         <Button
           type="primary"
           onClick={() => {
@@ -475,7 +476,7 @@ export default function PublishDetail(props: IProps) {
         >
           离线部署
         </Button>
-        {/* )} */}
+        {/* )}  */}
 
         {/* {envTypeCode === 'prod' ? (
           <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
