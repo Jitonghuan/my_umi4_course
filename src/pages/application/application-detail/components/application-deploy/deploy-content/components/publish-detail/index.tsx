@@ -464,18 +464,18 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {envTypeCode === 'prod' && appConfig.PRIVATE_METHODS === 'private' && (
-          <Button
-            type="primary"
-            onClick={() => {
-              setDeployVisible(true);
-              setDeployEnv([]);
-            }}
-            icon={<UploadOutlined />}
-          >
-            离线部署
-          </Button>
-        )}
+        {/* {envTypeCode === 'prod' && appConfig.PRIVATE_METHODS === 'private' && ( */}
+        <Button
+          type="primary"
+          onClick={() => {
+            setDeployVisible(true);
+            setDeployEnv([]);
+          }}
+          icon={<UploadOutlined />}
+        >
+          离线部署
+        </Button>
+        {/* )} */}
 
         {/* {envTypeCode === 'prod' ? (
           <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
