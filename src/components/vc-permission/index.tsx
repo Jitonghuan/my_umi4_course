@@ -1,6 +1,6 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import { FeContext } from '@/common/hooks';
-import FELayout from '@cffe/vc-layout';
+import { NoPermissionPage } from '@cffe/layout';
 
 export interface IProps {
   /** 权限点 */
@@ -24,6 +24,6 @@ export default function VCPermission(props: React.PropsWithChildren<IProps>) {
 
   // 权限未开启，或者权限数据中存在当前的节点数据
   return (
-    !isOpenPermission || hasPermission ? children : isShowErrorPage ? <FELayout.NoPermissionPage /> : null
+    !isOpenPermission || hasPermission ? children : isShowErrorPage ? <NoPermissionPage /> : null
   ) as React.ReactElement;
 }

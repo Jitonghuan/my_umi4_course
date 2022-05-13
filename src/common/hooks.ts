@@ -4,12 +4,20 @@
 // @create 2021/09/10 11:37
 
 import { useState, useEffect, useCallback, createContext, useContext } from 'react';
-import type { IPermission } from '@cffe/vc-layout/lib/sider-menu';
 import appConfig from '@/app.config';
 import DetailContext from '../pages/application/application-detail/context';
 import { getRequest, postRequest } from '@/utils/request';
 import { BasicData } from '@hbos/component-position-switcher';
 import * as APIS from './apis';
+
+interface IPermission {
+  /** 权限 ID */
+  permissionId: string | number;
+  /** 权限名称 */
+  permissionName: string;
+  /** 权限对应的路由地址 */
+  permissionUrl: string;
+}
 
 /** 全局上下文 */
 export const FeContext = createContext({

@@ -30,6 +30,17 @@ export const appMicroFeTypeOptions: IOption<AppMicroFeType>[] = [
   { label: '子应用', value: 'subProject' },
 ];
 
+export const feTypeOptions: IOption<any>[] = [
+  { label: 'web', value: 'web' },
+  { label: '定制包', value: 'customPack' },
+  { label: '定制页面', value: 'customPage' },
+];
+export const singleFeTypeOptions: IOption<any>[] = [{ label: 'web', value: 'web' }];
+export const microFeTypeOptions: IOption<any>[] = [
+  { label: 'web', value: 'web' },
+  { label: '定制包', value: 'customPack' },
+  { label: '定制页面', value: 'customPage' },
+];
 // export const relationMainAppCodeOptions: IOption[] = [
 //   'g3a_future-his-portal-web',
 //   'gmc_future-his-portal-web',
@@ -44,4 +55,7 @@ export const deployJobUrlOptions: IOption[] = [
   { label: '通用构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-single' },
   { label: 'HIS EMR', value: 'http://jenkins-fe.cfuture.shop/job/emr-loader' },
   { label: 'HIS ICU', value: 'http://jenkins-fe.cfuture.shop/job/future-his-icu' },
+  { label: '打印模版', value: 'http://jenkins-fe.cfuture.shop/job/fe-printer-main' },
+  { label: '定制包 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extensions' },
+  { label: '定制页面 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extension-pages' },
 ];
