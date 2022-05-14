@@ -259,13 +259,14 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
-    return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
+    return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}`;
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
   const uploadProps = {
-    name: appData?.appType === 'frontend' ? 'file' : 'image',
+    name: 'file',
     action: uploadImages,
+    maxCount: 1,
     progress: {
       strokeColor: {
         '0%': '#108ee9',
