@@ -18,6 +18,7 @@ import {
   feOfflineDeploy,
   restartApp,
   queryProjectEnvList,
+  checkOfflineDeploy,
 } from '@/pages/application/service';
 import { UploadOutlined } from '@ant-design/icons';
 import { IProps } from './types';
@@ -44,7 +45,7 @@ export default function PublishDetail(props: IProps) {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [projectEnvCodeOptions, setProjectEnvCodeOptions] = useState<any>([]);
   const [projectEnvName, setProjectEnvName] = useState<string>('');
-  const [offlineEnvData, setOffLineEnvData] = useState([]); //支持离线部署的环境
+  const [offlineEnvData, setOffLineEnvData] = useState<any>([]); //支持离线部署的环境
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
   const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
@@ -57,6 +58,7 @@ export default function PublishDetail(props: IProps) {
   const [pipelineOptions, setPipelineOptions] = useState<any>([]);
   const [selectPipeline, setSelectPipeline] = useState<any>('');
   const [selectMaster, setSelectMaster] = useState<any>('');
+  const [beforeUploadInfo, setBeforeUploadInfo] = useState<boolean>(true);
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
 
   let newNextEnvTypeCode = '';
@@ -260,6 +262,13 @@ export default function PublishDetail(props: IProps) {
 
   const uploadImages = () => {
     return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}`;
+  };
+  const beforeUploadAction = (envCode: string) => {
+    getRequest(checkOfflineDeploy, { data: { appCode: appData?.appCode, envCode } }).then((res) => {
+      if (res.success) {
+        setBeforeUploadInfo(false);
+      }
+    });
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
@@ -465,19 +474,19 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {/* appConfig.PRIVATE_METHODS === 'private' */}
-        {/* {envTypeCode === 'prod'  && ( */}
-        <Button
-          type="primary"
-          onClick={() => {
-            setDeployVisible(true);
-            setDeployEnv([]);
-          }}
-          icon={<UploadOutlined />}
-        >
-          离线部署
-        </Button>
-        {/* )}  */}
+        {envTypeCode === 'prod' && appConfig.PRIVATE_METHODS === 'private' && (
+          <Button
+            type="primary"
+            onClick={() => {
+              setDeployVisible(true);
+              setDeployEnv([]);
+              setBeforeUploadInfo(true);
+            }}
+            icon={<UploadOutlined />}
+          >
+            离线部署
+          </Button>
+        )}
 
         {/* {envTypeCode === 'prod' ? (
           <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
@@ -666,6 +675,7 @@ export default function PublishDetail(props: IProps) {
             onChange={(e: any) => {
               onOperate('uploadImageStart');
               setDeployEnv(e.target.value);
+              beforeUploadAction(e.target.value);
             }}
             value={deployEnv}
             options={offlineEnvData || []}
@@ -683,7 +693,7 @@ export default function PublishDetail(props: IProps) {
         <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
           <span>配置文件：</span>
           <Upload {...uploadProps} accept=".tgz,.gz">
-            <Button icon={<UploadOutlined />} type="primary" ghost disabled={!deployEnv?.length}>
+            <Button icon={<UploadOutlined />} type="primary" ghost disabled={beforeUploadInfo}>
               离线部署
             </Button>
           </Upload>
