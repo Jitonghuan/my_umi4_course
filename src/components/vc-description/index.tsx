@@ -62,6 +62,7 @@ const funcName = (props: any) => {
 
   const { dataSource = {}, ...rest } = props;
   let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
+  let envType = appConfig.envType;
 
   let publishRecordData: any = [];
   for (const key in dataSource) {
@@ -127,7 +128,9 @@ const funcName = (props: any) => {
       </Descriptions.Item>
 
       <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
-        {dataSource?.jenkinsUrl && (env === 'prod' ? dataSource?.deployId > 43222 : dataSource?.deployId > 1595) ? (
+        {appConfig.IS_Matrix === 'public' &&
+        dataSource?.jenkinsUrl &&
+        (env === 'prod' ? dataSource?.deployId > 43222 : dataSource?.deployId > 1595) ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -139,7 +142,56 @@ const funcName = (props: any) => {
             ))}
           </>
         ) : null}
-        {dataSource?.jenkinsUrl && (env === 'prod' ? dataSource?.deployId < 43222 : dataSource?.deployId < 1595) ? (
+
+        {envType === 'fygs' && dataSource?.deployId < 32316 ? (
+          <>
+            {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+              <div style={{ marginBottom: '5px' }}>
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                  {jenkinsItem?.subJenkinsUrl}
+                </a>
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
+              <div style={{ marginBottom: '5px' }}>
+                {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.JenkinsUrl} target="_blank">
+                  {jenkinsItem?.JenkinsUrl}
+                </a>
+              </div>
+            ))}
+          </>
+        )}
+        {envType === 'zslnyy' && dataSource?.deployId < 39455 ? (
+          <>
+            {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+              <div style={{ marginBottom: '5px' }}>
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                  {jenkinsItem?.subJenkinsUrl}
+                </a>
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
+              <div style={{ marginBottom: '5px' }}>
+                {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.JenkinsUrl} target="_blank">
+                  {jenkinsItem?.JenkinsUrl}
+                </a>
+              </div>
+            ))}
+          </>
+        )}
+        {appConfig.IS_Matrix === 'public' &&
+        dataSource?.jenkinsUrl &&
+        (env === 'prod' ? dataSource?.deployId < 43222 : dataSource?.deployId < 1595) ? (
           <>
             {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
