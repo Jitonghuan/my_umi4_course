@@ -13,6 +13,7 @@ import {
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // import TraceTable from './trace-table'
 import RightGraph from '../right-graph';
+import { getTraceInfo } from '../../../service';
 import './index.less';
 import * as d3 from 'd3';
 
@@ -28,7 +29,6 @@ export default function RrightTrace(props: any) {
         d3.select(node).selectAll('*').remove();
         var svg = d3.select(node).append('svg').style('height', 30).style('overflow', 'inherit');
 
-        // Create the scale
         var x = d3
           .scaleLinear()
           .domain([0, data.reduce((max: number, e: any) => Math.max(parseInt(e.durations), max), 0)]) // This is what is written on the Axis: from 0 to 100
@@ -95,30 +95,11 @@ export default function RrightTrace(props: any) {
       data.icon = icon;
       return data;
     };
-    console.log(handleData(data[0]), '11');
     setTreeData([handleData(data[0])]);
   }, [data]);
 
-  const switchChange = () => {};
-  // 处理数据
-  const listToTree = (list: any) => {
-    let map: any = {},
-      node,
-      roots = [];
-    for (let i = 0; i < list.length; i++) {
-      map[list[i].spanId] = i; // 初始化map
-      list[i].children = []; // 初始化children
-      list[i].key = list[i].spanId;
-    }
-    for (let j = 0; j < list.length; j++) {
-      node = list[j];
-      if (node.parentSpanId !== 0) {
-        list[map[node.parentSpanId]]?.children.push(node);
-      } else {
-        roots.push(node);
-      }
-    }
-    return roots;
+  const switchChange = (v: boolean) => {
+    getTraceInfo({ enableNoiseReduction: v, traceID: item.traceID }).then((res) => {});
   };
 
   return (
@@ -189,38 +170,37 @@ export default function RrightTrace(props: any) {
                 treeData={treeData}
                 blockNode
                 defaultExpandAll={true}
-                // showLine={{ showLeafIcon: false }}
                 showIcon={false}
                 showLine={{ showLeafIcon: false }}
-                // icon={<span className="span-icon">111</span>}
                 switcherIcon={<span className="span-icon"></span>}
                 titleRender={(node: any) => {
                   return (
                     <div className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} span-item`}>
-                      {node?.parentSpanId !== -1 ? (
-                        <div className="span-item-wrapper">
-                          <span className="span-title" style={{}}>
-                            {node?.endpointName || ''}
-                          </span>
-                          <span className="span-detail">
-                            {/* {Object.keys(node?.tags || {}).map((k: any) => (
+                      {
+                        node?.parentSpanId !== -1 ? (
+                          <div className="span-item-wrapper">
+                            <span className="span-title" style={{}}>
+                              {node?.endpointName || ''}
+                            </span>
+                            <span className="span-detail">
+                              {/* {Object.keys(node?.tags || {}).map((k: any) => (
                       <span className="span-tag" title={k}>
                         <Tag style={{ lineHeight: '14px', padding: '0 3px' }} color="blue">
                           {node.tags[k]}
                         </Tag>
                       </span>
                     ))} */}
-                          </span>
-                          <Progress
-                            percent={(parseFloat(node?.durations) * 100) / (data.length ? data[0].durations : 0)}
-                            showInfo={false}
-                            size="small"
-                            trailColor="transparent"
-                            className="span-progress"
-                          />
-                        </div>
-                      ) : null
-                      // <div style={{ width: '100%' }}><div ref={containerRef} className="scale" style={{ float: 'right' }}></div></div>
+                            </span>
+                            <Progress
+                              percent={(parseFloat(node?.durations) * 100) / (data.length ? data[0].durations : 0)}
+                              showInfo={false}
+                              size="small"
+                              trailColor="transparent"
+                              className="span-progress"
+                            />
+                          </div>
+                        ) : null
+                        // <div style={{ width: '100%' }}><div ref={containerRef} className="scale" style={{ float: 'right' }}></div></div>
                       }
                     </div>
                   );
