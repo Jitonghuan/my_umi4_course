@@ -174,17 +174,13 @@ const PublishContent = ({
           pagination={false}
           bordered
           scroll={{ x: '100%' }}
-          rowSelection={
-            isProd
-              ? undefined
-              : {
-                  type: 'checkbox',
-                  selectedRowKeys,
-                  onChange: (selectedRowKeys: React.Key[]) => {
-                    setSelectedRowKeys(selectedRowKeys as any);
-                  },
-                }
-          }
+          rowSelection={{
+            type: 'checkbox',
+            selectedRowKeys,
+            onChange: (selectedRowKeys: React.Key[]) => {
+              setSelectedRowKeys(selectedRowKeys as any);
+            },
+          }}
           columns={createTableSchema() as any}
         />
       </div>

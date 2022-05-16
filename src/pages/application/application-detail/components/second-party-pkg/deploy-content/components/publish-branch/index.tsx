@@ -44,6 +44,7 @@ export default function PublishBranch(props: IProps) {
       if (branchInfo?.masterBranch) {
         const initValue = option.find((item: any) => item.label === branchInfo?.masterBranch);
         setSelectMaster(initValue?.value);
+        masterBranchChange(initValue?.value);
       }
     }
   }, [masterListData, branchInfo?.masterBranch]);
