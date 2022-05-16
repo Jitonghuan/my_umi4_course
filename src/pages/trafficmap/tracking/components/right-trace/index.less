@@ -14,20 +14,49 @@
     }
   }
 
+  .ant-tree-switcher-leaf-line::before {
+    right: 16px;
+  }
+
+  .ant-tree-switcher-leaf-line::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    top: 14px;
+    left: 12px;
+    border-radius: 50%;
+    background-color: #3277d1;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .scale-warpper {
+    width: 100%;
+    height: 30px;
+    padding: 0 4px;
+  }
+
+  .scale,
+  .span-progress {
+    width: 300px;
+  }
+
   .span-item {
     display: flex;
     justify-content: space-between;
 
-    &.leaf::before {
-      content: '';
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: #3e8fe2;
-      margin: 0px 8px;
-      align-self: center;
-    }
+    // &.leaf::before {
+    //   content: '';
+    //   display: inline-block;
+    //   width: 8px;
+    //   height: 8px;
+    //   border-radius: 50%;
+    //   background-color: #3e8fe2;
+    //   margin: 0px 8px;
+    //   align-self: center;
+    //   // margin-left: -27px;
+    // }
 
     .span-title {
       margin-right: 10px;
@@ -53,6 +82,21 @@
     margin-right: 5px;
   }
 
+  .parent-icon {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4e59d3;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .ant-tree.ant-tree-block-node .ant-tree-list-holder-inner {
+    width: 100%;
+  }
+
   .ant-tree .ant-tree-treenode {
     // padding: 0 0 10px 0;
   }
@@ -63,8 +107,12 @@
   }
 
   .span-item {
-    width: 90%;
+    width: 100%;
     display: flex;
+
+    .ant-progress-line {
+      // width: 30%;
+    }
 
     &-wrapper {
       width: 100%;
@@ -73,12 +121,7 @@
     }
   }
 
-  .ant-progress-line {
-    width: 30%;
-  }
-
   .ant-progress-outer {
-    // float: right;
     width: 100%;
   }
 

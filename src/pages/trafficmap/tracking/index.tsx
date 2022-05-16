@@ -20,6 +20,7 @@ const mockData = [
     endpointName: 'homepage-level1',
     startTime: '2022-5-12 23:12:12',
     durations: '890',
+    icon: <CaretUpOutlined />,
   },
   {
     traceId: 'lalla',
@@ -28,6 +29,7 @@ const mockData = [
     endpointName: 'homepage-level2',
     startTime: '2022-5-12 23:12:12',
     durations: '89',
+    icon: <CaretUpOutlined />,
   },
   {
     traceId: 'xixix',
@@ -36,6 +38,7 @@ const mockData = [
     endpointName: 'homepage-level2',
     startTime: '2022-5-12 23:12:12',
     durations: '200',
+    icon: <CaretUpOutlined />,
   },
   {
     traceId: 'memme',
@@ -44,6 +47,7 @@ const mockData = [
     endpointName: 'homepage-level2',
     startTime: '2022-5-12 23:12:12',
     durations: '300',
+    icon: <CaretUpOutlined />,
   },
   {
     traceId: 'hhah',
@@ -52,6 +56,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '400',
+    icon: <CaretUpOutlined />,
   },
   {
     traceId: 'sopring',
@@ -60,6 +65,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '500',
+    icon: <CaretUpOutlined />,
   },
   {
     traceId: '1weljfdf',
@@ -68,6 +74,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '234',
+    icon: <CaretUpOutlined />,
   },
   {
     traceId: 'asfv',
@@ -76,6 +83,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '23',
+    icon: <CaretUpOutlined />,
   },
   {
     traceId: 'lgsd',
@@ -116,6 +124,7 @@ const mockData = [
     endpointName: 'homepage-level4',
     startTime: '2022-5-12 23:12:12',
     durations: '672',
+    icon: <CaretUpOutlined />,
   },
 ];
 export default function Tracking() {
@@ -204,25 +213,26 @@ export default function Tracking() {
   };
 
   // 处理数据 将list转化成tree格式
-  const listToTree = (list: any) => {
-    let map: any = {},
-      node,
-      roots = [];
+  function listToTree(list: any) {
+    var map: any = {};
+    var node = null;
+    var roots = [];
     for (let i = 0; i < list.length; i++) {
       map[list[i].spanId] = i; // 初始化map
-      list[i].children = []; // 初始化children
       list[i].key = list[i].spanId;
+      list[i].children = undefined;
     }
     for (let j = 0; j < list.length; j++) {
       node = list[j];
       if (node.parentSpanId !== 0) {
+        list[map[node.parentSpanId]].children = list[map[node.parentSpanId]].children || []; // 初始化children
         list[map[node.parentSpanId]]?.children.push(node);
       } else {
         roots.push(node);
       }
     }
     return roots;
-  };
+  }
 
   const timeChange = () => {};
   return (

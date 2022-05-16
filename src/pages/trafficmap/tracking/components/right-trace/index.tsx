@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { Form, Button, message } from 'antd';
 import { Tree, Switch } from 'antd';
 import { Tag, Divider, Progress, Select, Table } from 'antd';
@@ -22,7 +22,27 @@ export default function RrightTrace(props: any) {
   const [treeData, setTreeData] = useState<any>([]); //用于列表树的数据
   const [traceIdOptions, setTraceIdOptions] = useState<any>([]);
   const [selectTraceId, setSelectTraceId] = useState<any>('11112323232');
-  const containerRef = useRef(null);
+  const containerRef = useCallback(
+    (node: any) => {
+      if (node) {
+        d3.select(node).selectAll('*').remove();
+        var svg = d3.select(node).append('svg').style('height', 30).style('overflow', 'inherit');
+
+        // Create the scale
+        var x = d3
+          .scaleLinear()
+          .domain([0, data.reduce((max: number, e: any) => Math.max(parseInt(e.durations), max), 0)]) // This is what is written on the Axis: from 0 to 100
+          .range([0, node.clientWidth]); // This is where the axis is placed: from 100px to 800px
+
+        // Draw the axis
+        svg
+          .append('g')
+          .attr('transform', 'translate(0,25)') // This controls the vertical position of the Axis
+          .call(d3.axisTop(x));
+      }
+    },
+    [data],
+  );
   const titleList = [
     { key: 'list', label: '列表', icon: <UnorderedListOutlined /> },
     { key: 'table', label: '表格', icon: <TableOutlined /> },
@@ -65,31 +85,18 @@ export default function RrightTrace(props: any) {
   ];
 
   useEffect(() => {
-    if (!containerRef) return;
-    const container = containerRef.current;
-    var svg = d3.select(container).append('svg').style('height', 30).attr('width', '100%');
-
-    // Create the scale
-    var x = d3
-      .scaleLinear()
-      .domain([0, 150]) // This is what is written on the Axis: from 0 to 100
-      .range([310, 650]); // This is where the axis is placed: from 100px to 800px
-
-    // Draw the axis
-    svg
-      .append('g')
-      .attr('transform', 'translate(150,10)') // This controls the vertical position of the Axis
-      .call(d3.axisBottom(x));
-
-    return () => {
-      containerRef.current = null;
+    const handleData = (data: any) => {
+      // let icon = <span className="parent-icon"></span>;
+      let icon = <TableOutlined />;
+      if (data.children.length === 0) {
+        icon = <span className="left-icon">111</span>;
+        handleData(data.children);
+      }
+      data.icon = icon;
+      return data;
     };
-  }, [containerRef]);
-
-  useEffect(() => {
-    console.log(data, 'data');
-    console.log([{ key: 'root', parentSpanId: -1, endpointName: '', children: data }], 'treeData');
-    setTreeData([{ key: 'root', parentSpanId: -1, endpointName: '', children: data }]);
+    console.log(handleData(data[0]), '11');
+    setTreeData([handleData(data[0])]);
   }, [data]);
 
   const switchChange = () => {};
@@ -113,6 +120,7 @@ export default function RrightTrace(props: any) {
     }
     return roots;
   };
+
   return (
     <div className="trace-wrapper">
       <div className="trace-wrapper-top">
@@ -172,45 +180,53 @@ export default function RrightTrace(props: any) {
       <div className="trace-display">
         {activeBtn === 'list' && (
           <div>
+            <div className="scale-warpper">
+              <div ref={containerRef} className="scale" style={{ float: 'right' }}></div>
+            </div>
             {/* <div ref={containerRef} className='scale' ></div> */}
-            <Tree
-              treeData={treeData}
-              blockNode
-              defaultExpandAll
-              showLine={{ showLeafIcon: false }}
-              icon={<span className="span-icon"></span>}
-              switcherIcon={<span className="span-icon"></span>}
-              titleRender={(node: any) => {
-                return (
-                  <div className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} span-item`}>
-                    {node?.parentSpanId !== -1 ? (
-                      <div className="span-item-wrapper">
-                        <span className="span-title" style={{}}>
-                          {node?.endpointName || ''}
-                        </span>
-                        <span className="span-detail">
-                          {/* {Object.keys(node?.tags || {}).map((k: any) => (
+            {treeData?.length && (
+              <Tree
+                treeData={treeData}
+                blockNode
+                defaultExpandAll={true}
+                // showLine={{ showLeafIcon: false }}
+                showIcon={false}
+                showLine={{ showLeafIcon: false }}
+                // icon={<span className="span-icon">111</span>}
+                switcherIcon={<span className="span-icon"></span>}
+                titleRender={(node: any) => {
+                  return (
+                    <div className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} span-item`}>
+                      {node?.parentSpanId !== -1 ? (
+                        <div className="span-item-wrapper">
+                          <span className="span-title" style={{}}>
+                            {node?.endpointName || ''}
+                          </span>
+                          <span className="span-detail">
+                            {/* {Object.keys(node?.tags || {}).map((k: any) => (
                       <span className="span-tag" title={k}>
                         <Tag style={{ lineHeight: '14px', padding: '0 3px' }} color="blue">
                           {node.tags[k]}
                         </Tag>
                       </span>
                     ))} */}
-                        </span>
-                        <Progress
-                          percent={(parseFloat(node?.durations) * 100) / (data.length ? data[0].durations : 0)}
-                          showInfo={false}
-                          size="small"
-                          trailColor="transparent"
-                        />
-                      </div>
-                    ) : (
-                      <div ref={containerRef} className="scale"></div>
-                    )}
-                  </div>
-                );
-              }}
-            />
+                          </span>
+                          <Progress
+                            percent={(parseFloat(node?.durations) * 100) / (data.length ? data[0].durations : 0)}
+                            showInfo={false}
+                            size="small"
+                            trailColor="transparent"
+                            className="span-progress"
+                          />
+                        </div>
+                      ) : null
+                      // <div style={{ width: '100%' }}><div ref={containerRef} className="scale" style={{ float: 'right' }}></div></div>
+                      }
+                    </div>
+                  );
+                }}
+              />
+            )}
           </div>
         )}
         {activeBtn === 'table' && (
@@ -223,9 +239,15 @@ export default function RrightTrace(props: any) {
               expandIcon: ({ expanded, onExpand, record }) =>
                 record?.children?.length ? (
                   expanded ? (
-                    <DownOutlined style={{ margin: '0 3px', fontSize: '9px' }} onClick={(e) => onExpand(record, e)} />
+                    <DownOutlined
+                      style={{ marginRight: '3px', fontSize: '9px' }}
+                      onClick={(e) => onExpand(record, e)}
+                    />
                   ) : (
-                    <RightOutlined style={{ margin: '0 3px', fontSize: '9px' }} onClick={(e) => onExpand(record, e)} />
+                    <RightOutlined
+                      style={{ marginRight: '3px', fontSize: '9px' }}
+                      onClick={(e) => onExpand(record, e)}
+                    />
                   )
                 ) : null,
               defaultExpandAllRows: true,
@@ -233,7 +255,7 @@ export default function RrightTrace(props: any) {
             }}
           />
         )}
-        {activeBtn === 'tree' && <RightGraph />}
+        {activeBtn === 'tree' && <RightGraph treeData={data} />}
       </div>
     </div>
   );

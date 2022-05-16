@@ -1,13 +1,10 @@
-import { treeDataFormatter } from '@/pages/test/autotest/_components/report-detail/formatter';
 import G6, { Graph, GraphData } from '@antv/g6';
-import moment, { Moment } from 'moment';
 import React, { useEffect, useState, useMemo, forwardRef, useRef, useImperativeHandle } from 'react';
-// import './index.less';
 function mapData(arr: any) {
   if (!arr) return [];
-  return arr.map(({ id, title, children, ...other }: any) => ({
+  return arr.map(({ key, endpointName, children, ...other }: any) => ({
     // id: title,
-    label: title,
+    label: endpointName,
     children: mapData(children),
     ...other,
   }));
@@ -15,6 +12,7 @@ function mapData(arr: any) {
 export default function rightTree(props: any) {
   const { treeData } = props;
   const data = useMemo(() => treeData && { label: 'root11', children: mapData(treeData) }, [treeData]);
+  // const data = useMemo(() => mapData(treeData), [treeData])
   const containerRef: any = useRef(null);
   const [graph, setGraph] = useState<any>();
   // 初始化图表
@@ -22,10 +20,11 @@ export default function rightTree(props: any) {
     if (!containerRef) return;
     let g: any = null;
     const container = containerRef.current;
+
     g = new G6.TreeGraph({
       container: 'traceTree',
       width: container.clientWidth,
-      height: container.clientHeigth,
+      height: container.clientHeight,
       modes: {
         default: [
           // {
@@ -48,10 +47,12 @@ export default function rightTree(props: any) {
       },
       // 定义布局
       layout: {
-        type: 'dendrogram', // 布局类型
+        // type: 'dendrogram', // 布局类型
+        type: 'compactBox',
         direction: 'LR', // 自左至右布局，可选的有 H / V / LR / RL / TB / BT
         nodeSep: 50, // 节点之间间距
         rankSep: 100, // 每个层级之间的间距
+        nodeSize: 10,
       },
     });
     g.node(function (node: any) {
@@ -66,10 +67,28 @@ export default function rightTree(props: any) {
     if (data) {
       g.data(data);
       g.render();
-      // g.fitView();
+
+      g.fitView();
     }
     setGraph(g);
-    return () => g && g.destory && g.destory();
+
+    /**
+     * 监听dom大小的改变resize graph
+     */
+    const resizeObserver = new ResizeObserver((entries: any) => {
+      for (let entry of entries) {
+      }
+      if (!g || g.get('destroyed')) return;
+      if (!container) return;
+      g.changeSize(container.scrollWidth, container.scrollHeight - 30);
+      g.fitView();
+    });
+    resizeObserver.observe(container || document.body);
+
+    return () => {
+      g && g.destory && g.destory();
+      resizeObserver.disconnect();
+    };
   }, [containerRef, treeData]);
   // 渲染数据
   useEffect(() => {
