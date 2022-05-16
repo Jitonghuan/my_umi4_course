@@ -259,13 +259,14 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
-    return `${feOfflineDeploy}?appCode=${appData?.appCode}&envCode=${deployEnv}`;
+    return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}`;
   };
 
   // 上传按钮 message.error(info.file.response?.errorMsg) ||
   const uploadProps = {
-    name: appData?.appType === 'frontend' ? 'file' : 'image',
+    name: 'file',
     action: uploadImages,
+    maxCount: 1,
     progress: {
       strokeColor: {
         '0%': '#108ee9',
@@ -464,18 +465,19 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {envTypeCode === 'prod' && appConfig.PRIVATE_METHODS === 'private' && (
-          <Button
-            type="primary"
-            onClick={() => {
-              setDeployVisible(true);
-              setDeployEnv([]);
-            }}
-            icon={<UploadOutlined />}
-          >
-            离线部署
-          </Button>
-        )}
+        {/* appConfig.PRIVATE_METHODS === 'private' */}
+        {/* {envTypeCode === 'prod'  && ( */}
+        <Button
+          type="primary"
+          onClick={() => {
+            setDeployVisible(true);
+            setDeployEnv([]);
+          }}
+          icon={<UploadOutlined />}
+        >
+          离线部署
+        </Button>
+        {/* )}  */}
 
         {/* {envTypeCode === 'prod' ? (
           <Button type="default" disabled={!deployInfo.deployedEnvs} danger onClick={() => setRollbackVisible(true)}>
