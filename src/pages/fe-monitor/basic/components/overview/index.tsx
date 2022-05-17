@@ -133,8 +133,8 @@ const BasicOverview = ({ appGroup, envCode, feEnv }: IProps) => {
               (item, i) =>
                 i > 1 && (
                   <div key={i}>
-                    <b>{item[1]}</b>
-                    <span>{item[0]}</span>
+                    <b>{item[0] === '首次可交互时间' ? (item[1] / 1000).toFixed(3) : item[1]}</b>
+                    <span>{item[0] === '首次可交互时间' ? '首次可交互时间(秒)' : item[0]}</span>
                   </div>
                 ),
             )}

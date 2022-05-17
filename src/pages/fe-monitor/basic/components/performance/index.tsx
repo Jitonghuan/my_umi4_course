@@ -69,9 +69,10 @@ const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
     if (!chart) {
       return;
     }
+    const indicatorName = tab || activeTab;
     const res = await getPerformanceChart(
       getParam({
-        indicatorName: tab || activeTab,
+        indicatorName,
       }),
     );
 
@@ -79,10 +80,10 @@ const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
     if (data.length) {
       for (const item of data) {
         item[0] = moment(item[0]).format('YYYY-MM-DD HH:mm');
-        item[1] = Math.floor(item[1]);
+        item[1] = item[1].toFixed(2);
       }
+      data.unshift(['日期', '毫秒']);
     }
-
     chart.data(data);
     chart.draw();
   }
@@ -134,9 +135,9 @@ const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
     setChart(
       new Line({
         dom: document.querySelector('.performance-chart'),
-        fieldMap: { x: ['日期'], y: ['耗时'] },
+        fieldMap: { x: ['日期'], y: ['毫秒'] },
         layout: {
-          padding: [40, 40, 40, 40],
+          padding: [40, 40, 40, 65],
         },
         title: {
           isShow: false,
@@ -145,7 +146,7 @@ const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
           isShow: false,
         },
         yAxis: {
-          name: '毫秒',
+          name: ' ',
         },
         xAxis: {
           labelInterval: 2,
@@ -219,10 +220,10 @@ const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
                 dataIndex: 'url',
               },
               {
-                title: pageGroupTab === 'highFrequency' ? 'PV' : '平均载入时长-秒',
+                title: pageGroupTab === 'highFrequency' ? 'PV' : '平均载入时长(秒)',
                 render: (value, record) => (
                   <span>
-                    {pageGroupTab === 'highFrequency' ? record.pv : Math.floor(record.avgLoadTime / 100) || 0}
+                    {pageGroupTab === 'highFrequency' ? record.pv : (record.avgLoadTime / 1000).toFixed(2) || 0}
                   </span>
                 ),
               },
@@ -280,9 +281,9 @@ const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
                 dataIndex: 'url',
               },
               {
-                title: '平均载入时长-秒',
+                title: '平均载入时长(秒)',
                 dataIndex: 'avgLoadTime',
-                render: (value, record) => <span>{Math.floor(value / 100) || 0}</span>,
+                render: (value, record) => <span>{(value / 1000).toFixed(2) || 0}</span>,
               },
             ]}
             pagination={{

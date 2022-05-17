@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Spin } from 'antd';
-import { Line, Bar } from '@cffe/hulk-wave-chart';
+import { Line, Bar, Column } from '@cffe/hulk-wave-chart';
 import { getPerformanceDetail } from '../../server';
 import moment from 'moment';
 import { groupItem } from '../../const';
@@ -37,13 +37,13 @@ const PerformanceMarket = ({ url, param }: IProps) => {
     const loadTimeTrend = res?.data?.loadTimeTrend;
     const data = [];
     if (loadTimeTrend?.avgTime?.length) {
-      data.unshift(['日期', '平均载入时长', '最小载入时长', '最大载入时长']);
+      data.unshift(['日期', '平均载入时长(秒)', '最小载入时长(秒)', '最大载入时长(秒)']);
       for (let i = 0; i < loadTimeTrend.avgTime.length; i++) {
         data.push([
           moment(loadTimeTrend.avgTime[i][0]).format('YYYY-MM-DD HH:mm'),
-          Math.floor(loadTimeTrend.avgTime[i][1] / 100),
-          Math.floor(loadTimeTrend.minTime[i][1] / 100),
-          Math.floor(loadTimeTrend.maxTime[i][1] / 100),
+          (loadTimeTrend.avgTime[i][1] / 1000).toFixed(2),
+          (loadTimeTrend.minTime[i][1] / 1000).toFixed(2),
+          (loadTimeTrend.maxTime[i][1] / 1000).toFixed(2),
         ]);
       }
     }
@@ -101,9 +101,10 @@ const PerformanceMarket = ({ url, param }: IProps) => {
     const Obj = indicator || indicatorData;
     const data = [];
     if (Obj[activeTab]?.length) {
+      data.push(['日期', '时长(毫秒)']);
       for (let i = 0; i < Obj[activeTab].length; i++) {
         let item: any = Obj[activeTab][i];
-        data.push([moment(item[0]).format('YYYY-MM-DD HH:mm'), Math.floor(item[1])]);
+        data.push([moment(item[0]).format('YYYY-MM-DD HH:mm'), item[1].toFixed(2)]);
       }
     }
     indicatorChart?.data(data);
@@ -123,9 +124,10 @@ const PerformanceMarket = ({ url, param }: IProps) => {
     const data = res?.data?.pageLoadWaterfallChart || [];
     const list = [];
     if (data.length) {
+      list.push(['指标', '时长(秒)']);
       for (let i = 0; i < data.length; i++) {
         for (const key in data[i]) {
-          list.push([Math.floor(data[i][key] / 100), key]);
+          list.push([key, (data[i][key] / 1000).toFixed(key === 'fid' ? 4 : 2)]);
         }
       }
     }
@@ -137,7 +139,7 @@ const PerformanceMarket = ({ url, param }: IProps) => {
     setTrendChart(
       new Line({
         dom: document.querySelector('.trend-chart'),
-        fieldMap: { x: ['日期'], y: ['平均载入时长', '最小载入时长', '最大载入时长'] },
+        fieldMap: { x: ['日期'], y: ['平均载入时长(秒)', '最小载入时长(秒)', '最大载入时长(秒)'] },
         layout: {
           padding: [50, 20, 40, 40],
         },
@@ -152,10 +154,11 @@ const PerformanceMarket = ({ url, param }: IProps) => {
         },
         line: {
           isCustomColor: true,
+          isShowLable: false,
           customColor: ['#657CA6', '#4BA2FF', '#54DA81'],
         },
         yAxis: {
-          name: '秒',
+          name: ' ',
         },
         tooltip: {
           isShow: true,
@@ -195,9 +198,9 @@ const PerformanceMarket = ({ url, param }: IProps) => {
     setIndicatorChart(
       new Line({
         dom: document.querySelector('.indicator-chart'),
-        fieldMap: { x: ['日期'], y: ['时长'] },
+        fieldMap: { x: ['日期'], y: ['时长(毫秒)'] },
         layout: {
-          padding: [40, 20, 40, 70],
+          padding: [40, 20, 40, 40],
         },
         title: {
           isShow: false,
@@ -210,6 +213,7 @@ const PerformanceMarket = ({ url, param }: IProps) => {
         },
         line: {
           isCustomColor: true,
+          isShowLable: false,
           customColor: ['#4ba2ff'],
         },
         yAxis: {
@@ -224,18 +228,18 @@ const PerformanceMarket = ({ url, param }: IProps) => {
       }),
     );
     setWaterfallChart(
-      new Bar({
+      new Column({
         dom: document.querySelector('.waterfall-chart'),
         fieldMap: {
-          x: ['耗时'],
-          y: performanceItem,
+          x: ['指标'],
+          y: ['时长(秒)'],
         },
         bar: {
           isCustomColor: true,
           customColor: ['#4BA2FF'],
         },
         layout: {
-          padding: [20, 40, 40, 80],
+          padding: [50, 40, 40, 50],
         },
         title: {
           isShow: false,
@@ -244,10 +248,10 @@ const PerformanceMarket = ({ url, param }: IProps) => {
           isShow: false,
         },
         yAxis: {
-          name: '',
+          name: ' ',
         },
         xAxis: {
-          name: '秒',
+          name: '指标',
         },
         tooltip: {
           isShow: true,
