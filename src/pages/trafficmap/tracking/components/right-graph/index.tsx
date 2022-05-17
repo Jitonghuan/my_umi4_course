@@ -1,5 +1,7 @@
+import showResourceModal from '@/pages/ticket/resource-apply/resource-show';
 import G6, { Graph, GraphData } from '@antv/g6';
 import React, { useEffect, useState, useMemo, forwardRef, useRef, useImperativeHandle } from 'react';
+
 function mapData(arr: any) {
   if (!arr) return [];
   return arr.map(({ key, endpointName, children, ...other }: any) => ({
@@ -10,9 +12,10 @@ function mapData(arr: any) {
   }));
 }
 export default function rightTree(props: any) {
-  const { treeData } = props;
-  const data = useMemo(() => treeData && { label: 'root11', children: mapData(treeData) }, [treeData]);
-  // const data = useMemo(() => mapData(treeData), [treeData])
+  const { treeData, showModal } = props;
+  // const data = useMemo(() => treeData && { label: 'root11', children: mapData(treeData) }, [treeData]);
+  // console.log(treeData, 'tree')
+  const data = useMemo(() => mapData(treeData)[0], [treeData]);
   const containerRef: any = useRef(null);
   const [graph, setGraph] = useState<any>();
   // 初始化图表
@@ -26,14 +29,7 @@ export default function rightTree(props: any) {
       width: container.clientWidth,
       height: container.clientHeight,
       modes: {
-        default: [
-          // {
-          //     // 定义展开/收缩行为
-          //     type: 'collapse-expand',
-          // },
-          'drag-canvas',
-          'zoom-canvas',
-        ],
+        default: ['drag-canvas', 'zoom-canvas'],
       },
       defaultNode: {
         size: 26,
@@ -67,9 +63,9 @@ export default function rightTree(props: any) {
     if (data) {
       g.data(data);
       g.render();
-
       g.fitView();
     }
+    bindListener(g);
     setGraph(g);
 
     /**
@@ -89,10 +85,13 @@ export default function rightTree(props: any) {
       g && g.destory && g.destory();
       resizeObserver.disconnect();
     };
-  }, [containerRef, treeData]);
-  // 渲染数据
-  useEffect(() => {
-    if (!graph) return;
-  });
+  }, [containerRef, data]);
+
+  const bindListener = (graph: any) => {
+    graph.on('node:click', (evt: any) => {
+      showModal(evt.item._cfg.model);
+    });
+  };
+
   return <div ref={containerRef} id="traceTree" style={{ height: '100%' }}></div>;
 }

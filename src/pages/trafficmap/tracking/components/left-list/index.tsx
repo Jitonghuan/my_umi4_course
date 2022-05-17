@@ -36,7 +36,7 @@ export default function LeftList(props: any) {
         </div>
       ))}
       <div className="list-page">
-        <Pagination defaultCurrent={1} total={20} size="small" showQuickJumper />
+        <Pagination defaultCurrent={1} total={20} size="small" />
       </div>
     </div>
   ) : (

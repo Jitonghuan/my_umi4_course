@@ -9,8 +9,8 @@ export const useEnvOptions = () => {
   }, []);
   const getEnvOptions = async () => {
     const res = await getEnvList();
-    const envList = res.data.dataSource;
-    const envOptions = envList.map((item: any) => {
+    const envList = res?.data?.dataSource;
+    const envOptions = envList?.map((item: any) => {
       return {
         label: item.envName,
         value: item.envCode,

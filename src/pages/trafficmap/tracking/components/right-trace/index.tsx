@@ -1,7 +1,9 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { Form, Button, message } from 'antd';
+import { history } from 'umi';
 import { Tree, Switch } from 'antd';
 import { Tag, Divider, Progress, Select, Table } from 'antd';
+import TraceTime from './TraceTime';
 import {
   UnorderedListOutlined,
   BranchesOutlined,
@@ -13,16 +15,21 @@ import {
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // import TraceTable from './trace-table'
 import RightGraph from '../right-graph';
-import { getTraceInfo } from '../../../service';
+import { getTraceInfo, getNoiseList } from '../../../service';
 import './index.less';
+import DetailModal from '../detail-modal';
 import * as d3 from 'd3';
 
 export default function RrightTrace(props: any) {
-  const { item, data } = props;
-  const [activeBtn, setActiveBtn] = useState<string>('list');
+  const { item, data, envCode, selectTime } = props;
+  const [activeBtn, setActiveBtn] = useState<string>('table');
   const [treeData, setTreeData] = useState<any>([]); //用于列表树的数据
   const [traceIdOptions, setTraceIdOptions] = useState<any>([]);
   const [selectTraceId, setSelectTraceId] = useState<any>('11112323232');
+  const [visible, setVisible] = useState<boolean>(false);
+  const [detailData, setDetailData] = useState<any>({});
+  const [noiseOption, setNoiseOption] = useState<any>([]);
+  const [selectNoise, setSelectNoise] = useState<any>([]);
   const containerRef = useCallback(
     (node: any) => {
       if (node) {
@@ -44,28 +51,23 @@ export default function RrightTrace(props: any) {
     [data],
   );
   const titleList = [
-    { key: 'list', label: '列表', icon: <UnorderedListOutlined /> },
     { key: 'table', label: '表格', icon: <TableOutlined /> },
+    { key: 'list', label: '列表', icon: <UnorderedListOutlined /> },
     { key: 'tree', label: '树状', icon: <BranchesOutlined /> },
   ];
   const column = [
     {
-      title: 'traceId',
+      title: 'Method',
       dataIndex: 'traceId',
       key: 'traceId',
     },
     {
-      title: 'endpointName',
-      dataIndex: 'endpointName',
-      key: 'endpointName',
-    },
-    {
-      title: '开始时间',
+      title: 'Start Time',
       dataIndex: 'startTime',
       key: 'startTime',
     },
     {
-      title: 'Exes(ms)',
+      title: 'Exec(ms)',
       dataIndex: 'durations',
       key: 'durations',
     },
@@ -73,37 +75,73 @@ export default function RrightTrace(props: any) {
       title: 'Exec(%)',
       dataIndex: 'durations',
       key: 'durations',
-      render: (value: string, record: any) => (
-        <Progress
-          percent={(parseFloat(value) * 100) / (data.length ? data[0].durations : 0)}
-          showInfo={false}
-          size="small"
-          trailColor="transparent"
-        />
-      ),
+      render: (value: string, record: any) => <TraceTime {...record} />,
+    },
+    {
+      title: 'Self(ms)',
+      dataIndex: 'self',
+      key: 'self',
+    },
+    {
+      title: 'API',
+      dataIndex: 'durations',
+      key: 'durations',
+    },
+    {
+      title: 'Service',
+      dataIndex: 'serviceCode',
+      key: 'serviceCode',
     },
   ];
 
   useEffect(() => {
+    const allDurations = data.reduce((max: number, e: any) => Math.max(parseInt(e.durations), max), 0);
+
     const handleData = (data: any) => {
-      // let icon = <span className="parent-icon"></span>;
       let icon = <TableOutlined />;
-      if (data.children.length === 0) {
-        icon = <span className="left-icon">111</span>;
-        handleData(data.children);
+      if (data.children && data.children.length !== 0) {
+        data.children.map((e: any) => handleData(e));
       }
+      data.allDurations = allDurations;
+      data.durations = Number.isInteger(data.durations) ? data.durations : parseInt(data.durations);
+      data.selfDurations = Number.isInteger(data.selfDurations) ? data.selfDurations : parseInt(data.selfDurations);
       data.icon = icon;
       return data;
     };
-    setTreeData([handleData(data[0])]);
+    var treeData = [handleData(data[0])];
+
+    setTreeData(treeData);
   }, [data]);
 
-  const switchChange = (v: boolean) => {
-    getTraceInfo({ enableNoiseReduction: v, traceID: item.traceID }).then((res) => {});
+  useEffect(() => {
+    getNoiseList({ pageIndex: 1, pageSize: 20 }).then((res) => {
+      if (res?.success) {
+        const data = res?.data?.dataSource;
+        const dataList = data.map((item: any) => ({ value: item.id, label: item.noiseReductionComponent }));
+        setNoiseOption(dataList);
+      }
+    });
+  }, []);
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  const showModal = (value: any) => {
+    setDetailData(value);
+    setVisible(true);
+  };
+
+  const closeTag = (value: any) => {
+    const filterValue = selectNoise.filter((item: any) => {
+      return item.value !== value.value;
+    });
+    setSelectNoise(filterValue);
   };
 
   return (
     <div className="trace-wrapper">
+      <DetailModal visible={visible} detailData={detailData} handleCancel={handleCancel}></DetailModal>
       <div className="trace-wrapper-top">
         <div style={{ fontWeight: '800' }}>端点：{item?.endpointNames[0] || '--'}</div>
         <div className="top-select-btn">
@@ -114,7 +152,7 @@ export default function RrightTrace(props: any) {
               value={selectTraceId}
               size="small"
               onChange={(id) => {
-                selectTraceId(id);
+                setSelectTraceId(id);
               }}
               showSearch
               style={{ width: 240, marginLeft: '10px' }}
@@ -125,7 +163,16 @@ export default function RrightTrace(props: any) {
               </span>
             </CopyToClipboard>
           </div>
-          <Button type="primary" size="small">
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              history.push({
+                pathname: '/matrix/logger/search',
+                query: { envCode, selectTime, traceId: selectTraceId },
+              });
+            }}
+          >
             查看日志
           </Button>
         </div>
@@ -136,8 +183,19 @@ export default function RrightTrace(props: any) {
               持续时间：<Tag color="default">{item?.duration || '--'}ms</Tag>
             </span>
             <span>
-              降噪：
-              <Switch onChange={switchChange} size="small" />
+              降噪:
+              <Select
+                mode="multiple"
+                options={noiseOption}
+                value={selectNoise}
+                size="small"
+                labelInValue
+                onChange={(value) => {
+                  setSelectNoise(value);
+                }}
+                showSearch
+                style={{ width: 180, marginLeft: '10px' }}
+              />
             </span>
           </div>
           <div>
@@ -156,6 +214,26 @@ export default function RrightTrace(props: any) {
             })}
           </div>
         </div>
+        <div className="noise-list">
+          {selectNoise.length !== 0 && (
+            <div>
+              <span style={{ marginRight: '10px' }}>已选择的降噪组件:</span>
+              {selectNoise.map((item: any) => {
+                return (
+                  <Tag
+                    closable
+                    color="blue"
+                    onClose={() => {
+                      closeTag(item);
+                    }}
+                  >
+                    {item.label}
+                  </Tag>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
       <Divider />
       <div className="trace-display">
@@ -165,9 +243,9 @@ export default function RrightTrace(props: any) {
               <div ref={containerRef} className="scale" style={{ float: 'right' }}></div>
             </div>
             {/* <div ref={containerRef} className='scale' ></div> */}
-            {treeData?.length && (
+            {data?.length && (
               <Tree
-                treeData={treeData}
+                treeData={data}
                 blockNode
                 defaultExpandAll={true}
                 showIcon={false}
@@ -175,29 +253,28 @@ export default function RrightTrace(props: any) {
                 switcherIcon={<span className="span-icon"></span>}
                 titleRender={(node: any) => {
                   return (
-                    <div className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} span-item`}>
+                    <div
+                      className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} span-item`}
+                      onClick={() => {
+                        setDetailData(node);
+                        setVisible(true);
+                      }}
+                    >
                       {
                         node?.parentSpanId !== -1 ? (
                           <div className="span-item-wrapper">
                             <span className="span-title" style={{}}>
                               {node?.endpointName || ''}
                             </span>
-                            <span className="span-detail">
-                              {/* {Object.keys(node?.tags || {}).map((k: any) => (
-                      <span className="span-tag" title={k}>
-                        <Tag style={{ lineHeight: '14px', padding: '0 3px' }} color="blue">
-                          {node.tags[k]}
-                        </Tag>
-                      </span>
-                    ))} */}
-                            </span>
-                            <Progress
+                            <span className="span-detail"></span>
+                            <TraceTime {...node} />
+                            {/* <Progress
                               percent={(parseFloat(node?.durations) * 100) / (data.length ? data[0].durations : 0)}
                               showInfo={false}
                               size="small"
                               trailColor="transparent"
                               className="span-progress"
-                            />
+                            /> */}
                           </div>
                         ) : null
                         // <div style={{ width: '100%' }}><div ref={containerRef} className="scale" style={{ float: 'right' }}></div></div>
@@ -215,18 +292,32 @@ export default function RrightTrace(props: any) {
             defaultExpandAllRows={true}
             dataSource={data}
             pagination={false}
+            onRow={(record: any, index: any) => {
+              return {
+                onClick: (event) => {
+                  setDetailData(record);
+                  setVisible(true);
+                }, // 点击行
+              };
+            }}
             expandable={{
               expandIcon: ({ expanded, onExpand, record }) =>
                 record?.children?.length ? (
                   expanded ? (
                     <DownOutlined
                       style={{ marginRight: '3px', fontSize: '9px' }}
-                      onClick={(e) => onExpand(record, e)}
+                      onClick={(e) => {
+                        onExpand(record, e);
+                        e.stopPropagation();
+                      }}
                     />
                   ) : (
                     <RightOutlined
                       style={{ marginRight: '3px', fontSize: '9px' }}
-                      onClick={(e) => onExpand(record, e)}
+                      onClick={(e) => {
+                        onExpand(record, e);
+                        e.stopPropagation();
+                      }}
                     />
                   )
                 ) : null,
@@ -235,7 +326,7 @@ export default function RrightTrace(props: any) {
             }}
           />
         )}
-        {activeBtn === 'tree' && <RightGraph treeData={data} />}
+        {activeBtn === 'tree' && <RightGraph treeData={data} showModal={showModal} />}
       </div>
     </div>
   );

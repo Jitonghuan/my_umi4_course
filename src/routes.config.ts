@@ -623,11 +623,24 @@ export default [
         hideInMenu: process.env.BUILD_ENV === 'prod',
       },
       {
-        // path: 'domain-config',
         path: 'config',
         name: '配置',
-        key: 'trafficmap-domainconfig',
+        key: 'trafficmap-config',
         component: '@/pages/trafficmap/config',
+        routes: [
+          {
+            path: 'domain-config',
+            name: '域配置',
+            key: 'trafficmap-config',
+            component: '@/pages/trafficmap/config/component/domain-config',
+          },
+          {
+            path: 'noise-reduction',
+            name: '降噪配置',
+            key: 'trafficmap-config',
+            component: '@/pages/trafficmap/config/component/noise-reduction',
+          },
+        ],
       },
     ],
   },

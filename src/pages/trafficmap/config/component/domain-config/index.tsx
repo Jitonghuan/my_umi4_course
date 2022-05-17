@@ -16,8 +16,9 @@ const DomainConfig: React.FC = () => {
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<any>({});
+  // const [searchValue, setSearchValue] = useState<any>({});
   const [envOptions] = useEnvOptions();
+  const [form] = Form.useForm();
 
   const createRegionRef = useRef<any>();
 
@@ -27,9 +28,10 @@ const DomainConfig: React.FC = () => {
 
   useEffect(() => {
     requestRegionList();
-  }, [pageIndex, pageSize, searchValue]);
+  }, [pageIndex, pageSize]);
 
   const requestRegionList = async () => {
+    const searchValue = form.getFieldsValue();
     let data = {
       pageSize,
       pageIndex,
@@ -39,14 +41,14 @@ const DomainConfig: React.FC = () => {
 
     let res = await getRegionList(data);
 
-    setDomianList(res.data.dataSource);
-    setTotal(res.data.pageInfo.total);
+    setDomianList(res?.data?.dataSource);
+    setTotal(res?.data?.pageInfo?.total);
     setIsTableLoading(false);
   };
 
-  const onSearch = (values: any) => {
-    setSearchValue(values);
-  };
+  // const onSearch = (values: any) => {
+  //   setSearchValue(values);
+  // };
 
   const handleEdit = (record: any) => {
     createRegionRef.current.editDrawer(record);
@@ -127,10 +129,12 @@ const DomainConfig: React.FC = () => {
       {/* <FilterCard style={{ backgroundColor: '#F7F8FA' }}> */}
       <Form
         layout="inline"
-        onFinish={onSearch}
-        // onReset={() => {
-        //   requestRegionList();
-        // }}
+        onFinish={requestRegionList}
+        form={form}
+        onReset={() => {
+          form.resetFields();
+          requestRegionList();
+        }}
       >
         <Form.Item label="域名" name="regionName">
           <Input />

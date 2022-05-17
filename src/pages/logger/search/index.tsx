@@ -137,35 +137,45 @@ export default function LoggerSearch(props: any) {
   useLayoutEffect(() => {
     // receiveInfo
     if (Object.keys(receiveInfo).length !== 0) {
-      setStartTime(30 * 60 * 1000);
-      const now = new Date().getTime();
-      let defaultInterval = 30 * 60 * 1000;
-      let start = Number((now - defaultInterval) / 1000).toString();
-      let end = Number(now / 1000).toString();
+      console.log(receiveInfo, 'receiveInfo');
+      if (receiveInfo.selectTime) {
+      } else {
+        setStartTime(30 * 60 * 1000);
+        const now = new Date().getTime();
+        let defaultInterval = 30 * 60 * 1000;
+        let start = Number((now - defaultInterval) / 1000).toString();
+        let end = Number(now / 1000).toString();
+      }
       setEnvCode(receiveInfo.envCode);
-      setLogStore(receiveInfo.indexMode);
-      console.log('message', receiveInfo.message, receiveInfo, messageInfo['message']);
-      let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
+      setLogStore(receiveInfo.indexMode || 'app-log');
+      // console.log('message', receiveInfo.message, receiveInfo, messageInfo['message']);
+      if (messageInfo['message']) {
+        let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
+        setQuerySql(messageDecodedData);
+        sqlForm.setFieldsValue({
+          querySql: messageDecodedData,
+        });
+      }
+      if (receiveInfo.traceId) {
+        subInfoForm.setFieldsValue({ traceId: receiveInfo.traceId });
+      }
+      if (receiveInfo.selectTime) {
+        setStartRangePicker(receiveInfo.selectTime.startTime);
+        setEndTimestamp(receiveInfo.selectTime.endTime);
+      }
       // window.atob(receiveInfo.message);
       let appCodeArry = [];
       if (receiveInfo.appCode) {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
+        appCodeArry.push('envCode:' + receiveInfo.envCode);
+        setAppCodeValue(appCodeArry);
+        subInfoForm.setFieldsValue({
+          appCode: receiveInfo.appCode,
+        });
       }
-      appCodeArry.push('envCode:' + receiveInfo.envCode);
-      setAppCodeValue(appCodeArry);
-      setQuerySql(messageDecodedData);
-      subInfoForm.setFieldsValue({
-        appCode: receiveInfo.appCode,
-      });
-      sqlForm.setFieldsValue({
-        querySql: messageDecodedData,
-      });
       setEditScreenVisible(true);
-      loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
+      // loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
     }
-    // if(receiveInfo.type==='logSearchInfo'){
-
-    // }
   }, []);
   useLayoutEffect(() => {
     if (!envCode || !logStore) {

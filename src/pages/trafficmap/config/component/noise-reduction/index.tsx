@@ -5,7 +5,7 @@ import appConfig from '@/app.config';
 import { delRequest } from '@/utils/request';
 import './index.less';
 import AddNoise from './add-noise';
-import { getNoiseList } from '../../../service';
+import { getNoiseList, updataNoise } from '../../../service';
 
 export default function NoiseReduction() {
   const [noiseList, setNoiseList] = useState<any[]>([]);
@@ -34,13 +34,13 @@ export default function NoiseReduction() {
     },
     {
       title: '降噪组件',
-      dataIndex: 'noiseReductionComponents',
-      key: 'noiseReductionComponents',
+      dataIndex: 'noiseReductionComponent',
+      key: 'noiseReductionComponent',
     },
     {
       title: '降噪措施',
-      dataIndex: 'noiseReductionComponents',
-      key: 'noiseReductionComponents',
+      dataIndex: 'noiseReductionMeasure',
+      key: 'noiseReductionMeasure',
     },
     {
       title: '状态',
@@ -62,7 +62,7 @@ export default function NoiseReduction() {
               okText="是"
               cancelText="否"
               onConfirm={() => {
-                handleDeleteNoise(record.id);
+                handleUpdateNoise(record);
               }}
             >
               <Button type="link" >
@@ -116,14 +116,20 @@ export default function NoiseReduction() {
     queryNoiseList(obj);
   }
 
+  const handleUpdateNoise = async (record: any) => {
+    const params = Object.assign(record, { isEnable: !record.isEnable })
+    const res = await updataNoise({ ...params });
+    if (res && res.success) {
+      queryNoiseList({ pageIndex: 1, pageSize: 20 })
+    }
+  }
+
   const handleDeleteNoise = async (id: number) => {
     const res = await delRequest(`${appConfig.apiPrefix}/trafficMap/tracing/noiseReduction/delete/${id}`);
     if (res?.success) {
       queryNoiseList({ pageIndex: 1, pageSize: 20 })
     }
   };
-  //   启用禁用
-  const handleOperate = (data: any) => { };
   return (
     <div className="noise-reduciton">
       <AddNoise
@@ -145,11 +151,20 @@ export default function NoiseReduction() {
           queryNoiseList({ pageIndex: 1, pageSize: 20 })
         }}
       >
-        <Form.Item label="降噪名称" name="regionName">
-          <Input />
+        <Form.Item label="降噪配置名称：" name="noiseReductionName">
+          <Input style={{ width: 160 }} placeholder="请输入降噪名称" ></Input>
         </Form.Item>
-        <Form.Item label="降噪code" name="regionCode">
-          <Input />
+        <Form.Item label="降噪组件：" name="noiseReductionComponent">
+          <Input style={{ width: 160 }} placeholder="请输入降噪组件" ></Input>
+        </Form.Item>
+        <Form.Item label="降噪措施：" name="noiseReductionMeasure">
+          <Input style={{ width: 160 }} placeholder="请输入降噪措施"></Input>
+        </Form.Item>
+        <Form.Item label="是否启用：" name="isEnable" >
+          <Select allowClear style={{ width: '100px' }}>
+            <Select.Option value={true}>已启用</Select.Option>
+            <Select.Option value={false}>已禁用</Select.Option>
+          </Select>
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">

@@ -39,7 +39,7 @@ export default function addEnvData(props: IProps) {
 
     const handleSubmit = async () => {
         const values = await form.validateFields();
-        const res = await (mode === 'ADD' ? addNoise({ ...values }) : updataNoise({ ...values }));
+        const res = await (mode === 'ADD' ? addNoise({ ...values }) : updataNoise({ ...values, id: initData?.id }));
         if (res && res.success) {
             message.success(`${mode === 'ADD' ? '新增' : '编辑'}成功`)
             onSave?.();
@@ -67,20 +67,20 @@ export default function addEnvData(props: IProps) {
                     labelCol={{ flex: '120px' }}
                     onFinish={handleSubmit}
                 >
-                    <Form.Item label="所属环境：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
+                    {/* <Form.Item label="所属环境：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
                         <Select
                             options={envOptions}
                             showSearch
                             style={{ width: 180 }}
                             disabled={isDisabled}
                         />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item label="降噪配置名称：" name="noiseReductionName" rules={[{ required: true, message: '这是必填项' }]}>
                         <Input style={{ width: 230 }} placeholder="请输入降噪名称" ></Input>
                     </Form.Item>
 
-                    <Form.Item label="降噪组件：" name="noiseReductionComponents" rules={[{ required: true, message: '这是必填项' }]}>
+                    <Form.Item label="降噪组件：" name="noiseReductionComponent" rules={[{ required: true, message: '这是必填项' }]}>
                         <Input style={{ width: 230 }} placeholder="请输入降噪组件" ></Input>
                     </Form.Item>
 
@@ -90,8 +90,8 @@ export default function addEnvData(props: IProps) {
 
                     <Form.Item label="是否启用：" name="isEnable" rules={[{ required: true, message: '这是必选项' }]}>
                         <Radio.Group>
-                            <Radio value={1}>启用</Radio>
-                            <Radio value={0}>禁用</Radio>
+                            <Radio value={true}>启用</Radio>
+                            <Radio value={false}>禁用</Radio>
                         </Radio.Group>
                     </Form.Item>
 

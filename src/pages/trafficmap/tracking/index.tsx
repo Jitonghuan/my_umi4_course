@@ -20,6 +20,7 @@ const mockData = [
     endpointName: 'homepage-level1',
     startTime: '2022-5-12 23:12:12',
     durations: '890',
+    selfDurations: '89',
     icon: <CaretUpOutlined />,
   },
   {
@@ -29,6 +30,7 @@ const mockData = [
     endpointName: 'homepage-level2',
     startTime: '2022-5-12 23:12:12',
     durations: '89',
+    selfDurations: '12',
     icon: <CaretUpOutlined />,
   },
   {
@@ -38,6 +40,7 @@ const mockData = [
     endpointName: 'homepage-level2',
     startTime: '2022-5-12 23:12:12',
     durations: '200',
+    selfDurations: '89',
     icon: <CaretUpOutlined />,
   },
   {
@@ -47,6 +50,7 @@ const mockData = [
     endpointName: 'homepage-level2',
     startTime: '2022-5-12 23:12:12',
     durations: '300',
+    selfDurations: '89',
     icon: <CaretUpOutlined />,
   },
   {
@@ -56,6 +60,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '400',
+    selfDurations: '89',
     icon: <CaretUpOutlined />,
   },
   {
@@ -65,6 +70,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '500',
+    selfDurations: '89',
     icon: <CaretUpOutlined />,
   },
   {
@@ -74,6 +80,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '234',
+    selfDurations: '89',
     icon: <CaretUpOutlined />,
   },
   {
@@ -83,6 +90,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '23',
+    selfDurations: '2',
     icon: <CaretUpOutlined />,
   },
   {
@@ -92,6 +100,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '89',
+    selfDurations: '89',
   },
   {
     traceId: 'glnb',
@@ -100,6 +109,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '672',
+    selfDurations: '89',
   },
   {
     traceId: 'lfsd',
@@ -108,6 +118,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '235',
+    selfDurations: '89',
   },
   {
     traceId: '1sfsdf',
@@ -116,6 +127,7 @@ const mockData = [
     endpointName: 'homepage-level3',
     startTime: '2022-5-12 23:12:12',
     durations: '234',
+    selfDurations: '89',
   },
   {
     traceId: '1fasdf',
@@ -124,6 +136,7 @@ const mockData = [
     endpointName: 'homepage-level4',
     startTime: '2022-5-12 23:12:12',
     durations: '672',
+    selfDurations: '89',
     icon: <CaretUpOutlined />,
   },
 ];
@@ -134,7 +147,7 @@ export default function Tracking() {
   const [form] = Form.useForm();
   const [selectEnv, setSelectEnv] = useState('');
   const [appID, setAppID] = useState('');
-  const [selectTime, setSelectTime] = useState<moment.Moment[]>();
+  const [selectTime, setSelectTime] = useState<any>({ startTime: '', endTime: '' });
   const [applicationList, setApplicationList] = useState([]);
   const [instanceList, setInstanceList] = useState([]);
   const [envOptions]: any[][] = useEnvOptions();
@@ -154,6 +167,7 @@ export default function Tracking() {
   }, [envOptions]);
 
   useEffect(() => {
+    const values = form.getFieldsValue();
     queryTraceList({ pageIndex: 1, pageSize: 20 });
   }, [selectTime, selectEnv]);
 
@@ -197,7 +211,7 @@ export default function Tracking() {
   const queryTraceList = (params: any) => {
     setSpinning(true);
     const values = form.getFieldsValue();
-    getTrace({ ...params, ...values, envCode: selectEnv })
+    getTrace({ ...params, ...values, ...selectTime, envCode: selectEnv })
       .then((res) => {
         if (res) {
           setListData(res?.data?.traces);
@@ -234,7 +248,6 @@ export default function Tracking() {
     return roots;
   }
 
-  const timeChange = () => {};
   return (
     <PageContainer>
       <ContentCard className="trace-detail-page" style={{ height: '100%' }}>
@@ -255,10 +268,11 @@ export default function Tracking() {
             时间范围：
             <RangePicker
               showTime
-              value={selectTime as any}
-              onChange={(v: any) => {
-                setSelectTime(v);
+              // value={selectTime as any}
+              onChange={(v: any, time: any) => {
+                setSelectTime({ startTime: time[0], endTime: time[1] });
               }}
+              format="YYYY-MM-DD HH:mm:ss"
             />
           </div>
         </div>
@@ -275,10 +289,10 @@ export default function Tracking() {
             }}
             onReset={() => {
               form.resetFields();
-              // queryNgData({
-              //   pageIndex: 1,
-              //   pageSize: 20,
-              // });
+              queryTraceList({
+                pageIndex: 1,
+                pageSize: 20,
+              });
             }}
           >
             {expand && (
@@ -296,15 +310,7 @@ export default function Tracking() {
             )}
             {expand && (
               <Form.Item label="实例" name="instanceCode">
-                <Select
-                  options={instanceList}
-                  // onChange={(value) => {
-                  //   console.log
-                  //   // setInstanceList(value);
-                  // }}
-                  showSearch
-                  style={{ width: 160 }}
-                />
+                <Select options={instanceList} showSearch style={{ width: 160 }} />
               </Form.Item>
             )}
             {expand && (
@@ -345,12 +351,12 @@ export default function Tracking() {
             leftComp={<LeftList listData={listData} changeItem={leftItemChange} />}
             rightComp={
               listData.length !== 0 ? (
-                <RrightTrace item={currentItem} data={rightData} />
+                <RrightTrace item={currentItem} data={rightData} envCode={selectEnv} selectTime={selectTime} />
               ) : (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%', overflow: 'hidden' }} />
               )
             }
-            leftWidth={400}
+            leftWidth={240}
           ></ResizablePro>
           {/* </Spin> */}
         </div>
