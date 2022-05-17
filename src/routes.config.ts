@@ -519,7 +519,11 @@ export default [
         name: '应用监控',
         component: '@/pages/monitor/application',
       },
-
+      {
+        path: 'fe-monitor',
+        name: '前端监控',
+        component: '@/pages/fe-monitor/basic/index',
+      },
       {
         path: 'business',
         name: '业务监控',
@@ -566,11 +570,6 @@ export default [
         path: 'history',
         name: '报警历史',
         component: '@/pages/monitor/history',
-      },
-      {
-        path: 'fe-monitor',
-        name: '前端监控',
-        component: '@/pages/fe-monitor/basic/index',
       },
     ],
   },
