@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Table, Tooltip } from 'antd';
+import { Tabs, Table, Tooltip, Input } from 'antd';
 import Header from '../header';
 import { now } from '../../const';
 import moment from 'moment';
@@ -104,11 +104,7 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
                 ellipsis: {
                   showTitle: false,
                 },
-                render: (text) => (
-                  <Tooltip placement="topLeft" title={text}>
-                    {text}
-                  </Tooltip>
-                ),
+                render: (text) => <Input bordered={false} disabled value={text}></Input>,
               },
               {
                 title: 'TraceId',
@@ -122,11 +118,7 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
                 ellipsis: {
                   showTitle: false,
                 },
-                render: (text) => (
-                  <Tooltip placement="topLeft" title={text}>
-                    {text}
-                  </Tooltip>
-                ),
+                render: (text) => <Input bordered={false} disabled value={text}></Input>,
               },
               {
                 title: '出参',
@@ -135,30 +127,19 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
                 ellipsis: {
                   showTitle: false,
                 },
-                render: (text) => (
-                  <Tooltip placement="topLeft" title={text}>
-                    {text}
-                  </Tooltip>
-                ),
+                render: (text) => <Input bordered={false} disabled value={text}></Input>,
               },
               {
-                title: '耗时-秒',
+                title: '耗时(秒)',
                 width: '100px',
                 align: 'right',
-                render: (value, record) => <span>{Math.floor(record.timing / 100) || 0}</span>,
+                render: (value, record) => <span>{(record.timing / 1000).toFixed(2) || 0}</span>,
               },
               {
                 title: '页面名称',
                 dataIndex: 'url',
                 width: '250px',
-                ellipsis: {
-                  showTitle: false,
-                },
-                render: (text) => (
-                  <Tooltip placement="topLeft" title={text}>
-                    {text}
-                  </Tooltip>
-                ),
+                render: (text) => <Input bordered={false} disabled value={text}></Input>,
               },
               {
                 title: '上报时间',
@@ -188,11 +169,7 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
                 ellipsis: {
                   showTitle: false,
                 },
-                render: (text) => (
-                  <Tooltip placement="topLeft" title={text}>
-                    {text}
-                  </Tooltip>
-                ),
+                render: (text) => <Input bordered={false} disabled value={text}></Input>,
               },
               {
                 title: '页面',
@@ -201,11 +178,7 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
                 ellipsis: {
                   showTitle: false,
                 },
-                render: (text) => (
-                  <Tooltip placement="topLeft" title={text}>
-                    {text}
-                  </Tooltip>
-                ),
+                render: (text) => <Input bordered={false} disabled value={text}></Input>,
               },
               {
                 title: 'TraceId',
@@ -213,11 +186,11 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
                 render: (value, record) => <span>{record.d3?.split('-')[1] || '-'}</span>,
               },
               {
-                title: '耗时-秒',
+                title: '耗时(秒)',
                 width: '100px',
                 align: 'right',
                 dataIndex: 'timing',
-                render: (value, record) => <span>{Math.floor(record.timing / 100) || 0}</span>,
+                render: (value, record) => <span>{(record.timing / 1000).toFixed(2) || 0}</span>,
               },
               {
                 title: '上报时间',
@@ -233,11 +206,7 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
                 ellipsis: {
                   showTitle: false,
                 },
-                render: (text) => (
-                  <Tooltip placement="topLeft" title={text}>
-                    {text}
-                  </Tooltip>
-                ),
+                render: (text) => <Input bordered={false} disabled value={text}></Input>,
               },
             ]}
             pagination={{
