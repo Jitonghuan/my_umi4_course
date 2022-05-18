@@ -66,10 +66,9 @@ const funcName = (props: any) => {
 
   let publishRecordData: any = [];
   for (const key in dataSource) {
-    console.log('dataSource', dataSource);
     if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
       const element = dataSource[key];
-      console.log('element', element);
+
       publishRecordData.push({ label: key || '', value: dataSource[key] || '' });
     }
   }
@@ -143,7 +142,7 @@ const funcName = (props: any) => {
           </>
         ) : null}
 
-        {envType === 'fygs' && dataSource?.deployId < 32316 ? (
+        {appConfig.IS_Matrix === 'private' && envType === 'fygs' && dataSource?.deployId < 32316 ? (
           <>
             {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -154,7 +153,7 @@ const funcName = (props: any) => {
               </div>
             ))}
           </>
-        ) : (
+        ) : appConfig.IS_Matrix === 'private' && envType === 'fygs' && dataSource?.deployId < 32316 ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -165,8 +164,8 @@ const funcName = (props: any) => {
               </div>
             ))}
           </>
-        )}
-        {envType === 'zslnyy' && dataSource?.deployId < 39455 ? (
+        ) : null}
+        {appConfig.IS_Matrix === 'private' && envType === 'zslnyy' && dataSource?.deployId < 39455 ? (
           <>
             {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -177,7 +176,7 @@ const funcName = (props: any) => {
               </div>
             ))}
           </>
-        ) : (
+        ) : appConfig.IS_Matrix === 'private' && envType === 'zslnyy' && dataSource?.deployId < 39455 ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -188,7 +187,7 @@ const funcName = (props: any) => {
               </div>
             ))}
           </>
-        )}
+        ) : null}
         {appConfig.IS_Matrix === 'public' &&
         dataSource?.jenkinsUrl &&
         (env === 'prod' ? dataSource?.deployId < 43222 : dataSource?.deployId < 1595) ? (

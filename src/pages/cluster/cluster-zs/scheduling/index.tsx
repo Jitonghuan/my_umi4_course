@@ -58,8 +58,6 @@ export default function TrafficScheduling(props: any) {
         })
         .then(() => {
           sourceData.map((item: any, index) => {
-            console.log('> item', item);
-
             for (const key in values) {
               const element = values[key];
               if (element === 'cluster_a' && key === item.name) {

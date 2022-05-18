@@ -81,7 +81,6 @@ export default function Application() {
 
   const handleSyncClick = useCallback(
     (commonEnvCode: string) => {
-      console.log('commonEnvCode', commonEnvCode);
       Modal.confirm({
         title: '确认同步？',
         content: '请确认同步应用配置已是最新',

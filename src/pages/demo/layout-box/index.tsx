@@ -24,7 +24,6 @@ export default function DemoPageTb() {
       nums1++;
       newArry.push(a);
     }
-    console.log('newArry', newArry);
   }
 
   return (
