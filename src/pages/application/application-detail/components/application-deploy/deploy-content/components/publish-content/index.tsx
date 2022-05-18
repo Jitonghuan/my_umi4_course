@@ -216,18 +216,13 @@ export default function PublishContent(props: IProps) {
         <h4>内容列表</h4>
         <div className="caption-right">
           {!isProd && (
-            <span style={{ marginRight: 20 }}>
-              <Badge
-                count={
-                  <Tooltip placement="topRight" title={resubmitText}>
-                    <QuestionCircleTwoTone style={{ fontSize: 16 }} />{' '}
-                  </Tooltip>
-                }
-              >
-                <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-                  重新提交
-                </Button>
-              </Badge>
+            <span style={{ marginRight: 14 }}>
+              <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
+                重新提交
+              </Button>
+              <Tooltip placement="topRight" title={resubmitText}>
+                <QuestionCircleOutlined />
+              </Tooltip>
             </span>
           )}
 
@@ -236,7 +231,7 @@ export default function PublishContent(props: IProps) {
           </Button>
           <Tooltip placement="topRight" title={exitBranch}>
             {' '}
-            <QuestionCircleTwoTone style={{ fontSize: 20 }} />
+            <QuestionCircleOutlined />
           </Tooltip>
           {/* {!isFrontend && !isProd && (
             <Popconfirm
