@@ -37,8 +37,6 @@ export default function VersionEditor(props: IProps) {
   const isEdit = !!initData?.id;
   const [form] = Form.useForm<any>();
 
-  console.log('type', type);
-
   const handleSubmit = () => {
     form.validateFields().then((values) => {
       if (!isEdit) {
