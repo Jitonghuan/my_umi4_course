@@ -152,7 +152,7 @@ const funcName = (props: any) => {
               </div>
             ))}
           </>
-        ) : appConfig.IS_Matrix === 'private' && envType === 'zslnyy' && dataSource?.deployId > 104 ? (
+        ) : appConfig.IS_Matrix === 'private' && envType === 'base-poc' && dataSource?.deployId > 104 ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
