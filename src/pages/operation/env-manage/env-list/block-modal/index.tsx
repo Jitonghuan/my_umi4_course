@@ -49,10 +49,12 @@ export default function NGModalDetail(props: NGInfo) {
     if (initData.envCode) {
       queryAppsListData(initData.envCode);
     }
+
     return () => {
       setTargetKeys([]);
       setSelectedKeys(undefined);
       setDisabled(false);
+      createBlockForm.resetFields();
     };
   }, [visible]);
 
@@ -90,7 +92,6 @@ export default function NGModalDetail(props: NGInfo) {
           }
           //如果已选目标数据存在
           if (data.alreadyBlockedApps || data.needApplyApps) {
-            console.log('data.alreadyBlockedApps,data.needApplyApps', data.alreadyBlockedApps, data.needApplyApps);
             let arry: any = []; //存放整体的数组
             let selectedAppCode: any = []; //已选目标数据数组;
             let canAddDataSource = optType === 'block' ? data.canBlockedApps : data.whiteApplyApps;
@@ -155,7 +156,7 @@ export default function NGModalDetail(props: NGInfo) {
           }
         });
       }
-      console.log('unSelectedAppCode', unSelectedAppCode, selectedAppCode);
+
       if (categoryCurrent) {
         selectedAppCode.concat(categoryCurrent);
       }
