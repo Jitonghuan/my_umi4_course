@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
 import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Badge, Tooltip } from 'antd';
-import { PlusOutlined, BookOutlined, SnippetsFilled } from '@ant-design/icons';
+import { PlusOutlined, BookOutlined, SnippetsFilled, ContainerOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
@@ -399,8 +399,9 @@ export default function envManageList(props: any) {
                     />
                     <Badge
                       count={
-                        <BookOutlined
+                        <ContainerOutlined
                           title="请点击该图标进行发布审批白名单操作"
+                          style={{ fontSize: 16 }}
                           onClick={() => {
                             setBlockModalVisiable(true);
                             setInitBlockData(record);

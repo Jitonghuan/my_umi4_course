@@ -212,7 +212,7 @@ export default function NGModalDetail(props: NGInfo) {
     <Modal
       title={optType === 'block' ? '查看封网详情' : '查看发布审批详情'}
       visible={visible}
-      width={820}
+      width={830}
       onCancel={() => {
         onClose();
       }}
