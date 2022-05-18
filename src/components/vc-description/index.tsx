@@ -141,6 +141,29 @@ const funcName = (props: any) => {
             ))}
           </>
         ) : null}
+        {appConfig.IS_Matrix === 'private' && envType === 'base-poc' && dataSource?.deployId < 104 ? (
+          <>
+            {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+              <div style={{ marginBottom: '5px' }}>
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                  {jenkinsItem?.subJenkinsUrl}
+                </a>
+              </div>
+            ))}
+          </>
+        ) : appConfig.IS_Matrix === 'private' && envType === 'zslnyy' && dataSource?.deployId > 104 ? (
+          <>
+            {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
+              <div style={{ marginBottom: '5px' }}>
+                {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
+                <a href={jenkinsItem.JenkinsUrl} target="_blank">
+                  {jenkinsItem?.JenkinsUrl}
+                </a>
+              </div>
+            ))}
+          </>
+        ) : null}
 
         {appConfig.IS_Matrix === 'private' && envType === 'fygs' && dataSource?.deployId < 32316 ? (
           <>
@@ -153,7 +176,7 @@ const funcName = (props: any) => {
               </div>
             ))}
           </>
-        ) : appConfig.IS_Matrix === 'private' && envType === 'fygs' && dataSource?.deployId < 32316 ? (
+        ) : appConfig.IS_Matrix === 'private' && envType === 'fygs' && dataSource?.deployId > 32316 ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -176,7 +199,7 @@ const funcName = (props: any) => {
               </div>
             ))}
           </>
-        ) : appConfig.IS_Matrix === 'private' && envType === 'zslnyy' && dataSource?.deployId < 39455 ? (
+        ) : appConfig.IS_Matrix === 'private' && envType === 'zslnyy' && dataSource?.deployId > 39455 ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
