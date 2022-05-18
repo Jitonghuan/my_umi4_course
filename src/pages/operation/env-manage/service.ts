@@ -37,3 +37,9 @@ export const getAppEnvList = addAPIPrefix('/appManage/env/appList');
 
 /** POST 应用环境封网（应用粒度） */
 export const blockAppEnv = addAPIPrefix('/appManage/env/blockAppEnv');
+
+/*  POST 新增审批白名单接口  */
+export const applyWhiteList = addAPIPrefix('/appManage/env/applyWhiteList');
+
+/* GET   新增查询审批白名单列表 */
+export const getApplyWhiteList = addAPIPrefix('/appManage/env/applyWhiteList');
