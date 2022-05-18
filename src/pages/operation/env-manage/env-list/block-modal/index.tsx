@@ -8,12 +8,13 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { Spin, Form, Button, Modal, Transfer, Badge, Popconfirm, message } from 'antd';
-import { getAppEnvList, blockAppEnv } from '../../service';
+import { getAppEnvList, blockAppEnv, getApplyWhiteList, applyWhiteList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
 
 export interface NGInfo extends Record<string, any> {
   visible: boolean;
+  optType: string;
   onClose: () => any;
   initData: any;
 }
@@ -21,7 +22,7 @@ export interface NGInfo extends Record<string, any> {
 export default function NGModalDetail(props: NGInfo) {
   const [createBlockForm] = Form.useForm();
   let categoryCurrent: any = [];
-  const { visible, onClose, initData } = props;
+  const { visible, onClose, initData, optType } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
   const [appsListData, setAppsListData] = useState<any>([]);
@@ -58,7 +59,8 @@ export default function NGModalDetail(props: NGInfo) {
     let canAddAppsData: any = []; //可选数据数组
     let alreadyAddAppsData: any = [];
     setLoading(true);
-    await getRequest(getAppEnvList, { data: { envCode } })
+    const getAppListApi = optType === 'block' ? getAppEnvList : getApplyWhiteList;
+    await getRequest(getAppListApi, { data: { envCode } })
       .then((res) => {
         if (res?.success) {
           let data = res?.data;
@@ -161,7 +163,7 @@ export default function NGModalDetail(props: NGInfo) {
 
   return (
     <Modal
-      title="查看封网详情"
+      title={optType === 'block' ? '查看封网详情' : '查看发布审批详情'}
       visible={visible}
       width={820}
       onCancel={() => {

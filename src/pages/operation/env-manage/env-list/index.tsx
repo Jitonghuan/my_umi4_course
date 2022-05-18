@@ -46,8 +46,8 @@ export default function envManageList(props: any) {
   const [ngModalVisiable, setNgModalVisiable] = useState<boolean>(false);
   const [blockModalVisiable, setBlockModalVisiable] = useState<boolean>(false);
   const [initBlockData, setInitBlockData] = useState<any>({});
-
   const [currentNgCode, setCurrentNgCode] = useState<string>('');
+  const [optType, setOptType] = useState<string>('');
   const envTypeData = [
     {
       label: 'DEV',
@@ -263,6 +263,7 @@ export default function envManageList(props: any) {
     <PageContainer className="env-list-content">
       <BlockModal
         visible={blockModalVisiable}
+        optType={optType}
         onClose={() => {
           setBlockModalVisiable(false);
         }}
@@ -379,13 +380,29 @@ export default function envManageList(props: any) {
               title="启用发布审批"
               dataIndex="needApply"
               width={110}
-              render={(value, record, index) => (
-                <Switch
-                  className="needApply"
-                  onChange={() => handleNeedApplyChange(value, record)}
-                  checked={value === 0 ? true : false}
-                />
-              )}
+              render={(value, record, index) =>
+                value === 1 ? (
+                  <Switch
+                    className="needApply"
+                    onChange={() => handleNeedApplyChange(value, record)}
+                    checked={value === 0 ? true : false}
+                  />
+                ) : (
+                  <Button
+                    size="small"
+                    type="primary"
+                    shape="round"
+                    className="approval-button"
+                    onClick={() => {
+                      setBlockModalVisiable(true);
+                      setInitBlockData(record);
+                      setOptType('approval');
+                    }}
+                  >
+                    白名单
+                  </Button>
+                )
+              }
             />
             <Table.Column
               title="启用配置管理"
@@ -418,6 +435,7 @@ export default function envManageList(props: any) {
                   onClick={() => {
                     setBlockModalVisiable(true);
                     setInitBlockData(record);
+                    setOptType('block');
                   }}
                 >
                   封网
