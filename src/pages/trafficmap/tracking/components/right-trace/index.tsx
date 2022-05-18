@@ -169,7 +169,7 @@ export default function RrightTrace(props: any) {
             onClick={() => {
               history.push({
                 pathname: '/matrix/logger/search',
-                query: { envCode, selectTime, traceId: selectTraceId },
+                query: { envCode, ...selectTime, traceId: selectTraceId },
               });
             }}
           >

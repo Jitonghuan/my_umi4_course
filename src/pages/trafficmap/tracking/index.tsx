@@ -163,7 +163,9 @@ export default function Tracking() {
   const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
 
   useEffect(() => {
-    setSelectEnv(envOptions[0]?.value);
+    if (envOptions.length !== 0) {
+      setSelectEnv(envOptions[0]?.value);
+    }
   }, [envOptions]);
 
   useEffect(() => {
@@ -270,6 +272,8 @@ export default function Tracking() {
               showTime
               // value={selectTime as any}
               onChange={(v: any, time: any) => {
+                console.log(time);
+
                 setSelectTime({ startTime: time[0], endTime: time[1] });
               }}
               format="YYYY-MM-DD HH:mm:ss"
