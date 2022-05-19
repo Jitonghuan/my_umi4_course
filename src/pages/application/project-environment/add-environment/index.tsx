@@ -68,7 +68,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       if (mode === 'ADD') {
         let addParamsObj = {
           benchmarkEnvCode: params.benchmarkEnvCode || '',
-          projectEnvCode: params.envCode || '',
+          projectEnvCode: `pro-${params.envCode}` || '',
           projectEnvName: params.envName || '',
           mark: params.mark || '',
           relationApps: selectedAppCode || [],
@@ -79,7 +79,8 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       }
       if (mode === 'EDIT') {
         let editParamsObj = {
-          projectEnvCode: params.envCode || '',
+          // projectEnvCode: `pro-${params.envCode}` || '',
+          projectEnvCode: params.envCode,
           mark: params.mark || '',
           relationApps: selectedAppCode || [],
           projectEnvName: params.envName || '',
@@ -172,6 +173,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     if (mode !== 'HIDE' && mode !== 'ADD') {
       addEnvironmentForm.resetFields();
       if (initData) {
+        // let curEnvCode = initData?.envCode.substring(4) || '';
         addEnvironmentForm.setFieldsValue({
           envName: initData?.envName,
           envCode: initData?.envCode,
@@ -255,7 +257,11 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               },
             ]}
           >
-            <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+            {mode === 'EDIT' ? (
+              <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+            ) : (
+              <Input addonBefore="pro-" style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+            )}
           </Form.Item>
           <Form.Item
             label="选择基准环境"

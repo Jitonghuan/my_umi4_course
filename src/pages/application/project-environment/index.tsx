@@ -66,6 +66,7 @@ export default function EnvironmentList() {
   const [rowData, setRowData] = useState<any>({}); //选中一行后
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const typeRef = useRef('collect');
+  const [delEnvOpt, setDelEnvOpt] = useState<string>('');
   const queryProjectEnv = async (queryParamsObj: any) => {
     const url = typeRef.current === 'collect' ? queryMyCollectUrl : queryProjectEnvList;
     setListLoading(true);
@@ -242,17 +243,17 @@ export default function EnvironmentList() {
           {/* <div className="caption-left">
             <h3>项目环境列表</h3>
           </div> */}
-          {type === 'all' && (
-            <Button
-              type="primary"
-              onClick={() => {
-                setEnviroEditMode('ADD');
-              }}
-            >
-              <PlusOutlined />
-              新增项目环境
-            </Button>
-          )}
+          {/* {type === 'all' && ( */}
+          <Button
+            type="primary"
+            onClick={() => {
+              setEnviroEditMode('ADD');
+            }}
+          >
+            <PlusOutlined />
+            新增项目环境
+          </Button>
+          {/* )} */}
         </div>
         <div>
           <Spin spinning={isSpinning}>
@@ -371,6 +372,7 @@ export default function EnvironmentList() {
                       title="确定要删除该信息吗？"
                       onConfirm={() => {
                         let params = formList.getFieldsValue();
+                        setDelEnvOpt('del');
                         deleteProjectEnv(record?.envCode).then(() => {
                           queryProjectEnv({
                             pageIndex: 1,
@@ -388,7 +390,9 @@ export default function EnvironmentList() {
             </Table>
           </Spin>
         </div>
-        {type === 'collect' && <DetailList dataInfo={rowData} onSpin={onSpin} stopSpin={stopSpin}></DetailList>}
+        {type === 'collect' && (
+          <DetailList dataInfo={rowData} onSpin={onSpin} stopSpin={stopSpin} opt={delEnvOpt}></DetailList>
+        )}
       </ContentCard>
       {/* </Spin> */}
     </PageContainer>

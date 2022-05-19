@@ -25,7 +25,7 @@ export const appTypeOptions = [
   },
 ];
 export default function DetailList(props: any) {
-  const { dataInfo, onSpin, stopSpin, isUpdata = false, cancelUpdate = () => {} } = props;
+  const { dataInfo, onSpin, stopSpin, opt, isUpdata = false, cancelUpdate = () => {} } = props;
   const [projectEnvInfo, setProjectEnvInfo] = useState<any>(history.location.state);
   const [formList] = Form.useForm();
   const [addAppForm] = Form.useForm();
@@ -110,6 +110,8 @@ export default function DetailList(props: any) {
     if (dataInfo?.id || dataInfo?.id === '') {
       if (dataInfo.id === '') {
         setDataSource([]);
+      } else if (opt === 'del') {
+        return;
       } else {
         queryProjectEnv(dataInfo?.benchmarkEnvCode, dataInfo?.envCode);
         setProjectEnvInfo(dataInfo);
