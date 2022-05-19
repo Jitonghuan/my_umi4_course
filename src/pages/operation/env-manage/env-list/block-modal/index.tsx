@@ -8,12 +8,13 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { Spin, Form, Button, Modal, Transfer, Badge, Popconfirm, message } from 'antd';
-import { getAppEnvList, blockAppEnv } from '../../service';
+import { getAppEnvList, blockAppEnv, getApplyWhiteList, applyWhiteList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import './index.less';
 
 export interface NGInfo extends Record<string, any> {
   visible: boolean;
+  optType: string;
   onClose: () => any;
   initData: any;
 }
@@ -21,7 +22,8 @@ export interface NGInfo extends Record<string, any> {
 export default function NGModalDetail(props: NGInfo) {
   const [createBlockForm] = Form.useForm();
   let categoryCurrent: any = [];
-  const { visible, onClose, initData } = props;
+  let unSelectedCategoryCurrent: any = [];
+  const { visible, onClose, initData, optType } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
   const [appsListData, setAppsListData] = useState<any>([]);
@@ -47,10 +49,12 @@ export default function NGModalDetail(props: NGInfo) {
     if (initData.envCode) {
       queryAppsListData(initData.envCode);
     }
+
     return () => {
       setTargetKeys([]);
       setSelectedKeys(undefined);
       setDisabled(false);
+      createBlockForm.resetFields();
     };
   }, [visible]);
 
@@ -58,7 +62,8 @@ export default function NGModalDetail(props: NGInfo) {
     let canAddAppsData: any = []; //可选数据数组
     let alreadyAddAppsData: any = [];
     setLoading(true);
-    await getRequest(getAppEnvList, { data: { envCode } })
+    const getAppListApi = optType === 'block' ? getAppEnvList : getApplyWhiteList;
+    await getRequest(getAppListApi, { data: { envCode } })
       .then((res) => {
         if (res?.success) {
           let data = res?.data;
@@ -73,11 +78,25 @@ export default function NGModalDetail(props: NGInfo) {
             });
             setAppsListData(canAddAppsData); //如果只存在可选数据，则可选数据为整体的总数据源
           }
+          //needApplyApps已开启发布审批，whiteApplyApps白名单 未开启发布审批
+          //如果只存在白名单，不存在已发布审批
+          if (data.whiteApplyApps && !data.needApplyApps) {
+            data.whiteApplyApps?.map((item: any, index: number) => {
+              canAddAppsData.push({
+                key: index.toString(),
+                title: item.appCode,
+                appType: item.appType,
+              });
+            });
+            setAppsListData(canAddAppsData); //如果只存在可选数据，则可选数据为整体的总数据源
+          }
           //如果已选目标数据存在
-          if (data.alreadyBlockedApps) {
+          if (data.alreadyBlockedApps || data.needApplyApps) {
             let arry: any = []; //存放整体的数组
-            let selectedAppCode: any = []; //已选目标数据数组
-            data.canBlockedApps?.map((item: any, index: number) => {
+            let selectedAppCode: any = []; //已选目标数据数组;
+            let canAddDataSource = optType === 'block' ? data.canBlockedApps : data.whiteApplyApps;
+            let alreadyAddDataSource = optType === 'block' ? data.alreadyBlockedApps : data.needApplyApps;
+            canAddDataSource?.map((item: any, index: number) => {
               canAddAppsData.push({
                 key: index.toString(),
                 title: item.appCode,
@@ -89,7 +108,7 @@ export default function NGModalDetail(props: NGInfo) {
                 appType: item.appType,
               });
             }); //存放整体的数组arry中放入目标数据
-            data.alreadyBlockedApps?.map((item: any, index: number) => {
+            alreadyAddDataSource?.map((item: any, index: number) => {
               arry.push({
                 key: arry.length.toString(),
                 title: item.appCode,
@@ -107,6 +126,8 @@ export default function NGModalDetail(props: NGInfo) {
                 // selectedAppCode.push({key:item.key,title:item.title})
                 categoryCurrent.push(item.title);
                 selectedAppCode.push(item.key);
+              } else {
+                unSelectedCategoryCurrent.push(item.title);
               }
             }); //从整体数据源中筛选，其中不包含可选数据中所有的key值，即为已选数据，则setState目标数据key数组中,视图渲染
             setTargetKeys(selectedAppCode);
@@ -124,24 +145,39 @@ export default function NGModalDetail(props: NGInfo) {
 
   const handleOk = () => {
     let selectedAppCode: any = [];
+    let unSelectedAppCode: any = [];
     createBlockForm.validateFields().then((params) => {
       if (params.categoryCode) {
         appsListData.filter((item: any, index: number) => {
           if (params.categoryCode?.includes(item.key)) {
             selectedAppCode.push(item.title);
+          } else {
+            unSelectedAppCode.push(item.title);
           }
         });
       }
+
       if (categoryCurrent) {
         selectedAppCode.concat(categoryCurrent);
+      }
+      if (unSelectedCategoryCurrent) {
+        unSelectedAppCode.concat(unSelectedCategoryCurrent);
       }
       let addParamsObj = {
         envCode: initData.envCode,
         blockAppCodes: selectedAppCode || [],
       };
-      blockAppsEnv(addParamsObj).then(() => {
-        onClose();
-      });
+      let approvalParamsObj = {
+        envCode: initData.envCode,
+        whiteApplyAppCodes: unSelectedAppCode || [],
+      };
+      if (optType === 'block') {
+        blockAppsEnv(addParamsObj).then(() => {
+          onClose();
+        });
+      } else {
+        approvalDeploy(approvalParamsObj);
+      }
     });
   };
   const blockAppsEnv = async (addParamsObj: any) => {
@@ -149,7 +185,21 @@ export default function NGModalDetail(props: NGInfo) {
     await postRequest(blockAppEnv, { data: addParamsObj })
       .then((res) => {
         if (res?.success) {
-          message.success('封网成功！');
+          message.success('执行成功！');
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setEnsureLoading(false);
+      });
+  };
+  const approvalDeploy = async (approvalParamsObj: any) => {
+    setEnsureLoading(true);
+    await postRequest(applyWhiteList, { data: approvalParamsObj })
+      .then((res) => {
+        if (res?.success) {
+          message.success('执行成功！');
         } else {
           return;
         }
@@ -161,9 +211,9 @@ export default function NGModalDetail(props: NGInfo) {
 
   return (
     <Modal
-      title="查看封网详情"
+      title={optType === 'block' ? '查看封网详情' : '查看发布审批详情'}
       visible={visible}
-      width={820}
+      width={830}
       onCancel={() => {
         onClose();
       }}
@@ -205,7 +255,7 @@ export default function NGModalDetail(props: NGInfo) {
           <Form.Item label="选择应用" name="categoryCode" noStyle>
             <Transfer
               dataSource={appsListData}
-              titles={['未封网应用', '已封网应用']}
+              titles={optType === 'block' ? ['未封网应用', '已封网应用'] : ['发布审批白名单', '已开启发布审批']}
               targetKeys={targetKeys}
               showSearch
               filterOption={getfilterOption}
