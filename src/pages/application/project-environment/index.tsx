@@ -326,7 +326,7 @@ export default function EnvironmentList() {
                 width="20%"
                 ellipsis
                 render={(value) => (
-                  <div>
+                  <div onClick={(e) => e.stopPropagation()}>
                     <span>{value}</span>
                     <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
                       <span style={{ marginLeft: 8, color: 'royalblue' }}>
@@ -345,7 +345,7 @@ export default function EnvironmentList() {
                 width="18%"
                 key="action"
                 render={(_, record: EnvironmentEdit, index) => (
-                  <Space size="small">
+                  <Space size="small" onClick={(e) => e.stopPropagation()}>
                     <a
                       onClick={() => {
                         history.push({
