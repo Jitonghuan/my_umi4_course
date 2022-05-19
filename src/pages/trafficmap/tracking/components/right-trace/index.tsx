@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import { Form, Button, message } from 'antd';
+import { Form, Button, message, Tooltip } from 'antd';
 import { history } from 'umi';
 import { Tree, Switch } from 'antd';
 import { Tag, Divider, Progress, Select, Table } from 'antd';
@@ -60,6 +60,13 @@ export default function RrightTrace(props: any) {
       title: 'Method',
       dataIndex: 'traceId',
       key: 'traceId',
+      width: '25%',
+      ellipsis: true,
+      render: (value: string) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       title: 'Start Time',
@@ -98,8 +105,11 @@ export default function RrightTrace(props: any) {
     const allDurations = data.reduce((max: number, e: any) => Math.max(parseInt(e.durations), max), 0);
 
     const handleData = (data: any) => {
+      if (!data) {
+        return;
+      }
       let icon = <TableOutlined />;
-      if (data.children && data.children.length !== 0) {
+      if (data?.children && data?.children?.length !== 0) {
         data.children.map((e: any) => handleData(e));
       }
       data.allDurations = allDurations;
@@ -117,7 +127,7 @@ export default function RrightTrace(props: any) {
     getNoiseList({ pageIndex: 1, pageSize: 20 }).then((res) => {
       if (res?.success) {
         const data = res?.data?.dataSource;
-        const dataList = data.map((item: any) => ({ value: item.id, label: item.noiseReductionComponent }));
+        const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionComponent }));
         setNoiseOption(dataList);
       }
     });
@@ -132,18 +142,20 @@ export default function RrightTrace(props: any) {
     setVisible(true);
   };
 
-  const closeTag = (value: any) => {
-    const filterValue = selectNoise.filter((item: any) => {
-      return item.value !== value.value;
-    });
-    setSelectNoise(filterValue);
-  };
+  // const closeTag = (value: any) => {
+  //   const filterValue = selectNoise.filter((item: any) => {
+  //     return item.value !== value.value;
+  //   });
+  //   setSelectNoise(filterValue);
+  // };
 
   return (
     <div className="trace-wrapper">
       <DetailModal visible={visible} detailData={detailData} handleCancel={handleCancel}></DetailModal>
       <div className="trace-wrapper-top">
-        <div style={{ fontWeight: '800' }}>端点：{item?.endpointNames[0] || '--'}</div>
+        <div style={{ fontWeight: '800' }}>
+          端点：{item.endpointNames && item?.endpointNames?.length !== 0 ? item?.endpointNames[0] : '--'}
+        </div>
         <div className="top-select-btn">
           <div>
             traceID:
@@ -193,8 +205,9 @@ export default function RrightTrace(props: any) {
                 onChange={(value) => {
                   setSelectNoise(value);
                 }}
-                showSearch
+                // showSearch
                 style={{ width: 180, marginLeft: '10px' }}
+                autoClearSearchValue
               />
             </span>
           </div>
@@ -214,7 +227,7 @@ export default function RrightTrace(props: any) {
             })}
           </div>
         </div>
-        <div className="noise-list">
+        {/* <div className="noise-list">
           {selectNoise.length !== 0 && (
             <div>
               <span style={{ marginRight: '10px' }}>已选择的降噪组件:</span>
@@ -233,7 +246,7 @@ export default function RrightTrace(props: any) {
               })}
             </div>
           )}
-        </div>
+        </div> */}
       </div>
       <Divider />
       <div className="trace-display">
@@ -286,7 +299,7 @@ export default function RrightTrace(props: any) {
             )}
           </div>
         )}
-        {activeBtn === 'table' && (
+        {activeBtn === 'table' && data.length && (
           <Table
             columns={column}
             defaultExpandAllRows={true}
@@ -301,6 +314,7 @@ export default function RrightTrace(props: any) {
               };
             }}
             expandable={{
+              defaultExpandAllRows: true,
               expandIcon: ({ expanded, onExpand, record }) =>
                 record?.children?.length ? (
                   expanded ? (
@@ -321,7 +335,6 @@ export default function RrightTrace(props: any) {
                     />
                   )
                 ) : null,
-              defaultExpandAllRows: true,
               indentSize: 20,
             }}
           />

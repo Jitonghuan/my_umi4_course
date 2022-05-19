@@ -95,6 +95,13 @@ export const listDangerousCalls = (data: any) => {
 
 // 追踪部分
 
+//追踪-获取环境列表
+export const getEnvs = () => {
+  const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/envs';
+  // const url = addAPIPrefix('/trafficMap/tracing/envs');
+  return getRequest(url, {});
+};
+
 //追踪-获取应用列表
 export const getApplicationList = (data: any) => {
   const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/application/list';
@@ -124,27 +131,18 @@ export const getTraceInfo = (data: any) => {
 
 // 降噪-新增降噪配置
 export const addNoise = (data: any) => {
-  // const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/noiseReduction/create';
   const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/create');
   return postRequest(url, { data: data });
 };
 
 // 降噪-获取降噪配置列表
 export const getNoiseList = (data: any) => {
-  // const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/noiseReduction/list';
   const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/list');
   return getRequest(url, { data: data });
 };
 
 // 降噪-更新降噪配置
 export const updataNoise = (data: any) => {
-  // const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/noiseReduction/update';
-  const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/update');
-  return putRequest(url, { data: data });
-};
-
-// 降噪-删除降噪配置
-export const deleteNoise = (data: any) => {
   const url = addAPIPrefix('/trafficMap/tracing/noiseReduction/update');
   return putRequest(url, { data: data });
 };

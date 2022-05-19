@@ -1,13 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Tag, Tooltip, Pagination, Empty } from 'antd';
 import './index.less';
+import { leftItem } from '../../type';
+import { getListMonitor } from '@/pages/monitor/business/service';
 
-export default function LeftList(props: any) {
-  const [activeItem, setActiveItem] = useState<any>();
-  const { listData, changeItem } = props;
+interface IProps {
+  listData: leftItem[];
+  changeItem: any;
+  total: number;
+  pageChange: any;
+}
+
+export default function LeftList(props: IProps) {
+  const { listData, changeItem, total, pageChange } = props;
+  const [activeItem, setActiveItem] = useState<leftItem>();
+  const [current, setCurrent] = useState<number>(1);
 
   useEffect(() => {
-    if (listData.lenght !== 0) {
+    if (listData.length !== 0) {
       setActiveItem(listData[0]);
     }
   }, [listData]);
@@ -18,14 +28,14 @@ export default function LeftList(props: any) {
 
   return listData.length !== 0 ? (
     <div className="left-list-wrapper">
-      {listData?.map((item: any) => (
+      {listData?.map((item: leftItem) => (
         <div
           className={`list-item ${item?.key === activeItem?.key ? 'list-item-active' : ''}`}
           onClick={() => {
             setActiveItem(item);
           }}
         >
-          <Tooltip title={item?.traceID}>
+          <Tooltip title={item?.endpointNames[0]}>
             <div className="item-traceId">{item?.endpointNames[0]}</div>
           </Tooltip>
           <div className="item-message">
@@ -36,7 +46,17 @@ export default function LeftList(props: any) {
         </div>
       ))}
       <div className="list-page">
-        <Pagination defaultCurrent={1} total={20} size="small" />
+        <Pagination
+          current={current}
+          total={total}
+          pageSize={20}
+          size="small"
+          showSizeChanger={false}
+          onChange={(page, pageSize) => {
+            setCurrent(page);
+            pageChange({ pageIndex: page, pageSize });
+          }}
+        />
       </div>
     </div>
   ) : (

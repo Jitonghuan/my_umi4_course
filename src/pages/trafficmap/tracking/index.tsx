@@ -7,27 +7,27 @@ import LeftList from './components/left-list';
 import RrightTrace from './components/right-trace';
 import { Form, Select, Button, DatePicker, message, Switch, Divider, Input, Spin, Empty } from 'antd';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import { getApplicationList, getInstance, getTrace, getTraceInfo } from '../service';
+import { getApplicationList, getInstance, getTrace, getEnvs, getTraceInfo } from '../service';
+import { leftItem } from './type';
 const { RangePicker } = DatePicker;
-import { useEnvOptions } from '../hooks';
 import './index.less';
 
 const mockData = [
   {
-    traceId: 'hahah',
+    traceId: 'hahah1111fdfadfdfdfdfdsfdsfdfadsfdsfdfdfdsfsdf',
     spanId: 1,
     parentSpanId: 0,
-    endpointName: 'homepage-level1',
+    endpointName: 'homepage-level11',
     startTime: '2022-5-12 23:12:12',
     durations: '890',
     selfDurations: '89',
     icon: <CaretUpOutlined />,
   },
   {
-    traceId: 'lalla',
+    traceId: 'lalfdfdsfdfdsfdfdfdfdfadfgdfgbfhhfhergdfgsfdla',
     spanId: 2,
     parentSpanId: 1,
-    endpointName: 'homepage-level2',
+    endpointName: 'homepage-levefasdf2',
     startTime: '2022-5-12 23:12:12',
     durations: '89',
     selfDurations: '12',
@@ -64,7 +64,7 @@ const mockData = [
     icon: <CaretUpOutlined />,
   },
   {
-    traceId: 'sopring',
+    traceId: 'soprinfasdfasdfsdfdghryrhafdvasgfhergvasdg',
     spanId: 6,
     parentSpanId: 2,
     endpointName: 'homepage-level3',
@@ -141,19 +141,20 @@ const mockData = [
   },
 ];
 export default function Tracking() {
-  // const [envOptions, setEnvOptions] = useState([]);
-  const [listData, setListData] = useState([]); //左侧list数据
+  const [listData, setListData] = useState<leftItem[]>(); //左侧list数据
   const [rightData, setRightData] = useState<any>([]); //右侧渲染图的数据
   const [form] = Form.useForm();
-  const [selectEnv, setSelectEnv] = useState('');
+  const [selectEnv, setSelectEnv] = useState<string>('');
   const [appID, setAppID] = useState('');
-  const [selectTime, setSelectTime] = useState<any>({ startTime: '', endTime: '' });
+  const [selectTime, setSelectTime] = useState<any>({ start: '', end: '' });
   const [applicationList, setApplicationList] = useState([]);
   const [instanceList, setInstanceList] = useState([]);
-  const [envOptions]: any[][] = useEnvOptions();
+  const [envOptions, setEnvOptions] = useState<any>([]);
   const [expand, setIsExpand] = useState<boolean>(false);
-  const [currentItem, setCurrentItem] = useState<any>({});
+  const [currentItem, setCurrentItem] = useState<leftItem>();
   const [spinning, setSpinning] = useState<boolean>(false);
+  const [total, setTotal] = useState<number>(0);
+  const [pageIndex, setPageIndex] = useState<number>(1);
 
   const btnMessageList = [
     { expand: true, label: '收起更多', icon: <CaretUpOutlined /> },
@@ -161,6 +162,15 @@ export default function Tracking() {
   ];
 
   const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
+
+  useEffect(() => {
+    getEnvs().then((res) => {
+      if (res) {
+        const data = res?.data?.envs.map((item: any) => ({ label: item.envName, value: item.envCode }));
+        setEnvOptions(data);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (envOptions.length !== 0) {
@@ -211,12 +221,14 @@ export default function Tracking() {
 
   // 获取左侧list数据
   const queryTraceList = (params: any) => {
+    console.log(params, 11);
     setSpinning(true);
     const values = form.getFieldsValue();
     getTrace({ ...params, ...values, ...selectTime, envCode: selectEnv })
       .then((res) => {
         if (res) {
           setListData(res?.data?.traces);
+          setTotal(res?.data?.total);
         }
       })
       .finally(() => {
@@ -224,7 +236,7 @@ export default function Tracking() {
       });
   };
 
-  const leftItemChange = (value: any) => {
+  const leftItemChange = (value: leftItem) => {
     setCurrentItem(value);
   };
 
@@ -259,7 +271,7 @@ export default function Tracking() {
             <Select
               options={envOptions}
               value={selectEnv}
-              onChange={(env, option: any) => {
+              onChange={(env) => {
                 setSelectEnv(env);
               }}
               showSearch
@@ -270,13 +282,14 @@ export default function Tracking() {
             时间范围：
             <RangePicker
               showTime
-              // value={selectTime as any}
               onChange={(v: any, time: any) => {
-                console.log(time);
-
-                setSelectTime({ startTime: time[0], endTime: time[1] });
+                setSelectTime({ start: time[0], end: time[1] });
               }}
               format="YYYY-MM-DD HH:mm:ss"
+              defaultValue={[
+                moment(moment().subtract(15, 'minute'), 'YYYY-MM-DD HH:mm:ss'),
+                moment(moment(), 'YYYY-MM-DD HH:mm:ss'),
+              ]}
             />
           </div>
         </div>
@@ -285,7 +298,7 @@ export default function Tracking() {
           <Form
             layout="inline"
             form={form}
-            onFinish={(values: any) => {
+            onFinish={() => {
               queryTraceList({
                 pageIndex: 1,
                 pageSize: 20,
@@ -347,15 +360,21 @@ export default function Tracking() {
           </Form>
         </div>
 
-        {/* 右边详情展示部分 */}
         <div className="detail-main">
           {/* <Spin spinning={spinning} > */}
 
           <ResizablePro
-            leftComp={<LeftList listData={listData} changeItem={leftItemChange} />}
+            leftComp={
+              <LeftList
+                listData={listData || []}
+                total={total}
+                changeItem={leftItemChange}
+                pageChange={queryTraceList}
+              />
+            }
             rightComp={
-              listData.length !== 0 ? (
-                <RrightTrace item={currentItem} data={rightData} envCode={selectEnv} selectTime={selectTime} />
+              listData?.length !== 0 ? (
+                <RrightTrace item={currentItem || {}} data={rightData} envCode={selectEnv} selectTime={selectTime} />
               ) : (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%', overflow: 'hidden' }} />
               )
