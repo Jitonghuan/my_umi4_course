@@ -164,3 +164,5 @@ export const generateIndentConfig = addAPIPrefix('/deliveryManage/indent/config/
 
 /*57、 POST  编辑制品配置 */
 export const editIndentConfig = addAPIPrefix('/deliveryManage/indent/config/edit');
+/*58、 GET 出部署包 */
+export const getPackageStatus = addAPIPrefix('/deliveryManage/indent/package/status');

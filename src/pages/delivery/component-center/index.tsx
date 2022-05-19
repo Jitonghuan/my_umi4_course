@@ -13,17 +13,18 @@ import { history } from 'umi';
 import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
 import { useQueryComponentList, useQueryProductlineList } from './hook';
+import AddApplicationDraw from './components/addApplicationDraw';
 import './index.less';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 
 export default function ComponentCenter() {
   const identification: any = history.location.state;
-  console.log('identification', identification ? identification : '');
   const [productLineForm] = Form.useForm();
   const [tabActiveKey, setTabActiveKey] = useState<string>('app');
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
+  const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [curProductLine, setCurProductLine] = useState<string>('');
@@ -58,7 +59,20 @@ export default function ComponentCenter() {
   return (
     <PageContainer>
       <ContentCard>
-        <UserModal
+        <AddApplicationDraw
+          mode={batchAddMode}
+          productLineOptions={productLineOptions || []}
+          tabActiveKey={tabActiveKey}
+          curProductLine={curProductLine}
+          onClose={() => setBatchAddMode('HIDE')}
+          onSave={() => {
+            const param = productLineForm.getFieldsValue();
+            queryComponentList({ componentType: tabActiveKey, ...param });
+            setBatchAddMode('HIDE');
+          }}
+        />
+
+        {/* <UserModal
           visable={userModalVisiable}
           productLineOptions={productLineOptions || []}
           tabActiveKey={tabActiveKey}
@@ -68,7 +82,7 @@ export default function ComponentCenter() {
           onClose={() => {
             setUserModalVisiable(false);
           }}
-        />
+        /> */}
         <BasicDataModal
           visable={basicDataModalVisiable}
           tabActiveKey={tabActiveKey}
@@ -117,6 +131,7 @@ export default function ComponentCenter() {
                             type="primary"
                             onClick={() => {
                               if (tabActiveKey === 'app') {
+                                setBatchAddMode('ADD');
                                 setUserModalVisiable(true);
                               }
                               //  if (tabActiveKey === 'middleware') {

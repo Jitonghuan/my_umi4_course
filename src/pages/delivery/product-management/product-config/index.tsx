@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
-import { queryIndentInfoApi, generateIndentConfig } from '../../service';
+import { queryIndentInfoApi, generateIndentConfig, getPackageStatus } from '../../service';
 import moment from 'moment';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
@@ -28,6 +28,7 @@ export const STATUS_TYPE: Record<string, packageStatus> = {
   出包中: { text: '出包中', color: 'green' },
   出包异常: { text: '出包异常', color: 'red' },
   已出包: { text: '已出包', color: 'blue' },
+  未知: { text: '未知', color: 'default' },
 };
 
 export default function ProductConfig() {
@@ -47,13 +48,34 @@ export default function ProductConfig() {
   const [editVisable, setEditVisable] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
   const [curRecord, setCurRecord] = useState<any>({});
+  const [packageLoading, setPackageLoading] = useState<boolean>(false);
   const [editConfigLoading, editIndentConfigYaml] = useEditIndentConfigYaml();
   const [indentConfigInfo, setIndentConfigInfo] = useState<any>({});
   const [configInfoLoading, setConfigInfoLoading] = useState<boolean>(false);
   const [infoFoldOut, setInfoFoldOut] = useState<boolean>(false);
-  const [curIndentPackageStatus, setCurIndentPackageStatus] = useState<string>('');
+  const [curIndentPackageStatus, setCurIndentPackageStatus] = useState<string>('未知');
   const cacheRef = useRef<any>(null);
 
+  const queryPackageStatus = async (id: number) => {
+    setPackageLoading(true);
+    try {
+      await getRequest(`${getPackageStatus}?id=${id}`)
+        .then((res) => {
+          if (res.success) {
+            setCurIndentPackageStatus(res.data);
+            if (cacheRef.current && (res.data === '已出包' || res.data === '出包异常')) {
+              clearInterval(cacheRef.current);
+            }
+          }
+        })
+        .finally(() => {
+          setPackageLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log('curIndentPackageStatus', curIndentPackageStatus);
   const queryIndentInfo = async (id: number) => {
     setInfoLoading(true);
     try {
@@ -73,13 +95,6 @@ export default function ProductConfig() {
               },
             );
             setEditableStr(res.data.indentDescription || '');
-            setCurIndentPackageStatus(res.data.indentPackageStatus);
-            if (
-              cacheRef.current &&
-              (res.data.indentPackageStatus === '已出包' || res.data.indentPackageStatus === '出包异常')
-            ) {
-              clearInterval(cacheRef.current);
-            }
 
             configForm.setFieldsValue({
               configInfo: res.data.indentConfigYaml,
@@ -97,6 +112,7 @@ export default function ProductConfig() {
   };
   useEffect(() => {
     if (configInfo.id) {
+      queryPackageStatus(configInfo.id);
       queryIndentInfo(configInfo.id);
     } else {
       return;
@@ -142,7 +158,7 @@ export default function ProductConfig() {
   const downLoadIndent = () => {
     createPackageInde(configInfo.id);
     cacheRef.current = setInterval(() => {
-      queryIndentInfo(configInfo.id);
+      queryPackageStatus(configInfo.id);
     }, 100);
   };
   const queryIndentConfigInfo = async (id: number) => {
@@ -271,7 +287,7 @@ export default function ProductConfig() {
                 <div>
                   <p>
                     产品部署包：
-                    <Tag color={STATUS_TYPE[curIndentPackageStatus].color}>
+                    <Tag color={STATUS_TYPE[curIndentPackageStatus].color || 'default'}>
                       {STATUS_TYPE[curIndentPackageStatus].text || '--'}
                     </Tag>
                     {curIndentPackageStatus === '已出包' && (

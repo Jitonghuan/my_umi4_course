@@ -35,6 +35,7 @@ export default function ComponentDetail() {
     componentVersion,
     componentDescription,
     componentType,
+    componentId,
     activeTab,
     type,
     optType,
@@ -59,12 +60,12 @@ export default function ComponentDetail() {
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
 
-  const deletVersion = (id: number) => {
-    postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
+  const deletVersion = async (id: number) => {
+    await postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
       if (res.success) {
         message.success(res.data);
         getComponentVersionList(initRecord.id);
-        queryComponentInfo(componentName, curVersion?.version, componentType, curVersion.componentId);
+        // queryComponentInfo(componentName, curVersion?.version, componentType, curVersion.componentId);
       } else {
         return;
       }
@@ -140,15 +141,28 @@ export default function ComponentDetail() {
     if (!initRecord.id) {
       return;
     }
+    // if(componentVersion && componentName&&optType==='versionDetail'){
+    //   //componentId
+    //   console.log('进入这里1111')
+    //   queryComponentInfo(componentName, componentVersion, componentType, componentId);
+    //   getComponentVersionList(initRecord.id);
+    //   setCurVersion({
+    //     version: componentVersion,
+    //     componentId: componentId,
+    //   });
+
+    // }componentVersion
     if (componentVersion && componentName) {
       getComponentVersionList(initRecord.id);
-      queryComponentInfo(componentName, componentVersion, componentType, initRecord.componentId);
+      console.log('进入这里2222');
+      queryComponentInfo(componentName, componentVersion, componentType, componentId);
 
       setCurVersion({
         version: componentVersion,
-        componentId: initRecord.componentId,
+        componentId: componentId,
       });
     } else {
+      console.log('进入这里33333');
       getComponentVersionList(initRecord.id);
     }
   }, [componentName, componentVersion]);

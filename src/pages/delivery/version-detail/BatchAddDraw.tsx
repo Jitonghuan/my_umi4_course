@@ -9,15 +9,14 @@ import { useGetProductlineVersion, useGetAppList, useBulkadd } from './hooks';
 import './index.less';
 export interface AppComponentProps {
   mode: EditorMode;
-  versionId: number;
-  initData?: any;
+  versionId?: number;
   onClose?: () => any;
   onSave: () => any;
 }
 
 export default function TmplEditor(props: AppComponentProps) {
   const [addForm] = Form.useForm();
-  const { mode, initData, onClose, onSave, versionId } = props;
+  const { mode, onClose, onSave, versionId } = props;
   const [isDisabled, setIsdisabled] = useState<boolean>(false);
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [versionLoading, versionOptions, getProductlineVersion] = useGetProductlineVersion();

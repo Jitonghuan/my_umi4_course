@@ -31,7 +31,7 @@ export function useQueryEnvList() {
 }
 
 // 应用查询
-export function useGetApplicationOption(): [boolean, any, (componentSourceEnv: string) => Promise<void>] {
+export function useGetApplicationOption(): [boolean, any, any, (componentSourceEnv: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<any>([]);
   const getApplicationOption = async (componentSourceEnv: string) => {
@@ -41,9 +41,11 @@ export function useGetApplicationOption(): [boolean, any, (componentSourceEnv: s
         .then((res) => {
           if (res.success) {
             let data = res.data.dataSource;
-            const option = data?.map((item: any) => ({
+            const option = data?.map((item: any, index: number) => ({
               label: item,
               value: item,
+              title: item,
+              key: index,
             }));
             setDataSource(option);
           } else {
@@ -57,7 +59,7 @@ export function useGetApplicationOption(): [boolean, any, (componentSourceEnv: s
       console.log(error);
     }
   };
-  return [loading, dataSource, getApplicationOption];
+  return [loading, dataSource, setDataSource, getApplicationOption];
 }
 
 //组件查询
