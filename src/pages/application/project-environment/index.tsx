@@ -242,17 +242,17 @@ export default function EnvironmentList() {
           {/* <div className="caption-left">
             <h3>项目环境列表</h3>
           </div> */}
-          {type === 'all' && (
-            <Button
-              type="primary"
-              onClick={() => {
-                setEnviroEditMode('ADD');
-              }}
-            >
-              <PlusOutlined />
-              新增项目环境
-            </Button>
-          )}
+          {/* {type === 'all' && ( */}
+          <Button
+            type="primary"
+            onClick={() => {
+              setEnviroEditMode('ADD');
+            }}
+          >
+            <PlusOutlined />
+            新增项目环境
+          </Button>
+          {/* )} */}
         </div>
         <div>
           <Spin spinning={isSpinning}>
