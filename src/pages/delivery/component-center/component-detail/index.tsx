@@ -58,6 +58,7 @@ export default function ComponentDetail() {
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
+  const [addVersionDisabled, setAddVersionDisabled] = useState<boolean>(false);
   const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
 
   const deletVersion = async (id: number) => {
@@ -186,6 +187,15 @@ export default function ComponentDetail() {
       getProductlineList();
     }
   }, []);
+  useEffect(() => {
+    if (optType === 'versionDetail') {
+      setAddVersionDisabled(true);
+    }
+
+    return () => {
+      setAddVersionDisabled(false);
+    };
+  }, [optType]);
   return (
     <PageContainer>
       <Modal
@@ -260,7 +270,7 @@ export default function ComponentDetail() {
               <Button
                 type="primary"
                 style={{ marginLeft: 10 }}
-                disabled={componentType === 'middleware'}
+                disabled={componentType === 'middleware' || addVersionDisabled}
                 onClick={() => {
                   if (componentType === 'app') {
                     setUserModalVisiable(true);
@@ -280,7 +290,7 @@ export default function ComponentDetail() {
                 onClick={() => {
                   setShowVersionModal(true);
                 }}
-                disabled={!versionOptions.length}
+                disabled={!versionOptions.length || addVersionDisabled}
               >
                 删除版本
               </Button>
