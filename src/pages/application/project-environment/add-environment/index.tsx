@@ -51,7 +51,6 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     let selectedAppCode: any = [];
 
     addEnvironmentForm.validateFields().then((params) => {
-      console.log('params', params.envCode);
       if (params.categoryCode) {
         appsListData.filter((item: any, index: number) => {
           if (params.categoryCode?.includes(item.key)) {
@@ -80,7 +79,8 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       }
       if (mode === 'EDIT') {
         let editParamsObj = {
-          projectEnvCode: `pro-${params.envCode}` || '',
+          // projectEnvCode: `pro-${params.envCode}` || '',
+          projectEnvCode: params.envCode,
           mark: params.mark || '',
           relationApps: selectedAppCode || [],
           projectEnvName: params.envName || '',
@@ -173,10 +173,10 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     if (mode !== 'HIDE' && mode !== 'ADD') {
       addEnvironmentForm.resetFields();
       if (initData) {
-        let curEnvCode = initData?.envCode.substring(4) || '';
+        // let curEnvCode = initData?.envCode.substring(4) || '';
         addEnvironmentForm.setFieldsValue({
           envName: initData?.envName,
-          envCode: curEnvCode,
+          envCode: initData?.envCode,
           benchmarkEnvCode: initData?.relEnvs,
           mark: initData?.mark,
         });
@@ -257,7 +257,11 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
               },
             ]}
           >
-            <Input addonBefore="pro-" style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+            {mode === 'EDIT' ? (
+              <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+            ) : (
+              <Input addonBefore="pro-" style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+            )}
           </Form.Item>
           <Form.Item
             label="选择基准环境"

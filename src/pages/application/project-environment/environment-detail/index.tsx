@@ -61,45 +61,6 @@ export default function EnvironmentList() {
         setListLoading(false);
       });
   };
-  const queryCommonParamsRef = useRef<{ benchmarkEnvCode: string; projectEnvCode: string; whichApps: String }>({
-    benchmarkEnvCode: projectEnvInfo.benchmarkEnvCode,
-    projectEnvCode: projectEnvInfo.envCode,
-    whichApps: 'alreadyAdd',
-  });
-  const queryAppsListData = async (paramObj: any) => {
-    setLoading(true);
-    let canAddAppsData: any = []; //可选数据数组
-    await getRequest(queryAppsList, {
-      data: {
-        benchmarkEnvCode: paramObj.benchmarkEnvCode,
-        projectEnvCode: paramObj.projectEnvCode,
-        appName: paramObj?.appName,
-        appCode: paramObj?.appCode,
-        appType: paramObj?.appType,
-        whichApps: paramObj?.whichApps,
-      },
-    })
-      .then((res) => {
-        if (res?.success) {
-          let data = res?.data;
-          data.canAddApps?.map((item: any, index: number) => {
-            canAddAppsData.push({
-              value: item.appCode,
-              label: item.appName,
-            });
-          });
-          setAppsListData(canAddAppsData);
-          if (data.alreadyAddApps) {
-            setDataSource(data.alreadyAddApps);
-          } else {
-            setDataSource([]);
-          }
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
 
   useEffect(() => {
     queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
