@@ -137,6 +137,9 @@ export default function ComponentDetail() {
     }
   };
   useEffect(() => {
+    if (!initRecord.id) {
+      return;
+    }
     if (componentVersion && componentName) {
       getComponentVersionList(initRecord.id);
       queryComponentInfo(componentName, componentVersion, componentType, initRecord.componentId);
@@ -155,7 +158,7 @@ export default function ComponentDetail() {
       version: versionInfo.value,
       componentId: initRecord.id,
     });
-    console.log('versionInfo', versionInfo, '---', versionInfo.componentId);
+
     queryComponentInfo(componentName, versionInfo.value, componentType, initRecord.id);
   };
   const saveConfig = () => {
@@ -275,6 +278,9 @@ export default function ComponentDetail() {
               onClick={() => {
                 history.push({
                   pathname: '/matrix/delivery/component-center',
+                  state: {
+                    identification: componentType,
+                  },
                 });
               }}
             >

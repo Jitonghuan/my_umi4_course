@@ -68,6 +68,7 @@ export default function VersionDetail(props: DetailProps) {
                     componentVersion: record.componentVersion,
                     componentType: currentTab,
                     optType: 'componentCenter',
+
                     // componentId: record.id,
                     // componentDescription:record.componentDescription
                   },

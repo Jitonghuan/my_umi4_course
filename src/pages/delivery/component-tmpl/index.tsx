@@ -63,6 +63,7 @@ export default function ComponentTmpl() {
       <TmplEditDraw
         mode={tmplEditMode}
         initData={tmplateData}
+        productLineOptions={productLineOptions}
         onClose={() => setTmplEditMode('HIDE')}
         onSave={saveEditData}
       />

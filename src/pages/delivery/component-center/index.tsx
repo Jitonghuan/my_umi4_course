@@ -9,6 +9,7 @@ import { Tabs, Button, Typography, Select, Form, Input } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';
+import { history } from 'umi';
 import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
 import { useQueryComponentList, useQueryProductlineList } from './hook';
@@ -16,7 +17,9 @@ import './index.less';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 
-export default function VersionDetail() {
+export default function ComponentCenter() {
+  const identification: any = history.location.state;
+  console.log('identification', identification ? identification : '');
   const [productLineForm] = Form.useForm();
   const [tabActiveKey, setTabActiveKey] = useState<string>('app');
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
@@ -41,6 +44,11 @@ export default function VersionDetail() {
       getProductlineList();
     }
   }, []);
+  useEffect(() => {
+    if (identification?.identification) {
+      setTabActiveKey(identification?.identification);
+    }
+  }, [identification?.identification]);
   const onSearch = () => {
     const param = productLineForm.getFieldsValue();
     queryComponentList({ componentType: tabActiveKey, ...param });

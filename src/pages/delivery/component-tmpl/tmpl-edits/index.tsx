@@ -8,10 +8,10 @@ import AceEditor from '@/components/ace-editor';
 import { Drawer, Input, Button, Form, Select } from 'antd';
 import { useCreateComponentTmpl, useUpdateComponentTmpl } from './hooks';
 import { useGetTypeListOption } from '../hooks';
-import { productLineOptions } from '../config';
 export interface TmplListProps {
   mode?: EditorMode;
   initData: TmplEdit;
+  productLineOptions: any;
   onClose?: () => any;
   onSave: () => any;
 }
@@ -21,7 +21,7 @@ export default function TmplEditor(props: TmplListProps) {
   const [createLoading, createComponentTmpl] = useCreateComponentTmpl();
   const [updateLoading, updateComponentTmpl] = useUpdateComponentTmpl();
   const [optionLoading, typeOption] = useGetTypeListOption();
-  const { mode, initData, onClose, onSave } = props;
+  const { mode, initData, productLineOptions, onClose, onSave } = props;
   const [isDisabled, setIsdisabled] = useState<boolean>(false);
   const [editDisabled, setEditDisabled] = useState<boolean>(false);
 

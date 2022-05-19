@@ -4,6 +4,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { useAddBasicdata } from '../hook';
 import { getRequest } from '@/utils/request';
 import { uploadSqlfile, getVersionCheck } from '../../service';
+import './basicDataModal.less';
 export interface DetailProps {
   visable?: boolean;
   tabActiveKey: string;
@@ -88,10 +89,14 @@ export default function BasicModal(props: DetailProps) {
         let path = info.file.response.data;
         setFilePath(path);
       }
-      if (info.file.status === 'done') {
+      if (info.file.status === 'done' && info.file?.response.success) {
         message.success(`${info.file.name} 文件上传成功！`);
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 文件上传失败！`);
+      } else if (info.file?.response?.success === false) {
+        message.error(info.file.response?.errorMsg);
+      } else if (info.file.status === 'removed') {
+        message.warning('上传取消！');
       }
     },
     progress: {
@@ -171,7 +176,7 @@ export default function BasicModal(props: DetailProps) {
           getValueFromEvent={normFile}
           rules={[{ required: true, message: '请上传基础数据！' }]}
         >
-          <Upload name="logo" action="/upload.do" {...Uploadprops}>
+          <Upload name="logo" accept=".sql" action="/upload.do" {...Uploadprops}>
             <Button icon={<UploadOutlined />}>选择文件</Button>
           </Upload>
         </Form.Item>
