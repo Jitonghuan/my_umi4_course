@@ -104,7 +104,7 @@ export default defineConfig({
   ],
 
   // 开启动态资源加载
-  // dynamicImport: {
-  //   loading: '@/components/source-loading',
-  // },
+  dynamicImport: {
+    loading: '@/components/source-loading',
+  },
 });
