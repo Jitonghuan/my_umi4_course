@@ -81,7 +81,7 @@ export default function VCPageContent(props: React.PropsWithChildren<IProps>) {
           <Breadcrumb>
             {breadcrumbLists.map((el, index) => (
               <Breadcrumb.Item key={index}>
-                <a onClick={() => history.push(el.path)}>{el.name}</a>
+                <span>{el.name}</span>
               </Breadcrumb.Item>
             ))}
           </Breadcrumb>
