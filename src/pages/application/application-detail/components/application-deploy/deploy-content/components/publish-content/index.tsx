@@ -163,7 +163,7 @@ export default function PublishContent(props: IProps) {
 
   let resubmitText =
     '重新提交选择的分支，会将选中的分支最新的提交追加合并到部署分支（release分支）上，未选中的分支则不会合并';
-  let exitBranch = '将选中的分支从部署分支（release分支）中退出则会将剩下的分支，重新合并到新的部署分支中';
+  let exitBranch = '将选中的分支从部署分支（release分支）中退出，则会将剩下的分支重新合并到新的部署分支中';
 
   return (
     <div className={rootCls}>
@@ -219,20 +219,20 @@ export default function PublishContent(props: IProps) {
             <span style={{ marginRight: 14 }}>
               <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
                 重新提交
+                <Tooltip placement="topRight" title={resubmitText}>
+                  <QuestionCircleOutlined />
+                </Tooltip>
               </Button>
-              <Tooltip placement="topRight" title={resubmitText}>
-                <QuestionCircleOutlined />
-              </Tooltip>
             </span>
           )}
 
           <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
             退出分支
+            <Tooltip placement="topRight" title={exitBranch}>
+              <QuestionCircleOutlined />
+            </Tooltip>
           </Button>
-          <Tooltip placement="topRight" title={exitBranch}>
-            {' '}
-            <QuestionCircleOutlined />
-          </Tooltip>
+
           {/* {!isFrontend && !isProd && (
             <Popconfirm
               title="确定要重启应用吗？"
