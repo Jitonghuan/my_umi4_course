@@ -89,5 +89,8 @@
     "@umijs/preset-react": "~1.8.23",
     "prettier": "2.6.0"
   },
-  "__npminstall_done": false
+  "__npminstall_done": false,
+  "resolutions": {
+    "hyper-core": "1.6.2"
+  }
 }
