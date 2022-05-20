@@ -37,7 +37,7 @@ export default function PushVersionStep(props: StepItemProps) {
       {...others}
       title="推送版本"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      status={status}
       description={
         <>
           {isWait && <span>等待推送</span>}
