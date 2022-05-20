@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Breadcrumb, Card } from 'antd';
 import type { CardProps } from 'antd/lib/card';
-import { history } from 'umi';
 import classnames from 'classnames';
 import './index.less';
 
