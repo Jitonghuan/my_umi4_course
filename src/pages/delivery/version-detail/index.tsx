@@ -32,6 +32,7 @@ export default function VersionDetail() {
 
   useEffect(() => {
     if (!descriptionInfoData.versionId) {
+      debugger;
       return;
     }
     if (descriptionInfoData?.optType === 'componentDetail') {
@@ -135,6 +136,9 @@ export default function VersionDetail() {
                         currentTabType={item.type}
                         versionId={descriptionInfoData.versionId}
                         isEditable={isEditable}
+                        versionDescription={descriptionInfoData.versionDescription}
+                        releaseStatus={descriptionInfoData.releaseStatus}
+                        descriptionInfoData={descriptionInfoData}
                       />
                     </div>
                   </TabPane>

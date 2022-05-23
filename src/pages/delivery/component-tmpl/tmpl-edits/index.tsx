@@ -94,7 +94,7 @@ export default function TmplEditor(props: TmplListProps) {
             rules={[{ required: true, message: '请输入模版配置' }]}
             style={{ width: 800 }}
           >
-            <AceEditor mode="yaml" height={650} />
+            <AceEditor mode="yaml" height={650} readOnly={isDisabled} />
           </Form.Item>
         </Form>
       </ContentCard>

@@ -31,14 +31,18 @@ import './index.less';
 export default function ComponentDetail() {
   const {
     initRecord,
+    productVersionId,
     componentName,
     componentVersion,
     componentDescription,
     componentType,
     componentId,
     activeTab,
+    versionDescription,
+    releaseStatus,
     type,
     optType,
+    descriptionInfoData,
   }: any = history.location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
@@ -60,7 +64,7 @@ export default function ComponentDetail() {
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [addVersionDisabled, setAddVersionDisabled] = useState<boolean>(false);
   const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
-
+  console.log('productVersionId', productVersionId);
   const deletVersion = async (id: number) => {
     await postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
       if (res.success) {
@@ -304,9 +308,13 @@ export default function ComponentDetail() {
                     pathname: '/matrix/delivery/version-detail',
                     state: {
                       optType: 'componentDetail',
-                      versionId: curVersion.version,
-                      versionDescription: '',
-                      // releaseStatus:
+                      versionId: productVersionId,
+                      versionDescription: versionDescription,
+                      releaseStatus: releaseStatus,
+                      productName: descriptionInfoData.productName,
+                      productDescription: descriptionInfoData.productDescription,
+                      productGmtCreate: descriptionInfoData.gmtCreate,
+                      versionName: descriptionInfoData.versionName,
                     },
                   });
                 } else {

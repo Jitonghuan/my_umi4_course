@@ -326,37 +326,35 @@ export default function ProductConfig() {
                     重新生成制品配置
                   </Button>
                   （请将文件中的内容复制到制品包的config目录下）
-                  <Button
-                    type={buttonText === '编辑' ? 'primary' : 'default'}
-                    style={{ float: 'right' }}
-                    onClick={() => {
-                      if (readOnly) {
-                        setReadOnly(false);
-                        setButtonText('取消编辑');
-                      } else {
-                        setReadOnly(true);
-                        setButtonText('编辑');
-                      }
-                    }}
-                  >
-                    {buttonText}
-                  </Button>
+                  <div style={{ float: 'right' }}>
+                    <Button
+                      type={buttonText === '编辑' ? 'primary' : 'default'}
+                      onClick={() => {
+                        if (readOnly) {
+                          setReadOnly(false);
+                          setButtonText('取消编辑');
+                        } else {
+                          setReadOnly(true);
+                          setButtonText('编辑');
+                        }
+                      }}
+                    >
+                      {buttonText}
+                    </Button>
+                    <Button type="primary" style={{ marginLeft: 8 }} onClick={saveConfig} loading={editConfigLoading}>
+                      保存配置
+                    </Button>
+                  </div>
                 </div>
                 <div>
                   <Form form={configForm}>
                     <Spin spinning={configInfoLoading}>
                       <Form.Item name="configInfo" noStyle>
-                        <AceEditor mode="yaml" height={450} value={indentConfigInfo} readOnly={readOnly} />
+                        <AceEditor mode="yaml" height={550} value={indentConfigInfo} readOnly={readOnly} />
                       </Form.Item>
                     </Spin>
 
-                    <Form.Item>
-                      <span style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-                        <Button type="primary" onClick={saveConfig} loading={editConfigLoading}>
-                          保存配置
-                        </Button>
-                      </span>
-                    </Form.Item>
+                    <Form.Item></Form.Item>
                   </Form>
                 </div>
               </TabPane>

@@ -33,12 +33,24 @@ export interface VersionDetailProps {
   currentTab: string;
   currentTabType: string;
   versionId: number;
+  versionDescription: string;
   isEditable: boolean;
   initDataSource?: any;
+  releaseStatus?: any;
+  descriptionInfoData?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, versionId, currentTabType, isEditable, initDataSource } = props;
+  const {
+    currentTab,
+    versionId,
+    currentTabType,
+    isEditable,
+    releaseStatus,
+    initDataSource,
+    versionDescription,
+    descriptionInfoData,
+  } = props;
   const [searchForm] = Form.useForm();
   const [addLoading, addComponent] = useAddCompontent();
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
@@ -151,12 +163,16 @@ export default (props: VersionDetailProps) => {
               pathname: '/matrix/delivery/component-detail',
               state: {
                 initRecord: record,
+                productVersionId: versionId,
                 componentName: record.componentName,
                 componentVersion: record.componentVersion,
                 componentId: record.id,
                 componentType: currentTab,
                 componentDescription: record.componentDescription,
                 optType: 'versionDetail',
+                versionDescription: versionDescription,
+                releaseStatus: releaseStatus,
+                descriptionInfoData: descriptionInfoData,
               },
             });
           }}
