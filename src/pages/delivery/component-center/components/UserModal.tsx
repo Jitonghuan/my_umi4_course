@@ -13,6 +13,7 @@ export interface DetailProps {
   queryParams?: any;
   queryComponentList: (paramObj: { componentType: any }) => any;
   onClose: () => any;
+  optType?: string;
 }
 
 export default function BasicModal(props: DetailProps) {
@@ -26,6 +27,7 @@ export default function BasicModal(props: DetailProps) {
     curProductLine,
     initData,
     curVersion,
+    optType,
   } = props;
   const [addLoading, addApplication] = useAddApplication();
   const [appLoading, applicationOptions, getApplicationOption] = useGetApplicationOption();
@@ -95,8 +97,8 @@ export default function BasicModal(props: DetailProps) {
     if (Object.keys(initData || {})?.length !== 0) {
       console.log('initData', initData);
       form.setFieldsValue({ ...initData, componentVersion: curVersion });
-      if (tabActiveKey === 'app') {
-        // getApplicationOption(initData.componentSourceEnv);
+      if (tabActiveKey === 'app' && optType !== 'comdetailReadOnly') {
+        getApplicationOption(initData.componentSourceEnv);
       }
 
       setIsDisabled(true);

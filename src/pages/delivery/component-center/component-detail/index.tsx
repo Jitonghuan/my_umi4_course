@@ -243,6 +243,7 @@ export default function ComponentDetail() {
           setUserModalVisiable(false);
           getComponentVersionList(initRecord.id);
         }}
+        optType="comdetailReadOnly"
       />
       <BasicDataModal
         visable={basicDataModalVisiable}
