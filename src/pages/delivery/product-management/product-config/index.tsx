@@ -5,9 +5,10 @@ import { history } from 'umi';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import { queryIndentInfoApi, generateIndentConfig, getPackageStatus } from '../../service';
 import moment from 'moment';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
-import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form } from 'antd';
+import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form, message } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import ParameterEditModal from './editModal';
 import {
@@ -99,6 +100,7 @@ export default function ProductConfig() {
             configForm.setFieldsValue({
               configInfo: res.data.indentConfigYaml,
             });
+            setIndentConfigInfo(res.data.indentConfigYaml);
           } else {
             return;
           }
@@ -322,10 +324,24 @@ export default function ProductConfig() {
                 </div>
                 <div style={{ marginBottom: 10 }}>
                   安装配置文件：
-                  <Button type="primary" size="small" onClick={getConfigInfo} loading={configInfoLoading}>
+                  <Button
+                    style={{ marginRight: 10 }}
+                    type="primary"
+                    size="small"
+                    onClick={getConfigInfo}
+                    loading={configInfoLoading}
+                  >
                     重新生成制品配置
                   </Button>
-                  （请将文件中的内容复制到制品包的config目录下）
+                  <CopyToClipboard
+                    text={JSON.stringify(indentConfigInfo || {})}
+                    onCopy={() => message.success('复制成功！')}
+                  >
+                    <Button type="primary" size="small">
+                      {' '}
+                      一键复制
+                    </Button>
+                  </CopyToClipboard>
                   <div style={{ float: 'right' }}>
                     <Button
                       type={buttonText === '编辑' ? 'primary' : 'default'}

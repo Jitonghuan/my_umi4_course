@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form, message } from 'antd';
+import { Button, Input, Form, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   useQueryDeliveryParamList,
@@ -126,20 +126,16 @@ export default (props: VersionDetailProps) => {
         >
           编辑
         </a>,
-        <a
-          key="delete"
-          onClick={() => {
-            // if (isEditable) {
-            //   message.info('已发布不可以删除!');
-            // } else {
+        <Popconfirm
+          title="确定要删除吗？"
+          onConfirm={() => {
             deleteDeliveryParam(record.id).then(() => {
               setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
             });
-            // }
           }}
         >
-          删除
-        </a>,
+          <a key="delete">删除</a>,
+        </Popconfirm>,
       ],
     },
   ];
