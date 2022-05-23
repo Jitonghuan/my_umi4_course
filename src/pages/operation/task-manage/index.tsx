@@ -2,13 +2,14 @@
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2022/04/1 14:15
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
 import { Input, Table, Popconfirm, Form, Button, Spin, Select, Divider, Tag, Cascader, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import AddRecordModal from './addRecordEnv';
+import { taskTableSchema } from './schema';
 import ImportDataModal from './importData';
 import {
   useDnsManageList,
@@ -68,9 +69,11 @@ export default function DNSManageList(props: any) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [addRecordMode, setAddRecordMode] = useState<EditorMode>('HIDE');
-  const [importDataMode, setImportDataMode] = useState<EditorMode>('HIDE');
+  const [addTaskMode, setAddTaskMode] = useState<EditorMode>('HIDE');
   const [taskForm] = Form.useForm();
   const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
+  const [curRecord, setCurRecord] = useState<any>();
+  const [createAppVisible, setCreateAppVisible] = useState(false);
 
   useEffect(() => {
     getDnsManageEnvCodeList();
@@ -165,10 +168,27 @@ export default function DNSManageList(props: any) {
     setSelectCascaderValue(values[0]);
   };
 
+  // 表格列配置
+  const tableColumns = useMemo(() => {
+    return taskTableSchema({
+      onEditClick: (record, index) => {
+        setCurRecord(record);
+        setCreateAppVisible(true);
+      },
+      onDelClick: async (record, index) => {
+        // await deleteApp({ appCode: record.appCode, id: record.id });
+        message.success('删除成功');
+        // loadAppListData();
+      },
+      // selectedRows,
+      initEnvData,
+    }) as any;
+  }, []);
+
   return (
     <PageContainer className="DNS-list-content">
       <AddRecordModal
-        mode={addRecordMode}
+        mode={addTaskMode}
         initData={initEnvData}
         envCode={currentEnvCode}
         onSave={() => {
@@ -179,18 +199,7 @@ export default function DNSManageList(props: any) {
         }}
         onClose={() => setAddRecordMode('HIDE')}
       />
-      <ImportDataModal
-        mode={importDataMode}
-        onClose={() => setImportDataMode('HIDE')}
-        onSave={() => {
-          setImportDataMode('HIDE');
-          setTimeout(() => {
-            getDnsManageList({ currentEnvCode });
-          }, 100);
-        }}
-        selectedRowKeys={selectedRowKeys}
-        envCode={currentEnvCode.envCode}
-      />
+
       <FilterCard>
         <div>
           <Form
@@ -237,13 +246,17 @@ export default function DNSManageList(props: any) {
               type="primary"
               onClick={() => {
                 setInitEnvData(undefined);
-                // setAddEnvMode('ADD');
+                setAddTaskMode('ADD');
               }}
             >
               <PlusOutlined />
               创建任务
             </Button>
           </div>
+        </div>
+        <div>
+          <Table columns={tableColumns}></Table>
+          {/* taskTableSchema  */}
         </div>
       </ContentCard>
     </PageContainer>

@@ -17,15 +17,15 @@ const APP_TYPE_ICON = {
 };
 
 // 表格 schema
-export const createTableSchema = ({
+export const taskTableSchema = ({
   onEditClick,
   onDelClick,
-  categoryData,
+  // categoryData,
   businessDataList,
 }: {
   onEditClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
-  categoryData: any[];
+  // categoryData: any[];
   businessDataList: any[];
 }) =>
   [
@@ -62,7 +62,7 @@ export const createTableSchema = ({
       title: '上次执行结果',
       dataIndex: 'appCategoryCode',
       width: 120,
-      render: (value) => categoryData?.find((v) => v.categoryCode === value)?.categoryName || '-',
+      // render: (value) => categoryData?.find((v) => v.categoryCode === value)?.categoryName || '-',
     },
     {
       title: '启用',
