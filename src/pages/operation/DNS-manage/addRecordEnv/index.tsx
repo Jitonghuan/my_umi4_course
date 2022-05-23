@@ -72,8 +72,9 @@ export default function addEnvData(props: RecordEditDataProps) {
     }
   }, [mode]);
 
-  const handleSubmit = () => {
-    let param = createRecordForm.getFieldsValue();
+  const handleSubmit = async () => {
+    // let param = createRecordForm.getFieldsValue();
+    const param = await createRecordForm.validateFields();
     if (mode === 'ADD') {
       let paramObj = { envCode: envCode.envCode, status: '0', ...param };
       addDnsManage(paramObj).then(() => {
@@ -118,8 +119,19 @@ export default function addEnvData(props: RecordEditDataProps) {
               createRecordForm.resetFields();
             }}
           >
-            <Form.Item label="记录类型：" name="recordType" rules={[{ required: true, message: '这是必填项' }]}>
-              <Select style={{ width: '24vw' }} options={options} placeholder="A- 将域名指向一个IPV4地址"></Select>
+            <Form.Item
+              label="记录类型："
+              name="recordType"
+              rules={[{ required: true, message: '这是必填项' }]}
+              initialValue="A"
+            >
+              <Select
+                style={{ width: '24vw' }}
+                options={options}
+                placeholder="A- 将域名指向一个IPV4地址"
+                defaultValue="A"
+                disabled={true}
+              ></Select>
             </Form.Item>
             <Form.Item
               label="主机记录："
