@@ -6,8 +6,9 @@ import React from 'react';
 import { history } from 'umi';
 import { useEffect } from 'react';
 import { useAddDnsManage, useUpdateDnsManage } from '../hooks';
-import { Input, Form, Select, Spin, Modal, Button, Drawer, Switch } from 'antd';
+import { Input, Form, Select, Spin, Modal, Button, Drawer, Switch, Divider } from 'antd';
 import { recordEditData } from '../index';
+import EditorTable from '@cffe/pc-editor-table';
 // import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 
 export interface RecordEditDataProps {
@@ -103,6 +104,67 @@ export default function addEnvData(props: RecordEditDataProps) {
             </Form.Item>
             <Form.Item name="" label="任务类型" rules={[{ required: true, message: '这是必填项' }]}>
               <Select style={{ width: 200 }}></Select>
+            </Form.Item>
+            <Divider />
+            {/* ------------任务类型一---------- */}
+            <Form.Item label="appCode" name="">
+              <Select style={{ width: 80 }}></Select>
+            </Form.Item>
+            <Form.Item label="envCode" name="">
+              <Select style={{ width: 80 }}></Select>
+            </Form.Item>
+
+            <Form.Item label="容器" name="">
+              <Select style={{ width: 200 }}></Select>
+            </Form.Item>
+            <Form.Item label="执行路径" name="">
+              <Input placeholder="请输入执行路径" style={{ width: '24vw' }}></Input>
+            </Form.Item>
+            <Form.Item label="command" name="">
+              <Input placeholder="请输入command" style={{ width: '24vw' }}></Input>
+            </Form.Item>
+            {/* ------------任务类型二---------- */}
+            <Form.Item label="接口URL" name="">
+              <Select style={{ width: 200 }}></Select>
+            </Form.Item>
+            <Form.Item label="请求方法" name="">
+              <Select style={{ width: 80 }}></Select>
+            </Form.Item>
+
+            <Form.Item label="请求方法" name="">
+              <Select style={{ width: 80 }}></Select>
+            </Form.Item>
+            <Form.Item label="query params" name="">
+              <EditorTable
+                columns={[
+                  { title: 'Key', dataIndex: 'key', colProps: { width: 90 } },
+                  {
+                    title: 'VALUE',
+                    dataIndex: 'value',
+                    colProps: { width: 90 },
+                  },
+                ]}
+              />
+            </Form.Item>
+
+            {/* ------------任务类型三---------- */}
+            <Form.Item label="主机" name="">
+              <Input style={{ width: '24vw' }}></Input>
+            </Form.Item>
+            <Form.Item label="端口" name="">
+              <Input style={{ width: '24vw' }}></Input>
+            </Form.Item>
+            <Form.Item label="用户名" name="">
+              <Input style={{ width: '24vw' }}></Input>
+            </Form.Item>
+            <Form.Item label="密码" name="">
+              <Input style={{ width: '24vw' }}></Input>
+            </Form.Item>
+            <Form.Item label="数据库名" name="">
+              <Input style={{ width: '24vw' }}></Input>
+            </Form.Item>
+            <Form.Item label="SQL" name="">
+              <Input style={{ width: '24vw' }}></Input>
             </Form.Item>
           </Form>
         </div>
