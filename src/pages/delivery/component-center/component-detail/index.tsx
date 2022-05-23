@@ -64,7 +64,7 @@ export default function ComponentDetail() {
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [addVersionDisabled, setAddVersionDisabled] = useState<boolean>(false);
   const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
-  console.log('productVersionId', productVersionId);
+  // console.log('productVersionId', productVersionId);
   const deletVersion = async (id: number) => {
     await postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
       if (res.success) {
@@ -278,7 +278,7 @@ export default function ComponentDetail() {
                   if (componentType === 'app') {
                     setUserModalVisiable(true);
                   }
-                  //  if (tabActiveKey === 'middleware') {
+                  //  if (componentType === 'middleware') {
                   //    // setMiddlewareModalVisibale(true);
                   //  }
                   if (componentType === 'sql') {
