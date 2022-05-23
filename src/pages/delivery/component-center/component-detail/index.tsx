@@ -155,7 +155,7 @@ export default function ComponentDetail() {
     // }componentVersion
     if (componentVersion && componentName) {
       getComponentVersionList(initRecord.id);
-      console.log('进入这里2222');
+
       queryComponentInfo(componentName, componentVersion, componentType, componentId);
 
       setCurVersion({
@@ -163,7 +163,6 @@ export default function ComponentDetail() {
         componentId: componentId,
       });
     } else {
-      console.log('进入这里33333');
       getComponentVersionList(initRecord.id);
     }
   }, [componentName, componentVersion]);
@@ -300,12 +299,24 @@ export default function ComponentDetail() {
             <Button
               type="primary"
               onClick={() => {
-                history.push({
-                  pathname: '/matrix/delivery/component-center',
-                  state: {
-                    identification: componentType,
-                  },
-                });
+                if (optType === 'versionDetail') {
+                  history.push({
+                    pathname: '/matrix/delivery/version-detail',
+                    state: {
+                      optType: 'componentDetail',
+                      versionId: curVersion.version,
+                      versionDescription: '',
+                      // releaseStatus:
+                    },
+                  });
+                } else {
+                  history.push({
+                    pathname: '/matrix/delivery/component-center',
+                    state: {
+                      identification: componentType,
+                    },
+                  });
+                }
               }}
             >
               返回

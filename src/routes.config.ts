@@ -861,7 +861,7 @@ export default [
       },
     ],
     //测试环境和正式环境暂不展示
-    hideInMenu: process.env.BUILD_ENV === 'prod',
+    // hideInMenu: process.env.BUILD_ENV === 'prod',
   },
   {
     path: 'cluster',

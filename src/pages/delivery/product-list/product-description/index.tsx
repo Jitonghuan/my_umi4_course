@@ -188,7 +188,22 @@ export default function deliveryDescription() {
     <PageContainer className="product-description">
       <ContentCard>
         <div>
-          <Descriptions title="基本信息" column={2} className="basic-info-description" bordered={true}>
+          <Descriptions
+            title="基本信息"
+            column={2}
+            className="basic-info-description"
+            bordered={true}
+            extra={
+              <Button
+                type="primary"
+                onClick={() => {
+                  history.push('/matrix/delivery/product-list');
+                }}
+              >
+                返回
+              </Button>
+            }
+          >
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
               <Paragraph

@@ -27,6 +27,18 @@ export default function VersionDetail() {
   const [infoLoading, versionDescriptionInfo, getVersionDescriptionInfo] = useVersionDescriptionInfo();
   const [editLoading, editProductVersionDescription] = useEditProductVersionDescription();
   const [isEditable, setIsEditable] = useState<boolean>(false);
+  const [tabActiveKey, setTabActiveKey] = useState<string>('basicInfo');
+  console.log('descriptionInfoData', descriptionInfoData);
+
+  useEffect(() => {
+    if (!descriptionInfoData.versionId) {
+      return;
+    }
+    if (descriptionInfoData?.optType === 'componentDetail') {
+      setTabActiveKey('production');
+      console.log('tabActiveKey', tabActiveKey);
+    }
+  }, [descriptionInfoData?.optType]);
   useEffect(() => {
     getVersionDescriptionInfo(descriptionInfoData.versionId);
   }, []);
@@ -69,8 +81,14 @@ export default function VersionDetail() {
         </div>
         <Divider style={{ marginTop: 0, marginBottom: 4 }} />
         <>
-          <Tabs tabPosition="left">
-            <TabPane tab="基本信息" key="1">
+          <Tabs
+            tabPosition="left"
+            activeKey={tabActiveKey}
+            onChange={(key) => {
+              setTabActiveKey(key);
+            }}
+          >
+            <TabPane tab="基本信息" key="basicInfo">
               <div>
                 <Descriptions
                   title="基本信息"
@@ -107,7 +125,7 @@ export default function VersionDetail() {
                 </Descriptions>
               </div>
             </TabPane>
-            <TabPane tab="产品编排" key="2">
+            <TabPane tab="产品编排" key="production">
               <Tabs type="card">
                 {productionTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>
@@ -123,7 +141,7 @@ export default function VersionDetail() {
                 ))}
               </Tabs>
             </TabPane>
-            <TabPane tab="交付配置" key="3">
+            <TabPane tab="交付配置" key="delivery">
               <Tabs type="card">
                 {deliveryTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>
