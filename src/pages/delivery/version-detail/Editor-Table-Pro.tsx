@@ -166,7 +166,7 @@ export default (props: VersionDetailProps) => {
                 productVersionId: versionId,
                 componentName: record.componentName,
                 componentVersion: record.componentVersion,
-                componentId: record.id,
+                componentId: record.componentId,
                 componentType: currentTab,
                 componentDescription: record.componentDescription,
                 optType: 'versionDetail',

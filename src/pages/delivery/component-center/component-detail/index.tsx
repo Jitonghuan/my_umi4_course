@@ -97,8 +97,8 @@ export default function ComponentDetail() {
               queryComponentInfo(componentName, option[0]?.value, componentType, option[0]?.componentId);
             }
             setCurVersion({
-              version: option[0]?.value,
-              componentId: option[0]?.componentId,
+              version: option[0]?.value || componentVersion,
+              componentId: option[0]?.componentId || initRecord.componentId,
             });
           } else {
             return [];

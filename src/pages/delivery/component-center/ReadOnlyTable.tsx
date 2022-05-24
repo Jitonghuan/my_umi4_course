@@ -96,6 +96,7 @@ export default function VersionDetail(props: DetailProps) {
   return (
     <>
       <Table
+        bordered
         columns={
           currentTab === 'app'
             ? getColumns(true).filter((item) => {

@@ -181,7 +181,7 @@ export default function TmplEditor(props: AppComponentProps) {
         </Form.Item>
       </Form>
       <Divider />
-      {applicationOptions.length > 0 && (
+      {applicationOptions?.length > 0 && (
         <p className="app-list-show">
           <span> 应用列表:</span>
           <Space style={{ marginLeft: 12 }}>
