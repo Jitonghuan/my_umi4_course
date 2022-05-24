@@ -12,6 +12,33 @@ import { leftItem } from './type';
 const { RangePicker } = DatePicker;
 import './index.less';
 
+const START_TIME_ENUMS = [
+  {
+    label: '最近15分钟',
+    value: 15 * 60 * 1000,
+  },
+  {
+    label: '最近30分钟',
+    value: 30 * 60 * 1000,
+  },
+  {
+    label: '最近1小时',
+    value: 60 * 60 * 1000,
+  },
+  {
+    label: '最近1天',
+    value: 24 * 60 * 60 * 1000,
+  },
+  {
+    label: '最近一周',
+    value: 24 * 60 * 60 * 1000 * 7,
+  },
+  {
+    label: '最近一月',
+    value: 24 * 60 * 60 * 1000 * 30,
+  },
+];
+
 export default function Tracking() {
   const [listData, setListData] = useState<leftItem[]>(); //左侧list数据
   const [rightData, setRightData] = useState<any>([]); //右侧渲染图的数据
@@ -19,8 +46,8 @@ export default function Tracking() {
   const [selectEnv, setSelectEnv] = useState<string>('');
   const [appID, setAppID] = useState('');
   const [selectTime, setSelectTime] = useState<any>({
-    start: moment(moment().subtract(15, 'minute')).format('YYYY-MM-DD HH:mm:ss'),
-    end: moment(moment()).format('YYYY-MM-DD HH:mm:ss'),
+    start: moment().subtract(15, 'minute'),
+    end: moment(),
   });
   const [applicationList, setApplicationList] = useState([]);
   const [instanceList, setInstanceList] = useState([]);
@@ -31,6 +58,7 @@ export default function Tracking() {
   const [rightLoading, setRightLoading] = useState<boolean>(false); //右侧的loading
   const [total, setTotal] = useState<number>(0);
   const [pageIndex, setPageIndex] = useState<number>(1);
+  const [timeOption, setTimeOption] = useState<number>(Number(15 * 60 * 1000));
 
   const btnMessageList = [
     { expand: true, label: '收起更多', icon: <CaretUpOutlined /> },
@@ -71,7 +99,9 @@ export default function Tracking() {
   useEffect(() => {
     if (selectEnv) {
       try {
-        getApplicationList({ envCode: selectEnv }).then((res) => {
+        const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
+        const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
+        getApplicationList({ envCode: selectEnv, start, end }).then((res) => {
           if (res && res.success) {
             const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
             setApplicationList(data);
@@ -102,7 +132,9 @@ export default function Tracking() {
   const queryTraceList = (params: any) => {
     setLoading(true);
     const values = form.getFieldsValue();
-    getTrace({ ...params, ...values, ...selectTime, envCode: selectEnv })
+    const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
+    const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
+    getTrace({ ...params, ...values, end, start, envCode: selectEnv })
       .then((res) => {
         if (res) {
           setListData(res?.data?.dataSource);
@@ -121,7 +153,6 @@ export default function Tracking() {
       .then((res) => {
         if (res?.success) {
           const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
-          console.log(max, 'max');
           const handleData = (data: any) => {
             if (!data) {
               return;
@@ -152,10 +183,18 @@ export default function Tracking() {
 
   // 降噪下拉框发生改变时
   const noiseChange = (value: number[]) => {
-    console.log(value, '99');
-    queryTreeData(value);
+    if (value.length !== 0) {
+      queryTreeData(value);
+    }
   };
 
+  const timeOptionChange = (value: number) => {
+    setTimeOption(value);
+    const now = new Date().getTime();
+    const start = moment(Number(now - value));
+    const end = moment(now);
+    setSelectTime({ start, end });
+  };
   // 处理数据 将list转化成tree格式
   function listToTree(list: any) {
     var map: any = {};
@@ -201,9 +240,17 @@ export default function Tracking() {
               onChange={(v: any, time: any) => {
                 setSelectTime({ start: time[0], end: time[1] });
               }}
+              value={[moment(selectTime.start), moment(selectTime.end)]}
               format="YYYY-MM-DD HH:mm:ss"
-              defaultValue={[moment(moment().subtract(15, 'minute')), moment(moment())]}
+              // defaultValue={[moment(moment().subtract(15, 'minute')), moment()]}
             />
+            <Select value={timeOption} onChange={timeOptionChange} style={{ width: 140 }}>
+              {START_TIME_ENUMS.map((time) => (
+                <Select.Option key={time.value} value={time.value}>
+                  {time.label}
+                </Select.Option>
+              ))}
+            </Select>
           </div>
         </div>
         <Divider />
@@ -285,7 +332,7 @@ export default function Tracking() {
               />
             }
             rightComp={
-              listData?.length !== 0 ? (
+              listData && listData?.length !== 0 ? (
                 <RrightTrace
                   item={currentItem || {}}
                   data={rightData}

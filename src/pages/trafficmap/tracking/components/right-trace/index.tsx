@@ -24,7 +24,6 @@ import moment from '_moment@2.29.3@moment';
 
 export default function RrightTrace(props: any) {
   const { item, data, envCode, selectTime, loading, noiseChange } = props;
-  console.log(data, 'data');
   const [activeBtn, setActiveBtn] = useState<string>('table');
   const [treeData, setTreeData] = useState<any>([]); //用于列表树的数据
   const [traceIdOptions, setTraceIdOptions] = useState<any>([]);
@@ -148,13 +147,11 @@ export default function RrightTrace(props: any) {
       return data;
     };
     var treeData = [handleData(data[0])];
-    console.log(treeData, 'treeDAta');
-
     setTreeData(treeData);
   }, [data]);
 
   useEffect(() => {
-    getNoiseList({ pageIndex: 1, pageSize: 20 }).then((res) => {
+    getNoiseList({ pageIndex: -1, pageSize: -1 }).then((res) => {
       if (res?.success) {
         const data = res?.data?.dataSource;
         const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName }));
@@ -252,15 +249,15 @@ export default function RrightTrace(props: any) {
         </div>
       </div>
       <Divider />
-      <Spin spinning={loading}>
-        <div className="trace-display">
+      <div className="trace-display">
+        <Spin spinning={loading}>
           {activeBtn === 'list' && (
             <div className="trace-table">
               <div className="scale-warpper">
                 <div ref={containerRef} className="scale" style={{ float: 'right' }}></div>
               </div>
               {/* <div ref={containerRef} className='scale' ></div> */}
-              {data?.length && (
+              {data && data.length ? (
                 <Tree
                   treeData={treeData}
                   blockNode
@@ -287,10 +284,10 @@ export default function RrightTrace(props: any) {
                     );
                   }}
                 />
-              )}
+              ) : null}
             </div>
           )}
-          {activeBtn === 'table' && data?.length && (
+          {activeBtn === 'table' && data?.length ? (
             <Table
               columns={column}
               defaultExpandAllRows={true}
@@ -329,10 +326,10 @@ export default function RrightTrace(props: any) {
                 indentSize: 20,
               }}
             />
-          )}
-          {activeBtn === 'tree' && <RightGraph treeData={data} showModal={showModal} />}
-        </div>
-      </Spin>
+          ) : null}
+        </Spin>
+        {activeBtn === 'tree' && <RightGraph treeData={data} showModal={showModal} />}
+      </div>
     </div>
   );
 }

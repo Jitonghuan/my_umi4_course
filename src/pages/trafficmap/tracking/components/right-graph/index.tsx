@@ -6,14 +6,16 @@ import { formatText } from '@/common/util';
 function mapData(arr: any) {
   if (!arr) return [];
 
-  return arr.map(({ id, key, endpointName, children, ...other }: any) => ({
-    ...other,
-    id: id + '',
-    // label: endpointName,
-    label: formatText(endpointName, 20),
-    oriLabel: endpointName,
-    children: mapData(children),
-  }));
+  return arr.map(({ id, key, endpointName, children, ...other }: any) => {
+    return {
+      ...other,
+      // id: id+'',
+      // label: endpointName,
+      label: formatText(endpointName, 20),
+      oriLabel: endpointName,
+      children: mapData(children),
+    };
+  });
 }
 
 export default function rightTree(props: any) {
