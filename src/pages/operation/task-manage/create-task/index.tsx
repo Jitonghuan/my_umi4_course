@@ -6,11 +6,12 @@ import React from 'react';
 import { history } from 'umi';
 import { useEffect, useState } from 'react';
 import { useAddTask, useUpdateTask } from '../hooks';
-import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider } from 'antd';
+import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col } from 'antd';
 import { recordEditData } from '../index';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { TaskTypeOptions, RequestModeOptions, RequestMethodOptions } from './schema';
+import './index.less';
 // import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 
 export interface RecordEditDataProps {
@@ -129,21 +130,25 @@ export default function addEnvData(props: RecordEditDataProps) {
             {/* ------------任务类型一容器命令任务---------- */}
             {curTaskType === 1 && (
               <>
-                <p style={{ width: '100%', display: 'flex' }}>
-                  <Form.Item label="appCode" name="appCode" rules={[{ required: true, message: '这是必填项' }]}>
-                    <Select style={{ width: 180 }}></Select>
-                  </Form.Item>
-                  <Form.Item label="envCode" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
-                    <Select style={{ width: 180 }}></Select>
-                  </Form.Item>
-                </p>
+                <Row>
+                  <Col span={11}>
+                    <Form.Item label="appCode" name="appCode" rules={[{ required: true, message: '这是必填项' }]}>
+                      <Select style={{ width: 190 }}></Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={11}>
+                    <Form.Item label="envCode" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
+                      <Select style={{ width: 190 }}></Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
 
                 <Form.Item label="容器" name="containers" rules={[{ required: true, message: '这是必填项' }]}>
                   <Select style={{ width: '24vw' }}></Select>
                 </Form.Item>
-                <Form.Item label="执行路径" name="execPath" rules={[{ required: true, message: '这是必填项' }]}>
+                {/* <Form.Item label="执行路径" name="execPath" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input placeholder="请输入执行路径" style={{ width: '24vw' }}></Input>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input placeholder="请输入command" style={{ width: '24vw' }}></Input>
                 </Form.Item>
@@ -162,9 +167,9 @@ export default function addEnvData(props: RecordEditDataProps) {
                 <Form.Item label="密码" name="password" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input style={{ width: '24vw' }}></Input>
                 </Form.Item>
-                <Form.Item label="执行路径" name="execPath" rules={[{ required: true, message: '这是必填项' }]}>
+                {/* <Form.Item label="执行路径" name="execPath" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input placeholder="请输入执行路径" style={{ width: '24vw' }}></Input>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input placeholder="请输入command" style={{ width: '24vw' }}></Input>
                 </Form.Item>
