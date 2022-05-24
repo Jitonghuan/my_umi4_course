@@ -14,7 +14,6 @@ export default function TraceTime({ durations, allDurations, selfDurations }: an
           borderRadius: '3px',
           background: '#3fb1e3',
           position: 'relative',
-          marginTop: '11px',
           border: 'none',
           backgroundColor: '#3fb1e3',
           width: allP + '%',

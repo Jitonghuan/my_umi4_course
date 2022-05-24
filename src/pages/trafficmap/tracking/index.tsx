@@ -12,147 +12,23 @@ import { leftItem } from './type';
 const { RangePicker } = DatePicker;
 import './index.less';
 
-const mockData = [
-  {
-    traceId: 'hahah1111fdfadfdfdfdfdsfdsfdfadsfdsfdfdfdsfsdf',
-    spanId: 1,
-    parentSpanId: 0,
-    endpointName: 'homepage-level11',
-    startTime: '2022-5-12 23:12:12',
-    durations: '890',
-    selfDurations: '89',
-    icon: <CaretUpOutlined />,
-  },
-  {
-    traceId: 'lalfdfdsfdfdsfdfdfdfdfadfgdfgbfhhfhergdfgsfdla',
-    spanId: 2,
-    parentSpanId: 1,
-    endpointName: 'homepage-levefasdf2',
-    startTime: '2022-5-12 23:12:12',
-    durations: '89',
-    selfDurations: '12',
-    icon: <CaretUpOutlined />,
-  },
-  {
-    traceId: 'xixix',
-    spanId: 3,
-    parentSpanId: 1,
-    endpointName: 'homepage-level2',
-    startTime: '2022-5-12 23:12:12',
-    durations: '200',
-    selfDurations: '89',
-    icon: <CaretUpOutlined />,
-  },
-  {
-    traceId: 'memme',
-    spanId: 4,
-    parentSpanId: 1,
-    endpointName: 'homepage-level2',
-    startTime: '2022-5-12 23:12:12',
-    durations: '300',
-    selfDurations: '89',
-    icon: <CaretUpOutlined />,
-  },
-  {
-    traceId: 'hhah',
-    spanId: 5,
-    parentSpanId: 2,
-    endpointName: 'homepage-level3',
-    startTime: '2022-5-12 23:12:12',
-    durations: '400',
-    selfDurations: '89',
-    icon: <CaretUpOutlined />,
-  },
-  {
-    traceId: 'soprinfasdfasdfsdfdghryrhafdvasgfhergvasdg',
-    spanId: 6,
-    parentSpanId: 2,
-    endpointName: 'homepage-level3',
-    startTime: '2022-5-12 23:12:12',
-    durations: '500',
-    selfDurations: '89',
-    icon: <CaretUpOutlined />,
-  },
-  {
-    traceId: '1weljfdf',
-    spanId: 7,
-    parentSpanId: 2,
-    endpointName: 'homepage-level3',
-    startTime: '2022-5-12 23:12:12',
-    durations: '234',
-    selfDurations: '89',
-    icon: <CaretUpOutlined />,
-  },
-  {
-    traceId: 'asfv',
-    spanId: 8,
-    parentSpanId: 3,
-    endpointName: 'homepage-level3',
-    startTime: '2022-5-12 23:12:12',
-    durations: '23',
-    selfDurations: '2',
-    icon: <CaretUpOutlined />,
-  },
-  {
-    traceId: 'lgsd',
-    spanId: 9,
-    parentSpanId: 3,
-    endpointName: 'homepage-level3',
-    startTime: '2022-5-12 23:12:12',
-    durations: '89',
-    selfDurations: '89',
-  },
-  {
-    traceId: 'glnb',
-    spanId: 10,
-    parentSpanId: 4,
-    endpointName: 'homepage-level3',
-    startTime: '2022-5-12 23:12:12',
-    durations: '672',
-    selfDurations: '89',
-  },
-  {
-    traceId: 'lfsd',
-    spanId: 11,
-    parentSpanId: 4,
-    endpointName: 'homepage-level3',
-    startTime: '2022-5-12 23:12:12',
-    durations: '235',
-    selfDurations: '89',
-  },
-  {
-    traceId: '1sfsdf',
-    spanId: 12,
-    parentSpanId: 4,
-    endpointName: 'homepage-level3',
-    startTime: '2022-5-12 23:12:12',
-    durations: '234',
-    selfDurations: '89',
-  },
-  {
-    traceId: '1fasdf',
-    spanId: 13,
-    parentSpanId: 5,
-    endpointName: 'homepage-level4',
-    startTime: '2022-5-12 23:12:12',
-    durations: '672',
-    selfDurations: '89',
-    icon: <CaretUpOutlined />,
-  },
-];
 export default function Tracking() {
   const [listData, setListData] = useState<leftItem[]>(); //左侧list数据
   const [rightData, setRightData] = useState<any>([]); //右侧渲染图的数据
   const [form] = Form.useForm();
   const [selectEnv, setSelectEnv] = useState<string>('');
   const [appID, setAppID] = useState('');
-  const [selectTime, setSelectTime] = useState<any>({ start: '', end: '' });
+  const [selectTime, setSelectTime] = useState<any>({
+    start: moment(moment().subtract(15, 'minute')).format('YYYY-MM-DD HH:mm:ss'),
+    end: moment(moment()).format('YYYY-MM-DD HH:mm:ss'),
+  });
   const [applicationList, setApplicationList] = useState([]);
   const [instanceList, setInstanceList] = useState([]);
   const [envOptions, setEnvOptions] = useState<any>([]);
   const [expand, setIsExpand] = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<leftItem>();
-  const [spinning, setSpinning] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false); //左侧列表的loading
+  const [rightLoading, setRightLoading] = useState<boolean>(false); //右侧的loading
   const [total, setTotal] = useState<number>(0);
   const [pageIndex, setPageIndex] = useState<number>(1);
 
@@ -163,9 +39,10 @@ export default function Tracking() {
 
   const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
 
+  //获取环境列表
   useEffect(() => {
     getEnvs().then((res) => {
-      if (res) {
+      if (res && res.success) {
         const data = res?.data?.envs.map((item: any) => ({ label: item.envName, value: item.envCode }));
         setEnvOptions(data);
       }
@@ -179,21 +56,23 @@ export default function Tracking() {
   }, [envOptions]);
 
   useEffect(() => {
-    const values = form.getFieldsValue();
-    queryTraceList({ pageIndex: 1, pageSize: 20 });
+    if (selectTime && selectEnv) {
+      queryTraceList({ pageIndex: 1, pageSize: 20 });
+    }
   }, [selectTime, selectEnv]);
 
+  // 获取右侧图的数据
   useEffect(() => {
-    // getTraceInfo({traceID:currentItem?.traceID}).then((res)=>{
-    // })
-    setRightData(listToTree(mockData));
+    if (currentItem && currentItem?.traceIds?.length !== 0) {
+      queryTreeData([]);
+    }
   }, [currentItem]);
 
   useEffect(() => {
     if (selectEnv) {
       try {
         getApplicationList({ envCode: selectEnv }).then((res) => {
-          if (res) {
+          if (res && res.success) {
             const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
             setApplicationList(data);
           }
@@ -208,7 +87,7 @@ export default function Tracking() {
     if (appID) {
       try {
         getInstance({ envCode: selectEnv, appID }).then((res) => {
-          if (res) {
+          if (res && res.success) {
             const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
             setInstanceList(data);
           }
@@ -221,23 +100,57 @@ export default function Tracking() {
 
   // 获取左侧list数据
   const queryTraceList = (params: any) => {
-    console.log(params, 11);
-    setSpinning(true);
+    setLoading(true);
     const values = form.getFieldsValue();
     getTrace({ ...params, ...values, ...selectTime, envCode: selectEnv })
       .then((res) => {
         if (res) {
-          setListData(res?.data?.traces);
-          setTotal(res?.data?.total);
+          setListData(res?.data?.dataSource);
+          setTotal(res?.data?.pageInfo?.total);
         }
       })
       .finally(() => {
-        setSpinning(false);
+        setLoading(false);
       });
+  };
+
+  // 获取右侧数据
+  const queryTreeData = (value: any) => {
+    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value.join(',') }).then(
+      (res) => {
+        if (res?.success) {
+          const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
+          console.log(max, 'max');
+          const handleData = (data: any) => {
+            if (!data) {
+              return;
+            }
+            if (data?.children && data?.children?.length !== 0) {
+              data.children.map((e: any) => handleData(e));
+            } else {
+              data.children = [];
+            }
+            data.key = data.id;
+            data.allDurations = max; //该条链路总执行时间
+            data.durations = parseInt(data.endTime) - parseInt(data.startTime); //执行时间
+            data.selfDurations = data.durations - data.children.reduce((p: number, c: any) => p + c.durations, 0); //自身执行时间
+            return data;
+          };
+          const rightData = handleData(res?.data);
+          setRightData([rightData]);
+        }
+      },
+    );
   };
 
   const leftItemChange = (value: leftItem) => {
     setCurrentItem(value);
+  };
+
+  // 降噪下拉框发生改变时
+  const noiseChange = (value: number[]) => {
+    console.log(value, '99');
+    queryTreeData(value);
   };
 
   // 处理数据 将list转化成tree格式
@@ -286,10 +199,7 @@ export default function Tracking() {
                 setSelectTime({ start: time[0], end: time[1] });
               }}
               format="YYYY-MM-DD HH:mm:ss"
-              defaultValue={[
-                moment(moment().subtract(15, 'minute'), 'YYYY-MM-DD HH:mm:ss'),
-                moment(moment(), 'YYYY-MM-DD HH:mm:ss'),
-              ]}
+              defaultValue={[moment(moment().subtract(15, 'minute')), moment(moment())]}
             />
           </div>
         </div>
@@ -361,27 +271,32 @@ export default function Tracking() {
         </div>
 
         <div className="detail-main">
-          {/* <Spin spinning={spinning} > */}
-
           <ResizablePro
             leftComp={
               <LeftList
                 listData={listData || []}
                 total={total}
+                loading={loading}
                 changeItem={leftItemChange}
                 pageChange={queryTraceList}
               />
             }
             rightComp={
               listData?.length !== 0 ? (
-                <RrightTrace item={currentItem || {}} data={rightData} envCode={selectEnv} selectTime={selectTime} />
+                <RrightTrace
+                  item={currentItem || {}}
+                  data={rightData}
+                  envCode={selectEnv}
+                  selectTime={selectTime}
+                  noiseChange={noiseChange}
+                  loading={rightLoading}
+                />
               ) : (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%', overflow: 'hidden' }} />
               )
             }
             leftWidth={240}
           ></ResizablePro>
-          {/* </Spin> */}
         </div>
       </ContentCard>
     </PageContainer>

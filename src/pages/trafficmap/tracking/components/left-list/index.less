@@ -17,6 +17,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
     color: #448dfe;
+    font-size: 13px;
   }
 
   .item-message {
@@ -33,11 +34,24 @@
 }
 
 .left-list-wrapper {
-  overflow: hidden;
+  height: 93%;
+  overflow: auto;
+}
+
+.ant-spin-nested-loading {
+  height: 100%;
+
+  .ant-spin-container {
+    height: 100%;
+  }
 }
 
 .list-page {
+  width: 100%;
+  overflow: auto;
   margin-top: 20px;
-  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  /* display: flex; */
   justify-content: end;
 }

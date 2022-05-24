@@ -1,33 +1,58 @@
 import showResourceModal from '@/pages/ticket/resource-apply/resource-show';
 import G6, { Graph, GraphData } from '@antv/g6';
 import React, { useEffect, useState, useMemo, forwardRef, useRef, useImperativeHandle } from 'react';
+import { formatText } from '@/common/util';
 
 function mapData(arr: any) {
   if (!arr) return [];
-  return arr.map(({ key, endpointName, children, ...other }: any) => ({
-    // id: title,
-    label: endpointName,
-    children: mapData(children),
+
+  return arr.map(({ id, key, endpointName, children, ...other }: any) => ({
     ...other,
+    id: id + '',
+    // label: endpointName,
+    label: formatText(endpointName, 20),
+    oriLabel: endpointName,
+    children: mapData(children),
   }));
 }
+
 export default function rightTree(props: any) {
   const { treeData, showModal } = props;
+  const [graphData, setGraphData] = useState<any>({});
   // const data = useMemo(() => treeData && { label: 'root11', children: mapData(treeData) }, [treeData]);
-  // console.log(treeData, 'tree')
   const data = useMemo(() => mapData(treeData)[0], [treeData]);
+  console.log(data, 'data');
   const containerRef: any = useRef(null);
   const [graph, setGraph] = useState<any>();
+
   // 初始化图表
   useEffect(() => {
     if (!containerRef) return;
     let g: any = null;
     const container = containerRef.current;
 
+    const tooltip = new G6.Tooltip({
+      offsetX: 10,
+      offsetY: 10,
+      itemTypes: ['node'],
+      getContent: (e: any) => {
+        const outDiv = document.createElement('div');
+        outDiv.style.width = 'fit-content';
+        outDiv.innerHTML = `
+          <ul>
+          <li>端点: ${e.item.getModel().oriLabel}</li>
+          <li>Region: ${e.item.getModel().oriLabel}</li>
+          </ul>
+          `;
+        return outDiv;
+      },
+    });
+
     g = new G6.TreeGraph({
       container: 'traceTree',
       width: container.clientWidth,
       height: container.clientHeight,
+      plugins: [tooltip], // 插件
       modes: {
         default: ['drag-canvas', 'zoom-canvas'],
       },
@@ -91,6 +116,21 @@ export default function rightTree(props: any) {
     graph.on('node:click', (evt: any) => {
       showModal(evt.item._cfg.model);
     });
+    // graph.on('node:mouseenter', (evt: any) => {
+    //   const { item } = evt;
+    //   const model = item.getModel();
+    //   item.update({
+    //     label: model.oriLabel,
+    //   });
+    // });
+    // graph.on('node:mouseleave', (evt: any) => {
+    //   const { item } = evt;
+    //   const model = item.getModel();
+    //   item.update({
+    //     label: model.label,
+    //   });
+    // graph.setItemState(item, 'hover', false);
+    // });
   };
 
   return <div ref={containerRef} id="traceTree" style={{ height: '100%' }}></div>;

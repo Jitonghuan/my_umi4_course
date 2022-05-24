@@ -1,6 +1,10 @@
 // 左边的list样式
 //右边的追踪图样式
 .trace-wrapper {
+  .ant-table-tbody > tr td {
+    font-size: 13px;
+  }
+
   &-title {
     margin-right: 10px;
     // width: 200px;
@@ -66,8 +70,12 @@
 
     .span-title {
       margin-right: 10px;
-      font-weight: bold;
+      // font-weight: bold;
       white-space: nowrap;
+      font-size: 12px;
+      max-width: 12%;
+      text-overflow: ellipsis;
+      overflow: auto;
     }
 
     .span-detail {
@@ -85,7 +93,7 @@
     border-radius: 50%;
     background-color: #4e59d3;
     display: inline-block;
-    margin-right: 5px;
+    // margin-right: 5px;
   }
 
   .parent-icon {

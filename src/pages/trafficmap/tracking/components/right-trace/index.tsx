@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { Form, Button, message, Tooltip } from 'antd';
 import { history } from 'umi';
 import { Tree, Switch } from 'antd';
-import { Tag, Divider, Progress, Select, Table } from 'antd';
+import { Tag, Divider, Progress, Select, Table, Spin } from 'antd';
 import TraceTime from './TraceTime';
 import {
   UnorderedListOutlined,
@@ -11,6 +11,7 @@ import {
   TableOutlined,
   DownOutlined,
   RightOutlined,
+  CodepenOutlined,
 } from '@ant-design/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // import TraceTable from './trace-table'
@@ -19,17 +20,36 @@ import { getTraceInfo, getNoiseList } from '../../../service';
 import './index.less';
 import DetailModal from '../detail-modal';
 import * as d3 from 'd3';
+import moment from '_moment@2.29.3@moment';
+function TimeTree(data: any) {
+  return (
+    <>
+      <TraceTime {...data} />
+      {data?.children?.length ? data.children.map((e: any) => <TimeTree {...e} />) : <></>}
+    </>
+  );
+}
 
 export default function RrightTrace(props: any) {
-  const { item, data, envCode, selectTime } = props;
+  const { item, data, envCode, selectTime, loading, noiseChange } = props;
+  console.log(data, 'data');
   const [activeBtn, setActiveBtn] = useState<string>('table');
   const [treeData, setTreeData] = useState<any>([]); //用于列表树的数据
   const [traceIdOptions, setTraceIdOptions] = useState<any>([]);
-  const [selectTraceId, setSelectTraceId] = useState<any>('11112323232');
+  const [selectTraceId, setSelectTraceId] = useState<any>('');
   const [visible, setVisible] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<any>({});
   const [noiseOption, setNoiseOption] = useState<any>([]);
   const [selectNoise, setSelectNoise] = useState<any>([]);
+  useEffect(() => {
+    const idList = selectNoise.map((item: any) => item.value);
+    noiseChange(idList);
+  }, [selectNoise]);
+  useEffect(() => {
+    if (item && item.traceIds && item?.traceIds?.length !== 0) {
+      setSelectTraceId(item?.traceIds[0]);
+    }
+  }, [item]);
   const containerRef = useCallback(
     (node: any) => {
       if (node) {
@@ -38,7 +58,8 @@ export default function RrightTrace(props: any) {
 
         var x = d3
           .scaleLinear()
-          .domain([0, data.reduce((max: number, e: any) => Math.max(parseInt(e.durations), max), 0)]) // This is what is written on the Axis: from 0 to 100
+          .domain([0, 100])
+          // .domain([0, data.reduce((max: number, e: any) => Math.max(parseInt(e.durations), max), 0)]) // This is what is written on the Axis: from 0 to 100
           .range([0, node.clientWidth]); // This is where the axis is placed: from 100px to 800px
 
         // Draw the axis
@@ -58,9 +79,9 @@ export default function RrightTrace(props: any) {
   const column = [
     {
       title: 'Method',
-      dataIndex: 'traceId',
-      key: 'traceId',
-      width: '25%',
+      dataIndex: 'endpointName',
+      key: 'endpointName',
+      width: '35%',
       ellipsis: true,
       render: (value: string) => (
         <Tooltip placement="topLeft" title={value}>
@@ -72,11 +93,18 @@ export default function RrightTrace(props: any) {
       title: 'Start Time',
       dataIndex: 'startTime',
       key: 'startTime',
+      ellipsis: true,
+      render: (value: string) => (
+        <Tooltip placement="topLeft" title={moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}>
+          {moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}
+        </Tooltip>
+      ),
     },
     {
       title: 'Exec(ms)',
       dataIndex: 'durations',
       key: 'durations',
+      render: (value: string, record: any) => `${record.endTime - record.startTime}ms`,
     },
     {
       title: 'Exec(%)',
@@ -86,24 +114,34 @@ export default function RrightTrace(props: any) {
     },
     {
       title: 'Self(ms)',
-      dataIndex: 'self',
-      key: 'self',
+      dataIndex: 'selfDurations',
+      key: 'selfDurations',
     },
     {
       title: 'API',
-      dataIndex: 'durations',
-      key: 'durations',
+      dataIndex: 'component',
+      key: 'component',
+      ellipsis: true,
+      render: (value: string) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       title: 'Service',
       dataIndex: 'serviceCode',
       key: 'serviceCode',
+      ellipsis: true,
+      render: (value: string) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
   ];
 
   useEffect(() => {
-    const allDurations = data.reduce((max: number, e: any) => Math.max(parseInt(e.durations), max), 0);
-
     const handleData = (data: any) => {
       if (!data) {
         return;
@@ -112,13 +150,11 @@ export default function RrightTrace(props: any) {
       if (data?.children && data?.children?.length !== 0) {
         data.children.map((e: any) => handleData(e));
       }
-      data.allDurations = allDurations;
-      data.durations = Number.isInteger(data.durations) ? data.durations : parseInt(data.durations);
-      data.selfDurations = Number.isInteger(data.selfDurations) ? data.selfDurations : parseInt(data.selfDurations);
       data.icon = icon;
       return data;
     };
     var treeData = [handleData(data[0])];
+    console.log(treeData, 'treeDAta');
 
     setTreeData(treeData);
   }, [data]);
@@ -127,7 +163,7 @@ export default function RrightTrace(props: any) {
     getNoiseList({ pageIndex: 1, pageSize: 20 }).then((res) => {
       if (res?.success) {
         const data = res?.data?.dataSource;
-        const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionComponent }));
+        const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName }));
         setNoiseOption(dataList);
       }
     });
@@ -227,38 +263,19 @@ export default function RrightTrace(props: any) {
             })}
           </div>
         </div>
-        {/* <div className="noise-list">
-          {selectNoise.length !== 0 && (
-            <div>
-              <span style={{ marginRight: '10px' }}>已选择的降噪组件:</span>
-              {selectNoise.map((item: any) => {
-                return (
-                  <Tag
-                    closable
-                    color="blue"
-                    onClose={() => {
-                      closeTag(item);
-                    }}
-                  >
-                    {item.label}
-                  </Tag>
-                );
-              })}
-            </div>
-          )}
-        </div> */}
       </div>
       <Divider />
+      {/* <Spin spinning={loading}> */}
       <div className="trace-display">
         {activeBtn === 'list' && (
-          <div>
+          <div className="trace-table">
             <div className="scale-warpper">
               <div ref={containerRef} className="scale" style={{ float: 'right' }}></div>
             </div>
             {/* <div ref={containerRef} className='scale' ></div> */}
             {data?.length && (
               <Tree
-                treeData={data}
+                treeData={treeData}
                 blockNode
                 defaultExpandAll={true}
                 showIcon={false}
@@ -273,33 +290,30 @@ export default function RrightTrace(props: any) {
                         setVisible(true);
                       }}
                     >
-                      {
-                        node?.parentSpanId !== -1 ? (
-                          <div className="span-item-wrapper">
-                            <span className="span-title" style={{}}>
-                              {node?.endpointName || ''}
-                            </span>
-                            <span className="span-detail"></span>
-                            <TraceTime {...node} />
-                            {/* <Progress
+                      <div className="span-item-wrapper">
+                        <span className="span-title">
+                          <Tooltip title={node?.endpointName || ''}>{node?.endpointName || ''}</Tooltip>
+                        </span>
+                        <TraceTime {...node} />
+                        {/* <Progress
                               percent={(parseFloat(node?.durations) * 100) / (data.length ? data[0].durations : 0)}
                               showInfo={false}
                               size="small"
                               trailColor="transparent"
                               className="span-progress"
                             /> */}
-                          </div>
-                        ) : null
-                        // <div style={{ width: '100%' }}><div ref={containerRef} className="scale" style={{ float: 'right' }}></div></div>
-                      }
+                      </div>
                     </div>
                   );
                 }}
               />
             )}
+            {/* <div className="trace-table-scale">
+              {treeData.map((e: any) => <TimeTree {...e} />)}
+            </div> */}
           </div>
         )}
-        {activeBtn === 'table' && data.length && (
+        {activeBtn === 'table' && data?.length && (
           <Table
             columns={column}
             defaultExpandAllRows={true}
@@ -341,6 +355,7 @@ export default function RrightTrace(props: any) {
         )}
         {activeBtn === 'tree' && <RightGraph treeData={data} showModal={showModal} />}
       </div>
+      {/* </Spin> */}
     </div>
   );
 }

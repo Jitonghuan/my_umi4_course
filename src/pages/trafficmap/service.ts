@@ -97,29 +97,29 @@ export const listDangerousCalls = (data: any) => {
 
 //追踪-获取环境列表
 export const getEnvs = () => {
-  const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/envs';
-  // const url = addAPIPrefix('/trafficMap/tracing/envs');
+  // const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/envs';
+  const url = addAPIPrefix('/trafficMap/tracing/envs');
   return getRequest(url, {});
 };
 
 //追踪-获取应用列表
 export const getApplicationList = (data: any) => {
-  const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/application/list';
-  // const url = addAPIPrefix('/trafficMap/application/list');
+  // const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/application/list';
+  const url = addAPIPrefix('/trafficMap/application/list');
   return getRequest(url, { data: data });
 };
 
 // 追踪-查看应用实例
 export const getInstance = (data: any) => {
-  const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/application/instance/list';
-  // const url = addAPIPrefix('/trafficMap/application/instance/list');
+  // const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/application/instance/list';
+  const url = addAPIPrefix('/trafficMap/application/instance/list');
   return getRequest(url, { data: data });
 };
 
 // 追踪-链路追踪信息
 export const getTrace = (data: any) => {
-  const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/info';
-  // const url = addAPIPrefix('/trafficMap/tracing/search');
+  // const url = 'http://127.0.0.1:4523/mock/837336/trafficMap/tracing/info';
+  const url = addAPIPrefix('/trafficMap/tracing/search');
   return getRequest(url, { data: data });
 };
 
