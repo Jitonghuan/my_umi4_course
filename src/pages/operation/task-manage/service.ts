@@ -1,15 +1,15 @@
-//DNS 管理接口
-//接口文档地址：https://come-future.yuque.com/sekh46/bbgc7f/ianqs0
-//2022/04/02 13:50
+//任务管理接口
+//接口文档地址：https://come-future.yuque.com/sekh46/bbgc7f/ipkot4
+//2022/05/24 13:50
 import { addAPIPrefix } from '@/utils';
 
-/* GET 1、 dns信息查询  */
+/* POST 1、 新增任务接口  */
 
-export const getDnsManageList = addAPIPrefix('/opsManage/dnsManage/list');
+export const createJob = addAPIPrefix('/opsManage/job/create');
 
-/* POST 2、 dns记录添加 */
+/* PUT 2、 编辑任务接口 */
 
-export const addDnsManage = addAPIPrefix('/opsManage/dnsManage/add');
+export const updateJob = addAPIPrefix('/opsManage/job/update');
 
 /* POST 3、dns记录修改 */
 

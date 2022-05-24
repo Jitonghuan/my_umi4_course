@@ -8,9 +8,9 @@ import { Input, Table, Popconfirm, Form, Button, Spin, Select, Divider, Tag, Cas
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import AddRecordModal from './create-task';
+import CreateTaskModal from './create-task';
 import { taskTableSchema } from './schema';
-import ImportDataModal from './importData';
+import ExecutionDetailsModal from './execution-details-Modal';
 import {
   useDnsManageList,
   useDeleteDnsManage,
@@ -187,7 +187,8 @@ export default function DNSManageList(props: any) {
 
   return (
     <PageContainer className="DNS-list-content">
-      <AddRecordModal
+      <ExecutionDetailsModal />
+      <CreateTaskModal
         mode={addTaskMode}
         initData={initEnvData}
         envCode={currentEnvCode}
