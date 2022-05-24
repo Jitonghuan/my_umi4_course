@@ -58,3 +58,9 @@ export const getDashboardUrl = addAPIPrefix('/opsManage/multiple/getDashboardUrl
 
 /** GET 获取 获取院区列表 */
 export const getHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/common/getHospitalDistrictInfo');
+
+/** POST 集群同步-单应用发布 */
+export const singleAppDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
+
+/** GET 集群同步-单应用对比 */
+export const singleAppDiff = addAPIPrefix('/opsManage/multiple/appDiff');

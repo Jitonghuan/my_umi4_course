@@ -981,6 +981,13 @@ export default [
             hideInMenu: true,
           },
           {
+            path: 'application-sync-front',
+            name: '前端应用同步',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/application-sync-front',
+            hideInMenu: true,
+          },
+          {
             path: 'operation-log',
             name: '操作记录',
             key: 'cluster-clusterZs',
