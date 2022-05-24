@@ -4,20 +4,14 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Spin, Select, Divider, Tag, Cascader, message } from 'antd';
+import { Input, Table, Form, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import CreateTaskModal from './create-task';
 import { taskTableSchema } from './schema';
 import ExecutionDetailsModal from './execution-details-Modal';
-import {
-  useDnsManageList,
-  useDeleteDnsManage,
-  useUpdateDnsManageStatus,
-  useEnvCode,
-  useDnsManageHostList,
-} from './hooks';
+import { useTaskList, useTaskImplementList, useDeleteTask } from './hooks';
 
 import './index.less';
 
@@ -30,24 +24,7 @@ const STATUS_TYPE: Record<string, StatusTypeItem> = {
   '0': { tagText: '正常', color: 'green' },
   '1': { tagText: '暂停', color: 'default' },
 };
-export const CascaderOptions = [
-  {
-    label: '主机记录',
-    value: 'hostRecord',
-  },
-  {
-    label: '记录类型',
-    value: 'recordType',
-  },
-  {
-    label: '记录值',
-    value: 'recordValue',
-  },
-  {
-    label: '状态',
-    value: 'status',
-  },
-];
+
 /** 编辑页回显数据 */
 export interface recordEditData extends Record<string, any> {
   id: number;
@@ -60,14 +37,10 @@ export interface recordEditData extends Record<string, any> {
 }
 
 export default function DNSManageList(props: any) {
-  const [tableLoading, pageInfo, dataSource, setRecordDataSource, setPageInfo, getDnsManageList] = useDnsManageList();
-  const [currentEnvCode, getDnsManageEnvCodeList] = useEnvCode();
-  const [selectCascaderValue, setSelectCascaderValue] = useState<string>('');
-  const [listLoading, hostSource, getDnsManageHostList] = useDnsManageHostList();
-  const [statusLoading, updateDnsManage] = useUpdateDnsManageStatus();
-  const [delLoading, deleteDnsManage] = useDeleteDnsManage();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [tableLoading, taskTablePageInfo, taskTableSource, setTaskTableSource, setTaskTablePageInfo, getTaskList] =
+    useTaskList();
+  const [loading, pageInfo, source, setSource, setPageInfo, getTaskImplementList] = useTaskImplementList();
+  const [delLoading, deleteTask] = useDeleteTask();
   const [addRecordMode, setAddRecordMode] = useState<EditorMode>('HIDE');
   const [addTaskMode, setAddTaskMode] = useState<EditorMode>('HIDE');
   const [taskForm] = Form.useForm();
@@ -76,42 +49,35 @@ export default function DNSManageList(props: any) {
   const [createAppVisible, setCreateAppVisible] = useState(false);
 
   useEffect(() => {
-    getDnsManageEnvCodeList();
-    getDnsManageHostList();
+    getTaskList();
   }, []);
-  useEffect(() => {
-    if (currentEnvCode.envCode) {
-      getDnsManageList({ currentEnvCode });
-    }
-  }, [currentEnvCode.envCode]);
 
   const handleEditEnv = useCallback(
-    (record: recordEditData, index: number, type) => {
+    (record: recordEditData, index: number, type: any) => {
       setInitEnvData(record);
       setAddRecordMode(type);
-      setRecordDataSource(dataSource);
+      setTaskTableSource(taskTableSource);
     },
-    [dataSource],
+    [taskTableSource],
   );
-  const handleUpdateStatus = useCallback(
-    (record: any) => {
-      let newStatus: string = record.status === '0' ? '1' : '0';
-      let paramObj = {
-        envCode: currentEnvCode.envCode,
-        id: record.id,
-        status: newStatus,
-      };
-      updateDnsManage(paramObj).then(() => {
-        loadListData({ pageIndex: pageInfo.pageIndex, pageSize: pageInfo.pageSize });
-      });
-      setRecordDataSource(dataSource);
-    },
-    [dataSource],
-  );
+  // const handleUpdateStatus = useCallback(
+  //   (record: any) => {
+  //     let newStatus: string = record.status === '0' ? '1' : '0';
+  //     let paramObj = {
+  //       envCode: currentEnvCode.envCode,
+  //       id: record.id,
+  //       status: newStatus,
+  //     };
+  //     updateDnsManage(paramObj).then(() => {
+  //       loadListData({ pageIndex: pageInfo.pageIndex, pageSize: pageInfo.pageSize });
+  //     });
+  //     setRecordDataSource(dataSource);
+  //   },
+  //   [dataSource],
+  // );
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    console.log('pagination', pagination);
     setPageInfo({
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -122,7 +88,7 @@ export default function DNSManageList(props: any) {
       pageSize: pagination.pageSize,
     };
 
-    loadListData(obj);
+    getTaskList(obj);
   };
 
   const loadListData = (params: any) => {
@@ -131,41 +97,26 @@ export default function DNSManageList(props: any) {
     //   [selectCascaderValue]: value.keyword,
     // };
     // getDnsManageList({ currentEnvCode, ...params,...value });
-    if (value) {
-      getDnsManageList({ currentEnvCode, ...value, ...params });
-    } else {
-      getDnsManageList({ currentEnvCode, ...params });
-    }
+    // if (value) {
+    //   getDnsManageList({ currentEnvCode, ...value, ...params });
+    // } else {
+    //   getDnsManageList({ currentEnvCode, ...params });
+    // }
   };
 
   //删除数据
   const handleDelRecord = (record: any) => {
     let id = record.id;
-    deleteDnsManage({ envCode: currentEnvCode.envCode, id }).then(() => {
-      loadListData({ pageIndex: pageInfo.pageIndex, pageSize: pageInfo.pageSize });
-      // getDnsManageList({ currentEnvCode });
-    });
+    // deleteDnsManage({ envCode: currentEnvCode.envCode, id }).then(() => {
+    //   loadListData({ pageIndex: pageInfo.pageIndex, pageSize: pageInfo.pageSize });
+    //   // getDnsManageList({ currentEnvCode });
+    // });
   };
-  const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
-      setSelectedRowKeys(selectedRowKeys);
-      setSelectedRows(selectedRows);
-    },
-  };
+
   const handleSearch = () => {
     let value = taskForm.getFieldsValue();
-    // let paramObj = {
-    //   [selectCascaderValue]: value.keyword,
-    // };
-    getDnsManageList({ currentEnvCode, ...value });
-    // if (selectCascaderValue) {
-    //   getDnsManageList({ currentEnvCode, ...paramObj });
-    // } else {
-    //   message.warning('请先选择查询类型');
-    // }
-  };
-  const selectCascader = (values: any) => {
-    setSelectCascaderValue(values[0]);
+
+    // getDnsManageList({ currentEnvCode, ...value });
   };
 
   // 表格列配置
@@ -191,14 +142,14 @@ export default function DNSManageList(props: any) {
       <CreateTaskModal
         mode={addTaskMode}
         initData={initEnvData}
-        envCode={currentEnvCode}
+        envCode={''}
         onSave={() => {
-          setAddRecordMode('HIDE');
+          setAddTaskMode('HIDE');
           setTimeout(() => {
-            getDnsManageList({ currentEnvCode });
-          }, 100);
+            getTaskList();
+          }, 200);
         }}
-        onClose={() => setAddRecordMode('HIDE')}
+        onClose={() => setAddTaskMode('HIDE')}
       />
 
       <FilterCard>
@@ -207,18 +158,18 @@ export default function DNSManageList(props: any) {
             layout="inline"
             form={taskForm}
             onFinish={(values: any) => {
-              // queryEnvData({
-              //   ...values,
-              //   pageIndex: 1,
-              //   pageSize: 20,
-              // });
+              getTaskList({
+                ...values,
+                pageIndex: 1,
+                pageSize: 20,
+              });
             }}
             onReset={() => {
               taskForm.resetFields();
-              // queryEnvData({
-              //   pageIndex: 1,
-              //   // pageSize: pageSize,
-              // });
+              getTaskList({
+                pageIndex: 1,
+                // pageSize: pageSize,
+              });
             }}
           >
             <Form.Item label="任务Code：" name="taskCode">
@@ -256,7 +207,7 @@ export default function DNSManageList(props: any) {
           </div>
         </div>
         <div>
-          <Table columns={tableColumns}></Table>
+          <Table columns={tableColumns} dataSource={taskTableSource} loading={tableLoading}></Table>
           {/* taskTableSchema  */}
         </div>
       </ContentCard>

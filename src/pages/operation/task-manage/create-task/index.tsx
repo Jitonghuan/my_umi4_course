@@ -5,7 +5,7 @@
 import React from 'react';
 import { history } from 'umi';
 import { useEffect, useState } from 'react';
-import { useAddDnsManage, useUpdateDnsManage } from '../hooks';
+import { useAddTask, useUpdateTask } from '../hooks';
 import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider } from 'antd';
 import { recordEditData } from '../index';
 import EditorTable from '@cffe/pc-editor-table';
@@ -24,8 +24,8 @@ export interface RecordEditDataProps {
 export default function addEnvData(props: RecordEditDataProps) {
   const [createRecordForm] = Form.useForm();
   const { mode, onClose, onSave, initData, envCode } = props;
-  const [addLoading, addDnsManage] = useAddDnsManage();
-  const [updateLoading, updateDnsManage] = useUpdateDnsManage();
+  const [addLoading, addDnsManage] = useAddTask();
+  const [updateLoading, updateDnsManage] = useUpdateTask();
   const [curTaskType, setCurTaskType] = useState<number>();
   const [curRequestMethod, setCurRequestMethod] = useState<string>('');
 

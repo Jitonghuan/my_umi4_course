@@ -1,10 +1,10 @@
-import { useEffect, useState, useLayoutEffect } from 'react';
+import { useState } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from './service';
 import { message } from 'antd';
 
-//dns信息查询
-export function useDnsManageList() {
+//任务列表查询
+export function useTaskList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any>([]);
   const [pageInfo, setPageInfo] = useState({
@@ -13,21 +13,12 @@ export function useDnsManageList() {
     total: 0,
   });
 
-  const getDnsManageList = async (paramObj: {
-    currentEnvCode: any;
-    // hostRecord?: string;
-    // recordType?: string;
-    // recordValue?: string;
-    // status?: string;
-    keyWord?: string;
-    pageIndex?: number;
-    pageSize?: number;
-  }) => {
+  const getTaskList = async (paramObj: { jobCode?: string; pageIndex?: number; pageSize?: number }) => {
     setLoading(true);
     await getRequest(
-      `${APIS.getDnsManageList}?envCode=${paramObj.currentEnvCode.envCode}&keyWord=${
-        paramObj?.keyWord || ''
-      }&pageIndex=${paramObj?.pageIndex || 1}&pageSize=${paramObj?.pageSize || 20}`,
+      APIS.getJobList,
+      { data: paramObj },
+      // `${APIS.getJobList}?jobCode=${paramObj?.jobCode||''}&pageIndex=${paramObj?.pageIndex || 1}&pageSize=${paramObj?.pageSize || 20}`,
     )
       .then((result) => {
         if (result?.success) {
@@ -36,7 +27,6 @@ export function useDnsManageList() {
           setSource(dataSource);
           setPageInfo(pageInfo);
         }
-
         if (!result?.success) {
           return;
         }
@@ -46,146 +36,32 @@ export function useDnsManageList() {
       });
   };
 
-  return [loading, pageInfo, source, setSource, setPageInfo, getDnsManageList];
+  return [loading, pageInfo, source, setSource, setPageInfo, getTaskList];
 }
 
-//dns记录添加
-export function useAddDnsManage(): [
-  boolean,
-  (paramsObj: {
-    envCode: string;
-    hostRecord: string;
-    recordType: string;
-    recordValue: string;
-    status?: string;
-    remark?: string;
-  }) => Promise<void>,
-] {
+//任务执行情况列表查询
+export function useTaskImplementList() {
   const [loading, setLoading] = useState<boolean>(false);
-  const addDnsManage = async (paramsObj: {
-    envCode: string;
-    hostRecord: string;
-    recordType: string;
-    recordValue: string;
-    status?: string;
-    remark?: string;
-  }) => {
-    setLoading(true);
-    await postRequest(`${APIS.addDnsManage}?envCode=${paramsObj.envCode}`, { data: paramsObj })
-      .then((result) => {
-        if (result.success) {
-          message.success('新增记录成功！');
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  const [source, setSource] = useState<any>([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
 
-  return [loading, addDnsManage];
-}
-
-//dns记录修改
-export function useUpdateDnsManage(): [
-  boolean,
-  (paramsObj: {
-    envCode: string;
-    id: number;
-    hostRecord: string;
-    recordType: string;
-    recordValue: string;
-    remark?: string;
-  }) => Promise<void>,
-] {
-  const [loading, setLoading] = useState<boolean>(false);
-  const updateDnsManage = async (paramsObj: {
-    envCode: string;
-    id: number;
-    hostRecord: string;
-    recordType: string;
-    recordValue: string;
-    remark?: string;
-  }) => {
+  const getTaskImplementList = async (paramObj: { jobCode?: string; pageIndex?: number; pageSize?: number }) => {
     setLoading(true);
-    await putRequest(`${APIS.updateDnsManage}?envCode=${paramsObj.envCode}&id=${paramsObj.id}`, { data: paramsObj })
+    await getRequest(
+      `${APIS.getTaskList}?jobCode=${paramObj.jobCode}&pageIndex=${paramObj?.pageIndex || 1}&pageSize=${
+        paramObj?.pageSize || 20
+      }`,
+    )
       .then((result) => {
         if (result?.success) {
-          message.success(result.data);
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  return [loading, updateDnsManage];
-}
-
-//dns记录删除
-export function useDeleteDnsManage(): [boolean, (paramsObj: { envCode: string; id: number }) => Promise<void>] {
-  const [loading, setLoading] = useState<boolean>(false);
-  const deleteDnsManage = async (paramsObj: { envCode: string; id: number }) => {
-    setLoading(true);
-    await delRequest(`${APIS.deleteDnsManage}?envCode=${paramsObj.envCode}&id=${paramsObj.id}`)
-      .then((result) => {
-        if (result.success) {
-          message.success(result.data);
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  return [loading, deleteDnsManage];
-}
-
-//dns记录状态变更
-export function useUpdateDnsManageStatus(): [
-  boolean,
-  (paramsObj: { envCode: string; id: number; status: string }) => Promise<void>,
-] {
-  const [loading, setLoading] = useState<boolean>(false);
-  const updateDnsManage = async (paramsObj: { envCode: string; id: number; status: string }) => {
-    setLoading(true);
-    await postRequest(`${APIS.updateDnsManageStatus}?envCode=${paramsObj.envCode}&id=${paramsObj.id}`, {
-      data: paramsObj,
-    })
-      .then((result) => {
-        if (result.success) {
-          message.success(result.data);
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  return [loading, updateDnsManage];
-}
-
-//dns服务器查询
-export function useDnsManageHostList(): [boolean, any, () => Promise<void>] {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [source, setSource] = useState<any[]>([]);
-
-  const getDnsManageHostList = async () => {
-    setLoading(true);
-    await getRequest(APIS.getDnsManageHostList)
-      .then((result) => {
-        if (result?.success) {
-          const dataSource = result.data || [];
+          const dataSource = result.data.dataSource || [];
+          const pageInfo = result.data.pageInfo;
           setSource(dataSource);
-        } else {
-          return;
+          setPageInfo(pageInfo);
         }
         if (!result?.success) {
           return;
@@ -196,22 +72,108 @@ export function useDnsManageHostList(): [boolean, any, () => Promise<void>] {
       });
   };
 
-  return [loading, source, getDnsManageHostList];
+  return [loading, pageInfo, source, setSource, setPageInfo, getTaskImplementList];
 }
 
-//dns服务环境查询
-export function useEnvCode() {
-  const [source, setSource] = useState<any>({});
-
-  const getDnsManageEnvCodeList = async () => {
-    await getRequest(APIS.getDnsManageEnvCodeList).then((result) => {
-      if (result) {
-        const envCode = result.data || [];
-        setSource({ envCode: envCode });
-      } else {
-        return;
-      }
-    });
+//新增任务
+export function useAddTask(): [
+  boolean,
+  (paramsObj: {
+    jobCode: string;
+    jobName: string;
+    enable: number;
+    noticeType: number;
+    timeExpression: string;
+    jobType: number;
+    Desc?: string;
+    jobContent: string;
+  }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const createJob = async (paramsObj: {
+    jobCode: string;
+    jobName: string;
+    enable: number;
+    noticeType: number;
+    timeExpression: string;
+    jobType: number;
+    Desc?: string;
+    jobContent: string;
+  }) => {
+    setLoading(true);
+    await postRequest(APIS.createJob, { data: paramsObj })
+      .then((result) => {
+        if (result.success) {
+          message.success('新增任务成功！');
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
-  return [source, getDnsManageEnvCodeList];
+
+  return [loading, createJob];
+}
+
+//任务修改
+export function useUpdateTask(): [
+  boolean,
+  (paramsObj: {
+    jobName: string;
+    enable: number;
+    noticeType: number;
+    timeExpression: string;
+    jobType: number;
+    Desc?: string;
+    jobContent: string;
+  }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const updateTask = async (paramsObj: {
+    jobName: string;
+    enable: number;
+    noticeType: number;
+    timeExpression: string;
+    jobType: number;
+    Desc?: string;
+    jobContent: string;
+  }) => {
+    setLoading(true);
+    await putRequest(APIS.updateJob, { data: paramsObj })
+      .then((result) => {
+        if (result?.success) {
+          message.success(result.data);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, updateTask];
+}
+
+//删除任务
+export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const deleteTask = async (paramsObj: { jobCode: string }) => {
+    setLoading(true);
+    await delRequest(`${APIS.deleteJob}?envCode=${paramsObj.jobCode}`)
+      .then((result) => {
+        if (result.success) {
+          message.success(result.data);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, deleteTask];
 }

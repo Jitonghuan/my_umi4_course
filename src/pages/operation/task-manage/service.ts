@@ -11,30 +11,14 @@ export const createJob = addAPIPrefix('/opsManage/job/create');
 
 export const updateJob = addAPIPrefix('/opsManage/job/update');
 
-/* POST 3、dns记录修改 */
+/* DELETE 3、 删除任务接口 */
 
-export const updateDnsManage = addAPIPrefix('/opsManage/dnsManage/update');
+export const deleteJob = addAPIPrefix('/opsManage/job/delete');
 
-/* DELETE 4、 dns记录删除 */
+/* GET 4、 查询任务接口 */
 
-export const deleteDnsManage = addAPIPrefix('/opsManage/dnsManage/delete');
+export const getJobList = addAPIPrefix('/opsManage/job/list');
 
-/* POST 5、 dns记录状态变更 */
+/* GET 5、 查询任务执行情况接口 */
 
-export const updateDnsManageStatus = addAPIPrefix('/opsManage/dnsManage/status');
-
-/* POST 6、 dns记录导入 */
-
-export const uploadDnsManage = addAPIPrefix('/opsManage/dnsManage/upload');
-
-/* GET  7、dns记录导出 */
-
-export const downloadDnsManage = addAPIPrefix('/opsManage/dnsManage/download');
-
-/* GET 8、dns服务器查询 */
-
-export const getDnsManageHostList = addAPIPrefix('/opsManage/dnsManage/host/list');
-
-/* GET 9、dns服务环境查询 */
-
-export const getDnsManageEnvCodeList = addAPIPrefix('/opsManage/dnsManage/envcode/list');
+export const getTaskList = addAPIPrefix('/opsManage/task/list');
