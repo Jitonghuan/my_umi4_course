@@ -116,8 +116,9 @@ export default function Tracking() {
 
   // 获取右侧数据
   const queryTreeData = (value: any) => {
-    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value.join(',') }).then(
-      (res) => {
+    setRightLoading(true);
+    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
+      .then((res) => {
         if (res?.success) {
           const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
           console.log(max, 'max');
@@ -139,8 +140,10 @@ export default function Tracking() {
           const rightData = handleData(res?.data);
           setRightData([rightData]);
         }
-      },
-    );
+      })
+      .finally(() => {
+        setRightLoading(false);
+      });
   };
 
   const leftItemChange = (value: leftItem) => {

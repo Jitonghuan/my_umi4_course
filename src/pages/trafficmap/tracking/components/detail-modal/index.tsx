@@ -5,7 +5,7 @@ import './index.less';
 export default function DetailModal(props: any) {
   const { visible, handleCancel, detailData } = props;
   const list = [
-    { key: 'service', label: '服务：' },
+    { key: 'serviceCode', label: '服务：' },
     { key: 'serviceInstanceName', label: '实例：' },
     { key: 'endpointName', label: '端点：' },
     { key: 'type', label: '跨度类型：' },
@@ -13,7 +13,7 @@ export default function DetailModal(props: any) {
     { key: 'peer', label: 'Peer：' },
     { key: 'isError', label: '错误：' },
     { key: 'endpointName', label: 'http.method：' },
-    { key: 'service', label: 'url：' },
+    // { key: 'service', label: 'url：' },
   ];
   return (
     <>
