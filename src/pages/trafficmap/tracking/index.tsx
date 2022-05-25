@@ -91,8 +91,14 @@ export default function Tracking() {
   useEffect(() => {
     if (selectTime && selectEnv) {
       queryTraceList({ pageIndex: 1, pageSize: 20 });
+      form.setFieldsValue({ appID: '', instanceCode: '' });
+      setApplicationList([]);
+      setInstanceList([]);
       getAppList();
     }
+  }, [selectTime, selectEnv]);
+
+  useEffect(() => {
     if (selectTime && selectEnv && appID) {
       getIns();
     }
@@ -290,6 +296,7 @@ export default function Tracking() {
                   onChange={(value) => {
                     setAppID(value);
                   }}
+                  allowClear
                   showSearch
                   style={{ width: 160 }}
                 />
@@ -297,7 +304,7 @@ export default function Tracking() {
             )}
             {expand && (
               <Form.Item label="实例" name="instanceCode">
-                <Select options={instanceList} showSearch style={{ width: 150 }} />
+                <Select options={instanceList} showSearch allowClear style={{ width: 150 }} />
               </Form.Item>
             )}
             {expand && (
