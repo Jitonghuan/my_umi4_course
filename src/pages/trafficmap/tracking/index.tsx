@@ -90,9 +90,9 @@ export default function Tracking() {
 
   useEffect(() => {
     if (selectTime && selectEnv) {
-      queryTraceList({ pageIndex: 1, pageSize: 20 });
       form.setFieldsValue({ appID: '', instanceCode: '' });
       setApplicationList([]);
+      queryTraceList({ pageIndex: 1, pageSize: 20 });
       setInstanceList([]);
       getAppList();
     }
