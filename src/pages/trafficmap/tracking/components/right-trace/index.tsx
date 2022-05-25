@@ -39,6 +39,7 @@ export default function RrightTrace(props: any) {
   }, [selectNoise]);
   useEffect(() => {
     if (item && item.traceIds && item?.traceIds?.length !== 0) {
+      setTraceIdOptions([{ label: item?.traceIds[0], value: item?.traceIds[0] }]);
       setSelectTraceId(item?.traceIds[0]);
     }
   }, [item]);

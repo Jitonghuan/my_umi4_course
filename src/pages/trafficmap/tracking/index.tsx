@@ -59,6 +59,7 @@ export default function Tracking() {
   const [total, setTotal] = useState<number>(0);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [timeOption, setTimeOption] = useState<number>(Number(15 * 60 * 1000));
+  const [noiseList, setNoiseList] = useState<any>([]);
 
   const btnMessageList = [
     { expand: true, label: '收起更多', icon: <CaretUpOutlined /> },
@@ -90,8 +91,12 @@ export default function Tracking() {
   useEffect(() => {
     if (selectTime && selectEnv) {
       queryTraceList({ pageIndex: 1, pageSize: 20 });
+      getAppList();
     }
-  }, [selectTime, selectEnv]);
+    if (selectTime && selectEnv && appID) {
+      getIns();
+    }
+  }, [selectTime, selectEnv, appID]);
 
   // 获取右侧图的数据
   useEffect(() => {
@@ -100,45 +105,44 @@ export default function Tracking() {
     }
   }, [currentItem]);
 
-  useEffect(() => {
-    if (selectEnv) {
-      try {
-        const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
-        const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
-        getApplicationList({ envCode: selectEnv, start, end }).then((res) => {
-          if (res && res.success) {
-            const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
-            setApplicationList(data);
-          }
-        });
-      } catch (error) {
-        setApplicationList([]);
-      }
-    }
-  }, [selectEnv]);
+  //获取应用
+  const getAppList = () => {
+    const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
+    const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
+    getApplicationList({ envCode: selectEnv, start, end })
+      .then((res) => {
+        if (res && res.success) {
+          const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
+          setApplicationList(data);
+        }
+      })
+      .catch(() => setApplicationList([]));
+  };
 
-  useEffect(() => {
-    if (appID) {
-      try {
-        getInstance({ envCode: selectEnv, appID }).then((res) => {
-          if (res && res.success) {
-            const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
-            setInstanceList(data);
-          }
-        });
-      } catch (error) {
+  // 获取实例
+  const getIns = () => {
+    const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
+    const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
+    getInstance({ envCode: selectEnv, appID, start, end })
+      .then((res) => {
+        if (res && res.success) {
+          const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
+          setInstanceList(data);
+        }
+      })
+      .catch(() => {
         setInstanceList([]);
-      }
-    }
-  }, [appID]);
+      });
+  };
 
   // 获取左侧list数据
   const queryTraceList = (params: any) => {
     setLoading(true);
+    setListData([]);
     const values = form.getFieldsValue();
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
-    getTrace({ ...params, ...values, end, start, envCode: selectEnv })
+    getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: noiseList })
       .then((res) => {
         if (res) {
           setListData(res?.data?.dataSource);
@@ -169,7 +173,8 @@ export default function Tracking() {
             data.key = data.id;
             data.allDurations = max; //该条链路总执行时间
             data.durations = parseInt(data.endTime) - parseInt(data.startTime); //执行时间
-            data.selfDurations = data.durations - data.children.reduce((p: number, c: any) => p + c.durations, 0); //自身执行时间
+            const self = data.durations - data.children.reduce((p: number, c: any) => p + c.durations, 0);
+            data.selfDurations = self < 0 ? 0 : self; //自身执行时间
             return data;
           };
           const rightData = handleData(res?.data);
@@ -189,6 +194,7 @@ export default function Tracking() {
   const noiseChange = (value: number[]) => {
     if (value.length !== 0) {
       queryTreeData(value);
+      setNoiseList(value);
     }
   };
 
@@ -277,7 +283,7 @@ export default function Tracking() {
             }}
           >
             {expand && (
-              <Form.Item label="应用" name="application">
+              <Form.Item label="应用" name="appID">
                 <Select
                   value={appID}
                   options={applicationList}

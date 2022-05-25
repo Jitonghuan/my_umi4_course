@@ -120,14 +120,14 @@ export default function NoiseReduction() {
     const params = Object.assign(record, { isEnable: !record.isEnable })
     const res = await updataNoise({ ...params });
     if (res && res.success) {
-      queryNoiseList({ pageIndex: 1, pageSize: 20 })
+      queryNoiseList({ pageIndex: 1, pageSize })
     }
   }
 
   const handleDeleteNoise = async (id: number) => {
     const res = await delRequest(`${appConfig.apiPrefix}/trafficMap/tracing/noiseReduction/delete/${id}`);
     if (res?.success) {
-      queryNoiseList({ pageIndex: 1, pageSize: 20 })
+      queryNoiseList({ pageIndex: 1, pageSize })
     }
   };
   return (
@@ -144,7 +144,7 @@ export default function NoiseReduction() {
         }}></AddNoise>
       <Form
         layout="inline"
-        onFinish={() => { queryNoiseList({ pageIndex: 1, pageSize: 20 }) }}
+        onFinish={() => { queryNoiseList({ pageIndex: 1, pageSize }) }}
         form={form}
         onReset={() => {
           form.resetFields();
