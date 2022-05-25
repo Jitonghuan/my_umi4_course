@@ -32,7 +32,7 @@ export default function RrightTrace(props: any) {
   const [detailData, setDetailData] = useState<any>({});
   const [noiseOption, setNoiseOption] = useState<any>([]);
   const [selectNoise, setSelectNoise] = useState<any>([]);
-  const scaleRange = useMemo(() => (data && data.length ? data[0].allDurations : 100), [data]);
+  const scaleRange = useMemo(() => (data && data.length ? data[0]?.allDurations : 100), [data]);
   useEffect(() => {
     const idList = selectNoise.map((item: any) => item.value);
     noiseChange(idList);

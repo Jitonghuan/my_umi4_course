@@ -162,6 +162,7 @@ export default function Tracking() {
 
   // 获取右侧数据
   const queryTreeData = (value: any) => {
+    if (!currentItem?.traceIds[0]) return;
     setRightLoading(true);
     getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
       .then((res) => {
@@ -198,10 +199,8 @@ export default function Tracking() {
 
   // 降噪下拉框发生改变时
   const noiseChange = (value: number[]) => {
-    if (value.length !== 0) {
-      queryTreeData(value);
-      setNoiseList(value);
-    }
+    queryTreeData(value);
+    setNoiseList(value);
   };
 
   const timeOptionChange = (value: number) => {
