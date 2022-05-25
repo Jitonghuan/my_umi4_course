@@ -1,11 +1,66 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { Form, Modal, Radio, message, Table, Empty, Descriptions, Divider, Button } from 'antd';
-import { columns, containerColumns } from '../components/deployment-list/columns';
+import React, { useEffect, useMemo } from 'react';
+import { Tag, Table, Empty, Descriptions, Divider, Button } from 'antd';
+import { columns, creatContainerColumns } from '../components/deployment-list/columns';
 import { ContentCard } from '@/components/vc-page-content';
+import { LIST_STATUS_TYPE } from '../deployInfo-content/schema';
+import { useGetPodEventList, useListContainer } from './hook';
 import { history } from 'umi';
 import './index.less';
 
-export default function ContainerInfo() {
+export default function ContainerInfo(props: any) {
+  const { infoRecord, appCode, envCode, viewLogEnvType, id } = props.location.state;
+  const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
+  const [queryContainer, queryContainerData, loading] = useListContainer();
+  // let infoRecord:any=JSON.parse(initRecord)||{}
+  useEffect(() => {
+    if (!infoRecord?.instName || !envCode || !appCode) {
+      return;
+    }
+
+    getPodEventList({ instName: infoRecord?.instName, envCode: envCode });
+    queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
+  }, [infoRecord?.instName]);
+  useEffect(() => {
+    let intervalId = setInterval(() => {
+      if (infoRecord?.instName && envCode && appCode) {
+        getPodEventList({ instName: infoRecord?.instName, envCode: envCode });
+        queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
+      }
+    }, 30000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [infoRecord?.instName]);
+
+  // 表格列配置
+  const containerColumns = useMemo(() => {
+    return creatContainerColumns({
+      onViewLogClick: (record, index) => {
+        history.push(
+          `/matrix/application/detail/viewLog?appCode=${appCode}&envCode=${envCode}&instName=${infoRecord?.instName}&viewLogEnvType=${viewLogEnvType}`,
+        );
+        history.push({
+          pathname: `/matrix/application/detail/viewLog`,
+          query: {
+            appCode: appCode,
+            envCode: envCode,
+            instName: infoRecord?.instName,
+            viewLogEnvType: viewLogEnvType,
+            optType: 'containerInfo',
+          },
+          state: {
+            infoRecord: infoRecord,
+          },
+        });
+      },
+      onLoginShellClick: (record, index) => {
+        history.push(
+          `/matrix/application/detail/loginShell?appCode=${appCode}&envCode=${envCode}&instName=${infoRecord?.instName}`,
+        );
+      },
+    }) as any;
+  }, []);
   return (
     <ContentCard className="container-info">
       <Descriptions
@@ -21,9 +76,11 @@ export default function ContainerInfo() {
               history.replace({
                 pathname: `deployInfo`,
                 query: {
-                  // appCode: appCode,
-                  // envCode: currentEnvData,
-                  // viewLogEnvType: envTypeCode,
+                  viewLogEnv: envCode || '',
+                  viewLogEnvType: viewLogEnvType,
+                  type: 'viewLog_goBack',
+                  id: id,
+                  appCode: appCode,
                 },
               });
             }}
@@ -33,18 +90,28 @@ export default function ContainerInfo() {
         }
       >
         <Descriptions.Item label="实例名称" contentStyle={{ whiteSpace: 'nowrap' }}>
-          --
+          {infoRecord?.instName || '--'}
         </Descriptions.Item>
-        <Descriptions.Item label="运行状态">--</Descriptions.Item>
-        <Descriptions.Item label="运行镜像">--</Descriptions.Item>
-        <Descriptions.Item label="运行环境">--</Descriptions.Item>
-        <Descriptions.Item label="实例IP">--</Descriptions.Item>
-        <Descriptions.Item label="创建时间">--</Descriptions.Item>
+        <Descriptions.Item label="运行状态">
+          {
+            <Tag color={LIST_STATUS_TYPE[infoRecord.instStatus]?.color || 'default'}>
+              {LIST_STATUS_TYPE[infoRecord.instStatus]?.text || infoRecord.instStatus}
+            </Tag>
+          }
+        </Descriptions.Item>
+        <Descriptions.Item label="运行镜像">{infoRecord?.image || '--'}</Descriptions.Item>
+        <Descriptions.Item label="运行环境">{envCode || '--'}</Descriptions.Item>
+        <Descriptions.Item label="实例IP">{infoRecord?.instIP || '--'}</Descriptions.Item>
+        <Descriptions.Item label="创建时间">{infoRecord?.createTime || '--'}</Descriptions.Item>
       </Descriptions>
       <Divider />
       <h3 className="container-info-title">容器列表：</h3>
       <Table
+        scroll={{ y: window.innerHeight - 564 }}
+        pagination={false}
         columns={containerColumns}
+        loading={loading}
+        dataSource={queryContainerData}
         locale={{ emptyText: <Empty description="没有容器信息" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
       />
 
@@ -53,6 +120,10 @@ export default function ContainerInfo() {
       <h3 className="deployment-info-title">实例（Pod）事件：</h3>
       <Table
         columns={columns}
+        pagination={false}
+        scroll={{ y: window.innerHeight - 564 }}
+        dataSource={podListSource}
+        loading={podLoading}
         locale={{ emptyText: <Empty description="没有事件" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
       />
     </ContentCard>

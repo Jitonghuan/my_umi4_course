@@ -14,6 +14,7 @@ import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Inp
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
 import { restartApp, restartApplication, queryAppOperate } from '@/pages/application/service';
+import { useListDeploymentList } from '../container-info/hook';
 import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeleteInstance } from './hook';
@@ -23,53 +24,33 @@ import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
 import { LIST_STATUS_TYPE } from './schema';
 import DeploymentList from '../components/deployment-list';
+import { DeployContentProps } from './type';
 import './index.less';
 const rootCls = 'deploy-content-compo';
-export interface DeployContentProps {
-  /** 当前页面是否激活 */
-  isActive?: boolean;
-  /** 环境参数 */
-  envTypeCode: string;
-  // deployData:any
-  /** 部署下个环境成功回调 */
-  onDeployNextEnvSuccess: () => void;
-  intervalStop: () => void;
-  intervalStart: () => void;
-  viewLogEnv: string;
-  type: string;
-  viewLogEnvType: string;
-  // viewLogEnvType:string
-}
-export interface insStatusInfo {
-  insName?: string;
-  insIP?: string;
-  insNode: string;
-  image: string;
-  insStatus: string;
-}
-type statusTypeItem = {
-  color: string;
-  text: string;
-};
-const STATUS_TYPE: Record<number, statusTypeItem> = {
-  0: { text: '健康', color: 'error' },
-  1: { text: '不健康', color: 'success' },
-};
 
 export default function DeployContent(props: DeployContentProps) {
   const { viewLogEnv, type, viewLogEnvType } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
   const [formInstance] = Form.useForm();
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
-  const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  const [deploymentLoading, deploymentSource, setDeploymentSource, getDeploymentEventList] = useListDeploymentList();
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
+  const [currentEnvData, setCurrentEnvData] = useState<string>(''); //当前选中的环境；
+  const [currentContainerName, setCurrentContainerName] = useState<string>('');
+  const [currentInstName, setCurrentInstName] = useState<string>('');
+  const [currentFilePath, setCurrentFilePath] = useState<string>('');
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
+  const initEnvCode = useRef<string>('');
+  const [deleteInstance] = useDeleteInstance();
+  const [instanceTableData, setInstanceTableData] = useState<any>();
+  const [instanceloading, setInstanceLoading] = useState<boolean>(false);
+  const envClusterData = useRef();
+  envClusterData.current = listEnvClusterData;
   const { appCode } = appData || {};
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
@@ -89,13 +70,6 @@ export default function DeployContent(props: DeployContentProps) {
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
-  const initEnvCode = useRef<string>('');
-  const [deleteInstance] = useDeleteInstance();
-  const [instanceTableData, setInstanceTableData] = useState<any>();
-  const [instanceloading, setInstanceLoading] = useState<boolean>(false);
-
-  const envClusterData = useRef();
-  envClusterData.current = listEnvClusterData;
 
   const queryInstanceList = async (appCode: any, envCode: any) => {
     getRequest(queryInstanceListApi, { data: { appCode, envCode } })
@@ -119,6 +93,7 @@ export default function DeployContent(props: DeployContentProps) {
       loadInfoData(initEnvCode.current)
         .then(() => {
           queryInstanceList(appData?.appCode, initEnvCode.current);
+          getDeploymentEventList({ appCode, envCode: initEnvCode.current });
         })
         .catch((e: any) => {
           console.log('error happend in intervalFunc:', e);
@@ -149,6 +124,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: viewLogEnv });
             initEnvCode.current = viewLogEnv;
             setCurrentEnvData(viewLogEnv);
+            getDeploymentEventList({ appCode, envCode: initEnvCode.current });
             if (viewLogEnv !== '') {
               loadInfoData(viewLogEnv).then(() => {
                 queryAppOperateLog(viewLogEnv);
@@ -195,6 +171,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: initEnvCode.current });
             if (initEnvCode.current !== '') {
               let initLoadInfoData: any = [];
+              getDeploymentEventList({ appCode, envCode: initEnvCode.current });
 
               getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
                 .then((result) => {
@@ -256,38 +233,6 @@ export default function DeployContent(props: DeployContentProps) {
       });
     }
   };
-
-  useEffect(() => {
-    queryData();
-  }, []);
-
-  const queryData = () => {
-    getRequest(listAppEnvType, {
-      data: { appCode: appData?.appCode, isClient: false },
-    }).then((result) => {
-      const { data } = result || [];
-      let next: any = [];
-      (data || []).map((el: any) => {
-        if (el?.typeCode === 'dev') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
-        }
-        if (el?.typeCode === 'test') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
-        }
-        if (el?.typeCode === 'pre') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
-        }
-        if (el?.typeCode === 'prod') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
-        }
-      });
-      next.sort((a: any, b: any) => {
-        return a.sortType - b.sortType;
-      }); //升序
-      setEnvTypeData(next);
-    });
-  };
-
   const loadInfoData = async (envCode: any, operateType?: boolean) => {
     await getRequest(listEnvCluster, { data: { envCode: envCode } }).then((result) => {
       if (result.success) {
@@ -331,6 +276,7 @@ export default function DeployContent(props: DeployContentProps) {
                 }
                 if (initEnvCode.current !== '') {
                   queryAppOperateLog(initEnvCode.current);
+                  getDeploymentEventList({ appCode, envCode: initEnvCode.current });
                 }
               } else {
                 timerHandler('stop');
@@ -351,9 +297,7 @@ export default function DeployContent(props: DeployContentProps) {
       });
   };
   //加载容器信息
-  const [currentContainerName, setCurrentContainerName] = useState<string>('');
-  const [currentInstName, setCurrentInstName] = useState<string>('');
-  const [currentFilePath, setCurrentFilePath] = useState<string>('');
+
   const getContainerData = async (appCode: any, envCode: any, instName: string) => {
     getRequest(listContainer, { data: { appCode, envCode, instName } }).then((result) => {
       let data = result.data;
@@ -490,6 +434,14 @@ export default function DeployContent(props: DeployContentProps) {
                           appCode: appCode,
                           envCode: currentEnvData,
                           viewLogEnvType: envTypeCode,
+                          // initRecord:JSON.stringify(record)
+                        },
+                        state: {
+                          appCode: appCode,
+                          envCode: currentEnvData,
+                          viewLogEnvType: envTypeCode,
+                          infoRecord: record,
+                          id: appData?.id,
                         },
                       });
                     }}
@@ -608,7 +560,7 @@ export default function DeployContent(props: DeployContentProps) {
             </Table>
 
             <Divider />
-            <DeploymentList />
+            <DeploymentList dataSource={deploymentSource} loading={deploymentLoading} />
           </section>
           <section className="section-right1">
             <h3>操作记录</h3>

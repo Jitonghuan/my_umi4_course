@@ -3,7 +3,7 @@
 // @create 2021/11/12	17:04
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Select, Form, Button, Tag } from 'antd';
+import { Select, Form, Button, Tag, Checkbox, message } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '../deployInfo-content/service';
@@ -13,6 +13,7 @@ import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
 
 export default function AppDeployInfo(props: any) {
@@ -21,7 +22,9 @@ export default function AppDeployInfo(props: any) {
   const { appCode, envCode } = props.location.query;
   const instName = props.location.query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
+  const [previous, setPrevious] = useState<boolean>(false);
   let currentContainerName = '';
+  let optType = '';
   const ws = useRef<WebSocket>();
   useEffect(() => {
     if (appCode && envCode) {
@@ -39,15 +42,15 @@ export default function AppDeployInfo(props: any) {
           }
         })
         .then(() => {
-          initWS();
+          initWS(false);
         });
     }
   }, [envCode]);
 
-  const initWS = () => {
+  const initWS = (previous: boolean) => {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
-      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     //初始化terminal
@@ -89,6 +92,16 @@ export default function AppDeployInfo(props: any) {
         };
       }
     };
+    // if(previous){
+    //   ws.current.onopen = () => {
+    //     message.success('已切换至以前的容器，WebSocket链接成功!');
+    //   };
+
+    // }else if(optType==='changeInstance'&&!previous){
+    //   ws.current.onopen = () => {
+    //     message.success('切换至当前容器，WebSocket链接成功!');
+    //   };
+    // }
 
     window?.addEventListener('resize', function () {
       if (ws.current) {
@@ -131,7 +144,27 @@ export default function AppDeployInfo(props: any) {
       ws.current.close();
     }
     currentContainerName = getContainer;
-    initWS();
+    initWS(previous);
+  };
+  const onChange = (e: CheckboxChangeEvent) => {
+    setPrevious(e.target.checked);
+    if (ws.current) {
+      ws.current.close();
+      // initWS(e.target.checked);
+      // optType='changeInstance'
+      ws.current = new WebSocket(
+        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${e.target.checked}&action=shell`,
+      ); //建立通道
+      if (e.target.checked) {
+        ws.current.onopen = () => {
+          message.success('已切换至以前的容器，WebSocket链接成功!');
+        };
+      } else {
+        ws.current.onopen = () => {
+          message.success('切换至当前容器，WebSocket链接成功!');
+        };
+      }
+    }
   };
 
   return (
@@ -161,7 +194,11 @@ export default function AppDeployInfo(props: any) {
           </div>
         </div>
         <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
-        <div style={{ height: 28, width: '100%', textAlign: 'center', position: 'absolute', marginTop: 4 }}>
+        <div style={{ height: 28, width: '100%', textAlign: 'center', position: 'relative', marginTop: 4 }}>
+          <span style={{ position: 'absolute', left: 0 }}>
+            <Checkbox onChange={onChange} />
+            <b style={{ paddingLeft: 4 }}>以前的容器</b>
+          </span>
           <span className="eventButton">
             <Button type="primary" onClick={closeSocket}>
               关闭

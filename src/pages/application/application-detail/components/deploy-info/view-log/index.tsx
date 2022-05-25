@@ -11,6 +11,7 @@ import { history } from 'umi';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
 
 export default function ViewLog(props: any) {
@@ -19,7 +20,9 @@ export default function ViewLog(props: any) {
   const [log, setLog] = useState<string>('');
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
-  const { appCode, envCode, instName, viewLogEnvType } = props.location.query;
+  const [previous, setPrevious] = useState<boolean>(false);
+  const { appCode, envCode, instName, viewLogEnvType, optType } = props.location.query;
+  const { infoRecord } = props.location.state;
   const logData = useRef<string>('');
   let currentContainerName = '';
   let ansi_up = new AnsiUp();
@@ -39,7 +42,7 @@ export default function ViewLog(props: any) {
         setCurrentContainer(currentContainerName);
         setQueryListContainer(listContainer);
         ws.current = new WebSocket(
-          `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+          `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`,
         ); //建立通道
         let dom: any = document?.getElementById('result-log');
         ws.current.onmessage = (evt: any) => {
@@ -104,6 +107,52 @@ export default function ViewLog(props: any) {
       };
     }
   };
+  const onChange = (e: CheckboxChangeEvent) => {
+    console.log(`checked = ${e.target.checked}`);
+    setPrevious(e.target.checked);
+    if (ws.current) {
+      ws.current.close();
+      // ws.current.onclose = () => {
+      //   message.info('websocket已关闭，请刷新页面!');
+      // };
+      ws.current = new WebSocket(
+        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
+      ); //建立通道
+      if (e.target.checked) {
+        ws.current.onopen = () => {
+          message.success('已切换至以前的容器，WebSocket链接成功!');
+        };
+      } else {
+        ws.current.onopen = () => {
+          message.success('切换至当前容器，WebSocket链接成功!');
+        };
+      }
+
+      let dom: any = document?.getElementById('result-log');
+      ws.current.onmessage = (evt: any) => {
+        if (dom) {
+          // 获取滚动条到滚动区域底部的高度
+          const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
+          let bottom = 0;
+          if (scrollB) {
+            // 计算滚动条到日志div底部的距离
+            bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+          }
+          //如果返回结果是字符串，就拼接字符串，或者push到数组，
+          logData.current += evt.data;
+          setLog(logData.current);
+          let html = ansi_up.ansi_to_html(logData.current);
+          dom.innerHTML = html;
+          if (bottom <= 20) {
+            dom.scrollTo(0, dom.scrollHeight);
+          }
+        }
+      };
+      ws.current.onerror = () => {
+        message.warning('webSocket 链接失败');
+      };
+    }
+  };
 
   // 下载日志
   const downloadLog = () => {
@@ -142,16 +191,34 @@ export default function ViewLog(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.push({
-        pathname: `/matrix/application/detail/deployInfo`,
-        query: {
-          appCode: appCode,
-          id: id + '',
-          viewLogEnv: envCode,
-          type: 'viewLog_goBack',
-          viewLogEnvType: viewLogEnvType,
-        },
-      });
+      if (optType && optType === 'containerInfo') {
+        history.push({
+          pathname: `/matrix/application/detail/container-info`,
+          query: {
+            appCode: appCode,
+            envCode: envCode,
+            viewLogEnvType: viewLogEnvType,
+          },
+          state: {
+            appCode: appCode,
+            envCode: envCode,
+            viewLogEnvType: viewLogEnvType,
+            infoRecord: infoRecord,
+            id: appData?.id,
+          },
+        });
+      } else {
+        history.push({
+          pathname: `/matrix/application/detail/deployInfo`,
+          query: {
+            appCode: appCode,
+            id: id + '',
+            viewLogEnv: envCode,
+            type: 'viewLog_goBack',
+            viewLogEnvType: viewLogEnvType,
+          },
+        });
+      }
     }
     // history.goBack({envCode});
   };
@@ -194,8 +261,7 @@ export default function ViewLog(props: any) {
 
         <div style={{ height: 30, textAlign: 'center', position: 'relative' }}>
           <span style={{ position: 'absolute', left: 0 }}>
-            {' '}
-            <Checkbox />
+            <Checkbox onChange={onChange} />
             <b style={{ paddingLeft: 4 }}>以前的容器</b>
           </span>
 
