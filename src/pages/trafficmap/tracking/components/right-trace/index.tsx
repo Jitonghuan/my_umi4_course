@@ -54,12 +54,20 @@ export default function RrightTrace(props: any) {
           .domain([0, scaleRange])
           // .domain([0, data.reduce((max: number, e: any) => Math.max(parseInt(e.durations), max), 0)]) // This is what is written on the Axis: from 0 to 100
           .range([0, node.clientWidth]); // This is where the axis is placed: from 100px to 800px
-
         // Draw the axis
         svg
           .append('g')
           .attr('transform', 'translate(0,25)') // This controls the vertical position of the Axis
-          .call(d3.axisTop(x));
+          .call(
+            d3
+              .axisTop(x)
+              .ticks(7)
+              .tickFormat((d) => {
+                // var p = d3.format('s')(d);
+
+                return scaleRange > 1000 ? `${d.valueOf() / 1000}s` : d + 'ms';
+              }),
+          );
       }
     },
     [data],
@@ -89,7 +97,7 @@ export default function RrightTrace(props: any) {
       ellipsis: true,
       render: (value: string) => (
         <Tooltip placement="topLeft" title={moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}>
-          {moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}
+          {`${moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}ms`}
         </Tooltip>
       ),
     },
@@ -109,6 +117,7 @@ export default function RrightTrace(props: any) {
       title: 'Self(ms)',
       dataIndex: 'selfDurations',
       key: 'selfDurations',
+      render: (value: string, record: any) => `${value}ms`,
     },
     {
       title: 'API',
@@ -151,7 +160,7 @@ export default function RrightTrace(props: any) {
   }, [data]);
 
   useEffect(() => {
-    getNoiseList({ pageIndex: -1, pageSize: -1 }).then((res) => {
+    getNoiseList({ pageIndex: -1, pageSize: -1, isEnable: true }).then((res) => {
       if (res?.success) {
         const data = res?.data?.dataSource;
         const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName }));
@@ -210,7 +219,7 @@ export default function RrightTrace(props: any) {
         </div>
         <div className="top-final">
           <div>
-            <span>开始时间：{item?.start || '--'}</span>
+            <span>开始时间：{moment(Number(item?.start)).format('YYYY-MM-DD HH:mm:ss') || '--'}</span>
             <span style={{ margin: '0px 20px' }}>
               持续时间：<Tag color="default">{item?.duration || '--'}ms</Tag>
             </span>
@@ -251,81 +260,88 @@ export default function RrightTrace(props: any) {
       <Divider />
       <div className="trace-display">
         <Spin spinning={loading}>
-          {activeBtn === 'list' && (
-            <div className="trace-table">
-              <div className="scale-warpper">
-                <div ref={containerRef} className="scale" style={{ float: 'right' }}></div>
-              </div>
-              {/* <div ref={containerRef} className='scale' ></div> */}
-              {data && data.length ? (
-                <Tree
-                  treeData={treeData}
-                  blockNode
-                  defaultExpandAll={true}
-                  showIcon={false}
-                  showLine={{ showLeafIcon: false }}
-                  switcherIcon={<span className="span-icon"></span>}
-                  titleRender={(node: any) => {
-                    return (
-                      <div
-                        className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} span-item`}
-                        onClick={() => {
-                          setDetailData(node);
-                          setVisible(true);
-                        }}
-                      >
-                        <div className="span-item-wrapper">
-                          <span className="span-title">
-                            <Tooltip title={node?.endpointName || ''}>{node?.endpointName || ''}</Tooltip>
-                          </span>
-                          <TraceTime {...node} />
-                        </div>
-                      </div>
-                    );
+          {activeBtn === 'list' || activeBtn === 'table' ? (
+            <div className="spin-warp" style={{ minHeight: '300px' }}>
+              {activeBtn === 'list' && (
+                <div className="trace-table">
+                  <div className="scale-warpper">
+                    <div ref={containerRef} className="scale" style={{ float: 'right' }}></div>
+                  </div>
+                  {/* <div ref={containerRef} className='scale' ></div> */}
+                  {data && data.length ? (
+                    <Tree
+                      treeData={treeData}
+                      blockNode
+                      defaultExpandAll={true}
+                      showIcon={false}
+                      showLine={{ showLeafIcon: false }}
+                      switcherIcon={<span className="span-icon"></span>}
+                      titleRender={(node: any) => {
+                        return (
+                          <div
+                            className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${
+                              node.isError ? 'error-node' : ''
+                            } span-item`}
+                            onClick={() => {
+                              setDetailData(node);
+                              setVisible(true);
+                            }}
+                          >
+                            <div className="span-item-wrapper">
+                              <span className={`span-title ${node.isError ? 'error' : ''}`}>
+                                <Tooltip title={node?.endpointName || ''}>{node?.endpointName || ''}</Tooltip>
+                              </span>
+                              <TraceTime {...node} />
+                            </div>
+                          </div>
+                        );
+                      }}
+                    />
+                  ) : null}
+                </div>
+              )}
+              {activeBtn === 'table' && data?.length ? (
+                <Table
+                  columns={column}
+                  defaultExpandAllRows={true}
+                  dataSource={data}
+                  pagination={false}
+                  rowClassName={(record: any) => (record.isError ? 'error-line' : '')}
+                  onRow={(record: any, index: any) => {
+                    return {
+                      onClick: (event) => {
+                        setDetailData(record);
+                        setVisible(true);
+                      }, // 点击行
+                    };
+                  }}
+                  expandable={{
+                    defaultExpandAllRows: true,
+                    expandIcon: ({ expanded, onExpand, record }) =>
+                      record?.children?.length ? (
+                        expanded ? (
+                          <DownOutlined
+                            style={{ marginRight: '3px', fontSize: '9px' }}
+                            onClick={(e) => {
+                              onExpand(record, e);
+                              e.stopPropagation();
+                            }}
+                          />
+                        ) : (
+                          <RightOutlined
+                            style={{ marginRight: '3px', fontSize: '9px' }}
+                            onClick={(e) => {
+                              onExpand(record, e);
+                              e.stopPropagation();
+                            }}
+                          />
+                        )
+                      ) : null,
+                    indentSize: 20,
                   }}
                 />
               ) : null}
             </div>
-          )}
-          {activeBtn === 'table' && data?.length ? (
-            <Table
-              columns={column}
-              defaultExpandAllRows={true}
-              dataSource={data}
-              pagination={false}
-              onRow={(record: any, index: any) => {
-                return {
-                  onClick: (event) => {
-                    setDetailData(record);
-                    setVisible(true);
-                  }, // 点击行
-                };
-              }}
-              expandable={{
-                defaultExpandAllRows: true,
-                expandIcon: ({ expanded, onExpand, record }) =>
-                  record?.children?.length ? (
-                    expanded ? (
-                      <DownOutlined
-                        style={{ marginRight: '3px', fontSize: '9px' }}
-                        onClick={(e) => {
-                          onExpand(record, e);
-                          e.stopPropagation();
-                        }}
-                      />
-                    ) : (
-                      <RightOutlined
-                        style={{ marginRight: '3px', fontSize: '9px' }}
-                        onClick={(e) => {
-                          onExpand(record, e);
-                          e.stopPropagation();
-                        }}
-                      />
-                    )
-                  ) : null,
-                indentSize: 20,
-              }}
-            />
           ) : null}
         </Spin>
         {activeBtn === 'tree' && <RightGraph treeData={data} showModal={showModal} />}

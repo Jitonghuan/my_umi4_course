@@ -78,6 +78,10 @@ export default function Tracking() {
   }, []);
 
   useEffect(() => {
+    form.setFieldsValue({ traceState: 'ALL' });
+  }, []);
+
+  useEffect(() => {
     if (envOptions.length !== 0) {
       setSelectEnv(envOptions[0]?.value);
     }
@@ -287,16 +291,25 @@ export default function Tracking() {
             )}
             {expand && (
               <Form.Item label="实例" name="instanceCode">
-                <Select options={instanceList} showSearch style={{ width: 160 }} />
+                <Select options={instanceList} showSearch style={{ width: 150 }} />
+              </Form.Item>
+            )}
+            {expand && (
+              <Form.Item label="状态：" name="traceState">
+                <Select style={{ width: 100 }}>
+                  <Select.Option value={'ALL'}>全部</Select.Option>
+                  <Select.Option value={'SUCCESS'}>成功</Select.Option>
+                  <Select.Option value={'ERROR'}>失败</Select.Option>
+                </Select>
               </Form.Item>
             )}
             {expand && (
               <Form.Item label="端点：" name="endpoint">
-                <Input placeholder="请输入端点信息" style={{ width: 160 }}></Input>
+                <Input placeholder="请输入端点信息" style={{ width: 140 }}></Input>
               </Form.Item>
             )}
             <Form.Item label="traceID：" name="traceID">
-              <Input placeholder="请输入traceID" style={{ width: 180 }}></Input>
+              <Input placeholder="请输入traceID" style={{ width: 160 }}></Input>
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">

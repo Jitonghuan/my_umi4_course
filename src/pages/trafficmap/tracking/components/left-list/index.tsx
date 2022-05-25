@@ -40,12 +40,15 @@ export default function LeftList(props: IProps) {
               }}
             >
               <Tooltip title={item?.endpointNames[0]}>
-                <div className="item-traceId">{item?.endpointNames[0]}</div>
+                <div className={`item-traceId ${item.isError ? 'list-item-error' : ''}`}>{item?.endpointNames[0]}</div>
               </Tooltip>
-              <div className="item-message">
+              <div className={`item-message ${item.isError ? 'list-item-error' : ''}`}>
                 {' '}
                 <Tag color="default">{item?.duration}ms</Tag>
-                {moment(Number(item?.start)).format('YYYY-MM-DD HH:mm:ss')}
+                <span className={`item-time ${item.isError ? 'list-item-error' : ''}`}>
+                  {' '}
+                  {moment(Number(item?.start)).format('YYYY-MM-DD HH:mm:ss')}
+                </span>
                 {/* {item?.start} */}
               </div>
             </div>

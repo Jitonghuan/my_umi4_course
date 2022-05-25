@@ -85,7 +85,10 @@ export default function addEnvData(props: IProps) {
                     </Form.Item>
 
                     <Form.Item label="降噪措施：" name="noiseReductionMeasure" rules={[{ required: true, message: '这是必填项' }]}>
-                        <Input style={{ width: 230 }} placeholder="请输入降噪措施"></Input>
+                        <Select style={{ width: 230 }}>
+                            <Select.Option value='merge'>merge</Select.Option>
+                            <Select.Option value='ignore'>ignore</Select.Option>
+                        </Select>
                     </Form.Item>
 
                     <Form.Item label="是否启用：" name="isEnable" rules={[{ required: true, message: '这是必选项' }]}>

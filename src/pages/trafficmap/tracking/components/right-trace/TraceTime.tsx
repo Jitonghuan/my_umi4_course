@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { Tag, Divider, Progress, Select, Table } from 'antd';
 
-export default function TraceTime({ durations, allDurations, selfDurations }: any) {
+export default function TraceTime({ durations = 0, allDurations = 0, selfDurations = 0 }: any) {
   const allP = (durations / allDurations) * 100;
   const selfP = (selfDurations / durations) * 100;
 
@@ -16,7 +16,7 @@ export default function TraceTime({ durations, allDurations, selfDurations }: an
           position: 'relative',
           border: 'none',
           backgroundColor: '#3fb1e3',
-          width: allP + '%',
+          width: allP > 100 ? '100%' : `${allP + '%'}`,
         }}
       >
         <Progress
