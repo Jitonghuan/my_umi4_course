@@ -5,7 +5,6 @@
 import { defineConfig } from 'umi';
 import routes, { baseRoutePath } from '../src/routes.config';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
-const pathToCustomLoader = require('./path-to-custom-loader');
 
 // 资源引用的根路径，此变量与项目在 nginx 中匹配前缀相关，如果
 const sourceRoot = '/';
@@ -20,26 +19,20 @@ export default defineConfig({
 
   // 文件依赖路径别名，默认支持 @/ 指向 src/
   alias: {},
-  lessLoader: {
-    rules: [
-      {
-        test: /\.less$/,
-        use: [
-          'postcss-loader',
-          {
-            loader: 'less-loader',
-            options: {}
-          },
-          {
-            loader: pathToCustomLoader
-          }
-        ]
-      }
-    ]
-  },
   esbuild: {},
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
+    config.optimization.splitChunks({
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.(css|less)$/,
+          chunks: 'async',
+          minChunks: 1,
+          minSize: 0,
+        }
+      },
+    });
   },
   // 本地开发请求代理规则
   proxy: {
@@ -125,5 +118,5 @@ export default defineConfig({
   // 开启动态资源加载
   dynamicImport: {
     loading: '@/components/source-loading',
-  },
+  }
 });
