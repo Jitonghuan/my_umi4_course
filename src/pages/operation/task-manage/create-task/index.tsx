@@ -23,45 +23,69 @@ export interface RecordEditDataProps {
 }
 
 export default function addEnvData(props: RecordEditDataProps) {
-  const [createRecordForm] = Form.useForm();
+  const [createTaskForm] = Form.useForm();
   const { mode, onClose, onSave, initData, envCode } = props;
-  const [addLoading, addDnsManage] = useAddTask();
-  const [updateLoading, updateDnsManage] = useUpdateTask();
+  const [addLoading, addTaskManage] = useAddTask();
+  const [updateLoading, updateTaskManage] = useUpdateTask();
   const [curTaskType, setCurTaskType] = useState<number>();
   const [curRequestMethod, setCurRequestMethod] = useState<string>('');
+  const [isJobChangeOption, setIsJobChangeOption] = useState<number>(2); //是否封网
+  const [isJobChecked, setIsJobChecked] = useState<boolean>(false);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
 
     if (initData && mode === 'EDIT') {
-      createRecordForm.setFieldsValue({
+      createTaskForm.setFieldsValue({
         ...initData,
       });
     }
     if (mode === 'ADD') {
-      createRecordForm.resetFields();
+      createTaskForm.resetFields();
     }
   }, [mode]);
 
   const handleSubmit = () => {
-    let param = createRecordForm.getFieldsValue();
+    let param = createTaskForm.getFieldsValue();
     if (mode === 'ADD') {
-      let paramObj = { envCode: envCode.envCode, status: '0', ...param };
-      addDnsManage(paramObj).then(() => {
+      console.log('param', param);
+      let jobTypeContent = {};
+      if (param.jobType === 1) {
+        Object.assign(jobTypeContent, {
+          appCode: param?.appCode,
+          envCode: param?.envCode,
+          containers: param?.containers,
+          command: param?.command,
+        });
+      }
+      let newJobTypeContent;
+      let paramObj = { enable: isJobChangeOption, jobContent: '0', ...param };
+      addTaskManage(paramObj).then(() => {
         onSave();
       });
     } else if (mode === 'EDIT') {
       let paramObj = { envCode: envCode.envCode, id: initData?.id, status: initData?.status, ...param };
-      updateDnsManage(paramObj).then(() => {
+      updateTaskManage(paramObj).then(() => {
         onSave();
       });
+    }
+  };
+
+  //是否启用任务
+  const isJobChange = (checked: boolean) => {
+    if (checked === true) {
+      setIsJobChecked(true);
+      setIsJobChangeOption(1);
+    } else {
+      setIsJobChecked(true);
+      setIsJobChangeOption(2);
     }
   };
 
   return (
     <Drawer
       visible={mode !== 'HIDE'}
-      title={mode === 'EDIT' ? '修改记录' : '添加记录'}
+      title={mode === 'EDIT' ? '修改任务' : '新增任务'}
       // onCancel={() => onClose()}
       onClose={() => onClose()}
       width={'50%'}
@@ -75,28 +99,15 @@ export default function addEnvData(props: RecordEditDataProps) {
           </Button>
         </div>
       }
-      // footer={[
-      //   <Button type="primary" onClick={() => onClose()} loading={mode === 'EDIT' ? updateLoading : addLoading}>
-      //     取消
-      //   </Button>,
-      //   <Button
-      //     type="primary"
-      //     key="submit"
-      //     onClick={handleSubmit}
-      //     loading={mode === 'EDIT' ? updateLoading : addLoading}
-      //   >
-      //     确定
-      //   </Button>,
-      // ]}
     >
       <Spin spinning={mode === 'EDIT' ? updateLoading : addLoading}>
         <div className="recordAdd">
           <Form
             labelCol={{ flex: '120px' }}
-            form={createRecordForm}
+            form={createTaskForm}
             // onFinish={handleSubmit}
             onReset={() => {
-              createRecordForm.resetFields();
+              createTaskForm.resetFields();
             }}
           >
             <Form.Item label="任务名称" name="jobCode" rules={[{ required: true, message: '这是必填项' }]}>
@@ -109,7 +120,7 @@ export default function addEnvData(props: RecordEditDataProps) {
               <Input placeholder="请输入时间表达式" style={{ width: '24vw' }}></Input>
             </Form.Item>
             <Form.Item name="enable" label="是否启用" rules={[{ required: true, message: '这是必填项' }]}>
-              <Switch />
+              <Switch onChange={isJobChange} checked={isJobChecked} />
             </Form.Item>
             <Form.Item name="noticeType" label="执行结果通知" rules={[{ required: true, message: '这是必填项' }]}>
               <Select style={{ width: 200 }} options={RequestModeOptions}></Select>
