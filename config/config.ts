@@ -22,18 +22,20 @@ export default defineConfig({
   esbuild: {},
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
-    config.optimization.splitChunks({
-      cacheGroups: {
-        styles: {
-          name: 'styles',
-          test: /\.(css|less)$/,
-          chunks: 'async',
-          minChunks: 1,
-          minSize: 0,
-        }
-      },
-    });
   },
+  extraBabelPlugins: [
+    "@babel/syntax-dynamic-import",
+    ["@babel/plugin-proposal-private-methods", { "loose": true }],
+    ["@babel/proposal-class-properties", { "loose": true }],
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "lib",
+        "style": true
+      }
+    ]
+  ],
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
