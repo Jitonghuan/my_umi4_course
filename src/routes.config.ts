@@ -216,6 +216,14 @@ export default [
             component: '@/pages/application/application-detail/components/deploy-info',
           },
           {
+            path: 'container-info',
+            name: '容器信息',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/deploy-info/container-info',
+          },
+
+          {
             path: 'loginShell',
             name: '登陆shell',
             key: 'appList',

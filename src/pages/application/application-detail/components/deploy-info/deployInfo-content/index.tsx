@@ -10,7 +10,7 @@ import { history } from 'umi';
 import moment from 'moment';
 import appConfig from '@/app.config';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Input } from 'antd';
+import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Input, Divider } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
 import { restartApp, restartApplication, queryAppOperate } from '@/pages/application/service';
@@ -21,6 +21,8 @@ import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
+import { LIST_STATUS_TYPE } from './schema';
+import DeploymentList from '../components/deployment-list';
 import './index.less';
 const rootCls = 'deploy-content-compo';
 export interface DeployContentProps {
@@ -475,7 +477,27 @@ export default function DeployContent(props: DeployContentProps) {
               pagination={false}
               scroll={{ y: window.innerHeight - 340 }}
             >
-              <Table.Column title="名称" dataIndex="instName" width={140} render={(v, record) => <span>{v}</span>} />
+              <Table.Column
+                title="名称"
+                dataIndex="instName"
+                width={140}
+                render={(v, record) => (
+                  <a
+                    onClick={() => {
+                      history.replace({
+                        pathname: 'container-info',
+                        query: {
+                          appCode: appCode,
+                          envCode: currentEnvData,
+                          viewLogEnvType: envTypeCode,
+                        },
+                      });
+                    }}
+                  >
+                    {v}
+                  </a>
+                )}
+              />
               <Table.Column
                 title="IP"
                 dataIndex="instIP"
@@ -488,30 +510,10 @@ export default function DeployContent(props: DeployContentProps) {
                 dataIndex="instStatus"
                 width={100}
                 render={(status, record) => {
-                  return status === 'Running' ? (
-                    <Tag color="green">Running</Tag>
-                  ) : status === 'Succeeded' ? (
-                    <Tag color="cyan">Succeeded</Tag>
-                  ) : status === 'Pending' ? (
-                    <Tag color="gold">Pending</Tag>
-                  ) : status === 'Failed' ? (
-                    <Tag color="red">Failed</Tag>
-                  ) : status === 'Initializing' ? (
-                    <Tag color="default">Initializing</Tag>
-                  ) : status === 'NotReady' ? (
-                    <Tag color="lime">NotReady</Tag>
-                  ) : status === 'Unavailable' ? (
-                    <Tag color="red">Unavailable</Tag>
-                  ) : status === 'Scheduling' ? (
-                    <Tag color="geekblue">Scheduling</Tag>
-                  ) : status === 'Removing' ? (
-                    <Tag color="purple">Removing</Tag>
-                  ) : status === '运行正常' ? (
-                    <Tag color="green">运行正常</Tag>
-                  ) : status === '已运行但健康检查异常' ? (
-                    <Tag color="yellow">已运行但健康检查异常</Tag>
-                  ) : (
-                    <Tag>{status}</Tag>
+                  return (
+                    <Tag color={LIST_STATUS_TYPE[status].color || 'default'}>
+                      {LIST_STATUS_TYPE[status].text || status}
+                    </Tag>
                   );
                 }}
               />
@@ -604,6 +606,9 @@ export default function DeployContent(props: DeployContentProps) {
                 />
               ) : null}
             </Table>
+
+            <Divider />
+            <DeploymentList />
           </section>
           <section className="section-right1">
             <h3>操作记录</h3>
@@ -667,7 +672,6 @@ export default function DeployContent(props: DeployContentProps) {
               onClick={() => {
                 setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
                 message.info('文件开始下载');
-                // window.open(`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`)
                 setTimeout(() => {
                   setIsLogModalVisible(false);
                 }, 100);
