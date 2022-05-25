@@ -53,6 +53,7 @@
     "@types/diff-match-patch": "^1.0.32",
     "@types/react-resizable": "^1.7.4",
     "@umijs/hooks": "~1.9.3",
+    "@umijs/plugin-esbuild": "^1.4.1",
     "ace-diff": "^3.0.3",
     "ahooks": "~2.10.8",
     "ansi-up": "^1.0.0",
