@@ -23,7 +23,6 @@ export default function rightTree(props: any) {
   const [graphData, setGraphData] = useState<any>({});
   // const data = useMemo(() => treeData && { label: 'root11', children: mapData(treeData) }, [treeData]);
   const data = useMemo(() => mapData(treeData)[0], [treeData]);
-  console.log(data, 'data');
   const containerRef: any = useRef(null);
   const [graph, setGraph] = useState<any>();
 
@@ -43,7 +42,6 @@ export default function rightTree(props: any) {
         outDiv.innerHTML = `
           <ul>
           <li>端点: ${e.item.getModel().oriLabel}</li>
-          <li>Region: ${e.item.getModel().oriLabel}</li>
           </ul>
           `;
         return outDiv;
