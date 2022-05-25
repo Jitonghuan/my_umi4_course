@@ -2,13 +2,9 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
-import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { TmplEdit } from '../index';
-import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
 import { useCreateComponentTmpl, useUpdateComponentTmpl } from './hooks';

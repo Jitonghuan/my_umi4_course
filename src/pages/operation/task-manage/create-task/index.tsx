@@ -7,7 +7,7 @@ import { history } from 'umi';
 import { useEffect, useState } from 'react';
 import { useAddTask, useUpdateTask } from '../hooks';
 import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col } from 'antd';
-import { recordEditData } from '../index';
+import { recordEditData, KVProps, jobContentProps } from '../type';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { TaskTypeOptions, RequestModeOptions, RequestMethodOptions } from './schema';
@@ -31,40 +31,105 @@ export default function addEnvData(props: RecordEditDataProps) {
   const [curRequestMethod, setCurRequestMethod] = useState<string>('');
   const [isJobChangeOption, setIsJobChangeOption] = useState<number>(2); //是否封网
   const [isJobChecked, setIsJobChecked] = useState<boolean>(false);
+  const [isEditable, setIsEditable] = useState<boolean>(false);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
 
     if (initData && mode === 'EDIT') {
+      let jobContent: jobContentProps = {};
+      let labelList: KVProps[] = [];
+      setIsEditable(true);
+      if (initData.enable === 1) {
+        setIsJobChecked(true);
+      } else {
+        setIsJobChecked(false);
+      }
+      // initData?.params
+      if (initData?.jobContent) {
+        jobContent = JSON.parse(initData?.jobContent || '');
+        labelList = Object.keys(jobContent.params || {}).map((key) => ({
+          key,
+          value: jobContent.params?.[key],
+        }));
+      }
+      setCurTaskType(initData?.jobType);
+      setCurRequestMethod(jobContent?.method);
       createTaskForm.setFieldsValue({
         ...initData,
+        enable: isJobChecked,
+        ...jobContent,
+        params: labelList,
       });
     }
     if (mode === 'ADD') {
       createTaskForm.resetFields();
     }
+
+    return () => {
+      setIsEditable(false);
+    };
   }, [mode]);
 
-  const handleSubmit = () => {
-    let param = createTaskForm.getFieldsValue();
+  const handleSubmit = async () => {
+    let param = await createTaskForm.validateFields();
+    let jobTypeContent = {};
+    if (param.jobType === 1) {
+      Object.assign(jobTypeContent, {
+        appCode: param?.appCode,
+        envCode: param?.envCode,
+        containers: param?.containers,
+        command: param?.command,
+      });
+    }
+    if (param.jobType === 2) {
+      Object.assign(jobTypeContent, {
+        nodeIp: param?.nodeIp,
+        account: param?.account,
+        password: param?.password,
+        command: param?.command,
+      });
+    }
+    if (param.jobType === 3) {
+      let getParam: any = {};
+
+      param?.params?.map((item: any) => {
+        getParam[item.key] = item.value;
+      });
+      Object.assign(jobTypeContent, {
+        url: param?.url,
+        method: param?.method,
+        body: param?.body,
+        params: getParam,
+      });
+    }
+    if (param.jobType === 4) {
+      Object.assign(jobTypeContent, {
+        host: param?.host,
+        port: param?.port,
+        account: param?.account,
+        password: param?.password,
+        databaseName: param?.databaseName,
+        sql: param?.sql,
+      });
+    }
+
+    let newJobTypeContent = JSON.stringify(jobTypeContent || {});
+    let paramObj = {
+      enable: isJobChangeOption,
+      jobContent: newJobTypeContent,
+      jobCode: param?.jobCode,
+      jobName: param?.jobName,
+      noticeType: param?.noticeType,
+      timeExpression: param?.timeExpression,
+      jobType: param?.jobType,
+      Desc: param?.Desc,
+    };
     if (mode === 'ADD') {
-      console.log('param', param);
-      let jobTypeContent = {};
-      if (param.jobType === 1) {
-        Object.assign(jobTypeContent, {
-          appCode: param?.appCode,
-          envCode: param?.envCode,
-          containers: param?.containers,
-          command: param?.command,
-        });
-      }
-      let newJobTypeContent;
-      let paramObj = { enable: isJobChangeOption, jobContent: '0', ...param };
       addTaskManage(paramObj).then(() => {
         onSave();
       });
     } else if (mode === 'EDIT') {
-      let paramObj = { envCode: envCode.envCode, id: initData?.id, status: initData?.status, ...param };
       updateTaskManage(paramObj).then(() => {
         onSave();
       });
@@ -91,7 +156,7 @@ export default function addEnvData(props: RecordEditDataProps) {
       width={'50%'}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" onClick={handleSubmit}>
+          <Button type="primary" onClick={handleSubmit} loading={addLoading || updateLoading}>
             保存
           </Button>
           <Button type="default" onClick={props.onClose}>
@@ -110,11 +175,22 @@ export default function addEnvData(props: RecordEditDataProps) {
               createTaskForm.resetFields();
             }}
           >
-            <Form.Item label="任务名称" name="jobCode" rules={[{ required: true, message: '这是必填项' }]}>
+            <Form.Item label="任务名称" name="jobName" rules={[{ required: true, message: '这是必填项' }]}>
               <Input placeholder="请输入任务名称" style={{ width: '24vw' }}></Input>
             </Form.Item>
-            <Form.Item label="任务Code" name="jobName">
-              <Input style={{ width: '24vw' }} placeholder="请输入任务Code"></Input>
+            <Form.Item label="任务Code" name="jobCode">
+              <Input
+                style={{ width: '24vw' }}
+                placeholder="请输入任务Code(不要包含中文）"
+                disabled={isEditable}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: '输入的任务Code里请不要包含中文',
+                //     pattern: /^[^\u4e00-\u9fa5]*$/,
+                //   }
+                // ]}
+              ></Input>
             </Form.Item>
             <Form.Item name="timeExpression" label="时间表达式" rules={[{ required: true, message: '这是必填项' }]}>
               <Input placeholder="请输入时间表达式" style={{ width: '24vw' }}></Input>
@@ -125,7 +201,7 @@ export default function addEnvData(props: RecordEditDataProps) {
             <Form.Item name="noticeType" label="执行结果通知" rules={[{ required: true, message: '这是必填项' }]}>
               <Select style={{ width: 200 }} options={RequestModeOptions}></Select>
             </Form.Item>
-            <Form.Item name="Desc" label="备注：">
+            <Form.Item name="desc" label="备注：">
               <Input.TextArea placeholder="请输入备注" style={{ width: '24vw', height: 80 }}></Input.TextArea>
             </Form.Item>
             <Form.Item name="jobType" label="任务类型" rules={[{ required: true, message: '这是必填项' }]}>
@@ -176,7 +252,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                   <Input style={{ width: '24vw' }}></Input>
                 </Form.Item>
                 <Form.Item label="密码" name="password" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input style={{ width: '24vw' }}></Input>
+                  <Input.Password style={{ width: '24vw' }}></Input.Password>
                 </Form.Item>
                 {/* <Form.Item label="执行路径" name="execPath" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input placeholder="请输入执行路径" style={{ width: '24vw' }}></Input>
@@ -190,11 +266,11 @@ export default function addEnvData(props: RecordEditDataProps) {
             {curTaskType === 3 && (
               <>
                 <Form.Item label="接口URL" name="url" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input style={{ width: 200 }}></Input>
+                  <Input style={{ width: '24vw' }}></Input>
                 </Form.Item>
                 <Form.Item label="请求方法" name="method" rules={[{ required: true, message: '这是必填项' }]}>
                   <Select
-                    style={{ width: 200 }}
+                    style={{ width: '24vw' }}
                     options={RequestMethodOptions}
                     onChange={(value) => {
                       setCurRequestMethod(value);
@@ -202,12 +278,12 @@ export default function addEnvData(props: RecordEditDataProps) {
                   ></Select>
                 </Form.Item>
                 {curRequestMethod === 'POST' && (
-                  <Form.Item label="params" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Form.Item label="params" name="body" rules={[{ required: true, message: '这是必填项' }]}>
                     <AceEditor mode="json" height={280} />
                   </Form.Item>
                 )}
                 {curRequestMethod === 'GET' && (
-                  <Form.Item label="query" name="" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Form.Item label="query" name="params" rules={[{ required: true, message: '这是必填项' }]}>
                     <EditorTable
                       columns={[
                         { title: 'Key', dataIndex: 'key', colProps: { width: 90 } },
@@ -236,7 +312,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                   <Input style={{ width: '24vw' }}></Input>
                 </Form.Item>
                 <Form.Item label="密码" name="password" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input style={{ width: '24vw' }}></Input>
+                  <Input.Password style={{ width: '24vw' }}></Input.Password>
                 </Form.Item>
                 <Form.Item label="数据库名" name="databaseName" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input style={{ width: '24vw' }}></Input>

@@ -162,10 +162,10 @@ export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => P
   const [loading, setLoading] = useState<boolean>(false);
   const deleteTask = async (paramsObj: { jobCode: string }) => {
     setLoading(true);
-    await delRequest(`${APIS.deleteJob}?envCode=${paramsObj.jobCode}`)
+    await delRequest(`${APIS.deleteJob}/${paramsObj.jobCode}`)
       .then((result) => {
         if (result.success) {
-          message.success(result.data);
+          message.success('删除成功！');
         } else {
           return;
         }

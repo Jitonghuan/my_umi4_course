@@ -1,6 +1,6 @@
 import React from 'react';
 import { history } from 'umi';
-import { Popconfirm, Tooltip } from 'antd';
+import { Popconfirm, Tooltip, Switch } from 'antd';
 import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
@@ -36,12 +36,12 @@ export const taskTableSchema = ({
     },
     {
       title: '任务名称',
-      dataIndex: 'appName',
+      dataIndex: 'jobName',
       width: 230,
     },
     {
       title: '任务code',
-      dataIndex: 'appCode',
+      dataIndex: 'jobCode',
       width: 180,
       ellipsis: {
         showTitle: false,
@@ -56,7 +56,7 @@ export const taskTableSchema = ({
       title: '备注',
       width: 320,
       ellipsis: true,
-      dataIndex: 'gitAddress',
+      dataIndex: 'desc',
     },
     {
       title: '上次执行结果',
@@ -66,12 +66,11 @@ export const taskTableSchema = ({
     },
     {
       title: '启用',
-      dataIndex: 'appType',
+      dataIndex: 'enable',
       width: 100,
-      render: (appType: AppType) => (
+      render: (enable: number, record: any) => (
         <>
-          {APP_TYPE_ICON[appType]}&nbsp;
-          {APP_TYPE_MAP[appType] || '--'}
+          <Switch checked={enable === 1 ? true : false} />
         </>
       ),
     },
@@ -98,13 +97,7 @@ export const taskTableSchema = ({
           </a>
           <a
             onClick={() => {
-              history.push({
-                pathname: 'detail',
-                query: {
-                  id: record.id,
-                  appCode: record.appCode,
-                },
-              });
+              onEditClick(record, index);
             }}
           >
             编辑

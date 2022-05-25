@@ -12,6 +12,7 @@ import CreateTaskModal from './create-task';
 import { taskTableSchema } from './schema';
 import ExecutionDetailsModal from './execution-details-Modal';
 import { useTaskList, useTaskImplementList, useDeleteTask } from './hooks';
+import { recordEditData } from './type';
 
 import './index.less';
 
@@ -25,17 +26,6 @@ const STATUS_TYPE: Record<string, StatusTypeItem> = {
   '1': { tagText: '暂停', color: 'default' },
 };
 
-/** 编辑页回显数据 */
-export interface recordEditData extends Record<string, any> {
-  id: number;
-  hostRecord: string;
-  recordType: string;
-  recordValue: string;
-  status: string;
-  remark: any;
-  envCode: string;
-}
-
 export default function DNSManageList(props: any) {
   const [tableLoading, taskTablePageInfo, taskTableSource, setTaskTableSource, setTaskTablePageInfo, getTaskList] =
     useTaskList();
@@ -44,7 +34,6 @@ export default function DNSManageList(props: any) {
   const [addRecordMode, setAddRecordMode] = useState<EditorMode>('HIDE');
   const [addTaskMode, setAddTaskMode] = useState<EditorMode>('HIDE');
   const [taskForm] = Form.useForm();
-  const [initEnvData, setInitEnvData] = useState<any>([]); //初始化数据
   const [curRecord, setCurRecord] = useState<any>();
   const [createAppVisible, setCreateAppVisible] = useState(false);
 
@@ -54,7 +43,7 @@ export default function DNSManageList(props: any) {
 
   const handleEditEnv = useCallback(
     (record: recordEditData, index: number, type: any) => {
-      setInitEnvData(record);
+      setCurRecord(record);
       setAddRecordMode(type);
       setTaskTableSource(taskTableSource);
     },
@@ -124,15 +113,15 @@ export default function DNSManageList(props: any) {
     return taskTableSchema({
       onEditClick: (record, index) => {
         setCurRecord(record);
-        setCreateAppVisible(true);
+        setAddTaskMode('EDIT');
       },
       onDelClick: async (record, index) => {
-        // await deleteApp({ appCode: record.appCode, id: record.id });
-        message.success('删除成功');
-        // loadAppListData();
+        await deleteTask({ jobCode: record?.jobCode }).then(() => {
+          getTaskList();
+        });
       },
       // selectedRows,
-      initEnvData,
+      curRecord,
     }) as any;
   }, []);
 
@@ -141,7 +130,7 @@ export default function DNSManageList(props: any) {
       <ExecutionDetailsModal />
       <CreateTaskModal
         mode={addTaskMode}
-        initData={initEnvData}
+        initData={curRecord}
         envCode={''}
         onSave={() => {
           setAddTaskMode('HIDE');
@@ -197,7 +186,7 @@ export default function DNSManageList(props: any) {
             <Button
               type="primary"
               onClick={() => {
-                setInitEnvData(undefined);
+                setCurRecord(undefined);
                 setAddTaskMode('ADD');
               }}
             >
