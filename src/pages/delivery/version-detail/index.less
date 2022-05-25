@@ -56,10 +56,22 @@
     height: 40px !important;
   }
 
-  .ant-tabs > .ant-tabs-nav .ant-tabs-nav-list,
-  .ant-tabs > div > .ant-tabs-nav .ant-tabs-nav-list {
-    background-color: rgb(20, 172, 20);
-    height: 600px;
+  .ant-tabs-nav-list {
+    background-color: #e6ebf5;
+  }
+  .basicInfo {
+    > .ant-tabs-nav:nth-of-type(1) {
+      .ant-tabs-nav-list {
+        height: 500px;
+        background-color: #e6ebf5;
+      }
+    }
+    // >.ant-tabs-nav:nth-of-type(2){
+    //   .ant-tabs-nav-list{
+
+    //     background-color: #e6ebf5;
+    //   }
+    // }
   }
   .version-detail-info {
     background-color: rgb(243, 243, 245);

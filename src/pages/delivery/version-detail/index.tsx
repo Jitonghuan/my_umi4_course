@@ -84,6 +84,7 @@ export default function VersionDetail() {
         <>
           <Tabs
             tabPosition="left"
+            className="basicInfo"
             activeKey={tabActiveKey}
             onChange={(key) => {
               setTabActiveKey(key);
@@ -127,7 +128,7 @@ export default function VersionDetail() {
               </div>
             </TabPane>
             <TabPane tab="产品编排" key="production">
-              <Tabs type="card">
+              <Tabs type="card" className="basicInfocard">
                 {productionTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>
                     <div>
