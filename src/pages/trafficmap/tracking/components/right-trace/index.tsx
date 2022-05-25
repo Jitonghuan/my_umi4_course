@@ -211,7 +211,12 @@ export default function RrightTrace(props: any) {
             onClick={() => {
               history.push({
                 pathname: '/matrix/logger/search',
-                query: { envCode, ...selectTime, traceId: selectTraceId },
+                query: {
+                  envCode,
+                  startTime: moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss'),
+                  endTime: moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss'),
+                  traceId: selectTraceId,
+                },
               });
             }}
           >

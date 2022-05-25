@@ -110,7 +110,9 @@ export default function LoggerSearch(props: any) {
   //默认传最近30分钟，处理为秒级的时间戳
   let start = ((receiveInfo.startTime ? new Date(receiveInfo.startTime).getTime() : now - startTime) / 1000).toString();
   let end = ((receiveInfo.endTime ? new Date(receiveInfo.endTime).getTime() : now) / 1000).toString();
+  console.log(receiveInfo, 'receveInfo');
   if (receiveInfo.startTime || receiveInfo.endTime) {
+    console.log(start, end, 11);
     rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
   }
   const [stowCondition, setStowCondition] = useState<boolean>(false);
