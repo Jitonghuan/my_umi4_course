@@ -3,7 +3,7 @@
 // @create 2021/11/12 17:35
 
 import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffect } from 'react';
-import { Select, message, Form, Tag, Button } from 'antd';
+import { Select, message, Form, Tag, Button, Checkbox } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
 import appConfig from '@/app.config';
@@ -191,7 +191,14 @@ export default function ViewLog(props: any) {
         >
           {log}
         </div>
-        <div style={{ height: 30, textAlign: 'center' }}>
+
+        <div style={{ height: 30, textAlign: 'center', position: 'relative' }}>
+          <span style={{ position: 'absolute', left: 0 }}>
+            {' '}
+            <Checkbox />
+            <b style={{ paddingLeft: 4 }}>以前的容器</b>
+          </span>
+
           <span className="event-button">
             <Button type="primary" onClick={downloadLog}>
               下载日志
