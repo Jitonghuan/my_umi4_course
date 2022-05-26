@@ -25,6 +25,7 @@ export default defineConfig({
   },
   extraBabelPlugins: [
     "@babel/syntax-dynamic-import",
+    ["@babel/plugin-proposal-private-methods", { "loose": true }],
     ["@babel/proposal-class-properties", { "loose": true }],
     [
       "import",
