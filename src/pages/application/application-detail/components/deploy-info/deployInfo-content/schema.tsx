@@ -15,4 +15,7 @@ export const LIST_STATUS_TYPE: Record<string, statusTypeItem> = {
   Removing: { text: 'Removing', color: 'purple' },
   运行正常: { text: '运行正常', color: 'green' },
   已运行但健康检查异常: { text: '已运行但健康检查异常', color: 'yellow' },
+  Terminated: { text: 'Terminated', color: 'default' },
+  Waiting: { text: 'Waiting', color: 'yellow' },
+  Unknown: { text: 'Unknown', color: 'red' },
 };

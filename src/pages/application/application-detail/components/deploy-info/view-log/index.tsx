@@ -72,13 +72,16 @@ export default function ViewLog(props: any) {
   }, []);
 
   const selectListContainer = (getContainer: string) => {
-    currentContainerName = getContainer;
+    // currentContainerName = getContainer;
     setCurrentContainer(getContainer);
     if (ws.current) {
-      ws.current.onclose = () => {
-        message.info('websocket已关闭，请刷新页面!');
-      };
-
+      ws.current.close();
+      logData.current = '';
+      setLog(logData.current);
+      scrollBegin.current = true;
+      ws.current = new WebSocket(
+        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&action=watchContainerLog&tailLine=200`,
+      ); //建立通道
       ws.current.onopen = () => {
         message.success('更换容器，WebSocket链接成功!');
       };
@@ -108,15 +111,14 @@ export default function ViewLog(props: any) {
     }
   };
   const onChange = (e: CheckboxChangeEvent) => {
-    console.log(`checked = ${e.target.checked}`);
     setPrevious(e.target.checked);
     if (ws.current) {
       ws.current.close();
-      // ws.current.onclose = () => {
-      //   message.info('websocket已关闭，请刷新页面!');
-      // };
+      logData.current = '';
+      setLog(logData.current);
+      scrollBegin.current = true;
       ws.current = new WebSocket(
-        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
+        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainer}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
       ); //建立通道
       if (e.target.checked) {
         ws.current.onopen = () => {

@@ -26,6 +26,7 @@ export default function AppDeployInfo(props: any) {
   let currentContainerName = '';
   let optType = '';
   const ws = useRef<WebSocket>();
+  const term = useRef<any>();
   useEffect(() => {
     if (appCode && envCode) {
       getRequest(APIS.listContainer, { data: { appCode, envCode, instName } })
@@ -47,14 +48,14 @@ export default function AppDeployInfo(props: any) {
     }
   }, [envCode]);
 
-  const initWS = (previous: boolean) => {
+  const initWS = (previous?: boolean) => {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
       `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     //初始化terminal
-    const term = new Terminal({
+    term.current = new Terminal({
       altClickMovesCursor: true,
       rendererType: 'canvas', //渲染类型
       convertEol: true, //启用时，光标将设置为下一行的开头
@@ -70,38 +71,28 @@ export default function AppDeployInfo(props: any) {
         cursor: 'white', //设置光标
       },
     });
-    term.open(dom);
+    term.current.open(dom);
     const fitAddon = new FitAddon();
-    term.loadAddon(fitAddon);
+    term.current.loadAddon(fitAddon);
     fitAddon.fit();
     ws.current.onopen = () => {
       if (ws.current) {
         const attachAddon = new AttachAddon(ws.current);
-        term.loadAddon(attachAddon);
-        term.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
-        term.writeln('WebSocket链接成功');
+        term.current.loadAddon(attachAddon);
+        term.current.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+        term.current.writeln('WebSocket链接成功');
         let sendJson = {
           operation: 'resize',
-          cols: term.cols,
-          rows: term.rows,
+          cols: term.current.cols,
+          rows: term.current.rows,
         };
         ws.current.send(JSON.stringify(sendJson));
-        term.focus();
+        term.current.focus();
         ws.current.onerror = () => {
-          term.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
+          term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
         };
       }
     };
-    // if(previous){
-    //   ws.current.onopen = () => {
-    //     message.success('已切换至以前的容器，WebSocket链接成功!');
-    //   };
-
-    // }else if(optType==='changeInstance'&&!previous){
-    //   ws.current.onopen = () => {
-    //     message.success('切换至当前容器，WebSocket链接成功!');
-    //   };
-    // }
 
     window?.addEventListener('resize', function () {
       if (ws.current) {
@@ -118,8 +109,8 @@ export default function AppDeployInfo(props: any) {
         }
         let sendJson = {
           operation: 'resize',
-          cols: term.cols,
-          rows: term.rows,
+          cols: term.current.cols,
+          rows: term.current.rows,
         };
         ws.current.send(JSON.stringify(sendJson));
       }
@@ -144,7 +135,34 @@ export default function AppDeployInfo(props: any) {
       ws.current.close();
     }
     currentContainerName = getContainer;
-    initWS(previous);
+    ws.current = new WebSocket(
+      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
+    ); //建立通道
+
+    ws.current.onopen = () => {
+      message.success('已切换容器，WebSocket链接成功!');
+      term.current.reset();
+      if (ws.current) {
+        const attachAddon = new AttachAddon(ws.current);
+        term.current.loadAddon(attachAddon);
+        term.current.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+        term.current.writeln('WebSocket链接成功');
+
+        let sendJson = {
+          operation: 'resize',
+          cols: term.current.cols,
+          rows: term.current.rows,
+        };
+        ws.current.send(JSON.stringify(sendJson));
+        term.current.focus();
+        ws.current.onerror = () => {
+          term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
+        };
+
+        //  term.current.writeln('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+        //  term.current.write('WebSocket链接成功');
+      }
+    };
   };
 
   return (

@@ -41,7 +41,9 @@ export const creatContainerColumns = ({
       title: '容器状态',
       dataIndex: 'status',
       render: (status: any, record: any) => {
-        return <Tag color={LIST_STATUS_TYPE[status].color || 'default'}>{LIST_STATUS_TYPE[status].text || status}</Tag>;
+        return (
+          <Tag color={LIST_STATUS_TYPE[status]?.color || 'default'}>{LIST_STATUS_TYPE[status]?.text || status}</Tag>
+        );
       },
     },
     {
