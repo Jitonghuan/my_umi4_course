@@ -23,19 +23,6 @@ export default defineConfig({
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
-  extraBabelPlugins: [
-    "@babel/syntax-dynamic-import",
-    ["@babel/plugin-proposal-private-methods", { "loose": true }],
-    ["@babel/proposal-class-properties", { "loose": true }],
-    [
-      "import",
-      {
-        "libraryName": "antd",
-        "libraryDirectory": "lib",
-        "style": true
-      }
-    ]
-  ],
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
@@ -97,6 +84,7 @@ export default defineConfig({
   themeHbos: {
     // 项目 bundleName，插件会使用这个 bundleName 来进行样式隔离
     bundleName: 'matrix',
+    globalStyle: true,
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome
