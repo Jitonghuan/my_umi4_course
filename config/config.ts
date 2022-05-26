@@ -34,14 +34,6 @@ export default defineConfig({
         "libraryDirectory": "lib",
         "style": true
       }
-    ],
-    [
-      "import",
-      {
-        "libraryName": "@cffe/h2o-design",
-        "libraryDirectory": "lib/components",
-      },
-      '@cffe/h2o-design'
     ]
   ],
   // 本地开发请求代理规则
