@@ -6,7 +6,6 @@ import Shortcuts from './shortcuts';
 import Announcement from './announcement';
 import Docs from './docs';
 import styles from './style/index.module.less';
-import './mock';
 
 const { Row, Col } = Grid;
 
