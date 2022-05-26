@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Spin, Typography, Grid } from '@arco-design/web-react';
 import { DonutChart } from 'bizcharts';
 
-// import whiteBg from '@/assets/imgs/BGthree.png';
+import whiteBg from '@/assets/imgs/BGthree.png';
 // import '../workplace/style/content.module.less';
 import {
   ActiveRingChart,
@@ -98,10 +98,10 @@ function PopularContent() {
 
           {/* <div style={{ display: 'flex', justifyContent: 'space-around' }}> */}
           <div style={{ position: 'absolute' }}>
-            {/* <img
+            <img
               src={whiteBg}
               style={{ width: 790, height: 'calc(100vh - 332px)', top: 4, filter: 'opacity(0.3)' }}
-            ></img> */}
+            ></img>
           </div>
           <div style={{ paddingTop: 30, position: 'relative', zIndex: 4 }}>
             <Row style={{ display: 'flex', justifyContent: 'center' }}>

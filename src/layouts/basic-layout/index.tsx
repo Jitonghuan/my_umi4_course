@@ -90,7 +90,7 @@ export default function Layout(props: any) {
   let deptitle = { modal_title: '切换部门' };
   ConfigProvider.config({
     theme: {
-      primaryColor: ' #9bb3cc',
+      primaryColor: '#86a0bb',
       //#92a6bb
     },
   });
@@ -151,7 +151,7 @@ export default function Layout(props: any) {
                     iconName: 'AlertOutlined',
                     iconType: 'antd',
                     type: 'popup',
-                    content: null,
+                    content: () => {},
                   },
                 ],
                 title: (

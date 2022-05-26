@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Space } from '@arco-design/web-react';
 import Overview from './overview';
 import ContentPercentage from './content-percentage';
+import { ContentCard } from '@/components/vc-page-content';
 import Shortcuts from './shortcuts';
 import Announcement from './announcement';
 import Docs from './docs';
@@ -13,7 +14,7 @@ const gutter = 16;
 
 function Workplace() {
   return (
-    <>
+    <ContentCard>
       <div className="content-bg-mask">
         <div className="g-polygon g-polygon-1"></div>
         <div className="g-polygon g-polygon-2"></div>
@@ -30,7 +31,7 @@ function Workplace() {
           <Docs />
         </Space>
       </div>
-    </>
+    </ContentCard>
   );
 }
 
