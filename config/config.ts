@@ -120,5 +120,15 @@ export default defineConfig({
   // 开启动态资源加载
   dynamicImport: {
     loading: '@/components/source-loading',
-  }
+  },
+  extraBabelPlugins: [
+    [
+      require.resolve('babel-plugin-import'),
+      {
+        "libraryName": "@cffe/h2o-design",
+        "libraryDirectory": "lib/components",
+      },
+      '@cffe/h2o-design',
+    ]
+  ],
 });
