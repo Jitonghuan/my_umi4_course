@@ -137,7 +137,6 @@ export function useQueryComponentVersionOptions(): [
               });
             });
             setDataSource(options);
-            console.log('options000', options);
           } else {
             return [];
           }
@@ -360,7 +359,7 @@ export function useQueryParamList() {
             options.push({
               label: key,
               value: key,
-              configParamValue: JSON.stringify(dataSource[key]),
+              paramValue: JSON.stringify(dataSource[key]),
             });
           }
 
@@ -596,7 +595,7 @@ export function useGetProductlineVersion() {
               value: item,
             });
           });
-          console.log('options', options);
+
           setDataSource(options);
         } else {
           setDataSource([]);

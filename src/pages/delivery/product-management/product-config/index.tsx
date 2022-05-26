@@ -2,12 +2,13 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { queryIndentInfoApi, generateIndentConfig, getPackageStatus } from '../../service';
 import moment from 'moment';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
-import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form, message } from 'antd';
+import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form, message, Tooltip } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import ParameterEditModal from './editModal';
 import {
@@ -200,6 +201,8 @@ export default function ProductConfig() {
       setButtonText('编辑');
     });
   };
+  const afreshText = '由最新的交付参数等配置生成新的制品配置，会覆盖原有的自定义配置';
+  const updateText = '获取产品版本里最新的交付参数并更新到此处，不会改动参数值';
 
   return (
     <PageContainer>
@@ -295,7 +298,10 @@ export default function ProductConfig() {
                     });
                   }}
                 >
-                  更新交付参数
+                  更新交付参数{' '}
+                  <Tooltip placement="topRight" title={updateText}>
+                    <QuestionCircleOutlined />
+                  </Tooltip>
                 </Button>
               )
             }
@@ -356,7 +362,10 @@ export default function ProductConfig() {
                   onClick={getConfigInfo}
                   loading={configInfoLoading}
                 >
-                  重新生成制品配置
+                  重新生成制品配置{' '}
+                  <Tooltip placement="topLeft" title={afreshText}>
+                    <QuestionCircleOutlined />
+                  </Tooltip>
                 </Button>
                 <CopyToClipboard
                   text={JSON.stringify(indentConfigInfo || {})}
