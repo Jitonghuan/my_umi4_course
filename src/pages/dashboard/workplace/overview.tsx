@@ -53,6 +53,7 @@ type DataType = {
 function Overview() {
   const [data, setData] = useState<DataType>({});
   const [loading, setLoading] = useState(true);
+  let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
   // const t = useLocale(locale);
 
   // const userInfo = useSelector((state: any) => state.userInfo || {});
@@ -77,7 +78,7 @@ function Overview() {
     <Card>
       <Typography.Title heading={5}>
         <Decoration7 style={{ width: '230px', height: '30px' }}>
-          <span style={{ display: 'inline-block', padding: 10 }}>欢迎回来，姬同欢</span>
+          <span style={{ display: 'inline-block', padding: 10 }}>欢迎回来，{userInfo?.name}</span>
         </Decoration7>
 
         {/* {t['workplace.welcomeBack']} */}

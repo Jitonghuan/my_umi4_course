@@ -3,7 +3,10 @@
 // @create 2021/07/02 15:45
 
 @import '../../assets/styles/index.less';
-
+@body-background: #474747;
+@component-background: #474749;
+@descriptions-bg: #353536;
+@allconfig-background:rgba (23, 23, 26, 0.2);
 .header-app .header-logo {
   border-radius: 0;
 }
@@ -30,7 +33,8 @@
 .userinfo,
 .department,
 .matrix-title,
-.anticon-alert {
+.anticon-alert,
+.anticon-comment {
   // color: #FFFFFF;
   color: #0a0a0a !important;
 }
@@ -43,16 +47,23 @@ body[fone-theme='foneDark'] {
   .layout-header,
   .arco-breadcrumb,
   .vc-page-content-body,
-  .ant-card-body,
-  .ant-table-content,
-  .ant-tabs-nav-wrap,
+  // .ant-card-body,
+  // .ant-table-content,
+  // .ant-tabs-nav-wrap,
   .matrix-style-scoped,
-  .ant-table-cell,
-  .ant-select:not(.ant-select-customize-input) .ant-select-selector,
-  .ant-input:placeholder-shown,
+  // .ant-table-cell,
+  // .ant-select:not(.ant-select-customize-input) .ant-select-selector,
+  // .ant-input:placeholder-shown,
   // .arco-layout-sider-trigger .arco-layout-sider-trigger-light,
   // .bg-mask,
   // .arco-layout-sider-trigger-light,
+  * {
+    background: @allconfig-background!important;
+    color: white !important;
+  }
+  .ant-card {
+    background-color: @body-background;
+  }
   .ant-descriptions-view {
     background: #232324;
   }
@@ -62,27 +73,24 @@ body[fone-theme='foneDark'] {
   .ant-page-header {
     background: #232324 !important;
   }
-  // .ant-pro-global-header {
-  //   background: #232324 !important;
-  // }
-  // .arco-layout-sider-children,.arco-menu-light{
-  //   *{
-  //     // background: linear-gradient(#dae0f3, #e9edf8);
-  //     background:#232324 !important ;
-  //   }
-  //   // background: linear-gradient(#b0c2f5, #e9edf8);
-  //   background:#232324  !important;
-  // }
 
   .arco-layout-sider-trigger-light {
     background: #232324 !important;
   }
+  .ant-table {
+    background: @body-background !important;
+  }
+  .ant-table-tbody > tr.ant-table-row:hover > td,
+  .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+    background: @descriptions-bg !important;
+  }
+
   .vc-page-content-body,
-  .ant-card-body,
-  .ant-table-content,
+  // .ant-card-body,
+  // .ant-table-content,
   .ant-tabs-nav-wrap,
   .layout-header-title,
-  .ant-table-cell,
+  // .ant-table-cell,
   .ant-descriptions-view {
     color: white;
   }
@@ -91,10 +99,7 @@ body[fone-theme='foneDark'] {
   }
   .arco-layout-content {
     // border: 1px solid var(--color-neutral-3) !important; --color-mask-bg:
-    * {
-      background: rgba(23, 23, 26, 0.2) !important;
-      color: white !important;
-    }
+
     .all-application-page__card,
     .ant-radio-button-wrapper,
     .ant-tag-default,

@@ -2,12 +2,13 @@ import { useMemo, useState } from 'react';
 import { ConfigProvider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
+import { Modal } from 'antd';
+import 'antd/dist/antd.variable.min.css';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import '@arco-design/web-react/dist/css/arco.css';
 import { useSize, useDebounce } from '@umijs/hooks';
 import { WaterMark } from '@ant-design/pro-layout';
-import '@arco-design/web-react/dist/css/arco.css';
 import { AlertOutlined } from '@ant-design/icons';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
@@ -164,9 +165,21 @@ export default function Layout(props: any) {
                   {
                     iconName: 'AlertOutlined',
                     iconType: 'antd',
-                    type: 'popup',
+                    type: 'customize',
                     content: () => {
                       changeTheme();
+                    },
+                  },
+                  {
+                    iconName: 'CommentOutlined',
+                    iconType: 'antd',
+                    type: 'customize',
+                    content: (visible, setVisible) => {
+                      return (
+                        <Modal visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
+                          您当前暂无通知消息!
+                        </Modal>
+                      );
                     },
                   },
                 ],
