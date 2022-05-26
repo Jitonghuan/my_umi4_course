@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Card } from 'antd';
+import { Table, Card } from '@cffe/h2o-design';
 import Form from './form';
 import { TableSearchProps } from './typing';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';

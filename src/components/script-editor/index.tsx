@@ -3,7 +3,7 @@
 // @create 2021/07/17 21:06
 
 import React, { useState, useCallback } from 'react';
-import { Modal, Input, message } from 'antd';
+import { Modal, Input, message } from '@cffe/h2o-design';
 import { EditOutlined } from '@ant-design/icons';
 import AceEditor, { isJSON, AceDataType } from '../ace-editor';
 

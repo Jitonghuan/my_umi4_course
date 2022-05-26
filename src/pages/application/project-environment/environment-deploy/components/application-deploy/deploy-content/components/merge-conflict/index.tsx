@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, Button, List, Tooltip, message, Popconfirm } from 'antd';
+import { Modal, Button, List, Tooltip, message, Popconfirm } from '@cffe/h2o-design';
 import { CheckCircleTwoTone, QuestionCircleFilled } from '@ant-design/icons';
 import CodeMirrorEditor from './CodeMirrorEditor';
 import MonacoEditorMerge from './MonacoEditorMerge';

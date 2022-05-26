@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Typography, Popconfirm, Select } from 'antd';
+import { Descriptions, Button, Modal, message, Typography, Popconfirm, Select } from '@cffe/h2o-design';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { history } from 'umi';
 import DetailContext from '../../../../../context';

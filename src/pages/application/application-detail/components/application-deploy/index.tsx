@@ -3,7 +3,7 @@
 // @create 2021/08/25 16:21
 
 import React, { useContext, useState, useLayoutEffect, useEffect, useMemo } from 'react';
-import { Tabs, Select, Tag, Spin } from 'antd';
+import { Tabs, Select, Tag, Spin } from '@cffe/h2o-design';
 import { SettingOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';

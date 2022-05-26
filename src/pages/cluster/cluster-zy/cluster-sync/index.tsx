@@ -3,7 +3,7 @@
 // @create 2021/07/27 14:33
 
 import React from 'react';
-import { Button, Table, Alert } from 'antd';
+import { Button, Table, Alert } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { useTableData } from './hooks';
 

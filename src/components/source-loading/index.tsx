@@ -3,7 +3,7 @@
 // @create 2021/07/27 15:02
 
 import React from 'react';
-import { Spin } from 'antd';
+import { Spin } from '@cffe/h2o-design';
 import './index.less';
 
 export default function SourceLoading() {

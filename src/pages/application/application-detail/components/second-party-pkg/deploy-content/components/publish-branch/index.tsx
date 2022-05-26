@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { Steps, Button, message, Modal, Checkbox, Input, Select } from 'antd';
+import { Steps, Button, message, Modal, Checkbox, Input, Select } from '@cffe/h2o-design';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import { createTableSchema } from './schema';

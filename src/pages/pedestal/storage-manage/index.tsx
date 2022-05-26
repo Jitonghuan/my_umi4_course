@@ -12,7 +12,7 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { history } from 'umi';
-import { Tabs } from 'antd';
+import { Tabs } from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
 import VolumeManage from './volume-manage';

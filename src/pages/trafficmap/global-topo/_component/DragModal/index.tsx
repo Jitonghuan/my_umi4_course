@@ -5,7 +5,7 @@
  *               重写原因：ant design的modal有ant-modal-wrap,导致modal显示时点击事件无法到达下层dom。
  */
 import React, { useState, useEffect } from 'react';
-import { Button } from 'antd';
+import { Button } from '@cffe/h2o-design';
 import { CloseOutlined } from '@ant-design/icons';
 import Draggable from 'react-draggable';
 import './index.less';

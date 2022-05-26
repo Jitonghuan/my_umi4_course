@@ -3,7 +3,7 @@
 // @create 2021/08/16 19:51
 
 import React from 'react';
-import { Tabs } from 'antd';
+import { Tabs } from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
 import VCPermission from '@/components/vc-permission';

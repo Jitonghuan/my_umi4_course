@@ -3,7 +3,7 @@
 // @create 2021/08/19 10:57
 
 import React, { useState, useCallback, useContext } from 'react';
-import { Popover, Spin, Tag } from 'antd';
+import { Popover, Spin, Tag } from '@cffe/h2o-design';
 import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '@/pages/application/service';

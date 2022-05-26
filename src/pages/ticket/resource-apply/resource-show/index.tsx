@@ -9,7 +9,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { history } from 'umi';
 import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
-import { Input, Upload, Button, Form, Radio, Row, Col, Select, Space, Modal } from 'antd';
+import { Input, Upload, Button, Form, Radio, Row, Col, Select, Space, Modal } from '@cffe/h2o-design';
 // import './index.less';
 
 /** 定义接口获取值 */

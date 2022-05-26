@@ -4,7 +4,7 @@
  * @Description: 应用信息AppInfo 可拖拽弹窗弹层。
  */
 import React, { useState, useEffect } from 'react';
-import { Button } from 'antd';
+import { Button } from '@cffe/h2o-design';
 import LineChart from '../line-chart';
 import './index.less';
 import { IAppInfo } from '@/pages/trafficmap/interface';

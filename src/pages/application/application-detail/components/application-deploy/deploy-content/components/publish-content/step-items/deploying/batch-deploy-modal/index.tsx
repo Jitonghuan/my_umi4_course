@@ -6,7 +6,7 @@
  */
 
 import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { Modal, Radio, Spin, message, Select, Tag } from 'antd';
+import { Modal, Radio, Spin, message, Select, Tag } from '@cffe/h2o-design';
 import DetailContext from '@/pages/application/application-detail/context';
 import { confirmDeploy, queryEnvsReq, applyHaveNoUpPlanList } from '@/pages/application/service';
 // import { IProps } from './types';

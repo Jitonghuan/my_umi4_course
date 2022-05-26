@@ -3,7 +3,7 @@
 // @create 2021/06/23 09:25
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Form, Input, Select, Button, Table, Tag, message, Popconfirm } from 'antd';
+import { Form, Input, Select, Button, Table, Tag, message, Popconfirm } from '@cffe/h2o-design';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
 import DetailModal from '@/components/detail-modal';

@@ -10,7 +10,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import ShowResourceModal from './resource-show';
-import { Input, Upload, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Input, Upload, Button, Form, Row, Col, Select, Space } from '@cffe/h2o-design';
 import './index.less';
 /** Modal页回显数据 */
 export interface showResource extends Record<string, any> {

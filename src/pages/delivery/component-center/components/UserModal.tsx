@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Select, message, Popconfirm, Input } from 'antd';
+import { Modal, Button, Form, Select, message, Popconfirm, Input } from '@cffe/h2o-design';
 import { useAddApplication, useQueryComponentList, useGetApplicationOption, useQueryEnvList } from '../hook';
 export interface DetailProps {
   visable?: boolean;

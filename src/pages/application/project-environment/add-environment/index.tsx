@@ -8,7 +8,7 @@ import { history } from 'umi';
 import { useState, useEffect } from 'react';
 import { getRequest } from '@/utils/request';
 import { useCreateProjectEnv, useUpdateProjectEnv, useEnvList } from '../hook';
-import { Drawer, Input, Button, Form, Transfer, Select, Space, Badge } from 'antd';
+import { Drawer, Input, Button, Form, Transfer, Select, Space, Badge } from '@cffe/h2o-design';
 import { queryAppsList } from '../service';
 import './index.less';
 

@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { TmplEdit } from '../index';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
+import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from '@cffe/h2o-design';
 import { useCreateComponentTmpl, useUpdateComponentTmpl } from './hooks';
 import { useGetTypeListOption } from '../hooks';
 import { productLineOptions } from '../config';

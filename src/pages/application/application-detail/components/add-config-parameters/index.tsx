@@ -6,7 +6,7 @@
  */
 
 import React, { useContext, useState } from 'react';
-import { Button, Table, message } from 'antd';
+import { Button, Table, message } from '@cffe/h2o-design';
 import { EditableProTable } from '@ant-design/pro-table';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';

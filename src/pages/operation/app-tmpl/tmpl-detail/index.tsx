@@ -10,7 +10,7 @@ import request, { getRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
-import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Table, Input, Button, Form, Row, Col, Select, Space } from '@cffe/h2o-design';
 import './index.less';
 
 export default function DemoPageTb(porps: any) {

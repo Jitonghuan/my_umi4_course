@@ -9,7 +9,7 @@ import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
+import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from '@cffe/h2o-design';
 import DetailContext from '../../../context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest } from '@/utils/request';

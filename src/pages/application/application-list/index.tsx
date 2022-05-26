@@ -3,7 +3,7 @@
 // @create 2021/08/25 09:23
 
 import React, { useMemo, useState, useCallback, useContext } from 'react';
-import { Button, message, Table } from 'antd';
+import { Button, message, Table } from '@cffe/h2o-design';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import ApplicationEditor from '../_components/application-editor';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { history } from 'umi';
-import { Popconfirm, Tooltip } from 'antd';
+import { Popconfirm, Tooltip } from '@cffe/h2o-design';
 import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 

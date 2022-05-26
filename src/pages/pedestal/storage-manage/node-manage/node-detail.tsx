@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from 'react';
-import { Form, Select, Button, Table, Tag, Divider, Modal, Checkbox } from 'antd';
+import { Form, Select, Button, Table, Tag, Divider, Modal, Checkbox } from '@cffe/h2o-design';
 import { useDeviceNameList, useAddDevice } from './hook';
 import './index.less';
 export interface nodeListProps {

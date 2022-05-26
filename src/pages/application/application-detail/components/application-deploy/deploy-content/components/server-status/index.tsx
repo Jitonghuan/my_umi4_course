@@ -3,7 +3,7 @@
 // @create 2021/08/09 20:13
 
 import React, { useState, useCallback, useContext, useMemo } from 'react';
-import { Descriptions, Modal, Button, Table, message } from 'antd';
+import { Descriptions, Modal, Button, Table, message } from '@cffe/h2o-design';
 import { GroupedStatusInfoProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';

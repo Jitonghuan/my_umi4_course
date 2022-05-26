@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Steps } from 'antd';
+import { Steps } from '@cffe/h2o-design';
 import {} from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import QualityCheckResult from './quality-check-result';

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';

@@ -1,4 +1,4 @@
-import { Tooltip } from 'antd';
+import { Tooltip } from '@cffe/h2o-design';
 import React from 'react';
 import { datetimeCellRender } from '@/utils';
 

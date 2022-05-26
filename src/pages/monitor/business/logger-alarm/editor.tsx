@@ -3,7 +3,7 @@
 // @create 2021/06/25 09:26
 
 import React, { useEffect, useState } from 'react';
-import { Form, Drawer, Input, Select, Button, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
+import { Form, Drawer, Input, Select, Button, message, Radio, InputNumber, TimePicker, Alert } from '@cffe/h2o-design';
 import { postRequest, putRequest } from '@/utils/request';
 import moment from 'moment';
 import * as APIS from './service';

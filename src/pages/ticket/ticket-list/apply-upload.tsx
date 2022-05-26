@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, message, Button } from 'antd';
+import { Upload, message, Button } from '@cffe/h2o-design';
 import { UploadOutlined } from '@ant-design/icons';
 
 export interface IProps {

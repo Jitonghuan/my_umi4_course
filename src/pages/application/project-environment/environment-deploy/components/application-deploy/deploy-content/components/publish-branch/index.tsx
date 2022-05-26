@@ -10,7 +10,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, message, Tag, Tooltip, Select } from 'antd';
+import { Table, Input, Button, Modal, message, Tag, Tooltip, Select } from '@cffe/h2o-design';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '../../../../../context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';

@@ -1,6 +1,6 @@
 import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import * as APIS from './service';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 import { useEffect, useState } from 'react';
 import appConfig from '@/app.config';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
+import { Table, Tooltip, Space, Popconfirm, Button, Tag } from '@cffe/h2o-design';
 import type { FormInstance } from 'antd/lib';
 import { PlusOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';

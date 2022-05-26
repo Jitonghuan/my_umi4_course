@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Select, Button, Table, Space, Popconfirm, Tag, Divider, Modal, Checkbox } from 'antd';
+import { Form, Select, Button, Table, Space, Popconfirm, Tag, Divider, Modal, Checkbox } from '@cffe/h2o-design';
 import { history } from 'umi';
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';

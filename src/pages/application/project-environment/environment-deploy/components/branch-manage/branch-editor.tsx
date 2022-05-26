@@ -3,7 +3,7 @@
 // @create 2021/08/27 10:58
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Modal, Input, Form, message, Select, Radio } from 'antd';
+import { Modal, Input, Form, message, Select, Radio } from '@cffe/h2o-design';
 import {
   createFeatureBranch,
   queryPortalList,

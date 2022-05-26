@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
-import { Tag, Tooltip, Popconfirm } from 'antd';
+import { Tag, Tooltip, Popconfirm } from '@cffe/h2o-design';
 import { StarFilled, StarTwoTone, Html5Outlined, CodeOutlined, UserOutlined } from '@ant-design/icons';
 import { collectRequst } from '../../common';
 import CardLayout from '@cffe/vc-b-card-layout';

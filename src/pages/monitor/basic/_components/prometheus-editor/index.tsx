@@ -3,7 +3,7 @@
 // @create 2021/08/16 20:50
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Form, Input, Select, Button, Drawer, message } from 'antd';
+import { Form, Input, Select, Button, Drawer, message } from '@cffe/h2o-design';
 import { getRequest } from '@/utils/request';
 import EditorTable from '@cffe/pc-editor-table';
 import { KVProps, PromitheusItemProps } from '../../interfaces';

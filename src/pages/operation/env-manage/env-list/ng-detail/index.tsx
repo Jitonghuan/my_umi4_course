@@ -8,7 +8,7 @@
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Spin, Form, Button, Modal, message } from 'antd';
+import { Input, Spin, Form, Button, Modal, message } from '@cffe/h2o-design';
 import AceEditor from '@/components/ace-editor';
 import { queryNgListDetail } from '../../service';
 import { getRequest } from '@/utils/request';

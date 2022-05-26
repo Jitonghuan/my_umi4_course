@@ -3,7 +3,7 @@
 // @create 2021/08/30 20:33
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button } from 'antd';
+import { Drawer, message, Form, Button } from '@cffe/h2o-design';
 import UserSelector, { stringToList } from '@/components/user-selector';
 import { updateAppMember } from '@/pages/application/service';
 import { AppMemberInfo } from '@/pages/application/interfaces';

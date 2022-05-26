@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
-import { Input, Button, Form, Row, Col, Select, Space } from 'antd';
+import { Input, Button, Form, Row, Col, Select, Space } from '@cffe/h2o-design';
 import './index.less';
 
 /** 应用开发语言(后端) */

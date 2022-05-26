@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRequest, putRequest, delRequest } from '@/utils/request';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 import * as APIS from './service';
 export function useEnvListOptions() {
   const [envCodeOption, setEnvCodeOption] = useState<any>([]);

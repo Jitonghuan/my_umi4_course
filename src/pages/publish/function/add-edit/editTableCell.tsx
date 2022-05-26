@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'antd';
+import { Form } from '@cffe/h2o-design';
 import { IFuncItem } from '../../typing';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {

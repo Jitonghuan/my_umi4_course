@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import * as APIS from './service';
 import { getRequest, postRequest } from '@/utils/request';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 
 //查看环境集群信息
 export function useDeployInfoData(envCode: any) {

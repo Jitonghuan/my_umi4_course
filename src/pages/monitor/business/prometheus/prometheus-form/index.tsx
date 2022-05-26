@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Steps, Space } from 'antd';
+import { Form, Button, Steps, Space } from '@cffe/h2o-design';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
 import useRequest from '@/utils/useRequest';

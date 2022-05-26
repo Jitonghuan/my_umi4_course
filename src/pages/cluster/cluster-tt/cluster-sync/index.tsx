@@ -3,7 +3,7 @@
 // @create 2021/11/9 10:05
 
 import React, { useState, useRef } from 'react';
-import { Button, Table, Alert, Modal } from 'antd';
+import { Button, Table, Alert, Modal } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { useTableData } from './hooks';
 import DetailModal from '@/components/detail-modal';

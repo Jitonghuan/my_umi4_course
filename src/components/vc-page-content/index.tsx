@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Breadcrumb, Card } from 'antd';
+import { Breadcrumb, Card } from '@cffe/h2o-design';
 import type { CardProps } from 'antd/lib/card';
 import { history } from 'umi';
 import classnames from 'classnames';

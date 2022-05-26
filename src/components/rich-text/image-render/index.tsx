@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'antd';
+import { Image } from '@cffe/h2o-design';
 import { IRenderElementProps, useSelected, useSonaContext } from '@cffe/sona';
 import './index.less';
 

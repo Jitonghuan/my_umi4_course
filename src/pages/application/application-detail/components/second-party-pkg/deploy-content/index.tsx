@@ -14,7 +14,7 @@ import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
 import { queryDeployList, queryFeatureDeployed, queryActiveDeployInfo } from '@/pages/application/service';
 import './index.less';
-import { Spin } from 'antd';
+import { Spin } from '@cffe/h2o-design';
 
 const rootCls = 'deploy-content-compo';
 

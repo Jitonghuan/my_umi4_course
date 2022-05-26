@@ -3,7 +3,7 @@
 // @create 2021/08/16 15:40
 
 import React, { useMemo } from 'react';
-import { Modal } from 'antd';
+import { Modal } from '@cffe/h2o-design';
 import AceEditor from '../ace-editor';
 import './index.less';
 

@@ -3,7 +3,7 @@
 // @create 2021/08/25 09:23
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Button, Select, Input, Divider, Form, Modal, Table } from 'antd';
+import { Button, Select, Input, Divider, Form, Modal, Table } from '@cffe/h2o-design';
 import {
   useCreateVersion,
   useUpdateVersion,

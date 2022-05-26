@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import { Tabs, Card, Form, Input, Spin, Select, Divider, Button } from 'antd';
+import { Tabs, Card, Form, Input, Spin, Select, Divider, Button } from '@cffe/h2o-design';
 import { RedoOutlined } from '@ant-design/icons';
 import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';

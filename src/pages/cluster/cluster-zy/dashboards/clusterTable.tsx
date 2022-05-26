@@ -3,7 +3,7 @@
 // @create 2021/08/09 10:30
 
 import React, { useMemo } from 'react';
-import { Table } from 'antd';
+import { Table } from '@cffe/h2o-design';
 import './index.less';
 export interface ChartCaseListProps {
   loading?: boolean;

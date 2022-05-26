@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox } from '@cffe/h2o-design';
 import { getRequest } from '@/utils/request';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';

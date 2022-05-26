@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form } from 'antd';
+import { Form } from '@cffe/h2o-design';
 import type { FormInstance } from 'antd/lib';
 import { history } from 'umi';
 import EditTable from '@/components/edit-table';

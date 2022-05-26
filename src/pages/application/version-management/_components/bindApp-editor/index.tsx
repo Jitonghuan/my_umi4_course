@@ -3,7 +3,7 @@
 // @create 2021/08/25 09:23
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Select, Descriptions, Divider, Form, Modal, Table, Popconfirm } from 'antd';
+import { Button, Select, Descriptions, Divider, Form, Modal, Table, Popconfirm } from '@cffe/h2o-design';
 import { columns } from '../version-editor/schema';
 import { useVersionAppList, useBoundApp, useQueryCategory } from '../../hooks';
 import './index.less';

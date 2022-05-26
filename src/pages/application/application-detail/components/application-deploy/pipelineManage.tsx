@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Modal, message, Form } from 'antd';
+import { Modal, message, Form } from '@cffe/h2o-design';
 import { ConsoleSqlOutlined, PlusOutlined } from '@ant-design/icons';
 import { addPipelineUrl, updatePipelineUrl, deletePipeline } from '@/pages/application/service';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';

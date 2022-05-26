@@ -1,5 +1,5 @@
 import React from 'react';
-import { Descriptions, Table, Tag } from 'antd';
+import { Descriptions, Table, Tag } from '@cffe/h2o-design';
 import moment from 'moment';
 import type { DescriptionsProps } from 'antd/lib/descriptions';
 import appConfig from '@/app.config';

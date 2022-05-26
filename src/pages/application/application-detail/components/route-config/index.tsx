@@ -3,7 +3,7 @@
 // @create 2021/09/02 14:21
 
 import React, { useState, useContext, useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
-import { Select, Button, Tabs, Spin, Empty, Modal, message } from 'antd';
+import { Select, Button, Tabs, Spin, Empty, Modal, message } from '@cffe/h2o-design';
 import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';

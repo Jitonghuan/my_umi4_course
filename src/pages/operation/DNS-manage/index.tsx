@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Spin, Divider, Tag, Cascader, message } from 'antd';
+import { Input, Table, Popconfirm, Form, Button, Spin, Divider, Tag, Cascader, message } from '@cffe/h2o-design';
 import { LoginOutlined, HighlightOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';

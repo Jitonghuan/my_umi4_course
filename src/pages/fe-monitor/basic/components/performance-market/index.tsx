@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Spin } from 'antd';
+import { Spin } from '@cffe/h2o-design';
 import { Line, Bar, Column } from '@cffe/hulk-wave-chart';
 import { getPerformanceDetail } from '../../server';
 import moment from 'moment';

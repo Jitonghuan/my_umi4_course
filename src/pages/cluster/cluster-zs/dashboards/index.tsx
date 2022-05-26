@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button } from 'antd';
+import { Button } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import ClusterAChart from './chart-case-Acluster';
 import ClusterBChart from './chart-case-Bcluster';

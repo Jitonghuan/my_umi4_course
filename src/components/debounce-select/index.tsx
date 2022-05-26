@@ -3,7 +3,7 @@
 // @create 2021/06/03 08:48
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Select, Spin, Empty } from 'antd';
+import { Select, Spin, Empty } from '@cffe/h2o-design';
 import type { SelectProps } from 'antd/lib/select';
 import debounce from 'lodash/debounce';
 

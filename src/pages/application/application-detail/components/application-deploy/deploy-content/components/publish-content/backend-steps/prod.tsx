@@ -3,7 +3,7 @@
 // @create 2021/09/05 22:43
 
 import React from 'react';
-import { Steps } from 'antd';
+import { Steps } from '@cffe/h2o-design';
 import { StepsProps } from '../types';
 import CreateTaskStep from '../step-items/create-task';
 import MergeReleaseStep from '../step-items/merge-release';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { getRequest, postRequest, putRequest, delRequest } from './request';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 
 type IResponse<R = any> = {
   success: boolean;

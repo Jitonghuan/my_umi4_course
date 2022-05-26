@@ -16,7 +16,7 @@ import {
   Modal,
   Descriptions,
   Tooltip,
-} from 'antd';
+} from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';

@@ -5,7 +5,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Line } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
-import { Select } from 'antd';
+import { Select } from '@cffe/h2o-design';
 import './index.less';
 export interface ChartCaseListProps {
   data: any;

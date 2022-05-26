@@ -6,7 +6,7 @@ import React from 'react';
 import { history } from 'umi';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
-import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from 'antd';
+import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from '@cffe/h2o-design';
 import { record } from '../type';
 import AceEditor from '@/components/ace-editor';
 import { createNg, updateNg } from '../service';

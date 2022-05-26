@@ -18,7 +18,7 @@ import {
   Tag,
   Divider,
   Radio,
-} from 'antd';
+} from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { stringify } from 'qs';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'antd';
+import { Form } from '@cffe/h2o-design';
 
 import useComponents from './hooks/useComponents';
 import useDefaultStyle from './hooks/useDefaultStyle';

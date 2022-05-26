@@ -5,7 +5,7 @@
 import { useEffect, useState, useLayoutEffect } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from './service';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 
 //选择环境
 export function useEnvOptions() {

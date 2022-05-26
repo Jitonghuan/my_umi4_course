@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Radio, Table, Tooltip } from 'antd';
+import { Radio, Table, Tooltip } from '@cffe/h2o-design';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Line } from '@cffe/hulk-wave-chart';
 import Header from '../header';

@@ -3,7 +3,7 @@
 // @create 2021/05/30 10:10
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Input, Table, Popconfirm } from 'antd';
+import { Input, Table, Popconfirm } from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from './service';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, message } from 'antd';
+import { Modal, Button, Form, message } from '@cffe/h2o-design';
 import { record, ConfigProp } from '../type';
 import AceEditor from '@/components/ace-editor';
 import './config-template.less';

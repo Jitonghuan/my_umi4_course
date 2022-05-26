@@ -5,7 +5,7 @@
 import React, { useMemo } from 'react';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import { loggerChart } from './formatter';
-import { Tag } from 'antd';
+import { Tag } from '@cffe/h2o-design';
 
 const { ColorContainer } = colorUtil.context;
 

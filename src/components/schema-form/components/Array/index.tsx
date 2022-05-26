@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input } from 'antd';
+import { Button, Input } from '@cffe/h2o-design';
 import { CloseSquareOutlined } from '@ant-design/icons';
 
 import './index.less';

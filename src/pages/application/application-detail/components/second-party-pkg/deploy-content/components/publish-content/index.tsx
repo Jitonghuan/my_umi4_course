@@ -6,7 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import { Modal, Button } from 'antd';
+import { Modal, Button } from '@cffe/h2o-design';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import ProdSteps from './prod-steps';

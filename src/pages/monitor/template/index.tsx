@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Space, Tag, Popconfirm, Form, Tooltip } from 'antd';
+import { Button, Space, Tag, Popconfirm, Form, Tooltip } from '@cffe/h2o-design';
 import type { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import TableSearch from '@/components/table-search';

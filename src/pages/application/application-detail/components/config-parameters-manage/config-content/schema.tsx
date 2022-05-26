@@ -1,5 +1,5 @@
 import React from 'react';
-import { Popconfirm } from 'antd';
+import { Popconfirm } from '@cffe/h2o-design';
 import { ColumnProps } from '@cffe/vc-hulk-table';
 
 // 表格 schema

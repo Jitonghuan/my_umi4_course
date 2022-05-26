@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
-import { Button, DatePicker, Form, Select, Tabs, Tree, Card } from 'antd';
+import { Button, DatePicker, Form, Select, Tabs, Tree, Card } from '@cffe/h2o-design';
 import './index.less';
 import * as echarts from 'echarts';
 import { IAppInfo } from '../interface';

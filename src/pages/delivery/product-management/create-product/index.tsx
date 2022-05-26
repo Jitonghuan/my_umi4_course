@@ -1,6 +1,6 @@
 //创建制品
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
+import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from '@cffe/h2o-design';
 import { UploadOutlined } from '@ant-design/icons';
 import { useQueryProductList, useQueryProductVersionList, useCreateIndent } from './hook';
 export interface ProductListProps {

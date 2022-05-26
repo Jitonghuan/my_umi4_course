@@ -3,7 +3,7 @@
 // @create 2021/07/27 15:28
 
 import React, { useState, useCallback, useRef } from 'react';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 import Editor, { IAnnotation } from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/mode-json';

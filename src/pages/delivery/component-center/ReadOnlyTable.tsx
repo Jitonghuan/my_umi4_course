@@ -9,7 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
-import { Table, Tag, Space, Popconfirm } from 'antd';
+import { Table, Tag, Space, Popconfirm } from '@cffe/h2o-design';
 import { useQueryComponentList, useDeleteComponent } from './hook';
 export interface DetailProps {
   currentTab: string;

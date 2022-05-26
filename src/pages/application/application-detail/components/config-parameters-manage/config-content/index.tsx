@@ -7,7 +7,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { history } from 'umi';
-import { Form, Select, Popconfirm, Button, message } from 'antd';
+import { Form, Select, Popconfirm, Button, message } from '@cffe/h2o-design';
 import DetailContext from '@/pages/application/application-detail/context';
 import AceEditor from '@/components/ace-editor';
 import { queryConfigList, envList } from '@/pages/application/service';

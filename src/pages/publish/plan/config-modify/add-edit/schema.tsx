@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag } from 'antd';
+import { Tag } from '@cffe/h2o-design';
 import { statusType } from '@/pages/publish/constant';
 import { getEnvName, datetimeCellRender } from '@/utils';
 

@@ -3,7 +3,7 @@
 // @create 2021/08/09 10:30
 
 import React, { useEffect, useState, useContext } from 'react';
-import { Table, Select } from 'antd';
+import { Table, Select } from '@cffe/h2o-design';
 import { getRequest } from '@/utils/request';
 import { listRanking, listUserRanking } from './service';
 import DetailContext from '@/pages/application/application-detail/context';

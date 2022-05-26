@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Modal, Button, List, Tag } from 'antd';
+import { Modal, Button, List, Tag } from '@cffe/h2o-design';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '@/pages/application/application-detail/context';
 import { recordFieldMap, recordFieldMapOut, recordDisplayMap } from './schema';

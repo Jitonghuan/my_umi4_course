@@ -3,7 +3,7 @@
 // @create 2021/05/30 10:10
 
 import React, { useState } from 'react';
-import { Form, Select, Input, Button } from 'antd';
+import { Form, Select, Input, Button } from '@cffe/h2o-design';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import RulesTable from './_components/rules-table';
