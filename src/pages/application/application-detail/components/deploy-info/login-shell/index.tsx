@@ -19,12 +19,11 @@ import './index.less';
 export default function AppDeployInfo(props: any) {
   const { appData } = useContext(DetailContext);
   const [viewLogform] = Form.useForm();
-  const { appCode, envCode } = props.location.query;
+  const { appCode, envCode, optType, containerName } = props.location.query;
   const instName = props.location.query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [previous, setPrevious] = useState<boolean>(false);
   let currentContainerName = '';
-  let optType = '';
   const ws = useRef<WebSocket>();
   const term = useRef<any>();
   useEffect(() => {
@@ -37,8 +36,14 @@ export default function AppDeployInfo(props: any) {
               value: item?.containerName,
               label: item?.containerName,
             }));
-            currentContainerName = listContainer[0].value;
-            viewLogform.setFieldsValue({ containerName: currentContainerName });
+            if (optType && optType === 'containerInfo') {
+              currentContainerName = containerName;
+              viewLogform.setFieldsValue({ containerName: containerName });
+            } else {
+              currentContainerName = listContainer[0].value;
+              viewLogform.setFieldsValue({ containerName: currentContainerName });
+            }
+
             setQueryListContainer(listContainer);
           }
         })

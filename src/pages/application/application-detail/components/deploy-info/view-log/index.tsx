@@ -21,7 +21,7 @@ export default function ViewLog(props: any) {
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
   const [previous, setPrevious] = useState<boolean>(false);
-  const { appCode, envCode, instName, viewLogEnvType, optType } = props.location.query;
+  const { appCode, envCode, instName, viewLogEnvType, optType, containerName } = props.location.query;
   const { infoRecord } = props.location.state;
   const logData = useRef<string>('');
   let currentContainerName = '';
@@ -37,9 +37,17 @@ export default function ViewLog(props: any) {
           value: item?.containerName,
           label: item?.containerName,
         }));
-        currentContainerName = listContainer[0].value;
-        viewLogform.setFieldsValue({ containerName: currentContainerName });
-        setCurrentContainer(currentContainerName);
+
+        if (optType && optType === 'containerInfo') {
+          currentContainerName = containerName;
+          viewLogform.setFieldsValue({ containerName: containerName });
+          setCurrentContainer(containerName);
+        } else {
+          currentContainerName = listContainer[0].value;
+          viewLogform.setFieldsValue({ containerName: currentContainerName });
+          setCurrentContainer(currentContainerName);
+        }
+
         setQueryListContainer(listContainer);
         ws.current = new WebSocket(
           `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`,

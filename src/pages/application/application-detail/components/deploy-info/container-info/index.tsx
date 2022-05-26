@@ -37,9 +37,9 @@ export default function ContainerInfo(props: any) {
   const containerColumns = useMemo(() => {
     return creatContainerColumns({
       onViewLogClick: (record, index) => {
-        history.push(
-          `/matrix/application/detail/viewLog?appCode=${appCode}&envCode=${envCode}&instName=${infoRecord?.instName}&viewLogEnvType=${viewLogEnvType}`,
-        );
+        // history.push(
+        //   `/matrix/application/detail/viewLog?appCode=${appCode}&envCode=${envCode}&instName=${infoRecord?.instName}&viewLogEnvType=${viewLogEnvType}`,
+        // );
         history.push({
           pathname: `/matrix/application/detail/viewLog`,
           query: {
@@ -48,6 +48,7 @@ export default function ContainerInfo(props: any) {
             instName: infoRecord?.instName,
             viewLogEnvType: viewLogEnvType,
             optType: 'containerInfo',
+            containerName: record?.containerName,
           },
           state: {
             infoRecord: infoRecord,
@@ -56,7 +57,7 @@ export default function ContainerInfo(props: any) {
       },
       onLoginShellClick: (record, index) => {
         history.push(
-          `/matrix/application/detail/loginShell?appCode=${appCode}&envCode=${envCode}&instName=${infoRecord?.instName}`,
+          `/matrix/application/detail/loginShell?appCode=${appCode}&envCode=${envCode}&instName=${infoRecord?.instName}&containerName=${record?.containerName}&optType=containerInfo`,
         );
       },
     }) as any;
