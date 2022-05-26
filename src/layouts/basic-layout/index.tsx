@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';
 import { useSize, useDebounce } from '@umijs/hooks';
 import { WaterMark } from '@ant-design/pro-layout';
+import '@arco-design/web-react/dist/css/arco.css';
+import { AlertOutlined } from '@ant-design/icons';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
 import { IconMap } from '@/components/vc-icons';
@@ -20,6 +22,7 @@ import {
   useStaffDepData,
 } from '@/common/hooks';
 import './index.less';
+import 'antd/dist/antd.variable.min.css';
 
 // 屏蔽掉 React Development 模式下红色的警告
 if (appConfig.isLocal) {
@@ -85,6 +88,12 @@ export default function Layout(props: any) {
     }, 200);
   };
   let deptitle = { modal_title: '切换部门' };
+  ConfigProvider.config({
+    theme: {
+      primaryColor: ' #9bb3cc',
+      //#92a6bb
+    },
+  });
   return (
     <ConfigProvider locale={zhCN}>
       <PositionSwitcher
@@ -137,11 +146,27 @@ export default function Layout(props: any) {
                     deptId: userInfo.deptInfo.deptId,
                   });
                 },
+                extensions: [
+                  {
+                    iconName: 'AlertOutlined',
+                    iconType: 'antd',
+                    type: 'popup',
+                    content: null,
+                  },
+                ],
                 title: (
-                  <div>
-                    <img src={appConfig.logo} style={{ marginRight: '5px' }} />
-                    {appConfig.title + appConfig.logoName}
-                  </div>
+                  <>
+                    <div className="matrix-title">
+                      <span>
+                        <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
+                        {appConfig.title + appConfig.logoName}
+                      </span>
+                      {/* 
+                      <span  >
+                        <AlertOutlined />
+                      </span> */}
+                    </div>
+                  </>
                 ),
                 positionText: '部门',
                 isShowGlobalMenu: false,
