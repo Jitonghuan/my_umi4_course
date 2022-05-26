@@ -3,7 +3,7 @@
 // @create 2021/09/05 22:57
 
 import React, { useState, useContext, useImperativeHandle } from 'react';
-import { Modal, Button, Table, Tag, Tooltip } from 'antd';
+import { Modal, Button, Table, Tag, Tooltip } from '@cffe/h2o-design';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import DetailContext from '../../../../../context';

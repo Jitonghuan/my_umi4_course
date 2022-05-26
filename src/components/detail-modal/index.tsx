@@ -3,7 +3,7 @@
 // @create 2021/07/11 15:58
 
 import React, { useState } from 'react';
-import { Modal, Input } from 'antd';
+import { Modal, Input } from '@cffe/h2o-design';
 import AceEditor, { AceDataType } from '../ace-editor';
 
 export interface DetailModal {

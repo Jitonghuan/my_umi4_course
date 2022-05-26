@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select } from 'antd';
+import { Select } from '@cffe/h2o-design';
 
 export interface IProps {
   /** 属性描述 */

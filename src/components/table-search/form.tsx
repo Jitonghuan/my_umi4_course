@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Input, DatePicker, Button, Form, Space, InputNumber, Radio, Checkbox } from 'antd';
+import { Select, Input, DatePicker, Button, Form, Space, InputNumber, Radio, Checkbox } from '@cffe/h2o-design';
 import { TableSearchProps, FormProps } from './typing';
 
 const { Item } = Form;

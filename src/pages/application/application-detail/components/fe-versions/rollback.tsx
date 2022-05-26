@@ -3,7 +3,7 @@
 // @create 2021/09/05 11:34
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, message, Table, Empty } from 'antd';
+import { Modal, message, Table, Empty } from '@cffe/h2o-design';
 import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
 import { datetimeCellRender } from '@/utils';
 import { rollbackFeApp } from '@/pages/application/service';

@@ -3,7 +3,7 @@
 // @create 2021/08/30 20:45
 
 import React, { useState, useEffect, useContext, useCallback, useMemo, Fragment } from 'react';
-import { Descriptions, Button } from 'antd';
+import { Descriptions, Button } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { FeContext } from '@/common/hooks';
 import ApplicationEditor from '@/pages/application/_components/application-editor';

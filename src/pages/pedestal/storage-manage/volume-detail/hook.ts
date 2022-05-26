@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 
 // 获取卷brick信息
 export function useGetBrickInfo() {

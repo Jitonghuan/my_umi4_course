@@ -3,7 +3,7 @@
 // @create 2021/07/27 14:34
 
 import React, { useState, useRef } from 'react';
-import { Button, Spin } from 'antd';
+import { Button, Spin } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { useFrameURL } from './hooks';
 import './index.less';

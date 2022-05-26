@@ -6,7 +6,7 @@ import React from 'react';
 import { history } from 'umi';
 import { useEffect } from 'react';
 import { useAddDnsManage, useUpdateDnsManage } from '../hooks';
-import { Input, Form, Select, Spin, Modal, Button } from 'antd';
+import { Input, Form, Select, Spin, Modal, Button } from '@cffe/h2o-design';
 import { recordEditData } from '../index';
 // import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 

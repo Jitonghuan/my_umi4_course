@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Result, Button } from 'antd';
+import { Result, Button } from '@cffe/h2o-design';
 import { history } from 'umi';
 
 interface StepThreeProps {

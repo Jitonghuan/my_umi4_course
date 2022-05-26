@@ -4,7 +4,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { Line } from '@ant-design/charts';
-import { Select } from 'antd';
+import { Select } from '@cffe/h2o-design';
 import { colorUtil } from '@cffe/fe-datav-components';
 export interface ChartCaseListProps {
   data: any;

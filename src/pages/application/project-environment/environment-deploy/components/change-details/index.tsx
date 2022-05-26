@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { Button, Select } from 'antd';
+import { Button, Select } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { appChangeChart } from './formatter';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';

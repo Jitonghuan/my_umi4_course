@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Tabs } from 'antd';
+import { Tabs } from '@cffe/h2o-design';
 import appConfig from '@/app.config';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';

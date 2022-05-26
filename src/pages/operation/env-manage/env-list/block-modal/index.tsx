@@ -7,7 +7,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { Spin, Form, Button, Modal, Transfer, Badge, Popconfirm, message } from 'antd';
+import { Spin, Form, Button, Modal, Transfer, Badge, Popconfirm, message } from '@cffe/h2o-design';
 import { getAppEnvList, blockAppEnv, getApplyWhiteList, applyWhiteList } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import './index.less';

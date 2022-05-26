@@ -3,7 +3,7 @@
 // @create 2021/09/05 21:09
 
 import React, { useState } from 'react';
-import { Steps, Button, message } from 'antd';
+import { Steps, Button, message } from '@cffe/h2o-design';
 import { StepItemProps } from '../../types';
 import { downloadSource } from '@/pages/application/service';
 

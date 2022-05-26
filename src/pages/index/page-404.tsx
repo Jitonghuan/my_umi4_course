@@ -3,7 +3,7 @@
 // @create 2021/08/01 14:54
 
 import React from 'react';
-import { Result } from 'antd';
+import { Result } from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 

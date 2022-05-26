@@ -1,5 +1,5 @@
 import React, { useState, useImperativeHandle, useEffect } from 'react';
-import { Drawer, Form, Select, Button, Input } from 'antd';
+import { Drawer, Form, Select, Button, Input } from '@cffe/h2o-design';
 import TableTransfer from '../table-transfer';
 import { DEFAULT_LEVEL, LevelEnum } from '@/pages/trafficmap/constant';
 import { IRelApp } from '@/pages/trafficmap/interface';

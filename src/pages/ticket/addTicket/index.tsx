@@ -11,7 +11,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
-import { Input, Upload, Button, Form, Radio, Row, Col, Select, Space } from 'antd';
+import { Input, Upload, Button, Form, Radio, Row, Col, Select, Space } from '@cffe/h2o-design';
 import './index.less';
 
 export default function addTicket() {

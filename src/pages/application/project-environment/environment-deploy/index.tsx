@@ -4,7 +4,7 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { history, Link } from 'umi';
-import { Tabs, Spin, Empty, Tag, Badge, Button } from 'antd';
+import { Tabs, Spin, Empty, Tag, Badge, Button } from '@cffe/h2o-design';
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';

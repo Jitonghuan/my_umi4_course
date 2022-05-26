@@ -1,6 +1,6 @@
 import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { EditableProTable } from '@ant-design/pro-table';
-import { Popconfirm, message } from 'antd';
+import { Popconfirm, message } from '@cffe/h2o-design';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm from '@ant-design/pro-form';
 

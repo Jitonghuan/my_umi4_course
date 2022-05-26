@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Steps, Button, Modal, message } from 'antd';
+import { Steps, Button, Modal, message } from '@cffe/h2o-design';
 import { retryBuild, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import BatchDeployModal from '../deploying/batch-deploy-modal';

@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames';
-import { Tree, Input, Select } from 'antd';
+import { Tree, Input, Select } from '@cffe/h2o-design';
 import { CustomTreeProps, TreeNode } from './interfaces';
 import { searchTreeData } from './utils';
 import './index.less';

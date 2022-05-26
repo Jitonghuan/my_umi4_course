@@ -3,7 +3,7 @@
 // @create 2021/07/27 14:32
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Modal, Select, Button, message, Table } from 'antd';
+import { Modal, Select, Button, message, Table } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { useAppOptions } from './hooks';
 import { postRequest, getRequest } from '@/utils/request';

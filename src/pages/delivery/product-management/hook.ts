@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../service';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
 // 查询产品列表
 export function useQueryIndentList(): [

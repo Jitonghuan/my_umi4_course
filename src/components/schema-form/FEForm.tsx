@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form } from 'antd';
+import { Button, Form } from '@cffe/h2o-design';
 import type { FormProps } from 'antd/lib/form';
 
 import useDefaultStyle from './hooks/useDefaultStyle';

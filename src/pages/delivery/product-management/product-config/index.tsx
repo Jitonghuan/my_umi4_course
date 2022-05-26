@@ -6,7 +6,7 @@ import { queryIndentInfoApi, generateIndentConfig } from '../../service';
 import moment from 'moment';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
-import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form } from 'antd';
+import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import ParameterEditModal from './editModal';
 import {

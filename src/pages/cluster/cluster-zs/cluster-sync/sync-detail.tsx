@@ -3,7 +3,7 @@
 // @create 2021/07/29 16:06
 
 import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
-import { Button, Steps, Spin, Result, message } from 'antd';
+import { Button, Steps, Spin, Result, message } from '@cffe/h2o-design';
 import moment from 'moment';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';

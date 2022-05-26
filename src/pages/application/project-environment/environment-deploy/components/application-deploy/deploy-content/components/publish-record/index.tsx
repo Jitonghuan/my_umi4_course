@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Modal, Button, List, Tag } from 'antd';
+import { Modal, Button, List, Tag } from '@cffe/h2o-design';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '../../../../../context';

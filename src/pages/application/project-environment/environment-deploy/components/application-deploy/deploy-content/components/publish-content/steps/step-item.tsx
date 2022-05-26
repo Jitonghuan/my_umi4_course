@@ -1,6 +1,6 @@
 import React from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Steps, Button } from 'antd';
+import { Steps, Button } from '@cffe/h2o-design';
 import CreateTaskStep from '../step-items/create-task';
 import MergeReleaseStep from '../step-items/merge-release';
 import MergeMasterStep from '../step-items/merge-master';

@@ -3,7 +3,7 @@
 // @create 2022/04/26 14:12
 
 import React, { useCallback, useEffect } from 'react';
-import { Modal, Input, Form } from 'antd';
+import { Modal, Input, Form } from '@cffe/h2o-design';
 import { useSaveIndentParam } from '../hook';
 
 export interface IProps {

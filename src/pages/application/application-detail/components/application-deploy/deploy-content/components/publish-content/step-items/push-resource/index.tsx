@@ -4,7 +4,7 @@
 
 import React, { useRef, useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Steps, Button, message } from 'antd';
+import { Steps, Button, message } from '@cffe/h2o-design';
 import { rePushFeResource, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import DetailContext from '@/pages/application/application-detail/context';

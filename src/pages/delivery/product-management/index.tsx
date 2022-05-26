@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { history } from 'umi';
 import PageContainer from '@/components/page-container';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Spin } from 'antd';
+import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Spin } from '@cffe/h2o-design';
 import CreateProductModal from './create-product';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryIndentList, useDeleteIndent } from './hook';

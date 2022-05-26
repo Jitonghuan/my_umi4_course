@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Select, Tabs } from 'antd';
+import { Select, Tabs } from '@cffe/h2o-design';
 import { history } from 'umi';
 import BasicOverview from './components/overview';
 import BasicError from './components/error';

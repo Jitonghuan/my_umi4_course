@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Form, Select, Table, Tag, Divider } from 'antd';
+import { Form, Select, Table, Tag, Divider } from '@cffe/h2o-design';
 import { getRequest } from '@/utils/request';
 import { ContentCard } from '@/components/vc-page-content';
 import DiskUsagePieChart from './dashboards/disk-usage-pieChart';

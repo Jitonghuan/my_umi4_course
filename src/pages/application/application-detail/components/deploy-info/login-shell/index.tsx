@@ -3,7 +3,7 @@
 // @create 2021/11/12	17:04
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Select, Form, Button, Tag, Checkbox, message } from 'antd';
+import { Select, Form, Button, Tag, Checkbox, message } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '../deployInfo-content/service';

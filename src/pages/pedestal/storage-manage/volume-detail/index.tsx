@@ -5,7 +5,20 @@
  */
 
 import React, { useState } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Divider, Modal, Checkbox } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Table,
+  Space,
+  Popconfirm,
+  message,
+  Tag,
+  Divider,
+  Modal,
+  Checkbox,
+} from '@cffe/h2o-design';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';

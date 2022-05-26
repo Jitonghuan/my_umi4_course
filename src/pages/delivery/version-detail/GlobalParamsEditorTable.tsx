@@ -3,7 +3,7 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { history } from 'umi';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form } from 'antd';
+import { Button, Input, Space, Tag, Form } from '@cffe/h2o-design';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProFormField } from '@ant-design/pro-form';
 import {

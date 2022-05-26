@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 import { getRequest, postRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
 //组件版本查询

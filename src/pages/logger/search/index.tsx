@@ -14,7 +14,7 @@ import {
   Skeleton,
   Divider,
   Tabs,
-} from 'antd';
+} from '@cffe/h2o-design';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
 import InfiniteScroll from 'react-infinite-scroll-component';

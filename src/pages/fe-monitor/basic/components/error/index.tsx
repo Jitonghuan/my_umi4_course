@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Descriptions } from 'antd';
+import { Button, Table, Descriptions } from '@cffe/h2o-design';
 import Header from '../header';
 import { now } from '../../const';
 import { Line } from '@cffe/hulk-wave-chart';

@@ -11,7 +11,7 @@ import * as APIS from '../service';
 import { TmplEdit } from '../tmpl-list';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
+import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from '@cffe/h2o-design';
 
 export interface TmplListProps {
   mode?: EditorMode;

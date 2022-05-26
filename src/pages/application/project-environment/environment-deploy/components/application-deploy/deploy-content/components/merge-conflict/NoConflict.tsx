@@ -1,4 +1,4 @@
-import { Modal, Button } from 'antd';
+import { Modal, Button } from '@cffe/h2o-design';
 import React, { useState } from 'react';
 import { IProp } from './types';
 

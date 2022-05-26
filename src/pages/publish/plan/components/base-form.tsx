@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col } from '@cffe/h2o-design';
 import { renderForm } from '@/components/table-search/form';
 import { FormProps } from '@/components/table-search/typing';
 import { BaseFormProps } from '../../typing';

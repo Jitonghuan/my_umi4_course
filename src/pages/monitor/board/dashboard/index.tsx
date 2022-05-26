@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Select } from 'antd';
+import { Button, Modal, Select } from '@cffe/h2o-design';
 import CpuUtilization from './cpu-utilization-line';
 import LoadUtilization from './load-utilization-line';
 import MemroyUtilization from './memory-utilization-line';

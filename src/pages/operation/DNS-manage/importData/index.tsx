@@ -5,7 +5,7 @@
 import { useEffect } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
 import { uploadDnsManage, downloadDnsManage } from '../service';
-import { Button, message, Modal, Upload } from 'antd';
+import { Button, message, Modal, Upload } from '@cffe/h2o-design';
 import './index.less';
 
 const { Dragger } = Upload;

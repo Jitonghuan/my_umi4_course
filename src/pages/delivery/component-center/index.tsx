@@ -8,7 +8,7 @@
  */
 import React, { useState } from 'react';
 import PageContainer from '@/components/page-container';
-import { Tabs, Radio, Space, Descriptions, Button, Input, Form, Typography } from 'antd';
+import { Tabs, Radio, Space, Descriptions, Button, Input, Form, Typography } from '@cffe/h2o-design';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';

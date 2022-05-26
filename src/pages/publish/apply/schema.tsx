@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag, Badge } from 'antd';
+import { Tag, Badge } from '@cffe/h2o-design';
 import { ColumnProps } from '@cffe/vc-hulk-table';
 import {
   APPLY_STATUS_COLOR_MAP,

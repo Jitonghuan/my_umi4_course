@@ -1,7 +1,7 @@
 // fork from business/component/rules-table
 
 import React, { useState } from 'react';
-import { Table, Tooltip, Space, Popconfirm, Button, Tag } from 'antd';
+import { Table, Tooltip, Space, Popconfirm, Button, Tag } from '@cffe/h2o-design';
 import useRequest from '@/utils/useRequest';
 
 import { queryRulesList, createRules, updateRules, ruleSwitch, deleteRules } from '../../../basic/services';

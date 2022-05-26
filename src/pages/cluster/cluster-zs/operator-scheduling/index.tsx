@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Card, Select, Input, Table, message, Divider } from 'antd';
+import { Form, Button, Card, Select, Input, Table, message, Divider } from '@cffe/h2o-design';
 import { DeleteOutlined } from '@ant-design/icons';
 import * as APIS from './service';
 import appConfig from '@/app.config';

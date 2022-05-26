@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import { Select } from 'antd';
+import { Select } from '@cffe/h2o-design';
 import OperatorScheduling from '../operator-scheduling';
 import Scheduling from '../scheduling';
 export default function SchedulingMode() {

@@ -4,7 +4,7 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { history, Link } from 'umi';
-import { Tabs, Spin, Empty } from 'antd';
+import { Tabs, Spin, Empty } from '@cffe/h2o-design';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';

@@ -4,7 +4,7 @@
 import appConfig from '@/app.config';
 import { useState, useEffect, useCallback } from 'react';
 import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 
 /** GET 创建版本 */
 export const createVersion = `${appConfig.apiPrefix}/appManage/version/create`;

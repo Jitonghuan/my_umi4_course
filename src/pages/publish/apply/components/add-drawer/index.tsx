@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useRef, useMemo } from 'react';
-import { Drawer, Form, Input, Radio, Select, DatePicker, Button, Table, Divider } from 'antd';
+import { Drawer, Form, Input, Radio, Select, DatePicker, Button, Table, Divider } from '@cffe/h2o-design';
 
 import { FeContext } from '@/common/hooks';
 import { DEPLOY_TYPE_OPTIONS } from '../../const';

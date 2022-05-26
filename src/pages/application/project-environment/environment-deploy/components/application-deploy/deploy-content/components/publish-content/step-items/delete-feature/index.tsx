@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Steps, Button } from 'antd';
+import { Steps, Button } from '@cffe/h2o-design';
 import { retryDelFeature, venusAnalyze, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 

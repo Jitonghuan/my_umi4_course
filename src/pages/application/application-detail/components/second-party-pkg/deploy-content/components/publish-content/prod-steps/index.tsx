@@ -6,7 +6,7 @@
  */
 
 import React, { useMemo, useState } from 'react';
-import { Steps, Button, Modal, Radio } from 'antd';
+import { Steps, Button, Modal, Radio } from '@cffe/h2o-design';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import DeployModal from './deploy-modal';
 import { retryMerge, retryDeploy, reMergeMaster, retryDelFeature } from '@/pages/application/service';

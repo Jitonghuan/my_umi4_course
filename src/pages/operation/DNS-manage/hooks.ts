@@ -1,7 +1,7 @@
 import { useEffect, useState, useLayoutEffect } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from './service';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 
 //dns信息查询
 export function useDnsManageList() {

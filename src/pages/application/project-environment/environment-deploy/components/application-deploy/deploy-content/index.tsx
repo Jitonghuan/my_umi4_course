@@ -20,7 +20,7 @@ import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
-import { Spin } from 'antd';
+import { Spin } from '@cffe/h2o-design';
 import './index.less';
 
 const rootCls = 'deploy-content-compo';

@@ -6,7 +6,7 @@ import React from 'react';
 import { history } from 'umi';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
-import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag } from 'antd';
+import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag } from '@cffe/h2o-design';
 import { EnvEditData } from '../env-list/index';
 import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 import './index.less';

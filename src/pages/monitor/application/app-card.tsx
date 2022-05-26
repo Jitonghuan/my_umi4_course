@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Radio, Select, message, Spin, RadioChangeEvent, Drawer, Tooltip } from 'antd';
+import { Radio, Select, message, Spin, RadioChangeEvent, Drawer, Tooltip } from '@cffe/h2o-design';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import { RedoOutlined, FullscreenOutlined, SyncOutlined } from '@ant-design/icons';
 import { RATE_ENUMS, START_TIME_ENUMS } from './app-table';

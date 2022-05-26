@@ -1,4 +1,4 @@
-import { Transfer, Table } from 'antd';
+import { Transfer, Table } from '@cffe/h2o-design';
 import difference from 'lodash/difference';
 import './index.less';
 

@@ -6,7 +6,7 @@ import moment from 'moment';
 import { queryComponentInfoApi } from '../../service';
 import { getRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
-import { Form, Tabs, Select, Button, Descriptions, Typography, Divider, Spin } from 'antd';
+import { Form, Tabs, Select, Button, Descriptions, Typography, Divider, Spin } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryComponentList, useUpdateDescription, useUpdateConfiguration } from './hooks';
 import './index.less';

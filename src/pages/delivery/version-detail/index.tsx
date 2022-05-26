@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
-import { Tabs, Descriptions, Button, Typography, Divider } from 'antd';
+import { Tabs, Descriptions, Button, Typography, Divider } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import moment from 'moment';

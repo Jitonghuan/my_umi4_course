@@ -4,7 +4,7 @@
  * @Description: 红线追踪弹窗：可拖动
  */
 import React, { useEffect, useState } from 'react';
-import { Select } from 'antd';
+import { Select } from '@cffe/h2o-design';
 import moment from 'moment';
 import { listDangerousCalls } from '@/pages/trafficmap/service';
 import DragModal from '../DragModal';

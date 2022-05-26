@@ -6,7 +6,7 @@
  */
 
 import React, { useContext, useState, useEffect, useRef, useMemo } from 'react';
-import { Table, Input, Button, Popconfirm, Form, Space } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, Space } from '@cffe/h2o-design';
 import type { FormInstance, TableColumnProps } from 'antd/lib';
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import './index.less';

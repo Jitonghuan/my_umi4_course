@@ -3,7 +3,7 @@
 // @create 2021/07/27 14:36
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Form, Radio, Button, Modal } from 'antd';
+import { Form, Radio, Button, Modal } from '@cffe/h2o-design';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { useInitClusterData, useClusterSource } from './hooks';

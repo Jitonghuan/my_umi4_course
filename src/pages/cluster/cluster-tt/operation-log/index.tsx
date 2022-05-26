@@ -3,7 +3,7 @@
 // @create 2021/11/2 10:35
 
 import React, { useState } from 'react';
-import { Table, Modal } from 'antd';
+import { Table, Modal } from '@cffe/h2o-design';
 import { datetimeCellRender } from '@/utils';
 import { ContentCard } from '@/components/vc-page-content';
 import { useLogSource } from './hooks';

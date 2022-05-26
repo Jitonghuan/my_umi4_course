@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DatePicker, Radio } from 'antd';
+import { DatePicker, Radio } from '@cffe/h2o-design';
 import moment from 'moment';
 
 const { RangePicker } = DatePicker;

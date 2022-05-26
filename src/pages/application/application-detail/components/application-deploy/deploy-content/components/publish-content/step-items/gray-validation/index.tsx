@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Steps, Button, Modal } from 'antd';
+import { Steps, Button, Modal } from '@cffe/h2o-design';
 import { fePublishVerify } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 

@@ -3,7 +3,7 @@
 // @create 2022/02/14 10:20
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Spin, Descriptions } from 'antd';
+import { Button, Spin, Descriptions } from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { DiffOutlined } from '@ant-design/icons';

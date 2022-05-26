@@ -6,7 +6,7 @@
  */
 
 import React, { useLayoutEffect, useEffect, useState, useContext, useMemo } from 'react';
-import { Tabs, Select, Tag } from 'antd';
+import { Tabs, Select, Tag } from '@cffe/h2o-design';
 import { queryEnvTypeData } from '@/common/apis';
 import { getRequest } from '@/utils/request';
 import DeployContent from './deploy-content';

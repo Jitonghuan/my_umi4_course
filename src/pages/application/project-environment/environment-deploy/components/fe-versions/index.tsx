@@ -4,7 +4,7 @@
 
 import React, { useState, useContext, useCallback, useEffect } from 'react';
 import moment from 'moment';
-import { Button, Empty, Spin } from 'antd';
+import { Button, Empty, Spin } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { FeContext } from '@/common/hooks';
 import DetailContext from '../../context';

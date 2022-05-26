@@ -6,7 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import { Modal, Input, Spin, message } from 'antd';
+import { Modal, Input, Spin, message } from '@cffe/h2o-design';
 import { BasicForm } from '@/components/schema-form';
 import createSchema from './create-schema';
 import { configAdd, configUpdate } from '@/pages/application/service';

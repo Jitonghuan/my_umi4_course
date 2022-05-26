@@ -3,7 +3,7 @@
 // @create 2021/05/30 10:10
 
 import { useCallback } from 'react';
-import { message } from 'antd';
+import { message } from '@cffe/h2o-design';
 import { GlobalOutlined, HeartOutlined } from '@ant-design/icons';
 import CustomIcon from '@cffe/vc-custom-icon';
 import PageContainer from '@/components/page-container';

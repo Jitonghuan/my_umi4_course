@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, message } from 'antd';
+import { Form, message } from '@cffe/h2o-design';
 
 import { IFuncItem } from '../../typing';
 

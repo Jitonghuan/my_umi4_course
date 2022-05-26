@@ -3,7 +3,7 @@
 // @create 2022/04/21 15:30
 
 import React, { useMemo, useState, useCallback } from 'react';
-import { Button, Table } from 'antd';
+import { Button, Table } from '@cffe/h2o-design';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import VersionEditor from './_components/version-editor';

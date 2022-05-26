@@ -1,7 +1,7 @@
 import React from 'react';
 import { datetimeCellRender } from '@/utils';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
-import { Space, Tag, Popconfirm } from 'antd';
+import { Space, Tag, Popconfirm } from '@cffe/h2o-design';
 import type { ColumnsType } from 'antd/lib/table';
 import { Link } from 'umi';
 import { statusType } from '../constant';

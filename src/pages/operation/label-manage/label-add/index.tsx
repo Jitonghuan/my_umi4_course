@@ -9,7 +9,7 @@ import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { LabelEdit } from '../label-list';
 import { useAppCategoryOption } from '../hook';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from 'antd';
+import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from '@cffe/h2o-design';
 import { useCreateLabelTag, useEditLabel } from '../hook';
 
 export interface LabelListProps {

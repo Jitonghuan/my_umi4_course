@@ -1,5 +1,5 @@
 // import React from 'react';
-import { Input, InputNumber, Select, DatePicker, Checkbox, Radio } from 'antd';
+import { Input, InputNumber, Select, DatePicker, Checkbox, Radio } from '@cffe/h2o-design';
 
 import ArrayComponent from '../components/Array';
 import CustomComponent from '../components/Custom';

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Button, Space, Popconfirm, Form } from 'antd';
+import { Button, Space, Popconfirm, Form } from '@cffe/h2o-design';
 import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
 import { FormProps, OptionProps } from '@/components/table-search/typing';

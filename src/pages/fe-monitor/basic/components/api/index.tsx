@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Table, Tooltip, Input } from 'antd';
+import { Tabs, Table, Tooltip, Input } from '@cffe/h2o-design';
 import Header from '../header';
 import { now } from '../../const';
 import moment from 'moment';

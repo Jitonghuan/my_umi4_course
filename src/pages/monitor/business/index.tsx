@@ -3,7 +3,7 @@
 // @create 2021/05/30 10:10
 
 import React, { useState } from 'react';
-import { List, Card, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from 'antd';
+import { List, Card, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import { PauseCircleFilled, ClockCircleFilled } from '@ant-design/icons';
 import { history } from 'umi';

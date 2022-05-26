@@ -3,7 +3,7 @@
 // @create 2021/08/30 20:05
 
 import React, { useMemo } from 'react';
-import { Tag } from 'antd';
+import { Tag } from '@cffe/h2o-design';
 import { UserOutlined } from '@ant-design/icons';
 import type { TagProps } from 'antd/lib/tag';
 import { stringToList } from './index';
