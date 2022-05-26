@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import { queryIndentInfoApi, generateIndentConfig, getPackageStatus } from '../../service';
 import moment from 'moment';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -17,6 +16,7 @@ import {
   useEditDescription,
   useCreatePackageInde,
   useEditIndentConfigYaml,
+  useUpdateParamIndent,
 } from '../hook';
 import { compontentsSchema, configDeliverySchema } from './schema';
 import './index.less';
@@ -43,6 +43,7 @@ export default function ProductConfig() {
   const [downloading, createPackageInde] = useCreatePackageInde();
   const [loading, dataSource, queryIndentParamList] = useQueryIndentParamList();
   const [configLoading, configDataSource, queryIndentConfigParamList] = useQueryIndentConfigParamList();
+  const [updateLoading, updateParamIndent] = useUpdateParamIndent();
   const [editLoading, editDescription] = useEditDescription();
   const [buttonText, setButtonText] = useState<string>('编辑');
   const [readOnly, setReadOnly] = useState<boolean>(true);
@@ -53,9 +54,9 @@ export default function ProductConfig() {
   const [editConfigLoading, editIndentConfigYaml] = useEditIndentConfigYaml();
   const [indentConfigInfo, setIndentConfigInfo] = useState<any>({});
   const [configInfoLoading, setConfigInfoLoading] = useState<boolean>(false);
-  const [infoFoldOut, setInfoFoldOut] = useState<boolean>(false);
   const [curIndentPackageStatus, setCurIndentPackageStatus] = useState<string>('未知');
   const cacheRef = useRef<any>(null);
+  const [tabActiveKey, setTabActiveKey] = useState<string>('1');
 
   const queryPackageStatus = async (id: number) => {
     setPackageLoading(true);
@@ -76,7 +77,7 @@ export default function ProductConfig() {
       console.log(error);
     }
   };
-  console.log('curIndentPackageStatus', curIndentPackageStatus);
+
   const queryIndentInfo = async (id: number) => {
     setInfoLoading(true);
     try {
@@ -116,11 +117,15 @@ export default function ProductConfig() {
     if (configInfo.id) {
       queryPackageStatus(configInfo.id);
       queryIndentInfo(configInfo.id);
+      queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+      queryIndentParamList({ id: configInfo.id, isGlobal: false });
     } else {
       return;
     }
   }, [configInfo.id]);
-  const tabOnclick = (key: any) => {};
+  const tabOnclick = (key: any) => {
+    setTabActiveKey(key);
+  };
 
   //  全局参数表格列配置 configTableColumns
   const configTableColumns = useMemo(() => {
@@ -252,7 +257,7 @@ export default function ProductConfig() {
           <div>
             <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: 8, height: 20, fontSize: 16, marginTop: 16 }}>
               出包管理
-              <Button
+              {/* <Button
                 icon={infoFoldOut ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
                 style={{ marginLeft: 8 }}
                 type="primary"
@@ -268,115 +273,131 @@ export default function ProductConfig() {
                 }}
               >
                 {infoFoldOut ? '收起详情' : '展开详情'}
-              </Button>
+              </Button> */}
             </h3>
           </div>
         </div>
-        {infoFoldOut && (
-          <div style={{ paddingTop: 10 }}>
-            <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
-              <TabPane tab="配置交付参数" key="1">
-                <Tabs defaultActiveKey="1" onChange={tabOnclick}>
-                  <TabPane tab="全局参数" key="1">
-                    <Table columns={configTableColumns} dataSource={configDataSource} loading={configLoading}></Table>
-                  </TabPane>
-                  <TabPane tab="组件参数" key="2">
-                    <Table columns={componentTableColumns} dataSource={dataSource} loading={loading}></Table>
-                  </TabPane>
-                </Tabs>
-              </TabPane>
-              <TabPane tab="出包和部署" key="2">
-                <div>
-                  <p>
-                    产品部署包：
-                    <Tag color={STATUS_TYPE[curIndentPackageStatus].color || 'default'}>
-                      {STATUS_TYPE[curIndentPackageStatus].text || '--'}
-                    </Tag>
-                    {curIndentPackageStatus === '已出包' && (
-                      <Button
-                        type="primary"
-                        size="small"
-                        onClick={() => {
-                          window.open(configInfoData?.indentPackageUrl);
-                        }}
-                      >
-                        下载部署包
-                      </Button>
-                    )}
-                    {curIndentPackageStatus !== '已出包' && (
-                      <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}>
-                        出部署包
-                      </Button>
-                    )}
-                    {/* </Button> */}
-                    {curIndentPackageStatus === '已出包' && (
-                      <Button
-                        type="primary"
-                        size="small"
-                        style={{ marginLeft: 10 }}
-                        onClick={downLoadIndent}
-                        loading={curIndentPackageStatus !== '已出包' && curIndentPackageStatus !== '出包失败'}
-                      >
-                        重新出包
-                      </Button>
-                    )}
-                  </p>
-                </div>
-                <div style={{ marginBottom: 10 }}>
-                  安装配置文件：
-                  <Button
-                    style={{ marginRight: 10 }}
-                    type="primary"
-                    size="small"
-                    onClick={getConfigInfo}
-                    loading={configInfoLoading}
-                  >
-                    重新生成制品配置
-                  </Button>
-                  <CopyToClipboard
-                    text={JSON.stringify(indentConfigInfo || {})}
-                    onCopy={() => message.success('复制成功！')}
-                  >
-                    <Button type="primary" size="small">
-                      {' '}
-                      一键复制
-                    </Button>
-                  </CopyToClipboard>
-                  <div style={{ float: 'right' }}>
+
+        <div style={{ paddingTop: 10 }}>
+          <Tabs
+            activeKey={tabActiveKey}
+            onChange={tabOnclick}
+            type="card"
+            tabBarExtraContent={
+              tabActiveKey === '1' && (
+                <Button
+                  type="primary"
+                  loading={updateLoading}
+                  onClick={() => {
+                    updateParamIndent(configInfo.id).then(() => {
+                      queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+                      queryIndentParamList({ id: configInfo.id, isGlobal: false });
+                    });
+                  }}
+                >
+                  更新交付参数
+                </Button>
+              )
+            }
+          >
+            <TabPane tab="配置交付参数" key="1">
+              <Tabs defaultActiveKey="1">
+                <TabPane tab="全局参数" key="1">
+                  <Table columns={configTableColumns} dataSource={configDataSource} loading={configLoading}></Table>
+                </TabPane>
+                <TabPane tab="组件参数" key="2">
+                  <Table columns={componentTableColumns} dataSource={dataSource} loading={loading}></Table>
+                </TabPane>
+              </Tabs>
+            </TabPane>
+            <TabPane tab="出包和部署" key="2">
+              <div>
+                <p>
+                  产品部署包：
+                  <Tag color={STATUS_TYPE[curIndentPackageStatus].color || 'default'}>
+                    {STATUS_TYPE[curIndentPackageStatus].text || '--'}
+                  </Tag>
+                  {curIndentPackageStatus === '已出包' && (
                     <Button
-                      type={buttonText === '编辑' ? 'primary' : 'default'}
+                      type="primary"
+                      size="small"
                       onClick={() => {
-                        if (readOnly) {
-                          setReadOnly(false);
-                          setButtonText('取消编辑');
-                        } else {
-                          setReadOnly(true);
-                          setButtonText('编辑');
-                        }
+                        window.open(configInfoData?.indentPackageUrl);
                       }}
                     >
-                      {buttonText}
+                      下载部署包
                     </Button>
-                    <Button type="primary" style={{ marginLeft: 8 }} onClick={saveConfig} loading={editConfigLoading}>
-                      保存配置
+                  )}
+                  {curIndentPackageStatus !== '已出包' && (
+                    <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}>
+                      出部署包
                     </Button>
-                  </div>
+                  )}
+                  {/* </Button> */}
+                  {curIndentPackageStatus === '已出包' && (
+                    <Button
+                      type="primary"
+                      size="small"
+                      style={{ marginLeft: 10 }}
+                      onClick={downLoadIndent}
+                      loading={curIndentPackageStatus !== '已出包' && curIndentPackageStatus !== '出包失败'}
+                    >
+                      重新出包
+                    </Button>
+                  )}
+                </p>
+              </div>
+              <div style={{ marginBottom: 10 }}>
+                安装配置文件：
+                <Button
+                  style={{ marginRight: 10 }}
+                  // type="primary"
+                  size="small"
+                  onClick={getConfigInfo}
+                  loading={configInfoLoading}
+                >
+                  重新生成制品配置
+                </Button>
+                <CopyToClipboard
+                  text={JSON.stringify(indentConfigInfo || {})}
+                  onCopy={() => message.success('复制成功！')}
+                >
+                  <Button size="small"> 一键复制</Button>
+                </CopyToClipboard>
+                <div style={{ float: 'right' }}>
+                  <Button
+                    type={buttonText === '编辑' ? 'primary' : 'default'}
+                    onClick={() => {
+                      if (readOnly) {
+                        setReadOnly(false);
+                        setButtonText('取消编辑');
+                      } else {
+                        setReadOnly(true);
+                        setButtonText('编辑');
+                      }
+                    }}
+                  >
+                    {buttonText}
+                  </Button>
+                  <Button type="primary" style={{ marginLeft: 8 }} onClick={saveConfig} loading={editConfigLoading}>
+                    保存配置
+                  </Button>
                 </div>
-                <div>
-                  <Form form={configForm}>
-                    <Spin spinning={configInfoLoading}>
-                      <Form.Item name="configInfo" noStyle>
-                        <AceEditor mode="yaml" height={550} value={indentConfigInfo} readOnly={readOnly} />
-                      </Form.Item>
-                    </Spin>
+              </div>
+              <div>
+                <Form form={configForm}>
+                  <Spin spinning={configInfoLoading}>
+                    <Form.Item name="configInfo" noStyle>
+                      <AceEditor mode="yaml" height={550} value={indentConfigInfo} readOnly={readOnly} />
+                    </Form.Item>
+                  </Spin>
 
-                    <Form.Item></Form.Item>
-                  </Form>
-                </div>
-              </TabPane>
-            </Tabs>
-          </div>
-        )}
+                  <Form.Item></Form.Item>
+                </Form>
+              </div>
+            </TabPane>
+          </Tabs>
+        </div>
       </ContentCard>
     </PageContainer>
   );

@@ -435,8 +435,8 @@ export function useQueryDeliveryGloableParamList(): [
   any,
   (
     versionId: number,
-    configParamComponent?: string,
-    configParamName?: string,
+    paramComponent?: string,
+    paramName?: string,
     pageIndex?: number,
     pageInfo?: number,
   ) => Promise<void>,
@@ -450,15 +450,15 @@ export function useQueryDeliveryGloableParamList(): [
   });
   const queryDeliveryParamList = async (
     versionId: number,
-    configParamComponent?: string,
-    configParamName?: string,
+    paramComponent?: string,
+    paramName?: string,
     pageIndex?: number,
     pageSize?: number,
   ) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
-        data: { versionId, configParamComponent, configParamName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { versionId, paramComponent, paramName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
       })
         .then((res) => {
           if (res.success) {
@@ -489,19 +489,19 @@ export function useSaveParam(): [
   boolean,
   (paramsObj: {
     versionId: number;
-    configParamComponent: string;
-    configParamName: string;
-    configParamValue: string;
-    configParamDescription?: string;
+    paramComponent: string;
+    paramName: string;
+    paramValue: string;
+    paramDescription?: string;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const saveParam = async (paramsObj: {
     versionId: number;
-    configParamComponent: string;
-    configParamName: string;
-    configParamValue: string;
-    configParamDescription?: string;
+    paramComponent: string;
+    paramName: string;
+    paramValue: string;
+    paramDescription?: string;
   }) => {
     setLoading(true);
     try {
@@ -528,14 +528,10 @@ export function useSaveParam(): [
 //编辑交付配置参数
 export function useEditVersionParam(): [
   boolean,
-  (paramsObj: { id: number; configParamValue: string; configParamDescription: string }) => Promise<void>,
+  (paramsObj: { id: number; paramValue: string; paramDescription: string }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const editVersionParam = async (paramsObj: {
-    id: number;
-    configParamValue: string;
-    configParamDescription: string;
-  }) => {
+  const editVersionParam = async (paramsObj: { id: number; paramValue: string; paramDescription: string }) => {
     setLoading(true);
     try {
       await postRequest(APIS.editVersionParam, {

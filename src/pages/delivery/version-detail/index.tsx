@@ -146,7 +146,7 @@ export default function VersionDetail() {
                 ))}
               </Tabs>
             </TabPane>
-            <TabPane tab="交付配置" key="delivery">
+            <TabPane tab="交付参数" key="delivery">
               <Tabs type="card">
                 {deliveryTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>

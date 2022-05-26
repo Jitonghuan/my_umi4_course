@@ -60,8 +60,8 @@ export default (props: VersionDetailProps) => {
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '参数名称',
-      key: 'configParamName',
-      dataIndex: 'configParamName',
+      key: 'paramName',
+      dataIndex: 'paramName',
       editable: (text, record, index) => {
         if (type === 'edit' && text) {
           return false;
@@ -88,8 +88,8 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '参数值',
-      key: 'configParamValue',
-      dataIndex: 'configParamValue',
+      key: 'paramValue',
+      dataIndex: 'paramValue',
       // valueType: 'select',
       formItemProps: () => {
         return {
@@ -105,7 +105,7 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '参数说明',
-      dataIndex: 'configParamDescription',
+      dataIndex: 'paramDescription',
     },
 
     {
@@ -141,14 +141,14 @@ export default (props: VersionDetailProps) => {
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryGloableParamList(versionId, 'global', param.configParamName);
+    queryDeliveryGloableParamList(versionId, 'global', param.paramName);
   };
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="configParamName">
+            <Form.Item name="paramName">
               <Input style={{ width: 220 }} placeholder="请输入参数名称"></Input>
             </Form.Item>
             <Form.Item>
@@ -211,7 +211,7 @@ export default (props: VersionDetailProps) => {
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
             if (type === 'add') {
-              await saveParam({ ...params, versionId: versionId, configParamComponent: 'global' }).then(() => {
+              await saveParam({ ...params, versionId: versionId, paramComponent: 'global' }).then(() => {
                 queryDeliveryGloableParamList(versionId, 'global');
               });
             } else if (type === 'edit') {

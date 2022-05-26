@@ -10,7 +10,6 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';
 import { history } from 'umi';
-import UserModal from './components/UserModal';
 import BasicDataModal from './components/basicDataModal';
 import { useQueryComponentList, useQueryProductlineList } from './hook';
 import AddApplicationDraw from './components/addApplicationDraw';
@@ -25,7 +24,6 @@ export default function ComponentCenter() {
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
-  const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [curProductLine, setCurProductLine] = useState<string>('');
   const [queryParams, setQueryParams] = useState<any>({});
@@ -132,7 +130,7 @@ export default function ComponentCenter() {
                             onClick={() => {
                               if (tabActiveKey === 'app') {
                                 setBatchAddMode('ADD');
-                                setUserModalVisiable(true);
+                                // setUserModalVisiable(true);
                               }
                               //  if (tabActiveKey === 'middleware') {
                               //    // setMiddlewareModalVisibale(true);

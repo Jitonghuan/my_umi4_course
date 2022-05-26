@@ -61,8 +61,8 @@ export default (props: VersionDetailProps) => {
   const columns: ProColumns<any>[] = [
     {
       title: '参数来源组件',
-      key: 'configParamComponent',
-      dataIndex: 'configParamComponent',
+      key: 'paramComponent',
+      dataIndex: 'paramComponent',
       valueType: 'select',
       formItemProps: () => {
         return {
@@ -102,8 +102,8 @@ export default (props: VersionDetailProps) => {
 
     {
       title: '选择参数',
-      key: 'configParamName',
-      dataIndex: 'configParamName',
+      key: 'paramName',
+      dataIndex: 'paramName',
       valueType: 'select',
       formItemProps: () => {
         return {
@@ -132,7 +132,7 @@ export default (props: VersionDetailProps) => {
                 if (item.value === value) {
                   updateRow(config.recordKey, {
                     ...form.getFieldsValue(config.recordKey),
-                    configParamValue: item.configParamValue,
+                    paramValue: item.paramValue,
                   });
                 }
               });
@@ -143,15 +143,15 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '参数值',
-      key: 'configParamValue',
-      dataIndex: 'configParamValue',
+      key: 'paramValue',
+      dataIndex: 'paramValue',
       renderFormItem: (_, config: any, data) => {
         return <Input disabled={true}></Input>;
       },
     },
     {
       title: '参数说明',
-      dataIndex: 'configParamDescription',
+      dataIndex: 'paramDescription',
     },
 
     {
@@ -167,7 +167,7 @@ export default (props: VersionDetailProps) => {
             // } else {
             action?.startEditable?.(record.id);
             setType('edit');
-            queryParamList(versionId, record.configParamComponent);
+            queryParamList(versionId, record.paramComponent);
             // }
           }}
         >
@@ -188,7 +188,7 @@ export default (props: VersionDetailProps) => {
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryParamList(versionId, param.configParamName);
+    queryDeliveryParamList(versionId, param.paramName);
   };
   const tableChange = (values: any) => {
     setDataSource;
@@ -199,7 +199,7 @@ export default (props: VersionDetailProps) => {
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="configParamComponent">
+            <Form.Item name="paramComponent">
               <Input style={{ width: 220 }} placeholder="请输入参数来源组件"></Input>
             </Form.Item>
             <Form.Item>
