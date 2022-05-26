@@ -24,9 +24,6 @@ export default defineConfig({
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
   extraBabelPlugins: [
-    "@babel/syntax-dynamic-import",
-    ["@babel/plugin-proposal-private-methods", { "loose": true }],
-    ["@babel/proposal-class-properties", { "loose": true }],
     [
       "import",
       {
