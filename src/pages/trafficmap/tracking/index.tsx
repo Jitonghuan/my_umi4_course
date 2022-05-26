@@ -70,7 +70,7 @@ export default function Tracking() {
 
   //获取环境列表
   useEffect(() => {
-    getEnvs().then((res) => {
+    getEnvs().then((res: any) => {
       if (res && res.success) {
         const data = res?.data?.envs.map((item: any) => ({ label: item.envName, value: item.envCode }));
         setEnvOptions(data);
@@ -116,7 +116,7 @@ export default function Tracking() {
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
     getApplicationList({ envCode: selectEnv, start, end })
-      .then((res) => {
+      .then((res: any) => {
         if (res && res.success) {
           const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
           setApplicationList(data);
@@ -149,7 +149,7 @@ export default function Tracking() {
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
     getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: noiseList })
-      .then((res) => {
+      .then((res: any) => {
         if (res) {
           setListData(res?.data?.dataSource);
           setTotal(res?.data?.pageInfo?.total);
@@ -165,7 +165,7 @@ export default function Tracking() {
     if (!currentItem?.traceIds[0]) return;
     setRightLoading(true);
     getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
-      .then((res) => {
+      .then((res: any) => {
         if (res?.success) {
           const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
           const handleData = (data: any) => {
@@ -252,6 +252,7 @@ export default function Tracking() {
             时间范围：
             <RangePicker
               showTime
+              allowClear={false}
               onChange={(v: any, time: any) => {
                 setSelectTime({ start: time[0], end: time[1] });
               }}
