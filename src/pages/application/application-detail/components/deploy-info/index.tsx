@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Tabs } from '@cffe/h2o-design';
+import { Tabs } from 'antd';
 import appConfig from '@/app.config';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -79,7 +79,7 @@ export default function AppDeployInfo(props: any) {
       envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
         ? localStorage.getItem('__init_env_tab__')
         : env;
-    debugger;
+
     setTabActive(currentTabActive);
   };
 
