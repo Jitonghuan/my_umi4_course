@@ -4,6 +4,7 @@ import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';
+import '@arco-design/web-react/dist/css/arco.css';
 import { useSize, useDebounce } from '@umijs/hooks';
 import { WaterMark } from '@ant-design/pro-layout';
 import '@arco-design/web-react/dist/css/arco.css';
@@ -56,6 +57,7 @@ export default function Layout(props: any) {
   const [staffOrgData, loadStaffOrgData] = useStaffOrgData();
   const [chooseDept] = useChooseDept();
   const [staffDepData, loadStaffDepData] = useStaffDepData();
+  const [style, setStyle] = useState<any>('foneLight');
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -95,17 +97,17 @@ export default function Layout(props: any) {
     },
   });
 
-  // const changeTheme = () => {
-  //   if (style == 'foneDark') {
-  //     setStyle('globalLight');
-  //     document.body.removeAttribute('fone-theme');
-  //     document.body.setAttribute('arco-theme', 'light');
-  //   } else {
-  //     setStyle('foneDark');
-  //     document.body.setAttribute('fone-theme', 'foneDark');
-  //     document.body.setAttribute('arco-theme', 'dark');
-  //   }
-  // };
+  const changeTheme = () => {
+    if (style == 'foneDark') {
+      setStyle('globalLight');
+      document.body.removeAttribute('fone-theme');
+      document.body.setAttribute('arco-theme', 'light');
+    } else {
+      setStyle('foneDark');
+      document.body.setAttribute('fone-theme', 'foneDark');
+      document.body.setAttribute('arco-theme', 'dark');
+    }
+  };
   return (
     <ConfigProvider locale={zhCN}>
       <PositionSwitcher
@@ -163,7 +165,9 @@ export default function Layout(props: any) {
                     iconName: 'AlertOutlined',
                     iconType: 'antd',
                     type: 'popup',
-                    content: () => {},
+                    content: () => {
+                      changeTheme();
+                    },
                   },
                 ],
                 title: (
