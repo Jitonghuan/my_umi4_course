@@ -106,7 +106,7 @@ export default function RrightTrace(props: any) {
       title: 'Exec(ms)',
       dataIndex: 'durations',
       key: 'durations',
-      render: (value: string, record: any) => `${record.endTime - record.startTime}ms`,
+      render: (value: string, record: any) => `${record?.endTime - record?.startTime}ms`,
     },
     {
       title: 'Exec(%)',
@@ -312,7 +312,7 @@ export default function RrightTrace(props: any) {
                   defaultExpandAllRows={true}
                   dataSource={data}
                   pagination={false}
-                  rowClassName={(record: any) => (record.isError ? 'error-line' : '')}
+                  rowClassName={(record: any) => (record?.isError ? 'error-line' : '')}
                   onRow={(record: any, index: any) => {
                     return {
                       onClick: (event) => {

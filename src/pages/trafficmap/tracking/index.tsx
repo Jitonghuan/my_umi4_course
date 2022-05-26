@@ -130,7 +130,7 @@ export default function Tracking() {
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
     getInstance({ envCode: selectEnv, appID, start, end })
-      .then((res) => {
+      .then((res: any) => {
         if (res && res.success) {
           const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
           setInstanceList(data);
