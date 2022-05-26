@@ -6,6 +6,7 @@
 @body-background: #474747;
 @component-background: #474749;
 @descriptions-bg: #353536;
+//:rgba(23, 23, 26, 0.2);
 @allconfig-background:rgba (23, 23, 26, 0.2);
 .header-app .header-logo {
   border-radius: 0;
@@ -60,6 +61,40 @@ body[fone-theme='foneDark'] {
   * {
     background: @allconfig-background !important;
     color: white !important;
+    border-color: var(--color-neutral-3) !important;
+  }
+
+  .ant-table-cell-fix-right {
+    * {
+      background: @descriptions-bg !important;
+    }
+  }
+  .ant-table-cell .ant-table-cell-fix-right .ant-table-cell-fix-right-first {
+    background: @descriptions-bg !important;
+    * {
+      background: @descriptions-bg !important;
+    }
+  }
+  .ant-menu .ant-menu-root .ant-menu-inline .ant-menu-light {
+    background: none !important;
+  }
+  .v_basic-layout-wrapper .ant-layout-sider-children {
+    background: #232324 !important;
+  }
+  .logo {
+    background: none !important;
+    .matrix-title {
+      background: none !important;
+      span {
+        background: none !important;
+      }
+    }
+  }
+  .right-area {
+    background: none !important;
+    * {
+      background: none !important;
+    }
   }
   .ant-card {
     background-color: @body-background;
@@ -84,7 +119,19 @@ body[fone-theme='foneDark'] {
   .ant-table-tbody > tr > td.ant-table-cell-row-hover {
     background: @descriptions-bg !important;
   }
-
+  .ant-table-cell-fix-right {
+    background: @descriptions-bg !important;
+  }
+  .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table,
+  .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table {
+    border-top: 1px solid var(--color-neutral-3) !important;
+  }
+  .ant-table.ant-table-bordered > .ant-table-container {
+    border-top: 1px solid var(--color-neutral-3) !important;
+  }
+  .ant-table-content {
+    border: 1px solid var(--color-neutral-3) !important;
+  }
   .vc-page-content-body,
   // .ant-card-body,
   // .ant-table-content,
@@ -96,6 +143,7 @@ body[fone-theme='foneDark'] {
   }
   .ant-form-item-label > label {
     color: white !important;
+    background: none !important;
   }
   .arco-layout-content {
     // border: 1px solid var(--color-neutral-3) !important; --color-mask-bg:
@@ -106,6 +154,9 @@ body[fone-theme='foneDark'] {
     .ant-card-body {
       border: 1px solid var(--color-neutral-3) !important;
     }
+  }
+  .all-application-page__card {
+    border: 1px solid var(--color-neutral-3) !important;
   }
 
   .ant-space-item {
@@ -173,15 +224,16 @@ body[fone-theme='foneDark'] {
     color: #f2f4f8 !important;
     background-color: #67678c5e !important;
   }
-  .ant-dropdown-trigger,
-  .ant-avatar-string {
-    background: linear-gradient(#dee5f8, #f5f5f7) !important;
-    color: #000 !important;
-  }
-  .ant-menu-submenu-arrow {
-    &::after,
-    &::before {
-      background-color: rgb(250, 248, 248) !important;
-    }
-  }
+
+  // .ant-dropdown-trigger,
+  // .ant-avatar-string {
+  //   background: linear-gradient(#dee5f8, #f5f5f7) !important;
+  //   color: #000 !important;
+  // }
+  // .ant-menu-submenu-arrow {
+  //   &::after,
+  //   &::before {
+  //     background-color: rgb(250, 248, 248) !important;
+  //   }
+  // }
 }
