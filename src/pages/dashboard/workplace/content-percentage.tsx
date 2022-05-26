@@ -98,10 +98,7 @@ function PopularContent() {
 
           {/* <div style={{ display: 'flex', justifyContent: 'space-around' }}> */}
           <div style={{ position: 'absolute' }}>
-            <img
-              src={whiteBg}
-              style={{ width: 790, height: 'calc(100vh - 332px)', top: 4, filter: 'opacity(0.3)' }}
-            ></img>
+            <img src={whiteBg} style={{ top: 4, filter: 'opacity(0.3)', height: '50vh', width: '54vw' }}></img>
           </div>
           <div style={{ paddingTop: 30, position: 'relative', zIndex: 4 }}>
             <Row style={{ display: 'flex', justifyContent: 'center' }}>
