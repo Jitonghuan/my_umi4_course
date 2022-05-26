@@ -511,7 +511,19 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() =>
                           history.push(
-                            `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}`,
+                            {
+                              pathname: '/matrix/application/detail/viewLog',
+                              query: {
+                                appCode: appData?.appCode,
+                                envCode: currentEnvData,
+                                instName: record?.instName,
+                                viewLogEnvType: envTypeCode,
+                              },
+                              state: {
+                                infoRecord: record,
+                              },
+                            },
+                            // `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}`,
                           )
                         }
                       >

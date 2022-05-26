@@ -110,7 +110,7 @@ export default function ContainerInfo(props: any) {
         scroll={{ y: window.innerHeight - 564 }}
         pagination={false}
         columns={containerColumns}
-        loading={loading}
+        // loading={loading}
         dataSource={queryContainerData}
         locale={{ emptyText: <Empty description="没有容器信息" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
       />
@@ -123,7 +123,7 @@ export default function ContainerInfo(props: any) {
         pagination={false}
         scroll={{ y: window.innerHeight - 564 }}
         dataSource={podListSource}
-        loading={podLoading}
+        // loading={podLoading}
         locale={{ emptyText: <Empty description="没有事件" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
       />
     </ContentCard>

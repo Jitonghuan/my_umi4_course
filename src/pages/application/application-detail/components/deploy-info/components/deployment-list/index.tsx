@@ -17,7 +17,7 @@ export default function DeploymentList(props: DeployContentProps) {
         pagination={false}
         columns={columns}
         dataSource={dataSource}
-        loading={loading}
+        // loading={loading}
         locale={{ emptyText: <Empty description="没有事件" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
       />
     </>
