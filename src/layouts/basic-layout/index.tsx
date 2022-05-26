@@ -94,6 +94,18 @@ export default function Layout(props: any) {
       //#92a6bb
     },
   });
+
+  // const changeTheme = () => {
+  //   if (style == 'foneDark') {
+  //     setStyle('globalLight');
+  //     document.body.removeAttribute('fone-theme');
+  //     document.body.setAttribute('arco-theme', 'light');
+  //   } else {
+  //     setStyle('foneDark');
+  //     document.body.setAttribute('fone-theme', 'foneDark');
+  //     document.body.setAttribute('arco-theme', 'dark');
+  //   }
+  // };
   return (
     <ConfigProvider locale={zhCN}>
       <PositionSwitcher
