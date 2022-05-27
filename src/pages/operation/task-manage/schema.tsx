@@ -3,6 +3,7 @@ import { history } from 'umi';
 import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
 import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
+import { JOB_STATUS } from './type';
 
 export type AppType = 'frontend' | 'backend';
 
@@ -63,7 +64,9 @@ export const taskTableSchema = ({
       dataIndex: 'lastExecStatus',
       width: 120,
 
-      render: (status) => <Tag></Tag>,
+      render: (status) => (
+        <Tag color={JOB_STATUS[status]?.color || 'default'}>{JOB_STATUS[status]?.text || status}</Tag>
+      ),
     },
     {
       title: '启用',
