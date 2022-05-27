@@ -36,12 +36,8 @@
     "@cffe/algorithm": "^1.0.5",
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "1.0.0",
-<<<<<<< HEAD
     "@cffe/h2o-design": "css-var",
     "@cffe/h2o-theme": "css-var",
-=======
-    "@cffe/h2o-design": "^2.0.0",
->>>>>>> feature_deploy_Info_20220524171658
     "@cffe/hulk-wave-chart": "^0.0.4",
     "@cffe/internal-icon": "^1.0.1",
     "@cffe/layout": "0.1.23",
@@ -95,7 +91,15 @@
     "@hbos/umi-plugin-theme-hbos": "^1.0.1",
     "@types/react-copy-to-clipboard": "^5.0.2",
     "@umijs/preset-react": "~1.8.23",
-    "prettier": "2.6.0"
+    "prettier": "2.6.0",
+    "@babel/cli": "^7.12.17",
+    "@babel/core": "^7.12.17",
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
+    "@babel/plugin-proposal-private-methods": "^7.13.0",
+    "@babel/preset-env": "^7.12.17",
+    "@babel/preset-react": "^7.12.13",
+    "@babel/preset-typescript": "^7.12.17",
+    "babel-plugin-import": "~1.13.3"
   },
   "resolutions": {
     "@cffe/h2o-design": "css-var"

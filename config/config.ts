@@ -22,8 +22,6 @@ export default defineConfig({
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
-<<<<<<< HEAD
-=======
   extraBabelPlugins: [
     [
       "import",
@@ -34,7 +32,6 @@ export default defineConfig({
       }
     ]
   ],
->>>>>>> feature_deploy_Info_20220524171658
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
