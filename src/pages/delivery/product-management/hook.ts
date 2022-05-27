@@ -204,12 +204,12 @@ export function useQueryIndentParamList(): [
 }
 
 // 编辑交付配置参数值
-export function useSaveIndentParam(): [boolean, (id: number, configParamValue: string) => Promise<void>] {
+export function useSaveIndentParam(): [boolean, (id: number, paramValue: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const saveIndentParam = async (id: number, paramValue: string) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.saveIndentParam}?id=${id}&configParamValue=${paramValue}`)
+      await postRequest(`${APIS.saveIndentParam}?id=${id}&paramValue=${paramValue}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);
