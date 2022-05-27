@@ -23,19 +23,6 @@ export default defineConfig({
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
-  extraBabelPlugins: [
-    "@babel/syntax-dynamic-import",
-    ["@babel/plugin-proposal-private-methods", { "loose": true }],
-    ["@babel/proposal-class-properties", { "loose": true }],
-    [
-      "import",
-      {
-        "libraryName": "antd",
-        "libraryDirectory": "lib",
-        "style": true
-      }
-    ]
-  ],
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
@@ -122,6 +109,17 @@ export default defineConfig({
     loading: '@/components/source-loading',
   },
   extraBabelPlugins: [
+    "@babel/syntax-dynamic-import",
+    ["@babel/plugin-proposal-private-methods", { "loose": true }],
+    ["@babel/proposal-class-properties", { "loose": true }],
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "lib",
+        "style": true
+      }
+    ],
     [
       require.resolve('babel-plugin-import'),
       {
