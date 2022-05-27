@@ -1,6 +1,6 @@
 import React from 'react';
 import { history } from 'umi';
-import { Popconfirm, Tooltip, Switch } from 'antd';
+import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
 import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
@@ -60,9 +60,10 @@ export const taskTableSchema = ({
     },
     {
       title: '上次执行结果',
-      dataIndex: 'appCategoryCode',
+      dataIndex: 'lastExecStatus',
       width: 120,
-      // render: (value) => categoryData?.find((v) => v.categoryCode === value)?.categoryName || '-',
+
+      render: (status) => <Tag></Tag>,
     },
     {
       title: '启用',
@@ -77,7 +78,7 @@ export const taskTableSchema = ({
     {
       width: 140,
       title: '操作',
-      fixed: 'right',
+
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">

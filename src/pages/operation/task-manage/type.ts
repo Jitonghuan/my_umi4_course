@@ -9,6 +9,19 @@ export interface jobContentProps {
   url?: string;
 }
 
+export interface jobStatus {
+  text?: string;
+  color?: string;
+}
+////1正在执行，2执行成功，3执行失败 0没执行过
+
+export const JOB_STATUS: Record<number, jobStatus> = {
+  0: { text: '未曾执行', color: 'gray' },
+  1: { text: '正在执行', color: 'yellow' },
+  2: { text: '执行成功', color: 'green' },
+  3: { text: '执行失败', color: 'red' },
+};
+
 export interface recordEditData extends Record<string, any> {
   jobCode: string;
   jobName: string;

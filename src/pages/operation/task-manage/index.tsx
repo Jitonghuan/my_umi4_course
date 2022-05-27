@@ -1,4 +1,4 @@
-// DNS管理
+// 任务管理
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2022/04/1 14:15
 
@@ -126,7 +126,7 @@ export default function DNSManageList(props: any) {
   }, []);
 
   return (
-    <PageContainer className="DNS-list-content">
+    <PageContainer>
       <ExecutionDetailsModal />
       <CreateTaskModal
         mode={addTaskMode}

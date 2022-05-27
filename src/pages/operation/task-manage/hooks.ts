@@ -23,6 +23,12 @@ export function useTaskList() {
       .then((result) => {
         if (result?.success) {
           const dataSource = result.data.dataSource || [];
+          // let dataArry:any=[];
+          // dataSource?.map((item:any)=>{
+          //   dataArry.push(
+          //     Object.assign(item.job,item.lastExecStatus)
+          //   )
+          // })
           const pageInfo = result.data.pageInfo;
           setSource(dataSource);
           setPageInfo(pageInfo);
