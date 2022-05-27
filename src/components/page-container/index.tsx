@@ -15,6 +15,7 @@ export default function PageContainer(props: React.PropsWithChildren<IProps>) {
     <VCPageContent
       breadcrumbMap={breadcrumbMap}
       pathname={location.pathname}
+      className="layout-content"
       isFlex
       height="calc(100vh - 60px)"
       {...rest}
