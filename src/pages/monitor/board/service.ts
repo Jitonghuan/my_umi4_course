@@ -118,14 +118,41 @@ export const queryClustersData = (params: { envTypeCode: string }) =>
  */
 
 export const queryPodUrl = `${appConfig.apiPrefix}/monitorManage/resource/pod`;
-export const queryPodUseData = (clusterId: number, pageIndex?: number, pageSize?: number, keyword?: any) =>
-  getRequest(queryPodUrl, { data: { clusterId, pageIndex: pageIndex || 1, pageSize: pageSize || 20, keyword } }).then(
-    (res: any) => {
-      if (res?.success) {
-        let podResourceData: any = [];
-        podResourceData = res.data;
-        return podResourceData;
-      }
-      return [];
-    },
-  );
+export const queryPodUseData = (
+  clusterId: number,
+  pageIndex?: number,
+  pageSize?: number,
+  keyword?: any,
+  namespace?: string,
+) =>
+  getRequest(queryPodUrl, {
+    data: { clusterId, pageIndex: pageIndex || 1, pageSize: pageSize || 20, keyword, namespace },
+  }).then((res: any) => {
+    if (res?.success) {
+      let podResourceData: any = [];
+      podResourceData = res.data;
+      return podResourceData;
+    }
+    return [];
+  });
+
+/**
+ * 获取namespace
+ */
+export const queryPodNamespaceApi = `${appConfig.apiPrefix}/monitorManage/resource/podNamespace`;
+export const queryPodNamespaceData = (params: { clusterId: string }) =>
+  getRequest(queryPodNamespaceApi, { data: params }).then((res: any) => {
+    if (res?.success) {
+      const result: any = [];
+      let dataSource = res.data;
+      dataSource?.map((ele: any) => {
+        result.push({
+          label: ele.namespace,
+          value: ele.namespace,
+        });
+      }, []);
+
+      return result;
+    }
+    return [];
+  });

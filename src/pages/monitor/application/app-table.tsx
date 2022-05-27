@@ -4,6 +4,7 @@ import { Card, Select, Form, Tooltip, Tabs, Button } from 'antd';
 import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
+import { getRequest } from '@/utils/request';
 import AppCard from './app-card';
 import CpuUtilization from './dashboard/cpu-utilization-line';
 import MemroyUtilization from './dashboard/memory-utilization-line';
@@ -207,75 +208,142 @@ const Coms = (props: IProps) => {
   };
 
   // 查询节点使用率
-  const {
-    run: queryNodeList,
-    reset,
-    tableProps,
-  } = usePaginated({
-    requestUrl: queryPodInfoApi,
-    requestMethod: 'GET',
-    showRequestError: true,
-    didMounted: false,
-    formatRequestParams: (params) => {
-      console.log('params', params);
-      return {
-        ...params,
-
+  const [nodeDataSource, setNodeDataSource] = useState<any>([]);
+  const queryNodeList = () => {
+    getRequest(queryPodInfoApi, {
+      data: {
         start: Number((now - startTime) / 1000),
         end: Number(now / 1000),
         pageSize: 1000,
         ...prevFilter.current,
-      };
-    },
-    formatResult: (resp) => {
-      if (resp.data && resp.data[0]) {
-        setCurtIp(resp.data[0].hostIP);
-        setHostName(resp.data[0].hostName);
-      }
-      return {
-        dataSource: resp.data || [],
-        pageInfo: {
-          pageIndex: 1,
-          pageSize: 1000,
-        },
-      };
-    },
-    successFunc: (resp: any) => {
-      queryPodCpu(
-        resp.data[0].hostName,
-        filter.envCode,
-        Number((now - startTime) / 1000),
-        Number(now / 1000),
-        filter.appCode,
-        resp.data[0].hostIP,
-      );
-      queryPodMem(
-        resp.data[0].hostName,
-        filter.envCode,
-        Number((now - startTime) / 1000),
-        Number(now / 1000),
-        filter.appCode,
-        resp.data[0].hostIP,
-      );
-      queryPodDisk(
-        resp.data[0].hostName,
-        filter.envCode,
-        Number((now - startTime) / 1000),
-        Number(now / 1000),
-        filter.appCode,
-        resp.data[0].hostIP,
-      );
-      queryPodNetwork(
-        resp.data[0].hostName,
-        filter.envCode,
-        Number((now - startTime) / 1000),
-        Number(now / 1000),
-        filter.appCode,
-        resp.data[0].hostIP,
-      );
-    },
-    pagination: false,
-  });
+      },
+    })
+      .then((resp) => {
+        if (resp.data && resp.data[0]) {
+          setCurtIp(resp.data[0].hostIP);
+          setHostName(resp.data[0].hostName);
+        }
+
+        setNodeDataSource(resp.data);
+        if (!resp.success) {
+          setNodeDataSource([]);
+          return;
+        }
+        return {
+          dataSource: resp.data || [],
+          pageInfo: {
+            pageIndex: 1,
+            pageSize: 1000,
+          },
+        };
+      })
+      .then((resp) => {
+        if (!resp?.dataSource[0].hostName) {
+          return;
+        }
+
+        queryPodCpu(
+          resp?.dataSource[0].hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          resp?.dataSource[0].hostIP,
+        );
+        queryPodMem(
+          resp?.dataSource[0].hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          resp?.dataSource[0].hostIP,
+        );
+        queryPodDisk(
+          resp?.dataSource[0].hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          resp?.dataSource[0].hostIP,
+        );
+        queryPodNetwork(
+          resp?.dataSource[0].hostName,
+          filter.envCode,
+          Number((now - startTime) / 1000),
+          Number(now / 1000),
+          filter.appCode,
+          resp?.dataSource[0].hostIP,
+        );
+      });
+  };
+  // const {
+  //   // run: queryNodeList,
+  //   reset,
+  //   tableProps,
+  // } = usePaginated({
+  //   requestUrl: queryPodInfoApi,
+  //   requestMethod: 'GET',
+  //   showRequestError: true,
+  //   didMounted: false,
+  //   formatRequestParams: (params) => {
+  //     return {
+  //       ...params,
+
+  //       start: Number((now - startTime) / 1000),
+  //       end: Number(now / 1000),
+  //       pageSize: 1000,
+  //       ...prevFilter.current,
+  //     };
+  //   },
+  //   formatResult: (resp) => {
+  //     if (resp.data && resp.data[0]) {
+  //       setCurtIp(resp.data[0].hostIP);
+  //       setHostName(resp.data[0].hostName);
+  //     }
+  //     return {
+  //       dataSource: resp.data || [],
+  //       pageInfo: {
+  //         pageIndex: 1,
+  //         pageSize: 1000,
+  //       },
+  //     };
+  //   },
+  //   successFunc: (resp: any) => {
+  //     queryPodCpu(
+  //       resp.data[0].hostName,
+  //       filter.envCode,
+  //       Number((now - startTime) / 1000),
+  //       Number(now / 1000),
+  //       filter.appCode,
+  //       resp.data[0].hostIP,
+  //     );
+  //     queryPodMem(
+  //       resp.data[0].hostName,
+  //       filter.envCode,
+  //       Number((now - startTime) / 1000),
+  //       Number(now / 1000),
+  //       filter.appCode,
+  //       resp.data[0].hostIP,
+  //     );
+  //     queryPodDisk(
+  //       resp.data[0].hostName,
+  //       filter.envCode,
+  //       Number((now - startTime) / 1000),
+  //       Number(now / 1000),
+  //       filter.appCode,
+  //       resp.data[0].hostIP,
+  //     );
+  //     queryPodNetwork(
+  //       resp.data[0].hostName,
+  //       filter.envCode,
+  //       Number((now - startTime) / 1000),
+  //       Number(now / 1000),
+  //       filter.appCode,
+  //       resp.data[0].hostIP,
+  //     );
+  //   },
+  //   pagination: false,
+  // });
 
   useEffect(() => {
     queryApps();
@@ -290,7 +358,7 @@ const Coms = (props: IProps) => {
 
   useEffect(() => {
     if (filter?.appCode && filter?.envCode) {
-      reset();
+      // reset();
       queryNodeList();
     }
   }, [filter]);
@@ -368,7 +436,7 @@ const Coms = (props: IProps) => {
     }
     if (value) {
       timeRateInterval.current = setInterval(() => {
-        reset();
+        // reset();
         queryNodeList();
         prevRateNum.current += 1;
         setRateNum(prevRateNum.current);
@@ -376,7 +444,7 @@ const Coms = (props: IProps) => {
     }
   };
   const refreash = () => {
-    reset();
+    // reset();
     queryNodeList();
   };
 
@@ -464,7 +532,7 @@ const Coms = (props: IProps) => {
             <RedoOutlined
               style={{ float: 'right' }}
               onClick={() => {
-                reset();
+                // reset();
                 queryNodeList();
               }}
             />
@@ -473,7 +541,9 @@ const Coms = (props: IProps) => {
           <HulkTable
             rowKey="ip"
             size="small"
+            dataSource={nodeDataSource}
             columns={tableSchema as ColumnProps[]}
+            pagination={false}
             onRow={(record) => {
               return {
                 onClick: () => {
@@ -515,7 +585,7 @@ const Coms = (props: IProps) => {
               };
             }}
             // scroll={{ y: 300 }}
-            {...tableProps}
+            // {...tableProps}
             customColumnMap={{
               cpu: (value) => {
                 return value ? `${value}%` : '';
