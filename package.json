@@ -6,7 +6,7 @@
     "dev": "NODE_ENV=development MOCK=none umi dev",
     "mock": "cross-env NODE_ENV=development umi dev",
     "start": "fnpm i && npm run dev",
-    "build": "cross-env umi build",
+    "build": "umi build",
     "build:analyze": "cross-env ANALYZE=1 umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
@@ -56,7 +56,6 @@
     "@types/diff-match-patch": "^1.0.32",
     "@types/react-resizable": "^1.7.4",
     "@umijs/hooks": "~1.9.3",
-    "@umijs/plugin-esbuild": "^1.4.1",
     "ace-diff": "^3.0.3",
     "ahooks": "~2.10.8",
     "ansi-up": "^1.0.0",

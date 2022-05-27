@@ -19,23 +19,9 @@ export default defineConfig({
 
   // 文件依赖路径别名，默认支持 @/ 指向 src/
   alias: {},
-  esbuild: {},
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
-  extraBabelPlugins: [
-    "@babel/syntax-dynamic-import",
-    ["@babel/plugin-proposal-private-methods", { "loose": true }],
-    ["@babel/proposal-class-properties", { "loose": true }],
-    [
-      "import",
-      {
-        "libraryName": "antd",
-        "libraryDirectory": "lib",
-        "style": true
-      }
-    ]
-  ],
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
