@@ -94,7 +94,7 @@ export default function PublishDetail(props: IProps) {
     try {
       const res = await deployMaster({
         pipelineCode,
-        envCodes: envCode,
+        envCodes: [envCode],
         buildType: getBuildType(),
         masterBranch: selectMaster, //主干分支
       });

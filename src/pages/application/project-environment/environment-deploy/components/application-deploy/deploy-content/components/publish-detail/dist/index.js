@@ -136,7 +136,7 @@ function PublishDetail(props) {
                     _a.trys.push([1, , 3, 4]);
                     return [4 /*yield*/, service_1.deployMaster({
                             pipelineCode: pipelineCode,
-                            envCodes: envCode,
+                            envCodes: [envCode],
                             buildType: getBuildType(),
                             masterBranch: selectMaster
                         })];
