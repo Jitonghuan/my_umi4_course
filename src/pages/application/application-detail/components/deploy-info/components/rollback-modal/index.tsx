@@ -3,7 +3,7 @@
 // @create 2021/08/09 16:22
 
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { Form, Modal, Radio, message } from 'antd';
+import { Form, Modal, Radio, message } from '@cffe/h2o-design';
 import { getRequest, postRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '@/pages/application/service';

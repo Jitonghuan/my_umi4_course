@@ -3,7 +3,7 @@
 // @create 2021/08/18 09:45
 
 import React, { useState, useEffect, useCallback, useContext, useRef, useMemo } from 'react';
-import { Tabs, Button, Table, message, Popconfirm, Spin, Empty } from 'antd';
+import { Tabs, Button, Table, message, Popconfirm, Spin, Empty } from '@cffe/h2o-design';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
