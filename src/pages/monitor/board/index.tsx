@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import { Tabs, Card, Form, Input, Spin, Select, Divider, Button } from 'antd';
+import { Tabs, Card, Form, Input, Spin, Select, Divider, Button } from '@cffe/h2o-design';
 import { RedoOutlined } from '@ant-design/icons';
 import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';
@@ -22,6 +22,7 @@ import {
   queryResUseData,
   queryNodeUseDataApi,
   queryUseMarketData,
+  queryPodNamespaceData,
   queryClustersData,
   queryPodUseData,
   queryPodUrl,
@@ -136,6 +137,7 @@ const Coms = (props: any) => {
   const [resLoading, setResLoading] = useState<boolean>(false);
   const [podLoading, setPodLoading] = useState<boolean>(false);
   const [nodeLoading, setNodeLoading] = useState<boolean>(false);
+  const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
   const [podDataSource, setPodDataSource] = useState<any>([]);
   const [nodeDataSource, setNodeDataSource] = useState<any>([]);
   const [searchField] = Form.useForm();
@@ -187,9 +189,15 @@ const Coms = (props: any) => {
       });
   };
   //查询pod列表数据
-  const queryPodData = (value: any, pageIndexParam?: number, pageSizeParam?: number, keyWordParams?: any) => {
+  const queryPodData = (
+    value: any,
+    pageIndexParam?: number,
+    pageSizeParam?: number,
+    keyWordParams?: any,
+    namespace?: string,
+  ) => {
     setPodLoading(true);
-    queryPodUseData(value, pageIndexParam || 1, pageSizeParam || 20, keyWordParams)
+    queryPodUseData(value, pageIndexParam || 1, pageSizeParam || 20, keyWordParams, namespace)
       .then((result) => {
         const resultDataSouce = result?.dataSource?.map((item: Record<string, object>) => {
           const key = Object.keys(item)[0];
@@ -213,6 +221,9 @@ const Coms = (props: any) => {
     getRequest(queryNodeUseDataApi, { data: params })
       .then((result: any) => {
         let data: any = [];
+        if (!result.success) {
+          data = [];
+        }
         if (result.data === null) {
           data = [];
         } else {
@@ -242,6 +253,12 @@ const Coms = (props: any) => {
       setUseMarket(res);
     });
   };
+  //查询nameSpace
+  const queryNameSpace = (value: any) => {
+    queryPodNamespaceData({ clusterId: value }).then((res) => {
+      setNameSpaceOption(res);
+    });
+  };
 
   useEffect(() => {
     if (currentTab) {
@@ -254,7 +271,7 @@ const Coms = (props: any) => {
           queryPodData(resp[0]?.value);
           // // reset();
           queryNodeList({ clusterId: resp[0]?.value });
-          // // queryNodeList(resp[0]?.value);
+          queryNameSpace(resp[0]?.value);
           queryUseMarket(resp[0]?.value);
         } else {
           // reset();
@@ -366,8 +383,9 @@ const Coms = (props: any) => {
   };
   const handleSearchPod = () => {
     let param = searchPodField.getFieldsValue();
+
     setSearchKeyWords(param);
-    queryPodData(currentCluster, pageIndex, pageSize, param.keyword);
+    queryPodData(currentCluster, pageIndex, pageSize, param.keyword, param.namespace);
   };
 
   const handleOk = () => {
@@ -566,7 +584,17 @@ const Coms = (props: any) => {
             <h3 className="monitor-tabs-content-title" style={{ margin: 0 }}>
               Pod资源明细
             </h3>
-            <Form form={searchPodField} layout="inline">
+            <Form form={searchPodField} layout="inline" onFinish={handleSearchPod}>
+              <Form.Item name="namespace">
+                <Select
+                  placeholder="选择nameSpace进行搜索"
+                  style={{ width: 260 }}
+                  options={nameSpaceOption}
+                  showSearch
+                  allowClear
+                  onChange={handleSearchPod}
+                />
+              </Form.Item>
               <Form.Item name="keyword">
                 <Input.Search placeholder="搜索主机名、IP" style={{ width: 320 }} onSearch={handleSearchPod} />
               </Form.Item>
@@ -597,7 +625,8 @@ const Coms = (props: any) => {
                 onChange: (next, size: any) => {
                   console.log('next', next, size);
                   setPageSize(size);
-                  setPageIndex(next), queryPodData(currentCluster, next, size, searchKeyWords?.keyword);
+                  setPageIndex(next),
+                    queryPodData(currentCluster, next, size, searchKeyWords?.keyword, searchKeyWords?.namespace);
                 },
               }}
               customColumnMap={{
