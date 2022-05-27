@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Card, Select, Form, Tooltip, Tabs, Button } from '@cffe/h2o-design';
+import { Card, Select, Form, Tooltip, Tabs, Button } from 'antd';
 import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
